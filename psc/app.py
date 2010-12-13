@@ -51,7 +51,10 @@ class App(AppBase):
         try:
             location = RegistrationCenter.objects.get(code=params['location_id'])
         except RegistrationCenter.DoesNotExist:
-            return self.default(msg)
+            if int(params['location_id']) == 999:
+                location = None
+            else:
+                return self.default(msg)
 
         # determine date of message
         day = int(params['day'])
@@ -113,12 +116,18 @@ class App(AppBase):
             try:
                 location = RegistrationCenter.objects.get(code=params['location_id'])
             except RegistrationCenter.DoesNotExist:
-                return self.default(msg)
+                if int(params['location_id']) == 999:
+                    location = None
+                else:
+                    return self.default(msg)
         else:
             try:
                 location = LGA.objects.get(code=params['location_id'])
             except LGA.DoesNotExist:
-                return self.default(msg)
+                if int(params['location_id']) == 999:
+                    location = None
+                else:
+                    return self.default(msg)
 
         # determine date of message
         day = int(params['day'])
@@ -157,7 +166,10 @@ class App(AppBase):
         try:
             location = RegistrationCenter.objects.get(code=params['location_id'])
         except RegistrationCenter.DoesNotExist:
-            return self.default(msg)
+            if int(params['location_id']) == 999:
+                location = None
+            else:
+                return self.default(msg)
 
         # determine date of message
         day = int(params['day'])
@@ -209,12 +221,18 @@ class App(AppBase):
             try:
                 location = RegistrationCenter.objects.get(code=params['location_id'])
             except RegistrationCenter.DoesNotExist:
-                return self.default(msg)
+                if int(params['location_id']) == 999:
+                    location = None
+                else:
+                    return self.default(msg)
         else:
             try:
                 location = LGA.objects.get(code=params['location_id'])
             except LGA.DoesNotExist:
-                return self.default(msg)
+                if int(params['location_id']) == 999:
+                    location = None
+                else:
+                    return self.default(msg)
 
         # determine date of message
         day = int(params['day'])
