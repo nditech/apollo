@@ -9,22 +9,20 @@ from datetime import datetime
 
 class App(AppBase):
     def __init__(self, router):
-        self.pattern = re.compile(r'PSC(\d{6})(DC|VR)(\d{2})(RC|GA)(\d{3})!?([A-Z\d]{1,})@?(.*)', re.I)
-        self.vr_checklist  = re.compile(r'PSC(?P<observer_id>\d{6})VR(?P<day>\d{2})RC(?P<location_id>\d{3})(?P<responses>[ABCDEFGHJKMNPQRSTUVWXYZ\d]{2,})', re.I)
+        self.pattern = re.compile(r'PSC(?P<observer_id>\d{6})(DC|VR)(\d{2})(RC|GA)(\d{3})(!?([A-Z\d]{1,})@?(.*))?', re.I)
+        self.vr_checklist  = re.compile(r'PSC(?P<observer_id>\d{6})VR(?P<day>\d{2})RC(?P<location_id>\d{3})(?P<responses>[ABCDEFGHJKMNPQRSTUVWXYZ\d]{2,})?', re.I)
         self.vr_incidence  = re.compile(r'PSC(?P<observer_id>\d{6})VR(?P<day>\d{2})(?P<location_type>(RC|GA))(?P<location_id>\d{3})!(?P<responses>[ABCDEFGHJKMNPQ]{1,})@?(?P<comment>.*)', re.I)
-        self.dco_checklist = re.compile(r'PSC(?P<observer_id>\d{6})DC(?P<day>\d{2})RC(?P<location_id>\d{3})(?P<responses>[ABCDEFGHJKMNPQRSTUVWX\d]{2,})', re.I)
+        self.dco_checklist = re.compile(r'PSC(?P<observer_id>\d{6})DC(?P<day>\d{2})RC(?P<location_id>\d{3})(?P<responses>[ABCDEFGHJKMNPQRSTUVWX\d]{2,})?', re.I)
         self.dco_incidence = re.compile(r'PSC(?P<observer_id>\d{6})DC(?P<day>\d{2})(?P<location_type>(RC|GA))(?P<location_id>\d{3})!(?P<responses>[ABCDEFGHJK]{1,})@?(?P<comment>.*)', re.I)
         AppBase.__init__(self, router)
         
     def handle(self, message):
         if self.pattern.match(message.text):
             # Let's determine if we have a valid contact for this message
-            if hasattr(message, 'contact'):
-                try:
-                    message.observer = Observer.objects.get(contact=message.contact)
-                except Observer.DoesNotExist:
-                    return message.respond('You are not authorized to send reports to this number.')
-            else:
+            match = self.pattern.match(message.text)
+            try:
+                message.observer = Observer.objects.get(observer_id=match.group('observer_id'))
+            except Observer.DoesNotExist:
                 return message.respond('You are not authorized to send reports to this number.')
 
             # This is likely a valid PSC message
@@ -269,5 +267,5 @@ class App(AppBase):
     def _parse_checklist(self, responses):
         ''' Converts strings that look like A2C3D89AA90 into
             {'A':'2', 'C':'3', 'D':'89', 'AA':'90'}'''
-        return dict(re.findall(r'([A-Z]{1,2})([0-9]+)', responses.upper()))
+        return dict(re.findall(r'([A-Z]{1,2})([0-9]+)', responses.upper())) if responses else {}
 
