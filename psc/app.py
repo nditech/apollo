@@ -11,9 +11,9 @@ class App(AppBase):
     def __init__(self, router):
         self.pattern = re.compile(r'PSC(?P<observer_id>\d{6})(DC|VR)(\d{2})(RC|GA)(\d{3})(!?([A-Z\d]{1,})@?(.*))?', re.I)
         self.vr_checklist  = re.compile(r'PSC(?P<observer_id>\d{6})VR(?P<day>\d{2})RC(?P<location_id>\d{3})(?P<responses>[ABCDEFGHJKMNPQRSTUVWXYZ\d]{2,})?', re.I)
-        self.vr_incidence  = re.compile(r'PSC(?P<observer_id>\d{6})VR(?P<day>\d{2})(?P<location_type>(RC|GA))(?P<location_id>\d{3})!(?P<responses>[ABCDEFGHJKMNPQ]{1,})@?(?P<comment>.*)', re.I)
+        self.vr_incident  = re.compile(r'PSC(?P<observer_id>\d{6})VR(?P<day>\d{2})(?P<location_type>(RC|GA))(?P<location_id>\d{3})!(?P<responses>[ABCDEFGHJKMNPQ]{1,})@?(?P<comment>.*)', re.I)
         self.dco_checklist = re.compile(r'PSC(?P<observer_id>\d{6})DC(?P<day>\d{2})RC(?P<location_id>\d{3})(?P<responses>[ABCDEFGHJKMNPQRSTUVWX\d]{2,})?', re.I)
-        self.dco_incidence = re.compile(r'PSC(?P<observer_id>\d{6})DC(?P<day>\d{2})(?P<location_type>(RC|GA))(?P<location_id>\d{3})!(?P<responses>[ABCDEFGHJK]{1,})@?(?P<comment>.*)', re.I)
+        self.dco_incident = re.compile(r'PSC(?P<observer_id>\d{6})DC(?P<day>\d{2})(?P<location_type>(RC|GA))(?P<location_id>\d{3})!(?P<responses>[ABCDEFGHJK]{1,})@?(?P<comment>.*)', re.I)
         AppBase.__init__(self, router)
         
     def handle(self, message):
@@ -28,15 +28,15 @@ class App(AppBase):
                 return message.respond('You are not authorized to send reports to this number.')
 
             # This is likely a valid PSC message
-            match = self.vr_incidence.match(message.text)
+            match = self.vr_incident.match(message.text)
             if match:
-                return self._vr_incidence(message, match.groupdict())
+                return self._vr_incident(message, match.groupdict())
             match = self.vr_checklist.match(message.text)
             if match:
                 return self._vr_checklist(message, match.groupdict())
-            match = self.dco_incidence.match(message.text)
+            match = self.dco_incident.match(message.text)
             if match:
-                return self._dco_incidence(message, match.groupdict())
+                return self._dco_incident(message, match.groupdict())
             match = self.dco_checklist.match(message.text)
             if match:
                 return self._dco_checklist(message, match.groupdict())
@@ -113,7 +113,7 @@ class App(AppBase):
         vr.save()
         return msg.respond('VR Checklist Accepted!')
 
-    def _vr_incidence(self, msg, params):
+    def _vr_incident(self, msg, params):
         # determine location
         if params['location_type'].upper() == 'RC':
             try:
@@ -147,7 +147,7 @@ class App(AppBase):
                 month -= 1
         msg.received_at = datetime(year, month, day)
 
-        # Create the Incidence
+        # Create the Incident
         inc = VRIncident() 
         inc.date = msg.date
         inc.observer = msg.observer
@@ -163,7 +163,7 @@ class App(AppBase):
 
         inc.save()
 
-        return msg.respond('VR Incidence Report Accepted!')
+        return msg.respond('VR Incident Report Accepted!')
 
     def _dco_checklist(self, msg, params):
         # determine location
@@ -222,7 +222,7 @@ class App(AppBase):
         dco.save()
         return msg.respond('DCO Checklist Accepted!')
 
-    def _dco_incidence(self, msg, params):
+    def _dco_incident(self, msg, params):
         # determine location
         if params['location_type'].upper() == 'RC':
             try:
@@ -256,7 +256,7 @@ class App(AppBase):
                 month -= 1
         msg.received_at = datetime(year, month, day)
 
-        # Create the Incidence
+        # Create the Incident
         inc = DCOIncident() 
         inc.date = msg.date
         inc.observer = msg.observer
@@ -272,7 +272,7 @@ class App(AppBase):
 
         inc.save()
 
-        return msg.respond('DCO Incidence Report Accepted!')
+        return msg.respond('DCO Incident Report Accepted!')
 
     def _parse_checklist(self, responses):
         ''' Converts strings that look like A2C3D89AA90 into
