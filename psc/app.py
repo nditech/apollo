@@ -26,18 +26,18 @@ class App(AppBase):
                 return message.respond('You are not authorized to send reports to this number.')
 
             # This is likely a valid PSC message
-            match = self.vr_checklist.match(message.text)
-            if match:
-                return self._vr_checklist(message, match.groupdict())
             match = self.vr_incidence.match(message.text)
             if match:
                 return self._vr_incidence(message, match.groupdict())
-            match = self.dco_checklist.match(message.text)
+            match = self.vr_checklist.match(message.text)
             if match:
-                return self._dco_checklist(message, match.groupdict())
+                return self._vr_checklist(message, match.groupdict())
             match = self.dco_incidence.match(message.text)
             if match:
                 return self._dco_incidence(message, match.groupdict())
+            match = self.dco_checklist.match(message.text)
+            if match:
+                return self._dco_checklist(message, match.groupdict())
             
             return self.default(message)
     
@@ -71,8 +71,11 @@ class App(AppBase):
 
         # Create the checklist
         try:
-            vr = VRChecklist.objects.get(date=msg.date, observer=msg.observer, 
+            if location:
+                vr = VRChecklist.objects.get(date=msg.date, observer=msg.observer, 
                     location_type=ContentType.objects.get_for_model(location), location_id=location.pk)
+            else:
+                vr = VRChecklist.objects.get(date=msg.date, observer=msg.observer)
         except VRChecklist.DoesNotExist:
             vr = VRChecklist() 
             vr.date = msg.date
@@ -146,7 +149,8 @@ class App(AppBase):
         inc = VRIncident() 
         inc.date = msg.date
         inc.observer = msg.observer
-        inc.location = location
+        if location:
+            inc.location = location
 
         for case in list(params['responses'].upper()):
             if hasattr(inc, case):
@@ -186,8 +190,11 @@ class App(AppBase):
 
         # Create the checklist
         try:
-            dco = DCOChecklist.objects.get(date=msg.date, observer=msg.observer, 
-                    location_type=ContentType.objects.get_for_model(location), location_id=location.pk)
+            if location:
+                dco = DCOChecklist.objects.get(date=msg.date, observer=msg.observer, 
+                        location_type=ContentType.objects.get_for_model(location), location_id=location.pk)
+            else:
+                dco = DCOChecklist.objects.get(date=msg.date, observer=msg.observer)
         except DCOChecklist.DoesNotExist:
             dco = DCOChecklist() 
             dco.date = msg.date
@@ -251,7 +258,8 @@ class App(AppBase):
         inc = DCOIncident() 
         inc.date = msg.date
         inc.observer = msg.observer
-        inc.location = location
+        if location:
+           inc.location = location
 
         for case in list(params['responses'].upper()):
             if hasattr(inc, case):
