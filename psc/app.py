@@ -17,6 +17,8 @@ class App(AppBase):
         AppBase.__init__(self, router)
         
     def handle(self, message):
+        # strip all unwanted whitespace and punctuation marks
+        message.text = message.text.replace(" ", "").replace(";", "").replace(",", "").replace(":", "").replace("/", "").replace(".", "")
         if self.pattern.match(message.text):
             # Let's determine if we have a valid contact for this message
             match = self.pattern.match(message.text)
