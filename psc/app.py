@@ -111,7 +111,7 @@ class App(AppBase):
             else:
                 return self.default(msg)
         vr.save()
-        return msg.respond('VR Checklist Accepted!')
+        return msg.respond('Checklist report accepted! You sent: %s' % msg.text)
 
     def _vr_incident(self, msg, params):
         # determine location
@@ -163,7 +163,7 @@ class App(AppBase):
 
         inc.save()
 
-        return msg.respond('VR Incident Report Accepted!')
+        return msg.respond('Incident report accepted! You sent: %s' % msg.text)
 
     def _dco_checklist(self, msg, params):
         # determine location
@@ -220,7 +220,7 @@ class App(AppBase):
             else:
                 return self.default(msg)
         dco.save()
-        return msg.respond('DCO Checklist Accepted!')
+        return msg.respond('Checklist report accepted! You sent: %s' % msg.text)
 
     def _dco_incident(self, msg, params):
         # determine location
@@ -272,7 +272,7 @@ class App(AppBase):
 
         inc.save()
 
-        return msg.respond('DCO Incident Report Accepted!')
+        return msg.respond('Incident report accepted! You sent: %s' % msg.text)
 
     def _parse_checklist(self, responses):
         ''' Converts strings that look like A2C3D89AA90 into
