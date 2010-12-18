@@ -18,7 +18,15 @@ class App(AppBase):
         
     def handle(self, message):
         # strip all unwanted whitespace and punctuation marks
-        message.text = message.text.replace(" ", "").replace(";", "").replace(",", "").replace(":", "").replace("/", "").replace(".", "")
+        message.text = message.text.replace(";", " ").replace(",", " ").replace(":", " ").replace("/", " ").replace(".", " ")
+        if not (message.text.find("@") == -1):
+            text = message.text
+            (part1, part2) = (text[0:text.find("@")], text[text.find("@"):])
+            part1 = part1.replace(" ", "")
+            message.text = part1 + part2
+        else:
+            message.text = message.text.replace(" ", "")
+
         if self.pattern.match(message.text):
             # Let's determine if we have a valid contact for this message
             match = self.pattern.match(message.text)
