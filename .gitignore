@@ -1,3 +1,5 @@
 *.sqlite3
 *.pyc
 rapidsms.log*
+schema.png
+local_settings.py
