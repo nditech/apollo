@@ -37,6 +37,6 @@ if settings.DEBUG:
 
 urlpatterns += patterns('',
     # PSC urls for default routing
-    (r'', include('psc.urls')),
     (r'^assets/(?P<path>.*)$', 'django.views.static.serve', {'document_root': 'assets'}), 
+    (r'', include('psc.urls')),
 ) 
