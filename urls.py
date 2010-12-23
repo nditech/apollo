@@ -15,7 +15,6 @@ urlpatterns = patterns('',
     
     # RapidSMS core URLs
     (r'^account/', include('rapidsms.urls.login_logout')),
-    url(r'^$', 'rapidsms.views.dashboard', name='rapidsms-dashboard'),
 
     # RapidSMS contrib app URLs
     (r'^ajax/', include('rapidsms.contrib.ajax.urls')),
@@ -35,3 +34,9 @@ if settings.DEBUG:
         # production)
         (r'^', include('rapidsms.urls.static_media')),
     )
+
+urlpatterns += patterns('',
+    # PSC urls for default routing
+    (r'', include('psc.urls')),
+    (r'^assets/(?P<path>.*)$', 'django.views.static.serve', {'document_root': 'assets'}), 
+) 
