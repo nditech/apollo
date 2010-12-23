@@ -4,6 +4,22 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 from rapidsms.models import Contact
 
+class State(Location):
+    name = models.CharField(max_length=100)
+    code = models.CharField("State Code", max_length=50)
+
+    @property
+    def label(self):
+        return self.name
+
+class District(Location):
+    name = models.CharField(max_length=100)
+    code = models.CharField("Senatorial District Code", max_length=50)
+
+    @property
+    def label(self):
+        return self.name
+
 class LGA(Location):
     name = models.CharField(max_length=100)
     code = models.CharField("LGA Code", max_length=50)
