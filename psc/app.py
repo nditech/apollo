@@ -22,7 +22,8 @@ class App(AppBase):
         if not (message.text.find("@") == -1):
             text = message.text
             (part1, part2) = (text[0:text.find("@")], text[text.find("@"):])
-            part1 = part1.replace(" ", "")
+            part1 = part1.upper()
+            part1 = part1.replace(" ", "").replace("O","0").replace("I","1").replace("L","1")
             message.text = part1 + part2
         else:
             message.text = message.text.replace(" ", "")
