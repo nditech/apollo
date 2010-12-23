@@ -22,7 +22,7 @@
 			<div class="grid_16">
 				<ul class="nav main">
 					<li>
-						<a href="12/">Voter's Registration</a>
+						<a href="#">Voter's Registration</a>
 						<ul>
 							<li>
 								<a href="#">Checklist</a>
@@ -33,7 +33,7 @@
 						</ul>
 					</li>
 					<li>
-						<a href="#">Display, Claims &amp; Objections</a>
+						<a href="#">Display, Claims, ...</a>
 						<ul>
 							<li>
 								<a href="#">Checklist</a>
@@ -44,13 +44,14 @@
 						</ul>
 					</li>
 					<li class="secondary">
-						<a href="#" title="960.gs | A CSS grid system developed by Nathan Smith">System Administration</a>
+						<a href="#" title="">System Administration</a>
 					</li>
 				</ul>
 			</div>
 			<div class="clear"></div>
+			{% block content %}
 			<div class="grid_16">
-				<h2 id="page-heading">Screen Title</h2>
+				<h2 id="page-heading">{{ page_title|default:"PSC2011" }}</h2>
 			</div>
 			<div class="clear"></div>
 			<div class="grid_16">
@@ -61,10 +62,13 @@
 					</div>
 				</div>
 			</div>
+			{% endblock %}
 			<div class="clear"></div>
 			<div class="grid_16" id="site_info">
 				<div class="box">
+					{% block footer %}
 					<p>Footer</p>
+					{% endblock %}
 				</div>
 			</div>
 			<div class="clear"></div>
