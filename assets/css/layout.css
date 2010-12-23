@@ -28,7 +28,7 @@ a:hover {
 ----------------------------------------------- */
 .container_12,
 .container_16 {
-	background:#fff;
+	background:#ECF1EF;
 }
 
 
@@ -51,7 +51,7 @@ h1#branding {
 	font-weight:normal;
 	font-size:2em;
 	text-align:left;
-	background:#aaa;
+	background:#87CEEB;
 	padding:.7em 1em;
 	margin-bottom:0;
 }
@@ -79,7 +79,7 @@ h2#page-heading {
 	font-weight:normal;
 	text-transform:uppercase;
 	color:#fff;
-	background:#333;
+	background:#87CEEB;
 	margin:-10px -10px 0 -10px;
 	padding:6px 12px;
 }
@@ -418,7 +418,7 @@ input.search.button {
 /* site information
 ----------------------------------------------- */
 #site_info .box {
-	color:#ccc;
+	color:#000000;
 	background:#666;
 	margin-bottom:10px;
 }
