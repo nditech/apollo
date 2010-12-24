@@ -18,58 +18,21 @@
 					<th>Incidents</th>
 					<th>Edit</th>
 				</tr>
-				<tr>
-					<td>Dipo Elegbede</td>
-					<td>Damilare Onajole</td>
-					<td>Ansar-u-deen Nursery and Primary School</td>
-					<td>289</td>
-					<td>Jere</td>
-					<td>Maiduguri</td>
+				{% for checklist in checklists.object_list %}
+				<tr{% cycle '' ' class="odd"' %}>
+					<td>{{ checklist.observer.name }}</td>
+					<td>Supervisor Name</td>
+					<td>{{ checklist.location.name }}</td>
+					<td>{{ checklist.location.code }}</td>
+					<td>{{ checklist.location.parent.name }}</td>
+					<td>State</td>
 					<td>1st</td>
 					<td>2nd</td>
 					<td>3rd</td>
 					<td><a href="#">Add</a></td>
 					<td><a href="#">Edit</a></td>
 				</tr>
-				<tr class="odd">
-					<td>Dipo Elegbede</td>
-					<td>Damilare Onajole</td>
-					<td>Ansar-u-deen Nursery and Primary School</td>
-					<td>289</td>
-					<td>Jere</td>
-					<td>Maiduguri</td>
-					<td>1st</td>
-					<td>2nd</td>
-					<td>3rd</td>
-					<td><a href="#">Add</a></td>
-					<td><a href="#">Edit</a></td>
-				</tr>
-				<tr>
-					<td>Dipo Elegbede</td>
-					<td>Damilare Onajole</td>
-					<td>Ansar-u-deen Nursery and Primary School</td>
-					<td>289</td>
-					<td>Jere</td>
-					<td>Maiduguri</td>
-					<td>1st</td>
-					<td>2nd</td>
-					<td>3rd</td>
-					<td><a href="#">Add</a></td>
-					<td><a href="#">Edit</a></td>
-				</tr>
-				<tr class="odd">
-					<td>Dipo Elegbede</td>
-					<td>Damilare Onajole</td>
-					<td>Ansar-u-deen Nursery and Primary School</td>
-					<td>289</td>
-					<td>Jere</td>
-					<td>Maiduguri</td>
-					<td>1st</td>
-					<td>2nd</td>
-					<td>3rd</td>
-					<td><strong>! (2)</strong></td>
-					<td><a href="#">Edit</a></td>
-				</tr>
+				{% endfor %}
 			</table>
 		</div>
 	</div>

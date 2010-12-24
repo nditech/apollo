@@ -1,15 +1,34 @@
 # Create your views here.
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, get_object_or_404
 from django.http import HttpResponse
 from django.template import RequestContext
+from models import *
+from django.core.paginator import Paginator, EmptyPage, InvalidPage
+
+# paginator settings
+items_per_page = 25
 
 def home(request):
     return render_to_response('psc/layout.html')
 
 def vr_list(request):
-    return render_to_response('psc/psc_list.html')
+    paginator = Paginator(VRChecklist.objects.all(), items_per_page)
+
+    try:
+        page = int(request.GET.get('page', '1'))
+    except ValueError:
+        page = 1
+
+    # an invalid range will retrieve the last page of results
+    try:
+        checklists = paginator.page(page)
+    except (EmptyPage, InvalidPage):
+        checklists = paginator.page(paginator.num_pages)
+
+    return render_to_response('psc/psc_list.html', {'checklists': checklists})
 
 def vr_checklist(request, checklist_id=0):
+    checklist = get_object_or_404(VRChecklist, pk=checklist_id)
     return render_to_response('psc/vr_checklist_form.html', {'page_title': 'Voters Registration Checklist'})
 
 def vr_incident(request, incident_id=0):
