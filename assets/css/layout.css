@@ -357,6 +357,8 @@ form .grandparent {
         clear: both;
 }
 
+
+
 /* form divs */
 form .grandparent .parent {
         display:block;
@@ -364,7 +366,7 @@ form .grandparent .parent {
         clear: both;
         border-bottom: 1px dashed #999;
         float: left;
-        padding-bottom: 20px;
+        padding-bottom: 3px;
 }
 
 form .grandparent .parent.last {
@@ -383,13 +385,31 @@ form .grandparent .parent .first {
 }
 
 form .grandparent .parent .second {
-    width: 70%;
+    width: 40%;
     padding: 1%;
+     border-right: 1px dashed #999;
 }
 
 form .grandparent .parent .third {
-    width: 20%;
+    width: 50%;
     padding: 1%;
+}
+
+form .grandparent .parent .third .options {
+   display: inline;
+   float: left;
+   margin-right: 20px;
+   text-align: center;
+   width: 90px;
+}
+
+form .grandparent .parent .third .options input {
+   display: block;
+   margin: 10px auto;
+}
+
+form .grandparent .parent input.text.numeric {
+    width: 40px;
 }
 
 form .buttons {

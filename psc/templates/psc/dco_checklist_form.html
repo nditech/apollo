@@ -4,7 +4,8 @@
 			<div class="grid_16">
 				<div class="box">
 					<div class="block">
-		<form>
+		<form action='http://127.0.0.1:8000/dco/3' method='post'>
+		{% csrf_token %}
 		<h2>Observer Details</h2>
 		<!-- observer details group form -->
 		<div class='grandparent'>
