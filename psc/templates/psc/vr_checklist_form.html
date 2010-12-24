@@ -1,0 +1,366 @@
+{% extends "psc/layout.html" %}
+{% block content %}
+
+			<div class="grid_16">
+				<div class="box">				
+					<div class="block">
+		<form>
+		<h2>Observer Details</h2>
+		<!-- observer details group form -->
+		<div class='grandparent'>
+			<div class='parent last'>
+				<div class='first'>
+					<p>PSC</p>
+				</div>
+				<div class='second'>
+					<p>Observer ID (always start every text message with "PSC" followed by your Observer ID Number)</p>
+				</div>
+				<div class='third'>
+					<input type='text' name='PSC' class='text numeric'>
+				</div>
+			</div>
+		</div>
+                <div class="clear"></div>
+		<h2>Opening Checklist Questions</h2>
+		<!-- opening checklist question -->
+		<div class='grandparent'>
+			<div class='parent'>
+				<div class='first'>
+					<p>A</p>
+				</div>
+				<div class='second'>
+					<p>What time did the registration centre open? (tick one) (If the centre has not opened by 12 noon complete a critical incident form and report immediately)</p>
+				</div>
+				<div class='third'>
+					<p><input name='A' type='radio' class='radio numeric'> Open by 8AM 
+					<p><input name='A' type='radio' class='radio numeric'> Between 8AM &amp; 10AM</p>
+					<p><input name='A' type='radio' class='radio numeric'> Between 10AM &amp; 12 noon</p>
+					<p><input name='A' type='radio' class='radio numeric'> Not Open by 12 noon</p>
+				</div>
+			</div>
+			<div class='parent'>
+				<div class='first'>
+					<p>B</p>
+				</div>
+				<div class='second'>
+					<p>Were you permitted to observe at the registration centre? (tick Yes or No) (If not permitted to observe complete a critical incident form and immediately report)</p>
+				</div>
+				<div class='third'>
+					<p><input name='B' type='radio' class='radio numeric' value='1'> Yes</p>
+					<p><input name='B' type='radio' class='radio numeric' value='2'> No</p>
+					<p><input name='B' type='radio' class='radio numeric' value=''> Unchecked</p>
+				</div>
+			</div>
+			<div class='parent'>
+				<div class='first'>
+					<p>C</p>
+				</div>
+				<div class='second'>
+					<p>How many registration officers were at the registration centre? (enter number)</p>
+				</div>
+				<div class='third'>
+					<input type='text' class='text numeric'>
+				</div>
+			</div>
+			<div class='parent'>
+				<div class='first'>
+					<p>D</p>
+				</div>
+				<div class='second'>
+					<p>Did the registration centre have a complete and functioning Direct Data Capture (DDC) system (tick all that apply)</p>
+				</div>
+				<div class='third'>
+					<p><input name='D' type='checkbox' class='checkbox alpha' value='1'>Missing/Broken Computer</p>
+					<p><input name='D' type='checkbox' class='checkbox alpha' value='2'>Missing/Broken Camera</p>
+					<p><input name='D' type='checkbox' class='checkbox alpha' value='3'>Missing/Broken Printer</p>
+					<p><input name='D' type='checkbox' class='checkbox alpha' value='4'>None(Missing/Broken)</p>
+				</div>
+			</div>
+			<div class='parent'>
+				<div class='first'>
+					<p>E</p>
+				</div>
+				<div class='second'>
+				<p>Was the registration centre missing any of the following materials? (tick all that apply)</p>
+				</div>
+				<div class='third'>
+					<p><input name='E' type='checkbox' class='checkbox alpha' value='1'>Manual Register of Voters (EC. 1A)</p>
+					<p><input name='E' type='checkbox' class='checkbox alpha' value='2'>Indelible Ink to Mark Fingers</p>
+					<p><input name='E' type='checkbox' class='checkbox alpha' value='3'>Blank Temporary Voter's Cards</p>
+					<p><input name='E' type='checkbox' class='checkbox alpha' value='4'>INEC Stamp</p>
+					<p><input name='E' type='checkbox' class='checkbox alpha' value='5'>None Missing</p>
+				</div>
+			</div>
+			<div class='parent'>
+				<div class='first'>
+					<p>F</p>
+				</div>
+				<div class='second'>
+					<p>How many political party agents were at the registration centre? (enter number)</p>
+				</div>
+				<div class='third'>
+					<input type='text' name='F' class='text numeric'>
+				</div>
+			</div>
+			<div class='parent last'>
+				<div class='first'>
+					<p>G</p>
+				</div>
+				<div class='second'>
+					<p>Were any security agents present at the registration centre? (tick Yes or No)</p>
+				</div>
+				<div class='third'>
+					<p><input name='B' type='radio' class='radio numeric' value='1'> Yes</p>
+					<p><input name='B' type='radio' class='radio numeric' value='2'> No</p>
+					<p><input name='B' type='radio' class='radio numeric' value=''> Unchecked</p>
+				</div>
+			</div>
+		</div>
+                <div class="clear"></div>
+		<!-- end of dat checklist -->
+		<h2>End of day checklist question</h2>
+		<div class='grandparent'>
+			<div class='parent'>
+				<div class='first'>
+					<p>H</p>
+				</div>
+				<div class='second'>
+					<p>Was anyone permitted to register who appeared under 18 years old? (tick the one that applies best)</p>
+				</div>
+				<div class='third'>
+					<p><input name='H' type='radio' class='radio numeric' value='1'>None</p>
+					<p><input name='H' type='radio' class='radio numeric' value='2'>Few</p>
+					<p><input name='H' type='radio' class='radio numeric' value=''>Half</p>
+					<p><input name='H' type='radio' class='radio numeric' value=''>Most</p>
+					<p><input name='H' type='radio' class='radio numeric' value=''>All</p>
+				</div>
+			</div>
+			<div class='parent'>
+				<div class='first'>
+					<p>J</p>
+				</div>
+				<div class='second'>
+					<p>Was anyone permitted to register who had indelible ink on his/her finger meaning he/she had already registered? (tick the one that applies best)</p>
+				</div>
+				<div class='third'>
+					<p><input name='H' type='radio' class='radio numeric' value='1'>None</p>
+					<p><input name='H' type='radio' class='radio numeric' value='2'>Few</p>
+					<p><input name='H' type='radio' class='radio numeric' value=''>Half</p>
+					<p><input name='H' type='radio' class='radio numeric' value=''>Most</p>
+					<p><input name='H' type='radio' class='radio numeric' value=''>All</p>
+				</div>
+			</div>
+			<div class='parent'>
+				<div class='first'>
+					<p>K</p>
+				</div>
+				<div class='second'>
+					<p>Was anyone permitted to register who did not appear to be from the community? (tick the one that applies best)</p>
+				</div>
+				<div class='third'>
+					<p><input name='H' type='radio' class='radio numeric' value='1'>None</p>
+					<p><input name='H' type='radio' class='radio numeric' value='2'>Few</p>
+					<p><input name='H' type='radio' class='radio numeric' value=''>Half</p>
+					<p><input name='H' type='radio' class='radio numeric' value=''>Most</p>
+					<p><input name='H' type='radio' class='radio numeric' value=''>All</p>
+				</div>
+			</div>
+			<div class='parent'>
+				<div class='first'>
+					<p>M</p>
+				</div>
+				<div class='second'>
+					<p>Were the fingers of successful registrants marked with indelible ink? (tick the one that applies best)</p>
+				</div>
+				<div class='third'>
+					<p><input name='H' type='radio' class='radio numeric' value='1'>None</p>
+					<p><input name='H' type='radio' class='radio numeric' value='2'>Few</p>
+					<p><input name='H' type='radio' class='radio numeric' value=''>Half</p>
+					<p><input name='H' type='radio' class='radio numeric' value=''>Most</p>
+					<p><input name='H' type='radio' class='radio numeric' value=''>All</p>
+				</div>
+			</div>
+			<div class='parent'>
+				<div class='first'>
+					<p>N</p>
+				</div>
+				<div class='second'>
+					<p>Were photos taken of successful registrants? (tick the one that applies best)</p>
+				</div>
+				<div class='third'>
+					<p><input name='H' type='radio' class='radio numeric' value='1'>None</p>
+					<p><input name='H' type='radio' class='radio numeric' value='2'>Few</p>
+					<p><input name='H' type='radio' class='radio numeric' value=''>Half</p>
+					<p><input name='H' type='radio' class='radio numeric' value=''>Most</p>
+					<p><input name='H' type='radio' class='radio numeric' value=''>All</p>
+				</div>
+			</div>
+			<div class='parent'>
+				<div class='first'>
+					<p>P</p>
+				</div>
+				<div class='second'>
+					<p>Were successful registrants issued with temporary voter's cards? (tick the one that applies best)</p>
+				</div>
+				<div class='third'>
+					<p><input name='H' type='radio' class='radio numeric' value='1'>None</p>
+					<p><input name='H' type='radio' class='radio numeric' value='2'>Few</p>
+					<p><input name='H' type='radio' class='radio numeric' value=''>Half</p>
+					<p><input name='H' type='radio' class='radio numeric' value=''>Most</p>
+					<p><input name='H' type='radio' class='radio numeric' value=''>All</p>
+				</div>
+			</div>
+			<div class='parent'>
+				<div class='first'>
+					<p>Q</p>
+				</div>
+				<div class='second'>
+					<p>Were the names of successful registrants entered into the Direct Data Capture (DDC) system? (tick the one that applies best)</p>
+				</div>
+				<div class='third'>
+					<p><input name='H' type='radio' class='radio numeric' value='1'>None</p>
+					<p><input name='H' type='radio' class='radio numeric' value='2'>Few</p>
+					<p><input name='H' type='radio' class='radio numeric' value=''>Half</p>
+					<p><input name='H' type='radio' class='radio numeric' value=''>Most</p>
+					<p><input name='H' type='radio' class='radio numeric' value=''>All</p>
+				</div>
+			</div>
+			<div class='parent'>
+				<div class='first'>
+					<p>R</p>
+				</div>
+				<div class='second'>
+					<p>Were the names of successful registrants entered into the Manual Register of Voters (MRV) Form EC.1A? (tick the one that applies best)</p>
+				</div>
+				<div class='third'>
+					<p><input name='H' type='radio' class='radio numeric' value='1'>None</p>
+					<p><input name='H' type='radio' class='radio numeric' value='2'>Few</p>
+					<p><input name='H' type='radio' class='radio numeric' value=''>Half</p>
+					<p><input name='H' type='radio' class='radio numeric' value=''>Most</p>
+					<p><input name='H' type='radio' class='radio numeric' value=''>All</p>
+				</div>
+			</div>
+			<div class='parent'>
+				<div class='first'>
+					<p>S</p>
+				</div>
+				<div class='second'>
+					<p>Did anyone successfully register for someone who was not present at the registration centre (i.e. proxy registration)? (tick the one that applies best)</p>
+				</div>
+				<div class='third'>
+					<p><input name='H' type='radio' class='radio numeric' value='1'>None</p>
+					<p><input name='H' type='radio' class='radio numeric' value='2'>Few</p>
+					<p><input name='H' type='radio' class='radio numeric' value=''>Half</p>
+					<p><input name='H' type='radio' class='radio numeric' value=''>Most</p>
+					<p><input name='H' type='radio' class='radio numeric' value=''>All</p>
+				</div>
+			</div>
+			<div class='parent'>
+				<div class='first'>
+					<p>T</p>
+				</div>
+				<div class='second'>
+					<p>Did the Direct Data Capture (DDC) system properly function throughout the day? (tick Yes or No)</p>
+				</div>
+				<div class='third'>
+					<p><input name='B' type='radio' class='radio numeric' value='1'> Yes</p>
+					<p><input name='B' type='radio' class='radio numeric' value='2'> No</p>
+					<p><input name='B' type='radio' class='radio numeric' value=''> Unchecked</p>
+				</div>
+			</div>
+			<div class='parent'>
+				<div class='first'>
+					<p>U</p>
+				</div>
+				<div class='second'>
+					<p>Did the registration centre run out of materials during the day? (tick Yes or No)</p>
+				</div>
+				<div class='third'>
+					<p><input name='B' type='radio' class='radio numeric' value='1'> Yes</p>
+					<p><input name='B' type='radio' class='radio numeric' value='2'> No</p>
+					<p><input name='B' type='radio' class='radio numeric' value=''> Unchecked</p>
+				</div>
+			</div>
+			<div class='parent'>
+				<div class='first'>
+					<p>V</p>
+				</div>
+				<div class='second'>
+					<p>Did the registration centre remain open until 5 pm? (tick Yes or No)</p>
+				</div>
+				<div class='third'>
+					<p><input name='B' type='radio' class='radio numeric' value='1'> Yes</p>
+					<p><input name='B' type='radio' class='radio numeric' value='2'> No</p>
+					<p><input name='B' type='radio' class='radio numeric' value=''> Unchecked</p>
+				</div>
+			</div>
+			<div class='parent'>
+				<div class='first'>
+					<p>W</p>
+				</div>
+				<div class='second'>
+					<p>Did anyone attempt to disrupt voter registration at the centre? (tick Yes or No)</p>
+				</div>
+				<div class='third'>
+					<p><input name='B' type='radio' class='radio numeric' value='1'> Yes</p>
+					<p><input name='B' type='radio' class='radio numeric' value='2'> No</p>
+					<p><input name='B' type='radio' class='radio numeric' value=''> Unchecked</p>
+				</div>
+			</div>
+			<div class='parent'>
+				<div class='first'>
+					<p>X</p>
+				</div>
+				<div class='second'>
+					<p>Did anyone attempt to intimidate or harass people in or around the centre? (tick Yes or No)</p>
+				</div>
+				<div class='third'>
+					<p><input name='B' type='radio' class='radio numeric' value='1'> Yes</p>
+					<p><input name='B' type='radio' class='radio numeric' value='2'> No</p>
+					<p><input name='B' type='radio' class='radio numeric' value=''> Unchecked</p>
+				</div>
+			</div>
+			<div class='parent'>
+				<div class='first'>
+					<p>Y</p>
+				</div>
+				<div class='second'>
+					<p>How many people registered during this day? (record number from Certificate of Completion of Daily Registration of Voters Form EC.1B(1)) (enter number) (if not permited to record this figure enter &quot;9999&quot;)</p>
+				</div>
+				<div class='third'>
+					<p><input name='B' type='text' class='text numeric'></p>
+
+				</div>
+			</div>
+			<div class='parent'>
+				<div class='first'>
+					<p>Z</p>
+				</div>
+				<div class='second'>
+					<p>How many people so far (total to date) have registered at this centre according to the Manual Register of Voters (MRV) Form EC.1A? (enter number) (if not permitted to record this figure enter &quot;9999&quot;)</p>
+				</div>
+				<div class='third'>
+					<p><input name='B' type='text' class='text numeric'></p>
+				</div>
+			</div>
+			<div class='parent last'>
+				<div class='first'>
+					<p>AA</p>
+				</div>
+				<div class='second'>
+					<p>How many people so far (total to date) have registered according to the DDC system? (enter number) (if not permitted to record this figure enter &quot;9999&quot;)</p>
+				</div>
+				<div class='third'>
+					<p><input name='B' type= 'text'  class='text numeric'> </p>
+				</div>
+                        </div>
+                    <div class="buttons">
+                    <input type="submit" name="submit" value="Submit">
+                    <input type="reset" name="reset" value="Reset">
+                    </div>
+		</form>
+
+					</div>
+				</div>
+			</div>
+{% endblock %}

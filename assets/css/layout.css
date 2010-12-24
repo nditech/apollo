@@ -7,7 +7,7 @@ body {
 	background: #eee;
 	border-top: 5px solid #000;
 	color: #333;
-	font-size: 11px;
+	font-size: 13px;
 	padding: 0 0 40px;
 }
 
@@ -80,7 +80,7 @@ h2#page-heading {
 	text-transform:uppercase;
 	color:#fff;
 	background:#87CEEB;
-	margin:-10px -10px 0 -10px;
+	margin: 10px 0 ;
 	padding:6px 12px;
 }
 .box h2 a,
@@ -350,6 +350,55 @@ input.search.button {
 	width:28%;
 	margin-left:2%;
 }
+
+form .grandparent {
+        width: 100%;
+        display: block;
+        clear: both;
+}
+
+/* form divs */
+form .grandparent .parent {
+        display:block;
+        width: 100%;
+        clear: both;
+        border-bottom: 1px dashed #999;
+        float: left;
+        padding-bottom: 20px;
+}
+
+form .grandparent .parent.last {
+        border: none;
+}
+
+form .grandparent .parent .first, form .grandparent .parent .second, form .grandparent .parent .third{
+    float: left;
+    display: block
+}
+
+form .grandparent .parent .first {
+    width: 2%;
+    padding: 1%;
+    border-right: 1px dashed #999;
+}
+
+form .grandparent .parent .second {
+    width: 70%;
+    padding: 1%;
+}
+
+form .grandparent .parent .third {
+    width: 20%;
+    padding: 1%;
+}
+
+form .buttons {
+    float: right;
+    clear: both;
+    padding-right: 50px;
+    padding-bottom: 10px
+}
+
 
 
 /* articles

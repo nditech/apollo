@@ -1,0 +1,148 @@
+{% extends "psc/layout.html" %}
+{% block content %}
+
+			<div class="grid_16">
+				<div class="box">
+					<div class="block">
+		<form>
+		<h2>Observer Details</h2>
+		<!-- observer details group form -->
+		<div class='grandparent'>
+			<div class='parent last'>
+				<div class='first'>
+					<p>PSC</p>
+				</div>
+				<div class='second'>
+					<p>Observer ID (always start every text message with "PSC" followed by your Observer ID Number)</p>
+				</div>
+				<div class='third'>
+					<input type='text' name='PSC' class='text numeric'>
+				</div>
+			</div>
+		</div>
+                <div class="clear"></div>
+		<h2>Critical Incidents</h2>
+		<!-- opening checklist question -->
+		<div class='grandparent'>
+			<div class='parent'>
+				<div class='first'>
+					<p>A</p>
+				</div>
+				<div class='second'>
+					<p>Registration Centre not open/does not exist</p>
+				</div>
+				<div class='third'>
+					<p><input name='A' type='checkbox' class='checkbox numeric' value='1'></p>
+				</div>
+			</div>
+			<div class='parent'>
+				<div class='first'>
+					<p>B</p>
+				</div>
+				<div class='second'>
+					<p>Not permitted to observe at registration centre</p>
+				</div>
+				<div class='third'>
+					<p><input name='B' type='checkbox' class='checkbox numeric' value='1'></p>
+				</div>
+			</div>
+			<div class='parent'>
+				<div class='first'>
+					<p>C</p>
+				</div>
+				<div class='second'>
+					<p>Preliminary Register of Voters (PRV) not in a visible place for public scrutiny</p>
+				</div>
+				<div class='third'>
+					<p><input name='C' type='checkbox' class='checkbox numeric' value='1'></p>
+				</div>
+			</div>
+			<div class='parent'>
+				<div class='first'>
+					<p>D</p>
+				</div>
+				<div class='second'>
+					<p>People not permitted to scrutinize the Preliminary Register of Voters (PRV)</p>
+				</div>
+				<div class='third'>
+					<p><input name='D' type='checkbox' class='checkbox numeric' value='1'></p>
+				</div>
+			</div>
+			<div class='parent'>
+				<div class='first'>
+					<p>E</p>
+				</div>
+				<div class='second'>
+				<p> People not permitted to file a Claim to have their name added or corrected</p>
+				</div>
+				<div class='third'>
+					<p><input name='E' type='checkbox' class='checkbox numeric' value='1'></p>
+				</div>
+			</div>
+			<div class='parent'>
+				<div class='first'>
+					<p>F</p>
+				</div>
+				<div class='second'>
+					<p>People not permitted to file an Objection to have a name removed</p>
+				</div>
+				<div class='third'>
+					<p><input name='F' type='checkbox' class='checkbox numeric' value='1'></p>
+				</div>
+			</div>
+			<div class='parent'>
+				<div class='first'>
+					<p>G</p>
+				</div>
+				<div class='second'>
+					<p>Centre ran out of materials</p>
+				</div>
+				<div class='third'>
+					<p><input name='G' type='checkbox' class='checkbox numeric' value='1'></p>
+				</div>
+			</div>
+			<div class='parent'>
+				<div class='first'>
+					<p>H</p>
+				</div>
+				<div class='second'>
+					<p> Intimidation or harassment in or around the centre</p>
+				</div>
+				<div class='third'>
+					<p><input name='H' type='checkbox' class='checkbox numeric' value='1'></p>
+				</div>
+			</div>
+			<div class='parent'>
+				<div class='first'>
+					<p>J</p>
+				</div>
+				<div class='second'>
+					<p>Violence in or around the centre</p>
+				</div>
+				<div class='third'>
+					<p><input name='J' type='checkbox' class='checkbox numeric' value='1'></p>
+				</div>
+			</div>
+			<div class='parent last'>
+				<div class='first'>
+					<p>K</p>
+				</div>
+				<div class='second'>
+					<p>Other</p>
+				</div>
+				<div class='third'>
+					<p><input name='K' type='checkbox' class='checkbox numeric' value='1'></p>
+				</div>
+			</div>
+		</div>
+
+                    <div class="buttons">
+                    <input type="submit" name="submit" value="Submit">
+                    <input type="reset" name="reset" value="Reset">
+                    </div>
+		</form>
+
+					</div>
+				</div>
+			</div>
+{% endblock %}
