@@ -7,7 +7,7 @@ body {
 	background: #eee;
 	border-top: 5px solid #000;
 	color: #333;
-	font-size: 13px;
+	font-size: 11px;
 	padding: 0 0 40px;
 }
 
@@ -80,7 +80,7 @@ h2#page-heading {
 	text-transform:uppercase;
 	color:#fff;
 	background:#87CEEB;
-	margin: 10px 0 ;
+	margin: -10px -10px 0 -10px;
 	padding:6px 12px;
 }
 .box h2 a,
