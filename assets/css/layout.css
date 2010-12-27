@@ -7,7 +7,7 @@ body {
 	background: #eee;
 	border-top: 5px solid #000;
 	color: #333;
-	font-size: 11px;
+	font-size: 0.9em;
 	padding: 0 0 40px;
 }
 
@@ -252,7 +252,7 @@ col.colC {
 	width:8em;
 }
 th, td {
-	padding:.2em 1em;
+	padding:.2em .5em;
 	text-align:left;
 }
 thead th {
@@ -409,7 +409,9 @@ form .grandparent .parent .third .options input {
 }
 
 form .grandparent .parent input.text.numeric {
-    width: 40px;
+    width: 5em;
+		font-size: 1.5em;
+		padding: 2px;
 }
 
 form .buttons {
@@ -417,6 +419,7 @@ form .buttons {
     clear: both;
     padding-right: 50px;
     padding-bottom: 10px
+		font-size: 1.5em;
 }
 
 
