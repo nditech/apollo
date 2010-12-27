@@ -42,6 +42,7 @@ class Observer(models.Model):
     location_type = models.ForeignKey(ContentType, null=True, blank=True)
     location_id = models.PositiveIntegerField(null=True, blank=True)
     location = generic.GenericForeignKey("location_type", "location_id")
+    supervisor = models.ForeignKey("Observer", related_name="observers", blank=True, null=True)
 
     def __set_name(self, name):
         self.contact.name = name

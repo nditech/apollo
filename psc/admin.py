@@ -3,8 +3,10 @@
 
 
 from django.contrib import admin
-from .models import LGA, RegistrationCenter, VRChecklist, VRIncident, DCOChecklist, DCOIncident, Observer
+from .models import State, District, LGA, RegistrationCenter, VRChecklist, VRIncident, DCOChecklist, DCOIncident, Observer
 
+admin.site.register(State)
+admin.site.register(District)
 admin.site.register(LGA)
 admin.site.register(RegistrationCenter)
 admin.site.register(VRChecklist)

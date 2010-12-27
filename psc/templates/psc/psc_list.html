@@ -7,27 +7,27 @@
 			<table>
 				<tr class="odd">
 					<th>Date</th>
-					<th>Observer</th>
-					<th>Supervisor</th>
 					<th>Registration Center</th>
 					<th>RCID</th>
 					<th>LGA</th>
 					<th>State</th>
+					<th>Observer</th>
+					<th>Supervisor</th>
 					<th>1st</th>
 					<th>2nd</th>
 					<th>3rd</th>
-					<th>Incidents</th>
+					<th>IN</th>
 					<th>Edit</th>
 				</tr>
 				{% for cl in checklists.object_list %}
 				<tr{% cycle '' ' class="odd"' %}>
 					<td>{{ cl.date|date:"SHORT_DATE_FORMAT" }}</td>
-					<td>{{ cl.observer.name }}</td>
-					<td>Supervisor Name</td>
 					<td>{{ cl.location.name }}</td>
 					<td>{{ cl.location.code }}</td>
 					<td>{{ cl.location.parent.name }}</td>
-					<td>State</td>
+					<td>{{ cl.location.parent.parent.name }}</td>
+					<td>{{ cl.observer.name }}</td>
+					<td>{{ cl.observer.supervisor.name }}</td>
 					<td>
 					<img src="/assets/img/status.png" width="16" height="16" alt="complete" />
 					</td>
@@ -56,9 +56,22 @@
 					<td><a href="#">Add</a></td>
 					<td><a href="#">Edit</a></td>
 				</tr>
+				{% empty %}
+				<tr>
+					<td colspan="12" class="nodata">No reports yet</td>
+				</tr>
 				{% endfor %}
 			</table>
 		</div>
+		{% if checklist.has_other_pages %}
+		<div class="paginator">
+			<a href="?page={{ checklist.previous_page_number }}"><span>&laquo;</span></a>
+			{% for pagenum in checklist.paginator.page_range %}
+			<a href="?page={{ pagenum }}"><span>1</span></a>
+			{% endfor %}
+			<a href="?page={{ checklist.next_page_number }}"><span>&raquo;</span></a>
+		</div>
+		{% endif %}
 	</div>
 </div>
 
