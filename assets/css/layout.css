@@ -7,7 +7,7 @@ body {
 	background: #eee;
 	border-top: 5px solid #000;
 	color: #333;
-	font-size: 13px;
+	font-size: 11px;
 	padding: 0 0 40px;
 }
 
@@ -80,7 +80,7 @@ h2#page-heading {
 	text-transform:uppercase;
 	color:#fff;
 	background:#87CEEB;
-	margin: 10px 0 ;
+	margin: -10px -10px 0 -10px;
 	padding:6px 12px;
 }
 .box h2 a,
@@ -587,3 +587,9 @@ form .buttons {
 #kwick .four {
 	background: #999;
 }
+
+/*
+ * custom styles
+ */
+.nodata { text-align: center; font-style: italic; padding: 1em; }
+.paginator span { font-size: 1.2em; padding: 0.5em 0.8em; background-color: white; border: solid #333 1px; border-collapse: collapse; margin: 0 -1px 0 0; }
