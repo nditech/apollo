@@ -74,6 +74,13 @@ class RegistrationCenter(Location):
     def __unicode__(self):
         return self.name
 
+class Partner(models.Model):
+    name = models.CharField("Partner's name", max_length=100)
+    code = models.CharField(max_length=10)
+
+    def __unicode__(self):
+        return self.name
+
 class Observer(models.Model):
     ROLES = (
         ('NSC', 'National Steering Committee'),
@@ -85,14 +92,14 @@ class Observer(models.Model):
         ('OBS', 'Observer'))
 
     contact = models.OneToOneField(Contact)
-    dob = models.DateField("Date of Birth")
+    dob = models.DateField("Date of Birth", blank=True, null=True)
     email = models.EmailField()
     observer_id = models.CharField(max_length=6)
     location_type = models.ForeignKey(ContentType, null=True, blank=True)
     location_id = models.PositiveIntegerField(null=True, blank=True)
     location = generic.GenericForeignKey("location_type", "location_id")
     supervisor = models.ForeignKey("Observer", related_name="observers", blank=True, null=True)
-    partner = models.OneToOneField("Observer", blank=True, null=True)
+    partner = models.ForeignKey("Partner", related_name="observers")
     role = models.CharField('Observer Role', max_length=3, choices=ROLES, blank=True)
 
     def __set_name(self, name):
