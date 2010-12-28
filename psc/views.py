@@ -4,6 +4,8 @@ from django.http import HttpResponse
 from django.template import RequestContext
 from models import *
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
+from rapidsms.contrib.messagelog.tables import MessageTable
+from rapidsms.contrib.messagelog.models import Message
 
 # paginator settings
 items_per_page = 25
@@ -47,3 +49,7 @@ def dco_checklist(request, checklist_id=0):
 def dco_incident(request, incident_id=0):
     return render_to_response('psc/dco_incident_form.html', {'page_title': 'Display/Claims & Objections Critical Incidents'})
 
+def message_log(request):
+    messages =   MessageTable(Message.objects.all(), request=request)
+    return render_to_response('psc/msg_log.html', { 'messages_list' : messages }, context_instance=RequestContext(request))
+   

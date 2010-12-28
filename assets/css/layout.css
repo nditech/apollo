@@ -364,10 +364,10 @@ form .grandparent {
         width: 100%;
         display: block;
         clear: both;
-		background: url('/assets/img/dashed-bg.png') repeat-y;
-		background-position: 670px 0;
-		float: left;
-		margin-bottom: 10px;
+        background: url('/assets/img/dashed-bg.png') repeat-y;
+        background-position: 56% 0;
+        float: left;
+        margin-bottom: 10px;
 }
 
 
@@ -378,8 +378,8 @@ form .grandparent .parent {
         border-bottom: 1px dashed #999;
         float: left;
         padding-bottom: 3px;
-		background: url('/assets/img/dashed-bg.png') repeat-y;
-		background-position: 50px 0;
+        background: url('/assets/img/dashed-bg.png') repeat-y;
+        background-position: 4% 0;
 }
 
 form .grandparent .parent.last {
