@@ -1,0 +1,12 @@
+{% extends 'psc/layout.html' %}
+{% block content %}
+<div class="grid_16">
+	<div class="box"> 
+		<h2>Message Log</h2>
+		<div class="block">
+			{{ messages_list.as_html }}
+		</div>
+	</div>
+</div>
+
+{% endblock %}
