@@ -381,6 +381,1005 @@
     }
   }, 
   {
+    "pk": 1, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/019/BN", 
+      "name": "Benue North East", 
+      "parent": 7
+    }
+  }, 
+  {
+    "pk": 2, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/020/BN", 
+      "name": "Benue North West", 
+      "parent": 7
+    }
+  }, 
+  {
+    "pk": 3, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/021/BN", 
+      "name": "Benue South", 
+      "parent": 7
+    }
+  }, 
+  {
+    "pk": 4, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/109/FC", 
+      "name": "FCT (Abaji & Kwali)", 
+      "parent": 8
+    }
+  }, 
+  {
+    "pk": 5, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/109/FC", 
+      "name": "FCT (Abuja Municipality & Bwari)", 
+      "parent": 8
+    }
+  }, 
+  {
+    "pk": 6, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/109/FC", 
+      "name": "FCT (Gwagwalada & Kuje)", 
+      "parent": 8
+    }
+  }, 
+  {
+    "pk": 7, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/064/KG", 
+      "name": "Kogi Central ", 
+      "parent": 9
+    }
+  }, 
+  {
+    "pk": 8, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/065/KG", 
+      "name": "Kogi East", 
+      "parent": 9
+    }
+  }, 
+  {
+    "pk": 9, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/066/KG", 
+      "name": "Kogi West", 
+      "parent": 9
+    }
+  }, 
+  {
+    "pk": 10, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/068/KW", 
+      "name": "Kwara Central", 
+      "parent": 10
+    }
+  }, 
+  {
+    "pk": 11, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/067/KW", 
+      "name": "Kwara North", 
+      "parent": 10
+    }
+  }, 
+  {
+    "pk": 12, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/069/KW", 
+      "name": "Kwara South", 
+      "parent": 10
+    }
+  }, 
+  {
+    "pk": 13, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/073/NW", 
+      "name": "Nasarawa North", 
+      "parent": 11
+    }
+  }, 
+  {
+    "pk": 14, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/075/NW", 
+      "name": "Nasarawa South", 
+      "parent": 11
+    }
+  }, 
+  {
+    "pk": 15, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/074/NW", 
+      "name": "Nasarawa West", 
+      "parent": 11
+    }
+  }, 
+  {
+    "pk": 16, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/076/NG", 
+      "name": "Niger East", 
+      "parent": 12
+    }
+  }, 
+  {
+    "pk": 17, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/077/NG", 
+      "name": "Niger North", 
+      "parent": 12
+    }
+  }, 
+  {
+    "pk": 18, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/078/NG", 
+      "name": "Niger South", 
+      "parent": 12
+    }
+  }, 
+  {
+    "pk": 19, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/092/PL", 
+      "name": "Plateau Central", 
+      "parent": 13
+    }
+  }, 
+  {
+    "pk": 20, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/093/PL", 
+      "name": "Plateau North", 
+      "parent": 13
+    }
+  }, 
+  {
+    "pk": 21, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/091/PL", 
+      "name": "Plateau South", 
+      "parent": 13
+    }
+  }, 
+  {
+    "pk": 22, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/006/AD", 
+      "name": "Adamawa Central", 
+      "parent": 14
+    }
+  }, 
+  {
+    "pk": 23, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/004/AD", 
+      "name": "Adamawa North", 
+      "parent": 14
+    }
+  }, 
+  {
+    "pk": 24, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/005/AD", 
+      "name": "Adamawa South", 
+      "parent": 14
+    }
+  }, 
+  {
+    "pk": 25, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/014/BA", 
+      "name": "Bauchi Central", 
+      "parent": 15
+    }
+  }, 
+  {
+    "pk": 26, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/015/BA", 
+      "name": "Bauchi North", 
+      "parent": 15
+    }
+  }, 
+  {
+    "pk": 27, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/013/BA", 
+      "name": "Bauchi South", 
+      "parent": 15
+    }
+  }, 
+  {
+    "pk": 28, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/023/BO", 
+      "name": "Borno Central", 
+      "parent": 16
+    }
+  }, 
+  {
+    "pk": 29, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/022/BO", 
+      "name": "Borno North", 
+      "parent": 16
+    }
+  }, 
+  {
+    "pk": 30, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/024/BO", 
+      "name": "Borno South", 
+      "parent": 16
+    }
+  }, 
+  {
+    "pk": 31, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/043/GM", 
+      "name": "Gombe Central", 
+      "parent": 17
+    }
+  }, 
+  {
+    "pk": 32, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/045/GM", 
+      "name": "Gombe North", 
+      "parent": 17
+    }
+  }, 
+  {
+    "pk": 33, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/044/GM", 
+      "name": "Gombe South", 
+      "parent": 17
+    }
+  }, 
+  {
+    "pk": 34, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/101/TR", 
+      "name": "Taraba Central", 
+      "parent": 18
+    }
+  }, 
+  {
+    "pk": 35, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/102/TR", 
+      "name": "Taraba North", 
+      "parent": 18
+    }
+  }, 
+  {
+    "pk": 36, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/100/TR", 
+      "name": "Taraba South", 
+      "parent": 18
+    }
+  }, 
+  {
+    "pk": 37, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/103/YB", 
+      "name": "Yobe East", 
+      "parent": 19
+    }
+  }, 
+  {
+    "pk": 38, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/104/YB", 
+      "name": "Yobe North", 
+      "parent": 19
+    }
+  }, 
+  {
+    "pk": 39, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/105/YB", 
+      "name": "Yobe South", 
+      "parent": 19
+    }
+  }, 
+  {
+    "pk": 40, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/050/JG", 
+      "name": "Jigawa North East", 
+      "parent": 20
+    }
+  }, 
+  {
+    "pk": 41, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/051/JG", 
+      "name": "Jigawa North West", 
+      "parent": 20
+    }
+  }, 
+  {
+    "pk": 42, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/049/JG", 
+      "name": "Jigawa South West", 
+      "parent": 20
+    }
+  }, 
+  {
+    "pk": 43, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/053/KD", 
+      "name": "Kaduna Central", 
+      "parent": 21
+    }
+  }, 
+  {
+    "pk": 44, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/052/KD", 
+      "name": "Kaduna North", 
+      "parent": 21
+    }
+  }, 
+  {
+    "pk": 45, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/054/KD", 
+      "name": "Kaduna South", 
+      "parent": 21
+    }
+  }, 
+  {
+    "pk": 46, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/055/KN", 
+      "name": "Kano Central", 
+      "parent": 22
+    }
+  }, 
+  {
+    "pk": 47, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/056/KN", 
+      "name": "Kano North", 
+      "parent": 22
+    }
+  }, 
+  {
+    "pk": 48, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/057/KN", 
+      "name": "Kano South", 
+      "parent": 22
+    }
+  }, 
+  {
+    "pk": 49, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/060/KT", 
+      "name": "Katsina Central", 
+      "parent": 23
+    }
+  }, 
+  {
+    "pk": 50, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/058/KT", 
+      "name": "Katsina North", 
+      "parent": 23
+    }
+  }, 
+  {
+    "pk": 51, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/059/KT", 
+      "name": "Katsina South", 
+      "parent": 23
+    }
+  }, 
+  {
+    "pk": 52, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/062/KB", 
+      "name": "Kebbi Central", 
+      "parent": 24
+    }
+  }, 
+  {
+    "pk": 53, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/061/KB", 
+      "name": "Kebbi North", 
+      "parent": 24
+    }
+  }, 
+  {
+    "pk": 54, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/063/KB", 
+      "name": "Kebbi South", 
+      "parent": 24
+    }
+  }, 
+  {
+    "pk": 55, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/097/SO", 
+      "name": "Sokoto East", 
+      "parent": 25
+    }
+  }, 
+  {
+    "pk": 56, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/098/SO", 
+      "name": "Sokoto North", 
+      "parent": 25
+    }
+  }, 
+  {
+    "pk": 57, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/099/SO", 
+      "name": "Sokoto South", 
+      "parent": 25
+    }
+  }, 
+  {
+    "pk": 58, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/107/ZF", 
+      "name": "Zamfara Central", 
+      "parent": 26
+    }
+  }, 
+  {
+    "pk": 59, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/106/ZF", 
+      "name": "Zamfara North", 
+      "parent": 26
+    }
+  }, 
+  {
+    "pk": 60, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/108/ZF", 
+      "name": "Zamfara West", 
+      "parent": 26
+    }
+  }, 
+  {
+    "pk": 61, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/002/AB", 
+      "name": "Abia Central", 
+      "parent": 27
+    }
+  }, 
+  {
+    "pk": 62, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/001/AB", 
+      "name": "Abia North", 
+      "parent": 27
+    }
+  }, 
+  {
+    "pk": 63, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/003/AB", 
+      "name": "Abia South", 
+      "parent": 27
+    }
+  }, 
+  {
+    "pk": 64, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/011/AN", 
+      "name": "Anambra Central", 
+      "parent": 28
+    }
+  }, 
+  {
+    "pk": 65, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/010/AN", 
+      "name": "Anambra North", 
+      "parent": 28
+    }
+  }, 
+  {
+    "pk": 66, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/012/AN", 
+      "name": "Anambra South", 
+      "parent": 28
+    }
+  }, 
+  {
+    "pk": 67, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/032/EB", 
+      "name": "Ebonyi Central", 
+      "parent": 29
+    }
+  }, 
+  {
+    "pk": 68, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/031/EB", 
+      "name": "Ebonyi North", 
+      "parent": 29
+    }
+  }, 
+  {
+    "pk": 69, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/033/EB", 
+      "name": "Ebonyi South", 
+      "parent": 29
+    }
+  }, 
+  {
+    "pk": 70, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/040/EN", 
+      "name": "Enugu East", 
+      "parent": 30
+    }
+  }, 
+  {
+    "pk": 71, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/042/EN", 
+      "name": "Enugu North", 
+      "parent": 30
+    }
+  }, 
+  {
+    "pk": 72, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/041/EN", 
+      "name": "Enugu West", 
+      "parent": 30
+    }
+  }, 
+  {
+    "pk": 73, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/046/IM", 
+      "name": "Imo East", 
+      "parent": 31
+    }
+  }, 
+  {
+    "pk": 74, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/048/IM", 
+      "name": "Imo North", 
+      "parent": 31
+    }
+  }, 
+  {
+    "pk": 75, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/047/IM", 
+      "name": "Imo West", 
+      "parent": 31
+    }
+  }, 
+  {
+    "pk": 76, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/007/AK", 
+      "name": "Akwa Ibom North East", 
+      "parent": 32
+    }
+  }, 
+  {
+    "pk": 77, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/008/AK", 
+      "name": "Akwa Ibom North West", 
+      "parent": 32
+    }
+  }, 
+  {
+    "pk": 78, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/009/AK", 
+      "name": "Akwa Ibom South", 
+      "parent": 32
+    }
+  }, 
+  {
+    "pk": 79, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/017/BY", 
+      "name": "Bayelsa Central", 
+      "parent": 33
+    }
+  }, 
+  {
+    "pk": 80, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/016/BY", 
+      "name": "Bayelsa East", 
+      "parent": 33
+    }
+  }, 
+  {
+    "pk": 81, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/018/BY", 
+      "name": "Bayelsa West", 
+      "parent": 33
+    }
+  }, 
+  {
+    "pk": 82, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/026/CR", 
+      "name": "Cross River Central", 
+      "parent": 34
+    }
+  }, 
+  {
+    "pk": 83, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/025/CR", 
+      "name": "Cross River North", 
+      "parent": 34
+    }
+  }, 
+  {
+    "pk": 84, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/027/CR", 
+      "name": "Cross River South", 
+      "parent": 34
+    }
+  }, 
+  {
+    "pk": 85, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/028/DT", 
+      "name": "Delta Central", 
+      "parent": 35
+    }
+  }, 
+  {
+    "pk": 86, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/029/DT", 
+      "name": "Delta North", 
+      "parent": 35
+    }
+  }, 
+  {
+    "pk": 87, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/030/DT", 
+      "name": "Delta South", 
+      "parent": 35
+    }
+  }, 
+  {
+    "pk": 88, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/034/ED", 
+      "name": "Edo Central", 
+      "parent": 36
+    }
+  }, 
+  {
+    "pk": 89, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/035/ED", 
+      "name": "Edo North", 
+      "parent": 36
+    }
+  }, 
+  {
+    "pk": 90, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/036/ED", 
+      "name": "Edo South", 
+      "parent": 36
+    }
+  }, 
+  {
+    "pk": 91, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/094/RV", 
+      "name": "Rivers East", 
+      "parent": 37
+    }
+  }, 
+  {
+    "pk": 92, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/095/RV", 
+      "name": "Rivers South East", 
+      "parent": 37
+    }
+  }, 
+  {
+    "pk": 93, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/096/RV", 
+      "name": "Rivers West", 
+      "parent": 37
+    }
+  }, 
+  {
+    "pk": 94, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/038/EK", 
+      "name": "Ekiti Central", 
+      "parent": 38
+    }
+  }, 
+  {
+    "pk": 95, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/037/EK", 
+      "name": "Ekiti North", 
+      "parent": 38
+    }
+  }, 
+  {
+    "pk": 96, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/039/EK", 
+      "name": "Ekiti South", 
+      "parent": 38
+    }
+  }, 
+  {
+    "pk": 97, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/070/LA", 
+      "name": "Lagos Central", 
+      "parent": 39
+    }
+  }, 
+  {
+    "pk": 98, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/071/LA", 
+      "name": "Lagos East", 
+      "parent": 39
+    }
+  }, 
+  {
+    "pk": 99, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/072/LA", 
+      "name": "Lagos West", 
+      "parent": 39
+    }
+  }, 
+  {
+    "pk": 100, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/079/OG", 
+      "name": "Ogun Central", 
+      "parent": 40
+    }
+  }, 
+  {
+    "pk": 101, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/080/OG", 
+      "name": "Ogun East", 
+      "parent": 40
+    }
+  }, 
+  {
+    "pk": 102, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/081/OG", 
+      "name": "Ogun West", 
+      "parent": 40
+    }
+  }, 
+  {
+    "pk": 103, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/083/OD", 
+      "name": "Ondo Central", 
+      "parent": 41
+    }
+  }, 
+  {
+    "pk": 104, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/082/OD", 
+      "name": "Ondo North", 
+      "parent": 41
+    }
+  }, 
+  {
+    "pk": 105, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/084/OD", 
+      "name": "Ondo South", 
+      "parent": 41
+    }
+  }, 
+  {
+    "pk": 106, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/085/OS", 
+      "name": "Osun Central", 
+      "parent": 42
+    }
+  }, 
+  {
+    "pk": 107, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/086/OS", 
+      "name": "Osun East", 
+      "parent": 42
+    }
+  }, 
+  {
+    "pk": 108, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/087/OS", 
+      "name": "Osun West", 
+      "parent": 42
+    }
+  }, 
+  {
+    "pk": 109, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/088/OY", 
+      "name": "Oyo Central", 
+      "parent": 43
+    }
+  }, 
+  {
+    "pk": 110, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/089/OY", 
+      "name": "Oyo North", 
+      "parent": 43
+    }
+  }, 
+  {
+    "pk": 111, 
+    "model": "psc.district", 
+    "fields": {
+      "code": "SD/090/OY", 
+      "name": "Oyo South", 
+      "parent": 43
+    }
+  }, 
+  {
     "pk": 44, 
     "model": "psc.lga", 
     "fields": {
