@@ -1,12 +1,13 @@
 {% extends "psc/layout.html" %}
 {% block content %}
-
+<form>
 			<div class="grid_16">
 				<div class="box">
-					<div class="block">
-		<form>
-		<h2>Observer Details</h2>
+					
+	
+		<h2>Observer Details</h2>		
 		<!-- observer details group form -->
+		<div class="block">
 		<div class='grandparent'>
 			<div class='parent last'>
 				<div class='first'>
@@ -16,13 +17,15 @@
 					<p>Observer ID (always start every text message with "PSC" followed by your Observer ID Number)</p>
 				</div>
 				<div class='third'>
-					<input type='text' name='PSC' class='text numeric'>
+					<input type='text' name='PSC' class='text numeric' maxlength="6">
 				</div>
 			</div>
+		</div>
 		</div>
                 <div class="clear"></div>
 		<h2>Critical Incidents</h2>
 		<!-- opening checklist question -->
+		<div class='block'>
 		<div class='grandparent'>
 			<div class='parent'>
 				<div class='first'>
@@ -32,7 +35,7 @@
 					<p>Registration Centre not open/does not exist</p>
 				</div>
 				<div class='third'>
-					<p><input name='A' type='checkbox' class='checkbox numeric' value='1'></p>
+					<div class="options"><input name='A' type='checkbox' class='checkbox numeric' value='1'></div>
 				</div>
 			</div>
 			<div class='parent'>
@@ -43,7 +46,7 @@
 					<p>Not permitted to observe at registration centre</p>
 				</div>
 				<div class='third'>
-					<p><input name='B' type='checkbox' class='checkbox numeric' value='1'></p>
+					<div class ="options"><input name='B' type='checkbox' class='checkbox numeric' value='1'></div>
 				</div>
 			</div>
 			<div class='parent'>
@@ -54,7 +57,7 @@
 					<p>Preliminary Register of Voters (PRV) not in a visible place for public scrutiny</p>
 				</div>
 				<div class='third'>
-					<p><input name='C' type='checkbox' class='checkbox numeric' value='1'></p>
+					<div class="options"><input name='C' type='checkbox' class='checkbox numeric' value='1'></div>
 				</div>
 			</div>
 			<div class='parent'>
@@ -65,7 +68,7 @@
 					<p>People not permitted to scrutinize the Preliminary Register of Voters (PRV)</p>
 				</div>
 				<div class='third'>
-					<p><input name='D' type='checkbox' class='checkbox numeric' value='1'></p>
+					<div class="options"><input name='D' type='checkbox' class='checkbox numeric' value='1'></div>
 				</div>
 			</div>
 			<div class='parent'>
@@ -76,7 +79,7 @@
 				<p> People not permitted to file a Claim to have their name added or corrected</p>
 				</div>
 				<div class='third'>
-					<p><input name='E' type='checkbox' class='checkbox numeric' value='1'></p>
+                    <div class="options"><input name='E' type='checkbox' class='checkbox numeric' value='1'></div>
 				</div>
 			</div>
 			<div class='parent'>
@@ -87,7 +90,7 @@
 					<p>People not permitted to file an Objection to have a name removed</p>
 				</div>
 				<div class='third'>
-					<p><input name='F' type='checkbox' class='checkbox numeric' value='1'></p>
+					<div class="options"><input name='F' type='checkbox' class='checkbox numeric' value='1'></div>
 				</div>
 			</div>
 			<div class='parent'>
@@ -98,7 +101,7 @@
 					<p>Centre ran out of materials</p>
 				</div>
 				<div class='third'>
-					<p><input name='G' type='checkbox' class='checkbox numeric' value='1'></p>
+					<div class="options"><input name='G' type='checkbox' class='checkbox numeric' value='1'></div>
 				</div>
 			</div>
 			<div class='parent'>
@@ -109,7 +112,7 @@
 					<p> Intimidation or harassment in or around the centre</p>
 				</div>
 				<div class='third'>
-					<p><input name='H' type='checkbox' class='checkbox numeric' value='1'></p>
+					<div class="options"><input name='H' type='checkbox' class='checkbox numeric' value='1'></div>
 				</div>
 			</div>
 			<div class='parent'>
@@ -120,7 +123,7 @@
 					<p>Violence in or around the centre</p>
 				</div>
 				<div class='third'>
-					<p><input name='J' type='checkbox' class='checkbox numeric' value='1'></p>
+					<div class="options"><input name='J' type='checkbox' class='checkbox numeric' value='1'></div>
 				</div>
 			</div>
 			<div class='parent last'>
@@ -131,18 +134,22 @@
 					<p>Other</p>
 				</div>
 				<div class='third'>
-					<p><input name='K' type='checkbox' class='checkbox numeric' value='1'></p>
+					<div class="options"><input name='K' type='checkbox' class='checkbox numeric' value='1'></div>
 				</div>
 			</div>
 		</div>
+		</div>
+		
 
                     <div class="buttons">
                     <input type="submit" name="submit" value="Submit">
                     <input type="reset" name="reset" value="Reset">
                     </div>
-		</form>
+					<div class='clear'></div>
+	
 
 					</div>
 				</div>
-			</div>
+			
+				</form>
 {% endblock %}

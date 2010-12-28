@@ -4,44 +4,96 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 from rapidsms.models import Contact
 
-class State(Location):
+class Zone(models.Model):
     name = models.CharField(max_length=100)
-    code = models.CharField("State Code", max_length=50)
+    code = models.CharField("Zone Code", max_length=50, blank=True, db_index=True)
 
     @property
     def label(self):
         return self.name
 
-class District(Location):
+    def __unicode__(self):
+        return self.name
+
+class State(models.Model):
     name = models.CharField(max_length=100)
-    code = models.CharField("Senatorial District Code", max_length=50)
+    code = models.CharField("State Code", max_length=50, blank=True, db_index=True)
+    parent = models.ForeignKey("Zone", related_name="states", blank=True, null=True)
 
     @property
     def label(self):
         return self.name
 
-class LGA(Location):
+    def __unicode__(self):
+        return self.name
+
+class District(models.Model):
     name = models.CharField(max_length=100)
-    code = models.CharField("LGA Code", max_length=50)
+    code = models.CharField("Senatorial District Code", max_length=50, blank=True, db_index=True)
+    parent = models.ForeignKey("State", related_name="districts", blank=True, null=True)
 
     @property
     def label(self):
+        return self.name
+
+    def __unicode__(self):
+        return self.name
+
+class LGA(models.Model):
+    name = models.CharField(max_length=100)
+    code = models.CharField("LGA Code", max_length=50, blank=True, db_index=True)
+    parent = models.ForeignKey("District", related_name="lgas", blank=True, null=True)
+
+    @property
+    def label(self):
+        return self.name
+
+    def __unicode__(self):
+        return self.name
+
+class Ward(models.Model):
+    name = models.CharField(max_length=100)
+    code = models.CharField("Ward Code", max_length=50, blank=True, db_index=True)
+    parent = models.ForeignKey("LGA", related_name="wards", blank=True, null=True)
+
+    @property
+    def label(self):
+        return self.name
+
+    def __unicode__(self):
         return self.name
 
 class RegistrationCenter(Location):
     name = models.CharField(max_length=100)
-    code = models.CharField("Registration Center Code", max_length=50)
+    code = models.CharField("Registration Center Code", max_length=50, db_index=True)
 
     @property
     def label(self):
         return self.name
 
+    def __unicode__(self):
+        return self.name
+
 class Observer(models.Model):
+    ROLES = (
+        ('NSC', 'National Steering Committee'),
+        ('NS', 'National Secretariat'),
+        ('ZC', 'Zonal Coordinator'),
+        ('SC', 'State Coordinator'),
+        ('SDC', 'State Deputy Coordinator'),
+        ('LGA', 'LGA Supervisor'),
+        ('OBS', 'Observer'))
+
     contact = models.OneToOneField(Contact)
+    dob = models.DateField("Date of Birth")
+    email = models.EmailField()
     observer_id = models.CharField(max_length=6)
     location_type = models.ForeignKey(ContentType, null=True, blank=True)
     location_id = models.PositiveIntegerField(null=True, blank=True)
     location = generic.GenericForeignKey("location_type", "location_id")
+    supervisor = models.ForeignKey("Observer", related_name="observers", blank=True, null=True)
+    partner = models.OneToOneField("Observer", blank=True, null=True)
+    role = models.CharField('Observer Role', max_length=3, choices=ROLES, blank=True)
 
     def __set_name(self, name):
         self.contact.name = name

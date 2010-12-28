@@ -7,7 +7,7 @@ body {
 	background: #eee;
 	border-top: 5px solid #000;
 	color: #333;
-	font-size: 13px;
+	font-size: 0.9em;
 	padding: 0 0 40px;
 }
 
@@ -80,7 +80,7 @@ h2#page-heading {
 	text-transform:uppercase;
 	color:#fff;
 	background:#87CEEB;
-	margin: 10px 0 ;
+	margin: -10px -10px 0 -10px;
 	padding:6px 12px;
 }
 .box h2 a,
@@ -252,7 +252,7 @@ col.colC {
 	width:8em;
 }
 th, td {
-	padding:.2em 1em;
+	padding:.2em .5em;
 	text-align:left;
 }
 thead th {
@@ -351,15 +351,26 @@ input.search.button {
 	margin-left:2%;
 }
 
-form .grandparent {
-        width: 100%;
-        display: block;
-        clear: both;
-}
 
 
 
 /* form divs */
+
+form .block {
+	padding: 0;
+}
+
+form .grandparent {
+        width: 100%;
+        display: block;
+        clear: both;
+		background: url('/assets/img/dashed-bg.png') repeat-y;
+		background-position: 670px 0;
+		float: left;
+		margin-bottom: 10px;
+}
+
+
 form .grandparent .parent {
         display:block;
         width: 100%;
@@ -367,6 +378,8 @@ form .grandparent .parent {
         border-bottom: 1px dashed #999;
         float: left;
         padding-bottom: 3px;
+		background: url('/assets/img/dashed-bg.png') repeat-y;
+		background-position: 50px 0;
 }
 
 form .grandparent .parent.last {
@@ -381,17 +394,15 @@ form .grandparent .parent .first, form .grandparent .parent .second, form .grand
 form .grandparent .parent .first {
     width: 2%;
     padding: 1%;
-    border-right: 1px dashed #999;
 }
 
 form .grandparent .parent .second {
-    width: 40%;
+    width: 50%;
     padding: 1%;
-     border-right: 1px dashed #999;
 }
 
 form .grandparent .parent .third {
-    width: 50%;
+    width: 40%;
     padding: 1%;
 }
 
@@ -409,7 +420,9 @@ form .grandparent .parent .third .options input {
 }
 
 form .grandparent .parent input.text.numeric {
-    width: 40px;
+    width: 5em;
+	font-size: 1.5em;
+	padding: 2px;
 }
 
 form .buttons {
@@ -417,6 +430,7 @@ form .buttons {
     clear: both;
     padding-right: 50px;
     padding-bottom: 10px
+	font-size: 1.5em;
 }
 
 
@@ -587,3 +601,9 @@ form .buttons {
 #kwick .four {
 	background: #999;
 }
+
+/*
+ * custom styles
+ */
+.nodata { text-align: center; font-style: italic; padding: 1em; }
+.paginator span { font-size: 1.2em; padding: 0.5em 0.8em; background-color: white; border: solid #333 1px; border-collapse: collapse; margin: 0 -1px 0 0; }

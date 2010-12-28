@@ -1,12 +1,13 @@
 {% extends "psc/layout.html" %}
 {% block content %}
-
+<form>
 			<div class="grid_16">
 				<div class="box">
-					<div class="block">
-		<form action='http://127.0.0.1:8000/dco/3' method='post'>
+					
+		
 		{% csrf_token %}
 		<h2>Observer Details</h2>
+		<div class="block">
 		<!-- observer details group form -->
 		<div class='grandparent'>
 			<div class='parent last'>
@@ -17,13 +18,15 @@
 					<p>Observer ID (always start every text message with "PSC" followed by your Observer ID Number)</p>
 				</div>
 				<div class='third'>
-					<input type='text' name='PSC' class='text numeric'>
+					<input type='text' name='PSC' class='text numeric' maxlength='6'>
 				</div>
 			</div>
+		</div>
 		</div>
                 <div class="clear"></div>
 		<h2>Opening Checklist Questions</h2>
 		<!-- opening checklist question -->
+		<div class='block'>
 		<div class='grandparent'>
 			<div class='parent'>
 				<div class='first'>
@@ -33,10 +36,10 @@
 					<p>What time did the registration centre open? (tick one) (If the centre has not opened by 12 noon complete a critical incident form and report immediately)</p>
 				</div>
 				<div class='third'>
-					<p><input name='A' type='radio' class='radio numeric'> Open by 8AM </p>
-					<p><input name='A' type='radio' class='radio numeric'> Between 8AM &amp; 10AM</p>
-					<p><input name='A' type='radio' class='radio numeric'> Between 10AM &amp; 12 noon</p>
-					<p><input name='A' type='radio' class='radio numeric'> Not Open by 12 noon</p>
+					<div class='options'><input name='A' type='radio' class='radio numeric'>Open by 8AM<br />(1)</div>
+					<div class='options'><input name='A' type='radio' class='radio numeric'>Between 8AM &amp; 10AM<br />(2)</div>
+					<div class='options'><input name='A' type='radio' class='radio numeric'>Between 10AM &amp; 12 noon<br />(3)</div>
+					<div class='options'><input name='A' type='radio' class='radio numeric'>Not Open by 12 noon<br />(4)</div>
 				</div>
 			</div>
 			<div class='parent'>
@@ -47,9 +50,9 @@
 					<p>Were you permitted to observe at the registration centre? (tick Yes or No) (If not permitted to observe complete a critical incident form and immediately report)</p>
 				</div>
 				<div class='third'>
-					<p><input name='B' type='radio' class='radio numeric' value='1'> Yes</p>
-					<p><input name='B' type='radio' class='radio numeric' value='2'> No</p>
-					<p><input name='B' type='radio' class='radio numeric' value=''> Unchecked</p>
+					<div class='options'><input name='B' type='radio' class='radio numeric' value='1'>Yes<br />(1)</div>
+					<div class='options'><input name='B' type='radio' class='radio numeric' value='2'>No<br />(2)</div>
+					<div class='options'><input name='B' type='radio' class='radio numeric' value=''>Unchecked<br />(3)</div>
 				</div>
 			</div>
 			<div class='parent'>
@@ -60,7 +63,7 @@
 					<p>How many registration officers were at the registration centre? (enter number)</p>
 				</div>
 				<div class='third'>
-					<input type='text' class='text numeric'>
+					<input type='text' class='text numeric' maxlength='6'>
 				</div>
 			</div>
 			<div class='parent'>
@@ -71,10 +74,10 @@
 					<p>Did the registration centre have a complete and functioning Direct Data Capture (DDC) system (tick all that apply)</p>
 				</div>
 				<div class='third'>
-					<p><input name='D' type='checkbox' class='checkbox alpha' value='1'>Missing/Broken Computer</p>
-					<p><input name='D' type='checkbox' class='checkbox alpha' value='2'>Missing/Broken Camera</p>
-					<p><input name='D' type='checkbox' class='checkbox alpha' value='3'>Missing/Broken Printer</p>
-					<p><input name='D' type='checkbox' class='checkbox alpha' value='4'>None(Missing/Broken)</p>
+					<div class='options'><input name='D' type='checkbox' class='checkbox alpha' value='1'>Missing/Broken Computer<br />(1)</div>
+					<div class='options'><input name='D' type='checkbox' class='checkbox alpha' value='2'>Missing/Broken Camera<br />(2)</div>
+					<div class='options'><input name='D' type='checkbox' class='checkbox alpha' value='3'>Missing/Broken Printer<br />(3)</div>
+					<div class='options'><input name='D' type='checkbox' class='checkbox alpha' value='4'>None<br />(Missing/Broken)<br />(4)</div>
 				</div>
 			</div>
 			<div class='parent'>
@@ -85,11 +88,11 @@
 				<p>Was the registration centre missing any of the following materials? (tick all that apply)</p>
 				</div>
 				<div class='third'>
-					<p><input name='E' type='checkbox' class='checkbox alpha' value='1'>Manual Register of Voters (EC. 1A)</p>
-					<p><input name='E' type='checkbox' class='checkbox alpha' value='2'>Indelible Ink to Mark Fingers</p>
-					<p><input name='E' type='checkbox' class='checkbox alpha' value='3'>Blank Temporary Voter's Cards</p>
-					<p><input name='E' type='checkbox' class='checkbox alpha' value='4'>INEC Stamp</p>
-					<p><input name='E' type='checkbox' class='checkbox alpha' value='5'>None Missing</p>
+					<div class='options'><input name='E' type='checkbox' class='checkbox alpha' value='1'>Manual Register of Voters<br />.(EC. 1A)<br />(1)</div>
+					<div class='options'><input name='E' type='checkbox' class='checkbox alpha' value='2'>Indelible Ink to Mark Fingers<br />(2)</div>
+					<div class='options'><input name='E' type='checkbox' class='checkbox alpha' value='3'>Blank Temporary Voter's Cards<br />(3)</div>
+					<div class='options'><input name='E' type='checkbox' class='checkbox alpha' value='4'>INEC Stamp<br />(4)</div>
+					<div class='options'><input name='E' type='checkbox' class='checkbox alpha' value='5'>None Missing<br />(5)</div>
 				</div>
 			</div>
 			<div class='parent'>
@@ -100,7 +103,7 @@
 					<p>How many political party agents were at the registration centre? (enter number)</p>
 				</div>
 				<div class='third'>
-					<input type='text' name='F' class='text numeric'>
+					<input type='text' name='F' class='text numeric' maxlength='6'>
 				</div>
 			</div>
 			<div class='parent last'>
@@ -111,15 +114,17 @@
 					<p>Were any security agents present at the registration centre? (tick Yes or No)</p>
 				</div>
 				<div class='third'>
-					<p><input name='B' type='radio' class='radio numeric' value='1'> Yes</p>
-					<p><input name='B' type='radio' class='radio numeric' value='2'> No</p>
-					<p><input name='B' type='radio' class='radio numeric' value=''> Unchecked</p>
+					<div class='options'><input name='G' type='radio' class='radio numeric' value='1'>Yes<br />(1)</div>
+					<div class='options'><input name='G' type='radio' class='radio numeric' value='2'>No<br />(2)</div>
+					<div class='options'><input name='G' type='radio' class='radio numeric' value=''>Unchecked<br />(3)</div>
 				</div>
 			</div>
+		</div>
 		</div>
                 <div class="clear"></div>
 		<!-- end of dat checklist -->
 		<h2>End of day checklist question</h2>
+		<div class='block'>
 		<div class='grandparent'>
 			<div class='parent'>
 				<div class='first'>
@@ -129,11 +134,12 @@
 					<p>Was anyone permitted to register who appeared under 18 years old? (tick the one that applies best)</p>
 				</div>
 				<div class='third'>
-					<p><input name='H' type='radio' class='radio numeric' value='1'>None</p>
-					<p><input name='H' type='radio' class='radio numeric' value='2'>Few</p>
-					<p><input name='H' type='radio' class='radio numeric' value=''>Half</p>
-					<p><input name='H' type='radio' class='radio numeric' value=''>Most</p>
-					<p><input name='H' type='radio' class='radio numeric' value=''>All</p>
+					<div class='options'><input name='H' type='radio' class='radio numeric' value='1'>None<br />(1)</div>
+					<div class='options'><input name='H' type='radio' class='radio numeric' value='2'>Few<br />(2)</div>
+					<div class='options'><input name='H' type='radio' class='radio numeric' value='3'>Half<br />(3)</div>
+					<div class='options'><input name='H' type='radio' class='radio numeric' value='4'>Most<br />(4)</div>
+					<div class='options'><input name='H' type='radio' class='radio numeric' value='5'>All<br />(5)</div>
+					<div class='options'><input name='H' type='radio' class='radio numeric' value=''>Unchecked<br />(3)</div>
 				</div>
 			</div>
 			<div class='parent'>
@@ -144,11 +150,13 @@
 					<p>Was anyone permitted to register who had indelible ink on his/her finger meaning he/she had already registered? (tick the one that applies best)</p>
 				</div>
 				<div class='third'>
-					<p><input name='H' type='radio' class='radio numeric' value='1'>None</p>
-					<p><input name='H' type='radio' class='radio numeric' value='2'>Few</p>
-					<p><input name='H' type='radio' class='radio numeric' value=''>Half</p>
-					<p><input name='H' type='radio' class='radio numeric' value=''>Most</p>
-					<p><input name='H' type='radio' class='radio numeric' value=''>All</p>
+					<div class='options'><input name='J' type='radio' class='radio numeric' value='1'>None<br />(1)</div>
+					<div class='options'><input name='J' type='radio' class='radio numeric' value='2'>Few<br />(2)</div>
+					<div class='options'><input name='J' type='radio' class='radio numeric' value='3'>Half<br />(3)</div>
+					<div class='options'><input name='J' type='radio' class='radio numeric' value='4'>Most<br />(4)</div>
+					<div class='options'><input name='J' type='radio' class='radio numeric' value='5'>All<br />(5)</div>
+					<div class='options'><input name='J type='radio' class='radio numeric' value=''>Unchecked<br />(3)</div>
+
 				</div>
 			</div>
 			<div class='parent'>
@@ -159,11 +167,13 @@
 					<p>Was anyone permitted to register who did not appear to be from the community? (tick the one that applies best)</p>
 				</div>
 				<div class='third'>
-					<p><input name='H' type='radio' class='radio numeric' value='1'>None</p>
-					<p><input name='H' type='radio' class='radio numeric' value='2'>Few</p>
-					<p><input name='H' type='radio' class='radio numeric' value=''>Half</p>
-					<p><input name='H' type='radio' class='radio numeric' value=''>Most</p>
-					<p><input name='H' type='radio' class='radio numeric' value=''>All</p>
+					<div class='options'><input name='K' type='radio' class='radio numeric' value='1'>None<br />(1)</div>
+					<div class='options'><input name='K' type='radio' class='radio numeric' value='2'>Few<br />(2)</div>
+					<div class='options'><input name='K' type='radio' class='radio numeric' value='3'>Half<br />(3)</div>
+					<div class='options'><input name='K' type='radio' class='radio numeric' value='4'>Most<br />(4)</div>
+					<div class='options'><input name='K' type='radio' class='radio numeric' value='5'>All<br />(5)</div>
+					<div class='options'><input name='K' type='radio' class='radio numeric' value=''>Unchecked<br />(3)</div>
+
 				</div>
 			</div>
 			<div class='parent'>
@@ -174,11 +184,13 @@
 					<p>Were the fingers of successful registrants marked with indelible ink? (tick the one that applies best)</p>
 				</div>
 				<div class='third'>
-					<p><input name='H' type='radio' class='radio numeric' value='1'>None</p>
-					<p><input name='H' type='radio' class='radio numeric' value='2'>Few</p>
-					<p><input name='H' type='radio' class='radio numeric' value=''>Half</p>
-					<p><input name='H' type='radio' class='radio numeric' value=''>Most</p>
-					<p><input name='H' type='radio' class='radio numeric' value=''>All</p>
+					<div class='options'><input name='M' type='radio' class='radio numeric' value='1'>None<br />(1)</div>
+					<div class='options'><input name='M' type='radio' class='radio numeric' value='2'>Few<br />(2)</div>
+					<div class='options'><input name='M' type='radio' class='radio numeric' value='3'>Half<br />(3)</div>
+					<div class='options'><input name='M' type='radio' class='radio numeric' value='4'>Most<br />(4)</div>
+					<div class='options'><input name='M' type='radio' class='radio numeric' value='5'>All<br />(5)</div>
+					<div class='options'><input name='M' type='radio' class='radio numeric' value=''>Unchecked<br />(3)</div>
+
 				</div>
 			</div>
 			<div class='parent'>
@@ -189,11 +201,12 @@
 					<p>Were photos taken of successful registrants? (tick the one that applies best)</p>
 				</div>
 				<div class='third'>
-					<p><input name='H' type='radio' class='radio numeric' value='1'>None</p>
-					<p><input name='H' type='radio' class='radio numeric' value='2'>Few</p>
-					<p><input name='H' type='radio' class='radio numeric' value=''>Half</p>
-					<p><input name='H' type='radio' class='radio numeric' value=''>Most</p>
-					<p><input name='H' type='radio' class='radio numeric' value=''>All</p>
+					<div class='options'><input name='N' type='radio' class='radio numeric' value='1'>None<br />(1)</div>
+					<div class='options'><input name='N' type='radio' class='radio numeric' value='2'>Few<br />(2)</div>
+					<div class='options'><input name='N' type='radio' class='radio numeric' value='3'>Half<br />(3)</div>
+					<div class='options'><input name='N' type='radio' class='radio numeric' value='4'>Most<br />(4)</div>
+					<div class='options'><input name='N' type='radio' class='radio numeric' value='5'>All<br />(5)</div>
+					<div class='options'><input name='N' type='radio' class='radio numeric' value=''>Unchecked<br />(3)</div>				
 				</div>
 			</div>
 			<div class='parent'>
@@ -204,11 +217,12 @@
 					<p>Were successful registrants issued with temporary voter's cards? (tick the one that applies best)</p>
 				</div>
 				<div class='third'>
-					<p><input name='H' type='radio' class='radio numeric' value='1'>None</p>
-					<p><input name='H' type='radio' class='radio numeric' value='2'>Few</p>
-					<p><input name='H' type='radio' class='radio numeric' value=''>Half</p>
-					<p><input name='H' type='radio' class='radio numeric' value=''>Most</p>
-					<p><input name='H' type='radio' class='radio numeric' value=''>All</p>
+					<div class='options'><input name='P' type='radio' class='radio numeric' value='1'>None<br />(1)</div>
+					<div class='options'><input name='P' type='radio' class='radio numeric' value='2'>Few<br />(2)</div>
+					<div class='options'><input name='P' type='radio' class='radio numeric' value='3'>Half<br />(3)</div>
+					<div class='options'><input name='P' type='radio' class='radio numeric' value='4'>Most<br />(4)</div>
+					<div class='options'><input name='P' type='radio' class='radio numeric' value='5'>All<br />(5)</div>
+					<div class='options'><input name='P' type='radio' class='radio numeric' value=''>Unchecked<br />(3)</div>				
 				</div>
 			</div>
 			<div class='parent'>
@@ -219,11 +233,13 @@
 					<p>Were the names of successful registrants entered into the Direct Data Capture (DDC) system? (tick the one that applies best)</p>
 				</div>
 				<div class='third'>
-					<p><input name='H' type='radio' class='radio numeric' value='1'>None</p>
-					<p><input name='H' type='radio' class='radio numeric' value='2'>Few</p>
-					<p><input name='H' type='radio' class='radio numeric' value=''>Half</p>
-					<p><input name='H' type='radio' class='radio numeric' value=''>Most</p>
-					<p><input name='H' type='radio' class='radio numeric' value=''>All</p>
+					<div class='options'><input name='Q' type='radio' class='radio numeric' value='1'>None<br />(1)</div>
+					<div class='options'><input name='Q' type='radio' class='radio numeric' value='2'>Few<br />(2)</div>
+					<div class='options'><input name='Q' type='radio' class='radio numeric' value='3'>Half<br />(3)</div>
+					<div class='options'><input name='Q' type='radio' class='radio numeric' value='4'>Most<br />(4)</div>
+					<div class='options'><input name='Q' type='radio' class='radio numeric' value='5'>All<br />(5)</div>
+					<div class='options'><input name='Q' type='radio' class='radio numeric' value=''>Unchecked<br />(3)</div>
+				
 				</div>
 			</div>
 			<div class='parent'>
@@ -234,11 +250,13 @@
 					<p>Were the names of successful registrants entered into the Manual Register of Voters (MRV) Form EC.1A? (tick the one that applies best)</p>
 				</div>
 				<div class='third'>
-					<p><input name='H' type='radio' class='radio numeric' value='1'>None</p>
-					<p><input name='H' type='radio' class='radio numeric' value='2'>Few</p>
-					<p><input name='H' type='radio' class='radio numeric' value=''>Half</p>
-					<p><input name='H' type='radio' class='radio numeric' value=''>Most</p>
-					<p><input name='H' type='radio' class='radio numeric' value=''>All</p>
+					<div class='options'><input name='R' type='radio' class='radio numeric' value='1'>None<br />(1)</div>
+					<div class='options'><input name='R' type='radio' class='radio numeric' value='2'>Few<br />(2)</div>
+					<div class='options'><input name='R' type='radio' class='radio numeric' value='3'>Half<br />(3)</div>
+					<div class='options'><input name='R' type='radio' class='radio numeric' value='4'>Most<br />(4)</div>
+					<div class='options'><input name='R' type='radio' class='radio numeric' value='5'>All<br />(5)</div>
+					<div class='options'><input name='R' type='radio' class='radio numeric' value=''>Unchecked<br />(3)</div>
+
 				</div>
 			</div>
 			<div class='parent'>
@@ -249,11 +267,12 @@
 					<p>Did anyone successfully register for someone who was not present at the registration centre (i.e. proxy registration)? (tick the one that applies best)</p>
 				</div>
 				<div class='third'>
-					<p><input name='H' type='radio' class='radio numeric' value='1'>None</p>
-					<p><input name='H' type='radio' class='radio numeric' value='2'>Few</p>
-					<p><input name='H' type='radio' class='radio numeric' value=''>Half</p>
-					<p><input name='H' type='radio' class='radio numeric' value=''>Most</p>
-					<p><input name='H' type='radio' class='radio numeric' value=''>All</p>
+					<div class='options'><input name='S' type='radio' class='radio numeric' value='1'>None<br />(1)</div>
+					<div class='options'><input name='S' type='radio' class='radio numeric' value='2'>Few<br />(2)</div>
+					<div class='options'><input name='S' type='radio' class='radio numeric' value='3'>Half<br />(3)</div>
+					<div class='options'><input name='S' type='radio' class='radio numeric' value='4'>Most<br />(4)</div>
+					<div class='options'><input name='S' type='radio' class='radio numeric' value='5'>All<br />(5)</div>
+					<div class='options'><input name='S' type='radio' class='radio numeric' value=''>Unchecked<br />(3)</div>
 				</div>
 			</div>
 			<div class='parent'>
@@ -264,9 +283,9 @@
 					<p>Did the Direct Data Capture (DDC) system properly function throughout the day? (tick Yes or No)</p>
 				</div>
 				<div class='third'>
-					<p><input name='B' type='radio' class='radio numeric' value='1'> Yes</p>
-					<p><input name='B' type='radio' class='radio numeric' value='2'> No</p>
-					<p><input name='B' type='radio' class='radio numeric' value=''> Unchecked</p>
+					<div class='options'><input name='T' type='radio' class='radio numeric' value='1'>Yes<br />(1)</div>
+					<div class='options'><input name='T' type='radio' class='radio numeric' value='2'>No<br />(2)</div>
+					<div class='options'><input name='T' type='radio' class='radio numeric' value=''>Unchecked<br />(3)</div>
 				</div>
 			</div>
 			<div class='parent'>
@@ -277,9 +296,9 @@
 					<p>Did the registration centre run out of materials during the day? (tick Yes or No)</p>
 				</div>
 				<div class='third'>
-					<p><input name='B' type='radio' class='radio numeric' value='1'> Yes</p>
-					<p><input name='B' type='radio' class='radio numeric' value='2'> No</p>
-					<p><input name='B' type='radio' class='radio numeric' value=''> Unchecked</p>
+					<div class='options'><input name='U' type='radio' class='radio numeric' value='1'>Yes<br />(1)</div>
+					<div class='options'><input name='U' type='radio' class='radio numeric' value='2'>No<br />(2)</div>
+					<div class='options'><input name='U' type='radio' class='radio numeric' value=''>Unchecked<br />(3)</div>
 				</div>
 			</div>
 			<div class='parent'>
@@ -290,9 +309,9 @@
 					<p>Did the registration centre remain open until 5 pm? (tick Yes or No)</p>
 				</div>
 				<div class='third'>
-					<p><input name='B' type='radio' class='radio numeric' value='1'> Yes</p>
-					<p><input name='B' type='radio' class='radio numeric' value='2'> No</p>
-					<p><input name='B' type='radio' class='radio numeric' value=''> Unchecked</p>
+					<div class='options'><input name='V' type='radio' class='radio numeric' value='1'>Yes<br />(1)</div>
+					<div class='options'><input name='V' type='radio' class='radio numeric' value='2'>No<br />(2)</div>
+					<div class='options'><input name='V' type='radio' class='radio numeric' value=''>Unchecked<br />(3)</div>
 				</div>
 			</div>
 			<div class='parent'>
@@ -303,9 +322,9 @@
 					<p>Did anyone attempt to disrupt voter registration at the centre? (tick Yes or No)</p>
 				</div>
 				<div class='third'>
-					<p><input name='B' type='radio' class='radio numeric' value='1'> Yes</p>
-					<p><input name='B' type='radio' class='radio numeric' value='2'> No</p>
-					<p><input name='B' type='radio' class='radio numeric' value=''> Unchecked</p>
+					<div class='options'><input name='W' type='radio' class='radio numeric' value='1'>Yes<br />(1)</div>
+					<div class='options'><input name='W' type='radio' class='radio numeric' value='2'>No<br />(2)</div>
+					<div class='options'><input name='W' type='radio' class='radio numeric' value=''>Unchecked<br />(3)</div>
 				</div>
 			</div>
 			<div class='parent'>
@@ -316,9 +335,9 @@
 					<p>Did anyone attempt to intimidate or harass people in or around the centre? (tick Yes or No)</p>
 				</div>
 				<div class='third'>
-					<p><input name='B' type='radio' class='radio numeric' value='1'> Yes</p>
-					<p><input name='B' type='radio' class='radio numeric' value='2'> No</p>
-					<p><input name='B' type='radio' class='radio numeric' value=''> Unchecked</p>
+					<div class='options'><input name='X' type='radio' class='radio numeric' value='1'>Yes<br />(1)</div>
+					<div class='options'><input name='X' type='radio' class='radio numeric' value='2'>No<br />(2)</div>
+					<div class='options'><input name='X' type='radio' class='radio numeric' value=''>Unchecked<br />(3)</div>
 				</div>
 			</div>
 			<div class='parent'>
@@ -329,7 +348,7 @@
 					<p>How many people registered during this day? (record number from Certificate of Completion of Daily Registration of Voters Form EC.1B(1)) (enter number) (if not permited to record this figure enter "9999"</p>
 				</div>
 				<div class='third'>
-					<p><input name='B' type='text' class='text numeric'></p>
+					<p><input name='Y' type='text' class='text numeric' maxlength='6'></p>
 				</div>
 			</div>
 			<div class='parent'>
@@ -340,7 +359,7 @@
 					<p>How many people so far (total to date) have registered at this centre according to the Manual Register of Voters (MRV) Form EC.1A? (enter number) (if not permitted to record this figure enter "9999")</p>
 				</div>
 				<div class='third'>
-					<p><input name='B' type='text' class='text numeric'></p>
+					<p><input name='Z' type='text' class='text numeric' maxlength='6'></p>
 				</div>
 			</div>
 			<div class='parent last'>
@@ -351,15 +370,18 @@
 					<p>How many people so far (total to date) have registered according to the DDC system? (enter number) (if not permitted to record this figure enter "9999")</p>
 				</div>
 				<div class='third'>
-					<p><input name='B' type='text' class='text numeric'> </p>
+					<p><input name='AA' type='text' class='text numeric' maxlength='6'> </p>
 				</div>
 		</div>
                     <div class="buttons">
                         <input type="submit" name="submit" value="Submit">
                         <input type="reset" name="reset" value="Reset">
                     </div>
-		</form>
+	
                         </div>
 				</div>
+				<div class='clear'></div>
 			</div>
+			</div>
+				</form>
 {% endblock %}
