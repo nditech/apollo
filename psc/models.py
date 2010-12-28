@@ -3,6 +3,7 @@ from rapidsms.contrib.locations.models import Location
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 from rapidsms.models import Contact
+from django.db.models.signals import post_save
 
 class Zone(models.Model):
     name = models.CharField(max_length=100)
@@ -232,3 +233,11 @@ class DCOIncident(models.Model):
     def __unicode__(self):
         return "DCO Incident for %s from %s on %s" % (self.location, self.observer, self.date)
 
+def one_to_one_observer_relationship(sender, **kwargs):
+    if kwargs['instance'].partner:
+        partner = kwargs['instance'].partner
+        if partner.partner != kwargs['instance']:
+            partner.partner = kwargs['instance'] # my partner's partner is me :)
+            partner.save()
+
+post_save.connect(one_to_one_observer_relationship, sender=Observer)
