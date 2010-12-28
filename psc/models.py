@@ -79,7 +79,7 @@ class Partner(models.Model):
     code = models.CharField(max_length=10)
 
     def __unicode__(self):
-        return self.name
+        return self.code
 
 class Observer(models.Model):
     ROLES = (
