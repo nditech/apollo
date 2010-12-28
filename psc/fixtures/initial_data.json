@@ -7345,5 +7345,45 @@
       "name": "Ido", 
       "parent": null
     }
+  }, 
+  {
+    "pk": 1, 
+    "model": "psc.partner", 
+    "fields": {
+      "code": "FOMWAN", 
+      "name": "Federation of Muslim Women's Associations in Nigeria"
+    }
+  }, 
+  {
+    "pk": 2, 
+    "model": "psc.partner", 
+    "fields": {
+      "code": "JDPC", 
+      "name": "Justice, Peace and Development/Caritas Nigeria"
+    }
+  }, 
+  {
+    "pk": 3, 
+    "model": "psc.partner", 
+    "fields": {
+      "code": "NBA", 
+      "name": "Nigerian Bar Association"
+    }
+  }, 
+  {
+    "pk": 4, 
+    "model": "psc.partner", 
+    "fields": {
+      "code": "TMG", 
+      "name": "Transition Monitoring Group"
+    }
+  }, 
+  {
+    "pk": 5, 
+    "model": "psc.partner", 
+    "fields": {
+      "code": "Other", 
+      "name": "Other"
+    }
   }
 ]
