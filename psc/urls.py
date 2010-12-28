@@ -9,4 +9,5 @@ urlpatterns = patterns('',
     (r'^dco/?$', views.dco_list),
     (r'^dco/(?P<checklist_id>\d+)/?$', views.dco_checklist),
     (r'^dco/in/(?P<incident_id>\d+)/?$', views.dco_incident),
+    (r'^msglog/$', views.message_log),
 )
