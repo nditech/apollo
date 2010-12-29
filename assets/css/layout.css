@@ -52,7 +52,7 @@ h1#branding {
 	font-size:2em;
 	text-align:left;
 	background:#87CEEB;
-	padding:.7em 1em;
+	padding:1em 1em;
 	margin-bottom:0;
 }
 
@@ -546,6 +546,10 @@ form .buttons {
 	padding:10px 20px;
 	float:right;
 }
+.floatLeft {
+        float: Left;
+        margin-right: 20px;
+    }
 
 #accordian-block {
 	padding-bottom:10px;

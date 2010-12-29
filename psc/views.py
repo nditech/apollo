@@ -14,6 +14,7 @@ def home(request):
     return render_to_response('psc/layout.html')
 
 def vr_list(request):
+	
     paginator = Paginator(VRChecklist.objects.all(), items_per_page)
 
     try:
