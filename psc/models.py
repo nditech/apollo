@@ -3,6 +3,8 @@ from rapidsms.contrib.locations.models import Location
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 from rapidsms.models import Contact
+from audit_log.models.fields import LastUserField
+from audit_log.models.managers import AuditLog
 
 class Zone(models.Model):
     name = models.CharField(max_length=100)
@@ -150,6 +152,7 @@ class VRChecklist(models.Model):
     Y = models.IntegerField(blank=True, null=True)
     Z = models.IntegerField(blank=True, null=True)
     AA = models.IntegerField(blank=True, null=True)
+    audit_log = AuditLog()
 
     def __unicode__(self):
         return "VR Checklist for %s from %s on %s" % (self.location, self.observer, self.date)
@@ -175,6 +178,7 @@ class VRIncident(models.Model):
     P = models.NullBooleanField(blank=True)
     Q = models.NullBooleanField(blank=True)
     comment = models.CharField(max_length=100, blank=True)
+    audit_log = AuditLog()
 
     def __unicode__(self):
         return "VR Incident for %s from %s on %s" % (self.location, self.observer, self.date)
@@ -214,6 +218,7 @@ class DCOChecklist(models.Model):
     V = models.IntegerField(blank=True, null=True)
     W = models.IntegerField(blank=True, null=True)
     X = models.IntegerField(blank=True, null=True)
+    audit_log = AuditLog()
 
     def __unicode__(self):
         return "DCO Checklist for %s from %s on %s" % (self.location, self.observer, self.date)
@@ -235,6 +240,7 @@ class DCOIncident(models.Model):
     J = models.NullBooleanField(blank=True)
     K = models.NullBooleanField(blank=True)
     comment = models.CharField(max_length=100, blank=True)
+    audit_log = AuditLog()
 
     def __unicode__(self):
         return "DCO Incident for %s from %s on %s" % (self.location, self.observer, self.date)

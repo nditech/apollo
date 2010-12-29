@@ -1,0 +1,79 @@
+{% extends 'psc/layout.html' %}
+{% block content %}
+<div class="grid_16">
+	<div class="box"> 
+		<h2>Action Log</h2>
+		<div class="block">
+		
+                        <table>
+                            <thead>
+                             <th>Date</th>
+                             <th>User</th>
+                             <th>Item</th>
+                             <th>Action</th>
+                                
+                            </thead>
+                            {% for log in vr_incident_log_list %}
+                            <tr{% cycle '' 'class="odd"' %}>
+                                <td>{{ log.action_date|date:"SHORT_DATE_FORMAT" }}</td>
+                                <td>{{ log.action_user|capfirst }}</td>
+                                <td>
+                                    {% if log.action_type != 'D' %}
+                                    <a href="/vr/in/{{ log.id }}">VR Incident</a>
+                                    {% else %}
+                                    VR Incident
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if log.action_type == 'U' %} Updated {% endif %}
+                                    {% if log.action_type == 'D' %} Deleted {% endif %}
+                                    {% if log.action_type == 'I' %} Inserted {% endif %}
+                                </td>
+                                
+                            </tr>
+                            {% endfor %}
+                            {% for log in vr_checklist_log_list %}
+                            <tr{% cycle '' 'class="odd"' %}>
+                                <td>{{ log.action_date|date:"SHORT_DATE_FORMAT" }}</td>
+                                <td>{{ log.action_user|capfirst }}</td>
+                                <td><a href="/vr/{{ log.id }}">VR Checklist</a></td>
+                                <td>
+                                    {% if log.action_type == 'U' %} Updated {% endif %}
+                                    {% if log.action_type == 'D' %} Deleted {% endif %}
+                                    {% if log.action_type == 'I' %} Inserted {% endif %}
+                                </td>
+                                
+                            </tr>
+                            {% endfor %}
+                            {% for log in dco_incident_log_list %}
+                            <tr{% cycle '' 'class="odd"' %}>
+                                <td>{{ log.action_date|date:"SHORT_DATE_FORMAT" }}</td>
+                                <td>{{ log.action_user|capfirst }}</td>
+                                <td><a href="/dco/in/{{ log.id }}">DCO Incident</a></td>
+                                <td>
+                                    {% if log.action_type == 'U' %} Updated {% endif %}
+                                    {% if log.action_type == 'D' %} Deleted {% endif %}
+                                    {% if log.action_type == 'I' %} Inserted {% endif %}
+                                </td>
+                                
+                            </tr>
+                            {% endfor %}
+                            {% for log in dco_checklist_log_list %}
+                            <tr{% cycle '' 'class="odd"' %}>
+                                <td>{{ log.action_date|date:"SHORT_DATE_FORMAT" }}</td>
+                                <td>{{ log.action_user|capfirst }}</td>
+                                <td><a href="/dco/{{ log.id }}">DCO Checklist</a></td>
+                                <td>
+                                    {% if log.action_type == 'U' %} Updated {% endif %}
+                                    {% if log.action_type == 'D' %} Deleted {% endif %}
+                                    {% if log.action_type == 'I' %} Inserted {% endif %}
+                                </td>
+                                
+                            </tr>
+                            {% endfor %}
+                        </table>
+                        
+		</div>
+	</div>
+</div>
+{% endblock %}

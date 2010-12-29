@@ -4,3 +4,4 @@ rapidsms.log*
 schema.png
 local_settings.py
 *.swp
+nbproject

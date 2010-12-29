@@ -52,4 +52,15 @@ def dco_incident(request, incident_id=0):
 def message_log(request):
     messages =   MessageTable(Message.objects.all(), request=request)
     return render_to_response('psc/msg_log.html', { 'messages_list' : messages }, context_instance=RequestContext(request))
-   
+
+def action_log(request):
+    #get action log for vr and dco 
+    vr_checklist_log = VRChecklist.audit_log.all()
+    vr_incident_log = VRIncident.audit_log.all()
+    dco_checklist_log = DCOChecklist.audit_log.all()
+    dco_incident_log = DCOIncident.audit_log.all()
+
+    #all logs
+    #logs = {'vr_checklist_log_list' : vr_checklist_log, 'vr_incident_log_list': vr_incident_log, 'dco_checklist_log_list': dco_checklist_log, 'dco_incident_log_list': dco_incident_log}
+
+    return render_to_response('psc/action_log.html', {'vr_checklist_log_list' : vr_checklist_log, 'vr_incident_log_list': vr_incident_log, 'dco_checklist_log_list': dco_checklist_log, 'dco_incident_log_list': dco_incident_log})
