@@ -3,7 +3,6 @@ from rapidsms.contrib.locations.models import Location
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 from rapidsms.models import Contact
-from audit_log.models.fields import LastUserField
 from audit_log.models.managers import AuditLog
 
 class Zone(models.Model):
