@@ -54,7 +54,7 @@
 					{% endif %}
 					</td>
 					<td><a href="#">Add</a></td>
-					<td><a href="#">Edit</a></td>
+					<td><a href="{% url psc.views.vr_checklist cl.id %}">Edit</a></td>
 				</tr>
 				{% empty %}
 				<tr>
