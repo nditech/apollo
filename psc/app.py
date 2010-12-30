@@ -288,3 +288,52 @@ class App(AppBase):
             {'A':'2', 'C':'3', 'D':'89', 'AA':'90'}'''
         return dict(re.findall(r'([A-Z]{1,2})([0-9]+)', responses.upper())) if responses else {}
 
+    def _vrc_validate(self, responses):
+        range_error = []
+        attribute_error = []
+        for key in responses.keys():
+        
+            if key not in ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'AA']: attribute_error.append(key)
+            if key in ['A'] and int(responses[key]) not in range(1,5): range_error.append(key)
+            elif key in ['B', 'G', 'T', 'U', 'V', 'W', 'X'] and int(responses[key]) not in range(1, 3): range_error.append(key)
+            elif key in ['H', 'J', 'K', 'M', 'N', 'P', 'Q','R','S'] and int(responses[key]) not in range(1, 6): range_error.append(key)
+            elif key in ['C', 'F'] and int(responses[key]) > 99: range_error.append(key)
+            elif key in ['Y', 'Z', 'AA'] and int(responses[key]) > 9999: range_error.append(key)
+            elif key in ['D']:
+                r = filter(lambda x: True if x not in ['1','2','3','4'] else False, responses['D'])
+                if r:
+                    range_error.append(key)
+                elif '4' in responses['D'] and len(responses['D'].replace('4','')) > 0: range_error.append(key)
+            elif key in ['E']:
+                s = filter(lambda y: True if y not in ['1','2','3','4','5'] else False, responses['E'])
+                if s: range_error.append(key)
+                elif '5' in responses['E'] and len(responses['E'].replace('5','')) > 0: range_error.append(key)
+        return {'range': range_error, 'attribute': attribute_error }
+        
+    def _vrci_validate(self, message):
+        attribute_error = []
+        for key in list(message):
+            if key not in ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'M', 'N', 'P', 'Q']: attribute_error.append(key)
+        return {'attribute': attribute_error }
+        
+    def _dcoc_validate(self, responses):
+        range_error = []
+        attribute_error = []
+        for key in responses.keys():
+            if key not in ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X']: attribute_error.append(key)
+            if key in ['A', 'B', 'D', 'E', 'H', 'M', 'N','P', 'Q','R'] and int(responses[key]) not in range(1, 3): range_error.append(key)
+            elif key in ['C', 'G'] and int(responses[key]) > 99: range_error.append(key)
+            elif key in ['J', 'K','S', 'T', 'U', 'V', 'W', 'X'] and int(responses[key]) > 9999: range_error.append(key)
+            elif key in ['F']:
+                r = filter(lambda x: True if x not in ['1','2','3','4','5','6','7','8','9'] else False, responses['D'])
+                if r: range_error.append(key)
+                elif '9' in responses['F'] and len(responses['F'].replace('9','')) > 0: range_error.append(key)
+        return {'range': range_error, 'attribute': attribute_error }
+        
+        
+    def _dcoi_validate(self, message):
+        attribute_error = []
+        for key in list(message):
+            if key not in ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K']: attribute_error.append(key)
+        return {'attribute': attribute_error }
+    
