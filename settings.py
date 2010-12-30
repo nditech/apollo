@@ -2,6 +2,7 @@
 # vim: ai ts=4 sts=4 et sw=4
 # encoding=utf-8
 
+
 # -------------------------------------------------------------------- #
 #                          MAIN CONFIGURATION                          #
 # -------------------------------------------------------------------- #
@@ -162,6 +163,13 @@ TEST_EXCLUDED_APPS = [
 # the project-level url patterns
 ROOT_URLCONF = "urls"
 
+MIDDLEWARE_CLASSES = (
+    'django.middleware.common.CommonMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'audit_log.middleware.UserLoggingMiddleware')
 
 # since we might hit the database from any thread during testing, the
 # in-memory sqlite database isn't sufficient. it spawns a separate
