@@ -420,17 +420,21 @@ form .grandparent .parent .third .options input {
 }
 
 form .grandparent .parent input.text.numeric {
-    width: 5em;
+  width: 5em;
 	font-size: 1.5em;
 	padding: 2px;
 }
 
 form .buttons {
-    float: right;
-    clear: both;
-    padding-right: 50px;
-    padding-bottom: 10px
+	float: right;
+	clear: both;
+	padding-bottom: 10px
 	font-size: 1.5em;
+	width: 43%;
+}
+
+form .buttons input[type='submit'] {
+	padding: 1em;
 }
 
 
