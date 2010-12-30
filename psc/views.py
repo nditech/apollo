@@ -1,11 +1,14 @@
 # Create your views here.
 from django.shortcuts import render_to_response, get_object_or_404
-from django.http import HttpResponse
+from django.core.urlresolvers import reverse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.template import RequestContext
 from models import *
+from django.views.decorators.csrf import csrf_view_exempt
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from rapidsms.contrib.messagelog.tables import MessageTable
 from rapidsms.contrib.messagelog.models import Message
+from forms import VRChecklistForm
 
 # paginator settings
 items_per_page = 25
@@ -29,9 +32,16 @@ def vr_list(request):
 
     return render_to_response('psc/psc_list.html', {'checklists': checklists})
 
+@csrf_view_exempt
 def vr_checklist(request, checklist_id=0):
     checklist = get_object_or_404(VRChecklist, pk=checklist_id)
-    return render_to_response('psc/vr_checklist_form.html', {'page_title': 'Voters Registration Checklist'})
+    if (request.POST):
+        f = VRChecklistForm(request.POST, instance=checklist)
+        f.save()
+        return HttpResponseRedirect(reverse('psc.views.vr_list'))
+    else:
+        f = VRChecklistForm(instance=checklist)
+        return render_to_response('psc/vr_checklist_form.html', {'page_title': 'Voters Registration Checklist', 'checklist': checklist, 'form': f })
 
 def vr_incident(request, incident_id=0):
     return render_to_response('psc/vr_incident_form.html', {'page_title': 'Voters Registration Critrical Incidents'})
