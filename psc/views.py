@@ -30,7 +30,7 @@ def vr_list(request):
     except (EmptyPage, InvalidPage):
         checklists = paginator.page(paginator.num_pages)
 
-    return render_to_response('psc/vr_checklist_list.html', {'checklists': checklists})
+    return render_to_response('psc/vr_checklist_list.html', {'page_title': "Voter's Registration Data Management", 'checklists': checklists})
 
 @csrf_view_exempt
 def vr_checklist(request, checklist_id=0):

@@ -7,16 +7,16 @@
 			<table>
 				<tr class="odd">
 					<th>Date</th>
-					<th>Registration Center</th>
+					<th>RC</th>
 					<th>RCID</th>
 					<th>LGA</th>
+					<th>District</th>
 					<th>State</th>
 					<th>Observer</th>
 					<th>Supervisor</th>
 					<th>1st</th>
 					<th>2nd</th>
 					<th>3rd</th>
-					<th>IN</th>
 					<th>Edit</th>
 				</tr>
 				{% for cl in checklists.object_list %}
@@ -24,8 +24,9 @@
 					<td>{{ cl.date|date:"SHORT_DATE_FORMAT" }}</td>
 					<td>{{ cl.location.name|default:"Unknown" }}</td>
 					<td>{{ cl.location.code|default:"999" }}</td>
-					<td>{{ cl.location.parent.name|default:"Uknown" }}</td>
-					<td>{{ cl.location.parent.parent.name|default:"Uknown" }}</td>
+					<td>{{ cl.observer.location.name|default:"Uknown" }}</td>
+					<td>{{ cl.observer.location.parent.name|default:"Uknown" }}</td>
+					<td>{{ cl.observer.location.parent.parent.name|default:"Uknown" }}</td>
 					<td>{{ cl.observer.name }}</td>
 					<td>{{ cl.observer.supervisor.name }}</td>
 					<td>
@@ -57,7 +58,6 @@
 					{% endif %}
 					{% endif %}
 					</td>
-					<td><a href="{% url psc.views.vr_incidents cl.id %} ">Add</a></td>
 					<td><a href="{% url psc.views.vr_checklist cl.id %}">Edit</a></td>
 				</tr>
 				{% empty %}
