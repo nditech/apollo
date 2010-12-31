@@ -1,387 +1,302 @@
 {% extends "psc/layout.html" %}
 {% block content %}
-<form>
-			<div class="grid_16">
-				<div class="box">
-					
-		
-		{% csrf_token %}
-		<h2>Observer Details</h2>
-		<div class="block">
-		<!-- observer details group form -->
-		<div class='grandparent'>
-			<div class='parent last'>
-				<div class='first'>
-					<p>PSC</p>
-				</div>
-				<div class='second'>
-					<p>Observer ID (always start every text message with "PSC" followed by your Observer ID Number)</p>
-				</div>
-				<div class='third'>
-					<input type='text' name='PSC' class='text numeric' maxlength='6'>
-				</div>
-			</div>
+<form action="{% url psc.views.dco_checklist checklist.id %}" method="post">
+    <div class="grid_16">
+        <div class="box">
+            <h2>Checklist Details</h2>
+            <div class="block">
+		<!-- checklist details -->
+		<table>
+			<tr><td>Observer:</td><td>{{ checklist.observer.name }}</td></tr>
+			<tr><td>Date:</td><td>{{ checklist.date|date:"SHORT_DATE_FORMAT" }}</td></tr>
+		</table>
 		</div>
-		</div>
-                <div class="clear"></div>
-		<h2>Opening Checklist Questions</h2>
-		<!-- opening checklist question -->
-		<div class='block'>
-		<div class='grandparent'>
-			<div class='parent'>
-				<div class='first'>
-					<p>A</p>
-				</div>
-				<div class='second'>
-					<p>What time did the registration centre open? (tick one) (If the centre has not opened by 12 noon complete a critical incident form and report immediately)</p>
-				</div>
-				<div class='third'>
-					<div class='options'><input name='A' type='radio' class='radio numeric'>Open by 8AM<br />(1)</div>
-					<div class='options'><input name='A' type='radio' class='radio numeric'>Between 8AM &amp; 10AM<br />(2)</div>
-					<div class='options'><input name='A' type='radio' class='radio numeric'>Between 10AM &amp; 12 noon<br />(3)</div>
-					<div class='options'><input name='A' type='radio' class='radio numeric'>Not Open by 12 noon<br />(4)</div>
-				</div>
-			</div>
-			<div class='parent'>
-				<div class='first'>
-					<p>B</p>
-				</div>
-				<div class='second'>
-					<p>Were you permitted to observe at the registration centre? (tick Yes or No) (If not permitted to observe complete a critical incident form and immediately report)</p>
-				</div>
-				<div class='third'>
-					<div class='options'><input name='B' type='radio' class='radio numeric' value='1'>Yes<br />(1)</div>
-					<div class='options'><input name='B' type='radio' class='radio numeric' value='2'>No<br />(2)</div>
-					<div class='options'><input name='B' type='radio' class='radio numeric' value=''>Unchecked<br />(3)</div>
-				</div>
-			</div>
-			<div class='parent'>
-				<div class='first'>
-					<p>C</p>
-				</div>
-				<div class='second'>
-					<p>How many registration officers were at the registration centre? (enter number)</p>
-				</div>
-				<div class='third'>
-					<input type='text' class='text numeric' maxlength='6'>
-				</div>
-			</div>
-			<div class='parent'>
-				<div class='first'>
-					<p>D</p>
-				</div>
-				<div class='second'>
-					<p>Did the registration centre have a complete and functioning Direct Data Capture (DDC) system (tick all that apply)</p>
-				</div>
-				<div class='third'>
-					<div class='options'><input name='D' type='checkbox' class='checkbox alpha' value='1'>Missing/Broken Computer<br />(1)</div>
-					<div class='options'><input name='D' type='checkbox' class='checkbox alpha' value='2'>Missing/Broken Camera<br />(2)</div>
-					<div class='options'><input name='D' type='checkbox' class='checkbox alpha' value='3'>Missing/Broken Printer<br />(3)</div>
-					<div class='options'><input name='D' type='checkbox' class='checkbox alpha' value='4'>None<br />(Missing/Broken)<br />(4)</div>
-				</div>
-			</div>
-			<div class='parent'>
-				<div class='first'>
-					<p>E</p>
-				</div>
-				<div class='second'>
-				<p>Was the registration centre missing any of the following materials? (tick all that apply)</p>
-				</div>
-				<div class='third'>
-					<div class='options'><input name='E' type='checkbox' class='checkbox alpha' value='1'>Manual Register of Voters<br />.(EC. 1A)<br />(1)</div>
-					<div class='options'><input name='E' type='checkbox' class='checkbox alpha' value='2'>Indelible Ink to Mark Fingers<br />(2)</div>
-					<div class='options'><input name='E' type='checkbox' class='checkbox alpha' value='3'>Blank Temporary Voter's Cards<br />(3)</div>
-					<div class='options'><input name='E' type='checkbox' class='checkbox alpha' value='4'>INEC Stamp<br />(4)</div>
-					<div class='options'><input name='E' type='checkbox' class='checkbox alpha' value='5'>None Missing<br />(5)</div>
-				</div>
-			</div>
-			<div class='parent'>
-				<div class='first'>
-					<p>F</p>
-				</div>
-				<div class='second'>
-					<p>How many political party agents were at the registration centre? (enter number)</p>
-				</div>
-				<div class='third'>
-					<input type='text' name='F' class='text numeric' maxlength='6'>
-				</div>
-			</div>
-			<div class='parent last'>
-				<div class='first'>
-					<p>G</p>
-				</div>
-				<div class='second'>
-					<p>Were any security agents present at the registration centre? (tick Yes or No)</p>
-				</div>
-				<div class='third'>
-					<div class='options'><input name='G' type='radio' class='radio numeric' value='1'>Yes<br />(1)</div>
-					<div class='options'><input name='G' type='radio' class='radio numeric' value='2'>No<br />(2)</div>
-					<div class='options'><input name='G' type='radio' class='radio numeric' value=''>Unchecked<br />(6)</div>
-				</div>
-			</div>
-		</div>
-		</div>
-                <div class="clear"></div>
-		<!-- end of dat checklist -->
-		<h2>End of day checklist question</h2>
-		<div class='block'>
-		<div class='grandparent'>
-			<div class='parent'>
-				<div class='first'>
-					<p>H</p>
-				</div>
-				<div class='second'>
-					<p>Was anyone permitted to register who appeared under 18 years old? (tick the one that applies best)</p>
-				</div>
-				<div class='third'>
-					<div class='options'><input name='H' type='radio' class='radio numeric' value='1'>None<br />(1)</div>
-					<div class='options'><input name='H' type='radio' class='radio numeric' value='2'>Few<br />(2)</div>
-					<div class='options'><input name='H' type='radio' class='radio numeric' value='3'>Half<br />(3)</div>
-					<div class='options'><input name='H' type='radio' class='radio numeric' value='4'>Most<br />(4)</div>
-					<div class='options'><input name='H' type='radio' class='radio numeric' value='5'>All<br />(5)</div>
-					<div class='options'><input name='H' type='radio' class='radio numeric' value=''>Unchecked<br />(6)</div>
-				</div>
-			</div>
-			<div class='parent'>
-				<div class='first'>
-					<p>J</p>
-				</div>
-				<div class='second'>
-					<p>Was anyone permitted to register who had indelible ink on his/her finger meaning he/she had already registered? (tick the one that applies best)</p>
-				</div>
-				<div class='third'>
-					<div class='options'><input name='J' type='radio' class='radio numeric' value='1'>None<br />(1)</div>
-					<div class='options'><input name='J' type='radio' class='radio numeric' value='2'>Few<br />(2)</div>
-					<div class='options'><input name='J' type='radio' class='radio numeric' value='3'>Half<br />(3)</div>
-					<div class='options'><input name='J' type='radio' class='radio numeric' value='4'>Most<br />(4)</div>
-					<div class='options'><input name='J' type='radio' class='radio numeric' value='5'>All<br />(5)</div>
-					<div class='options'><input name='J' type='radio' class='radio numeric' value=''>Unchecked<br />(6)</div>
-
-				</div>
-			</div>
-			<div class='parent'>
-				<div class='first'>
-					<p>K</p>
-				</div>
-				<div class='second'>
-					<p>Was anyone permitted to register who did not appear to be from the community? (tick the one that applies best)</p>
-				</div>
-				<div class='third'>
-					<div class='options'><input name='K' type='radio' class='radio numeric' value='1'>None<br />(1)</div>
-					<div class='options'><input name='K' type='radio' class='radio numeric' value='2'>Few<br />(2)</div>
-					<div class='options'><input name='K' type='radio' class='radio numeric' value='3'>Half<br />(3)</div>
-					<div class='options'><input name='K' type='radio' class='radio numeric' value='4'>Most<br />(4)</div>
-					<div class='options'><input name='K' type='radio' class='radio numeric' value='5'>All<br />(5)</div>
-					<div class='options'><input name='K' type='radio' class='radio numeric' value=''>Unchecked<br />(6)</div>
-
-				</div>
-			</div>
-			<div class='parent'>
-				<div class='first'>
-					<p>M</p>
-				</div>
-				<div class='second'>
-					<p>Were the fingers of successful registrants marked with indelible ink? (tick the one that applies best)</p>
-				</div>
-				<div class='third'>
-					<div class='options'><input name='M' type='radio' class='radio numeric' value='1'>None<br />(1)</div>
-					<div class='options'><input name='M' type='radio' class='radio numeric' value='2'>Few<br />(2)</div>
-					<div class='options'><input name='M' type='radio' class='radio numeric' value='3'>Half<br />(3)</div>
-					<div class='options'><input name='M' type='radio' class='radio numeric' value='4'>Most<br />(4)</div>
-					<div class='options'><input name='M' type='radio' class='radio numeric' value='5'>All<br />(5)</div>
-					<div class='options'><input name='M' type='radio' class='radio numeric' value=''>Unchecked<br />(6)</div>
-
-				</div>
-			</div>
-			<div class='parent'>
-				<div class='first'>
-					<p>N</p>
-				</div>
-				<div class='second'>
-					<p>Were photos taken of successful registrants? (tick the one that applies best)</p>
-				</div>
-				<div class='third'>
-					<div class='options'><input name='N' type='radio' class='radio numeric' value='1'>None<br />(1)</div>
-					<div class='options'><input name='N' type='radio' class='radio numeric' value='2'>Few<br />(2)</div>
-					<div class='options'><input name='N' type='radio' class='radio numeric' value='3'>Half<br />(3)</div>
-					<div class='options'><input name='N' type='radio' class='radio numeric' value='4'>Most<br />(4)</div>
-					<div class='options'><input name='N' type='radio' class='radio numeric' value='5'>All<br />(5)</div>
-					<div class='options'><input name='N' type='radio' class='radio numeric' value=''>Unchecked<br />(6)</div>
-				</div>
-			</div>
-			<div class='parent'>
-				<div class='first'>
-					<p>P</p>
-				</div>
-				<div class='second'>
-					<p>Were successful registrants issued with temporary voter's cards? (tick the one that applies best)</p>
-				</div>
-				<div class='third'>
-					<div class='options'><input name='P' type='radio' class='radio numeric' value='1'>None<br />(1)</div>
-					<div class='options'><input name='P' type='radio' class='radio numeric' value='2'>Few<br />(2)</div>
-					<div class='options'><input name='P' type='radio' class='radio numeric' value='3'>Half<br />(3)</div>
-					<div class='options'><input name='P' type='radio' class='radio numeric' value='4'>Most<br />(4)</div>
-					<div class='options'><input name='P' type='radio' class='radio numeric' value='5'>All<br />(5)</div>
-					<div class='options'><input name='P' type='radio' class='radio numeric' value=''>Unchecked<br />(6)</div>
-				</div>
-			</div>
-			<div class='parent'>
-				<div class='first'>
-					<p>Q</p>
-				</div>
-				<div class='second'>
-					<p>Were the names of successful registrants entered into the Direct Data Capture (DDC) system? (tick the one that applies best)</p>
-				</div>
-				<div class='third'>
-					<div class='options'><input name='Q' type='radio' class='radio numeric' value='1'>None<br />(1)</div>
-					<div class='options'><input name='Q' type='radio' class='radio numeric' value='2'>Few<br />(2)</div>
-					<div class='options'><input name='Q' type='radio' class='radio numeric' value='3'>Half<br />(3)</div>
-					<div class='options'><input name='Q' type='radio' class='radio numeric' value='4'>Most<br />(4)</div>
-					<div class='options'><input name='Q' type='radio' class='radio numeric' value='5'>All<br />(5)</div>
-					<div class='options'><input name='Q' type='radio' class='radio numeric' value=''>Unchecked<br />(6)</div>
-				
-				</div>
-			</div>
-			<div class='parent'>
-				<div class='first'>
-					<p>R</p>
-				</div>
-				<div class='second'>
-					<p>Were the names of successful registrants entered into the Manual Register of Voters (MRV) Form EC.1A? (tick the one that applies best)</p>
-				</div>
-				<div class='third'>
-					<div class='options'><input name='R' type='radio' class='radio numeric' value='1'>None<br />(1)</div>
-					<div class='options'><input name='R' type='radio' class='radio numeric' value='2'>Few<br />(2)</div>
-					<div class='options'><input name='R' type='radio' class='radio numeric' value='3'>Half<br />(3)</div>
-					<div class='options'><input name='R' type='radio' class='radio numeric' value='4'>Most<br />(4)</div>
-					<div class='options'><input name='R' type='radio' class='radio numeric' value='5'>All<br />(5)</div>
-					<div class='options'><input name='R' type='radio' class='radio numeric' value=''>Unchecked<br />(6)</div>
-
-				</div>
-			</div>
-			<div class='parent'>
-				<div class='first'>
-					<p>S</p>
-				</div>
-				<div class='second'>
-					<p>Did anyone successfully register for someone who was not present at the registration centre (i.e. proxy registration)? (tick the one that applies best)</p>
-				</div>
-				<div class='third'>
-					<div class='options'><input name='S' type='radio' class='radio numeric' value='1'>None<br />(1)</div>
-					<div class='options'><input name='S' type='radio' class='radio numeric' value='2'>Few<br />(2)</div>
-					<div class='options'><input name='S' type='radio' class='radio numeric' value='3'>Half<br />(3)</div>
-					<div class='options'><input name='S' type='radio' class='radio numeric' value='4'>Most<br />(4)</div>
-					<div class='options'><input name='S' type='radio' class='radio numeric' value='5'>All<br />(5)</div>
-					<div class='options'><input name='S' type='radio' class='radio numeric' value=''>Unchecked<br />(6)</div>
-				</div>
-			</div>
-			<div class='parent'>
-				<div class='first'>
-					<p>T</p>
-				</div>
-				<div class='second'>
-					<p>Did the Direct Data Capture (DDC) system properly function throughout the day? (tick Yes or No)</p>
-				</div>
-				<div class='third'>
-					<div class='options'><input name='T' type='radio' class='radio numeric' value='1'>Yes<br />(1)</div>
-					<div class='options'><input name='T' type='radio' class='radio numeric' value='2'>No<br />(2)</div>
-					<div class='options'><input name='T' type='radio' class='radio numeric' value=''>Unchecked<br />(3)</div>
-				</div>
-			</div>
-			<div class='parent'>
-				<div class='first'>
-					<p>U</p>
-				</div>
-				<div class='second'>
-					<p>Did the registration centre run out of materials during the day? (tick Yes or No)</p>
-				</div>
-				<div class='third'>
-					<div class='options'><input name='U' type='radio' class='radio numeric' value='1'>Yes<br />(1)</div>
-					<div class='options'><input name='U' type='radio' class='radio numeric' value='2'>No<br />(2)</div>
-					<div class='options'><input name='U' type='radio' class='radio numeric' value=''>Unchecked<br />(3)</div>
-				</div>
-			</div>
-			<div class='parent'>
-				<div class='first'>
-					<p>V</p>
-				</div>
-				<div class='second'>
-					<p>Did the registration centre remain open until 5 pm? (tick Yes or No)</p>
-				</div>
-				<div class='third'>
-					<div class='options'><input name='V' type='radio' class='radio numeric' value='1'>Yes<br />(1)</div>
-					<div class='options'><input name='V' type='radio' class='radio numeric' value='2'>No<br />(2)</div>
-					<div class='options'><input name='V' type='radio' class='radio numeric' value=''>Unchecked<br />(3)</div>
-				</div>
-			</div>
-			<div class='parent'>
-				<div class='first'>
-					<p>W</p>
-				</div>
-				<div class='second'>
-					<p>Did anyone attempt to disrupt voter registration at the centre? (tick Yes or No)</p>
-				</div>
-				<div class='third'>
-					<div class='options'><input name='W' type='radio' class='radio numeric' value='1'>Yes<br />(1)</div>
-					<div class='options'><input name='W' type='radio' class='radio numeric' value='2'>No<br />(2)</div>
-					<div class='options'><input name='W' type='radio' class='radio numeric' value=''>Unchecked<br />(3)</div>
-				</div>
-			</div>
-			<div class='parent'>
-				<div class='first'>
-					<p>X</p>
-				</div>
-				<div class='second'>
-					<p>Did anyone attempt to intimidate or harass people in or around the centre? (tick Yes or No)</p>
-				</div>
-				<div class='third'>
-					<div class='options'><input name='X' type='radio' class='radio numeric' value='1'>Yes<br />(1)</div>
-					<div class='options'><input name='X' type='radio' class='radio numeric' value='2'>No<br />(2)</div>
-					<div class='options'><input name='X' type='radio' class='radio numeric' value=''>Unchecked<br />(3)</div>
-				</div>
-			</div>
-			<div class='parent'>
-				<div class='first'>
-					<p>Y</p>
-				</div>
-				<div class='second'>
-					<p>How many people registered during this day? (record number from Certificate of Completion of Daily Registration of Voters Form EC.1B(1)) (enter number) (if not permited to record this figure enter "9999"</p>
-				</div>
-				<div class='third'>
-					<p><input name='Y' type='text' class='text numeric' maxlength='6'></p>
-				</div>
-			</div>
-			<div class='parent'>
-				<div class='first'>
-					<p>Z</p>
-				</div>
-				<div class='second'>
-					<p>How many people so far (total to date) have registered at this centre according to the Manual Register of Voters (MRV) Form EC.1A? (enter number) (if not permitted to record this figure enter "9999")</p>
-				</div>
-				<div class='third'>
-					<p><input name='Z' type='text' class='text numeric' maxlength='6'></p>
-				</div>
-			</div>
-			<div class='parent last'>
-				<div class='first'>
-					<p>AA</p>
-				</div>
-				<div class='second'>
-					<p>How many people so far (total to date) have registered according to the DDC system? (enter number) (if not permitted to record this figure enter "9999")</p>
-				</div>
-				<div class='third'>
-					<p><input name='AA' type='text' class='text numeric' maxlength='6'> </p>
-				</div>
-		</div>
-                    <div class="buttons">
-                        <input type="submit" name="submit" value="Submit">
-                        <input type="reset" name="reset" value="Reset">
-                    </div>
-	
+            <div class="clear"></div>
+            <h2>Opening Checklist Questions</h2>
+            <!-- opening checklist question -->
+            <div class='block'>
+                <div class='grandparent'>
+                    <div class='parent'>
+                        <div class='first'>
+                            <p>A</p>
                         </div>
-				</div>
-				<div class='clear'></div>
-			</div>
-			</div>
-				</form>
+                        <div class='second'>
+                            <p>{{ form.A.help_text }}</p>
+                        </div>
+                        <div class='third'>
+                            <div class='options'><input name='{{ form.A.name }}' type='radio' class='radio numeric' value='1'{% if form.initial.A == 1 %} checked='checked'{% endif %}>Yes</div>
+                            <div class='options'><input name='{{ form.A.name }}' type='radio' class='radio numeric' value='2'{% if form.initial.A == 2 %} checked='checked'{% endif %}>No</div>
+                            <div class='options'><input name='{{ form.A.name }}' type='radio' class='radio numeric' value='0'{% if not form.initial.A %} checked='checked'{% endif %}>Unchecked</div>
+                        </div>
+                    </div>
+                    <div class='parent'>
+                        <div class='first'>
+                            <p>B</p>
+                        </div>
+                        <div class='second'>
+                            <p>{{ form.B.help_text }}</p>
+                        </div>
+                        <div class='third'>
+                            <div class='options'><input name='{{ form.B.name }}' type='radio' class='radio numeric' value="1"{% if form.initial.B == 1 %} checked='checked'{% endif %}>Yes</div>
+                            <div class='options'><input name='{{ form.B.name }}' type='radio' class='radio numeric' value="2"{% if form.initial.B == 2 %} checked='checked'{% endif %}>No</div>
+                            <div class='options'><input name='{{ form.B.name }}' type='radio' class='radio numeric' value="0"{% if not form.initial.B %} checked='checked'{% endif %}>Unchecked</div>
+                        </div>
+                    </div>
+                    <div class='parent'>
+                        <div class='first'>
+                            <p>C</p>
+                        </div>
+                        <div class='second'>
+                            <p>{{ form.C.help_text }}</p>
+                        </div>
+                        <div class='third'>
+                            <input name='{{ form.C.name }}' type='text' class='text numeric' maxlength='3' value="{{ form.initial.C }}">
+                        </div>
+                    </div>
+                    <div class='parent'>
+                        <div class='first'>
+                            <p>D</p>
+                        </div>
+                        <div class='second'>
+                            <p>{{ form.D.help_text }}</p>
+                        </div>
+                        <div class='third'>
+                            <div class='options'><input name='{{ form.D.name }}' type='radio' class='radio numeric' value="1"{% if form.initial.D == 1 %} checked='checked'{% endif %}>Yes</div>
+                            <div class='options'><input name='{{ form.D.name }}' type='radio' class='radio numeric' value="2"{% if form.initial.D == 2 %} checked='checked'{% endif %}>No</div>
+                            <div class='options'><input name='{{ form.D.name }}' type='radio' class='radio numeric' value="0"{% if not form.initial.D %} checked='checked'{% endif %}>Unchecked</div>
+                        </div>
+                    </div>
+                    <div class='parent'>
+                        <div class='first'>
+                            <p>E</p>
+                        </div>
+                        <div class='second'>
+                            <p>{{ form.E.help_text }}</p>
+                        </div>
+                        <div class='third'>
+                            <div class='options'><input name='{{ form.E.name }}' type='radio' class='radio numeric' value="1"{% if form.initial.E == 1 %} checked='checked'{% endif %}>Yes</div>
+                            <div class='options'><input name='{{ form.E.name }}' type='radio' class='radio numeric' value="2"{% if form.initial.E == 2 %} checked='checked'{% endif %}>No</div>
+                            <div class='options'><input name='{{ form.E.name }}' type='radio' class='radio numeric' value="0"{% if not form.initial.E %} checked='checked'{% endif %}>Unchecked</div>
+                        </div>
+                    </div>
+                    <div class='parent'>
+                        <div class='first'>
+                            <p>F</p>
+                        </div>
+                        <div class='second'>
+                            <p>{{ form.F1.help_text }}</p>
+                        </div>
+                        <div class='third'>
+                            <div class='options'><input name='{{ form.F1.name }}' type='checkbox' class='checkbox numeric' value="1"{% if form.initial.F1 %} checked='checked'{% endif %}>Statement of Additions <br />(EC. 1C)(1)</div>
+                            <div class='options'><input name='{{ form.F2.name }}' type='checkbox' class='checkbox numeric' value="1"{% if form.initial.F2 %} checked='checked'{% endif %}>Statement of Corrections<br />(E.1D)(2)</div>
+                            <div class='options'><input name='{{ form.F3.name }}' type='checkbox' class='checkbox numeric' value="1"{% if form.initial.F3 %} checked='checked'{% endif %}>Statement of Deletions <br />(EC.1E)(3)</div>
+                            <div class='options'><input name='{{ form.F4.name }}' type='checkbox' class='checkbox numeric' value="1"{% if form.initial.F4 %} checked='checked'{% endif %}>Claims for Correction or Insertion <br />(EC.2)(4)</div>
+                            <div class='options'><input name='{{ form.F5.name }}' type='checkbox' class='checkbox numeric' value="1"{% if form.initial.F5 %} checked='checked'{% endif %}>Objections to Inclusion <br />(EC.3)(5)</div>
+                            <div class='options'><input name='{{ form.F6.name }}' type='checkbox' class='checkbox numeric' value="1"{% if form.initial.F6 %} checked='checked'{% endif %}>Notification of Death <br />(EC.3A)(6)</div>
+                            <div class='options'><input name='{{ form.F7.name }}' type='checkbox' class='checkbox numeric' value="1"{% if form.initial.F7 %} checked='checked'{% endif %}>Summary of Returns <br />(EC.5A)(7)</div>
+                            <div class='options'><input name='{{ form.F8.name }}' type='checkbox' class='checkbox numeric' value="1"{% if form.initial.F8 %} checked='checked'{% endif %}>Summary of Actions<br />(EC.6A)(8)</div>
+                            <div class='options'><input name='{{ form.F9.name }}' type='checkbox' class='checkbox numeric' value="1"{% if form.initial.F9 %} checked='checked'{% endif %}>None Missing(9)</div>
+                        </div>
+                    </div>
+                    <div class='parent'>
+                        <div class='first'>
+                            <p>G</p>
+                        </div>
+                        <div class='second'>
+                            <p>{{ form.G.help_text }}</p>
+                        </div>
+                        <div class='third'>
+                            <div class='options'><input name='{{ form.G.name }}' type='text' class='text numeric' value="{{ form.initial.G }}"></div>
+                        </div>
+                    </div>
+                    <div class='parent'>
+                        <div class='first'>
+                            <p>H</p>
+                        </div>
+                        <div class='second'>
+                            <p>{{ form.H.help_text }}</p>
+                        </div>
+                        <div class='third'>
+                            <div class='options'><input name='{{ form.H.name }}' type='radio' class='radio numeric' value="1"{% if form.initial.H == 1 %} checked='checked'{% endif %}>Yes</div>
+                            <div class='options'><input name='{{ form.H.name }}' type='radio' class='radio numeric' value="2"{% if form.initial.H == 2 %} checked='checked'{% endif %}>No</div>
+                            <div class='options'><input name='{{ form.H.name }}' type='radio' class='radio numeric' value="0"{% if not form.initial.H %} checked='checked'{% endif %}>Unchecked</div>
+                        </div>
+                    </div>
+                    <div class='parent'>
+                        <div class='first'>
+                            <p>J</p>
+                        </div>
+                        <div class='second'>
+                            <p>{{ form.J.help_text }}</p>
+                        </div>
+                        <div class='third'>
+                            <div class='options'><input name='{{ form.J.name }}' type='text' class='text numeric' value="{{ form.initial.J }}"></div>
+                        </div>
+                    </div>
+                    <div class='parent'>
+                        <div class='first'>
+                            <p>K</p>
+                        </div>
+                        <div class='second'>
+                            <p>{{ form.K.help_text }}</p>
+                        </div>
+                        <div class='third'>
+                            <div class='options'><input name='{{ form.K.name }}' type='text' class='text numeric' value="{{ form.initial.K }}"></div>
+                        </div>
+                    </div>
+                      <div class='parent'>
+                        <div class='first'>
+                            <p>M</p>
+                        </div>
+                        <div class='second'>
+                            <p>{{ form.M.help_text }}</p>
+                        </div>
+                        <div class='third'>
+                            <div class='options'><input name='{{ form.M.name }}' type='radio' class='radio numeric' value="1"{% if form.initial.M == 1 %} checked='checked'{% endif %}>Yes</div>
+                            <div class='options'><input name='{{ form.M.name }}' type='radio' class='radio numeric' value="2"{% if form.initial.M == 2 %} checked='checked'{% endif %}>No</div>
+                            <div class='options'><input name='{{ form.M.name }}' type='radio' class='radio numeric' value="0"{% if not form.initial.M %} checked='checked'{% endif %}>Unchecked</div>
+                        </div>
+                    </div>
+                    <div class='parent'>
+                        <div class='first'>
+                            <p>N</p>
+                        </div>
+                        <div class='second'>
+                            <p>{{ form.N.help_text }}</p>
+                        </div>
+                        <div class='third'>
+                            <div class='options'><input name='{{ form.N.name }}' type='radio' class='radio numeric' value="1"{% if form.initial.N == 1 %} checked='checked'{% endif %}>Yes</div>
+                            <div class='options'><input name='{{ form.N.name }}' type='radio' class='radio numeric' value="2"{% if form.initial.N == 2 %} checked='checked'{% endif %}>No</div>
+                            <div class='options'><input name='{{ form.N.name }}' type='radio' class='radio numeric' value="0"{% if not form.initial.N %} checked='checked'{% endif %}>Unchecked</div>
+                        </div>
+                    </div>
+                    <div class='parent'>
+                        <div class='first'>
+                            <p>P</p>
+                        </div>
+                        <div class='second'>
+                            <p>{{ form.P.help_text }}</p>
+                        </div>
+                        <div class='third'>
+                            <div class='options'><input name='{{ form.P.name }}' type='radio' class='radio numeric' value="1"{% if form.initial.P == 1 %} checked='checked'{% endif %}>Yes</div>
+                            <div class='options'><input name='{{ form.P.name }}' type='radio' class='radio numeric' value="2"{% if form.initial.P == 2 %} checked='checked'{% endif %}>No</div>
+                            <div class='options'><input name='{{ form.P.name }}' type='radio' class='radio numeric' value="0"{% if not form.initial.P %} checked='checked'{% endif %}>Unchecked</div>
+                        </div>
+                    </div>
+                    <div class='parent'>
+                        <div class='first'>
+                            <p>Q</p>
+                        </div>
+                        <div class='second'>
+                            <p>{{ form.Q.help_text }}</p>
+                        </div>
+                        <div class='third'>
+                            <div class='options'><input name='{{ form.Q.name }}' type='radio' class='radio numeric' value="1"{% if form.initial.Q == 1 %} checked='checked'{% endif %}>Yes</div>
+                            <div class='options'><input name='{{ form.Q.name }}' type='radio' class='radio numeric' value="2"{% if form.initial.Q == 2 %} checked='checked'{% endif %}>No</div>
+                            <div class='options'><input name='{{ form.Q.name }}' type='radio' class='radio numeric' value="0"{% if not form.initial.Q %} checked='checked'{% endif %}>Unchecked</div>
+                        </div>
+                    </div>
+                    <div class='parent'>
+                        <div class='first'>
+                            <p>R</p>
+                        </div>
+                        <div class='second'>
+                            <p>{{ form.R.help_text }}</p>
+                        </div>
+                        <div class='third'>
+                            <div class='options'><input name='{{ form.R.name }}' type='radio' class='radio numeric' value="1"{% if form.initial.R == 1 %} checked='checked'{% endif %}>Yes</div>
+                            <div class='options'><input name='{{ form.R.name }}' type='radio' class='radio numeric' value="2"{% if form.initial.R == 2 %} checked='checked'{% endif %}>No</div>
+                            <div class='options'><input name='{{ form.R.name }}' type='radio' class='radio numeric' value="0"{% if not form.initial.R %} checked='checked'{% endif %}>Unchecked</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="clear"></div>
+            <h2>Filed Claims and Objections Questions</h2>
+            <div class="block">
+                <div class="grandparent">
+                     <div class='parent'>
+                        <div class='first'>
+                            <p>S</p>
+                        </div>
+                        <div class='second'>
+                            <p>{{ form.S.help_text }}</p>
+                        </div>
+                        <div class='third'>
+                            <div class='options'><input name='{{ form.S.name }}' type='text' class='text numeric' value="{{ form.initial.S }}"></div>
+                        </div>
+                    </div>
+                     <div class='parent'>
+                        <div class='first'>
+                            <p>T</p>
+                        </div>
+                        <div class='second'>
+                            <p>{{ form.T.help_text }}</p>
+                        </div>
+                        <div class='third'>
+                            <div class='options'><input name='{{ form.T.name }}' type='text' class='text numeric' value="{{ form.initial.T }}"></div>
+                        </div>
+                    </div>
+                     <div class='parent'>
+                        <div class='first'>
+                            <p>U</p>
+                        </div>
+                        <div class='second'>
+                            <p>{{ form.U.help_text }}</p>
+                        </div>
+                        <div class='third'>
+                            <div class='options'><input name='{{ form.U.name }}' type='text' class='text numeric' value="{{ form.initial.U }}"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="clear"></div>
+            <h2>Actions taken in response to Claims & Objections</h2>
+            <div class="block">
+                <div class="grandparent">
+                    <div class="parent">
+                        <div class='first'>
+                            <p>V</p>
+                        </div>
+                        <div class='second'>
+                            <p>{{ form.V.help_text }}</p>
+                        </div>
+                        <div class='third'>
+                            <div class='options'><input name='{{ form.V.name }}' type='text' class='text numeric' value="{{ form.initial.V }}"></div>
+                        </div>
+                    </div>
+                     <div class="parent">
+                        <div class='first'>
+                            <p>W</p>
+                        </div>
+                        <div class='second'>
+                            <p>{{ form.W.help_text }}</p>
+                        </div>
+                        <div class='third'>
+                            <div class='options'><input name='{{ form.W.name }}' type='text' class='text numeric' value="{{ form.initial.W }}"></div>
+                        </div>
+                    </div>
+                     <div class="parent">
+                        <div class='first'>
+                            <p>X</p>
+                        </div>
+                        <div class='second'>
+                            <p>{{ form.X.help_text }}</p>
+                        </div>
+                        <div class='third'>
+                            <div class='options'><input name='{{ form.X.name }}' type='text' class='text numeric' value="{{ form.initial.X }}"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="clear"></div>
+
+            <div class="buttons">
+                <input type="submit" name="submit" value="Submit">
+                <input type="reset" name="reset" value="Reset">
+            </div>
+
+        </div>
+    </div>
+</form>
 {% endblock %}
