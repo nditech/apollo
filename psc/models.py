@@ -92,9 +92,10 @@ class Observer(models.Model):
         ('LGA', 'LGA Supervisor'),
         ('OBS', 'Observer'))
 
-    contact = models.OneToOneField(Contact)
+    contact = models.OneToOneField(Contact, blank=True, null=True)
     dob = models.DateField("Date of Birth", blank=True, null=True)
     email = models.EmailField()
+    phone = models.CharField(max_length=14, null=True, blank=True)
     observer_id = models.CharField(max_length=6)
     location_type = models.ForeignKey(ContentType, null=True, blank=True)
     location_id = models.PositiveIntegerField(null=True, blank=True)
