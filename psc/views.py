@@ -17,7 +17,6 @@ def home(request):
     return render_to_response('psc/layout.html')
 
 def vr_list(request):
-	
     paginator = Paginator(VRChecklist.objects.all(), items_per_page)
 
     try:
@@ -31,7 +30,7 @@ def vr_list(request):
     except (EmptyPage, InvalidPage):
         checklists = paginator.page(paginator.num_pages)
 
-    return render_to_response('psc/psc_list.html', {'checklists': checklists})
+    return render_to_response('psc/vr_checklist_list.html', {'checklists': checklists})
 
 @csrf_view_exempt
 def vr_checklist(request, checklist_id=0):
