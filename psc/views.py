@@ -47,7 +47,20 @@ def vr_incident(request, incident_id=0):
     return render_to_response('psc/vr_incident_form.html', {'page_title': 'Voters Registration Critrical Incidents'})
 
 def dco_list(request):
-    return HttpResponse('OK')
+    paginator = Paginator(DCOChecklist.objects.all(), items_per_page)
+
+    try:
+        page = int(request.GET.get('page', '1'))
+    except ValueError:
+        page = 1
+
+    # an invalid range will retrieve the last page of results
+    try:
+        checklists = paginator.page(page)
+    except (EmptyPage, InvalidPage):
+        checklists = paginator.page(paginator.num_pages)
+
+    return render_to_response('psc/dco_checklist_list.html', {'checklists': checklists})
 
 def dco_checklist(request, checklist_id=0):   
     if request.POST:
