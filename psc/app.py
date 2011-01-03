@@ -238,7 +238,7 @@ class App(AppBase):
         for key in responses.keys():
             # validation
             if key in ['A', 'B', 'D', 'E', 'H', 'M', 'N', 'P', 'Q', 'R'] and int(responses[key]) in range(1, 3): # Yes or No
-                setattr(dco, key, True if int(responses[key]) == 1 else False)
+                setattr(dco, key, int(responses[key]))
             elif key in ['C', 'G', 'J', 'K', 'S', 'T', 'U', 'V', 'W', 'X']: # numeric responses
                 setattr(dco, key, int(responses[key]))
             elif key == 'F' and responses[key] == '9':
@@ -375,4 +375,3 @@ class App(AppBase):
         for key in list(message):
             if key not in ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K']: attribute_error.append(key)
         return {'attribute': attribute_error }
-    
