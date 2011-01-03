@@ -10,10 +10,12 @@ from datetime import datetime
 class App(AppBase):
     def __init__(self, router):
         self.pattern = re.compile(r'PSC(?P<observer_id>\d{6})(DC|VR)(\d{2})(RC|GA)(\d{3})(!?([A-Z\d]{1,})@?(.*))?', re.I)
-        self.vr_checklist  = re.compile(r'PSC(?P<observer_id>\d{6})VR(?P<day>\d{2})RC(?P<location_id>\d{3})(?P<responses>[ABCDEFGHJKMNPQRSTUVWXYZ\d]{2,})?', re.I)
-        self.vr_incident  = re.compile(r'PSC(?P<observer_id>\d{6})VR(?P<day>\d{2})(?P<location_type>(RC|GA))(?P<location_id>\d{3})!(?P<responses>[ABCDEFGHJKMNPQ]{1,})@?(?P<comment>.*)', re.I)
-        self.dco_checklist = re.compile(r'PSC(?P<observer_id>\d{6})DC(?P<day>\d{2})RC(?P<location_id>\d{3})(?P<responses>[ABCDEFGHJKMNPQRSTUVWX\d]{2,})?', re.I)
-        self.dco_incident = re.compile(r'PSC(?P<observer_id>\d{6})DC(?P<day>\d{2})(?P<location_type>(RC|GA))(?P<location_id>\d{3})!(?P<responses>[ABCDEFGHJK]{1,})@?(?P<comment>.*)', re.I)
+        self.vr_checklist  = re.compile(r'PSC(?P<observer_id>\d{6})VR(?P<day>\d{2})RC(?P<location_id>\d{3})(?P<responses>[A-Z\d]{2,})?', re.I)
+        self.vr_incident  = re.compile(r'PSC(?P<observer_id>\d{6})VR(?P<day>\d{2})(?P<location_type>(RC|GA))(?P<location_id>\d{3})!(?P<responses>[A-Z]{1,})@?(?P<comment>.*)', re.I)
+        self.dco_checklist = re.compile(r'PSC(?P<observer_id>\d{6})DC(?P<day>\d{2})RC(?P<location_id>\d{3})(?P<responses>[A-Z\d]{2,})?', re.I)
+        self.dco_incident = re.compile(r'PSC(?P<observer_id>\d{6})DC(?P<day>\d{2})(?P<location_type>(RC|GA))(?P<location_id>\d{3})!(?P<responses>[A-Z]{1,})@?(?P<comment>.*)', re.I)
+        self.range_error_response = 'Invalid values for: %s'
+        self.attribute_error_response = 'Unknown attributes: %s'
         AppBase.__init__(self, router)
         
     def handle(self, message):
@@ -100,7 +102,7 @@ class App(AppBase):
             if key == 'A' and int(responses[key]) in range(1, 5): # Time of opening of RC
                 vr.A = int(responses[key])
             elif key in ['B', 'G', 'T', 'U', 'V', 'W', 'X'] and int(responses[key]) in range(1, 3):
-                setattr(vr, key, True if int(responses[key]) == 1 else False)
+                setattr(vr, key, int(responses[key]))
             elif key in ['C', 'F', 'Y', 'Z', 'AA']:
                 setattr(vr, key, int(responses[key]))
             elif key in ['H', 'J', 'K', 'M', 'N', 'P', 'Q', 'R', 'S'] and int(responses[key]) in range(1, 6):
@@ -117,10 +119,19 @@ class App(AppBase):
                 for opt in list(responses[key]):
                     if int(opt) in range(1, 5):
                         setattr(vr, key+opt, True)
-            else:
-                return self.default(msg)
         vr.save()
-        return msg.respond('Checklist report accepted! You sent: %s' % msg.text)
+
+        check = self._vrc_validate(responses)
+        error_responses = []
+        if check['attribute'] or check['range']:
+            if check['attribute']:
+                error_responses.append(self.attribute_error_response % (", ".join(check['attribute'])))
+            if check['range']:
+                error_responses.append(self.range_error_response % (", ".join(check['range'])))
+            error_responses.append("You sent: %s" % msg.text)
+            return msg.respond(". ".join(error_responses))
+        else:
+            return msg.respond('VR Checklist report accepted! You sent: %s' % msg.text)
 
     def _vr_incident(self, msg, params):
         # determine location
@@ -172,7 +183,17 @@ class App(AppBase):
 
         inc.save()
 
-        return msg.respond('Incident report accepted! You sent: %s' % msg.text)
+        check = self._vri_validate(params['responses'].upper())
+        error_responses = []
+
+        if check['attribute']:
+            # generate error response
+            if check['attribute']:
+                error_responses.append(self.attribute_error_response % (", ".join(check['attribute'])))
+            error_responses.append("You sent: %s" % msg.text)
+            return msg.respond(". ".join(error_responses))
+        else:
+            return msg.respond('VR Incident report accepted! You sent: %s' % msg.text)
 
     def _dco_checklist(self, msg, params):
         # determine location
@@ -217,7 +238,7 @@ class App(AppBase):
         for key in responses.keys():
             # validation
             if key in ['A', 'B', 'D', 'E', 'H', 'M', 'N', 'P', 'Q', 'R'] and int(responses[key]) in range(1, 3): # Yes or No
-                setattr(dco, key, True if int(responses[key]) == 1 else False)
+                setattr(dco, key, int(responses[key]))
             elif key in ['C', 'G', 'J', 'K', 'S', 'T', 'U', 'V', 'W', 'X']: # numeric responses
                 setattr(dco, key, int(responses[key]))
             elif key == 'F' and responses[key] == '9':
@@ -226,10 +247,19 @@ class App(AppBase):
                 for opt in list(responses[key]):
                     if int(opt) in range(1, 9):
                         setattr(dco, key+opt, True)
-            else:
-                return self.default(msg)
         dco.save()
-        return msg.respond('Checklist report accepted! You sent: %s' % msg.text)
+
+        check = self._dcoc_validate(responses)
+        error_responses = []
+        if check['attribute'] or check['range']:
+            if check['attribute']:
+                error_responses.append(self.attribute_error_response % (", ".join(check['attribute'])))
+            if check['range']:
+                error_responses.append(self.range_error_response % (", ".join(check['range'])))
+            error_responses.append("You sent: %s" % msg.text)
+            return msg.respond(". ".join(error_responses))
+        else:
+            return msg.respond('DCO Checklist report accepted! You sent: %s' % msg.text)
 
     def _dco_incident(self, msg, params):
         # determine location
@@ -281,18 +311,27 @@ class App(AppBase):
 
         inc.save()
 
-        return msg.respond('Incident report accepted! You sent: %s' % msg.text)
+        check = self._dcoi_validate(params['responses'].upper())
+        error_responses = []
+
+        if check['attribute']:
+            # generate error response
+            if check['attribute']:
+                error_responses.append(self.attribute_error_response % (", ".join(check['attribute'])))
+            error_responses.append("You sent: %s" % msg.text)
+            return msg.respond(". ".join(error_responses))
+        else:
+            return msg.respond('DCO Incident report accepted! You sent: %s' % msg.text)
 
     def _parse_checklist(self, responses):
         ''' Converts strings that look like A2C3D89AA90 into
             {'A':'2', 'C':'3', 'D':'89', 'AA':'90'}'''
-        return dict(re.findall(r'([A-Z]{1,2})([0-9]+)', responses.upper())) if responses else {}
+        return dict(re.findall(r'([A-Z]{1,})([0-9]+)', responses.upper())) if responses else {}
 
     def _vrc_validate(self, responses):
         range_error = []
         attribute_error = []
         for key in responses.keys():
-        
             if key not in ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'AA']: attribute_error.append(key)
             if key in ['A'] and int(responses[key]) not in range(1,5): range_error.append(key)
             elif key in ['B', 'G', 'T', 'U', 'V', 'W', 'X'] and int(responses[key]) not in range(1, 3): range_error.append(key)
@@ -310,7 +349,7 @@ class App(AppBase):
                 elif '5' in responses['E'] and len(responses['E'].replace('5','')) > 0: range_error.append(key)
         return {'range': range_error, 'attribute': attribute_error }
         
-    def _vrci_validate(self, message):
+    def _vri_validate(self, message):
         attribute_error = []
         for key in list(message):
             if key not in ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'M', 'N', 'P', 'Q']: attribute_error.append(key)
@@ -336,4 +375,3 @@ class App(AppBase):
         for key in list(message):
             if key not in ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K']: attribute_error.append(key)
         return {'attribute': attribute_error }
-    

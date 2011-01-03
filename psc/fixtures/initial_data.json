@@ -1380,6969 +1380,6969 @@
     }
   }, 
   {
+    "pk": 1, 
+    "model": "psc.lga", 
+    "fields": {
+      "code": "001", 
+      "name": "Katsina-Ala", 
+      "parent": 1
+    }
+  }, 
+  {
+    "pk": 2, 
+    "model": "psc.lga", 
+    "fields": {
+      "code": "002", 
+      "name": "Konshisha", 
+      "parent": 1
+    }
+  }, 
+  {
+    "pk": 3, 
+    "model": "psc.lga", 
+    "fields": {
+      "code": "003", 
+      "name": "Kwande", 
+      "parent": 1
+    }
+  }, 
+  {
+    "pk": 4, 
+    "model": "psc.lga", 
+    "fields": {
+      "code": "004", 
+      "name": "Logo", 
+      "parent": 1
+    }
+  }, 
+  {
+    "pk": 5, 
+    "model": "psc.lga", 
+    "fields": {
+      "code": "005", 
+      "name": "Ukum", 
+      "parent": 1
+    }
+  }, 
+  {
+    "pk": 6, 
+    "model": "psc.lga", 
+    "fields": {
+      "code": "006", 
+      "name": "Ushongo", 
+      "parent": 1
+    }
+  }, 
+  {
+    "pk": 7, 
+    "model": "psc.lga", 
+    "fields": {
+      "code": "007", 
+      "name": "Vandeikya", 
+      "parent": 1
+    }
+  }, 
+  {
+    "pk": 8, 
+    "model": "psc.lga", 
+    "fields": {
+      "code": "008", 
+      "name": "Buruku", 
+      "parent": 2
+    }
+  }, 
+  {
+    "pk": 9, 
+    "model": "psc.lga", 
+    "fields": {
+      "code": "009", 
+      "name": "Gboko", 
+      "parent": 2
+    }
+  }, 
+  {
+    "pk": 10, 
+    "model": "psc.lga", 
+    "fields": {
+      "code": "010", 
+      "name": "Guma", 
+      "parent": 2
+    }
+  }, 
+  {
+    "pk": 11, 
+    "model": "psc.lga", 
+    "fields": {
+      "code": "011", 
+      "name": "Gwer East", 
+      "parent": 2
+    }
+  }, 
+  {
+    "pk": 12, 
+    "model": "psc.lga", 
+    "fields": {
+      "code": "012", 
+      "name": "Gwer West", 
+      "parent": 2
+    }
+  }, 
+  {
+    "pk": 13, 
+    "model": "psc.lga", 
+    "fields": {
+      "code": "013", 
+      "name": "Makurdi", 
+      "parent": 2
+    }
+  }, 
+  {
+    "pk": 14, 
+    "model": "psc.lga", 
+    "fields": {
+      "code": "014", 
+      "name": "Tarka", 
+      "parent": 2
+    }
+  }, 
+  {
+    "pk": 15, 
+    "model": "psc.lga", 
+    "fields": {
+      "code": "015", 
+      "name": "Ado", 
+      "parent": 3
+    }
+  }, 
+  {
+    "pk": 16, 
+    "model": "psc.lga", 
+    "fields": {
+      "code": "016", 
+      "name": "Agatu", 
+      "parent": 3
+    }
+  }, 
+  {
+    "pk": 17, 
+    "model": "psc.lga", 
+    "fields": {
+      "code": "017", 
+      "name": "Apa", 
+      "parent": 3
+    }
+  }, 
+  {
+    "pk": 18, 
+    "model": "psc.lga", 
+    "fields": {
+      "code": "018", 
+      "name": "Obi", 
+      "parent": 3
+    }
+  }, 
+  {
+    "pk": 19, 
+    "model": "psc.lga", 
+    "fields": {
+      "code": "019", 
+      "name": "Ogbadibo", 
+      "parent": 3
+    }
+  }, 
+  {
+    "pk": 20, 
+    "model": "psc.lga", 
+    "fields": {
+      "code": "020", 
+      "name": "Ohimini", 
+      "parent": 3
+    }
+  }, 
+  {
+    "pk": 21, 
+    "model": "psc.lga", 
+    "fields": {
+      "code": "021", 
+      "name": "Oju", 
+      "parent": 3
+    }
+  }, 
+  {
+    "pk": 22, 
+    "model": "psc.lga", 
+    "fields": {
+      "code": "022", 
+      "name": "Okpokwu", 
+      "parent": 3
+    }
+  }, 
+  {
+    "pk": 23, 
+    "model": "psc.lga", 
+    "fields": {
+      "code": "023", 
+      "name": "Oturkpo", 
+      "parent": 3
+    }
+  }, 
+  {
+    "pk": 24, 
+    "model": "psc.lga", 
+    "fields": {
+      "code": "024", 
+      "name": "Abaji", 
+      "parent": 4
+    }
+  }, 
+  {
+    "pk": 25, 
+    "model": "psc.lga", 
+    "fields": {
+      "code": "025", 
+      "name": "Kwali", 
+      "parent": 4
+    }
+  }, 
+  {
+    "pk": 26, 
+    "model": "psc.lga", 
+    "fields": {
+      "code": "026", 
+      "name": "Abuja Municipal", 
+      "parent": 5
+    }
+  }, 
+  {
+    "pk": 27, 
+    "model": "psc.lga", 
+    "fields": {
+      "code": "027", 
+      "name": "Bwari", 
+      "parent": 5
+    }
+  }, 
+  {
+    "pk": 28, 
+    "model": "psc.lga", 
+    "fields": {
+      "code": "028", 
+      "name": "Gwagwalada", 
+      "parent": 6
+    }
+  }, 
+  {
+    "pk": 29, 
+    "model": "psc.lga", 
+    "fields": {
+      "code": "029", 
+      "name": "Kuje", 
+      "parent": 6
+    }
+  }, 
+  {
+    "pk": 30, 
+    "model": "psc.lga", 
+    "fields": {
+      "code": "030", 
+      "name": "Adavi", 
+      "parent": 7
+    }
+  }, 
+  {
+    "pk": 31, 
+    "model": "psc.lga", 
+    "fields": {
+      "code": "031", 
+      "name": "Ajaokuta", 
+      "parent": 7
+    }
+  }, 
+  {
+    "pk": 32, 
+    "model": "psc.lga", 
+    "fields": {
+      "code": "032", 
+      "name": "Ogori-Magongo", 
+      "parent": 7
+    }
+  }, 
+  {
+    "pk": 33, 
+    "model": "psc.lga", 
+    "fields": {
+      "code": "033", 
+      "name": "Okehi", 
+      "parent": 7
+    }
+  }, 
+  {
+    "pk": 34, 
+    "model": "psc.lga", 
+    "fields": {
+      "code": "034", 
+      "name": "Okene", 
+      "parent": 7
+    }
+  }, 
+  {
+    "pk": 35, 
+    "model": "psc.lga", 
+    "fields": {
+      "code": "035", 
+      "name": "Ankpa", 
+      "parent": 8
+    }
+  }, 
+  {
+    "pk": 36, 
+    "model": "psc.lga", 
+    "fields": {
+      "code": "036", 
+      "name": "Bassa", 
+      "parent": 8
+    }
+  }, 
+  {
+    "pk": 37, 
+    "model": "psc.lga", 
+    "fields": {
+      "code": "037", 
+      "name": "Dekina", 
+      "parent": 8
+    }
+  }, 
+  {
+    "pk": 38, 
+    "model": "psc.lga", 
+    "fields": {
+      "code": "038", 
+      "name": "Ibaji", 
+      "parent": 8
+    }
+  }, 
+  {
+    "pk": 39, 
+    "model": "psc.lga", 
+    "fields": {
+      "code": "039", 
+      "name": "Idah", 
+      "parent": 8
+    }
+  }, 
+  {
+    "pk": 40, 
+    "model": "psc.lga", 
+    "fields": {
+      "code": "040", 
+      "name": "Igalamela-Odolu", 
+      "parent": 8
+    }
+  }, 
+  {
+    "pk": 41, 
+    "model": "psc.lga", 
+    "fields": {
+      "code": "041", 
+      "name": "Ofu", 
+      "parent": 8
+    }
+  }, 
+  {
+    "pk": 42, 
+    "model": "psc.lga", 
+    "fields": {
+      "code": "042", 
+      "name": "Olamaboro", 
+      "parent": 8
+    }
+  }, 
+  {
+    "pk": 43, 
+    "model": "psc.lga", 
+    "fields": {
+      "code": "043", 
+      "name": "Omala", 
+      "parent": 8
+    }
+  }, 
+  {
     "pk": 44, 
     "model": "psc.lga", 
     "fields": {
-      "code": "1", 
-      "name": "Katsina-Ala", 
-      "parent": null
+      "code": "044", 
+      "name": "Ijumu", 
+      "parent": 9
     }
   }, 
   {
     "pk": 45, 
     "model": "psc.lga", 
     "fields": {
-      "code": "2", 
-      "name": "Konshisha", 
-      "parent": null
+      "code": "045", 
+      "name": "Kabba-Bunu", 
+      "parent": 9
     }
   }, 
   {
     "pk": 46, 
     "model": "psc.lga", 
     "fields": {
-      "code": "3", 
-      "name": "Kwande", 
-      "parent": null
+      "code": "046", 
+      "name": "Kogi", 
+      "parent": 9
     }
   }, 
   {
     "pk": 47, 
     "model": "psc.lga", 
     "fields": {
-      "code": "4", 
-      "name": "Logo", 
-      "parent": null
+      "code": "047", 
+      "name": "Lokoja", 
+      "parent": 9
     }
   }, 
   {
     "pk": 48, 
     "model": "psc.lga", 
     "fields": {
-      "code": "5", 
-      "name": "Ukum", 
-      "parent": null
+      "code": "048", 
+      "name": "Mopa-Muro", 
+      "parent": 9
     }
   }, 
   {
     "pk": 49, 
     "model": "psc.lga", 
     "fields": {
-      "code": "6", 
-      "name": "Ushongo", 
-      "parent": null
+      "code": "049", 
+      "name": "Yagba East", 
+      "parent": 9
     }
   }, 
   {
     "pk": 50, 
     "model": "psc.lga", 
     "fields": {
-      "code": "7", 
-      "name": "Vandeikya", 
-      "parent": null
+      "code": "050", 
+      "name": "Yagba West", 
+      "parent": 9
     }
   }, 
   {
     "pk": 51, 
     "model": "psc.lga", 
     "fields": {
-      "code": "8", 
-      "name": "Buruku", 
-      "parent": null
+      "code": "051", 
+      "name": "Asa", 
+      "parent": 10
     }
   }, 
   {
     "pk": 52, 
     "model": "psc.lga", 
     "fields": {
-      "code": "9", 
-      "name": "Gboko", 
-      "parent": null
+      "code": "052", 
+      "name": "Ilorin East", 
+      "parent": 10
     }
   }, 
   {
     "pk": 53, 
     "model": "psc.lga", 
     "fields": {
-      "code": "10", 
-      "name": "Guma", 
-      "parent": null
+      "code": "053", 
+      "name": "Ilorin South", 
+      "parent": 10
     }
   }, 
   {
     "pk": 54, 
     "model": "psc.lga", 
     "fields": {
-      "code": "11", 
-      "name": "Gwer East", 
-      "parent": null
+      "code": "054", 
+      "name": "Ilorin West", 
+      "parent": 10
     }
   }, 
   {
     "pk": 55, 
     "model": "psc.lga", 
     "fields": {
-      "code": "12", 
-      "name": "Gwer West", 
-      "parent": null
+      "code": "055", 
+      "name": "Baruten", 
+      "parent": 11
     }
   }, 
   {
     "pk": 56, 
     "model": "psc.lga", 
     "fields": {
-      "code": "13", 
-      "name": "Makurdi", 
-      "parent": null
+      "code": "056", 
+      "name": "Edu", 
+      "parent": 11
     }
   }, 
   {
     "pk": 57, 
     "model": "psc.lga", 
     "fields": {
-      "code": "14", 
-      "name": "Tarka", 
-      "parent": null
+      "code": "057", 
+      "name": "Kaiama", 
+      "parent": 11
     }
   }, 
   {
     "pk": 58, 
     "model": "psc.lga", 
     "fields": {
-      "code": "15", 
-      "name": "Ado", 
-      "parent": null
+      "code": "058", 
+      "name": "Moro", 
+      "parent": 11
     }
   }, 
   {
     "pk": 59, 
     "model": "psc.lga", 
     "fields": {
-      "code": "16", 
-      "name": "Agatu", 
-      "parent": null
+      "code": "059", 
+      "name": "Pategi", 
+      "parent": 11
     }
   }, 
   {
     "pk": 60, 
     "model": "psc.lga", 
     "fields": {
-      "code": "17", 
-      "name": "Apa", 
-      "parent": null
+      "code": "060", 
+      "name": "Ekiti", 
+      "parent": 12
     }
   }, 
   {
     "pk": 61, 
     "model": "psc.lga", 
     "fields": {
-      "code": "18", 
-      "name": "Obi", 
-      "parent": null
+      "code": "061", 
+      "name": "Ifelodun", 
+      "parent": 12
     }
   }, 
   {
     "pk": 62, 
     "model": "psc.lga", 
     "fields": {
-      "code": "19", 
-      "name": "Ogbadibo", 
-      "parent": null
+      "code": "062", 
+      "name": "Irepodun", 
+      "parent": 12
     }
   }, 
   {
     "pk": 63, 
     "model": "psc.lga", 
     "fields": {
-      "code": "20", 
-      "name": "Ohimini", 
-      "parent": null
+      "code": "063", 
+      "name": "Isin", 
+      "parent": 12
     }
   }, 
   {
     "pk": 64, 
     "model": "psc.lga", 
     "fields": {
-      "code": "21", 
-      "name": "Oju", 
-      "parent": null
+      "code": "064", 
+      "name": "Offa", 
+      "parent": 12
     }
   }, 
   {
     "pk": 65, 
     "model": "psc.lga", 
     "fields": {
-      "code": "22", 
-      "name": "Okpokwu", 
-      "parent": null
+      "code": "065", 
+      "name": "Oke-Ero", 
+      "parent": 12
     }
   }, 
   {
     "pk": 66, 
     "model": "psc.lga", 
     "fields": {
-      "code": "23", 
-      "name": "Oturkpo", 
-      "parent": null
+      "code": "066", 
+      "name": "Oyun", 
+      "parent": 12
     }
   }, 
   {
     "pk": 67, 
     "model": "psc.lga", 
     "fields": {
-      "code": "24", 
-      "name": "Abaji", 
-      "parent": null
+      "code": "067", 
+      "name": "Akwanga", 
+      "parent": 13
     }
   }, 
   {
     "pk": 68, 
     "model": "psc.lga", 
     "fields": {
-      "code": "25", 
-      "name": "Kwali", 
-      "parent": null
+      "code": "068", 
+      "name": "Nasarawa Egon", 
+      "parent": 13
     }
   }, 
   {
     "pk": 69, 
     "model": "psc.lga", 
     "fields": {
-      "code": "26", 
-      "name": "Abuja Municipal", 
-      "parent": null
+      "code": "069", 
+      "name": "Wamba", 
+      "parent": 13
     }
   }, 
   {
     "pk": 70, 
     "model": "psc.lga", 
     "fields": {
-      "code": "27", 
-      "name": "Bwari", 
-      "parent": null
+      "code": "070", 
+      "name": "Awe", 
+      "parent": 14
     }
   }, 
   {
     "pk": 71, 
     "model": "psc.lga", 
     "fields": {
-      "code": "28", 
-      "name": "Gwagwalada", 
-      "parent": null
+      "code": "071", 
+      "name": "Doma", 
+      "parent": 14
     }
   }, 
   {
     "pk": 72, 
     "model": "psc.lga", 
     "fields": {
-      "code": "29", 
-      "name": "Kuje", 
-      "parent": null
+      "code": "072", 
+      "name": "Keana", 
+      "parent": 14
     }
   }, 
   {
     "pk": 73, 
     "model": "psc.lga", 
     "fields": {
-      "code": "30", 
-      "name": "Adavi", 
-      "parent": null
+      "code": "073", 
+      "name": "Lafia", 
+      "parent": 14
     }
   }, 
   {
     "pk": 74, 
     "model": "psc.lga", 
     "fields": {
-      "code": "31", 
-      "name": "Ajaokuta", 
-      "parent": null
+      "code": "074", 
+      "name": "Obi", 
+      "parent": 14
     }
   }, 
   {
     "pk": 75, 
     "model": "psc.lga", 
     "fields": {
-      "code": "32", 
-      "name": "Ogori-Magongo", 
-      "parent": null
+      "code": "075", 
+      "name": "Karu", 
+      "parent": 15
     }
   }, 
   {
     "pk": 76, 
     "model": "psc.lga", 
     "fields": {
-      "code": "33", 
-      "name": "Okehi", 
-      "parent": null
+      "code": "076", 
+      "name": "Keffi", 
+      "parent": 15
     }
   }, 
   {
     "pk": 77, 
     "model": "psc.lga", 
     "fields": {
-      "code": "34", 
-      "name": "Okene", 
-      "parent": null
+      "code": "077", 
+      "name": "Kokona", 
+      "parent": 15
     }
   }, 
   {
     "pk": 78, 
     "model": "psc.lga", 
     "fields": {
-      "code": "35", 
-      "name": "Ankpa", 
-      "parent": null
+      "code": "078", 
+      "name": "Nasarawa", 
+      "parent": 15
     }
   }, 
   {
     "pk": 79, 
     "model": "psc.lga", 
     "fields": {
-      "code": "36", 
-      "name": "Bassa", 
-      "parent": null
+      "code": "079", 
+      "name": "Toto", 
+      "parent": 15
     }
   }, 
   {
     "pk": 80, 
     "model": "psc.lga", 
     "fields": {
-      "code": "37", 
-      "name": "Dekina", 
-      "parent": null
+      "code": "080", 
+      "name": "Bosso", 
+      "parent": 16
     }
   }, 
   {
     "pk": 81, 
     "model": "psc.lga", 
     "fields": {
-      "code": "38", 
-      "name": "Ibaji", 
-      "parent": null
+      "code": "081", 
+      "name": "Chanchanga", 
+      "parent": 16
     }
   }, 
   {
     "pk": 82, 
     "model": "psc.lga", 
     "fields": {
-      "code": "39", 
-      "name": "Idah", 
-      "parent": null
+      "code": "082", 
+      "name": "Gurara", 
+      "parent": 16
     }
   }, 
   {
     "pk": 83, 
     "model": "psc.lga", 
     "fields": {
-      "code": "40", 
-      "name": "Igalamela-Odolu", 
-      "parent": null
+      "code": "083", 
+      "name": "Munya", 
+      "parent": 16
     }
   }, 
   {
     "pk": 84, 
     "model": "psc.lga", 
     "fields": {
-      "code": "41", 
-      "name": "Ofu", 
-      "parent": null
+      "code": "084", 
+      "name": "Paikoro", 
+      "parent": 16
     }
   }, 
   {
     "pk": 85, 
     "model": "psc.lga", 
     "fields": {
-      "code": "42", 
-      "name": "Olamaboro", 
-      "parent": null
+      "code": "085", 
+      "name": "Rafi", 
+      "parent": 16
     }
   }, 
   {
     "pk": 86, 
     "model": "psc.lga", 
     "fields": {
-      "code": "43", 
-      "name": "Omala", 
-      "parent": null
+      "code": "086", 
+      "name": "Shiroro", 
+      "parent": 16
     }
   }, 
   {
     "pk": 87, 
     "model": "psc.lga", 
     "fields": {
-      "code": "44", 
-      "name": "Ijumu", 
-      "parent": null
+      "code": "087", 
+      "name": "Suleja", 
+      "parent": 16
     }
   }, 
   {
     "pk": 88, 
     "model": "psc.lga", 
     "fields": {
-      "code": "45", 
-      "name": "Kabba-Bunu", 
-      "parent": null
+      "code": "088", 
+      "name": "Tafa", 
+      "parent": 16
     }
   }, 
   {
     "pk": 89, 
     "model": "psc.lga", 
     "fields": {
-      "code": "46", 
-      "name": "Kogi", 
-      "parent": null
+      "code": "089", 
+      "name": "Agwara", 
+      "parent": 17
     }
   }, 
   {
     "pk": 90, 
     "model": "psc.lga", 
     "fields": {
-      "code": "47", 
-      "name": "Lokoja", 
-      "parent": null
+      "code": "090", 
+      "name": "Borgu", 
+      "parent": 17
     }
   }, 
   {
     "pk": 91, 
     "model": "psc.lga", 
     "fields": {
-      "code": "48", 
-      "name": "Mopa-Muro", 
-      "parent": null
+      "code": "091", 
+      "name": "Kontagora", 
+      "parent": 17
     }
   }, 
   {
     "pk": 92, 
     "model": "psc.lga", 
     "fields": {
-      "code": "49", 
-      "name": "Yagba East", 
-      "parent": null
+      "code": "092", 
+      "name": "Magama", 
+      "parent": 17
     }
   }, 
   {
     "pk": 93, 
     "model": "psc.lga", 
     "fields": {
-      "code": "50", 
-      "name": "Yagba West", 
-      "parent": null
+      "code": "093", 
+      "name": "Mariga", 
+      "parent": 17
     }
   }, 
   {
     "pk": 94, 
     "model": "psc.lga", 
     "fields": {
-      "code": "51", 
-      "name": "Asa", 
-      "parent": null
+      "code": "094", 
+      "name": "Mashegu", 
+      "parent": 17
     }
   }, 
   {
     "pk": 95, 
     "model": "psc.lga", 
     "fields": {
-      "code": "52", 
-      "name": "Ilorin East", 
-      "parent": null
+      "code": "095", 
+      "name": "Rijau", 
+      "parent": 17
     }
   }, 
   {
     "pk": 96, 
     "model": "psc.lga", 
     "fields": {
-      "code": "53", 
-      "name": "Ilorin South", 
-      "parent": null
+      "code": "096", 
+      "name": "Wushishi", 
+      "parent": 17
     }
   }, 
   {
     "pk": 97, 
     "model": "psc.lga", 
     "fields": {
-      "code": "54", 
-      "name": "Ilorin West", 
-      "parent": null
+      "code": "097", 
+      "name": "Agaie", 
+      "parent": 18
     }
   }, 
   {
     "pk": 98, 
     "model": "psc.lga", 
     "fields": {
-      "code": "55", 
-      "name": "Baruten", 
-      "parent": null
+      "code": "098", 
+      "name": "Bida", 
+      "parent": 18
     }
   }, 
   {
     "pk": 99, 
     "model": "psc.lga", 
     "fields": {
-      "code": "56", 
-      "name": "Edu", 
-      "parent": null
+      "code": "099", 
+      "name": "Edati", 
+      "parent": 18
     }
   }, 
   {
     "pk": 100, 
     "model": "psc.lga", 
     "fields": {
-      "code": "57", 
-      "name": "Kaiama", 
-      "parent": null
+      "code": "100", 
+      "name": "Gbako", 
+      "parent": 18
     }
   }, 
   {
     "pk": 101, 
     "model": "psc.lga", 
     "fields": {
-      "code": "58", 
-      "name": "Moro", 
-      "parent": null
+      "code": "101", 
+      "name": "Katcha", 
+      "parent": 18
     }
   }, 
   {
     "pk": 102, 
     "model": "psc.lga", 
     "fields": {
-      "code": "59", 
-      "name": "Pategi", 
-      "parent": null
+      "code": "102", 
+      "name": "Lapai", 
+      "parent": 18
     }
   }, 
   {
     "pk": 103, 
     "model": "psc.lga", 
     "fields": {
-      "code": "60", 
-      "name": "Ekiti", 
-      "parent": null
+      "code": "103", 
+      "name": "Lavun", 
+      "parent": 18
     }
   }, 
   {
     "pk": 104, 
     "model": "psc.lga", 
     "fields": {
-      "code": "61", 
-      "name": "Ifelodun", 
-      "parent": null
+      "code": "104", 
+      "name": "Mokwa", 
+      "parent": 18
     }
   }, 
   {
     "pk": 105, 
     "model": "psc.lga", 
     "fields": {
-      "code": "62", 
-      "name": "Irepodun", 
-      "parent": null
+      "code": "105", 
+      "name": "Bokkos", 
+      "parent": 19
     }
   }, 
   {
     "pk": 106, 
     "model": "psc.lga", 
     "fields": {
-      "code": "63", 
-      "name": "Isin", 
-      "parent": null
+      "code": "106", 
+      "name": "Kanam", 
+      "parent": 19
     }
   }, 
   {
     "pk": 107, 
     "model": "psc.lga", 
     "fields": {
-      "code": "64", 
-      "name": "Offa", 
-      "parent": null
+      "code": "107", 
+      "name": "Kanke", 
+      "parent": 19
     }
   }, 
   {
     "pk": 108, 
     "model": "psc.lga", 
     "fields": {
-      "code": "65", 
-      "name": "Oke-Ero", 
-      "parent": null
+      "code": "108", 
+      "name": "Mangu", 
+      "parent": 19
     }
   }, 
   {
     "pk": 109, 
     "model": "psc.lga", 
     "fields": {
-      "code": "66", 
-      "name": "Oyun", 
-      "parent": null
+      "code": "109", 
+      "name": "Pankshin", 
+      "parent": 19
     }
   }, 
   {
     "pk": 110, 
     "model": "psc.lga", 
     "fields": {
-      "code": "67", 
-      "name": "Akwanga", 
-      "parent": null
+      "code": "110", 
+      "name": "Barkin Ladi", 
+      "parent": 20
     }
   }, 
   {
     "pk": 111, 
     "model": "psc.lga", 
     "fields": {
-      "code": "68", 
-      "name": "Nasarawa Egon", 
-      "parent": null
+      "code": "111", 
+      "name": "Bassa", 
+      "parent": 20
     }
   }, 
   {
     "pk": 112, 
     "model": "psc.lga", 
     "fields": {
-      "code": "69", 
-      "name": "Wamba", 
-      "parent": null
+      "code": "112", 
+      "name": "Jos East", 
+      "parent": 20
     }
   }, 
   {
     "pk": 113, 
     "model": "psc.lga", 
     "fields": {
-      "code": "70", 
-      "name": "Awe", 
-      "parent": null
+      "code": "113", 
+      "name": "Jos North", 
+      "parent": 20
     }
   }, 
   {
     "pk": 114, 
     "model": "psc.lga", 
     "fields": {
-      "code": "71", 
-      "name": "Doma", 
-      "parent": null
+      "code": "114", 
+      "name": "Jos South", 
+      "parent": 20
     }
   }, 
   {
     "pk": 115, 
     "model": "psc.lga", 
     "fields": {
-      "code": "72", 
-      "name": "Keana", 
-      "parent": null
+      "code": "115", 
+      "name": "Riyom", 
+      "parent": 20
     }
   }, 
   {
     "pk": 116, 
     "model": "psc.lga", 
     "fields": {
-      "code": "73", 
-      "name": "Lafia", 
-      "parent": null
+      "code": "116", 
+      "name": "Langtang North", 
+      "parent": 21
     }
   }, 
   {
     "pk": 117, 
     "model": "psc.lga", 
     "fields": {
-      "code": "74", 
-      "name": "Obi", 
-      "parent": null
+      "code": "117", 
+      "name": "Langtang South", 
+      "parent": 21
     }
   }, 
   {
     "pk": 118, 
     "model": "psc.lga", 
     "fields": {
-      "code": "75", 
-      "name": "Karu", 
-      "parent": null
+      "code": "118", 
+      "name": "Mikang", 
+      "parent": 21
     }
   }, 
   {
     "pk": 119, 
     "model": "psc.lga", 
     "fields": {
-      "code": "76", 
-      "name": "Keffi", 
-      "parent": null
+      "code": "119", 
+      "name": "Qua'an Pan", 
+      "parent": 21
     }
   }, 
   {
     "pk": 120, 
     "model": "psc.lga", 
     "fields": {
-      "code": "77", 
-      "name": "Kokona", 
-      "parent": null
+      "code": "120", 
+      "name": "Shendam", 
+      "parent": 21
     }
   }, 
   {
     "pk": 121, 
     "model": "psc.lga", 
     "fields": {
-      "code": "78", 
-      "name": "Nasarawa", 
-      "parent": null
+      "code": "121", 
+      "name": "Wase", 
+      "parent": 21
     }
   }, 
   {
     "pk": 122, 
     "model": "psc.lga", 
     "fields": {
-      "code": "79", 
-      "name": "Toto", 
-      "parent": null
+      "code": "122", 
+      "name": "Fufore", 
+      "parent": 22
     }
   }, 
   {
     "pk": 123, 
     "model": "psc.lga", 
     "fields": {
-      "code": "80", 
-      "name": "Bosso", 
-      "parent": null
+      "code": "123", 
+      "name": "Girei", 
+      "parent": 22
     }
   }, 
   {
     "pk": 124, 
     "model": "psc.lga", 
     "fields": {
-      "code": "81", 
-      "name": "Chanchanga", 
-      "parent": null
+      "code": "124", 
+      "name": "Gombi", 
+      "parent": 22
     }
   }, 
   {
     "pk": 125, 
     "model": "psc.lga", 
     "fields": {
-      "code": "82", 
-      "name": "Gurara", 
-      "parent": null
+      "code": "125", 
+      "name": "Hong", 
+      "parent": 22
     }
   }, 
   {
     "pk": 126, 
     "model": "psc.lga", 
     "fields": {
-      "code": "83", 
-      "name": "Munya", 
-      "parent": null
+      "code": "126", 
+      "name": "Song", 
+      "parent": 22
     }
   }, 
   {
     "pk": 127, 
     "model": "psc.lga", 
     "fields": {
-      "code": "84", 
-      "name": "Paikoro", 
-      "parent": null
+      "code": "127", 
+      "name": "Yola North", 
+      "parent": 22
     }
   }, 
   {
     "pk": 128, 
     "model": "psc.lga", 
     "fields": {
-      "code": "85", 
-      "name": "Rafi", 
-      "parent": null
+      "code": "128", 
+      "name": "Yola South", 
+      "parent": 22
     }
   }, 
   {
     "pk": 129, 
     "model": "psc.lga", 
     "fields": {
-      "code": "86", 
-      "name": "Shiroro", 
-      "parent": null
+      "code": "129", 
+      "name": "Madagali", 
+      "parent": 23
     }
   }, 
   {
     "pk": 130, 
     "model": "psc.lga", 
     "fields": {
-      "code": "87", 
-      "name": "Suleja", 
-      "parent": null
+      "code": "130", 
+      "name": "Maiha", 
+      "parent": 23
     }
   }, 
   {
     "pk": 131, 
     "model": "psc.lga", 
     "fields": {
-      "code": "88", 
-      "name": "Tafa", 
-      "parent": null
+      "code": "131", 
+      "name": "Michika", 
+      "parent": 23
     }
   }, 
   {
     "pk": 132, 
     "model": "psc.lga", 
     "fields": {
-      "code": "89", 
-      "name": "Agwara", 
-      "parent": null
+      "code": "132", 
+      "name": "Mubi North", 
+      "parent": 23
     }
   }, 
   {
     "pk": 133, 
     "model": "psc.lga", 
     "fields": {
-      "code": "90", 
-      "name": "Borgu", 
-      "parent": null
+      "code": "133", 
+      "name": "Mubi South", 
+      "parent": 23
     }
   }, 
   {
     "pk": 134, 
     "model": "psc.lga", 
     "fields": {
-      "code": "91", 
-      "name": "Kontagora", 
-      "parent": null
+      "code": "134", 
+      "name": "Demsa", 
+      "parent": 24
     }
   }, 
   {
     "pk": 135, 
     "model": "psc.lga", 
     "fields": {
-      "code": "92", 
-      "name": "Magama", 
-      "parent": null
+      "code": "135", 
+      "name": "Ganye", 
+      "parent": 24
     }
   }, 
   {
     "pk": 136, 
     "model": "psc.lga", 
     "fields": {
-      "code": "93", 
-      "name": "Mariga", 
-      "parent": null
+      "code": "136", 
+      "name": "Guyuk", 
+      "parent": 24
     }
   }, 
   {
     "pk": 137, 
     "model": "psc.lga", 
     "fields": {
-      "code": "94", 
-      "name": "Mashegu", 
-      "parent": null
+      "code": "137", 
+      "name": "Jada", 
+      "parent": 24
     }
   }, 
   {
     "pk": 138, 
     "model": "psc.lga", 
     "fields": {
-      "code": "95", 
-      "name": "Rijau", 
-      "parent": null
+      "code": "138", 
+      "name": "Lamurde", 
+      "parent": 24
     }
   }, 
   {
     "pk": 139, 
     "model": "psc.lga", 
     "fields": {
-      "code": "96", 
-      "name": "Wushishi", 
-      "parent": null
+      "code": "139", 
+      "name": "Mayo-Belwa", 
+      "parent": 24
     }
   }, 
   {
     "pk": 140, 
     "model": "psc.lga", 
     "fields": {
-      "code": "97", 
-      "name": "Agaie", 
-      "parent": null
+      "code": "140", 
+      "name": "Numan", 
+      "parent": 24
     }
   }, 
   {
     "pk": 141, 
     "model": "psc.lga", 
     "fields": {
-      "code": "98", 
-      "name": "Bida", 
-      "parent": null
+      "code": "141", 
+      "name": "Shelleng", 
+      "parent": 24
     }
   }, 
   {
     "pk": 142, 
     "model": "psc.lga", 
     "fields": {
-      "code": "99", 
-      "name": "Edati", 
-      "parent": null
+      "code": "142", 
+      "name": "Toungo", 
+      "parent": 24
     }
   }, 
   {
     "pk": 143, 
     "model": "psc.lga", 
     "fields": {
-      "code": "100", 
-      "name": "Gbako", 
-      "parent": null
+      "code": "143", 
+      "name": "Damban", 
+      "parent": 25
     }
   }, 
   {
     "pk": 144, 
     "model": "psc.lga", 
     "fields": {
-      "code": "101", 
-      "name": "Katcha", 
-      "parent": null
+      "code": "144", 
+      "name": "Darazo", 
+      "parent": 25
     }
   }, 
   {
     "pk": 145, 
     "model": "psc.lga", 
     "fields": {
-      "code": "102", 
-      "name": "Lapai", 
-      "parent": null
+      "code": "145", 
+      "name": "Ganjuwa", 
+      "parent": 25
     }
   }, 
   {
     "pk": 146, 
     "model": "psc.lga", 
     "fields": {
-      "code": "103", 
-      "name": "Lavun", 
-      "parent": null
+      "code": "146", 
+      "name": "Misau", 
+      "parent": 25
     }
   }, 
   {
     "pk": 147, 
     "model": "psc.lga", 
     "fields": {
-      "code": "104", 
-      "name": "Mokwa", 
-      "parent": null
+      "code": "147", 
+      "name": "Ningi", 
+      "parent": 25
     }
   }, 
   {
     "pk": 148, 
     "model": "psc.lga", 
     "fields": {
-      "code": "105", 
-      "name": "Bokkos", 
-      "parent": null
+      "code": "148", 
+      "name": "Warji", 
+      "parent": 25
     }
   }, 
   {
     "pk": 149, 
     "model": "psc.lga", 
     "fields": {
-      "code": "106", 
-      "name": "Kanam", 
-      "parent": null
+      "code": "149", 
+      "name": "Gamawa", 
+      "parent": 26
     }
   }, 
   {
     "pk": 150, 
     "model": "psc.lga", 
     "fields": {
-      "code": "107", 
-      "name": "Kanke", 
-      "parent": null
+      "code": "150", 
+      "name": "Giade", 
+      "parent": 26
     }
   }, 
   {
     "pk": 151, 
     "model": "psc.lga", 
     "fields": {
-      "code": "108", 
-      "name": "Mangu", 
-      "parent": null
+      "code": "151", 
+      "name": "Itas-Gadau", 
+      "parent": 26
     }
   }, 
   {
     "pk": 152, 
     "model": "psc.lga", 
     "fields": {
-      "code": "109", 
-      "name": "Pankshin", 
-      "parent": null
+      "code": "152", 
+      "name": "Jama'are", 
+      "parent": 26
     }
   }, 
   {
     "pk": 153, 
     "model": "psc.lga", 
     "fields": {
-      "code": "110", 
-      "name": "Barkin Ladi", 
-      "parent": null
+      "code": "153", 
+      "name": "Katagum", 
+      "parent": 26
     }
   }, 
   {
     "pk": 154, 
     "model": "psc.lga", 
     "fields": {
-      "code": "111", 
-      "name": "Bassa", 
-      "parent": null
+      "code": "154", 
+      "name": "Shira", 
+      "parent": 26
     }
   }, 
   {
     "pk": 155, 
     "model": "psc.lga", 
     "fields": {
-      "code": "112", 
-      "name": "Jos East", 
-      "parent": null
+      "code": "155", 
+      "name": "Zaki", 
+      "parent": 26
     }
   }, 
   {
     "pk": 156, 
     "model": "psc.lga", 
     "fields": {
-      "code": "113", 
-      "name": "Jos North", 
-      "parent": null
+      "code": "156", 
+      "name": "Alkaleri", 
+      "parent": 27
     }
   }, 
   {
     "pk": 157, 
     "model": "psc.lga", 
     "fields": {
-      "code": "114", 
-      "name": "Jos South", 
-      "parent": null
+      "code": "157", 
+      "name": "Bauchi", 
+      "parent": 27
     }
   }, 
   {
     "pk": 158, 
     "model": "psc.lga", 
     "fields": {
-      "code": "115", 
-      "name": "Riyom", 
-      "parent": null
+      "code": "158", 
+      "name": "Bogoro", 
+      "parent": 27
     }
   }, 
   {
     "pk": 159, 
     "model": "psc.lga", 
     "fields": {
-      "code": "116", 
-      "name": "Langtang North", 
-      "parent": null
+      "code": "159", 
+      "name": "Dass", 
+      "parent": 27
     }
   }, 
   {
     "pk": 160, 
     "model": "psc.lga", 
     "fields": {
-      "code": "117", 
-      "name": "Langtang South", 
-      "parent": null
+      "code": "160", 
+      "name": "Kirfi", 
+      "parent": 27
     }
   }, 
   {
     "pk": 161, 
     "model": "psc.lga", 
     "fields": {
-      "code": "118", 
-      "name": "Mikang", 
-      "parent": null
+      "code": "161", 
+      "name": "Tafawa Balewa", 
+      "parent": 27
     }
   }, 
   {
     "pk": 162, 
     "model": "psc.lga", 
     "fields": {
-      "code": "119", 
-      "name": "Qua'an Pan", 
-      "parent": null
+      "code": "162", 
+      "name": "Toro", 
+      "parent": 27
     }
   }, 
   {
     "pk": 163, 
     "model": "psc.lga", 
     "fields": {
-      "code": "120", 
-      "name": "Shendam", 
-      "parent": null
+      "code": "163", 
+      "name": "Bama", 
+      "parent": 28
     }
   }, 
   {
     "pk": 164, 
     "model": "psc.lga", 
     "fields": {
-      "code": "121", 
-      "name": "Wase", 
-      "parent": null
+      "code": "164", 
+      "name": "Dikwa", 
+      "parent": 28
     }
   }, 
   {
     "pk": 165, 
     "model": "psc.lga", 
     "fields": {
-      "code": "122", 
-      "name": "Fufore", 
-      "parent": null
+      "code": "165", 
+      "name": "Jere", 
+      "parent": 28
     }
   }, 
   {
     "pk": 166, 
     "model": "psc.lga", 
     "fields": {
-      "code": "123", 
-      "name": "Girei", 
-      "parent": null
+      "code": "166", 
+      "name": "Kala-Balge", 
+      "parent": 28
     }
   }, 
   {
     "pk": 167, 
     "model": "psc.lga", 
     "fields": {
-      "code": "124", 
-      "name": "Gombi", 
-      "parent": null
+      "code": "167", 
+      "name": "Konduga", 
+      "parent": 28
     }
   }, 
   {
     "pk": 168, 
     "model": "psc.lga", 
     "fields": {
-      "code": "125", 
-      "name": "Hong", 
-      "parent": null
+      "code": "168", 
+      "name": "Mafa", 
+      "parent": 28
     }
   }, 
   {
     "pk": 169, 
     "model": "psc.lga", 
     "fields": {
-      "code": "126", 
-      "name": "Song", 
-      "parent": null
+      "code": "169", 
+      "name": "Maiduguri Metropolitan", 
+      "parent": 28
     }
   }, 
   {
     "pk": 170, 
     "model": "psc.lga", 
     "fields": {
-      "code": "127", 
-      "name": "Yola North", 
-      "parent": null
+      "code": "170", 
+      "name": "Ngala", 
+      "parent": 28
     }
   }, 
   {
     "pk": 171, 
     "model": "psc.lga", 
     "fields": {
-      "code": "128", 
-      "name": "Yola South", 
-      "parent": null
+      "code": "171", 
+      "name": "Abadam", 
+      "parent": 29
     }
   }, 
   {
     "pk": 172, 
     "model": "psc.lga", 
     "fields": {
-      "code": "129", 
-      "name": "Madagali", 
-      "parent": null
+      "code": "172", 
+      "name": "Gubio", 
+      "parent": 29
     }
   }, 
   {
     "pk": 173, 
     "model": "psc.lga", 
     "fields": {
-      "code": "130", 
-      "name": "Maiha", 
-      "parent": null
+      "code": "173", 
+      "name": "Guzamala", 
+      "parent": 29
     }
   }, 
   {
     "pk": 174, 
     "model": "psc.lga", 
     "fields": {
-      "code": "131", 
-      "name": "Michika", 
-      "parent": null
+      "code": "174", 
+      "name": "Kaga", 
+      "parent": 29
     }
   }, 
   {
     "pk": 175, 
     "model": "psc.lga", 
     "fields": {
-      "code": "132", 
-      "name": "Mubi North", 
-      "parent": null
+      "code": "175", 
+      "name": "Kukawa", 
+      "parent": 29
     }
   }, 
   {
     "pk": 176, 
     "model": "psc.lga", 
     "fields": {
-      "code": "133", 
-      "name": "Mubi South", 
-      "parent": null
+      "code": "176", 
+      "name": "Magumeri", 
+      "parent": 29
     }
   }, 
   {
     "pk": 177, 
     "model": "psc.lga", 
     "fields": {
-      "code": "134", 
-      "name": "Demsa", 
-      "parent": null
+      "code": "177", 
+      "name": "Marte", 
+      "parent": 29
     }
   }, 
   {
     "pk": 178, 
     "model": "psc.lga", 
     "fields": {
-      "code": "135", 
-      "name": "Ganye", 
-      "parent": null
+      "code": "178", 
+      "name": "Mobbar", 
+      "parent": 29
     }
   }, 
   {
     "pk": 179, 
     "model": "psc.lga", 
     "fields": {
-      "code": "136", 
-      "name": "Guyuk", 
-      "parent": null
+      "code": "179", 
+      "name": "Monguno", 
+      "parent": 29
     }
   }, 
   {
     "pk": 180, 
     "model": "psc.lga", 
     "fields": {
-      "code": "137", 
-      "name": "Jada", 
-      "parent": null
+      "code": "180", 
+      "name": "Nganzai", 
+      "parent": 29
     }
   }, 
   {
     "pk": 181, 
     "model": "psc.lga", 
     "fields": {
-      "code": "138", 
-      "name": "Lamurde", 
-      "parent": null
+      "code": "181", 
+      "name": "Askira-Uba", 
+      "parent": 30
     }
   }, 
   {
     "pk": 182, 
     "model": "psc.lga", 
     "fields": {
-      "code": "139", 
-      "name": "Mayo-Belwa", 
-      "parent": null
+      "code": "182", 
+      "name": "Bayo", 
+      "parent": 30
     }
   }, 
   {
     "pk": 183, 
     "model": "psc.lga", 
     "fields": {
-      "code": "140", 
-      "name": "Numan", 
-      "parent": null
+      "code": "183", 
+      "name": "Biu", 
+      "parent": 30
     }
   }, 
   {
     "pk": 184, 
     "model": "psc.lga", 
     "fields": {
-      "code": "141", 
-      "name": "Shelleng", 
-      "parent": null
+      "code": "184", 
+      "name": "Chibok", 
+      "parent": 30
     }
   }, 
   {
     "pk": 185, 
     "model": "psc.lga", 
     "fields": {
-      "code": "142", 
-      "name": "Toungo", 
-      "parent": null
+      "code": "185", 
+      "name": "Damboa", 
+      "parent": 30
     }
   }, 
   {
     "pk": 186, 
     "model": "psc.lga", 
     "fields": {
-      "code": "143", 
-      "name": "Damban", 
-      "parent": null
+      "code": "186", 
+      "name": "Gwoza", 
+      "parent": 30
     }
   }, 
   {
     "pk": 187, 
     "model": "psc.lga", 
     "fields": {
-      "code": "144", 
-      "name": "Darazo", 
-      "parent": null
+      "code": "187", 
+      "name": "Hawul", 
+      "parent": 30
     }
   }, 
   {
     "pk": 188, 
     "model": "psc.lga", 
     "fields": {
-      "code": "145", 
-      "name": "Ganjuwa", 
-      "parent": null
+      "code": "188", 
+      "name": "Kwaya Kusar", 
+      "parent": 30
     }
   }, 
   {
     "pk": 189, 
     "model": "psc.lga", 
     "fields": {
-      "code": "146", 
-      "name": "Misau", 
-      "parent": null
+      "code": "189", 
+      "name": "Shani", 
+      "parent": 30
     }
   }, 
   {
     "pk": 190, 
     "model": "psc.lga", 
     "fields": {
-      "code": "147", 
-      "name": "Ningi", 
-      "parent": null
+      "code": "190", 
+      "name": "Akko", 
+      "parent": 31
     }
   }, 
   {
     "pk": 191, 
     "model": "psc.lga", 
     "fields": {
-      "code": "148", 
-      "name": "Warji", 
-      "parent": null
+      "code": "191", 
+      "name": "Yamaltu-Deba", 
+      "parent": 31
     }
   }, 
   {
     "pk": 192, 
     "model": "psc.lga", 
     "fields": {
-      "code": "149", 
-      "name": "Gamawa", 
-      "parent": null
+      "code": "192", 
+      "name": "Dukku", 
+      "parent": 32
     }
   }, 
   {
     "pk": 193, 
     "model": "psc.lga", 
     "fields": {
-      "code": "150", 
-      "name": "Giade", 
-      "parent": null
+      "code": "193", 
+      "name": "Funakaye", 
+      "parent": 32
     }
   }, 
   {
     "pk": 194, 
     "model": "psc.lga", 
     "fields": {
-      "code": "151", 
-      "name": "Itas-Gadau", 
-      "parent": null
+      "code": "194", 
+      "name": "Gombe", 
+      "parent": 32
     }
   }, 
   {
     "pk": 195, 
     "model": "psc.lga", 
     "fields": {
-      "code": "152", 
-      "name": "Jama'are", 
-      "parent": null
+      "code": "195", 
+      "name": "Kwami", 
+      "parent": 32
     }
   }, 
   {
     "pk": 196, 
     "model": "psc.lga", 
     "fields": {
-      "code": "153", 
-      "name": "Katagum", 
-      "parent": null
+      "code": "196", 
+      "name": "Nafada", 
+      "parent": 32
     }
   }, 
   {
     "pk": 197, 
     "model": "psc.lga", 
     "fields": {
-      "code": "154", 
-      "name": "Shira", 
-      "parent": null
+      "code": "197", 
+      "name": "Balanga", 
+      "parent": 33
     }
   }, 
   {
     "pk": 198, 
     "model": "psc.lga", 
     "fields": {
-      "code": "155", 
-      "name": "Zaki", 
-      "parent": null
+      "code": "198", 
+      "name": "Billiri", 
+      "parent": 33
     }
   }, 
   {
     "pk": 199, 
     "model": "psc.lga", 
     "fields": {
-      "code": "156", 
-      "name": "Alkaleri", 
-      "parent": null
+      "code": "199", 
+      "name": "Kaltungo", 
+      "parent": 33
     }
   }, 
   {
     "pk": 200, 
     "model": "psc.lga", 
     "fields": {
-      "code": "157", 
-      "name": "Bauchi", 
-      "parent": null
+      "code": "200", 
+      "name": "Shongom", 
+      "parent": 33
     }
   }, 
   {
     "pk": 201, 
     "model": "psc.lga", 
     "fields": {
-      "code": "158", 
-      "name": "Bogoro", 
-      "parent": null
+      "code": "201", 
+      "name": "Bali", 
+      "parent": 34
     }
   }, 
   {
     "pk": 202, 
     "model": "psc.lga", 
     "fields": {
-      "code": "159", 
-      "name": "Dass", 
-      "parent": null
+      "code": "202", 
+      "name": "Gashaka", 
+      "parent": 34
     }
   }, 
   {
     "pk": 203, 
     "model": "psc.lga", 
     "fields": {
-      "code": "160", 
-      "name": "Kirfi", 
-      "parent": null
+      "code": "203", 
+      "name": "Gassol", 
+      "parent": 34
     }
   }, 
   {
     "pk": 204, 
     "model": "psc.lga", 
     "fields": {
-      "code": "161", 
-      "name": "Tafawa Balewa", 
-      "parent": null
+      "code": "204", 
+      "name": "Kurmi", 
+      "parent": 34
     }
   }, 
   {
     "pk": 205, 
     "model": "psc.lga", 
     "fields": {
-      "code": "162", 
-      "name": "Toro", 
-      "parent": null
+      "code": "205", 
+      "name": "Sardauna", 
+      "parent": 34
     }
   }, 
   {
     "pk": 206, 
     "model": "psc.lga", 
     "fields": {
-      "code": "163", 
-      "name": "Bama", 
-      "parent": null
+      "code": "206", 
+      "name": "Ardo-Kola", 
+      "parent": 35
     }
   }, 
   {
     "pk": 207, 
     "model": "psc.lga", 
     "fields": {
-      "code": "164", 
-      "name": "Dikwa", 
-      "parent": null
+      "code": "207", 
+      "name": "Jalingo", 
+      "parent": 35
     }
   }, 
   {
     "pk": 208, 
     "model": "psc.lga", 
     "fields": {
-      "code": "165", 
-      "name": "Jere", 
-      "parent": null
+      "code": "208", 
+      "name": "Karim-Lamido", 
+      "parent": 35
     }
   }, 
   {
     "pk": 209, 
     "model": "psc.lga", 
     "fields": {
-      "code": "166", 
-      "name": "Kala-Balge", 
-      "parent": null
+      "code": "209", 
+      "name": "Lau", 
+      "parent": 35
     }
   }, 
   {
     "pk": 210, 
     "model": "psc.lga", 
     "fields": {
-      "code": "167", 
-      "name": "Konduga", 
-      "parent": null
+      "code": "210", 
+      "name": "Yorro", 
+      "parent": 35
     }
   }, 
   {
     "pk": 211, 
     "model": "psc.lga", 
     "fields": {
-      "code": "168", 
-      "name": "Mafa", 
-      "parent": null
+      "code": "211", 
+      "name": "Zing", 
+      "parent": 35
     }
   }, 
   {
     "pk": 212, 
     "model": "psc.lga", 
     "fields": {
-      "code": "169", 
-      "name": "Maiduguri Metropolitan", 
-      "parent": null
+      "code": "212", 
+      "name": "Donga", 
+      "parent": 36
     }
   }, 
   {
     "pk": 213, 
     "model": "psc.lga", 
     "fields": {
-      "code": "170", 
-      "name": "Ngala", 
-      "parent": null
+      "code": "213", 
+      "name": "Ibi", 
+      "parent": 36
     }
   }, 
   {
     "pk": 214, 
     "model": "psc.lga", 
     "fields": {
-      "code": "171", 
-      "name": "Abadam", 
-      "parent": null
+      "code": "214", 
+      "name": "Takum", 
+      "parent": 36
     }
   }, 
   {
     "pk": 215, 
     "model": "psc.lga", 
     "fields": {
-      "code": "172", 
-      "name": "Gubio", 
-      "parent": null
+      "code": "215", 
+      "name": "Ussa", 
+      "parent": 36
     }
   }, 
   {
     "pk": 216, 
     "model": "psc.lga", 
     "fields": {
-      "code": "173", 
-      "name": "Guzamala", 
-      "parent": null
+      "code": "216", 
+      "name": "Wukari", 
+      "parent": 36
     }
   }, 
   {
     "pk": 217, 
     "model": "psc.lga", 
     "fields": {
-      "code": "174", 
-      "name": "Kaga", 
-      "parent": null
+      "code": "217", 
+      "name": "Bursari", 
+      "parent": 37
     }
   }, 
   {
     "pk": 218, 
     "model": "psc.lga", 
     "fields": {
-      "code": "175", 
-      "name": "Kukawa", 
-      "parent": null
+      "code": "218", 
+      "name": "Damaturu", 
+      "parent": 37
     }
   }, 
   {
     "pk": 219, 
     "model": "psc.lga", 
     "fields": {
-      "code": "176", 
-      "name": "Magumeri", 
-      "parent": null
+      "code": "219", 
+      "name": "Geidam", 
+      "parent": 37
     }
   }, 
   {
     "pk": 220, 
     "model": "psc.lga", 
     "fields": {
-      "code": "177", 
-      "name": "Marte", 
-      "parent": null
+      "code": "220", 
+      "name": "Gujba", 
+      "parent": 37
     }
   }, 
   {
     "pk": 221, 
     "model": "psc.lga", 
     "fields": {
-      "code": "178", 
-      "name": "Mobbar", 
-      "parent": null
+      "code": "221", 
+      "name": "Gulani", 
+      "parent": 37
     }
   }, 
   {
     "pk": 222, 
     "model": "psc.lga", 
     "fields": {
-      "code": "179", 
-      "name": "Monguno", 
-      "parent": null
+      "code": "222", 
+      "name": "Tarmuwa", 
+      "parent": 37
     }
   }, 
   {
     "pk": 223, 
     "model": "psc.lga", 
     "fields": {
-      "code": "180", 
-      "name": "Nganzai", 
-      "parent": null
+      "code": "223", 
+      "name": "Yunusari", 
+      "parent": 37
     }
   }, 
   {
     "pk": 224, 
     "model": "psc.lga", 
     "fields": {
-      "code": "181", 
-      "name": "Askira-Uba", 
-      "parent": null
+      "code": "224", 
+      "name": "Bade", 
+      "parent": 38
     }
   }, 
   {
     "pk": 225, 
     "model": "psc.lga", 
     "fields": {
-      "code": "182", 
-      "name": "Bayo", 
-      "parent": null
+      "code": "225", 
+      "name": "Jakusko", 
+      "parent": 38
     }
   }, 
   {
     "pk": 226, 
     "model": "psc.lga", 
     "fields": {
-      "code": "183", 
-      "name": "Biu", 
-      "parent": null
+      "code": "226", 
+      "name": "Karasuwa", 
+      "parent": 38
     }
   }, 
   {
     "pk": 227, 
     "model": "psc.lga", 
     "fields": {
-      "code": "184", 
-      "name": "Chibok", 
-      "parent": null
+      "code": "227", 
+      "name": "Machina", 
+      "parent": 38
     }
   }, 
   {
     "pk": 228, 
     "model": "psc.lga", 
     "fields": {
-      "code": "185", 
-      "name": "Damboa", 
-      "parent": null
+      "code": "228", 
+      "name": "Nguru", 
+      "parent": 38
     }
   }, 
   {
     "pk": 229, 
     "model": "psc.lga", 
     "fields": {
-      "code": "186", 
-      "name": "Gwoza", 
-      "parent": null
+      "code": "229", 
+      "name": "Yusufari", 
+      "parent": 38
     }
   }, 
   {
     "pk": 230, 
     "model": "psc.lga", 
     "fields": {
-      "code": "187", 
-      "name": "Hawul", 
-      "parent": null
+      "code": "230", 
+      "name": "Fika", 
+      "parent": 39
     }
   }, 
   {
     "pk": 231, 
     "model": "psc.lga", 
     "fields": {
-      "code": "188", 
-      "name": "Kwaya Kusar", 
-      "parent": null
+      "code": "231", 
+      "name": "Fune", 
+      "parent": 39
     }
   }, 
   {
     "pk": 232, 
     "model": "psc.lga", 
     "fields": {
-      "code": "189", 
-      "name": "Shani", 
-      "parent": null
+      "code": "232", 
+      "name": "Nangere", 
+      "parent": 39
     }
   }, 
   {
     "pk": 233, 
     "model": "psc.lga", 
     "fields": {
-      "code": "190", 
-      "name": "Akko", 
-      "parent": null
+      "code": "233", 
+      "name": "Potiskum", 
+      "parent": 39
     }
   }, 
   {
     "pk": 234, 
     "model": "psc.lga", 
     "fields": {
-      "code": "191", 
-      "name": "Yamaltu-Deba", 
-      "parent": null
+      "code": "234", 
+      "name": "Auyo", 
+      "parent": 40
     }
   }, 
   {
     "pk": 235, 
     "model": "psc.lga", 
     "fields": {
-      "code": "192", 
-      "name": "Dukku", 
-      "parent": null
+      "code": "235", 
+      "name": "Biriniwa", 
+      "parent": 40
     }
   }, 
   {
     "pk": 236, 
     "model": "psc.lga", 
     "fields": {
-      "code": "193", 
-      "name": "Funakaye", 
-      "parent": null
+      "code": "236", 
+      "name": "Guri", 
+      "parent": 40
     }
   }, 
   {
     "pk": 237, 
     "model": "psc.lga", 
     "fields": {
-      "code": "194", 
-      "name": "Gombe", 
-      "parent": null
+      "code": "237", 
+      "name": "Hadejia", 
+      "parent": 40
     }
   }, 
   {
     "pk": 238, 
     "model": "psc.lga", 
     "fields": {
-      "code": "195", 
-      "name": "Kwami", 
-      "parent": null
+      "code": "238", 
+      "name": "Kafin Hausa", 
+      "parent": 40
     }
   }, 
   {
     "pk": 239, 
     "model": "psc.lga", 
     "fields": {
-      "code": "196", 
-      "name": "Nafada", 
-      "parent": null
+      "code": "239", 
+      "name": "Kaugama", 
+      "parent": 40
     }
   }, 
   {
     "pk": 240, 
     "model": "psc.lga", 
     "fields": {
-      "code": "197", 
-      "name": "Balanga", 
-      "parent": null
+      "code": "240", 
+      "name": "Kiri Kasama", 
+      "parent": 40
     }
   }, 
   {
     "pk": 241, 
     "model": "psc.lga", 
     "fields": {
-      "code": "198", 
-      "name": "Billiri", 
-      "parent": null
+      "code": "241", 
+      "name": "Malam Madori", 
+      "parent": 40
     }
   }, 
   {
     "pk": 242, 
     "model": "psc.lga", 
     "fields": {
-      "code": "199", 
-      "name": "Kaltungo", 
-      "parent": null
+      "code": "242", 
+      "name": "Babura", 
+      "parent": 41
     }
   }, 
   {
     "pk": 243, 
     "model": "psc.lga", 
     "fields": {
-      "code": "200", 
-      "name": "Shongom", 
-      "parent": null
+      "code": "243", 
+      "name": "Gagarawa", 
+      "parent": 41
     }
   }, 
   {
     "pk": 244, 
     "model": "psc.lga", 
     "fields": {
-      "code": "201", 
-      "name": "Bali", 
-      "parent": null
+      "code": "244", 
+      "name": "Garki", 
+      "parent": 41
     }
   }, 
   {
     "pk": 245, 
     "model": "psc.lga", 
     "fields": {
-      "code": "202", 
-      "name": "Gashaka", 
-      "parent": null
+      "code": "245", 
+      "name": "Gumel", 
+      "parent": 41
     }
   }, 
   {
     "pk": 246, 
     "model": "psc.lga", 
     "fields": {
-      "code": "203", 
-      "name": "Gassol", 
-      "parent": null
+      "code": "246", 
+      "name": "Gwiwa", 
+      "parent": 41
     }
   }, 
   {
     "pk": 247, 
     "model": "psc.lga", 
     "fields": {
-      "code": "204", 
-      "name": "Kurmi", 
-      "parent": null
+      "code": "247", 
+      "name": "Kazaure", 
+      "parent": 41
     }
   }, 
   {
     "pk": 248, 
     "model": "psc.lga", 
     "fields": {
-      "code": "205", 
-      "name": "Sardauna", 
-      "parent": null
+      "code": "248", 
+      "name": "Maigatari", 
+      "parent": 41
     }
   }, 
   {
     "pk": 249, 
     "model": "psc.lga", 
     "fields": {
-      "code": "206", 
-      "name": "Ardo-Kola", 
-      "parent": null
+      "code": "249", 
+      "name": "Ringim", 
+      "parent": 41
     }
   }, 
   {
     "pk": 250, 
     "model": "psc.lga", 
     "fields": {
-      "code": "207", 
-      "name": "Jalingo", 
-      "parent": null
+      "code": "250", 
+      "name": "Roni", 
+      "parent": 41
     }
   }, 
   {
     "pk": 251, 
     "model": "psc.lga", 
     "fields": {
-      "code": "208", 
-      "name": "Karim-Lamido", 
-      "parent": null
+      "code": "251", 
+      "name": "Sule Tankarkar", 
+      "parent": 41
     }
   }, 
   {
     "pk": 252, 
     "model": "psc.lga", 
     "fields": {
-      "code": "209", 
-      "name": "Lau", 
-      "parent": null
+      "code": "252", 
+      "name": "Taura", 
+      "parent": 41
     }
   }, 
   {
     "pk": 253, 
     "model": "psc.lga", 
     "fields": {
-      "code": "210", 
-      "name": "Yorro", 
-      "parent": null
+      "code": "253", 
+      "name": "Yankwashi", 
+      "parent": 41
     }
   }, 
   {
     "pk": 254, 
     "model": "psc.lga", 
     "fields": {
-      "code": "211", 
-      "name": "Zing", 
-      "parent": null
+      "code": "254", 
+      "name": "Birnin Kudu", 
+      "parent": 42
     }
   }, 
   {
     "pk": 255, 
     "model": "psc.lga", 
     "fields": {
-      "code": "212", 
-      "name": "Donga", 
-      "parent": null
+      "code": "255", 
+      "name": "Buji", 
+      "parent": 42
     }
   }, 
   {
     "pk": 256, 
     "model": "psc.lga", 
     "fields": {
-      "code": "213", 
-      "name": "Ibi", 
-      "parent": null
+      "code": "256", 
+      "name": "Dutse", 
+      "parent": 42
     }
   }, 
   {
     "pk": 257, 
     "model": "psc.lga", 
     "fields": {
-      "code": "214", 
-      "name": "Takum", 
-      "parent": null
+      "code": "257", 
+      "name": "Gwaram", 
+      "parent": 42
     }
   }, 
   {
     "pk": 258, 
     "model": "psc.lga", 
     "fields": {
-      "code": "215", 
-      "name": "Ussa", 
-      "parent": null
+      "code": "258", 
+      "name": "Jahun", 
+      "parent": 42
     }
   }, 
   {
     "pk": 259, 
     "model": "psc.lga", 
     "fields": {
-      "code": "216", 
-      "name": "Wukari", 
-      "parent": null
+      "code": "259", 
+      "name": "Kiyawa", 
+      "parent": 42
     }
   }, 
   {
     "pk": 260, 
     "model": "psc.lga", 
     "fields": {
-      "code": "217", 
-      "name": "Bursari", 
-      "parent": null
+      "code": "260", 
+      "name": "Miga", 
+      "parent": 42
     }
   }, 
   {
     "pk": 261, 
     "model": "psc.lga", 
     "fields": {
-      "code": "218", 
-      "name": "Damaturu", 
-      "parent": null
+      "code": "261", 
+      "name": "Birnin Gwari", 
+      "parent": 43
     }
   }, 
   {
     "pk": 262, 
     "model": "psc.lga", 
     "fields": {
-      "code": "219", 
-      "name": "Geidam", 
-      "parent": null
+      "code": "262", 
+      "name": "Chikun", 
+      "parent": 43
     }
   }, 
   {
     "pk": 263, 
     "model": "psc.lga", 
     "fields": {
-      "code": "220", 
-      "name": "Gujba", 
-      "parent": null
+      "code": "263", 
+      "name": "Giwa", 
+      "parent": 43
     }
   }, 
   {
     "pk": 264, 
     "model": "psc.lga", 
     "fields": {
-      "code": "221", 
-      "name": "Gulani", 
-      "parent": null
+      "code": "264", 
+      "name": "Igabi", 
+      "parent": 43
     }
   }, 
   {
     "pk": 265, 
     "model": "psc.lga", 
     "fields": {
-      "code": "222", 
-      "name": "Tarmuwa", 
-      "parent": null
+      "code": "265", 
+      "name": "Kaduna North", 
+      "parent": 43
     }
   }, 
   {
     "pk": 266, 
     "model": "psc.lga", 
     "fields": {
-      "code": "223", 
-      "name": "Yunusari", 
-      "parent": null
+      "code": "266", 
+      "name": "Kaduna South", 
+      "parent": 43
     }
   }, 
   {
     "pk": 267, 
     "model": "psc.lga", 
     "fields": {
-      "code": "224", 
-      "name": "Bade", 
-      "parent": null
+      "code": "267", 
+      "name": "Kajuru", 
+      "parent": 43
     }
   }, 
   {
     "pk": 268, 
     "model": "psc.lga", 
     "fields": {
-      "code": "225", 
-      "name": "Jakusko", 
-      "parent": null
+      "code": "268", 
+      "name": "Ikara", 
+      "parent": 44
     }
   }, 
   {
     "pk": 269, 
     "model": "psc.lga", 
     "fields": {
-      "code": "226", 
-      "name": "Karasuwa", 
-      "parent": null
+      "code": "269", 
+      "name": "Kubau", 
+      "parent": 44
     }
   }, 
   {
     "pk": 270, 
     "model": "psc.lga", 
     "fields": {
-      "code": "227", 
-      "name": "Machina", 
-      "parent": null
+      "code": "270", 
+      "name": "Kudan", 
+      "parent": 44
     }
   }, 
   {
     "pk": 271, 
     "model": "psc.lga", 
     "fields": {
-      "code": "228", 
-      "name": "Nguru", 
-      "parent": null
+      "code": "271", 
+      "name": "Lere", 
+      "parent": 44
     }
   }, 
   {
     "pk": 272, 
     "model": "psc.lga", 
     "fields": {
-      "code": "229", 
-      "name": "Yusufari", 
-      "parent": null
+      "code": "272", 
+      "name": "Makarfi", 
+      "parent": 44
     }
   }, 
   {
     "pk": 273, 
     "model": "psc.lga", 
     "fields": {
-      "code": "230", 
-      "name": "Fika", 
-      "parent": null
+      "code": "273", 
+      "name": "Sabon Gari", 
+      "parent": 44
     }
   }, 
   {
     "pk": 274, 
     "model": "psc.lga", 
     "fields": {
-      "code": "231", 
-      "name": "Fune", 
-      "parent": null
+      "code": "274", 
+      "name": "Soba", 
+      "parent": 44
     }
   }, 
   {
     "pk": 275, 
     "model": "psc.lga", 
     "fields": {
-      "code": "232", 
-      "name": "Nangere", 
-      "parent": null
+      "code": "275", 
+      "name": "Zaria", 
+      "parent": 44
     }
   }, 
   {
     "pk": 276, 
     "model": "psc.lga", 
     "fields": {
-      "code": "233", 
-      "name": "Potiskum", 
-      "parent": null
+      "code": "276", 
+      "name": "Jaba", 
+      "parent": 45
     }
   }, 
   {
     "pk": 277, 
     "model": "psc.lga", 
     "fields": {
-      "code": "234", 
-      "name": "Auyo", 
-      "parent": null
+      "code": "277", 
+      "name": "Jema'a", 
+      "parent": 45
     }
   }, 
   {
     "pk": 278, 
     "model": "psc.lga", 
     "fields": {
-      "code": "235", 
-      "name": "Biriniwa", 
-      "parent": null
+      "code": "278", 
+      "name": "Kachia", 
+      "parent": 45
     }
   }, 
   {
     "pk": 279, 
     "model": "psc.lga", 
     "fields": {
-      "code": "236", 
-      "name": "Guri", 
-      "parent": null
+      "code": "279", 
+      "name": "Kagarko", 
+      "parent": 45
     }
   }, 
   {
     "pk": 280, 
     "model": "psc.lga", 
     "fields": {
-      "code": "237", 
-      "name": "Hadejia", 
-      "parent": null
+      "code": "280", 
+      "name": "Kaura", 
+      "parent": 45
     }
   }, 
   {
     "pk": 281, 
     "model": "psc.lga", 
     "fields": {
-      "code": "238", 
-      "name": "Kafin Hausa", 
-      "parent": null
+      "code": "281", 
+      "name": "Kauru", 
+      "parent": 45
     }
   }, 
   {
     "pk": 282, 
     "model": "psc.lga", 
     "fields": {
-      "code": "239", 
-      "name": "Kaugama", 
-      "parent": null
+      "code": "282", 
+      "name": "Sanga", 
+      "parent": 45
     }
   }, 
   {
     "pk": 283, 
     "model": "psc.lga", 
     "fields": {
-      "code": "240", 
-      "name": "Kiri Kasama", 
-      "parent": null
+      "code": "283", 
+      "name": "Zangon Kataf", 
+      "parent": 45
     }
   }, 
   {
     "pk": 284, 
     "model": "psc.lga", 
     "fields": {
-      "code": "241", 
-      "name": "Malam Madori", 
-      "parent": null
+      "code": "284", 
+      "name": "Dala", 
+      "parent": 46
     }
   }, 
   {
     "pk": 285, 
     "model": "psc.lga", 
     "fields": {
-      "code": "242", 
-      "name": "Babura", 
-      "parent": null
+      "code": "285", 
+      "name": "Dawakin Kudu", 
+      "parent": 46
     }
   }, 
   {
     "pk": 286, 
     "model": "psc.lga", 
     "fields": {
-      "code": "243", 
-      "name": "Gagarawa", 
-      "parent": null
+      "code": "286", 
+      "name": "Fagge", 
+      "parent": 46
     }
   }, 
   {
     "pk": 287, 
     "model": "psc.lga", 
     "fields": {
-      "code": "244", 
-      "name": "Garki", 
-      "parent": null
+      "code": "287", 
+      "name": "Garun Mallam", 
+      "parent": 46
     }
   }, 
   {
     "pk": 288, 
     "model": "psc.lga", 
     "fields": {
-      "code": "245", 
-      "name": "Gumel", 
-      "parent": null
+      "code": "288", 
+      "name": "Gezawa", 
+      "parent": 46
     }
   }, 
   {
     "pk": 289, 
     "model": "psc.lga", 
     "fields": {
-      "code": "246", 
-      "name": "Gwiwa", 
-      "parent": null
+      "code": "289", 
+      "name": "Gwale", 
+      "parent": 46
     }
   }, 
   {
     "pk": 290, 
     "model": "psc.lga", 
     "fields": {
-      "code": "247", 
-      "name": "Kazaure", 
-      "parent": null
+      "code": "290", 
+      "name": "Kano Municipal", 
+      "parent": 46
     }
   }, 
   {
     "pk": 291, 
     "model": "psc.lga", 
     "fields": {
-      "code": "248", 
-      "name": "Maigatari", 
-      "parent": null
+      "code": "291", 
+      "name": "Kumbotso", 
+      "parent": 46
     }
   }, 
   {
     "pk": 292, 
     "model": "psc.lga", 
     "fields": {
-      "code": "249", 
-      "name": "Ringim", 
-      "parent": null
+      "code": "292", 
+      "name": "Kura", 
+      "parent": 46
     }
   }, 
   {
     "pk": 293, 
     "model": "psc.lga", 
     "fields": {
-      "code": "250", 
-      "name": "Roni", 
-      "parent": null
+      "code": "293", 
+      "name": "Madobi", 
+      "parent": 46
     }
   }, 
   {
     "pk": 294, 
     "model": "psc.lga", 
     "fields": {
-      "code": "251", 
-      "name": "Sule Tankarkar", 
-      "parent": null
+      "code": "294", 
+      "name": "Minjibir", 
+      "parent": 46
     }
   }, 
   {
     "pk": 295, 
     "model": "psc.lga", 
     "fields": {
-      "code": "252", 
-      "name": "Taura", 
-      "parent": null
+      "code": "295", 
+      "name": "Nasarawa", 
+      "parent": 46
     }
   }, 
   {
     "pk": 296, 
     "model": "psc.lga", 
     "fields": {
-      "code": "253", 
-      "name": "Yankwashi", 
-      "parent": null
+      "code": "296", 
+      "name": "Tarauni", 
+      "parent": 46
     }
   }, 
   {
     "pk": 297, 
     "model": "psc.lga", 
     "fields": {
-      "code": "254", 
-      "name": "Birnin Kudu", 
-      "parent": null
+      "code": "297", 
+      "name": "Ungogo", 
+      "parent": 46
     }
   }, 
   {
     "pk": 298, 
     "model": "psc.lga", 
     "fields": {
-      "code": "255", 
-      "name": "Buji", 
-      "parent": null
+      "code": "298", 
+      "name": "Warawa", 
+      "parent": 46
     }
   }, 
   {
     "pk": 299, 
     "model": "psc.lga", 
     "fields": {
-      "code": "256", 
-      "name": "Dutse", 
-      "parent": null
+      "code": "299", 
+      "name": "Bagwai", 
+      "parent": 47
     }
   }, 
   {
     "pk": 300, 
     "model": "psc.lga", 
     "fields": {
-      "code": "257", 
-      "name": "Gwaram", 
-      "parent": null
+      "code": "300", 
+      "name": "Bichi", 
+      "parent": 47
     }
   }, 
   {
     "pk": 301, 
     "model": "psc.lga", 
     "fields": {
-      "code": "258", 
-      "name": "Jahun", 
-      "parent": null
+      "code": "301", 
+      "name": "Dambatta", 
+      "parent": 47
     }
   }, 
   {
     "pk": 302, 
     "model": "psc.lga", 
     "fields": {
-      "code": "259", 
-      "name": "Kiyawa", 
-      "parent": null
+      "code": "302", 
+      "name": "Dawakin Tofa", 
+      "parent": 47
     }
   }, 
   {
     "pk": 303, 
     "model": "psc.lga", 
     "fields": {
-      "code": "260", 
-      "name": "Miga", 
-      "parent": null
+      "code": "303", 
+      "name": "Gabasawa", 
+      "parent": 46
     }
   }, 
   {
     "pk": 304, 
     "model": "psc.lga", 
     "fields": {
-      "code": "261", 
-      "name": "Birnin Gwari", 
-      "parent": null
+      "code": "304", 
+      "name": "Gwarzo", 
+      "parent": 47
     }
   }, 
   {
     "pk": 305, 
     "model": "psc.lga", 
     "fields": {
-      "code": "262", 
-      "name": "Chikun", 
-      "parent": null
+      "code": "305", 
+      "name": "Kabo", 
+      "parent": 47
     }
   }, 
   {
     "pk": 306, 
     "model": "psc.lga", 
     "fields": {
-      "code": "263", 
-      "name": "Giwa", 
-      "parent": null
+      "code": "306", 
+      "name": "Kunchi", 
+      "parent": 47
     }
   }, 
   {
     "pk": 307, 
     "model": "psc.lga", 
     "fields": {
-      "code": "264", 
-      "name": "Igabi", 
-      "parent": null
+      "code": "307", 
+      "name": "Makoda", 
+      "parent": 47
     }
   }, 
   {
     "pk": 308, 
     "model": "psc.lga", 
     "fields": {
-      "code": "265", 
-      "name": "Kaduna North", 
-      "parent": null
+      "code": "308", 
+      "name": "Rimin Gado", 
+      "parent": 47
     }
   }, 
   {
     "pk": 309, 
     "model": "psc.lga", 
     "fields": {
-      "code": "266", 
-      "name": "Kaduna South", 
-      "parent": null
+      "code": "309", 
+      "name": "Shanono", 
+      "parent": 47
     }
   }, 
   {
     "pk": 310, 
     "model": "psc.lga", 
     "fields": {
-      "code": "267", 
-      "name": "Kajuru", 
-      "parent": null
+      "code": "310", 
+      "name": "Tofa", 
+      "parent": 47
     }
   }, 
   {
     "pk": 311, 
     "model": "psc.lga", 
     "fields": {
-      "code": "268", 
-      "name": "Ikara", 
-      "parent": null
+      "code": "311", 
+      "name": "Tsanyawa", 
+      "parent": 47
     }
   }, 
   {
     "pk": 312, 
     "model": "psc.lga", 
     "fields": {
-      "code": "269", 
-      "name": "Kubau", 
-      "parent": null
+      "code": "312", 
+      "name": "Ajingi", 
+      "parent": 48
     }
   }, 
   {
     "pk": 313, 
     "model": "psc.lga", 
     "fields": {
-      "code": "270", 
-      "name": "Kudan", 
-      "parent": null
+      "code": "313", 
+      "name": "Albasu", 
+      "parent": 48
     }
   }, 
   {
     "pk": 314, 
     "model": "psc.lga", 
     "fields": {
-      "code": "271", 
-      "name": "Lere", 
-      "parent": null
+      "code": "314", 
+      "name": "Bebeji", 
+      "parent": 48
     }
   }, 
   {
     "pk": 315, 
     "model": "psc.lga", 
     "fields": {
-      "code": "272", 
-      "name": "Makarfi", 
-      "parent": null
+      "code": "315", 
+      "name": "Bunkure", 
+      "parent": 48
     }
   }, 
   {
     "pk": 316, 
     "model": "psc.lga", 
     "fields": {
-      "code": "273", 
-      "name": "Sabon Gari", 
-      "parent": null
+      "code": "316", 
+      "name": "Doguwa", 
+      "parent": 48
     }
   }, 
   {
     "pk": 317, 
     "model": "psc.lga", 
     "fields": {
-      "code": "274", 
-      "name": "Soba", 
-      "parent": null
+      "code": "317", 
+      "name": "Garko", 
+      "parent": 48
     }
   }, 
   {
     "pk": 318, 
     "model": "psc.lga", 
     "fields": {
-      "code": "275", 
-      "name": "Zaria", 
-      "parent": null
+      "code": "318", 
+      "name": "Gaya", 
+      "parent": 48
     }
   }, 
   {
     "pk": 319, 
     "model": "psc.lga", 
     "fields": {
-      "code": "276", 
-      "name": "Jaba", 
-      "parent": null
+      "code": "319", 
+      "name": "Karaye", 
+      "parent": 48
     }
   }, 
   {
     "pk": 320, 
     "model": "psc.lga", 
     "fields": {
-      "code": "277", 
-      "name": "Jema'a", 
-      "parent": null
+      "code": "320", 
+      "name": "Kibiya", 
+      "parent": 48
     }
   }, 
   {
     "pk": 321, 
     "model": "psc.lga", 
     "fields": {
-      "code": "278", 
-      "name": "Kachia", 
-      "parent": null
+      "code": "321", 
+      "name": "Kiru", 
+      "parent": 48
     }
   }, 
   {
     "pk": 322, 
     "model": "psc.lga", 
     "fields": {
-      "code": "279", 
-      "name": "Kagarko", 
-      "parent": null
+      "code": "322", 
+      "name": "Rano", 
+      "parent": 48
     }
   }, 
   {
     "pk": 323, 
     "model": "psc.lga", 
     "fields": {
-      "code": "280", 
-      "name": "Kaura", 
-      "parent": null
+      "code": "323", 
+      "name": "Rogo", 
+      "parent": 48
     }
   }, 
   {
     "pk": 324, 
     "model": "psc.lga", 
     "fields": {
-      "code": "281", 
-      "name": "Kauru", 
-      "parent": null
+      "code": "324", 
+      "name": "Sumaila", 
+      "parent": 48
     }
   }, 
   {
     "pk": 325, 
     "model": "psc.lga", 
     "fields": {
-      "code": "282", 
-      "name": "Sanga", 
-      "parent": null
+      "code": "325", 
+      "name": "Takai", 
+      "parent": 48
     }
   }, 
   {
     "pk": 326, 
     "model": "psc.lga", 
     "fields": {
-      "code": "283", 
-      "name": "Zangon Kataf", 
-      "parent": null
+      "code": "326", 
+      "name": "Tudun Wada", 
+      "parent": 48
     }
   }, 
   {
     "pk": 327, 
     "model": "psc.lga", 
     "fields": {
-      "code": "284", 
-      "name": "Dala", 
-      "parent": null
+      "code": "327", 
+      "name": "Wudil", 
+      "parent": 48
     }
   }, 
   {
     "pk": 328, 
     "model": "psc.lga", 
     "fields": {
-      "code": "285", 
-      "name": "Dawakin Kudu", 
-      "parent": null
+      "code": "328", 
+      "name": "Batagarawa", 
+      "parent": 49
     }
   }, 
   {
     "pk": 329, 
     "model": "psc.lga", 
     "fields": {
-      "code": "286", 
-      "name": "Fagge", 
-      "parent": null
+      "code": "329", 
+      "name": "Batsari", 
+      "parent": 49
     }
   }, 
   {
     "pk": 330, 
     "model": "psc.lga", 
     "fields": {
-      "code": "287", 
-      "name": "Garun Mallam", 
-      "parent": null
+      "code": "330", 
+      "name": "Charanchi", 
+      "parent": 49
     }
   }, 
   {
     "pk": 331, 
     "model": "psc.lga", 
     "fields": {
-      "code": "288", 
-      "name": "Gezawa", 
-      "parent": null
+      "code": "331", 
+      "name": "Dan Musa", 
+      "parent": 49
     }
   }, 
   {
     "pk": 332, 
     "model": "psc.lga", 
     "fields": {
-      "code": "289", 
-      "name": "Gwale", 
-      "parent": null
+      "code": "332", 
+      "name": "Dutsin-Ma", 
+      "parent": 49
     }
   }, 
   {
     "pk": 333, 
     "model": "psc.lga", 
     "fields": {
-      "code": "290", 
-      "name": "Kano Municipal", 
-      "parent": null
+      "code": "333", 
+      "name": "Jibia", 
+      "parent": 49
     }
   }, 
   {
     "pk": 334, 
     "model": "psc.lga", 
     "fields": {
-      "code": "291", 
-      "name": "Kumbotso", 
-      "parent": null
+      "code": "334", 
+      "name": "Kaita", 
+      "parent": 49
     }
   }, 
   {
     "pk": 335, 
     "model": "psc.lga", 
     "fields": {
-      "code": "292", 
-      "name": "Kura", 
-      "parent": null
+      "code": "335", 
+      "name": "Katsina", 
+      "parent": 49
     }
   }, 
   {
     "pk": 336, 
     "model": "psc.lga", 
     "fields": {
-      "code": "293", 
-      "name": "Madobi", 
-      "parent": null
+      "code": "336", 
+      "name": "Kurfi", 
+      "parent": 49
     }
   }, 
   {
     "pk": 337, 
     "model": "psc.lga", 
     "fields": {
-      "code": "294", 
-      "name": "Minjibir", 
-      "parent": null
+      "code": "337", 
+      "name": "Rimi", 
+      "parent": 49
     }
   }, 
   {
     "pk": 338, 
     "model": "psc.lga", 
     "fields": {
-      "code": "295", 
-      "name": "Nasarawa", 
-      "parent": null
+      "code": "338", 
+      "name": "Safana", 
+      "parent": 49
     }
   }, 
   {
     "pk": 339, 
     "model": "psc.lga", 
     "fields": {
-      "code": "296", 
-      "name": "Tarauni", 
-      "parent": null
+      "code": "339", 
+      "name": "Baure", 
+      "parent": 50
     }
   }, 
   {
     "pk": 340, 
     "model": "psc.lga", 
     "fields": {
-      "code": "297", 
-      "name": "Ungogo", 
-      "parent": null
+      "code": "340", 
+      "name": "Bindawa", 
+      "parent": 50
     }
   }, 
   {
     "pk": 341, 
     "model": "psc.lga", 
     "fields": {
-      "code": "298", 
-      "name": "Warawa", 
-      "parent": null
+      "code": "341", 
+      "name": "Daura", 
+      "parent": 50
     }
   }, 
   {
     "pk": 342, 
     "model": "psc.lga", 
     "fields": {
-      "code": "299", 
-      "name": "Bagwai", 
-      "parent": null
+      "code": "342", 
+      "name": "Dutsi", 
+      "parent": 50
     }
   }, 
   {
     "pk": 343, 
     "model": "psc.lga", 
     "fields": {
-      "code": "300", 
-      "name": "Bichi", 
-      "parent": null
+      "code": "343", 
+      "name": "Ingawa", 
+      "parent": 50
     }
   }, 
   {
     "pk": 344, 
     "model": "psc.lga", 
     "fields": {
-      "code": "301", 
-      "name": "Dambatta", 
-      "parent": null
+      "code": "344", 
+      "name": "Kankia", 
+      "parent": 50
     }
   }, 
   {
     "pk": 345, 
     "model": "psc.lga", 
     "fields": {
-      "code": "302", 
-      "name": "Dawakin Tofa", 
-      "parent": null
+      "code": "345", 
+      "name": "Kusada", 
+      "parent": 50
     }
   }, 
   {
     "pk": 346, 
     "model": "psc.lga", 
     "fields": {
-      "code": "303", 
-      "name": "Gabasawa", 
-      "parent": null
+      "code": "346", 
+      "name": "Mai'adua", 
+      "parent": 50
     }
   }, 
   {
     "pk": 347, 
     "model": "psc.lga", 
     "fields": {
-      "code": "304", 
-      "name": "Gwarzo", 
-      "parent": null
+      "code": "347", 
+      "name": "Mani", 
+      "parent": 50
     }
   }, 
   {
     "pk": 348, 
     "model": "psc.lga", 
     "fields": {
-      "code": "305", 
-      "name": "Kabo", 
-      "parent": null
+      "code": "348", 
+      "name": "Mashi", 
+      "parent": 50
     }
   }, 
   {
     "pk": 349, 
     "model": "psc.lga", 
     "fields": {
-      "code": "306", 
-      "name": "Kunchi", 
-      "parent": null
+      "code": "349", 
+      "name": "Sandamu", 
+      "parent": 50
     }
   }, 
   {
     "pk": 350, 
     "model": "psc.lga", 
     "fields": {
-      "code": "307", 
-      "name": "Makoda", 
-      "parent": null
+      "code": "350", 
+      "name": "Zango ", 
+      "parent": 50
     }
   }, 
   {
     "pk": 351, 
     "model": "psc.lga", 
     "fields": {
-      "code": "308", 
-      "name": "Rimin Gado", 
-      "parent": null
+      "code": "351", 
+      "name": "Bakori", 
+      "parent": 51
     }
   }, 
   {
     "pk": 352, 
     "model": "psc.lga", 
     "fields": {
-      "code": "309", 
-      "name": "Shanono", 
-      "parent": null
+      "code": "352", 
+      "name": "Dandume", 
+      "parent": 51
     }
   }, 
   {
     "pk": 353, 
     "model": "psc.lga", 
     "fields": {
-      "code": "310", 
-      "name": "Tofa", 
-      "parent": null
+      "code": "353", 
+      "name": "Danja", 
+      "parent": 51
     }
   }, 
   {
     "pk": 354, 
     "model": "psc.lga", 
     "fields": {
-      "code": "311", 
-      "name": "Tsanyawa", 
-      "parent": null
+      "code": "354", 
+      "name": "Faskari", 
+      "parent": 51
     }
   }, 
   {
     "pk": 355, 
     "model": "psc.lga", 
     "fields": {
-      "code": "312", 
-      "name": "Ajingi", 
-      "parent": null
+      "code": "355", 
+      "name": "Funtua", 
+      "parent": 51
     }
   }, 
   {
     "pk": 356, 
     "model": "psc.lga", 
     "fields": {
-      "code": "313", 
-      "name": "Albasu", 
-      "parent": null
+      "code": "356", 
+      "name": "Kafur", 
+      "parent": 51
     }
   }, 
   {
     "pk": 357, 
     "model": "psc.lga", 
     "fields": {
-      "code": "314", 
-      "name": "Bebeji", 
-      "parent": null
+      "code": "357", 
+      "name": "Kankara", 
+      "parent": 51
     }
   }, 
   {
     "pk": 358, 
     "model": "psc.lga", 
     "fields": {
-      "code": "315", 
-      "name": "Bunkure", 
-      "parent": null
+      "code": "358", 
+      "name": "Malumfashi", 
+      "parent": 51
     }
   }, 
   {
     "pk": 359, 
     "model": "psc.lga", 
     "fields": {
-      "code": "316", 
-      "name": "Doguwa", 
-      "parent": null
+      "code": "359", 
+      "name": "Matazu", 
+      "parent": 51
     }
   }, 
   {
     "pk": 360, 
     "model": "psc.lga", 
     "fields": {
-      "code": "317", 
-      "name": "Garko", 
-      "parent": null
+      "code": "360", 
+      "name": "Musawa", 
+      "parent": 51
     }
   }, 
   {
     "pk": 361, 
     "model": "psc.lga", 
     "fields": {
-      "code": "318", 
-      "name": "Gaya", 
-      "parent": null
+      "code": "361", 
+      "name": "Sabuwa", 
+      "parent": 51
     }
   }, 
   {
     "pk": 362, 
     "model": "psc.lga", 
     "fields": {
-      "code": "319", 
-      "name": "Karaye", 
-      "parent": null
+      "code": "362", 
+      "name": "Aleiro", 
+      "parent": 52
     }
   }, 
   {
     "pk": 363, 
     "model": "psc.lga", 
     "fields": {
-      "code": "320", 
-      "name": "Kibiya", 
-      "parent": null
+      "code": "363", 
+      "name": "Birnin Kebbi", 
+      "parent": 52
     }
   }, 
   {
     "pk": 364, 
     "model": "psc.lga", 
     "fields": {
-      "code": "321", 
-      "name": "Kiru", 
-      "parent": null
+      "code": "364", 
+      "name": "Bunza", 
+      "parent": 52
     }
   }, 
   {
     "pk": 365, 
     "model": "psc.lga", 
     "fields": {
-      "code": "322", 
-      "name": "Rano", 
-      "parent": null
+      "code": "365", 
+      "name": "Gwandu", 
+      "parent": 52
     }
   }, 
   {
     "pk": 366, 
     "model": "psc.lga", 
     "fields": {
-      "code": "323", 
-      "name": "Rogo", 
-      "parent": null
+      "code": "366", 
+      "name": "Jega", 
+      "parent": 52
     }
   }, 
   {
     "pk": 367, 
     "model": "psc.lga", 
     "fields": {
-      "code": "324", 
-      "name": "Sumaila", 
-      "parent": null
+      "code": "367", 
+      "name": "Kalgo", 
+      "parent": 52
     }
   }, 
   {
     "pk": 368, 
     "model": "psc.lga", 
     "fields": {
-      "code": "325", 
-      "name": "Takai", 
-      "parent": null
+      "code": "368", 
+      "name": "Koko-Besse", 
+      "parent": 52
     }
   }, 
   {
     "pk": 369, 
     "model": "psc.lga", 
     "fields": {
-      "code": "326", 
-      "name": "Tudun Wada", 
-      "parent": null
+      "code": "369", 
+      "name": "Maiyama", 
+      "parent": 52
     }
   }, 
   {
     "pk": 370, 
     "model": "psc.lga", 
     "fields": {
-      "code": "327", 
-      "name": "Wudil", 
-      "parent": null
+      "code": "370", 
+      "name": "Arewa", 
+      "parent": 53
     }
   }, 
   {
     "pk": 371, 
     "model": "psc.lga", 
     "fields": {
-      "code": "328", 
-      "name": "Batagarawa", 
-      "parent": null
+      "code": "371", 
+      "name": "Argungu", 
+      "parent": 53
     }
   }, 
   {
     "pk": 372, 
     "model": "psc.lga", 
     "fields": {
-      "code": "329", 
-      "name": "Batsari", 
-      "parent": null
+      "code": "372", 
+      "name": "Augie", 
+      "parent": 53
     }
   }, 
   {
     "pk": 373, 
     "model": "psc.lga", 
     "fields": {
-      "code": "330", 
-      "name": "Charanchi", 
-      "parent": null
+      "code": "373", 
+      "name": "Bagudo", 
+      "parent": 53
     }
   }, 
   {
     "pk": 374, 
     "model": "psc.lga", 
     "fields": {
-      "code": "331", 
-      "name": "Dan Musa", 
-      "parent": null
+      "code": "374", 
+      "name": "Dandi", 
+      "parent": 53
     }
   }, 
   {
     "pk": 375, 
     "model": "psc.lga", 
     "fields": {
-      "code": "332", 
-      "name": "Dutsin-Ma", 
-      "parent": null
+      "code": "375", 
+      "name": "Suru", 
+      "parent": 53
     }
   }, 
   {
     "pk": 376, 
     "model": "psc.lga", 
     "fields": {
-      "code": "333", 
-      "name": "Jibia", 
-      "parent": null
+      "code": "376", 
+      "name": "Fakai", 
+      "parent": 54
     }
   }, 
   {
     "pk": 377, 
     "model": "psc.lga", 
     "fields": {
-      "code": "334", 
-      "name": "Kaita", 
-      "parent": null
+      "code": "377", 
+      "name": "Ngaski", 
+      "parent": 54
     }
   }, 
   {
     "pk": 378, 
     "model": "psc.lga", 
     "fields": {
-      "code": "335", 
-      "name": "Katsina", 
-      "parent": null
+      "code": "378", 
+      "name": "Sakaba", 
+      "parent": 54
     }
   }, 
   {
     "pk": 379, 
     "model": "psc.lga", 
     "fields": {
-      "code": "336", 
-      "name": "Kurfi", 
-      "parent": null
+      "code": "379", 
+      "name": "Shanga", 
+      "parent": 54
     }
   }, 
   {
     "pk": 380, 
     "model": "psc.lga", 
     "fields": {
-      "code": "337", 
-      "name": "Rimi", 
-      "parent": null
+      "code": "380", 
+      "name": "Wasagu-Danko", 
+      "parent": 54
     }
   }, 
   {
     "pk": 381, 
     "model": "psc.lga", 
     "fields": {
-      "code": "338", 
-      "name": "Safana", 
-      "parent": null
+      "code": "381", 
+      "name": "Yauri", 
+      "parent": 54
     }
   }, 
   {
     "pk": 382, 
     "model": "psc.lga", 
     "fields": {
-      "code": "339", 
-      "name": "Baure", 
-      "parent": null
+      "code": "382", 
+      "name": "Zuru", 
+      "parent": 54
     }
   }, 
   {
     "pk": 383, 
     "model": "psc.lga", 
     "fields": {
-      "code": "340", 
-      "name": "Bindawa", 
-      "parent": null
+      "code": "383", 
+      "name": "Gada ", 
+      "parent": 55
     }
   }, 
   {
     "pk": 384, 
     "model": "psc.lga", 
     "fields": {
-      "code": "341", 
-      "name": "Daura", 
-      "parent": null
+      "code": "384", 
+      "name": "Goronyo", 
+      "parent": 55
     }
   }, 
   {
     "pk": 385, 
     "model": "psc.lga", 
     "fields": {
-      "code": "342", 
-      "name": "Dutsi", 
-      "parent": null
+      "code": "385", 
+      "name": "Gwadabawa", 
+      "parent": 55
     }
   }, 
   {
     "pk": 386, 
     "model": "psc.lga", 
     "fields": {
-      "code": "343", 
-      "name": "Ingawa", 
-      "parent": null
+      "code": "386", 
+      "name": "Illela", 
+      "parent": 55
     }
   }, 
   {
     "pk": 387, 
     "model": "psc.lga", 
     "fields": {
-      "code": "344", 
-      "name": "Kankia", 
-      "parent": null
+      "code": "387", 
+      "name": "Isa", 
+      "parent": 55
     }
   }, 
   {
     "pk": 388, 
     "model": "psc.lga", 
     "fields": {
-      "code": "345", 
-      "name": "Kusada", 
-      "parent": null
+      "code": "388", 
+      "name": "Rabah", 
+      "parent": 55
     }
   }, 
   {
     "pk": 389, 
     "model": "psc.lga", 
     "fields": {
-      "code": "346", 
-      "name": "Mai'adua", 
-      "parent": null
+      "code": "389", 
+      "name": "Sabon Birni", 
+      "parent": 55
     }
   }, 
   {
     "pk": 390, 
     "model": "psc.lga", 
     "fields": {
-      "code": "347", 
-      "name": "Mani", 
-      "parent": null
+      "code": "390", 
+      "name": "Wurno", 
+      "parent": 55
     }
   }, 
   {
     "pk": 391, 
     "model": "psc.lga", 
     "fields": {
-      "code": "348", 
-      "name": "Mashi", 
-      "parent": null
+      "code": "391", 
+      "name": "Binji", 
+      "parent": 56
     }
   }, 
   {
     "pk": 392, 
     "model": "psc.lga", 
     "fields": {
-      "code": "349", 
-      "name": "Sandamu", 
-      "parent": null
+      "code": "392", 
+      "name": "Gudu", 
+      "parent": 56
     }
   }, 
   {
     "pk": 393, 
     "model": "psc.lga", 
     "fields": {
-      "code": "350", 
-      "name": "Zango ", 
-      "parent": null
+      "code": "393", 
+      "name": "Kware", 
+      "parent": 56
     }
   }, 
   {
     "pk": 394, 
     "model": "psc.lga", 
     "fields": {
-      "code": "351", 
-      "name": "Bakori", 
-      "parent": null
+      "code": "394", 
+      "name": "Silame", 
+      "parent": 56
     }
   }, 
   {
     "pk": 395, 
     "model": "psc.lga", 
     "fields": {
-      "code": "352", 
-      "name": "Dandume", 
-      "parent": null
+      "code": "395", 
+      "name": "Sokoto North", 
+      "parent": 56
     }
   }, 
   {
     "pk": 396, 
     "model": "psc.lga", 
     "fields": {
-      "code": "353", 
-      "name": "Danja", 
-      "parent": null
+      "code": "396", 
+      "name": "Sokoto South", 
+      "parent": 56
     }
   }, 
   {
     "pk": 397, 
     "model": "psc.lga", 
     "fields": {
-      "code": "354", 
-      "name": "Faskari", 
-      "parent": null
+      "code": "397", 
+      "name": "Tangaza", 
+      "parent": 56
     }
   }, 
   {
     "pk": 398, 
     "model": "psc.lga", 
     "fields": {
-      "code": "355", 
-      "name": "Funtua", 
-      "parent": null
+      "code": "398", 
+      "name": "Wamako", 
+      "parent": 56
     }
   }, 
   {
     "pk": 399, 
     "model": "psc.lga", 
     "fields": {
-      "code": "356", 
-      "name": "Kafur", 
-      "parent": null
+      "code": "399", 
+      "name": "Bodinga", 
+      "parent": 57
     }
   }, 
   {
     "pk": 400, 
     "model": "psc.lga", 
     "fields": {
-      "code": "357", 
-      "name": "Kankara", 
-      "parent": null
+      "code": "400", 
+      "name": "Dange-Shuni", 
+      "parent": 57
     }
   }, 
   {
     "pk": 401, 
     "model": "psc.lga", 
     "fields": {
-      "code": "358", 
-      "name": "Malumfashi", 
-      "parent": null
+      "code": "401", 
+      "name": "Kebbe", 
+      "parent": 57
     }
   }, 
   {
     "pk": 402, 
     "model": "psc.lga", 
     "fields": {
-      "code": "359", 
-      "name": "Matazu", 
-      "parent": null
+      "code": "402", 
+      "name": "Shagari", 
+      "parent": 57
     }
   }, 
   {
     "pk": 403, 
     "model": "psc.lga", 
     "fields": {
-      "code": "360", 
-      "name": "Musawa", 
-      "parent": null
+      "code": "403", 
+      "name": "Tambuwal ", 
+      "parent": 57
     }
   }, 
   {
     "pk": 404, 
     "model": "psc.lga", 
     "fields": {
-      "code": "361", 
-      "name": "Sabuwa", 
-      "parent": null
+      "code": "404", 
+      "name": "Tureta", 
+      "parent": 57
     }
   }, 
   {
     "pk": 405, 
     "model": "psc.lga", 
     "fields": {
-      "code": "362", 
-      "name": "Aleiro", 
-      "parent": null
+      "code": "405", 
+      "name": "Yabo", 
+      "parent": 57
     }
   }, 
   {
     "pk": 406, 
     "model": "psc.lga", 
     "fields": {
-      "code": "363", 
-      "name": "Birnin Kebbi", 
-      "parent": null
+      "code": "406", 
+      "name": "Bungudu", 
+      "parent": 58
     }
   }, 
   {
     "pk": 407, 
     "model": "psc.lga", 
     "fields": {
-      "code": "364", 
-      "name": "Bunza", 
-      "parent": null
+      "code": "407", 
+      "name": "Gusau", 
+      "parent": 58
     }
   }, 
   {
     "pk": 408, 
     "model": "psc.lga", 
     "fields": {
-      "code": "365", 
-      "name": "Gwandu", 
-      "parent": null
+      "code": "408", 
+      "name": "Maru", 
+      "parent": 58
     }
   }, 
   {
     "pk": 409, 
     "model": "psc.lga", 
     "fields": {
-      "code": "366", 
-      "name": "Jega", 
-      "parent": null
+      "code": "409", 
+      "name": "Tsafe", 
+      "parent": 58
     }
   }, 
   {
     "pk": 410, 
     "model": "psc.lga", 
     "fields": {
-      "code": "367", 
-      "name": "Kalgo", 
-      "parent": null
+      "code": "410", 
+      "name": "Birnin Magaji-Kiyaw", 
+      "parent": 59
     }
   }, 
   {
     "pk": 411, 
     "model": "psc.lga", 
     "fields": {
-      "code": "368", 
-      "name": "Koko-Besse", 
-      "parent": null
+      "code": "411", 
+      "name": "Kaura Namoda", 
+      "parent": 59
     }
   }, 
   {
     "pk": 412, 
     "model": "psc.lga", 
     "fields": {
-      "code": "369", 
-      "name": "Maiyama", 
-      "parent": null
+      "code": "412", 
+      "name": "Shinkafi", 
+      "parent": 59
     }
   }, 
   {
     "pk": 413, 
     "model": "psc.lga", 
     "fields": {
-      "code": "370", 
-      "name": "Arewa", 
-      "parent": null
+      "code": "413", 
+      "name": "Zurmi ", 
+      "parent": 59
     }
   }, 
   {
     "pk": 414, 
     "model": "psc.lga", 
     "fields": {
-      "code": "371", 
-      "name": "Argungu", 
-      "parent": null
+      "code": "414", 
+      "name": "Anka", 
+      "parent": 60
     }
   }, 
   {
     "pk": 415, 
     "model": "psc.lga", 
     "fields": {
-      "code": "372", 
-      "name": "Augie", 
-      "parent": null
+      "code": "415", 
+      "name": "Bakura", 
+      "parent": 60
     }
   }, 
   {
     "pk": 416, 
     "model": "psc.lga", 
     "fields": {
-      "code": "373", 
-      "name": "Bagudo", 
-      "parent": null
+      "code": "416", 
+      "name": "Bukkuyum", 
+      "parent": 60
     }
   }, 
   {
     "pk": 417, 
     "model": "psc.lga", 
     "fields": {
-      "code": "374", 
-      "name": "Dandi", 
-      "parent": null
+      "code": "417", 
+      "name": "Gummi", 
+      "parent": 60
     }
   }, 
   {
     "pk": 418, 
     "model": "psc.lga", 
     "fields": {
-      "code": "375", 
-      "name": "Suru", 
-      "parent": null
+      "code": "418", 
+      "name": "Maradun", 
+      "parent": 60
     }
   }, 
   {
     "pk": 419, 
     "model": "psc.lga", 
     "fields": {
-      "code": "376", 
-      "name": "Fakai", 
-      "parent": null
+      "code": "419", 
+      "name": "Talata Marafa", 
+      "parent": 60
     }
   }, 
   {
     "pk": 420, 
     "model": "psc.lga", 
     "fields": {
-      "code": "377", 
-      "name": "Ngaski", 
-      "parent": null
+      "code": "420", 
+      "name": "Ikwuano", 
+      "parent": 61
     }
   }, 
   {
     "pk": 421, 
     "model": "psc.lga", 
     "fields": {
-      "code": "378", 
-      "name": "Sakaba", 
-      "parent": null
+      "code": "421", 
+      "name": "Isiala Ngwa North", 
+      "parent": 61
     }
   }, 
   {
     "pk": 422, 
     "model": "psc.lga", 
     "fields": {
-      "code": "379", 
-      "name": "Shanga", 
-      "parent": null
+      "code": "422", 
+      "name": "Isiala Ngwa South", 
+      "parent": 61
     }
   }, 
   {
     "pk": 423, 
     "model": "psc.lga", 
     "fields": {
-      "code": "380", 
-      "name": "Wasagu-Danko", 
-      "parent": null
+      "code": "423", 
+      "name": "Umuahia North", 
+      "parent": 61
     }
   }, 
   {
     "pk": 424, 
     "model": "psc.lga", 
     "fields": {
-      "code": "381", 
-      "name": "Yauri", 
-      "parent": null
+      "code": "424", 
+      "name": "Umuahia South", 
+      "parent": 61
     }
   }, 
   {
     "pk": 425, 
     "model": "psc.lga", 
     "fields": {
-      "code": "382", 
-      "name": "Zuru", 
-      "parent": null
+      "code": "425", 
+      "name": "Arochukwu", 
+      "parent": 62
     }
   }, 
   {
     "pk": 426, 
     "model": "psc.lga", 
     "fields": {
-      "code": "383", 
-      "name": "Gada ", 
-      "parent": null
+      "code": "426", 
+      "name": "Bende", 
+      "parent": 62
     }
   }, 
   {
     "pk": 427, 
     "model": "psc.lga", 
     "fields": {
-      "code": "384", 
-      "name": "Goronyo", 
-      "parent": null
+      "code": "427", 
+      "name": "Isuikwuato", 
+      "parent": 62
     }
   }, 
   {
     "pk": 428, 
     "model": "psc.lga", 
     "fields": {
-      "code": "385", 
-      "name": "Gwadabawa", 
-      "parent": null
+      "code": "428", 
+      "name": "Ohafia", 
+      "parent": 62
     }
   }, 
   {
     "pk": 429, 
     "model": "psc.lga", 
     "fields": {
-      "code": "386", 
-      "name": "Illela", 
-      "parent": null
+      "code": "429", 
+      "name": "Umu Nneochi", 
+      "parent": 62
     }
   }, 
   {
     "pk": 430, 
     "model": "psc.lga", 
     "fields": {
-      "code": "387", 
-      "name": "Isa", 
-      "parent": null
+      "code": "430", 
+      "name": "Aba North", 
+      "parent": 63
     }
   }, 
   {
     "pk": 431, 
     "model": "psc.lga", 
     "fields": {
-      "code": "388", 
-      "name": "Rabah", 
-      "parent": null
+      "code": "431", 
+      "name": "Aba South", 
+      "parent": 63
     }
   }, 
   {
     "pk": 432, 
     "model": "psc.lga", 
     "fields": {
-      "code": "389", 
-      "name": "Sabon Birni", 
-      "parent": null
+      "code": "432", 
+      "name": "Obingwa ", 
+      "parent": 63
     }
   }, 
   {
     "pk": 433, 
     "model": "psc.lga", 
     "fields": {
-      "code": "390", 
-      "name": "Wurno", 
-      "parent": null
+      "code": "433", 
+      "name": "Osisioma", 
+      "parent": 63
     }
   }, 
   {
     "pk": 434, 
     "model": "psc.lga", 
     "fields": {
-      "code": "391", 
-      "name": "Binji", 
-      "parent": null
+      "code": "434", 
+      "name": "Ugwunagbo", 
+      "parent": 63
     }
   }, 
   {
     "pk": 435, 
     "model": "psc.lga", 
     "fields": {
-      "code": "392", 
-      "name": "Gudu", 
-      "parent": null
+      "code": "435", 
+      "name": "Ukwa East", 
+      "parent": 63
     }
   }, 
   {
     "pk": 436, 
     "model": "psc.lga", 
     "fields": {
-      "code": "393", 
-      "name": "Kware", 
-      "parent": null
+      "code": "436", 
+      "name": "Ukwa West", 
+      "parent": 63
     }
   }, 
   {
     "pk": 437, 
     "model": "psc.lga", 
     "fields": {
-      "code": "394", 
-      "name": "Silame", 
-      "parent": null
+      "code": "437", 
+      "name": "Anaocha", 
+      "parent": 64
     }
   }, 
   {
     "pk": 438, 
     "model": "psc.lga", 
     "fields": {
-      "code": "395", 
-      "name": "Sokoto North", 
-      "parent": null
+      "code": "438", 
+      "name": "Awka North", 
+      "parent": 64
     }
   }, 
   {
     "pk": 439, 
     "model": "psc.lga", 
     "fields": {
-      "code": "396", 
-      "name": "Sokoto South", 
-      "parent": null
+      "code": "439", 
+      "name": "Awka South", 
+      "parent": 64
     }
   }, 
   {
     "pk": 440, 
     "model": "psc.lga", 
     "fields": {
-      "code": "397", 
-      "name": "Tangaza", 
-      "parent": null
+      "code": "440", 
+      "name": "Dunukofia", 
+      "parent": 64
     }
   }, 
   {
     "pk": 441, 
     "model": "psc.lga", 
     "fields": {
-      "code": "398", 
-      "name": "Wamako", 
-      "parent": null
+      "code": "441", 
+      "name": "Idemili North", 
+      "parent": 64
     }
   }, 
   {
     "pk": 442, 
     "model": "psc.lga", 
     "fields": {
-      "code": "399", 
-      "name": "Bodinga", 
-      "parent": null
+      "code": "442", 
+      "name": "Idemili South", 
+      "parent": 64
     }
   }, 
   {
     "pk": 443, 
     "model": "psc.lga", 
     "fields": {
-      "code": "400", 
-      "name": "Dange-Shuni", 
-      "parent": null
+      "code": "443", 
+      "name": "Njikoka ", 
+      "parent": 64
     }
   }, 
   {
     "pk": 444, 
     "model": "psc.lga", 
     "fields": {
-      "code": "401", 
-      "name": "Kebbe", 
-      "parent": null
+      "code": "444", 
+      "name": "Anambra East", 
+      "parent": 65
     }
   }, 
   {
     "pk": 445, 
     "model": "psc.lga", 
     "fields": {
-      "code": "402", 
-      "name": "Shagari", 
-      "parent": null
+      "code": "445", 
+      "name": "Anambra West", 
+      "parent": 65
     }
   }, 
   {
     "pk": 446, 
     "model": "psc.lga", 
     "fields": {
-      "code": "403", 
-      "name": "Tambuwal ", 
-      "parent": null
+      "code": "446", 
+      "name": "Ayamelum", 
+      "parent": 65
     }
   }, 
   {
     "pk": 447, 
     "model": "psc.lga", 
     "fields": {
-      "code": "404", 
-      "name": "Tureta", 
-      "parent": null
+      "code": "447", 
+      "name": "Ogbaru", 
+      "parent": 65
     }
   }, 
   {
     "pk": 448, 
     "model": "psc.lga", 
     "fields": {
-      "code": "405", 
-      "name": "Yabo", 
-      "parent": null
+      "code": "448", 
+      "name": "Onitsha North", 
+      "parent": 65
     }
   }, 
   {
     "pk": 449, 
     "model": "psc.lga", 
     "fields": {
-      "code": "406", 
-      "name": "Bungudu", 
-      "parent": null
+      "code": "449", 
+      "name": "Onitsha South", 
+      "parent": 65
     }
   }, 
   {
     "pk": 450, 
     "model": "psc.lga", 
     "fields": {
-      "code": "407", 
-      "name": "Gusau", 
-      "parent": null
+      "code": "450", 
+      "name": "Oyi", 
+      "parent": 65
     }
   }, 
   {
     "pk": 451, 
     "model": "psc.lga", 
     "fields": {
-      "code": "408", 
-      "name": "Maru", 
-      "parent": null
+      "code": "451", 
+      "name": "Aguata", 
+      "parent": 66
     }
   }, 
   {
     "pk": 452, 
     "model": "psc.lga", 
     "fields": {
-      "code": "409", 
-      "name": "Tsafe", 
-      "parent": null
+      "code": "452", 
+      "name": "Ekwusigo", 
+      "parent": 66
     }
   }, 
   {
     "pk": 453, 
     "model": "psc.lga", 
     "fields": {
-      "code": "410", 
-      "name": "Birnin Magaji-Kiyaw", 
-      "parent": null
+      "code": "453", 
+      "name": "Ihiala", 
+      "parent": 66
     }
   }, 
   {
     "pk": 454, 
     "model": "psc.lga", 
     "fields": {
-      "code": "411", 
-      "name": "Kaura Namoda", 
-      "parent": null
+      "code": "454", 
+      "name": "Nnewi North", 
+      "parent": 66
     }
   }, 
   {
     "pk": 455, 
     "model": "psc.lga", 
     "fields": {
-      "code": "412", 
-      "name": "Shinkafi", 
-      "parent": null
+      "code": "455", 
+      "name": "Nnewi South", 
+      "parent": 66
     }
   }, 
   {
     "pk": 456, 
     "model": "psc.lga", 
     "fields": {
-      "code": "413", 
-      "name": "Zurmi ", 
-      "parent": null
+      "code": "456", 
+      "name": "Orumba North", 
+      "parent": 66
     }
   }, 
   {
     "pk": 457, 
     "model": "psc.lga", 
     "fields": {
-      "code": "414", 
-      "name": "Anka", 
-      "parent": null
+      "code": "457", 
+      "name": "Orumba South", 
+      "parent": 66
     }
   }, 
   {
     "pk": 458, 
     "model": "psc.lga", 
     "fields": {
-      "code": "415", 
-      "name": "Bakura", 
-      "parent": null
+      "code": "458", 
+      "name": "Ezza North", 
+      "parent": 67
     }
   }, 
   {
     "pk": 459, 
     "model": "psc.lga", 
     "fields": {
-      "code": "416", 
-      "name": "Bukkuyum", 
-      "parent": null
+      "code": "459", 
+      "name": "Ezza South", 
+      "parent": 67
     }
   }, 
   {
     "pk": 460, 
     "model": "psc.lga", 
     "fields": {
-      "code": "417", 
-      "name": "Gummi", 
-      "parent": null
+      "code": "460", 
+      "name": "Ikwo", 
+      "parent": 67
     }
   }, 
   {
     "pk": 461, 
     "model": "psc.lga", 
     "fields": {
-      "code": "418", 
-      "name": "Maradun", 
-      "parent": null
+      "code": "461", 
+      "name": "Ishielu", 
+      "parent": 67
     }
   }, 
   {
     "pk": 462, 
     "model": "psc.lga", 
     "fields": {
-      "code": "419", 
-      "name": "Talata Marafa", 
-      "parent": null
+      "code": "462", 
+      "name": "Abakaliki", 
+      "parent": 68
     }
   }, 
   {
     "pk": 463, 
     "model": "psc.lga", 
     "fields": {
-      "code": "420", 
-      "name": "Ikwuano", 
-      "parent": null
+      "code": "463", 
+      "name": "Ebonyi", 
+      "parent": 68
     }
   }, 
   {
     "pk": 464, 
     "model": "psc.lga", 
     "fields": {
-      "code": "421", 
-      "name": "Isiala Ngwa North", 
-      "parent": null
+      "code": "464", 
+      "name": "Izzi", 
+      "parent": 68
     }
   }, 
   {
     "pk": 465, 
     "model": "psc.lga", 
     "fields": {
-      "code": "422", 
-      "name": "Isiala Ngwa South", 
-      "parent": null
+      "code": "465", 
+      "name": "Ohaukwu", 
+      "parent": 68
     }
   }, 
   {
     "pk": 466, 
     "model": "psc.lga", 
     "fields": {
-      "code": "423", 
-      "name": "Umuahia North", 
-      "parent": null
+      "code": "466", 
+      "name": "Afikpo North", 
+      "parent": 69
     }
   }, 
   {
     "pk": 467, 
     "model": "psc.lga", 
     "fields": {
-      "code": "424", 
-      "name": "Umuahia South", 
-      "parent": null
+      "code": "467", 
+      "name": "Afikpo South", 
+      "parent": 69
     }
   }, 
   {
     "pk": 468, 
     "model": "psc.lga", 
     "fields": {
-      "code": "425", 
-      "name": "Arochukwu", 
-      "parent": null
+      "code": "468", 
+      "name": "Ivo", 
+      "parent": 69
     }
   }, 
   {
     "pk": 469, 
     "model": "psc.lga", 
     "fields": {
-      "code": "426", 
-      "name": "Bende", 
-      "parent": null
+      "code": "469", 
+      "name": "Ohaozara", 
+      "parent": 69
     }
   }, 
   {
     "pk": 470, 
     "model": "psc.lga", 
     "fields": {
-      "code": "427", 
-      "name": "Isuikwuato", 
-      "parent": null
+      "code": "470", 
+      "name": "Onicha", 
+      "parent": 69
     }
   }, 
   {
     "pk": 471, 
     "model": "psc.lga", 
     "fields": {
-      "code": "428", 
-      "name": "Ohafia", 
-      "parent": null
+      "code": "471", 
+      "name": "Enugu East", 
+      "parent": 70
     }
   }, 
   {
     "pk": 472, 
     "model": "psc.lga", 
     "fields": {
-      "code": "429", 
-      "name": "Umu Nneochi", 
-      "parent": null
+      "code": "472", 
+      "name": "Enugu North", 
+      "parent": 70
     }
   }, 
   {
     "pk": 473, 
     "model": "psc.lga", 
     "fields": {
-      "code": "430", 
-      "name": "Aba North", 
-      "parent": null
+      "code": "473", 
+      "name": "Enugu South", 
+      "parent": 70
     }
   }, 
   {
     "pk": 474, 
     "model": "psc.lga", 
     "fields": {
-      "code": "431", 
-      "name": "Aba South", 
-      "parent": null
+      "code": "474", 
+      "name": "Isi-Uzo", 
+      "parent": 70
     }
   }, 
   {
     "pk": 475, 
     "model": "psc.lga", 
     "fields": {
-      "code": "432", 
-      "name": "Obingwa ", 
-      "parent": null
+      "code": "475", 
+      "name": "Nkanu East", 
+      "parent": 70
     }
   }, 
   {
     "pk": 476, 
     "model": "psc.lga", 
     "fields": {
-      "code": "433", 
-      "name": "Osisioma", 
-      "parent": null
+      "code": "476", 
+      "name": "Nkanu West", 
+      "parent": 70
     }
   }, 
   {
     "pk": 477, 
     "model": "psc.lga", 
     "fields": {
-      "code": "434", 
-      "name": "Ugwunagbo", 
-      "parent": null
+      "code": "477", 
+      "name": "Igbo-Etiti", 
+      "parent": 71
     }
   }, 
   {
     "pk": 478, 
     "model": "psc.lga", 
     "fields": {
-      "code": "435", 
-      "name": "Ukwa East", 
-      "parent": null
+      "code": "478", 
+      "name": "Igbo-Eze North", 
+      "parent": 71
     }
   }, 
   {
     "pk": 479, 
     "model": "psc.lga", 
     "fields": {
-      "code": "436", 
-      "name": "Ukwa West", 
-      "parent": null
+      "code": "479", 
+      "name": "Igbo-Eze South", 
+      "parent": 71
     }
   }, 
   {
     "pk": 480, 
     "model": "psc.lga", 
     "fields": {
-      "code": "437", 
-      "name": "Anaocha", 
-      "parent": null
+      "code": "480", 
+      "name": "Nsukka", 
+      "parent": 71
     }
   }, 
   {
     "pk": 481, 
     "model": "psc.lga", 
     "fields": {
-      "code": "438", 
-      "name": "Awka North", 
-      "parent": null
+      "code": "481", 
+      "name": "Udenu", 
+      "parent": 71
     }
   }, 
   {
     "pk": 482, 
     "model": "psc.lga", 
     "fields": {
-      "code": "439", 
-      "name": "Awka South", 
-      "parent": null
+      "code": "482", 
+      "name": "Uzo Uwani", 
+      "parent": 71
     }
   }, 
   {
     "pk": 483, 
     "model": "psc.lga", 
     "fields": {
-      "code": "440", 
-      "name": "Dunukofia", 
-      "parent": null
+      "code": "483", 
+      "name": "Aninri", 
+      "parent": 72
     }
   }, 
   {
     "pk": 484, 
     "model": "psc.lga", 
     "fields": {
-      "code": "441", 
-      "name": "Idemili North", 
-      "parent": null
+      "code": "484", 
+      "name": "Awgu", 
+      "parent": 72
     }
   }, 
   {
     "pk": 485, 
     "model": "psc.lga", 
     "fields": {
-      "code": "442", 
-      "name": "Idemili South", 
-      "parent": null
+      "code": "485", 
+      "name": "Ezeagu", 
+      "parent": 72
     }
   }, 
   {
     "pk": 486, 
     "model": "psc.lga", 
     "fields": {
-      "code": "443", 
-      "name": "Njikoka ", 
-      "parent": null
+      "code": "486", 
+      "name": "Oji River", 
+      "parent": 72
     }
   }, 
   {
     "pk": 487, 
     "model": "psc.lga", 
     "fields": {
-      "code": "444", 
-      "name": "Anambra East", 
-      "parent": null
+      "code": "487", 
+      "name": "Udi", 
+      "parent": 72
     }
   }, 
   {
     "pk": 488, 
     "model": "psc.lga", 
     "fields": {
-      "code": "445", 
-      "name": "Anambra West", 
-      "parent": null
+      "code": "488", 
+      "name": "Aboh Mbaise", 
+      "parent": 73
     }
   }, 
   {
     "pk": 489, 
     "model": "psc.lga", 
     "fields": {
-      "code": "446", 
-      "name": "Ayamelum", 
-      "parent": null
+      "code": "489", 
+      "name": "Ahiazu Mbaise", 
+      "parent": 73
     }
   }, 
   {
     "pk": 490, 
     "model": "psc.lga", 
     "fields": {
-      "code": "447", 
-      "name": "Ogbaru", 
-      "parent": null
+      "code": "490", 
+      "name": "Ezinihitte", 
+      "parent": 73
     }
   }, 
   {
     "pk": 491, 
     "model": "psc.lga", 
     "fields": {
-      "code": "448", 
-      "name": "Onitsha North", 
-      "parent": null
+      "code": "491", 
+      "name": "Ikeduru", 
+      "parent": 73
     }
   }, 
   {
     "pk": 492, 
     "model": "psc.lga", 
     "fields": {
-      "code": "449", 
-      "name": "Onitsha South", 
-      "parent": null
+      "code": "492", 
+      "name": "Mbaitolu", 
+      "parent": 73
     }
   }, 
   {
     "pk": 493, 
     "model": "psc.lga", 
     "fields": {
-      "code": "450", 
-      "name": "Oyi", 
-      "parent": null
+      "code": "493", 
+      "name": "Ngor Okpala", 
+      "parent": 73
     }
   }, 
   {
     "pk": 494, 
     "model": "psc.lga", 
     "fields": {
-      "code": "451", 
-      "name": "Aguata", 
-      "parent": null
+      "code": "494", 
+      "name": "Owerri Municipal", 
+      "parent": 73
     }
   }, 
   {
     "pk": 495, 
     "model": "psc.lga", 
     "fields": {
-      "code": "452", 
-      "name": "Ekwusigo", 
-      "parent": null
+      "code": "495", 
+      "name": "Owerri North", 
+      "parent": 73
     }
   }, 
   {
     "pk": 496, 
     "model": "psc.lga", 
     "fields": {
-      "code": "453", 
-      "name": "Ihiala", 
-      "parent": null
+      "code": "496", 
+      "name": "Owerri West", 
+      "parent": 73
     }
   }, 
   {
     "pk": 497, 
     "model": "psc.lga", 
     "fields": {
-      "code": "454", 
-      "name": "Nnewi North", 
-      "parent": null
+      "code": "497", 
+      "name": "Ehime Mbano", 
+      "parent": 74
     }
   }, 
   {
     "pk": 498, 
     "model": "psc.lga", 
     "fields": {
-      "code": "455", 
-      "name": "Nnewi South", 
-      "parent": null
+      "code": "498", 
+      "name": "Ihitte-Uboma", 
+      "parent": 74
     }
   }, 
   {
     "pk": 499, 
     "model": "psc.lga", 
     "fields": {
-      "code": "456", 
-      "name": "Orumba North", 
-      "parent": null
+      "code": "499", 
+      "name": "Isiala Mbano", 
+      "parent": 74
     }
   }, 
   {
     "pk": 500, 
     "model": "psc.lga", 
     "fields": {
-      "code": "457", 
-      "name": "Orumba South", 
-      "parent": null
+      "code": "500", 
+      "name": "Obowo", 
+      "parent": 74
     }
   }, 
   {
     "pk": 501, 
     "model": "psc.lga", 
     "fields": {
-      "code": "458", 
-      "name": "Ezza North", 
-      "parent": null
+      "code": "501", 
+      "name": "Okigwe", 
+      "parent": 74
     }
   }, 
   {
     "pk": 502, 
     "model": "psc.lga", 
     "fields": {
-      "code": "459", 
-      "name": "Ezza South", 
-      "parent": null
+      "code": "502", 
+      "name": "Onuimo", 
+      "parent": 74
     }
   }, 
   {
     "pk": 503, 
     "model": "psc.lga", 
     "fields": {
-      "code": "460", 
-      "name": "Ikwo", 
-      "parent": null
+      "code": "503", 
+      "name": "Ideato North", 
+      "parent": 75
     }
   }, 
   {
     "pk": 504, 
     "model": "psc.lga", 
     "fields": {
-      "code": "461", 
-      "name": "Ishielu", 
-      "parent": null
+      "code": "504", 
+      "name": "Ideato South", 
+      "parent": 75
     }
   }, 
   {
     "pk": 505, 
     "model": "psc.lga", 
     "fields": {
-      "code": "462", 
-      "name": "Abakaliki", 
-      "parent": null
+      "code": "505", 
+      "name": "Isu", 
+      "parent": 75
     }
   }, 
   {
     "pk": 506, 
     "model": "psc.lga", 
     "fields": {
-      "code": "463", 
-      "name": "Ebonyi", 
-      "parent": null
+      "code": "506", 
+      "name": "Njaba", 
+      "parent": 75
     }
   }, 
   {
     "pk": 507, 
     "model": "psc.lga", 
     "fields": {
-      "code": "464", 
-      "name": "Izzi", 
-      "parent": null
+      "code": "507", 
+      "name": "Nkwerre", 
+      "parent": 75
     }
   }, 
   {
     "pk": 508, 
     "model": "psc.lga", 
     "fields": {
-      "code": "465", 
-      "name": "Ohaukwu", 
-      "parent": null
+      "code": "508", 
+      "name": "Nwangele", 
+      "parent": 75
     }
   }, 
   {
     "pk": 509, 
     "model": "psc.lga", 
     "fields": {
-      "code": "466", 
-      "name": "Afikpo North", 
-      "parent": null
+      "code": "509", 
+      "name": "Oguta", 
+      "parent": 75
     }
   }, 
   {
     "pk": 510, 
     "model": "psc.lga", 
     "fields": {
-      "code": "467", 
-      "name": "Afikpo South", 
-      "parent": null
+      "code": "510", 
+      "name": "Ohaji-Egbema", 
+      "parent": 75
     }
   }, 
   {
     "pk": 511, 
     "model": "psc.lga", 
     "fields": {
-      "code": "468", 
-      "name": "Ivo", 
-      "parent": null
+      "code": "511", 
+      "name": "Orlu", 
+      "parent": 75
     }
   }, 
   {
     "pk": 512, 
     "model": "psc.lga", 
     "fields": {
-      "code": "469", 
-      "name": "Ohaozara", 
-      "parent": null
+      "code": "512", 
+      "name": "Orsu", 
+      "parent": 75
     }
   }, 
   {
     "pk": 513, 
     "model": "psc.lga", 
     "fields": {
-      "code": "470", 
-      "name": "Onicha", 
-      "parent": null
+      "code": "513", 
+      "name": "Oru East", 
+      "parent": 75
     }
   }, 
   {
     "pk": 514, 
     "model": "psc.lga", 
     "fields": {
-      "code": "471", 
-      "name": "Enugu East", 
-      "parent": null
+      "code": "514", 
+      "name": "Oru West", 
+      "parent": 75
     }
   }, 
   {
     "pk": 515, 
     "model": "psc.lga", 
     "fields": {
-      "code": "472", 
-      "name": "Enugu North", 
-      "parent": null
+      "code": "515", 
+      "name": "Etinan", 
+      "parent": 76
     }
   }, 
   {
     "pk": 516, 
     "model": "psc.lga", 
     "fields": {
-      "code": "473", 
-      "name": "Enugu South", 
-      "parent": null
+      "code": "516", 
+      "name": "Ibesikpo Asutan", 
+      "parent": 76
     }
   }, 
   {
     "pk": 517, 
     "model": "psc.lga", 
     "fields": {
-      "code": "474", 
-      "name": "Isi-Uzo", 
-      "parent": null
+      "code": "517", 
+      "name": "Ibiono Ibom", 
+      "parent": 76
     }
   }, 
   {
     "pk": 518, 
     "model": "psc.lga", 
     "fields": {
-      "code": "475", 
-      "name": "Nkanu East", 
-      "parent": null
+      "code": "518", 
+      "name": "Itu", 
+      "parent": 76
     }
   }, 
   {
     "pk": 519, 
     "model": "psc.lga", 
     "fields": {
-      "code": "476", 
-      "name": "Nkanu West", 
-      "parent": null
+      "code": "519", 
+      "name": "Nsit Atai", 
+      "parent": 76
     }
   }, 
   {
     "pk": 520, 
     "model": "psc.lga", 
     "fields": {
-      "code": "477", 
-      "name": "Igbo-Etiti", 
-      "parent": null
+      "code": "520", 
+      "name": "Nsit Ibom", 
+      "parent": 76
     }
   }, 
   {
     "pk": 521, 
     "model": "psc.lga", 
     "fields": {
-      "code": "478", 
-      "name": "Igbo-Eze North", 
-      "parent": null
+      "code": "521", 
+      "name": "Nsit Ubium", 
+      "parent": 76
     }
   }, 
   {
     "pk": 522, 
     "model": "psc.lga", 
     "fields": {
-      "code": "479", 
-      "name": "Igbo-Eze South", 
-      "parent": null
+      "code": "522", 
+      "name": "Uruan", 
+      "parent": 76
     }
   }, 
   {
     "pk": 523, 
     "model": "psc.lga", 
     "fields": {
-      "code": "480", 
-      "name": "Nsukka", 
-      "parent": null
+      "code": "523", 
+      "name": "Uyo", 
+      "parent": 76
     }
   }, 
   {
     "pk": 524, 
     "model": "psc.lga", 
     "fields": {
-      "code": "481", 
-      "name": "Udenu", 
-      "parent": null
+      "code": "524", 
+      "name": "Abak", 
+      "parent": 77
     }
   }, 
   {
     "pk": 525, 
     "model": "psc.lga", 
     "fields": {
-      "code": "482", 
-      "name": "Uzo Uwani", 
-      "parent": null
+      "code": "525", 
+      "name": "Essien Udim", 
+      "parent": 77
     }
   }, 
   {
     "pk": 526, 
     "model": "psc.lga", 
     "fields": {
-      "code": "483", 
-      "name": "Aninri", 
-      "parent": null
+      "code": "526", 
+      "name": "Etim Ekpo", 
+      "parent": 77
     }
   }, 
   {
     "pk": 527, 
     "model": "psc.lga", 
     "fields": {
-      "code": "484", 
-      "name": "Awgu", 
-      "parent": null
+      "code": "527", 
+      "name": "Ika", 
+      "parent": 77
     }
   }, 
   {
     "pk": 528, 
     "model": "psc.lga", 
     "fields": {
-      "code": "485", 
-      "name": "Ezeagu", 
-      "parent": null
+      "code": "528", 
+      "name": "Ikono", 
+      "parent": 77
     }
   }, 
   {
     "pk": 529, 
     "model": "psc.lga", 
     "fields": {
-      "code": "486", 
-      "name": "Oji River", 
-      "parent": null
+      "code": "529", 
+      "name": "Ikot Ekpene", 
+      "parent": 77
     }
   }, 
   {
     "pk": 530, 
     "model": "psc.lga", 
     "fields": {
-      "code": "487", 
-      "name": "Udi", 
-      "parent": null
+      "code": "530", 
+      "name": "Ini", 
+      "parent": 77
     }
   }, 
   {
     "pk": 531, 
     "model": "psc.lga", 
     "fields": {
-      "code": "488", 
-      "name": "Aboh Mbaise", 
-      "parent": null
+      "code": "531", 
+      "name": "Obot Akara", 
+      "parent": 77
     }
   }, 
   {
     "pk": 532, 
     "model": "psc.lga", 
     "fields": {
-      "code": "489", 
-      "name": "Ahiazu Mbaise", 
-      "parent": null
+      "code": "532", 
+      "name": "Oruk Anam", 
+      "parent": 77
     }
   }, 
   {
     "pk": 533, 
     "model": "psc.lga", 
     "fields": {
-      "code": "490", 
-      "name": "Ezinihitte", 
-      "parent": null
+      "code": "533", 
+      "name": "Ukanafun", 
+      "parent": 77
     }
   }, 
   {
     "pk": 534, 
     "model": "psc.lga", 
     "fields": {
-      "code": "491", 
-      "name": "Ikeduru", 
-      "parent": null
+      "code": "534", 
+      "name": "Eastern Obolo", 
+      "parent": 78
     }
   }, 
   {
     "pk": 535, 
     "model": "psc.lga", 
     "fields": {
-      "code": "492", 
-      "name": "Mbaitolu", 
-      "parent": null
+      "code": "535", 
+      "name": "Eket", 
+      "parent": 78
     }
   }, 
   {
     "pk": 536, 
     "model": "psc.lga", 
     "fields": {
-      "code": "493", 
-      "name": "Ngor Okpala", 
-      "parent": null
+      "code": "536", 
+      "name": "Esit Eket", 
+      "parent": 78
     }
   }, 
   {
     "pk": 537, 
     "model": "psc.lga", 
     "fields": {
-      "code": "494", 
-      "name": "Owerri Municipal", 
-      "parent": null
+      "code": "537", 
+      "name": "Ibeno", 
+      "parent": 78
     }
   }, 
   {
     "pk": 538, 
     "model": "psc.lga", 
     "fields": {
-      "code": "495", 
-      "name": "Owerri North", 
-      "parent": null
+      "code": "538", 
+      "name": "Ikot Abasi", 
+      "parent": 78
     }
   }, 
   {
     "pk": 539, 
     "model": "psc.lga", 
     "fields": {
-      "code": "496", 
-      "name": "Owerri West", 
-      "parent": null
+      "code": "539", 
+      "name": "Mbo", 
+      "parent": 78
     }
   }, 
   {
     "pk": 540, 
     "model": "psc.lga", 
     "fields": {
-      "code": "497", 
-      "name": "Ehime Mbano", 
-      "parent": null
+      "code": "540", 
+      "name": "Mkpat Enin", 
+      "parent": 78
     }
   }, 
   {
     "pk": 541, 
     "model": "psc.lga", 
     "fields": {
-      "code": "498", 
-      "name": "Ihitte-Uboma", 
-      "parent": null
+      "code": "541", 
+      "name": "Okobo", 
+      "parent": 78
     }
   }, 
   {
     "pk": 542, 
     "model": "psc.lga", 
     "fields": {
-      "code": "499", 
-      "name": "Isiala Mbano", 
-      "parent": null
+      "code": "542", 
+      "name": "Onna", 
+      "parent": 78
     }
   }, 
   {
     "pk": 543, 
     "model": "psc.lga", 
     "fields": {
-      "code": "500", 
-      "name": "Obowo", 
-      "parent": null
+      "code": "543", 
+      "name": "Oron ", 
+      "parent": 78
     }
   }, 
   {
     "pk": 544, 
     "model": "psc.lga", 
     "fields": {
-      "code": "501", 
-      "name": "Okigwe", 
-      "parent": null
+      "code": "544", 
+      "name": "Udung Uko", 
+      "parent": 78
     }
   }, 
   {
     "pk": 545, 
     "model": "psc.lga", 
     "fields": {
-      "code": "502", 
-      "name": "Onuimo", 
-      "parent": null
+      "code": "545", 
+      "name": "Urue Offong-Oruko", 
+      "parent": 78
     }
   }, 
   {
     "pk": 546, 
     "model": "psc.lga", 
     "fields": {
-      "code": "503", 
-      "name": "Ideato North", 
-      "parent": null
+      "code": "546", 
+      "name": "Kolokuma-Opokuma", 
+      "parent": 79
     }
   }, 
   {
     "pk": 547, 
     "model": "psc.lga", 
     "fields": {
-      "code": "504", 
-      "name": "Ideato South", 
-      "parent": null
+      "code": "547", 
+      "name": "Southern Ijaw", 
+      "parent": 79
     }
   }, 
   {
     "pk": 548, 
     "model": "psc.lga", 
     "fields": {
-      "code": "505", 
-      "name": "Isu", 
-      "parent": null
+      "code": "548", 
+      "name": "Yenagoa", 
+      "parent": 79
     }
   }, 
   {
     "pk": 549, 
     "model": "psc.lga", 
     "fields": {
-      "code": "506", 
-      "name": "Njaba", 
-      "parent": null
+      "code": "549", 
+      "name": "Brass", 
+      "parent": 80
     }
   }, 
   {
     "pk": 550, 
     "model": "psc.lga", 
     "fields": {
-      "code": "507", 
-      "name": "Nkwerre", 
-      "parent": null
+      "code": "550", 
+      "name": "Nembe", 
+      "parent": 80
     }
   }, 
   {
     "pk": 551, 
     "model": "psc.lga", 
     "fields": {
-      "code": "508", 
-      "name": "Nwangele", 
-      "parent": null
+      "code": "551", 
+      "name": "Ogbia", 
+      "parent": 80
     }
   }, 
   {
     "pk": 552, 
     "model": "psc.lga", 
     "fields": {
-      "code": "509", 
-      "name": "Oguta", 
-      "parent": null
+      "code": "552", 
+      "name": "Ekeremor", 
+      "parent": 81
     }
   }, 
   {
     "pk": 553, 
     "model": "psc.lga", 
     "fields": {
-      "code": "510", 
-      "name": "Ohaji-Egbema", 
-      "parent": null
+      "code": "553", 
+      "name": "Sagbama", 
+      "parent": 81
     }
   }, 
   {
     "pk": 554, 
     "model": "psc.lga", 
     "fields": {
-      "code": "511", 
-      "name": "Orlu", 
-      "parent": null
+      "code": "554", 
+      "name": "Abi", 
+      "parent": 82
     }
   }, 
   {
     "pk": 555, 
     "model": "psc.lga", 
     "fields": {
-      "code": "512", 
-      "name": "Orsu", 
-      "parent": null
+      "code": "555", 
+      "name": "Boki", 
+      "parent": 82
     }
   }, 
   {
     "pk": 556, 
     "model": "psc.lga", 
     "fields": {
-      "code": "513", 
-      "name": "Oru East", 
-      "parent": null
+      "code": "556", 
+      "name": "Etung", 
+      "parent": 82
     }
   }, 
   {
     "pk": 557, 
     "model": "psc.lga", 
     "fields": {
-      "code": "514", 
-      "name": "Oru West", 
-      "parent": null
+      "code": "557", 
+      "name": "Ikom", 
+      "parent": 82
     }
   }, 
   {
     "pk": 558, 
     "model": "psc.lga", 
     "fields": {
-      "code": "515", 
-      "name": "Etinan", 
-      "parent": null
+      "code": "558", 
+      "name": "Obubra", 
+      "parent": 82
     }
   }, 
   {
     "pk": 559, 
     "model": "psc.lga", 
     "fields": {
-      "code": "516", 
-      "name": "Ibesikpo Asutan", 
-      "parent": null
+      "code": "559", 
+      "name": "Yakuur", 
+      "parent": 82
     }
   }, 
   {
     "pk": 560, 
     "model": "psc.lga", 
     "fields": {
-      "code": "517", 
-      "name": "Ibiono Ibom", 
-      "parent": null
+      "code": "560", 
+      "name": "Yala", 
+      "parent": 83
     }
   }, 
   {
     "pk": 561, 
     "model": "psc.lga", 
     "fields": {
-      "code": "518", 
-      "name": "Itu", 
-      "parent": null
+      "code": "561", 
+      "name": "Bekwarra", 
+      "parent": 83
     }
   }, 
   {
     "pk": 562, 
     "model": "psc.lga", 
     "fields": {
-      "code": "519", 
-      "name": "Nsit Atai", 
-      "parent": null
+      "code": "562", 
+      "name": "Obanliku", 
+      "parent": 83
     }
   }, 
   {
     "pk": 563, 
     "model": "psc.lga", 
     "fields": {
-      "code": "520", 
-      "name": "Nsit Ibom", 
-      "parent": null
+      "code": "563", 
+      "name": "Obudu", 
+      "parent": 83
     }
   }, 
   {
     "pk": 564, 
     "model": "psc.lga", 
     "fields": {
-      "code": "521", 
-      "name": "Nsit Ubium", 
-      "parent": null
+      "code": "564", 
+      "name": "Ogoja", 
+      "parent": 83
     }
   }, 
   {
     "pk": 565, 
     "model": "psc.lga", 
     "fields": {
-      "code": "522", 
-      "name": "Uruan", 
-      "parent": null
+      "code": "565", 
+      "name": "Akamkpa", 
+      "parent": 84
     }
   }, 
   {
     "pk": 566, 
     "model": "psc.lga", 
     "fields": {
-      "code": "523", 
-      "name": "Uyo", 
-      "parent": null
+      "code": "566", 
+      "name": "Akpabuyo", 
+      "parent": 84
     }
   }, 
   {
     "pk": 567, 
     "model": "psc.lga", 
     "fields": {
-      "code": "524", 
-      "name": "Abak", 
-      "parent": null
+      "code": "567", 
+      "name": "Bakassi", 
+      "parent": 84
     }
   }, 
   {
     "pk": 568, 
     "model": "psc.lga", 
     "fields": {
-      "code": "525", 
-      "name": "Essien Udim", 
-      "parent": null
+      "code": "568", 
+      "name": "Biase", 
+      "parent": 84
     }
   }, 
   {
     "pk": 569, 
     "model": "psc.lga", 
     "fields": {
-      "code": "526", 
-      "name": "Etim Ekpo", 
-      "parent": null
+      "code": "569", 
+      "name": "Calabar Municipal", 
+      "parent": 84
     }
   }, 
   {
     "pk": 570, 
     "model": "psc.lga", 
     "fields": {
-      "code": "527", 
-      "name": "Ika", 
-      "parent": null
+      "code": "570", 
+      "name": "Calabar South", 
+      "parent": 84
     }
   }, 
   {
     "pk": 571, 
     "model": "psc.lga", 
     "fields": {
-      "code": "528", 
-      "name": "Ikono", 
-      "parent": null
+      "code": "571", 
+      "name": "Odukpani", 
+      "parent": 84
     }
   }, 
   {
     "pk": 572, 
     "model": "psc.lga", 
     "fields": {
-      "code": "529", 
-      "name": "Ikot Ekpene", 
-      "parent": null
+      "code": "572", 
+      "name": "Ethiope East", 
+      "parent": 85
     }
   }, 
   {
     "pk": 573, 
     "model": "psc.lga", 
     "fields": {
-      "code": "530", 
-      "name": "Ini", 
-      "parent": null
+      "code": "573", 
+      "name": "Ethiope West", 
+      "parent": 85
     }
   }, 
   {
     "pk": 574, 
     "model": "psc.lga", 
     "fields": {
-      "code": "531", 
-      "name": "Obot Akara", 
-      "parent": null
+      "code": "574", 
+      "name": "Okpe", 
+      "parent": 85
     }
   }, 
   {
     "pk": 575, 
     "model": "psc.lga", 
     "fields": {
-      "code": "532", 
-      "name": "Oruk Anam", 
-      "parent": null
+      "code": "575", 
+      "name": "Sapele", 
+      "parent": 85
     }
   }, 
   {
     "pk": 576, 
     "model": "psc.lga", 
     "fields": {
-      "code": "533", 
-      "name": "Ukanafun", 
-      "parent": null
+      "code": "576", 
+      "name": "Udu", 
+      "parent": 85
     }
   }, 
   {
     "pk": 577, 
     "model": "psc.lga", 
     "fields": {
-      "code": "534", 
-      "name": "Eastern Obolo", 
-      "parent": null
+      "code": "577", 
+      "name": "Ughelli North", 
+      "parent": 85
     }
   }, 
   {
     "pk": 578, 
     "model": "psc.lga", 
     "fields": {
-      "code": "535", 
-      "name": "Eket", 
-      "parent": null
+      "code": "578", 
+      "name": "Ughelli South", 
+      "parent": 85
     }
   }, 
   {
     "pk": 579, 
     "model": "psc.lga", 
     "fields": {
-      "code": "536", 
-      "name": "Esit Eket", 
-      "parent": null
+      "code": "579", 
+      "name": "Uvwie", 
+      "parent": 85
     }
   }, 
   {
     "pk": 580, 
     "model": "psc.lga", 
     "fields": {
-      "code": "537", 
-      "name": "Ibeno", 
-      "parent": null
+      "code": "580", 
+      "name": "Aniocha North", 
+      "parent": 86
     }
   }, 
   {
     "pk": 581, 
     "model": "psc.lga", 
     "fields": {
-      "code": "538", 
-      "name": "Ikot Abasi", 
-      "parent": null
+      "code": "581", 
+      "name": "Aniocha South", 
+      "parent": 86
     }
   }, 
   {
     "pk": 582, 
     "model": "psc.lga", 
     "fields": {
-      "code": "539", 
-      "name": "Mbo", 
-      "parent": null
+      "code": "582", 
+      "name": "Ika North-East", 
+      "parent": 86
     }
   }, 
   {
     "pk": 583, 
     "model": "psc.lga", 
     "fields": {
-      "code": "540", 
-      "name": "Mkpat Enin", 
-      "parent": null
+      "code": "583", 
+      "name": "Ika South", 
+      "parent": 86
     }
   }, 
   {
     "pk": 584, 
     "model": "psc.lga", 
     "fields": {
-      "code": "541", 
-      "name": "Okobo", 
-      "parent": null
+      "code": "584", 
+      "name": "Ndokwa East", 
+      "parent": 86
     }
   }, 
   {
     "pk": 585, 
     "model": "psc.lga", 
     "fields": {
-      "code": "542", 
-      "name": "Onna", 
-      "parent": null
+      "code": "585", 
+      "name": "Ndokwa West", 
+      "parent": 86
     }
   }, 
   {
     "pk": 586, 
     "model": "psc.lga", 
     "fields": {
-      "code": "543", 
-      "name": "Oron ", 
-      "parent": null
+      "code": "586", 
+      "name": "Oshimili North", 
+      "parent": 86
     }
   }, 
   {
     "pk": 587, 
     "model": "psc.lga", 
     "fields": {
-      "code": "544", 
-      "name": "Udung Uko", 
-      "parent": null
+      "code": "587", 
+      "name": "Oshimili South", 
+      "parent": 86
     }
   }, 
   {
     "pk": 588, 
     "model": "psc.lga", 
     "fields": {
-      "code": "545", 
-      "name": "Urue Offong-Oruko", 
-      "parent": null
+      "code": "588", 
+      "name": "Ukwuani", 
+      "parent": 86
     }
   }, 
   {
     "pk": 589, 
     "model": "psc.lga", 
     "fields": {
-      "code": "546", 
-      "name": "Kolokuma-Opokuma", 
-      "parent": null
+      "code": "589", 
+      "name": "Bomadi", 
+      "parent": 87
     }
   }, 
   {
     "pk": 590, 
     "model": "psc.lga", 
     "fields": {
-      "code": "547", 
-      "name": "Southern Ijaw", 
-      "parent": null
+      "code": "590", 
+      "name": "Burutu", 
+      "parent": 87
     }
   }, 
   {
     "pk": 591, 
     "model": "psc.lga", 
     "fields": {
-      "code": "548", 
-      "name": "Yenagoa", 
-      "parent": null
+      "code": "591", 
+      "name": "Isoko North", 
+      "parent": 87
     }
   }, 
   {
     "pk": 592, 
     "model": "psc.lga", 
     "fields": {
-      "code": "549", 
-      "name": "Brass", 
-      "parent": null
+      "code": "592", 
+      "name": "Isoko South", 
+      "parent": 87
     }
   }, 
   {
     "pk": 593, 
     "model": "psc.lga", 
     "fields": {
-      "code": "550", 
-      "name": "Nembe", 
-      "parent": null
+      "code": "593", 
+      "name": "Patani", 
+      "parent": 87
     }
   }, 
   {
     "pk": 594, 
     "model": "psc.lga", 
     "fields": {
-      "code": "551", 
-      "name": "Ogbia", 
-      "parent": null
+      "code": "594", 
+      "name": "Warri North", 
+      "parent": 87
     }
   }, 
   {
     "pk": 595, 
     "model": "psc.lga", 
     "fields": {
-      "code": "552", 
-      "name": "Ekeremor", 
-      "parent": null
+      "code": "595", 
+      "name": "Warri South", 
+      "parent": 87
     }
   }, 
   {
     "pk": 596, 
     "model": "psc.lga", 
     "fields": {
-      "code": "553", 
-      "name": "Sagbama", 
-      "parent": null
+      "code": "596", 
+      "name": "Warri South-West", 
+      "parent": 87
     }
   }, 
   {
     "pk": 597, 
     "model": "psc.lga", 
     "fields": {
-      "code": "554", 
-      "name": "Abi", 
-      "parent": null
+      "code": "597", 
+      "name": "Esan Central", 
+      "parent": 88
     }
   }, 
   {
     "pk": 598, 
     "model": "psc.lga", 
     "fields": {
-      "code": "555", 
-      "name": "Boki", 
-      "parent": null
+      "code": "598", 
+      "name": "Esan North-East", 
+      "parent": 88
     }
   }, 
   {
     "pk": 599, 
     "model": "psc.lga", 
     "fields": {
-      "code": "556", 
-      "name": "Etung", 
-      "parent": null
+      "code": "599", 
+      "name": "Esan South-East", 
+      "parent": 88
     }
   }, 
   {
     "pk": 600, 
     "model": "psc.lga", 
     "fields": {
-      "code": "557", 
-      "name": "Ikom", 
-      "parent": null
+      "code": "600", 
+      "name": "Esan West", 
+      "parent": 88
     }
   }, 
   {
     "pk": 601, 
     "model": "psc.lga", 
     "fields": {
-      "code": "558", 
-      "name": "Obubra", 
-      "parent": null
+      "code": "601", 
+      "name": "Igueben", 
+      "parent": 88
     }
   }, 
   {
     "pk": 602, 
     "model": "psc.lga", 
     "fields": {
-      "code": "559", 
-      "name": "Yakuur", 
-      "parent": null
+      "code": "602", 
+      "name": "Akoko Edo", 
+      "parent": 89
     }
   }, 
   {
     "pk": 603, 
     "model": "psc.lga", 
     "fields": {
-      "code": "560", 
-      "name": "Yala", 
-      "parent": null
+      "code": "603", 
+      "name": "Etsako Central", 
+      "parent": 89
     }
   }, 
   {
     "pk": 604, 
     "model": "psc.lga", 
     "fields": {
-      "code": "561", 
-      "name": "Bekwarra", 
-      "parent": null
+      "code": "604", 
+      "name": "Etsako East", 
+      "parent": 89
     }
   }, 
   {
     "pk": 605, 
     "model": "psc.lga", 
     "fields": {
-      "code": "562", 
-      "name": "Obanliku", 
-      "parent": null
+      "code": "605", 
+      "name": "Etsako West", 
+      "parent": 89
     }
   }, 
   {
     "pk": 606, 
     "model": "psc.lga", 
     "fields": {
-      "code": "563", 
-      "name": "Obudu", 
-      "parent": null
+      "code": "606", 
+      "name": "Owan East", 
+      "parent": 89
     }
   }, 
   {
     "pk": 607, 
     "model": "psc.lga", 
     "fields": {
-      "code": "564", 
-      "name": "Ogoja", 
-      "parent": null
+      "code": "607", 
+      "name": "Owan West", 
+      "parent": 89
     }
   }, 
   {
     "pk": 608, 
     "model": "psc.lga", 
     "fields": {
-      "code": "565", 
-      "name": "Akamkpa", 
-      "parent": null
+      "code": "608", 
+      "name": "Egor", 
+      "parent": 90
     }
   }, 
   {
     "pk": 609, 
     "model": "psc.lga", 
     "fields": {
-      "code": "566", 
-      "name": "Akpabuyo", 
-      "parent": null
+      "code": "609", 
+      "name": "Ikpoba Okha", 
+      "parent": 90
     }
   }, 
   {
     "pk": 610, 
     "model": "psc.lga", 
     "fields": {
-      "code": "567", 
-      "name": "Bakassi", 
-      "parent": null
+      "code": "610", 
+      "name": "Oredo ", 
+      "parent": 90
     }
   }, 
   {
     "pk": 611, 
     "model": "psc.lga", 
     "fields": {
-      "code": "568", 
-      "name": "Biase", 
-      "parent": null
+      "code": "611", 
+      "name": "Orhionmwon", 
+      "parent": 90
     }
   }, 
   {
     "pk": 612, 
     "model": "psc.lga", 
     "fields": {
-      "code": "569", 
-      "name": "Calabar Municipal", 
-      "parent": null
+      "code": "612", 
+      "name": "Ovia North-East", 
+      "parent": 90
     }
   }, 
   {
     "pk": 613, 
     "model": "psc.lga", 
     "fields": {
-      "code": "570", 
-      "name": "Calabar South", 
-      "parent": null
+      "code": "613", 
+      "name": "Ovia South-West", 
+      "parent": 90
     }
   }, 
   {
     "pk": 614, 
     "model": "psc.lga", 
     "fields": {
-      "code": "571", 
-      "name": "Odukpani", 
-      "parent": null
+      "code": "614", 
+      "name": "Uhunmwonde", 
+      "parent": 90
     }
   }, 
   {
     "pk": 615, 
     "model": "psc.lga", 
     "fields": {
-      "code": "572", 
-      "name": "Ethiope East", 
-      "parent": null
+      "code": "615", 
+      "name": "Emohua", 
+      "parent": 91
     }
   }, 
   {
     "pk": 616, 
     "model": "psc.lga", 
     "fields": {
-      "code": "573", 
-      "name": "Ethiope West", 
-      "parent": null
+      "code": "616", 
+      "name": "Etche", 
+      "parent": 91
     }
   }, 
   {
     "pk": 617, 
     "model": "psc.lga", 
     "fields": {
-      "code": "574", 
-      "name": "Okpe", 
-      "parent": null
+      "code": "617", 
+      "name": "Ikwerre", 
+      "parent": 91
     }
   }, 
   {
     "pk": 618, 
     "model": "psc.lga", 
     "fields": {
-      "code": "575", 
-      "name": "Sapele", 
-      "parent": null
+      "code": "618", 
+      "name": "Obio-Akpor", 
+      "parent": 91
     }
   }, 
   {
     "pk": 619, 
     "model": "psc.lga", 
     "fields": {
-      "code": "576", 
-      "name": "Udu", 
-      "parent": null
+      "code": "619", 
+      "name": "Ogu-Bolo", 
+      "parent": 91
     }
   }, 
   {
     "pk": 620, 
     "model": "psc.lga", 
     "fields": {
-      "code": "577", 
-      "name": "Ughelli North", 
-      "parent": null
+      "code": "620", 
+      "name": "Okrika", 
+      "parent": 91
     }
   }, 
   {
     "pk": 621, 
     "model": "psc.lga", 
     "fields": {
-      "code": "578", 
-      "name": "Ughelli South", 
-      "parent": null
+      "code": "621", 
+      "name": "Omuma", 
+      "parent": 91
     }
   }, 
   {
     "pk": 622, 
     "model": "psc.lga", 
     "fields": {
-      "code": "579", 
-      "name": "Uvwie", 
-      "parent": null
+      "code": "622", 
+      "name": "Port Harcourt", 
+      "parent": 91
     }
   }, 
   {
     "pk": 623, 
     "model": "psc.lga", 
     "fields": {
-      "code": "580", 
-      "name": "Aniocha North", 
-      "parent": null
+      "code": "623", 
+      "name": "Andoni", 
+      "parent": 92
     }
   }, 
   {
     "pk": 624, 
     "model": "psc.lga", 
     "fields": {
-      "code": "581", 
-      "name": "Aniocha South", 
-      "parent": null
+      "code": "624", 
+      "name": "Eleme", 
+      "parent": 92
     }
   }, 
   {
     "pk": 625, 
     "model": "psc.lga", 
     "fields": {
-      "code": "582", 
-      "name": "Ika North-East", 
-      "parent": null
+      "code": "625", 
+      "name": "Gokana", 
+      "parent": 92
     }
   }, 
   {
     "pk": 626, 
     "model": "psc.lga", 
     "fields": {
-      "code": "583", 
-      "name": "Ika South", 
-      "parent": null
+      "code": "626", 
+      "name": "Khana", 
+      "parent": 92
     }
   }, 
   {
     "pk": 627, 
     "model": "psc.lga", 
     "fields": {
-      "code": "584", 
-      "name": "Ndokwa East", 
-      "parent": null
+      "code": "627", 
+      "name": "Opobo-Nkoro", 
+      "parent": 92
     }
   }, 
   {
     "pk": 628, 
     "model": "psc.lga", 
     "fields": {
-      "code": "585", 
-      "name": "Ndokwa West", 
-      "parent": null
+      "code": "628", 
+      "name": "Oyigbo", 
+      "parent": 92
     }
   }, 
   {
     "pk": 629, 
     "model": "psc.lga", 
     "fields": {
-      "code": "586", 
-      "name": "Oshimili North", 
-      "parent": null
+      "code": "629", 
+      "name": "Tai", 
+      "parent": 92
     }
   }, 
   {
     "pk": 630, 
     "model": "psc.lga", 
     "fields": {
-      "code": "587", 
-      "name": "Oshimili South", 
-      "parent": null
+      "code": "630", 
+      "name": "Abua-Odual", 
+      "parent": 93
     }
   }, 
   {
     "pk": 631, 
     "model": "psc.lga", 
     "fields": {
-      "code": "588", 
-      "name": "Ukwuani", 
-      "parent": null
+      "code": "631", 
+      "name": "Ahoada East", 
+      "parent": 93
     }
   }, 
   {
     "pk": 632, 
     "model": "psc.lga", 
     "fields": {
-      "code": "589", 
-      "name": "Bomadi", 
-      "parent": null
+      "code": "632", 
+      "name": "Ahoada West", 
+      "parent": 93
     }
   }, 
   {
     "pk": 633, 
     "model": "psc.lga", 
     "fields": {
-      "code": "590", 
-      "name": "Burutu", 
-      "parent": null
+      "code": "633", 
+      "name": "Akuku-Toru", 
+      "parent": 93
     }
   }, 
   {
     "pk": 634, 
     "model": "psc.lga", 
     "fields": {
-      "code": "591", 
-      "name": "Isoko North", 
-      "parent": null
+      "code": "634", 
+      "name": "Asari-Toru", 
+      "parent": 93
     }
   }, 
   {
     "pk": 635, 
     "model": "psc.lga", 
     "fields": {
-      "code": "592", 
-      "name": "Isoko South", 
-      "parent": null
+      "code": "635", 
+      "name": "Bonny", 
+      "parent": 93
     }
   }, 
   {
     "pk": 636, 
     "model": "psc.lga", 
     "fields": {
-      "code": "593", 
-      "name": "Patani", 
-      "parent": null
+      "code": "636", 
+      "name": "Degema", 
+      "parent": 93
     }
   }, 
   {
     "pk": 637, 
     "model": "psc.lga", 
     "fields": {
-      "code": "594", 
-      "name": "Warri North", 
-      "parent": null
+      "code": "637", 
+      "name": "Ogba-Egbema-Ndoni", 
+      "parent": 93
     }
   }, 
   {
     "pk": 638, 
     "model": "psc.lga", 
     "fields": {
-      "code": "595", 
-      "name": "Warri South", 
-      "parent": null
+      "code": "638", 
+      "name": "Ado Ekiti", 
+      "parent": 94
     }
   }, 
   {
     "pk": 639, 
     "model": "psc.lga", 
     "fields": {
-      "code": "596", 
-      "name": "Warri South-West", 
-      "parent": null
+      "code": "639", 
+      "name": "Efon", 
+      "parent": 94
     }
   }, 
   {
     "pk": 640, 
     "model": "psc.lga", 
     "fields": {
-      "code": "597", 
-      "name": "Esan Central", 
-      "parent": null
+      "code": "640", 
+      "name": "Ekiti West", 
+      "parent": 94
     }
   }, 
   {
     "pk": 641, 
     "model": "psc.lga", 
     "fields": {
-      "code": "598", 
-      "name": "Esan North-East", 
-      "parent": null
+      "code": "641", 
+      "name": "Ijero", 
+      "parent": 94
     }
   }, 
   {
     "pk": 642, 
     "model": "psc.lga", 
     "fields": {
-      "code": "599", 
-      "name": "Esan South-East", 
-      "parent": null
+      "code": "642", 
+      "name": "Irepodun-Ifelodun", 
+      "parent": 94
     }
   }, 
   {
     "pk": 643, 
     "model": "psc.lga", 
     "fields": {
-      "code": "600", 
-      "name": "Esan West", 
-      "parent": null
+      "code": "643", 
+      "name": "Ido-Osi", 
+      "parent": 95
     }
   }, 
   {
     "pk": 644, 
     "model": "psc.lga", 
     "fields": {
-      "code": "601", 
-      "name": "Igueben", 
-      "parent": null
+      "code": "644", 
+      "name": "Ikole ", 
+      "parent": 95
     }
   }, 
   {
     "pk": 645, 
     "model": "psc.lga", 
     "fields": {
-      "code": "602", 
-      "name": "Akoko Edo", 
-      "parent": null
+      "code": "645", 
+      "name": "Ilejemeje", 
+      "parent": 95
     }
   }, 
   {
     "pk": 646, 
     "model": "psc.lga", 
     "fields": {
-      "code": "603", 
-      "name": "Etsako Central", 
-      "parent": null
+      "code": "646", 
+      "name": "Moba", 
+      "parent": 95
     }
   }, 
   {
     "pk": 647, 
     "model": "psc.lga", 
     "fields": {
-      "code": "604", 
-      "name": "Etsako East", 
-      "parent": null
+      "code": "647", 
+      "name": "Oye", 
+      "parent": 95
     }
   }, 
   {
     "pk": 648, 
     "model": "psc.lga", 
     "fields": {
-      "code": "605", 
-      "name": "Etsako West", 
-      "parent": null
+      "code": "648", 
+      "name": "Ekiti East", 
+      "parent": 96
     }
   }, 
   {
     "pk": 649, 
     "model": "psc.lga", 
     "fields": {
-      "code": "606", 
-      "name": "Owan East", 
-      "parent": null
+      "code": "649", 
+      "name": "Ekiti South-West", 
+      "parent": 96
     }
   }, 
   {
     "pk": 650, 
     "model": "psc.lga", 
     "fields": {
-      "code": "607", 
-      "name": "Owan West", 
-      "parent": null
+      "code": "650", 
+      "name": "Emure", 
+      "parent": 96
     }
   }, 
   {
     "pk": 651, 
     "model": "psc.lga", 
     "fields": {
-      "code": "608", 
-      "name": "Egor", 
-      "parent": null
+      "code": "651", 
+      "name": "Gbonyin", 
+      "parent": 96
     }
   }, 
   {
     "pk": 652, 
     "model": "psc.lga", 
     "fields": {
-      "code": "609", 
-      "name": "Ikpoba Okha", 
-      "parent": null
+      "code": "652", 
+      "name": "Ikere", 
+      "parent": 96
     }
   }, 
   {
     "pk": 653, 
     "model": "psc.lga", 
     "fields": {
-      "code": "610", 
-      "name": "Oredo ", 
-      "parent": null
+      "code": "653", 
+      "name": "Ise-Orun", 
+      "parent": 96
     }
   }, 
   {
     "pk": 654, 
     "model": "psc.lga", 
     "fields": {
-      "code": "611", 
-      "name": "Orhionmwon", 
-      "parent": null
+      "code": "654", 
+      "name": "Apapa", 
+      "parent": 97
     }
   }, 
   {
     "pk": 655, 
     "model": "psc.lga", 
     "fields": {
-      "code": "612", 
-      "name": "Ovia North-East", 
-      "parent": null
+      "code": "655", 
+      "name": "Eti-Osa", 
+      "parent": 97
     }
   }, 
   {
     "pk": 656, 
     "model": "psc.lga", 
     "fields": {
-      "code": "613", 
-      "name": "Ovia South-West", 
-      "parent": null
+      "code": "656", 
+      "name": "Lagos Island", 
+      "parent": 97
     }
   }, 
   {
     "pk": 657, 
     "model": "psc.lga", 
     "fields": {
-      "code": "614", 
-      "name": "Uhunmwonde", 
-      "parent": null
+      "code": "657", 
+      "name": "Lagos Mainland", 
+      "parent": 97
     }
   }, 
   {
     "pk": 658, 
     "model": "psc.lga", 
     "fields": {
-      "code": "615", 
-      "name": "Emohua", 
-      "parent": null
+      "code": "658", 
+      "name": "Surulere", 
+      "parent": 97
     }
   }, 
   {
     "pk": 659, 
     "model": "psc.lga", 
     "fields": {
-      "code": "616", 
-      "name": "Etche", 
-      "parent": null
+      "code": "659", 
+      "name": "Epe", 
+      "parent": 98
     }
   }, 
   {
     "pk": 660, 
     "model": "psc.lga", 
     "fields": {
-      "code": "617", 
-      "name": "Ikwerre", 
-      "parent": null
+      "code": "660", 
+      "name": "Ibeju-Lekki", 
+      "parent": 98
     }
   }, 
   {
     "pk": 661, 
     "model": "psc.lga", 
     "fields": {
-      "code": "618", 
-      "name": "Obio-Akpor", 
-      "parent": null
+      "code": "661", 
+      "name": "Ikorodu", 
+      "parent": 98
     }
   }, 
   {
     "pk": 662, 
     "model": "psc.lga", 
     "fields": {
-      "code": "619", 
-      "name": "Ogu-Bolo", 
-      "parent": null
+      "code": "662", 
+      "name": "Kosofe", 
+      "parent": 98
     }
   }, 
   {
     "pk": 663, 
     "model": "psc.lga", 
     "fields": {
-      "code": "620", 
-      "name": "Okrika", 
-      "parent": null
+      "code": "663", 
+      "name": "Shomolu", 
+      "parent": 98
     }
   }, 
   {
     "pk": 664, 
     "model": "psc.lga", 
     "fields": {
-      "code": "621", 
-      "name": "Omuma", 
-      "parent": null
+      "code": "664", 
+      "name": "Agege", 
+      "parent": 99
     }
   }, 
   {
     "pk": 665, 
     "model": "psc.lga", 
     "fields": {
-      "code": "622", 
-      "name": "Port Harcourt", 
-      "parent": null
+      "code": "665", 
+      "name": "Ajeromi-Ifelondun", 
+      "parent": 99
     }
   }, 
   {
     "pk": 666, 
     "model": "psc.lga", 
     "fields": {
-      "code": "623", 
-      "name": "Andoni", 
-      "parent": null
+      "code": "666", 
+      "name": "Alimosho", 
+      "parent": 99
     }
   }, 
   {
     "pk": 667, 
     "model": "psc.lga", 
     "fields": {
-      "code": "624", 
-      "name": "Eleme", 
-      "parent": null
+      "code": "667", 
+      "name": "Amuwo-Odofin", 
+      "parent": 99
     }
   }, 
   {
     "pk": 668, 
     "model": "psc.lga", 
     "fields": {
-      "code": "625", 
-      "name": "Gokana", 
-      "parent": null
+      "code": "668", 
+      "name": "Badagry", 
+      "parent": 99
     }
   }, 
   {
     "pk": 669, 
     "model": "psc.lga", 
     "fields": {
-      "code": "626", 
-      "name": "Khana", 
-      "parent": null
+      "code": "669", 
+      "name": "Ifako-Ijaiye", 
+      "parent": 99
     }
   }, 
   {
     "pk": 670, 
     "model": "psc.lga", 
     "fields": {
-      "code": "627", 
-      "name": "Opobo-Nkoro", 
-      "parent": null
+      "code": "670", 
+      "name": "Ikeja", 
+      "parent": 99
     }
   }, 
   {
     "pk": 671, 
     "model": "psc.lga", 
     "fields": {
-      "code": "628", 
-      "name": "Oyigbo", 
-      "parent": null
+      "code": "671", 
+      "name": "Mushin", 
+      "parent": 99
     }
   }, 
   {
     "pk": 672, 
     "model": "psc.lga", 
     "fields": {
-      "code": "629", 
-      "name": "Tai", 
-      "parent": null
+      "code": "672", 
+      "name": "Ojo", 
+      "parent": 99
     }
   }, 
   {
     "pk": 673, 
     "model": "psc.lga", 
     "fields": {
-      "code": "630", 
-      "name": "Abua-Odual", 
-      "parent": null
+      "code": "673", 
+      "name": "Oshodi-Isolo", 
+      "parent": 99
     }
   }, 
   {
     "pk": 674, 
     "model": "psc.lga", 
     "fields": {
-      "code": "631", 
-      "name": "Ahoada East", 
-      "parent": null
+      "code": "674", 
+      "name": "Abeokuta North", 
+      "parent": 100
     }
   }, 
   {
     "pk": 675, 
     "model": "psc.lga", 
     "fields": {
-      "code": "632", 
-      "name": "Ahoada West", 
-      "parent": null
+      "code": "675", 
+      "name": "Abeokuta South", 
+      "parent": 100
     }
   }, 
   {
     "pk": 676, 
     "model": "psc.lga", 
     "fields": {
-      "code": "633", 
-      "name": "Akuku-Toru", 
-      "parent": null
+      "code": "676", 
+      "name": "Ewekoro", 
+      "parent": 100
     }
   }, 
   {
     "pk": 677, 
     "model": "psc.lga", 
     "fields": {
-      "code": "634", 
-      "name": "Asari-Toru", 
-      "parent": null
+      "code": "677", 
+      "name": "Ifo", 
+      "parent": 100
     }
   }, 
   {
     "pk": 678, 
     "model": "psc.lga", 
     "fields": {
-      "code": "635", 
-      "name": "Bonny", 
-      "parent": null
+      "code": "678", 
+      "name": "Obafemi-Owode", 
+      "parent": 100
     }
   }, 
   {
     "pk": 679, 
     "model": "psc.lga", 
     "fields": {
-      "code": "636", 
-      "name": "Degema", 
-      "parent": null
+      "code": "679", 
+      "name": "Odeda", 
+      "parent": 100
     }
   }, 
   {
     "pk": 680, 
     "model": "psc.lga", 
     "fields": {
-      "code": "637", 
-      "name": "Ogba-Egbema-Ndoni", 
-      "parent": null
+      "code": "680", 
+      "name": "Ijebu East", 
+      "parent": 101
     }
   }, 
   {
     "pk": 681, 
     "model": "psc.lga", 
     "fields": {
-      "code": "638", 
-      "name": "Ado Ekiti", 
-      "parent": null
+      "code": "681", 
+      "name": "Ijebu North", 
+      "parent": 101
     }
   }, 
   {
     "pk": 682, 
     "model": "psc.lga", 
     "fields": {
-      "code": "639", 
-      "name": "Efon", 
-      "parent": null
+      "code": "682", 
+      "name": "Ijebu North East", 
+      "parent": 101
     }
   }, 
   {
     "pk": 683, 
     "model": "psc.lga", 
     "fields": {
-      "code": "640", 
-      "name": "Ekiti West", 
-      "parent": null
+      "code": "683", 
+      "name": "Ijebu-Ode", 
+      "parent": 101
     }
   }, 
   {
     "pk": 684, 
     "model": "psc.lga", 
     "fields": {
-      "code": "641", 
-      "name": "Ijero", 
-      "parent": null
+      "code": "684", 
+      "name": "Ikenne", 
+      "parent": 101
     }
   }, 
   {
     "pk": 685, 
     "model": "psc.lga", 
     "fields": {
-      "code": "642", 
-      "name": "Irepodun-Ifelodun", 
-      "parent": null
+      "code": "685", 
+      "name": "Odogbolu", 
+      "parent": 101
     }
   }, 
   {
     "pk": 686, 
     "model": "psc.lga", 
     "fields": {
-      "code": "643", 
-      "name": "Ido-Osi", 
-      "parent": null
+      "code": "686", 
+      "name": "Ogun Waterside", 
+      "parent": 101
     }
   }, 
   {
     "pk": 687, 
     "model": "psc.lga", 
     "fields": {
-      "code": "644", 
-      "name": "Ikole ", 
-      "parent": null
+      "code": "687", 
+      "name": "Remo North", 
+      "parent": 101
     }
   }, 
   {
     "pk": 688, 
     "model": "psc.lga", 
     "fields": {
-      "code": "645", 
-      "name": "Ilejemeje", 
-      "parent": null
+      "code": "688", 
+      "name": "Sagamu", 
+      "parent": 101
     }
   }, 
   {
     "pk": 689, 
     "model": "psc.lga", 
     "fields": {
-      "code": "646", 
-      "name": "Moba", 
-      "parent": null
+      "code": "689", 
+      "name": "Ado-Odo-Ota", 
+      "parent": 102
     }
   }, 
   {
     "pk": 690, 
     "model": "psc.lga", 
     "fields": {
-      "code": "647", 
-      "name": "Oye", 
-      "parent": null
+      "code": "690", 
+      "name": "Egbado North", 
+      "parent": 102
     }
   }, 
   {
     "pk": 691, 
     "model": "psc.lga", 
     "fields": {
-      "code": "648", 
-      "name": "Ekiti East", 
-      "parent": null
+      "code": "691", 
+      "name": "Egbado South", 
+      "parent": 102
     }
   }, 
   {
     "pk": 692, 
     "model": "psc.lga", 
     "fields": {
-      "code": "649", 
-      "name": "Ekiti South-West", 
-      "parent": null
+      "code": "692", 
+      "name": "Imeko Afon", 
+      "parent": 102
     }
   }, 
   {
     "pk": 693, 
     "model": "psc.lga", 
     "fields": {
-      "code": "650", 
-      "name": "Emure", 
-      "parent": null
+      "code": "693", 
+      "name": "Ipokia", 
+      "parent": 102
     }
   }, 
   {
     "pk": 694, 
     "model": "psc.lga", 
     "fields": {
-      "code": "651", 
-      "name": "Gbonyin", 
-      "parent": null
+      "code": "694", 
+      "name": "Akure North", 
+      "parent": 103
     }
   }, 
   {
     "pk": 695, 
     "model": "psc.lga", 
     "fields": {
-      "code": "652", 
-      "name": "Ikere", 
-      "parent": null
+      "code": "695", 
+      "name": "Akure South", 
+      "parent": 103
     }
   }, 
   {
     "pk": 696, 
     "model": "psc.lga", 
     "fields": {
-      "code": "653", 
-      "name": "Ise-Orun", 
-      "parent": null
+      "code": "696", 
+      "name": "Idanre", 
+      "parent": 103
     }
   }, 
   {
     "pk": 697, 
     "model": "psc.lga", 
     "fields": {
-      "code": "654", 
-      "name": "Apapa", 
-      "parent": null
+      "code": "697", 
+      "name": "Ifedore", 
+      "parent": 103
     }
   }, 
   {
     "pk": 698, 
     "model": "psc.lga", 
     "fields": {
-      "code": "655", 
-      "name": "Eti-Osa", 
-      "parent": null
+      "code": "698", 
+      "name": "Ondo East", 
+      "parent": 103
     }
   }, 
   {
     "pk": 699, 
     "model": "psc.lga", 
     "fields": {
-      "code": "656", 
-      "name": "Lagos Island", 
-      "parent": null
+      "code": "699", 
+      "name": "Ondo West", 
+      "parent": 103
     }
   }, 
   {
     "pk": 700, 
     "model": "psc.lga", 
     "fields": {
-      "code": "657", 
-      "name": "Lagos Mainland", 
-      "parent": null
+      "code": "700", 
+      "name": "Akoko North-East", 
+      "parent": 104
     }
   }, 
   {
     "pk": 701, 
     "model": "psc.lga", 
     "fields": {
-      "code": "658", 
-      "name": "Surulere", 
-      "parent": null
+      "code": "701", 
+      "name": "Akoko North-West", 
+      "parent": 104
     }
   }, 
   {
     "pk": 702, 
     "model": "psc.lga", 
     "fields": {
-      "code": "659", 
-      "name": "Epe", 
-      "parent": null
+      "code": "702", 
+      "name": "Akoko South-East", 
+      "parent": 104
     }
   }, 
   {
     "pk": 703, 
     "model": "psc.lga", 
     "fields": {
-      "code": "660", 
-      "name": "Ibeju-Lekki", 
-      "parent": null
+      "code": "703", 
+      "name": "Akoko South-West", 
+      "parent": 104
     }
   }, 
   {
     "pk": 704, 
     "model": "psc.lga", 
     "fields": {
-      "code": "661", 
-      "name": "Ikorodu", 
-      "parent": null
+      "code": "704", 
+      "name": "Ose", 
+      "parent": 104
     }
   }, 
   {
     "pk": 705, 
     "model": "psc.lga", 
     "fields": {
-      "code": "662", 
-      "name": "Kosofe", 
-      "parent": null
+      "code": "705", 
+      "name": "Owo", 
+      "parent": 104
     }
   }, 
   {
     "pk": 706, 
     "model": "psc.lga", 
     "fields": {
-      "code": "663", 
-      "name": "Shomolu", 
-      "parent": null
+      "code": "706", 
+      "name": "Ese Odo", 
+      "parent": 105
     }
   }, 
   {
     "pk": 707, 
     "model": "psc.lga", 
     "fields": {
-      "code": "664", 
-      "name": "Agege", 
-      "parent": null
+      "code": "707", 
+      "name": "Ilaje", 
+      "parent": 105
     }
   }, 
   {
     "pk": 708, 
     "model": "psc.lga", 
     "fields": {
-      "code": "665", 
-      "name": "Ajeromi-Ifelondun", 
-      "parent": null
+      "code": "708", 
+      "name": "Ile Oluji-Okeigbo", 
+      "parent": 105
     }
   }, 
   {
     "pk": 709, 
     "model": "psc.lga", 
     "fields": {
-      "code": "666", 
-      "name": "Alimosho", 
-      "parent": null
+      "code": "709", 
+      "name": "Irele", 
+      "parent": 105
     }
   }, 
   {
     "pk": 710, 
     "model": "psc.lga", 
     "fields": {
-      "code": "667", 
-      "name": "Amuwo-Odofin", 
-      "parent": null
+      "code": "710", 
+      "name": "Odigbo", 
+      "parent": 105
     }
   }, 
   {
     "pk": 711, 
     "model": "psc.lga", 
     "fields": {
-      "code": "668", 
-      "name": "Badagry", 
-      "parent": null
+      "code": "711", 
+      "name": "Okitipupa", 
+      "parent": 105
     }
   }, 
   {
     "pk": 712, 
     "model": "psc.lga", 
     "fields": {
-      "code": "669", 
-      "name": "Ifako-Ijaiye", 
-      "parent": null
+      "code": "712", 
+      "name": "Boluwaduro", 
+      "parent": 106
     }
   }, 
   {
     "pk": 713, 
     "model": "psc.lga", 
     "fields": {
-      "code": "670", 
-      "name": "Ikeja", 
-      "parent": null
+      "code": "713", 
+      "name": "Boripe", 
+      "parent": 106
     }
   }, 
   {
     "pk": 714, 
     "model": "psc.lga", 
     "fields": {
-      "code": "671", 
-      "name": "Mushin", 
-      "parent": null
+      "code": "714", 
+      "name": "Ifedayo", 
+      "parent": 106
     }
   }, 
   {
     "pk": 715, 
     "model": "psc.lga", 
     "fields": {
-      "code": "672", 
-      "name": "Ojo", 
-      "parent": null
+      "code": "715", 
+      "name": "Ifelodun", 
+      "parent": 106
     }
   }, 
   {
     "pk": 716, 
     "model": "psc.lga", 
     "fields": {
-      "code": "673", 
-      "name": "Oshodi-Isolo", 
-      "parent": null
+      "code": "716", 
+      "name": "Ila", 
+      "parent": 106
     }
   }, 
   {
     "pk": 717, 
     "model": "psc.lga", 
     "fields": {
-      "code": "674", 
-      "name": "Abeokuta North", 
-      "parent": null
+      "code": "717", 
+      "name": "Irepodun", 
+      "parent": 106
     }
   }, 
   {
     "pk": 718, 
     "model": "psc.lga", 
     "fields": {
-      "code": "675", 
-      "name": "Abeokuta South", 
-      "parent": null
+      "code": "718", 
+      "name": "Odo-Otin", 
+      "parent": 106
     }
   }, 
   {
     "pk": 719, 
     "model": "psc.lga", 
     "fields": {
-      "code": "676", 
-      "name": "Ewekoro", 
-      "parent": null
+      "code": "719", 
+      "name": "Olorunda", 
+      "parent": 106
     }
   }, 
   {
     "pk": 720, 
     "model": "psc.lga", 
     "fields": {
-      "code": "677", 
-      "name": "Ifo", 
-      "parent": null
+      "code": "720", 
+      "name": "Orolu", 
+      "parent": 106
     }
   }, 
   {
     "pk": 721, 
     "model": "psc.lga", 
     "fields": {
-      "code": "678", 
-      "name": "Obafemi-Owode", 
-      "parent": null
+      "code": "721", 
+      "name": "Osogbo", 
+      "parent": 106
     }
   }, 
   {
     "pk": 722, 
     "model": "psc.lga", 
     "fields": {
-      "code": "679", 
-      "name": "Odeda", 
-      "parent": null
+      "code": "722", 
+      "name": "Atakunmosa East", 
+      "parent": 107
     }
   }, 
   {
     "pk": 723, 
     "model": "psc.lga", 
     "fields": {
-      "code": "680", 
-      "name": "Ijebu East", 
-      "parent": null
+      "code": "723", 
+      "name": "Atakunmosa West", 
+      "parent": 107
     }
   }, 
   {
     "pk": 724, 
     "model": "psc.lga", 
     "fields": {
-      "code": "681", 
-      "name": "Ijebu North", 
-      "parent": null
+      "code": "724", 
+      "name": "Ife Central", 
+      "parent": 107
     }
   }, 
   {
     "pk": 725, 
     "model": "psc.lga", 
     "fields": {
-      "code": "682", 
-      "name": "Ijebu North East", 
-      "parent": null
+      "code": "725", 
+      "name": "Ife East", 
+      "parent": 107
     }
   }, 
   {
     "pk": 726, 
     "model": "psc.lga", 
     "fields": {
-      "code": "683", 
-      "name": "Ijebu-Ode", 
-      "parent": null
+      "code": "726", 
+      "name": "Ife North", 
+      "parent": 107
     }
   }, 
   {
     "pk": 727, 
     "model": "psc.lga", 
     "fields": {
-      "code": "684", 
-      "name": "Ikenne", 
-      "parent": null
+      "code": "727", 
+      "name": "Ife South", 
+      "parent": 107
     }
   }, 
   {
     "pk": 728, 
     "model": "psc.lga", 
     "fields": {
-      "code": "685", 
-      "name": "Odogbolu", 
-      "parent": null
+      "code": "728", 
+      "name": "Ilesa East", 
+      "parent": 107
     }
   }, 
   {
     "pk": 729, 
     "model": "psc.lga", 
     "fields": {
-      "code": "686", 
-      "name": "Ogun Waterside", 
-      "parent": null
+      "code": "729", 
+      "name": "Ilesa West", 
+      "parent": 107
     }
   }, 
   {
     "pk": 730, 
     "model": "psc.lga", 
     "fields": {
-      "code": "687", 
-      "name": "Remo North", 
-      "parent": null
+      "code": "730", 
+      "name": "Obokun", 
+      "parent": 107
     }
   }, 
   {
     "pk": 731, 
     "model": "psc.lga", 
     "fields": {
-      "code": "688", 
-      "name": "Sagamu", 
-      "parent": null
+      "code": "731", 
+      "name": "Oriade", 
+      "parent": 107
     }
   }, 
   {
     "pk": 732, 
     "model": "psc.lga", 
     "fields": {
-      "code": "689", 
-      "name": "Ado-Odo-Ota", 
-      "parent": null
+      "code": "732", 
+      "name": "Aiyadaade", 
+      "parent": 108
     }
   }, 
   {
     "pk": 733, 
     "model": "psc.lga", 
     "fields": {
-      "code": "690", 
-      "name": "Egbado North", 
-      "parent": null
+      "code": "733", 
+      "name": "Aiyedire", 
+      "parent": 108
     }
   }, 
   {
     "pk": 734, 
     "model": "psc.lga", 
     "fields": {
-      "code": "691", 
-      "name": "Egbado South", 
-      "parent": null
+      "code": "734", 
+      "name": "Ede North", 
+      "parent": 108
     }
   }, 
   {
     "pk": 735, 
     "model": "psc.lga", 
     "fields": {
-      "code": "692", 
-      "name": "Imeko Afon", 
-      "parent": null
+      "code": "735", 
+      "name": "Ede South", 
+      "parent": 108
     }
   }, 
   {
     "pk": 736, 
     "model": "psc.lga", 
     "fields": {
-      "code": "693", 
-      "name": "Ipokia", 
-      "parent": null
+      "code": "736", 
+      "name": "Egbedore", 
+      "parent": 108
     }
   }, 
   {
     "pk": 737, 
     "model": "psc.lga", 
     "fields": {
-      "code": "694", 
-      "name": "Akure North", 
-      "parent": null
+      "code": "737", 
+      "name": "Ejigbo", 
+      "parent": 108
     }
   }, 
   {
     "pk": 738, 
     "model": "psc.lga", 
     "fields": {
-      "code": "695", 
-      "name": "Akure South", 
-      "parent": null
+      "code": "738", 
+      "name": "Irewole", 
+      "parent": 108
     }
   }, 
   {
     "pk": 739, 
     "model": "psc.lga", 
     "fields": {
-      "code": "696", 
-      "name": "Idanre", 
-      "parent": null
+      "code": "739", 
+      "name": "Isokan", 
+      "parent": 108
     }
   }, 
   {
     "pk": 740, 
     "model": "psc.lga", 
     "fields": {
-      "code": "697", 
-      "name": "Ifedore", 
-      "parent": null
+      "code": "740", 
+      "name": "Iwo", 
+      "parent": 108
     }
   }, 
   {
     "pk": 741, 
     "model": "psc.lga", 
     "fields": {
-      "code": "698", 
-      "name": "Ondo East", 
-      "parent": null
+      "code": "741", 
+      "name": "Ola Oluwa", 
+      "parent": 108
     }
   }, 
   {
     "pk": 742, 
     "model": "psc.lga", 
     "fields": {
-      "code": "699", 
-      "name": "Ondo West", 
-      "parent": null
+      "code": "742", 
+      "name": "Afijio", 
+      "parent": 109
     }
   }, 
   {
     "pk": 743, 
     "model": "psc.lga", 
     "fields": {
-      "code": "700", 
-      "name": "Akoko North-East", 
-      "parent": null
+      "code": "743", 
+      "name": "Akinyele", 
+      "parent": 109
     }
   }, 
   {
     "pk": 744, 
     "model": "psc.lga", 
     "fields": {
-      "code": "701", 
-      "name": "Akoko North-West", 
-      "parent": null
+      "code": "744", 
+      "name": "Atiba", 
+      "parent": 109
     }
   }, 
   {
     "pk": 745, 
     "model": "psc.lga", 
     "fields": {
-      "code": "702", 
-      "name": "Akoko South-East", 
-      "parent": null
+      "code": "745", 
+      "name": "Egbeda", 
+      "parent": 109
     }
   }, 
   {
     "pk": 746, 
     "model": "psc.lga", 
     "fields": {
-      "code": "703", 
-      "name": "Akoko South-West", 
-      "parent": null
+      "code": "746", 
+      "name": "Lagelu", 
+      "parent": 109
     }
   }, 
   {
     "pk": 747, 
     "model": "psc.lga", 
     "fields": {
-      "code": "704", 
-      "name": "Ose", 
-      "parent": null
+      "code": "747", 
+      "name": "Ogo Oluwa", 
+      "parent": 109
     }
   }, 
   {
     "pk": 748, 
     "model": "psc.lga", 
     "fields": {
-      "code": "705", 
-      "name": "Owo", 
-      "parent": null
+      "code": "748", 
+      "name": "Oluyole", 
+      "parent": 109
     }
   }, 
   {
     "pk": 749, 
     "model": "psc.lga", 
     "fields": {
-      "code": "706", 
-      "name": "Ese Odo", 
-      "parent": null
+      "code": "749", 
+      "name": "Ona-Ara", 
+      "parent": 109
     }
   }, 
   {
     "pk": 750, 
     "model": "psc.lga", 
     "fields": {
-      "code": "707", 
-      "name": "Ilaje", 
-      "parent": null
+      "code": "750", 
+      "name": "Oyo East", 
+      "parent": 109
     }
   }, 
   {
     "pk": 751, 
     "model": "psc.lga", 
     "fields": {
-      "code": "708", 
-      "name": "Ile Oluji-Okeigbo", 
-      "parent": null
+      "code": "751", 
+      "name": "Oyo West", 
+      "parent": 109
     }
   }, 
   {
     "pk": 752, 
     "model": "psc.lga", 
     "fields": {
-      "code": "709", 
-      "name": "Irele", 
-      "parent": null
+      "code": "752", 
+      "name": "Surulere", 
+      "parent": 109
     }
   }, 
   {
     "pk": 753, 
     "model": "psc.lga", 
     "fields": {
-      "code": "710", 
-      "name": "Odigbo", 
-      "parent": null
+      "code": "753", 
+      "name": "Atisbo", 
+      "parent": 110
     }
   }, 
   {
     "pk": 754, 
     "model": "psc.lga", 
     "fields": {
-      "code": "711", 
-      "name": "Okitipupa", 
-      "parent": null
+      "code": "754", 
+      "name": "Irepo", 
+      "parent": 110
     }
   }, 
   {
     "pk": 755, 
     "model": "psc.lga", 
     "fields": {
-      "code": "712", 
-      "name": "Boluwaduro", 
-      "parent": null
+      "code": "755", 
+      "name": "Iseyin", 
+      "parent": 110
     }
   }, 
   {
     "pk": 756, 
     "model": "psc.lga", 
     "fields": {
-      "code": "713", 
-      "name": "Boripe", 
-      "parent": null
+      "code": "756", 
+      "name": "Itesiwaju", 
+      "parent": 110
     }
   }, 
   {
     "pk": 757, 
     "model": "psc.lga", 
     "fields": {
-      "code": "714", 
-      "name": "Ifedayo", 
-      "parent": null
+      "code": "757", 
+      "name": "Iwajowa", 
+      "parent": 110
     }
   }, 
   {
     "pk": 758, 
     "model": "psc.lga", 
     "fields": {
-      "code": "715", 
-      "name": "Ifelodun", 
-      "parent": null
+      "code": "758", 
+      "name": "Kajola", 
+      "parent": 110
     }
   }, 
   {
     "pk": 759, 
     "model": "psc.lga", 
     "fields": {
-      "code": "716", 
-      "name": "Ila", 
-      "parent": null
+      "code": "759", 
+      "name": "Ogbomosho North", 
+      "parent": 110
     }
   }, 
   {
     "pk": 760, 
     "model": "psc.lga", 
     "fields": {
-      "code": "717", 
-      "name": "Irepodun", 
-      "parent": null
+      "code": "760", 
+      "name": "Ogbomosho South", 
+      "parent": 110
     }
   }, 
   {
     "pk": 761, 
     "model": "psc.lga", 
     "fields": {
-      "code": "718", 
-      "name": "Odo-Otin", 
-      "parent": null
+      "code": "761", 
+      "name": "Olorunsogo", 
+      "parent": 110
     }
   }, 
   {
     "pk": 762, 
     "model": "psc.lga", 
     "fields": {
-      "code": "719", 
-      "name": "Olorunda", 
-      "parent": null
+      "code": "762", 
+      "name": "Orelope", 
+      "parent": 110
     }
   }, 
   {
     "pk": 763, 
     "model": "psc.lga", 
     "fields": {
-      "code": "720", 
-      "name": "Orolu", 
-      "parent": null
+      "code": "763", 
+      "name": "Ori Ire", 
+      "parent": 110
     }
   }, 
   {
     "pk": 764, 
     "model": "psc.lga", 
     "fields": {
-      "code": "721", 
-      "name": "Osogbo", 
-      "parent": null
+      "code": "764", 
+      "name": "Saki East", 
+      "parent": 110
     }
   }, 
   {
     "pk": 765, 
     "model": "psc.lga", 
     "fields": {
-      "code": "722", 
-      "name": "Atakunmosa East", 
-      "parent": null
+      "code": "765", 
+      "name": "Saki West", 
+      "parent": 110
     }
   }, 
   {
     "pk": 766, 
     "model": "psc.lga", 
     "fields": {
-      "code": "723", 
-      "name": "Atakunmosa West", 
-      "parent": null
+      "code": "766", 
+      "name": "Ibadan North", 
+      "parent": 111
     }
   }, 
   {
     "pk": 767, 
     "model": "psc.lga", 
     "fields": {
-      "code": "724", 
-      "name": "Ife Central", 
-      "parent": null
+      "code": "767", 
+      "name": "Ibadan North-East", 
+      "parent": 111
     }
   }, 
   {
     "pk": 768, 
     "model": "psc.lga", 
     "fields": {
-      "code": "725", 
-      "name": "Ife East", 
-      "parent": null
+      "code": "768", 
+      "name": "Ibadan North-West", 
+      "parent": 111
     }
   }, 
   {
     "pk": 769, 
     "model": "psc.lga", 
     "fields": {
-      "code": "726", 
-      "name": "Ife North", 
-      "parent": null
+      "code": "769", 
+      "name": "Ibadan South-East", 
+      "parent": 111
     }
   }, 
   {
     "pk": 770, 
     "model": "psc.lga", 
     "fields": {
-      "code": "727", 
-      "name": "Ife South", 
-      "parent": null
+      "code": "770", 
+      "name": "Ibadan South-West", 
+      "parent": 111
     }
   }, 
   {
     "pk": 771, 
     "model": "psc.lga", 
     "fields": {
-      "code": "728", 
-      "name": "Ilesa East", 
-      "parent": null
+      "code": "771", 
+      "name": "Ibarapa Central", 
+      "parent": 111
     }
   }, 
   {
     "pk": 772, 
     "model": "psc.lga", 
     "fields": {
-      "code": "729", 
-      "name": "Ilesa West", 
-      "parent": null
+      "code": "772", 
+      "name": "Ibarapa East", 
+      "parent": 111
     }
   }, 
   {
     "pk": 773, 
     "model": "psc.lga", 
     "fields": {
-      "code": "730", 
-      "name": "Obokun", 
-      "parent": null
+      "code": "773", 
+      "name": "Ibarapa North", 
+      "parent": 111
     }
   }, 
   {
     "pk": 774, 
     "model": "psc.lga", 
     "fields": {
-      "code": "731", 
-      "name": "Oriade", 
-      "parent": null
-    }
-  }, 
-  {
-    "pk": 775, 
-    "model": "psc.lga", 
-    "fields": {
-      "code": "732", 
-      "name": "Aiyadaade", 
-      "parent": null
-    }
-  }, 
-  {
-    "pk": 776, 
-    "model": "psc.lga", 
-    "fields": {
-      "code": "733", 
-      "name": "Aiyedire", 
-      "parent": null
-    }
-  }, 
-  {
-    "pk": 777, 
-    "model": "psc.lga", 
-    "fields": {
-      "code": "734", 
-      "name": "Ede North", 
-      "parent": null
-    }
-  }, 
-  {
-    "pk": 778, 
-    "model": "psc.lga", 
-    "fields": {
-      "code": "735", 
-      "name": "Ede South", 
-      "parent": null
-    }
-  }, 
-  {
-    "pk": 779, 
-    "model": "psc.lga", 
-    "fields": {
-      "code": "736", 
-      "name": "Egbedore", 
-      "parent": null
-    }
-  }, 
-  {
-    "pk": 780, 
-    "model": "psc.lga", 
-    "fields": {
-      "code": "737", 
-      "name": "Ejigbo", 
-      "parent": null
-    }
-  }, 
-  {
-    "pk": 781, 
-    "model": "psc.lga", 
-    "fields": {
-      "code": "738", 
-      "name": "Irewole", 
-      "parent": null
-    }
-  }, 
-  {
-    "pk": 782, 
-    "model": "psc.lga", 
-    "fields": {
-      "code": "739", 
-      "name": "Isokan", 
-      "parent": null
-    }
-  }, 
-  {
-    "pk": 783, 
-    "model": "psc.lga", 
-    "fields": {
-      "code": "740", 
-      "name": "Iwo", 
-      "parent": null
-    }
-  }, 
-  {
-    "pk": 784, 
-    "model": "psc.lga", 
-    "fields": {
-      "code": "741", 
-      "name": "Ola Oluwa", 
-      "parent": null
-    }
-  }, 
-  {
-    "pk": 785, 
-    "model": "psc.lga", 
-    "fields": {
-      "code": "742", 
-      "name": "Afijio", 
-      "parent": null
-    }
-  }, 
-  {
-    "pk": 786, 
-    "model": "psc.lga", 
-    "fields": {
-      "code": "743", 
-      "name": "Akinyele", 
-      "parent": null
-    }
-  }, 
-  {
-    "pk": 787, 
-    "model": "psc.lga", 
-    "fields": {
-      "code": "744", 
-      "name": "Atiba", 
-      "parent": null
-    }
-  }, 
-  {
-    "pk": 788, 
-    "model": "psc.lga", 
-    "fields": {
-      "code": "745", 
-      "name": "Egbeda", 
-      "parent": null
-    }
-  }, 
-  {
-    "pk": 789, 
-    "model": "psc.lga", 
-    "fields": {
-      "code": "746", 
-      "name": "Lagelu", 
-      "parent": null
-    }
-  }, 
-  {
-    "pk": 790, 
-    "model": "psc.lga", 
-    "fields": {
-      "code": "747", 
-      "name": "Ogo Oluwa", 
-      "parent": null
-    }
-  }, 
-  {
-    "pk": 791, 
-    "model": "psc.lga", 
-    "fields": {
-      "code": "748", 
-      "name": "Oluyole", 
-      "parent": null
-    }
-  }, 
-  {
-    "pk": 792, 
-    "model": "psc.lga", 
-    "fields": {
-      "code": "749", 
-      "name": "Ona-Ara", 
-      "parent": null
-    }
-  }, 
-  {
-    "pk": 793, 
-    "model": "psc.lga", 
-    "fields": {
-      "code": "750", 
-      "name": "Oyo East", 
-      "parent": null
-    }
-  }, 
-  {
-    "pk": 794, 
-    "model": "psc.lga", 
-    "fields": {
-      "code": "751", 
-      "name": "Oyo West", 
-      "parent": null
-    }
-  }, 
-  {
-    "pk": 795, 
-    "model": "psc.lga", 
-    "fields": {
-      "code": "752", 
-      "name": "Surulere", 
-      "parent": null
-    }
-  }, 
-  {
-    "pk": 796, 
-    "model": "psc.lga", 
-    "fields": {
-      "code": "753", 
-      "name": "Atisbo", 
-      "parent": null
-    }
-  }, 
-  {
-    "pk": 797, 
-    "model": "psc.lga", 
-    "fields": {
-      "code": "754", 
-      "name": "Irepo", 
-      "parent": null
-    }
-  }, 
-  {
-    "pk": 798, 
-    "model": "psc.lga", 
-    "fields": {
-      "code": "755", 
-      "name": "Iseyin", 
-      "parent": null
-    }
-  }, 
-  {
-    "pk": 799, 
-    "model": "psc.lga", 
-    "fields": {
-      "code": "756", 
-      "name": "Itesiwaju", 
-      "parent": null
-    }
-  }, 
-  {
-    "pk": 800, 
-    "model": "psc.lga", 
-    "fields": {
-      "code": "757", 
-      "name": "Iwajowa", 
-      "parent": null
-    }
-  }, 
-  {
-    "pk": 801, 
-    "model": "psc.lga", 
-    "fields": {
-      "code": "758", 
-      "name": "Kajola", 
-      "parent": null
-    }
-  }, 
-  {
-    "pk": 802, 
-    "model": "psc.lga", 
-    "fields": {
-      "code": "759", 
-      "name": "Ogbomosho North", 
-      "parent": null
-    }
-  }, 
-  {
-    "pk": 803, 
-    "model": "psc.lga", 
-    "fields": {
-      "code": "760", 
-      "name": "Ogbomosho South", 
-      "parent": null
-    }
-  }, 
-  {
-    "pk": 804, 
-    "model": "psc.lga", 
-    "fields": {
-      "code": "761", 
-      "name": "Olorunsogo", 
-      "parent": null
-    }
-  }, 
-  {
-    "pk": 805, 
-    "model": "psc.lga", 
-    "fields": {
-      "code": "762", 
-      "name": "Orelope", 
-      "parent": null
-    }
-  }, 
-  {
-    "pk": 806, 
-    "model": "psc.lga", 
-    "fields": {
-      "code": "763", 
-      "name": "Ori Ire", 
-      "parent": null
-    }
-  }, 
-  {
-    "pk": 807, 
-    "model": "psc.lga", 
-    "fields": {
-      "code": "764", 
-      "name": "Saki East", 
-      "parent": null
-    }
-  }, 
-  {
-    "pk": 808, 
-    "model": "psc.lga", 
-    "fields": {
-      "code": "765", 
-      "name": "Saki West", 
-      "parent": null
-    }
-  }, 
-  {
-    "pk": 809, 
-    "model": "psc.lga", 
-    "fields": {
-      "code": "766", 
-      "name": "Ibadan North", 
-      "parent": null
-    }
-  }, 
-  {
-    "pk": 810, 
-    "model": "psc.lga", 
-    "fields": {
-      "code": "767", 
-      "name": "Ibadan North-East", 
-      "parent": null
-    }
-  }, 
-  {
-    "pk": 811, 
-    "model": "psc.lga", 
-    "fields": {
-      "code": "768", 
-      "name": "Ibadan North-West", 
-      "parent": null
-    }
-  }, 
-  {
-    "pk": 812, 
-    "model": "psc.lga", 
-    "fields": {
-      "code": "769", 
-      "name": "Ibadan South-East", 
-      "parent": null
-    }
-  }, 
-  {
-    "pk": 813, 
-    "model": "psc.lga", 
-    "fields": {
-      "code": "770", 
-      "name": "Ibadan South-West", 
-      "parent": null
-    }
-  }, 
-  {
-    "pk": 814, 
-    "model": "psc.lga", 
-    "fields": {
-      "code": "771", 
-      "name": "Ibarapa Central", 
-      "parent": null
-    }
-  }, 
-  {
-    "pk": 815, 
-    "model": "psc.lga", 
-    "fields": {
-      "code": "772", 
-      "name": "Ibarapa East", 
-      "parent": null
-    }
-  }, 
-  {
-    "pk": 816, 
-    "model": "psc.lga", 
-    "fields": {
-      "code": "773", 
-      "name": "Ibarapa North", 
-      "parent": null
-    }
-  }, 
-  {
-    "pk": 817, 
-    "model": "psc.lga", 
-    "fields": {
       "code": "774", 
       "name": "Ido", 
-      "parent": null
+      "parent": 111
     }
   }, 
   {

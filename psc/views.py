@@ -8,7 +8,7 @@ from django.views.decorators.csrf import csrf_view_exempt
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from rapidsms.contrib.messagelog.tables import MessageTable
 from rapidsms.contrib.messagelog.models import Message
-from forms import VRChecklistForm
+from forms import VRChecklistForm, VRIncidentFormSet
 
 # paginator settings
 items_per_page = 25
@@ -30,7 +30,7 @@ def vr_list(request):
     except (EmptyPage, InvalidPage):
         checklists = paginator.page(paginator.num_pages)
 
-    return render_to_response('psc/vr_checklist_list.html', {'checklists': checklists})
+    return render_to_response('psc/vr_checklist_list.html', {'page_title': "Voter's Registration Data Management", 'checklists': checklists})
 
 @csrf_view_exempt
 def vr_checklist(request, checklist_id=0):
@@ -43,8 +43,18 @@ def vr_checklist(request, checklist_id=0):
         f = VRChecklistForm(instance=checklist)
         return render_to_response('psc/vr_checklist_form.html', {'page_title': 'Voters Registration Checklist', 'checklist': checklist, 'form': f })
 
-def vr_incident(request, incident_id=0):
-    return render_to_response('psc/vr_incident_form.html', {'page_title': 'Voters Registration Critrical Incidents'})
+def vr_incidents(request, checklist_id=0):
+    checklist = {}
+    incidents = {}
+
+    try:
+        checklist = VRChecklist.objects.get(pk=checklist_id)
+        incidents = VRIncidentFormSet(queryset=VRIncident.objects.filter(date=checklist.date, observer=checklist.observer))
+    except VRChecklist.DoesNotExist:
+        # this must be an error
+        pass
+
+    return render_to_response('psc/vr_incidents.html', {'page_title': 'Voters Registration Critrical Incidents', 'incidents_formset': incidents, 'checklist': checklist })
 
 def dco_list(request):
     paginator = Paginator(DCOChecklist.objects.all(), items_per_page)
@@ -69,7 +79,7 @@ def dco_checklist(request, checklist_id=0):
     else:
         return render_to_response('psc/dco_checklist_form.html', {'page_title': 'Display/Claims & Objections Checklist'}, context_instance=RequestContext(request))
 
-def dco_incident(request, incident_id=0):
+def dco_incidents(request, incident_id=0):
     return render_to_response('psc/dco_incident_form.html', {'page_title': 'Display/Claims & Objections Critical Incidents'})
 
 def message_log(request):
