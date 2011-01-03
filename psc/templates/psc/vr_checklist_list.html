@@ -5,7 +5,8 @@
 		<h2>Voter's Registration Checklist and Incidents</h2>
 		<div class="block">
 			<table>
-				<tr class="odd">
+				<thead>
+                                    <tr>
 					<th>Date</th>
 					<th>Registration Center</th>
 					<th>RCID</th>
@@ -18,7 +19,8 @@
 					<th>3rd</th>
 					<th>IN</th>
 					<th>Edit</th>
-				</tr>
+                                    </tr>
+                                </thead>
 				{% for cl in checklists.object_list %}
 				<tr{% cycle '' ' class="odd"' %}>
 					<td>{{ cl.date|date:"SHORT_DATE_FORMAT" }}</td>
