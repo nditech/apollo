@@ -1,0 +1,9 @@
+Django==1.2.3
+MySQL-python==1.2.2
+RapidSMS==0.9.6a
+django-audit-log==0.2.1
+django-filter==0.5.3
+django-nose==0.1.2
+djappsettings==0.1.0
+djtables==0.1.1
+nose==0.11.4
