@@ -13,8 +13,6 @@ class VRIncidentForm(forms.ModelForm):
         model = VRIncident
         exclude = ['location_type', 'location_id', 'location', 'observer', 'date']
 
-VRIncidentFormSet = modelformset_factory(VRIncident)
-
 class DCOChecklistForm(forms.ModelForm):
     class Meta:
         model = DCOChecklist

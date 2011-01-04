@@ -10,7 +10,7 @@ from django.views.decorators.csrf import csrf_view_exempt
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from rapidsms.contrib.messagelog.tables import MessageTable
 from rapidsms.contrib.messagelog.models import Message
-from forms import VRChecklistForm, VRIncidentFormSet, VRChecklistFilterForm
+from forms import VRChecklistForm, VRIncidentForm
 
 # paginator settings
 items_per_page = 25
@@ -19,7 +19,7 @@ def home(request):
     return render_to_response('psc/layout.html')
 
 @csrf_view_exempt
-def vr_list(request):
+def vr_checklist_list(request):
     qs = Q()
 
     if request.method == 'GET':
@@ -66,20 +66,22 @@ def vr_checklist(request, checklist_id=0):
         f = VRChecklistForm(instance=checklist)
         return render_to_response('psc/vr_checklist_form.html', {'page_title': 'Voters Registration Checklist', 'checklist': checklist, 'form': f })
 
-def vr_incidents(request, checklist_id=0):
-    checklist = {}
-    incidents = {}
+def vr_incident_update(request, incident_id=0):
+    incident = get_object_or_404(VRIncident, pk=incident_id)
+    if request.POST:        
+        f = VRIncidentForm(request.POST, instance=incident)
+        if f.is_valid():
+            print f.cleaned_data
+            f.save()
+        return HttpResponseRedirect(reverse('psc.views.vr_incident_list'))    
+    else:
+        f = VRIncidentForm(instance=incident)   
+        return render_to_response('psc/vr_incident_update_form.html', {'page_title': 'Voters Registration Critrical Incidents', 'incident': incident, 'form': f })
 
-    try:
-        checklist = VRChecklist.objects.get(pk=checklist_id)
-        incidents = VRIncidentFormSet(queryset=VRIncident.objects.filter(date=checklist.date, observer=checklist.observer))
-    except VRChecklist.DoesNotExist:
-        # this must be an error
-        pass
+def vr_incident_add(request):
+    return render_to_response('psc/layout.html')
 
-    return render_to_response('psc/vr_incident_form.html', {'page_title': 'Voters Registration Critrical Incidents', 'incidents_formset': incidents, 'checklist': checklist })
-
-def vr_incidents_list(request):
+def vr_incident_list(request):
     paginator = Paginator(VRIncident.objects.all(), items_per_page)
 
     try:
@@ -119,7 +121,7 @@ def dco_checklist(request, checklist_id=0):
     else:
         return render_to_response('psc/dco_checklist_form.html', {'page_title': 'Display/Claims & Objections Checklist'}, context_instance=RequestContext(request))
 
-def dco_incidents(request, incident_id=0):
+def dco_incident(request, incident_id=0):
     return render_to_response('psc/dco_incident_form.html', {'page_title': 'Display/Claims & Objections Critical Incidents'})
 
 def message_log(request):

@@ -1,0 +1,215 @@
+{% extends "psc/layout.html" %}
+{% block content %}
+<form method="POST" action="{% url psc.views.vr_incident_update incident.id %}" >
+			<div class="grid_16">
+				<div class="box">
+					
+		
+		<h2>Observer Details</h2>
+		<!-- observer details group form -->
+		<div class="block">
+		<table>
+			<tr><td>Observer:</td><td>{{ incident.observer.name }}</td></tr>
+			<tr><td>Date:</td><td>{{ incident.date|date:"SHORT_DATE_FORMAT" }}</td></tr>
+		</table>
+		</div>
+                <div class="clear"></div>
+		<h2>Critical Incidents</h2>
+		<!-- opening checklist question -->
+		<div class='block'>
+		<div class='grandparent'>
+			<div class='parent'>
+				<div class='first'>
+					<p>A</p>
+				</div>
+				<div class='second'>
+					<p>Registration Centre not open/does not exist</p>
+				</div>
+				<div class='third'>
+					<div class='options'>
+                                            <input name='{{ form.A.name }}' type='checkbox' class='checkbox numeric' value='True' {% if form.initial.A %} checked='checked' {% endif %}>
+                                        </div>
+				</div>
+			</div>
+			<div class='parent'>
+				<div class='first'>
+					<p>B</p>
+				</div>
+				<div class='second'>
+					<p>Not permitted to observe at registration centre</p>
+				</div>
+				<div class='third'>
+					<div class='options'>
+                                            <input name='B' type='checkbox' class='checkbox numeric' value='True' {% if form.initial.B %} checked='checked' {% endif %}>
+                                        </div>
+				</div>
+			</div>
+			<div class='parent'>
+				<div class='first'>
+					<p>C</p>
+				</div>
+				<div class='second'>
+					<p>Voter registration suspended at the centre</p>
+				</div>
+				<div class='third'>
+					<div class='options'>
+                                            <input name='C' type='checkbox' class='checkbox numeric' value='True' {% if form.initial.C %} checked='checked' {% endif %}>
+                                        </div>
+				</div>
+			</div>
+			<div class='parent'>
+				<div class='first'>
+					<p>D</p>
+				</div>
+				<div class='second'>
+					<p>Missing or incomplete Direct Data Capture (DDC) system</p>
+				</div>
+				<div class='third'>
+					<div class='options'>
+                                            <input name='D' type='checkbox' class='checkbox numeric' value='True'{% if form.initial.D %} checked='checked' {% endif %}>
+                                        </div>
+				</div>
+			</div>
+			<div class='parent'>
+				<div class='first'>
+					<p>E</p>
+				</div>
+				<div class='second'>
+				<p>Not functioning Direct Data Capture (DDC) system</p>
+				</div>
+				<div class='third'>
+					<div class='options'>
+                                            <input name='E' type='checkbox' class='checkbox numeric' value='True' {% if form.initial.E %} checked='checked' {% endif %}>
+                                        </div>
+				</div>
+			</div>
+			<div class='parent'>
+				<div class='first'>
+					<p>F</p>
+				</div>
+				<div class='second'>
+					<p>Centre ran out of materials</p>
+				</div>
+				<div class='third'>
+					<div class='options'>
+                                            <input name='F' type='checkbox' class='checkbox numeric' value='True' {% if form.initial.F %} checked='checked' {% endif %}>
+                                        </div>
+				</div>
+			</div>
+			<div class='parent'>
+				<div class='first'>
+					<p>G</p>
+				</div>
+				<div class='second'>
+					<p>Registering of large numbers of underage persons</p>
+				</div>
+				<div class='third'>
+					<div class='options'>
+                                            <input name='G' type='checkbox' class='checkbox numeric' value='True'{% if form.initial.G %} checked='checked' {% endif %}>
+                                        </div>
+				</div>
+			</div>
+			<div class='parent'>
+				<div class='first'>
+					<p>H</p>
+				</div>
+				<div class='second'>
+					<p>Registering of large numbers of people who have already registered</p>
+				</div>
+				<div class='third'>
+					<div class='options'>
+                                            <input name='H' type='checkbox' class='checkbox numeric' value='True' {% if form.initial.H %} checked='checked' {% endif %}>
+                                        </div>
+				</div>
+			</div>
+			<div class='parent'>
+				<div class='first'>
+					<p>J</p>
+				</div>
+				<div class='second'>
+					<p>Registering of large numbers of people not from the community </p>
+				</div>
+				<div class='third'>
+					<div class='options'>
+                                            <input name='J' type='checkbox' class='checkbox numeric' value='True' {% if form.initial.J %} checked='checked' {% endif %}>
+                                        </div>
+				</div>
+			</div>
+			<div class='parent'>
+				<div class='first'>
+					<p>K</p>
+				</div>
+				<div class='second'>
+					<p>Registering large numbers of people without providing them temporary voter's cards</p>
+				</div>
+				<div class='third'>
+					<div class='options'>
+                                            <input name='K' type='checkbox' class='checkbox numeric' value='True' {% if form.initial.K %} checked='checked' {% endif %}>
+                                        </div>
+				</div>
+			</div>
+			<div class='parent'>
+				<div class='first'>
+					<p>M</p>
+				</div>
+				<div class='second'>
+					<p>Registering large numbers of people who receive temporary voter's cards with missing or inaccurate information</p>
+				</div>
+				<div class='third'>
+					<div class='options'>
+                                            <input name='M' type='checkbox' class='checkbox numeric' value='True'{% if form.initial.M %} checked='checked' {% endif %}>
+                                        </div>
+				</div>
+			</div>
+			<div class='parent'>
+				<div class='first'>
+					<p>N</p>
+				</div>
+				<div class='second'>
+					<p>Violence in or around the centre</p>
+				</div>
+				<div class='third'>
+					<div class='options'>
+                                            <input name='N' type='checkbox' class='checkbox numeric' value='True'{% if form.initial.N %} checked='checked' {% endif %}>
+                                        </div>
+				</div>
+			</div>
+			<div class='parent'>
+				<div class='first'>
+					<p>P</p>
+				</div>
+				<div class='second'>
+					<p>Intimidation or harassment in or around the centre</p>
+				</div>
+				<div class='third'>
+					<div class='options'>
+                                            <input name='P' type='checkbox' class='checkbox numeric' value='True'{% if form.initial.P %} checked='checked' {% endif %}>
+                                        </div>
+				</div>
+			</div>
+			<div class='parent last'>
+				<div class='first'>
+					<p>Q</p>
+				</div>
+				<div class='second'>
+					<p>Other</p>
+				</div>
+				<div class='third'>
+					<div class='options'>
+                                            <input name='Q' type='checkbox' class='checkbox numeric' value='True'{% if form.initial.Q %} checked='checked' {% endif %}>
+                                        </div>
+				</div>
+			</div>
+		</div>
+                    <div class="buttons">
+                    <input type="submit" name="submit" value="Submit">
+                    <input type="reset" name="reset" value="Reset">
+                    </div>
+		
+
+					</div>
+					<div class='clear'></div>
+				</div>
+			</div>
+			</form>
+{% endblock %}
