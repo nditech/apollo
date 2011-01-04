@@ -8,7 +8,7 @@ from django.views.decorators.csrf import csrf_view_exempt
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from rapidsms.contrib.messagelog.tables import MessageTable
 from rapidsms.contrib.messagelog.models import Message
-from forms import VRChecklistForm, VRIncidentForm
+from forms import VRChecklistForm, VRIncidentForm, DCOIncidentForm
 
 # paginator settings
 items_per_page = 25
@@ -101,6 +101,44 @@ def dco_checklist(request, checklist_id=0):
 
 def dco_incident(request, incident_id=0):
     return render_to_response('psc/dco_incident_form.html', {'page_title': 'Display/Claims & Objections Critical Incidents'})
+
+def dco_incident_list(request):
+    paginator = Paginator(DCOIncident.objects.all(), items_per_page)
+
+    try:
+        page = int(request.GET.get('page', '1'))
+    except ValueError:
+        page = 1
+
+    # an invalid range will retrieve the last page of results
+    try:
+        checklists = paginator.page(page)
+    except (EmptyPage, InvalidPage):
+        checklists = paginator.page(paginator.num_pages)
+
+    return render_to_response('psc/dco_incident_list.html', {'page_title': "DCO Incidents", 'checklists': checklists})
+
+@csrf_view_exempt
+def dco_incident_update(request, incident_id=0):
+    
+    incident = get_object_or_404(DCOIncident, pk=incident_id)
+    if request.POST:
+        f = DCOIncidentForm(request.POST, instance=incident)    
+        f.save()
+        return HttpResponseRedirect(reverse('psc.views.dco_incident_list'))
+    else:
+        f = DCOIncidentForm(instance=incident)
+        return render_to_response('psc/dco_incident_update_form.html', {'page_title': 'DCO Incidents', 'incident': incident, 'form': f })
+
+@csrf_view_exempt
+def dco_incident_add(request):
+    if request.POST:
+        f = DCOIncidentForm(request.POST)                    
+        f.save()
+        return HttpResponseRedirect(reverse('psc.views.dco_incident_list'))
+    else:
+        f = DCOIncidentForm()
+        return render_to_response('psc/dco_incident_add_form.html', {'page_title': 'Voters Registration Critrical Incidents', 'form': f })
 
 def message_log(request):
     messages =   MessageTable(Message.objects.all(), request=request)
