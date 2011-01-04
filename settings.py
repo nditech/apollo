@@ -76,6 +76,7 @@ INSTALLED_APPS = [
     "rapidsms.contrib.echo",
 
     "psc",
+    "django_extensions",
 ]
 
 # this rapidsms-specific setting defines which views are linked by the
