@@ -46,11 +46,11 @@ def vr_checklist_list(request):
 @csrf_view_exempt
 def vr_incident_update(request, incident_id=0):
     incident = get_object_or_404(VRIncident, pk=incident_id)
-    if request.POST:
-        #return HttpResponse(request.POST['A'])
+    if request.POST:        
         f = VRIncidentForm(request.POST, instance=incident)
-        return HttpResponse(f.values)
-        f.save()        
+        if f.is_valid():
+            print f.cleaned_data
+            f.save()
         return HttpResponseRedirect(reverse('psc.views.vr_incident_list'))    
     else:
         f = VRIncidentForm(instance=incident)   
