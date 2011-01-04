@@ -4,6 +4,8 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import RequestContext
 from models import *
+from datetime import datetime
+from django.db.models import Q
 from django.views.decorators.csrf import csrf_view_exempt
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from rapidsms.contrib.messagelog.tables import MessageTable
@@ -17,18 +19,28 @@ def home(request):
     return render_to_response('psc/layout.html')
 
 @csrf_view_exempt
-def vr_checklist(request, checklist_id=0):
-    checklist = get_object_or_404(VRChecklist, pk=checklist_id)
-    if (request.POST):
-        f = VRChecklistForm(request.POST, instance=checklist)
-        f.save()
-        return HttpResponseRedirect(reverse('psc.views.vr_list'))
-    else:
-        f = VRChecklistForm(instance=checklist)
-        return render_to_response('psc/vr_checklist_form.html', {'page_title': 'Voters Registration Checklist', 'checklist': checklist, 'form': f })
-
 def vr_checklist_list(request):
-    paginator = Paginator(VRChecklist.objects.all(), items_per_page)
+    qs = Q()
+
+    if request.method == 'GET':
+        filter_form = VRChecklistFilterForm(request.GET)
+
+        if filter_form.is_valid():
+            data = filter_form.cleaned_data
+            if data['zone']:
+                qs &= Q(observer__location_id__in=LGA.objects.filter(parent__parent__parent__code__iexact=data['zone']).values_list('id', flat=True))
+            if data['state']:
+                qs &= Q(observer__location_id__in=LGA.objects.filter(parent__parent__code__exact=data['state']).values_list('id', flat=True))
+            if data['district']:
+                qs &= Q(observer__location_id__in=LGA.objects.filter(parent__code__exact=data['district']).values_list('id', flat=True))
+            if data['day']:
+                qs &= Q(date=datetime.strptime(data['day'], '%d/%m/%Y'))
+            if data['status']:
+                pass
+    else:
+        filter_form = VRChecklistFilterForm()
+
+    paginator = Paginator(VRChecklist.objects.filter(qs), items_per_page)
 
     try:
         page = int(request.GET.get('page', '1'))
@@ -41,9 +53,19 @@ def vr_checklist_list(request):
     except (EmptyPage, InvalidPage):
         checklists = paginator.page(paginator.num_pages)
 
-    return render_to_response('psc/vr_checklist_list.html', {'page_title': "Voter's Registration Data Management", 'checklists': checklists})
+    return render_to_response('psc/vr_checklist_list.html', {'page_title': "Voter's Registration Data Management", 'checklists': checklists, 'filter_form': filter_form })
 
 @csrf_view_exempt
+def vr_checklist(request, checklist_id=0):
+    checklist = get_object_or_404(VRChecklist, pk=checklist_id)
+    if (request.POST):
+        f = VRChecklistForm(request.POST, instance=checklist)
+        f.save()
+        return HttpResponseRedirect(reverse('psc.views.vr_list'))
+    else:
+        f = VRChecklistForm(instance=checklist)
+        return render_to_response('psc/vr_checklist_form.html', {'page_title': 'Voters Registration Checklist', 'checklist': checklist, 'form': f })
+
 def vr_incident_update(request, incident_id=0):
     incident = get_object_or_404(VRIncident, pk=incident_id)
     if request.POST:        
