@@ -4,9 +4,16 @@
 	<div class="box"> 
 		<h2>Voter's Registration Checklist and Incidents</h2>
 		<div class="block">
+			<div id="filter">
+				<form action="" method="get" accept-charset="utf-8">
+					<ul>
+					{{ filter_form.as_ul }} <input type="submit" value="filter &rarr;">
+					</ul>
+				</form>
+			</div>
 			<table>
 				<thead>
-                                    <tr>
+				<tr>
 					<th>Date</th>
 					<th>RC</th>
 					<th>RCID</th>
@@ -18,9 +25,9 @@
 					<th>1st</th>
 					<th>2nd</th>
 					<th>3rd</th>
-					<th>Edit</th>
-                                    </tr>
-                                </thead>
+					<th>&nbsp;</th>
+				</tr>
+				</thead>
 				{% for cl in checklists.object_list %}
 				<tr{% cycle '' ' class="odd"' %}>
 					<td>{{ cl.date|date:"SHORT_DATE_FORMAT" }}</td>
@@ -45,7 +52,7 @@
 					{% if cl.A or cl.B or cl.C or cl.D1 or cl.D2 or cl.D3 or cl.D4 or cl.E1 or cl.E2 or cl.E3 or cl.E4 or cl.E5 or cl.F or cl.G %}
 					<img src="/assets/img/status-away.png" width="16" height="16" alt="incomplete" />
 					{% else %}
-					&nbsp;
+					<img src="/assets/img/status-busy.png" width="16" height="16" alt="none" />
 					{% endif %}
 					{% endif %}
 					</td>
@@ -56,7 +63,7 @@
 					{% if cl.H or cl.J or cl.K or cl.M or cl.N or cl.P or cl.Q or cl.R or cl.S or cl.T or cl.U or cl.V or cl.W or cl.X or cl.Y or cl.Z or cl.AA %}
 					<img src="/assets/img/status-away.png" width="16" height="16" alt="incomplete" />
 					{% else %}
-					&nbsp;
+					<img src="/assets/img/status-busy.png" width="16" height="16" alt="none" />
 					{% endif %}
 					{% endif %}
 					</td>
