@@ -1,9 +1,8 @@
 {% extends "psc/layout.html" %}
 {% block content %}
-<form>
+<form method="POST" action="{% url psc.views.vr_incident_add %}" >
 			<div class="grid_16">
-				<div class="box">
-					
+				<div class="box">		
 		
 		<h2>Observer Details</h2>
 		<!-- observer details group form -->

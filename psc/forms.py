@@ -19,9 +19,14 @@ class DCOChecklistForm(forms.ModelForm):
         exclude = ['location_type', 'location_id', 'location', 'observer', 'date']
 
 class DCOIncidentForm(forms.ModelForm):
+    DAYS = (('', '--'),
+        ('03/01/2011', 'Day 1'),
+        ('10/01/2011', 'Day 2'),
+        ('14/01/2011', 'Day 3'))
+    date = forms.ChoiceField(choices=DAYS)
     class Meta:
         model = DCOIncident
-        exclude = ['location_type', 'location_id', 'location', 'observer', 'date']
+        exclude = ['location_type', 'location_id', 'location', 'date']
 
 DCOIncidentFormSet = modelformset_factory(DCOIncident)
 

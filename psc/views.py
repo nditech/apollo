@@ -79,7 +79,7 @@ def vr_incident_update(request, incident_id=0):
         return render_to_response('psc/vr_incident_update_form.html', {'page_title': 'Voters Registration Critrical Incidents', 'incident': incident, 'form': f })
 
 def vr_incident_add(request):
-    return render_to_response('psc/layout.html')
+    return render_to_response('psc/vr_incident_form.html')
 
 def vr_incident_list(request):
     paginator = Paginator(VRIncident.objects.all(), items_per_page)
@@ -155,7 +155,7 @@ def dco_incident_update(request, incident_id=0):
 @csrf_view_exempt
 def dco_incident_add(request):
     if request.POST:
-        f = DCOIncidentForm(request.POST)                    
+        f = DCOIncidentForm(request.POST)
         f.save()
         return HttpResponseRedirect(reverse('psc.views.dco_incident_list'))
     else:
