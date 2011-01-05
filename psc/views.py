@@ -35,7 +35,88 @@ def vr_checklist_list(request):
             if data['day']:
                 qs &= Q(date=data['day'])
             if data['status']:
-                pass
+                if int(data['status']) == 1 or int(data['status']) == 2: # no texts received or missing first text
+                    qs &= Q(submitted=False)
+                elif int(data['status']) == 3: # missing second text
+                    qs &= Q(A__isnull=True) | \
+                          Q(B=0) | \
+                          Q(C__isnull=True) | \
+                          Q(F__isnull=True) | \
+                          Q(G=0) | \
+                          (Q(D1__isnull=True) & \
+                          Q(D2__isnull=True) & \
+                          Q(D3__isnull=True) & \
+                          Q(D4__isnull=True)) | \
+                          (Q(E1__isnull=True) & \
+                          Q(E2__isnull=True) & \
+                          Q(E3__isnull=True) & \
+                          Q(E4__isnull=True) & \
+                          Q(E5__isnull=True))
+                elif int(data['status']) == 4: # missing third text
+                    qs &= Q(H__isnull=True) | \
+                          Q(J__isnull=True) | \
+                          Q(K__isnull=True) | \
+                          Q(M__isnull=True) | \
+                          Q(N__isnull=True) | \
+                          Q(P__isnull=True) | \
+                          Q(Q__isnull=True) | \
+                          Q(R__isnull=True) | \
+                          Q(S__isnull=True) | \
+                          Q(T=0) | \
+                          Q(U=0) | \
+                          Q(V=0) | \
+                          Q(W=0) | \
+                          Q(X=0) | \
+                          Q(Y__isnull=True) | \
+                          Q(Z__isnull=True) | \
+                          Q(AA__isnull=True)
+                elif int(data['status']) == 5: # missing any text
+                    qs &= Q(submitted=False) | \
+                          Q(A__isnull=True) | \
+                          Q(B=0) | \
+                          Q(C__isnull=True) | \
+                          Q(F__isnull=True) | \
+                          Q(G=0) | \
+                          (Q(D1__isnull=True) & \
+                          Q(D2__isnull=True) & \
+                          Q(D3__isnull=True) & \
+                          Q(D4__isnull=True)) | \
+                          (Q(E1__isnull=True) & \
+                          Q(E2__isnull=True) & \
+                          Q(E3__isnull=True) & \
+                          Q(E4__isnull=True) & \
+                          Q(E5__isnull=True)) | \
+                          Q(H__isnull=True) | \
+                          Q(J__isnull=True) | \
+                          Q(K__isnull=True) | \
+                          Q(M__isnull=True) | \
+                          Q(N__isnull=True) | \
+                          Q(P__isnull=True) | \
+                          Q(Q__isnull=True) | \
+                          Q(R__isnull=True) | \
+                          Q(S__isnull=True) | \
+                          Q(T=0) | \
+                          Q(U=0) | \
+                          Q(V=0) | \
+                          Q(W=0) | \
+                          Q(X=0) | \
+                          Q(Y__isnull=True) | \
+                          Q(Z__isnull=True) | \
+                          Q(AA__isnull=True)
+                elif int(data['status']) == 6: # all texts received
+                    qs &= Q(submitted=True,A__isnull=False,B__gte=1,C__isnull=False,F__isnull=False,G__gte=1) & \
+                          Q(H__isnull=False,J__isnull=False,K__isnull=False,M__isnull=False,N__isnull=False) & \
+                          Q(P__isnull=False,Q__isnull=False,R__isnull=False,S__isnull=False,T__gte=1,U__gte=1) & \
+                          Q(V__gte=1,W__gte=1,X__gte=1,Y__isnull=False,Z__isnull=False,AA__isnull=False) & \
+                          (Q(D1__isnull=False) | \
+                          Q(D2__isnull=False) | \
+                          Q(D3__isnull=False) | \
+                          Q(D4__isnull=False)) & \
+                          (Q(E1__isnull=False) | \
+                          Q(E2__isnull=False) | \
+                          Q(E3__isnull=False) | \
+                          Q(E4__isnull=False) | \
+                          Q(E5__isnull=False))
             if data['observer_id']:
                 qs &= Q(observer__observer_id__exact=data['observer_id'])
     else:
@@ -61,8 +142,9 @@ def vr_checklist(request, checklist_id=0):
     checklist = get_object_or_404(VRChecklist, pk=checklist_id)
     if (request.POST):
         f = VRChecklistForm(request.POST, instance=checklist)
-        f.save()
-        return HttpResponseRedirect(reverse('psc.views.vr_list'))
+        if f.is_valid():
+            f.save()
+        return HttpResponseRedirect(reverse('psc.views.vr_checklist_list'))
     else:
         f = VRChecklistForm(instance=checklist)
         return render_to_response('psc/vr_checklist_form.html', {'page_title': 'Voters Registration Checklist', 'checklist': checklist, 'form': f })

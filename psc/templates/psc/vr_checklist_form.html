@@ -355,6 +355,7 @@
 				</div>
 				<div class='third'>
 					<p><input name='{{ form.AA.name }}' type= 'text'  class='text numeric' maxlength='3' value='{{ form.initial.AA|default:"" }}'> </p>
+					<input type="hidden" name="{{ form.submitted.name }}" value="True">
 				</div>
       </div>
       <div class="buttons">
