@@ -25,24 +25,24 @@
 			<div class="grid_16">
 				<ul class="nav main">
 					<li>
-						<a href="#">Voter's Registration</a>
+						<a href="{% url psc.views.vr_checklist_list %}">Voter's Registration</a>
 						<ul>
 							<li>
 								<a href="{% url psc.views.vr_checklist_list %}">Checklist</a>
 							</li>
 							<li>
-								<a href="#">Incidents</a>
+								<a href="{% url psc.views.vr_incident_list %}">Incidents</a>
 							</li>
 						</ul>
 					</li>
 					<li>
-						<a href="#">Display/Claims & Objections </a>
+						<a href="{% url psc.views.dco_checklist_list %}">Display, Claims & Objections </a>
 						<ul>
 							<li>
-								<a href="#">Checklist</a>
+								<a href="{% url psc.views.dco_checklist_list %}">Checklist</a>
 							</li>
 							<li>
-								<a href="#">Incidents</a>
+								<a href="{% url psc.views.dco_incident_list %}">Incidents</a>
 							</li>
 						</ul>
 					</li>

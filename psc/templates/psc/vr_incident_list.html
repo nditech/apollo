@@ -5,8 +5,8 @@
 		<h2>Voter's Registration Incidents</h2>
 		<div class="block">
 			<table>
-                               <thead>
-                                    <tr>
+				<thead>
+					<tr>
 					<th>Date</th>
 					<th>Location</th>
 					<th>Observer</th>
@@ -23,9 +23,9 @@
 					<th>N</th>
 					<th>P</th>
 					<th>Q</th>
-                                        <th>&nbsp;</th>
-                                    </tr>
-                                </thead>
+					<th>&nbsp;</th>
+					</tr>
+				</thead>
 				{% for cl in checklists.object_list %}
 				<tr{% cycle '' ' class="odd"' %}>
 					<td>{{ cl.date|date:"SHORT_DATE_FORMAT" }}</td>
@@ -101,7 +101,7 @@
 				</tr>
 				{% empty %}
 				<tr>
-					<td colspan="12" class="nodata">No reports yet</td>
+					<td colspan="17" class="nodata">No reports yet</td>
 				</tr>
 				{% endfor %}
 			</table>
