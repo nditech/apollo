@@ -44,9 +44,9 @@ VR_DAYS = (('', '--'),
         (datetime.date(datetime(2011, 1, 29)), 'Day 5'))
 
 class VRChecklistFilterForm(forms.Form):
+    observer_id = forms.CharField(required=False, label="Observer Id", max_length=6, widget=forms.TextInput(attrs={'style':'width:7em'}))
+    day = forms.ChoiceField(choices=VR_DAYS, required=False)
     zone = forms.ChoiceField(choices=ZONES, required=False)
     state = forms.ChoiceField(choices=STATES, required=False)
     district = forms.ChoiceField(choices=DISTRICTS, required=False) 
-    day = forms.ChoiceField(choices=VR_DAYS, required=False)
     status = forms.ChoiceField(choices=STATUSES, required=False)
-    observer_id = forms.CharField(required=False, label="Observer Id", max_length=6, widget=forms.TextInput(attrs={'style':'width:7em'}))
