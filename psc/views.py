@@ -145,7 +145,8 @@ def dco_incident_update(request, incident_id=0):
     
     incident = get_object_or_404(DCOIncident, pk=incident_id)
     if request.POST:
-        f = DCOIncidentForm(request.POST, instance=incident)    
+        f = DCOIncidentForm(request.POST, instance=incident)
+        print f.errors
         f.save()
         return HttpResponseRedirect(reverse('psc.views.dco_incident_list'))
     else:
@@ -155,7 +156,7 @@ def dco_incident_update(request, incident_id=0):
 @csrf_view_exempt
 def dco_incident_add(request):
     if request.POST:
-        f = DCOIncidentForm(request.POST)
+        f = DCOIncidentForm(request.POST, DCOIncident)
         f.save()
         return HttpResponseRedirect(reverse('psc.views.dco_incident_list'))
     else:

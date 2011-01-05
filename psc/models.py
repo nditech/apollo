@@ -113,7 +113,7 @@ class Observer(models.Model):
     name = property(__get_name, __set_name)
 
     def __unicode__(self):
-        return self.__get_name()
+        return self.observer_id
 
 class VRChecklist(models.Model):
     OPENTIME = ((1, 'Open by 8AM (1)'),

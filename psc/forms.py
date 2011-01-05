@@ -2,6 +2,7 @@ from django import forms
 from models import VRChecklist, VRIncident, DCOChecklist, DCOIncident
 from models import Zone, State, District
 from django.forms.models import modelformset_factory
+from datetime import datetime
 
 class VRChecklistForm(forms.ModelForm):
     class Meta:
@@ -20,13 +21,14 @@ class DCOChecklistForm(forms.ModelForm):
 
 class DCOIncidentForm(forms.ModelForm):
     DAYS = (('', '--'),
-        ('03/01/2011', 'Day 1'),
-        ('10/01/2011', 'Day 2'),
-        ('14/01/2011', 'Day 3'))
+        (datetime.date(datetime(2011, 1, 3)), 'Day 1'),
+        (datetime.date(datetime(2011, 1, 10)), 'Day 2'),
+        (datetime.date(datetime(2011, 1, 14)), 'Day 3'),)
+        
     date = forms.ChoiceField(choices=DAYS)
     class Meta:
         model = DCOIncident
-        exclude = ['location_type', 'location_id', 'location', 'date']
+        exclude = ['location_type', 'location_id', 'location']
 
 DCOIncidentFormSet = modelformset_factory(DCOIncident)
 
@@ -44,9 +46,9 @@ STATUSES = ((0, '--'),
             (8, '2nd SMS missing'),
             (9, '3rd SMS missing'))
 DAYS = (('', '--'),
-        ('03/01/2011', 'Day 1'),
-        ('10/01/2011', 'Day 2'),
-        ('14/01/2011', 'Day 3'))
+        (datetime.date(datetime(2011, 1, 3)), 'Day 1'),
+        (datetime.date(datetime(2011, 1, 10)), 'Day 2'),
+        (datetime.date(datetime(2011, 1, 14)), 'Day 3'),)
 
 class VRChecklistFilterForm(forms.Form):
     zone = forms.ChoiceField(choices=ZONES, required=False)

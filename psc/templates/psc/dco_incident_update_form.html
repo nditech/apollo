@@ -5,22 +5,20 @@
 				<div class="box">
 					
 	
-		<h2>Observer Details</h2>		
+
+		<h2>Observer Details</h2>
 		<!-- observer details group form -->
 		<div class="block">
-		<div class='grandparent'>
-			<div class='parent last'>
-				<div class='first'>
-					<p>PSC</p>
-				</div>
-				<div class='second'>
-					<p>Observer ID (always start every text message with "PSC" followed by your Observer ID Number)</p>
-				</div>
-				<div class='third'>
-					<input type='text' name='PSC' class='text numeric' maxlength="6">
-				</div>
-			</div>
-		</div>
+		<table>
+			<tr><td>Observer:</td><td>
+                                {{ incident.observer.name }}
+                                <input name='observer' type='hidden' value='{{ incident.observer.id }}'  >
+                                                        </td></tr>
+			<tr><td>Date:</td><td>
+                                {{ incident.date|date:"SHORT_DATE_FORMAT" }}
+                                <input name='date' type='hidden' value='{{ incident.date }}'>
+                            </td></tr>
+		</table>
 		</div>
                 <div class="clear"></div>
 		<h2>Critical Incidents</h2>
