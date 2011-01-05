@@ -10,9 +10,15 @@ class VRChecklistForm(forms.ModelForm):
         exclude = ['location_type', 'location_id', 'location', 'observer', 'date']
 
 class VRIncidentForm(forms.ModelForm):
+    DAYS = (('', '--'),
+        (datetime.date(datetime(2011, 1, 3)), 'Day 1'),
+        (datetime.date(datetime(2011, 1, 10)), 'Day 2'),
+        (datetime.date(datetime(2011, 1, 14)), 'Day 3'),)
+
+    date = forms.ChoiceField(choices=DAYS)
     class Meta:
         model = VRIncident
-        exclude = ['location_type', 'location_id', 'location', 'observer', 'date']
+        exclude = ['location_type', 'location_id', 'location']
 
 class DCOChecklistForm(forms.ModelForm):
     class Meta:
