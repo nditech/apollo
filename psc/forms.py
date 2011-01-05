@@ -43,10 +43,21 @@ VR_DAYS = (('', '--'),
         (datetime.date(datetime(2011, 1, 27)), 'Day 4'),
         (datetime.date(datetime(2011, 1, 29)), 'Day 5'))
 
+DCO_DAYS = (('', '--'),
+        (datetime.date(datetime(2011, 2, 3)), 'Day 1'),
+        (datetime.date(datetime(2011, 2, 8)), 'Day 2'))
+
 class VRChecklistFilterForm(forms.Form):
-    observer_id = forms.CharField(required=False, label="Observer Id", max_length=6, widget=forms.TextInput(attrs={'style':'width:7em'}))
+    observer_id = forms.CharField(required=False, label="Observer ID", max_length=6, widget=forms.TextInput(attrs={'style':'width:7em'}))
     day = forms.ChoiceField(choices=VR_DAYS, required=False)
     zone = forms.ChoiceField(choices=ZONES, required=False)
     state = forms.ChoiceField(choices=STATES, required=False)
     district = forms.ChoiceField(choices=DISTRICTS, required=False) 
     status = forms.ChoiceField(choices=STATUSES, required=False)
+
+class DCOChecklistFilterForm(forms.Form):
+    observer_id = forms.CharField(required=False, label="Observer ID", max_length=6, widget=forms.TextInput(attrs={'style':'width:7em'}))
+    day = forms.ChoiceField(choices=DCO_DAYS, required=False)
+    zone = forms.ChoiceField(choices=ZONES, required=False)
+    state = forms.ChoiceField(choices=STATES, required=False)
+    district = forms.ChoiceField(choices=DISTRICTS, required=False) 
