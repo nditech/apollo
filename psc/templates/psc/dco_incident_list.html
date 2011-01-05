@@ -1,9 +1,51 @@
 {% extends 'psc/layout.html' %}
+{% load query_string %}
+{% block javascripts %}
+{{ block.super }}
+<script src="/assets/js/jquery-1.4.4.min.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript" charset="utf-8">
+	$(function() {
+		$("#reset").click(function () {
+			$("#id_zone").val("");
+			$("#id_state").val("");
+			$("#id_district").val("");
+			$("#id_day").val("");
+			$("#id_status").val(0);
+			$("#id_observer_id").val("");
+			$("#filter_form").submit();
+		});
+	});
+</script>
+{% endblock %}
 {% block content %}
 <div class="grid_16">
 	<div class="box"> 
 		<h2>Voter's Registration Incidents</h2>
 		<div class="block">
+                    <div id="filter">
+				<form action="" method="get" id="filter_form" accept-charset="utf-8">
+					<table>
+						<thead>
+							<tr>
+								{% for field in filter_form %}
+								<th>{{ field.label }}</th>
+								{% endfor %}
+								<th>&nbsp;</th>
+								<th>&nbsp;</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								{% for field in filter_form %}
+								<td>{{ field }}</td>
+								{% endfor %}
+								<td><input type="button" value="reset" id="reset"></td>
+								<td><input type="submit" value="filter &rarr;"></td>
+							</tr>
+						</tbody>
+					</table>
+				</form>
+			</div>
 			<table>
                                <thead>
                                     <tr>
@@ -77,7 +119,7 @@
 				</tr>
 				{% empty %}
 				<tr>
-					<td colspan="12" class="nodata">No reports yet</td>
+					<td colspan="17" class="nodata">No reports yet</td>
 				</tr>
 				{% endfor %}
 			</table>

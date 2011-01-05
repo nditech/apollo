@@ -62,3 +62,17 @@ class VRChecklistFilterForm(forms.Form):
     day = forms.ChoiceField(choices=VR_DAYS, required=False)
     status = forms.ChoiceField(choices=STATUSES, required=False)
     observer_id = forms.CharField(required=False, label="Observer Id", max_length=6, widget=forms.TextInput(attrs={'style':'width:7em'}))
+
+class VRIncidentFilterForm(forms.Form):
+    zone = forms.ChoiceField(choices=ZONES, required=False)
+    state = forms.ChoiceField(choices=STATES, required=False)
+    district = forms.ChoiceField(choices=DISTRICTS, required=False)
+    day = forms.ChoiceField(choices=VR_DAYS, required=False)
+    observer_id = forms.CharField(required=False, label="Observer Id", max_length=6, widget=forms.TextInput(attrs={'style':'width:7em'}))
+
+class DCOIncidentFilterForm(forms.Form):
+    zone = forms.ChoiceField(choices=ZONES, required=False)
+    state = forms.ChoiceField(choices=STATES, required=False)
+    district = forms.ChoiceField(choices=DISTRICTS, required=False)
+    day = forms.ChoiceField(choices=VR_DAYS, required=False)
+    observer_id = forms.CharField(required=False, label="Observer Id", max_length=6, widget=forms.TextInput(attrs={'style':'width:7em'}))
