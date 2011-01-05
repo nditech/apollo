@@ -210,6 +210,7 @@ class DCOChecklist(models.Model):
     location = generic.GenericForeignKey("location_type", "location_id")
     observer = models.ForeignKey(Observer)
     date = models.DateField()
+    sms_serial = models.PositiveSmallIntegerField(blank=True, null=True, help_text="Used in tracking the SMS recieved in a day")
     A = models.PositiveSmallIntegerField(blank=True, default=0, choices=YES_NO, help_text='Was the registration centre open? (tick Yes or No) (If not permitted to observe complete a critical incident form and immediately report)')
     B = models.PositiveSmallIntegerField(blank=True, default=0, choices=YES_NO, help_text='Were you permitted to observe at the registration centre? (tick Yes or No) (If not permitted to observe complete a critical incident form and immediately report)')
     C = models.IntegerField(blank=True, null=True, help_text='How many registration officers were at the registration centre? (enter number)')
