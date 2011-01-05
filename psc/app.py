@@ -89,11 +89,13 @@ class App(AppBase):
                     location_type=ContentType.objects.get_for_model(location), location_id=location.pk)
             else:
                 vr = VRChecklist.objects.get(date=msg.date, observer=msg.observer)
+            vr.submitted = True
         except VRChecklist.DoesNotExist:
             vr = VRChecklist() 
             vr.date = msg.date
             vr.observer = msg.observer
             vr.location = location
+            vr.submitted = True
 
         responses = self._parse_checklist(params['responses'])
 

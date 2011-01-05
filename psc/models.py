@@ -164,6 +164,9 @@ class VRChecklist(models.Model):
     Y = models.IntegerField(blank=True, null=True, help_text='How many people registered during this day? (record number from Certificate of Completion of Daily Registration of Voters Form EC.1B(1)) (enter number) (if not permited to record this figure enter "9999")')
     Z = models.IntegerField(blank=True, null=True, help_text='How many people so far (total to date) have registered at this centre according to the Manual Register of Voters (MRV) Form EC.1A? (enter number) (if not permitted to record this figure enter "9999")')
     AA = models.IntegerField(blank=True, null=True, help_text='How many people so far (total to date) have registered according to the DDC system? (enter number) (if not permitted to record this figure enter "9999")')
+    submitted = models.BooleanField(default=False, help_text="This field tracks if (even though already created), this report has been submitted by the reporter")
+    report_rc = models.CharField(max_length=100, help_text="Registration Center as supplied by the data entry operator")
+    report_rcid = models.CharField(max_length=50, help_text="Registration Center ID as supplied by the data entry operator")
     audit_log = AuditLog()
 
     def __unicode__(self):
