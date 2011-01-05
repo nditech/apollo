@@ -172,6 +172,11 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'audit_log.middleware.UserLoggingMiddleware')
 
+try:
+    from local_settings import *
+except ImportError:
+    pass
+
 # since we might hit the database from any thread during testing, the
 # in-memory sqlite database isn't sufficient. it spawns a separate
 # virtual database for each thread, and syncdb is only called for the
