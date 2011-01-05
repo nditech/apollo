@@ -15,7 +15,8 @@ class App(AppBase):
         self.dco_checklist = re.compile(r'PSC(?P<observer_id>\d{6})DC(?P<day>\d{2})RC(?P<location_id>\d{3})(?P<responses>[A-Z\d]{2,})?', re.I)
         self.dco_incident = re.compile(r'PSC(?P<observer_id>\d{6})DC(?P<day>\d{2})(?P<location_type>(RC|GA))(?P<location_id>\d{3})!(?P<responses>[A-Z]{1,})@?(?P<comment>.*)', re.I)
         self.range_error_response = 'Invalid values for: %s'
-        self.attribute_error_response = 'Unknown attributes: %s'
+        self.checklist_attribute_error_response = 'Unknown checklist code: %s'
+        self.incident_attribute_error_response = 'Unknown critical incident code: %s'
         AppBase.__init__(self, router)
         
     def handle(self, message):
@@ -127,7 +128,7 @@ class App(AppBase):
         error_responses = []
         if check['attribute'] or check['range']:
             if check['attribute']:
-                error_responses.append(self.attribute_error_response % (", ".join(check['attribute'])))
+                error_responses.append(self.checklist_attribute_error_response % (", ".join(check['attribute'])))
             if check['range']:
                 error_responses.append(self.range_error_response % (", ".join(check['range'])))
             error_responses.append("You sent: %s" % msg.text)
@@ -191,7 +192,7 @@ class App(AppBase):
         if check['attribute']:
             # generate error response
             if check['attribute']:
-                error_responses.append(self.attribute_error_response % (", ".join(check['attribute'])))
+                error_responses.append(self.incident_attribute_error_response % (", ".join(check['attribute'])))
             error_responses.append("You sent: %s" % msg.text)
             return msg.respond(". ".join(error_responses))
         else:
@@ -255,7 +256,7 @@ class App(AppBase):
         error_responses = []
         if check['attribute'] or check['range']:
             if check['attribute']:
-                error_responses.append(self.attribute_error_response % (", ".join(check['attribute'])))
+                error_responses.append(self.checklist_attribute_error_response % (", ".join(check['attribute'])))
             if check['range']:
                 error_responses.append(self.range_error_response % (", ".join(check['range'])))
             error_responses.append("You sent: %s" % msg.text)
@@ -319,7 +320,7 @@ class App(AppBase):
         if check['attribute']:
             # generate error response
             if check['attribute']:
-                error_responses.append(self.attribute_error_response % (", ".join(check['attribute'])))
+                error_responses.append(self.incident_attribute_error_response % (", ".join(check['attribute'])))
             error_responses.append("You sent: %s" % msg.text)
             return msg.respond(". ".join(error_responses))
         else:
