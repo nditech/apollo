@@ -10,7 +10,7 @@ from django.views.decorators.csrf import csrf_view_exempt
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from rapidsms.contrib.messagelog.tables import MessageTable
 from rapidsms.contrib.messagelog.models import Message
-from forms import VRChecklistForm, VRIncidentForm, DCOIncidentForm
+from forms import VRChecklistForm, VRIncidentForm, DCOIncidentForm, VRChecklistFilterForm
 
 # paginator settings
 items_per_page = 25
