@@ -1,14 +1,32 @@
 {% extends 'psc/layout.html' %}
+{% load query_string %}
 {% block content %}
 <div class="grid_16">
-	<div class="box"> 
+	<div class="box" style="padding-bottom:1em"> 
 		<h2>Voter's Registration Checklist and Incidents</h2>
 		<div class="block">
 			<div id="filter">
 				<form action="" method="get" accept-charset="utf-8">
-					<ul>
-					{{ filter_form.as_ul }} <input type="submit" value="filter &rarr;">
-					</ul>
+					<table>
+						<thead>
+							<tr>
+								{% for field in filter_form %}
+								<th>{{ field.label }}</th>
+								{% endfor %}
+								<th>&nbsp;</th>
+								<th>&nbsp;</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								{% for field in filter_form %}
+								<td>{{ field }}</td>
+								{% endfor %}
+								<td><input type="button" value="reset"></td>
+								<td><input type="submit" value="filter &rarr;"></td>
+							</tr>
+						</tbody>
+					</table>
 				</form>
 			</div>
 			<table>
@@ -30,29 +48,33 @@
 				</thead>
 				{% for cl in checklists.object_list %}
 				<tr{% cycle '' ' class="odd"' %}>
-					<td>{{ cl.date|date:"SHORT_DATE_FORMAT" }}</td>
-					<td>{{ cl.location.name|default:"Unknown" }}</td>
-					<td>{{ cl.location.code|default:"999" }}</td>
+					<td>{{ cl.date|date:"d/m/Y" }}</td>
+					<td>{% firstof cl.report_rc cl.location.name|default:"Unknown" %}</td>
+					<td>{% firstof cl.report_rcid cl.location.code|default:"999" %}</td>
 					<td>{{ cl.observer.location.name|default:"Uknown" }}</td>
 					<td>{{ cl.observer.location.parent.name|default:"Uknown" }}</td>
 					<td>{{ cl.observer.location.parent.parent.name|default:"Uknown" }}</td>
 					<td>{{ cl.observer.name }}</td>
 					<td>{{ cl.observer.supervisor.name }}</td>
 					<td>
-					<img src="/assets/img/status.png" width="16" height="16" alt="complete" />
+					{% if cl.submitted %}
+						<img src="/assets/img/status.png" width="16" height="16" alt="complete" />
+					{% else %}
+						<img src="/assets/img/status-busy.png" width="16" height="16" alt="none" />
+					{% endif %}
 					</td>
 					<td>
 					{% if cl.A and cl.B and cl.C and cl.G %}
 						{% if cl.D1 or cl.D2 or cl.D3 or cl.D4 %}
 							{% if cl.E1 or cl.E2 or cl.E3 or cl.E4 or cl.E5 %}
-					<img src="/assets/img/status.png" width="16" height="16" alt="complete" />
+								<img src="/assets/img/status.png" width="16" height="16" alt="complete" />
 							{% endif %}
 						{% endif %}
 					{% else %}
 					{% if cl.A or cl.B or cl.C or cl.D1 or cl.D2 or cl.D3 or cl.D4 or cl.E1 or cl.E2 or cl.E3 or cl.E4 or cl.E5 or cl.F or cl.G %}
-					<img src="/assets/img/status-away.png" width="16" height="16" alt="incomplete" />
+						<img src="/assets/img/status-away.png" width="16" height="16" alt="incomplete" />
 					{% else %}
-					<img src="/assets/img/status-busy.png" width="16" height="16" alt="none" />
+						<img src="/assets/img/status-busy.png" width="16" height="16" alt="none" />
 					{% endif %}
 					{% endif %}
 					</td>
@@ -76,13 +98,15 @@
 				{% endfor %}
 			</table>
 		</div>
-		{% if checklist.has_other_pages %}
+		{% if checklists.has_other_pages %}
 		<div class="paginator">
-			<a href="?page={{ checklist.previous_page_number }}"><span>&laquo;</span></a>
-			{% for pagenum in checklist.paginator.page_range %}
-			<a href="?page={{ pagenum }}"><span>1</span></a>
-			{% endfor %}
-			<a href="?page={{ checklist.next_page_number }}"><span>&raquo;</span></a>
+			{% if checklists.has_previous %}
+			<a href="{% query_string "page=checklists.previous_page_number" "" %}"><span>&laquo;</span></a>
+			{% endif %}
+			<span class="current">Page {{ checklists.number }} of {{ checklists.paginator.num_pages }}</span>
+			{% if checklists.has_next %}
+			<a href="{% query_string "page=checklists.next_page_number" "" %}"><span>&raquo;</span></a>
+			{% endif %}
 		</div>
 		{% endif %}
 	</div>

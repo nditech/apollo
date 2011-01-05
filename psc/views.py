@@ -18,7 +18,6 @@ items_per_page = 25
 def home(request):
     return render_to_response('psc/layout.html')
 
-@csrf_view_exempt
 def vr_checklist_list(request):
     qs = Q()
 
@@ -34,9 +33,11 @@ def vr_checklist_list(request):
             if data['district']:
                 qs &= Q(observer__location_id__in=LGA.objects.filter(parent__code__exact=data['district']).values_list('id', flat=True))
             if data['day']:
-                qs &= Q(date=datetime.strptime(data['day'], '%d/%m/%Y'))
+                qs &= Q(date=data['day'])
             if data['status']:
                 pass
+            if data['observer_id']:
+                qs &= Q(observer__observer_id__exact=data['observer_id'])
     else:
         filter_form = VRChecklistFilterForm()
 
@@ -53,7 +54,7 @@ def vr_checklist_list(request):
     except (EmptyPage, InvalidPage):
         checklists = paginator.page(paginator.num_pages)
 
-    return render_to_response('psc/vr_checklist_list.html', {'page_title': "Voter's Registration Data Management", 'checklists': checklists, 'filter_form': filter_form })
+    return render_to_response('psc/vr_checklist_list.html', {'page_title': "Voter's Registration Data Management", 'checklists': checklists, 'filter_form': filter_form }, context_instance=RequestContext(request))
 
 @csrf_view_exempt
 def vr_checklist(request, checklist_id=0):
