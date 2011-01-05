@@ -9,7 +9,7 @@ from django.views.decorators.csrf import csrf_view_exempt
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from rapidsms.contrib.messagelog.tables import MessageTable
 from rapidsms.contrib.messagelog.models import Message
-from forms import VRChecklistForm, VRIncidentForm, DCOIncidentForm, VRChecklistFilterForm, DCOChecklistFilterForm
+from forms import VRChecklistForm, VRIncidentForm, DCOIncidentForm, VRChecklistFilterForm, VRIncidentFilterForm, DCOIncidentFilterForm, DCOChecklistFilterForm
 
 # paginator settings
 items_per_page = 25
@@ -73,7 +73,7 @@ def vr_checklist_list(request):
                 qs &= Q(observer__observer_id__exact=data['observer_id'])
     else:
         filter_form = VRChecklistFilterForm()
-
+        
     paginator = Paginator(VRChecklist.objects.filter(qs), items_per_page)
 
     try:
@@ -149,7 +149,6 @@ def vr_incident_update(request, incident_id=0):
     if request.POST:        
         f = VRIncidentForm(request.POST, instance=incident)
         if f.is_valid():
-            print f.cleaned_data
             f.save()
         return HttpResponseRedirect(reverse('psc.views.vr_incident_list'))    
     else:
@@ -168,8 +167,15 @@ def dco_incident_update(request, incident_id=0):
         f = DCOIncidentForm(instance=incident)
         return render_to_response('psc/dco_incident_update_form.html', {'page_title': 'Display, Claims & Objections Critical Incident', 'incident': incident, 'form': f })
 
+@csrf_view_exempt
 def vr_incident_add(request):
-    return render_to_response('psc/layout.html')
+    if request.POST:
+        f = VRIncidentForm(request.POST, VRIncident)
+        f.save()
+        return HttpResponseRedirect(reverse('psc.views.vr_incident_list'))
+    else:
+        f = VRIncidentForm()
+        return render_to_response('psc/vr_incident_add_form.html', {'page_title': "Add Voter's Registration Critrical Incident", 'form': f })
 
 @csrf_view_exempt
 def dco_incident_add(request):
@@ -179,10 +185,30 @@ def dco_incident_add(request):
         return HttpResponseRedirect(reverse('psc.views.dco_incident_list'))
     else:
         f = DCOIncidentForm()
-        return render_to_response('psc/dco_incident_add_form.html', {'page_title': 'Voters Registration Critrical Incidents', 'form': f })
+        return render_to_response('psc/dco_incident_add_form.html', {'page_title': "Add Display, Claims & Objections Critrical Incident", 'form': f })
 
 def vr_incident_list(request):
-    paginator = Paginator(VRIncident.objects.all(), items_per_page)
+    qs = Q()
+
+    if request.method == 'GET':
+        filter_form = VRIncidentFilterForm(request.GET)
+
+        if filter_form.is_valid():
+            data = filter_form.cleaned_data
+            if data['zone']:
+                qs &= Q(observer__location_id__in=LGA.objects.filter(parent__parent__parent__code__iexact=data['zone']).values_list('id', flat=True))
+            if data['state']:
+                qs &= Q(observer__location_id__in=LGA.objects.filter(parent__parent__code__exact=data['state']).values_list('id', flat=True))
+            if data['district']:
+                qs &= Q(observer__location_id__in=LGA.objects.filter(parent__code__exact=data['district']).values_list('id', flat=True))
+            if data['day']:
+                qs &= Q(date=data['day'])
+            if data['observer_id']:
+                qs &= Q(observer__observer_id__exact=data['observer_id'])
+    else:
+        filter_form = VRIncidentFilterForm()
+    
+    paginator = Paginator(VRIncident.objects.filter(qs), items_per_page)
 
     try:
         page = int(request.GET.get('page', '1'))
@@ -195,10 +221,29 @@ def vr_incident_list(request):
     except (EmptyPage, InvalidPage):
         checklists = paginator.page(paginator.num_pages)
 
-    return render_to_response('psc/vr_incident_list.html', {'page_title': "Voter's Registration Critical Incidents", 'checklists': checklists})
+    return render_to_response('psc/vr_incident_list.html', {'page_title': "Voter's Registration Critical Incidents", 'checklists': checklists, 'filter_form': filter_form})
 
 def dco_incident_list(request):
-    paginator = Paginator(DCOIncident.objects.all(), items_per_page)
+    qs = Q()
+    if request.method == 'GET':
+        filter_form = DCOIncidentFilterForm(request.GET)
+
+        if filter_form.is_valid():
+            data = filter_form.cleaned_data
+            if data['zone']:
+                qs &= Q(observer__location_id__in=LGA.objects.filter(parent__parent__parent__code__iexact=data['zone']).values_list('id', flat=True))
+            if data['state']:
+                qs &= Q(observer__location_id__in=LGA.objects.filter(parent__parent__code__exact=data['state']).values_list('id', flat=True))
+            if data['district']:
+                qs &= Q(observer__location_id__in=LGA.objects.filter(parent__code__exact=data['district']).values_list('id', flat=True))
+            if data['day']:
+                qs &= Q(date=data['day'])
+            if data['observer_id']:
+                qs &= Q(observer__observer_id__exact=data['observer_id'])
+    else:
+        filter_form = DCOIncidentFilterForm()
+
+    paginator = Paginator(DCOIncident.objects.filter(qs), items_per_page)
 
     try:
         page = int(request.GET.get('page', '1'))
@@ -211,10 +256,7 @@ def dco_incident_list(request):
     except (EmptyPage, InvalidPage):
         checklists = paginator.page(paginator.num_pages)
 
-    return render_to_response('psc/dco_incident_list.html', {'page_title': "Display, Claims & Objections Critical Incidents", 'checklists': checklists})
-
-def dco_incident(request, incident_id=0):
-    return render_to_response('psc/dco_incident_form.html', {'page_title': 'Display, Claims & Objections Critical Incident'})
+    return render_to_response('psc/dco_incident_list.html', {'page_title': "Display, Claims & Objections Critical Incidents", 'checklists': checklists, 'filter_form': filter_form})
 
 def message_log(request):
     messages = MessageTable(Message.objects.all(), request=request)

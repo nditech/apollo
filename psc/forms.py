@@ -4,28 +4,6 @@ from models import Zone, State, District
 from django.forms.models import modelformset_factory
 from datetime import datetime
 
-class VRChecklistForm(forms.ModelForm):
-    class Meta:
-        model = VRChecklist
-        exclude = ['location_type', 'location_id', 'location', 'observer', 'date']
-
-class VRIncidentForm(forms.ModelForm):
-    class Meta:
-        model = VRIncident
-        exclude = ['location_type', 'location_id', 'location', 'observer', 'date']
-
-class DCOChecklistForm(forms.ModelForm):
-    class Meta:
-        model = DCOChecklist
-        exclude = ['location_type', 'location_id', 'location', 'observer', 'date']
-
-class DCOIncidentForm(forms.ModelForm):
-    class Meta:
-        model = DCOIncident
-        exclude = ['location_type', 'location_id', 'location', 'observer', 'date']
-
-DCOIncidentFormSet = modelformset_factory(DCOIncident)
-
 ZONES = tuple([('', '--')]+[(zone.code, zone.name) for zone in Zone.objects.all()])
 STATES = tuple([('', '--')]+[(state.code, state.name) for state in State.objects.all()])
 DISTRICTS = tuple([('', '--')]+[(district.code, district.name) for district in District.objects.all()])
@@ -47,6 +25,30 @@ DCO_DAYS = (('', '--'),
         (datetime.date(datetime(2011, 2, 3)), 'Day 1'),
         (datetime.date(datetime(2011, 2, 8)), 'Day 2'))
 
+class VRChecklistForm(forms.ModelForm):
+    class Meta:
+        model = VRChecklist
+        exclude = ['location_type', 'location_id', 'location', 'observer', 'date']
+
+class VRIncidentForm(forms.ModelForm):
+    date = forms.ChoiceField(choices=VR_DAYS)
+    class Meta:
+        model = VRIncident
+        exclude = ['location_type', 'location_id', 'location']
+
+class DCOChecklistForm(forms.ModelForm):
+    class Meta:
+        model = DCOChecklist
+        exclude = ['location_type', 'location_id', 'location', 'observer', 'date']
+
+class DCOIncidentForm(forms.ModelForm):
+    date = forms.ChoiceField(choices=DCO_DAYS)
+    class Meta:
+        model = DCOIncident
+        exclude = ['location_type', 'location_id', 'location']
+
+DCOIncidentFormSet = modelformset_factory(DCOIncident)
+
 class VRChecklistFilterForm(forms.Form):
     observer_id = forms.CharField(required=False, label="Observer ID", max_length=6, widget=forms.TextInput(attrs={'style':'width:7em'}))
     day = forms.ChoiceField(choices=VR_DAYS, required=False)
@@ -61,3 +63,17 @@ class DCOChecklistFilterForm(forms.Form):
     zone = forms.ChoiceField(choices=ZONES, required=False)
     state = forms.ChoiceField(choices=STATES, required=False)
     district = forms.ChoiceField(choices=DISTRICTS, required=False) 
+
+class VRIncidentFilterForm(forms.Form):
+    observer_id = forms.CharField(required=False, label="Observer Id", max_length=6, widget=forms.TextInput(attrs={'style':'width:7em'}))
+    day = forms.ChoiceField(choices=VR_DAYS, required=False)
+    zone = forms.ChoiceField(choices=ZONES, required=False)
+    state = forms.ChoiceField(choices=STATES, required=False)
+    district = forms.ChoiceField(choices=DISTRICTS, required=False)
+
+class DCOIncidentFilterForm(forms.Form):
+    observer_id = forms.CharField(required=False, label="Observer Id", max_length=6, widget=forms.TextInput(attrs={'style':'width:7em'}))
+    day = forms.ChoiceField(choices=VR_DAYS, required=False)
+    zone = forms.ChoiceField(choices=ZONES, required=False)
+    state = forms.ChoiceField(choices=STATES, required=False)
+    district = forms.ChoiceField(choices=DISTRICTS, required=False)

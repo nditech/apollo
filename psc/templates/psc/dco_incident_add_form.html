@@ -9,7 +9,7 @@
 		<!-- observer details group form -->
 		<div class="block">
 		<div class='grandparent'>
-			<div class='parent last'>
+			<div class='parent'>
 				<div class='first'>
 					<p>PSC</p>
 				</div>
@@ -17,7 +17,18 @@
 					<p>Observer ID (always start every text message with "PSC" followed by your Observer ID Number)</p>
 				</div>
 				<div class='third'>
-					<input type='text' name='PSC' class='text numeric' maxlength="6">
+					{{ form.observer.as_widget }}
+				</div>
+			</div>
+                    	<div class='parent last'>
+				<div class='first'>
+					<p>Date</p>
+				</div>
+				<div class='second'>
+					<p>Choose Date</p>
+				</div>
+				<div class='third'>
+					{{ form.date.as_widget }}
 				</div>
 			</div>
 		</div>

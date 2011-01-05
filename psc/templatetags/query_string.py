@@ -46,7 +46,6 @@ class QueryStringNode(template.Node):
         
     def render(self, context):
         p = {}
-        print context
         for k, v in context["request"].GET.items():
             p[k]=v
         return get_query_string(p,self.add,self.remove,context)
