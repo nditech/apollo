@@ -32,6 +32,7 @@ class VRChecklistForm(forms.ModelForm):
 
 class VRIncidentForm(forms.ModelForm):
     date = forms.ChoiceField(choices=VR_DAYS)
+    observer = forms.ModelChoiceField(queryset=Observer.objects.exclude(observer_id=""), empty_label="--")
     class Meta:
         model = VRIncident
         exclude = ['location_type', 'location_id', 'location']
