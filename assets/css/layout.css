@@ -258,7 +258,7 @@ th, td {
 thead th {
 	border-bottom:2px solid #888;
 	background:#bbb;
-	padding:.4em 1em .2em;
+	padding:.4em 0.5em .2em;
 }
 thead th.table-head {
 	font-size:1em;
