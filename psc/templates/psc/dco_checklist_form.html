@@ -7,8 +7,8 @@
             <div class="block">
 		<!-- checklist details -->
 		<table>
-			<tr><td>Observer:</td><td>{{ checklist.observer.name }}</td></tr>
-			<tr><td>Date:</td><td>{{ checklist.date|date:"SHORT_DATE_FORMAT" }}</td></tr>
+			<tr><td>Observer:</td><td>{{ checklist.observer.name }} (<strong>{{ checklist.observer.observer_id }}</strong>)</td></tr>
+			<tr><td>Date:</td><td>{{ checklist.date|date:"d/m/Y" }}</td></tr>
 		</table>
 		</div>
             <div class="clear"></div>
@@ -292,8 +292,7 @@
             <div class="clear"></div>
 
             <div class="buttons">
-                <input type="submit" name="submit" value="Submit">
-                <input type="reset" name="reset" value="Reset">
+                <input type="submit" name="submit" value="Save">
             </div>
 
         </div>

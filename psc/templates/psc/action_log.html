@@ -15,7 +15,7 @@
                             </thead>
                             {% for log in vr_incident_log_list %}
                             <tr{% cycle '' 'class="odd"' %}>
-                                <td>{{ log.action_date|date:"SHORT_DATE_FORMAT" }}</td>
+                                <td>{{ log.action_date|date:"d/m/Y" }}</td>
                                 <td>{{ log.action_user|capfirst }}</td>
                                 <td>
                                     {% if log.action_type != 'D' %}
@@ -34,7 +34,7 @@
                             {% endfor %}
                             {% for log in vr_checklist_log_list %}
                             <tr{% cycle '' 'class="odd"' %}>
-                                <td>{{ log.action_date|date:"SHORT_DATE_FORMAT" }}</td>
+                                <td>{{ log.action_date|date:"d/m/Y" }}</td>
                                 <td>{{ log.action_user|capfirst }}</td>
                                 <td><a href="/vr/{{ log.id }}">VR Checklist</a></td>
                                 <td>
@@ -47,7 +47,7 @@
                             {% endfor %}
                             {% for log in dco_incident_log_list %}
                             <tr{% cycle '' 'class="odd"' %}>
-                                <td>{{ log.action_date|date:"SHORT_DATE_FORMAT" }}</td>
+                                <td>{{ log.action_date|date:"d/m/Y" }}</td>
                                 <td>{{ log.action_user|capfirst }}</td>
                                 <td><a href="/dco/in/{{ log.id }}">DCO Incident</a></td>
                                 <td>
@@ -60,7 +60,7 @@
                             {% endfor %}
                             {% for log in dco_checklist_log_list %}
                             <tr{% cycle '' 'class="odd"' %}>
-                                <td>{{ log.action_date|date:"SHORT_DATE_FORMAT" }}</td>
+                                <td>{{ log.action_date|date:"d/m/Y" }}</td>
                                 <td>{{ log.action_user|capfirst }}</td>
                                 <td><a href="/dco/{{ log.id }}">DCO Checklist</a></td>
                                 <td>
