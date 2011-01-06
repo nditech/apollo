@@ -240,6 +240,9 @@ class DCOChecklist(models.Model):
     V = models.IntegerField(blank=True, null=True, help_text='So far (total to date), how many Inclusion have been made according to the Summary of Actions Taken by the Revision Officer - Form EC.6A (enter number)')
     W = models.IntegerField(blank=True, null=True, help_text='So far (total to date), how many Corrections have been made according to the Summary of Actions Taken by the Revision Officer - Form EC.6A (enter number)')
     X = models.IntegerField(blank=True, null=True, help_text='So far (total to date), how many Deletions have been made according to the Summary of Actions Taken by the Revision Officer - Form EC.6A (enter number)')
+    submitted = models.BooleanField(default=False, help_text="This field tracks if (even though already created), this report has been submitted by the reporter")
+    report_rc = models.CharField(blank=True, null=True, max_length=100, help_text="Registration Center as supplied by the data entry operator")
+    report_rcid = models.CharField(blank=True, null=True, max_length=50, help_text="Registration Center ID as supplied by the data entry operator")
     audit_log = AuditLog()
 
     def __unicode__(self):
