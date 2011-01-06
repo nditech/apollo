@@ -364,8 +364,8 @@ form .grandparent {
         width: 100%;
         display: block;
         clear: both;
-        background: url('/assets/img/dashed-bg.png') repeat-y;
-        background-position: 56% 0;
+         /* background: url('/assets/img/dashed-bg.png') repeat-y;
+        background-position: 56% 0; **/
         float: left;
         margin-bottom: 10px;
 }
@@ -387,31 +387,37 @@ form .grandparent .parent.last {
 }
 
 form .grandparent .parent .first, form .grandparent .parent .second, form .grandparent .parent .third{
-    float: left;
     display: block
 }
 
 form .grandparent .parent .first {
-    width: 2%;
+    width: 3%;
+    padding: 1%;
+    float: left;
+}
+
+form .grandparent .parent .second {    
     padding: 1%;
 }
 
-form .grandparent .parent .second {
-    width: 50%;
-    padding: 1%;
+form .grandparent .parent .second p {
+    font-size: 20px;
 }
 
 form .grandparent .parent .third {
-    width: 40%;
+    margin-top: -30px;
+    margin-left: 50px;
+    width: 100%;
     padding: 1%;
+    float: left;
 }
 
 form .grandparent .parent .third .options {
    display: inline;
    float: left;
-   margin-right: 20px;
+   margin-right: 80px;
    text-align: center;
-   width: 90px;
+
 }
 
 form .grandparent .parent .third .options input {
