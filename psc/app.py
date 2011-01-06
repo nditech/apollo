@@ -229,18 +229,26 @@ class App(AppBase):
             if location:
                 dco = DCOChecklist.objects.get(date=msg.date, observer=msg.observer, location_type=ContentType.objects.get_for_model(location), location_id=location.pk)
             else:
-                dco = DCOChecklist.objects.filter(date=msg.date, observer=msg.observer)
+                dco = DCOChecklist.objects.filter(date=msg.date, observer=msg.observer, submitted=True)
                 counter = len(dco) + 1
-                dco = DCOChecklist()
-                dco.date = msg.date
-                dco.observer = msg.observer
-                dco.sms_serial = counter
+                '''DCO Checklists are prepopulated (3 checklists)  and have to be filled first before creating new
+                ones.'''
+                if counter > 3:
+                    dco = DCOChecklist()
+                    dco.date = msg.date
+                    dco.observer = msg.observer
+                    dco.sms_serial = counter
+                    dco.submitted =True
+                else:
+                    dco = DCOChecklist.objects.get(date=msg.date, observer=msg.observer, sms_serial=counter)
+                    dco.submitted = True
         except DCOChecklist.DoesNotExist:
             dco = DCOChecklist() 
             dco.date = msg.date
             dco.observer = msg.observer
             dco.location = location
             dco.sms_serial = counter
+            dco.submitted = True
 
         responses = self._parse_checklist(params['responses'])
 

@@ -293,6 +293,7 @@
 
             <div class="buttons">
 								<input type="hidden" name="{{ form.sms_serial.name }}" value="{{ form.initial.sms_serial }}">
+								<input type="hidden" name="{{ form.submitted.name }}" value="True">
 								{% csrf_token %}
                 <input type="submit" name="submit" value="Save">
             </div>
