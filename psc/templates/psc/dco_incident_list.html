@@ -60,6 +60,7 @@
 					<th>E</th>
 					<th>F</th>
 					<th>G</th>
+					<th>H</th>
 					<th>J</th>
 					<th>K</th>					
 					<th><a href="{% url psc.views.dco_incident_add  %}">Add Incident</a></th>
@@ -107,6 +108,11 @@
 						{% endif %}
 					</td>
 					<td>
+						{% if cl.H %}
+						<img src="/assets/img/status-busy.png" width="16" height="16" alt="complete" />
+						{% endif %}
+					</td>
+					<td>
 						{% if cl.J %}
 						<img src="/assets/img/status-busy.png" width="16" height="16" alt="complete" />
 						{% endif %}
@@ -120,7 +126,7 @@
 				</tr>
 				{% empty %}
 				<tr>
-					<td colspan="18" class="nodata">No reports yet</td>
+					<td colspan="19" class="nodata">No reports yet</td>
 				</tr>
 				{% endfor %}
 			</table>

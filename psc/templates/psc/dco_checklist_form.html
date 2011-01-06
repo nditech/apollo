@@ -50,7 +50,7 @@
                             <p>{{ form.C.help_text }}</p>
                         </div>
                         <div class='third'>
-                            <input name='{{ form.C.name }}' type='text' class='text numeric' maxlength='3' value="{{ form.initial.C }}">
+                            <input name='{{ form.C.name }}' type='text' class='text numeric' maxlength='3' value="{{ form.initial.C|default:"" }}">
                         </div>
                     </div>
                     <div class='parent'>
@@ -87,15 +87,15 @@
                             <p>{{ form.F1.help_text }}</p>
                         </div>
                         <div class='third'>
-                            <div class='options'><input name='{{ form.F1.name }}' type='checkbox' class='checkbox numeric' value="1"{% if form.initial.F1 %} checked='checked'{% endif %}>Statement of Additions <br />(EC. 1C)(1)</div>
-                            <div class='options'><input name='{{ form.F2.name }}' type='checkbox' class='checkbox numeric' value="1"{% if form.initial.F2 %} checked='checked'{% endif %}>Statement of Corrections<br />(E.1D)(2)</div>
-                            <div class='options'><input name='{{ form.F3.name }}' type='checkbox' class='checkbox numeric' value="1"{% if form.initial.F3 %} checked='checked'{% endif %}>Statement of Deletions <br />(EC.1E)(3)</div>
-                            <div class='options'><input name='{{ form.F4.name }}' type='checkbox' class='checkbox numeric' value="1"{% if form.initial.F4 %} checked='checked'{% endif %}>Claims for Correction or Insertion <br />(EC.2)(4)</div>
-                            <div class='options'><input name='{{ form.F5.name }}' type='checkbox' class='checkbox numeric' value="1"{% if form.initial.F5 %} checked='checked'{% endif %}>Objections to Inclusion <br />(EC.3)(5)</div>
-                            <div class='options'><input name='{{ form.F6.name }}' type='checkbox' class='checkbox numeric' value="1"{% if form.initial.F6 %} checked='checked'{% endif %}>Notification of Death <br />(EC.3A)(6)</div>
-                            <div class='options'><input name='{{ form.F7.name }}' type='checkbox' class='checkbox numeric' value="1"{% if form.initial.F7 %} checked='checked'{% endif %}>Summary of Returns <br />(EC.5A)(7)</div>
-                            <div class='options'><input name='{{ form.F8.name }}' type='checkbox' class='checkbox numeric' value="1"{% if form.initial.F8 %} checked='checked'{% endif %}>Summary of Actions<br />(EC.6A)(8)</div>
-                            <div class='options'><input name='{{ form.F9.name }}' type='checkbox' class='checkbox numeric' value="1"{% if form.initial.F9 %} checked='checked'{% endif %}>None Missing(9)</div>
+                            <div class='options'><input name='{{ form.F1.name }}' type='checkbox' class='checkbox numeric' value="True"{% if form.initial.F1 %} checked='checked'{% endif %}>Statement of Additions <br />(EC. 1C)(1)</div>
+                            <div class='options'><input name='{{ form.F2.name }}' type='checkbox' class='checkbox numeric' value="True"{% if form.initial.F2 %} checked='checked'{% endif %}>Statement of Corrections<br />(E.1D)(2)</div>
+                            <div class='options'><input name='{{ form.F3.name }}' type='checkbox' class='checkbox numeric' value="True"{% if form.initial.F3 %} checked='checked'{% endif %}>Statement of Deletions <br />(EC.1E)(3)</div>
+                            <div class='options'><input name='{{ form.F4.name }}' type='checkbox' class='checkbox numeric' value="True"{% if form.initial.F4 %} checked='checked'{% endif %}>Claims for Correction or Insertion <br />(EC.2)(4)</div>
+                            <div class='options'><input name='{{ form.F5.name }}' type='checkbox' class='checkbox numeric' value="True"{% if form.initial.F5 %} checked='checked'{% endif %}>Objections to Inclusion <br />(EC.3)(5)</div>
+                            <div class='options'><input name='{{ form.F6.name }}' type='checkbox' class='checkbox numeric' value="True"{% if form.initial.F6 %} checked='checked'{% endif %}>Notification of Death <br />(EC.3A)(6)</div>
+                            <div class='options'><input name='{{ form.F7.name }}' type='checkbox' class='checkbox numeric' value="True"{% if form.initial.F7 %} checked='checked'{% endif %}>Summary of Returns <br />(EC.5A)(7)</div>
+                            <div class='options'><input name='{{ form.F8.name }}' type='checkbox' class='checkbox numeric' value="True"{% if form.initial.F8 %} checked='checked'{% endif %}>Summary of Actions<br />(EC.6A)(8)</div>
+                            <div class='options'><input name='{{ form.F9.name }}' type='checkbox' class='checkbox numeric' value="True"{% if form.initial.F9 %} checked='checked'{% endif %}>None Missing(9)</div>
                         </div>
                     </div>
                     <div class='parent'>
@@ -106,7 +106,7 @@
                             <p>{{ form.G.help_text }}</p>
                         </div>
                         <div class='third'>
-                            <div class='options'><input name='{{ form.G.name }}' type='text' class='text numeric' value="{{ form.initial.G }}"></div>
+                            <div class='options'><input name='{{ form.G.name }}' type='text' class='text numeric' value="{{ form.initial.G|default:"" }}"></div>
                         </div>
                     </div>
                     <div class='parent'>
@@ -130,7 +130,7 @@
                             <p>{{ form.J.help_text }}</p>
                         </div>
                         <div class='third'>
-                            <div class='options'><input name='{{ form.J.name }}' type='text' class='text numeric' value="{{ form.initial.J }}"></div>
+                            <div class='options'><input name='{{ form.J.name }}' type='text' class='text numeric' value="{{ form.initial.J|default:"" }}"></div>
                         </div>
                     </div>
                     <div class='parent'>
@@ -141,7 +141,7 @@
                             <p>{{ form.K.help_text }}</p>
                         </div>
                         <div class='third'>
-                            <div class='options'><input name='{{ form.K.name }}' type='text' class='text numeric' value="{{ form.initial.K }}"></div>
+                            <div class='options'><input name='{{ form.K.name }}' type='text' class='text numeric' value="{{ form.initial.K|default:"" }}"></div>
                         </div>
                     </div>
                       <div class='parent'>
@@ -223,7 +223,7 @@
                             <p>{{ form.S.help_text }}</p>
                         </div>
                         <div class='third'>
-                            <div class='options'><input name='{{ form.S.name }}' type='text' class='text numeric' value="{{ form.initial.S }}"></div>
+                            <div class='options'><input name='{{ form.S.name }}' type='text' class='text numeric' value="{{ form.initial.S|default:"" }}"></div>
                         </div>
                     </div>
                      <div class='parent'>
@@ -234,7 +234,7 @@
                             <p>{{ form.T.help_text }}</p>
                         </div>
                         <div class='third'>
-                            <div class='options'><input name='{{ form.T.name }}' type='text' class='text numeric' value="{{ form.initial.T }}"></div>
+                            <div class='options'><input name='{{ form.T.name }}' type='text' class='text numeric' value="{{ form.initial.T|default:"" }}"></div>
                         </div>
                     </div>
                      <div class='parent'>
@@ -245,7 +245,7 @@
                             <p>{{ form.U.help_text }}</p>
                         </div>
                         <div class='third'>
-                            <div class='options'><input name='{{ form.U.name }}' type='text' class='text numeric' value="{{ form.initial.U }}"></div>
+                            <div class='options'><input name='{{ form.U.name }}' type='text' class='text numeric' value="{{ form.initial.U|default:"" }}"></div>
                         </div>
                     </div>
                 </div>
@@ -262,7 +262,7 @@
                             <p>{{ form.V.help_text }}</p>
                         </div>
                         <div class='third'>
-                            <div class='options'><input name='{{ form.V.name }}' type='text' class='text numeric' value="{{ form.initial.V }}"></div>
+                            <div class='options'><input name='{{ form.V.name }}' type='text' class='text numeric' value="{{ form.initial.V|default:"" }}"></div>
                         </div>
                     </div>
                      <div class="parent">
@@ -273,7 +273,7 @@
                             <p>{{ form.W.help_text }}</p>
                         </div>
                         <div class='third'>
-                            <div class='options'><input name='{{ form.W.name }}' type='text' class='text numeric' value="{{ form.initial.W }}"></div>
+                            <div class='options'><input name='{{ form.W.name }}' type='text' class='text numeric' value="{{ form.initial.W|default:"" }}"></div>
                         </div>
                     </div>
                      <div class="parent">
@@ -284,7 +284,7 @@
                             <p>{{ form.X.help_text }}</p>
                         </div>
                         <div class='third'>
-                            <div class='options'><input name='{{ form.X.name }}' type='text' class='text numeric' value="{{ form.initial.X }}"></div>
+                            <div class='options'><input name='{{ form.X.name }}' type='text' class='text numeric' value="{{ form.initial.X|default:"" }}"></div>
                         </div>
                     </div>
                 </div>
@@ -292,6 +292,8 @@
             <div class="clear"></div>
 
             <div class="buttons">
+								<input type="hidden" name="{{ form.sms_serial.name }}" value="{{ form.initial.sms_serial }}">
+								{% csrf_token %}
                 <input type="submit" name="submit" value="Save">
             </div>
 

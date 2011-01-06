@@ -9,7 +9,7 @@ from django.views.decorators.csrf import csrf_view_exempt
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from rapidsms.contrib.messagelog.tables import MessageTable
 from rapidsms.contrib.messagelog.models import Message
-from forms import VRChecklistForm, VRIncidentForm, DCOIncidentForm, VRChecklistFilterForm, VRIncidentFilterForm, DCOIncidentFilterForm, DCOChecklistFilterForm
+from forms import VRChecklistForm, VRIncidentForm, DCOIncidentForm, VRChecklistFilterForm, VRIncidentFilterForm, DCOIncidentFilterForm, DCOChecklistFilterForm, DCOChecklistForm
 
 # paginator settings
 items_per_page = 25
@@ -110,7 +110,7 @@ def dco_checklist_list(request):
     else:
         filter_form = DCOChecklistFilterForm()
 
-    paginator = Paginator(DCOChecklist.objects.filter(qs), items_per_page)
+    paginator = Paginator(DCOChecklist.objects.filter(qs).order_by('date', 'observer', 'sms_serial'), items_per_page)
 
     try:
         page = int(request.GET.get('page', '1'))
@@ -138,11 +138,15 @@ def vr_checklist(request, checklist_id=0):
         return render_to_response('psc/vr_checklist_form.html', {'page_title': 'Voters Registration Checklist', 'checklist': checklist, 'form': f })
 
 def dco_checklist(request, checklist_id=0):   
-    if request.POST:
-        gotcha = request.POST['PSC'];
-        return HttpResponse(gotcha)
+    checklist = get_object_or_404(DCOChecklist, pk=checklist_id)
+    if (request.POST):
+        f = DCOChecklistForm(request.POST, instance=checklist)
+        if f.is_valid():
+            f.save()
+        return HttpResponseRedirect(reverse('psc.views.dco_checklist_list'))
     else:
-        return render_to_response('psc/dco_checklist_form.html', {'page_title': 'Display/Claims & Objections Checklist'}, context_instance=RequestContext(request))
+        f = DCOChecklistForm(instance=checklist)
+    return render_to_response('psc/dco_checklist_form.html', {'page_title': 'Display, Claims & Objections Checklist', 'checklist': checklist, 'form': f}, context_instance=RequestContext(request))
 
 def vr_incident_update(request, incident_id=0):
     incident = get_object_or_404(VRIncident, pk=incident_id)

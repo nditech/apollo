@@ -254,6 +254,7 @@ col.colC {
 th, td {
 	padding:.2em .5em;
 	text-align:left;
+	min-width: 16px;
 }
 thead th {
 	border-bottom:2px solid #888;
@@ -624,3 +625,8 @@ form .buttons input[type='submit'] {
 
 #filter li { display: inline; margin: 0; }
 #filter ul { margin-bottom: 1em; }
+
+tbody tr.extraneous th, tbody tr.extraneous td {
+	background:#ff3333;
+}
+

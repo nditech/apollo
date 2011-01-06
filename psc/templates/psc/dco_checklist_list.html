@@ -1,5 +1,21 @@
 {% extends 'psc/layout.html' %}
 {% load query_string %}
+{% block javascripts %}
+{{ block.super }}
+<script src="/assets/js/jquery-1.4.4.min.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript" charset="utf-8">
+	$(function() {
+		$("#reset").click(function () {
+			$("#id_zone").val("");
+			$("#id_state").val("");
+			$("#id_district").val("");
+			$("#id_day").val("");
+			$("#id_observer_id").val("");
+			$("#filter_form").submit();
+		});
+	});
+</script>
+{% endblock %}
 {% block content %}
 <div class="grid_16">
 	<div class="box"> 
@@ -45,19 +61,25 @@
 				</thead>
 				<tbody>
 				{% for cl in checklists.object_list %}
+				{% if cl.sms_serial > 3 %}
+				<tr class="extraneous">
+				{% else %}
 				<tr{% cycle '' ' class="odd"' %}>
+				{% endif %}
 					<td>{{ cl.sms_serial|default:"N/A" }}</td>
 					<td>{{ cl.observer.observer_id }}</td>
 					<td>{{ cl.date|date:"d/m/Y" }}</td>
-					<td>{{ cl.location.name }}</td>
-					<td>{{ cl.location.parent.name }}</td>
-					<td>{{ cl.location.parent.parent.name }}</td>
+					<td>{{ cl.observer.location.name }}</td>
+					<td>{{ cl.observer.location.parent.name }}</td>
+					<td>{{ cl.observer.location.parent.parent.name }}</td>
 					<td>{{ cl.observer.name }}</td>
 					<td>{{ cl.observer.supervisor.name }}</td>
 					<td>
 					{% if cl.A and cl.B and cl.C and cl.D and cl.E and cl.G and cl.H and cl.J and cl.K and cl.M and cl.N and cl.P and cl.Q and cl.R and cl.S and cl.T and cl.U and cl.V and cl.W and cl.X %}
 						{% if cl.F1 or cl.F2 or cl.F3 or cl.F4 or cl.F5 or cl.F6 or cl.F7 or cl.F8 or cl.F9 %}
 							<img src="/assets/img/status.png" width="16" height="16" alt="complete" />
+						{% else %}
+							<img src="/assets/img/status-away.png" width="16" height="16" alt="incomplete" />
 						{% endif %}
 					{% else %}
 					{% if cl.A or cl.B or cl.C or cl.D or cl.E or cl.G or cl.H or cl.J or cl.K or cl.M or cl.N or cl.P or cl.Q or cl.R or cl.S or cl.T or cl.U or cl.V or cl.W or cl.X or cl.F1 or cl.F2 or cl.F3 or cl.F4 or cl.F5 or cl.F6 or cl.F7 or cl.F8 or cl.F9 %}

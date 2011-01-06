@@ -224,17 +224,23 @@ class App(AppBase):
         msg.received_at = datetime(year, month, day)
 
         # Create the checklist
+        counter = 1
         try:
             if location:
-                dco = DCOChecklist.objects.get(date=msg.date, observer=msg.observer, 
-                        location_type=ContentType.objects.get_for_model(location), location_id=location.pk)
+                dco = DCOChecklist.objects.get(date=msg.date, observer=msg.observer, location_type=ContentType.objects.get_for_model(location), location_id=location.pk)
             else:
-                dco = DCOChecklist.objects.get(date=msg.date, observer=msg.observer)
+                dco = DCOChecklist.objects.filter(date=msg.date, observer=msg.observer)
+                counter = len(dco) + 1
+                dco = DCOChecklist()
+                dco.date = msg.date
+                dco.observer = msg.observer
+                dco.sms_serial = counter
         except DCOChecklist.DoesNotExist:
             dco = DCOChecklist() 
             dco.date = msg.date
             dco.observer = msg.observer
             dco.location = location
+            dco.sms_serial = counter
 
         responses = self._parse_checklist(params['responses'])
 
