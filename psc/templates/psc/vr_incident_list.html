@@ -51,7 +51,9 @@
 					<tr>
 					<th>Observer ID</th>
 					<th>Date</th>
-					<th>Location</th>
+					<th>LGA</th>
+					<th>District</th>
+					<th>State</th>
 					<th>Observer</th>
 					<th>A</th>
 					<th>B</th>
@@ -70,10 +72,12 @@
 					</tr>
 				</thead>
 				{% for cl in checklists.object_list %}
-				<tr{% cycle '' ' class="odd"' %}>
+				<tr{% cycle ' class="odd"' '' %}>
 					<td>{{ cl.observer.observer_id }}</td>					
 					<td>{{ cl.date|date:"d/m/Y" }}</td>
 					<td>{{ cl.observer.location.name|default:"Unknown" }}</td>
+					<td>{{ cl.observer.location.parent.name|default:"Unknown" }}</td>
+					<td>{{ cl.observer.location.parent.parent.name|default:"Unknown" }}</td>
 					<td>{{ cl.observer.name }}</td>					
 					<td>
 						{% if cl.A %}
@@ -144,7 +148,7 @@
 				</tr>
 				{% empty %}
 				<tr>
-					<td colspan="18" class="nodata">No reports yet</td>
+					<td colspan="20" class="nodata">No reports yet</td>
 				</tr>
 				{% endfor %}
 			</table>

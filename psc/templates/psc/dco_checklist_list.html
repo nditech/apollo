@@ -46,7 +46,7 @@
 			</div>
 			<table>
 				<thead>
-					<tr class="odd">
+					<tr>
 						<th>SN</th>
 						<th>Observer ID</th>
 						<th>Date</th>
@@ -64,7 +64,7 @@
 				{% if cl.sms_serial > 3 %}
 				<tr class="extraneous">
 				{% else %}
-				<tr{% cycle '' ' class="odd"' %}>
+				<tr{% cycle ' class="odd"' '' %}>
 				{% endif %}
 					<td>{{ cl.sms_serial|default:"N/A" }}</td>
 					<td>{{ cl.observer.observer_id }}</td>
