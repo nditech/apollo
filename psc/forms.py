@@ -1,6 +1,6 @@
 from django import forms
 from models import VRChecklist, VRIncident, DCOChecklist, DCOIncident
-from models import Zone, State, District
+from models import Zone, State, District, Observer
 from django.forms.models import modelformset_factory
 from datetime import datetime
 
@@ -43,6 +43,7 @@ class DCOChecklistForm(forms.ModelForm):
 
 class DCOIncidentForm(forms.ModelForm):
     date = forms.ChoiceField(choices=DCO_DAYS)
+    observer = forms.ModelChoiceField(queryset=Observer.objects.exclude(observer_id=""), empty_label="--")
     class Meta:
         model = DCOIncident
         exclude = ['location_type', 'location_id', 'location']
