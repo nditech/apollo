@@ -107,7 +107,7 @@
                             <p>{{ form.G.help_text }}</p>
                         </div>
                         <div class='third'>
-                            <div class='options'><input name='{{ form.G.name }}' type='text' class='text numeric' value="{{ form.initial.G|default:"" }}"></div>
+                            <div class='options'><input name='{{ form.G.name }}' type='text' maxlength="4" class='text numeric' value="{{ form.initial.G|default:"" }}"></div>
                         </div>
                     </div>
                     <div class='parent'>
