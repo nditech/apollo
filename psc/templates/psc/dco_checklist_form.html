@@ -308,15 +308,34 @@
             {% for comment in comment_list %}
                <p>Posted by: {{ comment.user_name }} on {{ comment.submit_date }}</p>
                 <p>Comment: {{ comment.comment }}</p>
+
             {% endfor %}
             {% get_comment_form for checklist as cform %}
             <form action="{% comment_form_target %}" method="post">
               <input type="hidden" name="next" value="{% url psc.views.dco_checklist checklist.id %}" />
-              {{ cform.as_p }}
+              <!-- {{ cform.as_p }} -->
+              <table>
+                  <tr width="10%">
+                      <td>Name</td>
+                      <td>{{ cform.name.as_widget }}</td>
+                  </tr>
+                  <tr>
+                      <td>Email Address</td>
+                      <td>{{ cform.email.as_widget }}</td>
+                  </tr>
+                  <tr>
+                      <td>Url</td>
+                      <td>{{ cform.url.as_widget }}</td>
+                  </tr>
+                  <tr>
+                      <td>Comment</td>
+                      <td>{{ cform.comment.as_widget }}</td>
+                  </tr>
               <tr>
                 <td></td>
                 <td><input type="submit" name="preview" class="submit-post" value="Preview"></td>
               </tr>
+            </table>
             </form>
 
         </div>
