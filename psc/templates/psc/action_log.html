@@ -3,8 +3,7 @@
 <div class="grid_16">
 	<div class="box"> 
 		<h2>Action Log</h2>
-		<div class="block">
-		
+		<div class="block">		
                         <table>
                             <thead>
                              <th>Date</th>
@@ -13,67 +12,41 @@
                              <th>Action</th>
                                 
                             </thead>
-                            {% for log in vr_incident_log_list %}
-                            <tr{% cycle '' 'class="odd"' %}>
-                                <td>{{ log.action_date|date:"d/m/Y" }}</td>
-                                <td>{{ log.action_user|capfirst }}</td>
-                                <td>
-                                    {% if log.action_type != 'D' %}
-                                    <a href="/vr/in/{{ log.id }}">VR Incident</a>
-                                    {% else %}
-                                    VR Incident
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    {% if log.action_type == 'U' %} Updated {% endif %}
-                                    {% if log.action_type == 'D' %} Deleted {% endif %}
-                                    {% if log.action_type == 'I' %} Inserted {% endif %}
-                                </td>
-                                
-                            </tr>
+                            {% for log in logs.object_list %}
+                                    <tr{% cycle '' 'class="odd"' %}>
+                                        <td>{{ log.action_date|date:"d/m/Y" }}</td>
+                                        <td>{{ log.action_user|capfirst }}</td>
+                                        <td>
+                                         
+                                                {% if log.action_type != 'D' %}
+                                                <a href="/vr/in/{{ log.id }}">VR Incident</a>
+                                                {% else %}
+                                                VR Incident
+                                                {% endif %}
+                                           
+                                        </td>
+                                        <td>
+                                            {% if log.action_type == 'U' %} Updated {% endif %}
+                                            {% if log.action_type == 'D' %} Deleted {% endif %}
+                                            {% if log.action_type == 'I' %} Inserted {% endif %}
+                                        </td>
+
+                                    </tr>
                             {% endfor %}
-                            {% for log in vr_checklist_log_list %}
-                            <tr{% cycle '' 'class="odd"' %}>
-                                <td>{{ log.action_date|date:"d/m/Y" }}</td>
-                                <td>{{ log.action_user|capfirst }}</td>
-                                <td><a href="/vr/{{ log.id }}">VR Checklist</a></td>
-                                <td>
-                                    {% if log.action_type == 'U' %} Updated {% endif %}
-                                    {% if log.action_type == 'D' %} Deleted {% endif %}
-                                    {% if log.action_type == 'I' %} Inserted {% endif %}
-                                </td>
-                                
-                            </tr>
-                            {% endfor %}
-                            {% for log in dco_incident_log_list %}
-                            <tr{% cycle '' 'class="odd"' %}>
-                                <td>{{ log.action_date|date:"d/m/Y" }}</td>
-                                <td>{{ log.action_user|capfirst }}</td>
-                                <td><a href="/dco/in/{{ log.id }}">DCO Incident</a></td>
-                                <td>
-                                    {% if log.action_type == 'U' %} Updated {% endif %}
-                                    {% if log.action_type == 'D' %} Deleted {% endif %}
-                                    {% if log.action_type == 'I' %} Inserted {% endif %}
-                                </td>
-                                
-                            </tr>
-                            {% endfor %}
-                            {% for log in dco_checklist_log_list %}
-                            <tr{% cycle '' 'class="odd"' %}>
-                                <td>{{ log.action_date|date:"d/m/Y" }}</td>
-                                <td>{{ log.action_user|capfirst }}</td>
-                                <td><a href="/dco/{{ log.id }}">DCO Checklist</a></td>
-                                <td>
-                                    {% if log.action_type == 'U' %} Updated {% endif %}
-                                    {% if log.action_type == 'D' %} Deleted {% endif %}
-                                    {% if log.action_type == 'I' %} Inserted {% endif %}
-                                </td>
-                                
-                            </tr>
-                            {% endfor %}
-                        </table>
-                        
+                                             
+                        </table>                        
 		</div>
+                {% if logs.has_other_pages %}
+		<div class="paginator">
+			{% if logs.has_previous %}
+			<a href="?page={{ logs.previous_page_number }}"><span>&laquo;</span></a>
+			{% endif %}
+			<span class="current">Page {{ logs.number }} of {{ logs.paginator.num_pages }}</span>
+			{% if logs.has_next %}
+			<a href="?page={{ logs.next_page_number }}"><span>&raquo;</span></a>
+			{% endif %}
+		</div>
+		{% endif %}
 	</div>
 </div>
 {% endblock %}

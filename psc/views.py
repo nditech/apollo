@@ -87,7 +87,7 @@ def vr_checklist_list(request):
     except (EmptyPage, InvalidPage):
         checklists = paginator.page(paginator.num_pages)
 
-    return render_to_response('psc/vr_checklist_list.html', {'page_title': "Voter's Registration Data Management", 'checklists': checklists, 'filter_form': filter_form }, context_instance=RequestContext(request))
+    return render_to_response('psc/vr_checklist_list.html', {'page_title': "Voters' Registration Data Management", 'checklists': checklists, 'filter_form': filter_form }, context_instance=RequestContext(request))
 
 def dco_checklist_list(request):
     qs = Q()
@@ -135,7 +135,7 @@ def vr_checklist(request, checklist_id=0):
         return HttpResponseRedirect(reverse('psc.views.vr_checklist_list'))
     else:
         f = VRChecklistForm(instance=checklist)
-        return render_to_response('psc/vr_checklist_form.html', {'page_title': 'Voters Registration Checklist', 'checklist': checklist, 'form': f })
+        return render_to_response('psc/vr_checklist_form.html', {'page_title': "Voters' Registration Checklist", 'checklist': checklist, 'form': f })
 
 def dco_checklist(request, checklist_id=0):   
     checklist = get_object_or_404(DCOChecklist, pk=checklist_id)
@@ -157,7 +157,7 @@ def vr_incident_update(request, incident_id=0):
         return HttpResponseRedirect(reverse('psc.views.vr_incident_list'))    
     else:
         f = VRIncidentForm(instance=incident)   
-        return render_to_response('psc/vr_incident_update_form.html', {'page_title': 'Voters Registration Critrical Incident', 'incident': incident, 'form': f })
+        return render_to_response('psc/vr_incident_update_form.html', {'page_title': "Voters' Registration Critrical Incident", 'incident': incident, 'form': f })
 
 @csrf_view_exempt
 def dco_incident_update(request, incident_id=0):
@@ -179,7 +179,7 @@ def vr_incident_add(request):
         return HttpResponseRedirect(reverse('psc.views.vr_incident_list'))
     else:
         f = VRIncidentForm()
-        return render_to_response('psc/vr_incident_add_form.html', {'page_title': "Add Voter's Registration Critrical Incident", 'form': f })
+        return render_to_response('psc/vr_incident_add_form.html', {'page_title': "Add Voters' Registration Critrical Incident", 'form': f })
 
 @csrf_view_exempt
 def dco_incident_add(request):
@@ -225,7 +225,7 @@ def vr_incident_list(request):
     except (EmptyPage, InvalidPage):
         checklists = paginator.page(paginator.num_pages)
 
-    return render_to_response('psc/vr_incident_list.html', {'page_title': "Voter's Registration Critical Incidents", 'checklists': checklists, 'filter_form': filter_form})
+    return render_to_response('psc/vr_incident_list.html', {'page_title': "Voters' Registration Critical Incidents", 'checklists': checklists, 'filter_form': filter_form})
 
 def dco_incident_list(request):
     qs = Q()
@@ -267,10 +267,25 @@ def message_log(request):
     return render_to_response('psc/msg_log.html', { 'page_title': 'Message Log', 'messages_list' : messages }, context_instance=RequestContext(request))
 
 def action_log(request):
+    from itertools import chain
     #get action log for vr and dco 
     vr_checklist_log = VRChecklist.audit_log.all()
     vr_incident_log = VRIncident.audit_log.all()
     dco_checklist_log = DCOChecklist.audit_log.all()
     dco_incident_log = DCOIncident.audit_log.all()
 
-    return render_to_response('psc/action_log.html', {'page_title': 'Action Log', 'vr_checklist_log_list' : vr_checklist_log, 'vr_incident_log_list': vr_incident_log, 'dco_checklist_log_list': dco_checklist_log, 'dco_incident_log_list': dco_incident_log})
+    object_list = list(chain(dco_checklist_log, dco_incident_log, vr_incident_log, vr_checklist_log))
+    
+    paginator = Paginator(object_list, items_per_page)
+    try:
+        page = int(request.GET.get('page', '1'))
+    except ValueError:
+        page = 1
+
+    # an invalid range will retrieve the last page of results
+    try:
+        logs = paginator.page(page)
+    except (EmptyPage, InvalidPage):
+        logs = paginator.page(paginator.num_pages)
+    print logs
+    return render_to_response('psc/action_log.html', {'page_title': 'Action Log', 'logs' : logs})

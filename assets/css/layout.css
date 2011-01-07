@@ -433,15 +433,17 @@ form .grandparent .parent input.text.numeric {
 }
 
 form .buttons {
-	float: right;
+	float: left;
+        margin-left: 100px;
 	clear: both;
-	padding-bottom: 10px
+	padding-bottom: 10px;
 	font-size: 1.5em;
 	width: 43%;
 }
 
 form .buttons input[type='submit'] {
 	padding: 1em;
+        text-align: left;
 }
 
 
