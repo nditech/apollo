@@ -1,4 +1,5 @@
 {% extends "psc/layout.html" %}
+{% load comments %}
 {% block content %}
 <form action="{% url psc.views.dco_checklist checklist.id %}" method="post">
     <div class="grid_16">
@@ -288,17 +289,37 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="clear"></div>
+            
 
             <div class="buttons">
-								<input type="hidden" name="{{ form.sms_serial.name }}" value="{{ form.initial.sms_serial }}">
-								<input type="hidden" name="{{ form.submitted.name }}" value="True">
-								{% csrf_token %}
+                <input type="hidden" name="{{ form.sms_serial.name }}" value="{{ form.initial.sms_serial }}">
+                <input type="hidden" name="{{ form.submitted.name }}" value="True">
+                {% csrf_token %}
                 <input type="submit" name="submit" value="Save">
             </div>
+                </div>
+            <div class="clear"></div>
         </div>
-        
+        <div class="clear"></div>
+        <div class="box">
+            <h2>Comments</h2>
+            <div class="block" >
+            {% get_comment_list for checklist as comment_list %}
+            {% for comment in comment_list %}
+               <p>Posted by: {{ comment.user_name }} on {{ comment.submit_date }}</p>
+                <p>Comment: {{ comment.comment }}</p>
+            {% endfor %}
+            {% get_comment_form for checklist as cform %}
+            <form action="{% comment_form_target %}" method="post">
+              <input type="hidden" name="next" value="{% url psc.views.dco_checklist checklist.id %}" />
+              {{ cform.as_p }}
+              <tr>
+                <td></td>
+                <td><input type="submit" name="preview" class="submit-post" value="Preview"></td>
+              </tr>
+            </form>
+
+        </div>
         </div>
     </div>
 </form>

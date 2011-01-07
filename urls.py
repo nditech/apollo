@@ -40,4 +40,5 @@ urlpatterns += patterns('',
     # PSC urls for default routing
     (r'^assets/(?P<path>.*)$', 'django.views.static.serve', {'document_root': 'assets'}), 
     (r'', include('psc.urls')),
+    (r'^comments/', include('django.contrib.comments.urls')),
 ) 
