@@ -1,5 +1,4 @@
 {% extends "psc/layout.html" %}
-{% load comments %}
 {% block content %}
 <form action="{% url psc.views.dco_checklist checklist.id %}" method="post">
     <div class="grid_16">
@@ -298,6 +297,8 @@
 								{% csrf_token %}
                 <input type="submit" name="submit" value="Save">
             </div>
+        </div>
+        
         </div>
     </div>
 </form>
