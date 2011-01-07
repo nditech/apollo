@@ -246,8 +246,8 @@
                             <p>{{ form.U.help_text }}</p>
                         </div>
                         <div class='third'>
-                            <div class='options'><input name='{{ form.U.name }}' type='text' class='text numeric' value="{{ form.initial.U|default:"" }}"></div>
-                        </div>
+                            <div class='options'><input name='{{ form.U.name }}' type='text' maxlength= "4" class='text numeric' value="{{ form.initial.U|default:"" }}"></div>
+                        </div> 
                     </div>
                 </div>
             </div>
@@ -263,7 +263,7 @@
                             <p>{{ form.V.help_text }}</p>
                         </div>
                         <div class='third'>
-                            <div class='options'><input name='{{ form.V.name }}' type='text' class='text numeric' value="{{ form.initial.V|default:"" }}"></div>
+                            <div class='options'><input name='{{ form.V.name }}' type='text' maxlength="4" class='text numeric' value="{{ form.initial.V|default:"" }}"></div>
                         </div>
                     </div>
                      <div class="parent">
@@ -274,7 +274,7 @@
                             <p>{{ form.W.help_text }}</p>
                         </div>
                         <div class='third'>
-                            <div class='options'><input name='{{ form.W.name }}' type='text' class='text numeric' value="{{ form.initial.W|default:"" }}"></div>
+                            <div class='options'><input name='{{ form.W.name }}' type='text' maxlength="4" class='text numeric' value="{{ form.initial.W|default:"" }}"></div>
                         </div>
                     </div>
                      <div class="parent">
@@ -285,7 +285,7 @@
                             <p>{{ form.X.help_text }}</p>
                         </div>
                         <div class='third'>
-                            <div class='options'><input name='{{ form.X.name }}' type='text' class='text numeric' value="{{ form.initial.X|default:"" }}"></div>
+                            <div class='options'><input name='{{ form.X.name }}' type='text' maxlength="4" class='text numeric' value="{{ form.initial.X|default:"" }}"></div>
                         </div>
                     </div>
                 </div>
