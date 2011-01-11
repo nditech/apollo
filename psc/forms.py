@@ -15,15 +15,15 @@ STATUSES = ((0, 'All'),
             (5, 'missing any text'),
             (6, 'all texts received'))
 VR_DAYS = (('', 'All'),
-        (datetime.date(datetime(2011, 1, 15)), 'Day 1'),
-        (datetime.date(datetime(2011, 1, 20)), 'Day 2'),
-        (datetime.date(datetime(2011, 1, 22)), 'Day 3'),
-        (datetime.date(datetime(2011, 1, 27)), 'Day 4'),
-        (datetime.date(datetime(2011, 1, 29)), 'Day 5'))
+        (datetime.date(datetime(2011, 1, 15)), 'Sat 15-Jan'),
+        (datetime.date(datetime(2011, 1, 20)), 'Thu 20-Jan'),
+        (datetime.date(datetime(2011, 1, 22)), 'Sat 22-Jan'),
+        (datetime.date(datetime(2011, 1, 27)), 'Thu 27-Jan'),
+        (datetime.date(datetime(2011, 1, 29)), 'Sat 29-Jan'))
 
 DCO_DAYS = (('', 'All'),
-        (datetime.date(datetime(2011, 2, 3)), 'Day 1'),
-        (datetime.date(datetime(2011, 2, 8)), 'Day 2'))
+        (datetime.date(datetime(2011, 2, 3)), 'Thu 3-Feb'),
+        (datetime.date(datetime(2011, 2, 8)), 'Tue 8-Feb'))
 
 class VRChecklistForm(forms.ModelForm):
     class Meta:
