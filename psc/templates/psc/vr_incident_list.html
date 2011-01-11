@@ -74,7 +74,7 @@
 				{% for cl in checklists.object_list %}
 				<tr{% cycle ' class="odd"' '' %}>
 					<td>{{ cl.observer.observer_id }}</td>					
-					<td>{{ cl.date|date:"d/m/Y" }}</td>
+					<td>{{ cl.date|date:"D d-N" }}</td>
 					<td>{{ cl.observer.location.name|default:"Unknown" }}</td>
 					<td>{{ cl.observer.location.parent.name|default:"Unknown" }}</td>
 					<td>{{ cl.observer.location.parent.parent.name|default:"Unknown" }}</td>
