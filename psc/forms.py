@@ -15,7 +15,7 @@ STATUSES = ((0, 'All'),
             (5, 'missing any text'),
             (6, 'all texts received'))
 VR_DAYS = (('', 'All'),
-        (datetime.date(datetime(2011, 1, 15)), 'Sat 15-Jan'),
+        (datetime.date(datetime(2011, 1, 14)), 'Sat 15-Jan'),
         (datetime.date(datetime(2011, 1, 20)), 'Thu 20-Jan'),
         (datetime.date(datetime(2011, 1, 22)), 'Sat 22-Jan'),
         (datetime.date(datetime(2011, 1, 27)), 'Thu 27-Jan'),

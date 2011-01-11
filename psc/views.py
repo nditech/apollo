@@ -9,7 +9,7 @@ from django.views.decorators.csrf import csrf_view_exempt
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from rapidsms.contrib.messagelog.tables import MessageTable
 from rapidsms.contrib.messagelog.models import Message
-from forms import VRChecklistForm, VRIncidentForm, DCOIncidentForm, VRChecklistFilterForm, VRIncidentFilterForm, DCOIncidentFilterForm, DCOChecklistFilterForm, DCOChecklistForm
+from forms import VRChecklistForm, VRIncidentForm, DCOIncidentForm, VRChecklistFilterForm, VRIncidentFilterForm, DCOIncidentFilterForm, DCOChecklistFilterForm, DCOChecklistForm, VR_DAYS, DCO_DAYS
 
 # paginator settings
 items_per_page = 25
@@ -18,8 +18,8 @@ def home(request):
     return render_to_response('psc/layout.html')
 
 def vr_checklist_list(request):
-    qs = Q()
-
+    
+    qs = Q(date__in=[d[0] for d in VR_DAYS if d[0]])
     if request.method == 'GET':
         filter_form = VRChecklistFilterForm(request.GET)
 
@@ -90,8 +90,8 @@ def vr_checklist_list(request):
     return render_to_response('psc/vr_checklist_list.html', {'page_title': "Voters' Registration Data Management", 'checklists': checklists, 'filter_form': filter_form }, context_instance=RequestContext(request))
 
 def dco_checklist_list(request):
-    qs = Q()
 
+    qs = Q(date__in=[d[0] for d in DCO_DAYS if d[0]])    
     if request.method == 'GET':
         filter_form = DCOChecklistFilterForm(request.GET)
 

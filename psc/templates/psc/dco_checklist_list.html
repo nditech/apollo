@@ -4,116 +4,113 @@
 {{ block.super }}
 <script src="/assets/js/jquery-1.4.4.min.js" type="text/javascript" charset="utf-8"></script>
 <script type="text/javascript" charset="utf-8">
-	$(function() {
-		$("#reset").click(function () {
-			$("#id_zone").val("");
-			$("#id_state").val("");
-			$("#id_district").val("");
-			$("#id_day").val("");
-			$("#id_observer_id").val("");
-			$("#filter_form").submit();
-		});
-	});
+    $(function() {
+        $("#reset").click(function () {
+            $("#id_zone").val("");
+            $("#id_state").val("");
+            $("#id_district").val("");
+            $("#id_day").val("");
+            $("#id_observer_id").val("");
+            $("#filter_form").submit();
+        });
+    });
 </script>
 {% endblock %}
 {% block content %}
 <div class="grid_16">
-	<div class="box"> 
-		<h2>Display, Claims &amp; Objections Checklists</h2>
-		<div class="block">
-			<div id="filter">
-				<form action="" method="get" id="filter_form" accept-charset="utf-8">
-					<table>
-						<thead>
-							<tr>
+    <div class="box">
+        <h2>Display, Claims &amp; Objections Checklists</h2>
+        <div class="block">
+            <div id="filter">
+                <form action="" method="get" id="filter_form" accept-charset="utf-8">
+                    <table>
+                        <thead>
+                            <tr>
 								{% for field in filter_form %}
-								<th>{{ field.label }}</th>
+                                <th>{{ field.label }}</th>
 								{% endfor %}
-								<th>&nbsp;</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								{% for field in filter_form %}
-                                                                {% if field.name == 'day' %}
-                                                                    <td>{{ field }}</td>
-                                                                {% endif %}
-                                                                {% if field.name != 'date' %}
-                                                                    <td>{{ field }}</td>
-                                                                {% endif %}
+                                <th>&nbsp;</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+								{% for field in filter_form %}                                                              
+
+                                <td>{{ field }}</td>
+
 								{% endfor %}
-								<td><input type="button" value="reset" id="reset">
-								<input type="submit" value="filter &rarr;"></td>
-							</tr>
-						</tbody>
-					</table>
-				</form>
-			</div>
-			<table>
-				<thead>
-					<tr>
-						<th>SN</th>
-						<th>PSC ID</th>
-						<th>Date</th>
-						<th>LGA</th>
-						<th>State/SD</th>						
-						<th>Observer</th>
-						<th>Supervisor</th>
-						<th>Status</th>
-						<th>&nbsp;</th>
-					</tr>
-				</thead>
-				<tbody>
+                                <td><input type="button" value="reset" id="reset">
+                                    <input type="submit" value="filter &rarr;"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </form>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>SN</th>
+                        <th>PSC ID</th>
+                        <th>Date</th>
+                        <th>LGA</th>
+                        <th>State/SD</th>
+                        <th>Observer</th>
+                        <th>Supervisor</th>
+                        <th>Status</th>
+                        <th>&nbsp;</th>
+                    </tr>
+                </thead>
+                <tbody>
 				{% for cl in checklists.object_list %}
 				{% if cl.sms_serial > 3 %}
-				<tr class="extraneous">
+                    <tr class="extraneous">
 				{% else %}
-				<tr{% cycle ' class="odd"' '' %}>
+                    <tr{% cycle ' class="odd"' '' %}>
 				{% endif %}
-					<td>{{ cl.sms_serial|default:"N/A" }}</td>
-					<td>{{ cl.observer.observer_id }}</td>
-					<td>{{ cl.date|date:"D d-M" }}</td>
-					<td>{{ cl.observer.location.name }}</td>
-					<td>{{ cl.observer.location.parent.name|truncatewords:3 }}</td>
-					<td>{{ cl.observer.name }}</td>
-					<td>{{ cl.observer.supervisor.name }}</td>
-					<td>
+                        <td>{{ cl.sms_serial|default:"N/A" }}</td>
+                        <td>{{ cl.observer.observer_id }}</td>
+                        <td>{{ cl.date|date:"D d-M" }}</td>
+                        <td>{{ cl.observer.location.name }}</td>
+                        <td>{{ cl.observer.location.parent.name|truncatewords:3 }}</td>
+                        <td>{{ cl.observer.name }}</td>
+                        <td>{{ cl.observer.supervisor.name }}</td>
+                        <td>
 					{% if cl.A and cl.B and cl.C and cl.D and cl.E and cl.G and cl.H and cl.J and cl.K and cl.M and cl.N and cl.P and cl.Q and cl.R and cl.S and cl.T and cl.U and cl.V and cl.W and cl.X and cl.submitted %}
 						{% if cl.F1 or cl.F2 or cl.F3 or cl.F4 or cl.F5 or cl.F6 or cl.F7 or cl.F8 or cl.F9 %}
-							<img src="/assets/img/status.png" width="16" height="16" alt="complete" />
+                            <img src="/assets/img/status.png" width="16" height="16" alt="complete" />
 						{% else %}
-							<img src="/assets/img/status-away.png" width="16" height="16" alt="incomplete" />
+                            <img src="/assets/img/status-away.png" width="16" height="16" alt="incomplete" />
 						{% endif %}
 					{% else %}
 					{% if cl.A or cl.B or cl.C or cl.D or cl.E or cl.G or cl.H or cl.J or cl.K or cl.M or cl.N or cl.P or cl.Q or cl.R or cl.S or cl.T or cl.U or cl.V or cl.W or cl.X or cl.F1 or cl.F2 or cl.F3 or cl.F4 or cl.F5 or cl.F6 or cl.F7 or cl.F8 or cl.F9 and cl.submitted %}
-						<img src="/assets/img/status-away.png" width="16" height="16" alt="incomplete" />
+                            <img src="/assets/img/status-away.png" width="16" height="16" alt="incomplete" />
 					{% else %}
-						<img src="/assets/img/status-busy.png" width="16" height="16" alt="missing" />
+                            <img src="/assets/img/status-busy.png" width="16" height="16" alt="missing" />
 					{% endif %}
 					{% endif %}
-					</td>
-					<td><a href="{% url psc.views.dco_checklist cl.id %}">Edit</a></td>
-				</tr>
+                        </td>
+                        <td><a href="{% url psc.views.dco_checklist cl.id %}">Edit</a></td>
+                    </tr>
 				{% empty %}
-				<tr>
-					<td colspan="10" class="nodata">No reports yet</td>
-				</tr>
+                    <tr>
+                        <td colspan="10" class="nodata">No reports yet</td>
+                    </tr>
 				{% endfor %}
-				</tbody>
-			</table>
-		</div>
+                </tbody>
+            </table>
+        </div>
 		{% if checklists.has_other_pages %}
-		<div class="paginator">
+        <div class="paginator">
 			{% if checklists.has_previous %}
-			<a href="{% query_string "page=checklists.previous_page_number" "" %}"><span>&laquo;</span></a>
+            <a href="{% query_string "page=checklists.previous_page_number" "" %}"><span>&laquo;</span></a>
 			{% endif %}
-			<span class="current">Page {{ checklists.number }} of {{ checklists.paginator.num_pages }}</span>
+            <span class="current">Page {{ checklists.number }} of {{ checklists.paginator.num_pages }}</span>
 			{% if checklists.has_next %}
-			<a href="{% query_string "page=checklists.next_page_number" "" %}"><span>&raquo;</span></a>
+            <a href="{% query_string "page=checklists.next_page_number" "" %}"><span>&raquo;</span></a>
 			{% endif %}
-		</div>
-		{% endif %}
-	</div>
+        </div>
 
+		{% endif %}
+    </div>
 </div>
 {% endblock %}

@@ -4,155 +4,155 @@
 {{ block.super }}
 <script src="/assets/js/jquery-1.4.4.min.js" type="text/javascript" charset="utf-8"></script>
 <script type="text/javascript" charset="utf-8">
-	$(function() {
-		$("#reset").click(function () {
-			$("#id_zone").val("");
-			$("#id_state").val("");
-			$("#id_district").val("");
-			$("#id_day").val("");
-			$("#id_status").val(0);
-			$("#id_observer_id").val("");
-			$("#filter_form").submit();
-		});
-	});
+    $(function() {
+        $("#reset").click(function () {
+            $("#id_zone").val("");
+            $("#id_state").val("");
+            $("#id_district").val("");
+            $("#id_day").val("");
+            $("#id_status").val(0);
+            $("#id_observer_id").val("");
+            $("#filter_form").submit();
+        });
+    });
 </script>
 {% endblock %}
 {% block content %}
 <div class="grid_16">
-	<div class="box"> 
-		<h2>Voters' Registration Incidents</h2>
-		<div class="block">
-                    <div id="filter">
-				<form action="" method="get" id="filter_form" accept-charset="utf-8">
-					<table>
-						<thead>
-							<tr>
+    <div class="box">
+        <h2>Voters' Registration Incidents</h2>
+        <div class="block">
+            <div id="filter">
+                <form action="" method="get" id="filter_form" accept-charset="utf-8">
+                    <table>
+                        <thead>
+                            <tr>
 								{% for field in filter_form %}
-								<th>{{ field.label }}</th>
+                                <th>{{ field.label }}</th>
 								{% endfor %}
-								<th>&nbsp;</th>
-								<th>&nbsp;</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
+                                <th>&nbsp;</th>
+                                <th>&nbsp;</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
 								{% for field in filter_form %}
-								<td>{{ field }}</td>
+                                <td>{{ field }}</td>
 								{% endfor %}
-								<td><input type="button" value="reset" id="reset"></td>
-								<td><input type="submit" value="filter &rarr;"></td>
-							</tr>
-						</tbody>
-					</table>
-				</form>
-			</div>
-			<table>
-				<thead>
-					<tr>
-					<th>PSC ID</th>
-					<th>Date</th>
-					<th>LGA</th>
-					<th>District</th>
-					<th>State</th>
-					<th>Observer</th>
-					<th>A</th>
-					<th>B</th>
-					<th>C</th>
-					<th>D</th>
-					<th>E</th>
-					<th>F</th>
-					<th>G</th>
-					<th>J</th>
-					<th>K</th>
-					<th>M</th>
-					<th>N</th>
-					<th>P</th>
-					<th>Q</th>
-					<th><a href="{% url psc.views.vr_incident_add  %}">Add Incident</a></th>
-					</tr>
-				</thead>
+                                <td><input type="button" value="reset" id="reset"></td>
+                                <td><input type="submit" value="filter &rarr;"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </form>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>PSC ID</th>
+                        <th>Date</th>
+                        <th>LGA</th>
+                        <th>District</th>
+                        <th>State</th>
+                        <th>Observer</th>
+                        <th>A</th>
+                        <th>B</th>
+                        <th>C</th>
+                        <th>D</th>
+                        <th>E</th>
+                        <th>F</th>
+                        <th>G</th>
+                        <th>J</th>
+                        <th>K</th>
+                        <th>M</th>
+                        <th>N</th>
+                        <th>P</th>
+                        <th>Q</th>
+                        <th><a href="{% url psc.views.vr_incident_add  %}">Add Incident</a></th>
+                    </tr>
+                </thead>
 				{% for cl in checklists.object_list %}
-				<tr{% cycle ' class="odd"' '' %}>
-					<td>{{ cl.observer.observer_id }}</td>					
-					<td>{{ cl.date|date:"D d-M" }}</td>
-					<td>{{ cl.observer.location.name|default:"Unknown" }}</td>
-					<td>{{ cl.observer.location.parent.name|default:"Unknown" }}</td>
-					<td>{{ cl.observer.location.parent.parent.name|default:"Unknown" }}</td>
-					<td>{{ cl.observer.name }}</td>					
-					<td>
+                <tr{% cycle ' class="odd"' '' %}>
+                    <td>{{ cl.observer.observer_id }}</td>
+                    <td>{{ cl.date|date:"D d-M" }}</td>
+                    <td>{{ cl.observer.location.name|default:"Unknown" }}</td>
+                    <td>{{ cl.observer.location.parent.name|default:"Unknown" }}</td>
+                    <td>{{ cl.observer.location.parent.parent.name|default:"Unknown" }}</td>
+                    <td>{{ cl.observer.name }}</td>
+                    <td>
 						{% if cl.A %}
-						<img src="/assets/img/status-busy.png" width="16" height="16" alt="complete" />
+                        <img src="/assets/img/status-busy.png" width="16" height="16" alt="complete" />
 						{% endif %}
-					</td>
-					<td>
+                    </td>
+                    <td>
 						{% if cl.B %}
-						<img src="/assets/img/status-busy.png" width="16" height="16" alt="complete" />
+                        <img src="/assets/img/status-busy.png" width="16" height="16" alt="complete" />
 						{% endif %}
-					</td>
-					<td>
+                    </td>
+                    <td>
 						{% if cl.C %}
-						<img src="/assets/img/status-busy.png" width="16" height="16" alt="complete" />
+                        <img src="/assets/img/status-busy.png" width="16" height="16" alt="complete" />
 						{% endif %}
-					</td>
-					<td>
+                    </td>
+                    <td>
 						{% if cl.D %}
-						<img src="/assets/img/status-busy.png" width="16" height="16" alt="complete" />
+                        <img src="/assets/img/status-busy.png" width="16" height="16" alt="complete" />
 						{% endif %}
-					</td>
-					<td>
+                    </td>
+                    <td>
 						{% if cl.E %}
-						<img src="/assets/img/status-busy.png" width="16" height="16" alt="complete" />
+                        <img src="/assets/img/status-busy.png" width="16" height="16" alt="complete" />
 						{% endif %}
-					</td>
-					<td>
+                    </td>
+                    <td>
 						{% if cl.F %}
-						<img src="/assets/img/status-busy.png" width="16" height="16" alt="complete" />
+                        <img src="/assets/img/status-busy.png" width="16" height="16" alt="complete" />
 						{% endif %}
-					</td>
-					<td>
+                    </td>
+                    <td>
 						{% if cl.G %}
-						<img src="/assets/img/status-busy.png" width="16" height="16" alt="complete" />
+                        <img src="/assets/img/status-busy.png" width="16" height="16" alt="complete" />
 						{% endif %}
-					</td>
-					<td>
+                    </td>
+                    <td>
 						{% if cl.J %}
-						<img src="/assets/img/status-busy.png" width="16" height="16" alt="complete" />
+                        <img src="/assets/img/status-busy.png" width="16" height="16" alt="complete" />
 						{% endif %}
-					</td>
-					<td>
+                    </td>
+                    <td>
 						{% if cl.K %}
-						<img src="/assets/img/status-busy.png" width="16" height="16" alt="complete" />
+                        <img src="/assets/img/status-busy.png" width="16" height="16" alt="complete" />
 						{% endif %}
-					</td>
-					<td>
+                    </td>
+                    <td>
 						{% if cl.M %}
-						<img src="/assets/img/status-busy.png" width="16" height="16" alt="complete" />
+                        <img src="/assets/img/status-busy.png" width="16" height="16" alt="complete" />
 						{% endif %}
-					</td>
-					<td>
+                    </td>
+                    <td>
 						{% if cl.N %}
-						<img src="/assets/img/status-busy.png" width="16" height="16" alt="complete" />
+                        <img src="/assets/img/status-busy.png" width="16" height="16" alt="complete" />
 						{% endif %}
-					</td>
-					<td>
+                    </td>
+                    <td>
 						{% if cl.P %}
-						<img src="/assets/img/status-busy.png" width="16" height="16" alt="complete" />
+                        <img src="/assets/img/status-busy.png" width="16" height="16" alt="complete" />
 						{% endif %}
-					</td>
-					<td>
+                    </td>
+                    <td>
 						{% if cl.Q %}
-						<img src="/assets/img/status-busy.png" width="16" height="16" alt="complete" />
+                        <img src="/assets/img/status-busy.png" width="16" height="16" alt="complete" />
 						{% endif %}
-					</td>
-					<td><a href="{% url psc.views.vr_incident_update cl.id %}">Edit</a></td>
-				</tr>
+                    </td>
+                    <td><a href="{% url psc.views.vr_incident_update cl.id %}">Edit</a></td>
+                </tr>
 				{% empty %}
-				<tr>
-					<td colspan="20" class="nodata">No reports yet</td>
-				</tr>
+                <tr>
+                    <td colspan="20" class="nodata">No reports yet</td>
+                </tr>
 				{% endfor %}
-			</table>
-		</div>
-	</div>
+            </table>
+        </div>
+    </div>
 </div>
 {% endblock %}
