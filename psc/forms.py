@@ -4,24 +4,24 @@ from models import Zone, State, District, Observer
 from django.forms.models import modelformset_factory
 from datetime import datetime
 
-ZONES = tuple([('', '--')]+[(zone.code, zone.name) for zone in Zone.objects.all().order_by('name')])
-STATES = tuple([('', '--')]+[(state.code, state.name) for state in State.objects.all().order_by('name')])
-DISTRICTS = tuple([('', '--')]+[(district.code, district.name) for district in District.objects.all().order_by('name')])
-STATUSES = ((0, '--'),
+ZONES = tuple([('', 'All')]+[(zone.code, zone.name) for zone in Zone.objects.all().order_by('name')])
+STATES = tuple([('', 'All')]+[(state.code, state.name) for state in State.objects.all().order_by('name')])
+DISTRICTS = tuple([('', 'All')]+[(district.code, district.name) for district in District.objects.all().order_by('name')])
+STATUSES = ((0, 'All'),
             (1, 'no texts received'),
             (2, 'missing 1st text'),
             (3, 'missing 2nd text'),
             (4, 'missing 3rd text'),
             (5, 'missing any text'),
             (6, 'all texts received'))
-VR_DAYS = (('', '--'),
+VR_DAYS = (('', 'All'),
         (datetime.date(datetime(2011, 1, 15)), 'Day 1'),
         (datetime.date(datetime(2011, 1, 20)), 'Day 2'),
         (datetime.date(datetime(2011, 1, 22)), 'Day 3'),
         (datetime.date(datetime(2011, 1, 27)), 'Day 4'),
         (datetime.date(datetime(2011, 1, 29)), 'Day 5'))
 
-DCO_DAYS = (('', '--'),
+DCO_DAYS = (('', 'All'),
         (datetime.date(datetime(2011, 2, 3)), 'Day 1'),
         (datetime.date(datetime(2011, 2, 8)), 'Day 2'))
 
