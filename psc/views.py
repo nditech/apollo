@@ -1,7 +1,7 @@
 # Create your views here.
 from django.shortcuts import render_to_response, get_object_or_404
 from django.core.urlresolvers import reverse
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponseRedirect
 from django.template import RequestContext
 from models import *
 from django.db.models import Q
@@ -125,7 +125,6 @@ def dco_checklist_list(request):
 
     return render_to_response('psc/dco_checklist_list.html', {'page_title': "Display, Claims & Objections Data Management", 'checklists': checklists, 'filter_form': filter_form }, context_instance=RequestContext(request))
 
-@csrf_view_exempt
 def vr_checklist(request, checklist_id=0):
     checklist = get_object_or_404(VRChecklist, pk=checklist_id)
     if (request.POST):
@@ -135,7 +134,7 @@ def vr_checklist(request, checklist_id=0):
         return HttpResponseRedirect(reverse('psc.views.vr_checklist_list'))
     else:
         f = VRChecklistForm(instance=checklist)
-        return render_to_response('psc/vr_checklist_form.html', {'page_title': "Voters' Registration Checklist", 'checklist': checklist, 'form': f })
+        return render_to_response('psc/vr_checklist_form.html', {'page_title': "Voters' Registration Checklist", 'checklist': checklist, 'form': f }, context_instance=RequestContext(request))
 
 def dco_checklist(request, checklist_id=0):   
     checklist = get_object_or_404(DCOChecklist, pk=checklist_id)
