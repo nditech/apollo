@@ -17,6 +17,7 @@ DATABASES = {
     }
 }
 
+TIME_ZONE = 'Africa/Lagos'
 
 # the rapidsms backend configuration is designed to resemble django's
 # database configuration, as a nested dict of (name, configuration).
