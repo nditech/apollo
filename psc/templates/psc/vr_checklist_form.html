@@ -1,4 +1,5 @@
 {% extends "psc/layout.html" %}
+{% load comments %}
 {% block content %}
 <form method="POST" action="{% url psc.views.vr_checklist checklist.id %}">
 <div class="grid_16">
@@ -359,12 +360,35 @@
 				</div>
       </div>
       <div class="buttons">
+				{% csrf_token %}
 				<input type="submit" name="submit" value="Save">
 			</div>
 		</div>
 	</div>
-	<div class='clear'></div>
-</div>
-</div>
 </form>
+	<div class='clear'></div>
+	<a name="comments"></a>
+	<h2>Comments</h2>
+	<div class="block" >
+		{% get_comment_list for checklist as comment_list %}
+		{% for comment in comment_list %}
+			<p>Posted by <strong>{{ comment.user_name|default:"Data Operator" }}</strong> on <strong>{{ comment.submit_date|date:"M jS, Y h:iA" }}</strong><br />Comment: {{ comment.comment }}</p>
+		{% endfor %}
+		{% get_comment_form for checklist as cform %}
+		<form action="{% comment_form_target %}" method="post">
+			<input type="hidden" name="next" value="{% url psc.views.vr_checklist checklist.id %}" />
+			<table>
+				<tr width="10%">
+					<td valign="top" style="vertical-align:top">Comment</td>
+					<td valign="top">{{ cform.comment.as_widget }}</td>
+				</tr>
+				<tr>
+					<td>{% csrf_token %}{{ cform.content_type.as_widget }}{{ cform.object_pk.as_widget }}{{ cform.timestamp.as_widget }}{{ cform.security_hash.as_widget }}</td>
+					<td><input type="submit" name="post" class="submit-post" value="Post"></td>
+				</tr>
+			</table>
+		</form>
+	</div>
+</div>
+</div>
 {% endblock %}
