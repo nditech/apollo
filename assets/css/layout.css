@@ -83,6 +83,17 @@ h2#page-heading {
 	margin: -10px -10px 0 -10px;
 	padding:6px 12px;
 }
+
+.box h2 span.indicator {
+    background-color: #256188;
+    padding: 5px;
+    font-size: 11px;
+    font-weight: bold;
+    border: 1px #87CEEB solid;
+    -moz-border-radius: 10%;
+    margin-right: 10px;
+}
+
 .box h2 a,
 .box h2 a.visible {
 	color:#fff;
