@@ -74,7 +74,7 @@
 					<td>{{ cl.observer.observer_id }}</td>
 					<td>{{ cl.date|date:"D d-M" }}</td>
 					<td>{{ cl.observer.location.name }}</td>
-					<td>{{ cl.observer.location.parent.name }}</td>					
+					<td>{{ cl.observer.location.parent.name|truncatewords:3 }}</td>
 					<td>{{ cl.observer.name }}</td>
 					<td>{{ cl.observer.supervisor.name }}</td>
 					<td>
