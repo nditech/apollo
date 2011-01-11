@@ -4,7 +4,7 @@ from models import Zone, State, District, Observer
 from django.forms.models import modelformset_factory
 from datetime import datetime
 
-ZONES = tuple([('', 'All')]+[(zone.code, zone.name) for zone in Zone.objects.all().order_by('name')])
+ZONES = tuple([('', 'All')]+[(zone.code, zone.code) for zone in Zone.objects.all().order_by('name')])
 STATES = tuple([('', 'All')]+[(state.code, state.name) for state in State.objects.all().order_by('name')])
 DISTRICTS = tuple([('', 'All')]+[(district.code, district.name) for district in District.objects.all().order_by('name')])
 STATUSES = ((0, 'All'),
