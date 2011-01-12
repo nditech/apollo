@@ -8,414 +8,32 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
         
-        # Adding model 'Zone'
-        db.create_table('psc_zone', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=100)),
-            ('code', self.gf('django.db.models.fields.CharField')(db_index=True, max_length=50, blank=True)),
-        ))
-        db.send_create_signal('psc', ['Zone'])
+        # Adding field 'VRChecklist.comment'
+        db.add_column('psc_vrchecklist', 'comment', self.gf('django.db.models.fields.CharField')(default='', max_length=100, blank=True), keep_default=False)
 
-        # Adding model 'State'
-        db.create_table('psc_state', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=100)),
-            ('code', self.gf('django.db.models.fields.CharField')(db_index=True, max_length=50, blank=True)),
-            ('parent', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='states', null=True, to=orm['psc.Zone'])),
-        ))
-        db.send_create_signal('psc', ['State'])
+        # Adding field 'DCOChecklist.comment'
+        db.add_column('psc_dcochecklist', 'comment', self.gf('django.db.models.fields.CharField')(default='', max_length=100, blank=True), keep_default=False)
 
-        # Adding model 'District'
-        db.create_table('psc_district', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=100)),
-            ('code', self.gf('django.db.models.fields.CharField')(db_index=True, max_length=50, blank=True)),
-            ('parent', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='districts', null=True, to=orm['psc.State'])),
-        ))
-        db.send_create_signal('psc', ['District'])
+        # Adding field 'VRChecklistAuditLogEntry.comment'
+        db.add_column('psc_vrchecklistauditlogentry', 'comment', self.gf('django.db.models.fields.CharField')(default='', max_length=100, blank=True), keep_default=False)
 
-        # Adding model 'LGA'
-        db.create_table('psc_lga', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=100)),
-            ('code', self.gf('django.db.models.fields.CharField')(db_index=True, max_length=50, blank=True)),
-            ('parent', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='lgas', null=True, to=orm['psc.District'])),
-        ))
-        db.send_create_signal('psc', ['LGA'])
-
-        # Adding model 'Ward'
-        db.create_table('psc_ward', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=100)),
-            ('code', self.gf('django.db.models.fields.CharField')(db_index=True, max_length=50, blank=True)),
-            ('parent', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='wards', null=True, to=orm['psc.LGA'])),
-        ))
-        db.send_create_signal('psc', ['Ward'])
-
-        # Adding model 'RegistrationCenter'
-        db.create_table('psc_registrationcenter', (
-            ('location_ptr', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['locations.Location'], unique=True, primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=100)),
-            ('code', self.gf('django.db.models.fields.CharField')(max_length=50, db_index=True)),
-        ))
-        db.send_create_signal('psc', ['RegistrationCenter'])
-
-        # Adding model 'Partner'
-        db.create_table('psc_partner', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=100)),
-            ('code', self.gf('django.db.models.fields.CharField')(max_length=10)),
-        ))
-        db.send_create_signal('psc', ['Partner'])
-
-        # Adding model 'Observer'
-        db.create_table('psc_observer', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('contact', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['rapidsms.Contact'], unique=True, null=True, blank=True)),
-            ('dob', self.gf('django.db.models.fields.DateField')(null=True, blank=True)),
-            ('email', self.gf('django.db.models.fields.EmailField')(max_length=75)),
-            ('phone', self.gf('django.db.models.fields.CharField')(max_length=14, null=True, blank=True)),
-            ('observer_id', self.gf('django.db.models.fields.CharField')(max_length=6)),
-            ('location_type', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['contenttypes.ContentType'], null=True, blank=True)),
-            ('location_id', self.gf('django.db.models.fields.PositiveIntegerField')(null=True, blank=True)),
-            ('supervisor', self.gf('django.db.models.fields.related.ForeignKey')(blank=True, related_name='observers', null=True, to=orm['psc.Observer'])),
-            ('partner', self.gf('django.db.models.fields.related.ForeignKey')(related_name='observers', to=orm['psc.Partner'])),
-            ('role', self.gf('django.db.models.fields.CharField')(max_length=3, blank=True)),
-        ))
-        db.send_create_signal('psc', ['Observer'])
-
-        # Adding model 'VRChecklistAuditLogEntry'
-        db.create_table('psc_vrchecklistauditlogentry', (
-            ('id', self.gf('django.db.models.fields.IntegerField')(db_index=True, blank=True)),
-            ('location_type', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['contenttypes.ContentType'], null=True, blank=True)),
-            ('location_id', self.gf('django.db.models.fields.PositiveIntegerField')(null=True, blank=True)),
-            ('observer', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['psc.Observer'])),
-            ('date', self.gf('django.db.models.fields.DateField')()),
-            ('A', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('B', self.gf('django.db.models.fields.PositiveSmallIntegerField')(default=0, blank=True)),
-            ('C', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('D1', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('D2', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('D3', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('D4', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('E1', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('E2', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('E3', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('E4', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('E5', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('F', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('G', self.gf('django.db.models.fields.PositiveSmallIntegerField')(default=0, blank=True)),
-            ('H', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('J', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('K', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('M', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('N', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('P', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('Q', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('R', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('S', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('T', self.gf('django.db.models.fields.PositiveSmallIntegerField')(default=0, blank=True)),
-            ('U', self.gf('django.db.models.fields.PositiveSmallIntegerField')(default=0, blank=True)),
-            ('V', self.gf('django.db.models.fields.PositiveSmallIntegerField')(default=0, blank=True)),
-            ('W', self.gf('django.db.models.fields.PositiveSmallIntegerField')(default=0, blank=True)),
-            ('X', self.gf('django.db.models.fields.PositiveSmallIntegerField')(default=0, blank=True)),
-            ('Y', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('Z', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('AA', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('submitted', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('report_rc', self.gf('django.db.models.fields.CharField')(max_length=100, null=True, blank=True)),
-            ('report_rcid', self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True)),
-            ('action_id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('action_date', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now)),
-            ('action_user', self.gf('audit_log.models.fields.LastUserField')(related_name='_vrchecklist_audit_log_entry')),
-            ('action_type', self.gf('django.db.models.fields.CharField')(max_length=1)),
-        ))
-        db.send_create_signal('psc', ['VRChecklistAuditLogEntry'])
-
-        # Adding model 'VRChecklist'
-        db.create_table('psc_vrchecklist', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('location_type', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['contenttypes.ContentType'], null=True, blank=True)),
-            ('location_id', self.gf('django.db.models.fields.PositiveIntegerField')(null=True, blank=True)),
-            ('observer', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['psc.Observer'])),
-            ('date', self.gf('django.db.models.fields.DateField')()),
-            ('A', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('B', self.gf('django.db.models.fields.PositiveSmallIntegerField')(default=0, blank=True)),
-            ('C', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('D1', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('D2', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('D3', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('D4', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('E1', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('E2', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('E3', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('E4', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('E5', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('F', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('G', self.gf('django.db.models.fields.PositiveSmallIntegerField')(default=0, blank=True)),
-            ('H', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('J', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('K', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('M', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('N', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('P', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('Q', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('R', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('S', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('T', self.gf('django.db.models.fields.PositiveSmallIntegerField')(default=0, blank=True)),
-            ('U', self.gf('django.db.models.fields.PositiveSmallIntegerField')(default=0, blank=True)),
-            ('V', self.gf('django.db.models.fields.PositiveSmallIntegerField')(default=0, blank=True)),
-            ('W', self.gf('django.db.models.fields.PositiveSmallIntegerField')(default=0, blank=True)),
-            ('X', self.gf('django.db.models.fields.PositiveSmallIntegerField')(default=0, blank=True)),
-            ('Y', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('Z', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('AA', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('submitted', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('report_rc', self.gf('django.db.models.fields.CharField')(max_length=100, null=True, blank=True)),
-            ('report_rcid', self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True)),
-        ))
-        db.send_create_signal('psc', ['VRChecklist'])
-
-        # Adding model 'VRIncidentAuditLogEntry'
-        db.create_table('psc_vrincidentauditlogentry', (
-            ('id', self.gf('django.db.models.fields.IntegerField')(db_index=True, blank=True)),
-            ('location_type', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['contenttypes.ContentType'], null=True, blank=True)),
-            ('location_id', self.gf('django.db.models.fields.PositiveIntegerField')(null=True, blank=True)),
-            ('observer', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['psc.Observer'])),
-            ('date', self.gf('django.db.models.fields.DateField')()),
-            ('A', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('B', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('C', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('D', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('E', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('F', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('G', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('H', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('J', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('K', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('M', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('N', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('P', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('Q', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('comment', self.gf('django.db.models.fields.CharField')(max_length=100, blank=True)),
-            ('action_id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('action_date', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now)),
-            ('action_user', self.gf('audit_log.models.fields.LastUserField')(related_name='_vrincident_audit_log_entry')),
-            ('action_type', self.gf('django.db.models.fields.CharField')(max_length=1)),
-        ))
-        db.send_create_signal('psc', ['VRIncidentAuditLogEntry'])
-
-        # Adding model 'VRIncident'
-        db.create_table('psc_vrincident', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('location_type', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['contenttypes.ContentType'], null=True, blank=True)),
-            ('location_id', self.gf('django.db.models.fields.PositiveIntegerField')(null=True, blank=True)),
-            ('observer', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['psc.Observer'])),
-            ('date', self.gf('django.db.models.fields.DateField')()),
-            ('A', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('B', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('C', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('D', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('E', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('F', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('G', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('H', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('J', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('K', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('M', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('N', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('P', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('Q', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('comment', self.gf('django.db.models.fields.CharField')(max_length=100, blank=True)),
-        ))
-        db.send_create_signal('psc', ['VRIncident'])
-
-        # Adding model 'DCOChecklistAuditLogEntry'
-        db.create_table('psc_dcochecklistauditlogentry', (
-            ('id', self.gf('django.db.models.fields.IntegerField')(db_index=True, blank=True)),
-            ('location_type', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['contenttypes.ContentType'], null=True, blank=True)),
-            ('location_id', self.gf('django.db.models.fields.PositiveIntegerField')(null=True, blank=True)),
-            ('observer', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['psc.Observer'])),
-            ('date', self.gf('django.db.models.fields.DateField')()),
-            ('sms_serial', self.gf('django.db.models.fields.PositiveSmallIntegerField')(null=True, blank=True)),
-            ('A', self.gf('django.db.models.fields.PositiveSmallIntegerField')(default=0, blank=True)),
-            ('B', self.gf('django.db.models.fields.PositiveSmallIntegerField')(default=0, blank=True)),
-            ('C', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('D', self.gf('django.db.models.fields.PositiveSmallIntegerField')(default=0, blank=True)),
-            ('E', self.gf('django.db.models.fields.PositiveSmallIntegerField')(default=0, blank=True)),
-            ('F1', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('F2', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('F3', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('F4', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('F5', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('F6', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('F7', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('F8', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('F9', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('G', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('H', self.gf('django.db.models.fields.PositiveSmallIntegerField')(default=0, blank=True)),
-            ('J', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('K', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('M', self.gf('django.db.models.fields.PositiveSmallIntegerField')(default=0, blank=True)),
-            ('N', self.gf('django.db.models.fields.PositiveSmallIntegerField')(default=0, blank=True)),
-            ('P', self.gf('django.db.models.fields.PositiveSmallIntegerField')(default=0, blank=True)),
-            ('Q', self.gf('django.db.models.fields.PositiveSmallIntegerField')(default=0, blank=True)),
-            ('R', self.gf('django.db.models.fields.PositiveSmallIntegerField')(default=0, blank=True)),
-            ('S', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('T', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('U', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('V', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('W', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('X', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('submitted', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('report_rc', self.gf('django.db.models.fields.CharField')(max_length=100, null=True, blank=True)),
-            ('report_rcid', self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True)),
-            ('action_id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('action_date', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now)),
-            ('action_user', self.gf('audit_log.models.fields.LastUserField')(related_name='_dcochecklist_audit_log_entry')),
-            ('action_type', self.gf('django.db.models.fields.CharField')(max_length=1)),
-        ))
-        db.send_create_signal('psc', ['DCOChecklistAuditLogEntry'])
-
-        # Adding model 'DCOChecklist'
-        db.create_table('psc_dcochecklist', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('location_type', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['contenttypes.ContentType'], null=True, blank=True)),
-            ('location_id', self.gf('django.db.models.fields.PositiveIntegerField')(null=True, blank=True)),
-            ('observer', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['psc.Observer'])),
-            ('date', self.gf('django.db.models.fields.DateField')()),
-            ('sms_serial', self.gf('django.db.models.fields.PositiveSmallIntegerField')(null=True, blank=True)),
-            ('A', self.gf('django.db.models.fields.PositiveSmallIntegerField')(default=0, blank=True)),
-            ('B', self.gf('django.db.models.fields.PositiveSmallIntegerField')(default=0, blank=True)),
-            ('C', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('D', self.gf('django.db.models.fields.PositiveSmallIntegerField')(default=0, blank=True)),
-            ('E', self.gf('django.db.models.fields.PositiveSmallIntegerField')(default=0, blank=True)),
-            ('F1', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('F2', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('F3', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('F4', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('F5', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('F6', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('F7', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('F8', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('F9', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('G', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('H', self.gf('django.db.models.fields.PositiveSmallIntegerField')(default=0, blank=True)),
-            ('J', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('K', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('M', self.gf('django.db.models.fields.PositiveSmallIntegerField')(default=0, blank=True)),
-            ('N', self.gf('django.db.models.fields.PositiveSmallIntegerField')(default=0, blank=True)),
-            ('P', self.gf('django.db.models.fields.PositiveSmallIntegerField')(default=0, blank=True)),
-            ('Q', self.gf('django.db.models.fields.PositiveSmallIntegerField')(default=0, blank=True)),
-            ('R', self.gf('django.db.models.fields.PositiveSmallIntegerField')(default=0, blank=True)),
-            ('S', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('T', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('U', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('V', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('W', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('X', self.gf('django.db.models.fields.IntegerField')(null=True, blank=True)),
-            ('submitted', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('report_rc', self.gf('django.db.models.fields.CharField')(max_length=100, null=True, blank=True)),
-            ('report_rcid', self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True)),
-        ))
-        db.send_create_signal('psc', ['DCOChecklist'])
-
-        # Adding model 'DCOIncidentAuditLogEntry'
-        db.create_table('psc_dcoincidentauditlogentry', (
-            ('id', self.gf('django.db.models.fields.IntegerField')(db_index=True, blank=True)),
-            ('location_type', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['contenttypes.ContentType'], null=True, blank=True)),
-            ('location_id', self.gf('django.db.models.fields.PositiveIntegerField')(null=True, blank=True)),
-            ('observer', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['psc.Observer'])),
-            ('date', self.gf('django.db.models.fields.DateField')()),
-            ('A', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('B', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('C', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('D', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('E', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('F', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('G', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('H', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('J', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('K', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('comment', self.gf('django.db.models.fields.CharField')(max_length=100, blank=True)),
-            ('action_id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('action_date', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now)),
-            ('action_user', self.gf('audit_log.models.fields.LastUserField')(related_name='_dcoincident_audit_log_entry')),
-            ('action_type', self.gf('django.db.models.fields.CharField')(max_length=1)),
-        ))
-        db.send_create_signal('psc', ['DCOIncidentAuditLogEntry'])
-
-        # Adding model 'DCOIncident'
-        db.create_table('psc_dcoincident', (
-            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('location_type', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['contenttypes.ContentType'], null=True, blank=True)),
-            ('location_id', self.gf('django.db.models.fields.PositiveIntegerField')(null=True, blank=True)),
-            ('observer', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['psc.Observer'])),
-            ('date', self.gf('django.db.models.fields.DateField')()),
-            ('A', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('B', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('C', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('D', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('E', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('F', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('G', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('H', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('J', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('K', self.gf('django.db.models.fields.NullBooleanField')(null=True, blank=True)),
-            ('comment', self.gf('django.db.models.fields.CharField')(max_length=100, blank=True)),
-        ))
-        db.send_create_signal('psc', ['DCOIncident'])
+        # Adding field 'DCOChecklistAuditLogEntry.comment'
+        db.add_column('psc_dcochecklistauditlogentry', 'comment', self.gf('django.db.models.fields.CharField')(default='', max_length=100, blank=True), keep_default=False)
 
 
     def backwards(self, orm):
         
-        # Deleting model 'Zone'
-        db.delete_table('psc_zone')
+        # Deleting field 'VRChecklist.comment'
+        db.delete_column('psc_vrchecklist', 'comment')
 
-        # Deleting model 'State'
-        db.delete_table('psc_state')
+        # Deleting field 'DCOChecklist.comment'
+        db.delete_column('psc_dcochecklist', 'comment')
 
-        # Deleting model 'District'
-        db.delete_table('psc_district')
+        # Deleting field 'VRChecklistAuditLogEntry.comment'
+        db.delete_column('psc_vrchecklistauditlogentry', 'comment')
 
-        # Deleting model 'LGA'
-        db.delete_table('psc_lga')
-
-        # Deleting model 'Ward'
-        db.delete_table('psc_ward')
-
-        # Deleting model 'RegistrationCenter'
-        db.delete_table('psc_registrationcenter')
-
-        # Deleting model 'Partner'
-        db.delete_table('psc_partner')
-
-        # Deleting model 'Observer'
-        db.delete_table('psc_observer')
-
-        # Deleting model 'VRChecklistAuditLogEntry'
-        db.delete_table('psc_vrchecklistauditlogentry')
-
-        # Deleting model 'VRChecklist'
-        db.delete_table('psc_vrchecklist')
-
-        # Deleting model 'VRIncidentAuditLogEntry'
-        db.delete_table('psc_vrincidentauditlogentry')
-
-        # Deleting model 'VRIncident'
-        db.delete_table('psc_vrincident')
-
-        # Deleting model 'DCOChecklistAuditLogEntry'
-        db.delete_table('psc_dcochecklistauditlogentry')
-
-        # Deleting model 'DCOChecklist'
-        db.delete_table('psc_dcochecklist')
-
-        # Deleting model 'DCOIncidentAuditLogEntry'
-        db.delete_table('psc_dcoincidentauditlogentry')
-
-        # Deleting model 'DCOIncident'
-        db.delete_table('psc_dcoincident')
+        # Deleting field 'DCOChecklistAuditLogEntry.comment'
+        db.delete_column('psc_dcochecklistauditlogentry', 'comment')
 
 
     models = {
@@ -505,6 +123,7 @@ class Migration(SchemaMigration):
             'V': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
             'W': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
             'X': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
+            'comment': ('django.db.models.fields.CharField', [], {'max_length': '100', 'blank': 'True'}),
             'date': ('django.db.models.fields.DateField', [], {}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'location_id': ('django.db.models.fields.PositiveIntegerField', [], {'null': 'True', 'blank': 'True'}),
@@ -550,6 +169,7 @@ class Migration(SchemaMigration):
             'action_id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'action_type': ('django.db.models.fields.CharField', [], {'max_length': '1'}),
             'action_user': ('audit_log.models.fields.LastUserField', [], {'related_name': "'_dcochecklist_audit_log_entry'"}),
+            'comment': ('django.db.models.fields.CharField', [], {'max_length': '100', 'blank': 'True'}),
             'date': ('django.db.models.fields.DateField', [], {}),
             'id': ('django.db.models.fields.IntegerField', [], {'db_index': 'True', 'blank': 'True'}),
             'location_id': ('django.db.models.fields.PositiveIntegerField', [], {'null': 'True', 'blank': 'True'}),
@@ -682,6 +302,7 @@ class Migration(SchemaMigration):
             'X': ('django.db.models.fields.PositiveSmallIntegerField', [], {'default': '0', 'blank': 'True'}),
             'Y': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
             'Z': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
+            'comment': ('django.db.models.fields.CharField', [], {'max_length': '100', 'blank': 'True'}),
             'date': ('django.db.models.fields.DateField', [], {}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'location_id': ('django.db.models.fields.PositiveIntegerField', [], {'null': 'True', 'blank': 'True'}),
@@ -728,6 +349,7 @@ class Migration(SchemaMigration):
             'action_id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'action_type': ('django.db.models.fields.CharField', [], {'max_length': '1'}),
             'action_user': ('audit_log.models.fields.LastUserField', [], {'related_name': "'_vrchecklist_audit_log_entry'"}),
+            'comment': ('django.db.models.fields.CharField', [], {'max_length': '100', 'blank': 'True'}),
             'date': ('django.db.models.fields.DateField', [], {}),
             'id': ('django.db.models.fields.IntegerField', [], {'db_index': 'True', 'blank': 'True'}),
             'location_id': ('django.db.models.fields.PositiveIntegerField', [], {'null': 'True', 'blank': 'True'}),
