@@ -5,7 +5,6 @@ from django.http import HttpResponseRedirect
 from django.template import RequestContext
 from models import *
 from django.db.models import Q
-from django.views.decorators.csrf import csrf_view_exempt
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from rapidsms.contrib.messagelog.tables import MessageTable
 from rapidsms.contrib.messagelog.models import Message
@@ -118,7 +117,6 @@ def vr_checklist_list(request):
     return render_to_response('psc/vr_checklist_list.html', {'page_title': "Voters' Registration Data Management", 'checklists': checklists, 'filter_form': filter_form }, context_instance=RequestContext(request))
 
 def dco_checklist_list(request):
-
     qs = Q(date__in=[d[0] for d in DCO_DAYS if d[0]])    
     if request.method == 'GET':
         filter_form = DCOChecklistFilterForm(request.GET)

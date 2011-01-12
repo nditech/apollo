@@ -357,6 +357,16 @@
 														<div class='third'>
 																<div class="options">
 																	<input name='{{ form.AA.name }}' type= 'text'  class='text numeric' maxlength='4' value='{{ form.initial.AA|default:"" }}'>
+																</div>
+														</div>
+												</div>
+												<div class='parent'>
+														<div class='first'>
+																<p>Comment</p>
+														</div>
+														<div class='third'>
+																<div class="options">
+																	<input name='{{ form.comment.name }}' type= 'text'  class='text comment' value='{{ form.initial.comment|default:"" }}'>
 																	<input type="hidden" name="{{ form.submitted.name }}" value="True">
 																</div>
 														</div>
