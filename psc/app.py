@@ -66,7 +66,9 @@ class App(AppBase):
             if int(params['location_id']) == 999:
                 location = None
             else:
-                return self.default(msg)
+                # quick fix to allow any location code but use a default
+                location = None
+                #return self.default(msg)
 
         # determine date of message
         day = int(params['day'])
@@ -145,7 +147,9 @@ class App(AppBase):
                 if int(params['location_id']) == 999:
                     location = None
                 else:
-                    return self.default(msg)
+                    # quick fix to allow any location code but use a default
+                    location = None
+                    #return self.default(msg)
         else:
             try:
                 location = LGA.objects.get(code=params['location_id'])
@@ -153,7 +157,9 @@ class App(AppBase):
                 if int(params['location_id']) == 999:
                     location = None
                 else:
-                    return self.default(msg)
+                    # quick fix to allow any location code but use a default
+                    location = None
+                    #return self.default(msg)
 
         # determine date of message
         day = int(params['day'])
@@ -206,7 +212,9 @@ class App(AppBase):
             if int(params['location_id']) == 999:
                 location = None
             else:
-                return self.default(msg)
+                # quick fix to allow any location code but use a default
+                location = None
+                #return self.default(msg)
 
         # determine date of message
         day = int(params['day'])
@@ -287,7 +295,9 @@ class App(AppBase):
                 if int(params['location_id']) == 999:
                     location = None
                 else:
-                    return self.default(msg)
+                    # quick fix to allow any location code but use a default
+                    location = None
+                    #return self.default(msg)
         else:
             try:
                 location = LGA.objects.get(code=params['location_id'])
@@ -295,7 +305,9 @@ class App(AppBase):
                 if int(params['location_id']) == 999:
                     location = None
                 else:
-                    return self.default(msg)
+                    # quick fix to allow any location code but use a default
+                    location = None
+                    #return self.default(msg)
 
         # determine date of message
         day = int(params['day'])
