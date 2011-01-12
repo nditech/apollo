@@ -259,9 +259,8 @@ class App(AppBase):
             elif key in ['H', 'J', 'K', 'M', 'N', 'P', 'Q','R','S'] and int(responses[key]) not in range(1, 6): range_error.append(key)
             elif key in ['C', 'F'] and int(responses[key]) > 99: range_error.append(key)
             if key in ['Y', 'Z', 'AA'] and int(responses[key]) > 9999: range_error.append(key)
-            if key in ['Y','Z','AA'] and int(responses[key]) < 9999:
-                if int(responses[key]) == 999: int(responses[key]) == 9999
-                else: range_error.append(key)
+            if key in ['Y','Z','AA'] and int(responses[key]) == 999:
+                responses[key] = 9999
             elif key in ['D']:
                 r = filter(lambda x: True if x not in ['1','2','3','4'] else False, responses['D'])
                 if r:
@@ -287,9 +286,8 @@ class App(AppBase):
             if key in ['A', 'B', 'D', 'E', 'H', 'M', 'N','P', 'Q','R'] and int(responses[key]) not in range(1, 3): range_error.append(key)
             elif key in ['C', 'G'] and int(responses[key]) > 99: range_error.append(key)
             if key in ['J', 'K','S', 'T', 'U', 'V', 'W', 'X'] and int(responses[key]) > 9999: range_error.append(key)
-            if key in ['J', 'K','S', 'T', 'U', 'V', 'W', 'X'] and int(responses[key]) < 9999:
-                if int(responses[key]) == 999: int(responses[key]) == 9999
-                else: range_error.append(key)
+            if key in ['J', 'K','S', 'T', 'U', 'V', 'W', 'X'] and int(responses[key]) == 999:
+                responses[key] = 9999
             elif key in ['F']:
                 r = filter(lambda x: True if x not in ['1','2','3','4','5','6','7','8','9'] else False, responses['D'])
                 if r: range_error.append(key)
