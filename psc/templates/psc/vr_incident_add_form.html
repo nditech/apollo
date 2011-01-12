@@ -57,7 +57,7 @@
                         </div>
                         <div class='third'>
                             <div class='options'>
-                                <input name='B' type='checkbox' class='checkbox numeric' value='True' {% if form.initial.B %} checked='checked' {% endif %}>
+                                <input name='{{ form.B.name }}' type='checkbox' class='checkbox numeric' value='True' {% if form.initial.B %} checked='checked' {% endif %}>
                             </div>
                         </div>
                     </div>
@@ -70,7 +70,7 @@
                         </div>
                         <div class='third'>
                             <div class='options'>
-                                <input name='C' type='checkbox' class='checkbox numeric' value='True' {% if form.initial.C %} checked='checked' {% endif %}>
+                                <input name='{{ form.C.name }}' type='checkbox' class='checkbox numeric' value='True' {% if form.initial.C %} checked='checked' {% endif %}>
                             </div>
                         </div>
                     </div>
@@ -83,7 +83,7 @@
                         </div>
                         <div class='third'>
                             <div class='options'>
-                                <input name='D' type='checkbox' class='checkbox numeric' value='True'{% if form.initial.D %} checked='checked' {% endif %}>
+                                <input name='{{ form.D.name }}' type='checkbox' class='checkbox numeric' value='True'{% if form.initial.D %} checked='checked' {% endif %}>
                             </div>
                         </div>
                     </div>
@@ -96,7 +96,7 @@
                         </div>
                         <div class='third'>
                             <div class='options'>
-                                <input name='E' type='checkbox' class='checkbox numeric' value='True' {% if form.initial.E %} checked='checked' {% endif %}>
+                                <input name='{{ form.E.name }}' type='checkbox' class='checkbox numeric' value='True' {% if form.initial.E %} checked='checked' {% endif %}>
                             </div>
                         </div>
                     </div>
@@ -109,7 +109,7 @@
                         </div>
                         <div class='third'>
                             <div class='options'>
-                                <input name='F' type='checkbox' class='checkbox numeric' value='True' {% if form.initial.F %} checked='checked' {% endif %}>
+                                <input name='{{ form.F.name }}' type='checkbox' class='checkbox numeric' value='True' {% if form.initial.F %} checked='checked' {% endif %}>
                             </div>
                         </div>
                     </div>
@@ -122,7 +122,7 @@
                         </div>
                         <div class='third'>
                             <div class='options'>
-                                <input name='G' type='checkbox' class='checkbox numeric' value='True'{% if form.initial.G %} checked='checked' {% endif %}>
+                                <input name='{{ form.G.name }}' type='checkbox' class='checkbox numeric' value='True'{% if form.initial.G %} checked='checked' {% endif %}>
                             </div>
                         </div>
                     </div>
@@ -135,7 +135,7 @@
                         </div>
                         <div class='third'>
                             <div class='options'>
-                                <input name='H' type='checkbox' class='checkbox numeric' value='True' {% if form.initial.H %} checked='checked' {% endif %}>
+                                <input name='{{ form.H.name }}' type='checkbox' class='checkbox numeric' value='True' {% if form.initial.H %} checked='checked' {% endif %}>
                             </div>
                         </div>
                     </div>
@@ -148,7 +148,7 @@
                         </div>
                         <div class='third'>
                             <div class='options'>
-                                <input name='J' type='checkbox' class='checkbox numeric' value='True' {% if form.initial.J %} checked='checked' {% endif %}>
+                                <input name='{{ form.H.name }}' type='checkbox' class='checkbox numeric' value='True' {% if form.initial.J %} checked='checked' {% endif %}>
                             </div>
                         </div>
                     </div>
@@ -161,7 +161,7 @@
                         </div>
                         <div class='third'>
                             <div class='options'>
-                                <input name='K' type='checkbox' class='checkbox numeric' value='True' {% if form.initial.K %} checked='checked' {% endif %}>
+                                <input name='{{ form.K.name }}' type='checkbox' class='checkbox numeric' value='True' {% if form.initial.K %} checked='checked' {% endif %}>
                             </div>
                         </div>
                     </div>
@@ -174,7 +174,7 @@
                         </div>
                         <div class='third'>
                             <div class='options'>
-                                <input name='M' type='checkbox' class='checkbox numeric' value='True'{% if form.initial.M %} checked='checked' {% endif %}>
+                                <input name='{{ form.M.name }}' type='checkbox' class='checkbox numeric' value='True'{% if form.initial.M %} checked='checked' {% endif %}>
                             </div>
                         </div>
                     </div>
@@ -187,7 +187,7 @@
                         </div>
                         <div class='third'>
                             <div class='options'>
-                                <input name='N' type='checkbox' class='checkbox numeric' value='True'{% if form.initial.N %} checked='checked' {% endif %}>
+                                <input name='{{ form.N.name }}' type='checkbox' class='checkbox numeric' value='True'{% if form.initial.N %} checked='checked' {% endif %}>
                             </div>
                         </div>
                     </div>
@@ -200,7 +200,7 @@
                         </div>
                         <div class='third'>
                             <div class='options'>
-                                <input name='P' type='checkbox' class='checkbox numeric' value='True'{% if form.initial.P %} checked='checked' {% endif %}>
+                                <input name='{{ form.P.name }}' type='checkbox' class='checkbox numeric' value='True'{% if form.initial.P %} checked='checked' {% endif %}>
                             </div>
                         </div>
                     </div>
@@ -213,7 +213,17 @@
                         </div>
                         <div class='third'>
                             <div class='options'>
-                                <input name='Q' type='checkbox' class='checkbox numeric' value='True'{% if form.initial.Q %} checked='checked' {% endif %}>
+                                <input name='{{ form.Q.name }}' type='checkbox' class='checkbox numeric' value='True'{% if form.initial.Q %} checked='checked' {% endif %}>
+                            </div>
+                        </div>
+                    </div>
+                    <div class='parent'>
+                        <div class='first'>
+                            <p>Comment</p>
+                        </div>
+                        <div class='third'>
+                            <div class='options'>
+                                <input name='{{ form.comment.name }}' type='text' class='text comment' value='{{ form.initial.comment }}'>
                             </div>
                         </div>
                     </div>
