@@ -15,7 +15,7 @@ from forms import VRChecklistForm, VRIncidentForm, DCOIncidentForm, VRChecklistF
 items_per_page = 25
 
 def home(request):
-    return render_to_response('psc/layout.html')
+    return render_to_response('psc/home.html', {'page_title': 'PSC 2011 SwiftCount Dashboard'})
 
 def vr_checklist_list(request):
     
