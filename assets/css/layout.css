@@ -435,7 +435,7 @@ form .grandparent .parent .third .options {
 
 form .grandparent .parent .third .options input {
    display: block;
-   margin: 10px auto;
+   /*margin: 10px auto;*/
 }
 
 form .grandparent .parent input.text.numeric {
@@ -446,7 +446,6 @@ form .grandparent .parent input.text.numeric {
 
 form .buttons {
 	float: left;
-	margin-left: 58px;
 	clear: both;
 	padding-bottom: 10px;
 	font-size: 1.5em;

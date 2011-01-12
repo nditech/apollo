@@ -3,8 +3,6 @@
 <form method="POST" action="{% url psc.views.dco_incident_add %}" >
     <div class="grid_16">
         <div class="box">
-
-
             <h2>Observer Details</h2>
             <!-- observer details group form -->
             <div class="block">
@@ -155,7 +153,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class='parent last'>
+                    <div class='parent'>
                         <div class='first'>
                             <p>K</p>
                         </div>
@@ -168,16 +166,20 @@
                             </div>
                         </div>
                     </div>
+                    <div class='parent last'>
+                        <div class='first'>
+                            <p>&nbsp;</p>
+                        </div>
+                        <div class='third'>
+                            <div class="options buttons">
+																{% csrf_token %}
+																<input type="submit" name="submit" value="Save">
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-
-
-            <div class="buttons">
-                <input type="submit" name="submit" value="Save">
-            </div>
             <div class='clear'></div>
-
-
         </div>
     </div>
 </form>

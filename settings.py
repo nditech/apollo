@@ -79,6 +79,7 @@ INSTALLED_APPS = [
 
     "psc",
     "django_extensions",
+    'south',
 ]
 
 # this rapidsms-specific setting defines which views are linked by the

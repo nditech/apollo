@@ -1,162 +1,188 @@
 {% extends "psc/layout.html" %}
+{% load comments %}
 {% block content %}
-<form method="POST" action="{% url psc.views.dco_incident_update incident.id %}" >
-    <div class="grid_16">
-        <div class="box">
-            <h2>Observer Details</h2>
-            <!-- observer details group form -->
-            <div class="block">
-                <table>
-                    <tr><td>Observer:</td><td>{{ incident.observer.name }} (<strong>{{ incident.observer.observer_id  }}</strong>)<input name='observer' type='hidden' value='{{ incident.observer.id }}'></td></tr>
-                    <tr><td>Date:</td><td>{{ incident.date|date:"d/m/Y" }}<input name='date' type='hidden' value='{{ incident.date }}'></td></tr>
-                </table>
-            </div>
-            <div class="clear"></div>
-            <h2>Critical Incidents</h2>
-            <!-- opening checklist question -->
-            <div class='block'>
-                <div class='grandparent'>
-                    <div class='parent'>
-                        <div class='first'>
-                            <p>A</p>
-                        </div>
-                        <div class='second'>
-                            <p>Registration Centre not open/does not exist</p>
-                        </div>
-                        <div class='third'>
-                            <div class="options">
-                                <input name='A' type='checkbox' class='checkbox numeric' value='True' {% if form.initial.A %} checked='checked' {% endif %}>
-                            </div>
-                        </div>
-                    </div>
-                    <div class='parent'>
-                        <div class='first'>
-                            <p>B</p>
-                        </div>
-                        <div class='second'>
-                            <p>Not permitted to observe at registration centre</p>
-                        </div>
-                        <div class='third'>
-                            <div class ="options">
-                                <input name='B' type='checkbox' class='checkbox numeric' value='True' {% if form.initial.B %} checked='checked' {% endif %}>
-                            </div>
-                        </div>
-                    </div>
-                    <div class='parent'>
-                        <div class='first'>
-                            <p>C</p>
-                        </div>
-                        <div class='second'>
-                            <p>Preliminary Register of Voters (PRV) not in a visible place for public scrutiny</p>
-                        </div>
-                        <div class='third'>
-                            <div class="options">
-                                <input name='C' type='checkbox' class='checkbox numeric' value='True' {% if form.initial.C %} checked='checked' {% endif %}>
-                            </div>
-                        </div>
-                    </div>
-                    <div class='parent'>
-                        <div class='first'>
-                            <p>D</p>
-                        </div>
-                        <div class='second'>
-                            <p>People not permitted to scrutinize the Preliminary Register of Voters (PRV)</p>
-                        </div>
-                        <div class='third'>
-                            <div class="options">
-                                <input name='D' type='checkbox' class='checkbox numeric' value='True' {% if form.initial.D %} checked='checked' {% endif %}>
-                            </div>
-                        </div>
-                    </div>
-                    <div class='parent'>
-                        <div class='first'>
-                            <p>E</p>
-                        </div>
-                        <div class='second'>
-                            <p> People not permitted to file a Claim to have their name added or corrected</p>
-                        </div>
-                        <div class='third'>
-                            <div class="options">
-                                <input name='E' type='checkbox' class='checkbox numeric' value='True' {% if form.initial.E %} checked='checked' {% endif %}>
-                            </div>
-                        </div>
-                    </div>
-                    <div class='parent'>
-                        <div class='first'>
-                            <p>F</p>
-                        </div>
-                        <div class='second'>
-                            <p>People not permitted to file an Objection to have a name removed</p>
-                        </div>
-                        <div class='third'>
-                            <div class="options">
-                                <input name='F' type='checkbox' class='checkbox numeric' value='True' {% if form.initial.F %} checked='checked' {% endif %}>
-                            </div>
-                        </div>
-                    </div>
-                    <div class='parent'>
-                        <div class='first'>
-                            <p>G</p>
-                        </div>
-                        <div class='second'>
-                            <p>Centre ran out of materials</p>
-                        </div>
-                        <div class='third'>
-                            <div class="options">
-                                <input name='G' type='checkbox' class='checkbox numeric' value='True' {% if form.initial.G %} checked='checked' {% endif %}>
-                            </div>
-                        </div>
-                    </div>
-                    <div class='parent'>
-                        <div class='first'>
-                            <p>H</p>
-                        </div>
-                        <div class='second'>
-                            <p> Intimidation or harassment in or around the centre</p>
-                        </div>
-                        <div class='third'>
-                            <div class="options">
-                                <input name='H' type='checkbox' class='checkbox numeric' value='True' {% if form.initial.H %} checked='checked' {% endif %}>
-                            </div>
-                        </div>
-                    </div>
-                    <div class='parent'>
-                        <div class='first'>
-                            <p>J</p>
-                        </div>
-                        <div class='second'>
-                            <p>Violence in or around the centre</p>
-                        </div>
-                        <div class='third'>
-                            <div class="options">
-                                <input name='J' type='checkbox' class='checkbox numeric' value='True' {% if form.initial.J %} checked='checked' {% endif %}>
-                            </div>
-                        </div>
-                    </div>
-                    <div class='parent last'>
-                        <div class='first'>
-                            <p>K</p>
-                        </div>
-                        <div class='second'>
-                            <p>Other</p>
-                        </div>
-                        <div class='third'>
-                            <div class="options">
-                                <input name='K' type='checkbox' class='checkbox numeric' value='True' {% if form.initial.K %} checked='checked' {% endif %}>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-
-            <div class="buttons">
-                <input type="submit" name="submit" value="Save">
-            </div>
-            <div class='clear'></div>
-
-
-        </div>
-    </div>
-</form>
+<div class="grid_16">
+		<div class="box">
+				<h2>Observer Details</h2>
+				<!-- observer details group form -->
+				<form method="POST" action="{% url psc.views.dco_incident_update incident.id %}" >
+						<div class="block">
+								<table>
+										<tr><td>Observer:</td><td>{{ incident.observer.name }} (<strong>{{ incident.observer.observer_id  }}</strong>)<input name='observer' type='hidden' value='{{ incident.observer.id }}'></td></tr>
+										<tr><td>Date:</td><td>{{ incident.date|date:"d/m/Y" }}<input name='date' type='hidden' value='{{ incident.date }}'></td></tr>
+								</table>
+						</div>
+						<div class="clear"></div>
+						<h2>Critical Incidents</h2>
+						<!-- opening checklist question -->
+						<div class='block'>
+								<div class='grandparent'>
+										<div class='parent'>
+												<div class='first'>
+														<p>A</p>
+												</div>
+												<div class='second'>
+														<p>Registration Centre not open/does not exist</p>
+												</div>
+												<div class='third'>
+														<div class="options">
+																<input name='A' type='checkbox' class='checkbox numeric' value='True' {% if form.initial.A %} checked='checked' {% endif %}>
+														</div>
+												</div>
+										</div>
+										<div class='parent'>
+												<div class='first'>
+														<p>B</p>
+												</div>
+												<div class='second'>
+														<p>Not permitted to observe at registration centre</p>
+												</div>
+												<div class='third'>
+														<div class ="options">
+																<input name='B' type='checkbox' class='checkbox numeric' value='True' {% if form.initial.B %} checked='checked' {% endif %}>
+														</div>
+												</div>
+										</div>
+										<div class='parent'>
+												<div class='first'>
+														<p>C</p>
+												</div>
+												<div class='second'>
+														<p>Preliminary Register of Voters (PRV) not in a visible place for public scrutiny</p>
+												</div>
+												<div class='third'>
+														<div class="options">
+																<input name='C' type='checkbox' class='checkbox numeric' value='True' {% if form.initial.C %} checked='checked' {% endif %}>
+														</div>
+												</div>
+										</div>
+										<div class='parent'>
+												<div class='first'>
+														<p>D</p>
+												</div>
+												<div class='second'>
+														<p>People not permitted to scrutinize the Preliminary Register of Voters (PRV)</p>
+												</div>
+												<div class='third'>
+														<div class="options">
+																<input name='D' type='checkbox' class='checkbox numeric' value='True' {% if form.initial.D %} checked='checked' {% endif %}>
+														</div>
+												</div>
+										</div>
+										<div class='parent'>
+												<div class='first'>
+														<p>E</p>
+												</div>
+												<div class='second'>
+														<p> People not permitted to file a Claim to have their name added or corrected</p>
+												</div>
+												<div class='third'>
+														<div class="options">
+																<input name='E' type='checkbox' class='checkbox numeric' value='True' {% if form.initial.E %} checked='checked' {% endif %}>
+														</div>
+												</div>
+										</div>
+										<div class='parent'>
+												<div class='first'>
+														<p>F</p>
+												</div>
+												<div class='second'>
+														<p>People not permitted to file an Objection to have a name removed</p>
+												</div>
+												<div class='third'>
+														<div class="options">
+																<input name='F' type='checkbox' class='checkbox numeric' value='True' {% if form.initial.F %} checked='checked' {% endif %}>
+														</div>
+												</div>
+										</div>
+										<div class='parent'>
+												<div class='first'>
+														<p>G</p>
+												</div>
+												<div class='second'>
+														<p>Centre ran out of materials</p>
+												</div>
+												<div class='third'>
+														<div class="options">
+																<input name='G' type='checkbox' class='checkbox numeric' value='True' {% if form.initial.G %} checked='checked' {% endif %}>
+														</div>
+												</div>
+										</div>
+										<div class='parent'>
+												<div class='first'>
+														<p>H</p>
+												</div>
+												<div class='second'>
+														<p> Intimidation or harassment in or around the centre</p>
+												</div>
+												<div class='third'>
+														<div class="options">
+																<input name='H' type='checkbox' class='checkbox numeric' value='True' {% if form.initial.H %} checked='checked' {% endif %}>
+														</div>
+												</div>
+										</div>
+										<div class='parent'>
+												<div class='first'>
+														<p>J</p>
+												</div>
+												<div class='second'>
+														<p>Violence in or around the centre</p>
+												</div>
+												<div class='third'>
+														<div class="options">
+																<input name='J' type='checkbox' class='checkbox numeric' value='True' {% if form.initial.J %} checked='checked' {% endif %}>
+														</div>
+												</div>
+										</div>
+										<div class='parent'>
+												<div class='first'>
+														<p>K</p>
+												</div>
+												<div class='second'>
+														<p>Other</p>
+												</div>
+												<div class='third'>
+														<div class="options">
+																<input name='K' type='checkbox' class='checkbox numeric' value='True' {% if form.initial.K %} checked='checked' {% endif %}>
+														</div>
+												</div>
+										</div>
+										<div class='parent last'>
+												<div class='first'>
+														<p>&nbsp;</p>
+												</div>
+												<div class='third'>
+														<div class="options buttons">
+																<input type="submit" name="submit" value="Save">
+														</div>
+												</div>
+										</div>
+								</div>
+						</div>
+				</form>
+				<div class='clear'></div>
+				<a name="comments"></a>
+				<h2>Comments</h2>
+				<div class="block" >
+				{% get_comment_list for incident as comment_list %}
+				{% for comment in comment_list %}
+						<p>Posted by <strong>{{ comment.user_name|default:"Data Operator" }}</strong> on <strong>{{ comment.submit_date|date:"M jS, Y h:iA" }}</strong><br />Comment: {{ comment.comment }}</p>
+				{% endfor %}
+				{% get_comment_form for incident as cform %}
+						<form action="{% comment_form_target %}" method="post">
+								<input type="hidden" name="next" value="{% url psc.views.dco_incident_update incident.id %}" />
+								<table>
+										<tr width="10%">
+												<td valign="top" style="vertical-align:top">Comment</td>
+												<td valign="top">{{ cform.comment.as_widget }}</td>
+										</tr>
+										<tr>
+												<td>{% csrf_token %}{{ cform.content_type.as_widget }}{{ cform.object_pk.as_widget }}{{ cform.timestamp.as_widget }}{{ cform.security_hash.as_widget }}</td>
+												<td><input type="submit" name="post" class="submit-post" value="Post"></td>
+										</tr>
+								</table>
+						</form>
+				</div>
+		</div>
+</div>
 {% endblock %}
