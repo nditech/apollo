@@ -1,0 +1,114 @@
+{% extends "psc/layout.html" %}
+{% block content %}
+    <div class="grid_16">
+        <div class="box">
+            <h2>Dashboard</h2>
+            <div class="box dashboard">
+                <div class="controls">
+               
+                <form method="get">
+                     Filter by Zone
+                <select name="zone">
+                    <option value="">All</option>
+                    <option value="NC">North Central</option>
+                    <option value="NE">North East</option>
+                    <option value="NW">North West</option>
+                    <option value="SE">South East</option>
+                    <option value="SS">South South</option>
+                    <option value="SW">South West</option>
+                </select>
+                <input name="Go" value="GO" type="submit" style="height: 38px; font-size: 25px">
+                </form>
+                </div>
+                <table width="100%" class="dashboard">
+                    <tr>
+                        <td>
+                            <div class="box compartment">
+                                <h2 class="dashboard-header"><a href="#">VR Checklists </a></h2>
+                                 <div class="dash-row">
+                                     <div class="dash-column first">How many missing 1st SMS</div>
+                                     <div class="dash-column second"><span>{{ missing_first_sms }}</span></div>
+                                </div>
+                                 <div class="dash-row">
+                                     <div class="dash-column first">How many missing 2nd SMS</div>
+                                     <div class="dash-column second"><span>{{ missing_second_sms }}</span></div>
+                                </div>
+                                 <div class="dash-row">
+                                     <div class="dash-column first">How many missing 3rd SMS</div>
+                                     <div class="dash-column second"><span>{{ missing_third_sms }}</span></div>
+                                </div>
+                                <div class="dash-row last">
+                                     <div class="dash-text"> <a href="{% url psc.views.vr_checklist_list %}">(View All)</a></div>
+                                </div>
+                                <div class="clear"></div>
+                            </div>
+                            <div class="clear"></div>
+                        </td>
+                        <td>
+                            
+                            <div class="box compartment">
+                                <h2 class="dashboard-header"><a href="#">DCO Checklists </a></h2>
+                                <div class="dash-row">
+                                    <div class="dash-column first">1st Report</div>
+                                    <div class="dash-column second"><span> NE, SW, SS</span></div>
+                                </div>
+                                <div class="dash-row">
+                                     <div class="dash-column first">2nd Report</div>
+                                     <div class="dash-column second"><span>39</span></div>
+                                </div>
+                                <div class="dash-row">
+                                     <div class="dash-column first">3rd Report</div>
+                                     <div class="dash-column second"><span>NE, SW, SS</span></div>
+                                </div>
+                                <div class="dash-row last">
+                                     <div class="dash-text"><a href="{% url psc.views.dco_checklist_list %}">(View All)</a></div>
+                                </div>
+                                <div class="clear"></div>
+                            </div>
+                            <div class="clear"></div>
+                        </td>
+                        
+                    </tr>
+                    <tr>                        
+                        <td>                            
+                            <div class="box compartment">
+                                <h2 class="dashboard-header"><a href="#">VR Incidents</a></h2>
+                                <div class="dash-row">
+                                     <div class="dash-column first">Total number of incidents</div>
+                                     <div class="dash-column second"><span>39</span></div>
+                                </div>
+                                 <div class="dash-row">
+                                     <div class="dash-column first">Total number of incidents </div>
+                                     <div class="dash-column second"><span class="dash-num">39</span></div>
+                                </div>
+                                <div class="dash-row last">
+                                     <div class="dash-text"><a href="{% url psc.views.vr_incident_add %}">(Add Incident)</a> <span class="divider">|</span> <a href="{% url psc.views.vr_incident_list %}">(View All)</a></div>
+                                </div>
+                                <div class="clear"></div>
+                            </div>
+                            <div class="clear"></div>
+                        </td>
+                        <td>
+                            <div class="box compartment">
+                                <h2 class="dashboard-header"><a href="#">DCO Incidents</a></h2>
+                                <div class="dash-row">
+                                     <div class="dash-column first">Total number of incidents</div>
+                                     <div class="dash-column second"><span>39</span></div>
+                                </div>                                
+                                 <div class="dash-row">
+                                     <div class="dash-column first">Total number of incidents</div>
+                                     <div class="dash-column second"><span>39</span></div>
+                                </div>
+                                <div class="dash-row last">
+                                     <div class="dash-text"><a href="{% url psc.views.dco_incident_add %}">(Add Incident)</a> | <a href="{% url psc.views.dco_incident_list %}">(View All)</div>
+                                </div>
+                                <div class="clear"></div>
+                            </div>
+                            <div class="clear"></div>
+                        </td>
+                    </tr>
+                </table>
+           </div>
+        </div>
+    </div>
+{% endblock %}
