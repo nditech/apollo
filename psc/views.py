@@ -114,7 +114,7 @@ def vr_checklist_list(request):
     except (EmptyPage, InvalidPage):
         checklists = paginator.page(paginator.num_pages)
 
-    return render_to_response('psc/vr_checklist_list.html', {'page_title': "Voters' Registration Data Management", 'checklists': checklists, 'filter_form': filter_form }, context_instance=RequestContext(request))
+    return render_to_response('psc/vr_checklist_list.html', {'page_title': "Voter Registration Data Management", 'checklists': checklists, 'filter_form': filter_form }, context_instance=RequestContext(request))
 
 def dco_checklist_list(request):
     qs = Q(date__in=[d[0] for d in DCO_DAYS if d[0]])    
@@ -160,7 +160,7 @@ def vr_checklist(request, checklist_id=0):
         return HttpResponseRedirect(reverse('psc.views.vr_checklist_list'))
     else:
         f = VRChecklistForm(instance=checklist)
-        return render_to_response('psc/vr_checklist_form.html', {'page_title': "Voters' Registration Checklist", 'checklist': checklist, 'form': f }, context_instance=RequestContext(request))
+        return render_to_response('psc/vr_checklist_form.html', {'page_title': "Voter Registration Checklist", 'checklist': checklist, 'form': f }, context_instance=RequestContext(request))
 
 def dco_checklist(request, checklist_id=0):   
     checklist = get_object_or_404(DCOChecklist, pk=checklist_id)
@@ -182,7 +182,7 @@ def vr_incident_update(request, incident_id=0):
         return HttpResponseRedirect(reverse('psc.views.vr_incident_list'))    
     else:
         f = VRIncidentForm(instance=incident)   
-        return render_to_response('psc/vr_incident_update_form.html', {'page_title': "Voters' Registration Critrical Incident", 'incident': incident, 'form': f }, context_instance=RequestContext(request))
+        return render_to_response('psc/vr_incident_update_form.html', {'page_title': "Voter Registration Critrical Incident", 'incident': incident, 'form': f }, context_instance=RequestContext(request))
 
 def dco_incident_update(request, incident_id=0):
     incident = get_object_or_404(DCOIncident, pk=incident_id)
@@ -201,7 +201,7 @@ def vr_incident_add(request):
         return HttpResponseRedirect(reverse('psc.views.vr_incident_list'))
     else:
         f = VRIncidentForm()
-        return render_to_response('psc/vr_incident_add_form.html', {'page_title': "Add Voters' Registration Critrical Incident", 'form': f }, context_instance=RequestContext(request))
+        return render_to_response('psc/vr_incident_add_form.html', {'page_title': "Add Voter Registration Critrical Incident", 'form': f }, context_instance=RequestContext(request))
 
 def dco_incident_add(request):
     if request.POST:
@@ -246,7 +246,7 @@ def vr_incident_list(request):
     except (EmptyPage, InvalidPage):
         checklists = paginator.page(paginator.num_pages)
 
-    return render_to_response('psc/vr_incident_list.html', {'page_title': "Voters' Registration Critical Incidents", 'checklists': checklists, 'filter_form': filter_form}, context_instance=RequestContext(request))
+    return render_to_response('psc/vr_incident_list.html', {'page_title': "Voter Registration Critical Incidents", 'checklists': checklists, 'filter_form': filter_form}, context_instance=RequestContext(request))
 
 def dco_incident_list(request):
     qs = Q()
