@@ -18,7 +18,6 @@ def home(request):
     return render_to_response('psc/layout.html')
 
 def vr_checklist_list(request):
-    
     qs = Q(date__in=[d[0] for d in VR_DAYS if d[0]])
     if request.method == 'GET':
         filter_form = VRChecklistFilterForm(request.GET)
@@ -156,11 +155,9 @@ def vr_incident_update(request, incident_id=0):
         return HttpResponseRedirect(reverse('psc.views.vr_incident_list'))    
     else:
         f = VRIncidentForm(instance=incident)   
-        return render_to_response('psc/vr_incident_update_form.html', {'page_title': "Voters' Registration Critrical Incident", 'incident': incident, 'form': f })
+        return render_to_response('psc/vr_incident_update_form.html', {'page_title': "Voters' Registration Critrical Incident", 'incident': incident, 'form': f }, context_instance=RequestContext(request))
 
-@csrf_view_exempt
 def dco_incident_update(request, incident_id=0):
-    
     incident = get_object_or_404(DCOIncident, pk=incident_id)
     if request.POST:
         f = DCOIncidentForm(request.POST, instance=incident)    
@@ -168,9 +165,8 @@ def dco_incident_update(request, incident_id=0):
         return HttpResponseRedirect(reverse('psc.views.dco_incident_list'))
     else:
         f = DCOIncidentForm(instance=incident)
-        return render_to_response('psc/dco_incident_update_form.html', {'page_title': 'Display, Claims & Objections Critical Incident', 'incident': incident, 'form': f })
+        return render_to_response('psc/dco_incident_update_form.html', {'page_title': 'Display, Claims & Objections Critical Incident', 'incident': incident, 'form': f }, context_instance=RequestContext(request))
 
-@csrf_view_exempt
 def vr_incident_add(request):
     if request.POST:
         f = VRIncidentForm(request.POST, VRIncident)
@@ -178,9 +174,8 @@ def vr_incident_add(request):
         return HttpResponseRedirect(reverse('psc.views.vr_incident_list'))
     else:
         f = VRIncidentForm()
-        return render_to_response('psc/vr_incident_add_form.html', {'page_title': "Add Voters' Registration Critrical Incident", 'form': f })
+        return render_to_response('psc/vr_incident_add_form.html', {'page_title': "Add Voters' Registration Critrical Incident", 'form': f }, context_instance=RequestContext(request))
 
-@csrf_view_exempt
 def dco_incident_add(request):
     if request.POST:
         f = DCOIncidentForm(request.POST)                    
@@ -188,7 +183,7 @@ def dco_incident_add(request):
         return HttpResponseRedirect(reverse('psc.views.dco_incident_list'))
     else:
         f = DCOIncidentForm()
-        return render_to_response('psc/dco_incident_add_form.html', {'page_title': "Add Display, Claims & Objections Critrical Incident", 'form': f })
+        return render_to_response('psc/dco_incident_add_form.html', {'page_title': "Add Display, Claims & Objections Critrical Incident", 'form': f }, context_instance=RequestContext(request))
 
 def vr_incident_list(request):
     qs = Q()
