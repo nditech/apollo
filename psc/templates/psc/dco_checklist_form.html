@@ -288,12 +288,19 @@
                             <div class='options'><input name='{{ form.X.name }}' type='text' class='text numeric' value="{{ form.initial.X|default:"" }}"></div>
                         </div>
                     </div>
-                </div>
-                <div class="buttons">
-                    <input type="hidden" name="{{ form.sms_serial.name }}" value="{{ form.initial.sms_serial }}">
-                    <input type="hidden" name="{{ form.submitted.name }}" value="True">
-					{% csrf_token %}
-                    <input type="submit" name="submit" value="Save">
+                    <div class="parent last">
+                        <div class='first'>
+                            <p>&nbsp;</p>
+                        </div>
+                        <div class='third'>
+                            <div class='options buttons'>
+																<input type="hidden" name="{{ form.sms_serial.name }}" value="{{ form.initial.sms_serial }}">
+																<input type="hidden" name="{{ form.submitted.name }}" value="True">
+																{% csrf_token %}
+																<input type="submit" name="submit" value="Save">
+														</div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="clear"></div>

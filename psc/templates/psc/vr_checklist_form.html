@@ -347,7 +347,7 @@
                             <p><input name='{{ form.Z.name }}' type='text' class='text numeric' maxlength='4' value='{{ form.initial.Z|default:"" }}'></p>
                         </div>
                     </div>
-                    <div class='parent last'>
+                    <div class='parent'>
                         <div class='first'>
                             <p>AA</p>
                         </div>
@@ -355,13 +355,23 @@
                             <p>{{ form.AA.help_text }}</p>
                         </div>
                         <div class='third'>
-                            <p><input name='{{ form.AA.name }}' type= 'text'  class='text numeric' maxlength='4' value='{{ form.initial.AA|default:"" }}'> </p>
-                            <input type="hidden" name="{{ form.submitted.name }}" value="True">
+                            <div class="options">
+															<input name='{{ form.AA.name }}' type= 'text'  class='text numeric' maxlength='4' value='{{ form.initial.AA|default:"" }}'>
+															<input type="hidden" name="{{ form.submitted.name }}" value="True">
+														</div>
                         </div>
                     </div>
-                    <div class="buttons">
-				{% csrf_token %}
-                        <input type="submit" name="submit" value="Save">
+                    <div class='parent last'>
+                        <div class='first'>
+                            <p>&nbsp;</p>
+                        </div>
+                        <div class='third'>
+														<div class="options buttons">
+																<input type="hidden" name="{{ form.submitted.name }}" value="True">
+																{% csrf_token %}
+																<input type="submit" name="submit" value="Save">
+														</div>
+                        </div>
                     </div>
                 </div>
             </div>

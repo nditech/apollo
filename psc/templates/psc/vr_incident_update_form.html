@@ -3,10 +3,7 @@
 <form method="POST" action="{% url psc.views.vr_incident_update incident.id %}" >
     <div class="grid_16">
         <div class="box">
-
-
             <h2>Observer Details</h2>
-            <!-- observer details group form -->
             <div class="block">
                 <table>
                     <tr><td>Observer:</td><td>{{ incident.observer.name }} (<strong>{{ incident.observer.observer_id }}</strong>)</td></tr>
@@ -187,7 +184,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class='parent last'>
+                    <div class='parent'>
                         <div class='first'>
                             <p>Q</p>
                         </div>
@@ -200,12 +197,17 @@
                             </div>
                         </div>
                     </div>
+                    <div class='parent last'>
+                        <div class='first'>
+                            <p>&nbsp;</p>
+                        </div>
+                        <div class='third'>
+                            <div class='options buttons'>
+																<input type="submit" name="submit" value="Save">
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="buttons">
-                    <input type="submit" name="submit" value="Save">
-                </div>
-
-
             </div>
             <div class='clear'></div>
         </div>
