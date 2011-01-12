@@ -10,9 +10,9 @@ from datetime import datetime
 class App(AppBase):
     def __init__(self, router):
         self.pattern = re.compile(r'PSC(?P<observer_id>\d{6})(DC|VR)(\d{2})(RC|GA)(\d{3})(!?([A-Z\d]{1,})@?(.*))?', re.I)
-        self.vr_checklist  = re.compile(r'PSC(?P<observer_id>\d{6})VR(?P<day>\d{2})RC(?P<location_id>\d{3})(?P<responses>[A-Z\d]{2,})?', re.I)
+        self.vr_checklist  = re.compile(r'PSC(?P<observer_id>\d{6})VR(?P<day>\d{2})RC(?P<location_id>\d{3})(?P<responses>[A-Z\d]{2,})?@?(?P<comment>.*)', re.I)
         self.vr_incident  = re.compile(r'PSC(?P<observer_id>\d{6})VR(?P<day>\d{2})(?P<location_type>(RC|GA))(?P<location_id>\d{3})!(?P<responses>[A-Z]{1,})@?(?P<comment>.*)', re.I)
-        self.dco_checklist = re.compile(r'PSC(?P<observer_id>\d{6})DC(?P<day>\d{2})RC(?P<location_id>\d{3})(?P<responses>[A-Z\d]{2,})?', re.I)
+        self.dco_checklist = re.compile(r'PSC(?P<observer_id>\d{6})DC(?P<day>\d{2})RC(?P<location_id>\d{3})(?P<responses>[A-Z\d]{2,})?@?(?P<comment>.*)', re.I)
         self.dco_incident = re.compile(r'PSC(?P<observer_id>\d{6})DC(?P<day>\d{2})(?P<location_type>(RC|GA))(?P<location_id>\d{3})!(?P<responses>[A-Z]{1,})@?(?P<comment>.*)', re.I)
         self.range_error_response = 'Invalid values for: %s'
         self.checklist_attribute_error_response = 'Unknown checklist code: %s'
@@ -76,6 +76,9 @@ class App(AppBase):
             vr.observer = msg.observer
             vr.location = msg.location
             vr.submitted = True
+
+        if params['comment']:
+            vr.comment = params['comment']
 
         responses = self._parse_checklist(params['responses'])
 
@@ -177,6 +180,9 @@ class App(AppBase):
             dco.location = msg.location
             dco.sms_serial = counter
             dco.submitted = True
+
+        if params['comment']:
+            dco.comment = params['comment']
 
         responses = self._parse_checklist(params['responses'])
 
