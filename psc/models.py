@@ -70,6 +70,7 @@ class Ward(models.Model):
 class RegistrationCenter(Location):
     name = models.CharField(max_length=100)
     code = models.CharField("Registration Center Code", max_length=50, db_index=True)
+    inec_code = models.CharField("INEC Registration Center Code", max_length=50, blank=True, null=True)
 
     @property
     def label(self):
