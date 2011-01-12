@@ -444,6 +444,12 @@ form .grandparent .parent input.text.numeric {
 	padding: 2px;
 }
 
+form .grandparent .parent input.text.comment {
+  width: 35em;
+	font-size: 1.5em;
+	padding: 2px;
+}
+
 form .buttons {
 	float: left;
 	clear: both;
