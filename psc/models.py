@@ -4,6 +4,9 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 from rapidsms.models import Contact
 from audit_log.models.managers import AuditLog
+from south.modelsinspector import add_introspection_rules
+
+add_introspection_rules([], ['^audit_log\.models\.fields\.LastUserField'])
 
 class Zone(models.Model):
     name = models.CharField(max_length=100)
