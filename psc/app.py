@@ -59,37 +59,14 @@ class App(AppBase):
        return message.respond('Invalid message: %s' % message.text)
 
     def _vr_checklist(self, msg, params):
-        # determine location
-        try:
-            location = RegistrationCenter.objects.get(code=params['location_id'])
-        except RegistrationCenter.DoesNotExist:
-            if int(params['location_id']) == 999:
-                location = None
-            else:
-                # quick fix to allow any location code but use a default
-                location = None
-                #return self.default(msg)
-
-        # determine date of message
-        day = int(params['day'])
-
-        # if the day being reported is greater than the current day,
-        # then reference is being made of the previous month
-        year = msg.date.year
-        month = msg.date.month
-        if day > msg.date.day:
-            if month == 1:
-                month = 12
-                year -= 1
-            else:
-                month -= 1
-        msg.received_at = datetime(year, month, day)
+        # determine location and date
+        self._preprocess(msg, params)
 
         # Create the checklist
         try:
-            if location:
+            if msg.location:
                 vr = VRChecklist.objects.get(date=msg.date, observer=msg.observer, 
-                    location_type=ContentType.objects.get_for_model(location), location_id=location.pk)
+                    location_type=ContentType.objects.get_for_model(msg.location), location_id=msg.location.pk)
             else:
                 vr = VRChecklist.objects.get(date=msg.date, observer=msg.observer)
             vr.submitted = True
@@ -97,7 +74,7 @@ class App(AppBase):
             vr = VRChecklist() 
             vr.date = msg.date
             vr.observer = msg.observer
-            vr.location = location
+            vr.location = msg.location
             vr.submitted = True
 
         responses = self._parse_checklist(params['responses'])
@@ -139,49 +116,15 @@ class App(AppBase):
             return msg.respond('VR Checklist report accepted! You sent: %s' % msg.text)
 
     def _vr_incident(self, msg, params):
-        # determine location
-        if params['location_type'].upper() == 'RC':
-            try:
-                location = RegistrationCenter.objects.get(code=params['location_id'])
-            except RegistrationCenter.DoesNotExist:
-                if int(params['location_id']) == 999:
-                    location = None
-                else:
-                    # quick fix to allow any location code but use a default
-                    location = None
-                    #return self.default(msg)
-        else:
-            try:
-                location = LGA.objects.get(code=params['location_id'])
-            except LGA.DoesNotExist:
-                if int(params['location_id']) == 999:
-                    location = None
-                else:
-                    # quick fix to allow any location code but use a default
-                    location = None
-                    #return self.default(msg)
-
-        # determine date of message
-        day = int(params['day'])
-
-        # if the day being reported is greater than the current day,
-        # then reference is being made of the previous month
-        year = msg.date.year
-        month = msg.date.month
-        if day > msg.date.day:
-            if month == 1:
-                month = 12
-                year -= 1
-            else:
-                month -= 1
-        msg.received_at = datetime(year, month, day)
+        # determine location and date
+        self._preprocess(msg, params)
 
         # Create the Incident
         inc = VRIncident() 
         inc.date = msg.date
         inc.observer = msg.observer
-        if location:
-            inc.location = location
+        if msg.location:
+            inc.location = msg.location
 
         for case in list(params['responses'].upper()):
             if hasattr(inc, case):
@@ -205,37 +148,14 @@ class App(AppBase):
             return msg.respond('VR Incident report accepted! You sent: %s' % msg.text)
 
     def _dco_checklist(self, msg, params):
-        # determine location
-        try:
-            location = RegistrationCenter.objects.get(code=params['location_id'])
-        except RegistrationCenter.DoesNotExist:
-            if int(params['location_id']) == 999:
-                location = None
-            else:
-                # quick fix to allow any location code but use a default
-                location = None
-                #return self.default(msg)
-
-        # determine date of message
-        day = int(params['day'])
-
-        # if the day being reported is greater than the current day,
-        # then reference is being made of the previous month
-        year = msg.date.year
-        month = msg.date.month
-        if day > msg.date.day:
-            if month == 1:
-                month = 12
-                year -= 1
-            else:
-                month -= 1
-        msg.received_at = datetime(year, month, day)
+        # determine location and date
+        self._preprocess(msg, params)
 
         # Create the checklist
         counter = 1
         try:
-            if location:
-                dco = DCOChecklist.objects.get(date=msg.date, observer=msg.observer, location_type=ContentType.objects.get_for_model(location), location_id=location.pk)
+            if msg.location:
+                dco = DCOChecklist.objects.get(date=msg.date, observer=msg.observer, location_type=ContentType.objects.get_for_model(msg.location), location_id=msg.location.pk)
             else:
                 dco = DCOChecklist.objects.filter(date=msg.date, observer=msg.observer, submitted=True)
                 counter = len(dco) + 1
@@ -254,7 +174,7 @@ class App(AppBase):
             dco = DCOChecklist() 
             dco.date = msg.date
             dco.observer = msg.observer
-            dco.location = location
+            dco.location = msg.location
             dco.sms_serial = counter
             dco.submitted = True
 
@@ -287,49 +207,15 @@ class App(AppBase):
             return msg.respond('DCO Checklist report accepted! You sent: %s' % msg.text)
 
     def _dco_incident(self, msg, params):
-        # determine location
-        if params['location_type'].upper() == 'RC':
-            try:
-                location = RegistrationCenter.objects.get(code=params['location_id'])
-            except RegistrationCenter.DoesNotExist:
-                if int(params['location_id']) == 999:
-                    location = None
-                else:
-                    # quick fix to allow any location code but use a default
-                    location = None
-                    #return self.default(msg)
-        else:
-            try:
-                location = LGA.objects.get(code=params['location_id'])
-            except LGA.DoesNotExist:
-                if int(params['location_id']) == 999:
-                    location = None
-                else:
-                    # quick fix to allow any location code but use a default
-                    location = None
-                    #return self.default(msg)
-
-        # determine date of message
-        day = int(params['day'])
-
-        # if the day being reported is greater than the current day,
-        # then reference is being made of the previous month
-        year = msg.date.year
-        month = msg.date.month
-        if day > msg.date.day:
-            if month == 1:
-                month = 12
-                year -= 1
-            else:
-                month -= 1
-        msg.received_at = datetime(year, month, day)
+        # determine location and date
+        self._preprocess(msg, params)
 
         # Create the Incident
         inc = DCOIncident() 
         inc.date = msg.date
         inc.observer = msg.observer
-        if location:
-           inc.location = location
+        if msg.location:
+           inc.location = msg.location
 
         for case in list(params['responses'].upper()):
             if hasattr(inc, case):
@@ -404,3 +290,39 @@ class App(AppBase):
         for key in list(message):
             if key not in ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K']: attribute_error.append(key)
         return {'attribute': attribute_error }
+
+    def _preprocess(self, message, params):
+        # determine location
+        if params.has_key('location_type') and params['location_type'].upper() == 'GA':
+            try:
+                location = LGA.objects.get(code=params['location_id'])
+            except LGA.DoesNotExist:
+                if int(params['location_id']) == 999:
+                    location = None
+                else:
+                    location = None
+        else:
+            try:
+                location = RegistrationCenter.objects.get(code=params['location_id'])
+            except RegistrationCenter.DoesNotExist:
+                if int(params['location_id']) == 999:
+                    location = None
+                else:
+                    location = None
+
+        message.location = location
+
+        # determine date of message
+        day = int(params['day'])
+
+        # if the day being reported is greater than the current day,
+        # then reference is being made of the previous month
+        year = message.date.year
+        month = message.date.month
+        if day > message.date.day:
+            if month == 1:
+                month = 12
+                year -= 1
+            else:
+                month -= 1
+        message.received_at = datetime(year, month, day)
