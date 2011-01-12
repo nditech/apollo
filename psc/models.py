@@ -3,10 +3,10 @@ from rapidsms.contrib.locations.models import Location
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 from rapidsms.models import Contact
-from audit_log.models.managers import AuditLog
+from django.contrib.auth.models import User
 from south.modelsinspector import add_introspection_rules
-
-add_introspection_rules([], ['^audit_log\.models\.fields\.LastUserField'])
+from audit_log.models import fields
+from audit_log.models.managers import AuditLog
 
 class Zone(models.Model):
     name = models.CharField(max_length=100)
@@ -167,6 +167,7 @@ class VRChecklist(models.Model):
     Y = models.IntegerField(blank=True, null=True, help_text='How many people registered during this day? (record number from Certificate of Completion of Daily Registration of Voters Form EC.1B(1)) (enter number) (if not permited to record this figure enter "9999")')
     Z = models.IntegerField(blank=True, null=True, help_text='How many people so far (total to date) have registered at this centre according to the Manual Register of Voters (MRV) Form EC.1A? (enter number) (if not permitted to record this figure enter "9999")')
     AA = models.IntegerField(blank=True, null=True, help_text='How many people so far (total to date) have registered according to the DDC system? (enter number) (if not permitted to record this figure, enter "9999")')
+    comment = models.CharField(max_length=100, blank=True)
     submitted = models.BooleanField(default=False, help_text="This field tracks if (even though already created), this report has been submitted by the reporter")
     report_rc = models.CharField(blank=True, null=True, max_length=100, help_text="Registration Center as supplied by the data entry operator")
     report_rcid = models.CharField(blank=True, null=True, max_length=50, help_text="Registration Center ID as supplied by the data entry operator")
@@ -243,6 +244,7 @@ class DCOChecklist(models.Model):
     V = models.IntegerField(blank=True, null=True, help_text='So far (total to date), how many Inclusion have been made according to the Summary of Actions Taken by the Revision Officer - Form EC.6A (enter number)')
     W = models.IntegerField(blank=True, null=True, help_text='So far (total to date), how many Corrections have been made according to the Summary of Actions Taken by the Revision Officer - Form EC.6A (enter number)')
     X = models.IntegerField(blank=True, null=True, help_text='So far (total to date), how many Deletions have been made according to the Summary of Actions Taken by the Revision Officer - Form EC.6A (enter number)')
+    comment = models.CharField(max_length=100, blank=True)
     submitted = models.BooleanField(default=False, help_text="This field tracks if (even though already created), this report has been submitted by the reporter")
     report_rc = models.CharField(blank=True, null=True, max_length=100, help_text="Registration Center as supplied by the data entry operator")
     report_rcid = models.CharField(blank=True, null=True, max_length=50, help_text="Registration Center ID as supplied by the data entry operator")
@@ -273,3 +275,13 @@ class DCOIncident(models.Model):
     def __unicode__(self):
         return "DCO Incident for %s from %s on %s" % (self.location, self.observer, self.date)
 
+# Make sure the `to` and `null` parameters will be ignored
+rules = [((fields.LastUserField,),
+    [],
+    {
+        'to': ['rel.to', {'default': User}],
+        'null': ['null', {'default': True}],
+    },)]
+
+# Add the rules for the `LastUserField`
+add_introspection_rules(rules, ['^audit_log\.models\.fields\.LastUserField'])

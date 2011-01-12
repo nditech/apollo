@@ -127,7 +127,7 @@ class Migration(SchemaMigration):
             ('report_rcid', self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True)),
             ('action_id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('action_date', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now)),
-            ('action_user', self.gf('audit_log.models.fields.LastUserField')(related_name='_vrchecklist_audit_log_entry', null=True, to=orm['auth.User'])),
+            ('action_user', self.gf('audit_log.models.fields.LastUserField')(related_name='_vrchecklist_audit_log_entry')),
             ('action_type', self.gf('django.db.models.fields.CharField')(max_length=1)),
         ))
         db.send_create_signal('psc', ['VRChecklistAuditLogEntry'])
@@ -200,7 +200,7 @@ class Migration(SchemaMigration):
             ('comment', self.gf('django.db.models.fields.CharField')(max_length=100, blank=True)),
             ('action_id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('action_date', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now)),
-            ('action_user', self.gf('audit_log.models.fields.LastUserField')(related_name='_vrincident_audit_log_entry', null=True, to=orm['auth.User'])),
+            ('action_user', self.gf('audit_log.models.fields.LastUserField')(related_name='_vrincident_audit_log_entry')),
             ('action_type', self.gf('django.db.models.fields.CharField')(max_length=1)),
         ))
         db.send_create_signal('psc', ['VRIncidentAuditLogEntry'])
@@ -272,7 +272,7 @@ class Migration(SchemaMigration):
             ('report_rcid', self.gf('django.db.models.fields.CharField')(max_length=50, null=True, blank=True)),
             ('action_id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('action_date', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now)),
-            ('action_user', self.gf('audit_log.models.fields.LastUserField')(related_name='_dcochecklist_audit_log_entry', null=True, to=orm['auth.User'])),
+            ('action_user', self.gf('audit_log.models.fields.LastUserField')(related_name='_dcochecklist_audit_log_entry')),
             ('action_type', self.gf('django.db.models.fields.CharField')(max_length=1)),
         ))
         db.send_create_signal('psc', ['DCOChecklistAuditLogEntry'])
@@ -340,7 +340,7 @@ class Migration(SchemaMigration):
             ('comment', self.gf('django.db.models.fields.CharField')(max_length=100, blank=True)),
             ('action_id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('action_date', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now)),
-            ('action_user', self.gf('audit_log.models.fields.LastUserField')(related_name='_dcoincident_audit_log_entry', null=True, to=orm['auth.User'])),
+            ('action_user', self.gf('audit_log.models.fields.LastUserField')(related_name='_dcoincident_audit_log_entry')),
             ('action_type', self.gf('django.db.models.fields.CharField')(max_length=1)),
         ))
         db.send_create_signal('psc', ['DCOIncidentAuditLogEntry'])
@@ -549,7 +549,7 @@ class Migration(SchemaMigration):
             'action_date': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
             'action_id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'action_type': ('django.db.models.fields.CharField', [], {'max_length': '1'}),
-            'action_user': ('audit_log.models.fields.LastUserField', [], {'related_name': "'_dcochecklist_audit_log_entry'", 'null': 'True', 'to': "orm['auth.User']"}),
+            'action_user': ('audit_log.models.fields.LastUserField', [], {'related_name': "'_dcochecklist_audit_log_entry'"}),
             'date': ('django.db.models.fields.DateField', [], {}),
             'id': ('django.db.models.fields.IntegerField', [], {'db_index': 'True', 'blank': 'True'}),
             'location_id': ('django.db.models.fields.PositiveIntegerField', [], {'null': 'True', 'blank': 'True'}),
@@ -594,7 +594,7 @@ class Migration(SchemaMigration):
             'action_date': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
             'action_id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'action_type': ('django.db.models.fields.CharField', [], {'max_length': '1'}),
-            'action_user': ('audit_log.models.fields.LastUserField', [], {'related_name': "'_dcoincident_audit_log_entry'", 'null': 'True', 'to': "orm['auth.User']"}),
+            'action_user': ('audit_log.models.fields.LastUserField', [], {'related_name': "'_dcoincident_audit_log_entry'"}),
             'comment': ('django.db.models.fields.CharField', [], {'max_length': '100', 'blank': 'True'}),
             'date': ('django.db.models.fields.DateField', [], {}),
             'id': ('django.db.models.fields.IntegerField', [], {'db_index': 'True', 'blank': 'True'}),
@@ -727,7 +727,7 @@ class Migration(SchemaMigration):
             'action_date': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
             'action_id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'action_type': ('django.db.models.fields.CharField', [], {'max_length': '1'}),
-            'action_user': ('audit_log.models.fields.LastUserField', [], {'related_name': "'_vrchecklist_audit_log_entry'", 'null': 'True', 'to': "orm['auth.User']"}),
+            'action_user': ('audit_log.models.fields.LastUserField', [], {'related_name': "'_vrchecklist_audit_log_entry'"}),
             'date': ('django.db.models.fields.DateField', [], {}),
             'id': ('django.db.models.fields.IntegerField', [], {'db_index': 'True', 'blank': 'True'}),
             'location_id': ('django.db.models.fields.PositiveIntegerField', [], {'null': 'True', 'blank': 'True'}),
@@ -779,7 +779,7 @@ class Migration(SchemaMigration):
             'action_date': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
             'action_id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'action_type': ('django.db.models.fields.CharField', [], {'max_length': '1'}),
-            'action_user': ('audit_log.models.fields.LastUserField', [], {'related_name': "'_vrincident_audit_log_entry'", 'null': 'True', 'to': "orm['auth.User']"}),
+            'action_user': ('audit_log.models.fields.LastUserField', [], {'related_name': "'_vrincident_audit_log_entry'"}),
             'comment': ('django.db.models.fields.CharField', [], {'max_length': '100', 'blank': 'True'}),
             'date': ('django.db.models.fields.DateField', [], {}),
             'id': ('django.db.models.fields.IntegerField', [], {'db_index': 'True', 'blank': 'True'}),
