@@ -9,7 +9,7 @@
 						<div class="block">
 								<table>
 										<tr><td>Observer:</td><td>{{ incident.observer.name }} (<strong>{{ incident.observer.observer_id  }}</strong>)<input name='observer' type='hidden' value='{{ incident.observer.id }}'></td></tr>
-										<tr><td>Date:</td><td>{{ incident.date|date:"d/m/Y" }}<input name='date' type='hidden' value='{{ incident.date }}'></td></tr>
+										<tr><td>Date:</td><td>{{ incident.date|date:"D d-M" }}<input name='date' type='hidden' value='{{ incident.date }}'></td></tr>
 								</table>
 						</div>
 						<div class="clear"></div>

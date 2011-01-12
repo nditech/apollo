@@ -643,3 +643,94 @@ tbody tr.extraneous th, tbody tr.extraneous td {
 	background:#ff3333;
 }
 
+
+/* ----- styling for home dashboard -------------- */
+
+.dashboard .controls  {
+    font-size: 25px;
+    margin-bottom: 10px;
+    text-align: right;
+}
+
+.dashboard .controls  select {
+    font-size: 25px;
+}
+
+table.dashboard {
+    padding-top: 10px;
+    border: none;
+}
+
+table.dashboard td {
+    border: none;
+}
+
+.box h2.dashboard-header  {
+    background-color: #666666;
+}
+
+.box.compartment {
+    min-height: 250px;
+}
+
+.box .dash-row {
+    width: 100%;
+    display: block;
+    clear: both;
+    border-bottom: 1px dashed #ccc;
+    float: left;
+    margin-bottom: 10px;
+    padding-top: 10px;
+}
+
+.box .dash-row.last {
+    border-bottom: none;
+    
+}
+
+.box .dash-text {
+    text-align: right;
+}
+
+.box .dash-text a {
+    font-size: 18px;
+    font-weight: normal;
+    color: #1DB3EF;
+    text-decoration: underline;
+}
+
+.box .dash-text a:hover {
+    text-decoration: none;
+}
+
+.box .dash-column {
+    float: left;
+}
+
+.box .dash-column.first {
+    width: 60%;
+    font-size: 22px;
+}
+
+.box .dash-column.second {
+    width: 40%;
+    float: right;
+    text-align: right;
+}
+
+.box .dash-column.second span {
+    background-color: #256188;
+    color: #fff;
+    padding: 5px;
+    font-size: 15px;
+    font-weight: bold;
+    border: 1px #87CEEB solid;
+    -moz-border-radius: 5%;
+    margin-right: 10px;
+    min-width: 20px;
+}
+
+.box .dash-column both {
+    width: 100%;
+}
+

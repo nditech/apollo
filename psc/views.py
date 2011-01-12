@@ -10,12 +10,41 @@ from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from rapidsms.contrib.messagelog.tables import MessageTable
 from rapidsms.contrib.messagelog.models import Message
 from forms import VRChecklistForm, VRIncidentForm, DCOIncidentForm, VRChecklistFilterForm, VRIncidentFilterForm, DCOIncidentFilterForm, DCOChecklistFilterForm, DCOChecklistForm, VR_DAYS, DCO_DAYS
+from datetime import datetime
 
 # paginator settings
 items_per_page = 25
 
 def home(request):
-    return render_to_response('psc/home.html', {'page_title': 'PSC 2011 SwiftCount Dashboard'})
+    context = {'page_title': 'PSC 2011 SwiftCount Dashboard'}
+    
+    #vr first missing sms
+    context['missing_first_sms'] = VRChecklist.objects.filter(submitted=False).count()
+    # second missing sms
+    qs2 = Q(A__isnull=True) | Q(B=0) | Q(C__isnull=True) | Q(F__isnull=True) | Q(G=0) | \
+                          (Q(D1__isnull=True) & Q(D2__isnull=True) & Q(D3__isnull=True) & Q(D4__isnull=True)) | \
+                          (Q(E1__isnull=True) & Q(E2__isnull=True) & Q(E3__isnull=True) & Q(E4__isnull=True) & \
+                          Q(E5__isnull=True))
+    context['missing_second_sms'] = VRChecklist.objects.filter(qs2).count()
+    # third missing sms
+    qs3 = Q(H__isnull=True) | Q(J__isnull=True) | Q(K__isnull=True) | Q(M__isnull=True) | \
+                          Q(N__isnull=True) | Q(P__isnull=True) | Q(Q__isnull=True) | Q(R__isnull=True) | \
+                          Q(S__isnull=True) | Q(T=0) | Q(U=0) | Q(V=0) | Q(W=0) | Q(X=0) | Q(Y__isnull=True) | \
+                          Q(Z__isnull=True) | Q(AA__isnull=True)
+    context['missing_third_sms'] = VRChecklist.objects.filter(qs3).count()
+
+    #dco
+    #checklist sent today
+    context['checklist_today'] = DCOChecklist.objects.filter(date=datetime.now()).count()
+    context['dco_in_count'] = DCOIncident.objects.all().count()
+    dco_d = DCOIncident.objects.all()
+    
+    
+    
+
+
+    #render
+    return render_to_response('psc/home.html', context)
 
 def vr_checklist_list(request):
     qs = Q(date__in=[d[0] for d in VR_DAYS if d[0]])
@@ -219,7 +248,7 @@ def vr_incident_list(request):
     except (EmptyPage, InvalidPage):
         checklists = paginator.page(paginator.num_pages)
 
-    return render_to_response('psc/vr_incident_list.html', {'page_title': "Voters' Registration Critical Incidents", 'checklists': checklists, 'filter_form': filter_form})
+    return render_to_response('psc/vr_incident_list.html', {'page_title': "Voters' Registration Critical Incidents", 'checklists': checklists, 'filter_form': filter_form}, context_instance=RequestContext(request))
 
 def dco_incident_list(request):
     qs = Q()
@@ -254,7 +283,7 @@ def dco_incident_list(request):
     except (EmptyPage, InvalidPage):
         checklists = paginator.page(paginator.num_pages)
 
-    return render_to_response('psc/dco_incident_list.html', {'page_title': "Display, Claims & Objections Critical Incidents", 'checklists': checklists, 'filter_form': filter_form})
+    return render_to_response('psc/dco_incident_list.html', {'page_title': "Display, Claims & Objections Critical Incidents", 'checklists': checklists, 'filter_form': filter_form}, context_instance=RequestContext(request))
 
 def message_log(request):
     messages = MessageTable(Message.objects.all(), request=request)
