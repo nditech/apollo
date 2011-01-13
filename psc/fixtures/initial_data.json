@@ -1383,7 +1383,7 @@
     "pk": 1, 
     "model": "psc.lga", 
     "fields": {
-      "code": "001", 
+      "code": "201", 
       "name": "Katsina-Ala", 
       "parent": 1
     }
@@ -1392,7 +1392,7 @@
     "pk": 2, 
     "model": "psc.lga", 
     "fields": {
-      "code": "002", 
+      "code": "202", 
       "name": "Konshisha", 
       "parent": 1
     }
@@ -1401,7 +1401,7 @@
     "pk": 3, 
     "model": "psc.lga", 
     "fields": {
-      "code": "003", 
+      "code": "203", 
       "name": "Kwande", 
       "parent": 1
     }
@@ -1410,7 +1410,7 @@
     "pk": 4, 
     "model": "psc.lga", 
     "fields": {
-      "code": "004", 
+      "code": "204", 
       "name": "Logo", 
       "parent": 1
     }
@@ -1419,7 +1419,7 @@
     "pk": 5, 
     "model": "psc.lga", 
     "fields": {
-      "code": "005", 
+      "code": "205", 
       "name": "Ukum", 
       "parent": 1
     }
@@ -1428,7 +1428,7 @@
     "pk": 6, 
     "model": "psc.lga", 
     "fields": {
-      "code": "006", 
+      "code": "206", 
       "name": "Ushongo", 
       "parent": 1
     }
@@ -1437,7 +1437,7 @@
     "pk": 7, 
     "model": "psc.lga", 
     "fields": {
-      "code": "007", 
+      "code": "207", 
       "name": "Vandeikya", 
       "parent": 1
     }
@@ -1446,7 +1446,7 @@
     "pk": 8, 
     "model": "psc.lga", 
     "fields": {
-      "code": "008", 
+      "code": "208", 
       "name": "Buruku", 
       "parent": 2
     }
@@ -1455,7 +1455,7 @@
     "pk": 9, 
     "model": "psc.lga", 
     "fields": {
-      "code": "009", 
+      "code": "209", 
       "name": "Gboko", 
       "parent": 2
     }
@@ -1464,7 +1464,7 @@
     "pk": 10, 
     "model": "psc.lga", 
     "fields": {
-      "code": "010", 
+      "code": "210", 
       "name": "Guma", 
       "parent": 2
     }
@@ -1473,7 +1473,7 @@
     "pk": 11, 
     "model": "psc.lga", 
     "fields": {
-      "code": "011", 
+      "code": "211", 
       "name": "Gwer East", 
       "parent": 2
     }
@@ -1482,7 +1482,7 @@
     "pk": 12, 
     "model": "psc.lga", 
     "fields": {
-      "code": "012", 
+      "code": "212", 
       "name": "Gwer West", 
       "parent": 2
     }
@@ -1491,7 +1491,7 @@
     "pk": 13, 
     "model": "psc.lga", 
     "fields": {
-      "code": "013", 
+      "code": "213", 
       "name": "Makurdi", 
       "parent": 2
     }
@@ -1500,7 +1500,7 @@
     "pk": 14, 
     "model": "psc.lga", 
     "fields": {
-      "code": "014", 
+      "code": "214", 
       "name": "Tarka", 
       "parent": 2
     }
@@ -1509,7 +1509,7 @@
     "pk": 15, 
     "model": "psc.lga", 
     "fields": {
-      "code": "015", 
+      "code": "215", 
       "name": "Ado", 
       "parent": 3
     }
@@ -1518,7 +1518,7 @@
     "pk": 16, 
     "model": "psc.lga", 
     "fields": {
-      "code": "016", 
+      "code": "216", 
       "name": "Agatu", 
       "parent": 3
     }
@@ -1527,7 +1527,7 @@
     "pk": 17, 
     "model": "psc.lga", 
     "fields": {
-      "code": "017", 
+      "code": "217", 
       "name": "Apa", 
       "parent": 3
     }
@@ -1536,7 +1536,7 @@
     "pk": 18, 
     "model": "psc.lga", 
     "fields": {
-      "code": "018", 
+      "code": "218", 
       "name": "Obi", 
       "parent": 3
     }
@@ -1545,7 +1545,7 @@
     "pk": 19, 
     "model": "psc.lga", 
     "fields": {
-      "code": "019", 
+      "code": "219", 
       "name": "Ogbadibo", 
       "parent": 3
     }
@@ -1554,7 +1554,7 @@
     "pk": 20, 
     "model": "psc.lga", 
     "fields": {
-      "code": "020", 
+      "code": "220", 
       "name": "Ohimini", 
       "parent": 3
     }
@@ -1563,7 +1563,7 @@
     "pk": 21, 
     "model": "psc.lga", 
     "fields": {
-      "code": "021", 
+      "code": "221", 
       "name": "Oju", 
       "parent": 3
     }
@@ -1572,7 +1572,7 @@
     "pk": 22, 
     "model": "psc.lga", 
     "fields": {
-      "code": "022", 
+      "code": "222", 
       "name": "Okpokwu", 
       "parent": 3
     }
@@ -1581,7 +1581,7 @@
     "pk": 23, 
     "model": "psc.lga", 
     "fields": {
-      "code": "023", 
+      "code": "223", 
       "name": "Oturkpo", 
       "parent": 3
     }
@@ -1590,7 +1590,7 @@
     "pk": 24, 
     "model": "psc.lga", 
     "fields": {
-      "code": "024", 
+      "code": "224", 
       "name": "Abaji", 
       "parent": 4
     }
@@ -1599,7 +1599,7 @@
     "pk": 25, 
     "model": "psc.lga", 
     "fields": {
-      "code": "025", 
+      "code": "225", 
       "name": "Kwali", 
       "parent": 4
     }
@@ -1608,7 +1608,7 @@
     "pk": 26, 
     "model": "psc.lga", 
     "fields": {
-      "code": "026", 
+      "code": "226", 
       "name": "Abuja Municipal", 
       "parent": 5
     }
@@ -1617,7 +1617,7 @@
     "pk": 27, 
     "model": "psc.lga", 
     "fields": {
-      "code": "027", 
+      "code": "227", 
       "name": "Bwari", 
       "parent": 5
     }
@@ -1626,7 +1626,7 @@
     "pk": 28, 
     "model": "psc.lga", 
     "fields": {
-      "code": "028", 
+      "code": "228", 
       "name": "Gwagwalada", 
       "parent": 6
     }
@@ -1635,7 +1635,7 @@
     "pk": 29, 
     "model": "psc.lga", 
     "fields": {
-      "code": "029", 
+      "code": "229", 
       "name": "Kuje", 
       "parent": 6
     }
@@ -1644,7 +1644,7 @@
     "pk": 30, 
     "model": "psc.lga", 
     "fields": {
-      "code": "030", 
+      "code": "230", 
       "name": "Adavi", 
       "parent": 7
     }
@@ -1653,7 +1653,7 @@
     "pk": 31, 
     "model": "psc.lga", 
     "fields": {
-      "code": "031", 
+      "code": "231", 
       "name": "Ajaokuta", 
       "parent": 7
     }
@@ -1662,7 +1662,7 @@
     "pk": 32, 
     "model": "psc.lga", 
     "fields": {
-      "code": "032", 
+      "code": "232", 
       "name": "Ogori-Magongo", 
       "parent": 7
     }
@@ -1671,7 +1671,7 @@
     "pk": 33, 
     "model": "psc.lga", 
     "fields": {
-      "code": "033", 
+      "code": "233", 
       "name": "Okehi", 
       "parent": 7
     }
@@ -1680,7 +1680,7 @@
     "pk": 34, 
     "model": "psc.lga", 
     "fields": {
-      "code": "034", 
+      "code": "234", 
       "name": "Okene", 
       "parent": 7
     }
@@ -1689,7 +1689,7 @@
     "pk": 35, 
     "model": "psc.lga", 
     "fields": {
-      "code": "035", 
+      "code": "235", 
       "name": "Ankpa", 
       "parent": 8
     }
@@ -1698,7 +1698,7 @@
     "pk": 36, 
     "model": "psc.lga", 
     "fields": {
-      "code": "036", 
+      "code": "236", 
       "name": "Bassa", 
       "parent": 8
     }
@@ -1707,7 +1707,7 @@
     "pk": 37, 
     "model": "psc.lga", 
     "fields": {
-      "code": "037", 
+      "code": "237", 
       "name": "Dekina", 
       "parent": 8
     }
@@ -1716,7 +1716,7 @@
     "pk": 38, 
     "model": "psc.lga", 
     "fields": {
-      "code": "038", 
+      "code": "238", 
       "name": "Ibaji", 
       "parent": 8
     }
@@ -1725,7 +1725,7 @@
     "pk": 39, 
     "model": "psc.lga", 
     "fields": {
-      "code": "039", 
+      "code": "239", 
       "name": "Idah", 
       "parent": 8
     }
@@ -1734,7 +1734,7 @@
     "pk": 40, 
     "model": "psc.lga", 
     "fields": {
-      "code": "040", 
+      "code": "240", 
       "name": "Igalamela-Odolu", 
       "parent": 8
     }
@@ -1743,7 +1743,7 @@
     "pk": 41, 
     "model": "psc.lga", 
     "fields": {
-      "code": "041", 
+      "code": "241", 
       "name": "Ofu", 
       "parent": 8
     }
@@ -1752,7 +1752,7 @@
     "pk": 42, 
     "model": "psc.lga", 
     "fields": {
-      "code": "042", 
+      "code": "242", 
       "name": "Olamaboro", 
       "parent": 8
     }
@@ -1761,7 +1761,7 @@
     "pk": 43, 
     "model": "psc.lga", 
     "fields": {
-      "code": "043", 
+      "code": "243", 
       "name": "Omala", 
       "parent": 8
     }
@@ -1770,7 +1770,7 @@
     "pk": 44, 
     "model": "psc.lga", 
     "fields": {
-      "code": "044", 
+      "code": "244", 
       "name": "Ijumu", 
       "parent": 9
     }
@@ -1779,7 +1779,7 @@
     "pk": 45, 
     "model": "psc.lga", 
     "fields": {
-      "code": "045", 
+      "code": "245", 
       "name": "Kabba-Bunu", 
       "parent": 9
     }
@@ -1788,7 +1788,7 @@
     "pk": 46, 
     "model": "psc.lga", 
     "fields": {
-      "code": "046", 
+      "code": "246", 
       "name": "Kogi", 
       "parent": 9
     }
@@ -1797,7 +1797,7 @@
     "pk": 47, 
     "model": "psc.lga", 
     "fields": {
-      "code": "047", 
+      "code": "247", 
       "name": "Lokoja", 
       "parent": 9
     }
@@ -1806,7 +1806,7 @@
     "pk": 48, 
     "model": "psc.lga", 
     "fields": {
-      "code": "048", 
+      "code": "248", 
       "name": "Mopa-Muro", 
       "parent": 9
     }
@@ -1815,7 +1815,7 @@
     "pk": 49, 
     "model": "psc.lga", 
     "fields": {
-      "code": "049", 
+      "code": "249", 
       "name": "Yagba East", 
       "parent": 9
     }
@@ -1824,7 +1824,7 @@
     "pk": 50, 
     "model": "psc.lga", 
     "fields": {
-      "code": "050", 
+      "code": "250", 
       "name": "Yagba West", 
       "parent": 9
     }
@@ -1833,7 +1833,7 @@
     "pk": 51, 
     "model": "psc.lga", 
     "fields": {
-      "code": "051", 
+      "code": "251", 
       "name": "Asa", 
       "parent": 10
     }
@@ -1842,7 +1842,7 @@
     "pk": 52, 
     "model": "psc.lga", 
     "fields": {
-      "code": "052", 
+      "code": "252", 
       "name": "Ilorin East", 
       "parent": 10
     }
@@ -1851,7 +1851,7 @@
     "pk": 53, 
     "model": "psc.lga", 
     "fields": {
-      "code": "053", 
+      "code": "253", 
       "name": "Ilorin South", 
       "parent": 10
     }
@@ -1860,7 +1860,7 @@
     "pk": 54, 
     "model": "psc.lga", 
     "fields": {
-      "code": "054", 
+      "code": "254", 
       "name": "Ilorin West", 
       "parent": 10
     }
@@ -1869,7 +1869,7 @@
     "pk": 55, 
     "model": "psc.lga", 
     "fields": {
-      "code": "055", 
+      "code": "255", 
       "name": "Baruten", 
       "parent": 11
     }
@@ -1878,7 +1878,7 @@
     "pk": 56, 
     "model": "psc.lga", 
     "fields": {
-      "code": "056", 
+      "code": "256", 
       "name": "Edu", 
       "parent": 11
     }
@@ -1887,7 +1887,7 @@
     "pk": 57, 
     "model": "psc.lga", 
     "fields": {
-      "code": "057", 
+      "code": "257", 
       "name": "Kaiama", 
       "parent": 11
     }
@@ -1896,7 +1896,7 @@
     "pk": 58, 
     "model": "psc.lga", 
     "fields": {
-      "code": "058", 
+      "code": "258", 
       "name": "Moro", 
       "parent": 11
     }
@@ -1905,7 +1905,7 @@
     "pk": 59, 
     "model": "psc.lga", 
     "fields": {
-      "code": "059", 
+      "code": "259", 
       "name": "Pategi", 
       "parent": 11
     }
@@ -1914,7 +1914,7 @@
     "pk": 60, 
     "model": "psc.lga", 
     "fields": {
-      "code": "060", 
+      "code": "260", 
       "name": "Ekiti", 
       "parent": 12
     }
@@ -1923,7 +1923,7 @@
     "pk": 61, 
     "model": "psc.lga", 
     "fields": {
-      "code": "061", 
+      "code": "261", 
       "name": "Ifelodun", 
       "parent": 12
     }
@@ -1932,7 +1932,7 @@
     "pk": 62, 
     "model": "psc.lga", 
     "fields": {
-      "code": "062", 
+      "code": "262", 
       "name": "Irepodun", 
       "parent": 12
     }
@@ -1941,7 +1941,7 @@
     "pk": 63, 
     "model": "psc.lga", 
     "fields": {
-      "code": "063", 
+      "code": "263", 
       "name": "Isin", 
       "parent": 12
     }
@@ -1950,7 +1950,7 @@
     "pk": 64, 
     "model": "psc.lga", 
     "fields": {
-      "code": "064", 
+      "code": "264", 
       "name": "Offa", 
       "parent": 12
     }
@@ -1959,7 +1959,7 @@
     "pk": 65, 
     "model": "psc.lga", 
     "fields": {
-      "code": "065", 
+      "code": "265", 
       "name": "Oke-Ero", 
       "parent": 12
     }
@@ -1968,7 +1968,7 @@
     "pk": 66, 
     "model": "psc.lga", 
     "fields": {
-      "code": "066", 
+      "code": "266", 
       "name": "Oyun", 
       "parent": 12
     }
@@ -1977,7 +1977,7 @@
     "pk": 67, 
     "model": "psc.lga", 
     "fields": {
-      "code": "067", 
+      "code": "267", 
       "name": "Akwanga", 
       "parent": 13
     }
@@ -1986,7 +1986,7 @@
     "pk": 68, 
     "model": "psc.lga", 
     "fields": {
-      "code": "068", 
+      "code": "268", 
       "name": "Nasarawa Egon", 
       "parent": 13
     }
@@ -1995,7 +1995,7 @@
     "pk": 69, 
     "model": "psc.lga", 
     "fields": {
-      "code": "069", 
+      "code": "269", 
       "name": "Wamba", 
       "parent": 13
     }
@@ -2004,7 +2004,7 @@
     "pk": 70, 
     "model": "psc.lga", 
     "fields": {
-      "code": "070", 
+      "code": "270", 
       "name": "Awe", 
       "parent": 14
     }
@@ -2013,7 +2013,7 @@
     "pk": 71, 
     "model": "psc.lga", 
     "fields": {
-      "code": "071", 
+      "code": "271", 
       "name": "Doma", 
       "parent": 14
     }
@@ -2022,7 +2022,7 @@
     "pk": 72, 
     "model": "psc.lga", 
     "fields": {
-      "code": "072", 
+      "code": "272", 
       "name": "Keana", 
       "parent": 14
     }
@@ -2031,7 +2031,7 @@
     "pk": 73, 
     "model": "psc.lga", 
     "fields": {
-      "code": "073", 
+      "code": "273", 
       "name": "Lafia", 
       "parent": 14
     }
@@ -2040,7 +2040,7 @@
     "pk": 74, 
     "model": "psc.lga", 
     "fields": {
-      "code": "074", 
+      "code": "274", 
       "name": "Obi", 
       "parent": 14
     }
@@ -2049,7 +2049,7 @@
     "pk": 75, 
     "model": "psc.lga", 
     "fields": {
-      "code": "075", 
+      "code": "275", 
       "name": "Karu", 
       "parent": 15
     }
@@ -2058,7 +2058,7 @@
     "pk": 76, 
     "model": "psc.lga", 
     "fields": {
-      "code": "076", 
+      "code": "276", 
       "name": "Keffi", 
       "parent": 15
     }
@@ -2067,7 +2067,7 @@
     "pk": 77, 
     "model": "psc.lga", 
     "fields": {
-      "code": "077", 
+      "code": "277", 
       "name": "Kokona", 
       "parent": 15
     }
@@ -2076,7 +2076,7 @@
     "pk": 78, 
     "model": "psc.lga", 
     "fields": {
-      "code": "078", 
+      "code": "278", 
       "name": "Nasarawa", 
       "parent": 15
     }
@@ -2085,7 +2085,7 @@
     "pk": 79, 
     "model": "psc.lga", 
     "fields": {
-      "code": "079", 
+      "code": "279", 
       "name": "Toto", 
       "parent": 15
     }
@@ -2094,7 +2094,7 @@
     "pk": 80, 
     "model": "psc.lga", 
     "fields": {
-      "code": "080", 
+      "code": "280", 
       "name": "Bosso", 
       "parent": 16
     }
@@ -2103,7 +2103,7 @@
     "pk": 81, 
     "model": "psc.lga", 
     "fields": {
-      "code": "081", 
+      "code": "281", 
       "name": "Chanchanga", 
       "parent": 16
     }
@@ -2112,7 +2112,7 @@
     "pk": 82, 
     "model": "psc.lga", 
     "fields": {
-      "code": "082", 
+      "code": "282", 
       "name": "Gurara", 
       "parent": 16
     }
@@ -2121,7 +2121,7 @@
     "pk": 83, 
     "model": "psc.lga", 
     "fields": {
-      "code": "083", 
+      "code": "283", 
       "name": "Munya", 
       "parent": 16
     }
@@ -2130,7 +2130,7 @@
     "pk": 84, 
     "model": "psc.lga", 
     "fields": {
-      "code": "084", 
+      "code": "284", 
       "name": "Paikoro", 
       "parent": 16
     }
@@ -2139,7 +2139,7 @@
     "pk": 85, 
     "model": "psc.lga", 
     "fields": {
-      "code": "085", 
+      "code": "285", 
       "name": "Rafi", 
       "parent": 16
     }
@@ -2148,7 +2148,7 @@
     "pk": 86, 
     "model": "psc.lga", 
     "fields": {
-      "code": "086", 
+      "code": "286", 
       "name": "Shiroro", 
       "parent": 16
     }
@@ -2157,7 +2157,7 @@
     "pk": 87, 
     "model": "psc.lga", 
     "fields": {
-      "code": "087", 
+      "code": "287", 
       "name": "Suleja", 
       "parent": 16
     }
@@ -2166,7 +2166,7 @@
     "pk": 88, 
     "model": "psc.lga", 
     "fields": {
-      "code": "088", 
+      "code": "288", 
       "name": "Tafa", 
       "parent": 16
     }
@@ -2175,7 +2175,7 @@
     "pk": 89, 
     "model": "psc.lga", 
     "fields": {
-      "code": "089", 
+      "code": "289", 
       "name": "Agwara", 
       "parent": 17
     }
@@ -2184,7 +2184,7 @@
     "pk": 90, 
     "model": "psc.lga", 
     "fields": {
-      "code": "090", 
+      "code": "290", 
       "name": "Borgu", 
       "parent": 17
     }
@@ -2193,7 +2193,7 @@
     "pk": 91, 
     "model": "psc.lga", 
     "fields": {
-      "code": "091", 
+      "code": "291", 
       "name": "Kontagora", 
       "parent": 17
     }
@@ -2202,7 +2202,7 @@
     "pk": 92, 
     "model": "psc.lga", 
     "fields": {
-      "code": "092", 
+      "code": "292", 
       "name": "Magama", 
       "parent": 17
     }
@@ -2211,7 +2211,7 @@
     "pk": 93, 
     "model": "psc.lga", 
     "fields": {
-      "code": "093", 
+      "code": "293", 
       "name": "Mariga", 
       "parent": 17
     }
@@ -2220,7 +2220,7 @@
     "pk": 94, 
     "model": "psc.lga", 
     "fields": {
-      "code": "094", 
+      "code": "294", 
       "name": "Mashegu", 
       "parent": 17
     }
@@ -2229,7 +2229,7 @@
     "pk": 95, 
     "model": "psc.lga", 
     "fields": {
-      "code": "095", 
+      "code": "295", 
       "name": "Rijau", 
       "parent": 17
     }
@@ -2238,7 +2238,7 @@
     "pk": 96, 
     "model": "psc.lga", 
     "fields": {
-      "code": "096", 
+      "code": "296", 
       "name": "Wushishi", 
       "parent": 17
     }
@@ -2247,7 +2247,7 @@
     "pk": 97, 
     "model": "psc.lga", 
     "fields": {
-      "code": "097", 
+      "code": "297", 
       "name": "Agaie", 
       "parent": 18
     }
@@ -2256,7 +2256,7 @@
     "pk": 98, 
     "model": "psc.lga", 
     "fields": {
-      "code": "098", 
+      "code": "298", 
       "name": "Bida", 
       "parent": 18
     }
@@ -2265,7 +2265,7 @@
     "pk": 99, 
     "model": "psc.lga", 
     "fields": {
-      "code": "099", 
+      "code": "299", 
       "name": "Edati", 
       "parent": 18
     }
@@ -2274,7 +2274,7 @@
     "pk": 100, 
     "model": "psc.lga", 
     "fields": {
-      "code": "100", 
+      "code": "300", 
       "name": "Gbako", 
       "parent": 18
     }
@@ -2283,7 +2283,7 @@
     "pk": 101, 
     "model": "psc.lga", 
     "fields": {
-      "code": "101", 
+      "code": "301", 
       "name": "Katcha", 
       "parent": 18
     }
@@ -2292,7 +2292,7 @@
     "pk": 102, 
     "model": "psc.lga", 
     "fields": {
-      "code": "102", 
+      "code": "302", 
       "name": "Lapai", 
       "parent": 18
     }
@@ -2301,7 +2301,7 @@
     "pk": 103, 
     "model": "psc.lga", 
     "fields": {
-      "code": "103", 
+      "code": "303", 
       "name": "Lavun", 
       "parent": 18
     }
@@ -2310,7 +2310,7 @@
     "pk": 104, 
     "model": "psc.lga", 
     "fields": {
-      "code": "104", 
+      "code": "304", 
       "name": "Mokwa", 
       "parent": 18
     }
@@ -2319,7 +2319,7 @@
     "pk": 105, 
     "model": "psc.lga", 
     "fields": {
-      "code": "105", 
+      "code": "305", 
       "name": "Bokkos", 
       "parent": 19
     }
@@ -2328,7 +2328,7 @@
     "pk": 106, 
     "model": "psc.lga", 
     "fields": {
-      "code": "106", 
+      "code": "306", 
       "name": "Kanam", 
       "parent": 19
     }
@@ -2337,7 +2337,7 @@
     "pk": 107, 
     "model": "psc.lga", 
     "fields": {
-      "code": "107", 
+      "code": "307", 
       "name": "Kanke", 
       "parent": 19
     }
@@ -2346,7 +2346,7 @@
     "pk": 108, 
     "model": "psc.lga", 
     "fields": {
-      "code": "108", 
+      "code": "308", 
       "name": "Mangu", 
       "parent": 19
     }
@@ -2355,7 +2355,7 @@
     "pk": 109, 
     "model": "psc.lga", 
     "fields": {
-      "code": "109", 
+      "code": "309", 
       "name": "Pankshin", 
       "parent": 19
     }
@@ -2364,7 +2364,7 @@
     "pk": 110, 
     "model": "psc.lga", 
     "fields": {
-      "code": "110", 
+      "code": "310", 
       "name": "Barkin Ladi", 
       "parent": 20
     }
@@ -2373,7 +2373,7 @@
     "pk": 111, 
     "model": "psc.lga", 
     "fields": {
-      "code": "111", 
+      "code": "311", 
       "name": "Bassa", 
       "parent": 20
     }
@@ -2382,7 +2382,7 @@
     "pk": 112, 
     "model": "psc.lga", 
     "fields": {
-      "code": "112", 
+      "code": "312", 
       "name": "Jos East", 
       "parent": 20
     }
@@ -2391,7 +2391,7 @@
     "pk": 113, 
     "model": "psc.lga", 
     "fields": {
-      "code": "113", 
+      "code": "313", 
       "name": "Jos North", 
       "parent": 20
     }
@@ -2400,7 +2400,7 @@
     "pk": 114, 
     "model": "psc.lga", 
     "fields": {
-      "code": "114", 
+      "code": "314", 
       "name": "Jos South", 
       "parent": 20
     }
@@ -2409,7 +2409,7 @@
     "pk": 115, 
     "model": "psc.lga", 
     "fields": {
-      "code": "115", 
+      "code": "315", 
       "name": "Riyom", 
       "parent": 20
     }
@@ -2418,7 +2418,7 @@
     "pk": 116, 
     "model": "psc.lga", 
     "fields": {
-      "code": "116", 
+      "code": "316", 
       "name": "Langtang North", 
       "parent": 21
     }
@@ -2427,7 +2427,7 @@
     "pk": 117, 
     "model": "psc.lga", 
     "fields": {
-      "code": "117", 
+      "code": "317", 
       "name": "Langtang South", 
       "parent": 21
     }
@@ -2436,7 +2436,7 @@
     "pk": 118, 
     "model": "psc.lga", 
     "fields": {
-      "code": "118", 
+      "code": "318", 
       "name": "Mikang", 
       "parent": 21
     }
@@ -2445,7 +2445,7 @@
     "pk": 119, 
     "model": "psc.lga", 
     "fields": {
-      "code": "119", 
+      "code": "319", 
       "name": "Qua'an Pan", 
       "parent": 21
     }
@@ -2454,7 +2454,7 @@
     "pk": 120, 
     "model": "psc.lga", 
     "fields": {
-      "code": "120", 
+      "code": "320", 
       "name": "Shendam", 
       "parent": 21
     }
@@ -2463,7 +2463,7 @@
     "pk": 121, 
     "model": "psc.lga", 
     "fields": {
-      "code": "121", 
+      "code": "321", 
       "name": "Wase", 
       "parent": 21
     }
@@ -2472,7 +2472,7 @@
     "pk": 122, 
     "model": "psc.lga", 
     "fields": {
-      "code": "122", 
+      "code": "322", 
       "name": "Fufore", 
       "parent": 22
     }
@@ -2481,7 +2481,7 @@
     "pk": 123, 
     "model": "psc.lga", 
     "fields": {
-      "code": "123", 
+      "code": "323", 
       "name": "Girei", 
       "parent": 22
     }
@@ -2490,7 +2490,7 @@
     "pk": 124, 
     "model": "psc.lga", 
     "fields": {
-      "code": "124", 
+      "code": "324", 
       "name": "Gombi", 
       "parent": 22
     }
@@ -2499,7 +2499,7 @@
     "pk": 125, 
     "model": "psc.lga", 
     "fields": {
-      "code": "125", 
+      "code": "325", 
       "name": "Hong", 
       "parent": 22
     }
@@ -2508,7 +2508,7 @@
     "pk": 126, 
     "model": "psc.lga", 
     "fields": {
-      "code": "126", 
+      "code": "326", 
       "name": "Song", 
       "parent": 22
     }
@@ -2517,7 +2517,7 @@
     "pk": 127, 
     "model": "psc.lga", 
     "fields": {
-      "code": "127", 
+      "code": "327", 
       "name": "Yola North", 
       "parent": 22
     }
@@ -2526,7 +2526,7 @@
     "pk": 128, 
     "model": "psc.lga", 
     "fields": {
-      "code": "128", 
+      "code": "328", 
       "name": "Yola South", 
       "parent": 22
     }
@@ -2535,7 +2535,7 @@
     "pk": 129, 
     "model": "psc.lga", 
     "fields": {
-      "code": "129", 
+      "code": "329", 
       "name": "Madagali", 
       "parent": 23
     }
@@ -2544,7 +2544,7 @@
     "pk": 130, 
     "model": "psc.lga", 
     "fields": {
-      "code": "130", 
+      "code": "330", 
       "name": "Maiha", 
       "parent": 23
     }
@@ -2553,7 +2553,7 @@
     "pk": 131, 
     "model": "psc.lga", 
     "fields": {
-      "code": "131", 
+      "code": "331", 
       "name": "Michika", 
       "parent": 23
     }
@@ -2562,7 +2562,7 @@
     "pk": 132, 
     "model": "psc.lga", 
     "fields": {
-      "code": "132", 
+      "code": "332", 
       "name": "Mubi North", 
       "parent": 23
     }
@@ -2571,7 +2571,7 @@
     "pk": 133, 
     "model": "psc.lga", 
     "fields": {
-      "code": "133", 
+      "code": "333", 
       "name": "Mubi South", 
       "parent": 23
     }
@@ -2580,7 +2580,7 @@
     "pk": 134, 
     "model": "psc.lga", 
     "fields": {
-      "code": "134", 
+      "code": "334", 
       "name": "Demsa", 
       "parent": 24
     }
@@ -2589,7 +2589,7 @@
     "pk": 135, 
     "model": "psc.lga", 
     "fields": {
-      "code": "135", 
+      "code": "335", 
       "name": "Ganye", 
       "parent": 24
     }
@@ -2598,7 +2598,7 @@
     "pk": 136, 
     "model": "psc.lga", 
     "fields": {
-      "code": "136", 
+      "code": "336", 
       "name": "Guyuk", 
       "parent": 24
     }
@@ -2607,7 +2607,7 @@
     "pk": 137, 
     "model": "psc.lga", 
     "fields": {
-      "code": "137", 
+      "code": "337", 
       "name": "Jada", 
       "parent": 24
     }
@@ -2616,7 +2616,7 @@
     "pk": 138, 
     "model": "psc.lga", 
     "fields": {
-      "code": "138", 
+      "code": "338", 
       "name": "Lamurde", 
       "parent": 24
     }
@@ -2625,7 +2625,7 @@
     "pk": 139, 
     "model": "psc.lga", 
     "fields": {
-      "code": "139", 
+      "code": "339", 
       "name": "Mayo-Belwa", 
       "parent": 24
     }
@@ -2634,7 +2634,7 @@
     "pk": 140, 
     "model": "psc.lga", 
     "fields": {
-      "code": "140", 
+      "code": "340", 
       "name": "Numan", 
       "parent": 24
     }
@@ -2643,7 +2643,7 @@
     "pk": 141, 
     "model": "psc.lga", 
     "fields": {
-      "code": "141", 
+      "code": "341", 
       "name": "Shelleng", 
       "parent": 24
     }
@@ -2652,7 +2652,7 @@
     "pk": 142, 
     "model": "psc.lga", 
     "fields": {
-      "code": "142", 
+      "code": "342", 
       "name": "Toungo", 
       "parent": 24
     }
@@ -2661,7 +2661,7 @@
     "pk": 143, 
     "model": "psc.lga", 
     "fields": {
-      "code": "143", 
+      "code": "343", 
       "name": "Damban", 
       "parent": 25
     }
@@ -2670,7 +2670,7 @@
     "pk": 144, 
     "model": "psc.lga", 
     "fields": {
-      "code": "144", 
+      "code": "344", 
       "name": "Darazo", 
       "parent": 25
     }
@@ -2679,7 +2679,7 @@
     "pk": 145, 
     "model": "psc.lga", 
     "fields": {
-      "code": "145", 
+      "code": "345", 
       "name": "Ganjuwa", 
       "parent": 25
     }
@@ -2688,7 +2688,7 @@
     "pk": 146, 
     "model": "psc.lga", 
     "fields": {
-      "code": "146", 
+      "code": "346", 
       "name": "Misau", 
       "parent": 25
     }
@@ -2697,7 +2697,7 @@
     "pk": 147, 
     "model": "psc.lga", 
     "fields": {
-      "code": "147", 
+      "code": "347", 
       "name": "Ningi", 
       "parent": 25
     }
@@ -2706,7 +2706,7 @@
     "pk": 148, 
     "model": "psc.lga", 
     "fields": {
-      "code": "148", 
+      "code": "348", 
       "name": "Warji", 
       "parent": 25
     }
@@ -2715,7 +2715,7 @@
     "pk": 149, 
     "model": "psc.lga", 
     "fields": {
-      "code": "149", 
+      "code": "349", 
       "name": "Gamawa", 
       "parent": 26
     }
@@ -2724,7 +2724,7 @@
     "pk": 150, 
     "model": "psc.lga", 
     "fields": {
-      "code": "150", 
+      "code": "350", 
       "name": "Giade", 
       "parent": 26
     }
@@ -2733,7 +2733,7 @@
     "pk": 151, 
     "model": "psc.lga", 
     "fields": {
-      "code": "151", 
+      "code": "351", 
       "name": "Itas-Gadau", 
       "parent": 26
     }
@@ -2742,7 +2742,7 @@
     "pk": 152, 
     "model": "psc.lga", 
     "fields": {
-      "code": "152", 
+      "code": "352", 
       "name": "Jama'are", 
       "parent": 26
     }
@@ -2751,7 +2751,7 @@
     "pk": 153, 
     "model": "psc.lga", 
     "fields": {
-      "code": "153", 
+      "code": "353", 
       "name": "Katagum", 
       "parent": 26
     }
@@ -2760,7 +2760,7 @@
     "pk": 154, 
     "model": "psc.lga", 
     "fields": {
-      "code": "154", 
+      "code": "354", 
       "name": "Shira", 
       "parent": 26
     }
@@ -2769,7 +2769,7 @@
     "pk": 155, 
     "model": "psc.lga", 
     "fields": {
-      "code": "155", 
+      "code": "355", 
       "name": "Zaki", 
       "parent": 26
     }
@@ -2778,7 +2778,7 @@
     "pk": 156, 
     "model": "psc.lga", 
     "fields": {
-      "code": "156", 
+      "code": "356", 
       "name": "Alkaleri", 
       "parent": 27
     }
@@ -2787,7 +2787,7 @@
     "pk": 157, 
     "model": "psc.lga", 
     "fields": {
-      "code": "157", 
+      "code": "357", 
       "name": "Bauchi", 
       "parent": 27
     }
@@ -2796,7 +2796,7 @@
     "pk": 158, 
     "model": "psc.lga", 
     "fields": {
-      "code": "158", 
+      "code": "358", 
       "name": "Bogoro", 
       "parent": 27
     }
@@ -2805,7 +2805,7 @@
     "pk": 159, 
     "model": "psc.lga", 
     "fields": {
-      "code": "159", 
+      "code": "359", 
       "name": "Dass", 
       "parent": 27
     }
@@ -2814,7 +2814,7 @@
     "pk": 160, 
     "model": "psc.lga", 
     "fields": {
-      "code": "160", 
+      "code": "360", 
       "name": "Kirfi", 
       "parent": 27
     }
@@ -2823,7 +2823,7 @@
     "pk": 161, 
     "model": "psc.lga", 
     "fields": {
-      "code": "161", 
+      "code": "361", 
       "name": "Tafawa Balewa", 
       "parent": 27
     }
@@ -2832,7 +2832,7 @@
     "pk": 162, 
     "model": "psc.lga", 
     "fields": {
-      "code": "162", 
+      "code": "362", 
       "name": "Toro", 
       "parent": 27
     }
@@ -2841,7 +2841,7 @@
     "pk": 163, 
     "model": "psc.lga", 
     "fields": {
-      "code": "163", 
+      "code": "363", 
       "name": "Bama", 
       "parent": 28
     }
@@ -2850,7 +2850,7 @@
     "pk": 164, 
     "model": "psc.lga", 
     "fields": {
-      "code": "164", 
+      "code": "364", 
       "name": "Dikwa", 
       "parent": 28
     }
@@ -2859,7 +2859,7 @@
     "pk": 165, 
     "model": "psc.lga", 
     "fields": {
-      "code": "165", 
+      "code": "365", 
       "name": "Jere", 
       "parent": 28
     }
@@ -2868,7 +2868,7 @@
     "pk": 166, 
     "model": "psc.lga", 
     "fields": {
-      "code": "166", 
+      "code": "366", 
       "name": "Kala-Balge", 
       "parent": 28
     }
@@ -2877,7 +2877,7 @@
     "pk": 167, 
     "model": "psc.lga", 
     "fields": {
-      "code": "167", 
+      "code": "367", 
       "name": "Konduga", 
       "parent": 28
     }
@@ -2886,7 +2886,7 @@
     "pk": 168, 
     "model": "psc.lga", 
     "fields": {
-      "code": "168", 
+      "code": "368", 
       "name": "Mafa", 
       "parent": 28
     }
@@ -2895,7 +2895,7 @@
     "pk": 169, 
     "model": "psc.lga", 
     "fields": {
-      "code": "169", 
+      "code": "369", 
       "name": "Maiduguri Metropolitan", 
       "parent": 28
     }
@@ -2904,7 +2904,7 @@
     "pk": 170, 
     "model": "psc.lga", 
     "fields": {
-      "code": "170", 
+      "code": "370", 
       "name": "Ngala", 
       "parent": 28
     }
@@ -2913,7 +2913,7 @@
     "pk": 171, 
     "model": "psc.lga", 
     "fields": {
-      "code": "171", 
+      "code": "371", 
       "name": "Abadam", 
       "parent": 29
     }
@@ -2922,7 +2922,7 @@
     "pk": 172, 
     "model": "psc.lga", 
     "fields": {
-      "code": "172", 
+      "code": "372", 
       "name": "Gubio", 
       "parent": 29
     }
@@ -2931,7 +2931,7 @@
     "pk": 173, 
     "model": "psc.lga", 
     "fields": {
-      "code": "173", 
+      "code": "373", 
       "name": "Guzamala", 
       "parent": 29
     }
@@ -2940,7 +2940,7 @@
     "pk": 174, 
     "model": "psc.lga", 
     "fields": {
-      "code": "174", 
+      "code": "374", 
       "name": "Kaga", 
       "parent": 29
     }
@@ -2949,7 +2949,7 @@
     "pk": 175, 
     "model": "psc.lga", 
     "fields": {
-      "code": "175", 
+      "code": "375", 
       "name": "Kukawa", 
       "parent": 29
     }
@@ -2958,7 +2958,7 @@
     "pk": 176, 
     "model": "psc.lga", 
     "fields": {
-      "code": "176", 
+      "code": "376", 
       "name": "Magumeri", 
       "parent": 29
     }
@@ -2967,7 +2967,7 @@
     "pk": 177, 
     "model": "psc.lga", 
     "fields": {
-      "code": "177", 
+      "code": "377", 
       "name": "Marte", 
       "parent": 29
     }
@@ -2976,7 +2976,7 @@
     "pk": 178, 
     "model": "psc.lga", 
     "fields": {
-      "code": "178", 
+      "code": "378", 
       "name": "Mobbar", 
       "parent": 29
     }
@@ -2985,7 +2985,7 @@
     "pk": 179, 
     "model": "psc.lga", 
     "fields": {
-      "code": "179", 
+      "code": "379", 
       "name": "Monguno", 
       "parent": 29
     }
@@ -2994,7 +2994,7 @@
     "pk": 180, 
     "model": "psc.lga", 
     "fields": {
-      "code": "180", 
+      "code": "380", 
       "name": "Nganzai", 
       "parent": 29
     }
@@ -3003,7 +3003,7 @@
     "pk": 181, 
     "model": "psc.lga", 
     "fields": {
-      "code": "181", 
+      "code": "381", 
       "name": "Askira-Uba", 
       "parent": 30
     }
@@ -3012,7 +3012,7 @@
     "pk": 182, 
     "model": "psc.lga", 
     "fields": {
-      "code": "182", 
+      "code": "382", 
       "name": "Bayo", 
       "parent": 30
     }
@@ -3021,7 +3021,7 @@
     "pk": 183, 
     "model": "psc.lga", 
     "fields": {
-      "code": "183", 
+      "code": "383", 
       "name": "Biu", 
       "parent": 30
     }
@@ -3030,7 +3030,7 @@
     "pk": 184, 
     "model": "psc.lga", 
     "fields": {
-      "code": "184", 
+      "code": "384", 
       "name": "Chibok", 
       "parent": 30
     }
@@ -3039,7 +3039,7 @@
     "pk": 185, 
     "model": "psc.lga", 
     "fields": {
-      "code": "185", 
+      "code": "385", 
       "name": "Damboa", 
       "parent": 30
     }
@@ -3048,7 +3048,7 @@
     "pk": 186, 
     "model": "psc.lga", 
     "fields": {
-      "code": "186", 
+      "code": "387", 
       "name": "Gwoza", 
       "parent": 30
     }
@@ -3057,7 +3057,7 @@
     "pk": 187, 
     "model": "psc.lga", 
     "fields": {
-      "code": "187", 
+      "code": "388", 
       "name": "Hawul", 
       "parent": 30
     }
@@ -3075,7 +3075,7 @@
     "pk": 189, 
     "model": "psc.lga", 
     "fields": {
-      "code": "189", 
+      "code": "389", 
       "name": "Shani", 
       "parent": 30
     }
@@ -3084,7 +3084,7 @@
     "pk": 190, 
     "model": "psc.lga", 
     "fields": {
-      "code": "190", 
+      "code": "390", 
       "name": "Akko", 
       "parent": 31
     }
@@ -3093,7 +3093,7 @@
     "pk": 191, 
     "model": "psc.lga", 
     "fields": {
-      "code": "191", 
+      "code": "391", 
       "name": "Yamaltu-Deba", 
       "parent": 31
     }
@@ -3102,7 +3102,7 @@
     "pk": 192, 
     "model": "psc.lga", 
     "fields": {
-      "code": "192", 
+      "code": "392", 
       "name": "Dukku", 
       "parent": 32
     }
@@ -3111,7 +3111,7 @@
     "pk": 193, 
     "model": "psc.lga", 
     "fields": {
-      "code": "193", 
+      "code": "393", 
       "name": "Funakaye", 
       "parent": 32
     }
@@ -3120,7 +3120,7 @@
     "pk": 194, 
     "model": "psc.lga", 
     "fields": {
-      "code": "194", 
+      "code": "394", 
       "name": "Gombe", 
       "parent": 32
     }
@@ -3129,7 +3129,7 @@
     "pk": 195, 
     "model": "psc.lga", 
     "fields": {
-      "code": "195", 
+      "code": "395", 
       "name": "Kwami", 
       "parent": 32
     }
@@ -3138,7 +3138,7 @@
     "pk": 196, 
     "model": "psc.lga", 
     "fields": {
-      "code": "196", 
+      "code": "396", 
       "name": "Nafada", 
       "parent": 32
     }
@@ -3147,7 +3147,7 @@
     "pk": 197, 
     "model": "psc.lga", 
     "fields": {
-      "code": "197", 
+      "code": "397", 
       "name": "Balanga", 
       "parent": 33
     }
@@ -3156,7 +3156,7 @@
     "pk": 198, 
     "model": "psc.lga", 
     "fields": {
-      "code": "198", 
+      "code": "398", 
       "name": "Billiri", 
       "parent": 33
     }
@@ -3165,7 +3165,7 @@
     "pk": 199, 
     "model": "psc.lga", 
     "fields": {
-      "code": "199", 
+      "code": "399", 
       "name": "Kaltungo", 
       "parent": 33
     }
@@ -3174,7 +3174,7 @@
     "pk": 200, 
     "model": "psc.lga", 
     "fields": {
-      "code": "200", 
+      "code": "400", 
       "name": "Shongom", 
       "parent": 33
     }
@@ -3183,7 +3183,7 @@
     "pk": 201, 
     "model": "psc.lga", 
     "fields": {
-      "code": "201", 
+      "code": "401", 
       "name": "Bali", 
       "parent": 34
     }
@@ -3192,7 +3192,7 @@
     "pk": 202, 
     "model": "psc.lga", 
     "fields": {
-      "code": "202", 
+      "code": "402", 
       "name": "Gashaka", 
       "parent": 34
     }
@@ -3201,7 +3201,7 @@
     "pk": 203, 
     "model": "psc.lga", 
     "fields": {
-      "code": "203", 
+      "code": "403", 
       "name": "Gassol", 
       "parent": 34
     }
@@ -3210,7 +3210,7 @@
     "pk": 204, 
     "model": "psc.lga", 
     "fields": {
-      "code": "204", 
+      "code": "404", 
       "name": "Kurmi", 
       "parent": 34
     }
@@ -3219,7 +3219,7 @@
     "pk": 205, 
     "model": "psc.lga", 
     "fields": {
-      "code": "205", 
+      "code": "405", 
       "name": "Sardauna", 
       "parent": 34
     }
@@ -3228,7 +3228,7 @@
     "pk": 206, 
     "model": "psc.lga", 
     "fields": {
-      "code": "206", 
+      "code": "406", 
       "name": "Ardo-Kola", 
       "parent": 35
     }
@@ -3237,7 +3237,7 @@
     "pk": 207, 
     "model": "psc.lga", 
     "fields": {
-      "code": "207", 
+      "code": "407", 
       "name": "Jalingo", 
       "parent": 35
     }
@@ -3246,7 +3246,7 @@
     "pk": 208, 
     "model": "psc.lga", 
     "fields": {
-      "code": "208", 
+      "code": "408", 
       "name": "Karim-Lamido", 
       "parent": 35
     }
@@ -3255,7 +3255,7 @@
     "pk": 209, 
     "model": "psc.lga", 
     "fields": {
-      "code": "209", 
+      "code": "409", 
       "name": "Lau", 
       "parent": 35
     }
@@ -3264,7 +3264,7 @@
     "pk": 210, 
     "model": "psc.lga", 
     "fields": {
-      "code": "210", 
+      "code": "410", 
       "name": "Yorro", 
       "parent": 35
     }
@@ -3273,7 +3273,7 @@
     "pk": 211, 
     "model": "psc.lga", 
     "fields": {
-      "code": "211", 
+      "code": "411", 
       "name": "Zing", 
       "parent": 35
     }
@@ -3282,7 +3282,7 @@
     "pk": 212, 
     "model": "psc.lga", 
     "fields": {
-      "code": "212", 
+      "code": "412", 
       "name": "Donga", 
       "parent": 36
     }
@@ -3291,7 +3291,7 @@
     "pk": 213, 
     "model": "psc.lga", 
     "fields": {
-      "code": "213", 
+      "code": "413", 
       "name": "Ibi", 
       "parent": 36
     }
@@ -3300,7 +3300,7 @@
     "pk": 214, 
     "model": "psc.lga", 
     "fields": {
-      "code": "214", 
+      "code": "414", 
       "name": "Takum", 
       "parent": 36
     }
@@ -3309,7 +3309,7 @@
     "pk": 215, 
     "model": "psc.lga", 
     "fields": {
-      "code": "215", 
+      "code": "415", 
       "name": "Ussa", 
       "parent": 36
     }
@@ -3318,7 +3318,7 @@
     "pk": 216, 
     "model": "psc.lga", 
     "fields": {
-      "code": "216", 
+      "code": "416", 
       "name": "Wukari", 
       "parent": 36
     }
@@ -3327,7 +3327,7 @@
     "pk": 217, 
     "model": "psc.lga", 
     "fields": {
-      "code": "217", 
+      "code": "417", 
       "name": "Bursari", 
       "parent": 37
     }
@@ -3336,7 +3336,7 @@
     "pk": 218, 
     "model": "psc.lga", 
     "fields": {
-      "code": "218", 
+      "code": "418", 
       "name": "Damaturu", 
       "parent": 37
     }
@@ -3345,7 +3345,7 @@
     "pk": 219, 
     "model": "psc.lga", 
     "fields": {
-      "code": "219", 
+      "code": "419", 
       "name": "Geidam", 
       "parent": 37
     }
@@ -3354,7 +3354,7 @@
     "pk": 220, 
     "model": "psc.lga", 
     "fields": {
-      "code": "220", 
+      "code": "420", 
       "name": "Gujba", 
       "parent": 37
     }
@@ -3363,7 +3363,7 @@
     "pk": 221, 
     "model": "psc.lga", 
     "fields": {
-      "code": "221", 
+      "code": "421", 
       "name": "Gulani", 
       "parent": 37
     }
@@ -3372,7 +3372,7 @@
     "pk": 222, 
     "model": "psc.lga", 
     "fields": {
-      "code": "222", 
+      "code": "422", 
       "name": "Tarmuwa", 
       "parent": 37
     }
@@ -3381,7 +3381,7 @@
     "pk": 223, 
     "model": "psc.lga", 
     "fields": {
-      "code": "223", 
+      "code": "423", 
       "name": "Yunusari", 
       "parent": 37
     }
@@ -3390,7 +3390,7 @@
     "pk": 224, 
     "model": "psc.lga", 
     "fields": {
-      "code": "224", 
+      "code": "424", 
       "name": "Bade", 
       "parent": 38
     }
@@ -3399,7 +3399,7 @@
     "pk": 225, 
     "model": "psc.lga", 
     "fields": {
-      "code": "225", 
+      "code": "425", 
       "name": "Jakusko", 
       "parent": 38
     }
@@ -3408,7 +3408,7 @@
     "pk": 226, 
     "model": "psc.lga", 
     "fields": {
-      "code": "226", 
+      "code": "426", 
       "name": "Karasuwa", 
       "parent": 38
     }
@@ -3417,7 +3417,7 @@
     "pk": 227, 
     "model": "psc.lga", 
     "fields": {
-      "code": "227", 
+      "code": "427", 
       "name": "Machina", 
       "parent": 38
     }
@@ -3426,7 +3426,7 @@
     "pk": 228, 
     "model": "psc.lga", 
     "fields": {
-      "code": "228", 
+      "code": "428", 
       "name": "Nguru", 
       "parent": 38
     }
@@ -3435,7 +3435,7 @@
     "pk": 229, 
     "model": "psc.lga", 
     "fields": {
-      "code": "229", 
+      "code": "429", 
       "name": "Yusufari", 
       "parent": 38
     }
@@ -3444,7 +3444,7 @@
     "pk": 230, 
     "model": "psc.lga", 
     "fields": {
-      "code": "230", 
+      "code": "430", 
       "name": "Fika", 
       "parent": 39
     }
@@ -3453,7 +3453,7 @@
     "pk": 231, 
     "model": "psc.lga", 
     "fields": {
-      "code": "231", 
+      "code": "431", 
       "name": "Fune", 
       "parent": 39
     }
@@ -3462,7 +3462,7 @@
     "pk": 232, 
     "model": "psc.lga", 
     "fields": {
-      "code": "232", 
+      "code": "432", 
       "name": "Nangere", 
       "parent": 39
     }
@@ -3471,7 +3471,7 @@
     "pk": 233, 
     "model": "psc.lga", 
     "fields": {
-      "code": "233", 
+      "code": "433", 
       "name": "Potiskum", 
       "parent": 39
     }
@@ -3480,7 +3480,7 @@
     "pk": 234, 
     "model": "psc.lga", 
     "fields": {
-      "code": "234", 
+      "code": "434", 
       "name": "Auyo", 
       "parent": 40
     }
@@ -3489,7 +3489,7 @@
     "pk": 235, 
     "model": "psc.lga", 
     "fields": {
-      "code": "235", 
+      "code": "435", 
       "name": "Biriniwa", 
       "parent": 40
     }
@@ -3498,7 +3498,7 @@
     "pk": 236, 
     "model": "psc.lga", 
     "fields": {
-      "code": "236", 
+      "code": "436", 
       "name": "Guri", 
       "parent": 40
     }
@@ -3507,7 +3507,7 @@
     "pk": 237, 
     "model": "psc.lga", 
     "fields": {
-      "code": "237", 
+      "code": "437", 
       "name": "Hadejia", 
       "parent": 40
     }
@@ -3516,7 +3516,7 @@
     "pk": 238, 
     "model": "psc.lga", 
     "fields": {
-      "code": "238", 
+      "code": "438", 
       "name": "Kafin Hausa", 
       "parent": 40
     }
@@ -3525,7 +3525,7 @@
     "pk": 239, 
     "model": "psc.lga", 
     "fields": {
-      "code": "239", 
+      "code": "439", 
       "name": "Kaugama", 
       "parent": 40
     }
@@ -3534,7 +3534,7 @@
     "pk": 240, 
     "model": "psc.lga", 
     "fields": {
-      "code": "240", 
+      "code": "440", 
       "name": "Kiri Kasama", 
       "parent": 40
     }
@@ -3543,7 +3543,7 @@
     "pk": 241, 
     "model": "psc.lga", 
     "fields": {
-      "code": "241", 
+      "code": "441", 
       "name": "Malam Madori", 
       "parent": 40
     }
@@ -3552,7 +3552,7 @@
     "pk": 242, 
     "model": "psc.lga", 
     "fields": {
-      "code": "242", 
+      "code": "442", 
       "name": "Babura", 
       "parent": 41
     }
@@ -3561,7 +3561,7 @@
     "pk": 243, 
     "model": "psc.lga", 
     "fields": {
-      "code": "243", 
+      "code": "443", 
       "name": "Gagarawa", 
       "parent": 41
     }
@@ -3570,7 +3570,7 @@
     "pk": 244, 
     "model": "psc.lga", 
     "fields": {
-      "code": "244", 
+      "code": "444", 
       "name": "Garki", 
       "parent": 41
     }
@@ -3579,7 +3579,7 @@
     "pk": 245, 
     "model": "psc.lga", 
     "fields": {
-      "code": "245", 
+      "code": "445", 
       "name": "Gumel", 
       "parent": 41
     }
@@ -3588,7 +3588,7 @@
     "pk": 246, 
     "model": "psc.lga", 
     "fields": {
-      "code": "246", 
+      "code": "446", 
       "name": "Gwiwa", 
       "parent": 41
     }
@@ -3597,7 +3597,7 @@
     "pk": 247, 
     "model": "psc.lga", 
     "fields": {
-      "code": "247", 
+      "code": "447", 
       "name": "Kazaure", 
       "parent": 41
     }
@@ -3606,7 +3606,7 @@
     "pk": 248, 
     "model": "psc.lga", 
     "fields": {
-      "code": "248", 
+      "code": "448", 
       "name": "Maigatari", 
       "parent": 41
     }
@@ -3615,7 +3615,7 @@
     "pk": 249, 
     "model": "psc.lga", 
     "fields": {
-      "code": "249", 
+      "code": "449", 
       "name": "Ringim", 
       "parent": 41
     }
@@ -3624,7 +3624,7 @@
     "pk": 250, 
     "model": "psc.lga", 
     "fields": {
-      "code": "250", 
+      "code": "450", 
       "name": "Roni", 
       "parent": 41
     }
@@ -3633,7 +3633,7 @@
     "pk": 251, 
     "model": "psc.lga", 
     "fields": {
-      "code": "251", 
+      "code": "451", 
       "name": "Sule Tankarkar", 
       "parent": 41
     }
@@ -3642,7 +3642,7 @@
     "pk": 252, 
     "model": "psc.lga", 
     "fields": {
-      "code": "252", 
+      "code": "452", 
       "name": "Taura", 
       "parent": 41
     }
@@ -3651,7 +3651,7 @@
     "pk": 253, 
     "model": "psc.lga", 
     "fields": {
-      "code": "253", 
+      "code": "453", 
       "name": "Yankwashi", 
       "parent": 41
     }
@@ -3660,7 +3660,7 @@
     "pk": 254, 
     "model": "psc.lga", 
     "fields": {
-      "code": "254", 
+      "code": "454", 
       "name": "Birnin Kudu", 
       "parent": 42
     }
@@ -3669,7 +3669,7 @@
     "pk": 255, 
     "model": "psc.lga", 
     "fields": {
-      "code": "255", 
+      "code": "455", 
       "name": "Buji", 
       "parent": 42
     }
@@ -3678,7 +3678,7 @@
     "pk": 256, 
     "model": "psc.lga", 
     "fields": {
-      "code": "256", 
+      "code": "456", 
       "name": "Dutse", 
       "parent": 42
     }
@@ -3687,7 +3687,7 @@
     "pk": 257, 
     "model": "psc.lga", 
     "fields": {
-      "code": "257", 
+      "code": "457", 
       "name": "Gwaram", 
       "parent": 42
     }
@@ -3696,7 +3696,7 @@
     "pk": 258, 
     "model": "psc.lga", 
     "fields": {
-      "code": "258", 
+      "code": "458", 
       "name": "Jahun", 
       "parent": 42
     }
@@ -3705,7 +3705,7 @@
     "pk": 259, 
     "model": "psc.lga", 
     "fields": {
-      "code": "259", 
+      "code": "459", 
       "name": "Kiyawa", 
       "parent": 42
     }
@@ -3714,7 +3714,7 @@
     "pk": 260, 
     "model": "psc.lga", 
     "fields": {
-      "code": "260", 
+      "code": "460", 
       "name": "Miga", 
       "parent": 42
     }
@@ -3723,7 +3723,7 @@
     "pk": 261, 
     "model": "psc.lga", 
     "fields": {
-      "code": "261", 
+      "code": "461", 
       "name": "Birnin Gwari", 
       "parent": 43
     }
@@ -3732,7 +3732,7 @@
     "pk": 262, 
     "model": "psc.lga", 
     "fields": {
-      "code": "262", 
+      "code": "462", 
       "name": "Chikun", 
       "parent": 43
     }
@@ -3741,7 +3741,7 @@
     "pk": 263, 
     "model": "psc.lga", 
     "fields": {
-      "code": "263", 
+      "code": "463", 
       "name": "Giwa", 
       "parent": 43
     }
@@ -3750,7 +3750,7 @@
     "pk": 264, 
     "model": "psc.lga", 
     "fields": {
-      "code": "264", 
+      "code": "464", 
       "name": "Igabi", 
       "parent": 43
     }
@@ -3759,7 +3759,7 @@
     "pk": 265, 
     "model": "psc.lga", 
     "fields": {
-      "code": "265", 
+      "code": "465", 
       "name": "Kaduna North", 
       "parent": 43
     }
@@ -3768,7 +3768,7 @@
     "pk": 266, 
     "model": "psc.lga", 
     "fields": {
-      "code": "266", 
+      "code": "466", 
       "name": "Kaduna South", 
       "parent": 43
     }
@@ -3777,7 +3777,7 @@
     "pk": 267, 
     "model": "psc.lga", 
     "fields": {
-      "code": "267", 
+      "code": "467", 
       "name": "Kajuru", 
       "parent": 43
     }
@@ -3786,7 +3786,7 @@
     "pk": 268, 
     "model": "psc.lga", 
     "fields": {
-      "code": "268", 
+      "code": "468", 
       "name": "Ikara", 
       "parent": 44
     }
@@ -3795,7 +3795,7 @@
     "pk": 269, 
     "model": "psc.lga", 
     "fields": {
-      "code": "269", 
+      "code": "469", 
       "name": "Kubau", 
       "parent": 44
     }
@@ -3804,7 +3804,7 @@
     "pk": 270, 
     "model": "psc.lga", 
     "fields": {
-      "code": "270", 
+      "code": "470", 
       "name": "Kudan", 
       "parent": 44
     }
@@ -3813,7 +3813,7 @@
     "pk": 271, 
     "model": "psc.lga", 
     "fields": {
-      "code": "271", 
+      "code": "471", 
       "name": "Lere", 
       "parent": 44
     }
@@ -3822,7 +3822,7 @@
     "pk": 272, 
     "model": "psc.lga", 
     "fields": {
-      "code": "272", 
+      "code": "472", 
       "name": "Makarfi", 
       "parent": 44
     }
@@ -3831,7 +3831,7 @@
     "pk": 273, 
     "model": "psc.lga", 
     "fields": {
-      "code": "273", 
+      "code": "473", 
       "name": "Sabon Gari", 
       "parent": 44
     }
@@ -3840,7 +3840,7 @@
     "pk": 274, 
     "model": "psc.lga", 
     "fields": {
-      "code": "274", 
+      "code": "474", 
       "name": "Soba", 
       "parent": 44
     }
@@ -3849,7 +3849,7 @@
     "pk": 275, 
     "model": "psc.lga", 
     "fields": {
-      "code": "275", 
+      "code": "475", 
       "name": "Zaria", 
       "parent": 44
     }
@@ -3858,7 +3858,7 @@
     "pk": 276, 
     "model": "psc.lga", 
     "fields": {
-      "code": "276", 
+      "code": "476", 
       "name": "Jaba", 
       "parent": 45
     }
@@ -3867,7 +3867,7 @@
     "pk": 277, 
     "model": "psc.lga", 
     "fields": {
-      "code": "277", 
+      "code": "477", 
       "name": "Jema'a", 
       "parent": 45
     }
@@ -3876,7 +3876,7 @@
     "pk": 278, 
     "model": "psc.lga", 
     "fields": {
-      "code": "278", 
+      "code": "478", 
       "name": "Kachia", 
       "parent": 45
     }
@@ -3885,7 +3885,7 @@
     "pk": 279, 
     "model": "psc.lga", 
     "fields": {
-      "code": "279", 
+      "code": "479", 
       "name": "Kagarko", 
       "parent": 45
     }
@@ -3894,7 +3894,7 @@
     "pk": 280, 
     "model": "psc.lga", 
     "fields": {
-      "code": "280", 
+      "code": "480", 
       "name": "Kaura", 
       "parent": 45
     }
@@ -3903,7 +3903,7 @@
     "pk": 281, 
     "model": "psc.lga", 
     "fields": {
-      "code": "281", 
+      "code": "481", 
       "name": "Kauru", 
       "parent": 45
     }
@@ -3912,7 +3912,7 @@
     "pk": 282, 
     "model": "psc.lga", 
     "fields": {
-      "code": "282", 
+      "code": "482", 
       "name": "Sanga", 
       "parent": 45
     }
@@ -3921,7 +3921,7 @@
     "pk": 283, 
     "model": "psc.lga", 
     "fields": {
-      "code": "283", 
+      "code": "483", 
       "name": "Zangon Kataf", 
       "parent": 45
     }
@@ -3930,7 +3930,7 @@
     "pk": 284, 
     "model": "psc.lga", 
     "fields": {
-      "code": "284", 
+      "code": "484", 
       "name": "Dala", 
       "parent": 46
     }
@@ -3939,7 +3939,7 @@
     "pk": 285, 
     "model": "psc.lga", 
     "fields": {
-      "code": "285", 
+      "code": "485", 
       "name": "Dawakin Kudu", 
       "parent": 46
     }
@@ -3948,7 +3948,7 @@
     "pk": 286, 
     "model": "psc.lga", 
     "fields": {
-      "code": "286", 
+      "code": "486", 
       "name": "Fagge", 
       "parent": 46
     }
@@ -3957,7 +3957,7 @@
     "pk": 287, 
     "model": "psc.lga", 
     "fields": {
-      "code": "287", 
+      "code": "488", 
       "name": "Garun Mallam", 
       "parent": 46
     }
@@ -3966,7 +3966,7 @@
     "pk": 288, 
     "model": "psc.lga", 
     "fields": {
-      "code": "288", 
+      "code": "489", 
       "name": "Gezawa", 
       "parent": 46
     }
@@ -3975,7 +3975,7 @@
     "pk": 289, 
     "model": "psc.lga", 
     "fields": {
-      "code": "289", 
+      "code": "490", 
       "name": "Gwale", 
       "parent": 46
     }
@@ -3984,7 +3984,7 @@
     "pk": 290, 
     "model": "psc.lga", 
     "fields": {
-      "code": "290", 
+      "code": "491", 
       "name": "Kano Municipal", 
       "parent": 46
     }
@@ -3993,7 +3993,7 @@
     "pk": 291, 
     "model": "psc.lga", 
     "fields": {
-      "code": "291", 
+      "code": "492", 
       "name": "Kumbotso", 
       "parent": 46
     }
@@ -4002,7 +4002,7 @@
     "pk": 292, 
     "model": "psc.lga", 
     "fields": {
-      "code": "292", 
+      "code": "493", 
       "name": "Kura", 
       "parent": 46
     }
@@ -4011,7 +4011,7 @@
     "pk": 293, 
     "model": "psc.lga", 
     "fields": {
-      "code": "293", 
+      "code": "494", 
       "name": "Madobi", 
       "parent": 46
     }
@@ -4020,7 +4020,7 @@
     "pk": 294, 
     "model": "psc.lga", 
     "fields": {
-      "code": "294", 
+      "code": "495", 
       "name": "Minjibir", 
       "parent": 46
     }
@@ -4029,7 +4029,7 @@
     "pk": 295, 
     "model": "psc.lga", 
     "fields": {
-      "code": "295", 
+      "code": "496", 
       "name": "Nasarawa", 
       "parent": 46
     }
@@ -4038,7 +4038,7 @@
     "pk": 296, 
     "model": "psc.lga", 
     "fields": {
-      "code": "296", 
+      "code": "497", 
       "name": "Tarauni", 
       "parent": 46
     }
@@ -4047,7 +4047,7 @@
     "pk": 297, 
     "model": "psc.lga", 
     "fields": {
-      "code": "297", 
+      "code": "498", 
       "name": "Ungogo", 
       "parent": 46
     }
@@ -4056,7 +4056,7 @@
     "pk": 298, 
     "model": "psc.lga", 
     "fields": {
-      "code": "298", 
+      "code": "503", 
       "name": "Warawa", 
       "parent": 46
     }
@@ -4065,7 +4065,7 @@
     "pk": 299, 
     "model": "psc.lga", 
     "fields": {
-      "code": "299", 
+      "code": "499", 
       "name": "Bagwai", 
       "parent": 47
     }
@@ -4074,7 +4074,7 @@
     "pk": 300, 
     "model": "psc.lga", 
     "fields": {
-      "code": "300", 
+      "code": "500", 
       "name": "Bichi", 
       "parent": 47
     }
@@ -4083,7 +4083,7 @@
     "pk": 301, 
     "model": "psc.lga", 
     "fields": {
-      "code": "301", 
+      "code": "501", 
       "name": "Dambatta", 
       "parent": 47
     }
@@ -4092,7 +4092,7 @@
     "pk": 302, 
     "model": "psc.lga", 
     "fields": {
-      "code": "302", 
+      "code": "502", 
       "name": "Dawakin Tofa", 
       "parent": 47
     }
@@ -4101,7 +4101,7 @@
     "pk": 303, 
     "model": "psc.lga", 
     "fields": {
-      "code": "303", 
+      "code": "487", 
       "name": "Gabasawa", 
       "parent": 46
     }
@@ -4110,7 +4110,7 @@
     "pk": 304, 
     "model": "psc.lga", 
     "fields": {
-      "code": "304", 
+      "code": "504", 
       "name": "Gwarzo", 
       "parent": 47
     }
@@ -4119,7 +4119,7 @@
     "pk": 305, 
     "model": "psc.lga", 
     "fields": {
-      "code": "305", 
+      "code": "505", 
       "name": "Kabo", 
       "parent": 47
     }
@@ -4128,7 +4128,7 @@
     "pk": 306, 
     "model": "psc.lga", 
     "fields": {
-      "code": "306", 
+      "code": "506", 
       "name": "Kunchi", 
       "parent": 47
     }
@@ -4137,7 +4137,7 @@
     "pk": 307, 
     "model": "psc.lga", 
     "fields": {
-      "code": "307", 
+      "code": "507", 
       "name": "Makoda", 
       "parent": 47
     }
@@ -4146,7 +4146,7 @@
     "pk": 308, 
     "model": "psc.lga", 
     "fields": {
-      "code": "308", 
+      "code": "508", 
       "name": "Rimin Gado", 
       "parent": 47
     }
@@ -4155,7 +4155,7 @@
     "pk": 309, 
     "model": "psc.lga", 
     "fields": {
-      "code": "309", 
+      "code": "509", 
       "name": "Shanono", 
       "parent": 47
     }
@@ -4164,7 +4164,7 @@
     "pk": 310, 
     "model": "psc.lga", 
     "fields": {
-      "code": "310", 
+      "code": "510", 
       "name": "Tofa", 
       "parent": 47
     }
@@ -4173,7 +4173,7 @@
     "pk": 311, 
     "model": "psc.lga", 
     "fields": {
-      "code": "311", 
+      "code": "511", 
       "name": "Tsanyawa", 
       "parent": 47
     }
@@ -4182,7 +4182,7 @@
     "pk": 312, 
     "model": "psc.lga", 
     "fields": {
-      "code": "312", 
+      "code": "512", 
       "name": "Ajingi", 
       "parent": 48
     }
@@ -4191,7 +4191,7 @@
     "pk": 313, 
     "model": "psc.lga", 
     "fields": {
-      "code": "313", 
+      "code": "513", 
       "name": "Albasu", 
       "parent": 48
     }
@@ -4200,7 +4200,7 @@
     "pk": 314, 
     "model": "psc.lga", 
     "fields": {
-      "code": "314", 
+      "code": "514", 
       "name": "Bebeji", 
       "parent": 48
     }
@@ -4209,7 +4209,7 @@
     "pk": 315, 
     "model": "psc.lga", 
     "fields": {
-      "code": "315", 
+      "code": "515", 
       "name": "Bunkure", 
       "parent": 48
     }
@@ -4218,7 +4218,7 @@
     "pk": 316, 
     "model": "psc.lga", 
     "fields": {
-      "code": "316", 
+      "code": "516", 
       "name": "Doguwa", 
       "parent": 48
     }
@@ -4227,7 +4227,7 @@
     "pk": 317, 
     "model": "psc.lga", 
     "fields": {
-      "code": "317", 
+      "code": "517", 
       "name": "Garko", 
       "parent": 48
     }
@@ -4236,7 +4236,7 @@
     "pk": 318, 
     "model": "psc.lga", 
     "fields": {
-      "code": "318", 
+      "code": "518", 
       "name": "Gaya", 
       "parent": 48
     }
@@ -4245,7 +4245,7 @@
     "pk": 319, 
     "model": "psc.lga", 
     "fields": {
-      "code": "319", 
+      "code": "519", 
       "name": "Karaye", 
       "parent": 48
     }
@@ -4254,7 +4254,7 @@
     "pk": 320, 
     "model": "psc.lga", 
     "fields": {
-      "code": "320", 
+      "code": "520", 
       "name": "Kibiya", 
       "parent": 48
     }
@@ -4263,7 +4263,7 @@
     "pk": 321, 
     "model": "psc.lga", 
     "fields": {
-      "code": "321", 
+      "code": "521", 
       "name": "Kiru", 
       "parent": 48
     }
@@ -4272,7 +4272,7 @@
     "pk": 322, 
     "model": "psc.lga", 
     "fields": {
-      "code": "322", 
+      "code": "522", 
       "name": "Rano", 
       "parent": 48
     }
@@ -4281,7 +4281,7 @@
     "pk": 323, 
     "model": "psc.lga", 
     "fields": {
-      "code": "323", 
+      "code": "523", 
       "name": "Rogo", 
       "parent": 48
     }
@@ -4290,7 +4290,7 @@
     "pk": 324, 
     "model": "psc.lga", 
     "fields": {
-      "code": "324", 
+      "code": "524", 
       "name": "Sumaila", 
       "parent": 48
     }
@@ -4299,7 +4299,7 @@
     "pk": 325, 
     "model": "psc.lga", 
     "fields": {
-      "code": "325", 
+      "code": "525", 
       "name": "Takai", 
       "parent": 48
     }
@@ -4308,7 +4308,7 @@
     "pk": 326, 
     "model": "psc.lga", 
     "fields": {
-      "code": "326", 
+      "code": "526", 
       "name": "Tudun Wada", 
       "parent": 48
     }
@@ -4317,7 +4317,7 @@
     "pk": 327, 
     "model": "psc.lga", 
     "fields": {
-      "code": "327", 
+      "code": "527", 
       "name": "Wudil", 
       "parent": 48
     }
@@ -4326,7 +4326,7 @@
     "pk": 328, 
     "model": "psc.lga", 
     "fields": {
-      "code": "328", 
+      "code": "528", 
       "name": "Batagarawa", 
       "parent": 49
     }
@@ -4335,7 +4335,7 @@
     "pk": 329, 
     "model": "psc.lga", 
     "fields": {
-      "code": "329", 
+      "code": "529", 
       "name": "Batsari", 
       "parent": 49
     }
@@ -4344,7 +4344,7 @@
     "pk": 330, 
     "model": "psc.lga", 
     "fields": {
-      "code": "330", 
+      "code": "530", 
       "name": "Charanchi", 
       "parent": 49
     }
@@ -4353,7 +4353,7 @@
     "pk": 331, 
     "model": "psc.lga", 
     "fields": {
-      "code": "331", 
+      "code": "531", 
       "name": "Dan Musa", 
       "parent": 49
     }
@@ -4362,7 +4362,7 @@
     "pk": 332, 
     "model": "psc.lga", 
     "fields": {
-      "code": "332", 
+      "code": "532", 
       "name": "Dutsin-Ma", 
       "parent": 49
     }
@@ -4371,7 +4371,7 @@
     "pk": 333, 
     "model": "psc.lga", 
     "fields": {
-      "code": "333", 
+      "code": "533", 
       "name": "Jibia", 
       "parent": 49
     }
@@ -4380,7 +4380,7 @@
     "pk": 334, 
     "model": "psc.lga", 
     "fields": {
-      "code": "334", 
+      "code": "534", 
       "name": "Kaita", 
       "parent": 49
     }
@@ -4389,7 +4389,7 @@
     "pk": 335, 
     "model": "psc.lga", 
     "fields": {
-      "code": "335", 
+      "code": "535", 
       "name": "Katsina", 
       "parent": 49
     }
@@ -4398,7 +4398,7 @@
     "pk": 336, 
     "model": "psc.lga", 
     "fields": {
-      "code": "336", 
+      "code": "536", 
       "name": "Kurfi", 
       "parent": 49
     }
@@ -4407,7 +4407,7 @@
     "pk": 337, 
     "model": "psc.lga", 
     "fields": {
-      "code": "337", 
+      "code": "537", 
       "name": "Rimi", 
       "parent": 49
     }
@@ -4416,7 +4416,7 @@
     "pk": 338, 
     "model": "psc.lga", 
     "fields": {
-      "code": "338", 
+      "code": "538", 
       "name": "Safana", 
       "parent": 49
     }
@@ -4425,7 +4425,7 @@
     "pk": 339, 
     "model": "psc.lga", 
     "fields": {
-      "code": "339", 
+      "code": "539", 
       "name": "Baure", 
       "parent": 50
     }
@@ -4434,7 +4434,7 @@
     "pk": 340, 
     "model": "psc.lga", 
     "fields": {
-      "code": "340", 
+      "code": "540", 
       "name": "Bindawa", 
       "parent": 50
     }
@@ -4443,7 +4443,7 @@
     "pk": 341, 
     "model": "psc.lga", 
     "fields": {
-      "code": "341", 
+      "code": "541", 
       "name": "Daura", 
       "parent": 50
     }
@@ -4452,7 +4452,7 @@
     "pk": 342, 
     "model": "psc.lga", 
     "fields": {
-      "code": "342", 
+      "code": "542", 
       "name": "Dutsi", 
       "parent": 50
     }
@@ -4461,7 +4461,7 @@
     "pk": 343, 
     "model": "psc.lga", 
     "fields": {
-      "code": "343", 
+      "code": "543", 
       "name": "Ingawa", 
       "parent": 50
     }
@@ -4470,7 +4470,7 @@
     "pk": 344, 
     "model": "psc.lga", 
     "fields": {
-      "code": "344", 
+      "code": "544", 
       "name": "Kankia", 
       "parent": 50
     }
@@ -4479,7 +4479,7 @@
     "pk": 345, 
     "model": "psc.lga", 
     "fields": {
-      "code": "345", 
+      "code": "545", 
       "name": "Kusada", 
       "parent": 50
     }
@@ -4488,7 +4488,7 @@
     "pk": 346, 
     "model": "psc.lga", 
     "fields": {
-      "code": "346", 
+      "code": "546", 
       "name": "Mai'adua", 
       "parent": 50
     }
@@ -4497,7 +4497,7 @@
     "pk": 347, 
     "model": "psc.lga", 
     "fields": {
-      "code": "347", 
+      "code": "547", 
       "name": "Mani", 
       "parent": 50
     }
@@ -4506,7 +4506,7 @@
     "pk": 348, 
     "model": "psc.lga", 
     "fields": {
-      "code": "348", 
+      "code": "548", 
       "name": "Mashi", 
       "parent": 50
     }
@@ -4515,7 +4515,7 @@
     "pk": 349, 
     "model": "psc.lga", 
     "fields": {
-      "code": "349", 
+      "code": "549", 
       "name": "Sandamu", 
       "parent": 50
     }
@@ -4524,7 +4524,7 @@
     "pk": 350, 
     "model": "psc.lga", 
     "fields": {
-      "code": "350", 
+      "code": "550", 
       "name": "Zango ", 
       "parent": 50
     }
@@ -4533,7 +4533,7 @@
     "pk": 351, 
     "model": "psc.lga", 
     "fields": {
-      "code": "351", 
+      "code": "551", 
       "name": "Bakori", 
       "parent": 51
     }
@@ -4542,7 +4542,7 @@
     "pk": 352, 
     "model": "psc.lga", 
     "fields": {
-      "code": "352", 
+      "code": "552", 
       "name": "Dandume", 
       "parent": 51
     }
@@ -4551,7 +4551,7 @@
     "pk": 353, 
     "model": "psc.lga", 
     "fields": {
-      "code": "353", 
+      "code": "553", 
       "name": "Danja", 
       "parent": 51
     }
@@ -4560,7 +4560,7 @@
     "pk": 354, 
     "model": "psc.lga", 
     "fields": {
-      "code": "354", 
+      "code": "554", 
       "name": "Faskari", 
       "parent": 51
     }
@@ -4569,7 +4569,7 @@
     "pk": 355, 
     "model": "psc.lga", 
     "fields": {
-      "code": "355", 
+      "code": "555", 
       "name": "Funtua", 
       "parent": 51
     }
@@ -4578,7 +4578,7 @@
     "pk": 356, 
     "model": "psc.lga", 
     "fields": {
-      "code": "356", 
+      "code": "556", 
       "name": "Kafur", 
       "parent": 51
     }
@@ -4587,7 +4587,7 @@
     "pk": 357, 
     "model": "psc.lga", 
     "fields": {
-      "code": "357", 
+      "code": "557", 
       "name": "Kankara", 
       "parent": 51
     }
@@ -4596,7 +4596,7 @@
     "pk": 358, 
     "model": "psc.lga", 
     "fields": {
-      "code": "358", 
+      "code": "558", 
       "name": "Malumfashi", 
       "parent": 51
     }
@@ -4605,7 +4605,7 @@
     "pk": 359, 
     "model": "psc.lga", 
     "fields": {
-      "code": "359", 
+      "code": "559", 
       "name": "Matazu", 
       "parent": 51
     }
@@ -4614,7 +4614,7 @@
     "pk": 360, 
     "model": "psc.lga", 
     "fields": {
-      "code": "360", 
+      "code": "560", 
       "name": "Musawa", 
       "parent": 51
     }
@@ -4623,7 +4623,7 @@
     "pk": 361, 
     "model": "psc.lga", 
     "fields": {
-      "code": "361", 
+      "code": "561", 
       "name": "Sabuwa", 
       "parent": 51
     }
@@ -4632,7 +4632,7 @@
     "pk": 362, 
     "model": "psc.lga", 
     "fields": {
-      "code": "362", 
+      "code": "562", 
       "name": "Aleiro", 
       "parent": 52
     }
@@ -4641,7 +4641,7 @@
     "pk": 363, 
     "model": "psc.lga", 
     "fields": {
-      "code": "363", 
+      "code": "563", 
       "name": "Birnin Kebbi", 
       "parent": 52
     }
@@ -4650,7 +4650,7 @@
     "pk": 364, 
     "model": "psc.lga", 
     "fields": {
-      "code": "364", 
+      "code": "564", 
       "name": "Bunza", 
       "parent": 52
     }
@@ -4659,7 +4659,7 @@
     "pk": 365, 
     "model": "psc.lga", 
     "fields": {
-      "code": "365", 
+      "code": "565", 
       "name": "Gwandu", 
       "parent": 52
     }
@@ -4668,7 +4668,7 @@
     "pk": 366, 
     "model": "psc.lga", 
     "fields": {
-      "code": "366", 
+      "code": "566", 
       "name": "Jega", 
       "parent": 52
     }
@@ -4677,7 +4677,7 @@
     "pk": 367, 
     "model": "psc.lga", 
     "fields": {
-      "code": "367", 
+      "code": "567", 
       "name": "Kalgo", 
       "parent": 52
     }
@@ -4686,7 +4686,7 @@
     "pk": 368, 
     "model": "psc.lga", 
     "fields": {
-      "code": "368", 
+      "code": "568", 
       "name": "Koko-Besse", 
       "parent": 52
     }
@@ -4695,7 +4695,7 @@
     "pk": 369, 
     "model": "psc.lga", 
     "fields": {
-      "code": "369", 
+      "code": "569", 
       "name": "Maiyama", 
       "parent": 52
     }
@@ -4704,7 +4704,7 @@
     "pk": 370, 
     "model": "psc.lga", 
     "fields": {
-      "code": "370", 
+      "code": "570", 
       "name": "Arewa", 
       "parent": 53
     }
@@ -4713,7 +4713,7 @@
     "pk": 371, 
     "model": "psc.lga", 
     "fields": {
-      "code": "371", 
+      "code": "571", 
       "name": "Argungu", 
       "parent": 53
     }
@@ -4722,7 +4722,7 @@
     "pk": 372, 
     "model": "psc.lga", 
     "fields": {
-      "code": "372", 
+      "code": "572", 
       "name": "Augie", 
       "parent": 53
     }
@@ -4731,7 +4731,7 @@
     "pk": 373, 
     "model": "psc.lga", 
     "fields": {
-      "code": "373", 
+      "code": "573", 
       "name": "Bagudo", 
       "parent": 53
     }
@@ -4740,7 +4740,7 @@
     "pk": 374, 
     "model": "psc.lga", 
     "fields": {
-      "code": "374", 
+      "code": "574", 
       "name": "Dandi", 
       "parent": 53
     }
@@ -4749,7 +4749,7 @@
     "pk": 375, 
     "model": "psc.lga", 
     "fields": {
-      "code": "375", 
+      "code": "575", 
       "name": "Suru", 
       "parent": 53
     }
@@ -4758,7 +4758,7 @@
     "pk": 376, 
     "model": "psc.lga", 
     "fields": {
-      "code": "376", 
+      "code": "576", 
       "name": "Fakai", 
       "parent": 54
     }
@@ -4767,7 +4767,7 @@
     "pk": 377, 
     "model": "psc.lga", 
     "fields": {
-      "code": "377", 
+      "code": "577", 
       "name": "Ngaski", 
       "parent": 54
     }
@@ -4776,7 +4776,7 @@
     "pk": 378, 
     "model": "psc.lga", 
     "fields": {
-      "code": "378", 
+      "code": "578", 
       "name": "Sakaba", 
       "parent": 54
     }
@@ -4785,7 +4785,7 @@
     "pk": 379, 
     "model": "psc.lga", 
     "fields": {
-      "code": "379", 
+      "code": "579", 
       "name": "Shanga", 
       "parent": 54
     }
@@ -4794,7 +4794,7 @@
     "pk": 380, 
     "model": "psc.lga", 
     "fields": {
-      "code": "380", 
+      "code": "580", 
       "name": "Wasagu-Danko", 
       "parent": 54
     }
@@ -4803,7 +4803,7 @@
     "pk": 381, 
     "model": "psc.lga", 
     "fields": {
-      "code": "381", 
+      "code": "581", 
       "name": "Yauri", 
       "parent": 54
     }
@@ -4812,7 +4812,7 @@
     "pk": 382, 
     "model": "psc.lga", 
     "fields": {
-      "code": "382", 
+      "code": "582", 
       "name": "Zuru", 
       "parent": 54
     }
@@ -4821,7 +4821,7 @@
     "pk": 383, 
     "model": "psc.lga", 
     "fields": {
-      "code": "383", 
+      "code": "583", 
       "name": "Gada ", 
       "parent": 55
     }
@@ -4830,7 +4830,7 @@
     "pk": 384, 
     "model": "psc.lga", 
     "fields": {
-      "code": "384", 
+      "code": "584", 
       "name": "Goronyo", 
       "parent": 55
     }
@@ -4839,7 +4839,7 @@
     "pk": 385, 
     "model": "psc.lga", 
     "fields": {
-      "code": "385", 
+      "code": "585", 
       "name": "Gwadabawa", 
       "parent": 55
     }
@@ -4848,7 +4848,7 @@
     "pk": 386, 
     "model": "psc.lga", 
     "fields": {
-      "code": "386", 
+      "code": "586", 
       "name": "Illela", 
       "parent": 55
     }
@@ -4857,7 +4857,7 @@
     "pk": 387, 
     "model": "psc.lga", 
     "fields": {
-      "code": "387", 
+      "code": "587", 
       "name": "Isa", 
       "parent": 55
     }
@@ -4866,7 +4866,7 @@
     "pk": 388, 
     "model": "psc.lga", 
     "fields": {
-      "code": "388", 
+      "code": "588", 
       "name": "Rabah", 
       "parent": 55
     }
@@ -4875,7 +4875,7 @@
     "pk": 389, 
     "model": "psc.lga", 
     "fields": {
-      "code": "389", 
+      "code": "589", 
       "name": "Sabon Birni", 
       "parent": 55
     }
@@ -4884,7 +4884,7 @@
     "pk": 390, 
     "model": "psc.lga", 
     "fields": {
-      "code": "390", 
+      "code": "590", 
       "name": "Wurno", 
       "parent": 55
     }
@@ -4893,7 +4893,7 @@
     "pk": 391, 
     "model": "psc.lga", 
     "fields": {
-      "code": "391", 
+      "code": "591", 
       "name": "Binji", 
       "parent": 56
     }
@@ -4902,7 +4902,7 @@
     "pk": 392, 
     "model": "psc.lga", 
     "fields": {
-      "code": "392", 
+      "code": "592", 
       "name": "Gudu", 
       "parent": 56
     }
@@ -4911,7 +4911,7 @@
     "pk": 393, 
     "model": "psc.lga", 
     "fields": {
-      "code": "393", 
+      "code": "593", 
       "name": "Kware", 
       "parent": 56
     }
@@ -4920,7 +4920,7 @@
     "pk": 394, 
     "model": "psc.lga", 
     "fields": {
-      "code": "394", 
+      "code": "594", 
       "name": "Silame", 
       "parent": 56
     }
@@ -4929,7 +4929,7 @@
     "pk": 395, 
     "model": "psc.lga", 
     "fields": {
-      "code": "395", 
+      "code": "595", 
       "name": "Sokoto North", 
       "parent": 56
     }
@@ -4938,7 +4938,7 @@
     "pk": 396, 
     "model": "psc.lga", 
     "fields": {
-      "code": "396", 
+      "code": "596", 
       "name": "Sokoto South", 
       "parent": 56
     }
@@ -4947,7 +4947,7 @@
     "pk": 397, 
     "model": "psc.lga", 
     "fields": {
-      "code": "397", 
+      "code": "597", 
       "name": "Tangaza", 
       "parent": 56
     }
@@ -4956,7 +4956,7 @@
     "pk": 398, 
     "model": "psc.lga", 
     "fields": {
-      "code": "398", 
+      "code": "598", 
       "name": "Wamako", 
       "parent": 56
     }
@@ -4965,7 +4965,7 @@
     "pk": 399, 
     "model": "psc.lga", 
     "fields": {
-      "code": "399", 
+      "code": "599", 
       "name": "Bodinga", 
       "parent": 57
     }
@@ -4974,7 +4974,7 @@
     "pk": 400, 
     "model": "psc.lga", 
     "fields": {
-      "code": "400", 
+      "code": "600", 
       "name": "Dange-Shuni", 
       "parent": 57
     }
@@ -4983,7 +4983,7 @@
     "pk": 401, 
     "model": "psc.lga", 
     "fields": {
-      "code": "401", 
+      "code": "601", 
       "name": "Kebbe", 
       "parent": 57
     }
@@ -4992,7 +4992,7 @@
     "pk": 402, 
     "model": "psc.lga", 
     "fields": {
-      "code": "402", 
+      "code": "602", 
       "name": "Shagari", 
       "parent": 57
     }
@@ -5001,7 +5001,7 @@
     "pk": 403, 
     "model": "psc.lga", 
     "fields": {
-      "code": "403", 
+      "code": "603", 
       "name": "Tambuwal ", 
       "parent": 57
     }
@@ -5010,7 +5010,7 @@
     "pk": 404, 
     "model": "psc.lga", 
     "fields": {
-      "code": "404", 
+      "code": "604", 
       "name": "Tureta", 
       "parent": 57
     }
@@ -5019,7 +5019,7 @@
     "pk": 405, 
     "model": "psc.lga", 
     "fields": {
-      "code": "405", 
+      "code": "605", 
       "name": "Yabo", 
       "parent": 57
     }
@@ -5028,7 +5028,7 @@
     "pk": 406, 
     "model": "psc.lga", 
     "fields": {
-      "code": "406", 
+      "code": "606", 
       "name": "Bungudu", 
       "parent": 58
     }
@@ -5037,7 +5037,7 @@
     "pk": 407, 
     "model": "psc.lga", 
     "fields": {
-      "code": "407", 
+      "code": "607", 
       "name": "Gusau", 
       "parent": 58
     }
@@ -5046,7 +5046,7 @@
     "pk": 408, 
     "model": "psc.lga", 
     "fields": {
-      "code": "408", 
+      "code": "608", 
       "name": "Maru", 
       "parent": 58
     }
@@ -5055,7 +5055,7 @@
     "pk": 409, 
     "model": "psc.lga", 
     "fields": {
-      "code": "409", 
+      "code": "609", 
       "name": "Tsafe", 
       "parent": 58
     }
@@ -5064,7 +5064,7 @@
     "pk": 410, 
     "model": "psc.lga", 
     "fields": {
-      "code": "410", 
+      "code": "610", 
       "name": "Birnin Magaji-Kiyaw", 
       "parent": 59
     }
@@ -5073,7 +5073,7 @@
     "pk": 411, 
     "model": "psc.lga", 
     "fields": {
-      "code": "411", 
+      "code": "611", 
       "name": "Kaura Namoda", 
       "parent": 59
     }
@@ -5082,7 +5082,7 @@
     "pk": 412, 
     "model": "psc.lga", 
     "fields": {
-      "code": "412", 
+      "code": "612", 
       "name": "Shinkafi", 
       "parent": 59
     }
@@ -5091,7 +5091,7 @@
     "pk": 413, 
     "model": "psc.lga", 
     "fields": {
-      "code": "413", 
+      "code": "613", 
       "name": "Zurmi ", 
       "parent": 59
     }
@@ -5100,7 +5100,7 @@
     "pk": 414, 
     "model": "psc.lga", 
     "fields": {
-      "code": "414", 
+      "code": "614", 
       "name": "Anka", 
       "parent": 60
     }
@@ -5109,7 +5109,7 @@
     "pk": 415, 
     "model": "psc.lga", 
     "fields": {
-      "code": "415", 
+      "code": "615", 
       "name": "Bakura", 
       "parent": 60
     }
@@ -5118,7 +5118,7 @@
     "pk": 416, 
     "model": "psc.lga", 
     "fields": {
-      "code": "416", 
+      "code": "616", 
       "name": "Bukkuyum", 
       "parent": 60
     }
@@ -5127,7 +5127,7 @@
     "pk": 417, 
     "model": "psc.lga", 
     "fields": {
-      "code": "417", 
+      "code": "617", 
       "name": "Gummi", 
       "parent": 60
     }
@@ -5136,7 +5136,7 @@
     "pk": 418, 
     "model": "psc.lga", 
     "fields": {
-      "code": "418", 
+      "code": "618", 
       "name": "Maradun", 
       "parent": 60
     }
@@ -5145,7 +5145,7 @@
     "pk": 419, 
     "model": "psc.lga", 
     "fields": {
-      "code": "419", 
+      "code": "619", 
       "name": "Talata Marafa", 
       "parent": 60
     }
@@ -5154,7 +5154,7 @@
     "pk": 420, 
     "model": "psc.lga", 
     "fields": {
-      "code": "420", 
+      "code": "620", 
       "name": "Ikwuano", 
       "parent": 61
     }
@@ -5163,7 +5163,7 @@
     "pk": 421, 
     "model": "psc.lga", 
     "fields": {
-      "code": "421", 
+      "code": "621", 
       "name": "Isiala Ngwa North", 
       "parent": 61
     }
@@ -5172,7 +5172,7 @@
     "pk": 422, 
     "model": "psc.lga", 
     "fields": {
-      "code": "422", 
+      "code": "622", 
       "name": "Isiala Ngwa South", 
       "parent": 61
     }
@@ -5181,7 +5181,7 @@
     "pk": 423, 
     "model": "psc.lga", 
     "fields": {
-      "code": "423", 
+      "code": "623", 
       "name": "Umuahia North", 
       "parent": 61
     }
@@ -5190,7 +5190,7 @@
     "pk": 424, 
     "model": "psc.lga", 
     "fields": {
-      "code": "424", 
+      "code": "624", 
       "name": "Umuahia South", 
       "parent": 61
     }
@@ -5199,7 +5199,7 @@
     "pk": 425, 
     "model": "psc.lga", 
     "fields": {
-      "code": "425", 
+      "code": "625", 
       "name": "Arochukwu", 
       "parent": 62
     }
@@ -5208,7 +5208,7 @@
     "pk": 426, 
     "model": "psc.lga", 
     "fields": {
-      "code": "426", 
+      "code": "626", 
       "name": "Bende", 
       "parent": 62
     }
@@ -5217,7 +5217,7 @@
     "pk": 427, 
     "model": "psc.lga", 
     "fields": {
-      "code": "427", 
+      "code": "627", 
       "name": "Isuikwuato", 
       "parent": 62
     }
@@ -5226,7 +5226,7 @@
     "pk": 428, 
     "model": "psc.lga", 
     "fields": {
-      "code": "428", 
+      "code": "628", 
       "name": "Ohafia", 
       "parent": 62
     }
@@ -5235,7 +5235,7 @@
     "pk": 429, 
     "model": "psc.lga", 
     "fields": {
-      "code": "429", 
+      "code": "629", 
       "name": "Umu Nneochi", 
       "parent": 62
     }
@@ -5244,7 +5244,7 @@
     "pk": 430, 
     "model": "psc.lga", 
     "fields": {
-      "code": "430", 
+      "code": "630", 
       "name": "Aba North", 
       "parent": 63
     }
@@ -5253,7 +5253,7 @@
     "pk": 431, 
     "model": "psc.lga", 
     "fields": {
-      "code": "431", 
+      "code": "631", 
       "name": "Aba South", 
       "parent": 63
     }
@@ -5262,7 +5262,7 @@
     "pk": 432, 
     "model": "psc.lga", 
     "fields": {
-      "code": "432", 
+      "code": "632", 
       "name": "Obingwa ", 
       "parent": 63
     }
@@ -5271,7 +5271,7 @@
     "pk": 433, 
     "model": "psc.lga", 
     "fields": {
-      "code": "433", 
+      "code": "633", 
       "name": "Osisioma", 
       "parent": 63
     }
@@ -5280,7 +5280,7 @@
     "pk": 434, 
     "model": "psc.lga", 
     "fields": {
-      "code": "434", 
+      "code": "634", 
       "name": "Ugwunagbo", 
       "parent": 63
     }
@@ -5289,7 +5289,7 @@
     "pk": 435, 
     "model": "psc.lga", 
     "fields": {
-      "code": "435", 
+      "code": "635", 
       "name": "Ukwa East", 
       "parent": 63
     }
@@ -5298,7 +5298,7 @@
     "pk": 436, 
     "model": "psc.lga", 
     "fields": {
-      "code": "436", 
+      "code": "636", 
       "name": "Ukwa West", 
       "parent": 63
     }
@@ -5307,7 +5307,7 @@
     "pk": 437, 
     "model": "psc.lga", 
     "fields": {
-      "code": "437", 
+      "code": "637", 
       "name": "Anaocha", 
       "parent": 64
     }
@@ -5316,7 +5316,7 @@
     "pk": 438, 
     "model": "psc.lga", 
     "fields": {
-      "code": "438", 
+      "code": "638", 
       "name": "Awka North", 
       "parent": 64
     }
@@ -5325,7 +5325,7 @@
     "pk": 439, 
     "model": "psc.lga", 
     "fields": {
-      "code": "439", 
+      "code": "639", 
       "name": "Awka South", 
       "parent": 64
     }
@@ -5334,7 +5334,7 @@
     "pk": 440, 
     "model": "psc.lga", 
     "fields": {
-      "code": "440", 
+      "code": "640", 
       "name": "Dunukofia", 
       "parent": 64
     }
@@ -5343,7 +5343,7 @@
     "pk": 441, 
     "model": "psc.lga", 
     "fields": {
-      "code": "441", 
+      "code": "641", 
       "name": "Idemili North", 
       "parent": 64
     }
@@ -5352,7 +5352,7 @@
     "pk": 442, 
     "model": "psc.lga", 
     "fields": {
-      "code": "442", 
+      "code": "642", 
       "name": "Idemili South", 
       "parent": 64
     }
@@ -5361,7 +5361,7 @@
     "pk": 443, 
     "model": "psc.lga", 
     "fields": {
-      "code": "443", 
+      "code": "643", 
       "name": "Njikoka ", 
       "parent": 64
     }
@@ -5370,7 +5370,7 @@
     "pk": 444, 
     "model": "psc.lga", 
     "fields": {
-      "code": "444", 
+      "code": "644", 
       "name": "Anambra East", 
       "parent": 65
     }
@@ -5379,7 +5379,7 @@
     "pk": 445, 
     "model": "psc.lga", 
     "fields": {
-      "code": "445", 
+      "code": "645", 
       "name": "Anambra West", 
       "parent": 65
     }
@@ -5388,7 +5388,7 @@
     "pk": 446, 
     "model": "psc.lga", 
     "fields": {
-      "code": "446", 
+      "code": "646", 
       "name": "Ayamelum", 
       "parent": 65
     }
@@ -5397,7 +5397,7 @@
     "pk": 447, 
     "model": "psc.lga", 
     "fields": {
-      "code": "447", 
+      "code": "647", 
       "name": "Ogbaru", 
       "parent": 65
     }
@@ -5406,7 +5406,7 @@
     "pk": 448, 
     "model": "psc.lga", 
     "fields": {
-      "code": "448", 
+      "code": "648", 
       "name": "Onitsha North", 
       "parent": 65
     }
@@ -5415,7 +5415,7 @@
     "pk": 449, 
     "model": "psc.lga", 
     "fields": {
-      "code": "449", 
+      "code": "649", 
       "name": "Onitsha South", 
       "parent": 65
     }
@@ -5424,7 +5424,7 @@
     "pk": 450, 
     "model": "psc.lga", 
     "fields": {
-      "code": "450", 
+      "code": "650", 
       "name": "Oyi", 
       "parent": 65
     }
@@ -5433,7 +5433,7 @@
     "pk": 451, 
     "model": "psc.lga", 
     "fields": {
-      "code": "451", 
+      "code": "651", 
       "name": "Aguata", 
       "parent": 66
     }
@@ -5442,7 +5442,7 @@
     "pk": 452, 
     "model": "psc.lga", 
     "fields": {
-      "code": "452", 
+      "code": "652", 
       "name": "Ekwusigo", 
       "parent": 66
     }
@@ -5451,7 +5451,7 @@
     "pk": 453, 
     "model": "psc.lga", 
     "fields": {
-      "code": "453", 
+      "code": "653", 
       "name": "Ihiala", 
       "parent": 66
     }
@@ -5460,7 +5460,7 @@
     "pk": 454, 
     "model": "psc.lga", 
     "fields": {
-      "code": "454", 
+      "code": "654", 
       "name": "Nnewi North", 
       "parent": 66
     }
@@ -5469,7 +5469,7 @@
     "pk": 455, 
     "model": "psc.lga", 
     "fields": {
-      "code": "455", 
+      "code": "655", 
       "name": "Nnewi South", 
       "parent": 66
     }
@@ -5478,7 +5478,7 @@
     "pk": 456, 
     "model": "psc.lga", 
     "fields": {
-      "code": "456", 
+      "code": "656", 
       "name": "Orumba North", 
       "parent": 66
     }
@@ -5487,7 +5487,7 @@
     "pk": 457, 
     "model": "psc.lga", 
     "fields": {
-      "code": "457", 
+      "code": "657", 
       "name": "Orumba South", 
       "parent": 66
     }
@@ -5496,7 +5496,7 @@
     "pk": 458, 
     "model": "psc.lga", 
     "fields": {
-      "code": "458", 
+      "code": "658", 
       "name": "Ezza North", 
       "parent": 67
     }
@@ -5505,7 +5505,7 @@
     "pk": 459, 
     "model": "psc.lga", 
     "fields": {
-      "code": "459", 
+      "code": "659", 
       "name": "Ezza South", 
       "parent": 67
     }
@@ -5514,7 +5514,7 @@
     "pk": 460, 
     "model": "psc.lga", 
     "fields": {
-      "code": "460", 
+      "code": "660", 
       "name": "Ikwo", 
       "parent": 67
     }
@@ -5523,7 +5523,7 @@
     "pk": 461, 
     "model": "psc.lga", 
     "fields": {
-      "code": "461", 
+      "code": "661", 
       "name": "Ishielu", 
       "parent": 67
     }
@@ -5532,7 +5532,7 @@
     "pk": 462, 
     "model": "psc.lga", 
     "fields": {
-      "code": "462", 
+      "code": "662", 
       "name": "Abakaliki", 
       "parent": 68
     }
@@ -5541,7 +5541,7 @@
     "pk": 463, 
     "model": "psc.lga", 
     "fields": {
-      "code": "463", 
+      "code": "663", 
       "name": "Ebonyi", 
       "parent": 68
     }
@@ -5550,7 +5550,7 @@
     "pk": 464, 
     "model": "psc.lga", 
     "fields": {
-      "code": "464", 
+      "code": "664", 
       "name": "Izzi", 
       "parent": 68
     }
@@ -5559,7 +5559,7 @@
     "pk": 465, 
     "model": "psc.lga", 
     "fields": {
-      "code": "465", 
+      "code": "665", 
       "name": "Ohaukwu", 
       "parent": 68
     }
@@ -5568,7 +5568,7 @@
     "pk": 466, 
     "model": "psc.lga", 
     "fields": {
-      "code": "466", 
+      "code": "666", 
       "name": "Afikpo North", 
       "parent": 69
     }
@@ -5577,7 +5577,7 @@
     "pk": 467, 
     "model": "psc.lga", 
     "fields": {
-      "code": "467", 
+      "code": "667", 
       "name": "Afikpo South", 
       "parent": 69
     }
@@ -5586,7 +5586,7 @@
     "pk": 468, 
     "model": "psc.lga", 
     "fields": {
-      "code": "468", 
+      "code": "668", 
       "name": "Ivo", 
       "parent": 69
     }
@@ -5595,7 +5595,7 @@
     "pk": 469, 
     "model": "psc.lga", 
     "fields": {
-      "code": "469", 
+      "code": "669", 
       "name": "Ohaozara", 
       "parent": 69
     }
@@ -5604,7 +5604,7 @@
     "pk": 470, 
     "model": "psc.lga", 
     "fields": {
-      "code": "470", 
+      "code": "670", 
       "name": "Onicha", 
       "parent": 69
     }
@@ -5613,7 +5613,7 @@
     "pk": 471, 
     "model": "psc.lga", 
     "fields": {
-      "code": "471", 
+      "code": "671", 
       "name": "Enugu East", 
       "parent": 70
     }
@@ -5622,7 +5622,7 @@
     "pk": 472, 
     "model": "psc.lga", 
     "fields": {
-      "code": "472", 
+      "code": "672", 
       "name": "Enugu North", 
       "parent": 70
     }
@@ -5631,7 +5631,7 @@
     "pk": 473, 
     "model": "psc.lga", 
     "fields": {
-      "code": "473", 
+      "code": "673", 
       "name": "Enugu South", 
       "parent": 70
     }
@@ -5640,7 +5640,7 @@
     "pk": 474, 
     "model": "psc.lga", 
     "fields": {
-      "code": "474", 
+      "code": "674", 
       "name": "Isi-Uzo", 
       "parent": 70
     }
@@ -5649,7 +5649,7 @@
     "pk": 475, 
     "model": "psc.lga", 
     "fields": {
-      "code": "475", 
+      "code": "675", 
       "name": "Nkanu East", 
       "parent": 70
     }
@@ -5658,7 +5658,7 @@
     "pk": 476, 
     "model": "psc.lga", 
     "fields": {
-      "code": "476", 
+      "code": "676", 
       "name": "Nkanu West", 
       "parent": 70
     }
@@ -5667,7 +5667,7 @@
     "pk": 477, 
     "model": "psc.lga", 
     "fields": {
-      "code": "477", 
+      "code": "677", 
       "name": "Igbo-Etiti", 
       "parent": 71
     }
@@ -5676,7 +5676,7 @@
     "pk": 478, 
     "model": "psc.lga", 
     "fields": {
-      "code": "478", 
+      "code": "678", 
       "name": "Igbo-Eze North", 
       "parent": 71
     }
@@ -5685,7 +5685,7 @@
     "pk": 479, 
     "model": "psc.lga", 
     "fields": {
-      "code": "479", 
+      "code": "679", 
       "name": "Igbo-Eze South", 
       "parent": 71
     }
@@ -5694,7 +5694,7 @@
     "pk": 480, 
     "model": "psc.lga", 
     "fields": {
-      "code": "480", 
+      "code": "680", 
       "name": "Nsukka", 
       "parent": 71
     }
@@ -5703,7 +5703,7 @@
     "pk": 481, 
     "model": "psc.lga", 
     "fields": {
-      "code": "481", 
+      "code": "681", 
       "name": "Udenu", 
       "parent": 71
     }
@@ -5712,7 +5712,7 @@
     "pk": 482, 
     "model": "psc.lga", 
     "fields": {
-      "code": "482", 
+      "code": "682", 
       "name": "Uzo Uwani", 
       "parent": 71
     }
@@ -5721,7 +5721,7 @@
     "pk": 483, 
     "model": "psc.lga", 
     "fields": {
-      "code": "483", 
+      "code": "683", 
       "name": "Aninri", 
       "parent": 72
     }
@@ -5730,7 +5730,7 @@
     "pk": 484, 
     "model": "psc.lga", 
     "fields": {
-      "code": "484", 
+      "code": "684", 
       "name": "Awgu", 
       "parent": 72
     }
@@ -5739,7 +5739,7 @@
     "pk": 485, 
     "model": "psc.lga", 
     "fields": {
-      "code": "485", 
+      "code": "685", 
       "name": "Ezeagu", 
       "parent": 72
     }
@@ -5748,7 +5748,7 @@
     "pk": 486, 
     "model": "psc.lga", 
     "fields": {
-      "code": "486", 
+      "code": "686", 
       "name": "Oji River", 
       "parent": 72
     }
@@ -5757,7 +5757,7 @@
     "pk": 487, 
     "model": "psc.lga", 
     "fields": {
-      "code": "487", 
+      "code": "687", 
       "name": "Udi", 
       "parent": 72
     }
@@ -5766,7 +5766,7 @@
     "pk": 488, 
     "model": "psc.lga", 
     "fields": {
-      "code": "488", 
+      "code": "688", 
       "name": "Aboh Mbaise", 
       "parent": 73
     }
@@ -5775,7 +5775,7 @@
     "pk": 489, 
     "model": "psc.lga", 
     "fields": {
-      "code": "489", 
+      "code": "689", 
       "name": "Ahiazu Mbaise", 
       "parent": 73
     }
@@ -5784,7 +5784,7 @@
     "pk": 490, 
     "model": "psc.lga", 
     "fields": {
-      "code": "490", 
+      "code": "690", 
       "name": "Ezinihitte", 
       "parent": 73
     }
@@ -5793,7 +5793,7 @@
     "pk": 491, 
     "model": "psc.lga", 
     "fields": {
-      "code": "491", 
+      "code": "691", 
       "name": "Ikeduru", 
       "parent": 73
     }
@@ -5802,7 +5802,7 @@
     "pk": 492, 
     "model": "psc.lga", 
     "fields": {
-      "code": "492", 
+      "code": "692", 
       "name": "Mbaitolu", 
       "parent": 73
     }
@@ -5811,7 +5811,7 @@
     "pk": 493, 
     "model": "psc.lga", 
     "fields": {
-      "code": "493", 
+      "code": "693", 
       "name": "Ngor Okpala", 
       "parent": 73
     }
@@ -5820,7 +5820,7 @@
     "pk": 494, 
     "model": "psc.lga", 
     "fields": {
-      "code": "494", 
+      "code": "694", 
       "name": "Owerri Municipal", 
       "parent": 73
     }
@@ -5829,7 +5829,7 @@
     "pk": 495, 
     "model": "psc.lga", 
     "fields": {
-      "code": "495", 
+      "code": "695", 
       "name": "Owerri North", 
       "parent": 73
     }
@@ -5838,7 +5838,7 @@
     "pk": 496, 
     "model": "psc.lga", 
     "fields": {
-      "code": "496", 
+      "code": "696", 
       "name": "Owerri West", 
       "parent": 73
     }
@@ -5847,7 +5847,7 @@
     "pk": 497, 
     "model": "psc.lga", 
     "fields": {
-      "code": "497", 
+      "code": "697", 
       "name": "Ehime Mbano", 
       "parent": 74
     }
@@ -5856,7 +5856,7 @@
     "pk": 498, 
     "model": "psc.lga", 
     "fields": {
-      "code": "498", 
+      "code": "698", 
       "name": "Ihitte-Uboma", 
       "parent": 74
     }
@@ -5865,7 +5865,7 @@
     "pk": 499, 
     "model": "psc.lga", 
     "fields": {
-      "code": "499", 
+      "code": "699", 
       "name": "Isiala Mbano", 
       "parent": 74
     }
@@ -5874,7 +5874,7 @@
     "pk": 500, 
     "model": "psc.lga", 
     "fields": {
-      "code": "500", 
+      "code": "700", 
       "name": "Obowo", 
       "parent": 74
     }
@@ -5883,7 +5883,7 @@
     "pk": 501, 
     "model": "psc.lga", 
     "fields": {
-      "code": "501", 
+      "code": "701", 
       "name": "Okigwe", 
       "parent": 74
     }
@@ -5892,7 +5892,7 @@
     "pk": 502, 
     "model": "psc.lga", 
     "fields": {
-      "code": "502", 
+      "code": "702", 
       "name": "Onuimo", 
       "parent": 74
     }
@@ -5901,7 +5901,7 @@
     "pk": 503, 
     "model": "psc.lga", 
     "fields": {
-      "code": "503", 
+      "code": "703", 
       "name": "Ideato North", 
       "parent": 75
     }
@@ -5910,7 +5910,7 @@
     "pk": 504, 
     "model": "psc.lga", 
     "fields": {
-      "code": "504", 
+      "code": "704", 
       "name": "Ideato South", 
       "parent": 75
     }
@@ -5919,7 +5919,7 @@
     "pk": 505, 
     "model": "psc.lga", 
     "fields": {
-      "code": "505", 
+      "code": "705", 
       "name": "Isu", 
       "parent": 75
     }
@@ -5928,7 +5928,7 @@
     "pk": 506, 
     "model": "psc.lga", 
     "fields": {
-      "code": "506", 
+      "code": "706", 
       "name": "Njaba", 
       "parent": 75
     }
@@ -5937,7 +5937,7 @@
     "pk": 507, 
     "model": "psc.lga", 
     "fields": {
-      "code": "507", 
+      "code": "707", 
       "name": "Nkwerre", 
       "parent": 75
     }
@@ -5946,7 +5946,7 @@
     "pk": 508, 
     "model": "psc.lga", 
     "fields": {
-      "code": "508", 
+      "code": "708", 
       "name": "Nwangele", 
       "parent": 75
     }
@@ -5955,7 +5955,7 @@
     "pk": 509, 
     "model": "psc.lga", 
     "fields": {
-      "code": "509", 
+      "code": "709", 
       "name": "Oguta", 
       "parent": 75
     }
@@ -5964,7 +5964,7 @@
     "pk": 510, 
     "model": "psc.lga", 
     "fields": {
-      "code": "510", 
+      "code": "710", 
       "name": "Ohaji-Egbema", 
       "parent": 75
     }
@@ -5973,7 +5973,7 @@
     "pk": 511, 
     "model": "psc.lga", 
     "fields": {
-      "code": "511", 
+      "code": "711", 
       "name": "Orlu", 
       "parent": 75
     }
@@ -5982,7 +5982,7 @@
     "pk": 512, 
     "model": "psc.lga", 
     "fields": {
-      "code": "512", 
+      "code": "712", 
       "name": "Orsu", 
       "parent": 75
     }
@@ -5991,7 +5991,7 @@
     "pk": 513, 
     "model": "psc.lga", 
     "fields": {
-      "code": "513", 
+      "code": "713", 
       "name": "Oru East", 
       "parent": 75
     }
@@ -6000,7 +6000,7 @@
     "pk": 514, 
     "model": "psc.lga", 
     "fields": {
-      "code": "514", 
+      "code": "714", 
       "name": "Oru West", 
       "parent": 75
     }
@@ -6009,7 +6009,7 @@
     "pk": 515, 
     "model": "psc.lga", 
     "fields": {
-      "code": "515", 
+      "code": "715", 
       "name": "Etinan", 
       "parent": 76
     }
@@ -6018,7 +6018,7 @@
     "pk": 516, 
     "model": "psc.lga", 
     "fields": {
-      "code": "516", 
+      "code": "716", 
       "name": "Ibesikpo Asutan", 
       "parent": 76
     }
@@ -6027,7 +6027,7 @@
     "pk": 517, 
     "model": "psc.lga", 
     "fields": {
-      "code": "517", 
+      "code": "717", 
       "name": "Ibiono Ibom", 
       "parent": 76
     }
@@ -6036,7 +6036,7 @@
     "pk": 518, 
     "model": "psc.lga", 
     "fields": {
-      "code": "518", 
+      "code": "718", 
       "name": "Itu", 
       "parent": 76
     }
@@ -6045,7 +6045,7 @@
     "pk": 519, 
     "model": "psc.lga", 
     "fields": {
-      "code": "519", 
+      "code": "719", 
       "name": "Nsit Atai", 
       "parent": 76
     }
@@ -6054,7 +6054,7 @@
     "pk": 520, 
     "model": "psc.lga", 
     "fields": {
-      "code": "520", 
+      "code": "720", 
       "name": "Nsit Ibom", 
       "parent": 76
     }
@@ -6063,7 +6063,7 @@
     "pk": 521, 
     "model": "psc.lga", 
     "fields": {
-      "code": "521", 
+      "code": "721", 
       "name": "Nsit Ubium", 
       "parent": 76
     }
@@ -6072,7 +6072,7 @@
     "pk": 522, 
     "model": "psc.lga", 
     "fields": {
-      "code": "522", 
+      "code": "722", 
       "name": "Uruan", 
       "parent": 76
     }
@@ -6081,7 +6081,7 @@
     "pk": 523, 
     "model": "psc.lga", 
     "fields": {
-      "code": "523", 
+      "code": "723", 
       "name": "Uyo", 
       "parent": 76
     }
@@ -6090,7 +6090,7 @@
     "pk": 524, 
     "model": "psc.lga", 
     "fields": {
-      "code": "524", 
+      "code": "724", 
       "name": "Abak", 
       "parent": 77
     }
@@ -6099,7 +6099,7 @@
     "pk": 525, 
     "model": "psc.lga", 
     "fields": {
-      "code": "525", 
+      "code": "725", 
       "name": "Essien Udim", 
       "parent": 77
     }
@@ -6108,7 +6108,7 @@
     "pk": 526, 
     "model": "psc.lga", 
     "fields": {
-      "code": "526", 
+      "code": "726", 
       "name": "Etim Ekpo", 
       "parent": 77
     }
@@ -6117,7 +6117,7 @@
     "pk": 527, 
     "model": "psc.lga", 
     "fields": {
-      "code": "527", 
+      "code": "727", 
       "name": "Ika", 
       "parent": 77
     }
@@ -6126,7 +6126,7 @@
     "pk": 528, 
     "model": "psc.lga", 
     "fields": {
-      "code": "528", 
+      "code": "728", 
       "name": "Ikono", 
       "parent": 77
     }
@@ -6135,7 +6135,7 @@
     "pk": 529, 
     "model": "psc.lga", 
     "fields": {
-      "code": "529", 
+      "code": "729", 
       "name": "Ikot Ekpene", 
       "parent": 77
     }
@@ -6144,7 +6144,7 @@
     "pk": 530, 
     "model": "psc.lga", 
     "fields": {
-      "code": "530", 
+      "code": "730", 
       "name": "Ini", 
       "parent": 77
     }
@@ -6153,7 +6153,7 @@
     "pk": 531, 
     "model": "psc.lga", 
     "fields": {
-      "code": "531", 
+      "code": "731", 
       "name": "Obot Akara", 
       "parent": 77
     }
@@ -6162,7 +6162,7 @@
     "pk": 532, 
     "model": "psc.lga", 
     "fields": {
-      "code": "532", 
+      "code": "732", 
       "name": "Oruk Anam", 
       "parent": 77
     }
@@ -6171,7 +6171,7 @@
     "pk": 533, 
     "model": "psc.lga", 
     "fields": {
-      "code": "533", 
+      "code": "733", 
       "name": "Ukanafun", 
       "parent": 77
     }
@@ -6180,7 +6180,7 @@
     "pk": 534, 
     "model": "psc.lga", 
     "fields": {
-      "code": "534", 
+      "code": "734", 
       "name": "Eastern Obolo", 
       "parent": 78
     }
@@ -6189,7 +6189,7 @@
     "pk": 535, 
     "model": "psc.lga", 
     "fields": {
-      "code": "535", 
+      "code": "735", 
       "name": "Eket", 
       "parent": 78
     }
@@ -6198,7 +6198,7 @@
     "pk": 536, 
     "model": "psc.lga", 
     "fields": {
-      "code": "536", 
+      "code": "736", 
       "name": "Esit Eket", 
       "parent": 78
     }
@@ -6207,7 +6207,7 @@
     "pk": 537, 
     "model": "psc.lga", 
     "fields": {
-      "code": "537", 
+      "code": "737", 
       "name": "Ibeno", 
       "parent": 78
     }
@@ -6216,7 +6216,7 @@
     "pk": 538, 
     "model": "psc.lga", 
     "fields": {
-      "code": "538", 
+      "code": "738", 
       "name": "Ikot Abasi", 
       "parent": 78
     }
@@ -6225,7 +6225,7 @@
     "pk": 539, 
     "model": "psc.lga", 
     "fields": {
-      "code": "539", 
+      "code": "739", 
       "name": "Mbo", 
       "parent": 78
     }
@@ -6234,7 +6234,7 @@
     "pk": 540, 
     "model": "psc.lga", 
     "fields": {
-      "code": "540", 
+      "code": "740", 
       "name": "Mkpat Enin", 
       "parent": 78
     }
@@ -6243,7 +6243,7 @@
     "pk": 541, 
     "model": "psc.lga", 
     "fields": {
-      "code": "541", 
+      "code": "741", 
       "name": "Okobo", 
       "parent": 78
     }
@@ -6252,7 +6252,7 @@
     "pk": 542, 
     "model": "psc.lga", 
     "fields": {
-      "code": "542", 
+      "code": "742", 
       "name": "Onna", 
       "parent": 78
     }
@@ -6261,7 +6261,7 @@
     "pk": 543, 
     "model": "psc.lga", 
     "fields": {
-      "code": "543", 
+      "code": "743", 
       "name": "Oron ", 
       "parent": 78
     }
@@ -6270,7 +6270,7 @@
     "pk": 544, 
     "model": "psc.lga", 
     "fields": {
-      "code": "544", 
+      "code": "744", 
       "name": "Udung Uko", 
       "parent": 78
     }
@@ -6279,7 +6279,7 @@
     "pk": 545, 
     "model": "psc.lga", 
     "fields": {
-      "code": "545", 
+      "code": "745", 
       "name": "Urue Offong-Oruko", 
       "parent": 78
     }
@@ -6288,7 +6288,7 @@
     "pk": 546, 
     "model": "psc.lga", 
     "fields": {
-      "code": "546", 
+      "code": "746", 
       "name": "Kolokuma-Opokuma", 
       "parent": 79
     }
@@ -6297,7 +6297,7 @@
     "pk": 547, 
     "model": "psc.lga", 
     "fields": {
-      "code": "547", 
+      "code": "747", 
       "name": "Southern Ijaw", 
       "parent": 79
     }
@@ -6306,7 +6306,7 @@
     "pk": 548, 
     "model": "psc.lga", 
     "fields": {
-      "code": "548", 
+      "code": "748", 
       "name": "Yenagoa", 
       "parent": 79
     }
@@ -6315,7 +6315,7 @@
     "pk": 549, 
     "model": "psc.lga", 
     "fields": {
-      "code": "549", 
+      "code": "749", 
       "name": "Brass", 
       "parent": 80
     }
@@ -6324,7 +6324,7 @@
     "pk": 550, 
     "model": "psc.lga", 
     "fields": {
-      "code": "550", 
+      "code": "750", 
       "name": "Nembe", 
       "parent": 80
     }
@@ -6333,7 +6333,7 @@
     "pk": 551, 
     "model": "psc.lga", 
     "fields": {
-      "code": "551", 
+      "code": "751", 
       "name": "Ogbia", 
       "parent": 80
     }
@@ -6342,7 +6342,7 @@
     "pk": 552, 
     "model": "psc.lga", 
     "fields": {
-      "code": "552", 
+      "code": "752", 
       "name": "Ekeremor", 
       "parent": 81
     }
@@ -6351,7 +6351,7 @@
     "pk": 553, 
     "model": "psc.lga", 
     "fields": {
-      "code": "553", 
+      "code": "753", 
       "name": "Sagbama", 
       "parent": 81
     }
@@ -6360,7 +6360,7 @@
     "pk": 554, 
     "model": "psc.lga", 
     "fields": {
-      "code": "554", 
+      "code": "754", 
       "name": "Abi", 
       "parent": 82
     }
@@ -6369,7 +6369,7 @@
     "pk": 555, 
     "model": "psc.lga", 
     "fields": {
-      "code": "555", 
+      "code": "755", 
       "name": "Boki", 
       "parent": 82
     }
@@ -6378,7 +6378,7 @@
     "pk": 556, 
     "model": "psc.lga", 
     "fields": {
-      "code": "556", 
+      "code": "756", 
       "name": "Etung", 
       "parent": 82
     }
@@ -6387,7 +6387,7 @@
     "pk": 557, 
     "model": "psc.lga", 
     "fields": {
-      "code": "557", 
+      "code": "757", 
       "name": "Ikom", 
       "parent": 82
     }
@@ -6396,7 +6396,7 @@
     "pk": 558, 
     "model": "psc.lga", 
     "fields": {
-      "code": "558", 
+      "code": "758", 
       "name": "Obubra", 
       "parent": 82
     }
@@ -6405,7 +6405,7 @@
     "pk": 559, 
     "model": "psc.lga", 
     "fields": {
-      "code": "559", 
+      "code": "759", 
       "name": "Yakuur", 
       "parent": 82
     }
@@ -6414,7 +6414,7 @@
     "pk": 560, 
     "model": "psc.lga", 
     "fields": {
-      "code": "560", 
+      "code": "764", 
       "name": "Yala", 
       "parent": 83
     }
@@ -6423,7 +6423,7 @@
     "pk": 561, 
     "model": "psc.lga", 
     "fields": {
-      "code": "561", 
+      "code": "760", 
       "name": "Bekwarra", 
       "parent": 83
     }
@@ -6432,7 +6432,7 @@
     "pk": 562, 
     "model": "psc.lga", 
     "fields": {
-      "code": "562", 
+      "code": "761", 
       "name": "Obanliku", 
       "parent": 83
     }
@@ -6441,7 +6441,7 @@
     "pk": 563, 
     "model": "psc.lga", 
     "fields": {
-      "code": "563", 
+      "code": "762", 
       "name": "Obudu", 
       "parent": 83
     }
@@ -6450,7 +6450,7 @@
     "pk": 564, 
     "model": "psc.lga", 
     "fields": {
-      "code": "564", 
+      "code": "763", 
       "name": "Ogoja", 
       "parent": 83
     }
@@ -6459,7 +6459,7 @@
     "pk": 565, 
     "model": "psc.lga", 
     "fields": {
-      "code": "565", 
+      "code": "765", 
       "name": "Akamkpa", 
       "parent": 84
     }
@@ -6468,7 +6468,7 @@
     "pk": 566, 
     "model": "psc.lga", 
     "fields": {
-      "code": "566", 
+      "code": "766", 
       "name": "Akpabuyo", 
       "parent": 84
     }
@@ -6477,7 +6477,7 @@
     "pk": 567, 
     "model": "psc.lga", 
     "fields": {
-      "code": "567", 
+      "code": "767", 
       "name": "Bakassi", 
       "parent": 84
     }
@@ -6486,7 +6486,7 @@
     "pk": 568, 
     "model": "psc.lga", 
     "fields": {
-      "code": "568", 
+      "code": "768", 
       "name": "Biase", 
       "parent": 84
     }
@@ -6495,7 +6495,7 @@
     "pk": 569, 
     "model": "psc.lga", 
     "fields": {
-      "code": "569", 
+      "code": "769", 
       "name": "Calabar Municipal", 
       "parent": 84
     }
@@ -6504,7 +6504,7 @@
     "pk": 570, 
     "model": "psc.lga", 
     "fields": {
-      "code": "570", 
+      "code": "770", 
       "name": "Calabar South", 
       "parent": 84
     }
@@ -6513,7 +6513,7 @@
     "pk": 571, 
     "model": "psc.lga", 
     "fields": {
-      "code": "571", 
+      "code": "771", 
       "name": "Odukpani", 
       "parent": 84
     }
@@ -6522,7 +6522,7 @@
     "pk": 572, 
     "model": "psc.lga", 
     "fields": {
-      "code": "572", 
+      "code": "772", 
       "name": "Ethiope East", 
       "parent": 85
     }
@@ -6531,7 +6531,7 @@
     "pk": 573, 
     "model": "psc.lga", 
     "fields": {
-      "code": "573", 
+      "code": "773", 
       "name": "Ethiope West", 
       "parent": 85
     }
@@ -6540,7 +6540,7 @@
     "pk": 574, 
     "model": "psc.lga", 
     "fields": {
-      "code": "574", 
+      "code": "774", 
       "name": "Okpe", 
       "parent": 85
     }
@@ -6549,7 +6549,7 @@
     "pk": 575, 
     "model": "psc.lga", 
     "fields": {
-      "code": "575", 
+      "code": "775", 
       "name": "Sapele", 
       "parent": 85
     }
@@ -6558,7 +6558,7 @@
     "pk": 576, 
     "model": "psc.lga", 
     "fields": {
-      "code": "576", 
+      "code": "776", 
       "name": "Udu", 
       "parent": 85
     }
@@ -6567,7 +6567,7 @@
     "pk": 577, 
     "model": "psc.lga", 
     "fields": {
-      "code": "577", 
+      "code": "777", 
       "name": "Ughelli North", 
       "parent": 85
     }
@@ -6576,7 +6576,7 @@
     "pk": 578, 
     "model": "psc.lga", 
     "fields": {
-      "code": "578", 
+      "code": "778", 
       "name": "Ughelli South", 
       "parent": 85
     }
@@ -6585,7 +6585,7 @@
     "pk": 579, 
     "model": "psc.lga", 
     "fields": {
-      "code": "579", 
+      "code": "779", 
       "name": "Uvwie", 
       "parent": 85
     }
@@ -6594,7 +6594,7 @@
     "pk": 580, 
     "model": "psc.lga", 
     "fields": {
-      "code": "580", 
+      "code": "780", 
       "name": "Aniocha North", 
       "parent": 86
     }
@@ -6603,7 +6603,7 @@
     "pk": 581, 
     "model": "psc.lga", 
     "fields": {
-      "code": "581", 
+      "code": "781", 
       "name": "Aniocha South", 
       "parent": 86
     }
@@ -6612,7 +6612,7 @@
     "pk": 582, 
     "model": "psc.lga", 
     "fields": {
-      "code": "582", 
+      "code": "782", 
       "name": "Ika North-East", 
       "parent": 86
     }
@@ -6621,7 +6621,7 @@
     "pk": 583, 
     "model": "psc.lga", 
     "fields": {
-      "code": "583", 
+      "code": "783", 
       "name": "Ika South", 
       "parent": 86
     }
@@ -6630,7 +6630,7 @@
     "pk": 584, 
     "model": "psc.lga", 
     "fields": {
-      "code": "584", 
+      "code": "784", 
       "name": "Ndokwa East", 
       "parent": 86
     }
@@ -6639,7 +6639,7 @@
     "pk": 585, 
     "model": "psc.lga", 
     "fields": {
-      "code": "585", 
+      "code": "785", 
       "name": "Ndokwa West", 
       "parent": 86
     }
@@ -6648,7 +6648,7 @@
     "pk": 586, 
     "model": "psc.lga", 
     "fields": {
-      "code": "586", 
+      "code": "786", 
       "name": "Oshimili North", 
       "parent": 86
     }
@@ -6657,7 +6657,7 @@
     "pk": 587, 
     "model": "psc.lga", 
     "fields": {
-      "code": "587", 
+      "code": "787", 
       "name": "Oshimili South", 
       "parent": 86
     }
@@ -6666,7 +6666,7 @@
     "pk": 588, 
     "model": "psc.lga", 
     "fields": {
-      "code": "588", 
+      "code": "788", 
       "name": "Ukwuani", 
       "parent": 86
     }
@@ -6675,7 +6675,7 @@
     "pk": 589, 
     "model": "psc.lga", 
     "fields": {
-      "code": "589", 
+      "code": "789", 
       "name": "Bomadi", 
       "parent": 87
     }
@@ -6684,7 +6684,7 @@
     "pk": 590, 
     "model": "psc.lga", 
     "fields": {
-      "code": "590", 
+      "code": "790", 
       "name": "Burutu", 
       "parent": 87
     }
@@ -6693,7 +6693,7 @@
     "pk": 591, 
     "model": "psc.lga", 
     "fields": {
-      "code": "591", 
+      "code": "791", 
       "name": "Isoko North", 
       "parent": 87
     }
@@ -6702,7 +6702,7 @@
     "pk": 592, 
     "model": "psc.lga", 
     "fields": {
-      "code": "592", 
+      "code": "792", 
       "name": "Isoko South", 
       "parent": 87
     }
@@ -6711,7 +6711,7 @@
     "pk": 593, 
     "model": "psc.lga", 
     "fields": {
-      "code": "593", 
+      "code": "793", 
       "name": "Patani", 
       "parent": 87
     }
@@ -6720,7 +6720,7 @@
     "pk": 594, 
     "model": "psc.lga", 
     "fields": {
-      "code": "594", 
+      "code": "794", 
       "name": "Warri North", 
       "parent": 87
     }
@@ -6729,7 +6729,7 @@
     "pk": 595, 
     "model": "psc.lga", 
     "fields": {
-      "code": "595", 
+      "code": "795", 
       "name": "Warri South", 
       "parent": 87
     }
@@ -6738,7 +6738,7 @@
     "pk": 596, 
     "model": "psc.lga", 
     "fields": {
-      "code": "596", 
+      "code": "796", 
       "name": "Warri South-West", 
       "parent": 87
     }
@@ -6747,7 +6747,7 @@
     "pk": 597, 
     "model": "psc.lga", 
     "fields": {
-      "code": "597", 
+      "code": "797", 
       "name": "Esan Central", 
       "parent": 88
     }
@@ -6756,7 +6756,7 @@
     "pk": 598, 
     "model": "psc.lga", 
     "fields": {
-      "code": "598", 
+      "code": "798", 
       "name": "Esan North-East", 
       "parent": 88
     }
@@ -6765,7 +6765,7 @@
     "pk": 599, 
     "model": "psc.lga", 
     "fields": {
-      "code": "599", 
+      "code": "799", 
       "name": "Esan South-East", 
       "parent": 88
     }
@@ -6774,7 +6774,7 @@
     "pk": 600, 
     "model": "psc.lga", 
     "fields": {
-      "code": "600", 
+      "code": "800", 
       "name": "Esan West", 
       "parent": 88
     }
@@ -6783,7 +6783,7 @@
     "pk": 601, 
     "model": "psc.lga", 
     "fields": {
-      "code": "601", 
+      "code": "801", 
       "name": "Igueben", 
       "parent": 88
     }
@@ -6792,7 +6792,7 @@
     "pk": 602, 
     "model": "psc.lga", 
     "fields": {
-      "code": "602", 
+      "code": "802", 
       "name": "Akoko Edo", 
       "parent": 89
     }
@@ -6801,7 +6801,7 @@
     "pk": 603, 
     "model": "psc.lga", 
     "fields": {
-      "code": "603", 
+      "code": "803", 
       "name": "Etsako Central", 
       "parent": 89
     }
@@ -6810,7 +6810,7 @@
     "pk": 604, 
     "model": "psc.lga", 
     "fields": {
-      "code": "604", 
+      "code": "804", 
       "name": "Etsako East", 
       "parent": 89
     }
@@ -6819,7 +6819,7 @@
     "pk": 605, 
     "model": "psc.lga", 
     "fields": {
-      "code": "605", 
+      "code": "805", 
       "name": "Etsako West", 
       "parent": 89
     }
@@ -6828,7 +6828,7 @@
     "pk": 606, 
     "model": "psc.lga", 
     "fields": {
-      "code": "606", 
+      "code": "806", 
       "name": "Owan East", 
       "parent": 89
     }
@@ -6837,7 +6837,7 @@
     "pk": 607, 
     "model": "psc.lga", 
     "fields": {
-      "code": "607", 
+      "code": "807", 
       "name": "Owan West", 
       "parent": 89
     }
@@ -6846,7 +6846,7 @@
     "pk": 608, 
     "model": "psc.lga", 
     "fields": {
-      "code": "608", 
+      "code": "808", 
       "name": "Egor", 
       "parent": 90
     }
@@ -6855,7 +6855,7 @@
     "pk": 609, 
     "model": "psc.lga", 
     "fields": {
-      "code": "609", 
+      "code": "809", 
       "name": "Ikpoba Okha", 
       "parent": 90
     }
@@ -6864,7 +6864,7 @@
     "pk": 610, 
     "model": "psc.lga", 
     "fields": {
-      "code": "610", 
+      "code": "810", 
       "name": "Oredo ", 
       "parent": 90
     }
@@ -6873,7 +6873,7 @@
     "pk": 611, 
     "model": "psc.lga", 
     "fields": {
-      "code": "611", 
+      "code": "811", 
       "name": "Orhionmwon", 
       "parent": 90
     }
@@ -6882,7 +6882,7 @@
     "pk": 612, 
     "model": "psc.lga", 
     "fields": {
-      "code": "612", 
+      "code": "812", 
       "name": "Ovia North-East", 
       "parent": 90
     }
@@ -6891,7 +6891,7 @@
     "pk": 613, 
     "model": "psc.lga", 
     "fields": {
-      "code": "613", 
+      "code": "813", 
       "name": "Ovia South-West", 
       "parent": 90
     }
@@ -6900,7 +6900,7 @@
     "pk": 614, 
     "model": "psc.lga", 
     "fields": {
-      "code": "614", 
+      "code": "814", 
       "name": "Uhunmwonde", 
       "parent": 90
     }
@@ -6909,7 +6909,7 @@
     "pk": 615, 
     "model": "psc.lga", 
     "fields": {
-      "code": "615", 
+      "code": "815", 
       "name": "Emohua", 
       "parent": 91
     }
@@ -6918,7 +6918,7 @@
     "pk": 616, 
     "model": "psc.lga", 
     "fields": {
-      "code": "616", 
+      "code": "816", 
       "name": "Etche", 
       "parent": 91
     }
@@ -6927,7 +6927,7 @@
     "pk": 617, 
     "model": "psc.lga", 
     "fields": {
-      "code": "617", 
+      "code": "817", 
       "name": "Ikwerre", 
       "parent": 91
     }
@@ -6936,7 +6936,7 @@
     "pk": 618, 
     "model": "psc.lga", 
     "fields": {
-      "code": "618", 
+      "code": "818", 
       "name": "Obio-Akpor", 
       "parent": 91
     }
@@ -6945,7 +6945,7 @@
     "pk": 619, 
     "model": "psc.lga", 
     "fields": {
-      "code": "619", 
+      "code": "819", 
       "name": "Ogu-Bolo", 
       "parent": 91
     }
@@ -6954,7 +6954,7 @@
     "pk": 620, 
     "model": "psc.lga", 
     "fields": {
-      "code": "620", 
+      "code": "820", 
       "name": "Okrika", 
       "parent": 91
     }
@@ -6963,7 +6963,7 @@
     "pk": 621, 
     "model": "psc.lga", 
     "fields": {
-      "code": "621", 
+      "code": "821", 
       "name": "Omuma", 
       "parent": 91
     }
@@ -6972,7 +6972,7 @@
     "pk": 622, 
     "model": "psc.lga", 
     "fields": {
-      "code": "622", 
+      "code": "822", 
       "name": "Port Harcourt", 
       "parent": 91
     }
@@ -6981,7 +6981,7 @@
     "pk": 623, 
     "model": "psc.lga", 
     "fields": {
-      "code": "623", 
+      "code": "823", 
       "name": "Andoni", 
       "parent": 92
     }
@@ -6990,7 +6990,7 @@
     "pk": 624, 
     "model": "psc.lga", 
     "fields": {
-      "code": "624", 
+      "code": "824", 
       "name": "Eleme", 
       "parent": 92
     }
@@ -6999,7 +6999,7 @@
     "pk": 625, 
     "model": "psc.lga", 
     "fields": {
-      "code": "625", 
+      "code": "825", 
       "name": "Gokana", 
       "parent": 92
     }
@@ -7008,7 +7008,7 @@
     "pk": 626, 
     "model": "psc.lga", 
     "fields": {
-      "code": "626", 
+      "code": "826", 
       "name": "Khana", 
       "parent": 92
     }
@@ -7017,7 +7017,7 @@
     "pk": 627, 
     "model": "psc.lga", 
     "fields": {
-      "code": "627", 
+      "code": "827", 
       "name": "Opobo-Nkoro", 
       "parent": 92
     }
@@ -7026,7 +7026,7 @@
     "pk": 628, 
     "model": "psc.lga", 
     "fields": {
-      "code": "628", 
+      "code": "828", 
       "name": "Oyigbo", 
       "parent": 92
     }
@@ -7035,7 +7035,7 @@
     "pk": 629, 
     "model": "psc.lga", 
     "fields": {
-      "code": "629", 
+      "code": "829", 
       "name": "Tai", 
       "parent": 92
     }
@@ -7044,7 +7044,7 @@
     "pk": 630, 
     "model": "psc.lga", 
     "fields": {
-      "code": "630", 
+      "code": "830", 
       "name": "Abua-Odual", 
       "parent": 93
     }
@@ -7053,7 +7053,7 @@
     "pk": 631, 
     "model": "psc.lga", 
     "fields": {
-      "code": "631", 
+      "code": "831", 
       "name": "Ahoada East", 
       "parent": 93
     }
@@ -7062,7 +7062,7 @@
     "pk": 632, 
     "model": "psc.lga", 
     "fields": {
-      "code": "632", 
+      "code": "832", 
       "name": "Ahoada West", 
       "parent": 93
     }
@@ -7071,7 +7071,7 @@
     "pk": 633, 
     "model": "psc.lga", 
     "fields": {
-      "code": "633", 
+      "code": "833", 
       "name": "Akuku-Toru", 
       "parent": 93
     }
@@ -7080,7 +7080,7 @@
     "pk": 634, 
     "model": "psc.lga", 
     "fields": {
-      "code": "634", 
+      "code": "834", 
       "name": "Asari-Toru", 
       "parent": 93
     }
@@ -7089,7 +7089,7 @@
     "pk": 635, 
     "model": "psc.lga", 
     "fields": {
-      "code": "635", 
+      "code": "835", 
       "name": "Bonny", 
       "parent": 93
     }
@@ -7098,7 +7098,7 @@
     "pk": 636, 
     "model": "psc.lga", 
     "fields": {
-      "code": "636", 
+      "code": "836", 
       "name": "Degema", 
       "parent": 93
     }
@@ -7107,7 +7107,7 @@
     "pk": 637, 
     "model": "psc.lga", 
     "fields": {
-      "code": "637", 
+      "code": "837", 
       "name": "Ogba-Egbema-Ndoni", 
       "parent": 93
     }
@@ -7116,7 +7116,7 @@
     "pk": 638, 
     "model": "psc.lga", 
     "fields": {
-      "code": "638", 
+      "code": "838", 
       "name": "Ado Ekiti", 
       "parent": 94
     }
@@ -7125,7 +7125,7 @@
     "pk": 639, 
     "model": "psc.lga", 
     "fields": {
-      "code": "639", 
+      "code": "839", 
       "name": "Efon", 
       "parent": 94
     }
@@ -7134,7 +7134,7 @@
     "pk": 640, 
     "model": "psc.lga", 
     "fields": {
-      "code": "640", 
+      "code": "840", 
       "name": "Ekiti West", 
       "parent": 94
     }
@@ -7143,7 +7143,7 @@
     "pk": 641, 
     "model": "psc.lga", 
     "fields": {
-      "code": "641", 
+      "code": "841", 
       "name": "Ijero", 
       "parent": 94
     }
@@ -7152,7 +7152,7 @@
     "pk": 642, 
     "model": "psc.lga", 
     "fields": {
-      "code": "642", 
+      "code": "842", 
       "name": "Irepodun-Ifelodun", 
       "parent": 94
     }
@@ -7161,7 +7161,7 @@
     "pk": 643, 
     "model": "psc.lga", 
     "fields": {
-      "code": "643", 
+      "code": "843", 
       "name": "Ido-Osi", 
       "parent": 95
     }
@@ -7170,7 +7170,7 @@
     "pk": 644, 
     "model": "psc.lga", 
     "fields": {
-      "code": "644", 
+      "code": "844", 
       "name": "Ikole ", 
       "parent": 95
     }
@@ -7179,7 +7179,7 @@
     "pk": 645, 
     "model": "psc.lga", 
     "fields": {
-      "code": "645", 
+      "code": "845", 
       "name": "Ilejemeje", 
       "parent": 95
     }
@@ -7188,7 +7188,7 @@
     "pk": 646, 
     "model": "psc.lga", 
     "fields": {
-      "code": "646", 
+      "code": "846", 
       "name": "Moba", 
       "parent": 95
     }
@@ -7197,7 +7197,7 @@
     "pk": 647, 
     "model": "psc.lga", 
     "fields": {
-      "code": "647", 
+      "code": "847", 
       "name": "Oye", 
       "parent": 95
     }
@@ -7206,7 +7206,7 @@
     "pk": 648, 
     "model": "psc.lga", 
     "fields": {
-      "code": "648", 
+      "code": "848", 
       "name": "Ekiti East", 
       "parent": 96
     }
@@ -7215,7 +7215,7 @@
     "pk": 649, 
     "model": "psc.lga", 
     "fields": {
-      "code": "649", 
+      "code": "849", 
       "name": "Ekiti South-West", 
       "parent": 96
     }
@@ -7224,7 +7224,7 @@
     "pk": 650, 
     "model": "psc.lga", 
     "fields": {
-      "code": "650", 
+      "code": "850", 
       "name": "Emure", 
       "parent": 96
     }
@@ -7233,7 +7233,7 @@
     "pk": 651, 
     "model": "psc.lga", 
     "fields": {
-      "code": "651", 
+      "code": "851", 
       "name": "Gbonyin", 
       "parent": 96
     }
@@ -7242,7 +7242,7 @@
     "pk": 652, 
     "model": "psc.lga", 
     "fields": {
-      "code": "652", 
+      "code": "852", 
       "name": "Ikere", 
       "parent": 96
     }
@@ -7251,7 +7251,7 @@
     "pk": 653, 
     "model": "psc.lga", 
     "fields": {
-      "code": "653", 
+      "code": "853", 
       "name": "Ise-Orun", 
       "parent": 96
     }
@@ -7260,7 +7260,7 @@
     "pk": 654, 
     "model": "psc.lga", 
     "fields": {
-      "code": "654", 
+      "code": "854", 
       "name": "Apapa", 
       "parent": 97
     }
@@ -7269,7 +7269,7 @@
     "pk": 655, 
     "model": "psc.lga", 
     "fields": {
-      "code": "655", 
+      "code": "855", 
       "name": "Eti-Osa", 
       "parent": 97
     }
@@ -7278,7 +7278,7 @@
     "pk": 656, 
     "model": "psc.lga", 
     "fields": {
-      "code": "656", 
+      "code": "856", 
       "name": "Lagos Island", 
       "parent": 97
     }
@@ -7287,7 +7287,7 @@
     "pk": 657, 
     "model": "psc.lga", 
     "fields": {
-      "code": "657", 
+      "code": "857", 
       "name": "Lagos Mainland", 
       "parent": 97
     }
@@ -7296,7 +7296,7 @@
     "pk": 658, 
     "model": "psc.lga", 
     "fields": {
-      "code": "658", 
+      "code": "858", 
       "name": "Surulere", 
       "parent": 97
     }
@@ -7305,7 +7305,7 @@
     "pk": 659, 
     "model": "psc.lga", 
     "fields": {
-      "code": "659", 
+      "code": "859", 
       "name": "Epe", 
       "parent": 98
     }
@@ -7314,7 +7314,7 @@
     "pk": 660, 
     "model": "psc.lga", 
     "fields": {
-      "code": "660", 
+      "code": "860", 
       "name": "Ibeju-Lekki", 
       "parent": 98
     }
@@ -7323,7 +7323,7 @@
     "pk": 661, 
     "model": "psc.lga", 
     "fields": {
-      "code": "661", 
+      "code": "861", 
       "name": "Ikorodu", 
       "parent": 98
     }
@@ -7332,7 +7332,7 @@
     "pk": 662, 
     "model": "psc.lga", 
     "fields": {
-      "code": "662", 
+      "code": "862", 
       "name": "Kosofe", 
       "parent": 98
     }
@@ -7341,7 +7341,7 @@
     "pk": 663, 
     "model": "psc.lga", 
     "fields": {
-      "code": "663", 
+      "code": "863", 
       "name": "Shomolu", 
       "parent": 98
     }
@@ -7350,7 +7350,7 @@
     "pk": 664, 
     "model": "psc.lga", 
     "fields": {
-      "code": "664", 
+      "code": "864", 
       "name": "Agege", 
       "parent": 99
     }
@@ -7359,7 +7359,7 @@
     "pk": 665, 
     "model": "psc.lga", 
     "fields": {
-      "code": "665", 
+      "code": "865", 
       "name": "Ajeromi-Ifelondun", 
       "parent": 99
     }
@@ -7368,7 +7368,7 @@
     "pk": 666, 
     "model": "psc.lga", 
     "fields": {
-      "code": "666", 
+      "code": "866", 
       "name": "Alimosho", 
       "parent": 99
     }
@@ -7377,7 +7377,7 @@
     "pk": 667, 
     "model": "psc.lga", 
     "fields": {
-      "code": "667", 
+      "code": "867", 
       "name": "Amuwo-Odofin", 
       "parent": 99
     }
@@ -7386,7 +7386,7 @@
     "pk": 668, 
     "model": "psc.lga", 
     "fields": {
-      "code": "668", 
+      "code": "868", 
       "name": "Badagry", 
       "parent": 99
     }
@@ -7395,7 +7395,7 @@
     "pk": 669, 
     "model": "psc.lga", 
     "fields": {
-      "code": "669", 
+      "code": "869", 
       "name": "Ifako-Ijaiye", 
       "parent": 99
     }
@@ -7404,7 +7404,7 @@
     "pk": 670, 
     "model": "psc.lga", 
     "fields": {
-      "code": "670", 
+      "code": "870", 
       "name": "Ikeja", 
       "parent": 99
     }
@@ -7413,7 +7413,7 @@
     "pk": 671, 
     "model": "psc.lga", 
     "fields": {
-      "code": "671", 
+      "code": "871", 
       "name": "Mushin", 
       "parent": 99
     }
@@ -7422,7 +7422,7 @@
     "pk": 672, 
     "model": "psc.lga", 
     "fields": {
-      "code": "672", 
+      "code": "872", 
       "name": "Ojo", 
       "parent": 99
     }
@@ -7431,7 +7431,7 @@
     "pk": 673, 
     "model": "psc.lga", 
     "fields": {
-      "code": "673", 
+      "code": "873", 
       "name": "Oshodi-Isolo", 
       "parent": 99
     }
@@ -7440,7 +7440,7 @@
     "pk": 674, 
     "model": "psc.lga", 
     "fields": {
-      "code": "674", 
+      "code": "874", 
       "name": "Abeokuta North", 
       "parent": 100
     }
@@ -7449,7 +7449,7 @@
     "pk": 675, 
     "model": "psc.lga", 
     "fields": {
-      "code": "675", 
+      "code": "875", 
       "name": "Abeokuta South", 
       "parent": 100
     }
@@ -7458,7 +7458,7 @@
     "pk": 676, 
     "model": "psc.lga", 
     "fields": {
-      "code": "676", 
+      "code": "876", 
       "name": "Ewekoro", 
       "parent": 100
     }
@@ -7467,7 +7467,7 @@
     "pk": 677, 
     "model": "psc.lga", 
     "fields": {
-      "code": "677", 
+      "code": "877", 
       "name": "Ifo", 
       "parent": 100
     }
@@ -7476,7 +7476,7 @@
     "pk": 678, 
     "model": "psc.lga", 
     "fields": {
-      "code": "678", 
+      "code": "878", 
       "name": "Obafemi-Owode", 
       "parent": 100
     }
@@ -7485,7 +7485,7 @@
     "pk": 679, 
     "model": "psc.lga", 
     "fields": {
-      "code": "679", 
+      "code": "879", 
       "name": "Odeda", 
       "parent": 100
     }
@@ -7494,7 +7494,7 @@
     "pk": 680, 
     "model": "psc.lga", 
     "fields": {
-      "code": "680", 
+      "code": "880", 
       "name": "Ijebu East", 
       "parent": 101
     }
@@ -7503,7 +7503,7 @@
     "pk": 681, 
     "model": "psc.lga", 
     "fields": {
-      "code": "681", 
+      "code": "881", 
       "name": "Ijebu North", 
       "parent": 101
     }
@@ -7512,7 +7512,7 @@
     "pk": 682, 
     "model": "psc.lga", 
     "fields": {
-      "code": "682", 
+      "code": "882", 
       "name": "Ijebu North East", 
       "parent": 101
     }
@@ -7521,7 +7521,7 @@
     "pk": 683, 
     "model": "psc.lga", 
     "fields": {
-      "code": "683", 
+      "code": "883", 
       "name": "Ijebu-Ode", 
       "parent": 101
     }
@@ -7530,7 +7530,7 @@
     "pk": 684, 
     "model": "psc.lga", 
     "fields": {
-      "code": "684", 
+      "code": "884", 
       "name": "Ikenne", 
       "parent": 101
     }
@@ -7539,7 +7539,7 @@
     "pk": 685, 
     "model": "psc.lga", 
     "fields": {
-      "code": "685", 
+      "code": "885", 
       "name": "Odogbolu", 
       "parent": 101
     }
@@ -7548,7 +7548,7 @@
     "pk": 686, 
     "model": "psc.lga", 
     "fields": {
-      "code": "686", 
+      "code": "886", 
       "name": "Ogun Waterside", 
       "parent": 101
     }
@@ -7557,7 +7557,7 @@
     "pk": 687, 
     "model": "psc.lga", 
     "fields": {
-      "code": "687", 
+      "code": "887", 
       "name": "Remo North", 
       "parent": 101
     }
@@ -7566,7 +7566,7 @@
     "pk": 688, 
     "model": "psc.lga", 
     "fields": {
-      "code": "688", 
+      "code": "888", 
       "name": "Sagamu", 
       "parent": 101
     }
@@ -7575,7 +7575,7 @@
     "pk": 689, 
     "model": "psc.lga", 
     "fields": {
-      "code": "689", 
+      "code": "889", 
       "name": "Ado-Odo-Ota", 
       "parent": 102
     }
@@ -7584,7 +7584,7 @@
     "pk": 690, 
     "model": "psc.lga", 
     "fields": {
-      "code": "690", 
+      "code": "890", 
       "name": "Egbado North", 
       "parent": 102
     }
@@ -7593,7 +7593,7 @@
     "pk": 691, 
     "model": "psc.lga", 
     "fields": {
-      "code": "691", 
+      "code": "891", 
       "name": "Egbado South", 
       "parent": 102
     }
@@ -7602,7 +7602,7 @@
     "pk": 692, 
     "model": "psc.lga", 
     "fields": {
-      "code": "692", 
+      "code": "892", 
       "name": "Imeko Afon", 
       "parent": 102
     }
@@ -7611,7 +7611,7 @@
     "pk": 693, 
     "model": "psc.lga", 
     "fields": {
-      "code": "693", 
+      "code": "893", 
       "name": "Ipokia", 
       "parent": 102
     }
@@ -7620,7 +7620,7 @@
     "pk": 694, 
     "model": "psc.lga", 
     "fields": {
-      "code": "694", 
+      "code": "894", 
       "name": "Akure North", 
       "parent": 103
     }
@@ -7629,7 +7629,7 @@
     "pk": 695, 
     "model": "psc.lga", 
     "fields": {
-      "code": "695", 
+      "code": "895", 
       "name": "Akure South", 
       "parent": 103
     }
@@ -7638,7 +7638,7 @@
     "pk": 696, 
     "model": "psc.lga", 
     "fields": {
-      "code": "696", 
+      "code": "896", 
       "name": "Idanre", 
       "parent": 103
     }
@@ -7647,7 +7647,7 @@
     "pk": 697, 
     "model": "psc.lga", 
     "fields": {
-      "code": "697", 
+      "code": "897", 
       "name": "Ifedore", 
       "parent": 103
     }
@@ -7656,7 +7656,7 @@
     "pk": 698, 
     "model": "psc.lga", 
     "fields": {
-      "code": "698", 
+      "code": "898", 
       "name": "Ondo East", 
       "parent": 103
     }
@@ -7665,7 +7665,7 @@
     "pk": 699, 
     "model": "psc.lga", 
     "fields": {
-      "code": "699", 
+      "code": "899", 
       "name": "Ondo West", 
       "parent": 103
     }
@@ -7674,7 +7674,7 @@
     "pk": 700, 
     "model": "psc.lga", 
     "fields": {
-      "code": "700", 
+      "code": "900", 
       "name": "Akoko North-East", 
       "parent": 104
     }
@@ -7683,7 +7683,7 @@
     "pk": 701, 
     "model": "psc.lga", 
     "fields": {
-      "code": "701", 
+      "code": "901", 
       "name": "Akoko North-West", 
       "parent": 104
     }
@@ -7692,7 +7692,7 @@
     "pk": 702, 
     "model": "psc.lga", 
     "fields": {
-      "code": "702", 
+      "code": "902", 
       "name": "Akoko South-East", 
       "parent": 104
     }
@@ -7701,7 +7701,7 @@
     "pk": 703, 
     "model": "psc.lga", 
     "fields": {
-      "code": "703", 
+      "code": "903", 
       "name": "Akoko South-West", 
       "parent": 104
     }
@@ -7710,7 +7710,7 @@
     "pk": 704, 
     "model": "psc.lga", 
     "fields": {
-      "code": "704", 
+      "code": "904", 
       "name": "Ose", 
       "parent": 104
     }
@@ -7719,7 +7719,7 @@
     "pk": 705, 
     "model": "psc.lga", 
     "fields": {
-      "code": "705", 
+      "code": "905", 
       "name": "Owo", 
       "parent": 104
     }
@@ -7728,7 +7728,7 @@
     "pk": 706, 
     "model": "psc.lga", 
     "fields": {
-      "code": "706", 
+      "code": "906", 
       "name": "Ese Odo", 
       "parent": 105
     }
@@ -7737,7 +7737,7 @@
     "pk": 707, 
     "model": "psc.lga", 
     "fields": {
-      "code": "707", 
+      "code": "907", 
       "name": "Ilaje", 
       "parent": 105
     }
@@ -7746,7 +7746,7 @@
     "pk": 708, 
     "model": "psc.lga", 
     "fields": {
-      "code": "708", 
+      "code": "908", 
       "name": "Ile Oluji-Okeigbo", 
       "parent": 105
     }
@@ -7755,7 +7755,7 @@
     "pk": 709, 
     "model": "psc.lga", 
     "fields": {
-      "code": "709", 
+      "code": "909", 
       "name": "Irele", 
       "parent": 105
     }
@@ -7764,7 +7764,7 @@
     "pk": 710, 
     "model": "psc.lga", 
     "fields": {
-      "code": "710", 
+      "code": "910", 
       "name": "Odigbo", 
       "parent": 105
     }
@@ -7773,7 +7773,7 @@
     "pk": 711, 
     "model": "psc.lga", 
     "fields": {
-      "code": "711", 
+      "code": "911", 
       "name": "Okitipupa", 
       "parent": 105
     }
@@ -7782,7 +7782,7 @@
     "pk": 712, 
     "model": "psc.lga", 
     "fields": {
-      "code": "712", 
+      "code": "912", 
       "name": "Boluwaduro", 
       "parent": 106
     }
@@ -7791,7 +7791,7 @@
     "pk": 713, 
     "model": "psc.lga", 
     "fields": {
-      "code": "713", 
+      "code": "913", 
       "name": "Boripe", 
       "parent": 106
     }
@@ -7800,7 +7800,7 @@
     "pk": 714, 
     "model": "psc.lga", 
     "fields": {
-      "code": "714", 
+      "code": "914", 
       "name": "Ifedayo", 
       "parent": 106
     }
@@ -7809,7 +7809,7 @@
     "pk": 715, 
     "model": "psc.lga", 
     "fields": {
-      "code": "715", 
+      "code": "915", 
       "name": "Ifelodun", 
       "parent": 106
     }
@@ -7818,7 +7818,7 @@
     "pk": 716, 
     "model": "psc.lga", 
     "fields": {
-      "code": "716", 
+      "code": "916", 
       "name": "Ila", 
       "parent": 106
     }
@@ -7827,7 +7827,7 @@
     "pk": 717, 
     "model": "psc.lga", 
     "fields": {
-      "code": "717", 
+      "code": "917", 
       "name": "Irepodun", 
       "parent": 106
     }
@@ -7836,7 +7836,7 @@
     "pk": 718, 
     "model": "psc.lga", 
     "fields": {
-      "code": "718", 
+      "code": "918", 
       "name": "Odo-Otin", 
       "parent": 106
     }
@@ -7845,7 +7845,7 @@
     "pk": 719, 
     "model": "psc.lga", 
     "fields": {
-      "code": "719", 
+      "code": "919", 
       "name": "Olorunda", 
       "parent": 106
     }
@@ -7854,7 +7854,7 @@
     "pk": 720, 
     "model": "psc.lga", 
     "fields": {
-      "code": "720", 
+      "code": "920", 
       "name": "Orolu", 
       "parent": 106
     }
@@ -7863,7 +7863,7 @@
     "pk": 721, 
     "model": "psc.lga", 
     "fields": {
-      "code": "721", 
+      "code": "921", 
       "name": "Osogbo", 
       "parent": 106
     }
@@ -7872,7 +7872,7 @@
     "pk": 722, 
     "model": "psc.lga", 
     "fields": {
-      "code": "722", 
+      "code": "922", 
       "name": "Atakunmosa East", 
       "parent": 107
     }
@@ -7881,7 +7881,7 @@
     "pk": 723, 
     "model": "psc.lga", 
     "fields": {
-      "code": "723", 
+      "code": "923", 
       "name": "Atakunmosa West", 
       "parent": 107
     }
@@ -7890,7 +7890,7 @@
     "pk": 724, 
     "model": "psc.lga", 
     "fields": {
-      "code": "724", 
+      "code": "924", 
       "name": "Ife Central", 
       "parent": 107
     }
@@ -7899,7 +7899,7 @@
     "pk": 725, 
     "model": "psc.lga", 
     "fields": {
-      "code": "725", 
+      "code": "925", 
       "name": "Ife East", 
       "parent": 107
     }
@@ -7908,7 +7908,7 @@
     "pk": 726, 
     "model": "psc.lga", 
     "fields": {
-      "code": "726", 
+      "code": "926", 
       "name": "Ife North", 
       "parent": 107
     }
@@ -7917,7 +7917,7 @@
     "pk": 727, 
     "model": "psc.lga", 
     "fields": {
-      "code": "727", 
+      "code": "927", 
       "name": "Ife South", 
       "parent": 107
     }
@@ -7926,7 +7926,7 @@
     "pk": 728, 
     "model": "psc.lga", 
     "fields": {
-      "code": "728", 
+      "code": "928", 
       "name": "Ilesa East", 
       "parent": 107
     }
@@ -7935,7 +7935,7 @@
     "pk": 729, 
     "model": "psc.lga", 
     "fields": {
-      "code": "729", 
+      "code": "929", 
       "name": "Ilesa West", 
       "parent": 107
     }
@@ -7944,7 +7944,7 @@
     "pk": 730, 
     "model": "psc.lga", 
     "fields": {
-      "code": "730", 
+      "code": "930", 
       "name": "Obokun", 
       "parent": 107
     }
@@ -7953,7 +7953,7 @@
     "pk": 731, 
     "model": "psc.lga", 
     "fields": {
-      "code": "731", 
+      "code": "931", 
       "name": "Oriade", 
       "parent": 107
     }
@@ -7962,7 +7962,7 @@
     "pk": 732, 
     "model": "psc.lga", 
     "fields": {
-      "code": "732", 
+      "code": "932", 
       "name": "Aiyadaade", 
       "parent": 108
     }
@@ -7971,7 +7971,7 @@
     "pk": 733, 
     "model": "psc.lga", 
     "fields": {
-      "code": "733", 
+      "code": "933", 
       "name": "Aiyedire", 
       "parent": 108
     }
@@ -7980,7 +7980,7 @@
     "pk": 734, 
     "model": "psc.lga", 
     "fields": {
-      "code": "734", 
+      "code": "934", 
       "name": "Ede North", 
       "parent": 108
     }
@@ -7989,7 +7989,7 @@
     "pk": 735, 
     "model": "psc.lga", 
     "fields": {
-      "code": "735", 
+      "code": "935", 
       "name": "Ede South", 
       "parent": 108
     }
@@ -7998,7 +7998,7 @@
     "pk": 736, 
     "model": "psc.lga", 
     "fields": {
-      "code": "736", 
+      "code": "936", 
       "name": "Egbedore", 
       "parent": 108
     }
@@ -8007,7 +8007,7 @@
     "pk": 737, 
     "model": "psc.lga", 
     "fields": {
-      "code": "737", 
+      "code": "937", 
       "name": "Ejigbo", 
       "parent": 108
     }
@@ -8016,7 +8016,7 @@
     "pk": 738, 
     "model": "psc.lga", 
     "fields": {
-      "code": "738", 
+      "code": "938", 
       "name": "Irewole", 
       "parent": 108
     }
@@ -8025,7 +8025,7 @@
     "pk": 739, 
     "model": "psc.lga", 
     "fields": {
-      "code": "739", 
+      "code": "939", 
       "name": "Isokan", 
       "parent": 108
     }
@@ -8034,7 +8034,7 @@
     "pk": 740, 
     "model": "psc.lga", 
     "fields": {
-      "code": "740", 
+      "code": "940", 
       "name": "Iwo", 
       "parent": 108
     }
@@ -8043,7 +8043,7 @@
     "pk": 741, 
     "model": "psc.lga", 
     "fields": {
-      "code": "741", 
+      "code": "941", 
       "name": "Ola Oluwa", 
       "parent": 108
     }
@@ -8052,7 +8052,7 @@
     "pk": 742, 
     "model": "psc.lga", 
     "fields": {
-      "code": "742", 
+      "code": "942", 
       "name": "Afijio", 
       "parent": 109
     }
@@ -8061,7 +8061,7 @@
     "pk": 743, 
     "model": "psc.lga", 
     "fields": {
-      "code": "743", 
+      "code": "943", 
       "name": "Akinyele", 
       "parent": 109
     }
@@ -8070,7 +8070,7 @@
     "pk": 744, 
     "model": "psc.lga", 
     "fields": {
-      "code": "744", 
+      "code": "944", 
       "name": "Atiba", 
       "parent": 109
     }
@@ -8079,7 +8079,7 @@
     "pk": 745, 
     "model": "psc.lga", 
     "fields": {
-      "code": "745", 
+      "code": "945", 
       "name": "Egbeda", 
       "parent": 109
     }
@@ -8088,7 +8088,7 @@
     "pk": 746, 
     "model": "psc.lga", 
     "fields": {
-      "code": "746", 
+      "code": "946", 
       "name": "Lagelu", 
       "parent": 109
     }
@@ -8097,7 +8097,7 @@
     "pk": 747, 
     "model": "psc.lga", 
     "fields": {
-      "code": "747", 
+      "code": "947", 
       "name": "Ogo Oluwa", 
       "parent": 109
     }
@@ -8106,7 +8106,7 @@
     "pk": 748, 
     "model": "psc.lga", 
     "fields": {
-      "code": "748", 
+      "code": "948", 
       "name": "Oluyole", 
       "parent": 109
     }
@@ -8115,7 +8115,7 @@
     "pk": 749, 
     "model": "psc.lga", 
     "fields": {
-      "code": "749", 
+      "code": "949", 
       "name": "Ona-Ara", 
       "parent": 109
     }
@@ -8124,7 +8124,7 @@
     "pk": 750, 
     "model": "psc.lga", 
     "fields": {
-      "code": "750", 
+      "code": "950", 
       "name": "Oyo East", 
       "parent": 109
     }
@@ -8133,7 +8133,7 @@
     "pk": 751, 
     "model": "psc.lga", 
     "fields": {
-      "code": "751", 
+      "code": "951", 
       "name": "Oyo West", 
       "parent": 109
     }
@@ -8142,7 +8142,7 @@
     "pk": 752, 
     "model": "psc.lga", 
     "fields": {
-      "code": "752", 
+      "code": "952", 
       "name": "Surulere", 
       "parent": 109
     }
@@ -8151,7 +8151,7 @@
     "pk": 753, 
     "model": "psc.lga", 
     "fields": {
-      "code": "753", 
+      "code": "953", 
       "name": "Atisbo", 
       "parent": 110
     }
@@ -8160,7 +8160,7 @@
     "pk": 754, 
     "model": "psc.lga", 
     "fields": {
-      "code": "754", 
+      "code": "954", 
       "name": "Irepo", 
       "parent": 110
     }
@@ -8169,7 +8169,7 @@
     "pk": 755, 
     "model": "psc.lga", 
     "fields": {
-      "code": "755", 
+      "code": "955", 
       "name": "Iseyin", 
       "parent": 110
     }
@@ -8178,7 +8178,7 @@
     "pk": 756, 
     "model": "psc.lga", 
     "fields": {
-      "code": "756", 
+      "code": "956", 
       "name": "Itesiwaju", 
       "parent": 110
     }
@@ -8187,7 +8187,7 @@
     "pk": 757, 
     "model": "psc.lga", 
     "fields": {
-      "code": "757", 
+      "code": "957", 
       "name": "Iwajowa", 
       "parent": 110
     }
@@ -8196,7 +8196,7 @@
     "pk": 758, 
     "model": "psc.lga", 
     "fields": {
-      "code": "758", 
+      "code": "958", 
       "name": "Kajola", 
       "parent": 110
     }
@@ -8205,7 +8205,7 @@
     "pk": 759, 
     "model": "psc.lga", 
     "fields": {
-      "code": "759", 
+      "code": "959", 
       "name": "Ogbomosho North", 
       "parent": 110
     }
@@ -8214,7 +8214,7 @@
     "pk": 760, 
     "model": "psc.lga", 
     "fields": {
-      "code": "760", 
+      "code": "960", 
       "name": "Ogbomosho South", 
       "parent": 110
     }
@@ -8223,7 +8223,7 @@
     "pk": 761, 
     "model": "psc.lga", 
     "fields": {
-      "code": "761", 
+      "code": "961", 
       "name": "Olorunsogo", 
       "parent": 110
     }
@@ -8232,7 +8232,7 @@
     "pk": 762, 
     "model": "psc.lga", 
     "fields": {
-      "code": "762", 
+      "code": "962", 
       "name": "Orelope", 
       "parent": 110
     }
@@ -8241,7 +8241,7 @@
     "pk": 763, 
     "model": "psc.lga", 
     "fields": {
-      "code": "763", 
+      "code": "963", 
       "name": "Ori Ire", 
       "parent": 110
     }
@@ -8250,7 +8250,7 @@
     "pk": 764, 
     "model": "psc.lga", 
     "fields": {
-      "code": "764", 
+      "code": "964", 
       "name": "Saki East", 
       "parent": 110
     }
@@ -8259,7 +8259,7 @@
     "pk": 765, 
     "model": "psc.lga", 
     "fields": {
-      "code": "765", 
+      "code": "965", 
       "name": "Saki West", 
       "parent": 110
     }
@@ -8268,7 +8268,7 @@
     "pk": 766, 
     "model": "psc.lga", 
     "fields": {
-      "code": "766", 
+      "code": "966", 
       "name": "Ibadan North", 
       "parent": 111
     }
@@ -8277,7 +8277,7 @@
     "pk": 767, 
     "model": "psc.lga", 
     "fields": {
-      "code": "767", 
+      "code": "968", 
       "name": "Ibadan North-East", 
       "parent": 111
     }
@@ -8286,7 +8286,7 @@
     "pk": 768, 
     "model": "psc.lga", 
     "fields": {
-      "code": "768", 
+      "code": "969", 
       "name": "Ibadan North-West", 
       "parent": 111
     }
@@ -8295,7 +8295,7 @@
     "pk": 769, 
     "model": "psc.lga", 
     "fields": {
-      "code": "769", 
+      "code": "970", 
       "name": "Ibadan South-East", 
       "parent": 111
     }
@@ -8304,7 +8304,7 @@
     "pk": 770, 
     "model": "psc.lga", 
     "fields": {
-      "code": "770", 
+      "code": "971", 
       "name": "Ibadan South-West", 
       "parent": 111
     }
@@ -8313,7 +8313,7 @@
     "pk": 771, 
     "model": "psc.lga", 
     "fields": {
-      "code": "771", 
+      "code": "972", 
       "name": "Ibarapa Central", 
       "parent": 111
     }
@@ -8322,7 +8322,7 @@
     "pk": 772, 
     "model": "psc.lga", 
     "fields": {
-      "code": "772", 
+      "code": "973", 
       "name": "Ibarapa East", 
       "parent": 111
     }
@@ -8331,7 +8331,7 @@
     "pk": 773, 
     "model": "psc.lga", 
     "fields": {
-      "code": "773", 
+      "code": "974", 
       "name": "Ibarapa North", 
       "parent": 111
     }
@@ -8340,7 +8340,7 @@
     "pk": 774, 
     "model": "psc.lga", 
     "fields": {
-      "code": "774", 
+      "code": "975", 
       "name": "Ido", 
       "parent": 111
     }
