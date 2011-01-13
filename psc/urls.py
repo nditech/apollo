@@ -2,7 +2,7 @@ from django.conf.urls.defaults import *
 import views
 
 urlpatterns = patterns('',
-    (r'^home/$', views.home),
+    (r'^$', views.home),
     (r'^vr/?$', views.vr_checklist_list),
     (r'^vr/(?P<checklist_id>\d+)/?$', views.vr_checklist),
     (r'^vr/in/?$', views.vr_incident_list),
