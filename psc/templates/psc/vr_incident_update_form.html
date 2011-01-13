@@ -3,12 +3,16 @@
 {% block content %}
 <div class="grid_16">
 		<div class="box">
-				<h2>Observer Details</h2>
+				<h2>Critical Incident Details</h2>
 				<form method="POST" action="{% url psc.views.vr_incident_update incident.id %}" >
 						<div class="block">
 								<table>
-										<tr><td>Observer:</td><td>{{ incident.observer.name }} (<strong>{{ incident.observer.observer_id }}</strong>)</td></tr>
+										<tr><td>Observer:</td><td>{{ incident.observer.name }} (<strong>{{ incident.observer.observer_id }}</strong>)<input name="observer" type="hidden" value="{{ incident.observer.id }}" /></td></tr>
+										<tr><td>Observer Phone No.:</td><td><strong>{{ incident.observer.phone }}</strong></td></tr>
+										<tr><td>Location:</td><td><strong>{{ location.parent.parent.parent.name }} - {{ location.parent.parent.name }} - {{ location.parent.name }} - {{ location.name }}</strong></td></tr>
 										<tr><td>Date:</td><td>{{ incident.date|date:"D d-M" }}</td></tr>
+										<tr><td>LGA:</td><td>{{ incident.location.parent.name }}</td></tr>
+										<tr><td>RC:</td><td>{{ incident.location.name }}</td></tr>
 								</table>
 						</div>
 						<div class="clear"></div>

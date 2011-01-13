@@ -182,6 +182,7 @@ def dco_checklist(request, checklist_id=0):
 @login_required()
 def vr_incident_update(request, incident_id=0):
     incident = get_object_or_404(VRIncident, pk=incident_id)
+    location = incident.observer.location
     if request.POST:        
         f = VRIncidentForm(request.POST, instance=incident)
         if f.is_valid():
@@ -189,18 +190,19 @@ def vr_incident_update(request, incident_id=0):
         return HttpResponseRedirect(reverse('psc.views.vr_incident_list'))    
     else:
         f = VRIncidentForm(instance=incident)   
-        return render_to_response('psc/vr_incident_update_form.html', {'page_title': "Voter Registration Critrical Incident", 'incident': incident, 'form': f }, context_instance=RequestContext(request))
+        return render_to_response('psc/vr_incident_update_form.html', {'page_title': "Voter Registration Critrical Incident", 'incident': incident, 'location': location, 'form': f }, context_instance=RequestContext(request))
 
 @login_required()
 def dco_incident_update(request, incident_id=0):
     incident = get_object_or_404(DCOIncident, pk=incident_id)
+    location = incident.observer.location
     if request.POST:
         f = DCOIncidentForm(request.POST, instance=incident)    
         f.save()
         return HttpResponseRedirect(reverse('psc.views.dco_incident_list'))
     else:
         f = DCOIncidentForm(instance=incident)
-        return render_to_response('psc/dco_incident_update_form.html', {'page_title': 'Display, Claims & Objections Critical Incident', 'incident': incident, 'form': f }, context_instance=RequestContext(request))
+        return render_to_response('psc/dco_incident_update_form.html', {'page_title': 'Display, Claims & Objections Critical Incident', 'incident': incident, 'location': location, 'form': f }, context_instance=RequestContext(request))
 
 @login_required()
 def vr_incident_add(request):
