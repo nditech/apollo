@@ -64,11 +64,8 @@ class App(AppBase):
 
         # Create the checklist
         try:
-            if msg.location:
-                vr = VRChecklist.objects.get(date=msg.date, observer=msg.observer, 
-                    location_type=ContentType.objects.get_for_model(msg.location), location_id=msg.location.pk)
-            else:
-                vr = VRChecklist.objects.get(date=msg.date, observer=msg.observer)
+            vr = VRChecklist.objects.get(date=msg.date, observer=msg.observer)
+            vr.location = msg.location
             vr.submitted = True
         except VRChecklist.DoesNotExist:
             vr = VRChecklist() 
@@ -157,22 +154,23 @@ class App(AppBase):
         # Create the checklist
         counter = 1
         try:
-            if msg.location:
-                dco = DCOChecklist.objects.get(date=msg.date, observer=msg.observer, location_type=ContentType.objects.get_for_model(msg.location), location_id=msg.location.pk)
+            dco = DCOChecklist.objects.filter(date=msg.date, observer=msg.observer, submitted=True)
+            counter = len(dco) + 1
+            '''DCO Checklists are prepopulated (3 checklists)  and have to be filled first before creating new
+            ones.'''
+            if counter > 3:
+                dco = DCOChecklist()
+                dco.date = msg.date
+                dco.observer = msg.observer
+                if msg.location:
+                    dco.location = msg.location
+                dco.sms_serial = counter
+                dco.submitted =True
             else:
-                dco = DCOChecklist.objects.filter(date=msg.date, observer=msg.observer, submitted=True)
-                counter = len(dco) + 1
-                '''DCO Checklists are prepopulated (3 checklists)  and have to be filled first before creating new
-                ones.'''
-                if counter > 3:
-                    dco = DCOChecklist()
-                    dco.date = msg.date
-                    dco.observer = msg.observer
-                    dco.sms_serial = counter
-                    dco.submitted =True
-                else:
-                    dco = DCOChecklist.objects.get(date=msg.date, observer=msg.observer, sms_serial=counter)
-                    dco.submitted = True
+                dco = DCOChecklist.objects.get(date=msg.date, observer=msg.observer, sms_serial=counter)
+                if msg.location:
+                    dco.location = msg.location
+                dco.submitted = True
         except DCOChecklist.DoesNotExist:
             dco = DCOChecklist() 
             dco.date = msg.date
@@ -306,19 +304,24 @@ class App(AppBase):
         if params.has_key('location_type') and params['location_type'].upper() == 'GA':
             try:
                 location = LGA.objects.get(code=params['location_id'])
+                location = RegistrationCenter.objects.get(parent=location,code='999')
             except LGA.DoesNotExist:
-                if int(params['location_id']) == 999:
-                    location = None
-                else:
-                    location = None
+                lga = LGA.objects.get(name="Unknown")
+                location = RegistrationCenter.objects.get(parent=lga,code="999")
+            except RegistrationCenter.DoesNotExist:
+                lga = LGA.objects.get(name="Unknown")
+                location = RegistrationCenter.objects.get(parent=lga,code="999")
         else:
             try:
-                location = RegistrationCenter.objects.get(code=params['location_id'])
-            except RegistrationCenter.DoesNotExist:
-                if int(params['location_id']) == 999:
-                    location = None
+                if message.observer.location_type == ContentType.objects.get_for_model(LGA.objects.get(pk=1)):
+                    lga = LGA.objects.get(pk=message.observer.location_id)
+                    location = RegistrationCenter.objects.get(parent=lga,code=params['location_id'])
                 else:
-                    location = None
+                    lga = LGA.objects.get(name="Unknown")
+                    location = RegistrationCenter.objects.get(parent=lga,code="999")
+            except RegistrationCenter.DoesNotExist:
+                lga = LGA.objects.get(name="Unknown")
+                location = RegistrationCenter.objects.get(parent=lga,code="999")
 
         message.location = location
 
