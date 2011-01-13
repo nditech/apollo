@@ -8346,6 +8346,15 @@
     }
   }, 
   {
+    "pk": 775, 
+    "model": "psc.lga", 
+    "fields": {
+      "code": "999", 
+      "name": "Unknown", 
+      "parent": null
+    }
+  }, 
+  {
     "pk": 1, 
     "model": "psc.partner", 
     "fields": {
