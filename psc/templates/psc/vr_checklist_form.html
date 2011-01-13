@@ -7,9 +7,9 @@
 						<form method="POST" action="{% url psc.views.vr_checklist checklist.id %}">
 								<div class="block">
 										<!-- checklist details -->
-										<table>
-												<tr><td>Observer:</td><td>{{ checklist.observer.name }} (<strong>{{ checklist.observer.observer_id  }}</strong>)</td></tr>
-												<tr><td>Date:</td><td>{{ checklist.date|date:"D d-M" }}</td></tr>
+										<table class="observer_details">
+                                                                                            <tr><td>Observer:</td><td>{{ checklist.observer.name }} (<strong>{{ checklist.observer.observer_id  }}</strong>)</td></tr>
+                                                                                            <tr><td>Date:</td><td>{{ checklist.date|date:"D d-M" }}</td></tr>
 										</table>
 								</div>
 								<div class="clear"></div>

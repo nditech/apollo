@@ -39,9 +39,6 @@ def home(request):
     context['checklist_today'] = DCOChecklist.objects.filter(date=datetime.now()).count()
     context['dco_in_count'] = DCOIncident.objects.all().count()
     dco_d = DCOIncident.objects.all()
-    
-    
-    
 
 
     #render
