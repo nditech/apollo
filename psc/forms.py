@@ -31,8 +31,8 @@ class VRChecklistForm(forms.ModelForm):
         exclude = ['location_type', 'location_id', 'location', 'observer', 'date']
 
 class VRIncidentForm(forms.ModelForm):
-    date = forms.ChoiceField(choices=VR_DAYS)
-    observer = forms.ModelChoiceField(queryset=Observer.objects.exclude(observer_id=""), empty_label="--")
+    date = forms.ChoiceField(choices=tuple([('', '--')] + [(date, label) for (date, label) in VR_DAYS if date]))
+    observer = forms.ModelChoiceField(queryset=Observer.objects.filter(role__in=['SC', 'SDC', 'LGA']).exclude(observer_id=""), empty_label="--")
     class Meta:
         model = VRIncident
         exclude = ['location_type', 'location_id', 'location']
@@ -49,8 +49,8 @@ class DCOChecklistForm(forms.ModelForm):
         exclude = ['location_type', 'location_id', 'location', 'observer', 'date']
 
 class DCOIncidentForm(forms.ModelForm):
-    date = forms.ChoiceField(choices=DCO_DAYS)
-    observer = forms.ModelChoiceField(queryset=Observer.objects.exclude(observer_id=""), empty_label="--")
+    date = forms.ChoiceField(choices=tuple([('', '--')] + [(date, label) for (date, label) in DCO_DAYS if date]))
+    observer = forms.ModelChoiceField(queryset=Observer.objects.filter(role__in=['SC', 'SDC', 'LGA']).exclude(observer_id=""), empty_label="--")
     class Meta:
         model = DCOIncident
         exclude = ['location_type', 'location_id', 'location']
