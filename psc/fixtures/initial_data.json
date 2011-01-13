@@ -4525,7 +4525,7 @@
     "model": "psc.lga", 
     "fields": {
       "code": "550", 
-      "name": "Zango ", 
+      "name": "Zango", 
       "parent": 50
     }
   }, 
@@ -4822,7 +4822,7 @@
     "model": "psc.lga", 
     "fields": {
       "code": "583", 
-      "name": "Gada ", 
+      "name": "Gada", 
       "parent": 55
     }
   }, 
@@ -5002,7 +5002,7 @@
     "model": "psc.lga", 
     "fields": {
       "code": "603", 
-      "name": "Tambuwal ", 
+      "name": "Tambuwal", 
       "parent": 57
     }
   }, 
@@ -5092,7 +5092,7 @@
     "model": "psc.lga", 
     "fields": {
       "code": "613", 
-      "name": "Zurmi ", 
+      "name": "Zurmi", 
       "parent": 59
     }
   }, 
@@ -5263,7 +5263,7 @@
     "model": "psc.lga", 
     "fields": {
       "code": "632", 
-      "name": "Obingwa ", 
+      "name": "Obingwa", 
       "parent": 63
     }
   }, 
@@ -5362,7 +5362,7 @@
     "model": "psc.lga", 
     "fields": {
       "code": "643", 
-      "name": "Njikoka ", 
+      "name": "Njikoka", 
       "parent": 64
     }
   }, 
@@ -6262,7 +6262,7 @@
     "model": "psc.lga", 
     "fields": {
       "code": "743", 
-      "name": "Oron ", 
+      "name": "Oron", 
       "parent": 78
     }
   }, 
@@ -6865,7 +6865,7 @@
     "model": "psc.lga", 
     "fields": {
       "code": "810", 
-      "name": "Oredo ", 
+      "name": "Oredo", 
       "parent": 90
     }
   }, 
@@ -7171,7 +7171,7 @@
     "model": "psc.lga", 
     "fields": {
       "code": "844", 
-      "name": "Ikole ", 
+      "name": "Ikole", 
       "parent": 95
     }
   }, 
