@@ -65,7 +65,7 @@
                         <th>H</th>
                         <th>J</th>
                         <th>K</th>
-                        <th><a href="{% url psc.views.dco_incident_add  %}">Add Incident</a></th>
+                        <th class="checklist"><button onclick="location.href='{% url psc.views.dco_incident_add  %}'">Add Incident</button></th>
                     </tr>
                 </thead>
 				{% for cl in checklists.object_list %}
@@ -126,7 +126,7 @@
                         <img src="/assets/img/status-busy.png" width="16" height="16" alt="complete" />
 						{% endif %}
                     </td>
-                    <td><a href="{% url psc.views.dco_incident_update cl.id %}">Edit</a></td>
+                    <td class="checklist"><a href="{% url psc.views.dco_incident_update cl.id %}">Edit</a></td>
                 </tr>
 				{% empty %}
                 <tr>

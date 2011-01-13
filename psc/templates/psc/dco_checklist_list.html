@@ -56,7 +56,7 @@
                         <th>State/SD</th>
                         <th>Observer</th>
                         <th>Supervisor</th>
-                        <th>Status</th>
+                        <th class="checklist">Status</th>
                         <th>&nbsp;</th>
                     </tr>
                 </thead>
@@ -74,7 +74,7 @@
                         <td>{{ cl.observer.location.parent.name|truncatewords:3 }}</td>
                         <td>{{ cl.observer.name }}</td>
                         <td>{{ cl.observer.supervisor.name }}</td>
-                        <td>
+                        <td class="checklist">
 					{% if cl.A and cl.B and cl.C and cl.D and cl.E and cl.G and cl.H and cl.J and cl.K and cl.M and cl.N and cl.P and cl.Q and cl.R and cl.S and cl.T and cl.U and cl.V and cl.W and cl.X and cl.submitted %}
 						{% if cl.F1 or cl.F2 or cl.F3 or cl.F4 or cl.F5 or cl.F6 or cl.F7 or cl.F8 or cl.F9 %}
                             <img src="/assets/img/status.png" width="16" height="16" alt="complete" />

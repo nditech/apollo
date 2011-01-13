@@ -165,7 +165,7 @@ class VRChecklist(models.Model):
     V = models.PositiveSmallIntegerField(blank=True, default=0, choices=YES_NO, help_text='Did the registration centre remain open until 5 pm? (tick Yes or No)')
     W = models.PositiveSmallIntegerField(blank=True, default=0, choices=YES_NO, help_text="Did anyone attempt to disrupt voters' registration at the centre? (tick Yes or No)")
     X = models.PositiveSmallIntegerField(blank=True, default=0, choices=YES_NO, help_text='Did anyone attempt to intimidate or harass people in or around the centre? (tick Yes or No)')
-    Y = models.IntegerField(blank=True, null=True, help_text='How many people registered during this day? (record number from Certificate of Completion of Daily Registration of Voters Form EC.1B(1)) (enter number) (if not permited to record this figure enter "9999")')
+    Y = models.IntegerField(blank=True, null=True, help_text='How many people registered during this day? (record number from Certificate of Completion of Daily Registration of Voters Form EC.1B(1)) (if not permited to record this figure enter "9999")')
     Z = models.IntegerField(blank=True, null=True, help_text='How many people so far (total to date) have registered at this centre according to the Manual Register of Voters (MRV) Form EC.1A? (enter number) (if not permitted to record this figure enter "9999")')
     AA = models.IntegerField(blank=True, null=True, help_text='How many people so far (total to date) have registered according to the DDC system? (enter number) (if not permitted to record this figure, enter "9999")')
     comment = models.CharField(max_length=100, blank=True)

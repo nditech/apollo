@@ -56,9 +56,9 @@
                         <th>Observer</th>
                         <th>Phone</th>
                         <th>Supervisor</th>
-                        <th>1st</th>
-                        <th>2nd</th>
-                        <th>3rd</th>
+                        <th class="checklist">1st</th>
+                        <th class="checklist">2nd</th>
+                        <th class="checklist">3rd</th>
                         <th>&nbsp;</th>
                     </tr>
                 </thead>
@@ -71,14 +71,14 @@
                     <td>{{ cl.observer.name }}</td>
                     <td>{{ cl.observer.phone }}</td>
                     <td>{{ cl.observer.supervisor.name }}</td>
-                    <td>
+                    <td class="checklist">
 					{% if cl.submitted %}
                         <img src="/assets/img/status.png" width="16" height="16" alt="complete" />
 					{% else %}
                         <img src="/assets/img/status-busy.png" width="16" height="16" alt="none" />
 					{% endif %}
                     </td>
-                    <td>
+                    <td class="checklist">
 					{% if cl.A and cl.B and cl.C and cl.G %}
 						{% if cl.D1 or cl.D2 or cl.D3 or cl.D4 %}
 							{% if cl.E1 or cl.E2 or cl.E3 or cl.E4 or cl.E5 %}
@@ -93,7 +93,7 @@
 					{% endif %}
 					{% endif %}
                     </td>
-                    <td>
+                    <td class="checklist">
 					{% if cl.H and cl.J and cl.K and cl.M and cl.N and cl.P and cl.Q and cl.R and cl.S and cl.T and cl.U and cl.V and cl.W and cl.X and cl.Y and cl.Z and cl.AA %}
                         <img src="/assets/img/status.png" width="16" height="16" alt="complete" />
 					{% else %}

@@ -266,7 +266,10 @@ col.colC {
 th, td {
 	padding:.2em .5em;
 	text-align:left;
-	min-width: 16px;
+}
+th.checklist, td.checklist {
+	min-width: 30px;
+	text-align: center;
 }
 thead th {
 	border-bottom:2px solid #888;
@@ -448,6 +451,12 @@ form .grandparent .parent input.text.comment {
   width: 35em;
 	font-size: 1.5em;
 	padding: 2px;
+}
+
+input.bigbox {
+  width: 20em;
+	font-size: 1em;
+	padding: 4px;
 }
 
 form .buttons {
