@@ -740,3 +740,14 @@ table.dashboard td {
     width: 100%;
 }
 
+/*----------- messages and error styling ------------------------*/
+span.error {
+    display: block;
+    margin: 10px 10px 0 10px;
+    background-color: #FF495F;
+    border: 1px solid #fff;
+    font-size: 13px;
+    font-weight: bold;
+    color: #fff;
+    padding: 5px;
+}

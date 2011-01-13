@@ -12,7 +12,13 @@ urlpatterns = patterns('',
     (r'^dco/(?P<checklist_id>\d+)/?$', views.dco_checklist),
     (r'^dco/in/?$', views.dco_incident_list),
     (r'^dco/in/(?P<incident_id>\d+)/?$', views.dco_incident_update),
-    (r'^dco/in/add?$', views.dco_incident_add),
+    (r'^dco/in/add/?$', views.dco_incident_add),
     (r'^msglog/$', views.message_log),
     (r'^actionlog/$', views.action_log),
+)
+
+#authentication urls
+urlpatterns += patterns('',
+    (r'^accounts/login/$', 'django.contrib.auth.views.login', {'template_name': 'psc/login.html'}),
+    (r'^accounts/logout/$', 'django.contrib.auth.views.logout_then_login')
 )

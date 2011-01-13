@@ -1,0 +1,29 @@
+{% extends "psc/layout.html" %}
+{% block content %}
+<div class="grid_16">
+    <div class="box">
+        <h2>Login</h2>
+        {% if form.errors %}
+        <span class="error">Your username and password didn't match. Please try again.</span>
+        {% endif %}
+        <div class="box">
+            <form method="post" action="{% url django.contrib.auth.views.login %}">
+                {% csrf_token %}
+                <table width="50%">
+                    <tr>
+                        <td>{{ form.username.label_tag }}</td>
+                        <td>{{ form.username }}</td>
+                    </tr>
+                    <tr>
+                        <td>{{ form.password.label_tag }}</td>
+                        <td>{{ form.password }}</td>
+                    </tr>
+                </table>
+
+                <input type="submit" value="login" />
+                <input type="hidden" name="next" value="{{ next }}" />
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

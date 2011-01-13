@@ -10,10 +10,12 @@ from rapidsms.contrib.messagelog.tables import MessageTable
 from rapidsms.contrib.messagelog.models import Message
 from forms import VRChecklistForm, VRIncidentForm, DCOIncidentForm, VRChecklistFilterForm, VRIncidentFilterForm, DCOIncidentFilterForm, DCOChecklistFilterForm, DCOChecklistForm, VR_DAYS, DCO_DAYS
 from datetime import datetime
+from django.contrib.auth.decorators import login_required
 
 # paginator settings
 items_per_page = 25
 
+@login_required()
 def home(request):
     context = {'page_title': 'PSC 2011 SwiftCount Dashboard'}
     
@@ -43,8 +45,9 @@ def home(request):
 
 
     #render
-    return render_to_response('psc/home.html', context)
+    return render_to_response('psc/home.html', context,  context_instance=RequestContext(request))
 
+@login_required()
 def vr_checklist_list(request):
     qs = Q(date__in=[d[0] for d in VR_DAYS if d[0]])
     if request.method == 'GET':
@@ -116,6 +119,7 @@ def vr_checklist_list(request):
 
     return render_to_response('psc/vr_checklist_list.html', {'page_title': "Voter Registration Data Management", 'checklists': checklists, 'filter_form': filter_form }, context_instance=RequestContext(request))
 
+@login_required()
 def dco_checklist_list(request):
     qs = Q(date__in=[d[0] for d in DCO_DAYS if d[0]])    
     if request.method == 'GET':
@@ -151,6 +155,7 @@ def dco_checklist_list(request):
 
     return render_to_response('psc/dco_checklist_list.html', {'page_title': "Display, Claims & Objections Data Management", 'checklists': checklists, 'filter_form': filter_form }, context_instance=RequestContext(request))
 
+@login_required()
 def vr_checklist(request, checklist_id=0):
     checklist = get_object_or_404(VRChecklist, pk=checklist_id)
     if (request.POST):
@@ -162,6 +167,7 @@ def vr_checklist(request, checklist_id=0):
         f = VRChecklistForm(instance=checklist)
         return render_to_response('psc/vr_checklist_form.html', {'page_title': "Voter Registration Checklist", 'checklist': checklist, 'form': f }, context_instance=RequestContext(request))
 
+@login_required()
 def dco_checklist(request, checklist_id=0):   
     checklist = get_object_or_404(DCOChecklist, pk=checklist_id)
     if (request.POST):
@@ -173,6 +179,7 @@ def dco_checklist(request, checklist_id=0):
         f = DCOChecklistForm(instance=checklist)
     return render_to_response('psc/dco_checklist_form.html', {'page_title': 'Display, Claims & Objections Checklist', 'checklist': checklist, 'form': f}, context_instance=RequestContext(request))
 
+@login_required()
 def vr_incident_update(request, incident_id=0):
     incident = get_object_or_404(VRIncident, pk=incident_id)
     if request.POST:        
@@ -184,6 +191,7 @@ def vr_incident_update(request, incident_id=0):
         f = VRIncidentForm(instance=incident)   
         return render_to_response('psc/vr_incident_update_form.html', {'page_title': "Voter Registration Critrical Incident", 'incident': incident, 'form': f }, context_instance=RequestContext(request))
 
+@login_required()
 def dco_incident_update(request, incident_id=0):
     incident = get_object_or_404(DCOIncident, pk=incident_id)
     if request.POST:
@@ -194,6 +202,7 @@ def dco_incident_update(request, incident_id=0):
         f = DCOIncidentForm(instance=incident)
         return render_to_response('psc/dco_incident_update_form.html', {'page_title': 'Display, Claims & Objections Critical Incident', 'incident': incident, 'form': f }, context_instance=RequestContext(request))
 
+@login_required()
 def vr_incident_add(request):
     if request.POST:
         f = VRIncidentForm(request.POST, VRIncident)
@@ -203,6 +212,7 @@ def vr_incident_add(request):
         f = VRIncidentForm()
         return render_to_response('psc/vr_incident_add_form.html', {'page_title': "Add Voter Registration Critrical Incident", 'form': f }, context_instance=RequestContext(request))
 
+@login_required()
 def dco_incident_add(request):
     if request.POST:
         f = DCOIncidentForm(request.POST)                    
@@ -212,6 +222,7 @@ def dco_incident_add(request):
         f = DCOIncidentForm()
         return render_to_response('psc/dco_incident_add_form.html', {'page_title': "Add Display, Claims & Objections Critrical Incident", 'form': f }, context_instance=RequestContext(request))
 
+@login_required()
 def vr_incident_list(request):
     qs = Q()
 
@@ -248,6 +259,7 @@ def vr_incident_list(request):
 
     return render_to_response('psc/vr_incident_list.html', {'page_title': "Voter Registration Critical Incidents", 'checklists': checklists, 'filter_form': filter_form}, context_instance=RequestContext(request))
 
+@login_required()
 def dco_incident_list(request):
     qs = Q()
     if request.method == 'GET':
@@ -283,10 +295,12 @@ def dco_incident_list(request):
 
     return render_to_response('psc/dco_incident_list.html', {'page_title': "Display, Claims & Objections Critical Incidents", 'checklists': checklists, 'filter_form': filter_form}, context_instance=RequestContext(request))
 
+@login_required()
 def message_log(request):
     messages = MessageTable(Message.objects.all(), request=request)
     return render_to_response('psc/msg_log.html', { 'page_title': 'Message Log', 'messages_list' : messages }, context_instance=RequestContext(request))
 
+@login_required()
 def action_log(request):
     from itertools import chain
     #get action log for vr and dco 
@@ -309,4 +323,4 @@ def action_log(request):
     except (EmptyPage, InvalidPage):
         logs = paginator.page(paginator.num_pages)
     print logs
-    return render_to_response('psc/action_log.html', {'page_title': 'Action Log', 'logs' : logs})
+    return render_to_response('psc/action_log.html', {'page_title': 'Action Log', 'logs' : logs},  context_instance=RequestContext(request))
