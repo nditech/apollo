@@ -45,7 +45,7 @@
                         </div>
                         <div class='third'>
                             <div class="options">
-                                <input name='{{ form.A.name }}' type='checkbox' class='checkbox numeric' value='True' >
+                                <input name='{{ form.A.name }}' type='checkbox' class='checkbox numeric' value='True' {% if form.initial.A %} checked='checked' {% endif %} >
                             </div>
                         </div>
                     </div>
@@ -58,7 +58,7 @@
                         </div>
                         <div class='third'>
                             <div class ="options">
-                                <input name='{{ form.B.name }}' type='checkbox' class='checkbox numeric' value='True' >
+                                <input name='{{ form.B.name }}' type='checkbox' class='checkbox numeric' value='True' {% if form.initial.B %} checked='checked' {% endif %}>
                             </div>
                         </div>
                     </div>
@@ -71,7 +71,7 @@
                         </div>
                         <div class='third'>
                             <div class="options">
-                                <input name='{{ form.C.name }}' type='checkbox' class='checkbox numeric' value='True' >
+                                <input name='{{ form.C.name }}' type='checkbox' class='checkbox numeric' value='True' {% if form.initial.C %} checked='checked' {% endif %}>
                             </div>
                         </div>
                     </div>

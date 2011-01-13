@@ -23,6 +23,7 @@
             </div>
             <div class="clear"></div>
             <div class="grid_16">
+                {% if user.is_authenticated %}
                 <ul class="nav main">
                     <li>
                         <a href="{% url psc.views.home %}">Dashboard</a>
@@ -58,13 +59,17 @@
                             <li>
                                 <a href="{% url psc.views.action_log %}">Action Log</a>
                             </li>
+                            <li>
+                                <a href="{% url django.contrib.auth.views.logout_then_login %}">Logout</a>
+                            </li>
                         </ul>
                     </li>
                 </ul>
+                {% endif %}
             </div>
             <div class="clear"></div>
             <div class="grid_16">
-                <h2 id="page-heading">{{ page_title|default:"PSC2011" }}</h2>
+                <h2 id="page-heading">{{ page_title|default:"Project 2011 SwiftCount" }}</h2>
             </div>
             <div class="clear"></div>
 			{% block content %}
