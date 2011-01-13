@@ -158,6 +158,7 @@ def dco_checklist_list(request):
 @login_required()
 def vr_checklist(request, checklist_id=0):
     checklist = get_object_or_404(VRChecklist, pk=checklist_id)
+    location = checklist.observer.location
     if (request.POST):
         f = VRChecklistForm(request.POST, instance=checklist)
         if f.is_valid():
@@ -165,11 +166,12 @@ def vr_checklist(request, checklist_id=0):
         return HttpResponseRedirect(reverse('psc.views.vr_checklist_list'))
     else:
         f = VRChecklistForm(instance=checklist)
-        return render_to_response('psc/vr_checklist_form.html', {'page_title': "Voter Registration Checklist", 'checklist': checklist, 'form': f }, context_instance=RequestContext(request))
+        return render_to_response('psc/vr_checklist_form.html', {'page_title': "Voter Registration Checklist", 'checklist': checklist, 'location': location, 'form': f }, context_instance=RequestContext(request))
 
 @login_required()
 def dco_checklist(request, checklist_id=0):   
     checklist = get_object_or_404(DCOChecklist, pk=checklist_id)
+    location = checklist.observer.location
     if (request.POST):
         f = DCOChecklistForm(request.POST, instance=checklist)
         if f.is_valid():
@@ -177,7 +179,7 @@ def dco_checklist(request, checklist_id=0):
         return HttpResponseRedirect(reverse('psc.views.dco_checklist_list'))
     else:
         f = DCOChecklistForm(instance=checklist)
-    return render_to_response('psc/dco_checklist_form.html', {'page_title': 'Display, Claims & Objections Checklist', 'checklist': checklist, 'form': f}, context_instance=RequestContext(request))
+    return render_to_response('psc/dco_checklist_form.html', {'page_title': 'Display, Claims & Objections Checklist', 'checklist': checklist, 'location': location, 'form': f}, context_instance=RequestContext(request))
 
 @login_required()
 def vr_incident_update(request, incident_id=0):
