@@ -1,5 +1,4 @@
 from django.db import models
-from rapidsms.contrib.locations.models import Location
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 from rapidsms.models import Contact
@@ -67,10 +66,11 @@ class Ward(models.Model):
     def __unicode__(self):
         return self.name
 
-class RegistrationCenter(Location):
+class RegistrationCenter(models.Model):
     name = models.CharField(max_length=100)
     code = models.CharField("Registration Center Code", max_length=50, db_index=True)
     inec_code = models.CharField("INEC Registration Center Code", max_length=50, blank=True, null=True)
+    parent = models.ForeignKey("LGA", blank=True, null=True)
 
     @property
     def label(self):
