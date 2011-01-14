@@ -60,7 +60,7 @@ class DCOIncidentUpdateForm(forms.ModelForm):
 DCOIncidentFormSet = modelformset_factory(DCOIncident)
 
 class VRChecklistFilterForm(forms.Form):
-    observer_id = forms.CharField(required=False, label="PSC ID", max_length=6, widget=forms.TextInput(attrs={'style':'width:7em'}))
+    observer_id = forms.CharField(required=False, label="PSC ID", max_length=6, widget=forms.TextInput(attrs={'autocomplete':'off','style':'width:7em',}))
     day = forms.ChoiceField(choices=VR_DAYS, required=False)
     zone = forms.ChoiceField(choices=ZONES, required=False)
     state = forms.ChoiceField(choices=STATES, required=False)
@@ -68,21 +68,21 @@ class VRChecklistFilterForm(forms.Form):
     status = forms.ChoiceField(choices=STATUSES, required=False)
 
 class DCOChecklistFilterForm(forms.Form):
-    observer_id = forms.CharField(required=False, label="PSC ID", max_length=6, widget=forms.TextInput(attrs={'style':'width:7em'}))
+    observer_id = forms.CharField(required=False, label="PSC ID", max_length=6, widget=forms.TextInput(attrs={'autocomplete':'off','style':'width:7em'}))
     day = forms.ChoiceField(choices=DCO_DAYS, required=False)
     zone = forms.ChoiceField(choices=ZONES, required=False)
     state = forms.ChoiceField(choices=STATES, required=False)
     district = forms.ChoiceField(choices=DISTRICTS, required=False) 
 
 class VRIncidentFilterForm(forms.Form):
-    observer_id = forms.CharField(required=False, label="PSC ID", max_length=6, widget=forms.TextInput(attrs={'style':'width:7em'}))
+    observer_id = forms.CharField(required=False, label="PSC ID", max_length=6, widget=forms.TextInput(attrs={'autocomplete':'off','style':'width:7em'}))
     day = forms.ChoiceField(choices=VR_DAYS, required=False)
     zone = forms.ChoiceField(choices=ZONES, required=False)
     state = forms.ChoiceField(choices=STATES, required=False)
     district = forms.ChoiceField(choices=DISTRICTS, required=False)
 
 class DCOIncidentFilterForm(forms.Form):
-    observer_id = forms.CharField(required=False, label="PSC ID", max_length=6, widget=forms.TextInput(attrs={'style':'width:7em'}))
+    observer_id = forms.CharField(required=False, label="PSC ID", max_length=6, widget=forms.TextInput(attrs={'autocomplete':'off','style':'width:7em'}))
     day = forms.ChoiceField(choices=VR_DAYS, required=False)
     zone = forms.ChoiceField(choices=ZONES, required=False)
     state = forms.ChoiceField(choices=STATES, required=False)

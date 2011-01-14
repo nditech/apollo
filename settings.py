@@ -167,6 +167,7 @@ TEST_EXCLUDED_APPS = [
 # the project-level url patterns
 ROOT_URLCONF = "urls"
 
+
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
