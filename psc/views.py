@@ -12,6 +12,7 @@ from forms import VRChecklistForm, VRIncidentForm, DCOIncidentForm, VRChecklistF
 from forms import DCOIncidentUpdateForm, VRIncidentUpdateForm
 from datetime import datetime
 from django.contrib.auth.decorators import login_required
+import stats
 
 # paginator settings
 items_per_page = 25
@@ -21,26 +22,33 @@ def home(request):
     context = {'page_title': 'PSC 2011 SwiftCount Dashboard'}
     
     #vr first missing sms
-    context['missing_first_sms'] = VRChecklist.objects.filter(submitted=False).count()
+    vr = stats.get_models_fields_missing(VRChecklist, ['submitted']).filter(date=datetime.date(datetime.today()))
+    context['missing_first_sms'] = vr.count()
+
     # second missing sms
     qs2 = Q(A__isnull=True) | Q(B=0) | Q(C__isnull=True) | Q(F__isnull=True) | Q(G=0) | \
                           (Q(D1__isnull=True) & Q(D2__isnull=True) & Q(D3__isnull=True) & Q(D4__isnull=True)) | \
                           (Q(E1__isnull=True) & Q(E2__isnull=True) & Q(E3__isnull=True) & Q(E4__isnull=True) & \
                           Q(E5__isnull=True))
-    context['missing_second_sms'] = VRChecklist.objects.filter(qs2).count()
+    context['missing_second_sms'] = VRChecklist.objects.filter(qs2).filter(date=datetime.date(datetime.today())).count()
+
     # third missing sms
     qs3 = Q(H__isnull=True) | Q(J__isnull=True) | Q(K__isnull=True) | Q(M__isnull=True) | \
                           Q(N__isnull=True) | Q(P__isnull=True) | Q(Q__isnull=True) | Q(R__isnull=True) | \
                           Q(S__isnull=True) | Q(T=0) | Q(U=0) | Q(V=0) | Q(W=0) | Q(X=0) | Q(Y__isnull=True) | \
                           Q(Z__isnull=True) | Q(AA__isnull=True)
-    context['missing_third_sms'] = VRChecklist.objects.filter(qs3).count()
+    context['missing_third_sms'] = VRChecklist.objects.filter(qs3).filter(date=datetime.date(datetime.today())).count()
+    context['vr_incidents_count'] = VRIncident.objects.all().count()
+    context['vr_incidents_today'] = VRIncident.objects.filter(date=datetime.date(datetime.today())).count()
 
-    #dco
-    #checklist sent today
-    context['checklist_today'] = DCOChecklist.objects.filter(date=datetime.now()).count()
-    context['dco_in_count'] = DCOIncident.objects.all().count()
-    dco_d = DCOIncident.objects.all()
+    #dco checklist sent today
+    context['dco_checklist_today'] = DCOChecklist.objects.filter(date=datetime.date(datetime.today())).count()
+    context['dco_incidents_count'] = DCOIncident.objects.all().count()
+    context['dco_incidents_today'] = DCOIncident.objects.filter(date=datetime.date(datetime.today())).count()
 
+    context['dco_checklist_first_today'] = DCOChecklist.objects.filter(sms_serial=1,date=datetime.date(datetime.today())).count()
+    context['dco_checklist_second_today'] = DCOChecklist.objects.filter(sms_serial=2,date=datetime.date(datetime.today())).count()
+    context['dco_checklist_third_today'] = DCOChecklist.objects.filter(sms_serial=3,date=datetime.date(datetime.today())).count()
 
     #render
     return render_to_response('psc/home.html', context,  context_instance=RequestContext(request))
