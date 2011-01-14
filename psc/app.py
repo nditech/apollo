@@ -29,7 +29,7 @@ class App(AppBase):
             part1 = part1.replace(" ", "").replace("O","0").replace("I","1").replace("L","1")
             message.text = part1 + part2
         else:
-            message.text = message.text.replace(" ", "").replace("O","0").replace("I","1").replace("L","1")
+            message.text = message.text.upper().replace(" ", "").replace("O","0").replace("I","1").replace("L","1")
 
         if self.pattern.match(message.text):
             # Let's determine if we have a valid contact for this message
