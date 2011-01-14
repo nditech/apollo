@@ -93,6 +93,7 @@
 					{% else %}
                         <img src="/assets/img/status-busy.png" width="16" height="16" alt="none" />
 					{% endif %}
+					{% endif %}
                     </td>
                     <td class="checklist">
 					{% if cl.H and cl.J and cl.K and cl.M and cl.N and cl.P and cl.Q and cl.R and cl.S and cl.T and cl.U and cl.V and cl.W and cl.X and cl.Y and cl.Z and cl.AA %}
@@ -102,6 +103,7 @@
                         <img src="/assets/img/status-away.png" width="16" height="16" alt="incomplete" />
 					{% else %}
                         <img src="/assets/img/status-busy.png" width="16" height="16" alt="none" />
+					{% endif %}
 					{% endif %}
                     </td>
                     <td><a href="{% url psc.views.vr_checklist cl.id %}">Edit</a></td>
