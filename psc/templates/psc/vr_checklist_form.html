@@ -18,7 +18,7 @@
             <!-- opening checklist question -->
             <div class='block'>
                 <!-- checklist details -->
-                <table>
+                <table class="observer_details">
                     <tr><td width="30%">Date:</td><td>{{ checklist.date|date:"D d-M" }}</td></tr>
                     <tr><td>RC:</td><td>{{ checklist.location.name|default:"Unknown" }} {% if checklist.location %}(<strong>{{ checklist.location.code }}</strong>){% endif %}</td></tr>
                     <tr><td>INEC RC:</td><td><input type="text" class="bigbox" name="{{ form.report_rc.name }}" value="{{ form.initial.report_rc|default:"" }}"></td></tr>
