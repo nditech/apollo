@@ -166,6 +166,7 @@ TEST_EXCLUDED_APPS = [
 
 # the project-level url patterns
 ROOT_URLCONF = "urls"
+SESSION_COOKIE_AGE=900
 
 
 MIDDLEWARE_CLASSES = (
