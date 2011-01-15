@@ -6,6 +6,7 @@ from .models import Observer, RegistrationCenter, LGA, VRIncident, VRChecklist, 
 from django.contrib.contenttypes.models import ContentType
 import re
 from datetime import datetime
+from decorators import role_required
 
 class App(AppBase):
     def __init__(self, router):
@@ -58,6 +59,7 @@ class App(AppBase):
     def default(self, message):
        return message.respond('Invalid message: %s' % message.text)
 
+    @role_required('LGA')
     def _vr_checklist(self, msg, params):
         # determine location and date
         self._preprocess(msg, params)
@@ -147,6 +149,7 @@ class App(AppBase):
         else:
             return msg.respond('VR Incident report accepted! You sent: %s' % msg.text)
 
+    @role_required('LGA')
     def _dco_checklist(self, msg, params):
         # determine location and date
         self._preprocess(msg, params)
