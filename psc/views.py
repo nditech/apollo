@@ -57,8 +57,13 @@ def home(request):
 def vr_checklist_list(request):
     #qs = Q(date__in=[d[0] for d in VR_DAYS if d[0]])
     qs = Q()
+    if not request.session.has_key('vr_checklist_filter'):
+        request.session['vr_checklist_filter'] = {}
+
     if request.method == 'GET':
-        filter_form = VRChecklistFilterForm(request.GET)
+        if filter(lambda key: request.GET.has_key(key), ['zone', 'state', 'district', 'day', 'status', 'observer_id']):
+            request.session['vr_checklist_filter'] = request.GET
+        filter_form = VRChecklistFilterForm(request.session['vr_checklist_filter'])
 
         if filter_form.is_valid():
             data = filter_form.cleaned_data
@@ -250,9 +255,13 @@ def dco_incident_add(request):
 @login_required()
 def vr_incident_list(request):
     qs = Q()
+    if not request.session.has_key('vr_incident_filter'):
+        request.session['vr_incident_filter'] = {}
 
     if request.method == 'GET':
-        filter_form = VRIncidentFilterForm(request.GET)
+        if filter(lambda key: request.GET.has_key(key), ['zone', 'state', 'district', 'day', 'observer_id']):
+            request.session['vr_incident_filter'] = request.GET
+        filter_form = VRIncidentFilterForm(request.session['vr_incident_filter'])
 
         if filter_form.is_valid():
             data = filter_form.cleaned_data
