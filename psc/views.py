@@ -41,6 +41,10 @@ def home(request):
                    Q(S__isnull=False) & Q(T__gt=0) & Q(U__gt=0) & Q(V__gt=0) & Q(W__gt=0) & Q(X__gt=0) & Q(Y__isnull=False) & \
                    Q(Z__isnull=False) & Q(AA__isnull=False)
 
+    all_checklists = VRChecklist.objects.filter(date=datetime.date(datetime.today())).count()
+    second_partial = VRChecklist.objects.filter(date=datetime.date(datetime.today())).filter(qs2_partial).count()
+    third_completed = VRChecklist.objects.filter(date=datetime.date(datetime.today())).filter(qs3_complete).count()
+
     context['missing_third_sms'] = all_checklists - second_partial - third_completed 
     context['vr_incidents_count'] = VRIncident.objects.all().count()
     context['vr_incidents_today'] = VRIncident.objects.filter(date=datetime.date(datetime.today())).count()
