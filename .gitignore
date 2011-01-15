@@ -7,3 +7,4 @@ local_settings.py
 *.swp
 nbproject
 psc/fixtures/registrationcenters.json
+supervise/
