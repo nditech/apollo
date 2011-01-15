@@ -1,7 +1,7 @@
 # Create your views here.
 from django.shortcuts import render_to_response, get_object_or_404
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext
 from models import *
 from django.db.models import Q
@@ -26,18 +26,27 @@ def home(request):
     context['missing_first_sms'] = vr.count()
 
     # second missing sms
-    qs2 = Q(A__isnull=True) | Q(B=0) | Q(C__isnull=True) | Q(F__isnull=True) | Q(G=0) | \
-                          (Q(D1__isnull=True) & Q(D2__isnull=True) & Q(D3__isnull=True) & Q(D4__isnull=True)) | \
+    qs2 = Q(A__isnull=True) & Q(B=0) & Q(C__isnull=True) & Q(F__isnull=True) & Q(G=0) & \
+                          (Q(D1__isnull=True) & Q(D2__isnull=True) & Q(D3__isnull=True) & Q(D4__isnull=True)) & \
                           (Q(E1__isnull=True) & Q(E2__isnull=True) & Q(E3__isnull=True) & Q(E4__isnull=True) & \
                           Q(E5__isnull=True))
     context['missing_second_sms'] = VRChecklist.objects.filter(qs2).filter(date=datetime.date(datetime.today())).count()
 
     # third missing sms
+    # get partial missing sms 2
+    qs2orig = Q(A__isnull=True) | Q(B=0) | Q(C__isnull=True) | Q(F__isnull=True) | Q(G=0) | \
+                          (Q(D1__isnull=True) & Q(D2__isnull=True) & Q(D3__isnull=True) & Q(D4__isnull=True)) | \
+                          (Q(E1__isnull=True) & Q(E2__isnull=True) & Q(E3__isnull=True) & Q(E4__isnull=True) & \
+                          Q(E5__isnull=True))
+
+   
     qs3 = Q(H__isnull=True) | Q(J__isnull=True) | Q(K__isnull=True) | Q(M__isnull=True) | \
                           Q(N__isnull=True) | Q(P__isnull=True) | Q(Q__isnull=True) | Q(R__isnull=True) | \
                           Q(S__isnull=True) | Q(T=0) | Q(U=0) | Q(V=0) | Q(W=0) | Q(X=0) | Q(Y__isnull=True) | \
                           Q(Z__isnull=True) | Q(AA__isnull=True)
-    context['missing_third_sms'] = VRChecklist.objects.filter(qs3).filter(date=datetime.date(datetime.today())).count()
+
+    context['missing_third_sms'] = 798 - VRChecklist.objects.filter(qs2orig).filter(date=datetime.date(datetime.today())).count()
+   # context['missing_third_sms'] = VRChecklist.objects.filter(qs3).filter(date=datetime.date(datetime.today())).count()
     context['vr_incidents_count'] = VRIncident.objects.all().count()
     context['vr_incidents_today'] = VRIncident.objects.filter(date=datetime.date(datetime.today())).count()
 
@@ -127,7 +136,13 @@ def vr_checklist_list(request):
                 qs &= Q(observer__observer_id__exact=data['observer_id'])
     else:
         filter_form = VRChecklistFilterForm()
-        
+
+    #get all objects
+    if request.GET.get('export'):
+        global items_per_page
+	items_per_page = VRChecklist.objects.filter(qs).count()
+        print items_per_page
+    
     paginator = Paginator(VRChecklist.objects.filter(qs), items_per_page)
 
     try:
@@ -141,7 +156,12 @@ def vr_checklist_list(request):
     except (EmptyPage, InvalidPage):
         checklists = paginator.page(paginator.num_pages)
 
-    return render_to_response('psc/vr_checklist_list.html', {'page_title': "Voter Registration Data Management", 'checklists': checklists, 'filter_form': filter_form }, context_instance=RequestContext(request))
+    #if export
+    if request.GET.get('export'):
+        header = ['A', 'B', 'C', 'D1', 'D2', 'D3', 'D4', 'E1', 'E2', 'E3', 'E4', 'E5', 'F', 'G', 'H', 'J', 'K', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'AA']
+        return export(checklists, header, 'VRChecklist_Export' )
+    else:
+        return render_to_response('psc/vr_checklist_list.html', {'page_title': "Voter Registration Data Management", 'checklists': checklists, 'filter_form': filter_form }, context_instance=RequestContext(request))
 
 @login_required()
 def dco_checklist_list(request):
@@ -177,6 +197,7 @@ def dco_checklist_list(request):
         checklists = paginator.page(page)
     except (EmptyPage, InvalidPage):
         checklists = paginator.page(paginator.num_pages)
+
 
     return render_to_response('psc/dco_checklist_list.html', {'page_title': "Display, Claims & Objections Data Management", 'checklists': checklists, 'filter_form': filter_form }, context_instance=RequestContext(request))
 
@@ -277,7 +298,12 @@ def vr_incident_list(request):
                 qs &= Q(observer__observer_id__exact=data['observer_id'])
     else:
         filter_form = VRIncidentFilterForm()
-    
+
+    if request.GET.get('export'):
+        global items_per_page
+	items_per_page = VRIncident.objects.filter(qs).count()
+        print items_per_page
+
     paginator = Paginator(VRIncident.objects.filter(qs).order_by('-id'), items_per_page)
 
     try:
@@ -291,7 +317,11 @@ def vr_incident_list(request):
     except (EmptyPage, InvalidPage):
         checklists = paginator.page(paginator.num_pages)
 
-    return render_to_response('psc/vr_incident_list.html', {'page_title': "Voter Registration Critical Incidents", 'checklists': checklists, 'filter_form': filter_form}, context_instance=RequestContext(request))
+    if request.GET.get('export'):
+        header = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'M', 'N', 'P', 'Q']
+        return export(checklists, header, 'VRIncident_Export' )
+    else:
+        return render_to_response('psc/vr_incident_list.html', {'page_title': "Voter Registration Critical Incidents", 'checklists': checklists, 'filter_form': filter_form}, context_instance=RequestContext(request))
 
 @login_required()
 def dco_incident_list(request):
@@ -358,3 +388,36 @@ def action_log(request):
         logs = paginator.page(paginator.num_pages)
     print logs
     return render_to_response('psc/action_log.html', {'page_title': 'Action Log', 'logs' : logs},  context_instance=RequestContext(request))
+
+def export(dataset, header, filename='export'):
+    import csv
+    
+    response = HttpResponse(mimetype='text/csv')
+    response['Content-Disposition'] = 'attachment; filename=%s.csv' % filename
+    writer = csv.writer(response)
+
+    #write header
+    header_row = ['PSD ID', 'Zone', 'State']
+    for col in header:
+        header_row.append(col)
+    writer.writerow(header_row)
+
+    #write body
+    for field in dataset.object_list:
+        row = []
+        row.append(field.observer.observer_id)
+        #get zone        
+        if field.observer.role == 'LGA' or field.observer.role == 'OBS':
+            row.append(field.observer.location.parent.parent.name)
+            row.append(field.observer.location.parent.parent.name)
+        elif field.observer.role == 'SC' or field.observer.role == 'SDC':
+            row.apend(field.observer.location.parent.parent.name)
+            row.apend(field.observer.location.parent.name)
+
+        #the rest of the fields
+        for column in header:            
+            row.append(getattr(field, column))
+        writer.writerow(row)
+        
+    return response
+
