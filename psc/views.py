@@ -8,7 +8,7 @@ from django.db.models import Q
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from rapidsms.contrib.messagelog.tables import MessageTable
 from rapidsms.contrib.messagelog.models import Message
-from forms import VRChecklistForm, VRIncidentForm, DCOIncidentForm, VRChecklistFilterForm, VRIncidentFilterForm, DCOIncidentFilterForm, DCOChecklistFilterForm, DCOChecklistForm, VR_DAYS, DCO_DAYS
+from forms import VRChecklistForm, VRIncidentForm, DCOIncidentForm, VRChecklistFilterForm, VRIncidentFilterForm, DCOIncidentFilterForm, DCOChecklistFilterForm, DCOChecklistForm
 from forms import DCOIncidentUpdateForm, VRIncidentUpdateForm
 from datetime import datetime
 from django.contrib.auth.decorators import login_required
@@ -26,27 +26,22 @@ def home(request):
     context['missing_first_sms'] = vr.count()
 
     # second missing sms
-    qs2 = Q(A__isnull=True) & Q(B=0) & Q(C__isnull=True) & Q(F__isnull=True) & Q(G=0) & \
-                          (Q(D1__isnull=True) & Q(D2__isnull=True) & Q(D3__isnull=True) & Q(D4__isnull=True)) & \
-                          (Q(E1__isnull=True) & Q(E2__isnull=True) & Q(E3__isnull=True) & Q(E4__isnull=True) & \
-                          Q(E5__isnull=True))
-    context['missing_second_sms'] = VRChecklist.objects.filter(qs2).filter(date=datetime.date(datetime.today())).count()
+    qs2 = Q(A__isnull=False) & Q(B__gt=0) & Q(C__isnull=False) & Q(F__isnull=False) & Q(G__gt=0) & \
+          (Q(D1__isnull=False) | Q(D2__isnull=False) | Q(D3__isnull=False) | Q(D4__isnull=False)) & \
+          (Q(E1__isnull=False) | Q(E2__isnull=False) | Q(E3__isnull=False) | Q(E4__isnull=False) | \
+          Q(E5__isnull=False))
+    context['missing_second_sms'] = VRChecklist.objects.filter(date=datetime.date(datetime.today())).exclude(qs2).count()
 
     # third missing sms
     # get partial missing sms 2
-    qs2orig = Q(A__isnull=True) | Q(B=0) | Q(C__isnull=True) | Q(F__isnull=True) | Q(G=0) | \
-                          (Q(D1__isnull=True) & Q(D2__isnull=True) & Q(D3__isnull=True) & Q(D4__isnull=True)) | \
-                          (Q(E1__isnull=True) & Q(E2__isnull=True) & Q(E3__isnull=True) & Q(E4__isnull=True) & \
-                          Q(E5__isnull=True))
-
+    qs2_partial = Q(A=4)
    
-    qs3 = Q(H__isnull=True) | Q(J__isnull=True) | Q(K__isnull=True) | Q(M__isnull=True) | \
-                          Q(N__isnull=True) | Q(P__isnull=True) | Q(Q__isnull=True) | Q(R__isnull=True) | \
-                          Q(S__isnull=True) | Q(T=0) | Q(U=0) | Q(V=0) | Q(W=0) | Q(X=0) | Q(Y__isnull=True) | \
-                          Q(Z__isnull=True) | Q(AA__isnull=True)
+    qs3_complete = Q(H__isnull=False) & Q(J__isnull=False) & Q(K__isnull=False) & Q(M__isnull=False) & \
+                   Q(N__isnull=False) & Q(P__isnull=False) & Q(Q__isnull=False) & Q(R__isnull=False) & \
+                   Q(S__isnull=False) & Q(T__gt=0) & Q(U__gt=0) & Q(V__gt=0) & Q(W__gt=0) & Q(X__gt=0) & Q(Y__isnull=False) & \
+                   Q(Z__isnull=False) & Q(AA__isnull=False)
 
-    context['missing_third_sms'] = 798 - VRChecklist.objects.filter(qs2orig).filter(date=datetime.date(datetime.today())).count()
-   # context['missing_third_sms'] = VRChecklist.objects.filter(qs3).filter(date=datetime.date(datetime.today())).count()
+    context['missing_third_sms'] = all_checklists - second_partial - third_completed 
     context['vr_incidents_count'] = VRIncident.objects.all().count()
     context['vr_incidents_today'] = VRIncident.objects.filter(date=datetime.date(datetime.today())).count()
 
