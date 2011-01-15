@@ -735,12 +735,12 @@ table.dashboard td {
 }
 
 .box .dash-column.first {
-    width: 60%;
+    width: 40%;
     font-size: 22px;
 }
 
 .box .dash-column.second {
-    width: 40%;
+    width: 60%;
     float: right;
     text-align: right;
 }

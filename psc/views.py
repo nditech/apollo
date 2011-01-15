@@ -22,30 +22,23 @@ def home(request):
     context = {'page_title': 'PSC 2011 SwiftCount Dashboard'}
     
     #vr first missing sms
-    vr = stats.model_sieve(VRChecklist, ['submitted']).filter(date=datetime.date(datetime.today()))
-    context['missing_first_sms'] = vr.count()
+    context['missing_first_sms'] = stats.model_sieve(VRChecklist, ['submitted'], exclude=True).filter(date=datetime.date(datetime.today())).count()
+    context['received_first_sms'] = stats.model_sieve(VRChecklist, ['submitted']).filter(date=datetime.date(datetime.today())).count()
 
     # second missing sms
-    qs2 = Q(A__isnull=False) & Q(B__gt=0) & Q(C__isnull=False) & Q(F__isnull=False) & Q(G__gt=0) & \
-          (Q(D1__isnull=False) | Q(D2__isnull=False) | Q(D3__isnull=False) | Q(D4__isnull=False)) & \
-          (Q(E1__isnull=False) | Q(E2__isnull=False) | Q(E3__isnull=False) | Q(E4__isnull=False) | \
-          Q(E5__isnull=False))
-    context['missing_second_sms'] = VRChecklist.objects.filter(date=datetime.date(datetime.today())).exclude(qs2).count()
+    context['missing_second_sms'] = stats.model_sieve(VRChecklist, ['A', 'B', 'C', 'F', 'G', ['D1', 'D2', 'D3', 'D4'], \
+                ['E1', 'E2', 'E3', 'E4', 'E5']], exclude=True).filter(date=datetime.date(datetime.today())).count()
+    context['complete_second_sms'] = stats.model_sieve(VRChecklist, ['A', 'B', 'C', 'F', 'G', ['D1', 'D2', 'D3', 'D4'], ['E1', 'E2', 'E3', 'E4', 'E5']]).exclude(A=4).filter(date=datetime.date(datetime.today())).count()
+    context['incomplete_second_sms'] = stats.model_sieve(VRChecklist, [['A', 'B', 'C', 'F', 'G', 'D1', 'D2', 'D3', 'D4', 'E1', 'E2', 'E3', 'E4', 'E5']]).exclude(A=4).filter(date=datetime.date(datetime.today())).count() - context['complete_second_sms']
+    context['unverified_second_sms'] = stats.model_sieve(VRChecklist, [('A', 4), ('verified_second', False), 'B', 'C', 'F', 'G', ['D1', 'D2', 'D3', 'D4'], ['E1', 'E2', 'E3', 'E4', 'E5']]).filter(date=datetime.date(datetime.today())).count()
+    context['not_open_second_sms'] = stats.model_sieve(VRChecklist, ['B', 'C', 'F', 'D1', 'D2', 'D3', 'D4', 'E1', 'E2', 'E3', 'E4', 'E5'], exclude=True).filter(A=4).filter(date=datetime.date(datetime.today())).count() + stats.model_sieve(VRChecklist, [('A', 4), ('verified_second', True)]).filter(date=datetime.date(datetime.today())).count()
 
     # third missing sms
-    # get partial missing sms 2
-    qs2_partial = Q(A=4)
-   
-    qs3_complete = Q(H__isnull=False) & Q(J__isnull=False) & Q(K__isnull=False) & Q(M__isnull=False) & \
-                   Q(N__isnull=False) & Q(P__isnull=False) & Q(Q__isnull=False) & Q(R__isnull=False) & \
-                   Q(S__isnull=False) & Q(T__gt=0) & Q(U__gt=0) & Q(V__gt=0) & Q(W__gt=0) & Q(X__gt=0) & Q(Y__isnull=False) & \
-                   Q(Z__isnull=False) & Q(AA__isnull=False)
+    context['complete_third_sms'] = stats.model_sieve(VRChecklist, ['H', 'J', 'K', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'AA']).exclude(A=4).filter(date=datetime.date(datetime.today())).count()
+    context['complete_third_sms'] += stats.model_sieve(VRChecklist, ['H', 'J', 'K', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'AA', ('A', 4), ('verified_third', True)]).filter(date=datetime.date(datetime.today())).count()
+    context['missing_third_sms'] = context['complete_second_sms'] - context['complete_third_sms'] 
+    context['blank_third_sms'] = stats.model_sieve(VRChecklist, ['H', 'J', 'K', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'AA'], exclude=True).filter(A=4).filter(date=datetime.date(datetime.today())).count()
 
-    all_checklists = VRChecklist.objects.filter(date=datetime.date(datetime.today())).count()
-    second_partial = VRChecklist.objects.filter(date=datetime.date(datetime.today())).filter(qs2_partial).count()
-    third_completed = VRChecklist.objects.filter(date=datetime.date(datetime.today())).filter(qs3_complete).count()
-
-    context['missing_third_sms'] = all_checklists - second_partial - third_completed 
     context['vr_incidents_count'] = VRIncident.objects.all().count()
     context['vr_incidents_today'] = VRIncident.objects.filter(date=datetime.date(datetime.today())).count()
 
@@ -287,11 +280,11 @@ def vr_incident_list(request):
         if filter_form.is_valid():
             data = filter_form.cleaned_data
             if data['zone']:
-                qs &= Q(observer__location_id__in=LGA.objects.filter(parent__parent__parent__code__iexact=data['zone']).values_list('id', flat=True))
+                qs &= Q(location_id__in=RegistrationCenter.objects.filter(parent__parent__parent__parent__code__exact=data['zone']).values_list('id', flat=True))
             if data['state']:
-                qs &= Q(observer__location_id__in=LGA.objects.filter(parent__parent__code__exact=data['state']).values_list('id', flat=True))
+                qs &= Q(location_id__in=RegistrationCenter.objects.filter(parent__parent__parent__code__exact=data['state']).values_list('id', flat=True))
             if data['district']:
-                qs &= Q(observer__location_id__in=LGA.objects.filter(parent__code__exact=data['district']).values_list('id', flat=True))
+                qs &= Q(location_id__in=RegistrationCenter.objects.filter(parent__parent__code__exact=data['district']).values_list('id', flat=True))
             if data['day']:
                 qs &= Q(date=data['day'])
             if data['observer_id']:
