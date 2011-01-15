@@ -13,7 +13,10 @@ STATUSES = ((0, 'All'),
             (3, 'missing 2nd text'),
             (4, 'missing 3rd text'),
             (5, 'missing any text'),
-            (6, 'all texts received'))
+            (6, 'received 1st text'),
+            (7, 'received 2nd text'),
+            (8, 'received 3rd text'),
+            (9, 'all texts received'))
 VR_DAYS = (('', 'All'),
         (datetime.date(datetime(2011, 1, 15)), 'Sat 15-Jan'),
         (datetime.date(datetime(2011, 1, 20)), 'Thu 20-Jan'),
