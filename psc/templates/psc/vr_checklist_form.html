@@ -42,7 +42,7 @@
                             <div class='options'><center><input name='{{ form.A.name }}' type='radio' class='radio numeric' value="2"{% if form.initial.A == 2 %} checked='checked'{% endif %}> Between 8AM &amp; 10AM<br>(2)</center></div>
                             <div class='options'><center><input name='{{ form.A.name }}' type='radio' class='radio numeric' value="3"{% if form.initial.A == 3 %} checked='checked'{% endif %}> Between 10AM &amp; 12 noon<br>(3) </center></div>
                             <div class='options'><center><input name='{{ form.A.name }}' type='radio' class='radio numeric' value="4"{% if form.initial.A == 4 %} checked='checked'{% endif %}> Not Open by 12 noon<br>(4) </center></div>
-                            <div class='options'><center><input name='{{ form.A.name }}' type='radio' class='radio numeric' value='0'{% if not form.initial.A %} checked='checked'{% endif %}>Unchecked</center></div>
+                            <div class='options'><center><input name='{{ form.A.name }}' type='radio' class='radio numeric' value=''{% if not form.initial.A %} checked='checked'{% endif %}>Unchecked</center></div>
                         </div>
                     </div>
                     <div class='parent'>
