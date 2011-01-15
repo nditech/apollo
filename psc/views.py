@@ -1,7 +1,7 @@
 # Create your views here.
 from django.shortcuts import render_to_response, get_object_or_404
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext
 from models import *
 from django.db.models import Q
@@ -109,7 +109,13 @@ def vr_checklist_list(request):
                 qs &= Q(observer__observer_id__exact=data['observer_id'])
     else:
         filter_form = VRChecklistFilterForm()
-        
+
+    #get all objects
+    if request.GET.get('export'):
+        global items_per_page
+	items_per_page = VRChecklist.objects.filter(qs).count()
+        print items_per_page
+    
     paginator = Paginator(VRChecklist.objects.filter(qs), items_per_page)
 
     try:
@@ -123,7 +129,12 @@ def vr_checklist_list(request):
     except (EmptyPage, InvalidPage):
         checklists = paginator.page(paginator.num_pages)
 
-    return render_to_response('psc/vr_checklist_list.html', {'page_title': "Voter Registration Data Management", 'checklists': checklists, 'filter_form': filter_form }, context_instance=RequestContext(request))
+    #if export
+    if request.GET.get('export'):
+        header = ['A', 'B', 'C', 'D1', 'D2', 'D3', 'D4', 'E1', 'E2', 'E3', 'E4', 'E5', 'F', 'G', 'H', 'J', 'K', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'AA']
+        return export(checklists, header, 'VRChecklist_Export' )
+    else:
+        return render_to_response('psc/vr_checklist_list.html', {'page_title': "Voter Registration Data Management", 'checklists': checklists, 'filter_form': filter_form }, context_instance=RequestContext(request))
 
 @login_required()
 def dco_checklist_list(request):
@@ -158,6 +169,7 @@ def dco_checklist_list(request):
         checklists = paginator.page(page)
     except (EmptyPage, InvalidPage):
         checklists = paginator.page(paginator.num_pages)
+
 
     return render_to_response('psc/dco_checklist_list.html', {'page_title': "Display, Claims & Objections Data Management", 'checklists': checklists, 'filter_form': filter_form }, context_instance=RequestContext(request))
 
@@ -254,7 +266,12 @@ def vr_incident_list(request):
                 qs &= Q(observer__observer_id__exact=data['observer_id'])
     else:
         filter_form = VRIncidentFilterForm()
-    
+
+    if request.GET.get('export'):
+        global items_per_page
+	items_per_page = VRIncident.objects.filter(qs).count()
+        print items_per_page
+
     paginator = Paginator(VRIncident.objects.filter(qs).order_by('-id'), items_per_page)
 
     try:
@@ -268,7 +285,11 @@ def vr_incident_list(request):
     except (EmptyPage, InvalidPage):
         checklists = paginator.page(paginator.num_pages)
 
-    return render_to_response('psc/vr_incident_list.html', {'page_title': "Voter Registration Critical Incidents", 'checklists': checklists, 'filter_form': filter_form}, context_instance=RequestContext(request))
+    if request.GET.get('export'):
+        header = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'M', 'N', 'P', 'Q']
+        return export(checklists, header, 'VRIncident_Export' )
+    else:
+        return render_to_response('psc/vr_incident_list.html', {'page_title': "Voter Registration Critical Incidents", 'checklists': checklists, 'filter_form': filter_form}, context_instance=RequestContext(request))
 
 @login_required()
 def dco_incident_list(request):
@@ -335,3 +356,36 @@ def action_log(request):
         logs = paginator.page(paginator.num_pages)
     print logs
     return render_to_response('psc/action_log.html', {'page_title': 'Action Log', 'logs' : logs},  context_instance=RequestContext(request))
+
+def export(dataset, header, filename='export'):
+    import csv
+    
+    response = HttpResponse(mimetype='text/csv')
+    response['Content-Disposition'] = 'attachment; filename=%s.csv' % filename
+    writer = csv.writer(response)
+
+    #write header
+    header_row = ['PSD ID', 'Zone', 'State']
+    for col in header:
+        header_row.append(col)
+    writer.writerow(header_row)
+
+    #write body
+    for field in dataset.object_list:
+        row = []
+        row.append(field.observer.observer_id)
+        #get zone        
+        if field.observer.role == 'LGA' or field.observer.role == 'OBS':
+            row.append(field.observer.location.parent.parent.name)
+            row.append(field.observer.location.parent.parent.name)
+        elif field.observer.role == 'SC' or field.observer.role == 'SDC':
+            row.apend(field.observer.location.parent.parent.name)
+            row.apend(field.observer.location.parent.name)
+
+        #the rest of the fields
+        for column in header:            
+            row.append(getattr(field, column))
+        writer.writerow(row)
+        
+    return response
+
