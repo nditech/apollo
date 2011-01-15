@@ -1,4 +1,5 @@
 *.sqlite3
+*.sql
 *.pyc
 rapidsms.log*
 schema.png
@@ -6,3 +7,4 @@ local_settings.py
 *.swp
 nbproject
 psc/fixtures/registrationcenters.json
+supervise/

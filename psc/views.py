@@ -55,9 +55,15 @@ def home(request):
 
 @login_required()
 def vr_checklist_list(request):
-    qs = Q(date__in=[d[0] for d in VR_DAYS if d[0]])
+    #qs = Q(date__in=[d[0] for d in VR_DAYS if d[0]])
+    qs = Q()
+    if not request.session.has_key('vr_checklist_filter'):
+        request.session['vr_checklist_filter'] = {}
+
     if request.method == 'GET':
-        filter_form = VRChecklistFilterForm(request.GET)
+        if filter(lambda key: request.GET.has_key(key), ['zone', 'state', 'district', 'day', 'status', 'observer_id']):
+            request.session['vr_checklist_filter'] = request.GET
+        filter_form = VRChecklistFilterForm(request.session['vr_checklist_filter'])
 
         if filter_form.is_valid():
             data = filter_form.cleaned_data
@@ -91,7 +97,19 @@ def vr_checklist_list(request):
                           Q(M__isnull=True) | Q(N__isnull=True) | Q(P__isnull=True) | Q(Q__isnull=True) | \
                           Q(R__isnull=True) | Q(S__isnull=True) | Q(T=0) | Q(U=0) | Q(V=0) | Q(W=0) | \
                           Q(X=0) | Q(Y__isnull=True) | Q(Z__isnull=True) | Q(AA__isnull=True)
-                elif int(data['status']) == 6: # all texts received
+                elif int(data['status']) == 6: # received 1st text
+                    qs &= Q(submitted=True) 
+                elif int(data['status']) == 7: # received second text
+                    qs &= Q(A__isnull=False) & Q(B__gt=0) & Q(C__isnull=False) & Q(F__isnull=False) & Q(G__gt=0) & \
+                          (Q(D1__isnull=False) | Q(D2__isnull=False) | Q(D3__isnull=False) | Q(D4__isnull=False)) & \
+                          (Q(E1__isnull=False) | Q(E2__isnull=False) | Q(E3__isnull=False) | Q(E4__isnull=False) | \
+                          Q(E5__isnull=False))
+                elif int(data['status']) == 8: # received third text
+                    qs &= Q(H__isnull=False) & Q(J__isnull=False) & Q(K__isnull=False) & Q(M__isnull=False) & \
+                          Q(N__isnull=False) & Q(P__isnull=False) & Q(Q__isnull=False) & Q(R__isnull=False) & \
+                          Q(S__isnull=False) & Q(T__gt=0) & Q(U__gt=0) & Q(V__gt=0) & Q(W__gt=0) & Q(X__gt=0) & Q(Y__isnull=False) & \
+                          Q(Z__isnull=False) & Q(AA__isnull=False)
+                elif int(data['status']) == 9: # all texts received
                     qs &= Q(submitted=True,A__isnull=False,B__gte=1,C__isnull=False,F__isnull=False,G__gte=1) & \
                           Q(H__isnull=False,J__isnull=False,K__isnull=False,M__isnull=False,N__isnull=False) & \
                           Q(P__isnull=False,Q__isnull=False,R__isnull=False,S__isnull=False,T__gte=1,U__gte=1) & \
@@ -138,7 +156,8 @@ def vr_checklist_list(request):
 
 @login_required()
 def dco_checklist_list(request):
-    qs = Q(date__in=[d[0] for d in DCO_DAYS if d[0]])    
+    #qs = Q(date__in=[d[0] for d in DCO_DAYS if d[0]])
+    qs = Q()
     if request.method == 'GET':
         filter_form = DCOChecklistFilterForm(request.GET)
 
@@ -248,9 +267,13 @@ def dco_incident_add(request):
 @login_required()
 def vr_incident_list(request):
     qs = Q()
+    if not request.session.has_key('vr_incident_filter'):
+        request.session['vr_incident_filter'] = {}
 
     if request.method == 'GET':
-        filter_form = VRIncidentFilterForm(request.GET)
+        if filter(lambda key: request.GET.has_key(key), ['zone', 'state', 'district', 'day', 'observer_id']):
+            request.session['vr_incident_filter'] = request.GET
+        filter_form = VRIncidentFilterForm(request.session['vr_incident_filter'])
 
         if filter_form.is_valid():
             data = filter_form.cleaned_data

@@ -42,7 +42,7 @@
                             <div class='options'><center><input name='{{ form.A.name }}' type='radio' class='radio numeric' value="2"{% if form.initial.A == 2 %} checked='checked'{% endif %}> Between 8AM &amp; 10AM<br>(2)</center></div>
                             <div class='options'><center><input name='{{ form.A.name }}' type='radio' class='radio numeric' value="3"{% if form.initial.A == 3 %} checked='checked'{% endif %}> Between 10AM &amp; 12 noon<br>(3) </center></div>
                             <div class='options'><center><input name='{{ form.A.name }}' type='radio' class='radio numeric' value="4"{% if form.initial.A == 4 %} checked='checked'{% endif %}> Not Open by 12 noon<br>(4) </center></div>
-                            <div class='options'><center><input name='{{ form.A.name }}' type='radio' class='radio numeric' value='0'{% if not form.initial.A %} checked='checked'{% endif %}>Unchecked</center></div>
+                            <div class='options'><center><input name='{{ form.A.name }}' type='radio' class='radio numeric' value=''{% if not form.initial.A %} checked='checked'{% endif %}>Unchecked</center></div>
                         </div>
                     </div>
                     <div class='parent'>
@@ -66,7 +66,7 @@
                             <p>{{ form.C.help_text }}</p>
                         </div>
                         <div class='third'>
-                            <input name='{{ form.C.name }}' type='text' class='text numeric' maxlength='3' value="{{ form.initial.C|default:"" }}">
+                            <input name='{{ form.C.name }}' type='text' autocomplete='off' class='text numeric' maxlength='3' value="{% if form.initial.C != None %}{{ form.initial.C }}{% endif %}">
                         </div>
                     </div>
                     <div class='parent'>
@@ -113,7 +113,7 @@
                             <p>{{ form.F.help_text }}</p>
                         </div>
                         <div class='third'>
-                            <input type='text' name='{{ form.F.name }}' class='text numeric' maxlength='3' value='{{ form.initial.F|default:"" }}'>
+                            <input type='text' autocomplete='off' name='{{ form.F.name }}' class='text numeric' maxlength='3' value='{% if form.initial.F != None %}{{ form.initial.F }}{% endif %}'>
                         </div>
                     </div>
                     <div class='parent last'>
@@ -353,7 +353,7 @@
                             <p>{{ form.Y.help_text }}</p>
                         </div>
                         <div class='third'>
-                            <p><input name='{{ form.Y.name }}' type='text' class='text numeric' maxlength='4' value='{{ form.initial.Y|default:"" }}'></p>
+                            <p><input name='{{ form.Y.name }}' type='text' autocomplete='off' class='text numeric' maxlength='4' value='{% if form.initial.Y != None %}{{ form.initial.Y }}{% endif %}'></p>
                         </div>
                     </div>
                     <div class='parent'>
@@ -364,7 +364,7 @@
                             <p>{{ form.Z.help_text }}</p>
                         </div>
                         <div class='third'>
-                            <p><input name='{{ form.Z.name }}' type='text' class='text numeric' maxlength='4' value='{{ form.initial.Z|default:"" }}'></p>
+                            <p><input name='{{ form.Z.name }}' type='text' autocomplete='off' class='text numeric' maxlength='4' value='{% if form.initial.Z != None %}{{ form.initial.Z }}{% endif %}'></p>
                         </div>
                     </div>
                     <div class='parent'>
@@ -376,7 +376,7 @@
                         </div>
                         <div class='third'>
                             <div class="options">
-                                <input name='{{ form.AA.name }}' type= 'text'  class='text numeric' maxlength='4' value='{{ form.initial.AA|default:"" }}'>
+                                <input name='{{ form.AA.name }}' type= 'text'  class='text numeric' maxlength='4' value='{% if form.initial.AA != None %}{{ form.initial.AA }}{% endif %}'>
                             </div>
                         </div>
                     </div>

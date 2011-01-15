@@ -13,9 +13,16 @@ STATUSES = ((0, 'All'),
             (3, 'missing 2nd text'),
             (4, 'missing 3rd text'),
             (5, 'missing any text'),
-            (6, 'all texts received'))
+            (6, 'received 1st text'),
+            (7, 'received 2nd text'),
+            (8, 'received 3rd text'),
+            (9, 'all texts received'))
 VR_DAYS = (('', 'All'),
-        (datetime.date(datetime(2011, 1, 14)), 'Fri 14-Jan'))
+        (datetime.date(datetime(2011, 1, 15)), 'Sat 15-Jan'),
+        (datetime.date(datetime(2011, 1, 20)), 'Thu 20-Jan'),
+        (datetime.date(datetime(2011, 1, 22)), 'Sat 22-Jan'),
+        (datetime.date(datetime(2011, 1, 27)), 'Thu 27-Jan'),
+        (datetime.date(datetime(2011, 1, 29)), 'Sat 29-Jan'))
 
 DCO_DAYS = (('', 'All'),
         (datetime.date(datetime(2011, 2, 3)), 'Thu 3-Feb'),
@@ -60,7 +67,7 @@ class DCOIncidentUpdateForm(forms.ModelForm):
 DCOIncidentFormSet = modelformset_factory(DCOIncident)
 
 class VRChecklistFilterForm(forms.Form):
-    observer_id = forms.CharField(required=False, label="PSC ID", max_length=6, widget=forms.TextInput(attrs={'style':'width:7em'}))
+    observer_id = forms.CharField(required=False, label="PSC ID", max_length=6, widget=forms.TextInput(attrs={'autocomplete':'off','style':'width:7em',}))
     day = forms.ChoiceField(choices=VR_DAYS, required=False)
     zone = forms.ChoiceField(choices=ZONES, required=False)
     state = forms.ChoiceField(choices=STATES, required=False)
@@ -68,21 +75,21 @@ class VRChecklistFilterForm(forms.Form):
     status = forms.ChoiceField(choices=STATUSES, required=False)
 
 class DCOChecklistFilterForm(forms.Form):
-    observer_id = forms.CharField(required=False, label="PSC ID", max_length=6, widget=forms.TextInput(attrs={'style':'width:7em'}))
+    observer_id = forms.CharField(required=False, label="PSC ID", max_length=6, widget=forms.TextInput(attrs={'autocomplete':'off','style':'width:7em'}))
     day = forms.ChoiceField(choices=DCO_DAYS, required=False)
     zone = forms.ChoiceField(choices=ZONES, required=False)
     state = forms.ChoiceField(choices=STATES, required=False)
     district = forms.ChoiceField(choices=DISTRICTS, required=False) 
 
 class VRIncidentFilterForm(forms.Form):
-    observer_id = forms.CharField(required=False, label="PSC ID", max_length=6, widget=forms.TextInput(attrs={'style':'width:7em'}))
+    observer_id = forms.CharField(required=False, label="PSC ID", max_length=6, widget=forms.TextInput(attrs={'autocomplete':'off','style':'width:7em'}))
     day = forms.ChoiceField(choices=VR_DAYS, required=False)
     zone = forms.ChoiceField(choices=ZONES, required=False)
     state = forms.ChoiceField(choices=STATES, required=False)
     district = forms.ChoiceField(choices=DISTRICTS, required=False)
 
 class DCOIncidentFilterForm(forms.Form):
-    observer_id = forms.CharField(required=False, label="PSC ID", max_length=6, widget=forms.TextInput(attrs={'style':'width:7em'}))
+    observer_id = forms.CharField(required=False, label="PSC ID", max_length=6, widget=forms.TextInput(attrs={'autocomplete':'off','style':'width:7em'}))
     day = forms.ChoiceField(choices=VR_DAYS, required=False)
     zone = forms.ChoiceField(choices=ZONES, required=False)
     state = forms.ChoiceField(choices=STATES, required=False)
