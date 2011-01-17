@@ -10579,7 +10579,7 @@
       "contact": 184, 
       "role": "LGA", 
       "partner": 1, 
-      "location_id": 27, 
+      "location_id": 28, 
       "location_type": 24
     }
   }, 
@@ -10595,7 +10595,7 @@
       "contact": 185, 
       "role": "LGA", 
       "partner": 2, 
-      "location_id": 28, 
+      "location_id": 27, 
       "location_type": 24
     }
   }, 

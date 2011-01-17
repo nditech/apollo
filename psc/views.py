@@ -8,7 +8,7 @@ from django.db.models import Q
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from rapidsms.contrib.messagelog.tables import MessageTable
 from rapidsms.contrib.messagelog.models import Message
-from forms import VRChecklistForm, VRIncidentForm, DCOIncidentForm, VRChecklistFilterForm, VRIncidentFilterForm, DCOIncidentFilterForm, DCOChecklistFilterForm, DCOChecklistForm, VR_DAYS, DCO_DAYS
+from forms import VRChecklistForm, VRIncidentForm, DCOIncidentForm, VRChecklistFilterForm, VRIncidentFilterForm, DCOIncidentFilterForm, DCOChecklistFilterForm, DCOChecklistForm
 from forms import DCOIncidentUpdateForm, VRIncidentUpdateForm
 from datetime import datetime
 from django.contrib.auth.decorators import login_required
@@ -26,42 +26,26 @@ def home(request):
     context['missing_first_sms'] = vr.count()
 
     # second missing sms
-    qs2 = Q(A__isnull=True) & Q(B=0) & Q(C__isnull=True) & Q(F__isnull=True) & Q(G=0) & \
-                          (Q(D1__isnull=True) & Q(D2__isnull=True) & Q(D3__isnull=True) & Q(D4__isnull=True)) & \
-                          (Q(E1__isnull=True) & Q(E2__isnull=True) & Q(E3__isnull=True) & Q(E4__isnull=True) & \
-                          Q(E5__isnull=True))
-    context['missing_second_sms'] = VRChecklist.objects.filter(qs2).filter(date=datetime.date(datetime.today())).count()
+    qs2 = Q(A__isnull=False) & Q(B__gt=0) & Q(C__isnull=False) & Q(F__isnull=False) & Q(G__gt=0) & \
+          (Q(D1__isnull=False) | Q(D2__isnull=False) | Q(D3__isnull=False) | Q(D4__isnull=False)) & \
+          (Q(E1__isnull=False) | Q(E2__isnull=False) | Q(E3__isnull=False) | Q(E4__isnull=False) | \
+          Q(E5__isnull=False))
+    context['missing_second_sms'] = VRChecklist.objects.filter(date=datetime.date(datetime.today())).exclude(qs2).count()
 
     # third missing sms
-    # get missing 2nd sms
-    q_missing_2nd_sms = Q(A__isnull=True) & Q(B=0) & Q(C__isnull=True) & Q(F__isnull=True) & Q(G=0) & \
-                          (Q(D1__isnull=True) & Q(D2__isnull=True) & Q(D3__isnull=True) & Q(D4__isnull=True)) & \
-                          (Q(E1__isnull=True) & Q(E2__isnull=True) & Q(E3__isnull=True) & Q(E4__isnull=True) & \
-                          Q(E5__isnull=True))
+    # get partial missing sms 2
+    qs2_partial = Q(A=4)
+   
+    qs3_complete = Q(H__isnull=False) & Q(J__isnull=False) & Q(K__isnull=False) & Q(M__isnull=False) & \
+                   Q(N__isnull=False) & Q(P__isnull=False) & Q(Q__isnull=False) & Q(R__isnull=False) & \
+                   Q(S__isnull=False) & Q(T__gt=0) & Q(U__gt=0) & Q(V__gt=0) & Q(W__gt=0) & Q(X__gt=0) & Q(Y__isnull=False) & \
+                   Q(Z__isnull=False) & Q(AA__isnull=False)
 
-    missing_2nd_sms = VRChecklist.objects.filter(q_missing_2nd_sms).filter(date=datetime.date(datetime.today())).count()
-    print "missing 2nd text %s " % missing_2nd_sms
+    all_checklists = VRChecklist.objects.filter(date=datetime.date(datetime.today())).count()
+    second_partial = VRChecklist.objects.filter(date=datetime.date(datetime.today())).filter(qs2_partial).count()
+    third_completed = VRChecklist.objects.filter(date=datetime.date(datetime.today())).filter(qs3_complete).count()
 
-    # get complete 2nd sms
-    q_complete_2nd_sms = Q(A__isnull=False) & Q(B=1) & Q(C__isnull=False) & Q(F__isnull=False) & Q(G=1) & \
-                          (Q(D1__isnull=False) | Q(D2__isnull=False) | Q(D3__isnull=False) | Q(D4__isnull=False)) & \
-                          (Q(E1__isnull=False) | Q(E2__isnull=False) | Q(E3__isnull=False) | Q(E4__isnull=False) | \
-                          Q(E5__isnull=False))
-
-    complete_2nd_sms = VRChecklist.objects.filter(q_complete_2nd_sms).filter(date=datetime.date(datetime.today())).count()
-    print "complete 2nd sms %s " % complete_2nd_sms
-
-    #get complete 3rd sms
-    q_complete_3rd_sms = Q(H__isnull=False) & Q(J__isnull=False) & Q(K__isnull=False) & Q(M__isnull=False) & \
-                          Q(N__isnull=False) & Q(P__isnull=False) & Q(Q__isnull=False) & Q(R__isnull=False) & \
-                          Q(S__isnull=False) & Q(T=1) & Q(U=1) & Q(V=1) & Q(W=1) & Q(X=1) & Q(Y__isnull=False) & \
-                          Q(Z__isnull=False) & Q(AA__isnull=False)
-
-    complete_3rd_sms = VRChecklist.objects.filter(q_complete_3rd_sms).filter(date=datetime.date(datetime.today())).count()
-    print "complete 3rd sms %s " % complete_3rd_sms
-    
-    #context['missing_third_sms'] = 798 - VRChecklist.objects.filter(complete_3rd_sms).filter(date=datetime.date(datetime.today())).count()
-   # context['missing_third_sms'] = VRChecklist.objects.filter(qs3).filter(date=datetime.date(datetime.today())).count()
+    context['missing_third_sms'] = all_checklists - second_partial - third_completed 
     context['vr_incidents_count'] = VRIncident.objects.all().count()
     context['vr_incidents_today'] = VRIncident.objects.filter(date=datetime.date(datetime.today())).count()
 

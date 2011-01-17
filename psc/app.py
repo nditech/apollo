@@ -88,7 +88,10 @@ class App(AppBase):
             elif key in ['B', 'G', 'T', 'U', 'V', 'W', 'X'] and int(responses[key]) in range(1, 3):
                 setattr(vr, key, int(responses[key]))
             elif key in ['C', 'F', 'Y', 'Z', 'AA']:
-                setattr(vr, key, int(responses[key]))
+                if int(responses[key]) in (99,999,9999):
+                    setattr(vr, key, None)
+                else:
+                    setattr(vr, key, int(responses[key]))
             elif key in ['H', 'J', 'K', 'M', 'N', 'P', 'Q', 'R', 'S'] and int(responses[key]) in range(1, 6):
                 setattr(vr, key, int(responses[key]))
             elif key == 'D' and responses[key] == '4':
@@ -192,7 +195,10 @@ class App(AppBase):
             if key in ['A', 'B', 'D', 'E', 'H', 'M', 'N', 'P', 'Q', 'R'] and int(responses[key]) in range(1, 3): # Yes or No
                 setattr(dco, key, int(responses[key]))
             elif key in ['C', 'G', 'J', 'K', 'S', 'T', 'U', 'V', 'W', 'X']: # numeric responses
-                setattr(dco, key, int(responses[key]))
+                if int(responses[key]) in (99,999,999):
+                    setattr(dco, key, None)
+                else:
+                    setattr(dco, key, int(responses[key]))
             elif key == 'F' and responses[key] == '9':
                 setattr(dco, key+'9', True) 
             elif key == 'F' and not '9' in responses[key]:
