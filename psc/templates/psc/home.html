@@ -35,7 +35,7 @@
                                 </div>
                                  <div class="dash-row">
                                      <div class="dash-column first">Missing 3rd SMS</div>
-                                     <div class="dash-column second"><span>{{ missing_third_sms }}</span></div>
+                                     <div class="dash-column second"><span>{% if missing_third_sms < 0 %}0{% else %}{{ missing_third_sms }}{% endif %}</span></div>
                                 </div>
                                 <div class="dash-row last">
                                      <div class="dash-text"> <a href="{% url psc.views.vr_checklist_list %}">(View All)</a></div>
