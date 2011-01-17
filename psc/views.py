@@ -155,12 +155,10 @@ def vr_checklist_list(request):
     except (EmptyPage, InvalidPage):
         checklists = paginator.page(paginator.num_pages)
 
-    #if export
-    if request.GET.get('export'):
-        header = ['A', 'B', 'C', 'D1', 'D2', 'D3', 'D4', 'E1', 'E2', 'E3', 'E4', 'E5', 'F', 'G', 'H', 'J', 'K', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'AA']
-        return export(checklists, header, 'VRChecklist_Export' )
-    else:
-        return render_to_response('psc/vr_checklist_list.html', {'page_title': "Voter Registration Data Management", 'checklists': checklists, 'filter_form': filter_form }, context_instance=RequestContext(request))
+    page_details = {}
+    page_details['first'] = paginator.page_range[0]
+    page_details['last'] = paginator.page_range[len(paginator.page_range) - 1]
+    return render_to_response('psc/vr_checklist_list.html', {'page_title': "Voter Registration Data Management", 'checklists': checklists, 'filter_form': filter_form, 'page_details' : page_details }, context_instance=RequestContext(request))
 
 @login_required()
 def dco_checklist_list(request):
@@ -197,8 +195,10 @@ def dco_checklist_list(request):
     except (EmptyPage, InvalidPage):
         checklists = paginator.page(paginator.num_pages)
 
-
-    return render_to_response('psc/dco_checklist_list.html', {'page_title': "Display, Claims & Objections Data Management", 'checklists': checklists, 'filter_form': filter_form }, context_instance=RequestContext(request))
+    page_details = {}
+    page_details['first'] = paginator.page_range[0]
+    page_details['last'] = paginator.page_range[len(paginator.page_range) - 1]
+    return render_to_response('psc/dco_checklist_list.html', {'page_title': "Display, Claims & Objections Data Management", 'checklists': checklists, 'filter_form': filter_form, 'page_details': page_details }, context_instance=RequestContext(request))
 
 @login_required()
 def vr_checklist(request, checklist_id=0):
@@ -315,12 +315,11 @@ def vr_incident_list(request):
         checklists = paginator.page(page)
     except (EmptyPage, InvalidPage):
         checklists = paginator.page(paginator.num_pages)
-
-    if request.GET.get('export'):
-        header = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'M', 'N', 'P', 'Q']
-        return export(checklists, header, 'VRIncident_Export' )
-    else:
-        return render_to_response('psc/vr_incident_list.html', {'page_title': "Voter Registration Critical Incidents", 'checklists': checklists, 'filter_form': filter_form}, context_instance=RequestContext(request))
+    
+    page_details = {}
+    page_details['first'] = paginator.page_range[0]
+    page_details['last'] = paginator.page_range[len(paginator.page_range) - 1]
+    return render_to_response('psc/vr_incident_list.html', {'page_title': "Voter Registration Critical Incidents", 'checklists': checklists, 'filter_form': filter_form, 'page_details': page_details}, context_instance=RequestContext(request))
 
 @login_required()
 def dco_incident_list(request):
@@ -356,7 +355,10 @@ def dco_incident_list(request):
     except (EmptyPage, InvalidPage):
         checklists = paginator.page(paginator.num_pages)
 
-    return render_to_response('psc/dco_incident_list.html', {'page_title': "Display, Claims & Objections Critical Incidents", 'checklists': checklists, 'filter_form': filter_form}, context_instance=RequestContext(request))
+    page_details = {}
+    page_details['first'] = paginator.page_range[0]
+    page_details['last'] = paginator.page_range[len(paginator.page_range) - 1]
+    return render_to_response('psc/dco_incident_list.html', {'page_title': "Display, Claims & Objections Critical Incidents", 'checklists': checklists, 'filter_form': filter_form, 'page_details': page_details}, context_instance=RequestContext(request))
 
 @login_required()
 def message_log(request):
