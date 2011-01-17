@@ -1,5 +1,37 @@
 {% extends "psc/layout.html" %}
 {% load comments %}
+{% block javascripts %}
+{{ block.super }}
+<script src="/assets/js/jquery-1.4.4.min.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript" charset="utf-8">
+    $(function() {
+        //uncheck the rest if..
+        $("input[name=D4]").click(function(){
+           $("input[name=D1]").attr('checked', false)
+           $("input[name=D2]").attr('checked', false)
+           $("input[name=D3]").attr('checked', false)
+        });
+
+        //uncheck D4 if..
+        $("input[name=D1], input[name=D2], input[name=D3]").click(function(){
+           $("input[name=D4]").attr('checked', false)
+        });
+
+        //uncheck the rest if..
+        $("input[name=E5]").click(function(){
+           $("input[name=E1]").attr('checked', false)
+           $("input[name=E2]").attr('checked', false)
+           $("input[name=E3]").attr('checked', false)
+           $("input[name=E4]").attr('checked', false)
+        });
+
+        //uncheck D4 if..
+        $("input[name=E1], input[name=E2], input[name=E3], input[name=E4]").click(function(){
+           $("input[name=E5]").attr('checked', false)
+        });
+    });
+</script>
+{% endblock %}
 {% block content %}
 <div class="grid_16">
     <div class="box">
