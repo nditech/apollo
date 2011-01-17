@@ -11,7 +11,7 @@ from rapidsms.contrib.messagelog.models import Message
 from forms import VRChecklistForm, VRIncidentForm, DCOIncidentForm, VRChecklistFilterForm, VRIncidentFilterForm, DCOIncidentFilterForm, DCOChecklistFilterForm, DCOChecklistForm
 from forms import DCOIncidentUpdateForm, VRIncidentUpdateForm
 from datetime import datetime
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 import stats
 
 # paginator settings
@@ -359,11 +359,13 @@ def dco_incident_list(request):
     return render_to_response('psc/dco_incident_list.html', {'page_title': "Display, Claims & Objections Critical Incidents", 'checklists': checklists, 'filter_form': filter_form}, context_instance=RequestContext(request))
 
 @login_required()
+@permission_required('psc.can_view_msglog', login_url='/')
 def message_log(request):
     messages = MessageTable(Message.objects.all(), request=request)
     return render_to_response('psc/msg_log.html', { 'page_title': 'Message Log', 'messages_list' : messages }, context_instance=RequestContext(request))
 
 @login_required()
+@permission_required('psc.can_view_auditlog', login_url='/')
 def action_log(request):
     from itertools import chain
     #get action log for vr and dco 

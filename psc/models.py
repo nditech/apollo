@@ -286,3 +286,14 @@ rules = [((fields.LastUserField,),
 
 # Add the rules for the `LastUserField`
 add_introspection_rules(rules, ['^audit_log\.models\.fields\.LastUserField'])
+
+
+class Access(models.Model):
+    class Meta:
+        permissions = (
+            ('can_view_msglog', 'Can View Message Log'),
+            ('can_view_auditlog', 'Can View Audit Log'),
+            ('can_analyse', 'Can Analyse'),
+            ('can_export','Can Export'),
+    )
+
