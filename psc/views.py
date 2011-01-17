@@ -132,7 +132,7 @@ def vr_checklist_list(request):
                           Q(E4__isnull=False) | \
                           Q(E5__isnull=False))
             if data['observer_id']:
-                qs &= Q(observer__observer_id__exact=data['observer_id'])
+                qs = Q(observer__observer_id__exact=data['observer_id'])
     else:
         filter_form = VRChecklistFilterForm()
 
@@ -178,7 +178,7 @@ def dco_checklist_list(request):
             if data['day']:
                 qs &= Q(date=data['day'])
             if data['observer_id']:
-                qs &= Q(observer__observer_id__exact=data['observer_id'])
+                qs = Q(observer__observer_id__exact=data['observer_id'])
     else:
         filter_form = DCOChecklistFilterForm()
 
@@ -294,7 +294,7 @@ def vr_incident_list(request):
             if data['day']:
                 qs &= Q(date=data['day'])
             if data['observer_id']:
-                qs &= Q(observer__observer_id__exact=data['observer_id'])
+                qs = Q(observer__observer_id__exact=data['observer_id'])
     else:
         filter_form = VRIncidentFilterForm()
 
@@ -338,7 +338,7 @@ def dco_incident_list(request):
             if data['day']:
                 qs &= Q(date=data['day'])
             if data['observer_id']:
-                qs &= Q(observer__observer_id__exact=data['observer_id'])
+                qs = Q(observer__observer_id__exact=data['observer_id'])
     else:
         filter_form = DCOIncidentFilterForm()
 
