@@ -7,12 +7,15 @@
 				<form method="POST" action="{% url psc.views.vr_incident_update incident.id %}" >
 						<div class="block">
 								<table>
-										<tr><td>Observer:</td><td>{{ incident.observer.name }} (<strong>{{ incident.observer.observer_id }}</strong>)<input name="observer" type="hidden" value="{{ incident.observer.id }}" /></td></tr>
-										<tr><td>Observer Phone No.:</td><td><strong>{{ incident.observer.phone }}</strong></td></tr>
-										<tr><td>Location:</td><td><strong>{{ location.parent.parent.parent.name }} - {{ location.parent.parent.name }} - {{ location.parent.name }} - {{ location.name }}</strong></td></tr>
-										<tr><td>Date:</td><td>{{ incident.date|date:"D d-M" }}</td></tr>
-										<tr><td>LGA:</td><td>{{ incident.location.parent.name }}</td></tr>
-										<tr><td>RC:</td><td>{{ incident.location.name }}</td></tr>
+										<tr><td>Observer:</td><td>{{ incident.observer.name }} (<strong>{{ incident.observer.observer_id }}</strong>) <strong>{{ incident.observer.phone }}</strong><input name="observer" type="hidden" value="{{ incident.observer.id }}" /></td></tr>
+										{% if incident.observer.role == "NS" or incident.observer.role == "NSC" or incident.observer.role == "SC" or incident.observer.role == "SDC" %}
+										<tr><td>Location:</td><td>{{ incident.observer.location.parent.name }} - <strong>{{ incident.observer.location.name }}</strong></strong></td></tr>
+										{% else %}
+										<tr><td>Location:</td><td>{{ incident.observer.location.parent.parent.parent.name }} - <strong>{{ incident.observer.location.parent.parent.name }}</strong></strong></td></tr>
+										{% endif %}
+										<tr><td>Date:</td><td>{{ incident.date|date:"D d-M" }}<input type="hidden" name="{{ form.date.name }}" value="{{ form.initial.date }}" /></td></tr>
+										<tr><td>LGA:</td><td>{{ incident.location.parent.name }} (<strong>{{ incident.location.parent.code }}</strong>)</td></tr>
+										<tr><td>RC:</td><td>{{ incident.location.name }} (<strong>{{ incident.location.code }}</strong>)</td></tr>
 								</table>
 						</div>
 						<div class="clear"></div>
@@ -42,7 +45,7 @@
 												</div>
 												<div class='third'>
 														<div class='options'>
-																<input name='{{ form.B.name }}' type='checkbox' class='checkbox numeric' value='True' {% if form.initial.B %} checked='checked' {% endif %}>
+																<input name='{{ form.B.name }}' type='checkbox' class='checkbox numeric' value='True' {% if form.initial.B %}checked='checked'{% endif %}>
 														</div>
 												</div>
 										</div>
@@ -218,6 +221,7 @@
 												</div>
 												<div class='third'>
 														<div class='options buttons'>
+																{% csrf_token %}
 																<input type="submit" name="submit" value="Save">
 														</div>
 												</div>

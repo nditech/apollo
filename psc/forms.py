@@ -37,6 +37,12 @@ class VRIncidentForm(forms.ModelForm):
         model = VRIncident
         exclude = ['location_type', 'location_id', 'location']
 
+class VRIncidentUpdateForm(forms.ModelForm):
+    observer = forms.ModelChoiceField(queryset=Observer.objects.exclude(observer_id=""), empty_label="--")
+    class Meta:
+        model = VRIncident
+        exclude = ['location_type', 'location_id', 'location']
+
 class DCOChecklistForm(forms.ModelForm):
     class Meta:
         model = DCOChecklist
@@ -44,6 +50,12 @@ class DCOChecklistForm(forms.ModelForm):
 
 class DCOIncidentForm(forms.ModelForm):
     date = forms.ChoiceField(choices=DCO_DAYS)
+    observer = forms.ModelChoiceField(queryset=Observer.objects.exclude(observer_id=""), empty_label="--")
+    class Meta:
+        model = DCOIncident
+        exclude = ['location_type', 'location_id', 'location']
+
+class DCOIncidentUpdateForm(forms.ModelForm):
     observer = forms.ModelChoiceField(queryset=Observer.objects.exclude(observer_id=""), empty_label="--")
     class Meta:
         model = DCOIncident

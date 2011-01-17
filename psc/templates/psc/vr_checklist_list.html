@@ -54,6 +54,7 @@
                         <th>LGA</th>
                         <th>State/SD</th>
                         <th>Observer</th>
+                        <th>Phone</th>
                         <th>Supervisor</th>
                         <th>1st</th>
                         <th>2nd</th>
@@ -68,6 +69,7 @@
                     <td>{{ cl.observer.location.name|default:"Uknown" }}</td>
                     <td>{{ cl.observer.location.parent.name|default:"Uknown"|truncatewords:3 }}</td>
                     <td>{{ cl.observer.name }}</td>
+                    <td>{{ cl.observer.phone }}</td>
                     <td>{{ cl.observer.supervisor.name }}</td>
                     <td>
 					{% if cl.submitted %}

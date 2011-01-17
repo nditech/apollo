@@ -9,6 +9,7 @@ from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from rapidsms.contrib.messagelog.tables import MessageTable
 from rapidsms.contrib.messagelog.models import Message
 from forms import VRChecklistForm, VRIncidentForm, DCOIncidentForm, VRChecklistFilterForm, VRIncidentFilterForm, DCOIncidentFilterForm, DCOChecklistFilterForm, DCOChecklistForm, VR_DAYS, DCO_DAYS
+from forms import DCOIncidentUpdateForm, VRIncidentUpdateForm
 from datetime import datetime
 from django.contrib.auth.decorators import login_required
 
@@ -186,7 +187,7 @@ def vr_incident_update(request, incident_id=0):
     incident = get_object_or_404(VRIncident, pk=incident_id)
     location = incident.observer.location
     if request.POST:        
-        f = VRIncidentForm(request.POST, instance=incident)
+        f = VRIncidentUpdateForm(request.POST, instance=incident)
         if f.is_valid():
             f.save()
         return HttpResponseRedirect(reverse('psc.views.vr_incident_list'))    
@@ -199,8 +200,9 @@ def dco_incident_update(request, incident_id=0):
     incident = get_object_or_404(DCOIncident, pk=incident_id)
     location = incident.observer.location
     if request.POST:
-        f = DCOIncidentForm(request.POST, instance=incident)    
-        f.save()
+        f = DCOIncidentUpdateForm(request.POST, instance=incident)    
+        if f.is_valid():
+            f.save()
         return HttpResponseRedirect(reverse('psc.views.dco_incident_list'))
     else:
         f = DCOIncidentForm(instance=incident)
@@ -248,7 +250,7 @@ def vr_incident_list(request):
     else:
         filter_form = VRIncidentFilterForm()
     
-    paginator = Paginator(VRIncident.objects.filter(qs), items_per_page)
+    paginator = Paginator(VRIncident.objects.filter(qs).order_by('-id'), items_per_page)
 
     try:
         page = int(request.GET.get('page', '1'))
@@ -284,7 +286,7 @@ def dco_incident_list(request):
     else:
         filter_form = DCOIncidentFilterForm()
 
-    paginator = Paginator(DCOIncident.objects.filter(qs), items_per_page)
+    paginator = Paginator(DCOIncident.objects.filter(qs).order_by('-id'), items_per_page)
 
     try:
         page = int(request.GET.get('page', '1'))

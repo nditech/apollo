@@ -11,18 +11,17 @@
 												<tr><td width="30%">Observer:</td><td>{{ checklist.observer.name }} (<strong>{{ checklist.observer.observer_id  }}</strong>)</td></tr>
 												<tr><td>Observer Phone No.:</td><td><strong>{{ checklist.observer.phone  }}</strong></td></tr>
 												<tr><td>Supervisor:</td><td>{{ checklist.observer.supervisor|default:"" }} {% if checklist.observer.supervisor %}(<strong>{{ checklist.observer.supervisor.phone  }}</strong>){% endif %}</td></tr>
-												<tr><td>Location:</td><td><strong>{{ location.parent.parent.parent.name }} - {{ location.parent.parent.name }} - {{ location.parent.name }} - {{ location.name }}</strong></td></tr>
+												<tr><td>Location:</td><td>{{ location.parent.parent.parent.name }} - {{ location.parent.parent.name }} - {{ location.parent.name }} - <strong>{{ location.name }}</strong></td></tr>
 										</table>
 								</div>
 								<div class="clear"></div>
-								<h2><span class="indicator">1st SMS</span>Checklist Details</h2>
+								<h2><span class="indicator">1st SMS</span>Arrival Questions</h2>
 								<!-- opening checklist question -->
 								<div class='block'>
 										<!-- checklist details -->
 										<table>
 												<tr><td width="30%">Date:</td><td>{{ checklist.date|date:"D d-M" }}</td></tr>
-												<tr><td>LGA:</td><td>{{ incident.location.parent.name|default:"Unknown" }}</td></tr>
-												<tr><td>RC:</td><td>{{ incident.location.name|default:"Unknown" }} {% if incident.location %}(<strong>{{ incident.location.code }}</strong>){% endif %}</td></tr>
+												<tr><td>RC:</td><td>{{ checklist.location.name|default:"Unknown" }} {% if checklist.location %}(<strong>{{ checklist.location.code }}</strong>){% endif %}</td></tr>
 										</table>
 								</div>
 								<div class="clear"></div>

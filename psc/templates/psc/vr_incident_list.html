@@ -52,9 +52,9 @@
                         <th>PSC ID</th>
                         <th>Date</th>
                         <th>LGA</th>
-                        <th>District</th>
                         <th>State</th>
                         <th>Observer</th>
+                        <th>Phone</th>
                         <th>A</th>
                         <th>B</th>
                         <th>C</th>
@@ -75,10 +75,15 @@
                 <tr{% cycle ' class="odd"' '' %}>
                     <td>{{ cl.observer.observer_id }}</td>
                     <td>{{ cl.date|date:"D d-M" }}</td>
+										{% if cl.observer.role == "NS" or cl.observer.role == "NSC" or cl.observer.role == "SC" or cl.observer.role == "SDC" %}
+                    <td>{{ cl.location.parent.name }}</td>
                     <td>{{ cl.observer.location.name|default:"Unknown" }}</td>
-                    <td>{{ cl.observer.location.parent.name|default:"Unknown" }}</td>
-                    <td>{{ cl.observer.location.parent.parent.name|default:"Unknown" }}</td>
+										{% else %}
+                    <td>{{ cl.location.parent.name }}</td>
+                    <td>{{ cl.location.parent.parent.parent.name|default:"Unknown" }}</td>
+										{% endif %}
                     <td>{{ cl.observer.name }}</td>
+                    <td>{{ cl.observer.phone }}</td>
                     <td>
 						{% if cl.A %}
                         <img src="/assets/img/status-busy.png" width="16" height="16" alt="complete" />
