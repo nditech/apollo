@@ -475,6 +475,7 @@ form .buttons {
 form .buttons input[type='submit'] {
 	padding: 1em;
         text-align: left;
+        font-size: 25px
 }
 
 
