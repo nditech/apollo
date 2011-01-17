@@ -98,10 +98,10 @@
 													<img src="/assets/img/status-away.png" width="16" height="16" alt="incomplete" />
 							{% else %}
 								{% if cl.A = 4 %}
-									{% if cl.H or cl.J or cl.K or cl.M or cl.N or cl.P or cl.Q or cl.R or cl.S or cl.T or cl.U or cl.V or cl.W or cl.X or cl.Y or cl.Z or cl.AA %}
-													<img src="/assets/img/exclamation-red.png" width="16" height="16" alt="none" />
+									{% if cl.B or cl.C or cl.D1 or cl.D2 or cl.D3 or cl.D4 or cl.E1 or cl.E2 or cl.E3 or cl.E4 or cl.E5 or cl.F or cl.G %}
+													<img src="/assets/img/exclamation-red.png" width="16" height="16" alt="not open and have answers" />
 									{% else %}
-													<img src="/assets/img/information.png" width="16" height="16" alt="none" />
+													<img src="/assets/img/information.png" width="16" height="16" alt="not open" />
 									{% endif %}
 								{% endif %}
 							{% endif %}
@@ -109,13 +109,17 @@
 					{% endif %}
                     </td>
                     <td class="checklist">
-					{% if cl.H and cl.J and cl.K and cl.M and cl.N and cl.P and cl.Q and cl.R and cl.S and cl.T and cl.U and cl.V and cl.W and cl.X and cl.Y != None and cl.Z != None and cl.AA != None %}
+					{% if cl.A != 4 and cl.H and cl.J and cl.K and cl.M and cl.N and cl.P and cl.Q and cl.R and cl.S and cl.T and cl.U and cl.V and cl.W and cl.X and cl.Y != None and cl.Z != None and cl.AA != None %}
                         <img src="/assets/img/status.png" width="16" height="16" alt="complete" />
 					{% else %}
-					{% if cl.H or cl.J or cl.K or cl.M or cl.N or cl.P or cl.Q or cl.R or cl.S or cl.T or cl.U or cl.V or cl.W or cl.X or cl.Y or cl.Z or cl.AA %}
+					{% if cl.A != 4 and cl.H or cl.J or cl.K or cl.M or cl.N or cl.P or cl.Q or cl.R or cl.S or cl.T or cl.U or cl.V or cl.W or cl.X or cl.Y or cl.Z or cl.AA %}
                         <img src="/assets/img/status-away.png" width="16" height="16" alt="incomplete" />
 					{% else %}
+						{% if cl.A = 4 %}
+												<img src="/assets/img/exclamation-red.png" width="16" height="16" alt="not open and have answers" />
+						{% else %}
                         <img src="/assets/img/status-busy.png" width="16" height="16" alt="none" />
+						{% endif %}
 					{% endif %}
 					{% endif %}
                     </td>
