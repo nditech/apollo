@@ -390,35 +390,122 @@ def action_log(request):
     print logs
     return render_to_response('psc/action_log.html', {'page_title': 'Action Log', 'logs' : logs},  context_instance=RequestContext(request))
 
-def export(dataset, header, filename='export'):
+def export(request, model):
     import csv
+    #remove this
+    print model
     
     response = HttpResponse(mimetype='text/csv')
-    response['Content-Disposition'] = 'attachment; filename=%s.csv' % filename
+    response['Content-Disposition'] = 'attachment; filename=%s.csv' % model
     writer = csv.writer(response)
 
-    #write header
-    header_row = ['PSD ID', 'Zone', 'State']
-    for col in header:
-        header_row.append(col)
-    writer.writerow(header_row)
-
-    #write body
-    for field in dataset.object_list:
-        row = []
-        row.append(field.observer.observer_id)
-        #get zone        
-        if field.observer.role == 'LGA' or field.observer.role == 'OBS':
-            row.append(field.observer.location.parent.parent.name)
-            row.append(field.observer.location.parent.parent.name)
-        elif field.observer.role == 'SC' or field.observer.role == 'SDC':
-            row.apend(field.observer.location.parent.parent.name)
-            row.apend(field.observer.location.parent.name)
-
-        #the rest of the fields
-        for column in header:            
-            row.append(getattr(field, column))
-        writer.writerow(row)
+    def export_messagelog(writer):
+        header =  ["Date","Phone","Direction","Text"]
+        writer.writerow(header)
         
-    return response
+        messages = Message.objects.all().order_by('-date')        
+        for message in messages:
+            date = message.date.strftime('%Y-%m-%d %H:%M:%S')
+            phone = message.connection.identity
+            direction = message.direction
+            text = message.text
+            writer.writerow([date, phone, direction, text.replace('"', "'")])
 
+    def export_vri(writer):
+        header = ["PSC ID","Zone","State","LGA","VR","RC","A","B","C","D","E","F","G","H","J","K","M","N","P","Q","Comment"]
+        writer.writerow(header)
+
+        vris = VRIncident.objects.all()
+        for vri in vris:
+            pscid = vri.observer.observer_id
+            lga = vri.location.parent.name
+            if vri.location.parent.code == '999':
+                if vri.observer.role == 'SDC':
+                    zone = vri.observer.location.parent.parent.name
+                    state = vri.observer.location.parent.name
+                else:
+                    zone = vri.observer.location.parent.name
+                    state = vri.observer.location.name
+            else:
+                zone = vri.location.parent.parent.parent.parent.name
+                state = vri.location.parent.parent.parent.name
+            vr = vri.date.day
+            rc = vri.location.code
+            A = vri.A if vri.A else ""
+            B = vri.B if vri.B else ""
+            C = vri.C if vri.C else ""
+            D = vri.D if vri.D else ""
+            E = vri.E if vri.E else ""
+            F = vri.F if vri.F else ""
+            G = vri.G if vri.G else ""
+            H = vri.H if vri.H else ""
+            J = vri.J if vri.J else ""
+            K = vri.K if vri.K else ""
+            M = vri.M if vri.M else ""
+            N = vri.N if vri.N else ""
+            P = vri.P if vri.P else ""
+            Q = vri.Q if vri.Q else ""
+            comment = vri.comment if vri.comment else ""
+            writer.writerow([pscid, zone, state, lga, vr, rc, A, B, C, D, E, F, G, H, J, K, M, N, P, Q, comment.replace('"', "'")])
+
+    def export_vrc(writer):
+        header =  ["PSC ID","Zone","State","LGA","VR","RC","A","B","C","D1","D2","D3","D4","E1","E2","E3","E4","E5","F","G","H","J","K","M","N","P","Q","R","S","T","U","V","W","X","Y","Z","AA","Comment"]
+        writer.writerow(header)
+
+        vrcs = VRChecklist.objects.filter(submitted=True,observer__role='LGA')
+        for vrc in vrcs:
+            pscid = vrc.observer.observer_id
+            try:
+                zone = vrc.location.parent.parent.parent.parent.name
+                state = vrc.location.parent.parent.parent.name
+                lga = vrc.location.parent.name
+                rc = vrc.location.code
+            except AttributeError:
+                try:
+                    zone = vrc.observer.location.parent.parent.parent.name
+                    state = vrc.observer.location.parent.parent.name
+                    lga = vrc.observer.location.name
+                    rc = "999"
+                except AttributeError:
+                    print vrc.id
+                    sys.exit(1)
+            vr = vrc.date.day
+            A = vrc.A if vrc.A else ""
+            B = vrc.B
+            C = vrc.C if vrc.C else ""
+            D1 = "" if vrc.D1 == None else 1 if vrc.D1 == True else 2
+            D2 = "" if vrc.D2 == None else 1 if vrc.D2 == True else 2
+            D3 = "" if vrc.D3 == None else 1 if vrc.D3 == True else 2
+            D4 = "" if vrc.D4 == None else 1 if vrc.D4 == True else 2
+            E1 = "" if vrc.E1 == None else 1 if vrc.E1 == True else 2
+            E2 = "" if vrc.E2 == None else 1 if vrc.E2 == True else 2
+            E3 = "" if vrc.E3 == None else 1 if vrc.E3 == True else 2
+            E4 = "" if vrc.E4 == None else 1 if vrc.E4 == True else 2
+            E5 = "" if vrc.E5 == None else 1 if vrc.E5 == True else 2
+            F = vrc.F if vrc.F else ""
+            G = vrc.G
+            H = vrc.H if vrc.H else ""
+            J = vrc.J if vrc.J else ""
+            K = vrc.K if vrc.K else ""
+            M = vrc.M if vrc.M else ""
+            N = vrc.N if vrc.N else ""
+            P = vrc.P if vrc.P else ""
+            Q = vrc.Q if vrc.Q else ""
+            R = vrc.R if vrc.R else ""
+            S = vrc.S if vrc.S else ""
+            T = vrc.T
+            U = vrc.U
+            V = vrc.V
+            W = vrc.W
+            X = vrc.X
+            Y = vrc.Y if vrc.Y else ""
+            Z = vrc.Z if vrc.Z else ""
+            AA = vrc.AA if vrc.AA else ""
+            comment = vrc.comment
+            writer.writerow([pscid, zone, state, lga, vr, rc, A, B, C, D1, D2, D3, D4, E1, E2, E3, E4, E5, F, G, H, J, K, M, N, P, Q, R, S, T, U, V, W, X, Y, Z, AA, comment.replace('"', "'")])
+
+    # export here
+    export_method = eval("export_%s" % model)
+    if hasattr(export_method, '__call__'):
+        export_method(writer)
+        return response
