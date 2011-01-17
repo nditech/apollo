@@ -163,15 +163,15 @@
         </div>
         {% if checklists.has_other_pages %}
         <div class="paginator">
-            <a href="{% query_string "page=page_details.first" "" %}"><span>First</span></a>
+            <a href="{% query_string "page=page_details.first" "" %}"><span>&laquo;</span></a>
 			{% if checklists.has_previous %}
-            <a href="{% query_string "page=checklists.previous_page_number" "" %}"><span>&laquo;</span></a>
+            <a href="{% query_string "page=checklists.previous_page_number" "" %}"><span>&lsaquo;</span></a>
 			{% endif %}
-            <span class="current">Page {{ checklists.number }} of {{ checklists.paginator.num_pages }}</span>
+            <a href="javascript:;"><span class="current">Page {{ checklists.number }} of {{ checklists.paginator.num_pages }}</span></a>
 			{% if checklists.has_next %}
-            <a href="{% query_string 'page=checklists.next_page_number' '' %}"><span>&raquo;</span></a>
+            <a href="{% query_string 'page=checklists.next_page_number' '' %}"><span>&rsaquo;</span></a>
 			{% endif %}
-            <a href="{% query_string "page=page_details.last" "" %}"><span>Last</span></a>
+            <a href="{% query_string "page=page_details.last" "" %}"><span>&raquo;</span></a>
         </div>
         {% endif %}
     </div>
