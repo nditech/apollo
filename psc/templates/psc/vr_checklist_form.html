@@ -37,10 +37,10 @@
 																<p>{{ form.A.help_text }}</p>
 														</div>
 														<div class='third'>
-																<div class='options'><input name='{{ form.A.name }}' type='radio' class='radio numeric' value="1"{% if form.initial.A == 1 %} checked='checked'{% endif %}> Open by 8AM<br>(1)</div>
-																<div class='options'><input name='{{ form.A.name }}' type='radio' class='radio numeric' value="2"{% if form.initial.A == 2 %} checked='checked'{% endif %}> Between 8AM &amp; 10AM<br>(2)</div>
-																<div class='options'><input name='{{ form.A.name }}' type='radio' class='radio numeric' value="3"{% if form.initial.A == 3 %} checked='checked'{% endif %}> Between 10AM &amp; 12 noon<br>(3) </div>
-																<div class='options'><input name='{{ form.A.name }}' type='radio' class='radio numeric' value="4"{% if form.initial.A == 4 %} checked='checked'{% endif %}> Not Open by 12 noon<br>(4) </div>
+																<div class='options'><center><input name='{{ form.A.name }}' type='radio' class='radio numeric' value="1"{% if form.initial.A == 1 %} checked='checked'{% endif %}> Open by 8AM<br>(1)</center></div>
+																<div class='options'><center><input name='{{ form.A.name }}' type='radio' class='radio numeric' value="2"{% if form.initial.A == 2 %} checked='checked'{% endif %}> Between 8AM &amp; 10AM<br>(2)</center></div>
+																<div class='options'><center><input name='{{ form.A.name }}' type='radio' class='radio numeric' value="3"{% if form.initial.A == 3 %} checked='checked'{% endif %}> Between 10AM &amp; 12 noon<br>(3) </center></div>
+																<div class='options'><center><input name='{{ form.A.name }}' type='radio' class='radio numeric' value="4"{% if form.initial.A == 4 %} checked='checked'{% endif %}> Not Open by 12 noon<br>(4) </center></div>
 														</div>
 												</div>
 												<div class='parent'>
@@ -75,10 +75,17 @@
 																<p>{{ form.D1.help_text }}</p>
 														</div>
 														<div class='third'>
-																<div class='options'><input name='{{ form.D1.name }}' type='checkbox' class='checkbox alpha' value='True'{% if form.initial.D1 %} checked='checked'{% endif %}>Missing/Broken Computer<br />(1)</div>
-																<div class='options'><input name='{{ form.D2.name }}' type='checkbox' class='checkbox alpha' value='True'{% if form.initial.D2 %} checked='checked'{% endif %}>Missing/Broken Camera<br />(2)</div>
-																<div class='options'><input name='{{ form.D3.name }}' type='checkbox' class='checkbox alpha' value='True'{% if form.initial.D3 %} checked='checked'{% endif %}>Missing/Broken Printer<br />(3)</div>
-																<div class='options'><input name='{{ form.D4.name }}' type='checkbox' class='checkbox alpha' value='True'{% if form.initial.D4 %} checked='checked'{% endif %}>None<br />(Missing/Broken)<br />(4)</div>
+																<div class='options'>
+                                                                                                                                    <center><input name='{{ form.D1.name }}' type='checkbox' class='checkbox alpha' value='True'{% if form.initial.D1 %} checked='checked'{% endif %}>
+                                                                                                                                           Missing/Broken Computer<br />(1)</center>
+                                                                                                                                </div>
+																<div class='options'>
+                                                                                                                                    <center>
+                                                                                                                                    <input name='{{ form.D2.name }}' type='checkbox' class='checkbox alpha' value='True'{% if form.initial.D2 %} checked='checked'{% endif %}>Missing/Broken Camera<br />(2)
+                                                                                                                                    </center>
+                                                                                                                                </div>
+																<div class='options'><center><input name='{{ form.D3.name }}' type='checkbox' class='checkbox alpha' value='True'{% if form.initial.D3 %} checked='checked'{% endif %}>Missing/Broken Printer<br />(3)</center></div>
+																<div class='options'><center><input name='{{ form.D4.name }}' type='checkbox' class='checkbox alpha' value='True'{% if form.initial.D4 %} checked='checked'{% endif %}>None (Missing/Broken)<br />(4)</center></div>
 														</div>
 												</div>
 												<div class='parent'>
@@ -89,11 +96,11 @@
 																<p>{{ form.E1.help_text }}</p>
 														</div>
 														<div class='third'>
-																<div class='options'><input name='{{ form.E1.name }}' type='checkbox' class='checkbox alpha' value='True'{% if form.initial.E1 %} checked='checked'{% endif %}>Manual Register of Voters (EC. 1A)<br>(1)</div>
-																<div class='options'><input name='{{ form.E2.name }}' type='checkbox' class='checkbox alpha' value='True'{% if form.initial.E2 %} checked='checked'{% endif %}>Indelible Ink to Mark Fingers<br>(2)</div>
-																<div class='options'><input name='{{ form.E3.name }}' type='checkbox' class='checkbox alpha' value='True'{% if form.initial.E3 %} checked='checked'{% endif %}>Blank Temporary Voter's Cards<br>(3)</div>
-																<div class='options'><input name='{{ form.E4.name }}' type='checkbox' class='checkbox alpha' value='True'{% if form.initial.E4 %} checked='checked'{% endif %}>INEC Stamp<br>(4)</div>
-																<div class='options'><input name='{{ form.E5.name }}' type='checkbox' class='checkbox alpha' value='True'{% if form.initial.E5 %} checked='checked'{% endif %}>None Missing<br>(5)</div>
+																<div class='options'><center><input name='{{ form.E1.name }}' type='checkbox' class='checkbox alpha' value='True'{% if form.initial.E1 %} checked='checked'{% endif %}>Manual Register of Voters (EC. 1A)<br>(1)</center></div>
+																<div class='options'><center><input name='{{ form.E2.name }}' type='checkbox' class='checkbox alpha' value='True'{% if form.initial.E2 %} checked='checked'{% endif %}>Indelible Ink to Mark Fingers<br>(2)</center></div>
+																<div class='options'><center><input name='{{ form.E3.name }}' type='checkbox' class='checkbox alpha' value='True'{% if form.initial.E3 %} checked='checked'{% endif %}>Blank Temporary Voter's Cards<br>(3)</center></div>
+																<div class='options'><center><input name='{{ form.E4.name }}' type='checkbox' class='checkbox alpha' value='True'{% if form.initial.E4 %} checked='checked'{% endif %}>INEC Stamp<br>(4)</center></div>
+																<div class='options'><center><input name='{{ form.E5.name }}' type='checkbox' class='checkbox alpha' value='True'{% if form.initial.E5 %} checked='checked'{% endif %}>None Missing<br>(5)</center></div>
 														</div>
 												</div>
 												<div class='parent'>

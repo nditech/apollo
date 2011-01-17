@@ -50,6 +50,9 @@
                             </li>
                         </ul>
                     </li>
+                    <li class=" secondary logout">
+                           <a href="{% url django.contrib.auth.views.logout_then_login %}">Logout</a>
+                    </li>
                     <li class="secondary">
                         <a href="#" title="" style="width:14.3em;text-align:left">System Administration</a>
                         <ul>
@@ -59,11 +62,9 @@
                             <li>
                                 <a href="{% url psc.views.action_log %}">Action Log</a>
                             </li>
-                            <li>
-                                <a href="{% url django.contrib.auth.views.logout_then_login %}">Logout</a>
-                            </li>
                         </ul>
                     </li>
+
                 </ul>
                 {% endif %}
             </div>

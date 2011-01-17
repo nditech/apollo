@@ -751,3 +751,11 @@ span.error {
     color: #fff;
     padding: 5px;
 }
+
+table.observer_details {
+    font-size: 22px;
+}
+
+ul.main li.logout a{
+    background-color:#AB3130
+}
