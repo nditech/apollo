@@ -20,7 +20,7 @@
 {% block content %}
 <div class="grid_16">
     <div class="box">
-        <h2>Voter Registration Incidents</h2>
+        <h2>Voter Registration Incidents<span class="flag"><button onclick="location.href='{% url psc.views.export "vri" %}'">Export</button></span></h2>
         <div class="block">
             <div id="filter">
                 <form action="" method="get" id="filter_form" accept-charset="utf-8">

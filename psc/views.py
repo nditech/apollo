@@ -26,18 +26,42 @@ def home(request):
     context['missing_first_sms'] = vr.count()
 
     # second missing sms
-    qs2 = Q(A__isnull=True) | Q(B=0) | Q(C__isnull=True) | Q(F__isnull=True) | Q(G=0) | \
-                          (Q(D1__isnull=True) & Q(D2__isnull=True) & Q(D3__isnull=True) & Q(D4__isnull=True)) | \
+    qs2 = Q(A__isnull=True) & Q(B=0) & Q(C__isnull=True) & Q(F__isnull=True) & Q(G=0) & \
+                          (Q(D1__isnull=True) & Q(D2__isnull=True) & Q(D3__isnull=True) & Q(D4__isnull=True)) & \
                           (Q(E1__isnull=True) & Q(E2__isnull=True) & Q(E3__isnull=True) & Q(E4__isnull=True) & \
                           Q(E5__isnull=True))
     context['missing_second_sms'] = VRChecklist.objects.filter(qs2).filter(date=datetime.date(datetime.today())).count()
 
     # third missing sms
-    qs3 = Q(H__isnull=True) | Q(J__isnull=True) | Q(K__isnull=True) | Q(M__isnull=True) | \
-                          Q(N__isnull=True) | Q(P__isnull=True) | Q(Q__isnull=True) | Q(R__isnull=True) | \
-                          Q(S__isnull=True) | Q(T=0) | Q(U=0) | Q(V=0) | Q(W=0) | Q(X=0) | Q(Y__isnull=True) | \
-                          Q(Z__isnull=True) | Q(AA__isnull=True)
-    context['missing_third_sms'] = VRChecklist.objects.filter(qs3).filter(date=datetime.date(datetime.today())).count()
+    # get missing 2nd sms
+    q_missing_2nd_sms = Q(A__isnull=True) & Q(B=0) & Q(C__isnull=True) & Q(F__isnull=True) & Q(G=0) & \
+                          (Q(D1__isnull=True) & Q(D2__isnull=True) & Q(D3__isnull=True) & Q(D4__isnull=True)) & \
+                          (Q(E1__isnull=True) & Q(E2__isnull=True) & Q(E3__isnull=True) & Q(E4__isnull=True) & \
+                          Q(E5__isnull=True))
+
+    missing_2nd_sms = VRChecklist.objects.filter(q_missing_2nd_sms).filter(date=datetime.date(datetime.today())).count()
+    print "missing 2nd text %s " % missing_2nd_sms
+
+    # get complete 2nd sms
+    q_complete_2nd_sms = Q(A__isnull=False) & Q(B=1) & Q(C__isnull=False) & Q(F__isnull=False) & Q(G=1) & \
+                          (Q(D1__isnull=False) | Q(D2__isnull=False) | Q(D3__isnull=False) | Q(D4__isnull=False)) & \
+                          (Q(E1__isnull=False) | Q(E2__isnull=False) | Q(E3__isnull=False) | Q(E4__isnull=False) | \
+                          Q(E5__isnull=False))
+
+    complete_2nd_sms = VRChecklist.objects.filter(q_complete_2nd_sms).filter(date=datetime.date(datetime.today())).count()
+    print "complete 2nd sms %s " % complete_2nd_sms
+
+    #get complete 3rd sms
+    q_complete_3rd_sms = Q(H__isnull=False) & Q(J__isnull=False) & Q(K__isnull=False) & Q(M__isnull=False) & \
+                          Q(N__isnull=False) & Q(P__isnull=False) & Q(Q__isnull=False) & Q(R__isnull=False) & \
+                          Q(S__isnull=False) & Q(T=1) & Q(U=1) & Q(V=1) & Q(W=1) & Q(X=1) & Q(Y__isnull=False) & \
+                          Q(Z__isnull=False) & Q(AA__isnull=False)
+
+    complete_3rd_sms = VRChecklist.objects.filter(q_complete_3rd_sms).filter(date=datetime.date(datetime.today())).count()
+    print "complete 3rd sms %s " % complete_3rd_sms
+    
+    #context['missing_third_sms'] = 798 - VRChecklist.objects.filter(complete_3rd_sms).filter(date=datetime.date(datetime.today())).count()
+   # context['missing_third_sms'] = VRChecklist.objects.filter(qs3).filter(date=datetime.date(datetime.today())).count()
     context['vr_incidents_count'] = VRIncident.objects.all().count()
     context['vr_incidents_today'] = VRIncident.objects.filter(date=datetime.date(datetime.today())).count()
 
@@ -380,35 +404,122 @@ def action_log(request):
     print logs
     return render_to_response('psc/action_log.html', {'page_title': 'Action Log', 'logs' : logs},  context_instance=RequestContext(request))
 
-def export(dataset, header, filename='export'):
+def export(request, model):
     import csv
+    #remove this
+    print model
     
     response = HttpResponse(mimetype='text/csv')
-    response['Content-Disposition'] = 'attachment; filename=%s.csv' % filename
+    response['Content-Disposition'] = 'attachment; filename=%s.csv' % model
     writer = csv.writer(response)
 
-    #write header
-    header_row = ['PSD ID', 'Zone', 'State']
-    for col in header:
-        header_row.append(col)
-    writer.writerow(header_row)
-
-    #write body
-    for field in dataset.object_list:
-        row = []
-        row.append(field.observer.observer_id)
-        #get zone        
-        if field.observer.role == 'LGA' or field.observer.role == 'OBS':
-            row.append(field.observer.location.parent.parent.name)
-            row.append(field.observer.location.parent.parent.name)
-        elif field.observer.role == 'SC' or field.observer.role == 'SDC':
-            row.apend(field.observer.location.parent.parent.name)
-            row.apend(field.observer.location.parent.name)
-
-        #the rest of the fields
-        for column in header:            
-            row.append(getattr(field, column))
-        writer.writerow(row)
+    def export_messagelog(writer):
+        header =  ["Date","Phone","Direction","Text"]
+        writer.writerow(header)
         
-    return response
+        messages = Message.objects.all().order_by('-date')        
+        for message in messages:
+            date = message.date.strftime('%Y-%m-%d %H:%M:%S')
+            phone = message.connection.identity
+            direction = message.direction
+            text = message.text
+            writer.writerow([date, phone, direction, text.replace('"', "'")])
 
+    def export_vri(writer):
+        header = ["PSC ID","Zone","State","LGA","VR","RC","A","B","C","D","E","F","G","H","J","K","M","N","P","Q","Comment"]
+        writer.writerow(header)
+
+        vris = VRIncident.objects.all()
+        for vri in vris:
+            pscid = vri.observer.observer_id
+            lga = vri.location.parent.name
+            if vri.location.parent.code == '999':
+                if vri.observer.role == 'SDC':
+                    zone = vri.observer.location.parent.parent.name
+                    state = vri.observer.location.parent.name
+                else:
+                    zone = vri.observer.location.parent.name
+                    state = vri.observer.location.name
+            else:
+                zone = vri.location.parent.parent.parent.parent.name
+                state = vri.location.parent.parent.parent.name
+            vr = vri.date.day
+            rc = vri.location.code
+            A = vri.A if vri.A else ""
+            B = vri.B if vri.B else ""
+            C = vri.C if vri.C else ""
+            D = vri.D if vri.D else ""
+            E = vri.E if vri.E else ""
+            F = vri.F if vri.F else ""
+            G = vri.G if vri.G else ""
+            H = vri.H if vri.H else ""
+            J = vri.J if vri.J else ""
+            K = vri.K if vri.K else ""
+            M = vri.M if vri.M else ""
+            N = vri.N if vri.N else ""
+            P = vri.P if vri.P else ""
+            Q = vri.Q if vri.Q else ""
+            comment = vri.comment if vri.comment else ""
+            writer.writerow([pscid, zone, state, lga, vr, rc, A, B, C, D, E, F, G, H, J, K, M, N, P, Q, comment.replace('"', "'")])
+
+    def export_vrc(writer):
+        header =  ["PSC ID","Zone","State","LGA","VR","RC","A","B","C","D1","D2","D3","D4","E1","E2","E3","E4","E5","F","G","H","J","K","M","N","P","Q","R","S","T","U","V","W","X","Y","Z","AA","Comment"]
+        writer.writerow(header)
+
+        vrcs = VRChecklist.objects.filter(submitted=True,observer__role='LGA')
+        for vrc in vrcs:
+            pscid = vrc.observer.observer_id
+            try:
+                zone = vrc.location.parent.parent.parent.parent.name
+                state = vrc.location.parent.parent.parent.name
+                lga = vrc.location.parent.name
+                rc = vrc.location.code
+            except AttributeError:
+                try:
+                    zone = vrc.observer.location.parent.parent.parent.name
+                    state = vrc.observer.location.parent.parent.name
+                    lga = vrc.observer.location.name
+                    rc = "999"
+                except AttributeError:
+                    print vrc.id
+                    sys.exit(1)
+            vr = vrc.date.day
+            A = vrc.A if vrc.A else ""
+            B = vrc.B
+            C = vrc.C if vrc.C else ""
+            D1 = "" if vrc.D1 == None else 1 if vrc.D1 == True else 2
+            D2 = "" if vrc.D2 == None else 1 if vrc.D2 == True else 2
+            D3 = "" if vrc.D3 == None else 1 if vrc.D3 == True else 2
+            D4 = "" if vrc.D4 == None else 1 if vrc.D4 == True else 2
+            E1 = "" if vrc.E1 == None else 1 if vrc.E1 == True else 2
+            E2 = "" if vrc.E2 == None else 1 if vrc.E2 == True else 2
+            E3 = "" if vrc.E3 == None else 1 if vrc.E3 == True else 2
+            E4 = "" if vrc.E4 == None else 1 if vrc.E4 == True else 2
+            E5 = "" if vrc.E5 == None else 1 if vrc.E5 == True else 2
+            F = vrc.F if vrc.F else ""
+            G = vrc.G
+            H = vrc.H if vrc.H else ""
+            J = vrc.J if vrc.J else ""
+            K = vrc.K if vrc.K else ""
+            M = vrc.M if vrc.M else ""
+            N = vrc.N if vrc.N else ""
+            P = vrc.P if vrc.P else ""
+            Q = vrc.Q if vrc.Q else ""
+            R = vrc.R if vrc.R else ""
+            S = vrc.S if vrc.S else ""
+            T = vrc.T
+            U = vrc.U
+            V = vrc.V
+            W = vrc.W
+            X = vrc.X
+            Y = vrc.Y if vrc.Y else ""
+            Z = vrc.Z if vrc.Z else ""
+            AA = vrc.AA if vrc.AA else ""
+            comment = vrc.comment
+            writer.writerow([pscid, zone, state, lga, vr, rc, A, B, C, D1, D2, D3, D4, E1, E2, E3, E4, E5, F, G, H, J, K, M, N, P, Q, R, S, T, U, V, W, X, Y, Z, AA, comment.replace('"', "'")])
+
+    # export here
+    export_method = eval("export_%s" % model)
+    if hasattr(export_method, '__call__'):
+        export_method(writer)
+        return response

@@ -35,7 +35,7 @@ a:hover {
 /* headings
 ----------------------------------------------- */
 h1, h2, h3, h4, h5, h6 {line-height:1.2em; margin-bottom:.3em;}
-h2 {margin-top:1em;}
+h2 {margin-top:1em; height: 25px;}
 h5 {font-size:1.2em;}
 h6 {font-size:1em; text-transform:uppercase;}
 
@@ -64,6 +64,11 @@ h2#page-heading {
 	padding:.5em;
 	margin:0 0 10px 0;
 	border-bottom:1px solid #ccc;
+}
+
+h2 span.flag {
+        float: right;
+        display: block;
 }
 
 
