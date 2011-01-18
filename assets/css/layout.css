@@ -746,15 +746,51 @@ table.dashboard td {
 }
 
 .box .dash-column.second span {
-    background-color: #256188;
+    background-color: #CF0000;
     color: #fff;
-    padding: 5px;
+    padding: 6px;
     font-size: 15px;
     font-weight: bold;
-    border: 1px #87CEEB solid;
+    border: 1px #000 solid;
     -moz-border-radius: 5%;
-    margin-right: 10px;
+    margin-right: 8px;
     min-width: 20px;
+}
+
+.box .dash-column.second span.missing {
+    background-color: #CF0000;
+    color: #fff;
+}
+
+.box .dash-column.second span.unverified {
+    background-color: #FF803E;
+    color: #fff;
+}
+
+.box .dash-column.second span.incomplete {
+    background-color: #EDEF00;
+    color: #000;
+}
+
+.box .dash-column.second span.not_open {
+    background-color: #256188;
+    color: #fff;
+}
+
+.box .dash-column.second span.complete {
+    background-color: #158F00;
+    color: #fff;
+}
+
+.box .dash-column.second span.blank {
+    background-color: #FFF;
+    color: #000;
+}
+
+.box .dash-column.second span.spacer {
+    background-color: #DDD;
+    border: 1px #DDD solid;
+    color: #000;
 }
 
 .box .dash-column both {
