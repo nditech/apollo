@@ -458,9 +458,15 @@ form .grandparent .parent input.text.comment {
 	padding: 2px;
 }
 
-input.bigbox {
-  width: 20em;
+input.bigbox, select.bigbox {
+  min-width: 20em;
 	font-size: 1em;
+	padding: 4px;
+}
+
+select.bigbox {
+  min-width: 20em;
+	font-size: 0.8em;
 	padding: 4px;
 }
 

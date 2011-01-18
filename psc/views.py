@@ -140,7 +140,6 @@ def vr_checklist_list(request):
     if request.GET.get('export'):
         global items_per_page
 	items_per_page = VRChecklist.objects.filter(qs).count()
-        print items_per_page
     
     paginator = Paginator(VRChecklist.objects.filter(qs), items_per_page)
 
@@ -203,6 +202,7 @@ def dco_checklist_list(request):
 @login_required()
 def vr_checklist(request, checklist_id=0):
     checklist = get_object_or_404(VRChecklist, pk=checklist_id)
+    rcs = RegistrationCenter.objects.filter(parent=checklist.location.parent)
     location = checklist.observer.location
     if (request.POST):
         f = VRChecklistForm(request.POST, instance=checklist)
@@ -211,11 +211,12 @@ def vr_checklist(request, checklist_id=0):
         return HttpResponseRedirect(reverse('psc.views.vr_checklist_list'))
     else:
         f = VRChecklistForm(instance=checklist)
-        return render_to_response('psc/vr_checklist_form.html', {'page_title': "Voter Registration Checklist", 'checklist': checklist, 'location': location, 'form': f }, context_instance=RequestContext(request))
+        return render_to_response('psc/vr_checklist_form.html', {'page_title': "Voter Registration Checklist", 'checklist': checklist, 'rcs': rcs, 'location': location, 'form': f }, context_instance=RequestContext(request))
 
 @login_required()
 def dco_checklist(request, checklist_id=0):   
     checklist = get_object_or_404(DCOChecklist, pk=checklist_id)
+    rcs = RegistrationCenter.objects.filter(parent=checklist.location.parent)
     location = checklist.observer.location
     if (request.POST):
         f = DCOChecklistForm(request.POST, instance=checklist)
@@ -224,7 +225,7 @@ def dco_checklist(request, checklist_id=0):
         return HttpResponseRedirect(reverse('psc.views.dco_checklist_list'))
     else:
         f = DCOChecklistForm(instance=checklist)
-    return render_to_response('psc/dco_checklist_form.html', {'page_title': 'Display, Claims & Objections Checklist', 'checklist': checklist, 'location': location, 'form': f}, context_instance=RequestContext(request))
+    return render_to_response('psc/dco_checklist_form.html', {'page_title': 'Display, Claims & Objections Checklist', 'checklist': checklist, 'rcs': rcs, 'location': location, 'form': f}, context_instance=RequestContext(request))
 
 @login_required()
 def vr_incident_update(request, incident_id=0):
@@ -301,7 +302,6 @@ def vr_incident_list(request):
     if request.GET.get('export'):
         global items_per_page
 	items_per_page = VRIncident.objects.filter(qs).count()
-        print items_per_page
 
     paginator = Paginator(VRIncident.objects.filter(qs).order_by('-id'), items_per_page)
 
@@ -389,7 +389,6 @@ def action_log(request):
         logs = paginator.page(page)
     except (EmptyPage, InvalidPage):
         logs = paginator.page(paginator.num_pages)
-    print logs
     return render_to_response('psc/action_log.html', {'page_title': 'Action Log', 'logs' : logs},  context_instance=RequestContext(request))
 
 def fetch_locations(request, method, params=0):
@@ -473,8 +472,7 @@ def export(request, model):
                     lga = vrc.observer.location.name
                     rc = "999"
                 except AttributeError:
-                    print vrc.id
-                    sys.exit(1)
+                    pass
             vr = vrc.date.day
             A = vrc.A if vrc.A else ""
             B = vrc.B

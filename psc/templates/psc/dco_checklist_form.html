@@ -37,8 +37,13 @@
 										<tr><td>Supervisor:</td><td>{{ checklist.observer.supervisor|default:"" }} {% if checklist.observer.supervisor %}(<strong>{{ checklist.observer.supervisor.phone  }}</strong>){% endif %}</td></tr>
 										<tr><td>Location:</td><td><strong>{{ location.parent.parent.parent.name }} - {{ location.parent.parent.name }} - {{ location.parent.name }} - {{ location.name }}</strong></td></tr>
 										<tr><td>Date:</td><td>{{ checklist.date|date:"D d-M" }}</td></tr>
-										<tr><td>LGA:</td><td>{{ incident.location.parent.name|default:"Unknown" }}</td></tr>
-										<tr><td>RC:</td><td>{{ incident.location.name|default:"Unknown" }} {% if incident.location %}(<strong>{{ incident.location.code }}</strong>){% endif %}</td></tr>
+										<tr><td>LGA:</td><td>{{ checklist.location.parent.name|default:"Unknown" }}</td></tr>
+                    <tr><td>RC:</td><td><select class="bigbox" name="{{ form.location_id.name }}">
+										{% for rc in rcs %}
+											<option value="{{ rc.id }}" {% if checklist.location.code == rc.code %}selected="selected"{% endif %}>{{ rc.code }} - {{ rc.name }}</option>
+										{% endfor %}
+										</select></td></tr>
+										<!--<tr><td>RC:</td><td>{{ checklist.location.name|default:"Unknown" }} {% if checklist.location %}(<strong>{{ checklist.location.code }}</strong>){% endif %}</td></tr>-->
 								</table>
 						</div>
 						<div class="clear"></div>
