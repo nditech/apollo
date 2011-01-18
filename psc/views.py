@@ -22,7 +22,7 @@ def home(request):
     context = {'page_title': 'PSC 2011 SwiftCount Dashboard'}
     
     #vr first missing sms
-    vr = stats.get_models_fields_missing(VRChecklist, ['submitted']).filter(date=datetime.date(datetime.today()))
+    vr = stats.model_sieve(VRChecklist, ['submitted']).filter(date=datetime.date(datetime.today()))
     context['missing_first_sms'] = vr.count()
 
     # second missing sms
