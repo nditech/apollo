@@ -153,7 +153,7 @@
                             <input type='text' autocomplete='off' name='{{ form.F.name }}' class='text numeric' maxlength='3' value='{% if form.initial.F != None %}{{ form.initial.F }}{% endif %}'>
                         </div>
                     </div>
-                    <div class='parent last'>
+                    <div class='parent'>
                         <div class='first'>
                             <p>G</p>
                         </div>
@@ -164,6 +164,17 @@
                             <div class='options'><input name='{{ form.G.name }}' type='radio' class='radio numeric' value='1'{% if form.initial.G == 1 %} checked='checked'{% endif %}> Yes<br>(1)</div>
                             <div class='options'><input name='{{ form.G.name }}' type='radio' class='radio numeric' value='2'{% if form.initial.G == 2 %} checked='checked'{% endif %}>No<br>(2) </div>
                             <div class='options'><center><input name='{{ form.G.name }}' type='radio' class='radio numeric' value='0'{% if not form.initial.G %} checked='checked'{% endif %}> Unchecked<br></center></div>
+                        </div>
+                    </div>
+                    <div class='parent last'>
+                        <div class='first'>
+                            <p>Verify</p>
+                        </div>
+                        <div class='second'>
+                            <p>Check the box below to verify this text message</p>
+                        </div>
+                        <div class='third'>
+                            <div class='options'><center><input name='{{ form.verified_second.name }}' type='checkbox' class='checkbox alpha' value='True'{% if form.initial.verified_second %} checked='checked'{% endif %} /> Verified</center></div>
                         </div>
                     </div>
                 </div>
@@ -426,6 +437,17 @@
                                 <input name='{{ form.comment.name }}' type= 'text'  class='text comment' value='{{ form.initial.comment|default:"" }}'>
                                 <input type="hidden" name="{{ form.submitted.name }}" value="True">
                             </div>
+                        </div>
+                    </div>
+                    <div class='parent'>
+                        <div class='first'>
+                            <p>Verify</p>
+                        </div>
+                        <div class='second'>
+                            <p>Check the box below to verify this text message</p>
+                        </div>
+                        <div class='third'>
+                            <div class='options'><center><input name='{{ form.verified_third.name }}' type='checkbox' class='checkbox alpha' value='True'{% if form.initial.verified_third %} checked='checked'{% endif %} /> Verified</center></div>
                         </div>
                     </div>
                     <div class='parent last'>

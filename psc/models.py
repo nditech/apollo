@@ -172,6 +172,8 @@ class VRChecklist(models.Model):
     submitted = models.BooleanField(default=False, help_text="This field tracks if (even though already created), this report has been submitted by the reporter")
     report_rc = models.CharField(blank=True, null=True, max_length=100, help_text="Registration Center as supplied by the data entry operator")
     report_rcid = models.CharField(blank=True, null=True, max_length=50, help_text="Registration Center ID as supplied by the data entry operator")
+    verified_second = models.BooleanField(default=False)
+    verified_third = models.BooleanField(default=False)
     audit_log = AuditLog()
 
     def __unicode__(self):
