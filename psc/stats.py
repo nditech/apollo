@@ -1,7 +1,7 @@
 from django.db.models import Q
 from django.db import models
 
-def get_models_fields_exist(model, fields):
+def get_models_fields_exists(model, fields):
     if issubclass(model, models.Model):         
         def process_fields(fields, cond='AND'):
             query = Q()
