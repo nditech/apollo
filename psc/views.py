@@ -478,7 +478,7 @@ def export(request, model):
             vr = vrc.date.day
             A = vrc.A if vrc.A else ""
             B = vrc.B
-            C = vrc.C if vrc.C else ""
+            C = vrc.C if vrc.C != None else ""
             D1 = "" if vrc.D1 == None else 1 if vrc.D1 == True else 2
             D2 = "" if vrc.D2 == None else 1 if vrc.D2 == True else 2
             D3 = "" if vrc.D3 == None else 1 if vrc.D3 == True else 2
@@ -488,7 +488,7 @@ def export(request, model):
             E3 = "" if vrc.E3 == None else 1 if vrc.E3 == True else 2
             E4 = "" if vrc.E4 == None else 1 if vrc.E4 == True else 2
             E5 = "" if vrc.E5 == None else 1 if vrc.E5 == True else 2
-            F = vrc.F if vrc.F else ""
+            F = vrc.F if vrc.F != None else ""
             G = vrc.G
             H = vrc.H if vrc.H else ""
             J = vrc.J if vrc.J else ""
@@ -504,9 +504,9 @@ def export(request, model):
             V = vrc.V
             W = vrc.W
             X = vrc.X
-            Y = vrc.Y if vrc.Y else ""
-            Z = vrc.Z if vrc.Z else ""
-            AA = vrc.AA if vrc.AA else ""
+            Y = vrc.Y if vrc.Y != None else ""
+            Z = vrc.Z if vrc.Z != None else ""
+            AA = vrc.AA if vrc.AA != None else ""
             comment = vrc.comment
             writer.writerow([pscid, zone, state, lga, vr, rc, A, B, C, D1, D2, D3, D4, E1, E2, E3, E4, E5, F, G, H, J, K, M, N, P, Q, R, S, T, U, V, W, X, Y, Z, AA, comment.replace('"', "'")])
 
