@@ -52,7 +52,12 @@
                 <!-- checklist details -->
                 <table class="observer_details">
                     <tr><td width="30%">Date:</td><td>{{ checklist.date|date:"D d-M" }}</td></tr>
-                    <tr><td>RC:</td><td>{{ checklist.location.name|default:"Unknown" }} {% if checklist.location %}(<strong>{{ checklist.location.code }}</strong>){% endif %}</td></tr>
+                    <!--<tr><td>RC:</td><td>{{ checklist.location.name|default:"Unknown" }} {% if checklist.location %}(<strong>{{ checklist.location.code }}</strong>){% endif %}</td></tr>-->
+                    <tr><td>RC:</td><td><select class="bigbox" name="{{ form.location_id.name }}">
+										{% for rc in rcs %}
+											<option value="{{ rc.id }}" {% if checklist.location.code == rc.code %}selected="selected"{% endif %}>{{ rc.code }} - {{ rc.name }}</option>
+										{% endfor %}
+										</select></td></tr>
                     <tr><td>INEC RC:</td><td><input type="text" class="bigbox" name="{{ form.report_rc.name }}" value="{{ form.initial.report_rc|default:"" }}"></td></tr>
                     <tr><td>INEC RC CODE:</td><td><input type="text" class="bigbox" name="{{ form.report_rcid.name }}" value="{{ form.initial.report_rcid|default:"" }}"></td></tr>
                 </table>

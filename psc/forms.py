@@ -31,7 +31,7 @@ DCO_DAYS = (('', 'All'),
 class VRChecklistForm(forms.ModelForm):
     class Meta:
         model = VRChecklist
-        exclude = ['location_type', 'location_id', 'location', 'observer', 'date']
+        exclude = ['location_type', 'location', 'observer', 'date']
 
 class VRIncidentForm(forms.ModelForm):
     date = forms.ChoiceField(choices=tuple([('', '--')] + [(date, label) for (date, label) in VR_DAYS if date]))
@@ -49,7 +49,7 @@ class VRIncidentUpdateForm(forms.ModelForm):
 class DCOChecklistForm(forms.ModelForm):
     class Meta:
         model = DCOChecklist
-        exclude = ['location_type', 'location_id', 'location', 'observer', 'date']
+        exclude = ['location_type', 'location', 'observer', 'date']
 
 class DCOIncidentForm(forms.ModelForm):
     date = forms.ChoiceField(choices=tuple([('', '--')] + [(date, label) for (date, label) in DCO_DAYS if date]))

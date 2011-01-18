@@ -73,55 +73,77 @@
                     <td>{{ cl.observer.name|truncatewords:2 }}{% if cl.observer.phone %} (<strong>{{ cl.observer.phone }}</strong>){% endif %}</td>
                     <td>{{ cl.observer.supervisor.name|truncatewords:2 }}{% if cl.observer.supervisor.phone %} (<strong>{{ cl.observer.supervisor.phone }}</strong>){% endif %}</td>
                     <td class="checklist">
-					{% if cl.submitted %}
+										{% if cl.submitted %}
                         <img src="/assets/img/status.png" width="16" height="16" alt="complete" />
-					{% else %}
-                        <img src="/assets/img/status-busy.png" width="16" height="16" alt="none" />
-					{% endif %}
+										{% else %}
+                        <img src="/assets/img/exclamation-red.png" width="16" height="16" alt="none" />
+										{% endif %}
                     </td>
                     <td class="checklist">
-					{% if cl.A != 4 and cl.B and cl.C != None and cl.F != None and cl.G %}
-						{% if cl.D1 or cl.D2 or cl.D3 or cl.D4 %}
-							{% if cl.E1 or cl.E2 or cl.E3 or cl.E4 or cl.E5 %}
-                        <img src="/assets/img/status.png" width="16" height="16" alt="complete" />
-							{% endif %}
-						{% endif %}
-					{% else %}
-						{% if cl.A = None and cl.B = 0 and cl.C = None and cl.F = None and cl.G = 0 %}
-							{% if cl.D1 = None and cl.D2 = None and cl.D3 = None and cl.D4 = None %}
-								{% if cl.E1 = None and cl.E2 = None and cl.E3 = None and cl.E4 = None and cl.E5 = None %}
-                        <img src="/assets/img/status-busy.png" width="16" height="16" alt="none" />
-								{% endif %}
-							{% endif %}
-						{% else %}
-							{% if cl.A != 4 or cl.B or cl.C or cl.D1 or cl.D2 or cl.D3 or cl.D4 or cl.E1 or cl.E2 or cl.E3 or cl.E4 or cl.E5 or cl.F or cl.G %}
-													<img src="/assets/img/status-away.png" width="16" height="16" alt="incomplete" />
-							{% else %}
-								{% if cl.A = 4 %}
-									{% if cl.B or cl.C or cl.D1 or cl.D2 or cl.D3 or cl.D4 or cl.E1 or cl.E2 or cl.E3 or cl.E4 or cl.E5 or cl.F or cl.G %}
-													<img src="/assets/img/exclamation-red.png" width="16" height="16" alt="not open and have answers" />
-									{% else %}
-													<img src="/assets/img/information.png" width="16" height="16" alt="not open" />
-									{% endif %}
-								{% endif %}
-							{% endif %}
-						{% endif %}
-					{% endif %}
-                    </td>
-                    <td class="checklist">
-					{% if cl.A != 4 and cl.H and cl.J and cl.K and cl.M and cl.N and cl.P and cl.Q and cl.R and cl.S and cl.T and cl.U and cl.V and cl.W and cl.X and cl.Y != None and cl.Z != None and cl.AA != None %}
-                        <img src="/assets/img/status.png" width="16" height="16" alt="complete" />
-					{% else %}
-					{% if cl.A != 4 and cl.H or cl.J or cl.K or cl.M or cl.N or cl.P or cl.Q or cl.R or cl.S or cl.T or cl.U or cl.V or cl.W or cl.X or cl.Y or cl.Z or cl.AA %}
-                        <img src="/assets/img/status-away.png" width="16" height="16" alt="incomplete" />
-					{% else %}
-						{% if cl.A = 4 %}
+										{% if not cl.A and cl.B = 0 and cl.C = None and cl.F = None and not cl.G %}
+											{% if not cl.D1 and not cl.D2 and not cl.D3 and not cl.D4 %}
+												{% if not cl.E1 and not cl.E2 and not cl.E3 and not cl.E4 and not cl.E5 %}
 												<img src="/assets/img/exclamation-red.png" width="16" height="16" alt="not open and have answers" />
-						{% else %}
-                        <img src="/assets/img/status-busy.png" width="16" height="16" alt="none" />
-						{% endif %}
-					{% endif %}
-					{% endif %}
+												{% endif %}
+											{% endif %}
+										{% else %}
+											{% if cl.A != 4 %}
+												{% if cl.B and cl.C != None and cl.F != None and cl.G %}
+													{% if cl.D1 or cl.D2 or cl.D3 or cl.D4 %}
+														{% if cl.E1 or cl.E2 or cl.E3 or cl.E4 or cl.E5 %}
+															<img src="/assets/img/status.png" width="16" height="16" alt="incomplete" />
+														{% else %}
+															<img src="/assets/img/status-away.png" width="16" height="16" alt="incomplete" />
+														{% endif %}
+													{% else %}
+														<img src="/assets/img/status-away.png" width="16" height="16" alt="incomplete" />
+													{% endif %}
+												{% else %}
+													<img src="/assets/img/status-away.png" width="16" height="16" alt="incomplete" />
+												{% endif %}
+											{% else %}
+												{% if cl.verified_second %}
+													<img src="/assets/img/information.png" width="16" height="16" alt="not open" />
+												{% else %}
+													{% if not cl.B and cl.C == None and cl.F == None and not cl.G %}
+														{% if not cl.D1 and not cl.D2 and not cl.D3 and not cl.D4 %}
+															{% if not cl.E1 and not cl.E2 and not cl.E3 and not cl.E4 and not cl.E5 %}
+																<img src="/assets/img/information.png" width="16" height="16" alt="not open" />
+															{% else %}
+																<img src="/assets/img/status-busy.png" width="16" height="16" alt="none" />
+															{% endif %}
+														{% else %}
+															<img src="/assets/img/status-busy.png" width="16" height="16" alt="none" />
+														{% endif %}
+													{% else %}
+														<img src="/assets/img/status-busy.png" width="16" height="16" alt="none" />
+													{% endif %}
+												{% endif %}
+											{% endif %}
+										{% endif %}
+                    </td>
+                    <td class="checklist">
+										{% if cl.A != 4 %}
+											{% if cl.H and cl.J and cl.K and cl.M and cl.N and cl.P and cl.Q and cl.R and cl.S and cl.T and cl.U and cl.V and cl.W and cl.X and cl.Y != None and cl.Z != None and cl.AA != None %}
+                        <img src="/assets/img/status.png" width="16" height="16" alt="complete" />
+											{% else %}
+												{% if cl.H or cl.J or cl.K or cl.M or cl.N or cl.P or cl.Q or cl.R or cl.S or cl.T or cl.U or cl.V or cl.W or cl.X or cl.Y != None or cl.Z != None or cl.AA != None %}
+													<img src="/assets/img/status-away.png" width="16" height="16" alt="incomplete" />
+												{% else %}
+													<img src="/assets/img/exclamation-red.png" width="16" height="16" alt="not open and have answers" />
+												{% endif %}
+											{% endif %}
+										{% else %}
+											{% if cl.verified_third %}
+												<img src="/assets/img/information.png" width="16" height="16" alt="not open" />
+											{% else %}
+												{% if cl.H or cl.J or cl.K or cl.M or cl.N or cl.P or cl.Q or cl.R or cl.S or cl.T or cl.U or cl.V or cl.W or cl.X or cl.Y != None or cl.Z != None or cl.AA != None %}
+													<img src="/assets/img/status-busy.png" width="16" height="16" alt="none" />
+												{% else %}
+													<img src="/assets/img/status-offline.png" width="16" height="16" alt="not expected" />
+												{% endif %}
+											{% endif %}
+										{% endif %}
                     </td>
                     <td><a href="{% url psc.views.vr_checklist cl.id %}">Edit</a></td>
                 </tr>
