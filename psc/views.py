@@ -391,9 +391,9 @@ def action_log(request):
         logs = paginator.page(paginator.num_pages)
     return render_to_response('psc/action_log.html', {'page_title': 'Action Log', 'logs' : logs},  context_instance=RequestContext(request))
 
-def fetch_locations(request, method, params=0):
-    if method == 'lga':
-        lgas = LGA.objects.all().order_by('name').values('code', 'name')
+def ajax_fetch_rcs(request, method, lga_id=0):
+    if lga_id:
+        rcs = RegistrationCenter.objects.filter(parent__id=lga_id)
 
 @login_required()
 @permission_required('psc.can_analyse', login_url='/')
