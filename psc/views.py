@@ -361,13 +361,13 @@ def dco_incident_list(request):
     return render_to_response('psc/dco_incident_list.html', {'page_title': "Display, Claims & Objections Critical Incidents", 'checklists': checklists, 'filter_form': filter_form, 'page_details': page_details}, context_instance=RequestContext(request))
 
 @login_required()
-@permission_required('psc.can_view_msglog', login_url='/')
+@permission_required('psc.can_administer', login_url='/')
 def message_log(request):
     messages = MessageTable(Message.objects.all(), request=request)
     return render_to_response('psc/msg_log.html', { 'page_title': 'Message Log', 'messages_list' : messages }, context_instance=RequestContext(request))
 
 @login_required()
-@permission_required('psc.can_view_auditlog', login_url='/')
+@permission_required('psc.can_administer', login_url='/')
 def action_log(request):
     from itertools import chain
     #get action log for vr and dco 
@@ -392,10 +392,14 @@ def action_log(request):
     print logs
     return render_to_response('psc/action_log.html', {'page_title': 'Action Log', 'logs' : logs},  context_instance=RequestContext(request))
 
+def fetch_locations(request, method, params=0):
+    if method == 'lga':
+        lgas = LGA.objects.all().order_by('name').values('code', 'name')
+
+@login_required()
+@permission_required('psc.can_analyse', login_url='/')
 def export(request, model):
     import csv
-    #remove this
-    print model
     
     response = HttpResponse(mimetype='text/csv')
     response['Content-Disposition'] = 'attachment; filename=%s.csv' % model
@@ -507,6 +511,7 @@ def export(request, model):
             writer.writerow([pscid, zone, state, lga, vr, rc, A, B, C, D1, D2, D3, D4, E1, E2, E3, E4, E5, F, G, H, J, K, M, N, P, Q, R, S, T, U, V, W, X, Y, Z, AA, comment.replace('"', "'")])
 
     # export here
+    # TODO: refactor
     export_method = eval("export_%s" % model)
     if hasattr(export_method, '__call__'):
         export_method(writer)

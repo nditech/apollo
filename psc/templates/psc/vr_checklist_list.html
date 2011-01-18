@@ -22,7 +22,7 @@
     <div class="box" style="padding-bottom:1em">
         <h2>Voter Registration Checklist<span class="flag">
                 <button onclick="location.href='{% url psc.views.vr_checklist_list %}'">Refresh</button>
-                <button onclick="location.href='{% url psc.views.export "vrc" %}'">Export</button></span>
+                {% if perms.psc.can_analyse %}<button onclick="location.href='{% url psc.views.export "vrc" %}'">Export</button></span>{% endif %}
         </h2>
         <div class="block">
             <div id="filter">
