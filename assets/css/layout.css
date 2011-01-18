@@ -742,13 +742,28 @@ table.dashboard td {
 .box .dash-column.second span {
     background-color: #256188;
     color: #fff;
-    padding: 5px;
+    padding: 6px;
     font-size: 15px;
     font-weight: bold;
-    border: 1px #87CEEB solid;
+    border: 1px #e2e2e2 solid;
     -moz-border-radius: 5%;
-    margin-right: 10px;
+    margin-right: 8px;
     min-width: 20px;
+}
+
+.box .dash-column.second span.missing {
+    background-color: #CF0000;
+    color: #fff;
+}
+
+.box .dash-column.second span.incomplete {
+    background-color: #FFA200;
+    color: #fff;
+}
+
+.box .dash-column.second span.complete {
+    background-color: #008F13;
+    color: #fff;
 }
 
 .box .dash-column both {
