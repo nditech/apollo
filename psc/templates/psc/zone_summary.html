@@ -12,7 +12,7 @@
                         <th>Zone</th>
                         <th colspan="2">1st SMS</th>
                         <th colspan="5">2st SMS</th>
-                        <th colspan="6">3rd SMS</th>
+                        <th colspan="7">3rd SMS</th>
                     </tr>
                     <tr>
                         <td>&nbsp;</td>
@@ -28,10 +28,12 @@
                         <td><img src="/assets/img/information.png" width="16" height="16" alt="complete" /></td>
                         <td><img src="/assets/img/status-away.png" width="16" height="16" alt="complete" /></td>
                         <td><img src="/assets/img/exclamation-red.png" width="16" height="16" alt="complete" /></td>
+                        <td><img src="/assets/img/status-offline.png" width="16" height="16" alt="complete" /></td>
                     </tr>
                     {% for zone in zone_list %}
                     <tr>
                         <td>{{ zone }}</td>
+                        <td>%</td>
                         <td>%</td>
                         <td>%</td>
                         <td>%</td>
