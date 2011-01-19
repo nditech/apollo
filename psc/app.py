@@ -15,9 +15,9 @@ class App(AppBase):
         self.vr_incident  = re.compile(r'PSC(?P<observer_id>\d{6})VR(?P<day>\d{2})(?P<location_type>(RC|GA))(?P<location_id>\d{3})!(?P<responses>[A-Z]{1,})@?(?P<comment>.*)', re.I)
         self.dco_checklist = re.compile(r'PSC(?P<observer_id>\d{6})DC(?P<day>\d{2})RC(?P<location_id>\d{3})(?P<responses>[A-Z\d]{2,})?@?(?P<comment>.*)', re.I)
         self.dco_incident = re.compile(r'PSC(?P<observer_id>\d{6})DC(?P<day>\d{2})(?P<location_type>(RC|GA))(?P<location_id>\d{3})!(?P<responses>[A-Z]{1,})@?(?P<comment>.*)', re.I)
-        self.range_error_response = 'Invalid values for: %s'
-        self.checklist_attribute_error_response = 'Unknown checklist code: %s'
-        self.incident_attribute_error_response = 'Unknown critical incident code: %s'
+        self.range_error_response = 'Invalid response(s) for question(s): "%s"'
+        self.checklist_attribute_error_response = 'Invalid responses for the checklist code: "%s"'
+        self.incident_attribute_error_response = 'Unknown critical incident code: "%s"'
         AppBase.__init__(self, router)
         
     def handle(self, message):
@@ -29,8 +29,12 @@ class App(AppBase):
             part1 = part1.upper()
             part1 = part1.replace(" ", "").replace("O","0").replace("I","1").replace("L","1")
             message.text = part1 + part2
+            message.message_only = part1
+            message.comments_only = part2
+            
         else:
             message.text = message.text.upper().replace(" ", "").replace("O","0").replace("I","1").replace("L","1")
+            message.message_only = message.text
 
         if self.pattern.match(message.text):
             # Let's determine if we have a valid contact for this message
@@ -38,7 +42,7 @@ class App(AppBase):
             try:
                 message.observer = Observer.objects.get(observer_id=match.group('observer_id'))
             except Observer.DoesNotExist:
-                return message.respond('You are not authorized to send reports to this number.')
+                return message.respond('Observer ID not found.Please resend with valid PSC. You sent: %s' % message.message_only)
 
             # This is likely a valid PSC message
             match = self.vr_incident.match(message.text)
@@ -57,7 +61,7 @@ class App(AppBase):
             return self.default(message)
     
     def default(self, message):
-       return message.respond('Invalid message: %s' % message.text)
+       return message.respond('Invalid message:"%s". Check VR or RC and please resend!' % message.message_only)
 
     @role_required('LGA')
     def _vr_checklist(self, msg, params):
@@ -115,10 +119,10 @@ class App(AppBase):
                 error_responses.append(self.checklist_attribute_error_response % (", ".join(check['attribute'])))
             if check['range']:
                 error_responses.append(self.range_error_response % (", ".join(check['range'])))
-            error_responses.append("You sent: %s" % msg.text)
+            error_responses.append("You sent: %s" % msg.message_only)
             return msg.respond(". ".join(error_responses))
         else:
-            return msg.respond('VR Checklist report accepted! You sent: %s' % msg.text)
+            return msg.respond('VR Checklist report accepted! You sent: %s' % msg.message_only)
 
     def _vr_incident(self, msg, params):
         # determine location and date
@@ -147,10 +151,10 @@ class App(AppBase):
             # generate error response
             if check['attribute']:
                 error_responses.append(self.incident_attribute_error_response % (", ".join(check['attribute'])))
-            error_responses.append("You sent: %s" % msg.text)
+            error_responses.append("You sent: %s" % msg.message_only)
             return msg.respond(". ".join(error_responses))
         else:
-            return msg.respond('VR Incident report accepted! You sent: %s' % msg.text)
+            return msg.respond('VR Incident report accepted! You sent: %s' % msg.message_only)
 
     @role_required('LGA')
     def _dco_checklist(self, msg, params):
@@ -214,10 +218,10 @@ class App(AppBase):
                 error_responses.append(self.checklist_attribute_error_response % (", ".join(check['attribute'])))
             if check['range']:
                 error_responses.append(self.range_error_response % (", ".join(check['range'])))
-            error_responses.append("You sent: %s" % msg.text)
+            error_responses.append("You sent: %s" % msg.message_only)
             return msg.respond(". ".join(error_responses))
         else:
-            return msg.respond('DCO Checklist report accepted! You sent: %s' % msg.text)
+            return msg.respond('DCO Checklist report accepted! You sent: %s' % msg.message_only)
 
     def _dco_incident(self, msg, params):
         # determine location and date
@@ -246,10 +250,10 @@ class App(AppBase):
             # generate error response
             if check['attribute']:
                 error_responses.append(self.incident_attribute_error_response % (", ".join(check['attribute'])))
-            error_responses.append("You sent: %s" % msg.text)
+            error_responses.append("You sent: %s" % msg.message_only)
             return msg.respond(". ".join(error_responses))
         else:
-            return msg.respond('DCO Incident report accepted! You sent: %s' % msg.text)
+            return msg.respond('DCO Incident report accepted! You sent: %s' % msg.message_only)
 
     def _parse_checklist(self, responses):
         ''' Converts strings that look like A2C3D89AA90 into
