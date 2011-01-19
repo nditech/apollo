@@ -1,4 +1,22 @@
 {% extends "psc/layout.html" %}
+{% block javascripts %}
+{{ block.super }}
+<script src="/assets/js/jquery-1.4.4.min.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript" charset="utf-8">
+    $(function(){
+       $('#lga_list').change(function() {
+           var lga_id = $('#lga_list').val()
+            $.getJSON('/get-rcs-by-lga/'+ lga_id, function(data){
+                $('#rc_list').empty()
+                $.each(data, function(){
+                  //alert(this.pk)
+                  $('#rc_list').append("<option value='"+ this.pk +"'>" + this.fields.name +"</option>")
+                })
+            })
+        });
+    });
+</script>
+{% endblock %}
 {% load comments %}
 {% block content %}
 <div class="grid_16">
@@ -6,7 +24,7 @@
 				<h2>Critical Incident Details</h2>
 				<form method="POST" action="{% url psc.views.vr_incident_update incident.id %}" >
 						<div class="block">
-								<table>
+								<table class="observer_details">
 										<tr><td>Observer:</td><td>{{ incident.observer.name }} (<strong>{{ incident.observer.observer_id }}</strong>) <strong>{{ incident.observer.phone }}</strong><input name="observer" type="hidden" value="{{ incident.observer.id }}" /></td></tr>
 										{% if incident.observer.role == "NS" or incident.observer.role == "NSC" or incident.observer.role == "SC" or incident.observer.role == "SDC" %}
 										<tr><td>Location:</td><td>{{ incident.observer.location.parent.name }} - <strong>{{ incident.observer.location.name }}</strong></strong></td></tr>
@@ -14,8 +32,24 @@
 										<tr><td>Location:</td><td>{{ incident.observer.location.parent.parent.parent.name }} - <strong>{{ incident.observer.location.parent.parent.name }}</strong></strong></td></tr>
 										{% endif %}
 										<tr><td>Date:</td><td>{{ incident.date|date:"D d-M" }}<input type="hidden" name="{{ form.date.name }}" value="{{ form.initial.date }}" /></td></tr>
-										<tr><td>LGA:</td><td>{{ incident.location.parent.name }} (<strong>{{ incident.location.parent.code }}</strong>)</td></tr>
-										<tr><td>RC:</td><td>{{ incident.location.name }} (<strong>{{ incident.location.code }}</strong>)</td></tr>
+										<tr><td>LGA:</td>
+                                                                                    <td>
+                                                                                        <select class="bigbox" name="{{ form.name.location_id.name }}" id="lga_list" >
+                                                                                            {% for lga in lga_list %}
+                                                                                                <option value="{{ lga.id }}" {% if incident.location.parent.id == lga.id %} selected='selected' {% endif %}>{{ lga.name }} ({{ lga.code }})</option>
+                                                                                            {% endfor %}
+                                                                                        </select>
+                                                                                    </td>
+                                                                                </tr>
+										<tr><td>RC:</td>
+                                                                                    <td>
+                                                                                        <select class="bigbox" name="{{ form.name.location_id.name }}" id="rc_list">
+                                                                                            {% for rc in rc_list_by_lga %}
+                                                                                                <option value="{{ rc.id }}" {% if incident.location.id == rc.id %} selected='selected' {% endif %}>{{ rc.name }} ({{ rc.name }})</option>
+                                                                                            {% endfor %}
+                                                                                        </select>
+                                                                                    </td>
+                                                                                </tr>
 								</table>
 						</div>
 						<div class="clear"></div>
