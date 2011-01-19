@@ -16,6 +16,8 @@ urlpatterns = patterns('',
     (r'^msglog/$', views.message_log),
     (r'^actionlog/$', views.action_log),
     (r'^exportall/(?P<model>.+)/?$', views.export),
+    (r'^zone/summary/?$', views.zone_summary),
+    (r'^state/summary/?$', views.state_summary),
 )
 
 #authentication urls

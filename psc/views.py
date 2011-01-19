@@ -514,3 +514,14 @@ def export(request, model):
     if hasattr(export_method, '__call__'):
         export_method(writer)
         return response
+@permission_required('psc.can_analyse', login_url='/')
+@login_required()
+def zone_summary(request):
+    zone_list = Zone.objects.all()
+    return render_to_response('psc/zone_summary.html', {'page_title': 'Zone Summary', 'zone_list': zone_list},  context_instance=RequestContext(request))
+
+@permission_required('psc.can_analyse', login_url='/')
+@login_required()
+def state_summary(request):
+    state_list = State.objects.all()
+    return render_to_response('psc/state_summary.html', {'page_title': 'State Summary', 'state_list': state_list},  context_instance=RequestContext(request))

@@ -316,6 +316,13 @@ td.currency {
 	text-align:right;
 }
 
+table.summary tr {
+    border-bottom: 1px dashed #999;
+}
+
+table.summary tr td {
+    padding: 8px;
+}
 
 /* forms
 ----------------------------------------------- */

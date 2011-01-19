@@ -1,0 +1,54 @@
+{% extends 'psc/layout.html' %}
+{% block content %}
+<div class="grid_16">
+    <div class="box">
+        <h2>A Summary of Zones<span class="flag">
+                <button onclick="location.href='{% url psc.views.zone_summary %}'">Refresh</button>
+        </span></h2>
+        <div class="block">
+            <table width="100%" class="summary">
+                <thead>
+                    <tr>
+                        <th>Zone</th>
+                        <th colspan="2">1st SMS</th>
+                        <th colspan="5">2st SMS</th>
+                        <th colspan="6">3rd SMS</th>
+                    </tr>
+                    <tr>
+                        <td>&nbsp;</td>
+                        <td><img src="/assets/img/status.png" width="16" height="16" alt="complete" /></td>
+                        <td><img src="/assets/img/status-busy.png" width="16" height="16" alt="complete" /></td>
+                        <td><img src="/assets/img/status.png" width="16" height="16" alt="complete" /></td>
+                        <td><img src="/assets/img/status-busy.png" width="16" height="16" alt="complete" /></td>
+                        <td><img src="/assets/img/information.png" width="16" height="16" alt="complete" /></td>
+                        <td><img src="/assets/img/status-away.png" width="16" height="16" alt="complete" /></td>
+                        <td><img src="/assets/img/exclamation-red.png" width="16" height="16" alt="complete" /></td>
+                        <td><img src="/assets/img/status.png" width="16" height="16" alt="complete" /></td>
+                        <td><img src="/assets/img/status-busy.png" width="16" height="16" alt="complete" /></td>
+                        <td><img src="/assets/img/information.png" width="16" height="16" alt="complete" /></td>
+                        <td><img src="/assets/img/status-away.png" width="16" height="16" alt="complete" /></td>
+                        <td><img src="/assets/img/exclamation-red.png" width="16" height="16" alt="complete" /></td>
+                    </tr>
+                    {% for zone in zone_list %}
+                    <tr>
+                        <td>{{ zone }}</td>
+                        <td>%</td>
+                        <td>%</td>
+                        <td>%</td>
+                        <td>%</td>
+                        <td>%</td>
+                        <td>%</td>
+                        <td>%</td>
+                        <td>%</td>
+                        <td>%</td>
+                        <td>%</td>
+                        <td>%</td>
+                        <td>%</td>
+                    </tr>
+                    {% endfor %}
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
