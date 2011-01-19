@@ -26,8 +26,7 @@ def home(request):
     context['received_first_sms'] = stats.model_sieve(VRChecklist, ['submitted']).filter(date=datetime.date(datetime.today())).count()
 
     # second missing sms
-    context['missing_second_sms'] = stats.model_sieve(VRChecklist, ['A', 'B', 'C', 'F', 'G', ['D1', 'D2', 'D3', 'D4'], \
-                ['E1', 'E2', 'E3', 'E4', 'E5']], exclude=True).filter(date=datetime.date(datetime.today())).count()
+    context['missing_second_sms'] = stats.model_sieve(VRChecklist, ['A', 'B', 'C', 'F', 'G', 'D1', 'D2', 'D3', 'D4', 'E1', 'E2', 'E3', 'E4', 'E5'], exclude=True).filter(date=datetime.date(datetime.today())).count()
     context['complete_second_sms'] = stats.model_sieve(VRChecklist, ['A', 'B', 'C', 'F', 'G', ['D1', 'D2', 'D3', 'D4'], ['E1', 'E2', 'E3', 'E4', 'E5']]).exclude(A=4).filter(date=datetime.date(datetime.today())).count()
     context['incomplete_second_sms'] = stats.model_sieve(VRChecklist, [['A', 'B', 'C', 'F', 'G', 'D1', 'D2', 'D3', 'D4', 'E1', 'E2', 'E3', 'E4', 'E5']]).exclude(A=4).filter(date=datetime.date(datetime.today())).count() - context['complete_second_sms']
     context['unverified_second_sms'] = stats.model_sieve(VRChecklist, [('A', 4), ('verified_second', False), 'B', 'C', 'F', 'G', ['D1', 'D2', 'D3', 'D4'], ['E1', 'E2', 'E3', 'E4', 'E5']]).filter(date=datetime.date(datetime.today())).count()
