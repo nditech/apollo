@@ -71,7 +71,7 @@ def home(request):
           Q(Z__isnull=False) | Q(AA__isnull=False))
     context['unverified_third_sms'] = VRChecklist.objects.filter(qs).filter(third_unverified_qs).count()
     context['not_open_third_sms'] = stats.model_sieve(VRChecklist, [('A', 4), ('verified_third', True)]).filter(qs).count()
-    context['missing_third_sms'] = stats.model_sieve(VRChecklist, ['H', 'J', 'K', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'AA'], exclude=True).filter(qs).count() - context['blank_third_sms']
+    context['missing_third_sms'] = stats.model_sieve(VRChecklist, ['H', 'J', 'K', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'AA'], exclude=True).filter(qs).count() - context['blank_third_sms'] - context['partial_third_sms']
 
     context['vr_incidents_count'] = VRIncident.objects.all().count()
     context['vr_incidents_today'] = VRIncident.objects.filter(qs).count()
