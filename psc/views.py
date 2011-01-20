@@ -596,7 +596,7 @@ def state_summary(request):
     return render_to_response('psc/state_summary.html', {'page_title': 'State Summary', 'state_list': state_list},  context_instance=RequestContext(request))
 
 def vr_checklist_analysis(request):
-    return render_to_response('psc/vr_checklist_analysis', {'page_title': 'Voter Registration Checklist Analysis'})
+    return render_to_response('psc/vr_checklist_analysis.html', {'page_title': 'Voter Registration Checklist Analysis'})
 
 
 #ajax methods
