@@ -1,0 +1,355 @@
+{% extends 'psc/layout.html' %}
+{% block content %}
+<div class="grid_16">
+    <div class="box">
+        <h2>Yes / No Questions</h2>
+        <div class="block">
+            <table width="100%" class="summary">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Question</th>
+                        <th colspan="2">n</th>
+                        <th colspan="2">Yes</th>
+                        <th colspan="2">No</th>
+                    </tr>
+                </thead>
+                    <tr>
+                        <th>B</th>
+                        <th>{{ questions.b.label }}</th>
+                        <th>{{ questions.b.n_figure }}</th>
+                        <th>{{ questions.b.n_percentage }}</th>
+                        <th>{{ questions.b.yes_figure }}</th>
+                        <th>{{ questions.b.yes_percentage }}</th>
+                        <th>{{ questions.b.no_figure }}</th>
+                        <th>{{ questions.b.no_percentage }}</th>
+                    </tr>
+                    <tr>
+                        <th>G</th>
+                        <th>{{ questions.g.label }}</th>
+                        <th>{{ questions.g.n_figure }}</th>
+                        <th>{{ questions.g.n_percentage }}</th>
+                        <th>{{ questions.g.yes_figure }}</th>
+                        <th>{{ questions.g.yes_percentage }}</th>
+                        <th>{{ questions.g.no_figure }}</th>
+                        <th>{{ questions.g.no_percentage }}</th>
+                    </tr>
+                    <tr>
+                        <th>T</th>
+                        <th>{{ questions.t.label }}</th>
+                        <th>{{ questions.t.n_figure }}</th>
+                        <th>{{ questions.t.n_percentage }}</th>
+                        <th>{{ questions.t.yes_figure }}</th>
+                        <th>{{ questions.t.yes_percentage }}</th>
+                        <th>{{ questions.t.no_figure }}</th>
+                        <th>{{ questions.t.no_percentage }}</th>
+                    </tr>
+                    <tr>
+                        <th>U</th>
+                        <th>{{ questions.u.label }}</th>
+                        <th>{{ questions.u.n_figure }}</th>
+                        <th>{{ questions.u.n_percentage }}</th>
+                        <th>{{ questions.u.yes_figure }}</th>
+                        <th>{{ questions.u.yes_percentage }}</th>
+                        <th>{{ questions.u.no_figure }}</th>
+                        <th>{{ questions.u.no_percentage }}</th>
+                    </tr>
+                    <tr>
+                        <th>V</th>
+                        <th>{{ questions.v.label }}</th>
+                        <th>{{ questions.v.n_figure }}</th>
+                        <th>{{ questions.v.n_percentage }}</th>
+                        <th>{{ questions.v.yes_figure }}</th>
+                        <th>{{ questions.v.yes_percentage }}</th>
+                        <th>{{ questions.v.no_figure }}</th>
+                        <th>{{ questions.v.no_percentage }}</th>
+                    </tr>
+                    <tr>
+                        <th>W</th>
+                        <th>{{ questions.w.label }}</th>
+                        <th>{{ questions.w.n_figure }}</th>
+                        <th>{{ questions.w.n_percentage }}</th>
+                        <th>{{ questions.w.yes_figure }}</th>
+                        <th>{{ questions.w.yes_percentage }}</th>
+                        <th>{{ questions.w.no_figure }}</th>
+                        <th>{{ questions.w.no_percentage }}</th>
+                    </tr>
+                    <tr>
+                        <th>X</th>
+                        <th>{{ questions.x.label }}</th>
+                        <th>{{ questions.x.n_figure }}</th>
+                        <th>{{ questions.x.n_percentage }}</th>
+                        <th>{{ questions.x.yes_figure }}</th>
+                        <th>{{ questions.x.yes_percentage }}</th>
+                        <th>{{ questions.x.no_figure }}</th>
+                        <th>{{ questions.x.no_percentage }}</th>
+                    </tr>
+            </table>
+        </div>
+    </div>
+    <div class="box">
+        <h2>Permission Questions</h2>
+        <div class="block">
+            <table width="100%" class="summary">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Question</th>
+                        <th colspan="2">n</th>
+                        <th colspan="2">None</th>
+                        <th colspan="2">Few</th>
+                        <th colspan="2">Half</th>
+                        <th colspan="2">Most</th>
+                        <th colspan="2">All</th>
+                    </tr>
+                </thead>
+                    <tr>
+                        <th>H</th>
+                        <th>{{ questions.h.label }}</th>
+                        <th>{{ questions.h.n_figure }}</th>
+                        <th>{{ questions.h.n_percentage }}</th>
+                        <th>{{ questions.h.none_figure }}</th>
+                        <th>{{ questions.h.none_percentage }}</th>
+                        <th>{{ questions.h.few_figure }}</th>
+                        <th>{{ questions.h.few_percentage }}</th>
+                        <th>{{ questions.h.half_figure }}</th>
+                        <th>{{ questions.h.half_percentage }}</th>
+                        <th>{{ questions.h.most_figure }}</th>
+                        <th>{{ questions.h.most_percentage }}</th>
+                        <th>{{ questions.h.all_figure }}</th>
+                        <th>{{ questions.h.all_percentage }}</th>
+                    </tr>
+                    <tr>
+                        <th>J</th>
+                        <th>{{ questions.j.label }}</th>
+                        <th>{{ questions.j.n_figure }}</th>
+                        <th>{{ questions.j.n_percentage }}</th>
+                        <th>{{ questions.j.none_figure }}</th>
+                        <th>{{ questions.j.none_percentage }}</th>
+                        <th>{{ questions.j.few_figure }}</th>
+                        <th>{{ questions.j.few_percentage }}</th>
+                        <th>{{ questions.j.half_figure }}</th>
+                        <th>{{ questions.j.half_percentage }}</th>
+                        <th>{{ questions.j.most_figure }}</th>
+                        <th>{{ questions.j.most_percentage }}</th>
+                        <th>{{ questions.j.all_figure }}</th>
+                        <th>{{ questions.j.all_percentage }}</th>
+                    </tr>
+                    <tr>
+                        <th>K</th>
+                        <th>{{ questions.k.label }}</th>
+                        <th>{{ questions.k.n_figure }}</th>
+                        <th>{{ questions.k.n_percentage }}</th>
+                        <th>{{ questions.k.none_figure }}</th>
+                        <th>{{ questions.k.none_percentage }}</th>
+                        <th>{{ questions.k.few_figure }}</th>
+                        <th>{{ questions.k.few_percentage }}</th>
+                        <th>{{ questions.k.half_figure }}</th>
+                        <th>{{ questions.k.half_percentage }}</th>
+                        <th>{{ questions.k.most_figure }}</th>
+                        <th>{{ questions.k.most_percentage }}</th>
+                        <th>{{ questions.k.all_figure }}</th>
+                        <th>{{ questions.k.all_percentage }}</th>
+                    </tr>
+                    <tr>
+                        <th>M</th>
+                        <th>{{ questions.m.label }}</th>
+                        <th>{{ questions.m.n_figure }}</th>
+                        <th>{{ questions.m.n_percentage }}</th>
+                        <th>{{ questions.m.none_figure }}</th>
+                        <th>{{ questions.m.none_percentage }}</th>
+                        <th>{{ questions.m.few_figure }}</th>
+                        <th>{{ questions.m.few_percentage }}</th>
+                        <th>{{ questions.m.half_figure }}</th>
+                        <th>{{ questions.m.half_percentage }}</th>
+                        <th>{{ questions.m.most_figure }}</th>
+                        <th>{{ questions.m.most_percentage }}</th>
+                        <th>{{ questions.m.all_figure }}</th>
+                        <th>{{ questions.m.all_percentage }}</th>
+                    </tr>
+                    <tr>
+                        <th>N</th>
+                        <th>{{ questions.n.label }}</th>
+                        <th>{{ questions.n.n_figure }}</th>
+                        <th>{{ questions.n.n_percentage }}</th>
+                        <th>{{ questions.n.none_figure }}</th>
+                        <th>{{ questions.n.none_percentage }}</th>
+                        <th>{{ questions.n.few_figure }}</th>
+                        <th>{{ questions.n.few_percentage }}</th>
+                        <th>{{ questions.n.half_figure }}</th>
+                        <th>{{ questions.n.half_percentage }}</th>
+                        <th>{{ questions.n.most_figure }}</th>
+                        <th>{{ questions.n.most_percentage }}</th>
+                        <th>{{ questions.n.all_figure }}</th>
+                        <th>{{ questions.n.all_percentage }}</th>
+                    </tr>
+                    <tr>
+                        <th>P</th>
+                        <th>{{ questions.p.label }}</th>
+                        <th>{{ questions.p.n_figure }}</th>
+                        <th>{{ questions.p.n_percentage }}</th>
+                        <th>{{ questions.p.none_figure }}</th>
+                        <th>{{ questions.p.none_percentage }}</th>
+                        <th>{{ questions.p.few_figure }}</th>
+                        <th>{{ questions.p.few_percentage }}</th>
+                        <th>{{ questions.p.half_figure }}</th>
+                        <th>{{ questions.p.half_percentage }}</th>
+                        <th>{{ questions.p.most_figure }}</th>
+                        <th>{{ questions.p.most_percentage }}</th>
+                        <th>{{ questions.p.all_figure }}</th>
+                        <th>{{ questions.p.all_percentage }}</th>
+                    </tr>
+                    <tr>
+                        <th>Q</th>
+                        <th>{{ questions.q.label }}</th>
+                        <th>{{ questions.q.n_figure }}</th>
+                        <th>{{ questions.q.n_percentage }}</th>
+                        <th>{{ questions.q.none_figure }}</th>
+                        <th>{{ questions.q.none_percentage }}</th>
+                        <th>{{ questions.q.few_figure }}</th>
+                        <th>{{ questions.q.few_percentage }}</th>
+                        <th>{{ questions.q.half_figure }}</th>
+                        <th>{{ questions.q.half_percentage }}</th>
+                        <th>{{ questions.q.most_figure }}</th>
+                        <th>{{ questions.q.most_percentage }}</th>
+                        <th>{{ questions.q.all_figure }}</th>
+                        <th>{{ questions.q.all_percentage }}</th>
+                    </tr>
+                    <tr>
+                        <th>R</th>
+                        <th>{{ questions.r.label }}</th>
+                        <th>{{ questions.r.n_figure }}</th>
+                        <th>{{ questions.r.n_percentage }}</th>
+                        <th>{{ questions.r.none_figure }}</th>
+                        <th>{{ questions.r.none_percentage }}</th>
+                        <th>{{ questions.r.few_figure }}</th>
+                        <th>{{ questions.r.few_percentage }}</th>
+                        <th>{{ questions.r.half_figure }}</th>
+                        <th>{{ questions.r.half_percentage }}</th>
+                        <th>{{ questions.r.most_figure }}</th>
+                        <th>{{ questions.r.most_percentage }}</th>
+                        <th>{{ questions.r.all_figure }}</th>
+                        <th>{{ questions.r.all_percentage }}</th>
+                    </tr>
+                    <tr>
+                        <th>S</th>
+                        <th>{{ questions.s.label }}</th>
+                        <th>{{ questions.s.n_figure }}</th>
+                        <th>{{ questions.s.n_percentage }}</th>
+                        <th>{{ questions.s.none_figure }}</th>
+                        <th>{{ questions.s.none_percentage }}</th>
+                        <th>{{ questions.s.few_figure }}</th>
+                        <th>{{ questions.s.few_percentage }}</th>
+                        <th>{{ questions.s.half_figure }}</th>
+                        <th>{{ questions.s.half_percentage }}</th>
+                        <th>{{ questions.s.most_figure }}</th>
+                        <th>{{ questions.s.most_percentage }}</th>
+                        <th>{{ questions.s.all_figure }}</th>
+                        <th>{{ questions.s.all_percentage }}</th>
+                    </tr>
+                    
+            </table>
+        </div>
+    </div>
+    <div class="box">
+        <h2>Direct Data Capture System</h2>
+        <div class="block">
+            <table width="100%" class="summary">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Question</th>
+                        <th colspan="2">n</th>
+                        <th colspan="2">None</th>
+                        <th colspan="2">Missing / Broken Computer</th>
+                        <th colspan="2">Missing / Broken Camera</th>
+                        <th colspan="2">Missing / Broken Printer</th>
+                    </tr>
+                </thead> 
+                    <tr>
+                        <th>D</th>
+                        <td>{{ questions.s.label }}</td>
+                        <td>{{ questions.d.n_figure }}</td>
+                        <td>{{ questions.d.n_percentage }}</td>
+                        <td>{{ questions.d.none_figure }}</td>
+                        <td>{{ questions.d.none_percentage }}</td>
+                        <td>{{ questions.d.computer_figure }}</td>
+                        <td>{{ questions.d.computer_percentage }}</td>
+                        <td>{{ questions.d.camera_figure }}</td>
+                        <td>{{ questions.d.camera_percentage }}</td>
+                        <td>{{ questions.d.printer_figure }}</td>
+                        <td>{{ questions.d.printer_percentage }}</td>
+                    </tr>                  
+            </table>
+        </div>
+    </div>
+    <div class="box">
+        <h2>Missing Materials</h2>
+        <div class="block">
+            <table width="100%" class="summary">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Question</th>
+                        <th colspan="2">n</th>
+                        <th colspan="2">None</th>
+                        <th colspan="2">Manual Register of Voters</th>
+                        <th colspan="2">Indelible Ink to Mark Figures</th>
+                        <th colspan="2">Blank Temporary Voter's Cards</th>
+                        <th colspan="2">INEC Stamp</th>
+                    </tr>
+                </thead>
+                    <tr>
+                        <td>E</td>
+                        <td>{{ questions.e.label }}</td>
+                        <td>{{ questions.e.n_figure }}</td>
+                        <td>{{ questions.e.n_percentage }}</td>
+                        <td>{{ questions.e.none_figure }}</td>
+                        <td>{{ questions.e.none_percentage }}</td>
+                        <td>{{ questions.e.manual_figure }}</td>
+                        <td>{{ questions.e.manual_percentage }}</td>
+                        <td>{{ questions.e.indelible_figure }}</td>
+                        <td>{{ questions.e.indelible_percentage }}</td>
+                        <td>{{ questions.e.blank_figure }}</td>
+                        <td>{{ questions.e.blank_percentage }}</td>
+                        <td>{{ questions.e.inec_stamp }}</td>
+                        <td>{{ questions.e.inec_percentage }}</td>
+
+                    </tr>
+            </table>
+        </div>
+    </div>
+        <div class="box">
+        <h2>Opening Time</h2>
+        <div class="block">
+            <table width="100%" class="summary">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Question</th>
+                        <th colspan="2">n</th>
+                        <th colspan="2">By 8:00 AM</th>
+                        <th colspan="2">Between 8 &amp; 10 AM</th>
+                        <th colspan="2">Between 10 &amp; 12 NOON</th>
+                        <th colspan="2">Not Open by 12 Noon</th>
+                    </tr>
+                </thead>
+                    <tr>
+                        <th>A</th>
+                        <th>{{ questions.a.label }}</td>
+                        <td>{{ questions.a.n_figure }}</td>
+                        <td>{{ questions.a.n_percentage }}</td>
+                        <td>{{ questions.a.eight_figure }}</td>
+                        <td>{{ questions.e.eight_percentage }}</td>
+                        <td>{{ questions.e.eight_ten_figure }}</td>
+                        <td>{{ questions.e.eight_ten_percentage }}</td>
+                        <td>{{ questions.e.ten_twelve_figure }}</td>
+                        <td>{{ questions.e.ten_twelve_percentage }}</td>
+                        <td>{{ questions.e.not_twelve_figure }}</td>
+                        <td>{{ questions.e.not_twelve_percentage }}</td>
+                    </tr>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
