@@ -42,7 +42,7 @@ class App(AppBase):
             try:
                 message.observer = Observer.objects.get(observer_id=match.group('observer_id'))
             except Observer.DoesNotExist:
-                return message.respond('Observer ID not found.Please resend with valid PSC. You sent: %s' % message.message_only)
+                return message.respond('Observer ID not found. Please resend with valid PSC. You sent: %s' % message.message_only)
 
             # This is likely a valid PSC message
             match = self.vr_incident.match(message.text)
@@ -61,7 +61,7 @@ class App(AppBase):
             return self.default(message)
     
     def default(self, message):
-       return message.respond('Invalid message:"%s".Please resend!' % message.message_only)
+       return message.respond('Invalid message:"%s". Please resend!' % message.message_only)
 
     @role_required('LGA')
     def _vr_checklist(self, msg, params):
