@@ -68,7 +68,6 @@ def vr_checklist_list(request):
 
         if filter_form.is_valid():
             data = filter_form.cleaned_data
-            print data
 
             if data['zone']:
                 qs_include &= Q(observer__location_id__in=LGA.objects.filter(parent__parent__parent__code__iexact=data['zone']).values_list('id', flat=True))
@@ -77,22 +76,22 @@ def vr_checklist_list(request):
             if data['day']:
                 qs_include &= Q(date=data['day'])
 
-            if int(data['first']) == 1:
+            if data['first'] == u'1':
                 qs_include &= Q(submitted=True)
-            elif int(data['first']) == 2:
+            elif data['first'] == u'2':
                 qs_include &= Q(submitted=False)
 
-            if int(data['second']) == 1: # complete
+            if data['second'] == u'1': # complete
                 qs_include &= ~Q(A=4) & Q(B__gt=0) & Q(C__isnull=False) & Q(F__isnull=False) & Q(G__gt=0) & \
                       (Q(D1__isnull=False) | Q(D2__isnull=False) | Q(D3__isnull=False) | Q(D4__isnull=False)) & \
                       (Q(E1__isnull=False) | Q(E2__isnull=False) | Q(E3__isnull=False) | Q(E4__isnull=False) | \
                       Q(E5__isnull=False))
-            elif int(data['second']) == 2: # missing
+            elif data['second'] == u'2': # missing
                 qs_include &= Q(A__isnull=True) & Q(B=0) & Q(C__isnull=True) & Q(F__isnull=True) & Q(G=0) & \
                       (Q(D1__isnull=True) | Q(D2__isnull=True) | Q(D3__isnull=True) | Q(D4__isnull=True)) & \
                       (Q(E1__isnull=True) | Q(E2__isnull=True) | Q(E3__isnull=True) | Q(E4__isnull=True) | \
                       Q(E5__isnull=True))
-            elif int(data['second']) == 3: # partial
+            elif data['second'] == u'3': # partial
                 qs_include &= (~Q(B=0) | Q(C__isnull=False) | Q(F__isnull=False) | ~Q(G=0) | \
                       Q(D1__isnull=False) | Q(D2__isnull=False) | Q(D3__isnull=False) | Q(D4__isnull=False) | \
                       Q(E1__isnull=False) | Q(E2__isnull=False) | Q(E3__isnull=False) | Q(E4__isnull=False) | \
@@ -101,28 +100,28 @@ def vr_checklist_list(request):
                       (Q(D1__isnull=False) | Q(D2__isnull=False) | Q(D3__isnull=False) | Q(D4__isnull=False)) & \
                       (Q(E1__isnull=False) | Q(E2__isnull=False) | Q(E3__isnull=False) | Q(E4__isnull=False) | \
                       Q(E5__isnull=False))
-            elif int(data['second']) == 4: # not open unverified
+            elif data['second'] == u'4': # not open unverified
                 qs_include &= (~Q(B=0) | Q(C__isnull=False) | Q(F__isnull=False) | ~Q(G=0) | \
                       Q(D1__isnull=False) | Q(D2__isnull=False) | Q(D3__isnull=False) | Q(D4__isnull=False) | \
                       Q(E1__isnull=False) | Q(E2__isnull=False) | Q(E3__isnull=False) | Q(E4__isnull=False) | \
                       Q(E5__isnull=False)) & Q(A=4) & Q(verified_second=False)
-            elif int(data['second']) == 5: # not open verified
+            elif data['second'] == u'5': # not open verified
                 qs_include &= (Q(A=4) & Q(verified_second=True)) | ((Q(B=0) & Q(C__isnull=True) & Q(F__isnull=True) & Q(G=0) & \
                       (Q(D1__isnull=True) | Q(D2__isnull=True) | Q(D3__isnull=True) | Q(D4__isnull=True)) & \
                       (Q(E1__isnull=True) | Q(E2__isnull=True) | Q(E3__isnull=True) | Q(E4__isnull=True) | \
                       Q(E5__isnull=True))) & Q(A=4))
 
-            if int(data['third']) == 1: # complete
+            if data['third'] == u'1': # complete
                 qs_include &= ~Q(A=4) & Q(H__isnull=False) & Q(J__isnull=False) & Q(K__isnull=False) & Q(M__isnull=False) & \
                       Q(N__isnull=False) & Q(P__isnull=False) & Q(Q__isnull=False) & Q(R__isnull=False) & \
                       Q(S__isnull=False) & Q(T__gt=0) & Q(U__gt=0) & Q(V__gt=0) & Q(W__gt=0) & Q(X__gt=0) & Q(Y__isnull=False) & \
                       Q(Z__isnull=False) & Q(AA__isnull=False)
-            elif int(data['third']) == 2: # incomplete
+            elif data['third'] == u'2': # incomplete
                 qs_include &= ~Q(A=4) & Q(H__isnull=True) & Q(J__isnull=True) & Q(K__isnull=True) & Q(M__isnull=True) & \
                       Q(N__isnull=True) & Q(P__isnull=True) & Q(Q__isnull=True) & Q(R__isnull=True) & \
                       Q(S__isnull=True) & Q(T=0) & Q(U=0) & Q(V=0) & Q(W=0) & Q(X=0) & Q(Y__isnull=True) & \
                       Q(Z__isnull=True) & Q(AA__isnull=True)
-            elif int(data['third']) == 3: # partial
+            elif data['third'] == u'3': # partial
                 qs_include &= Q(H__isnull=False) | Q(J__isnull=False) | Q(K__isnull=False) | Q(M__isnull=False) | \
                       Q(N__isnull=False) | Q(P__isnull=False) | Q(Q__isnull=False) | Q(R__isnull=False) | \
                       Q(S__isnull=False) | Q(T__gt=0) & Q(U__gt=0) | Q(V__gt=0) | Q(W__gt=0) | Q(X__gt=0) | Q(Y__isnull=False) | \
@@ -131,14 +130,14 @@ def vr_checklist_list(request):
                       Q(N__isnull=False) & Q(P__isnull=False) & Q(Q__isnull=False) & Q(R__isnull=False) & \
                       Q(S__isnull=False) & Q(T__gt=0) & Q(U__gt=0) & Q(V__gt=0) & Q(W__gt=0) & Q(X__gt=0) & Q(Y__isnull=False) & \
                       Q(Z__isnull=False) & Q(AA__isnull=False) | Q(A=4)
-            elif int(data['third']) == 4:
+            elif data['third'] == u'4':
                 qs_include &= Q(A=4) & Q(verified_third=False) & (Q(H__isnull=False) | Q(J__isnull=False) | Q(K__isnull=False) | Q(M__isnull=False) | \
                       Q(N__isnull=False) | Q(P__isnull=False) | Q(Q__isnull=False) | Q(R__isnull=False) | \
                       Q(S__isnull=False) | Q(T__gt=0) & Q(U__gt=0) | Q(V__gt=0) | Q(W__gt=0) | Q(X__gt=0) | Q(Y__isnull=False) | \
                       Q(Z__isnull=False) | Q(AA__isnull=False))
-            elif int(data['third']) == 5:
+            elif data['third'] == u'5':
                 qs_include &= Q(A=4) & Q(verified_third=True)
-            elif int(data['third']) == 6:
+            elif data['third'] == u'6':
                 qs_include &= Q(A=4) & Q(H__isnull=True) & Q(J__isnull=True) & Q(K__isnull=True) & Q(M__isnull=True) & \
                       Q(N__isnull=True) & Q(P__isnull=True) & Q(Q__isnull=True) & Q(R__isnull=True) & \
                       Q(S__isnull=True) & Q(T=0) & Q(U=0) & Q(V=0) & Q(W=0) & Q(X=0) & Q(Y__isnull=True) & \
