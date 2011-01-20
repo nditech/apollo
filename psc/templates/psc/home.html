@@ -35,10 +35,10 @@
                                  <div class="dash-row">
                                      <div class="dash-column first">2nd SMS</div>
                                      <div class="dash-column second">
+                                         <span class="missing">{{ missing_second_sms|default:"0" }}</span>
                                          <span class="unverified">{{ unverified_second_sms|default:"0" }}</span>
                                          <span class="incomplete">{{ incomplete_second_sms|default:"0" }}</span>
-                                         <span class="not_open">{{ not_open_second_sms|default:"0" }}</span>
-                                         <span class="missing">{{ missing_second_sms|default:"0" }}</span>
+                                         <span class="not_open">{{ not_open_second_sms|default:"0" }}</span>                                         
                                          <span class="complete">{{ complete_second_sms|default:"0" }}</span>
                                      </div>
                                 </div>

@@ -576,6 +576,11 @@ def state_summary(request):
     state_list = State.objects.all()
     return render_to_response('psc/state_summary.html', {'page_title': 'State Summary', 'state_list': state_list},  context_instance=RequestContext(request))
 
+def vr_checklist_analysis(request):
+    return render_to_response('psc/vr_checklist_analysis', {'page_title': 'Voter Registration Checklist Analysis'})
+
+
+#ajax methods
 def get_rcs_by_lga(request, lga_id=0):
     #response = HttpResponse(mimetype='application/json')
     #get the serilizer
