@@ -168,7 +168,7 @@ class VRChecklist(models.Model):
     Y = models.IntegerField(blank=True, null=True, help_text='How many people registered during this day? (record number from Certificate of Completion of Daily Registration of Voters Form EC.1B(1)) (if not permited to record this figure enter "9999")')
     Z = models.IntegerField(blank=True, null=True, help_text='How many people so far (total to date) have registered at this centre according to the Manual Register of Voters (MRV) Form EC.1A? (enter number) (if not permitted to record this figure enter "9999")')
     AA = models.IntegerField(blank=True, null=True, help_text='How many people so far (total to date) have registered according to the DDC system? (enter number) (if not permitted to record this figure, enter "9999")')
-    comment = models.CharField(max_length=100, blank=True)
+    comment = models.CharField(max_length=200, blank=True)
     submitted = models.BooleanField(default=False, help_text="This field tracks if (even though already created), this report has been submitted by the reporter")
     report_rc = models.CharField(blank=True, null=True, max_length=100, help_text="Registration Center as supplied by the data entry operator")
     report_rcid = models.CharField(blank=True, null=True, max_length=50, help_text="Registration Center ID as supplied by the data entry operator")
@@ -199,7 +199,7 @@ class VRIncident(models.Model):
     N = models.NullBooleanField(blank=True)
     P = models.NullBooleanField(blank=True)
     Q = models.NullBooleanField(blank=True)
-    comment = models.CharField(max_length=100, blank=True)
+    comment = models.CharField(max_length=200, blank=True)
     audit_log = AuditLog()
 
     def __unicode__(self):
@@ -247,7 +247,7 @@ class DCOChecklist(models.Model):
     V = models.IntegerField(blank=True, null=True, help_text='So far (total to date), how many Inclusion have been made according to the Summary of Actions Taken by the Revision Officer - Form EC.6A (enter number)')
     W = models.IntegerField(blank=True, null=True, help_text='So far (total to date), how many Corrections have been made according to the Summary of Actions Taken by the Revision Officer - Form EC.6A (enter number)')
     X = models.IntegerField(blank=True, null=True, help_text='So far (total to date), how many Deletions have been made according to the Summary of Actions Taken by the Revision Officer - Form EC.6A (enter number)')
-    comment = models.CharField(max_length=100, blank=True)
+    comment = models.CharField(max_length=200, blank=True)
     submitted = models.BooleanField(default=False, help_text="This field tracks if (even though already created), this report has been submitted by the reporter")
     report_rc = models.CharField(blank=True, null=True, max_length=100, help_text="Registration Center as supplied by the data entry operator")
     report_rcid = models.CharField(blank=True, null=True, max_length=50, help_text="Registration Center ID as supplied by the data entry operator")
@@ -272,7 +272,7 @@ class DCOIncident(models.Model):
     H = models.NullBooleanField(blank=True)
     J = models.NullBooleanField(blank=True)
     K = models.NullBooleanField(blank=True)
-    comment = models.CharField(max_length=100, blank=True)
+    comment = models.CharField(max_length=200, blank=True)
     audit_log = AuditLog()
 
     def __unicode__(self):
