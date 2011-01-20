@@ -93,7 +93,7 @@ class App(AppBase):
                 setattr(vr, key, int(responses[key]))
             elif key in ['C', 'F', 'Y', 'Z', 'AA']:
                 if int(responses[key]) in (999,9999):
-                    setattr(vr, key, None)
+                    setattr(vr, key, 9999)
                 else:
                     setattr(vr, key, int(responses[key]))
             elif key in ['H', 'J', 'K', 'M', 'N', 'P', 'Q', 'R', 'S'] and int(responses[key]) in range(1, 6):
@@ -198,9 +198,14 @@ class App(AppBase):
             # validation
             if key in ['A', 'B', 'D', 'E', 'H', 'M', 'N', 'P', 'Q', 'R'] and int(responses[key]) in range(1, 3): # Yes or No
                 setattr(dco, key, int(responses[key]))
-            elif key in ['C', 'G', 'J', 'K', 'S', 'T', 'U', 'V', 'W', 'X']: # numeric responses
-                if int(responses[key]) in (99,999,999):
-                    setattr(dco, key, None)
+            elif key in ['C', 'G']: # numeric responses
+                if int(responses[key]) in (99,999,9999):
+                    setattr(dco, key, 99)
+                else:
+                    setattr(dco, key, int(responses[key]))
+            elif key in ['J', 'K', 'S', 'T', 'U', 'V', 'W', 'X']: # numeric responses
+                if int(responses[key]) in (999,9999):
+                    setattr(dco, key, 9999)
                 else:
                     setattr(dco, key, int(responses[key]))
             elif key == 'F' and responses[key] == '9':
