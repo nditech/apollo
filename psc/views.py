@@ -9,7 +9,7 @@ from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from rapidsms.contrib.messagelog.tables import MessageTable
 from rapidsms.contrib.messagelog.models import Message
 from forms import VRChecklistForm, VRIncidentForm, DCOIncidentForm, VRChecklistFilterForm, VRIncidentFilterForm, DCOIncidentFilterForm, DCOChecklistFilterForm, DCOChecklistForm
-from forms import DCOIncidentUpdateForm, VRIncidentUpdateForm
+from forms import DCOIncidentUpdateForm, VRIncidentUpdateForm, MessagelogFilterForm
 from datetime import datetime
 from django.contrib.auth.decorators import login_required, permission_required
 import stats
@@ -379,16 +379,27 @@ def dco_incident_list(request):
 @login_required()
 @permission_required('psc.can_administer', login_url='/')
 def message_log(request):
-    print request.GET.get('q')
-    if request.GET.get('type'):
-        if request.GET.get('type') == 'phone':
-            query = Q(connection__in=request.GET.get('q'))
-        elif request.GET.get('type') == 'message':
-            query = Q(text__exact=request.GET.get('q'))
-        messages = MessageTable(Message.objects.filter(query), request=request)
+    qs = Q()
+    if not request.session.has_key('messagelog_filter'):
+        request.session['messagelog_filter'] = {}
+
+    if request.method == 'GET':
+        if filter(lambda key: request.GET.has_key(key), ['phone', 'message']):
+            request.session['messagelog_filter'] = request.GET
+        filter_form = MessagelogFilterForm(request.session['messagelog_filter'])
+
+        if filter_form.is_valid():
+            data = filter_form.cleaned_data
+
+            if data['phone']:
+                qs &= Q(connection__identity__icontains=data['phone'].strip())
+            if data['message']:
+                qs &= Q(text__icontains=data['message'])
     else:
-        messages = MessageTable(Message.objects.all(), request=request)
-    return render_to_response('psc/msg_log.html', { 'page_title': 'Message Log', 'messages_list' : messages }, context_instance=RequestContext(request))
+        filter_form = MessagelogFilterForm()
+    
+    messages = MessageTable(Message.objects.filter(qs), request=request)
+    return render_to_response('psc/msg_log.html', { 'page_title': 'Message Log', 'messages_list' : messages, 'filter_form': filter_form }, context_instance=RequestContext(request))
 
 @login_required()
 @permission_required('psc.can_administer', login_url='/')

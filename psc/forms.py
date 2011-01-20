@@ -112,3 +112,7 @@ class DCOIncidentFilterForm(forms.Form):
     zone = forms.ChoiceField(choices=ZONES, required=False)
     state = forms.ChoiceField(choices=STATES, required=False)
     district = forms.ChoiceField(choices=DISTRICTS, required=False)
+
+class MessagelogFilterForm(forms.Form):
+    phone = forms.CharField(required=False, widget=forms.TextInput(attrs={'autocomplete':'off'}))
+    message = forms.CharField(required=False, widget=forms.TextInput(attrs={'autocomplete':'off'}))

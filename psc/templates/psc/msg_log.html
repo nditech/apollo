@@ -1,27 +1,37 @@
 {% extends 'psc/layout.html' %}
+{% block javascripts %}
+{{ block.super }}
+<script src="/assets/js/jquery-1.4.4.min.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript" charset="utf-8">
+    $(function() {
+        $("#reset").click(function () {
+            $("#id_message").val("");
+            $("#id_phone").val("");
+            $("#filter_form").submit();
+        });
+    });
+</script>
+{% endblock %}
 {% block content %}
 <div class="grid_16">
     <div class="box">
         <div id="filter">
-                <form action="" method="get" accept-charset="utf-8">
-                    <table >
+                <form action="" method="get" id="filter_form" accept-charset="utf-8">
+                    <table>
                         <thead>
                             <tr>
-                                
-                                <th>&nbsp;</th>
+								{% for field in filter_form %}
+                                <th width="15%">{{ field.label }}</th>
+								{% endfor %}
                                 <th>&nbsp;</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td><input name="q" type="text">                               
-                                    <select name="type">
-                                        <option value="message">Phone</option>
-                                        <option value="phone">Message</option>
-                                    </select>
-                                </td>
-                                <td><input type="button" value="reset" id="reset">
-                                    <input type="submit" value="filter &rarr;"></td>
+								{% for field in filter_form %}
+                                <td>{{ field }}</td>
+								{% endfor %}
+                                <td><input type="button" value="reset" id="reset"> <input type="submit" value="filter &rarr;"></td>
                             </tr>
                         </tbody>
                     </table>
