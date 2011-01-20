@@ -116,3 +116,6 @@ class DCOIncidentFilterForm(forms.Form):
 class MessagelogFilterForm(forms.Form):
     phone = forms.CharField(required=False, widget=forms.TextInput(attrs={'autocomplete':'off'}))
     message = forms.CharField(required=False, widget=forms.TextInput(attrs={'autocomplete':'off'}))
+
+class DashboardFilterForm(forms.Form):
+    zone = forms.ChoiceField(choices=ZONES, required=False)
