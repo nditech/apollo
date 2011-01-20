@@ -37,6 +37,14 @@
                             <li>
                                 <a href="{% url psc.views.vr_incident_list %}">Incidents</a>
                             </li>
+														{% if perms.psc.can_analyse %}
+                            <li>
+                                <a href="{% url psc.views.vr_zone_summary %}">Zone Summary</a>
+                            </li>
+                            <li>
+                                <a href="{% url psc.views.vr_state_summary %}">State Summary</a>
+                            </li>
+														{% endif %}
                         </ul>
                     </li>
                     <li>

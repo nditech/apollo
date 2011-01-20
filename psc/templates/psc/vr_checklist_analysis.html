@@ -29,9 +29,8 @@
                         <thead>
                             <tr>
 								{% for field in filter_form %}
-                                <th>{{ field.label }}</th>
+                                <th width="10%">{{ field.label }}</th>
 								{% endfor %}
-                                <th>&nbsp;</th>
                                 <th>&nbsp;</th>
                             </tr>
                         </thead>
@@ -40,8 +39,7 @@
 								{% for field in filter_form %}
                                 <td>{{ field }}</td>
 								{% endfor %}
-                                <td><input type="button" value="reset" id="reset"></td>
-                                <td><input type="submit" value="filter &rarr;"></td>
+                                <td><input type="button" value="reset" id="reset"> <input type="submit" value="filter &rarr;"></td>
                             </tr>
                         </tbody>
                     </table>

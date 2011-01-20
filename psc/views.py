@@ -618,7 +618,7 @@ def export(request, model):
         return response
 @permission_required('psc.can_analyse', login_url='/')
 @login_required()
-def zone_summary(request):
+def vr_zone_summary(request):
     ctx = RequestContext(request)
     ctx['page_title'] = 'Zone Summary'
     ctx['zone_list'] = []
@@ -650,7 +650,7 @@ def zone_summary(request):
 
 @permission_required('psc.can_analyse', login_url='/')
 @login_required()
-def state_summary(request):
+def vr_state_summary(request):
     ctx = RequestContext(request)
     ctx['page_title'] = 'State Summary'
     ctx['state_list'] = []
