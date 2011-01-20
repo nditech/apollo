@@ -412,7 +412,6 @@ def dco_incident_list(request):
     return render_to_response('psc/dco_incident_list.html', {'page_title': "Display, Claims & Objections Critical Incidents", 'checklists': checklists, 'filter_form': filter_form, 'page_details': page_details}, context_instance=RequestContext(request))
 
 @login_required()
-@permission_required('psc.can_administer', login_url='/')
 def message_log(request):
     qs = Q()
     if not request.session.has_key('messagelog_filter'):
