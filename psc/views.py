@@ -681,7 +681,26 @@ def vr_state_summary(request):
     return render_to_response('psc/state_summary.html', context_instance=ctx)
 
 def vr_checklist_analysis(request):
-    qs = Q(date=datetime.date(datetime(2011, 1, 20)))
+    qs = Q()
+    if not request.session.has_key('vr_analysis_filter'):
+        request.session['vr_analysis_filter'] = {}
+
+    if request.method == 'GET':
+        if filter(lambda key: request.GET.has_key(key), ['zone', 'state', 'date']):
+            request.session['vr_analysis_filter'] = request.GET
+        filter_form = VRAnalysisFilterForm(request.session['vr_analysis_filter'])
+
+        if filter_form.is_valid():
+            data = filter_form.cleaned_data
+
+            if data['state']:
+                qs &= Q(location_id__in=RegistrationCenter.objects.filter(parent__parent__parent__code__iexact=data['state']).values_list('id', flat=True))
+            elif data['zone']:
+                qs &= Q(location_id__in=RegistrationCenter.objects.filter(parent__parent__parent__parent__code__iexact=data['zone']).values('id'))
+            if data['date']:
+                qs &= Q(date=datetime.date(datetime.strptime(data['date'], '%Y-%m-%d')))
+    else:
+        filter_form = VRAnalysisFilterForm()
 
     ctx = RequestContext(request)
     ctx['question'] = dict()
@@ -710,7 +729,6 @@ def vr_checklist_analysis(request):
     ctx['question']['Z'] = stats.vr_QZ(qs)
     ctx['question']['AA'] = stats.vr_QAA(qs)
 
-    filter_form = VRAnalysisFilterForm()
     return render_to_response('psc/vr_checklist_analysis.html', {'page_title': 'Voter Registration Checklist Analysis', 'filter_form': filter_form}, context_instance=ctx)
 
 

@@ -15,6 +15,12 @@
                 })
             })
         });
+				$('#reset').click(function() {
+					$('#id_zone').val("");
+					$('#id_state').val("");
+					$('#id_date').val("");
+					$('#filter_form').submit();
+				});
     });
 </script>
 {% endblock %}
@@ -49,7 +55,7 @@
             <table width="100%" class="summary">
                 <thead>
                     <tr>
-                        <th>No</th>
+                        <th>&nbsp;</th>
                         <th>Question</th>
                         <th>n</th>
                         <th colspan="2">Yes</th>
@@ -128,7 +134,7 @@
             <table width="100%" class="summary">
                 <thead>
                     <tr>
-                        <th>No</th>
+                        <th>&nbsp;</th>
                         <th>Question</th>
                         <th>n</th>
                         <th colspan="2">None</th>
@@ -282,7 +288,7 @@
             <table width="100%" class="summary">
                 <thead>
                     <tr>
-                        <th>No</th>
+                        <th>&nbsp;</th>
                         <th>Question</th>
                         <th>n</th>
                         <th colspan="2">Missing / Broken Computer</th>
@@ -313,7 +319,7 @@
             <table width="100%" class="summary">
                 <thead>
                     <tr>
-                        <th>No</th>
+                        <th>&nbsp;</th>
                         <th>Question</th>
                         <th>n</th>
                         <th colspan="2">Manual Register of Voters</th>
@@ -347,7 +353,7 @@
             <table width="100%" class="summary">
                 <thead>
                     <tr>
-                        <th>No</th>
+                        <th>&nbsp;</th>
                         <th>Question</th>
                         <th>n</th>
                         <th colspan="2">By 8:00 AM</th>
@@ -378,7 +384,7 @@
             <table width="100%" class="summary">
                 <thead>
                     <tr>
-                        <th>No</th>
+                        <th>&nbsp;</th>
                         <th>Question</th>
                         <th>n</th>
                         <th>Average</th>                       
@@ -386,21 +392,21 @@
                 </thead>
                 <tr>
                     <td>Y</td>
-                    <td>{{ question.y.label }}</td>
-                    <td>{{ question.y.n }}</td>
-                    <td>{{ question.y.average }}</td>
+                    <td>{{ question.Y.label }}</td>
+                    <td>{{ question.Y.n }}</td>
+                    <td>{{ question.Y.mean|floatformat:2 }}</td>
                 </tr>
                 <tr>
                     <td>Z</td>
-                    <td>{{ question.z.label }}</td>
-                    <td>{{ question.z.n }}</td>
-                    <td>{{ question.z.average }}</td>
+                    <td>{{ question.Z.label }}</td>
+                    <td>{{ question.Z.n }}</td>
+                    <td>{{ question.Z.mean|floatformat:2 }}</td>
                 </tr>
                 <tr>
                     <td>AA</td>
-                    <td>{{ question.aa.label }}</td>
-                    <td>{{ question.aa.n }}</td>
-                    <td>{{ question.aa.average }}</td>
+                    <td>{{ question.AA.label }}</td>
+                    <td>{{ question.AA.n }}</td>
+                    <td>{{ question.AA.mean|floatformat:2 }}</td>
                 </tr>
             </table>
         </div>
@@ -411,7 +417,7 @@
             <table width="100%" class="summary">
                 <thead>
                     <tr>
-                        <th>No</th>
+                        <th>&nbsp;</th>
                         <th>Question</th>
                         <th>n</th>
                         <th>0%</th>
@@ -440,23 +446,45 @@
             <table width="100%" class="summary">
                 <thead>
                     <tr>
-                        <th>No</th>
+                        <th>&nbsp;</th>
+                        <th>Question</th>
+                        <th>n</th>
+                        <th>Average</th>
+												<th>0s</th>
+												<th>1s</th>
+												<th>2s</th>
+												<th>3s</th>
+												<th>4s</th>
+												<th>&gt;5</th>
+                    </tr>
+                </thead>
+                <tr>
+                    <td>C</td>
+                    <td>{{ question.C.label }}</td>
+                    <td>{{ question.C.n }}</td>
+                    <td>{{ question.C.mean|floatformat:2 }}</td>
+                    <td>{{ question.C.options.0 }} <strong>{{ question.C.options.0|percentage:question.C.n }}</strong></td>
+                    <td>{{ question.C.options.1 }} <strong>{{ question.C.options.1|percentage:question.C.n }}</strong></td>
+                    <td>{{ question.C.options.2 }} <strong>{{ question.C.options.2|percentage:question.C.n }}</strong></td>
+                    <td>{{ question.C.options.3 }} <strong>{{ question.C.options.3|percentage:question.C.n }}</strong></td>
+                    <td>{{ question.C.options.4 }} <strong>{{ question.C.options.4|percentage:question.C.n }}</strong></td>
+                    <td>{{ question.C.options.5 }} <strong>{{ question.C.options.5|percentage:question.C.n }}</strong></td>
+                </tr>
+            </table>
+            <table width="100%" class="summary">
+                <thead>
+                    <tr>
+                        <th>&nbsp;</th>
                         <th>Question</th>
                         <th>n</th>
                         <th>Average</th>
                     </tr>
                 </thead>
                 <tr>
-                    <td>C</td>
-                    <td>{{ question.c.label }}</td>
-                    <td>{{ question.c.n }}</td>
-                    <td>{{ question.c.average }}</td>
-                </tr>
-                <tr>
                     <td>F</td>
-                    <td>{{ question.f.label }}</td>
-                    <td>{{ question.f.n }}</td>
-                    <td>{{ question.f.average }}</td>
+                    <td>{{ question.F.label }}</td>
+                    <td>{{ question.F.valid_n }}</td>
+                    <td>{{ question.F.mean|floatformat:2 }}</td>
                 </tr>
             </table>
         </div>
