@@ -1,10 +1,52 @@
 {% extends 'psc/layout.html' %}
+{% block javascripts %}
+{{ block.super }}
+<script src="/assets/js/jquery-1.4.4.min.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript" charset="utf-8">
+    $(function(){        
+       $('#id_zone').change(function() {
+           var zone = $('#id_zone').val()
+           $.getJSON('/get-states-by-zone/'+ zone, function(data){
+                $('#id_state').empty()
+                $.each(data, function(){
+                  //alert(this.pk)
+                  $('#id_state').append("<option value='"+ this.pk +"'>" + this.fields.name +"</option>")
+                })
+            })
+        });
+    });
+</script>
+{% endblock %}
 {% block content %}
 {% load calc %}
 <div class="grid_16">
     <div class="box">
         <h2>Yes / No Questions</h2>
         <div class="block">
+            <div id="filter">
+                <form action="" method="get" id="filter_form" accept-charset="utf-8">
+                    <table>
+                        <thead>
+                            <tr>
+								{% for field in filter_form %}
+                                <th>{{ field.label }}</th>
+								{% endfor %}
+                                <th>&nbsp;</th>
+                                <th>&nbsp;</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+								{% for field in filter_form %}
+                                <td>{{ field }}</td>
+								{% endfor %}
+                                <td><input type="button" value="reset" id="reset"></td>
+                                <td><input type="submit" value="filter &rarr;"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </form>
+            </div>
             <table width="100%" class="summary">
                 <thead>
                     <tr>
