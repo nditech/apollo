@@ -61,7 +61,7 @@ class App(AppBase):
             return self.default(message)
     
     def default(self, message):
-       return message.respond('Invalid message:"%s". Check VR or RC and please resend!' % message.message_only)
+       return message.respond('Invalid message:"%s".Please resend!' % message.message_only)
 
     @role_required('LGA')
     def _vr_checklist(self, msg, params):
