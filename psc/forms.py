@@ -24,14 +24,14 @@ VR_CHECKLIST_2ND = ((0, 'All'),
                     (1, 'Complete'),
                     (2, 'Missing'),
                     (3, 'Partial'),
-                    (4, 'Not Open Unverified'),
-                    (5, 'Not Open Verified'))
+                    (4, 'Not Open Problem'),
+                    (5, 'Not Open'))
 VR_CHECKLIST_3RD = ((0, 'All'),
                     (1, 'Complete'),
                     (2, 'Missing'),
                     (3, 'Partial'),
-                    (4, 'Not Open Unverified'),
-                    (5, 'Not Open Verified'),
+                    (4, 'Not Open Problem'),
+                    (5, 'Not Open'),
                     (6, 'Blank'))
 VR_DAYS = (('', 'All'),
         (datetime.date(datetime(2011, 1, 15)), 'Sat 15-Jan'),
