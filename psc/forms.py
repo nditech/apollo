@@ -17,6 +17,22 @@ STATUSES = ((0, 'All'),
             (7, 'received 2nd text'),
             (8, 'received 3rd text'),
             (9, 'all texts received'))
+VR_CHECKLIST_1ST = ((0, 'All'),
+                    (1, 'Complete'),
+                    (2, 'Missing'))
+VR_CHECKLIST_2ND = ((0, 'All'),
+                    (1, 'Complete'),
+                    (2, 'Missing'),
+                    (3, 'Partial'),
+                    (4, 'Not Open Unverified'),
+                    (5, 'Not Open Verified'))
+VR_CHECKLIST_3RD = ((0, 'All'),
+                    (1, 'Complete'),
+                    (2, 'Missing'),
+                    (3, 'Partial'),
+                    (4, 'Not Open Unverified'),
+                    (5, 'Not Open Verified'),
+                    (6, 'Blank'))
 VR_DAYS = (('', 'All'),
         (datetime.date(datetime(2011, 1, 15)), 'Sat 15-Jan'),
         (datetime.date(datetime(2011, 1, 19)), 'Wed 19-Jan'),
@@ -72,8 +88,9 @@ class VRChecklistFilterForm(forms.Form):
     day = forms.ChoiceField(choices=VR_DAYS, required=False)
     zone = forms.ChoiceField(choices=ZONES, required=False)
     state = forms.ChoiceField(choices=STATES, required=False)
-    district = forms.ChoiceField(choices=DISTRICTS, required=False) 
-    status = forms.ChoiceField(choices=STATUSES, required=False)
+    first = forms.ChoiceField(choices=VR_CHECKLIST_1ST, required=False, label='1st SMS')
+    second = forms.ChoiceField(choices=VR_CHECKLIST_2ND, required=False, label='2nd SMS')
+    third = forms.ChoiceField(choices=VR_CHECKLIST_3RD, required=False, label='3rd SMS')
 
 class DCOChecklistFilterForm(forms.Form):
     observer_id = forms.CharField(required=False, label="PSC ID", max_length=6, widget=forms.TextInput(attrs={'autocomplete':'off','style':'width:7em'}))
