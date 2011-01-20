@@ -359,7 +359,15 @@ def dco_incident_list(request):
 @login_required()
 @permission_required('psc.can_administer', login_url='/')
 def message_log(request):
-    messages = MessageTable(Message.objects.all(), request=request)
+    print request.GET.get('q')
+    if request.GET.get('type'):
+        if request.GET.get('type') == 'phone':
+            query = Q(connection__in=request.GET.get('q'))
+        elif request.GET.get('type') == 'message':
+            query = Q(text__exact=request.GET.get('q'))
+        messages = MessageTable(Message.objects.filter(query), request=request)
+    else:
+        messages = MessageTable(Message.objects.all(), request=request)
     return render_to_response('psc/msg_log.html', { 'page_title': 'Message Log', 'messages_list' : messages }, context_instance=RequestContext(request))
 
 @login_required()

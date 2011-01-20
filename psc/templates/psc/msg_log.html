@@ -2,6 +2,32 @@
 {% block content %}
 <div class="grid_16">
     <div class="box">
+        <div id="filter">
+                <form action="" method="get" accept-charset="utf-8">
+                    <table >
+                        <thead>
+                            <tr>
+                                
+                                <th>&nbsp;</th>
+                                <th>&nbsp;</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><input name="q" type="text">                               
+                                    <select name="type">
+                                        <option value="message">Phone</option>
+                                        <option value="phone">Message</option>
+                                    </select>
+                                </td>
+                                <td><input type="button" value="reset" id="reset">
+                                    <input type="submit" value="filter &rarr;"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </form>
+            </div>
+
         <h2>Message Log <span class="flag"><button onclick="location.href='{% url psc.views.export "messagelog" %}'">Export</button></span></h2>
         <div class="block">
 			{{ messages_list.as_html }}
