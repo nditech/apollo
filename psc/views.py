@@ -26,7 +26,7 @@ def home(request):
     context['received_first_sms'] = stats.model_sieve(VRChecklist, ['submitted']).filter(date=datetime.date(datetime.today())).count()
 
     # second missing sms
-    context['missing_second_sms'] = stats.model_sieve(VRChecklist, ['A', 'B', 'C', 'F', 'G', 'D1', 'D2', 'D3', 'D4', 'E1', 'E2', 'E3', 'E4', 'E5'], exclude=True).filter(date=datetime.date(datetime.today())).count()
+    context['missing_second_sms'] = stats.model_sieve(VRChecklist, ['A', 'B', 'C', 'F', 'G', ['D1', 'D2', 'D3', 'D4'], ['E1', 'E2', 'E3', 'E4', 'E5']], exclude=True).filter(date=datetime.date(datetime.today())).count()
     context['complete_second_sms'] = stats.model_sieve(VRChecklist, ['A', 'B', 'C', 'F', 'G', ['D1', 'D2', 'D3', 'D4'], ['E1', 'E2', 'E3', 'E4', 'E5']]).exclude(A=4).filter(date=datetime.date(datetime.today())).count()
     context['incomplete_second_sms'] = stats.model_sieve(VRChecklist, [['A', 'B', 'C', 'F', 'G', 'D1', 'D2', 'D3', 'D4', 'E1', 'E2', 'E3', 'E4', 'E5']]).exclude(A=4).filter(date=datetime.date(datetime.today())).count() - context['complete_second_sms']
     context['unverified_second_sms'] = stats.model_sieve(VRChecklist, [('A', 4), ('verified_second', False), 'B', 'C', 'F', 'G', ['D1', 'D2', 'D3', 'D4'], ['E1', 'E2', 'E3', 'E4', 'E5']]).filter(date=datetime.date(datetime.today())).count()
@@ -56,84 +56,105 @@ def home(request):
 @login_required()
 def vr_checklist_list(request):
     #qs = Q(date__in=[d[0] for d in VR_DAYS if d[0]])
-    qs = Q()
+    qs_include = Q()
+    qs_exclude = Q()
     if not request.session.has_key('vr_checklist_filter'):
         request.session['vr_checklist_filter'] = {}
 
     if request.method == 'GET':
-        if filter(lambda key: request.GET.has_key(key), ['zone', 'state', 'district', 'day', 'status', 'observer_id']):
+        if filter(lambda key: request.GET.has_key(key), ['zone', 'state', 'first', 'second', 'third', 'day', 'observer_id']):
             request.session['vr_checklist_filter'] = request.GET
         filter_form = VRChecklistFilterForm(request.session['vr_checklist_filter'])
 
         if filter_form.is_valid():
             data = filter_form.cleaned_data
+            print data
+
             if data['zone']:
-                qs &= Q(observer__location_id__in=LGA.objects.filter(parent__parent__parent__code__iexact=data['zone']).values_list('id', flat=True))
+                qs_include &= Q(observer__location_id__in=LGA.objects.filter(parent__parent__parent__code__iexact=data['zone']).values_list('id', flat=True))
             if data['state']:
-                qs &= Q(observer__location_id__in=LGA.objects.filter(parent__parent__code__exact=data['state']).values_list('id', flat=True))
-            if data['district']:
-                qs &= Q(observer__location_id__in=LGA.objects.filter(parent__code__exact=data['district']).values_list('id', flat=True))
+                qs_include &= Q(observer__location_id__in=LGA.objects.filter(parent__parent__code__exact=data['state']).values_list('id', flat=True))
             if data['day']:
-                qs &= Q(date=data['day'])
-            if data['status']:
-                if int(data['status']) == 1 or int(data['status']) == 2: # no texts received or missing first text
-                    qs &= Q(submitted=False)
-                elif int(data['status']) == 3: # missing second text
-                    qs &= Q(A__isnull=True) | Q(B=0) | Q(C__isnull=True) | Q(F__isnull=True) | Q(G=0) | \
-                          (Q(D1__isnull=True) & Q(D2__isnull=True) & Q(D3__isnull=True) & Q(D4__isnull=True)) | \
-                          (Q(E1__isnull=True) & Q(E2__isnull=True) & Q(E3__isnull=True) & Q(E4__isnull=True) & \
-                          Q(E5__isnull=True))
-                elif int(data['status']) == 4: # missing third text
-                    qs &= Q(H__isnull=True) | Q(J__isnull=True) | Q(K__isnull=True) | Q(M__isnull=True) | \
-                          Q(N__isnull=True) | Q(P__isnull=True) | Q(Q__isnull=True) | Q(R__isnull=True) | \
-                          Q(S__isnull=True) | Q(T=0) | Q(U=0) | Q(V=0) | Q(W=0) | Q(X=0) | Q(Y__isnull=True) | \
-                          Q(Z__isnull=True) | Q(AA__isnull=True)
-                elif int(data['status']) == 5: # missing any text
-                    qs &= Q(submitted=False) | Q(A__isnull=True) | Q(B=0) | Q(C__isnull=True) | \
-                          Q(F__isnull=True) | Q(G=0) | \
-                          (Q(D1__isnull=True) & Q(D2__isnull=True) & Q(D3__isnull=True) & Q(D4__isnull=True)) | \
-                          (Q(E1__isnull=True) & Q(E2__isnull=True) & Q(E3__isnull=True) & Q(E4__isnull=True) & \
-                          Q(E5__isnull=True)) | Q(H__isnull=True) | Q(J__isnull=True) | Q(K__isnull=True) | \
-                          Q(M__isnull=True) | Q(N__isnull=True) | Q(P__isnull=True) | Q(Q__isnull=True) | \
-                          Q(R__isnull=True) | Q(S__isnull=True) | Q(T=0) | Q(U=0) | Q(V=0) | Q(W=0) | \
-                          Q(X=0) | Q(Y__isnull=True) | Q(Z__isnull=True) | Q(AA__isnull=True)
-                elif int(data['status']) == 6: # received 1st text
-                    qs &= Q(submitted=True) 
-                elif int(data['status']) == 7: # received second text
-                    qs &= Q(A__isnull=False) & Q(B__gt=0) & Q(C__isnull=False) & Q(F__isnull=False) & Q(G__gt=0) & \
-                          (Q(D1__isnull=False) | Q(D2__isnull=False) | Q(D3__isnull=False) | Q(D4__isnull=False)) & \
-                          (Q(E1__isnull=False) | Q(E2__isnull=False) | Q(E3__isnull=False) | Q(E4__isnull=False) | \
-                          Q(E5__isnull=False))
-                elif int(data['status']) == 8: # received third text
-                    qs &= Q(H__isnull=False) & Q(J__isnull=False) & Q(K__isnull=False) & Q(M__isnull=False) & \
-                          Q(N__isnull=False) & Q(P__isnull=False) & Q(Q__isnull=False) & Q(R__isnull=False) & \
-                          Q(S__isnull=False) & Q(T__gt=0) & Q(U__gt=0) & Q(V__gt=0) & Q(W__gt=0) & Q(X__gt=0) & Q(Y__isnull=False) & \
-                          Q(Z__isnull=False) & Q(AA__isnull=False)
-                elif int(data['status']) == 9: # all texts received
-                    qs &= Q(submitted=True,A__isnull=False,B__gte=1,C__isnull=False,F__isnull=False,G__gte=1) & \
-                          Q(H__isnull=False,J__isnull=False,K__isnull=False,M__isnull=False,N__isnull=False) & \
-                          Q(P__isnull=False,Q__isnull=False,R__isnull=False,S__isnull=False,T__gte=1,U__gte=1) & \
-                          Q(V__gte=1,W__gte=1,X__gte=1,Y__isnull=False,Z__isnull=False,AA__isnull=False) & \
-                          (Q(D1__isnull=False) | \
-                          Q(D2__isnull=False) | \
-                          Q(D3__isnull=False) | \
-                          Q(D4__isnull=False)) & \
-                          (Q(E1__isnull=False) | \
-                          Q(E2__isnull=False) | \
-                          Q(E3__isnull=False) | \
-                          Q(E4__isnull=False) | \
-                          Q(E5__isnull=False))
+                qs_include &= Q(date=data['day'])
+
+            if int(data['first']) == 1:
+                qs_include &= Q(submitted=True)
+            elif int(data['first']) == 2:
+                qs_include &= Q(submitted=False)
+
+            if int(data['second']) == 1: # complete
+                qs_include &= ~Q(A=4) & Q(B__gt=0) & Q(C__isnull=False) & Q(F__isnull=False) & Q(G__gt=0) & \
+                      (Q(D1__isnull=False) | Q(D2__isnull=False) | Q(D3__isnull=False) | Q(D4__isnull=False)) & \
+                      (Q(E1__isnull=False) | Q(E2__isnull=False) | Q(E3__isnull=False) | Q(E4__isnull=False) | \
+                      Q(E5__isnull=False))
+            elif int(data['second']) == 2: # missing
+                qs_include &= Q(A__isnull=True) & Q(B=0) & Q(C__isnull=True) & Q(F__isnull=True) & Q(G=0) & \
+                      (Q(D1__isnull=True) | Q(D2__isnull=True) | Q(D3__isnull=True) | Q(D4__isnull=True)) & \
+                      (Q(E1__isnull=True) | Q(E2__isnull=True) | Q(E3__isnull=True) | Q(E4__isnull=True) | \
+                      Q(E5__isnull=True))
+            elif int(data['second']) == 3: # partial
+                qs_include &= (~Q(B=0) | Q(C__isnull=False) | Q(F__isnull=False) | ~Q(G=0) | \
+                      Q(D1__isnull=False) | Q(D2__isnull=False) | Q(D3__isnull=False) | Q(D4__isnull=False) | \
+                      Q(E1__isnull=False) | Q(E2__isnull=False) | Q(E3__isnull=False) | Q(E4__isnull=False) | \
+                      Q(E5__isnull=False)) & ~Q(A=4) 
+                qs_exclude &= ~Q(A=4) & Q(B__gt=0) & Q(C__isnull=False) & Q(F__isnull=False) & Q(G__gt=0) & \
+                      (Q(D1__isnull=False) | Q(D2__isnull=False) | Q(D3__isnull=False) | Q(D4__isnull=False)) & \
+                      (Q(E1__isnull=False) | Q(E2__isnull=False) | Q(E3__isnull=False) | Q(E4__isnull=False) | \
+                      Q(E5__isnull=False))
+            elif int(data['second']) == 4: # not open unverified
+                qs_include &= (~Q(B=0) | Q(C__isnull=False) | Q(F__isnull=False) | ~Q(G=0) | \
+                      Q(D1__isnull=False) | Q(D2__isnull=False) | Q(D3__isnull=False) | Q(D4__isnull=False) | \
+                      Q(E1__isnull=False) | Q(E2__isnull=False) | Q(E3__isnull=False) | Q(E4__isnull=False) | \
+                      Q(E5__isnull=False)) & Q(A=4) & Q(verified_second=False)
+            elif int(data['second']) == 5: # not open verified
+                qs_include &= (Q(A=4) & Q(verified_second=True)) | ((Q(B=0) & Q(C__isnull=True) & Q(F__isnull=True) & Q(G=0) & \
+                      (Q(D1__isnull=True) | Q(D2__isnull=True) | Q(D3__isnull=True) | Q(D4__isnull=True)) & \
+                      (Q(E1__isnull=True) | Q(E2__isnull=True) | Q(E3__isnull=True) | Q(E4__isnull=True) | \
+                      Q(E5__isnull=True))) & Q(A=4))
+
+            if int(data['third']) == 1: # complete
+                qs_include &= ~Q(A=4) & Q(H__isnull=False) & Q(J__isnull=False) & Q(K__isnull=False) & Q(M__isnull=False) & \
+                      Q(N__isnull=False) & Q(P__isnull=False) & Q(Q__isnull=False) & Q(R__isnull=False) & \
+                      Q(S__isnull=False) & Q(T__gt=0) & Q(U__gt=0) & Q(V__gt=0) & Q(W__gt=0) & Q(X__gt=0) & Q(Y__isnull=False) & \
+                      Q(Z__isnull=False) & Q(AA__isnull=False)
+            elif int(data['third']) == 2: # incomplete
+                qs_include &= ~Q(A=4) & Q(H__isnull=True) & Q(J__isnull=True) & Q(K__isnull=True) & Q(M__isnull=True) & \
+                      Q(N__isnull=True) & Q(P__isnull=True) & Q(Q__isnull=True) & Q(R__isnull=True) & \
+                      Q(S__isnull=True) & Q(T=0) & Q(U=0) & Q(V=0) & Q(W=0) & Q(X=0) & Q(Y__isnull=True) & \
+                      Q(Z__isnull=True) & Q(AA__isnull=True)
+            elif int(data['third']) == 3: # partial
+                qs_include &= Q(H__isnull=False) | Q(J__isnull=False) | Q(K__isnull=False) | Q(M__isnull=False) | \
+                      Q(N__isnull=False) | Q(P__isnull=False) | Q(Q__isnull=False) | Q(R__isnull=False) | \
+                      Q(S__isnull=False) | Q(T__gt=0) & Q(U__gt=0) | Q(V__gt=0) | Q(W__gt=0) | Q(X__gt=0) | Q(Y__isnull=False) | \
+                      Q(Z__isnull=False) | Q(AA__isnull=False) 
+                qs_exclude &= ~Q(A=4) & Q(H__isnull=False) & Q(J__isnull=False) & Q(K__isnull=False) & Q(M__isnull=False) & \
+                      Q(N__isnull=False) & Q(P__isnull=False) & Q(Q__isnull=False) & Q(R__isnull=False) & \
+                      Q(S__isnull=False) & Q(T__gt=0) & Q(U__gt=0) & Q(V__gt=0) & Q(W__gt=0) & Q(X__gt=0) & Q(Y__isnull=False) & \
+                      Q(Z__isnull=False) & Q(AA__isnull=False) | Q(A=4)
+            elif int(data['third']) == 4:
+                qs_include &= Q(A=4) & Q(verified_third=False) & (Q(H__isnull=False) | Q(J__isnull=False) | Q(K__isnull=False) | Q(M__isnull=False) | \
+                      Q(N__isnull=False) | Q(P__isnull=False) | Q(Q__isnull=False) | Q(R__isnull=False) | \
+                      Q(S__isnull=False) | Q(T__gt=0) & Q(U__gt=0) | Q(V__gt=0) | Q(W__gt=0) | Q(X__gt=0) | Q(Y__isnull=False) | \
+                      Q(Z__isnull=False) | Q(AA__isnull=False))
+            elif int(data['third']) == 5:
+                qs_include &= Q(A=4) & Q(verified_third=True)
+            elif int(data['third']) == 6:
+                qs_include &= Q(A=4) & Q(H__isnull=True) & Q(J__isnull=True) & Q(K__isnull=True) & Q(M__isnull=True) & \
+                      Q(N__isnull=True) & Q(P__isnull=True) & Q(Q__isnull=True) & Q(R__isnull=True) & \
+                      Q(S__isnull=True) & Q(T=0) & Q(U=0) & Q(V=0) & Q(W=0) & Q(X=0) & Q(Y__isnull=True) & \
+                      Q(Z__isnull=True) & Q(AA__isnull=True)
+            
             if data['observer_id']:
-                qs = Q(observer__observer_id__exact=data['observer_id'])
+                qs_include = Q(observer__observer_id__exact=data['observer_id'])
     else:
         filter_form = VRChecklistFilterForm()
 
     #get all objects
+    global items_per_page
     if request.GET.get('export'):
-        global items_per_page
-	items_per_page = VRChecklist.objects.filter(qs).count()
+	    items_per_page = VRChecklist.objects.filter(qs_include).exclude(qs_exclude).count()
     
-    paginator = Paginator(VRChecklist.objects.filter(qs), items_per_page)
+    paginator = Paginator(VRChecklist.objects.filter(qs_include).exclude(qs_exclude), items_per_page)
 
     try:
         page = int(request.GET.get('page', '1'))
