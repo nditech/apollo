@@ -1,4 +1,5 @@
 {% extends 'psc/layout.html' %}
+{% load calc %}
 {% block content %}
 <div class="grid_16">
     <div class="box">
@@ -17,35 +18,35 @@
                     <tr>
                         <td>&nbsp;</td>
                         <td><img src="/assets/img/status.png" width="16" height="16" alt="complete" /></td>
-                        <td><img src="/assets/img/status-busy.png" width="16" height="16" alt="complete" /></td>
+                        <td><img src="/assets/img/exclamation-red.png" width="16" height="16" alt="missing" /></td>
                         <td><img src="/assets/img/status.png" width="16" height="16" alt="complete" /></td>
-                        <td><img src="/assets/img/status-busy.png" width="16" height="16" alt="complete" /></td>
-                        <td><img src="/assets/img/information.png" width="16" height="16" alt="complete" /></td>
-                        <td><img src="/assets/img/status-away.png" width="16" height="16" alt="complete" /></td>
-                        <td><img src="/assets/img/exclamation-red.png" width="16" height="16" alt="complete" /></td>
+                        <td><img src="/assets/img/status-busy.png" width="16" height="16" alt="unverified problem" /></td>
+                        <td><img src="/assets/img/information.png" width="16" height="16" alt="verified" /></td>
+                        <td><img src="/assets/img/status-away.png" width="16" height="16" alt="partial" /></td>
+                        <td><img src="/assets/img/exclamation-red.png" width="16" height="16" alt="missing" /></td>
                         <td><img src="/assets/img/status.png" width="16" height="16" alt="complete" /></td>
-                        <td><img src="/assets/img/status-busy.png" width="16" height="16" alt="complete" /></td>
-                        <td><img src="/assets/img/information.png" width="16" height="16" alt="complete" /></td>
-                        <td><img src="/assets/img/status-away.png" width="16" height="16" alt="complete" /></td>
-                        <td><img src="/assets/img/exclamation-red.png" width="16" height="16" alt="complete" /></td>
-                        <td><img src="/assets/img/status-offline.png" width="16" height="16" alt="complete" /></td>
+                        <td><img src="/assets/img/status-busy.png" width="16" height="16" alt="unverified problem" /></td>
+                        <td><img src="/assets/img/information.png" width="16" height="16" alt="verified" /></td>
+                        <td><img src="/assets/img/status-away.png" width="16" height="16" alt="partial" /></td>
+                        <td><img src="/assets/img/exclamation-red.png" width="16" height="16" alt="missing" /></td>
+                        <td><img src="/assets/img/status-offline.png" width="16" height="16" alt="blank" /></td>
                     </tr>
                     {% for state in state_list %}
                     <tr>
-                        <td>{{ state }}</td>
-                        <td>%</td>
-                        <td>%</td>
-                        <td>%</td>
-                        <td>%</td>
-                        <td>%</td>
-                        <td>%</td>
-                        <td>%</td>
-                        <td>%</td>
-                        <td>%</td>
-                        <td>%</td>
-                        <td>%</td>
-                        <td>%</td>
-                        <td>%</td>
+                        <td>{{ state.name }}</td>
+                        <td>{{ state.first_complete|percentage:state.n }}</td>
+                        <td>{{ state.first_missing|percentage:state.n }}</td>
+                        <td>{{ state.second_complete|percentage:state.n }}</td>
+                        <td>{{ state.second_problem|percentage:state.n }}</td>
+                        <td>{{ state.second_verified|percentage:state.n }}</td>
+                        <td>{{ state.second_partial|percentage:state.n }}</td>
+                        <td>{{ state.second_missing|percentage:state.n }}</td>
+                        <td>{{ state.third_complete|percentage:state.n }}</td>
+                        <td>{{ state.third_problem|percentage:state.n }}</td>
+                        <td>{{ state.third_verified|percentage:state.n }}</td>
+                        <td>{{ state.third_partial|percentage:state.n }}</td>
+                        <td>{{ state.third_missing|percentage:state.n }}</td>
+                        <td>{{ state.third_blank|percentage:state.n }}</td>
                     </tr>
                     {% endfor %}
                 </thead>

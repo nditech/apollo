@@ -13,6 +13,7 @@ from forms import DCOIncidentUpdateForm, VRIncidentUpdateForm, MessagelogFilterF
 from datetime import datetime
 from django.contrib.auth.decorators import login_required, permission_required
 import stats
+from queries import queries
 
 # paginator settings
 items_per_page = 25
@@ -617,14 +618,66 @@ def export(request, model):
 @permission_required('psc.can_analyse', login_url='/')
 @login_required()
 def zone_summary(request):
+    ctx = RequestContext(request)
+    ctx['page_title'] = 'Zone Summary'
+    ctx['zone_list'] = []
     zone_list = Zone.objects.all()
-    return render_to_response('psc/zone_summary.html', {'page_title': 'Zone Summary', 'zone_list': zone_list},  context_instance=RequestContext(request))
+
+    for zone in zone_list:
+        rcs_in_zone = RegistrationCenter.objects.filter(parent__parent__parent__parent__id=zone.pk).values_list('id', flat=True)
+        qs = VRChecklist.objects.filter(date=datetime.date(datetime.today())).filter(location_id__in=rcs_in_zone)
+        zone_stats = {
+            'name': zone.name,
+            'n': qs.count(),
+            'first_complete': qs.filter(queries['first']['complete']).count(),
+            'first_missing': qs.filter(queries['first']['missing']).count(),
+            'second_complete': qs.filter(queries['second']['complete']).count(),
+            'second_missing': qs.filter(queries['second']['missing']).count(),
+            'second_partial': qs.filter(queries['second']['partial']).count(),
+            'second_problem': qs.filter(queries['second']['problem']).count(),
+            'second_verified': qs.filter(queries['second']['verified']).count(),
+            'third_complete': qs.filter(queries['third']['complete']).count(),
+            'third_missing': qs.filter(queries['third']['missing']).count(),
+            'third_partial': qs.filter(queries['third']['partial']).count(),
+            'third_problem': qs.filter(queries['third']['problem']).count(),
+            'third_verified': qs.filter(queries['third']['verified']).count(),
+            'third_blank': qs.filter(queries['third']['blank']).count(),
+        }
+        ctx['zone_list'].append(zone_stats)
+        
+    return render_to_response('psc/zone_summary.html', context_instance=ctx)
 
 @permission_required('psc.can_analyse', login_url='/')
 @login_required()
 def state_summary(request):
-    state_list = State.objects.all()
-    return render_to_response('psc/state_summary.html', {'page_title': 'State Summary', 'state_list': state_list},  context_instance=RequestContext(request))
+    ctx = RequestContext(request)
+    ctx['page_title'] = 'State Summary'
+    ctx['state_list'] = []
+    state_list = State.objects.all().order_by('name')
+
+    for state in state_list:
+        rcs_in_state = RegistrationCenter.objects.filter(parent__parent__parent__id=state.pk).values_list('id', flat=True)
+        qs = VRChecklist.objects.filter(date=datetime.date(datetime.today())).filter(location_id__in=rcs_in_state)
+        state_stats = {
+            'name': state.name,
+            'n': qs.count(),
+            'first_complete': qs.filter(queries['first']['complete']).count(),
+            'first_missing': qs.filter(queries['first']['missing']).count(),
+            'second_complete': qs.filter(queries['second']['complete']).count(),
+            'second_missing': qs.filter(queries['second']['missing']).count(),
+            'second_partial': qs.filter(queries['second']['partial']).count(),
+            'second_problem': qs.filter(queries['second']['problem']).count(),
+            'second_verified': qs.filter(queries['second']['verified']).count(),
+            'third_complete': qs.filter(queries['third']['complete']).count(),
+            'third_missing': qs.filter(queries['third']['missing']).count(),
+            'third_partial': qs.filter(queries['third']['partial']).count(),
+            'third_problem': qs.filter(queries['third']['problem']).count(),
+            'third_verified': qs.filter(queries['third']['verified']).count(),
+            'third_blank': qs.filter(queries['third']['blank']).count(),
+        }
+        ctx['state_list'].append(state_stats)
+        
+    return render_to_response('psc/state_summary.html', context_instance=ctx)
 
 def vr_checklist_analysis(request):
     qs = Q(date=datetime.date(datetime(2011, 1, 20)))

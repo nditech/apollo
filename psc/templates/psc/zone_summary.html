@@ -1,4 +1,5 @@
 {% extends 'psc/layout.html' %}
+{% load calc %}
 {% block content %}
 <div class="grid_16">
     <div class="box">
@@ -17,35 +18,35 @@
                     <tr>
                         <td>&nbsp;</td>
                         <td><img src="/assets/img/status.png" width="16" height="16" alt="complete" /></td>
-                        <td><img src="/assets/img/status-busy.png" width="16" height="16" alt="complete" /></td>
+                        <td><img src="/assets/img/exclamation-red.png" width="16" height="16" alt="missing" /></td>
                         <td><img src="/assets/img/status.png" width="16" height="16" alt="complete" /></td>
-                        <td><img src="/assets/img/status-busy.png" width="16" height="16" alt="complete" /></td>
-                        <td><img src="/assets/img/information.png" width="16" height="16" alt="complete" /></td>
-                        <td><img src="/assets/img/status-away.png" width="16" height="16" alt="complete" /></td>
-                        <td><img src="/assets/img/exclamation-red.png" width="16" height="16" alt="complete" /></td>
+                        <td><img src="/assets/img/status-busy.png" width="16" height="16" alt="unverified problem" /></td>
+                        <td><img src="/assets/img/information.png" width="16" height="16" alt="verified" /></td>
+                        <td><img src="/assets/img/status-away.png" width="16" height="16" alt="partial" /></td>
+                        <td><img src="/assets/img/exclamation-red.png" width="16" height="16" alt="missing" /></td>
                         <td><img src="/assets/img/status.png" width="16" height="16" alt="complete" /></td>
-                        <td><img src="/assets/img/status-busy.png" width="16" height="16" alt="complete" /></td>
-                        <td><img src="/assets/img/information.png" width="16" height="16" alt="complete" /></td>
-                        <td><img src="/assets/img/status-away.png" width="16" height="16" alt="complete" /></td>
-                        <td><img src="/assets/img/exclamation-red.png" width="16" height="16" alt="complete" /></td>
-                        <td><img src="/assets/img/status-offline.png" width="16" height="16" alt="complete" /></td>
+                        <td><img src="/assets/img/status-busy.png" width="16" height="16" alt="unverified problem" /></td>
+                        <td><img src="/assets/img/information.png" width="16" height="16" alt="verified" /></td>
+                        <td><img src="/assets/img/status-away.png" width="16" height="16" alt="partial" /></td>
+                        <td><img src="/assets/img/exclamation-red.png" width="16" height="16" alt="missing" /></td>
+                        <td><img src="/assets/img/status-offline.png" width="16" height="16" alt="blank" /></td>
                     </tr>
                     {% for zone in zone_list %}
                     <tr>
-                        <td>{{ zone }}</td>
-                        <td>%</td>
-                        <td>%</td>
-                        <td>%</td>
-                        <td>%</td>
-                        <td>%</td>
-                        <td>%</td>
-                        <td>%</td>
-                        <td>%</td>
-                        <td>%</td>
-                        <td>%</td>
-                        <td>%</td>
-                        <td>%</td>
-                        <td>%</td>
+                        <td>{{ zone.name }}</td>
+                        <td>{{ zone.first_complete|percentage:zone.n }}</td>
+                        <td>{{ zone.first_missing|percentage:zone.n }}</td>
+                        <td>{{ zone.second_complete|percentage:zone.n }}</td>
+                        <td>{{ zone.second_problem|percentage:zone.n }}</td>
+                        <td>{{ zone.second_verified|percentage:zone.n }}</td>
+                        <td>{{ zone.second_partial|percentage:zone.n }}</td>
+                        <td>{{ zone.second_missing|percentage:zone.n }}</td>
+                        <td>{{ zone.third_complete|percentage:zone.n }}</td>
+                        <td>{{ zone.third_problem|percentage:zone.n }}</td>
+                        <td>{{ zone.third_verified|percentage:zone.n }}</td>
+                        <td>{{ zone.third_partial|percentage:zone.n }}</td>
+                        <td>{{ zone.third_missing|percentage:zone.n }}</td>
+                        <td>{{ zone.third_blank|percentage:zone.n }}</td>
                     </tr>
                     {% endfor %}
                 </thead>
