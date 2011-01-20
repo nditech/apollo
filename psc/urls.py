@@ -20,7 +20,7 @@ urlpatterns = patterns('',
     (r'^vr/state/summary/?$', views.vr_state_summary),
     (r'^get-rcs-by-lga/(?P<lga_id>\d+)/?$', views.get_rcs_by_lga),
     (r'^get-states-by-zone/(?P<zone>.+)/?$', views.get_states_by_zone),
-    (r'^vrc-analysis/?$', views.vr_checklist_analysis),
+    (r'^vr/analysis/?$', views.vr_checklist_analysis),
 )
 
 #authentication urls
