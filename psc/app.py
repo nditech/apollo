@@ -68,7 +68,7 @@ class App(AppBase):
         # determine location and date
         self._preprocess(msg, params)
 
-        # Create the checklist
+        # Create the checklista
         try:
             vr = VRChecklist.objects.get(date=msg.date, observer=msg.observer)
             vr.location = msg.location
@@ -92,8 +92,8 @@ class App(AppBase):
             elif key in ['B', 'G', 'T', 'U', 'V', 'W', 'X'] and int(responses[key]) in range(1, 3):
                 setattr(vr, key, int(responses[key]))
             elif key in ['C', 'F', 'Y', 'Z', 'AA']:
-                if int(responses[key]) in (99,999,9999):
-                    setattr(vr, key, None)
+                if int(responses[key]) in (999,9999):
+                    setattr(vr, key, 9999)
                 else:
                     setattr(vr, key, int(responses[key]))
             elif key in ['H', 'J', 'K', 'M', 'N', 'P', 'Q', 'R', 'S'] and int(responses[key]) in range(1, 6):
@@ -198,9 +198,14 @@ class App(AppBase):
             # validation
             if key in ['A', 'B', 'D', 'E', 'H', 'M', 'N', 'P', 'Q', 'R'] and int(responses[key]) in range(1, 3): # Yes or No
                 setattr(dco, key, int(responses[key]))
-            elif key in ['C', 'G', 'J', 'K', 'S', 'T', 'U', 'V', 'W', 'X']: # numeric responses
-                if int(responses[key]) in (99,999,999):
-                    setattr(dco, key, None)
+            elif key in ['C', 'G']: # numeric responses
+                if int(responses[key]) in (99,999,9999):
+                    setattr(dco, key, 99)
+                else:
+                    setattr(dco, key, int(responses[key]))
+            elif key in ['J', 'K', 'S', 'T', 'U', 'V', 'W', 'X']: # numeric responses
+                if int(responses[key]) in (999,9999):
+                    setattr(dco, key, 9999)
                 else:
                     setattr(dco, key, int(responses[key]))
             elif key == 'F' and responses[key] == '9':
@@ -268,7 +273,8 @@ class App(AppBase):
             if key in ['A'] and int(responses[key]) not in range(1,5): range_error.append(key)
             elif key in ['B', 'G', 'T', 'U', 'V', 'W', 'X'] and int(responses[key]) not in range(1, 3): range_error.append(key)
             elif key in ['H', 'J', 'K', 'M', 'N', 'P', 'Q','R','S'] and int(responses[key]) not in range(1, 6): range_error.append(key)
-            elif key in ['C', 'F'] and int(responses[key]) > 99: range_error.append(key)
+            elif key in ['C'] and int(responses[key]) > 10: range_error.append(key)
+            elif key in ['F'] and int(responses[key]) > 60: range_error.append(key)
             if key in ['Y', 'Z', 'AA'] and int(responses[key]) > 9999: range_error.append(key)
             if key in ['Y','Z','AA'] and int(responses[key]) == 999:
                 responses[key] = 9999
@@ -295,7 +301,8 @@ class App(AppBase):
         for key in responses.keys():
             if key not in ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X']: attribute_error.append(key)
             if key in ['A', 'B', 'D', 'E', 'H', 'M', 'N','P', 'Q','R'] and int(responses[key]) not in range(1, 3): range_error.append(key)
-            elif key in ['C', 'G'] and int(responses[key]) > 99: range_error.append(key)
+            elif key in ['C'] and int(responses[key]) > 10: range_error.append(key)
+            elif key in ['G'] and int(responses[key]) > 60: range_error.append(key)
             if key in ['J', 'K','S', 'T', 'U', 'V', 'W', 'X'] and int(responses[key]) > 9999: range_error.append(key)
             if key in ['J', 'K','S', 'T', 'U', 'V', 'W', 'X'] and int(responses[key]) == 999:
                 responses[key] = 9999

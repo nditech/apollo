@@ -9,7 +9,7 @@ from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from rapidsms.contrib.messagelog.tables import MessageTable
 from rapidsms.contrib.messagelog.models import Message
 from forms import VRChecklistForm, VRIncidentForm, DCOIncidentForm, VRChecklistFilterForm, VRIncidentFilterForm, DCOIncidentFilterForm, DCOChecklistFilterForm, DCOChecklistForm
-from forms import DCOIncidentUpdateForm, VRIncidentUpdateForm, MessagelogFilterForm
+from forms import DCOIncidentUpdateForm, VRIncidentUpdateForm, MessagelogFilterForm, DashboardFilterForm
 from datetime import datetime
 from django.contrib.auth.decorators import login_required, permission_required
 import stats
@@ -19,24 +19,43 @@ items_per_page = 25
 
 @login_required()
 def home(request):
+    qs = Q(date=datetime.date(datetime.today()))
+    if not request.session.has_key('dashboard_filter'):
+        request.session['dashboard_filter'] = {}
+
+    if request.method == 'GET':
+        if filter(lambda key: request.GET.has_key(key), ['zone']):
+            request.session['dashboard_filter'] = request.GET
+        filter_form = DashboardFilterForm(request.session['dashboard_filter'])
+
+        if filter_form.is_valid():
+            data = filter_form.cleaned_data
+
+            if data['zone']:
+                qs &= Q(location_id__in=RegistrationCenter.objects.filter(parent__parent__parent__parent__code__iexact=data['zone']).values('id'))
+    else:
+        filter_form = DashboardFilterForm()
+
     context = {'page_title': 'PSC 2011 SwiftCount Dashboard'}
+    context['filter_form'] = filter_form
     
     #vr first missing sms
-    context['missing_first_sms'] = stats.model_sieve(VRChecklist, ['submitted'], exclude=True).filter(date=datetime.date(datetime.today())).count()
-    context['received_first_sms'] = stats.model_sieve(VRChecklist, ['submitted']).filter(date=datetime.date(datetime.today())).count()
+    context['missing_first_sms'] = stats.model_sieve(VRChecklist, ['submitted'], exclude=True).filter(qs).count()
+    context['received_first_sms'] = stats.model_sieve(VRChecklist, ['submitted']).filter(qs).count()
 
     # second missing sms
-    context['missing_second_sms'] = stats.model_sieve(VRChecklist, ['A', 'B', 'C', 'F', 'G', ['D1', 'D2', 'D3', 'D4'], ['E1', 'E2', 'E3', 'E4', 'E5']], exclude=True).filter(date=datetime.date(datetime.today())).count()
-    context['complete_second_sms'] = stats.model_sieve(VRChecklist, ['A', 'B', 'C', 'F', 'G', ['D1', 'D2', 'D3', 'D4'], ['E1', 'E2', 'E3', 'E4', 'E5']]).exclude(A=4).filter(date=datetime.date(datetime.today())).count()
-    context['incomplete_second_sms'] = stats.model_sieve(VRChecklist, [['A', 'B', 'C', 'F', 'G', 'D1', 'D2', 'D3', 'D4', 'E1', 'E2', 'E3', 'E4', 'E5']]).exclude(A=4).filter(date=datetime.date(datetime.today())).count() - context['complete_second_sms']
-    context['unverified_second_sms'] = stats.model_sieve(VRChecklist, [('A', 4), ('verified_second', False), 'B', 'C', 'F', 'G', ['D1', 'D2', 'D3', 'D4'], ['E1', 'E2', 'E3', 'E4', 'E5']]).filter(date=datetime.date(datetime.today())).count()
-    context['not_open_second_sms'] = stats.model_sieve(VRChecklist, ['B', 'C', 'F', 'D1', 'D2', 'D3', 'D4', 'E1', 'E2', 'E3', 'E4', 'E5'], exclude=True).filter(A=4).filter(date=datetime.date(datetime.today())).count() + stats.model_sieve(VRChecklist, [('A', 4), ('verified_second', True)]).filter(date=datetime.date(datetime.today())).count()
+    context['complete_second_sms'] = stats.model_sieve(VRChecklist, ['A', 'B', 'C', 'F', 'G', ['D1', 'D2', 'D3', 'D4'], ['E1', 'E2', 'E3', 'E4', 'E5']]).exclude(A=4).filter(qs).count()
+    second_sms_qs = ~Q(A=4) & (~Q(B=0) | Q(C__isnull=False) | Q(F__isnull=False) | ~Q(G=0) | Q(D1__isnull=False) | Q(D2__isnull=False) | Q(D3__isnull=False) | 
+        Q(D4__isnull=False) | Q(E1__isnull=False) | Q(E2__isnull=False) | Q(E3__isnull=False) | Q(E4__isnull=False) | Q(E5__isnull=False))
+    context['incomplete_second_sms'] = VRChecklist.objects.filter(second_sms_qs).filter(qs).count() - context['complete_second_sms']
+    context['unverified_second_sms'] = stats.model_sieve(VRChecklist, [('A', 4), ('verified_second', False), 'B', 'C', 'F', 'G', ['D1', 'D2', 'D3', 'D4'], ['E1', 'E2', 'E3', 'E4', 'E5']]).filter(qs).count()
+    context['not_open_second_sms'] = stats.model_sieve(VRChecklist, ['B', 'C', 'F', 'D1', 'D2', 'D3', 'D4', 'E1', 'E2', 'E3', 'E4', 'E5'], exclude=True).filter(A=4).filter(qs).count() + stats.model_sieve(VRChecklist, [('A', 4), ('verified_second', True)]).filter(date=datetime.date(datetime.today())).count()
+    context['missing_second_sms'] = stats.model_sieve(VRChecklist, ['A', 'B', 'C', 'F', 'G', ['D1', 'D2', 'D3', 'D4'], ['E1', 'E2', 'E3', 'E4', 'E5']], exclude=True).filter(qs).count() - context['incomplete_second_sms'] - context['not_open_second_sms']
 
     # third missing sms
-    context['complete_third_sms'] = stats.model_sieve(VRChecklist, ['H', 'J', 'K', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'AA']).exclude(A=4).filter(date=datetime.date(datetime.today())).count()
-    context['complete_third_sms'] += stats.model_sieve(VRChecklist, ['H', 'J', 'K', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'AA', ('A', 4), ('verified_third', True)]).filter(date=datetime.date(datetime.today())).count()
-    context['missing_third_sms'] = context['complete_second_sms'] - context['complete_third_sms'] 
-    context['blank_third_sms'] = stats.model_sieve(VRChecklist, ['H', 'J', 'K', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'AA'], exclude=True).filter(A=4).filter(date=datetime.date(datetime.today())).count()
+    context['complete_third_sms'] = stats.model_sieve(VRChecklist, ['H', 'J', 'K', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'AA']).exclude(A=4).filter(qs).count()
+    context['complete_third_sms'] += stats.model_sieve(VRChecklist, ['H', 'J', 'K', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'AA', ('A', 4), ('verified_third', True)]).filter(qs).count()
+    context['blank_third_sms'] = stats.model_sieve(VRChecklist, ['H', 'J', 'K', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'AA'], exclude=True).filter(A=4).filter(qs).count()
     third_partial_qs_include = Q(H__isnull=False) | Q(J__isnull=False) | Q(K__isnull=False) | Q(M__isnull=False) | \
           Q(N__isnull=False) | Q(P__isnull=False) | Q(Q__isnull=False) | Q(R__isnull=False) | \
           Q(S__isnull=False) | Q(T__gt=0) & Q(U__gt=0) | Q(V__gt=0) | Q(W__gt=0) | Q(X__gt=0) | Q(Y__isnull=False) | \
@@ -45,25 +64,26 @@ def home(request):
           Q(N__isnull=False) & Q(P__isnull=False) & Q(Q__isnull=False) & Q(R__isnull=False) & \
           Q(S__isnull=False) & Q(T__gt=0) & Q(U__gt=0) & Q(V__gt=0) & Q(W__gt=0) & Q(X__gt=0) & Q(Y__isnull=False) & \
           Q(Z__isnull=False) & Q(AA__isnull=False) | Q(A=4)
-    context['partial_third_sms'] = VRChecklist.objects.filter(date=datetime.date(datetime.today())).filter(third_partial_qs_include).exclude(third_partial_qs_exclude).count()
+    context['partial_third_sms'] = VRChecklist.objects.filter(qs).filter(third_partial_qs_include).exclude(third_partial_qs_exclude).count()
     third_unverified_qs = Q(A=4) & Q(verified_third=False) & (Q(H__isnull=False) | Q(J__isnull=False) | Q(K__isnull=False) | Q(M__isnull=False) | \
           Q(N__isnull=False) | Q(P__isnull=False) | Q(Q__isnull=False) | Q(R__isnull=False) | \
           Q(S__isnull=False) | Q(T__gt=0) & Q(U__gt=0) | Q(V__gt=0) | Q(W__gt=0) | Q(X__gt=0) | Q(Y__isnull=False) | \
           Q(Z__isnull=False) | Q(AA__isnull=False))
-    context['unverified_third_sms'] = VRChecklist.objects.filter(date=datetime.date(datetime.today())).filter(third_unverified_qs).count()
-    context['not_open_third_sms'] = stats.model_sieve(VRChecklist, [('A', 4), ('verified_third', True)]).filter(date=datetime.date(datetime.today())).count()
+    context['unverified_third_sms'] = VRChecklist.objects.filter(qs).filter(third_unverified_qs).count()
+    context['not_open_third_sms'] = stats.model_sieve(VRChecklist, [('A', 4), ('verified_third', True)]).filter(qs).count()
+    context['missing_third_sms'] = stats.model_sieve(VRChecklist, ['H', 'J', 'K', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'AA'], exclude=True).filter(qs).count() - context['blank_third_sms']
 
     context['vr_incidents_count'] = VRIncident.objects.all().count()
-    context['vr_incidents_today'] = VRIncident.objects.filter(date=datetime.date(datetime.today())).count()
+    context['vr_incidents_today'] = VRIncident.objects.filter(qs).count()
 
     #dco checklist sent today
-    context['dco_checklist_today'] = DCOChecklist.objects.filter(date=datetime.date(datetime.today())).count()
+    context['dco_checklist_today'] = DCOChecklist.objects.filter(qs).count()
     context['dco_incidents_count'] = DCOIncident.objects.all().count()
-    context['dco_incidents_today'] = DCOIncident.objects.filter(date=datetime.date(datetime.today())).count()
+    context['dco_incidents_today'] = DCOIncident.objects.filter(qs).count()
 
-    context['dco_checklist_first_today'] = DCOChecklist.objects.filter(sms_serial=1,date=datetime.date(datetime.today())).count()
-    context['dco_checklist_second_today'] = DCOChecklist.objects.filter(sms_serial=2,date=datetime.date(datetime.today())).count()
-    context['dco_checklist_third_today'] = DCOChecklist.objects.filter(sms_serial=3,date=datetime.date(datetime.today())).count()
+    context['dco_checklist_first_today'] = DCOChecklist.objects.filter(sms_serial=1).filter(qs).count()
+    context['dco_checklist_second_today'] = DCOChecklist.objects.filter(sms_serial=2).filter(qs).count()
+    context['dco_checklist_third_today'] = DCOChecklist.objects.filter(sms_serial=3).filter(qs).count()
 
     #render
     return render_to_response('psc/home.html', context,  context_instance=RequestContext(request))
@@ -392,7 +412,6 @@ def dco_incident_list(request):
     return render_to_response('psc/dco_incident_list.html', {'page_title': "Display, Claims & Objections Critical Incidents", 'checklists': checklists, 'filter_form': filter_form, 'page_details': page_details}, context_instance=RequestContext(request))
 
 @login_required()
-@permission_required('psc.can_administer', login_url='/')
 def message_log(request):
     qs = Q()
     if not request.session.has_key('messagelog_filter'):

@@ -7,17 +7,9 @@
                 <div class="controls">
                
                 <form method="get">
-                     Filter by Zone
-                <select name="zone">
-                    <option value="">All</option>
-                    <option value="NC">North Central</option>
-                    <option value="NE">North East</option>
-                    <option value="NW">North West</option>
-                    <option value="SE">South East</option>
-                    <option value="SS">South South</option>
-                    <option value="SW">South West</option>
-                </select>
-                <input name="Go" value="GO" type="submit" style="height: 38px; font-size: 25px">
+                     Filter by zone
+								{{ filter_form.zone }} 
+                <input name="Go" value="GO" type="submit" style="height: 34px; font-size: 20px">
                 </form>
                 </div>
                 <table width="100%" class="dashboard">
