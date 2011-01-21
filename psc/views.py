@@ -42,10 +42,14 @@ def home(request):
 
     context = {'page_title': 'PSC 2011 SwiftCount Dashboard'}
     context['filter_form'] = filter_form
-    
+
+
     #vr first missing sms
     context['missing_first_sms'] = stats.model_sieve(VRChecklist, ['submitted'], exclude=True).filter(qs).count()
     context['received_first_sms'] = stats.model_sieve(VRChecklist, ['submitted']).filter(qs).count()
+
+
+
 
     # second missing sms
     context['complete_second_sms'] = stats.model_sieve(VRChecklist, ['A', 'B', 'C', 'F', 'G', ['D1', 'D2', 'D3', 'D4'], ['E1', 'E2', 'E3', 'E4', 'E5']]).filter(A__in=[1,2,3]).filter(qs).count()
@@ -76,6 +80,10 @@ def home(request):
         Q(D3__isnull=True) | Q(D4__isnull=True)) & (Q(E1__isnull=True) | Q(E2__isnull=True) | Q(E3__isnull=True) | Q(E4__isnull=True) | Q(E5__isnull=True))
     
     context['missing_second_sms'] = VRChecklist.objects.filter(qs_missing).filter(qs).count()
+
+
+
+
 
     # third missing sms
     context['complete_third_sms'] = stats.model_sieve(VRChecklist, ['H', 'J', 'K', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'AA']).exclude(A=4).filter(qs).count()
@@ -172,37 +180,30 @@ def vr_checklist_list(request):
                       (Q(E1__isnull=True) | Q(E2__isnull=True) | Q(E3__isnull=True) | Q(E4__isnull=True) | \
                       Q(E5__isnull=True))) & Q(A=4))
 
-            if data['third'] == u'1': # complete
-                qs_include &= ~Q(A=4) & Q(H__isnull=False) & Q(J__isnull=False) & Q(K__isnull=False) & Q(M__isnull=False) & \
+            qs_complete = Q(H__isnull=False) & Q(J__isnull=False) & Q(K__isnull=False) & Q(M__isnull=False) & \
                       Q(N__isnull=False) & Q(P__isnull=False) & Q(Q__isnull=False) & Q(R__isnull=False) & \
                       Q(S__isnull=False) & Q(T__gt=0) & Q(U__gt=0) & Q(V__gt=0) & Q(W__gt=0) & Q(X__gt=0) & Q(Y__isnull=False) & \
                       Q(Z__isnull=False) & Q(AA__isnull=False)
-            elif data['third'] == u'2': # incomplete
-                qs_include &= ~Q(A=4) & Q(H__isnull=True) & Q(J__isnull=True) & Q(K__isnull=True) & Q(M__isnull=True) & \
+            qs_missing = Q(H__isnull=True) & Q(J__isnull=True) & Q(K__isnull=True) & Q(M__isnull=True) & \
                       Q(N__isnull=True) & Q(P__isnull=True) & Q(Q__isnull=True) & Q(R__isnull=True) & \
                       Q(S__isnull=True) & Q(T=0) & Q(U=0) & Q(V=0) & Q(W=0) & Q(X=0) & Q(Y__isnull=True) & \
                       Q(Z__isnull=True) & Q(AA__isnull=True)
+            qs_partial = (Q(H__isnull=False) | Q(J__isnull=False) | Q(K__isnull=False) | Q(M__isnull=False) | \
+                      Q(N__isnull=False) | Q(P__isnull=False) | Q(Q__isnull=False) | Q(R__isnull=False) | \
+                      Q(S__isnull=False) | Q(T__gt=0) | Q(U__gt=0) | Q(V__gt=0) | Q(W__gt=0) | Q(X__gt=0) | Q(Y__isnull=False) | \
+                      Q(Z__isnull=False) | Q(AA__isnull=False)) & ~(qs_complete)
+            if data['third'] == u'1': # complete
+                qs_include &= ~Q(A=4) & qs_complete
+            elif data['third'] == u'2': # missing
+                qs_include &= ~Q(A=4) & qs_missing
             elif data['third'] == u'3': # partial
-                qs_include &= Q(H__isnull=False) | Q(J__isnull=False) | Q(K__isnull=False) | Q(M__isnull=False) | \
-                      Q(N__isnull=False) | Q(P__isnull=False) | Q(Q__isnull=False) | Q(R__isnull=False) | \
-                      Q(S__isnull=False) | Q(T__gt=0) & Q(U__gt=0) | Q(V__gt=0) | Q(W__gt=0) | Q(X__gt=0) | Q(Y__isnull=False) | \
-                      Q(Z__isnull=False) | Q(AA__isnull=False) 
-                qs_exclude &= ~Q(A=4) & Q(H__isnull=False) & Q(J__isnull=False) & Q(K__isnull=False) & Q(M__isnull=False) & \
-                      Q(N__isnull=False) & Q(P__isnull=False) & Q(Q__isnull=False) & Q(R__isnull=False) & \
-                      Q(S__isnull=False) & Q(T__gt=0) & Q(U__gt=0) & Q(V__gt=0) & Q(W__gt=0) & Q(X__gt=0) & Q(Y__isnull=False) & \
-                      Q(Z__isnull=False) & Q(AA__isnull=False) | Q(A=4)
+                qs_include &= ~Q(A=4) & qs_partial
             elif data['third'] == u'4': # not open unverified
-                qs_include &= Q(A=4) & Q(verified_third=False) & (Q(H__isnull=False) | Q(J__isnull=False) | Q(K__isnull=False) | Q(M__isnull=False) | \
-                      Q(N__isnull=False) | Q(P__isnull=False) | Q(Q__isnull=False) | Q(R__isnull=False) | \
-                      Q(S__isnull=False) | Q(T__gt=0) & Q(U__gt=0) | Q(V__gt=0) | Q(W__gt=0) | Q(X__gt=0) | Q(Y__isnull=False) | \
-                      Q(Z__isnull=False) | Q(AA__isnull=False))
+                qs_include &= ((Q(A=4) & qs_partial) | (Q(A=4) & qs_complete & Q(verified_third=False)))
             elif data['third'] == u'5': # not open verified
-                qs_include &= Q(A=4) & Q(verified_third=True)
+                qs_include &= ((Q(A=4) & Q(verified_third=True) & qs_partial))
             elif data['third'] == u'6': # blank
-                qs_include &= Q(A=4) & Q(H__isnull=True) & Q(J__isnull=True) & Q(K__isnull=True) & Q(M__isnull=True) & \
-                      Q(N__isnull=True) & Q(P__isnull=True) & Q(Q__isnull=True) & Q(R__isnull=True) & \
-                      Q(S__isnull=True) & Q(T=0) & Q(U=0) & Q(V=0) & Q(W=0) & Q(X=0) & Q(Y__isnull=True) & \
-                      Q(Z__isnull=True) & Q(AA__isnull=True)
+                qs_include &= Q(A=4) & qs_missing
             
             if data['observer_id']:
                 qs_include = Q(observer__observer_id__exact=data['observer_id'])
