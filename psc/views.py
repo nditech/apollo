@@ -85,27 +85,31 @@ def home(request):
 
 
 
+    qs_complete = Q(H__isnull=False) & Q(J__isnull=False) & Q(K__isnull=False) & Q(M__isnull=False) & \
+              Q(N__isnull=False) & Q(P__isnull=False) & Q(Q__isnull=False) & Q(R__isnull=False) & \
+              Q(S__isnull=False) & Q(T__gt=0) & Q(U__gt=0) & Q(V__gt=0) & Q(W__gt=0) & Q(X__gt=0) & Q(Y__isnull=False) & \
+              Q(Z__isnull=False) & Q(AA__isnull=False)
+    qs_missing = Q(H__isnull=True) & Q(J__isnull=True) & Q(K__isnull=True) & Q(M__isnull=True) & \
+              Q(N__isnull=True) & Q(P__isnull=True) & Q(Q__isnull=True) & Q(R__isnull=True) & \
+              Q(S__isnull=True) & Q(T=0) & Q(U=0) & Q(V=0) & Q(W=0) & Q(X=0) & Q(Y__isnull=True) & \
+              Q(Z__isnull=True) & Q(AA__isnull=True)
+    qs_partial = (Q(H__isnull=False) | Q(J__isnull=False) | Q(K__isnull=False) | Q(M__isnull=False) | \
+              Q(N__isnull=False) | Q(P__isnull=False) | Q(Q__isnull=False) | Q(R__isnull=False) | \
+              Q(S__isnull=False) | Q(T__gt=0) | Q(U__gt=0) | Q(V__gt=0) | Q(W__gt=0) | Q(X__gt=0) | Q(Y__isnull=False) | \
+              Q(Z__isnull=False) | Q(AA__isnull=False)) & ~(qs_complete)
+    qs_third_complete = ~Q(A=4) & qs_complete
+    qs_third_missing = ~Q(A=4) & qs_missing
+    qs_third_partial = ~Q(A=4) & qs_partial
+    qs_third_problem = ((Q(A=4) & qs_partial) | (Q(A=4) & qs_complete & Q(verified_third=False)))
+    qs_third_verified = ((Q(A=4) & Q(verified_third=True) & qs_partial))
+    qs_third_blank = Q(A=4) & qs_missing
     # third missing sms
-    context['complete_third_sms'] = stats.model_sieve(VRChecklist, ['H', 'J', 'K', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'AA']).exclude(A=4).filter(qs).count()
-    context['complete_third_sms'] += stats.model_sieve(VRChecklist, ['H', 'J', 'K', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'AA', ('A', 4), ('verified_third', True)]).filter(qs).count()
-    context['blank_third_sms'] = stats.model_sieve(VRChecklist, [['H', 'J', 'K', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'AA']], exclude=True).filter(A=4).filter(qs).count()
-    third_partial_qs_include = Q(H__isnull=False) | Q(J__isnull=False) | Q(K__isnull=False) | Q(M__isnull=False) | \
-          Q(N__isnull=False) | Q(P__isnull=False) | Q(Q__isnull=False) | Q(R__isnull=False) | \
-          Q(S__isnull=False) | Q(T__gt=0) & Q(U__gt=0) | Q(V__gt=0) | Q(W__gt=0) | Q(X__gt=0) | Q(Y__isnull=False) | \
-          Q(Z__isnull=False) | Q(AA__isnull=False) 
-    third_partial_qs_exclude = ~Q(A=4) & Q(H__isnull=False) & Q(J__isnull=False) & Q(K__isnull=False) & Q(M__isnull=False) & \
-          Q(N__isnull=False) & Q(P__isnull=False) & Q(Q__isnull=False) & Q(R__isnull=False) & \
-          Q(S__isnull=False) & Q(T__gt=0) & Q(U__gt=0) & Q(V__gt=0) & Q(W__gt=0) & Q(X__gt=0) & Q(Y__isnull=False) & \
-          Q(Z__isnull=False) & Q(AA__isnull=False) | Q(A=4)
-    context['partial_third_sms'] = VRChecklist.objects.filter(qs).filter(third_partial_qs_include).exclude(third_partial_qs_exclude).count()
-    third_unverified_qs = Q(A=4) & Q(verified_third=False) & (Q(H__isnull=False) | Q(J__isnull=False) | Q(K__isnull=False) | Q(M__isnull=False) | \
-          Q(N__isnull=False) | Q(P__isnull=False) | Q(Q__isnull=False) | Q(R__isnull=False) | \
-          Q(S__isnull=False) | Q(T__gt=0) & Q(U__gt=0) | Q(V__gt=0) | Q(W__gt=0) | Q(X__gt=0) | Q(Y__isnull=False) | \
-          Q(Z__isnull=False) | Q(AA__isnull=False))
-    context['unverified_third_sms'] = VRChecklist.objects.filter(qs).filter(third_unverified_qs).count()
-    context['not_open_third_sms'] = stats.model_sieve(VRChecklist, [('A', 4), ('verified_third', True)]).filter(qs).count()
-    #context['missing_third_sms'] = stats.model_sieve(VRChecklist, [['H', 'J', 'K', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'AA']], exclude=True).filter(qs).exclude(A=4).count() - context['blank_third_sms'] - context['partial_third_sms']
-    context['missing_third_sms'] = stats.model_sieve(VRChecklist, [['H', 'J', 'K', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'AA']], exclude=True).exclude(A=4).filter(qs).count() - context['blank_third_sms']
+    context['complete_third_sms'] = VRChecklist.objects.filter(qs_third_complete).filter(qs).count()
+    context['blank_third_sms'] = VRChecklist.objects.filter(qs_third_blank).filter(qs).count()
+    context['partial_third_sms'] = VRChecklist.objects.filter(qs).filter(qs_third_partial).count()
+    context['unverified_third_sms'] = VRChecklist.objects.filter(qs).filter(qs_third_problem).count()
+    context['not_open_third_sms'] = VRChecklist.objects.filter(qs_third_verified).filter(qs).count()
+    context['missing_third_sms'] = VRChecklist.objects.filter(qs_third_missing).filter(qs).count()
 
     context['vr_incidents_count'] = VRIncident.objects.all().count()
     context['vr_incidents_today'] = VRIncident.objects.filter(qs).count()
