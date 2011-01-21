@@ -93,7 +93,11 @@
 												{% if cl.B and cl.C != None and cl.F != None and cl.G %}
 													{% if cl.D1 or cl.D2 or cl.D3 or cl.D4 %}
 														{% if cl.E1 or cl.E2 or cl.E3 or cl.E4 or cl.E5 %}
-															<img src="/assets/img/status.png" width="16" height="16" alt="incomplete" />
+															{% if cl.A != None %}
+																<img src="/assets/img/status.png" width="16" height="16" alt="incomplete" />
+															{% else %}
+																<img src="/assets/img/status-away.png" width="16" height="16" alt="incomplete" />
+															{% endif %}
 														{% else %}
 															<img src="/assets/img/status-away.png" width="16" height="16" alt="incomplete" />
 														{% endif %}
