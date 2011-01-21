@@ -627,7 +627,36 @@ def state_summary(request):
     return render_to_response('psc/state_summary.html', {'page_title': 'State Summary', 'state_list': state_list},  context_instance=RequestContext(request))
 
 def vr_checklist_analysis(request):
-    return render_to_response('psc/vr_checklist_analysis.html', {'page_title': 'Voter Registration Checklist Analysis'})
+    qs = Q(date=datetime.date(datetime(2011, 1, 20)))
+
+    ctx = RequestContext(request)
+    ctx['question'] = dict()
+    ctx['question']['A'] = stats.vr_QA(qs) 
+    ctx['question']['B'] = stats.vr_QB(qs)
+    ctx['question']['C'] = stats.vr_QC(qs)
+    ctx['question']['D'] = stats.vr_QD(qs)
+    ctx['question']['E'] = stats.vr_QE(qs)
+    ctx['question']['F'] = stats.vr_QF(qs)
+    ctx['question']['G'] = stats.vr_QG(qs)
+    ctx['question']['H'] = stats.vr_QH(qs)
+    ctx['question']['J'] = stats.vr_QJ(qs)
+    ctx['question']['K'] = stats.vr_QK(qs)
+    ctx['question']['M'] = stats.vr_QM(qs)
+    ctx['question']['N'] = stats.vr_QN(qs)
+    ctx['question']['P'] = stats.vr_QP(qs)
+    ctx['question']['Q'] = stats.vr_QQ(qs)
+    ctx['question']['R'] = stats.vr_QR(qs)
+    ctx['question']['S'] = stats.vr_QS(qs)
+    ctx['question']['T'] = stats.vr_QT(qs)
+    ctx['question']['U'] = stats.vr_QU(qs)
+    ctx['question']['V'] = stats.vr_QV(qs)
+    ctx['question']['W'] = stats.vr_QW(qs)
+    ctx['question']['X'] = stats.vr_QX(qs)
+    ctx['question']['Y'] = stats.vr_QY(qs)
+    ctx['question']['Z'] = stats.vr_QZ(qs)
+    ctx['question']['AA'] = stats.vr_QAA(qs)
+    
+    return render_to_response('psc/vr_checklist_analysis.html', {'page_title': 'Voter Registration Checklist Analysis'}, context_instance=ctx)
 
 
 #ajax methods
