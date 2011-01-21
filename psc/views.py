@@ -19,12 +19,13 @@ items_per_page = 25
 
 @login_required()
 def home(request):
-    qs = Q(date=datetime.date(datetime.today()))
+    filter_date = datetime.date(datetime.today())
+    qs = Q()
     if not request.session.has_key('dashboard_filter'):
         request.session['dashboard_filter'] = {}
 
     if request.method == 'GET':
-        if filter(lambda key: request.GET.has_key(key), ['zone']):
+        if filter(lambda key: request.GET.has_key(key), ['zone', 'date']):
             request.session['dashboard_filter'] = request.GET
         filter_form = DashboardFilterForm(request.session['dashboard_filter'])
 
@@ -33,8 +34,11 @@ def home(request):
 
             if data['zone']:
                 qs &= Q(location_id__in=RegistrationCenter.objects.filter(parent__parent__parent__parent__code__iexact=data['zone']).values('id'))
+            if data['date']:
+                filter_date = datetime.date(datetime.strptime(data['date'], '%Y-%m-%d'))
     else:
         filter_form = DashboardFilterForm()
+    qs = Q(date=filter_date) & qs
 
     context = {'page_title': 'PSC 2011 SwiftCount Dashboard'}
     context['filter_form'] = filter_form

@@ -45,6 +45,20 @@ DCO_DAYS = (('', 'All'),
         (datetime.date(datetime(2011, 2, 3)), 'Thu 3-Feb'),
         (datetime.date(datetime(2011, 2, 8)), 'Tue 8-Feb'))
 
+vr_checklist_dates =  list(VRChecklist.objects.all().distinct('date').values_list('date', flat=True).order_by('date'))
+dco_checklist_dates = list(DCOChecklist.objects.all().distinct('date').values_list('date', flat=True).order_by('date'))
+checklist_dates = vr_checklist_dates + dco_checklist_dates
+
+# make the checklist dates unique
+checklist_dates = list(set(checklist_dates))
+checklist_dates.sort()
+checklist_date_choices = [[datetime.date(datetime.today()), 'Today']]
+
+for checklist_date in checklist_dates:
+    checklist_date_choices.append((checklist_date, checklist_date.strftime('%Y %d-%b %a')))
+
+checklist_date_choices = tuple(checklist_date_choices)
+
 class VRChecklistForm(forms.ModelForm):
     class Meta:
         model = VRChecklist
@@ -119,3 +133,4 @@ class MessagelogFilterForm(forms.Form):
 
 class DashboardFilterForm(forms.Form):
     zone = forms.ChoiceField(choices=ZONES, required=False)
+    date = forms.ChoiceField(choices=checklist_date_choices, required=False)
