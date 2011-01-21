@@ -331,5 +331,93 @@
             </table>
         </div>
     </div>
+    <div class="box">
+        <h2>Number of Registrations</h2>
+        <div class="block">
+            <table width="100%" class="summary">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Question</th>
+                        <th>n</th>
+                        <th>Average</th>                       
+                    </tr>
+                </thead>
+                <tr>
+                    <td>Y</td>
+                    <td>{{ question.y.label }}</td>
+                    <td>{{ question.y.n }}</td>
+                    <td>{{ question.y.average }}</td>
+                </tr>
+                <tr>
+                    <td>Z</td>
+                    <td>{{ question.z.label }}</td>
+                    <td>{{ question.z.n }}</td>
+                    <td>{{ question.z.average }}</td>
+                </tr>
+                <tr>
+                    <td>AA</td>
+                    <td>{{ question.aa.label }}</td>
+                    <td>{{ question.aa.n }}</td>
+                    <td>{{ question.aa.average }}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="box">
+        <h2>Custom Analysis</h2>
+        <div class="block">
+            <table width="100%" class="summary">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Question</th>
+                        <th>n</th>
+                        <th>0%</th>
+                        <th>0.1% - 2.4%</th>
+                        <th>2.5% - 4.9%</th>
+                        <th>5.0% - 9.9%</th>
+                        <th>10% - Above</th>
+                    </tr>
+                </thead>
+                <tr>
+                    <td>Custom</td>
+                    <td>{{ question.custom.label }}</td>
+                    <td>{{ question.custom.n }}</td>
+                    <td>{{ question.custom.zero_two }}</td>
+                    <td>{{ question.custom.two_five }}</td>
+                    <td>{{ question.custom.five_zero }}</td>
+                    <td>{{ question.custom.ten_above }}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="box">
+        <h2>Numeric Questions</h2>
+        <div class="block">
+            <table width="100%" class="summary">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Question</th>
+                        <th>n</th>
+                        <th>Average</th>
+                    </tr>
+                </thead>
+                <tr>
+                    <td>C</td>
+                    <td>{{ question.c.label }}</td>
+                    <td>{{ question.c.n }}</td>
+                    <td>{{ question.c.average }}</td>
+                </tr>
+                <tr>
+                    <td>F</td>
+                    <td>{{ question.f.label }}</td>
+                    <td>{{ question.f.n }}</td>
+                    <td>{{ question.f.average }}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
 </div>
 {% endblock %}
