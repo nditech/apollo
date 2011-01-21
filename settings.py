@@ -78,7 +78,6 @@ INSTALLED_APPS = [
     "rapidsms.contrib.echo",
 
     "psc",
-    "django_extensions",
     'south',
 ]
 
