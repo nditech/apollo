@@ -1,5 +1,6 @@
 {% extends 'psc/layout.html' %}
 {% block content %}
+{% load calc %}
 <div class="grid_16">
     <div class="box">
         <h2>Yes / No Questions</h2>
@@ -9,80 +10,73 @@
                     <tr>
                         <th>No</th>
                         <th>Question</th>
-                        <th colspan="2">n</th>
+                        <th>n</th>
                         <th colspan="2">Yes</th>
                         <th colspan="2">No</th>
                     </tr>
                 </thead>
                     <tr>
                         <th>B</th>
-                        <th>{{ questions.b.label }}</th>
-                        <th>{{ questions.b.n_figure }}</th>
-                        <th>{{ questions.b.n_percentage }}</th>
-                        <th>{{ questions.b.yes_figure }}</th>
-                        <th>{{ questions.b.yes_percentage }}</th>
-                        <th>{{ questions.b.no_figure }}</th>
-                        <th>{{ questions.b.no_percentage }}</th>
+                        <th>{{ question.B.label }}</th>
+                        <th>{{ question.B.n }}</th>
+                        <th>{{ question.B.options.1 }}</th>
+                        <th><strong>{{ question.B.options.1|percentage:question.B.n }}</strong></th>
+                        <th>{{ question.B.options.2 }}</th>
+                        <th><strong>{{ question.B.options.2|percentage:question.B.n }}</strong></th>
                     </tr>
                     <tr>
                         <th>G</th>
-                        <th>{{ questions.g.label }}</th>
-                        <th>{{ questions.g.n_figure }}</th>
-                        <th>{{ questions.g.n_percentage }}</th>
-                        <th>{{ questions.g.yes_figure }}</th>
-                        <th>{{ questions.g.yes_percentage }}</th>
-                        <th>{{ questions.g.no_figure }}</th>
-                        <th>{{ questions.g.no_percentage }}</th>
+                        <th>{{ question.G.label }}</th>
+                        <th>{{ question.G.n }}</th>
+                        <th>{{ question.G.options.1 }}</th>
+                        <th><strong>{{ question.G.options.1|percentage:question.G.n }}</strong></th>
+                        <th>{{ question.G.options.2 }}</th>
+                        <th><strong>{{ question.G.options.2|percentage:question.G.n }}</strong></th>
                     </tr>
                     <tr>
                         <th>T</th>
-                        <th>{{ questions.t.label }}</th>
-                        <th>{{ questions.t.n_figure }}</th>
-                        <th>{{ questions.t.n_percentage }}</th>
-                        <th>{{ questions.t.yes_figure }}</th>
-                        <th>{{ questions.t.yes_percentage }}</th>
-                        <th>{{ questions.t.no_figure }}</th>
-                        <th>{{ questions.t.no_percentage }}</th>
+                        <th>{{ question.T.label }}</th>
+                        <th>{{ question.T.n }}</th>
+                        <th>{{ question.T.options.1 }}</th>
+                        <th><strong>{{ question.T.options.1|percentage:question.T.n }}</strong></th>
+                        <th>{{ question.T.options.2 }}</th>
+                        <th><strong>{{ question.T.options.2|percentage:question.T.n }}</strong></th>
                     </tr>
                     <tr>
                         <th>U</th>
-                        <th>{{ questions.u.label }}</th>
-                        <th>{{ questions.u.n_figure }}</th>
-                        <th>{{ questions.u.n_percentage }}</th>
-                        <th>{{ questions.u.yes_figure }}</th>
-                        <th>{{ questions.u.yes_percentage }}</th>
-                        <th>{{ questions.u.no_figure }}</th>
-                        <th>{{ questions.u.no_percentage }}</th>
+                        <th>{{ question.U.label }}</th>
+                        <th>{{ question.U.n }}</th>
+                        <th>{{ question.U.options.1 }}</th>
+                        <th><strong>{{ question.U.options.1|percentage:question.U.n }}</strong></th>
+                        <th>{{ question.U.options.2 }}</th>
+                        <th><strong>{{ question.U.options.2|percentage:question.U.n }}</strong></th>
                     </tr>
                     <tr>
                         <th>V</th>
-                        <th>{{ questions.v.label }}</th>
-                        <th>{{ questions.v.n_figure }}</th>
-                        <th>{{ questions.v.n_percentage }}</th>
-                        <th>{{ questions.v.yes_figure }}</th>
-                        <th>{{ questions.v.yes_percentage }}</th>
-                        <th>{{ questions.v.no_figure }}</th>
-                        <th>{{ questions.v.no_percentage }}</th>
+                        <th>{{ question.V.label }}</th>
+                        <th>{{ question.V.n }}</th>
+                        <th>{{ question.V.options.1 }}</th>
+                        <th><strong>{{ question.V.options.1|percentage:question.V.n }}</strong></th>
+                        <th>{{ question.V.options.2 }}</th>
+                        <th><strong>{{ question.V.options.2|percentage:question.V.n }}</strong></th>
                     </tr>
                     <tr>
                         <th>W</th>
-                        <th>{{ questions.w.label }}</th>
-                        <th>{{ questions.w.n_figure }}</th>
-                        <th>{{ questions.w.n_percentage }}</th>
-                        <th>{{ questions.w.yes_figure }}</th>
-                        <th>{{ questions.w.yes_percentage }}</th>
-                        <th>{{ questions.w.no_figure }}</th>
-                        <th>{{ questions.w.no_percentage }}</th>
+                        <th>{{ question.W.label }}</th>
+                        <th>{{ question.W.n }}</th>
+                        <th>{{ question.W.options.1 }}</th>
+                        <th><strong>{{ question.W.options.1|percentage:question.W.n }}</strong></th>
+                        <th>{{ question.W.options.2 }}</th>
+                        <th><strong>{{ question.W.options.2|percentage:question.W.n }}</strong></th>
                     </tr>
                     <tr>
                         <th>X</th>
-                        <th>{{ questions.x.label }}</th>
-                        <th>{{ questions.x.n_figure }}</th>
-                        <th>{{ questions.x.n_percentage }}</th>
-                        <th>{{ questions.x.yes_figure }}</th>
-                        <th>{{ questions.x.yes_percentage }}</th>
-                        <th>{{ questions.x.no_figure }}</th>
-                        <th>{{ questions.x.no_percentage }}</th>
+                        <th>{{ question.X.label }}</th>
+                        <th>{{ question.X.n }}</th>
+                        <th>{{ question.X.options.1 }}</th>
+                        <th><strong>{{ question.X.options.1|percentage:question.X.n }}</strong></th>
+                        <th>{{ question.X.options.2 }}</th>
+                        <th><strong>{{ question.X.options.2|percentage:question.X.n }}</strong></th>
                     </tr>
             </table>
         </div>
@@ -95,7 +89,7 @@
                     <tr>
                         <th>No</th>
                         <th>Question</th>
-                        <th colspan="2">n</th>
+                        <th>n</th>
                         <th colspan="2">None</th>
                         <th colspan="2">Few</th>
                         <th colspan="2">Half</th>
@@ -105,149 +99,139 @@
                 </thead>
                     <tr>
                         <th>H</th>
-                        <th>{{ questions.h.label }}</th>
-                        <th>{{ questions.h.n_figure }}</th>
-                        <th>{{ questions.h.n_percentage }}</th>
-                        <th>{{ questions.h.none_figure }}</th>
-                        <th>{{ questions.h.none_percentage }}</th>
-                        <th>{{ questions.h.few_figure }}</th>
-                        <th>{{ questions.h.few_percentage }}</th>
-                        <th>{{ questions.h.half_figure }}</th>
-                        <th>{{ questions.h.half_percentage }}</th>
-                        <th>{{ questions.h.most_figure }}</th>
-                        <th>{{ questions.h.most_percentage }}</th>
-                        <th>{{ questions.h.all_figure }}</th>
-                        <th>{{ questions.h.all_percentage }}</th>
+                        <td>{{ question.H.label }}</td>
+                        <td>{{ question.H.n }}</td>
+                        <td>{{ question.H.options.1 }}</td>
+                        <td><strong>{{ question.H.options.1|percentage:question.H.n }}</strong></td>
+                        <td>{{ question.H.options.2 }}</td>
+                        <td><strong>{{ question.H.options.2|percentage:question.H.n }}</strong></td>
+                        <td>{{ question.H.options.3 }}</td>
+                        <td><strong>{{ question.H.options.3|percentage:question.H.n }}</strong></td>
+                        <td>{{ question.H.options.4 }}</td>
+                        <td><strong>{{ question.H.options.4|percentage:question.H.n }}</strong></td>
+                        <td>{{ question.H.options.5 }}</td>
+                        <td><strong>{{ question.H.options.5|percentage:question.H.n }}</strong></td>
                     </tr>
                     <tr>
                         <th>J</th>
-                        <th>{{ questions.j.label }}</th>
-                        <th>{{ questions.j.n_figure }}</th>
-                        <th>{{ questions.j.n_percentage }}</th>
-                        <th>{{ questions.j.none_figure }}</th>
-                        <th>{{ questions.j.none_percentage }}</th>
-                        <th>{{ questions.j.few_figure }}</th>
-                        <th>{{ questions.j.few_percentage }}</th>
-                        <th>{{ questions.j.half_figure }}</th>
-                        <th>{{ questions.j.half_percentage }}</th>
-                        <th>{{ questions.j.most_figure }}</th>
-                        <th>{{ questions.j.most_percentage }}</th>
-                        <th>{{ questions.j.all_figure }}</th>
-                        <th>{{ questions.j.all_percentage }}</th>
+                        <td>{{ question.J.label }}</td>
+                        <td>{{ question.J.n }}</td>
+                        <td>{{ question.J.options.1 }}</td>
+                        <td><strong>{{ question.J.options.1|percentage:question.J.n }}</strong></td>
+                        <td>{{ question.J.options.2 }}</td>
+                        <td><strong>{{ question.J.options.2|percentage:question.J.n }}</strong></td>
+                        <td>{{ question.J.options.3 }}</td>
+                        <td><strong>{{ question.J.options.3|percentage:question.J.n }}</strong></td>
+                        <td>{{ question.J.options.4 }}</td>
+                        <td><strong>{{ question.J.options.4|percentage:question.J.n }}</strong></td>
+                        <td>{{ question.J.options.5 }}</td>
+                        <td><strong>{{ question.J.options.5|percentage:question.J.n }}</strong></td>
                     </tr>
                     <tr>
                         <th>K</th>
-                        <th>{{ questions.k.label }}</th>
-                        <th>{{ questions.k.n_figure }}</th>
-                        <th>{{ questions.k.n_percentage }}</th>
-                        <th>{{ questions.k.none_figure }}</th>
-                        <th>{{ questions.k.none_percentage }}</th>
-                        <th>{{ questions.k.few_figure }}</th>
-                        <th>{{ questions.k.few_percentage }}</th>
-                        <th>{{ questions.k.half_figure }}</th>
-                        <th>{{ questions.k.half_percentage }}</th>
-                        <th>{{ questions.k.most_figure }}</th>
-                        <th>{{ questions.k.most_percentage }}</th>
-                        <th>{{ questions.k.all_figure }}</th>
-                        <th>{{ questions.k.all_percentage }}</th>
+                        <td>{{ question.K.label }}</td>
+                        <td>{{ question.K.n }}</td>
+                        <td>{{ question.K.options.1 }}</td>
+                        <td><strong>{{ question.K.options.1|percentage:question.K.n }}</strong></td>
+                        <td>{{ question.K.options.2 }}</td>
+                        <td><strong>{{ question.K.options.2|percentage:question.K.n }}</strong></td>
+                        <td>{{ question.K.options.3 }}</td>
+                        <td><strong>{{ question.K.options.3|percentage:question.K.n }}</strong></td>
+                        <td>{{ question.K.options.4 }}</td>
+                        <td><strong>{{ question.K.options.4|percentage:question.K.n }}</strong></td>
+                        <td>{{ question.K.options.5 }}</td>
+                        <td><strong>{{ question.K.options.5|percentage:question.K.n }}</strong></td>
                     </tr>
                     <tr>
                         <th>M</th>
-                        <th>{{ questions.m.label }}</th>
-                        <th>{{ questions.m.n_figure }}</th>
-                        <th>{{ questions.m.n_percentage }}</th>
-                        <th>{{ questions.m.none_figure }}</th>
-                        <th>{{ questions.m.none_percentage }}</th>
-                        <th>{{ questions.m.few_figure }}</th>
-                        <th>{{ questions.m.few_percentage }}</th>
-                        <th>{{ questions.m.half_figure }}</th>
-                        <th>{{ questions.m.half_percentage }}</th>
-                        <th>{{ questions.m.most_figure }}</th>
-                        <th>{{ questions.m.most_percentage }}</th>
-                        <th>{{ questions.m.all_figure }}</th>
-                        <th>{{ questions.m.all_percentage }}</th>
+                        <td>{{ question.M.label }}</td>
+                        <td>{{ question.M.n }}</td>
+                        <td>{{ question.M.options.1 }}</td>
+                        <td><strong>{{ question.M.options.1|percentage:question.M.n }}</strong></td>
+                        <td>{{ question.M.options.2 }}</td>
+                        <td><strong>{{ question.M.options.2|percentage:question.M.n }}</strong></td>
+                        <td>{{ question.M.options.3 }}</td>
+                        <td><strong>{{ question.M.options.3|percentage:question.M.n }}</strong></td>
+                        <td>{{ question.M.options.4 }}</td>
+                        <td><strong>{{ question.M.options.4|percentage:question.M.n }}</strong></td>
+                        <td>{{ question.M.options.5 }}</td>
+                        <td><strong>{{ question.M.options.5|percentage:question.M.n }}</strong></td>
                     </tr>
                     <tr>
                         <th>N</th>
-                        <th>{{ questions.n.label }}</th>
-                        <th>{{ questions.n.n_figure }}</th>
-                        <th>{{ questions.n.n_percentage }}</th>
-                        <th>{{ questions.n.none_figure }}</th>
-                        <th>{{ questions.n.none_percentage }}</th>
-                        <th>{{ questions.n.few_figure }}</th>
-                        <th>{{ questions.n.few_percentage }}</th>
-                        <th>{{ questions.n.half_figure }}</th>
-                        <th>{{ questions.n.half_percentage }}</th>
-                        <th>{{ questions.n.most_figure }}</th>
-                        <th>{{ questions.n.most_percentage }}</th>
-                        <th>{{ questions.n.all_figure }}</th>
-                        <th>{{ questions.n.all_percentage }}</th>
+                        <td>{{ question.N.label }}</td>
+                        <td>{{ question.N.n }}</td>
+                        <td>{{ question.N.options.1 }}</td>
+                        <td><strong>{{ question.N.options.1|percentage:question.N.n }}</strong></td>
+                        <td>{{ question.N.options.2 }}</td>
+                        <td><strong>{{ question.N.options.2|percentage:question.N.n }}</strong></td>
+                        <td>{{ question.N.options.3 }}</td>
+                        <td><strong>{{ question.N.options.3|percentage:question.N.n }}</strong></td>
+                        <td>{{ question.N.options.4 }}</td>
+                        <td><strong>{{ question.N.options.4|percentage:question.N.n }}</strong></td>
+                        <td>{{ question.N.options.5 }}</td>
+                        <td><strong>{{ question.N.options.5|percentage:question.N.n }}</strong></td>
                     </tr>
                     <tr>
                         <th>P</th>
-                        <th>{{ questions.p.label }}</th>
-                        <th>{{ questions.p.n_figure }}</th>
-                        <th>{{ questions.p.n_percentage }}</th>
-                        <th>{{ questions.p.none_figure }}</th>
-                        <th>{{ questions.p.none_percentage }}</th>
-                        <th>{{ questions.p.few_figure }}</th>
-                        <th>{{ questions.p.few_percentage }}</th>
-                        <th>{{ questions.p.half_figure }}</th>
-                        <th>{{ questions.p.half_percentage }}</th>
-                        <th>{{ questions.p.most_figure }}</th>
-                        <th>{{ questions.p.most_percentage }}</th>
-                        <th>{{ questions.p.all_figure }}</th>
-                        <th>{{ questions.p.all_percentage }}</th>
+                        <td>{{ question.P.label }}</td>
+                        <td>{{ question.P.n }}</td>
+                        <td>{{ question.P.options.1 }}</td>
+                        <td><strong>{{ question.P.options.1|percentage:question.P.n }}</strong></td>
+                        <td>{{ question.P.options.2 }}</td>
+                        <td><strong>{{ question.P.options.2|percentage:question.P.n }}</strong></td>
+                        <td>{{ question.P.options.3 }}</td>
+                        <td><strong>{{ question.P.options.3|percentage:question.P.n }}</strong></td>
+                        <td>{{ question.P.options.4 }}</td>
+                        <td><strong>{{ question.P.options.4|percentage:question.P.n }}</strong></td>
+                        <td>{{ question.P.options.5 }}</td>
+                        <td><strong>{{ question.P.options.5|percentage:question.P.n }}</strong></td>
                     </tr>
                     <tr>
                         <th>Q</th>
-                        <th>{{ questions.q.label }}</th>
-                        <th>{{ questions.q.n_figure }}</th>
-                        <th>{{ questions.q.n_percentage }}</th>
-                        <th>{{ questions.q.none_figure }}</th>
-                        <th>{{ questions.q.none_percentage }}</th>
-                        <th>{{ questions.q.few_figure }}</th>
-                        <th>{{ questions.q.few_percentage }}</th>
-                        <th>{{ questions.q.half_figure }}</th>
-                        <th>{{ questions.q.half_percentage }}</th>
-                        <th>{{ questions.q.most_figure }}</th>
-                        <th>{{ questions.q.most_percentage }}</th>
-                        <th>{{ questions.q.all_figure }}</th>
-                        <th>{{ questions.q.all_percentage }}</th>
+                        <td>{{ question.Q.label }}</td>
+                        <td>{{ question.Q.n }}</td>
+                        <td>{{ question.Q.options.1 }}</td>
+                        <td><strong>{{ question.Q.options.1|percentage:question.Q.n }}</strong></td>
+                        <td>{{ question.Q.options.2 }}</td>
+                        <td><strong>{{ question.Q.options.2|percentage:question.Q.n }}</strong></td>
+                        <td>{{ question.Q.options.3 }}</td>
+                        <td><strong>{{ question.Q.options.3|percentage:question.Q.n }}</strong></td>
+                        <td>{{ question.Q.options.4 }}</td>
+                        <td><strong>{{ question.Q.options.4|percentage:question.Q.n }}</strong></td>
+                        <td>{{ question.Q.options.5 }}</td>
+                        <td><strong>{{ question.Q.options.5|percentage:question.Q.n }}</strong></td>
                     </tr>
                     <tr>
                         <th>R</th>
-                        <th>{{ questions.r.label }}</th>
-                        <th>{{ questions.r.n_figure }}</th>
-                        <th>{{ questions.r.n_percentage }}</th>
-                        <th>{{ questions.r.none_figure }}</th>
-                        <th>{{ questions.r.none_percentage }}</th>
-                        <th>{{ questions.r.few_figure }}</th>
-                        <th>{{ questions.r.few_percentage }}</th>
-                        <th>{{ questions.r.half_figure }}</th>
-                        <th>{{ questions.r.half_percentage }}</th>
-                        <th>{{ questions.r.most_figure }}</th>
-                        <th>{{ questions.r.most_percentage }}</th>
-                        <th>{{ questions.r.all_figure }}</th>
-                        <th>{{ questions.r.all_percentage }}</th>
+                        <td>{{ question.R.label }}</td>
+                        <td>{{ question.R.n }}</td>
+                        <td>{{ question.R.options.1 }}</td>
+                        <td><strong>{{ question.R.options.1|percentage:question.R.n }}</strong></td>
+                        <td>{{ question.R.options.2 }}</td>
+                        <td><strong>{{ question.R.options.2|percentage:question.R.n }}</strong></td>
+                        <td>{{ question.R.options.3 }}</td>
+                        <td><strong>{{ question.R.options.3|percentage:question.R.n }}</strong></td>
+                        <td>{{ question.R.options.4 }}</td>
+                        <td><strong>{{ question.R.options.4|percentage:question.R.n }}</strong></td>
+                        <td>{{ question.R.options.5 }}</td>
+                        <td><strong>{{ question.R.options.5|percentage:question.R.n }}</strong></td>
                     </tr>
                     <tr>
                         <th>S</th>
-                        <th>{{ questions.s.label }}</th>
-                        <th>{{ questions.s.n_figure }}</th>
-                        <th>{{ questions.s.n_percentage }}</th>
-                        <th>{{ questions.s.none_figure }}</th>
-                        <th>{{ questions.s.none_percentage }}</th>
-                        <th>{{ questions.s.few_figure }}</th>
-                        <th>{{ questions.s.few_percentage }}</th>
-                        <th>{{ questions.s.half_figure }}</th>
-                        <th>{{ questions.s.half_percentage }}</th>
-                        <th>{{ questions.s.most_figure }}</th>
-                        <th>{{ questions.s.most_percentage }}</th>
-                        <th>{{ questions.s.all_figure }}</th>
-                        <th>{{ questions.s.all_percentage }}</th>
+                        <td>{{ question.S.label }}</td>
+                        <td>{{ question.S.n }}</td>
+                        <td>{{ question.S.options.1 }}</td>
+                        <td><strong>{{ question.S.options.1|percentage:question.S.n }}</strong></td>
+                        <td>{{ question.S.options.2 }}</td>
+                        <td><strong>{{ question.S.options.2|percentage:question.S.n }}</strong></td>
+                        <td>{{ question.S.options.3 }}</td>
+                        <td><strong>{{ question.S.options.3|percentage:question.S.n }}</strong></td>
+                        <td>{{ question.S.options.4 }}</td>
+                        <td><strong>{{ question.S.options.4|percentage:question.S.n }}</strong></td>
+                        <td>{{ question.S.options.5 }}</td>
+                        <td><strong>{{ question.S.options.5|percentage:question.S.n }}</strong></td>
                     </tr>
-                    
             </table>
         </div>
     </div>
@@ -259,26 +243,25 @@
                     <tr>
                         <th>No</th>
                         <th>Question</th>
-                        <th colspan="2">n</th>
-                        <th colspan="2">None</th>
+                        <th>n</th>
                         <th colspan="2">Missing / Broken Computer</th>
                         <th colspan="2">Missing / Broken Camera</th>
                         <th colspan="2">Missing / Broken Printer</th>
+                        <th colspan="2">None</th>
                     </tr>
                 </thead> 
                     <tr>
                         <th>D</th>
-                        <td>{{ questions.s.label }}</td>
-                        <td>{{ questions.d.n_figure }}</td>
-                        <td>{{ questions.d.n_percentage }}</td>
-                        <td>{{ questions.d.none_figure }}</td>
-                        <td>{{ questions.d.none_percentage }}</td>
-                        <td>{{ questions.d.computer_figure }}</td>
-                        <td>{{ questions.d.computer_percentage }}</td>
-                        <td>{{ questions.d.camera_figure }}</td>
-                        <td>{{ questions.d.camera_percentage }}</td>
-                        <td>{{ questions.d.printer_figure }}</td>
-                        <td>{{ questions.d.printer_percentage }}</td>
+                        <td>{{ question.D.label }}</td>
+                        <td>{{ question.D.n }}</td>
+                        <td>{{ question.D.options.1 }}</td>
+                        <td><strong>{{ question.D.options.1|percentage:question.D.n }}</strong></td>
+                        <td>{{ question.D.options.2 }}</td>
+                        <td><strong>{{ question.D.options.2|percentage:question.D.n }}</strong></td>
+                        <td>{{ question.D.options.3 }}</td>
+                        <td><strong>{{ question.D.options.3|percentage:question.D.n }}</strong></td>
+                        <td>{{ question.D.options.4 }}</td>
+                        <td><strong>{{ question.D.options.4|percentage:question.D.n }}</strong></td>
                     </tr>                  
             </table>
         </div>
@@ -291,31 +274,29 @@
                     <tr>
                         <th>No</th>
                         <th>Question</th>
-                        <th colspan="2">n</th>
-                        <th colspan="2">None</th>
+                        <th>n</th>
                         <th colspan="2">Manual Register of Voters</th>
                         <th colspan="2">Indelible Ink to Mark Figures</th>
                         <th colspan="2">Blank Temporary Voter's Cards</th>
                         <th colspan="2">INEC Stamp</th>
+                        <th colspan="2">None</th>
                     </tr>
                 </thead>
                     <tr>
-                        <td>E</td>
-                        <td>{{ questions.e.label }}</td>
-                        <td>{{ questions.e.n_figure }}</td>
-                        <td>{{ questions.e.n_percentage }}</td>
-                        <td>{{ questions.e.none_figure }}</td>
-                        <td>{{ questions.e.none_percentage }}</td>
-                        <td>{{ questions.e.manual_figure }}</td>
-                        <td>{{ questions.e.manual_percentage }}</td>
-                        <td>{{ questions.e.indelible_figure }}</td>
-                        <td>{{ questions.e.indelible_percentage }}</td>
-                        <td>{{ questions.e.blank_figure }}</td>
-                        <td>{{ questions.e.blank_percentage }}</td>
-                        <td>{{ questions.e.inec_stamp }}</td>
-                        <td>{{ questions.e.inec_percentage }}</td>
-
-                    </tr>
+                        <th>E</th>
+                        <td>{{ question.E.label }}</td>
+                        <td>{{ question.E.n }}</td>
+                        <td>{{ question.E.options.1 }}</td>
+                        <td><strong>{{ question.E.options.1|percentage:question.E.n }}</strong></td>
+                        <td>{{ question.E.options.2 }}</td>
+                        <td><strong>{{ question.E.options.2|percentage:question.E.n }}</strong></td>
+                        <td>{{ question.E.options.3 }}</td>
+                        <td><strong>{{ question.E.options.3|percentage:question.E.n }}</strong></td>
+                        <td>{{ question.E.options.4 }}</td>
+                        <td><strong>{{ question.E.options.4|percentage:question.E.n }}</strong></td>
+                        <td>{{ question.E.options.5 }}</td>
+                        <td><strong>{{ question.E.options.5|percentage:question.E.n }}</strong></td>
+                    </tr>                  
             </table>
         </div>
     </div>
@@ -327,7 +308,7 @@
                     <tr>
                         <th>No</th>
                         <th>Question</th>
-                        <th colspan="2">n</th>
+                        <th>n</th>
                         <th colspan="2">By 8:00 AM</th>
                         <th colspan="2">Between 8 &amp; 10 AM</th>
                         <th colspan="2">Between 10 &amp; 12 NOON</th>
@@ -336,17 +317,16 @@
                 </thead>
                     <tr>
                         <th>A</th>
-                        <th>{{ questions.a.label }}</td>
-                        <td>{{ questions.a.n_figure }}</td>
-                        <td>{{ questions.a.n_percentage }}</td>
-                        <td>{{ questions.a.eight_figure }}</td>
-                        <td>{{ questions.e.eight_percentage }}</td>
-                        <td>{{ questions.e.eight_ten_figure }}</td>
-                        <td>{{ questions.e.eight_ten_percentage }}</td>
-                        <td>{{ questions.e.ten_twelve_figure }}</td>
-                        <td>{{ questions.e.ten_twelve_percentage }}</td>
-                        <td>{{ questions.e.not_twelve_figure }}</td>
-                        <td>{{ questions.e.not_twelve_percentage }}</td>
+                        <th>{{ question.A.label }}</td>
+                        <td>{{ question.A.n }}</td>
+                        <td>{{ question.A.options.1 }}</td>
+												<td><strong>{{ question.A.options.1|percentage:question.A.n }}</strong></td>
+                        <td>{{ question.A.options.2 }}</td>
+                        <td><strong>{{ question.A.options.2|percentage:question.A.n }}</strong></td>
+                        <td>{{ question.A.options.3 }}</td>
+                        <td><strong>{{ question.A.options.3|percentage:question.A.n }}</strong></td>
+                        <td>{{ question.A.options.4 }}</td>
+                        <td><strong>{{ question.A.options.4|percentage:question.A.n }}</strong></td>
                     </tr>
             </table>
         </div>
