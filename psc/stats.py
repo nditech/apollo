@@ -26,6 +26,7 @@ def vr_QC(q=Q()):
     for vr in vrs:
         if vr['C'] in range(0, 10):
             key = vr['C']
+            sum += vr['C']
             if options.has_key(key+1):
                 options[key+1] += 1
                 valid += 1
@@ -72,16 +73,203 @@ def vr_QE(q=Q()):
     return {'n': n, 'options': options }
 
 def vr_QF(q=Q()):
-    pass
+    vrs = VRChecklist.objects.filter(q).filter(F__isnull=False).values('F')
+    total = len(vrs)
+    valid = 0
+    options = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0}
+    for vr in vrs:
+        if vr['F'] in range(0, 10):
+            key = vr['F']
+            if options.has_key(key+1):
+                options[key+1] += 1
+                valid += 1
+            else:
+                options[6] += 1
+                valid += 1
+        else:
+            options[6] += 1
+
+    return {'n': total, 'valid_n': valid, 'options': options}
 
 def vr_QG(q=Q()):
-    pass
+    vrs = VRChecklist.objects.filter(q).filter(G__gt=0).values('G')
+    n = len(vrs)
+    options = {1: 0, 2: 0}
+    for vr in vrs:
+        options[vr['G']] += 1
+    return {'n': n, 'options': options }
 
 def vr_QH(q=Q()):
-    pass
+    vrs = VRChecklist.objects.filter(q).filter(H__isnull=False).values('H')
+    n = len(vrs)
+    options = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
+    for vr in vrs:
+        options[vr['H']] += 1
+    return {'n': n, 'options': options }
 
 def vr_QJ(q=Q()):
-    pass
+    vrs = VRChecklist.objects.filter(q).filter(J__isnull=False).values('J')
+    n = len(vrs)
+    options = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
+    for vr in vrs:
+        options[vr['J']] += 1
+    return {'n': n, 'options': options }
+
+def vr_QK(q=Q()):
+    vrs = VRChecklist.objects.filter(q).filter(K__isnull=False).values('K')
+    n = len(vrs)
+    options = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
+    for vr in vrs:
+        options[vr['K']] += 1
+    return {'n': n, 'options': options }
+
+def vr_QM(q=Q()):
+    vrs = VRChecklist.objects.filter(q).filter(M__isnull=False).values('M')
+    n = len(vrs)
+    options = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
+    for vr in vrs:
+        options[vr['M']] += 1
+    return {'n': n, 'options': options }
+
+def vr_QN(q=Q()):
+    vrs = VRChecklist.objects.filter(q).filter(N__isnull=False).values('N')
+    n = len(vrs)
+    options = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
+    for vr in vrs:
+        options[vr['N']] += 1
+    return {'n': n, 'options': options }
+
+def vr_QP(q=Q()):
+    vrs = VRChecklist.objects.filter(q).filter(P__isnull=False).values('P')
+    n = len(vrs)
+    options = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
+    for vr in vrs:
+        options[vr['P']] += 1
+    return {'n': n, 'options': options }
+
+def vr_QQ(q=Q()):
+    vrs = VRChecklist.objects.filter(q).filter(Q__isnull=False).values('Q')
+    n = len(vrs)
+    options = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
+    for vr in vrs:
+        options[vr['Q']] += 1
+    return {'n': n, 'options': options }
+
+def vr_QR(q=Q()):
+    vrs = VRChecklist.objects.filter(q).filter(R__isnull=False).values('R')
+    n = len(vrs)
+    options = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
+    for vr in vrs:
+        options[vr['R']] += 1
+    return {'n': n, 'options': options }
+
+def vr_QS(q=Q()):
+    vrs = VRChecklist.objects.filter(q).filter(S__isnull=False).values('S')
+    n = len(vrs)
+    options = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
+    for vr in vrs:
+        options[vr['S']] += 1
+    return {'n': n, 'options': options }
+
+def vr_QT(q=Q()):
+    vrs = VRChecklist.objects.filter(q).filter(T__gt=0).values('T')
+    n = len(vrs)
+    options = {1: 0, 2: 0}
+    for vr in vrs:
+        options[vr['T']] += 1
+    return {'n': n, 'options': options }
+
+def vr_QU(q=Q()):
+    vrs = VRChecklist.objects.filter(q).filter(U__gt=0).values('U')
+    n = len(vrs)
+    options = {1: 0, 2: 0}
+    for vr in vrs:
+        options[vr['U']] += 1
+    return {'n': n, 'options': options }
+
+def vr_QV(q=Q()):
+    vrs = VRChecklist.objects.filter(q).filter(V__gt=0).values('V')
+    n = len(vrs)
+    options = {1: 0, 2: 0}
+    for vr in vrs:
+        options[vr['V']] += 1
+    return {'n': n, 'options': options }
+
+def vr_QW(q=Q()):
+    vrs = VRChecklist.objects.filter(q).filter(W__gt=0).values('W')
+    n = len(vrs)
+    options = {1: 0, 2: 0}
+    for vr in vrs:
+        options[vr['W']] += 1
+    return {'n': n, 'options': options }
+
+def vr_QX(q=Q()):
+    vrs = VRChecklist.objects.filter(q).filter(X__gt=0).values('X')
+    n = len(vrs)
+    options = {1: 0, 2: 0}
+    for vr in vrs:
+        options[vr['X']] += 1
+    return {'n': n, 'options': options }
+
+def vr_QY(q=Q()):
+    vrs = VRChecklist.objects.filter(q).filter(Y__isnull=False).values('Y')
+    total = len(vrs)
+    valid = 0
+    options = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0}
+    for vr in vrs:
+        if vr['Y'] in range(0, 200):
+            key = vr['Y']
+            sum += vr['Y']
+            if options.has_key(key+1):
+                options[key+1] += 1
+                valid += 1
+            else:
+                options[6] += 1
+                valid += 1
+        else:
+            options[6] += 1
+
+    return {'n': total, 'valid_n': valid, 'options': options}
+
+def vr_QZ(q=Q()):
+    vrs = VRChecklist.objects.filter(q).filter(Z__isnull=False).values('Z')
+    total = len(vrs)
+    valid = 0
+    options = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0}
+    for vr in vrs:
+        if vr['Z'] in range(0, 2500):
+            key = vr['Z']
+            sum += vr['Z']
+            if options.has_key(key+1):
+                options[key+1] += 1
+                valid += 1
+            else:
+                options[6] += 1
+                valid += 1
+        else:
+            options[6] += 1
+
+    return {'n': total, 'valid_n': valid, 'options': options}
+
+def vr_QAA(q=Q()):
+    vrs = VRChecklist.objects.filter(q).filter(AA__isnull=False).values('AA')
+    total = len(vrs)
+    valid = 0
+    options = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0}
+    for vr in vrs:
+        if vr['AA'] in range(0, 2600):
+            key = vr['AA']
+            sum += vr['AA']
+            if options.has_key(key+1):
+                options[key+1] += 1
+                valid += 1
+            else:
+                options[6] += 1
+                valid += 1
+        else:
+            options[6] += 1
+
+    return {'n': total, 'valid_n': valid, 'options': options}
 
 def model_sieve(model, fields, exclude=False):
     if issubclass(model, models.Model):         
