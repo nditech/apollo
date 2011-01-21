@@ -22,21 +22,22 @@ def vr_QC(q=Q()):
     vrs = VRChecklist.objects.filter(q).filter(C__isnull=False).values('C')
     total = len(vrs)
     valid = 0
-    options = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0}
+    summation = 0
+    options = {0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
     for vr in vrs:
         if vr['C'] in range(0, 10):
             key = vr['C']
-            sum += vr['C']
-            if options.has_key(key+1):
-                options[key+1] += 1
+            summation += vr['C']
+            if options.has_key(key):
+                options[key] += 1
                 valid += 1
             else:
-                options[6] += 1
+                options[5] += 1
                 valid += 1
         else:
-            options[6] += 1
+            options[5] += 1
 
-    return {'n': total, 'valid_n': valid, 'options': options}
+    return {'n': total, 'valid_n': valid, 'options': options, 'sum': summation}
 
 def vr_QD(q=Q()):
     qs = Q(D1__isnull=False) | Q(D2__isnull=False) | Q(D3__isnull=False) | Q(D4__isnull=False)
@@ -76,20 +77,12 @@ def vr_QF(q=Q()):
     vrs = VRChecklist.objects.filter(q).filter(F__isnull=False).values('F')
     total = len(vrs)
     valid = 0
-    options = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0}
+    summation = 0
     for vr in vrs:
-        if vr['F'] in range(0, 10):
-            key = vr['F']
-            if options.has_key(key+1):
-                options[key+1] += 1
+        if vr['F'] in range(0, 61):
                 valid += 1
-            else:
-                options[6] += 1
-                valid += 1
-        else:
-            options[6] += 1
-
-    return {'n': total, 'valid_n': valid, 'options': options}
+                summation += vr['F']
+    return {'n': total, 'valid_n': valid, 'sum': summation}
 
 def vr_QG(q=Q()):
     vrs = VRChecklist.objects.filter(q).filter(G__gt=0).values('G')
@@ -215,61 +208,37 @@ def vr_QY(q=Q()):
     vrs = VRChecklist.objects.filter(q).filter(Y__isnull=False).values('Y')
     total = len(vrs)
     valid = 0
-    options = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0}
+    summation = 0
     for vr in vrs:
-        if vr['Y'] in range(0, 200):
-            key = vr['Y']
-            sum += vr['Y']
-            if options.has_key(key+1):
-                options[key+1] += 1
-                valid += 1
-            else:
-                options[6] += 1
-                valid += 1
-        else:
-            options[6] += 1
+        if vr['Y'] in range(0, 201):
+            summation += vr['Y']
+            valid += 1
 
-    return {'n': total, 'valid_n': valid, 'options': options}
+    return {'n': total, 'valid_n': valid, 'sum': summation}
 
 def vr_QZ(q=Q()):
     vrs = VRChecklist.objects.filter(q).filter(Z__isnull=False).values('Z')
     total = len(vrs)
     valid = 0
-    options = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0}
+    summation = 0
     for vr in vrs:
-        if vr['Z'] in range(0, 2500):
-            key = vr['Z']
-            sum += vr['Z']
-            if options.has_key(key+1):
-                options[key+1] += 1
-                valid += 1
-            else:
-                options[6] += 1
-                valid += 1
-        else:
-            options[6] += 1
+        if vr['Z'] in range(0, 2501):
+            summation += vr['Z']
+            valid += 1
 
-    return {'n': total, 'valid_n': valid, 'options': options}
+    return {'n': total, 'valid_n': valid, 'sum': summation}
 
 def vr_QAA(q=Q()):
     vrs = VRChecklist.objects.filter(q).filter(AA__isnull=False).values('AA')
     total = len(vrs)
     valid = 0
-    options = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0}
+    summation = 0
     for vr in vrs:
-        if vr['AA'] in range(0, 2600):
-            key = vr['AA']
-            sum += vr['AA']
-            if options.has_key(key+1):
-                options[key+1] += 1
-                valid += 1
-            else:
-                options[6] += 1
-                valid += 1
-        else:
-            options[6] += 1
+        if vr['AA'] in range(0, 2501):
+            summation += vr['AA']
+            valid += 1
 
-    return {'n': total, 'valid_n': valid, 'options': options}
+    return {'n': total, 'valid_n': valid, 'sum': summation}
 
 def model_sieve(model, fields, exclude=False):
     if issubclass(model, models.Model):         
