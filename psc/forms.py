@@ -134,3 +134,8 @@ class MessagelogFilterForm(forms.Form):
 class DashboardFilterForm(forms.Form):
     zone = forms.ChoiceField(choices=ZONES, required=False)
     date = forms.ChoiceField(choices=checklist_date_choices, required=False)
+
+class VRAnalysisFilterForm(forms.Form):
+    zone = forms.ChoiceField(choices=ZONES, required=False)
+    state = forms.ChoiceField(choices=STATES, required=False)
+    date = forms.ChoiceField(choices=VR_DAYS, required=False)
