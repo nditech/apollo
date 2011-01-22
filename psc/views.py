@@ -9,8 +9,9 @@ from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from rapidsms.contrib.messagelog.tables import MessageTable
 from rapidsms.contrib.messagelog.models import Message
 from forms import VRChecklistForm, VRIncidentForm, DCOIncidentForm, VRChecklistFilterForm, VRIncidentFilterForm, DCOIncidentFilterForm, DCOChecklistFilterForm, DCOChecklistForm
-from forms import DCOIncidentUpdateForm, VRIncidentUpdateForm, MessagelogFilterForm, DashboardFilterForm
+from forms import DCOIncidentUpdateForm, VRIncidentUpdateForm, MessagelogFilterForm, DashboardFilterForm, VRAnalysisFilterForm
 from datetime import datetime
+from django.core import serializers
 from django.contrib.auth.decorators import login_required, permission_required
 import stats
 
@@ -655,15 +656,19 @@ def vr_checklist_analysis(request):
     ctx['question']['Y'] = stats.vr_QY(qs)
     ctx['question']['Z'] = stats.vr_QZ(qs)
     ctx['question']['AA'] = stats.vr_QAA(qs)
-    
-    return render_to_response('psc/vr_checklist_analysis.html', {'page_title': 'Voter Registration Checklist Analysis'}, context_instance=ctx)
+
+    filter_form = VRAnalysisFilterForm()
+    return render_to_response('psc/vr_checklist_analysis.html', {'page_title': 'Voter Registration Checklist Analysis', 'filter_form': filter_form}, context_instance=ctx)
 
 
 #ajax methods
 def get_rcs_by_lga(request, lga_id=0):
-    #response = HttpResponse(mimetype='application/json')
-    #get the serilizer
-    from django.core import serializers
     if lga_id:
-       rcs = serializers.serialize('json', RegistrationCenter.objects.filter(parent=lga_id))
-       return HttpResponse(mimetype='application/json', content=rcs)
+        rcs = serializers.serialize('json', RegistrationCenter.objects.filter(parent=lga_id))
+        return HttpResponse(mimetype='application/json', content=rcs)
+
+def get_states_by_zone(request, zone):
+    if zone:
+        states = serializers.serialize('json', State.objects.filter(parent__code=zone))
+        print states
+        return HttpResponse(mimetype='application/jsoin', content=states)
