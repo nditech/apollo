@@ -27,13 +27,13 @@ class App(AppBase):
             text = message.text
             (part1, part2) = (text[0:text.find("@")], text[text.find("@"):])
             part1 = part1.upper()
-            part1 = part1.replace(" ", "").replace("O","0").replace("I","1").replace("L","1")
+            part1 = part1.replace(" ", "").replace("O","0").replace("I","1").replace("L","1").replace("&","").replace("-","").replace("?","")
             message.text = part1 + part2
             message.message_only = part1
             message.comments_only = part2
             
         else:
-            message.text = message.text.upper().replace(" ", "").replace("O","0").replace("I","1").replace("L","1")
+            message.text = message.text.upper().replace(" ", "").replace("O","0").replace("I","1").replace("L","1").replace("&","").replace("-","").replace("?","")
             message.message_only = message.text
 
         if self.pattern.match(message.text):
