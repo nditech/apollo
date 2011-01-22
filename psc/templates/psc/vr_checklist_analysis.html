@@ -8,6 +8,7 @@
            var zone = $('#id_zone').val()
            $.getJSON('/get-states-by-zone/'+ zone, function(data){
                 $('#id_state').empty()
+                $('#id_state').append("<option value=''>All</option>")
                 $.each(data, function(){
                   //alert(this.pk)
                   $('#id_state').append("<option value='"+ this.pk +"'>" + this.fields.name +"</option>")
