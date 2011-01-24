@@ -3,6 +3,10 @@ from django.db import models
 from models import *
 from numpy import *
 
+def vr_N(q=Q()):
+    n = VRChecklist.objects.filter(q).count()
+    return n
+
 def vr_QA(q=Q()):
     vrs = VRChecklist.objects.filter(q).filter(A__isnull=False).values_list('A', flat=True)
     n = len(vrs)

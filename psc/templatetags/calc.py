@@ -8,4 +8,6 @@ def percentage(fraction, population):
         return "%.0f%%" % ((float(fraction) / float(population)) * 100)
     except ValueError:
         return ''
+    except ZeroDivisionError:
+        return "0%"
 

@@ -11,6 +11,7 @@ from rapidsms.contrib.messagelog.tables import MessageTable
 from rapidsms.contrib.messagelog.models import Message
 from forms import VRChecklistForm, VRIncidentForm, DCOIncidentForm, VRChecklistFilterForm, VRIncidentFilterForm, DCOIncidentFilterForm, DCOChecklistFilterForm, DCOChecklistForm
 from forms import DCOIncidentUpdateForm, VRIncidentUpdateForm, MessagelogFilterForm, DashboardFilterForm, VRAnalysisFilterForm
+from forms import VRSummaryFilterForm
 from datetime import datetime
 from django.core import serializers
 from django.contrib.auth.decorators import login_required, permission_required
@@ -623,14 +624,33 @@ def export(request, model):
 @permission_required('psc.can_analyse', login_url='/')
 @login_required()
 def vr_zone_summary(request):
+    filter_date = datetime.date(datetime.today())
+    if not request.session.has_key('vr_zone_summary_filter'):
+        request.session['vr_zone_summary_filter'] = {}
+
+    if request.method == 'GET':
+        if filter(lambda key: request.GET.has_key(key), ['date']):
+            request.session['vr_zone_summary_filter'] = request.GET
+        filter_form = VRSummaryFilterForm(request.session['vr_zone_summary_filter'])
+
+        if filter_form.is_valid():
+            data = filter_form.cleaned_data
+
+            if data['date']:
+                filter_date = datetime.date(datetime.strptime(data['date'], '%Y-%m-%d'))
+    else:
+        filter_form = VRSummaryFilterForm()
+    q = Q(date=filter_date)
+
     ctx = RequestContext(request)
     ctx['page_title'] = 'Zone Summary'
+    ctx['filter_form'] = filter_form
     ctx['zone_list'] = []
     zone_list = Zone.objects.all()
 
     for zone in zone_list:
         rcs_in_zone = RegistrationCenter.objects.filter(parent__parent__parent__parent__id=zone.pk).values_list('id', flat=True)
-        qs = VRChecklist.objects.filter(date=datetime.date(datetime.today())).filter(location_id__in=rcs_in_zone)
+        qs = VRChecklist.objects.filter(q).filter(location_id__in=rcs_in_zone)
         zone_stats = {
             'name': zone.name,
             'n': qs.count(),
@@ -655,14 +675,33 @@ def vr_zone_summary(request):
 @permission_required('psc.can_analyse', login_url='/')
 @login_required()
 def vr_state_summary(request):
+    filter_date = datetime.date(datetime.today())
+    if not request.session.has_key('vr_state_summary_filter'):
+        request.session['vr_state_summary_filter'] = {}
+
+    if request.method == 'GET':
+        if filter(lambda key: request.GET.has_key(key), ['date']):
+            request.session['vr_state_summary_filter'] = request.GET
+        filter_form = VRSummaryFilterForm(request.session['vr_state_summary_filter'])
+
+        if filter_form.is_valid():
+            data = filter_form.cleaned_data
+
+            if data['date']:
+                filter_date = datetime.date(datetime.strptime(data['date'], '%Y-%m-%d'))
+    else:
+        filter_form = VRSummaryFilterForm()
+    q = Q(date=filter_date)
+
     ctx = RequestContext(request)
     ctx['page_title'] = 'State Summary'
+    ctx['filter_form'] = filter_form
     ctx['state_list'] = []
     state_list = State.objects.all().order_by('name')
 
     for state in state_list:
         rcs_in_state = RegistrationCenter.objects.filter(parent__parent__parent__id=state.pk).values_list('id', flat=True)
-        qs = VRChecklist.objects.filter(date=datetime.date(datetime.today())).filter(location_id__in=rcs_in_state)
+        qs = VRChecklist.objects.filter(q).filter(location_id__in=rcs_in_state)
         state_stats = {
             'name': state.name,
             'n': qs.count(),
@@ -708,6 +747,7 @@ def vr_checklist_analysis(request):
 
     ctx = RequestContext(request)
     ctx['question'] = dict()
+    ctx['question']['no_of_checklists'] = stats.vr_N(qs)
     ctx['question']['A'] = stats.vr_QA(qs) 
     ctx['question']['B'] = stats.vr_QB(qs)
     ctx['question']['C'] = stats.vr_QC(qs)
