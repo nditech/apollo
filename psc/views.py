@@ -1,5 +1,4 @@
 # Create your views here.
-from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render_to_response, get_object_or_404
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponse
@@ -788,10 +787,8 @@ def get_states_by_zone(request, zone):
         print states
         return HttpResponse(mimetype='application/jsoin', content=states)
 
-@csrf_exempt
-def vr_incident_delete(request):
-    if request.method == 'POST':
-        delete_ids = request.POST.getlist('ids')
-        VRIncident.objects.filter(id__in=delete_ids).delete()
+def vr_incident_delete(request, incident_id):
+    if int(incident_id):        
+        VRIncident.objects.get(pk=incident_id).delete()
         return HttpResponseRedirect(reverse('psc.views.vr_incident_list'))
     

@@ -21,7 +21,7 @@ urlpatterns = patterns('',
     (r'^get-rcs-by-lga/(?P<lga_id>\d+)/?$', views.get_rcs_by_lga),
     (r'^get-states-by-zone/(?P<zone>.+)/?$', views.get_states_by_zone),
     (r'^vr/analysis/?$', views.vr_checklist_analysis),
-    (r'^vr/in/delete?$', views.vr_incident_delete),
+    (r'^vr/in/del/(?P<incident_id>\d+)/?$', views.vr_incident_delete),
 )
 
 #authentication urls
