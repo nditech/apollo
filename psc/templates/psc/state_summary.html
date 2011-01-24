@@ -1,11 +1,47 @@
 {% extends 'psc/layout.html' %}
 {% load calc %}
+{% block javascripts %}
+{{ block.super }}
+<script src="/assets/js/jquery-1.4.4.min.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript" charset="utf-8">
+    $(function() {
+        $("#reset").click(function () {
+            $("#id_date").val("");
+            $("#filter_form").submit();
+        });
+    });
+</script>
+{% endblock %}
 {% block content %}
 <div class="grid_16">
     <div class="box">
         <h2>A Summary of State<span class="flag">
                 <button onclick="location.href='{% url psc.views.vr_state_summary %}'">Refresh</button>
         </span></h2>
+        <div class="block">
+            <div id="filter">
+                <form action="" method="get" id="filter_form" accept-charset="utf-8">
+                    <table>
+                        <thead>
+                            <tr>
+								{% for field in filter_form %}
+                                <th width="10%">{{ field.label }}</th>
+								{% endfor %}
+                                <th>&nbsp;</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+								{% for field in filter_form %}
+                                <td>{{ field }}</td>
+								{% endfor %}
+                                <td><input type="button" value="reset" id="reset"> <input type="submit" value="filter &rarr;"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </form>
+            </div>
+				</div>
         <div class="block">
             <table width="100%" class="summary">
                 <thead>

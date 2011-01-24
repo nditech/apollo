@@ -139,3 +139,6 @@ class VRAnalysisFilterForm(forms.Form):
     zone = forms.ChoiceField(choices=ZONES, required=False)
     state = forms.ChoiceField(choices=STATES, required=False)
     date = forms.ChoiceField(choices=VR_DAYS, required=False)
+
+class VRSummaryFilterForm(forms.Form):
+    date = forms.ChoiceField(choices=tuple([('', 'Today')] + [(date, label) for (date, label) in VR_DAYS if date]))
