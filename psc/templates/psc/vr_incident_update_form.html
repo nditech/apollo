@@ -2,8 +2,11 @@
 {% block javascripts %}
 {{ block.super }}
 <script src="/assets/js/jquery-1.4.4.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="/assets/js/date.js" type="text/javascript" charset="utf-8"></script>
+<script src="/assets/js/jquery.datePicker.js" type="text/javascript" charset="utf-8"></script>
 <script type="text/javascript" charset="utf-8">
     $(function(){
+       //ajax calls
        $('#lga_list').change(function() {
            var lga_id = $('#lga_list').val()
             $.getJSON('/get-rcs-by-lga/'+ lga_id, function(data){
@@ -14,6 +17,12 @@
                 })
             })
         });
+
+        Date.firstDayOfWeek = 0;
+        Date.format = 'yyyy-mm-dd';
+        //date picker
+        $('.date-pick').datePicker({startDate:'01/01/2011', endDate:'31/05/2011'});
+
     });
 </script>
 {% endblock %}
@@ -31,7 +40,12 @@
 										{% else %}
 										<tr><td>Location:</td><td>{{ incident.observer.location.parent.parent.parent.name }} - <strong>{{ incident.observer.location.parent.parent.name }}</strong></strong></td></tr>
 										{% endif %}
-										<tr><td>Date:</td><td>{{ incident.date|date:"D d-M" }}<input type="hidden" name="{{ form.date.name }}" value="{{ form.initial.date }}" /></td></tr>
+										<tr><td>Date:</td>
+                                                                                    <td>
+                                                                                        <!-- {{ incident.date|date:"D d-M" }}<input type="hidden" name="{{ form.date.name }}" value="{{ form.initial.date }}" /> -->
+                                                                                        <input class="bigbox date-pick" type="text" name="{{ form.date.name }}" value="{{ form.initial.date }}" />
+                                                                                    </td>
+                                                                                </tr>
 										<tr><td>LGA:</td>
                                                                                     <td>
                                                                                         <select class="bigbox" name="{{ form.name.location_id.name }}" id="lga_list" >
