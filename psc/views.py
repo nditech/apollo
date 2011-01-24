@@ -559,7 +559,7 @@ def export(request, model):
         header =  ["PSC ID","Zone","State","LGA","VR","RC","A","B","C","D1","D2","D3","D4","E1","E2","E3","E4","E5","F","G","H","J","K","M","N","P","Q","R","S","T","U","V","W","X","Y","Z","AA","Comment"]
         writer.writerow(header)
 
-        vrcs = VRChecklist.objects.filter(submitted=True,observer__role='LGA')
+        vrcs = VRChecklist.objects.filter(observer__role='LGA')
         for vrc in vrcs:
             pscid = vrc.observer.observer_id
             try:
@@ -574,10 +574,13 @@ def export(request, model):
                     lga = vrc.observer.location.name
                     rc = "999"
                 except AttributeError:
-                    pass
+                    zone = ""
+                    state = ""
+                    lga = "999"
+                    rc = "999"
             vr = vrc.date.day
             A = vrc.A if vrc.A else ""
-            B = vrc.B
+            B = vrc.B if vrc.B else ""
             C = vrc.C if vrc.C != None else ""
             D1 = "" if vrc.D1 == None else 1 if vrc.D1 == True else 2
             D2 = "" if vrc.D2 == None else 1 if vrc.D2 == True else 2
@@ -589,7 +592,7 @@ def export(request, model):
             E4 = "" if vrc.E4 == None else 1 if vrc.E4 == True else 2
             E5 = "" if vrc.E5 == None else 1 if vrc.E5 == True else 2
             F = vrc.F if vrc.F != None else ""
-            G = vrc.G
+            G = vrc.G if vrc.G else ""
             H = vrc.H if vrc.H else ""
             J = vrc.J if vrc.J else ""
             K = vrc.K if vrc.K else ""
@@ -599,11 +602,11 @@ def export(request, model):
             Q = vrc.Q if vrc.Q else ""
             R = vrc.R if vrc.R else ""
             S = vrc.S if vrc.S else ""
-            T = vrc.T
-            U = vrc.U
-            V = vrc.V
-            W = vrc.W
-            X = vrc.X
+            T = vrc.T if vrc.T else ""
+            U = vrc.U if vrc.U else ""
+            V = vrc.V if vrc.V else ""
+            W = vrc.W if vrc.W else ""
+            X = vrc.X if vrc.X else ""
             Y = vrc.Y if vrc.Y != None else ""
             Z = vrc.Z if vrc.Z != None else ""
             AA = vrc.AA if vrc.AA != None else ""
