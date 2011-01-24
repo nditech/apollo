@@ -72,7 +72,7 @@
                         <th>N</th>
                         <th>P</th>
                         <th>Q</th>
-                        <th class="checklist"><button onclick='location.href="{% url psc.views.vr_incident_add  %}"'>Add Incident</button></th>
+                        <th class="checklist" colspan="2"><button onclick='location.href="{% url psc.views.vr_incident_add  %}"'>Add Incident</button></th>
                     </tr>
                 </thead>
 				{% for cl in checklists.object_list %}
@@ -155,8 +155,11 @@
                     </td>
                     <td class="checklist">
                         <a href="{% url psc.views.vr_incident_update cl.id %}">Edit</a>
-                        <input type="checkbox" value="{{ cl.id }}" name="ids" />
                     </td>
+										<td>
+                        <a href="">Del</a>
+												<!--<input type="checkbox" value="{{ cl.id }}" name="ids" />-->
+										</td>
                 </tr>
 				{% empty %}
                 <tr>
