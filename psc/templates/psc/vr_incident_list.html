@@ -52,8 +52,7 @@
             <form action="/vr/in/delete" method="post">
             <table>
                 <thead>
-                    <tr>
-                        <th>&nbsp;</th>
+                    <tr>                        
                         <th>PSC ID</th>
                         <th>Date</th>
                         <th>LGA</th>
@@ -77,8 +76,7 @@
                     </tr>
                 </thead>
 				{% for cl in checklists.object_list %}
-                <tr{% cycle ' class="odd"' '' %}>
-                    <td><input type="checkbox" value="{{ cl.id }}" name="ids" /></td>
+                <tr{% cycle ' class="odd"' '' %}>                    
                     <td>{{ cl.observer.observer_id }}</td>
                     <td>{{ cl.date|date:"D d-M" }}</td>
 										{% if cl.observer.role == "NS" or cl.observer.role == "NSC" or cl.observer.role == "SC" or cl.observer.role == "SDC" %}
@@ -155,7 +153,10 @@
                         <img src="/assets/img/status-busy.png" width="16" height="16" alt="complete" />
 						{% endif %}
                     </td>
-                    <td class="checklist"><a href="{% url psc.views.vr_incident_update cl.id %}">Edit</a></td>
+                    <td class="checklist">
+                        <a href="{% url psc.views.vr_incident_update cl.id %}">Edit</a>
+                        <input type="checkbox" value="{{ cl.id }}" name="ids" />
+                    </td>
                 </tr>
 				{% empty %}
                 <tr>
@@ -166,10 +167,7 @@
         </div>
         
         <div class="paginator">
-            <img src="/assets/img/delete_arrow.png">
-            <input type="submit" value="Delete" name="Delete" onClick="return confirm('Are you sure you want to delete selcted incidents')"/>
             {% if checklists.has_other_pages %}
-            <div style="float: right; width: 300px">
             <a href="{% query_string "page=page_details.first" "" %}"><span>&laquo;</span></a>
 			{% if checklists.has_previous %}
             <a href="{% query_string "page=checklists.previous_page_number" "" %}"><span>&lsaquo;</span></a>
@@ -179,8 +177,11 @@
             <a href="{% query_string 'page=checklists.next_page_number' '' %}"><span>&rsaquo;</span></a>
 			{% endif %}
             <a href="{% query_string "page=page_details.last" "" %}"><span>&raquo;</span></a>
-            </div>
             {% endif %}
+            <div style="float: right; margin-right: 40px;">
+                <input type="submit" value="Delete" name="Delete" onClick="return confirm('Are you sure you want to delete selcted incidents')"/>
+                <img src="/assets/img/delete_arrow.png">
+            </div>            
         </div>
         <div class="clear"></div>
         <br />
