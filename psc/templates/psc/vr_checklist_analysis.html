@@ -457,9 +457,7 @@
 												<th>0s</th>
 												<th>1s</th>
 												<th>2s</th>
-												<th>3s</th>
-												<th>4s</th>
-												<th>&gt;5</th>
+												<th>3+</th>
                     </tr>
                 </thead>
                 <tr>
@@ -468,30 +466,21 @@
                     <td>{{ question.no_of_checklists }}</td>
                     <td>{{ question.C.n }}</td>
                     <td>{{ question.C.mean|floatformat:2 }}</td>
-                    <td>{{ question.C.options.0 }} <strong>{{ question.C.options.0|percentage:question.C.n }}</strong></td>
-                    <td>{{ question.C.options.1 }} <strong>{{ question.C.options.1|percentage:question.C.n }}</strong></td>
-                    <td>{{ question.C.options.2 }} <strong>{{ question.C.options.2|percentage:question.C.n }}</strong></td>
-                    <td>{{ question.C.options.3 }} <strong>{{ question.C.options.3|percentage:question.C.n }}</strong></td>
-                    <td>{{ question.C.options.4 }} <strong>{{ question.C.options.4|percentage:question.C.n }}</strong></td>
-                    <td>{{ question.C.options.5 }} <strong>{{ question.C.options.5|percentage:question.C.n }}</strong></td>
+                    <td>{{ question.C.options.0 }} <strong>({{ question.C.options.0|percentage:question.C.n }})</strong></td>
+                    <td>{{ question.C.options.1 }} <strong>({{ question.C.options.1|percentage:question.C.n }})</strong></td>
+                    <td>{{ question.C.options.2 }} <strong>({{ question.C.options.2|percentage:question.C.n }})</strong></td>
+                    <td>{{ question.C.options.3 }} <strong>({{ question.C.options.3|percentage:question.C.n }})</strong></td>
                 </tr>
-            </table>
-            <table width="100%" class="summary">
-                <thead>
-                    <tr>
-                        <th>&nbsp;</th>
-                        <th>Question</th>
-                        <th>N</th>
-                        <th>n</th>
-                        <th>Average</th>
-                    </tr>
-                </thead>
                 <tr>
                     <td>F</td>
                     <td>{{ question.F.label }}</td>
                     <td>{{ question.no_of_checklists }}</td>
-                    <td>{{ question.F.valid_n }}</td>
+                    <td>{{ question.F.n }}</td>
                     <td>{{ question.F.mean|floatformat:2 }}</td>
+                    <td>{{ question.F.options.0 }} <strong>({{ question.F.options.0|percentage:question.F.n }})</strong></td>
+                    <td>{{ question.F.options.1 }} <strong>({{ question.F.options.1|percentage:question.F.n }})</strong></td>
+                    <td>{{ question.F.options.2 }} <strong>({{ question.F.options.2|percentage:question.F.n }})</strong></td>
+                    <td>{{ question.F.options.3 }} <strong>({{ question.F.options.3|percentage:question.F.n }})</strong></td>
                 </tr>
             </table>
         </div>

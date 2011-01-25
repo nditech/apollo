@@ -27,7 +27,7 @@ def vr_QC(q=Q()):
     vrs = VRChecklist.objects.filter(q).filter(C__isnull=False).values_list('C', flat=True)
     total = len(vrs)
     valid = []
-    options = {0: 0, 1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
+    options = {0: 0, 1: 0, 2: 0, 3: 0}
     for vr in vrs:
         if vr in range(0, 10):
             key = vr
@@ -35,10 +35,10 @@ def vr_QC(q=Q()):
                 options[key] += 1
                 valid.append(vr)
             else:
-                options[5] += 1
+                options[3] += 1
                 valid.append(vr)
         else:
-            options[5] += 1
+            options[3] += 1
 
     return {'n': total, 'valid_n': len(valid), 'options': options, 'mean': mean(valid), 'label': VRChecklist._meta.get_field_by_name('C')[0].help_text }
 
@@ -79,11 +79,21 @@ def vr_QE(q=Q()):
 def vr_QF(q=Q()):
     vrs = VRChecklist.objects.filter(q).filter(F__isnull=False).values_list('F', flat=True)
     total = len(vrs)
+    options = {0: 0, 1: 0, 2: 0, 3: 0}
     valid = []
     for vr in vrs:
         if vr in range(0, 61):
+            key = vr
+            if options.has_key(key):
+                options[key] += 1
                 valid.append(vr)
-    return {'n': total, 'valid_n': len(valid), 'mean': mean(valid), 'label': VRChecklist._meta.get_field_by_name('F')[0].help_text }
+            else:
+                options[3] += 1
+                valid.append(vr)
+        else:
+            options[3] += 1
+
+    return {'n': total, 'valid_n': len(valid), 'options': options, 'mean': mean(valid), 'label': VRChecklist._meta.get_field_by_name('F')[0].help_text }
 
 def vr_QG(q=Q()):
     vrs = VRChecklist.objects.filter(q).filter(G__gt=0).values('G')
