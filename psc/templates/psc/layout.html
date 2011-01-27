@@ -76,6 +76,11 @@
                                 <a href="{% url psc.views.action_log %}">Action Log</a>
                             </li>
 										{% endif %}
+                        {% if perms.psc.can_analyse %}
+                            <li>
+                                <a href="{% url psc.views.send_mail %}">Email Blast</a>
+                            </li>
+			{% endif %}
                         </ul>
                     </li>
                 </ul>

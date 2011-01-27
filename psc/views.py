@@ -10,9 +10,10 @@ from rapidsms.contrib.messagelog.tables import MessageTable
 from rapidsms.contrib.messagelog.models import Message
 from forms import VRChecklistForm, VRIncidentForm, DCOIncidentForm, VRChecklistFilterForm, VRIncidentFilterForm, DCOIncidentFilterForm, DCOChecklistFilterForm, DCOChecklistForm
 from forms import DCOIncidentUpdateForm, VRIncidentUpdateForm, MessagelogFilterForm, DashboardFilterForm, VRAnalysisFilterForm
-from forms import VRSummaryFilterForm
+from forms import VRSummaryFilterForm, EmailBlastForm
 from datetime import datetime
 from django.core import serializers
+from django.core.mail import send_mail
 from django.contrib.auth.decorators import login_required, permission_required
 import stats
 from queries import queries
@@ -787,8 +788,37 @@ def get_states_by_zone(request, zone):
         print states
         return HttpResponse(mimetype='application/jsoin', content=states)
 
+@permission_required('psc.can_analyse', login_url='/')
+@login_required()
 def vr_incident_delete(request, incident_id):
     if int(incident_id):        
         VRIncident.objects.get(pk=incident_id).delete()
         return HttpResponseRedirect(reverse('psc.views.vr_incident_list'))
-    
+
+#@permission_required('psc.can_analyse', login_url='/')
+#@login_required()
+def send_mail(request):
+    if request.method == 'POST':
+        subject = request.POST.get('subject')
+        message = request.POST.get('message')
+        recipients = []
+        #if to single person
+        if request.POST.get('psc_id', 0):
+            psc_id = int(request.POST.get('psc_id'))
+            email = Observer.objects.get(observer_id=psc_id).email
+            recipients.append(email)
+            
+        #if to multiple recipients
+        if request.POST.getlist('recipient'):
+            roles = request.POST.getlist('recipient')
+            email_list = Observer.objects.filter(role__in=roles).values_list('email', flat=True)
+            recipients.extend(email_list)
+
+        #confirm = send_mail(subject, message, 'admin@psc2011.co.cc', recipients, fail_silently=False)
+        if confirm:
+            return HttpResponse('send_mail() giving some error.')
+        else:
+            return HttpResponse('send_mail() giving some error.')
+    else:
+        form = EmailBlastForm()
+        return render_to_response('psc/send_mail.html', { 'form': form }, context_instance=RequestContext(request))

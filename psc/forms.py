@@ -44,6 +44,15 @@ DCO_DAYS = (('', 'All'),
         (datetime.date(datetime(2011, 2, 3)), 'Thu 3-Feb'),
         (datetime.date(datetime(2011, 2, 8)), 'Tue 8-Feb'))
 
+ROLES = (
+        ('NSC', 'National Steering Committee'),
+        ('NS', 'National Secretariat'),
+        ('ZC', 'Zonal Coordinator'),
+        ('SC', 'State Coordinator'),
+        ('SDC', 'State Deputy Coordinator'),
+        ('LGA', 'LGA Supervisor'),
+        ('OBS', 'Observer'))
+
 vr_checklist_dates =  list(VRChecklist.objects.all().distinct('date').values_list('date', flat=True).order_by('date'))
 dco_checklist_dates = list(DCOChecklist.objects.all().distinct('date').values_list('date', flat=True).order_by('date'))
 checklist_dates = vr_checklist_dates + dco_checklist_dates
@@ -141,3 +150,9 @@ class VRAnalysisFilterForm(forms.Form):
 
 class VRSummaryFilterForm(forms.Form):
     date = forms.ChoiceField(choices=tuple([('', 'Today')] + [(date, label) for (date, label) in VR_DAYS if date]))
+
+class EmailBlastForm(forms.Form):
+    subject = forms.CharField(max_length=500)
+    recipient = forms.MultipleChoiceField(choices=ROLES, required=False)
+    psc_id  = forms.CharField(max_length=10)
+    message = forms.CharField(widget=forms.Textarea)
