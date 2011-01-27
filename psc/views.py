@@ -815,10 +815,7 @@ def send_mail(request):
             recipients.extend(email_list)
 
         #confirm = send_mail(subject, message, 'admin@psc2011.co.cc', recipients, fail_silently=False)
-        if confirm:
-            return HttpResponse('send_mail() giving some error.')
-        else:
-            return HttpResponse('send_mail() giving some error.')
+        return HttpResponseRedirect(reverse('psc.views.send_mail'))
     else:
         form = EmailBlastForm()
         return render_to_response('psc/send_mail.html', { 'form': form }, context_instance=RequestContext(request))
