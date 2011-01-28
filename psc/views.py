@@ -724,7 +724,12 @@ def vr_state_summary(request):
     return render_to_response('psc/state_summary.html', context_instance=ctx)
 
 def vr_checklist_analysis(request):
+    vr_days = [datetime.date(datetime(2011, 1, 15)), datetime.date(datetime(2011, 1, 20)), datetime.date(datetime(2011, 1, 22)), datetime.date(datetime(2011, 1, 27)), datetime.date(datetime(2011, 1, 29))]
+
     qs = Q()
+    qs &= Q(submitted__isnull=False)
+    qs &= Q(date__in=vr_days)
+
     if not request.session.has_key('vr_analysis_filter'):
         request.session['vr_analysis_filter'] = {}
 
