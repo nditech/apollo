@@ -753,7 +753,9 @@ def vr_checklist_analysis(request):
     ctx = RequestContext(request)
     ctx['question'] = dict()
     ctx['question']['no_of_checklists'] = stats.vr_N(qs)
-    ctx['question']['A'] = stats.vr_QA(qs) 
+    ctx['question']['A'] = stats.vr_QA(qs)
+    #for B through AA
+    qs &= ~Q(A=4)
     ctx['question']['B'] = stats.vr_QB(qs)
     ctx['question']['C'] = stats.vr_QC(qs)
     ctx['question']['D'] = stats.vr_QD(qs)
