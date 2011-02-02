@@ -39,8 +39,8 @@ VR_DAYS = (('', 'All'),
         (datetime.date(datetime(2011, 1, 22)), 'Sat 22-Jan'),
         (datetime.date(datetime(2011, 1, 27)), 'Thu 27-Jan'),
         (datetime.date(datetime(2011, 1, 29)), 'Sat 29-Jan'),
-        (datetime.date(datetime(2011, 2, 3)), 'Thu 03-JFeb'),
-        (datetime.date(datetime(2011, 2, 5)), 'Thu 05-JFeb'))
+        (datetime.date(datetime(2011, 2, 3)), 'Thu 03-Feb'),
+        (datetime.date(datetime(2011, 2, 5)), 'Thu 05-Feb'))
 
 DCO_DAYS = (('', 'All'),
         (datetime.date(datetime(2011, 2, 3)), 'Thu 3-Feb'),
