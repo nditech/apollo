@@ -10,11 +10,11 @@ from decorators import role_required
 
 class App(AppBase):
     def __init__(self, router):
-        self.pattern = re.compile(r'PSC(?P<observer_id>\d{6})(DC|VR)(\d{2})(RC|GA)(\d{3})(!?([A-Z\d]{1,})@?(.*))?', re.I)
-        self.vr_checklist  = re.compile(r'PSC(?P<observer_id>\d{6})VR(?P<day>\d{2})RC(?P<location_id>\d{3})(?P<responses>[A-Z\d]{2,})?@?(?P<comment>.*)', re.I)
-        self.vr_incident  = re.compile(r'PSC(?P<observer_id>\d{6})VR(?P<day>\d{2})(?P<location_type>(RC|GA))(?P<location_id>\d{3})!(?P<responses>[A-Z]{1,})@?(?P<comment>.*)', re.I)
-        self.dco_checklist = re.compile(r'PSC(?P<observer_id>\d{6})DC(?P<day>\d{2})RC(?P<location_id>\d{3})(?P<responses>[A-Z\d]{2,})?@?(?P<comment>.*)', re.I)
-        self.dco_incident = re.compile(r'PSC(?P<observer_id>\d{6})DC(?P<day>\d{2})(?P<location_type>(RC|GA))(?P<location_id>\d{3})!(?P<responses>[A-Z]{1,})@?(?P<comment>.*)', re.I)
+        self.pattern = re.compile(r'PSC(?P<observer_id>\d{6})(DC|VR)(\d{1,2})(RC|GA)(\d{3})(!?([A-Z\d]{1,})@?(.*))?', re.I)
+        self.vr_checklist  = re.compile(r'PSC(?P<observer_id>\d{6})VR(?P<day>\d{1,2})RC(?P<location_id>\d{3})(?P<responses>[A-Z\d]{2,})?@?(?P<comment>.*)', re.I)
+        self.vr_incident  = re.compile(r'PSC(?P<observer_id>\d{6})VR(?P<day>\d{1,2})(?P<location_type>(RC|GA))(?P<location_id>\d{3})!(?P<responses>[A-Z]{1,})@?(?P<comment>.*)', re.I)
+        self.dco_checklist = re.compile(r'PSC(?P<observer_id>\d{6})DC(?P<day>\d{1,2})RC(?P<location_id>\d{3})(?P<responses>[A-Z\d]{2,})?@?(?P<comment>.*)', re.I)
+        self.dco_incident = re.compile(r'PSC(?P<observer_id>\d{6})DC(?P<day>\d{1,2})(?P<location_type>(RC|GA))(?P<location_id>\d{3})!(?P<responses>[A-Z]{1,})@?(?P<comment>.*)', re.I)
         self.range_error_response = 'Invalid response(s) for question(s): "%s"'
         self.checklist_attribute_error_response = 'Invalid responses for the checklist code: "%s"'
         self.incident_attribute_error_response = 'Unknown critical incident code: "%s"'
