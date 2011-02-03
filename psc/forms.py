@@ -42,6 +42,9 @@ VR_DAYS = (('', 'All'),
         (datetime.date(datetime(2011, 2, 3)), 'Thu 03-Feb'),
         (datetime.date(datetime(2011, 2, 5)), 'Sat 05-Feb'))
 
+VR_INCIDENT_DAYS = tuple([('', 'All')]+[(date, date.strftime('%a %d-%b')) for date in VRIncident.objects.all().distinct('date').order_by('-date').values_list('date', flat=True)])
+
+
 DCO_DAYS = (('', 'All'),
         (datetime.date(datetime(2011, 2, 3)), 'Thu 3-Feb'),
         (datetime.date(datetime(2011, 2, 8)), 'Tue 8-Feb'))
@@ -125,7 +128,7 @@ class DCOChecklistFilterForm(forms.Form):
 
 class VRIncidentFilterForm(forms.Form):
     observer_id = forms.CharField(required=False, label="PSC ID", max_length=6, widget=forms.TextInput(attrs={'autocomplete':'off','style':'width:7em'}))
-    day = forms.ChoiceField(choices=VR_DAYS, required=False)
+    day = forms.ChoiceField(choices=VR_INCIDENT_DAYS, required=False)
     zone = forms.ChoiceField(choices=ZONES, required=False)
     state = forms.ChoiceField(choices=STATES, required=False)
     district = forms.ChoiceField(choices=DISTRICTS, required=False)
