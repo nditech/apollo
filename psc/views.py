@@ -9,6 +9,7 @@ from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from rapidsms.contrib.messagelog.tables import MessageTable
 from rapidsms.contrib.messagelog.models import Message
 from forms import VRChecklistForm, VRIncidentForm, DCOIncidentForm, VRChecklistFilterForm, VRIncidentFilterForm, DCOIncidentFilterForm, DCOChecklistFilterForm, DCOChecklistForm
+from forms import VR_DAYS
 from forms import DCOIncidentUpdateForm, VRIncidentUpdateForm, MessagelogFilterForm, DashboardFilterForm, VRAnalysisFilterForm
 from forms import VRSummaryFilterForm, EmailBlastForm
 from datetime import datetime
@@ -724,10 +725,9 @@ def vr_state_summary(request):
     return render_to_response('psc/state_summary.html', context_instance=ctx)
 
 def vr_checklist_analysis(request):
-    vr_days = [datetime.date(datetime(2011, 1, 15)), datetime.date(datetime(2011, 1, 20)), datetime.date(datetime(2011, 1, 22)), datetime.date(datetime(2011, 1, 27)), datetime.date(datetime(2011, 1, 29))]
+    vr_days = [day[0] for day in VR_DAYS if day[0]]
 
-    qs = Q()
-    qs &= Q(submitted__isnull=False)
+    qs = Q(submitted=True)
     qs &= Q(date__in=vr_days)
 
     if not request.session.has_key('vr_analysis_filter'):
@@ -754,6 +754,7 @@ def vr_checklist_analysis(request):
     ctx['question'] = dict()
     ctx['question']['no_of_checklists'] = stats.vr_N(qs)
     ctx['question']['A'] = stats.vr_QA(qs)
+
     #for B through AA
     qs &= ~Q(A=4)
     ctx['question']['B'] = stats.vr_QB(qs)
