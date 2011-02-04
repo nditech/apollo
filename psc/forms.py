@@ -46,8 +46,8 @@ VR_INCIDENT_DAYS = tuple([('', 'All')]+[(date, date.strftime('%a %d-%b')) for da
 
 
 DCO_DAYS = (('', 'All'),
-        (datetime.date(datetime(2011, 2, 3)), 'Thu 3-Feb'),
-        (datetime.date(datetime(2011, 2, 8)), 'Tue 8-Feb'))
+        (datetime.date(datetime(2011, 2, 12)), 'Sat 12-Feb'),
+        (datetime.date(datetime(2011, 2, 17)), 'Tue 17-Feb'))
 
 ROLES = (
         ('NSC', 'National Steering Committee'),
