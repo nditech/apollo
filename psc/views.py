@@ -262,7 +262,7 @@ def dco_checklist_list(request):
     else:
         filter_form = DCOChecklistFilterForm()
 
-    paginator = Paginator(DCOChecklist.objects.filter(qs).order_by('date', 'observer', 'sms_serial'), items_per_page)
+    paginator = Paginator(DCOChecklist.objects.filter(qs).order_by('date', 'observer'), items_per_page)
 
     try:
         page = int(request.GET.get('page', '1'))
