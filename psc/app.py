@@ -162,31 +162,18 @@ class App(AppBase):
         self._preprocess(msg, params)
 
         # Create the checklist
-        counter = 1
         try:
             dco = DCOChecklist.objects.filter(date=msg.date, observer=msg.observer, submitted=True)
-            counter = len(dco) + 1
-            '''DCO Checklists are prepopulated (3 checklists)  and have to be filled first before creating new
-            ones.'''
-            if counter > 3:
-                dco = DCOChecklist()
-                dco.date = msg.date
-                dco.observer = msg.observer
-                if msg.location:
-                    dco.location = msg.location
-                dco.sms_serial = counter
-                dco.submitted =True
-            else:
-                dco = DCOChecklist.objects.get(date=msg.date, observer=msg.observer, sms_serial=counter)
-                if msg.location:
-                    dco.location = msg.location
-                dco.submitted = True
+            dco.date = msg.date
+            dco.observer = msg.observer
+            if msg.location:
+                dco.location = msg.location
+            dco.submitted =True
         except DCOChecklist.DoesNotExist:
             dco = DCOChecklist() 
             dco.date = msg.date
             dco.observer = msg.observer
             dco.location = msg.location
-            dco.sms_serial = counter
             dco.submitted = True
 
         if params['comment']:
