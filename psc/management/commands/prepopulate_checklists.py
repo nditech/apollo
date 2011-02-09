@@ -34,17 +34,14 @@ class Command(BaseCommand):
                     lga = ls.location
                     # set default location
                     location = RegistrationCenter.objects.get(parent=lga,code__exact="999")
-                    counter = 1
-                    while counter <= 3:
-                        try:
-                            dco = DCOChecklist.objects.get(date=report_date, observer=ls, sms_serial=counter)
-                        except DCOChecklist.DoesNotExist:
-                            dco = DCOChecklist(date=report_date, observer=ls, sms_serial=counter)
-                            dco.location_type = ContentType.objects.get_for_model(location)
-                            dco.location_id = location.pk
-                            dco.save()
-                            dco_reports_created += 1
-                        counter += 1
+                    try:
+                        dco = DCOChecklist.objects.get(date=report_date, observer=ls)
+                    except DCOChecklist.DoesNotExist:
+                        dco = DCOChecklist(date=report_date, observer=ls)
+                        dco.location_type = ContentType.objects.get_for_model(location)
+                        dco.location_id = location.pk
+                        dco.save()
+                        dco_reports_created += 1
 
         print "%d Voter's Registration Checklists Prepopulated" % vr_reports_created
         print "%d Display, Claims and Objection Checklists Prepopulated" % dco_reports_created
