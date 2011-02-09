@@ -58,16 +58,8 @@
                             <div class="box compartment">
                                 <h2 class="dashboard-header"><a href="#">DCO Checklists </a></h2>
                                 <div class="dash-row">
-                                    <div class="dash-column first">1st Report</div>
-                                    <div class="dash-column second"><span>{{ dco_checklist_first_today }}</span></div>
-                                </div>
-                                <div class="dash-row">
-                                     <div class="dash-column first">2nd Report</div>
-                                     <div class="dash-column second"><span>{{ dco_checklist_second_today }}</span></div>
-                                </div>
-                                <div class="dash-row">
-                                     <div class="dash-column first">3rd Report</div>
-                                     <div class="dash-column second"><span>{{ dco_checklist_third_today }}</span></div>
+                                    <div class="dash-column first">Checklist Reports</div>
+                                    <div class="dash-column second"><span>{{ dco_checklists_today }}</span></div>
                                 </div>
                                 <div class="dash-row last">
                                      <div class="dash-text"><a href="{% url psc.views.dco_checklist_list %}">(View All)</a></div>

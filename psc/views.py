@@ -124,9 +124,7 @@ def home(request):
     context['dco_incidents_count'] = DCOIncident.objects.all().count()
     context['dco_incidents_today'] = DCOIncident.objects.filter(qs).count()
 
-    context['dco_checklist_first_today'] = DCOChecklist.objects.filter(sms_serial=1).filter(qs).count()
-    context['dco_checklist_second_today'] = DCOChecklist.objects.filter(sms_serial=2).filter(qs).count()
-    context['dco_checklist_third_today'] = DCOChecklist.objects.filter(sms_serial=3).filter(qs).count()
+    context['dco_checklists_today'] = DCOChecklist.objects.filter(qs).count()
 
     #render
     return render_to_response('psc/home.html', context,  context_instance=RequestContext(request))
