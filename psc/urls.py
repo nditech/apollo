@@ -22,6 +22,7 @@ urlpatterns = patterns('',
     (r'^get-states-by-zone/(?P<zone>.+)/?$', views.get_states_by_zone),
     (r'^vr/analysis/?$', views.vr_checklist_analysis),
     (r'^vr/in/del/(?P<incident_id>\d+)/?$', views.vr_incident_delete),
+    (r'^dco/in/del/(?P<incident_id>\d+)/?$', views.dco_incident_delete),
     (r'^sendmail/?$', views.send_mail),
 )
 

@@ -801,6 +801,13 @@ def vr_incident_delete(request, incident_id):
         VRIncident.objects.get(pk=incident_id).delete()
         return HttpResponseRedirect(reverse('psc.views.vr_incident_list'))
 
+@permission_required('psc.can_analyse', login_url='/')
+@login_required()
+def dco_incident_delete(request, incident_id):
+    if int(incident_id):        
+        DCOIncident.objects.get(pk=incident_id).delete()
+        return HttpResponseRedirect(reverse('psc.views.dco_incident_list'))
+
 #@permission_required('psc.can_analyse', login_url='/')
 #@login_required()
 def send_mail(request):
