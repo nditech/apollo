@@ -620,6 +620,7 @@ def export(request, model):
     if hasattr(export_method, '__call__'):
         export_method(writer)
         return response
+
 @permission_required('psc.can_analyse', login_url='/')
 @login_required()
 def vr_zone_summary(request):
@@ -669,7 +670,7 @@ def vr_zone_summary(request):
         }
         ctx['zone_list'].append(zone_stats)
         
-    return render_to_response('psc/zone_summary.html', context_instance=ctx)
+    return render_to_response('psc/vr_zone_summary.html', context_instance=ctx)
 
 @permission_required('psc.can_analyse', login_url='/')
 @login_required()
@@ -720,7 +721,7 @@ def vr_state_summary(request):
         }
         ctx['state_list'].append(state_stats)
         
-    return render_to_response('psc/state_summary.html', context_instance=ctx)
+    return render_to_response('psc/vr_state_summary.html', context_instance=ctx)
 
 def vr_checklist_analysis(request):
     vr_days = [day[0] for day in VR_DAYS if day[0]]
