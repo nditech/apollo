@@ -57,6 +57,7 @@
                         <th>State/SD</th>
                         <th>Observer</th>
                         <th>Supervisor</th>
+                        <th class="checklist">Arrival</th>
                         <th class="checklist">Status</th>
                         <th>&nbsp;</th>
                     </tr>
@@ -71,25 +72,40 @@
                         <td>{{ cl.observer.name }}</td>
                         <td>{{ cl.observer.supervisor.name }}</td>
                         <td class="checklist">
-					{% if cl.A and cl.B and cl.C and cl.D and cl.E and cl.G and cl.H and cl.J and cl.K and cl.M and cl.N and cl.P and cl.Q and cl.R and cl.S and cl.T and cl.U and cl.V and cl.W and cl.X and cl.submitted %}
-						{% if cl.F1 or cl.F2 or cl.F3 or cl.F4 or cl.F5 or cl.F6 or cl.F7 or cl.F8 or cl.F9 %}
+						{% if cl.submitted %}
+                            <img src="/assets/img/status.png" width="16" height="16" alt="arrived" />
+						{% else %}
+                            <img src="/assets/img/exclamation-red.png" width="16" height="16" alt="none" />
+						{% endif %}
+												</td>
+                        <td class="checklist">
+					{% if cl.A = 1 %}
+						{% if cl.B and cl.C and cl.D and cl.E and cl.G and cl.H and cl.J and cl.K and cl.M and cl.N and cl.P and cl.Q and cl.R and cl.S and cl.T and cl.U and cl.V and cl.W and cl.X and cl.submitted %}
+							{% if cl.F1 or cl.F2 or cl.F3 or cl.F4 or cl.F5 or cl.F6 or cl.F7 or cl.F8 or cl.F9 %}
                             <img src="/assets/img/status.png" width="16" height="16" alt="complete" />
+							{% else %}
+                            <img src="/assets/img/status-away.png" width="16" height="16" alt="incomplete" />
+							{% endif %}
 						{% else %}
                             <img src="/assets/img/status-away.png" width="16" height="16" alt="incomplete" />
 						{% endif %}
 					{% else %}
-					{% if cl.A or cl.B or cl.C or cl.D or cl.E or cl.G or cl.H or cl.J or cl.K or cl.M or cl.N or cl.P or cl.Q or cl.R or cl.S or cl.T or cl.U or cl.V or cl.W or cl.X or cl.F1 or cl.F2 or cl.F3 or cl.F4 or cl.F5 or cl.F6 or cl.F7 or cl.F8 or cl.F9 and cl.submitted %}
-                            <img src="/assets/img/status-away.png" width="16" height="16" alt="incomplete" />
-					{% else %}
-                            <img src="/assets/img/status-busy.png" width="16" height="16" alt="missing" />
-					{% endif %}
+						{% if cl.A = 2 %}
+							{% if cl.B or cl.C or cl.D or cl.E or cl.G or cl.H or cl.J or cl.K or cl.M or cl.N or cl.P or cl.Q or cl.R or cl.S or cl.T or cl.U or cl.V or cl.W or cl.X or cl.F1 or cl.F2 or cl.F3 or cl.F4 or cl.F5 or cl.F6 or cl.F7 or cl.F8 or cl.F9 and cl.submitted %}
+														<img src="/assets/img/status-busy.png" width="16" height="16" alt="none" />
+							{% else %}
+														<img src="/assets/img/information.png" width="16" height="16" alt="not open" />
+							{% endif %}
+						{% else %}
+                            <img src="/assets/img/exclamation-red.png" width="16" height="16" alt="missing" />
+						{% endif %}
 					{% endif %}
                         </td>
                         <td><a href="{% url psc.views.dco_checklist cl.id %}">Edit</a></td>
                     </tr>
 				{% empty %}
                     <tr>
-                        <td colspan="10" class="nodata">No reports yet</td>
+                        <td colspan="11" class="nodata">No reports yet</td>
                     </tr>
 				{% endfor %}
                 </tbody>
