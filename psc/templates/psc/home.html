@@ -58,8 +58,21 @@
                             <div class="box compartment">
                                 <h2 class="dashboard-header"><a href="#">DCO Checklists </a></h2>
                                 <div class="dash-row">
+                                    <div class="dash-column first">Arrival Texts</div>
+                                    <div class="dash-column second">
+																				<span class="missing">{{ dco_not_arrived|default:"0" }}</span>
+                                        <span class="complete">{{ dco_arrived|default:"0" }}</span>
+																		</div>
+                                </div>
+                                <div class="dash-row">
                                     <div class="dash-column first">Checklist Reports</div>
-                                    <div class="dash-column second"><span>{{ dco_checklists_today }}</span></div>
+                                    <div class="dash-column second">
+                                         <span class="missing">{{ dco_missing|default:"0" }}</span>
+                                         <span class="unverified">{{ dco_not_open_problem|default:"0" }}</span>
+                                         <span class="incomplete">{{ dco_partial|default:"0" }}</span>
+                                         <span class="not_open">{{ dco_not_open|default:"0" }}</span>                                         
+                                         <span class="complete">{{ dco_complete|default:"0" }}</span>
+																		</div>
                                 </div>
                                 <div class="dash-row last">
                                      <div class="dash-text"><a href="{% url psc.views.dco_checklist_list %}">(View All)</a></div>
