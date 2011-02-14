@@ -163,7 +163,7 @@ class App(AppBase):
 
         # Create the checklist
         try:
-            dco = DCOChecklist.objects.filter(date=msg.date, observer=msg.observer, submitted=True)
+            dco = DCOChecklist.objects.get(date=msg.date, observer=msg.observer)
             if msg.location:
                 dco.location = msg.location
             dco.submitted =True
