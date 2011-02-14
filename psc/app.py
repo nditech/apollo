@@ -173,6 +173,12 @@ class App(AppBase):
             dco.observer = msg.observer
             dco.location = msg.location
             dco.submitted = True
+        except DCOChecklist.MultipleObjectsReturned:
+            dco = DCOChecklist.objects.filter(date=msg.date, observer=msg.observer)[0]
+            if msg.location:
+                dco.location = msg.location
+            dco.submitted =True
+
 
         if params['comment']:
             dco.comment = params['comment']
