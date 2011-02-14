@@ -663,6 +663,39 @@ def export(request, model):
             comment = vri.comment if vri.comment else ""
             writer.writerow([pscid, zone, state, lga, vr, rc, A, B, C, D, E, F, G, H, J, K, M, N, P, Q, comment.replace('"', "'")])
 
+    def export_dcoi(writer):
+        header = ["PSC ID","Zone","State","LGA","DC","RC","A","B","C","D","E","F","G","H","J","K","Comment"]
+        writer.writerow(header)
+
+        dcois = DCOIncident.objects.all()
+        for dcoi in dcois:
+            pscid = dcoi.observer.observer_id
+            lga = dcoi.location.parent.name
+            if dcoi.location.parent.code == '999':
+                if dcoi.observer.role == 'SDC':
+                    zone = dcoi.observer.location.parent.parent.name
+                    state = dcoi.observer.location.parent.name
+                else:
+                    zone = dcoi.observer.location.parent.name
+                    state = dcoi.observer.location.name
+            else:
+                zone = dcoi.location.parent.parent.parent.parent.name
+                state = dcoi.location.parent.parent.parent.name
+            dc = dcoi.date.day
+            rc = dcoi.location.code
+            A = dcoi.A if dcoi.A else ""
+            B = dcoi.B if dcoi.B else ""
+            C = dcoi.C if dcoi.C else ""
+            D = dcoi.D if dcoi.D else ""
+            E = dcoi.E if dcoi.E else ""
+            F = dcoi.F if dcoi.F else ""
+            G = dcoi.G if dcoi.G else ""
+            H = dcoi.H if dcoi.H else ""
+            J = dcoi.J if dcoi.J else ""
+            K = dcoi.K if dcoi.K else ""
+            comment = dcoi.comment if dcoi.comment else ""
+            writer.writerow([pscid, zone, state, lga, dc, rc, A, B, C, D, E, F, G, H, J, K, comment.replace('"', "'")])
+
     def export_vrc(writer):
         header =  ["PSC ID","Zone","State","LGA","VR","RC","A","B","C","D1","D2","D3","D4","E1","E2","E3","E4","E5","F","G","H","J","K","M","N","P","Q","R","S","T","U","V","W","X","Y","Z","AA","Comment"]
         writer.writerow(header)
@@ -720,6 +753,62 @@ def export(request, model):
             AA = vrc.AA if vrc.AA != None else ""
             comment = vrc.comment
             writer.writerow([pscid, zone, state, lga, vr, rc, A, B, C, D1, D2, D3, D4, E1, E2, E3, E4, E5, F, G, H, J, K, M, N, P, Q, R, S, T, U, V, W, X, Y, Z, AA, comment.replace('"', "'")])
+
+    def export_dcoc(writer):
+        header =  ["PSC ID","Zone","State","LGA","DC","RC","A","B","C","D","E","F1","F2","F3","F4","F5","F6","F7","F8","F9","G","H","J","K","M","N","P","Q","R","S","T","U","V","W","X","Comment"]
+        writer.writerow(header)
+
+        dcocs = DCOChecklist.objects.filter(observer__role='LGA')
+        for dcoc in dcocs:
+            pscid = dcoc.observer.observer_id
+            try:
+                zone = dcoc.location.parent.parent.parent.parent.name
+                state = dcoc.location.parent.parent.parent.name
+                lga = dcoc.location.parent.name
+                rc = dcoc.location.code
+            except AttributeError:
+                try:
+                    zone = dcoc.observer.location.parent.parent.parent.name
+                    state = dcoc.observer.location.parent.parent.name
+                    lga = dcoc.observer.location.name
+                    rc = "999"
+                except AttributeError:
+                    zone = ""
+                    state = ""
+                    lga = "999"
+                    rc = "999"
+            dc = dcoc.date.day
+            A = dcoc.A if dcoc.A else ""
+            B = dcoc.B if dcoc.B else ""
+            C = dcoc.C if dcoc.C else ""
+            D = dcoc.D if dcoc.D else ""
+            E = dcoc.E if dcoc.E else ""
+            F1 = "" if dcoc.F1 == None else 1 if dcoc.F1 == True else 2
+            F2 = "" if dcoc.F2 == None else 1 if dcoc.F2 == True else 2
+            F3 = "" if dcoc.F3 == None else 1 if dcoc.F3 == True else 2
+            F4 = "" if dcoc.F4 == None else 1 if dcoc.F4 == True else 2
+            F5 = "" if dcoc.F5 == None else 5 if dcoc.F5 == True else 2
+            F6 = "" if dcoc.F6 == None else 1 if dcoc.F6 == True else 6
+            F7 = "" if dcoc.F7 == None else 1 if dcoc.F7 == True else 2
+            F8 = "" if dcoc.F8 == None else 1 if dcoc.F8 == True else 2
+            F9 = "" if dcoc.F9 == None else 1 if dcoc.F9 == True else 2
+            G = dcoc.G if dcoc.G else ""
+            H = dcoc.H if dcoc.H else ""
+            J = dcoc.J if dcoc.J else ""
+            K = dcoc.K if dcoc.K else ""
+            M = dcoc.M if dcoc.M else ""
+            N = dcoc.N if dcoc.N else ""
+            P = dcoc.P if dcoc.P else ""
+            Q = dcoc.Q if dcoc.Q else ""
+            R = dcoc.R if dcoc.R else ""
+            S = dcoc.S if dcoc.S else ""
+            T = dcoc.T if dcoc.T else ""
+            U = dcoc.U if dcoc.U else ""
+            V = dcoc.V if dcoc.V else ""
+            W = dcoc.W if dcoc.W else ""
+            X = dcoc.X if dcoc.X else ""
+            comment = dcoc.comment
+            writer.writerow([pscid, zone, state, lga, dc, rc, A, B, C, D, E, F1, F2, F3, F4, F5, F6, F7, F8, F9, G, H, J, K, M, N, P, Q, R, S, T, U, V, W, X, comment.replace('"', "'")])
 
     # export here
     # TODO: refactor

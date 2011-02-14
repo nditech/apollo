@@ -22,6 +22,7 @@
     <div class="box">
         <h2>Display, Claims &amp; Objections Checklists <span class="flag">
             <button onclick="location.href='{% url psc.views.dco_checklist_list %}'">Refresh</button>
+            {% if perms.psc.can_analyse %}<button onclick="location.href='{% url psc.views.export "dcoc" %}'">Export</button></span>{% endif %}
         </span></h2>
         <div class="block">
             <div id="filter">
