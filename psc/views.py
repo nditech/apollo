@@ -289,26 +289,87 @@ def vr_checklist_list(request):
 @login_required()
 def dco_checklist_list(request):
     #qs = Q(date__in=[d[0] for d in DCO_DAYS if d[0]])
-    qs = Q()
+    qs_include = Q()
+    if not request.session.has_key('dco_checklist_filter'):
+        request.session['dco_checklist_filter'] = {}
+
     if request.method == 'GET':
-        filter_form = DCOChecklistFilterForm(request.GET)
+        if filter(lambda key: request.GET.has_key(key), ['zone', 'state', 'first', 'second', 'day', 'observer_id']):
+            request.session['dco_checklist_filter'] = request.GET
+        filter_form = DCOChecklistFilterForm(request.session['dco_checklist_filter'])
 
         if filter_form.is_valid():
             data = filter_form.cleaned_data
+
             if data['zone']:
-                qs &= Q(observer__location_id__in=LGA.objects.filter(parent__parent__parent__code__iexact=data['zone']).values_list('id', flat=True))
+                qs_include &= Q(observer__location_id__in=LGA.objects.filter(parent__parent__parent__code__iexact=data['zone']).values_list('id', flat=True))
             if data['state']:
-                qs &= Q(observer__location_id__in=LGA.objects.filter(parent__parent__code__exact=data['state']).values_list('id', flat=True))
-            if data['district']:
-                qs &= Q(observer__location_id__in=LGA.objects.filter(parent__code__exact=data['district']).values_list('id', flat=True))
+                qs_include &= Q(observer__location_id__in=LGA.objects.filter(parent__parent__code__exact=data['state']).values_list('id', flat=True))
             if data['day']:
-                qs &= Q(date=data['day'])
+                qs_include &= Q(date=data['day'])
+
+            if data['first'] == u'1':
+                qs_include &= Q(submitted=True)
+            elif data['first'] == u'2':
+                qs_include &= Q(submitted=False)
+
+            qs_complete = Q(A=1) & Q(B__gt=0) & Q(C__isnull=False) & Q(D__gt=0) & Q(E__gt=0) & (Q(F1__isnull=False) | \
+                Q(F2__isnull=False) | Q(F3__isnull=False) | Q(F4__isnull=False) | Q(F5__isnull=False) | \
+                Q(F6__isnull=False) | Q(F7__isnull=False) | Q(F8__isnull=False) | Q(F9__isnull=False)) & \
+                Q(G__isnull=False) & Q(H__gt=0) & Q(J__isnull=False) & Q(K__isnull=False) & Q(M__gt=0) & Q(N__gt=0) & \
+                Q(P__gt=0) & Q(Q__gt=0) & Q(R__gt=0) & Q(S__isnull=False) & Q(T__isnull=False) & Q(U__isnull=False) & \
+                Q(V__isnull=False) & Q(W__isnull=False) & Q(X__isnull=False)
+
+            qs_missing = Q(A=0) & Q(B=0) & Q(C__isnull=True) & Q(D=0) & Q(E=0) & Q(F1__isnull=True) & \
+                Q(F2__isnull=True) & Q(F3__isnull=True) & Q(F4__isnull=True) & Q(F5__isnull=True) & \
+                Q(F6__isnull=True) & Q(F7__isnull=True) & Q(F8__isnull=True) & Q(F9__isnull=True) & \
+                Q(G__isnull=True) & Q(H=0) & Q(J__isnull=True) & Q(K__isnull=True) & Q(M=0) & Q(N=0) & \
+                Q(P=0) & Q(Q=0) & Q(R=0) & Q(S__isnull=True) & Q(T__isnull=True) & Q(U__isnull=True) & \
+                Q(V__isnull=True) & Q(W__isnull=True) & Q(X__isnull=True)
+
+            qs_partial = Q(A=1) & (Q(B__gt=0) | Q(C__isnull=False) & Q(D__gt=0) | Q(E__gt=0) | Q(F1__isnull=False) | \
+                Q(F2__isnull=False) | Q(F3__isnull=False) | Q(F4__isnull=False) | Q(F5__isnull=False) | \
+                Q(F6__isnull=False) | Q(F7__isnull=False) | Q(F8__isnull=False) | Q(F9__isnull=False) | \
+                Q(G__isnull=False) | Q(H__gt=0) | Q(J__isnull=False) | Q(K__isnull=False) | Q(M__gt=0) | Q(N__gt=0) | \
+                Q(P__gt=0) | Q(Q__gt=0) | Q(R__gt=0) | Q(S__isnull=False) | Q(T__isnull=False) | Q(U__isnull=False) | \
+                Q(V__isnull=False) | Q(W__isnull=False) | Q(X__isnull=False)) & ~(qs_complete)
+
+            qs_not_open = Q(A=2) & Q(B=0) & Q(C__isnull=True) & Q(D=0) & Q(E=0) & Q(F1__isnull=True) & \
+                Q(F2__isnull=True) & Q(F3__isnull=True) & Q(F4__isnull=True) & Q(F5__isnull=True) & \
+                Q(F6__isnull=True) & Q(F7__isnull=True) & Q(F8__isnull=True) & Q(F9__isnull=True) & \
+                Q(G__isnull=True) & Q(H=0) & Q(J__isnull=True) & Q(K__isnull=True) & Q(M=0) & Q(N=0) & \
+                Q(P=0) & Q(Q=0) & Q(R=0) & Q(S__isnull=True) & Q(T__isnull=True) & Q(U__isnull=True) & \
+                Q(V__isnull=True) & Q(W__isnull=True) & Q(X__isnull=True)
+
+            qs_not_open_problem = Q(A=2) & (Q(B__gt=0) | Q(C__isnull=False) & Q(D__gt=0) | Q(E__gt=0) | Q(F1__isnull=False) | \
+                Q(F2__isnull=False) | Q(F3__isnull=False) | Q(F4__isnull=False) | Q(F5__isnull=False) | \
+                Q(F6__isnull=False) | Q(F7__isnull=False) | Q(F8__isnull=False) | Q(F9__isnull=False) | \
+                Q(G__isnull=False) | Q(H__gt=0) | Q(J__isnull=False) | Q(K__isnull=False) | Q(M__gt=0) | Q(N__gt=0) | \
+                Q(P__gt=0) | Q(Q__gt=0) | Q(R__gt=0) | Q(S__isnull=False) | Q(T__isnull=False) | Q(U__isnull=False) | \
+                Q(V__isnull=False) | Q(W__isnull=False) | Q(X__isnull=False)) & ~(qs_complete)
+
+            if data['second'] == u'1': # complete
+                qs_include &= qs_complete
+            elif data['second'] == u'2': # missing
+                qs_include &= qs_missing
+            elif data['second'] == u'3': # partial
+                qs_include &= qs_partial
+            elif data['second'] == u'4': # not open problem
+                qs_include &= qs_not_open_problem
+            elif data['second'] == u'5': # not open
+                qs_include &= qs_not_open
+
             if data['observer_id']:
-                qs = Q(observer__observer_id__exact=data['observer_id'])
+                qs_include = Q(observer__observer_id__exact=data['observer_id'])
     else:
         filter_form = DCOChecklistFilterForm()
 
-    paginator = Paginator(DCOChecklist.objects.filter(qs).order_by('date', 'observer'), items_per_page)
+    #get all objects
+    global items_per_page
+    if request.GET.get('export'):
+	    items_per_page = DCOChecklist.objects.filter(qs_include).count()
+    
+    paginator = Paginator(DCOChecklist.objects.filter(qs_include).order_by('date', 'observer'), items_per_page)
 
     try:
         page = int(request.GET.get('page', '1'))

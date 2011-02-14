@@ -45,6 +45,15 @@ VR_DAYS = (('', 'All'),
 VR_INCIDENT_DAYS = tuple([('', 'All')]+[(date, date.strftime('%a %d-%b')) for date in VRIncident.objects.all().distinct('date').order_by('-date').values_list('date', flat=True)])
 
 
+DCO_ARRIVAL = ((0, 'All'),
+               (1, 'Arrived'),
+               (2, 'Not Arrived'))
+DCO_STATUS = ((0, 'All'),
+              (1, 'Complete'),
+              (2, 'Missing'),
+              (3, 'Partial'),
+              (4, 'Not Open Problem'),
+              (5, 'Not Open'))
 DCO_DAYS = (('', 'All'),
         (datetime.date(datetime(2011, 2, 14)), 'Mon 14-Feb'),
         (datetime.date(datetime(2011, 2, 17)), 'Thu 17-Feb'))
@@ -124,7 +133,8 @@ class DCOChecklistFilterForm(forms.Form):
     day = forms.ChoiceField(choices=DCO_DAYS, required=False)
     zone = forms.ChoiceField(choices=ZONES, required=False)
     state = forms.ChoiceField(choices=STATES, required=False)
-    district = forms.ChoiceField(choices=DISTRICTS, required=False) 
+    first = forms.ChoiceField(choices=DCO_ARRIVAL, required=False, label='Arrival Text')
+    second = forms.ChoiceField(choices=DCO_STATUS, required=False, label='2nd SMS')
 
 class VRIncidentFilterForm(forms.Form):
     observer_id = forms.CharField(required=False, label="PSC ID", max_length=6, widget=forms.TextInput(attrs={'autocomplete':'off','style':'width:7em'}))
