@@ -69,8 +69,8 @@
                         <td>{{ cl.date|date:"D d-M" }}</td>
                         <td>{{ cl.observer.location.name }}</td>
                         <td>{{ cl.observer.location.parent.name|truncatewords:3 }}</td>
-                        <td>{{ cl.observer.name }}</td>
-                        <td>{{ cl.observer.supervisor.name }}</td>
+												<td>{{ cl.observer.name|truncatewords:2 }}{% if cl.observer.phone %} (<strong>{{ cl.observer.phone }}</strong>){% endif %}</td>
+												<td>{{ cl.observer.supervisor.name|truncatewords:2 }}{% if cl.observer.supervisor.phone %} (<strong>{{ cl.observer.supervisor.phone }}</strong>){% endif %}</td>
                         <td class="checklist">
 						{% if cl.submitted %}
                             <img src="/assets/img/status.png" width="16" height="16" alt="arrived" />
