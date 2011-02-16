@@ -516,8 +516,13 @@ def vr_incident_list(request):
 @login_required()
 def dco_incident_list(request):
     qs = Q()
+    if not request.session.has_key('dco_incident_filter'):
+        request.session['dco_incident_filter'] = {}
+
     if request.method == 'GET':
-        filter_form = DCOIncidentFilterForm(request.GET)
+        if filter(lambda key: request.GET.has_key(key), ['zone', 'state', 'district', 'day', 'observer_id']):
+            request.session['dco_incident_filter'] = request.GET
+        filter_form = DCOIncidentFilterForm(request.session['dco_incident_filter'])
 
         if filter_form.is_valid():
             data = filter_form.cleaned_data

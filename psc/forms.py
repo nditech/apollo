@@ -44,6 +44,7 @@ VR_DAYS = (('', 'All'),
 
 VR_INCIDENT_DAYS = tuple([('', 'All')]+[(date, date.strftime('%a %d-%b')) for date in VRIncident.objects.all().distinct('date').order_by('-date').values_list('date', flat=True)])
 
+DCO_INCIDENT_DAYS = tuple([('', 'All')]+[(date, date.strftime('%a %d-%b')) for date in DCOIncident.objects.all().distinct('date').order_by('-date').values_list('date', flat=True)])
 
 DCO_ARRIVAL = ((0, 'All'),
                (1, 'Arrived'),
@@ -145,7 +146,7 @@ class VRIncidentFilterForm(forms.Form):
 
 class DCOIncidentFilterForm(forms.Form):
     observer_id = forms.CharField(required=False, label="PSC ID", max_length=6, widget=forms.TextInput(attrs={'autocomplete':'off','style':'width:7em'}))
-    day = forms.ChoiceField(choices=VR_DAYS, required=False)
+    day = forms.ChoiceField(choices=DCO_INCIDENT_DAYS, required=False)
     zone = forms.ChoiceField(choices=ZONES, required=False)
     state = forms.ChoiceField(choices=STATES, required=False)
     district = forms.ChoiceField(choices=DISTRICTS, required=False)
