@@ -125,47 +125,11 @@ def home(request):
     context['dco_arrived'] = DCOChecklist.objects.filter(qs).filter(qs_dco_arrived).count()
     context['dco_not_arrived'] = DCOChecklist.objects.filter(qs).filter(qs_dco_not_arrived).count()
 
-
-    qs_dco_missing = Q(A=0) & Q(B=0) & Q(C__isnull=True) & Q(D=0) & Q(E=0) & Q(F1__isnull=True) & \
-        Q(F2__isnull=True) & Q(F3__isnull=True) & Q(F4__isnull=True) & Q(F5__isnull=True) & \
-        Q(F6__isnull=True) & Q(F7__isnull=True) & Q(F8__isnull=True) & Q(F9__isnull=True) & \
-        Q(G__isnull=True) & Q(H=0) & Q(J__isnull=True) & Q(K__isnull=True) & Q(M=0) & Q(N=0) & \
-        Q(P=0) & Q(Q=0) & Q(R=0) & Q(S__isnull=True) & Q(T__isnull=True) & Q(U__isnull=True) & \
-        Q(V__isnull=True) & Q(W__isnull=True) & Q(X__isnull=True)
-
-    qs_dco_not_open = Q(A=2) & Q(B=0) & Q(C__isnull=True) & Q(D=0) & Q(E=0) & Q(F1__isnull=True) & \
-        Q(F2__isnull=True) & Q(F3__isnull=True) & Q(F4__isnull=True) & Q(F5__isnull=True) & \
-        Q(F6__isnull=True) & Q(F7__isnull=True) & Q(F8__isnull=True) & Q(F9__isnull=True) & \
-        Q(G__isnull=True) & Q(H=0) & Q(J__isnull=True) & Q(K__isnull=True) & Q(M=0) & Q(N=0) & \
-        Q(P=0) & Q(Q=0) & Q(R=0) & Q(S__isnull=True) & Q(T__isnull=True) & Q(U__isnull=True) & \
-        Q(V__isnull=True) & Q(W__isnull=True) & Q(X__isnull=True)
-
-    qs_dco_complete = Q(A=1) & Q(B__gt=0) & Q(C__isnull=False) & Q(D__gt=0) & Q(E__gt=0) & (Q(F1__isnull=False) | \
-        Q(F2__isnull=False) | Q(F3__isnull=False) | Q(F4__isnull=False) | Q(F5__isnull=False) | \
-        Q(F6__isnull=False) | Q(F7__isnull=False) | Q(F8__isnull=False) | Q(F9__isnull=False)) & \
-        Q(G__isnull=False) & Q(H__gt=0) & Q(J__isnull=False) & Q(K__isnull=False) & Q(M__gt=0) & Q(N__gt=0) & \
-        Q(P__gt=0) & Q(Q__gt=0) & Q(R__gt=0) & Q(S__isnull=False) & Q(T__isnull=False) & Q(U__isnull=False) & \
-        Q(V__isnull=False) & Q(W__isnull=False) & Q(X__isnull=False) & Q(submitted=True)
-
-    qs_dco_partial = Q(A=1) & (Q(B__gt=0) | Q(C__isnull=False) & Q(D__gt=0) | Q(E__gt=0) | Q(F1__isnull=False) | \
-        Q(F2__isnull=False) | Q(F3__isnull=False) | Q(F4__isnull=False) | Q(F5__isnull=False) | \
-        Q(F6__isnull=False) | Q(F7__isnull=False) | Q(F8__isnull=False) | Q(F9__isnull=False) | \
-        Q(G__isnull=False) | Q(H__gt=0) | Q(J__isnull=False) | Q(K__isnull=False) | Q(M__gt=0) | Q(N__gt=0) | \
-        Q(P__gt=0) | Q(Q__gt=0) | Q(R__gt=0) | Q(S__isnull=False) | Q(T__isnull=False) | Q(U__isnull=False) | \
-        Q(V__isnull=False) | Q(W__isnull=False) | Q(X__isnull=False)) & ~(qs_dco_complete)
-
-    qs_dco_not_open_problem = Q(A=2) & (Q(B__gt=0) | Q(C__isnull=False) & Q(D__gt=0) | Q(E__gt=0) | Q(F1__isnull=False) | \
-        Q(F2__isnull=False) | Q(F3__isnull=False) | Q(F4__isnull=False) | Q(F5__isnull=False) | \
-        Q(F6__isnull=False) | Q(F7__isnull=False) | Q(F8__isnull=False) | Q(F9__isnull=False) | \
-        Q(G__isnull=False) | Q(H__gt=0) | Q(J__isnull=False) | Q(K__isnull=False) | Q(M__gt=0) | Q(N__gt=0) | \
-        Q(P__gt=0) | Q(Q__gt=0) | Q(R__gt=0) | Q(S__isnull=False) | Q(T__isnull=False) | Q(U__isnull=False) | \
-        Q(V__isnull=False) | Q(W__isnull=False) | Q(X__isnull=False)) & ~(qs_dco_complete)
-
-    context['dco_missing'] = DCOChecklist.objects.filter(qs).filter(qs_dco_missing).count()
-    context['dco_not_open_problem'] = DCOChecklist.objects.filter(qs).filter(qs_dco_not_open_problem).count()
-    context['dco_partial'] = DCOChecklist.objects.filter(qs).filter(qs_dco_partial).count()
-    context['dco_not_open'] = DCOChecklist.objects.filter(qs).filter(qs_dco_not_open).count()
-    context['dco_complete'] = DCOChecklist.objects.filter(qs).filter(qs_dco_complete).count()
+    context['dco_missing'] = DCOChecklist.objects.filter(qs).filter(queries['dco']['status']['missing']).count()
+    context['dco_not_open_problem'] = DCOChecklist.objects.filter(qs).filter(queries['dco']['status']['problem']).count()
+    context['dco_partial'] = DCOChecklist.objects.filter(qs).filter(queries['dco']['status']['partial']).count()
+    context['dco_not_open'] = DCOChecklist.objects.filter(qs).filter(queries['dco']['status']['not_open']).count()
+    context['dco_complete'] = DCOChecklist.objects.filter(qs).filter(queries['dco']['status']['complete']).count()
 
     context['dco_incidents_count'] = DCOIncident.objects.all().count()
     context['dco_incidents_today'] = DCOIncident.objects.filter(qs).count()
@@ -313,51 +277,16 @@ def dco_checklist_list(request):
             elif data['first'] == u'2':
                 qs_include &= Q(submitted=False)
 
-            qs_complete = Q(A=1) & Q(B__gt=0) & Q(C__isnull=False) & Q(D__gt=0) & Q(E__gt=0) & (Q(F1__isnull=False) | \
-                Q(F2__isnull=False) | Q(F3__isnull=False) | Q(F4__isnull=False) | Q(F5__isnull=False) | \
-                Q(F6__isnull=False) | Q(F7__isnull=False) | Q(F8__isnull=False) | Q(F9__isnull=False)) & \
-                Q(G__isnull=False) & Q(H__gt=0) & Q(J__isnull=False) & Q(K__isnull=False) & Q(M__gt=0) & Q(N__gt=0) & \
-                Q(P__gt=0) & Q(Q__gt=0) & Q(R__gt=0) & Q(S__isnull=False) & Q(T__isnull=False) & Q(U__isnull=False) & \
-                Q(V__isnull=False) & Q(W__isnull=False) & Q(X__isnull=False)
-
-            qs_missing = Q(A=0) & Q(B=0) & Q(C__isnull=True) & Q(D=0) & Q(E=0) & Q(F1__isnull=True) & \
-                Q(F2__isnull=True) & Q(F3__isnull=True) & Q(F4__isnull=True) & Q(F5__isnull=True) & \
-                Q(F6__isnull=True) & Q(F7__isnull=True) & Q(F8__isnull=True) & Q(F9__isnull=True) & \
-                Q(G__isnull=True) & Q(H=0) & Q(J__isnull=True) & Q(K__isnull=True) & Q(M=0) & Q(N=0) & \
-                Q(P=0) & Q(Q=0) & Q(R=0) & Q(S__isnull=True) & Q(T__isnull=True) & Q(U__isnull=True) & \
-                Q(V__isnull=True) & Q(W__isnull=True) & Q(X__isnull=True)
-
-            qs_partial = Q(A=1) & (Q(B__gt=0) | Q(C__isnull=False) & Q(D__gt=0) | Q(E__gt=0) | Q(F1__isnull=False) | \
-                Q(F2__isnull=False) | Q(F3__isnull=False) | Q(F4__isnull=False) | Q(F5__isnull=False) | \
-                Q(F6__isnull=False) | Q(F7__isnull=False) | Q(F8__isnull=False) | Q(F9__isnull=False) | \
-                Q(G__isnull=False) | Q(H__gt=0) | Q(J__isnull=False) | Q(K__isnull=False) | Q(M__gt=0) | Q(N__gt=0) | \
-                Q(P__gt=0) | Q(Q__gt=0) | Q(R__gt=0) | Q(S__isnull=False) | Q(T__isnull=False) | Q(U__isnull=False) | \
-                Q(V__isnull=False) | Q(W__isnull=False) | Q(X__isnull=False)) & ~(qs_complete)
-
-            qs_not_open = Q(A=2) & Q(B=0) & Q(C__isnull=True) & Q(D=0) & Q(E=0) & Q(F1__isnull=True) & \
-                Q(F2__isnull=True) & Q(F3__isnull=True) & Q(F4__isnull=True) & Q(F5__isnull=True) & \
-                Q(F6__isnull=True) & Q(F7__isnull=True) & Q(F8__isnull=True) & Q(F9__isnull=True) & \
-                Q(G__isnull=True) & Q(H=0) & Q(J__isnull=True) & Q(K__isnull=True) & Q(M=0) & Q(N=0) & \
-                Q(P=0) & Q(Q=0) & Q(R=0) & Q(S__isnull=True) & Q(T__isnull=True) & Q(U__isnull=True) & \
-                Q(V__isnull=True) & Q(W__isnull=True) & Q(X__isnull=True)
-
-            qs_not_open_problem = Q(A=2) & (Q(B__gt=0) | Q(C__isnull=False) & Q(D__gt=0) | Q(E__gt=0) | Q(F1__isnull=False) | \
-                Q(F2__isnull=False) | Q(F3__isnull=False) | Q(F4__isnull=False) | Q(F5__isnull=False) | \
-                Q(F6__isnull=False) | Q(F7__isnull=False) | Q(F8__isnull=False) | Q(F9__isnull=False) | \
-                Q(G__isnull=False) | Q(H__gt=0) | Q(J__isnull=False) | Q(K__isnull=False) | Q(M__gt=0) | Q(N__gt=0) | \
-                Q(P__gt=0) | Q(Q__gt=0) | Q(R__gt=0) | Q(S__isnull=False) | Q(T__isnull=False) | Q(U__isnull=False) | \
-                Q(V__isnull=False) | Q(W__isnull=False) | Q(X__isnull=False)) & ~(qs_complete)
-
             if data['second'] == u'1': # complete
-                qs_include &= qs_complete
+                qs_include &= queries['dco']['status']['complete']
             elif data['second'] == u'2': # missing
-                qs_include &= qs_missing
+                qs_include &= queries['dco']['status']['missing']
             elif data['second'] == u'3': # partial
-                qs_include &= qs_partial
+                qs_include &= queries['dco']['status']['partial']
             elif data['second'] == u'4': # not open problem
-                qs_include &= qs_not_open_problem
+                qs_include &= queries['dco']['status']['problem']
             elif data['second'] == u'5': # not open
-                qs_include &= qs_not_open
+                qs_include &= queries['dco']['status']['not_open']
 
             if data['observer_id']:
                 qs_include = Q(observer__observer_id__exact=data['observer_id'])

@@ -65,6 +65,7 @@ queries['dco']['status']['missing'] = Q(A=0) & Q(B=0) & Q(C__isnull=True) & Q(D=
     Q(G__isnull=True) & Q(H=0) & Q(J__isnull=True) & Q(K__isnull=True) & Q(M=0) & Q(N=0) & \
     Q(P=0) & Q(Q=0) & Q(R=0) & Q(S__isnull=True) & Q(T__isnull=True) & Q(U__isnull=True) & \
     Q(V__isnull=True) & Q(W__isnull=True) & Q(X__isnull=True)
+
 queries['dco']['status']['not_open'] = Q(A=2) & Q(B=0) & Q(C__isnull=True) & Q(D=0) & Q(E=0) & Q(F1__isnull=True) & \
     Q(F2__isnull=True) & Q(F3__isnull=True) & Q(F4__isnull=True) & Q(F5__isnull=True) & \
     Q(F6__isnull=True) & Q(F7__isnull=True) & Q(F8__isnull=True) & Q(F9__isnull=True) & \
@@ -72,9 +73,9 @@ queries['dco']['status']['not_open'] = Q(A=2) & Q(B=0) & Q(C__isnull=True) & Q(D
     Q(P=0) & Q(Q=0) & Q(R=0) & Q(S__isnull=True) & Q(T__isnull=True) & Q(U__isnull=True) & \
     Q(V__isnull=True) & Q(W__isnull=True) & Q(X__isnull=True)
 
-queries['dco']['status']['complete'] = Q(A=1) & Q(B__gt=0) & Q(C__isnull=False) & Q(D__gt=0) & Q(E__gt=0) & (Q(F1__isnull=False) | \
-    Q(F2__isnull=False) | Q(F3__isnull=False) | Q(F4__isnull=False) | Q(F5__isnull=False) | \
-    Q(F6__isnull=False) | Q(F7__isnull=False) | Q(F8__isnull=False) | Q(F9__isnull=False)) & \
+queries['dco']['status']['complete'] = Q(A=1) & Q(B__gt=0) & Q(C__isnull=False) & Q(D__gt=0) & Q(E__gt=0) & (~Q(F1=False) | \
+    ~Q(F2=False) | ~Q(F3=False) | ~Q(F4=False) | ~Q(F5=False) | \
+    ~Q(F6=False) | ~Q(F7=False) | ~Q(F8=False) | ~Q(F9=False)) & \
     Q(G__isnull=False) & Q(H__gt=0) & Q(J__isnull=False) & Q(K__isnull=False) & Q(M__gt=0) & Q(N__gt=0) & \
     Q(P__gt=0) & Q(Q__gt=0) & Q(R__gt=0) & Q(S__isnull=False) & Q(T__isnull=False) & Q(U__isnull=False) & \
     Q(V__isnull=False) & Q(W__isnull=False) & Q(X__isnull=False) & Q(submitted=True)
