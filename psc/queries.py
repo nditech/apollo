@@ -53,3 +53,43 @@ queries['third']['problem']             = ((Q(A=4) & qs_partial) | (Q(A=4) & qs_
 queries['third']['verified']            = ((Q(A=4) & Q(verified_third=True) & qs_partial))
 queries['third']['blank']               = Q(A=4) & qs_missing
 
+queries['dco'] = {}
+queries['dco']['arrival'] = {}
+queries['dco']['arrival']['yes'] = Q(submitted=True)
+queries['dco']['arrival']['no'] = Q(submitted=False)
+
+queries['dco']['status'] = {}
+queries['dco']['status']['missing'] = Q(A=0) & Q(B=0) & Q(C__isnull=True) & Q(D=0) & Q(E=0) & Q(F1__isnull=True) & \
+    Q(F2__isnull=True) & Q(F3__isnull=True) & Q(F4__isnull=True) & Q(F5__isnull=True) & \
+    Q(F6__isnull=True) & Q(F7__isnull=True) & Q(F8__isnull=True) & Q(F9__isnull=True) & \
+    Q(G__isnull=True) & Q(H=0) & Q(J__isnull=True) & Q(K__isnull=True) & Q(M=0) & Q(N=0) & \
+    Q(P=0) & Q(Q=0) & Q(R=0) & Q(S__isnull=True) & Q(T__isnull=True) & Q(U__isnull=True) & \
+    Q(V__isnull=True) & Q(W__isnull=True) & Q(X__isnull=True)
+queries['dco']['status']['not_open'] = Q(A=2) & Q(B=0) & Q(C__isnull=True) & Q(D=0) & Q(E=0) & Q(F1__isnull=True) & \
+    Q(F2__isnull=True) & Q(F3__isnull=True) & Q(F4__isnull=True) & Q(F5__isnull=True) & \
+    Q(F6__isnull=True) & Q(F7__isnull=True) & Q(F8__isnull=True) & Q(F9__isnull=True) & \
+    Q(G__isnull=True) & Q(H=0) & Q(J__isnull=True) & Q(K__isnull=True) & Q(M=0) & Q(N=0) & \
+    Q(P=0) & Q(Q=0) & Q(R=0) & Q(S__isnull=True) & Q(T__isnull=True) & Q(U__isnull=True) & \
+    Q(V__isnull=True) & Q(W__isnull=True) & Q(X__isnull=True)
+
+queries['dco']['status']['complete'] = Q(A=1) & Q(B__gt=0) & Q(C__isnull=False) & Q(D__gt=0) & Q(E__gt=0) & (Q(F1__isnull=False) | \
+    Q(F2__isnull=False) | Q(F3__isnull=False) | Q(F4__isnull=False) | Q(F5__isnull=False) | \
+    Q(F6__isnull=False) | Q(F7__isnull=False) | Q(F8__isnull=False) | Q(F9__isnull=False)) & \
+    Q(G__isnull=False) & Q(H__gt=0) & Q(J__isnull=False) & Q(K__isnull=False) & Q(M__gt=0) & Q(N__gt=0) & \
+    Q(P__gt=0) & Q(Q__gt=0) & Q(R__gt=0) & Q(S__isnull=False) & Q(T__isnull=False) & Q(U__isnull=False) & \
+    Q(V__isnull=False) & Q(W__isnull=False) & Q(X__isnull=False) & Q(submitted=True)
+
+queries['dco']['status']['partial'] = Q(A=1) & (Q(B__gt=0) | Q(C__isnull=False) & Q(D__gt=0) | Q(E__gt=0) | Q(F1__isnull=False) | \
+    Q(F2__isnull=False) | Q(F3__isnull=False) | Q(F4__isnull=False) | Q(F5__isnull=False) | \
+    Q(F6__isnull=False) | Q(F7__isnull=False) | Q(F8__isnull=False) | Q(F9__isnull=False) | \
+    Q(G__isnull=False) | Q(H__gt=0) | Q(J__isnull=False) | Q(K__isnull=False) | Q(M__gt=0) | Q(N__gt=0) | \
+    Q(P__gt=0) | Q(Q__gt=0) | Q(R__gt=0) | Q(S__isnull=False) | Q(T__isnull=False) | Q(U__isnull=False) | \
+    Q(V__isnull=False) | Q(W__isnull=False) | Q(X__isnull=False) | Q(submitted=True)) & ~(queries['dco']['status']['complete'])
+
+queries['dco']['status']['problem'] = Q(A=2) & (Q(B__gt=0) | Q(C__isnull=False) & Q(D__gt=0) | Q(E__gt=0) | Q(F1__isnull=False) | \
+    Q(F2__isnull=False) | Q(F3__isnull=False) | Q(F4__isnull=False) | Q(F5__isnull=False) | \
+    Q(F6__isnull=False) | Q(F7__isnull=False) | Q(F8__isnull=False) | Q(F9__isnull=False) | \
+    Q(G__isnull=False) | Q(H__gt=0) | Q(J__isnull=False) | Q(K__isnull=False) | Q(M__gt=0) | Q(N__gt=0) | \
+    Q(P__gt=0) | Q(Q__gt=0) | Q(R__gt=0) | Q(S__isnull=False) | Q(T__isnull=False) | Q(U__isnull=False) | \
+    Q(V__isnull=False) | Q(W__isnull=False) | Q(X__isnull=False)) & ~(queries['dco']['status']['complete'])
+

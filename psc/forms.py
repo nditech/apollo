@@ -167,6 +167,9 @@ class VRAnalysisFilterForm(forms.Form):
 class VRSummaryFilterForm(forms.Form):
     date = forms.ChoiceField(choices=tuple([('', 'Today')] + [(date, label) for (date, label) in VR_DAYS if date]))
 
+class DCOSummaryFilterForm(forms.Form):
+    date = forms.ChoiceField(choices=tuple([('', 'Today')] + [(date, label) for (date, label) in DCO_DAYS if date]))
+
 class EmailBlastForm(forms.Form):
     subject = forms.CharField(max_length=500)
     recipient = forms.MultipleChoiceField(choices=ROLES, required=False)

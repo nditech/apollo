@@ -60,6 +60,14 @@
                             <li>
                                 <a href="{% url psc.views.dco_incident_list %}">Incidents</a>
                             </li>
+														{% if perms.psc.can_analyse %}
+                            <li>
+                                <a href="{% url psc.views.dco_zone_summary %}">Zone Summary</a>
+                            </li>
+                            <li>
+                                <a href="{% url psc.views.dco_state_summary %}">State Summary</a>
+                            </li>
+														{% endif %}
                         </ul>
                     </li>
                     <li class=" secondary logout">

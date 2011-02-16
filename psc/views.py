@@ -11,7 +11,7 @@ from rapidsms.contrib.messagelog.models import Message
 from forms import VRChecklistForm, VRIncidentForm, DCOIncidentForm, VRChecklistFilterForm, VRIncidentFilterForm, DCOIncidentFilterForm, DCOChecklistFilterForm, DCOChecklistForm
 from forms import VR_DAYS
 from forms import DCOIncidentUpdateForm, VRIncidentUpdateForm, MessagelogFilterForm, DashboardFilterForm, VRAnalysisFilterForm
-from forms import VRSummaryFilterForm, EmailBlastForm
+from forms import VRSummaryFilterForm, DCOSummaryFilterForm, EmailBlastForm
 from datetime import datetime
 from django.core import serializers
 from django.core.mail import send_mail
@@ -924,6 +924,96 @@ def vr_state_summary(request):
         
     return render_to_response('psc/vr_state_summary.html', context_instance=ctx)
 
+@permission_required('psc.can_analyse', login_url='/')
+@login_required()
+def dco_zone_summary(request):
+    filter_date = datetime.date(datetime.today())
+    if not request.session.has_key('dco_zone_summary_filter'):
+        request.session['dco_zone_summary_filter'] = {}
+
+    if request.method == 'GET':
+        if filter(lambda key: request.GET.has_key(key), ['date']):
+            request.session['dco_zone_summary_filter'] = request.GET
+        filter_form = DCOSummaryFilterForm(request.session['dco_zone_summary_filter'])
+
+        if filter_form.is_valid():
+            data = filter_form.cleaned_data
+
+            if data['date']:
+                filter_date = datetime.date(datetime.strptime(data['date'], '%Y-%m-%d'))
+    else:
+        filter_form = DCOSummaryFilterForm()
+    q = Q(date=filter_date)
+
+    ctx = RequestContext(request)
+    ctx['page_title'] = 'Zone Summary'
+    ctx['filter_form'] = filter_form
+    ctx['zone_list'] = []
+    zone_list = Zone.objects.all()
+
+    for zone in zone_list:
+        rcs_in_zone = RegistrationCenter.objects.filter(parent__parent__parent__parent__id=zone.pk).values_list('id', flat=True)
+        qs = DCOChecklist.objects.filter(q).filter(location_id__in=rcs_in_zone)
+        zone_stats = {
+            'name': zone.name,
+            'n': qs.count(),
+            'arrived_yes': qs.filter(queries['dco']['arrival']['yes']).count(),
+            'arrived_no': qs.filter(queries['dco']['arrival']['no']).count(),
+            'status_complete': qs.filter(queries['dco']['status']['complete']).count(),
+            'status_missing': qs.filter(queries['dco']['status']['missing']).count(),
+            'status_partial': qs.filter(queries['dco']['status']['partial']).count(),
+            'status_problem': qs.filter(queries['dco']['status']['problem']).count(),
+            'status_not_open': qs.filter(queries['dco']['status']['not_open']).count(),
+        }
+        ctx['zone_list'].append(zone_stats)
+        
+    return render_to_response('psc/dco_zone_summary.html', context_instance=ctx)
+
+@permission_required('psc.can_analyse', login_url='/')
+@login_required()
+def dco_state_summary(request):
+    filter_date = datetime.date(datetime.today())
+    if not request.session.has_key('dco_state_summary_filter'):
+        request.session['dco_state_summary_filter'] = {}
+
+    if request.method == 'GET':
+        if filter(lambda key: request.GET.has_key(key), ['date']):
+            request.session['dco_state_summary_filter'] = request.GET
+        filter_form = DCOSummaryFilterForm(request.session['dco_state_summary_filter'])
+
+        if filter_form.is_valid():
+            data = filter_form.cleaned_data
+
+            if data['date']:
+                filter_date = datetime.date(datetime.strptime(data['date'], '%Y-%m-%d'))
+    else:
+        filter_form = DCOSummaryFilterForm()
+    q = Q(date=filter_date)
+
+    ctx = RequestContext(request)
+    ctx['page_title'] = 'State Summary'
+    ctx['filter_form'] = filter_form
+    ctx['state_list'] = []
+    state_list = State.objects.all().order_by('name')
+
+    for state in state_list:
+        rcs_in_state = RegistrationCenter.objects.filter(parent__parent__parent__id=state.pk).values_list('id', flat=True)
+        qs = DCOChecklist.objects.filter(q).filter(location_id__in=rcs_in_state)
+        state_stats = {
+            'name': state.name,
+            'n': qs.count(),
+            'arrived_yes': qs.filter(queries['dco']['arrival']['yes']).count(),
+            'arrived_no': qs.filter(queries['dco']['arrival']['no']).count(),
+            'status_complete': qs.filter(queries['dco']['status']['complete']).count(),
+            'status_missing': qs.filter(queries['dco']['status']['missing']).count(),
+            'status_partial': qs.filter(queries['dco']['status']['partial']).count(),
+            'status_problem': qs.filter(queries['dco']['status']['problem']).count(),
+            'status_not_open': qs.filter(queries['dco']['status']['not_open']).count(),
+        }
+        ctx['state_list'].append(state_stats)
+        
+    return render_to_response('psc/dco_state_summary.html', context_instance=ctx)
+
 def vr_checklist_analysis(request):
     vr_days = [day[0] for day in VR_DAYS if day[0]]
 
@@ -993,7 +1083,6 @@ def get_rcs_by_lga(request, lga_id=0):
 def get_states_by_zone(request, zone):
     if zone:
         states = serializers.serialize('json', State.objects.filter(parent__code=zone))
-        print states
         return HttpResponse(mimetype='application/jsoin', content=states)
 
 @permission_required('psc.can_analyse', login_url='/')
