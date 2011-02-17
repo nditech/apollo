@@ -38,7 +38,7 @@ def home(request):
             data = filter_form.cleaned_data
 
             if data['zone']:
-                qs &= Q(location_id__in=RegistrationCenter.objects.filter(parent__parent__parent__parent__code__iexact=data['zone']).values('id'))
+                qs &= Q(observer__location_id__in=LGA.objects.filter(parent__parent__parent__code__iexact=data['zone']).values_list('id', flat=True))
             if data['date']:
                 filter_date = datetime.date(datetime.strptime(data['date'], '%Y-%m-%d'))
     else:
