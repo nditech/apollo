@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 from south.modelsinspector import add_introspection_rules
 from audit_log.models import fields
 from audit_log.models.managers import AuditLog
+from django.conf import settings
 
 class Zone(models.Model):
     name = models.CharField(max_length=100)
@@ -297,3 +298,30 @@ class Access(models.Model):
             ('can_administer', 'Can Administer'),
     )
 
+from urllib import quote_plus
+import urllib2
+
+class NodSMS():
+    endpoint_sendsms = 'http://api.nodsms.com/index.php?user=%(user)s&pass=%(pass)s&from=%(sender)s&to=%(destination)s&msg=%(message)s'
+    endpoint_balance = 'http://api.nodsms.com/credit.php?user=%(user)s&pass=%(pass)s'
+    user = settings.SMS_USER
+    pwd  = settings.SMS_PASS
+
+    def sendsms(self, to, msg, sender="SwiftCount"):
+        result = urllib2.urlopen(self.endpoint_sendsms % {
+            'user': quote_plus(self.user),
+            'pass': quote_plus(self.pwd),
+            'sender': quote_plus(sender),
+            'destination': quote_plus(to),
+            'message': quote_plus(msg)}).read()
+        if result == 'sent':
+            return True
+        else:
+            return False
+
+    def credit_balance(self):
+        result = urllib2.urlopen(self.endpoint_balance % {'user': quote_plus(self.user), 'pass': quote_plus(self.pwd) }).read()
+        if result.isdigit():
+            return int(result)
+        else:
+            return 0
