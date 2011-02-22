@@ -167,6 +167,8 @@ TEST_EXCLUDED_APPS = [
 ROOT_URLCONF = "urls"
 #SESSION_COOKIE_AGE=900
 
+SMS_USER = ''
+SMS_PASS = ''
 
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
