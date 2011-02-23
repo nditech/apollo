@@ -8,7 +8,7 @@ from django.db.models import Q
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from rapidsms.contrib.messagelog.tables import MessageTable
 from rapidsms.contrib.messagelog.models import Message
-from forms import VRChecklistForm, VRIncidentForm, DCOIncidentForm, VRChecklistFilterForm, VRIncidentFilterForm, DCOIncidentFilterForm, DCOChecklistFilterForm, DCOChecklistForm
+from forms import VRChecklistForm, VRIncidentForm, DCOIncidentForm, VRChecklistFilterForm, VRIncidentFilterForm, DCOIncidentFilterForm, DCOChecklistFilterForm, DCOChecklistForm, ContactEditForm, ContactlistFilterForm
 from forms import VR_DAYS
 from forms import DCOIncidentUpdateForm, VRIncidentUpdateForm, MessagelogFilterForm, DashboardFilterForm, VRAnalysisFilterForm
 from forms import VRSummaryFilterForm, DCOSummaryFilterForm, EmailBlastForm
@@ -18,6 +18,8 @@ from django.core.mail import send_mail
 from django.contrib.auth.decorators import login_required, permission_required
 import stats
 from queries import queries
+from django.contrib.contenttypes.models import ContentType
+
 
 # paginator settings
 items_per_page = 25
@@ -1001,6 +1003,73 @@ def vr_checklist_analysis(request):
     ctx['question']['AA'] = stats.vr_QAA(qs)
 
     return render_to_response('psc/vr_checklist_analysis.html', {'page_title': 'Voter Registration Checklist Analysis', 'filter_form': filter_form}, context_instance=ctx)
+
+@login_required()
+def contact_list(request):
+    qs_include = Q()
+    if not request.session.has_key('contact_filter'):
+        request.session['contact_filter'] = {}
+    
+    if request.method == 'GET':
+        if filter(lambda key: request.GET.has_key(key), ['zone', 'state', 'observer_id']):
+            request.session['contact_filter'] = request.GET
+        filter_form = ContactlistFilterForm(request.session['contact_filter'])
+    
+        if filter_form.is_valid():
+            data = filter_form.cleaned_data
+    
+            if data['zone']:
+		zone = Zone.objects.get(code=data['zone'])
+                qs_include &= Q(location_type=ContentType.objects.get_for_model(Zone), location_id__exact = zone.id)
+            if data['state']:
+                qs_include &= Q(state=data['state'])
+            if data['observer_id']:
+                qs_include &= Q(observer_id=data['observer_id'])
+	    if data['role']:
+                qs_include &= Q(role=data['role'])
+            if data['partner']:
+                qs_include &= Q(partner=data['partner'])
+    else:
+        filter_form = ContactlistFilterForm()
+
+    #get all objects
+    global items_per_page
+    if request.GET.get('export'):
+	    items_per_page = Observer.objects.all().count()
+    
+    paginator = Paginator(Observer.objects.exclude(role__in=['ZC']).order_by('observer_id'), items_per_page)
+
+    try:
+        page = int(request.GET.get('page', '1'))
+    except ValueError:
+        page = 1
+
+    # an invalid range will retrieve the last page of results
+    try:
+        contact = paginator.page(page)
+    except (EmptyPage, InvalidPage):
+        contact = paginator.page(paginator.num_pages)
+
+    page_details = {}
+    page_details['first'] = paginator.page_range[0]
+    page_details['last'] = paginator.page_range[len(paginator.page_range) - 1]
+    return render_to_response('psc/contact_list.html', {'page_title': "CONTACT LIST",'contact': contact,
+						    'filter_form': filter_form, 'page_details': page_details,}
+			      , context_instance=RequestContext(request))
+
+
+def contact_edit(request, contact_id=0):
+    contact = get_object_or_404(Observer, pk=contact_id)
+    if (request.POST):
+        f = ContactEditForm(request.POST, instance=contact)
+        if f.is_valid():
+            f.save()
+        return HttpResponseRedirect(reverse('psc.views.contact_list'))
+    else:
+        f = ContactEditForm(instance=contact)
+    return render_to_response('psc/contact_edit.html', {'page_title': 'Contact List', 'contact': contact,
+							'form': f}, context_instance=RequestContext(request))
+
 
 
 #ajax methods

@@ -1,0 +1,26 @@
+{% extends "psc/layout.html" %}
+{% block javascripts %}
+{{ block.super }}
+<script src="/assets/js/jquery-1.4.4.min.js" type="text/javascript" charset="utf-8"></script>
+
+{% endblock %}
+{% load comments %}
+{% block content %}
+<div class="grid_16">
+    <div class="box">
+	<h2>Contact Details</h2>
+	    <form action="{% url psc.views.contact_edit contact.id %}" method="post">
+		<div class="block">
+		    <table class="observer_details">
+			<tr><td width="30%">Name:</td><td>{{ contact.name }}</td></tr>
+			<tr><td>Observer Phone No.:</td><td>{{ form.phone  }}</td></tr>
+			<tr><td>E-mail:</td><td>{{ form.email }}</td></tr>
+			<tr><td>Partner:</td><td>{{ form.partner }}</td></tr>
+		    </table>
+		</div>
+		{% csrf_token %}
+		    <input type="submit" name="submit" value="Save">
+	    </form>
+    </div>
+</div>
+{% endblock %}

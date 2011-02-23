@@ -60,6 +60,7 @@ DCO_DAYS = (('', 'All'),
         (datetime.date(datetime(2011, 2, 17)), 'Thu 17-Feb'))
 
 ROLES = (
+        ('', 'All'),
         ('NSC', 'National Steering Committee'),
         ('NS', 'National Secretariat'),
         ('ZC', 'Zonal Coordinator'),
@@ -67,6 +68,14 @@ ROLES = (
         ('SDC', 'State Deputy Coordinator'),
         ('LGA', 'LGA Supervisor'),
         ('OBS', 'Observer'))
+
+PARTNERS =  (
+                ('', 'All'),
+                ('FOMWAN', 'FOMWAN'),
+                ('JDPC', 'JDPC'),
+                ('NBA', 'NBA'),
+                ('TMC', 'TMC'))
+
 
 vr_checklist_dates =  list(VRChecklist.objects.all().distinct('date').values_list('date', flat=True).order_by('date'))
 dco_checklist_dates = list(DCOChecklist.objects.all().distinct('date').values_list('date', flat=True).order_by('date'))
@@ -136,6 +145,14 @@ class DCOChecklistFilterForm(forms.Form):
     state = forms.ChoiceField(choices=STATES, required=False)
     first = forms.ChoiceField(choices=DCO_ARRIVAL, required=False, label='Arrival Text')
     second = forms.ChoiceField(choices=DCO_STATUS, required=False, label='2nd SMS')
+    
+class ContactlistFilterForm(forms.Form):
+    observer_id = forms.CharField(required=False, label="PSC ID", max_length=6, widget=forms.TextInput(attrs={'autocomplete':'off','style':'width:7em'}))
+    zone = forms.ChoiceField(choices=ZONES, required=False)
+    state = forms.ChoiceField(choices=STATES, required=False)
+    role = forms.ChoiceField(choices=ROLES, required=False, label='Role')
+    partner = forms.ChoiceField(choices=PARTNERS, required=False, label='Partner')
+
 
 class VRIncidentFilterForm(forms.Form):
     observer_id = forms.CharField(required=False, label="PSC ID", max_length=6, widget=forms.TextInput(attrs={'autocomplete':'off','style':'width:7em'}))
@@ -175,3 +192,8 @@ class EmailBlastForm(forms.Form):
     recipient = forms.MultipleChoiceField(choices=ROLES, required=False)
     psc_id  = forms.CharField(max_length=10)
     message = forms.CharField(widget=forms.Textarea)
+    
+class ContactEditForm(forms.ModelForm):
+    class Meta:
+        model = Observer
+        exclude = ['dob', 'location_type', 'observer_id', 'role', 'location_id', 'location', 'supervisor']

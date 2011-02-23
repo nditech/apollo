@@ -26,6 +26,8 @@ urlpatterns = patterns('',
     (r'^vr/in/del/(?P<incident_id>\d+)/?$', views.vr_incident_delete),
     (r'^dco/in/del/(?P<incident_id>\d+)/?$', views.dco_incident_delete),
     (r'^sendmail/?$', views.send_mail),
+    (r'^contact/$', views.contact_list),
+    (r'^contactedit/(?P<contact_id>\d+)/$', views.contact_edit),
 )
 
 #authentication urls
