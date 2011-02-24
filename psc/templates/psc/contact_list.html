@@ -20,8 +20,7 @@
 <div class="grid_16">
     <div class="box">
         <h2>Contact List<span class="flag">
-            <button onclick="location.href='{% url psc.views.dco_checklist_list %}'">Refresh</button>
-            {% if perms.psc.can_analyse %}<button onclick="location.href='{% url psc.views.export "dcoc" %}'">Export</button></span>{% endif %}
+            <button onclick="location.href='{% url psc.views.contact_list %}'">Refresh</button>
         </span></h2>
         <div class="block">
             <div id="filter">

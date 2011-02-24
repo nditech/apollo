@@ -59,23 +59,20 @@ DCO_DAYS = (('', 'All'),
         (datetime.date(datetime(2011, 2, 14)), 'Mon 14-Feb'),
         (datetime.date(datetime(2011, 2, 17)), 'Thu 17-Feb'))
 
-ROLES = (
-        ('', 'All'),
-        ('NSC', 'National Steering Committee'),
-        ('NS', 'National Secretariat'),
-        ('ZC', 'Zonal Coordinator'),
-        ('SC', 'State Coordinator'),
-        ('SDC', 'State Deputy Coordinator'),
-        ('LGA', 'LGA Supervisor'),
-        ('OBS', 'Observer'))
+ROLES = (('', 'All'),
+        ('NSC', 'NSC'),
+        ('NS', 'NS'),
+        ('ZC', 'ZC'),
+        ('SC', 'SC'),
+        ('SDC', 'SDC'),
+        ('LGA', 'LGA'),
+        ('OBS', 'OBS'))
 
-PARTNERS =  (
-                ('', 'All'),
-                ('FOMWAN', 'FOMWAN'),
-                ('JDPC', 'JDPC'),
-                ('NBA', 'NBA'),
-                ('TMC', 'TMC'))
-
+PARTNERS = (('', 'All'),
+            ('FOMWAN', 'FOMWAN'),
+            ('JDPC', 'JDPC'),
+            ('NBA', 'NBA'),
+            ('TMC', 'TMC'))
 
 vr_checklist_dates =  list(VRChecklist.objects.all().distinct('date').values_list('date', flat=True).order_by('date'))
 dco_checklist_dates = list(DCOChecklist.objects.all().distinct('date').values_list('date', flat=True).order_by('date'))
