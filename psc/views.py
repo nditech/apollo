@@ -1081,11 +1081,15 @@ def contact_edit(request, contact_id=0):
         f = ContactEditForm(request.POST, instance=contact)
         if f.is_valid():
             f.save()
+            contact.contact.name = request.POST.get('name', '')
+            contact.contact.save()
         return HttpResponseRedirect(reverse('psc.views.contact_list'))
     else:
         f = ContactEditForm(instance=contact)
+
+    partners = Partner.objects.all()
     return render_to_response('psc/contact_edit.html', {'page_title': 'Contact List', 'contact': contact,
-							'form': f}, context_instance=RequestContext(request))
+	    'form': f, 'partners': partners}, context_instance=RequestContext(request))
 
 
 

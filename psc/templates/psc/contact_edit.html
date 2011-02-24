@@ -9,17 +9,30 @@
 <div class="grid_16">
     <div class="box">
 	<h2>Contact Details</h2>
-	    <form action="{% url psc.views.contact_edit contact.id %}" method="post">
+	  <form action="{% url psc.views.contact_edit contact.id %}" method="post">
+		{% csrf_token %}
 		<div class="block">
 		    <table class="observer_details">
-			<tr><td width="30%">Name:</td><td>{{ contact.name }}</td></tr>
-			<tr><td>Observer Phone No.:</td><td>{{ form.phone  }}</td></tr>
-			<tr><td>E-mail:</td><td>{{ form.email }}</td></tr>
-			<tr><td>Partner:</td><td>{{ form.partner }}</td></tr>
+      <tr><td>Location:</td>
+			
+			<td><strong>{% if contact.role == 'NSC' or contact.role == 'NS' or contact.role == 'SC' or contact.role == 'SDC' %}Unknown{% endif %}{% if contact.role == 'LGA' %}{{ contact.location.name }}{% endif %}{% if contact.role == 'OBS' %}{{ contact.location.parent.name }}{% endif %}</strong> - {% if contact.role == 'NSC' or contact.role == 'NS' or contact.role == 'SC' or contact.role == 'SDC' %}{{ contact.location.name }}{% endif %}{% if contact.role == 'LGA' %}{{ contact.location.parent.parent.name }}{% endif %}{% if contact.role == 'OBS' %}{{ contact.location.parent.parent.parent.name }}{% endif %} - {% if contact.role == 'NSC' or contact.role == 'NS' or contact.role == 'SC' or contact.role == 'SDC' %}{{ contact.location.parent.name }}{% endif %}{% if contact.role == 'LGA' %}{{ contact.location.parent.parent.parent.name }}{% endif %}{% if contact.role == 'OBS' %}{{ contact.location.parent.parent.parent.parent.name }}{% endif %}</td>
+			</tr>
+			<tr><td width="30%">Observer ID:</td><td><strong>{{ contact.observer_id }}</strong></td></tr>
+			<tr><td width="30%">Name:</td><td><input type="text" class="bigbox" name="name" value="{{ contact.name }}" /></td></tr>
+			<tr><td>Observer Phone No.:</td><td><input type="text" class="bigbox" name="{{ form.phone.name }}" value="{{ form.initial.phone  }}" /></td></tr>
+			<tr><td>E-mail:</td><td><input type="text" class="bigbox" name="{{ form.email.name }}" value="{{ form.initial.email }}" /></td></tr>
+			<tr><td>Partner:</td>
+			<td>
+			<select class="bigbox" name="{{ form.partner.name }}">
+			{% for partner in partners %}
+				<option value="{{ partner.id }}" {% if contact.partner.id == partner.id %}selected="selected"{% endif %}>{{ partner.code }}</option>
+			{% endfor %}
+			</select>
+			</td>
+			</tr>
+			<tr><td>&nbsp;</td><td><input type="submit" name="submit" value="Save" /></td></tr>
 		    </table>
 		</div>
-		{% csrf_token %}
-		    <input type="submit" name="submit" value="Save">
 	    </form>
     </div>
 </div>

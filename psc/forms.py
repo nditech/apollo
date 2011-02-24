@@ -196,4 +196,4 @@ class EmailBlastForm(forms.Form):
 class ContactEditForm(forms.ModelForm):
     class Meta:
         model = Observer
-        exclude = ['dob', 'location_type', 'observer_id', 'role', 'location_id', 'location', 'supervisor']
+        exclude = ['dob', 'location_type', 'observer_id', 'role', 'location_id', 'location', 'supervisor', 'contact']
