@@ -1011,7 +1011,7 @@ def contact_list(request):
         request.session['contact_filter'] = {}
     
     if request.method == 'GET':
-        if filter(lambda key: request.GET.has_key(key), ['zone', 'state', 'observer_id']):
+        if filter(lambda key: request.GET.has_key(key), ['zone', 'state', 'role', 'partner', 'observer_id']):
             request.session['contact_filter'] = request.GET
         filter_form = ContactlistFilterForm(request.session['contact_filter'])
     
@@ -1019,16 +1019,33 @@ def contact_list(request):
             data = filter_form.cleaned_data
     
             if data['zone']:
-		zone = Zone.objects.get(code=data['zone'])
-                qs_include &= Q(location_type=ContentType.objects.get_for_model(Zone), location_id__exact = zone.id)
+                try:
+                    states_in_zone = State.objects.filter(parent__code=data['zone']).values_list('id', flat=True)
+                    districts_in_zone = District.objects.filter(parent__parent__code=data['zone']).values_list('id', flat=True)
+                    lgas_in_zone = LGA.objects.filter(parent__parent__parent__code=data['zone']).values_list('id', flat=True)
+                    qs_states = Q(role__in=['NS', 'NSC', 'SC'], location_type=ContentType.objects.get_for_model(State), location_id__in=states_in_zone)
+                    qs_districts = Q(role__in=['SDC'], location_type=ContentType.objects.get_for_model(District), location_id__in=districts_in_zone)
+                    qs_lgas = Q(role__in=['LGA'], location_type=ContentType.objects.get_for_model(LGA), location_id__in=lgas_in_zone)
+                    qs_include &= (qs_states | qs_districts | qs_lgas)
+                except:
+                    pass
             if data['state']:
-                qs_include &= Q(state=data['state'])
+                try:
+                    state = State.objects.get(code=data['state']).id
+                    districts_in_state = District.objects.filter(parent__code=data['state']).values_list('id', flat=True)
+                    lgas_in_state = LGA.objects.filter(parent__parent__code=data['state']).values_list('id', flat=True)
+                    qs_states = Q(role__in=['NS', 'NSC', 'SC'], location_type=ContentType.objects.get_for_model(State), location_id=state)
+                    qs_districts = Q(role__in=['SDC'], location_type=ContentType.objects.get_for_model(District), location_id__in=districts_in_state)
+                    qs_lgas = Q(role__in=['LGA'], location_type=ContentType.objects.get_for_model(LGA), location_id__in=lgas_in_state)
+                    qs_include &= (qs_states | qs_districts | qs_lgas)
+                except:
+                    pass
             if data['observer_id']:
-                qs_include &= Q(observer_id=data['observer_id'])
+                qs_include = Q(observer_id=data['observer_id'])
 	    if data['role']:
                 qs_include &= Q(role=data['role'])
             if data['partner']:
-                qs_include &= Q(partner=data['partner'])
+                qs_include &= Q(partner__code=data['partner'])
     else:
         filter_form = ContactlistFilterForm()
 
@@ -1037,7 +1054,7 @@ def contact_list(request):
     if request.GET.get('export'):
 	    items_per_page = Observer.objects.all().count()
     
-    paginator = Paginator(Observer.objects.exclude(role__in=['ZC']).order_by('observer_id'), items_per_page)
+    paginator = Paginator(Observer.objects.filter(qs_include).exclude(role__in=['ZC']).order_by('observer_id'), items_per_page)
 
     try:
         page = int(request.GET.get('page', '1'))
