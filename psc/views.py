@@ -1073,8 +1073,9 @@ def contact_list(request):
     page_details = {}
     page_details['first'] = paginator.page_range[0]
     page_details['last'] = paginator.page_range[len(paginator.page_range) - 1]
+    msg_recipients = Observer.objects.filter(qs_include).exclude(role__in=['ZC']).values_list('phone', flat=True)
     return render_to_response('psc/contact_list.html', {'page_title': "CONTACT LIST",'contact': contact,
-						    'filter_form': filter_form, 'page_details': page_details,}
+						    'filter_form': filter_form, 'page_details': page_details,'msg_recipients': msg_recipients}
 			      , context_instance=RequestContext(request))
 
 
