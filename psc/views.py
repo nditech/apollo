@@ -19,6 +19,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 import stats
 from queries import queries
 from django.contrib.contenttypes.models import ContentType
+from django.views.decorators.csrf import csrf_exempt
 
 
 # paginator settings
@@ -250,7 +251,9 @@ def vr_checklist_list(request):
     page_details = {}
     page_details['first'] = paginator.page_range[0]
     page_details['last'] = paginator.page_range[len(paginator.page_range) - 1]
-    return render_to_response('psc/vr_checklist_list.html', {'page_title': "Voter Registration Data Management", 'checklists': checklists, 'filter_form': filter_form, 'page_details' : page_details }, context_instance=RequestContext(request))
+    
+    msg_recipients = list(set(VRChecklist.objects.filter(qs_include).exclude(qs_exclude).values_list('observer__phone', flat=True)))
+    return render_to_response('psc/vr_checklist_list.html', {'page_title': "Voter Registration Data Management", 'checklists': checklists, 'filter_form': filter_form, 'page_details' : page_details, 'msg_recipients': msg_recipients }, context_instance=RequestContext(request))
 
 @login_required()
 def dco_checklist_list(request):
@@ -1142,3 +1145,19 @@ def send_mail(request):
     else:
         form = EmailBlastForm()
         return render_to_response('psc/send_mail.html', { 'form': form }, context_instance=RequestContext(request))
+
+@permission_required('psc.can_analyse', login_url='/')
+@login_required()
+@csrf_exempt
+def ajax_send_message(request):
+    if request.POST:
+        to = request.POST.get('to', '')
+        msg = request.POST.get('msg', '')
+        if to and msg:
+            messenger = NodSMS()
+            result = messenger.sendsms(to, msg)
+            if result:
+                return HttpResponse("1");
+            else:
+                return HttpResponse("0");
+    return HttpResponse("0");

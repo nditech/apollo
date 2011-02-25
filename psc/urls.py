@@ -28,6 +28,7 @@ urlpatterns = patterns('',
     (r'^sendmail/?$', views.send_mail),
     (r'^contact/$', views.contact_list),
     (r'^contactedit/(?P<contact_id>\d+)/$', views.contact_edit),
+    (r'^ajax_sendmsg$', views.ajax_send_message),
 )
 
 #authentication urls
