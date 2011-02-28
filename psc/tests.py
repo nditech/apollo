@@ -2,6 +2,11 @@ import unittest
 from rapidsms.tests.scripted import TestScript
 
 class TestPSC(TestScript):
+    fixtures = ['observers', 'unknown_rcs']
+
+    def setUp(self):
+        super(TestPSC, self).setUp()
+
     def testVRChecklist(self):
         self.assertInteraction("""
           1234 > psc111111vr12rc999
@@ -9,10 +14,10 @@ class TestPSC(TestScript):
         """)
 
     def testVRIncident(self):
-	pass
+    	pass
 
     def testDCOChecklist(self):
-	pass
+	    pass
 
     def testDCOIncident(self):
-	pass
+	    pass
