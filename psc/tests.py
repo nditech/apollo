@@ -1,23 +1,18 @@
-"""
-This file demonstrates two different styles of tests (one doctest and one
-unittest). These will both pass when you run "manage.py test".
+import unittest
+from rapidsms.tests.scripted import TestScript
 
-Replace these with more appropriate tests for your application.
-"""
+class TestPSC(TestScript):
+    def testVRChecklist(self):
+        self.assertInteraction("""
+          1234 > psc111111vr12rc999
+          1234 < Observer ID not found. Please resend with valid PSC. You sent: PSC111111VR12RC999
+        """)
 
-from django.test import TestCase
+    def testVRIncident(self):
+	pass
 
-class SimpleTest(TestCase):
-    def test_basic_addition(self):
-        """
-        Tests that 1 + 1 always equals 2.
-        """
-        self.failUnlessEqual(1 + 1, 2)
+    def testDCOChecklist(self):
+	pass
 
-__test__ = {"doctest": """
-Another way to test that 1 + 1 is equal to 2.
-
->>> 1 + 1 == 2
-True
-"""}
-
+    def testDCOIncident(self):
+	pass
