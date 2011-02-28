@@ -233,8 +233,7 @@ def vr_checklist_list(request):
     #get all objects
     global items_per_page
     if request.GET.get('export'):
-	    items_per_page = VRChecklist.objects.filter(qs_include).exclude(qs_exclude).count()
-    
+	items_per_page = VRChecklist.objects.filter(qs_include).exclude(qs_exclude).count()
     paginator = Paginator(VRChecklist.objects.filter(qs_include).exclude(qs_exclude), items_per_page)
 
     try:
@@ -301,10 +300,8 @@ def dco_checklist_list(request):
     #get all objects
     global items_per_page
     if request.GET.get('export'):
-	    items_per_page = DCOChecklist.objects.filter(qs_include).count()
-    
+	items_per_page = DCOChecklist.objects.filter(qs_include).count()
     paginator = Paginator(DCOChecklist.objects.filter(qs_include).order_by('date', 'observer'), items_per_page)
-
     try:
         page = int(request.GET.get('page', '1'))
     except ValueError:
@@ -319,7 +316,8 @@ def dco_checklist_list(request):
     page_details = {}
     page_details['first'] = paginator.page_range[0]
     page_details['last'] = paginator.page_range[len(paginator.page_range) - 1]
-    return render_to_response('psc/dco_checklist_list.html', {'page_title': "Display, Claims & Objections Data Management", 'checklists': checklists, 'filter_form': filter_form, 'page_details': page_details }, context_instance=RequestContext(request))
+    msg_recipients = list(set(DCOChecklist.objects.filter(qs_include).values_list('observer__phone', flat=True)))
+    return render_to_response('psc/dco_checklist_list.html', {'page_title': "Display, Claims & Objections Data Management", 'checklists': checklists, 'filter_form': filter_form, 'page_details': page_details, 'msg_recipients': msg_recipients }, context_instance=RequestContext(request))
 
 @login_required()
 def vr_checklist(request, checklist_id=0):

@@ -10,10 +10,35 @@
             $("#id_state").val("");
             $("#id_day").val("");
             $("#id_observer_id").val("");
-						$("#id_first").val("");
-						$("#id_second").val("");
+	    $("#id_first").val("");
+	    $("#id_second").val("");
             $("#filter_form").submit();
         });
+	$("#sndmsg_btn").toggle(function () {
+	$("#messenger").slideDown("slow");
+	}, function () {
+	$("#messenger").slideUp("slow");
+	});
+
+	$("#send_btn").click(function () {
+	$("#ajax-loader").show();
+	$("#send_btn").attr("disabled", "disabled");
+	    var to = $("#to").val();
+	    var msg = $("#msg").val();
+	$.post("/ajax_sendmsg", {to: to, msg: msg},
+    function (data) {
+	if (data == "1") {
+	    alert("Message sent!");
+	    $("#msg").val("");
+	    $("#messenger").slideUp("slow");
+	} else {
+	    alert("Message sending failed.");
+	    }
+	    $("#send_btn").removeAttr("disabled");
+	    $("#ajax-loader").hide();
+	        }
+	    );
+	});
     });
 </script>
 {% endblock %}
@@ -22,8 +47,9 @@
     <div class="box">
         <h2>Display, Claims &amp; Objections Checklists <span class="flag">
             <button onclick="location.href='{% url psc.views.dco_checklist_list %}'">Refresh</button>
-            {% if perms.psc.can_analyse %}<button onclick="location.href='{% url psc.views.export "dcoc" %}'">Export</button></span>{% endif %}
-        </span></h2>
+            {% if perms.psc.can_analyse %}<button onclick="location.href='{% url psc.views.export "dcoc" %}'">Export</button>{% endif %}
+	    {% if perms.psc.can_analyse %}<button id="sndmsg_btn">Send Message</button>{% endif %}
+	</span></h2>
         <div class="block">
             <div id="filter">
                 <form action="" method="get" id="filter_form" accept-charset="utf-8">
@@ -49,6 +75,14 @@
                         </tbody>
                     </table>
                 </form>
+		<div id="messenger" style="display:none">
+		    <table>
+		    <tr>
+			<td style="vertical-align:top;padding-left:1em" width="150">You are about to send to <strong>{{ msg_recipients|length|default:"0" }}</strong> recipients</td>
+			<td width="250"><input type="hidden" name="to" value="{{ msg_recipients|join:"," }}" id="to" /><textarea id="msg" cols="30" rows="5"></textarea><br /><button id="send_btn">Send</button> <img style="display:none" src="/assets/img/ajax-loader.gif" alt="sending..." id="ajax-loader" /></td>
+		    </tr>
+		    </table>
+		</div>
             </div>
             <table>
                 <thead>
