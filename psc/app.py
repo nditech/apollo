@@ -15,6 +15,8 @@ class App(AppBase):
         self.vr_incident  = re.compile(r'PSC(?P<observer_id>\d{6})VR(?P<day>\d{1,2})(?P<location_type>(RC|GA))(?P<location_id>\d{3})!(?P<responses>[A-Z]{1,})@?(?P<comment>.*)', re.I)
         self.dco_checklist = re.compile(r'PSC(?P<observer_id>\d{6})DC(?P<day>\d{1,2})RC(?P<location_id>\d{3})(?P<responses>[A-Z\d]{2,})?@?(?P<comment>.*)', re.I)
         self.dco_incident = re.compile(r'PSC(?P<observer_id>\d{6})DC(?P<day>\d{1,2})(?P<location_type>(RC|GA))(?P<location_id>\d{3})!(?P<responses>[A-Z]{1,})@?(?P<comment>.*)', re.I)
+        self.eday_checklist = re.compile(r'PSC(?P<observer_id>\d{6})(?P<responses>[A-Z\d]{3,})?@?(?P<comment>.*)', re.I)
+        self.eday_incident = re.compile(r'PSC(?P<observer_id>\d{6})!(?P<responses>[A-Z]{1,})@?(?P<comment>.*)', re.I)
         self.range_error_response = 'Invalid response(s) for question(s): "%s"'
         self.checklist_attribute_error_response = 'Invalid responses for the checklist code: "%s"'
         self.incident_attribute_error_response = 'Unknown critical incident code: "%s"'
@@ -250,7 +252,88 @@ class App(AppBase):
             return msg.respond(". ".join(error_responses))
         else:
             return msg.respond('DCO Incident report accepted! You sent: %s' % msg.message_only)
+            
+    def _eday_checklist(self, msg, params):
+        # determine location and date
+        self._preprocess(msg, params)
 
+        # Create the checklista
+        try:
+            eday = EDAYChecklist.objects.get(date=msg.date, observer=msg.observer)
+            eday.location = msg.location
+            eday.submitted = True
+        except EDAYChecklist.DoesNotExist:
+            eday = EDAYChecklist() 
+            eday.date = msg.date
+            eday.observer = msg.observer
+            eday.location = msg.location
+            eday.submitted = True
+
+        if params['comment']:
+            eday.comment = params['comment']
+
+        responses = self._parse_checklist(params['responses'])
+
+        for key in responses.keys():
+            # validation
+            if key == ['AA','BC','BF','BK','BN','CB','CF','CG','CH','CJ','CK','CM','CN','CP','CQ'] and int(responses[key]) in range(0, 4): #Yes/No questions
+                setattr(vr, key, int(responses[key]))
+            elif key in ['BA','BG','BH','BJ','BM','CA','CC','CD','CE'] and int(responses[key]) in range(1, 6):
+                setattr(vr, key, int(responses[key]))
+            elif key in ['BD'] and int(responses[key])== 9:
+                eday.BD == int(responses[key])
+            elif key in ['BE'] and int(responses[key])== 99:
+                eday.BE == int(responses[key])
+            elif key in ['BB'] and int(responses[key])== 999:
+                eday.BB == int(responses[key])
+            elif key in ['BP'] and int(responses[key])== 9999:
+                eday.BP == int(responses[key])
+        eday.save()
+
+        check = self._edayc_validate(responses)
+        error_responses = []
+        if check['attribute'] or check['range']:
+            if check['attribute']:
+                error_responses.append(self.checklist_attribute_error_response % (", ".join(check['attribute'])))
+            if check['range']:
+                error_responses.append(self.range_error_response % (", ".join(check['range'])))
+            error_responses.append("You sent: %s" % msg.message_only)
+            return msg.respond(". ".join(error_responses))
+        else:
+            return msg.respond('EDAY Checklist report accepted! You sent: %s' % msg.message_only)
+
+    def _eday_incident(self, msg, params):
+        # determine location and date
+        self._preprocess(msg, params)
+
+        # Create the Incident
+        inc = EDAYIncident() 
+        inc.date = msg.date
+        inc.observer = msg.observer
+        if msg.location:
+            inc.location = msg.location
+
+        for case in list(params['responses'].upper()):
+            if hasattr(inc, case):
+                setattr(inc, case, True)
+
+        if params['comment']:
+            inc.comment = params['comment']
+
+        inc.save()
+
+        check = self._edayi_validate(params['responses'].upper())
+        error_responses = []
+
+        if check['attribute']:
+            # generate error response
+            if check['attribute']:
+                error_responses.append(self.incident_attribute_error_response % (", ".join(check['attribute'])))
+            error_responses.append("You sent: %s" % msg.message_only)
+            return msg.respond(". ".join(error_responses))
+        else:
+            return msg.respond('EDAY Incident report accepted! You sent: %s' % msg.message_only)
+    
     def _parse_checklist(self, responses):
         ''' Converts strings that look like A2C3D89AA90 into
             {'A':'2', 'C':'3', 'D':'89', 'AA':'90'}'''
@@ -308,6 +391,25 @@ class App(AppBase):
         attribute_error = []
         for key in list(message):
             if key not in ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K']: attribute_error.append(key)
+        return {'attribute': attribute_error }
+        
+    def _edayc_validate(self, responses):
+        range_error = []
+        attribute_error = []
+        for key in responses.keys():
+            if key not in ['AA', 'BA', 'BB', 'BC', 'BD', 'BE', 'BF', 'BG', 'BH', 'BJ', 'BK', 'BM', 'BN', 'BP', 'CA', 'CB', 'CC', 'CD', 'CE', 'CF', 'CG', 'CH', 'CJ', 'CK', 'CM', 'CN', 'CP', 'CQ']: attribute_error.append(key)
+            if key in ['AA','BC','BF','BK','BN','CB','CF','CG','CH','CJ','CK','CM','CN','CP','CQ'] and int(responses[key]) not in range(0,4): range_error.append(key)
+            elif key in ['BA','BG','BH','BJ','BM','CA','CC','CD','CE'] and int(responses[key]) not in range(1, 6): range_error.append(key)
+            elif key in ['BD'] and int(responses[key]) > 9: range_error.append(key)
+            elif key in ['BE'] and int(responses[key]) > 99: range_error.append(key)
+            elif key in ['BB'] and int(responses[key]) > 999: range_error.append(key)
+            if key in ['bp'] and int(responses[key]) > 9999: range_error.append(key)
+        return {'range': range_error, 'attribute': attribute_error }
+        
+    def _edayi_validate(self, message):
+        attribute_error = []
+        for key in list(message):
+            if key not in ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'M', 'N', 'P', 'Q', 'R', 'S', 'T']: attribute_error.append(key)
         return {'attribute': attribute_error }
 
     def _preprocess(self, message, params):
