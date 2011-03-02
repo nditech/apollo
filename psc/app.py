@@ -2,7 +2,7 @@
 # vim: ai ts=4 sts=4 et sw=4
 
 from rapidsms.apps.base import AppBase
-from .models import Observer, RegistrationCenter, LGA, VRIncident, VRChecklist, DCOChecklist, DCOIncident
+from .models import Observer, RegistrationCenter, LGA, VRIncident, VRChecklist, DCOChecklist, DCOIncident, EDAYChecklist, EDAYIncident
 from django.contrib.contenttypes.models import ContentType
 import re
 from datetime import datetime
@@ -10,7 +10,7 @@ from decorators import role_required
 
 class App(AppBase):
     def __init__(self, router):
-        self.pattern = re.compile(r'PSC(?P<observer_id>\d{6})(DC|VR)(\d{1,2})(RC|GA)(\d{3})(!?([A-Z\d]{1,})@?(.*))?', re.I)
+        self.pattern = re.compile(r'PSC(?P<observer_id>\d{6})(DC|VR)?(\d{1,2})?(RC|GA)?(\d{3})?(!?([A-Z\d]{1,})@?(.*))?', re.I)
         self.vr_checklist  = re.compile(r'PSC(?P<observer_id>\d{6})VR(?P<day>\d{1,2})RC(?P<location_id>\d{3})(?P<responses>[A-Z\d]{2,})?@?(?P<comment>.*)', re.I)
         self.vr_incident  = re.compile(r'PSC(?P<observer_id>\d{6})VR(?P<day>\d{1,2})(?P<location_type>(RC|GA))(?P<location_id>\d{3})!(?P<responses>[A-Z]{1,})@?(?P<comment>.*)', re.I)
         self.dco_checklist = re.compile(r'PSC(?P<observer_id>\d{6})DC(?P<day>\d{1,2})RC(?P<location_id>\d{3})(?P<responses>[A-Z\d]{2,})?@?(?P<comment>.*)', re.I)
@@ -59,7 +59,14 @@ class App(AppBase):
             match = self.dco_checklist.match(message.text)
             if match:
                 return self._dco_checklist(message, match.groupdict())
+            match = self.eday_incident.match(message.text)
+            if match:
+                return self._eday_incident(message, match.groupdict())
+            match = self.eday_checklist.match(message.text)
+            if match:
+                return self._eday_checklist(message, match.groupdict())
             
+            print "Within handle"
             return self.default(message)
     
     def default(self, message):
@@ -277,9 +284,9 @@ class App(AppBase):
         for key in responses.keys():
             # validation
             if key == ['AA','BC','BF','BK','BN','CB','CF','CG','CH','CJ','CK','CM','CN','CP','CQ'] and int(responses[key]) in range(0, 4): #Yes/No questions
-                setattr(vr, key, int(responses[key]))
+                setattr(eday, key, int(responses[key]))
             elif key in ['BA','BG','BH','BJ','BM','CA','CC','CD','CE'] and int(responses[key]) in range(1, 6):
-                setattr(vr, key, int(responses[key]))
+                setattr(eday, key, int(responses[key]))
             elif key in ['BD'] and int(responses[key])== 9:
                 eday.BD == int(responses[key])
             elif key in ['BE'] and int(responses[key])== 99:
@@ -439,7 +446,11 @@ class App(AppBase):
         message.location = location
 
         # determine date of message
-        day = int(params['day'])
+        # if the day is not specified, the date of the current day should be the value of key 'day'.
+        if params.has_key('day'):
+            day = int(params['day'])
+        else:
+            day = datetime.now().day
 
         # if the day being reported is greater than the current day,
         # then reference is being made of the previous month
