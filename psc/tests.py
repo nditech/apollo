@@ -50,12 +50,31 @@ class TestPSC(TestScript):
 	""")
 
     def testVRIncident(self):
-    	pass
+    	self.assertInteraction("""
+	  1234 > PSC172001VR22GA639!E5
+	  1234 < VR Incident report accepted! You sent: PSC172001VR22GA639!E5
+	  1234 > PSC172001VR22GA639!DE
+	  1234 < VR Incident report accepted! You sent: PSC172001VR22GA639!DE
+	  1234 > PSC172001VR22GA639!I AM HERE TO OBSERVE
+	  1234 < Invalid message:"PSC172001VR22GA639!1AMHERET00BSERVE". Please resend!
+	  1234 > PSC172001VR22GA639!@NO COMMENT
+	  1234 < Invalid message:"PSC172001VR22GA639!". Please resend!
+	  1234 > PSC17201VR22RC639!abcdef
+	  1234 < Invalid message:"PSC17201VR22RC639!ABCDEF". Please resend!
+	  1234 > PSC172001VR22GA639@ I AM READy
+	  1234 < Invalid message:"PSC172001VR22GA639". Please resend!
+	  1234 > PSC172001VR22ndRC999!a
+	  1234 < Invalid message:"PSC172001VR22NDRC999!A". Please resend!
+	  1234 > PSC172001VR22GA639nothing is happening here
+	  1234 < Invalid message:"PSC172001VR22GA639N0TH1NG1SHAPPEN1NGHERE". Please resend!
+        """)
 
     def testDCOChecklist(self):
 	self.assertInteraction("""
 	  1234 > psc817001dc14rc999a1b1c3d1e1f5
 	  1234 < DCO Checklist report accepted! You sent: PSC817001DC14RC999A1B1C3D1E1F5
+	  1234 > PSC366001DC14RC999@I am here to do the needed
+	  1234 < DCO Checklist report accepted! You sent: PSC366001DC14RC999
 	  1234 > PSC648001DC15RC196A2
 	  1234 < DCO Checklist report accepted! You sent: PSC648001DC15RC196A2
 	  1234 > PSC740001DC14RC109A1B1C3D1E1F9G3H1J9999K300M2N2P2Q2R1@impressive
@@ -73,4 +92,21 @@ class TestPSC(TestScript):
         """)
 
     def testDCOIncident(self):
-	pass
+	self.assertInteraction("""
+	  1234 > PSC646001DC20RC162!ACK
+	  1234 < DCO Incident report accepted! You sent: PSC646001DC20RC162!ACK
+	  1234 > PSC646001DC20RC162ACK
+	  1234 < DCO Checklist report accepted! You sent: PSC646001DC20RC162ACK
+	  1234 > PSC646001DC20RC162!ACKatI am on the field
+	  1234 < Unknown critical incident code: "T". You sent: PSC646001DC20RC162!ACKAT1AM0NTHEF1E1D
+	  1234 > PSC15403DC19GA258!E@faulty ddc in 5 centres of moro lga
+	  1234 < Invalid message:"PSC15403DC19GA258!E". Please resend!
+	  1234 > PSC154003DC19GA258@faulty ddc in 5 centres of moro lga
+	  1234 < Invalid message:"PSC154003DC19GA258". Please resend!
+	  1234 > PSC954001DC11RCunknown!A@good workshop
+	  1234 < Invalid message:"PSC954001DC11RCUNKN0WN!A". Please resend!
+	  1234 > PSC954001DC11thRC9999!A@good workshop
+	  1234 < Invalid message:"PSC954001DC11THRC9999!A". Please resend!
+	  1234 > PSC954ooiDCiiRC999!A@good workshop
+	  1234 < DCO Incident report accepted! You sent: PSC954001DC11RC999!A
+        """)
