@@ -108,7 +108,8 @@ class Observer(models.Model):
     supervisor = models.ForeignKey("Observer", related_name="observers", blank=True, null=True)
     partner = models.ForeignKey("Partner", related_name="observers")
     role = models.CharField('Observer Role', max_length=3, choices=ROLES, blank=True)
-
+    position = models.PositiveSmallIntegerField(default=1, help_text='This field identifies an observer per polling unit.')
+    
     def __set_name(self, name):
         self.contact.name = name
 
@@ -277,6 +278,86 @@ class DCOIncident(models.Model):
 
     def __unicode__(self):
         return "DCO Incident for %s from %s on %s" % (self.location, self.observer, self.date)
+        
+        
+class EDAYChecklist(models.Model):
+    VA_OPENTIME = ((1, 'Open by 8AM (1)'), (2, 'Between 8AM & 9AM (2)'), (3, 'Between 9AM & 12 noon (3)'), (4, 'After by 12 noon (4)'), (5, 'Never Started (5)'))
+    VP_OPENTIME = ((1, 'Before 1PM (1)'), (2, 'Between 1PM & 2PM (2)'), (3, 'Between 2PM & 3PM (3)'), (4, 'After 3PM (4)'), (5, 'Never Started (5)'))
+    TURNOVER = ((1, 'No one'), (2, 'A Few'), (3, 'Half'), (4, 'Most'), (5, 'Everyone'))
+    YES_NO = ((0, 'Unspecified'), (1, 'Yes'), (2, 'No'), (3, "Don't Know"))
+    EDAY_CHECK = (('1', '1stObserver'), ('2', '2ndObserver'), ('3', 'Control'))
+    location_type = models.ForeignKey(ContentType, null=True, blank=True)
+    location_id = models.PositiveIntegerField(null=True, blank=True)
+    location = generic.GenericForeignKey("location_type", "location_id")
+    observer = models.ForeignKey(Observer)
+    date = models.DateField()
+    AA = models.PositiveSmallIntegerField(blank=True, default=0, choices=YES_NO, help_text='Had any polling officials arrived by 7:30AM?')
+    BA = models.IntegerField(blank=True, null=True, choices=VA_OPENTIME, help_text='What time did the accreditation begin? (tick one)')
+    BB = models.IntegerField(blank=True, null=True, help_text="What is the unit's three digit INEC code? (this is public information)")
+    BC = models.PositiveSmallIntegerField(blank=True, default=0, choices=YES_NO, help_text='Was the polling station divided into two or more sub-units? (tick one)')
+    BD = models.IntegerField(blank=True, null=True, help_text='How many polling officials were present? (enter number)')
+    BE = models.IntegerField(blank=True, null=True, help_text='How many political party agents were present? (enter number)')
+    BF = models.PositiveSmallIntegerField(blank=True, default=0, choices=YES_NO, help_text='Were any security personnel present? (tick one)')
+    BG = models.IntegerField(blank=True, null=True, choices=TURNOVER, help_text='Was anyone accredited to vote who did not have a voter\'s card? (tick one)')
+    BH = models.IntegerField(blank=True, null=True, choices=TURNOVER, help_text='Did polling officials make a tick to the left of every accredited voters name in the register of voters? (tick one)')
+    BJ = models.IntegerField(blank=True, null=True, choices=TURNOVER, help_text='Did the polling officials mark the cuticle on a left finger of every accredited voter? (tick one)')
+    BK = models.PositiveSmallIntegerField(blank=True, default=0, choices=YES_NO, help_text='Was everyone who arrived before accreditation of voters finished allowed to be accredited? (tick one)')
+    BM = models.IntegerField(blank=True, null=True, choices=TURNOVER, help_text='How many people left the polling unit after being accredited to vote?(Accredited voters should remain at the polling unit until voting) (tick one)')
+    BN = models.PositiveSmallIntegerField(blank=True, default=0, choices=YES_NO, help_text='Did anyone attempt to harass/intimidate voters/polling officials during accreditation? (tick one)')
+    BP = models.IntegerField(blank=True, null=True, help_text='How many people were accredited to vote (as announced by the INEC official)? (enter number)')
+    CA = models.IntegerField(blank=True, null=True, choices=VP_OPENTIME, help_text='What time did the voting begin? (tick one)')
+    CB = models.PositiveSmallIntegerField(blank=True, default=0, choices=YES_NO, help_text='Was the ballot box shown to be empty before being closed and locked? (tick one)')
+    CC = models.IntegerField(blank=True, null=True, choices=TURNOVER, help_text='Was anyone permitted to vote who did not have a voter\'s card and indelible ink on the cuticle of a left finger? (Every voter should have both)(tick one)')
+    CD = models.IntegerField(blank=True, null=True, choices=TURNOVER, help_text='Did polling officials check for every voters name in the register of voters and make a tick to the right of the voters name? (tick one)')
+    CE = models.IntegerField(blank=True, null=True, choices=TURNOVER, help_text='Was every ballot paper stamped and signed before being given to voters? (The polling official must both stamp and sign each ballot paper) (tick one)')
+    CF = models.PositiveSmallIntegerField(blank=True, default=0, choices=YES_NO, help_text='Were voters able to mark their ballot paper in secret? (tick one)')
+    CG = models.PositiveSmallIntegerField(blank=True, default=0, choices=YES_NO, help_text='Was anyone accredited to vote after the accreditation of voters process was closed? (tick one)')
+    CH = models.PositiveSmallIntegerField(blank=True, default=0, choices=YES_NO, help_text='Did anyone attempt to harass/intimidate voters/polling officials during the voting process? (tick one)')
+    CJ = models.PositiveSmallIntegerField(blank=True, default=0, choices=YES_NO, help_text='Were the ballot papers properly sorted according to each political party? (tick one)')
+    CK = models.PositiveSmallIntegerField(blank=True, default=0, choices=YES_NO, help_text='Were the results announced? (tick one)')
+    CM = models.PositiveSmallIntegerField(blank=True, default=0, choices=YES_NO, help_text='Did any political party agent disagree with the announced results? (tick one)')
+    CN = models.PositiveSmallIntegerField(blank=True, default=0, choices=YES_NO, help_text='Were the results posted in a public place easy for people to see? (tick one)')
+    CP = models.PositiveSmallIntegerField(blank=True, default=0, choices=YES_NO, help_text='Did the posted results match announced results? (tick one)')
+    CQ = models.PositiveSmallIntegerField(blank=True, default=0, choices=YES_NO, help_text='Did anyone attempt to harass/intimidate polling officials during counting? (tick one)')
+
+    comment = models.CharField(max_length=200, blank=True)
+    submitted = models.BooleanField(default=False, help_text="This field tracks if (even though already created), this report has been submitted by the reporter")
+    checklist_index = models.CharField(max_length=1, default='1', choices=EDAY_CHECK, help_text='This fields helps to identify the reporter sending a particular checklist')
+    audit_log = AuditLog()
+
+    def __unicode__(self):
+        return "EDAY Checklist for %s from %s on %s" % (self.location, self.observer, self.date)
+        
+
+class EDAYIncident(models.Model):
+    location_type = models.ForeignKey(ContentType, null=True, blank=True)
+    location_id = models.PositiveIntegerField(null=True, blank=True)
+    location = generic.GenericForeignKey("location_type", "location_id")
+    observer = models.ForeignKey(Observer)
+    date = models.DateField()
+    A = models.NullBooleanField(blank=True)
+    B = models.NullBooleanField(blank=True)
+    C = models.NullBooleanField(blank=True)
+    D = models.NullBooleanField(blank=True)
+    E = models.NullBooleanField(blank=True)
+    F = models.NullBooleanField(blank=True)
+    G = models.NullBooleanField(blank=True)
+    H = models.NullBooleanField(blank=True)
+    J = models.NullBooleanField(blank=True)
+    K = models.NullBooleanField(blank=True)
+    M = models.NullBooleanField(blank=True)
+    N = models.NullBooleanField(blank=True)
+    P = models.NullBooleanField(blank=True)
+    Q = models.NullBooleanField(blank=True)
+    R = models.NullBooleanField(blank=True)
+    S = models.NullBooleanField(blank=True)
+    T = models.NullBooleanField(blank=True)
+
+    comment = models.CharField(max_length=200, blank=True)
+    audit_log = AuditLog()
+
+    def __unicode__(self):
+        return "EDAY Incident for %s from %s on %s" % (self.location, self.observer, self.date)
 
 # Make sure the `to` and `null` parameters will be ignored
 rules = [((fields.LastUserField,),

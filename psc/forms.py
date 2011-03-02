@@ -1,5 +1,5 @@
 from django import forms
-from models import VRChecklist, VRIncident, DCOChecklist, DCOIncident
+from models import VRChecklist, VRIncident, DCOChecklist, DCOIncident, EDAYChecklist, EDAYIncident
 from models import Zone, State, District, Observer
 from django.forms.models import modelformset_factory
 from datetime import datetime
@@ -42,9 +42,20 @@ VR_DAYS = (('', 'All'),
         (datetime.date(datetime(2011, 2, 3)), 'Thu 03-Feb'),
         (datetime.date(datetime(2011, 2, 5)), 'Sat 05-Feb'))
 
+EDAY_DAYS = (('', 'All'),
+        (datetime.date(datetime(2011, 1, 15)), 'Sat 15-Jan'),
+        (datetime.date(datetime(2011, 1, 20)), 'Thu 20-Jan'),
+        (datetime.date(datetime(2011, 1, 22)), 'Sat 22-Jan'),
+        (datetime.date(datetime(2011, 1, 27)), 'Thu 27-Jan'),
+        (datetime.date(datetime(2011, 4, 2)), 'Sat 02-Apr'),
+        (datetime.date(datetime(2011, 4, 9)), 'Sat 09-Apr'),
+        (datetime.date(datetime(2011, 4, 16)), 'Sat 16-Apr'))
+
 VR_INCIDENT_DAYS = tuple([('', 'All')]+[(date, date.strftime('%a %d-%b')) for date in VRIncident.objects.all().distinct('date').order_by('-date').values_list('date', flat=True)])
 
 DCO_INCIDENT_DAYS = tuple([('', 'All')]+[(date, date.strftime('%a %d-%b')) for date in DCOIncident.objects.all().distinct('date').order_by('-date').values_list('date', flat=True)])
+
+EDAY_INCIDENT_DAYS = tuple([('', 'All')]+[(date, date.strftime('%a %d-%b')) for date in EDAYIncident.objects.all().distinct('date').order_by('-date').values_list('date', flat=True)])
 
 DCO_ARRIVAL = ((0, 'All'),
                (1, 'Arrived'),
@@ -76,7 +87,8 @@ PARTNERS = (('', 'All'),
 
 vr_checklist_dates =  list(VRChecklist.objects.all().distinct('date').values_list('date', flat=True).order_by('date'))
 dco_checklist_dates = list(DCOChecklist.objects.all().distinct('date').values_list('date', flat=True).order_by('date'))
-checklist_dates = vr_checklist_dates + dco_checklist_dates
+eday_checklist_dates =  list(EDAYChecklist.objects.all().distinct('date').values_list('date', flat=True).order_by('date'))
+checklist_dates = vr_checklist_dates + dco_checklist_dates + eday_checklist_dates
 
 # make the checklist dates unique
 checklist_dates = list(set(checklist_dates))
@@ -117,7 +129,7 @@ class DCOIncidentForm(forms.ModelForm):
     class Meta:
         model = DCOIncident
         exclude = ['location_type', 'location_id', 'location']
-
+        
 class DCOIncidentUpdateForm(forms.ModelForm):
     observer = forms.ModelChoiceField(queryset=Observer.objects.exclude(observer_id=""), empty_label="--")
     class Meta:
@@ -125,6 +137,24 @@ class DCOIncidentUpdateForm(forms.ModelForm):
         exclude = ['location_type', 'location_id', 'location']
 
 DCOIncidentFormSet = modelformset_factory(DCOIncident)
+
+class EDAYChecklistForm(forms.ModelForm):
+    class Meta:
+        model = EDAYChecklist
+        exclude = ['location_type', 'location', 'observer', 'date']
+
+class EDAYIncidentForm(forms.ModelForm):
+    date = forms.ChoiceField(choices=tuple([('', '--')] + [(date, label) for (date, label) in EDAY_DAYS if date]))
+    observer = forms.ModelChoiceField(queryset=Observer.objects.filter(role__in=['SC', 'SDC', 'LGA']).exclude(observer_id=""), empty_label="--")
+    class Meta:
+        model = EDAYIncident
+        exclude = ['location_type', 'location_id', 'location']
+        
+class EDAYIncidentUpdateForm(forms.ModelForm):
+    observer = forms.ModelChoiceField(queryset=Observer.objects.exclude(observer_id=""), empty_label="--")
+    class Meta:
+        model = EDAYIncident
+        exclude = ['location_type', 'location_id', 'location']
 
 class VRChecklistFilterForm(forms.Form):
     observer_id = forms.CharField(required=False, label="PSC ID", max_length=6, widget=forms.TextInput(attrs={'autocomplete':'off','style':'width:7em',}))
@@ -142,6 +172,14 @@ class DCOChecklistFilterForm(forms.Form):
     state = forms.ChoiceField(choices=STATES, required=False)
     first = forms.ChoiceField(choices=DCO_ARRIVAL, required=False, label='Arrival Text')
     second = forms.ChoiceField(choices=DCO_STATUS, required=False, label='2nd SMS')
+    
+class EDAYChecklistFilterForm(forms.Form):
+    observer_id = forms.CharField(required=False, label="PSC ID", max_length=6, widget=forms.TextInput(attrs={'autocomplete':'off','style':'width:7em'}))
+    day = forms.ChoiceField(choices=EDAY_DAYS, required=False)
+    zone = forms.ChoiceField(choices=ZONES, required=False)
+    state = forms.ChoiceField(choices=STATES, required=False)
+    #first = forms.ChoiceField(choices=DCO_ARRIVAL, required=False, label='Arrival Text')
+    #second = forms.ChoiceField(choices=DCO_STATUS, required=False, label='2nd SMS')
     
 class ContactlistFilterForm(forms.Form):
     observer_id = forms.CharField(required=False, label="PSC ID", max_length=6, widget=forms.TextInput(attrs={'autocomplete':'off','style':'width:7em'}))
@@ -165,6 +203,13 @@ class DCOIncidentFilterForm(forms.Form):
     state = forms.ChoiceField(choices=STATES, required=False)
     district = forms.ChoiceField(choices=DISTRICTS, required=False)
 
+class EDAYIncidentFilterForm(forms.Form):
+    observer_id = forms.CharField(required=False, label="PSC ID", max_length=6, widget=forms.TextInput(attrs={'autocomplete':'off','style':'width:7em'}))
+    day = forms.ChoiceField(choices=EDAY_INCIDENT_DAYS, required=False)
+    zone = forms.ChoiceField(choices=ZONES, required=False)
+    state = forms.ChoiceField(choices=STATES, required=False)
+    district = forms.ChoiceField(choices=DISTRICTS, required=False)
+
 class MessagelogFilterForm(forms.Form):
     phone = forms.CharField(required=False, widget=forms.TextInput(attrs={'autocomplete':'off'}))
     message = forms.CharField(required=False, widget=forms.TextInput(attrs={'autocomplete':'off'}))
@@ -177,12 +222,20 @@ class VRAnalysisFilterForm(forms.Form):
     zone = forms.ChoiceField(choices=ZONES, required=False)
     state = forms.ChoiceField(choices=STATES, required=False)
     date = forms.ChoiceField(choices=VR_DAYS, required=False)
+    
+class EDAYAnalysisFilterForm(forms.Form):
+    zone = forms.ChoiceField(choices=ZONES, required=False)
+    state = forms.ChoiceField(choices=STATES, required=False)
+    date = forms.ChoiceField(choices=EDAY_DAYS, required=False)
 
 class VRSummaryFilterForm(forms.Form):
     date = forms.ChoiceField(choices=tuple([('', 'Today')] + [(date, label) for (date, label) in VR_DAYS if date]))
 
 class DCOSummaryFilterForm(forms.Form):
     date = forms.ChoiceField(choices=tuple([('', 'Today')] + [(date, label) for (date, label) in DCO_DAYS if date]))
+
+class EDAYSummaryFilterForm(forms.Form):
+    date = forms.ChoiceField(choices=tuple([('', 'Today')] + [(date, label) for (date, label) in EDAY_DAYS if date]))
 
 class EmailBlastForm(forms.Form):
     subject = forms.CharField(max_length=500)
