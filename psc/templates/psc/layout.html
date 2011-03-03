@@ -70,6 +70,17 @@
 														{% endif %}
                         </ul>
                     </li>
+		    <li>
+                        <a href="{% url psc.views.eday_checklist_list %}">Election Day </a>
+                        <ul>
+                            <li>
+                                <a href="{% url psc.views.eday_checklist_list %}">Checklist</a>
+                            </li>
+                            <li>
+                                <a href="{% url psc.views.eday_incident_list %}">Incidents</a>
+                            </li>
+                        </ul>
+                    </li>
 		     <li>
                         <a href="{% url psc.views.contact_list %}">Contact List</a>
                     </li>

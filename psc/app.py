@@ -20,6 +20,7 @@ class App(AppBase):
         self.range_error_response = 'Invalid response(s) for question(s): "%s"'
         self.checklist_attribute_error_response = 'Invalid responses for the checklist code: "%s"'
         self.incident_attribute_error_response = 'Unknown critical incident code: "%s"'
+        
         AppBase.__init__(self, router)
         
     def handle(self, message):

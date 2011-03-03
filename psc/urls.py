@@ -13,6 +13,13 @@ urlpatterns = patterns('',
     (r'^dco/in/?$', views.dco_incident_list),
     (r'^dco/in/(?P<incident_id>\d+)/?$', views.dco_incident_update),
     (r'^dco/in/add/?$', views.dco_incident_add),
+    
+    (r'^eday/?$', views.eday_checklist_list),
+    (r'^eday/(?P<checklist_id>\d+)/?$', views.eday_checklist),
+    (r'^eday/in/?$', views.eday_incident_list),
+    (r'^eday/in/(?P<incident_id>\d+)/?$', views.eday_incident_update),
+    (r'^eday/in/add/?$', views.eday_incident_add),
+    
     (r'^msglog/$', views.message_log),
     (r'^actionlog/$', views.action_log),
     (r'^exportall/(?P<model>.+)/?$', views.export),
@@ -25,6 +32,9 @@ urlpatterns = patterns('',
     (r'^vr/analysis/?$', views.vr_checklist_analysis),
     (r'^vr/in/del/(?P<incident_id>\d+)/?$', views.vr_incident_delete),
     (r'^dco/in/del/(?P<incident_id>\d+)/?$', views.dco_incident_delete),
+    
+    (r'^eday/in/del/(?P<incident_id>\d+)/?$', views.eday_incident_delete),
+    
     (r'^sendmail/?$', views.send_mail),
     (r'^contact/$', views.contact_list),
     (r'^contactedit/(?P<contact_id>\d+)/$', views.contact_edit),
