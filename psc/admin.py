@@ -3,7 +3,7 @@
 
 
 from django.contrib import admin
-from .models import Zone, State, District, LGA, Ward, RegistrationCenter, VRChecklist, VRIncident, DCOChecklist, DCOIncident, Observer
+from .models import Zone, State, District, LGA, Ward, RegistrationCenter, VRChecklist, VRIncident, DCOChecklist, DCOIncident, Observer, EDAYChecklist, EDAYIncident
 from .models import Partner
 
 admin.site.register(Zone)
@@ -18,3 +18,5 @@ admin.site.register(DCOChecklist)
 admin.site.register(DCOIncident)
 admin.site.register(Observer)
 admin.site.register(Partner)
+admin.site.register(EDAYChecklist)
+admin.site.register(EDAYIncident)
