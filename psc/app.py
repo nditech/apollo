@@ -11,6 +11,7 @@ from decorators import role_required
 class App(AppBase):
     def __init__(self, router):
         self.pattern = re.compile(r'PSC(?P<observer_id>\d{6})(DC|VR)?(\d{1,2})?(RC|GA)?(\d{3})?(!?([A-Z\d]{1,})@?(.*))?', re.I)
+        self.vr_dc_pattern = re.compile(r'PSC(?P<observer_id>\d{6})(DC|VR)', re.I)
         self.vr_checklist  = re.compile(r'PSC(?P<observer_id>\d{6})VR(?P<day>\d{1,2})RC(?P<location_id>\d{3})(?P<responses>[A-Z\d]{2,})?@?(?P<comment>.*)', re.I)
         self.vr_incident  = re.compile(r'PSC(?P<observer_id>\d{6})VR(?P<day>\d{1,2})(?P<location_type>(RC|GA))(?P<location_id>\d{3})!(?P<responses>[A-Z]{1,})@?(?P<comment>.*)', re.I)
         self.dco_checklist = re.compile(r'PSC(?P<observer_id>\d{6})DC(?P<day>\d{1,2})RC(?P<location_id>\d{3})(?P<responses>[A-Z\d]{2,})?@?(?P<comment>.*)', re.I)
@@ -47,26 +48,27 @@ class App(AppBase):
                 return message.respond('Observer ID not found. Please resend with valid PSC. You sent: %s' % message.message_only)
 
             # This is likely a valid PSC message
-            match = self.vr_incident.match(message.text)
-            if match:
-                return self._vr_incident(message, match.groupdict())
-            match = self.vr_checklist.match(message.text)
-            if match:
-                return self._vr_checklist(message, match.groupdict())
-            match = self.dco_incident.match(message.text)
-            if match:
-                return self._dco_incident(message, match.groupdict())
-            match = self.dco_checklist.match(message.text)
-            if match:
-                return self._dco_checklist(message, match.groupdict())
-            match = self.eday_incident.match(message.text)
-            if match:
-                return self._eday_incident(message, match.groupdict())
-            match = self.eday_checklist.match(message.text)
-            if match:
-                return self._eday_checklist(message, match.groupdict())
+            if self.vr_dc_pattern.match(message.text):
+                match = self.vr_incident.match(message.text)
+                if match:
+                    return self._vr_incident(message, match.groupdict())
+                match = self.vr_checklist.match(message.text)
+                if match:
+                    return self._vr_checklist(message, match.groupdict())
+                match = self.dco_incident.match(message.text)
+                if match:
+                    return self._dco_incident(message, match.groupdict())
+                match = self.dco_checklist.match(message.text)
+                if match:
+                    return self._dco_checklist(message, match.groupdict())
+            else:
+                match = self.eday_incident.match(message.text)
+                if match:
+                    return self._eday_incident(message, match.groupdict())
+                match = self.eday_checklist.match(message.text)
+                if match:
+                    return self._eday_checklist(message, match.groupdict())
             
-            print "Within handle"
             return self.default(message)
     
     def default(self, message):
