@@ -43,10 +43,6 @@ VR_DAYS = (('', 'All'),
         (datetime.date(datetime(2011, 2, 5)), 'Sat 05-Feb'))
 
 EDAY_DAYS = (('', 'All'),
-        (datetime.date(datetime(2011, 1, 15)), 'Sat 15-Jan'),
-        (datetime.date(datetime(2011, 1, 20)), 'Thu 20-Jan'),
-        (datetime.date(datetime(2011, 1, 22)), 'Sat 22-Jan'),
-        (datetime.date(datetime(2011, 1, 27)), 'Thu 27-Jan'),
         (datetime.date(datetime(2011, 4, 2)), 'Sat 02-Apr'),
         (datetime.date(datetime(2011, 4, 9)), 'Sat 09-Apr'),
         (datetime.date(datetime(2011, 4, 16)), 'Sat 16-Apr'))
