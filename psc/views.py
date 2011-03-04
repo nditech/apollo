@@ -10,7 +10,7 @@ from rapidsms.contrib.messagelog.tables import MessageTable
 from rapidsms.contrib.messagelog.models import Message
 from forms import VRChecklistForm, VRIncidentForm, DCOIncidentForm, VRChecklistFilterForm, VRIncidentFilterForm, DCOIncidentFilterForm, DCOChecklistFilterForm, DCOChecklistForm, ContactEditForm, ContactlistFilterForm
 from forms import VR_DAYS
-from forms import DCOIncidentUpdateForm, VRIncidentUpdateForm, MessagelogFilterForm, DashboardFilterForm, VRAnalysisFilterForm
+from forms import DCOIncidentUpdateForm, VRIncidentUpdateForm, MessagelogFilterForm, DashboardFilterForm, VRAnalysisFilterForm, EDAYIncidentUpdateForm, EDAYIncidentFilterForm, EDAYIncidentForm, EDAYChecklistFilterForm, EDAYChecklistForm
 from forms import VRSummaryFilterForm, DCOSummaryFilterForm, EmailBlastForm
 from datetime import datetime
 from django.core import serializers
@@ -319,6 +319,55 @@ def dco_checklist_list(request):
     msg_recipients = list(set(DCOChecklist.objects.filter(qs_include).values_list('observer__phone', flat=True)))
     return render_to_response('psc/dco_checklist_list.html', {'page_title': "Display, Claims & Objections Data Management", 'checklists': checklists, 'filter_form': filter_form, 'page_details': page_details, 'msg_recipients': msg_recipients }, context_instance=RequestContext(request))
 
+def eday_checklist_list(request):
+    #qs = Q(date__in=[d[0] for d in DCO_DAYS if d[0]])
+    qs_include = Q()
+    if not request.session.has_key('eday_checklist_filter'):
+        request.session['eday_checklist_filter'] = {}
+
+    if request.method == 'GET':
+        if filter(lambda key: request.GET.has_key(key), ['zone', 'state', 'first', 'second', 'day', 'observer_id']):
+            request.session['eday_checklist_filter'] = request.GET
+        filter_form = EDAYChecklistFilterForm(request.session['eday_checklist_filter'])
+
+        if filter_form.is_valid():
+            data = filter_form.cleaned_data
+
+            if data['zone']:
+                qs_include &= Q(observer__location_id__in=LGA.objects.filter(parent__parent__parent__code__iexact=data['zone']).values_list('id', flat=True))
+            if data['state']:
+                qs_include &= Q(observer__location_id__in=LGA.objects.filter(parent__parent__code__exact=data['state']).values_list('id', flat=True))
+            if data['day']:
+                qs_include &= Q(date=data['day'])
+
+            if data['observer_id']:
+                qs_include = Q(observer__observer_id__exact=data['observer_id'])
+    else:
+        filter_form = EDAYChecklistFilterForm()
+
+    #get all objects
+    global items_per_page
+    if request.GET.get('export'):
+	items_per_page = EDAYChecklist.objects.filter(qs_include).count()
+    paginator = Paginator(EDAYChecklist.objects.filter(qs_include).order_by('date', 'observer'), items_per_page)
+    try:
+        page = int(request.GET.get('page', '1'))
+    except ValueError:
+        page = 1
+
+    # an invalid range will retrieve the last page of results
+    try:
+        checklists = paginator.page(page)
+    except (EmptyPage, InvalidPage):
+        checklists = paginator.page(paginator.num_pages)
+
+    page_details = {}
+    page_details['first'] = paginator.page_range[0]
+    page_details['last'] = paginator.page_range[len(paginator.page_range) - 1]
+    msg_recipients = list(set(EDAYChecklist.objects.filter(qs_include).values_list('observer__phone', flat=True)))
+    return render_to_response('psc/eday_checklist_list.html', {'page_title': "Election Day Data Management", 'checklists': checklists, 'filter_form': filter_form, 'page_details': page_details, 'msg_recipients': msg_recipients }, context_instance=RequestContext(request))
+
+
 @login_required()
 def vr_checklist(request, checklist_id=0):
     checklist = get_object_or_404(VRChecklist, pk=checklist_id)
@@ -346,6 +395,20 @@ def dco_checklist(request, checklist_id=0):
     else:
         f = DCOChecklistForm(instance=checklist)
     return render_to_response('psc/dco_checklist_form.html', {'page_title': 'Display, Claims & Objections Checklist', 'checklist': checklist, 'rcs': rcs, 'location': location, 'form': f}, context_instance=RequestContext(request))
+
+def eday_checklist(request, checklist_id=0):   
+    checklist = get_object_or_404(EDAYChecklist, pk=checklist_id)
+    rcs = RegistrationCenter.objects.filter(parent=checklist.location.parent)
+    location = checklist.observer.location
+    if (request.POST):
+        f = EDAYChecklistForm(request.POST, instance=checklist)
+        if f.is_valid():
+            f.save()
+        return HttpResponseRedirect(reverse('psc.views.eday_checklist_list'))
+    else:
+        f = EDAYChecklistForm(instance=checklist)
+    return render_to_response('psc/eday_checklist_form.html', {'page_title': 'Election Day Checklist', 'checklist': checklist, 'rcs': rcs, 'location': location, 'form': f}, context_instance=RequestContext(request))
+
 
 @login_required()
 def vr_incident_update(request, incident_id=0):
@@ -488,6 +551,70 @@ def dco_incident_list(request):
     page_details['first'] = paginator.page_range[0]
     page_details['last'] = paginator.page_range[len(paginator.page_range) - 1]
     return render_to_response('psc/dco_incident_list.html', {'page_title': "Display, Claims & Objections Critical Incidents", 'checklists': checklists, 'filter_form': filter_form, 'page_details': page_details}, context_instance=RequestContext(request))
+
+def eday_incident_list(request):
+    qs = Q()
+    if not request.session.has_key('eday_incident_filter'):
+        request.session['eday_incident_filter'] = {}
+
+    if request.method == 'GET':
+        if filter(lambda key: request.GET.has_key(key), ['zone', 'state', 'district', 'day', 'observer_id']):
+            request.session['dco_incident_filter'] = request.GET
+        filter_form = EDAYIncidentFilterForm(request.session['eday_incident_filter'])
+
+        if filter_form.is_valid():
+            data = filter_form.cleaned_data
+            if data['zone']:
+                qs &= Q(observer__location_id__in=LGA.objects.filter(parent__parent__parent__code__iexact=data['zone']).values_list('id', flat=True))
+            if data['state']:
+                qs &= Q(observer__location_id__in=LGA.objects.filter(parent__parent__code__exact=data['state']).values_list('id', flat=True))
+            if data['district']:
+                qs &= Q(observer__location_id__in=LGA.objects.filter(parent__code__exact=data['district']).values_list('id', flat=True))
+            if data['day']:
+                qs &= Q(date=data['day'])
+            if data['observer_id']:
+                qs = Q(observer__observer_id__exact=data['observer_id'])
+    else:
+        filter_form = EDAYIncidentFilterForm()
+
+    paginator = Paginator(EDAYIncident.objects.filter(qs).order_by('-id'), items_per_page)
+
+    try:
+        page = int(request.GET.get('page', '1'))
+    except ValueError:
+        page = 1
+
+    # an invalid range will retrieve the last page of results
+    try:
+        checklists = paginator.page(page)
+    except (EmptyPage, InvalidPage):
+        checklists = paginator.page(paginator.num_pages)
+
+    page_details = {}
+    page_details['first'] = paginator.page_range[0]
+    page_details['last'] = paginator.page_range[len(paginator.page_range) - 1]
+    return render_to_response('psc/eday_incident_list.html', {'page_title': "Election Day Critical Incidents", 'checklists': checklists, 'filter_form': filter_form, 'page_details': page_details}, context_instance=RequestContext(request))
+
+def eday_incident_add(request):
+    if request.POST:
+        f = EDAYIncidentForm(request.POST)                    
+        f.save()
+        return HttpResponseRedirect(reverse('psc.views.eday_incident_list'))
+    else:
+        f = EDAYIncidentForm()
+        return render_to_response('psc/eday_incident_add_form.html', {'page_title': "Add Election Day Critrical Incident", 'form': f }, context_instance=RequestContext(request))
+
+def eday_incident_update(request, incident_id=0):
+    incident = get_object_or_404(EDAYIncident, pk=incident_id)
+    location = incident.observer.location
+    if request.POST:
+        f = EDAYIncidentUpdateForm(request.POST, instance=incident)    
+        if f.is_valid():
+            f.save()
+        return HttpResponseRedirect(reverse('psc.views.eday_incident_list'))
+    else:
+        f = DCOIncidentForm(instance=incident)
+        return render_to_response('psc/eday_incident_update_form.html', {'page_title': 'Election Day Critical Incident', 'incident': incident, 'location': location, 'form': f }, context_instance=RequestContext(request))
 
 @login_required()
 def message_log(request):
@@ -1119,6 +1246,11 @@ def dco_incident_delete(request, incident_id):
     if int(incident_id):        
         DCOIncident.objects.get(pk=incident_id).delete()
         return HttpResponseRedirect(reverse('psc.views.dco_incident_list'))
+	
+def eday_incident_delete(request, incident_id):
+    if int(incident_id):        
+        EDAYIncident.objects.get(pk=incident_id).delete()
+        return HttpResponseRedirect(reverse('psc.views.eday_incident_list'))
 
 #@permission_required('psc.can_analyse', login_url='/')
 #@login_required()

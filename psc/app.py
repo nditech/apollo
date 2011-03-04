@@ -21,6 +21,7 @@ class App(AppBase):
         self.range_error_response = 'Invalid response(s) for question(s): "%s"'
         self.checklist_attribute_error_response = 'Invalid responses for the checklist code: "%s"'
         self.incident_attribute_error_response = 'Unknown critical incident code: "%s"'
+        
         AppBase.__init__(self, router)
         
     def handle(self, message):
@@ -412,7 +413,7 @@ class App(AppBase):
             elif key in ['BD'] and int(responses[key]) > 9: range_error.append(key)
             elif key in ['BE'] and int(responses[key]) > 99: range_error.append(key)
             elif key in ['BB'] and int(responses[key]) > 999: range_error.append(key)
-            if key in ['bp'] and int(responses[key]) > 9999: range_error.append(key)
+            if key in ['BP'] and int(responses[key]) > 3500: range_error.append(key)
         return {'range': range_error, 'attribute': attribute_error }
         
     def _edayi_validate(self, message):
