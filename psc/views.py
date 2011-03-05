@@ -252,7 +252,9 @@ def vr_checklist_list(request):
     page_details['last'] = paginator.page_range[len(paginator.page_range) - 1]
     
     msg_recipients = list(set(VRChecklist.objects.filter(qs_include).exclude(qs_exclude).values_list('observer__phone', flat=True)))
-    return render_to_response('psc/vr_checklist_list.html', {'page_title': "Voter Registration Data Management", 'checklists': checklists, 'filter_form': filter_form, 'page_details' : page_details, 'msg_recipients': msg_recipients }, context_instance=RequestContext(request))
+    messenger = NodSMS()
+    credits = messenger.credit_balance()
+    return render_to_response('psc/vr_checklist_list.html', {'page_title': "Voter Registration Data Management", 'checklists': checklists, 'filter_form': filter_form, 'page_details' : page_details, 'msg_recipients': msg_recipients, 'credits': credits }, context_instance=RequestContext(request))
 
 @login_required()
 def dco_checklist_list(request):
@@ -317,7 +319,9 @@ def dco_checklist_list(request):
     page_details['first'] = paginator.page_range[0]
     page_details['last'] = paginator.page_range[len(paginator.page_range) - 1]
     msg_recipients = list(set(DCOChecklist.objects.filter(qs_include).values_list('observer__phone', flat=True)))
-    return render_to_response('psc/dco_checklist_list.html', {'page_title': "Display, Claims & Objections Data Management", 'checklists': checklists, 'filter_form': filter_form, 'page_details': page_details, 'msg_recipients': msg_recipients }, context_instance=RequestContext(request))
+    messenger = NodSMS()
+    credits = messenger.credit_balance()
+    return render_to_response('psc/dco_checklist_list.html', {'page_title': "Display, Claims & Objections Data Management", 'checklists': checklists, 'filter_form': filter_form, 'page_details': page_details, 'msg_recipients': msg_recipients, 'credits': credits }, context_instance=RequestContext(request))
 
 def eday_checklist_list(request):
     #qs = Q(date__in=[d[0] for d in DCO_DAYS if d[0]])
@@ -365,7 +369,9 @@ def eday_checklist_list(request):
     page_details['first'] = paginator.page_range[0]
     page_details['last'] = paginator.page_range[len(paginator.page_range) - 1]
     msg_recipients = list(set(EDAYChecklist.objects.filter(qs_include).values_list('observer__phone', flat=True)))
-    return render_to_response('psc/eday_checklist_list.html', {'page_title': "Election Day Data Management", 'checklists': checklists, 'filter_form': filter_form, 'page_details': page_details, 'msg_recipients': msg_recipients }, context_instance=RequestContext(request))
+    messenger = NodSMS()
+    credits = messenger.credit_balance()
+    return render_to_response('psc/eday_checklist_list.html', {'page_title': "Election Day Data Management", 'checklists': checklists, 'filter_form': filter_form, 'page_details': page_details, 'msg_recipients': msg_recipients, 'credits': credits }, context_instance=RequestContext(request))
 
 
 @login_required()
@@ -1199,8 +1205,10 @@ def contact_list(request):
     page_details['first'] = paginator.page_range[0]
     page_details['last'] = paginator.page_range[len(paginator.page_range) - 1]
     msg_recipients = Observer.objects.filter(qs_include).exclude(role__in=['ZC']).values_list('phone', flat=True)
+    messenger = NodSMS()
+    credits = messenger.credit_balance()
     return render_to_response('psc/contact_list.html', {'page_title': "Contacts Management",'contact': contact,
-						    'filter_form': filter_form, 'page_details': page_details,'msg_recipients': msg_recipients}
+						    'filter_form': filter_form, 'page_details': page_details,'msg_recipients': msg_recipients, 'credits': credits}
 			      , context_instance=RequestContext(request))
 
 
