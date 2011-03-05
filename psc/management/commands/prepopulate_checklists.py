@@ -1,14 +1,14 @@
 from django.core.management.base import BaseCommand
-from psc.models import VRChecklist, DCOChecklist, Observer, RegistrationCenter
+from psc.models import VRChecklist, DCOChecklist, Observer, RegistrationCenter, EDAYChecklist
 from django.contrib.contenttypes.models import ContentType
-from psc.forms import VR_DAYS, DCO_DAYS
+from psc.forms import VR_DAYS, DCO_DAYS, EDAY_DAYS
 
 class Command(BaseCommand):
     help = "My shiny new management command."
 
     def handle(self, *args, **options):
         # prepopulate vr checklists for LGA supervisors
-        vr_reports_created = dco_reports_created = 0
+        vr_reports_created = dco_reports_created = eday_reports_created = 0
         lga_supervisors = Observer.objects.filter(role__iexact='LGA')
         for ls in lga_supervisors:
             for day in VR_DAYS:
@@ -43,5 +43,28 @@ class Command(BaseCommand):
                         dco.save()
                         dco_reports_created += 1
 
+            
+        observers = Observer.objects.filter(role__iexact='OBS')
+        for observer in observers:
+            for day in EDAY_DAYS:
+                if day[0]:
+                    report_date = day[0]
+                    rc = observer.location
+                    eday, created = EDAYChecklist.objects.get_or_create(date=report_date, observer=observer, location_type=ContentType.objects.get_for_model(rc), location_id=rc.id)
+                    if created:
+                        eday_reports_created += 1
+
+        
+        lga_supervisors = Observer.objects.filter(role__iexact='LGA')
+        for lga_supervisor in lga_supervisors:
+            for day in EDAY_DAYS[:-2]: # omit the last two dates
+                if day[0]:
+                    report_date = day[0]
+                    rc = lga_supervisor.location
+                    eday, created = EDAYChecklist.objects.get_or_create(date=report_date, observer=lga_supervisor, location_type=ContentType.objects.get_for_model(rc), location_id=rc.id)
+                    if created:
+                        eday_reports_created += 1
+                        
         print "%d Voter's Registration Checklists Prepopulated" % vr_reports_created
         print "%d Display, Claims and Objection Checklists Prepopulated" % dco_reports_created
+        print "%d Election Day Checklists Prepopulated" % eday_reports_created
