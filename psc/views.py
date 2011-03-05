@@ -1199,7 +1199,7 @@ def contact_list(request):
     page_details['first'] = paginator.page_range[0]
     page_details['last'] = paginator.page_range[len(paginator.page_range) - 1]
     msg_recipients = Observer.objects.filter(qs_include).exclude(role__in=['ZC']).values_list('phone', flat=True)
-    return render_to_response('psc/contact_list.html', {'page_title': "CONTACT LIST",'contact': contact,
+    return render_to_response('psc/contact_list.html', {'page_title': "Contacts Management",'contact': contact,
 						    'filter_form': filter_form, 'page_details': page_details,'msg_recipients': msg_recipients}
 			      , context_instance=RequestContext(request))
 
@@ -1217,7 +1217,7 @@ def contact_edit(request, contact_id=0):
         f = ContactEditForm(instance=contact)
 
     partners = Partner.objects.all()
-    return render_to_response('psc/contact_edit.html', {'page_title': 'Contact List', 'contact': contact,
+    return render_to_response('psc/contact_edit.html', {'page_title': 'Contact', 'contact': contact,
 	    'form': f, 'partners': partners}, context_instance=RequestContext(request))
 
 
