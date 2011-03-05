@@ -87,6 +87,20 @@ class Partner(models.Model):
     def __unicode__(self):
         return self.code
 
+class Sample(models.Model):
+    """The Sample model groups locations into samples that are used for data analyses"""
+    SAMPLES = (
+        ('NATIONAL', 'NATIONAL'),
+        ('GUBER', 'GUBERNATORIAL'),
+        ('SENATE', 'SENATORIAL'))
+        
+    sample = models.CharField(choices=SAMPLES, max_length=100, db_index=True)
+    location = models.ForeignKey(RegistrationCenter, related_name="sample")
+
+    def __unicode__(self):
+        return "%s -> %s" % (self.location, self.sample)
+
+
 class Observer(models.Model):
     ROLES = (
         ('NSC', 'National Steering Committee'),
