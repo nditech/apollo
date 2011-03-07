@@ -1,12 +1,13 @@
 from django import forms
 from models import VRChecklist, VRIncident, DCOChecklist, DCOIncident, EDAYChecklist, EDAYIncident
-from models import Zone, State, District, Observer
+from models import Zone, State, District, Observer, LGA
 from django.forms.models import modelformset_factory
 from datetime import datetime
 
 ZONES = tuple([('', 'All')]+[(zone.code, zone.code) for zone in Zone.objects.all().order_by('name')])
 STATES = tuple([('', 'All')]+[(state.code, state.name) for state in State.objects.all().order_by('name')])
 DISTRICTS = tuple([('', 'All')]+[(district.code, district.name) for district in District.objects.all().order_by('name')])
+LGAS = tuple([('', 'All')]+[(lga.code, lga.name) for lga in LGA.objects.all().order_by('name')])
 STATUSES = ((0, 'All'),
             (1, 'no texts received'),
             (2, 'missing 1st text'),
@@ -183,6 +184,8 @@ class ContactlistFilterForm(forms.Form):
     state = forms.ChoiceField(choices=STATES, required=False)
     role = forms.ChoiceField(choices=ROLES, required=False, label='Role')
     partner = forms.ChoiceField(choices=PARTNERS, required=False, label='Partner')
+    district = forms.ChoiceField(choices=DISTRICTS, required=False, label='District')
+    lga = forms.ChoiceField(choices=LGAS, required=False, label='LGA')
 
 
 class VRIncidentFilterForm(forms.Form):

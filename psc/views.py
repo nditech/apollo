@@ -1145,7 +1145,7 @@ def contact_list(request):
         request.session['contact_filter'] = {}
     
     if request.method == 'GET':
-        if filter(lambda key: request.GET.has_key(key), ['zone', 'state', 'role', 'partner', 'observer_id']):
+        if filter(lambda key: request.GET.has_key(key), ['zone', 'state', 'role', 'partner', 'observer_id', 'district', 'lga']):
             request.session['contact_filter'] = request.GET
         filter_form = ContactlistFilterForm(request.session['contact_filter'])
     
@@ -1157,10 +1157,12 @@ def contact_list(request):
                     states_in_zone = State.objects.filter(parent__code=data['zone']).values_list('id', flat=True)
                     districts_in_zone = District.objects.filter(parent__parent__code=data['zone']).values_list('id', flat=True)
                     lgas_in_zone = LGA.objects.filter(parent__parent__parent__code=data['zone']).values_list('id', flat=True)
+		    rcs_in_zone = RegistrationCenter.objects.filter(parent__parent__parent__parent__code=data['zone']).values_list('id', flat=True)
                     qs_states = Q(role__in=['NS', 'NSC', 'SC'], location_type=ContentType.objects.get_for_model(State), location_id__in=states_in_zone)
                     qs_districts = Q(role__in=['SDC'], location_type=ContentType.objects.get_for_model(District), location_id__in=districts_in_zone)
                     qs_lgas = Q(role__in=['LGA'], location_type=ContentType.objects.get_for_model(LGA), location_id__in=lgas_in_zone)
-                    qs_include &= (qs_states | qs_districts | qs_lgas)
+		    qs_rcs = Q(role__in=['OBS'], location_type=ContentType.objects.get_for_model(RegistrationCenter), location_id__in=rcs_in_zone)
+                    qs_include &= (qs_states | qs_districts | qs_lgas | qs_rcs)
                 except:
                     pass
             if data['state']:
@@ -1168,12 +1170,34 @@ def contact_list(request):
                     state = State.objects.get(code=data['state']).id
                     districts_in_state = District.objects.filter(parent__code=data['state']).values_list('id', flat=True)
                     lgas_in_state = LGA.objects.filter(parent__parent__code=data['state']).values_list('id', flat=True)
+		    rcs_in_state = RegistrationCenter.objects.filter(parent__parent__parent__code=data['state']).values_list('id', flat=True)		    
                     qs_states = Q(role__in=['NS', 'NSC', 'SC'], location_type=ContentType.objects.get_for_model(State), location_id=state)
                     qs_districts = Q(role__in=['SDC'], location_type=ContentType.objects.get_for_model(District), location_id__in=districts_in_state)
                     qs_lgas = Q(role__in=['LGA'], location_type=ContentType.objects.get_for_model(LGA), location_id__in=lgas_in_state)
-                    qs_include &= (qs_states | qs_districts | qs_lgas)
+		    qs_rcs = Q(role__in=['OBS'], location_type=ContentType.objects.get_for_model(RegistrationCenter), location_id__in=rcs_in_state)
+                    qs_include &= (qs_states | qs_districts | qs_lgas | qs_rcs)
                 except:
                     pass
+	    if data['district']:
+		try:
+		    district = District.objects.get(code=data['district']).id
+		    lgas_in_district = LGA.objects.filter(parent__code=data['district']).values_list('id', flat=True)
+		    rcs_in_district = RegistrationCenter.objects.filter(parent__parent__code=data['district']).values_list('id', flat=True)
+                    qs_districts = Q(role__in=['SDC'], location_type=ContentType.objects.get_for_model(District), location_id=district)
+                    qs_lgas = Q(role__in=['LGA'], location_type=ContentType.objects.get_for_model(LGA), location_id__in=lgas_in_district)
+		    qs_rcs = Q(role__in=['OBS'], location_type=ContentType.objects.get_for_model(RegistrationCenter), location_id__in=rcs_in_district)		    
+                    qs_include &= (qs_districts | qs_lgas | qs_rcs)
+		except:
+		    pass
+	    if data['lga']:
+		try:
+		    lga = LGA.objects.get(code=data['lga']).id
+		    rcs_in_lga = RegistrationCenter.objects.filter(parent__code=data['lga']).values_list('id', flat=True)
+		    qs_lgas = Q(role__in['LGA'], location_type=ContentType.objects.get_for_model(LGA), location_id=lga)
+		    qs_rcs = Q(role__in['OBS'], location_type=ContentType.objects.get_for_model(RegistrationCenter), location_id__in=rcs_in_lga)
+                    qs_include &= (qs_lgas | qs_rcs)
+		except:
+		    pass
             if data['observer_id']:
                 qs_include = Q(observer_id=data['observer_id'])
 	    if data['role']:
