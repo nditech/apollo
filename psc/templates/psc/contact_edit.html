@@ -14,16 +14,23 @@
 		<div class="block">
 		    <table class="observer_details">
 			<tr><td>Location:</td>
-			    <td><strong>{% if contact.role == 'NSC' or contact.role == 'NS' or contact.role == 'SC' or contact.role == 'SDC' %}Unknown{% endif %}
-					{% if contact.role == 'LGA' %}{{ contact.location.name }}{% endif %}
-					{% if contact.role == 'OBS' %}{{ contact.location.parent.name }}{% endif %}</strong> -
+			    <td>{% if contact.role == 'NSC' or contact.role == 'NS' or contact.role == 'SC' or contact.role == 'SDC' %}{{ contact.location.parent.name }}{% endif %}
+					{% if contact.role == 'LGA' %}{{ contact.location.parent.parent.parent.name }}{% endif %}
+					{% if contact.role == 'OBS' %}{{ contact.location.parent.parent.parent.parent.name }}{% endif %}-
 					{% if contact.role == 'NSC' or contact.role == 'NS' or contact.role == 'SC' or contact.role == 'SDC' %}{{ contact.location.name }}{% endif %}
 					{% if contact.role == 'LGA' %}{{ contact.location.parent.parent.name }}{% endif %}
 					{% if contact.role == 'OBS' %}{{ contact.location.parent.parent.parent.name }}{% endif %} -
-					{% if contact.role == 'NSC' or contact.role == 'NS' or contact.role == 'SC' or contact.role == 'SDC' %}{{ contact.location.parent.name }}{% endif %}
-					{% if contact.role == 'LGA' %}{{ contact.location.parent.parent.parent.name }}{% endif %}
-					{% if contact.role == 'OBS' %}{{ contact.location.parent.parent.parent.parent.name }}{% endif %}</td>
+					<strong>{% if contact.role == 'NSC' or contact.role == 'NS' or contact.role == 'SC' or contact.role == 'SDC' %}Unknown{% endif %}
+					{% if contact.role == 'LGA' %}{{ contact.location.name }}{% endif %}
+					{% if contact.role == 'OBS' %}{{ contact.location.parent.name }}{% endif %}</strong> -
+					{% if contact.role == 'NSC' or contact.role == 'NS' or contact.role == 'SC' %}Unknown{% endif %}
+					{% if contact.role == 'SDC' %}{{ contact.location.name }}{% endif %}
+					{% if contact.role == 'LGA' %}{{ contact.location.parent.name }}{% endif %}
+					{% if contact.role == 'OBS' %}{{ contact.location.parent.parent.name }}{% endif %}
+			    </td>
 			</tr>
+			<tr><td width="30%">Polling Unit:</td><td><strong>{% if contact.role == 'NSC' or contact.role == 'NS' or contact.role == 'SC' or contact.role == 'SDC' or contact.role == 'RC' or contact.role == 'LGA' %}Unknown{% endif %}
+									  {% if contact.role == 'OBS' %}{{ contact.location.name }}{% endif %}</strong></td></tr>
 			<tr><td width="30%">PSC ID:</td><td><strong>{{ contact.observer_id }}</strong></td></tr>
 			<tr><td width="30%">Name:</td><td><input type="text" class="bigbox" name="name" value="{{ contact.name }}" /></td></tr>
 			<tr><td>Observer Phone No.:</td><td><input type="text" class="bigbox" name="{{ form.phone.name }}" value="{{ form.initial.phone|default:""  }}" /></td></tr>
