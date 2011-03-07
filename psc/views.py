@@ -20,6 +20,7 @@ import stats
 from queries import queries
 from django.contrib.contenttypes.models import ContentType
 from django.views.decorators.csrf import csrf_exempt
+import json
 
 
 # paginator settings
@@ -143,6 +144,69 @@ def home(request):
     return render_to_response('psc/home.html', context,  context_instance=RequestContext(request))
 
 @login_required()
+def ajax_home_stats(request):
+    filter_date = datetime.date(datetime.today())
+    qs = Q()
+    if not request.session.has_key('dashboard_filter'):
+        request.session['dashboard_filter'] = {}
+
+    if request.method == 'GET':
+        filter_form = DashboardFilterForm(request.session['dashboard_filter'])
+
+        if filter_form.is_valid():
+            data = filter_form.cleaned_data
+
+            if data['zone']:
+                # TODO:
+                qs &= Q(observer__location_id__in=LGA.objects.filter(parent__parent__parent__code__iexact=data['zone']).values_list('id', flat=True))
+            if data['date']:
+                filter_date = datetime.date(datetime.strptime(data['date'], '%Y-%m-%d'))
+    else:
+        filter_form = DashboardFilterForm()
+    qs = Q(date=filter_date) & qs
+
+    #vr first missing sms
+    context = dict()
+    context['vr_missing_first_sms'] = VRChecklist.objects.filter(queries['first']['missing']).filter(qs).count()
+    context['vr_received_first_sms'] = VRChecklist.objects.filter(queries['first']['complete']).filter(qs).count()
+
+    # second missing sms
+    context['vr_complete_second_sms'] = VRChecklist.objects.filter(queries['second']['complete']).filter(qs).count()
+    context['vr_incomplete_second_sms'] = VRChecklist.objects.filter(queries['second']['partial']).filter(qs).count()
+    context['vr_unverified_second_sms'] = VRChecklist.objects.filter(queries['second']['problem']).filter(qs).count()
+    context['vr_not_open_second_sms'] = VRChecklist.objects.filter(queries['second']['verified']).filter(qs).count()
+    context['vr_missing_second_sms'] = VRChecklist.objects.filter(queries['second']['missing']).filter(qs).count()
+           
+    # third missing sms
+    context['vr_complete_third_sms'] = VRChecklist.objects.filter(queries['third']['complete']).filter(qs).count()
+    context['vr_blank_third_sms'] = VRChecklist.objects.filter(queries['third']['blank']).filter(qs).count()
+    context['vr_partial_third_sms'] = VRChecklist.objects.filter(qs).filter(queries['third']['partial']).count()
+    context['vr_unverified_third_sms'] = VRChecklist.objects.filter(qs).filter(queries['third']['problem']).count()
+    context['vr_not_open_third_sms'] = VRChecklist.objects.filter(queries['third']['verified']).filter(qs).count()
+    context['vr_missing_third_sms'] = VRChecklist.objects.filter(queries['third']['missing']).filter(qs).count()
+
+    context['vr_incidents_count'] = VRIncident.objects.all().count()
+    context['vr_incidents_today'] = VRIncident.objects.filter(qs).count()
+
+    #dco checklist sent today
+    context['dco_arrived'] = DCOChecklist.objects.filter(qs).filter(queries['dco']['arrival']['yes']).count()
+    context['dco_not_arrived'] = DCOChecklist.objects.filter(qs).filter(queries['dco']['arrival']['no']).count()
+
+    context['dco_missing'] = DCOChecklist.objects.filter(qs).filter(queries['dco']['status']['missing']).count()
+    context['dco_not_open_problem'] = DCOChecklist.objects.filter(qs).filter(queries['dco']['status']['problem']).count()
+    context['dco_partial'] = DCOChecklist.objects.filter(qs).filter(queries['dco']['status']['partial']).count()
+    context['dco_not_open'] = DCOChecklist.objects.filter(qs).filter(queries['dco']['status']['not_open']).count()
+    context['dco_complete'] = DCOChecklist.objects.filter(qs).filter(queries['dco']['status']['complete']).count()
+
+    context['dco_incidents_count'] = DCOIncident.objects.all().count()
+    context['dco_incidents_today'] = DCOIncident.objects.filter(qs).count()
+
+    context['dco_checklists_today'] = DCOChecklist.objects.filter(qs).count()
+    json_string = json.dumps(context)
+    
+    return HttpResponse(mimetype='application/json', content=json_string)
+        
+@login_required()
 def vr_checklist_list(request):
     #qs = Q(date__in=[d[0] for d in VR_DAYS if d[0]])
     qs_include = Q()
@@ -233,7 +297,7 @@ def vr_checklist_list(request):
     #get all objects
     global items_per_page
     if request.GET.get('export'):
-	items_per_page = VRChecklist.objects.filter(qs_include).exclude(qs_exclude).count()
+        items_per_page = VRChecklist.objects.filter(qs_include).exclude(qs_exclude).count()
     paginator = Paginator(VRChecklist.objects.filter(qs_include).exclude(qs_exclude), items_per_page)
 
     try:
@@ -302,7 +366,7 @@ def dco_checklist_list(request):
     #get all objects
     global items_per_page
     if request.GET.get('export'):
-	items_per_page = DCOChecklist.objects.filter(qs_include).count()
+        items_per_page = DCOChecklist.objects.filter(qs_include).count()
     paginator = Paginator(DCOChecklist.objects.filter(qs_include).order_by('date', 'observer'), items_per_page)
     try:
         page = int(request.GET.get('page', '1'))
@@ -352,7 +416,7 @@ def eday_checklist_list(request):
     #get all objects
     global items_per_page
     if request.GET.get('export'):
-	items_per_page = EDAYChecklist.objects.filter(qs_include).count()
+        items_per_page = EDAYChecklist.objects.filter(qs_include).count()
     paginator = Paginator(EDAYChecklist.objects.filter(qs_include).order_by('date', 'observer'), items_per_page)
     try:
         page = int(request.GET.get('page', '1'))
@@ -494,7 +558,7 @@ def vr_incident_list(request):
 
     if request.GET.get('export'):
         global items_per_page
-	items_per_page = VRIncident.objects.filter(qs).count()
+    items_per_page = VRIncident.objects.filter(qs).count()
 
     paginator = Paginator(VRIncident.objects.filter(qs).order_by('-id'), items_per_page)
 
@@ -1157,51 +1221,57 @@ def contact_list(request):
                     states_in_zone = State.objects.filter(parent__code=data['zone']).values_list('id', flat=True)
                     districts_in_zone = District.objects.filter(parent__parent__code=data['zone']).values_list('id', flat=True)
                     lgas_in_zone = LGA.objects.filter(parent__parent__parent__code=data['zone']).values_list('id', flat=True)
-		    rcs_in_zone = RegistrationCenter.objects.filter(parent__parent__parent__parent__code=data['zone']).values_list('id', flat=True)
+                    rcs_in_zone = RegistrationCenter.objects.filter(parent__parent__parent__parent__code=data['zone']).values_list('id', flat=True)
                     qs_states = Q(role__in=['NS', 'NSC', 'SC'], location_type=ContentType.objects.get_for_model(State), location_id__in=states_in_zone)
                     qs_districts = Q(role__in=['SDC'], location_type=ContentType.objects.get_for_model(District), location_id__in=districts_in_zone)
                     qs_lgas = Q(role__in=['LGA'], location_type=ContentType.objects.get_for_model(LGA), location_id__in=lgas_in_zone)
-		    qs_rcs = Q(role__in=['OBS'], location_type=ContentType.objects.get_for_model(RegistrationCenter), location_id__in=rcs_in_zone)
+                    qs_rcs = Q(role__in=['OBS'], location_type=ContentType.objects.get_for_model(RegistrationCenter), location_id__in=rcs_in_zone)
                     qs_include &= (qs_states | qs_districts | qs_lgas | qs_rcs)
                 except:
                     pass
+                    
             if data['state']:
                 try:
                     state = State.objects.get(code=data['state']).id
                     districts_in_state = District.objects.filter(parent__code=data['state']).values_list('id', flat=True)
                     lgas_in_state = LGA.objects.filter(parent__parent__code=data['state']).values_list('id', flat=True)
-		    rcs_in_state = RegistrationCenter.objects.filter(parent__parent__parent__code=data['state']).values_list('id', flat=True)		    
+                    rcs_in_state = RegistrationCenter.objects.filter(parent__parent__parent__code=data['state']).values_list('id', flat=True)           
                     qs_states = Q(role__in=['NS', 'NSC', 'SC'], location_type=ContentType.objects.get_for_model(State), location_id=state)
                     qs_districts = Q(role__in=['SDC'], location_type=ContentType.objects.get_for_model(District), location_id__in=districts_in_state)
                     qs_lgas = Q(role__in=['LGA'], location_type=ContentType.objects.get_for_model(LGA), location_id__in=lgas_in_state)
-		    qs_rcs = Q(role__in=['OBS'], location_type=ContentType.objects.get_for_model(RegistrationCenter), location_id__in=rcs_in_state)
+                    qs_rcs = Q(role__in=['OBS'], location_type=ContentType.objects.get_for_model(RegistrationCenter), location_id__in=rcs_in_state)
                     qs_include &= (qs_states | qs_districts | qs_lgas | qs_rcs)
                 except:
                     pass
-	    if data['district']:
-		try:
-		    district = District.objects.get(code=data['district']).id
-		    lgas_in_district = LGA.objects.filter(parent__code=data['district']).values_list('id', flat=True)
-		    rcs_in_district = RegistrationCenter.objects.filter(parent__parent__code=data['district']).values_list('id', flat=True)
+                    
+            if data['district']:
+                try:
+                    district = District.objects.get(code=data['district']).id
+                    lgas_in_district = LGA.objects.filter(parent__code=data['district']).values_list('id', flat=True)
+                    rcs_in_district = RegistrationCenter.objects.filter(parent__parent__code=data['district']).values_list('id', flat=True)
                     qs_districts = Q(role__in=['SDC'], location_type=ContentType.objects.get_for_model(District), location_id=district)
                     qs_lgas = Q(role__in=['LGA'], location_type=ContentType.objects.get_for_model(LGA), location_id__in=lgas_in_district)
-		    qs_rcs = Q(role__in=['OBS'], location_type=ContentType.objects.get_for_model(RegistrationCenter), location_id__in=rcs_in_district)		    
+                    qs_rcs = Q(role__in=['OBS'], location_type=ContentType.objects.get_for_model(RegistrationCenter), location_id__in=rcs_in_district)          
                     qs_include &= (qs_districts | qs_lgas | qs_rcs)
-		except:
-		    pass
-	    if data['lga']:
-		try:
-		    lga = LGA.objects.get(code=data['lga']).id
-		    rcs_in_lga = RegistrationCenter.objects.filter(parent__code=data['lga']).values_list('id', flat=True)
-		    qs_lgas = Q(role__in['LGA'], location_type=ContentType.objects.get_for_model(LGA), location_id=lga)
-		    qs_rcs = Q(role__in['OBS'], location_type=ContentType.objects.get_for_model(RegistrationCenter), location_id__in=rcs_in_lga)
+                except:
+                    pass
+                    
+            if data['lga']:
+                try:
+                    lga = LGA.objects.get(code=data['lga']).id
+                    rcs_in_lga = RegistrationCenter.objects.filter(parent__code=data['lga']).values_list('id', flat=True)
+                    qs_lgas = Q(role__in=['LGA'], location_type=ContentType.objects.get_for_model(LGA), location_id=lga)
+                    qs_rcs = Q(role__in=['OBS'], location_type=ContentType.objects.get_for_model(RegistrationCenter), location_id__in=rcs_in_lga)
                     qs_include &= (qs_lgas | qs_rcs)
-		except:
-		    pass
+                except:
+                    pass
+                    
             if data['observer_id']:
                 qs_include = Q(observer_id=data['observer_id'])
-	    if data['role']:
+                
+            if data['role']:
                 qs_include &= Q(role=data['role'])
+                    
             if data['partner']:
                 qs_include &= Q(partner__code=data['partner'])
     else:
@@ -1210,7 +1280,7 @@ def contact_list(request):
     #get all objects
     global items_per_page
     if request.GET.get('export'):
-	    items_per_page = Observer.objects.all().count()
+        items_per_page = Observer.objects.all().count()
     
     paginator = Paginator(Observer.objects.filter(qs_include).exclude(role__in=['ZC']).order_by('observer_id'), items_per_page)
 
@@ -1232,8 +1302,8 @@ def contact_list(request):
     messenger = NodSMS()
     credits = messenger.credit_balance()
     return render_to_response('psc/contact_list.html', {'page_title': "Contacts Management",'contact': contact,
-						    'filter_form': filter_form, 'page_details': page_details,'msg_recipients': msg_recipients, 'credits': credits}
-			      , context_instance=RequestContext(request))
+                            'filter_form': filter_form, 'page_details': page_details,'msg_recipients': msg_recipients, 'credits': credits}
+                  , context_instance=RequestContext(request))
 
 
 def contact_edit(request, contact_id=0):
@@ -1250,7 +1320,7 @@ def contact_edit(request, contact_id=0):
 
     partners = Partner.objects.all()
     return render_to_response('psc/contact_edit.html', {'page_title': 'Contact', 'contact': contact,
-	    'form': f, 'partners': partners}, context_instance=RequestContext(request))
+        'form': f, 'partners': partners}, context_instance=RequestContext(request))
 
 
 
@@ -1278,7 +1348,7 @@ def dco_incident_delete(request, incident_id):
     if int(incident_id):        
         DCOIncident.objects.get(pk=incident_id).delete()
         return HttpResponseRedirect(reverse('psc.views.dco_incident_list'))
-	
+    
 def eday_incident_delete(request, incident_id):
     if int(incident_id):        
         EDAYIncident.objects.get(pk=incident_id).delete()

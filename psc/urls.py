@@ -3,6 +3,7 @@ import views
 
 urlpatterns = patterns('',
     (r'^$', views.home),
+    (r'^ajax_stats/?$', views.ajax_home_stats),
     (r'^vr/?$', views.vr_checklist_list),
     (r'^vr/(?P<checklist_id>\d+)/?$', views.vr_checklist),
     (r'^vr/in/?$', views.vr_incident_list),
