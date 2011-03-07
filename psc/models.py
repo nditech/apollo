@@ -110,6 +110,11 @@ class Observer(models.Model):
         ('SDC', 'State Deputy Coordinator'),
         ('LGA', 'LGA Supervisor'),
         ('OBS', 'Observer'))
+    
+    GENDER = (
+        ('M', 'Male'),
+        ('F', 'Female'),
+        ('X', 'Unknown'))
 
     contact = models.OneToOneField(Contact, blank=True, null=True)
     dob = models.DateField("Date of Birth", blank=True, null=True)
@@ -123,6 +128,7 @@ class Observer(models.Model):
     partner = models.ForeignKey("Partner", related_name="observers")
     role = models.CharField('Observer Role', max_length=3, choices=ROLES, blank=True)
     position = models.PositiveSmallIntegerField(default=1, help_text='This field identifies an observer per polling unit.')
+    gender = models.CharField('Sex', max_length=1, choices=GENDER, blank=True, null=True)
     
     def __set_name(self, name):
         self.contact.name = name
