@@ -77,8 +77,11 @@
                 <thead>
                     <tr>
 			<th>PSC ID</th>
+			<th>Zone</th>
+			<th>State</th>
+			<th>Senatorial District</th>
 			<th>LGA</th>
-                        <th>State</th>
+                        <th>Polling Unit</th>
                         <th>Name</th>
 			<th>Phone</th>
 			<th>E-Mail</th>
@@ -91,14 +94,17 @@
 		{% for observer in contact.object_list %}
 		    <tr{% cycle ' class="odd"' '' %}>
 			<td>{{ observer.observer_id }}</td>
-			{% if observer.role == 'NSC' or observer.role == 'NS' or observer.role == 'SC' or observer.role == 'SDC' %}
-                        <td>Unknown</td>
+			{% if observer.role == 'NSC' or observer.role == 'NS' or observer.role == 'SC' %}
+			<td>{{ observer.location.parent.name }}</td>
 			{% endif %}
-			{% if observer.role == 'LGA' %}
-                        <td>{{ observer.location.name }}</td>
+			{% if observer.role == 'SDC' %}
+			<td>{{ observer.location.parent.parent.name }}</td>
 			{% endif %}
-                        {% if observer.role == 'OBS' %}
-                        <td>{{ observer.location.parent.name }}</td>
+			{% if observer.role == 'LGA'%}
+			<td>{{ observer.location.parent.parent.parent.name }}</td>
+			{% endif %}
+			{% if observer.role == 'OBS' %}
+			<td>{{ observer.location.parent.parent.parent.parent.name }}</td>
 			{% endif %}
 			{% if observer.role == 'NSC' or observer.role == 'NS' or observer.role == 'SC' %}
 			<td>{{ observer.location.name }}</td>
@@ -111,6 +117,33 @@
 			{% endif %}
 			{% if observer.role == 'RC' %}
 			<td>{{ observer.location.parent.parent.parent.name}}</td>
+			{% endif %}
+			{% if observer.role == 'NSC' or observer.role == 'NS' or observer.role == 'SC' %}
+			<td>Unknown</td>
+			{% endif %}
+			{% if observer.role == 'SDC' %}
+			<td>{{ observer.location.name }}</td>
+			{% endif %}
+			{% if observer.role == 'LGA' %}
+			<td>{{ observer.location.parent.name }}</td>
+			{% endif %}
+			{% if observer.role == 'OBS' %}
+			<td>{{ observer.location.parent.parent.name }}</td>
+			{% endif %}
+			{% if observer.role == 'NSC' or observer.role == 'NS' or observer.role == 'SC' or observer.role == 'SDC' %}
+                        <td>Unknown</td>
+			{% endif %}
+			{% if observer.role == 'LGA' %}
+                        <td>{{ observer.location.name }}</td>
+			{% endif %}
+                        {% if observer.role == 'OBS' %}
+                        <td>{{ observer.location.parent.name }}</td>
+			{% endif %}
+			{% if observer.role == 'NSC' or observer.role == 'NS' or observer.role == 'SC' or observer.role == 'SDC' or observer.role == 'RC' or observer.role == 'LGA' %}
+			<td>Unknown</td>
+			{% endif %}
+			{% if observer.role == 'OBS' %}
+			<td>{{ observer.location.name }}</td>
 			{% endif %}
 			<td>{{ observer.name}}</td>
 			<td>{% if observer.phone %}{{ observer.phone }}{% endif %}</td>

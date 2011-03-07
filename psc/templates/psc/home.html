@@ -9,7 +9,7 @@
                 <form method="get">
                      Filters
 								{{ filter_form.date }}
-								{{ filter_form.zone }} 
+								{{ filter_form.zone }}
                 <input name="Go" value="GO" type="submit" style="height: 34px; font-size: 20px">
                 </form>
                 </div>
@@ -29,36 +29,28 @@
                                      <div class="dash-column first">2nd SMS</div>
                                      <div class="dash-column second">
                                          <span class="missing">{{ missing_second_sms|default:"0" }}</span>
-                                         <span class="unverified">{{ unverified_second_sms|default:"0" }}</span>
                                          <span class="incomplete">{{ incomplete_second_sms|default:"0" }}</span>
-                                         <span class="not_open">{{ not_open_second_sms|default:"0" }}</span>                                         
                                          <span class="complete">{{ complete_second_sms|default:"0" }}</span>
                                      </div>
                                 </div>
                                  <div class="dash-row">
                                      <div class="dash-column first">3rd SMS</div>
                                      <div class="dash-column second">
-                                         <span class="blank">{{ blank_third_sms|default:"0" }}</span>
                                          <span class="missing">{{ missing_third_sms|default:"0" }}</span>
-                                         <span class="unverified">{{ unverified_third_sms|default:"0" }}</span>
-                                         <span class="incomplete">{{ partial_third_sms|default:"0" }}</span>                                         
-                                         <span class="not_open">{{ not_open_third_sms|default:"0" }}</span>                                         
+                                         <span class="incomplete">{{ incomplete_third_sms|default:"0" }}</span>                                         
                                          <span class="complete">{{ complete_third_sms|default:"0" }}</span>
                                      </div>
                                 </div>
 				<div class="dash-row">
                                      <div class="dash-column first">4th SMS</div>
                                      <div class="dash-column second">
-                                         <span class="blank">{{ blank_third_sms|default:"0" }}</span>
                                          <span class="missing">{{ missing_third_sms|default:"0" }}</span>
-                                         <span class="unverified">{{ unverified_third_sms|default:"0" }}</span>
-                                         <span class="incomplete">{{ partial_third_sms|default:"0" }}</span>                                         
-                                         <span class="not_open">{{ not_open_third_sms|default:"0" }}</span>                                         
+                                         <span class="incomplete">{{ incomplete_third_sms|default:"0" }}</span>                                         
                                          <span class="complete">{{ complete_third_sms|default:"0" }}</span>
                                      </div>
                                 </div>
                                 <div class="dash-row last">
-                                     <div class="dash-text"> <a href="{% url psc.views.vr_checklist_list %}">(View All)</a></div>
+                                     <div class="dash-text"> <a href="{% url psc.views.eday_checklist_list %}">(View All)</a></div>
                                 </div>
                                 <div class="clear"></div>
                             </div>
@@ -69,14 +61,14 @@
                                 <h2 class="dashboard-header"><a href="#">EDAY Incidents</a></h2>
                                 <div class="dash-row">
                                      <div class="dash-column first">Incidents rec'd today</div>
-                                     <div class="dash-column second"><span>{{ dco_incidents_today }}</span></div>
+                                     <div class="dash-column second"><span>{{ eday_incidents_today }}</span></div>
                                 </div>                                
                                  <div class="dash-row">
                                      <div class="dash-column first">Total incidents rec'd</div>
-                                     <div class="dash-column second"><span>{{ dco_incidents_count }}</span></div>
+                                     <div class="dash-column second"><span>{{ eday_incidents_count }}</span></div>
                                 </div>
                                 <div class="dash-row last">
-                                     <div class="dash-text"><a href="{% url psc.views.dco_incident_add %}">(Add Incident)</a> | <a href="{% url psc.views.dco_incident_list %}">(View All)</div>
+                                     <div class="dash-text"><a href="{% url psc.views.eday_incident_add %}">(Add Incident)</a> | <a href="{% url psc.views.eday_incident_list %}">(View All)</div>
                                 </div>
                                 <div class="clear"></div>
                             </div>
