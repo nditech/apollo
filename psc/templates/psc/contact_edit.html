@@ -37,7 +37,7 @@
 			<select class="bigbox" name="{{ form.gender.name }}">
 			    <option value="M" {% if form.initial.gender == 'M' %}selected="selected"{% endif %}>Male</option>
 			    <option value="F" {% if form.initial.gender == 'F' %}selected="selected"{% endif %}>Female</option>
-			    <option value="X" {% if form.initial.gender == 'X' %}selected="selected"{% endif %}>Unknown</option>
+			    <option value="X" {% if form.initial.gender == 'X' or not form.initial.gender %}selected="selected"{% endif %}>Unknown</option>
 			</select>
 			</td></tr>
 			<tr><td>Observer Phone No.:</td><td><input type="text" class="bigbox" name="{{ form.phone.name }}" value="{{ form.initial.phone|default:""  }}" /></td></tr>
