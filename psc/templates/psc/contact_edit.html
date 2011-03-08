@@ -33,6 +33,13 @@
 									  {% if contact.role == 'OBS' %}{{ contact.location.name }}{% endif %}</strong></td></tr>
 			<tr><td width="30%">PSC ID:</td><td><strong>{{ contact.observer_id }}</strong></td></tr>
 			<tr><td width="30%">Name:</td><td><input type="text" class="bigbox" name="name" value="{{ contact.name }}" /></td></tr>
+			<tr><td>Gender:</td><td>
+			<select class="bigbox" name="{{ form.gender.name }}">
+			    <option value="M" {% if form.initial.gender == 'M' %}selected="selected"{% endif %}>Male</option>
+			    <option value="F" {% if form.initial.gender == 'F' %}selected="selected"{% endif %}>Female</option>
+			    <option value="X" {% if form.initial.gender == 'X' %}selected="selected"{% endif %}>Unknown</option>
+			</select>
+			</td></tr>
 			<tr><td>Observer Phone No.:</td><td><input type="text" class="bigbox" name="{{ form.phone.name }}" value="{{ form.initial.phone|default:""  }}" /></td></tr>
 			<tr><td>E-mail:</td><td><input type="text" class="bigbox" name="{{ form.email.name }}" value="{{ form.initial.email }}" /></td></tr>
 			<tr><td>Partner:</td>
