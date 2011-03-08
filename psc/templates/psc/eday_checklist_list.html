@@ -75,14 +75,7 @@
                         </tbody>
                     </table>
                 </form>
-		<div id="messenger" style="display:none">
-		    <table>
-		    <tr>
-			<td style="vertical-align:top;padding-left:1em" width="150">You are about to send to <strong>{{ msg_recipients|length|default:"0" }}</strong> recipients</td>
-			<td width="250"><input type="hidden" name="to" value="{{ msg_recipients|join:"," }}" id="to" /><textarea id="msg" cols="30" rows="5"></textarea><br /><button id="send_btn">Send</button> <img style="display:none" src="/assets/img/ajax-loader.gif" alt="sending..." id="ajax-loader" /></td>
-		    </tr>
-		    </table>
-		</div>
+        		{% include "psc/messenger.html" %}
             </div>
             <table>
                 <thead>
