@@ -182,10 +182,11 @@ class ContactlistFilterForm(forms.Form):
     observer_id = forms.CharField(required=False, label="PSC ID", max_length=6, widget=forms.TextInput(attrs={'autocomplete':'off','style':'width:7em'}))
     zone = forms.ChoiceField(choices=ZONES, required=False)
     state = forms.ChoiceField(choices=STATES, required=False)
-    role = forms.ChoiceField(choices=ROLES, required=False, label='Role')
-    partner = forms.ChoiceField(choices=PARTNERS, required=False, label='Partner')
     district = forms.ChoiceField(choices=DISTRICTS, required=False, label='District')
     lga = forms.ChoiceField(choices=LGAS, required=False, label='LGA')
+    role = forms.ChoiceField(choices=ROLES, required=False, label='Role')
+    partner = forms.ChoiceField(choices=PARTNERS, required=False, label='Partner')
+
 
 
 class VRIncidentFilterForm(forms.Form):
@@ -245,4 +246,4 @@ class EmailBlastForm(forms.Form):
 class ContactEditForm(forms.ModelForm):
     class Meta:
         model = Observer
-        exclude = ['dob', 'location_type', 'observer_id', 'role', 'location_id', 'location', 'supervisor', 'contact']
+        exclude = ['dob', 'location_type', 'observer_id', 'role', 'location_id', 'location', 'supervisor', 'contact', 'name', 'position']

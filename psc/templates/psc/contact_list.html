@@ -81,9 +81,9 @@
 			<th>PSC ID</th>
 			<th>Zone</th>
 			<th>State</th>
-			<th>Senatorial District</th>
+			<th>SD</th>
 			<th>LGA</th>
-                        <th>Polling Unit</th>
+                        <th>PU</th>
                         <th>Name</th>
 			<th>Phone</th>
 			<th>E-Mail</th>
@@ -147,7 +147,7 @@
 			{% if observer.role == 'OBS' %}
 			<td>{{ observer.location.name }}</td>
 			{% endif %}
-			<td>{{ observer.name}}</td>
+			<td>{{ observer.name }}</td>
 			<td>{% if observer.phone %}{{ observer.phone }}{% endif %}</td>
 			<td>{{ observer.email }}</td>
                         <td>{{ observer.role }}</td>
