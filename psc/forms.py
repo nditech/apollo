@@ -44,7 +44,9 @@ VR_DAYS = (('', 'All'),
         (datetime.date(datetime(2011, 2, 5)), 'Sat 05-Feb'))
 
 EDAY_DAYS = (('', 'All'),
+        (datetime.date(datetime(2011, 3, 31)), 'Thu 31-Mar'),
         (datetime.date(datetime(2011, 4, 2)), 'Sat 02-Apr'),
+        (datetime.date(datetime(2011, 4, 7)), 'Thu 07-Apr'),
         (datetime.date(datetime(2011, 4, 9)), 'Sat 09-Apr'),
         (datetime.date(datetime(2011, 4, 16)), 'Sat 16-Apr'))
 
