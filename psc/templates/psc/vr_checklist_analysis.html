@@ -2,24 +2,25 @@
 {% block javascripts %}
 {{ block.super }}
 <link rel="stylesheet" type="text/css" href="/assets/css/piechart.css"/>
-<img src="/assets/img/spacer.gif" width="81" height="72" alt = "wow" style = "margin:10px"/>
 <script src="/assets/js/jquery-1.4.4.min.js" type="text/javascript" charset="utf-8"></script>
 <script src="/assets/js/moocanvas.js" type="text/javascript" charset="utf-8"></script>
 <script src="/assets/js/mootools-beta-1.2b2.js" type="text/javascript" charset="utf-8"></script>
 <script src="/assets/js/piechart.js" type="text/javascript" charset="utf-8"></script>
 <script type="text/javascript" charset="utf-8">
-    $(function(){        
+    /*$(function(){        
        $('#id_zone').change(function() {
-           var zone = $('#id_zone').val()
-           $.getKSON('/get-states-by-zone/'+ zone, function(data){
-                $('#id_state').empty()
-                $('#id_state').append("<option value=''>All</option>")
+           var zone = $('#id_zone').val();
+           $.getJSON('/get-states-by-zone/'+ zone, function(data){
+				alert('Got data');
+                $('#id_state').empty();
+                $('#id_state').append("<option value=''>All</option>");
                 $.each(data, function(){
-                  //alert(this.pk)
+					alert(this.pk);
                   $('#id_state').append("<option value='"+ this.pk +"'>" + this.fields.name +"</option>")
-                })
-            })
+                });
+            });
         });
+	*/
 	$('#reset').click(function() {
 		$('#id_zone').val("");
 		$('#id_state').val("");
