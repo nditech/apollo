@@ -1,4 +1,5 @@
 # Create your views here.
+from django.utils.encoding import smart_str, smart_unicode
 from django.shortcuts import render_to_response, get_object_or_404
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponse
@@ -963,6 +964,57 @@ def export(request, model):
             comment = dcoc.comment
             writer.writerow([pscid, zone, state, lga, dc, rc, A, B, C, D, E, F1, F2, F3, F4, F5, F6, F7, F8, F9, G, H, J, K, M, N, P, Q, R, S, T, U, V, W, X, comment.replace('"', "'")])
 
+    def export_contact(writer):
+        header =  ["PSC ID", "Zone", "State", "SD", "LGA", "PU", "Name", "Gender", "Phone", "Email", "Role", "Organisation"]
+        writer.writerow(header)
+        contacts = Observer.objects.all()
+        for contact in contacts:
+	    pscid = contact.observer_id
+	    role = contact.role
+	    if role  == 'ZC':
+		zone = contact.location.name
+	    elif role in ['NSC', 'NS', 'SC']:
+		zone = contact.location.parent.name
+	    elif role ==  'SDC':
+		zone = contact.location.parent.parent.name
+	    elif role == 'LGA':
+		zone = contact.location.parent.parent.parent.name
+	    elif role == 'OBS':
+		zone = contact.location.parent.parent.parent.parent.name
+	    if role in ['NSC', 'NS', 'SC']:
+		state = contact.location.name
+	    elif role == 'SDC':
+		state = contact.location.parent.name
+	    elif role == 'LGA':
+		state = contact.location.parent.parent.name
+	    elif role == 'OBS':
+		state = contact.location.parent.parent.parent.name
+	    else:
+		state = "Unknown"
+	    if role == 'SDC':
+		sd = contact.location.name
+	    elif role == 'LGA':
+		sd = contact.location.parent.name
+	    elif role == 'OBS':
+		sd = contact.location.parent.parent.name
+	    else:
+		sd = "Unknown"
+	    if role == 'LGA':
+		lga = contact.location.name
+	    elif role == 'OBS':
+		lga = contact.location.parent.name
+	    else:
+		lga = "Unknown"
+	    if role == 'OBS':
+		pu = smart_str(contact.location.name)
+	    else:
+		pu = "Unknown"
+	    name = smart_str(contact.name)
+	    organisation = contact.partner
+	    gender = contact.gender
+	    phone = contact.phone
+	    email = contact.email
+	    writer.writerow([pscid, zone, state, sd, lga, pu, name, gender, phone, email, role, organisation])
     # export here
     # TODO: refactor
     export_method = eval("export_%s" % model)

@@ -48,6 +48,7 @@
     <div class="box">
         <h2>Contacts List<span class="flag">
             <button onclick="location.href='{% url psc.views.contact_list %}'">Refresh</button>
+            {% if perms.psc.can_analyse %}<button onclick="location.href='{% url psc.views.export "contact" %}'">Export</button>{% endif %}	    
 	{% if perms.psc.can_analyse %}<button id="sndmsg_btn">Send Message</button>{% endif %}
         </span></h2>
         <div class="block">
