@@ -16,7 +16,7 @@
             $("#id_observer_id").val("");
             $("#filter_form").submit();
         });
-
+{% if perms.psc.can_analyse %}
 				$("#sndmsg_btn").toggle(function () {
 					$("#messenger").slideDown("slow");
 				}, function () {
@@ -43,6 +43,7 @@
 						}
 					);
 				});
+{% endif %}
     });
 </script>
 {% endblock %}
@@ -53,7 +54,7 @@
 					<span class="flag">
             <button onclick="location.href='{% url psc.views.vr_checklist_list %}'">Refresh</button>
             {% if perms.psc.can_analyse %}<button onclick="location.href='{% url psc.views.export "vrc" %}'">Export</button>{% endif %}
-						{% if perms.psc.can_analyse %}<button id="sndmsg_btn">Send Message</button>{% endif %}
+			{% if perms.psc.can_analyse %}<button id="sndmsg_btn">Send Message</button>{% endif %}
 					</span>
         </h2>
         <div class="block">
@@ -94,7 +95,7 @@
                         <th class="checklist">1st</th>
                         <th class="checklist">2nd</th>
                         <th class="checklist">3rd</th>
-                        <th>&nbsp;</th>
+                        {% if perms.psc.can_manage_data %}<th>&nbsp;</th>{% endif %}
                     </tr>
                 </thead>
 				{% for cl in checklists.object_list %}

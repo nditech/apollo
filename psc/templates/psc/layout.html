@@ -35,10 +35,12 @@
                             <li>
                                 <a href="{% url psc.views.vr_checklist_list %}">Checklist</a>
                             </li>
+							{% if perms.psc.can_manage_data %}
                             <li>
                                 <a href="{% url psc.views.vr_incident_list %}">Incidents</a>
                             </li>
-														{% if perms.psc.can_analyse %}
+							{% endif %}
+							{% if perms.psc.can_analyse %}
                             <li>
                                 <a href="{% url psc.views.vr_zone_summary %}">Zone Summary</a>
                             </li>
@@ -48,7 +50,7 @@
                             <li>
                                 <a href="{% url psc.views.vr_checklist_analysis %}">Checklist Analyses</a>
                             </li>
-														{% endif %}
+							{% endif %}
                         </ul>
                     </li>
                     <li>
@@ -57,17 +59,19 @@
                             <li>
                                 <a href="{% url psc.views.dco_checklist_list %}">Checklist</a>
                             </li>
+							{% if perms.psc.can_manage_data %}
                             <li>
                                 <a href="{% url psc.views.dco_incident_list %}">Incidents</a>
                             </li>
-														{% if perms.psc.can_analyse %}
+							{% endif %}
+							{% if perms.psc.can_analyse %}
                             <li>
                                 <a href="{% url psc.views.dco_zone_summary %}">Zone Summary</a>
                             </li>
                             <li>
                                 <a href="{% url psc.views.dco_state_summary %}">State Summary</a>
                             </li>
-														{% endif %}
+							{% endif %}
                         </ul>
                     </li>
 		    <li>
@@ -76,15 +80,18 @@
                             <li>
                                 <a href="{% url psc.views.eday_checklist_list %}">Checklist</a>
                             </li>
+							{% if perms.psc.can_manage_data %}
                             <li>
                                 <a href="{% url psc.views.eday_incident_list %}">Incidents</a>
                             </li>
+							{% endif %}
                         </ul>
                     </li>
-		     <li>
+					{% if perms.psc.can_analyse %}
+		     		<li>
                         <a href="{% url psc.views.contact_list %}">Contacts Management</a>
                     </li>
-		     
+					{% endif %}
                     <li class=" secondary logout">
                            <a href="{% url django.contrib.auth.views.logout_then_login %}">Logout</a>
                     </li>
@@ -94,16 +101,16 @@
                             <li>
                                 <a href="{% url psc.views.message_log %}">Message Log</a>
                             </li>
-										{% if perms.psc.can_administer %}
+							{% if perms.psc.can_administer %}
                             <li>
                                 <a href="{% url psc.views.action_log %}">Action Log</a>
                             </li>
-										{% endif %}
-                        {% if perms.psc.can_analyse %}
-                            <li>
+							{% endif %}
+                        	{% if perms.psc.can_analyse %}
+                            <!--<li>
                                 <a href="{% url psc.views.send_mail %}">Email Blast</a>
-                            </li>
-			{% endif %}
+                            </li>-->
+							{% endif %}
                         </ul>
                     </li>
                 </ul>

@@ -19,7 +19,7 @@
 	}, function () {
 	$("#messenger").slideUp("slow");
 	});
-
+{% if perms.psc.can_analyse %}
 	$("#send_btn").click(function () {
 	$("#ajax-loader").show();
 	$("#send_btn").attr("disabled", "disabled");
@@ -39,6 +39,7 @@
 	        }
 	    );
 	});
+{% endif %}
     });
 </script>
 {% endblock %}
@@ -88,7 +89,7 @@
                         <th>Supervisor</th>
                         <th class="checklist">Arrival</th>
                         <th class="checklist">Status</th>
-                        <th>&nbsp;</th>
+                        {% if psc.perms.can_manage_data %}<th>&nbsp;</th>{% endif %}
                     </tr>
                 </thead>
                 <tbody>
@@ -114,7 +115,7 @@
                             <img src="/assets/img/status-away.png" width="16" height="16" alt="incomplete" />
 							{% endif %}
                         </td>
-                        {% if perms.psc.can_analyse %}<td><a href="{% url psc.views.eday_checklist cl.id %}">Edit</a></td>{% endif %}
+                        {% if perms.psc.can_manage_data %}<td><a href="{% url psc.views.eday_checklist cl.id %}">Edit</a></td>{% endif %}
                     </tr>
 				{% empty %}
                     <tr>

@@ -14,6 +14,7 @@
 	    $("#id_second").val("");
             $("#filter_form").submit();
         });
+{% if perms.psc.can_analyse %}
 	$("#sndmsg_btn").toggle(function () {
 	$("#messenger").slideDown("slow");
 	}, function () {
@@ -39,6 +40,7 @@
 	        }
 	    );
 	});
+{% endif %}
     });
 </script>
 {% endblock %}
@@ -88,7 +90,7 @@
                         <th>Supervisor</th>
                         <th class="checklist">Arrival</th>
                         <th class="checklist">Status</th>
-                        <th>&nbsp;</th>
+                        {% if perms.psc.can_manage_data %}<th>&nbsp;</th>{% endif %}
                     </tr>
                 </thead>
                 <tbody>
@@ -130,7 +132,7 @@
 						{% endif %}
 					{% endif %}
                         </td>
-                        {% if perms.psc.can_analyse %}<td><a href="{% url psc.views.dco_checklist cl.id %}">Edit</a></td>{% endif %}
+                        {% if perms.psc.can_manage_data %}<td><a href="{% url psc.views.dco_checklist cl.id %}">Edit</a></td>{% endif %}
                     </tr>
 				{% empty %}
                     <tr>
