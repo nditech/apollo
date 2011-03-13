@@ -130,7 +130,7 @@
 						{% endif %}
 					{% endif %}
                         </td>
-                        <td><a href="{% url psc.views.dco_checklist cl.id %}">Edit</a></td>
+                        {% if perms.psc.can_analyse %}<td><a href="{% url psc.views.dco_checklist cl.id %}">Edit</a></td>{% endif %}
                     </tr>
 				{% empty %}
                     <tr>

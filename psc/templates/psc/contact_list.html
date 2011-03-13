@@ -152,7 +152,7 @@
 			<td>{{ observer.email }}</td>
                         <td>{{ observer.role }}</td>
 			<td>{{ observer.partner }}</td>
-                        <td><a href="{% url psc.views.contact_edit observer.id %}">Edit</a></td>
+                        {% if perms.psc.can_analyse %}<td><a href="{% url psc.views.contact_edit observer.id %}">Edit</a></td>{% endif %}
                     </tr>
 				{% empty %}
                     <tr>

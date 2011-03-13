@@ -207,6 +207,7 @@ def ajax_home_stats(request):
     return HttpResponse(mimetype='application/json', content=json_string)
         
 @login_required()
+#@permission_required('psc.can_analyse', login_url='/')
 def vr_checklist_list(request):
     #qs = Q(date__in=[d[0] for d in VR_DAYS if d[0]])
     qs_include = Q()
@@ -320,6 +321,7 @@ def vr_checklist_list(request):
     credits = messenger.credit_balance()
     return render_to_response('psc/vr_checklist_list.html', {'page_title': "Voter Registration Data Management", 'checklists': checklists, 'filter_form': filter_form, 'page_details' : page_details, 'msg_recipients': msg_recipients, 'credits': credits }, context_instance=RequestContext(request))
 
+#@permission_required('psc.can_analyse', login_url='/')
 @login_required()
 def dco_checklist_list(request):
     #qs = Q(date__in=[d[0] for d in DCO_DAYS if d[0]])
@@ -387,6 +389,8 @@ def dco_checklist_list(request):
     credits = messenger.credit_balance()
     return render_to_response('psc/dco_checklist_list.html', {'page_title': "Display, Claims & Objections Data Management", 'checklists': checklists, 'filter_form': filter_form, 'page_details': page_details, 'msg_recipients': msg_recipients, 'credits': credits }, context_instance=RequestContext(request))
 
+#@permission_required('psc.can_analyse', login_url='/')
+@login_required()
 def eday_checklist_list(request):
     #qs = Q(date__in=[d[0] for d in DCO_DAYS if d[0]])
     qs_include = Q()
@@ -437,7 +441,7 @@ def eday_checklist_list(request):
     credits = messenger.credit_balance()
     return render_to_response('psc/eday_checklist_list.html', {'page_title': "Election Day Data Management", 'checklists': checklists, 'filter_form': filter_form, 'page_details': page_details, 'msg_recipients': msg_recipients, 'credits': credits }, context_instance=RequestContext(request))
 
-
+@permission_required('psc.can_analyse', login_url='/')
 @login_required()
 def vr_checklist(request, checklist_id=0):
     checklist = get_object_or_404(VRChecklist, pk=checklist_id)
@@ -452,6 +456,7 @@ def vr_checklist(request, checklist_id=0):
         f = VRChecklistForm(instance=checklist)
         return render_to_response('psc/vr_checklist_form.html', {'page_title': "Voter Registration Checklist", 'checklist': checklist, 'rcs': rcs, 'location': location, 'form': f }, context_instance=RequestContext(request))
 
+@permission_required('psc.can_analyse', login_url='/')
 @login_required()
 def dco_checklist(request, checklist_id=0):   
     checklist = get_object_or_404(DCOChecklist, pk=checklist_id)
@@ -466,6 +471,8 @@ def dco_checklist(request, checklist_id=0):
         f = DCOChecklistForm(instance=checklist)
     return render_to_response('psc/dco_checklist_form.html', {'page_title': 'Display, Claims & Objections Checklist', 'checklist': checklist, 'rcs': rcs, 'location': location, 'form': f}, context_instance=RequestContext(request))
 
+@permission_required('psc.can_analyse', login_url='/')
+@login_required()
 def eday_checklist(request, checklist_id=0):   
     checklist = get_object_or_404(EDAYChecklist, pk=checklist_id)
     rcs = RegistrationCenter.objects.filter(parent=checklist.location.parent)
@@ -479,7 +486,7 @@ def eday_checklist(request, checklist_id=0):
         f = EDAYChecklistForm(instance=checklist)
     return render_to_response('psc/eday_checklist_form.html', {'page_title': 'Election Day Checklist', 'checklist': checklist, 'rcs': rcs, 'location': location, 'form': f}, context_instance=RequestContext(request))
 
-
+@permission_required('psc.can_analyse', login_url='/')
 @login_required()
 def vr_incident_update(request, incident_id=0):
     incident = get_object_or_404(VRIncident, pk=incident_id)
@@ -497,6 +504,7 @@ def vr_incident_update(request, incident_id=0):
         f = VRIncidentForm(instance=incident)   
         return render_to_response('psc/vr_incident_update_form.html', {'page_title': "Voter Registration Critrical Incident", 'incident': incident, 'location': location, 'form': f, 'lga_list': lga_list, 'rc_list_by_lga': rc_list_by_lga }, context_instance=RequestContext(request))
 
+@permission_required('psc.can_analyse', login_url='/')
 @login_required()
 def dco_incident_update(request, incident_id=0):
     incident = get_object_or_404(DCOIncident, pk=incident_id)
@@ -510,6 +518,7 @@ def dco_incident_update(request, incident_id=0):
         f = DCOIncidentForm(instance=incident)
         return render_to_response('psc/dco_incident_update_form.html', {'page_title': 'Display, Claims & Objections Critical Incident', 'incident': incident, 'location': location, 'form': f }, context_instance=RequestContext(request))
 
+@permission_required('psc.can_analyse', login_url='/')
 @login_required()
 def vr_incident_add(request):
     if request.POST:
@@ -520,6 +529,7 @@ def vr_incident_add(request):
         f = VRIncidentForm()
         return render_to_response('psc/vr_incident_add_form.html', {'page_title': "Add Voter Registration Critrical Incident", 'form': f }, context_instance=RequestContext(request))
 
+@permission_required('psc.can_analyse', login_url='/')
 @login_required()
 def dco_incident_add(request):
     if request.POST:
@@ -530,6 +540,7 @@ def dco_incident_add(request):
         f = DCOIncidentForm()
         return render_to_response('psc/dco_incident_add_form.html', {'page_title': "Add Display, Claims & Objections Critrical Incident", 'form': f }, context_instance=RequestContext(request))
 
+@permission_required('psc.can_analyse', login_url='/')
 @login_required()
 def vr_incident_list(request):
     qs = Q()
@@ -578,6 +589,7 @@ def vr_incident_list(request):
     page_details['last'] = paginator.page_range[len(paginator.page_range) - 1]
     return render_to_response('psc/vr_incident_list.html', {'page_title': "Voter Registration Critical Incidents", 'checklists': checklists, 'filter_form': filter_form, 'page_details': page_details}, context_instance=RequestContext(request))
 
+@permission_required('psc.can_analyse', login_url='/')
 @login_required()
 def dco_incident_list(request):
     qs = Q()
@@ -622,6 +634,8 @@ def dco_incident_list(request):
     page_details['last'] = paginator.page_range[len(paginator.page_range) - 1]
     return render_to_response('psc/dco_incident_list.html', {'page_title': "Display, Claims & Objections Critical Incidents", 'checklists': checklists, 'filter_form': filter_form, 'page_details': page_details}, context_instance=RequestContext(request))
 
+@permission_required('psc.can_analyse', login_url='/')
+@login_required()
 def eday_incident_list(request):
     qs = Q()
     if not request.session.has_key('eday_incident_filter'):
@@ -665,6 +679,8 @@ def eday_incident_list(request):
     page_details['last'] = paginator.page_range[len(paginator.page_range) - 1]
     return render_to_response('psc/eday_incident_list.html', {'page_title': "Election Day Critical Incidents", 'checklists': checklists, 'filter_form': filter_form, 'page_details': page_details}, context_instance=RequestContext(request))
 
+@permission_required('psc.can_analyse', login_url='/')
+@login_required()
 def eday_incident_add(request):
     if request.POST:
         f = EDAYIncidentForm(request.POST)                    
@@ -674,6 +690,8 @@ def eday_incident_add(request):
         f = EDAYIncidentForm()
         return render_to_response('psc/eday_incident_add_form.html', {'page_title': "Add Election Day Critrical Incident", 'form': f }, context_instance=RequestContext(request))
 
+@permission_required('psc.can_analyse', login_url='/')
+@login_required()
 def eday_incident_update(request, incident_id=0):
     incident = get_object_or_404(EDAYIncident, pk=incident_id)
     location = incident.observer.location
@@ -686,6 +704,7 @@ def eday_incident_update(request, incident_id=0):
         f = DCOIncidentForm(instance=incident)
         return render_to_response('psc/eday_incident_update_form.html', {'page_title': 'Election Day Critical Incident', 'incident': incident, 'location': location, 'form': f }, context_instance=RequestContext(request))
 
+@permission_required('psc.can_analyse', login_url='/')
 @login_required()
 def message_log(request):
     qs = Q()
@@ -1143,6 +1162,7 @@ def dco_state_summary(request):
         
     return render_to_response('psc/dco_state_summary.html', context_instance=ctx)
 
+@permission_required('psc.can_analyse', login_url='/')
 def vr_checklist_analysis(request):
     vr_days = [day[0] for day in VR_DAYS if day[0]]
 
@@ -1202,6 +1222,7 @@ def vr_checklist_analysis(request):
 
     return render_to_response('psc/vr_checklist_analysis.html', {'page_title': 'Voter Registration Checklist Analysis', 'filter_form': filter_form}, context_instance=ctx)
 
+@permission_required('psc.can_analyse', login_url='/')
 @login_required()
 def contact_list(request):
     qs_include = Q()
@@ -1306,6 +1327,8 @@ def contact_list(request):
                   , context_instance=RequestContext(request))
 
 
+@permission_required('psc.can_analyse', login_url='/')
+@login_required()
 def contact_edit(request, contact_id=0):
     contact = get_object_or_404(Observer, pk=contact_id)
     if (request.POST):
@@ -1349,6 +1372,8 @@ def dco_incident_delete(request, incident_id):
         DCOIncident.objects.get(pk=incident_id).delete()
         return HttpResponseRedirect(reverse('psc.views.dco_incident_list'))
     
+@permission_required('psc.can_analyse', login_url='/')
+@login_required()
 def eday_incident_delete(request, incident_id):
     if int(incident_id):        
         EDAYIncident.objects.get(pk=incident_id).delete()
