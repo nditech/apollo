@@ -82,7 +82,7 @@
                                      </div>
                                 </div>
                                 <div class="dash-row last">
-                                     <div class="dash-text"> <a href="{% url psc.views.eday_checklist_list %}">(View All)</a></div>
+                                     <div class="dash-text">{% if perms.psc.can_manage %}<a href="{% url psc.views.eday_checklist_list %}">(View All)</a>{% endif %}</div>
                                 </div>
                                 <div class="clear"></div>
                             </div>
@@ -100,7 +100,7 @@
                                      <div class="dash-column second"><span>{{ eday_incidents_count }}</span></div>
                                 </div>
                                 <div class="dash-row last">
-                                     <div class="dash-text"><a href="{% url psc.views.eday_incident_add %}">(Add Incident)</a> | <a href="{% url psc.views.eday_incident_list %}">(View All)</div>
+                                     <div class="dash-text">{% if perms.psc.can_manage %}<a href="{% url psc.views.eday_incident_add %}">(Add Incident)</a>{% endif %} | {% if perms.psc.can_manage %}<a href="{% url psc.views.eday_incident_list %}">(View All)</a>{% endif %}</div>
                                 </div>
                                 <div class="clear"></div>
                             </div>
@@ -139,7 +139,7 @@
                                      </div>
                                 </div>
                                 <div class="dash-row last">
-                                     <div class="dash-text"> <a href="{% url psc.views.vr_checklist_list %}">(View All)</a></div>
+                                     <div class="dash-text">{% if perms.psc.can_manage %}<a href="{% url psc.views.vr_checklist_list %}">(View All)</a>{% endif %}</div>
                                 </div>
                                 <div class="clear"></div>
                             </div>
@@ -167,7 +167,7 @@
 																		</div>
                                 </div>
                                 <div class="dash-row last">
-                                     <div class="dash-text"><a href="{% url psc.views.dco_checklist_list %}">(View All)</a></div>
+                                     <div class="dash-text">{% if perms.psc.can_manage %}<a href="{% url psc.views.dco_checklist_list %}">(View All)</a>{% endif %}</div>
                                 </div>
                                 <div class="clear"></div>
                             </div>
@@ -188,7 +188,7 @@
                                      <div class="dash-column second"><span class="dash-num" id="vr_incidents_count">{{ vr_incidents_count }}</span></div>
                                 </div>
                                 <div class="dash-row last">
-                                     <div class="dash-text"><a href="{% url psc.views.vr_incident_add %}">(Add Incident)</a> <span class="divider">|</span> <a href="{% url psc.views.vr_incident_list %}">(View All)</a></div>
+                                     <div class="dash-text">{% if perms.psc.can_manage %}<a href="{% url psc.views.vr_incident_add %}">(Add Incident)</a>{% endif %} <span class="divider">|</span> {% if perms.psc.can_manage %}<a href="{% url psc.views.vr_incident_list %}">(View All)</a>{% endif %}</div>
                                 </div>
                                 <div class="clear"></div>
                             </div>

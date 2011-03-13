@@ -72,7 +72,7 @@
                         <th>N</th>
                         <th>P</th>
                         <th>Q</th>
-                        <th class="checklist" colspan="2"><button onclick='location.href="{% url psc.views.vr_incident_add  %}"'>Add Incident</button></th>
+                        {% if perms.psc.can_manage %}<th class="checklist" colspan="2"><button onclick='location.href="{% url psc.views.vr_incident_add  %}"'>Add Incident</button></th>{% endif %}
                     </tr>
                 </thead>
 				{% for cl in checklists.object_list %}
