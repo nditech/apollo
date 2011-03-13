@@ -72,7 +72,7 @@
                         <th>N</th>
                         <th>P</th>
                         <th>Q</th>
-                        {% if perms.psc.can_manage %}<th class="checklist" colspan="2"><button onclick='location.href="{% url psc.views.vr_incident_add  %}"'>Add Incident</button></th>{% endif %}
+                        {% if perms.psc.can_manage_data %}<th class="checklist" colspan="2"><button onclick='location.href="{% url psc.views.vr_incident_add  %}"'>Add Incident</button></th>{% endif %}
                     </tr>
                 </thead>
 				{% for cl in checklists.object_list %}
@@ -154,7 +154,7 @@
 						{% endif %}
                     </td>
                     <td class="checklist">
-                        <a href="{% url psc.views.vr_incident_update cl.id %}">Edit</a>
+                        {% if perms.psc.can_manage_data %}<a href="{% url psc.views.vr_incident_update cl.id %}">Edit</a>{% endif %}
                     </td>
 										<td>
                         <a href="{% url psc.views.vr_incident_delete cl.id %}" onClick="return confirm('Are you sure you want to delete this incident')">Del</a>
