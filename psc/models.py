@@ -91,8 +91,9 @@ class Sample(models.Model):
     """The Sample model groups locations into samples that are used for data analyses"""
     SAMPLES = (
         ('NATIONAL', 'NATIONAL'),
-        ('GUBER', 'GUBERNATORIAL'),
-        ('SENATE', 'SENATORIAL'))
+        ('STATE', 'STATE'),
+        ('CONTROL', 'CONTROL'),
+        ('TREATMENT', 'TREATMENT'))
         
     sample = models.CharField(choices=SAMPLES, max_length=100, db_index=True)
     location = models.ForeignKey(RegistrationCenter, related_name="sample")
