@@ -38,7 +38,7 @@
                 </form>
             </div>
 
-        <h2>Message Log <span class="flag"><button onclick="location.href='{% url psc.views.export "messagelog" %}'">Export</button></span></h2>
+        <h2>Message Log <span class="flag"><button onclick="location.href='{% url msglog_export %}'">Export</button></span></h2>
         <div class="block">
 			{{ messages_list.as_html }}
         </div>

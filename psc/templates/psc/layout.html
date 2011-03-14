@@ -30,14 +30,14 @@
                         <a href="{% url psc.views.home %}">Dashboard</a>
                     </li>
                     <li>
-                        <a href="{% url psc.views.vr_checklist_list %}">Voter Registration</a>
+                        <a href="{% url vr_checklist_view %}">Voter Registration</a>
                         <ul>
                             <li>
-                                <a href="{% url psc.views.vr_checklist_list %}">Checklist</a>
+                                <a href="{% url vr_checklist_view %}">Checklist</a>
                             </li>
 							{% if perms.psc.can_manage_data %}
                             <li>
-                                <a href="{% url psc.views.vr_incident_list %}">Incidents</a>
+                                <a href="{% url vr_incident_view %}">Incidents</a>
                             </li>
 							{% endif %}
 							{% if perms.psc.can_analyse %}
@@ -54,14 +54,14 @@
                         </ul>
                     </li>
                     <li>
-                        <a href="{% url psc.views.dco_checklist_list %}">Display, Claims & Objections </a>
+                        <a href="{% url dco_checklist_view %}">Display, Claims & Objections </a>
                         <ul>
                             <li>
-                                <a href="{% url psc.views.dco_checklist_list %}">Checklist</a>
+                                <a href="{% url dco_checklist_view %}">Checklist</a>
                             </li>
 							{% if perms.psc.can_manage_data %}
                             <li>
-                                <a href="{% url psc.views.dco_incident_list %}">Incidents</a>
+                                <a href="{% url dco_incident_view %}">Incidents</a>
                             </li>
 							{% endif %}
 							{% if perms.psc.can_analyse %}
@@ -75,21 +75,21 @@
                         </ul>
                     </li>
 		    <li>
-                        <a href="{% url psc.views.eday_checklist_list %}">Election Day </a>
+                        <a href="{% url eday_checklist_view %}">Election Day </a>
                         <ul>
                             <li>
-                                <a href="{% url psc.views.eday_checklist_list %}">Checklist</a>
+                                <a href="{% url eday_checklist_view %}">Checklist</a>
                             </li>
 							{% if perms.psc.can_manage_data %}
                             <li>
-                                <a href="{% url psc.views.eday_incident_list %}">Incidents</a>
+                                <a href="{% url eday_incident_view %}">Incidents</a>
                             </li>
 							{% endif %}
                         </ul>
                     </li>
 					{% if perms.psc.can_analyse %}
 		     		<li>
-                        <a href="{% url psc.views.contact_list %}">Contacts Management</a>
+                        <a href="{% url contacts_list_view %}">Contacts Management</a>
                     </li>
 					{% endif %}
                     <li class=" secondary logout">
@@ -99,7 +99,7 @@
                         <a href="#" title="" style="width:14.3em;text-align:left">System Administration</a>
                         <ul>
                             <li>
-                                <a href="{% url psc.views.message_log %}">Message Log</a>
+                                <a href="{% url msglog %}">Message Log</a>
                             </li>
 							{% if perms.psc.can_administer %}
                             <li>

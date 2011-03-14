@@ -21,8 +21,8 @@
 <div class="grid_16">
     <div class="box">
         <h2>Voter Registration Incidents<span class="flag">
-                <button onclick="location.href='{% url psc.views.vr_incident_list %}'">Refresh</button>
-                {% if perms.psc.can_analyse %}<button onclick="location.href='{% url psc.views.export "vri" %}'">Export</button>{% endif %}
+                <button onclick="location.href='{% url vr_incident_view %}'">Refresh</button>
+                {% if perms.psc.can_analyse %}<button onclick="location.href='{% url vr_incident_export %}'">Export</button>{% endif %}
         </span></h2>
         <div class="block">
             <div id="filter">

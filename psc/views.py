@@ -23,7 +23,6 @@ from django.contrib.contenttypes.models import ContentType
 from django.views.decorators.csrf import csrf_exempt
 import json
 
-
 # paginator settings
 items_per_page = 25
 
@@ -206,10 +205,9 @@ def ajax_home_stats(request):
     json_string = json.dumps(context)
     
     return HttpResponse(mimetype='application/json', content=json_string)
-        
+
 @login_required()
-def vr_checklist_list(request):
-    #qs = Q(date__in=[d[0] for d in VR_DAYS if d[0]])
+def vr_checklist_list(request, action=None):
     qs_include = Q()
     qs_exclude = Q()
     if not request.session.has_key('vr_checklist_filter'):
@@ -297,7 +295,7 @@ def vr_checklist_list(request):
 
     #get all objects
     global items_per_page
-    if request.GET.get('export'):
+    if action == 'export':
         items_per_page = VRChecklist.objects.filter(qs_include).exclude(qs_exclude).count()
     paginator = Paginator(VRChecklist.objects.filter(qs_include).exclude(qs_exclude), items_per_page)
 
@@ -319,10 +317,14 @@ def vr_checklist_list(request):
     msg_recipients = list(set(VRChecklist.objects.filter(qs_include).exclude(qs_exclude).values_list('observer__phone', flat=True)))
     messenger = NodSMS()
     credits = messenger.credit_balance()
-    return render_to_response('psc/vr_checklist_list.html', {'page_title': "Voter Registration Data Management", 'checklists': checklists, 'filter_form': filter_form, 'page_details' : page_details, 'msg_recipients': msg_recipients, 'credits': credits }, context_instance=RequestContext(request))
+    
+    if action == "export":
+        return export(request, 'vrc', checklists.object_list)
+    else:
+        return render_to_response('psc/vr_checklist_list.html', {'page_title': "Voter Registration Data Management", 'checklists': checklists, 'filter_form': filter_form, 'page_details' : page_details, 'msg_recipients': msg_recipients, 'credits': credits }, context_instance=RequestContext(request))
 
 @login_required()
-def dco_checklist_list(request):
+def dco_checklist_list(request, action=None):
     #qs = Q(date__in=[d[0] for d in DCO_DAYS if d[0]])
     qs_include = Q()
     if not request.session.has_key('dco_checklist_filter'):
@@ -366,8 +368,9 @@ def dco_checklist_list(request):
 
     #get all objects
     global items_per_page
-    if request.GET.get('export'):
+    if action == 'export':
         items_per_page = DCOChecklist.objects.filter(qs_include).count()
+        
     paginator = Paginator(DCOChecklist.objects.filter(qs_include).order_by('date', 'observer'), items_per_page)
     try:
         page = int(request.GET.get('page', '1'))
@@ -386,10 +389,14 @@ def dco_checklist_list(request):
     msg_recipients = list(set(DCOChecklist.objects.filter(qs_include).values_list('observer__phone', flat=True)))
     messenger = NodSMS()
     credits = messenger.credit_balance()
-    return render_to_response('psc/dco_checklist_list.html', {'page_title': "Display, Claims & Objections Data Management", 'checklists': checklists, 'filter_form': filter_form, 'page_details': page_details, 'msg_recipients': msg_recipients, 'credits': credits }, context_instance=RequestContext(request))
+        
+    if action == "export":
+        return export(request, 'dcoc', checklists.object_list)
+    else:
+        return render_to_response('psc/dco_checklist_list.html', {'page_title': "Display, Claims & Objections Data Management", 'checklists': checklists, 'filter_form': filter_form, 'page_details': page_details, 'msg_recipients': msg_recipients, 'credits': credits }, context_instance=RequestContext(request))
 
 @login_required()
-def eday_checklist_list(request):
+def eday_checklist_list(request, action=None):
     #qs = Q(date__in=[d[0] for d in DCO_DAYS if d[0]])
     qs_include = Q()
     if not request.session.has_key('eday_checklist_filter'):
@@ -417,7 +424,7 @@ def eday_checklist_list(request):
 
     #get all objects
     global items_per_page
-    if request.GET.get('export'):
+    if action == 'export':
         items_per_page = EDAYChecklist.objects.filter(qs_include).count()
     paginator = Paginator(EDAYChecklist.objects.filter(qs_include).order_by('date', 'observer'), items_per_page)
     try:
@@ -437,7 +444,11 @@ def eday_checklist_list(request):
     msg_recipients = list(set(EDAYChecklist.objects.filter(qs_include).values_list('observer__phone', flat=True)))
     messenger = NodSMS()
     credits = messenger.credit_balance()
-    return render_to_response('psc/eday_checklist_list.html', {'page_title': "Election Day Data Management", 'checklists': checklists, 'filter_form': filter_form, 'page_details': page_details, 'msg_recipients': msg_recipients, 'credits': credits }, context_instance=RequestContext(request))
+    
+    if action == "export":
+        return export(request, 'edayc', checklists.object_list)
+    else:
+        return render_to_response('psc/eday_checklist_list.html', {'page_title': "Election Day Data Management", 'checklists': checklists, 'filter_form': filter_form, 'page_details': page_details, 'msg_recipients': msg_recipients, 'credits': credits }, context_instance=RequestContext(request))
 
 @permission_required('psc.can_manage_data', login_url='/')
 @login_required()
@@ -540,7 +551,7 @@ def dco_incident_add(request):
 
 @permission_required('psc.can_manage_data', login_url='/')
 @login_required()
-def vr_incident_list(request):
+def vr_incident_list(request, action=None):
     qs = Q()
     if not request.session.has_key('vr_incident_filter'):
         request.session['vr_incident_filter'] = {}
@@ -564,11 +575,11 @@ def vr_incident_list(request):
                 qs = Q(observer__observer_id__exact=data['observer_id'])
     else:
         filter_form = VRIncidentFilterForm()
-
-    if request.GET.get('export'):
-        global items_per_page
-    items_per_page = VRIncident.objects.filter(qs).count()
-
+    
+    global items_per_page
+    if action == 'export':
+        items_per_page = VRIncident.objects.filter(qs).count()
+    
     paginator = Paginator(VRIncident.objects.filter(qs).order_by('-id'), items_per_page)
 
     try:
@@ -578,18 +589,22 @@ def vr_incident_list(request):
 
     # an invalid range will retrieve the last page of results
     try:
-        checklists = paginator.page(page)
+        incidents = paginator.page(page)
     except (EmptyPage, InvalidPage):
-        checklists = paginator.page(paginator.num_pages)
+        incidents = paginator.page(paginator.num_pages)
     
     page_details = {}
     page_details['first'] = paginator.page_range[0]
     page_details['last'] = paginator.page_range[len(paginator.page_range) - 1]
-    return render_to_response('psc/vr_incident_list.html', {'page_title': "Voter Registration Critical Incidents", 'checklists': checklists, 'filter_form': filter_form, 'page_details': page_details}, context_instance=RequestContext(request))
+    
+    if action == "export":
+        return export(request, 'vri', incidents.object_list)
+    else:
+        return render_to_response('psc/vr_incident_list.html', {'page_title': "Voter Registration Critical Incidents", 'checklists': incidents, 'filter_form': filter_form, 'page_details': page_details}, context_instance=RequestContext(request))
 
 @permission_required('psc.can_manage_data', login_url='/')
 @login_required()
-def dco_incident_list(request):
+def dco_incident_list(request, action=None):
     qs = Q()
     if not request.session.has_key('dco_incident_filter'):
         request.session['dco_incident_filter'] = {}
@@ -614,6 +629,10 @@ def dco_incident_list(request):
     else:
         filter_form = DCOIncidentFilterForm()
 
+    global items_per_page
+    if action == 'export':
+        items_per_page = DCOIncident.objects.filter(qs).count()
+        
     paginator = Paginator(DCOIncident.objects.filter(qs).order_by('-id'), items_per_page)
 
     try:
@@ -623,18 +642,21 @@ def dco_incident_list(request):
 
     # an invalid range will retrieve the last page of results
     try:
-        checklists = paginator.page(page)
+        incidents = paginator.page(page)
     except (EmptyPage, InvalidPage):
-        checklists = paginator.page(paginator.num_pages)
+        incidents = paginator.page(paginator.num_pages)
 
     page_details = {}
     page_details['first'] = paginator.page_range[0]
     page_details['last'] = paginator.page_range[len(paginator.page_range) - 1]
-    return render_to_response('psc/dco_incident_list.html', {'page_title': "Display, Claims & Objections Critical Incidents", 'checklists': checklists, 'filter_form': filter_form, 'page_details': page_details}, context_instance=RequestContext(request))
+    if action == "export":
+        return export(request, 'dcoi', incidents.object_list)
+    else:
+        return render_to_response('psc/dco_incident_list.html', {'page_title': "Display, Claims & Objections Critical Incidents", 'checklists': incidents, 'filter_form': filter_form, 'page_details': page_details}, context_instance=RequestContext(request))
 
 @permission_required('psc.can_manage_data', login_url='/')
 @login_required()
-def eday_incident_list(request):
+def eday_incident_list(request, action=None):
     qs = Q()
     if not request.session.has_key('eday_incident_filter'):
         request.session['eday_incident_filter'] = {}
@@ -658,7 +680,9 @@ def eday_incident_list(request):
                 qs = Q(observer__observer_id__exact=data['observer_id'])
     else:
         filter_form = EDAYIncidentFilterForm()
-
+        
+    if action == 'export':
+        items_per_page = EDAYIncident.objects.filter(qs).count()
     paginator = Paginator(EDAYIncident.objects.filter(qs).order_by('-id'), items_per_page)
 
     try:
@@ -668,14 +692,17 @@ def eday_incident_list(request):
 
     # an invalid range will retrieve the last page of results
     try:
-        checklists = paginator.page(page)
+        incidents = paginator.page(page)
     except (EmptyPage, InvalidPage):
-        checklists = paginator.page(paginator.num_pages)
+        incidents = paginator.page(paginator.num_pages)
 
     page_details = {}
     page_details['first'] = paginator.page_range[0]
     page_details['last'] = paginator.page_range[len(paginator.page_range) - 1]
-    return render_to_response('psc/eday_incident_list.html', {'page_title': "Election Day Critical Incidents", 'checklists': checklists, 'filter_form': filter_form, 'page_details': page_details}, context_instance=RequestContext(request))
+    if action == "export":
+        return export(request, 'edayi', incidents.object_list)
+    else:
+        return render_to_response('psc/eday_incident_list.html', {'page_title': "Election Day Critical Incidents", 'checklists': incidents, 'filter_form': filter_form, 'page_details': page_details}, context_instance=RequestContext(request))
 
 @permission_required('psc.can_manage_data', login_url='/')
 @login_required()
@@ -704,7 +731,7 @@ def eday_incident_update(request, incident_id=0):
 
 @permission_required('psc.can_analyse', login_url='/')
 @login_required()
-def message_log(request):
+def message_log(request, action=None):
     qs = Q()
     if not request.session.has_key('messagelog_filter'):
         request.session['messagelog_filter'] = {}
@@ -724,8 +751,12 @@ def message_log(request):
     else:
         filter_form = MessagelogFilterForm()
     
-    messages = MessageTable(Message.objects.filter(qs), request=request)
-    return render_to_response('psc/msg_log.html', { 'page_title': 'Message Log', 'messages_list' : messages, 'filter_form': filter_form }, context_instance=RequestContext(request))
+    if action == 'export':
+        messages = Message.objects.filter(qs).order_by('-date')
+        return export(request, 'messagelog', messages)
+    else:
+        messages = MessageTable(Message.objects.filter(qs), request=request)
+        return render_to_response('psc/msg_log.html', { 'page_title': 'Message Log', 'messages_list' : messages, 'filter_form': filter_form }, context_instance=RequestContext(request))
 
 @login_required()
 @permission_required('psc.can_administer', login_url='/')
@@ -758,7 +789,7 @@ def ajax_fetch_rcs(request, method, lga_id=0):
 
 @login_required()
 @permission_required('psc.can_analyse', login_url='/')
-def export(request, model):
+def export(request, model, query_set=None):
     import csv
     
     response = HttpResponse(mimetype='text/csv')
@@ -769,7 +800,7 @@ def export(request, model):
         header =  ["Date","Phone","Direction","Text"]
         writer.writerow(header)
         
-        messages = Message.objects.all().order_by('-date')        
+        messages = query_set       
         for message in messages:
             date = message.date.strftime('%Y-%m-%d %H:%M:%S')
             phone = message.connection.identity
@@ -781,7 +812,7 @@ def export(request, model):
         header = ["PSC ID","Zone","State","LGA","VR","RC","A","B","C","D","E","F","G","H","J","K","M","N","P","Q","Comment"]
         writer.writerow(header)
 
-        vris = VRIncident.objects.all()
+        vris = query_set
         for vri in vris:
             pscid = vri.observer.observer_id
             lga = vri.location.parent.name
@@ -818,7 +849,7 @@ def export(request, model):
         header = ["PSC ID","Zone","State","LGA","DC","RC","A","B","C","D","E","F","G","H","J","K","Comment"]
         writer.writerow(header)
 
-        dcois = DCOIncident.objects.all()
+        dcois = query_set
         for dcoi in dcois:
             pscid = dcoi.observer.observer_id
             lga = dcoi.location.parent.name
@@ -851,7 +882,7 @@ def export(request, model):
         header =  ["PSC ID","Zone","State","LGA","VR","RC","A","B","C","D1","D2","D3","D4","E1","E2","E3","E4","E5","F","G","H","J","K","M","N","P","Q","R","S","T","U","V","W","X","Y","Z","AA","Comment"]
         writer.writerow(header)
 
-        vrcs = VRChecklist.objects.filter(observer__role='LGA')
+        vrcs = query_set
         for vrc in vrcs:
             pscid = vrc.observer.observer_id
             try:
@@ -909,7 +940,7 @@ def export(request, model):
         header =  ["PSC ID","Zone","State","LGA","DC","RC","A","B","C","D","E","F1","F2","F3","F4","F5","F6","F7","F8","F9","G","H","J","K","M","N","P","Q","R","S","T","U","V","W","X","Comment"]
         writer.writerow(header)
 
-        dcocs = DCOChecklist.objects.filter(observer__role='LGA')
+        dcocs = query_set
         for dcoc in dcocs:
             pscid = dcoc.observer.observer_id
             try:
@@ -964,7 +995,8 @@ def export(request, model):
     def export_contact(writer):
         header =  ["PSC ID", "Zone", "State", "SD", "LGA", "PU", "Name", "Gender", "Phone", "Email", "Role", "Organisation"]
         writer.writerow(header)
-        contacts = Observer.objects.all()
+
+        contacts = query_set
         for contact in contacts:
 	    pscid = contact.observer_id
 	    role = contact.role
@@ -1273,7 +1305,7 @@ def vr_checklist_analysis(request):
 
 @permission_required('psc.can_analyse', login_url='/')
 @login_required()
-def contact_list(request):
+def contact_list(request, action=None):
     qs_include = Q()
     if not request.session.has_key('contact_filter'):
         request.session['contact_filter'] = {}
@@ -1349,8 +1381,8 @@ def contact_list(request):
 
     #get all objects
     global items_per_page
-    if request.GET.get('export'):
-        items_per_page = Observer.objects.all().count()
+    if action == 'export':
+        items_per_page = Observer.objects.filter(qs_include).exclude(role__in=['ZC']).order_by('observer_id').count()
     
     paginator = Paginator(Observer.objects.filter(qs_include).exclude(role__in=['ZC']).order_by('observer_id'), items_per_page)
 
@@ -1371,10 +1403,12 @@ def contact_list(request):
     msg_recipients = Observer.objects.filter(qs_include).exclude(role__in=['ZC']).values_list('phone', flat=True)
     messenger = NodSMS()
     credits = messenger.credit_balance()
-    return render_to_response('psc/contact_list.html', {'page_title': "Contacts Management",'contact': contact,
-                            'filter_form': filter_form, 'page_details': page_details,'msg_recipients': msg_recipients, 'credits': credits}
-                  , context_instance=RequestContext(request))
-
+    if action == 'export':
+        return export(request, 'contact', contact.object_list)
+    else:
+        return render_to_response('psc/contact_list.html', {'page_title': "Contacts Management",'contact': contact,
+                'filter_form': filter_form, 'page_details': page_details,'msg_recipients': msg_recipients, 'credits': credits}, 
+                context_instance=RequestContext(request))
 
 @permission_required('psc.can_analyse', login_url='/')
 @login_required()
@@ -1393,7 +1427,6 @@ def contact_edit(request, contact_id=0):
     partners = Partner.objects.all()
     return render_to_response('psc/contact_edit.html', {'page_title': 'Contact', 'contact': contact,
         'form': f, 'partners': partners}, context_instance=RequestContext(request))
-
 
 
 #ajax methods
