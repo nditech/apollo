@@ -345,6 +345,25 @@ class EDAYChecklist(models.Model):
     submitted = models.BooleanField(default=False, help_text="This field tracks if (even though already created), this report has been submitted by the reporter")
     checklist_index = models.CharField(max_length=1, default='1', choices=EDAY_CHECK, help_text='This fields helps to identify the reporter sending a particular checklist')
     audit_log = AuditLog()
+    
+    def other(self):
+        if self.checklist_index in [eday[0] for eday in EDAYChecklist.EDAY_CHECK[:2]]:
+            other_index = EDAYChecklist.EDAY_CHECK[0][0] if self.checklist_index == EDAYChecklist.EDAY_CHECK[1][0] else EDAYChecklist.EDAY_CHECK[1][0]
+            try:
+                return EDAYChecklist.objects.get(date=self.date, checklist_index=other_index, location_type=self.location_type, location_id=self.location_id)
+            except EDAYChecklist.DoesNotExist:
+                return None
+        else:
+            return None
+    
+    def control(self):
+        if self.checklist_index == EDAYChecklist.EDAY_CHECK[2]:
+            return None
+        else:
+            try:
+                return EDAYChecklist.objects.get(date=self.date, checklist_index=EDAYChecklist.EDAY_CHECK[2][0], location_type=self.location_type, location_id=self.location_id)
+            except EDAYChecklist.DoesNotExist:
+                return None
 
     def __unicode__(self):
         return "EDAY Checklist for %s from %s on %s" % (self.location, self.observer, self.date)

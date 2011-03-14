@@ -46,24 +46,35 @@ class Command(BaseCommand):
             
         observers = Observer.objects.filter(role__iexact='OBS')
         for observer in observers:
-            for day in EDAY_DAYS[0] + EDAY_DAYS[-3:]:# This is set to remove the date for the senatorial election.
+            for day in (EDAY_DAYS[1],) + EDAY_DAYS[-3:]:# This is set to remove the date for the senatorial election.
                 if day[0]:
                     report_date = day[0]
                     rc = observer.location
-                    eday, created = EDAYChecklist.objects.get_or_create(date=report_date, observer=observer, location_type=ContentType.objects.get_for_model(rc), location_id=rc.id)
+                    eday, created = EDAYChecklist.objects.get_or_create(date=report_date, observer=observer, checklist_index=observer.observer_id[-1], location_type=ContentType.objects.get_for_model(rc), location_id=rc.id)
                     if created:
                         eday_reports_created += 1
+                    
+                    if observer.observer_id.endswith('1'):
+                        eday_control, control_created = EDAYChecklist.objects.get_or_create(date=report_date, observer=observer, checklist_index='3', location_type=ContentType.objects.get_for_model(rc), location_id=rc.id)
+                        if control_created:
+                            eday_reports_created += 1
 
         
         lga_supervisors = Observer.objects.filter(role__iexact='LGA')
         for lga_supervisor in lga_supervisors:
-            for day in EDAY_DAYS[:3]: # omit the last two dates
+            for day in EDAY_DAYS[1:3]: # omit the last two dates
                 if day[0]:
                     report_date = day[0]
                     rc = lga_supervisor.location
                     eday, created = EDAYChecklist.objects.get_or_create(date=report_date, observer=lga_supervisor, location_type=ContentType.objects.get_for_model(rc), location_id=rc.id)
                     if created:
                         eday_reports_created += 1
+                    
+                    
+                    if lga_supervisor.observer_id.endswith('1'):
+                        eday_control, control_created = EDAYChecklist.objects.get_or_create(date=report_date, observer=lga_supervisor, checklist_index='3', location_type=ContentType.objects.get_for_model(rc), location_id=rc.id)
+                        if control_created:
+                            eday_reports_created += 1
                         
         print "%d Voter's Registration Checklists Prepopulated" % vr_reports_created
         print "%d Display, Claims and Objection Checklists Prepopulated" % dco_reports_created
