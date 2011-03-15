@@ -16,6 +16,17 @@
            $("input[name=F8]").attr('checked', false)
         });
     });
+    $(function(){
+        $('.control').attr('checked', false);
+        $('.control_text').attr('disabled', true);
+        $('.control').click(function(){
+            if($('input[name='+ $(this).attr('value')+']').attr('disabled') == false){
+                $('input[name='+ $(this).attr('value')+']').attr('disabled', true);
+            }else{
+                $('input[name='+ $(this).attr('value')+']').attr('disabled', false);
+            }
+        });
+    });
 </script>
 {% endblock %}
 {% load comments %}
@@ -23,7 +34,7 @@
 <div class="grid_16">
 		<div class="box">
 				<h2>Checklist Details</h2>
-				<form action="{% url psc.views.eday_checklist checklist.id %}" method="post">
+				<form action="{% url psc.views.eday_checklist checklist.id %}" method="post" name='xxx'>
 						<div class="block">
 								<!-- checklist details -->
 								<table class="observer_details">
@@ -42,526 +53,157 @@
                     <tr><td>INEC RC CODE:</td><td><input type="text" class="bigbox" name="{{ form.report_rcid.name }}" value="{{ form.initial.report_rcid|default:"" }}"></td></tr>
 								</table>
 						</div>
-						<div class="clear"></div>
-						<h2>Opening Checklist Questions</h2>
-						<!-- opening checklist question -->
-						<h2>Arrival</h2>
-						<div class='block'>
-								<div class='grandparent'>
-										<div class='parent'>
-												<div class='first'>
-														<p>AA</p>
-												</div>
-												<div class='second'>
-														<p>{{ form.AA.help_text }}</p>
-												</div>
-												<div class='third'>
-														<div class='options'><input name='{{ form.AA.name }}' type='radio' class='radio numeric' value='1'{% if form.initial.AA == 1 %} checked='checked'{% endif %}>Yes</div>
-														<div class='options'><input name='{{ form.AA.name }}' type='radio' class='radio numeric' value='2'{% if form.initial.AA == 2 %} checked='checked'{% endif %}>No</div>
-														<div class='options'><input name='{{ form.AA.name }}' type='radio' class='radio numeric' value='0'{% if not form.initial.AA%} checked='checked'{% endif %}>Unchecked</div>
-												</div>
-										</div>
-								</div>
-						</div>
-						<div class="clear"></div>
-						<h2>Accreditation</h2>
-						<div class="block">
-								<div class='grandparent'>
-										<div class='parent'>
-												<div class='first'>
-														<p>BA</p>
-												</div>
-												<div class='second'>
-														<p>{{ form.BA.help_text }}</p>
-												</div>
-												<div class='third'>
-														<div class='options'><input name='{{ form.BA1.name }}' type='radio' class='radio numeric' value="1"{% if form.initial.BA1 %} checked='checked'{% endif %}>Before 8am<br />(1)</div>
-														<div class='options'><input name='{{ form.BA2.name }}' type='radio' class='radio numeric' value="2"{% if form.initial.BA2 %} checked='checked'{% endif %}>Between 8 & 9am<br />(2)</div>
-														<div class='options'><input name='{{ form.BA3.name }}' type='radio' class='radio numeric' value="3"{% if form.initial.BA3 %} checked='checked'{% endif %}>Between 9 and 12noon<br />(3)</div>
-														<div class='options'><input name='{{ form.BA4.name }}' type='radio' class='radio numeric' value="4"{% if form.initial.BA4 %} checked='checked'{% endif %}>After by 12noon <br />(4)</div>
-														<div class='options'><input name='{{ form.BA5.name }}' type='radio' class='radio numeric' value="5"{% if form.initial.BA5 %} checked='checked'{% endif %}>Never started<br />(5)</div>
-												</div>
-										</div>
-										<div class='parent'>
-												<div class='first'>
-														<p>BB</p>
-												</div>
-												<div class='second'>
-														<p>{{ form.BB.help_text }}</p>
-												</div>
-												<div class='third'>
-														<input name='{{ form.BB.name }}' type='text' autocomplete='off' class='text numeric' maxlength='3' value="{{ form.initial.BB|default:"" }}">
-												</div>
-										</div>
-										<div class='parent'>
-												<div class='first'>
-														<p>BC</p>
-												</div>
-												<div class='second'>
-														<p>{{ form.BC.help_text }}</p>
-												</div>
-												<div class='third'>
-														<div class='options'><input name='{{ form.BC.name }}' type='radio' class='radio numeric' value='1'{% if form.initial.BC == 1 %} checked='checked'{% endif %}>Yes</div>
-														<div class='options'><input name='{{ form.BC.name }}' type='radio' class='radio numeric' value='2'{% if form.initial.BC == 2 %} checked='checked'{% endif %}>No</div>
-														<div class='options'><input name='{{ form.BC.name }}' type='radio' class='radio numeric' value='0'{% if not form.initial.BC %} checked='checked'{% endif %}>Unchecked</div>
-												</div>
-										</div>
-										<div class='parent'>
-												<div class='first'>
-														<p>BD</p>
-												</div>
-												<div class='second'>
-														<p>{{ form.BD.help_text }}</p>
-												</div>
-												<div class='third'>
-														<input name='{{ form.BD.name }}' type='text' autocomplete='off' class='text numeric' maxlength='3' value="{{ form.initial.BD|default:"" }}">
-												</div>
-										</div>
-										<div class='parent'>
-												<div class='first'>
-														<p>BE</p>
-												</div>
-												<div class='second'>
-														<p>{{ form.BE.help_text }}</p>
-												</div>
-												<div class='third'>
-														<input name='{{ form.BE.name }}' type='text' autocomplete='off' class='text numeric' maxlength='3' value="{{ form.initial.BE|default:"" }}">
-												</div>
-										</div>
-										<div class='parent'>
-												<div class='first'>
-														<p>BF</p>
-												</div>
-												<div class='second'>
-														<p>{{ form.BF.help_text }}</p>
-												</div>
-												<div class='third'>
-														<div class='options'><input name='{{ form.BF.name }}' type='radio' class='radio numeric' value='1'{% if form.initial.BF == 1 %} checked='checked'{% endif %}>Yes</div>
-														<div class='options'><input name='{{ form.BF.name }}' type='radio' class='radio numeric' value='2'{% if form.initial.BF == 2 %} checked='checked'{% endif %}>No</div>
-														<div class='options'><input name='{{ form.BF.name }}' type='radio' class='radio numeric' value='0'{% if not form.initial.BF %} checked='checked'{% endif %}>Unchecked</div>
-												</div>
-										</div>
-										<div class='parent'>
-												<div class='first'>
-														<p>BG</p>
-												</div>
-												<div class='second'>
-														<p>{{ form.BG.help_text }}</p>
-												</div>
-												<div class='third'>
-														<div class='options'><input name='{{ form.BG1.name }}' type='radio' class='radio numeric' value="1"{% if form.initial.BG1 %} checked='checked'{% endif %}>None<br />(1)</div>
-														<div class='options'><input name='{{ form.BG2.name }}' type='radio' class='radio numeric' value="2"{% if form.initial.BG2 %} checked='checked'{% endif %}>A few<br />(2)</div>
-														<div class='options'><input name='{{ form.BG3.name }}' type='radio' class='radio numeric' value="3"{% if form.initial.BG3 %} checked='checked'{% endif %}>Half<br />(3)</div>
-														<div class='options'><input name='{{ form.BG4.name }}' type='radio' class='radio numeric' value="4"{% if form.initial.BG4 %} checked='checked'{% endif %}>Most<br />(4)</div>
-														<div class='options'><input name='{{ form.BG5.name }}' type='radio' class='radio numeric' value="5"{% if form.initial.BG5 %} checked='checked'{% endif %}>All<br />(5)</div>
-												</div>
-										</div>
-										<div class='parent'>
-												<div class='first'>
-														<p>BH</p>
-												</div>
-												<div class='second'>
-														<p>{{ form.BH.help_text }}</p>
-												</div>
-												<div class='third'>
-														<div class='options'><input name='{{ form.BH1.name }}' type='radio' class='radio numeric' value="1"{% if form.initial.BH1 %} checked='checked'{% endif %}>None<br />(1)</div>
-														<div class='options'><input name='{{ form.BH2.name }}' type='radio' class='radio numeric' value="2"{% if form.initial.BH2 %} checked='checked'{% endif %}>A few<br />(2)</div>
-														<div class='options'><input name='{{ form.BH3.name }}' type='radio' class='radio numeric' value="3"{% if form.initial.BH3 %} checked='checked'{% endif %}>Half<br />(3)</div>
-														<div class='options'><input name='{{ form.BH4.name }}' type='radio' class='radio numeric' value="4"{% if form.initial.BH4 %} checked='checked'{% endif %}>Most<br />(4)</div>
-														<div class='options'><input name='{{ form.BH5.name }}' type='radio' class='radio numeric' value="5"{% if form.initial.BH5 %} checked='checked'{% endif %}>All<br />(5)</div>
-												</div>
-										</div>
-										<div class='parent'>
-												<div class='first'>
-														<p>BJ</p>
-												</div>
-												<div class='second'>
-														<p>{{ form.BJ.help_text }}</p>
-												</div>
-												<div class='third'>
-														<div class='options'><input name='{{ form.BJ1.name }}' type='radio' class='radio numeric' value="1"{% if form.initial.BJ1 %} checked='checked'{% endif %}>None<br />(1)</div>
-														<div class='options'><input name='{{ form.BJ2.name }}' type='radio' class='radio numeric' value="2"{% if form.initial.BJ2 %} checked='checked'{% endif %}>A few<br />(2)</div>
-														<div class='options'><input name='{{ form.BJ3.name }}' type='radio' class='radio numeric' value="3"{% if form.initial.BJ3 %} checked='checked'{% endif %}>Half<br />(3)</div>
-														<div class='options'><input name='{{ form.BJ4.name }}' type='radio' class='radio numeric' value="4"{% if form.initial.BJ4 %} checked='checked'{% endif %}>Most<br />(4)</div>
-														<div class='options'><input name='{{ form.BJ5.name }}' type='radio' class='radio numeric' value="5"{% if form.initial.BJ5 %} checked='checked'{% endif %}>All<br />(5)</div>
-												</div>
-										</div>
-										<div class='parent'>
-												<div class='first'>
-														<p>BK</p>
-												</div>
-												<div class='second'>
-														<p>{{ form.BK.help_text }}</p>
-												</div>
-												<div class='third'>
-														<div class='options'><input name='{{ form.BK.name }}' type='radio' class='radio numeric' value='1'{% if form.initial.BK == 1 %} checked='checked'{% endif %}>Yes</div>
-														<div class='options'><input name='{{ form.BK.name }}' type='radio' class='radio numeric' value='2'{% if form.initial.BK == 2 %} checked='checked'{% endif %}>No</div>
-														<div class='options'><input name='{{ form.BK.name }}' type='radio' class='radio numeric' value='0'{% if not form.initial.BK %} checked='checked'{% endif %}>Unchecked</div>
-												</div>
-										</div>
-										<div class='parent'>
-												<div class='first'>
-														<p>BM</p>
-												</div>
-												<div class='second'>
-														<p>{{ form.BM.help_text }}</p>
-												</div>
-												<div class='third'>
-														<div class='options'><input name='{{ form.BM1.name }}' type='radio' class='radio numeric' value="1"{% if form.initial.BM1 %} checked='checked'{% endif %}>None<br />(1)</div>
-														<div class='options'><input name='{{ form.BM2.name }}' type='radio' class='radio numeric' value="2"{% if form.initial.BM2 %} checked='checked'{% endif %}>A few<br />(2)</div>
-														<div class='options'><input name='{{ form.BM3.name }}' type='radio' class='radio numeric' value="3"{% if form.initial.BM3 %} checked='checked'{% endif %}>Half<br />(3)</div>
-														<div class='options'><input name='{{ form.BM4.name }}' type='radio' class='radio numeric' value="4"{% if form.initial.BM4 %} checked='checked'{% endif %}>Most<br />(4)</div>
-														<div class='options'><input name='{{ form.BM5.name }}' type='radio' class='radio numeric' value="5"{% if form.initial.BM5 %} checked='checked'{% endif %}>All<br />(5)</div>
-												</div>
-										</div>
-										<div class='parent'>
-												<div class='first'>
-														<p>BN</p>
-												</div>
-												<div class='second'>
-														<p>{{ form.BN.help_text }}</p>
-												</div>
-												<div class='third'>
-														<div class='options'><input name='{{ form.BN.name }}' type='radio' class='radio numeric' value='1'{% if form.initial.BN == 1 %} checked='checked'{% endif %}>Yes</div>
-														<div class='options'><input name='{{ form.BN.name }}' type='radio' class='radio numeric' value='2'{% if form.initial.BN == 2 %} checked='checked'{% endif %}>No</div>
-														<div class='options'><input name='{{ form.BN.name }}' type='radio' class='radio numeric' value='0'{% if not form.initial.BN %} checked='checked'{% endif %}>Unchecked</div>
-												</div>
-										</div>
-										<div class='parent'>
-												<div class='first'>
-														<p>BP</p>
-												</div>
-												<div class='second'>
-														<p>{{ form.BP.help_text }}</p>
-												</div>
-												<div class='third'>
-														<input name='{{ form.BP.name }}' type='text' autocomplete='off' class='text numeric' maxlength='3' value="{{ form.initial.BP|default:"" }}">
-												</div>
-										</div>
-								</div>
-						</div>
-						<div class="clear"></div>
-						<h2>Voting Process</h2>
-						<div class="block">
-								<div class='grandparent'>
-										<div class='parent'>
-												<div class='first'>
-														<p>CA</p>
-												</div>
-												<div class='second'>
-														<p>{{ form.CA.help_text }}</p>
-												</div>
-												<div class='third'>
-														<div class='options'><input name='{{ form.CA1.name }}' type='radio' class='radio numeric' value="1"{% if form.initial.CA1 %} checked='checked'{% endif %}>Before 1pm<br />(1)</div>
-														<div class='options'><input name='{{ form.CA2.name }}' type='radio' class='radio numeric' value="2"{% if form.initial.CA2 %} checked='checked'{% endif %}>Between 1 & 2pm<br />(2)</div>
-														<div class='options'><input name='{{ form.CA3.name }}' type='radio' class='radio numeric' value="3"{% if form.initial.CA3 %} checked='checked'{% endif %}>Between 2 and 3pm<br />(3)</div>
-														<div class='options'><input name='{{ form.CA4.name }}' type='radio' class='radio numeric' value="4"{% if form.initial.CA4 %} checked='checked'{% endif %}>After 3pm<br />(4)</div>
-														<div class='options'><input name='{{ form.CA5.name }}' type='radio' class='radio numeric' value="5"{% if form.initial.CA5 %} checked='checked'{% endif %}>Never started<br />(5)</div>
-												</div>
-										</div>
-										<div class='parent'>
-												<div class='first'>
-														<p>CB</p>
-												</div>
-												<div class='second'>
-														<p>{{ form.CB.help_text }}</p>
-												</div>
-												<div class='third'>
-														<div class='options'><input name='{{ form.CB.name }}' type='radio' class='radio numeric' value='1'{% if form.initial.CB == 1 %} checked='checked'{% endif %}>Yes</div>
-														<div class='options'><input name='{{ form.CB.name }}' type='radio' class='radio numeric' value='2'{% if form.initial.CB == 2 %} checked='checked'{% endif %}>No</div>
-														<div class='options'><input name='{{ form.CB.name }}' type='radio' class='radio numeric' value='0'{% if not form.initial.CB %} checked='checked'{% endif %}>Unchecked</div>
-												</div>
-										</div>
-										<div class='parent'>
-												<div class='first'>
-														<p>CC</p>
-												</div>
-												<div class='second'>
-														<p>{{ form.CC.help_text }}</p>
-												</div>
-												<div class='third'>
-														<div class='options'><input name='{{ form.CC1.name }}' type='radio' class='radio numeric' value="1"{% if form.initial.CC1 %} checked='checked'{% endif %}>None<br />(1)</div>
-														<div class='options'><input name='{{ form.CC2.name }}' type='radio' class='radio numeric' value="2"{% if form.initial.CC2 %} checked='checked'{% endif %}>A few<br />(2)</div>
-														<div class='options'><input name='{{ form.CC3.name }}' type='radio' class='radio numeric' value="3"{% if form.initial.CC3 %} checked='checked'{% endif %}>Half<br />(3)</div>
-														<div class='options'><input name='{{ form.CC4.name }}' type='radio' class='radio numeric' value="4"{% if form.initial.CC4 %} checked='checked'{% endif %}>Most<br />(4)</div>
-														<div class='options'><input name='{{ form.CC5.name }}' type='radio' class='radio numeric' value="5"{% if form.initial.CC5 %} checked='checked'{% endif %}>All<br />(5)</div>
-												</div>
-										</div>
-										<div class='parent'>
-												<div class='first'>
-														<p>CD</p>
-												</div>
-												<div class='second'>
-														<p>{{ form.CD.help_text }}</p>
-												</div>
-												<div class='third'>
-														<div class='options'><input name='{{ form.CD1.name }}' type='radio' class='radio numeric' value="1"{% if form.initial.CD1 %} checked='checked'{% endif %}>None<br />(1)</div>
-														<div class='options'><input name='{{ form.CD2.name }}' type='radio' class='radio numeric' value="2"{% if form.initial.CD2 %} checked='checked'{% endif %}>A few<br />(2)</div>
-														<div class='options'><input name='{{ form.CD3.name }}' type='radio' class='radio numeric' value="3"{% if form.initial.CD3 %} checked='checked'{% endif %}>Half<br />(3)</div>
-														<div class='options'><input name='{{ form.CD4.name }}' type='radio' class='radio numeric' value="4"{% if form.initial.CD4 %} checked='checked'{% endif %}>Most<br />(4)</div>
-														<div class='options'><input name='{{ form.CD5.name }}' type='radio' class='radio numeric' value="5"{% if form.initial.CD5 %} checked='checked'{% endif %}>All<br />(5)</div>
-												</div>
-										</div>
-										<div class='parent'>
-												<div class='first'>
-														<p>CE</p>
-												</div>
-												<div class='second'>
-														<p>{{ form.CE.help_text }}</p>
-												</div>
-												<div class='third'>
-														<div class='options'><input name='{{ form.CE1.name }}' type='radio' class='radio numeric' value="1"{% if form.initial.CE1 %} checked='checked'{% endif %}>None<br />(1)</div>
-														<div class='options'><input name='{{ form.CE2.name }}' type='radio' class='radio numeric' value="2"{% if form.initial.CE2 %} checked='checked'{% endif %}>A few<br />(2)</div>
-														<div class='options'><input name='{{ form.CE3.name }}' type='radio' class='radio numeric' value="3"{% if form.initial.CE3 %} checked='checked'{% endif %}>Half<br />(3)</div>
-														<div class='options'><input name='{{ form.CE4.name }}' type='radio' class='radio numeric' value="4"{% if form.initial.CE4 %} checked='checked'{% endif %}>Most<br />(4)</div>
-														<div class='options'><input name='{{ form.CE5.name }}' type='radio' class='radio numeric' value="5"{% if form.initial.CE5 %} checked='checked'{% endif %}>All<br />(5)</div>
-												</div>
-										</div>
-										<div class='parent'>
-												<div class='first'>
-														<p>CF</p>
-												</div>
-												<div class='second'>
-														<p>{{ form.CF.help_text }}</p>
-												</div>
-												<div class='third'>
-														<div class='options'><input name='{{ form.CF.name }}' type='radio' class='radio numeric' value='1'{% if form.initial.CF == 1 %} checked='checked'{% endif %}>Yes</div>
-														<div class='options'><input name='{{ form.CF.name }}' type='radio' class='radio numeric' value='2'{% if form.initial.CF == 2 %} checked='checked'{% endif %}>No</div>
-														<div class='options'><input name='{{ form.CF.name }}' type='radio' class='radio numeric' value='0'{% if not form.initial.CF %} checked='checked'{% endif %}>Unchecked</div>
-												</div>
-										</div>
-										<div class='parent'>
-												<div class='first'>
-														<p>CG</p>
-												</div>
-												<div class='second'>
-														<p>{{ form.CG.help_text }}</p>
-												</div>
-												<div class='third'>
-														<div class='options'><input name='{{ form.CG.name }}' type='radio' class='radio numeric' value='1'{% if form.initial.CG == 1 %} checked='checked'{% endif %}>Yes</div>
-														<div class='options'><input name='{{ form.CG.name }}' type='radio' class='radio numeric' value='2'{% if form.initial.CG == 2 %} checked='checked'{% endif %}>No</div>
-														<div class='options'><input name='{{ form.CG.name }}' type='radio' class='radio numeric' value='0'{% if not form.initial.CG %} checked='checked'{% endif %}>Unchecked</div>
-												</div>
-										</div>
-										<div class='parent'>
-												<div class='first'>
-														<p>CH</p>
-												</div>
-												<div class='second'>
-														<p>{{ form.CH.help_text }}</p>
-												</div>
-												<div class='third'>
-														<div class='options'><input name='{{ form.CH.name }}' type='radio' class='radio numeric' value='1'{% if form.initial.CH == 1 %} checked='checked'{% endif %}>Yes</div>
-														<div class='options'><input name='{{ form.CH.name }}' type='radio' class='radio numeric' value='2'{% if form.initial.CH == 2 %} checked='checked'{% endif %}>No</div>
-														<div class='options'><input name='{{ form.CH.name }}' type='radio' class='radio numeric' value='0'{% if not form.initial.CH %} checked='checked'{% endif %}>Unchecked</div>
-												</div>
-										</div>
-								</div>
-						</div>
-						<div class="clear"></div>
-						<h2>Counting Process</h2>
-						<div class="block">
-								<div class='grandparent'>
-										<div class='parent'>
-												<div class='first'>
-														<p>CJ</p>
-												</div>
-												<div class='second'>
-														<p>{{ form.CJ.help_text }}</p>
-												</div>
-												<div class='third'>
-														<div class='options'><input name='{{ form.CJ.name }}' type='radio' class='radio numeric' value='1'{% if form.initial.CJ == 1 %} checked='checked'{% endif %}>Yes</div>
-														<div class='options'><input name='{{ form.CJ.name }}' type='radio' class='radio numeric' value='2'{% if form.initial.CJ == 2 %} checked='checked'{% endif %}>No</div>
-														<div class='options'><input name='{{ form.CJ.name }}' type='radio' class='radio numeric' value='0'{% if not form.initial.CJ %} checked='checked'{% endif %}>Unchecked</div>
-												</div>
-										</div>
-										<div class='parent'>
-												<div class='first'>
-														<p>CK</p>
-												</div>
-												<div class='second'>
-														<p>{{ form.CK.help_text }}</p>
-												</div>
-												<div class='third'>
-														<div class='options'><input name='{{ form.CK.name }}' type='radio' class='radio numeric' value='1'{% if form.initial.CK == 1 %} checked='checked'{% endif %}>Yes</div>
-														<div class='options'><input name='{{ form.CK.name }}' type='radio' class='radio numeric' value='2'{% if form.initial.CK == 2 %} checked='checked'{% endif %}>No</div>
-														<div class='options'><input name='{{ form.CK.name }}' type='radio' class='radio numeric' value='0'{% if not form.initial.CK %} checked='checked'{% endif %}>Unchecked</div>
-												</div>
-										</div>
-										<div class='parent'>
-												<div class='first'>
-														<p>CM</p>
-												</div>
-												<div class='second'>
-														<p>{{ form.CM.help_text }}</p>
-												</div>
-												<div class='third'>
-														<div class='options'><input name='{{ form.CM.name }}' type='radio' class='radio numeric' value='1'{% if form.initial.CM == 1 %} checked='checked'{% endif %}>Yes</div>
-														<div class='options'><input name='{{ form.CM.name }}' type='radio' class='radio numeric' value='2'{% if form.initial.CM == 2 %} checked='checked'{% endif %}>No</div>
-														<div class='options'><input name='{{ form.CM.name }}' type='radio' class='radio numeric' value='0'{% if not form.initial.CM %} checked='checked'{% endif %}>Unchecked</div>
-												</div>
-										</div>
-										<div class='parent'>
-												<div class='first'>
-														<p>CN</p>
-												</div>
-												<div class='second'>
-														<p>{{ form.CN.help_text }}</p>
-												</div>
-												<div class='third'>
-														<div class='options'><input name='{{ form.CN.name }}' type='radio' class='radio numeric' value='1'{% if form.initial.CN == 1 %} checked='checked'{% endif %}>Yes</div>
-														<div class='options'><input name='{{ form.CN.name }}' type='radio' class='radio numeric' value='2'{% if form.initial.CN == 2 %} checked='checked'{% endif %}>No</div>
-														<div class='options'><input name='{{ form.CN.name }}' type='radio' class='radio numeric' value='0'{% if not form.initial.CN %} checked='checked'{% endif %}>Unchecked</div>
-												</div>
-										</div>
-										<div class='parent'>
-												<div class='first'>
-														<p>CP</p>
-												</div>
-												<div class='second'>
-														<p>{{ form.CP.help_text }}</p>
-												</div>
-												<div class='third'>
-														<div class='options'><input name='{{ form.CP.name }}' type='radio' class='radio numeric' value='1'{% if form.initial.CP == 1 %} checked='checked'{% endif %}>Yes</div>
-														<div class='options'><input name='{{ form.CP.name }}' type='radio' class='radio numeric' value='2'{% if form.initial.CP == 2 %} checked='checked'{% endif %}>No</div>
-														<div class='options'><input name='{{ form.CP.name }}' type='radio' class='radio numeric' value='0'{% if not form.initial.CP %} checked='checked'{% endif %}>Unchecked</div>
-												</div>
-										</div>
-										<div class='parent'>
-												<div class='first'>
-														<p>CQ</p>
-												</div>
-												<div class='second'>
-														<p>{{ form.CQ.help_text }}</p>
-												</div>
-												<div class='third'>
-														<div class='options'><input name='{{ form.CQ.name }}' type='radio' class='radio numeric' value='1'{% if form.initial.CQ == 1 %} checked='checked'{% endif %}>Yes</div>
-														<div class='options'><input name='{{ form.CQ.name }}' type='radio' class='radio numeric' value='2'{% if form.initial.CQ == 2 %} checked='checked'{% endif %}>No</div>
-														<div class='options'><input name='{{ form.CQ.name }}' type='radio' class='radio numeric' value='0'{% if not form.initial.CQ %} checked='checked'{% endif %}>Unchecked</div>
-												</div>
-										</div>
-								</div>
-						</div>
-						<div class="clear"></div>
-						<h2>Official Presidential Election Summary</h2>
-						<div class="block">
-								<div class='grandparent'>
-										<div class='parent'>
-												<div class='first'>
-														<p>DA</p>
-												</div>
-												<div class='second'>
-														<p>{{ form.DA.help_text }}</p>
-												</div>
-												<div class='third'>
-														<input name='{{ form.DA.name }}' type='text' autocomplete='off' class='text numeric' maxlength='3' value="{{ form.initial.DA|default:"" }}">
-												</div>
-										</div>
-										<div class='parent'>
-												<div class='first'>
-														<p>DB</p>
-												</div>
-												<div class='second'>
-														<p>{{ form.DB.help_text }}</p>
-												</div>
-												<div class='third'>
-														<input name='{{ form.DB.name }}' type='text' autocomplete='off' class='text numeric' maxlength='3' value="{{ form.initial.DB|default:"" }}">
-												</div>
-										</div>
-										<div class='parent'>
-												<div class='first'>
-														<p>DC</p>
-												</div>
-												<div class='second'>
-														<p>{{ form.DC.help_text }}</p>
-												</div>
-												<div class='third'>
-														<input name='{{ form.DC.name }}' type='text' autocomplete='off' class='text numeric' maxlength='3' value="{{ form.initial.DC|default:"" }}">
-												</div>
-										</div>
-										<div class='parent'>
-												<div class='first'>
-														<p>DD</p>
-												</div>
-												<div class='second'>
-														<p>{{ form.DD.help_text }}</p>
-												</div>
-												<div class='third'>
-														<input name='{{ form.DD.name }}' type='text' autocomplete='off' class='text numeric' maxlength='3' value="{{ form.initial.DD|default:"" }}">
-												</div>
-										</div>
-										<div class='parent'>
-												<div class='first'>
-														<p>DE</p>
-												</div>
-												<div class='second'>
-														<p>{{ form.DE.help_text }}</p>
-												</div>
-												<div class='third'>
-														<input name='{{ form.DE.name }}' type='text' autocomplete='off' class='text numeric' maxlength='3' value="{{ form.initial.DE|default:"" }}">
-												</div>
-										</div>
-										<div class='parent'>
-												<div class='first'>
-														<p>DF</p>
-												</div>
-												<div class='second'>
-														<p>{{ form.DF.help_text }}</p>
-												</div>
-												<div class='third'>
-														<input name='{{ form.DF.name }}' type='text' autocomplete='off' class='text numeric' maxlength='3' value="{{ form.initial.DF|default:"" }}">
-												</div>
-										</div>
-										<div class='parent'>
-												<div class='first'>
-														<p>DG</p>
-												</div>
-												<div class='second'>
-														<p>{{ form.DG.help_text }}</p>
-												</div>
-												<div class='third'>
-														<input name='{{ form.DG.name }}' type='text' autocomplete='off' class='text numeric' maxlength='3' value="{{ form.initial.DG|default:"" }}">
-												</div>
-										</div>
-										<div class='parent'>
-												<div class='first'>
-														<p>DH</p>
-												</div>
-												<div class='second'>
-														<p>{{ form.DH.help_text }}</p>
-												</div>
-												<div class='third'>
-														<input name='{{ form.DH.name }}' type='text' autocomplete='off' class='text numeric' maxlength='3' value="{{ form.initial.DH|default:"" }}">
-												</div>
-										</div>
-										
-												<div class='first'>
-														<p>Comment</p>
-												</div>
-												<div class='third'>
-														<div class="options">
-															<input name='{{ form.comment.name }}' type= 'text'  class='text comment' value='{{ form.initial.comment|default:"" }}'>
-														</div>
-												</div>
-										</div>
-								
-										<div class="parent last">
-												<div class='first'>
-														<p>&nbsp;</p>
-												</div>
-												<div class='third'>
-														<div class='options buttons'>
-																<input type="hidden" name="{{ form.sms_serial.name }}" value="{{ form.initial.sms_serial }}">
-																<input type="hidden" name="{{ form.submitted.name }}" value="True">
-																{% csrf_token %}
-																<input type="submit" name="submit" value="Save">
-														</div>
-												</div>
-										</div>
-								</div>
-						</div>
+		</div>
+					    <div class="clear"></div>
+					    <!--<div class="box">
+					    <h2>Opening Checklist Questions</h2>
+					    <h2>Arrival</h2>
+					    </div>-->
+					    <div class="box">
+						<table>
+						    <tr>
+							<th>
+							    <td>Index</td><td>Question</td><td>OBS1</td><td>OBS2</td><td>CONTROL</td><td>&nbsp;</td>
+							</th>
+						    </tr>
+						    <tr><td colspan="7">
+							<div class="box">
+							    <h2>Opening Checklist Questions</h2>
+							    <h2>Arrival</h2>
+							</div>
+						    </td></tr>
+						    <tr>
+							<td>&nbsp;</td><td>AA</td><td>{{ form.AA.help_text }} <br />Yes <strong>(1)</strong> No <strong>(2)</strong> Unchecked <strong>(3)</strong></td><td><input name='{{ form.AA.name }}' type='text'></td><td><input name='{{ form.AA.name }}' type='text'></td><td><input name='AAi' type='text' class='control_text'></td><td><input type='checkbox' class="control" value="AAi"></td>
+						    </tr>
+						    <tr><td colspan="7">
+							<div class="box">
+							    <h2>Accreditation Process</h2>
+							</div>
+						    </td></tr>
+						    <tr>
+							<td>&nbsp;</td><td>BA</td><td>{{ form.BA.help_text }} <br />Open by 8am <strong>(1)</strong> Between 8am & 9am <strong>(2)</strong> Between 9am & 12noon <strong>(3)</strong> After by 12noon <strong>(4)</strong> Never Started <strong>(5)</strong></td><td><input name='{{ form.BA.name }}' type='text'></td><td><input name='{{ form.BA.name }}' type='text'></td><td><input name='BAi' type='text' class='control_text' ></td><td><input type='checkbox' class="control" value="BAi"></td>
+						    </tr>
+						    <tr>
+							<td>&nbsp;</td><td>BB</td><td>{{ form.BB.help_text }}</td><td><input name='{{ form.BB.name }}' type='text'></td><td><input name='{{ form.BB.name }}' type='text'></td><td><input name='BBi' type='text' class='control_text' ></td><td><input type='checkbox' class="control" value="BBi"></td>
+						    </tr>
+						    <tr>
+							<td>&nbsp;</td><td>BC</td><td>{{ form.BC.help_text }} <br />Yes <strong>(1)</strong> No <strong>(2)</strong> Unchecked <strong>(3)</strong></td><td><input name='{{ form.BC.name }}' type='text'></td><td><input name='{{ form.BC.name }}' type='text'></td><td><input name='BCi' type='text' class='control_text' ></td><td><input type='checkbox' class="control" value="BCi"></td>
+						    </tr>
+						    <tr>
+							<td>&nbsp;</td><td>BD</td><td>{{ form.BD.help_text }}</td><td><input name='{{ form.BD.name }}' type='text'></td><td><input name='{{ form.BD.name }}' type='text'></td><td><input name='BDi' type='text' class='control_text' ></td><td><input type='checkbox' class="control" value="BDi"></td>
+						    </tr>
+						    <tr>
+							<td>&nbsp;</td><td>BE</td><td>{{ form.BE.help_text }}</td><td><input name='{{ form.BE.name }}' type='text'></td><td><input name='{{ form.BE.name }}' type='text'></td><td><input name='BEi' type='text' class='control_text' ></td><td><input type='checkbox' class="control" value="BEi"></td>
+						    </tr>
+						    <tr>
+							<td>&nbsp;</td><td>BF</td><td>{{ form.BF.help_text }} <br />Yes <strong>(1)</strong> No <strong>(2)</strong> Unchecked <strong>(3)</strong></td><td><input name='{{ form.BF.name }}' type='text'></td><td><input name='{{ form.BF.name }}' type='text'></td><td><input name='BFi' type='text' class='control_text' ></td><td><input type='checkbox' class="control" value="BFi"></td>
+						    </tr>
+						    <tr>
+							<td>&nbsp;</td><td>BG</td><td>{{ form.BG.help_text }} <br />No one <strong>(1)</strong> A Few <strong>(2)</strong> Half <strong>(3)</strong> Most <strong>(4)</strong> Everyone <strong>(5)</strong></td><td><input name='{{ form.BG.name }}' type='text'></td><td><input name='{{ form.BG.name }}' type='text'></td><td><input name='BGi' type='text' class='control_text' ></td><td><input type='checkbox' class="control" value="BGi"></td>
+						    </tr>
+						    <tr>
+							<td>&nbsp;</td><td>BH</td><td>{{ form.BH.help_text }} <br />No one <strong>(1)</strong> A Few <strong>(2)</strong> Half <strong>(3)</strong> Most <strong>(4)</strong> Everyone <strong>(5)</strong></td><td><input name='{{ form.BH.name }}' type='text'></td><td><input name='{{ form.BH.name }}' type='text'></td><td><input name='BHi' type='text' class='control_text' ></td><td><input type='checkbox' class="control" value="BHi"></td>
+						    </tr>
+						    <tr>
+							<td>&nbsp;</td><td>BJ</td><td>{{ form.BJ.help_text }} <br />No one <strong>(1)</strong> A Few <strong>(2)</strong> Half <strong>(3)</strong> Most <strong>(4)</strong> Everyone <strong>(5)</strong></td><td><input name='{{ form.BJ.name }}' type='text'></td><td><input name='{{ form.BJ.name }}' type='text'></td><td><input name='BJi' type='text' class='control_text' ></td><td><input type='checkbox' class="control" value="BJi"></td>
+						    </tr>
+						    <tr>
+							<td>&nbsp;</td><td>BK</td><td>{{ form.BK.help_text }} <br />Yes <strong>(1)</strong> No <strong>(2)</strong> Unchecked <strong>(3)</strong></td><td><input name='{{ form.BK.name }}' type='text'></td><td><input name='{{ form.BK.name }}' type='text'></td><td><input name='BKi' type='text' class='control_text' ></td><td><input type='checkbox' class="control" value="BKi"></td>
+						    </tr>
+						    <tr>
+							<td>&nbsp;</td><td>BM</td><td>{{ form.BM.help_text }} <br />No one <strong>(1)</strong> A Few <strong>(2)</strong> Half <strong>(3)</strong> Most <strong>(4)</strong> Everyone <strong>(5)</strong></td><td><input name='{{ form.BM.name }}' type='text'></td><td><input name='{{ form.BM.name }}' type='text'></td><td><input name='BMi' type='text' class='control_text' ></td><td><input type='checkbox' class="control" value="BMi"></td>
+						    </tr>
+						    <tr>
+							<td>&nbsp;</td><td>BN</td><td>{{ form.BN.help_text }} <br />Yes <strong>(1)</strong> No <strong>(2)</strong> Unchecked <strong>(3)</strong></td><td><input name='{{ form.BN.name }}' type='text'></td><td><input name='{{ form.BN.name }}' type='text'></td><td><input name='BNi' type='text' class='control_text' ></td><td><input type='checkbox' class="control" value="BNi"></td>
+						    </tr>
+						    <tr>
+							<td>&nbsp;</td><td>BP</td><td>{{ form.BP.help_text }} <br />Yes <strong>(1)</strong> No <strong>(2)</strong> Unchecked <strong>(3)</strong></td><td><input name='{{ form.BP.name }}' type='text'></td><td><input name='{{ form.BP.name }}' type='text'></td><td><input name='BPi' type='text' class='control_text' ></td><td><input type='checkbox' class="control" value="BPi"></td>
+						    </tr>
+						    <tr><td colspan="7">
+							<div class="box">
+							    <h2>Voting Process</h2>
+							</div>
+						    </td></tr>
+						    <tr>
+							<td>&nbsp;</td><td>CA</td><td>{{ form.CA.help_text }} <br />Before 1pm <strong>(1)</strong> Between 1pm & 2pm <strong>(2)</strong> Between 2pm & 3pm <strong>(3)</strong> After 3pm <strong>(4)</strong> Never Started <strong>(5)</strong></td><td><input name='{{ form.CA.name }}' type='text'></td><td><input name='{{ form.CA.name }}' type='text'></td><td><input name='CAi' type='text' class='control_text' ></td><td><input type='checkbox' class="control" value="CAi"></td>
+						    </tr>
+						    <tr>
+							<td>&nbsp;</td><td>CB</td><td>{{ form.CB.help_text }} <br />Yes <strong>(1)</strong> No <strong>(2)</strong> Unchecked <strong>(3)</strong></td><td><input name='{{ form.CB.name }}' type='text'></td><td><input name='{{ form.CB.name }}' type='text'></td><td><input name='CBi' type='text' class='control_text' ></td><td><input type='checkbox' class="control" value="CBi"></td>
+						    </tr>
+						    <tr>
+							<td>&nbsp;</td><td>CC</td><td>{{ form.CC.help_text }} <br />No one <strong>(1)</strong> A Few <strong>(2)</strong> Half <strong>(3)</strong> Most <strong>(4)</strong> Everyone <strong>(5)</strong></td><td><input name='{{ form.CC.name }}' type='text'></td><td><input name='{{ form.CC.name }}' type='text'></td><td><input name='CCi' type='text' class='control_text' ></td><td><input type='checkbox' class="control" value="CCi"></td>
+						    </tr>
+						    <tr>
+							<td>&nbsp;</td><td>CD</td><td>{{ form.CD.help_text }} <br />No one <strong>(1)</strong> A Few <strong>(2)</strong> Half <strong>(3)</strong> Most <strong>(4)</strong> Everyone <strong>(5)</strong></td><td><input name='{{ form.CD.name }}' type='text'></td><td><input name='{{ form.CD.name }}' type='text'></td><td><input name='CDi' type='text' class='control_text' ></td><td><input type='checkbox' class="control" value="CDi"></td>
+						    </tr>
+						    <tr>
+							<td>&nbsp;</td><td>CE</td><td>{{ form.CE.help_text }} <br />No one <strong>(1)</strong> A Few <strong>(2)</strong> Half <strong>(3)</strong> Most <strong>(4)</strong> Everyone <strong>(5)</strong></td><td><input name='{{ form.CE.name }}' type='text'></td><td><input name='{{ form.CE.name }}' type='text'></td><td><input name='CEi' type='text' class='control_text' ></td><td><input type='checkbox' class="control" value="CEi"></td>
+						    </tr>
+						    <tr>
+							<td>&nbsp;</td><td>CF</td><td>{{ form.CF.help_text }} <br />Yes <strong>(1)</strong> No <strong>(2)</strong> Unchecked <strong>(3)</strong></td><td><input name='{{ form.CF.name }}' type='text'></td><td><input name='{{ form.CF.name }}' type='text'></td><td><input name='CFi' type='text' class='control_text' ></td><td><input type='checkbox' class="control" value="CFi"></td>
+						    </tr>
+						    <tr>
+							<td>&nbsp;</td><td>CG</td><td>{{ form.CG.help_text }} <br />Yes <strong>(1)</strong> No <strong>(2)</strong> Unchecked <strong>(3)</strong></td><td><input name='{{ form.CG.name }}' type='text'></td><td><input name='{{ form.CG.name }}' type='text'></td><td><input name='CGi' type='text' class='control_text' ></td><td><input type='checkbox' class="control" value="CGi"></td>
+						    </tr>
+						    <tr>
+							<td>&nbsp;</td><td>CH</td><td>{{ form.CH.help_text }} <br />Yes <strong>(1)</strong> No <strong>(2)</strong> Unchecked <strong>(3)</strong></td><td><input name='{{ form.CH.name }}' type='text'></td><td><input name='{{ form.CH.name }}' type='text'></td><td><input name='CHi' type='text' class='control_text' ></td><td><input type='checkbox' class="control" value="CHi"></td>
+						    </tr>
+						    <tr><td colspan="7">
+							<div class="box">
+							    <h2>Counting Process</h2>
+							</div>
+						    </td></tr>
+						    <tr>
+							<td>&nbsp;</td><td>CJ</td><td>{{ form.CJ.help_text }} <br />Yes <strong>(1)</strong> No <strong>(2)</strong> Unchecked <strong>(3)</strong></td><td><input name='{{ form.CJ.name }}' type='text'></td><td><input name='{{ form.CJ.name }}' type='text'></td><td><input name='CJi' type='text' class='control_text' ></td><td><input type='checkbox' class="control" value="CJi"></td>
+						    </tr>
+						    <tr>
+							<td>&nbsp;</td><td>CK</td><td>{{ form.CK.help_text }} <br />Yes <strong>(1)</strong> No <strong>(2)</strong> Unchecked <strong>(3)</strong></td><td><input name='{{ form.CK.name }}' type='text'></td><td><input name='{{ form.CK.name }}' type='text'></td><td><input name='CKi' type='text' class='control_text' ></td><td><input type='checkbox' class="control" value="CKi"></td>
+						    </tr>
+						    <tr>
+							<td>&nbsp;</td><td>CM</td><td>{{ form.CM.help_text }} <br />Yes <strong>(1)</strong> No <strong>(2)</strong> Unchecked <strong>(3)</strong></td><td><input name='{{ form.CM.name }}' type='text'></td><td><input name='{{ form.CM.name }}' type='text'></td><td><input name='CMi' type='text' class='control_text' ></td><td><input type='checkbox' class="control" value="CMi"></td>
+						    </tr>
+						    <tr>
+							<td>&nbsp;</td><td>CN</td><td>{{ form.CN.help_text }} <br />Yes <strong>(1)</strong> No <strong>(2)</strong> Unchecked <strong>(3)</strong></td><td><input name='{{ form.CN.name }}' type='text'></td><td><input name='{{ form.CN.name }}' type='text'></td><td><input name='CNi' type='text' class='control_text' ></td><td><input type='checkbox' class="control" value="CNi"></td>
+						    </tr>
+						    <tr>
+							<td>&nbsp;</td><td>CP</td><td>{{ form.CP.help_text }} <br />Yes <strong>(1)</strong> No <strong>(2)</strong> Unchecked <strong>(3)</strong></td><td><input name='{{ form.CP.name }}' type='text'></td><td><input name='{{ form.CP.name }}' type='text'></td><td><input name='CPi' type='text' class='control_text' ></td><td><input type='checkbox' class="control" value="CPi"></td>
+						    </tr>
+						    <tr>
+							<td>&nbsp;</td><td>CQ</td><td>{{ form.CQ.help_text }} <br />Yes <strong>(1)</strong> No <strong>(2)</strong> Unchecked <strong>(3)</strong></td><td><input name='{{ form.CQ.name }}' type='text'></td><td><input name='{{ form.CQ.name }}' type='text'></td><td><input name='CQi' type='text' class='control_text' ></td><td><input type='checkbox' class="control" value="CQi"></td>
+						    </tr>
+						    <tr><td colspan="7">
+							<div class="box">
+							    <h2>Official Presidential Election Summary Information</h2>
+							</div>
+						    </td></tr>
+						    <tr>
+							<td>&nbsp;</td><td>DA</td><td>{{ form.DA.help_text }}</td><td><input name='{{ form.DA.name }}' type='text'></td><td><input name='{{ form.DA.name }}' type='text'></td><td><input name='DAi' type='text' class='control_text' ></td><td><input type='checkbox' class="control" value="DAi"></td>
+						    </tr>
+						    <tr>
+							<td>&nbsp;</td><td>DB</td><td>{{ form.DB.help_text }}</td><td><input name='{{ form.DB.name }}' type='text'></td><td><input name='{{ form.DB.name }}' type='text'></td><td><input name='DBi' type='text' class='control_text' ></td><td><input type='checkbox' class="control" value="DBi"></td>
+						    </tr>
+						    <tr>
+							<td>&nbsp;</td><td>DC</td><td>{{ form.DC.help_text }}</td><td><input name='{{ form.DC.name }}' type='text'></td><td><input name='{{ form.DC.name }}' type='text'></td><td><input name='DCi' type='text' class='control_text' ></td><td><input type='checkbox' class="control" value="DCi"></td>
+						    </tr>
+						    <tr>
+							<td>&nbsp;</td><td>DD</td><td>{{ form.DD.help_text }}</td><td><input name='{{ form.DD.name }}' type='text'></td><td><input name='{{ form.DD.name }}' type='text'></td><td><input name='DDi' type='text' class='control_text' ></td><td><input type='checkbox' class="control" value="DDi"></td>
+						    </tr>
+						    <tr>
+							<td>&nbsp;</td><td>DE</td><td>{{ form.DE.help_text }}</td><td><input name='{{ form.DE.name }}' type='text'></td><td><input name='{{ form.DE.name }}' type='text'></td><td><input name='DEi' type='text' class='control_text' ></td><td><input type='checkbox' class="control" value="DEi"></td>
+						    </tr>
+						    <tr>
+							<td>&nbsp;</td><td>DF</td><td>{{ form.DF.help_text }}</td><td><input name='{{ form.DF.name }}' type='text'></td><td><input name='{{ form.DF.name }}' type='text'></td><td><input name='DFi' type='text' class='control_text' ></td><td><input type='checkbox' class="control" value="DFi"></td>
+						    </tr>
+						    <tr>
+							<td>&nbsp;</td><td>DG</td><td>{{ form.DG.help_text }}</td><td><input name='{{ form.DG.name }}' type='text'></td><td><input name='{{ form.DG.name }}' type='text'></td><td><input name='DGi' type='text' class='control_text' ></td><td><input type='checkbox' class="control" value="DGi"></td>
+						    </tr>
+						    <tr>
+							<td>&nbsp;</td><td>DH</td><td>{{ form.DH.help_text }}</td><td><input name='{{ form.DH.name }}' type='text'></td><td><input name='{{ form.DH.name }}' type='text'></td><td><input name='DHi' type='text' class='control_text' ></td><td><input type='checkbox' class="control" value="DHi"></td>
+						    </tr>
+						</table>
+					    </div>
 				</form>
-				<div class="clear"></div>
+				<!--<div class="clear"></div>
 				<a name="comments"></a>
 				<h2>Comments</h2>
 				<div class="block">
@@ -584,6 +226,6 @@
 								</table>
 						</form>
 				</div>
-		</div>
+		</div>-->
 </div>
 {% endblock %}
