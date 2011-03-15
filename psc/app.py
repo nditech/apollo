@@ -290,13 +290,15 @@ class App(AppBase):
                 setattr(eday, key, int(responses[key]))
             elif key in ['BA','BG','BH','BJ','BM','CA','CC','CD','CE'] and int(responses[key]) in range(1, 6):
                 setattr(eday, key, int(responses[key]))
-            elif key in ['BD'] and int(responses[key])== 9:
+            elif key in ['DA', 'DB', 'DC', 'DD', 'DE', 'DF', 'DG', 'DH'] and int(responses[key]) <= 5000:
+                setattr(eday, key, int(responses[key]))
+            elif key in ['BD'] and int(responses[key]) <= 9:
                 eday.BD == int(responses[key])
-            elif key in ['BE'] and int(responses[key])== 99:
+            elif key in ['BE'] and int(responses[key]) <= 99:
                 eday.BE == int(responses[key])
-            elif key in ['BB'] and int(responses[key])== 999:
+            elif key in ['BB'] and int(responses[key]) <= 999:
                 eday.BB == int(responses[key])
-            elif key in ['BP'] and int(responses[key])== 9999:
+            elif key in ['BP'] and int(responses[key]) <= 9999:
                 eday.BP == int(responses[key])
         eday.save()
 
@@ -407,13 +409,14 @@ class App(AppBase):
         range_error = []
         attribute_error = []
         for key in responses.keys():
-            if key not in ['AA', 'BA', 'BB', 'BC', 'BD', 'BE', 'BF', 'BG', 'BH', 'BJ', 'BK', 'BM', 'BN', 'BP', 'CA', 'CB', 'CC', 'CD', 'CE', 'CF', 'CG', 'CH', 'CJ', 'CK', 'CM', 'CN', 'CP', 'CQ']: attribute_error.append(key)
+            if key not in ['AA', 'BA', 'BB', 'BC', 'BD', 'BE', 'BF', 'BG', 'BH', 'BJ', 'BK', 'BM', 'BN', 'BP', 'CA', 'CB', 'CC', 'CD', 'CE', 'CF', 'CG', 'CH', 'CJ', 'CK', 'CM', 'CN', 'CP', 'CQ', 'DA', 'DB', 'DC', 'DD', 'DE', 'DF', 'DG', 'DH']: attribute_error.append(key)
             if key in ['AA','BC','BF','BK','BN','CB','CF','CG','CH','CJ','CK','CM','CN','CP','CQ'] and int(responses[key]) not in range(0,4): range_error.append(key)
             elif key in ['BA','BG','BH','BJ','BM','CA','CC','CD','CE'] and int(responses[key]) not in range(1, 6): range_error.append(key)
+            elif key in ['DA', 'DB', 'DC', 'DD', 'DE', 'DF', 'DG', 'DH']: range_error.append(key)
             elif key in ['BD'] and int(responses[key]) > 9: range_error.append(key)
             elif key in ['BE'] and int(responses[key]) > 99: range_error.append(key)
             elif key in ['BB'] and int(responses[key]) > 999: range_error.append(key)
-            if key in ['BP'] and int(responses[key]) > 3500: range_error.append(key)
+            elif key in ['BP'] and int(responses[key]) > 3500: range_error.append(key)
         return {'range': range_error, 'attribute': attribute_error }
         
     def _edayi_validate(self, message):

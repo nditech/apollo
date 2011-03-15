@@ -440,7 +440,101 @@
 														<div class='options'><input name='{{ form.CQ.name }}' type='radio' class='radio numeric' value='0'{% if not form.initial.CQ %} checked='checked'{% endif %}>Unchecked</div>
 												</div>
 										</div>
+								</div>
+						</div>
+						<div class="clear"></div>
+						<h2>Official Presidential Election Summary</h2>
+						<div class="block">
+								<div class='grandparent'>
 										<div class='parent'>
+												<div class='first'>
+														<p>DA</p>
+												</div>
+												<div class='second'>
+														<p>{{ form.DA.help_text }}</p>
+												</div>
+												<div class='third'>
+														<input name='{{ form.DA.name }}' type='text' autocomplete='off' class='text numeric' maxlength='3' value="{{ form.initial.DA|default:"" }}">
+												</div>
+										</div>
+										<div class='parent'>
+												<div class='first'>
+														<p>DB</p>
+												</div>
+												<div class='second'>
+														<p>{{ form.DB.help_text }}</p>
+												</div>
+												<div class='third'>
+														<input name='{{ form.DB.name }}' type='text' autocomplete='off' class='text numeric' maxlength='3' value="{{ form.initial.DB|default:"" }}">
+												</div>
+										</div>
+										<div class='parent'>
+												<div class='first'>
+														<p>DC</p>
+												</div>
+												<div class='second'>
+														<p>{{ form.DC.help_text }}</p>
+												</div>
+												<div class='third'>
+														<input name='{{ form.DC.name }}' type='text' autocomplete='off' class='text numeric' maxlength='3' value="{{ form.initial.DC|default:"" }}">
+												</div>
+										</div>
+										<div class='parent'>
+												<div class='first'>
+														<p>DD</p>
+												</div>
+												<div class='second'>
+														<p>{{ form.DD.help_text }}</p>
+												</div>
+												<div class='third'>
+														<input name='{{ form.DD.name }}' type='text' autocomplete='off' class='text numeric' maxlength='3' value="{{ form.initial.DD|default:"" }}">
+												</div>
+										</div>
+										<div class='parent'>
+												<div class='first'>
+														<p>DE</p>
+												</div>
+												<div class='second'>
+														<p>{{ form.DE.help_text }}</p>
+												</div>
+												<div class='third'>
+														<input name='{{ form.DE.name }}' type='text' autocomplete='off' class='text numeric' maxlength='3' value="{{ form.initial.DE|default:"" }}">
+												</div>
+										</div>
+										<div class='parent'>
+												<div class='first'>
+														<p>DF</p>
+												</div>
+												<div class='second'>
+														<p>{{ form.DF.help_text }}</p>
+												</div>
+												<div class='third'>
+														<input name='{{ form.DF.name }}' type='text' autocomplete='off' class='text numeric' maxlength='3' value="{{ form.initial.DF|default:"" }}">
+												</div>
+										</div>
+										<div class='parent'>
+												<div class='first'>
+														<p>DG</p>
+												</div>
+												<div class='second'>
+														<p>{{ form.DG.help_text }}</p>
+												</div>
+												<div class='third'>
+														<input name='{{ form.DG.name }}' type='text' autocomplete='off' class='text numeric' maxlength='3' value="{{ form.initial.DG|default:"" }}">
+												</div>
+										</div>
+										<div class='parent'>
+												<div class='first'>
+														<p>DH</p>
+												</div>
+												<div class='second'>
+														<p>{{ form.DH.help_text }}</p>
+												</div>
+												<div class='third'>
+														<input name='{{ form.DH.name }}' type='text' autocomplete='off' class='text numeric' maxlength='3' value="{{ form.initial.DH|default:"" }}">
+												</div>
+										</div>
+										
 												<div class='first'>
 														<p>Comment</p>
 												</div>

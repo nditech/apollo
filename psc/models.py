@@ -375,7 +375,15 @@ class EDAYChecklist(models.Model):
     CN = models.PositiveSmallIntegerField(blank=True, default=0, choices=YES_NO, help_text='Were the results posted in a public place easy for people to see? (tick one)')
     CP = models.PositiveSmallIntegerField(blank=True, default=0, choices=YES_NO, help_text='Did the posted results match announced results? (tick one)')
     CQ = models.PositiveSmallIntegerField(blank=True, default=0, choices=YES_NO, help_text='Did anyone attempt to harass/intimidate polling officials during counting? (tick one)')
-
+    DA = models.IntegerField(blank=True, null=True, help_text='Number of voters on the Register')
+    DB = models.IntegerField(blank=True, null=True, help_text='Number of Ballot Papers issued to the Polling Unit')
+    DC = models.IntegerField(blank=True, null=True, help_text='Number of Accredited Voters')
+    DD = models.IntegerField(blank=True, null=True, help_text='Number of Unused Ballot Papers')
+    DE = models.IntegerField(blank=True, null=True, help_text='Number of Spoilt Ballot Papers')
+    DF = models.IntegerField(blank=True, null=True, help_text='Number of Rejected Ballots')
+    DG = models.IntegerField(blank=True, null=True, help_text='Number of Total Valid Votes')
+    DH = models.IntegerField(blank=True, null=True, help_text='Total Number of Used Ballot Papers')
+    
     comment = models.CharField(max_length=200, blank=True)
     submitted = models.BooleanField(default=False, help_text="This field tracks if (even though already created), this report has been submitted by the reporter")
     checklist_index = models.CharField(max_length=1, default='1', choices=EDAY_CHECK, help_text='This fields helps to identify the reporter sending a particular checklist')
