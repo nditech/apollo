@@ -141,6 +141,41 @@ class Observer(models.Model):
 
     def __unicode__(self):
         return self.observer_id
+    
+    @property
+    def zone(self):
+        if self.role == 'ZC':
+            return self.location
+        elif self.role in ['SC', 'NS', 'NSC']:
+            return self.location.parent
+        elif self.role == 'SDC':
+            return self.location.parent.parent
+        elif self.role == 'LGA':
+            return self.location.parent.parent.parent
+        elif self.role == 'OBS':
+            return self.location.parent.parent.parent.parent
+    
+    @property
+    def state(self):
+        if self.role in ['SC', 'NS', 'NSC']:
+            return self.location
+        elif self.role == 'SDC':
+            return self.location.parent
+        elif self.role == 'LGA':
+            return self.location.parent.parent
+        elif self.role == 'OBS':
+            return self.location.parent.parent.parent
+        else:
+            return None
+    
+    @property
+    def lga(self):
+        if self.role == 'LGA':
+            return self.location
+        elif self.role == 'OBS':
+            return self.location.parent
+        else:
+            return None
 
 class VRChecklist(models.Model):
     OPENTIME = ((1, 'Open by 8AM (1)'),
