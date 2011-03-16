@@ -534,20 +534,25 @@ def edaychecklist_handler(sender, **kwargs):
     if not kwargs['instance'].checklist_index == '3':
         other_checklist = kwargs['instance'].other
         control_checklist = kwargs['instance'].control
-        
         # only fetch fields that have not been overridden in the control checklist
         available_fields = filter(lambda field: field not in EDAYChecklistOverrides.objects.filter(checklist=control_checklist).values_list('field', flat=True), map(lambda field: field.attname, kwargs['instance']._meta.fields[5:-3]))
         
         for field in available_fields:
             # we'll only propagate values from a checklist to the control if the value for the current checklist matches
             # that of the other checklist or the current checklist has a value and the other doesn't
-            if getattr(kwargs['instance'], field) and ((getattr(kwargs['instance'], field) == getattr(other_checklist, field)) or not getattr(other_checklist, field)):
-                setattr(control_checklist, field, getattr(kwargs['instance'], field))
-            
-            # if the above didn't execute, we want to be sure there's no conflict, if there is
-            # we must make sure the control checklist's value gets blanked
-            elif getattr(kwargs['instance'], field) and getattr(other_checklist, field):
-                setattr(control_checklist, field, None)
-        control_checklist.save()
+            try:
+                if getattr(kwargs['instance'], field) and ((getattr(kwargs['instance'], field) == getattr(other_checklist, field)) or not getattr(other_checklist, field)):
+                    setattr(control_checklist, field, getattr(kwargs['instance'], field))
+                
+                # if the above didn't execute, we want to be sure there's no conflict, if there is
+                # we must make sure the control checklist's value gets blanked
+                elif getattr(kwargs['instance'], field) and getattr(other_checklist, field):
+                    setattr(control_checklist, field, None)
+            except AttributeError:
+                pass
+        try:
+            control_checklist.save()
+        except AttributeError:
+            pass
 
 post_save.connect(edaychecklist_handler, sender=EDAYChecklist)

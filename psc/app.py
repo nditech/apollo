@@ -5,7 +5,7 @@ from rapidsms.apps.base import AppBase
 from .models import Observer, RegistrationCenter, LGA, VRIncident, VRChecklist, DCOChecklist, DCOIncident, EDAYChecklist, EDAYIncident
 from django.contrib.contenttypes.models import ContentType
 import re
-from datetime import datetime
+from datetime import datetime, timedelta
 from decorators import role_required
 
 class App(AppBase):
@@ -267,13 +267,13 @@ class App(AppBase):
         # determine location and date
         self._preprocess(msg, params)
 
-        # Create the checklista
+        # Create the checklist
         try:
-            eday = EDAYChecklist.objects.get(date=msg.date, observer=msg.observer)
+            eday = EDAYChecklist.objects.filter(date__range=(msg.date-timedelta(3), msg.date), observer=msg.observer, checklist_index=msg.observer.observer_id[-1]).order_by('-date')[0]
             eday.location = msg.location
             eday.submitted = True
-        except EDAYChecklist.DoesNotExist:
-            eday = EDAYChecklist() 
+        except (EDAYChecklist.DoesNotExist, IndexError):
+            eday = EDAYChecklist()
             eday.date = msg.date
             eday.observer = msg.observer
             eday.location = msg.location
@@ -298,7 +298,7 @@ class App(AppBase):
                 eday.BE == int(responses[key])
             elif key in ['BB'] and int(responses[key]) <= 999:
                 eday.BB == int(responses[key])
-            elif key in ['BP'] and int(responses[key]) <= 9999:
+            elif key in ['BP'] and int(responses[key]) <= 3500:
                 eday.BP == int(responses[key])
         eday.save()
 
