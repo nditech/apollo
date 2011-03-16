@@ -172,7 +172,18 @@ class Observer(models.Model):
             return self.location.parent.parent.parent
         else:
             return None
-    
+
+    @property
+    def district(self):
+        if self.role == 'SDC':
+            return self.location
+        if self.role == 'LGA':
+            return self.location.parent
+        elif self.role == 'OBS':
+            return self.location.parent.parent
+        else:
+            return None
+
     @property
     def lga(self):
         if self.role == 'LGA':
