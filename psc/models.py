@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 from south.modelsinspector import add_introspection_rules
 from audit_log.models import fields
 from audit_log.models.managers import AuditLog
+from django.db.models.signals import post_save
 from django.conf import settings
 
 class Zone(models.Model):
@@ -351,34 +352,34 @@ class EDAYChecklist(models.Model):
     location = generic.GenericForeignKey("location_type", "location_id")
     observer = models.ForeignKey(Observer)
     date = models.DateField()
-    AA = models.PositiveSmallIntegerField(blank=True, default=0, choices=YES_NO, help_text='Had any polling officials arrived by 7:30AM?')
+    AA = models.PositiveSmallIntegerField(blank=True, null=True, default=0, choices=YES_NO, help_text='Had any polling officials arrived by 7:30AM?')
     BA = models.IntegerField(blank=True, null=True, choices=VA_OPENTIME, help_text='What time did the accreditation begin? (tick one)')
     BB = models.IntegerField(blank=True, null=True, help_text="What is the unit's three digit INEC code? (this is public information)")
-    BC = models.PositiveSmallIntegerField(blank=True, default=0, choices=YES_NO, help_text='Was the polling station divided into two or more sub-units? (tick one)')
+    BC = models.PositiveSmallIntegerField(blank=True, null=True, default=0, choices=YES_NO, help_text='Was the polling station divided into two or more sub-units? (tick one)')
     BD = models.IntegerField(blank=True, null=True, help_text='How many polling officials were present? (enter number)')
     BE = models.IntegerField(blank=True, null=True, help_text='How many political party agents were present? (enter number)')
-    BF = models.PositiveSmallIntegerField(blank=True, default=0, choices=YES_NO, help_text='Were any security personnel present? (tick one)')
+    BF = models.PositiveSmallIntegerField(blank=True, null=True, default=0, choices=YES_NO, help_text='Were any security personnel present? (tick one)')
     BG = models.IntegerField(blank=True, null=True, choices=TURNOVER, help_text='Was anyone accredited to vote who did not have a voter\'s card? (tick one)')
     BH = models.IntegerField(blank=True, null=True, choices=TURNOVER, help_text='Did polling officials make a tick to the left of every accredited voters name in the register of voters? (tick one)')
     BJ = models.IntegerField(blank=True, null=True, choices=TURNOVER, help_text='Did the polling officials mark the cuticle on a left finger of every accredited voter? (tick one)')
-    BK = models.PositiveSmallIntegerField(blank=True, default=0, choices=YES_NO, help_text='Was everyone who arrived before accreditation of voters finished allowed to be accredited? (tick one)')
+    BK = models.PositiveSmallIntegerField(blank=True, null=True, default=0, choices=YES_NO, help_text='Was everyone who arrived before accreditation of voters finished allowed to be accredited? (tick one)')
     BM = models.IntegerField(blank=True, null=True, choices=TURNOVER, help_text='How many people left the polling unit after being accredited to vote?(Accredited voters should remain at the polling unit until voting) (tick one)')
-    BN = models.PositiveSmallIntegerField(blank=True, default=0, choices=YES_NO, help_text='Did anyone attempt to harass/intimidate voters/polling officials during accreditation? (tick one)')
+    BN = models.PositiveSmallIntegerField(blank=True, null=True, default=0, choices=YES_NO, help_text='Did anyone attempt to harass/intimidate voters/polling officials during accreditation? (tick one)')
     BP = models.IntegerField(blank=True, null=True, help_text='How many people were accredited to vote (as announced by the INEC official)? (enter number)')
     CA = models.IntegerField(blank=True, null=True, choices=VP_OPENTIME, help_text='What time did the voting begin? (tick one)')
-    CB = models.PositiveSmallIntegerField(blank=True, default=0, choices=YES_NO, help_text='Was the ballot box shown to be empty before being closed and locked? (tick one)')
+    CB = models.PositiveSmallIntegerField(blank=True, null=True, default=0, choices=YES_NO, help_text='Was the ballot box shown to be empty before being closed and locked? (tick one)')
     CC = models.IntegerField(blank=True, null=True, choices=TURNOVER, help_text='Was anyone permitted to vote who did not have a voter\'s card and indelible ink on the cuticle of a left finger? (Every voter should have both)(tick one)')
     CD = models.IntegerField(blank=True, null=True, choices=TURNOVER, help_text='Did polling officials check for every voters name in the register of voters and make a tick to the right of the voters name? (tick one)')
     CE = models.IntegerField(blank=True, null=True, choices=TURNOVER, help_text='Was every ballot paper stamped and signed before being given to voters? (The polling official must both stamp and sign each ballot paper) (tick one)')
-    CF = models.PositiveSmallIntegerField(blank=True, default=0, choices=YES_NO, help_text='Were voters able to mark their ballot paper in secret? (tick one)')
-    CG = models.PositiveSmallIntegerField(blank=True, default=0, choices=YES_NO, help_text='Was anyone accredited to vote after the accreditation of voters process was closed? (tick one)')
-    CH = models.PositiveSmallIntegerField(blank=True, default=0, choices=YES_NO, help_text='Did anyone attempt to harass/intimidate voters/polling officials during the voting process? (tick one)')
-    CJ = models.PositiveSmallIntegerField(blank=True, default=0, choices=YES_NO, help_text='Were the ballot papers properly sorted according to each political party? (tick one)')
-    CK = models.PositiveSmallIntegerField(blank=True, default=0, choices=YES_NO, help_text='Were the results announced? (tick one)')
-    CM = models.PositiveSmallIntegerField(blank=True, default=0, choices=YES_NO, help_text='Did any political party agent disagree with the announced results? (tick one)')
-    CN = models.PositiveSmallIntegerField(blank=True, default=0, choices=YES_NO, help_text='Were the results posted in a public place easy for people to see? (tick one)')
-    CP = models.PositiveSmallIntegerField(blank=True, default=0, choices=YES_NO, help_text='Did the posted results match announced results? (tick one)')
-    CQ = models.PositiveSmallIntegerField(blank=True, default=0, choices=YES_NO, help_text='Did anyone attempt to harass/intimidate polling officials during counting? (tick one)')
+    CF = models.PositiveSmallIntegerField(blank=True, null=True, default=0, choices=YES_NO, help_text='Were voters able to mark their ballot paper in secret? (tick one)')
+    CG = models.PositiveSmallIntegerField(blank=True, null=True, default=0, choices=YES_NO, help_text='Was anyone accredited to vote after the accreditation of voters process was closed? (tick one)')
+    CH = models.PositiveSmallIntegerField(blank=True, null=True, default=0, choices=YES_NO, help_text='Did anyone attempt to harass/intimidate voters/polling officials during the voting process? (tick one)')
+    CJ = models.PositiveSmallIntegerField(blank=True, null=True, default=0, choices=YES_NO, help_text='Were the ballot papers properly sorted according to each political party? (tick one)')
+    CK = models.PositiveSmallIntegerField(blank=True, null=True, default=0, choices=YES_NO, help_text='Were the results announced? (tick one)')
+    CM = models.PositiveSmallIntegerField(blank=True, null=True, default=0, choices=YES_NO, help_text='Did any political party agent disagree with the announced results? (tick one)')
+    CN = models.PositiveSmallIntegerField(blank=True, null=True, default=0, choices=YES_NO, help_text='Were the results posted in a public place easy for people to see? (tick one)')
+    CP = models.PositiveSmallIntegerField(blank=True, null=True, default=0, choices=YES_NO, help_text='Did the posted results match announced results? (tick one)')
+    CQ = models.PositiveSmallIntegerField(blank=True, null=True, default=0, choices=YES_NO, help_text='Did anyone attempt to harass/intimidate polling officials during counting? (tick one)')
     DA = models.IntegerField(blank=True, null=True, help_text='Number of voters on the Register')
     DB = models.IntegerField(blank=True, null=True, help_text='Number of Ballot Papers issued to the Polling Unit')
     DC = models.IntegerField(blank=True, null=True, help_text='Number of Accredited Voters')
@@ -393,6 +394,7 @@ class EDAYChecklist(models.Model):
     checklist_index = models.CharField(max_length=1, default='1', choices=EDAY_CHECK, help_text='This fields helps to identify the reporter sending a particular checklist')
     audit_log = AuditLog()
     
+    @property
     def other(self):
         if self.checklist_index in [eday[0] for eday in EDAYChecklist.EDAY_CHECK[:2]]:
             other_index = EDAYChecklist.EDAY_CHECK[0][0] if self.checklist_index == EDAYChecklist.EDAY_CHECK[1][0] else EDAYChecklist.EDAY_CHECK[1][0]
@@ -403,6 +405,7 @@ class EDAYChecklist(models.Model):
         else:
             return None
     
+    @property
     def control(self):
         if self.checklist_index == EDAYChecklist.EDAY_CHECK[2]:
             return None
@@ -414,7 +417,14 @@ class EDAYChecklist(models.Model):
 
     def __unicode__(self):
         return "EDAY Checklist for %s from %s on %s" % (self.location, self.observer, self.date)
-        
+
+class EDAYChecklistOverrides(models.Model):
+    """Tracks fields that are overriden in the EDAYChecklist"""
+    field = models.CharField(max_length=2)
+    checklist = models.ForeignKey(EDAYChecklist, limit_choices_to = {'checklist_index': '3'})
+
+    def __unicode__(self):
+        return "%s -> %s" % (self.checklist, self.field)
 
 class EDAYIncident(models.Model):
     location_type = models.ForeignKey(ContentType, null=True, blank=True)
@@ -509,8 +519,35 @@ class NodSMS():
             return False
 
     def credit_balance(self):
-        result = urllib2.urlopen(self.endpoint_balance % {'user': quote_plus(self.user), 'pass': quote_plus(self.pwd) }).read()
-        if result.isdigit():
-            return int(result)
-        else:
+        try:
+            result = urllib2.urlopen(self.endpoint_balance % {'user': quote_plus(self.user), 'pass': quote_plus(self.pwd) }).read()
+            if result.isdigit():
+                return int(result)
+            else:
+                return 0
+        except urllib2.URLError:
             return 0
+
+# signals
+def edaychecklist_handler(sender, **kwargs):
+    # don't process 'control' checklists
+    if not kwargs['instance'].checklist_index == '3':
+        other_checklist = kwargs['instance'].other
+        control_checklist = kwargs['instance'].control
+        
+        # only fetch fields that have not been overridden in the control checklist
+        available_fields = filter(lambda field: field not in EDAYChecklistOverrides.objects.filter(checklist=control_checklist).values_list('field', flat=True), map(lambda field: field.attname, kwargs['instance']._meta.fields[5:-3]))
+        
+        for field in available_fields:
+            # we'll only propagate values from a checklist to the control if the value for the current checklist matches
+            # that of the other checklist or the current checklist has a value and the other doesn't
+            if getattr(kwargs['instance'], field) and ((getattr(kwargs['instance'], field) == getattr(other_checklist, field)) or not getattr(other_checklist, field)):
+                setattr(control_checklist, field, getattr(kwargs['instance'], field))
+            
+            # if the above didn't execute, we want to be sure there's no conflict, if there is
+            # we must make sure the control checklist's value gets blanked
+            elif getattr(kwargs['instance'], field) and getattr(other_checklist, field):
+                setattr(control_checklist, field, None)
+        control_checklist.save()
+
+post_save.connect(edaychecklist_handler, sender=EDAYChecklist)
