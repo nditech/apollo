@@ -398,7 +398,7 @@ def dco_checklist_list(request, action=None):
 @login_required()
 def eday_checklist_list(request, action=None):
     #qs = Q(date__in=[d[0] for d in DCO_DAYS if d[0]])
-    qs_include = Q()
+    qs_include = ~Q(checklist_index='3')
     if not request.session.has_key('eday_checklist_filter'):
         request.session['eday_checklist_filter'] = {}
 
@@ -426,7 +426,7 @@ def eday_checklist_list(request, action=None):
     global items_per_page
     if action == 'export':
         items_per_page = EDAYChecklist.objects.filter(qs_include).count()
-    paginator = Paginator(EDAYChecklist.objects.filter(qs_include).order_by('date', 'observer'), items_per_page)
+    paginator = Paginator(EDAYChecklist.objects.filter(qs_include).order_by('date', 'location_id', 'checklist_index'), items_per_page)
     try:
         page = int(request.GET.get('page', '1'))
     except ValueError:
