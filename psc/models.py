@@ -27,6 +27,10 @@ class State(models.Model):
     @property
     def label(self):
         return self.name
+    
+    @property
+    def contesting_codes(self):
+        return self.contesting_set.all().values_list('code', flat=True)
 
     def __unicode__(self):
         return self.name
@@ -464,6 +468,27 @@ class Access(models.Model):
 
 from urllib import quote_plus
 import urllib2
+
+class Party(models.Model):
+    name = models.CharField("Party Full Name",max_length=100, blank="true", null="true")
+    code = models.CharField("Political Party", max_length=5)
+    
+    def __unicode__(self):
+        return self.code
+    
+    class Meta:
+        verbose_name_plural = "Parties"
+        
+class Contesting(models.Model):
+    code = models.CharField("Checklist Code", max_length=2)
+    party = models.ForeignKey(Party)
+    state = models.ForeignKey(State)
+    
+    def __unicode__(self):
+        return self.code
+    
+    class Meta:
+        verbose_name_plural = "Contesting"
 
 class NodSMS():
     endpoint_sendsms = 'http://api.nodsms.com/index.php?user=%(user)s&pass=%(pass)s&from=%(sender)s&to=%(destination)s&msg=%(message)s'
