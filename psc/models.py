@@ -442,7 +442,7 @@ class EDAYIncident(models.Model):
     location_id = models.PositiveIntegerField(null=True, blank=True)
     location = generic.GenericForeignKey("location_type", "location_id")
     observer = models.ForeignKey(Observer)
-    date = models.DateField()
+    date = models.DateTimeField()
     A = models.NullBooleanField(blank=True)
     B = models.NullBooleanField(blank=True)
     C = models.NullBooleanField(blank=True)
