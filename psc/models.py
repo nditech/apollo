@@ -566,4 +566,5 @@ def edaychecklist_handler(sender, **kwargs):
         except AttributeError:
             pass
 
+# while creating checklists, this signal will need to be disabled
 post_save.connect(edaychecklist_handler, sender=EDAYChecklist)
