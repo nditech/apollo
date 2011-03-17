@@ -34,23 +34,22 @@
 <div class="grid_16">
 		<div class="box">
 				<h2>Checklist Details</h2>
-				<form action="{% url psc.views.eday_checklist checklist.id %}" method="post" name='xxx'>
+				<form action="{% url psc.views.eday_checklist checklist1.id %}" method="post" name='xxx'>
 						<div class="block">
 								<!-- checklist details -->
 								<table class="observer_details">
-										<tr><td width="30%">Observer:</td><td>{{ checklist.observer.name }} (<strong>{{ checklist.observer.observer_id  }}</strong>)</td></tr>
-										<tr><td>Observer Phone No.:</td><td><strong>{{ checklist.observer.phone  }}</strong></td></tr>
-										<tr><td>Supervisor:</td><td>{{ checklist.observer.supervisor|default:"" }} {% if checklist.observer.supervisor %}(<strong>{{ checklist.observer.supervisor.phone  }}</strong>){% endif %}</td></tr>
-										<tr><td>Location:</td><td>{{ location.parent.parent.parent.name }} - {{ location.parent.parent.name }} - {{ location.parent.name }} - <strong>{{ location.name }}</strong></td></tr>
-										<tr><td>Date:</td><td>{{ checklist.date|date:"D d-M" }}</td></tr>
-										<tr><td>LGA:</td><td>{{ checklist.location.parent.name|default:"Unknown" }}</td></tr>
-                    <tr><td>RC:</td><td><select class="bigbox" name="{{ form.location_id.name }}">
-										{% for rc in rcs %}
-											<option value="{{ rc.id }}" {% if checklist.location.code == rc.code %}selected="selected"{% endif %}>{{ rc.code }} - {{ rc.name }}</option>
-										{% endfor %}
-										</select></td></tr>
-                    <tr><td>INEC RC:</td><td><input type="text" class="bigbox" name="{{ form.report_rc.name }}" value="{{ form.initial.report_rc|default:"" }}"></td></tr>
-                    <tr><td>INEC RC CODE:</td><td><input type="text" class="bigbox" name="{{ form.report_rcid.name }}" value="{{ form.initial.report_rcid|default:"" }}"></td></tr>
+										<tr><td width="30%">Observer:</td><td>{{ checklist1.observer.name }} (<strong>{{ checklist1.observer.observer_id  }}</strong>)</td>
+														  <td>{{ checklist2.observer.name }} (<strong>{{ checklist2.observer.observer_id  }}</strong>)</td></tr>
+										<tr><td>Observer Phone No.:</td><td><strong>{{ checklist1.observer.phone  }}</strong></td>
+													    <td><strong>{{ checklist2.observer.phone  }}</strong></td></tr>
+										<tr><td>Supervisor:</td><td>{{ checklist1.observer.supervisor|default:"" }} {% if checklist1.observer.supervisor %}(<strong>{{ checklist1.observer.supervisor.phone  }}</strong>){% endif %}</td>
+													<td>{{ checklist2.observer.supervisor|default:"" }} {% if checklist2.observer.supervisor %}(<strong>{{ checklist2.observer.supervisor.phone  }}</strong>){% endif %}</td></tr>
+										<tr><td>Location:</td><td>{{ checklist1.observer.zone.name }} - {{ checklist1.observer.state.name }} - <strong>{{ checklist1.observer.lga.name }}</strong></td>
+												    <td>{{ checklist2.observer.zone.name }} - {{ checklist2.observer.state.name }} - <strong>{{ checklist2.observer.lga.name }}</strong></td></tr>
+										<tr><td>Date:</td><td>{{ checklist1.date|date:"D d-M" }}</td>
+												<td>{{ checklist2.date|date:"D d-M" }}</td></tr>
+										<tr><td>PS:</td><td>{{ checklist1.observer.ps|default:"Unknown" }}</td>
+												<td>{{ checklist2.observer.ps|default:"Unknown" }}</td></tr>
 								</table>
 						</div>
 		</div>
@@ -73,7 +72,7 @@
 							</div>
 						    </td></tr>
 						    <tr>
-							<td>&nbsp;</td><td>AA</td><td>{{ form.AA.help_text }} <br />Yes <strong>(1)</strong> No <strong>(2)</strong> Unchecked <strong>(3)</strong></td><td><input name='{{ form.AA.name }}' type='text'></td><td><input name='{{ form.AA.name }}' type='text'></td><td><input name='AAi' type='text' class='control_text'></td><td><input type='checkbox' class="control" value="AAi"></td>
+							<td>&nbsp;</td><td>AA</td><td>{{ form.AA.help_text }} <br />Yes <strong>(1)</strong> No <strong>(2)</strong> Unchecked <strong>(3)</strong></td><td><input name='{{ form.AA.name }}' class='bigbox2' type='text'></td><td><input name='{{ form.AA.name }}' class='bigbox2' type='text'></td><td><input name='AAi' class='control_text bigbox2' type='text'></td><td><input type='checkbox' class="control" value="AAi"></td>
 						    </tr>
 						    <tr><td colspan="7">
 							<div class="box">
@@ -81,43 +80,43 @@
 							</div>
 						    </td></tr>
 						    <tr>
-							<td>&nbsp;</td><td>BA</td><td>{{ form.BA.help_text }} <br />Open by 8am <strong>(1)</strong> Between 8am & 9am <strong>(2)</strong> Between 9am & 12noon <strong>(3)</strong> After by 12noon <strong>(4)</strong> Never Started <strong>(5)</strong></td><td><input name='{{ form.BA.name }}' type='text'></td><td><input name='{{ form.BA.name }}' type='text'></td><td><input name='BAi' type='text' class='control_text' ></td><td><input type='checkbox' class="control" value="BAi"></td>
+							<td>&nbsp;</td><td>BA</td><td>{{ form.BA.help_text }} <br />Open by 8am <strong>(1)</strong> Between 8am & 9am <strong>(2)</strong> Between 9am & 12noon <strong>(3)</strong> After by 12noon <strong>(4)</strong> Never Started <strong>(5)</strong></td><td><input name='{{ form.BA.name }}' class='bigbox2' type='text' ></td><td><input name='{{ form.BA.name }}' type='text' class='bigbox2'></td><td><input name='BAi' type='text' class='control_text bigbox2'></td><td><input type='checkbox' class="control" value="BAi"></td>
 						    </tr>
 						    <tr>
-							<td>&nbsp;</td><td>BB</td><td>{{ form.BB.help_text }}</td><td><input name='{{ form.BB.name }}' type='text'></td><td><input name='{{ form.BB.name }}' type='text'></td><td><input name='BBi' type='text' class='control_text' ></td><td><input type='checkbox' class="control" value="BBi"></td>
+							<td>&nbsp;</td><td>BB</td><td>{{ form.BB.help_text }}</td><td><input name='{{ form.BB.name }}' type='text' class='bigbox2'></td><td><input name='{{ form.BB.name }}' type='text' class='bigbox2'></td><td><input name='BBi' type='text' class='control_text bigbox2'></td><td><input type='checkbox' class="control" value="BBi"></td>
 						    </tr>
 						    <tr>
-							<td>&nbsp;</td><td>BC</td><td>{{ form.BC.help_text }} <br />Yes <strong>(1)</strong> No <strong>(2)</strong> Unchecked <strong>(3)</strong></td><td><input name='{{ form.BC.name }}' type='text'></td><td><input name='{{ form.BC.name }}' type='text'></td><td><input name='BCi' type='text' class='control_text' ></td><td><input type='checkbox' class="control" value="BCi"></td>
+							<td>&nbsp;</td><td>BC</td><td>{{ form.BC.help_text }} <br />Yes <strong>(1)</strong> No <strong>(2)</strong> Unchecked <strong>(3)</strong></td><td><input name='{{ form.BC.name }}' type='text' class='bigbox2'></td><td><input name='{{ form.BC.name }}' type='text' class='bigbox2'></td><td><input name='BCi' type='text' class='control_text bigbox2'></td><td><input type='checkbox' class="control" value="BCi"></td>
 						    </tr>
 						    <tr>
-							<td>&nbsp;</td><td>BD</td><td>{{ form.BD.help_text }}</td><td><input name='{{ form.BD.name }}' type='text'></td><td><input name='{{ form.BD.name }}' type='text'></td><td><input name='BDi' type='text' class='control_text' ></td><td><input type='checkbox' class="control" value="BDi"></td>
+							<td>&nbsp;</td><td>BD</td><td>{{ form.BD.help_text }}</td><td><input name='{{ form.BD.name }}' type='text' class='bigbox2'></td><td><input name='{{ form.BD.name }}' type='text' class='bigbox2'></td><td><input name='BDi' type='text' class='control_text bigbox2'></td><td><input type='checkbox' class="control" value="BDi"></td>
 						    </tr>
 						    <tr>
-							<td>&nbsp;</td><td>BE</td><td>{{ form.BE.help_text }}</td><td><input name='{{ form.BE.name }}' type='text'></td><td><input name='{{ form.BE.name }}' type='text'></td><td><input name='BEi' type='text' class='control_text' ></td><td><input type='checkbox' class="control" value="BEi"></td>
+							<td>&nbsp;</td><td>BE</td><td>{{ form.BE.help_text }}</td><td><input name='{{ form.BE.name }}' type='text' class='bigbox2'></td><td><input name='{{ form.BE.name }}' type='text' class='bigbox2'></td><td><input name='BEi' type='text' class='control_text bigbox2'></td><td><input type='checkbox' class="control" value="BEi"></td>
 						    </tr>
 						    <tr>
-							<td>&nbsp;</td><td>BF</td><td>{{ form.BF.help_text }} <br />Yes <strong>(1)</strong> No <strong>(2)</strong> Unchecked <strong>(3)</strong></td><td><input name='{{ form.BF.name }}' type='text'></td><td><input name='{{ form.BF.name }}' type='text'></td><td><input name='BFi' type='text' class='control_text' ></td><td><input type='checkbox' class="control" value="BFi"></td>
+							<td>&nbsp;</td><td>BF</td><td>{{ form.BF.help_text }} <br />Yes <strong>(1)</strong> No <strong>(2)</strong> Unchecked <strong>(3)</strong></td><td><input name='{{ form.BF.name }}' type='text' class='bigbox2'></td><td><input name='{{ form.BF.name }}' type='text' class='bigbox2'></td><td><input name='BFi' type='text' class='control_text bigbox2'></td><td><input type='checkbox' class="control" value="BFi"></td>
 						    </tr>
 						    <tr>
-							<td>&nbsp;</td><td>BG</td><td>{{ form.BG.help_text }} <br />No one <strong>(1)</strong> A Few <strong>(2)</strong> Half <strong>(3)</strong> Most <strong>(4)</strong> Everyone <strong>(5)</strong></td><td><input name='{{ form.BG.name }}' type='text'></td><td><input name='{{ form.BG.name }}' type='text'></td><td><input name='BGi' type='text' class='control_text' ></td><td><input type='checkbox' class="control" value="BGi"></td>
+							<td>&nbsp;</td><td>BG</td><td>{{ form.BG.help_text }} <br />No one <strong>(1)</strong> A Few <strong>(2)</strong> Half <strong>(3)</strong> Most <strong>(4)</strong> Everyone <strong>(5)</strong></td><td><input name='{{ form.BG.name }}' type='text' class='bigbox2'></td><td><input name='{{ form.BG.name }}' type='text' class='bigbox2'></td><td><input name='BGi' type='text' class='control_text bigbox2'></td><td><input type='checkbox' class="control" value="BGi"></td>
 						    </tr>
 						    <tr>
-							<td>&nbsp;</td><td>BH</td><td>{{ form.BH.help_text }} <br />No one <strong>(1)</strong> A Few <strong>(2)</strong> Half <strong>(3)</strong> Most <strong>(4)</strong> Everyone <strong>(5)</strong></td><td><input name='{{ form.BH.name }}' type='text'></td><td><input name='{{ form.BH.name }}' type='text'></td><td><input name='BHi' type='text' class='control_text' ></td><td><input type='checkbox' class="control" value="BHi"></td>
+							<td>&nbsp;</td><td>BH</td><td>{{ form.BH.help_text }} <br />No one <strong>(1)</strong> A Few <strong>(2)</strong> Half <strong>(3)</strong> Most <strong>(4)</strong> Everyone <strong>(5)</strong></td><td><input name='{{ form.BH.name }}' type='text' class='bigbox2'></td><td><input name='{{ form.BH.name }}' type='text' class='bigbox2'></td><td><input name='BHi' type='text' class='control_text bigbox2'></td><td><input type='checkbox' class="control" value="BHi"></td>
 						    </tr>
 						    <tr>
-							<td>&nbsp;</td><td>BJ</td><td>{{ form.BJ.help_text }} <br />No one <strong>(1)</strong> A Few <strong>(2)</strong> Half <strong>(3)</strong> Most <strong>(4)</strong> Everyone <strong>(5)</strong></td><td><input name='{{ form.BJ.name }}' type='text'></td><td><input name='{{ form.BJ.name }}' type='text'></td><td><input name='BJi' type='text' class='control_text' ></td><td><input type='checkbox' class="control" value="BJi"></td>
+							<td>&nbsp;</td><td>BJ</td><td>{{ form.BJ.help_text }} <br />No one <strong>(1)</strong> A Few <strong>(2)</strong> Half <strong>(3)</strong> Most <strong>(4)</strong> Everyone <strong>(5)</strong></td><td><input name='{{ form.BJ.name }}' type='text' class='bigbox2'></td><td><input name='{{ form.BJ.name }}' type='text' class='bigbox2'></td><td><input name='BJi' type='text' class='control_text bigbox2'></td><td><input type='checkbox' class="control" value="BJi"></td>
 						    </tr>
 						    <tr>
-							<td>&nbsp;</td><td>BK</td><td>{{ form.BK.help_text }} <br />Yes <strong>(1)</strong> No <strong>(2)</strong> Unchecked <strong>(3)</strong></td><td><input name='{{ form.BK.name }}' type='text'></td><td><input name='{{ form.BK.name }}' type='text'></td><td><input name='BKi' type='text' class='control_text' ></td><td><input type='checkbox' class="control" value="BKi"></td>
+							<td>&nbsp;</td><td>BK</td><td>{{ form.BK.help_text }} <br />Yes <strong>(1)</strong> No <strong>(2)</strong> Unchecked <strong>(3)</strong></td><td><input name='{{ form.BK.name }}' type='text' class='bigbox2'></td><td><input name='{{ form.BK.name }}' type='text' class='bigbox2'></td><td><input name='BKi' type='text' class='control_text bigbox2'></td><td><input type='checkbox' class="control" value="BKi"></td>
 						    </tr>
 						    <tr>
-							<td>&nbsp;</td><td>BM</td><td>{{ form.BM.help_text }} <br />No one <strong>(1)</strong> A Few <strong>(2)</strong> Half <strong>(3)</strong> Most <strong>(4)</strong> Everyone <strong>(5)</strong></td><td><input name='{{ form.BM.name }}' type='text'></td><td><input name='{{ form.BM.name }}' type='text'></td><td><input name='BMi' type='text' class='control_text' ></td><td><input type='checkbox' class="control" value="BMi"></td>
+							<td>&nbsp;</td><td>BM</td><td>{{ form.BM.help_text }} <br />No one <strong>(1)</strong> A Few <strong>(2)</strong> Half <strong>(3)</strong> Most <strong>(4)</strong> Everyone <strong>(5)</strong></td><td><input name='{{ form.BM.name }}' type='text' class='bigbox2'></td><td><input name='{{ form.BM.name }}' type='text' class='bigbox2'></td><td><input name='BMi' type='text' class='control_text bigbox2'></td><td><input type='checkbox' class="control" value="BMi"></td>
 						    </tr>
 						    <tr>
-							<td>&nbsp;</td><td>BN</td><td>{{ form.BN.help_text }} <br />Yes <strong>(1)</strong> No <strong>(2)</strong> Unchecked <strong>(3)</strong></td><td><input name='{{ form.BN.name }}' type='text'></td><td><input name='{{ form.BN.name }}' type='text'></td><td><input name='BNi' type='text' class='control_text' ></td><td><input type='checkbox' class="control" value="BNi"></td>
+							<td>&nbsp;</td><td>BN</td><td>{{ form.BN.help_text }} <br />Yes <strong>(1)</strong> No <strong>(2)</strong> Unchecked <strong>(3)</strong></td><td><input name='{{ form.BN.name }}' type='text' class='bigbox2'></td><td><input name='{{ form.BN.name }}' type='text' class='bigbox2'></td><td><input name='BNi' type='text' class='control_text bigbox2'></td><td><input type='checkbox' class="control" value="BNi"></td>
 						    </tr>
 						    <tr>
-							<td>&nbsp;</td><td>BP</td><td>{{ form.BP.help_text }} <br />Yes <strong>(1)</strong> No <strong>(2)</strong> Unchecked <strong>(3)</strong></td><td><input name='{{ form.BP.name }}' type='text'></td><td><input name='{{ form.BP.name }}' type='text'></td><td><input name='BPi' type='text' class='control_text' ></td><td><input type='checkbox' class="control" value="BPi"></td>
+							<td>&nbsp;</td><td>BP</td><td>{{ form.BP.help_text }} <br />Yes <strong>(1)</strong> No <strong>(2)</strong> Unchecked <strong>(3)</strong></td><td><input name='{{ form.BP.name }}' type='text' class='bigbox2'></td><td><input name='{{ form.BP.name }}' type='text' class='bigbox2'></td><td><input name='BPi' type='text' class='control_text bigbox2'></td><td><input type='checkbox' class="control" value="BPi"></td>
 						    </tr>
 						    <tr><td colspan="7">
 							<div class="box">
@@ -125,28 +124,28 @@
 							</div>
 						    </td></tr>
 						    <tr>
-							<td>&nbsp;</td><td>CA</td><td>{{ form.CA.help_text }} <br />Before 1pm <strong>(1)</strong> Between 1pm & 2pm <strong>(2)</strong> Between 2pm & 3pm <strong>(3)</strong> After 3pm <strong>(4)</strong> Never Started <strong>(5)</strong></td><td><input name='{{ form.CA.name }}' type='text'></td><td><input name='{{ form.CA.name }}' type='text'></td><td><input name='CAi' type='text' class='control_text' ></td><td><input type='checkbox' class="control" value="CAi"></td>
+							<td>&nbsp;</td><td>CA</td><td>{{ form.CA.help_text }} <br />Before 1pm <strong>(1)</strong> Between 1pm & 2pm <strong>(2)</strong> Between 2pm & 3pm <strong>(3)</strong> After 3pm <strong>(4)</strong> Never Started <strong>(5)</strong></td><td><input name='{{ form.CA.name }}' type='text' class='bigbox2'></td><td><input name='{{ form.CA.name }}' type='text' class='bigbox2'></td><td><input name='CAi' type='text' class='control_text bigbox2'></td><td><input type='checkbox' class="control" value="CAi"></td>
 						    </tr>
 						    <tr>
-							<td>&nbsp;</td><td>CB</td><td>{{ form.CB.help_text }} <br />Yes <strong>(1)</strong> No <strong>(2)</strong> Unchecked <strong>(3)</strong></td><td><input name='{{ form.CB.name }}' type='text'></td><td><input name='{{ form.CB.name }}' type='text'></td><td><input name='CBi' type='text' class='control_text' ></td><td><input type='checkbox' class="control" value="CBi"></td>
+							<td>&nbsp;</td><td>CB</td><td>{{ form.CB.help_text }} <br />Yes <strong>(1)</strong> No <strong>(2)</strong> Unchecked <strong>(3)</strong></td><td><input name='{{ form.CB.name }}' type='text' class='bigbox2'></td><td><input name='{{ form.CB.name }}' type='text' class='bigbox2'></td><td><input name='CBi' type='text' class='control_text bigbox2'></td><td><input type='checkbox' class="control" value="CBi"></td>
 						    </tr>
 						    <tr>
-							<td>&nbsp;</td><td>CC</td><td>{{ form.CC.help_text }} <br />No one <strong>(1)</strong> A Few <strong>(2)</strong> Half <strong>(3)</strong> Most <strong>(4)</strong> Everyone <strong>(5)</strong></td><td><input name='{{ form.CC.name }}' type='text'></td><td><input name='{{ form.CC.name }}' type='text'></td><td><input name='CCi' type='text' class='control_text' ></td><td><input type='checkbox' class="control" value="CCi"></td>
+							<td>&nbsp;</td><td>CC</td><td>{{ form.CC.help_text }} <br />No one <strong>(1)</strong> A Few <strong>(2)</strong> Half <strong>(3)</strong> Most <strong>(4)</strong> Everyone <strong>(5)</strong></td><td><input name='{{ form.CC.name }}' type='text' class='bigbox2'></td><td><input name='{{ form.CC.name }}' type='text' class='bigbox2'></td><td><input name='CCi' type='text' class='control_text bigbox2'></td><td><input type='checkbox' class="control" value="CCi"></td>
 						    </tr>
 						    <tr>
-							<td>&nbsp;</td><td>CD</td><td>{{ form.CD.help_text }} <br />No one <strong>(1)</strong> A Few <strong>(2)</strong> Half <strong>(3)</strong> Most <strong>(4)</strong> Everyone <strong>(5)</strong></td><td><input name='{{ form.CD.name }}' type='text'></td><td><input name='{{ form.CD.name }}' type='text'></td><td><input name='CDi' type='text' class='control_text' ></td><td><input type='checkbox' class="control" value="CDi"></td>
+							<td>&nbsp;</td><td>CD</td><td>{{ form.CD.help_text }} <br />No one <strong>(1)</strong> A Few <strong>(2)</strong> Half <strong>(3)</strong> Most <strong>(4)</strong> Everyone <strong>(5)</strong></td><td><input name='{{ form.CD.name }}' type='text' class='bigbox2'></td><td><input name='{{ form.CD.name }}' type='text' class='bigbox2'></td><td><input name='CDi' type='text' class='control_text bigbox2'></td><td><input type='checkbox' class="control" value="CDi"></td>
 						    </tr>
 						    <tr>
-							<td>&nbsp;</td><td>CE</td><td>{{ form.CE.help_text }} <br />No one <strong>(1)</strong> A Few <strong>(2)</strong> Half <strong>(3)</strong> Most <strong>(4)</strong> Everyone <strong>(5)</strong></td><td><input name='{{ form.CE.name }}' type='text'></td><td><input name='{{ form.CE.name }}' type='text'></td><td><input name='CEi' type='text' class='control_text' ></td><td><input type='checkbox' class="control" value="CEi"></td>
+							<td>&nbsp;</td><td>CE</td><td>{{ form.CE.help_text }} <br />No one <strong>(1)</strong> A Few <strong>(2)</strong> Half <strong>(3)</strong> Most <strong>(4)</strong> Everyone <strong>(5)</strong></td><td><input name='{{ form.CE.name }}' type='text' class='bigbox2'></td><td><input name='{{ form.CE.name }}' type='text' class='bigbox2'></td><td><input name='CEi' type='text' class='control_text bigbox2'></td><td><input type='checkbox' class="control" value="CEi"></td>
 						    </tr>
 						    <tr>
-							<td>&nbsp;</td><td>CF</td><td>{{ form.CF.help_text }} <br />Yes <strong>(1)</strong> No <strong>(2)</strong> Unchecked <strong>(3)</strong></td><td><input name='{{ form.CF.name }}' type='text'></td><td><input name='{{ form.CF.name }}' type='text'></td><td><input name='CFi' type='text' class='control_text' ></td><td><input type='checkbox' class="control" value="CFi"></td>
+							<td>&nbsp;</td><td>CF</td><td>{{ form.CF.help_text }} <br />Yes <strong>(1)</strong> No <strong>(2)</strong> Unchecked <strong>(3)</strong></td><td><input name='{{ form.CF.name }}' type='text' class='bigbox2'></td><td><input name='{{ form.CF.name }}' type='text' class='bigbox2'></td><td><input name='CFi' type='text' class='control_text bigbox2'></td><td><input type='checkbox' class="control" value="CFi"></td>
 						    </tr>
 						    <tr>
-							<td>&nbsp;</td><td>CG</td><td>{{ form.CG.help_text }} <br />Yes <strong>(1)</strong> No <strong>(2)</strong> Unchecked <strong>(3)</strong></td><td><input name='{{ form.CG.name }}' type='text'></td><td><input name='{{ form.CG.name }}' type='text'></td><td><input name='CGi' type='text' class='control_text' ></td><td><input type='checkbox' class="control" value="CGi"></td>
+							<td>&nbsp;</td><td>CG</td><td>{{ form.CG.help_text }} <br />Yes <strong>(1)</strong> No <strong>(2)</strong> Unchecked <strong>(3)</strong></td><td><input name='{{ form.CG.name }}' type='text' class='bigbox2'></td><td><input name='{{ form.CG.name }}' type='text' class='bigbox2'></td><td><input name='CGi' type='text' class='control_text bigbox2'></td><td><input type='checkbox' class="control" value="CGi"></td>
 						    </tr>
 						    <tr>
-							<td>&nbsp;</td><td>CH</td><td>{{ form.CH.help_text }} <br />Yes <strong>(1)</strong> No <strong>(2)</strong> Unchecked <strong>(3)</strong></td><td><input name='{{ form.CH.name }}' type='text'></td><td><input name='{{ form.CH.name }}' type='text'></td><td><input name='CHi' type='text' class='control_text' ></td><td><input type='checkbox' class="control" value="CHi"></td>
+							<td>&nbsp;</td><td>CH</td><td>{{ form.CH.help_text }} <br />Yes <strong>(1)</strong> No <strong>(2)</strong> Unchecked <strong>(3)</strong></td><td><input name='{{ form.CH.name }}' type='text' class='bigbox2'></td><td><input name='{{ form.CH.name }}' type='text' class='bigbox2'></td><td><input name='CHi' type='text' class='control_text bigbox2'></td><td><input type='checkbox' class="control" value="CHi"></td>
 						    </tr>
 						    <tr><td colspan="7">
 							<div class="box">
@@ -154,22 +153,22 @@
 							</div>
 						    </td></tr>
 						    <tr>
-							<td>&nbsp;</td><td>CJ</td><td>{{ form.CJ.help_text }} <br />Yes <strong>(1)</strong> No <strong>(2)</strong> Unchecked <strong>(3)</strong></td><td><input name='{{ form.CJ.name }}' type='text'></td><td><input name='{{ form.CJ.name }}' type='text'></td><td><input name='CJi' type='text' class='control_text' ></td><td><input type='checkbox' class="control" value="CJi"></td>
+							<td>&nbsp;</td><td>CJ</td><td>{{ form.CJ.help_text }} <br />Yes <strong>(1)</strong> No <strong>(2)</strong> Unchecked <strong>(3)</strong></td><td><input name='{{ form.CJ.name }}' type='text' class='bigbox2'></td><td><input name='{{ form.CJ.name }}' type='text' class='bigbox2'></td><td><input name='CJi' type='text' class='control_text bigbox2'></td><td><input type='checkbox' class="control" value="CJi"></td>
 						    </tr>
 						    <tr>
-							<td>&nbsp;</td><td>CK</td><td>{{ form.CK.help_text }} <br />Yes <strong>(1)</strong> No <strong>(2)</strong> Unchecked <strong>(3)</strong></td><td><input name='{{ form.CK.name }}' type='text'></td><td><input name='{{ form.CK.name }}' type='text'></td><td><input name='CKi' type='text' class='control_text' ></td><td><input type='checkbox' class="control" value="CKi"></td>
+							<td>&nbsp;</td><td>CK</td><td>{{ form.CK.help_text }} <br />Yes <strong>(1)</strong> No <strong>(2)</strong> Unchecked <strong>(3)</strong></td><td><input name='{{ form.CK.name }}' type='text' class='bigbox2'></td><td><input name='{{ form.CK.name }}' type='text' class='bigbox2'></td><td><input name='CKi' type='text' class='control_text bigbox2'></td><td><input type='checkbox' class="control" value="CKi"></td>
 						    </tr>
 						    <tr>
-							<td>&nbsp;</td><td>CM</td><td>{{ form.CM.help_text }} <br />Yes <strong>(1)</strong> No <strong>(2)</strong> Unchecked <strong>(3)</strong></td><td><input name='{{ form.CM.name }}' type='text'></td><td><input name='{{ form.CM.name }}' type='text'></td><td><input name='CMi' type='text' class='control_text' ></td><td><input type='checkbox' class="control" value="CMi"></td>
+							<td>&nbsp;</td><td>CM</td><td>{{ form.CM.help_text }} <br />Yes <strong>(1)</strong> No <strong>(2)</strong> Unchecked <strong>(3)</strong></td><td><input name='{{ form.CM.name }}' type='text' class='bigbox2'></td><td><input name='{{ form.CM.name }}' type='text' class='bigbox2'></td><td><input name='CMi' type='text' class='control_text bigbox2'></td><td><input type='checkbox' class="control" value="CMi"></td>
 						    </tr>
 						    <tr>
-							<td>&nbsp;</td><td>CN</td><td>{{ form.CN.help_text }} <br />Yes <strong>(1)</strong> No <strong>(2)</strong> Unchecked <strong>(3)</strong></td><td><input name='{{ form.CN.name }}' type='text'></td><td><input name='{{ form.CN.name }}' type='text'></td><td><input name='CNi' type='text' class='control_text' ></td><td><input type='checkbox' class="control" value="CNi"></td>
+							<td>&nbsp;</td><td>CN</td><td>{{ form.CN.help_text }} <br />Yes <strong>(1)</strong> No <strong>(2)</strong> Unchecked <strong>(3)</strong></td><td><input name='{{ form.CN.name }}' type='text' class='bigbox2'></td><td><input name='{{ form.CN.name }}' type='text' class='bigbox2'></td><td><input name='CNi' type='text' class='control_text bigbox2'></td><td><input type='checkbox' class="control" value="CNi"></td>
 						    </tr>
 						    <tr>
-							<td>&nbsp;</td><td>CP</td><td>{{ form.CP.help_text }} <br />Yes <strong>(1)</strong> No <strong>(2)</strong> Unchecked <strong>(3)</strong></td><td><input name='{{ form.CP.name }}' type='text'></td><td><input name='{{ form.CP.name }}' type='text'></td><td><input name='CPi' type='text' class='control_text' ></td><td><input type='checkbox' class="control" value="CPi"></td>
+							<td>&nbsp;</td><td>CP</td><td>{{ form.CP.help_text }} <br />Yes <strong>(1)</strong> No <strong>(2)</strong> Unchecked <strong>(3)</strong></td><td><input name='{{ form.CP.name }}' type='text' class='bigbox2'></td><td><input name='{{ form.CP.name }}' type='text' class='bigbox2'></td><td><input name='CPi' type='text' class='control_text bigbox2'></td><td><input type='checkbox' class="control" value="CPi"></td>
 						    </tr>
 						    <tr>
-							<td>&nbsp;</td><td>CQ</td><td>{{ form.CQ.help_text }} <br />Yes <strong>(1)</strong> No <strong>(2)</strong> Unchecked <strong>(3)</strong></td><td><input name='{{ form.CQ.name }}' type='text'></td><td><input name='{{ form.CQ.name }}' type='text'></td><td><input name='CQi' type='text' class='control_text' ></td><td><input type='checkbox' class="control" value="CQi"></td>
+							<td>&nbsp;</td><td>CQ</td><td>{{ form.CQ.help_text }} <br />Yes <strong>(1)</strong> No <strong>(2)</strong> Unchecked <strong>(3)</strong></td><td><input name='{{ form.CQ.name }}' type='text' class='bigbox2'></td><td><input name='{{ form.CQ.name }}' type='text' class='bigbox2'></td><td><input name='CQi' type='text' class='control_text bigbox2'></td><td><input type='checkbox' class="control" value="CQi"></td>
 						    </tr>
 						    <tr><td colspan="7">
 							<div class="box">
@@ -177,55 +176,31 @@
 							</div>
 						    </td></tr>
 						    <tr>
-							<td>&nbsp;</td><td>DA</td><td>{{ form.DA.help_text }}</td><td><input name='{{ form.DA.name }}' type='text'></td><td><input name='{{ form.DA.name }}' type='text'></td><td><input name='DAi' type='text' class='control_text' ></td><td><input type='checkbox' class="control" value="DAi"></td>
+							<td>&nbsp;</td><td>DA</td><td>{{ form.DA.help_text }}</td><td><input name='{{ form.DA.name }}' type='text' class='bigbox2'></td><td><input name='{{ form.DA.name }}' type='text' class='bigbox2'></td><td><input name='DAi' type='text' class='control_text bigbox2'></td><td><input type='checkbox' class="control" value="DAi"></td>
 						    </tr>
 						    <tr>
-							<td>&nbsp;</td><td>DB</td><td>{{ form.DB.help_text }}</td><td><input name='{{ form.DB.name }}' type='text'></td><td><input name='{{ form.DB.name }}' type='text'></td><td><input name='DBi' type='text' class='control_text' ></td><td><input type='checkbox' class="control" value="DBi"></td>
+							<td>&nbsp;</td><td>DB</td><td>{{ form.DB.help_text }}</td><td><input name='{{ form.DB.name }}' type='text' class='bigbox2'></td><td><input name='{{ form.DB.name }}' type='text' class='bigbox2'></td><td><input name='DBi' type='text' class='control_text bigbox2'></td><td><input type='checkbox' class="control" value="DBi"></td>
 						    </tr>
 						    <tr>
-							<td>&nbsp;</td><td>DC</td><td>{{ form.DC.help_text }}</td><td><input name='{{ form.DC.name }}' type='text'></td><td><input name='{{ form.DC.name }}' type='text'></td><td><input name='DCi' type='text' class='control_text' ></td><td><input type='checkbox' class="control" value="DCi"></td>
+							<td>&nbsp;</td><td>DC</td><td>{{ form.DC.help_text }}</td><td><input name='{{ form.DC.name }}' type='text' class='bigbox2'></td><td><input name='{{ form.DC.name }}' type='text' class='bigbox2'></td><td><input name='DCi' type='text' class='control_text bigbox2'></td><td><input type='checkbox' class="control" value="DCi"></td>
 						    </tr>
 						    <tr>
-							<td>&nbsp;</td><td>DD</td><td>{{ form.DD.help_text }}</td><td><input name='{{ form.DD.name }}' type='text'></td><td><input name='{{ form.DD.name }}' type='text'></td><td><input name='DDi' type='text' class='control_text' ></td><td><input type='checkbox' class="control" value="DDi"></td>
+							<td>&nbsp;</td><td>DD</td><td>{{ form.DD.help_text }}</td><td><input name='{{ form.DD.name }}' type='text' class='bigbox2'></td><td><input name='{{ form.DD.name }}' type='text' class='bigbox2'></td><td><input name='DDi' type='text' class='control_text bigbox2'></td><td><input type='checkbox' class="control" value="DDi"></td>
 						    </tr>
 						    <tr>
-							<td>&nbsp;</td><td>DE</td><td>{{ form.DE.help_text }}</td><td><input name='{{ form.DE.name }}' type='text'></td><td><input name='{{ form.DE.name }}' type='text'></td><td><input name='DEi' type='text' class='control_text' ></td><td><input type='checkbox' class="control" value="DEi"></td>
+							<td>&nbsp;</td><td>DE</td><td>{{ form.DE.help_text }}</td><td><input name='{{ form.DE.name }}' type='text' class='bigbox2'></td><td><input name='{{ form.DE.name }}' type='text' class='bigbox2'></td><td><input name='DEi' type='text' class='control_text bigbox2'></td><td><input type='checkbox' class="control" value="DEi"></td>
 						    </tr>
 						    <tr>
-							<td>&nbsp;</td><td>DF</td><td>{{ form.DF.help_text }}</td><td><input name='{{ form.DF.name }}' type='text'></td><td><input name='{{ form.DF.name }}' type='text'></td><td><input name='DFi' type='text' class='control_text' ></td><td><input type='checkbox' class="control" value="DFi"></td>
+							<td>&nbsp;</td><td>DF</td><td>{{ form.DF.help_text }}</td><td><input name='{{ form.DF.name }}' type='text' class='bigbox2'></td><td><input name='{{ form.DF.name }}' type='text' class='bigbox2'></td><td><input name='DFi' type='text' class='control_text bigbox2'></td><td><input type='checkbox' class="control" value="DFi"></td>
 						    </tr>
 						    <tr>
-							<td>&nbsp;</td><td>DG</td><td>{{ form.DG.help_text }}</td><td><input name='{{ form.DG.name }}' type='text'></td><td><input name='{{ form.DG.name }}' type='text'></td><td><input name='DGi' type='text' class='control_text' ></td><td><input type='checkbox' class="control" value="DGi"></td>
+							<td>&nbsp;</td><td>DG</td><td>{{ form.DG.help_text }}</td><td><input name='{{ form.DG.name }}' type='text' class='bigbox2'></td><td><input name='{{ form.DG.name }}' type='text' class='bigbox2'></td><td><input name='DGi' type='text' class='control_text bigbox2'></td><td><input type='checkbox' class="control" value="DGi"></td>
 						    </tr>
 						    <tr>
-							<td>&nbsp;</td><td>DH</td><td>{{ form.DH.help_text }}</td><td><input name='{{ form.DH.name }}' type='text'></td><td><input name='{{ form.DH.name }}' type='text'></td><td><input name='DHi' type='text' class='control_text' ></td><td><input type='checkbox' class="control" value="DHi"></td>
+							<td>&nbsp;</td><td>DH</td><td>{{ form.DH.help_text }}</td><td><input name='{{ form.DH.name }}' type='text' class='bigbox2'></td><td><input name='{{ form.DH.name }}' type='text' class='bigbox2'></td><td><input name='DHi' type='text' class='control_text bigbox2'></td><td><input type='checkbox' class="control" value="DHi"></td>
 						    </tr>
 						</table>
 					    </div>
 				</form>
-				<!--<div class="clear"></div>
-				<a name="comments"></a>
-				<h2>Comments</h2>
-				<div class="block">
-						{% get_comment_list for checklist as comment_list %}
-						{% for comment in comment_list %}
-						<p>Posted by <strong>{{ comment.user_name|default:"Data Operator" }}</strong> on <strong>{{ comment.submit_date|date:"M jS, Y h:iA" }}</strong><br />Comment: {{ comment.comment }}</p>
-						{% endfor %}
-						{% get_comment_form for checklist as cform %}
-						<form action="{% comment_form_target %}" method="post">
-								<input type="hidden" name="next" value="{% url psc.views.eday_checklist checklist.id %}" />
-								<table>
-										<tr width="10%">
-												<td valign="top" style="vertical-align:top">Comment</td>
-												<td valign="top">{{ cform.comment.as_widget }}</td>
-										</tr>
-										<tr>
-												<td>{% csrf_token %}{{ cform.content_type.as_widget }}{{ cform.object_pk.as_widget }}{{ cform.timestamp.as_widget }}{{ cform.security_hash.as_widget }}</td>
-												<td><input type="submit" name="post" class="submit-post" value="Post"></td>
-										</tr>
-								</table>
-						</form>
-				</div>
-		</div>-->
 </div>
 {% endblock %}

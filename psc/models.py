@@ -35,6 +35,9 @@ class State(models.Model):
 
     def __unicode__(self):
         return self.name
+    
+    class Meta:
+        ordering = ['name']
 
 class District(models.Model):
     name = models.CharField(max_length=100)
@@ -190,6 +193,13 @@ class Observer(models.Model):
             return self.location
         elif self.role == 'OBS':
             return self.location.parent
+        else:
+            return None
+        
+    @property
+    def ps(self):
+        if self.role == 'OBS':
+            return self.location
         else:
             return None
 
@@ -506,7 +516,7 @@ class Contesting(models.Model):
     state = models.ForeignKey(State)
     
     def __unicode__(self):
-        return self.code
+        return self.party.code
     
     class Meta:
         verbose_name_plural = "Contesting"
@@ -567,4 +577,4 @@ def edaychecklist_handler(sender, **kwargs):
             pass
 
 # while creating checklists, this signal will need to be disabled
-post_save.connect(edaychecklist_handler, sender=EDAYChecklist)
+#post_save.connect(edaychecklist_handler, sender=EDAYChecklist)

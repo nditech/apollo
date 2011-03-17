@@ -483,17 +483,16 @@ def dco_checklist(request, checklist_id=0):
 @permission_required('psc.can_manage_data', login_url='/')
 @login_required()
 def eday_checklist(request, checklist_id=0):   
-    checklist = get_object_or_404(EDAYChecklist, pk=checklist_id)
-    rcs = RegistrationCenter.objects.filter(parent=checklist.location.parent)
-    location = checklist.observer.location
+    checklist1 = get_object_or_404(EDAYChecklist, pk=checklist_id)
+    checklist1, checklist2 = (checklist1, checklist1.other) if checklist1.checklist_index == '1' else (checklist1.other, checklist1)
     if (request.POST):
-        f = EDAYChecklistForm(request.POST, instance=checklist)
+        f = EDAYChecklistForm(request.POST, instance=checklist1)
         if f.is_valid():
             f.save()
         return HttpResponseRedirect(reverse('psc.views.eday_checklist_list'))
     else:
-        f = EDAYChecklistForm(instance=checklist)
-    return render_to_response('psc/eday_checklist_form.html', {'page_title': 'Election Day Checklist', 'checklist': checklist, 'rcs': rcs, 'location': location, 'form': f}, context_instance=RequestContext(request))
+        f = EDAYChecklistForm(instance=checklist1)
+    return render_to_response('psc/eday_checklist_form.html', {'page_title': 'Election Day Checklist', 'checklist1': checklist1, 'checklist2': checklist2, 'form': f}, context_instance=RequestContext(request))
 
 @permission_required('psc.can_manage_data', login_url='/')
 @login_required()
