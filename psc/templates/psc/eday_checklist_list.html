@@ -1,5 +1,6 @@
 {% extends 'psc/layout.html' %}
 {% load query_string %}
+{% load expr %}
 {% block javascripts %}
 {{ block.super }}
 <script src="/assets/js/jquery-1.4.4.min.js" type="text/javascript" charset="utf-8"></script>
@@ -114,34 +115,111 @@
                         <td>{{ cl.observer.district.name|truncatewords:3 }}</td>
 						<td>{{ cl.observer.name|truncatewords:2 }}{% if cl.observer.phone %} (<strong>{{ cl.observer.phone }}</strong>){% endif %}</td>
                         <td class="checklist">
+						{% if cl.submitted and cl.AA %}
                             <img src="/assets/img/status.png" width="16" height="16" alt="complete" />
+						{% else %}
+                        	<img src="/assets/img/exclamation-red.png" width="16" height="16" alt="none" />
+						{% endif %}
 						</td>
                         <td class="checklist">
+						{% if cl.BA and cl.BA < 4 %}
+							{% if cl.BB and cl.BC and cl.BD and cl.BE and cl.BF and cl.BG and cl.BH and cl.BJ and cl.BK and cl.BM and cl.BN and cl.BP %}
+                            <img src="/assets/img/status.png" width="16" height="16" alt="complete" />
+							{% else %}
+							<img src="/assets/img/status-away.png" width="16" height="16" alt="incomplete" />
+							{% endif %}
+						{% else %}
+							{% if cl.BA >= 4 %}
+								{% if cl.BB or cl.BC or cl.BD or cl.BE or cl.BF or cl.BG or cl.BH or cl.BJ or cl.BK or cl.BM or cl.BN or cl.BP %}
+									<img src="/assets/img/status-busy.png" width="16" height="16" alt="not open problem" />
+								{% else %}
+									<img src="/assets/img/information.png" width="16" height="16" alt="not open" />
+								{% endif %}
+							{% else %}
+								{% if cl.BA or cl.BB or cl.BC or cl.BD or cl.BE or cl.BF or cl.BG or cl.BH or cl.BJ or cl.BK or cl.BM or cl.BN or cl.BP %}
+									<img src="/assets/img/status-away.png" width="16" height="16" alt="incomplete" />
+								{% else %}
+									<img src="/assets/img/exclamation-red.png" width="16" height="16" alt="none" />
+								{% endif %}
+							{% endif %}
+						{% endif %}
+                        </td>
+						<td class="checklist">
+						{% if cl.CA and cl.BA and cl.CA < 4 and cl.BA < 4 %}
+							{% if cl.CB and cl.CC and cl.CD and cl.CE and cl.CF and cl.CG and cl.CH and cl.CJ and cl.CK and cl.CM and cl.CN and cl.CP and cl.CQ %}
+                            <img src="/assets/img/status.png" width="16" height="16" alt="complete" />
+							{% else %}
+							<img src="/assets/img/status-away.png" width="16" height="16" alt="incomplete" />
+							{% endif %}
+						{% else %}
+							{% if cl.CA >= 4 or cl.BA >= 4 %}
+								{% if cl.CB or cl.CC or cl.CD or cl.CE or cl.CF or cl.CG or cl.CH or cl.CJ or cl.CK or cl.CM or cl.CN or cl.CP or cl.CQ %}
+									<img src="/assets/img/status-busy.png" width="16" height="16" alt="not open problem" />
+								{% else %}
+									<img src="/assets/img/information.png" width="16" height="16" alt="not open" />
+								{% endif %}
+							{% else %}
+								{% if cl.CA or cl.CB or cl.CC or cl.CD or cl.CE or cl.CF or cl.CG or cl.CH or cl.CJ or cl.CK or cl.CM or cl.CN or cl.CP or cl.CQ %}
+									<img src="/assets/img/status-away.png" width="16" height="16" alt="incomplete" />
+								{% else %}
+									<img src="/assets/img/exclamation-red.png" width="16" height="16" alt="none" />
+								{% endif %}
+							{% endif %}
+						{% endif %}
+                        </td>
+						<td class="checklist">
+						{% if cl.DA and cl.DB and cl.DC and cl.DD and cl.DE and cl.DF and cl.DG and cl.DH %}
+                            <img src="/assets/img/status.png" width="16" height="16" alt="complete" />
+						{% else %}
+							{% if cl.DA or cl.DB or cl.DC or cl.DD or cl.DE or cl.DF or cl.DG or cl.DH %}
+								<img src="/assets/img/status-away.png" width="16" height="16" alt="incomplete" />
+							{% else %}
+								<img src="/assets/img/exclamation-red.png" width="16" height="16" alt="none" />
+							{% endif %}
+						{% endif %}
+                        </td>
+						<td class="checklist" id="results">
                             <img src="/assets/img/status.png" width="16" height="16" alt="complete" />
                         </td>
 						<td class="checklist">
-                            <img src="/assets/img/status.png" width="16" height="16" alt="complete" />
+						{# if the other checklist has no value for a particular field of interest then we have no conflict #}
+						{% expr ((cl.AA == cl.other.AA) or not cl.other.AA or not cl.AA) as flag1 %}
+						{% if flag1 %}
+                            <img src="/assets/img/status.png" width="16" height="16" alt="ok" />
+						{% else %}
+							<img src="/assets/img/status-busy.png" width="16" height="16" alt="conflict" />
+						{% endif %}
                         </td>
 						<td class="checklist">
-                            <img src="/assets/img/status.png" width="16" height="16" alt="complete" />
+						{% expr (cl.BA == cl.other.BA or not cl.other.BA or not cl.BA) and (cl.BB == cl.other.BB or not cl.other.BB or not cl.BB) and (cl.BC == cl.other.BC or not cl.other.BC or not cl.BC) and (cl.BD == cl.other.BD or not cl.other.BD or not cl.BD) and (cl.BE == cl.other.BE or not cl.other.BE or not cl.BE) and (cl.BF == cl.other.BF or not cl.other.BF or not cl.BF) and (cl.BG == cl.other.BG or not cl.other.BG or not cl.BG) and (cl.BH == cl.other.BH or not cl.other.BH or not cl.BH) and (cl.BJ == cl.other.BJ or not cl.other.BJ or not cl.BJ) and (cl.BK == cl.other.BK or not cl.other.BK or not cl.BK) and (cl.BM == cl.other.BM or not cl.other.BM or not cl.BM) and (cl.BN == cl.other.BN or not cl.other.BN or not cl.BN) and (cl.BP == cl.other.BP or not cl.other.BP or not cl.BP) as flag2 %}
+						{% if flag2 %}
+                            <img src="/assets/img/status.png" width="16" height="16" alt="ok" />
+						{% else %}
+							<img src="/assets/img/status-busy.png" width="16" height="16" alt="conflict" />
+						{% endif %}
                         </td>
 						<td class="checklist">
-                            <img src="/assets/img/status.png" width="16" height="16" alt="complete" />
+						{% expr (cl.CA == cl.other.CA or not cl.other.CA or not cl.CA) and (cl.CB == cl.other.CB or not cl.other.CB or not cl.CB) and (cl.CC == cl.other.CC or not cl.other.CC or not cl.CC) and (cl.CD == cl.other.CD or not cl.other.CD or not cl.CD) and (cl.CE == cl.other.CE or not cl.other.CE or not cl.CE) and (cl.CF == cl.other.CF or not cl.other.CF or not cl.CF) and (cl.CG == cl.other.CG or not cl.other.CG or not cl.CG) and (cl.CH == cl.other.CH or not cl.other.CH or not cl.CH) and (cl.CJ == cl.other.CJ or not cl.other.CJ or not cl.CJ) and (cl.CK == cl.other.CK or not cl.other.CK or not cl.CK) and (cl.CM == cl.other.CM or not cl.other.CM or not cl.CM) and (cl.CN == cl.other.CN or not cl.other.CN or not cl.CN) and (cl.CP == cl.other.CP or not cl.other.CP or not cl.CP) and (cl.CP == cl.other.CQ or not cl.other.CQ or not cl.CQ) as flag3 %}
+						{% if flag3 %}
+                            <img src="/assets/img/status.png" width="16" height="16" alt="ok" />
+						{% else %}
+							<img src="/assets/img/status-busy.png" width="16" height="16" alt="conflict" />
+						{% endif %}
                         </td>
 						<td class="checklist">
-                            <img src="/assets/img/status.png" width="16" height="16" alt="complete" />
+						{% expr (cl.DA == cl.other.DA or not cl.other.DA or not cl.DA) and (cl.DB == cl.other.DB or not cl.other.DB or not cl.DB) and (cl.DC == cl.other.DC or not cl.other.DC or not cl.DC) and (cl.DD == cl.other.DD or not cl.other.DD or not cl.DD) and (cl.DE == cl.other.DE or not cl.other.DE or not cl.DE) and (cl.DF == cl.other.DF or not cl.other.DF or not cl.DF) and (cl.DG == cl.other.DG or not cl.other.DG or not cl.DG) and (cl.DH == cl.other.DH or not cl.other.DH or not cl.DH) as flag4 %}
+						{% if flag4 %}
+                            <img src="/assets/img/status.png" width="16" height="16" alt="ok" />
+						{% else %}
+							<img src="/assets/img/status-busy.png" width="16" height="16" alt="conflict" />
+						{% endif %}
                         </td>
-						<td class="checklist">
-                            <img src="/assets/img/status.png" width="16" height="16" alt="complete" />
-                        </td>
-						<td class="checklist">
-                            <img src="/assets/img/status.png" width="16" height="16" alt="complete" />
-                        </td>
-						<td class="checklist">
-                            <img src="/assets/img/status.png" width="16" height="16" alt="complete" />
-                        </td>
-						<td class="checklist">
-                            <img src="/assets/img/status.png" width="16" height="16" alt="complete" />
+						<td class="checklist" id="results_flags">
+						{% if flag5 %}
+                            <img src="/assets/img/status.png" width="16" height="16" alt="ok" />
+						{% else %}
+							<img src="/assets/img/status-busy.png" width="16" height="16" alt="conflict" />
+						{% endif %}
                         </td>
                         {% if perms.psc.can_manage_data %}<td><a href="{% url psc.views.eday_checklist cl.id %}">Edit</a></td>{% endif %}
                     </tr>
@@ -165,8 +243,6 @@
 			{% endif %}
              <a href="{% query_string "page=page_details.last" "" %}"><span>&raquo;</span></a>
         </div>
-              
-
 		{% endif %}
     </div>
 </div>
