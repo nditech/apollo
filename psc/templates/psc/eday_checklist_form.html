@@ -4,15 +4,15 @@
 <script src="/assets/js/jquery-1.4.4.min.js" type="text/javascript" charset="utf-8"></script>
 <script type="text/javascript" charset="utf-8">
     $(function(){
-        $('.control').attr('checked', false);
         $('.control_text').attr('disabled', true);
-        $('.control').click(function(){
-            if($('input[name='+ $(this).attr('value')+']').attr('disabled') == false){
-                $('input[name='+ $(this).attr('value')+']').attr('disabled', true);
-            }else{
-                $('input[name='+ $(this).attr('value')+']').attr('disabled', false);
-            }
-        });
+
+		$('.control').click(function () {
+			if ($('input[name=control-'+ $(this).attr('value') +']').attr('disabled') == true) {
+				$('input[name=control-'+ $(this).attr('value') +']').attr('disabled', false);
+			} else {
+				$('input[name=control-'+ $(this).attr('value') +']').attr('disabled', true);
+			}
+		});
     });
 </script>
 {% endblock %}
@@ -22,6 +22,7 @@
 		<div class="box">
 				<h2>Checklist Details</h2>
 				<form action="{% url psc.views.eday_checklist checklist1.id %}" method="post" name='xxx'>
+				{% csrf_token %}
 						<div class="block">
 								<!-- checklist details -->
 								<table class="observer_details">
@@ -59,7 +60,7 @@
 							</div>
 						    </td></tr>
 						    <tr>
-							<td>&nbsp;</td><td>AA</td><td>{{ form.AA.help_text }} <br />Yes <strong>(1)</strong> No <strong>(2)</strong> Unchecked <strong>(3)</strong></td><td><input name='{{ form.AA.html_name }}' class='bigbox2' type='text' value="{{ form.initial.AA|default:'' }}"></td><td><input name='{{ form2.AA.html_name }}' class='bigbox2' type='text' value="{{ form2.initial.AA|default:'' }}"></td><td><input name='{{ form3.AA.html_name }}' class='control_text bigbox2' type='text' value="{{ form3.initial.AA|default:'' }}"></td><td><input type='checkbox' class="control" value="AAi"></td>
+							<td>&nbsp;</td><td>AA</td><td>{{ form.AA.help_text }} <br />Yes <strong>(1)</strong> No <strong>(2)</strong> Unchecked <strong>(3)</strong></td><td><input name='{{ form.AA.html_name }}' class='bigbox2' type='text' value="{{ form.initial.AA|default:'' }}"></td><td><input name='{{ form2.AA.html_name }}' class='bigbox2' type='text' value="{{ form2.initial.AA|default:'' }}"></td><td><input name='{{ form3.AA.html_name }}' class='control_text bigbox2' type='text' value="{{ form3.initial.AA|default:'' }}"></td><td><input type='checkbox' name="override" class="control" value="{{ form3.AA.name }}"></td>
 						    </tr>
 						    <tr><td colspan="7">
 							<div class="box">
@@ -67,10 +68,10 @@
 							</div>
 						    </td></tr>
 						    <tr>
-							<td>&nbsp;</td><td>BA</td><td>{{ form.BA.help_text }} <br />Open by 8am <strong>(1)</strong> Between 8am &amp; 9am <strong>(2)</strong> Between 9am &amp; 12noon <strong>(3)</strong> After by 12noon <strong>(4)</strong> Never Started <strong>(5)</strong></td><td><input name='{{ form.BA.html_name }}' class='bigbox2' type='text' value="{{ form.initial.BA|default:'' }}" ></td><td><input name='{{ form2.BA.html_name }}' type='text' class='bigbox2' value="{{ form2.initial.BA|default:'' }}"></td><td><input name='{{ form3.BA.html_name }}' type='text' class='control_text bigbox2' value="{{ form3.initial.BA|default:'' }}"></td><td><input type='checkbox' class="control" value="BAi"></td>
+							<td>&nbsp;</td><td>BA</td><td>{{ form.BA.help_text }} <br />Open by 8am <strong>(1)</strong> Between 8am &amp; 9am <strong>(2)</strong> Between 9am &amp; 12noon <strong>(3)</strong> After by 12noon <strong>(4)</strong> Never Started <strong>(5)</strong></td><td><input name='{{ form.BA.html_name }}' class='bigbox2' type='text' value="{{ form.initial.BA|default:'' }}" ></td><td><input name='{{ form2.BA.html_name }}' type='text' class='bigbox2' value="{{ form2.initial.BA|default:'' }}"></td><td><input name='{{ form3.BA.html_name }}' type='text' class='control_text bigbox2' value="{{ form3.initial.BA|default:'' }}"></td><td><input type='checkbox' name="override" class="control" value="{{ form3.BA.name }}"></td>
 						    </tr>
 						    <tr>
-							<td>&nbsp;</td><td>BB</td><td>{{ form.BB.help_text }}</td><td><input name='{{ form.BB.html_name }}' type='text' class='bigbox2' value="{{ form.initial.BB|default:'' }}"></td><td><input name='{{ form2.BB.html_name }}' type='text' class='bigbox2' value="{{ form2.initial.BB|default:'' }}"></td><td><input name='{{ form3.BB.html_name }}' type='text' class='control_text bigbox2' value="{{ form3.initial.BB|default:'' }}"></td><td><input type='checkbox' class="control" value="BBi"></td>
+							<td>&nbsp;</td><td>BB</td><td>{{ form.BB.help_text }}</td><td><input name='{{ form.BB.html_name }}' type='text' class='bigbox2' value="{{ form.initial.BB|default:'' }}"></td><td><input name='{{ form2.BB.html_name }}' type='text' class='bigbox2' value="{{ form2.initial.BB|default:'' }}"></td><td><input name='{{ form3.BB.html_name }}' type='text' class='control_text bigbox2' value="{{ form3.initial.BB|default:'' }}"></td><td><input type='checkbox' name="override" class="control" value="{{ form3.BB.name }}"></td>
 						    </tr>
 						    <tr>
 							<td>&nbsp;</td><td>BC</td><td>{{ form.BC.help_text }} <br />Yes <strong>(1)</strong> No <strong>(2)</strong> Unchecked <strong>(3)</strong></td><td><input name='{{ form.BC.html_name }}' type='text' class='bigbox2' value="{{form.initial.BC|default:''}}"></td><td><input name='{{ form2.BC.html_name }}' type='text' class='bigbox2' value="{{form2.initial.BC|default:''}}"></td><td><input name='{{form3.BC.html_name}}' type='text' class='control_text bigbox2' value="{{form3.initial.BC|default:''}}"></td><td><input type='checkbox' class="control" value="BCi"></td>

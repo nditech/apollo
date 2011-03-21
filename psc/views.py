@@ -486,7 +486,8 @@ def eday_checklist(request, checklist_id=0):
     checklist1 = get_object_or_404(EDAYChecklist, pk=checklist_id)
     checklist1, checklist2 = (checklist1, checklist1.other) if checklist1.checklist_index == '1' else (checklist1.other, checklist1)
     control_checklist = checklist1.control
-    if (request.POST):
+    
+    if (request.POST):        
         f1 = EDAYChecklistForm(request.POST, prefix="checklist1", instance=checklist1)
         f2 = EDAYChecklistForm(request.POST, prefix="checklist2", instance=checklist2)
         f3 = EDAYChecklistForm(request.POST, prefix="control", instance=control_checklist)
@@ -497,7 +498,7 @@ def eday_checklist(request, checklist_id=0):
             f2.save()
         
         # TODO: handle control checklist updates
-        return HttpResponseRedirect(reverse('psc.views.eday_checklist_list'))
+        return HttpResponseRedirect(reverse('eday_checklist_view'))
     else:
         f1 = EDAYChecklistForm(instance=checklist1, prefix="checklist1")
         f2 = EDAYChecklistForm(instance=checklist2, prefix="checklist2")
