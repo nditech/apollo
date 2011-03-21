@@ -499,9 +499,9 @@ def eday_checklist(request, checklist_id=0):
         # TODO: handle control checklist updates
         return HttpResponseRedirect(reverse('psc.views.eday_checklist_list'))
     else:
-        f1 = EDAYChecklistForm(instance=checklist1)
-        f2 = EDAYChecklistForm(instance=checklist2)
-        f3 = EDAYChecklistForm(instance=control_checklist)
+        f1 = EDAYChecklistForm(instance=checklist1, prefix="checklist1")
+        f2 = EDAYChecklistForm(instance=checklist2, prefix="checklist2")
+        f3 = EDAYChecklistForm(instance=control_checklist, prefix="control")
     return render_to_response('psc/eday_checklist_form.html', {'page_title': 'Election Day Checklist', 'checklist1': checklist1, 'checklist2': checklist2, 'control_checklist': control_checklist, 'form': f1, 'form2': f2, 'form3': f3}, context_instance=RequestContext(request))
 
 @permission_required('psc.can_manage_data', login_url='/')
