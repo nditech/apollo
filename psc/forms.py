@@ -140,7 +140,7 @@ DCOIncidentFormSet = modelformset_factory(DCOIncident)
 class EDAYChecklistForm(forms.ModelForm):
     class Meta:
         model = EDAYChecklist
-        exclude = ['location_type', 'location', 'observer', 'date']
+        exclude = ['location_type', 'location', 'observer', 'date', 'checklist_index', 'audit_log']
 
 class EDAYIncidentForm(forms.ModelForm):
     date = forms.ChoiceField(choices=tuple([('', '--')] + [(date, label) for (date, label) in EDAY_DAYS if date]))

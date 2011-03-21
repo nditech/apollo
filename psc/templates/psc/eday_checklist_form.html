@@ -59,7 +59,7 @@
 							</div>
 						    </td></tr>
 						    <tr>
-							<td>&nbsp;</td><td>AA</td><td>{{ form.AA.help_text }} <br />Yes <strong>(1)</strong> No <strong>(2)</strong> Unchecked <strong>(3)</strong></td><td><input name='{{ form.AA.name }}' class='bigbox2' type='text'></td><td><input name='{{ form.AA.name }}' class='bigbox2' type='text'></td><td><input name='AAi' class='control_text bigbox2' type='text'></td><td><input type='checkbox' class="control" value="AAi"></td>
+							<td>&nbsp;</td><td>AA</td><td>{{ form.AA.help_text }} <br />Yes <strong>(1)</strong> No <strong>(2)</strong> Unchecked <strong>(3)</strong></td><td><input name='{{ form.AA.name }}' class='bigbox2' type='text' value="{{ form.initial.AA|default:'' }}"></td><td><input name='{{ form2.AA.name }}' class='bigbox2' type='text' value="{{ form2.initial.AA|default:'' }}"></td><td><input name='{{ form3.AA.name }}' class='control_text bigbox2' type='text' value="{{ form3.initial.AA|default:'' }}"></td><td><input type='checkbox' class="control" value="AAi"></td>
 						    </tr>
 						    <tr><td colspan="7">
 							<div class="box">
@@ -67,10 +67,10 @@
 							</div>
 						    </td></tr>
 						    <tr>
-							<td>&nbsp;</td><td>BA</td><td>{{ form.BA.help_text }} <br />Open by 8am <strong>(1)</strong> Between 8am & 9am <strong>(2)</strong> Between 9am & 12noon <strong>(3)</strong> After by 12noon <strong>(4)</strong> Never Started <strong>(5)</strong></td><td><input name='{{ form.BA.name }}' class='bigbox2' type='text' ></td><td><input name='{{ form.BA.name }}' type='text' class='bigbox2'></td><td><input name='BAi' type='text' class='control_text bigbox2'></td><td><input type='checkbox' class="control" value="BAi"></td>
+							<td>&nbsp;</td><td>BA</td><td>{{ form.BA.help_text }} <br />Open by 8am <strong>(1)</strong> Between 8am &amp; 9am <strong>(2)</strong> Between 9am &amp; 12noon <strong>(3)</strong> After by 12noon <strong>(4)</strong> Never Started <strong>(5)</strong></td><td><input name='{{ form.BA.name }}' class='bigbox2' type='text' value="{{ form.initial.BA|default:'' }}" ></td><td><input name='{{ form2.BA.name }}' type='text' class='bigbox2' value="{{ form2.initial.BA|default:"" }}"></td><td><input name='{{ form3.BA.name }}' type='text' class='control_text bigbox2' value="{{ form3.initial.BA|default:'' }}"></td><td><input type='checkbox' class="control" value="BAi"></td>
 						    </tr>
 						    <tr>
-							<td>&nbsp;</td><td>BB</td><td>{{ form.BB.help_text }}</td><td><input name='{{ form.BB.name }}' type='text' class='bigbox2'></td><td><input name='{{ form.BB.name }}' type='text' class='bigbox2'></td><td><input name='BBi' type='text' class='control_text bigbox2'></td><td><input type='checkbox' class="control" value="BBi"></td>
+							<td>&nbsp;</td><td>BB</td><td>{{ form.BB.help_text }}</td><td><input name='{{ form.BB.name }}' type='text' class='bigbox2' value="{{ form.initial.BB|default:'' }}"></td><td><input name='{{ form2.BB.name }}' type='text' class='bigbox2' value="{{ form2.initial.BB|default:'' }}"></td><td><input name='{{ form3.BB.name }}' type='text' class='control_text bigbox2' value="{{ form3.initial.BB|default:'' }}"></td><td><input type='checkbox' class="control" value="BBi"></td>
 						    </tr>
 						    <tr>
 							<td>&nbsp;</td><td>BC</td><td>{{ form.BC.help_text }} <br />Yes <strong>(1)</strong> No <strong>(2)</strong> Unchecked <strong>(3)</strong></td><td><input name='{{ form.BC.name }}' type='text' class='bigbox2'></td><td><input name='{{ form.BC.name }}' type='text' class='bigbox2'></td><td><input name='BCi' type='text' class='control_text bigbox2'></td><td><input type='checkbox' class="control" value="BCi"></td>
@@ -111,7 +111,7 @@
 							</div>
 						    </td></tr>
 						    <tr>
-							<td>&nbsp;</td><td>CA</td><td>{{ form.CA.help_text }} <br />Before 1pm <strong>(1)</strong> Between 1pm & 2pm <strong>(2)</strong> Between 2pm & 3pm <strong>(3)</strong> After 3pm <strong>(4)</strong> Never Started <strong>(5)</strong></td><td><input name='{{ form.CA.name }}' type='text' class='bigbox2'></td><td><input name='{{ form.CA.name }}' type='text' class='bigbox2'></td><td><input name='CAi' type='text' class='control_text bigbox2'></td><td><input type='checkbox' class="control" value="CAi"></td>
+							<td>&nbsp;</td><td>CA</td><td>{{ form.CA.help_text }} <br />Before 1pm <strong>(1)</strong> Between 1pm &amp; 2pm <strong>(2)</strong> Between 2pm &amp; 3pm <strong>(3)</strong> After 3pm <strong>(4)</strong> Never Started <strong>(5)</strong></td><td><input name='{{ form.CA.name }}' type='text' class='bigbox2'></td><td><input name='{{ form.CA.name }}' type='text' class='bigbox2'></td><td><input name='CAi' type='text' class='control_text bigbox2'></td><td><input type='checkbox' class="control" value="CAi"></td>
 						    </tr>
 						    <tr>
 							<td>&nbsp;</td><td>CB</td><td>{{ form.CB.help_text }} <br />Yes <strong>(1)</strong> No <strong>(2)</strong> Unchecked <strong>(3)</strong></td><td><input name='{{ form.CB.name }}' type='text' class='bigbox2'></td><td><input name='{{ form.CB.name }}' type='text' class='bigbox2'></td><td><input name='CBi' type='text' class='control_text bigbox2'></td><td><input type='checkbox' class="control" value="CBi"></td>

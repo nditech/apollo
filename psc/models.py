@@ -577,4 +577,4 @@ def edaychecklist_handler(sender, **kwargs):
             pass
 
 # while creating checklists, this signal will need to be disabled
-#post_save.connect(edaychecklist_handler, sender=EDAYChecklist)
+post_save.connect(edaychecklist_handler, sender=EDAYChecklist)

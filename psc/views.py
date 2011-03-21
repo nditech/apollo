@@ -485,14 +485,24 @@ def dco_checklist(request, checklist_id=0):
 def eday_checklist(request, checklist_id=0):   
     checklist1 = get_object_or_404(EDAYChecklist, pk=checklist_id)
     checklist1, checklist2 = (checklist1, checklist1.other) if checklist1.checklist_index == '1' else (checklist1.other, checklist1)
+    control_checklist = checklist1.control
     if (request.POST):
-        f = EDAYChecklistForm(request.POST, instance=checklist1)
-        if f.is_valid():
-            f.save()
+        f1 = EDAYChecklistForm(request.POST, prefix="checklist1", instance=checklist1)
+        f2 = EDAYChecklistForm(request.POST, prefix="checklist2", instance=checklist2)
+        f3 = EDAYChecklistForm(request.POST, prefix="control", instance=control_checklist)
+        
+        if f1.is_valid():
+            f1.save()
+        if f2.is_valid():
+            f2.save()
+        
+        # TODO: handle control checklist updates
         return HttpResponseRedirect(reverse('psc.views.eday_checklist_list'))
     else:
-        f = EDAYChecklistForm(instance=checklist1)
-    return render_to_response('psc/eday_checklist_form.html', {'page_title': 'Election Day Checklist', 'checklist1': checklist1, 'checklist2': checklist2, 'form': f}, context_instance=RequestContext(request))
+        f1 = EDAYChecklistForm(instance=checklist1)
+        f2 = EDAYChecklistForm(instance=checklist2)
+        f3 = EDAYChecklistForm(instance=control_checklist)
+    return render_to_response('psc/eday_checklist_form.html', {'page_title': 'Election Day Checklist', 'checklist1': checklist1, 'checklist2': checklist2, 'control_checklist': control_checklist, 'form': f1, 'form2': f2, 'form3': f3}, context_instance=RequestContext(request))
 
 @permission_required('psc.can_manage_data', login_url='/')
 @login_required()
@@ -997,52 +1007,52 @@ def export(request, model, query_set=None):
 
         contacts = query_set
         for contact in contacts:
-	    pscid = contact.observer_id
-	    role = contact.role
-	    if role  == 'ZC':
-		zone = contact.location.name
-	    elif role in ['NSC', 'NS', 'SC']:
-		zone = contact.location.parent.name
-	    elif role ==  'SDC':
-		zone = contact.location.parent.parent.name
-	    elif role == 'LGA':
-		zone = contact.location.parent.parent.parent.name
-	    elif role == 'OBS':
-		zone = contact.location.parent.parent.parent.parent.name
-	    if role in ['NSC', 'NS', 'SC']:
-		state = contact.location.name
-	    elif role == 'SDC':
-		state = contact.location.parent.name
-	    elif role == 'LGA':
-		state = contact.location.parent.parent.name
-	    elif role == 'OBS':
-		state = contact.location.parent.parent.parent.name
-	    else:
-		state = "Unknown"
-	    if role == 'SDC':
-		sd = contact.location.name
-	    elif role == 'LGA':
-		sd = contact.location.parent.name
-	    elif role == 'OBS':
-		sd = contact.location.parent.parent.name
-	    else:
-		sd = "Unknown"
-	    if role == 'LGA':
-		lga = contact.location.name
-	    elif role == 'OBS':
-		lga = contact.location.parent.name
-	    else:
-		lga = "Unknown"
-	    if role == 'OBS':
-		pu = smart_str(contact.location.name)
-	    else:
-		pu = "Unknown"
-	    name = smart_str(contact.name)
-	    organisation = contact.partner
-	    gender = contact.gender
-	    phone = contact.phone
-	    email = contact.email
-	    writer.writerow([pscid, zone, state, sd, lga, pu, name, gender, phone, email, role, organisation])
+            pscid = contact.observer_id
+            role = contact.role
+            if role  == 'ZC':
+                zone = contact.location.name
+            elif role in ['NSC', 'NS', 'SC']:
+                zone = contact.location.parent.name
+            elif role ==  'SDC':
+                zone = contact.location.parent.parent.name
+            elif role == 'LGA':
+                zone = contact.location.parent.parent.parent.name
+            elif role == 'OBS':
+                zone = contact.location.parent.parent.parent.parent.name
+            if role in ['NSC', 'NS', 'SC']:
+                state = contact.location.name
+            elif role == 'SDC':
+                state = contact.location.parent.name
+            elif role == 'LGA':
+                state = contact.location.parent.parent.name
+            elif role == 'OBS':
+                state = contact.location.parent.parent.parent.name
+            else:
+                state = "Unknown"
+            if role == 'SDC':
+                sd = contact.location.name
+            elif role == 'LGA':
+                sd = contact.location.parent.name
+            elif role == 'OBS':
+                sd = contact.location.parent.parent.name
+            else:
+                sd = "Unknown"
+            if role == 'LGA':
+                lga = contact.location.name
+            elif role == 'OBS':
+                lga = contact.location.parent.name
+            else:
+                lga = "Unknown"
+            if role == 'OBS':
+                pu = smart_str(contact.location.name)
+            else:
+                pu = "Unknown"
+                name = smart_str(contact.name)
+                organisation = contact.partner
+                gender = contact.gender
+                phone = contact.phone
+                email = contact.email
+            writer.writerow([pscid, zone, state, sd, lga, pu, name, gender, phone, email, role, organisation])
     # export here
     # TODO: refactor
     export_method = eval("export_%s" % model)
