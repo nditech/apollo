@@ -177,8 +177,6 @@ class EDAYChecklistFilterForm(forms.Form):
     day = forms.ChoiceField(choices=EDAY_DAYS, required=False)
     zone = forms.ChoiceField(choices=ZONES, required=False)
     state = forms.ChoiceField(choices=STATES, required=False)
-    #first = forms.ChoiceField(choices=DCO_ARRIVAL, required=False, label='Arrival Text')
-    #second = forms.ChoiceField(choices=DCO_STATUS, required=False, label='2nd SMS')
     
 class ContactlistFilterForm(forms.Form):
     observer_id = forms.CharField(required=False, label="PSC ID", max_length=6, widget=forms.TextInput(attrs={'autocomplete':'off','style':'width:7em'}))
@@ -188,8 +186,6 @@ class ContactlistFilterForm(forms.Form):
     lga = forms.ChoiceField(choices=LGAS, required=False, label='LGA')
     role = forms.ChoiceField(choices=ROLES, required=False, label='Role')
     partner = forms.ChoiceField(choices=PARTNERS, required=False, label='Partner')
-
-
 
 class VRIncidentFilterForm(forms.Form):
     observer_id = forms.CharField(required=False, label="PSC ID", max_length=6, widget=forms.TextInput(attrs={'autocomplete':'off','style':'width:7em'}))

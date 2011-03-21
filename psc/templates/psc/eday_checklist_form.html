@@ -3,19 +3,6 @@
 {{ block.super }}
 <script src="/assets/js/jquery-1.4.4.min.js" type="text/javascript" charset="utf-8"></script>
 <script type="text/javascript" charset="utf-8">
-    $(function() {
-        //uncheck the rest if..
-        $("input[name=F9]").click(function(){
-           $("input[name=F1]").attr('checked', false)
-           $("input[name=F2]").attr('checked', false)
-           $("input[name=F3]").attr('checked', false)
-           $("input[name=F4]").attr('checked', false)
-           $("input[name=F5]").attr('checked', false)
-           $("input[name=F6]").attr('checked', false)
-           $("input[name=F7]").attr('checked', false)
-           $("input[name=F8]").attr('checked', false)
-        });
-    });
     $(function(){
         $('.control').attr('checked', false);
         $('.control_text').attr('disabled', true);
