@@ -539,6 +539,7 @@ class Party(models.Model):
     
     class Meta:
         verbose_name_plural = "Parties"
+        ordering = ['code']
         
 class Contesting(models.Model):
     code = models.CharField("Checklist Code", max_length=2)
@@ -546,7 +547,7 @@ class Contesting(models.Model):
     state = models.ForeignKey(State)
     
     def __unicode__(self):
-        return self.party.code
+        return "%s => %s (%s)" % (self.state.name, self.party.code, self.code)
     
     class Meta:
         verbose_name_plural = "Contesting"
