@@ -115,7 +115,7 @@
                         <td>{{ cl.observer.district.name|truncatewords:3 }}</td>
 						<td>{{ cl.observer.name|truncatewords:2 }}{% if cl.observer.phone %} (<strong>{{ cl.observer.phone }}</strong>){% endif %}</td>
                         <td class="checklist">
-						{% if cl.submitted and cl.AA %}
+						{% if cl.AA %}
                             <img src="/assets/img/status.png" width="16" height="16" alt="complete" />
 						{% else %}
                         	<img src="/assets/img/exclamation-red.png" width="16" height="16" alt="none" />

@@ -4,13 +4,13 @@
 <script src="/assets/js/jquery-1.4.4.min.js" type="text/javascript" charset="utf-8"></script>
 <script type="text/javascript" charset="utf-8">
     $(function(){
-        $('.control_text').attr('disabled', true);
+        $('.control_text').attr('disabled', 'disabled');
 
 		$('.control').click(function () {
-			if ($('input[name=control-'+ $(this).attr('value') +']').attr('disabled') == true) {
-				$('input[name=control-'+ $(this).attr('value') +']').attr('disabled', false);
+			if ($('input[name=control-'+ $(this).attr('value') +']').attr('disabled')) {
+				$('input[name=control-'+ $(this).attr('value') +']').removeAttr('disabled');
 			} else {
-				$('input[name=control-'+ $(this).attr('value') +']').attr('disabled', true);
+				$('input[name=control-'+ $(this).attr('value') +']').attr('disabled', 'disabled');
 			}
 		});
     });

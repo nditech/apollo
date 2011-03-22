@@ -492,12 +492,19 @@ def eday_checklist(request, checklist_id=0):
         f2 = EDAYChecklistForm(request.POST, prefix="checklist2", instance=checklist2)
         f3 = EDAYChecklistForm(request.POST, prefix="control", instance=control_checklist)
         
+        overrides = request.POST.getlist('override')
+        # create overrides for the control checklist to prevent further edits via SMS
+        for override in overrides:
+            obj, created = EDAYChecklistOverrides.objects.get_or_create(field=override, checklist=control_checklist)
+        
+        # the control checklist should be saved first before the others
+        if f3.is_valid():
+            f3.save()
         if f1.is_valid():
             f1.save()
         if f2.is_valid():
             f2.save()
         
-        # TODO: handle control checklist updates
         return HttpResponseRedirect(reverse('eday_checklist_view'))
     else:
         f1 = EDAYChecklistForm(instance=checklist1, prefix="checklist1")
