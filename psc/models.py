@@ -465,6 +465,14 @@ class EDAYChecklist(models.Model):
                 return EDAYChecklist.objects.get(date=self.date, checklist_index=EDAYChecklist.EDAY_CHECK[2][0], location_type=self.location_type, location_id=self.location_id)
             except EDAYChecklist.DoesNotExist:
                 return None
+    
+    @property
+    def contesting(self):
+        return self.observer.state.contesting_set.values_list('code', flat=True)
+        
+    @property
+    def parties(self):
+        return dict(self.observer.state.contesting_set.values_list('code','party__code'))
 
     def __unicode__(self):
         return "EDAY Checklist for %s from %s on %s" % (self.location, self.observer, self.date)
@@ -540,7 +548,7 @@ class Party(models.Model):
     class Meta:
         verbose_name_plural = "Parties"
         ordering = ['code']
-        
+                
 class Contesting(models.Model):
     code = models.CharField("Checklist Code", max_length=2)
     party = models.ForeignKey(Party)
