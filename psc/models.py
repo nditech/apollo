@@ -129,7 +129,7 @@ class Observer(models.Model):
     dob = models.DateField("Date of Birth", blank=True, null=True)
     email = models.EmailField(blank=True, null=True)
     phone = models.CharField(max_length=14, null=True, blank=True)
-    observer_id = models.CharField(max_length=6)
+    observer_id = models.CharField(max_length=6, db_index=True)
     location_type = models.ForeignKey(ContentType, null=True, blank=True)
     location_id = models.PositiveIntegerField(null=True, blank=True)
     location = generic.GenericForeignKey("location_type", "location_id")
@@ -220,7 +220,7 @@ class VRChecklist(models.Model):
     location_id = models.PositiveIntegerField(null=True, blank=True)
     location = generic.GenericForeignKey("location_type", "location_id")
     observer = models.ForeignKey(Observer)
-    date = models.DateField()
+    date = models.DateField(db_index=True)
     A = models.IntegerField(blank=True, null=True, choices=OPENTIME, help_text='What time did the registration centre open? (tick one) (If the centre has not opened by 12 noon, complete a critical incident form and report immediately)')
     B = models.PositiveSmallIntegerField(blank=True, default=0, choices=YES_NO, help_text='Were you permitted to observe at the registration centre? (tick Yes or No) (If not permitted to observe, complete a critical incident form and immediately report)')
     C = models.IntegerField(blank=True, null=True, help_text='How many registration officers were at the registration centre? (enter number)')
@@ -268,7 +268,7 @@ class VRIncident(models.Model):
     location_id = models.PositiveIntegerField(null=True, blank=True)
     location = generic.GenericForeignKey("location_type", "location_id")
     observer = models.ForeignKey(Observer)
-    date = models.DateField()
+    date = models.DateField(db_index=True)
     A = models.NullBooleanField(blank=True)
     B = models.NullBooleanField(blank=True)
     C = models.NullBooleanField(blank=True)
@@ -300,7 +300,7 @@ class DCOChecklist(models.Model):
     location_id = models.PositiveIntegerField(null=True, blank=True)
     location = generic.GenericForeignKey("location_type", "location_id")
     observer = models.ForeignKey(Observer)
-    date = models.DateField()
+    date = models.DateField(db_index=True)
     A = models.PositiveSmallIntegerField(blank=True, default=0, choices=YES_NO, help_text='Was the registration centre open? (tick Yes or No) (If not permitted to observe, complete a critical incident form and immediately report)')
     B = models.PositiveSmallIntegerField(blank=True, default=0, choices=YES_NO, help_text='Were you permitted to observe at the registration centre? (tick Yes or No) (If not permitted to observe, complete a critical incident form and immediately report)')
     C = models.IntegerField(blank=True, null=True, help_text='How many registration officers were at the registration centre? (enter number)')
@@ -344,7 +344,7 @@ class DCOIncident(models.Model):
     location_id = models.PositiveIntegerField(null=True, blank=True)
     location = generic.GenericForeignKey("location_type", "location_id")
     observer = models.ForeignKey(Observer)
-    date = models.DateField()
+    date = models.DateField(db_index=True)
     A = models.NullBooleanField(blank=True)
     B = models.NullBooleanField(blank=True)
     C = models.NullBooleanField(blank=True)
@@ -372,7 +372,7 @@ class EDAYChecklist(models.Model):
     location_id = models.PositiveIntegerField(null=True, blank=True)
     location = generic.GenericForeignKey("location_type", "location_id")
     observer = models.ForeignKey(Observer)
-    date = models.DateField()
+    date = models.DateField(db_index=True)
     AA = models.PositiveSmallIntegerField(blank=True, null=True, default=0, choices=YES_NO, help_text='Had any polling officials arrived by 7:30AM?')
     BA = models.IntegerField(blank=True, null=True, choices=VA_OPENTIME, help_text='What time did the accreditation begin? (tick one)')
     BB = models.IntegerField(blank=True, null=True, help_text="What is the unit's three digit INEC code? (this is public information)")
@@ -412,7 +412,7 @@ class EDAYChecklist(models.Model):
     
     comment = models.CharField(max_length=200, blank=True)
     submitted = models.BooleanField(default=False, help_text="This field tracks if (even though already created), this report has been submitted by the reporter")
-    checklist_index = models.CharField(max_length=1, default='1', choices=EDAY_CHECK, help_text='This fields helps to identify the reporter sending a particular checklist')
+    checklist_index = models.CharField(max_length=1, default='1', choices=EDAY_CHECK, help_text='This fields helps to identify the reporter sending a particular checklist', db_index=True)
     audit_log = AuditLog()
     
     @property
@@ -452,7 +452,7 @@ class EDAYIncident(models.Model):
     location_id = models.PositiveIntegerField(null=True, blank=True)
     location = generic.GenericForeignKey("location_type", "location_id")
     observer = models.ForeignKey(Observer)
-    date = models.DateTimeField()
+    date = models.DateTimeField(db_index=True)
     A = models.NullBooleanField(blank=True)
     B = models.NullBooleanField(blank=True)
     C = models.NullBooleanField(blank=True)
@@ -502,7 +502,7 @@ import urllib2
 
 class Party(models.Model):
     name = models.CharField("Party Full Name",max_length=100, blank="true", null="true")
-    code = models.CharField("Political Party", max_length=5)
+    code = models.CharField("Political Party", max_length=5, db_index=True)
     
     def __unicode__(self):
         return self.code
