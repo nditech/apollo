@@ -269,7 +269,7 @@ col.colC {
 	width:8em;
 }
 th, td {
-	padding:.2em .5em;
+	padding:.5em .5em;
 	text-align:left;
 }
 th.checklist, td.checklist {
@@ -828,4 +828,17 @@ table.observer_details {
 
 ul.main li.logout a{
     background-color:#AB3130
+}
+
+/*----------------- custom styles -----------------*/
+.table_heading {
+    background: skyBlue;
+    font-size:1em;
+    color:white;
+    text-transform:uppercase;
+    padding-left:1.5em;
+}
+.table_heading2 {
+    background: skyBlue;
+    color:white;
 }
