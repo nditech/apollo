@@ -264,19 +264,16 @@ class App(AppBase):
             return msg.respond('DCO Incident report accepted! You sent: %s' % msg.message_only)
             
     def _eday_checklist(self, msg, params):
-        # determine location and date
-        self._preprocess(msg, params)
-
         # Create the checklist
         try:
             eday = EDAYChecklist.objects.filter(date__range=(msg.date-timedelta(3), msg.date), observer=msg.observer, checklist_index=msg.observer.observer_id[-1]).order_by('-date')[0]
-            eday.location = msg.location
+            eday.location = msg.observer.location
             eday.submitted = True
         except (EDAYChecklist.DoesNotExist, IndexError):
             eday = EDAYChecklist()
             eday.date = msg.date
             eday.observer = msg.observer
-            eday.location = msg.location
+            eday.location = msg.observer.location
             eday.submitted = True
 
         if params['comment']:
@@ -315,15 +312,12 @@ class App(AppBase):
             return msg.respond('EDAY Checklist report accepted! You sent: %s' % msg.message_only)
 
     def _eday_incident(self, msg, params):
-        # determine location and date
-        self._preprocess(msg, params)
-
         # Create the Incident
         inc = EDAYIncident() 
         inc.date = msg.date
         inc.observer = msg.observer
-        if msg.location:
-            inc.location = msg.location
+        if msg.observer.location:
+            inc.location = msg.observer.location
 
         for case in list(params['responses'].upper()):
             if hasattr(inc, case):
