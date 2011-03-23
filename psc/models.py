@@ -555,7 +555,7 @@ class Contesting(models.Model):
     state = models.ForeignKey(State)
     
     def __unicode__(self):
-        return "%s => %s (%s)" % (self.state.name, self.party.code, self.code)
+        return '%s State %s has the code: %s' %(self.state.name, self.party.code, self.code)
     
     class Meta:
         verbose_name_plural = "Contesting"

@@ -6,6 +6,9 @@ from django.contrib import admin
 from .models import Zone, State, District, LGA, Ward, RegistrationCenter, VRChecklist, VRIncident, DCOChecklist, DCOIncident, Observer, EDAYChecklist, EDAYIncident
 from .models import Partner, Party, Contesting
 
+class ContestingAdmin(admin.ModelAdmin):
+    list_display = ('state', 'party', 'code')
+
 admin.site.register(Zone)
 admin.site.register(State)
 admin.site.register(District)
@@ -21,4 +24,4 @@ admin.site.register(Partner)
 admin.site.register(EDAYChecklist)
 admin.site.register(EDAYIncident)
 admin.site.register(Party)
-admin.site.register(Contesting)
+admin.site.register(Contesting, ContestingAdmin)
