@@ -162,8 +162,8 @@
 						    <tr>
 							<td>&nbsp;</td><td>DH</td><td>{{ form.DH.help_text }}</td><td><input name='{{ form.DH.html_name }}' type='text' class='bigbox2' value="{{form.initial.DH|default:''}}"></td><td><input name='{{ form2.DH.html_name }}' type='text' class='bigbox2' value="{{form2.initial.DH|default:''}}"></td><td><input name='{{form3.DH.html_name}}' type='text' class='control_text bigbox2' value="{{form3.initial.DH|default:''}}"></td><td><input type='checkbox' class="control" name="override" value="{{ form3.DH.name }}"></td>
 						    </tr>
-						    <tr><td colspan="7" class="table_heading">Official Election Results</td></tr>
 						    {% if 'EA' in checklist1.contesting %}
+						    <tr><td colspan="7" class="table_heading">Official Election Results</td></tr>
 						    <tr>
 							<td>&nbsp;</td><td>EA</td><td>Votes for {{ checklist1.parties.EA }}</td><td><input name='{{ form.EA.html_name }}' type='text' class='bigbox2' value="{{form.initial.EA|default:''}}"></td><td><input name='{{ form2.EA.html_name }}' type='text' class='bigbox2' value="{{form2.initial.EA|default:''}}"></td><td><input name='{{form3.EA.html_name}}' type='text' class='control_text bigbox2' value="{{form3.initial.EA|default:''}}"></td><td><input type='checkbox' class="control" name="override" value="{{ form3.EA.name }}"></td>
 						    </tr>
