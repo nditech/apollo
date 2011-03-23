@@ -42,6 +42,28 @@ VR_DAYS = (('', 'All'),
         (datetime.date(datetime(2011, 1, 29)), 'Sat 29-Jan'),
         (datetime.date(datetime(2011, 2, 3)), 'Thu 03-Feb'),
         (datetime.date(datetime(2011, 2, 5)), 'Sat 05-Feb'))
+EDAY_CHECKLIST_1ST = (('', 'All'),
+                    (1, 'Complete'),
+                    (2, 'Missing'))
+EDAY_CHECKLIST_2ND = (('', 'All'),
+                    (1, 'Complete'),
+                    (2, 'Partial'),
+                    (3, 'Not Open'),
+                    (4, 'Problem'),
+                    (5, 'Missing'))
+EDAY_CHECKLIST_3RD = (('', 'All'),
+                    (1, 'Complete'),
+                    (2, 'Partial'),
+                    (3, 'Not Open'),
+                    (4, 'Problem'))
+EDAY_CHECKLIST_4TH = (('', 'All'),
+                    (1, 'Complete'),
+                    (2, 'Partial'),
+                    (3, 'Missing'))
+EDAY_CHECKLIST_5TH = (('', 'All'),
+                    (1, 'Complete'),
+                    (2, 'Partial'),
+                    (3, 'Missing'))
 
 EDAY_DAYS = (('', 'All'),
         (datetime.date(datetime(2011, 3, 31)), 'Thu 31-Mar'),
@@ -177,6 +199,11 @@ class EDAYChecklistFilterForm(forms.Form):
     day = forms.ChoiceField(choices=EDAY_DAYS, required=False)
     zone = forms.ChoiceField(choices=ZONES, required=False)
     state = forms.ChoiceField(choices=STATES, required=False)
+    first = forms.ChoiceField(choices=EDAY_CHECKLIST_1ST, required=False, label='1st SMS')
+    second = forms.ChoiceField(choices=EDAY_CHECKLIST_2ND, required=False, label='2nd SMS')
+    third = forms.ChoiceField(choices=EDAY_CHECKLIST_3RD, required=False, label='3rd SMS')
+    fourth = forms.ChoiceField(choices=EDAY_CHECKLIST_4TH, required=False, label='4th SMS')
+    fifth = forms.ChoiceField(choices=EDAY_CHECKLIST_5TH, required=False, label='5th SMS')
     
 class ContactlistFilterForm(forms.Form):
     observer_id = forms.CharField(required=False, label="PSC ID", max_length=6, widget=forms.TextInput(attrs={'autocomplete':'off','style':'width:7em'}))
