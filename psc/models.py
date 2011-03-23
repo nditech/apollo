@@ -8,6 +8,7 @@ from audit_log.models import fields
 from audit_log.models.managers import AuditLog
 from django.db.models.signals import post_save
 from django.conf import settings
+from psc_helpers import model_attribute_cache as cache
 
 class Zone(models.Model):
     name = models.CharField(max_length=100)
@@ -30,6 +31,7 @@ class State(models.Model):
         return self.name
     
     @property
+    @cache
     def contesting_codes(self):
         return self.contesting_set.all().values_list('code', flat=True)
 
@@ -151,6 +153,7 @@ class Observer(models.Model):
         return self.observer_id
     
     @property
+    @cache
     def zone(self):
         if self.role == 'ZC':
             return self.location
@@ -164,6 +167,7 @@ class Observer(models.Model):
             return self.location.parent.parent.parent.parent
     
     @property
+    @cache
     def state(self):
         if self.role in ['SC', 'NS', 'NSC']:
             return self.location
@@ -177,6 +181,7 @@ class Observer(models.Model):
             return None
 
     @property
+    @cache
     def district(self):
         if self.role == 'SDC':
             return self.location
@@ -188,6 +193,7 @@ class Observer(models.Model):
             return None
 
     @property
+    @cache
     def lga(self):
         if self.role == 'LGA':
             return self.location
@@ -197,6 +203,7 @@ class Observer(models.Model):
             return None
         
     @property
+    @cache
     def ps(self):
         if self.role == 'OBS':
             return self.location
@@ -446,31 +453,35 @@ class EDAYChecklist(models.Model):
     audit_log = AuditLog()
     
     @property
+    @cache
     def other(self):
         if self.checklist_index in [eday[0] for eday in EDAYChecklist.EDAY_CHECK[:2]]:
             other_index = EDAYChecklist.EDAY_CHECK[0][0] if self.checklist_index == EDAYChecklist.EDAY_CHECK[1][0] else EDAYChecklist.EDAY_CHECK[1][0]
             try:
-                return EDAYChecklist.objects.get(date=self.date, checklist_index=other_index, location_type=self.location_type, location_id=self.location_id)
+                return EDAYChecklist.objects.select_related().get(date=self.date, checklist_index=other_index, location_type=self.location_type, location_id=self.location_id)
             except EDAYChecklist.DoesNotExist:
                 return None
         else:
             return None
     
     @property
+    @cache
     def control(self):
         if self.checklist_index == EDAYChecklist.EDAY_CHECK[2]:
             return None
         else:
             try:
-                return EDAYChecklist.objects.get(date=self.date, checklist_index=EDAYChecklist.EDAY_CHECK[2][0], location_type=self.location_type, location_id=self.location_id)
+                return EDAYChecklist.objects.select_related().get(date=self.date, checklist_index=EDAYChecklist.EDAY_CHECK[2][0], location_type=self.location_type, location_id=self.location_id)
             except EDAYChecklist.DoesNotExist:
                 return None
     
     @property
+    @cache
     def contesting(self):
         return self.observer.state.contesting_set.values_list('code', flat=True)
         
     @property
+    @cache
     def parties(self):
         return dict(self.observer.state.contesting_set.values_list('code','party__code'))
 
