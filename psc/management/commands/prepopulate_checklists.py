@@ -58,15 +58,14 @@ class Command(BaseCommand):
                     if day[0]:
                         report_date = day[0]
                         rc = observer.location
-                        eday, created = EDAYChecklist.objects.get_or_create(date=report_date, observer=observer, checklist_index=observer.observer_id[-1], location_type=ContentType.objects.get_for_model(rc), location_id=rc.id)
+                        eday, created = EDAYChecklist.objects.get_or_create(date=report_date, observer=observer, checklist_index='1' if int(observer.observer_id[-1]) % 2 else '2', location_type=ContentType.objects.get_for_model(rc), location_id=rc.id)
                         if created:
                             eday_reports_created += 1
                     
-                        if observer.observer_id.endswith('1'):
+                        if int(observer.observer_id[-1]) % 2:
                             eday_control, control_created = EDAYChecklist.objects.get_or_create(date=report_date, observer=observer, checklist_index='3', location_type=ContentType.objects.get_for_model(rc), location_id=rc.id)
                             if control_created:
                                 eday_reports_created += 1
-
         
             lga_supervisors = Observer.objects.filter(role__iexact='LGA')
             for lga_supervisor in lga_supervisors:
@@ -74,12 +73,12 @@ class Command(BaseCommand):
                     if day[0]:
                         report_date = day[0]
                         rc = lga_supervisor.location
-                        eday, created = EDAYChecklist.objects.get_or_create(date=report_date, observer=lga_supervisor, checklist_index=lga_supervisor.observer_id[-1], location_type=ContentType.objects.get_for_model(rc), location_id=rc.id)
+                        eday, created = EDAYChecklist.objects.get_or_create(date=report_date, observer=lga_supervisor, checklist_index='1' if int(lga_supervisor.observer_id[-1]) % 2 else '2', location_type=ContentType.objects.get_for_model(rc), location_id=rc.id)
                         if created:
                             eday_reports_created += 1
                     
                     
-                        if lga_supervisor.observer_id.endswith('1'):
+                        if int(lga_supervisor.observer_id[-1]) % 2:
                             eday_control, control_created = EDAYChecklist.objects.get_or_create(date=report_date, observer=lga_supervisor, checklist_index='3', location_type=ContentType.objects.get_for_model(rc), location_id=rc.id)
                             if control_created:
                                 eday_reports_created += 1
