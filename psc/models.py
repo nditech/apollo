@@ -487,14 +487,22 @@ class EDAYChecklist(models.Model):
     @cache
     def flag1(self):
         '''Returns a true when there is an aggreement'''
-        if ((self.AA == self.other.AA) or not self.other.AA or not self.AA):
+        if not self.checklist_index == 3 and ((self.AA == self.other.AA) or not self.other.AA or not self.AA):
+            return True
+        return False
+    
+    @property
+    @cache
+    def control_flag1(self):
+        '''Returns a true if there is a defined value for the control checklist in this group'''
+        if not self.checklist_index == 3 and self.control.AA:
             return True
         return False
     
     @property
     @cache
     def flag2(self):
-        if (self.BA == self.other.BA or not self.other.BA or not self.BA) \
+        if not self.checklist_index == 3 and (self.BA == self.other.BA or not self.other.BA or not self.BA) \
             and (self.BB == self.other.BB or not self.other.BB or not self.BB) \
             and (self.BC == self.other.BC or not self.other.BC or not self.BC) \
             and (self.BD == self.other.BD or not self.other.BD or not self.BD) \
@@ -509,11 +517,30 @@ class EDAYChecklist(models.Model):
             and (self.BP == self.other.BP or not self.other.BP or not self.BP):
             return True
         return False
-    
+
+    @property
+    @cache
+    def control_flag2(self):
+        if not self.checklist_index == 3 and (self.BA == self.other.BA or self.control.BA) \
+            and (self.BB == self.other.BB or self.control.BB) \
+            and (self.BC == self.other.BC or self.control.BC) \
+            and (self.BD == self.other.BD or self.control.BD) \
+            and (self.BE == self.other.BE or self.control.BE) \
+            and (self.BF == self.other.BF or self.control.BF) \
+            and (self.BG == self.other.BG or self.control.BG) \
+            and (self.BH == self.other.BH or self.control.BH) \
+            and (self.BJ == self.other.BJ or self.control.BJ) \
+            and (self.BK == self.other.BK or self.control.BK) \
+            and (self.BM == self.other.BM or self.control.BM) \
+            and (self.BN == self.other.BN or self.control.BN) \
+            and (self.BP == self.other.BP or self.control.BP):
+            return True
+        return False
+        
     @property
     @cache
     def flag3(self):
-        if (self.CA == self.other.CA or not self.other.CA or not self.CA) \
+        if not self.checklist_index == 3 and (self.CA == self.other.CA or not self.other.CA or not self.CA) \
             and (self.CB == self.other.CB or not self.other.CB or not self.CB) \
             and (self.CC == self.other.CC or not self.other.CC or not self.CC) \
             and (self.CD == self.other.CD or not self.other.CD or not self.CD) \
@@ -532,8 +559,28 @@ class EDAYChecklist(models.Model):
     
     @property
     @cache
+    def control_flag3(self):
+        if not self.checklist_index == 3 and (self.CA == self.other.CA or self.control.CA) \
+            and (self.CB == self.other.CB or self.control.CB) \
+            and (self.CC == self.other.CC or self.control.CC) \
+            and (self.CD == self.other.CD or self.control.CD) \
+            and (self.CE == self.other.CE or self.control.CE) \
+            and (self.CF == self.other.CF or self.control.CF) \
+            and (self.CG == self.other.CG or self.control.CG) \
+            and (self.CH == self.other.CH or self.control.CH) \
+            and (self.CJ == self.other.CJ or self.control.CJ) \
+            and (self.CK == self.other.CK or self.control.CK) \
+            and (self.CM == self.other.CM or self.control.CM) \
+            and (self.CN == self.other.CN or self.control.CN) \
+            and (self.CP == self.other.CP or self.control.CP) \
+            and (self.CP == self.other.CQ or self.control.CQ):
+            return True
+        return False
+
+    @property
+    @cache
     def flag4(self):
-        if (self.DA == self.other.DA or not self.other.DA or not self.DA) \
+        if not self.checklist_index == 3 and (self.DA == self.other.DA or not self.other.DA or not self.DA) \
             and (self.DB == self.other.DB or not self.other.DB or not self.DB) \
             and (self.DC == self.other.DC or not self.other.DC or not self.DC) \
             and (self.DD == self.other.DD or not self.other.DD or not self.DD) \
@@ -543,16 +590,67 @@ class EDAYChecklist(models.Model):
             and (self.DH == self.other.DH or not self.other.DH or not self.DH):
             return True
         return False
-    
+
+    @property
+    @cache
+    def control_flag4(self):
+        if not self.checklist_index == 3 and (self.DA == self.other.DA or self.control.DA) \
+            and (self.DB == self.other.DB or self.control.DB) \
+            and (self.DC == self.other.DC or self.control.DC) \
+            and (self.DD == self.other.DD or self.control.DD) \
+            and (self.DE == self.other.DE or self.control.DE) \
+            and (self.DF == self.other.DF or self.control.DF) \
+            and (self.DG == self.other.DG or self.control.DG) \
+            and (self.DH == self.other.DH or self.control.DH):
+            return True
+        return False
+
     @property
     @cache
     def flag5(self):
-        contesting_party_codes = self.contesting
-        flag = True
+        if not self.checklist_index == 3:
+            contesting_party_codes = self.contesting
+            flag = True
         
+            for party_code in contesting_party_codes:
+                flag = flag and (getattr(self, party_code) == getattr(self.other, party_code) or not getattr(self.other, party_code) or not getattr(self, party_code))
+            return flag
+        else:
+            return False
+    
+    @property
+    @cache
+    def control_flag5(self):
+        if not self.checklist_index == 3:
+            contesting_party_codes = self.contesting
+            flag = True
+
+            for party_code in contesting_party_codes:
+                flag = flag and (getattr(self, party_code) == getattr(self.other, party_code) or getattr(self.control, party_code))
+            return flag
+        else:
+            return False
+    
+    @property
+    @cache
+    def sms_status_5th(self):
+        '''This method computes the status for the 5th SMS:
+        1 - Complete
+        2 - Partially completed
+        3 - None submitted'''
+        contesting_party_codes = self.contesting
+        and_condition = True
+        or_condition = False
         for party_code in contesting_party_codes:
-            flag = flag and (getattr(self, party_code) == getattr(self.other, party_code) or not getattr(self.other, party_code) or not getattr(self, party_code))
-        return flag
+            and_condition = and_condition and getattr(self, party_code)
+            or_condition = or_condition or getattr(self, party_code)
+        
+        if and_condition:
+            return 1
+        elif or_condition:
+            return 2
+        else:
+            return 3
 
     def __unicode__(self):
         return "EDAY Checklist for %s from %s on %s" % (self.location, self.observer, self.date)

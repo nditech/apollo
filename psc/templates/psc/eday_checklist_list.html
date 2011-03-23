@@ -182,38 +182,46 @@
 						{% endif %}
                         </td>
 						<td class="checklist" id="results">
+						{% if cl.sms_status_5th == 1 %}
                             <img src="/assets/img/status.png" width="16" height="16" alt="complete" />
+						{% else %}
+							{% if cl.sms_status_5th == 2 %}
+							<img src="/assets/img/status-away.png" width="16" height="16" alt="incomplete" />							
+							{% else %}
+							<img src="/assets/img/exclamation-red.png" width="16" height="16" alt="none" />
+							{% endif %}
+						{% endif %}
                         </td>
 						<td class="checklist">
-						{% if cl.flag1 %}
+						{% if cl.flag1 or cl.control_flag1 %}
                             <img src="/assets/img/status.png" width="16" height="16" alt="ok" />
 						{% else %}
 							<img src="/assets/img/status-busy.png" width="16" height="16" alt="conflict" />
 						{% endif %}
                         </td>
 						<td class="checklist">
-						{% if cl.flag2 %}
+						{% if cl.flag2 or cl.control_flag2 %}
                             <img src="/assets/img/status.png" width="16" height="16" alt="ok" />
 						{% else %}
 							<img src="/assets/img/status-busy.png" width="16" height="16" alt="conflict" />
 						{% endif %}
                         </td>
 						<td class="checklist">
-						{% if cl.flag3 %}
+						{% if cl.flag3 or cl.control_flag3 %}
                             <img src="/assets/img/status.png" width="16" height="16" alt="ok" />
 						{% else %}
 							<img src="/assets/img/status-busy.png" width="16" height="16" alt="conflict" />
 						{% endif %}
                         </td>
 						<td class="checklist">
-						{% if cl.flag4 %}
+						{% if cl.flag4 or cl.control_flag4 %}
                             <img src="/assets/img/status.png" width="16" height="16" alt="ok" />
 						{% else %}
 							<img src="/assets/img/status-busy.png" width="16" height="16" alt="conflict" />
 						{% endif %}
                         </td>
 						<td class="checklist" id="results_flags">
-						{% if cl.flag5 %}
+						{% if cl.flag5 or cl.control_flag5 %}
                             <img src="/assets/img/status.png" width="16" height="16" alt="ok" />
 						{% else %}
 							<img src="/assets/img/status-busy.png" width="16" height="16" alt="conflict" />
