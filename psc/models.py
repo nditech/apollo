@@ -153,7 +153,6 @@ class Observer(models.Model):
         return self.observer_id
     
     @property
-    @cache
     def zone(self):
         if self.role == 'ZC':
             return self.location
@@ -167,7 +166,6 @@ class Observer(models.Model):
             return self.location.parent.parent.parent.parent
     
     @property
-    @cache
     def state(self):
         if self.role in ['SC', 'NS', 'NSC']:
             return self.location
@@ -181,7 +179,6 @@ class Observer(models.Model):
             return None
 
     @property
-    @cache
     def district(self):
         if self.role == 'SDC':
             return self.location
@@ -193,7 +190,6 @@ class Observer(models.Model):
             return None
 
     @property
-    @cache
     def lga(self):
         if self.role == 'LGA':
             return self.location
@@ -203,7 +199,6 @@ class Observer(models.Model):
             return None
         
     @property
-    @cache
     def ps(self):
         if self.role == 'OBS':
             return self.location
@@ -370,6 +365,9 @@ class DCOIncident(models.Model):
         
         
 class EDAYChecklist(models.Model):
+    '''The flags defined in this model compute conflicts for different sections of this checklist model and set 
+    a true when there is an agreement and a false when there is a conflict'''
+    
     VA_OPENTIME = ((1, 'Open by 8AM (1)'), (2, 'Between 8AM & 9AM (2)'), (3, 'Between 9AM & 12 noon (3)'), (4, 'After by 12 noon (4)'), (5, 'Never Started (5)'))
     VP_OPENTIME = ((1, 'Before 1PM (1)'), (2, 'Between 1PM & 2PM (2)'), (3, 'Between 2PM & 3PM (3)'), (4, 'After 3PM (4)'), (5, 'Never Started (5)'))
     TURNOVER = ((1, 'No one'), (2, 'A Few'), (3, 'Half'), (4, 'Most'), (5, 'Everyone'))
@@ -484,6 +482,77 @@ class EDAYChecklist(models.Model):
     @cache
     def parties(self):
         return dict(self.observer.state.contesting_set.values_list('code','party__code'))
+    
+    @property
+    @cache
+    def flag1(self):
+        '''Returns a true when there is an aggreement'''
+        if ((self.AA == self.other.AA) or not self.other.AA or not self.AA):
+            return True
+        return False
+    
+    @property
+    @cache
+    def flag2(self):
+        if (self.BA == self.other.BA or not self.other.BA or not self.BA) \
+            and (self.BB == self.other.BB or not self.other.BB or not self.BB) \
+            and (self.BC == self.other.BC or not self.other.BC or not self.BC) \
+            and (self.BD == self.other.BD or not self.other.BD or not self.BD) \
+            and (self.BE == self.other.BE or not self.other.BE or not self.BE) \
+            and (self.BF == self.other.BF or not self.other.BF or not self.BF) \
+            and (self.BG == self.other.BG or not self.other.BG or not self.BG) \
+            and (self.BH == self.other.BH or not self.other.BH or not self.BH) \
+            and (self.BJ == self.other.BJ or not self.other.BJ or not self.BJ) \
+            and (self.BK == self.other.BK or not self.other.BK or not self.BK) \
+            and (self.BM == self.other.BM or not self.other.BM or not self.BM) \
+            and (self.BN == self.other.BN or not self.other.BN or not self.BN) \
+            and (self.BP == self.other.BP or not self.other.BP or not self.BP):
+            return True
+        return False
+    
+    @property
+    @cache
+    def flag3(self):
+        if (self.CA == self.other.CA or not self.other.CA or not self.CA) \
+            and (self.CB == self.other.CB or not self.other.CB or not self.CB) \
+            and (self.CC == self.other.CC or not self.other.CC or not self.CC) \
+            and (self.CD == self.other.CD or not self.other.CD or not self.CD) \
+            and (self.CE == self.other.CE or not self.other.CE or not self.CE) \
+            and (self.CF == self.other.CF or not self.other.CF or not self.CF) \
+            and (self.CG == self.other.CG or not self.other.CG or not self.CG) \
+            and (self.CH == self.other.CH or not self.other.CH or not self.CH) \
+            and (self.CJ == self.other.CJ or not self.other.CJ or not self.CJ) \
+            and (self.CK == self.other.CK or not self.other.CK or not self.CK) \
+            and (self.CM == self.other.CM or not self.other.CM or not self.CM) \
+            and (self.CN == self.other.CN or not self.other.CN or not self.CN) \
+            and (self.CP == self.other.CP or not self.other.CP or not self.CP) \
+            and (self.CP == self.other.CQ or not self.other.CQ or not self.CQ):
+            return True
+        return False
+    
+    @property
+    @cache
+    def flag4(self):
+        if (self.DA == self.other.DA or not self.other.DA or not self.DA) \
+            and (self.DB == self.other.DB or not self.other.DB or not self.DB) \
+            and (self.DC == self.other.DC or not self.other.DC or not self.DC) \
+            and (self.DD == self.other.DD or not self.other.DD or not self.DD) \
+            and (self.DE == self.other.DE or not self.other.DE or not self.DE) \
+            and (self.DF == self.other.DF or not self.other.DF or not self.DF) \
+            and (self.DG == self.other.DG or not self.other.DG or not self.DG) \
+            and (self.DH == self.other.DH or not self.other.DH or not self.DH):
+            return True
+        return False
+    
+    @property
+    @cache
+    def flag5(self):
+        contesting_party_codes = self.contesting
+        flag = True
+        
+        for party_code in contesting_party_codes:
+            flag = flag and (getattr(self, party_code) == getattr(self.other, party_code) or not getattr(self.other, party_code) or not getattr(self, party_code))
+        return flag
 
     def __unicode__(self):
         return "EDAY Checklist for %s from %s on %s" % (self.location, self.observer, self.date)
