@@ -87,7 +87,6 @@
                         <th>PU</th>
                         <th>Name</th>
 			<th>Phone</th>
-			<th>E-Mail</th>
 			<th>Role</th>
 			<th>Partner</th>
                         <th>&nbsp;</th>
@@ -150,14 +149,13 @@
 			{% endif %}
 			<td>{{ observer.name }}</td>
 			<td>{% if observer.phone %}{{ observer.phone }}{% endif %}</td>
-			<td>{{ observer.email }}</td>
-                        <td>{{ observer.role }}</td>
+            <td>{{ observer.role }}</td>
 			<td>{{ observer.partner }}</td>
                         {% if perms.psc.can_analyse %}<td><a href="{% url psc.views.contact_edit observer.id %}">Edit</a></td>{% endif %}
                     </tr>
 				{% empty %}
                     <tr>
-                        <td colspan="11" class="nodata">No reports yet</td>
+                        <td colspan="10" class="nodata">No reports yet</td>
                     </tr>
 		{% endfor %}
                 </tbody>
