@@ -287,7 +287,7 @@ class App(AppBase):
                 setattr(eday, key, int(responses[key]))
             elif key in ['BA','BG','BH','BJ','BM','CA','CC','CD','CE'] and int(responses[key]) in range(1, 6):
                 setattr(eday, key, int(responses[key]))
-            elif key in ['DA', 'DB', 'DC', 'DD', 'DE', 'DF', 'DG', 'DH'] and int(responses[key]) <= 5000:
+            elif key in ['DA', 'DB', 'DC', 'DD', 'DE', 'DF', 'DG', 'DH', 'EA', 'EB', 'EC', 'ED', 'EE', 'EF', 'EG', 'EH', 'EJ', 'EK', 'EM', 'EN', 'EP', 'EQ', 'ER', 'ES', 'ET', 'EU', 'EV', 'EW', 'EX', 'EY', 'EZ', 'FA', 'FB', 'FC', 'FD', 'FE', 'FF', 'FG'] and int(responses[key]) <= 5000:
                 setattr(eday, key, int(responses[key]))
             elif key in ['BD'] and int(responses[key]) <= 9:
                 eday.BD == int(responses[key])
@@ -403,10 +403,11 @@ class App(AppBase):
         range_error = []
         attribute_error = []
         for key in responses.keys():
-            if key not in ['AA', 'BA', 'BB', 'BC', 'BD', 'BE', 'BF', 'BG', 'BH', 'BJ', 'BK', 'BM', 'BN', 'BP', 'CA', 'CB', 'CC', 'CD', 'CE', 'CF', 'CG', 'CH', 'CJ', 'CK', 'CM', 'CN', 'CP', 'CQ', 'DA', 'DB', 'DC', 'DD', 'DE', 'DF', 'DG', 'DH']: attribute_error.append(key)
+            if key not in ['AA', 'BA', 'BB', 'BC', 'BD', 'BE', 'BF', 'BG', 'BH', 'BJ', 'BK', 'BM', 'BN', 'BP', 'CA', 'CB', 'CC', 'CD', 'CE', 'CF', 'CG', 'CH', 'CJ', 'CK', 'CM', 'CN', 'CP', 'CQ', 'DA', 'DB', 'DC', 'DD', 'DE', 'DF', 'DG', 'DH', 'EA', 'EB', 'EC', 'ED', 'EE', 'EF', 'EG', 'EH', 'EJ', 'EK', 'EM', 'EN', 'EP', 'EQ', 'ER', 'ES', 'ET', 'EU', 'EV', 'EW', 'EX', 'EY', 'EZ', 'FA', 'FB', 'FC', 'FD', 'FE', 'FF', 'FG']: attribute_error.append(key)
             if key in ['AA','BC','BF','BK','BN','CB','CF','CG','CH','CJ','CK','CM','CN','CP','CQ'] and int(responses[key]) not in range(0,4): range_error.append(key)
             elif key in ['BA','BG','BH','BJ','BM','CA','CC','CD','CE'] and int(responses[key]) not in range(1, 6): range_error.append(key)
-            elif key in ['DA', 'DB', 'DC', 'DD', 'DE', 'DF', 'DG', 'DH']: range_error.append(key)
+            elif key in ['DA', 'DB', 'DC', 'DD', 'DE', 'DF', 'DG', 'DH'] and int(responses[key]) > 5000: range_error.append(key)
+            elif key in ['EA', 'EB', 'EC', 'ED', 'EE', 'EF', 'EG', 'EH', 'EJ', 'EK', 'EM', 'EN', 'EP', 'EQ', 'ER', 'ES', 'ET', 'EU', 'EV', 'EW', 'EX', 'EY', 'EZ', 'FA', 'FB', 'FC', 'FD', 'FE', 'FF', 'FG'] and int(responses[key]) > 5000: range_error.append(key)
             elif key in ['BD'] and int(responses[key]) > 9: range_error.append(key)
             elif key in ['BE'] and int(responses[key]) > 99: range_error.append(key)
             elif key in ['BB'] and int(responses[key]) > 999: range_error.append(key)
