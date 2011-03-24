@@ -1,5 +1,6 @@
 from django.core.management.base import BaseCommand
-from psc.models import VRChecklist, DCOChecklist, Observer, RegistrationCenter, EDAYChecklist
+from django.db.models.signals import post_save
+from psc.models import VRChecklist, DCOChecklist, Observer, RegistrationCenter, EDAYChecklist, edaychecklist_handler
 from django.contrib.contenttypes.models import ContentType
 from psc.forms import VR_DAYS, DCO_DAYS, EDAY_DAYS
 
@@ -7,10 +8,14 @@ class Command(BaseCommand):
     help = "My shiny new management command."
 
     def handle(self, *args, **options):
+        # disconnect the edaychecklist_hanlder so we don't have to deal with
+        # exceptions arising from our checklist management
+        post_save.disconnect(edaychecklist_handler, sender=EDAYChecklist)
+        
         vr_reports_created = dco_reports_created = eday_reports_created = 0
         
         # prepopulate vr checklists for LGA supervisors
-        if args[0] == 'vr':
+        if len(args) and args[0] == 'vr':
             print "Prepopulating VR Checklists..."
             lga_supervisors = Observer.objects.filter(role__iexact='LGA')
             for ls in lga_supervisors:
@@ -31,7 +36,7 @@ class Command(BaseCommand):
                             vr_reports_created += 1
             print "%d Voter's Registration Checklists Prepopulated" % vr_reports_created
             
-        elif args[0] == 'dco':
+        elif len(args) and args[0] == 'dco':
             print "Prepopulating DCO Checklists..."
             for day in DCO_DAYS:
                 if day[0]:
@@ -50,7 +55,7 @@ class Command(BaseCommand):
                         dco_reports_created += 1
             print "%d Display, Claims and Objection Checklists Prepopulated" % dco_reports_created
 
-        elif args[0] == 'eday':
+        elif len(args) and args[0] == 'eday':
             print "Prepopulating EDay Checklists..."
             observers = Observer.objects.filter(role__iexact='OBS')
             for observer in observers:
