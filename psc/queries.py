@@ -94,3 +94,84 @@ queries['dco']['status']['problem'] = Q(A=2) & (Q(B__gt=0) | Q(C__isnull=False) 
     Q(P__gt=0) | Q(Q__gt=0) | Q(R__gt=0) | Q(S__isnull=False) | Q(T__isnull=False) | Q(U__isnull=False) | \
     Q(V__isnull=False) | Q(W__isnull=False) | Q(X__isnull=False)) & ~(queries['dco']['status']['complete'])
 
+
+queries['eday'] = {}
+queries['eday']['arrival'] = {}
+queries['eday']['arrival']['yes'] = Q(AA__gt=0)
+queries['eday']['arrival']['no'] = Q(AA=0)|Q(AA__isnull=True)
+
+queries['eday']['accreditation'] = {}
+queries['eday']['accreditation']['complete'] = Q(BA__isnull=False) & Q(BB__isnull=False) & (Q(BC__gt=0)|Q(BC__isnull=False)) & Q(BD__isnull=False) & \
+    Q(BE__isnull=False) & (Q(BF__gt=0)| Q(BF__isnull=False)) & Q(BG__isnull=False) & Q(BH__isnull=False) & Q(BJ__isnull=False) & (Q(BK__gt=0)|Q(BK__isnull=False)) & \
+    Q(BM__isnull=False) & (Q(BN__gt=0)| Q(BN__isnull=False)) & Q(BP__isnull=False)
+
+queries['eday']['accreditation']['partial'] = (Q(BA__isnull=False) | Q(BB__isnull=False) | (Q(BC__gt=0) & Q(BC__isnull=False)) | Q(BD__isnull=False) | \
+    Q(BE__isnull=False) | (Q(BF__gt=0) & Q(BF__isnull=False)) | Q(BG__isnull=False) | Q(BH__isnull=False) | Q(BJ__isnull=False) | (Q(BK__gt=0) & Q(BK__isnull=False)) | \
+    Q(BM__isnull=False) | (Q(BN__gt=0) & Q(BN__isnull=False)) | Q(BP__isnull=False)) & ~(queries['eday']['accreditation']['complete']) & ~Q(BA=5)
+
+queries['eday']['accreditation']['not_open'] = Q(BA=5) & Q(BB__isnull=True) & (Q(BC=0)|Q(BC__isnull=True)) & Q(BD__isnull=True) & \
+    Q(BE__isnull=True) & (Q(BF=0)|Q(BF__isnull=True)) & Q(BG__isnull=True) & Q(BH__isnull=True) & Q(BJ__isnull=True) & (Q(BK=0)|Q(BK__isnull=True)) & \
+    Q(BM__isnull=True) & (Q(BN=0)|Q(BN__isnull=True)) & Q(BP__isnull=True)
+
+queries['eday']['accreditation']['problem'] = Q(BA=5) & (Q(BB__isnull=False) | (Q(BC__gt=0)|Q(BC__isnull=False)) | Q(BD__isnull=False) | \
+    Q(BE__isnull=False) | (Q(BF__gt=0)|Q(BF__isnull=False)) | Q(BG__isnull=False) | Q(BH__isnull=False) | Q(BJ__isnull=False) | Q(BK__gt=0) | \
+    Q(BM__isnull=False) | (Q(BN__gt=0)|Q(BN__isnull=False)) | Q(BP__isnull=False))
+
+queries['eday']['accreditation']['missing'] = Q(BA__isnull=True) & Q(BB__isnull=True) & (Q(BC=0)|Q(BC__isnull=True)) & Q(BD__isnull=True) & \
+    Q(BE__isnull=True) & (Q(BF=0)|Q(BF__isnull=True)) & Q(BG__isnull=True) & Q(BH__isnull=True) & Q(BJ__isnull=True) & (Q(BK=0)|Q(BK__isnull=True)) & \
+    Q(BM__isnull=True) & (Q(BN=0)|Q(BN__isnull=True)) & Q(BP__isnull=True)
+
+
+queries['eday']['voting_and_counting'] = {}
+queries['eday']['voting_and_counting']['complete'] = Q(CA__isnull=False) & Q(CB__gt=0) & Q(CC__isnull=False) & Q(CD__isnull=False) & \
+    Q(CE__isnull=False) & Q(CF__gt=0) & Q(CG__gt=0) & Q(CH__gt=0) & Q(CJ__gt=0) & Q(CK__gt=0) & Q(CM__gt=0) & Q(CN__gt=0) & Q(CP__gt=0) & Q(CQ__gt=0)
+
+queries['eday']['voting_and_counting']['partial'] = (Q(CA__isnull=False) | Q(CB__gt=0) | Q(CC__isnull=False) | \
+    Q(CD__isnull=False) | Q(CE__isnull=False) | Q(CF__gt=0) | Q(CG__gt=0) | Q(CH__gt=0) | Q(CJ__gt=0) | Q(CK__gt=0) | \
+    (Q(CM__gt=0)& Q(CM__isnull=False)) | Q(CN__gt=0) | Q(CP__gt=0) | Q(CQ__gt=0)) & ~(queries['eday']['voting_and_counting']['complete']) & ~Q(CA=5) & ~Q(BA=5)
+
+queries['eday']['voting_and_counting']['not_open'] = (Q(CA=5) | Q(BA=5)) & (Q(CB=0)|Q(CB__isnull=True)) & Q(CC__isnull=True) & \
+    Q(CD__isnull=True) & Q(CE__isnull=True) & (Q(CF=0)| Q(CF__isnull=True)) & (Q(CG=0)| Q(CG__isnull=True)) & \
+    (Q(CH=0)| Q(CH__isnull=True)) & (Q(CJ=0)| Q(CJ__isnull=True)) & (Q(CK=0)| Q(CK__isnull=True)) & (Q(CM=0)| Q(CM__isnull=True)) & \
+    (Q(CN=0)| Q(CN__isnull=True)) & (Q(CP=0)| Q(CP__isnull=True)) & (Q(CQ=0)| Q(CQ__isnull=True))
+
+queries['eday']['voting_and_counting']['problem'] = (Q(CA=5) | Q(BA=5)) & (Q(CB__gt=0)&Q(CB__isnull=False)) | Q(CC__isnull=False) | Q(CD__isnull=False) | \
+    Q(CE__isnull=False) | (Q(CF__gt=0)| Q(CF__isnull=False)) | (Q(CG__gt=0)| Q(CG__isnull=False)) | Q(CH__gt=0) | Q(CJ__gt=0) | Q(CK__gt=0) | \
+    Q(CM__gt=0) | Q(CN__gt=0) | Q(CP__gt=0) | Q(CQ__gt=0)
+
+queries['eday']['voting_and_counting']['missing'] = Q(CA__isnull=True) & (Q(CB=0)|Q(CB__isnull=True)) & Q(CC__isnull=True) & \
+    Q(CD__isnull=True) & Q(CE__isnull=True) & (Q(CF=0)|Q(CF__isnull=True)) & (Q(CG=0)|Q(CG__isnull=True)) & \
+    (Q(CH=0)|Q(CH__isnull=True)) & (Q(CJ=0)|Q(CJ__isnull=True)) & (Q(CK=0)|Q(CK__isnull=True)) & (Q(CM=0)|Q(CM__isnull=True)) & \
+    (Q(CN=0)|Q(CN__isnull=True)) & (Q(CP=0)|Q(CP__isnull=True)) & (Q(CQ=0)|Q(CQ__isnull=True))
+
+queries['eday']['official_summary'] = {}
+queries['eday']['official_summary']['complete'] = Q(DA__isnull=False) & Q(DB__isnull=False) & Q(DC__isnull=False) & Q(DD__isnull=False) & \
+    Q(DE__isnull=False) & Q(DF__isnull=False) & Q(DG__isnull=False) & Q(DH__isnull=False)
+
+queries['eday']['official_summary']['partial'] = (Q(DA__isnull=False) | Q(DB__isnull=False) | Q(DC__isnull=False) | Q(DD__isnull=False) | \
+    Q(DE__isnull=False) | Q(DF__isnull=False) | Q(DG__isnull=False) | Q(DH__isnull=False)) & ~(queries['eday']['official_summary']['complete'])
+
+queries['eday']['official_summary']['missing'] = Q(DA__isnull=True) & Q(DB__isnull=True) & Q(DC__isnull=True) & Q(DD__isnull=True) & \
+    Q(DE__isnull=True) & Q(DF__isnull=True) & Q(DG__isnull=True) & Q(DH__isnull=True)
+
+queries['eday']['official_results'] = {}
+queries['eday']['official_results']['complete'] = Q(EA__isnull=False) & Q(EB__isnull=False) & Q(EC__isnull=False) & Q(ED__isnull=False) & \
+    Q(EE__isnull=False) & Q(EF__isnull=False) & Q(EG__isnull=False) & Q(EH__isnull=False) & Q(EJ__isnull=False) & Q(EK__isnull=False) & \
+    Q(EM__isnull=False) & Q(EN__isnull=False) & Q(EP__isnull=False) & Q(EQ__isnull=False) & Q(ER__isnull=False) & Q(ES__isnull=False) & \
+    Q(ET__isnull=False) & Q(EU__isnull=False) & Q(EV__isnull=False) & Q(EW__isnull=False) & Q(EX__isnull=False) & Q(EY__isnull=False) & \
+    Q(EZ__isnull=False) & Q(FA__isnull=False) & Q(FB__isnull=False) & Q(FC__isnull=False) & Q(FD__isnull=False) & Q(FE__isnull=False) & \
+    Q(FF__isnull=False) & Q(FG__isnull=False)
+
+queries['eday']['official_results']['partial'] = Q(EA__isnull=False) | Q(EB__isnull=False) | Q(EC__isnull=False) | Q(ED__isnull=False) | \
+    Q(EE__isnull=False) | Q(EF__isnull=False) | Q(EG__isnull=False) | Q(EH__isnull=False) | Q(EJ__isnull=False) | Q(EK__isnull=False) | \
+    Q(EM__isnull=False) | Q(EN__isnull=False) | Q(EP__isnull=False) | Q(EQ__isnull=False) | Q(ER__isnull=False) | Q(ES__isnull=False) | \
+    Q(ET__isnull=False) | Q(EU__isnull=False) | Q(EV__isnull=False) | Q(EW__isnull=False) | Q(EX__isnull=False) | Q(EY__isnull=False) | \
+    Q(EZ__isnull=False) | Q(FA__isnull=False) | Q(FB__isnull=False) | Q(FC__isnull=False) | Q(FD__isnull=False) | Q(FE__isnull=False) | \
+    Q(FF__isnull=False) | Q(FG__isnull=False) & ~(queries['eday']['official_results']['complete'])
+
+queries['eday']['official_results']['missing'] = Q(EA__isnull=True) & Q(EB__isnull=True) & Q(EC__isnull=True) & Q(ED__isnull=True) & \
+    Q(EE__isnull=True) & Q(EF__isnull=True) & Q(EG__isnull=True) & Q(EH__isnull=True) & Q(EJ__isnull=True) & Q(EK__isnull=True) & \
+    Q(EM__isnull=True) & Q(EN__isnull=True) & Q(EP__isnull=True) & Q(EQ__isnull=True) & Q(ER__isnull=True) & Q(ES__isnull=True) & \
+    Q(ET__isnull=True) & Q(EU__isnull=True) & Q(EV__isnull=True) & Q(EW__isnull=True) & Q(EX__isnull=True) & Q(EY__isnull=True) & \
+    Q(EZ__isnull=True) & Q(FA__isnull=True) & Q(FB__isnull=True) & Q(FC__isnull=True) & Q(FD__isnull=True) & Q(FE__isnull=True) & \
+    Q(FF__isnull=True) & Q(FG__isnull=True)

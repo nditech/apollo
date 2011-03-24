@@ -55,7 +55,8 @@ EDAY_CHECKLIST_3RD = (('', 'All'),
                     (1, 'Complete'),
                     (2, 'Partial'),
                     (3, 'Not Open'),
-                    (4, 'Problem'))
+                    (4, 'Problem'),
+                    (5, 'Missing'))
 EDAY_CHECKLIST_4TH = (('', 'All'),
                     (1, 'Complete'),
                     (2, 'Partial'),
@@ -162,7 +163,7 @@ DCOIncidentFormSet = modelformset_factory(DCOIncident)
 class EDAYChecklistForm(forms.ModelForm):
     class Meta:
         model = EDAYChecklist
-        exclude = ['location_type', 'location', 'observer', 'date', 'checklist_index', 'audit_log']
+        exclude = ['location_type', 'location', 'location_id', 'observer', 'date', 'checklist_index', 'audit_log']
 
 class EDAYIncidentForm(forms.ModelForm):
     date = forms.ChoiceField(choices=tuple([('', '--')] + [(date, label) for (date, label) in EDAY_DAYS if date]))

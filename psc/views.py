@@ -402,7 +402,7 @@ def eday_checklist_list(request, action=None):
         request.session['eday_checklist_filter'] = {}
 
     if request.method == 'GET':
-        if filter(lambda key: request.GET.has_key(key), ['zone', 'state', 'first', 'second', 'day', 'observer_id']):
+        if filter(lambda key: request.GET.has_key(key), ['zone', 'state', 'first', 'second', 'third', 'fourth', 'fifth', 'day', 'observer_id']):
             request.session['eday_checklist_filter'] = request.GET
         filter_form = EDAYChecklistFilterForm(request.session['eday_checklist_filter'])
 
@@ -415,9 +415,46 @@ def eday_checklist_list(request, action=None):
                 qs_include &= Q(observer__location_id__in=LGA.objects.filter(parent__parent__code__exact=data['state']).values_list('id', flat=True))
             if data['day']:
                 qs_include &= Q(date=data['day'])
-
             if data['observer_id']:
                 qs_include = Q(observer__observer_id__exact=data['observer_id'])
+                
+            if data['first'] == u'1': # complete
+                qs_include &= queries['eday']['arrival']['yes']
+            elif data['first'] == u'2':
+                qs_include &= queries['eday']['arrival']['no']
+            if data['second'] == u'1': # complete
+                qs_include &= queries['eday']['accreditation']['complete']
+            elif data['second'] == u'2': # partial
+                qs_include &= queries['eday']['accreditation']['partial']
+            elif data['second'] == u'3': # not open
+                qs_include &= queries['eday']['accreditation']['not_open']
+            elif data['second'] == u'4': # not open problem
+                qs_include &= queries['eday']['accreditation']['problem']
+            elif data['second'] == u'5': # missing
+                qs_include &= queries['eday']['accreditation']['missing']
+            if data['third'] == u'1': # complete
+                qs_include &= queries['eday']['voting_and_counting']['complete']
+            elif data['third'] == u'2': # partial
+                qs_include &= queries['eday']['voting_and_counting']['partial']
+            elif data['third'] == u'3': # not open
+                qs_include &= queries['eday']['voting_and_counting']['not_open']
+            elif data['third'] == u'4': # not open problem
+                qs_include &= queries['eday']['voting_and_counting']['problem']
+            elif data['third'] == u'5': # missing
+                qs_include &= queries['eday']['voting_and_counting']['missing']
+            if data['fourth'] == u'1': # complete
+                qs_include &= queries['eday']['official_summary']['complete']
+            elif data['fourth'] == u'2': # missing
+                qs_include &= queries['eday']['official_summary']['partial']
+            elif data['fourth'] == u'5': # partial
+                qs_include &= queries['eday']['official_summary']['missing']
+            if data['fifth'] == u'1': # complete
+                qs_include &= queries['eday']['official_results']['complete']
+            elif data['fifth'] == u'2': # missing
+                qs_include &= queries['eday']['official_results']['partial']
+            elif data['fifth'] == u'5': # partial
+                qs_include &= queries['eday']['official_results']['missing']
+           
     else:
         filter_form = EDAYChecklistFilterForm()
 
