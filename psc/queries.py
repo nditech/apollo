@@ -140,9 +140,9 @@ queries['eday']['voting_and_counting']['problem'] = (Q(CA=5) | Q(BA=5)) & (Q(CB_
     Q(CM__gt=0) | Q(CN__gt=0) | Q(CP__gt=0) | Q(CQ__gt=0)
 
 queries['eday']['voting_and_counting']['missing'] = Q(CA__isnull=True) & (Q(CB=0)|Q(CB__isnull=True)) & Q(CC__isnull=True) & \
-    Q(CD__isnull=True) & Q(CE__isnull=True) & (Q(CF=0)|Q(CF__isnull=True)) & (Q(CG=0)|Q(CG__isnull=True)) & \
-    (Q(CH=0)|Q(CH__isnull=True)) & (Q(CJ=0)|Q(CJ__isnull=True)) & (Q(CK=0)|Q(CK__isnull=True)) & (Q(CM=0)|Q(CM__isnull=True)) & \
-    (Q(CN=0)|Q(CN__isnull=True)) & (Q(CP=0)|Q(CP__isnull=True)) & (Q(CQ=0)|Q(CQ__isnull=True))
+    Q(CD__isnull=True) & Q(CE__isnull=True) & (Q(CF=0)|Q(CF__isnull=True)) & (Q(CG=0)|Q(CG__isnull=True)) & (Q(CH=0)|Q(CH__isnull=True)) & \
+    (Q(CJ=0)|Q(CJ__isnull=True)) & (Q(CK=0)|Q(CK__isnull=True)) & (Q(CM=0)|Q(CM__isnull=True)) & (Q(CN=0)|Q(CN__isnull=True)) & \
+    (Q(CP=0)|Q(CP__isnull=True)) & (Q(CQ=0)|Q(CQ__isnull=True))
 
 queries['eday']['official_summary'] = {}
 queries['eday']['official_summary']['complete'] = Q(DA__isnull=False) & Q(DB__isnull=False) & Q(DC__isnull=False) & Q(DD__isnull=False) & \
