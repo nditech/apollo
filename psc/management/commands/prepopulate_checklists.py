@@ -1,5 +1,6 @@
 from django.core.management.base import BaseCommand
-from psc.models import VRChecklist, DCOChecklist, Observer, RegistrationCenter, EDAYChecklist
+from django.db.models.signals import post_save
+from psc.models import VRChecklist, DCOChecklist, Observer, RegistrationCenter, EDAYChecklist, edaychecklist_handler
 from django.contrib.contenttypes.models import ContentType
 from psc.forms import VR_DAYS, DCO_DAYS, EDAY_DAYS
 
@@ -7,6 +8,10 @@ class Command(BaseCommand):
     help = "My shiny new management command."
 
     def handle(self, *args, **options):
+        # disconnect the edaychecklist_hanlder so we don't have to deal with
+        # exceptions arising from our checklist management
+        post_save.disconnect(edaychecklist_handler, sender=EDAYChecklist)
+        
         vr_reports_created = dco_reports_created = eday_reports_created = 0
         
         # prepopulate vr checklists for LGA supervisors
