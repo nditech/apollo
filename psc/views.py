@@ -165,6 +165,9 @@ def home(request):
     context['eday_fifth_sms_partial'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').filter(queries['eday']['official_results']['partial']).count()
     context['eday_fifth_sms_not_open'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').filter(queries['eday']['official_results']['not_open']).count()
     context['eday_fifth_sms_complete'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').filter(queries['eday']['official_results']['complete']).count()
+    
+    context['eday_incidents_count'] = EDAYIncident.objects.all().count()
+    context['eday_incidents_today'] = EDAYIncident.objects.filter(qs).count()
 
     #render
     return render_to_response('psc/home.html', context,  context_instance=RequestContext(request))
@@ -253,6 +256,9 @@ def ajax_home_stats(request):
     context['eday_fifth_sms_partial'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').filter(queries['eday']['official_results']['partial']).count()
     context['eday_fifth_sms_not_open'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').filter(queries['eday']['official_results']['not_open']).count()
     context['eday_fifth_sms_complete'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').filter(queries['eday']['official_results']['complete']).count()
+    
+    context['eday_incidents_count'] = EDAYIncident.objects.all().count()
+    context['eday_incidents_today'] = EDAYIncident.objects.filter(qs).count()
     
     json_string = json.dumps(context)
     
@@ -794,7 +800,8 @@ def eday_incident_list(request, action=None):
                 qs = Q(observer__observer_id__exact=data['observer_id'])
     else:
         filter_form = EDAYIncidentFilterForm()
-        
+    
+    global items_per_page
     if action == 'export':
         items_per_page = EDAYIncident.objects.filter(qs).count()
     paginator = Paginator(EDAYIncident.objects.filter(qs).order_by('-id'), items_per_page)
