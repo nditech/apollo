@@ -12,7 +12,6 @@
             $.getJSON('/get-rcs-by-lga/'+ lga_id, function(data){
                 $('#rc_list').empty()
                 $.each(data, function(){
-                  //alert(this.pk)
                   $('#rc_list').append("<option value='"+ this.pk +"'>" + this.fields.name +"</option>")
                 })
             })
@@ -42,7 +41,6 @@
 										{% endif %}
 										<tr><td>Date:</td>
                                                                                     <td>
-                                                                                        <!-- {{ incident.date|date:"D d-M" }}<input type="hidden" name="{{ form.date.name }}" value="{{ form.initial.date }}" /> -->
                                                                                         <input class="bigbox date-pick" type="text" name="{{ form.date.name }}" value="{{ form.initial.date }}" />
                                                                                     </td>
                                                                                 </tr>

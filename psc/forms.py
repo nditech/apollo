@@ -174,7 +174,7 @@ class EDAYIncidentForm(forms.ModelForm):
     observer = forms.ModelChoiceField(queryset=Observer.objects.filter(role__in=['SC', 'SDC', 'LGA']).exclude(observer_id=""), empty_label="--")
     class Meta:
         model = EDAYIncident
-        exclude = ['location_type', 'location_id', 'location']
+        exclude = ['location_type', 'location_id', 'location', 'date']
         
 class EDAYIncidentUpdateForm(forms.ModelForm):
     observer = forms.ModelChoiceField(queryset=Observer.objects.exclude(observer_id=""), empty_label="--")
