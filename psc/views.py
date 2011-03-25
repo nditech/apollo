@@ -831,7 +831,7 @@ def eday_incident_add(request):
     if request.POST:
         f = EDAYIncidentForm(request.POST)                    
         f.save()
-        return HttpResponseRedirect(reverse('psc.views.eday_incident_list'))
+        return HttpResponseRedirect(reverse('eday_incident_view'))
     else:
         f = EDAYIncidentForm()
         return render_to_response('psc/eday_incident_add_form.html', {'page_title': "Add Election Day Critrical Incident", 'form': f }, context_instance=RequestContext(request))
