@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from south.modelsinspector import add_introspection_rules
 from audit_log.models import fields
 from audit_log.models.managers import AuditLog
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_save
 from django.conf import settings
 from psc_helpers import model_attribute_cache as cache
 
@@ -448,6 +448,7 @@ class EDAYChecklist(models.Model):
     comment = models.CharField(max_length=200, blank=True)
     submitted = models.BooleanField(default=False, help_text="This field tracks if (even though already created), this report has been submitted by the reporter")
     checklist_index = models.CharField(max_length=1, default='1', choices=EDAY_CHECK, help_text='This fields helps to identify the reporter sending a particular checklist', db_index=True)
+    sms_status_5th = models.PositiveIntegerField(default=3, blank=True, help_text="Field to track the completion status of the fifth SMS")
     audit_log = AuditLog()
     
     @property
@@ -630,27 +631,6 @@ class EDAYChecklist(models.Model):
             return flag
         else:
             return False
-    
-    @property
-    @cache
-    def sms_status_5th(self):
-        '''This method computes the status for the 5th SMS:
-        1 - Complete
-        2 - Partially completed
-        3 - None submitted'''
-        contesting_party_codes = self.contesting
-        and_condition = True
-        or_condition = False
-        for party_code in contesting_party_codes:
-            and_condition = and_condition and getattr(self, party_code)
-            or_condition = or_condition or getattr(self, party_code)
-        
-        if and_condition:
-            return 1
-        elif or_condition:
-            return 2
-        else:
-            return 3
 
     def __unicode__(self):
         return "EDAY Checklist for %s from %s on %s" % (self.location, self.observer, self.date)
@@ -769,11 +749,11 @@ class NodSMS():
 # signals
 def edaychecklist_handler(sender, **kwargs):
     # don't process 'control' checklists
-    if not kwargs['instance'].checklist_index == '3':
+    if not kwargs['instance'].checklist_index == '3' and not kwargs['created']:
         other_checklist = kwargs['instance'].other
         control_checklist = kwargs['instance'].control
         # only fetch fields that have not been overridden in the control checklist
-        available_fields = filter(lambda field: field not in EDAYChecklistOverrides.objects.filter(checklist=control_checklist).values_list('field', flat=True), map(lambda field: field.attname, kwargs['instance']._meta.fields[5:-3]))
+        available_fields = filter(lambda field: field not in EDAYChecklistOverrides.objects.filter(checklist=control_checklist).values_list('field', flat=True), map(lambda field: field.attname, kwargs['instance']._meta.fields[5:-5]))
         
         for field in available_fields:
             # we'll only propagate values from a checklist to the control if the value for the current checklist matches
@@ -795,3 +775,26 @@ def edaychecklist_handler(sender, **kwargs):
 
 # while creating checklists, this signal will need to be disabled
 post_save.connect(edaychecklist_handler, sender=EDAYChecklist)
+
+def edaychecklist_5th_sms_handler(sender, **kwargs):
+    '''This method computes the status for the 5th SMS:
+    1 - Complete
+    2 - Partially completed
+    3 - None submitted'''
+    if not kwargs['instance'].checklist_index == '3' and kwargs['instance'].contesting:
+        # compute 5th sms completion status
+        contesting_party_codes = kwargs['instance'].contesting
+        and_condition = True
+        or_condition = False
+        for party_code in contesting_party_codes:
+            and_condition = and_condition and getattr(kwargs['instance'], party_code)
+            or_condition = or_condition or getattr(kwargs['instance'], party_code)
+
+        if and_condition:
+            kwargs['instance'].sms_status_5th = 1
+        elif or_condition:
+            kwargs['instance'].sms_status_5th = 2
+        else:
+            kwargs['instance'].sms_status_5th = 3
+
+pre_save.connect(edaychecklist_5th_sms_handler, sender=EDAYChecklist)
