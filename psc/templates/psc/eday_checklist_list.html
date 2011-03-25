@@ -136,7 +136,7 @@
 								{% if cl.BB or cl.BC or cl.BD or cl.BE or cl.BF or cl.BG or cl.BH or cl.BJ or cl.BK or cl.BM or cl.BN or cl.BP %}
 									<img src="/assets/img/status-busy.png" width="16" height="16" alt="not open problem" />
 								{% else %}
-									<img src="/assets/img/information.png" width="16" height="16" alt="not open" />
+									<img src="/assets/img/status-offline.png" width="16" height="16" alt="not expected" />
 								{% endif %}
 							{% else %}
 								{% if cl.BA or cl.BB or cl.BC or cl.BD or cl.BE or cl.BF or cl.BG or cl.BH or cl.BJ or cl.BK or cl.BM or cl.BN or cl.BP %}
@@ -148,7 +148,7 @@
 						{% endif %}
                         </td>
 						<td class="checklist">
-						{% if cl.CA and cl.BA and cl.CA < 4 and cl.BA < 4 %}
+						{% if cl.CA and cl.CA < 5 and cl.BA < 5 %}
 							{% if cl.CB and cl.CC and cl.CD and cl.CE and cl.CF and cl.CG and cl.CH and cl.CJ and cl.CK and cl.CM and cl.CN and cl.CP and cl.CQ %}
                             <img src="/assets/img/status.png" width="16" height="16" alt="complete" />
 							{% else %}
@@ -159,7 +159,7 @@
 								{% if cl.CB or cl.CC or cl.CD or cl.CE or cl.CF or cl.CG or cl.CH or cl.CJ or cl.CK or cl.CM or cl.CN or cl.CP or cl.CQ %}
 									<img src="/assets/img/status-busy.png" width="16" height="16" alt="not open problem" />
 								{% else %}
-									<img src="/assets/img/information.png" width="16" height="16" alt="not open" />
+									<img src="/assets/img/status-offline.png" width="16" height="16" alt="not expected" />
 								{% endif %}
 							{% else %}
 								{% if cl.CA or cl.CB or cl.CC or cl.CD or cl.CE or cl.CF or cl.CG or cl.CH or cl.CJ or cl.CK or cl.CM or cl.CN or cl.CP or cl.CQ %}
@@ -171,24 +171,40 @@
 						{% endif %}
                         </td>
 						<td class="checklist">
-						{% if cl.DA and cl.DB and cl.DC and cl.DD and cl.DE and cl.DF and cl.DG and cl.DH %}
-                            <img src="/assets/img/status.png" width="16" height="16" alt="complete" />
+						{% if cl.CA < 5 and cl.BA < 5 %}
+							{% if cl.DA and cl.DB and cl.DC and cl.DD and cl.DE and cl.DF and cl.DG and cl.DH %}
+	                            <img src="/assets/img/status.png" width="16" height="16" alt="complete" />
+							{% else %}
+								{% if cl.DA or cl.DB or cl.DC or cl.DD or cl.DE or cl.DF or cl.DG or cl.DH %}
+									<img src="/assets/img/status-away.png" width="16" height="16" alt="incomplete" />
+								{% else %}
+									<img src="/assets/img/exclamation-red.png" width="16" height="16" alt="none" />
+								{% endif %}
+							{% endif %}
 						{% else %}
 							{% if cl.DA or cl.DB or cl.DC or cl.DD or cl.DE or cl.DF or cl.DG or cl.DH %}
-								<img src="/assets/img/status-away.png" width="16" height="16" alt="incomplete" />
+								<img src="/assets/img/status-busy.png" width="16" height="16" alt="not open problem" />
 							{% else %}
-								<img src="/assets/img/exclamation-red.png" width="16" height="16" alt="none" />
+								<img src="/assets/img/status-offline.png" width="16" height="16" alt="not expected" />
 							{% endif %}
 						{% endif %}
                         </td>
 						<td class="checklist" id="results">
-						{% if cl.sms_status_5th == 1 %}
-                            <img src="/assets/img/status.png" width="16" height="16" alt="complete" />
-						{% else %}
-							{% if cl.sms_status_5th == 2 %}
-							<img src="/assets/img/status-away.png" width="16" height="16" alt="incomplete" />							
+						{% if cl.BA < 5 and cl.CA < 5 %}
+							{% if cl.sms_status_5th == 1 %}
+	                            <img src="/assets/img/status.png" width="16" height="16" alt="complete" />
 							{% else %}
-							<img src="/assets/img/exclamation-red.png" width="16" height="16" alt="none" />
+								{% if cl.sms_status_5th == 2 %}
+								<img src="/assets/img/status-away.png" width="16" height="16" alt="incomplete" />							
+								{% else %}
+								<img src="/assets/img/exclamation-red.png" width="16" height="16" alt="none" />
+								{% endif %}
+							{% endif %}
+						{% else %}
+							{% if cl.sms_status_5th == 1 or cl.sms_status_5th == 2 %}
+								<img src="/assets/img/status-busy.png" width="16" height="16" alt="not open problem" />
+							{% else %}
+								<img src="/assets/img/status-offline.png" width="16" height="16" alt="not expected" />
 							{% endif %}
 						{% endif %}
                         </td>

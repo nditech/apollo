@@ -444,15 +444,23 @@ def eday_checklist_list(request, action=None):
                 qs_include &= queries['eday']['voting_and_counting']['missing']
             if data['fourth'] == u'1': # complete
                 qs_include &= queries['eday']['official_summary']['complete']
-            elif data['fourth'] == u'2': # missing
+            elif data['fourth'] == u'2': # partial
                 qs_include &= queries['eday']['official_summary']['partial']
-            elif data['fourth'] == u'5': # partial
+            elif data['fourth'] == u'3': # not open
+                qs_include &= queries['eday']['official_summary']['not_open']
+            elif data['fourth'] == u'4': # not open problem
+                qs_include &= queries['eday']['official_summary']['problem']
+            elif data['fourth'] == u'5': # missing
                 qs_include &= queries['eday']['official_summary']['missing']
             if data['fifth'] == u'1': # complete
                 qs_include &= queries['eday']['official_results']['complete']
-            elif data['fifth'] == u'2': # missing
+            elif data['fifth'] == u'2': # partial
                 qs_include &= queries['eday']['official_results']['partial']
-            elif data['fifth'] == u'5': # partial
+            elif data['fifth'] == u'3': # not open
+                qs_include &= queries['eday']['official_results']['not_open']
+            elif data['fifth'] == u'4': # not open problem
+                qs_include &= queries['eday']['official_results']['problem']
+            elif data['fifth'] == u'5': # missing
                 qs_include &= queries['eday']['official_results']['missing']
            
     else:
