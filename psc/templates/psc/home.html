@@ -53,32 +53,48 @@
                                  <div class="dash-row">
                                      <div class="dash-column first">1st SMS</div>
                                      <div class="dash-column second">
-                                         <span class="missing">{{ missing_first_sms|default:"0" }}</span>                                         
-                                         <span class="complete">{{ received_first_sms|default:"0" }}</span>
+                                         <span class="missing" id="eday_not_arrived">{{eday_not_arrived|default:"0" }}</span>                      
+                                         <span class="complete" id="eday_arrived">{{ eday_arrived|default:"0" }}</span>
                                      </div>
                                 </div>
                                  <div class="dash-row">
                                      <div class="dash-column first">2nd SMS</div>
                                      <div class="dash-column second">
-                                         <span class="missing">{{ missing_second_sms|default:"0" }}</span>
-                                         <span class="incomplete">{{ incomplete_second_sms|default:"0" }}</span>
-                                         <span class="complete">{{ complete_second_sms|default:"0" }}</span>
+										<span class="blank" id="eday_second_sms_not_open">{{ eday_second_sms_not_open|default:"0" }}</span>
+                                         <span class="missing" id="eday_second_sms_missing">{{ eday_second_sms_missing|default:"0" }}</span>
+										 <span class="unverified" id="eday_second_sms_not_open_problem">{{ eday_second_sms_not_open_problem|default:"0" }}</span>
+                                         <span class="incomplete" id="eday_second_sms_partial">{{ eday_second_sms_partial|default:"0" }}</span>
+                                         <span class="complete" id="eday_second_sms_complete">{{ eday_second_sms_complete|default:"0" }}</span>
                                      </div>
                                 </div>
                                  <div class="dash-row">
                                      <div class="dash-column first">3rd SMS</div>
                                      <div class="dash-column second">
-                                         <span class="missing">{{ missing_third_sms|default:"0" }}</span>
-                                         <span class="incomplete">{{ incomplete_third_sms|default:"0" }}</span>                                         
-                                         <span class="complete">{{ complete_third_sms|default:"0" }}</span>
+										<span class="blank" id="eday_third_sms_not_open">{{ eday_third_sms_not_open|default:"0" }}</span>
+                                         <span class="missing" id="eday_third_sms_missing">{{ eday_third_sms_missing|default:"0" }}</span>
+										 <span class="unverified" id="eday_second_sms_not_open_problem">{{ eday_second_sms_not_open_problem|default:"0" }}</span>
+                                         <span class="incomplete" id="eday_third_sms_partial">{{ eday_third_sms_partial|default:"0" }}</span>      
+                                         <span class="complete" id="eday_third_sms_complete">{{ eday_third_sms_complete|default:"0" }}</span>
                                      </div>
                                 </div>
 				<div class="dash-row">
                                      <div class="dash-column first">4th SMS</div>
                                      <div class="dash-column second">
-                                         <span class="missing">{{ missing_third_sms|default:"0" }}</span>
-                                         <span class="incomplete">{{ incomplete_third_sms|default:"0" }}</span>                                         
-                                         <span class="complete">{{ complete_third_sms|default:"0" }}</span>
+										<span class="blank" id="eday_fourth_sms_not_open">{{ eday_fourth_sms_not_open|default:"0" }}</span>
+                                         <span class="missing" id="eday_fourth_sms_missing">{{ eday_fourth_sms_missing|default:"0" }}</span>
+										 <span class="unverified" id="eday_fourth_sms_not_open_problem">{{ eday_fourth_sms_not_open_problem|default:"0" }}</span>
+                                         <span class="incomplete" id="eday_fourth_sms_partial">{{ eday_fourth_sms_partial|default:"0" }}</span>    
+                                         <span class="complete" id="eday_fourth_sms_complete">{{ eday_fourth_sms_complete|default:"0" }}</span>
+                                     </div>
+                                </div>
+				<div class="dash-row">
+                                     <div class="dash-column first">5th SMS</div>
+                                     <div class="dash-column second">
+										<span class="blank" id="eday_fifth_sms_not_open">{{ eday_fifth_sms_not_open|default:"0" }}</span>
+                                         <span class="missing" id="eday_fifth_sms_missing">{{ eday_fifth_sms_missing|default:"0" }}</span>
+										 <span class="unverified" id="eday_fifth_sms_not_open_problem">{{ eday_fifth_sms_not_open_problem|default:"0" }}</span>
+                                         <span class="incomplete" id="eday_fifth_sms_partial">{{ eday_fifth_sms_partial|default:"0" }}</span>      
+                                         <span class="complete" id="eday_fifth_sms_complete">{{ eday_fifth_sms_complete|default:"0" }}</span>
                                      </div>
                                 </div>
                                 <div class="dash-row last">
