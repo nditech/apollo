@@ -139,6 +139,32 @@ def home(request):
     context['dco_incidents_today'] = DCOIncident.objects.filter(qs).count()
 
     context['dco_checklists_today'] = DCOChecklist.objects.filter(qs).count()
+    
+    context['eday_arrived'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').filter(queries['eday']['arrival']['yes']).count()
+    context['eday_not_arrived'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').filter(queries['eday']['arrival']['no']).count()
+    context['eday_second_sms_missing'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').filter(queries['eday']['accreditation']['missing']).count()
+    context['eday_second_sms_not_open_problem'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').filter(queries['eday']['accreditation']['problem']).count()
+    context['eday_second_sms_partial'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').filter(queries['eday']['accreditation']['partial']).count()
+    context['eday_second_sms_not_open'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').filter(queries['eday']['accreditation']['not_open']).count()
+    context['eday_second_sms_complete'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').filter(queries['eday']['accreditation']['complete']).count()
+
+    context['eday_third_sms_missing'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').filter(queries['eday']['voting_and_counting']['missing']).count()
+    context['eday_third_sms_not_open_problem'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').filter(queries['eday']['voting_and_counting']['problem']).count()
+    context['eday_third_sms_partial'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').filter(queries['eday']['voting_and_counting']['partial']).count()
+    context['eday_third_sms_not_open'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').filter(queries['eday']['voting_and_counting']['not_open']).count()
+    context['eday_third_sms_complete'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').filter(queries['eday']['voting_and_counting']['complete']).count()
+    
+    context['eday_fourth_sms_missing'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').filter(queries['eday']['official_summary']['missing']).count()
+    context['eday_fourth_sms_not_open_problem'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').filter(queries['eday']['official_summary']['problem']).count()
+    context['eday_fourth_sms_partial'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').filter(queries['eday']['official_summary']['partial']).count()
+    context['eday_fourth_sms_not_open'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').filter(queries['eday']['official_summary']['not_open']).count()
+    context['eday_fourth_sms_complete'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').filter(queries['eday']['official_summary']['complete']).count()
+    
+    context['eday_fifth_sms_missing'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').filter(queries['eday']['official_results']['missing']).count()
+    context['eday_fifth_sms_not_open_problem'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').filter(queries['eday']['official_results']['problem']).count()
+    context['eday_fifth_sms_partial'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').filter(queries['eday']['official_results']['partial']).count()
+    context['eday_fifth_sms_not_open'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').filter(queries['eday']['official_results']['not_open']).count()
+    context['eday_fifth_sms_complete'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').filter(queries['eday']['official_results']['complete']).count()
 
     #render
     return render_to_response('psc/home.html', context,  context_instance=RequestContext(request))
@@ -201,6 +227,33 @@ def ajax_home_stats(request):
     context['dco_incidents_today'] = DCOIncident.objects.filter(qs).count()
 
     context['dco_checklists_today'] = DCOChecklist.objects.filter(qs).count()
+    
+    context['eday_arrived'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').filter(queries['eday']['arrival']['yes']).count()
+    context['eday_not_arrived'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').filter(queries['eday']['arrival']['no']).count()
+    context['eday_second_sms_missing'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').filter(queries['eday']['accreditation']['missing']).count()
+    context['eday_second_sms_not_open_problem'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').filter(queries['eday']['accreditation']['problem']).count()
+    context['eday_second_sms_partial'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').filter(queries['eday']['accreditation']['partial']).count()
+    context['eday_second_sms_not_open'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').filter(queries['eday']['accreditation']['not_open']).count()
+    context['eday_second_sms_complete'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').filter(queries['eday']['accreditation']['complete']).count()
+
+    context['eday_third_sms_missing'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').filter(queries['eday']['voting_and_counting']['missing']).count()
+    context['eday_third_sms_not_open_problem'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').filter(queries['eday']['voting_and_counting']['problem']).count()
+    context['eday_third_sms_partial'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').filter(queries['eday']['voting_and_counting']['partial']).count()
+    context['eday_third_sms_not_open'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').filter(queries['eday']['voting_and_counting']['not_open']).count()
+    context['eday_third_sms_complete'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').filter(queries['eday']['voting_and_counting']['complete']).count()
+    
+    context['eday_fourth_sms_missing'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').filter(queries['eday']['official_summary']['missing']).count()
+    context['eday_fourth_sms_not_open_problem'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').filter(queries['eday']['official_summary']['problem']).count()
+    context['eday_fourth_sms_partial'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').filter(queries['eday']['official_summary']['partial']).count()
+    context['eday_fourth_sms_not_open'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').filter(queries['eday']['official_summary']['not_open']).count()
+    context['eday_fourth_sms_complete'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').filter(queries['eday']['official_summary']['complete']).count()
+    
+    context['eday_fifth_sms_missing'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').filter(queries['eday']['official_results']['missing']).count()
+    context['eday_fifth_sms_not_open_problem'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').filter(queries['eday']['official_results']['problem']).count()
+    context['eday_fifth_sms_partial'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').filter(queries['eday']['official_results']['partial']).count()
+    context['eday_fifth_sms_not_open'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').filter(queries['eday']['official_results']['not_open']).count()
+    context['eday_fifth_sms_complete'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').filter(queries['eday']['official_results']['complete']).count()
+    
     json_string = json.dumps(context)
     
     return HttpResponse(mimetype='application/json', content=json_string)
