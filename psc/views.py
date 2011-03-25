@@ -563,7 +563,7 @@ def vr_checklist(request, checklist_id=0):
         f = VRChecklistForm(request.POST, instance=checklist)
         if f.is_valid():
             f.save()
-        return HttpResponseRedirect(reverse('psc.views.vr_checklist_list'))
+        return HttpResponseRedirect(reverse('vr_checklist_view'))
     else:
         f = VRChecklistForm(instance=checklist)
         return render_to_response('psc/vr_checklist_form.html', {'page_title': "Voter Registration Checklist", 'checklist': checklist, 'rcs': rcs, 'location': location, 'form': f }, context_instance=RequestContext(request))
@@ -578,7 +578,7 @@ def dco_checklist(request, checklist_id=0):
         f = DCOChecklistForm(request.POST, instance=checklist)
         if f.is_valid():
             f.save()
-        return HttpResponseRedirect(reverse('psc.views.dco_checklist_list'))
+        return HttpResponseRedirect(reverse('dco_checklist_view'))
     else:
         f = DCOChecklistForm(instance=checklist)
     return render_to_response('psc/dco_checklist_form.html', {'page_title': 'Display, Claims & Objections Checklist', 'checklist': checklist, 'rcs': rcs, 'location': location, 'form': f}, context_instance=RequestContext(request))
@@ -628,7 +628,7 @@ def vr_incident_update(request, incident_id=0):
         f = VRIncidentUpdateForm(request.POST, instance=incident)
         if f.is_valid():
             f.save()
-        return HttpResponseRedirect(reverse('psc.views.vr_incident_list'))    
+        return HttpResponseRedirect(reverse('vr_incident_view'))    
     else:
         f = VRIncidentForm(instance=incident)   
         return render_to_response('psc/vr_incident_update_form.html', {'page_title': "Voter Registration Critrical Incident", 'incident': incident, 'location': location, 'form': f, 'lga_list': lga_list, 'rc_list_by_lga': rc_list_by_lga }, context_instance=RequestContext(request))
@@ -642,7 +642,7 @@ def dco_incident_update(request, incident_id=0):
         f = DCOIncidentUpdateForm(request.POST, instance=incident)    
         if f.is_valid():
             f.save()
-        return HttpResponseRedirect(reverse('psc.views.dco_incident_list'))
+        return HttpResponseRedirect(reverse('dco_incident_view'))
     else:
         f = DCOIncidentForm(instance=incident)
         return render_to_response('psc/dco_incident_update_form.html', {'page_title': 'Display, Claims & Objections Critical Incident', 'incident': incident, 'location': location, 'form': f }, context_instance=RequestContext(request))
@@ -653,7 +653,7 @@ def vr_incident_add(request):
     if request.POST:
         f = VRIncidentForm(request.POST, VRIncident)
         f.save()
-        return HttpResponseRedirect(reverse('psc.views.vr_incident_list'))
+        return HttpResponseRedirect(reverse('vr_incident_view'))
     else:
         f = VRIncidentForm()
         return render_to_response('psc/vr_incident_add_form.html', {'page_title': "Add Voter Registration Critrical Incident", 'form': f }, context_instance=RequestContext(request))
@@ -664,7 +664,7 @@ def dco_incident_add(request):
     if request.POST:
         f = DCOIncidentForm(request.POST)                    
         f.save()
-        return HttpResponseRedirect(reverse('psc.views.dco_incident_list'))
+        return HttpResponseRedirect(reverse('dco_incident_view'))
     else:
         f = DCOIncidentForm()
         return render_to_response('psc/dco_incident_add_form.html', {'page_title': "Add Display, Claims & Objections Critrical Incident", 'form': f }, context_instance=RequestContext(request))
@@ -845,7 +845,7 @@ def eday_incident_update(request, incident_id=0):
         f = EDAYIncidentUpdateForm(request.POST, instance=incident)    
         if f.is_valid():
             f.save()
-        return HttpResponseRedirect(reverse('psc.views.eday_incident_list'))
+        return HttpResponseRedirect(reverse('eday_incident_view'))
     else:
         f = DCOIncidentForm(instance=incident)
         return render_to_response('psc/eday_incident_update_form.html', {'page_title': 'Election Day Critical Incident', 'incident': incident, 'location': location, 'form': f }, context_instance=RequestContext(request))
@@ -1541,7 +1541,7 @@ def contact_edit(request, contact_id=0):
             f.save()
             contact.contact.name = request.POST.get('name', '')
             contact.contact.save()
-        return HttpResponseRedirect(reverse('psc.views.contact_list'))
+        return HttpResponseRedirect(reverse('contacts_list_view'))
     else:
         f = ContactEditForm(instance=contact)
 
@@ -1566,21 +1566,21 @@ def get_states_by_zone(request, zone):
 def vr_incident_delete(request, incident_id):
     if int(incident_id):        
         VRIncident.objects.get(pk=incident_id).delete()
-        return HttpResponseRedirect(reverse('psc.views.vr_incident_list'))
+        return HttpResponseRedirect(reverse('vr_incident_view'))
 
 @permission_required('psc.can_manage_data', login_url='/')
 @login_required()
 def dco_incident_delete(request, incident_id):
     if int(incident_id):        
         DCOIncident.objects.get(pk=incident_id).delete()
-        return HttpResponseRedirect(reverse('psc.views.dco_incident_list'))
+        return HttpResponseRedirect(reverse('dco_incident_view'))
     
 @permission_required('psc.can_manage_data', login_url='/')
 @login_required()
 def eday_incident_delete(request, incident_id):
     if int(incident_id):        
         EDAYIncident.objects.get(pk=incident_id).delete()
-        return HttpResponseRedirect(reverse('psc.views.eday_incident_list'))
+        return HttpResponseRedirect(reverse('eday_incident_view'))
 
 @permission_required('psc.can_analyse', login_url='/')
 @login_required()
