@@ -1159,11 +1159,11 @@ def export(request, model, query_set=None):
                 pu = smart_str(contact.location.name)
             else:
                 pu = "Unknown"
-                name = smart_str(contact.name)
-                organisation = contact.partner
-                gender = contact.gender
-                phone = contact.phone
-                email = contact.email
+            name = smart_str(contact.name)
+            organisation = contact.partner
+            gender = contact.gender
+            phone = contact.phone
+            email = contact.email
             writer.writerow([pscid, zone, state, sd, lga, pu, name, gender, phone, email, role, organisation])
     # export here
     # TODO: refactor
