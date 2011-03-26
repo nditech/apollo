@@ -1427,7 +1427,7 @@ def vr_checklist_analysis(request):
 @permission_required('psc.can_analyse', login_url='/')
 @login_required()
 def contact_list(request, action=None):
-    qs_include = Q()
+    qs_include = ~(Q(observer_id__endswith="6") & Q(role="LGA"))
     if not request.session.has_key('contact_filter'):
         request.session['contact_filter'] = {}
     
