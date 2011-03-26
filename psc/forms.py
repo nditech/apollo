@@ -47,28 +47,28 @@ EDAY_CHECKLIST_1ST = (('', 'All'),
                     (2, 'Missing'))
 EDAY_CHECKLIST_2ND = (('', 'All'),
                     (1, 'Complete'),
+                    (5, 'Missing'),
                     (2, 'Partial'),
                     (3, 'Blank'),
-                    (4, 'Problem'),
-                    (5, 'Missing'))
+                    (4, 'Problem'))
 EDAY_CHECKLIST_3RD = (('', 'All'),
                     (1, 'Complete'),
+                    (5, 'Missing'),
                     (2, 'Partial'),
                     (3, 'Blank'),
-                    (4, 'Problem'),
-                    (5, 'Missing'))
+                    (4, 'Problem'))
 EDAY_CHECKLIST_4TH = (('', 'All'),
                     (1, 'Complete'),
+                    (5, 'Missing'),
                     (2, 'Partial'),
                     (3, 'Blank'),
-                    (4, 'Problem'),
-                    (5, 'Missing'))
+                    (4, 'Problem'))
 EDAY_CHECKLIST_5TH = (('', 'All'),
                     (1, 'Complete'),
+                    (5, 'Missing'),
                     (2, 'Partial'),
                     (3, 'Blank'),
-                    (4, 'Problem'),
-                    (5, 'Missing'))
+                    (4, 'Problem'))
 
 EDAY_DAYS = (('', 'All'),
         (datetime.date(datetime(2011, 3, 31)), 'Thu 31-Mar'),
