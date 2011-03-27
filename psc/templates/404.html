@@ -1,0 +1,49 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <title>{{ page_title|default:"PSC2011" }}</title>
+        <link rel="stylesheet" type="text/css" href="/assets/css/reset.css" media="screen" />
+        <link rel="stylesheet" type="text/css" href="/assets/css/text.css" media="screen" />
+        <link rel="stylesheet" type="text/css" href="/assets/css/grid.css" media="screen" />
+        <link rel="stylesheet" type="text/css" href="/assets/css/layout.css" media="screen" />
+        <link rel="stylesheet" type="text/css" href="/assets/css/nav.css" media="screen" />
+        <link rel="stylesheet" type="text/css" href="/assets/css/datePicker.css" media="screen" />
+        <!--[if IE 6]><link rel="stylesheet" type="text/css" href="/assets/css/ie6.css" media="screen" /><![endif]-->
+        <!--[if IE 7]><link rel="stylesheet" type="text/css" href="/assets/css/ie.css" media="screen" /><![endif]-->
+		{% block javascripts %}
+		{% endblock %}
+    </head>
+    <body>
+        <div class="container_16">
+            <div class="grid_16">
+                <img class="floatLeft" src="/assets/img/logo.jpg" width="81" height="72" alt = "wow" style = "margin:10px"/>
+                <h1 id="branding">
+                    <a href="">Project 2011 SwiftCount (FOMWAN, JDPC, NBA &amp; TMG)</a>
+                </h1>
+            </div>
+            <div class="clear"></div>
+            <div class="grid_16">
+                <h2 id="page-heading">Page Not Found</h2>
+            </div>
+            <div class="clear"></div>
+            <div class="grid_16">
+                <div class="box">
+                    <h2>Oops!</h2>
+                    <div class="block">
+                        <p>Sorry but it looks like the page you're trying to access, does not exist.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="clear"></div>
+            <div class="grid_16" id="site_info">
+                <div class="box">
+					{% block footer %}
+                    <p>A project by <a href="http://www.fomwan.org/">FOMWAN</a>, <a href="#">JDPC</a>, <a href="http://www.nba.org.ng/">NBA</a> and <a href="http://www.tmgnigeria.org/">TMG</a></p>
+					{% endblock %}
+                </div>
+            </div>
+            <div class="clear"></div>
+        </div>
+    </body>
+</html>

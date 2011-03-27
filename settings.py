@@ -49,6 +49,7 @@ INSTALLED_BACKENDS = {
 INSTALLED_APPS = [
 
     # the essentials.
+    "psc",
     "django_nose",
     "djtables",
     "rapidsms",
@@ -76,8 +77,6 @@ INSTALLED_APPS = [
     "rapidsms.contrib.registration",
     "rapidsms.contrib.scheduler",
     "rapidsms.contrib.echo",
-
-    "psc",
     'south',
 ]
 
