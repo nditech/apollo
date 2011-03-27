@@ -34,7 +34,7 @@ def home(request):
         request.session['dashboard_filter'] = {}
 
     if request.method == 'GET':
-        if filter(lambda key: request.GET.has_key(key), ['zone', 'date']):
+        if filter(lambda key: request.GET.has_key(key), ['zone', 'state', 'date', 'sample']):
             request.session['dashboard_filter'] = request.GET
         filter_form = DashboardFilterForm(request.session['dashboard_filter'])
 
@@ -42,7 +42,11 @@ def home(request):
             data = filter_form.cleaned_data
 
             if data['zone']:
-                qs &= Q(observer__location_id__in=LGA.objects.filter(parent__parent__parent__code__iexact=data['zone']).values_list('id', flat=True))
+                qs &= (Q(observer__role='LGA', observer__location_id__in=LGA.objects.filter(parent__parent__parent__code__iexact=data['zone']).values_list('id', flat=True)) | Q(observer__role="OBS", observer__location_id__in=RegistrationCenter.objects.filter(parent__parent__parent__parent__code__iexact=data['zone']).values_list('id', flat=True)))
+            if data['state']:
+                qs &= (Q(observer__role='LGA', observer__location_id__in=LGA.objects.filter(parent__parent__code__iexact=data['state']).values_list('id', flat=True)) | Q(observer__role="OBS", observer__location_id__in=RegistrationCenter.objects.filter(parent__parent__parent__code__iexact=data['state']).values_list('id', flat=True)))
+            if data['sample']:
+                qs &= Q(location_type=ContentType.objects.get_for_model(RegistrationCenter),location_id__in=Sample.objects.filter(sample=data['sample']).values_list('location', flat=True))
             if data['date']:
                 filter_date = datetime.date(datetime.strptime(data['date'], '%Y-%m-%d'))
     else:
@@ -464,13 +468,15 @@ def eday_checklist_list(request, action=None):
         request.session['eday_checklist_filter'] = {}
 
     if request.method == 'GET':
-        if filter(lambda key: request.GET.has_key(key), ['zone', 'state', 'first', 'second', 'third', 'fourth', 'fifth', 'day', 'observer_id']):
+        if filter(lambda key: request.GET.has_key(key), ['sample', 'zone', 'state', 'first', 'second', 'third', 'fourth', 'fifth', 'day', 'observer_id']):
             request.session['eday_checklist_filter'] = request.GET
         filter_form = EDAYChecklistFilterForm(request.session['eday_checklist_filter'])
 
         if filter_form.is_valid():
             data = filter_form.cleaned_data
 
+            if data['sample']:
+                qs_include &= Q(location_type=ContentType.objects.get_for_model(RegistrationCenter),location_id__in=Sample.objects.filter(sample=data['sample']).values_list('location', flat=True))
             if data['zone']:
                 qs_include &= Q(observer__location_id__in=LGA.objects.filter(parent__parent__parent__code__iexact=data['zone']).values_list('id', flat=True))
             if data['state']:
