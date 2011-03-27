@@ -46,14 +46,14 @@
 						<table>
 						    <tr>
 							<th>
-							    <td>Index</td><td>Question</td><td>OBS1</td>{% if checklist1.observer.role != 'LGA' %}<td>OBS2</td><td>CONTROL</td>{% endif %}<td>&nbsp;</td>
+							    <td>Index</td><td>Question</td><td>OBS1</td>{% if checklist1.observer.role != 'LGA' %}<td>OBS2</td><td>CONTROL</td><td>&nbsp;</td>{% endif %}
 							</th>
 						    </tr>
-						    <tr><td colspan="7" class="table_heading">Opening Checklist Questions (Arrival)</td></tr>
+						    <tr><td colspan="{% if checklist1.observer.role != 'LGA' %}7{% else %}4{% endif %}" class="table_heading">Opening Checklist Questions (Arrival)</td></tr>
 						    <tr>
 							<td>&nbsp;</td><td>AA</td><td>{{ form.AA.help_text }} <br />Yes <strong>(1)</strong> No <strong>(2)</strong> Unchecked <strong>(3)</strong></td><td><input name='{{ form.AA.html_name }}' class='bigbox2' type='text' value="{{ form.initial.AA|default:'' }}"></td>{% if checklist1.observer.role != 'LGA' %}<td><input name='{{ form2.AA.html_name }}' class='bigbox2' type='text' value="{{ form2.initial.AA|default:'' }}"></td><td><input name='{{ form3.AA.html_name }}' class='control_text bigbox2' type='text' value="{{ form3.initial.AA|default:'' }}"></td><td><input type='checkbox' name="override" class="control" value="{{ form3.AA.name }}"></td>{% endif %}
 						    </tr>
-						    <tr><td colspan="7" class="table_heading">Accreditation Process</td></tr>
+						    <tr><td colspan="{% if checklist1.observer.role != 'LGA' %}7{% else %}4{% endif %}" class="table_heading">Accreditation Process</td></tr>
 						    <tr>
 							<td>&nbsp;</td><td>BA</td><td>{{ form.BA.help_text }} <br />Open by 8am <strong>(1)</strong> Between 8am &amp; 9am <strong>(2)</strong> Between 9am &amp; 12noon <strong>(3)</strong> After by 12noon <strong>(4)</strong> Never Started <strong>(5)</strong></td><td><input name='{{ form.BA.html_name }}' class='bigbox2' type='text' value="{{ form.initial.BA|default:'' }}" ></td>{% if checklist1.observer.role != 'LGA' %}<td><input name='{{ form2.BA.html_name }}' type='text' class='bigbox2' value="{{ form2.initial.BA|default:'' }}"></td><td><input name='{{ form3.BA.html_name }}' type='text' class='control_text bigbox2' value="{{ form3.initial.BA|default:'' }}"></td><td><input type='checkbox' name="override" class="control" value="{{ form3.BA.name }}"></td>{% endif %}
 						    </tr>
@@ -93,7 +93,7 @@
 						    <tr>
 							<td>&nbsp;</td><td>BP</td><td>{{ form.BP.help_text }} </td><td><input name='{{ form.BP.html_name }}' type='text' class='bigbox2' value="{{form.initial.BP|default:''}}"></td>{% if checklist1.observer.role != 'LGA' %}<td><input name='{{ form2.BP.html_name }}' type='text' class='bigbox2' value="{{form2.initial.BP|default:''}}"></td><td><input name='{{form3.BP.html_name}}' type='text' class='control_text bigbox2' value="{{form3.initial.BP|default:''}}"></td><td><input type='checkbox' class="control" name="override" value="{{ form3.BP.name }}"></td>{% endif %}
 						    </tr>
-						    <tr><td colspan="7" class="table_heading">Voting Process</td></tr>
+						    <tr><td colspan="{% if checklist1.observer.role != 'LGA' %}7{% else %}4{% endif %}" class="table_heading">Voting Process</td></tr>
 						    <tr>
 							<td>&nbsp;</td><td>CA</td><td>{{ form.CA.help_text }} <br />Before 1pm <strong>(1)</strong> Between 1pm &amp; 2pm <strong>(2)</strong> Between 2pm &amp; 3pm <strong>(3)</strong> After 3pm <strong>(4)</strong> Never Started <strong>(5)</strong></td><td><input name='{{ form.CA.html_name }}' type='text' class='bigbox2' value="{{form.initial.CA|default:''}}"></td>{% if checklist1.observer.role != 'LGA' %}<td><input name='{{ form2.CA.html_name }}' type='text' class='bigbox2' value="{{form2.initial.CA|default:''}}"></td><td><input name='{{form3.CA.html_name}}' type='text' class='control_text bigbox2' value="{{form3.initial.CA|default:''}}"></td><td><input type='checkbox' class="control" name="override" value="{{ form3.CA.name }}"></td>{% endif %}
 						    </tr>
@@ -118,7 +118,7 @@
 						    <tr>
 							<td>&nbsp;</td><td>CH</td><td>{{ form.CH.help_text }} <br />Yes <strong>(1)</strong> No <strong>(2)</strong> Unchecked <strong>(3)</strong></td><td><input name='{{ form.CH.html_name }}' type='text' class='bigbox2' value="{{form.initial.CH|default:''}}"></td>{% if checklist1.observer.role != 'LGA' %}<td><input name='{{ form2.CH.html_name }}' type='text' class='bigbox2' value="{{form2.initial.CH|default:''}}"></td><td><input name='{{form3.CH.html_name}}' type='text' class='control_text bigbox2' value="{{form3.initial.CH|default:''}}"></td><td><input type='checkbox' class="control" name="override" value="{{ form3.CH.name }}"></td>{% endif %}
 						    </tr>
-						    <tr><td colspan="7" class="table_heading">Counting Process</td></tr>
+						    <tr><td colspan="{% if checklist1.observer.role != 'LGA' %}7{% else %}4{% endif %}" class="table_heading">Counting Process</td></tr>
 						    <tr>
 							<td>&nbsp;</td><td>CJ</td><td>{{ form.CJ.help_text }} <br />Yes <strong>(1)</strong> No <strong>(2)</strong> Unchecked <strong>(3)</strong></td><td><input name='{{ form.CJ.html_name }}' type='text' class='bigbox2' value="{{form.initial.CJ|default:''}}"></td>{% if checklist1.observer.role != 'LGA' %}<td><input name='{{ form2.CJ.html_name }}' type='text' class='bigbox2' value="{{form2.initial.CJ|default:''}}"></td><td><input name='{{form3.CJ.html_name}}' type='text' class='control_text bigbox2' value="{{form3.initial.CJ|default:''}}"></td><td><input type='checkbox' class="control" name="override" value="{{ form3.CJ.name }}"></td>{% endif %}
 						    </tr>
@@ -137,7 +137,7 @@
 						    <tr>
 							<td>&nbsp;</td><td>CQ</td><td>{{ form.CQ.help_text }} <br />Yes <strong>(1)</strong> No <strong>(2)</strong> Unchecked <strong>(3)</strong></td><td><input name='{{ form.CQ.html_name }}' type='text' class='bigbox2' value="{{form.initial.CQ|default:''}}"></td>{% if checklist1.observer.role != 'LGA' %}<td><input name='{{ form2.CQ.html_name }}' type='text' class='bigbox2' value="{{form2.initial.CQ|default:''}}"></td><td><input name='{{form3.CQ.html_name}}' type='text' class='control_text bigbox2' value="{{form3.initial.CQ|default:''}}"></td><td><input type='checkbox' class="control" name="override" value="{{ form3.CQ.name }}"></td>{% endif %}
 						    </tr>
-						    <tr><td colspan="7" class="table_heading">Official Election Summary Information</td></tr>
+						    <tr><td colspan="{% if checklist1.observer.role != 'LGA' %}7{% else %}4{% endif %}" class="table_heading">Official Election Summary Information</td></tr>
 						    <tr>
 							<td>&nbsp;</td><td>DA</td><td>{{ form.DA.help_text }}</td><td><input name='{{ form.DA.html_name }}' type='text' class='bigbox2' value="{{form.initial.DA|default:''}}"></td>{% if checklist1.observer.role != 'LGA' %}<td><input name='{{ form2.DA.html_name }}' type='text' class='bigbox2' value="{{form2.initial.DA|default:''}}"></td><td><input name='{{form3.DA.html_name}}' type='text' class='control_text bigbox2' value="{{form3.initial.DA|default:''}}"></td><td><input type='checkbox' class="control" name="override" value="{{ form3.DA.name }}"></td>{% endif %}
 						    </tr>
@@ -163,7 +163,7 @@
 							<td>&nbsp;</td><td>DH</td><td>{{ form.DH.help_text }}</td><td><input name='{{ form.DH.html_name }}' type='text' class='bigbox2' value="{{form.initial.DH|default:''}}"></td>{% if checklist1.observer.role != 'LGA' %}<td><input name='{{ form2.DH.html_name }}' type='text' class='bigbox2' value="{{form2.initial.DH|default:''}}"></td><td><input name='{{form3.DH.html_name}}' type='text' class='control_text bigbox2' value="{{form3.initial.DH|default:''}}"></td><td><input type='checkbox' class="control" name="override" value="{{ form3.DH.name }}"></td>{% endif %}
 						    </tr>
 						    {% if 'EA' in checklist1.contesting %}
-						    <tr><td colspan="7" class="table_heading">Official Election Results</td></tr>
+						    <tr><td colspan="{% if checklist1.observer.role != 'LGA' %}7{% else %}4{% endif %}" class="table_heading">Official Election Results</td></tr>
 						    <tr>
 							<td>&nbsp;</td><td>EA</td><td>Votes for {{ checklist1.parties.EA }}</td><td><input name='{{ form.EA.html_name }}' type='text' class='bigbox2' value="{{form.initial.EA|default:''}}"></td>{% if checklist1.observer.role != 'LGA' %}<td><input name='{{ form2.EA.html_name }}' type='text' class='bigbox2' value="{{form2.initial.EA|default:''}}"></td><td><input name='{{form3.EA.html_name}}' type='text' class='control_text bigbox2' value="{{form3.initial.EA|default:''}}"></td><td><input type='checkbox' class="control" name="override" value="{{ form3.EA.name }}"></td>{% endif %}
 						    </tr>
@@ -314,7 +314,7 @@
 						    </tr>
 						    {% endif %}
 						    <tr>
-							<td colspan="3">&nbsp;</td><td colspan="4"><input type="submit" name="submit" value="Save" id="submit"></td>
+							<td{% if checklist1.observer.role != 'LGA' %} colspan="3"{% endif %}>&nbsp;</td><td colspan="4"><input type="submit" name="submit" value="Save" id="submit"></td>
 						    </tr>
 						</table>
 					    </div>
