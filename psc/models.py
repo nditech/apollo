@@ -152,6 +152,11 @@ class Observer(models.Model):
     def __unicode__(self):
         return self.observer_id
     
+    class Meta:
+        permissions = (
+            ('view_observer', 'Can view observer'),
+        )
+    
     @property
     def zone(self):
         if self.role == 'ZC':
@@ -264,6 +269,11 @@ class VRChecklist(models.Model):
 
     def __unicode__(self):
         return "VR Checklist for %s from %s on %s" % (self.location, self.observer, self.date)
+    
+    class Meta:
+        permissions = (
+            ('view_vrchecklist', 'Can view vr checklist'),
+        )
 
 class VRIncident(models.Model):
     location_type = models.ForeignKey(ContentType, null=True, blank=True)
@@ -290,6 +300,11 @@ class VRIncident(models.Model):
 
     def __unicode__(self):
         return "VR Incident for %s from %s on %s" % (self.location, self.observer, self.date)
+    
+    class Meta:
+        permissions = (
+            ('view_vrincident', 'Can view vr incident'),
+        )
 
 class DCOChecklist(models.Model):
     OPENTIME = ((1, 'Open by 8AM (1)'),
@@ -340,6 +355,11 @@ class DCOChecklist(models.Model):
 
     def __unicode__(self):
         return "DCO Checklist for %s from %s on %s" % (self.location, self.observer, self.date)
+    
+    class Meta:
+        permissions = (
+            ('view_dcochecklist', 'Can view dco checklist'),
+        )
 
 class DCOIncident(models.Model):
     location_type = models.ForeignKey(ContentType, null=True, blank=True)
@@ -362,7 +382,11 @@ class DCOIncident(models.Model):
 
     def __unicode__(self):
         return "DCO Incident for %s from %s on %s" % (self.location, self.observer, self.date)
-        
+    
+    class Meta:
+        permissions = (
+            ('view_dcoincident', 'Can view dco incident'),
+        )
         
 class EDAYChecklist(models.Model):
     '''The flags defined in this model compute conflicts for different sections of this checklist model and set 
@@ -634,6 +658,11 @@ class EDAYChecklist(models.Model):
 
     def __unicode__(self):
         return "EDAY Checklist for %s from %s on %s" % (self.location, self.observer, self.date)
+    
+    class Meta:
+        permissions = (
+            ('view_edaychecklist', 'Can view eday checklist'),
+        )
 
 class EDAYChecklistOverrides(models.Model):
     """Tracks fields that are overriden in the EDAYChecklist"""
@@ -673,6 +702,11 @@ class EDAYIncident(models.Model):
     def __unicode__(self):
         return "EDAY Incident for %s from %s on %s" % (self.location, self.observer, self.date)
 
+    class Meta:
+        permissions = (
+            ('view_edayincident', 'Can view eday incident'),
+        )
+
 # Make sure the `to` and `null` parameters will be ignored
 rules = [((fields.LastUserField,),
     [],
@@ -691,7 +725,7 @@ class Access(models.Model):
             ('can_analyse', 'Can Analyse'),
             ('can_manage_data','Can Manage Data'),
             ('can_administer', 'Can Administer'),
-    )
+        )
 
 from urllib import quote_plus
 import urllib2
