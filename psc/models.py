@@ -760,11 +760,11 @@ class NodSMS():
 
     def sendsms(self, to, msg, sender="SwiftCount"):
         result = urllib2.urlopen(self.endpoint_sendsms, urlencode({
-            'user': quote_plus(self.user),
-            'pass': quote_plus(self.pwd),
-            'from': quote_plus(sender),
-            'to': quote_plus(to),
-            'msg': quote_plus(msg)})).read()
+            'user': self.user,
+            'pass': self.pwd,
+            'from': sender,
+            'to': to,
+            'msg': msg})).read()
         if result == 'sent':
             return True
         else:
