@@ -29,13 +29,13 @@
                     <li>
                         <a href="{% url psc.views.home %}">Dashboard</a>
                     </li>
-                    <li>
+                    {% if perms.psc.view_vrchecklist %}<li>
                         <a href="{% url vr_checklist_view %}">Voter Registration</a>
                         <ul>
                             <li>
                                 <a href="{% url vr_checklist_view %}">Checklist</a>
                             </li>
-							{% if perms.psc.can_manage_data %}
+							{% if perms.psc.view_vrincident %}
                             <li>
                                 <a href="{% url vr_incident_view %}">Incidents</a>
                             </li>
@@ -52,14 +52,14 @@
                             </li>
 							{% endif %}
                         </ul>
-                    </li>
-                    <li>
+                    </li>{% endif %}
+                    {% if perms.psc.view_dcochecklist %}<li>
                         <a href="{% url dco_checklist_view %}">Display, Claims & Objections </a>
                         <ul>
                             <li>
                                 <a href="{% url dco_checklist_view %}">Checklist</a>
                             </li>
-							{% if perms.psc.can_manage_data %}
+							{% if perms.psc.view_dcoincident %}
                             <li>
                                 <a href="{% url dco_incident_view %}">Incidents</a>
                             </li>
@@ -73,21 +73,26 @@
                             </li>
 							{% endif %}
                         </ul>
-                    </li>
-		    <li>
+                    </li>{% endif %}
+		    		{% if perms.psc.view_edaychecklist %}<li>
                         <a href="{% url eday_checklist_view %}">Election Day </a>
                         <ul>
                             <li>
                                 <a href="{% url eday_checklist_view %}">Checklist</a>
                             </li>
-							{% if perms.psc.can_manage_data %}
+							{% if perms.psc.view_edayincident %}
                             <li>
                                 <a href="{% url eday_incident_view %}">Incidents</a>
                             </li>
 							{% endif %}
+							{% if perms.psc.can_analyse %}
+                            <li>
+                                <a href="{% url psc.views.eday_checklist_analysis %}">Checklist Analyses</a>
+                            </li>
+							{% endif %}
                         </ul>
-                    </li>
-					{% if perms.psc.can_analyse %}
+                    </li>{% endif %}
+					{% if perms.psc.view_observer %}
 		     		<li>
                         <a href="{% url contacts_list_view %}">Contacts Management</a>
                     </li>
@@ -98,23 +103,18 @@
                     <li class="secondary">
                         <a href="#" title="" style="width:14.3em;text-align:left">System Administration</a>
                         <ul>
-                            <li>
+                            {% if perms.psc.can_manage_data %}<li>
                                 <a href="{% url msglog %}">Message Log</a>
-                            </li>
-							{% if perms.psc.can_administer %}
-                            <li>
+                            </li>{% endif %}
+							{% if perms.psc.can_administer %}<li>
                                 <a href="{% url psc.views.action_log %}">Action Log</a>
-                            </li>
-							{% endif %}
-                        	{% if perms.psc.can_analyse %}
-                            <!--<li>
+                            </li>{% endif %}
+                        	{% if perms.psc.can_analyse %}<!--<li>
                                 <a href="{% url psc.views.send_mail %}">Email Blast</a>
-                            </li>-->
-							{% endif %}
+                            </li>-->{% endif %}
                         </ul>
                     </li>
-                </ul>
-                {% endif %}
+                </ul>{% endif %}
             </div>
             <div class="clear"></div>
             <div class="grid_16">

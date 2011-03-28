@@ -72,7 +72,7 @@
                         <th>N</th>
                         <th>P</th>
                         <th>Q</th>
-                        {% if perms.psc.can_manage_data %}<th class="checklist" colspan="2"><button onclick='location.href="{% url psc.views.vr_incident_add  %}"'>Add Incident</button></th>{% endif %}
+                        <th class="checklist" colspan="2">{% if perms.psc.add_vrincident %}<button onclick='location.href="{% url psc.views.vr_incident_add  %}"'>Add Incident</button>{% else %}&nbsp;{% endif %}</th>
                     </tr>
                 </thead>
 				{% for cl in checklists.object_list %}
@@ -153,12 +153,8 @@
                         <img src="/assets/img/status-busy.png" width="16" height="16" alt="complete" />
 						{% endif %}
                     </td>
-                    <td class="checklist">
-                        {% if perms.psc.can_manage_data %}<a href="{% url psc.views.vr_incident_update cl.id %}">Edit</a>{% endif %}
-                    </td>
-										<td>
-                        <a href="{% url psc.views.vr_incident_delete cl.id %}" onClick="return confirm('Are you sure you want to delete this incident')">Del</a>
-										</td>
+                    <td class="checklist">{% if perms.psc.change_vrincident %}<a href="{% url psc.views.vr_incident_update cl.id %}">Edit</a>{% else %}&nbsp;{% endif %}</td>
+					<td>{% if perms.psc.delete_vrincident %}<a href="{% url psc.views.vr_incident_delete cl.id %}" onClick="return confirm('Are you sure you want to delete this incident')">Del</a>{% else %}&nbsp;{% endif %}</td>
                 </tr>
 				{% empty %}
                 <tr>

@@ -90,7 +90,7 @@
                         <th>Supervisor</th>
                         <th class="checklist">Arrival</th>
                         <th class="checklist">Status</th>
-                        {% if perms.psc.can_manage_data %}<th>&nbsp;</th>{% endif %}
+                        <th>&nbsp;</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -132,7 +132,7 @@
 						{% endif %}
 					{% endif %}
                         </td>
-                        {% if perms.psc.can_manage_data %}<td><a href="{% url psc.views.dco_checklist cl.id %}">Edit</a></td>{% endif %}
+                        <td>{% if perms.psc.change_dcochecklist %}<a href="{% url psc.views.dco_checklist cl.id %}">Edit</a>{% else %}&nbsp;{% endif %}</td>
                     </tr>
 				{% empty %}
                     <tr>

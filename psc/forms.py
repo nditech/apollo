@@ -1,6 +1,6 @@
 from django import forms
 from models import VRChecklist, VRIncident, DCOChecklist, DCOIncident, EDAYChecklist, EDAYIncident
-from models import Zone, State, District, Observer, LGA
+from models import Zone, State, District, Observer, LGA, Sample
 from django.forms.models import modelformset_factory
 from datetime import datetime
 
@@ -8,6 +8,7 @@ ZONES = tuple([('', 'All')]+[(zone.code, zone.code) for zone in Zone.objects.all
 STATES = tuple([('', 'All')]+[(state.code, state.name) for state in State.objects.all().order_by('name')])
 DISTRICTS = tuple([('', 'All')]+[(district.code, district.name) for district in District.objects.all().order_by('name')])
 LGAS = tuple([('', 'All')]+[(lga.code, lga.name) for lga in LGA.objects.all().order_by('name')])
+SAMPLES = tuple([('', 'All')]+[(sample[0], sample[1]) for sample in Sample.SAMPLES])
 STATUSES = ((0, 'All'),
             (1, 'no texts received'),
             (2, 'missing 1st text'),
@@ -174,13 +175,13 @@ class EDAYIncidentForm(forms.ModelForm):
     observer = forms.ModelChoiceField(queryset=Observer.objects.filter(role__in=['SC', 'SDC', 'LGA']).exclude(observer_id=""), empty_label="--")
     class Meta:
         model = EDAYIncident
-        exclude = ['location_type', 'location_id', 'location', 'date']
+        exclude = ['location_type', 'location_id', 'location']
         
 class EDAYIncidentUpdateForm(forms.ModelForm):
     observer = forms.ModelChoiceField(queryset=Observer.objects.exclude(observer_id=""), empty_label="--")
     class Meta:
         model = EDAYIncident
-        exclude = ['location_type', 'location_id', 'location']
+        exclude = ['location_type', 'location_id', 'location', 'date']
 
 class VRChecklistFilterForm(forms.Form):
     observer_id = forms.CharField(required=False, label="PSC ID", max_length=6, widget=forms.TextInput(attrs={'autocomplete':'off','style':'width:7em',}))
@@ -202,6 +203,7 @@ class DCOChecklistFilterForm(forms.Form):
 class EDAYChecklistFilterForm(forms.Form):
     observer_id = forms.CharField(required=False, label="PSC ID", max_length=6, widget=forms.TextInput(attrs={'autocomplete':'off','style':'width:7em'}))
     day = forms.ChoiceField(choices=EDAY_DAYS, required=False)
+    sample = forms.ChoiceField(choices=SAMPLES, required=False)
     zone = forms.ChoiceField(choices=ZONES, required=False)
     state = forms.ChoiceField(choices=STATES, required=False)
     first = forms.ChoiceField(choices=EDAY_CHECKLIST_1ST, required=False, label='1st SMS')
@@ -246,6 +248,8 @@ class MessagelogFilterForm(forms.Form):
 
 class DashboardFilterForm(forms.Form):
     zone = forms.ChoiceField(choices=ZONES, required=False)
+    state = forms.ChoiceField(choices=STATES, required=False)
+    sample = forms.ChoiceField(choices=SAMPLES, required=False)
     date = forms.ChoiceField(choices=checklist_date_choices, required=False)
 
 class VRAnalysisFilterForm(forms.Form):
@@ -254,6 +258,7 @@ class VRAnalysisFilterForm(forms.Form):
     date = forms.ChoiceField(choices=VR_DAYS, required=False)
     
 class EDAYAnalysisFilterForm(forms.Form):
+    sample = forms.ChoiceField(choices=SAMPLES, required=False)
     zone = forms.ChoiceField(choices=ZONES, required=False)
     state = forms.ChoiceField(choices=STATES, required=False)
     date = forms.ChoiceField(choices=EDAY_DAYS, required=False)

@@ -43,6 +43,7 @@ urlpatterns = patterns('',
     url(r'^get-states-by-zone/(?P<zone>.+)/?$', views.get_states_by_zone),
     
     url(r'^vr/analysis/?$', views.vr_checklist_analysis),
+    url(r'^eday/analysis/?$', views.eday_checklist_analysis),
     url(r'^vr/in/del/(?P<incident_id>\d+)/?$', views.vr_incident_delete),
     url(r'^dco/in/del/(?P<incident_id>\d+)/?$', views.dco_incident_delete),
     

@@ -17,6 +17,18 @@
           $('#auto_refresh').html('Auto Refresh: Off');
         }
       );
+	  $("#charts_btn").toggle(
+        function () {
+		  $("#tables").hide();
+		  $("#charts").show();
+          $('#charts_btn').html('Table Display');
+        },
+        function () {
+	      $("#charts").hide();
+		  $("#tables").show();
+          $('#charts_btn').html('Charts Display');
+        }
+      );
     });
     
     function refreshDashboard() {
@@ -34,20 +46,24 @@
 {% block content %}
     <div class="grid_16">
         <div class="box">
-            <h2>Dashboard <span class="flag"><button id="auto_refresh">Auto Refresh: Off</button><button onclick="location.href='{% url psc.views.home %}'">Refresh</button></span></h2>
+            <h2>Dashboard <span class="flag"><button id="charts_btn">Charts Display</button><button id="auto_refresh">Auto Refresh: Off</button><button onclick="location.href='{% url psc.views.home %}'">Refresh</button></span></h2>
             <div class="box dashboard">
                 <div class="controls">
                
                 <form method="get">
                      Filters
+								{{ filter_form.sample }}
 								{{ filter_form.date }}
 								{{ filter_form.zone }}
+								{{ filter_form.state }}
                 <input name="Go" value="GO" type="submit" style="height: 34px; font-size: 20px">
                 </form>
                 </div>
+				<div id="tables">
                 <table width="100%" class="dashboard">
-		    <tr>
-			 <td width="50%">
+					{% if perms.psc.view_edaychecklist %}
+		    		<tr>
+					 <td width="50%">
                             <div class="box compartment">
                                 <h2 class="dashboard-header"><a href="#">EDAY Checklists </a></h2>
                                  <div class="dash-row">
@@ -77,7 +93,7 @@
                                          <span class="complete" id="eday_third_sms_complete">{{ eday_third_sms_complete|default:"0" }}</span>
                                      </div>
                                 </div>
-				<div class="dash-row">
+								<div class="dash-row">
                                      <div class="dash-column first">4th SMS</div>
                                      <div class="dash-column second">
 										<span class="blank" id="eday_fourth_sms_not_open">{{ eday_fourth_sms_not_open|default:"0" }}</span>
@@ -87,7 +103,7 @@
                                          <span class="complete" id="eday_fourth_sms_complete">{{ eday_fourth_sms_complete|default:"0" }}</span>
                                      </div>
                                 </div>
-				<div class="dash-row">
+								<div class="dash-row">
                                      <div class="dash-column first">5th SMS</div>
                                      <div class="dash-column second">
 										<span class="blank" id="eday_fifth_sms_not_open">{{ eday_fifth_sms_not_open|default:"0" }}</span>
@@ -104,8 +120,8 @@
                             </div>
                             <div class="clear"></div>
                         </td>
-			<td>
-			    <div class="box compartment">
+						<td>
+			    			<div class="box compartment">
                                 <h2 class="dashboard-header"><a href="#">EDAY Incidents</a></h2>
                                 <div class="dash-row">
                                      <div class="dash-column first">Incidents rec'd today</div>
@@ -116,12 +132,14 @@
                                      <div class="dash-column second" id="eday_incidents_count"><span>{{ eday_incidents_count|default:"0" }}</span></div>
                                 </div>
                                 <div class="dash-row last">
-                                     <div class="dash-text">{% if perms.psc.can_manage_data %}<a href="{% url psc.views.eday_incident_add %}">(Add Incident)</a>{% endif %} | {% if perms.psc.can_manage_data %}<a href="{% url psc.views.eday_incident_list %}">(View All)</a>{% endif %}</div>
+                                     {% if perms.psc.can_manage_data %}<div class="dash-text">{% if perms.psc.add_edayincident %}<a href="{% url psc.views.eday_incident_add %}">(Add Incident)</a> | {% endif %}{% if perms.psc.view_edayincident %}<a href="{% url psc.views.eday_incident_list %}">(View All)</a>{% endif %}</div>{% endif %}
                                 </div>
                                 <div class="clear"></div>
                             </div>
-			</td>
-		    </tr>
+						</td>
+		    		</tr>
+					{% endif %}
+					{% if perms.psc.view_vrchecklist %}
                     <tr>
                         <td width="50%">
                             <div class="box compartment">
@@ -161,8 +179,29 @@
                             </div>
                             <div class="clear"></div>
                         </td>
-                        <td>
-                            
+						<td>                            
+                            <div class="box compartment">
+                                <h2 class="dashboard-header"><a href="#">VR Incidents</a></h2>
+                                <div class="dash-row">
+                                     <div class="dash-column first">Incidents rec'd today</div>
+                                     <div class="dash-column second"><span id="vr_incidents_today">{{ vr_incidents_today }}</span></div>
+                                </div>
+                                 <div class="dash-row">
+                                     <div class="dash-column first">Total incidents rec'd</div>
+                                     <div class="dash-column second"><span class="dash-num" id="vr_incidents_count">{{ vr_incidents_count }}</span></div>
+                                </div>
+                                <div class="dash-row last">
+                                     <div class="dash-text">{% if perms.psc.can_manage_data %}<a href="{% url psc.views.vr_incident_add %}">(Add Incident)</a>{% endif %} <span class="divider">|</span> {% if perms.psc.can_manage_data %}<a href="{% url psc.views.vr_incident_list %}">(View All)</a>{% endif %}</div>
+                                </div>
+                                <div class="clear"></div>
+                            </div>
+                            <div class="clear"></div>
+                        </td>
+                    </tr>
+					{% endif %}
+					{% if perms.psc.view_dcochecklist %}
+                    <tr>                        
+                        <td> 
                             <div class="box compartment">
                                 <h2 class="dashboard-header"><a href="#">DCO Checklists </a></h2>
                                 <div class="dash-row">
@@ -189,27 +228,6 @@
                             </div>
                             <div class="clear"></div>
                         </td>
-                        
-                    </tr>
-                    <tr>                        
-                        <td>                            
-                            <div class="box compartment">
-                                <h2 class="dashboard-header"><a href="#">VR Incidents</a></h2>
-                                <div class="dash-row">
-                                     <div class="dash-column first">Incidents rec'd today</div>
-                                     <div class="dash-column second"><span id="vr_incidents_today">{{ vr_incidents_today }}</span></div>
-                                </div>
-                                 <div class="dash-row">
-                                     <div class="dash-column first">Total incidents rec'd</div>
-                                     <div class="dash-column second"><span class="dash-num" id="vr_incidents_count">{{ vr_incidents_count }}</span></div>
-                                </div>
-                                <div class="dash-row last">
-                                     <div class="dash-text">{% if perms.psc.can_manage_data %}<a href="{% url psc.views.vr_incident_add %}">(Add Incident)</a>{% endif %} <span class="divider">|</span> {% if perms.psc.can_manage_data %}<a href="{% url psc.views.vr_incident_list %}">(View All)</a>{% endif %}</div>
-                                </div>
-                                <div class="clear"></div>
-                            </div>
-                            <div class="clear"></div>
-                        </td>
                         <td>
                             <div class="box compartment">
                                 <h2 class="dashboard-header"><a href="#">DCO Incidents</a></h2>
@@ -229,7 +247,29 @@
                             <div class="clear"></div>
                         </td>
                     </tr>
+					{% endif %}
                 </table>
+				</div>
+				<div id="charts" style="display:none">
+					{% if perms.psc.view_edaychecklist %}
+					<table width="100%" class="dashboard">
+			    		<tr>
+						 <td width="100%">
+	                            <div class="box compartment">
+	                                <h2 class="dashboard-header"><a href="#">EDAY Checklists </a></h2>
+	                                <table width="100%">
+										<tr><th>1st SMS</th><th>2nd SMS</th><th>3rd SMS</th></tr>
+										<tr><td>[1st SMS chart]</td><td>[2nd SMS chart]</td><td>[3rd SMS chart]</td></tr>
+										<tr><th>4th SMS</th><th>5th SMS</th><th>&nbsp;</th></tr>
+										<tr><td>[4th SMS chart]</td><td>[5th SMS chart]</td><td>&nbsp;</td></tr>
+									</table>
+	                            </div>
+	                            <div class="clear"></div>
+	                        </td>
+			    		</tr>
+					</table>
+					{% endif %}
+				</div>
            </div>
         </div>
     </div>

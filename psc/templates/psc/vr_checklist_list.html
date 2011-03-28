@@ -95,7 +95,7 @@
                         <th class="checklist">1st</th>
                         <th class="checklist">2nd</th>
                         <th class="checklist">3rd</th>
-                        {% if perms.psc.can_manage_data %}<th>&nbsp;</th>{% endif %}
+                        <th>&nbsp;</th>
                     </tr>
                 </thead>
 				{% for cl in checklists.object_list %}
@@ -183,7 +183,7 @@
 											{% endif %}
 										{% endif %}
                     </td>
-                    {% if perms.psc.can_manage_data %}<td><a href="{% url psc.views.vr_checklist cl.id %}">Edit</a></td>{% endif %}
+                    <td>{% if perms.psc.change_vrchecklist %}<a href="{% url psc.views.vr_checklist cl.id %}">Edit</a>{% else %}&nbsp;{% endif %}</td>
 
                 </tr>
 				{% empty %}

@@ -75,7 +75,7 @@
 
 								{% endfor %}
                                 <td><input type="button" value="reset" id="reset">
-                                    <input type="submit" value="filter &rarr;"></td>
+                                    <input type="submit" value="filter"></td>
                             </tr>
                         </tbody>
                     </table>
@@ -88,7 +88,7 @@
                         <th colspan="5">&nbsp;</th>
                         <th colspan="5">SMS</th>
                         <th colspan="5">Flag</th>
-                        {% if perms.psc.can_manage_data %}<th>&nbsp;</th>{% endif %}
+                        {% if perms.psc.change_edaychecklist %}<th>&nbsp;</th>{% endif %}
                     </tr>	
                     <tr>
                         <th>PSC ID</th>
@@ -106,7 +106,7 @@
                         <th class="checklist">3rd</th>
                         <th class="checklist">4th</th>
                         <th class="checklist">5th</th>
-                        {% if perms.psc.can_manage_data %}<th>&nbsp;</th>{% endif %}
+                        {% if perms.psc.change_edaychecklist %}<th>&nbsp;</th>{% endif %}
                     </tr>
                 </thead>
                 <tbody>
@@ -243,7 +243,7 @@
 							<img src="/assets/img/status-busy.png" width="16" height="16" alt="conflict" />
 						{% endif %}
                         </td>
-                        {% if perms.psc.can_manage_data %}<td><a href="{% url psc.views.eday_checklist cl.id %}">Edit</a></td>{% endif %}
+                        {% if perms.psc.change_edaychecklist %}<td><a href="{% url psc.views.eday_checklist cl.id %}">Edit</a></td>{% endif %}
                     </tr>
 				{% empty %}
                     <tr>

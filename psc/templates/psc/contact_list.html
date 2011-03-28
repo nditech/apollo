@@ -151,7 +151,7 @@
 			<td>{% if observer.phone %}{{ observer.phone }}{% endif %}</td>
             <td>{{ observer.role }}</td>
 			<td>{{ observer.partner }}</td>
-                        {% if perms.psc.can_analyse %}<td><a href="{% url psc.views.contact_edit observer.id %}">Edit</a></td>{% endif %}
+                        <td>{% if perms.psc.change_observer %}<a href="{% url psc.views.contact_edit observer.id %}">Edit</a>{% else %}&nbsp;{% endif %}</td>
                     </tr>
 				{% empty %}
                     <tr>

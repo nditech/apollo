@@ -10,8 +10,8 @@ from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from rapidsms.contrib.messagelog.tables import MessageTable
 from rapidsms.contrib.messagelog.models import Message
 from forms import VRChecklistForm, VRIncidentForm, DCOIncidentForm, VRChecklistFilterForm, VRIncidentFilterForm, DCOIncidentFilterForm, DCOChecklistFilterForm, DCOChecklistForm, ContactEditForm, ContactlistFilterForm
-from forms import VR_DAYS
-from forms import DCOIncidentUpdateForm, VRIncidentUpdateForm, MessagelogFilterForm, DashboardFilterForm, VRAnalysisFilterForm, EDAYIncidentUpdateForm, EDAYIncidentFilterForm, EDAYIncidentForm, EDAYChecklistFilterForm, EDAYChecklistForm
+from forms import VR_DAYS, EDAY_DAYS
+from forms import DCOIncidentUpdateForm, VRIncidentUpdateForm, MessagelogFilterForm, DashboardFilterForm, VRAnalysisFilterForm, EDAYAnalysisFilterForm, EDAYIncidentUpdateForm, EDAYIncidentFilterForm, EDAYIncidentForm, EDAYChecklistFilterForm, EDAYChecklistForm
 from forms import VRSummaryFilterForm, DCOSummaryFilterForm, EmailBlastForm
 from datetime import datetime
 from django.core import serializers
@@ -34,7 +34,7 @@ def home(request):
         request.session['dashboard_filter'] = {}
 
     if request.method == 'GET':
-        if filter(lambda key: request.GET.has_key(key), ['zone', 'date']):
+        if filter(lambda key: request.GET.has_key(key), ['zone', 'state', 'date', 'sample']):
             request.session['dashboard_filter'] = request.GET
         filter_form = DashboardFilterForm(request.session['dashboard_filter'])
 
@@ -42,7 +42,11 @@ def home(request):
             data = filter_form.cleaned_data
 
             if data['zone']:
-                qs &= Q(observer__location_id__in=LGA.objects.filter(parent__parent__parent__code__iexact=data['zone']).values_list('id', flat=True))
+                qs &= (Q(observer__role='LGA', observer__location_id__in=LGA.objects.filter(parent__parent__parent__code__iexact=data['zone']).values_list('id', flat=True)) | Q(observer__role="OBS", observer__location_id__in=RegistrationCenter.objects.filter(parent__parent__parent__parent__code__iexact=data['zone']).values_list('id', flat=True)))
+            if data['state']:
+                qs &= (Q(observer__role='LGA', observer__location_id__in=LGA.objects.filter(parent__parent__code__iexact=data['state']).values_list('id', flat=True)) | Q(observer__role="OBS", observer__location_id__in=RegistrationCenter.objects.filter(parent__parent__parent__code__iexact=data['state']).values_list('id', flat=True)))
+            if data['sample']:
+                qs &= Q(location_type=ContentType.objects.get_for_model(RegistrationCenter),location_id__in=Sample.objects.filter(sample=data['sample']).values_list('location', flat=True))
             if data['date']:
                 filter_date = datetime.date(datetime.strptime(data['date'], '%Y-%m-%d'))
     else:
@@ -264,6 +268,7 @@ def ajax_home_stats(request):
     
     return HttpResponse(mimetype='application/json', content=json_string)
 
+@permission_required('psc.view_vrchecklist', login_url='/')
 @login_required()
 def vr_checklist_list(request, action=None):
     qs_include = Q()
@@ -381,6 +386,7 @@ def vr_checklist_list(request, action=None):
     else:
         return render_to_response('psc/vr_checklist_list.html', {'page_title': "Voter Registration Data Management", 'checklists': checklists, 'filter_form': filter_form, 'page_details' : page_details, 'msg_recipients': msg_recipients, 'credits': credits }, context_instance=RequestContext(request))
 
+@permission_required('psc.view_dcochecklist', login_url='/')
 @login_required()
 def dco_checklist_list(request, action=None):
     #qs = Q(date__in=[d[0] for d in DCO_DAYS if d[0]])
@@ -453,6 +459,7 @@ def dco_checklist_list(request, action=None):
     else:
         return render_to_response('psc/dco_checklist_list.html', {'page_title': "Display, Claims & Objections Data Management", 'checklists': checklists, 'filter_form': filter_form, 'page_details': page_details, 'msg_recipients': msg_recipients, 'credits': credits }, context_instance=RequestContext(request))
 
+@permission_required('psc.view_edaychecklist', login_url='/')
 @login_required()
 def eday_checklist_list(request, action=None):
     #qs = Q(date__in=[d[0] for d in DCO_DAYS if d[0]])
@@ -461,13 +468,15 @@ def eday_checklist_list(request, action=None):
         request.session['eday_checklist_filter'] = {}
 
     if request.method == 'GET':
-        if filter(lambda key: request.GET.has_key(key), ['zone', 'state', 'first', 'second', 'third', 'fourth', 'fifth', 'day', 'observer_id']):
+        if filter(lambda key: request.GET.has_key(key), ['sample', 'zone', 'state', 'first', 'second', 'third', 'fourth', 'fifth', 'day', 'observer_id']):
             request.session['eday_checklist_filter'] = request.GET
         filter_form = EDAYChecklistFilterForm(request.session['eday_checklist_filter'])
 
         if filter_form.is_valid():
             data = filter_form.cleaned_data
 
+            if data['sample']:
+                qs_include &= Q(location_type=ContentType.objects.get_for_model(RegistrationCenter),location_id__in=Sample.objects.filter(sample=data['sample']).values_list('location', flat=True))
             if data['zone']:
                 qs_include &= Q(observer__location_id__in=LGA.objects.filter(parent__parent__parent__code__iexact=data['zone']).values_list('id', flat=True))
             if data['state']:
@@ -553,7 +562,7 @@ def eday_checklist_list(request, action=None):
     else:
         return render_to_response('psc/eday_checklist_list.html', {'page_title': "Election Day Data Management", 'checklists': checklists, 'filter_form': filter_form, 'page_details': page_details, 'msg_recipients': msg_recipients, 'credits': credits }, context_instance=RequestContext(request))
 
-@permission_required('psc.can_manage_data', login_url='/')
+@permission_required('psc.change_vrchecklist', login_url='/')
 @login_required()
 def vr_checklist(request, checklist_id=0):
     checklist = get_object_or_404(VRChecklist, pk=checklist_id)
@@ -568,7 +577,7 @@ def vr_checklist(request, checklist_id=0):
         f = VRChecklistForm(instance=checklist)
         return render_to_response('psc/vr_checklist_form.html', {'page_title': "Voter Registration Checklist", 'checklist': checklist, 'rcs': rcs, 'location': location, 'form': f }, context_instance=RequestContext(request))
 
-@permission_required('psc.can_manage_data', login_url='/')
+@permission_required('psc.change_dcochecklist', login_url='/')
 @login_required()
 def dco_checklist(request, checklist_id=0):   
     checklist = get_object_or_404(DCOChecklist, pk=checklist_id)
@@ -583,7 +592,7 @@ def dco_checklist(request, checklist_id=0):
         f = DCOChecklistForm(instance=checklist)
     return render_to_response('psc/dco_checklist_form.html', {'page_title': 'Display, Claims & Objections Checklist', 'checklist': checklist, 'rcs': rcs, 'location': location, 'form': f}, context_instance=RequestContext(request))
 
-@permission_required('psc.can_manage_data', login_url='/')
+@permission_required('psc.change_edaychecklist', login_url='/')
 @login_required()
 def eday_checklist(request, checklist_id=0):   
     checklist1 = get_object_or_404(EDAYChecklist, pk=checklist_id)
@@ -615,7 +624,7 @@ def eday_checklist(request, checklist_id=0):
         f3 = EDAYChecklistForm(instance=control_checklist, prefix="control")
     return render_to_response('psc/eday_checklist_form.html', {'page_title': 'Election Day Checklist', 'checklist1': checklist1, 'checklist2': checklist2, 'control_checklist': control_checklist, 'form': f1, 'form2': f2, 'form3': f3}, context_instance=RequestContext(request))
 
-@permission_required('psc.can_manage_data', login_url='/')
+@permission_required('psc.change_vrincident', login_url='/')
 @login_required()
 def vr_incident_update(request, incident_id=0):
     incident = get_object_or_404(VRIncident, pk=incident_id)
@@ -633,7 +642,7 @@ def vr_incident_update(request, incident_id=0):
         f = VRIncidentForm(instance=incident)   
         return render_to_response('psc/vr_incident_update_form.html', {'page_title': "Voter Registration Critrical Incident", 'incident': incident, 'location': location, 'form': f, 'lga_list': lga_list, 'rc_list_by_lga': rc_list_by_lga }, context_instance=RequestContext(request))
 
-@permission_required('psc.can_manage_data', login_url='/')
+@permission_required('psc.change_dcoincident', login_url='/')
 @login_required()
 def dco_incident_update(request, incident_id=0):
     incident = get_object_or_404(DCOIncident, pk=incident_id)
@@ -647,7 +656,7 @@ def dco_incident_update(request, incident_id=0):
         f = DCOIncidentForm(instance=incident)
         return render_to_response('psc/dco_incident_update_form.html', {'page_title': 'Display, Claims & Objections Critical Incident', 'incident': incident, 'location': location, 'form': f }, context_instance=RequestContext(request))
 
-@permission_required('psc.can_manage_data', login_url='/')
+@permission_required('psc.add_vrincident', login_url='/')
 @login_required()
 def vr_incident_add(request):
     if request.POST:
@@ -658,7 +667,7 @@ def vr_incident_add(request):
         f = VRIncidentForm()
         return render_to_response('psc/vr_incident_add_form.html', {'page_title': "Add Voter Registration Critrical Incident", 'form': f }, context_instance=RequestContext(request))
 
-@permission_required('psc.can_manage_data', login_url='/')
+@permission_required('psc.add_dcoincident', login_url='/')
 @login_required()
 def dco_incident_add(request):
     if request.POST:
@@ -669,7 +678,7 @@ def dco_incident_add(request):
         f = DCOIncidentForm()
         return render_to_response('psc/dco_incident_add_form.html', {'page_title': "Add Display, Claims & Objections Critrical Incident", 'form': f }, context_instance=RequestContext(request))
 
-@permission_required('psc.can_manage_data', login_url='/')
+@permission_required('psc.view_vrincident', login_url='/')
 @login_required()
 def vr_incident_list(request, action=None):
     qs = Q()
@@ -722,7 +731,7 @@ def vr_incident_list(request, action=None):
     else:
         return render_to_response('psc/vr_incident_list.html', {'page_title': "Voter Registration Critical Incidents", 'checklists': incidents, 'filter_form': filter_form, 'page_details': page_details}, context_instance=RequestContext(request))
 
-@permission_required('psc.can_manage_data', login_url='/')
+@permission_required('psc.view_dcoincident', login_url='/')
 @login_required()
 def dco_incident_list(request, action=None):
     qs = Q()
@@ -774,7 +783,7 @@ def dco_incident_list(request, action=None):
     else:
         return render_to_response('psc/dco_incident_list.html', {'page_title': "Display, Claims & Objections Critical Incidents", 'checklists': incidents, 'filter_form': filter_form, 'page_details': page_details}, context_instance=RequestContext(request))
 
-@permission_required('psc.can_manage_data', login_url='/')
+@permission_required('psc.view_edayincident', login_url='/')
 @login_required()
 def eday_incident_list(request, action=None):
     qs = Q()
@@ -783,7 +792,7 @@ def eday_incident_list(request, action=None):
 
     if request.method == 'GET':
         if filter(lambda key: request.GET.has_key(key), ['zone', 'state', 'district', 'day', 'observer_id']):
-            request.session['dco_incident_filter'] = request.GET
+            request.session['eday_incident_filter'] = request.GET
         filter_form = EDAYIncidentFilterForm(request.session['eday_incident_filter'])
 
         if filter_form.is_valid():
@@ -825,7 +834,7 @@ def eday_incident_list(request, action=None):
     else:
         return render_to_response('psc/eday_incident_list.html', {'page_title': "Election Day Critical Incidents", 'checklists': incidents, 'filter_form': filter_form, 'page_details': page_details}, context_instance=RequestContext(request))
 
-@permission_required('psc.can_manage_data', login_url='/')
+@permission_required('psc.add_edayincident', login_url='/')
 @login_required()
 def eday_incident_add(request):
     if request.POST:
@@ -836,7 +845,7 @@ def eday_incident_add(request):
         f = EDAYIncidentForm()
         return render_to_response('psc/eday_incident_add_form.html', {'page_title': "Add Election Day Critrical Incident", 'form': f }, context_instance=RequestContext(request))
 
-@permission_required('psc.can_manage_data', login_url='/')
+@permission_required('psc.change_edayincident', login_url='/')
 @login_required()
 def eday_incident_update(request, incident_id=0):
     incident = get_object_or_404(EDAYIncident, pk=incident_id)
@@ -847,10 +856,10 @@ def eday_incident_update(request, incident_id=0):
             f.save()
         return HttpResponseRedirect(reverse('eday_incident_view'))
     else:
-        f = DCOIncidentForm(instance=incident)
+        f = EDAYIncidentUpdateForm(instance=incident)
         return render_to_response('psc/eday_incident_update_form.html', {'page_title': 'Election Day Critical Incident', 'incident': incident, 'location': location, 'form': f }, context_instance=RequestContext(request))
 
-@permission_required('psc.can_analyse', login_url='/')
+@permission_required('psc.can_manage_data', login_url='/')
 @login_required()
 def message_log(request, action=None):
     qs = Q()
@@ -1425,6 +1434,81 @@ def vr_checklist_analysis(request):
     return render_to_response('psc/vr_checklist_analysis.html', {'page_title': 'Voter Registration Checklist Analysis', 'filter_form': filter_form}, context_instance=ctx)
 
 @permission_required('psc.can_analyse', login_url='/')
+def eday_checklist_analysis(request):
+    eday_days = [day[0] for day in EDAY_DAYS if day[0]]
+
+    # limit analysis to only the control checklists
+    qs = Q(checklist_index='3') & Q(date__in=eday_days)
+
+    if not request.session.has_key('eday_analysis_filter'):
+        request.session['eday_analysis_filter'] = {}
+
+    if request.method == 'GET':
+        if filter(lambda key: request.GET.has_key(key), ['sample', 'zone', 'state', 'date']):
+            request.session['eday_analysis_filter'] = request.GET
+        filter_form = EDAYAnalysisFilterForm(request.session['eday_analysis_filter'])
+
+        if filter_form.is_valid():
+            data = filter_form.cleaned_data
+
+            if data['zone']:
+                qs = Q(location_id__in=RegistrationCenter.objects.filter(parent__parent__parent__parent__code__iexact=data['zone']).values('id'))
+            elif data['state']:
+                qs = Q(location_id__in=RegistrationCenter.objects.filter(parent__parent__parent__code__iexact=data['state']).values_list('id', flat=True))
+            if data['sample']:
+                qs &= Q(location_type=ContentType.objects.get_for_model(RegistrationCenter),location_id__in=Sample.objects.filter(sample=data['sample']).values_list('location', flat=True))
+            if data['date']:
+                qs &= Q(date=datetime.date(datetime.strptime(data['date'], '%Y-%m-%d')))
+    else:
+        filter_form = EDAYAnalysisFilterForm()
+
+    ctx = RequestContext(request)
+    ctx['question'] = dict()
+    ctx['question']['no_of_checklists'] = stats.eday_N(qs)
+
+    #
+    ctx['question']['AA'] = stats.eday_QAA(qs)
+    
+    qs &= ~(Q(BA=5)|Q(CA=5))
+    ctx['question']['BF'] = stats.eday_QBF(qs)
+    ctx['question']['BK'] = stats.eday_QBK(qs)
+    ctx['question']['BN'] = stats.eday_QBN(qs)
+    ctx['question']['CB'] = stats.eday_QCQ(qs)
+    ctx['question']['CF'] = stats.eday_QCF(qs)
+    ctx['question']['CG'] = stats.eday_QCG(qs)
+    ctx['question']['CH'] = stats.eday_QCH(qs)
+    ctx['question']['CJ'] = stats.eday_QCJ(qs)
+    ctx['question']['CK'] = stats.eday_QCK(qs)
+    ctx['question']['CM'] = stats.eday_QCM(qs)
+    ctx['question']['CN'] = stats.eday_QCN(qs)
+    ctx['question']['CP'] = stats.eday_QCP(qs)
+    ctx['question']['CQ'] = stats.eday_QCQ(qs)
+    
+    ctx['question']['BC'] = stats.eday_QBC(qs)
+    ctx['question']['BA'] = stats.eday_QBA(qs)
+    ctx['question']['BG'] = stats.eday_QBG(qs)
+    ctx['question']['BH'] = stats.eday_QBH(qs)
+    ctx['question']['BJ'] = stats.eday_QBJ(qs)
+    ctx['question']['BM'] = stats.eday_QBM(qs)
+    ctx['question']['CA'] = stats.eday_QCA(qs)
+    ctx['question']['CC'] = stats.eday_QCC(qs)
+    ctx['question']['CD'] = stats.eday_QCD(qs)
+    ctx['question']['CE'] = stats.eday_QCE(qs)
+    ctx['question']['BD'] = stats.eday_QBD(qs)
+    ctx['question']['BE'] = stats.eday_QBE(qs)
+    ctx['question']['BP'] = stats.eday_QBP(qs)
+    ctx['question']['DA'] = stats.eday_QDA(qs)
+    ctx['question']['DB'] = stats.eday_QDB(qs)
+    ctx['question']['DC'] = stats.eday_QDC(qs)
+    ctx['question']['DD'] = stats.eday_QDD(qs)
+    ctx['question']['DE'] = stats.eday_QDE(qs)
+    ctx['question']['DF'] = stats.eday_QDF(qs)
+    ctx['question']['DG'] = stats.eday_QDG(qs)
+    ctx['question']['DH'] = stats.eday_QDH(qs)
+
+    return render_to_response('psc/eday_checklist_analysis.html', {'page_title': 'Election Day Checklist Analysis', 'filter_form': filter_form}, context_instance=ctx)
+
+@permission_required('psc.view_observer', login_url='/')
 @login_required()
 def contact_list(request, action=None):
     qs_include = ~(Q(observer_id__endswith="6") & Q(role="LGA"))
@@ -1531,7 +1615,7 @@ def contact_list(request, action=None):
                 'filter_form': filter_form, 'page_details': page_details,'msg_recipients': msg_recipients, 'credits': credits}, 
                 context_instance=RequestContext(request))
 
-@permission_required('psc.can_analyse', login_url='/')
+@permission_required('psc.change_observer', login_url='/')
 @login_required()
 def contact_edit(request, contact_id=0):
     contact = get_object_or_404(Observer, pk=contact_id)
@@ -1561,21 +1645,21 @@ def get_states_by_zone(request, zone):
         states = serializers.serialize('json', State.objects.filter(parent__code=zone))
         return HttpResponse(mimetype='application/jsoin', content=states)
 
-@permission_required('psc.can_manage_data', login_url='/')
+@permission_required('psc.delete_vrincident', login_url='/')
 @login_required()
 def vr_incident_delete(request, incident_id):
     if int(incident_id):        
         VRIncident.objects.get(pk=incident_id).delete()
         return HttpResponseRedirect(reverse('vr_incident_view'))
 
-@permission_required('psc.can_manage_data', login_url='/')
+@permission_required('psc.delete_dcoincident', login_url='/')
 @login_required()
 def dco_incident_delete(request, incident_id):
     if int(incident_id):        
         DCOIncident.objects.get(pk=incident_id).delete()
         return HttpResponseRedirect(reverse('dco_incident_view'))
     
-@permission_required('psc.can_manage_data', login_url='/')
+@permission_required('psc.delete_edayincident', login_url='/')
 @login_required()
 def eday_incident_delete(request, incident_id):
     if int(incident_id):        
