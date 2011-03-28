@@ -727,7 +727,7 @@ class Access(models.Model):
             ('can_administer', 'Can Administer'),
         )
 
-from urllib import quote_plus
+from urllib import quote_plus, urlencode
 import urllib2
 
 class Party(models.Model):
@@ -753,18 +753,18 @@ class Contesting(models.Model):
         verbose_name_plural = "Contesting"
 
 class NodSMS():
-    endpoint_sendsms = 'http://api.nodsms.com/index.php?user=%(user)s&pass=%(pass)s&from=%(sender)s&to=%(destination)s&msg=%(message)s'
+    endpoint_sendsms = 'http://api.nodsms.com/index.php'
     endpoint_balance = 'http://api.nodsms.com/credit.php?user=%(user)s&pass=%(pass)s'
     user = settings.SMS_USER
     pwd  = settings.SMS_PASS
 
     def sendsms(self, to, msg, sender="SwiftCount"):
-        result = urllib2.urlopen(self.endpoint_sendsms % {
+        result = urllib2.urlopen(self.endpoint_sendsms, urlencode({
             'user': quote_plus(self.user),
             'pass': quote_plus(self.pwd),
-            'sender': quote_plus(sender),
-            'destination': quote_plus(to),
-            'message': quote_plus(msg)}).read()
+            'from': quote_plus(sender),
+            'to': quote_plus(to),
+            'msg': quote_plus(msg)})).read()
         if result == 'sent':
             return True
         else:
