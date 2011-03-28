@@ -856,7 +856,7 @@ def eday_incident_update(request, incident_id=0):
             f.save()
         return HttpResponseRedirect(reverse('eday_incident_view'))
     else:
-        f = DCOIncidentForm(instance=incident)
+        f = EDAYIncidentUpdateForm(instance=incident)
         return render_to_response('psc/eday_incident_update_form.html', {'page_title': 'Election Day Critical Incident', 'incident': incident, 'location': location, 'form': f }, context_instance=RequestContext(request))
 
 @permission_required('psc.can_manage_data', login_url='/')

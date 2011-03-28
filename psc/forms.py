@@ -175,13 +175,13 @@ class EDAYIncidentForm(forms.ModelForm):
     observer = forms.ModelChoiceField(queryset=Observer.objects.filter(role__in=['SC', 'SDC', 'LGA']).exclude(observer_id=""), empty_label="--")
     class Meta:
         model = EDAYIncident
-        exclude = ['location_type', 'location_id', 'location', 'date']
+        exclude = ['location_type', 'location_id', 'location']
         
 class EDAYIncidentUpdateForm(forms.ModelForm):
     observer = forms.ModelChoiceField(queryset=Observer.objects.exclude(observer_id=""), empty_label="--")
     class Meta:
         model = EDAYIncident
-        exclude = ['location_type', 'location_id', 'location']
+        exclude = ['location_type', 'location_id', 'location', 'date']
 
 class VRChecklistFilterForm(forms.Form):
     observer_id = forms.CharField(required=False, label="PSC ID", max_length=6, widget=forms.TextInput(attrs={'autocomplete':'off','style':'width:7em',}))
