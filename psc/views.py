@@ -792,7 +792,7 @@ def eday_incident_list(request, action=None):
 
     if request.method == 'GET':
         if filter(lambda key: request.GET.has_key(key), ['zone', 'state', 'district', 'day', 'observer_id']):
-            request.session['dco_incident_filter'] = request.GET
+            request.session['eday_incident_filter'] = request.GET
         filter_form = EDAYIncidentFilterForm(request.session['eday_incident_filter'])
 
         if filter_form.is_valid():
