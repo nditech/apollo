@@ -1,6 +1,8 @@
 {% extends "psc/layout.html" %}
 {% block javascripts %}
   <script src="/assets/js/jquery-1.4.4.min.js" type="text/javascript" charset="utf-8"></script>
+  <script src="/assets/js/raphael.js"></script>
+  <script src="/assets/js/pie.js"></script>
   <script type="text/javascript" charset="utf-8">
     var timeout = 5000;
     var enabled = false;
@@ -29,7 +31,28 @@
           $('#charts_btn').html('Charts Display');
         }
       );
-    });
+	  
+	  first_values = [{{eday_not_arrived|default:"0" }}, {{ eday_arrived|default:"0" }}];
+	  first_labels = ['A', 'B'];
+	  paper = Raphael("firstChart", 200, 200);
+	  first = paper.pieChart(100, 100, 60, first_values, first_labels, "#fff", ['red', 'green']);
+	  second_values = [{{ eday_second_sms_not_open|default:"0" }}, {{ eday_second_sms_missing|default:"0" }}, {{eday_second_sms_not_open_problem|default:"0" }},{{ eday_second_sms_partial|default:"0" }}, {{ eday_second_sms_complete|default:"0" }}];
+	  second_labels = ['A', 'B', 'C', 'D', 'E'];
+	  paper2 = Raphael("secondChart", 200, 200);
+	  second = paper2.pieChart(100, 100, 60, second_values, second_labels, "#fff", ['white', 'red', 'orange', 'yellow', 'green']);
+	  third_values = [{{ eday_third_sms_not_open|default:"0" }}, {{ eday_third_sms_missing|default:"0" }}, {{eday_third_sms_not_open_problem|default:"0" }},{{ eday_third_sms_partial|default:"0" }}, {{ eday_third_sms_complete|default:"0" }}];
+	  third_labels = ['A', 'B', 'C', 'D', 'E'];
+	  paper3 = Raphael("thirdChart", 200, 200);
+	  third = paper3.pieChart(100, 100, 60, third_values, third_labels, "#fff", ['white', 'red', 'orange', 'yellow', 'green']);
+	  fourth_values = [{{ eday_fourth_sms_not_open|default:"0" }}, {{ eday_fourth_sms_missing|default:"0" }}, {{eday_fourth_sms_not_open_problem|default:"0" }},{{ eday_fourth_sms_partial|default:"0" }}, {{ eday_fourth_sms_complete|default:"0" }}];
+	  fourth_labels = ['A', 'B', 'C', 'D', 'E'];
+	  paper4 = Raphael("fourthChart", 200, 200);
+	  fourth = paper4.pieChart(100, 100, 60, fourth_values, fourth_labels, "#fff", ['white', 'red', 'orange', 'yellow', 'green']);
+	  fifth_values = [{{ eday_fifth_sms_not_open|default:"0" }}, {{ eday_fifth_sms_missing|default:"0" }}, {{eday_fifth_sms_not_open_problem|default:"0" }},{{ eday_fifth_sms_partial|default:"0" }}, {{ eday_fifth_sms_complete|default:"0" }}];
+	  fifth_labels = ['A', 'B', 'C', 'D', 'E'];
+	  paper5 = Raphael("fifthChart", 200, 200);
+	  fifth = paper5.pieChart(100, 100, 60, fifth_values, fifth_labels, "#fff", ['white','red', 'orange', 'yellow', 'green']);
+	});
     
     function refreshDashboard() {
       if (enabled) {
@@ -259,9 +282,9 @@
 	                                <h2 class="dashboard-header"><a href="#">EDAY Checklists </a></h2>
 	                                <table width="100%">
 										<tr><th>1st SMS</th><th>2nd SMS</th><th>3rd SMS</th></tr>
-										<tr><td>[1st SMS chart]</td><td>[2nd SMS chart]</td><td>[3rd SMS chart]</td></tr>
+										<tr><td><div id="firstChart"></div></td><td><div id="secondChart"></div></td><td><div id="thirdChart"></div></td></tr>
 										<tr><th>4th SMS</th><th>5th SMS</th><th>&nbsp;</th></tr>
-										<tr><td>[4th SMS chart]</td><td>[5th SMS chart]</td><td>&nbsp;</td></tr>
+										<tr><td><div id="fourthChart"></div></td><td><div id="fifthChart"></div></td><td>&nbsp;</td></tr>
 									</table>
 	                            </div>
 	                            <div class="clear"></div>
