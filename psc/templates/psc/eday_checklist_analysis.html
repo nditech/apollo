@@ -1,0 +1,696 @@
+{% extends 'psc/layout.html' %}
+{% block javascripts %}
+{{ block.super }}
+<link rel="stylesheet" type="text/css" href="/assets/css/piechart.css"/>
+<script src="/assets/js/jquery-1.4.4.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="/assets/js/moocanvas.js" type="text/javascript" charset="utf-8"></script>
+<script src="/assets/js/mootools-beta-1.2b2.js" type="text/javascript" charset="utf-8"></script>
+<script src="/assets/js/piechart.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript" charset="utf-8">
+	$('#reset').click(function() {
+			$('#id_zone').val("");
+			$('#id_state').val("");
+			$('#id_date').val("");
+			$("#id_sample").val("");
+			$('#filter_form').submit();
+		});
+    });
+</script>
+<style>
+    .mid th, .mid td { vertical-align: middle; }
+</style>
+{% endblock %}
+{% block content %}
+{% load calc %}
+<div class="grid_16">
+    <div class="box">
+        <div class="block">
+            <div id="filter">
+                <form action="" method="get" id="filter_form" accept-charset="utf-8">
+                    <table>
+                        <thead>
+                            <tr>
+								{% for field in filter_form %}
+                                <th width="10%">{{ field.label }}</th>
+								{% endfor %}
+                                <th>&nbsp;</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+								{% for field in filter_form %}
+                                <td>{{ field }}</td>
+								{% endfor %}
+                                <td><input type="button" value="reset" id="reset"> <input type="submit" value="filter &rarr;"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </form>
+            </div>
+        </div>
+        </div>
+        <div class="box">
+        <h2>Yes / No Questions</h2>
+        <div class="block">
+            <table width="100%" class="summary">
+                <thead>
+                    <tr>
+                        <th>&nbsp;</th>
+                        <th>Question</th>
+                        <th>N</th>
+                        <th colspan="2">n</th>
+                        <th colspan="2">Yes</th>
+                        <th colspan="2">No</th>
+						<th>&nbsp;</th>
+                    </tr>
+                </thead>
+                    <tr class="mid">
+                        <th>AA</th>
+                        <td>{{ question.AA.label }}</td>
+                        <td>{{ question.no_of_checklists }}</td>
+                        <td>{{ question.AA.n }}</td>
+                        <td><strong>{{ question.AA.n|percentage:question.no_of_checklists }}</strong></td>
+                        <td>{{ question.AA.options.1 }}</td>
+                        <td><strong>{{ question.AA.options.1|percentage:question.AA.n }}</strong></td>
+                        <td>{{ question.AA.options.2 }}</td>
+                        <td><strong>{{ question.AA.options.2|percentage:question.AA.n }}</strong></td>
+						<td><table style="display:none" class="pieChart">
+						<tr><td>Yes</td><td>{{ question.AA.options.1 }}</td></tr>
+						<tr><td>No</td><td>{{ question.AA.options.2 }}</td></tr>
+						</table></td>
+                    </tr>
+					<tr class="mid">
+                        <th>BF</th>
+                        <td>{{ question.BF.label }}</td>
+                        <td>{{ question.no_of_checklists }}</td>
+                        <td>{{ question.BF.n }}</td>
+                        <td><strong>{{ question.BF.n|percentage:question.no_of_checklists }}</strong></td>
+                        <td>{{ question.BF.options.1 }}</td>
+                        <td><strong>{{ question.BF.options.1|percentage:question.BF.n }}</strong></td>
+                        <td>{{ question.BF.options.2 }}</td>
+                        <td><strong>{{ question.BF.options.2|percentage:question.BF.n }}</strong></td>
+						<td><table style="display:none" class="pieChart">
+						<tr><td>Yes</td><td>{{ question.BF.options.1 }}</td></tr>
+						<tr><td>No</td><td>{{ question.BF.options.2 }}</td></tr>
+						</table></td>
+                    </tr>
+					<tr class="mid">
+                        <th>BK</th>
+                        <td>{{ question.BK.label }}</td>
+                        <td>{{ question.no_of_checklists }}</td>
+                        <td>{{ question.BK.n }}</td>
+                        <td><strong>{{ question.BK.n|percentage:question.no_of_checklists }}</strong></td>
+                        <td>{{ question.BK.options.1 }}</td>
+                        <td><strong>{{ question.BK.options.1|percentage:question.BK.n }}</strong></td>
+                        <td>{{ question.BK.options.2 }}</td>
+                        <td><strong>{{ question.BK.options.2|percentage:question.BK.n }}</strong></td>
+						<td><table style="display:none" class="pieChart">
+						<tr><td>Yes</td><td>{{ question.BK.options.1 }}</td></tr>
+						<tr><td>No</td><td>{{ question.BK.options.2 }}</td></tr>
+						</table></td>
+                    </tr>
+					<tr class="mid">
+                        <th>BN</th>
+                        <td>{{ question.BN.label }}</td>
+                        <td>{{ question.no_of_checklists }}</td>
+                        <td>{{ question.BN.n }}</td>
+                        <td><strong>{{ question.BN.n|percentage:question.no_of_checklists }}</strong></td>
+                        <td>{{ question.BN.options.1 }}</td>
+                        <td><strong>{{ question.BN.options.1|percentage:question.BN.n }}</strong></td>
+                        <td>{{ question.BN.options.2 }}</td>
+                        <td><strong>{{ question.BN.options.2|percentage:question.BN.n }}</strong></td>
+						<td><table style="display:none" class="pieChart">
+						<tr><td>Yes</td><td>{{ question.BN.options.1 }}</td></tr>
+						<tr><td>No</td><td>{{ question.BN.options.2 }}</td></tr>
+						</table></td>
+                    </tr>
+					<tr class="mid">
+                        <th>CB</th>
+                        <td>{{ question.CB.label }}</td>
+                        <td>{{ question.no_of_checklists }}</td>
+                        <td>{{ question.CB.n }}</td>
+                        <td><strong>{{ question.CB.n|percentage:question.no_of_checklists }}</strong></td>
+                        <td>{{ question.CB.options.1 }}</td>
+                        <td><strong>{{ question.CB.options.1|percentage:question.CB.n }}</strong></td>
+                        <td>{{ question.CB.options.2 }}</td>
+                        <td><strong>{{ question.CB.options.2|percentage:question.CB.n }}</strong></td>
+						<td><table style="display:none" class="pieChart">
+						<tr><td>Yes</td><td>{{ question.CB.options.1 }}</td></tr>
+						<tr><td>No</td><td>{{ question.CB.options.2 }}</td></tr>
+						</table></td>
+                    </tr>
+					<tr class="mid">
+                        <th>CF</th>
+                        <td>{{ question.CF.label }}</td>
+                        <td>{{ question.no_of_checklists }}</td>
+                        <td>{{ question.CF.n }}</td>
+                        <td><strong>{{ question.CF.n|percentage:question.no_of_checklists }}</strong></td>
+                        <td>{{ question.CF.options.1 }}</td>
+                        <td><strong>{{ question.CF.options.1|percentage:question.CF.n }}</strong></td>
+                        <td>{{ question.CF.options.2 }}</td>
+                        <td><strong>{{ question.CF.options.2|percentage:question.CF.n }}</strong></td>
+						<td><table style="display:none" class="pieChart">
+						<tr><td>Yes</td><td>{{ question.CF.options.1 }}</td></tr>
+						<tr><td>No</td><td>{{ question.CF.options.2 }}</td></tr>
+						</table></td>
+                    </tr>
+					<tr class="mid">
+                        <th>CG</th>
+                        <td>{{ question.CG.label }}</td>
+                        <td>{{ question.no_of_checklists }}</td>
+                        <td>{{ question.CG.n }}</td>
+                        <td><strong>{{ question.CG.n|percentage:question.no_of_checklists }}</strong></td>
+                        <td>{{ question.CG.options.1 }}</td>
+                        <td><strong>{{ question.CG.options.1|percentage:question.CG.n }}</strong></td>
+                        <td>{{ question.CG.options.2 }}</td>
+                        <td><strong>{{ question.CG.options.2|percentage:question.CG.n }}</strong></td>
+						<td><table style="display:none" class="pieChart">
+						<tr><td>Yes</td><td>{{ question.CG.options.1 }}</td></tr>
+						<tr><td>No</td><td>{{ question.CG.options.2 }}</td></tr>
+						</table></td>
+                    </tr>
+					<tr class="mid">
+                        <th>CH</th>
+                        <td>{{ question.CH.label }}</td>
+                        <td>{{ question.no_of_checklists }}</td>
+                        <td>{{ question.CH.n }}</td>
+                        <td><strong>{{ question.CH.n|percentage:question.no_of_checklists }}</strong></td>
+                        <td>{{ question.CH.options.1 }}</td>
+                        <td><strong>{{ question.CH.options.1|percentage:question.CH.n }}</strong></td>
+                        <td>{{ question.CH.options.2 }}</td>
+                        <td><strong>{{ question.CH.options.2|percentage:question.CH.n }}</strong></td>
+						<td><table style="display:none" class="pieChart">
+						<tr><td>Yes</td><td>{{ question.CH.options.1 }}</td></tr>
+						<tr><td>No</td><td>{{ question.CH.options.2 }}</td></tr>
+						</table></td>
+                    </tr>
+					<tr class="mid">
+                        <th>CJ</th>
+                        <td>{{ question.CJ.label }}</td>
+                        <td>{{ question.no_of_checklists }}</td>
+                        <td>{{ question.CJ.n }}</td>
+                        <td><strong>{{ question.CJ.n|percentage:question.no_of_checklists }}</strong></td>
+                        <td>{{ question.CJ.options.1 }}</td>
+                        <td><strong>{{ question.CJ.options.1|percentage:question.CJ.n }}</strong></td>
+                        <td>{{ question.CJ.options.2 }}</td>
+                        <td><strong>{{ question.CJ.options.2|percentage:question.CJ.n }}</strong></td>
+						<td><table style="display:none" class="pieChart">
+						<tr><td>Yes</td><td>{{ question.CJ.options.1 }}</td></tr>
+						<tr><td>No</td><td>{{ question.CJ.options.2 }}</td></tr>
+						</table></td>
+                    </tr>
+					<tr class="mid">
+                        <th>CK</th>
+                        <td>{{ question.CK.label }}</td>
+                        <td>{{ question.no_of_checklists }}</td>
+                        <td>{{ question.CK.n }}</td>
+                        <td><strong>{{ question.CK.n|percentage:question.no_of_checklists }}</strong></td>
+                        <td>{{ question.CK.options.1 }}</td>
+                        <td><strong>{{ question.CK.options.1|percentage:question.CK.n }}</strong></td>
+                        <td>{{ question.CK.options.2 }}</td>
+                        <td><strong>{{ question.CK.options.2|percentage:question.CK.n }}</strong></td>
+						<td><table style="display:none" class="pieChart">
+						<tr><td>Yes</td><td>{{ question.CK.options.1 }}</td></tr>
+						<tr><td>No</td><td>{{ question.CK.options.2 }}</td></tr>
+						</table></td>
+                    </tr>
+					<tr class="mid">
+                        <th>CM</th>
+                        <td>{{ question.CM.label }}</td>
+                        <td>{{ question.no_of_checklists }}</td>
+                        <td>{{ question.CM.n }}</td>
+                        <td><strong>{{ question.CM.n|percentage:question.no_of_checklists }}</strong></td>
+                        <td>{{ question.CM.options.1 }}</td>
+                        <td><strong>{{ question.CM.options.1|percentage:question.CM.n }}</strong></td>
+                        <td>{{ question.CM.options.2 }}</td>
+                        <td><strong>{{ question.CM.options.2|percentage:question.CM.n }}</strong></td>
+						<td><table style="display:none" class="pieChart">
+						<tr><td>Yes</td><td>{{ question.CM.options.1 }}</td></tr>
+						<tr><td>No</td><td>{{ question.CM.options.2 }}</td></tr>
+						</table></td>
+                    </tr>
+					<tr class="mid">
+                        <th>CN</th>
+                        <td>{{ question.CN.label }}</td>
+                        <td>{{ question.no_of_checklists }}</td>
+                        <td>{{ question.CN.n }}</td>
+                        <td><strong>{{ question.CN.n|percentage:question.no_of_checklists }}</strong></td>
+                        <td>{{ question.CN.options.1 }}</td>
+                        <td><strong>{{ question.CN.options.1|percentage:question.CN.n }}</strong></td>
+                        <td>{{ question.CN.options.2 }}</td>
+                        <td><strong>{{ question.CN.options.2|percentage:question.CN.n }}</strong></td>
+						<td><table style="display:none" class="pieChart">
+						<tr><td>Yes</td><td>{{ question.CN.options.1 }}</td></tr>
+						<tr><td>No</td><td>{{ question.CN.options.2 }}</td></tr>
+						</table></td>
+                    </tr>
+					<tr class="mid">
+                        <th>CP</th>
+                        <td>{{ question.CP.label }}</td>
+                        <td>{{ question.no_of_checklists }}</td>
+                        <td>{{ question.CP.n }}</td>
+                        <td><strong>{{ question.CP.n|percentage:question.no_of_checklists }}</strong></td>
+                        <td>{{ question.CP.options.1 }}</td>
+                        <td><strong>{{ question.CP.options.1|percentage:question.CP.n }}</strong></td>
+                        <td>{{ question.CP.options.2 }}</td>
+                        <td><strong>{{ question.CP.options.2|percentage:question.CP.n }}</strong></td>
+						<td><table style="display:none" class="pieChart">
+						<tr><td>Yes</td><td>{{ question.CP.options.1 }}</td></tr>
+						<tr><td>No</td><td>{{ question.CP.options.2 }}</td></tr>
+						</table></td>
+                    </tr>
+					<tr class="mid">
+                        <th>CQ</th>
+                        <td>{{ question.CQ.label }}</td>
+                        <td>{{ question.no_of_checklists }}</td>
+                        <td>{{ question.CQ.n }}</td>
+                        <td><strong>{{ question.CQ.n|percentage:question.no_of_checklists }}</strong></td>
+                        <td>{{ question.CQ.options.1 }}</td>
+                        <td><strong>{{ question.CQ.options.1|percentage:question.CQ.n }}</strong></td>
+                        <td>{{ question.CQ.options.2 }}</td>
+                        <td><strong>{{ question.CQ.options.2|percentage:question.CQ.n }}</strong></td>
+						<td><table style="display:none" class="pieChart">
+						<tr><td>Yes</td><td>{{ question.CQ.options.1 }}</td></tr>
+						<tr><td>No</td><td>{{ question.CQ.options.2 }}</td></tr>
+						</table></td>
+                    </tr>
+            </table>
+        </div>
+    </div>
+	<div class="box">
+        <h2>Yes/No/Maybe Questions</h2>
+        <div class="block">
+            <table width="100%" class="summary">
+                <thead>
+                    <tr>
+                        <th>&nbsp;</th>
+                        <th>Question</th>
+                        <th>N</th>
+                        <th colspan="2">n</th>
+                        <th colspan="2">Yes</th>
+                        <th colspan="2">No</th>
+                        <th colspan="2">Maybe</th>
+						<th>&nbsp;</th>
+                    </tr>
+                </thead>
+                    <tr class="mid">
+                        <th>BC</th>
+                        <td>{{ question.BC.label }}</td>
+                        <td>{{ question.no_of_checklists }}</td>
+                        <td>{{ question.BC.n }}</td>
+                        <td><strong>{{ question.BC.n|percentage:question.no_of_checklists }}</strong></td>
+                        <td>{{ question.BC.options.1 }}</td>
+                        <td><strong>{{ question.BC.options.1|percentage:question.BC.n }}</strong></td>
+                        <td>{{ question.BC.options.2 }}</td>
+                        <td><strong>{{ question.BC.options.2|percentage:question.BC.n }}</strong></td>
+                        <td>{{ question.BC.options.3 }}</td>
+                        <td><strong>{{ question.BC.options.3|percentage:question.BC.n }}</strong></td>
+						<td><table style="display:none" class="pieChart">
+						<tr><td>Yes</td><td>{{ question.BC.options.1 }}</td></tr>
+						<tr><td>No</td><td>{{ question.BC.options.2 }}</td></tr>
+						<tr><td>Maybe</td><td>{{ question.BC.options.3 }}</td></tr>
+						</table></td>
+                    </tr>
+            </table>
+        </div>
+    </div>
+	<div class="box">
+        <h2>Opening Questions</h2>
+        <div class="block">
+            <table width="100%" class="summary">
+                <thead>
+                    <tr>
+                        <th>&nbsp;</th>
+                        <th>Question</th>
+                        <th>N</th>
+                        <th colspan="2">n</th>
+                        <th colspan="2">8am</th>
+                        <th colspan="2">Btw 8am &amp; 9am</th>
+                        <th colspan="2">Btw 9am &amp; 12pm</th>
+                        <th colspan="2">After 12pm</th>
+                        <th colspan="2">Never Started</th>
+						<th>&nbsp;</th>
+                    </tr>
+                </thead>
+                    <tr class="mid">
+                        <th>BA</th>
+                        <td>{{ question.BA.label }}</td>
+                        <td>{{ question.no_of_checklists }}</td>
+                        <td>{{ question.BA.n }}</td>
+                        <td><strong>{{ question.BA.n|percentage:question.no_of_checklists }}</strong></td>
+                        <td>{{ question.BA.options.1 }}</td>
+                        <td><strong>{{ question.BA.options.1|percentage:question.BA.n }}</strong></td>
+                        <td>{{ question.BA.options.2 }}</td>
+                        <td><strong>{{ question.BA.options.2|percentage:question.BA.n }}</strong></td>
+                        <td>{{ question.BA.options.3 }}</td>
+                        <td><strong>{{ question.BA.options.3|percentage:question.BA.n }}</strong></td>
+                        <td>{{ question.BA.options.4 }}</td>
+                        <td><strong>{{ question.BA.options.4|percentage:question.BA.n }}</strong></td>
+                        <td>{{ question.BA.options.5 }}</td>
+                        <td><strong>{{ question.BA.options.5|percentage:question.BA.n }}</strong></td>
+						<td><table style="display:none" class="pieChart">
+						<tr><td>None</td><td>{{ question.BA.options.1 }}</td></tr>
+						<tr><td>Few</td><td>{{ question.BA.options.2 }}</td></tr>
+						<tr><td>Half</td><td>{{ question.BA.options.3 }}</td></tr>
+						<tr><td>Most</td><td>{{ question.BA.options.4 }}</td></tr>
+						<tr><td>Everyone</td><td>{{ question.BA.options.5 }}</td></tr>
+						</table></td>
+                    </tr>
+			</table>
+			<table width="100%" class="summary">
+                <thead>
+                    <tr>
+                        <th>&nbsp;</th>
+                        <th>Question</th>
+                        <th>N</th>
+                        <th colspan="2">n</th>
+                        <th colspan="2">Before 1pm</th>
+                        <th colspan="2">Btw 1pm &amp; 2pm</th>
+                        <th colspan="2">Btw 2pm &amp; 3pm</th>
+                        <th colspan="2">After 3pm</th>
+                        <th colspan="2">Never Started</th>
+						<th>&nbsp;</th>
+                    </tr>
+                </thead>
+                    <tr class="mid">
+                        <th>CA</th>
+                        <td>{{ question.CA.label }}</td>
+                        <td>{{ question.no_of_checklists }}</td>
+                        <td>{{ question.CA.n }}</td>
+                        <td><strong>{{ question.CA.n|percentage:question.no_of_checklists }}</strong></td>
+                        <td>{{ question.CA.options.1 }}</td>
+                        <td><strong>{{ question.CA.options.1|percentage:question.CA.n }}</strong></td>
+                        <td>{{ question.CA.options.2 }}</td>
+                        <td><strong>{{ question.CA.options.2|percentage:question.CA.n }}</strong></td>
+                        <td>{{ question.CA.options.3 }}</td>
+                        <td><strong>{{ question.CA.options.3|percentage:question.CA.n }}</strong></td>
+                        <td>{{ question.CA.options.4 }}</td>
+                        <td><strong>{{ question.CA.options.4|percentage:question.CA.n }}</strong></td>
+                        <td>{{ question.CA.options.5 }}</td>
+                        <td><strong>{{ question.CA.options.5|percentage:question.CA.n }}</strong></td>
+						<td><table style="display:none" class="pieChart">
+						<tr><td>None</td><td>{{ question.CA.options.1 }}</td></tr>
+						<tr><td>Few</td><td>{{ question.CA.options.2 }}</td></tr>
+						<tr><td>Half</td><td>{{ question.CA.options.3 }}</td></tr>
+						<tr><td>Most</td><td>{{ question.CA.options.4 }}</td></tr>
+						<tr><td>Everyone</td><td>{{ question.CA.options.5 }}</td></tr>
+						</table></td>
+                    </tr>
+			</table>
+        </div>
+    </div>
+    <div class="box">
+        <h2>Option Questions</h2>
+        <div class="block">
+            <table width="100%" class="summary">
+                <thead>
+                    <tr>
+                        <th>&nbsp;</th>
+                        <th>Question</th>
+                        <th>N</th>
+                        <th colspan="2">n</th>
+                        <th colspan="2">None</th>
+                        <th colspan="2">Few</th>
+                        <th colspan="2">Half</th>
+                        <th colspan="2">Most</th>
+                        <th colspan="2">Everyone</th>
+						<th>&nbsp;</th>
+                    </tr>
+                </thead>
+					<tr class="mid">
+                        <th>BG</th>
+                        <td>{{ question.BG.label }}</td>
+                        <td>{{ question.no_of_checklists }}</td>
+                        <td>{{ question.BG.n }}</td>
+                        <td><strong>{{ question.BG.n|percentage:question.no_of_checklists }}</strong></td>
+                        <td>{{ question.BG.options.1 }}</td>
+                        <td><strong>{{ question.BG.options.1|percentage:question.BG.n }}</strong></td>
+                        <td>{{ question.BG.options.2 }}</td>
+                        <td><strong>{{ question.BG.options.2|percentage:question.BG.n }}</strong></td>
+                        <td>{{ question.BG.options.3 }}</td>
+                        <td><strong>{{ question.BG.options.3|percentage:question.BG.n }}</strong></td>
+                        <td>{{ question.BG.options.4 }}</td>
+                        <td><strong>{{ question.BG.options.4|percentage:question.BG.n }}</strong></td>
+                        <td>{{ question.BG.options.5 }}</td>
+                        <td><strong>{{ question.BG.options.5|percentage:question.BG.n }}</strong></td>
+						<td><table style="display:none" class="pieChart">
+						<tr><td>None</td><td>{{ question.BG.options.1 }}</td></tr>
+						<tr><td>Few</td><td>{{ question.BG.options.2 }}</td></tr>
+						<tr><td>Half</td><td>{{ question.BG.options.3 }}</td></tr>
+						<tr><td>Most</td><td>{{ question.BG.options.4 }}</td></tr>
+						<tr><td>Everyone</td><td>{{ question.BG.options.5 }}</td></tr>
+						</table></td>
+                    </tr>
+					<tr class="mid">
+                        <th>BH</th>
+                        <td>{{ question.BH.label }}</td>
+                        <td>{{ question.no_of_checklists }}</td>
+                        <td>{{ question.BH.n }}</td>
+                        <td><strong>{{ question.BH.n|percentage:question.no_of_checklists }}</strong></td>
+                        <td>{{ question.BH.options.1 }}</td>
+                        <td><strong>{{ question.BH.options.1|percentage:question.BH.n }}</strong></td>
+                        <td>{{ question.BH.options.2 }}</td>
+                        <td><strong>{{ question.BH.options.2|percentage:question.BH.n }}</strong></td>
+                        <td>{{ question.BH.options.3 }}</td>
+                        <td><strong>{{ question.BH.options.3|percentage:question.BH.n }}</strong></td>
+                        <td>{{ question.BH.options.4 }}</td>
+                        <td><strong>{{ question.BH.options.4|percentage:question.BH.n }}</strong></td>
+                        <td>{{ question.BH.options.5 }}</td>
+                        <td><strong>{{ question.BH.options.5|percentage:question.BH.n }}</strong></td>
+						<td><table style="display:none" class="pieChart">
+						<tr><td>None</td><td>{{ question.BH.options.1 }}</td></tr>
+						<tr><td>Few</td><td>{{ question.BH.options.2 }}</td></tr>
+						<tr><td>Half</td><td>{{ question.BH.options.3 }}</td></tr>
+						<tr><td>Most</td><td>{{ question.BH.options.4 }}</td></tr>
+						<tr><td>Everyone</td><td>{{ question.BH.options.5 }}</td></tr>
+						</table></td>
+                    </tr>
+					<tr class="mid">
+                        <th>BJ</th>
+                        <td>{{ question.BJ.label }}</td>
+                        <td>{{ question.no_of_checklists }}</td>
+                        <td>{{ question.BJ.n }}</td>
+                        <td><strong>{{ question.BJ.n|percentage:question.no_of_checklists }}</strong></td>
+                        <td>{{ question.BJ.options.1 }}</td>
+                        <td><strong>{{ question.BJ.options.1|percentage:question.BJ.n }}</strong></td>
+                        <td>{{ question.BJ.options.2 }}</td>
+                        <td><strong>{{ question.BJ.options.2|percentage:question.BJ.n }}</strong></td>
+                        <td>{{ question.BJ.options.3 }}</td>
+                        <td><strong>{{ question.BJ.options.3|percentage:question.BJ.n }}</strong></td>
+                        <td>{{ question.BJ.options.4 }}</td>
+                        <td><strong>{{ question.BJ.options.4|percentage:question.BJ.n }}</strong></td>
+                        <td>{{ question.BJ.options.5 }}</td>
+                        <td><strong>{{ question.BJ.options.5|percentage:question.BJ.n }}</strong></td>
+						<td><table style="display:none" class="pieChart">
+						<tr><td>None</td><td>{{ question.BJ.options.1 }}</td></tr>
+						<tr><td>Few</td><td>{{ question.BJ.options.2 }}</td></tr>
+						<tr><td>Half</td><td>{{ question.BJ.options.3 }}</td></tr>
+						<tr><td>Most</td><td>{{ question.BJ.options.4 }}</td></tr>
+						<tr><td>Everyone</td><td>{{ question.BJ.options.5 }}</td></tr>
+						</table></td>
+                    </tr>
+					<tr class="mid">
+                        <th>BM</th>
+                        <td>{{ question.BM.label }}</td>
+                        <td>{{ question.no_of_checklists }}</td>
+                        <td>{{ question.BM.n }}</td>
+                        <td><strong>{{ question.BM.n|percentage:question.no_of_checklists }}</strong></td>
+                        <td>{{ question.BM.options.1 }}</td>
+                        <td><strong>{{ question.BM.options.1|percentage:question.BM.n }}</strong></td>
+                        <td>{{ question.BM.options.2 }}</td>
+                        <td><strong>{{ question.BM.options.2|percentage:question.BM.n }}</strong></td>
+                        <td>{{ question.BM.options.3 }}</td>
+                        <td><strong>{{ question.BM.options.3|percentage:question.BM.n }}</strong></td>
+                        <td>{{ question.BM.options.4 }}</td>
+                        <td><strong>{{ question.BM.options.4|percentage:question.BM.n }}</strong></td>
+                        <td>{{ question.BM.options.5 }}</td>
+                        <td><strong>{{ question.BM.options.5|percentage:question.BM.n }}</strong></td>
+						<td><table style="display:none" class="pieChart">
+						<tr><td>None</td><td>{{ question.BM.options.1 }}</td></tr>
+						<tr><td>Few</td><td>{{ question.BM.options.2 }}</td></tr>
+						<tr><td>Half</td><td>{{ question.BM.options.3 }}</td></tr>
+						<tr><td>Most</td><td>{{ question.BM.options.4 }}</td></tr>
+						<tr><td>Everyone</td><td>{{ question.BM.options.5 }}</td></tr>
+						</table></td>
+                    </tr>
+					<tr class="mid">
+                        <th>CC</th>
+                        <td>{{ question.CC.label }}</td>
+                        <td>{{ question.no_of_checklists }}</td>
+                        <td>{{ question.CC.n }}</td>
+                        <td><strong>{{ question.CC.n|percentage:question.no_of_checklists }}</strong></td>
+                        <td>{{ question.CC.options.1 }}</td>
+                        <td><strong>{{ question.CC.options.1|percentage:question.CC.n }}</strong></td>
+                        <td>{{ question.CC.options.2 }}</td>
+                        <td><strong>{{ question.CC.options.2|percentage:question.CC.n }}</strong></td>
+                        <td>{{ question.CC.options.3 }}</td>
+                        <td><strong>{{ question.CC.options.3|percentage:question.CC.n }}</strong></td>
+                        <td>{{ question.CC.options.4 }}</td>
+                        <td><strong>{{ question.CC.options.4|percentage:question.CC.n }}</strong></td>
+                        <td>{{ question.CC.options.5 }}</td>
+                        <td><strong>{{ question.CC.options.5|percentage:question.CC.n }}</strong></td>
+						<td><table style="display:none" class="pieChart">
+						<tr><td>None</td><td>{{ question.CC.options.1 }}</td></tr>
+						<tr><td>Few</td><td>{{ question.CC.options.2 }}</td></tr>
+						<tr><td>Half</td><td>{{ question.CC.options.3 }}</td></tr>
+						<tr><td>Most</td><td>{{ question.CC.options.4 }}</td></tr>
+						<tr><td>Everyone</td><td>{{ question.CC.options.5 }}</td></tr>
+						</table></td>
+                    </tr>
+					<tr class="mid">
+                        <th>CD</th>
+                        <td>{{ question.CD.label }}</td>
+                        <td>{{ question.no_of_checklists }}</td>
+                        <td>{{ question.CD.n }}</td>
+                        <td><strong>{{ question.CD.n|percentage:question.no_of_checklists }}</strong></td>
+                        <td>{{ question.CD.options.1 }}</td>
+                        <td><strong>{{ question.CD.options.1|percentage:question.CD.n }}</strong></td>
+                        <td>{{ question.CD.options.2 }}</td>
+                        <td><strong>{{ question.CD.options.2|percentage:question.CD.n }}</strong></td>
+                        <td>{{ question.CD.options.3 }}</td>
+                        <td><strong>{{ question.CD.options.3|percentage:question.CD.n }}</strong></td>
+                        <td>{{ question.CD.options.4 }}</td>
+                        <td><strong>{{ question.CD.options.4|percentage:question.CD.n }}</strong></td>
+                        <td>{{ question.CD.options.5 }}</td>
+                        <td><strong>{{ question.CD.options.5|percentage:question.CD.n }}</strong></td>
+						<td><table style="display:none" class="pieChart">
+						<tr><td>None</td><td>{{ question.CD.options.1 }}</td></tr>
+						<tr><td>Few</td><td>{{ question.CD.options.2 }}</td></tr>
+						<tr><td>Half</td><td>{{ question.CD.options.3 }}</td></tr>
+						<tr><td>Most</td><td>{{ question.CD.options.4 }}</td></tr>
+						<tr><td>Everyone</td><td>{{ question.CD.options.5 }}</td></tr>
+						</table></td>
+                    </tr>
+					<tr class="mid">
+                        <th>CE</th>
+                        <td>{{ question.CE.label }}</td>
+                        <td>{{ question.no_of_checklists }}</td>
+                        <td>{{ question.CE.n }}</td>
+                        <td><strong>{{ question.CE.n|percentage:question.no_of_checklists }}</strong></td>
+                        <td>{{ question.CE.options.1 }}</td>
+                        <td><strong>{{ question.CE.options.1|percentage:question.CE.n }}</strong></td>
+                        <td>{{ question.CE.options.2 }}</td>
+                        <td><strong>{{ question.CE.options.2|percentage:question.CE.n }}</strong></td>
+                        <td>{{ question.CE.options.3 }}</td>
+                        <td><strong>{{ question.CE.options.3|percentage:question.CE.n }}</strong></td>
+                        <td>{{ question.CE.options.4 }}</td>
+                        <td><strong>{{ question.CE.options.4|percentage:question.CE.n }}</strong></td>
+                        <td>{{ question.CE.options.5 }}</td>
+                        <td><strong>{{ question.CE.options.5|percentage:question.CE.n }}</strong></td>
+						<td><table style="display:none" class="pieChart">
+						<tr><td>None</td><td>{{ question.CE.options.1 }}</td></tr>
+						<tr><td>Few</td><td>{{ question.CE.options.2 }}</td></tr>
+						<tr><td>Half</td><td>{{ question.CE.options.3 }}</td></tr>
+						<tr><td>Most</td><td>{{ question.CE.options.4 }}</td></tr>
+						<tr><td>Everyone</td><td>{{ question.CE.options.5 }}</td></tr>
+						</table></td>
+                    </tr>
+            </table>
+        </div>
+    </div>
+    <div class="box">
+        <h2>Numeric Questions</h2>
+        <div class="block">
+            <table width="100%" class="summary">
+                <thead>
+                    <tr>
+                        <th>&nbsp;</th>
+                        <th>Question</th>
+                        <th colspan="2">N</th>
+                        <th>n</th>
+                        <th>Average</th>                       
+                    </tr>
+                </thead>
+                <tr>
+                    <td>BD</td>
+                    <td>{{ question.BD.label }}</td>
+                    <td>{{ question.no_of_checklists }}</td>
+                    <td>{{ question.BD.n }}</td>
+                    <td><strong>{{ question.BD.n|percentage:question.no_of_checklists }}</strong></td>
+                    <td>{{ question.BD.mean|floatformat:2 }}</td>
+                </tr>
+				<tr>
+                    <td>BE</td>
+                    <td>{{ question.BE.label }}</td>
+                    <td>{{ question.no_of_checklists }}</td>
+                    <td>{{ question.BE.n }}</td>
+                    <td><strong>{{ question.BE.n|percentage:question.no_of_checklists }}</strong></td>
+                    <td>{{ question.BE.mean|floatformat:2 }}</td>
+                </tr>
+				<tr>
+                    <td>BP</td>
+                    <td>{{ question.BP.label }}</td>
+                    <td>{{ question.no_of_checklists }}</td>
+                    <td>{{ question.BP.n }}</td>
+                    <td><strong>{{ question.BP.n|percentage:question.no_of_checklists }}</strong></td>
+                    <td>{{ question.BP.mean|floatformat:2 }}</td>
+                </tr>
+				<tr>
+                    <td>DA</td>
+                    <td>{{ question.DA.label }}</td>
+                    <td>{{ question.no_of_checklists }}</td>
+                    <td>{{ question.DA.n }}</td>
+                    <td><strong>{{ question.DA.n|percentage:question.no_of_checklists }}</strong></td>
+                    <td>{{ question.DA.mean|floatformat:2 }}</td>
+                </tr>
+				<tr>
+                    <td>DB</td>
+                    <td>{{ question.DB.label }}</td>
+                    <td>{{ question.no_of_checklists }}</td>
+                    <td>{{ question.DB.n }}</td>
+                    <td><strong>{{ question.DB.n|percentage:question.no_of_checklists }}</strong></td>
+                    <td>{{ question.DB.mean|floatformat:2 }}</td>
+                </tr>
+				<tr>
+                    <td>DC</td>
+                    <td>{{ question.DC.label }}</td>
+                    <td>{{ question.no_of_checklists }}</td>
+                    <td>{{ question.DC.n }}</td>
+                    <td><strong>{{ question.DC.n|percentage:question.no_of_checklists }}</strong></td>
+                    <td>{{ question.DC.mean|floatformat:2 }}</td>
+                </tr>
+				<tr>
+                    <td>DD</td>
+                    <td>{{ question.DD.label }}</td>
+                    <td>{{ question.no_of_checklists }}</td>
+                    <td>{{ question.DD.n }}</td>
+                    <td><strong>{{ question.DD.n|percentage:question.no_of_checklists }}</strong></td>
+                    <td>{{ question.DD.mean|floatformat:2 }}</td>
+                </tr>
+				<tr>
+                    <td>DE</td>
+                    <td>{{ question.DE.label }}</td>
+                    <td>{{ question.no_of_checklists }}</td>
+                    <td>{{ question.DE.n }}</td>
+                    <td><strong>{{ question.DE.n|percentage:question.no_of_checklists }}</strong></td>
+                    <td>{{ question.DE.mean|floatformat:2 }}</td>
+                </tr>
+				<tr>
+                    <td>DF</td>
+                    <td>{{ question.DF.label }}</td>
+                    <td>{{ question.no_of_checklists }}</td>
+                    <td>{{ question.DF.n }}</td>
+                    <td><strong>{{ question.DF.n|percentage:question.no_of_checklists }}</strong></td>
+                    <td>{{ question.DF.mean|floatformat:2 }}</td>
+                </tr>
+				<tr>
+                    <td>DG</td>
+                    <td>{{ question.DG.label }}</td>
+                    <td>{{ question.no_of_checklists }}</td>
+                    <td>{{ question.DG.n }}</td>
+                    <td><strong>{{ question.DG.n|percentage:question.no_of_checklists }}</strong></td>
+                    <td>{{ question.DG.mean|floatformat:2 }}</td>
+                </tr>
+				<tr>
+                    <td>DH</td>
+                    <td>{{ question.DH.label }}</td>
+                    <td>{{ question.no_of_checklists }}</td>
+                    <td>{{ question.DH.n }}</td>
+                    <td><strong>{{ question.DH.n|percentage:question.no_of_checklists }}</strong></td>
+                    <td>{{ question.DH.mean|floatformat:2 }}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -10,8 +10,8 @@ from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from rapidsms.contrib.messagelog.tables import MessageTable
 from rapidsms.contrib.messagelog.models import Message
 from forms import VRChecklistForm, VRIncidentForm, DCOIncidentForm, VRChecklistFilterForm, VRIncidentFilterForm, DCOIncidentFilterForm, DCOChecklistFilterForm, DCOChecklistForm, ContactEditForm, ContactlistFilterForm
-from forms import VR_DAYS
-from forms import DCOIncidentUpdateForm, VRIncidentUpdateForm, MessagelogFilterForm, DashboardFilterForm, VRAnalysisFilterForm, EDAYIncidentUpdateForm, EDAYIncidentFilterForm, EDAYIncidentForm, EDAYChecklistFilterForm, EDAYChecklistForm
+from forms import VR_DAYS, EDAY_DAYS
+from forms import DCOIncidentUpdateForm, VRIncidentUpdateForm, MessagelogFilterForm, DashboardFilterForm, VRAnalysisFilterForm, EDAYAnalysisFilterForm, EDAYIncidentUpdateForm, EDAYIncidentFilterForm, EDAYIncidentForm, EDAYChecklistFilterForm, EDAYChecklistForm
 from forms import VRSummaryFilterForm, DCOSummaryFilterForm, EmailBlastForm
 from datetime import datetime
 from django.core import serializers
@@ -1432,6 +1432,81 @@ def vr_checklist_analysis(request):
     ctx['question']['AA'] = stats.vr_QAA(qs)
 
     return render_to_response('psc/vr_checklist_analysis.html', {'page_title': 'Voter Registration Checklist Analysis', 'filter_form': filter_form}, context_instance=ctx)
+
+@permission_required('psc.can_analyse', login_url='/')
+def eday_checklist_analysis(request):
+    eday_days = [day[0] for day in EDAY_DAYS if day[0]]
+
+    # limit analysis to only the control checklists
+    qs = Q(checklist_index='3') & Q(date__in=eday_days)
+
+    if not request.session.has_key('eday_analysis_filter'):
+        request.session['eday_analysis_filter'] = {}
+
+    if request.method == 'GET':
+        if filter(lambda key: request.GET.has_key(key), ['sample', 'zone', 'state', 'date']):
+            request.session['eday_analysis_filter'] = request.GET
+        filter_form = EDAYAnalysisFilterForm(request.session['eday_analysis_filter'])
+
+        if filter_form.is_valid():
+            data = filter_form.cleaned_data
+
+            if data['zone']:
+                qs = Q(location_id__in=RegistrationCenter.objects.filter(parent__parent__parent__parent__code__iexact=data['zone']).values('id'))
+            elif data['state']:
+                qs = Q(location_id__in=RegistrationCenter.objects.filter(parent__parent__parent__code__iexact=data['state']).values_list('id', flat=True))
+            if data['sample']:
+                qs &= Q(location_type=ContentType.objects.get_for_model(RegistrationCenter),location_id__in=Sample.objects.filter(sample=data['sample']).values_list('location', flat=True))
+            if data['date']:
+                qs &= Q(date=datetime.date(datetime.strptime(data['date'], '%Y-%m-%d')))
+    else:
+        filter_form = EDAYAnalysisFilterForm()
+
+    ctx = RequestContext(request)
+    ctx['question'] = dict()
+    ctx['question']['no_of_checklists'] = stats.eday_N(qs)
+
+    #
+    ctx['question']['AA'] = stats.eday_QAA(qs)
+    
+    qs &= ~(Q(BA=5)|Q(CA=5))
+    ctx['question']['BF'] = stats.eday_QBF(qs)
+    ctx['question']['BK'] = stats.eday_QBK(qs)
+    ctx['question']['BN'] = stats.eday_QBN(qs)
+    ctx['question']['CB'] = stats.eday_QCQ(qs)
+    ctx['question']['CF'] = stats.eday_QCF(qs)
+    ctx['question']['CG'] = stats.eday_QCG(qs)
+    ctx['question']['CH'] = stats.eday_QCH(qs)
+    ctx['question']['CJ'] = stats.eday_QCJ(qs)
+    ctx['question']['CK'] = stats.eday_QCK(qs)
+    ctx['question']['CM'] = stats.eday_QCM(qs)
+    ctx['question']['CN'] = stats.eday_QCN(qs)
+    ctx['question']['CP'] = stats.eday_QCP(qs)
+    ctx['question']['CQ'] = stats.eday_QCQ(qs)
+    
+    ctx['question']['BC'] = stats.eday_QBC(qs)
+    ctx['question']['BA'] = stats.eday_QBA(qs)
+    ctx['question']['BG'] = stats.eday_QBG(qs)
+    ctx['question']['BH'] = stats.eday_QBH(qs)
+    ctx['question']['BJ'] = stats.eday_QBJ(qs)
+    ctx['question']['BM'] = stats.eday_QBM(qs)
+    ctx['question']['CA'] = stats.eday_QCA(qs)
+    ctx['question']['CC'] = stats.eday_QCC(qs)
+    ctx['question']['CD'] = stats.eday_QCD(qs)
+    ctx['question']['CE'] = stats.eday_QCE(qs)
+    ctx['question']['BD'] = stats.eday_QBD(qs)
+    ctx['question']['BE'] = stats.eday_QBE(qs)
+    ctx['question']['BP'] = stats.eday_QBP(qs)
+    ctx['question']['DA'] = stats.eday_QDA(qs)
+    ctx['question']['DB'] = stats.eday_QDB(qs)
+    ctx['question']['DC'] = stats.eday_QDC(qs)
+    ctx['question']['DD'] = stats.eday_QDD(qs)
+    ctx['question']['DE'] = stats.eday_QDE(qs)
+    ctx['question']['DF'] = stats.eday_QDF(qs)
+    ctx['question']['DG'] = stats.eday_QDG(qs)
+    ctx['question']['DH'] = stats.eday_QDH(qs)
+
+    return render_to_response('psc/eday_checklist_analysis.html', {'page_title': 'Election Day Checklist Analysis', 'filter_form': filter_form}, context_instance=ctx)
 
 @permission_required('psc.view_observer', login_url='/')
 @login_required()

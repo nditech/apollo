@@ -258,6 +258,7 @@ class VRAnalysisFilterForm(forms.Form):
     date = forms.ChoiceField(choices=VR_DAYS, required=False)
     
 class EDAYAnalysisFilterForm(forms.Form):
+    sample = forms.ChoiceField(choices=SAMPLES, required=False)
     zone = forms.ChoiceField(choices=ZONES, required=False)
     state = forms.ChoiceField(choices=STATES, required=False)
     date = forms.ChoiceField(choices=EDAY_DAYS, required=False)
