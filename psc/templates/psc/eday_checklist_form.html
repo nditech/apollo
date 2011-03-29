@@ -314,7 +314,7 @@
 						    </tr>
 						    {% endif %}
 						    <tr>
-							<td{% if checklist1.observer.role != 'LGA' %} colspan="3"{% endif %}>&nbsp;</td><td colspan="4"><input type="submit" name="submit" value="Save" id="submit"></td>
+							<td colspan="{% if checklist1.observer.role != 'LGA' %}4{% else %}3{% endif %}">&nbsp;</td><td colspan="{% if checklist1.observer.role != 'LGA' %}3{% else %}1{% endif %}"><input type="submit" name="submit" value="Save" id="submit"></td>
 						    </tr>
 						</table>
 					    </div>
