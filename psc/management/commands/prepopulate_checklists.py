@@ -86,13 +86,13 @@ class Command(BaseCommand):
                         report_date = day[0]
                         rc = lga_supervisor.location
                         try:
-                            eday = EDAYChecklist.objects.get(date=report_date, observer=lga_supervisor, checklist_index='1' if int(lga_supervisor.observer_id[-1]) % 6 else '2', location_type=ContentType.objects.get_for_model(rc), location_id=rc.id)
+                            eday = EDAYChecklist.objects.get(date=report_date, observer=lga_supervisor, checklist_index='1' if int(lga_supervisor.observer_id[-1]) < 6 else '2', location_type=ContentType.objects.get_for_model(rc), location_id=rc.id)
                         except EDAYChecklist.DoesNotExist:
-                            eday = EDAYChecklist.objects.create(date=report_date, observer=lga_supervisor, checklist_index='1' if int(lga_supervisor.observer_id[-1]) % 6 else '2', location_type=ContentType.objects.get_for_model(rc), location_id=rc.id)
+                            eday = EDAYChecklist.objects.create(date=report_date, observer=lga_supervisor, checklist_index='1' if int(lga_supervisor.observer_id[-1]) < 6 else '2', location_type=ContentType.objects.get_for_model(rc), location_id=rc.id)
                             eday_reports_created += 1
                     
                     
-                        if int(lga_supervisor.observer_id[-1]) % 6:
+                        if int(lga_supervisor.observer_id[-1]) < 6:
                             try:
                                 eday_control = EDAYChecklist.objects.get(date=report_date, observer=lga_supervisor, checklist_index='3', location_type=ContentType.objects.get_for_model(rc), location_id=rc.id)
                             except EDAYChecklist.DoesNotExist:
