@@ -501,7 +501,10 @@ class EDAYChecklist(models.Model):
     @property
     @cache
     def contesting(self):
-        return self.observer.state.contesting_set.values_list('code', flat=True)
+        try:
+            return self.observer.state.contesting_set.values_list('code', flat=True)
+        except AttributeError:
+            return []
         
     @property
     @cache
