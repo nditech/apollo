@@ -538,7 +538,7 @@ def eday_checklist_list(request, action=None):
     global items_per_page
     if action == 'export':
         items_per_page = EDAYChecklist.objects.filter(qs_include).count()
-    paginator = Paginator(EDAYChecklist.objects.filter(qs_include).order_by('date', 'location_id', 'checklist_index'), items_per_page)
+    paginator = Paginator(EDAYChecklist.objects.filter(qs_include).select_related().order_by('date', 'location_id', 'checklist_index'), items_per_page)
     try:
         page = int(request.GET.get('page', '1'))
     except ValueError:
@@ -553,7 +553,12 @@ def eday_checklist_list(request, action=None):
     page_details = {}
     page_details['first'] = paginator.page_range[0]
     page_details['last'] = paginator.page_range[len(paginator.page_range) - 1]
-    msg_recipients = list(set(EDAYChecklist.objects.filter(qs_include).values_list('observer__phone', flat=True)))
+
+    # only users with the can_analyse permission should make this query execute
+    if request.user.has_perms('psc.can_analyse'):
+        msg_recipients = list(set(EDAYChecklist.objects.filter(qs_include).values_list('observer__phone', flat=True)))
+    else:
+        msg_recipients = []
     messenger = NodSMS()
     credits = messenger.credit_balance()
     
