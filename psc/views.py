@@ -57,121 +57,124 @@ def home(request):
     context['filter_form'] = filter_form
 
 
-    #vr first missing sms
-    context['missing_first_sms'] = stats.model_sieve(VRChecklist, ['submitted'], exclude=True).filter(qs).count()
-    context['received_first_sms'] = stats.model_sieve(VRChecklist, ['submitted']).filter(qs).count()
+    if request.user.has_perm('psc.view_vrchecklist'):
+        #vr first missing sms
+        context['missing_first_sms'] = stats.model_sieve(VRChecklist, ['submitted'], exclude=True).filter(qs).count()
+        context['received_first_sms'] = stats.model_sieve(VRChecklist, ['submitted']).filter(qs).count()
 
 
 
 
-    # second missing sms
-    context['complete_second_sms'] = stats.model_sieve(VRChecklist, ['A', 'B', 'C', 'F', 'G', ['D1', 'D2', 'D3', 'D4'], ['E1', 'E2', 'E3', 'E4', 'E5']]).filter(A__in=[1,2,3]).filter(qs).count()
+        # second missing sms
+        context['complete_second_sms'] = stats.model_sieve(VRChecklist, ['A', 'B', 'C', 'F', 'G', ['D1', 'D2', 'D3', 'D4'], ['E1', 'E2', 'E3', 'E4', 'E5']]).filter(A__in=[1,2,3]).filter(qs).count()
+        
+        qs_partial_include = Q(A__lt=4) | Q(B__gt=0) | Q(C__isnull=False) | Q(F__isnull=False) | Q(G__gt=0) | \
+              Q(D1__isnull=False) | Q(D2__isnull=False) | Q(D3__isnull=False) | Q(D4__isnull=False) | \
+              Q(E1__isnull=False) | Q(E2__isnull=False) | Q(E3__isnull=False) | Q(E4__isnull=False) | \
+              Q(E5__isnull=False)
+        qs_partial_exclude = Q(A__in=[1,2,3,4]) & Q(B__gt=0) & Q(C__isnull=False) & Q(F__isnull=False) & Q(G__gt=0) & \
+              (Q(D1__isnull=False) | Q(D2__isnull=False) | Q(D3__isnull=False) | Q(D4__isnull=False)) & \
+              (Q(E1__isnull=False) | Q(E2__isnull=False) | Q(E3__isnull=False) | Q(E4__isnull=False) | \
+              Q(E5__isnull=False))
+        context['incomplete_second_sms'] = VRChecklist.objects.filter(qs_partial_include).exclude(qs_partial_exclude).filter(qs).count()
+
+        qs_unverified = (Q(B__gt=0) | Q(C__isnull=False) | Q(F__isnull=False) | Q(G__gt=0) | \
+              Q(D1__isnull=False) | Q(D2__isnull=False) | Q(D3__isnull=False) | Q(D4__isnull=False) | \
+              Q(E1__isnull=False) | Q(E2__isnull=False) | Q(E3__isnull=False) | Q(E4__isnull=False) | \
+              Q(E5__isnull=False)) & Q(A=4) & Q(verified_second=False)
+        context['unverified_second_sms'] = VRChecklist.objects.filter(qs_unverified).filter(qs).count()
+        
+        qs_not_open = (Q(A=4) & Q(verified_second=True)) | ((Q(B=0) & Q(C__isnull=True) & Q(F__isnull=True) & Q(G=0) & \
+              (Q(D1__isnull=True) | Q(D2__isnull=True) | Q(D3__isnull=True) | Q(D4__isnull=True)) & \
+              (Q(E1__isnull=True) | Q(E2__isnull=True) | Q(E3__isnull=True) | Q(E4__isnull=True) | \
+              Q(E5__isnull=True))) & Q(A=4))
+        context['not_open_second_sms'] = VRChecklist.objects.filter(qs_not_open).filter(qs).count()
+
+        qs_missing = Q(A__isnull=True) & Q(B=0) & Q(C__isnull=True) & Q(F__isnull=True) & Q(G=0) & (Q(D1__isnull=True) | Q(D2__isnull=True) | \
+            Q(D3__isnull=True) | Q(D4__isnull=True)) & (Q(E1__isnull=True) | Q(E2__isnull=True) | Q(E3__isnull=True) | Q(E4__isnull=True) | Q(E5__isnull=True))
+        
+        context['missing_second_sms'] = VRChecklist.objects.filter(qs_missing).filter(qs).count()
+
+
+
+
+
+        qs_complete = Q(H__isnull=False) & Q(J__isnull=False) & Q(K__isnull=False) & Q(M__isnull=False) & \
+                  Q(N__isnull=False) & Q(P__isnull=False) & Q(Q__isnull=False) & Q(R__isnull=False) & \
+                  Q(S__isnull=False) & Q(T__gt=0) & Q(U__gt=0) & Q(V__gt=0) & Q(W__gt=0) & Q(X__gt=0) & Q(Y__isnull=False) & \
+                  Q(Z__isnull=False) & Q(AA__isnull=False)
+        qs_missing = Q(H__isnull=True) & Q(J__isnull=True) & Q(K__isnull=True) & Q(M__isnull=True) & \
+                  Q(N__isnull=True) & Q(P__isnull=True) & Q(Q__isnull=True) & Q(R__isnull=True) & \
+                  Q(S__isnull=True) & Q(T=0) & Q(U=0) & Q(V=0) & Q(W=0) & Q(X=0) & Q(Y__isnull=True) & \
+                  Q(Z__isnull=True) & Q(AA__isnull=True)
+        qs_partial = (Q(H__isnull=False) | Q(J__isnull=False) | Q(K__isnull=False) | Q(M__isnull=False) | \
+                  Q(N__isnull=False) | Q(P__isnull=False) | Q(Q__isnull=False) | Q(R__isnull=False) | \
+                  Q(S__isnull=False) | Q(T__gt=0) | Q(U__gt=0) | Q(V__gt=0) | Q(W__gt=0) | Q(X__gt=0) | Q(Y__isnull=False) | \
+                  Q(Z__isnull=False) | Q(AA__isnull=False)) & ~(qs_complete)
+        qs_third_complete = ~Q(A=4) & qs_complete
+        qs_third_missing = ~Q(A=4) & qs_missing
+        qs_third_partial = ~Q(A=4) & qs_partial
+        qs_third_problem = ((Q(A=4) & qs_partial) | (Q(A=4) & qs_complete & Q(verified_third=False)))
+        qs_third_verified = ((Q(A=4) & Q(verified_third=True) & qs_partial))
+        qs_third_blank = Q(A=4) & qs_missing
+        # third missing sms
+        context['complete_third_sms'] = VRChecklist.objects.filter(qs_third_complete).filter(qs).count()
+        context['blank_third_sms'] = VRChecklist.objects.filter(qs_third_blank).filter(qs).count()
+        context['partial_third_sms'] = VRChecklist.objects.filter(qs).filter(qs_third_partial).count()
+        context['unverified_third_sms'] = VRChecklist.objects.filter(qs).filter(qs_third_problem).count()
+        context['not_open_third_sms'] = VRChecklist.objects.filter(qs_third_verified).filter(qs).count()
+        context['missing_third_sms'] = VRChecklist.objects.filter(qs_third_missing).filter(qs).count()
+
+        context['vr_incidents_count'] = VRIncident.objects.all().count()
+        context['vr_incidents_today'] = VRIncident.objects.filter(qs).count()
+
+    if request.user.has_perm('psc.view_dcochecklist'):
+        #dco checklist sent today
+        qs_dco_arrived = Q(submitted=True)
+        qs_dco_not_arrived = Q(submitted=False) 
+        context['dco_arrived'] = DCOChecklist.objects.filter(qs).filter(qs_dco_arrived).count()
+        context['dco_not_arrived'] = DCOChecklist.objects.filter(qs).filter(qs_dco_not_arrived).count()
+
+        context['dco_missing'] = DCOChecklist.objects.filter(qs).filter(queries['dco']['status']['missing']).count()
+        context['dco_not_open_problem'] = DCOChecklist.objects.filter(qs).filter(queries['dco']['status']['problem']).count()
+        context['dco_partial'] = DCOChecklist.objects.filter(qs).filter(queries['dco']['status']['partial']).count()
+        context['dco_not_open'] = DCOChecklist.objects.filter(qs).filter(queries['dco']['status']['not_open']).count()
+        context['dco_complete'] = DCOChecklist.objects.filter(qs).filter(queries['dco']['status']['complete']).count()
+
+        context['dco_incidents_count'] = DCOIncident.objects.all().count()
+        context['dco_incidents_today'] = DCOIncident.objects.filter(qs).count()
+
+        context['dco_checklists_today'] = DCOChecklist.objects.filter(qs).count()
     
-    qs_partial_include = Q(A__lt=4) | Q(B__gt=0) | Q(C__isnull=False) | Q(F__isnull=False) | Q(G__gt=0) | \
-          Q(D1__isnull=False) | Q(D2__isnull=False) | Q(D3__isnull=False) | Q(D4__isnull=False) | \
-          Q(E1__isnull=False) | Q(E2__isnull=False) | Q(E3__isnull=False) | Q(E4__isnull=False) | \
-          Q(E5__isnull=False)
-    qs_partial_exclude = Q(A__in=[1,2,3,4]) & Q(B__gt=0) & Q(C__isnull=False) & Q(F__isnull=False) & Q(G__gt=0) & \
-          (Q(D1__isnull=False) | Q(D2__isnull=False) | Q(D3__isnull=False) | Q(D4__isnull=False)) & \
-          (Q(E1__isnull=False) | Q(E2__isnull=False) | Q(E3__isnull=False) | Q(E4__isnull=False) | \
-          Q(E5__isnull=False))
-    context['incomplete_second_sms'] = VRChecklist.objects.filter(qs_partial_include).exclude(qs_partial_exclude).filter(qs).count()
+    if request.user.has_perm('psc.view_edaychecklist'):
+        context['eday_arrived'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').exclude(observer__role='LGA', observer__observer_id__iregex=r'[^1-4]$').filter(queries['eday']['arrival']['yes']).count()
+        context['eday_not_arrived'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').exclude(observer__role='LGA', observer__observer_id__iregex=r'[^1-4]$').filter(queries['eday']['arrival']['no']).count()
+        context['eday_second_sms_missing'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').exclude(observer__role='LGA', observer__observer_id__iregex=r'[^1-4]$').filter(queries['eday']['accreditation']['missing']).count()
+        context['eday_second_sms_not_open_problem'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').exclude(observer__role='LGA', observer__observer_id__iregex=r'[^1-4]$').filter(queries['eday']['accreditation']['problem']).count()
+        context['eday_second_sms_partial'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').exclude(observer__role='LGA', observer__observer_id__iregex=r'[^1-4]$').filter(queries['eday']['accreditation']['partial']).count()
+        context['eday_second_sms_not_open'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').exclude(observer__role='LGA', observer__observer_id__iregex=r'[^1-4]$').filter(queries['eday']['accreditation']['not_open']).count()
+        context['eday_second_sms_complete'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').exclude(observer__role='LGA', observer__observer_id__iregex=r'[^1-4]$').filter(queries['eday']['accreditation']['complete']).count()
 
-    qs_unverified = (Q(B__gt=0) | Q(C__isnull=False) | Q(F__isnull=False) | Q(G__gt=0) | \
-          Q(D1__isnull=False) | Q(D2__isnull=False) | Q(D3__isnull=False) | Q(D4__isnull=False) | \
-          Q(E1__isnull=False) | Q(E2__isnull=False) | Q(E3__isnull=False) | Q(E4__isnull=False) | \
-          Q(E5__isnull=False)) & Q(A=4) & Q(verified_second=False)
-    context['unverified_second_sms'] = VRChecklist.objects.filter(qs_unverified).filter(qs).count()
-    
-    qs_not_open = (Q(A=4) & Q(verified_second=True)) | ((Q(B=0) & Q(C__isnull=True) & Q(F__isnull=True) & Q(G=0) & \
-          (Q(D1__isnull=True) | Q(D2__isnull=True) | Q(D3__isnull=True) | Q(D4__isnull=True)) & \
-          (Q(E1__isnull=True) | Q(E2__isnull=True) | Q(E3__isnull=True) | Q(E4__isnull=True) | \
-          Q(E5__isnull=True))) & Q(A=4))
-    context['not_open_second_sms'] = VRChecklist.objects.filter(qs_not_open).filter(qs).count()
-
-    qs_missing = Q(A__isnull=True) & Q(B=0) & Q(C__isnull=True) & Q(F__isnull=True) & Q(G=0) & (Q(D1__isnull=True) | Q(D2__isnull=True) | \
-        Q(D3__isnull=True) | Q(D4__isnull=True)) & (Q(E1__isnull=True) | Q(E2__isnull=True) | Q(E3__isnull=True) | Q(E4__isnull=True) | Q(E5__isnull=True))
-    
-    context['missing_second_sms'] = VRChecklist.objects.filter(qs_missing).filter(qs).count()
-
-
-
-
-
-    qs_complete = Q(H__isnull=False) & Q(J__isnull=False) & Q(K__isnull=False) & Q(M__isnull=False) & \
-              Q(N__isnull=False) & Q(P__isnull=False) & Q(Q__isnull=False) & Q(R__isnull=False) & \
-              Q(S__isnull=False) & Q(T__gt=0) & Q(U__gt=0) & Q(V__gt=0) & Q(W__gt=0) & Q(X__gt=0) & Q(Y__isnull=False) & \
-              Q(Z__isnull=False) & Q(AA__isnull=False)
-    qs_missing = Q(H__isnull=True) & Q(J__isnull=True) & Q(K__isnull=True) & Q(M__isnull=True) & \
-              Q(N__isnull=True) & Q(P__isnull=True) & Q(Q__isnull=True) & Q(R__isnull=True) & \
-              Q(S__isnull=True) & Q(T=0) & Q(U=0) & Q(V=0) & Q(W=0) & Q(X=0) & Q(Y__isnull=True) & \
-              Q(Z__isnull=True) & Q(AA__isnull=True)
-    qs_partial = (Q(H__isnull=False) | Q(J__isnull=False) | Q(K__isnull=False) | Q(M__isnull=False) | \
-              Q(N__isnull=False) | Q(P__isnull=False) | Q(Q__isnull=False) | Q(R__isnull=False) | \
-              Q(S__isnull=False) | Q(T__gt=0) | Q(U__gt=0) | Q(V__gt=0) | Q(W__gt=0) | Q(X__gt=0) | Q(Y__isnull=False) | \
-              Q(Z__isnull=False) | Q(AA__isnull=False)) & ~(qs_complete)
-    qs_third_complete = ~Q(A=4) & qs_complete
-    qs_third_missing = ~Q(A=4) & qs_missing
-    qs_third_partial = ~Q(A=4) & qs_partial
-    qs_third_problem = ((Q(A=4) & qs_partial) | (Q(A=4) & qs_complete & Q(verified_third=False)))
-    qs_third_verified = ((Q(A=4) & Q(verified_third=True) & qs_partial))
-    qs_third_blank = Q(A=4) & qs_missing
-    # third missing sms
-    context['complete_third_sms'] = VRChecklist.objects.filter(qs_third_complete).filter(qs).count()
-    context['blank_third_sms'] = VRChecklist.objects.filter(qs_third_blank).filter(qs).count()
-    context['partial_third_sms'] = VRChecklist.objects.filter(qs).filter(qs_third_partial).count()
-    context['unverified_third_sms'] = VRChecklist.objects.filter(qs).filter(qs_third_problem).count()
-    context['not_open_third_sms'] = VRChecklist.objects.filter(qs_third_verified).filter(qs).count()
-    context['missing_third_sms'] = VRChecklist.objects.filter(qs_third_missing).filter(qs).count()
-
-    context['vr_incidents_count'] = VRIncident.objects.all().count()
-    context['vr_incidents_today'] = VRIncident.objects.filter(qs).count()
-
-    #dco checklist sent today
-    qs_dco_arrived = Q(submitted=True)
-    qs_dco_not_arrived = Q(submitted=False) 
-    context['dco_arrived'] = DCOChecklist.objects.filter(qs).filter(qs_dco_arrived).count()
-    context['dco_not_arrived'] = DCOChecklist.objects.filter(qs).filter(qs_dco_not_arrived).count()
-
-    context['dco_missing'] = DCOChecklist.objects.filter(qs).filter(queries['dco']['status']['missing']).count()
-    context['dco_not_open_problem'] = DCOChecklist.objects.filter(qs).filter(queries['dco']['status']['problem']).count()
-    context['dco_partial'] = DCOChecklist.objects.filter(qs).filter(queries['dco']['status']['partial']).count()
-    context['dco_not_open'] = DCOChecklist.objects.filter(qs).filter(queries['dco']['status']['not_open']).count()
-    context['dco_complete'] = DCOChecklist.objects.filter(qs).filter(queries['dco']['status']['complete']).count()
-
-    context['dco_incidents_count'] = DCOIncident.objects.all().count()
-    context['dco_incidents_today'] = DCOIncident.objects.filter(qs).count()
-
-    context['dco_checklists_today'] = DCOChecklist.objects.filter(qs).count()
-    
-    context['eday_arrived'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').exclude(observer__role='LGA', observer__observer_id__iregex=r'[^1-4]$').filter(queries['eday']['arrival']['yes']).count()
-    context['eday_not_arrived'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').exclude(observer__role='LGA', observer__observer_id__iregex=r'[^1-4]$').filter(queries['eday']['arrival']['no']).count()
-    context['eday_second_sms_missing'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').exclude(observer__role='LGA', observer__observer_id__iregex=r'[^1-4]$').filter(queries['eday']['accreditation']['missing']).count()
-    context['eday_second_sms_not_open_problem'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').exclude(observer__role='LGA', observer__observer_id__iregex=r'[^1-4]$').filter(queries['eday']['accreditation']['problem']).count()
-    context['eday_second_sms_partial'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').exclude(observer__role='LGA', observer__observer_id__iregex=r'[^1-4]$').filter(queries['eday']['accreditation']['partial']).count()
-    context['eday_second_sms_not_open'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').exclude(observer__role='LGA', observer__observer_id__iregex=r'[^1-4]$').filter(queries['eday']['accreditation']['not_open']).count()
-    context['eday_second_sms_complete'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').exclude(observer__role='LGA', observer__observer_id__iregex=r'[^1-4]$').filter(queries['eday']['accreditation']['complete']).count()
-
-    context['eday_third_sms_missing'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').exclude(observer__role='LGA', observer__observer_id__iregex=r'[^1-4]$').filter(queries['eday']['voting_and_counting']['missing']).count()
-    context['eday_third_sms_not_open_problem'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').exclude(observer__role='LGA', observer__observer_id__iregex=r'[^1-4]$').filter(queries['eday']['voting_and_counting']['problem']).count()
-    context['eday_third_sms_partial'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').exclude(observer__role='LGA', observer__observer_id__iregex=r'[^1-4]$').filter(queries['eday']['voting_and_counting']['partial']).count()
-    context['eday_third_sms_not_open'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').exclude(observer__role='LGA', observer__observer_id__iregex=r'[^1-4]$').filter(queries['eday']['voting_and_counting']['not_open']).count()
-    context['eday_third_sms_complete'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').exclude(observer__role='LGA', observer__observer_id__iregex=r'[^1-4]$').filter(queries['eday']['voting_and_counting']['complete']).count()
-    
-    context['eday_fourth_sms_missing'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').exclude(observer__role='LGA', observer__observer_id__iregex=r'[^1-4]$').filter(queries['eday']['official_summary']['missing']).count()
-    context['eday_fourth_sms_not_open_problem'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').exclude(observer__role='LGA', observer__observer_id__iregex=r'[^1-4]$').filter(queries['eday']['official_summary']['problem']).count()
-    context['eday_fourth_sms_partial'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').exclude(observer__role='LGA', observer__observer_id__iregex=r'[^1-4]$').filter(queries['eday']['official_summary']['partial']).count()
-    context['eday_fourth_sms_not_open'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').exclude(observer__role='LGA', observer__observer_id__iregex=r'[^1-4]$').filter(queries['eday']['official_summary']['not_open']).count()
-    context['eday_fourth_sms_complete'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').exclude(observer__role='LGA', observer__observer_id__iregex=r'[^1-4]$').filter(queries['eday']['official_summary']['complete']).count()
-    
-    context['eday_fifth_sms_missing'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').exclude(observer__role='LGA', observer__observer_id__iregex=r'[^1-4]$').filter(queries['eday']['official_results']['missing']).count()
-    context['eday_fifth_sms_not_open_problem'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').exclude(observer__role='LGA', observer__observer_id__iregex=r'[^1-4]$').filter(queries['eday']['official_results']['problem']).count()
-    context['eday_fifth_sms_partial'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').exclude(observer__role='LGA', observer__observer_id__iregex=r'[^1-4]$').filter(queries['eday']['official_results']['partial']).count()
-    context['eday_fifth_sms_not_open'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').exclude(observer__role='LGA', observer__observer_id__iregex=r'[^1-4]$').filter(queries['eday']['official_results']['not_open']).count()
-    context['eday_fifth_sms_complete'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').exclude(observer__role='LGA', observer__observer_id__iregex=r'[^1-4]$').filter(queries['eday']['official_results']['complete']).count()
-    
-    context['eday_incidents_count'] = EDAYIncident.objects.all().count()
-    context['eday_incidents_today'] = EDAYIncident.objects.filter(qs).count()
+        context['eday_third_sms_missing'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').exclude(observer__role='LGA', observer__observer_id__iregex=r'[^1-4]$').filter(queries['eday']['voting_and_counting']['missing']).count()
+        context['eday_third_sms_not_open_problem'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').exclude(observer__role='LGA', observer__observer_id__iregex=r'[^1-4]$').filter(queries['eday']['voting_and_counting']['problem']).count()
+        context['eday_third_sms_partial'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').exclude(observer__role='LGA', observer__observer_id__iregex=r'[^1-4]$').filter(queries['eday']['voting_and_counting']['partial']).count()
+        context['eday_third_sms_not_open'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').exclude(observer__role='LGA', observer__observer_id__iregex=r'[^1-4]$').filter(queries['eday']['voting_and_counting']['not_open']).count()
+        context['eday_third_sms_complete'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').exclude(observer__role='LGA', observer__observer_id__iregex=r'[^1-4]$').filter(queries['eday']['voting_and_counting']['complete']).count()
+        
+        context['eday_fourth_sms_missing'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').exclude(observer__role='LGA', observer__observer_id__iregex=r'[^1-4]$').filter(queries['eday']['official_summary']['missing']).count()
+        context['eday_fourth_sms_not_open_problem'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').exclude(observer__role='LGA', observer__observer_id__iregex=r'[^1-4]$').filter(queries['eday']['official_summary']['problem']).count()
+        context['eday_fourth_sms_partial'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').exclude(observer__role='LGA', observer__observer_id__iregex=r'[^1-4]$').filter(queries['eday']['official_summary']['partial']).count()
+        context['eday_fourth_sms_not_open'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').exclude(observer__role='LGA', observer__observer_id__iregex=r'[^1-4]$').filter(queries['eday']['official_summary']['not_open']).count()
+        context['eday_fourth_sms_complete'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').exclude(observer__role='LGA', observer__observer_id__iregex=r'[^1-4]$').filter(queries['eday']['official_summary']['complete']).count()
+        
+        context['eday_fifth_sms_missing'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').exclude(observer__role='LGA', observer__observer_id__iregex=r'[^1-4]$').filter(queries['eday']['official_results']['missing']).count()
+        context['eday_fifth_sms_not_open_problem'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').exclude(observer__role='LGA', observer__observer_id__iregex=r'[^1-4]$').filter(queries['eday']['official_results']['problem']).count()
+        context['eday_fifth_sms_partial'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').exclude(observer__role='LGA', observer__observer_id__iregex=r'[^1-4]$').filter(queries['eday']['official_results']['partial']).count()
+        context['eday_fifth_sms_not_open'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').exclude(observer__role='LGA', observer__observer_id__iregex=r'[^1-4]$').filter(queries['eday']['official_results']['not_open']).count()
+        context['eday_fifth_sms_complete'] = EDAYChecklist.objects.filter(qs).exclude(checklist_index='3').exclude(observer__role='LGA', observer__observer_id__iregex=r'[^1-4]$').filter(queries['eday']['official_results']['complete']).count()
+        
+        context['eday_incidents_count'] = EDAYIncident.objects.all().count()
+        context['eday_incidents_today'] = EDAYIncident.objects.filter(qs).count()
 
     #render
     return render_to_response('psc/home.html', context,  context_instance=RequestContext(request))
@@ -475,16 +478,17 @@ def eday_checklist_list(request, action=None):
         if filter_form.is_valid():
             data = filter_form.cleaned_data
 
-            if data['sample']:
-                qs_include &= Q(location_type=ContentType.objects.get_for_model(RegistrationCenter),location_id__in=Sample.objects.filter(sample=data['sample']).values_list('location', flat=True))
-            if data['zone']:
-                qs_include &= Q(observer__location_id__in=LGA.objects.filter(parent__parent__parent__code__iexact=data['zone']).values_list('id', flat=True))
-            if data['state']:
-                qs_include &= Q(observer__location_id__in=LGA.objects.filter(parent__parent__code__exact=data['state']).values_list('id', flat=True))
-            if data['day']:
-                qs_include &= Q(date=data['day'])
             if data['observer_id']:
-                qs_include = Q(observer__observer_id__exact=data['observer_id'])
+                qs_include &= Q(observer__observer_id__exact=data['observer_id'])
+            else:
+                if data['sample']:
+                    qs_include &= Q(location_type=ContentType.objects.get_for_model(RegistrationCenter),location_id__in=Sample.objects.filter(sample=data['sample']).values_list('location', flat=True))
+                if data['zone']:
+                    qs_include &= Q(observer__location_id__in=LGA.objects.filter(parent__parent__parent__code__iexact=data['zone']).values_list('id', flat=True))
+                if data['state']:
+                    qs_include &= Q(observer__location_id__in=LGA.objects.filter(parent__parent__code__exact=data['state']).values_list('id', flat=True))
+                if data['day']:
+                    qs_include &= Q(date=data['day'])
                 
             if data['first'] == u'1': # complete
                 qs_include &= queries['eday']['arrival']['yes']
@@ -538,7 +542,7 @@ def eday_checklist_list(request, action=None):
     global items_per_page
     if action == 'export':
         items_per_page = EDAYChecklist.objects.filter(qs_include).count()
-    paginator = Paginator(EDAYChecklist.objects.filter(qs_include).select_related().order_by('date', 'location_id', 'checklist_index'), items_per_page)
+    paginator = Paginator(EDAYChecklist.objects.select_related('other', 'control', 'observer', 'observer__contact').filter(qs_include).order_by('date', 'location_id', 'checklist_index'), items_per_page)
     try:
         page = int(request.GET.get('page', '1'))
     except ValueError:
@@ -555,7 +559,7 @@ def eday_checklist_list(request, action=None):
     page_details['last'] = paginator.page_range[len(paginator.page_range) - 1]
 
     # only users with the can_analyse permission should make this query execute
-    if request.user.has_perms('psc.can_analyse'):
+    if request.user.has_perm('psc.can_analyse'):
         msg_recipients = list(set(EDAYChecklist.objects.filter(qs_include).values_list('observer__phone', flat=True)))
     else:
         msg_recipients = []
