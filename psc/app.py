@@ -48,6 +48,9 @@ class App(AppBase):
             except Observer.DoesNotExist:
                 return message.respond('Observer ID not found. Please resend with valid PSC. You sent: %s' % message.message_only)
 
+            if message.observer.phone[-10:] != message.connection.identity[-10:]:
+                return message.respond('You are reporting from an unrecognised telephone number. Please call the NIC to update your phone number.')
+
             # This is likely a valid PSC message
             if self.vr_dc_pattern.match(message.text):
                 match = self.vr_incident.match(message.text)
