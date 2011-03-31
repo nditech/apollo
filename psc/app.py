@@ -280,20 +280,20 @@ class App(AppBase):
         if eday:
             for key in responses.keys():
                 # validation
-                if key == ['AA','BC','BF','BK','BN','CB','CF','CG','CH','CJ','CK','CM','CN','CP','CQ'] and int(responses[key]) in range(0, 4): #Yes/No questions
+                if key in ['AA','BC','BF','BK','BN','CB','CF','CG','CH','CJ','CK','CM','CN','CP','CQ'] and int(responses[key]) in range(0, 4): #Yes/No questions
                     setattr(eday, key, int(responses[key]))
                 elif key in ['BA','BG','BH','BJ','BM','CA','CC','CD','CE'] and int(responses[key]) in range(1, 6):
                     setattr(eday, key, int(responses[key]))
                 elif key in ['DA', 'DB', 'DC', 'DD', 'DE', 'DF', 'DG', 'DH', 'EA', 'EB', 'EC', 'ED', 'EE', 'EF', 'EG', 'EH', 'EJ', 'EK', 'EM', 'EN', 'EP', 'EQ', 'ER', 'ES', 'ET', 'EU', 'EV', 'EW', 'EX', 'EY', 'EZ', 'FA', 'FB', 'FC', 'FD', 'FE', 'FF', 'FG'] and int(responses[key]) <= 5000:
                     setattr(eday, key, int(responses[key]))
                 elif key in ['BD'] and int(responses[key]) <= 9:
-                    eday.BD == int(responses[key])
+                    eday.BD = int(responses[key])
                 elif key in ['BE'] and int(responses[key]) <= 99:
-                    eday.BE == int(responses[key])
+                    eday.BE = int(responses[key])
                 elif key in ['BB'] and int(responses[key]) <= 999:
-                    eday.BB == int(responses[key])
+                    eday.BB = int(responses[key])
                 elif key in ['BP'] and int(responses[key]) <= 3500:
-                    eday.BP == int(responses[key])
+                    eday.BP = int(responses[key])
                 
             if params['comment']:
                 eday.comment = params['comment']
