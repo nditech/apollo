@@ -42,9 +42,9 @@ def home(request):
             data = filter_form.cleaned_data
 
             if data['zone']:
-                qs &= (Q(observer__role='LGA', observer__location_id__in=LGA.objects.filter(parent__parent__parent__code__iexact=data['zone']).values_list('id', flat=True)) | Q(observer__role="OBS", observer__location_id__in=RegistrationCenter.objects.filter(parent__parent__parent__parent__code__iexact=data['zone']).values_list('id', flat=True)))
+                qs &= Q(observer__zone=Zone.objects.get(code__iexact=data['zone']))
             if data['state']:
-                qs &= (Q(observer__role='LGA', observer__location_id__in=LGA.objects.filter(parent__parent__code__iexact=data['state']).values_list('id', flat=True)) | Q(observer__role="OBS", observer__location_id__in=RegistrationCenter.objects.filter(parent__parent__parent__code__iexact=data['state']).values_list('id', flat=True)))
+                qs &= Q(observer__state=State.objects.get(code__iexact=data['state']))
             if data['sample']:
                 qs &= Q(location_type=ContentType.objects.get_for_model(RegistrationCenter),location_id__in=Sample.objects.filter(sample=data['sample']).values_list('location', flat=True))
             if data['date']:
@@ -193,7 +193,7 @@ def ajax_home_stats(request):
             data = filter_form.cleaned_data
 
             if data['zone']:
-                qs &= Q(observer__location_id__in=LGA.objects.filter(parent__parent__parent__code__iexact=data['zone']).values_list('id', flat=True))
+                qs &= Q(observer__zone=Zone.objects.get(code__iexact=data['zone']))
             if data['date']:
                 filter_date = datetime.date(datetime.strptime(data['date'], '%Y-%m-%d'))
     else:
@@ -484,9 +484,9 @@ def eday_checklist_list(request, action=None):
                 if data['sample']:
                     qs_include &= Q(location_type=ContentType.objects.get_for_model(RegistrationCenter),location_id__in=Sample.objects.filter(sample=data['sample']).values_list('location', flat=True))
                 if data['zone']:
-                    qs_include &= (Q(observer__role='LGA',observer__zone=Zone.objects.get(code__iexact=data['zone'])) | Q(observer__role='OBS',observer__zone=Zone.objects.get(code__iexact=data['zone'])))
+                    qs_include &= Q(observer__zone=Zone.objects.get(code__iexact=data['zone']))
                 if data['state']:
-                    qs_include &= (Q(observer__role='LGA',observer__state=State.objects.get(code__exact=data['state'])) | Q(observer__role='OBS',observer__state=State.objects.get(code__exact=data['state'])))
+                    qs_include &= Q(observer__state=State.objects.get(code__exact=data['state']))
                 if data['day']:
                     qs_include &= Q(date=data['day'])
                 
