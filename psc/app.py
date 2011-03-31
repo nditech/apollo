@@ -269,40 +269,39 @@ class App(AppBase):
     def _eday_checklist(self, msg, params):
         # Create the checklist
         try:
-            eday = EDAYChecklist.objects.filter(date__range=(msg.date-timedelta(3), msg.date), observer=msg.observer, checklist_index=msg.observer.observer_id[-1]).order_by('-date')[0]
+            eday = EDAYChecklist.objects.filter(date__range=(msg.date-timedelta(3), msg.date), observer=msg.observer, checklist_index='1' if msg.observer.position == 1 else '2').order_by('-date')[0]
             eday.location = msg.observer.location
             eday.submitted = True
         except (EDAYChecklist.DoesNotExist, IndexError):
-            eday = EDAYChecklist()
-            eday.date = msg.date
-            eday.observer = msg.observer
-            eday.location = msg.observer.location
-            eday.submitted = True
-
-        if params['comment']:
-            eday.comment = params['comment']
+            eday = None
 
         responses = self._parse_checklist(params['responses'])
 
-        for key in responses.keys():
-            # validation
-            if key == ['AA','BC','BF','BK','BN','CB','CF','CG','CH','CJ','CK','CM','CN','CP','CQ'] and int(responses[key]) in range(0, 4): #Yes/No questions
-                setattr(eday, key, int(responses[key]))
-            elif key in ['BA','BG','BH','BJ','BM','CA','CC','CD','CE'] and int(responses[key]) in range(1, 6):
-                setattr(eday, key, int(responses[key]))
-            elif key in ['DA', 'DB', 'DC', 'DD', 'DE', 'DF', 'DG', 'DH', 'EA', 'EB', 'EC', 'ED', 'EE', 'EF', 'EG', 'EH', 'EJ', 'EK', 'EM', 'EN', 'EP', 'EQ', 'ER', 'ES', 'ET', 'EU', 'EV', 'EW', 'EX', 'EY', 'EZ', 'FA', 'FB', 'FC', 'FD', 'FE', 'FF', 'FG'] and int(responses[key]) <= 5000:
-                setattr(eday, key, int(responses[key]))
-            elif key in ['BD'] and int(responses[key]) <= 9:
-                eday.BD == int(responses[key])
-            elif key in ['BE'] and int(responses[key]) <= 99:
-                eday.BE == int(responses[key])
-            elif key in ['BB'] and int(responses[key]) <= 999:
-                eday.BB == int(responses[key])
-            elif key in ['BP'] and int(responses[key]) <= 3500:
-                eday.BP == int(responses[key])
-        eday.save()
+        if eday:
+            for key in responses.keys():
+                # validation
+                if key == ['AA','BC','BF','BK','BN','CB','CF','CG','CH','CJ','CK','CM','CN','CP','CQ'] and int(responses[key]) in range(0, 4): #Yes/No questions
+                    setattr(eday, key, int(responses[key]))
+                elif key in ['BA','BG','BH','BJ','BM','CA','CC','CD','CE'] and int(responses[key]) in range(1, 6):
+                    setattr(eday, key, int(responses[key]))
+                elif key in ['DA', 'DB', 'DC', 'DD', 'DE', 'DF', 'DG', 'DH', 'EA', 'EB', 'EC', 'ED', 'EE', 'EF', 'EG', 'EH', 'EJ', 'EK', 'EM', 'EN', 'EP', 'EQ', 'ER', 'ES', 'ET', 'EU', 'EV', 'EW', 'EX', 'EY', 'EZ', 'FA', 'FB', 'FC', 'FD', 'FE', 'FF', 'FG'] and int(responses[key]) <= 5000:
+                    setattr(eday, key, int(responses[key]))
+                elif key in ['BD'] and int(responses[key]) <= 9:
+                    eday.BD == int(responses[key])
+                elif key in ['BE'] and int(responses[key]) <= 99:
+                    eday.BE == int(responses[key])
+                elif key in ['BB'] and int(responses[key]) <= 999:
+                    eday.BB == int(responses[key])
+                elif key in ['BP'] and int(responses[key]) <= 3500:
+                    eday.BP == int(responses[key])
+                
+            if params['comment']:
+                eday.comment = params['comment']
+            
+            eday.save()
 
         check = self._edayc_validate(responses)
+        
         error_responses = []
         if check['attribute'] or check['range']:
             if check['attribute']:
