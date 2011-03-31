@@ -1154,7 +1154,7 @@ def export(request, model, query_set=None):
         
             AA = eday.AA if eday.AA else ""
             BA = eday.BA
-            BB = eday.BB
+            BB = "%.3d" % eday.BB if eday.BB else ""
             BC = eday.BC if eday.BC else ""
             BD = eday.BD
             BE = eday.BE
