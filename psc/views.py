@@ -484,9 +484,9 @@ def eday_checklist_list(request, action=None):
                 if data['sample']:
                     qs_include &= Q(location_type=ContentType.objects.get_for_model(RegistrationCenter),location_id__in=Sample.objects.filter(sample=data['sample']).values_list('location', flat=True))
                 if data['zone']:
-                    qs_include &= Q(observer__location_id__in=LGA.objects.filter(parent__parent__parent__code__iexact=data['zone']).values_list('id', flat=True))
+                    qs_include &= (Q(observer__role='LGA',observer__zone=Zone.objects.get(code__iexact=data['zone'])) | Q(observer__role='OBS',observer__zone=Zone.objects.get(code__iexact=data['zone'])))
                 if data['state']:
-                    qs_include &= Q(observer__location_id__in=LGA.objects.filter(parent__parent__code__exact=data['state']).values_list('id', flat=True))
+                    qs_include &= (Q(observer__role='LGA',observer__state=State.objects.get(code__exact=data['state'])) | Q(observer__role='OBS',observer__state=State.objects.get(code__exact=data['state'])))
                 if data['day']:
                     qs_include &= Q(date=data['day'])
                 
@@ -542,7 +542,7 @@ def eday_checklist_list(request, action=None):
     global items_per_page
     if action == 'export':
         items_per_page = EDAYChecklist.objects.filter(qs_include).count()
-    paginator = Paginator(EDAYChecklist.objects.select_related('other', 'control', 'observer', 'observer__contact').filter(qs_include).order_by('date', 'location_id', 'checklist_index'), items_per_page)
+    paginator = Paginator(EDAYChecklist.objects.select_related('other', 'control', 'observer', 'observer__contact', 'observer__lga', 'observer__district').filter(qs_include).order_by('date', 'location_id', 'checklist_index'), items_per_page)
     try:
         page = int(request.GET.get('page', '1'))
     except ValueError:
@@ -763,11 +763,11 @@ def dco_incident_list(request, action=None):
         if filter_form.is_valid():
             data = filter_form.cleaned_data
             if data['zone']:
-                qs &= Q(observer__location_id__in=LGA.objects.filter(parent__parent__parent__code__iexact=data['zone']).values_list('id', flat=True))
+                qs &= Q(observer__zone=Zone.objects.get(code__exact=data['zone']))
             if data['state']:
-                qs &= Q(observer__location_id__in=LGA.objects.filter(parent__parent__code__exact=data['state']).values_list('id', flat=True))
+                qs &= Q(observer__state=State.objects.get(code__exact=data['state']))
             if data['district']:
-                qs &= Q(observer__location_id__in=LGA.objects.filter(parent__code__exact=data['district']).values_list('id', flat=True))
+                qs &= Q(observer__district=District.objects.get(code__exact=data['district']))
             if data['day']:
                 qs &= Q(date=data['day'])
             if data['observer_id']:
