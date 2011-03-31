@@ -608,29 +608,37 @@ def eday_checklist(request, checklist_id=0):
     checklist1, checklist2 = (checklist1, checklist1.other) if checklist1.checklist_index == '1' else (checklist1.other, checklist1)
     control_checklist = checklist1.control
     
-    if (request.POST):        
+    if (request.POST):
         f1 = EDAYChecklistForm(request.POST, prefix="checklist1", instance=checklist1)
-        f2 = EDAYChecklistForm(request.POST, prefix="checklist2", instance=checklist2)
-        f3 = EDAYChecklistForm(request.POST, prefix="control", instance=control_checklist)
+        if checklist1.observer.role == 'OBS':
+            f2 = EDAYChecklistForm(request.POST, prefix="checklist2", instance=checklist2)
+            f3 = EDAYChecklistForm(request.POST, prefix="control", instance=control_checklist)
         
-        overrides = request.POST.getlist('override')
-        # create overrides for the control checklist to prevent further edits via SMS
-        for override in overrides:
-            obj, created = EDAYChecklistOverrides.objects.get_or_create(field=override, checklist=control_checklist)
+            overrides = request.POST.getlist('override')
+            # create overrides for the control checklist to prevent further edits via SMS
+            for override in overrides:
+                obj, created = EDAYChecklistOverrides.objects.get_or_create(field=override, checklist=control_checklist)
         
         # the control checklist should be saved first before the others
-        if f3.is_valid():
-            f3.save()
+        if checklist1.observer.role == 'OBS':
+            if f3.is_valid():
+                f3.save()
         if f1.is_valid():
             f1.save()
-        if f2.is_valid():
-            f2.save()
+        
+        if checklist1.observer.role == 'OBS':
+            if f2.is_valid():
+                f2.save()
         
         return HttpResponseRedirect(reverse('eday_checklist_view'))
     else:
         f1 = EDAYChecklistForm(instance=checklist1, prefix="checklist1")
-        f2 = EDAYChecklistForm(instance=checklist2, prefix="checklist2")
-        f3 = EDAYChecklistForm(instance=control_checklist, prefix="control")
+        if checklist1.observer.role == 'OBS':
+            f2 = EDAYChecklistForm(instance=checklist2, prefix="checklist2")
+            f3 = EDAYChecklistForm(instance=control_checklist, prefix="control")
+        else:
+            f2 = None
+            f3 = None
     return render_to_response('psc/eday_checklist_form.html', {'page_title': 'Election Day Checklist', 'checklist1': checklist1, 'checklist2': checklist2, 'control_checklist': control_checklist, 'form': f1, 'form2': f2, 'form3': f3}, context_instance=RequestContext(request))
 
 @permission_required('psc.change_vrincident', login_url='/')

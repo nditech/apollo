@@ -209,6 +209,22 @@ class Observer(models.Model):
             return self.location
         else:
             return None
+    
+    @property
+    @cache
+    def twin(self):
+        if self.role == 'OBS':
+            try:
+                return Observer.objects.get(location_id=self.location_id, location_type=self.location_type, position=1 if self.position==2 else 2, role=self.role)
+            except Observer.DoesNotExist:
+                pass
+            except Observer.MultipleObjectsReturned:
+                return Observer.objects.get(location_id=self.location_id, location_type=self.location_type, position=1 if self.position==2 else 2, observer_id=str(int(self.observer_id)+1) if self.position==1 else str(int(self.observer_id)-1),role=self.role)
+        elif self.role == 'LGA':
+            try:
+                return Observer.objects.get(location_id=self.location_id, location_type=self.location_type, position=1 if self.position==2 else 2, role=self.role, observer_id=str(int(self.observer_id)-5) if self.position==2 else str(int(self.observer_id)+5))
+            except Observer.DoesNotExist:
+                pass
 
 class VRChecklist(models.Model):
     OPENTIME = ((1, 'Open by 8AM (1)'),
@@ -481,7 +497,7 @@ class EDAYChecklist(models.Model):
         if self.checklist_index in [eday[0] for eday in EDAYChecklist.EDAY_CHECK[:2]]:
             other_index = EDAYChecklist.EDAY_CHECK[0][0] if self.checklist_index == EDAYChecklist.EDAY_CHECK[1][0] else EDAYChecklist.EDAY_CHECK[1][0]
             try:
-                return EDAYChecklist.objects.select_related().get(date=self.date, checklist_index=other_index, location_type=self.location_type, location_id=self.location_id)
+                return EDAYChecklist.objects.select_related().get(date=self.date, observer=self.observer.twin, checklist_index=other_index, location_type=self.location_type, location_id=self.location_id)
             except EDAYChecklist.DoesNotExist:
                 return None
         else:
@@ -494,7 +510,7 @@ class EDAYChecklist(models.Model):
             return None
         else:
             try:
-                return EDAYChecklist.objects.select_related().get(date=self.date, checklist_index=EDAYChecklist.EDAY_CHECK[2][0], location_type=self.location_type, location_id=self.location_id)
+                return EDAYChecklist.objects.select_related().get(date=self.date, observer=self.observer, checklist_index=EDAYChecklist.EDAY_CHECK[2][0], location_type=self.location_type, location_id=self.location_id)
             except EDAYChecklist.DoesNotExist:
                 return None
     
