@@ -1139,6 +1139,59 @@ def export(request, model, query_set=None):
             comment = dcoc.comment
             writer.writerow([pscid, zone, state, lga, dc, rc, A, B, C, D, E, F1, F2, F3, F4, F5, F6, F7, F8, F9, G, H, J, K, M, N, P, Q, R, S, T, U, V, W, X, comment.replace('"', "'")])
 
+    def export_edayc(writer):
+        header =  ["PSC ID","Zone","State","LGA","PS","AA","BA","BB","BC","BD","BE","BF","BG","BH","BJ","BK","BM","BN","BP","CA","CB","CC","CD","CE","CF","CG","CH","CJ","CK","CM","CN","CP","CQ","DA","DB","DC","DD","DE","DF","DG","DH","Comment"]
+        writer.writerow(header)
+
+        edays = query_set
+        for eday in edays:
+            pscid = eday.observer.observer_id
+        
+            zone = eday.observer.zone if eday.observer.zone else ""
+            state = eday.observer.state if eday.observer.state else ""
+            lga = eday.observer.lga if eday.observer.lga else ""
+            ps = str(eday.observer.ps).replace('"', "'") if eday.observer.ps else ""
+        
+            AA = eday.AA if eday.AA else ""
+            BA = eday.BA
+            BB = eday.BB
+            BC = eday.BC if eday.BC else ""
+            BD = eday.BD
+            BE = eday.BE
+            BF = eday.BF if eday.BF else ""
+            BG = eday.BG
+            BH = eday.BH
+            BJ = eday.BJ
+            BK = eday.BK if eday.BK else ""
+            BM = eday.BM
+            BN = eday.BN if eday.BN else ""
+            BP = eday.BP
+            CA = eday.CA
+            CB = eday.CB if eday.CB else ""
+            CC = eday.CC
+            CD = eday.CD
+            CE = eday.CE
+            CF = eday.CF if eday.CF else ""
+            CG = eday.CG if eday.CG else ""
+            CH = eday.CH if eday.CH else ""
+            CJ = eday.CJ if eday.CJ else ""
+            CK = eday.CK if eday.CK else ""
+            CM = eday.CM if eday.CM else ""
+            CN = eday.CN if eday.CN else ""
+            CP = eday.CP if eday.CP else ""
+            CQ = eday.CQ if eday.CQ else ""
+            DA = eday.DA
+            DB = eday.DB 
+            DC = eday.DC 
+            DD = eday.DD 
+            DE = eday.DE 
+            DF = eday.DF 
+            DG = eday.DG 
+            DH = eday.DH
+            
+            comment = eday.comment
+            writer.writerow([pscid, zone, state, lga, ps, AA, BA, BB, BC, BD, BE, BF, BG, BH, BJ, BK, BM, BN, BP, CA, CB, CC, CD, CE, CF, CG, CH, CJ, CK, CM, CN, CP, CQ, DA, DB, DC, DD, DE, DF, DG, DH, comment.replace('"', "'")])
+
     def export_contact(writer):
         header =  ["PSC ID", "Zone", "State", "SD", "LGA", "PU", "Name", "Gender", "Phone", "Email", "Role", "Organisation"]
         writer.writerow(header)
