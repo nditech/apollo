@@ -497,7 +497,7 @@ class EDAYChecklist(models.Model):
         if self.checklist_index in [eday[0] for eday in EDAYChecklist.EDAY_CHECK[:2]]:
             other_index = EDAYChecklist.EDAY_CHECK[0][0] if self.checklist_index == EDAYChecklist.EDAY_CHECK[1][0] else EDAYChecklist.EDAY_CHECK[1][0]
             try:
-                return EDAYChecklist.objects.select_related().get(date=self.date, checklist_index=other_index, location_type=self.location_type, location_id=self.location_id)
+                return EDAYChecklist.objects.select_related().get(date=self.date, observer=self.observer.twin, checklist_index=other_index, location_type=self.location_type, location_id=self.location_id)
             except EDAYChecklist.DoesNotExist:
                 return None
         else:
@@ -510,7 +510,7 @@ class EDAYChecklist(models.Model):
             return None
         else:
             try:
-                return EDAYChecklist.objects.select_related().get(date=self.date, checklist_index=EDAYChecklist.EDAY_CHECK[2][0], location_type=self.location_type, location_id=self.location_id)
+                return EDAYChecklist.objects.select_related().get(date=self.date, observer=self.observer, checklist_index=EDAYChecklist.EDAY_CHECK[2][0], location_type=self.location_type, location_id=self.location_id)
             except EDAYChecklist.DoesNotExist:
                 return None
     
