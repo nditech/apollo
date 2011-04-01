@@ -141,6 +141,12 @@ class Observer(models.Model):
     position = models.PositiveSmallIntegerField(default=1, help_text='This field identifies an observer per polling unit.')
     gender = models.CharField('Sex', max_length=1, choices=GENDER, blank=True, null=True)
     
+    zone = models.ForeignKey('Zone', blank=True, null=True)
+    state = models.ForeignKey('State', blank=True, null=True)
+    district = models.ForeignKey('District', blank=True, null=True)
+    lga = models.ForeignKey('LGA', blank=True, null=True)
+    ps = models.ForeignKey('RegistrationCenter', blank=True, null=True)
+    
     def __set_name(self, name):
         self.contact.name = name
 
@@ -156,60 +162,7 @@ class Observer(models.Model):
         permissions = (
             ('view_observer', 'Can view observer'),
         )
-    
-    @property
-    def zone(self):
-        if self.role == 'ZC':
-            return self.location
-        elif self.role in ['SC', 'NS', 'NSC']:
-            return self.location.parent
-        elif self.role == 'SDC':
-            return self.location.parent.parent
-        elif self.role == 'LGA':
-            return self.location.parent.parent.parent
-        elif self.role == 'OBS':
-            return self.location.parent.parent.parent.parent
-    
-    @property
-    def state(self):
-        if self.role in ['SC', 'NS', 'NSC']:
-            return self.location
-        elif self.role == 'SDC':
-            return self.location.parent
-        elif self.role == 'LGA':
-            return self.location.parent.parent
-        elif self.role == 'OBS':
-            return self.location.parent.parent.parent
-        else:
-            return None
-
-    @property
-    def district(self):
-        if self.role == 'SDC':
-            return self.location
-        if self.role == 'LGA':
-            return self.location.parent
-        elif self.role == 'OBS':
-            return self.location.parent.parent
-        else:
-            return None
-
-    @property
-    def lga(self):
-        if self.role == 'LGA':
-            return self.location
-        elif self.role == 'OBS':
-            return self.location.parent
-        else:
-            return None
         
-    @property
-    def ps(self):
-        if self.role == 'OBS':
-            return self.location
-        else:
-            return None
-    
     @property
     @cache
     def twin(self):
@@ -851,3 +804,56 @@ def edaychecklist_5th_sms_handler(sender, **kwargs):
             kwargs['instance'].sms_status_5th = 3
 
 pre_save.connect(edaychecklist_5th_sms_handler, sender=EDAYChecklist)
+
+def observer_location_handler(sender, **kwargs):
+    '''This method computes the various location parameters for observers:
+    Zone, State, District, LGA and Polling Station/Registration Center'''
+    # compute zone
+    if kwargs['instance'].role in ['ZC']:
+        kwargs['instance'].zone = kwargs['instance'].location
+    if kwargs['instance'].role in ['SC', 'NS', 'NSC']:
+        kwargs['instance'].zone = kwargs['instance'].location.parent
+    elif kwargs['instance'].role == 'SDC':
+        kwargs['instance'].zone = kwargs['instance'].location.parent.parent
+    elif kwargs['instance'].role == 'LGA':
+        kwargs['instance'].zone = kwargs['instance'].location.parent.parent.parent
+    elif kwargs['instance'].role == 'OBS':
+        kwargs['instance'].zone = kwargs['instance'].location.parent.parent.parent.parent
+    
+    # compute state
+    if kwargs['instance'].role in ['SC', 'NS', 'NSC']:
+        kwargs['instance'].state = kwargs['instance'].location
+    elif kwargs['instance'].role == 'SDC':
+        kwargs['instance'].state = kwargs['instance'].location.parent
+    elif kwargs['instance'].role == 'LGA':
+        kwargs['instance'].state = kwargs['instance'].location.parent.parent
+    elif kwargs['instance'].role == 'OBS':
+        kwargs['instance'].state = kwargs['instance'].location.parent.parent.parent
+    else:
+        kwargs['instance'].state = None
+
+    # compute district
+    if kwargs['instance'].role == 'SDC':
+        kwargs['instance'].district = kwargs['instance'].location
+    if kwargs['instance'].role == 'LGA':
+        kwargs['instance'].district = kwargs['instance'].location.parent
+    elif kwargs['instance'].role == 'OBS':
+        kwargs['instance'].district = kwargs['instance'].location.parent.parent
+    else:
+        kwargs['instance'].district = None
+
+    # compute lga
+    if kwargs['instance'].role == 'LGA':
+        kwargs['instance'].lga = kwargs['instance'].location
+    elif kwargs['instance'].role == 'OBS':
+        kwargs['instance'].lga = kwargs['instance'].location.parent
+    else:
+        kwargs['instance'].lga = None
+        
+    # compute ps
+    if kwargs['instance'].role == 'OBS':
+        kwargs['instance'].ps = kwargs['instance'].location
+    else:
+        kwargs['instance'].ps = None
+
+pre_save.connect(observer_location_handler, sender=Observer)
