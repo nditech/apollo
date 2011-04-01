@@ -1713,7 +1713,7 @@ def get_rcs_by_lga(request, lga_id=0):
 def get_states_by_zone(request, zone):
     if zone:
         states = serializers.serialize('json', State.objects.filter(parent__code=zone))
-        return HttpResponse(mimetype='application/jsoin', content=states)
+        return HttpResponse(mimetype='application/json', content=states)
 
 @permission_required('psc.delete_vrincident', login_url='/')
 @login_required()

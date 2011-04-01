@@ -731,12 +731,16 @@ class NodSMS():
     pwd  = settings.SMS_PASS
 
     def sendsms(self, to, msg, sender="SwiftCount"):
-        result = urllib2.urlopen(self.endpoint_sendsms, urlencode({
-            'user': self.user,
-            'pass': self.pwd,
-            'from': sender,
-            'to': to,
-            'msg': msg})).read()
+        to_list = to.split(",")
+        step = 5000
+        parts = [to_list[index:step+index] for index in range(0, len(to_list)+1 if len(to_list) % step else len(to_list), step)]
+        for part in parts:
+            result = urllib2.urlopen(self.endpoint_sendsms, urlencode({
+                'user': self.user,
+                'pass': self.pwd,
+                'from': sender,
+                'to': ",".join(part),
+                'msg': msg})).read()
         if result == 'sent':
             return True
         else:
