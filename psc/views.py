@@ -1539,7 +1539,7 @@ def eday_checklist_analysis(request):
     #
     ctx['question']['AA'] = stats.eday_QAA(qs)
     
-    qs &= ~(Q(BA=5)|Q(CA=5))
+    qs &= ~Q(BA=5) & ~Q(CA=5)
     ctx['question']['BF'] = stats.eday_QBF(qs)
     ctx['question']['BK'] = stats.eday_QBK(qs)
     ctx['question']['BN'] = stats.eday_QBN(qs)
@@ -1713,7 +1713,7 @@ def get_rcs_by_lga(request, lga_id=0):
 def get_states_by_zone(request, zone):
     if zone:
         states = serializers.serialize('json', State.objects.filter(parent__code=zone))
-        return HttpResponse(mimetype='application/jsoin', content=states)
+        return HttpResponse(mimetype='application/json', content=states)
 
 @permission_required('psc.delete_vrincident', login_url='/')
 @login_required()

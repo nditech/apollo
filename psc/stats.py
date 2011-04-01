@@ -255,7 +255,10 @@ def eday_QAA(q=Q()):
     n = len(edays)
     options = {1: 0, 2: 0}
     for eday in edays:
-        options[eday] += 1
+        try:
+            options[eday] += 1
+        except KeyError:
+            pass
     return {'n': n, 'options': options, 'label': EDAYChecklist._meta.get_field_by_name('AA')[0].help_text }
 
 def eday_QBF(q=Q()):   
@@ -263,7 +266,10 @@ def eday_QBF(q=Q()):
     n = len(edays)
     options = {1: 0, 2: 0}
     for eday in edays:
-        options[eday] += 1
+        try:
+            options[eday] += 1
+        except KeyError:
+            pass
     return {'n': n, 'options': options, 'label': EDAYChecklist._meta.get_field_by_name('BF')[0].help_text }
 
 def eday_QBK(q=Q()):   
@@ -271,7 +277,10 @@ def eday_QBK(q=Q()):
     n = len(edays)
     options = {1: 0, 2: 0}
     for eday in edays:
-        options[eday] += 1
+        try:
+            options[eday] += 1
+        except KeyError:
+            pass
     return {'n': n, 'options': options, 'label': EDAYChecklist._meta.get_field_by_name('BK')[0].help_text }
 
 def eday_QBN(q=Q()):   
@@ -279,7 +288,10 @@ def eday_QBN(q=Q()):
     n = len(edays)
     options = {1: 0, 2: 0}
     for eday in edays:
-        options[eday] += 1
+        try:
+            options[eday] += 1
+        except KeyError:
+            pass
     return {'n': n, 'options': options, 'label': EDAYChecklist._meta.get_field_by_name('BN')[0].help_text }
 
 def eday_QCB(q=Q()):   
@@ -287,7 +299,10 @@ def eday_QCB(q=Q()):
     n = len(edays)
     options = {1: 0, 2: 0}
     for eday in edays:
-        options[eday] += 1
+        try:
+            options[eday] += 1
+        except KeyError:
+            pass
     return {'n': n, 'options': options, 'label': EDAYChecklist._meta.get_field_by_name('CB')[0].help_text }
 
 def eday_QCF(q=Q()):   
@@ -295,7 +310,10 @@ def eday_QCF(q=Q()):
     n = len(edays)
     options = {1: 0, 2: 0}
     for eday in edays:
-        options[eday] += 1
+        try:
+            options[eday] += 1
+        except KeyError:
+            pass
     return {'n': n, 'options': options, 'label': EDAYChecklist._meta.get_field_by_name('CF')[0].help_text }
 
 def eday_QCG(q=Q()):   
@@ -303,7 +321,10 @@ def eday_QCG(q=Q()):
     n = len(edays)
     options = {1: 0, 2: 0}
     for eday in edays:
-        options[eday] += 1
+        try:
+            options[eday] += 1
+        except KeyError:
+            pass
     return {'n': n, 'options': options, 'label': EDAYChecklist._meta.get_field_by_name('CG')[0].help_text }
 
 def eday_QCH(q=Q()):   
@@ -311,7 +332,10 @@ def eday_QCH(q=Q()):
     n = len(edays)
     options = {1: 0, 2: 0}
     for eday in edays:
-        options[eday] += 1
+        try:
+            options[eday] += 1
+        except KeyError:
+            pass
     return {'n': n, 'options': options, 'label': EDAYChecklist._meta.get_field_by_name('CH')[0].help_text }
 
 def eday_QCJ(q=Q()):   
@@ -319,7 +343,10 @@ def eday_QCJ(q=Q()):
     n = len(edays)
     options = {1: 0, 2: 0}
     for eday in edays:
-        options[eday] += 1
+        try:
+            options[eday] += 1
+        except KeyError:
+            pass
     return {'n': n, 'options': options, 'label': EDAYChecklist._meta.get_field_by_name('CJ')[0].help_text }
 
 def eday_QCK(q=Q()):   
@@ -327,7 +354,10 @@ def eday_QCK(q=Q()):
     n = len(edays)
     options = {1: 0, 2: 0}
     for eday in edays:
-        options[eday] += 1
+        try:
+            options[eday] += 1
+        except KeyError:
+            pass
     return {'n': n, 'options': options, 'label': EDAYChecklist._meta.get_field_by_name('CK')[0].help_text }
 
 def eday_QCM(q=Q()):   
@@ -335,7 +365,10 @@ def eday_QCM(q=Q()):
     n = len(edays)
     options = {1: 0, 2: 0}
     for eday in edays:
-        options[eday] += 1
+        try:
+            options[eday] += 1
+        except KeyError:
+            pass
     return {'n': n, 'options': options, 'label': EDAYChecklist._meta.get_field_by_name('CM')[0].help_text }
 
 def eday_QCN(q=Q()):   
@@ -343,7 +376,10 @@ def eday_QCN(q=Q()):
     n = len(edays)
     options = {1: 0, 2: 0}
     for eday in edays:
-        options[eday] += 1
+        try:
+            options[eday] += 1
+        except KeyError:
+            pass
     return {'n': n, 'options': options, 'label': EDAYChecklist._meta.get_field_by_name('CN')[0].help_text }
 
 def eday_QCP(q=Q()):   
@@ -351,7 +387,10 @@ def eday_QCP(q=Q()):
     n = len(edays)
     options = {1: 0, 2: 0}
     for eday in edays:
-        options[eday] += 1
+        try:
+            options[eday] += 1
+        except KeyError:
+            pass
     return {'n': n, 'options': options, 'label': EDAYChecklist._meta.get_field_by_name('CP')[0].help_text }
 
 def eday_QCQ(q=Q()):   
@@ -359,7 +398,10 @@ def eday_QCQ(q=Q()):
     n = len(edays)
     options = {1: 0, 2: 0}
     for eday in edays:
-        options[eday] += 1
+        try:
+            options[eday] += 1
+        except KeyError:
+            pass
     return {'n': n, 'options': options, 'label': EDAYChecklist._meta.get_field_by_name('CQ')[0].help_text }
 
 def eday_QBC(q=Q()):   
@@ -367,7 +409,10 @@ def eday_QBC(q=Q()):
     n = len(edays)
     options = {1: 0, 2: 0, 3:0}
     for eday in edays:
-        options[eday] += 1
+        try:
+            options[eday] += 1
+        except KeyError:
+            pass
     return {'n': n, 'options': options, 'label': EDAYChecklist._meta.get_field_by_name('BC')[0].help_text }
 
 def eday_QBA(q=Q()):   
@@ -375,7 +420,10 @@ def eday_QBA(q=Q()):
     n = len(edays)
     options = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
     for eday in edays:
-        options[eday] += 1
+        try:
+            options[eday] += 1
+        except KeyError:
+            pass
     return {'n': n, 'options': options, 'label': EDAYChecklist._meta.get_field_by_name('BA')[0].help_text }
 
 def eday_QBG(q=Q()):   
@@ -383,7 +431,10 @@ def eday_QBG(q=Q()):
     n = len(edays)
     options = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
     for eday in edays:
-        options[eday] += 1
+        try:
+            options[eday] += 1
+        except KeyError:
+            pass
     return {'n': n, 'options': options, 'label': EDAYChecklist._meta.get_field_by_name('BG')[0].help_text }
 
 def eday_QBH(q=Q()):   
@@ -391,7 +442,10 @@ def eday_QBH(q=Q()):
     n = len(edays)
     options = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
     for eday in edays:
-        options[eday] += 1
+        try:
+            options[eday] += 1
+        except KeyError:
+            pass
     return {'n': n, 'options': options, 'label': EDAYChecklist._meta.get_field_by_name('BH')[0].help_text }
 
 def eday_QBJ(q=Q()):   
@@ -399,7 +453,10 @@ def eday_QBJ(q=Q()):
     n = len(edays)
     options = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
     for eday in edays:
-        options[eday] += 1
+        try:
+            options[eday] += 1
+        except KeyError:
+            pass
     return {'n': n, 'options': options, 'label': EDAYChecklist._meta.get_field_by_name('BJ')[0].help_text }
 
 def eday_QBM(q=Q()):   
@@ -407,7 +464,10 @@ def eday_QBM(q=Q()):
     n = len(edays)
     options = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
     for eday in edays:
-        options[eday] += 1
+        try:
+            options[eday] += 1
+        except KeyError:
+            pass
     return {'n': n, 'options': options, 'label': EDAYChecklist._meta.get_field_by_name('BM')[0].help_text }
 
 def eday_QCA(q=Q()):   
@@ -415,7 +475,10 @@ def eday_QCA(q=Q()):
     n = len(edays)
     options = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
     for eday in edays:
-        options[eday] += 1
+        try:
+            options[eday] += 1
+        except KeyError:
+            pass
     return {'n': n, 'options': options, 'label': EDAYChecklist._meta.get_field_by_name('CA')[0].help_text }
 
 def eday_QCC(q=Q()):   
@@ -423,7 +486,10 @@ def eday_QCC(q=Q()):
     n = len(edays)
     options = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
     for eday in edays:
-        options[eday] += 1
+        try:
+            options[eday] += 1
+        except KeyError:
+            pass
     return {'n': n, 'options': options, 'label': EDAYChecklist._meta.get_field_by_name('CC')[0].help_text }
 
 def eday_QCD(q=Q()):   
@@ -431,7 +497,10 @@ def eday_QCD(q=Q()):
     n = len(edays)
     options = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
     for eday in edays:
-        options[eday] += 1
+        try:
+            options[eday] += 1
+        except KeyError:
+            pass
     return {'n': n, 'options': options, 'label': EDAYChecklist._meta.get_field_by_name('CD')[0].help_text }
 
 def eday_QCE(q=Q()):   
@@ -439,7 +508,10 @@ def eday_QCE(q=Q()):
     n = len(edays)
     options = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0}
     for eday in edays:
-        options[eday] += 1
+        try:
+            options[eday] += 1
+        except KeyError:
+            pass
     return {'n': n, 'options': options, 'label': EDAYChecklist._meta.get_field_by_name('CE')[0].help_text }
 
 def eday_QBD(q=Q()):
