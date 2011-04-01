@@ -815,11 +815,11 @@ def eday_incident_list(request, action=None):
         if filter_form.is_valid():
             data = filter_form.cleaned_data
             if data['zone']:
-                qs &= Q(observer__location_id__in=LGA.objects.filter(parent__parent__parent__code__iexact=data['zone']).values_list('id', flat=True))
+                qs &= Q(observer__zone=Zone.objects.get(code__iexact=data['zone']))
             if data['state']:
-                qs &= Q(observer__location_id__in=LGA.objects.filter(parent__parent__code__exact=data['state']).values_list('id', flat=True))
+                qs &= Q(observer__state=State.objects.get(code__exact=data['state']))
             if data['district']:
-                qs &= Q(observer__location_id__in=LGA.objects.filter(parent__code__exact=data['district']).values_list('id', flat=True))
+                qs &= Q(observer__district=District.objects.filter(code__exact=data['district']))
             if data['day']:
                 qs &= Q(date=data['day'])
             if data['observer_id']:
