@@ -237,7 +237,7 @@ class DCOIncidentFilterForm(forms.Form):
 
 class EDAYIncidentFilterForm(forms.Form):
     observer_id = forms.CharField(required=False, label="PSC ID", max_length=6, widget=forms.TextInput(attrs={'autocomplete':'off','style':'width:7em'}))
-    day = forms.ChoiceField(choices=EDAY_INCIDENT_DAYS, required=False)
+    day = forms.ChoiceField(choices=EDAY_DAYS, required=False)
     zone = forms.ChoiceField(choices=ZONES, required=False)
     state = forms.ChoiceField(choices=STATES, required=False)
     district = forms.ChoiceField(choices=DISTRICTS, required=False)
