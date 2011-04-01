@@ -741,7 +741,7 @@ class NodSMS():
                 'from': sender,
                 'to': ",".join(part),
                 'msg': msg})).read()
-        if result == 'sent':
+        if result.strip() == 'sent':
             return True
         else:
             return False
