@@ -1512,8 +1512,8 @@ def vr_checklist_analysis(request):
 def eday_checklist_analysis(request):
     eday_days = [day[0] for day in EDAY_DAYS if day[0]]
 
-    # limit analysis to only the control checklists
-    qs = Q(checklist_index='3') & Q(date__in=eday_days)
+    # limit analysis to only the control checklists - VERY IMPORTANT
+    qs = (Q(checklist_index='1', observer__role='LGA')|Q(checklist_index='3', observer__role='OBS')) & Q(date__in=eday_days)
 
     if not request.session.has_key('eday_analysis_filter'):
         request.session['eday_analysis_filter'] = {}
