@@ -1535,6 +1535,7 @@ def eday_checklist_analysis(request):
     ctx = RequestContext(request)
     ctx['question'] = dict()
     ctx['question']['no_of_checklists'] = stats.eday_N(qs)
+    ctx['question']['no_of_lgas'] = stats.eday_L(qs)
 
     #
     ctx['question']['AA'] = stats.eday_QAA(qs)
