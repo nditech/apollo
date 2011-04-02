@@ -825,7 +825,8 @@ def eday_incident_list(request, action=None):
             if data['district']:
                 qs &= Q(observer__district=District.objects.filter(code__exact=data['district']))
             if data['day']:
-                qs &= Q(date=data['day'])
+                date = datetime.strptime(data['day'], '%Y-%m-%d')
+                qs &= Q(date__day=date.day, date__month=date.month, date__year=date.year)
             if data['observer_id']:
                 qs = Q(observer__observer_id__exact=data['observer_id'])
     else:
