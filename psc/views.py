@@ -51,7 +51,7 @@ def home(request):
                 filter_date = datetime.date(datetime.strptime(data['date'], '%Y-%m-%d'))
     else:
         filter_form = DashboardFilterForm()
-    qs = Q(date=filter_date) & qs
+    qs = Q(date__day=filter_date.day, date__month=filter_date.month, date__year=filter_date.year) & qs
 
     context = {'page_title': 'PSC 2011 SwiftCount Dashboard'}
     context['filter_form'] = filter_form
