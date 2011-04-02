@@ -33,23 +33,23 @@
       );
 	  
 	  first_values = [{{eday_not_arrived|default:"0" }}, {{ eday_arrived|default:"0" }}];
-	  first_labels = ['A', 'B'];
+	  first_labels = ['', ''];
 	  paper = Raphael("firstChart", 200, 200);
 	  first = paper.pieChart(100, 100, 60, first_values, first_labels, "#fff", ['red', 'green']);
 	  second_values = [{{ eday_second_sms_not_open|default:"0" }}, {{ eday_second_sms_missing|default:"0" }}, {{eday_second_sms_not_open_problem|default:"0" }},{{ eday_second_sms_partial|default:"0" }}, {{ eday_second_sms_complete|default:"0" }}];
-	  second_labels = ['A', 'B', 'C', 'D', 'E'];
+	  second_labels = ['', '', '', '', ''];
 	  paper2 = Raphael("secondChart", 200, 200);
 	  second = paper2.pieChart(100, 100, 60, second_values, second_labels, "#fff", ['white', 'red', 'orange', 'yellow', 'green']);
 	  third_values = [{{ eday_third_sms_not_open|default:"0" }}, {{ eday_third_sms_missing|default:"0" }}, {{eday_third_sms_not_open_problem|default:"0" }},{{ eday_third_sms_partial|default:"0" }}, {{ eday_third_sms_complete|default:"0" }}];
-	  third_labels = ['A', 'B', 'C', 'D', 'E'];
+	  third_labels = ['', '', '', '', ''];
 	  paper3 = Raphael("thirdChart", 200, 200);
 	  third = paper3.pieChart(100, 100, 60, third_values, third_labels, "#fff", ['white', 'red', 'orange', 'yellow', 'green']);
 	  fourth_values = [{{ eday_fourth_sms_not_open|default:"0" }}, {{ eday_fourth_sms_missing|default:"0" }}, {{eday_fourth_sms_not_open_problem|default:"0" }},{{ eday_fourth_sms_partial|default:"0" }}, {{ eday_fourth_sms_complete|default:"0" }}];
-	  fourth_labels = ['A', 'B', 'C', 'D', 'E'];
+	  fourth_labels = ['', '', '', '', ''];
 	  paper4 = Raphael("fourthChart", 200, 200);
 	  fourth = paper4.pieChart(100, 100, 60, fourth_values, fourth_labels, "#fff", ['white', 'red', 'orange', 'yellow', 'green']);
 	  fifth_values = [{{ eday_fifth_sms_not_open|default:"0" }}, {{ eday_fifth_sms_missing|default:"0" }}, {{eday_fifth_sms_not_open_problem|default:"0" }},{{ eday_fifth_sms_partial|default:"0" }}, {{ eday_fifth_sms_complete|default:"0" }}];
-	  fifth_labels = ['A', 'B', 'C', 'D', 'E'];
+	  fifth_labels = ['', '', '', '', ''];
 	  paper5 = Raphael("fifthChart", 200, 200);
 	  fifth = paper5.pieChart(100, 100, 60, fifth_values, fifth_labels, "#fff", ['white','red', 'orange', 'yellow', 'green']);
 	});
