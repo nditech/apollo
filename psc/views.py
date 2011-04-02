@@ -202,7 +202,7 @@ def ajax_home_stats(request):
                 qs &= Q(observer__state=State.objects.get(code__iexact=data['state']))
     else:
         filter_form = DashboardFilterForm()
-    qs = Q(date=filter_date) & qs
+    qs = Q(date__day=filter_date.day, date__month=filter_date.month, date__year=filter_date.year) & qs
 
     #vr first missing sms
     context = dict()
