@@ -148,11 +148,11 @@
                                 <h2 class="dashboard-header"><a href="#">EDAY Incidents</a></h2>
                                 <div class="dash-row">
                                      <div class="dash-column first">Incidents rec'd today</div>
-                                     <div class="dash-column second" id="eday_incidents_today"><span>{{ eday_incidents_today|default:"0" }}</span></div>
+                                     <div class="dash-column second"><span id="eday_incidents_today">{{ eday_incidents_today|default:"0" }}</span></div>
                                 </div>                                
                                  <div class="dash-row">
                                      <div class="dash-column first">Total incidents rec'd</div>
-                                     <div class="dash-column second" id="eday_incidents_count"><span>{{ eday_incidents_count|default:"0" }}</span></div>
+                                     <div class="dash-column second"><span id="eday_incidents_count">{{ eday_incidents_count|default:"0" }}</span></div>
                                 </div>
                                 <div class="dash-row last">
                                      {% if perms.psc.can_manage_data %}<div class="dash-text">{% if perms.psc.add_edayincident %}<a href="{% url psc.views.eday_incident_add %}">(Add Incident)</a> | {% endif %}{% if perms.psc.view_edayincident %}<a href="{% url psc.views.eday_incident_list %}">(View All)</a>{% endif %}</div>{% endif %}
