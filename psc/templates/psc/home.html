@@ -155,7 +155,7 @@
                                      <div class="dash-column second"><span id="eday_incidents_count">{{ eday_incidents_count|default:"0" }}</span></div>
                                 </div>
                                 <div class="dash-row last">
-                                     {% if perms.psc.can_manage_data %}<div class="dash-text">{% if perms.psc.add_edayincident %}<a href="{% url psc.views.eday_incident_add %}">(Add Incident)</a> | {% endif %}{% if perms.psc.view_edayincident %}<a href="{% url psc.views.eday_incident_list %}">(View All)</a>{% endif %}</div>{% endif %}
+                                     {% if perms.psc.can_manage_data %}<div class="dash-text">{% if perms.psc.add_edayincident %}<a href="{% url psc.views.eday_incident_add %}">(Add Incident)</a> | {% endif %}{% if perms.psc.view_edayincident %}<a href="{% url eday_incident_view %}">(View All)</a>{% endif %}</div>{% endif %}
                                 </div>
                                 <div class="clear"></div>
                             </div>
