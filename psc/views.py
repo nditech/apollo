@@ -196,6 +196,10 @@ def ajax_home_stats(request):
                 qs &= Q(observer__zone=Zone.objects.get(code__iexact=data['zone']))
             if data['date']:
                 filter_date = datetime.date(datetime.strptime(data['date'], '%Y-%m-%d'))
+            if data['sample']:
+                qs &= Q(location_type=ContentType.objects.get_for_model(RegistrationCenter),location_id__in=Sample.objects.filter(sample=data['sample']).values_list('location', flat=True))
+            if data['state']:
+                qs &= Q(observer__state=State.objects.get(code__iexact=data['state']))
     else:
         filter_form = DashboardFilterForm()
     qs = Q(date=filter_date) & qs
