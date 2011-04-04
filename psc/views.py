@@ -22,6 +22,7 @@ from queries import queries
 from django.contrib.contenttypes.models import ContentType
 from django.views.decorators.csrf import csrf_exempt
 import json
+from django.conf import settings
 
 # paginator settings
 items_per_page = 25
@@ -1681,7 +1682,8 @@ def contact_list(request, action=None):
     page_details = {}
     page_details['first'] = paginator.page_range[0]
     page_details['last'] = paginator.page_range[len(paginator.page_range) - 1]
-    msg_recipients = Observer.objects.filter(qs_include).exclude(role__in=['ZC']).values_list('phone', flat=True)
+    msg_recipients = list(Observer.objects.filter(qs_include).exclude(role__in=['ZC']).values_list('phone', flat=True))
+    msg_recipients += settings.PHONE_CC
     messenger = NodSMS()
     credits = messenger.credit_balance()
     if action == 'export':

@@ -168,6 +168,7 @@ ROOT_URLCONF = "urls"
 
 SMS_USER = ''
 SMS_PASS = ''
+PHONE_CC = []
 
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
