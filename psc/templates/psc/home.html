@@ -33,23 +33,23 @@
       );
 	  
 	  first_values = [{{eday_not_arrived|default:"0" }}, {{ eday_arrived|default:"0" }}];
-	  first_labels = ['A', 'B'];
+	  first_labels = ['', ''];
 	  paper = Raphael("firstChart", 200, 200);
 	  first = paper.pieChart(100, 100, 60, first_values, first_labels, "#fff", ['red', 'green']);
 	  second_values = [{{ eday_second_sms_not_open|default:"0" }}, {{ eday_second_sms_missing|default:"0" }}, {{eday_second_sms_not_open_problem|default:"0" }},{{ eday_second_sms_partial|default:"0" }}, {{ eday_second_sms_complete|default:"0" }}];
-	  second_labels = ['A', 'B', 'C', 'D', 'E'];
+	  second_labels = ['', '', '', '', ''];
 	  paper2 = Raphael("secondChart", 200, 200);
 	  second = paper2.pieChart(100, 100, 60, second_values, second_labels, "#fff", ['white', 'red', 'orange', 'yellow', 'green']);
 	  third_values = [{{ eday_third_sms_not_open|default:"0" }}, {{ eday_third_sms_missing|default:"0" }}, {{eday_third_sms_not_open_problem|default:"0" }},{{ eday_third_sms_partial|default:"0" }}, {{ eday_third_sms_complete|default:"0" }}];
-	  third_labels = ['A', 'B', 'C', 'D', 'E'];
+	  third_labels = ['', '', '', '', ''];
 	  paper3 = Raphael("thirdChart", 200, 200);
 	  third = paper3.pieChart(100, 100, 60, third_values, third_labels, "#fff", ['white', 'red', 'orange', 'yellow', 'green']);
 	  fourth_values = [{{ eday_fourth_sms_not_open|default:"0" }}, {{ eday_fourth_sms_missing|default:"0" }}, {{eday_fourth_sms_not_open_problem|default:"0" }},{{ eday_fourth_sms_partial|default:"0" }}, {{ eday_fourth_sms_complete|default:"0" }}];
-	  fourth_labels = ['A', 'B', 'C', 'D', 'E'];
+	  fourth_labels = ['', '', '', '', ''];
 	  paper4 = Raphael("fourthChart", 200, 200);
 	  fourth = paper4.pieChart(100, 100, 60, fourth_values, fourth_labels, "#fff", ['white', 'red', 'orange', 'yellow', 'green']);
 	  fifth_values = [{{ eday_fifth_sms_not_open|default:"0" }}, {{ eday_fifth_sms_missing|default:"0" }}, {{eday_fifth_sms_not_open_problem|default:"0" }},{{ eday_fifth_sms_partial|default:"0" }}, {{ eday_fifth_sms_complete|default:"0" }}];
-	  fifth_labels = ['A', 'B', 'C', 'D', 'E'];
+	  fifth_labels = ['', '', '', '', ''];
 	  paper5 = Raphael("fifthChart", 200, 200);
 	  fifth = paper5.pieChart(100, 100, 60, fifth_values, fifth_labels, "#fff", ['white','red', 'orange', 'yellow', 'green']);
 	});
@@ -148,14 +148,14 @@
                                 <h2 class="dashboard-header"><a href="#">EDAY Incidents</a></h2>
                                 <div class="dash-row">
                                      <div class="dash-column first">Incidents rec'd today</div>
-                                     <div class="dash-column second" id="eday_incidents_today"><span>{{ eday_incidents_today|default:"0" }}</span></div>
+                                     <div class="dash-column second"><span id="eday_incidents_today">{{ eday_incidents_today|default:"0" }}</span></div>
                                 </div>                                
                                  <div class="dash-row">
                                      <div class="dash-column first">Total incidents rec'd</div>
-                                     <div class="dash-column second" id="eday_incidents_count"><span>{{ eday_incidents_count|default:"0" }}</span></div>
+                                     <div class="dash-column second"><span id="eday_incidents_count">{{ eday_incidents_count|default:"0" }}</span></div>
                                 </div>
                                 <div class="dash-row last">
-                                     {% if perms.psc.can_manage_data %}<div class="dash-text">{% if perms.psc.add_edayincident %}<a href="{% url psc.views.eday_incident_add %}">(Add Incident)</a> | {% endif %}{% if perms.psc.view_edayincident %}<a href="{% url psc.views.eday_incident_list %}">(View All)</a>{% endif %}</div>{% endif %}
+                                     {% if perms.psc.can_manage_data %}<div class="dash-text">{% if perms.psc.add_edayincident %}<a href="{% url psc.views.eday_incident_add %}">(Add Incident)</a> | {% endif %}{% if perms.psc.view_edayincident %}<a href="{% url eday_incident_view %}">(View All)</a>{% endif %}</div>{% endif %}
                                 </div>
                                 <div class="clear"></div>
                             </div>

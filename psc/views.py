@@ -22,6 +22,7 @@ from queries import queries
 from django.contrib.contenttypes.models import ContentType
 from django.views.decorators.csrf import csrf_exempt
 import json
+from django.conf import settings
 
 # paginator settings
 items_per_page = 25
@@ -51,11 +52,13 @@ def home(request):
                 filter_date = datetime.date(datetime.strptime(data['date'], '%Y-%m-%d'))
     else:
         filter_form = DashboardFilterForm()
-    qs = Q(date=filter_date) & qs
+    qs = Q(date__day=filter_date.day, date__month=filter_date.month, date__year=filter_date.year) & qs
+    
+    if request.user.username in settings.RESTRICTED_USERS.keys():
+        qs &= Q(observer__state=State.objects.get(name__iexact=settings.RESTRICTED_USERS[request.user.username]))
 
     context = {'page_title': 'PSC 2011 SwiftCount Dashboard'}
     context['filter_form'] = filter_form
-
 
     if request.user.has_perm('psc.view_vrchecklist'):
         #vr first missing sms
@@ -196,9 +199,16 @@ def ajax_home_stats(request):
                 qs &= Q(observer__zone=Zone.objects.get(code__iexact=data['zone']))
             if data['date']:
                 filter_date = datetime.date(datetime.strptime(data['date'], '%Y-%m-%d'))
+            if data['sample']:
+                qs &= Q(location_type=ContentType.objects.get_for_model(RegistrationCenter),location_id__in=Sample.objects.filter(sample=data['sample']).values_list('location', flat=True))
+            if data['state']:
+                qs &= Q(observer__state=State.objects.get(code__iexact=data['state']))
     else:
         filter_form = DashboardFilterForm()
-    qs = Q(date=filter_date) & qs
+    qs = Q(date__day=filter_date.day, date__month=filter_date.month, date__year=filter_date.year) & qs
+
+    if request.user.username in settings.RESTRICTED_USERS.keys():
+        qs &= Q(observer__state=State.objects.get(name__iexact=settings.RESTRICTED_USERS[request.user.username]))
 
     #vr first missing sms
     context = dict()
@@ -538,6 +548,9 @@ def eday_checklist_list(request, action=None):
     else:
         filter_form = EDAYChecklistFilterForm()
 
+    if request.user.username in settings.RESTRICTED_USERS.keys():
+        qs_include &= Q(observer__state=State.objects.get(name__iexact=settings.RESTRICTED_USERS[request.user.username]))
+
     #get all objects
     global items_per_page
     if action == 'export':
@@ -815,13 +828,14 @@ def eday_incident_list(request, action=None):
         if filter_form.is_valid():
             data = filter_form.cleaned_data
             if data['zone']:
-                qs &= Q(observer__location_id__in=LGA.objects.filter(parent__parent__parent__code__iexact=data['zone']).values_list('id', flat=True))
+                qs &= Q(observer__zone=Zone.objects.get(code__iexact=data['zone']))
             if data['state']:
-                qs &= Q(observer__location_id__in=LGA.objects.filter(parent__parent__code__exact=data['state']).values_list('id', flat=True))
+                qs &= Q(observer__state=State.objects.get(code__exact=data['state']))
             if data['district']:
-                qs &= Q(observer__location_id__in=LGA.objects.filter(parent__code__exact=data['district']).values_list('id', flat=True))
+                qs &= Q(observer__district=District.objects.filter(code__exact=data['district']))
             if data['day']:
-                qs &= Q(date=data['day'])
+                date = datetime.strptime(data['day'], '%Y-%m-%d')
+                qs &= Q(date__day=date.day, date__month=date.month, date__year=date.year)
             if data['observer_id']:
                 qs = Q(observer__observer_id__exact=data['observer_id'])
     else:
@@ -1507,8 +1521,8 @@ def vr_checklist_analysis(request):
 def eday_checklist_analysis(request):
     eday_days = [day[0] for day in EDAY_DAYS if day[0]]
 
-    # limit analysis to only the control checklists
-    qs = Q(checklist_index='3') & Q(date__in=eday_days)
+    # limit analysis to only the control checklists - VERY IMPORTANT
+    qs = (Q(checklist_index='1', observer__role='LGA')|Q(checklist_index='3', observer__role='OBS')) & Q(date__in=eday_days)
 
     if not request.session.has_key('eday_analysis_filter'):
         request.session['eday_analysis_filter'] = {}
@@ -1522,9 +1536,9 @@ def eday_checklist_analysis(request):
             data = filter_form.cleaned_data
 
             if data['zone']:
-                qs &= Q(location_id__in=RegistrationCenter.objects.filter(parent__parent__parent__parent__code__iexact=data['zone']).values('id'))
+                qs &= Q(observer__zone=Zone.objects.filter(code__iexact=data['zone']))
             elif data['state']:
-                qs &= Q(location_id__in=RegistrationCenter.objects.filter(parent__parent__parent__code__iexact=data['state']).values_list('id', flat=True))
+                qs &= Q(observer__state=State.objects.filter(code__iexact=data['state']))
             if data['sample']:
                 qs &= Q(location_type=ContentType.objects.get_for_model(RegistrationCenter),location_id__in=Sample.objects.filter(sample=data['sample']).values_list('location', flat=True))
             if data['date']:
@@ -1535,6 +1549,7 @@ def eday_checklist_analysis(request):
     ctx = RequestContext(request)
     ctx['question'] = dict()
     ctx['question']['no_of_checklists'] = stats.eday_N(qs)
+    ctx['question']['no_of_lgas'] = stats.eday_L(qs)
 
     #
     ctx['question']['AA'] = stats.eday_QAA(qs)
@@ -1675,7 +1690,8 @@ def contact_list(request, action=None):
     page_details = {}
     page_details['first'] = paginator.page_range[0]
     page_details['last'] = paginator.page_range[len(paginator.page_range) - 1]
-    msg_recipients = Observer.objects.filter(qs_include).exclude(role__in=['ZC']).values_list('phone', flat=True)
+    msg_recipients = list(Observer.objects.filter(qs_include).exclude(role__in=['ZC']).values_list('phone', flat=True))
+    msg_recipients += settings.PHONE_CC
     messenger = NodSMS()
     credits = messenger.credit_balance()
     if action == 'export':

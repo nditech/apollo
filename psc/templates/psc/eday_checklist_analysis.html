@@ -59,6 +59,8 @@
                         <th>Question</th>
                         <th>N</th>
                         <th colspan="2">n</th>
+						<th>L</th>
+						<th colspan="2">l</th>
                         <th colspan="2">Yes</th>
                         <th colspan="2">No</th>
 						<th>&nbsp;</th>
@@ -70,6 +72,9 @@
                         <td>{{ question.no_of_checklists }}</td>
                         <td>{{ question.AA.n }}</td>
                         <td><strong>{{ question.AA.n|percentage:question.no_of_checklists }}</strong></td>
+						<td>{{ question.no_of_lgas }}</td>
+                        <td>{{ question.AA.l }}</td>
+                        <td><strong>{{ question.AA.l|percentage:question.no_of_lgas }}</strong></td>
                         <td>{{ question.AA.options.1 }}</td>
                         <td><strong>{{ question.AA.options.1|percentage:question.AA.n }}</strong></td>
                         <td>{{ question.AA.options.2 }}</td>
@@ -85,6 +90,9 @@
                         <td>{{ question.no_of_checklists }}</td>
                         <td>{{ question.BF.n }}</td>
                         <td><strong>{{ question.BF.n|percentage:question.no_of_checklists }}</strong></td>
+						<td>{{ question.no_of_lgas }}</td>
+                        <td>{{ question.BF.l }}</td>
+                        <td><strong>{{ question.BF.l|percentage:question.no_of_lgas }}</strong></td>
                         <td>{{ question.BF.options.1 }}</td>
                         <td><strong>{{ question.BF.options.1|percentage:question.BF.n }}</strong></td>
                         <td>{{ question.BF.options.2 }}</td>
@@ -100,6 +108,9 @@
                         <td>{{ question.no_of_checklists }}</td>
                         <td>{{ question.BK.n }}</td>
                         <td><strong>{{ question.BK.n|percentage:question.no_of_checklists }}</strong></td>
+						<td>{{ question.no_of_lgas }}</td>
+                        <td>{{ question.BK.l }}</td>
+                        <td><strong>{{ question.BK.l|percentage:question.no_of_lgas }}</strong></td>
                         <td>{{ question.BK.options.1 }}</td>
                         <td><strong>{{ question.BK.options.1|percentage:question.BK.n }}</strong></td>
                         <td>{{ question.BK.options.2 }}</td>
@@ -115,6 +126,9 @@
                         <td>{{ question.no_of_checklists }}</td>
                         <td>{{ question.BN.n }}</td>
                         <td><strong>{{ question.BN.n|percentage:question.no_of_checklists }}</strong></td>
+						<td>{{ question.no_of_lgas }}</td>
+                        <td>{{ question.BN.l }}</td>
+                        <td><strong>{{ question.BN.l|percentage:question.no_of_lgas }}</strong></td>
                         <td>{{ question.BN.options.1 }}</td>
                         <td><strong>{{ question.BN.options.1|percentage:question.BN.n }}</strong></td>
                         <td>{{ question.BN.options.2 }}</td>
@@ -130,6 +144,9 @@
                         <td>{{ question.no_of_checklists }}</td>
                         <td>{{ question.CB.n }}</td>
                         <td><strong>{{ question.CB.n|percentage:question.no_of_checklists }}</strong></td>
+						<td>{{ question.no_of_lgas }}</td>
+                        <td>{{ question.CB.l }}</td>
+                        <td><strong>{{ question.CB.l|percentage:question.no_of_lgas }}</strong></td>
                         <td>{{ question.CB.options.1 }}</td>
                         <td><strong>{{ question.CB.options.1|percentage:question.CB.n }}</strong></td>
                         <td>{{ question.CB.options.2 }}</td>
@@ -145,6 +162,9 @@
                         <td>{{ question.no_of_checklists }}</td>
                         <td>{{ question.CF.n }}</td>
                         <td><strong>{{ question.CF.n|percentage:question.no_of_checklists }}</strong></td>
+						<td>{{ question.no_of_lgas }}</td>
+                        <td>{{ question.CF.l }}</td>
+                        <td><strong>{{ question.CF.l|percentage:question.no_of_lgas }}</strong></td>
                         <td>{{ question.CF.options.1 }}</td>
                         <td><strong>{{ question.CF.options.1|percentage:question.CF.n }}</strong></td>
                         <td>{{ question.CF.options.2 }}</td>
@@ -160,6 +180,9 @@
                         <td>{{ question.no_of_checklists }}</td>
                         <td>{{ question.CG.n }}</td>
                         <td><strong>{{ question.CG.n|percentage:question.no_of_checklists }}</strong></td>
+						<td>{{ question.no_of_lgas }}</td>
+                        <td>{{ question.CG.l }}</td>
+                        <td><strong>{{ question.CG.l|percentage:question.no_of_lgas }}</strong></td>
                         <td>{{ question.CG.options.1 }}</td>
                         <td><strong>{{ question.CG.options.1|percentage:question.CG.n }}</strong></td>
                         <td>{{ question.CG.options.2 }}</td>
@@ -175,6 +198,9 @@
                         <td>{{ question.no_of_checklists }}</td>
                         <td>{{ question.CH.n }}</td>
                         <td><strong>{{ question.CH.n|percentage:question.no_of_checklists }}</strong></td>
+						<td>{{ question.no_of_lgas }}</td>
+                        <td>{{ question.CH.l }}</td>
+                        <td><strong>{{ question.CH.l|percentage:question.no_of_lgas }}</strong></td>
                         <td>{{ question.CH.options.1 }}</td>
                         <td><strong>{{ question.CH.options.1|percentage:question.CH.n }}</strong></td>
                         <td>{{ question.CH.options.2 }}</td>
@@ -190,6 +216,9 @@
                         <td>{{ question.no_of_checklists }}</td>
                         <td>{{ question.CJ.n }}</td>
                         <td><strong>{{ question.CJ.n|percentage:question.no_of_checklists }}</strong></td>
+						<td>{{ question.no_of_lgas }}</td>
+                        <td>{{ question.CJ.l }}</td>
+                        <td><strong>{{ question.CJ.l|percentage:question.no_of_lgas }}</strong></td>
                         <td>{{ question.CJ.options.1 }}</td>
                         <td><strong>{{ question.CJ.options.1|percentage:question.CJ.n }}</strong></td>
                         <td>{{ question.CJ.options.2 }}</td>
@@ -205,6 +234,9 @@
                         <td>{{ question.no_of_checklists }}</td>
                         <td>{{ question.CK.n }}</td>
                         <td><strong>{{ question.CK.n|percentage:question.no_of_checklists }}</strong></td>
+						<td>{{ question.no_of_lgas }}</td>
+                        <td>{{ question.CK.l }}</td>
+                        <td><strong>{{ question.CK.l|percentage:question.no_of_lgas }}</strong></td>
                         <td>{{ question.CK.options.1 }}</td>
                         <td><strong>{{ question.CK.options.1|percentage:question.CK.n }}</strong></td>
                         <td>{{ question.CK.options.2 }}</td>
@@ -220,6 +252,9 @@
                         <td>{{ question.no_of_checklists }}</td>
                         <td>{{ question.CM.n }}</td>
                         <td><strong>{{ question.CM.n|percentage:question.no_of_checklists }}</strong></td>
+						<td>{{ question.no_of_lgas }}</td>
+                        <td>{{ question.CM.l }}</td>
+                        <td><strong>{{ question.CM.l|percentage:question.no_of_lgas }}</strong></td>
                         <td>{{ question.CM.options.1 }}</td>
                         <td><strong>{{ question.CM.options.1|percentage:question.CM.n }}</strong></td>
                         <td>{{ question.CM.options.2 }}</td>
@@ -235,6 +270,9 @@
                         <td>{{ question.no_of_checklists }}</td>
                         <td>{{ question.CN.n }}</td>
                         <td><strong>{{ question.CN.n|percentage:question.no_of_checklists }}</strong></td>
+						<td>{{ question.no_of_lgas }}</td>
+                        <td>{{ question.CN.l }}</td>
+                        <td><strong>{{ question.CN.l|percentage:question.no_of_lgas }}</strong></td>
                         <td>{{ question.CN.options.1 }}</td>
                         <td><strong>{{ question.CN.options.1|percentage:question.CN.n }}</strong></td>
                         <td>{{ question.CN.options.2 }}</td>
@@ -250,6 +288,9 @@
                         <td>{{ question.no_of_checklists }}</td>
                         <td>{{ question.CP.n }}</td>
                         <td><strong>{{ question.CP.n|percentage:question.no_of_checklists }}</strong></td>
+						<td>{{ question.no_of_lgas }}</td>
+                        <td>{{ question.CP.l }}</td>
+                        <td><strong>{{ question.CP.l|percentage:question.no_of_lgas }}</strong></td>
                         <td>{{ question.CP.options.1 }}</td>
                         <td><strong>{{ question.CP.options.1|percentage:question.CP.n }}</strong></td>
                         <td>{{ question.CP.options.2 }}</td>
@@ -265,6 +306,9 @@
                         <td>{{ question.no_of_checklists }}</td>
                         <td>{{ question.CQ.n }}</td>
                         <td><strong>{{ question.CQ.n|percentage:question.no_of_checklists }}</strong></td>
+						<td>{{ question.no_of_lgas }}</td>
+                        <td>{{ question.CQ.l }}</td>
+                        <td><strong>{{ question.CQ.l|percentage:question.no_of_lgas }}</strong></td>
                         <td>{{ question.CQ.options.1 }}</td>
                         <td><strong>{{ question.CQ.options.1|percentage:question.CQ.n }}</strong></td>
                         <td>{{ question.CQ.options.2 }}</td>
@@ -287,6 +331,8 @@
                         <th>Question</th>
                         <th>N</th>
                         <th colspan="2">n</th>
+						<th>L</th>
+                        <th colspan="2">l</th>
                         <th colspan="2">Yes</th>
                         <th colspan="2">No</th>
                         <th colspan="2">Maybe</th>
@@ -299,6 +345,9 @@
                         <td>{{ question.no_of_checklists }}</td>
                         <td>{{ question.BC.n }}</td>
                         <td><strong>{{ question.BC.n|percentage:question.no_of_checklists }}</strong></td>
+						<td>{{ question.no_of_lgas }}</td>
+                        <td>{{ question.BC.l }}</td>
+                        <td><strong>{{ question.BC.l|percentage:question.no_of_lgas }}</strong></td>
                         <td>{{ question.BC.options.1 }}</td>
                         <td><strong>{{ question.BC.options.1|percentage:question.BC.n }}</strong></td>
                         <td>{{ question.BC.options.2 }}</td>
@@ -324,6 +373,8 @@
                         <th>Question</th>
                         <th>N</th>
                         <th colspan="2">n</th>
+						<th>L</th>
+                        <th colspan="2">l</th>
                         <th colspan="2">8am</th>
                         <th colspan="2">Btw 8am &amp; 9am</th>
                         <th colspan="2">Btw 9am &amp; 12pm</th>
@@ -338,6 +389,9 @@
                         <td>{{ question.no_of_checklists }}</td>
                         <td>{{ question.BA.n }}</td>
                         <td><strong>{{ question.BA.n|percentage:question.no_of_checklists }}</strong></td>
+						<td>{{ question.no_of_lgas }}</td>
+                        <td>{{ question.BA.l }}</td>
+                        <td><strong>{{ question.BA.l|percentage:question.no_of_lgas }}</strong></td>
                         <td>{{ question.BA.options.1 }}</td>
                         <td><strong>{{ question.BA.options.1|percentage:question.BA.n }}</strong></td>
                         <td>{{ question.BA.options.2 }}</td>
@@ -364,6 +418,8 @@
                         <th>Question</th>
                         <th>N</th>
                         <th colspan="2">n</th>
+						<th>L</th>
+                        <th colspan="2">l</th>
                         <th colspan="2">Before 1pm</th>
                         <th colspan="2">Btw 1pm &amp; 2pm</th>
                         <th colspan="2">Btw 2pm &amp; 3pm</th>
@@ -378,6 +434,9 @@
                         <td>{{ question.no_of_checklists }}</td>
                         <td>{{ question.CA.n }}</td>
                         <td><strong>{{ question.CA.n|percentage:question.no_of_checklists }}</strong></td>
+						<td>{{ question.no_of_lgas }}</td>
+                        <td>{{ question.CA.l }}</td>
+                        <td><strong>{{ question.CA.l|percentage:question.no_of_lgas }}</strong></td>
                         <td>{{ question.CA.options.1 }}</td>
                         <td><strong>{{ question.CA.options.1|percentage:question.CA.n }}</strong></td>
                         <td>{{ question.CA.options.2 }}</td>
@@ -409,6 +468,8 @@
                         <th>Question</th>
                         <th>N</th>
                         <th colspan="2">n</th>
+						<th>L</th>
+                        <th colspan="2">l</th>
                         <th colspan="2">None</th>
                         <th colspan="2">Few</th>
                         <th colspan="2">Half</th>
@@ -423,6 +484,9 @@
                         <td>{{ question.no_of_checklists }}</td>
                         <td>{{ question.BG.n }}</td>
                         <td><strong>{{ question.BG.n|percentage:question.no_of_checklists }}</strong></td>
+						<td>{{ question.no_of_lgas }}</td>
+                        <td>{{ question.BG.l }}</td>
+                        <td><strong>{{ question.BG.l|percentage:question.no_of_lgas }}</strong></td>
                         <td>{{ question.BG.options.1 }}</td>
                         <td><strong>{{ question.BG.options.1|percentage:question.BG.n }}</strong></td>
                         <td>{{ question.BG.options.2 }}</td>
@@ -447,6 +511,9 @@
                         <td>{{ question.no_of_checklists }}</td>
                         <td>{{ question.BH.n }}</td>
                         <td><strong>{{ question.BH.n|percentage:question.no_of_checklists }}</strong></td>
+						<td>{{ question.no_of_lgas }}</td>
+                        <td>{{ question.BH.l }}</td>
+                        <td><strong>{{ question.BH.l|percentage:question.no_of_lgas }}</strong></td>
                         <td>{{ question.BH.options.1 }}</td>
                         <td><strong>{{ question.BH.options.1|percentage:question.BH.n }}</strong></td>
                         <td>{{ question.BH.options.2 }}</td>
@@ -471,6 +538,9 @@
                         <td>{{ question.no_of_checklists }}</td>
                         <td>{{ question.BJ.n }}</td>
                         <td><strong>{{ question.BJ.n|percentage:question.no_of_checklists }}</strong></td>
+						<td>{{ question.no_of_lgas }}</td>
+                        <td>{{ question.BJ.l }}</td>
+                        <td><strong>{{ question.BJ.l|percentage:question.no_of_lgas }}</strong></td>
                         <td>{{ question.BJ.options.1 }}</td>
                         <td><strong>{{ question.BJ.options.1|percentage:question.BJ.n }}</strong></td>
                         <td>{{ question.BJ.options.2 }}</td>
@@ -495,6 +565,9 @@
                         <td>{{ question.no_of_checklists }}</td>
                         <td>{{ question.BM.n }}</td>
                         <td><strong>{{ question.BM.n|percentage:question.no_of_checklists }}</strong></td>
+						<td>{{ question.no_of_lgas }}</td>
+                        <td>{{ question.BM.l }}</td>
+                        <td><strong>{{ question.BM.l|percentage:question.no_of_lgas }}</strong></td>
                         <td>{{ question.BM.options.1 }}</td>
                         <td><strong>{{ question.BM.options.1|percentage:question.BM.n }}</strong></td>
                         <td>{{ question.BM.options.2 }}</td>
@@ -519,6 +592,9 @@
                         <td>{{ question.no_of_checklists }}</td>
                         <td>{{ question.CC.n }}</td>
                         <td><strong>{{ question.CC.n|percentage:question.no_of_checklists }}</strong></td>
+						<td>{{ question.no_of_lgas }}</td>
+                        <td>{{ question.CC.l }}</td>
+                        <td><strong>{{ question.CC.l|percentage:question.no_of_lgas }}</strong></td>
                         <td>{{ question.CC.options.1 }}</td>
                         <td><strong>{{ question.CC.options.1|percentage:question.CC.n }}</strong></td>
                         <td>{{ question.CC.options.2 }}</td>
@@ -543,6 +619,9 @@
                         <td>{{ question.no_of_checklists }}</td>
                         <td>{{ question.CD.n }}</td>
                         <td><strong>{{ question.CD.n|percentage:question.no_of_checklists }}</strong></td>
+						<td>{{ question.no_of_lgas }}</td>
+                        <td>{{ question.CD.l }}</td>
+                        <td><strong>{{ question.CD.l|percentage:question.no_of_lgas }}</strong></td>
                         <td>{{ question.CD.options.1 }}</td>
                         <td><strong>{{ question.CD.options.1|percentage:question.CD.n }}</strong></td>
                         <td>{{ question.CD.options.2 }}</td>
@@ -567,6 +646,9 @@
                         <td>{{ question.no_of_checklists }}</td>
                         <td>{{ question.CE.n }}</td>
                         <td><strong>{{ question.CE.n|percentage:question.no_of_checklists }}</strong></td>
+						<td>{{ question.no_of_lgas }}</td>
+                        <td>{{ question.CE.l }}</td>
+                        <td><strong>{{ question.CE.l|percentage:question.no_of_lgas }}</strong></td>
                         <td>{{ question.CE.options.1 }}</td>
                         <td><strong>{{ question.CE.options.1|percentage:question.CE.n }}</strong></td>
                         <td>{{ question.CE.options.2 }}</td>
@@ -596,8 +678,10 @@
                     <tr>
                         <th>&nbsp;</th>
                         <th>Question</th>
-                        <th colspan="2">N</th>
-                        <th>n</th>
+                        <th>N</th>
+                        <th colspan="2">n</th>
+						<th>L</th>
+                        <th colspan="2">l</th>
                         <th>Average</th>                       
                     </tr>
                 </thead>
@@ -607,6 +691,9 @@
                     <td>{{ question.no_of_checklists }}</td>
                     <td>{{ question.BD.n }}</td>
                     <td><strong>{{ question.BD.n|percentage:question.no_of_checklists }}</strong></td>
+					<td>{{ question.no_of_lgas }}</td>
+                    <td>{{ question.BD.l }}</td>
+                    <td><strong>{{ question.BD.l|percentage:question.no_of_lgas }}</strong></td>
                     <td>{{ question.BD.mean|floatformat:2 }}</td>
                 </tr>
 				<tr>
@@ -615,6 +702,9 @@
                     <td>{{ question.no_of_checklists }}</td>
                     <td>{{ question.BE.n }}</td>
                     <td><strong>{{ question.BE.n|percentage:question.no_of_checklists }}</strong></td>
+					<td>{{ question.no_of_lgas }}</td>
+                    <td>{{ question.BE.l }}</td>
+                    <td><strong>{{ question.BE.l|percentage:question.no_of_lgas }}</strong></td>
                     <td>{{ question.BE.mean|floatformat:2 }}</td>
                 </tr>
 				<tr>
@@ -623,6 +713,9 @@
                     <td>{{ question.no_of_checklists }}</td>
                     <td>{{ question.BP.n }}</td>
                     <td><strong>{{ question.BP.n|percentage:question.no_of_checklists }}</strong></td>
+                    <td>{{ question.no_of_lgas }}</td>
+                    <td>{{ question.BP.l }}</td>
+                    <td><strong>{{ question.BP.l|percentage:question.no_of_lgas }}</strong></td>
                     <td>{{ question.BP.mean|floatformat:2 }}</td>
                 </tr>
 				<tr>
@@ -631,6 +724,9 @@
                     <td>{{ question.no_of_checklists }}</td>
                     <td>{{ question.DA.n }}</td>
                     <td><strong>{{ question.DA.n|percentage:question.no_of_checklists }}</strong></td>
+					<td>{{ question.no_of_lgas }}</td>
+                    <td>{{ question.DA.l }}</td>
+                    <td><strong>{{ question.DA.l|percentage:question.no_of_lgas }}</strong></td>
                     <td>{{ question.DA.mean|floatformat:2 }}</td>
                 </tr>
 				<tr>
@@ -639,6 +735,9 @@
                     <td>{{ question.no_of_checklists }}</td>
                     <td>{{ question.DB.n }}</td>
                     <td><strong>{{ question.DB.n|percentage:question.no_of_checklists }}</strong></td>
+					<td>{{ question.no_of_lgas }}</td>
+                    <td>{{ question.DB.l }}</td>
+                    <td><strong>{{ question.DB.l|percentage:question.no_of_lgas }}</strong></td>
                     <td>{{ question.DB.mean|floatformat:2 }}</td>
                 </tr>
 				<tr>
@@ -647,6 +746,9 @@
                     <td>{{ question.no_of_checklists }}</td>
                     <td>{{ question.DC.n }}</td>
                     <td><strong>{{ question.DC.n|percentage:question.no_of_checklists }}</strong></td>
+                    <td>{{ question.no_of_lgas }}</td>
+                    <td>{{ question.DC.l }}</td>
+                    <td><strong>{{ question.DC.l|percentage:question.no_of_lgas }}</strong></td>
                     <td>{{ question.DC.mean|floatformat:2 }}</td>
                 </tr>
 				<tr>
@@ -655,6 +757,9 @@
                     <td>{{ question.no_of_checklists }}</td>
                     <td>{{ question.DD.n }}</td>
                     <td><strong>{{ question.DD.n|percentage:question.no_of_checklists }}</strong></td>
+                    <td>{{ question.no_of_lgas }}</td>
+                    <td>{{ question.DD.l }}</td>
+                    <td><strong>{{ question.DD.l|percentage:question.no_of_lgas }}</strong></td>
                     <td>{{ question.DD.mean|floatformat:2 }}</td>
                 </tr>
 				<tr>
@@ -663,6 +768,9 @@
                     <td>{{ question.no_of_checklists }}</td>
                     <td>{{ question.DE.n }}</td>
                     <td><strong>{{ question.DE.n|percentage:question.no_of_checklists }}</strong></td>
+                    <td>{{ question.no_of_lgas }}</td>
+                    <td>{{ question.DE.l }}</td>
+                    <td><strong>{{ question.DE.l|percentage:question.no_of_lgas }}</strong></td>
                     <td>{{ question.DE.mean|floatformat:2 }}</td>
                 </tr>
 				<tr>
@@ -671,6 +779,9 @@
                     <td>{{ question.no_of_checklists }}</td>
                     <td>{{ question.DF.n }}</td>
                     <td><strong>{{ question.DF.n|percentage:question.no_of_checklists }}</strong></td>
+                    <td>{{ question.no_of_lgas }}</td>
+                    <td>{{ question.DF.l }}</td>
+                    <td><strong>{{ question.DF.l|percentage:question.no_of_lgas }}</strong></td>
                     <td>{{ question.DF.mean|floatformat:2 }}</td>
                 </tr>
 				<tr>
@@ -679,6 +790,9 @@
                     <td>{{ question.no_of_checklists }}</td>
                     <td>{{ question.DG.n }}</td>
                     <td><strong>{{ question.DG.n|percentage:question.no_of_checklists }}</strong></td>
+                    <td>{{ question.no_of_lgas }}</td>
+                    <td>{{ question.DG.l }}</td>
+                    <td><strong>{{ question.DG.l|percentage:question.no_of_lgas }}</strong></td>
                     <td>{{ question.DG.mean|floatformat:2 }}</td>
                 </tr>
 				<tr>
@@ -687,6 +801,9 @@
                     <td>{{ question.no_of_checklists }}</td>
                     <td>{{ question.DH.n }}</td>
                     <td><strong>{{ question.DH.n|percentage:question.no_of_checklists }}</strong></td>
+                    <td>{{ question.no_of_lgas }}</td>
+                    <td>{{ question.DH.l }}</td>
+                    <td><strong>{{ question.DH.l|percentage:question.no_of_lgas }}</strong></td>
                     <td>{{ question.DH.mean|floatformat:2 }}</td>
                 </tr>
             </table>
