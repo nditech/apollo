@@ -170,6 +170,8 @@ SMS_USER = ''
 SMS_PASS = ''
 PHONE_CC = []
 
+RESTRICTED_USERS = {'user1':'location1'}
+
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',

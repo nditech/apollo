@@ -53,10 +53,12 @@ def home(request):
     else:
         filter_form = DashboardFilterForm()
     qs = Q(date__day=filter_date.day, date__month=filter_date.month, date__year=filter_date.year) & qs
+    
+    if request.user.username in settings.RESTRICTED_USERS.keys():
+        qs &= Q(observer__state=State.objects.get(name__iexact=settings.RESTRICTED_USERS[request.user.username]))
 
     context = {'page_title': 'PSC 2011 SwiftCount Dashboard'}
     context['filter_form'] = filter_form
-
 
     if request.user.has_perm('psc.view_vrchecklist'):
         #vr first missing sms
@@ -204,6 +206,9 @@ def ajax_home_stats(request):
     else:
         filter_form = DashboardFilterForm()
     qs = Q(date__day=filter_date.day, date__month=filter_date.month, date__year=filter_date.year) & qs
+
+    if request.user.username in settings.RESTRICTED_USERS.keys():
+        qs &= Q(observer__state=State.objects.get(name__iexact=settings.RESTRICTED_USERS[request.user.username]))
 
     #vr first missing sms
     context = dict()
@@ -542,6 +547,9 @@ def eday_checklist_list(request, action=None):
            
     else:
         filter_form = EDAYChecklistFilterForm()
+
+    if request.user.username in settings.RESTRICTED_USERS.keys():
+        qs_include &= Q(observer__state=State.objects.get(name__iexact=settings.RESTRICTED_USERS[request.user.username]))
 
     #get all objects
     global items_per_page
