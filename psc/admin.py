@@ -11,6 +11,10 @@ from .models import Partner, Party, Contesting
 
 class ContestingAdmin(admin.ModelAdmin):
     list_display = ('state', 'party', 'code')
+    
+class ObserverAdmin(admin.ModelAdmin):
+    list_display = ('observer_id', 'name')
+    search_fields = ['observer_id',]
      
 class GroupAdminWithCount(GroupAdmin):
     def user_count(self, obj):
@@ -20,6 +24,7 @@ class GroupAdminWithCount(GroupAdmin):
 
 admin.site.unregister(Group)
 admin.site.register(Group, GroupAdminWithCount)
+admin.site.register(Observer, ObserverAdmin)
 admin.site.register(Zone)
 admin.site.register(State)
 admin.site.register(District)

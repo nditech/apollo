@@ -252,6 +252,7 @@ class DashboardFilterForm(forms.Form):
     state = forms.ChoiceField(choices=STATES, required=False)
     sample = forms.ChoiceField(choices=SAMPLES, required=False)
     date = forms.ChoiceField(choices=checklist_date_choices, required=False)
+    lga = forms.ChoiceField(choices=LGAS, required=False)
 
 class VRAnalysisFilterForm(forms.Form):
     zone = forms.ChoiceField(choices=ZONES, required=False)

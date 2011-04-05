@@ -162,6 +162,7 @@ class Observer(models.Model):
         permissions = (
             ('view_observer', 'Can view observer'),
         )
+        ordering = ['observer_id']
         
     @property
     @cache
