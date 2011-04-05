@@ -1,14 +1,25 @@
 #!/usr/bin/env python
 # vim: ai ts=4 sts=4 et sw=4
 
-
+from django.contrib.auth.models import User
+from django.contrib.auth.admin import UserAdmin
+from django.contrib.auth.admin import GroupAdmin
+from django.contrib.auth.models import Group
 from django.contrib import admin
 from .models import Zone, State, District, LGA, Ward, RegistrationCenter, VRChecklist, VRIncident, DCOChecklist, DCOIncident, Observer, EDAYChecklist, EDAYIncident
 from .models import Partner, Party, Contesting
 
 class ContestingAdmin(admin.ModelAdmin):
     list_display = ('state', 'party', 'code')
+     
+class GroupAdminWithCount(GroupAdmin):
+    def user_count(self, obj):
+        return obj.user_set.count()
 
+    list_display = GroupAdmin.list_display + ('user_count',)
+
+admin.site.unregister(Group)
+admin.site.register(Group, GroupAdminWithCount)
 admin.site.register(Zone)
 admin.site.register(State)
 admin.site.register(District)
