@@ -844,6 +844,9 @@ def eday_incident_list(request, action=None):
     else:
         filter_form = EDAYIncidentFilterForm()
     
+    if request.user.username in settings.RESTRICTED_USERS.keys():
+        qs_include &= Q(observer__state=State.objects.get(name__iexact=settings.RESTRICTED_USERS[request.user.username]))
+    
     global items_per_page
     if action == 'export':
         items_per_page = EDAYIncident.objects.filter(qs).count()
