@@ -2,7 +2,6 @@
 # vim: ai ts=4 sts=4 et sw=4
 
 from django.contrib.auth.models import User
-from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.admin import GroupAdmin
 from django.contrib.auth.models import Group
 from django.contrib import admin
@@ -24,7 +23,6 @@ class GroupAdminWithCount(GroupAdmin):
 
 admin.site.unregister(Group)
 admin.site.register(Group, GroupAdminWithCount)
-admin.site.register(Observer, ObserverAdmin)
 admin.site.register(Zone)
 admin.site.register(State)
 admin.site.register(District)
@@ -35,7 +33,7 @@ admin.site.register(VRChecklist)
 admin.site.register(VRIncident)
 admin.site.register(DCOChecklist)
 admin.site.register(DCOIncident)
-admin.site.register(Observer)
+admin.site.register(Observer, ObserverAdmin)
 admin.site.register(Partner)
 admin.site.register(EDAYChecklist)
 admin.site.register(EDAYIncident)
