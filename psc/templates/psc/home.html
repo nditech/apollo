@@ -144,6 +144,7 @@
                             </div>
                             <div class="clear"></div>
                         </td>
+						{% if perms.psc.view_edayincident %}
 						<td>
 			    			<div class="box compartment">
                                 <h2 class="dashboard-header"><a href="#">EDAY Incidents</a></h2>
@@ -161,6 +162,7 @@
                                 <div class="clear"></div>
                             </div>
 						</td>
+						{% endif %}
 		    		</tr>
 					{% endif %}
 					{% if perms.psc.view_vrchecklist %}
