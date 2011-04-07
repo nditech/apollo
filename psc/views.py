@@ -49,7 +49,7 @@ def home(request):
             if data['sample']:
                 qs &= Q(location_type=ContentType.objects.get_for_model(RegistrationCenter),location_id__in=Sample.objects.filter(sample=data['sample']).values_list('location', flat=True))
             if data['lga']:
-                qs &= Q(observer__lga=LGA.objects.get(code__iexact=data['state']))
+                qs &= Q(observer__lga=LGA.objects.get(code__iexact=data['lga']))
             if data['date']:
                 filter_date = datetime.date(datetime.strptime(data['date'], '%Y-%m-%d'))
             
