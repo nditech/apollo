@@ -79,7 +79,7 @@
 								{{ filter_form.date }}
 								{{ filter_form.zone }}
 								{{ filter_form.state }}
-								{{ filter_form.lga }}
+								{% if perms.psc.view_edayincident %}{{ filter_form.lga }}{% endif %}
                 <input name="Go" value="GO" type="submit" style="height: 34px; font-size: 20px">
                 </form>
                 </div>
