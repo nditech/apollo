@@ -499,7 +499,7 @@ def eday_checklist_list(request, action=None):
                 if data['zone']:
                     qs_include &= Q(observer__zone=Zone.objects.get(code__iexact=data['zone']))
                 if data['state']:
-                    qs_include &= Q(observer__state=State.objects.get(code__iexact=data['zone']))
+                    qs_include &= Q(observer__state=State.objects.get(code__iexact=data['state']))
                 if data['day']:
                     qs_include &= Q(date=data['day'])
                 
