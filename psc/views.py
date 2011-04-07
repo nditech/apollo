@@ -43,13 +43,13 @@ def home(request):
             data = filter_form.cleaned_data
 
             if data['zone']:
-                qs &= (Q(observer__role='LGA', observer__location_id__in=LGA.objects.filter(parent__parent__parent__code__iexact=data['zone']).values_list('id', flat=True)) | Q(observer__role="OBS", observer__location_id__in=RegistrationCenter.objects.filter(parent__parent__parent__parent__code__iexact=data['zone']).values_list('id', flat=True)))
+                qs &= Q(observer__zone=Zone.objects.get(code__iexact=data['zone']))
             if data['state']:
-                qs &= (Q(observer__role='LGA', observer__location_id__in=LGA.objects.filter(parent__parent__code__iexact=data['state']).values_list('id', flat=True)) | Q(observer__role="OBS", observer__location_id__in=RegistrationCenter.objects.filter(parent__parent__parent__code__iexact=data['state']).values_list('id', flat=True)))
+                qs &= Q(observer__state=State.objects.get(code__iexact=data['state']))
             if data['sample']:
                 qs &= Q(location_type=ContentType.objects.get_for_model(RegistrationCenter),location_id__in=Sample.objects.filter(sample=data['sample']).values_list('location', flat=True))
             if data['lga']:
-                qs &= (Q(observer__role='LGA', observer__location_id=LGA.objects.filter(code__iexact=data['lga']).values_list('id', flat=True)) | Q(observer__role="OBS", observer__location_id__in=RegistrationCenter.objects.filter(parent__code__iexact=data['lga']).values_list('id', flat=True)))
+                qs &= Q(observer__lga=LGA.objects.get(code__iexact=data['state']))
             if data['date']:
                 filter_date = datetime.date(datetime.strptime(data['date'], '%Y-%m-%d'))
             
@@ -199,7 +199,7 @@ def ajax_home_stats(request):
             data = filter_form.cleaned_data
 
             if data['zone']:
-                qs &= Q(observer__location_id__in=LGA.objects.filter(parent__parent__parent__code__iexact=data['zone']).values_list('id', flat=True))
+                qs &= Q(observer__zone=Zone.objects.get(code__iexact=data['zone']))
             if data['date']:
                 filter_date = datetime.date(datetime.strptime(data['date'], '%Y-%m-%d'))
             if data['sample']:
@@ -497,9 +497,9 @@ def eday_checklist_list(request, action=None):
                 if data['sample']:
                     qs_include &= Q(location_type=ContentType.objects.get_for_model(RegistrationCenter),location_id__in=Sample.objects.filter(sample=data['sample']).values_list('location', flat=True))
                 if data['zone']:
-                    qs_include &= Q(observer__location_id__in=LGA.objects.filter(parent__parent__parent__code__iexact=data['zone']).values_list('id', flat=True))
+                    qs_include &= Q(observer__zone=Zone.objects.get(code__iexact=data['zone']))
                 if data['state']:
-                    qs_include &= Q(observer__location_id__in=LGA.objects.filter(parent__parent__code__exact=data['state']).values_list('id', flat=True))
+                    qs_include &= Q(observer__state=State.objects.get(code__iexact=data['zone']))
                 if data['day']:
                     qs_include &= Q(date=data['day'])
                 
@@ -558,7 +558,7 @@ def eday_checklist_list(request, action=None):
     global items_per_page
     if action == 'export':
         items_per_page = EDAYChecklist.objects.filter(qs_include).count()
-    paginator = Paginator(EDAYChecklist.objects.select_related('other', 'control', 'observer', 'observer__contact').filter(qs_include).order_by('date', 'location_id', 'checklist_index'), items_per_page)
+    paginator = Paginator(EDAYChecklist.objects.select_related('other', 'control', 'observer', 'observer__contact', 'observer__lga', 'observer__district').filter(qs_include).order_by('date', 'location_id', 'checklist_index'), items_per_page)
     try:
         page = int(request.GET.get('page', '1'))
     except ValueError:
@@ -1211,7 +1211,60 @@ def export(request, model, query_set=None):
             phone = contact.phone
             email = contact.email
             writer.writerow([pscid, zone, state, sd, lga, pu, name, gender, phone, email, role, organisation])
-    # export here
+
+    def export_edayc(writer):
+       header =  ["PSC ID","Zone","State","LGA","PS","AA","BA","BB","BC","BD","BE","BF","BG","BH","BJ","BK","BM","BN","BP","CA","CB","CC","CD","CE","CF","CG","CH","CJ","CK","CM","CN","CP","CQ","DA","DB","DC","DD","DE","DF","DG","DH","Comment"]
+       writer.writerow(header)
+
+       edays = query_set
+       for eday in edays:
+           pscid = eday.observer.observer_id
+   
+           zone = eday.observer.zone if eday.observer.zone else ""
+           state = eday.observer.state if eday.observer.state else ""
+           lga = eday.observer.lga if eday.observer.lga else ""
+           ps = str(eday.observer.ps).replace('"', "'") if eday.observer.ps else ""
+   
+           AA = eday.AA if eday.AA else ""
+           BA = eday.BA
+           BB = "%.3d" % eday.BB if eday.BB else ""
+           BC = eday.BC if eday.BC else ""
+           BD = eday.BD
+           BE = eday.BE
+           BF = eday.BF if eday.BF else ""
+           BG = eday.BG
+           BH = eday.BH
+           BJ = eday.BJ
+           BK = eday.BK if eday.BK else ""
+           BM = eday.BM
+           BN = eday.BN if eday.BN else ""
+           BP = eday.BP
+           CA = eday.CA
+           CB = eday.CB if eday.CB else ""
+           CC = eday.CC
+           CD = eday.CD
+           CE = eday.CE
+           CF = eday.CF if eday.CF else ""
+           CG = eday.CG if eday.CG else ""
+           CH = eday.CH if eday.CH else ""
+           CJ = eday.CJ if eday.CJ else ""
+           CK = eday.CK if eday.CK else ""
+           CM = eday.CM if eday.CM else ""
+           CN = eday.CN if eday.CN else ""
+           CP = eday.CP if eday.CP else ""
+           CQ = eday.CQ if eday.CQ else ""
+           DA = eday.DA
+           DB = eday.DB 
+           DC = eday.DC 
+           DD = eday.DD 
+           DE = eday.DE 
+           DF = eday.DF 
+           DG = eday.DG 
+           DH = eday.DH
+       
+           comment = eday.comment
+           writer.writerow([pscid, zone, state, lga, ps, AA, BA, BB, BC, BD, BE, BF, BG, BH, BJ, BK, BM, BN, BP, CA, CB, CC, CD, CE, CF, CG, CH, CJ, CK, CM, CN, CP, CQ, DA, DB, DC, DD, DE, DF, DG, DH, comment.replace('"', "'")])            
+
     # TODO: refactor
     export_method = eval("export_%s" % model)
     if hasattr(export_method, '__call__'):
