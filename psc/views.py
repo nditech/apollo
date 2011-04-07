@@ -553,6 +553,9 @@ def eday_checklist_list(request, action=None):
 
     if request.user.username in settings.RESTRICTED_USERS.keys():
         qs_include &= Q(observer__state=State.objects.get(name__iexact=settings.RESTRICTED_USERS[request.user.username]))
+    
+    if u'data clerk' in request.user.groups.values_list('name', flat=True):
+        qs_include &= Q(date=datetime.today().date())
 
     #get all objects
     global items_per_page
