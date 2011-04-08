@@ -1218,13 +1218,14 @@ def export(request, model, query_set=None):
             writer.writerow([pscid, zone, state, sd, lga, pu, name, gender, phone, email, role, organisation])
 
     def export_edayc(writer):
-       header =  ["PSC ID","Zone","State","LGA","PS","AA","BA","BB","BC","BD","BE","BF","BG","BH","BJ","BK","BM","BN","BP","CA","CB","CC","CD","CE","CF","CG","CH","CJ","CK","CM","CN","CP","CQ","DA","DB","DC","DD","DE","DF","DG","DH","Comment"]
+       header =  ["PSC ID","Observer Name","Telephone","Zone","State","LGA","PS","AA","BA","BB","BC","BD","BE","BF","BG","BH","BJ","BK","BM","BN","BP","CA","CB","CC","CD","CE","CF","CG","CH","CJ","CK","CM","CN","CP","CQ","DA","DB","DC","DD","DE","DF","DG","DH","Comment"]
        writer.writerow(header)
 
        edays = query_set
        for eday in edays:
            pscid = eday.observer.observer_id
-   
+           observer_name = eday.observer.name
+           telephone = eday.observer.phone
            zone = eday.observer.zone if eday.observer.zone else ""
            state = eday.observer.state if eday.observer.state else ""
            lga = eday.observer.lga if eday.observer.lga else ""
@@ -1268,7 +1269,7 @@ def export(request, model, query_set=None):
            DH = eday.DH
        
            comment = eday.comment
-           writer.writerow([pscid, zone, state, lga, ps, AA, BA, BB, BC, BD, BE, BF, BG, BH, BJ, BK, BM, BN, BP, CA, CB, CC, CD, CE, CF, CG, CH, CJ, CK, CM, CN, CP, CQ, DA, DB, DC, DD, DE, DF, DG, DH, comment.replace('"', "'")])            
+           writer.writerow([pscid, observer_name, telephone, zone, state, lga, ps, AA, BA, BB, BC, BD, BE, BF, BG, BH, BJ, BK, BM, BN, BP, CA, CB, CC, CD, CE, CF, CG, CH, CJ, CK, CM, CN, CP, CQ, DA, DB, DC, DD, DE, DF, DG, DH, comment.replace('"', "'")])            
 
     # TODO: refactor
     export_method = eval("export_%s" % model)
