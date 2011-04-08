@@ -47,7 +47,7 @@ def home(request):
             if data['state']:
                 qs &= Q(observer__state=State.objects.get(code__iexact=data['state']))
             if data['sample']:
-                qs &= Q(location_type=ContentType.objects.get_for_model(RegistrationCenter),location_id__in=Sample.objects.filter(sample=data['sample']).values_list('location', flat=True))
+                qs &= Q(observer__observer_id_in=Sample.objects.filter(sample=data['sample']).values_list('observer', flat=True))
             if data['lga']:
                 qs &= Q(observer__lga=LGA.objects.get(code__iexact=data['lga']))
             if data['date']:
@@ -203,7 +203,7 @@ def ajax_home_stats(request):
             if data['date']:
                 filter_date = datetime.date(datetime.strptime(data['date'], '%Y-%m-%d'))
             if data['sample']:
-                qs &= Q(location_type=ContentType.objects.get_for_model(RegistrationCenter),location_id__in=Sample.objects.filter(sample=data['sample']).values_list('location', flat=True))
+                qs &= Q(observer__id__in=Sample.objects.filter(sample=data['sample']).values_list('observer', flat=True))
             if data['state']:
                 qs &= Q(observer__state=State.objects.get(code__iexact=data['state']))
     else:
@@ -495,7 +495,7 @@ def eday_checklist_list(request, action=None):
                 qs_include &= Q(observer__observer_id__exact=data['observer_id'])
             else:
                 if data['sample']:
-                    qs_include &= Q(location_type=ContentType.objects.get_for_model(RegistrationCenter),location_id__in=Sample.objects.filter(sample=data['sample']).values_list('location', flat=True))
+                    qs_include &= Q(observer__id__in=Sample.objects.filter(sample=data['sample']).values_list('observer', flat=True))
                 if data['zone']:
                     qs_include &= Q(observer__zone=Zone.objects.get(code__iexact=data['zone']))
                 if data['state']:
@@ -1550,7 +1550,7 @@ def eday_checklist_analysis(request):
             elif data['state']:
                 qs &= Q(observer__state=State.objects.filter(code__iexact=data['state']))
             if data['sample']:
-                qs &= Q(location_type=ContentType.objects.get_for_model(RegistrationCenter),location_id__in=Sample.objects.filter(sample=data['sample']).values_list('location', flat=True))
+                qs &= Q(observer__id__in=Sample.objects.filter(sample=data['sample']).values_list('observer', flat=True))
             if data['date']:
                 qs &= Q(date=datetime.date(datetime.strptime(data['date'], '%Y-%m-%d')))
     else:

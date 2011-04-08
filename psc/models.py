@@ -106,10 +106,10 @@ class Sample(models.Model):
         ('TREATMENT', 'TREATMENT'))
         
     sample = models.CharField(choices=SAMPLES, max_length=100, db_index=True)
-    location = models.ForeignKey(RegistrationCenter, related_name="sample")
+    observer = models.ForeignKey('Observer', blank=True, null=True, related_name="sample")
 
     def __unicode__(self):
-        return "%s -> %s" % (self.location, self.sample)
+        return "%s -> %s" % (self.observer, self.sample)
 
 
 class Observer(models.Model):
