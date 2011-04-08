@@ -77,7 +77,7 @@ EDAY_DAYS = (('', 'All'),
         (datetime.date(datetime(2011, 4, 7)), 'Thu 07-Apr'),
         (datetime.date(datetime(2011, 4, 9)), 'Sat 09-Apr'),
         (datetime.date(datetime(2011, 4, 16)), 'Sat 16-Apr'),
-		(datetime.date(datetime(2011, 4, 26)), 'Tue 26-Apr'))
+	(datetime.date(datetime(2011, 4, 26)), 'Tue 26-Apr'))
 
 VR_INCIDENT_DAYS = tuple([('', 'All')]+[(date, date.strftime('%a %d-%b')) for date in VRIncident.objects.all().distinct('date').order_by('-date').values_list('date', flat=True)])
 
@@ -207,6 +207,7 @@ class EDAYChecklistFilterForm(forms.Form):
     sample = forms.ChoiceField(choices=SAMPLES, required=False)
     zone = forms.ChoiceField(choices=ZONES, required=False)
     state = forms.ChoiceField(choices=STATES, required=False)
+    lga = forms.ChoiceField(choices=LGAS, required=False)
     first = forms.ChoiceField(choices=EDAY_CHECKLIST_1ST, required=False, label='1st SMS')
     second = forms.ChoiceField(choices=EDAY_CHECKLIST_2ND, required=False, label='2nd SMS')
     third = forms.ChoiceField(choices=EDAY_CHECKLIST_3RD, required=False, label='3rd SMS')

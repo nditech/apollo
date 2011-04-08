@@ -484,7 +484,7 @@ def eday_checklist_list(request, action=None):
         request.session['eday_checklist_filter'] = {}
 
     if request.method == 'GET':
-        if filter(lambda key: request.GET.has_key(key), ['sample', 'zone', 'state', 'first', 'second', 'third', 'fourth', 'fifth', 'day', 'observer_id']):
+        if filter(lambda key: request.GET.has_key(key), ['sample', 'zone', 'state', 'lga', 'first', 'second', 'third', 'fourth', 'fifth', 'day', 'observer_id']):
             request.session['eday_checklist_filter'] = request.GET
         filter_form = EDAYChecklistFilterForm(request.session['eday_checklist_filter'])
 
@@ -500,6 +500,8 @@ def eday_checklist_list(request, action=None):
                     qs_include &= Q(observer__zone=Zone.objects.get(code__iexact=data['zone']))
                 if data['state']:
                     qs_include &= Q(observer__state=State.objects.get(code__iexact=data['state']))
+                if data['lga']:
+                    qs_include &= Q(observer__lga=LGA.objects.get(code__iexact=data['lga']))
                 if data['day']:
                     qs_include &= Q(date=data['day'])
                 
