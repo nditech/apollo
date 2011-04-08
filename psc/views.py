@@ -627,7 +627,7 @@ def dco_checklist(request, checklist_id=0):
 def eday_checklist(request, checklist_id=0):   
     checklist1 = get_object_or_404(EDAYChecklist, pk=checklist_id)
     checklist2 = checklist1.other
-    control_checklist = checklist1.control
+    control_checklist = checklist1.control if checklist1.checklist_index == '1' else checklist2.control
     
     if (request.POST):
         f1 = EDAYChecklistForm(request.POST, prefix="checklist1", instance=checklist1)
@@ -644,13 +644,11 @@ def eday_checklist(request, checklist_id=0):
         if checklist1.observer.role == 'OBS':
             if f3.is_valid():
                 f3.save()
-        if f1.is_valid():
-            f1.save()
-        
-        if checklist1.observer.role == 'OBS':
             if f2.is_valid():
                 f2.save()
-        
+        if f1.is_valid():
+            f1.save()
+
         return HttpResponseRedirect(reverse('eday_checklist_view'))
     else:
         f1 = EDAYChecklistForm(instance=checklist1, prefix="checklist1")

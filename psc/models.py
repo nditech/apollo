@@ -464,7 +464,7 @@ class EDAYChecklist(models.Model):
             return None
         else:
             try:
-                return EDAYChecklist.objects.select_related().get(date=self.date, observer=self.observer, checklist_index=EDAYChecklist.EDAY_CHECK[2][0], location_type=self.location_type, location_id=self.location_id)
+                return EDAYChecklist.objects.select_related().get(date=self.date, observer=self.observer if self.observer.position==1 else self.observer.twin, checklist_index=EDAYChecklist.EDAY_CHECK[2][0], location_type=self.location_type, location_id=self.location_id)
             except EDAYChecklist.DoesNotExist:
                 return None
     
