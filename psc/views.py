@@ -624,7 +624,7 @@ def dco_checklist(request, checklist_id=0):
 @login_required()
 def eday_checklist(request, checklist_id=0):   
     checklist1 = get_object_or_404(EDAYChecklist, pk=checklist_id)
-    checklist1, checklist2 = (checklist1, checklist1.other) if checklist1.checklist_index == '1' else (checklist1.other, checklist1)
+    checklist2 = checklist1.other
     control_checklist = checklist1.control
     
     if (request.POST):
