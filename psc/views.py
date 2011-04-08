@@ -47,7 +47,7 @@ def home(request):
             if data['state']:
                 qs &= Q(observer__state=State.objects.get(code__iexact=data['state']))
             if data['sample']:
-                qs &= Q(observer__observer_id_in=Sample.objects.filter(sample=data['sample']).values_list('observer', flat=True))
+                qs &= Q(observer__id__in=Sample.objects.filter(sample=data['sample']).values_list('observer', flat=True))
             if data['lga']:
                 qs &= Q(observer__lga=LGA.objects.get(code__iexact=data['lga']))
             if data['date']:
