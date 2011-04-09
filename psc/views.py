@@ -1546,7 +1546,7 @@ def eday_question_analysis(request, question="AA"):
             data = filter_form.cleaned_data
 
             if data['sample']:
-                qs &= Q(location_type=ContentType.objects.get_for_model(RegistrationCenter),location_id__in=Sample.objects.filter(sample=data['sample']).values_list('location', flat=True))
+                qs &= Q(observer__id__in=Sample.objects.filter(sample=data['sample']).values_list('observer', flat=True))
             if data['date']:
                 qs &= Q(date=datetime.date(datetime.strptime(data['date'], '%Y-%m-%d')))
     else:
