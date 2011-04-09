@@ -89,6 +89,9 @@ class RegistrationCenter(models.Model):
 
     def __unicode__(self):
         return self.name
+    
+    class Meta:
+        ordering = ['name']
 
 class Partner(models.Model):
     name = models.CharField("Partner's name", max_length=100)
