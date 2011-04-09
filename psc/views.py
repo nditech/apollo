@@ -1528,6 +1528,83 @@ def vr_checklist_analysis(request):
     return render_to_response('psc/vr_checklist_analysis.html', {'page_title': 'Voter Registration Checklist Analysis', 'filter_form': filter_form}, context_instance=ctx)
 
 @permission_required('psc.can_analyse', login_url='/')
+def eday_question_analysis(request, question="AA"):
+    eday_days = [day[0] for day in EDAY_DAYS if day[0]]
+
+    # limit analysis to only the control checklists - VERY IMPORTANT
+    qs = (Q(checklist_index='1', observer__role='LGA')|Q(checklist_index='3', observer__role='OBS')) & Q(date__in=eday_days)
+
+    if not request.session.has_key('eday_question_filter'):
+        request.session['eday_question_filter'] = {}
+
+    if request.method == 'GET':
+        if filter(lambda key: request.GET.has_key(key), ['sample', 'date']):
+            request.session['eday_question_filter'] = request.GET
+        filter_form = EDAYAnalysisFilterForm(request.session['eday_question_filter'])
+
+        if filter_form.is_valid():
+            data = filter_form.cleaned_data
+
+            if data['sample']:
+                qs &= Q(location_type=ContentType.objects.get_for_model(RegistrationCenter),location_id__in=Sample.objects.filter(sample=data['sample']).values_list('location', flat=True))
+            if data['date']:
+                qs &= Q(date=datetime.date(datetime.strptime(data['date'], '%Y-%m-%d')))
+    else:
+        filter_form = EDAYAnalysisFilterForm()
+    
+    ctx = RequestContext(request)
+    ctx['zones'] = list()
+    ctx['states'] = list()
+    
+    all_questions = ['AA', 'BF', 'BK', 'BN', 'CB', 'CF', 'CG', 'CH', 'CJ', 'CK', 'CM', 'CN', 'CP', 'CQ', 'BC', 'BA', 'CA'] + \
+        ['BG', 'BH', 'BJ', 'BM', 'CC', 'CD', 'CE'] + ['BD', 'BE', 'BP', 'DA', 'DB', 'DC', 'DD', 'DE', 'DF', 'DG', 'DH']
+    
+    question_types = {'yes_no': ['AA', 'BF', 'BK', 'BN', 'CB', 'CF', 'CG', 'CH', 'CJ', 'CK', 'CM', 'CN', 'CP', 'CQ'],
+        'yes_no_maybe': ['BC'],
+        'opening': ['BA', 'CA'],
+        'option': ['BG', 'BH', 'BJ', 'BM', 'CC', 'CD', 'CE'],
+        'numeric': ['BD', 'BE', 'BP', 'DA', 'DB', 'DC', 'DD', 'DE', 'DF', 'DG', 'DH']}
+    
+    if question in all_questions:
+        zones = Zone.objects.all()
+        for zone in zones:
+            qs_zone = qs & Q(observer__zone=zone)
+            if not question == 'AA':
+                qs_zone &= ~Q(BA=5) & ~Q(CA=5)
+            d = dict()
+            d['name'] = zone.name
+            d['data'] = eval('stats.eday_Q' + question + '(qs_zone)')
+            d['data']['no_of_checklists'] = stats.eday_N(qs_zone)
+            d['data']['no_of_lgas'] = stats.eday_L(qs_zone)
+            ctx['zones'].append(d)
+        
+        states = State.objects.all()
+        for state in states:
+            qs_state = qs & Q(observer__state=state)
+            if not question == 'AA':
+                qs_state &= ~Q(BA=5) & ~Q(CA=5)
+            d = dict()
+            d['name'] = state.name
+            d['data'] = eval('stats.eday_Q' + question + '(qs_state)')
+            d['data']['no_of_checklists'] = stats.eday_N(qs_state)
+            d['data']['no_of_lgas'] = stats.eday_L(qs_state)
+            ctx['states'].append(d)
+    
+    # choose the template based on the question type
+    if question in question_types['yes_no']:
+        template = 'psc/eday_question_analysis_yes_no.html'
+    elif question in question_types['yes_no_maybe']:
+        template = 'psc/eday_question_analysis_yes_no_maybe.html'
+    elif question in question_types['opening']:
+        template = 'psc/eday_question_analysis_opening.html'
+    elif question in question_types['option']:
+        template = 'psc/eday_question_analysis_option.html'
+    elif question in question_types['numeric']:
+        template = 'psc/eday_question_analysis_numeric.html'
+    
+    return render_to_response(template, {'page_title': 'Election Day Question Analysis', 'filter_form': filter_form}, context_instance=ctx)
+
+@permission_required('psc.can_analyse', login_url='/')
 def eday_checklist_analysis(request):
     eday_days = [day[0] for day in EDAY_DAYS if day[0]]
 
@@ -1563,7 +1640,7 @@ def eday_checklist_analysis(request):
 
     #
     ctx['question']['AA'] = stats.eday_QAA(qs)
-    
+
     qs &= ~Q(BA=5) & ~Q(CA=5)
     ctx['question']['BF'] = stats.eday_QBF(qs)
     ctx['question']['BK'] = stats.eday_QBK(qs)
@@ -1578,7 +1655,7 @@ def eday_checklist_analysis(request):
     ctx['question']['CN'] = stats.eday_QCN(qs)
     ctx['question']['CP'] = stats.eday_QCP(qs)
     ctx['question']['CQ'] = stats.eday_QCQ(qs)
-    
+
     ctx['question']['BC'] = stats.eday_QBC(qs)
     ctx['question']['BA'] = stats.eday_QBA(qs)
     ctx['question']['BG'] = stats.eday_QBG(qs)

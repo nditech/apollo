@@ -44,6 +44,7 @@ urlpatterns = patterns('',
     
     url(r'^vr/analysis/?$', views.vr_checklist_analysis),
     url(r'^eday/analysis/?$', views.eday_checklist_analysis),
+    url(r'^eday/analysis/(?P<question>.+)/?', views.eday_question_analysis, name="eday_question_analysis"),
     url(r'^vr/in/del/(?P<incident_id>\d+)/?$', views.vr_incident_delete),
     url(r'^dco/in/del/(?P<incident_id>\d+)/?$', views.dco_incident_delete),
     
