@@ -12,7 +12,7 @@ class ContestingAdmin(admin.ModelAdmin):
     list_display = ('state', 'party', 'code')
     
 class ObserverAdmin(admin.ModelAdmin):
-    list_display = ('observer_id', 'name')
+    list_display = ('observer_id', 'name', 'location')
     search_fields = ['observer_id',]
      
 class GroupAdminWithCount(GroupAdmin):
