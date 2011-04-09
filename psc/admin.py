@@ -22,8 +22,8 @@ class GroupAdminWithCount(GroupAdmin):
     list_display = GroupAdmin.list_display + ('user_count',)
 
 class RegistrationCenterAdmin(admin.ModelAdmin):
-    list_display = ('code', 'name', 'parent')
-    search_fields = ['name',]
+    list_display = ('code', 'name', 'inec_code', 'parent')
+    search_fields = ['name', 'inec_code',]
     
 admin.site.unregister(Group)
 admin.site.register(Group, GroupAdminWithCount)
