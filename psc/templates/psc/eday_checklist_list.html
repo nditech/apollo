@@ -10,18 +10,19 @@
             $("#id_state").val("");
             $("#id_lga").val("");
             $("#id_day").val("");
+			$("#id_sample").val("");
             $("#id_observer_id").val("");
-	    $("#id_first").val("");
-	    $("#id_second").val("");
-	    $("#id_third").val("");
-	    $("#id_fourth").val("");
-	    $("#id_fifth").val("");
+	    	$("#id_first").val("");
+		    $("#id_second").val("");
+		    $("#id_third").val("");
+		    $("#id_fourth").val("");
+		    $("#id_fifth").val("");
             $("#filter_form").submit();
         });
 	$("#sndmsg_btn").toggle(function () {
-	$("#messenger").slideDown("slow");
-	}, function () {
-	$("#messenger").slideUp("slow");
+		$("#messenger").slideDown("slow");
+		}, function () {
+		$("#messenger").slideUp("slow");
 	});
 {% if perms.psc.can_analyse %}
 	$("#send_btn").click(function () {
