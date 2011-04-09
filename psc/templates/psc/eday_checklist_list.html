@@ -126,14 +126,14 @@
 						{% endif %}
 						</td>
                         <td class="checklist">
-						{% if cl.BA and cl.BA < 4 %}
+						{% if cl.BA and cl.BA <= 4 %}
 							{% if cl.BB and cl.BC and cl.BD and cl.BE and cl.BF and cl.BG and cl.BH and cl.BJ and cl.BK and cl.BM and cl.BN and cl.BP %}
                             <img src="/assets/img/status.png" width="16" height="16" alt="complete" />
 							{% else %}
 							<img src="/assets/img/status-away.png" width="16" height="16" alt="incomplete" />
 							{% endif %}
 						{% else %}
-							{% if cl.BA >= 4 %}
+							{% if cl.BA > 4 %}
 								{% if cl.BB or cl.BC or cl.BD or cl.BE or cl.BF or cl.BG or cl.BH or cl.BJ or cl.BK or cl.BM or cl.BN or cl.BP %}
 									<img src="/assets/img/status-busy.png" width="16" height="16" alt="not open problem" />
 								{% else %}
@@ -156,7 +156,7 @@
 							<img src="/assets/img/status-away.png" width="16" height="16" alt="incomplete" />
 							{% endif %}
 						{% else %}
-							{% if cl.CA >= 4 or cl.BA >= 4 %}
+							{% if cl.CA > 4 or cl.BA > 4 %}
 								{% if cl.CB or cl.CC or cl.CD or cl.CE or cl.CF or cl.CG or cl.CH or cl.CJ or cl.CK or cl.CM or cl.CN or cl.CP or cl.CQ %}
 									<img src="/assets/img/status-busy.png" width="16" height="16" alt="not open problem" />
 								{% else %}

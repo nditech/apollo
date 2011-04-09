@@ -101,7 +101,7 @@ queries['eday']['arrival']['yes'] = Q(AA__gt=0)
 queries['eday']['arrival']['no'] = Q(AA=0)|Q(AA__isnull=True)
 
 queries['eday']['accreditation'] = {}
-queries['eday']['accreditation']['complete'] = Q(BA__isnull=False) & Q(BB__isnull=False) & (Q(BC__gt=0)|Q(BC__isnull=False)) & Q(BD__isnull=False) & \
+queries['eday']['accreditation']['complete'] = Q(BA__isnull=False) & Q(BA__lte=4) & Q(BB__isnull=False) & (Q(BC__gt=0)|Q(BC__isnull=False)) & Q(BD__isnull=False) & \
     Q(BE__isnull=False) & (Q(BF__gt=0)| Q(BF__isnull=False)) & Q(BG__isnull=False) & Q(BH__isnull=False) & Q(BJ__isnull=False) & (Q(BK__gt=0)|Q(BK__isnull=False)) & \
     Q(BM__isnull=False) & (Q(BN__gt=0)| Q(BN__isnull=False)) & Q(BP__isnull=False)
 queries['eday']['accreditation']['partial'] = (Q(BA__isnull=False) | Q(BB__isnull=False) | (Q(BC__gt=0) & Q(BC__isnull=False)) | Q(BD__isnull=False) | \
