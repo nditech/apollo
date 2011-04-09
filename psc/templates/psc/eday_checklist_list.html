@@ -127,20 +127,20 @@
 						</td>
                         <td class="checklist">
 						{% if cl.BA and cl.BA <= 4 %}
-							{% if cl.BB and cl.BC and cl.BD and cl.BE and cl.BF and cl.BG and cl.BH and cl.BJ and cl.BK and cl.BM and cl.BN and cl.BP %}
+							{% if cl.BB and cl.BC and cl.BD != None and cl.BE != None and cl.BF and cl.BG and cl.BH and cl.BJ and cl.BK and cl.BM and cl.BN and cl.BP != None %}
                             <img src="/assets/img/status.png" width="16" height="16" alt="complete" />
 							{% else %}
 							<img src="/assets/img/status-away.png" width="16" height="16" alt="incomplete" />
 							{% endif %}
 						{% else %}
 							{% if cl.BA > 4 %}
-								{% if cl.BB or cl.BC or cl.BD or cl.BE or cl.BF or cl.BG or cl.BH or cl.BJ or cl.BK or cl.BM or cl.BN or cl.BP %}
+								{% if cl.BB or cl.BC or cl.BD != None or cl.BE != None or cl.BF or cl.BG or cl.BH or cl.BJ or cl.BK or cl.BM or cl.BN or cl.BP != None %}
 									<img src="/assets/img/status-busy.png" width="16" height="16" alt="not open problem" />
 								{% else %}
 									<img src="/assets/img/status-offline.png" width="16" height="16" alt="not expected" />
 								{% endif %}
 							{% else %}
-								{% if cl.BA or cl.BB or cl.BC or cl.BD or cl.BE or cl.BF or cl.BG or cl.BH or cl.BJ or cl.BK or cl.BM or cl.BN or cl.BP %}
+								{% if cl.BA or cl.BB or cl.BC or cl.BD != None or cl.BE != None or cl.BF or cl.BG or cl.BH or cl.BJ or cl.BK or cl.BM or cl.BN or cl.BP != None %}
 									<img src="/assets/img/status-away.png" width="16" height="16" alt="incomplete" />
 								{% else %}
 									<img src="/assets/img/exclamation-red.png" width="16" height="16" alt="none" />
@@ -173,17 +173,17 @@
                         </td>
 						<td class="checklist">
 						{% if cl.CA < 5 and cl.BA < 5 %}
-							{% if cl.DA and cl.DB and cl.DC and cl.DD and cl.DE and cl.DF and cl.DG and cl.DH %}
+							{% if cl.DA != None and cl.DB != None and cl.DC != None and cl.DD != None and cl.DE != None and cl.DF != None and cl.DG != None and cl.DH != None %}
 	                            <img src="/assets/img/status.png" width="16" height="16" alt="complete" />
 							{% else %}
-								{% if cl.DA or cl.DB or cl.DC or cl.DD or cl.DE or cl.DF or cl.DG or cl.DH %}
+								{% if cl.DA != None or cl.DB != None or cl.DC != None or cl.DD != None or cl.DE != None or cl.DF != None or cl.DG != None or cl.DH != None %}
 									<img src="/assets/img/status-away.png" width="16" height="16" alt="incomplete" />
 								{% else %}
 									<img src="/assets/img/exclamation-red.png" width="16" height="16" alt="none" />
 								{% endif %}
 							{% endif %}
 						{% else %}
-							{% if cl.DA or cl.DB or cl.DC or cl.DD or cl.DE or cl.DF or cl.DG or cl.DH %}
+							{% if cl.DA != None or cl.DB != None or cl.DC != None or cl.DD != None or cl.DE != None or cl.DF != None or cl.DG != None or cl.DH != None %}
 								<img src="/assets/img/status-busy.png" width="16" height="16" alt="not open problem" />
 							{% else %}
 								<img src="/assets/img/status-offline.png" width="16" height="16" alt="not expected" />
