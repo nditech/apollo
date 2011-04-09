@@ -1216,60 +1216,95 @@ def export(request, model, query_set=None):
             writer.writerow([pscid, zone, state, sd, lga, pu, name, gender, phone, email, role, organisation])
 
     def export_edayc(writer):
-       header =  ["PSC ID","Observer Name","Telephone","Zone","State","LGA","PS","AA","BA","BB","BC","BD","BE","BF","BG","BH","BJ","BK","BM","BN","BP","CA","CB","CC","CD","CE","CF","CG","CH","CJ","CK","CM","CN","CP","CQ","DA","DB","DC","DD","DE","DF","DG","DH","Comment"]
-       writer.writerow(header)
+        header =  ["PSC ID","Observer Name","Telephone","Zone","State","LGA","PS","AA","BA","BB","BC","BD","BE","BF","BG","BH","BJ","BK","BM","BN","BP","CA","CB","CC","CD","CE","CF","CG","CH","CJ","CK","CM","CN","CP","CQ","DA","DB","DC","DD","DE","DF","DG","DH","Comment"]
+        writer.writerow(header)
 
-       edays = query_set
-       for eday in edays:
-           pscid = eday.observer.observer_id
-           observer_name = eday.observer.name
-           telephone = eday.observer.phone
-           zone = eday.observer.zone if eday.observer.zone else ""
-           state = eday.observer.state if eday.observer.state else ""
-           lga = eday.observer.lga if eday.observer.lga else ""
-           ps = str(eday.observer.ps).replace('"', "'") if eday.observer.ps else ""
-   
-           AA = eday.AA if eday.AA else ""
-           BA = eday.BA
-           BB = "%.3d" % eday.BB if eday.BB else ""
-           BC = eday.BC if eday.BC else ""
-           BD = eday.BD
-           BE = eday.BE
-           BF = eday.BF if eday.BF else ""
-           BG = eday.BG
-           BH = eday.BH
-           BJ = eday.BJ
-           BK = eday.BK if eday.BK else ""
-           BM = eday.BM
-           BN = eday.BN if eday.BN else ""
-           BP = eday.BP
-           CA = eday.CA
-           CB = eday.CB if eday.CB else ""
-           CC = eday.CC
-           CD = eday.CD
-           CE = eday.CE
-           CF = eday.CF if eday.CF else ""
-           CG = eday.CG if eday.CG else ""
-           CH = eday.CH if eday.CH else ""
-           CJ = eday.CJ if eday.CJ else ""
-           CK = eday.CK if eday.CK else ""
-           CM = eday.CM if eday.CM else ""
-           CN = eday.CN if eday.CN else ""
-           CP = eday.CP if eday.CP else ""
-           CQ = eday.CQ if eday.CQ else ""
-           DA = eday.DA
-           DB = eday.DB 
-           DC = eday.DC 
-           DD = eday.DD 
-           DE = eday.DE 
-           DF = eday.DF 
-           DG = eday.DG 
-           DH = eday.DH
-       
-           comment = eday.comment
-           writer.writerow([pscid, observer_name, telephone, zone, state, lga, ps, AA, BA, BB, BC, BD, BE, BF, BG, BH, BJ, BK, BM, BN, BP, CA, CB, CC, CD, CE, CF, CG, CH, CJ, CK, CM, CN, CP, CQ, DA, DB, DC, DD, DE, DF, DG, DH, comment.replace('"', "'")])            
+        edays = query_set
+        for eday in edays:
+            pscid = eday.observer.observer_id
+            observer_name = eday.observer.name
+            telephone = eday.observer.phone
+            zone = eday.observer.zone if eday.observer.zone else ""
+            state = eday.observer.state if eday.observer.state else ""
+            lga = eday.observer.lga if eday.observer.lga else ""
+            ps = str(eday.observer.ps).replace('"', "'") if eday.observer.ps else ""
 
-    # TODO: refactor
+            AA = eday.AA if eday.AA else ""
+            BA = eday.BA
+            BB = "%.3d" % eday.BB if eday.BB else ""
+            BC = eday.BC if eday.BC else ""
+            BD = eday.BD
+            BE = eday.BE
+            BF = eday.BF if eday.BF else ""
+            BG = eday.BG
+            BH = eday.BH
+            BJ = eday.BJ
+            BK = eday.BK if eday.BK else ""
+            BM = eday.BM
+            BN = eday.BN if eday.BN else ""
+            BP = eday.BP
+            CA = eday.CA
+            CB = eday.CB if eday.CB else ""
+            CC = eday.CC
+            CD = eday.CD
+            CE = eday.CE
+            CF = eday.CF if eday.CF else ""
+            CG = eday.CG if eday.CG else ""
+            CH = eday.CH if eday.CH else ""
+            CJ = eday.CJ if eday.CJ else ""
+            CK = eday.CK if eday.CK else ""
+            CM = eday.CM if eday.CM else ""
+            CN = eday.CN if eday.CN else ""
+            CP = eday.CP if eday.CP else ""
+            CQ = eday.CQ if eday.CQ else ""
+            DA = eday.DA
+            DB = eday.DB 
+            DC = eday.DC 
+            DD = eday.DD 
+            DE = eday.DE 
+            DF = eday.DF 
+            DG = eday.DG 
+            DH = eday.DH
+
+            comment = eday.comment
+            writer.writerow([pscid, observer_name, telephone, zone, state, lga, ps, AA, BA, BB, BC, BD, BE, BF, BG, BH, BJ, BK, BM, BN, BP, CA, CB, CC, CD, CE, CF, CG, CH, CJ, CK, CM, CN, CP, CQ, DA, DB, DC, DD, DE, DF, DG, DH, comment.replace('"', "'")])            
+
+    def export_edayi(writer):
+        header =  ["PSC ID","Observer Name","Telephone","Zone","State","LGA","PS","A","B","C","D","E","F","G","H","J","K","M","N","P","Q","R","S","T","Comment"]
+        writer.writerow(header)
+
+        edays = query_set
+        for eday in edays:
+            pscid = eday.observer.observer_id
+            observer_name = eday.observer.name
+            telephone = eday.observer.phone
+            zone = eday.observer.zone if eday.observer.zone else ""
+            state = eday.observer.state if eday.observer.state else ""
+            lga = eday.observer.lga if eday.observer.lga else ""
+            ps = str(eday.observer.ps).replace('"', "'") if eday.observer.ps else ""
+
+            A = "1" if eday.A else ""
+            B = "1" if eday.B else ""
+            C = "1" if eday.C else ""
+            D = "1" if eday.D else ""
+            E = "1" if eday.E else ""
+            F = "1" if eday.F else ""
+            G = "1" if eday.G else ""
+            H = "1" if eday.H else ""
+            J = "1" if eday.J else ""
+            K = "1" if eday.K else ""
+            M = "1" if eday.M else ""
+            N = "1" if eday.N else ""
+            P = "1" if eday.P else ""
+            Q = "1" if eday.Q else ""
+            R = "1" if eday.R else ""
+            S = "1" if eday.S else ""
+            T = "1" if eday.T else ""
+
+            comment = eday.comment
+            writer.writerow([pscid, observer_name, telephone, zone, state, lga, ps, A, B, C, D, E, F, G, H, J, K, M, N, P, Q, R, S, T, comment.replace('"', "'")])            
+
+            # TODO: refactor
     export_method = eval("export_%s" % model)
     if hasattr(export_method, '__call__'):
         export_method(writer)
