@@ -21,6 +21,10 @@ class GroupAdminWithCount(GroupAdmin):
 
     list_display = GroupAdmin.list_display + ('user_count',)
 
+class RegistrationCenterAdmin(admin.ModelAdmin):
+    list_display = ('code', 'name', 'parent')
+    search_fields = ['name',]
+    
 admin.site.unregister(Group)
 admin.site.register(Group, GroupAdminWithCount)
 admin.site.register(Zone)
@@ -28,7 +32,7 @@ admin.site.register(State)
 admin.site.register(District)
 admin.site.register(LGA)
 admin.site.register(Ward)
-admin.site.register(RegistrationCenter)
+admin.site.register(RegistrationCenter, RegistrationCenterAdmin)
 admin.site.register(VRChecklist)
 admin.site.register(VRIncident)
 admin.site.register(DCOChecklist)
