@@ -9,6 +9,7 @@ from audit_log.models.managers import AuditLog
 from django.db.models.signals import post_save, pre_save
 from django.conf import settings
 from psc_helpers import model_attribute_cache as cache
+from datetime import datetime
 
 class Zone(models.Model):
     name = models.CharField(max_length=100)
@@ -442,6 +443,7 @@ class EDAYChecklist(models.Model):
     FE = models.IntegerField(blank=True, null=True)
     FF = models.IntegerField(blank=True, null=True)
     FG = models.IntegerField(blank=True, null=True)
+    last_updated = models.DateTimeField(blank=True, null=True, auto_now=True)
     
     comment = models.CharField(max_length=200, blank=True)
     submitted = models.BooleanField(default=False, help_text="This field tracks if (even though already created), this report has been submitted by the reporter")
@@ -476,15 +478,23 @@ class EDAYChecklist(models.Model):
     @cache
     def contesting(self):
         try:
-            return self.observer.state.contesting_set.values_list('code', flat=True)
+            if self.date == datetime.date(datetime(2011, 4, 26)): # date of guber elections
+                return self.observer.state.contesting_set.values_list('code', flat=True)
+            else:
+                # the presidential elections parties are stored with no state in particular
+                return Contesting.objects.filter(state=None).values_list('code', flat=True)
         except AttributeError:
             return []
         
     @property
     @cache
     def parties(self):
-        return dict(self.observer.state.contesting_set.values_list('code','party__code'))
-    
+        if self.date == datetime.date(datetime(2011, 4, 26)): # date of guber elections
+            return dict(self.observer.state.contesting_set.values_list('code','party__code'))
+        else:
+            # the presidential elections parties are stored with no state in particular
+            return dict(Contesting.objects.filter(state=None).values_list('code', 'party__code'))
+            
     @property
     @cache
     def flag1(self):
@@ -721,10 +731,10 @@ class Party(models.Model):
 class Contesting(models.Model):
     code = models.CharField("Checklist Code", max_length=2)
     party = models.ForeignKey(Party)
-    state = models.ForeignKey(State)
+    state = models.ForeignKey(State, blank=True, null=True)
     
     def __unicode__(self):
-        return '%s State %s has the code: %s' %(self.state.name, self.party.code, self.code)
+        return '%s State %s has the code: %s' % (self.state.name, self.party.code, self.code)
     
     class Meta:
         verbose_name_plural = "Contesting"
