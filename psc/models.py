@@ -787,6 +787,12 @@ def edaychecklist_handler(sender, **kwargs):
                 # we must make sure the control checklist's value gets blanked
                 elif getattr(kwargs['instance'], field) and getattr(other_checklist, field):
                     setattr(control_checklist, field, None)
+                
+                # if field values for both checklists are the same, freeze the override
+                # essentially it locks the control checklist field so data doesn't get overriden by 
+                # incoming data
+                #if getattr(kwargs['instance'], field) and (getattr(kwargs['instance'], field) == getattr(other_checklist, field)):
+                #    obj, created = EDAYChecklistOverrides.objects.get_or_create(field=field, control_checklist)
             except AttributeError:
                 pass
         try:
