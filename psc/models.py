@@ -9,6 +9,7 @@ from audit_log.models.managers import AuditLog
 from django.db.models.signals import post_save, pre_save
 from django.conf import settings
 from psc_helpers import model_attribute_cache as cache
+from datetime import datetime
 
 class Zone(models.Model):
     name = models.CharField(max_length=100)
@@ -393,8 +394,8 @@ class EDAYChecklist(models.Model):
     CA = models.IntegerField(blank=True, null=True, choices=VP_OPENTIME, help_text='What time did the voting begin? (tick one)')
     CB = models.PositiveSmallIntegerField(blank=True, null=True, default=0, choices=YES_NO, help_text='Was the ballot box shown to be empty before being closed and locked? (tick one)')
     CC = models.IntegerField(blank=True, null=True, choices=TURNOVER, help_text='Was anyone permitted to vote who did not have a voter\'s card and indelible ink on the cuticle of a left finger? (Every voter should have both)(tick one)')
-    CD = models.IntegerField(blank=True, null=True, choices=TURNOVER, help_text='Did polling officials check for every voters name in the register of voters and make a tick to the right of the voters name? (tick one)')
-    CE = models.IntegerField(blank=True, null=True, choices=TURNOVER, help_text='Was every ballot paper stamped and signed before being given to voters? (The polling official must both stamp and sign each ballot paper) (tick one)')
+    CD = models.IntegerField(blank=True, null=True, choices=TURNOVER, help_text='Did polling officials check for every voters name in the register of voters? (tick one)')
+    CE = models.IntegerField(blank=True, null=True, choices=TURNOVER, help_text='Was every ballot paper stamped and signed before being given to voters? (tick one)')
     CF = models.PositiveSmallIntegerField(blank=True, null=True, default=0, choices=YES_NO, help_text='Were voters able to mark their ballot paper in secret? (tick one)')
     CG = models.PositiveSmallIntegerField(blank=True, null=True, default=0, choices=YES_NO, help_text='Was anyone accredited to vote after the accreditation of voters process was closed? (tick one)')
     CH = models.PositiveSmallIntegerField(blank=True, null=True, default=0, choices=YES_NO, help_text='Did anyone attempt to harass/intimidate voters/polling officials during the voting process? (tick one)')
@@ -402,7 +403,7 @@ class EDAYChecklist(models.Model):
     CK = models.PositiveSmallIntegerField(blank=True, null=True, default=0, choices=YES_NO, help_text='Were the results announced? (tick one)')
     CM = models.PositiveSmallIntegerField(blank=True, null=True, default=0, choices=YES_NO, help_text='Did any political party agent disagree with the announced results? (tick one)')
     CN = models.PositiveSmallIntegerField(blank=True, null=True, default=0, choices=YES_NO, help_text='Were the results posted in a public place easy for people to see? (tick one)')
-    CP = models.PositiveSmallIntegerField(blank=True, null=True, default=0, choices=YES_NO, help_text='Did the posted results match announced results? (tick one)')
+    CP = models.PositiveSmallIntegerField(blank=True, null=True, default=0, choices=YES_NO, help_text='Did you agree with the official results? (tick one)')
     CQ = models.PositiveSmallIntegerField(blank=True, null=True, default=0, choices=YES_NO, help_text='Did anyone attempt to harass/intimidate polling officials during counting? (tick one)')
     DA = models.IntegerField(blank=True, null=True, help_text='Number of voters on the Register')
     DB = models.IntegerField(blank=True, null=True, help_text='Number of Ballot Papers issued to the Polling Unit')
@@ -442,6 +443,7 @@ class EDAYChecklist(models.Model):
     FE = models.IntegerField(blank=True, null=True)
     FF = models.IntegerField(blank=True, null=True)
     FG = models.IntegerField(blank=True, null=True)
+    last_updated = models.DateTimeField(blank=True, null=True, auto_now=True)
     
     comment = models.CharField(max_length=200, blank=True)
     submitted = models.BooleanField(default=False, help_text="This field tracks if (even though already created), this report has been submitted by the reporter")
@@ -476,15 +478,23 @@ class EDAYChecklist(models.Model):
     @cache
     def contesting(self):
         try:
-            return self.observer.state.contesting_set.values_list('code', flat=True)
+            if self.date == datetime.date(datetime(2011, 4, 26)): # date of guber elections
+                return self.observer.state.contesting_set.values_list('code', flat=True)
+            else:
+                # the presidential elections parties are stored with no state in particular
+                return Contesting.objects.filter(state=None).values_list('code', flat=True)
         except AttributeError:
             return []
         
     @property
     @cache
     def parties(self):
-        return dict(self.observer.state.contesting_set.values_list('code','party__code'))
-    
+        if self.date == datetime.date(datetime(2011, 4, 26)): # date of guber elections
+            return dict(self.observer.state.contesting_set.values_list('code','party__code'))
+        else:
+            # the presidential elections parties are stored with no state in particular
+            return dict(Contesting.objects.filter(state=None).values_list('code', 'party__code'))
+            
     @property
     @cache
     def flag1(self):
@@ -721,10 +731,10 @@ class Party(models.Model):
 class Contesting(models.Model):
     code = models.CharField("Checklist Code", max_length=2)
     party = models.ForeignKey(Party)
-    state = models.ForeignKey(State)
+    state = models.ForeignKey(State, blank=True, null=True)
     
     def __unicode__(self):
-        return '%s State %s has the code: %s' %(self.state.name, self.party.code, self.code)
+        return '%s State %s has the code: %s' % (self.state.name, self.party.code, self.code)
     
     class Meta:
         verbose_name_plural = "Contesting"
