@@ -25,12 +25,16 @@ class RegistrationCenterAdmin(admin.ModelAdmin):
     list_display = ('code', 'name', 'inec_code', 'parent')
     search_fields = ['name', 'inec_code',]
     
+class LGAAdmin(admin.ModelAdmin):
+    list_display = ('name', 'code', 'parent')
+    search_fields = ['name',]
+    
 admin.site.unregister(Group)
 admin.site.register(Group, GroupAdminWithCount)
 admin.site.register(Zone)
 admin.site.register(State)
 admin.site.register(District)
-admin.site.register(LGA)
+admin.site.register(LGA, LGAAdmin)
 admin.site.register(Ward)
 admin.site.register(RegistrationCenter, RegistrationCenterAdmin)
 admin.site.register(VRChecklist)
