@@ -457,7 +457,7 @@ class EDAYChecklist(models.Model):
         if self.checklist_index in [eday[0] for eday in EDAYChecklist.EDAY_CHECK[:2]]:
             other_index = EDAYChecklist.EDAY_CHECK[0][0] if self.checklist_index == EDAYChecklist.EDAY_CHECK[1][0] else EDAYChecklist.EDAY_CHECK[1][0]
             try:
-                return EDAYChecklist.objects.select_related().get(date=self.date, observer=self.observer.twin, checklist_index=other_index, location_type=self.location_type, location_id=self.location_id)
+                return EDAYChecklist.objects.select_related().get(date=self.date, observer=self.observer.twin, checklist_index=other_index)
             except EDAYChecklist.DoesNotExist:
                 return None
         else:
@@ -787,6 +787,12 @@ def edaychecklist_handler(sender, **kwargs):
                 # we must make sure the control checklist's value gets blanked
                 elif getattr(kwargs['instance'], field) and getattr(other_checklist, field):
                     setattr(control_checklist, field, None)
+                
+                # if field values for both checklists are the same, freeze the override
+                # essentially it locks the control checklist field so data doesn't get overriden by 
+                # incoming data
+                #if getattr(kwargs['instance'], field) and (getattr(kwargs['instance'], field) == getattr(other_checklist, field)):
+                #    obj, created = EDAYChecklistOverrides.objects.get_or_create(field=field, control_checklist)
             except AttributeError:
                 pass
         try:

@@ -61,7 +61,7 @@ class Command(BaseCommand):
             print "Prepopulating EDay Checklists..."
             observers = Observer.objects.filter(role__iexact='OBS')
             for observer in observers:
-                for day in (EDAY_DAYS[3],) + EDAY_DAYS[-3:]:# This is set to remove the date for the senatorial election.
+                for day in (EDAY_DAYS[3],) + EDAY_DAYS[-4:]:# This is set to remove the date for the senatorial election.
                     if day[0]:
                         report_date = day[0]
                         rc = observer.location
@@ -81,7 +81,7 @@ class Command(BaseCommand):
         
             lga_supervisors = Observer.objects.filter(role__iexact='LGA')
             for lga_supervisor in lga_supervisors:
-                for day in EDAY_DAYS[3:6]: # omit the last two dates
+                for day in EDAY_DAYS[3:7]: # omit the last two dates
                     if day[0]:
                         report_date = day[0]
                         rc = lga_supervisor.location

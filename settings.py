@@ -55,8 +55,8 @@ INSTALLED_APPS = [
     "rapidsms",
 
     # common dependencies (which don't clutter up the ui).
-    "rapidsms.contrib.handlers",
-    "rapidsms.contrib.ajax",
+    #"rapidsms.contrib.handlers",
+    #"rapidsms.contrib.ajax",
 
     # enable the django admin using a little shim app (which includes
     # the required urlpatterns), and a bunch of undocumented apps that
@@ -69,14 +69,14 @@ INSTALLED_APPS = [
     "django.contrib.comments",
 
     # the rapidsms contrib apps.
-    "rapidsms.contrib.export",
-    "rapidsms.contrib.httptester",
+    #"rapidsms.contrib.export",
+    #"rapidsms.contrib.httptester",
     #"rapidsms.contrib.locations",
     "rapidsms.contrib.messagelog",
-    "rapidsms.contrib.messaging",
-    "rapidsms.contrib.registration",
-    "rapidsms.contrib.scheduler",
-    "rapidsms.contrib.echo",
+    #"rapidsms.contrib.messaging",
+    #"rapidsms.contrib.registration",
+    #"rapidsms.contrib.scheduler",
+    #"rapidsms.contrib.echo",
     'south',
 ]
 

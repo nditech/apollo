@@ -76,6 +76,7 @@ EDAY_DAYS = (('', 'All'),
         (datetime.date(datetime(2011, 4, 2)), 'Sat 02-Apr'),
         (datetime.date(datetime(2011, 4, 7)), 'Thu 07-Apr'),
         (datetime.date(datetime(2011, 4, 9)), 'Sat 09-Apr'),
+        (datetime.date(datetime(2011, 4, 13)), 'Wed 13-Apr'),
         (datetime.date(datetime(2011, 4, 14)), 'Thu 14-Apr'),
         (datetime.date(datetime(2011, 4, 16)), 'Sat 16-Apr'),
 	(datetime.date(datetime(2011, 4, 26)), 'Tue 26-Apr'))
