@@ -12,7 +12,7 @@ from rapidsms.contrib.messagelog.models import Message
 from forms import VRChecklistForm, VRIncidentForm, DCOIncidentForm, VRChecklistFilterForm, VRIncidentFilterForm, DCOIncidentFilterForm, DCOChecklistFilterForm, DCOChecklistForm, ContactEditForm, ContactlistFilterForm
 from forms import VR_DAYS, EDAY_DAYS
 from forms import DCOIncidentUpdateForm, VRIncidentUpdateForm, MessagelogFilterForm, DashboardFilterForm, VRAnalysisFilterForm, EDAYAnalysisFilterForm, EDAYIncidentUpdateForm, EDAYIncidentFilterForm, EDAYIncidentForm, EDAYChecklistFilterForm, EDAYChecklistForm
-from forms import VRSummaryFilterForm, DCOSummaryFilterForm, EmailBlastForm
+from forms import VRSummaryFilterForm, DCOSummaryFilterForm, EmailBlastForm, EDAYResultAnalysisFilterForm
 from datetime import datetime
 from django.core import serializers
 from django.core.mail import send_mail
@@ -1714,6 +1714,45 @@ def eday_checklist_analysis(request):
     ctx['question']['DH'] = stats.eday_QDH(qs)
 
     return render_to_response('psc/eday_checklist_analysis.html', {'page_title': 'Election Day Checklist Analysis', 'filter_form': filter_form}, context_instance=ctx)
+
+
+
+@permission_required('psc.can_analyse', login_url='/')
+@login_required()
+def eday_result_analysis(request):
+    eday_days = [day[0] for day in EDAY_DAYS if day[0]]
+
+    # limit analysis to only the control checklists - VERY IMPORTANT
+    qs = (Q(checklist_index='1', observer__role='LGA')|Q(checklist_index='3', observer__role='OBS')) & Q(date__in=eday_days)
+
+    if not request.session.has_key('eday_analysis_filter'):
+        request.session['eday_analysis_filter'] = {}
+
+    if request.method == 'GET':
+        if filter(lambda key: request.GET.has_key(key), ['sample', 'zone', 'state', 'date']):
+            request.session['eday_analysis_filter'] = request.GET
+        filter_form = EDAYResultAnalysisFilterForm(request.session['eday_analysis_filter'])
+
+        if filter_form.is_valid():
+            data = filter_form.cleaned_data
+
+            if data['zone']:
+                qs &= Q(observer__zone=Zone.objects.filter(code__iexact=data['zone']))
+            elif data['state']:
+                qs &= Q(observer__state=State.objects.filter(code__iexact=data['state']))
+            if data['sample']:
+                qs &= Q(observer__id__in=Sample.objects.filter(sample=data['sample']).values_list('observer', flat=True))
+            if data['date']:
+                qs &= Q(date=datetime.date(datetime.strptime(data['date'], '%Y-%m-%d')))
+    else:
+        filter_form = EDAYResultAnalysisFilterForm()
+    return render_to_response('psc/eday_result_analysis.html', {'page_title': 'Election Day Result','filter_form': filter_form}, \
+			      context_instance=RequestContext(request))
+
+
+
+
+
 
 @permission_required('psc.view_observer', login_url='/')
 @login_required()

@@ -1,0 +1,167 @@
+{% extends 'psc/layout.html' %}
+{% block javascripts %}
+{{ block.super }}
+<script src="/assets/js/jquery-1.4.4.min.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript" charset="utf-8">
+    $(function() {
+        $("#reset").click(function () {
+            $("#id_date").val("");
+            $("#id_sample").val("");
+	});
+    });
+</script>
+<style>
+    .mid th, .mid td { vertical-align: middle; }
+</style>
+{% endblock %}
+{% load calc %}
+{% block content %}
+<div class="grid_16">
+    <div class="box">
+        <div class="block">
+            <div id="filter">
+                <form action="" method="get" id="filter_form" accept-charset="utf-8">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th width="10%">{{ filter_form.date.label }}</th>
+				<th width="10%">{{ filter_form.sample.label }}</th>
+                                <th>&nbsp;</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>{{ filter_form.date }}</td>
+                                <td>{{ filter_form.sample }}</td>
+                                <td><input type="button" value="reset" id="reset"> <input type="submit" value="filter &rarr;"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="box">
+	<h2><strong>Turnout Analysis for Zone</strong></h2>
+	<div class="block">
+		<table width="100%" class="summary">
+		    <thead>
+			<tr>
+			    <th>Zone</th>
+			    <th>N</th>
+			    <th>n</th>
+			    <th>n%</th>
+			    <th>RV</th>
+			    <th>T</th>
+			    <th>T%</th>
+			</tr>
+		    </thead>
+			{% for zone in zones %}
+			<tr>
+			    <td>{{ zone.name }}</td>{% endfor %}
+			    <td>SouthWest</td>
+			    <td>1234</td>
+			    <td>1234</td>
+			    <td>1234</td>
+			    <td>1234</td>
+			    <td>1234</td>
+			    <td>1234</td>
+			</tr>
+		</table>
+	</div>
+    </div>
+    <div class="box">
+	<h2><strong>Turnout Analysis for State</strong></h2>
+	<div class="block">
+		<table width="100%" class="summary">
+		    <thead>
+			<tr>
+			    <th>State</th>
+			    <th>N</th>
+			    <th>n</th>
+			    <th>n%</th>
+			    <th>RV</th>
+			    <th>T</th>
+			    <th>T%</th>
+			</tr>
+		    </thead>
+			{% for state in states %}
+			<tr>
+			    <td>{{ state.name }}</td>{% endfor %}
+			    <td>Ogun</td>
+			    <td>1234</td>
+			    <td>1234</td>
+			    <td>1234</td>
+			    <td>1234</td>
+			    <td>1234</td>
+			    <td>1234</td>
+			</tr>
+		</table>
+	</div>
+    </div>
+    <div class="box">
+	<h2><strong>Qualitative Analysis for Zone</strong></h2>
+	<div class="block">
+		<table width="100%" class="summary">
+		    <thead>
+			<tr>
+			    <th>Zone</th>
+			    <th>N</th>
+			    <th>n</th>
+			    <th>&nbsp;</th>
+			    <th colspan="2">PDP</th>
+			</tr>
+			<tr>
+			    <th>&nbsp;</th>
+			    <th>&nbsp;</th>
+			    <th>&nbsp;</th>
+			    <th>n</th>
+			    <th>n%</th>
+			    <th>MoE95%</th>
+			</tr>
+		    </thead>
+			<tr>
+			    <td>SouthWest</td>
+			    <td>1234</td>
+			    <td>1234</td>
+			    <td>230</td>
+			    <td>34%</td>
+			    <td>3.45%</td>
+			</tr>
+		</table>
+	</div>
+    </div>
+    <div class="box">
+	<h2><strong>Qualitative Analysis for State</strong></h2>
+	<div class="block">
+		<table width="100%" class="summary">
+		    <thead>
+			<tr>
+			    <th>State</th>
+			    <th>N</th>
+			    <th>n</th>
+			    <th>&nbsp;</th>
+			    <th colspan="2">PDP</th>
+			</tr>
+			<tr>
+			    <th>&nbsp;</th>
+			    <th>&nbsp;</th>
+			    <th>&nbsp;</th>
+			    <th>n</th>
+			    <th>n%</th>
+			    <th>MoE95%</th>
+			</tr>
+		    </thead>
+			<tr>
+			    <td>Ogun</td>
+			    <td>1234</td>
+			    <td>1234</td>
+			    <td>230</td>
+			    <td>34%</td>
+			    <td>3.45%</td>
+			</tr>
+		</table>
+	</div>
+    </div>
+</div>
+{% endblock %}

@@ -266,6 +266,12 @@ class EDAYAnalysisFilterForm(forms.Form):
     zone = forms.ChoiceField(choices=ZONES, required=False)
     state = forms.ChoiceField(choices=STATES, required=False)
     date = forms.ChoiceField(choices=EDAY_DAYS, required=False)
+    
+class EDAYResultAnalysisFilterForm(forms.Form):
+    sample = forms.ChoiceField(choices=SAMPLES, required=False)
+    zone = forms.ChoiceField(choices=ZONES, required=False)
+    state = forms.ChoiceField(choices=STATES, required=False)
+    date = forms.ChoiceField(choices=EDAY_DAYS, required=False)
 
 class VRSummaryFilterForm(forms.Form):
     date = forms.ChoiceField(choices=tuple([('', 'Today')] + [(date, label) for (date, label) in VR_DAYS if date]))

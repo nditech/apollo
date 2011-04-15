@@ -27,7 +27,7 @@ urlpatterns = patterns('',
     url(r'^eday/in/export/?', views.eday_incident_list, {'action': 'export'}, name="eday_incident_export"),
     url(r'^eday/in/(?P<incident_id>\d+)/?$', views.eday_incident_update),
     url(r'^eday/in/add/?$', views.eday_incident_add),
-    
+      
     url(r'^msglog/$', views.message_log, name="msglog"),
     url(r'^msglog/export/?$', views.message_log, {'action': 'export'}, name="msglog_export"),
     
@@ -47,6 +47,7 @@ urlpatterns = patterns('',
     url(r'^eday/analysis/(?P<question>.+)/?', views.eday_question_analysis, name="eday_question_analysis"),
     url(r'^vr/in/del/(?P<incident_id>\d+)/?$', views.vr_incident_delete),
     url(r'^dco/in/del/(?P<incident_id>\d+)/?$', views.dco_incident_delete),
+    url(r'^eday/results/?$', views.eday_result_analysis),
     
     url(r'^eday/in/del/(?P<incident_id>\d+)/?$', views.eday_incident_delete),
     
