@@ -1760,7 +1760,7 @@ def eday_result_analysis(request):
     else:
         filter_form = EDAYResultAnalysisFilterForm()
     
-    qs &= Q(DA__isnull=False,DG__isnull=False) & Q(sms_status_5th__in=[1,2]) # we must only consider samples that have answers for DA and DG
+    qs &= Q(DA__isnull=False,DG__isnull=False) # we must only consider samples that have answers for DA and DG
     
     ctx = dict()
     ctx['page_title'] = 'Election Day Result'
