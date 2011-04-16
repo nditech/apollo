@@ -781,12 +781,12 @@ def edaychecklist_handler(sender, **kwargs):
             # we'll only propagate values from a checklist to the control if the value for the current checklist matches
             # that of the other checklist or the current checklist has a value and the other doesn't
             try:
-                if getattr(kwargs['instance'], field) != None and ((getattr(kwargs['instance'], field) == getattr(other_checklist, field)) or getattr(other_checklist, field) != None):
+                if getattr(kwargs['instance'], field) != None and ((getattr(kwargs['instance'], field) == getattr(other_checklist, field)) or not getattr(other_checklist, field)):
                     setattr(control_checklist, field, getattr(kwargs['instance'], field))
                 
                 # if the above didn't execute, we want to be sure there's no conflict, if there is
                 # we must make sure the control checklist's value gets blanked
-                elif getattr(kwargs['instance'], field) != None and getattr(other_checklist, field):
+                elif getattr(kwargs['instance'], field) != None and getattr(other_checklist, field) != None:
                     setattr(control_checklist, field, None)
                 
                 # if field values for both checklists are the same, freeze the override
