@@ -5,7 +5,7 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext
 from models import *
-from django.db.models import Q
+from django.db.models import *
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from rapidsms.contrib.messagelog.tables import MessageTable
 from rapidsms.contrib.messagelog.models import Message
@@ -23,6 +23,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.views.decorators.csrf import csrf_exempt
 import json
 from django.conf import settings
+from moe import *
 
 # paginator settings
 items_per_page = 25
@@ -1716,8 +1717,7 @@ def eday_checklist_analysis(request):
     return render_to_response('psc/eday_checklist_analysis.html', {'page_title': 'Election Day Checklist Analysis', 'filter_form': filter_form}, context_instance=ctx)
 
 
-
-@permission_required('psc.can_analyse', login_url='/')
+@permission_required('psc.can_view_result', login_url='/')
 @login_required()
 def eday_result_analysis(request):
     eday_days = [day[0] for day in EDAY_DAYS if day[0]]
@@ -1725,33 +1725,96 @@ def eday_result_analysis(request):
     # limit analysis to only the control checklists - VERY IMPORTANT
     qs = (Q(checklist_index='1', observer__role='LGA')|Q(checklist_index='3', observer__role='OBS')) & Q(date__in=eday_days)
 
-    if not request.session.has_key('eday_analysis_filter'):
-        request.session['eday_analysis_filter'] = {}
+    if not request.session.has_key('eday_results_filter'):
+        request.session['eday_results_filter'] = {}
 
     if request.method == 'GET':
-        if filter(lambda key: request.GET.has_key(key), ['sample', 'zone', 'state', 'date']):
-            request.session['eday_analysis_filter'] = request.GET
-        filter_form = EDAYResultAnalysisFilterForm(request.session['eday_analysis_filter'])
+        if filter(lambda key: request.GET.has_key(key), ['sample', 'date']):
+            request.session['eday_results_filter'] = request.GET
+        filter_form = EDAYResultAnalysisFilterForm(request.session['eday_results_filter'])
 
         if filter_form.is_valid():
             data = filter_form.cleaned_data
-
-            if data['zone']:
-                qs &= Q(observer__zone=Zone.objects.filter(code__iexact=data['zone']))
-            elif data['state']:
-                qs &= Q(observer__state=State.objects.filter(code__iexact=data['state']))
+            
             if data['sample']:
                 qs &= Q(observer__id__in=Sample.objects.filter(sample=data['sample']).values_list('observer', flat=True))
             if data['date']:
                 qs &= Q(date=datetime.date(datetime.strptime(data['date'], '%Y-%m-%d')))
     else:
         filter_form = EDAYResultAnalysisFilterForm()
-    return render_to_response('psc/eday_result_analysis.html', {'page_title': 'Election Day Result','filter_form': filter_form}, \
-			      context_instance=RequestContext(request))
-
-
-
-
+    
+    ctx = dict()
+    ctx['page_title'] = 'Election Day Result'
+    ctx['filter_form'] = filter_form
+    ctx['turnout'] = dict()
+    ctx['turnout']['zones'] = list()
+    ctx['turnout']['states'] = list()
+    ctx['results'] = dict()
+    ctx['results']['zones'] = list()
+    ctx['results']['states'] = list()
+    ctx['results']['parties'] = dict()
+    ctx['results']['national'] = dict()
+    ctx['results']['zones'] = Zone.objects.all().values_list('code', flat=True)
+    ctx['N'] = RegistrationCenter.objects.all().count()
+    
+    ctx['party_codes'] = EDAYChecklist.objects.filter(qs)[0].contesting
+    ctx['party_names'] = EDAYChecklist.objects.filter(qs)[0].parties.values()
+    
+    national_data = checklist_data_generator(qs)
+    national_results = margin_of_error(national_data, ctx['N'])
+    
+    # calculate the national results
+    for index, party in enumerate(EDAYChecklist.objects.filter(qs)[0].parties.values()):
+        n = national_results['party_totals'][index];
+        N = national_results['total_votes']
+        moe95 = national_results['moe95'][index]
+        moe99 = national_results['moe99'][index]
+        
+        if not ctx['results']['national'].has_key(party):
+            ctx['results']['national'][party] = dict();
+        
+        ctx['results']['national'][party] = {'n': int(n), 'N': int(N), 'moe95': moe95, 'moe99': moe99 }
+    
+    for zone in Zone.objects.all():
+        qs_zone = qs & Q(observer__zone__id=zone.id)
+        zone_data = EDAYChecklist.objects.filter(qs_zone).aggregate(n=Count('id'), RV=Sum('DA'), T=Sum('DG'))
+        turnout_entry = dict()
+        results_entry = dict()
+        turnout_entry['name'] = results_entry['name'] = zone.name
+        turnout_entry['RV'] = zone_data['RV'] if zone_data['RV'] else 0
+        turnout_entry['n'] = results_entry['n'] = zone_data['n'] if zone_data['n'] else 0
+        turnout_entry['T'] = zone_data['T'] if zone_data['T'] else 0
+        ctx['turnout']['zones'].append(turnout_entry)
+        
+        zone_data = checklist_data_generator(qs_zone)
+        zone_results = margin_of_error(zone_data, ctx['N'])
+        results_entry['data'] = zone_results
+        results_entry['party_codes'] = EDAYChecklist.objects.filter(qs_zone)[0].contesting
+        results_entry['party_names'] = EDAYChecklist.objects.filter(qs_zone)[0].parties
+        
+        for index, party in enumerate(EDAYChecklist.objects.filter(qs_zone)[0].parties.values()):
+            n = zone_results['party_totals'][index];
+            N = zone_results['total_votes']
+            moe95 = zone_results['moe95'][index]
+            moe99 = zone_results['moe99'][index]
+            
+            if not ctx['results']['parties'].has_key(party):
+                ctx['results']['parties'][party] = dict();
+            if not ctx['results']['parties'][party].has_key(zone.code):
+                ctx['results']['parties'][party][zone.code] = dict();
+            
+            ctx['results']['parties'][party][zone.code] = {'n': int(n), 'N': int(N), 'moe95': moe95, 'moe99': moe99 }
+                
+    '''for state in State.objects.all():
+        state_data = EDAYChecklist.objects.filter(qs).filter(observer__state=state).aggregate(n=Count('id'), RV=Sum('DA'), T=Sum('DG'))
+        turnout_entry = dict()
+        turnout_entry['name'] = state.name
+        turnout_entry['RV'] = state_data['RV'] if state_data['RV'] else 0
+        turnout_entry['n'] = state_data['n'] if state_data['n'] else 0
+        turnout_entry['T'] = state_data['T'] if state_data['T'] else 0
+        ctx['turnout']['states'].append(turnout_entry)'''
+            
+    return render_to_response('psc/eday_result_analysis.html', ctx, context_instance=RequestContext(request))
 
 
 @permission_required('psc.view_observer', login_url='/')

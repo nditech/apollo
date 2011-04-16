@@ -7,7 +7,7 @@
         $("#reset").click(function () {
             $("#id_date").val("");
             $("#id_sample").val("");
-	});
+		});
     });
 </script>
 <style>
@@ -15,6 +15,7 @@
 </style>
 {% endblock %}
 {% load calc %}
+{% load dict-filters %}
 {% block content %}
 <div class="grid_16">
     <div class="box">
@@ -25,7 +26,7 @@
                         <thead>
                             <tr>
                                 <th width="10%">{{ filter_form.date.label }}</th>
-				<th width="10%">{{ filter_form.sample.label }}</th>
+								<th width="10%">{{ filter_form.sample.label }}</th>
                                 <th>&nbsp;</th>
                             </tr>
                         </thead>
@@ -56,46 +57,51 @@
 			    <th>T%</th>
 			</tr>
 		    </thead>
-			{% for zone in zones %}
+			{% for zone in turnout.zones %}
 			<tr>
-			    <td>{{ zone.name }}</td>{% endfor %}
-			    <td>SouthWest</td>
-			    <td>1234</td>
-			    <td>1234</td>
-			    <td>1234</td>
-			    <td>1234</td>
-			    <td>1234</td>
-			    <td>1234</td>
+			    <td>{{ zone.name }}</td>
+			    <td>{{ N }}</td>
+			    <td>{{ zone.n }}</td>
+			    <td>{{ zone.n|percentage:N }}</td>
+			    <td>{{ zone.RV }}</td>
+			    <td>{{ zone.T }}</td>
+			    <td>{{ zone.T|percentage:zone.RV }}</td>
 			</tr>
+			{% endfor %}
 		</table>
 	</div>
     </div>
-    <div class="box">
-	<h2><strong>Turnout Analysis for State</strong></h2>
+	<div class="box">
+	<h2><strong>Qualitative Analysis for Country</strong></h2>
 	<div class="block">
 		<table width="100%" class="summary">
 		    <thead>
 			<tr>
-			    <th>State</th>
-			    <th>N</th>
+			    <th>Party</th>
+				<th>N</th>
+			    <th colspan="4">Nigeria</th>
+			</tr>
+			<tr>
+			    <th>&nbsp;</th>
+				<th>&nbsp;</th>
 			    <th>n</th>
 			    <th>n%</th>
-			    <th>RV</th>
-			    <th>T</th>
-			    <th>T%</th>
+			    <th>ME95</th>
+				<th>ME99</th>
 			</tr>
 		    </thead>
-			{% for state in states %}
+			{% for party in party_names %}
 			<tr>
-			    <td>{{ state.name }}</td>{% endfor %}
-			    <td>Ogun</td>
-			    <td>1234</td>
-			    <td>1234</td>
-			    <td>1234</td>
-			    <td>1234</td>
-			    <td>1234</td>
-			    <td>1234</td>
+			    <td>{{ party }}</td>
+			    <td>{{ N }}</td>
+			{% with results.national|key_value:party|key_value:'N' as en %}
+			    <td>{{ results.national|key_value:party|key_value:'n' }}</td>
+				<td>{{ results.national|key_value:party|key_value:'n'|percentage:en }}</td>
+				<td>{{ results.national|key_value:party|key_value:'moe95'|stringformat:'.2f'|default:"0" }}%</td>
+				<td>{{ results.national|key_value:party|key_value:'moe99'|stringformat:'.2f'|default:"0" }}%</td>
+			{% endwith %}
 			</tr>
+			{% endfor %}
 		</table>
 	</div>
     </div>
@@ -105,61 +111,35 @@
 		<table width="100%" class="summary">
 		    <thead>
 			<tr>
-			    <th>Zone</th>
-			    <th>N</th>
-			    <th>n</th>
-			    <th>&nbsp;</th>
-			    <th colspan="2">PDP</th>
+			    <th>Party</th>
+				<th>N</th>
+				{% for zone in results.zones  %}
+			    <th colspan="3">{{ zone }}</th>
+				{% endfor %}
 			</tr>
 			<tr>
 			    <th>&nbsp;</th>
-			    <th>&nbsp;</th>
-			    <th>&nbsp;</th>
-			    <th>n</th>
-			    <th>n%</th>
-			    <th>MoE95%</th>
-			</tr>
-		    </thead>
-			<tr>
-			    <td>SouthWest</td>
-			    <td>1234</td>
-			    <td>1234</td>
-			    <td>230</td>
-			    <td>34%</td>
-			    <td>3.45%</td>
-			</tr>
-		</table>
-	</div>
-    </div>
-    <div class="box">
-	<h2><strong>Qualitative Analysis for State</strong></h2>
-	<div class="block">
-		<table width="100%" class="summary">
-		    <thead>
-			<tr>
-			    <th>State</th>
-			    <th>N</th>
-			    <th>n</th>
-			    <th>&nbsp;</th>
-			    <th colspan="2">PDP</th>
-			</tr>
-			<tr>
-			    <th>&nbsp;</th>
-			    <th>&nbsp;</th>
-			    <th>&nbsp;</th>
+				<th>&nbsp;</th>
+				{% for zone in results.zones  %}
 			    <th>n</th>
 			    <th>n%</th>
-			    <th>MoE95%</th>
+			    <th>ME95</th>
+				{% endfor %}
 			</tr>
 		    </thead>
+			{% for party in party_names %}
 			<tr>
-			    <td>Ogun</td>
-			    <td>1234</td>
-			    <td>1234</td>
-			    <td>230</td>
-			    <td>34%</td>
-			    <td>3.45%</td>
+			    <td>{{ party }}</td>
+			    <td>{{ N }}</td>			
+			{% for zone in results.zones %}
+			{% with results.parties|key_value:party|key_value:zone|key_value:'N' as en %}
+			    <td>{{ results.parties|key_value:party|key_value:zone|key_value:'n' }}</td>
+				<td>{{ results.parties|key_value:party|key_value:zone|key_value:'n'|percentage:en }}</td>
+				<td>{{ results.parties|key_value:party|key_value:zone|key_value:'moe95'|stringformat:'.2f'|default:"0" }}%</td>
+			{% endwith %}
+			{% endfor %}
 			</tr>
+			{% endfor %}
 		</table>
 	</div>
     </div>
