@@ -88,9 +88,9 @@
 				<th>ME99</th>
 			</tr>
 		    </thead>
-			{% for party in party_names %}
+			{% for party in party_codes %}
 			<tr>
-			    <td>{{ party }}</td>
+			    <td>{{ party_names|key_value:party }}</td>
 			{% with results.national|key_value:party|key_value:'N' as en %}
 			    <td>{{ results.national|key_value:party|key_value:'n' }}</td>
 				<td>{{ results.national|key_value:party|key_value:'n'|percentage:en }}</td>
@@ -122,9 +122,9 @@
 				{% endfor %}
 			</tr>
 		    </thead>
-			{% for party in party_names %}
+			{% for party in party_codes %}
 			<tr>
-			    <td>{{ party }}</td>
+			    <td>{{ party_names|key_value:party }}</td>
 			{% for zone in results.zones %}
 			{% with results.parties|key_value:party|key_value:zone|key_value:'N' as en %}
 			    <td>{{ results.parties|key_value:party|key_value:zone|key_value:'n' }}</td>

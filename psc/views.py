@@ -1758,13 +1758,13 @@ def eday_result_analysis(request):
     ctx['N'] = RegistrationCenter.objects.all().count()
     
     ctx['party_codes'] = EDAYChecklist.objects.filter(qs)[0].contesting
-    ctx['party_names'] = EDAYChecklist.objects.filter(qs)[0].parties.values()
+    ctx['party_names'] = EDAYChecklist.objects.filter(qs)[0].parties
     
     national_data = checklist_data_generator(qs)
     national_results = margin_of_error(national_data, ctx['N'])
     
     # calculate the national results
-    for index, party in enumerate(EDAYChecklist.objects.filter(qs)[0].parties.values()):
+    for index, party in enumerate(EDAYChecklist.objects.filter(qs)[0].contesting):
         n = national_results['party_totals'][index];
         N = national_results['total_votes']
         moe95 = national_results['moe95'][index]
@@ -1792,7 +1792,7 @@ def eday_result_analysis(request):
         results_entry['party_codes'] = EDAYChecklist.objects.filter(qs_zone)[0].contesting
         results_entry['party_names'] = EDAYChecklist.objects.filter(qs_zone)[0].parties
         
-        for index, party in enumerate(EDAYChecklist.objects.filter(qs_zone)[0].parties.values()):
+        for index, party in enumerate(EDAYChecklist.objects.filter(qs_zone)[0].contesting):
             n = zone_results['party_totals'][index];
             N = zone_results['total_votes']
             moe95 = zone_results['moe95'][index]
