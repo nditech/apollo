@@ -182,7 +182,24 @@ def home(request):
         
         context['eday_incidents_count'] = EDAYIncident.objects.all().count()
         context['eday_incidents_today'] = EDAYIncident.objects.filter(qs).count()
-
+        
+        # compute state compliance
+        complete_states = EDAYChecklist.objects.filter(qs).filter(queries['eday']['stations']['complete']).exclude(checklist_index='3').exclude(observer__role='LGA', observer__observer_id__iregex=r'[^1-4]$').distinct('observer__state').values_list('observer__state__name', flat=True)
+        partial_states = EDAYChecklist.objects.filter(qs).filter(queries['eday']['stations']['partial']).exclude(checklist_index='3').exclude(observer__role='LGA', observer__observer_id__iregex=r'[^1-4]$').distinct('observer__state').values_list('observer__state__name', flat=True)
+        missing_states = EDAYChecklist.objects.filter(qs).filter(queries['eday']['stations']['missing']).exclude(checklist_index='3').exclude(observer__role='LGA', observer__observer_id__iregex=r'[^1-4]$').distinct('observer__state').values_list('observer__state__name', flat=True)
+        
+        complete_set = set(complete_states)
+        partial_set = set(partial_states)
+        missing_set = set(missing_states)
+        
+        complete_set = complete_set.difference(complete_set.intersection(partial_set))
+        missing_set = missing_set.difference(missing_set.intersection(partial_set))
+        partial_set = partial_set.difference(complete_set).difference(missing_set)
+        
+        context['states_complete'] = complete_set
+        context['states_missing'] = missing_set
+        context['states_partial'] = partial_set
+        
     #render
     return render_to_response('psc/home.html', context,  context_instance=RequestContext(request))
 

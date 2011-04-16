@@ -7,7 +7,17 @@
   <script type="text/javascript" charset="utf-8">
     var timeout = 5000;
     var enabled = false;
-	var state_data = [{'state':'abia', 'value':1}, {'state':'adamawa', 'value':2}, {'state':'delta', 'value':3}, {'state':'oyo', 'value':1}];
+	var state_data = [
+	{% for state in states_complete %}
+		{'state': '{{state|lower|cut:" "}}', 'value': 1 },
+	{% endfor %}
+	{% for state in states_partial %}
+		{'state': '{{state|lower|cut:" "}}', 'value': 2 },
+	{% endfor %}
+	{% for state in states_missing %}
+		{'state': '{{state|lower|cut:" "}}', 'value': 3 },
+	{% endfor %}
+	];
     
     $(document).ready(function () {
       setTimeout('refreshDashboard()', timeout);

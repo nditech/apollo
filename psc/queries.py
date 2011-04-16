@@ -156,3 +156,24 @@ queries['eday']['official_results']['partial'] = Q(sms_status_5th=2) & ~Q(CA=5) 
 queries['eday']['official_results']['not_open'] = Q(sms_status_5th=3) & (Q(CA=5) | Q(BA=5))
 queries['eday']['official_results']['problem'] = (Q(sms_status_5th=1) | Q(sms_status_5th=2)) & (Q(CA=5) | Q(BA=5))
 queries['eday']['official_results']['missing'] = Q(sms_status_5th=3) & ~Q(CA=5) & ~Q(BA=5)
+
+queries['eday']['stations'] = {}
+queries['eday']['stations']['complete'] = Q(AA__gt=0) & Q(BA__isnull=False) & Q(BB__isnull=False) & (Q(BC__gt=0)|Q(BC__isnull=False)) & Q(BD__isnull=False) & \
+    Q(BE__isnull=False) & (Q(BF__gt=0)| Q(BF__isnull=False)) & Q(BG__isnull=False) & Q(BH__isnull=False) & Q(BJ__isnull=False) & (Q(BK__gt=0)|Q(BK__isnull=False)) & \
+    Q(BM__isnull=False) & (Q(BN__gt=0)| Q(BN__isnull=False)) & Q(BP__isnull=False) & Q(CA__isnull=False) & Q(CB__gt=0) & Q(CC__isnull=False) & Q(CD__isnull=False) & \
+    Q(CE__isnull=False) & Q(CF__gt=0) & Q(CG__gt=0) & Q(CH__gt=0) & Q(CJ__gt=0) & Q(CK__gt=0) & Q(CM__gt=0) & Q(CN__gt=0) & Q(CP__gt=0) & Q(CQ__gt=0) & \
+    Q(DA__isnull=False) & Q(DB__isnull=False) & Q(DC__isnull=False) & Q(DD__isnull=False) & Q(DE__isnull=False) & Q(DF__isnull=False) & Q(DG__isnull=False) & \
+    Q(DH__isnull=False) & Q(sms_status_5th=1)
+queries['eday']['stations']['partial'] = Q(AA__gt=0) | Q(BA__isnull=False) | Q(BB__isnull=False) | (Q(BC__gt=0)|Q(BC__isnull=False)) | Q(BD__isnull=False) | \
+        Q(BE__isnull=False) | (Q(BF__gt=0)| Q(BF__isnull=False)) | Q(BG__isnull=False) | Q(BH__isnull=False) | Q(BJ__isnull=False) | (Q(BK__gt=0)|Q(BK__isnull=False)) | \
+        Q(BM__isnull=False) | (Q(BN__gt=0)| Q(BN__isnull=False)) | Q(BP__isnull=False) | Q(CA__isnull=False) | Q(CB__gt=0) | Q(CC__isnull=False) | Q(CD__isnull=False) | \
+        Q(CE__isnull=False) | Q(CF__gt=0) | Q(CG__gt=0) | Q(CH__gt=0) | Q(CJ__gt=0) | Q(CK__gt=0) | Q(CM__gt=0) | Q(CN__gt=0) | Q(CP__gt=0) | Q(CQ__gt=0) | \
+        Q(DA__isnull=False) | Q(DB__isnull=False) | Q(DC__isnull=False) | Q(DD__isnull=False) | Q(DE__isnull=False) | Q(DF__isnull=False) | Q(DG__isnull=False) | \
+        Q(DH__isnull=False) | Q(sms_status_5th=1) & ~(queries['eday']['stations']['complete'])
+queries['eday']['stations']['missing'] = Q(AA=0)|Q(AA__isnull=True) & Q(BA__isnull=True) & Q(BB__isnull=True) & (Q(BC=0)|Q(BC__isnull=True)) & Q(BD__isnull=True) & \
+            Q(BE__isnull=True) & (Q(BF=0)|Q(BF__isnull=True)) & Q(BG__isnull=True) & Q(BH__isnull=True) & Q(BJ__isnull=True) & (Q(BK=0)|Q(BK__isnull=True)) & \
+            Q(BM__isnull=True) & (Q(BN=0)|Q(BN__isnull=True)) & Q(BP__isnull=True) & Q(CA__isnull=True) & (Q(CB=0)|Q(CB__isnull=True)) & Q(CC__isnull=True) & \
+            Q(CD__isnull=True) & Q(CE__isnull=True) & (Q(CF=0)|Q(CF__isnull=True)) & (Q(CG=0)|Q(CG__isnull=True)) & (Q(CH=0)|Q(CH__isnull=True)) & \
+            (Q(CJ=0)|Q(CJ__isnull=True)) & (Q(CK=0)|Q(CK__isnull=True)) & (Q(CM=0)|Q(CM__isnull=True)) & (Q(CN=0)|Q(CN__isnull=True)) & \
+            (Q(CP=0)|Q(CP__isnull=True)) & (Q(CQ=0)|Q(CQ__isnull=True)) & Q(DA__isnull=True) & Q(DB__isnull=True) & Q(DC__isnull=True) & Q(DD__isnull=True) & \
+            Q(DE__isnull=True) & Q(DF__isnull=True) & Q(DG__isnull=True) & Q(DH__isnull=True) & Q(sms_status_5th=3)
