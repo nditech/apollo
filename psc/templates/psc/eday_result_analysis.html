@@ -60,14 +60,23 @@
 			{% for zone in turnout.zones %}
 			<tr>
 			    <td>{{ zone.name }}</td>
-			    <td>{{ N }}</td>
+			    <td>{{ zone.N }}</td>
 			    <td>{{ zone.n }}</td>
-			    <td>{{ zone.n|percentage:N }}</td>
+			    <td>{{ zone.n|percentage:zone.N }}</td>
 			    <td>{{ zone.RV }}</td>
 			    <td>{{ zone.T }}</td>
 			    <td>{{ zone.T|percentage:zone.RV }}</td>
 			</tr>
 			{% endfor %}
+			<tr>
+			    <th>Totals</th>
+			    <th>{{ turnout.totals.N }}</th>
+			    <th>{{ turnout.totals.n }}</th>
+			    <th>{{ turnout.totals.n|percentage:turnout.totals.N }}</th>
+			    <th>{{ turnout.totals.RV }}</th>
+			    <th>{{ turnout.totals.T }}</th>
+			    <th>{{ turnout.totals.T|percentage:turnout.totals.RV }}</th>
+			</tr>
 		</table>
 	</div>
     </div>

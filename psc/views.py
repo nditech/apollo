@@ -1760,7 +1760,7 @@ def eday_result_analysis(request):
     else:
         filter_form = EDAYResultAnalysisFilterForm()
     
-    qs &= Q(DA__isnull=False,DG__isnull=False) # we must only consider samples that have answers for DA and DG
+    qs_results = qs & Q(DA__isnull=False,DG__isnull=False) # we must only consider samples that have answers for DA and DG
     
     ctx = dict()
     ctx['page_title'] = 'Election Day Result'
@@ -1768,6 +1768,7 @@ def eday_result_analysis(request):
     ctx['turnout'] = dict()
     ctx['turnout']['zones'] = list()
     ctx['turnout']['states'] = list()
+    ctx['turnout']['totals'] = {'N': 0, 'n': 0, 'RV': 0, 'T': 0}
     ctx['results'] = dict()
     ctx['results']['zones'] = list()
     ctx['results']['states'] = list()
@@ -1779,7 +1780,7 @@ def eday_result_analysis(request):
     ctx['party_codes'] = EDAYChecklist.objects.filter(qs)[0].contesting
     ctx['party_names'] = EDAYChecklist.objects.filter(qs)[0].parties
     
-    national_data = checklist_data_generator(qs)
+    national_data = checklist_data_generator(qs_results)
     national_results = margin_of_error(national_data, ctx['N'])
         
     # calculate the national results
@@ -1796,16 +1797,25 @@ def eday_result_analysis(request):
     
     for zone in Zone.objects.all():
         qs_zone = qs & Q(observer__zone__id=zone.id)
-        zone_data = EDAYChecklist.objects.filter(qs_zone).aggregate(n=Count('id'), RV=Sum('DA'), T=Sum('DG'))
+        zone_data1 = EDAYChecklist.objects.filter(qs_zone).filter(DA__isnull=False,DG__isnull=False).aggregate(n=Count('id'), RV=Sum('DA'), T=Sum('DG'))
+        zone_data2 = EDAYChecklist.objects.filter(qs_zone).aggregate(n=Count('id'), RV=Sum('DA'), T=Sum('DG'))
         turnout_entry = dict()
         results_entry = dict()
         turnout_entry['name'] = results_entry['name'] = zone.name
-        turnout_entry['RV'] = zone_data['RV'] if zone_data['RV'] else 0
-        turnout_entry['n'] = results_entry['n'] = zone_data['n'] if zone_data['n'] else 0
-        turnout_entry['T'] = zone_data['T'] if zone_data['T'] else 0
+        turnout_entry['RV'] = zone_data1['RV'] if zone_data1['RV'] else 0
+        turnout_entry['n'] = results_entry['n'] = zone_data1['n'] if zone_data1['n'] else 0
+        turnout_entry['N'] = zone_data2['n'] if zone_data2['n'] else 0
+        turnout_entry['T'] = zone_data1['T'] if zone_data1['T'] else 0
+        
+        ctx['turnout']['totals']['N'] += turnout_entry['N']
+        ctx['turnout']['totals']['n'] += turnout_entry['n']
+        ctx['turnout']['totals']['RV'] += turnout_entry['RV']
+        ctx['turnout']['totals']['T'] += turnout_entry['T']
+        
         ctx['turnout']['zones'].append(turnout_entry)
         
-        zone_data = checklist_data_generator(qs_zone)
+        qs_zone_results = qs_zone & Q(DA__isnull=False,DG__isnull=False)
+        zone_data = checklist_data_generator(qs_zone_results)
         zone_results = margin_of_error(zone_data, ctx['N'])
         results_entry['data'] = zone_results
         results_entry['party_codes'] = EDAYChecklist.objects.filter(qs_zone)[0].contesting
