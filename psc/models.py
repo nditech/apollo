@@ -815,8 +815,11 @@ def edaychecklist_5th_sms_handler(sender, **kwargs):
         and_condition = True
         or_condition = False
         for party_code in contesting_party_codes:
-            and_condition = and_condition and getattr(kwargs['instance'], party_code)
-            or_condition = or_condition or getattr(kwargs['instance'], party_code)
+            party_vote = getattr(kwargs['instance'], party_code)
+            if party_vote == 0:
+                party_vote = 1
+            and_condition = and_condition and party_vote
+            or_condition = or_condition or party_vote
 
         if and_condition:
             kwargs['instance'].sms_status_5th = 1
