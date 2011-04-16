@@ -712,6 +712,7 @@ class Access(models.Model):
             ('can_analyse', 'Can Analyse'),
             ('can_manage_data','Can Manage Data'),
             ('can_administer', 'Can Administer'),
+            ('can_view_result', 'Can View Result'),
         )
 
 from urllib import quote_plus, urlencode

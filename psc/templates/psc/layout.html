@@ -90,7 +90,7 @@
                                 <a href="{% url psc.views.eday_checklist_analysis %}">Checklist Analyses</a>
                             </li>
 							{% endif %}
-							{% if perms.psc.can_analyse %}
+							{% if perms.psc.can_view_result %}
                             <li>
                                 <a href="{% url psc.views.eday_result_analysis %}">Result Analyses</a>
                             </li>
