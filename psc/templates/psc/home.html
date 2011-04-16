@@ -3,9 +3,11 @@
   <script src="/assets/js/jquery-1.4.4.min.js" type="text/javascript" charset="utf-8"></script>
   <script src="/assets/js/raphael.js"></script>
   <script src="/assets/js/pie.js"></script>
+  <script src="/assets/js/nigeria.js"></script>
   <script type="text/javascript" charset="utf-8">
     var timeout = 5000;
     var enabled = false;
+	var state_data = [{'state':'abia', 'value':1}, {'state':'adamawa', 'value':2}, {'state':'delta', 'value':3}, {'state':'oyo', 'value':1}];
     
     $(document).ready(function () {
       setTimeout('refreshDashboard()', timeout);
@@ -22,15 +24,25 @@
 	  $("#charts_btn").toggle(
         function () {
 		  $("#tables").hide();
+		  $("#coverage_map").hide();
 		  $("#charts").show();
           $('#charts_btn').html('Table Display');
         },
         function () {
 	      $("#charts").hide();
+		  $("#coverage_map").hide();
 		  $("#tables").show();
           $('#charts_btn').html('Charts Display');
         }
       );
+	  
+	  $("#coverage_btn").click(
+		function () {
+		  $("#tables").hide();
+		  $("#coverage_map").show();
+		  $("#charts").hide();
+		}
+	  );
 	  
 	  first_values = [{{eday_not_arrived|default:"0" }}, {{ eday_arrived|default:"0" }}];
 	  first_labels = ['', ''];
@@ -52,6 +64,8 @@
 	  fifth_labels = ['', '', '', '', ''];
 	  paper5 = Raphael("fifthChart", 200, 200);
 	  fifth = paper5.pieChart(100, 100, 60, fifth_values, fifth_labels, "#fff", ['white','red', 'orange', 'yellow', 'green']);
+	  
+	  draw_map();
 	});
     
     function refreshDashboard() {
@@ -65,11 +79,24 @@
       setTimeout('refreshDashboard()', timeout);
     }
   </script>
+  <style type="text/css" media="screen">
+	#coverage_map {
+		height: 500px;
+		left: 50%;
+		margin: 50px auto;
+		width: 600px;
+	}
+	#paper {
+		height: 300px;
+		left: 50%;
+		width: 300px;
+	}
+  </style>
 {% endblock %}
 {% block content %}
     <div class="grid_16">
         <div class="box">
-            <h2>Dashboard <span class="flag"><button id="charts_btn">Charts Display</button><button id="auto_refresh">Auto Refresh: Off</button><button onclick="location.href='{% url psc.views.home %}'">Refresh</button></span></h2>
+            <h2>Dashboard <span class="flag"><button id="charts_btn">Charts Display</button><button id="coverage_btn">Coverage Map</button><button id="auto_refresh">Auto Refresh: Off</button><button onclick="location.href='{% url psc.views.home %}'">Refresh</button></span></h2>
             <div class="box dashboard">
                 <div class="controls">
                
@@ -296,6 +323,11 @@
 	                        </td>
 			    		</tr>
 					</table>
+					{% endif %}
+				</div>
+				<div id="coverage_map" style="display:none;">
+					{% if perms.psc.view_edaychecklist %}
+					<div id="paper"></div>		
 					{% endif %}
 				</div>
            </div>
