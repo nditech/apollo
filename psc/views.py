@@ -1760,6 +1760,8 @@ def eday_result_analysis(request):
     else:
         filter_form = EDAYResultAnalysisFilterForm()
     
+    qs &= Q(DA__isnull=False,DG__isnull=False) & Q(sms_status_5th__in=[1,2]) # we must only consider samples that have answers for DA and DG
+    
     ctx = dict()
     ctx['page_title'] = 'Election Day Result'
     ctx['filter_form'] = filter_form
@@ -1779,9 +1781,9 @@ def eday_result_analysis(request):
     
     national_data = checklist_data_generator(qs)
     national_results = margin_of_error(national_data, ctx['N'])
-    
+        
     # calculate the national results
-    for index, party in enumerate(EDAYChecklist.objects.filter(qs)[0].contesting):
+    for index, party in enumerate(ctx['party_codes']):
         n = national_results['party_totals'][index];
         N = national_results['total_votes']
         moe95 = national_results['moe95'][index]
@@ -1809,7 +1811,7 @@ def eday_result_analysis(request):
         results_entry['party_codes'] = EDAYChecklist.objects.filter(qs_zone)[0].contesting
         results_entry['party_names'] = EDAYChecklist.objects.filter(qs_zone)[0].parties
         
-        for index, party in enumerate(EDAYChecklist.objects.filter(qs_zone)[0].contesting):
+        for index, party in enumerate(ctx['party_codes']):
             n = zone_results['party_totals'][index];
             N = zone_results['total_votes']
             moe95 = zone_results['moe95'][index]

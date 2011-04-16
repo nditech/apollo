@@ -99,6 +99,13 @@
 			{% endwith %}
 			</tr>
 			{% endfor %}
+			<tr>
+			    <th>Totals</th>
+			    <th>{{ results.national|key_value:'EA'|key_value:'N' }}</th>
+				<th>100%</th>
+				<th>&nbsp;</th>
+				<th>&nbsp;</th>
+			</tr>
 		</table>
 	</div>
     </div>
@@ -134,6 +141,16 @@
 			{% endfor %}
 			</tr>
 			{% endfor %}
+			<tr>
+			    <th>Totals</th>
+			{% for zone in results.zones %}
+			{% with results.parties|key_value:'EA'|key_value:zone|key_value:'N' as en %}
+			    <th>{{ results.parties|key_value:'EA'|key_value:zone|key_value:'N' }}</th>
+				<th>100%</th>
+				<th>&nbsp;</th>
+			{% endwith %}
+			{% endfor %}
+			</tr>
 		</table>
 	</div>
     </div>
