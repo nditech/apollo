@@ -1890,8 +1890,15 @@ def eday_result_analysis(request):
                 ctx['results']['state']['party_totals'][state.name]['N'] += int(N)
 
             else:
+                if not ctx['results']['state']['parties'].has_key(party):
+                    ctx['results']['state']['parties'][party] = dict()
+                if not ctx['results']['state']['parties'][party].has_key(state.name):
+                    ctx['results']['state']['parties'][party][state.name] = dict()
+                if not ctx['results']['state']['party_totals'].has_key(state.name):
+                    ctx['results']['state']['party_totals'][state.name] = {'n': 0, 'N': 0}
+                
                 ctx['results']['state']['parties'][party][state.name] = {'n': 0, 'N': 0, 'moe95': 0, 'moe99': 0 }
-        
+    
     return render_to_response('psc/eday_result_analysis.html', ctx, context_instance=RequestContext(request))
 
 
