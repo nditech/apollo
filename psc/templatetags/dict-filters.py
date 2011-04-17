@@ -6,7 +6,7 @@ register = template.Library()
 
 def key_value(value, args):
     '''Retrieves a value from a dictionary given the key'''
-    return value.get(args) if value.has_key(args) else None
+    return value.get(args) if type(value) == dict and value.has_key(args) else None
 
 def index_value(value, args):
     '''Retrieves a value from a list given the index'''
