@@ -78,6 +78,7 @@ INSTALLED_APPS = [
     #"rapidsms.contrib.scheduler",
     #"rapidsms.contrib.echo",
     'south',
+    'johnny',
 ]
 
 # this rapidsms-specific setting defines which views are linked by the
@@ -133,6 +134,9 @@ LOG_FORMAT = "[%(name)s]: %(message)s"
 LOG_SIZE = 8192  # 8192 bits = 8 kb
 LOG_BACKUPS = 256  # number of logs to keep
 
+CACHE_BACKEND = 'johnny.backends.memcached://127.0.0.1:11211/'
+JOHNNY_MIDDLEWARE_KEY_PREFIX='jc_psc'
+JOHNNY_MIDDLEWARE_SECONDS=60*5
 
 # these weird dependencies should be handled by their respective apps,
 # but they're not, so here they are. most of them are for django admin.
@@ -173,6 +177,8 @@ PHONE_CC = []
 RESTRICTED_USERS = {'user1':'location1'}
 
 MIDDLEWARE_CLASSES = (
+    'johnny.middleware.LocalStoreClearMiddleware',
+    'johnny.middleware.QueryCacheMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
