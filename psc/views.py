@@ -6,6 +6,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext
 from models import *
 from django.db.models import *
+from django.views.decorators.cache import cache_page
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from rapidsms.contrib.messagelog.tables import MessageTable
 from rapidsms.contrib.messagelog.models import Message
@@ -320,9 +321,9 @@ def vr_checklist_list(request, action=None):
             data = filter_form.cleaned_data
 
             if data['zone']:
-                qs_include &= Q(observer__location_id__in=LGA.objects.filter(parent__parent__parent__code__iexact=data['zone']).values_list('id', flat=True))
+                qs_include &= Q(observer__zone__code__iexact=data['zone'])
             if data['state']:
-                qs_include &= Q(observer__location_id__in=LGA.objects.filter(parent__parent__code__exact=data['state']).values_list('id', flat=True))
+                qs_include &= Q(observer__state__code__exact=data['state'])
             if data['day']:
                 qs_include &= Q(date=data['day'])
 
@@ -413,13 +414,14 @@ def vr_checklist_list(request, action=None):
     page_details['last'] = paginator.page_range[len(paginator.page_range) - 1]
     
     msg_recipients = list(set(VRChecklist.objects.filter(qs_include).exclude(qs_exclude).values_list('observer__phone', flat=True)))
+    request.session['msg_recipients'] = msg_recipients
     messenger = NodSMS()
     credits = messenger.credit_balance()
     
     if action == "export":
         return export(request, 'vrc', checklists.object_list)
     else:
-        return render_to_response('psc/vr_checklist_list.html', {'page_title': "Voter Registration Data Management", 'checklists': checklists, 'filter_form': filter_form, 'page_details' : page_details, 'msg_recipients': msg_recipients, 'credits': credits }, context_instance=RequestContext(request))
+        return render_to_response('psc/vr_checklist_list.html', {'page_title': "Voter Registration Data Management", 'checklists': checklists, 'filter_form': filter_form, 'page_details' : page_details, 'credits': credits }, context_instance=RequestContext(request))
 
 @permission_required('psc.view_dcochecklist', login_url='/')
 @login_required()
@@ -438,9 +440,9 @@ def dco_checklist_list(request, action=None):
             data = filter_form.cleaned_data
 
             if data['zone']:
-                qs_include &= Q(observer__location_id__in=LGA.objects.filter(parent__parent__parent__code__iexact=data['zone']).values_list('id', flat=True))
+                qs_include &= Q(observer__zone__code__iexact=data['zone'])
             if data['state']:
-                qs_include &= Q(observer__location_id__in=LGA.objects.filter(parent__parent__code__exact=data['state']).values_list('id', flat=True))
+                qs_include &= Q(observer__state__code__exact=data['state'])
             if data['day']:
                 qs_include &= Q(date=data['day'])
 
@@ -486,13 +488,14 @@ def dco_checklist_list(request, action=None):
     page_details['first'] = paginator.page_range[0]
     page_details['last'] = paginator.page_range[len(paginator.page_range) - 1]
     msg_recipients = list(set(DCOChecklist.objects.filter(qs_include).values_list('observer__phone', flat=True)))
+    request.session['msg_recipients'] = msg_recipients
     messenger = NodSMS()
     credits = messenger.credit_balance()
         
     if action == "export":
         return export(request, 'dcoc', checklists.object_list)
     else:
-        return render_to_response('psc/dco_checklist_list.html', {'page_title': "Display, Claims & Objections Data Management", 'checklists': checklists, 'filter_form': filter_form, 'page_details': page_details, 'msg_recipients': msg_recipients, 'credits': credits }, context_instance=RequestContext(request))
+        return render_to_response('psc/dco_checklist_list.html', {'page_title': "Display, Claims & Objections Data Management", 'checklists': checklists, 'filter_form': filter_form, 'page_details': page_details, 'credits': credits }, context_instance=RequestContext(request))
 
 @permission_required('psc.view_edaychecklist', login_url='/')
 @login_required()
@@ -604,13 +607,14 @@ def eday_checklist_list(request, action=None):
         msg_recipients = list(set(EDAYChecklist.objects.filter(qs_include).values_list('observer__phone', flat=True)))
     else:
         msg_recipients = []
+    request.session['msg_recipients'] = msg_recipients
     messenger = NodSMS()
     credits = messenger.credit_balance()
     
     if action == "export":
         return export(request, 'edayc', checklists.object_list)
     else:
-        return render_to_response('psc/eday_checklist_list.html', {'page_title': "Election Day Data Management", 'checklists': checklists, 'filter_form': filter_form, 'page_details': page_details, 'msg_recipients': msg_recipients, 'credits': credits }, context_instance=RequestContext(request))
+        return render_to_response('psc/eday_checklist_list.html', {'page_title': "Election Day Data Management", 'checklists': checklists, 'filter_form': filter_form, 'page_details': page_details, 'credits': credits }, context_instance=RequestContext(request))
 
 @permission_required('psc.change_vrchecklist', login_url='/')
 @login_required()
@@ -802,11 +806,11 @@ def dco_incident_list(request, action=None):
         if filter_form.is_valid():
             data = filter_form.cleaned_data
             if data['zone']:
-                qs &= Q(observer__location_id__in=LGA.objects.filter(parent__parent__parent__code__iexact=data['zone']).values_list('id', flat=True))
+                qs &= Q(observer__zone__code__iexact=data['zone'])
             if data['state']:
-                qs &= Q(observer__location_id__in=LGA.objects.filter(parent__parent__code__exact=data['state']).values_list('id', flat=True))
+                qs &= Q(observer__state__code__exact=data['state'])
             if data['district']:
-                qs &= Q(observer__location_id__in=LGA.objects.filter(parent__code__exact=data['district']).values_list('id', flat=True))
+                qs &= Q(observer__district__code__exact=data['district'])
             if data['day']:
                 qs &= Q(date=data['day'])
             if data['observer_id']:
@@ -957,8 +961,10 @@ def action_log(request):
     vr_incident_log = VRIncident.audit_log.all()
     dco_checklist_log = DCOChecklist.audit_log.all()
     dco_incident_log = DCOIncident.audit_log.all()
+    eday_checklist_log = EDAYChecklist.audit_log.all()
+    eday_incident_log = EDAYIncident.audit_log.all()
 
-    object_list = list(chain(dco_checklist_log, dco_incident_log, vr_incident_log, vr_checklist_log))
+    object_list = list(chain(dco_checklist_log, dco_incident_log, vr_incident_log, vr_checklist_log, eday_checklist_log, eday_incident_log))
     
     paginator = Paginator(object_list, items_per_page)
     try:
@@ -1522,6 +1528,7 @@ def dco_state_summary(request):
         
     return render_to_response('psc/dco_state_summary.html', context_instance=ctx)
 
+@cache_page(60*15)
 @permission_required('psc.can_analyse', login_url='/')
 def vr_checklist_analysis(request):
     vr_days = [day[0] for day in VR_DAYS if day[0]]
@@ -1541,9 +1548,9 @@ def vr_checklist_analysis(request):
             data = filter_form.cleaned_data
 
             if data['zone']:
-                qs = Q(location_id__in=RegistrationCenter.objects.filter(parent__parent__parent__parent__code__iexact=data['zone']).values('id'))
+                qs = Q(observer__zone__code__iexact=data['zone'])
             elif data['state']:
-                qs = Q(location_id__in=RegistrationCenter.objects.filter(parent__parent__parent__code__iexact=data['state']).values_list('id', flat=True))
+                qs = Q(observer__state__code__iexact=data['state'])
             if data['date']:
                 qs &= Q(date=datetime.date(datetime.strptime(data['date'], '%Y-%m-%d')))
     else:
@@ -1582,6 +1589,7 @@ def vr_checklist_analysis(request):
 
     return render_to_response('psc/vr_checklist_analysis.html', {'page_title': 'Voter Registration Checklist Analysis', 'filter_form': filter_form}, context_instance=ctx)
 
+@cache_page(60*15)
 @permission_required('psc.can_analyse', login_url='/')
 def eday_question_analysis(request, question="AA"):
     eday_days = [day[0] for day in EDAY_DAYS if day[0]]
@@ -1659,6 +1667,7 @@ def eday_question_analysis(request, question="AA"):
     
     return render_to_response(template, {'page_title': 'Election Day Question Analysis', 'filter_form': filter_form}, context_instance=ctx)
 
+@cache_page(60*15)
 @permission_required('psc.can_analyse', login_url='/')
 def eday_checklist_analysis(request):
     eday_days = [day[0] for day in EDAY_DAYS if day[0]]
@@ -1735,7 +1744,7 @@ def eday_checklist_analysis(request):
 
     return render_to_response('psc/eday_checklist_analysis.html', {'page_title': 'Election Day Checklist Analysis', 'filter_form': filter_form}, context_instance=ctx)
 
-
+@cache_page(60*15)
 @permission_required('psc.can_view_result', login_url='/')
 @login_required()
 def eday_result_analysis(request):
@@ -1918,61 +1927,17 @@ def contact_list(request, action=None):
             data = filter_form.cleaned_data
     
             if data['zone']:
-                try:
-                    states_in_zone = State.objects.filter(parent__code=data['zone']).values_list('id', flat=True)
-                    districts_in_zone = District.objects.filter(parent__parent__code=data['zone']).values_list('id', flat=True)
-                    lgas_in_zone = LGA.objects.filter(parent__parent__parent__code=data['zone']).values_list('id', flat=True)
-                    rcs_in_zone = RegistrationCenter.objects.filter(parent__parent__parent__parent__code=data['zone']).values_list('id', flat=True)
-                    qs_states = Q(role__in=['NS', 'NSC', 'SC'], location_type=ContentType.objects.get_for_model(State), location_id__in=states_in_zone)
-                    qs_districts = Q(role__in=['SDC'], location_type=ContentType.objects.get_for_model(District), location_id__in=districts_in_zone)
-                    qs_lgas = Q(role__in=['LGA'], location_type=ContentType.objects.get_for_model(LGA), location_id__in=lgas_in_zone)
-                    qs_rcs = Q(role__in=['OBS'], location_type=ContentType.objects.get_for_model(RegistrationCenter), location_id__in=rcs_in_zone)
-                    qs_include &= (qs_states | qs_districts | qs_lgas | qs_rcs)
-                except:
-                    pass
-                    
+                qs_include &= Q(zone__code=data['zone'])
             if data['state']:
-                try:
-                    state = State.objects.get(code=data['state']).id
-                    districts_in_state = District.objects.filter(parent__code=data['state']).values_list('id', flat=True)
-                    lgas_in_state = LGA.objects.filter(parent__parent__code=data['state']).values_list('id', flat=True)
-                    rcs_in_state = RegistrationCenter.objects.filter(parent__parent__parent__code=data['state']).values_list('id', flat=True)           
-                    qs_states = Q(role__in=['NS', 'NSC', 'SC'], location_type=ContentType.objects.get_for_model(State), location_id=state)
-                    qs_districts = Q(role__in=['SDC'], location_type=ContentType.objects.get_for_model(District), location_id__in=districts_in_state)
-                    qs_lgas = Q(role__in=['LGA'], location_type=ContentType.objects.get_for_model(LGA), location_id__in=lgas_in_state)
-                    qs_rcs = Q(role__in=['OBS'], location_type=ContentType.objects.get_for_model(RegistrationCenter), location_id__in=rcs_in_state)
-                    qs_include &= (qs_states | qs_districts | qs_lgas | qs_rcs)
-                except:
-                    pass
-                    
+                qs_include &= Q(state__code=data['state'])
             if data['district']:
-                try:
-                    district = District.objects.get(code=data['district']).id
-                    lgas_in_district = LGA.objects.filter(parent__code=data['district']).values_list('id', flat=True)
-                    rcs_in_district = RegistrationCenter.objects.filter(parent__parent__code=data['district']).values_list('id', flat=True)
-                    qs_districts = Q(role__in=['SDC'], location_type=ContentType.objects.get_for_model(District), location_id=district)
-                    qs_lgas = Q(role__in=['LGA'], location_type=ContentType.objects.get_for_model(LGA), location_id__in=lgas_in_district)
-                    qs_rcs = Q(role__in=['OBS'], location_type=ContentType.objects.get_for_model(RegistrationCenter), location_id__in=rcs_in_district)          
-                    qs_include &= (qs_districts | qs_lgas | qs_rcs)
-                except:
-                    pass
-                    
+                qs_include &= Q(district__code=data['district'])
             if data['lga']:
-                try:
-                    lga = LGA.objects.get(code=data['lga']).id
-                    rcs_in_lga = RegistrationCenter.objects.filter(parent__code=data['lga']).values_list('id', flat=True)
-                    qs_lgas = Q(role__in=['LGA'], location_type=ContentType.objects.get_for_model(LGA), location_id=lga)
-                    qs_rcs = Q(role__in=['OBS'], location_type=ContentType.objects.get_for_model(RegistrationCenter), location_id__in=rcs_in_lga)
-                    qs_include &= (qs_lgas | qs_rcs)
-                except:
-                    pass
-                    
+                qs_include &= Q(lga__code=data['district'])
             if data['observer_id']:
                 qs_include = Q(observer_id=data['observer_id'])
-                
             if data['role']:
                 qs_include &= Q(role=data['role'])
-                    
             if data['partner']:
                 qs_include &= Q(partner__code=data['partner'])
     else:
@@ -2001,13 +1966,14 @@ def contact_list(request, action=None):
     page_details['last'] = paginator.page_range[len(paginator.page_range) - 1]
     msg_recipients = list(Observer.objects.filter(qs_include).exclude(role__in=['ZC']).values_list('phone', flat=True))
     msg_recipients += settings.PHONE_CC
+    request.session['msg_recipients'] = msg_recipients
     messenger = NodSMS()
     credits = messenger.credit_balance()
     if action == 'export':
         return export(request, 'contact', contact.object_list)
     else:
         return render_to_response('psc/contact_list.html', {'page_title': "Contacts Management",'contact': contact,
-                'filter_form': filter_form, 'page_details': page_details,'msg_recipients': msg_recipients, 'credits': credits}, 
+                'filter_form': filter_form, 'page_details': page_details, 'credits': credits}, 
                 context_instance=RequestContext(request))
 
 @permission_required('psc.change_observer', login_url='/')
@@ -2091,11 +2057,15 @@ def send_mail(request):
 @csrf_exempt
 def ajax_send_message(request):
     if request.POST:
-        to = request.POST.get('to', '')
+        to = request.session['msg_recipients']
         msg = request.POST.get('msg', '')
+        chunk_size = 5000
         if to and msg:
             messenger = NodSMS()
-            result = messenger.sendsms(to, msg)
+            chunks = [to[chunk_size*(cnt-1):chunk_size*cnt] for cnt in range(1, len(to)/chunk_size+2)]
+            for chunk in chunks:
+                if chunk:
+                    result = messenger.sendsms(",".join(chunk), msg)
             if result:
                 return HttpResponse("1");
             else:
