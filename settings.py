@@ -50,6 +50,7 @@ INSTALLED_APPS = [
 
     # the essentials.
     "psc",
+    "charts",
     "django_nose",
     "djtables",
     "rapidsms",

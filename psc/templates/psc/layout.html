@@ -95,6 +95,11 @@
                                 <a href="{% url psc.views.eday_result_analysis %}">Result Analyses</a>
                             </li>
 							{% endif %}
+							{% if perms.psc.can_view_result %}
+                            <li>
+                                <a href="{% url eday_convergence_chart %}">Results Convergence Chart</a>
+                            </li>
+							{% endif %}
                         </ul>
                     </li>{% endif %}
 					{% if perms.psc.view_observer %}
