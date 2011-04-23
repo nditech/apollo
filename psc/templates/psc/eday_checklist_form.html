@@ -138,6 +138,7 @@
 						    <tr>
 							<td>&nbsp;</td><td>CQ</td><td>{{ form.CQ.help_text }} <br />Yes <strong>(1)</strong> No <strong>(2)</strong> Unchecked <strong>(3)</strong></td><td><input name='{{ form.CQ.html_name }}' type='text' class='bigbox2' value="{{form.initial.CQ|default:''}}"></td>{% if checklist1.observer.role != 'LGA' %}<td><input name='{{ form2.CQ.html_name }}' type='text' class='cl2_only bigbox2' value="{{form2.initial.CQ|default:''}}"></td><td><input name='{{form3.CQ.html_name}}' type='text' class='control_text bigbox2' value="{{form3.initial.CQ|default:''}}"></td><td><input type='checkbox' class="control" name="override" value="{{ form3.CQ.name }}"></td>{% endif %}
 						    </tr>
+						    {% if checklist1.contesting %}
 						    <tr><td colspan="{% if checklist1.observer.role != 'LGA' %}7{% else %}4{% endif %}" class="table_heading">Official Election Summary Information</td></tr>
 						    <tr>
 							<td>&nbsp;</td><td>DA</td><td>{{ form.DA.help_text }}</td><td><input name='{{ form.DA.html_name }}' type='text' class='bigbox2' value="{{form.initial.DA|default_if_none:''}}"></td>{% if checklist1.observer.role != 'LGA' %}<td><input name='{{ form2.DA.html_name }}' type='text' class='bigbox2' value="{{form2.initial.DA|default_if_none:''}}"></td><td><input name='{{form3.DA.html_name}}' type='text' class='control_text bigbox2' value="{{form3.initial.DA|default_if_none:''}}"></td><td><input type='checkbox' class="control" name="override" value="{{ form3.DA.name }}"></td>{% endif %}
@@ -313,6 +314,7 @@
 						    <tr>
 							<td>&nbsp;</td><td>FG</td><td>Votes for {{ checklist1.parties.FG }}</td><td><input name='{{ form.FG.html_name }}' type='text' class='bigbox2' value="{{form.initial.FG|default_if_none:''}}"></td>{% if checklist1.observer.role != 'LGA' %}<td><input name='{{ form2.FG.html_name }}' type='text' class='cl2_only bigbox2' value="{{form2.initial.FG|default_if_none:''}}"></td><td><input name='{{form3.FG.html_name}}' type='text' class='control_text bigbox2' value="{{form3.initial.FG|default_if_none:''}}"></td><td><input type='checkbox' class="control" name="override" value="{{ form3.FG.name }}"></td>{% endif %}
 						    </tr>
+						    {% endif %}
 						    {% endif %}
 						    <tr>
 							<td colspan="{% if checklist1.observer.role != 'LGA' %}4{% else %}3{% endif %}">&nbsp;</td><td colspan="{% if checklist1.observer.role != 'LGA' %}3{% else %}1{% endif %}"><input type="submit" name="submit" value="Save" id="submit"></td>
