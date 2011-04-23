@@ -39,6 +39,7 @@ if settings.DEBUG:
 urlpatterns += patterns('',
     # PSC urls for default routing
     (r'^assets/(?P<path>.*)$', 'django.views.static.serve', {'document_root': 'assets'}), 
+    (r'^charts/xml/', include('charts.urls')),
     (r'', include('psc.urls')),
     (r'^comments/', include('django.contrib.comments.urls')),
 ) 

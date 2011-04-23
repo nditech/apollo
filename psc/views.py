@@ -1910,6 +1910,36 @@ def eday_result_analysis(request):
     
     return render_to_response('psc/eday_result_analysis.html', ctx, context_instance=RequestContext(request))
 
+@permission_required('psc.can_view_result', login_url='/')
+@login_required()
+def eday_cumulative_chart(request):
+    date = '2011-04-16' # default date
+    state_id = None
+    
+    if not request.session.has_key('eday_cum_chart_filter'):
+        request.session['eday_cum_chart_filter'] = {}
+
+    if request.method == 'GET':
+        if filter(lambda key: request.GET.has_key(key), ['date', 'state']):
+            request.session['eday_cum_chart_filter'] = request.GET
+        filter_form = EDAYResultAnalysisFilterForm(request.session['eday_cum_chart_filter'])
+
+        if filter_form.is_valid():
+            data = filter_form.cleaned_data
+
+            if data['state']:
+                state_id = data['state']
+            if data['date']:
+                date = data['date']
+    else:
+        filter_form = EDAYResultAnalysisFilterForm()
+
+    ctx = dict()
+    ctx['page_title'] = 'Election Day Convergence Chart'
+    ctx['filter_form'] = filter_form
+
+    return render_to_response('psc/eday_cumulative_chart.html', ctx, context_instance=RequestContext(request))
+
 
 @permission_required('psc.view_observer', login_url='/')
 @login_required()
