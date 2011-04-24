@@ -42,6 +42,27 @@
             </div>
         </div>
     </div>
+	<div class="box">
+		<h2><strong>LGA Coverage</strong></h2>
+		<div class="block">
+			<table width="100%" class="summary">
+				<thead>
+				<tr>
+					<th>&nbsp;</th>
+					<th>N</th>
+					<th>n</th>
+					<th>%</th>
+				</tr>
+				</thead>
+				<tr>
+					<td>LGA Coverage</td>
+					<td>{{ lga_total }}</td>
+					<td>{{ lga_coverage }}</td>
+					<td><strong>{{ lga_coverage|percentage:lga_total }}</strong></td>
+				</tr>
+			</table>
+		</div>
+	</div>
     <div class="box">
 	<h2><strong>Turnout Analysis for Zone</strong></h2>
 	<div class="block">
@@ -131,8 +152,8 @@
 			    <th>&nbsp;</th>
 			    <th>n</th>
 			    <th>n%</th>
-			    <th>ME95</th>
-				<th>ME99</th>
+			    <th>ME90</th>
+				<th>ME95</th>
 			</tr>
 		    </thead>
 			{% for party in party_codes %}
@@ -141,8 +162,8 @@
 			{% with results.national|key_value:party|key_value:'N' as en %}
 			    <td>{{ results.national|key_value:party|key_value:'n' }}</td>
 				<td>{{ results.national|key_value:party|key_value:'n'|percentage:en }}</td>
+				<td>{{ results.national|key_value:party|key_value:'moe90'|stringformat:'.2f'|default:"0" }}%</td>
 				<td>{{ results.national|key_value:party|key_value:'moe95'|stringformat:'.2f'|default:"0" }}%</td>
-				<td>{{ results.national|key_value:party|key_value:'moe99'|stringformat:'.2f'|default:"0" }}%</td>
 			{% endwith %}
 			</tr>
 			{% endfor %}

@@ -1744,6 +1744,14 @@ def eday_result_analysis(request):
     
     national_data = checklist_data_generator(qs_results)
     national_results = margin_of_error(national_data, ctx['N'])
+    
+    q_valid = Q(DA__isnull=False) & (Q(EA__isnull=False)|Q(EB__isnull=False)|Q(EC__isnull=False)|Q(ED__isnull=False) \
+        |Q(EE__isnull=False)|Q(EF__isnull=False)|Q(EG__isnull=False)|Q(EH__isnull=False)|Q(EJ__isnull=False)\
+        |Q(EK__isnull=False)|Q(EM__isnull=False)|Q(EN__isnull=False)|Q(EP__isnull=False)|Q(EQ__isnull=False)\
+        |Q(ER__isnull=False)|Q(ES__isnull=False)|Q(ET__isnull=False)|Q(EU__isnull=False)|Q(EV__isnull=False))
+    
+    ctx['lga_coverage'] = len(EDAYChecklist.objects.filter(qs).filter(q_valid).distinct('observer__lga__id').values_list('observer__lga__id', flat=True))
+    ctx['lga_total'] = len(EDAYChecklist.objects.filter(qs).distinct('observer__lga__id').values_list('observer__lga__id', flat=True))
         
     # calculate the national results
     for index, party in enumerate(ctx['party_codes']):
@@ -1751,15 +1759,16 @@ def eday_result_analysis(request):
         N = national_results['total_votes']
         moe95 = national_results['moe95'][index]
         moe99 = national_results['moe99'][index]
+        moe90 = national_results['moe90'][index]
         
         if not ctx['results']['national'].has_key(party):
             ctx['results']['national'][party] = dict();
         
-        ctx['results']['national'][party] = {'n': int(n), 'N': int(N), 'moe95': moe95, 'moe99': moe99 }
+        ctx['results']['national'][party] = {'n': int(n), 'N': int(N), 'moe95': moe95, 'moe99': moe99, 'moe90': moe90 }
     
     for zone in Zone.objects.all():
         qs_zone = qs & Q(observer__zone__id=zone.id)
-        zone_data1 = EDAYChecklist.objects.filter(qs_zone).filter(DA__isnull=False,DG__isnull=False).aggregate(n=Count('id'), RV=Sum('DA'), T=Sum('DG'))
+        zone_data1 = EDAYChecklist.objects.filter(qs_zone).filter(q_valid).aggregate(n=Count('id'), RV=Sum('DA'), T=Sum('DG'))
         zone_data2 = EDAYChecklist.objects.filter(qs_zone).aggregate(n=Count('id'), RV=Sum('DA'), T=Sum('DG'))
         turnout_entry = dict()
         results_entry = dict()
@@ -1776,7 +1785,7 @@ def eday_result_analysis(request):
         
         ctx['turnout']['zones'].append(turnout_entry)
         
-        qs_zone_results = qs_zone & Q(DA__isnull=False,DG__isnull=False)
+        qs_zone_results = qs_zone & q_valid
         zone_data = checklist_data_generator(qs_zone_results)
         zone_results = margin_of_error(zone_data, ctx['N'])
         #results_entry['data'] = zone_results
@@ -1789,6 +1798,7 @@ def eday_result_analysis(request):
                 N = zone_results['total_votes']
                 moe95 = zone_results['moe95'][index]
                 moe99 = zone_results['moe99'][index]
+                moe90 = zone_results['moe90'][index]
             
                 if not ctx['results']['zone']['parties'].has_key(party):
                     ctx['results']['zone']['parties'][party] = dict()
@@ -1797,16 +1807,16 @@ def eday_result_analysis(request):
                 if not ctx['results']['zone']['party_totals'].has_key(zone.code):
                     ctx['results']['zone']['party_totals'][zone.code] = {'n': 0, 'N': 0}
             
-                ctx['results']['zone']['parties'][party][zone.code] = {'n': int(n), 'N': int(N), 'moe95': moe95, 'moe99': moe99 }
+                ctx['results']['zone']['parties'][party][zone.code] = {'n': int(n), 'N': int(N), 'moe95': moe95, 'moe99': moe99, 'moe90': moe90 }
                 ctx['results']['zone']['party_totals'][zone.code]['n'] += int(n)
                 ctx['results']['zone']['party_totals'][zone.code]['N'] += int(N)
                 
             else:
-                ctx['results']['zone']['parties'][party][zone.code] = {'n': 0, 'N': 0, 'moe95': 0, 'moe99': 0 }
+                ctx['results']['zone']['parties'][party][zone.code] = {'n': 0, 'N': 0, 'moe95': 0, 'moe99': 0, 'moe90': 0 }
 
     for state in State.objects.all():
         qs_state = qs & Q(observer__state__id=state.id)
-        state_data1 = EDAYChecklist.objects.filter(qs_state).filter(DA__isnull=False,DG__isnull=False).aggregate(n=Count('id'), RV=Sum('DA'), T=Sum('DG'))
+        state_data1 = EDAYChecklist.objects.filter(qs_state).filter(q_valid).aggregate(n=Count('id'), RV=Sum('DA'), T=Sum('DG'))
         state_data2 = EDAYChecklist.objects.filter(qs_state).aggregate(n=Count('id'), RV=Sum('DA'), T=Sum('DG'))
         turnout_entry = dict()
         results_entry = dict()
@@ -1823,7 +1833,7 @@ def eday_result_analysis(request):
 
         ctx['turnout']['states'].append(turnout_entry)
 
-        qs_state_results = qs_state & Q(DA__isnull=False,DG__isnull=False)
+        qs_state_results = qs_state & q_valid
         state_data = checklist_data_generator(qs_state_results)
         state_results = margin_of_error(state_data, ctx['N'])
 
@@ -1833,6 +1843,7 @@ def eday_result_analysis(request):
                 N = state_results['total_votes']
                 moe95 = state_results['moe95'][index]
                 moe99 = state_results['moe99'][index]
+                moe90 = state_results['moe90'][index]
 
                 if not ctx['results']['state']['parties'].has_key(party):
                     ctx['results']['state']['parties'][party] = dict()
@@ -1841,7 +1852,7 @@ def eday_result_analysis(request):
                 if not ctx['results']['state']['party_totals'].has_key(state.name):
                     ctx['results']['state']['party_totals'][state.name] = {'n': 0, 'N': 0}
 
-                ctx['results']['state']['parties'][party][state.name] = {'n': int(n), 'N': int(N), 'moe95': moe95, 'moe99': moe99 }
+                ctx['results']['state']['parties'][party][state.name] = {'n': int(n), 'N': int(N), 'moe95': moe95, 'moe99': moe99, 'moe90': moe90 }
                 ctx['results']['state']['party_totals'][state.name]['n'] += int(n)
                 ctx['results']['state']['party_totals'][state.name]['N'] += int(N)
 
@@ -1853,7 +1864,7 @@ def eday_result_analysis(request):
                 if not ctx['results']['state']['party_totals'].has_key(state.name):
                     ctx['results']['state']['party_totals'][state.name] = {'n': 0, 'N': 0}
                 
-                ctx['results']['state']['parties'][party][state.name] = {'n': 0, 'N': 0, 'moe95': 0, 'moe99': 0 }
+                ctx['results']['state']['parties'][party][state.name] = {'n': 0, 'N': 0, 'moe95': 0, 'moe99': 0, 'moe90': 0 }
     
     return render_to_response('psc/eday_result_analysis.html', ctx, context_instance=RequestContext(request))
 
