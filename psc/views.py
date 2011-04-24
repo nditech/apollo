@@ -1768,15 +1768,19 @@ def eday_result_analysis(request):
     
     for zone in Zone.objects.all():
         qs_zone = qs & Q(observer__zone__id=zone.id)
-        zone_data1 = EDAYChecklist.objects.filter(qs_zone).filter(q_valid).aggregate(n=Count('id'), RV=Sum('DA'), T=Sum('DG'))
-        zone_data2 = EDAYChecklist.objects.filter(qs_zone).aggregate(n=Count('id'), RV=Sum('DA'), T=Sum('DG'))
+        zone_data1 = EDAYChecklist.objects.filter(qs_zone).filter(q_valid).aggregate(n=Count('id'), RV=Sum('DA'), T=Sum('DF'), sum_EA=Sum('EA'),\
+            sum_EB=Sum('EB'), sum_EC=Sum('EC'), sum_ED=Sum('ED'), sum_EE=Sum('EE'), sum_EF=Sum('EF'), sum_EG=Sum('EG'), sum_EH=Sum('EH'),
+            sum_EJ=Sum('EJ'), sum_EK=Sum('EK'), sum_EM=Sum('EM'), sum_EN=Sum('EN'), sum_EP=Sum('EP'), sum_EQ=Sum('EQ'), sum_ER=Sum('ER'),
+            sum_ES=Sum('ES'), sum_ET=Sum('ET'), sum_EU=Sum('EU'), sum_EV=Sum('EV'))
+        zone_data2 = EDAYChecklist.objects.filter(qs_zone).aggregate(n=Count('id'))
         turnout_entry = dict()
         results_entry = dict()
         turnout_entry['name'] = results_entry['name'] = zone.name
         turnout_entry['RV'] = zone_data1['RV'] if zone_data1['RV'] else 0
         turnout_entry['n'] = results_entry['n'] = zone_data1['n'] if zone_data1['n'] else 0
         turnout_entry['N'] = zone_data2['n'] if zone_data2['n'] else 0
-        turnout_entry['T'] = zone_data1['T'] if zone_data1['T'] else 0
+        turnout_entry['T'] = reduce(lambda x, y: x+y, [zone_data1[key] for key in ['T', 'sum_EA', 'sum_EB', 'sum_EC', 'sum_ED', 'sum_EE', 'sum_EF', 'sum_EG', 'sum_EH',\
+            'sum_EJ', 'sum_EK', 'sum_EM', 'sum_EN', 'sum_EP', 'sum_EQ', 'sum_ER', 'sum_ES', 'sum_ET', 'sum_EU', 'sum_EV']])
         
         ctx['turnout']['zone']['totals']['N'] += turnout_entry['N']
         ctx['turnout']['zone']['totals']['n'] += turnout_entry['n']
@@ -1816,15 +1820,19 @@ def eday_result_analysis(request):
 
     for state in State.objects.all():
         qs_state = qs & Q(observer__state__id=state.id)
-        state_data1 = EDAYChecklist.objects.filter(qs_state).filter(q_valid).aggregate(n=Count('id'), RV=Sum('DA'), T=Sum('DG'))
-        state_data2 = EDAYChecklist.objects.filter(qs_state).aggregate(n=Count('id'), RV=Sum('DA'), T=Sum('DG'))
+        state_data1 = EDAYChecklist.objects.filter(qs_state).filter(q_valid).aggregate(n=Count('id'), RV=Sum('DA'), T=Sum('DF'), sum_EA=Sum('EA'),\
+            sum_EB=Sum('EB'), sum_EC=Sum('EC'), sum_ED=Sum('ED'), sum_EE=Sum('EE'), sum_EF=Sum('EF'), sum_EG=Sum('EG'), sum_EH=Sum('EH'),
+            sum_EJ=Sum('EJ'), sum_EK=Sum('EK'), sum_EM=Sum('EM'), sum_EN=Sum('EN'), sum_EP=Sum('EP'), sum_EQ=Sum('EQ'), sum_ER=Sum('ER'),
+            sum_ES=Sum('ES'), sum_ET=Sum('ET'), sum_EU=Sum('EU'), sum_EV=Sum('EV'))
+        state_data2 = EDAYChecklist.objects.filter(qs_state).aggregate(n=Count('id'))
         turnout_entry = dict()
         results_entry = dict()
         turnout_entry['name'] = results_entry['name'] = state.name
         turnout_entry['RV'] = state_data1['RV'] if state_data1['RV'] else 0
         turnout_entry['n'] = results_entry['n'] = state_data1['n'] if state_data1['n'] else 0
         turnout_entry['N'] = state_data2['n'] if state_data2['n'] else 0
-        turnout_entry['T'] = state_data1['T'] if state_data1['T'] else 0
+        turnout_entry['T'] = reduce(lambda x, y: x+y, [state_data1[key] for key in ['T', 'sum_EA', 'sum_EB', 'sum_EC', 'sum_ED', 'sum_EE', 'sum_EF', 'sum_EG', 'sum_EH',\
+            'sum_EJ', 'sum_EK', 'sum_EM', 'sum_EN', 'sum_EP', 'sum_EQ', 'sum_ER', 'sum_ES', 'sum_ET', 'sum_EU', 'sum_EV']])
 
         ctx['turnout']['state']['totals']['N'] += turnout_entry['N']
         ctx['turnout']['state']['totals']['n'] += turnout_entry['n']
