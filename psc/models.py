@@ -108,7 +108,8 @@ class Sample(models.Model):
         ('STATE', 'STATE'),
         ('CONTROL', 'CONTROL'),
         ('TREATMENT', 'TREATMENT'),
-        ('NASS', 'NASS'))
+        ('NASS', 'NASS'),
+        ('NATIONAL LITE', 'NATIONAL LITE'))
         
     sample = models.CharField(choices=SAMPLES, max_length=100, db_index=True)
     observer = models.ForeignKey('Observer', blank=True, null=True, related_name="sample")
