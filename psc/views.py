@@ -1713,15 +1713,14 @@ def eday_result_analysis(request):
             
             if data['sample']:
                 qs &= Q(observer__id__in=Sample.objects.filter(sample=data['sample']).values_list('observer', flat=True))
-            if data['date']:
-                qs &= Q(date=datetime.date(datetime.strptime(data['date'], '%Y-%m-%d')))
     else:
         filter_form = EDAYResultAnalysisFilterForm()
     
+    qs &= Q(date=datetime.date(datetime.strptime('2011-04-16', '%Y-%m-%d')))
     qs_results = qs & Q(DA__isnull=False,DG__isnull=False) # we must only consider samples that have answers for DA and DG
     
     ctx = dict()
-    ctx['page_title'] = 'Election Day Result'
+    ctx['page_title'] = 'Presidential Elections Result'
     ctx['filter_form'] = filter_form
     ctx['turnout'] = dict()
     ctx['turnout']['zones'] = list()
@@ -1875,9 +1874,6 @@ def eday_result_analysis(request):
                 ctx['results']['state']['parties'][party][state.name] = {'n': 0, 'N': 0, 'moe95': 0, 'moe99': 0, 'moe90': 0 }
     
     return render_to_response('psc/eday_result_analysis.html', ctx, context_instance=RequestContext(request))
-
-
-
 
 def eday_guberresult_analysis(request):
     #eday_days = [day[0] for day in EDAY_DAYS if day[0]]
