@@ -15,12 +15,6 @@ class ObserverAdmin(admin.ModelAdmin):
     list_display = ('observer_id', 'name', 'location')
     search_fields = ['observer_id',]
      
-class GroupAdminWithCount(GroupAdmin):
-    def user_count(self, obj):
-        return obj.user_set.count()
-
-    list_display = GroupAdmin.list_display + ('user_count',)
-
 class RegistrationCenterAdmin(admin.ModelAdmin):
     list_display = ('code', 'name', 'inec_code', 'parent')
     search_fields = ['name', 'inec_code',]
@@ -29,8 +23,6 @@ class LGAAdmin(admin.ModelAdmin):
     list_display = ('name', 'code', 'parent')
     search_fields = ['name',]
     
-admin.site.unregister(Group)
-admin.site.register(Group, GroupAdminWithCount)
 admin.site.register(Zone)
 admin.site.register(State)
 admin.site.register(District)

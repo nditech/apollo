@@ -269,7 +269,7 @@ class App(AppBase):
     def _eday_checklist(self, msg, params):
         # Create the checklist
         try:
-            eday = EDAYChecklist.objects.filter(date__range=(msg.date-timedelta(3), msg.date), observer=msg.observer, checklist_index='1' if msg.observer.position == 1 else '2').order_by('-date')[0]
+            eday = EDAYChecklist.objects.filter(date__range=(msg.date-timedelta(4), msg.date), observer=msg.observer, checklist_index='1' if msg.observer.position == 1 else '2').order_by('-date')[0]
             eday.location = msg.observer.location
             eday.submitted = True
         except (EDAYChecklist.DoesNotExist, IndexError):
