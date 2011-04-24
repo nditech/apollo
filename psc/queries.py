@@ -1,5 +1,6 @@
 # Create your views here.
 from django.db.models import Q
+from datetime import datetime
 
 queries = {}
 
@@ -139,23 +140,23 @@ queries['eday']['voting_and_counting']['missing'] = Q(CA__isnull=True) & (Q(CB=0
 
 queries['eday']['official_summary'] = {}
 queries['eday']['official_summary']['complete'] = Q(DA__isnull=False) & Q(DB__isnull=False) & Q(DC__isnull=False) & Q(DD__isnull=False) & \
-    Q(DE__isnull=False) & Q(DF__isnull=False) & Q(DG__isnull=False) & Q(DH__isnull=False)
+    Q(DE__isnull=False) & Q(DF__isnull=False) & Q(DG__isnull=False) & Q(DH__isnull=False) & ~Q(date=datetime(2011, 4, 26),observer__state__name__in=[u'Adamawa', u'Anambra', u'Bayelsa', u'Cross River', u'Edo', u'Ekiti', u'FCT', u'Kogi', u'Ondo', u'Osun', u'Sokoto'])
 queries['eday']['official_summary']['partial'] = (Q(DA__isnull=False) | Q(DB__isnull=False) | Q(DC__isnull=False) | Q(DD__isnull=False) | \
-    Q(DE__isnull=False) | Q(DF__isnull=False) | Q(DG__isnull=False) | Q(DH__isnull=False)) & ~(queries['eday']['official_summary']['complete']) & ~Q(CA=5) & ~Q(BA=5)
+    Q(DE__isnull=False) | Q(DF__isnull=False) | Q(DG__isnull=False) | Q(DH__isnull=False)) & ~(queries['eday']['official_summary']['complete']) & ~Q(CA=5) & ~Q(BA=5) & ~Q(date=datetime(2011, 4, 26),observer__state__name__in=[u'Adamawa', u'Anambra', u'Bayelsa', u'Cross River', u'Edo', u'Ekiti', u'FCT', u'Kogi', u'Ondo', u'Osun', u'Sokoto'])
 queries['eday']['official_summary']['not_open'] = Q(DA__isnull=True) & Q(DB__isnull=True) & Q(DC__isnull=True) & Q(DD__isnull=True) & \
-    Q(DE__isnull=True) & Q(DF__isnull=True) & Q(DG__isnull=True) & Q(DH__isnull=True) & (Q(CA=5) | Q(BA=5))
+    Q(DE__isnull=True) & Q(DF__isnull=True) & Q(DG__isnull=True) & Q(DH__isnull=True) & (Q(CA=5) | Q(BA=5)) & ~Q(date=datetime(2011, 4, 26),observer__state__name__in=[u'Adamawa', u'Anambra', u'Bayelsa', u'Cross River', u'Edo', u'Ekiti', u'FCT', u'Kogi', u'Ondo', u'Osun', u'Sokoto'])
 queries['eday']['official_summary']['problem'] = (Q(DA__isnull=False) | Q(DB__isnull=False) | Q(DC__isnull=False) | Q(DD__isnull=False) | \
-    Q(DE__isnull=False) | Q(DF__isnull=False) | Q(DG__isnull=False) | Q(DH__isnull=False)) & (Q(CA=5) | Q(BA=5))
+    Q(DE__isnull=False) | Q(DF__isnull=False) | Q(DG__isnull=False) | Q(DH__isnull=False)) & (Q(CA=5) | Q(BA=5)) & ~Q(date=datetime(2011, 4, 26),observer__state__name__in=[u'Adamawa', u'Anambra', u'Bayelsa', u'Cross River', u'Edo', u'Ekiti', u'FCT', u'Kogi', u'Ondo', u'Osun', u'Sokoto'])
 queries['eday']['official_summary']['missing'] = Q(DA__isnull=True) & Q(DB__isnull=True) & Q(DC__isnull=True) & Q(DD__isnull=True) & \
-    Q(DE__isnull=True) & Q(DF__isnull=True) & Q(DG__isnull=True) & Q(DH__isnull=True) & ~Q(CA=5) & ~Q(BA=5)
+    Q(DE__isnull=True) & Q(DF__isnull=True) & Q(DG__isnull=True) & Q(DH__isnull=True) & ~Q(CA=5) & ~Q(BA=5) & ~Q(date=datetime(2011, 4, 26),observer__state__name__in=[u'Adamawa', u'Anambra', u'Bayelsa', u'Cross River', u'Edo', u'Ekiti', u'FCT', u'Kogi', u'Ondo', u'Osun', u'Sokoto'])
 
 
 queries['eday']['official_results'] = {}
-queries['eday']['official_results']['complete'] = Q(sms_status_5th=1) & ~Q(BA=5) & ~Q(CA=5)
-queries['eday']['official_results']['partial'] = Q(sms_status_5th=2) & ~Q(CA=5) & ~Q(BA=5)
-queries['eday']['official_results']['not_open'] = Q(sms_status_5th=3) & (Q(CA=5) | Q(BA=5))
-queries['eday']['official_results']['problem'] = (Q(sms_status_5th=1) | Q(sms_status_5th=2)) & (Q(CA=5) | Q(BA=5))
-queries['eday']['official_results']['missing'] = Q(sms_status_5th=3) & ~Q(CA=5) & ~Q(BA=5)
+queries['eday']['official_results']['complete'] = Q(sms_status_5th=1) & ~Q(BA=5) & ~Q(CA=5) & ~Q(date=datetime(2011, 4, 26),observer__state__name__in=[u'Adamawa', u'Anambra', u'Bayelsa', u'Cross River', u'Edo', u'Ekiti', u'FCT', u'Kogi', u'Ondo', u'Osun', u'Sokoto'])
+queries['eday']['official_results']['partial'] = Q(sms_status_5th=2) & ~Q(CA=5) & ~Q(BA=5) & ~Q(date=datetime(2011, 4, 26),observer__state__name__in=[u'Adamawa', u'Anambra', u'Bayelsa', u'Cross River', u'Edo', u'Ekiti', u'FCT', u'Kogi', u'Ondo', u'Osun', u'Sokoto'])
+queries['eday']['official_results']['not_open'] = Q(sms_status_5th=3) & (Q(CA=5) | Q(BA=5)) & ~Q(date=datetime(2011, 4, 26),observer__state__name__in=[u'Adamawa', u'Anambra', u'Bayelsa', u'Cross River', u'Edo', u'Ekiti', u'FCT', u'Kogi', u'Ondo', u'Osun', u'Sokoto'])
+queries['eday']['official_results']['problem'] = (Q(sms_status_5th=1) | Q(sms_status_5th=2)) & (Q(CA=5) | Q(BA=5)) & ~Q(date=datetime(2011, 4, 26),observer__state__name__in=[u'Adamawa', u'Anambra', u'Bayelsa', u'Cross River', u'Edo', u'Ekiti', u'FCT', u'Kogi', u'Ondo', u'Osun', u'Sokoto'])
+queries['eday']['official_results']['missing'] = Q(sms_status_5th=3) & ~Q(CA=5) & ~Q(BA=5) & ~Q(date=datetime(2011, 4, 26),observer__state__name__in=[u'Adamawa', u'Anambra', u'Bayelsa', u'Cross River', u'Edo', u'Ekiti', u'FCT', u'Kogi', u'Ondo', u'Osun', u'Sokoto'])
 
 queries['eday']['stations'] = {}
 queries['eday']['stations']['complete'] = Q(AA__gt=0) & Q(BA__isnull=False) & Q(BB__isnull=False) & (Q(BC__gt=0)|Q(BC__isnull=False)) & Q(BD__isnull=False) & \
