@@ -54,6 +54,7 @@ def margin_of_error(data, N=120000):
         standard_error = []
         moe95 = []
         moe99 = []
+        moe90 = []
         for j in range(0, pv.shape[1]):
             deviations.append([(pv[i,j] - p[j] * m[i])**2 for i in range(0, pv.shape[0])])
             sum_of_deviations.append(sum(deviations[j]))
@@ -61,7 +62,8 @@ def margin_of_error(data, N=120000):
             standard_error.append(sqrt(num*deg_of_freedom[j]))
             moe95.append(standard_error[j]*196)
             moe99.append(standard_error[j]*258)
+            moe90.append(standard_error[j]*164.5)
     
-        return {'moe95': moe95, 'moe99': moe99, 'party_totals': party_totals, 'total_votes': total_votes}
+        return {'moe95': moe95, 'moe99': moe99, 'moe90': moe90, 'party_totals': party_totals, 'total_votes': total_votes}
     else:
-        return {'moe95': [], 'moe99': [], 'party_totals': [0], 'total_votes': [0]}
+        return {'moe95': [], 'moe99': [], 'moe90': [], 'party_totals': [0], 'total_votes': [0]}
