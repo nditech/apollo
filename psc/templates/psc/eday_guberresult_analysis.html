@@ -25,12 +25,14 @@
                     <table>
                         <thead>
                             <tr>
-                                <th width="10%">{{ filter_form.state.label }}</th>
+                                <th width="10%">{{ filter_form.sample.label }}</th>
+				<th width="10%">{{ filter_form.state.label }}</th>
                                 <th>&nbsp;</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
+				<td>{{ filter_form.sample }}</td>
                                 <td>{{ filter_form.state }}</td>
                                 <td><input type="button" value="reset" id="reset"> <input type="submit" value="filter &rarr;"></td>
                             </tr>
@@ -40,8 +42,30 @@
             </div>
         </div>
     </div>
+    {% if party_codes %}
     <div class="box">
-	<h2><strong>Turnout Analysis for State</strong></h2>
+		<h2><strong>LGA Coverage</strong></h2>
+		<div class="block">
+			<table width="100%" class="summary">
+				<thead>
+				<tr>
+					<th>&nbsp;</th>
+					<th>N</th>
+					<th>n</th>
+					<th>%</th>
+				</tr>
+				</thead>
+				<tr>
+					<td>LGA Coverage</td>
+					<td>{{ lga_total }}</td>
+					<td>{{ lga_coverage }}</td>
+					<td><strong>{{ lga_coverage|percentage:lga_total }}</strong></td>
+				</tr>
+			</table>
+		</div>
+    </div>
+    <div class="box">
+	<h2><strong>Turnout Analysis for LGAS</strong></h2>
 	<div class="block">
 		<table width="100%" class="summary">
 		    <thead>
@@ -55,31 +79,31 @@
 			    <th>T%</th>
 			</tr>
 		    </thead>
-			{% for state in turnout.states %}
+			{% for lga in turnout.lgas %}
 			<tr {% cycle '' 'class="odd"' %}>
-			    <td>{{ state.name }}</td>
-			    <td>{{ state.N }}</td>
-			    <td>{{ state.n }}</td>
-			    <td>{{ state.n|percentage:state.N }}</td>
-			    <td>{{ state.RV }}</td>
-			    <td>{{ state.T }}</td>
-			    <td>{{ state.T|percentage:state.RV }}</td>
+			    <td>{{ lga.name }}</td>
+			    <td>{{ lga.N }}</td>
+			    <td>{{ lga.n }}</td>
+			    <td>{{ lga.n|percentage:lga.N }}</td>
+			    <td>{{ lga.RV }}</td>
+			    <td>{{ lga.T }}</td>
+			    <td>{{ lga.T|percentage:lga.RV }}</td>
 			</tr>
 			{% endfor %}
 			<tr>
 			    <th>Totals</th>
-			    <th>{{ turnout.state.totals.N }}</th>
-			    <th>{{ turnout.state.totals.n }}</th>
-			    <th>{{ turnout.state.totals.n|percentage:turnout.state.totals.N }}</th>
-			    <th>{{ turnout.state.totals.RV }}</th>
-			    <th>{{ turnout.state.totals.T }}</th>
-			    <th>{{ turnout.state.totals.T|percentage:turnout.state.totals.RV }}</th>
+			    <th>{{ turnout.lga.totals.N }}</th>
+			    <th>{{ turnout.lga.totals.n }}</th>
+			    <th>{{ turnout.lga.totals.n|percentage:turnout.lga.totals.N }}</th>
+			    <th>{{ turnout.lga.totals.RV }}</th>
+			    <th>{{ turnout.lga.totals.T }}</th>
+			    <th>{{ turnout.lga.totals.T|percentage:turnout.lga.totals.RV }}</th>
 			</tr>
 		</table>
 	</div>
     </div>
 	<div class="box">
-	<h2><strong>Qualitative Analysis for States</strong></h2>
+	<h2><strong>Qualitative Analysis for LGAS</strong></h2>
 	<div class="block">
 		<table width="100%" class="summary">
 		    <thead>
@@ -118,5 +142,12 @@
 		</table>
 	</div>
     </div>
+    {% else %}
+    <div class="box">
+		<div class="block">
+		    <p style='font-size:300%; color:blue; text-align:center'>No data available</p>
+		</div>
+    </div>
+    {% endif %}
 </div>
 {% endblock %}

@@ -1874,174 +1874,115 @@ def eday_result_analysis(request):
                 ctx['results']['state']['parties'][party][state.name] = {'n': 0, 'N': 0, 'moe95': 0, 'moe99': 0, 'moe90': 0 }
     
     return render_to_response('psc/eday_result_analysis.html', ctx, context_instance=RequestContext(request))
-
+    
 def eday_guberresult_analysis(request):
-    #eday_days = [day[0] for day in EDAY_DAYS if day[0]]
-    #
-    ## limit analysis to only the control checklists - VERY IMPORTANT
-    #qs = (Q(checklist_index='1', observer__role='LGA')|Q(checklist_index='3', observer__role='OBS')) & Q(date__in=eday_days)
-    #
-    #if not request.session.has_key('eday_results_filter'):
-    #    request.session['eday_results_filter'] = {}
-    #
-    #if request.method == 'GET':
-    #    if filter(lambda key: request.GET.has_key(key), ['state']):
-    #        request.session['eday_results_filter'] = request.GET
-    #    filter_form = EDAYResultAnalysisFilterForm(request.session['eday_results_filter'])
-    #
-    #    if filter_form.is_valid():
-    #        data = filter_form.cleaned_data
-    #        
-    #        if data['state']:
-    #            qs &= Q(observer__id__in=State.objects.filter(state=data['state']).values_list('observer', flat=True))
-    #else:
-    #    filter_form = EDAYResultAnalysisFilterForm()
-    #
-    #qs_results = qs & Q(DA__isnull=False,DG__isnull=False) # we must only consider samples that have answers for DA and DG
-    #
-    #ctx = dict()
-    #ctx['page_title'] = 'Gubernatorial Election Day Result'
-    #ctx['filter_form'] = filter_form
-    #ctx['turnout'] = dict()
-    #ctx['turnout']['states'] = list()
-    #ctx['turnout']['lgas'] = list()
-    #ctx['turnout']['state'] = {'totals': {'N': 0, 'n': 0, 'RV': 0, 'T': 0}}
-    #ctx['turnout']['lga'] = {'totals': {'N': 0, 'n': 0, 'RV': 0, 'T': 0}}
-    #
-    #ctx['results'] = dict()
-    #ctx['results']['states'] = list()
-    #ctx['results']['lgas'] = list()
-    #ctx['results']['state'] = {'parties': {}, 'party_totals': {}}
-    #ctx['results']['lga'] = {'parties': {}, 'party_totals': {}}
-    #
-    #ctx['results']['national'] = dict()
-    #ctx['results']['states'] = Zone.objects.all().values_list('code', flat=True)
-    #ctx['results']['lgas'] = State.objects.all().values_list('name', flat=True)
-    #ctx['N'] = RegistrationCenter.objects.all().count()
-    #
-    #ctx['party_codes'] = EDAYChecklist.objects.filter(qs)[0].contesting
-    #ctx['party_names'] = EDAYChecklist.objects.filter(qs)[0].parties
-    #
-    ##national_data = checklist_data_generator(qs_results)
-    ##national_results = margin_of_error(national_data, ctx['N'])
-    #    
-    ## calculate the national results
-    ##for index, party in enumerate(ctx['party_codes']):
-    ##    n = national_results['party_totals'][index];
-    ##    N = national_results['total_votes']
-    ##    moe95 = national_results['moe95'][index]
-    ##    moe99 = national_results['moe99'][index]
-    ##    
-    ##    if not ctx['results']['national'].has_key(party):
-    ##        ctx['results']['national'][party] = dict();
-    ##    
-    ##    ctx['results']['national'][party] = {'n': int(n), 'N': int(N), 'moe95': moe95, 'moe99': moe99 }
-    #
-    #for state in State.objects.all():
-    #    qs_state = qs & Q(observer__state__id=state.id)
-    #    state_data1 = EDAYChecklist.objects.filter(qs_state).filter(DA__isnull=False,DG__isnull=False).aggregate(n=Count('id'), RV=Sum('DA'), T=Sum('DG'))
-    #    state_data2 = EDAYChecklist.objects.filter(qs_state).aggregate(n=Count('id'), RV=Sum('DA'), T=Sum('DG'))
-    #    turnout_entry = dict()
-    #    results_entry = dict()
-    #    turnout_entry['name'] = results_entry['name'] = state.name
-    #    turnout_entry['RV'] = state_data1['RV'] if state_data1['RV'] else 0
-    #    turnout_entry['n'] = results_entry['n'] = state_data1['n'] if state_data1['n'] else 0
-    #    turnout_entry['N'] = state_data2['n'] if state_data2['n'] else 0
-    #    turnout_entry['T'] = state_data1['T'] if state_data1['T'] else 0
-    #    
-    #    ctx['turnout']['state']['totals']['N'] += turnout_entry['N']
-    #    ctx['turnout']['state']['totals']['n'] += turnout_entry['n']
-    #    ctx['turnout']['state']['totals']['RV'] += turnout_entry['RV']
-    #    ctx['turnout']['state']['totals']['T'] += turnout_entry['T']
-    #    
-    #    ctx['turnout']['states'].append(turnout_entry)
-    #    
-    #    qs_state_results = qs_state & Q(DA__isnull=False,DG__isnull=False)
-    #    state_data = checklist_data_generator(qs_state_results)
-    #    state_results = margin_of_error(state_data, ctx['N'])
-    #    #results_entry['data'] = zone_results
-    #    #results_entry['party_codes'] = EDAYChecklist.objects.filter(qs_zone)[0].contesting
-    #    #results_entry['party_names'] = EDAYChecklist.objects.filter(qs_zone)[0].parties
-    #    
-    #    for index, party in enumerate(ctx['party_codes']):
-    #        if type(state_data) == ndarray:
-    #            n = state_results['party_totals'][index]
-    #            N = state_results['total_votes']
-    #            moe95 = state_results['moe95'][index]
-    #            moe99 = state_results['moe99'][index]
-    #        
-    #            if not ctx['results']['state']['parties'].has_key(party):
-    #                ctx['results']['state']['parties'][party] = dict()
-    #            if not ctx['results']['state']['parties'][party].has_key(state.code):
-    #                ctx['results']['state']['parties'][party][state.code] = dict()
-    #            if not ctx['results']['state']['party_totals'].has_key(state.code):
-    #                ctx['results']['state']['party_totals'][state.code] = {'n': 0, 'N': 0}
-    #        
-    #            ctx['results']['state']['parties'][party][state.code] = {'n': int(n), 'N': int(N), 'moe95': moe95, 'moe99': moe99 }
-    #            ctx['results']['state']['party_totals'][state.code]['n'] += int(n)
-    #            ctx['results']['state']['party_totals'][state.code]['N'] += int(N)
-    #            
-    #        else:
-    #            ctx['results']['state']['parties'][party][state.code] = {'n': 0, 'N': 0, 'moe95': 0, 'moe99': 0 }
-    #
-    #for lga in LGA.objects.all():
-    #    qs_lga = qs & Q(observer__lga__id=lga.id)
-    #    lga_data1 = EDAYChecklist.objects.filter(qs_lga).filter(DA__isnull=False,DG__isnull=False).aggregate(n=Count('id'), RV=Sum('DA'), T=Sum('DG'))
-    #    lga_data2 = EDAYChecklist.objects.filter(qs_lga).aggregate(n=Count('id'), RV=Sum('DA'), T=Sum('DG'))
-    #    turnout_entry = dict()
-    #    results_entry = dict()
-    #    turnout_entry['name'] = results_entry['name'] = lga.name
-    #    turnout_entry['RV'] = lga_data1['RV'] if lga_data1['RV'] else 0
-    #    turnout_entry['n'] = results_entry['n'] = lga_data1['n'] if lga_data1['n'] else 0
-    #    turnout_entry['N'] = lga_data2['n'] if lga_data2['n'] else 0
-    #    turnout_entry['T'] = lga_data1['T'] if lga_data1['T'] else 0
-    #
-    #    ctx['turnout']['lga']['totals']['N'] += turnout_entry['N']
-    #    ctx['turnout']['lga']['totals']['n'] += turnout_entry['n']
-    #    ctx['turnout']['lga']['totals']['RV'] += turnout_entry['RV']
-    #    ctx['turnout']['lga']['totals']['T'] += turnout_entry['T']
-    #
-    #    ctx['turnout']['lgas'].append(turnout_entry)
-    #
-    #    qs_lga_results = qs_lga & Q(DA__isnull=False,DG__isnull=False)
-    #    lga_data = checklist_data_generator(qs_lga_results)
-    #    lga_results = margin_of_error(lga_data, ctx['N'])
-    #
-    #    for index, party in enumerate(ctx['party_codes']):
-    #        if type(lga_data) == ndarray:
-    #            n = lga_results['party_totals'][index]
-    #            N = lga_results['total_votes']
-    #            moe95 = lga_results['moe95'][index]
-    #            moe99 = lga_results['moe99'][index]
-    #
-    #            if not ctx['results']['lga']['parties'].has_key(party):
-    #                ctx['results']['lga']['parties'][party] = dict()
-    #            if not ctx['results']['lga']['parties'][party].has_key(lga.name):
-    #                ctx['results']['lga']['parties'][party][lga.name] = dict()
-    #            if not ctx['results']['lga']['party_totals'].has_key(lga.name):
-    #                ctx['results']['lga']['party_totals'][lga.name] = {'n': 0, 'N': 0}
-    #
-    #            ctx['results']['lga']['parties'][party][lga.name] = {'n': int(n), 'N': int(N), 'moe95': moe95, 'moe99': moe99 }
-    #            ctx['results']['lga']['party_totals'][lga.name]['n'] += int(n)
-    #            ctx['results']['lga']['party_totals'][lga.name]['N'] += int(N)
-    #
-    #        else:
-    #            if not ctx['results']['lga']['parties'].has_key(party):
-    #                ctx['results']['lga']['parties'][party] = dict()
-    #            if not ctx['results']['lga']['parties'][party].has_key(lga.name):
-    #                ctx['results']['lga']['parties'][party][lga.name] = dict()
-    #            if not ctx['results']['lga']['party_totals'].has_key(lga.name):
-    #                ctx['results']['lga']['party_totals'][lga.name] = {'n': 0, 'N': 0}
-    #            
-    #            ctx['results']['lga']['parties'][party][lga.name] = {'n': 0, 'N': 0, 'moe95': 0, 'moe99': 0 }
-    #
-    #return render_to_response('psc/eday_guberresult_analysis.html', ctx, context_instance=RequestContext(request))
-    pass
+    # limit analysis to only the control checklists - VERY IMPORTANT
+    qs = (Q(checklist_index='1', observer__role='LGA')|Q(checklist_index='3', observer__role='OBS'))
+    state_id = 27
 
+    if not request.session.has_key('eday_guberresults_filter'):
+        request.session['eday_guberresults_filter'] = {}
 
+    if request.method == 'GET':
+        if filter(lambda key: request.GET.has_key(key), ['sample', 'state']):
+            request.session['eday_guberresults_filter'] = request.GET
+        filter_form = EDAYResultAnalysisFilterForm(request.session['eday_guberresults_filter'])
 
+        if filter_form.is_valid():
+            data = filter_form.cleaned_data
+            
+            if data['sample']:
+                qs &= Q(observer__id__in=Sample.objects.filter(sample=data['sample']).values_list('observer', flat=True))
+	    if data['state']:
+                state_id = State.objects.get(code=data['state']).id
+    else:
+        filter_form = EDAYResultAnalysisFilterForm()
+        
+    qs &= Q(date=datetime.date(datetime.strptime('2011-04-26', '%Y-%m-%d')))
+    qs_results = qs
+    
+    ctx = dict()
+    ctx['page_title'] = 'Gubernatorial Elections Result'
+    ctx['filter_form'] = filter_form
+    ctx['turnout'] = dict()
+    ctx['turnout']['lga'] = {'totals': {'N': 0, 'n': 0, 'RV': 0, 'T': 0}}
+    
+    ctx['turnout']['lgas'] = list()
+    ctx['results'] = dict()
+    ctx['results']['lgas'] = list()
+    ctx['results']['lga'] = {'parties': {}, 'party_totals': {}}
+    ctx['results']['lgas'] = LGA.objects.filter(parent__parent__id=state_id).values_list('name', flat=True)
+    ctx['N'] = RegistrationCenter.objects.filter(parent__parent__parent__id=state_id).count() # restrict to only pus in the state
+    
+    try:
+	ctx['party_codes'] = EDAYChecklist.objects.filter(qs).filter(observer__state__id=state_id)[0].contesting
+	ctx['party_names'] = EDAYChecklist.objects.filter(qs).filter(observer__state__id=state_id)[0].parties
+    except IndexError:
+	ctx['party_codes'] = []
+	ctx['party_names'] = []
+    
+    if ctx['party_codes']:
+	q_valid = "Q(DA__isnull=False) & (" + "|".join(["Q(%s__isnull=False)" % party_code for party_code in ctx['party_codes']]) + ")"
+	q_valid = eval(q_valid)
+	
+	ctx['lga_coverage'] = len(EDAYChecklist.objects.filter(qs).filter(observer__state__id=state_id).filter(q_valid).distinct('observer__lga__id').values_list('observer__lga__id', flat=True))
+	ctx['lga_total'] = len(EDAYChecklist.objects.filter(qs).filter(observer__state__id=state_id).distinct('observer__lga__id').values_list('observer__lga__id', flat=True))
+	
+	for lga in LGA.objects.filter(parent__parent__id=state_id):
+	    qs_lga = qs & Q(observer__lga__id=lga.id)
+	    sum_str = ", ".join(["sum_%s=Sum('%s')" % (code, code) for code in ctx['party_codes']])
+	    lga_data1 = eval("EDAYChecklist.objects.filter(qs_lga).filter(q_valid).aggregate(n=Count('id'), RV=Sum('DA'), T=Sum('DF'), %s)" % sum_str)
+	    lga_data2 = EDAYChecklist.objects.filter(qs_lga).aggregate(n=Count('id'))
+	    turnout_entry = dict()
+	    results_entry = dict()
+	    turnout_entry['name'] = results_entry['name'] = lga.name
+	    turnout_entry['RV'] = lga_data1['RV'] if lga_data1['RV'] else 0
+	    turnout_entry['n'] = results_entry['n'] = lga_data1['n'] if lga_data1['n'] else 0
+	    turnout_entry['N'] = lga_data2['n'] if lga_data2['n'] else 0
+	    turnout_entry['T'] = reduce(lambda x, y: x if x else 0 + y if y else 0, [lga_data1[key] for key in ['T'] + ["sum_%s" % code for code in ctx['party_codes']]])
+    
+	    ctx['turnout']['lga']['totals']['N'] += turnout_entry['N']
+	    ctx['turnout']['lga']['totals']['n'] += turnout_entry['n']
+	    ctx['turnout']['lga']['totals']['RV'] += turnout_entry['RV']
+	    ctx['turnout']['lga']['totals']['T'] += turnout_entry['T']
+    
+	    ctx['turnout']['lgas'].append(turnout_entry)
+    
+	    qs_lga_results = qs_lga & q_valid
+	    lga_data = checklist_data_generator(qs_lga_results)
+	    lga_results = margin_of_error(lga_data, ctx['N'])
+    
+	    for index, party in enumerate(ctx['party_codes']):
+		if type(lga_data) == ndarray:
+		    n = lga_results['party_totals'][index]
+		    N = lga_results['total_votes']
+		    moe95 = lga_results['moe95'][index]
+		    moe99 = lga_results['moe99'][index]
+		    moe90 = lga_results['moe90'][index]
+    
+		    if not ctx['results']['lga']['parties'].has_key(party):
+			ctx['results']['lga']['parties'][party] = dict()
+		    if not ctx['results']['lga']['parties'][party].has_key(lga.name):
+			ctx['results']['lga']['parties'][party][lga.name] = dict()
+		    if not ctx['results']['lga']['party_totals'].has_key(lga.name):
+			ctx['results']['lga']['party_totals'][lga.name] = {'n': 0, 'N': 0}
+    
+		    ctx['results']['lga']['parties'][party][lga.name] = {'n': int(n), 'N': int(N), 'moe95': moe95, 'moe99': moe99, 'moe90': moe90 }
+		    ctx['results']['lga']['party_totals'][lga.name]['n'] += int(n)
+		    ctx['results']['lga']['party_totals'][lga.name]['N'] += int(N)
+    
+		else:
+		    if not ctx['results']['lga']['parties'].has_key(party):
+			ctx['results']['lga']['parties'][party] = dict()
+		    if not ctx['results']['lga']['parties'][party].has_key(lga.name):
+			ctx['results']['lga']['parties'][party][lga.name] = dict()
+		    if not ctx['results']['lga']['party_totals'].has_key(lga.name):
+			ctx['results']['lga']['party_totals'][lga.name] = {'n': 0, 'N': 0}
+		    
+		    ctx['results']['lga']['parties'][party][lga.name] = {'n': 0, 'N': 0, 'moe95': 0, 'moe99': 0, 'moe90': 0 }
 
-
+    return render_to_response('psc/eday_guberresult_analysis.html', ctx, context_instance=RequestContext(request))
+    
 @permission_required('psc.can_view_result', login_url='/')
 @login_required()
 def eday_cumulative_chart(request):
