@@ -1013,12 +1013,8 @@ def export(request, model, query_set=None):
             pscid = vri.observer.observer_id
             lga = vri.location.parent.name
             if vri.location.parent.code == '999':
-                if vri.observer.role == 'SDC':
-                    zone = vri.observer.location.parent.parent.name
-                    state = vri.observer.location.parent.name
-                else:
-                    zone = vri.observer.location.parent.name
-                    state = vri.observer.location.name
+                zone = vri.observer.zone.name if vri.observer.zone else ""
+                state = vri.observer.state.name if vri.observer.state else ""
             else:
                 zone = vri.location.parent.parent.parent.parent.name
                 state = vri.location.parent.parent.parent.name
@@ -1050,12 +1046,8 @@ def export(request, model, query_set=None):
             pscid = dcoi.observer.observer_id
             lga = dcoi.location.parent.name
             if dcoi.location.parent.code == '999':
-                if dcoi.observer.role == 'SDC':
-                    zone = dcoi.observer.location.parent.parent.name
-                    state = dcoi.observer.location.parent.name
-                else:
-                    zone = dcoi.observer.location.parent.name
-                    state = dcoi.observer.location.name
+                zone = dcoi.observer.zone.name if dcoi.observer.zone else ""
+                state = dcoi.observer.state.name if dcoi.observer.state else ""
             else:
                 zone = dcoi.location.parent.parent.parent.parent.name
                 state = dcoi.location.parent.parent.parent.name
@@ -1087,16 +1079,10 @@ def export(request, model, query_set=None):
                 lga = vrc.location.parent.name
                 rc = vrc.location.code
             except AttributeError:
-                try:
-                    zone = vrc.observer.location.parent.parent.parent.name
-                    state = vrc.observer.location.parent.parent.name
-                    lga = vrc.observer.location.name
-                    rc = "999"
-                except AttributeError:
-                    zone = ""
-                    state = ""
-                    lga = "999"
-                    rc = "999"
+                zone = vrc.observer.zone.name if vrc.observer.zone else ""
+                state = vrc.observer.state.name if vrc.observer.state else ""
+                lga = vrc.observer.lga.name if vrc.observer.lga else "999"
+                rc = "999"
             vr = vrc.date.day
             A = vrc.A if vrc.A else ""
             B = vrc.B if vrc.B else ""
@@ -1145,16 +1131,10 @@ def export(request, model, query_set=None):
                 lga = dcoc.location.parent.name
                 rc = dcoc.location.code
             except AttributeError:
-                try:
-                    zone = dcoc.observer.location.parent.parent.parent.name
-                    state = dcoc.observer.location.parent.parent.name
-                    lga = dcoc.observer.location.name
-                    rc = "999"
-                except AttributeError:
-                    zone = ""
-                    state = ""
-                    lga = "999"
-                    rc = "999"
+                zone = dcoc.observer.zone.name if dcoc.observer.zone else ""
+                state = dcoc.observer.state.name if dcoc.observer.state else ""
+                lga = dcoc.observer.lga.name if dcoc.observer.lga else "999"
+                rc = "999"
             dc = dcoc.date.day
             A = dcoc.A if dcoc.A else ""
             B = dcoc.B if dcoc.B else ""
@@ -1196,44 +1176,11 @@ def export(request, model, query_set=None):
         for contact in contacts:
             pscid = contact.observer_id
             role = contact.role
-            if role  == 'ZC':
-                zone = contact.location.name
-            elif role in ['NSC', 'NS', 'SC']:
-                zone = contact.location.parent.name
-            elif role ==  'SDC':
-                zone = contact.location.parent.parent.name
-            elif role == 'LGA':
-                zone = contact.location.parent.parent.parent.name
-            elif role == 'OBS':
-                zone = contact.location.parent.parent.parent.parent.name
-            if role in ['NSC', 'NS', 'SC']:
-                state = contact.location.name
-            elif role == 'SDC':
-                state = contact.location.parent.name
-            elif role == 'LGA':
-                state = contact.location.parent.parent.name
-            elif role == 'OBS':
-                state = contact.location.parent.parent.parent.name
-            else:
-                state = "Unknown"
-            if role == 'SDC':
-                sd = contact.location.name
-            elif role == 'LGA':
-                sd = contact.location.parent.name
-            elif role == 'OBS':
-                sd = contact.location.parent.parent.name
-            else:
-                sd = "Unknown"
-            if role == 'LGA':
-                lga = contact.location.name
-            elif role == 'OBS':
-                lga = contact.location.parent.name
-            else:
-                lga = "Unknown"
-            if role == 'OBS':
-                pu = smart_str(contact.location.name)
-            else:
-                pu = "Unknown"
+            zone = contact.zone.name
+            state = contact.state.name if contact.state else "Unknown"
+            sd = smart_str(contact.district.name) if contact.district else "Unknown"
+            lga = smart_str(contact.lga.name) if contact.lga else "Unknown"
+            pu = smart_str(contact.ps.name) if contact.ps else "Unknown"
             name = smart_str(contact.name)
             organisation = contact.partner
             gender = contact.gender
@@ -1248,12 +1195,12 @@ def export(request, model, query_set=None):
         edays = query_set
         for eday in edays:
             pscid = eday.observer.observer_id
-            observer_name = eday.observer.name
+            observer_name = smart_str(eday.observer.name)
             telephone = eday.observer.phone
             zone = eday.observer.zone if eday.observer.zone else ""
             state = eday.observer.state if eday.observer.state else ""
-            lga = eday.observer.lga if eday.observer.lga else ""
-            ps = str(eday.observer.ps).replace('"', "'") if eday.observer.ps else ""
+            lga = smart_str(eday.observer.lga.name) if eday.observer.lga else ""
+            ps = smart_str(eday.observer.ps.name).replace('"', "'") if eday.observer.ps else ""
 
             AA = eday.AA if eday.AA else ""
             BA = eday.BA
@@ -1302,12 +1249,12 @@ def export(request, model, query_set=None):
         edays = query_set
         for eday in edays:
             pscid = eday.observer.observer_id
-            observer_name = eday.observer.name
+            observer_name = smart_str(eday.observer.name)
             telephone = eday.observer.phone
             zone = eday.observer.zone if eday.observer.zone else ""
             state = eday.observer.state if eday.observer.state else ""
-            lga = eday.observer.lga if eday.observer.lga else ""
-            ps = str(eday.observer.ps).replace('"', "'") if eday.observer.ps else ""
+            lga = smart_str(eday.observer.lga.name) if eday.observer.lga else ""
+            ps = smart_str(eday.observer.ps.name).replace('"', "'") if eday.observer.ps else ""
 
             A = "1" if eday.A else ""
             B = "1" if eday.B else ""
