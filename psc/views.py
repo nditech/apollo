@@ -1903,7 +1903,7 @@ def eday_guberresult_analysis(request):
     
     ctx = dict()
     ctx['state_name'] = State.objects.get(pk=state_id).name
-    ctx['page_title'] = 'Gubernatorial Elections Results for %s' % ctx['state_name']
+    ctx['page_title'] = 'Gubernatorial Elections Results for %s State' % ctx['state_name']
     ctx['filter_form'] = filter_form
     ctx['turnout'] = dict()
     ctx['turnout']['lga'] = {'totals': {'N': 0, 'n': 0, 'RV': 0, 'T': 0}}
