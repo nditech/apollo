@@ -103,6 +103,44 @@
 	</div>
     </div>
 	<div class="box">
+	<h2><strong>Qualitative Analysis for State</strong></h2>
+	<div class="block">
+		<table width="100%" class="summary">
+		    <thead>
+			<tr>
+			    <th>Party</th>
+			    <th colspan="4">{{ state_name }}</th>
+			</tr>
+			<tr>
+			    <th>&nbsp;</th>
+			    <th>n</th>
+			    <th>n%</th>
+			    <th>MoE 90%</th>
+				<th>MoE 95%</th>
+			</tr>
+		    </thead>
+			{% for party in party_codes %}
+			<tr {% cycle '' 'class="odd"' %}>
+			    <td>{{ party_names|key_value:party }}</td>
+			{% with results.guber|key_value:party|key_value:'N' as en %}
+			    <td>{{ results.guber|key_value:party|key_value:'n' }}</td>
+				<td>{{ results.guber|key_value:party|key_value:'n'|percentage:en }}</td>
+				<td>{{ results.guber|key_value:party|key_value:'moe90'|stringformat:'.2f'|default:"0" }}%</td>
+				<td>{{ results.guber|key_value:party|key_value:'moe95'|stringformat:'.2f'|default:"0" }}%</td>
+			{% endwith %}
+			</tr>
+			{% endfor %}
+			<tr>
+			    <th>Totals</th>
+			    <th>{{ results.guber|key_value:'EA'|key_value:'N' }}</th>
+				<th>100%</th>
+				<th>&nbsp;</th>
+				<th>&nbsp;</th>
+			</tr>
+		</table>
+	</div>
+    </div>
+	<div class="box">
 	<h2><strong>Qualitative Analysis for LGAS</strong></h2>
 	<div class="block">
 		<table width="100%" class="summary">
