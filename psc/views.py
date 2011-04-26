@@ -1830,9 +1830,9 @@ def eday_result_analysis(request):
         turnout_entry['RV'] = state_data1['RV'] if state_data1['RV'] else 0
         turnout_entry['n'] = results_entry['n'] = state_data1['n'] if state_data1['n'] else 0
         turnout_entry['N'] = state_data2['n'] if state_data2['n'] else 0
-        turnout_entry['T'] = reduce(lambda x, y: x+y, [state_data1[key] for key in ['T', 'sum_EA', 'sum_EB', 'sum_EC', 'sum_ED', 'sum_EE', 'sum_EF', 'sum_EG', 'sum_EH',\
-            'sum_EJ', 'sum_EK', 'sum_EM', 'sum_EN', 'sum_EP', 'sum_EQ', 'sum_ER', 'sum_ES', 'sum_ET', 'sum_EU', 'sum_EV']])
-
+        #turnout_entry['T'] = reduce(lambda x, y: x+y, [state_data1[key] for key in ['T', 'sum_EA', 'sum_EB', 'sum_EC', 'sum_ED', 'sum_EE', 'sum_EF', 'sum_EG', 'sum_EH',\
+        #    'sum_EJ', 'sum_EK', 'sum_EM', 'sum_EN', 'sum_EP', 'sum_EQ', 'sum_ER', 'sum_ES', 'sum_ET', 'sum_EU', 'sum_EV']])
+	turnout_entry['T'] = reduce(lambda x, y: x if x else 0 + y if y else 0, [state_data1[key] for key in ['T'] + ["sum_%s" % code for code in ctx['party_codes']]])
         ctx['turnout']['state']['totals']['N'] += turnout_entry['N']
         ctx['turnout']['state']['totals']['n'] += turnout_entry['n']
         ctx['turnout']['state']['totals']['RV'] += turnout_entry['RV']
