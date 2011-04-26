@@ -13,7 +13,7 @@ from rapidsms.contrib.messagelog.models import Message
 from forms import VRChecklistForm, VRIncidentForm, DCOIncidentForm, VRChecklistFilterForm, VRIncidentFilterForm, DCOIncidentFilterForm, DCOChecklistFilterForm, DCOChecklistForm, ContactEditForm, ContactlistFilterForm
 from forms import VR_DAYS, EDAY_DAYS
 from forms import DCOIncidentUpdateForm, VRIncidentUpdateForm, MessagelogFilterForm, DashboardFilterForm, VRAnalysisFilterForm, EDAYAnalysisFilterForm, EDAYIncidentUpdateForm, EDAYIncidentFilterForm, EDAYIncidentForm, EDAYChecklistFilterForm, EDAYChecklistForm
-from forms import VRSummaryFilterForm, DCOSummaryFilterForm, EmailBlastForm, EDAYResultAnalysisFilterForm
+from forms import VRSummaryFilterForm, DCOSummaryFilterForm, EmailBlastForm, EDAYResultAnalysisFilterForm, EDAYGuberResultAnalysisFilterForm
 from datetime import datetime
 from django.core import serializers
 from django.core.mail import send_mail
@@ -1886,7 +1886,7 @@ def eday_guberresult_analysis(request):
     if request.method == 'GET':
         if filter(lambda key: request.GET.has_key(key), ['sample', 'state']):
             request.session['eday_guberresults_filter'] = request.GET
-        filter_form = EDAYResultAnalysisFilterForm(request.session['eday_guberresults_filter'])
+        filter_form = EDAYGuberResultAnalysisFilterForm(request.session['eday_guberresults_filter'])
 
         if filter_form.is_valid():
             data = filter_form.cleaned_data
@@ -1896,7 +1896,7 @@ def eday_guberresult_analysis(request):
             if data['state']:
                 state_id = State.objects.get(code=data['state']).id
     else:
-        filter_form = EDAYResultAnalysisFilterForm()
+        filter_form = EDAYGuberResultAnalysisFilterForm()
         
     qs &= Q(date=datetime.date(datetime.strptime('2011-04-26', '%Y-%m-%d')))
     qs_results = qs

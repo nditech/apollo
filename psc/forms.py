@@ -6,6 +6,7 @@ from datetime import datetime
 
 ZONES = tuple([('', 'All')]+[(zone.code, zone.code) for zone in Zone.objects.all().order_by('name')])
 STATES = tuple([('', 'All')]+[(state.code, state.name) for state in State.objects.all().order_by('name')])
+GUBER_STATES = tuple([(state.code, state.name) for state in State.objects.all().order_by('name')])
 DISTRICTS = tuple([('', 'All')]+[(district.code, district.name) for district in District.objects.all().order_by('name')])
 LGAS = tuple([('', 'All')]+[(lga.code, lga.name) for lga in LGA.objects.all().order_by('name')])
 SAMPLES = tuple([('', 'All')]+[(sample[0], sample[1]) for sample in Sample.SAMPLES])
@@ -274,6 +275,10 @@ class EDAYResultAnalysisFilterForm(forms.Form):
     state = forms.ChoiceField(choices=STATES, required=False)
     date = forms.ChoiceField(choices=EDAY_DAYS, required=False)
 
+class EDAYGuberResultAnalysisFilterForm(forms.Form):
+    sample = forms.ChoiceField(choices=SAMPLES, required=False)
+    state = forms.ChoiceField(choices=GUBER_STATES, required=False)
+    
 class VRSummaryFilterForm(forms.Form):
     date = forms.ChoiceField(choices=tuple([('', 'Today')] + [(date, label) for (date, label) in VR_DAYS if date]))
 
