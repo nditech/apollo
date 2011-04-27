@@ -9,7 +9,7 @@ def cumulative_results_data_generator(date, state_id=None):
     party_names = ['ACN', 'ADC', 'ANPP', 'APS', 'ARP', 'BNPP', 'CPC', 'FRESH', 'HDP', 'MPPP', 'NCP', 'NMDP', 'NTP', 'PDC', 'PDP', 'PMP', 'PPP', 'SDMP', 'UNPD']
     if state_id:
         try:
-            checklist = EDAYChecklist.objects.filter(date=datetime.strptime(date, '%Y-%m-%d').date(),observer__state__id=state_id)[0]
+            checklist = EDAYChecklist.objects.filter(date=datetime.strptime(date, '%Y-%m-%d').date(),observer__state__code=state_id)[0]
             party_codes = checklist.contesting
             party_names = [checklist.parties[i] for i in party_codes]
         except IndexError:
@@ -18,7 +18,7 @@ def cumulative_results_data_generator(date, state_id=None):
     # TODO: add condition for checking that at least on party has a vote (zero is allowed)
     if state_id:
         extra_fields = ", ".join(["SUM(eday.%s) AS sum_%s" % (code, code.upper()) for code in party_codes])
-        query = "SELECT eday.*, " + extra_fields + " FROM psc_edaychecklist eday, psc_observer obs, psc_state state WHERE eday.date=%s AND eday.DA IS NOT NULL AND eday.DG IS NOT NULL AND eday.observer_id=obs.id AND obs.state_id=state.id AND state.id=%s GROUP BY HOUR(last_updated), MOD(MINUTE(last_updated), 4)"
+        query = "SELECT eday.*, " + extra_fields + " FROM psc_edaychecklist eday, psc_observer obs, psc_state state WHERE eday.date=%s AND eday.DA IS NOT NULL AND eday.DG IS NOT NULL AND eday.observer_id=obs.id AND obs.state_id=state.id AND state.code=%s GROUP BY HOUR(last_updated), MOD(MINUTE(last_updated), 4)"
         checklists = EDAYChecklist.objects.raw(query, [date, state_id])
     else:
         extra_fields = ", ".join(["SUM(%s) AS sum_%s" % (code, code.upper()) for code in party_codes])
