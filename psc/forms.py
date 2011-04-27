@@ -80,7 +80,8 @@ EDAY_DAYS = (('', 'All'),
         (datetime.date(datetime(2011, 4, 13)), 'Wed 13-Apr'),
         (datetime.date(datetime(2011, 4, 14)), 'Thu 14-Apr'),
         (datetime.date(datetime(2011, 4, 16)), 'Sat 16-Apr'),
-	(datetime.date(datetime(2011, 4, 26)), 'Tue 26-Apr'))
+	(datetime.date(datetime(2011, 4, 26)), 'Tue 26-Apr'),
+        (datetime.date(datetime(2011, 4, 28)), 'Thu 28-Apr'))
 
 VR_INCIDENT_DAYS = tuple([('', 'All')]+[(date, date.strftime('%a %d-%b')) for date in VRIncident.objects.all().distinct('date').order_by('-date').values_list('date', flat=True)])
 
