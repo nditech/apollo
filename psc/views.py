@@ -1656,7 +1656,7 @@ def eday_checklist_analysis(request):
     ctx['question']['BF'] = stats.eday_QBF(qs)
     ctx['question']['BK'] = stats.eday_QBK(qs)
     ctx['question']['BN'] = stats.eday_QBN(qs)
-    ctx['question']['CB'] = stats.eday_QCQ(qs)
+    ctx['question']['CB'] = stats.eday_QCB(qs)
     ctx['question']['CF'] = stats.eday_QCF(qs)
     ctx['question']['CG'] = stats.eday_QCG(qs)
     ctx['question']['CH'] = stats.eday_QCH(qs)
