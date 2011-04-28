@@ -481,7 +481,7 @@ class EDAYChecklist(models.Model):
     @cache
     def contesting(self):
         try:
-            if self.date == datetime.date(datetime(2011, 4, 26)): # date of guber elections
+            if self.date in [datetime.date(datetime(2011, 4, 26)), datetime.date(datetime(2011, 4, 28))]: # date of guber elections
                 return self.observer.state.contesting_set.values_list('code', flat=True)
             else:
                 # the presidential elections parties are stored with no state in particular
@@ -492,7 +492,7 @@ class EDAYChecklist(models.Model):
     @property
     @cache
     def parties(self):
-        if self.date == datetime.date(datetime(2011, 4, 26)): # date of guber elections
+        if self.date in [datetime.date(datetime(2011, 4, 26)), datetime.date(datetime(2011, 4, 28))]: # date of guber elections
             return dict(self.observer.state.contesting_set.values_list('code','party__code'))
         else:
             # the presidential elections parties are stored with no state in particular
