@@ -277,6 +277,7 @@ class EDAYResultAnalysisFilterForm(forms.Form):
     date = forms.ChoiceField(choices=EDAY_DAYS, required=False)
 
 class EDAYGuberResultAnalysisFilterForm(forms.Form):
+    date = forms.ChoiceField(choices=EDAY_DAYS[-2:], required=False)
     sample = forms.ChoiceField(choices=SAMPLES, required=False)
     state = forms.ChoiceField(choices=GUBER_STATES, required=False)
     

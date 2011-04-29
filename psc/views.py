@@ -1879,6 +1879,7 @@ def eday_guberresult_analysis(request):
     # limit analysis to only the control checklists - VERY IMPORTANT
     qs = (Q(checklist_index='1', observer__role='LGA')|Q(checklist_index='3', observer__role='OBS'))
     state_id = 27
+    analysis_date = '2011-04-26'
 
     if not request.session.has_key('eday_guberresults_filter'):
         request.session['eday_guberresults_filter'] = {}
@@ -1895,10 +1896,12 @@ def eday_guberresult_analysis(request):
                 qs &= Q(observer__id__in=Sample.objects.filter(sample=data['sample']).values_list('observer', flat=True))
             if data['state']:
                 state_id = State.objects.get(code=data['state']).id
+            if data['date']:
+                analysis_date = data['date']
     else:
         filter_form = EDAYGuberResultAnalysisFilterForm()
         
-    qs &= Q(date=datetime.date(datetime.strptime('2011-04-26', '%Y-%m-%d')))
+    qs &= Q(date=datetime.date(datetime.strptime(analysis_date, '%Y-%m-%d')))
     qs_results = qs
     
     ctx = dict()
