@@ -6,6 +6,7 @@ schema.png
 local_settings.py
 *.swp
 nbproject
-psc/fixtures/registrationcenters.json
+webapp/fixtures/registrationcenters.json
 supervise/
 fabfile.py
+.DS_Store

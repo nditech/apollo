@@ -30,14 +30,6 @@ TIME_ZONE = 'Africa/Lagos'
 # to configure it. see the documentation in those modules for a list of
 # the valid options for each.
 INSTALLED_BACKENDS = {
-    #"att": {
-    #    "ENGINE": "rapidsms.backends.gsm",
-    #    "PORT": "/dev/ttyUSB0"
-    #},
-    #"verizon": {
-    #    "ENGINE": "rapidsms.backends.gsm,
-    #    "PORT": "/dev/ttyUSB1"
-    #},
     "message_tester": {
         "ENGINE": "rapidsms.backends.bucket",
     },
@@ -49,15 +41,11 @@ INSTALLED_BACKENDS = {
 INSTALLED_APPS = [
 
     # the essentials.
-    "psc",
+    "webapp",
     "charts",
     "django_nose",
     "djtables",
     "rapidsms",
-
-    # common dependencies (which don't clutter up the ui).
-    #"rapidsms.contrib.handlers",
-    #"rapidsms.contrib.ajax",
 
     # enable the django admin using a little shim app (which includes
     # the required urlpatterns), and a bunch of undocumented apps that
@@ -70,28 +58,8 @@ INSTALLED_APPS = [
     "django.contrib.comments",
 
     # the rapidsms contrib apps.
-    #"rapidsms.contrib.export",
-    #"rapidsms.contrib.httptester",
-    #"rapidsms.contrib.locations",
     "rapidsms.contrib.messagelog",
-    #"rapidsms.contrib.messaging",
-    #"rapidsms.contrib.registration",
-    #"rapidsms.contrib.scheduler",
-    #"rapidsms.contrib.echo",
     'south',
-    'johnny',
-]
-
-# this rapidsms-specific setting defines which views are linked by the
-# tabbed navigation. when adding an app to INSTALLED_APPS, you may wish
-# to add it here, also, to expose it in the rapidsms ui.
-RAPIDSMS_TABS = [
-    ("rapidsms.contrib.messagelog.views.message_log",       "Message Log"),
-    ("rapidsms.contrib.registration.views.registration",    "Registration"),
-    ("rapidsms.contrib.messaging.views.messaging",          "Messaging"),
-    ("rapidsms.contrib.locations.views.locations",          "Map"),
-    ("rapidsms.contrib.scheduler.views.index",              "Event Scheduler"),
-    ("rapidsms.contrib.httptester.views.generate_identity", "Message Tester"),
 ]
 
 
@@ -99,34 +67,28 @@ RAPIDSMS_TABS = [
 #                         BORING CONFIGURATION                         #
 # -------------------------------------------------------------------- #
 
-
 # debug mode is turned on as default, since rapidsms is under heavy
 # development at the moment, and full stack traces are very useful
 # when reporting bugs. don't forget to turn this off in production.
 DEBUG = TEMPLATE_DEBUG = False
 
-
 # after login (which is handled by django.contrib.auth), redirect to the
 # dashboard rather than 'accounts/profile' (the default).
 LOGIN_REDIRECT_URL = "/"
-
 
 # use django-nose to run tests. rapidsms contains lots of packages and
 # modules which django does not find automatically, and importing them
 # all manually is tiresome and error-prone.
 TEST_RUNNER = "django_nose.NoseTestSuiteRunner"
 
-
 # for some reason this setting is blank in django's global_settings.py,
 # but it is needed for static assets to be linkable.
 MEDIA_URL = "/static/"
-
 
 # this is required for the django.contrib.sites tests to run, but also
 # not included in global_settings.py, and is almost always ``1``.
 # see: http://docs.djangoproject.com/en/dev/ref/contrib/sites/
 SITE_ID = 1
-
 
 # the default log settings are very noisy.
 LOG_LEVEL = "DEBUG"
@@ -134,10 +96,6 @@ LOG_FILE = "rapidsms.log"
 LOG_FORMAT = "[%(name)s]: %(message)s"
 LOG_SIZE = 8192  # 8192 bits = 8 kb
 LOG_BACKUPS = 256  # number of logs to keep
-
-CACHE_BACKEND = 'johnny.backends.memcached://127.0.0.1:11211/'
-JOHNNY_MIDDLEWARE_KEY_PREFIX='jc_psc'
-JOHNNY_MIDDLEWARE_SECONDS=60*5
 
 # these weird dependencies should be handled by their respective apps,
 # but they're not, so here they are. most of them are for django admin.
@@ -178,8 +136,6 @@ PHONE_CC = []
 RESTRICTED_USERS = {'user1':'location1'}
 
 MIDDLEWARE_CLASSES = (
-    'johnny.middleware.LocalStoreClearMiddleware',
-    'johnny.middleware.QueryCacheMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
