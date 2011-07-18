@@ -1,4 +1,5 @@
-from webapp.models import ObserverRole, Location
+from django.db import models
+from webapp.utility_models import ObserverRole, Location
 
 class Observer(models.Model):
     """Election Observer"""
@@ -6,7 +7,7 @@ class Observer(models.Model):
     email = models.EmailField(blank=True)
     role = models.ForeignKey(ObserverRole)
     location = models.ForeignKey(Location)
-    supervisor = models.ForeignKey('Contact')
+    supervisor = models.ForeignKey('Contact', null=True)
 
     class Admin:
         list_display = ('',)
