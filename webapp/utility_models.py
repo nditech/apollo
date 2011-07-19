@@ -6,6 +6,7 @@ class LocationType(models.Model):
     name = models.CharField(max_length=100)
     # code is used mainly in the SMS processing logic
     code = models.CharField(blank=True, max_length=10)
+    in_form = models.BooleanField(default=False, help_text="Determines whether this LocationType can be used in SMS forms")
 
     class Admin:
         list_display = ('',)
