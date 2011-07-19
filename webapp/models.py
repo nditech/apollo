@@ -52,7 +52,7 @@ class ChecklistQuestionType(models.Model):
         ('text', 'text input'),
     )
     name = models.CharField(max_length=100)
-    validate_regex = models.CharField(blank=True, max_length=100)
+    validate_regex = models.CharField(blank=True, max_length=100, default='.*')
     widget = models.CharField(max_length=100, choices=WIDGET_CHOICES)
 
     class Admin:
