@@ -1,6 +1,8 @@
 from django.db import models
+from django.core.validators import RegexValidator
 from rapidsms.models import Contact
 from utility_models import *
+import re
 import datetime
 
 '''
@@ -32,7 +34,7 @@ class Checklist(models.Model):
 
 class ChecklistForm(models.Model):
     """Checklist Form"""
-    prefix = models.CharField(blank=True, max_length=100)
+    prefix = models.CharField(blank=True, max_length=100, validators=[RegexValidator(re.compile(r'[A-HJKMNP-Z]+', re.I), message='Prefixes may contain alphabets except the letters I, L and O')])
     name = models.CharField(max_length=100)
 
     class Admin:
@@ -67,7 +69,7 @@ class ChecklistQuestion(models.Model):
     """Checklist Question"""
     form = models.ForeignKey(ChecklistForm)
     type = models.ForeignKey(ChecklistQuestionType)
-    code = models.CharField(max_length=100)
+    code = models.CharField(max_length=100, validators=[RegexValidator(re.compile(r'[A-HJKMNP-Z]+', re.I), message='Question codes may contain alphabets except the letters I, L and O')])
     text = models.CharField(max_length=100)
     weight = models.IntegerField(help_text='The order in which the question should be displayed')
 
@@ -82,7 +84,7 @@ class ChecklistQuestion(models.Model):
 class ChecklistQuestionOption(models.Model):
     """Checklist Question Option"""
     question = models.ForeignKey(ChecklistQuestion, related_name='options')
-    code = models.CharField(max_length=100, help_text='The option value for the question')
+    code = models.CharField(max_length=100, help_text='The option value for the question', validators=[RegexValidator(re.compile(r'\d+', re.I), message='Option codes can only be numeric')])
     name = models.CharField(max_length=100, help_text='The option text for the question')
 
     class Admin:
@@ -97,7 +99,7 @@ class ChecklistResponse(models.Model):
     """Checklist Response"""
     checklist = models.ForeignKey(Checklist, related_name='responses')
     question = models.ForeignKey(ChecklistQuestion)
-    response = models.CharField(blank=True, max_length=100)
+    response = models.CharField(blank=True, max_length=100, validators=[RegexValidator(re.compile(r'\d+', re.I), message='The response may contain only numerals')])
 
     class Admin:
         list_display = ('',)
@@ -109,7 +111,7 @@ class ChecklistResponse(models.Model):
 
 class IncidentForm(models.Model):
     """Incident Form"""
-    prefix = models.CharField(blank=True, max_length=100)
+    prefix = models.CharField(blank=True, max_length=100, validators=[RegexValidator(re.compile(r'[A-HJKMNP-Z]+', re.I), message='Prefixes may contain alphabets except the letters I, L and O')])
     name = models.CharField(max_length=100)
 
     class Admin:
@@ -123,7 +125,7 @@ class IncidentForm(models.Model):
 class IncidentResponse(models.Model):
     """Incident Type"""
     form = models.ForeignKey(IncidentForm)
-    code = models.CharField(max_length=10)
+    code = models.CharField(max_length=10, validators=[RegexValidator(re.compile(r'[A-HJKMNP-Z]+', re.I), message='Incident response codes may contain alphabets except the letters I, L and O')])
     text = models.CharField(max_length=100)
 
     class Admin:

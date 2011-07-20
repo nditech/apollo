@@ -14,12 +14,11 @@ if settings.DEBUG:
         # INSTALLED_APPS via the Django static media server (NOT for use in
         # production)
         (r'^', include('rapidsms.urls.static_media')),
+        (r'^assets/(?P<path>.*)$', 'django.views.static.serve', {'document_root': 'assets'}), 
     )
 
 urlpatterns += patterns('',
-    # PSC urls for default routing
-    (r'^assets/(?P<path>.*)$', 'django.views.static.serve', {'document_root': 'assets'}), 
-    (r'^charts/xml/', include('charts.urls')),
+    # apolo urls for default routing
     (r'', include('webapp.urls')),
     (r'^comments/', include('django.contrib.comments.urls')),
 ) 
