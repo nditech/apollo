@@ -1,8 +1,14 @@
 from django.conf.urls.defaults import *
+from django.conf import settings
 from tastypie.resources import ModelResource
 from tastypie.api import Api
 import inspect
-from api import *
+# iteratively import all resources
+for app in settings.INSTALLED_APPS:
+    try:
+        exec 'from %s.api import *' % app
+    except ImportError:
+        pass
 
 api = Api()
 
