@@ -142,7 +142,7 @@ class Incident(models.Model):
     observer = models.ForeignKey(Contact)
     date = models.DateField(default=datetime.datetime.today)
     comment = models.CharField(blank=True, max_length=100)
-    responses = models.ManyToManyField(IncidentResponse, related_name='incidents')
+    responses = models.ManyToManyField(IncidentResponse, related_name='incidents', null=True, blank=True)
     created = models.DateTimeField(blank=False, auto_now_add=True)
     updated = models.DateTimeField(blank=False, auto_now=True)
 
@@ -151,4 +151,4 @@ class Incident(models.Model):
         search_fields = ('',)
 
     def __unicode__(self):
-        return self.id
+        return unicode(self.id)

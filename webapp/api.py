@@ -22,13 +22,13 @@ class LocationResource(ModelResource):
 class ContactRoleResource(ModelResource):
     class Meta:
         queryset = ObserverRole.objects.all()
-        resource_name = 'role'
+        resource_name = 'contact_role'
 
 
 class ContactResource(ModelResource):
-    role = fields.ForeignKey(ContactRoleResource, 'role')
-    location = fields.ForeignKey(LocationResource, 'location')
-    supervisor = fields.ForeignKey('ContactResource', 'supervisor', null=True, blank=True)
+    role = fields.ForeignKey(ContactRoleResource, 'role', full=True)
+    location = fields.ForeignKey(LocationResource, 'location', full=True)
+    supervisor = fields.ForeignKey('ContactResource', 'supervisor', null=True, blank=True, full=True)
     
     class Meta:
         queryset = Contact.objects.all()
@@ -41,29 +41,29 @@ class ContactResource(ModelResource):
 class ChecklistFormResource(ModelResource):
     class Meta:
         queryset = ChecklistForm.objects.all()
-        resource_name = 'form'   
+        resource_name = 'checklist_form'   
 
 
 class ChecklistQuestionTypeResource(ModelResource):
     class Meta:
         queryset = ChecklistQuestionType.objects.all()
-        resource_name = 'type'
+        resource_name = 'checklist_question_type'
 
 
 class ChecklistQuestionOptionResource(ModelResource):
     class Meta:
         queryset = ChecklistQuestionOption.objects.all()
-        resource_name = 'option'
+        resource_name = 'checklist_question_option'
 
 
 class ChecklistQuestionResource(ModelResource):
     form = fields.ForeignKey(ChecklistFormResource, 'form', readonly=True)
     type = fields.ForeignKey(ChecklistQuestionTypeResource, 'type', readonly=True)
-    options = fields.ToManyField(ChecklistQuestionOptionResource, 'option', readonly=True)
+    options = fields.ToManyField(ChecklistQuestionOptionResource, 'options', readonly=True, full=True)
     
     class Meta:
         queryset = ChecklistQuestion.objects.all()
-        resource_name = 'question'
+        resource_name = 'checklist_question'
 
 
 class ChecklistResponseResource(ModelResource):
@@ -71,20 +71,49 @@ class ChecklistResponseResource(ModelResource):
     
     class Meta:
         queryset = ChecklistResponse.objects.all()
-        resource_name = 'response'
+        resource_name = 'checklist_response'
         allowed_methods = ['get', 'put', 'post', 'delete']
         authentication = Authentication()
         authorization = Authorization()
 
 
 class ChecklistResource(ModelResource):
-    location = fields.ForeignKey(LocationResource, 'location')
-    observer = fields.ForeignKey(ContactResource, 'observer')
-    responses = fields.ToManyField(ChecklistResponseResource, 'response')
+    location = fields.ForeignKey(LocationResource, 'location', full=True)
+    observer = fields.ForeignKey(ContactResource, 'observer', full=True)
+    responses = fields.ToManyField(ChecklistResponseResource, 'responses', full=True)
     
     class Meta:
         queryset = Checklist.objects.all()
         resource_name = 'checklist'
+        allowed_methods = ['get', 'put', 'post', 'delete']
+        authentication = Authentication()
+        authorization = Authorization()
+
+
+class IncidentFormResource(ModelResource):
+    class Meta:
+        queryset = IncidentForm.objects.all()
+        resource_name = 'incident_form'
+
+class IncidentResponseResource(ModelResource):
+    form = fields.ForeignKey(IncidentFormResource, 'form', readonly=True)
+    
+    class Meta:
+        queryset = IncidentResponse.objects.all()
+        resource_name = 'incident_response'
+        allowed_methods = ['get', 'put', 'post', 'delete']
+        authentication = Authentication()
+        authorization = Authorization()
+
+
+class IncidentResource(ModelResource):
+    location = fields.ForeignKey(LocationResource, 'location', full=True)
+    observer = fields.ForeignKey(ContactResource, 'observer', full=True)
+    responses = fields.ToManyField(IncidentResponseResource, 'responses', full=True)
+    
+    class Meta:
+        queryset = Incident.objects.all()
+        resource_name = 'incident'
         allowed_methods = ['get', 'put', 'post', 'delete']
         authentication = Authentication()
         authorization = Authorization()
