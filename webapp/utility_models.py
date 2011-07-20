@@ -21,7 +21,7 @@ class Location(models.Model):
     name = models.CharField(max_length=100)
     code = models.CharField(max_length=100)
     type = models.ForeignKey(LocationType)
-    parent = models.ForeignKey('Location', null=True)
+    parent = models.ForeignKey('Location', null=True, blank=True)
     #poly = models.PolygonField()
     #latlon = models.PointField()
 
@@ -36,7 +36,7 @@ class Location(models.Model):
 class ObserverRole(models.Model):
     """Roles"""
     name = models.CharField(max_length=100)
-    parent = models.ForeignKey('ObserverRole', null=True)
+    parent = models.ForeignKey('ObserverRole', null=True, blank=True)
 
     class Admin:
         list_display = ('',)
