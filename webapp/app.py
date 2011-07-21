@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # vim: ai ts=4 sts=4 et sw=4
-
+from django.conf import settings
 from rapidsms.apps.base import AppBase
 from models import *
 import re
@@ -13,7 +13,8 @@ class App(AppBase):
         form_prefixes.extend(list(IncidentForm.objects.all().values_list("prefix", flat=True)))
         form_prefixes = list(set(form_prefixes)) # make the list unique
         
-        pattern_string = r'PSC(?P<observer_id>\d+)(?P<form_type>(' + "|".join(form_prefixes) + '))(?P<day>\d{1,2})(?P<location_type>(' + "|".join(LocationType.objects.all().exclude(in_form=False).values_list("code", flat=True)) + '))(?P<location_id>\d+)(!?)((?P<responses>[A-Z\d]{1,})@?((?P<comments>).*))?'
+        prefix = settings.SMS_PREFIX if hasattr(settings, 'SMS_PREFIX') else ''
+        pattern_string = prefix + r'(?P<observer_id>\d+)(?P<form_type>(' + "|".join(form_prefixes) + '))(?P<day>\d{1,2})(?P<location_type>(' + "|".join(LocationType.objects.all().exclude(in_form=False).values_list("code", flat=True)) + '))(?P<location_id>\d+)(!?)((?P<responses>[A-Z\d]{1,})@?((?P<comments>).*))?'
         self.pattern = re.compile(pattern_string, re.I)
         self.range_error_response = 'Invalid response(s) for question(s): "%s"'
         self.checklist_attribute_error_response = 'Invalid responses for the checklist code: "%s"'
