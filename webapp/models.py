@@ -29,7 +29,7 @@ class Checklist(models.Model):
         )
 
     def __unicode__(self):
-        return self.id
+        return '%s -> %s' % (self.observer.observer_id, self.location)
 
 
 class ChecklistForm(models.Model):
@@ -78,7 +78,7 @@ class ChecklistQuestion(models.Model):
         search_fields = ('',)
 
     def __unicode__(self):
-        return self.code
+        return '%s -> %s' % (self.form.name, self.code)
 
 
 class ChecklistQuestionOption(models.Model):
@@ -92,7 +92,7 @@ class ChecklistQuestionOption(models.Model):
         search_fields = ('',)
 
     def __unicode__(self):
-        return self.name
+        return '%s : %s -> %s' % (self.question.form.prefix, self.question.text, self.name)
 
 
 class ChecklistResponse(models.Model):
@@ -133,7 +133,7 @@ class IncidentResponse(models.Model):
         search_fields = ('',)
 
     def __unicode__(self):
-        return self.code
+        return '%s -> %s' % (self.form.prefix, self.code)
 
 
 class Incident(models.Model):
@@ -151,4 +151,4 @@ class Incident(models.Model):
         search_fields = ('',)
 
     def __unicode__(self):
-        return unicode(self.id)
+        return '%s (%s) -> %d' % (self.observer.observer_id, self.location, self.id)
