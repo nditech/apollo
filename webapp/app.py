@@ -5,6 +5,7 @@ from rapidsms.apps.base import AppBase
 from models import *
 import re
 from datetime import datetime, timedelta
+from django.utils.translation import ugettext as _
 
 
 class App(AppBase):
@@ -16,11 +17,11 @@ class App(AppBase):
         prefix = settings.SMS_PREFIX if hasattr(settings, 'SMS_PREFIX') else ''
         pattern_string = prefix + r'(?P<observer_id>\d+)(?P<form_type>(' + "|".join(form_prefixes) + '))(?P<day>\d{1,2})(?P<location_type>(' + "|".join(LocationType.objects.all().exclude(in_form=False).values_list("code", flat=True)) + '))(?P<location_id>\d+)(!?)((?P<responses>[A-Z\d]{1,})@?((?P<comments>).*))?'
         self.pattern = re.compile(pattern_string, re.I)
-        self.range_error_response = 'Invalid response(s) for question(s): "%s"'
-        self.checklist_attribute_error_response = 'Invalid responses for the checklist code: "%s"'
-        self.incident_attribute_error_response = 'Unknown critical incident code: "%s"'
-        self.unknown_location = 'Unknown location with code: %s'
-        self.unknown_observer = 'Observer ID not found. Please resend with valid Observer ID. You sent: %s'
+        self.range_error_response = _('Invalid response(s) for question(s): "%s"')
+        self.checklist_attribute_error_response = _('Invalid responses for the checklist code: "%s"')
+        self.incident_attribute_error_response = _('Unknown critical incident code: "%s"')
+        self.unknown_location = _('Unknown location with code: %s')
+        self.unknown_observer = _('Observer ID not found. Please resend with valid Observer ID. You sent: %s')
         AppBase.__init__(self, router)
         
     def handle(self, message):
@@ -47,7 +48,7 @@ class App(AppBase):
             try:
                 message.location = Location.objects.get(type__code=match.group('location_type'), code=match.group('location_id'))
             except Location.DoesNotExist:
-                return message.respond(self.uknown_location % match.group('location_id'))
+                return message.respond(self.unknown_location % match.group('location_id'))
                 
             # determine date of message
             # if the day is not specified, the date of the current day should be the value of key 'day'.
@@ -66,12 +67,10 @@ class App(AppBase):
                     year -= 1
                 else:
                     month -= 1
-            
             # we don't want to lose the time portion of the date if this report is
             # meant for the current day
             if day != message.date.day:
                 message.received_at = datetime(year, month, day)
-            
             is_invalid_question = False
             is_invalid_response = False
             invalid_questions = []
@@ -84,7 +83,6 @@ class App(AppBase):
                 responses = self._parse_checklist(match.group('responses'))
                 try:
                     checklist = Checklist.objects.get(location=message.location, observer=message.observer, date=message.received_at)
-                
                     try:
                         checklist_form = ChecklistForm.objects.get(prefix=match.group('form_type'))
                         questions = ChecklistQuestion.objects.filter(form=checklist_form)
@@ -102,7 +100,6 @@ class App(AppBase):
                                     # the question code and response are valid now save or update
                                     if hasattr(message, 'comments_only'):
                                         checklist.comment = message.comments_only
-                                    
                                     # update or add response to the checklist
                                     try:
                                         checklist_response = checklist.responses.get(question__code=question_code)
@@ -114,15 +111,14 @@ class App(AppBase):
                                             question=ChecklistQuestion.objects.get(form=checklist_form, code=question_code), \
                                             response=responses[question_code])
                                         checklist.responses.add(checklist_response)
-                            
                         if is_invalid_question:
                             return message.respond(self.checklist_attribute_error_response % ", ".join(invalid_questions))
                         elif is_invalid_response:
                             return message.respond(self.range_error_response % ", ".join(invalid_responses))
                         else:
                             # TODO: send a better success message
-                            return message.respond("Correct Checklist")
-                        
+                            checklist_confirm = _("Correct Checklist")
+                            return message.respond(checklist_confirm)
                     except ChecklistForm.DoesNotExist:
                         # checklist form type is invalid
                         return self.default(message)
@@ -147,7 +143,6 @@ class App(AppBase):
                         else:
                             # response code is valid
                             incident_responses.append(IncidentResponse.objects.get(form=incident_form, code=incident_response_code))
-                            
                     
                     if is_invalid_response:
                         return message.respond(self.incident_attribute_error_response % ", ".join(invalid_responses))
@@ -156,13 +151,16 @@ class App(AppBase):
                         incident.location = message.location
                         incident.observer = message.observer
                         incident.date = message.received_at
-                        incident.comment = message.comments_only if message.comments_only else None
+                        incident.comment = message.comments_only if hasattr(message,"comments_only") else ""
+                        incident.save()
                         for incident_response in incident_responses:
                             incident.responses.add(incident_response)
-                        incident.save()
-                            
+                        
+                        #return message.respond('************************')
+    
                         # TODO: use a better version of this response
-                        return message.respond ("Correct Incident")
+                        incident_confirm = _("Correct Incident")
+                        return message.respond (incident_confirm)
                         
                 except IncidentForm.DoesNotExist:
                     # incident form type is invalid
@@ -172,7 +170,8 @@ class App(AppBase):
             return self.default(message)
             
     def default(self, message):
-       return message.respond('Invalid message:"%s". Please resend!' % message.message_only)
+        default_message = _('Invalid message:"%s". Please resend!' % message.message_only)
+        return message.respond(default_message)
     
     def _parse_checklist(self, responses):
         ''' Converts strings that look like A2C3D89AA90 into
