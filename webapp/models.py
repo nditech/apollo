@@ -48,7 +48,6 @@ class ChecklistForm(models.Model):
 class ChecklistQuestionType(models.Model):
     """Checklist Question Type"""
     WIDGET_CHOICES = (
-        ('select', 'drop down selection'),
         ('radio', 'radio button selection'),
         ('checkbox', 'checkbox multiple choice selection'),
         ('text', 'text input'),
