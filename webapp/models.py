@@ -69,7 +69,7 @@ class ChecklistQuestion(models.Model):
     form = models.ForeignKey(ChecklistForm)
     type = models.ForeignKey(ChecklistQuestionType)
     code = models.CharField(max_length=100, validators=[RegexValidator(re.compile(r'[A-HJKMNP-Z]+', re.I), message='Question codes may contain alphabets except the letters I, L and O')])
-    text = models.CharField(max_length=100)
+    text = models.TextField()
     weight = models.IntegerField(help_text='The order in which the question should be displayed')
 
     class Admin:
