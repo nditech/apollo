@@ -1,9 +1,11 @@
 from tastypie.resources import ModelResource
 from tastypie.authentication import Authentication
 from tastypie.authorization import Authorization, DjangoAuthorization
+from tastypie.constants import ALL, ALL_WITH_RELATIONS
 from tastypie import fields
 from webapp.models import *
-from rapidsms.models import Contact
+from rapidsms.models import Contact, Connection, Backend
+from rapidsms.contrib.messagelog.models import Message
 
 class LocationTypeResource(ModelResource):
     class Meta:
@@ -25,6 +27,12 @@ class ContactRoleResource(ModelResource):
         resource_name = 'contact_role'
 
 
+class BackendResource(ModelResource):
+    class Meta:
+        queryset = Backend.objects.all()
+        resource_name = 'backend'
+
+
 class ContactResource(ModelResource):
     role = fields.ForeignKey(ContactRoleResource, 'role', full=True)
     location = fields.ForeignKey(LocationResource, 'location', full=True)
@@ -37,6 +45,18 @@ class ContactResource(ModelResource):
         authentication = Authentication()
         authorization = Authorization()
 
+
+class ConnectionResource(ModelResource):
+    backend = fields.ForeignKey(BackendResource, 'backend')
+    contact = fields.ForeignKey(ContactResource, 'contact', readonly=True, blank=True, null=True)
+
+    class Meta:
+        queryset = Connection.objects.all()
+        resource_name = 'connection'
+        filtering = {
+            'identity': ALL,
+        }
+        ordering = ['identity']
 
 class ChecklistFormResource(ModelResource):
     class Meta:
@@ -117,3 +137,17 @@ class IncidentResource(ModelResource):
         allowed_methods = ['get', 'put', 'post', 'delete']
         authentication = Authentication()
         authorization = Authorization()
+        
+class MessageResource(ModelResource):
+    contact = fields.ForeignKey(ContactResource, 'contact', full=True, readonly=True, null=True, blank=True)
+    connection = fields.ForeignKey(ConnectionResource, 'connection', readonly=True)
+    
+    class Meta:
+        queryset = Message.objects.all()
+        resource_name = 'message'
+        filtering = {
+            'text': ('contains',),
+            'direction': ('exact',),
+            'connection': ALL_WITH_RELATIONS,
+        }
+        ordering = ['text', 'date', 'direction', 'connection']

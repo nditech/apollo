@@ -155,8 +155,6 @@ class App(AppBase):
                         incident.save()
                         for incident_response in incident_responses:
                             incident.responses.add(incident_response)
-                        
-                        #return message.respond('************************')
     
                         # TODO: use a better version of this response
                         incident_confirm = _("Correct Incident")
