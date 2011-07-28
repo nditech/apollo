@@ -47,12 +47,15 @@ class ContactResource(ModelResource):
 
 
 class ConnectionResource(ModelResource):
-    backend = fields.ForeignKey(BackendResource, 'backend')
+    backend = fields.ForeignKey(BackendResource, 'backend', full=True)
     contact = fields.ForeignKey(ContactResource, 'contact', readonly=True, blank=True, null=True)
 
     class Meta:
         queryset = Connection.objects.all()
         resource_name = 'connection'
+        allowed_methods = ['get', 'put']
+        authentication = Authentication()
+        authorization = Authorization()
         filtering = {
             'identity': ALL,
         }
@@ -140,7 +143,7 @@ class IncidentResource(ModelResource):
         
 class MessageResource(ModelResource):
     contact = fields.ForeignKey(ContactResource, 'contact', full=True, readonly=True, null=True, blank=True)
-    connection = fields.ForeignKey(ConnectionResource, 'connection', readonly=True)
+    connection = fields.ForeignKey(ConnectionResource, 'connection', readonly=True, full=True)
     
     class Meta:
         queryset = Message.objects.all()
