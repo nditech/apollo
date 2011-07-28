@@ -150,4 +150,4 @@ class MessageResource(ModelResource):
             'direction': ('exact',),
             'connection': ALL_WITH_RELATIONS,
         }
-        ordering = ['text', 'direction', 'connection']
+        ordering = ['text', 'date', 'direction', 'connection']
