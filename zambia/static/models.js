@@ -53,7 +53,7 @@ Incident = Backbone.RelationalModel.extend({
 		}
 	}, {
 		type: Backbone.HasMany,
-		key: 'incidentResponse',
+		key: 'responses',
 		relatedModel: 'IncidentResponse',
 		reverserRelation: {
 			key: 'incidents'
