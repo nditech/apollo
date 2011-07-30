@@ -8,7 +8,7 @@ MessageView = Backbone.View.extend({
 	},
 	
 	render: function () {
-		$(this.el).html(ich.msg(this.model.attributes));
+		$(this.el).html(Templates.Message(this.model.attributes));
 		return this;
 	}
 });
