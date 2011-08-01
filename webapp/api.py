@@ -17,7 +17,7 @@ class LocationResource(ModelResource):
     type = fields.ForeignKey(LocationTypeResource, 'type')
     
     class Meta:
-        queryset = Location.objects.all()
+        queryset = Location.objects.select_related()
         resource_name = 'location'
 
 
@@ -39,7 +39,7 @@ class ContactResource(ModelResource):
     supervisor = fields.ForeignKey('ContactResource', 'supervisor', null=True, blank=True, full=True)
     
     class Meta:
-        queryset = Contact.objects.all()
+        queryset = Contact.objects.select_related()
         resource_name = 'contact'
         allowed_methods = ['get', 'put', 'post', 'delete']
         authentication = Authentication()
@@ -51,7 +51,7 @@ class ConnectionResource(ModelResource):
     contact = fields.ForeignKey(ContactResource, 'contact', readonly=True, blank=True, null=True)
 
     class Meta:
-        queryset = Connection.objects.all()
+        queryset = Connection.objects.select_related()
         resource_name = 'connection'
         allowed_methods = ['get', 'put']
         authentication = Authentication()
@@ -85,7 +85,7 @@ class ChecklistQuestionResource(ModelResource):
     options = fields.ToManyField(ChecklistQuestionOptionResource, 'options', readonly=True, full=True)
     
     class Meta:
-        queryset = ChecklistQuestion.objects.all()
+        queryset = ChecklistQuestion.objects.select_related()
         resource_name = 'checklist_question'
 
 
@@ -93,7 +93,7 @@ class ChecklistResponseResource(ModelResource):
     question = fields.ForeignKey(ChecklistQuestionResource, 'question', readonly=True)
     
     class Meta:
-        queryset = ChecklistResponse.objects.all()
+        queryset = ChecklistResponse.objects.select_related()
         resource_name = 'checklist_response'
         allowed_methods = ['get', 'put', 'post', 'delete']
         authentication = Authentication()
@@ -106,7 +106,7 @@ class ChecklistResource(ModelResource):
     responses = fields.ToManyField(ChecklistResponseResource, 'responses', full=True)
     
     class Meta:
-        queryset = Checklist.objects.all()
+        queryset = Checklist.objects.select_related()
         resource_name = 'checklist'
         allowed_methods = ['get', 'put', 'post', 'delete']
         authentication = Authentication()
@@ -122,7 +122,7 @@ class IncidentResponseResource(ModelResource):
     form = fields.ForeignKey(IncidentFormResource, 'form', readonly=True)
     
     class Meta:
-        queryset = IncidentResponse.objects.all()
+        queryset = IncidentResponse.objects.select_related()
         resource_name = 'incident_response'
         allowed_methods = ['get', 'put', 'post', 'delete']
         authentication = Authentication()
@@ -135,7 +135,7 @@ class IncidentResource(ModelResource):
     responses = fields.ToManyField(IncidentResponseResource, 'responses', full=True)
     
     class Meta:
-        queryset = Incident.objects.all()
+        queryset = Incident.objects.select_related()
         resource_name = 'incident'
         allowed_methods = ['get', 'put', 'post', 'delete']
         authentication = Authentication()
@@ -146,7 +146,7 @@ class MessageResource(ModelResource):
     connection = fields.ForeignKey(ConnectionResource, 'connection', readonly=True, full=True)
     
     class Meta:
-        queryset = Message.objects.all()
+        queryset = Message.objects.select_related('contact', 'connection', 'connection__backend', 'connection__contact', 'contact__role', 'contact__location')
         resource_name = 'message'
         filtering = {
             'text': ('contains',),
