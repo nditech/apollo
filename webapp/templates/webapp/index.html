@@ -1,0 +1,174 @@
+{% load webapp_tags %}
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<title>Minimalisto Site Template - Typography Page</title>
+<!--<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Droid+Serif:regular,italic,bold,bolditalic" type="text/css" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Droid+Sans:regular,bold" type="text/css" />  -->
+<link rel="stylesheet" type="text/css" href="/assets/css/style.css" />
+<script src="/assets/js/application-min.js" type="text/javascript" charset="utf-8"></script>
+<script src="/assets/js/handlebars.1.0.0.beta.3.js" type="text/javascript" charset="utf-8"></script>
+<script src="/static/zambia/models.js" type="text/javascript" charset="utf-8"></script>
+<script src="/static/zambia/collections.js" type="text/javascript" charset="utf-8"></script>
+<script src="/static/zambia/views.js" type="text/javascript" charset="utf-8"></script>
+{% app_templates %}
+<style type="text/css" media="screen">
+	.input_smoke {height:18px;background-color:#ddd;border:1px solid #ccc;padding:3px 10px;width:152px;border-radius:4px;}
+	select.input_smoke {height:26px;width:174px;}
+	.filter_pane {
+		background-color:#eee;
+		width:920px;
+		padding:20px;
+		padding-bottom: 10px;
+	}
+	.filter_pane_dashboard {
+		background-color:#eee;
+		width:920px;
+		padding:20px;
+		padding-bottom:0;
+		border-radius:5px;
+		-webkit-border-radius:5px;
+		-moz-border-radius:5px;
+	}
+	.filter_pane_bottom {
+		border-bottom-left-radius:5px;
+		-webkit-border-bottom-left-radius:5px;
+		-moz-border-bottom-left-radius:5px;
+		border-bottom-right-radius:5px;
+		-webkit-border-bottom-right-radius:5px;
+		-moz-border-bottom-right-radius:5px;
+		height: 10px;
+		background-color: #eee;
+	}
+	#filter_dropper {
+		background-color:orange;
+		margin-left: 800px;
+		width: 100px;
+		padding: 8px;
+		text-align: center;
+		color: white;
+		cursor: pointer;
+		border-bottom-left-radius:5px;
+		-webkit-border-bottom-left-radius:5px;
+		-moz-border-bottom-left-radius:5px;
+		border-bottom-right-radius:5px;
+		-webkit-border-bottom-right-radius:5px;
+		-moz-border-bottom-right-radius:5px;
+	}
+	div.input_el {float:left; margin-right:10px;margin-bottom:1.5em;}
+	div.clear {clear:left;}
+	.btn_space {margin-right:1em;}
+</style>
+<script type="text/javascript" charset="utf-8">
+	$(function() {
+		// create a collection object and fetch its contents
+		msgs = new MessageCollection();
+		msgs.fetch({
+			success: function (collection, response) {
+				msglog = new MessageLogView({collection: msgs});
+			},
+		});
+	});
+	
+	function filter_msgs() {
+		text = $('#text').val() == 'Text' ? "" : $('#text').val();
+		phone = $('#phone').val() == 'Phone Number' ? "" : $('#phone').val();
+		filter = {};
+		if (text) {
+			filter = $.extend(filter, {text__contains: text});
+		}
+		if (phone) {
+			filter = $.extend(filter, {connection__identity: phone});
+		}
+		msgs.filtrate(filter);
+	}
+</script>
+</head>
+<body>
+<div id="wrapper">
+	<div id="header">
+		<div id="logo"><a href="#"><img src="/assets/images/logo.png" alt="" /></a></div>
+			<div id="navigation" > 
+				<div class="menu-main-menu-container">
+					<ul id="dropmenu" class="menu">
+						<li><a href="index-2.html">Dashboard</a></li> 
+						<li><a href="about.html">Voter's Registration</a></li>
+						<li><a href="#">Display, Claims &amp; Objections</a>
+							<ul class="sub-menu"> 
+								<li><a href="index-2.html">Light</a></li> 
+								<li><a href="http://minimalisto-html.atixscripts.info/dark/index.html">Dark</a></li> 
+							</ul> 
+						</li>						
+						<li><a href="#">Elections</a>
+							<ul class="sub-menu"> 
+								<li class="current_page_item"><a href="typography.html">Typography</a></li> 
+								<li><a href="sidebar-right.html">Sidebar Right</a></li> 
+								<li><a href="fullwidth.html">Full Width Page</a></li> 
+							</ul> 
+						</li> 		
+						<li><a href="#">Contacts</a> 
+							<ul class="sub-menu"> 
+								<li><a href="portfolio-thumbnails-view.html">Thumbnails View</a></li> 
+								<li><a href="portfolio-list-view.html">List View</a> 
+									<ul class="sub-menu"> 
+										<li><a href="#">Sub-page 1</a></li> 
+										<li><a href="#">Sub-page 2</a></li> 
+									</ul> 
+								</li> 
+								<li><a href="#">Another Page</a></li> 
+							</ul> 
+						</li> 
+						<li><a href="#">Messages</a> 
+							<ul class="sub-menu"> 
+								<li><a href="blog-page.html">Blog Page</a></li> 
+								<li><a href="blog-single-page.html">Blog Single Page</a></li> 
+							</ul> 
+						</li>
+					</ul>
+				</div><!-- /dropmenu --> 
+			</div><!-- /navigation -->
+	</div><!--/header-->
+	<div id="container">
+		<div class="page-title">
+			<div class="page-title-content">
+				<div class="page-title-info left">
+					<h1>Message Log</h1>
+				</div>
+				<div class="page-title-link">
+					<a href="index-2.html">Back to Dashboard &raquo;</a>
+				</div>
+				<p class="clr"></p>
+			</div><!--/page-title-content-->
+		</div><!--/page-title-->
+		<div class="full_width_content">
+			<div class="filter_pane_dashboard" id="filter">
+				<div class="input_el"><input type="text" name="phone" class="input_smoke" value="Phone Number" id="phone" onfocus="if(this.value == 'Phone Number'){this.value = '';}" onblur="if(this.value == ''){this.value='Phone Number';}"></div>
+				<div class="input_el"><input type="text" name="text" class="input_smoke" value="Text" id="text" onfocus="if(this.value == 'Text'){this.value = '';}" onblur="if(this.value == ''){this.value='Text';}"></div>
+				<div class="input_el">
+					<span class="btn_blue btn_space"><a href="javascript:filter_msgs();" id="filter_btn">filter</a><span></span></span> <span class="btn_gray"><a href="javascript:;" id="reset_btn">reset</a><span></span></span>
+				</div>
+				<div class="clear"></div>
+			</div>
+			<div style="margin-top:2em"></div>
+			
+			<table id="messages">
+		    </table>
+		
+			<div style="margin-top:2em"></div>
+			<div id="pager">
+				<span class="btn_gray btn_space"><a href="javascript:msgs.firstPage();"><img src="/assets/images/first_sm.png" style="margin-top:8px"></a><span></span></span> <span class="btn_gray btn_space"><a href="javascript:msgs.previousPage();"><img src="/assets/images/previous_sm.png" style="margin-top:8px"></a><span></span></span> <span style="float:left;height:25px;line-height:25px;" class="btn_space">Page 1 of 4</span> <span class="btn_gray btn_space"><a href="javascript:msgs.nextPage();"><img src="/assets/images/next_sm.png" style="margin-top:8px"></a><span></span></span> <span class="btn_gray"><a href="javascript:msgs.lastPage();"><img src="/assets/images/last_sm.png" style="margin-top:8px"></a><span></span></span>
+			</div>
+			<div style="margin-top:2em"></div>
+		</div><!--/full_width_content-->
+	</div><!--/container-->
+	<div id="footer">
+		<div class="footer_bottom">
+			<div class="copyright">
+				&copy; Copyright 2011
+			</div><!--/copyright-->
+			</div><!--/footer_bottom-->
+	</div><!--/footer-->
+</div><!--/wrapper-->
+</body>
+</html>

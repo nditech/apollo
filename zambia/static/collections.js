@@ -6,20 +6,20 @@ MessageCollection = PaginatedCollection.extend({
 
 LocationCollection = Backbone.Collection.extend({
 	model: Location,
-	baseUrl: '/api/v1/location',
+	baseUrl: '/api/v1/location/',
 });
 
 IncidentCollection = PaginatedCollection.extend({
 	model: Incident,
-	baseUrl: '/api/v1/incident',
+	baseUrl: '/api/v1/incident/',
 });
 
 ContactCollection = PaginatedCollection.extend({
 	model: Contact,
-	baseUrl: '/api/v1/contact',
+	baseUrl: '/api/v1/contact/',
 });
 
 ChecklistCollection = PaginatedCollection.extend({
 	model: Checklist,
-	baseUrl: '/api/v1/checklist',
+	baseUrl: '/api/v1/checklist/',
 });
