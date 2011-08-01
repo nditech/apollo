@@ -64,6 +64,7 @@ INSTALLED_APPS = [
 ]
 
 MAKO_TEMPLATE_DIRS = (
+    'webapp/templates',
     'zambia/templates',
 )
 
