@@ -33,22 +33,8 @@ class BackendResource(ModelResource):
         resource_name = 'backend'
 
 
-class ContactResource(ModelResource):
-    role = fields.ForeignKey(ContactRoleResource, 'role', full=True)
-    location = fields.ForeignKey(LocationResource, 'location', full=True)
-    supervisor = fields.ForeignKey('ContactResource', 'supervisor', null=True, blank=True, full=True)
-    
-    class Meta:
-        queryset = Contact.objects.select_related()
-        resource_name = 'contact'
-        allowed_methods = ['get', 'put', 'post', 'delete']
-        authentication = Authentication()
-        authorization = Authorization()
-
-
 class ConnectionResource(ModelResource):
     backend = fields.ForeignKey(BackendResource, 'backend', full=True)
-    contact = fields.ForeignKey(ContactResource, 'contact', readonly=True, blank=True, null=True)
 
     class Meta:
         queryset = Connection.objects.select_related()
@@ -60,6 +46,21 @@ class ConnectionResource(ModelResource):
             'identity': ALL,
         }
         ordering = ['identity']
+
+
+class ContactResource(ModelResource):
+    role = fields.ForeignKey(ContactRoleResource, 'role', full=True)
+    location = fields.ForeignKey(LocationResource, 'location', full=True)
+    supervisor = fields.ForeignKey('ContactResource', 'supervisor', null=True, blank=True, full=True)
+    connections = fields.ToManyField(ConnectionResource, 'connection_set', readonly=True, full=True)
+    
+    class Meta:
+        queryset = Contact.objects.select_related()
+        resource_name = 'contact'
+        allowed_methods = ['get', 'put', 'post', 'delete']
+        authentication = Authentication()
+        authorization = Authorization()
+
 
 class ChecklistFormResource(ModelResource):
     class Meta:
