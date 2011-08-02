@@ -9,7 +9,10 @@
 <link rel="stylesheet" type="text/css" href="/assets/css/style.css" />
 <script src="/assets/js/application-min.js" type="text/javascript" charset="utf-8"></script>
 <script src="/assets/js/handlebars.1.0.0.beta.3.js" type="text/javascript" charset="utf-8"></script>
+<script src="/assets/js/jquery-ui.js" type="text/javascript" charset="utf-8"></script>
+<script src="/assets/js/ui.throbber.js" type="text/javascript" charset="utf-8"></script>
 <script src="/static/webapp/models.js" type="text/javascript" charset="utf-8"></script>
+<script src="/static/webapp/collections.js" type="text/javascript" charset="utf-8"></script>
 <script src="/static/webapp/views.js" type="text/javascript" charset="utf-8"></script>
 <script src="/static/webapp/routers.js" type="text/javascript" charset="utf-8"></script>
 <script src="/static/zambia/models.js" type="text/javascript" charset="utf-8"></script>
@@ -66,13 +69,23 @@
 </style>
 <script type="text/javascript" charset="utf-8">
 	$(function() {
-		// create a collection object and fetch its contents
-		msgs = new MessageCollection();
-		msgs.fetch({
-			success: function (collection, response) {
-				msglog = new MessageLogView({collection: msgs});
+		new WebappRouter();
+		new ZambiaRouter();
+		Backbone.history.start({root: '/home/'});
+		
+		$("#throbber").throbber({
+		    bgopacity: 0, fgcolor: "#AAA", segments: 12,
+			path: function(i, segments) {
+				return "M 40,8 c -4,0 -8,-4 -8,-8 c 0,-4 4,-8 8,-8 l 30,0 c 4,0 8,4 8,8 c 0,4 -4,8 -8,8 l -30,0 z";
 			},
+			opacity: function(i, segments) { return 1-(i%segments)/segments;},
+			speed: 3,
+			show: function() { $(this).fadeIn(100);},
+			hide: function(callback) { $(this).fadeOut(100, callback);}
 		});
+		
+		$(document).ajaxStart(function () { $("#throbber").throbber('enable'); });
+		$(document).ajaxStop(function () { $("#throbber").throbber('disable'); });
 	});
 	
 	function filter_msgs() {
@@ -111,27 +124,12 @@
 								<li><a href="fullwidth.html">Full Width Page</a></li> 
 							</ul> 
 						</li> 		
-						<li><a href="#">Contacts</a> 
-							<ul class="sub-menu"> 
-								<li><a href="portfolio-thumbnails-view.html">Thumbnails View</a></li> 
-								<li><a href="portfolio-list-view.html">List View</a> 
-									<ul class="sub-menu"> 
-										<li><a href="#">Sub-page 1</a></li> 
-										<li><a href="#">Sub-page 2</a></li> 
-									</ul> 
-								</li> 
-								<li><a href="#">Another Page</a></li> 
-							</ul> 
-						</li> 
-						<li><a href="#">Messages</a> 
-							<ul class="sub-menu"> 
-								<li><a href="blog-page.html">Blog Page</a></li> 
-								<li><a href="blog-single-page.html">Blog Single Page</a></li> 
-							</ul> 
-						</li>
+						<li><a href="#!/contacts">Contacts</a></li> 
+						<li><a href="#!/messages">Messages</a></li>
 					</ul>
 				</div><!-- /dropmenu --> 
 			</div><!-- /navigation -->
+			<div style="position: absolute; width: 280px; height: 200px; margin-top: -100px; margin-left: -140px; left: 50%; top: 50%;" id="throbber"></div>
 	</div><!--/header-->
 	<div id="container">
 		<div class="page-title">
