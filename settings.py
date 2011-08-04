@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     "django_nose",
     "djtables",
     "rapidsms",
+    "mptt",
 
     # enable the django admin using a little shim app (which includes
     # the required urlpatterns), and a bunch of undocumented apps that

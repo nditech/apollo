@@ -2,12 +2,13 @@
 # vim: ai ts=4 sts=4 et sw=4
 
 from django.contrib import admin
+from mptt.admin import MPTTModelAdmin
 
 from models import *
 from utility_models import *
 
-admin.site.register(LocationType)
-admin.site.register(Location)
+admin.site.register(LocationType, MPTTModelAdmin)
+admin.site.register(Location, MPTTModelAdmin)
 admin.site.register(ObserverRole)
 admin.site.register(Checklist)
 admin.site.register(ChecklistForm)
