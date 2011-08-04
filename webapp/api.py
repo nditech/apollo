@@ -8,17 +8,33 @@ from rapidsms.models import Contact, Connection, Backend
 from rapidsms.contrib.messagelog.models import Message
 
 class LocationTypeResource(ModelResource):
+    parent = fields.ForeignKey('self', 'parent', readonly=True, null=True, blank=True)
+    
     class Meta:
         queryset = LocationType.objects.all()
         resource_name = 'location_type'
+        filtering = {
+            'name': ALL,
+            'code': ALL,
+            'parent': ALL_WITH_RELATIONS,
+        }
+        ordering = ['name', 'code']
 
 
 class LocationResource(ModelResource):
-    type = fields.ForeignKey(LocationTypeResource, 'type')
+    type = fields.ForeignKey(LocationTypeResource, 'type', readonly=True, null=True, blank=True)
+    parent = fields.ForeignKey('self', 'parent', readonly=True, null=True, blank=True)
     
     class Meta:
         queryset = Location.objects.select_related()
         resource_name = 'location'
+        filtering = {
+            'name': ALL,
+            'code': ALL,
+            'type': ALL_WITH_RELATIONS,
+            'parent': ALL_WITH_RELATIONS,
+        }
+        ordering = ['name', 'code']
 
 
 class ContactRoleResource(ModelResource):
@@ -141,6 +157,12 @@ class IncidentResource(ModelResource):
         allowed_methods = ['get', 'put', 'post', 'delete']
         authentication = Authentication()
         authorization = Authorization()
+        filtering = {
+            'date': ALL,
+            'observer': ALL_WITH_RELATIONS,
+            'location': ALL_WITH_RELATIONS,
+        }
+        ordering = ['location', 'date', 'observer']
         
 class MessageResource(ModelResource):
     contact = fields.ForeignKey(ContactResource, 'contact', full=True, readonly=True, null=True, blank=True)
