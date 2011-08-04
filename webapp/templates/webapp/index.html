@@ -86,6 +86,8 @@
 		
 		$(document).ajaxStart(function () { $("#throbber").throbber('enable'); });
 		$(document).ajaxStop(function () { $("#throbber").throbber('disable'); });
+		
+		$("#throbber").throbber('disable');
 	});
 	
 	function filter_msgs() {
@@ -129,7 +131,7 @@
 					</ul>
 				</div><!-- /dropmenu --> 
 			</div><!-- /navigation -->
-			<div style="position: absolute; width: 280px; height: 200px; margin-top: -100px; margin-left: -140px; left: 50%; top: 50%;" id="throbber"></div>
+			<div style="position: fixed; width: 280px; height: 200px; margin-top: -100px; margin-left: -140px; left: 50%; top: 50%; display:none" id="throbber"></div>
 	</div><!--/header-->
 	<div id="container">
 		<div class="page-title">
