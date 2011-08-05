@@ -10,3 +10,4 @@ webapp/fixtures/registrationcenters.json
 supervise/
 fabfile.py
 .DS_Store
+src/

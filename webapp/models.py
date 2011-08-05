@@ -15,7 +15,7 @@ class Checklist(models.Model):
     location = models.ForeignKey(Location)
     observer = models.ForeignKey(Contact)
     date = models.DateField(default=datetime.datetime.today)
-    comment = models.CharField(blank=True, max_length=100)
+    comment = models.CharField(blank=True, max_length=200)
     created = models.DateTimeField(blank=False, auto_now_add=True)
     updated = models.DateTimeField(blank=False, auto_now=True)
 
@@ -125,7 +125,7 @@ class IncidentResponse(models.Model):
     """Incident Type"""
     form = models.ForeignKey(IncidentForm)
     code = models.CharField(max_length=10, validators=[RegexValidator(re.compile(r'[A-HJKMNP-Z]+', re.I), message='Incident response codes may contain alphabets except the letters I, L and O')])
-    text = models.CharField(max_length=100)
+    text = models.CharField(max_length=200)
 
     class Admin:
         list_display = ('',)

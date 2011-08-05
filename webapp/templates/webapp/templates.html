@@ -1,0 +1,40 @@
+<script type="text/x-handlebars-template" id="screen-template" charset="utf-8">
+	<div class="page-title">
+		<div class="page-title-content">
+			<div class="page-title-info left">
+				<h1>{{title}}</h1>
+			</div>
+			<div class="page-title-link">
+				<a href="#home">Back to Dashboard &raquo;</a>
+			</div>
+			<p class="clr"></p>
+		</div>
+	</div>
+	<div class="full_width_content">
+		{{content}}
+	</div>
+</script>
+<script type="text/x-handlebars-template" id="message-header-template" charset="utf-8">
+	<tbody>
+		<tr><th>Contact</th><th>Connection</th><th>Direction</th><th>Date</th><th>Text</th></tr>
+	</tbody>
+</script>
+<script type="text/x-handlebars-template" id="message-template" charset="utf-8">
+	<td>{{#if contact}}{{contact.attributes.name}}{{/if}}</td><td><strong>{{connection.attributes.identity}}</strong> ({{connection.attributes.backend.attributes.name}})</td><td>{{direction}}</td><td>{{date}}</td><td>{{text}}</td>
+</script>
+<script type="text/x-handlebars-template" id="contact-header-template" charset="utf-8">
+	<tbody>
+		<tr><th>Observer Id</th><th>Name</th><th>Role</th><th>Phone No.</th><th>Location</th></tr>
+	</tbody>
+</script>
+<script type="text/x-handlebars-template" id="contact-template" charset="utf-8">
+	<td>{{observer_id}}</td><td>{{name}}</td><td>{{role.name}}</td><td>{{connections.models.0.attributes.identity}}</td><td>{{location.name}}</td>
+</script>
+<script type="text/javascript" charset="utf-8">
+	Templates = (typeof(Templates) == 'undefined') ? {} : Templates;
+	Templates.Screen = Handlebars.compile($('#screen-template').html());
+	Templates.Message = Handlebars.compile($('#message-template').html());
+	Templates.MessageHeader = Handlebars.compile($('#message-header-template').html());
+	Templates.Contact = Handlebars.compile($('#contact-template').html());
+	Templates.ContactHeader = Handlebars.compile($('#contact-header-template').html());
+</script>

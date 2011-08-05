@@ -42,10 +42,12 @@ INSTALLED_APPS = [
 
     # the essentials.
     "webapp",
+    "zambia",
     "charts",
     "django_nose",
     "djtables",
     "rapidsms",
+    "mptt",
 
     # enable the django admin using a little shim app (which includes
     # the required urlpatterns), and a bunch of undocumented apps that
@@ -62,6 +64,10 @@ INSTALLED_APPS = [
     'south',
 ]
 
+MAKO_TEMPLATE_DIRS = (
+    'webapp/templates',
+    'zambia/templates',
+)
 
 # -------------------------------------------------------------------- #
 #                         BORING CONFIGURATION                         #
@@ -142,7 +148,8 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'audit_log.middleware.UserLoggingMiddleware')
+    'audit_log.middleware.UserLoggingMiddleware',
+    'djangomako.middleware.MakoMiddleware')
 
 # since we might hit the database from any thread during testing, the
 # in-memory sqlite database isn't sufficient. it spawns a separate

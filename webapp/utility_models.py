@@ -1,11 +1,13 @@
 #from django.contrib.gis.db import models
 from django.db import models
+from mptt.models import MPTTModel, TreeForeignKey
 
-class LocationType(models.Model):
+class LocationType(MPTTModel):
     """Location Type"""
     name = models.CharField(max_length=100)
     # code is used mainly in the SMS processing logic
     code = models.CharField(blank=True, max_length=10)
+    parent = TreeForeignKey('self', null=True, blank=True, related_name='children')
     in_form = models.BooleanField(default=False, help_text="Determines whether this LocationType can be used in SMS forms")
 
     class Admin:
@@ -16,12 +18,12 @@ class LocationType(models.Model):
         return self.name
 
 
-class Location(models.Model):
+class Location(MPTTModel):
     """Location"""
     name = models.CharField(max_length=100)
     code = models.CharField(max_length=100)
     type = models.ForeignKey(LocationType)
-    parent = models.ForeignKey('Location', null=True, blank=True)
+    parent = TreeForeignKey('self', null=True, blank=True, related_name='children')
     #poly = models.PolygonField()
     #latlon = models.PointField()
 

@@ -1,0 +1,24 @@
+<project>
+    <target name="concatenate" description="concatenate all js files">
+        <concat destfile="js/application.js">
+            <fileset file="js/jquery-1.6.2.js" />
+            <fileset file="js/dropmenu.js" />
+            <fileset file="js/underscore.js" />
+            <fileset file="js/backbone.js" />
+            <fileset file="js/backbone-relational.js" />
+            <fileset file="js/backbone-tastypie.js" />
+            <fileset file="js/paginated_collection.js" />
+        </concat>
+    </target>
+    <target name="compress" depends="concatenate" description="compress application.js to application-min.js">
+        <apply executable="java" parallel="false">
+            <fileset file="js/application.js" />
+            <arg line="-jar" />
+            <arg path="../../../bin/yuicompressor-2.4.2.jar" />
+            <srcfile />
+            <arg line="-o" />
+            <mapper type="glob" from="*.js" to="js/*-min.js" />
+            <targetfile />
+        </apply>
+    </target>
+</project>

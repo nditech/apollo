@@ -2,6 +2,7 @@ from django.conf.urls.defaults import *
 from django.conf import settings
 from tastypie.resources import ModelResource
 from tastypie.api import Api
+from views import *
 import inspect
 # iteratively import all resources
 for app in settings.INSTALLED_APPS:
@@ -22,6 +23,7 @@ for resource in resources:
     
 urlpatterns = patterns('',
     url(r'^api/', include(api.urls)),
+    url(r'^home/?', home)
 )
 
 #authentication urls
