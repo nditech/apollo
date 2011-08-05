@@ -10,24 +10,6 @@ class MyTask(Task):
     def run(self, x, y):
         return x + y
 
-
-class SendMsg(Task):
-    endpoint_sendsms = 'http://api.nodsms.com/index.php'
-    endpoint_balance = 'http://api.nodsms.com/credit.php?user=%(user)s&pass=%(pass)s'
-    user = "dipo"
-    pwd  = "father7777"
-    
-    def run(self, to, msg, sender="HEMHEM"):
-        result = urllib2.urlopen(self.endpoint_sendsms, urlencode({
-            'user': self.user,
-            'pass': self.pwd,
-            'from': sender,
-            'to': to,
-            'msg': msg})).read()
-        if result.strip() == 'sent':
-            return True
-        else:
-            return False
         
 class MessageBlast(Task):
     endpoint_sendsms = 'http://api2.infobip.com/api/sendsms/plain?user=%(user)&password=%(pwd)&sender=%(sender)&SMSText=%(msg)&GSM=%(to)'
