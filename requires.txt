@@ -13,3 +13,4 @@ numpy==1.5.1
 -e git://github.com/toastdriven/django-tastypie.git#egg=django-tastypie
 django-mako==0.1.5pre
 -e git://github.com/django-mptt/django-mptt.git#egg=django-mptt
+django-celery==2.2.4
