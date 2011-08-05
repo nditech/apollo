@@ -1597,18 +1597,18 @@ div.pagination {
 	margin: 3px;
 	text-align:center;
 	font-family:Tahoma,Helvetica,sans-serif;
-	font-size:.85em;
+	font-size:1em;
 }
 
 div.pagination a {
-	border: 1px solid #FFA500;
+	border: 1px solid #A9A9A9;
 	margin-right:3px;
 	padding:2px 8px;
 
 	background-position:bottom;
 	text-decoration: none;
 
-	color: #FFA500;		
+	color: #717171;		
 }
 div.pagination a:hover, div.pagination a:active {
 	border: 1px solid #FFA500;
@@ -1627,14 +1627,14 @@ div.pagination span.disabled {
 	display:none;
 }
 div.pagination a.next{
-	border:2px solid #FFA500;
+	border:2px solid #A9A9A9;
 	margin:0 0 0 10px;
 }
 div.pagination a.next:hover{
 	border:2px solid #FFA500;
 }
 div.pagination a.prev{
-	border:2px solid #FFA500;
+	border:2px solid #A9A9A9;
 	margin:0 10px 0 0;
 }
 div.pagination a.prev:hover{
