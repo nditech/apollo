@@ -41,7 +41,7 @@ class MessageBlast(Task):
             'from': self.sender,
             'to': to,
             'msg': msg})).read()
-        if result.strip() == 'sent':
+        if int(result.strip()) > 0:
             return True
         else:
             return False
