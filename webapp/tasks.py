@@ -29,7 +29,7 @@ class MessageBlast(Task):
             return False
 
 tasks.register(MyTask)
-tasks.register(SendMsg)
+
 tasks.register(MessageBlast)
 
 
