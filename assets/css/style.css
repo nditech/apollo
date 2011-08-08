@@ -56,6 +56,8 @@ th {
     border-right: whiteSmoke 5px solid;
 }
 
+th img {padding:0;}
+
 /******************* General Settings *******************/
 html,body {
 	height:100%;
@@ -1589,6 +1591,9 @@ ol#commentslist {
     border-bottom: 1px dashed #d3dad9;
 	width: 790px;
 }
+
+/******************* Interaction Elements *******************/
+.sortable_column {}
 
 /****************** Pagination *******************/
 
