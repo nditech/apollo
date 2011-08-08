@@ -30,8 +30,10 @@ MessageLogView = Backbone.View.extend({
 
     render: function(){
         var self = this;
+        // Store the heading of the table so it can be reused
+        var heading = $(self.el).children("tbody").children("tr")[0];
         $(self.el).empty();
-		$(self.el).append(Templates.MessageHeader());
+		$(self.el).append(heading ? heading : Templates.MessageHeader());
 		self.collection.each(function (mdl) {
 			msg_view = new MessageView({model: mdl}).render();
 			$(self.el).append(msg_view);
@@ -65,8 +67,10 @@ ContactsView = Backbone.View.extend({
 
     render: function(){
         var self = this;
+        // Store the heading of the table so it can be reused
+        var heading = $(self.el).children("tbody").children("tr")[0];
         $(self.el).empty();
-		$(self.el).append(Templates.ContactHeader());
+		$(self.el).append(heading ? heading : Templates.ContactHeader());
 		self.collection.each(function (mdl) {
 			contact_view = new ContactView({model: mdl}).render();
 			$(self.el).append(contact_view);

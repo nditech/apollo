@@ -8,11 +8,12 @@ WebappRouter = Backbone.Router.extend({
        screen = new Screen({title: 'Message Log', contents: ''});
        screen_view = new ScreenView({model: screen});
        
-       msgs = new MessageCollection();
-       msgs.fetch({
-           success: function (collection, response) {
-               msgs_view = new MessageLogView({collection: collection}).render();
+       paginated_collection = new MessageCollection();
+       paginated_collection.fetch({
+           success: function (coll, response) {
+               msgs_view = new MessageLogView({collection: coll}).render();
                $('div.full_width_content').html(msgs_view);
+               $('div.full_width_content').prepend(Templates.MessageSearch);
            },
        });
    },
@@ -21,11 +22,12 @@ WebappRouter = Backbone.Router.extend({
        screen = new Screen({title: 'Contacts', contents: ''});
        screen_view = new ScreenView({model: screen});
        
-       contacts = new ContactCollection();
-       contacts.fetch({
-           success: function (collection, response) {
-               contacts_view = new ContactsView({collection: collection}).render();
+       paginated_collection = new ContactCollection();
+       paginated_collection.fetch({
+           success: function (coll, response) {
+               contacts_view = new ContactsView({collection: coll}).render();
                $('div.full_width_content').html(contacts_view);
+               $('div.full_width_content').prepend(Templates.ContactSearch);
            },
        });
    }
