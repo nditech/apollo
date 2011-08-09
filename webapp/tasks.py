@@ -2,6 +2,8 @@ from celery.task import Task
 from celery.registry import tasks
 from urllib import quote_plus, urlencode
 import urllib2
+import xlrd, xlwt
+from models import *
 from django.conf import settings
 
 
@@ -27,10 +29,35 @@ class MessageBlast(Task):
             return True
         else:
             return False
+        
+
+class GetContact(Task):
+    def run(self, file_name):
+        #try:
+        print file_name
+        choice_file = xlrd.open_workbook(file_name)
+        choice_sheet = choice_file.sheet_by_index(0)
+        for row_num in range(choice_sheet.nrows):
+            row_vals = choice_sheet.row_values(row_num)
+            #print row_vals[4]
+            try:
+                contact = Contact.objects.get(observer_id = row_vals[0])
+                contact.name = row_vals[1]
+                print contact.name
+                contact.role = ObserverRole.objects.get(name=row_vals[3])
+                print contact.role
+                contact.location = Location.objects.get(name=row_vals[4])
+                print contact.location
+                contact.save()
+                print 'Contact saved successfully...'
+            except Contact.DoesNotExist:
+                print row_vals[4]
+                print 'There was an exception...'
+                new_contact = Contact.objects.create(observer_id=row_vals[0], name=row_vals[1], role=ObserverRole.objects.get(name=row_vals[3]), location = Location.objects.get(name=row_vals[4]))
+        #except:
+        #    print 'This is a general exception........'
+        return True
 
 tasks.register(MyTask)
-
 tasks.register(MessageBlast)
-
-
-
+tasks.register(GetContact)

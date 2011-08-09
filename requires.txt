@@ -14,3 +14,6 @@ numpy==1.5.1
 django-mako==0.1.5pre
 -e git://github.com/django-mptt/django-mptt.git#egg=django-mptt
 django-celery==2.2.4
+xlrd==0.7.1
+xlutils==1.4.1
+xlwt==0.7.2
