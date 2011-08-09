@@ -14,13 +14,39 @@
 		{{content}}
 	</div>
 </script>
+<script type="text/x-handlebars-template" id="message-search-template" charset="utf-8">
+	<div class="search_pane_dashboard">
+		<form id="search">
+		<div class="input_el"><input type="text" name="phone" class="input_smoke search_field" placeholder="Phone Number" id="search_connection__identity__endswith" pattern=".*[0-9]" title="Numeric figures only"></div>
+		<div class="input_el"><input type="text" name="text" class="input_smoke search_field" placeholder="Text" id="search_text__contains"></div>
+		<div class="input_el">
+			<span class="btn_blue btn_space"><a href="javascript:$('#search').submit();" class="search_btn">Search</a><span></span></span>
+		</div>
+		</form>
+		<div class="clear"></div>
+	</div>
+</script>
 <script type="text/x-handlebars-template" id="message-header-template" charset="utf-8">
 	<tbody>
-		<tr><th>Contact</th><th>Connection</th><th>Direction</th><th>Date</th><th>Text</th></tr>
+		<tr><th width="144"><a href="javascript:;" class="sortable_column" id="sort_contact">Contact</a></th><th width="192"><a href="javascript:;" class="sortable_column" id="sort_connection">Connection</a></th><th width="96"><a href="javascript:;" class="sortable_column" id="sort_direction">Direction</a></th><th width="144"><a href="javascript:;" class="sortable_column" id="sort_date">Date</a></th><th width="384">Text</th></tr>
 	</tbody>
 </script>
 <script type="text/x-handlebars-template" id="message-template" charset="utf-8">
-	<td>{{#if contact}}{{contact.attributes.name}}{{/if}}</td><td><strong>{{connection.attributes.identity}}</strong> ({{connection.attributes.backend.attributes.name}})</td><td>{{direction}}</td><td>{{date}}</td><td>{{text}}</td>
+	<td>{{#if contact}}{{contact.attributes.name}}{{else}}&nbsp;{{/if}}</td><td><strong>{{connection.attributes.identity}}</strong> ({{connection.attributes.backend.attributes.name}})</td><td>{{direction}}</td><td>{{date}}</td><td>{{text}}</td>
+</script>
+<script type="text/x-handlebars-template" id="contact-search-template" charset="utf-8">
+	<div class="search_pane_dashboard">
+		<form id="search">
+		<div class="input_el"><input type="text" name="observer_id" class="input_smoke search_field" id="search_observer_id" placeholder="Observer ID" pattern=".*[0-9]" title="Numeric figures only"></div>
+		<div class="input_el"><input type="text" name="name" class="input_smoke search_field" id="search_name__contains" placeholder="Name"></div>
+		<div class="input_el"><input type="text" name="phone" class="input_smoke search_field" id="search_connection__identity__endswith" placeholder="Phone Number" pattern=".*[0-9]" title="Numeric figures only"></div>		
+		<div class="input_el"><input type="text" name="location" class="input_smoke search_field" id="search_location__name" placeholder="Location"></div>
+		<div class="input_el">
+			<span class="btn_blue btn_space"><a href="javascript:$('#search').submit();" class="search_btn">Search</a><span></span></span>
+		</div>
+		</form>
+		<div class="clear"></div>
+	</div>
 </script>
 <script type="text/x-handlebars-template" id="contact-header-template" charset="utf-8">
 	<tbody>
@@ -33,8 +59,10 @@
 <script type="text/javascript" charset="utf-8">
 	Templates = (typeof(Templates) == 'undefined') ? {} : Templates;
 	Templates.Screen = Handlebars.compile($('#screen-template').html());
+	Templates.MessageSearch = Handlebars.compile($('#message-search-template').html());
 	Templates.Message = Handlebars.compile($('#message-template').html());
 	Templates.MessageHeader = Handlebars.compile($('#message-header-template').html());
+	Templates.ContactSearch = Handlebars.compile($('#contact-search-template').html());
 	Templates.Contact = Handlebars.compile($('#contact-template').html());
 	Templates.ContactHeader = Handlebars.compile($('#contact-header-template').html());
 </script>

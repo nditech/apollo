@@ -8,6 +8,9 @@
             <fileset file="js/backbone-relational.js" />
             <fileset file="js/backbone-tastypie.js" />
             <fileset file="js/paginated_collection.js" />
+            <fileset file="js/jquery-ui.js" />
+            <fileset file="js/ui.throbber.js" />
+            <fileset file="js/jquery.scrollTo.js" />
         </concat>
     </target>
     <target name="compress" depends="concatenate" description="compress application.js to application-min.js">
