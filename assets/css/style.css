@@ -1315,7 +1315,7 @@ ol#commentslist {
 	height: 25px;
 }
 
-.btn_gray_input input, .btn_gray a, .btn_yellow a, .btn_green a, .btn_red a, .btn_blue a  {
+.btn_gray_input input, .btn_gray a, .btn_yellow a, .btn_green a, .btn_red a, .btn_blue a, .btn_blue input  {
 	float: left;
 	height: 25px;
 	line-height: 25px;
@@ -1441,13 +1441,13 @@ ol#commentslist {
 .btn_blue {
 	background: url(../images/blue_left.png) no-repeat;
 }
-.btn_blue a {
+.btn_blue a, .btn_blue input {
 	background: url(../images/blue.png) repeat-x left top;
 }
 .btn_blue span {
 	background: url(../images/blue_right.png) no-repeat;
 }
-.btn_blue a:hover { 
+.btn_blue a:hover, .btn_blue input:hover { 
 	background: url(../images/blue_hover.png) repeat-x left top;
 }
 .btn_blue:hover {
