@@ -1,0 +1,19 @@
+Django==1.2.5
+MySQL-python>=1.2.2
+nose==0.11.4
+django-nose==0.1.2
+djappsettings==0.1.0
+-e git://github.com/timbaobjects/djtables.git@a1261db0961b724ef79f4d6f71a484bbcc02bedd#egg=djtables
+-e git://github.com/timbaobjects/rapidsms.git@23e0a29fd1824920f92c4f0f06cb92b3ac3cf938#egg=RapidSMS
+django-audit-log==0.2.1
+django-filter==0.5.3
+django-extensions==0.5
+South==0.7.2
+numpy==1.5.1
+-e git://github.com/toastdriven/django-tastypie.git@b183dd261d57a1a943a83b0819e69f7b407493f3#egg=django_tastypie-dev
+django-mako==0.1.5pre
+-e git://github.com/django-mptt/django-mptt.git@2d664c26493d3791b4c3f205da30a18326ab7dc9#egg=django_mptt-dev
+django-celery==2.2.4
+xlrd==0.7.1
+xlutils==1.4.1
+xlwt==0.7.2
