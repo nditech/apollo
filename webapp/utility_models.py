@@ -6,9 +6,9 @@ class LocationType(MPTTModel):
     """Location Type"""
     name = models.CharField(max_length=100)
     # code is used mainly in the SMS processing logic
-    code = models.CharField(blank=True, max_length=10)
+    code = models.CharField(blank=True, max_length=10, db_index=True)
     parent = TreeForeignKey('self', null=True, blank=True, related_name='children')
-    in_form = models.BooleanField(default=False, help_text="Determines whether this LocationType can be used in SMS forms")
+    in_form = models.BooleanField(default=False, db_index=True, help_text="Determines whether this LocationType can be used in SMS forms")
 
     class Admin:
         list_display = ('',)
@@ -20,8 +20,8 @@ class LocationType(MPTTModel):
 
 class Location(MPTTModel):
     """Location"""
-    name = models.CharField(max_length=100)
-    code = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, db_index=True)
+    code = models.CharField(max_length=100, db_index=True)
     type = models.ForeignKey(LocationType)
     parent = TreeForeignKey('self', null=True, blank=True, related_name='children')
     #poly = models.PolygonField()
@@ -37,7 +37,7 @@ class Location(MPTTModel):
 
 class ObserverRole(models.Model):
     """Roles"""
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, db_index=True)
     parent = models.ForeignKey('ObserverRole', null=True, blank=True)
 
     class Admin:

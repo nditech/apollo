@@ -1,15 +1,15 @@
+from django.conf.urls.defaults import *
 from tastypie.resources import ModelResource
 from tastypie.authentication import Authentication
 from tastypie.authorization import Authorization, DjangoAuthorization
 from tastypie.constants import ALL, ALL_WITH_RELATIONS
+from tastypie.utils import trailing_slash
 from tastypie import fields
 from webapp.models import *
 from rapidsms.models import Contact, Connection, Backend
 from rapidsms.contrib.messagelog.models import Message
 
-class LocationTypeResource(ModelResource):
-    parent = fields.ForeignKey('self', 'parent', readonly=True, null=True, blank=True)
-    
+class LocationTypeResource(ModelResource):    
     class Meta:
         queryset = LocationType.objects.all()
         resource_name = 'location_type'
@@ -19,11 +19,11 @@ class LocationTypeResource(ModelResource):
             'parent': ALL_WITH_RELATIONS,
         }
         ordering = ['name', 'code']
+        excludes = ['level', 'lft', 'rght', 'tree_id', 'in_form']
 
 
 class LocationResource(ModelResource):
-    type = fields.ForeignKey(LocationTypeResource, 'type', readonly=True, null=True, blank=True)
-    parent = fields.ForeignKey('self', 'parent', readonly=True, null=True, blank=True)
+    type = fields.ForeignKey(LocationTypeResource, 'type', readonly=True, null=True, blank=True, full=True)
     
     class Meta:
         queryset = Location.objects.select_related()
@@ -34,7 +34,31 @@ class LocationResource(ModelResource):
             'type': ALL_WITH_RELATIONS,
             'parent': ALL_WITH_RELATIONS,
         }
-        ordering = ['name', 'code']
+        ordering = ['name', 'code', 'type__code']
+        excludes = ['level', 'lft', 'rght', 'tree_id']
+    
+    def override_urls(self):
+        return [
+            url(r"^(?P<resource_name>%s)/search%s$" % (self._meta.resource_name, trailing_slash()), self.wrap_view('get_search'), name='api_location_search'),
+        ]
+    
+    def get_search(self, request, **kwargs):
+        self.method_check(request, allowed=['get'])
+        self.is_authenticated(request)
+        self.throttle_check(request)
+        
+        # do the query
+        locations = Location.objects.filter(name__icontains=request.GET.get('q', ''))
+        objects = []
+        for location in locations:
+            bundle = self.build_bundle(obj=location, request=request)
+            bundle = self.full_dehydrate(bundle)
+            objects.append(bundle)
+        
+        object_list = { 'objects': objects }
+        
+        self.log_throttled_access(request)
+        return self.create_response(request, object_list) 
 
 
 class ContactRoleResource(ModelResource):
