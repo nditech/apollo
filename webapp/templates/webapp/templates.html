@@ -39,7 +39,7 @@
 		<form id="search">
 		<div class="input_el"><input type="text" name="observer_id" class="input_smoke search_field" id="search_observer_id" placeholder="Observer ID" pattern=".*[0-9]" title="Numeric figures only"></div>
 		<div class="input_el"><input type="text" name="name" class="input_smoke search_field" id="search_name__contains" placeholder="Name"></div>
-		<div class="input_el"><input type="text" name="phone" class="input_smoke search_field" id="search_connection__identity__endswith" placeholder="Phone Number" pattern=".*[0-9]" title="Numeric figures only"></div>		
+		<div class="input_el"><input type="text" name="phone" class="input_smoke search_field" id="search_connections__identity__endswith" placeholder="Phone Number" pattern=".*[0-9]" title="Numeric figures only"></div>		
 		<div class="input_el"><input type="text" name="location" class="input_smoke search_field" id="search_location__name" placeholder="Location"></div>
 		<div class="input_el">
 			<span class="btn_blue btn_space"><input type="submit" name="submit" value="Search" class="search_btn"><span>&nbsp;</span></span>
@@ -50,7 +50,7 @@
 </script>
 <script type="text/x-handlebars-template" id="contact-header-template" charset="utf-8">
 	<tbody>
-		<tr><th>Observer Id</th><th>Name</th><th>Role</th><th>Phone No.</th><th>Location</th></tr>
+		<tr><th><a href="javascript:;" class="sortable_column" id="sort_observer_id">Observer Id</a></th><th><a href="javascript:;" class="sortable_column" id="sort_name">Name</a></th><th><a href="javascript:;" class="sortable_column" id="sort_role__name">Role</a></th><th><a href="javascript:;" class="sortable_column" id="sort_connections__identity">Phone No.</a></th><th><a href="javascript:;" class="sortable_column" id="sort_location__name">Location</a></th></tr>
 	</tbody>
 </script>
 <script type="text/x-handlebars-template" id="contact-template" charset="utf-8">

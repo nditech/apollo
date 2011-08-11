@@ -53,7 +53,7 @@ class LocationResource(ModelResource):
         self.throttle_check(request)
         
         # do the query
-        locations = Location.objects.filter(name__icontains=request.GET.get('term', ''))
+        locations = Location.objects.filter(name__icontains=request.GET.get('term', ''))[:20]
         objects = []
         for location in locations:
             bundle = self.build_bundle(obj=location, request=request)
@@ -105,6 +105,13 @@ class ContactResource(ModelResource):
         allowed_methods = ['get', 'put', 'post', 'delete']
         authentication = Authentication()
         authorization = Authorization()
+        filtering = {
+            'connections': ALL_WITH_RELATIONS,
+            'name': ('contains',),
+            'observer_id': ('exact',),
+            'location': ALL_WITH_RELATIONS,
+        }
+        ordering = ['observer_id', 'name', 'role', 'location', 'connections']
 
 
 class ChecklistFormResource(ModelResource):
