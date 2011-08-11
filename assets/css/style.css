@@ -1458,11 +1458,32 @@ ol#commentslist {
 }
 
 /******************* jquery-ui styles *******************/
+
 .ui-autocomplete-category {
 	font-weight: bold;
 	padding: .2em .4em;
 	margin: .8em 0 .2em;
 	line-height: 1.5;
+}
+ul.ui-menu{
+	list-style:none;
+	background:whitesmoke;
+	width:10%;
+	padding-left:0px;
+	border-left:1px solid #ccc;
+	border-right:1px solid #ccc;
+	border-bottom:1px solid #ccc;
+}
+.ui-corner-all a{
+	display:block;
+	padding: .4em .4em;
+	text-decoration:none;
+	color:grey;
+	cursor:pointer;
+}
+.ui-corner-all li a:hover{
+	background:#FFA500;
+	color:#fff;
 }
 
 /******************* Footer *******************/
