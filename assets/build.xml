@@ -8,9 +8,14 @@
             <fileset file="js/backbone-relational.js" />
             <fileset file="js/backbone-tastypie.js" />
             <fileset file="js/paginated_collection.js" />
-            <fileset file="js/jquery-ui.js" />
-            <fileset file="js/ui.throbber.js" />
+            <fileset file="js/jquery-ui-1.8.15.custom.js" />
+            <fileset file="js/jquery.ui.core.js" />
+            <fileset file="js/jquery.ui.widget.js" />
+            <fileset file="js/jquery.ui.autocomplete.js" />
+            <fileset file="js/jquery.ui.datepicker.js" />
+            <fileset file="js/jquery.ui.throbber.js" />
             <fileset file="js/jquery.scrollTo.js" />
+            <fileset file="js/custom.js" />
         </concat>
     </target>
     <target name="compress" depends="concatenate" description="compress application.js to application-min.js">

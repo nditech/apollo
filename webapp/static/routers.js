@@ -28,6 +28,12 @@ WebappRouter = Backbone.Router.extend({
                contacts_view = new ContactsView({collection: coll}).render();
                $('div.full_width_content').html(contacts_view);
                $('div.full_width_content').prepend(Templates.ContactSearch);
+               
+               // Autocomplete for location input textbox
+               $( "#search_location__name" ).catcomplete({
+                   minLength: 3,
+                   source: '/api/v1/location/search/'
+               });
            },
        });
    }
