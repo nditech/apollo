@@ -10,7 +10,7 @@ django-filter==0.5.3
 django-extensions==0.5
 South==0.7.2
 numpy==1.5.1
--e git://github.com/toastdriven/django-tastypie.git@b183dd261d57a1a943a83b0819e69f7b407493f3#egg=django_tastypie-dev
+-e git://github.com/timbaobjects/django-tastypie.git@c52d293950df16290606f9cf4f84e8e3fa2de5bd#egg=django_tastypie-dev
 django-mako==0.1.5pre
 -e git://github.com/django-mptt/django-mptt.git@2d664c26493d3791b4c3f205da30a18326ab7dc9#egg=django_mptt-dev
 django-celery==2.2.4
