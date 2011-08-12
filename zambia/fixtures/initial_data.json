@@ -1,0 +1,130 @@
+[
+  {
+    "pk": 1,
+    "model": "webapp.observerrole",
+    "fields": {
+      "name": "District Supervisor",
+      "parent": null
+    }
+  },
+  {
+    "pk": 2,
+    "model": "webapp.observerrole",
+    "fields": {
+      "name": "Monitor",
+      "parent": 1
+    }
+  },
+  {
+    "pk": 1,
+    "model": "webapp.locationtype",
+    "fields": {
+      "rght": 16,
+      "code": "",
+      "name": "Country",
+      "parent": null,
+      "level": 0,
+      "lft": 1,
+      "tree_id": 1,
+      "in_form": false
+    }
+  },
+  {
+    "pk": 2,
+    "model": "webapp.locationtype",
+    "fields": {
+      "rght": 15,
+      "code": "",
+      "name": "Province",
+      "parent": 1,
+      "level": 1,
+      "lft": 2,
+      "tree_id": 1,
+      "in_form": false
+    }
+  },
+  {
+    "pk": 3,
+    "model": "webapp.locationtype",
+    "fields": {
+      "rght": 14,
+      "code": "",
+      "name": "District",
+      "parent": 2,
+      "level": 2,
+      "lft": 3,
+      "tree_id": 1,
+      "in_form": false
+    }
+  },
+  {
+    "pk": 4,
+    "model": "webapp.locationtype",
+    "fields": {
+      "rght": 13,
+      "code": "",
+      "name": "Constituency",
+      "parent": 3,
+      "level": 3,
+      "lft": 4,
+      "tree_id": 1,
+      "in_form": false
+    }
+  },
+  {
+    "pk": 5,
+    "model": "webapp.locationtype",
+    "fields": {
+      "rght": 12,
+      "code": "",
+      "name": "Ward",
+      "parent": 4,
+      "level": 4,
+      "lft": 5,
+      "tree_id": 1,
+      "in_form": false
+    }
+  },
+  {
+    "pk": 6,
+    "model": "webapp.locationtype",
+    "fields": {
+      "rght": 11,
+      "code": "",
+      "name": "Polling District",
+      "parent": 5,
+      "level": 5,
+      "lft": 6,
+      "tree_id": 1,
+      "in_form": false
+    }
+  },
+  {
+    "pk": 7,
+    "model": "webapp.locationtype",
+    "fields": {
+      "rght": 10,
+      "code": "",
+      "name": "Polling Station",
+      "parent": 6,
+      "level": 6,
+      "lft": 7,
+      "tree_id": 1,
+      "in_form": false
+    }
+  },
+  {
+    "pk": 8,
+    "model": "webapp.locationtype",
+    "fields": {
+      "rght": 9,
+      "code": "",
+      "name": "Polling Stream",
+      "parent": 7,
+      "level": 7,
+      "lft": 8,
+      "tree_id": 1,
+      "in_form": false
+    }
+  }
+]
