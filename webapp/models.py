@@ -151,3 +151,31 @@ class Incident(models.Model):
 
     def __unicode__(self):
         return '%s (%s) -> %d' % (self.observer.observer_id, self.location, self.id)
+
+class Party(models.Model):
+    """Political parties contesting for positions in the elections"""
+    acronym = models.CharField(max_length=10)
+    name = models.CharField(max_length=100, help_text='Political party name')
+    # adding locations enables the distinction of parties contesting at different levels
+    # a party contesting at the national elections may not be contesting at the guber level
+    location = models.ForeignKey(Location, related_name='parties')
+
+    class Admin:
+        list_display = ('',)
+        search_fields = ('',)
+
+    def __unicode__(self):
+        return self.acronym
+
+class PartyVote(models.Model):
+    """Stores votes for each party in a checklist"""
+    party = models.ForeignKey(Party, related_name='votes')
+    checklist = models.ForeignKey(Checklist, related_name='votes')
+    votes = models.IntegerField(blank=True, null=True)
+
+    class Admin:
+        list_display = ('',)
+        search_fields = ('',)
+
+    def __unicode__(self):
+        return "%s (%s) -> %d" % (self.party.acronym, self.checklist.id, self.votes)
