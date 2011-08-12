@@ -31,7 +31,6 @@ WebappRouter = Backbone.Router.extend({
                
                // Autocomplete for location input textbox
                $( "#search_location__name" ).catcomplete({
-                   minLength: 3,
                    source: '/api/v1/location/search/'
                });
            },
