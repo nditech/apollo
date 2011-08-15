@@ -1624,6 +1624,44 @@ ul.ui-menu{
 /******************* Interaction Elements *******************/
 .sortable_column {}
 
+/****************** font definitions *****************/
+@font-face {
+  font-family: 'Droid Serif';
+  font-style: normal;
+  font-weight: normal;
+  src: local('Droid Serif'), local('DroidSerif'), url('/assets/fonts/DroidSerif.woff') format('woff');
+}
+@font-face {
+  font-family: 'Droid Serif';
+  font-style: normal;
+  font-weight: bold;
+  src: local('Droid Serif Bold'), local('DroidSerif-Bold'), url('/assets/fonts/DroidSerifBold.woff') format('woff');
+}
+@font-face {
+  font-family: 'Droid Serif';
+  font-style: italic;
+  font-weight: bold;
+  src: local('Droid Serif Bold Italic'), local('DroidSerif-BoldItalic'), url('/assets/fonts/DroidSerifBoldItalic.woff') format('woff');
+}
+@font-face {
+  font-family: 'Droid Serif';
+  font-style: italic;
+  font-weight: normal;
+  src: local('Droid Serif Italic'), local('DroidSerif-Italic'), url('/assets/fonts/DroidSerifItalic.woff') format('woff');
+}
+@font-face {
+  font-family: 'Droid Sans';
+  font-style: normal;
+  font-weight: bold;
+  src: local('Droid Sans Bold'), local('DroidSans-Bold'), url('/assets/fonts/DroidSansBold.woff') format('woff');
+}
+@font-face {
+  font-family: 'Droid Sans';
+  font-style: normal;
+  font-weight: normal;
+  src: local('Droid Sans'), local('DroidSans'), url('/assets/fonts/DroidSans.woff') format('woff');
+}
+
 /****************** Pagination *******************/
 
 div.pagination {
