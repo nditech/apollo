@@ -152,6 +152,7 @@ class Incident(models.Model):
     def __unicode__(self):
         return '%s (%s) -> %d' % (self.observer.observer_id, self.location, self.id)
 
+
 class Election(models.Model):
     """Election contest type"""
     name = models.CharField(max_length=100)
@@ -166,12 +167,12 @@ class Election(models.Model):
 
 class Party(models.Model):
     """Political parties contesting for positions in the elections"""
-    acronym = models.CharField(max_length=10)
+    acronym = models.CharField(max_length=100)
     name = models.CharField(max_length=100, help_text='Political party name')
     # adding locations enables the distinction of parties contesting at different levels
     # a party contesting at the national elections may not be contesting at the guber level
     location = models.ForeignKey(Location, related_name='parties')
-    election = models.ForeignKey(Election, related_name='parties')
+    elections = models.ManyToManyField(Election, related_name='parties')
     
     class Meta:
         verbose_name_plural = 'Parties'
@@ -182,6 +183,7 @@ class Party(models.Model):
 
     def __unicode__(self):
         return self.acronym
+
 
 class PartyVote(models.Model):
     """Stores votes for each party in a checklist"""
@@ -195,3 +197,20 @@ class PartyVote(models.Model):
 
     def __unicode__(self):
         return "%s (%s) -> %d" % (self.party.acronym, self.checklist.id, self.votes)
+
+
+class ChecklistFormParty(models.Model):
+    """Parties contesting for a particular checklist form"""
+    weight = models.IntegerField(help_text='The order in which the party should be displayed')
+    form = models.ForeignKey(ChecklistForm, related_name='checklist_form_parties')
+    party = models.ForeignKey(Party, related_name='checklist_form_parties')
+
+    class Meta:
+        verbose_name_plural = 'Checklist form parties'
+        
+    class Admin:
+        list_display = ('',)
+        search_fields = ('',)
+
+    def __unicode__(self):
+        return '%s -> %s' % (self.form, self.party)
