@@ -9,11 +9,12 @@ WebappRouter = Backbone.Router.extend({
        screen_view = new ScreenView({model: screen});
        
        paginated_collection = new MessageCollection();
+       $('div.full_width_content').html(Templates.MessageSearch);
+       
        paginated_collection.fetch({
            success: function (coll, response) {
                msgs_view = new MessageLogView({collection: coll}).render();
-               $('div.full_width_content').html(msgs_view);
-               $('div.full_width_content').prepend(Templates.MessageSearch);
+               $('div.full_width_content').append(msgs_view);
            },
        });
    },
@@ -23,11 +24,12 @@ WebappRouter = Backbone.Router.extend({
        screen_view = new ScreenView({model: screen});
        
        paginated_collection = new ContactCollection();
+       $('div.full_width_content').html(Templates.ContactSearch);
+       
        paginated_collection.fetch({
            success: function (coll, response) {
                contacts_view = new ContactsView({collection: coll}).render();
-               $('div.full_width_content').html(contacts_view);
-               $('div.full_width_content').prepend(Templates.ContactSearch);
+               $('div.full_width_content').append(contacts_view);
                
                // Autocomplete for location input textbox
                $( "#search_location__name" ).catcomplete({
