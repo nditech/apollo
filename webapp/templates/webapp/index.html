@@ -67,22 +67,9 @@
 <script type="text/javascript" charset="utf-8">
 	$(function() {
 		new WebappRouter();
-		//new ZambiaRouter();
+		new ZambiaRouter();
 		Backbone.history.start({root: '/home/'});
 	});
-	
-	function filter_msgs() {
-		text = $('#text').val() == 'Text' ? "" : $('#text').val();
-		phone = $('#phone').val() == 'Phone Number' ? "" : $('#phone').val();
-		filter = {};
-		if (text) {
-			filter = $.extend(filter, {text__contains: text});
-		}
-		if (phone) {
-			filter = $.extend(filter, {connection__identity: phone});
-		}
-		msgs.filtrate(filter);
-	}
 </script>
 </head>
 <body>
@@ -92,13 +79,13 @@
 			<div id="navigation" > 
 				<div class="menu-main-menu-container">
 					<ul id="dropmenu" class="menu">
-						<li><a href="index-2.html">Dashboard</a></li> 						
-						<li><a href="#">Elections</a>
+						<li><a href="#!/dashboard">Dashboard</a></li> 						
+						<li><a href="#!/elections/checklists">Elections</a>
 							<ul class="sub-menu"> 
-								<li class="current_page_item"><a href="#">Checklists</a></li>
-								<li><a href="#">Incidents</a></li> 
-								<li><a href="#">Process Analysis</a></li> 
-								<li><a href="#">Results Analysis</a></li> 
+								<li class="current_page_item"><a href="#!/elections/checklists">Checklists</a></li>
+								<li><a href="#!/elections/incidents">Incidents</a></li> 
+								<li><a href="#!/elections/process_analysis">Process Analysis</a></li> 
+								<li><a href="#!/elections/results_analysis">Results Analysis</a></li> 
 							</ul> 
 						</li> 		
 						<li><a href="#!/contacts">Contacts</a></li> 
@@ -114,7 +101,7 @@
 					<h1>Message Log</h1>
 				</div>
 				<div class="page-title-link">
-					<a href="index-2.html">Back to Dashboard &raquo;</a>
+					<a href="#!/dashboard">Back to Dashboard &raquo;</a>
 				</div>
 				<p class="clr"></p>
 			</div><!--/page-title-content-->
