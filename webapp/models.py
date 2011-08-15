@@ -152,6 +152,18 @@ class Incident(models.Model):
     def __unicode__(self):
         return '%s (%s) -> %d' % (self.observer.observer_id, self.location, self.id)
 
+class Election(models.Model):
+    """Election contest type"""
+    name = models.CharField(max_length=100)
+
+    class Admin:
+        list_display = ('',)
+        search_fields = ('',)
+
+    def __unicode__(self):
+        return self.name
+
+
 class Party(models.Model):
     """Political parties contesting for positions in the elections"""
     acronym = models.CharField(max_length=10)
@@ -159,6 +171,10 @@ class Party(models.Model):
     # adding locations enables the distinction of parties contesting at different levels
     # a party contesting at the national elections may not be contesting at the guber level
     location = models.ForeignKey(Location, related_name='parties')
+    election = models.ForeignKey(Election, related_name='parties')
+    
+    class Meta:
+        verbose_name_plural = 'Parties'
 
     class Admin:
         list_display = ('',)
