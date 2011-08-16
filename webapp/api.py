@@ -143,7 +143,7 @@ class ChecklistQuestionResource(ModelResource):
 
 
 class ChecklistResponseResource(ModelResource):
-    question = fields.ForeignKey(ChecklistQuestionResource, 'question', readonly=True)
+    question = fields.ForeignKey(ChecklistQuestionResource, 'question', readonly=True, full=True)
     
     class Meta:
         queryset = ChecklistResponse.objects.select_related()
