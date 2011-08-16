@@ -1,3 +1,16 @@
+<script type="text/x-handlebars-template" id="screen-dashboard-template" charset="utf-8">
+	<div class="page-title">
+		<div class="page-title-content">
+			<div class="page-title-info left">
+				<h1>{{title}}</h1>
+			</div>
+			<p class="clr"></p>
+		</div>
+	</div>
+	<div class="full_width_content">
+		{{content}}
+	</div>
+</script>
 <script type="text/x-handlebars-template" id="screen-template" charset="utf-8">
 	<div class="page-title">
 		<div class="page-title-content">
@@ -5,7 +18,7 @@
 				<h1>{{title}}</h1>
 			</div>
 			<div class="page-title-link">
-				<a href="#home">Back to Dashboard &raquo;</a>
+				<a href="#!/dashboard">Back to Dashboard &raquo;</a>
 			</div>
 			<p class="clr"></p>
 		</div>
@@ -59,6 +72,7 @@
 <script type="text/javascript" charset="utf-8">
 	Templates = (typeof(Templates) == 'undefined') ? {} : Templates;
 	Templates.Screen = Handlebars.compile($('#screen-template').html());
+	Templates.DashboardScreen = Handlebars.compile($('#screen-dashboard-template').html());
 	Templates.MessageSearch = Handlebars.compile($('#message-search-template').html());
 	Templates.Message = Handlebars.compile($('#message-template').html());
 	Templates.MessageHeader = Handlebars.compile($('#message-header-template').html());
