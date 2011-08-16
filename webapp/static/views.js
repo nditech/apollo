@@ -2,10 +2,15 @@
 ScreenView = Backbone.View.extend({
 	el: 'div#container',
 	render: function(){
-		$(this.el).html(Templates.Screen(this.model.attributes));
+	    // Set document title
+	    $('title').html(this.model.get('title') + ' - Apollo');
+		$(this.el).html(Templates[this.options.template](this.model.attributes));
 	},
 	initialize: function () {
 	    _.bindAll(this, 'render');
+	    // This allows the specification of template when initializing this view
+	    // this is useful for screens like the dashboard
+	    this.options.template = typeof(this.options.template) == 'undefined' ? 'Screen' : this.options.template;
 	    this.render();
 	}
 });

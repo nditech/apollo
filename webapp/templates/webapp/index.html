@@ -4,13 +4,9 @@
 <head>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <title>Minimalisto Site Template - Typography Page</title>
-<!--<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Droid+Serif:regular,italic,bold,bolditalic" type="text/css" />
-<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Droid+Sans:regular,bold" type="text/css" />  -->
 <link rel="stylesheet" type="text/css" href="/assets/css/style.css" />
 <script src="/assets/js/application-min.js" type="text/javascript" charset="utf-8"></script>
 <script src="/assets/js/handlebars.1.0.0.beta.3.js" type="text/javascript" charset="utf-8"></script>
-<script src="/assets/js/jquery-ui.js" type="text/javascript" charset="utf-8"></script>
-<script src="/assets/js/ui.throbber.js" type="text/javascript" charset="utf-8"></script>
 <script src="/static/webapp/models.js" type="text/javascript" charset="utf-8"></script>
 <script src="/static/webapp/collections.js" type="text/javascript" charset="utf-8"></script>
 <script src="/static/webapp/views.js" type="text/javascript" charset="utf-8"></script>
@@ -29,8 +25,9 @@
 		padding:20px;
 		padding-bottom: 10px;
 	}
-	.filter_pane_dashboard {
+	.search_pane_dashboard, .filter_pane_dashboard {
 		background-color:#eee;
+		margin-bottom:2em;
 		width:920px;
 		padding:20px;
 		padding-bottom:0;
@@ -72,36 +69,7 @@
 		new WebappRouter();
 		new ZambiaRouter();
 		Backbone.history.start({root: '/home/'});
-		
-		$("#throbber").throbber({
-		    bgopacity: 0, fgcolor: "#AAA", segments: 12,
-			path: function(i, segments) {
-				return "M 40,8 c -4,0 -8,-4 -8,-8 c 0,-4 4,-8 8,-8 l 30,0 c 4,0 8,4 8,8 c 0,4 -4,8 -8,8 l -30,0 z";
-			},
-			opacity: function(i, segments) { return 1-(i%segments)/segments;},
-			speed: 3,
-			show: function() { $(this).fadeIn(100);},
-			hide: function(callback) { $(this).fadeOut(100, callback);}
-		});
-		
-		$(document).ajaxStart(function () { $("#throbber").throbber('enable'); });
-		$(document).ajaxStop(function () { $("#throbber").throbber('disable'); });
-		
-		$("#throbber").throbber('disable');
 	});
-	
-	function filter_msgs() {
-		text = $('#text').val() == 'Text' ? "" : $('#text').val();
-		phone = $('#phone').val() == 'Phone Number' ? "" : $('#phone').val();
-		filter = {};
-		if (text) {
-			filter = $.extend(filter, {text__contains: text});
-		}
-		if (phone) {
-			filter = $.extend(filter, {connection__identity: phone});
-		}
-		msgs.filtrate(filter);
-	}
 </script>
 </head>
 <body>
@@ -111,23 +79,16 @@
 			<div id="navigation" > 
 				<div class="menu-main-menu-container">
 					<ul id="dropmenu" class="menu">
-						<li><a href="index-2.html">Dashboard</a></li> 
-						<li><a href="about.html">Voter's Registration</a></li>
-						<li><a href="#">Display, Claims &amp; Objections</a>
+						<li><a href="#!/dashboard">Dashboard</a></li> 						
+						<li><a href="#!/elections/checklists">Elections</a>
 							<ul class="sub-menu"> 
-								<li><a href="index-2.html">Light</a></li> 
-								<li><a href="http://minimalisto-html.atixscripts.info/dark/index.html">Dark</a></li> 
-							</ul> 
-						</li>						
-						<li><a href="#">Elections</a>
-							<ul class="sub-menu"> 
-								<li class="current_page_item"><a href="typography.html">Typography</a></li> 
-								<li><a href="sidebar-right.html">Sidebar Right</a></li> 
-								<li><a href="fullwidth.html">Full Width Page</a></li> 
+								<li class="current_page_item"><a href="#!/elections/checklists">Checklists</a></li>
+								<li><a href="#!/elections/incidents">Incidents</a></li> 
+								<li><a href="#!/elections/process_analysis">Process Analysis</a></li> 
+								<li><a href="#!/elections/results_analysis">Results Analysis</a></li> 
 							</ul> 
 						</li> 		
 						<li><a href="#!/contacts">Contacts</a></li> 
-						<li><a href="#!/messages">Messages</a></li>
 					</ul>
 				</div><!-- /dropmenu --> 
 			</div><!-- /navigation -->
@@ -140,7 +101,7 @@
 					<h1>Message Log</h1>
 				</div>
 				<div class="page-title-link">
-					<a href="index-2.html">Back to Dashboard &raquo;</a>
+					<a href="#!/dashboard">Back to Dashboard &raquo;</a>
 				</div>
 				<p class="clr"></p>
 			</div><!--/page-title-content-->
@@ -154,14 +115,24 @@
 				</div>
 				<div class="clear"></div>
 			</div>
-			<div style="margin-top:2em"></div>
 			
 			<table id="messages">
 		    </table>
 		
 			<div style="margin-top:2em"></div>
-			<div id="pager">
-				<span class="btn_gray btn_space"><a href="javascript:msgs.firstPage();"><img src="/assets/images/first_sm.png" style="margin-top:8px"></a><span></span></span> <span class="btn_gray btn_space"><a href="javascript:msgs.previousPage();"><img src="/assets/images/previous_sm.png" style="margin-top:8px"></a><span></span></span> <span style="float:left;height:25px;line-height:25px;" class="btn_space">Page 1 of 4</span> <span class="btn_gray btn_space"><a href="javascript:msgs.nextPage();"><img src="/assets/images/next_sm.png" style="margin-top:8px"></a><span></span></span> <span class="btn_gray"><a href="javascript:msgs.lastPage();"><img src="/assets/images/last_sm.png" style="margin-top:8px"></a><span></span></span>
+
+			<div class="pagination">
+				<a href="#" class="prev">&larr; prev</a>
+				<a href="#" class="current">1</a>
+				<a href="#">2</a>
+				<a href="#">3</a>
+				...
+				<a href="#">7</a>
+				<a href="#">8</a>
+				<a href="#">9</a>
+				...
+				<a href="#">10</a>
+				<a href="#" class="next">next &rarr;</a>
 			</div>
 			<div style="margin-top:2em"></div>
 		</div><!--/full_width_content-->

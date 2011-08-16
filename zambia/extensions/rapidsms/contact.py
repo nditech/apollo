@@ -9,11 +9,16 @@ class Observer(models.Model):
         ('M', 'Male'),
         ('F', 'Female'),
     )
+    PARTNERS = (
+        ('Caritas', 'Caritas'),
+        ('FODEP', 'FODEP')
+    )
     observer_id = models.CharField(max_length=100, validators=[RegexValidator(re.compile(r'\d+', re.I), message='Observer IDs can only contain numerals')])
     role = models.ForeignKey(ObserverRole)
     location = models.ForeignKey(Location)
     supervisor = models.ForeignKey('Contact', null=True, blank=True)
     gender = models.CharField(max_length=1, choices=GENDER, db_index=True)
+    partner = models.CharField(blank=True, max_length=100, choices=PARTNERS)
 
     class Admin:
         list_display = ('',)
