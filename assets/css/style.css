@@ -1715,3 +1715,52 @@ div.pagination a.prev{
 div.pagination a.prev:hover{
 	border:2px solid #FFA500;
 }
+
+/****************** custom styles ******************************/
+.input_smoke {height:18px;background-color:#ddd;border:1px solid #ccc;padding:3px 10px;width:152px;border-radius:4px;}
+select.input_smoke {height:26px;width:174px;}
+.filter_pane {
+	background-color:#eee;
+	width:920px;
+	padding:20px;
+	padding-bottom: 10px;
+	display: none;
+}
+.search_pane_dashboard, .filter_pane_dashboard {
+	background-color:#eee;
+	margin-bottom:2em;
+	width:920px;
+	padding:20px;
+	padding-bottom:0;
+	border-radius:5px;
+	-webkit-border-radius:5px;
+	-moz-border-radius:5px;
+}
+.filter_pane_bottom {
+	border-bottom-left-radius:5px;
+	-webkit-border-bottom-left-radius:5px;
+	-moz-border-bottom-left-radius:5px;
+	border-bottom-right-radius:5px;
+	-webkit-border-bottom-right-radius:5px;
+	-moz-border-bottom-right-radius:5px;
+	height: 10px;
+	background-color: #eee;
+}
+#filter_dropper {
+	background-color:orange;
+	margin-left: 800px;
+	width: 100px;
+	padding: 8px;
+	text-align: center;
+	color: white;
+	cursor: pointer;
+	border-bottom-left-radius:5px;
+	-webkit-border-bottom-left-radius:5px;
+	-moz-border-bottom-left-radius:5px;
+	border-bottom-right-radius:5px;
+	-webkit-border-bottom-right-radius:5px;
+	-moz-border-bottom-right-radius:5px;
+}
+div.input_el {float:left; margin-right:10px;margin-bottom:1.5em;}
+div.clear {clear:left;}
+.btn_space {margin-right:1em;}

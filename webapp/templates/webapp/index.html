@@ -16,54 +16,6 @@
 <script src="/static/zambia/views.js" type="text/javascript" charset="utf-8"></script>
 <script src="/static/zambia/routers.js" type="text/javascript" charset="utf-8"></script>
 {% app_templates %}
-<style type="text/css" media="screen">
-	.input_smoke {height:18px;background-color:#ddd;border:1px solid #ccc;padding:3px 10px;width:152px;border-radius:4px;}
-	select.input_smoke {height:26px;width:174px;}
-	.filter_pane {
-		background-color:#eee;
-		width:920px;
-		padding:20px;
-		padding-bottom: 10px;
-	}
-	.search_pane_dashboard, .filter_pane_dashboard {
-		background-color:#eee;
-		margin-bottom:2em;
-		width:920px;
-		padding:20px;
-		padding-bottom:0;
-		border-radius:5px;
-		-webkit-border-radius:5px;
-		-moz-border-radius:5px;
-	}
-	.filter_pane_bottom {
-		border-bottom-left-radius:5px;
-		-webkit-border-bottom-left-radius:5px;
-		-moz-border-bottom-left-radius:5px;
-		border-bottom-right-radius:5px;
-		-webkit-border-bottom-right-radius:5px;
-		-moz-border-bottom-right-radius:5px;
-		height: 10px;
-		background-color: #eee;
-	}
-	#filter_dropper {
-		background-color:orange;
-		margin-left: 800px;
-		width: 100px;
-		padding: 8px;
-		text-align: center;
-		color: white;
-		cursor: pointer;
-		border-bottom-left-radius:5px;
-		-webkit-border-bottom-left-radius:5px;
-		-moz-border-bottom-left-radius:5px;
-		border-bottom-right-radius:5px;
-		-webkit-border-bottom-right-radius:5px;
-		-moz-border-bottom-right-radius:5px;
-	}
-	div.input_el {float:left; margin-right:10px;margin-bottom:1.5em;}
-	div.clear {clear:left;}
-	.btn_space {margin-right:1em;}
-</style>
 <script type="text/javascript" charset="utf-8">
 	$(function() {
 		new WebappRouter();
@@ -107,7 +59,7 @@
 			</div><!--/page-title-content-->
 		</div><!--/page-title-->
 		<div class="full_width_content">
-			<div class="filter_pane_dashboard" id="filter">
+			<div class="filter_pane" id="filter">
 				<div class="input_el"><input type="text" name="phone" class="input_smoke" placeholder="Phone Number" id="phone" pattern=".*[0-9]"></div>
 				<div class="input_el"><input type="text" name="text" class="input_smoke" placeholder="Text" id="text"></div>
 				<div class="input_el">
@@ -115,6 +67,8 @@
 				</div>
 				<div class="clear"></div>
 			</div>
+			<div class="filter_pane_bottom"></div>
+			<div id="filter_dropper">Filter</div>
 			
 			<table id="messages">
 		    </table>
@@ -126,12 +80,11 @@
 				<a href="#" class="current">1</a>
 				<a href="#">2</a>
 				<a href="#">3</a>
-				...
 				<a href="#">7</a>
 				<a href="#">8</a>
 				<a href="#">9</a>
-				...
 				<a href="#">10</a>
+				<a href="#">...</a>
 				<a href="#" class="next">next &rarr;</a>
 			</div>
 			<div style="margin-top:2em"></div>

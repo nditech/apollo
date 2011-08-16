@@ -2,7 +2,7 @@
 ScreenView = Backbone.View.extend({
 	el: 'div#container',
 	render: function(){
-	    self = this;
+	    var self = this;
 	    // Set document title
 	    $('title').html(this.model.get('title') + ' - Apollo');
 	    
