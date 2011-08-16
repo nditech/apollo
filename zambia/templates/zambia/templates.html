@@ -1,0 +1,59 @@
+<script type="text/x-handlebars-template" id="checklist-filter-template" charset="utf-8">
+	<div id="filter" class="filter_pane">
+		<form id="search">
+		<div class="input_el"><input type="text" name="observer_id" class="input_smoke search_field" placeholder="Monitor Id" id="search_connection__identity__endswith" pattern=".*[0-9]" title="Numeric figures only"></div>
+		<div class="input_el"><input type="text" name="date" class="input_smoke search_field date_field" placeholder="Date" id="search_text__contains"></div>
+		<div class="input_el"><input type="text" name="location" class="input_smoke search_field" placeholder="Location" id="search_text__contains"></div>
+		<div class="clear"></div>
+		<div class="input_el">
+			<select name="setup_status" id="setup_status" class="input_smoke">
+				<option value="option1">Setup Status</option>
+				<option value="option2">Setup Complete</option>
+				<option value="option3">Setup Missing</option>
+				<option value="option4">Setup Partial</option>
+			</select>
+		</div>
+		<div class="input_el">
+			<select name="voting_status" id="voting_status" class="input_smoke">
+				<option value="option1">Voting Status</option>
+				<option value="option2">Voting Complete</option>
+				<option value="option3">Voting Missing</option>
+				<option value="option4">Voting Partial</option>
+			</select>
+		</div>
+		<div class="input_el">
+			<select name="closing_status" id="closing_status" class="input_smoke">
+				<option value="option1">Closing Status</option>
+				<option value="option2">Closing Complete</option>
+				<option value="option3">Closing Missing</option>
+				<option value="option4">Closing Partial</option>
+			</select>
+		</div>
+		<div class="input_el">
+			<select name="counting_status" id="counting_status" class="input_smoke">
+				<option value="option1">Counting Status</option>
+				<option value="option2">Counting Complete</option>
+				<option value="option3">Counting Missing</option>
+				<option value="option4">Counting Partial</option>
+			</select>
+		</div>
+		<div class="input_el">
+			<span class="btn_blue btn_space"><input type="submit" name="submit" value="Filter" class="search_btn"><span>&nbsp;</span></span>
+		</div>
+		</form>
+		<div class="clear"></div>
+	</div>
+	<div class="filter_pane_bottom"></div>
+	<div id="filter_dropper">Filter</div>
+	<div style="margin-top:2em"></div>
+</script>
+<script type="text/x-handlebars-template" id="checklist-header-template" charset="utf-8">
+	<tbody>
+		<tr><th><a href="javascript:;" class="sortable_column" id="sort_observer_id">Monitor Id</a></th><th><a href="javascript:;" class="sortable_column" id="sort_date">Date</a></th><th><a href="javascript:;" class="sortable_column" id="sort_location__name">Ward</a></th><th><a href="javascript:;" class="sortable_column" id="sort_location__name">Polling District</a></th><th><a href="javascript:;" class="sortable_column" id="sort_location__name">Supervisor</a></th><th><a href="javascript:;" class="sortable_column" id="sort_location__name">Monitor</a></th><th><span title="Setup">S</span></th><th><span title="Voting">V</span></th><th><span title="Closing">C</span></th><th><span title="Counting">C</span></th><th>Edit</th></tr>
+	</tbody>
+</script>
+<script type="text/javascript" charset="utf-8">
+	Templates = (typeof(Templates) == 'undefined') ? {} : Templates;
+	Templates.ChecklistFilter = Handlebars.compile($('#checklist-filter-template').html());
+	Templates.ChecklistHeader = Handlebars.compile($('#checklist-header-template').html());
+</script>

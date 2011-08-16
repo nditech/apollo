@@ -17,11 +17,14 @@ ZambiaRouter = Backbone.Router.extend({
         screen_view = new ScreenView({model: screen});
 
         paginated_collection = new ChecklistCollection();
+        $('div.full_width_content').html(Templates.ChecklistFilter);
+        
         paginated_collection.fetch({
           success: function (coll, response) {
-              //checklists_view = new ChecklistCollectionView({collection: coll}).render();
-              //$('div.full_width_content').html(checklists_view);
-              //$('div.full_width_content').prepend(Templates.ChecklistSearch);
+              checklists_view = new ChecklistCollectionView({collection: coll}).render();
+              $('div.full_width_content').append(checklists_view);
+              
+              $('.date_field').datepicker();
           },
         });
    },
