@@ -223,7 +223,7 @@ h6 {
 	font-size:13px;
 }
 #dropmenu li a {
-    color:#717171;
+    color: #a9a9a9;
 }
 #dropmenu li li a {
     color:#a9a9a9;
@@ -286,6 +286,9 @@ h6 {
 }
 #dropmenu li.current_page_item ul li a {
 	background:#fff;
+}
+#dropmenu li a.active {
+    color: #000;
 }
 #dropmenu li ul li a:hover {
 	padding:10px 10px;

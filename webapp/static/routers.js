@@ -5,7 +5,7 @@ WebappRouter = Backbone.Router.extend({
    },
    
    messages: function () {
-       screen = new Screen({title: 'Message Log', contents: ''});
+       screen = new Screen({title: 'Message Log', contents: '', link: '#!/messages'});
        screen_view = new ScreenView({model: screen});
        
        paginated_collection = new MessageCollection();
@@ -20,7 +20,7 @@ WebappRouter = Backbone.Router.extend({
    },
    
    contacts: function () {
-       screen = new Screen({title: 'Contacts', contents: ''});
+       screen = new Screen({title: 'Contacts', contents: '', link: '#!/contacts'});
        screen_view = new ScreenView({model: screen});
        
        paginated_collection = new ContactCollection();

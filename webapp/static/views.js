@@ -2,8 +2,23 @@
 ScreenView = Backbone.View.extend({
 	el: 'div#container',
 	render: function(){
+	    self = this;
 	    // Set document title
 	    $('title').html(this.model.get('title') + ' - Apollo');
+	    
+	    // Highlight the current page link
+	    $('#dropmenu li a').removeClass("active");
+	    $('#dropmenu li').each(function () {
+	        if ($("a", this).attr("href") == self.model.get('link')) {
+	            $("a:first", this).addClass("active");
+	            
+	            // The following will also highlight the parent menu to aid context
+	            if ($(this).parent('ul.sub-menu')) {
+	                var parent = $(this).parent('ul.sub-menu').parent();
+	                $('a:first', parent).addClass('active');
+	            }
+	        }
+	    });
 		$(this.el).html(Templates[this.options.template](this.model.attributes));
 	},
 	initialize: function () {
