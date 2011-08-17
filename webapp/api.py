@@ -53,9 +53,10 @@ class LocationResource(ModelResource):
         self.throttle_check(request)
         
         # do the query
-        locations = Location.objects.filter(name__icontains=request.GET.get('term', ''))[:20]
+        locations = Location.objects.filter(name__icontains=request.GET.get('term', ''))[:10]
+        sorted_locations = sorted(locations, key=lambda location: location.type.name)
         objects = []
-        for location in locations:
+        for location in sorted_locations:
             bundle = self.build_bundle(obj=location, request=request)
             bundle = self.full_dehydrate(bundle)
             objects.append(bundle)
