@@ -8,7 +8,14 @@ Screen = Backbone.Model.extend({
 });
 
 Backend = Backbone.RelationalModel.extend();
-Location = Backbone.RelationalModel.extend();
+Location = Backbone.RelationalModel.extend({
+    urlRoot: '/api/v1/location/',
+    relations: [{
+        type: Backbone.HasOne,
+        key: 'parent',
+        relatedModel: 'Location'
+    }]
+});
 IncidentForm = Backbone.RelationalModel.extend();
 ChecklistQuestion = Backbone.RelationalModel.extend();
 ChecklistQuestionType = Backbone.RelationalModel.extend();
@@ -33,6 +40,10 @@ Contact = Backbone.RelationalModel.extend({
 		reverserRelation: {
 			key: 'contacts'
 		}
+    },{
+        type: Backbone.HasOne,
+        key: 'supervisor',
+        relatedModel: 'Contact'
     }]
 });
 
@@ -100,23 +111,23 @@ Checklist = Backbone.RelationalModel.extend({
 		} 
 	}, {
 		type: Backbone.HasOne,
-		Key: 'contact',
+		key: 'observer',
 		relatedModel: 'Contact',
 		reverseRelation: {
 			key: 'checklists'
 		}	
-	}]
+	}, {
+		type: Backbone.HasMany,
+		key: 'responses',
+		relatedModel: 'ChecklistResponse',
+		reverseRelation: {
+			key: 'checklist'
+		}
+    }]
 });
 
 ChecklistResponse = Backbone.RelationalModel.extend({
 	relations: [{
-		type: Backbone.HasOne,
-		key: 'checklist',
-		relatedModel: 'Checklist',
-		reverseRelation: {
-			key: 'checklist_responses'
-		}
-	}, {
 		type: Backbone.HasOne,
 		key: 'question',
 		relatedModel: 'ChecklistQuestion',
