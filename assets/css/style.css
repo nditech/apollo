@@ -6,7 +6,6 @@ a, abbr, acronym, address, applet, area, b, base, basefont, bdo, big, blockquote
 	border:0;
 	outline:0;
 	font-size:100%;
-	vertical-align: baseline;
 	background:none;
 }
 ol, ul {
@@ -21,42 +20,48 @@ blockquote, q {
 q:before, q:after {
 	content: '';
 }
-table {
+table.datagrid {
 	border-collapse:collapse;
 	border-spacing:0;
 	width: 100%;
 }
 
-table * {
+table.datagrid th {
     padding: 1em 0.5em;
 }
 
-tr:first-child {
+.datagrid tr:first-child {
     border-bottom: solid 2px #888;
 }
 
-tr {
+.datagrid tr {
     border-bottom: 1px dashed #D3DAD9;
 }
 
-tr:nth-child(2n+1) {
+.datagrid tr:nth-child(2n+1) {
     background-color: #eee;
 }
 
-tr:hover {
+.datagrid tr:hover {
     background-color: #fff;
 }
 
-tr:last-child {
+.datagrid tr:last-child {
     border-bottom: 0;
 }
 
-th {
+.datagrid th {
     text-align: left;
     border-right: whiteSmoke 5px solid;
 }
 
-th img {padding:0;}
+.datagrid td {
+    padding: 0.8em;
+}
+
+table.datagrid img {padding:0;}
+
+table.datagrid th img {margin-left:0.5em;}
 
 /******************* General Settings *******************/
 html,body {
