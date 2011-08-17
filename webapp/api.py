@@ -24,6 +24,7 @@ class LocationTypeResource(ModelResource):
 
 class LocationResource(ModelResource):
     type = fields.ForeignKey(LocationTypeResource, 'type', readonly=True, null=True, blank=True, full=True)
+    parent = fields.ForeignKey('self', 'parent', readonly=True, null=True, blank=True, full=True)
     
     class Meta:
         queryset = Location.objects.select_related()
