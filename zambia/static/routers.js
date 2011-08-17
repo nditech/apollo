@@ -24,6 +24,12 @@ ZambiaRouter = Backbone.Router.extend({
               checklists_view = new ChecklistCollectionView({collection: coll}).render();
               $('div.full_width_content').append(checklists_view);
               
+              // Autocomplete for location input textbox
+              $( "#search_location__name" ).catcomplete({
+                 source: '/api/v1/location/search/',
+                 position: { my: 'left top', at: 'left bottom', collision: 'none', offset: '0 -3'}
+              });
+              
               $('.date_field').datepicker();
           },
         });
