@@ -51,9 +51,9 @@
 	<div class="search_pane_dashboard">
 		<form id="search">
 		<div class="input_el"><input type="text" name="observer_id" class="input_smoke search_field" id="search_observer_id" placeholder="Monitor ID" pattern=".*[0-9]" title="Numeric figures only"></div>
-		<div class="input_el"><input type="text" name="name" class="input_smoke search_field" id="search_name__contains" placeholder="Name"></div>
+		<div class="input_el"><input type="text" name="name" class="input_smoke search_field" id="search_name__icontains" placeholder="Name"></div>
 		<div class="input_el"><input type="text" name="phone" class="input_smoke search_field" id="search_connections__identity__endswith" placeholder="Phone Number" pattern=".*[0-9]" title="Numeric figures only"></div>		
-		<div class="input_el"><input type="text" name="location" class="input_smoke search_field" id="search_location__name" placeholder="Location"></div>
+		<div class="input_el"><input type="text" name="location" class="input_smoke" id="location__id" placeholder="Location"></div>
 		<div class="input_el">
 			<span class="btn_blue btn_space"><input type="submit" name="submit" value="Search" class="search_btn"><span>&nbsp;</span></span>
 		</div>

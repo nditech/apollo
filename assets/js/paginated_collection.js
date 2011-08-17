@@ -30,7 +30,7 @@ var PaginatedCollection = Backbone.Collection.extend({
       urlparams = {offset: this.offset, limit: this.limit};
       urlparams = $.extend(urlparams, this.filter_options);
       if (this.sort_field) {
-          urlparams = $.extend(urlparams, {sort_by: this.sort_field});
+          urlparams = $.extend(urlparams, {order_by: this.sort_field});
       }
       return this.baseUrl + '?' + $.param(urlparams);
   },

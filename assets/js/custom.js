@@ -13,7 +13,7 @@ $(function () {
 	});
 	
 	$(document).ajaxStart(function () { $("#throbber").throbber('enable'); });
-	$(document).ajaxStop(function () { $("#throbber").throbber('disable'); });
+	$(document).ajaxComplete(function () { $("#throbber").throbber('disable'); });
 	
 	$("#throbber").throbber('disable');
 	
@@ -73,12 +73,17 @@ $(function () {
 	});
 
     $.widget("custom.catcomplete", $.ui.autocomplete, {
+        _create: function () {
+            var element_id = this.element.attr('id');
+            this.element.after('<input type="hidden" class="search_field" id="search_'+element_id+'" />');
+            $.ui.autocomplete.prototype._create.apply(this);
+        },
     	_renderMenu: function( ul, items ) {
     		var self = this,
     			currentCategory = "";
     		$.each( items, function( index, item ) {
     			if ( item.category != currentCategory ) {
-    				ul.append( "<li class='ui-autocomplete-category'>" + item.category + "</li>" );
+    				ul.append( "<li class='ui-menu-item ui-autocomplete-category'>" + item.category + "</li>" );
     				currentCategory = item.category;
     			}
     			self._renderItem( ul, item );

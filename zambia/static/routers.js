@@ -25,12 +25,27 @@ ZambiaRouter = Backbone.Router.extend({
               $('div.full_width_content').append(checklists_view);
               
               // Autocomplete for location input textbox
-              $( "#search_location__name" ).catcomplete({
+              $("#location__id").catcomplete({
                  source: '/api/v1/location/search/',
-                 position: { my: 'left top', at: 'left bottom', collision: 'none', offset: '0 -4'}
+                 position: { my: 'left top', at: 'left bottom', collision: 'none', offset: '0 -4'},
+                 focus: function (event, ui) {
+                     $('#location__id').val(ui.item.label);
+                     return false;
+                 },
+                 select: function (event, ui) {
+                     $('#location__id').val(ui.item.label);
+                     $('#search_location__id').val(ui.item.id);
+                     return false;
+                 }
               });
               
-              $('.date_field').datepicker();
+              $("#location__id").blur(function () {
+                  if (!$(this).val()) {
+                      $('#search_location__id').val("");
+                  }
+              });
+              
+              $('.date_field').datepicker({dateFormat: 'yy-mm-dd'});
           },
         });
    },

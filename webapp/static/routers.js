@@ -27,15 +27,30 @@ WebappRouter = Backbone.Router.extend({
        $('div.full_width_content').html(Templates.ContactSearch);
        
        paginated_collection.fetch({
-           success: function (coll, response) {
-               contacts_view = new ContactsView({collection: coll}).render();
-               $('div.full_width_content').append(contacts_view);
+            success: function (coll, response) {
+                contacts_view = new ContactsView({collection: coll}).render();
+                $('div.full_width_content').append(contacts_view);
                
-               // Autocomplete for location input textbox
-               $( "#search_location__name" ).catcomplete({
-                   source: '/api/v1/location/search/',
-                   position: { my: 'left top', at: 'left bottom', collision: 'none', offset: '0 -4'}
-               });
+                // Autocomplete for location input textbox
+                $("#location__id").catcomplete({
+                    source: '/api/v1/location/search/',
+                    position: { my: 'left top', at: 'left bottom', collision: 'none', offset: '0 -4'},
+                    focus: function (event, ui) {
+                        $('#location__id').val(ui.item.label);
+                        return false;
+                    },
+                    select: function (event, ui) {
+                        $('#location__id').val(ui.item.label);
+                        $('#search_location__id').val(ui.item.id);
+                        return false;
+                    }
+                });
+
+                $("#location__id").blur(function () {
+                    if (!$(this).val()) {
+                        $('#search_location__id').val("");
+                    }
+                });
            },
        });
    }
