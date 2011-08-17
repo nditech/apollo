@@ -5,7 +5,7 @@ WebappRouter = Backbone.Router.extend({
    },
    
    messages: function () {
-       screen = new Screen({title: 'Message Log', contents: ''});
+       screen = new Screen({title: 'Message Log', contents: '', link: '#!/messages'});
        screen_view = new ScreenView({model: screen});
        
        paginated_collection = new MessageCollection();
@@ -20,7 +20,7 @@ WebappRouter = Backbone.Router.extend({
    },
    
    contacts: function () {
-       screen = new Screen({title: 'Contacts', contents: ''});
+       screen = new Screen({title: 'Contacts', contents: '', link: '#!/contacts'});
        screen_view = new ScreenView({model: screen});
        
        paginated_collection = new ContactCollection();
@@ -33,7 +33,8 @@ WebappRouter = Backbone.Router.extend({
                
                // Autocomplete for location input textbox
                $( "#search_location__name" ).catcomplete({
-                   source: '/api/v1/location/search/'
+                   source: '/api/v1/location/search/',
+                   position: { my: 'left top', at: 'left bottom', collision: 'none', offset: '0 -3'}
                });
            },
        });

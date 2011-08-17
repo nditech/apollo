@@ -32,6 +32,16 @@ $(function () {
 		return false;
 	});
 	
+	// Filter dropper
+	$("div#filter_dropper").live('click', function () {
+		filter_toggle = typeof(filter_toggle) == 'undefined' ? 0 : !filter_toggle;
+		if (filter_toggle) {
+			$("div#filter").slideUp();
+		} else {
+			$("div#filter").slideDown();
+		}
+	});
+	
 	// Column Sorting
 	$("a.sortable_column").live('click', function () {
 		match = /^sort_(.*)$/.exec($(this).attr('id'));
