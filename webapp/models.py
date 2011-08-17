@@ -12,7 +12,7 @@ the RapidSMS contact model. Details are in extensions/rapidsms/contact.py
 
 class Checklist(models.Model):
     """A generic checklist"""
-    location = models.ForeignKey(Location)
+    location = models.ForeignKey(Location, limit_choices_to={'type__name': 'Polling Stream'})
     observer = models.ForeignKey(Contact)
     date = models.DateField(default=datetime.datetime.today)
     comment = models.CharField(blank=True, max_length=200)
