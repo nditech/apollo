@@ -1470,8 +1470,12 @@ ol#commentslist {
 .ui-autocomplete-category {
 	font-weight: bold;
 	padding: .2em .4em;
-	margin: .8em 0 .2em;
-	line-height: 1.5;
+	margin-top: 1em;
+	line-height: 2;
+	vertical-align: baseline;
+}
+.ui-autocomplete-category:first-child {
+    margin-top: 0;
 }
 ul.ui-menu{
 	list-style:none;
