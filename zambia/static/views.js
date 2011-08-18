@@ -16,6 +16,7 @@ ChecklistView = Backbone.View.extend({
 ChecklistCollectionView = Backbone.View.extend({
     tagName: 'table',
     id: 'checklists',
+    className: 'datagrid',
 
     render: function(){
         var self = this;

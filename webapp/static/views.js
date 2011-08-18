@@ -47,6 +47,7 @@ MessageView = Backbone.View.extend({
 MessageLogView = Backbone.View.extend({
     tagName: 'table',
     id: 'messages',
+    className: 'datagrid',
 
     render: function(){
         var self = this;
@@ -84,6 +85,7 @@ ContactView = Backbone.View.extend({
 ContactsView = Backbone.View.extend({
     tagName: 'table',
     id: 'contacts',
+    className: 'datagrid',
 
     render: function(){
         var self = this;

@@ -6,7 +6,6 @@ a, abbr, acronym, address, applet, area, b, base, basefont, bdo, big, blockquote
 	border:0;
 	outline:0;
 	font-size:100%;
-	vertical-align: baseline;
 	background:none;
 }
 ol, ul {
@@ -21,42 +20,48 @@ blockquote, q {
 q:before, q:after {
 	content: '';
 }
-table {
+table.datagrid {
 	border-collapse:collapse;
 	border-spacing:0;
 	width: 100%;
 }
 
-table * {
+table.datagrid th {
     padding: 1em 0.5em;
 }
 
-tr:first-child {
+.datagrid tr:first-child {
     border-bottom: solid 2px #888;
 }
 
-tr {
+.datagrid tr {
     border-bottom: 1px dashed #D3DAD9;
 }
 
-tr:nth-child(2n+1) {
+.datagrid tr:nth-child(2n+1) {
     background-color: #eee;
 }
 
-tr:hover {
+.datagrid tr:hover {
     background-color: #fff;
 }
 
-tr:last-child {
+.datagrid tr:last-child {
     border-bottom: 0;
 }
 
-th {
+.datagrid th {
     text-align: left;
     border-right: whiteSmoke 5px solid;
 }
 
-th img {padding:0;}
+.datagrid td {
+    padding: 0.8em;
+}
+
+table.datagrid img {padding:0;}
+
+table.datagrid th img {margin-left:0.5em;}
 
 /******************* General Settings *******************/
 html,body {
@@ -1465,8 +1470,12 @@ ol#commentslist {
 .ui-autocomplete-category {
 	font-weight: bold;
 	padding: .2em .4em;
-	margin: .8em 0 .2em;
-	line-height: 1.5;
+	margin-top: 1em;
+	line-height: 2;
+	vertical-align: baseline;
+}
+.ui-autocomplete-category:first-child {
+    margin-top: 0;
 }
 ul.ui-menu{
 	list-style:none;
@@ -1671,13 +1680,14 @@ div.pagination {
 	padding: 3px;
 	margin: 3px;
 	text-align:center;
+	margin-top: 2em;
 	font-family:Tahoma,Helvetica,sans-serif;
 	font-size:1em;
 }
 
 div.pagination a {
 	border: 1px solid #A9A9A9;
-	margin-right:3px;
+	margin:0 2px;
 	padding:4px 8px;
 
 	background-position:bottom;
@@ -1691,29 +1701,9 @@ div.pagination a:hover, div.pagination a:active {
 	background-color:#FFA500;
 	color: #fff;
 }
-div.pagination span.current {
-	margin-right:3px;
-	padding:4px 6px;
-	
-	font-weight: bold;
-	color: #000;
-}
-div.pagination span.disabled {
-	display:none;
-}
-div.pagination a.next{
-	border:2px solid #A9A9A9;
-	margin:0 0 0 10px;
-}
-div.pagination a.next:hover{
-	border:2px solid #FFA500;
-}
-div.pagination a.prev{
-	border:2px solid #A9A9A9;
-	margin:0 10px 0 0;
-}
-div.pagination a.prev:hover{
-	border:2px solid #FFA500;
+div.pagination a.current {
+    color: #fff;
+    background-color:#FFA500;
 }
 
 /****************** custom styles ******************************/
@@ -1760,6 +1750,10 @@ select.input_smoke {height:26px;width:174px;}
 	border-bottom-right-radius:5px;
 	-webkit-border-bottom-right-radius:5px;
 	-moz-border-bottom-right-radius:5px;
+    background: orange url(/assets/images/sort_desc.png) no-repeat 90% 40%;
+}
+#filter_dropper.down {
+    background: orange url(/assets/images/sort_asc.png) no-repeat 90% 40%;
 }
 div.input_el {float:left; margin-right:10px;margin-bottom:1.5em;}
 div.clear {clear:left;}
