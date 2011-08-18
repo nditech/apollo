@@ -32,6 +32,12 @@ $(function () {
 		return false;
 	});
 	
+	// Form reset
+	$('#form_reset').live('click', function () {
+	    $('form#search .input_smoke').each(function () { $(this).val(""); });
+	    $('form#search').submit();
+	});
+	
 	// Filter dropper
 	$("div#filter_dropper").live('click', function () {
 		filter_toggle = typeof(filter_toggle) == 'undefined' ? 0 : !filter_toggle;

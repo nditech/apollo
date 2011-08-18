@@ -33,7 +33,7 @@
 		<div class="input_el"><input type="text" name="phone" class="input_smoke search_field" placeholder="Phone Number" id="search_connection__identity__endswith" pattern=".*[0-9]" title="Numeric figures only"></div>
 		<div class="input_el"><input type="text" name="text" class="input_smoke search_field" placeholder="Text" id="search_text__contains"></div>
 		<div class="input_el">
-			<span class="btn_blue btn_space"><input type="submit" name="submit" value="Search" class="search_btn"><span>&nbsp;</span></span>
+			<span class="btn_blue btn_space"><input type="submit" name="submit" value="Search" class="search_btn"><span>&nbsp;</span></span><span class="btn_gray"><a href="javascript:;" id="form_reset">Reset</a><span>&nbsp;</span></span>
 		</div>
 		</form>
 		<div class="clear"></div>
@@ -47,6 +47,9 @@
 <script type="text/x-handlebars-template" id="message-template" charset="utf-8">
 	<td>{{#if contact}}{{contact.attributes.name}}{{else}}&nbsp;{{/if}}</td><td><strong>{{connection.attributes.identity}}</strong> ({{connection.attributes.backend.attributes.name}})</td><td>{{direction}}</td><td>{{date}}</td><td>{{text}}</td>
 </script>
+<script type="text/x-handlebars-template" id="message-empty-template" charset="utf-8">
+	<tr><td colspan="5" class="empty"><em>No messages to display</em></td></tr>
+</script>
 <script type="text/x-handlebars-template" id="contact-search-template" charset="utf-8">
 	<div class="search_pane_dashboard">
 		<form id="search">
@@ -55,7 +58,7 @@
 		<div class="input_el"><input type="text" name="phone" class="input_smoke search_field" id="search_connections__identity__endswith" placeholder="Phone Number" pattern=".*[0-9]" title="Numeric figures only"></div>		
 		<div class="input_el"><input type="text" name="location" class="input_smoke" id="location__id" placeholder="Location"></div>
 		<div class="input_el">
-			<span class="btn_blue btn_space"><input type="submit" name="submit" value="Search" class="search_btn"><span>&nbsp;</span></span>
+			<span class="btn_blue btn_space"><input type="submit" name="submit" value="Search" class="search_btn"><span>&nbsp;</span></span><span class="btn_gray"><a href="javascript:;" id="form_reset">Reset</a><span>&nbsp;</span></span>
 		</div>
 		</form>
 		<div class="clear"></div>
@@ -69,14 +72,19 @@
 <script type="text/x-handlebars-template" id="contact-template" charset="utf-8">
 	<td>{{observer_id}}</td><td>{{name}}</td><td>{{role.name}}</td><td>{{connections.models.0.attributes.identity}}</td><td>{{location.name}}</td>
 </script>
+<script type="text/x-handlebars-template" id="contact-empty-template" charset="utf-8">
+	<tr><td colspan="5" class="empty"><em>No contacts to display</em></td></tr>
+</script>
 <script type="text/javascript" charset="utf-8">
 	Templates = (typeof(Templates) == 'undefined') ? {} : Templates;
 	Templates.Screen = Handlebars.compile($('#screen-template').html());
 	Templates.DashboardScreen = Handlebars.compile($('#screen-dashboard-template').html());
 	Templates.MessageSearch = Handlebars.compile($('#message-search-template').html());
 	Templates.Message = Handlebars.compile($('#message-template').html());
+	Templates.MessageEmpty = Handlebars.compile($('#message-empty-template').html());
 	Templates.MessageHeader = Handlebars.compile($('#message-header-template').html());
 	Templates.ContactSearch = Handlebars.compile($('#contact-search-template').html());
 	Templates.Contact = Handlebars.compile($('#contact-template').html());
+	Templates.ContactEmpty = Handlebars.compile($('#contact-empty-template').html());
 	Templates.ContactHeader = Handlebars.compile($('#contact-header-template').html());
 </script>

@@ -55,10 +55,14 @@ MessageLogView = Backbone.View.extend({
         var heading = $(self.el).children("tbody").children("tr")[0];
         $(self.el).empty();
 		$(self.el).append(heading ? heading : Templates.MessageHeader());
-		self.collection.each(function (mdl) {
-			msg_view = new MessageView({model: mdl}).render();
-			$(self.el).append(msg_view);
-		});
+		if (self.collection.length) {
+		    self.collection.each(function (mdl) {
+    			msg_view = new MessageView({model: mdl}).render();
+    			$(self.el).append(msg_view);
+    		});
+		} else {
+		    $(self.el).children("tbody").append(Templates.MessageEmpty());
+		}
 		return self.el;
     },
 
@@ -93,10 +97,15 @@ ContactsView = Backbone.View.extend({
         var heading = $(self.el).children("tbody").children("tr")[0];
         $(self.el).empty();
 		$(self.el).append(heading ? heading : Templates.ContactHeader());
-		self.collection.each(function (mdl) {
-			contact_view = new ContactView({model: mdl}).render();
-			$(self.el).append(contact_view);
-		});
+		if (self.collection.length) {
+		    self.collection.each(function (mdl) {
+    			contact_view = new ContactView({model: mdl}).render();
+    			$(self.el).append(contact_view);
+    		});
+		} else {
+		    $(self.el).children("tbody").append(Templates.ContactEmpty());
+		}
+		
 		return self.el;
     },
 
