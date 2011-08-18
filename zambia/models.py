@@ -1,6 +1,7 @@
 from django.db import models
-from webapp.models import ChecklistResponse, IncidentResponse
+from webapp.models import ChecklistResponse, IncidentResponse, Checklist, Incident
 from django.core.validators import RegexValidator
+from django.db.models.signals import post_save
 
 # Create your models here.
 class ZambiaChecklistResponse(ChecklistResponse):
@@ -44,3 +45,13 @@ class ZambiaIncidentResponse(models.Model):
     def __unicode__(self):
         return str(self.incident.id)
 
+def checklist_callback(sender, **kwargs):
+    if not hasattr(kwargs['instance'], 'response'):
+        response = ZambiaChecklistResponse.objects.create(checklist=kwargs['instance'])
+
+def incident_callback(sender, **kwargs):
+    if not hasattr(kwargs['instance'], 'response'):
+        response = ZambiaIncidentResponse.objects.create(checklist=kwargs['instance'])
+
+post_save.connect(checklist_callback, sender=Checklist)
+post_save.connect(incident_callback, sender=Incident)
