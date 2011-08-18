@@ -53,33 +53,27 @@
 	</tbody>
 </script>
 <script type="text/x-handlebars-template" id="checklist-template" charset="utf-8">
-	<td>{{observer.attributes.observer_id}}</td><td>{{date}}</td><td>{{location.attributes.parent.attributes.parent.attributes.parent.attributes.name}}</td><td>{{location.attributes.parent.attributes.parent.attributes.name}}</td><td>{{#if observer.attributes.supervisor}}{{observer.attributes.supervisor.attributes.name}}{{#if observer.attributes.supervisor.attributes.connections.models}} (<strong>{{observer.attributes.supervisor.attributes.connections.models.0.attributes.identity}}</strong>){{/if}}{{else}}&nbsp;{{/if}}</td><td>{{observer.attributes.name}}{{#if observer.attributes.connections.models}} (<strong>{{observer.attributes.connections.models.0.attributes.identity}}</strong>){{/if}}</td><td align="center">{{setup_flag responses}}</td><td align="center">{{setup_flag responses}}</td><td align="center">{{setup_flag responses}}</td><td align="center">{{setup_flag responses}}</td><td align="center">Edit</td>
+	<td>{{observer.attributes.observer_id}}</td><td>{{date}}</td><td>{{location.attributes.parent.attributes.parent.attributes.parent.attributes.name}}</td><td>{{location.attributes.parent.attributes.parent.attributes.name}}</td><td>{{#if observer.attributes.supervisor}}{{observer.attributes.supervisor.attributes.name}}{{#if observer.attributes.supervisor.attributes.connections.models}} (<strong>{{observer.attributes.supervisor.attributes.connections.models.0.attributes.identity}}</strong>){{/if}}{{else}}&nbsp;{{/if}}</td><td>{{observer.attributes.name}}{{#if observer.attributes.connections.models}} (<strong>{{observer.attributes.connections.models.0.attributes.identity}}</strong>){{/if}}</td><td align="center">{{setup_flag response}}</td><td align="center">{{setup_flag response}}</td><td align="center">{{setup_flag response}}</td><td align="center">{{setup_flag response}}</td><td align="center">Edit</td>
 </script>
 <script type="text/javascript" charset="utf-8">
-	function checklist_setup_complete(responses) {
-	    return _.all(['A', 'B', 'C', 'CA', 'CB', 'CC', 'CE', 'CF', 'CG', 'CH', 'D', 'E', 'EA', 
+	function checklist_setup_complete(response) {
+	    return _.all(['A', 'B', 'CA', 'CB', 'CC', 'CE', 'CF', 'CG', 'CH', 'D', 'E', 'EA', 
 	        'EB', 'EC', 'F', 'G', 'H', 'J', 'K'], function (code) {
-	        return responses.detect(function (response) {
-	            return response.get('question').get('code') == code && response.get('response');
-	        });
+			return response.get(code);
 	    });
 	}
 
-	function checklist_setup_missing(responses) {
-	    return !_.any(['A', 'B', 'C', 'CA', 'CB', 'CC', 'CE', 'CF', 'CG', 'CH', 'D', 'E', 'EA', 
+	function checklist_setup_missing(response) {
+	    return !_.any(['A', 'B', 'CA', 'CB', 'CC', 'CE', 'CF', 'CG', 'CH', 'D', 'E', 'EA', 
 	        'EB', 'EC', 'F', 'G', 'H', 'J', 'K'], function (code) {
-	        return responses.detect(function (response) {
-	            return response.get('question').get('code') == code && response.get('response');
-	        });
+			return response.get(code);
 	    });
 	}
 
-	function checklist_setup_partial(responses) {
-	    return _.any(['A', 'B', 'C', 'CA', 'CB', 'CC', 'CE', 'CF', 'CG', 'CH', 'D', 'E', 'EA',
+	function checklist_setup_partial(response) {
+	    return _.any(['A', 'B', 'CA', 'CB', 'CC', 'CE', 'CF', 'CG', 'CH', 'D', 'E', 'EA',
 	        'EB', 'EC', 'F', 'G', 'H', 'J', 'K'], function (code) {
-	        return responses.detect(function (response) {
-	            return response.get('question').get('code') == code && response.get('response');
-	        });
+			return response.get(code);
 	    });
 	}
 </script>

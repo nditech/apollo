@@ -134,104 +134,12 @@ class ChecklistFormResource(ModelResource):
         resource_name = 'checklist_form'   
 
 
-class ChecklistQuestionTypeResource(ModelResource):
-    class Meta:
-        queryset = ChecklistQuestionType.objects.all()
-        resource_name = 'checklist_question_type'
-
-
-class ChecklistQuestionOptionResource(ModelResource):
-    class Meta:
-        queryset = ChecklistQuestionOption.objects.all()
-        resource_name = 'checklist_question_option'
-
-
-class ChecklistQuestionResource(ModelResource):
-    form = fields.ForeignKey(ChecklistFormResource, 'form', readonly=True)
-    type = fields.ForeignKey(ChecklistQuestionTypeResource, 'type', readonly=True)
-    options = fields.ToManyField(ChecklistQuestionOptionResource, 'options', readonly=True, full=True)
-    
-    class Meta:
-        queryset = ChecklistQuestion.objects.select_related()
-        resource_name = 'checklist_question'
-
-
-class ChecklistResponseResource(ModelResource):
-    question = fields.ForeignKey(ChecklistQuestionResource, 'question', readonly=True, full=True)
-    
-    class Meta:
-        queryset = ChecklistResponse.objects.select_related()
-        resource_name = 'checklist_response'
-        allowed_methods = ['get', 'put', 'post', 'delete']
-        authentication = Authentication()
-        authorization = Authorization()
-
-
-class ChecklistResource(ModelResource):
-    location = fields.ForeignKey(LocationResource, 'location', full=True)
-    observer = fields.ForeignKey(ContactResource, 'observer', full=True)
-    responses = fields.ToManyField(ChecklistResponseResource, 'responses', full=True)
-    
-    class Meta:
-        queryset = Checklist.objects.select_related()
-        resource_name = 'checklist'
-        allowed_methods = ['get', 'put', 'post', 'delete']
-        authentication = Authentication()
-        authorization = Authorization()
-        filtering = {
-            'date': ALL,
-            'responses': ALL_WITH_RELATIONS,
-            'observer': ALL_WITH_RELATIONS,
-            'location': ALL_WITH_RELATIONS,
-        }
-        ordering = ['location', 'date', 'observer']
-    
-    def build_filters(self, filters=None):
-        if not filters:
-            filters = {}
-        
-        orm_filters = super(ChecklistResource, self).build_filters(filters)
-        if orm_filters.has_key('location__id__exact'):
-            id = orm_filters.pop('location__id__exact')
-            orm_filters['location__id__in'] = Location.objects.get(id=id).get_descendants(True).values_list('id', flat=True)
-        
-        return orm_filters
-
-
 class IncidentFormResource(ModelResource):
     class Meta:
         queryset = IncidentForm.objects.all()
-        resource_name = 'incident_form'
-
-class IncidentResponseResource(ModelResource):
-    form = fields.ForeignKey(IncidentFormResource, 'form', readonly=True)
-    
-    class Meta:
-        queryset = IncidentResponse.objects.select_related()
-        resource_name = 'incident_response'
-        allowed_methods = ['get', 'put', 'post', 'delete']
-        authentication = Authentication()
-        authorization = Authorization()
+        resource_name = 'incident_form'      
 
 
-class IncidentResource(ModelResource):
-    location = fields.ForeignKey(LocationResource, 'location', full=True)
-    observer = fields.ForeignKey(ContactResource, 'observer', full=True)
-    responses = fields.ToManyField(IncidentResponseResource, 'responses', full=True)
-    
-    class Meta:
-        queryset = Incident.objects.select_related()
-        resource_name = 'incident'
-        allowed_methods = ['get', 'put', 'post', 'delete']
-        authentication = Authentication()
-        authorization = Authorization()
-        filtering = {
-            'date': ALL,
-            'observer': ALL_WITH_RELATIONS,
-            'location': ALL_WITH_RELATIONS,
-        }
-        ordering = ['location', 'date', 'observer']
-        
 class MessageResource(ModelResource):
     contact = fields.ForeignKey(ContactResource, 'contact', full=True, readonly=True, null=True, blank=True)
     connection = fields.ForeignKey(ConnectionResource, 'connection', readonly=True, full=True)

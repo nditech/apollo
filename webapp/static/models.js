@@ -17,8 +17,6 @@ Location = Backbone.RelationalModel.extend({
     }]
 });
 IncidentForm = Backbone.RelationalModel.extend();
-ChecklistQuestion = Backbone.RelationalModel.extend();
-ChecklistQuestionType = Backbone.RelationalModel.extend();
 ChecklistForm = Backbone.RelationalModel.extend();
 
 Connection = Backbone.RelationalModel.extend({
@@ -68,6 +66,13 @@ Message = Backbone.RelationalModel.extend({
 Incident = Backbone.RelationalModel.extend({
 	relations: [{
 		type: Backbone.HasOne,
+		key: 'form',
+		relatedModel: 'IncidentForm',
+		reverseRelation: {
+			key: 'incidents'
+		}
+	},{
+		type: Backbone.HasOne,
 		key: 'location',
 		relatedModel: 'Location',
 		reverseRelation: {
@@ -81,28 +86,25 @@ Incident = Backbone.RelationalModel.extend({
 			key: 'incidents'
 		}
 	}, {
-		type: Backbone.HasMany,
-		key: 'responses',
+		type: Backbone.HasOne,
+		key: 'response',
 		relatedModel: 'IncidentResponse',
 		reverserRelation: {
-			key: 'incidents'
+			key: 'incident'
 		}
 	}]
 });
-
-IncidentResponse = Backbone.RelationalModel.extend({
-	relations: [{
-		type: Backbone.HasOne,
-		key: 'form',
-		relatedModel: 'IncidentForm',
-		reverseRelation: {
-			key: 'incident_responses'
-		}
-	}]
-});
+IncidentResponse = Backbone.RelationalModel.extend();
 
 Checklist = Backbone.RelationalModel.extend({
 	relations: [{
+		type: Backbone.HasOne,
+		key: 'form',
+		relatedModel: 'ChecklistForm',
+		reverseRelation: {
+			key: 'checklists'
+		}
+	}, {
 		type: Backbone.HasOne,
 		key: 'location',
 		relatedModel: 'Location',
@@ -117,40 +119,12 @@ Checklist = Backbone.RelationalModel.extend({
 			key: 'checklists'
 		}	
 	}, {
-		type: Backbone.HasMany,
-		key: 'responses',
+		type: Backbone.HasOne,
+		key: 'response',
 		relatedModel: 'ChecklistResponse',
 		reverseRelation: {
 			key: 'checklist'
 		}
     }]
 });
-
-ChecklistResponse = Backbone.RelationalModel.extend({
-	relations: [{
-		type: Backbone.HasOne,
-		key: 'question',
-		relatedModel: 'ChecklistQuestion',
-		reverseRelation: {
-			key: 'checklist_responses'
-		}
-	}]
-});
-
-ChecklistQuestion = Backbone.RelationalModel.extend({
-	relations: [{
-		type: Backbone.HasOne,
-		key: 'form',
-		relatedModel: 'ChecklistForm',
-		reverseRelation: {
-			key: 'checklist_questions'
-		}
-	}, {
-		type: Backbone.HasOne,
-		key: 'type',
-		relatedModel: 'ChecklistQuestionType',
-		reverseRelation: {
-			key: 'checklist_questions'
-		}
-	}]
-});
+ChecklistResponse = Backbone.RelationalModel.extend();
