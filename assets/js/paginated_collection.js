@@ -38,7 +38,7 @@ var PaginatedCollection = Backbone.Collection.extend({
     var info = {
       total: this.total,
       offset: this.offset,
-      page: Math.ceil(this.offset / this.limit) || 1,
+      page: Math.ceil((this.offset + 1) / this.limit),
       limit: this.limit,
       pages: Math.ceil(this.total / this.limit),
       prev: false,
@@ -89,6 +89,13 @@ var PaginatedCollection = Backbone.Collection.extend({
       return false;
     }
     this.offset = ((this.pageInfo().pages - 1) * this.limit) || 0;
+    return this.fetch();
+  },
+  gotoPage: function (page) {
+    if (page > this.pageInfo().pages) {
+      return false;
+    }
+    this.offset = ((page - 1) * this.limit) || 0;
     return this.fetch();
   },
   filtrate: function (options) {

@@ -1680,13 +1680,14 @@ div.pagination {
 	padding: 3px;
 	margin: 3px;
 	text-align:center;
+	margin-top: 2em;
 	font-family:Tahoma,Helvetica,sans-serif;
 	font-size:1em;
 }
 
 div.pagination a {
 	border: 1px solid #A9A9A9;
-	margin-right:3px;
+	margin:0 2px;
 	padding:4px 8px;
 
 	background-position:bottom;
@@ -1700,29 +1701,9 @@ div.pagination a:hover, div.pagination a:active {
 	background-color:#FFA500;
 	color: #fff;
 }
-div.pagination span.current {
-	margin-right:3px;
-	padding:4px 6px;
-	
-	font-weight: bold;
-	color: #000;
-}
-div.pagination span.disabled {
-	display:none;
-}
-div.pagination a.next{
-	border:2px solid #A9A9A9;
-	margin:0 0 0 10px;
-}
-div.pagination a.next:hover{
-	border:2px solid #FFA500;
-}
-div.pagination a.prev{
-	border:2px solid #A9A9A9;
-	margin:0 10px 0 0;
-}
-div.pagination a.prev:hover{
-	border:2px solid #FFA500;
+div.pagination a.current {
+    color: #fff;
+    background-color:#FFA500;
 }
 
 /****************** custom styles ******************************/
@@ -1769,6 +1750,10 @@ select.input_smoke {height:26px;width:174px;}
 	border-bottom-right-radius:5px;
 	-webkit-border-bottom-right-radius:5px;
 	-moz-border-bottom-right-radius:5px;
+    background: orange url(/assets/images/sort_desc.png) no-repeat 90% 40%;
+}
+#filter_dropper.down {
+    background: orange url(/assets/images/sort_asc.png) no-repeat 90% 40%;
 }
 div.input_el {float:left; margin-right:10px;margin-bottom:1.5em;}
 div.clear {clear:left;}
