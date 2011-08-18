@@ -60,8 +60,9 @@ table.datagrid th {
 }
 
 table.datagrid img {padding:0;}
-
 table.datagrid th img {margin-left:0.5em;}
+
+.datagrid td.empty {text-align:center;padding:2em;}
 
 /******************* General Settings *******************/
 html,body {
@@ -1757,4 +1758,4 @@ select.input_smoke {height:26px;width:174px;}
 }
 div.input_el {float:left; margin-right:10px;margin-bottom:1.5em;}
 div.clear {clear:left;}
-.btn_space {margin-right:1em;}
+.btn_space {margin-right:8px;}

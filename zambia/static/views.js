@@ -24,10 +24,15 @@ ChecklistCollectionView = Backbone.View.extend({
         var heading = $(self.el).children("tbody").children("tr")[0];
         $(self.el).empty();
 		$(self.el).append(heading ? heading : Templates.ChecklistHeader());
-		self.collection.each(function (mdl) {
-			checklist_view = new ChecklistView({model: mdl}).render();
-			$(self.el).append(checklist_view);
-		});
+		if (self.collection.length) {
+		    self.collection.each(function (mdl) {
+    			checklist_view = new ChecklistView({model: mdl}).render();
+    			$(self.el).append(checklist_view);
+    		});
+		} else {
+		    $(self.el).children("tbody").append(Templates.ChecklistEmpty());
+		}
+		
 		return self.el;
     },
 
