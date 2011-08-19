@@ -8,13 +8,13 @@ ZambiaRouter = Backbone.Router.extend({
     },
 
     dashboard: function () {
-        screen = new Screen({title: 'Dashboard', contents: '', link: '#!/dashboard'});
-        screen_view = new ScreenView({model: screen, template: 'ZambiaDashboardScreen'});
+        screen_model = new Screen({title: 'Dashboard', contents: '', link: '#!/dashboard'});
+        screen_view = new ScreenView({model: screen_model, template: 'ZambiaDashboardScreen'});
     },
     
     checklists: function () {
-        screen = new Screen({title: 'Election Checklists', contents: '', link: '#!/elections/checklists'});
-        screen_view = new ScreenView({model: screen});
+        screen_model = new Screen({title: 'Election Checklists', contents: '', link: '#!/elections/checklists'});
+        screen_view = new ScreenView({model: screen_model});
 
         paginated_collection = new ChecklistCollection();
         $('div.full_width_content').html(Templates.ChecklistFilter);
@@ -68,17 +68,17 @@ ZambiaRouter = Backbone.Router.extend({
    },
    
    incidents: function () {
-       screen = new Screen({title: 'Election Incidents', contents: '', link: '#!/elections/incidents'});
-       screen_view = new ScreenView({model: screen});
+       screen_model = new Screen({title: 'Election Incidents', contents: '', link: '#!/elections/incidents'});
+       screen_view = new ScreenView({model: screen_model});
    },
    
    process_analysis: function () {
-       screen = new Screen({title: 'Election Process Analysis', contents: '', link: '#!/elections/process_analysis'});
-       screen_view = new ScreenView({model: screen});
+       screen_model = new Screen({title: 'Election Process Analysis', contents: '', link: '#!/elections/process_analysis'});
+       screen_view = new ScreenView({model: screen_model});
    },
    
    results_analysis: function () {
-       screen = new Screen({title: 'Election Results Analysis', contents: '', link: '#!/elections/results_analysis'});
-       screen_view = new ScreenView({model: screen});
+       screen_model = new Screen({title: 'Election Results Analysis', contents: '', link: '#!/elections/results_analysis'});
+       screen_view = new ScreenView({model: screen_model});
    },
 });

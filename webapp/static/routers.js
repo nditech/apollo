@@ -5,8 +5,8 @@ WebappRouter = Backbone.Router.extend({
    },
    
    messages: function () {
-       screen = new Screen({title: 'Message Log', contents: '', link: '#!/messages'});
-       screen_view = new ScreenView({model: screen});
+       screen_model = new Screen({title: 'Message Log', contents: '', link: '#!/messages'});
+       screen_view = new ScreenView({model: screen_model});
        
        paginated_collection = new MessageCollection();
        $('div.full_width_content').html(Templates.MessageSearch);
@@ -38,8 +38,8 @@ WebappRouter = Backbone.Router.extend({
    },
    
    contacts: function () {
-       screen = new Screen({title: 'Contacts', contents: '', link: '#!/contacts'});
-       screen_view = new ScreenView({model: screen});
+       screen_model = new Screen({title: 'Contacts', contents: '', link: '#!/contacts'});
+       screen_view = new ScreenView({model: screen_model});
        
        paginated_collection = new ContactCollection();
        $('div.full_width_content').html(Templates.ContactSearch);

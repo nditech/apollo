@@ -4,7 +4,8 @@ ScreenView = Backbone.View.extend({
 	render: function(){
 	    var self = this;
 	    // Set document title
-	    $('title').html(this.model.get('title') + ' - Apollo');
+	    console.log(self);
+	    $('title').html(self.model.get('title') + ' - Apollo');
 	    
 	    // Highlight the current page link
 	    $('#dropmenu li a').removeClass("active");
