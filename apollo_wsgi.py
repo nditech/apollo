@@ -1,6 +1,10 @@
 #!/usr/bin/env python
 import os
 import sys
+import site
+
+#SITE = '/path/to/site-packages'
+#site.addsitedir(SITE)
 
 sys.path.append(os.path.join(os.path.dirname(__file__)))
 
