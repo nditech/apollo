@@ -1,6 +1,6 @@
 from django.conf.urls.defaults import *
 from django.conf import settings
-from tastypie.resources import ModelResource
+from tastypie.resources import ModelResource, Resource
 from tastypie.api import Api
 from views import *
 import inspect
@@ -16,14 +16,14 @@ api = Api()
 # dynamically load all the resources
 local_vars = locals()
 resources = filter(lambda klass: inspect.isclass(local_vars[klass]) \
-    and issubclass(local_vars[klass], ModelResource) and local_vars[klass] != ModelResource, local_vars.keys())
+    and issubclass(local_vars[klass], Resource) and local_vars[klass] not in [ModelResource, Resource], local_vars.keys())
 
 for resource in resources:
     api.register(local_vars[resource]())
     
 urlpatterns = patterns('',
     url(r'^api/', include(api.urls)),
-    url(r'^home/?', home)
+    url(r'^home/?', home),
 )
 
 #authentication urls
