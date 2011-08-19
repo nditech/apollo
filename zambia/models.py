@@ -40,6 +40,7 @@ class ZambiaChecklistResponse(ChecklistResponse):
         (3, 'Some(6-25)'),
         (4, 'Many(26+)')
     )
+    # setup
     A = models.IntegerField(blank=True, null=True, choices=OPTIONS_A, validators=[RegexValidator(r'[1-4]')], help_text='At what time did people start voting at your polling stream? (if voting has not commenced by 9am complete a critical incident form)')
     B = models.IntegerField(blank=True, null=True, choices=YES_NO, validators=[RegexValidator(r'[1-2]')], help_text='Was the polling stream set up so that voters could mark their ballot in secret? (if "No" complete a critical incident form)')
     CA = models.IntegerField(blank=True, null=True, choices=YES_NO, validators=[RegexValidator(r'[1-2]')], help_text='Did the polling stream have Indelible Markers')
@@ -59,6 +60,8 @@ class ZambiaChecklistResponse(ChecklistResponse):
     G = models.IntegerField(blank=True, null=True, choices=YES_NO, validators=[RegexValidator(r'[1-2]')], help_text='Were all ballot boxes present shown to be empty before they were closed and sealed?(if "No" complete a critical incident form)')
     H = models.IntegerField(blank=True, null=True, validators=[RegexValidator(r'\d+')], help_text='How many people are registered at the polling stream?')
     J = models.CharField(blank=True, null=True, max_length=100, validators=[RegexValidator(r'\d+')], help_text='What is the ECZ\'s six digit ID number of the polling station of your polling stream')
+    
+    # voting
     K = models.IntegerField(blank=True, null=True, choices=OPTIONS_K, validators=[RegexValidator(r'[1-4]')], help_text='How many people with a NRC and voter\'s card were not permitted to vote because their name did not appear on the voter\'s register')
     M = models.IntegerField(blank=True, null=True, choices=OPTIONS_K, validators=[RegexValidator(r'[1-4]')], help_text='How many people were permitted to vote even though they did not have their NRC and voter\'s card?')    
     N = models.IntegerField(blank=True, null=True, choices=OPTIONS_K, validators=[RegexValidator(r'[1-4]')], help_text='How many people were permitted to vote even though their name was not in the voter\'s register?')
@@ -70,13 +73,17 @@ class ZambiaChecklistResponse(ChecklistResponse):
     U = models.IntegerField(blank=True, null=True, choices=YES_NO, validators=[RegexValidator(r'[1-2]')], help_text='At any time, were unauthorised persons permitted in the polling stream?')
     V = models.IntegerField(blank=True, null=True, choices=YES_NO, validators=[RegexValidator(r'[1-2]')], help_text='Were there any incidents of intimidation or violence at the polling stream? (if "Yes" complete a critical incident form)')
     W = models.IntegerField(blank=True, null=True, choices=YES_NO, validators=[RegexValidator(r'[1-2]')], help_text='At any time, was the voting process suspended for more than 30 minutes? (if "Yes" complete a critical incident form)')
+    
+    # closing
     X = models.IntegerField(blank=True, null=True, choices=OPTIONS_K, validators=[RegexValidator(r'[1-4]')], help_text='How many people were in still in the queue waiting to vote at 18h00?')    
     Y = models.IntegerField(blank=True, null=True, choices=YES_NO_NONE, validators=[RegexValidator(r'[1-3]')], help_text='Was everyone in the queue waiting to vote at 18h00 permitted to vote')
     Z = models.IntegerField(blank=True, null=True, choices=YES_NO, validators=[RegexValidator(r'[1-2]')], help_text='Was anyone permitted to join the queue and vote after 18h00?')
     AA = models.IntegerField(blank=True, null=True, choices=YES_NO, validators=[RegexValidator(r'[1-2]')], help_text='Were the opening slots of all ballot boxes sealed closed after everyone had voted?')
-    AB = models.IntegerField(blank=True, null=True, choices=YES_NO, validators=[RegexValidator(r'[1-2]')], help_text='Were all polling agents permitted to observe the counting of ballot papers? (if "No" complete a critical incident form)')
-    AC = models.IntegerField(blank=True, null=True, choices=YES_NO, validators=[RegexValidator(r'[1-2]')], help_text='Were any unauthorized persons present during counting? (if "Yes" complete a critical incident form)')
-    AD = models.IntegerField(blank=True, null=True, choices=YES_NO, validators=[RegexValidator(r'[1-2]')], help_text='Were there any incidents of intimidation during counting? (if "Yes" complete a critical incident form)')
+    
+    # counting
+    AB   = models.IntegerField(blank=True, null=True, choices=YES_NO, validators=[RegexValidator(r'[1-2]')], help_text='Were all polling agents permitted to observe the counting of ballot papers? (if "No" complete a critical incident form)')
+    AC   = models.IntegerField(blank=True, null=True, choices=YES_NO, validators=[RegexValidator(r'[1-2]')], help_text='Were any unauthorized persons present during counting? (if "Yes" complete a critical incident form)')
+    AD   = models.IntegerField(blank=True, null=True, choices=YES_NO, validators=[RegexValidator(r'[1-2]')], help_text='Were there any incidents of intimidation during counting? (if "Yes" complete a critical incident form)')
     AEAA = models.IntegerField(blank=True, null=True, validators=[RegexValidator(r'[\d+]')], help_text='Number of Ballot Papers Received at Your Assigned Stream(Presidential)')
     AEAB = models.IntegerField(blank=True, null=True, validators=[RegexValidator(r'[\d+]')], help_text='Number of Ballot Papers Received at Entire Polling Station(Presidential )')
     AEAC = models.IntegerField(blank=True, null=True, validators=[RegexValidator(r'[\d+]')], help_text='Number of Ballot Papers Received at Your Assigned Stream(Parliamentary )')
@@ -119,10 +126,10 @@ class ZambiaChecklistResponse(ChecklistResponse):
     AFBD = models.IntegerField(blank=True, null=True, validators=[RegexValidator(r'[\d+]')], help_text='Number of Disputed Ballots at Entire Polling Station(Parliamentary )')
     AFBE = models.IntegerField(blank=True, null=True, validators=[RegexValidator(r'[\d+]')], help_text='Number of Disputed Ballots at Your Assigned Stream(Local Government )')
     AFBF = models.IntegerField(blank=True, null=True, validators=[RegexValidator(r'[\d+]')], help_text='Number of Disputed Ballots at Entire Polling Station(Local Government)')
-    AG = models.IntegerField(blank=True, null=True, choices=YES_NO, validators=[RegexValidator(r'[1-2]')], help_text='Did you agree with the presidential results for your polling stream?')
-    AH = models.IntegerField(blank=True, null=True, choices=YES_NO, validators=[RegexValidator(r'[1-2]')], help_text='Did all polling agents present agree with the presidentialresults for your polling stream?')
-    AJ = models.IntegerField(blank=True, null=True, choices=YES_NO, validators=[RegexValidator(r'[1-2]')], help_text='Were all polling agents present given a copy of the official results for the polling station?')
-    AK = models.IntegerField(blank=True, null=True, choices=YES_NO, validators=[RegexValidator(r'[1-2]')], help_text='Were the official results for the polling station posted for the public to see?')
+    AG   = models.IntegerField(blank=True, null=True, choices=YES_NO, validators=[RegexValidator(r'[1-2]')], help_text='Did you agree with the presidential results for your polling stream?')
+    AH   = models.IntegerField(blank=True, null=True, choices=YES_NO, validators=[RegexValidator(r'[1-2]')], help_text='Did all polling agents present agree with the presidentialresults for your polling stream?')
+    AJ   = models.IntegerField(blank=True, null=True, choices=YES_NO, validators=[RegexValidator(r'[1-2]')], help_text='Were all polling agents present given a copy of the official results for the polling station?')
+    AK   = models.IntegerField(blank=True, null=True, choices=YES_NO, validators=[RegexValidator(r'[1-2]')], help_text='Were the official results for the polling station posted for the public to see?')
     
     class Admin:
         list_display = ('',)
