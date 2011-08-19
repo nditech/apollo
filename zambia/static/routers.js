@@ -1,6 +1,6 @@
 ZambiaRouter = Backbone.Router.extend({
     routes: {
-       "!/dashboard": "dashboard", // #!/dashboard
+       "": "dashboard", // #!/dashboard
        "!/elections/checklists": "checklists", // #!/elections/checklists
        "!/elections/incidents": "incidents", // #!/elections/incidents
        "!/elections/process_analysis": "process_analysis", // #!/elections/process_analysis
