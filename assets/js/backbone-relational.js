@@ -481,7 +481,7 @@
 			else if ( item && ( _.isString( item ) || _.isNumber( item ) || typeof( item ) === 'object' ) ) {
 				// Try to find an instance of the appropriate 'relatedModel' in the store, or create it
 				var id = _.isString( item ) || _.isNumber( item ) ? item : item[ this.relatedModel.prototype.idAttribute ];
-				model = Backbone.Relational.store.find( this.relatedModel, id ) || this.createModel( item );
+				model = this.createModel( item );
 			}
 			
 			return model;
@@ -624,7 +624,7 @@
 				// Try to find instances of the appropriate 'relatedModel' in the store
 				_.each( this.keyContents, function( item ) {
 					var id = _.isString( item ) || _.isNumber( item ) ? item : item[ this.relatedModel.prototype.idAttribute ];
-					var model = Backbone.Relational.store.find( this.relatedModel, id ) || this.createModel( item );
+					var model = this.createModel( item );
 					
 					if ( model && !this.related.getByCid( model ) && !this.related.get( model ) ) {
 						this.related._add( model );
