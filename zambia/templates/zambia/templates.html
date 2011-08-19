@@ -1,3 +1,32 @@
+<script type="text/x-handlebars-template" id="screen-zambia-dashboard-template" charset="utf-8">
+	<div class="page-title">
+		<div class="page-title-content">
+			<div class="page-title-info left">
+				<h1>{{title}}</h1>
+			</div>
+			<p class="clr"></p>
+		</div>
+	</div>
+	<div class="full_width_content">
+		<table border="0" cellpadding="5" width="100%">
+			<tr>
+			<td valign="top">
+			<h1>Setup</h1>
+			<img src='/assets/images/dash/bar1.png' style="margin-bottom:2em" />
+			<h1 id="voting">Voting</h1>
+			<img src='/assets/images/dash/bar2.png' style="margin-bottom:2em" />
+			<h1 id="closing">Closing</h1>
+			<img src='/assets/images/dash/bar3.png' style="margin-bottom:2em" />
+			<h1 id="counting">Counting</h1>
+			<img src='/assets/images/dash/bar4.png' style="margin-bottom:2em" />
+			</td>
+			<td><img src='/assets/images/dash/zam_province.png' width='214' height='303' /></td>
+			</tr>
+		</table>
+		
+		
+	</div>
+</script>
 <script type="text/x-handlebars-template" id="checklist-filter-template" charset="utf-8">
 	<div id="filter" class="filter_pane">
 		<form id="search">
@@ -53,7 +82,7 @@
 	</tbody>
 </script>
 <script type="text/x-handlebars-template" id="checklist-template" charset="utf-8">
-	<td>{{observer.attributes.observer_id}}</td><td>{{date}}</td><td>{{location.attributes.parent.attributes.parent.attributes.parent.attributes.name}}</td><td>{{location.attributes.parent.attributes.parent.attributes.name}}</td><td>{{#if observer.attributes.supervisor}}{{observer.attributes.supervisor.attributes.name}}{{#if observer.attributes.supervisor.attributes.connections.models}} (<strong>{{observer.attributes.supervisor.attributes.connections.models.0.attributes.identity}}</strong>){{/if}}{{else}}&nbsp;{{/if}}</td><td>{{observer.attributes.name}}{{#if observer.attributes.connections.models}} (<strong>{{observer.attributes.connections.models.0.attributes.identity}}</strong>){{/if}}</td><td align="center">{{setup_flag response}}</td><td align="center">{{setup_flag response}}</td><td align="center">{{setup_flag response}}</td><td align="center">{{setup_flag response}}</td><td align="center">Edit</td>
+	<td>{{observer.attributes.observer_id}}</td><td>{{date}}</td><td>{{location.attributes.parent.attributes.parent.attributes.parent.attributes.name}}</td><td>{{location.attributes.parent.attributes.parent.attributes.name}}</td><td>{{#if observer.attributes.supervisor}}{{observer.attributes.supervisor.attributes.name}}{{#if observer.attributes.supervisor.attributes.connections.models}} (<strong>{{observer.attributes.supervisor.attributes.connections.models.0.attributes.identity}}</strong>){{/if}}{{else}}&nbsp;{{/if}}</td><td>{{observer.attributes.name}}{{#if observer.attributes.connections.models}} (<strong>{{observer.attributes.connections.models.0.attributes.identity}}</strong>){{/if}}</td><td align="center">{{setup_flag response}}</td><td align="center">{{voting_flag response}}</td><td align="center">{{closing_flag response}}</td><td align="center">{{counting_flag response}}</td><td align="center">Edit</td>
 </script>
 <script type="text/x-handlebars-template" id="checklist-empty-template" charset="utf-8">
 	<tr><td colspan="11" class="empty"><em>No checklists to display</em></td></tr>
@@ -79,6 +108,72 @@
 			return response.get(code);
 	    });
 	}
+	
+	function checklist_voting_complete(response) {
+	    return _.all(['K', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W'], function (code) {
+			return response.get(code);
+	    });
+	}
+
+	function checklist_voting_missing(response) {
+	    return !_.any(['K', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W'], function (code) {
+			return response.get(code);
+	    });
+	}
+
+	function checklist_voting_partial(response) {
+	    return _.any(['K', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W'], function (code) {
+			return response.get(code);
+	    });
+	}
+	
+	function checklist_closing_complete(response) {
+	    return _.all(['X', 'Y', 'Z', 'AA'], function (code) {
+			return response.get(code);
+	    });
+	}
+
+	function checklist_closing_missing(response) {
+	    return !_.any(['X', 'Y', 'Z', 'AA'], function (code) {
+			return response.get(code);
+	    });
+	}
+
+	function checklist_closing_partial(response) {
+	    return _.any(['X', 'Y', 'Z', 'AA'], function (code) {
+			return response.get(code);
+	    });
+	}
+	
+	function checklist_counting_complete(response) {
+	    return _.all(['AB', 'AC', 'AD', 'AEAA', 'AEAB', 'AEAC', 'AEAD', 'AEAE', 'AEAF', 'AEBA', 'AEBB', 'AEBC', \
+        'AEBD', 'AEBE', 'AEBF', 'AECA', 'AECB', 'AECC', 'AECD', 'AECE', 'AECF', 'AEDA', 'AEDB', \
+        'AEDC', 'AEDD', 'AEDE', 'AEDF', 'AEEA', 'AEEB', 'AEEC', 'AEED', 'AEEE', 'AEEF', 'AFAA', \
+        'AFAB', 'AFAC', 'AFAD', 'AFAE', 'AFAF', 'AFBA', 'AFBB', 'AFBC', 'AFBD', 'AFBE', 'AFBF', \
+        'AG', 'AH', 'AJ', 'AK'], function (code) {
+			return response.get(code);
+	    });
+	}
+
+	function checklist_counting_missing(response) {
+	    return !_.any(['AB', 'AC', 'AD', 'AEAA', 'AEAB', 'AEAC', 'AEAD', 'AEAE', 'AEAF', 'AEBA', 'AEBB', 'AEBC', \
+        'AEBD', 'AEBE', 'AEBF', 'AECA', 'AECB', 'AECC', 'AECD', 'AECE', 'AECF', 'AEDA', 'AEDB', \
+        'AEDC', 'AEDD', 'AEDE', 'AEDF', 'AEEA', 'AEEB', 'AEEC', 'AEED', 'AEEE', 'AEEF', 'AFAA', \
+        'AFAB', 'AFAC', 'AFAD', 'AFAE', 'AFAF', 'AFBA', 'AFBB', 'AFBC', 'AFBD', 'AFBE', 'AFBF', \
+        'AG', 'AH', 'AJ', 'AK'], function (code) {
+			return response.get(code);
+	    });
+	}
+
+	function checklist_counting_partial(response) {
+	    return _.any(['AB', 'AC', 'AD', 'AEAA', 'AEAB', 'AEAC', 'AEAD', 'AEAE', 'AEAF', 'AEBA', 'AEBB', 'AEBC', \
+        'AEBD', 'AEBE', 'AEBF', 'AECA', 'AECB', 'AECC', 'AECD', 'AECE', 'AECF', 'AEDA', 'AEDB', \
+        'AEDC', 'AEDD', 'AEDE', 'AEDF', 'AEEA', 'AEEB', 'AEEC', 'AEED', 'AEEE', 'AEEF', 'AFAA', \
+        'AFAB', 'AFAC', 'AFAD', 'AFAE', 'AFAF', 'AFBA', 'AFBB', 'AFBC', 'AFBD', 'AFBE', 'AFBF', \
+        'AG', 'AH', 'AJ', 'AK'], function (code) {
+			return response.get(code);
+	    });
+	}
 </script>
 <script type="text/javascript" charset="utf-8">
 	Handlebars.registerHelper('setup_flag', function (responses) {
@@ -90,10 +185,38 @@
 			return new Handlebars.SafeString('<img src="/assets/images/yellow_dot.png" alt="partial" />');
 		}
 	});
+	Handlebars.registerHelper('voting_flag', function (responses) {
+		if (checklist_voting_complete(responses)) {
+			return new Handlebars.SafeString('<img src="/assets/images/green_dot.png" alt="complete" />');
+		} else if (checklist_voting_missing(responses)) {
+			return new Handlebars.SafeString('<img src="/assets/images/red_dot.png" alt="missing" />');
+		} else {
+			return new Handlebars.SafeString('<img src="/assets/images/yellow_dot.png" alt="partial" />');
+		}
+	});
+	Handlebars.registerHelper('closing_flag', function (responses) {
+		if (checklist_closing_complete(responses)) {
+			return new Handlebars.SafeString('<img src="/assets/images/green_dot.png" alt="complete" />');
+		} else if (checklist_closing_missing(responses)) {
+			return new Handlebars.SafeString('<img src="/assets/images/red_dot.png" alt="missing" />');
+		} else {
+			return new Handlebars.SafeString('<img src="/assets/images/yellow_dot.png" alt="partial" />');
+		}
+	});
+	Handlebars.registerHelper('counting_flag', function (responses) {
+		if (checklist_counting_complete(responses)) {
+			return new Handlebars.SafeString('<img src="/assets/images/green_dot.png" alt="complete" />');
+		} else if (checklist_counting_missing(responses)) {
+			return new Handlebars.SafeString('<img src="/assets/images/red_dot.png" alt="missing" />');
+		} else {
+			return new Handlebars.SafeString('<img src="/assets/images/yellow_dot.png" alt="partial" />');
+		}
+	});
 	
 	Templates = (typeof(Templates) == 'undefined') ? {} : Templates;
 	Templates.ChecklistFilter = Handlebars.compile($('#checklist-filter-template').html());
 	Templates.ChecklistHeader = Handlebars.compile($('#checklist-header-template').html());
 	Templates.Checklist = Handlebars.compile($('#checklist-template').html());
 	Templates.ChecklistEmpty = Handlebars.compile($('#checklist-empty-template').html());
+	Templates.ZambiaDashboardScreen = Handlebars.compile($('#screen-zambia-dashboard-template').html());
 </script>
