@@ -114,7 +114,7 @@ class ContactResource(ModelResource):
             'observer_id': ('exact',),
             'location': ALL_WITH_RELATIONS,
         }
-        ordering = ['observer_id', 'name', 'role', 'location', 'connections']
+        ordering = ['observer_id', 'name', 'role', 'location', 'connections', 'partner']
         
     def build_filters(self, filters=None):
         if not filters:
