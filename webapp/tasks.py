@@ -7,13 +7,6 @@ from xlwt import *
 from models import *
 from rapidsms.models import Backend
 from django.conf import settings
-
-
-
-class MyTask(Task):
-    def run(self, x, y):
-        return x + y
-
         
 class MessageBlast(Task):
     endpoint_sendsms = 'http://api2.infobip.com/api/sendsms/plain?user=%(user)&password=%(pwd)&sender=%(sender)&SMSText=%(msg)&GSM=%(to)'
@@ -33,7 +26,7 @@ class MessageBlast(Task):
             return False
         
 
-class GetContact(Task):
+class ImportContacts(Task):
     def run(self, file_name):
         choice_file = xlrd.open_workbook(file_name)
         choice_sheet = choice_file.sheet_by_index(0)
@@ -52,7 +45,7 @@ class GetContact(Task):
         return True
 
 
-class ExportContact(Task):
+class ExportContacts(Task):
     def run(self):
         wb = Workbook()
         ws = wb.add_sheet('0')
@@ -73,7 +66,6 @@ class ExportContact(Task):
 
 
 
-tasks.register(MyTask)
 tasks.register(MessageBlast)
-tasks.register(GetContact)
-tasks.register(ExportContact)
+tasks.register(ImportContacts)
+tasks.register(ExportContacts)
