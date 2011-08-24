@@ -12,15 +12,15 @@ class ChecklistResponseResource(ModelResource):
         authorization = Authorization()
 
 
-class ChecklistResource(ModelResource):
+class ChecklistsResource(ModelResource):
     location = fields.ForeignKey(LocationResource, 'location', full=True)
     observer = fields.ForeignKey(ContactResource, 'observer', full=True)
     response = fields.ToOneField(ChecklistResponseResource, 'response', full=True)
 
     class Meta:
         queryset = Checklist.objects.select_related()
-        resource_name = 'checklist'
-        allowed_methods = ['get', 'put', 'post', 'delete']
+        resource_name = 'checklists'
+        allowed_methods = ['get']
         authentication = Authentication()
         authorization = Authorization()
         filtering = {
@@ -35,7 +35,7 @@ class ChecklistResource(ModelResource):
         if not filters:
             filters = {}
 
-        orm_filters = super(ChecklistResource, self).build_filters(filters)
+        orm_filters = super(ChecklistsResource, self).build_filters(filters)
         
         if orm_filters.has_key('location__id__exact'):
             id = orm_filters.pop('location__id__exact')
@@ -159,6 +159,19 @@ class ChecklistResource(ModelResource):
         return orm_filters
 
 
+class ChecklistResource(ModelResource):
+    location = fields.ForeignKey(LocationResource, 'location')
+    observer = fields.ForeignKey(ContactResource, 'observer')
+    response = fields.ToOneField(ChecklistResponseResource, 'response', full=True)
+
+    class Meta:
+        queryset = Checklist.objects.select_related()
+        resource_name = 'checklist'
+        allowed_methods = ['get', 'put', 'post', 'delete']
+        authentication = Authentication()
+        authorization = Authorization()
+
+
 class IncidentResponseResource(ModelResource):    
     class Meta:
         queryset = ZambiaIncidentResponse.objects.select_related()
@@ -168,15 +181,15 @@ class IncidentResponseResource(ModelResource):
         authorization = Authorization()
 
 
-class IncidentResource(ModelResource):
+class IncidentsResource(ModelResource):
     location = fields.ForeignKey(LocationResource, 'location', full=True)
     observer = fields.ForeignKey(ContactResource, 'observer', full=True)
     response = fields.ToOneField(IncidentResponseResource, 'response', full=True)
     
     class Meta:
         queryset = Incident.objects.select_related()
-        resource_name = 'incident'
-        allowed_methods = ['get', 'put', 'post', 'delete']
+        resource_name = 'incidents'
+        allowed_methods = ['get']
         authentication = Authentication()
         authorization = Authorization()
         filtering = {
@@ -186,3 +199,16 @@ class IncidentResource(ModelResource):
             'response': ALL_WITH_RELATIONS,
         }
         ordering = ['location', 'date', 'observer']
+
+
+class IncidentResource(ModelResource):
+    location = fields.ForeignKey(LocationResource, 'location')
+    observer = fields.ForeignKey(ContactResource, 'observer')
+    response = fields.ToOneField(IncidentResponseResource, 'response', full=True)
+    
+    class Meta:
+        queryset = Incident.objects.select_related()
+        resource_name = 'incident'
+        allowed_methods = ['get', 'put', 'post', 'delete']
+        authentication = Authentication()
+        authorization = Authorization()

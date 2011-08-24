@@ -97,6 +97,20 @@ class ConnectionResource(ModelResource):
 
 
 class ContactResource(ModelResource):
+    role = fields.ForeignKey(ContactRoleResource, 'role')
+    location = fields.ForeignKey(LocationResource, 'location')
+    supervisor = fields.ForeignKey('self', 'supervisor', null=True, blank=True)
+    connections = fields.ToManyField(ConnectionResource, 'connection_set', readonly=True, full=True)
+    
+    class Meta:
+        queryset = Contact.objects.select_related()
+        resource_name = 'contact'
+        allowed_methods = ['get', 'put', 'post', 'delete']
+        authentication = Authentication()
+        authorization = Authorization()
+
+
+class ContactsResource(ModelResource):
     role = fields.ForeignKey(ContactRoleResource, 'role', full=True)
     location = fields.ForeignKey(LocationResource, 'location', full=True)
     supervisor = fields.ForeignKey('self', 'supervisor', null=True, blank=True, full=True)
@@ -104,8 +118,8 @@ class ContactResource(ModelResource):
     
     class Meta:
         queryset = Contact.objects.select_related()
-        resource_name = 'contact'
-        allowed_methods = ['get', 'put', 'post', 'delete']
+        resource_name = 'contacts'
+        allowed_methods = ['get']
         authentication = Authentication()
         authorization = Authorization()
         filtering = {
@@ -120,7 +134,7 @@ class ContactResource(ModelResource):
         if not filters:
             filters = {}
 
-        orm_filters = super(ContactResource, self).build_filters(filters)
+        orm_filters = super(ContactsResource, self).build_filters(filters)
         if orm_filters.has_key('location__id__exact'):
             id = orm_filters.pop('location__id__exact')
             orm_filters['location__id__in'] = Location.objects.get(id=id).get_descendants(True).values_list('id', flat=True)

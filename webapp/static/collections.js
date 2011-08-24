@@ -11,15 +11,15 @@ LocationCollection = Backbone.Collection.extend({
 
 IncidentCollection = PaginatedCollection.extend({
 	model: Incident,
-	baseUrl: '/api/v1/incident/',
+	baseUrl: '/api/v1/incidents/',
 });
 
 ContactCollection = PaginatedCollection.extend({
 	model: Contact,
-	baseUrl: '/api/v1/contact/',
+	baseUrl: '/api/v1/contacts/',
 });
 
 ChecklistCollection = PaginatedCollection.extend({
 	model: Checklist,
-	baseUrl: '/api/v1/checklist/',
+	baseUrl: '/api/v1/checklists/',
 });
