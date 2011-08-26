@@ -23,8 +23,6 @@
 			<td><img src='/assets/images/dash/zam_province.png' width='214' height='303' /></td>
 			</tr>
 		</table>
-		
-		
 	</div>
 </script>
 <script type="text/x-handlebars-template" id="checklist-filter-template" charset="utf-8">
@@ -107,10 +105,31 @@
 	</tbody>
 </script>
 <script type="text/x-handlebars-template" id="contact-template" charset="utf-8">
-	<td>{{observer_id}}</td><td>{{name}}</td><td>{{role.name}}</td><td>{{connections.models.0.attributes.identity}}</td><td>{{location.name}} ({{location.type.name}})</td><td>{{partner}}</td><td style="text-align:center"><a href="#!/contact/1">Edit</a></td>
+	<td>{{observer_id}}</td><td>{{name}}</td><td>{{role.name}}</td><td>{{connections.models.0.attributes.identity}}</td><td>{{location.attributes.name}} ({{location.attributes.type.name}})</td><td>{{partner}}</td><td style="text-align:center"><a href="#!/contact/{{id}}">Edit</a></td>
 </script>
 <script type="text/x-handlebars-template" id="contact-empty-template" charset="utf-8">
 	<tr><td colspan="5" class="empty"><em>No contacts to display</em></td></tr>
+</script>
+<script type="text/x-handlebars-template" id='contact-edit-template' charset="utf-8">
+	<form id="contact_form">
+	<label for="observer_id"><span class="label">Monitor ID</span> <input type="text" id="observer_id" name="observer_id" class="input_smoke field" value="{{observer_id}}"></label>
+	<label for="name"><span class="label">Name</span> <input type="text" name="name" id="name" class="input_smoke field" value="{{name}}"></label>
+	<label for="role"><span class="label">Role</span> <select name="role" id="role" class="input_smoke field">
+		<option value='/api/v1/contact_role/1/'>District Supervisor</option>
+		<option value='/api/v1/contact_role/2/'>Monitor</option>
+	</select></label>
+	<label for="location"><span class="label">Location</span> <input type="text" name="location" id="location" class="input_smoke" value="{{location.attributes.name}}"></label>
+	<label for="gender"><span class="label">Gender</span> <select name="gender" id="gender" class="input_smoke field">
+		<option value='M'>Male</option>
+		<option value='F'>Female</option>
+	</select></label>
+	<label for="phone"><span class="label">Phone</span> <input type="text" name="phone" id="connections.models[0].attributes.identity" class="input_smoke field" value="{{connections.models.0.attributes.identity}}"></label>
+	<label for="partner"><span class="label">Partner</span> <select name="partner" id="partner" class="input_smoke field">
+		<option>Caritas</option>
+		<option>FODEP</option>
+	</select></label>
+	<label for="submit"><span class="label">&nbsp;</span> <span class="btn_yellow btn_space"><input type="submit" name="submit" value="Save"><span>&nbsp;</span></span></label>
+	</form>
 </script>
 <script type="text/javascript" charset="utf-8">
 	function checklist_setup_complete(response) {
@@ -203,38 +222,38 @@
 <script type="text/javascript" charset="utf-8">
 	Handlebars.registerHelper('setup_flag', function (responses) {
 		if (checklist_setup_complete(responses)) {
-			return new Handlebars.SafeString('<img src="/assets/images/green_dot.png" alt="complete" />');
+			return new Handlebars.SafeString('<img src="/assets/images/tick.png" alt="complete" />');
 		} else if (checklist_setup_missing(responses)) {
 			return new Handlebars.SafeString('<img src="/assets/images/red_dot.png" alt="missing" />');
 		} else {
-			return new Handlebars.SafeString('<img src="/assets/images/yellow_dot.png" alt="partial" />');
+			return new Handlebars.SafeString('<img src="/assets/images/caution.png" alt="partial" />');
 		}
 	});
 	Handlebars.registerHelper('voting_flag', function (responses) {
 		if (checklist_voting_complete(responses)) {
-			return new Handlebars.SafeString('<img src="/assets/images/green_dot.png" alt="complete" />');
+			return new Handlebars.SafeString('<img src="/assets/images/tick.png" alt="complete" />');
 		} else if (checklist_voting_missing(responses)) {
 			return new Handlebars.SafeString('<img src="/assets/images/red_dot.png" alt="missing" />');
 		} else {
-			return new Handlebars.SafeString('<img src="/assets/images/yellow_dot.png" alt="partial" />');
+			return new Handlebars.SafeString('<img src="/assets/images/caution.png" alt="partial" />');
 		}
 	});
 	Handlebars.registerHelper('closing_flag', function (responses) {
 		if (checklist_closing_complete(responses)) {
-			return new Handlebars.SafeString('<img src="/assets/images/green_dot.png" alt="complete" />');
+			return new Handlebars.SafeString('<img src="/assets/images/tick.png" alt="complete" />');
 		} else if (checklist_closing_missing(responses)) {
 			return new Handlebars.SafeString('<img src="/assets/images/red_dot.png" alt="missing" />');
 		} else {
-			return new Handlebars.SafeString('<img src="/assets/images/yellow_dot.png" alt="partial" />');
+			return new Handlebars.SafeString('<img src="/assets/images/caution.png" alt="partial" />');
 		}
 	});
 	Handlebars.registerHelper('counting_flag', function (responses) {
 		if (checklist_counting_complete(responses)) {
-			return new Handlebars.SafeString('<img src="/assets/images/green_dot.png" alt="complete" />');
+			return new Handlebars.SafeString('<img src="/assets/images/tick.png" alt="complete" />');
 		} else if (checklist_counting_missing(responses)) {
 			return new Handlebars.SafeString('<img src="/assets/images/red_dot.png" alt="missing" />');
 		} else {
-			return new Handlebars.SafeString('<img src="/assets/images/yellow_dot.png" alt="partial" />');
+			return new Handlebars.SafeString('<img src="/assets/images/caution.png" alt="partial" />');
 		}
 	});
 	
@@ -248,4 +267,5 @@
 	Templates.Contact = Handlebars.compile($('#contact-template').html());
 	Templates.ContactEmpty = Handlebars.compile($('#contact-empty-template').html());
 	Templates.ContactHeader = Handlebars.compile($('#contact-header-template').html());
+	Templates.ContactEdit = Handlebars.compile($('#contact-edit-template').html());
 </script>

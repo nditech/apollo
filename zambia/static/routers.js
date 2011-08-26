@@ -2,6 +2,7 @@ ZambiaRouter = Backbone.Router.extend({
     routes: {
        "": "dashboard", // #!/dashboard
        "!/contacts": "contacts", // #!/contacts
+       "!/contact/:id": "contact_edit", // #!/contact/1
        "!/elections/checklists": "checklists", // #!/elections/checklists
        "!/elections/incidents": "incidents", // #!/elections/incidents
        "!/elections/process_analysis": "process_analysis", // #!/elections/process_analysis
@@ -86,7 +87,7 @@ ZambiaRouter = Backbone.Router.extend({
    contacts: function () {
           screen_model = new Screen({title: 'Contacts', contents: '', link: '#!/contacts'});
           screen_view = new ScreenView({model: screen_model});
-
+          
           paginated_collection = new ContactCollection();
           $('div.full_width_content').html(Templates.ContactSearch);
 
@@ -134,6 +135,22 @@ ZambiaRouter = Backbone.Router.extend({
                        }
                    });
               },
+          });
+      },
+      
+      contact_edit: function (id) {
+          // Save page contents elsewhere before replacing it
+          old_page = $('div.full_width_content').html();
+          screen_model = new Screen({title: 'Edit Contact', content: '<h1>Hehe now content</h1>', link: '#!/contact/' + id});
+          screen_view = new ScreenView({model: screen_model});
+          
+          contact = new Contact();
+          contact.id = '/api/v1/contact/' + id;
+          contact.fetch({
+              success: function (model, response) {
+                  contact_edit_view = new ContactEditView({model: model}).render();
+                  $('div.full_width_content').html(contact_edit_view);
+              }
           });
       }
 });

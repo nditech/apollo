@@ -24,8 +24,9 @@ Connection = Backbone.RelationalModel.extend({
         type: Backbone.HasOne,
         key: 'backend',
         relatedModel: 'Backend',
+        includeInJSON: 'resource_uri',
         reverseRelation: {
-            key: 'connections'
+            key: 'connection'
         }
     }]
 });
@@ -41,7 +42,13 @@ Contact = Backbone.RelationalModel.extend({
     },{
         type: Backbone.HasOne,
         key: 'supervisor',
-        relatedModel: 'Contact'
+        relatedModel: 'Contact',
+        includeInJSON: 'resource_uri'
+    },{
+        type: Backbone.HasOne,
+        key: 'location',
+        relatedModel: 'Location',
+        includeInJSON: 'resource_uri'
     }]
 });
 

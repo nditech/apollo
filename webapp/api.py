@@ -98,7 +98,7 @@ class ConnectionResource(ModelResource):
 
 class ContactResource(ModelResource):
     role = fields.ForeignKey(ContactRoleResource, 'role')
-    location = fields.ForeignKey(LocationResource, 'location')
+    location = fields.ForeignKey(LocationResource, 'location', full=True)
     supervisor = fields.ForeignKey('self', 'supervisor', null=True, blank=True)
     connections = fields.ToManyField(ConnectionResource, 'connection_set', readonly=True, full=True)
     
