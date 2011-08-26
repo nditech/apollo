@@ -1710,6 +1710,14 @@ div.pagination a.current {
 /****************** custom styles ******************************/
 .input_smoke {height:18px;background-color:#ddd;border:1px solid #ccc;padding:3px 10px;width:152px;border-radius:4px;}
 select.input_smoke {height:26px;width:174px;}
+.input_smoke:focus {background-color:#ffa500;}
+.edit_form_floated .input_smoke {width:18em;}
+.edit_form_floated select.input_smoke {width:20em;}
+.full_width_content .edit_form_floated label {display:block;font-size:1.5em;clear:both;overflow:auto;margin-bottom:0.8em;border-top:1px dotted #D3DAD9;padding-top:0.8em;}
+.full_width_content .edit_form_floated label:first-child { border:0;}
+.full_width_content .edit_form_floated span.label {display:block;float:left;width:12em;vertical-align:middle;line-height:1.3em;}
+.full_width_content .edit_form_floated input, select {display:block;float:left;}
+
 .filter_pane {
 	background-color:#eee;
 	width:920px;
