@@ -24,8 +24,7 @@ class Location(MPTTModel):
     code = models.CharField(max_length=100, db_index=True)
     type = models.ForeignKey(LocationType)
     parent = TreeForeignKey('self', null=True, blank=True, related_name='children')
-    #poly = models.PolygonField()
-    #latlon = models.PointField()
+    path = models.TextField(blank=True, help_text='SVG path data for location')
 
     class Admin:
         list_display = ('',)
