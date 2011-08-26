@@ -8,7 +8,7 @@
 		</div>
 	</div>
 	<div class="full_width_content">
-		{{content}}
+		{{safe content}}
 	</div>
 </script>
 <script type="text/x-handlebars-template" id="screen-template" charset="utf-8">
@@ -24,7 +24,7 @@
 		</div>
 	</div>
 	<div class="full_width_content">
-		{{content}}
+		{{safe content}}
 	</div>
 </script>
 <script type="text/x-handlebars-template" id="message-search-template" charset="utf-8">
@@ -51,6 +51,12 @@
 	<tr><td colspan="5" class="empty"><em>No messages to display</em></td></tr>
 </script>
 <script type="text/javascript" charset="utf-8">
+	Handlebars.registerHelper('safe', function (text) {
+		if (text) {
+			return new Handlebars.SafeString(text);
+		}
+	});
+	
 	Templates = (typeof(Templates) == 'undefined') ? {} : Templates;
 	Templates.Screen = Handlebars.compile($('#screen-template').html());
 	Templates.DashboardScreen = Handlebars.compile($('#screen-dashboard-template').html());
