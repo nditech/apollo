@@ -139,10 +139,28 @@ class ZambiaChecklistResponse(ChecklistResponse):
         return str(self.checklist.id)
 
 class ZambiaIncidentResponse(models.Model):
-    A = models.NullBooleanField(blank=True)
-    B = models.NullBooleanField(blank=True)
-    C = models.NullBooleanField(blank=True)
-    D = models.NullBooleanField(blank=True)
+    WA = models.NullBooleanField(default=False, help_text='I witnessed the incident')
+    WB = models.NullBooleanField(default=False, help_text='I arrived just after the incident happened')
+    WC = models.NullBooleanField(default=False, help_text='The incident was reported to me by someone else')
+    
+    A = models.NullBooleanField(blank=False, help_text='Polling stream did not open')
+    B = models.NullBooleanField(blank=False, help_text='Polling stream opened very late')
+    C = models.NullBooleanField(blank=False, help_text='Polling stream closed very early')
+    D = models.NullBooleanField(blank=False, help_text='Polling stream did not have materials at opening')
+    E = models.NullBooleanField(blank=False, help_text='Voting buying/bribery')
+    F = models.NullBooleanField(blank=False, help_text='Monitor denied access to polling stream')
+    G = models.NullBooleanField(blank=False, help_text='Monitor not permitted to use reporting form')
+    H = models.NullBooleanField(blank=False, help_text='Police officers inside polling station')
+    I = models.NullBooleanField(blank=False, help_text='Polling stream ran out of materials')
+    J = models.NullBooleanField(blank=False, help_text='People in the queue at the time of official close of the polling station not allowed to vote')
+    K = models.NullBooleanField(blank=False, help_text='Violence/intimidation in or near the polling station')
+    K1 = models.NullBooleanField(blank=False, help_text='Uniformed police')
+    K2 = models.NullBooleanField(blank=False, help_text='Party supporters')
+    K4 = models.NullBooleanField(blank=False, help_text='Others')
+    L = models.NullBooleanField(blank=False, help_text='Violation of voting or counting procedures')
+    M = models.NullBooleanField(blank=False, help_text='Stealing or damaging of ballots')
+    N = models.NullBooleanField(blank=False, help_text='Voting or counting suspended during the process for more than 30 minutes')
+    O = models.NullBooleanField(blank=False, help_text='Others')
 
     class Admin:
         list_display = ('',)
