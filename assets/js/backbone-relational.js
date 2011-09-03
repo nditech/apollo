@@ -214,6 +214,7 @@
 			var modelColl = model.collection;
 			var coll = this.getCollection( model );
 			coll && coll._add( model );
+			model.bind( 'destroy', this.unregister, this );
 			model.collection = modelColl;
 		},
 		
@@ -229,6 +230,7 @@
 		 * Remove a 'model' from the store.
 		 */
 		unregister: function( model ) {
+			model.unbind( 'destroy', this.unregister );
 			var coll = this.getCollection( model );
 			coll && coll.remove( model );
 		}
@@ -471,7 +473,7 @@
 				} );
 		},
 		
-		findRelated: function() {
+		findRelated: function( options ) {
 			var item = this.keyContents;
 			var model = null;
 			
@@ -481,7 +483,13 @@
 			else if ( item && ( _.isString( item ) || _.isNumber( item ) || typeof( item ) === 'object' ) ) {
 				// Try to find an instance of the appropriate 'relatedModel' in the store, or create it
 				var id = _.isString( item ) || _.isNumber( item ) ? item : item[ this.relatedModel.prototype.idAttribute ];
-				model = this.createModel( item );
+				model = Backbone.Relational.store.find( this.relatedModel, id );
+				if ( model && _.isObject( item ) ) {
+					model.set( item, options );
+				}
+				else if ( !model ) {
+					model = this.createModel( item );
+				}
 			}
 			
 			return model;
@@ -512,7 +520,7 @@
 					this.related = attr;
 				}
 				else if ( attr ) {
-					var related = this.findRelated();
+					var related = this.findRelated( options );
 					this.setRelated( related );
 				}
 				else {
@@ -619,12 +627,19 @@
 			return collection;
 		},
 		
-		findRelated: function() {
+		findRelated: function( options ) {
 			if ( this.keyContents && _.isArray( this.keyContents ) ) {
 				// Try to find instances of the appropriate 'relatedModel' in the store
 				_.each( this.keyContents, function( item ) {
 					var id = _.isString( item ) || _.isNumber( item ) ? item : item[ this.relatedModel.prototype.idAttribute ];
-					var model = this.createModel( item );
+					
+					var model = Backbone.Relational.store.find( this.relatedModel, id );
+					if ( model && _.isObject( item ) ) {
+						model.set( item, options );
+					}
+					else if ( !model ) {
+						model = this.createModel( item );
+					}
 					
 					if ( model && !this.related.getByCid( model ) && !this.related.get( model ) ) {
 						this.related._add( model );
@@ -650,12 +665,12 @@
 				this.prepareCollection( attr );
 				this.related = attr;
 			}
-			// Otherwise, 'attr' should be an array of related object ids
+			// Otherwise, 'attr' should be an array of related object ids.
+			// Re-use the current 'this.related' if it is a Backbone.Collection.
 			else {
-				// Re-use the current 'this.related' if it is a Backbone.Collection
 				var coll = this.related instanceof Backbone.Collection ? this.related : new this.collectionType();
 				this.setRelated( this.prepareCollection( coll ) );
-				this.findRelated();
+				this.findRelated( options );
 			}
 			
 			// Notify new 'related' object of the new relation
@@ -805,8 +820,8 @@
 		},
 		
 		/**
-		 * Initialize Relations present in this.relations; determine the type (HasOne/HasMany), then create a new instance.
-		 * The regular constructor (which fills this.attributes, initialize, etc) hasn't run yet at this time!
+		 * Initialize Relations present in this.relations; determine the type (HasOne/HasMany), then creates a new instance.
+		 * Invoked in the first call so 'set' (which is made from the Backbone.Model constructor).
 		 */
 		initializeRelations: function() {
 			this.acquire(); // Setting up relations often also involve calls to 'set', and we only want to enter this function once
@@ -883,7 +898,7 @@
 		 * Retrieve related objects.
 		 * @param key {string} The relation key to fetch models for.
 		 * @param options {object} Options for 'Backbone.Model.fetch' and 'Backbone.sync'.
-		 * @return {xhr} An array or request objects
+		 * @return {xhr} An array of request objects
 		 */
 		fetchRelated: function( key, options ) {
 			options || ( options = {} );
@@ -1008,11 +1023,6 @@
 			Backbone.Relational.eventQueue.add( function() {
 					Backbone.Model.prototype.change.apply( dit, arguments );
 				});
-		},
-		
-		destroy: function( options ) {
-			Backbone.Relational.store.unregister( this );
-			return Backbone.Model.prototype.destroy.call( this, options );
 		},
 		
 		/**
