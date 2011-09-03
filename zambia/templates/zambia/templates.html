@@ -113,6 +113,7 @@
 <script type="text/x-handlebars-template" id='contact-edit-template' charset="utf-8">
 	<form id="contact_form" class="edit_form_floated">
 	<label for="observer_id"><span class="label">Monitor ID</span> <input type="text" id="observer_id" name="observer_id" class="input_smoke field" value="{{observer_id}}"></label>
+	<label for="nrc"><span class="label">NRC No.</span> <input type="text" id="nrc" name="nrc" class="input_smoke field" value="{{nrc}}"></label>
 	<label for="name"><span class="label">Name</span> <input type="text" name="name" id="name" class="input_smoke field" value="{{name}}"></label>
 	<label for="role"><span class="label">Role</span> <select name="role" id="role" class="input_smoke field">
 		<option value='/api/v1/contact_role/1/'>District Supervisor</option>
@@ -125,8 +126,12 @@
 	</select></label>
 	<label for="phone"><span class="label">Phone</span> <input type="text" name="phone" id="connections.models[0].attributes.identity" class="input_smoke field" value="{{connections.models.0.attributes.identity}}"></label>
 	<label for="partner"><span class="label">Partner</span> <select name="partner" id="partner" class="input_smoke field">
-		<option>Caritas</option>
-		<option>FODEP</option>
+		<option value="Caritas">Caritas</option>
+		<option value="FODEP">FODEP</option>
+	</select></label>
+	<label for="cell_coverage"><span class="label">Cell Coverage</span> <select name="cell_coverage" id="cell_coverage" class="input_smoke field">
+		<option value='1'>Yes</option>
+		<option value='0'>No</option>
 	</select></label>
 	<label for="submit"><span class="label">&nbsp;</span> <span class="btn_yellow btn_space"><input type="submit" name="submit" value="Save"><span>&nbsp;</span></span></label>
 	</form>

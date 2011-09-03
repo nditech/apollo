@@ -144,6 +144,7 @@ ContactEditView = Backbone.View.extend({
 		$('#partner', self.el).val(self.model.get('partner'));
 		$('#role', self.el).val(self.model.get('role'));
 		$('#gender', self.el).val(self.model.get('gender'));
+		$('#cell_coverage', self.el).val(self.model.get('cell_coverage'));
 		
 		// Autocomplete for location input textbox
         $("#location", self.el).catcomplete({
