@@ -134,6 +134,9 @@ class ZambiaChecklistResponse(ChecklistResponse):
     class Admin:
         list_display = ('',)
         search_fields = ('',)
+    
+    class Meta:
+        app_label = 'zambia'
 
     def __unicode__(self):
         return str(self.checklist.id)
@@ -165,6 +168,9 @@ class ZambiaIncidentResponse(models.Model):
     class Admin:
         list_display = ('',)
         search_fields = ('',)
+    
+    class Meta:
+        app_label = 'zambia'
 
     def __unicode__(self):
         return str(self.incident.id)
