@@ -109,7 +109,7 @@ class IncidentFormResource(ModelResource):
 
 
 class MessageResource(ModelResource):
-    contact = fields.ForeignKey(ContactResource, 'contact', full=True, readonly=True, null=True, blank=True)
+    contact = fields.ForeignKey('ContactResource', 'contact', full=True, readonly=True, null=True, blank=True)
     connection = fields.ForeignKey(ConnectionResource, 'connection', readonly=True, full=True)
     
     class Meta:
