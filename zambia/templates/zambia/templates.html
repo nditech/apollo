@@ -92,6 +92,21 @@
 		<div class="input_el"><input type="text" name="name" class="input_smoke search_field" id="search_name__icontains" placeholder="Name"></div>
 		<div class="input_el"><input type="text" name="phone" class="input_smoke search_field" id="search_connections__identity__endswith" placeholder="Phone Number" pattern=".*[0-9]" title="Numeric figures only"></div>		
 		<div class="input_el"><input type="text" name="location" class="input_smoke" id="location__id" placeholder="Location"></div>
+		<div class="clear"></div>
+		<div class="input_el">
+			<select name="partner" id="search_partner" class="input_smoke search_field">
+				<option value="">Partner Organization</option>
+				<option value="Caritas">Caritas</option>
+				<option value="FODEP">FODEP</option>
+			</select>
+		</div>
+		<div class="input_el">
+			<select name="cell_coverage" id="search_cell_coverage" class="input_smoke search_field">
+				<option value="">Cell Coverage</option>
+				<option value="1">Cell Coverage - Yes</option>
+				<option value="0">Cell Coverage - No</option>
+			</select>
+		</div>
 		<div class="input_el">
 			<span class="btn_blue btn_space"><input type="submit" name="submit" value="Search" class="search_btn"><span>&nbsp;</span></span><span class="btn_gray"><a href="javascript:;" id="form_reset">Reset</a><span>&nbsp;</span></span>
 		</div>

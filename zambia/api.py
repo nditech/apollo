@@ -22,6 +22,7 @@ class ContactsResource(ModelResource):
     role = fields.ForeignKey(ContactRoleResource, 'role', full=True)
     location = fields.ForeignKey(LocationResource, 'location', full=True)
     supervisor = fields.ForeignKey('self', 'supervisor', null=True, blank=True, full=True)
+    cell_coverage = fields.IntegerField('cell_coverage', null=True, blank=True)
     connections = fields.ToManyField(ConnectionResource, 'connection_set', readonly=True, full=True)
     
     class Meta:
@@ -35,6 +36,8 @@ class ContactsResource(ModelResource):
             'name': ('contains', 'icontains',),
             'observer_id': ('exact',),
             'location': ALL_WITH_RELATIONS,
+            'partner': ('exact',),
+            'cell_coverage': ('exact',),
         }
         ordering = ['observer_id', 'name', 'role', 'location', 'connections', 'partner']
         
