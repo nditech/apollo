@@ -3,6 +3,53 @@ from webapp.models import *
 from models import *
 from django.db.models import Q
 
+class ContactResource(ModelResource):
+    role = fields.ForeignKey(ContactRoleResource, 'role')
+    location = fields.ForeignKey(LocationResource, 'location', full=True)
+    supervisor = fields.ForeignKey('self', 'supervisor', null=True, blank=True)
+    cell_coverage = fields.IntegerField('cell_coverage', null=True, blank=True)
+    connections = fields.ToManyField(ConnectionResource, 'connection_set', readonly=True, full=True)
+    
+    class Meta:
+        queryset = Contact.objects.select_related()
+        resource_name = 'contact'
+        allowed_methods = ['get', 'put', 'post', 'delete']
+        authentication = Authentication()
+        authorization = Authorization()
+
+
+class ContactsResource(ModelResource):
+    role = fields.ForeignKey(ContactRoleResource, 'role', full=True)
+    location = fields.ForeignKey(LocationResource, 'location', full=True)
+    supervisor = fields.ForeignKey('self', 'supervisor', null=True, blank=True, full=True)
+    connections = fields.ToManyField(ConnectionResource, 'connection_set', readonly=True, full=True)
+    
+    class Meta:
+        queryset = Contact.objects.select_related()
+        resource_name = 'contacts'
+        allowed_methods = ['get']
+        authentication = Authentication()
+        authorization = Authorization()
+        filtering = {
+            'connections': ALL_WITH_RELATIONS,
+            'name': ('contains', 'icontains',),
+            'observer_id': ('exact',),
+            'location': ALL_WITH_RELATIONS,
+        }
+        ordering = ['observer_id', 'name', 'role', 'location', 'connections', 'partner']
+        
+    def build_filters(self, filters=None):
+        if not filters:
+            filters = {}
+
+        orm_filters = super(ContactsResource, self).build_filters(filters)
+        if orm_filters.has_key('location__id__exact'):
+            id = orm_filters.pop('location__id__exact')
+            orm_filters['location__id__in'] = Location.objects.get(id=id).get_descendants(True).values_list('id', flat=True)
+
+        return orm_filters
+
+
 class ChecklistResponseResource(ModelResource):    
     class Meta:
         queryset = ZambiaChecklistResponse.objects.select_related()

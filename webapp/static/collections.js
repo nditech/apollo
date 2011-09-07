@@ -14,11 +14,6 @@ IncidentCollection = PaginatedCollection.extend({
 	baseUrl: '/api/v1/incidents/',
 });
 
-ContactCollection = PaginatedCollection.extend({
-	model: Contact,
-	baseUrl: '/api/v1/contacts/',
-});
-
 ChecklistCollection = PaginatedCollection.extend({
 	model: Checklist,
 	baseUrl: '/api/v1/checklists/',
