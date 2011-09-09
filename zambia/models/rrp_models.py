@@ -1,5 +1,5 @@
 from django.db import models
-from webapp.models import ChecklistResponse, IncidentResponse, Checklist, Incident
+from webapp.models import ChecklistResponse, Checklist
 from django.core.validators import RegexValidator
 from django.db.models.signals import post_save
 from general_models import ZambiaIncidentResponse
@@ -145,7 +145,7 @@ def checklist_callback(sender, **kwargs):
 
 def incident_callback(sender, **kwargs):
     if not hasattr(kwargs['instance'], 'response'):
-        response = ZambiaIncidentResponse.objects.create(checklist=kwargs['instance'])
+        response = ZambiaIncidentResponse.objects.create(incident=kwargs['instance'])
 
 post_save.connect(checklist_callback, sender=Checklist)
 post_save.connect(incident_callback, sender=Incident)

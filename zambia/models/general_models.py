@@ -141,7 +141,7 @@ class ZambiaChecklistResponse(ChecklistResponse):
     def __unicode__(self):
         return str(self.checklist.id)
 
-class ZambiaIncidentResponse(models.Model):
+class ZambiaIncidentResponse(IncidentResponse):
     WA = models.NullBooleanField(default=False, help_text='I witnessed the incident')
     WB = models.NullBooleanField(default=False, help_text='I arrived just after the incident happened')
     WC = models.NullBooleanField(default=False, help_text='The incident was reported to me by someone else')
@@ -181,7 +181,7 @@ def checklist_callback(sender, **kwargs):
 
 def incident_callback(sender, **kwargs):
     if not hasattr(kwargs['instance'], 'response'):
-        response = ZambiaIncidentResponse.objects.create(checklist=kwargs['instance'])
+        response = ZambiaIncidentResponse.objects.create(incident=kwargs['instance'])
 
 post_save.connect(checklist_callback, sender=Checklist)
 post_save.connect(incident_callback, sender=Incident)
