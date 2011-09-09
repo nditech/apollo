@@ -83,7 +83,7 @@ $(function () {
     $.widget("custom.catcomplete", $.ui.autocomplete, {
         _create: function () {
             var element_id = this.element.attr('id');
-            this.element.after('<input type="hidden" class="search_field" id="search_'+element_id+'" />');
+            this.element.after('<input type="hidden" class="search_field input_smoke" id="search_'+element_id+'" />');
             $.ui.autocomplete.prototype._create.apply(this);
         },
     	_renderMenu: function( ul, items ) {
