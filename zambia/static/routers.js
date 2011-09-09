@@ -72,6 +72,56 @@ ZambiaRouter = Backbone.Router.extend({
    incidents: function () {
        screen_model = new Screen({title: 'Election Incidents', contents: '', link: '#!/elections/incidents'});
        screen_view = new ScreenView({model: screen_model});
+       
+       paginated_collection = new IncidentCollection();
+       $('div.full_width_content').html(Templates.IncidentFilter);
+       
+       paginated_collection.fetch({
+         success: function (coll, response) {
+             incidents_view = new IncidentCollectionView({collection: coll}).render();
+             $('div.full_width_content').append(incidents_view);
+             $('div.full_width_content').append('<div class="pagination" id="pager"></div>');
+             $('.pagination').paginator({currentPage: coll.pageInfo().page, pages: coll.pageInfo().pages});
+             $('.pagination').bind('paginate', function (event, page) {
+                coll.gotoPage(page);
+                return false;
+             });
+
+             coll.bind('reset', function (event) {
+                $('.pagination').unbind('paginate');
+                $('.pagination').paginator('destroy');
+                $('.pagination').paginator({currentPage: coll.pageInfo().page, pages: coll.pageInfo().pages});
+                $.scrollTo('div#container', 400);
+                $('.pagination').bind('paginate', function (event, page) {
+                    coll.gotoPage(page);
+                    return false;
+                });
+             });
+             
+             // Autocomplete for location input textbox
+             $("#location__id").catcomplete({
+                source: '/api/v1/location/search/',
+                position: { my: 'left top', at: 'left bottom', collision: 'none', offset: '0 -4'},
+                focus: function (event, ui) {
+                    $('#location__id').val(ui.item.label);
+                    return false;
+                },
+                select: function (event, ui) {
+                    $('#location__id').val(ui.item.label);
+                    $('#search_location__id').val(ui.item.id);
+                    return false;
+                }
+             });
+             
+             $("#location__id").blur(function () {
+                 if (!$(this).val()) {
+                     $('#search_location__id').val("");
+                 }
+             });
+             
+             $('.date_field').datepicker({dateFormat: 'yy-mm-dd'});
+         },
+       });
    },
    
    process_analysis: function () {

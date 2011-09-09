@@ -172,3 +172,46 @@ ChecklistCollectionView = Backbone.View.extend({
         this.collection.bind('reset', this.render);
     },
 });
+
+IncidentView = Backbone.View.extend({
+	tagName: 'tr',
+	
+	initialize: function () {
+		_.bindAll(this, "render");
+		this.model.bind('change', this.render);
+	},
+	
+	render: function () {
+		$(this.el).html(Templates.Incident(this.model.attributes));
+		return this.el;
+	}
+});
+
+IncidentCollectionView = Backbone.View.extend({
+    tagName: 'table',
+    id: 'checklists',
+    className: 'datagrid',
+
+    render: function(){
+        var self = this;
+        // Store the heading of the table so it can be reused
+        var heading = $(self.el).children("tbody").children("tr")[0];
+        $(self.el).empty();
+		$(self.el).append(heading ? heading : Templates.IncidentHeader());
+		if (self.collection.length) {
+		    self.collection.each(function (mdl) {
+    			incident_view = new IncidentView({model: mdl}).render();
+    			$(self.el).append(incident_view);
+    		});
+		} else {
+		    $(self.el).children("tbody").append(Templates.IncidentEmpty());
+		}
+		
+		return self.el;
+    },
+
+    initialize: function(){
+        _.bindAll(this, "render");
+        this.collection.bind('reset', this.render);
+    },
+});
