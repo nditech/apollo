@@ -16,6 +16,14 @@ class ContactResource(ModelResource):
         allowed_methods = ['get', 'put', 'post', 'delete']
         authentication = Authentication()
         authorization = Authorization()
+        filtering = {
+            'connections': ALL_WITH_RELATIONS,
+            'name': ('contains', 'icontains',),
+            'observer_id': ('exact',),
+            'location': ALL_WITH_RELATIONS,
+            'partner': ('exact',),
+            'cell_coverage': ('exact',),
+        }
 
 
 class ContactsResource(ModelResource):
@@ -250,6 +258,18 @@ class IncidentsResource(ModelResource):
         }
         ordering = ['location', 'date', 'observer']
 
+    def build_filters(self, filters=None):
+        if not filters:
+            filters = {}
+
+        orm_filters = super(IncidentsResource, self).build_filters(filters)
+        
+        if orm_filters.has_key('location__id__exact'):
+            id = orm_filters.pop('location__id__exact')
+            orm_filters['location__id__in'] = Location.objects.get(id=id).get_descendants(True).values_list('id', flat=True)
+        
+        print orm_filters
+        return orm_filters
 
 class IncidentResource(ModelResource):
     location = fields.ForeignKey(LocationResource, 'location')
