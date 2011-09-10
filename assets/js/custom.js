@@ -50,6 +50,36 @@ $(function () {
 		}
 	});
 	
+	// Facebox
+	$('a.sms_sender').live('click', function () {
+		$.facebox(Templates.SMSBlaster());
+		$('.message').maxlength(457);
+	});
+	
+	// SMS Sending
+	$('#send_btn').live('click', function () {
+	   $('#send_indicator').show();
+	   $('#send_btn').attr('disabled', 'disabled');
+	   $('#send_btn_wrapper').addClass('disabled');
+	   setTimeout(function () {
+	      $('#send_indicator').hide();
+   	      
+   	      $('#send_status').html('Sent successfully!').css('display', 'inline-block').css('color', '#569700');
+   	      setTimeout(function () {
+   	          $('#send_btn').removeAttr('disabled');
+         	  $('#send_btn_wrapper').removeClass('disabled');
+         	  $.facebox.close();
+   	      }, 2000);
+   	      
+   	      /*$('#send_status').html('Sending failed! Pls try again.').css('display', 'inline-block').css('color', '#FF0700');
+   	      setTimeout(function () {
+     	      $('#send_btn').removeAttr('disabled');
+           	  $('#send_btn_wrapper').removeClass('disabled');
+           	  $('#send_status').fadeOut();
+          }, 2000);*/
+	   }, 3000);
+	});
+	
 	// Column Sorting
 	$("a.sortable_column").live('click', function () {
 		match = /^sort_(.*)$/.exec($(this).attr('id'));
@@ -179,5 +209,22 @@ $(function () {
 				e.append('<a href="javascript:;" class="last">&raquo;</a>');
 			}
 		}
+    });
+    
+    jQuery.fn.extend({
+        maxlength: function(maxChars) {
+            $(this).after("<div class='msg_counter'>-</div>");
+
+            $(this).live('keyup', function() {
+                var charLen = $(this).val().length;
+                if (charLen > maxChars) {
+                    $(this).val($(this).val().substring(0, maxChars));
+                }
+                if (charLen <= 457) msgParts = 3;
+                if (charLen <= 305) msgParts = 2;
+                if (charLen <= 160) msgParts = 1;
+                $('div.msg_counter').html('<strong>' + charLen + '</strong> characters <strong>' + msgParts + '</strong> message parts');
+            });
+        },
     });
 });

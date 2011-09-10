@@ -65,7 +65,7 @@
 			</select>
 		</div>
 		<div class="input_el">
-			<span class="btn_blue btn_space"><input type="submit" name="submit" value="Filter" class="search_btn"><span>&nbsp;</span></span><span class="btn_gray"><a href="javascript:;" id="form_reset">Reset</a><span>&nbsp;</span></span>
+			<span class="btn_blue btn_space"><input type="submit" name="submit" value="Filter" class="search_btn"><span>&nbsp;</span></span><span class="btn_gray btn_space"><a href="javascript:;" id="form_reset">Reset</a><span>&nbsp;</span></span><span class="btn_yellow"><a href='javascript:;' class="sms_sender">SMS</a><span>&nbsp;</span></span>
 		</div>
 		</form>
 		<div class="clear"></div>
@@ -108,7 +108,7 @@
 			</select>
 		</div>
 		<div class="input_el">
-			<span class="btn_blue btn_space"><input type="submit" name="submit" value="Search" class="search_btn"><span>&nbsp;</span></span><span class="btn_gray"><a href="javascript:;" id="form_reset">Reset</a><span>&nbsp;</span></span>
+			<span class="btn_blue btn_space"><input type="submit" name="submit" value="Search" class="search_btn"><span>&nbsp;</span></span><span class="btn_gray btn_space"><a href="javascript:;" id="form_reset">Reset</a><span>&nbsp;</span></span><span class="btn_yellow"><a href='javascript:;' class="sms_sender">SMS</a><span>&nbsp;</span></span>
 		</div>
 		</form>
 		<div class="clear"></div>
@@ -158,7 +158,7 @@
 		<div class="input_el"><input type="text" name="date" class="input_smoke search_field date_field" placeholder="Date" id="search_date__exact"></div>
 		<div class="input_el"><input type="text" name="location" class="input_smoke" placeholder="Location" id="location__id"></div>
 		<div class="input_el">
-			<span class="btn_blue btn_space"><input type="submit" name="submit" value="Filter" class="search_btn"><span>&nbsp;</span></span><span class="btn_gray"><a href="javascript:;" id="form_reset">Reset</a><span>&nbsp;</span></span>
+			<span class="btn_blue btn_space"><input type="submit" name="submit" value="Filter" class="search_btn"><span>&nbsp;</span></span><span class="btn_gray btn_space"><a href="javascript:;" id="form_reset">Reset</a><span>&nbsp;</span></span><span class="btn_yellow"><a href='javascript:;' class="sms_sender">SMS</a><span>&nbsp;</span></span>
 		</div>
 		</form>
 		<div class="clear"></div>
@@ -166,14 +166,14 @@
 </script>
 <script type="text/x-handlebars-template" id="incident-header-template" charset="utf-8">
 	<tbody>
-		<tr><th><a href="javascript:;" class="sortable_column" id="sort_observer__observer_id">PSID</a></th><th><a href="javascript:;" class="sortable_column" id="sort_date">Date</a></th><th><a href="javascript:;" class="sortable_column" id="sort_location__parent__parent__parent__name">Ward</a></th><th><a href="javascript:;" class="sortable_column" id="sort_location__parent__parent__name">Polling District</a></th><th><a href="javascript:;" class="sortable_column" id="sort_observer__name">Monitor</a></th><th style="text-align:center"><span>A</span></th><th style="text-align:center"><span>B</span></th><th style="text-align:center"><span>C</span></th><th style="text-align:center"><span>D</span></th><th style="text-align:center"><span>E</span></th><th style="text-align:center"><span>F</span></th><th style="text-align:center"><span>G</span></th><th style="text-align:center"><span>H</span></th><th style="text-align:center"><span>I</span></th><th style="text-align:center"><span>J</span></th><th style="text-align:center"><span>K</span></th><th style="text-align:center"><span>K1</span></th><th style="text-align:center"><span>K2</span></th><th style="text-align:center"><span>K4</span></th><th style="text-align:center"><span>L</span></th><th style="text-align:center"><span>M</span></th><th style="text-align:center"><span>N</span></th><th style="text-align:center"><span>O</span></th><th style="text-align:center">Edit</th></tr>
+		<tr><th><a href="javascript:;" class="sortable_column" id="sort_observer__observer_id">PSID</a></th><th><a href="javascript:;" class="sortable_column" id="sort_date">Date</a></th><th><a href="javascript:;" class="sortable_column" id="sort_location__parent__parent__parent__name">Ward</a></th><th><a href="javascript:;" class="sortable_column" id="sort_location__parent__parent__name">Polling District</a></th><th><a href="javascript:;" class="sortable_column" id="sort_observer__name">Monitor</a></th><th style="text-align:center"><span>A</span></th><th style="text-align:center"><span>B</span></th><th style="text-align:center"><span>C</span></th><th style="text-align:center"><span>D</span></th><th style="text-align:center"><span>E</span></th><th style="text-align:center"><span>F</span></th><th style="text-align:center"><span>G</span></th><th style="text-align:center"><span>H</span></th><th style="text-align:center"><span>I</span></th><th style="text-align:center"><span>J</span></th><th style="text-align:center"><span>K</span></th><th style="text-align:center"><span>K1</span></th><th style="text-align:center"><span>K2</span></th><th style="text-align:center"><span>K4</span></th><th style="text-align:center"><span>L</span></th><th style="text-align:center"><span>M</span></th><th style="text-align:center"><span>N</span></th><th style="text-align:center"><span>O</span></th><th style="text-align:center">Edit</th><th style="text-align:center">Del</th></tr>
 	</tbody>
 </script>
 <script type="text/x-handlebars-template" id="incident-template" charset="utf-8">
-	<td>{{observer.attributes.observer_id}}</td><td>{{date}}</td><td>{{location.attributes.parent.attributes.parent.attributes.parent.attributes.name}}</td><td>{{location.attributes.parent.attributes.parent.attributes.name}}</td><td>{{observer.attributes.name}}{{#if observer.attributes.connections.models}} (<strong>{{observer.attributes.connections.models.0.attributes.identity}}</strong>){{/if}}</td><td align="center">{{incident_flag response "A"}}</td><td align="center">{{incident_flag response "B"}}</td><td align="center">{{incident_flag response "C"}}</td><td align="center">{{incident_flag response "D"}}</td><td align="center">{{incident_flag response "E"}}</td><td align="center">{{incident_flag response "F"}}</td><td align="center">{{incident_flag response "G"}}</td><td align="center">{{incident_flag response "H"}}</td><td align="center">{{incident_flag response "I"}}</td><td align="center">{{incident_flag response "J"}}</td><td align="center">{{incident_flag response "K"}}</td><td align="center">{{incident_flag response "K1"}}</td><td align="center">{{incident_flag response "K2"}}</td><td align="center">{{incident_flag response "K4"}}</td><td align="center">{{incident_flag response "L"}}</td><td align="center">{{incident_flag response "M"}}</td><td align="center">{{incident_flag response "N"}}</td><td align="center">{{incident_flag response "O"}}</td><td align="center">Edit</td>
+	<td>{{observer.attributes.observer_id}}</td><td>{{date}}</td><td>{{location.attributes.parent.attributes.parent.attributes.parent.attributes.name}}</td><td>{{location.attributes.parent.attributes.parent.attributes.name}}</td><td>{{observer.attributes.name}}{{#if observer.attributes.connections.models}} (<strong>{{observer.attributes.connections.models.0.attributes.identity}}</strong>){{/if}}</td><td align="center">{{incident_flag response "A"}}</td><td align="center">{{incident_flag response "B"}}</td><td align="center">{{incident_flag response "C"}}</td><td align="center">{{incident_flag response "D"}}</td><td align="center">{{incident_flag response "E"}}</td><td align="center">{{incident_flag response "F"}}</td><td align="center">{{incident_flag response "G"}}</td><td align="center">{{incident_flag response "H"}}</td><td align="center">{{incident_flag response "I"}}</td><td align="center">{{incident_flag response "J"}}</td><td align="center">{{incident_flag response "K"}}</td><td align="center">{{incident_flag response "K1"}}</td><td align="center">{{incident_flag response "K2"}}</td><td align="center">{{incident_flag response "K4"}}</td><td align="center">{{incident_flag response "L"}}</td><td align="center">{{incident_flag response "M"}}</td><td align="center">{{incident_flag response "N"}}</td><td align="center">{{incident_flag response "O"}}</td><td align="center">Edit</td><td align="center">Del</td>
 </script>
 <script type="text/x-handlebars-template" id="incident-empty-template" charset="utf-8">
-	<tr><td colspan="24" class="empty"><em>No incidents to display</em></td></tr>
+	<tr><td colspan="25" class="empty"><em>No incidents to display</em></td></tr>
 </script>
 <script type="text/javascript" charset="utf-8">
 	function checklist_setup_complete(response) {
