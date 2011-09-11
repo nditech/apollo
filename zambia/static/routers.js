@@ -4,7 +4,9 @@ ZambiaRouter = Backbone.Router.extend({
        "!/contacts": "contacts", // #!/contacts
        "!/contact/:id": "contact_edit", // #!/contact/1
        "!/elections/checklists": "checklists", // #!/elections/checklists
+       "!/elections/checklist/:id": "checklist_edit", // #!/elections/checklist/1
        "!/elections/incidents": "incidents", // #!/elections/incidents
+       "!/elections/incident/:id": "incident_edit", // #!/elections/incident/1
        "!/elections/process_analysis": "process_analysis", // #!/elections/process_analysis
        "!/elections/results_analysis": "results_analysis", // #!/elections/results_analysis
     },
@@ -69,6 +71,22 @@ ZambiaRouter = Backbone.Router.extend({
         });
    },
    
+   checklist_edit: function (id) {
+        // save old page contents
+        screen_model = new Screen({title: 'Edit Checklist', content: '', link: '#!/elections/checklist/' + id});
+        screen_view = new ScreenView({model: screen_model});
+
+        checklist = new Checklist();
+        checklist.id = '/api/v1/checklist/' + id;
+        checklist.fetch({
+            success: function (model, response) {
+                checklist_edit_view = new ChecklistEditView({model: model}).render();
+                $('div.full_width_content').html(checklist_edit_view);
+                $('div.pane:first').show();
+            }
+        });
+   },
+   
    incidents: function () {
        screen_model = new Screen({title: 'Election Incidents', contents: '', link: '#!/elections/incidents'});
        screen_view = new ScreenView({model: screen_model});
@@ -122,6 +140,10 @@ ZambiaRouter = Backbone.Router.extend({
              $('.date_field').datepicker({dateFormat: 'yy-mm-dd'});
          },
        });
+   },
+   
+   incident_edit: function (id) {
+       
    },
    
    process_analysis: function () {
@@ -190,8 +212,7 @@ ZambiaRouter = Backbone.Router.extend({
       
       contact_edit: function (id) {
           // Save page contents elsewhere before replacing it
-          old_page = $('div.full_width_content').html();
-          screen_model = new Screen({title: 'Edit Contact', content: '<h1>Hehe now content</h1>', link: '#!/contact/' + id});
+          screen_model = new Screen({title: 'Edit Contact', content: '', link: '#!/contact/' + id});
           screen_view = new ScreenView({model: screen_model});
           
           contact = new Contact();

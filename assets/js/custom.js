@@ -80,6 +80,32 @@ $(function () {
 	   }, 3000);
 	});
 	
+	// Sectional Tabs
+	$("div.section_tabs a").live('click', function () {
+		var id = $(this).attr('id');
+		match = /tab(\d)/.exec(id);
+		if (match) {
+			$('div.pane').hide();
+			$('div#pane' + match[1]).show();
+		}
+	});
+	$('div.section_tabs li').live('click', function(){
+		$(this).addClass('current');
+		$('div.section_tabs li').not(this).removeClass('current');
+	});
+	
+	// Uncheck a radio button if clicked twice	
+	$('input:radio').live('change', function () {
+	    $(this).attr('is_undue', '1');
+	}).live('click', function () {
+	    if (!$(this).attr('is_undue')) {
+	        $(this).removeAttr('checked');
+	    } else {
+	        $(this).removeAttr('is_undue');
+	    }
+	    $(this).trigger('radio_click');
+	});
+	
 	// Column Sorting
 	$("a.sortable_column").live('click', function () {
 		match = /^sort_(.*)$/.exec($(this).attr('id'));

@@ -1768,6 +1768,36 @@ div.input_el {float:left; margin-right:10px;margin-bottom:1.5em;}
 div.clear {clear:left;}
 .btn_space {margin-right:8px;}
 
+p.style { padding-top:1em;padding-bottom:1em;border-bottom: 1px dotted #D3DAD9;font:size:1.2em;overflow:auto; }
+p.style .span { font-size: 1.3em; }
+p.style label { font-size:1.5em; }	
+p.style span { padding-right:10px;font-size:1.5em; }
+p.style .head { font-weight:bold;float:left;font-size:1.5em;width:180px;}
+p.style .input label { font-size:1em;display:inline-block;margin-right:1em;text-align:center;vertical-align:top; }
+p.form_buttons { background-color: #fff;}
+
+.pane { margin-top: 3em; display: none;}
+.code { display: block;float:left;font-size:1em;width:30px;}
+.span { display: block;float:left;width:300px;margin-right: 30px;color: #aaa;}
+.input { display:block;float:left;width:560px;}
+
+div.section_tabs {
+	padding: 0;width: 100%;border-top: 5px solid #FFA500;background: transparent;
+	voice-family: "\"}\"";voice-family: inherit;margin-bottom: 6em;
+}
+div.section_tabs ul { margin:0;margin-left: 40px;padding: 0;list-style: none;}
+div.section_tabs li { display: inline;margin: 0 2px 0 0;padding: 0;text-transform:uppercase;}
+div.section_tabs a {
+	float: left;display: block;font: bold 12px Arial;color: black;text-decoration: none;
+	margin: 0 5px 0 0;padding: 5px 10px 9px 10px;
+	background-color: white;
+	-moz-border-radius-bottomleft: 5px;border-bottom-left-radius: 5px;
+	-moz-border-radius-bottomright: 5px;border-bottom-right-radius: 5px;
+}
+div.section_tabs a:hover, .section_tabs .current a {
+	background-color: #FFA500;padding-top: 9px;padding-bottom: 5px;color: white;
+}
+
 #facebox .content table tr td, #facebox .content table tr th {
 	padding: 2px;
 }
