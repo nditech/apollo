@@ -1832,3 +1832,5 @@ select.input_text {height:26px;width:174px;}
 	width:158x;
 	margin-left:10px;
 }
+
+p.style .textbox{display: block; float:left; width:80px;font-size:.8em;}
