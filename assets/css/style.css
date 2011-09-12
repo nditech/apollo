@@ -1814,23 +1814,22 @@ div.section_tabs a:hover, .section_tabs .current a {
 .input_text {height:18px;background-color:#ddd;border:1px solid #ccc;padding:3px 10px;width:60px;border-radius:4px;}
 select.input_text {height:26px;width:174px;}
 .input_text:focus {background-color:#ffa500;}
+p.style .textbox{display: block; float:left; width:80px;font-size:.8em;}
 .span_text{
 	display: block;
 	float:left;
-	width:158x;
+	width:158px;
 	margin-left:3px;
 }
 .span_mid{
 	display: block;
 	float:left;
-	width:158x;
+	width:158px;
 	margin-left:10px;
 }
 .span_text_last{
 	display: block;
 	float:left;
-	width:158x;
+	width:158px;
 	margin-left:10px;
 }
-
-p.style .textbox{display: block; float:left; width:80px;font-size:.8em;}
