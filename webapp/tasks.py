@@ -9,7 +9,7 @@ from rapidsms.models import Backend
 from django.conf import settings
         
 class MessageBlast(Task):
-    endpoint_sendsms = 'http://api2.infobip.com/api/sendsms/plain?user=%(user)&password=%(pwd)&sender=%(sender)&SMSText=%(msg)&GSM=%(to)'
+    endpoint_sendsms = 'http://nusms.nuobjects.com/index.php?user=%(user)&pass=%(pwd)&to=%(to)&from=%(sender)&msg=%(msg)'
     user = settings.SMS_USER
     pwd  = settings.SMS_PASS
     sender = settings.SMS_PREFIX
@@ -20,7 +20,7 @@ class MessageBlast(Task):
             'from': self.sender,
             'to': to,
             'msg': msg})).read()
-        if int(result.strip()) > 0:
+        if 'sent':
             return True
         else:
             return False
