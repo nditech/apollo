@@ -278,3 +278,72 @@ IncidentCollectionView = Backbone.View.extend({
         this.collection.bind('reset', this.render);
     },
 });
+
+IncidentEditView = Backbone.View.extend({
+	tagName: 'div',
+	
+	initialize: function () {
+		_.bindAll(this, "render", "save", "fieldChanged", "selectionChanged", "radioChanged");
+	},
+	
+	events: {
+        "change input:text.field": "fieldChanged",
+        "change textarea.field": "fieldChanged",
+        "change select.field": "selectionChanged",
+        "change input:checkbox.field": "radioChanged",
+        "radio_click input:radio.field": "radioChanged", // a custom event is monitored to prevent out of order execution
+        "submit": "save"
+    },
+    
+    radioChanged: function (e) {
+        var field = $(e.currentTarget);
+        var value = $('input[name="'+field.attr('name')+'"]:checked').val() || null;
+        eval('this.model.attributes.'+field.attr('name')+' = value');
+    },
+    
+    selectionChanged: function (e) {
+        var field = $(e.currentTarget);
+        var value = $("option:selected", field).val() || null;
+        eval('this.model.attributes.'+field.attr('name')+' = value');
+    },
+    
+    fieldChanged: function (e) {
+        var field = $(e.currentTarget);
+        var value = (field.val() == 0 || field.val()) ? field.val() : null;
+        eval('this.model.attributes.'+field.attr('name')+' = value');
+    },
+    		
+	save: function () {
+	    var self = this;
+        self.model.get('response').save(false, {success: function () {
+	        setTimeout(function () { history.go(-1); }, 200);
+	    }});
+	    return false;
+	},
+	
+	render: function () {
+	    var self = this;
+	    var input_el;
+	    
+		$(self.el).html(Templates.IncidentMetadata(this.model.attributes));
+		$(self.el).append(Templates.IncidentEdit(this.model.attributes));
+		
+		// Initialize values for drop down selections
+		_(self.model.get('response').attributes).each(function (value, key) {
+		    input_el = $('input[name="response.attributes.'+key+'"]:first', self.el);
+		    		    
+		    if ($(input_el).attr('type') == 'radio') {
+		        $('input[name="response.attributes.'+key+'"][value="'+value+'"]', self.el).attr('checked', 'checked');
+		    } else if ($(input_el).attr('type') == 'checkbox') {
+		        if (value) {
+		            $('input[name="response.attributes.'+key+'"]', self.el).attr('checked', 'checked');
+		        }
+		    } else {
+		        $('input[name="response.attributes.'+key+'"]', self.el).val(value);
+		    }
+		});
+		$('textarea[name="response.attributes.description"]', self.el).val(self.model.get('response').get('description'));
+        
+		return self.el;
+	}
+});

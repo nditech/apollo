@@ -72,7 +72,6 @@ ZambiaRouter = Backbone.Router.extend({
    },
    
    checklist_edit: function (id) {
-        // save old page contents
         screen_model = new Screen({title: 'Edit Checklist', content: '', link: '#!/elections/checklist/' + id});
         screen_view = new ScreenView({model: screen_model});
 
@@ -143,7 +142,17 @@ ZambiaRouter = Backbone.Router.extend({
    },
    
    incident_edit: function (id) {
-       
+       screen_model = new Screen({title: 'Edit Incident', content: '', link: '#!/elections/checklist/' + id});
+       screen_view = new ScreenView({model: screen_model});
+
+       incident = new Incident();
+       incident.id = '/api/v1/incident/' + id;
+       incident.fetch({
+           success: function (model, response) {
+               incident_edit_view = new IncidentEditView({model: model}).render();
+               $('div.full_width_content').html(incident_edit_view);
+           }
+       });
    },
    
    process_analysis: function () {

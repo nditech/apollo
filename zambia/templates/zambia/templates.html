@@ -751,7 +751,7 @@
 		<div class="input_el"><input type="text" name="date" class="input_smoke search_field date_field" placeholder="Date" id="search_date__exact"></div>
 		<div class="input_el"><input type="text" name="location" class="input_smoke" placeholder="Location" id="location__id"></div>
 		<div class="input_el">
-			<span class="btn_blue btn_space"><input type="submit" name="submit" value="Filter" class="search_btn"><span>&nbsp;</span></span><span class="btn_gray btn_space"><a href="javascript:;" id="form_reset">Reset</a><span>&nbsp;</span></span><span class="btn_yellow"><a href='javascript:;' class="sms_sender">SMS</a><span>&nbsp;</span></span>
+			<span class="btn_blue btn_space"><input type="submit" name="submit" value="Filter" class="search_btn"><span>&nbsp;</span></span><span class="btn_gray btn_space"><a href="javascript:;" id="form_reset">Reset</a><span>&nbsp;</span></span><span class="btn_yellow btn_space"><a href='javascript:;' class="sms_sender">SMS</a><span>&nbsp;</span></span><span class="btn_red btn_space"><a href="javascript:;" id="form_add_incident">Add Incident</a><span>&nbsp;</span></span>
 		</div>
 		</form>
 		<div class="clear"></div>
@@ -763,10 +763,150 @@
 	</tbody>
 </script>
 <script type="text/x-handlebars-template" id="incident-template" charset="utf-8">
-	<td>{{observer.attributes.observer_id}}</td><td>{{date}}</td><td>{{location.attributes.parent.attributes.parent.attributes.parent.attributes.name}}</td><td>{{location.attributes.parent.attributes.parent.attributes.name}}</td><td>{{observer.attributes.name}}{{#if observer.attributes.connections.models}} (<strong>{{observer.attributes.connections.models.0.attributes.identity}}</strong>){{/if}}</td><td align="center">{{incident_flag response "A"}}</td><td align="center">{{incident_flag response "B"}}</td><td align="center">{{incident_flag response "C"}}</td><td align="center">{{incident_flag response "D"}}</td><td align="center">{{incident_flag response "E"}}</td><td align="center">{{incident_flag response "F"}}</td><td align="center">{{incident_flag response "G"}}</td><td align="center">{{incident_flag response "H"}}</td><td align="center">{{incident_flag response "I"}}</td><td align="center">{{incident_flag response "J"}}</td><td align="center">{{incident_flag response "K"}}</td><td align="center">{{incident_flag response "K1"}}</td><td align="center">{{incident_flag response "K2"}}</td><td align="center">{{incident_flag response "K4"}}</td><td align="center">{{incident_flag response "L"}}</td><td align="center">{{incident_flag response "M"}}</td><td align="center">{{incident_flag response "N"}}</td><td align="center">{{incident_flag response "O"}}</td><td align="center">Edit</td><td align="center">Del</td>
+	<td>{{observer.attributes.observer_id}}</td><td>{{date}}</td><td>{{location.attributes.parent.attributes.parent.attributes.parent.attributes.name}}</td><td>{{location.attributes.parent.attributes.parent.attributes.name}}</td><td>{{observer.attributes.name}}{{#if observer.attributes.connections.models}} (<strong>{{observer.attributes.connections.models.0.attributes.identity}}</strong>){{/if}}</td><td align="center">{{incident_flag response "A"}}</td><td align="center">{{incident_flag response "B"}}</td><td align="center">{{incident_flag response "C"}}</td><td align="center">{{incident_flag response "D"}}</td><td align="center">{{incident_flag response "E"}}</td><td align="center">{{incident_flag response "F"}}</td><td align="center">{{incident_flag response "G"}}</td><td align="center">{{incident_flag response "H"}}</td><td align="center">{{incident_flag response "I"}}</td><td align="center">{{incident_flag response "J"}}</td><td align="center">{{incident_flag response "K"}}</td><td align="center">{{incident_flag response "K1"}}</td><td align="center">{{incident_flag response "K2"}}</td><td align="center">{{incident_flag response "K4"}}</td><td align="center">{{incident_flag response "L"}}</td><td align="center">{{incident_flag response "M"}}</td><td align="center">{{incident_flag response "N"}}</td><td align="center">{{incident_flag response "O"}}</td><td align="center"><a href="#!/elections/incident/{{id}}">Edit</a></td><td align="center">Del</td>
 </script>
 <script type="text/x-handlebars-template" id="incident-empty-template" charset="utf-8">
 	<tr><td colspan="25" class="empty"><em>No incidents to display</em></td></tr>
+</script>
+<script type="text/x-handlebars-template" id="incident-metadata-template" charset="utf-8">
+	<div>
+		<p class="style"><span class="span"><label>Province</label></span><span class="input"><input type="text" name="text"  class="input_smoke"></span></p>
+		<p class="style"><span class="span"><label>District</label></span><span class="input"><input type="text" name="text"  class="input_smoke"></span></p>
+		<p class="style"><span class="span"><label>Constituency</label></span><span class="input"><input type="text" name="text"  class="input_smoke"></span></p>
+		<p class="style"><span class="span"><label>Ward</label></span><span class="input"><input type="text" name="text"  class="input_smoke"></span></p>
+		<p class="style"><span class="span"><label>Polling District</label></span><span class="input"><input type="text" name="text"  class="input_smoke"></span></p>
+		<p class="style"><span class="span"><label>Polling District ID</label></span><span class="input"><input type="text" name="text"  class="input_smoke"></span></p>
+		<p class="style"><span class="span"><label>Date</label></span><span class="input"><input type="text" name="text"  class="input_smoke"></span></p>
+		<p class="style"><span class="span"><label>Time</label></span><span class="input"><input type="text" name="text"  class="input_smoke"></span></p>
+		<p class="clear"></p>
+	</div>
+</script>
+<script type="text/x-handlebars-template" id="incident-edit-template" charset="utf-8">
+	<form id="incident_form">
+		<p class="style">
+			<span class="code">1a.</span>
+			<span class="input"><label><input type="radio" name="response.attributes.W" value="1" class="field">I witnessed the incident</label></span>
+		</p>
+	
+		<p class="style">
+			<span class="code">1b.</span>
+			<span class="input"><label><input type="radio" name="response.attributes.W" value="2" class="field">I arrived just after the incident happened</label></span>
+		</p>
+	
+		<p class="style">
+			<span class="code">1c.</span>
+			<span class="input"><label><input type="radio" name="response.attributes.W" value="3" class="field">The incident was reported to me by someone else</label></span>
+		</p>
+		
+		<p class="clear"></p>
+	
+		<p class="style">
+			<span class="code">2a.</span>
+			<span class="input"><label><input type="checkbox" class="field" name="response.attributes.A" value="1">Polling stream did not open</label></span>
+		</p>
+
+		<p class="style">
+			<span class="code">2b.</span>
+			<span class="input"><label><input type="checkbox" class="field" name="response.attributes.B" value="1">Polling stream opened very late</label></span>
+		</p>
+	
+		<p class="style">
+			<span class="code">2c.</span>
+			<span class="input"><label><input type="checkbox" class="field" name="response.attributes.C" value="1">Polling stream closed very early</label></span>
+		</p>
+	
+		<p class="style">
+			<span class="code">2d.</span>
+			<span class="input"><label><input type="checkbox" class="field" name="response.attributes.D" value="1">Polling stream did not have materials at opening</label></span>
+		</p>
+	
+		<p class="style">
+			<span class="code">2e.</span>
+			<span class="input"><label><input type="checkbox" class="field" name="response.attributes.E" value="1">Vote buying/bribery</label></span>
+		</p>
+	
+		<p class="style">
+			<span class="code">2f.</span>
+			<span class="input"><label><input type="checkbox" class="field" name="response.attributes.F" value="1">Monitor denied access to polling stream</label></span>
+		</p>
+	
+		<p class="style">
+			<span class="code">2g.</span>
+			<span class="input"><label><input type="checkbox" class="field" name="response.attributes.G" value="1">Monitor not permitted to use reporting form</label></span>
+		</p>
+	
+		<p class="style">
+			<span class="code">2h.</span>
+			<span class="input"><label><input type="checkbox" class="field" name="response.attributes.H" value="1">Police officers inside polling station</label></span>
+		</p>
+	
+		<p class="style">
+			<span class="code">2i.</span>
+			<span class="input"><label><input type="checkbox" class="field" name="response.attributes.I" value="1">Polling stream ran out of materials</label></span>
+		</p>
+	
+		<p class="style">
+			<span class="code">2j.</span>
+			<span class="input"><label><input type="checkbox" class="field" name="response.attributes.J" value="1">People in the queue at the time of official close of the polling station not allowed to vote</label></span>
+		</p>
+	
+		<p class="style">
+			<span class="code">2k.</span>
+			<span class="input"><label><input type="checkbox" class="field" name="response.attributes.K" value="1">Violence/intimidation in or near the polling station</label></span>
+		</p>
+	
+		<p class="style">
+			<span class="code">2k1.</span>
+			<span class="input"><label><input type="checkbox" class="field" name="response.attributes.K1" value="1">Uniformed police</label></span>
+		</p>
+	
+		<p class="style">
+			<span class="code">2k2.</span>
+			<span class="input"><label><input type="checkbox" class="field" name="response.attributes.K2" value="1">Party supporters</label></span>
+		</p>
+	
+		<p class="style">
+			<span class="code">2k4.</span>
+			<span class="input"><label><input type="checkbox" class="field" name="response.attributes.K4" value="1">Others</label></span></p>
+	
+		<p class="style">
+			<span class="code">2l.</span>
+			<span class="input"><label><input type="checkbox" class="field" name="response.attributes.L" value="1">Violation of voting or counting procedures</label></span>
+		</p>
+	
+		<p class="style">
+			<span class="code">2m.</span>
+			<span class="input"><label><input type="checkbox" class="field" name="response.attributes.M" value="1">Stealing or damaging of ballots</label></span>
+		</p>
+	
+		<p class="style">
+			<span class="code">2n.</span>
+			<span class="input"><label><input type="checkbox" class="field" name="response.attributes.N" value="1">Voting or counting suspended during the process for more than 30 minutes</label></span>
+		</p>
+	
+		<p class="style">
+			<span class="code">2o.</span>
+			<span class="input"><label><input type="text" name="response.attributes.O"  class="input_smoke field">Other (explain)</label></span>
+		</p>
+	
+		<p class="style">
+			<span class="code">3.</span>
+			<span class="input">Description of Incident:<br/>
+			Please provide a brief description of the concrete facts regarding each incident, including who participated (their position and affiliation) and the sequence of events. Indicate other individuals, such as local or international observers or political party polling agents, who also witnessed the incident (and their contact information if possible).<br />
+			<br /><textarea rows="10" cols="30" class="input_smoke field" name="response.attributes.description"></textarea>
+			</span>
+		</p>
+	
+		<p class="style">
+			<span class="code">&nbsp;</span>
+			<span class="input">Name of the monitor<br /><input type="text" name="text" class="input_smoke"></span>
+		</p>
+	
+		<p class="style form_buttons">
+			<span class="code">&nbsp;</span>
+			<span class="input"><span class="btn_yellow btn_space"><input type="submit" value ="save" class="search_btn"/><span></span></span></span>
+		</p>
+	</form>
 </script>
 <script type="text/javascript" charset="utf-8">
 	function checklist_setup_complete(response) {
@@ -916,4 +1056,6 @@
 	Templates.IncidentHeader = Handlebars.compile($('#incident-header-template').html());
 	Templates.Incident = Handlebars.compile($('#incident-template').html());
 	Templates.IncidentEmpty = Handlebars.compile($('#incident-empty-template').html());
+	Templates.IncidentMetadata = Handlebars.compile($('#incident-metadata-template').html());
+	Templates.IncidentEdit = Handlebars.compile($('#incident-edit-template').html());
 </script>

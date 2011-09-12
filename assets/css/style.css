@@ -1708,7 +1708,8 @@ div.pagination a.current {
 }
 
 /****************** custom styles ******************************/
-.input_smoke {height:18px;background-color:#ddd;border:1px solid #ccc;padding:3px 10px;width:152px;border-radius:4px;}
+.input_smoke {background-color:#ddd;border:1px solid #ccc;padding:3px 10px;border-radius:4px;}
+input.input_smoke {height:18px;width:152px;}
 select.input_smoke {height:26px;width:174px;}
 .input_smoke:focus {background-color:#ffa500;}
 .edit_form_floated .input_smoke {width:18em;}
@@ -1780,6 +1781,7 @@ p.form_buttons { background-color: #fff;}
 .code { display: block;float:left;font-size:1em;width:30px;}
 .span { display: block;float:left;width:300px;margin-right: 30px;color: #aaa;}
 .input { display:block;float:left;width:560px;}
+#incident_form .input {width:860px;}
 
 div.section_tabs {
 	padding: 0;width: 100%;border-top: 5px solid #FFA500;background: transparent;
@@ -1797,6 +1799,8 @@ div.section_tabs a {
 div.section_tabs a:hover, .section_tabs .current a {
 	background-color: #FFA500;padding-top: 9px;padding-bottom: 5px;color: white;
 }
+#incident_form input {margin-right:0.5em;}
+#incident_form input[type=submit] {margin-right:0;}
 
 #facebox .content table tr td, #facebox .content table tr th {
 	padding: 2px;
