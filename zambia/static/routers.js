@@ -4,7 +4,9 @@ ZambiaRouter = Backbone.Router.extend({
        "!/contacts": "contacts", // #!/contacts
        "!/contact/:id": "contact_edit", // #!/contact/1
        "!/elections/checklists": "checklists", // #!/elections/checklists
+       "!/elections/checklist/:id": "checklist_edit", // #!/elections/checklist/1
        "!/elections/incidents": "incidents", // #!/elections/incidents
+       "!/elections/incident/:id": "incident_edit", // #!/elections/incident/1
        "!/elections/process_analysis": "process_analysis", // #!/elections/process_analysis
        "!/elections/results_analysis": "results_analysis", // #!/elections/results_analysis
     },
@@ -69,9 +71,88 @@ ZambiaRouter = Backbone.Router.extend({
         });
    },
    
+   checklist_edit: function (id) {
+        screen_model = new Screen({title: 'Edit Checklist', content: '', link: '#!/elections/checklist/' + id});
+        screen_view = new ScreenView({model: screen_model});
+
+        checklist = new Checklist();
+        checklist.id = '/api/v1/checklist/' + id;
+        checklist.fetch({
+            success: function (model, response) {
+                checklist_edit_view = new ChecklistEditView({model: model}).render();
+                $('div.full_width_content').html(checklist_edit_view);
+                $('div.pane:first').show();
+            }
+        });
+   },
+   
    incidents: function () {
        screen_model = new Screen({title: 'Election Incidents', contents: '', link: '#!/elections/incidents'});
        screen_view = new ScreenView({model: screen_model});
+       
+       paginated_collection = new IncidentCollection();
+       $('div.full_width_content').html(Templates.IncidentFilter);
+       
+       paginated_collection.fetch({
+         success: function (coll, response) {
+             incidents_view = new IncidentCollectionView({collection: coll}).render();
+             $('div.full_width_content').append(incidents_view);
+             $('div.full_width_content').append('<div class="pagination" id="pager"></div>');
+             $('.pagination').paginator({currentPage: coll.pageInfo().page, pages: coll.pageInfo().pages});
+             $('.pagination').bind('paginate', function (event, page) {
+                coll.gotoPage(page);
+                return false;
+             });
+
+             coll.bind('reset', function (event) {
+                $('.pagination').unbind('paginate');
+                $('.pagination').paginator('destroy');
+                $('.pagination').paginator({currentPage: coll.pageInfo().page, pages: coll.pageInfo().pages});
+                $.scrollTo('div#container', 400);
+                $('.pagination').bind('paginate', function (event, page) {
+                    coll.gotoPage(page);
+                    return false;
+                });
+             });
+             
+             // Autocomplete for location input textbox
+             $("#location__id").catcomplete({
+                source: '/api/v1/location/search/',
+                position: { my: 'left top', at: 'left bottom', collision: 'none', offset: '0 -4'},
+                focus: function (event, ui) {
+                    $('#location__id').val(ui.item.label);
+                    return false;
+                },
+                select: function (event, ui) {
+                    $('#location__id').val(ui.item.label);
+                    $('#search_location__id').val(ui.item.id);
+                    return false;
+                }
+             });
+             
+             $("#location__id").blur(function () {
+                 if (!$(this).val()) {
+                     $('#search_location__id').val("");
+                 }
+             });
+             
+             $('.date_field').datepicker({dateFormat: 'yy-mm-dd'});
+         },
+       });
+   },
+   
+   incident_edit: function (id) {
+       screen_model = new Screen({title: 'Edit Incident', content: '', link: '#!/elections/checklist/' + id});
+       screen_view = new ScreenView({model: screen_model});
+
+       incident = new Incident();
+       incident.id = '/api/v1/incident/' + id;
+       incident.fetch({
+           success: function (model, response) {
+               incident_edit_view = new IncidentEditView({model: model}).render();
+               $('div.full_width_content').html(incident_edit_view);
+           }
+       });
    },
    
    process_analysis: function () {
@@ -140,8 +221,7 @@ ZambiaRouter = Backbone.Router.extend({
       
       contact_edit: function (id) {
           // Save page contents elsewhere before replacing it
-          old_page = $('div.full_width_content').html();
-          screen_model = new Screen({title: 'Edit Contact', content: '<h1>Hehe now content</h1>', link: '#!/contact/' + id});
+          screen_model = new Screen({title: 'Edit Contact', content: '', link: '#!/contact/' + id});
           screen_view = new ScreenView({model: screen_model});
           
           contact = new Contact();

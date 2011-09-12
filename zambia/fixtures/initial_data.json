@@ -571,5 +571,12 @@
       "form": 2,
       "weight": 10
     }
+  },
+  {
+    "pk": 1,
+    "model": "rapidsms.backend",
+    "fields": {
+      "name": "message_tester"
+    }
   }
 ]

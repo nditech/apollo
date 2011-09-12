@@ -1324,7 +1324,7 @@ ol#commentslist {
 	height: 25px;
 }
 
-.btn_gray_input input, .btn_gray a, .btn_yellow a, .btn_green a, .btn_red a, .btn_blue a, .btn_blue input, .btn_yellow input  {
+.btn_gray_input input, .btn_gray a, .btn_yellow a, .btn_green a, .btn_red a, .btn_blue a, .btn_blue input, .btn_red input, .btn_green input, .btn_yellow input  {
 	float: left;
 	height: 25px;
 	line-height: 25px;
@@ -1366,19 +1366,19 @@ ol#commentslist {
 .btn_gray {
 	background: url(../images/gray_left.png) no-repeat;
 }
-.btn_gray a {
+.btn_gray a, .btn_gray input {
 	background: url(../images/gray.png) repeat-x left top;
 }
 .btn_gray span {
 	background: url(../images/gray_right.png) no-repeat;
 }
-.btn_gray a:hover { 
+.btn_gray a:hover, .btn_gray input:hover, .btn_gray input[disabled='disabled'] { 
 	background: url(../images/gray_hover.png) repeat-x left top;
 }
-.btn_gray:hover {
+.btn_gray:hover, .btn_gray.disabled {
 	background: url(../images/gray_left_hover.png) no-repeat;
 }
-.btn_gray:hover span {
+.btn_gray:hover span, .btn_gray.disabled span {
 	background: url(../images/gray_right_hover.png) no-repeat;
 }
 
@@ -1393,13 +1393,13 @@ ol#commentslist {
 .btn_yellow span {
 	background: url(../images/yellow_right.png) no-repeat;
 }
-.btn_yellow a:hover, .btn_yellow input:hover { 
+.btn_yellow a:hover, .btn_yellow input:hover, .btn_yellow input[disabled='disabled'] { 
 	background: url(../images/yellow_hover.png) repeat-x left top;
 }
-.btn_yellow:hover {
+.btn_yellow:hover, .btn_yellow.disabled {
 	background: url(../images/yellow_left_hover.png) no-repeat;
 }
-.btn_yellow:hover span {
+.btn_yellow:hover span, .btn_yellow.disabled span {
 	background: url(../images/yellow_right_hover.png) no-repeat;
 }
 
@@ -1408,19 +1408,19 @@ ol#commentslist {
 .btn_green {
 	background: url(../images/green_left.png) no-repeat;
 }
-.btn_green a {
+.btn_green a, .btn_green input {
 	background: url(../images/green.png) repeat-x left top;
 }
 .btn_green span {
 	background: url(../images/green_right.png) no-repeat;
 }
-.btn_green a:hover { 
+.btn_green a:hover, .btn_green input:hover, .btn_green input[disabled='disabled'] { 
 	background: url(../images/green_hover.png) repeat-x left top;
 }
-.btn_green:hover {
+.btn_green:hover, .btn_green.disabled {
 	background: url(../images/green_left_hover.png) no-repeat;
 }
-.btn_green:hover span {
+.btn_green:hover span, .btn_green.disabled span {
 	background: url(../images/green_right_hover.png) no-repeat;
 }
 
@@ -1429,19 +1429,19 @@ ol#commentslist {
 .btn_red {
 	background: url(../images/red_left.png) no-repeat;
 }
-.btn_red a {
+.btn_red a, .btn_red input {
 	background: url(../images/red.png) repeat-x left top;
 }
 .btn_red span {
 	background: url(../images/red_right.png) no-repeat;
 }
-.btn_red a:hover { 
+.btn_red a:hover, .btn_red input:hover, .btn_red input[disabled='disabled'] { 
 	background: url(../images/red_hover.png) repeat-x left top;
 }
-.btn_red:hover {
+.btn_red:hover, .btn_red.disabled {
 	background: url(../images/red_left_hover.png) no-repeat;
 }
-.btn_red:hover span {
+.btn_red:hover span, .btn_red.disabled span {
 	background: url(../images/red_right_hover.png) no-repeat;
 }
 
@@ -1456,13 +1456,13 @@ ol#commentslist {
 .btn_blue span {
 	background: url(../images/blue_right.png) no-repeat;
 }
-.btn_blue a:hover, .btn_blue input:hover { 
+.btn_blue a:hover, .btn_blue input:hover, .btn_blue input[disabled='disabled'] { 
 	background: url(../images/blue_hover.png) repeat-x left top;
 }
-.btn_blue:hover {
+.btn_blue:hover, .btn_blue.disabled {
 	background: url(../images/blue_left_hover.png) no-repeat;
 }
-.btn_blue:hover span {
+.btn_blue:hover span, .btn_blue.disabled span {
 	background: url(../images/blue_right_hover.png) no-repeat;
 }
 
@@ -1708,7 +1708,8 @@ div.pagination a.current {
 }
 
 /****************** custom styles ******************************/
-.input_smoke {height:18px;background-color:#ddd;border:1px solid #ccc;padding:3px 10px;width:152px;border-radius:4px;}
+.input_smoke {background-color:#ddd;border:1px solid #ccc;padding:3px 10px;border-radius:4px;}
+input.input_smoke {height:18px;width:152px;}
 select.input_smoke {height:26px;width:174px;}
 .input_smoke:focus {background-color:#ffa500;}
 .edit_form_floated .input_smoke {width:18em;}
@@ -1767,3 +1768,45 @@ select.input_smoke {height:26px;width:174px;}
 div.input_el {float:left; margin-right:10px;margin-bottom:1.5em;}
 div.clear {clear:left;}
 .btn_space {margin-right:8px;}
+
+p.style { padding-top:1em;padding-bottom:1em;border-bottom: 1px dotted #D3DAD9;font:size:1.2em;overflow:auto; }
+p.style .span { font-size: 1.3em; }
+p.style label { font-size:1.5em; }	
+p.style span { padding-right:10px;font-size:1.5em; }
+p.style .head { font-weight:bold;float:left;font-size:1.5em;width:180px;}
+p.style .input label { font-size:1em;display:inline-block;margin-right:1em;text-align:center;vertical-align:top; }
+p.form_buttons { background-color: #fff;}
+
+.pane { margin-top: 3em; display: none;}
+.code { display: block;float:left;font-size:1em;width:30px;}
+.span { display: block;float:left;width:300px;margin-right: 30px;color: #aaa;}
+.input { display:block;float:left;width:560px;}
+#incident_form .input {width:860px;}
+
+div.section_tabs {
+	padding: 0;width: 100%;border-top: 5px solid #FFA500;background: transparent;
+	voice-family: "\"}\"";voice-family: inherit;margin-bottom: 6em;
+}
+div.section_tabs ul { margin:0;margin-left: 40px;padding: 0;list-style: none;}
+div.section_tabs li { display: inline;margin: 0 2px 0 0;padding: 0;text-transform:uppercase;}
+div.section_tabs a {
+	float: left;display: block;font: bold 12px Arial;color: black;text-decoration: none;
+	margin: 0 5px 0 0;padding: 5px 10px 9px 10px;
+	background-color: white;
+	-moz-border-radius-bottomleft: 5px;border-bottom-left-radius: 5px;
+	-moz-border-radius-bottomright: 5px;border-bottom-right-radius: 5px;
+}
+div.section_tabs a:hover, .section_tabs .current a {
+	background-color: #FFA500;padding-top: 9px;padding-bottom: 5px;color: white;
+}
+#incident_form input {margin-right:0.5em;}
+#incident_form input[type=submit] {margin-right:0;}
+
+#facebox .content table tr td, #facebox .content table tr th {
+	padding: 2px;
+}
+
+#facebox .content textarea {
+	background-color: whiteSmoke;
+	padding: 5px;
+}

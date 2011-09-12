@@ -6,6 +6,7 @@
 <title>Page Title</title>
 <link rel="stylesheet" type="text/css" href="/assets/css/ui-lightness/style.css" />
 <link rel="stylesheet" type="text/css" href="/assets/css/style.css" />
+<link rel="stylesheet" type="text/css" href="/assets/css/facebox.css" />
 <script src="/assets/js/application-min.js" type="text/javascript" charset="utf-8"></script>
 <script src="/assets/js/handlebars.1.0.0.beta.3.js" type="text/javascript" charset="utf-8"></script>
 <script src="/static/webapp/models.js" type="text/javascript" charset="utf-8"></script>
@@ -21,7 +22,7 @@
 	$(function() {
 		new WebappRouter();
 		new ZambiaRouter();
-		Backbone.history.start({root: '/home/'});
+		Backbone.history.start();
 	});
 </script>
 <style type="text/css" media="screen">

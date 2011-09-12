@@ -18,7 +18,6 @@ ContactEditView = Backbone.View.extend({
 	
 	initialize: function () {
 		_.bindAll(this, "render", "save", "fieldChanged", "selectionChanged", "autocompleteChanged");
-		//this.model.bind('change', this.render);
 	},
 	
 	events: {
@@ -30,13 +29,14 @@ ContactEditView = Backbone.View.extend({
     
     selectionChanged: function (e) {
         var field = $(e.currentTarget);
-        var value = $("option:selected", field).val();
+        var value = $("option:selected", field).val() || null;
         eval('this.model.attributes.'+field.attr('id')+' = value');
     },
     
     fieldChanged: function (e) {
         var field = $(e.currentTarget);
-        eval('this.model.attributes.'+field.attr('id')+' = field.val()');
+        var value = field.val() || null;
+        eval('this.model.attributes.'+field.attr('id')+' = value');
     },
     
     autocompleteChanged: function (e) {
@@ -171,4 +171,179 @@ ChecklistCollectionView = Backbone.View.extend({
         _.bindAll(this, "render");
         this.collection.bind('reset', this.render);
     },
+});
+
+ChecklistEditView = Backbone.View.extend({
+	tagName: 'div',
+	
+	initialize: function () {
+		_.bindAll(this, "render", "save", "fieldChanged", "selectionChanged", "radioChanged");
+	},
+	
+	events: {
+        "change input:text.field": "fieldChanged",
+        "change select.field": "selectionChanged",
+        "radio_click input:radio.field": "radioChanged",
+        "submit": "save"
+    },
+    
+    radioChanged: function (e) {
+        var field = $(e.currentTarget);
+        var value = $('input[name="'+field.attr('name')+'"]:checked').val() || null;
+        eval('this.model.attributes.'+field.attr('name')+' = value');
+    },
+    
+    selectionChanged: function (e) {
+        var field = $(e.currentTarget);
+        var value = $("option:selected", field).val() || null;
+        eval('this.model.attributes.'+field.attr('name')+' = value');
+    },
+    
+    fieldChanged: function (e) {
+        var field = $(e.currentTarget);
+        var value = (field.val() == 0 || field.val()) ? field.val() : null;
+        eval('this.model.attributes.'+field.attr('name')+' = value');
+    },
+    		
+	save: function () {
+	    var self = this;
+        self.model.get('response').save(false, {success: function () {
+	        setTimeout(function () { history.go(-1); }, 200);
+	    }});
+	    return false;
+	},
+	
+	render: function () {
+	    var self = this;
+	    var input_el;
+	    
+		$(self.el).html(Templates.ChecklistSectionTabs());
+		$(self.el).append(Templates.ChecklistMetadata(this.model.attributes));
+		$(self.el).append(Templates.ChecklistEdit(this.model.attributes));
+		
+		// Initialize values for drop down selections
+		_(self.model.get('response').attributes).each(function (value, key) {
+		    input_el = $('input[name="response.attributes.'+key+'"]:first', self.el);
+		    		    
+		    if ($(input_el).attr('type') == 'radio') {
+		        $('input[name="response.attributes.'+key+'"][value="'+value+'"]', self.el).attr('checked', 'checked');
+		    } else {
+		        $('input[name="response.attributes.'+key+'"]', self.el).val(value);
+		    }
+		});
+        
+		return self.el;
+	}
+});
+
+IncidentView = Backbone.View.extend({
+	tagName: 'tr',
+	
+	initialize: function () {
+		_.bindAll(this, "render");
+		this.model.bind('change', this.render);
+	},
+	
+	render: function () {
+		$(this.el).html(Templates.Incident(this.model.attributes));
+		return this.el;
+	}
+});
+
+IncidentCollectionView = Backbone.View.extend({
+    tagName: 'table',
+    id: 'checklists',
+    className: 'datagrid',
+
+    render: function(){
+        var self = this;
+        // Store the heading of the table so it can be reused
+        var heading = $(self.el).children("tbody").children("tr")[0];
+        $(self.el).empty();
+		$(self.el).append(heading ? heading : Templates.IncidentHeader());
+		if (self.collection.length) {
+		    self.collection.each(function (mdl) {
+    			incident_view = new IncidentView({model: mdl}).render();
+    			$(self.el).append(incident_view);
+    		});
+		} else {
+		    $(self.el).children("tbody").append(Templates.IncidentEmpty());
+		}
+		
+		return self.el;
+    },
+
+    initialize: function(){
+        _.bindAll(this, "render");
+        this.collection.bind('reset', this.render);
+    },
+});
+
+IncidentEditView = Backbone.View.extend({
+	tagName: 'div',
+	
+	initialize: function () {
+		_.bindAll(this, "render", "save", "fieldChanged", "selectionChanged", "radioChanged");
+	},
+	
+	events: {
+        "change input:text.field": "fieldChanged",
+        "change textarea.field": "fieldChanged",
+        "change select.field": "selectionChanged",
+        "change input:checkbox.field": "radioChanged",
+        "radio_click input:radio.field": "radioChanged", // a custom event is monitored to prevent out of order execution
+        "submit": "save"
+    },
+    
+    radioChanged: function (e) {
+        var field = $(e.currentTarget);
+        var value = $('input[name="'+field.attr('name')+'"]:checked').val() || null;
+        eval('this.model.attributes.'+field.attr('name')+' = value');
+    },
+    
+    selectionChanged: function (e) {
+        var field = $(e.currentTarget);
+        var value = $("option:selected", field).val() || null;
+        eval('this.model.attributes.'+field.attr('name')+' = value');
+    },
+    
+    fieldChanged: function (e) {
+        var field = $(e.currentTarget);
+        var value = (field.val() == 0 || field.val()) ? field.val() : null;
+        eval('this.model.attributes.'+field.attr('name')+' = value');
+    },
+    		
+	save: function () {
+	    var self = this;
+        self.model.get('response').save(false, {success: function () {
+	        setTimeout(function () { history.go(-1); }, 200);
+	    }});
+	    return false;
+	},
+	
+	render: function () {
+	    var self = this;
+	    var input_el;
+	    
+		$(self.el).html(Templates.IncidentMetadata(this.model.attributes));
+		$(self.el).append(Templates.IncidentEdit(this.model.attributes));
+		
+		// Initialize values for drop down selections
+		_(self.model.get('response').attributes).each(function (value, key) {
+		    input_el = $('input[name="response.attributes.'+key+'"]:first', self.el);
+		    		    
+		    if ($(input_el).attr('type') == 'radio') {
+		        $('input[name="response.attributes.'+key+'"][value="'+value+'"]', self.el).attr('checked', 'checked');
+		    } else if ($(input_el).attr('type') == 'checkbox') {
+		        if (value) {
+		            $('input[name="response.attributes.'+key+'"]', self.el).attr('checked', 'checked');
+		        }
+		    } else {
+		        $('input[name="response.attributes.'+key+'"]', self.el).val(value);
+		    }
+		});
+		$('textarea[name="response.attributes.description"]', self.el).val(self.model.get('response').get('description'));
+        
+		return self.el;
+	}
 });

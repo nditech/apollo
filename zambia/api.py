@@ -16,6 +16,14 @@ class ContactResource(ModelResource):
         allowed_methods = ['get', 'put', 'post', 'delete']
         authentication = Authentication()
         authorization = Authorization()
+        filtering = {
+            'connections': ALL_WITH_RELATIONS,
+            'name': ('contains', 'icontains',),
+            'observer_id': ('exact',),
+            'location': ALL_WITH_RELATIONS,
+            'partner': ('exact',),
+            'cell_coverage': ('exact',),
+        }
 
 
 class ContactsResource(ModelResource):
@@ -90,6 +98,8 @@ class ChecklistsResource(ModelResource):
         if orm_filters.has_key('location__id__exact'):
             id = orm_filters.pop('location__id__exact')
             orm_filters['location__id__in'] = Location.objects.get(id=id).get_descendants(True).values_list('id', flat=True)
+        
+        # TODO: Filtering for general election checklists
         
         if 'setup_status' in filters:
             status = filters.get('setup_status')
@@ -173,28 +183,25 @@ class ChecklistsResource(ModelResource):
             status = filters.get('counting_status')
             if status == '1': # complete
                 orm_filters.update(dict([('response__%s__isnull' % field, False) for field in \
-                    ['AB', 'AC', 'AD', 'AEAA', 'AEAB', 'AEAC', 'AEAD', 'AEAE', 'AEAF', 'AEBA', 'AEBB', 'AEBC', \
-                    'AEBD', 'AEBE', 'AEBF', 'AECA', 'AECB', 'AECC', 'AECD', 'AECE', 'AECF', 'AEDA', 'AEDB', \
-                    'AEDC', 'AEDD', 'AEDE', 'AEDF', 'AEEA', 'AEEB', 'AEEC', 'AEED', 'AEEE', 'AEEF', 'AFAA', \
-                    'AFAB', 'AFAC', 'AFAD', 'AFAE', 'AFAF', 'AFBA', 'AFBB', 'AFBC', 'AFBD', 'AFBE', 'AFBF', \
-                    'AG', 'AH', 'AJ', 'AK']]))
+                    ['AB', 'AC', 'AD', 'AEAA', 'AEAB', 'AEBA', 'AEBB', 'AECA', 'AECB', 'AEDA', \
+                    'AEDB', 'AEEA', 'AEEB', 'AGA', 'AGB', 'AHA', 'AHB', 'AJA', 'AJB', 'AKA',  \
+                    'AKB', 'AMA', 'AMB', 'ANA', 'ANB', 'APA', 'APB', 'AQA', 'AQB', 'ARA', \
+                    'ARB', 'ASA', 'ASB', 'ATA', 'ATB', 'AUA', 'AUB', 'AV', 'AW', 'AX', 'AY']]))
                     
             elif status == '2': # missing
                 orm_filters.update(dict([('response__%s__isnull' % field, True) for field in \
-                    ['AB', 'AC', 'AD', 'AEAA', 'AEAB', 'AEAC', 'AEAD', 'AEAE', 'AEAF', 'AEBA', 'AEBB', 'AEBC', \
-                    'AEBD', 'AEBE', 'AEBF', 'AECA', 'AECB', 'AECC', 'AECD', 'AECE', 'AECF', 'AEDA', 'AEDB', \
-                    'AEDC', 'AEDD', 'AEDE', 'AEDF', 'AEEA', 'AEEB', 'AEEC', 'AEED', 'AEEE', 'AEEF', 'AFAA', \
-                    'AFAB', 'AFAC', 'AFAD', 'AFAE', 'AFAF', 'AFBA', 'AFBB', 'AFBC', 'AFBD', 'AFBE', 'AFBF', \
-                    'AG', 'AH', 'AJ', 'AK']]))
+                    ['AB', 'AC', 'AD', 'AEAA', 'AEAB', 'AEBA', 'AEBB', 'AECA', 'AECB', 'AEDA', \
+                    'AEDB', 'AEEA', 'AEEB', 'AGA', 'AGB', 'AHA', 'AHB', 'AJA', 'AJB', 'AKA',  \
+                    'AKB', 'AMA', 'AMB', 'ANA', 'ANB', 'APA', 'APB', 'AQA', 'AQB', 'ARA', \
+                    'ARB', 'ASA', 'ASB', 'ATA', 'ATB', 'AUA', 'AUB', 'AV', 'AW', 'AX', 'AY']]))
                     
             elif status == '3': # partial
                 query = None
                 complete_query = None
-                for field in ['AB', 'AC', 'AD', 'AEAA', 'AEAB', 'AEAC', 'AEAD', 'AEAE', 'AEAF', 'AEBA', 'AEBB', 'AEBC', \
-                'AEBD', 'AEBE', 'AEBF', 'AECA', 'AECB', 'AECC', 'AECD', 'AECE', 'AECF', 'AEDA', 'AEDB', \
-                'AEDC', 'AEDD', 'AEDE', 'AEDF', 'AEEA', 'AEEB', 'AEEC', 'AEED', 'AEEE', 'AEEF', 'AFAA', \
-                'AFAB', 'AFAC', 'AFAD', 'AFAE', 'AFAF', 'AFBA', 'AFBB', 'AFBC', 'AFBD', 'AFBE', 'AFBF', \
-                'AG', 'AH', 'AJ', 'AK']:
+                for field in ['AB', 'AC', 'AD', 'AEAA', 'AEAB', 'AEBA', 'AEBB', 'AECA', 'AECB', 'AEDA', \
+                'AEDB', 'AEEA', 'AEEB', 'AGA', 'AGB', 'AHA', 'AHB', 'AJA', 'AJB', 'AKA',  \
+                'AKB', 'AMA', 'AMB', 'ANA', 'ANB', 'APA', 'APB', 'AQA', 'AQB', 'ARA', \
+                'ARB', 'ASA', 'ASB', 'ATA', 'ATB', 'AUA', 'AUB', 'AV', 'AW', 'AX', 'AY']:
                     if not query:
                         exec 'query = Q(response__%s__isnull=False)' % field
                     else:
@@ -210,8 +217,8 @@ class ChecklistsResource(ModelResource):
 
 
 class ChecklistResource(ModelResource):
-    location = fields.ForeignKey(LocationResource, 'location')
-    observer = fields.ForeignKey(ContactResource, 'observer')
+    location = fields.ForeignKey(LocationResource, 'location', full=True, null=True, readonly=True)
+    observer = fields.ForeignKey(ContactResource, 'observer', full=True, null=True, readonly=True)
     response = fields.ToOneField(ChecklistResponseResource, 'response', full=True)
 
     class Meta:
@@ -250,6 +257,18 @@ class IncidentsResource(ModelResource):
         }
         ordering = ['location', 'date', 'observer']
 
+    def build_filters(self, filters=None):
+        if not filters:
+            filters = {}
+
+        orm_filters = super(IncidentsResource, self).build_filters(filters)
+        
+        if orm_filters.has_key('location__id__exact'):
+            id = orm_filters.pop('location__id__exact')
+            orm_filters['location__id__in'] = Location.objects.get(id=id).get_descendants(True).values_list('id', flat=True)
+        
+        print orm_filters
+        return orm_filters
 
 class IncidentResource(ModelResource):
     location = fields.ForeignKey(LocationResource, 'location')

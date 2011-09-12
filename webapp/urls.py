@@ -23,7 +23,7 @@ for resource in resources:
     
 urlpatterns = patterns('',
     url(r'^api/', include(api.urls)),
-    url(r'^home/?', home),
+    url(r'^$', home),
     url(r'^test/?', test)
 )
 

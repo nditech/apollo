@@ -1,8 +1,7 @@
 from django.db import models
-from webapp.models import ChecklistResponse, IncidentResponse, Checklist, Incident
+from webapp.models import ChecklistResponse, Checklist
 from django.core.validators import RegexValidator
 from django.db.models.signals import post_save
-from general_models import ZambiaIncidentResponse
 
 # Create your models here.
 class ZambiaChecklistResponse(ChecklistResponse):
@@ -10,7 +9,8 @@ class ZambiaChecklistResponse(ChecklistResponse):
         (1, 'Before 6am'),
         (2, 'At 6am'),
         (3, 'Between 6am and 7am'),
-        (4, 'After 9am')
+        (4, 'Between 7am and 9am'),
+        (5, 'After 9am')
     )
     YES_NO = (
         (1, 'Yes'),
@@ -24,22 +24,23 @@ class ZambiaChecklistResponse(ChecklistResponse):
     OPTIONS_CB = (
         (1, '3 boxes present'),
         (2, '2 boxes present'),
-        (3, '1 box present')
+        (3, '1 box present'),
+        (4, 'No box')
     )
     OPTIONS_CC = (
         (1, 'correct ballots'),
         (2, 'no ballots'),
     )
     OPTIONS_CD = (
-        (1, 'correct ballots'),
-        (2, 'wrong ballots'),
-        (3, 'no ballots')
+        (1, 'Correct Ballots'),
+        (2, 'Wrong Ballots'),
+        (3, 'No Ballots')
     )
     OPTIONS_K = (
-        (1, 'None(0)'),
-        (2, 'Few(1-5)'),
-        (3, 'Some(6-25)'),
-        (4, 'Many(26+)')
+        (1, 'None (0)'),
+        (2, 'Few (1-5)'),
+        (3, 'Some (6-25)'),
+        (4, 'Many (26+)')
     )
     # setup
     A = models.IntegerField(blank=True, null=True, choices=OPTIONS_A, validators=[RegexValidator(r'[1-4]')], help_text='At what time did people start voting at your polling stream? (if voting has not commenced by 9am complete a critical incident form)')
@@ -47,8 +48,8 @@ class ZambiaChecklistResponse(ChecklistResponse):
     CA = models.IntegerField(blank=True, null=True, choices=YES_NO, validators=[RegexValidator(r'[1-2]')], help_text='Did the polling stream have Indelible Markers')
     CB = models.IntegerField(blank=True, null=True, choices=OPTIONS_CB, validators=[RegexValidator(r'[1-3]')], help_text='Did the polling stream have Three Ballot Boxes (Presidential, Parliamentary/National Assembly and Local Government)')
     CC = models.IntegerField(blank=True, null=True, choices=OPTIONS_CC, validators=[RegexValidator(r'[1-2]')], help_text='Presidential Ballot Papers - Orange')
-    CD = models.IntegerField(blank=True, null=True, choices=OPTIONS_CC, validators=[RegexValidator(r'[1-3]')], help_text='Parliamentary/National Assembly Ballot Papers - Red ')
-    CE = models.IntegerField(blank=True, null=True, choices=OPTIONS_CC, validators=[RegexValidator(r'[1-3]')], help_text='Local Government Ballot Papers - Black and White')
+    CD = models.IntegerField(blank=True, null=True, choices=OPTIONS_CD, validators=[RegexValidator(r'[1-3]')], help_text='Parliamentary/National Assembly Ballot Papers - Red ')
+    CE = models.IntegerField(blank=True, null=True, choices=OPTIONS_CD, validators=[RegexValidator(r'[1-3]')], help_text='Local Government Ballot Papers - Black and White')
     CF = models.IntegerField(blank=True, null=True, choices=YES_NO, validators=[RegexValidator(r'[1-2]')], help_text='Official Stamp/Mark')
     CG = models.IntegerField(blank=True, null=True, choices=YES_NO, validators=[RegexValidator(r'[1-2]')], help_text='Final Voters\' Register')
     CH = models.IntegerField(blank=True, null=True, choices=YES_NO, validators=[RegexValidator(r'[1-2]')], help_text='Polling Booths')
@@ -86,20 +87,16 @@ class ZambiaChecklistResponse(ChecklistResponse):
     AB   = models.IntegerField(blank=True, null=True, choices=YES_NO, validators=[RegexValidator(r'[1-2]')], help_text='Were all polling agents permitted to observe the counting of ballot papers? (if "No" complete a critical incident form)')
     AC   = models.IntegerField(blank=True, null=True, choices=YES_NO, validators=[RegexValidator(r'[1-2]')], help_text='Were any unauthorized persons present during counting? (if "Yes" complete a critical incident form)')
     AD   = models.IntegerField(blank=True, null=True, choices=YES_NO, validators=[RegexValidator(r'[1-2]')], help_text='Were there any incidents of intimidation during counting? (if "Yes" complete a critical incident form)')
-    AEAA = models.IntegerField(blank=True, default=0, null=True, validators=[RegexValidator(r'[\d+]')], help_text='Number of Ballot Papers Received at Your Assigned Stream(Presidential)')
-    AEAB = models.IntegerField(blank=True, default=0, null=True, validators=[RegexValidator(r'[\d+]')], help_text='Number of Ballot Papers Received at Entire Polling Station(Presidential )')
-    AEBA = models.IntegerField(blank=True, default=0, null=True, validators=[RegexValidator(r'[\d+]')], help_text='Number of Unused Ballot Papers at Your Assigned Stream(Presidential )')
-    AEBB = models.IntegerField(blank=True, default=0, null=True, validators=[RegexValidator(r'[\d+]')], help_text='Number of Unused Ballot Papers at Entire Polling Station(Presidential )')
-    AECA = models.IntegerField(blank=True, default=0, null=True, validators=[RegexValidator(r'[\d+]')], help_text='Number of Issued Ballot Papers at Your Assigned Stream(Presidential )')
-    AECB = models.IntegerField(blank=True, default=0, null=True, validators=[RegexValidator(r'[\d+]')], help_text='Number of Issued Ballot Papers at Entire Polling Station(Presidential )')
-    AEDA = models.IntegerField(blank=True, default=0, null=True, validators=[RegexValidator(r'[\d+]')], help_text='Number of Spoilt Ballot Papers at Your Assigned Stream(Presidential )')
-    AEDB = models.IntegerField(blank=True, default=0, null=True, validators=[RegexValidator(r'[\d+]')], help_text='Number of Spoilt Ballot Papers at Entire Polling Station(Presidential )')
-    AEEA = models.IntegerField(blank=True, default=0, null=True, validators=[RegexValidator(r'[\d+]')], help_text='Number of Ballot Papers Found in the Ballot Box at Your Assigned Stream(Presidential )')
-    AEEB = models.IntegerField(blank=True, default=0, null=True, validators=[RegexValidator(r'[\d+]')], help_text='Number of Ballot Papers Found in the Ballot Box at Entire Polling Station(Presidential )')
-    AFAA = models.IntegerField(blank=True, default=0, null=True, validators=[RegexValidator(r'[\d+]')], help_text='Number of Rejected Ballot Papers at Your Assigned Stream(Presidential )')
-    AFAB = models.IntegerField(blank=True, default=0, null=True, validators=[RegexValidator(r'[\d+]')], help_text='Number of Rejected Ballot Papers at Entire Polling Station(Presidential )')
-    AFBA = models.IntegerField(blank=True, default=0, null=True, validators=[RegexValidator(r'[\d+]')], help_text='Number of Disputed Ballots at Your Assigned Stream(Presidential )')
-    AFBB = models.IntegerField(blank=True, default=0, null=True, validators=[RegexValidator(r'[\d+]')], help_text='Number of Disputed Ballots at Entire Polling Station(Presidential )')
+    AEAA = models.IntegerField(blank=True, null=True, validators=[RegexValidator(r'[\d+]')], help_text='Number of Ballot Papers Received at Your Assigned Stream(Presidential)')
+    AEAB = models.IntegerField(blank=True, null=True, validators=[RegexValidator(r'[\d+]')], help_text='Number of Ballot Papers Received at Entire Polling Station(Presidential )')
+    AEBA = models.IntegerField(blank=True, null=True, validators=[RegexValidator(r'[\d+]')], help_text='Number of Unused Ballot Papers at Your Assigned Stream(Presidential )')
+    AEBB = models.IntegerField(blank=True, null=True, validators=[RegexValidator(r'[\d+]')], help_text='Number of Unused Ballot Papers at Entire Polling Station(Presidential )')
+    AECA = models.IntegerField(blank=True, null=True, validators=[RegexValidator(r'[\d+]')], help_text='Number of Issued Ballot Papers at Your Assigned Stream(Presidential )')
+    AECB = models.IntegerField(blank=True, null=True, validators=[RegexValidator(r'[\d+]')], help_text='Number of Issued Ballot Papers at Entire Polling Station(Presidential )')
+    AEDA = models.IntegerField(blank=True, null=True, validators=[RegexValidator(r'[\d+]')], help_text='Number of Spoilt Ballot Papers at Your Assigned Stream(Presidential )')
+    AEDB = models.IntegerField(blank=True, null=True, validators=[RegexValidator(r'[\d+]')], help_text='Number of Spoilt Ballot Papers at Entire Polling Station(Presidential )')
+    AEEA = models.IntegerField(blank=True, null=True, validators=[RegexValidator(r'[\d+]')], help_text='Number of Ballot Papers Found in the Ballot Box at Your Assigned Stream(Presidential )')
+    AEEB = models.IntegerField(blank=True, null=True, validators=[RegexValidator(r'[\d+]')], help_text='Number of Ballot Papers Found in the Ballot Box at Entire Polling Station(Presidential )')
     AGA = models.IntegerField(blank=True, null=True, validators=[RegexValidator(r'\d+')], help_text='Votes for Rupiah Banda, MMD at Your Assigned Stream(Presidential)')
     AGB = models.IntegerField(blank=True, null=True, validators=[RegexValidator(r'\d+')], help_text='Votes for Rupiah Banda, MMD at Entire Polling Station(Presidential )')
     AHA = models.IntegerField(blank=True, null=True, validators=[RegexValidator(r'\d+')], help_text='Votes for Elias Chipimo, NAREP at Your Assigned Stream (Presidential)')
@@ -139,13 +136,15 @@ class ZambiaChecklistResponse(ChecklistResponse):
     def __unicode__(self):
         return str(self.checklist.id)
 
+from general_models import Incident, IncidentResponse, ZambiaIncidentResponse
+
 def checklist_callback(sender, **kwargs):
     if not hasattr(kwargs['instance'], 'response'):
         response = ZambiaChecklistResponse.objects.create(checklist=kwargs['instance'])
 
 def incident_callback(sender, **kwargs):
     if not hasattr(kwargs['instance'], 'response'):
-        response = ZambiaIncidentResponse.objects.create(checklist=kwargs['instance'])
+        response = ZambiaIncidentResponse.objects.create(incident=kwargs['instance'])
 
 post_save.connect(checklist_callback, sender=Checklist)
 post_save.connect(incident_callback, sender=Incident)

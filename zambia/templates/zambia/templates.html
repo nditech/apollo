@@ -65,7 +65,7 @@
 			</select>
 		</div>
 		<div class="input_el">
-			<span class="btn_blue btn_space"><input type="submit" name="submit" value="Filter" class="search_btn"><span>&nbsp;</span></span><span class="btn_gray"><a href="javascript:;" id="form_reset">Reset</a><span>&nbsp;</span></span>
+			<span class="btn_blue btn_space"><input type="submit" name="submit" value="Filter" class="search_btn"><span>&nbsp;</span></span><span class="btn_gray btn_space"><a href="javascript:;" id="form_reset">Reset</a><span>&nbsp;</span></span><span class="btn_yellow"><a href='javascript:;' class="sms_sender">SMS</a><span>&nbsp;</span></span>
 		</div>
 		</form>
 		<div class="clear"></div>
@@ -76,14 +76,607 @@
 </script>
 <script type="text/x-handlebars-template" id="checklist-header-template" charset="utf-8">
 	<tbody>
-		<tr><th><a href="javascript:;" class="sortable_column" id="sort_observer__observer_id">Monitor Id</a></th><th><a href="javascript:;" class="sortable_column" id="sort_date">Date</a></th><th><a href="javascript:;" class="sortable_column" id="sort_location__parent__parent__parent__name">Ward</a></th><th><a href="javascript:;" class="sortable_column" id="sort_location__parent__parent__name">Polling District</a></th><th><a href="javascript:;" class="sortable_column" id="sort_observer__supervisor__name">Supervisor</a></th><th><a href="javascript:;" class="sortable_column" id="sort_observer__name">Monitor</a></th><th style="text-align:center"><span title="Setup">S</span></th><th style="text-align:center"><span title="Voting">V</span></th><th style="text-align:center"><span title="Closing">C</span></th><th style="text-align:center"><span title="Counting">C</span></th><th style="text-align:center">Edit</th></tr>
+		<tr><th><a href="javascript:;" class="sortable_column" id="sort_observer__observer_id">Monitor Id</a></th><th><a href="javascript:;" class="sortable_column" id="sort_date">Date</a></th><th><a href="javascript:;" class="sortable_column" id="sort_location__parent__parent__parent__name">Ward</a></th><th><a href="javascript:;" class="sortable_column" id="sort_location__parent__parent__name">Polling District</a></th><th><a href="javascript:;" class="sortable_column" id="sort_observer__supervisor__name">Supervisor</a></th><th><a href="javascript:;" class="sortable_column" id="sort_observer__name">Monitor</a></th><th style="text-align:center"><span title="Setup">S</span></th><th style="text-align:center"><span title="Voting">V</span></th><th style="text-align:center"><span title="Closing">Cl</span></th><th style="text-align:center"><span title="Counting">Co</span></th><th style="text-align:center">Edit</th></tr>
 	</tbody>
 </script>
 <script type="text/x-handlebars-template" id="checklist-template" charset="utf-8">
-	<td>{{observer.attributes.observer_id}}</td><td>{{date}}</td><td>{{location.attributes.parent.attributes.parent.attributes.parent.attributes.name}}</td><td>{{location.attributes.parent.attributes.parent.attributes.name}}</td><td>{{#if observer.attributes.supervisor}}{{observer.attributes.supervisor.attributes.name}}{{#if observer.attributes.supervisor.attributes.connections.models}} (<strong>{{observer.attributes.supervisor.attributes.connections.models.0.attributes.identity}}</strong>){{/if}}{{else}}&nbsp;{{/if}}</td><td>{{observer.attributes.name}}{{#if observer.attributes.connections.models}} (<strong>{{observer.attributes.connections.models.0.attributes.identity}}</strong>){{/if}}</td><td align="center">{{setup_flag response}}</td><td align="center">{{voting_flag response}}</td><td align="center">{{closing_flag response}}</td><td align="center">{{counting_flag response}}</td><td align="center">Edit</td>
+	<td>{{observer.attributes.observer_id}}</td><td>{{date}}</td><td>{{location.attributes.parent.attributes.parent.attributes.parent.attributes.name}}</td><td>{{location.attributes.parent.attributes.parent.attributes.name}}</td><td>{{#if observer.attributes.supervisor}}{{observer.attributes.supervisor.attributes.name}}{{#if observer.attributes.supervisor.attributes.connections.models}} (<strong>{{observer.attributes.supervisor.attributes.connections.models.0.attributes.identity}}</strong>){{/if}}{{else}}&nbsp;{{/if}}</td><td>{{observer.attributes.name}}{{#if observer.attributes.connections.models}} (<strong>{{observer.attributes.connections.models.0.attributes.identity}}</strong>){{/if}}</td><td align="center">{{setup_flag response}}</td><td align="center">{{voting_flag response}}</td><td align="center">{{closing_flag response}}</td><td align="center">{{counting_flag response}}</td><td align="center"><a href="#!/elections/checklist/{{id}}">Edit</a></td>
 </script>
 <script type="text/x-handlebars-template" id="checklist-empty-template" charset="utf-8">
 	<tr><td colspan="11" class="empty"><em>No checklists to display</em></td></tr>
+</script>
+<script type="text/x-handlebars-template" id="checklist-section-tabs-template" charset="utf-8">
+	<div class="section_tabs">
+		<ul>
+			<li class="current"><a href="javascript:;" id="tab1">Setup</a></li>
+			<li><a href="javascript:;" id="tab2">Voting</a></li>
+			<li><a href="javascript:;" id="tab3">Closing</a></li>
+			<li><a href="javascript:;" id="tab4">Counting</a></li>
+		</ul>
+	</div>
+	<div id="clear"></div>
+</script>
+<script type="text/x-handlebars-template" id="checklist-metadata-template" charset="utf-8">
+	<div>
+		<p class="style"><span class="span"><label>Monitor</label></span><span class="input"><strong>{{observer.attributes.name}}</strong> ({{observer.attributes.connections.models.0.attributes.identity}})</span></p>
+		<p class="style"><span class="span"><label>Location</label></span><span class="input">{{location.attributes.parent.attributes.parent.attributes.parent.attributes.parent.attributes.parent.attributes.parent.attributes.name}} / {{location.attributes.parent.attributes.parent.attributes.parent.attributes.parent.attributes.parent.attributes.name}} / {{location.attributes.parent.attributes.parent.attributes.parent.attributes.parent.attributes.name}} / {{location.attributes.parent.attributes.parent.attributes.parent.attributes.name}}</span></p>
+		<p class="style"><span class="span"><label>Polling Location</label></span><span class="input">{{location.attributes.parent.attributes.parent.attributes.name}} / {{location.attributes.parent.attributes.name}} / <strong>{{location.attributes.name}}</strong></span></p>
+		{{#if observer.attributes.supervisor}}<p class="style"><span class="span"><label>Supervisor</label></span><span class="input"><strong>{{observer.attributes.supervisor.attributes.name}}</strong> ({{observer.attributes.supervisor.attributes.connections.models.0.attributes.identity}})</span></p>{{/if}}
+	</div>
+</script>
+<script type="text/x-handlebars-template" id="checklist-edit-template" charset="utf-8">
+	<form id="checklist_form">
+	<div class="pane" id="pane1">
+		<h1>SetUp</h1>
+		<p class="style">
+			<span class="code">1</span>
+
+			<span class="span">At what time did people start voting at your polling stream?</span>
+		
+			<span class="input"><label><input class="field" type="radio" name="response.attributes.A" value="1"><br />Before 6am</label>
+			<label><input class="field" type="radio" name="response.attributes.A" value="2"><br />At 6am</label>
+			<label><input class="field" type="radio" name="response.attributes.A" value="3"><br />Between <br />6am and 7am</label>
+			<label><input class="field" type="radio" name="response.attributes.A" value="4"><br />Between <br />7am and 9am</label>
+			<label><input class="field" type="radio" name="response.attributes.A" value="5"><br />After 9am</label></span>				
+		</p>
+		
+		<p class="style">
+			<span class="code">2</span>
+			
+			<span class="span">Was the polling stream set up so that voters could mark their ballot in secret?</span>
+			
+			<span class="input"><label><input class="field" type="radio" name="response.attributes.B" value="1"><br />Yes</label>
+			<label><input class="field" type="radio" name="response.attributes.B" value="2"><br />No</label></span>
+		</p>
+		
+		<p class="style">
+			<span class="code">3a.</span> 
+			<span class="span">Did your Polling Stream have Indelible Markers?</span>
+			<span class="input"><label><input class="field" type="radio" name="response.attributes.CA" value="1"><br />Yes</label>
+			<label><input class="field" type="radio" name="response.attributes.CA" value="2"><br />No</label></span>
+		</p>
+
+		<p class="style">
+			<span class="code">3b.</span>
+			
+			<span class="span">Did your Polling Stream have Three Ballot Boxes (Presidential, Parliamentary/National Assembly and Local Government)?</span>
+		 	
+			<span class="input"><label><input class="field" type="radio" name="response.attributes.CB" value="1"><br />3 Boxes Present</label>
+			<label><input class="field" type="radio" name="response.attributes.CB" value="2"><br />2 Boxes Present</label>
+			<label><input class="field" type="radio" name="response.attributes.CB" value="3"><br />1 Box Present</label>
+			<label><input class="field" type="radio" name="response.attributes.CB" value="4"><br />No Boxes</label></span>
+		</p>
+		
+		<p class="style">
+			<span class="code">3c.</span>
+			
+			<span class="span">Did your Polling Stream have Presidential Ballot Papers - Orange</span>
+			
+			<span class="input"><label><input class="field" type="radio" name="response.attributes.CC" value="1"><br />Correct Ballots</label>
+			<label><input class="field" type="radio" name="response.attributes.CC" value="2"><br />No Ballots</label></span>
+		</p>
+		
+		<p class="style">
+			<span class="code">3d.</span>
+			
+			<span class="span">Did your Polling Stream have Parliamentary/National Assembly Ballot Papers - Red</span>
+			
+			<span class="input"><label><input class="field" type="radio" name="response.attributes.CD" value="1"><br />Correct Ballots</label>
+			<label><input class="field" type="radio" name="response.attributes.CD" value="2"><br />Wrong Ballots</label>
+			<label><input class="field" type="radio" name="response.attributes.CD" value="3"><br />No Ballots</label></span>
+		</p>
+		
+		<p class="style">
+			<span class="code">3e.</span>
+			
+			<span class="span">Did your Polling Stream have Local Government Ballot Papers - Black and White</span>
+			
+			<span class="input"><label><input class="field" type="radio" name="response.attributes.CE" value="1"><br />Correct Ballots</label>
+			<label><input class="field" type="radio" name="response.attributes.CE" value="2"><br />Wrong Ballots</label>
+			<label><input class="field" type="radio" name="response.attributes.CE" value="3"><br />No Ballots</label></span>
+		</p>
+
+		<p class="style">
+			<span class="code">3f.</span>
+			
+			<span class="span">Did your Polling Stream have Official Stamp/Mark</span>
+			
+			<span class="input"><label><input class="field" type="radio" name="response.attributes.CF" value="1"><br />Yes</label>
+			<label><input class="field" type="radio" name="response.attributes.CF" value="2"><br />No</label></span>
+		</p>
+
+		<p class="style">
+			<span class="code">3g.</span>
+			
+			<span class="span">Did your Polling Stream have the Final Voters&#146; Register</span>
+			
+			<span class="input"><label><input class="field" type="radio" name="response.attributes.CG" value="1"><br />Yes</label>
+			<label><input class="field" type="radio" name="response.attributes.CG" value="2"><br />No</label></span>
+		</p>
+
+		<p class="style">
+			<span class="code">3h.</span>
+			
+			<span class="span">Did your Polling Stream have Polling Booths</span>
+			
+			<span class="input"><label><input class="field" type="radio" name="response.attributes.CH" value="1"><br />Yes</label>
+			<label><input class="field" type="radio" name="response.attributes.CH" value="2"><br />No</label></span>
+		</p>
+
+		<p class="style">
+			<span class="code">4</span>
+			
+			<span class="span">How many polling officials were present at the polling stream?</span>
+			
+			<span class="input"><input type="text" name="response.attributes.D" class="input_smoke field"><br/></span>
+		</p>
+
+		<p class="style">
+			<span class="code">5</span>
+			
+			<span class="span">How many political party polling agents were present at the polling stream?</span>
+			
+			<span class="input"><input type="text" name="response.attributes.E" class="input_smoke field"><br/></span>
+		</p>
+
+		<p class="style">
+			<span class="code">5a.</span>
+			
+			<span class="span">Was a polling agent present for MMD?</span>
+			
+			<span class="input"><label><input class="field" type="radio" name="response.attributes.EA" value="1"><br/>Yes</label>
+			<label><input class="field" type="radio" name="response.attributes.EA" value="2"><br/>No</label></span>
+		</p>
+
+		<p class="style">
+			<span class="code">5b.</span>
+			
+			<span class="span">Was a polling agent present for Patriotic Front?</span>
+			
+			<span class="input"><label><input class="field" type="radio" name="response.attributes.EB" value="1"><br/>Yes</label>
+			<label><input class="field" type="radio" name="response.attributes.EB" value="2"><br/>No</label></span>
+		</p>
+
+		<p class="style">
+			<span class="code">5c.</span>
+			
+			<span class="span">Was a polling agent present for UPND?</span>
+			
+			<span class="input"><label><input class="field" type="radio" name="response.attributes.EC" value="1"><br/>Yes</label>
+			<label><input class="field" type="radio" name="response.attributes.EC" value="2"><br/>No</label></span>
+		</p>
+
+		<p class="style">
+			<span class="code">6</span>
+			
+			<span class="span">Were uniformed police present at the polling stream?</span>
+			
+			<span class="input"><label><input class="field" type="radio" name="response.attributes.F" value="1"><br/>Yes</label>
+			<label><input class="field" type="radio" name="response.attributes.F" value="2"><br/>No</label></span>
+		</p>
+
+		<p class="style">
+			<span class="code">7</span>
+			
+			<span class="span">Were all ballot boxes present shown to be empty before they were closed and sealed?</span>
+			
+			<span class="input"><label><input class="field" type="radio" name="response.attributes.G" value="1"><br/>Yes</label>
+			<label><input class="field" type="radio" name="response.attributes.G" value="2"><br/>No</label></span>
+		</p>
+
+		<p class="style">
+			<span class="code">8</span>
+			
+			<span class="span">How many people are registered at the polling stream?</span>
+			
+			<span class="input"><input type="text" name="response.attributes.H" class="input_smoke field"></span>
+		</p>
+
+		<p class="style">
+			<span class="code">9</span>
+			
+			<span class="span">What is the ECZ&#146;s six digit ID number of the Polling Station of your Polling Stream</span>
+			
+			<span class="input"><input type="text" name="response.attributes.J" class="input_smoke field"></span>
+		</p>
+	</div>
+	
+	<div class="pane" id="pane2">
+		<h1>Voting</h1>
+		<p class="style">
+			<span class="code">10</span>
+			
+			<span class="span">How many people with a NRC and voter&#146;s card were not permitted to vote because their name did not appear on the voter&#146;s register</span>
+			
+			<span class="input"><label><input class="field" type="radio" name="response.attributes.K" value="1"><br />None (0)</label>
+			<label><input class="field" type="radio" name="response.attributes.K" value="2"><br />Few (1-5)</label>
+			<label><input class="field" type="radio" name="response.attributes.K" value="3"><br />Some (6-25)</label>
+			<label><input class="field" type="radio" name="response.attributes.K" value="4"><br />Many (26+)</label></span>
+		</p>
+
+		<p class="style">
+			<span class="code">11</span>
+			
+			<span class="span">How many people were permitted to vote even though they did not have their NRC and voter&#146;s card?</span>
+			
+			<span class="input"><label><input class="field" type="radio" name="response.attributes.M" value="1"><br />None (0)</label>
+			<label><input class="field" type="radio" name="response.attributes.M" value="2"><br />Few (1-5)</label>
+			<label><input class="field" type="radio" name="response.attributes.M" value="3"><br />Some (6-25)</label>
+			<label><input class="field" type="radio" name="response.attributes.M" value="4"><br />Many (26+)</label></span>
+		</p>
+
+		<p class="style">
+			<span class="code">12</span>
+			
+			<span class="span">How many people were permitted to vote even though their name was not in the voter&#146;s register?</span>
+			
+			<span class="input"><label><input class="field" type="radio" name="response.attributes.N" value="1"><br />None (0)</label>
+			<label><input class="field" type="radio" name="response.attributes.N" value="2"><br />Few (1-5)</label>
+			<label><input class="field" type="radio" name="response.attributes.N" value="3"><br />Some (6-25)</label>
+			<label><input class="field" type="radio" name="response.attributes.N" value="4"><br />Many (26+)</label></span>
+		</p>
+
+		<p class="style">
+			<span class="code">13</span>
+			
+			<span class="span">How many people who requested assistance in voting were denied assistance?</span>
+			
+			<span class="input"><label><input class="field" type="radio" name="response.attributes.P" value="1"><br />None (0)</label>
+			<label><input class="field" type="radio" name="response.attributes.P" value="2"><br />Few (1-5)</label>
+			<label><input class="field" type="radio" name="response.attributes.P" value="3"><br />Some (6-25)</label>
+			<label><input class="field" type="radio" name="response.attributes.P" value="4"><br />Many (26+)</label></span>
+		</p>
+
+		<p class="style">
+			<span class="code">14</span>
+			
+			<span class="span">How many people were permitted to vote on behalf of someone other than themselves?</span>
+			
+			<span class="input"><label><input class="field" type="radio" name="response.attributes.Q" value="1"><br />None (0)</label>
+			<label><input class="field" type="radio" name="response.attributes.Q" value="2"><br />Few (1-5)</label>
+			<label><input class="field" type="radio" name="response.attributes.Q" value="3"><br />Some (6-25)</label>
+			<label><input class="field" type="radio" name="response.attributes.Q" value="4"><br />Many (26+)</label></span>
+		</p>
+
+		<p class="style">
+			<span class="code">15</span>
+			
+			<span class="span">How many people who voted were not marked with indelible ink?</span>
+		
+			<span class="input"><label><input class="field" type="radio" name="response.attributes.R" value="1"><br />None (0)</label>
+			<label><input class="field" type="radio" name="response.attributes.R" value="2"><br />Few (1-5)</label>
+			<label><input class="field" type="radio" name="response.attributes.R" value="3"><br />Some (6-25)</label>
+			<label><input class="field" type="radio" name="response.attributes.R" value="4"><br />Many (26+)</label></span>
+		</p>
+
+		<p class="style">
+			<span class="code">16</span>
+		
+			<span class="span">At any time, did any campaigning occur inside or near the polling stream?</span>
+		
+			<span class="input"><label><input class="field" type="radio" name="response.attributes.S" value="1"><br />Yes</label>
+			<label><input class="field" type="radio" name="response.attributes.S" value="2"><br />No</label></span>
+		</p>
+
+		<p class="style">
+			<span class="code">17</span>
+		
+			<span class="span">At any time, were uniformed security personnel present in the polling stream without permission of the election officials?</span>
+		
+			<span class="input"><label><input class="field" type="radio" name="response.attributes.T" value="1"><br />Yes</label>
+			<label><input class="field" type="radio" name="response.attributes.T" value="2"><br />No</label></span>
+		</p>
+
+		<p class="style">
+			<span class="code">18</span>
+		
+			<span class="span">At any time, were unauthorised persons permitted in the polling stream?</span>
+		
+			<span class="input"><label><input class="field" type="radio" name="response.attributes.U" value="1"><br />Yes</label>
+			<label><input class="field" type="radio" name="response.attributes.U" value="2"><br />No</label></span>
+		</p>
+
+		<p class="style">
+			<span class="code">19</span>
+		
+			<span class="span">Were there any incidents of intimidation or violence at the polling stream?</span> 
+		
+			<span class="input"><label><input class="field" type="radio" name="response.attributes.V" value="1"><br />Yes</label>
+			<label><input class="field" type="radio" name="response.attributes.V" value="2"><br />No</label></span>
+		</p>
+	
+		<p class="style">
+			<span class="code">20</span>
+		
+			<span class="span">At any time, was the voting process suspended for more than 30 minutes?</span> 
+		
+			<span class="input"><label><input class="field" type="radio" name="response.attributes.W" value="1"><br />Yes</label>
+			<label><input class="field" type="radio" name="response.attributes.W" value="2"><br />No</label></span>
+		</p>
+	</div>
+	<div class="pane" id="pane3">
+		<h1>Closing</h1>
+		<p class="style">
+			<span class="code">21</span>
+		
+			<span class="span">How many people were in still in the queue waiting to vote at 18h00?</span>
+		
+			<span class="input"><label><input class="field" type="radio" name="response.attributes.X" value="1"><br />None (0)</label>
+			<label><input class="field" type="radio" name="response.attributes.X" value="2"><br />Few (1-5)</label>
+			<label><input class="field" type="radio" name="response.attributes.X" value="3"><br />some (6-25)</label>
+			<label><input class="field" type="radio" name="response.attributes.X" value="4"><br />Many (26+)</label></span>
+		</p>
+
+		<p class="style">
+			<span class="code">22</span>
+		
+			<span class="span">Was everyone in the queue waiting to vote at 18h00 permitted to vote?</span>
+		
+			<span class="input"><label><input class="field" type="radio" name="response.attributes.Y" value="1"><br />Yes</label>
+			<label><input class="field" type="radio" name="response.attributes.Y" value="2"><br />No</label>
+			<label><input class="field" type="radio" name="response.attributes.Y" value="3"><br />No One in Queue</label></span>
+		</p>
+		
+		<p class="style">
+			<span class="code">23</span>
+		
+			<span class="span">Was anyone permitted to join the queue and vote after 18h00?</span>
+		
+			<span class="input"><label><input class="field" type="radio" name="response.attributes.Z" value="1"><br />Yes</label>
+			<label><input class="field" type="radio" name="response.attributes.Z" value="2"><br />No</label></span>
+		</p>
+
+		<p class="style">
+			<span class="code">24</span>
+		
+			<span class="span">Were the opening slots of all ballot boxes sealed closed after everyone had voted?</span>
+		
+			<span class="input"><label><input class="field" type="radio" name="response.attributes.AA" value="1"><br />Yes</label>
+			<label><input class="field" type="radio" name="response.attributes.AA" value="2"><br />No</label></span>
+		</p>
+	</div>
+	<div class="pane" id="pane4">
+		<h1>Counting</h1>
+		<p class="style">
+			<span class="code">25</span>
+		
+			<span class="span">Were all polling agents permitted to observe the counting of ballot papers?</span> 
+		
+			<span class="input"><label><input class="field" type="radio" name="response.attributes.AB" value="1"><br />Yes</label>
+			<label><input class="field" type="radio" name="response.attributes.AB" value="2"><br />No</label></span>
+		</p>
+
+		<p class="style">
+			<span class="code">26</span>
+		
+			<span class="span">Were any unauthorized persons present during counting?</span>
+		
+			<span class="input"><label><input class="field" type="radio" name="response.attributes.AC" value="1"><br />Yes</label>
+			<label><input class="field" type="radio" name="response.attributes.AC" value="2"><br />No</label></span>
+		</p>
+
+		<p class="style">
+			<span class="code">27</span>
+		
+			<span class="span">Were there any incidents of intimidation during counting?</span>
+		
+			<span class="input"><label><input class="field" type="radio" name="response.attributes.AD" value="1"><br />Yes</label>
+			<label><input class="field" type="radio" name="response.attributes.AD" value="2"><br />No</label></span>
+		</p>
+
+		<p class="style">
+			<span class="code">28</span>
+		
+			<span class="span">Presidential Ballot Paper Reconciliation (Presidential Election Only)</span>
+		
+			<span class="head">Only Your Assigned Stream</span>
+			<span class="head">Entire Polling Station (All Streams)</span>
+		</p>
+
+		<p class="style">
+			<span class="code">28a.</span><span class="span"> Number of Ballot Papers Received - column (1)</span>
+		
+			<span class="input"><input class="field input_smoke" type="text" name="response.attributes.AEAA">
+			<input class="field input_smoke" type="text" name="response.attributes.AEAB"></span>
+		</p>
+	
+		<p class="style">
+			<span class="code">28b.</span>
+		
+			<span class="span"> Number of Unused Ballot Papers - column (4)</span>
+		
+			<span class="input"><input class="field input_smoke" type="text" name="response.attributes.AEBA">
+			<input class="field input_smoke" type="text" name="response.attributes.AEBB"></span>
+		</p>
+
+
+		<p class="style">
+			<span class="code">28c.</span>
+		
+			<span class="span"> Number of Issued Ballot Papers - column (2)</span>
+		
+			<span class="input"><input class="field input_smoke" type="text" name="response.attributes.AECA">
+			<input class="field input_smoke" type="text" name="response.attributes.AECB"></span>
+		</p>
+		
+		<p class="style">
+			<span class="code">28d.</span>
+		
+			<span class="span"> Number of Spoilt Ballot Papers - column (3)</span>
+		
+			<span class="input"><input class="field input_smoke" type="text" name="response.attributes.AEDA">
+			<input class="field input_smoke" type="text" name="response.attributes.AEDB"></span>
+		</p>
+	
+		<p class="style">
+			<span class="code">28e.</span>
+		
+			<span class="span">Number of Ballot Papers Found in the Ballot Box</span>
+		
+			<span class="input"><input class="field input_smoke" type="text" name="response.attributes.AEEA">
+			<input class="field input_smoke" type="text" name="response.attributes.AEEB"></span>
+		</p>
+
+		<p class="style">
+			<span class="code">29</span>
+		
+			<span class="span">Official Presidential Results as declared by the Election Officials (Presidential Election Only)</span>
+		
+			<span class="head">Only Your Assigned Stream</span>
+			<span class="head">Entire Polling Station (All Streams)</span>
+		</p>
+		
+		<p class="style">
+			<span class="code">29a.</span>
+		
+			<span class="span">Votes for Rupiah Banda, MMD</span>
+		
+			<span class="input"><input class="field input_smoke" type="text" name="response.attributes.AGA">
+			<input class="field input_smoke" type="text" name="response.attributes.AGB"></span>
+		</p>
+
+		<p class="style">
+			<span class="code">29b.</span>
+		
+			<span class="span">Votes for Elias Chipimo, NAREP</span>
+		
+			<span class="input"><input class="field input_smoke" type="text" name="response.attributes.AHA">
+			<input class="field input_smoke" type="text" name="response.attributes.AHB"></span>
+		</p>
+
+		<p class="style">
+			<span class="code">29c.</span>
+		
+			<span class="span"> Votes for Hakainde Hichilema, UPND</span>
+		
+			<span class="input"><input class="field input_smoke" type="text" name="response.attributes.AJA">
+			<input class="field input_smoke" type="text" name="response.attributes.AJB"></span>
+		</p>
+
+		<p class="style">
+			<span class="code">29d.</span>
+		
+			<span class="span"> Votes for Tilyenji Kaunda, UNIP</span>
+		
+			<span class="input"><input class="field input_smoke" type="text" name="response.attributes.AKA">
+			<input class="field input_smoke" type="text" name="response.attributes.AKB"></span>
+		</p>
+
+		<p class="style">
+			<span class="code">29e.</span>
+		
+			<span class="span">Votes for Ng&#146;andu Magande, NMP</span>
+		
+			<span class="input"><input class="field input_smoke" type="text" name="response.attributes.AMA">
+			<input class="field input_smoke" type="text" name="response.attributes.AMB"></span>
+		</p>
+
+		<p class="style">
+			<span class="code">29f.</span>
+		
+			<span class="span"> Votes for Charles Milupi, ADD</span>
+		
+			<span class="input"><input class="field input_smoke" type="text" name="response.attributes.ANA">
+			<input class="field input_smoke" type="text" name="response.attributes.ANB"></span>
+		</p>
+
+		<p class="style">
+			<span class="code">29g.</span>
+		
+			<span class="span"> Votes for Godfrey Miyanda, Heritage Party</span>
+		
+			<span class="input"><input class="field input_smoke" type="text" name="response.attributes.APA">
+			<input class="field input_smoke" type="text" name="response.attributes.APB"></span>
+		</p>
+
+		<p class="style">
+			<span class="code">29h.</span>
+		
+			<span class="span">Votes for Fred Mutesa, ZED</span>
+		
+			<span class="input"><input class="field input_smoke" type="text" name="response.attributes.AQA">
+			<input class="field input_smoke" type="text" name="response.attributes.AQB"></span>
+		</p>
+	
+		<p class="style">
+			<span class="code">29i.</span>
+		
+			<span class="span"> Votes for Edith Nawakwi, FDD</span>
+		
+			<span class="input"><input class="field input_smoke" type="text" name="response.attributes.ARA">
+			<input class="field input_smoke" type="text" name="response.attributes.ARB"></span>
+		</p>
+
+		<p class="style">
+			<span class="code">29j.</span>
+		
+			<span class="span">Votes for Michael Sata, Patriotic Front</span>
+		
+			<span class="input"><input class="field input_smoke" type="text" name="response.attributes.ASA">
+			<input class="field input_smoke" type="text" name="response.attributes.ASB"></span>
+		</p>
+
+		<p class="style">
+			<span class="code">29k.</span>
+		
+			<span class="span">Number of Rejected Ballot Papers</span>
+		
+			<span class="input"><input class="field input_smoke" type="text" name="response.attributes.ATA">
+			<input class="field input_smoke" type="text" name="response.attributes.ATB"></span>
+		</p>
+
+		<p class="style">
+			<span class="code">29l.</span>
+		
+			<span class="span">Number of Disputed Ballots</span>
+		
+			<span class="input"><input class="field input_smoke" type="text" name="response.attributes.AUA">
+			<input class="field input_smoke" type="text" name="response.attributes.AUB"></span>
+		</p>
+		
+		<p class="style">
+			<span class="code">30</span>
+		
+			<span class="span">Did you agree with the presidential results for your Polling Stream?</span>
+		
+			<span class="input"><label><input class="field" type="radio" name="response.attributes.AV" value="1"><br />Yes</label>
+			<label><input class="field" type="radio" name="response.attributes.AV" value="2"><br />No</label></span>
+		</p>
+
+		<p class="style">
+			<span class="code">31</span>
+		
+			<span class="span">Did <u>all</u> polling agents present agree with the presidential results for your Polling Stream?</span>
+		
+			<span class="input"><label><input class="field" type="radio" name="response.attributes.AW" value="1"><br />Yes</label>
+			<label><input class="field" type="radio" name="response.attributes.AW" value="2"><br />No</label></span>
+		</p>
+
+		<p class="style">
+			<span class="code">32</span>
+		
+			<span class="span">Were all polling agents present given a copy of the official results for the Polling Station?</span>
+		
+			<span class="input"><label><input class="field" type="radio" name="response.attributes.AX" value="1"><br />Yes</label>
+			<label><input class="field" type="radio" name="response.attributes.AX" value="2"><br />No</label></span>
+		</p>
+
+		<p class="style">
+			<span class="code">33</span>
+		
+			<span class="span">Were the official results for the Polling Station posted for the public to see?</span>
+		
+			<span class="input"><label><input class="field" type="radio" name="response.attributes.AY" value="1"><br />Yes</label>
+			<label><input class="field" type="radio" name="response.attributes.AY" value="2"><br />No</label></span>
+		</p>
+	</div>
+	
+	<p class="style form_buttons">
+		<span class="code">&nbsp;</span>
+		<span class="span">&nbsp;</span>
+		<span class="input"><span class="btn_yellow btn_space"><input type="submit" value ="save" class="search_btn"/><span></span></span></span>
+	</p>
+	</form>
 </script>
 <script type="text/x-handlebars-template" id="contact-search-template" charset="utf-8">
 	<div class="search_pane_dashboard">
@@ -108,7 +701,7 @@
 			</select>
 		</div>
 		<div class="input_el">
-			<span class="btn_blue btn_space"><input type="submit" name="submit" value="Search" class="search_btn"><span>&nbsp;</span></span><span class="btn_gray"><a href="javascript:;" id="form_reset">Reset</a><span>&nbsp;</span></span>
+			<span class="btn_blue btn_space"><input type="submit" name="submit" value="Search" class="search_btn"><span>&nbsp;</span></span><span class="btn_gray btn_space"><a href="javascript:;" id="form_reset">Reset</a><span>&nbsp;</span></span><span class="btn_yellow"><a href='javascript:;' class="sms_sender">SMS</a><span>&nbsp;</span></span>
 		</div>
 		</form>
 		<div class="clear"></div>
@@ -123,7 +716,7 @@
 	<td>{{observer_id}}</td><td>{{name}}</td><td>{{role.name}}</td><td>{{connections.models.0.attributes.identity}}</td><td>{{location.attributes.name}} ({{location.attributes.type.name}})</td><td>{{partner}}</td><td style="text-align:center"><a href="#!/contact/{{id}}">Edit</a></td>
 </script>
 <script type="text/x-handlebars-template" id="contact-empty-template" charset="utf-8">
-	<tr><td colspan="5" class="empty"><em>No contacts to display</em></td></tr>
+	<tr><td colspan="7" class="empty"><em>No contacts to display</em></td></tr>
 </script>
 <script type="text/x-handlebars-template" id='contact-edit-template' charset="utf-8">
 	<form id="contact_form" class="edit_form_floated">
@@ -151,91 +744,252 @@
 	<label for="submit"><span class="label">&nbsp;</span> <span class="btn_yellow btn_space"><input type="submit" name="submit" value="Save"><span>&nbsp;</span></span></label>
 	</form>
 </script>
+<script type="text/x-handlebars-template" id="incident-filter-template" charset="utf-8">
+	<div class="search_pane_dashboard">
+		<form id="search">
+		<div class="input_el"><input type="text" name="observer_id" class="input_smoke search_field" placeholder="Monitor Id" id="search_observer__observer_id__exact" pattern=".*[0-9]" title="Numeric figures only"></div>
+		<div class="input_el"><input type="text" name="date" class="input_smoke search_field date_field" placeholder="Date" id="search_date__exact"></div>
+		<div class="input_el"><input type="text" name="location" class="input_smoke" placeholder="Location" id="location__id"></div>
+		<div class="input_el">
+			<span class="btn_blue btn_space"><input type="submit" name="submit" value="Filter" class="search_btn"><span>&nbsp;</span></span><span class="btn_gray btn_space"><a href="javascript:;" id="form_reset">Reset</a><span>&nbsp;</span></span><span class="btn_yellow btn_space"><a href='javascript:;' class="sms_sender">SMS</a><span>&nbsp;</span></span><span class="btn_red btn_space"><a href="javascript:;" id="form_add_incident">Add Incident</a><span>&nbsp;</span></span>
+		</div>
+		</form>
+		<div class="clear"></div>
+	</div>
+</script>
+<script type="text/x-handlebars-template" id="incident-header-template" charset="utf-8">
+	<tbody>
+		<tr><th><a href="javascript:;" class="sortable_column" id="sort_observer__observer_id">PSID</a></th><th><a href="javascript:;" class="sortable_column" id="sort_date">Date</a></th><th><a href="javascript:;" class="sortable_column" id="sort_location__parent__parent__parent__name">Ward</a></th><th><a href="javascript:;" class="sortable_column" id="sort_location__parent__parent__name">Polling District</a></th><th><a href="javascript:;" class="sortable_column" id="sort_observer__name">Monitor</a></th><th style="text-align:center"><span>A</span></th><th style="text-align:center"><span>B</span></th><th style="text-align:center"><span>C</span></th><th style="text-align:center"><span>D</span></th><th style="text-align:center"><span>E</span></th><th style="text-align:center"><span>F</span></th><th style="text-align:center"><span>G</span></th><th style="text-align:center"><span>H</span></th><th style="text-align:center"><span>I</span></th><th style="text-align:center"><span>J</span></th><th style="text-align:center"><span>K</span></th><th style="text-align:center"><span>K1</span></th><th style="text-align:center"><span>K2</span></th><th style="text-align:center"><span>K4</span></th><th style="text-align:center"><span>L</span></th><th style="text-align:center"><span>M</span></th><th style="text-align:center"><span>N</span></th><th style="text-align:center"><span>O</span></th><th style="text-align:center">Edit</th><th style="text-align:center">Del</th></tr>
+	</tbody>
+</script>
+<script type="text/x-handlebars-template" id="incident-template" charset="utf-8">
+	<td>{{observer.attributes.observer_id}}</td><td>{{date}}</td><td>{{location.attributes.parent.attributes.parent.attributes.parent.attributes.name}}</td><td>{{location.attributes.parent.attributes.parent.attributes.name}}</td><td>{{observer.attributes.name}}{{#if observer.attributes.connections.models}} (<strong>{{observer.attributes.connections.models.0.attributes.identity}}</strong>){{/if}}</td><td align="center">{{incident_flag response "A"}}</td><td align="center">{{incident_flag response "B"}}</td><td align="center">{{incident_flag response "C"}}</td><td align="center">{{incident_flag response "D"}}</td><td align="center">{{incident_flag response "E"}}</td><td align="center">{{incident_flag response "F"}}</td><td align="center">{{incident_flag response "G"}}</td><td align="center">{{incident_flag response "H"}}</td><td align="center">{{incident_flag response "I"}}</td><td align="center">{{incident_flag response "J"}}</td><td align="center">{{incident_flag response "K"}}</td><td align="center">{{incident_flag response "K1"}}</td><td align="center">{{incident_flag response "K2"}}</td><td align="center">{{incident_flag response "K4"}}</td><td align="center">{{incident_flag response "L"}}</td><td align="center">{{incident_flag response "M"}}</td><td align="center">{{incident_flag response "N"}}</td><td align="center">{{incident_flag response "O"}}</td><td align="center"><a href="#!/elections/incident/{{id}}">Edit</a></td><td align="center">Del</td>
+</script>
+<script type="text/x-handlebars-template" id="incident-empty-template" charset="utf-8">
+	<tr><td colspan="25" class="empty"><em>No incidents to display</em></td></tr>
+</script>
+<script type="text/x-handlebars-template" id="incident-metadata-template" charset="utf-8">
+	<div>
+		<p class="style"><span class="span"><label>Province</label></span><span class="input"><input type="text" name="text"  class="input_smoke"></span></p>
+		<p class="style"><span class="span"><label>District</label></span><span class="input"><input type="text" name="text"  class="input_smoke"></span></p>
+		<p class="style"><span class="span"><label>Constituency</label></span><span class="input"><input type="text" name="text"  class="input_smoke"></span></p>
+		<p class="style"><span class="span"><label>Ward</label></span><span class="input"><input type="text" name="text"  class="input_smoke"></span></p>
+		<p class="style"><span class="span"><label>Polling District</label></span><span class="input"><input type="text" name="text"  class="input_smoke"></span></p>
+		<p class="style"><span class="span"><label>Polling District ID</label></span><span class="input"><input type="text" name="text"  class="input_smoke"></span></p>
+		<p class="style"><span class="span"><label>Date</label></span><span class="input"><input type="text" name="text"  class="input_smoke"></span></p>
+		<p class="style"><span class="span"><label>Time</label></span><span class="input"><input type="text" name="text"  class="input_smoke"></span></p>
+		<p class="clear"></p>
+	</div>
+</script>
+<script type="text/x-handlebars-template" id="incident-edit-template" charset="utf-8">
+	<form id="incident_form">
+		<p class="style">
+			<span class="code">1a.</span>
+			<span class="input"><label><input type="radio" name="response.attributes.W" value="1" class="field">I witnessed the incident</label></span>
+		</p>
+	
+		<p class="style">
+			<span class="code">1b.</span>
+			<span class="input"><label><input type="radio" name="response.attributes.W" value="2" class="field">I arrived just after the incident happened</label></span>
+		</p>
+	
+		<p class="style">
+			<span class="code">1c.</span>
+			<span class="input"><label><input type="radio" name="response.attributes.W" value="3" class="field">The incident was reported to me by someone else</label></span>
+		</p>
+		
+		<p class="clear"></p>
+	
+		<p class="style">
+			<span class="code">2a.</span>
+			<span class="input"><label><input type="checkbox" class="field" name="response.attributes.A" value="1">Polling stream did not open</label></span>
+		</p>
+
+		<p class="style">
+			<span class="code">2b.</span>
+			<span class="input"><label><input type="checkbox" class="field" name="response.attributes.B" value="1">Polling stream opened very late</label></span>
+		</p>
+	
+		<p class="style">
+			<span class="code">2c.</span>
+			<span class="input"><label><input type="checkbox" class="field" name="response.attributes.C" value="1">Polling stream closed very early</label></span>
+		</p>
+	
+		<p class="style">
+			<span class="code">2d.</span>
+			<span class="input"><label><input type="checkbox" class="field" name="response.attributes.D" value="1">Polling stream did not have materials at opening</label></span>
+		</p>
+	
+		<p class="style">
+			<span class="code">2e.</span>
+			<span class="input"><label><input type="checkbox" class="field" name="response.attributes.E" value="1">Vote buying/bribery</label></span>
+		</p>
+	
+		<p class="style">
+			<span class="code">2f.</span>
+			<span class="input"><label><input type="checkbox" class="field" name="response.attributes.F" value="1">Monitor denied access to polling stream</label></span>
+		</p>
+	
+		<p class="style">
+			<span class="code">2g.</span>
+			<span class="input"><label><input type="checkbox" class="field" name="response.attributes.G" value="1">Monitor not permitted to use reporting form</label></span>
+		</p>
+	
+		<p class="style">
+			<span class="code">2h.</span>
+			<span class="input"><label><input type="checkbox" class="field" name="response.attributes.H" value="1">Police officers inside polling station</label></span>
+		</p>
+	
+		<p class="style">
+			<span class="code">2i.</span>
+			<span class="input"><label><input type="checkbox" class="field" name="response.attributes.I" value="1">Polling stream ran out of materials</label></span>
+		</p>
+	
+		<p class="style">
+			<span class="code">2j.</span>
+			<span class="input"><label><input type="checkbox" class="field" name="response.attributes.J" value="1">People in the queue at the time of official close of the polling station not allowed to vote</label></span>
+		</p>
+	
+		<p class="style">
+			<span class="code">2k.</span>
+			<span class="input"><label><input type="checkbox" class="field" name="response.attributes.K" value="1">Violence/intimidation in or near the polling station</label></span>
+		</p>
+	
+		<p class="style">
+			<span class="code">2k1.</span>
+			<span class="input"><label><input type="checkbox" class="field" name="response.attributes.K1" value="1">Uniformed police</label></span>
+		</p>
+	
+		<p class="style">
+			<span class="code">2k2.</span>
+			<span class="input"><label><input type="checkbox" class="field" name="response.attributes.K2" value="1">Party supporters</label></span>
+		</p>
+	
+		<p class="style">
+			<span class="code">2k4.</span>
+			<span class="input"><label><input type="checkbox" class="field" name="response.attributes.K4" value="1">Others</label></span></p>
+	
+		<p class="style">
+			<span class="code">2l.</span>
+			<span class="input"><label><input type="checkbox" class="field" name="response.attributes.L" value="1">Violation of voting or counting procedures</label></span>
+		</p>
+	
+		<p class="style">
+			<span class="code">2m.</span>
+			<span class="input"><label><input type="checkbox" class="field" name="response.attributes.M" value="1">Stealing or damaging of ballots</label></span>
+		</p>
+	
+		<p class="style">
+			<span class="code">2n.</span>
+			<span class="input"><label><input type="checkbox" class="field" name="response.attributes.N" value="1">Voting or counting suspended during the process for more than 30 minutes</label></span>
+		</p>
+	
+		<p class="style">
+			<span class="code">2o.</span>
+			<span class="input"><label><input type="text" name="response.attributes.O"  class="input_smoke field">Other (explain)</label></span>
+		</p>
+	
+		<p class="style">
+			<span class="code">3.</span>
+			<span class="input">Description of Incident:<br/>
+			Please provide a brief description of the concrete facts regarding each incident, including who participated (their position and affiliation) and the sequence of events. Indicate other individuals, such as local or international observers or political party polling agents, who also witnessed the incident (and their contact information if possible).<br />
+			<br /><textarea rows="10" cols="30" class="input_smoke field" name="response.attributes.description"></textarea>
+			</span>
+		</p>
+	
+		<p class="style">
+			<span class="code">&nbsp;</span>
+			<span class="input">Name of the monitor<br /><input type="text" name="text" class="input_smoke"></span>
+		</p>
+	
+		<p class="style form_buttons">
+			<span class="code">&nbsp;</span>
+			<span class="input"><span class="btn_yellow btn_space"><input type="submit" value ="save" class="search_btn"/><span></span></span></span>
+		</p>
+	</form>
+</script>
 <script type="text/javascript" charset="utf-8">
 	function checklist_setup_complete(response) {
-	    return _.all(['A', 'B', 'CA', 'CB', 'CC', 'CE', 'CF', 'CG', 'CH', 'D', 'E', 'EA', 
-	        'EB', 'EC', 'F', 'G', 'H', 'J', 'K'], function (code) {
-			return response.get(code);
+	    return _.all(['A', 'B', 'CA', 'CB', 'CC', 'CD', 'CE', 'CF', 'CG', 'CH', 'D', 'E', 'EA', 
+	        'EB', 'EC', 'F', 'G', 'H', 'J'], function (code) {
+			return (response.get(code) || response.get(code) == 0) ? true : false;
 	    });
 	}
 
 	function checklist_setup_missing(response) {
-	    return !_.any(['A', 'B', 'CA', 'CB', 'CC', 'CE', 'CF', 'CG', 'CH', 'D', 'E', 'EA', 
-	        'EB', 'EC', 'F', 'G', 'H', 'J', 'K'], function (code) {
-			return response.get(code);
+	    return !_.any(['A', 'B', 'CA', 'CB', 'CC', 'CD', 'CE', 'CF', 'CG', 'CH', 'D', 'E', 'EA', 
+	        'EB', 'EC', 'F', 'G', 'H', 'J'], function (code) {
+			return (response.get(code) || response.get(code) == 0) ? true : false;
 	    });
 	}
 
 	function checklist_setup_partial(response) {
-	    return _.any(['A', 'B', 'CA', 'CB', 'CC', 'CE', 'CF', 'CG', 'CH', 'D', 'E', 'EA',
-	        'EB', 'EC', 'F', 'G', 'H', 'J', 'K'], function (code) {
-			return response.get(code);
+	    return _.any(['A', 'B', 'CA', 'CB', 'CC', 'CD', 'CE', 'CF', 'CG', 'CH', 'D', 'E', 'EA', 
+	        'EB', 'EC', 'F', 'G', 'H', 'J'], function (code) {
+			return (response.get(code) || response.get(code) == 0) ? true : false;
 	    });
 	}
 	
 	function checklist_voting_complete(response) {
 	    return _.all(['K', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W'], function (code) {
-			return response.get(code);
+			return (response.get(code) || response.get(code) == 0) ? true : false;
 	    });
 	}
 
 	function checklist_voting_missing(response) {
 	    return !_.any(['K', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W'], function (code) {
-			return response.get(code);
+			return (response.get(code) || response.get(code) == 0) ? true : false;
 	    });
 	}
 
 	function checklist_voting_partial(response) {
 	    return _.any(['K', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W'], function (code) {
-			return response.get(code);
+			return (response.get(code) || response.get(code) == 0) ? true : false;
 	    });
 	}
 	
 	function checklist_closing_complete(response) {
 	    return _.all(['X', 'Y', 'Z', 'AA'], function (code) {
-			return response.get(code);
+			return (response.get(code) || response.get(code) == 0) ? true : false;
 	    });
 	}
 
 	function checklist_closing_missing(response) {
 	    return !_.any(['X', 'Y', 'Z', 'AA'], function (code) {
-			return response.get(code);
+			return (response.get(code) || response.get(code) == 0) ? true : false;
 	    });
 	}
 
 	function checklist_closing_partial(response) {
 	    return _.any(['X', 'Y', 'Z', 'AA'], function (code) {
-			return response.get(code);
+			return (response.get(code) || response.get(code) == 0) ? true : false;
 	    });
 	}
 	
 	function checklist_counting_complete(response) {
-	    return _.all(['AB', 'AC', 'AD', 'AEAA', 'AEAB', 'AEAC', 'AEAD', 'AEAE', 'AEAF', 'AEBA', 'AEBB', 'AEBC', \
-        'AEBD', 'AEBE', 'AEBF', 'AECA', 'AECB', 'AECC', 'AECD', 'AECE', 'AECF', 'AEDA', 'AEDB', \
-        'AEDC', 'AEDD', 'AEDE', 'AEDF', 'AEEA', 'AEEB', 'AEEC', 'AEED', 'AEEE', 'AEEF', 'AFAA', \
-        'AFAB', 'AFAC', 'AFAD', 'AFAE', 'AFAF', 'AFBA', 'AFBB', 'AFBC', 'AFBD', 'AFBE', 'AFBF', \
-        'AG', 'AH', 'AJ', 'AK'], function (code) {
-			return response.get(code);
+	    return _.all(['AB', 'AC', 'AD', 'AEAA', 'AEAB', 'AEBA', 'AEBB', 'AECA', 'AECB', \
+		'AEDA', 'AEDB', 'AEEA', 'AEEB', 'AGA', 'AGB', 'AHA', 'AHB', 'AJA', 'AJB', 'AKA', \
+		'AKB', 'AMA', 'AMB', 'ANA', 'ANB', 'APA', 'APB', 'AQA', 'AQB', 'ARA', 'ARB', \
+		'ASA', 'ASB', 'ATA', 'ATB', 'AUA', 'AUB', 'AV', 'AW', 'AX', 'AY'], function (code) {
+			return (response.get(code) || response.get(code) == 0) ? true : false;
 	    });
 	}
 
 	function checklist_counting_missing(response) {
-	    return !_.any(['AB', 'AC', 'AD', 'AEAA', 'AEAB', 'AEAC', 'AEAD', 'AEAE', 'AEAF', 'AEBA', 'AEBB', 'AEBC', \
-        'AEBD', 'AEBE', 'AEBF', 'AECA', 'AECB', 'AECC', 'AECD', 'AECE', 'AECF', 'AEDA', 'AEDB', \
-        'AEDC', 'AEDD', 'AEDE', 'AEDF', 'AEEA', 'AEEB', 'AEEC', 'AEED', 'AEEE', 'AEEF', 'AFAA', \
-        'AFAB', 'AFAC', 'AFAD', 'AFAE', 'AFAF', 'AFBA', 'AFBB', 'AFBC', 'AFBD', 'AFBE', 'AFBF', \
-        'AG', 'AH', 'AJ', 'AK'], function (code) {
-			return response.get(code);
+	    return !_.any(['AB', 'AC', 'AD', 'AEAA', 'AEAB', 'AEBA', 'AEBB', 'AECA', 'AECB', \
+		'AEDA', 'AEDB', 'AEEA', 'AEEB', 'AGA', 'AGB', 'AHA', 'AHB', 'AJA', 'AJB', 'AKA', \
+		'AKB', 'AMA', 'AMB', 'ANA', 'ANB', 'APA', 'APB', 'AQA', 'AQB', 'ARA', 'ARB', \
+		'ASA', 'ASB', 'ATA', 'ATB', 'AUA', 'AUB', 'AV', 'AW', 'AX', 'AY'], function (code) {
+			return (response.get(code) || response.get(code) == 0) ? true : false;
 	    });
 	}
 
 	function checklist_counting_partial(response) {
-	    return _.any(['AB', 'AC', 'AD', 'AEAA', 'AEAB', 'AEAC', 'AEAD', 'AEAE', 'AEAF', 'AEBA', 'AEBB', 'AEBC', \
-        'AEBD', 'AEBE', 'AEBF', 'AECA', 'AECB', 'AECC', 'AECD', 'AECE', 'AECF', 'AEDA', 'AEDB', \
-        'AEDC', 'AEDD', 'AEDE', 'AEDF', 'AEEA', 'AEEB', 'AEEC', 'AEED', 'AEEE', 'AEEF', 'AFAA', \
-        'AFAB', 'AFAC', 'AFAD', 'AFAE', 'AFAF', 'AFBA', 'AFBB', 'AFBC', 'AFBD', 'AFBE', 'AFBF', \
-        'AG', 'AH', 'AJ', 'AK'], function (code) {
-			return response.get(code);
+	    return _.any(['AB', 'AC', 'AD', 'AEAA', 'AEAB', 'AEBA', 'AEBB', 'AECA', 'AECB', \
+		'AEDA', 'AEDB', 'AEEA', 'AEEB', 'AGA', 'AGB', 'AHA', 'AHB', 'AJA', 'AJB', 'AKA', \
+		'AKB', 'AMA', 'AMB', 'ANA', 'ANB', 'APA', 'APB', 'AQA', 'AQB', 'ARA', 'ARB', \
+		'ASA', 'ASB', 'ATA', 'ATB', 'AUA', 'AUB', 'AV', 'AW', 'AX', 'AY'], function (code) {
+			return (response.get(code) || response.get(code) == 0) ? true : false;
 	    });
 	}
 </script>
@@ -276,16 +1030,32 @@
 			return new Handlebars.SafeString('<img src="/assets/images/caution.png" alt="partial" />');
 		}
 	});
+	Handlebars.registerHelper('incident_flag', function (responses, attribute) {
+		if (responses.get(attribute)) {
+			return new Handlebars.SafeString('<img src="/assets/images/red_dot.png" />');
+		} else {
+			return new Handlebars.SafeString('&nbsp;');
+		}
+	});
 	
 	Templates = (typeof(Templates) == 'undefined') ? {} : Templates;
 	Templates.ChecklistFilter = Handlebars.compile($('#checklist-filter-template').html());
 	Templates.ChecklistHeader = Handlebars.compile($('#checklist-header-template').html());
 	Templates.Checklist = Handlebars.compile($('#checklist-template').html());
 	Templates.ChecklistEmpty = Handlebars.compile($('#checklist-empty-template').html());
+	Templates.ChecklistSectionTabs = Handlebars.compile($('#checklist-section-tabs-template').html());
+	Templates.ChecklistMetadata = Handlebars.compile($('#checklist-metadata-template').html());
+	Templates.ChecklistEdit = Handlebars.compile($('#checklist-edit-template').html());
 	Templates.ZambiaDashboardScreen = Handlebars.compile($('#screen-zambia-dashboard-template').html());
 	Templates.ContactSearch = Handlebars.compile($('#contact-search-template').html());
 	Templates.Contact = Handlebars.compile($('#contact-template').html());
 	Templates.ContactEmpty = Handlebars.compile($('#contact-empty-template').html());
 	Templates.ContactHeader = Handlebars.compile($('#contact-header-template').html());
 	Templates.ContactEdit = Handlebars.compile($('#contact-edit-template').html());
+	Templates.IncidentFilter = Handlebars.compile($('#incident-filter-template').html());
+	Templates.IncidentHeader = Handlebars.compile($('#incident-header-template').html());
+	Templates.Incident = Handlebars.compile($('#incident-template').html());
+	Templates.IncidentEmpty = Handlebars.compile($('#incident-empty-template').html());
+	Templates.IncidentMetadata = Handlebars.compile($('#incident-metadata-template').html());
+	Templates.IncidentEdit = Handlebars.compile($('#incident-edit-template').html());
 </script>
