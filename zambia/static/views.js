@@ -177,14 +177,27 @@ ChecklistEditView = Backbone.View.extend({
 	tagName: 'div',
 	
 	initialize: function () {
-		_.bindAll(this, "render", "save", "fieldChanged", "selectionChanged", "radioChanged");
+		_.bindAll(this, "render", "save", "fieldChanged", "selectionChanged", "radioChanged", "ecz_status");
 	},
 	
 	events: {
         "change input:text.field": "fieldChanged",
         "change select.field": "selectionChanged",
+        "keyup input[name='response.attributes.J']": "ecz_status",
         "radio_click input:radio.field": "radioChanged",
         "submit": "save"
+    },
+    
+    ecz_status: function (e) {
+        var value = $(e.currentTarget).val();
+        if (value.length == 6) {
+            if (value == this.model.get('location').get('parent').get('code')) {
+                // ECZ code matches
+                $('#ecz_status', this.el).attr('src', '/assets/images/tick.png').show();
+            } else {
+                $('#ecz_status', this.el).attr('src', '/assets/images/delete.png').show();
+            }
+        }
     },
     
     radioChanged: function (e) {
