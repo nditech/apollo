@@ -246,7 +246,7 @@ class IncidentsResource(ModelResource):
     class Meta:
         queryset = Incident.objects.select_related()
         resource_name = 'incidents'
-        allowed_methods = ['get']
+        allowed_methods = ['get', 'delete']
         authentication = Authentication()
         authorization = Authorization()
         filtering = {
@@ -278,6 +278,6 @@ class IncidentResource(ModelResource):
     class Meta:
         queryset = Incident.objects.select_related()
         resource_name = 'incident'
-        allowed_methods = ['get', 'put', 'post', 'delete']
+        allowed_methods = ['get', 'put', 'post']
         authentication = Authentication()
         authorization = Authorization()

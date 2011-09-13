@@ -254,8 +254,35 @@ IncidentCollectionView = Backbone.View.extend({
     tagName: 'table',
     id: 'checklists',
     className: 'datagrid',
+    
+    events: {
+        "click .del_incident": "deleteIncidentDialog",
+        "click #del_btn": "deleteIncident",
+        "click #del_cancel": "cancelDelete",
+    },
+    
+    deleteIncidentDialog: function (e) {
+        var resource_uri = $(e.currentTarget).attr('title');
+        $.facebox(Templates.IncidentDelDialog({'resource_uri': resource_uri}))
+    },
+    
+    deleteIncident: function (e) {
+        var self = this;
+        var resource_uri = $(e.currentTarget).attr('title');
+        self.collection.get(resource_uri).destroy({success: function (model, response) {
+            $.facebox.close();
+            self.collection.fetch();
+        }});
+    },
+    
+    cancelDelete: function (e) {
+        $.facebox.close();
+    },
 
     render: function(){
+        $('#del_btn').die('click');
+        $('#del_cancel').die('click');
+        
         var self = this;
         // Store the heading of the table so it can be reused
         var heading = $(self.el).children("tbody").children("tr")[0];
@@ -270,11 +297,14 @@ IncidentCollectionView = Backbone.View.extend({
 		    $(self.el).children("tbody").append(Templates.IncidentEmpty());
 		}
 		
+		$('#del_btn').live('click', self.deleteIncident);
+        $('#del_cancel').live('click', self.cancelDelete);
+		
 		return self.el;
     },
 
     initialize: function(){
-        _.bindAll(this, "render");
+        _.bindAll(this, "render", "deleteIncidentDialog", "deleteIncident", "cancelDelete");
         this.collection.bind('reset', this.render);
     },
 });
