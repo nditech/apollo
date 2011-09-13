@@ -96,6 +96,18 @@
 	</div>
 	<div id="clear"></div>
 </script>
+<script type="text/x-handlebars-template" id="general-checklist-section-tabs-template" charset="utf-8">
+	<div class="section_tabs">
+		<ul>
+			<li class="current"><a href="javascript:;" id="tab1">Identification</a></li>
+			<li><a href="javascript:;" id="tab2">Setup</a></li>
+			<li><a href="javascript:;" id="tab3">Voting</a></li>
+			<li><a href="javascript:;" id="tab4">Closing</a></li>
+			<li><a href="javascript:;" id="tab5">Counting</a></li>
+		</ul>
+	</div>
+	<div id="clear"></div>
+</script>
 <script type="text/x-handlebars-template" id="checklist-metadata-template" charset="utf-8">
 	<div>
 		<p class="style"><span class="span"><label>Monitor</label></span><span class="input"><strong>{{observer.attributes.name}}</strong> ({{observer.attributes.connections.models.0.attributes.identity}})</span></p>
@@ -1238,12 +1250,12 @@
 		</p>
 				
 		<p class="style"><span class="code">29n)</span> <span class="span">Number of Disputed Ballots</span>
-			<span class="input"><span class="span_text"><input type="text" name="response.attributes.AFQA"  class="input_text">
-			<input type="text" name="response.attributes.AFQB"  class="input_text"></span>
-			<span class="span_mid"><input type="text" name="response.attributes.AFQC"  class="input_text">
-			<input type="text" name="response.attributes.AFQD"  class="input_text"></span>
-			<span class="span_text_last"><input type="text" name="response.attributes.AFQE"  class="input_text">
-		<input type="text" name="response.attributes.AFQF"  class="input_text"></span></span>
+			<span class="input"><span class="span_text"><input type="text" name="response.attributes.AFQA"  class="input_text" pattern=".*[0-9]" title="Numeric figures only">
+			<input type="text" name="response.attributes.AFQB"  class="input_text" pattern=".*[0-9]" title="Numeric figures only"></span>
+			<span class="span_mid"><input type="text" name="response.attributes.AFQC"  class="input_text" pattern=".*[0-9]" title="Numeric figures only">
+			<input type="text" name="response.attributes.AFQD"  class="input_text" pattern=".*[0-9]" title="Numeric figures only"></span>
+			<span class="span_text_last"><input type="text" name="response.attributes.AFQE"  class="input_text" pattern=".*[0-9]" title="Numeric figures only">
+		<input type="text" name="response.attributes.AFQF"  class="input_text" pattern=".*[0-9]" title="Numeric figures only"></span></span>
 	</p>
 		
 		<p class="style">
