@@ -220,7 +220,7 @@
 			
 			<span class="span">How many polling officials were present at the polling stream?</span>
 			
-			<span class="input"><input type="text" name="response.attributes.D" class="input_smoke field"><br/></span>
+			<span class="input"><input type="text" name="response.attributes.D" class="input_smoke field" pattern=".*[0-9]" title="Numeric figures only"><br/></span>
 		</p>
 
 		<p class="style">
@@ -228,7 +228,7 @@
 			
 			<span class="span">How many political party polling agents were present at the polling stream?</span>
 			
-			<span class="input"><input type="text" name="response.attributes.E" class="input_smoke field"><br/></span>
+			<span class="input"><input type="text" name="response.attributes.E" class="input_smoke field" pattern=".*[0-9]" title="Numeric figures only"><br/></span>
 		</p>
 
 		<p class="style">
@@ -281,7 +281,7 @@
 			
 			<span class="span">How many people are registered at the polling stream?</span>
 			
-			<span class="input"><input type="text" name="response.attributes.H" class="input_smoke field"></span>
+			<span class="input"><input type="text" name="response.attributes.H" class="input_smoke field" pattern=".*[0-9]" title="Numeric figures only"></span>
 		</p>
 
 		<p class="style">
@@ -289,7 +289,7 @@
 			
 			<span class="span">What is the ECZ&#146;s six digit ID number of the Polling Station of your Polling Stream</span>
 			
-			<span class="input"><input type="text" name="response.attributes.J" class="input_smoke field"><img src="/assets/images/tick.png" id="ecz_status" style="vertical-align:middle;margin-left:0.4em;display:none" alt="Correct" /></span>
+			<span class="input"><input type="text" name="response.attributes.J" class="input_smoke field" pattern=".*[0-9]" title="Numeric figures only"><img src="/assets/images/tick.png" id="ecz_status" style="vertical-align:middle;margin-left:0.4em;display:none" alt="Correct" /></span>
 		</p>
 	</div>
 	
@@ -473,7 +473,7 @@
 			<span class="span">Were there any incidents of intimidation during counting?</span>
 		
 			<span class="input"><label><input class="field" type="radio" name="response.attributes.AD" value="1"><br />Yes</label>
-			<label><input class="field" type="radio" name="response.attributes.AD" value="2"><br />No</label></span>
+			<label><input class="field" type="radio" name="response.attributes.AD" value="2" ><br />No</label></span>
 		</p>
 
 		<p class="style">
@@ -488,8 +488,8 @@
 		<p class="style">
 			<span class="code">28a.</span><span class="span"> Number of Ballot Papers Received - column (1)</span>
 		
-			<span class="input"><input class="field input_smoke" type="text" name="response.attributes.AEAA">
-			<input class="field input_smoke" type="text" name="response.attributes.AEAB"></span>
+			<span class="input"><input class="field input_smoke" type="text" name="response.attributes.AEAA" pattern=".*[0-9]" title="Numeric figures only">
+			<input class="field input_smoke" type="text" name="response.attributes.AEAB" pattern=".*[0-9]" title="Numeric figures only"></span>
 		</p>
 	
 		<p class="style">
@@ -497,8 +497,8 @@
 		
 			<span class="span"> Number of Unused Ballot Papers - column (4)</span>
 		
-			<span class="input"><input class="field input_smoke" type="text" name="response.attributes.AEBA">
-			<input class="field input_smoke" type="text" name="response.attributes.AEBB"></span>
+			<span class="input"><input class="field input_smoke" type="text" name="response.attributes.AEBA" pattern=".*[0-9]" title="Numeric figures only">
+			<input class="field input_smoke" type="text" name="response.attributes.AEBB" pattern=".*[0-9]" title="Numeric figures only"></span>
 		</p>
 
 
@@ -507,8 +507,8 @@
 		
 			<span class="span"> Number of Issued Ballot Papers - column (2)</span>
 		
-			<span class="input"><input class="field input_smoke" type="text" name="response.attributes.AECA">
-			<input class="field input_smoke" type="text" name="response.attributes.AECB"></span>
+			<span class="input"><input class="field input_smoke" type="text" name="response.attributes.AECA" pattern=".*[0-9]" title="Numeric figures only">
+			<input class="field input_smoke" type="text" name="response.attributes.AECB" pattern=".*[0-9]" title="Numeric figures only"></span>
 		</p>
 		
 		<p class="style">
@@ -516,8 +516,8 @@
 		
 			<span class="span"> Number of Spoilt Ballot Papers - column (3)</span>
 		
-			<span class="input"><input class="field input_smoke" type="text" name="response.attributes.AEDA">
-			<input class="field input_smoke" type="text" name="response.attributes.AEDB"></span>
+			<span class="input"><input class="field input_smoke" type="text" name="response.attributes.AEDA" pattern=".*[0-9]" title="Numeric figures only">
+			<input class="field input_smoke" type="text" name="response.attributes.AEDB" pattern=".*[0-9]" title="Numeric figures only"></span>
 		</p>
 	
 		<p class="style">
@@ -525,8 +525,8 @@
 		
 			<span class="span">Number of Ballot Papers Found in the Ballot Box</span>
 		
-			<span class="input"><input class="field input_smoke" type="text" name="response.attributes.AEEA">
-			<input class="field input_smoke" type="text" name="response.attributes.AEEB"></span>
+			<span class="input"><input class="field input_smoke" type="text" name="response.attributes.AEEA" pattern=".*[0-9]" title="Numeric figures only">
+			<input class="field input_smoke" type="text" name="response.attributes.AEEB" pattern=".*[0-9]" title="Numeric figures only"></span>
 		</p>
 
 		<p class="style">
@@ -543,8 +543,8 @@
 		
 			<span class="span">Votes for Rupiah Banda, MMD</span>
 		
-			<span class="input"><input class="field input_smoke" type="text" name="response.attributes.AGA">
-			<input class="field input_smoke" type="text" name="response.attributes.AGB"></span>
+			<span class="input"><input class="field input_smoke" type="text" name="response.attributes.AGA" pattern=".*[0-9]" title="Numeric figures only">
+			<input class="field input_smoke" type="text" name="response.attributes.AGB" pattern=".*[0-9]" title="Numeric figures only"></span>
 		</p>
 
 		<p class="style">
@@ -552,8 +552,8 @@
 		
 			<span class="span">Votes for Elias Chipimo, NAREP</span>
 		
-			<span class="input"><input class="field input_smoke" type="text" name="response.attributes.AHA">
-			<input class="field input_smoke" type="text" name="response.attributes.AHB"></span>
+			<span class="input"><input class="field input_smoke" type="text" name="response.attributes.AHA" pattern=".*[0-9]" title="Numeric figures only">
+			<input class="field input_smoke" type="text" name="response.attributes.AHB" pattern=".*[0-9]" title="Numeric figures only"></span>
 		</p>
 
 		<p class="style">
@@ -561,8 +561,8 @@
 		
 			<span class="span"> Votes for Hakainde Hichilema, UPND</span>
 		
-			<span class="input"><input class="field input_smoke" type="text" name="response.attributes.AJA">
-			<input class="field input_smoke" type="text" name="response.attributes.AJB"></span>
+			<span class="input"><input class="field input_smoke" type="text" name="response.attributes.AJA" pattern=".*[0-9]" title="Numeric figures only">
+			<input class="field input_smoke" type="text" name="response.attributes.AJB" pattern=".*[0-9]" title="Numeric figures only"></span>
 		</p>
 
 		<p class="style">
@@ -570,8 +570,8 @@
 		
 			<span class="span"> Votes for Tilyenji Kaunda, UNIP</span>
 		
-			<span class="input"><input class="field input_smoke" type="text" name="response.attributes.AKA">
-			<input class="field input_smoke" type="text" name="response.attributes.AKB"></span>
+			<span class="input"><input class="field input_smoke" type="text" name="response.attributes.AKA" pattern=".*[0-9]" title="Numeric figures only">
+			<input class="field input_smoke" type="text" name="response.attributes.AKB" pattern=".*[0-9]" title="Numeric figures only"></span>
 		</p>
 
 		<p class="style">
@@ -579,8 +579,8 @@
 		
 			<span class="span">Votes for Ng&#146;andu Magande, NMP</span>
 		
-			<span class="input"><input class="field input_smoke" type="text" name="response.attributes.AMA">
-			<input class="field input_smoke" type="text" name="response.attributes.AMB"></span>
+			<span class="input"><input class="field input_smoke" type="text" name="response.attributes.AMA" pattern=".*[0-9]" title="Numeric figures only">
+			<input class="field input_smoke" type="text" name="response.attributes.AMB" pattern=".*[0-9]" title="Numeric figures only"></span>
 		</p>
 
 		<p class="style">
@@ -588,8 +588,8 @@
 		
 			<span class="span"> Votes for Charles Milupi, ADD</span>
 		
-			<span class="input"><input class="field input_smoke" type="text" name="response.attributes.ANA">
-			<input class="field input_smoke" type="text" name="response.attributes.ANB"></span>
+			<span class="input"><input class="field input_smoke" type="text" name="response.attributes.ANA" pattern=".*[0-9]" title="Numeric figures only">
+			<input class="field input_smoke" type="text" name="response.attributes.ANB" pattern=".*[0-9]" title="Numeric figures only"></span>
 		</p>
 
 		<p class="style">
@@ -597,8 +597,8 @@
 		
 			<span class="span"> Votes for Godfrey Miyanda, Heritage Party</span>
 		
-			<span class="input"><input class="field input_smoke" type="text" name="response.attributes.APA">
-			<input class="field input_smoke" type="text" name="response.attributes.APB"></span>
+			<span class="input"><input class="field input_smoke" type="text" name="response.attributes.APA" pattern=".*[0-9]" title="Numeric figures only">
+			<input class="field input_smoke" type="text" name="response.attributes.APB" pattern=".*[0-9]" title="Numeric figures only"></span>
 		</p>
 
 		<p class="style">
@@ -606,8 +606,8 @@
 		
 			<span class="span">Votes for Fred Mutesa, ZED</span>
 		
-			<span class="input"><input class="field input_smoke" type="text" name="response.attributes.AQA">
-			<input class="field input_smoke" type="text" name="response.attributes.AQB"></span>
+			<span class="input"><input class="field input_smoke" type="text" name="response.attributes.AQA" pattern=".*[0-9]" title="Numeric figures only">
+			<input class="field input_smoke" type="text" name="response.attributes.AQB" pattern=".*[0-9]" title="Numeric figures only"></span>
 		</p>
 	
 		<p class="style">
@@ -615,8 +615,8 @@
 		
 			<span class="span"> Votes for Edith Nawakwi, FDD</span>
 		
-			<span class="input"><input class="field input_smoke" type="text" name="response.attributes.ARA">
-			<input class="field input_smoke" type="text" name="response.attributes.ARB"></span>
+			<span class="input"><input class="field input_smoke" type="text" name="response.attributes.ARA" pattern=".*[0-9]" title="Numeric figures only">
+			<input class="field input_smoke" type="text" name="response.attributes.ARB" pattern=".*[0-9]" title="Numeric figures only"></span>
 		</p>
 
 		<p class="style">
@@ -624,8 +624,8 @@
 		
 			<span class="span">Votes for Michael Sata, Patriotic Front</span>
 		
-			<span class="input"><input class="field input_smoke" type="text" name="response.attributes.ASA">
-			<input class="field input_smoke" type="text" name="response.attributes.ASB"></span>
+			<span class="input"><input class="field input_smoke" type="text" name="response.attributes.ASA" pattern=".*[0-9]" title="Numeric figures only">
+			<input class="field input_smoke" type="text" name="response.attributes.ASB" pattern=".*[0-9]" title="Numeric figures only"></span>
 		</p>
 
 		<p class="style">
@@ -633,8 +633,8 @@
 		
 			<span class="span">Number of Rejected Ballot Papers</span>
 		
-			<span class="input"><input class="field input_smoke" type="text" name="response.attributes.ATA">
-			<input class="field input_smoke" type="text" name="response.attributes.ATB"></span>
+			<span class="input"><input class="field input_smoke" type="text" name="response.attributes.ATA" pattern=".*[0-9]" title="Numeric figures only">
+			<input class="field input_smoke" type="text" name="response.attributes.ATB" pattern=".*[0-9]" title="Numeric figures only"></span>
 		</p>
 
 		<p class="style">
@@ -642,8 +642,8 @@
 		
 			<span class="span">Number of Disputed Ballots</span>
 		
-			<span class="input"><input class="field input_smoke" type="text" name="response.attributes.AUA">
-			<input class="field input_smoke" type="text" name="response.attributes.AUB"></span>
+			<span class="input"><input class="field input_smoke" type="text" name="response.attributes.AUA" pattern=".*[0-9]" title="Numeric figures only">
+			<input class="field input_smoke" type="text" name="response.attributes.AUB" pattern=".*[0-9]" title="Numeric figures only"></span>
 		</p>
 		
 		<p class="style">
@@ -698,7 +698,7 @@
 		<p class="style"><span class="span"><label>Polling District/Station:</label></span><span class="input"><input type="text" name="text"  class="input_smoke"></span></p>
 		<p class="style"><span class="span"><label>Stream:</label></span><span class="input"><input type="text" name="text"  class="input_smoke"></span></p>
 		<p class="style"><span class="span"><label>Supervisor Name:</label></span><span class="input"><input type="text" name="text"  class="input_smoke"></span></p>
-		<p class="style"><span class="span"><label>Mobile:</label></span><span class="input"><input type="text" name="text"  class="input_smoke"></span></p>
+		<p class="style"><span class="span"><label>Mobile:</label></span><span class="input"><input type="text" name="text"  class="input_smoke" pattern=".*[0-9]" title="Numeric figures only"></span></p>
 	</div>
 	<div class="pane" id="pane2">
 		<h1>SetUp</h1>
@@ -802,7 +802,7 @@
 			
 			<span class="span">How many polling officials were present at the polling stream?</span>
 			
-			<span class="input"><input type="text" name="response.attributes.D" class="input_smoke field"><br/></span>
+			<span class="input"><input type="text" name="response.attributes.D" class="input_smoke field" pattern=".*[0-9]" title="Numeric figures only"><br/></span>
 		</p>
 
 		<p class="style">
@@ -810,7 +810,7 @@
 			
 			<span class="span">How many political party polling agents were present at the polling stream?</span>
 			
-			<span class="input"><input type="text" name="response.attributes.E" class="input_smoke field"><br/></span>
+			<span class="input"><input type="text" name="response.attributes.E" class="input_smoke field" pattern=".*[0-9]" title="Numeric figures only"><br/></span>
 		</p>
 
 		<p class="style">
@@ -863,7 +863,7 @@
 			
 			<span class="span">How many people are registered at the polling stream?</span>
 			
-			<span class="input"><input type="text" name="response.attributes.H" class="input_smoke field"></span>
+			<span class="input"><input type="text" name="response.attributes.H" class="input_smoke field" pattern=".*[0-9]" title="Numeric figures only"></span>
 		</p>
 
 		<p class="style">
@@ -871,7 +871,7 @@
 			
 			<span class="span">What is the ECZ&#146;s six digit ID number of the Polling Station of your Polling Stream</span>
 			
-			<span class="input"><input type="text" name="response.attributes.J" class="input_smoke field"></span>
+			<span class="input"><input type="text" name="response.attributes.J" class="input_smoke field" pattern=".*[0-9]" title="Numeric figures only"></span>
 		</p>
 	</div>
 	
@@ -1078,12 +1078,12 @@
 			
 			<span class="span">Number of Ballot Papers Received</span>
 			
-			<span class="input"><span class="span_text"><input type="text" name="response.attributes.AEAA" class="input_text field">
-			<input type="text" name="response.attributes.AEAB" class="input_text field"></span>
-			<span class="span_mid"><input type="text" name="response.attributes.AEAC"  class="input_text field">
-			<input type="text" name="response.attributes.AEAD" class="input_text field"></span>
-			<span class="span_text_last"><input type="text" name="response.attributes.AEAE" class="input_text field">
-			<input type="text" name="response.attributes.AEAF" class="input_text field"></span></span>
+			<span class="input"><span class="span_text"><input type="text" name="response.attributes.AEAA" class="input_text field" pattern=".*[0-9]" title="Numeric figures only">
+			<input type="text" name="response.attributes.AEAB" class="input_text field" pattern=".*[0-9]" title="Numeric figures only"></span>
+			<span class="span_mid"><input type="text" name="response.attributes.AEAC"  class="input_text field" pattern=".*[0-9]" title="Numeric figures only">
+			<input type="text" name="response.attributes.AEAD" class="input_text field" pattern=".*[0-9]" title="Numeric figures only"></span>
+			<span class="span_text_last"><input type="text" name="response.attributes.AEAE" class="input_text field" pattern=".*[0-9]" title="Numeric figures only">
+			<input type="text" name="response.attributes.AEAF" class="input_text field" pattern=".*[0-9]" title="Numeric figures only"></span></span>
 		</p>
 		
 		<p class="style">
@@ -1091,12 +1091,12 @@
 			
 			<span class="span">Number of Unused Ballot Papers</span>
 			
-			<span class="input"><span class="span_text"><input type="text" name="response.attributes.AEBA" class="input_text field">
-			<input type="text" name="response.attributes.AEBB" class="input_text field"></span>
-			<span class="span_mid"><input type="text" name="response.attributes.AEBC"  class="input_text field">
-			<input type="text" name="response.attributes.AEBD" class="input_text field"></span>
-			<span class="span_text_last"><input type="text" name="response.attributes.AEBE"  class="input_text field">
-			<input type="text" name="response.attributes.AEBF" class="input_text field"></span></span>
+			<span class="input"><span class="span_text"><input type="text" name="response.attributes.AEBA" class="input_text field" pattern=".*[0-9]" title="Numeric figures only">
+			<input type="text" name="response.attributes.AEBB" class="input_text field" pattern=".*[0-9]" title="Numeric figures only"></span>
+			<span class="span_mid"><input type="text" name="response.attributes.AEBC"  class="input_text field" pattern=".*[0-9]" title="Numeric figures only">
+			<input type="text" name="response.attributes.AEBD" class="input_text field" pattern=".*[0-9]" title="Numeric figures only"></span>
+			<span class="span_text_last"><input type="text" name="response.attributes.AEBE"  class="input_text field" pattern=".*[0-9]" title="Numeric figures only">
+			<input type="text" name="response.attributes.AEBF" class="input_text field" pattern=".*[0-9]" title="Numeric figures only"></span></span>
 		</p>
 
 		<p class="style">
@@ -1104,12 +1104,12 @@
 			
 			<span class="span"> Number of Issued Ballot Papers</span>
 			
-			<span class="input"><span class="span_text"><input type="text" name="response.attributes.AECA"  class="input_text field">
-			<input type="text" name="response.attributes.AECB" class="input_text field"></span>
-			<span class="span_mid"><input type="text" name="response.attributes.AECC"  class="input_text field">
-			<input type="text" name="response.attributes.AECD" class="input_text field"></span>
-			<span class="span_text_last"><input type="text" name="response.attributes.AECE"  class="input_text field">
-			<input type="text" name="response.attributes.AECF" class="input_text field"></span></span>
+			<span class="input"><span class="span_text"><input type="text" name="response.attributes.AECA"  class="input_text field" pattern=".*[0-9]" title="Numeric figures only">
+			<input type="text" name="response.attributes.AECB" class="input_text field" pattern=".*[0-9]" title="Numeric figures only"></span>
+			<span class="span_mid"><input type="text" name="response.attributes.AECC"  class="input_text field" pattern=".*[0-9]" title="Numeric figures only">
+			<input type="text" name="response.attributes.AECD" class="input_text field" pattern=".*[0-9]" title="Numeric figures only"></span>
+			<span class="span_text_last"><input type="text" name="response.attributes.AECE"  class="input_text field" pattern=".*[0-9]" title="Numeric figures only">
+			<input type="text" name="response.attributes.AECF" class="input_text field" pattern=".*[0-9]" title="Numeric figures only"></span></span>
 		</p>
 			
 		<p class="style">
@@ -1117,12 +1117,12 @@
 			
 			<span class="span">Number of Spoilt Ballot Papers</span>
 			
-			<span class="input"><span class="span_text"><input type="text" name="response.attributes.AEDA" class="input_text field">
-			<input type="text" name="response.attributes.AEDB" class="input_text field"></span>
-			<span class="span_mid"><input type="text" name="response.attributes.AEDC" class="input_text field">
-			<input type="text" name="response.attributes.AEDD" class="input_text field"></span>
-			<span class="span_text_last"><input type="text" name="response.attributes.AEDE" class="input_text field">
-			<input type="text" name="response.attributes.AEDF" class="input_text field"></span></span>
+			<span class="input"><span class="span_text"><input type="text" name="response.attributes.AEDA" class="input_text field" pattern=".*[0-9]" title="Numeric figures only">
+			<input type="text" name="response.attributes.AEDB" class="input_text field" pattern=".*[0-9]" title="Numeric figures only"></span>
+			<span class="span_mid"><input type="text" name="response.attributes.AEDC" class="input_text field" pattern=".*[0-9]" title="Numeric figures only">
+			<input type="text" name="response.attributes.AEDD" class="input_text field" pattern=".*[0-9]" title="Numeric figures only"></span>
+			<span class="span_text_last"><input type="text" name="response.attributes.AEDE" class="input_text field" pattern=".*[0-9]" title="Numeric figures only">
+			<input type="text" name="response.attributes.AEDF" class="input_text field" pattern=".*[0-9]" title="Numeric figures only"></span></span>
 		</p>
 		
 		<p class="style">
@@ -1130,12 +1130,12 @@
 			
 			<span class="span">Number of Ballot Papers Found in the Ballot Box</span>
 			
-			<span class="input"><span class="span_text"><input type="text" name="response.attributes.AEEA" class="input_text field">
-			<input type="text" name="response.attributes.AEEB" class="input_text field"></span>
-			<span class="span_mid"><input type="text" name="response.attributes.AEEC" class="input_text field">
-			<input type="text" name="response.attributes.AEED" class="input_text field"></span>
-			<span class="span_text_last"><input type="text" name="response.attributes.AEEE" class="input_text field">
-			<input type="text" name="response.attributes.AEEF" class="input_text field"></span></span>
+			<span class="input"><span class="span_text"><input type="text" name="response.attributes.AEEA" class="input_text field" pattern=".*[0-9]" title="Numeric figures only">
+			<input type="text" name="response.attributes.AEEB" class="input_text field" pattern=".*[0-9]" title="Numeric figures only"></span>
+			<span class="span_mid"><input type="text" name="response.attributes.AEEC" class="input_text field" pattern=".*[0-9]" title="Numeric figures only">
+			<input type="text" name="response.attributes.AEED" class="input_text field" pattern=".*[0-9]" title="Numeric figures only"></span>
+			<span class="span_text_last"><input type="text" name="response.attributes.AEEE" class="input_text field" pattern=".*[0-9]" title="Numeric figures only">
+			<input type="text" name="response.attributes.AEEF" class="input_text field" pattern=".*[0-9]" title="Numeric figures only"></span></span>
 		</p>
 
 		<p class="style">
@@ -1158,12 +1158,12 @@
 			
 			<span class="span">ADD</span>
 			
-			<span class="input"><span class="span_text"><input type="text" name="response.attributes.AFAA" class="input_text field">
-			<input type="text" name="response.attributes.AFAB" class="input_text field"></span>
-			<span class="span_mid"><input type="text" name="response.attributes.AFAC" class="input_text field">
-			<input type="text" name="response.attributes.AFAD" class="input_text field"></span>
-			<span class="span_text_last"><input type="text" name="response.attributes.AFAD" class="input_text field">
-			<input type="text" name="response.attributes.AFAE" class="input_text field"></span></span>
+			<span class="input"><span class="span_text"><input type="text" name="response.attributes.AFAA" class="input_text field" pattern=".*[0-9]" title="Numeric figures only">
+			<input type="text" name="response.attributes.AFAB" class="input_text field" pattern=".*[0-9]" title="Numeric figures only"></span>
+			<span class="span_mid"><input type="text" name="response.attributes.AFAC" class="input_text field" pattern=".*[0-9]" title="Numeric figures only">
+			<input type="text" name="response.attributes.AFAD" class="input_text field" pattern=".*[0-9]" title="Numeric figures only"></span>
+			<span class="span_text_last"><input type="text" name="response.attributes.AFAD" class="input_text field" pattern=".*[0-9]" title="Numeric figures only">
+			<input type="text" name="response.attributes.AFAE" class="input_text field" pattern=".*[0-9]" title="Numeric figures only"></span></span>
 		</p>
 
 		<p class="style">
@@ -1171,12 +1171,12 @@
 			
 			<span class="span">FDD</span>
 			
-			<span class="input"><span class="span_text"><input type="text" name="response.attributes.AFBA" class="input_text field">
-			<input type="text" name="response.attributes.AFBB" class="input_text field"></span>
-			<span class="span_mid"><input type="text" name="response.attributes.AFBC" class="input_text field">
-			<input type="text" name="response.attributes.AFBD" class="input_text field"></span>
-			<span class="span_text_last"><input type="text" name="response.attributes.AFBE" class="input_text field">
-			<input type="text" name="response.attributes.AFBF" class="input_text field"></span></span>
+			<span class="input"><span class="span_text"><input type="text" name="response.attributes.AFBA" class="input_text field" pattern=".*[0-9]" title="Numeric figures only">
+			<input type="text" name="response.attributes.AFBB" class="input_text field" pattern=".*[0-9]" title="Numeric figures only"></span>
+			<span class="span_mid"><input type="text" name="response.attributes.AFBC" class="input_text field" pattern=".*[0-9]" title="Numeric figures only">
+			<input type="text" name="response.attributes.AFBD" class="input_text field" pattern=".*[0-9]" title="Numeric figures only"></span>
+			<span class="span_text_last"><input type="text" name="response.attributes.AFBE" class="input_text field" pattern=".*[0-9]" title="Numeric figures only">
+			<input type="text" name="response.attributes.AFBF" class="input_text field" pattern=".*[0-9]" title="Numeric figures only"></span></span>
 		</p>
 
 		<p class="style">
@@ -1184,12 +1184,12 @@
 			
 			<span class="span">Heritage Party</span>
 			
-			<span class="input"><span class="span_text"><input type="text" name="response.attributes.AFCA" class="input_text field">
-			<input type="text" name="response.attributes.AFCB" class="input_text field"></span>
-			<span class="span_mid"><input type="text" name="response.attributes.AFCC" class="input_text field">
-			<input type="text" name="response.attributes.AFCD" class="input_text field"></span>
-			<span class="span_text_last"><input type="text" name="response.attributes.AFCE" class="input_text field">
-			<input type="text" name="response.attributes.AFCF" class="input_text field"></span></span>
+			<span class="input"><span class="span_text"><input type="text" name="response.attributes.AFCA" class="input_text field" pattern=".*[0-9]" title="Numeric figures only">
+			<input type="text" name="response.attributes.AFCB" class="input_text field" pattern=".*[0-9]" title="Numeric figures only"></span>
+			<span class="span_mid"><input type="text" name="response.attributes.AFCC" class="input_text field" pattern=".*[0-9]" title="Numeric figures only">
+			<input type="text" name="response.attributes.AFCD" class="input_text field" pattern=".*[0-9]" title="Numeric figures only"></span>
+			<span class="span_text_last"><input type="text" name="response.attributes.AFCE" class="input_text field" pattern=".*[0-9]" title="Numeric figures only">
+			<input type="text" name="response.attributes.AFCF" class="input_text field" pattern=".*[0-9]" title="Numeric figures only"></span></span>
 		</p>
 
 		<p class="style">
@@ -1197,12 +1197,12 @@
 			
 			<span class="span">MMD</span>
 			
-			<span class="input"><span class="span_text"><input type="text" name="response.attributes.AFDA" class="input_text field">
-			<input type="text" name="response.attributes.AFDB" class="input_text field"></span>
-			<span class="span_mid"><input type="text" name="response.attributes.AFDC" class="input_text field">
-			<input type="text" name="response.attributes.AFDD" class="input_text field"></span>
-			<span class="span_text_last"><input type="text" name="response.attributes.AFDE" class="input_text field">
-			<input type="text" name="response.attributes.AFDF" class="input_text field"></span></span>
+			<span class="input"><span class="span_text"><input type="text" name="response.attributes.AFDA" class="input_text field" pattern=".*[0-9]" title="Numeric figures only">
+			<input type="text" name="response.attributes.AFDB" class="input_text field" pattern=".*[0-9]" title="Numeric figures only"></span>
+			<span class="span_mid"><input type="text" name="response.attributes.AFDC" class="input_text field" pattern=".*[0-9]" title="Numeric figures only">
+			<input type="text" name="response.attributes.AFDD" class="input_text field" pattern=".*[0-9]" title="Numeric figures only"></span>
+			<span class="span_text_last"><input type="text" name="response.attributes.AFDE" class="input_text field" pattern=".*[0-9]" title="Numeric figures only">
+			<input type="text" name="response.attributes.AFDF" class="input_text field" pattern=".*[0-9]" title="Numeric figures only"></span></span>
 		</p>
 
 		<p class="style">
@@ -1210,12 +1210,12 @@
 			
 			<span class="span">NAREP</span>
 			
-			<span class="input"><span class="span_text"><input type="text" name="response.attributes.AFEA" class="input_text field">
-			<input type="text" name="response.attributes.AFEB" class="input_text field"></span>
-			<span class="span_mid"><input type="text" name="response.attributes.AFED" class="input_text field">
-			<input type="text" name="response.attributes.AFED" class="input_text field"></span>
-			<span class="span_text_last"><input type="text" name="response.attributes.AFEE" class="input_text field">
-			<input type="text" name="response.attributes.AFEF" class="input_text field"></span></span>
+			<span class="input"><span class="span_text"><input type="text" name="response.attributes.AFEA" class="input_text field" pattern=".*[0-9]" title="Numeric figures only">
+			<input type="text" name="response.attributes.AFEB" class="input_text field" pattern=".*[0-9]" title="Numeric figures only"></span>
+			<span class="span_mid"><input type="text" name="response.attributes.AFED" class="input_text field" pattern=".*[0-9]" title="Numeric figures only">
+			<input type="text" name="response.attributes.AFED" class="input_text field" pattern=".*[0-9]" title="Numeric figures only"></span>
+			<span class="span_text_last"><input type="text" name="response.attributes.AFEE" class="input_text field" pattern=".*[0-9]" title="Numeric figures only">
+			<input type="text" name="response.attributes.AFEF" class="input_text field" pattern=".*[0-9]" title="Numeric figures only"></span></span>
 		</p>
 
 		<p class="style">
@@ -1223,12 +1223,12 @@
 			
 			<span class="span">NDF</span>
 			
-			<span class="input"><span class="span_text"><input type="text" name="response.attributes.AFFA" class="input_text field">
-			<input type="text" name="response.attributes.AFFB" class="input_text field"></span>
-			<span class="span_mid"><input type="text" name="response.attributes.AFFC" class="input_text field">
-			<input type="text" name="response.attributes.AFFD" class="input_text field"></span>
-			<span class="span_text_last"><input type="text" name="response.attributes.AFFE" class="input_text field">
-			<input type="text" name="response.attributes.AFFF"  class="input_text field"></span></span>
+			<span class="input"><span class="span_text"><input type="text" name="response.attributes.AFFA" class="input_text field" pattern=".*[0-9]" title="Numeric figures only">
+			<input type="text" name="response.attributes.AFFB" class="input_text field" pattern=".*[0-9]" title="Numeric figures only"></span>
+			<span class="span_mid"><input type="text" name="response.attributes.AFFC" class="input_text field" pattern=".*[0-9]" title="Numeric figures only">
+			<input type="text" name="response.attributes.AFFD" class="input_text field" pattern=".*[0-9]" title="Numeric figures only"></span>
+			<span class="span_text_last"><input type="text" name="response.attributes.AFFE" class="input_text field" pattern=".*[0-9]" title="Numeric figures only">
+			<input type="text" name="response.attributes.AFFF"  class="input_text field" pattern=".*[0-9]" title="Numeric figures only"></span></span>
 		</p>
 	
 
@@ -1237,12 +1237,12 @@
 			
 			<span class="span">NMP</span>
 			
-			<span class="input"><span class="span_text"><input type="text" name="response.attributes.AFGA" class="input_text field">
-			<input type="text" name="response.attributes.AFGB" class="input_text field"></span>
-			<span class="span_mid"><input type="text" name="response.attributes.AFGC" class="input_text field">
-			<input type="text" name="response.attributes.AFGD" class="input_text field"></span>
-			<span class="span_text_last"><input type="text" name="response.attributes.AFGE" class="input_text field">
-			<input type="text" name="response.attributes.AFGF" class="input_text field"></span></span>
+			<span class="input"><span class="span_text"><input type="text" name="response.attributes.AFGA" class="input_text field" pattern=".*[0-9]" title="Numeric figures only">
+			<input type="text" name="response.attributes.AFGB" class="input_text field" pattern=".*[0-9]" title="Numeric figures only"></span>
+			<span class="span_mid"><input type="text" name="response.attributes.AFGC" class="input_text field" pattern=".*[0-9]" title="Numeric figures only">
+			<input type="text" name="response.attributes.AFGD" class="input_text field" pattern=".*[0-9]" title="Numeric figures only"></span>
+			<span class="span_text_last"><input type="text" name="response.attributes.AFGE" class="input_text field" pattern=".*[0-9]" title="Numeric figures only">
+			<input type="text" name="response.attributes.AFGF" class="input_text field" pattern=".*[0-9]" title="Numeric figures only"></span></span>
 		</p>
 
 
@@ -1251,12 +1251,12 @@
 			
 			<span class="span">Patriotic Front</span>
 			
-			<span class="input"><span class="span_text"><input type="text" name="response.attributes.AFHA" class="input_text field">
-			<input type="text" name="response.attributes.AFHB" class="input_text field"></span>
-			<span class="span_mid"><input type="text" name="response.attributes.AFHC" class="input_text field">
-			<input type="text" name="response.attributes.AFHD" class="input_text field"></span>
-			<span class="span_text_last"><input type="text" name="response.attributes.AFHE" class="input_text field">
-			<input type="text" name="response.attributes.AFHF" class="input_text field"></span></span>
+			<span class="input"><span class="span_text"><input type="text" name="response.attributes.AFHA" class="input_text field" pattern=".*[0-9]" title="Numeric figures only">
+			<input type="text" name="response.attributes.AFHB" class="input_text field" pattern=".*[0-9]" title="Numeric figures only"></span>
+			<span class="span_mid"><input type="text" name="response.attributes.AFHC" class="input_text field" pattern=".*[0-9]" title="Numeric figures only">
+			<input type="text" name="response.attributes.AFHD" class="input_text field" pattern=".*[0-9]" title="Numeric figures only"></span>
+			<span class="span_text_last"><input type="text" name="response.attributes.AFHE" class="input_text field" pattern=".*[0-9]" title="Numeric figures only">
+			<input type="text" name="response.attributes.AFHF" class="input_text field" pattern=".*[0-9]" title="Numeric figures only"></span></span>
 		</p>
 		
 		<p class="style">
@@ -1264,12 +1264,12 @@
 			
 			<span class="span">ULP</span>
 			
-			<span class="input"><span class="span_text"><input type="text" name="response.attributes.AFJA" class="input_text field">
-			<input type="text" name="response.attributes.AFJB" class="input_text field"></span>
-			<span class="span_mid"><input type="text" name="response.attributes.AFJC" class="input_text field">
-			<input type="text" name="response.attributes.AFJD" class="input_text field"></span>
-			<span class="span_text_last"><input type="text" name="response.attributes.AFJE" class="input_text field">
-			<input type="text" name="response.attributes.AFJF" class="input_text field"></span></span>
+			<span class="input"><span class="span_text"><input type="text" name="response.attributes.AFJA" class="input_text field" pattern=".*[0-9]" title="Numeric figures only">
+			<input type="text" name="response.attributes.AFJB" class="input_text field" pattern=".*[0-9]" title="Numeric figures only"></span>
+			<span class="span_mid"><input type="text" name="response.attributes.AFJC" class="input_text field" pattern=".*[0-9]" title="Numeric figures only">
+			<input type="text" name="response.attributes.AFJD" class="input_text field" pattern=".*[0-9]" title="Numeric figures only"></span>
+			<span class="span_text_last"><input type="text" name="response.attributes.AFJE" class="input_text field" pattern=".*[0-9]" title="Numeric figures only">
+			<input type="text" name="response.attributes.AFJF" class="input_text field" pattern=".*[0-9]" title="Numeric figures only"></span></span>
 		</p>
 
 		<p class="style">
@@ -1277,12 +1277,12 @@
 			
 			<span class="span">UNIP</span>
 			
-			<span class="input"><span class="span_text"><input type="text" name="response.attributes.AFKA" class="input_text field">
-			<input type="text" name="response.attributes.AFKB" class="input_text field"></span>
-			<span class="span_mid"><input type="text" name="response.attributes.AFKC" class="input_text field">
-			<input type="text" name="response.attributes.AFKD" class="input_text field"></span>
-			<span class="span_text_last"><input type="text" name="response.attributes.AFKE" class="input_text field">
-			<input type="text" name="response.attributes.AFKF" class="input_text field"></span></span>
+			<span class="input"><span class="span_text"><input type="text" name="response.attributes.AFKA" class="input_text field" pattern=".*[0-9]" title="Numeric figures only">
+			<input type="text" name="response.attributes.AFKB" class="input_text field" pattern=".*[0-9]" title="Numeric figures only"></span>
+			<span class="span_mid"><input type="text" name="response.attributes.AFKC" class="input_text field" pattern=".*[0-9]" title="Numeric figures only">
+			<input type="text" name="response.attributes.AFKD" class="input_text field" pattern=".*[0-9]" title="Numeric figures only"></span>
+			<span class="span_text_last"><input type="text" name="response.attributes.AFKE" class="input_text field" pattern=".*[0-9]" title="Numeric figures only">
+			<input type="text" name="response.attributes.AFKF" class="input_text field" pattern=".*[0-9]" title="Numeric figures only"></span></span>
 		</p>
 
 		<p class="style">
@@ -1290,12 +1290,12 @@
 			
 			<span class="span">UPND</span>
 			
-			<span class="input"><span class="span_text"><input type="text" name="response.attributes.AFMA" class="input_text field">
-			<input type="text" name="response.attributes.AFMB" class="input_text field"></span>
-			<span class="span_mid"><input type="text" name="response.attributes.AFMC" class="input_text field">
-			<input type="text" name="response.attributes.AFMD" class="input_text field"></span>
-			<span class="span_text_last"><input type="text" name="response.attributes.AFME" class="input_text field">
-			<input type="text" name="response.attributes.AFMF" class="input_text field"></span></span>
+			<span class="input"><span class="span_text"><input type="text" name="response.attributes.AFMA" class="input_text field" pattern=".*[0-9]" title="Numeric figures only">
+			<input type="text" name="response.attributes.AFMB" class="input_text field"></span pattern=".*[0-9]" title="Numeric figures only">
+			<span class="span_mid"><input type="text" name="response.attributes.AFMC" class="input_text field" pattern=".*[0-9]" title="Numeric figures only">
+			<input type="text" name="response.attributes.AFMD" class="input_text field" pattern=".*[0-9]" title="Numeric figures only"></span>
+			<span class="span_text_last"><input type="text" name="response.attributes.AFME" class="input_text field" pattern=".*[0-9]" title="Numeric figures only">
+			<input type="text" name="response.attributes.AFMF" class="input_text field" pattern=".*[0-9]" title="Numeric figures only"></span></span>
 		</p>
 
 		<p class="style">
@@ -1303,12 +1303,12 @@
 			
 			<span class="span">ZED</span>
 			
-			<span class="input"><span class="span_text"><input type="text" name="response.attributes.AFNA" class="input_text field">
-			<input type="text" name="response.attributes.AFNB" class="input_text field"></span>
-			<span class="span_mid"><input type="text" name="response.attributes.AFNC" class="input_text field">
-			<input type="text" name="response.attributes.AFND" class="input_text field"></span>
-			<span class="span_text_last"><input type="text" name="response.attributes.AFNE" class="input_text field">
-			<input type="text" name="response.attributes.AFNF" class="input_text field"></span></span>
+			<span class="input"><span class="span_text"><input type="text" name="response.attributes.AFNA" class="input_text field" pattern=".*[0-9]" title="Numeric figures only">
+			<input type="text" name="response.attributes.AFNB" class="input_text field" pattern=".*[0-9]" title="Numeric figures only"></span>
+			<span class="span_mid"><input type="text" name="response.attributes.AFNC" class="input_text field" pattern=".*[0-9]" title="Numeric figures only">
+			<input type="text" name="response.attributes.AFND" class="input_text field" pattern=".*[0-9]" title="Numeric figures only"></span>
+			<span class="span_text_last"><input type="text" name="response.attributes.AFNE" class="input_text field" pattern=".*[0-9]" title="Numeric figures only">
+			<input type="text" name="response.attributes.AFNF" class="input_text field" pattern=".*[0-9]" title="Numeric figures only"></span></span>
 		</p>
 			
 		<p class="style">
@@ -1316,12 +1316,12 @@
 			
 			<span class="span">Number of Rejected Ballots</span>
 			
-			<span class="input"><span class="span_text"><input type="text" name="response.attributes.AFPA" class="input_text field">
-			<input type="text" name="response.attributes.AFPB" class="input_text field"></span>
-			<span class="span_mid"><input type="text" name="response.attributes.AFPC" class="input_text field">
-			<input type="text" name="response.attributes.AFPD" class="input_text field"></span>
-			<span class="span_text_last"><input type="text" name="response.attributes.AFPF" class="input_text field">
-			<input type="text" name="response.attributes.AFPE" class="input_text field"></span></span>
+			<span class="input"><span class="span_text"><input type="text" name="response.attributes.AFPA" class="input_text field" pattern=".*[0-9]" title="Numeric figures only">
+			<input type="text" name="response.attributes.AFPB" class="input_text field" pattern=".*[0-9]" title="Numeric figures only"></span>
+			<span class="span_mid"><input type="text" name="response.attributes.AFPC" class="input_text field" pattern=".*[0-9]" title="Numeric figures only">
+			<input type="text" name="response.attributes.AFPD" class="input_text field" pattern=".*[0-9]" title="Numeric figures only"></span>
+			<span class="span_text_last"><input type="text" name="response.attributes.AFPF" class="input_text field" pattern=".*[0-9]" title="Numeric figures only">
+			<input type="text" name="response.attributes.AFPE" class="input_text field" pattern=".*[0-9]" title="Numeric figures only"></span></span>
 		</p>
 				
 		<p class="style">
