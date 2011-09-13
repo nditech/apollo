@@ -42,6 +42,9 @@ table.datagrid th {
     background-color: #eee;
 }
 
+tr.ecz_code_incorrect {background-color:#FCE6C9;}
+tr.ecz_code_incorrect:nth-child(2n+1) {background-color: #FCE6C9;}
+
 .datagrid tr:hover {
     background-color: #fff;
 }

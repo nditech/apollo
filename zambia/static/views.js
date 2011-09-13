@@ -140,6 +140,10 @@ ChecklistView = Backbone.View.extend({
 	
 	render: function () {
 		$(this.el).html(Templates.Checklist(this.model.attributes));
+		// ECZ code check
+		if (this.model.get('response').get('J') && this.model.get('location').get('parent').get('code') != this.model.get('response').get('J')) {
+		    $(this.el).addClass('ecz_code_incorrect');
+		}
 		return this.el;
 	}
 });
@@ -244,6 +248,8 @@ ChecklistEditView = Backbone.View.extend({
 		        $('input[name="response.attributes.'+key+'"]', self.el).val(value);
 		    }
 		});
+		
+		$("input[name='response.attributes.J']", self.el).trigger('keyup');
         
 		return self.el;
 	}
