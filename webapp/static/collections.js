@@ -4,7 +4,7 @@ MessageCollection = PaginatedCollection.extend({
     baseUrl: '/api/v1/message/',
 });
 
-LocationCollection = Backbone.Collection.extend({
+LocationCollection = PaginatedCollection.extend({
 	model: Location,
 	baseUrl: '/api/v1/location/',
 });

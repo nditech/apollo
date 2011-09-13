@@ -163,3 +163,18 @@ class ChecklistFormParty(models.Model):
 
     def __unicode__(self):
         return '%s -> %s' % (self.form, self.party)
+
+class Application(models.Model):
+    """Application model"""
+    name = models.CharField(blank=True, max_length=100)
+
+    class Admin:
+        list_display = ('',)
+        search_fields = ('',)
+
+    class Meta:
+        permissions = (
+            ('can_sms', 'Can send SMS'),
+        )
+    def __unicode__(self):
+        return self.name

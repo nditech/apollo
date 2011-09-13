@@ -17,7 +17,7 @@
 <script src="/static/zambia/collections.js" type="text/javascript" charset="utf-8"></script>
 <script src="/static/zambia/views.js" type="text/javascript" charset="utf-8"></script>
 <script src="/static/zambia/routers.js" type="text/javascript" charset="utf-8"></script>
-{% app_templates %}
+{% app_templates context_instance %}
 <script type="text/javascript" charset="utf-8">
 	$(function() {
 		new WebappRouter();
@@ -44,7 +44,8 @@
 								<li><a href="#!/elections/results_analysis">Results Analysis</a></li> 
 							</ul> 
 						</li> 		
-						<li><a href="#!/contacts">Contacts</a></li> 
+						<li><a href="#!/contacts">Contacts</a></li>
+						<li><a href="/accounts/logout/">Sign Out</a></li> 
 					</ul>
 				</div><!-- /dropmenu --> 
 			</div><!-- /navigation -->

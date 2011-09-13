@@ -65,7 +65,11 @@
 			</select>
 		</div>
 		<div class="input_el">
+% if perms['webapp'].user.has_perm('can_sms'):
 			<span class="btn_blue btn_space"><input type="submit" name="submit" value="Filter" class="search_btn"><span>&nbsp;</span></span><span class="btn_gray btn_space"><a href="javascript:;" id="form_reset">Reset</a><span>&nbsp;</span></span><span class="btn_yellow"><a href='javascript:;' class="sms_sender">SMS</a><span>&nbsp;</span></span>
+% else:
+			<span class="btn_blue btn_space"><input type="submit" name="submit" value="Filter" class="search_btn"><span>&nbsp;</span></span><span class="btn_gray btn_space"><a href="javascript:;" id="form_reset">Reset</a><span>&nbsp;</span></span>
+% endif
 		</div>
 		</form>
 		<div class="clear"></div>
@@ -1404,7 +1408,11 @@
 			</select>
 		</div>
 		<div class="input_el">
+% if perms['webapp'].user.has_perm('can_sms'):
 			<span class="btn_blue btn_space"><input type="submit" name="submit" value="Search" class="search_btn"><span>&nbsp;</span></span><span class="btn_gray btn_space"><a href="javascript:;" id="form_reset">Reset</a><span>&nbsp;</span></span><span class="btn_yellow"><a href='javascript:;' class="sms_sender">SMS</a><span>&nbsp;</span></span>
+% else:
+			<span class="btn_blue btn_space"><input type="submit" name="submit" value="Search" class="search_btn"><span>&nbsp;</span></span><span class="btn_gray btn_space"><a href="javascript:;" id="form_reset">Reset</a><span>&nbsp;</span></span>
+% endif
 		</div>
 		</form>
 		<div class="clear"></div>
@@ -1424,8 +1432,9 @@
 <script type="text/x-handlebars-template" id='contact-edit-template' charset="utf-8">
 	<form id="contact_form" class="edit_form_floated">
 	<label for="observer_id"><span class="label">Monitor ID</span> <input type="text" id="observer_id" name="observer_id" class="input_smoke field" value="{{observer_id}}"></label>
-	<label for="nrc"><span class="label">NRC No.</span> <input type="text" id="nrc" name="nrc" class="input_smoke field" value="{{nrc}}"></label>
 	<label for="name"><span class="label">Name</span> <input type="text" name="name" id="name" class="input_smoke field" value="{{name}}"></label>
+	<label for="phone"><span class="label">Phone</span> <input type="text" name="phone" id="connections.models[0].attributes.identity" class="input_smoke field" value="{{connections.models.0.attributes.identity}}"></label>
+	<label for="nrc"><span class="label">NRC No.</span> <input type="text" id="nrc" name="nrc" class="input_smoke field" value="{{nrc}}"></label>
 	<label for="role"><span class="label">Role</span> <select name="role" id="role" class="input_smoke field">
 		<option value='/api/v1/contact_role/1/'>District Supervisor</option>
 		<option value='/api/v1/contact_role/2/'>Monitor</option>
@@ -1435,10 +1444,16 @@
 		<option value='M'>Male</option>
 		<option value='F'>Female</option>
 	</select></label>
-	<label for="phone"><span class="label">Phone</span> <input type="text" name="phone" id="connections.models[0].attributes.identity" class="input_smoke field" value="{{connections.models.0.attributes.identity}}"></label>
+	
 	<label for="partner"><span class="label">Partner</span> <select name="partner" id="partner" class="input_smoke field">
+		<option value="AVAP">AVAP</option>
 		<option value="Caritas">Caritas</option>
 		<option value="FODEP">FODEP</option>
+		<option value="OYV">OYV</option>
+		<option value="SACCORD">SACCORD</option>
+		<option value="TI-Z">TI-Z</option>
+		<option value="YWA">YWA</option>
+		<option value="ZNWL">ZNWL</option>
 	</select></label>
 	<label for="cell_coverage"><span class="label">Cell Coverage</span> <select name="cell_coverage" id="cell_coverage" class="input_smoke field">
 		<option value='1'>Yes</option>
@@ -1454,7 +1469,11 @@
 		<div class="input_el"><input type="text" name="date" class="input_smoke search_field date_field" placeholder="Date" id="search_date__exact"></div>
 		<div class="input_el"><input type="text" name="location" class="input_smoke" placeholder="Location" id="location__id"></div>
 		<div class="input_el">
+% if perms['webapp'].user.has_perm('can_sms'):
 			<span class="btn_blue btn_space"><input type="submit" name="submit" value="Filter" class="search_btn"><span>&nbsp;</span></span><span class="btn_gray btn_space"><a href="javascript:;" id="form_reset">Reset</a><span>&nbsp;</span></span><span class="btn_yellow btn_space"><a href='javascript:;' class="sms_sender">SMS</a><span>&nbsp;</span></span><span class="btn_red btn_space"><a href="javascript:;" id="form_add_incident">Add Incident</a><span>&nbsp;</span></span>
+% else:
+			<span class="btn_blue btn_space"><input type="submit" name="submit" value="Filter" class="search_btn"><span>&nbsp;</span></span><span class="btn_gray btn_space"><a href="javascript:;" id="form_reset">Reset</a><span>&nbsp;</span></span><span class="btn_red btn_space"><a href="javascript:;" id="form_add_incident">Add Incident</a><span>&nbsp;</span></span>
+% endif
 		</div>
 		</form>
 		<div class="clear"></div>
@@ -1473,134 +1492,141 @@
 </script>
 <script type="text/x-handlebars-template" id="incident-metadata-template" charset="utf-8">
 	<div>
-		<p class="style"><span class="span"><label>Province</label></span><span class="input"><input type="text" name="text"  class="input_smoke"></span></p>
-		<p class="style"><span class="span"><label>District</label></span><span class="input"><input type="text" name="text"  class="input_smoke"></span></p>
-		<p class="style"><span class="span"><label>Constituency</label></span><span class="input"><input type="text" name="text"  class="input_smoke"></span></p>
-		<p class="style"><span class="span"><label>Ward</label></span><span class="input"><input type="text" name="text"  class="input_smoke"></span></p>
-		<p class="style"><span class="span"><label>Polling District</label></span><span class="input"><input type="text" name="text"  class="input_smoke"></span></p>
-		<p class="style"><span class="span"><label>Polling District ID</label></span><span class="input"><input type="text" name="text"  class="input_smoke"></span></p>
+		<p class="style"><span class="span"><label>Monitor Id</label></span><span class="input"><input name="monitor_id" id="monitor_id" class="input_smoke"><span id="observer_name" style="vertical-align:middle;font-size:0.8em;margin-left:0.8em"></span><input type="hidden" id="observer_id" name="observer" class="field" value="" /></span></p>
+		<p class="style"><span class="span"><label>Province</label></span><span class="input"><select name="province" title="province" class="input_smoke location_select"></select></span></p>
+		<p class="style"><span class="span"><label>District</label></span><span class="input"><select name="district" title="district" class="input_smoke location_select"></select></span></p>
+		<p class="style"><span class="span"><label>Constituency</label></span><span class="input"><select name="constituency" title="constituency" class="input_smoke location_select"></select></span></p>
+		<p class="style"><span class="span"><label>Ward</label></span><span class="input"><select name="ward" title="ward" class="input_smoke location_select"></select></span></p>
+		<p class="style"><span class="span"><label>Polling District</label></span><span class="input"><select name="location" title="polling_district" class="input_smoke location_select field"></select></span></p>
 		<p class="clear"></p>
 	</div>
 </script>
 <script type="text/x-handlebars-template" id="incident-edit-template" charset="utf-8">
 	<form id="incident_form">
 		<p class="style">
-			<span class="code">1a.</span>
+			<span class="code">1.</span>
+			<span class="input"><strong>Witness</strong></span>
+		</p>
+		
+		<p class="style">
+			<span class="code">a.</span>
 			<span class="input"><label><input type="radio" name="response.attributes.W" value="1" class="field">I witnessed the incident</label></span>
 		</p>
 	
 		<p class="style">
-			<span class="code">1b.</span>
+			<span class="code">b.</span>
 			<span class="input"><label><input type="radio" name="response.attributes.W" value="2" class="field">I arrived just after the incident happened</label></span>
 		</p>
 	
 		<p class="style">
-			<span class="code">1c.</span>
+			<span class="code">c.</span>
 			<span class="input"><label><input type="radio" name="response.attributes.W" value="3" class="field">The incident was reported to me by someone else</label></span>
 		</p>
 		
 		<p class="clear"></p>
+
+		<p class="style">
+			<span class="code">2.</span>
+			<span class="input"><strong>Incident Types</strong></span>
+		</p>
 	
 		<p class="style">
-			<span class="code">2a.</span>
+			<span class="code">a.</span>
 			<span class="input"><label><input type="checkbox" class="field" name="response.attributes.A" value="1">Polling stream did not open</label></span>
 		</p>
 
 		<p class="style">
-			<span class="code">2b.</span>
+			<span class="code">b.</span>
 			<span class="input"><label><input type="checkbox" class="field" name="response.attributes.B" value="1">Polling stream opened very late</label></span>
 		</p>
 	
 		<p class="style">
-			<span class="code">2c.</span>
+			<span class="code">c.</span>
 			<span class="input"><label><input type="checkbox" class="field" name="response.attributes.C" value="1">Polling stream closed very early</label></span>
 		</p>
 	
 		<p class="style">
-			<span class="code">2d.</span>
+			<span class="code">d.</span>
 			<span class="input"><label><input type="checkbox" class="field" name="response.attributes.D" value="1">Polling stream did not have materials at opening</label></span>
 		</p>
 	
 		<p class="style">
-			<span class="code">2e.</span>
+			<span class="code">e.</span>
 			<span class="input"><label><input type="checkbox" class="field" name="response.attributes.E" value="1">Vote buying/bribery</label></span>
 		</p>
 	
 		<p class="style">
-			<span class="code">2f.</span>
+			<span class="code">f.</span>
 			<span class="input"><label><input type="checkbox" class="field" name="response.attributes.F" value="1">Monitor denied access to polling stream</label></span>
 		</p>
 	
 		<p class="style">
-			<span class="code">2g.</span>
+			<span class="code">g.</span>
 			<span class="input"><label><input type="checkbox" class="field" name="response.attributes.G" value="1">Monitor not permitted to use reporting form</label></span>
 		</p>
 	
 		<p class="style">
-			<span class="code">2h.</span>
+			<span class="code">h.</span>
 			<span class="input"><label><input type="checkbox" class="field" name="response.attributes.H" value="1">Police officers inside polling station</label></span>
 		</p>
 	
 		<p class="style">
-			<span class="code">2i.</span>
+			<span class="code">i.</span>
 			<span class="input"><label><input type="checkbox" class="field" name="response.attributes.I" value="1">Polling stream ran out of materials</label></span>
 		</p>
 	
 		<p class="style">
-			<span class="code">2j.</span>
+			<span class="code">j.</span>
 			<span class="input"><label><input type="checkbox" class="field" name="response.attributes.J" value="1">People in the queue at the time of official close of the polling station not allowed to vote</label></span>
 		</p>
 	
 		<p class="style">
-			<span class="code">2k.</span>
+			<span class="code">k.</span>
 			<span class="input"><label><input type="checkbox" class="field" name="response.attributes.K" value="1">Violence/intimidation in or near the polling station</label></span>
 		</p>
 	
 		<p class="style">
-			<span class="code">2k1.</span>
+			<span class="code">k1.</span>
 			<span class="input"><label><input type="checkbox" class="field" name="response.attributes.K1" value="1">Uniformed police</label></span>
 		</p>
 	
 		<p class="style">
-			<span class="code">2k2.</span>
+			<span class="code">k2.</span>
 			<span class="input"><label><input type="checkbox" class="field" name="response.attributes.K2" value="1">Party supporters</label></span>
 		</p>
 	
 		<p class="style">
-			<span class="code">2k4.</span>
+			<span class="code">k4.</span>
 			<span class="input"><label><input type="checkbox" class="field" name="response.attributes.K4" value="1">Others</label></span></p>
 	
 		<p class="style">
-			<span class="code">2l.</span>
+			<span class="code">l.</span>
 			<span class="input"><label><input type="checkbox" class="field" name="response.attributes.L" value="1">Violation of voting or counting procedures</label></span>
 		</p>
 	
 		<p class="style">
-			<span class="code">2m.</span>
+			<span class="code">m.</span>
 			<span class="input"><label><input type="checkbox" class="field" name="response.attributes.M" value="1">Stealing or damaging of ballots</label></span>
 		</p>
 	
 		<p class="style">
-			<span class="code">2n.</span>
+			<span class="code">n.</span>
 			<span class="input"><label><input type="checkbox" class="field" name="response.attributes.N" value="1">Voting or counting suspended during the process for more than 30 minutes</label></span>
 		</p>
 	
 		<p class="style">
-			<span class="code">2o.</span>
+			<span class="code">o.</span>
 			<span class="input"><label><input type="text" name="response.attributes.O"  class="input_smoke field">Other (explain)</label></span>
 		</p>
-	
+		
+		<p class="clear"></p>
+		
 		<p class="style">
 			<span class="code">3.</span>
-			<span class="input">Description of Incident:<br/>
+			<span class="input"><strong>Description of Incident</strong><br/>
 			Please provide a brief description of the concrete facts regarding each incident, including who participated (their position and affiliation) and the sequence of events. Indicate other individuals, such as local or international observers or political party polling agents, who also witnessed the incident (and their contact information if possible).<br />
 			<br /><textarea rows="10" cols="60" class="input_smoke field" name="response.attributes.description"></textarea>
 			</span>
-		</p>
-	
-		<p class="style">
-			<span class="code">&nbsp;</span>
-			<span class="input">Name of the monitor<br /><input type="text" name="text" class="input_smoke"></span>
 		</p>
 	
 		<p class="style form_buttons">
@@ -1614,6 +1640,12 @@
 		<p>Are you sure you want to delete this incident?</p>
 		<div class="fb_2buttons"><span class="btn_red btn_space"><a href="javascript:;" title="{{resource_uri}}" id="del_btn">Delete</a><span></span></span><span class="btn_gray"><a href="javascript:;" id="del_cancel">Cancel</a><span></span></span></div>
 	</div>
+</script>
+<script type="text/x-handlebars-template" id="location-options-template" charset="utf-8">
+	<option>- select one -</option>
+	{{#each locations}}
+	<option value="{{attributes.resource_uri}}" title="{{attributes.id}}" {{#ifequal attributes.id ../selected_id}}selected="selected"{{/ifequal}}>{{attributes.name}}</option>
+	{{/each}}
 </script>
 <script type="text/javascript" charset="utf-8">
 	function checklist_setup_complete(response) {
@@ -1744,6 +1776,13 @@
 			return new Handlebars.SafeString('&nbsp;');
 		}
 	});
+	Handlebars.registerHelper('ifequal', function(conda, condb, block) {
+	  if (conda == condb) {
+	    return block(this);
+	  } else {
+		return block.inverse(this);
+	}
+	});
 	
 	Templates = (typeof(Templates) == 'undefined') ? {} : Templates;
 	Templates.ChecklistFilter = Handlebars.compile($('#checklist-filter-template').html());
@@ -1766,4 +1805,5 @@
 	Templates.IncidentMetadata = Handlebars.compile($('#incident-metadata-template').html());
 	Templates.IncidentEdit = Handlebars.compile($('#incident-edit-template').html());
 	Templates.IncidentDelDialog = Handlebars.compile($('#incident-delete-dialog-template').html());
+	Templates.LocationOptions = Handlebars.compile($('#location-options-template').html());
 </script>

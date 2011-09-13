@@ -29,6 +29,6 @@ urlpatterns = patterns('',
 
 #authentication urls
 urlpatterns += patterns('',
-    (r'^accounts/login/$', 'django.contrib.auth.views.login', {'template_name': 'psc/login.html'}),
+    (r'^accounts/login/$', 'django.contrib.auth.views.login', {'template_name': 'webapp/login.html'}),
     (r'^accounts/logout/$', 'django.contrib.auth.views.logout_then_login')
 )

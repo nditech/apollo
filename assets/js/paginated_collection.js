@@ -98,10 +98,10 @@ var PaginatedCollection = Backbone.Collection.extend({
     this.offset = ((page - 1) * this.limit) || 0;
     return this.fetch();
   },
-  filtrate: function (options) {
+  filtrate: function (options, fetch_options) {
       this.filter_options = options || {};
       this.offset = 0;
-      return this.fetch();
+      return this.fetch(fetch_options);
   },
   sort_by: function (field) {
       this.sort_field = field;
