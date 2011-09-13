@@ -143,6 +143,22 @@
   },
   {
     "pk": 1,
+    "model": "webapp.incidentform",
+    "fields": {
+      "prefix": "",
+      "name": "Elections"
+    }
+  },
+  {
+    "pk": 2,
+    "model": "webapp.incidentform",
+    "fields": {
+      "prefix": "",
+      "name": "Elections (RRP)"
+    }
+  },
+  {
+    "pk": 1,
     "model": "webapp.checklistform",
     "fields": {
       "prefix": "EDAY",
