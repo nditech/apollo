@@ -87,11 +87,12 @@ $(function () {
 		if (match) {
 			$('div.pane').hide();
 			$('div#pane' + match[1]).show();
+			$.scrollTo('div#wrapper', 400);
 		}
 	});
 	$('div.section_tabs li').live('click', function(){
-		$(this).addClass('current');
-		$('div.section_tabs li').not(this).removeClass('current');
+	    $('div.section_tabs li[title="'+$(this).attr('title')+'"]').addClass('current');
+		$('div.section_tabs li').not($('div.section_tabs li[title="'+$(this).attr('title')+'"]')).removeClass('current');
 	});
 	
 	// Uncheck a radio button if clicked twice	

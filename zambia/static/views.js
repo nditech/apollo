@@ -237,6 +237,7 @@ ChecklistEditView = Backbone.View.extend({
 		$(self.el).html(Templates.ChecklistSectionTabs());
 		$(self.el).append(Templates.ChecklistMetadata(this.model.attributes));
 		$(self.el).append(Templates.ChecklistEdit(this.model.attributes));
+		$('div.pane:last', self.el).after(Templates.ChecklistSectionTabs());
 		
 		// Initialize values for drop down selections
 		_(self.model.get('response').attributes).each(function (value, key) {
