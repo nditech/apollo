@@ -4,7 +4,7 @@ from django.views.decorators.csrf import csrf_exempt
 from djangomako.shortcuts import render_to_string
 from django.contrib.auth.decorators import login_required, permission_required
 from django.template import RequestContext
-from django.http import HttpResponse
+from django.http import *
 from django.conf import settings
 from api import *
 from tasks import *
@@ -23,7 +23,7 @@ def app_templates(context):
 
 @permission_required('webapp.can_sms')
 @csrf_exempt
-def send_sms(request):       
+def send_sms(request):    
     if request.POST:
         collection_type = request.POST.get('collection_type', '')
         message = request.POST.get('message', '')
@@ -35,8 +35,7 @@ def send_sms(request):
         elif collection_type == 'checklist':
             resource = ChecklistResource()
         
-        request_params = request.POST.get('filter', '')
-        
+        request_params = request.POST
         applicable_filters = resource.build_filters(request_params)
         obj_list = resource.apply_filters(request, applicable_filters)
         
@@ -47,7 +46,11 @@ def send_sms(request):
         elif collection_type == 'checklist':
             phone_numbers = [re.sub(r'^0', '260', checklist.observer.connection_set.all()[0].identity) for checklist in obj_list]
         
-        phone_numbers = set(phone_numbers)
-        #MessageBlast.delay(phone_numbers, message)
+        to = ",".join(set(phone_numbers))
+        if to:
+            MessageBlast.delay(to, message)
+            return HttpResponse(len(phone_numbers))
+        else:
+            return HttpResponseBadRequest()
             
-    return HttpResponse('OK')
+    return HttpResponseBadRequest()
