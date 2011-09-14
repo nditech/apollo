@@ -1,6 +1,7 @@
 // Backbone.js models
 
 Contact = Backbone.RelationalModel.extend({
+    urlRoot: '/api/v1/contact/',
     relations: [{
         type: Backbone.HasMany,
 		key: 'connections',

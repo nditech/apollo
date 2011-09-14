@@ -50,6 +50,7 @@ Message = Backbone.RelationalModel.extend({
 });
 
 Incident = Backbone.RelationalModel.extend({
+    urlRoot: '/api/v1/incident/',
 	relations: [{
 		type: Backbone.HasOne,
 		key: 'form',
@@ -78,7 +79,6 @@ Incident = Backbone.RelationalModel.extend({
 		type: Backbone.HasOne,
 		key: 'response',
 		relatedModel: 'IncidentResponse',
-		includeInJSON: 'resource_uri',
 		reverserRelation: {
 			key: 'incident'
 		}
@@ -87,6 +87,7 @@ Incident = Backbone.RelationalModel.extend({
 IncidentResponse = Backbone.RelationalModel.extend();
 
 Checklist = Backbone.RelationalModel.extend({
+    urlRoot: '/api/v1/checklist/',
 	relations: [{
 		type: Backbone.HasOne,
 		key: 'form',

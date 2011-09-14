@@ -4,9 +4,9 @@ from models import *
 from django.db.models import Q
 
 class ContactResource(ModelResource):
-    role = fields.ForeignKey(ContactRoleResource, 'role')
+    role = fields.ForeignKey(ContactRoleResource, 'role', full=True)
     location = fields.ForeignKey(LocationResource, 'location', full=True)
-    supervisor = fields.ForeignKey('self', 'supervisor', null=True, blank=True)
+    supervisor = fields.ForeignKey('self', 'supervisor', null=True, blank=True, full=True)
     cell_coverage = fields.IntegerField('cell_coverage', null=True, blank=True)
     connections = fields.ToManyField(ConnectionResource, 'connection_set', readonly=True, full=True)
     
@@ -246,6 +246,7 @@ class ChecklistsResource(ModelResource):
 
 class ChecklistResource(ModelResource):
     location = fields.ForeignKey(LocationResource, 'location', full=True, null=True, readonly=True)
+    form     = fields.ForeignKey(ChecklistFormResource, 'form')
     observer = fields.ForeignKey(ContactResource, 'observer', full=True, null=True, readonly=True)
     response = fields.ToOneField(ChecklistResponseResource, 'response', full=True)
 
@@ -299,8 +300,9 @@ class IncidentsResource(ModelResource):
 
 class IncidentResource(ModelResource):
     location = fields.ForeignKey(LocationResource, 'location', full=True)
-    observer = fields.ForeignKey(ContactResource, 'observer', readonly=True, full=True)
-    response = fields.ToOneField(IncidentResponseResource, 'response', full=True)
+    form     = fields.ForeignKey(IncidentFormResource, 'form')
+    observer = fields.ForeignKey(ContactResource, 'observer', full=True)
+    response = fields.ToOneField(IncidentResponseResource, 'response', full=True, readonly=True)
     
     class Meta:
         queryset = Incident.objects.select_related()
