@@ -1,0 +1,59 @@
+{% load webapp_tags %}
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<title>Apollo - Sign In</title>
+<link rel="stylesheet" type="text/css" href="/assets/css/style.css" />
+<style type="text/css" media="screen">
+	div#login_box {
+		width:25em;margin:0 auto;overflow:auto;background-color:#eee;padding:2em;
+		-moz-border-radius: 5px; border-radius: 5px;
+	}
+	#login_box span.label {font-size:1.4em;vertical-align:middle;display:inline-block;float:left;width:6em;margin-top:0.25em;}
+	#login_box label input.field {margin-bottom:1em;vertical-align:middle;float:left;}
+	#status_flash {background-color:#fff;padding:1em;font-style:italic;font-size:1.2em;overflow:auto;width:30em;margin:0 auto 3em auto;text-align:center;}
+</style>
+</head>
+<body>
+<div id="wrapper">
+	<div id="header">
+		<div id="logo"><a href="#"><img src="/assets/images/logo.png" alt="" /></a></div>
+	</div><!--/header-->
+	<div id="container">
+		<div class="page-title">
+			<div class="page-title-content">
+				<div class="page-title-info left">
+					<h1>Apollo Sign In</h1>
+				</div>
+				<p class="clr"></p>
+			</div><!--/page-title-content-->
+		</div><!--/page-title-->
+		<div class="full_width_content">
+			{% if form.errors %}
+			<div id="status_flash">
+				Your username and password <strong>did not match</strong>. Please try again.
+			</div>
+	        {% endif %}
+			
+			<div id="login_box">
+				<form action="" method="POST" accept-charset="utf-8">
+					{% csrf_token %}
+					<input type="hidden" name="next" value="{{ next }}" />
+					<label for="username"><span class="label">Username</span><input type="text" name="username" value="" class="input_smoke field" id="username"></label>
+					<label for="password"><span class="label">Password</span><input type="password" name="password" value="" class="input_smoke field" id="password"></label>
+					<label for="submit"><span class="label">&nbsp;</span><span class="btn_yellow"><input type="submit" name="submit" value="Sign In &rarr;" class="search_btn"><span>&nbsp;</span></span></label>
+				</form>
+			</div>
+		</div><!--/full_width_content-->
+	</div><!--/container-->
+	<div id="footer">
+		<div class="footer_bottom">
+			<div class="copyright">
+				&copy; Copyright 2011
+			</div><!--/copyright-->
+			</div><!--/footer_bottom-->
+	</div><!--/footer-->
+</div><!--/wrapper-->
+</body>
+</html>
