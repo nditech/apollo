@@ -69,7 +69,7 @@ ContactEditView = Backbone.View.extend({
 		
 		// Initialize values for drop down selections
 		$('#partner', self.el).val(self.model.get('partner'));
-		$('#role', self.el).val(self.model.get('role'));
+		$('#role', self.el).val(self.model.get('role').get('resource_uri'));
 		$('#gender', self.el).val(self.model.get('gender'));
 		$('#cell_coverage', self.el).val(self.model.get('cell_coverage'));
 		

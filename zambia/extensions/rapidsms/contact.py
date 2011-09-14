@@ -10,8 +10,14 @@ class Observer(models.Model):
         ('F', 'Female'),
     )
     PARTNERS = (
+        ('AVAP', 'AVAP'),
         ('Caritas', 'Caritas'),
-        ('FODEP', 'FODEP')
+        ('FODEP', 'FODEP'),
+        ('OYV', 'OYV'),
+        ('SACCORD', 'SACCORD'),
+        ('TI-Z', 'TI-Z'),
+        ('YWA', 'YWA'),
+        ('ZNWL', 'ZNWL')
     )
     observer_id = models.CharField(max_length=100, validators=[RegexValidator(re.compile(r'\d+', re.I), message='Observer IDs can only contain numerals')])
     role = models.ForeignKey(ObserverRole)
