@@ -78,12 +78,99 @@ ContactEditView = Backbone.View.extend({
             source: '/api/v1/location/search/',
             position: { my: 'left top', at: 'left bottom', collision: 'none', offset: '0 -4'},
             focus: function (event, ui) {
-                $('#location').val(ui.item.label);
+                $('#location').val(ui.item.name);
                 return false;
             },
             select: function (event, ui) {
                 $('#search_location').val(ui.item.resource_uri);
-                $('#location').val(ui.item.label);
+                $('#location').val(ui.item.name);
+                $('#search_location').change();
+                
+                return false;
+            }
+        });
+
+        $("#location", self.el).blur(function () {
+            if (!$(this).val()) {
+                $('#search_location', self.el).val("");
+            }
+            $('#search_location').change();
+        });
+        
+		return self.el;
+	}
+});
+
+ContactAddView = Backbone.View.extend({
+	tagName: 'div',
+	
+	initialize: function () {
+		_.bindAll(this, "render", "save", "fieldChanged", "selectionChanged", "autocompleteChanged");
+	},
+	
+	events: {
+        "change input.field": "fieldChanged",
+        "change select.field": "selectionChanged",
+        "change #search_location": "autocompleteChanged",
+        "submit": "save"
+    },
+    
+    selectionChanged: function (e) {
+        var field = $(e.currentTarget);
+        var value = $("option:selected", field).val() || null;
+        eval('this.model.attributes.'+field.attr('id')+' = value');
+    },
+    
+    fieldChanged: function (e) {
+        var field = $(e.currentTarget);
+        var value = field.val() || null;
+        eval('this.model.attributes.'+field.attr('id')+' = value');
+    },
+    
+    autocompleteChanged: function (e) {
+        var field = $(e.currentTarget);
+        var data = {};
+        match = /^search_(.*)/.exec(field.attr('id'));
+		if (match) {
+		    if (field.val()) {
+		        data[match[1]] = field.val();
+		    } else {
+		        data[match[1]] = this.model.previous(match[1]);
+		    }
+			this.model.attributes[match[1]] = data[match[1]];
+		}
+    },
+    		
+	save: function () {
+	    var self = this;
+	    self.model.save(false, {success: function () {
+	        conn = new Connection();
+            conn.attributes.backend = '/api/v1/backend/1/';
+            conn.attributes.identity = $('#identity', self.el).val();
+            conn.attributes.contact = self.model.get('resource_uri');
+
+            conn.save(false, {success: function () {
+                setTimeout(function () { history.go(-1); }, 200);
+            }});
+	    }});
+	    return false;
+	},
+	
+	render: function () {
+	    var self = this;
+		$(self.el).html(Templates.ContactAdd());
+		
+		// Autocomplete for location input textbox
+        $("#location", self.el).catcomplete({
+            source: '/api/v1/location/search/',
+            position: { my: 'left top', at: 'left bottom', collision: 'none', offset: '0 -4'},
+            focus: function (event, ui) {
+                $('#location').val(ui.item.name);
+                return false;
+            },
+            select: function (event, ui) {
+                $('#search_location').val(ui.item.resource_uri);
+                $('#location').val(ui.item.name);
                 $('#search_location').change();
                 
                 return false;
@@ -357,7 +444,7 @@ IncidentEditView = Backbone.View.extend({
                     $('.location_select').attr('disabled', 'disabled');
                     $('.location_select').html('');
                     
-                    if (model.get('role').name == 'Monitor') {
+                    if (model.get('role').get('name') == 'Monitor') {
                         // Monitor
                         var provinces = new LocationCollection();
                         provinces.filtrate({'type__name':'Province'}, {
@@ -382,7 +469,7 @@ IncidentEditView = Backbone.View.extend({
                                                                var polling_streams = new LocationCollection();
                                                                polling_streams.filtrate({'type__name':'Polling Stream', 'parent__parent__id':model.get('location').get('parent').get('parent').get('id')}, {
                                                                    success: function (coll, response) {
-                                                                       $('select[title="polling_stream"]').html(Templates.LocationOptions({'locations':coll.models, 'selected_id': model.get('location').get('id')}));
+                                                                       $('select[title="polling_stream"]').html(Templates.LocationOptions({'locations':coll.models, 'selected_id': model.get('location').get('id')})).trigger('change');
                                                                    }
                                                                });
                                                            }
@@ -395,7 +482,7 @@ IncidentEditView = Backbone.View.extend({
                                });
                            }
                         });
-                    } else if (model.get('role').name == 'District Supervisor') {
+                    } else if (model.get('role').get('name') == 'District Supervisor') {
                         // District Supervisor
                         var provinces = new LocationCollection();
                         provinces.filtrate({'type__name':'Province'}, {
@@ -599,7 +686,7 @@ IncidentAddView = Backbone.View.extend({
 	tagName: 'div',
 	
 	initialize: function () {
-		_.bindAll(this, "render", "save", "fieldChanged", "selectionChanged", "radioChanged", "locationChanged");
+		_.bindAll(this, "render", "save", "fieldChanged", "selectionChanged", "radioChanged", "locationChanged", "preloadLocations");
 	},
 	
 	events: {
@@ -615,6 +702,7 @@ IncidentAddView = Backbone.View.extend({
     },
     
     preloadLocations: function (e) {
+        var self = this;
         if ($(e.currentTarget).val()) {
             contact = new Contact();
             contact.id = $(e.currentTarget).val();
@@ -623,7 +711,7 @@ IncidentAddView = Backbone.View.extend({
                     $('.location_select').attr('disabled', 'disabled');
                     $('.location_select').html('');
                     
-                    if (model.get('role').name == 'Monitor') {
+                    if (model.get('role').get('name') == 'Monitor') {
                         // Monitor
                         var provinces = new LocationCollection();
                         provinces.filtrate({'type__name':'Province'}, {
@@ -648,7 +736,11 @@ IncidentAddView = Backbone.View.extend({
                                                                var polling_streams = new LocationCollection();
                                                                polling_streams.filtrate({'type__name':'Polling Stream', 'parent__parent__id':model.get('location').get('parent').get('parent').get('id')}, {
                                                                    success: function (coll, response) {
-                                                                       $('select[title="polling_stream"]').html(Templates.LocationOptions({'locations':coll.models, 'selected_id': model.get('location').get('id')}));
+                                                                       $('select[title="polling_stream"]').html(Templates.LocationOptions({'locations':coll.models, 'selected_id': model.get('location').get('id')})).trigger('change');
+                                                                       
+                                                                       var field = $('select[title="polling_stream"]');
+                                                                       var value = $("option:selected", field).val() || null;
+                                                                       eval('self.model.attributes.'+field.attr('name')+' = value');
                                                                    }
                                                                });
                                                            }
@@ -661,7 +753,7 @@ IncidentAddView = Backbone.View.extend({
                                });
                            }
                         });
-                    } else if (model.get('role').name == 'District Supervisor') {
+                    } else if (model.get('role').get('name') == 'District Supervisor') {
                         // District Supervisor
                         var provinces = new LocationCollection();
                         provinces.filtrate({'type__name':'Province'}, {
@@ -748,7 +840,7 @@ IncidentAddView = Backbone.View.extend({
                         $('select[title="polling_stream"]').removeAttr('disabled');
                     }
                 });
-            }  
+            }
         }   
     },
     

@@ -8,7 +8,7 @@ Contact = Backbone.RelationalModel.extend({
 		key: 'connections',
 		relatedModel: 'Connection',
 		reverserRelation: {
-			key: 'contacts'
+			key: 'contact'
 		}
     },{
         type: Backbone.HasOne,
@@ -26,5 +26,20 @@ Contact = Backbone.RelationalModel.extend({
         key: 'location',
         relatedModel: 'Location',
         includeInJSON: 'resource_uri'
+    }]
+});
+
+Backend = Backbone.RelationalModel.extend();
+
+Connection = Backbone.RelationalModel.extend({
+    urlRoot: '/api/v1/connection/',
+    relations: [{
+        type: Backbone.HasOne,
+        key: 'backend',
+        relatedModel: 'Backend',
+        includeInJSON: 'resource_uri',
+        reverseRelation: {
+            key: 'connection'
+        }
     }]
 });

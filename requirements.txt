@@ -13,7 +13,9 @@ numpy==1.5.1
 -e git://github.com/timbaobjects/django-tastypie.git@c52d293950df16290606f9cf4f84e8e3fa2de5bd#egg=django_tastypie-dev
 django-mako==0.1.5pre
 -e git://github.com/django-mptt/django-mptt.git@2d664c26493d3791b4c3f205da30a18326ab7dc9#egg=django_mptt-dev
-django-celery==2.2.4
+django-celery==2.2.7
 xlrd==0.7.1
 xlutils==1.4.1
 xlwt==0.7.2
+django-kombu==0.9.4
+kombu==1.2.1

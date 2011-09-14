@@ -40,7 +40,7 @@ $(function () {
 	
 	// Filter dropper
 	$("div#filter_dropper").live('click', function () {
-		filter_toggle = typeof(filter_toggle) == 'undefined' ? 0 : !filter_toggle;
+		filter_toggle = typeof(filter_toggle) === 'undefined' ? 0 : !filter_toggle;
 		if (filter_toggle) {
 			$("div#filter").slideUp();
 			$(this).toggleClass('down');
@@ -61,6 +61,21 @@ $(function () {
 	   $('#send_indicator').show();
 	   $('#send_btn').attr('disabled', 'disabled');
 	   $('#send_btn_wrapper').addClass('disabled');
+	   
+	   // Determine the filter options and collection type
+	   var params = paginated_collection.filter_options;
+	   if (paginated_collection instanceof ChecklistCollection) {
+	       params.collection_type = 'checklist';
+	   } else if (paginated_collection instanceof IncidentCollection) {
+	       params.collection_type = 'incident';
+	   } else if (paginated_collection instanceof ContactCollection) {
+	       params.collection_type = 'contact';
+	   }
+	   
+	   params.message = $('#message').val();
+	   
+	   $.post("/sendsms", params);
+	   
 	   setTimeout(function () {
 	      $('#send_indicator').hide();
    	      
@@ -208,7 +223,7 @@ $(function () {
 			var o = this.options, e = this.element;
 			e.empty();
 			
-			typeof(o._set) != 'undefined' || (o._set = Math.ceil(o.currentPage/10));
+			typeof(o._set) !== 'undefined' || (o._set = Math.ceil(o.currentPage/10));
 			o._maxsets = Math.ceil(o.pages/10);
 			o._stop = Math.min(o.pages, (o._set * 10));
 			

@@ -30,7 +30,7 @@
 		<form id="search">
 		<div class="input_el"><input type="text" name="observer_id" class="input_smoke search_field" placeholder="Monitor Id" id="search_observer__observer_id__exact" pattern=".*[0-9]" title="Numeric figures only"></div>
 		<div class="input_el"><input type="text" name="date" class="input_smoke search_field date_field" placeholder="Date" id="search_date__exact"></div>
-		<div class="input_el"><input type="text" name="location" class="input_smoke" placeholder="Location" id="location__id"></div>
+		<div class="input_el"><input type="text" name="location" class="input_smoke" placeholder="Location" id="location__id" style="width:30.5em"></div>
 		<div class="clear"></div>
 		<div class="input_el">
 			<select name="setup_status" id="search_setup_status" class="input_smoke search_field">
@@ -1391,7 +1391,7 @@
 		<div class="input_el"><input type="text" name="observer_id" class="input_smoke search_field" id="search_observer_id" placeholder="Monitor ID" pattern=".*[0-9]" title="Numeric figures only"></div>
 		<div class="input_el"><input type="text" name="name" class="input_smoke search_field" id="search_name__icontains" placeholder="Name"></div>
 		<div class="input_el"><input type="text" name="phone" class="input_smoke search_field" id="search_connections__identity__endswith" placeholder="Phone Number" pattern=".*[0-9]" title="Numeric figures only"></div>		
-		<div class="input_el"><input type="text" name="location" class="input_smoke" id="location__id" placeholder="Location"></div>
+		<div class="input_el"><input type="text" name="location" class="input_smoke" id="location__id" placeholder="Location" style="width:30.5em"></div>
 		<div class="clear"></div>
 		<div class="input_el">
 			<select name="partner" id="search_partner" class="input_smoke search_field">
@@ -1409,10 +1409,11 @@
 		</div>
 		<div class="input_el">
 % if perms['webapp'].user.has_perm('can_sms'):
-			<span class="btn_blue btn_space"><input type="submit" name="submit" value="Search" class="search_btn"><span>&nbsp;</span></span><span class="btn_gray btn_space"><a href="javascript:;" id="form_reset">Reset</a><span>&nbsp;</span></span><span class="btn_yellow"><a href='javascript:;' class="sms_sender">SMS</a><span>&nbsp;</span></span>
+			<span class="btn_blue btn_space"><input type="submit" name="submit" value="Search" class="search_btn"><span>&nbsp;</span></span><span class="btn_gray btn_space"><a href="javascript:;" id="form_reset">Reset</a><span>&nbsp;</span></span><span class="btn_yellow btn_space"><a href='javascript:;' class="sms_sender">SMS</a><span>&nbsp;</span></span>
 % else:
 			<span class="btn_blue btn_space"><input type="submit" name="submit" value="Search" class="search_btn"><span>&nbsp;</span></span><span class="btn_gray btn_space"><a href="javascript:;" id="form_reset">Reset</a><span>&nbsp;</span></span>
 % endif
+			<span class="btn_red btn_space"><a href="javascript:;" id="form_add_contact">Add</a><span>&nbsp;</span></span>
 		</div>
 		</form>
 		<div class="clear"></div>
@@ -1424,10 +1425,80 @@
 	</tbody>
 </script>
 <script type="text/x-handlebars-template" id="contact-template" charset="utf-8">
-	<td>{{observer_id}}</td><td>{{name}}</td><td>{{role.name}}</td><td>{{connections.models.0.attributes.identity}}</td><td>{{location.attributes.name}} ({{location.attributes.type.name}})</td><td>{{partner}}</td><td style="text-align:center"><a href="#!/contact/{{id}}">Edit</a></td>
+	<td>{{observer_id}}</td><td>{{name}}</td><td>{{role.attributes.name}}</td><td>{{connections.models.0.attributes.identity}}</td><td>{{location.attributes.name}} ({{location.attributes.type.name}})</td><td>{{partner}}</td><td style="text-align:center"><a href="#!/contact/{{id}}">Edit</a></td>
 </script>
 <script type="text/x-handlebars-template" id="contact-empty-template" charset="utf-8">
 	<tr><td colspan="7" class="empty"><em>No contacts to display</em></td></tr>
+</script>
+<script type="text/x-handlebars-template" id='general-contact-add-template' charset="utf-8">
+	<form id="contact_form" class="edit_form_floated">
+	<label for="name"><span class="label">Name</span> <input type="text" name="name" id="name" class="input_smoke field" value=""></label>
+	<label for="phone"><span class="label">Phone</span> <input type="text" name="phone" id="identity" class="input_smoke" value=""></label>
+	<label for="nrc"><span class="label">NRC No.</span> <input type="text" id="nrc" name="nrc" class="input_smoke field" value=""></label>
+	<label for="role"><span class="label">Role</span> <select name="role" id="role" class="input_smoke field">
+		<option>Not Specified</option>
+		<option value='/api/v1/contact_role/2/'>Monitor</option>
+		<option value='/api/v1/contact_role/3/'>Provincial Supervisor</option>
+		<option value='/api/v1/contact_role/4/'>Constituency Supervisor</option>
+	</select></label>
+	<label for="location"><span class="label">Location</span> <input type="text" name="location" id="location" class="input_smoke" value=""></label>
+	<label for="gender"><span class="label">Gender</span> <select name="gender" id="gender" class="input_smoke field">
+		<option>Not Specified</option>
+		<option value='M'>Male</option>
+		<option value='F'>Female</option>
+	</select></label>
+	<label for="partner"><span class="label">Partner</span> <select name="partner" id="partner" class="input_smoke field">
+		<option>Not Specified</option>
+		<option value="AVAP">AVAP</option>
+		<option value="Caritas">Caritas</option>
+		<option value="FODEP">FODEP</option>
+		<option value="OYV">OYV</option>
+		<option value="SACCORD">SACCORD</option>
+		<option value="TI-Z">TI-Z</option>
+		<option value="YWA">YWA</option>
+		<option value="ZNWL">ZNWL</option>
+	</select></label>
+	<label for="cell_coverage"><span class="label">Cell Coverage</span> <select name="cell_coverage" id="cell_coverage" class="input_smoke field">
+		<option>Not Specified</option>
+		<option value='1'>Yes</option>
+		<option value='0'>No</option>
+	</select></label>
+	<label for="submit"><span class="label">&nbsp;</span> <span class="btn_yellow btn_space"><input type="submit" name="submit" value="Save"><span>&nbsp;</span></span></label>
+	</form>
+</script>
+<script type="text/x-handlebars-template" id='general-contact-edit-template' charset="utf-8">
+	<form id="contact_form" class="edit_form_floated">
+	<label for="name"><span class="label">Name</span> <input type="text" name="name" id="name" class="input_smoke field" value="{{name}}"></label>
+	<label for="phone"><span class="label">Phone</span> <input type="text" name="phone" id="connections.models[0].attributes.identity" class="input_smoke field" value="{{connections.models.0.attributes.identity}}"></label>
+	<label for="nrc"><span class="label">NRC No.</span> <input type="text" id="nrc" name="nrc" class="input_smoke field" value="{{nrc}}"></label>
+	<label for="role"><span class="label">Role</span> <select name="role" id="role" class="input_smoke field">
+		<option value='/api/v1/contact_role/2/'>Monitor</option>
+		<option value='/api/v1/contact_role/1/'>District Supervisor</option>
+		<option value='/api/v1/contact_role/3/'>Provincial Supervisor</option>
+		<option value='/api/v1/contact_role/4/'>Constituency Supervisor</option>
+	</select></label>
+	<label for="location"><span class="label">Location</span> <input type="text" name="location" id="location" class="input_smoke" value="{{location.attributes.name}}"></label>
+	<label for="gender"><span class="label">Gender</span> <select name="gender" id="gender" class="input_smoke field">
+		<option value='M'>Male</option>
+		<option value='F'>Female</option>
+	</select></label>
+	<label for="partner"><span class="label">Partner</span> <select name="partner" id="partner" class="input_smoke field">
+		<option>Not Specified</option>
+		<option value="AVAP">AVAP</option>
+		<option value="Caritas">Caritas</option>
+		<option value="FODEP">FODEP</option>
+		<option value="OYV">OYV</option>
+		<option value="SACCORD">SACCORD</option>
+		<option value="TI-Z">TI-Z</option>
+		<option value="YWA">YWA</option>
+		<option value="ZNWL">ZNWL</option>
+	</select></label>
+	<label for="cell_coverage"><span class="label">Cell Coverage</span> <select name="cell_coverage" id="cell_coverage" class="input_smoke field">
+		<option value='1'>Yes</option>
+		<option value='0'>No</option>
+	</select></label>
+	<label for="submit"><span class="label">&nbsp;</span> <span class="btn_yellow btn_space"><input type="submit" name="submit" value="Save"><span>&nbsp;</span></span></label>
+	</form>
 </script>
 <script type="text/x-handlebars-template" id='contact-edit-template' charset="utf-8">
 	<form id="contact_form" class="edit_form_floated">
@@ -1468,12 +1539,12 @@
 		<form id="search">
 		<div class="input_el"><input type="text" name="observer_id" class="input_smoke search_field" placeholder="Monitor Id" id="search_observer__observer_id__exact" pattern=".*[0-9]" title="Numeric figures only"></div>
 		<div class="input_el"><input type="text" name="date" class="input_smoke search_field date_field" placeholder="Date" id="search_date__exact"></div>
-		<div class="input_el"><input type="text" name="location" class="input_smoke" placeholder="Location" id="location__id"></div>
+		<div class="input_el"><input type="text" name="location" class="input_smoke" placeholder="Location" id="location__id" style="width:30.5em"></div>
 		<div class="input_el">
 % if perms['webapp'].user.has_perm('can_sms'):
-			<span class="btn_blue btn_space"><input type="submit" name="submit" value="Filter" class="search_btn"><span>&nbsp;</span></span><span class="btn_gray btn_space"><a href="javascript:;" id="form_reset">Reset</a><span>&nbsp;</span></span><span class="btn_yellow btn_space"><a href='javascript:;' class="sms_sender">SMS</a><span>&nbsp;</span></span><span class="btn_red btn_space"><a href="javascript:;" id="form_add_incident">Add Incident</a><span>&nbsp;</span></span>
+			<span class="btn_blue btn_space"><input type="submit" name="submit" value="Filter" class="search_btn"><span>&nbsp;</span></span><span class="btn_gray btn_space"><a href="javascript:;" id="form_reset">Reset</a><span>&nbsp;</span></span><span class="btn_yellow btn_space"><a href='javascript:;' class="sms_sender">SMS</a><span>&nbsp;</span></span><span class="btn_red btn_space"><a href="javascript:;" id="form_add_incident">Add</a><span>&nbsp;</span></span>
 % else:
-			<span class="btn_blue btn_space"><input type="submit" name="submit" value="Filter" class="search_btn"><span>&nbsp;</span></span><span class="btn_gray btn_space"><a href="javascript:;" id="form_reset">Reset</a><span>&nbsp;</span></span><span class="btn_red btn_space"><a href="javascript:;" id="form_add_incident">Add Incident</a><span>&nbsp;</span></span>
+			<span class="btn_blue btn_space"><input type="submit" name="submit" value="Filter" class="search_btn"><span>&nbsp;</span></span><span class="btn_gray btn_space"><a href="javascript:;" id="form_reset">Reset</a><span>&nbsp;</span></span><span class="btn_red btn_space"><a href="javascript:;" id="form_add_incident">Add</a><span>&nbsp;</span></span>
 % endif
 		</div>
 		</form>
@@ -1799,7 +1870,8 @@
 	Templates.Contact = Handlebars.compile($('#contact-template').html());
 	Templates.ContactEmpty = Handlebars.compile($('#contact-empty-template').html());
 	Templates.ContactHeader = Handlebars.compile($('#contact-header-template').html());
-	Templates.ContactEdit = Handlebars.compile($('#contact-edit-template').html());
+	Templates.ContactEdit = Handlebars.compile($('#general-contact-edit-template').html());
+	Templates.ContactAdd = Handlebars.compile($('#general-contact-add-template').html());
 	Templates.IncidentFilter = Handlebars.compile($('#incident-filter-template').html());
 	Templates.IncidentHeader = Handlebars.compile($('#incident-header-template').html());
 	Templates.Incident = Handlebars.compile($('#incident-template').html());

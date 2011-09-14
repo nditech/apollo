@@ -19,7 +19,7 @@ class Observer(models.Model):
         ('YWA', 'YWA'),
         ('ZNWL', 'ZNWL')
     )
-    observer_id = models.CharField(max_length=100, validators=[RegexValidator(re.compile(r'\d+', re.I), message='Observer IDs can only contain numerals')])
+    observer_id = models.CharField(max_length=100, null=True, blank=True, validators=[RegexValidator(re.compile(r'\d+', re.I), message='Observer IDs can only contain numerals')])
     role = models.ForeignKey(ObserverRole)
     location = models.ForeignKey(Location)
     supervisor = models.ForeignKey('Contact', null=True, blank=True)

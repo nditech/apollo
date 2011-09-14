@@ -2,6 +2,9 @@
 # vim: ai ts=4 sts=4 et sw=4
 # encoding=utf-8
 
+import djcelery
+djcelery.setup_loader()
+
 
 # -------------------------------------------------------------------- #
 #                          MAIN CONFIGURATION                          #
@@ -35,7 +38,6 @@ INSTALLED_BACKENDS = {
     },
 }
 
-
 # to help you get started quickly, many django/rapidsms apps are enabled
 # by default. you may wish to remove some and/or add your own.
 INSTALLED_APPS = [
@@ -48,6 +50,8 @@ INSTALLED_APPS = [
     "djtables",
     "rapidsms",
     "mptt",
+    
+    "djkombu",
 
     # enable the django admin using a little shim app (which includes
     # the required urlpatterns), and a bunch of undocumented apps that
@@ -62,6 +66,7 @@ INSTALLED_APPS = [
     # the rapidsms contrib apps.
     "rapidsms.contrib.messagelog",
     'south',
+    "djcelery",
 ]
 
 MAKO_TEMPLATE_DIRS = (
@@ -136,6 +141,7 @@ ROOT_URLCONF = "urls"
 #SESSION_COOKIE_AGE=900
 
 SMS_PREFIX = ''
+SMS_SENDER = ''
 SMS_USER = ''
 SMS_PASS = ''
 PHONE_CC = []
@@ -150,6 +156,9 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'audit_log.middleware.UserLoggingMiddleware',
     'djangomako.middleware.MakoMiddleware')
+
+# celery queue settings
+BROKER_TRANSPORT = "django"
 
 # since we might hit the database from any thread during testing, the
 # in-memory sqlite database isn't sufficient. it spawns a separate
