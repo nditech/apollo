@@ -12,3 +12,4 @@ fabfile.py
 .DS_Store
 src/
 *.json
+*.log

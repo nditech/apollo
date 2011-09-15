@@ -51,8 +51,6 @@ INSTALLED_APPS = [
     "rapidsms",
     "mptt",
     
-    "djkombu",
-
     # enable the django admin using a little shim app (which includes
     # the required urlpatterns), and a bunch of undocumented apps that
     # the AdminSite seems to explode without.
@@ -158,7 +156,7 @@ MIDDLEWARE_CLASSES = (
     'djangomako.middleware.MakoMiddleware')
 
 # celery queue settings
-BROKER_TRANSPORT = "django"
+BROKER_TRANSPORT = "redis"
 
 # since we might hit the database from any thread during testing, the
 # in-memory sqlite database isn't sufficient. it spawns a separate
