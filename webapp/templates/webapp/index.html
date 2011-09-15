@@ -31,7 +31,11 @@
 <body>
 <div id="wrapper">
 	<div id="header">
-		<div id="logo"><a href="#"><img src="/assets/images/logo.png" alt="" /></a></div>
+{% if context_instance.settings.ZAMBIA_DEPLOYMENT == 'RRP' %}
+		<div id="logo"><a href="#"><img src="/assets/images/logo_csec_rrp.png" alt="" /></a></div>
+{% else %}
+		<div id="logo"><a href="#"><img src="/assets/images/logo_csec.png" alt="" /></a></div>
+{% endif %}
 			<div id="navigation" > 
 				<div class="menu-main-menu-container">
 					<ul id="dropmenu" class="menu">
