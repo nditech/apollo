@@ -17,5 +17,4 @@ django-celery==2.2.7
 xlrd==0.7.1
 xlutils==1.4.1
 xlwt==0.7.2
-django-kombu==0.9.4
-kombu==1.2.1
+redis==2.4.9
