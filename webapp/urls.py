@@ -24,6 +24,7 @@ for resource in resources:
 urlpatterns = patterns('',
     url(r'^api/', include(api.urls)),
     url(r'^$', home),
+    url(r'^sendsms/?', send_sms),
     url(r'^test/?', test)
 )
 

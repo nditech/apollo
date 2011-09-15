@@ -142,6 +142,22 @@
     }
   },
   {
+    "pk": 3,
+    "model": "webapp.observerrole",
+    "fields": {
+      "name": "Provincial Supervisor",
+      "parent": null
+    }
+  },
+  {
+    "pk": 4,
+    "model": "webapp.observerrole",
+    "fields": {
+      "name": "Constituency Supervisor",
+      "parent": null
+    }
+  },
+  {
     "pk": 1,
     "model": "webapp.incidentform",
     "fields": {

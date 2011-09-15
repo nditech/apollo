@@ -18,24 +18,29 @@
 		if ( method === 'create' ) {
 			var dfd = new $.Deferred();
 			
-			var success = options.success;
+			// Set up 'success' handling
+			dfd.done( options.success );
 			options.success = function( resp, status, xhr ) {
-				// If create is successful and doesn't return a response, fire a GET.
-				// Otherwise, trigger the original 'success'.
-				if ( xhr.status === 201 && resp.length === 0 ) { // 201 CREATED
-					var location = xhr.getResponseHeader('Location');
+				// If create is successful but doesn't return a response, fire an extra GET.
+				// Otherwise, resolve the deferred (which triggers the original 'success' callbacks).
+				if ( xhr.status === 201 && !resp ) { // 201 CREATED; response null or empty.
+					var location = xhr.getResponseHeader( 'Location' );
 					return $.ajax( {
 						   url: location,
-						   success: [ success, dfd.resolve ],
+						   success: dfd.resolve,
 						   error: dfd.reject
 						});
 				}
 				else {
-					success( resp, status, xhr );
-					return dfd.resolve();
+					return dfd.resolveWith( options.context || options, [ resp, status, xhr ] );
 				}
 			};
 			
+			// Set up 'error' handling
+			dfd.fail( options.error );
+			options.error = dfd.reject;
+			
+			// Make the request, make it accessibly by assigning it to the 'request' property on the deferred 
 			dfd.request = Backbone.oldSync( method, model, options );
 			return dfd;
 		}
@@ -68,7 +73,7 @@
 	};
 	
 	Backbone.Collection.prototype.parse = function( data ) {
-		return data.objects;
+		return data && data.objects;
 	};
 	
 	Backbone.Collection.prototype.url = function( models ) {

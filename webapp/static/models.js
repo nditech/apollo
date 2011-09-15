@@ -7,7 +7,6 @@ Screen = Backbone.Model.extend({
 	},
 });
 
-Backend = Backbone.RelationalModel.extend();
 Location = Backbone.RelationalModel.extend({
     urlRoot: '/api/v1/location/',
     relations: [{
@@ -18,18 +17,6 @@ Location = Backbone.RelationalModel.extend({
 });
 IncidentForm = Backbone.RelationalModel.extend();
 ChecklistForm = Backbone.RelationalModel.extend();
-
-Connection = Backbone.RelationalModel.extend({
-    relations: [{
-        type: Backbone.HasOne,
-        key: 'backend',
-        relatedModel: 'Backend',
-        includeInJSON: 'resource_uri',
-        reverseRelation: {
-            key: 'connection'
-        }
-    }]
-});
 
 Message = Backbone.RelationalModel.extend({
     relations: [{
@@ -50,6 +37,7 @@ Message = Backbone.RelationalModel.extend({
 });
 
 Incident = Backbone.RelationalModel.extend({
+    urlRoot: '/api/v1/incident/',
 	relations: [{
 		type: Backbone.HasOne,
 		key: 'form',
@@ -78,7 +66,6 @@ Incident = Backbone.RelationalModel.extend({
 		type: Backbone.HasOne,
 		key: 'response',
 		relatedModel: 'IncidentResponse',
-		includeInJSON: 'resource_uri',
 		reverserRelation: {
 			key: 'incident'
 		}
@@ -87,6 +74,7 @@ Incident = Backbone.RelationalModel.extend({
 IncidentResponse = Backbone.RelationalModel.extend();
 
 Checklist = Backbone.RelationalModel.extend({
+    urlRoot: '/api/v1/checklist/',
 	relations: [{
 		type: Backbone.HasOne,
 		key: 'form',

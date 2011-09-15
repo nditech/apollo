@@ -12,7 +12,7 @@ class MessageBlast(Task):
     endpoint_sendsms = 'http://nusms.nuobjects.com/index.php?user=%(user)&pass=%(pwd)&to=%(to)&from=%(sender)&msg=%(msg)'
     user = settings.SMS_USER
     pwd  = settings.SMS_PASS
-    sender = settings.SMS_PREFIX
+    sender = settings.SMS_SENDER
     def run(self, to, msg):
         result = urllib2.urlopen(self.endpoint_sendsms, urlencode({
             'user': self.user,

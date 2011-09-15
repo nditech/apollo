@@ -21,7 +21,7 @@ def get_incident_form(record, field):
 
 @spam.strict_handler('webapp.Incident.location')
 def get_incident_location(record, field):
-    return Location.objects.filter(type__name='Polling District').order_by('?')[0]
+    return Location.objects.filter(type__name='Polling Stream').order_by('?')[0]
 
 @spam.strict_handler('webapp.Checklist.observer')
 def get_incident_observer(record, field):

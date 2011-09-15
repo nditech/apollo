@@ -2,10 +2,12 @@ ZambiaRouter = Backbone.Router.extend({
     routes: {
        "": "dashboard", // #!/dashboard
        "!/contacts": "contacts", // #!/contacts
+       "!/contact/add": "contact_add", // #!/contact/add
        "!/contact/:id": "contact_edit", // #!/contact/1
        "!/elections/checklists": "checklists", // #!/elections/checklists
        "!/elections/checklist/:id": "checklist_edit", // #!/elections/checklist/1
        "!/elections/incidents": "incidents", // #!/elections/incidents
+       "!/elections/incident/add": "incident_add", // #!/elections/incident/add
        "!/elections/incident/:id": "incident_edit", // #!/elections/incident/1
        "!/elections/process_analysis": "process_analysis", // #!/elections/process_analysis
        "!/elections/results_analysis": "results_analysis", // #!/elections/results_analysis
@@ -50,11 +52,11 @@ ZambiaRouter = Backbone.Router.extend({
                  source: '/api/v1/location/search/',
                  position: { my: 'left top', at: 'left bottom', collision: 'none', offset: '0 -4'},
                  focus: function (event, ui) {
-                     $('#location__id').val(ui.item.label);
+                     $('#location__id').val(ui.item.name);
                      return false;
                  },
                  select: function (event, ui) {
-                     $('#location__id').val(ui.item.label);
+                     $('#location__id').val(ui.item.name);
                      $('#search_location__id').val(ui.item.id);
                      return false;
                  }
@@ -120,11 +122,11 @@ ZambiaRouter = Backbone.Router.extend({
                 source: '/api/v1/location/search/',
                 position: { my: 'left top', at: 'left bottom', collision: 'none', offset: '0 -4'},
                 focus: function (event, ui) {
-                    $('#location__id').val(ui.item.label);
+                    $('#location__id').val(ui.item.name);
                     return false;
                 },
                 select: function (event, ui) {
-                    $('#location__id').val(ui.item.label);
+                    $('#location__id').val(ui.item.name);
                     $('#search_location__id').val(ui.item.id);
                     return false;
                 }
@@ -137,20 +139,83 @@ ZambiaRouter = Backbone.Router.extend({
              });
              
              $('.date_field').datepicker({dateFormat: 'yy-mm-dd'});
+             $('#form_add_incident').click(function () {
+                 location.href = '/#!/elections/incident/add';
+             });
          },
        });
    },
    
    incident_edit: function (id) {
-       screen_model = new Screen({title: 'Edit Incident', content: '', link: '#!/elections/checklist/' + id});
+       screen_model = new Screen({title: 'Edit Incident', content: '', link: '#!/elections/incident/' + id});
        screen_view = new ScreenView({model: screen_model});
 
        incident = new Incident();
        incident.id = '/api/v1/incident/' + id;
        incident.fetch({
            success: function (model, response) {
-               incident_edit_view = new IncidentEditView({model: model}).render();
-               $('div.full_width_content').html(incident_edit_view);
+                incident_edit_view = new IncidentEditView({model: model}).render();
+                $('div.full_width_content').html(incident_edit_view);
+               
+                // Autocomplete for location input textbox
+                $("#monitor_id").catcomplete({
+                    source: '/api/v1/contacts/search/',
+                    position: { my: 'left top', at: 'left bottom', collision: 'none', offset: '0 -4'},
+                    focus: function (event, ui) {
+                        $('#monitor_id').val(ui.item.observer_id);
+                        return false;
+                    },
+                    select: function (event, ui) {
+                        $('#observer_name').html(ui.item.name);
+                        $('#monitor_id').val(ui.item.observer_id);
+                        $('#observer_id').val(ui.item.resource_uri).trigger('change');
+                        return false;
+                    }
+                });
+
+                $("#monitor_id").blur(function () {
+                    if (!$(this).val()) {
+                        $('#observer_id').val("");
+                    }
+                });
+           }
+       });
+   },
+   
+   incident_add: function (id) {
+       screen_model = new Screen({title: 'Add Incident', content: '', link: '#!/elections/incident/add'});
+       screen_view = new ScreenView({model: screen_model});
+       
+       incident = new Incident();
+       
+       // Since this is a new incident object, we need to explicitly set the IncidentResponse object
+       var incident_response = new IncidentResponse();
+       // Also set the form explicitly
+       incident.set({'response': incident_response});
+       incident.attributes.form = '/api/v1/incident_form/1';
+       
+       incident_add_view = new IncidentAddView({model: incident}).render();
+       $('div.full_width_content').html(incident_add_view);
+      
+       // Autocomplete for location input textbox
+       $("#monitor_id").catcomplete({
+           source: '/api/v1/contacts/search/',
+           position: { my: 'left top', at: 'left bottom', collision: 'none', offset: '0 -4'},
+           focus: function (event, ui) {
+               $('#monitor_id').val(ui.item.observer_id);
+               return false;
+           },
+           select: function (event, ui) {
+               $('#observer_name').html(ui.item.name);
+               $('#monitor_id').val(ui.item.observer_id);
+               $('#observer_id').val(ui.item.resource_uri).trigger('change');
+               return false;
+           }
+       });
+
+       $("#monitor_id").blur(function () {
+           if (!$(this).val()) {
+               $('#observer_id').val("");
            }
        });
    },
@@ -200,11 +265,11 @@ ZambiaRouter = Backbone.Router.extend({
                        source: '/api/v1/location/search/',
                        position: { my: 'left top', at: 'left bottom', collision: 'none', offset: '0 -4'},
                        focus: function (event, ui) {
-                           $('#location__id').val(ui.item.label);
+                           $('#location__id').val(ui.item.name);
                            return false;
                        },
                        select: function (event, ui) {
-                           $('#location__id').val(ui.item.label);
+                           $('#location__id').val(ui.item.name);
                            $('#search_location__id').val(ui.item.id);
                            return false;
                        }
@@ -216,6 +281,10 @@ ZambiaRouter = Backbone.Router.extend({
                        }
                    });
               },
+          });
+          
+          $('#form_add_contact').click(function () {
+              location.href = '/#!/contact/add';
           });
       },
       
@@ -232,5 +301,15 @@ ZambiaRouter = Backbone.Router.extend({
                   $('div.full_width_content').html(contact_edit_view);
               }
           });
-      }
+      },
+      
+    contact_add: function () {
+        // Save page contents elsewhere before replacing it
+        screen_model = new Screen({title: 'Add Contact', content: '', link: '#!/contact/add'});
+        screen_view = new ScreenView({model: screen_model});
+
+        contact = new Contact();
+        contact_add_view = new ContactAddView({model: contact}).render();
+        $('div.full_width_content').html(contact_add_view);
+    }
 });
