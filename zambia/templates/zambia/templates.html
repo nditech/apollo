@@ -1425,7 +1425,7 @@
 	</tbody>
 </script>
 <script type="text/x-handlebars-template" id="contact-template" charset="utf-8">
-	<td>{{observer_id}}</td><td>{{name}}</td><td>{{role.attributes.name}}</td><td>{{#if connections.models }}{{connections.models.0.attributes.identity}}{{else}}-{{/if}}</td><td>{{location.attributes.name}} ({{location.attributes.type.name}})</td><td>{{partner}}</td><td style="text-align:center"><a href="#!/contact/{{id}}">Edit</a></td>
+	<td>{{observer_id}}</td><td>{{name}}</td><td>{{#if role}}{{role.attributes.name}}{{else}}-{{/if}}</td><td>{{#if connections.models }}{{connections.models.0.attributes.identity}}{{else}}-{{/if}}</td><td>{{#if location}}{{location.attributes.name}} ({{location.attributes.type.name}}){{else}}-{{/if}}</td><td>{{partner}}</td><td style="text-align:center"><a href="#!/contact/{{id}}">Edit</a></td>
 </script>
 <script type="text/x-handlebars-template" id="contact-empty-template" charset="utf-8">
 	<tr><td colspan="7" class="empty"><em>No contacts to display</em></td></tr>
