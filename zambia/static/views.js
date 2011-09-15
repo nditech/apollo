@@ -146,7 +146,7 @@ ContactAddView = Backbone.View.extend({
 	    self.model.save(false, {success: function () {
 	        conn = new Connection();
             conn.attributes.backend = '/api/v1/backend/1/';
-            conn.attributes.identity = $('#identity', self.el).val();
+            conn.attributes.identity = $('#identity', self.el).val() || "0";
             conn.attributes.contact = self.model.get('resource_uri');
 
             conn.save(false, {success: function () {
