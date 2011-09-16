@@ -28,7 +28,7 @@
 <script type="text/x-handlebars-template" id="checklist-filter-template" charset="utf-8">
 	<div id="filter" class="filter_pane">
 		<form id="search">
-		<div class="input_el"><input type="text" name="observer_id" class="input_smoke search_field" placeholder="Monitor Id" id="search_observer__observer_id__exact" pattern=".*[0-9]" title="Numeric figures only" required></div>
+		<div class="input_el"><input type="text" name="observer_id" class="input_smoke search_field" placeholder="Monitor Id" id="search_observer__observer_id__exact" pattern=".*[0-9]" title="Numeric figures only"></div>
 		<div class="input_el"><input type="text" name="date" class="input_smoke search_field date_field" placeholder="Date" id="search_date__exact"></div>
 		<div class="input_el"><input type="text" name="location" class="input_smoke" placeholder="Location" id="location__id" style="width:30.5em"></div>
 		<div class="clear"></div>
@@ -1388,14 +1388,14 @@
 <script type="text/x-handlebars-template" id="contact-search-template" charset="utf-8">
 	<div class="search_pane_dashboard">
 		<form id="search">
-		<div class="input_el"><input type="text" name="observer_id" class="input_smoke search_field" id="search_observer_id" placeholder="Monitor ID" pattern=".*[0-9]" title="Numeric figures only" required></div>
-		<div class="input_el"><input type="text" name="name" class="input_smoke search_field" id="search_name__icontains" placeholder="Name" required></div>
-		<div class="input_el"><input type="text" name="phone" class="input_smoke search_field" id="search_connections__identity__endswith" placeholder="Phone Number" pattern=".*[0-9]" title="Numeric figures only" required></div>		
+		<div class="input_el"><input type="text" name="observer_id" class="input_smoke search_field" id="search_observer_id" placeholder="Monitor ID" pattern=".*[0-9]" title="Numeric figures only"></div>
+		<div class="input_el"><input type="text" name="name" class="input_smoke search_field" id="search_name__icontains" placeholder="Name"></div>
+		<div class="input_el"><input type="text" name="phone" class="input_smoke search_field" id="search_connections__identity__endswith" placeholder="Phone Number" pattern=".*[0-9]" title="Numeric figures only"></div>		
 		<div class="input_el"><input type="text" name="location" class="input_smoke" id="location__id" placeholder="Location" style="width:30.5em"></div>
 		<div class="clear"></div>
 		<div class="input_el">
 			<select name="partner" id="search_partner" class="input_smoke search_field">
-				<option>Partner Organization</option>
+				<option value="">Partner Organization</option>
 				<option value="AVAP">AVAP</option>
 				<option value="Caritas">Caritas</option>
 				<option value="FODEP">FODEP</option>
@@ -1439,22 +1439,22 @@
 <script type="text/x-handlebars-template" id='general-contact-add-template' charset="utf-8">
 	<form id="contact_form" class="edit_form_floated">
 	<label for="name"><span class="label">Name</span> <input type="text" name="name" id="name" class="input_smoke field" value="" required></label>
-	<label for="phone"><span class="label">Phone</span> <input type="text" name="phone" id="identity" class="input_smoke" value="" pattern=".*[0-9]" title="Numbers only pls" required></label>
+	<label for="phone"><span class="label">Phone</span> <input type="text" name="phone" id="identity" class="input_smoke" value="" pattern=".*[0-9]" title="Numbers only pls"></label>
 	<label for="nrc"><span class="label">NRC No.</span> <input type="text" id="nrc" name="nrc" class="input_smoke field" value=""></label>
 	<label for="role"><span class="label">Role</span> <select name="role" id="role" class="input_smoke field">
-		<option>Not Specified</option>
+		<option value="">Not Specified</option>
 		<option value='/api/v1/contact_role/2/'>Monitor</option>
 		<option value='/api/v1/contact_role/3/'>Provincial Supervisor</option>
 		<option value='/api/v1/contact_role/4/'>Constituency Supervisor</option>
 	</select></label>
 	<label for="location"><span class="label">Location</span> <input type="text" name="location" id="location" class="input_smoke" value=""></label>
 	<label for="gender"><span class="label">Gender</span> <select name="gender" id="gender" class="input_smoke field">
-		<option>Not Specified</option>
+		<option value="">Not Specified</option>
 		<option value='M'>Male</option>
 		<option value='F'>Female</option>
 	</select></label>
 	<label for="partner"><span class="label">Partner</span> <select name="partner" id="partner" class="input_smoke field">
-		<option>Not Specified</option>
+		<option value="">Not Specified</option>
 		<option value="AVAP">AVAP</option>
 		<option value="Caritas">Caritas</option>
 		<option value="FODEP">FODEP</option>
@@ -1465,7 +1465,7 @@
 		<option value="ZNWL">ZNWL</option>
 	</select></label>
 	<label for="cell_coverage"><span class="label">Cell Coverage</span> <select name="cell_coverage" id="cell_coverage" class="input_smoke field">
-		<option>Not Specified</option>
+		<option value="">Not Specified</option>
 		<option value='1'>Yes</option>
 		<option value='0'>No</option>
 	</select></label>
@@ -1489,7 +1489,7 @@
 		<option value='F'>Female</option>
 	</select></label>
 	<label for="partner"><span class="label">Partner</span> <select name="partner" id="partner" class="input_smoke field">
-		<option>Not Specified</option>
+		<option value="">Not Specified</option>
 		<option value="AVAP">AVAP</option>
 		<option value="Caritas">Caritas</option>
 		<option value="FODEP">FODEP</option>
@@ -1508,7 +1508,7 @@
 </script>
 <script type="text/x-handlebars-template" id='contact-edit-template' charset="utf-8">
 	<form id="contact_form" class="edit_form_floated">
-	<label for="observer_id"><span class="label">Monitor ID</span> <input type="text" id="observer_id" name="observer_id" class="input_smoke field" value="{{observer_id}}" pattern=".*[0-9]" title="Numbers only pls" required></label>
+	<label for="observer_id"><span class="label">Monitor ID</span> <input type="text" id="observer_id" name="observer_id" class="input_smoke field" value="{{observer_id}}" pattern=".*[0-9]" title="Numbers only pls"></label>
 	<label for="name"><span class="label">Name</span> <input type="text" name="name" id="name" class="input_smoke field" value="{{name}}" required></label>
 	<label for="phone"><span class="label">Phone</span> <input type="text" name="phone" id="connections.models[0].attributes.identity" class="input_smoke field" value="{{connections.models.0.attributes.identity}}" pattern=".*[0-9]" title="Numbers only pls"></label>
 	<label for="nrc"><span class="label">NRC No.</span> <input type="text" id="nrc" name="nrc" class="input_smoke field" value="{{nrc}}"></label>
@@ -1523,7 +1523,7 @@
 	</select></label>
 	
 	<label for="partner"><span class="label">Partner</span> <select name="partner" id="partner" class="input_smoke field">
-		<option>Not Specified</option>
+		<option value="">Not Specified</option>
 		<option value="AVAP">AVAP</option>
 		<option value="Caritas">Caritas</option>
 		<option value="FODEP">FODEP</option>
@@ -1543,7 +1543,7 @@
 <script type="text/x-handlebars-template" id="incident-filter-template" charset="utf-8">
 	<div class="search_pane_dashboard">
 		<form id="search">
-		<div class="input_el"><input type="text" name="observer_id" class="input_smoke search_field" placeholder="Monitor Id" id="search_observer__observer_id__exact" pattern=".*[0-9]" title="Numeric figures only" required></div>
+		<div class="input_el"><input type="text" name="observer_id" class="input_smoke search_field" placeholder="Monitor Id" id="search_observer__observer_id__exact" pattern=".*[0-9]" title="Numeric figures only"></div>
 		<div class="input_el"><input type="text" name="date" class="input_smoke search_field date_field" placeholder="Date" id="search_date__exact"></div>
 		<div class="input_el"><input type="text" name="location" class="input_smoke" placeholder="Location" id="location__id" style="width:30.5em"></div>
 		<div class="input_el">
@@ -1721,7 +1721,7 @@
 	</div>
 </script>
 <script type="text/x-handlebars-template" id="location-options-template" charset="utf-8">
-	<option>- select one -</option>
+	<option value="">- select one -</option>
 	{{#each locations}}
 	<option value="{{attributes.resource_uri}}" title="{{attributes.id}}" {{#ifequal attributes.id ../selected_id}}selected="selected"{{/ifequal}}>{{attributes.name}}</option>
 	{{/each}}

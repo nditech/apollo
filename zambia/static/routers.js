@@ -52,7 +52,7 @@ ZambiaRouter = Backbone.Router.extend({
                  source: '/api/v1/location/search/',
                  position: { my: 'left top', at: 'left bottom', collision: 'none', offset: '0 -4'},
                  focus: function (event, ui) {
-                     $('#location__id').val(ui.item.name);
+                     //$('#location__id').val(ui.item.name);
                      return false;
                  },
                  select: function (event, ui) {
@@ -122,7 +122,7 @@ ZambiaRouter = Backbone.Router.extend({
                 source: '/api/v1/location/search/',
                 position: { my: 'left top', at: 'left bottom', collision: 'none', offset: '0 -4'},
                 focus: function (event, ui) {
-                    $('#location__id').val(ui.item.name);
+                    //$('#location__id').val(ui.item.name);
                     return false;
                 },
                 select: function (event, ui) {
@@ -162,7 +162,7 @@ ZambiaRouter = Backbone.Router.extend({
                     source: '/api/v1/contacts/search/',
                     position: { my: 'left top', at: 'left bottom', collision: 'none', offset: '0 -4'},
                     focus: function (event, ui) {
-                        $('#monitor_id').val(ui.item.observer_id);
+                        //$('#monitor_id').val(ui.item.observer_id);
                         return false;
                     },
                     select: function (event, ui) {
@@ -202,7 +202,7 @@ ZambiaRouter = Backbone.Router.extend({
            source: '/api/v1/contacts/search/',
            position: { my: 'left top', at: 'left bottom', collision: 'none', offset: '0 -4'},
            focus: function (event, ui) {
-               $('#monitor_id').val(ui.item.observer_id);
+               //$('#monitor_id').val(ui.item.observer_id);
                return false;
            },
            select: function (event, ui) {
@@ -265,7 +265,7 @@ ZambiaRouter = Backbone.Router.extend({
                        source: '/api/v1/location/search/',
                        position: { my: 'left top', at: 'left bottom', collision: 'none', offset: '0 -4'},
                        focus: function (event, ui) {
-                           $('#location__id').val(ui.item.name);
+                           //$('#location__id').val(ui.item.name);
                            return false;
                        },
                        select: function (event, ui) {
