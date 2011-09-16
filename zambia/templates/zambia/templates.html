@@ -28,7 +28,7 @@
 <script type="text/x-handlebars-template" id="checklist-filter-template" charset="utf-8">
 	<div id="filter" class="filter_pane">
 		<form id="search">
-		<div class="input_el"><input type="text" name="observer_id" class="input_smoke search_field" placeholder="Monitor Id" id="search_observer__observer_id__exact" pattern=".*[0-9]" title="Numeric figures only"></div>
+		<div class="input_el"><input type="text" name="observer_id" class="input_smoke search_field" placeholder="Monitor Id" id="search_observer__observer_id__exact" class="txt" pattern=".*[0-9]" title="Numeric figures only"></div>
 		<div class="input_el"><input type="text" name="date" class="input_smoke search_field date_field" placeholder="Date" id="search_date__exact"></div>
 		<div class="input_el"><input type="text" name="location" class="input_smoke" placeholder="Location" id="location__id" style="width:30.5em"></div>
 		<div class="clear"></div>
@@ -1415,7 +1415,7 @@
 		</div>
 		<div class="input_el">
 % if perms['webapp'].user.has_perm('can_sms'):
-			<span class="btn_blue btn_space"><input type="submit" name="submit" value="Search" class="search_btn"><span>&nbsp;</span></span><span class="btn_gray btn_space"><a href="javascript:;" id="form_reset">Reset</a><span>&nbsp;</span></span><span class="btn_yellow btn_space"><a href='javascript:;' class="sms_sender">SMS</a><span>&nbsp;</span></span>
+			<span class="btn_blue btn_space"><input type="submit" name="submit" value="Search" class="search_btn" ><span>&nbsp;</span></span><span class="btn_gray btn_space"><a href="javascript:;" id="form_reset">Reset</a><span>&nbsp;</span></span><span class="btn_yellow btn_space"><a href='javascript:;' class="sms_sender">SMS</a><span>&nbsp;</span></span>
 % else:
 			<span class="btn_blue btn_space"><input type="submit" name="submit" value="Search" class="search_btn"><span>&nbsp;</span></span><span class="btn_gray btn_space"><a href="javascript:;" id="form_reset">Reset</a><span>&nbsp;</span></span>
 % endif
@@ -1439,7 +1439,7 @@
 <script type="text/x-handlebars-template" id='general-contact-add-template' charset="utf-8">
 	<form id="contact_form" class="edit_form_floated">
 	<label for="name"><span class="label">Name</span> <input type="text" name="name" id="name" class="input_smoke field" value="" required></label>
-	<label for="phone"><span class="label">Phone</span> <input type="text" name="phone" id="identity" class="input_smoke" value="" pattern=".*[0-9]" title="Numbers only pls"></label>
+	<label for="phone"><span class="label">Phone</span> <input type="text" name="phone" id="identity" class="input_smoke" value="" class="txt" pattern="[\s\d]*"></label>
 	<label for="nrc"><span class="label">NRC No.</span> <input type="text" id="nrc" name="nrc" class="input_smoke field" value=""></label>
 	<label for="role"><span class="label">Role</span> <select name="role" id="role" class="input_smoke field">
 		<option value="">Not Specified</option>
@@ -1469,13 +1469,13 @@
 		<option value='1'>Yes</option>
 		<option value='0'>No</option>
 	</select></label>
-	<label for="submit"><span class="label">&nbsp;</span> <span class="btn_yellow btn_space"><input type="submit" name="submit" value="Save"><span>&nbsp;</span></span></label>
+	<label for="submit"><span class="label">&nbsp;</span> <span class="btn_yellow btn_space"><input type="submit" name="submit" value="Save" class="sub"><span>&nbsp;</span></span></label>
 	</form>
 </script>
 <script type="text/x-handlebars-template" id='general-contact-edit-template' charset="utf-8">
 	<form id="contact_form" class="edit_form_floated">
 	<label for="name"><span class="label">Name</span> <input type="text" name="name" id="name" class="input_smoke field" value="{{name}}"></label>
-	<label for="phone"><span class="label">Phone</span> <input type="text" name="phone" id="connections.models[0].attributes.identity" class="input_smoke field" value="{{connections.models.0.attributes.identity}}" pattern=".*[0-9]" title="Numbers only pls"></label>
+	<label for="phone"><span class="label">Phone</span> <input type="text" name="phone" id="connections.models[0].attributes.identity" class="input_smoke field" value="{{connections.models.0.attributes.identity}}" class="txt" pattern="[\s\d]*"></label>
 	<label for="nrc"><span class="label">NRC No.</span> <input type="text" id="nrc" name="nrc" class="input_smoke field" value="{{nrc}}"></label>
 	<label for="role"><span class="label">Role</span> <select name="role" id="role" class="input_smoke field">
 		<option value='/api/v1/contact_role/2/'>Monitor</option>
@@ -1503,14 +1503,14 @@
 		<option value='1'>Yes</option>
 		<option value='0'>No</option>
 	</select></label>
-	<label for="submit"><span class="label">&nbsp;</span> <span class="btn_yellow btn_space"><input type="submit" name="submit" value="Save"><span>&nbsp;</span></span></label>
+	<label for="submit"><span class="label">&nbsp;</span> <span class="btn_yellow btn_space"><input type="submit" name="submit" value="Save" class="sub"><span>&nbsp;</span></span></label>
 	</form>
 </script>
 <script type="text/x-handlebars-template" id='contact-edit-template' charset="utf-8">
 	<form id="contact_form" class="edit_form_floated">
 	<label for="observer_id"><span class="label">Monitor ID</span> <input type="text" id="observer_id" name="observer_id" class="input_smoke field" value="{{observer_id}}" pattern=".*[0-9]" title="Numbers only pls"></label>
 	<label for="name"><span class="label">Name</span> <input type="text" name="name" id="name" class="input_smoke field" value="{{name}}" required></label>
-	<label for="phone"><span class="label">Phone</span> <input type="text" name="phone" id="connections.models[0].attributes.identity" class="input_smoke field" value="{{connections.models.0.attributes.identity}}" pattern=".*[0-9]" title="Numbers only pls"></label>
+	<label for="phone"><span class="label">Phone</span> <input type="text" name="phone" id="connections.models[0].attributes.identity" class="input_smoke field" value="{{connections.models.0.attributes.identity}}" class="txt" pattern="[\s\d]*"></label>
 	<label for="nrc"><span class="label">NRC No.</span> <input type="text" id="nrc" name="nrc" class="input_smoke field" value="{{nrc}}"></label>
 	<label for="role"><span class="label">Role</span> <select name="role" id="role" class="input_smoke field">
 		<option value='/api/v1/contact_role/1/'>District Supervisor</option>
@@ -1537,7 +1537,7 @@
 		<option value='1'>Yes</option>
 		<option value='0'>No</option>
 	</select></label>
-	<label for="submit"><span class="label">&nbsp;</span> <span class="btn_yellow btn_space"><input type="submit" name="submit" value="Save"><span>&nbsp;</span></span></label>
+	<label for="submit"><span class="label">&nbsp;</span> <span class="btn_yellow btn_space"><input type="submit" name="submit" value="Save" class="sub"><span>&nbsp;</span></span></label>
 	</form>
 </script>
 <script type="text/x-handlebars-template" id="incident-filter-template" charset="utf-8">

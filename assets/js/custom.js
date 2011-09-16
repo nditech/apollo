@@ -110,6 +110,12 @@ $(function () {
         $('div.section_tabs li').not($('div.section_tabs li[title="'+$(this).attr('title')+'"]')).removeClass('current');
     });
     
+	//Removes white space from contact phone when save button is clicked
+	$('.sub').live('click', function(){                    
+			str = $('.txt').val().replace(/ /g,'');
+			alert(str);
+        });
+	
     // Uncheck a radio button if clicked twice  
     $('input:radio').live('change', function () {
         $(this).attr('is_undue', '1');
