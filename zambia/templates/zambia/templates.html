@@ -28,7 +28,9 @@
 <script type="text/x-handlebars-template" id="checklist-filter-template" charset="utf-8">
 	<div id="filter" class="filter_pane">
 		<form id="search">
-		<div class="input_el"><input type="text" name="observer_id" class="input_smoke search_field" placeholder="Monitor Id" id="search_observer__observer_id__exact" class="txt" pattern=".*[0-9]" title="Numeric figures only"></div>
+% if settings.ZAMBIA_DEPLOYMENT == 'RRP':
+		<div class="input_el"><input type="text" name="observer_id" class="input_smoke search_field" placeholder="Monitor Id" id="search_observer__observer_id__exact" pattern=".*[0-9]" title="Numeric figures only"></div>
+% endif
 		<div class="input_el"><input type="text" name="date" class="input_smoke search_field date_field" placeholder="Date" id="search_date__exact"></div>
 		<div class="input_el"><input type="text" name="location" class="input_smoke" placeholder="Location" id="location__id" style="width:30.5em"></div>
 		<div class="clear"></div>
@@ -66,7 +68,7 @@
 		</div>
 		<div class="input_el">
 % if perms['webapp'].user.has_perm('can_sms'):
-			<span class="btn_blue btn_space"><input type="submit" name="submit" value="Search" class="search_btn"><span>&nbsp;</span></span><span class="btn_gray btn_space"><a href="javascript:;" id="form_reset">Reset</a><span>&nbsp;</span></span><span class="btn_yellow"><a href='javascript:;' class="sms_sender">SMS</a><span>&nbsp;</span></span>
+			<span class="btn_blue btn_space"><input type="submit" name="submit" value="Search" class="search_btn"><span>&nbsp;</span></span><span class="btn_gray btn_space"><a href="javascript:;" id="form_reset">Reset</a><span>&nbsp;</span></span><span class="btn_yellow btn_space"><a href='javascript:;' class="sms_sender">SMS</a><span>&nbsp;</span></span>
 % else:
 			<span class="btn_blue btn_space"><input type="submit" name="submit" value="Search" class="search_btn"><span>&nbsp;</span></span><span class="btn_gray btn_space"><a href="javascript:;" id="form_reset">Reset</a><span>&nbsp;</span></span>
 % endif
@@ -75,7 +77,11 @@
 		<div class="clear"></div>
 	</div>
 	<div class="filter_pane_bottom"></div>
-	<div id="filter_dropper">Filter</div>
+% if settings.ZAMBIA_DEPLOYMENT == 'GENERAL':
+	<div><span class="btn_red btn_space" style="margin-top:0.3em;margin-left:700px"><a href="javascript:;" id="form_add_checklist">Add Checklist</a><span>&nbsp;</span></span><div id="filter_dropper">Filter</div></div>
+% else:
+	<div><div id="filter_dropper">Filter</div></div>
+% endif	
 	<div style="margin-top:2em"></div>
 </script>
 <script type="text/x-handlebars-template" id="checklist-header-template" charset="utf-8">
@@ -84,7 +90,11 @@
 	</tbody>
 </script>
 <script type="text/x-handlebars-template" id="checklist-template" charset="utf-8">
+% if settings.ZAMBIA_DEPLOYMENT == 'GENERAL':
+	<td>-</td><td>{{date}}</td><td>{{location.attributes.parent.attributes.parent.attributes.parent.attributes.name}}</td><td>{{location.attributes.parent.attributes.parent.attributes.name}}</td><td>-</td><td>{{response.attributes.monitor_name}}{{#if response.attributes.monitor_phone}} (<strong>{{response.attributes.monitor_phone}}</strong>){{/if}}</td><td align="center">{{setup_flag response}}</td><td align="center">{{voting_flag response}}</td><td align="center">{{closing_flag response}}</td><td align="center">{{general_counting_flag response}}</td><td align="center"><a href="#!/elections/checklist/{{id}}">Edit</a></td>
+% else:
 	<td>{{observer.attributes.observer_id}}</td><td>{{date}}</td><td>{{location.attributes.parent.attributes.parent.attributes.parent.attributes.name}}</td><td>{{location.attributes.parent.attributes.parent.attributes.name}}</td><td>{{#if observer.attributes.supervisor}}{{observer.attributes.supervisor.attributes.name}}{{#iflen observer.attributes.supervisor.attributes.connections.models}} (<strong>{{observer.attributes.supervisor.attributes.connections.models.0.attributes.identity}}</strong>){{/iflen}}{{else}}&nbsp;{{/if}}</td><td>{{observer.attributes.name}}{{#iflen observer.attributes.connections.models}} (<strong>{{observer.attributes.connections.models.0.attributes.identity}}</strong>){{/iflen}}</td><td align="center">{{setup_flag response}}</td><td align="center">{{voting_flag response}}</td><td align="center">{{closing_flag response}}</td><td align="center">{{counting_flag response}}</td><td align="center"><a href="#!/elections/checklist/{{id}}">Edit</a></td>
+% endif
 </script>
 <script type="text/x-handlebars-template" id="checklist-empty-template" charset="utf-8">
 	<tr><td colspan="11" class="empty"><em>No checklists to display</em></td></tr>
@@ -697,12 +707,15 @@
 <script type="text/x-handlebars-template" id="general-checklist-edit-template" charset="utf-8">
 	<form id="checklist_form">
 	<div class="pane" id="pane1">
-		<p class="style"><span class="span"><label>Monitor Name:</label></span><span class="input"><input type="text" name="text"  class="input_smoke"></span></p>
-		<p class="style"><span class="span"><label>Province/District/Constituency/Ward:</label></span><span class="input"><input type="text" name="text"  class="input_smoke"></span></p>
-		<p class="style"><span class="span"><label>Polling District/Station:</label></span><span class="input"><input type="text" name="text"  class="input_smoke"></span></p>
-		<p class="style"><span class="span"><label>Stream:</label></span><span class="input"><input type="text" name="text"  class="input_smoke"></span></p>
-		<p class="style"><span class="span"><label>Supervisor Name:</label></span><span class="input"><input type="text" name="text"  class="input_smoke"></span></p>
-		<p class="style"><span class="span"><label>Mobile:</label></span><span class="input"><input type="text" name="text"  class="input_smoke" pattern=".*[0-9]" title="Numeric figures only"></span></p>
+		<h1>Identification</h1>
+		<p class="style"><span class="span"><label>Monitor Name</label></span><span class="input"><input type="text" name="response.attributes.monitor_name" id="response.attributes.monitor_name"  class="input_smoke field"></span></p>
+		<p class="style"><span class="span"><label>Monitor Phone</label></span><span class="input"><input type="text" name="response.attributes.monitor_phone" id="response.attributes.monitor_phone"  class="input_smoke field"></span></p>
+		<p class="style"><span class="span"><label>Province</label></span><span class="input"><select name="province" title="province" class="input_smoke location_select"></select></span></p>
+		<p class="style"><span class="span"><label>District</label></span><span class="input"><select name="district" title="district" class="input_smoke location_select"></select></span></p>
+		<p class="style"><span class="span"><label>Constituency</label></span><span class="input"><select name="constituency" title="constituency" class="input_smoke location_select"></select></span></p>
+		<p class="style"><span class="span"><label>Ward</label></span><span class="input"><select name="ward" title="ward" class="input_smoke location_select"></select></span></p>
+		<p class="style"><span class="span"><label>Polling District</label></span><span class="input"><select name="polling_district" title="polling_district" class="input_smoke location_select"></select></span></p>
+		<p class="style"><span class="span"><label>Polling Station/Stream</label></span><span class="input"><select name="location" title="polling_stream" class="input_smoke location_select field" style="width:20em"></select></span></p>
 	</div>
 	<div class="pane" id="pane2">
 		<h1>SetUp</h1>
@@ -1166,8 +1179,8 @@
 			<input type="text" name="response.attributes.AFAB" class="input_text field" pattern=".*[0-9]" title="Numeric figures only"></span>
 			<span class="span_mid"><input type="text" name="response.attributes.AFAC" class="input_text field" pattern=".*[0-9]" title="Numeric figures only">
 			<input type="text" name="response.attributes.AFAD" class="input_text field" pattern=".*[0-9]" title="Numeric figures only"></span>
-			<span class="span_text_last"><input type="text" name="response.attributes.AFAD" class="input_text field" pattern=".*[0-9]" title="Numeric figures only">
-			<input type="text" name="response.attributes.AFAE" class="input_text field" pattern=".*[0-9]" title="Numeric figures only"></span></span>
+			<span class="span_text_last"><input type="text" name="response.attributes.AFAE" class="input_text field" pattern=".*[0-9]" title="Numeric figures only">
+			<input type="text" name="response.attributes.AFAF" class="input_text field" pattern=".*[0-9]" title="Numeric figures only"></span></span>
 		</p>
 
 		<p class="style">
@@ -1216,7 +1229,7 @@
 			
 			<span class="input"><span class="span_text"><input type="text" name="response.attributes.AFEA" class="input_text field" pattern=".*[0-9]" title="Numeric figures only">
 			<input type="text" name="response.attributes.AFEB" class="input_text field" pattern=".*[0-9]" title="Numeric figures only"></span>
-			<span class="span_mid"><input type="text" name="response.attributes.AFED" class="input_text field" pattern=".*[0-9]" title="Numeric figures only">
+			<span class="span_mid"><input type="text" name="response.attributes.AFEC" class="input_text field" pattern=".*[0-9]" title="Numeric figures only">
 			<input type="text" name="response.attributes.AFED" class="input_text field" pattern=".*[0-9]" title="Numeric figures only"></span>
 			<span class="span_text_last"><input type="text" name="response.attributes.AFEE" class="input_text field" pattern=".*[0-9]" title="Numeric figures only">
 			<input type="text" name="response.attributes.AFEF" class="input_text field" pattern=".*[0-9]" title="Numeric figures only"></span></span>
@@ -1324,8 +1337,8 @@
 			<input type="text" name="response.attributes.AFPB" class="input_text field" pattern=".*[0-9]" title="Numeric figures only"></span>
 			<span class="span_mid"><input type="text" name="response.attributes.AFPC" class="input_text field" pattern=".*[0-9]" title="Numeric figures only">
 			<input type="text" name="response.attributes.AFPD" class="input_text field" pattern=".*[0-9]" title="Numeric figures only"></span>
-			<span class="span_text_last"><input type="text" name="response.attributes.AFPF" class="input_text field" pattern=".*[0-9]" title="Numeric figures only">
-			<input type="text" name="response.attributes.AFPE" class="input_text field" pattern=".*[0-9]" title="Numeric figures only"></span></span>
+			<span class="span_text_last"><input type="text" name="response.attributes.AFPE" class="input_text field" pattern=".*[0-9]" title="Numeric figures only">
+			<input type="text" name="response.attributes.AFPF" class="input_text field" pattern=".*[0-9]" title="Numeric figures only"></span></span>
 		</p>
 				
 		<p class="style">
@@ -1346,7 +1359,7 @@
 		
 			<span class="span">Did you agree with the presidential results for your Polling Stream?</span>
 		
-			<span class="input"><label><input class="field" type="radio" name="response.attributes.AV" value="1"><br />Yes</label>
+			<span class="input"><label><input class="field" type="radio" name="response.attributes.AG" value="1"><br />Yes</label>
 			<label><input class="field" type="radio" name="response.attributes.AG" value="2"><br />No</label></span>
 		</p>
 
@@ -1355,7 +1368,7 @@
 		
 			<span class="span">Did <u>all</u> polling agents present agree with the presidential results for your Polling Stream?</span>
 		
-			<span class="input"><label><input class="field" type="radio" name="response.attributes.AW" value="1"><br />Yes</label>
+			<span class="input"><label><input class="field" type="radio" name="response.attributes.AH" value="1"><br />Yes</label>
 			<label><input class="field" type="radio" name="response.attributes.AH" value="2"><br />No</label></span>
 		</p>
 
@@ -1364,7 +1377,7 @@
 		
 			<span class="span">Were all polling agents present given a copy of the official results for the Polling Station?</span>
 		
-			<span class="input"><label><input class="field" type="radio" name="response.attributes.AX" value="1"><br />Yes</label>
+			<span class="input"><label><input class="field" type="radio" name="response.attributes.AJ" value="1"><br />Yes</label>
 			<label><input class="field" type="radio" name="response.attributes.AJ" value="2"><br />No</label></span>
 		</p>
 
@@ -1373,7 +1386,7 @@
 		
 			<span class="span">Were the official results for the Polling Station posted for the public to see?</span>
 		
-			<span class="input"><label><input class="field" type="radio" name="response.attributes.AY" value="1"><br />Yes</label>
+			<span class="input"><label><input class="field" type="radio" name="response.attributes.AK" value="1"><br />Yes</label>
 			<label><input class="field" type="radio" name="response.attributes.AK" value="2"><br />No</label></span>
 		</p>
 	</div>
@@ -1388,7 +1401,9 @@
 <script type="text/x-handlebars-template" id="contact-search-template" charset="utf-8">
 	<div class="search_pane_dashboard">
 		<form id="search">
+% if settings.ZAMBIA_DEPLOYMENT == 'RRP':
 		<div class="input_el"><input type="text" name="observer_id" class="input_smoke search_field" id="search_observer_id" placeholder="Monitor ID" pattern=".*[0-9]" title="Numeric figures only"></div>
+% endif
 		<div class="input_el"><input type="text" name="name" class="input_smoke search_field" id="search_name__icontains" placeholder="Name"></div>
 		<div class="input_el"><input type="text" name="phone" class="input_smoke search_field" id="search_connections__identity__endswith" placeholder="Phone Number" pattern=".*[0-9]" title="Numeric figures only"></div>		
 		<div class="input_el"><input type="text" name="location" class="input_smoke" id="location__id" placeholder="Location" style="width:30.5em"></div>
@@ -1419,7 +1434,9 @@
 % else:
 			<span class="btn_blue btn_space"><input type="submit" name="submit" value="Search" class="search_btn"><span>&nbsp;</span></span><span class="btn_gray btn_space"><a href="javascript:;" id="form_reset">Reset</a><span>&nbsp;</span></span>
 % endif
+% if settings.ZAMBIA_DEPLOYMENT == 'GENERAL':
 			<span class="btn_red btn_space"><a href="javascript:;" id="form_add_contact">Add</a><span>&nbsp;</span></span>
+% endif
 		</div>
 		</form>
 		<div class="clear"></div>
@@ -1427,14 +1444,26 @@
 </script>
 <script type="text/x-handlebars-template" id="contact-header-template" charset="utf-8">
 	<tbody>
+% if perms['rapidsms'].user.has_perm('change_contact') or settings.ZAMBIA_DEPLOYMENT == 'GENERAL':
 		<tr><th><a href="javascript:;" class="sortable_column" id="sort_observer_id">Monitor Id</a></th><th><a href="javascript:;" class="sortable_column" id="sort_name">Name</a></th><th><a href="javascript:;" class="sortable_column" id="sort_role__name">Role</a></th><th><a href="javascript:;" class="sortable_column" id="sort_connections__identity">Phone No.</a></th><th><a href="javascript:;" class="sortable_column" id="sort_location__name">Location</a></th><th><a href="javascript:;" class="sortable_column" id="sort_partner">Partner</a></th><th style="text-align:center">Edit</th></tr>
+% else:
+		<tr><th><a href="javascript:;" class="sortable_column" id="sort_observer_id">Monitor Id</a></th><th><a href="javascript:;" class="sortable_column" id="sort_name">Name</a></th><th><a href="javascript:;" class="sortable_column" id="sort_role__name">Role</a></th><th><a href="javascript:;" class="sortable_column" id="sort_connections__identity">Phone No.</a></th><th><a href="javascript:;" class="sortable_column" id="sort_location__name">Location</a></th><th><a href="javascript:;" class="sortable_column" id="sort_partner">Partner</a></th></tr>
+% endif
 	</tbody>
 </script>
 <script type="text/x-handlebars-template" id="contact-template" charset="utf-8">
+% if perms['rapidsms'].user.has_perm('change_contact') or settings.ZAMBIA_DEPLOYMENT == 'GENERAL':
 	<td>{{observer_id}}</td><td>{{name}}</td><td>{{#if role}}{{role.attributes.name}}{{else}}-{{/if}}</td><td>{{#iflen connections.models }}{{connections.models.0.attributes.identity}}{{else}}-{{/iflen}}</td><td>{{#if location}}{{location.attributes.name}} ({{location.attributes.type.name}}){{else}}-{{/if}}</td><td>{{partner}}</td><td style="text-align:center"><a href="#!/contact/{{id}}">Edit</a></td>
+% else:
+	<td>{{observer_id}}</td><td>{{name}}</td><td>{{#if role}}{{role.attributes.name}}{{else}}-{{/if}}</td><td>{{#iflen connections.models }}{{connections.models.0.attributes.identity}}{{else}}-{{/iflen}}</td><td>{{#if location}}{{location.attributes.name}} ({{location.attributes.type.name}}){{else}}-{{/if}}</td><td>{{partner}}</td>
+% endif
 </script>
 <script type="text/x-handlebars-template" id="contact-empty-template" charset="utf-8">
+% if perms['rapidsms'].user.has_perm('change_contact') or settings.ZAMBIA_DEPLOYMENT == 'GENERAL':
 	<tr><td colspan="7" class="empty"><em>No contacts to display</em></td></tr>
+% else:
+	<tr><td colspan="6" class="empty"><em>No contacts to display</em></td></tr>
+% endif
 </script>
 <script type="text/x-handlebars-template" id='general-contact-add-template' charset="utf-8">
 	<form id="contact_form" class="edit_form_floated">
@@ -1543,7 +1572,9 @@
 <script type="text/x-handlebars-template" id="incident-filter-template" charset="utf-8">
 	<div class="search_pane_dashboard">
 		<form id="search">
+% if settings.ZAMBIA_DEPLOYMENT == 'RRP':
 		<div class="input_el"><input type="text" name="observer_id" class="input_smoke search_field" placeholder="Monitor Id" id="search_observer__observer_id__exact" pattern=".*[0-9]" title="Numeric figures only"></div>
+% endif
 		<div class="input_el"><input type="text" name="date" class="input_smoke search_field date_field" placeholder="Date" id="search_date__exact"></div>
 		<div class="input_el"><input type="text" name="location" class="input_smoke" placeholder="Location" id="location__id" style="width:30.5em"></div>
 		<div class="input_el">
@@ -1565,12 +1596,28 @@
 <script type="text/x-handlebars-template" id="incident-template" charset="utf-8">
 	<td>{{observer.attributes.observer_id}}</td><td>{{date}}</td><td>{{location.attributes.parent.attributes.parent.attributes.parent.attributes.name}}</td><td>{{location.attributes.parent.attributes.parent.attributes.name}}</td><td>{{observer.attributes.name}}{{#iflen observer.attributes.connections.models}} (<strong>{{observer.attributes.connections.models.0.attributes.identity}}</strong>){{/iflen}}</td><td align="center">{{incident_flag response "A"}}</td><td align="center">{{incident_flag response "B"}}</td><td align="center">{{incident_flag response "C"}}</td><td align="center">{{incident_flag response "D"}}</td><td align="center">{{incident_flag response "E"}}</td><td align="center">{{incident_flag response "F"}}</td><td align="center">{{incident_flag response "G"}}</td><td align="center">{{incident_flag response "H"}}</td><td align="center">{{incident_flag response "I"}}</td><td align="center">{{incident_flag response "J"}}</td><td align="center">{{incident_flag response "K"}}</td><td align="center">{{incident_flag response "K1"}}</td><td align="center">{{incident_flag response "K2"}}</td><td align="center">{{incident_flag response "K4"}}</td><td align="center">{{incident_flag response "L"}}</td><td align="center">{{incident_flag response "M"}}</td><td align="center">{{incident_flag response "N"}}</td><td align="center">{{incident_flag response "O"}}</td><td align="center"><a href="#!/elections/incident/{{id}}">Edit</a></td><td align="center"><a href="javascript:;" class="del_incident" title="{{resource_uri}}"><img src="/assets/images/delete.png" alt="Delete" /></a></td>
 </script>
+<script type="text/x-handlebars-template" id="general-incident-template" charset="utf-8">
+	<td>-</td><td>{{date}}</td><td>{{location.attributes.parent.attributes.parent.attributes.parent.attributes.name}}</td><td>{{location.attributes.parent.attributes.parent.attributes.name}}</td><td>{{response.attributes.monitor_name}}{{#if response.attributes.monitor_phone}} (<strong>{{response.attributes.monitor_phone}}</strong>){{/if}}</td><td align="center">{{incident_flag response "A"}}</td><td align="center">{{incident_flag response "B"}}</td><td align="center">{{incident_flag response "C"}}</td><td align="center">{{incident_flag response "D"}}</td><td align="center">{{incident_flag response "E"}}</td><td align="center">{{incident_flag response "F"}}</td><td align="center">{{incident_flag response "G"}}</td><td align="center">{{incident_flag response "H"}}</td><td align="center">{{incident_flag response "I"}}</td><td align="center">{{incident_flag response "J"}}</td><td align="center">{{incident_flag response "K"}}</td><td align="center">{{incident_flag response "K1"}}</td><td align="center">{{incident_flag response "K2"}}</td><td align="center">{{incident_flag response "K4"}}</td><td align="center">{{incident_flag response "L"}}</td><td align="center">{{incident_flag response "M"}}</td><td align="center">{{incident_flag response "N"}}</td><td align="center">{{incident_flag response "O"}}</td><td align="center"><a href="#!/elections/incident/{{id}}">Edit</a></td><td align="center"><a href="javascript:;" class="del_incident" title="{{resource_uri}}"><img src="/assets/images/delete.png" alt="Delete" /></a></td>
+</script>
 <script type="text/x-handlebars-template" id="incident-empty-template" charset="utf-8">
 	<tr><td colspan="25" class="empty"><em>No incidents to display</em></td></tr>
 </script>
 <script type="text/x-handlebars-template" id="incident-metadata-template" charset="utf-8">
 	<div>
 		<p class="style"><span class="span"><label>Monitor Id</label></span><span class="input"><input name="monitor_id" id="monitor_id" class="input_smoke" pattern=".*[0-9]" title="Numbers only pls" required><span id="observer_name" style="vertical-align:middle;font-size:0.8em;margin-left:0.8em"></span><input type="hidden" id="observer_id" name="observer" class="field" value="" /></span></p>
+		<p class="style"><span class="span"><label>Province</label></span><span class="input"><select name="province" title="province" class="input_smoke location_select"></select></span></p>
+		<p class="style"><span class="span"><label>District</label></span><span class="input"><select name="district" title="district" class="input_smoke location_select"></select></span></p>
+		<p class="style"><span class="span"><label>Constituency</label></span><span class="input"><select name="constituency" title="constituency" class="input_smoke location_select"></select></span></p>
+		<p class="style"><span class="span"><label>Ward</label></span><span class="input"><select name="ward" title="ward" class="input_smoke location_select"></select></span></p>
+		<p class="style"><span class="span"><label>Polling District</label></span><span class="input"><select name="polling_district" title="polling_district" class="input_smoke location_select"></select></span></p>
+		<p class="style"><span class="span"><label>Polling Station/Stream</label></span><span class="input"><select name="location" title="polling_stream" class="input_smoke location_select field" style="width:20em"></select></span></p>
+		<p class="clear"></p>
+	</div>
+</script>
+<script type="text/x-handlebars-template" id="general-incident-metadata-template" charset="utf-8">
+	<div>
+		<p class="style"><span class="span"><label>Monitor Name</label></span><span class="input"><input name="response.attributes.monitor_name" id="response.attributes.monitor_name" class="input_smoke field" required></span></p>
+		<p class="style"><span class="span"><label>Monitor Phone</label></span><span class="input"><input name="response.attributes.monitor_phone" id="response.attributes.monitor_phone" class="input_smoke field" required></span></p>
 		<p class="style"><span class="span"><label>Province</label></span><span class="input"><select name="province" title="province" class="input_smoke location_select"></select></span></p>
 		<p class="style"><span class="span"><label>District</label></span><span class="input"><select name="district" title="district" class="input_smoke location_select"></select></span></p>
 		<p class="style"><span class="span"><label>Constituency</label></span><span class="input"><select name="constituency" title="constituency" class="input_smoke location_select"></select></span></p>
@@ -1810,6 +1857,81 @@
 			return (response.get(code) || response.get(code) == 0) ? true : false;
 	    });
 	}
+	
+	function general_checklist_counting_complete(response) {
+	    return _.all(['AB', 'AC', 'AD', 'AEAA', 'AEAB', 'AEAC', 'AEAD', 'AEAE', 'AEAF', \
+		'AEBA', 'AEBB', 'AEBC', 'AEBD', 'AEBE', 'AEBF', \
+		'AECA', 'AECB', 'AECC', 'AECD', 'AECE', 'AECF', \
+		'AEDA', 'AEDB', 'AEDC', 'AEDD', 'AEDE', 'AEDF', \
+		'AEEA', 'AEEB', 'AEEC', 'AEED', 'AEEE', 'AEEF', \
+		'AFAA', 'AFAB', 'AFAC', 'AFAD', 'AFAE', 'AFAF', \
+		'AFBA', 'AFBB', 'AFBC', 'AFBD', 'AFBE', 'AFBF', \
+		'AFCA', 'AFCB', 'AFCC', 'AFCD', 'AFCE', 'AFCF', \
+		'AFDA', 'AFDB', 'AFDC', 'AFDD', 'AFDE', 'AFDF', \
+		'AFEA', 'AFEB', 'AFEC', 'AFED', 'AFEE', 'AFEF', \
+		'AFFA', 'AFFB', 'AFFC', 'AFFD', 'AFFE', 'AFFF', \
+		'AFGA', 'AFGB', 'AFGC', 'AFGD', 'AFGE', 'AFGF', \
+		'AFHA', 'AFHB', 'AFHC', 'AFHD', 'AFHE', 'AFHF', \
+		'AFJA', 'AFJB', 'AFJC', 'AFJD', 'AFJE', 'AFJF', \
+		'AFKA', 'AFKB', 'AFKC', 'AFKD', 'AFKE', 'AFKF', \
+		'AFMA', 'AFMB', 'AFMC', 'AFMD', 'AFME', 'AFMF', \
+		'AFNA', 'AFNB', 'AFNC', 'AFND', 'AFNE', 'AFNF', \
+		'AFPA', 'AFPB', 'AFPC', 'AFPD', 'AFPE', 'AFPF', \
+		'AFQA', 'AFQB', 'AFQC', 'AFQD', 'AFQE', 'AFQF', \
+		'AG', 'AH', 'AJ', 'AK'], function (code) {
+			return (response.get(code) || response.get(code) == 0) ? true : false;
+	    });
+	}
+
+	function general_checklist_counting_missing(response) {
+	    return !_.any(['AB', 'AC', 'AD', 'AEAA', 'AEAB', 'AEAC', 'AEAD', 'AEAE', 'AEAF', \
+		'AEBA', 'AEBB', 'AEBC', 'AEBD', 'AEBE', 'AEBF', \
+		'AECA', 'AECB', 'AECC', 'AECD', 'AECE', 'AECF', \
+		'AEDA', 'AEDB', 'AEDC', 'AEDD', 'AEDE', 'AEDF', \
+		'AEEA', 'AEEB', 'AEEC', 'AEED', 'AEEE', 'AEEF', \
+		'AFAA', 'AFAB', 'AFAC', 'AFAD', 'AFAE', 'AFAF', \
+		'AFBA', 'AFBB', 'AFBC', 'AFBD', 'AFBE', 'AFBF', \
+		'AFCA', 'AFCB', 'AFCC', 'AFCD', 'AFCE', 'AFCF', \
+		'AFDA', 'AFDB', 'AFDC', 'AFDD', 'AFDE', 'AFDF', \
+		'AFEA', 'AFEB', 'AFEC', 'AFED', 'AFEE', 'AFEF', \
+		'AFFA', 'AFFB', 'AFFC', 'AFFD', 'AFFE', 'AFFF', \
+		'AFGA', 'AFGB', 'AFGC', 'AFGD', 'AFGE', 'AFGF', \
+		'AFHA', 'AFHB', 'AFHC', 'AFHD', 'AFHE', 'AFHF', \
+		'AFJA', 'AFJB', 'AFJC', 'AFJD', 'AFJE', 'AFJF', \
+		'AFKA', 'AFKB', 'AFKC', 'AFKD', 'AFKE', 'AFKF', \
+		'AFMA', 'AFMB', 'AFMC', 'AFMD', 'AFME', 'AFMF', \
+		'AFNA', 'AFNB', 'AFNC', 'AFND', 'AFNE', 'AFNF', \
+		'AFPA', 'AFPB', 'AFPC', 'AFPD', 'AFPE', 'AFPF', \
+		'AFQA', 'AFQB', 'AFQC', 'AFQD', 'AFQE', 'AFQF', \
+		'AG', 'AH', 'AJ', 'AK'], function (code) {
+			return (response.get(code) || response.get(code) == 0) ? true : false;
+	    });
+	}
+
+	function general_checklist_counting_partial(response) {
+	    return _.any(['AB', 'AC', 'AD', 'AEAA', 'AEAB', 'AEAC', 'AEAD', 'AEAE', 'AEAF', \
+		'AEBA', 'AEBB', 'AEBC', 'AEBD', 'AEBE', 'AEBF', \
+		'AECA', 'AECB', 'AECC', 'AECD', 'AECE', 'AECF', \
+		'AEDA', 'AEDB', 'AEDC', 'AEDD', 'AEDE', 'AEDF', \
+		'AEEA', 'AEEB', 'AEEC', 'AEED', 'AEEE', 'AEEF', \
+		'AFAA', 'AFAB', 'AFAC', 'AFAD', 'AFAE', 'AFAF', \
+		'AFBA', 'AFBB', 'AFBC', 'AFBD', 'AFBE', 'AFBF', \
+		'AFCA', 'AFCB', 'AFCC', 'AFCD', 'AFCE', 'AFCF', \
+		'AFDA', 'AFDB', 'AFDC', 'AFDD', 'AFDE', 'AFDF', \
+		'AFEA', 'AFEB', 'AFEC', 'AFED', 'AFEE', 'AFEF', \
+		'AFFA', 'AFFB', 'AFFC', 'AFFD', 'AFFE', 'AFFF', \
+		'AFGA', 'AFGB', 'AFGC', 'AFGD', 'AFGE', 'AFGF', \
+		'AFHA', 'AFHB', 'AFHC', 'AFHD', 'AFHE', 'AFHF', \
+		'AFJA', 'AFJB', 'AFJC', 'AFJD', 'AFJE', 'AFJF', \
+		'AFKA', 'AFKB', 'AFKC', 'AFKD', 'AFKE', 'AFKF', \
+		'AFMA', 'AFMB', 'AFMC', 'AFMD', 'AFME', 'AFMF', \
+		'AFNA', 'AFNB', 'AFNC', 'AFND', 'AFNE', 'AFNF', \
+		'AFPA', 'AFPB', 'AFPC', 'AFPD', 'AFPE', 'AFPF', \
+		'AFQA', 'AFQB', 'AFQC', 'AFQD', 'AFQE', 'AFQF', \
+		'AG', 'AH', 'AJ', 'AK'], function (code) {
+			return (response.get(code) || response.get(code) == 0) ? true : false;
+	    });
+	}
 </script>
 <script type="text/javascript" charset="utf-8">
 	Handlebars.registerHelper('setup_flag', function (responses) {
@@ -1848,6 +1970,15 @@
 			return new Handlebars.SafeString('<img src="/assets/images/caution.png" alt="partial" />');
 		}
 	});
+	Handlebars.registerHelper('general_counting_flag', function (responses) {
+		if (general_checklist_counting_complete(responses)) {
+			return new Handlebars.SafeString('<img src="/assets/images/tick.png" alt="complete" />');
+		} else if (general_checklist_counting_missing(responses)) {
+			return new Handlebars.SafeString('<img src="/assets/images/red_dot.png" alt="missing" />');
+		} else {
+			return new Handlebars.SafeString('<img src="/assets/images/caution.png" alt="partial" />');
+		}
+	});
 	Handlebars.registerHelper('incident_flag', function (responses, attribute) {
 		if (responses.get(attribute)) {
 			return new Handlebars.SafeString('<img src="/assets/images/red_dot.png" />');
@@ -1875,21 +2006,41 @@
 	Templates.ChecklistHeader = Handlebars.compile($('#checklist-header-template').html());
 	Templates.Checklist = Handlebars.compile($('#checklist-template').html());
 	Templates.ChecklistEmpty = Handlebars.compile($('#checklist-empty-template').html());
+% if settings.ZAMBIA_DEPLOYMENT == 'GENERAL':
+	Templates.ChecklistSectionTabs = Handlebars.compile($('#general-checklist-section-tabs-template').html());
+% else:
 	Templates.ChecklistSectionTabs = Handlebars.compile($('#checklist-section-tabs-template').html());
+% endif
 	Templates.ChecklistMetadata = Handlebars.compile($('#checklist-metadata-template').html());
+% if settings.ZAMBIA_DEPLOYMENT == 'GENERAL':
+	Templates.ChecklistEdit = Handlebars.compile($('#general-checklist-edit-template').html());
+% else:
 	Templates.ChecklistEdit = Handlebars.compile($('#checklist-edit-template').html());
+% endif
 	Templates.ZambiaDashboardScreen = Handlebars.compile($('#screen-zambia-dashboard-template').html());
 	Templates.ContactSearch = Handlebars.compile($('#contact-search-template').html());
 	Templates.Contact = Handlebars.compile($('#contact-template').html());
 	Templates.ContactEmpty = Handlebars.compile($('#contact-empty-template').html());
 	Templates.ContactHeader = Handlebars.compile($('#contact-header-template').html());
+% if settings.ZAMBIA_DEPLOYMENT == 'GENERAL':
 	Templates.ContactEdit = Handlebars.compile($('#general-contact-edit-template').html());
 	Templates.ContactAdd = Handlebars.compile($('#general-contact-add-template').html());
+% else:
+	Templates.ContactEdit = Handlebars.compile($('#contact-edit-template').html());
+% endif
 	Templates.IncidentFilter = Handlebars.compile($('#incident-filter-template').html());
 	Templates.IncidentHeader = Handlebars.compile($('#incident-header-template').html());
+% if settings.ZAMBIA_DEPLOYMENT == 'GENERAL':
+	Templates.Incident = Handlebars.compile($('#general-incident-template').html());
+% else:
 	Templates.Incident = Handlebars.compile($('#incident-template').html());
+% endif
 	Templates.IncidentEmpty = Handlebars.compile($('#incident-empty-template').html());
+% if settings.ZAMBIA_DEPLOYMENT == 'GENERAL':
+	Templates.IncidentMetadata = Handlebars.compile($('#general-incident-metadata-template').html());
+% else:
 	Templates.IncidentMetadata = Handlebars.compile($('#incident-metadata-template').html());
+% endif
 	Templates.IncidentEdit = Handlebars.compile($('#incident-edit-template').html());
 	Templates.IncidentDelDialog = Handlebars.compile($('#incident-delete-dialog-template').html());
 	Templates.LocationOptions = Handlebars.compile($('#location-options-template').html());

@@ -26,7 +26,7 @@ class Checklist(models.Model):
     """A generic checklist"""
     form = models.ForeignKey(ChecklistForm, related_name='checklists')
     location = models.ForeignKey(Location, limit_choices_to={'type__name': 'Polling Stream'})
-    observer = models.ForeignKey(Contact)
+    observer = models.ForeignKey(Contact, blank=True, null=True)
     date = models.DateField(default=datetime.datetime.today)
     comment = models.CharField(blank=True, max_length=200)
     created = models.DateTimeField(blank=False, auto_now_add=True)
@@ -42,7 +42,7 @@ class Checklist(models.Model):
         )
 
     def __unicode__(self):
-        return '%s -> %s' % (self.observer.observer_id, self.location)
+        return '%s -> %s' % (self.id, self.location)
 
 
 class ChecklistResponse(models.Model):
@@ -75,7 +75,7 @@ class Incident(models.Model):
     """Incident forms"""
     form = models.ForeignKey(IncidentForm, related_name='incidents')
     location = models.ForeignKey(Location)
-    observer = models.ForeignKey(Contact)
+    observer = models.ForeignKey(Contact, blank=True, null=True)
     date = models.DateField(default=datetime.datetime.today)
     comment = models.CharField(blank=True, max_length=100)
     created = models.DateTimeField(blank=False, auto_now_add=True)
@@ -86,7 +86,7 @@ class Incident(models.Model):
         search_fields = ('',)
 
     def __unicode__(self):
-        return '%s (%s) -> %d' % (self.observer.observer_id, self.location, self.id)
+        return '(%s) -> %s' % (self.location, self.id)
 
 
 class IncidentResponse(models.Model):

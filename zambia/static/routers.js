@@ -5,6 +5,7 @@ ZambiaRouter = Backbone.Router.extend({
        "!/contact/add": "contact_add", // #!/contact/add
        "!/contact/:id": "contact_edit", // #!/contact/1
        "!/elections/checklists": "checklists", // #!/elections/checklists
+       "!/elections/checklist/add": "checklist_add", // #!/elections/checklist/add
        "!/elections/checklist/:id": "checklist_edit", // #!/elections/checklist/1
        "!/elections/incidents": "incidents", // #!/elections/incidents
        "!/elections/incident/add": "incident_add", // #!/elections/incident/add
@@ -69,8 +70,27 @@ ZambiaRouter = Backbone.Router.extend({
               });
               
               $('.date_field').datepicker({dateFormat: 'yy-mm-dd'});
+              $('#form_add_checklist').click(function () {
+                   location.href = '/#!/elections/checklist/add';
+              });
           },
         });
+   },
+   
+   checklist_add: function () {
+       screen_model = new Screen({title: 'Add Checklist', content: '', link: '#!/elections/checklist/add'});
+       screen_view = new ScreenView({model: screen_model});
+
+       checklist = new Checklist();
+       // Since this is a new incident object, we need to explicitly set the IncidentResponse object
+       var checklist_response = new ChecklistResponse();
+       // Also set the form explicitly
+       checklist.set({'response': checklist_response});
+       checklist.attributes.form = '/api/v1/checklist_form/1';
+       
+       checklist_add_view = new ChecklistAddView({model: checklist}).render();
+       $('div.full_width_content').html(checklist_add_view);
+       $('div.pane:first').show();
    },
    
    checklist_edit: function (id) {

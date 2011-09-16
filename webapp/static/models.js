@@ -79,6 +79,7 @@ Checklist = Backbone.RelationalModel.extend({
 		type: Backbone.HasOne,
 		key: 'form',
 		relatedModel: 'ChecklistForm',
+		includeInJSON: 'resource_uri',
 		reverseRelation: {
 			key: 'checklists'
 		}
@@ -86,6 +87,7 @@ Checklist = Backbone.RelationalModel.extend({
 		type: Backbone.HasOne,
 		key: 'location',
 		relatedModel: 'Location',
+		includeInJSON: 'resource_uri',
 		reverseRelation: {
 			key: 'checklists'
 		} 
@@ -93,6 +95,7 @@ Checklist = Backbone.RelationalModel.extend({
 		type: Backbone.HasOne,
 		key: 'observer',
 		relatedModel: 'Contact',
+		includeInJSON: 'resource_uri',
 		reverseRelation: {
 			key: 'checklists'
 		}	

@@ -2,6 +2,7 @@ from webapp.api import *
 from webapp.models import *
 from models import *
 from django.db.models import Q
+from django.conf import settings
 
 class ChecklistResponseResource(ModelResource):    
     class Meta:
@@ -14,7 +15,7 @@ class ChecklistResponseResource(ModelResource):
 
 class ChecklistsResource(ModelResource):
     location = fields.ForeignKey(LocationResource, 'location', full=True)
-    observer = fields.ForeignKey(ContactResource, 'observer', full=True)
+    observer = fields.ForeignKey(ContactResource, 'observer', full=True, null=True)
     response = fields.ToOneField(ChecklistResponseResource, 'response', full=True)
 
     class Meta:
@@ -37,7 +38,7 @@ class ChecklistsResource(ModelResource):
 
         orm_filters = super(ChecklistsResource, self).build_filters(filters)
         
-        if orm_filters.has_key('location__id__exact'):
+        if orm_filters.has_key('location__id__exact') or orm_filters.has_key('location__id'):
             id = orm_filters.pop('location__id__exact')
             orm_filters['location__id__in'] = Location.objects.get(id=id).get_descendants(True).values_list('id', flat=True)
         
@@ -124,34 +125,110 @@ class ChecklistsResource(ModelResource):
         if 'counting_status' in filters:
             status = filters.get('counting_status')
             if status == '1': # complete
-                orm_filters.update(dict([('response__%s__isnull' % field, False) for field in \
-                    ['AB', 'AC', 'AD', 'AEAA', 'AEAB', 'AEBA', 'AEBB', 'AECA', 'AECB', 'AEDA', \
-                    'AEDB', 'AEEA', 'AEEB', 'AGA', 'AGB', 'AHA', 'AHB', 'AJA', 'AJB', 'AKA',  \
-                    'AKB', 'AMA', 'AMB', 'ANA', 'ANB', 'APA', 'APB', 'AQA', 'AQB', 'ARA', \
-                    'ARB', 'ASA', 'ASB', 'ATA', 'ATB', 'AUA', 'AUB', 'AV', 'AW', 'AX', 'AY']]))
+                if settings.ZAMBIA_DEPLOYMENT == 'RRP':
+                    orm_filters.update(dict([('response__%s__isnull' % field, False) for field in \
+                        ['AB', 'AC', 'AD', 'AEAA', 'AEAB', 'AEBA', 'AEBB', 'AECA', 'AECB', 'AEDA', \
+                        'AEDB', 'AEEA', 'AEEB', 'AGA', 'AGB', 'AHA', 'AHB', 'AJA', 'AJB', 'AKA',  \
+                        'AKB', 'AMA', 'AMB', 'ANA', 'ANB', 'APA', 'APB', 'AQA', 'AQB', 'ARA', \
+                        'ARB', 'ASA', 'ASB', 'ATA', 'ATB', 'AUA', 'AUB', 'AV', 'AW', 'AX', 'AY']]))
+                else:
+                    orm_filters.update(dict([('response__%s__isnull' % field, False) for field in \
+                        ['AB', 'AC', 'AD', 'AEAA', 'AEAB', 'AEAC', 'AEAD', 'AEAE', 'AEAF', \
+                		'AEBA', 'AEBB', 'AEBC', 'AEBD', 'AEBE', 'AEBF', \
+                		'AECA', 'AECB', 'AECC', 'AECD', 'AECE', 'AECF', \
+                		'AEDA', 'AEDB', 'AEDC', 'AEDD', 'AEDE', 'AEDF', \
+                		'AEEA', 'AEEB', 'AEEC', 'AEED', 'AEEE', 'AEEF', \
+                		'AFAA', 'AFAB', 'AFAC', 'AFAD', 'AFAE', 'AFAF', \
+                		'AFBA', 'AFBB', 'AFBC', 'AFBD', 'AFBE', 'AFBF', \
+                		'AFCA', 'AFCB', 'AFCC', 'AFCD', 'AFCE', 'AFCF', \
+                		'AFDA', 'AFDB', 'AFDC', 'AFDD', 'AFDE', 'AFDF', \
+                		'AFEA', 'AFEB', 'AFEC', 'AFED', 'AFEE', 'AFEF', \
+                		'AFFA', 'AFFB', 'AFFC', 'AFFD', 'AFFE', 'AFFF', \
+                		'AFGA', 'AFGB', 'AFGC', 'AFGD', 'AFGE', 'AFGF', \
+                		'AFHA', 'AFHB', 'AFHC', 'AFHD', 'AFHE', 'AFHF', \
+                		'AFJA', 'AFJB', 'AFJC', 'AFJD', 'AFJE', 'AFJF', \
+                		'AFKA', 'AFKB', 'AFKC', 'AFKD', 'AFKE', 'AFKF', \
+                		'AFMA', 'AFMB', 'AFMC', 'AFMD', 'AFME', 'AFMF', \
+                		'AFNA', 'AFNB', 'AFNC', 'AFND', 'AFNE', 'AFNF', \
+                		'AFPA', 'AFPB', 'AFPC', 'AFPD', 'AFPE', 'AFPF', \
+                		'AFQA', 'AFQB', 'AFQC', 'AFQD', 'AFQE', 'AFQF', \
+                		'AG', 'AH', 'AJ', 'AK']]))
                     
             elif status == '2': # missing
-                orm_filters.update(dict([('response__%s__isnull' % field, True) for field in \
-                    ['AB', 'AC', 'AD', 'AEAA', 'AEAB', 'AEBA', 'AEBB', 'AECA', 'AECB', 'AEDA', \
-                    'AEDB', 'AEEA', 'AEEB', 'AGA', 'AGB', 'AHA', 'AHB', 'AJA', 'AJB', 'AKA',  \
-                    'AKB', 'AMA', 'AMB', 'ANA', 'ANB', 'APA', 'APB', 'AQA', 'AQB', 'ARA', \
-                    'ARB', 'ASA', 'ASB', 'ATA', 'ATB', 'AUA', 'AUB', 'AV', 'AW', 'AX', 'AY']]))
+                if settings.ZAMBIA_DEPLOYMENT == 'RRP':
+                    orm_filters.update(dict([('response__%s__isnull' % field, True) for field in \
+                        ['AB', 'AC', 'AD', 'AEAA', 'AEAB', 'AEBA', 'AEBB', 'AECA', 'AECB', 'AEDA', \
+                        'AEDB', 'AEEA', 'AEEB', 'AGA', 'AGB', 'AHA', 'AHB', 'AJA', 'AJB', 'AKA',  \
+                        'AKB', 'AMA', 'AMB', 'ANA', 'ANB', 'APA', 'APB', 'AQA', 'AQB', 'ARA', \
+                        'ARB', 'ASA', 'ASB', 'ATA', 'ATB', 'AUA', 'AUB', 'AV', 'AW', 'AX', 'AY']]))
+                else:
+                    orm_filters.update(dict([('response__%s__isnull' % field, True) for field in \
+                        ['AB', 'AC', 'AD', 'AEAA', 'AEAB', 'AEAC', 'AEAD', 'AEAE', 'AEAF', \
+                		'AEBA', 'AEBB', 'AEBC', 'AEBD', 'AEBE', 'AEBF', \
+                		'AECA', 'AECB', 'AECC', 'AECD', 'AECE', 'AECF', \
+                		'AEDA', 'AEDB', 'AEDC', 'AEDD', 'AEDE', 'AEDF', \
+                		'AEEA', 'AEEB', 'AEEC', 'AEED', 'AEEE', 'AEEF', \
+                		'AFAA', 'AFAB', 'AFAC', 'AFAD', 'AFAE', 'AFAF', \
+                		'AFBA', 'AFBB', 'AFBC', 'AFBD', 'AFBE', 'AFBF', \
+                		'AFCA', 'AFCB', 'AFCC', 'AFCD', 'AFCE', 'AFCF', \
+                		'AFDA', 'AFDB', 'AFDC', 'AFDD', 'AFDE', 'AFDF', \
+                		'AFEA', 'AFEB', 'AFEC', 'AFED', 'AFEE', 'AFEF', \
+                		'AFFA', 'AFFB', 'AFFC', 'AFFD', 'AFFE', 'AFFF', \
+                		'AFGA', 'AFGB', 'AFGC', 'AFGD', 'AFGE', 'AFGF', \
+                		'AFHA', 'AFHB', 'AFHC', 'AFHD', 'AFHE', 'AFHF', \
+                		'AFJA', 'AFJB', 'AFJC', 'AFJD', 'AFJE', 'AFJF', \
+                		'AFKA', 'AFKB', 'AFKC', 'AFKD', 'AFKE', 'AFKF', \
+                		'AFMA', 'AFMB', 'AFMC', 'AFMD', 'AFME', 'AFMF', \
+                		'AFNA', 'AFNB', 'AFNC', 'AFND', 'AFNE', 'AFNF', \
+                		'AFPA', 'AFPB', 'AFPC', 'AFPD', 'AFPE', 'AFPF', \
+                		'AFQA', 'AFQB', 'AFQC', 'AFQD', 'AFQE', 'AFQF', \
+                		'AG', 'AH', 'AJ', 'AK']]))
                     
             elif status == '3': # partial
                 query = None
                 complete_query = None
-                for field in ['AB', 'AC', 'AD', 'AEAA', 'AEAB', 'AEBA', 'AEBB', 'AECA', 'AECB', 'AEDA', \
-                'AEDB', 'AEEA', 'AEEB', 'AGA', 'AGB', 'AHA', 'AHB', 'AJA', 'AJB', 'AKA',  \
-                'AKB', 'AMA', 'AMB', 'ANA', 'ANB', 'APA', 'APB', 'AQA', 'AQB', 'ARA', \
-                'ARB', 'ASA', 'ASB', 'ATA', 'ATB', 'AUA', 'AUB', 'AV', 'AW', 'AX', 'AY']:
-                    if not query:
-                        exec 'query = Q(response__%s__isnull=False)' % field
-                    else:
-                        exec 'query |= Q(response__%s__isnull=False)' % field
-                    if not complete_query:
-                        exec 'complete_query = Q(response__%s__isnull=False)' % field
-                    else:
-                        exec 'complete_query &= Q(response__%s__isnull=False)' % field
+                if settings.ZAMBIA_DEPLOYMENT == 'RRP':
+                    for field in ['AB', 'AC', 'AD', 'AEAA', 'AEAB', 'AEBA', 'AEBB', 'AECA', 'AECB', 'AEDA', \
+                    'AEDB', 'AEEA', 'AEEB', 'AGA', 'AGB', 'AHA', 'AHB', 'AJA', 'AJB', 'AKA',  \
+                    'AKB', 'AMA', 'AMB', 'ANA', 'ANB', 'APA', 'APB', 'AQA', 'AQB', 'ARA', \
+                    'ARB', 'ASA', 'ASB', 'ATA', 'ATB', 'AUA', 'AUB', 'AV', 'AW', 'AX', 'AY']:
+                        if not query:
+                            exec 'query = Q(response__%s__isnull=False)' % field
+                        else:
+                            exec 'query |= Q(response__%s__isnull=False)' % field
+                        if not complete_query:
+                            exec 'complete_query = Q(response__%s__isnull=False)' % field
+                        else:
+                            exec 'complete_query &= Q(response__%s__isnull=False)' % field
+                else:
+                    for field in ['AB', 'AC', 'AD', 'AEAA', 'AEAB', 'AEAC', 'AEAD', 'AEAE', 'AEAF', \
+            		'AEBA', 'AEBB', 'AEBC', 'AEBD', 'AEBE', 'AEBF', \
+            		'AECA', 'AECB', 'AECC', 'AECD', 'AECE', 'AECF', \
+            		'AEDA', 'AEDB', 'AEDC', 'AEDD', 'AEDE', 'AEDF', \
+            		'AEEA', 'AEEB', 'AEEC', 'AEED', 'AEEE', 'AEEF', \
+            		'AFAA', 'AFAB', 'AFAC', 'AFAD', 'AFAE', 'AFAF', \
+            		'AFBA', 'AFBB', 'AFBC', 'AFBD', 'AFBE', 'AFBF', \
+            		'AFCA', 'AFCB', 'AFCC', 'AFCD', 'AFCE', 'AFCF', \
+            		'AFDA', 'AFDB', 'AFDC', 'AFDD', 'AFDE', 'AFDF', \
+            		'AFEA', 'AFEB', 'AFEC', 'AFED', 'AFEE', 'AFEF', \
+            		'AFFA', 'AFFB', 'AFFC', 'AFFD', 'AFFE', 'AFFF', \
+            		'AFGA', 'AFGB', 'AFGC', 'AFGD', 'AFGE', 'AFGF', \
+            		'AFHA', 'AFHB', 'AFHC', 'AFHD', 'AFHE', 'AFHF', \
+            		'AFJA', 'AFJB', 'AFJC', 'AFJD', 'AFJE', 'AFJF', \
+            		'AFKA', 'AFKB', 'AFKC', 'AFKD', 'AFKE', 'AFKF', \
+            		'AFMA', 'AFMB', 'AFMC', 'AFMD', 'AFME', 'AFMF', \
+            		'AFNA', 'AFNB', 'AFNC', 'AFND', 'AFNE', 'AFNF', \
+            		'AFPA', 'AFPB', 'AFPC', 'AFPD', 'AFPE', 'AFPF', \
+            		'AFQA', 'AFQB', 'AFQC', 'AFQD', 'AFQE', 'AFQF', \
+            		'AG', 'AH', 'AJ', 'AK']:
+                        if not query:
+                            exec 'query = Q(response__%s__isnull=False)' % field
+                        else:
+                            exec 'query |= Q(response__%s__isnull=False)' % field
+                        if not complete_query:
+                            exec 'complete_query = Q(response__%s__isnull=False)' % field
+                        else:
+                            exec 'complete_query &= Q(response__%s__isnull=False)' % field
                 exec 'query &= ~(complete_query)'
                 orm_filters['pk__in'] = Checklist.objects.filter(query).values_list('id', flat=True)
 
@@ -159,10 +236,10 @@ class ChecklistsResource(ModelResource):
 
 
 class ChecklistResource(ModelResource):
-    location = fields.ForeignKey(LocationResource, 'location', full=True, null=True, readonly=True)
+    location = fields.ForeignKey(LocationResource, 'location', full=True, null=True)
     form     = fields.ForeignKey(ChecklistFormResource, 'form')
     observer = fields.ForeignKey(ContactResource, 'observer', full=True, null=True, readonly=True)
-    response = fields.ToOneField(ChecklistResponseResource, 'response', full=True)
+    response = fields.ToOneField(ChecklistResponseResource, 'response', full=True, readonly=True)
 
     class Meta:
         queryset = Checklist.objects.select_related()
@@ -183,7 +260,7 @@ class IncidentResponseResource(ModelResource):
 
 class IncidentsResource(ModelResource):
     location = fields.ForeignKey(LocationResource, 'location', full=True)
-    observer = fields.ForeignKey(ContactResource, 'observer', full=True)
+    observer = fields.ForeignKey(ContactResource, 'observer', full=True, null=True)
     response = fields.ToOneField(IncidentResponseResource, 'response', full=True)
     
     class Meta:
@@ -215,7 +292,7 @@ class IncidentsResource(ModelResource):
 class IncidentResource(ModelResource):
     location = fields.ForeignKey(LocationResource, 'location', full=True)
     form     = fields.ForeignKey(IncidentFormResource, 'form')
-    observer = fields.ForeignKey(ContactResource, 'observer', full=True)
+    observer = fields.ForeignKey(ContactResource, 'observer', full=True, null=True)
     response = fields.ToOneField(IncidentResponseResource, 'response', full=True, readonly=True)
     
     class Meta:

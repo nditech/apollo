@@ -1,5 +1,5 @@
 from django.db import models
-from webapp.models import ChecklistResponse, Checklist
+from webapp.models import ChecklistResponse, Checklist, IncidentResponse, Incident
 from django.core.validators import RegexValidator
 from django.db.models.signals import post_save
 
@@ -136,7 +136,45 @@ class ZambiaChecklistResponse(ChecklistResponse):
     def __unicode__(self):
         return str(self.checklist.id)
 
-from general_models import Incident, IncidentResponse, ZambiaIncidentResponse
+
+class ZambiaIncidentResponse(IncidentResponse):
+    OPTIONS_W = (
+        (1, 'I witnessed the incident'),
+        (2, 'I arrived just after the incident happened'),
+        (3, 'The incident was reported to me by someone else')
+    )
+    W = models.IntegerField(blank=True, null=True, choices=OPTIONS_W, validators=[RegexValidator(r'[1-3]')], help_text='Witness')
+    
+    A = models.NullBooleanField(blank=False, help_text='Polling stream did not open')
+    B = models.NullBooleanField(blank=False, help_text='Polling stream opened very late')
+    C = models.NullBooleanField(blank=False, help_text='Polling stream closed very early')
+    D = models.NullBooleanField(blank=False, help_text='Polling stream did not have materials at opening')
+    E = models.NullBooleanField(blank=False, help_text='Voting buying/bribery')
+    F = models.NullBooleanField(blank=False, help_text='Monitor denied access to polling stream')
+    G = models.NullBooleanField(blank=False, help_text='Monitor not permitted to use reporting form')
+    H = models.NullBooleanField(blank=False, help_text='Police officers inside polling station')
+    I = models.NullBooleanField(blank=False, help_text='Polling stream ran out of materials')
+    J = models.NullBooleanField(blank=False, help_text='People in the queue at the time of official close of the polling station not allowed to vote')
+    K = models.NullBooleanField(blank=False, help_text='Violence/intimidation in or near the polling station')
+    K1 = models.NullBooleanField(blank=False, help_text='Uniformed police')
+    K2 = models.NullBooleanField(blank=False, help_text='Party supporters')
+    K4 = models.NullBooleanField(blank=False, help_text='Others')
+    L = models.NullBooleanField(blank=False, help_text='Violation of voting or counting procedures')
+    M = models.NullBooleanField(blank=False, help_text='Stealing or damaging of ballots')
+    N = models.NullBooleanField(blank=False, help_text='Voting or counting suspended during the process for more than 30 minutes')
+    O = models.TextField(blank=False, help_text='Others')
+    description = models.TextField(blank=True, help_text='Description of incident')
+
+    class Admin:
+        list_display = ('',)
+        search_fields = ('',)
+    
+    class Meta:
+        app_label = 'zambia'
+
+    def __unicode__(self):
+        return str(self.incident.id)
+
 
 def checklist_callback(sender, **kwargs):
     if not hasattr(kwargs['instance'], 'response'):

@@ -16,6 +16,11 @@
 <script src="/static/zambia/models.js" type="text/javascript" charset="utf-8"></script>
 <script src="/static/zambia/collections.js" type="text/javascript" charset="utf-8"></script>
 <script src="/static/zambia/views.js" type="text/javascript" charset="utf-8"></script>
+{% if context_instance.settings.ZAMBIA_DEPLOYMENT == 'RRP' %}
+<script src="/static/zambia/rrp_views.js" type="text/javascript" charset="utf-8"></script>
+{% else %}
+<script src="/static/zambia/general_views.js" type="text/javascript" charset="utf-8"></script>
+{% endif %}
 <script src="/static/zambia/routers.js" type="text/javascript" charset="utf-8"></script>
 {% app_templates context_instance %}
 <script type="text/javascript" charset="utf-8">
