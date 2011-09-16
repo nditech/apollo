@@ -67,7 +67,7 @@
 			</select>
 		</div>
 		<div class="input_el">
-% if perms['webapp'].user.has_perm('can_sms') and settings.ZAMBIA_DEPLOYMENT == 'RRP':
+% if user.has_perm('webapp.can_sms') and settings.ZAMBIA_DEPLOYMENT == 'RRP':
 			<span class="btn_blue btn_space"><input type="submit" name="submit" value="Search" class="search_btn"><span>&nbsp;</span></span><span class="btn_gray btn_space"><a href="javascript:;" id="form_reset">Reset</a><span>&nbsp;</span></span><span class="btn_yellow btn_space"><a href='javascript:;' class="sms_sender">SMS</a><span>&nbsp;</span></span>
 % else:
 			<span class="btn_blue btn_space"><input type="submit" name="submit" value="Search" class="search_btn"><span>&nbsp;</span></span><span class="btn_gray btn_space"><a href="javascript:;" id="form_reset">Reset</a><span>&nbsp;</span></span>
@@ -1438,7 +1438,7 @@
 			</select>
 		</div>
 		<div class="input_el">
-% if perms['webapp'].user.has_perm('can_sms'):
+% if user.has_perm('webapp.can_sms'):
 			<span class="btn_blue btn_space"><input type="submit" name="submit" value="Search" class="search_btn" ><span>&nbsp;</span></span><span class="btn_gray btn_space"><a href="javascript:;" id="form_reset">Reset</a><span>&nbsp;</span></span><span class="btn_yellow btn_space"><a href='javascript:;' class="sms_sender">SMS</a><span>&nbsp;</span></span>
 % else:
 			<span class="btn_blue btn_space"><input type="submit" name="submit" value="Search" class="search_btn"><span>&nbsp;</span></span><span class="btn_gray btn_space"><a href="javascript:;" id="form_reset">Reset</a><span>&nbsp;</span></span>
@@ -1453,7 +1453,7 @@
 </script>
 <script type="text/x-handlebars-template" id="contact-header-template" charset="utf-8">
 	<tbody>
-% if perms['rapidsms'].user.has_perm('change_contact') or settings.ZAMBIA_DEPLOYMENT == 'GENERAL':
+% if user.has_perm('rapidsms.change_contact') or settings.ZAMBIA_DEPLOYMENT == 'GENERAL':
 		<tr><th><a href="javascript:;" class="sortable_column" id="sort_observer_id">Monitor Id</a></th><th><a href="javascript:;" class="sortable_column" id="sort_name">Name</a></th><th><a href="javascript:;" class="sortable_column" id="sort_role__name">Role</a></th><th><a href="javascript:;" class="sortable_column" id="sort_connections__identity">Phone No.</a></th><th><a href="javascript:;" class="sortable_column" id="sort_location__name">Location</a></th><th><a href="javascript:;" class="sortable_column" id="sort_partner">Partner</a></th><th style="text-align:center">Edit</th></tr>
 % else:
 		<tr><th><a href="javascript:;" class="sortable_column" id="sort_observer_id">Monitor Id</a></th><th><a href="javascript:;" class="sortable_column" id="sort_name">Name</a></th><th><a href="javascript:;" class="sortable_column" id="sort_role__name">Role</a></th><th><a href="javascript:;" class="sortable_column" id="sort_connections__identity">Phone No.</a></th><th><a href="javascript:;" class="sortable_column" id="sort_location__name">Location</a></th><th><a href="javascript:;" class="sortable_column" id="sort_partner">Partner</a></th></tr>
@@ -1461,14 +1461,14 @@
 	</tbody>
 </script>
 <script type="text/x-handlebars-template" id="contact-template" charset="utf-8">
-% if perms['rapidsms'].user.has_perm('change_contact') or settings.ZAMBIA_DEPLOYMENT == 'GENERAL':
+% if user.has_perm('rapidsms.change_contact') or settings.ZAMBIA_DEPLOYMENT == 'GENERAL':
 	<td>{{observer_id}}</td><td>{{name}}</td><td>{{#if role}}{{role.attributes.name}}{{else}}-{{/if}}</td><td>{{#iflen connections.models }}{{connections.models.0.attributes.identity}}{{else}}-{{/iflen}}</td><td>{{#if location}}{{location.attributes.name}} ({{location.attributes.type.name}}){{else}}-{{/if}}</td><td>{{partner}}</td><td style="text-align:center"><a href="#!/contact/{{id}}">Edit</a></td>
 % else:
 	<td>{{observer_id}}</td><td>{{name}}</td><td>{{#if role}}{{role.attributes.name}}{{else}}-{{/if}}</td><td>{{#iflen connections.models }}{{connections.models.0.attributes.identity}}{{else}}-{{/iflen}}</td><td>{{#if location}}{{location.attributes.name}} ({{location.attributes.type.name}}){{else}}-{{/if}}</td><td>{{partner}}</td>
 % endif
 </script>
 <script type="text/x-handlebars-template" id="contact-empty-template" charset="utf-8">
-% if perms['rapidsms'].user.has_perm('change_contact') or settings.ZAMBIA_DEPLOYMENT == 'GENERAL':
+% if user.has_perm('rapidsms.change_contact') or settings.ZAMBIA_DEPLOYMENT == 'GENERAL':
 	<tr><td colspan="7" class="empty"><em>No contacts to display</em></td></tr>
 % else:
 	<tr><td colspan="6" class="empty"><em>No contacts to display</em></td></tr>
@@ -1587,7 +1587,7 @@
 		<div class="input_el"><input type="text" name="date" class="input_smoke search_field date_field" placeholder="Date" id="search_date__exact"></div>
 		<div class="input_el"><input type="text" name="location" class="input_smoke" placeholder="Location" id="location__id" style="width:30.5em"></div>
 		<div class="input_el">
-% if perms['webapp'].user.has_perm('can_sms') and settings.ZAMBIA_DEPLOYMENT == 'RRP':
+% if user.has_perm('webapp.can_sms') and settings.ZAMBIA_DEPLOYMENT == 'RRP':
 			<span class="btn_blue btn_space"><input type="submit" name="submit" value="Filter" class="search_btn"><span>&nbsp;</span></span><span class="btn_gray btn_space"><a href="javascript:;" id="form_reset">Reset</a><span>&nbsp;</span></span><span class="btn_yellow btn_space"><a href='javascript:;' class="sms_sender">SMS</a><span>&nbsp;</span></span><span class="btn_red btn_space"><a href="javascript:;" id="form_add_incident">Add</a><span>&nbsp;</span></span>
 % else:
 			<span class="btn_blue btn_space"><input type="submit" name="submit" value="Filter" class="search_btn"><span>&nbsp;</span></span><span class="btn_gray btn_space"><a href="javascript:;" id="form_reset">Reset</a><span>&nbsp;</span></span><span class="btn_red btn_space"><a href="javascript:;" id="form_add_incident">Add</a><span>&nbsp;</span></span>
