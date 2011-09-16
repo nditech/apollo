@@ -44,8 +44,10 @@
 							<ul class="sub-menu"> 
 								<li><a href="#!/elections/checklists">Checklists</a></li>
 								<li><a href="#!/elections/incidents">Incidents</a></li> 
+								{% if perms.webapp.can_analyse %}
 								<li><a href="#!/elections/process_analysis">Process Analysis</a></li> 
 								<li><a href="#!/elections/results_analysis">Results Analysis</a></li> 
+								{% endif %}
 							</ul> 
 						</li> 		
 						<li><a href="#!/contacts">Contacts</a></li>

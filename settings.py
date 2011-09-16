@@ -65,6 +65,7 @@ INSTALLED_APPS = [
     "rapidsms.contrib.messagelog",
     'south',
     "djcelery",
+    "reversion",
 ]
 
 MAKO_TEMPLATE_DIRS = (
@@ -151,6 +152,8 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.middleware.transaction.TransactionMiddleware',
+    'reversion.middleware.RevisionMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'audit_log.middleware.UserLoggingMiddleware',
     'djangomako.middleware.MakoMiddleware')

@@ -3,6 +3,13 @@
 
 from django.contrib import admin
 from models import *
+from reversion import admin as reversion
 
-admin.site.register(ZambiaChecklistResponse)
-admin.site.register(ZambiaIncidentResponse)
+class ZambiaChecklistResponseAdmin(reversion.VersionAdmin):
+    pass
+
+class ZambiaIncidentResponseAdmin(reversion.VersionAdmin):
+    pass
+
+admin.site.register(ZambiaChecklistResponse, ZambiaChecklistResponseAdmin)
+admin.site.register(ZambiaIncidentResponse, ZambiaIncidentResponseAdmin)

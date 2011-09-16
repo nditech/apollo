@@ -175,6 +175,7 @@ class Application(models.Model):
     class Meta:
         permissions = (
             ('can_sms', 'Can send SMS'),
+            ('can_analyse', 'Can view analyses'),
         )
     def __unicode__(self):
         return self.name
