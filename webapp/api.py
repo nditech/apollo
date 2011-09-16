@@ -82,6 +82,9 @@ class ContactRoleResource(ModelResource):
     class Meta:
         queryset = ObserverRole.objects.all()
         resource_name = 'contact_role'
+        filtering = {
+            'name': ALL,
+        }
 
 
 class BackendResource(ModelResource):
@@ -126,6 +129,7 @@ class ContactResource(ModelResource):
             'location': ALL_WITH_RELATIONS,
             'partner': ('exact',),
             'cell_coverage': ('exact',),
+            'role': ALL_WITH_RELATIONS,
         }
 
 
@@ -149,6 +153,7 @@ class ContactsResource(ModelResource):
             'location': ALL_WITH_RELATIONS,
             'partner': ('exact',),
             'cell_coverage': ('exact',),
+            'role': ALL_WITH_RELATIONS,
         }
         ordering = ['observer_id', 'name', 'role', 'location', 'connections', 'partner']
     
