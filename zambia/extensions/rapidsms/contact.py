@@ -16,6 +16,7 @@ class Observer(models.Model):
         ('OYV', 'OYV'),
         ('SACCORD', 'SACCORD'),
         ('TI-Z', 'TI-Z'),
+        ('WLG', 'WLG'),
         ('YWA', 'YWA'),
         ('ZNWL', 'ZNWL')
     )
