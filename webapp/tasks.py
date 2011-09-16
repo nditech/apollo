@@ -9,7 +9,7 @@ from rapidsms.models import Backend
 from django.conf import settings
         
 class MessageBlast(Task):
-    endpoint_sendsms = 'http://nusms.nuobjects.com/index.php?user=%(user)&pass=%(pwd)&to=%(to)&from=%(sender)&msg=%(msg)'
+    endpoint_sendsms = 'http://nusms.nuobjects.com/index.php'
     user = settings.SMS_USER
     pwd  = settings.SMS_PASS
     sender = settings.SMS_SENDER
