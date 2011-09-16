@@ -1817,6 +1817,7 @@ div.section_tabs a:hover, .section_tabs .current a {
 div.fb_dialog { text-align:center;}
 div.fb_dialog > p {font-size:1.2em;margin-bottom:1em;}
 div.fb_2buttons {overflow:auto;width:130px;margin:0 auto;}
+div.fb_ok_button {overflow:auto;width:50px;margin:0 auto;}
 
 .input_text {height:18px;background-color:#ddd;border:1px solid #ccc;padding:3px 10px;width:50px;border-radius:4px;}
 select.input_text {height:26px;width:174px;}
