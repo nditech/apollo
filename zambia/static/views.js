@@ -1,4 +1,105 @@
 // Backbone.js views
+DashboardView = Backbone.View.extend({
+       tagName: 'div',
+       
+       initialize: function () {
+           _.bindAll(this, "render", "search", "resetForm");
+       },
+       
+       events: {
+           "change .location_select": "locationChanged",
+           "click #form_reset": "resetForm",
+           "submit": "search"
+       },
+       
+       resetForm: function () {
+           $("select[title='province']").val("");
+           $("select[title='district']").html('<option value="">- Select a province -</option>');
+           $("select[title='sample']").val("");
+           $(this.el).trigger('submit');
+           return false;
+       },
+       
+       search: function (e) {
+           var self = this;
+           var params = {};
+           $(".search_field").each(function (index, field) {
+               if ($(field).val()) {
+                   params[$(field).attr('title')] = $('option:selected', field).attr('title');
+               }
+           });
+           $.get('/zambia/dashboard_stats/', params, function (result) {
+               $('#setup_missing', this.el).html(result.setup_missing);
+               $('#voting_missing', this.el).html(result.voting_missing);
+               $('#closing_missing', this.el).html(result.closing_missing);
+               $('#counting_missing', this.el).html(result.counting_missing);
+               
+               $('#setup_partial', this.el).html(result.setup_partial);
+               $('#voting_partial', this.el).html(result.voting_partial);
+               $('#closing_partial', this.el).html(result.closing_partial);
+               $('#counting_partial', this.el).html(result.counting_partial);
+               
+               $('#setup_complete', this.el).html(result.setup_complete);
+               $('#voting_complete', this.el).html(result.voting_complete);
+               $('#closing_complete', this.el).html(result.closing_complete);
+               $('#counting_complete', this.el).html(result.counting_complete);
+           });
+           return false;
+       },
+       
+       locationChanged: function (e) {
+           var el = $(e.currentTarget);
+           var location_type = $(el).attr("title");
+           var id = $('option:selected', el).attr('title');
+
+           if (id) {
+               if (location_type == 'province') {
+                   $('.location_select').not(el).html('');
+
+                   var districts = new LocationCollection();
+                   districts.filtrate({'type__name': 'District', 'parent__id': id}, {
+                       success: function (coll, response) {
+                           $('select[title="district"]').html(Templates.LocationOptions({'locations':coll.models}));
+                           $('select[title="district"] option:first').html('- District -');
+                       }
+                   });
+               }
+           }
+       },
+       
+       render: function () {           
+            $(this.el).html(Templates.ZambiaDashboardFilter());
+            $(this.el).append(Templates.ZambiaDashboard());
+
+            var provinces = new LocationCollection();
+            provinces.filtrate({'type__name':'Province'}, {
+              success: function (coll, response) {
+                  $('select[title="province"]').html(Templates.LocationOptions({'locations':coll.models}));
+                  $('select[title="province"] option:first').html('- Province -');
+              }
+            });
+            
+            $.get('/zambia/dashboard_stats/', function (result) {
+                $('#setup_missing', this.el).html(result.setup_missing);
+                $('#voting_missing', this.el).html(result.voting_missing);
+                $('#closing_missing', this.el).html(result.closing_missing);
+                $('#counting_missing', this.el).html(result.counting_missing);
+                
+                $('#setup_partial', this.el).html(result.setup_partial);
+                $('#voting_partial', this.el).html(result.voting_partial);
+                $('#closing_partial', this.el).html(result.closing_partial);
+                $('#counting_partial', this.el).html(result.counting_partial);
+                
+                $('#setup_complete', this.el).html(result.setup_complete);
+                $('#voting_complete', this.el).html(result.voting_complete);
+                $('#closing_complete', this.el).html(result.closing_complete);
+                $('#counting_complete', this.el).html(result.counting_complete);
+            });
+
+            return this.el;
+       }
+});
+
 ContactView = Backbone.View.extend({
        tagName: 'tr',
        

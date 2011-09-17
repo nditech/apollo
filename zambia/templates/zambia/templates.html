@@ -25,6 +25,25 @@
 		</table>
 	</div>
 </script>
+<script type="text/x-handlebars-template" id="zambia-dashboard-template" charset="utf-8">
+<div>
+	<table border="0" cellpadding="5" width="100%">
+		<tr>
+		<td valign="top">
+		<h1>Setup</h1>
+		<div class="chart_data">Missing: <span id="setup_missing" class="data_missing">0</span> Partial: <span id="setup_partial" class="data_partial">0</span> Complete: <span id="setup_complete" class="data_complete">0</span></div>
+		<h1 id="voting">Voting</h1>
+		<div class="chart_data">Missing: <span id="voting_missing" class="data_missing">0</span> Partial: <span id="voting_partial" class="data_partial">0</span> Complete: <span id="voting_complete" class="data_complete">0</span></div>
+		<h1 id="closing">Closing</h1>
+		<div class="chart_data">Missing: <span id="closing_missing" class="data_missing">0</span> Partial: <span id="closing_partial" class="data_partial">0</span> Complete: <span id="closing_complete" class="data_complete">0</span></div>
+		<h1 id="counting">Counting</h1>
+		<div class="chart_data">Missing: <span id="counting_missing" class="data_missing">0</span> Partial: <span id="counting_partial" class="data_partial">0</span> Complete: <span id="counting_complete" class="data_complete">0</span></div>
+		</td>
+		<td><img src='/assets/images/dash/zam_province.png' width='214' height='303' /></td>
+		</tr>
+	</table>
+</div>
+</script>
 <script type="text/x-handlebars-template" id="dashboard-filter-template" charset="utf-8">
 	<div class="search_pane_dashboard">
 		<form id="search">
@@ -2056,6 +2075,7 @@
 % endif
 	Templates.ZambiaDashboardScreen = Handlebars.compile($('#screen-zambia-dashboard-template').html());
 	Templates.ZambiaDashboardFilter = Handlebars.compile($('#dashboard-filter-template').html());
+	Templates.ZambiaDashboard = Handlebars.compile($('#zambia-dashboard-template').html());
 	Templates.ContactSearch = Handlebars.compile($('#contact-search-template').html());
 	Templates.Contact = Handlebars.compile($('#contact-template').html());
 	Templates.ContactEmpty = Handlebars.compile($('#contact-empty-template').html());

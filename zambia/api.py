@@ -56,9 +56,7 @@ class ChecklistsResource(ModelResource):
             elif loc.type.name == 'Polling Stream':
                 orm_filters['location__id__in'] = Location.objects.filter(id=id,type__name="Polling Stream").values_list('id', flat=True)
             
-        
-        # TODO: Filtering for general election checklists
-        
+                
         if 'setup_status' in filters:
             status = filters.get('setup_status')
             if status == '1': # complete

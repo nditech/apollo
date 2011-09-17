@@ -17,6 +17,9 @@ ZambiaRouter = Backbone.Router.extend({
     dashboard: function () {
         screen_model = new Screen({title: 'Dashboard', contents: '', link: '#!/dashboard'});
         screen_view = new ScreenView({model: screen_model, template: 'ZambiaDashboardScreen'});
+        
+        var dashboard_view = new DashboardView().render();
+        $('div.full_width_content').html(dashboard_view);
     },
     
     checklists: function () {

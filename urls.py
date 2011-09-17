@@ -22,6 +22,7 @@ if settings.DEBUG:
 urlpatterns += patterns('',
     # apolo urls for default routing
     (r'', include('webapp.urls')),
+    (r'zambia/', include('zambia.urls')),
     (r'^', include('rapidsms.urls.static_media')),
     (r'^comments/', include('django.contrib.comments.urls')),
 ) 
