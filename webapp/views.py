@@ -42,9 +42,9 @@ def send_sms(request):
         if collection_type == 'contact':
             phone_numbers = [re.sub(r'^0', '260', contact.connection_set.all()[0].identity).replace(" ", "") for contact in obj_list if contact.connection_set.all()[0].identity]
         elif collection_type == 'incident':
-            phone_numbers = [re.sub(r'^0', '260', incident.observer.connection_set.all()[0].identity).replace(" ", "") for incident in obj_list if contact.connection_set.all()[0].identity]
+            phone_numbers = [re.sub(r'^0', '260', incident.observer.connection_set.all()[0].identity).replace(" ", "") for incident in obj_list if incident.observer.connection_set.all()[0].identity]
         elif collection_type == 'checklist':
-            phone_numbers = [re.sub(r'^0', '260', checklist.observer.connection_set.all()[0].identity).replace(" ", "") for checklist in obj_list if contact.connection_set.all()[0].identity]
+            phone_numbers = [re.sub(r'^0', '260', checklist.observer.connection_set.all()[0].identity).replace(" ", "") for checklist in obj_list if checklist.observer.connection_set.all()[0].identity]
         
         phone_numbers += settings.PHONE_CC
         
