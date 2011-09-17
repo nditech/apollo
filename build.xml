@@ -16,6 +16,7 @@
             <fileset file="assets/js/jquery.ui.throbber.js" />
             <fileset file="assets/js/jquery.scrollTo.js" />
             <fileset file="assets/js/facebox.js" />
+			<fileset file="assets/js/protovis-d3.1.js" />
             <fileset file="assets/js/custom.js" />
         </concat>
     </target>
