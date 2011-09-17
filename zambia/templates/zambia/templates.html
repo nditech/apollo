@@ -25,6 +25,34 @@
 		</table>
 	</div>
 </script>
+<script type="text/x-handlebars-template" id="dashboard-filter-template" charset="utf-8">
+	<div class="search_pane_dashboard">
+		<form id="search">
+			<div class="input_el">
+				<select name="province" title="province" id="province" class="input_smoke search_field field location_select" style="width:20em">
+					<option value="">- Province -</option>
+				</select>
+			</div>
+			<div class="input_el">
+				<select name="district" title="district" id="district" class="input_smoke search_field field location_select" style="width:20em">
+					<option value="">- Select a province -</option>
+				</select>
+			</div>
+			<div class="input_el">
+				<select name="sample" title="sample" id="sample" class="input_smoke search_field field" style="width:20em">
+					<option value="" title="">- Sample -</option>
+					<option value="Caritas" title="Caritas">Caritas</option>
+					<option value="FODEP" title="FODEP">FODEP</option>
+				</select>
+			</div>
+			<div class="input_el">
+				<span class="btn_blue btn_space"><input type="submit" name="submit" value="Search" class="search_btn"><span>&nbsp;</span></span><span class="btn_gray btn_space"><a href="javascript:;" id="form_reset">Reset</a><span>&nbsp;</span></span>
+			</div>
+			<div class="clear"></div>
+		</form>
+	</div>
+</script>
+
 <script type="text/x-handlebars-template" id="checklist-filter-template" charset="utf-8">
 	<div id="filter" class="filter_pane">
 		<form id="search">
@@ -124,7 +152,7 @@
 </script>
 <script type="text/x-handlebars-template" id="checklist-metadata-template" charset="utf-8">
 	<div>
-		<p class="style"><span class="span"><label>Monitor</label></span><span class="input"><strong>{{observer.attributes.name}}</strong>{{#iflen observer.attributes.connections.models}} ({{observer.attributes.connections.models.0.attributes.identity}}){{/iflen}}</span></p>
+		<p class="style"><span class="span"><label>Monitor</label></span><span class="input"><strong>{{observer.attributes.name}}</strong>{{#iflen observer.attributes.connections.models}} ({{observer.attributes.connections.models.0.attributes.identity}}){{/iflen}} &mdash; <strong>{{observer.attributes.observer_id}}</strong></span></p>
 		<p class="style"><span class="span"><label>Location</label></span><span class="input">{{location.attributes.parent.attributes.parent.attributes.parent.attributes.parent.attributes.parent.attributes.parent.attributes.name}} / {{location.attributes.parent.attributes.parent.attributes.parent.attributes.parent.attributes.parent.attributes.name}} / {{location.attributes.parent.attributes.parent.attributes.parent.attributes.parent.attributes.name}} / {{location.attributes.parent.attributes.parent.attributes.parent.attributes.name}}</span></p>
 		<p class="style"><span class="span"><label>Polling Location</label></span><span class="input">{{location.attributes.parent.attributes.parent.attributes.name}} / {{location.attributes.parent.attributes.name}} / <strong>{{location.attributes.name}}</strong></span></p>
 		{{#if observer.attributes.supervisor}}<p class="style"><span class="span"><label>Supervisor</label></span><span class="input"><strong>{{observer.attributes.supervisor.attributes.name}}</strong>{{#iflen observer.attributes.supervisor.attributes.connections.models}} ({{observer.attributes.supervisor.attributes.connections.models.0.attributes.identity}}){{/iflen}}</span></p>{{/if}}
@@ -2027,6 +2055,7 @@
 	Templates.ChecklistEdit = Handlebars.compile($('#checklist-edit-template').html());
 % endif
 	Templates.ZambiaDashboardScreen = Handlebars.compile($('#screen-zambia-dashboard-template').html());
+	Templates.ZambiaDashboardFilter = Handlebars.compile($('#dashboard-filter-template').html());
 	Templates.ContactSearch = Handlebars.compile($('#contact-search-template').html());
 	Templates.Contact = Handlebars.compile($('#contact-template').html());
 	Templates.ContactEmpty = Handlebars.compile($('#contact-empty-template').html());
