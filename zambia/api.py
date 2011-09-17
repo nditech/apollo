@@ -40,7 +40,22 @@ class ChecklistsResource(ModelResource):
         
         if orm_filters.has_key('location__id__exact') or orm_filters.has_key('location__id'):
             id = orm_filters.pop('location__id__exact')
-            orm_filters['location__id__in'] = Location.objects.get(id=id).get_descendants(True).values_list('id', flat=True)
+            loc = Location.objects.get(id=id)
+            if loc.type.name == 'Province':
+                orm_filters['location__id__in'] = Location.objects.filter(parent__parent__parent__parent__parent__parent__id=id,type__name="Polling Stream").values_list('id', flat=True)
+            elif loc.type.name == 'District':
+                orm_filters['location__id__in'] = Location.objects.filter(parent__parent__parent__parent__parent__id=id,type__name="Polling Stream").values_list('id', flat=True)
+            elif loc.type.name == 'Constituency':
+                orm_filters['location__id__in'] = Location.objects.filter(parent__parent__parent__parent__id=id,type__name="Polling Stream").values_list('id', flat=True)
+            elif loc.type.name == 'Ward':
+                orm_filters['location__id__in'] = Location.objects.filter(parent__parent__parent__id=id,type__name="Polling Stream").values_list('id', flat=True)
+            elif loc.type.name == 'Polling District':
+                orm_filters['location__id__in'] = Location.objects.filter(parent__parent__id=id,type__name="Polling Stream").values_list('id', flat=True)
+            elif loc.type.name == 'Polling Station':
+                orm_filters['location__id__in'] = Location.objects.filter(parent__id=id,type__name="Polling Stream").values_list('id', flat=True)
+            elif loc.type.name == 'Polling Stream':
+                orm_filters['location__id__in'] = Location.objects.filter(id=id,type__name="Polling Stream").values_list('id', flat=True)
+            
         
         # TODO: Filtering for general election checklists
         
