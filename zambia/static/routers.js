@@ -18,8 +18,137 @@ ZambiaRouter = Backbone.Router.extend({
         screen_model = new Screen({title: 'Dashboard', contents: '', link: '#!/dashboard'});
         screen_view = new ScreenView({model: screen_model, template: 'ZambiaDashboardScreen'});
         
+        params = {};
+        
+        update_stats = function (result) {
+            setup.missing = result.setup_missing;
+            voting.missing = result.voting_missing;
+            closing.missing = result.closing_missing;
+            counting.missing = result.counting_missing;
+
+            setup.partial = result.setup_partial;
+            voting.partial = result.voting_partial;
+            closing.partial = result.closing_partial;
+            counting.partial = result.counting_partial;
+
+            setup.complete = result.setup_complete;
+            voting.complete = result.voting_complete;
+            closing.complete = result.closing_complete;
+            counting.complete = result.counting_complete;
+		}
+		
+		fetch_stats = function () {
+            $.ajax({
+    	        url: '/zambia/dashboard_stats/',
+    	        data: params,
+    	        global: false,
+    	        success: function (result) {
+    	            update_stats(result);
+    	        }
+    	    });
+        }
+        
         var dashboard_view = new DashboardView().render();
         $('div.full_width_content').html(dashboard_view);
+        
+        var missing_color = "#ff0d00";
+        var partial_color = "#fff800";
+        var complete_color = "#39e639";
+        var text_color = "#000";
+        var w = 400;
+        var h = 25;
+        
+        var setup    = {missing: 0, partial: 0, complete: 0};
+        var voting   = {missing: 0, partial: 0, complete: 0};
+        var closing  = {missing: 0, partial: 0, complete: 0};
+        var counting = {missing: 0, partial: 0, complete: 0};
+        
+        checklists_status =  function () {
+        	return {
+        		setup: {
+        			data: function () { return _(setup).map(function (i) { return [i]; }); }, 
+        			total: function () { return _(setup).reduce(function(i, sum) { return sum + i; }); }
+        		}, 
+        		voting: {
+        			data: function () { return _(voting).map(function (i) { return [i]; }); }, 
+        			total: function () { return _(voting).reduce(function(i, sum) { return sum + i; }); }
+        		},
+        		closing: {
+        			data: function () { return _(closing).map(function (i) { return [i]; }); }, 
+        			total: function () { return _(closing).reduce(function(i, sum) { return sum + i; }); } 
+        		},
+        		counting: {
+        			data: function () { return _(counting).map(function (i) { return [i]; }); }, 
+        			total: function () { return _(counting).reduce(function(i, sum) { return sum + i; }); } 
+        		},
+        	};
+        }
+        
+        vis_setup = new pv.Panel().canvas('setup').width(w+10).height(h).bottom(h).left(0).right(0);
+        vis_setup.add(pv.Layout.Stack)
+            .layers(checklists_status().setup.data)
+            .y(function (d) { return d / checklists_status().setup.total() * w; })
+            .orient('left-top')
+            .layer.add(pv.Bar)
+                .fillStyle(pv.colors(missing_color,partial_color,complete_color).by(function () { return this.parent.index; }))
+                .anchor("left").add(pv.Label).textStyle(text_color).text(function(d) { return d; }).visible(function (d) { return d / checklists_status().setup.total() > 0.03;});
+
+        vis_setup.add(pv.Label).textStyle(text_color).text(function () { return 'Missing: '+ checklists_status().setup.data()[0][0]; }).top(h*1.8).left(0);
+        vis_setup.add(pv.Label).textStyle(text_color).text(function () { return 'Partial: '+ checklists_status().setup.data()[1][0]; }).top(h*1.8).left(100);
+        vis_setup.add(pv.Label).textStyle(text_color).text(function () { return 'Complete: '+ checklists_status().setup.data()[2][0]; }).top(h*1.8).left(200);
+
+        vis_voting = new pv.Panel().canvas('voting').width(w+10).height(h).bottom(h).left(0).right(0);
+        vis_voting.add(pv.Layout.Stack)
+            .layers(checklists_status().voting.data)
+            .y(function (d) { return d / checklists_status().voting.total() * w; })
+            .orient('left-top')
+            .layer.add(pv.Bar)
+                .fillStyle(pv.colors(missing_color,partial_color,complete_color).by(function () { return this.parent.index; }))
+                .anchor("left").add(pv.Label).textStyle(text_color).text(function(d) { return d; }).visible(function (d) { return d / checklists_status().voting.total() > 0.03;});
+
+        vis_voting.add(pv.Label).textStyle(text_color).text(function () { return 'Missing: '+ checklists_status().voting.data()[0][0]; }).top(h*1.8).left(0);
+        vis_voting.add(pv.Label).textStyle(text_color).text(function () { return 'Partial: '+ checklists_status().voting.data()[1][0]; }).top(h*1.8).left(100);
+        vis_voting.add(pv.Label).textStyle(text_color).text(function () { return 'Complete: '+ checklists_status().voting.data()[2][0]; }).top(h*1.8).left(200);
+
+        vis_closing = new pv.Panel().canvas('closing').width(w+10).height(h).bottom(h).left(0).right(0);
+        vis_closing.add(pv.Layout.Stack)
+            .layers(checklists_status().closing.data)
+            .y(function (d) { return d / checklists_status().closing.total() * w; })
+            .orient('left-top')
+            .layer.add(pv.Bar)
+                .fillStyle(pv.colors(missing_color,partial_color,complete_color).by(function () { return this.parent.index; }))
+                .anchor("left").add(pv.Label).textStyle(text_color).text(function(d) { return d; }).visible(function (d) { return d / checklists_status().closing.total() > 0.03;});
+
+        vis_closing.add(pv.Label).textStyle(text_color).text(function () { return 'Missing: '+ checklists_status().closing.data()[0][0]; }).top(h*1.8).left(0);
+        vis_closing.add(pv.Label).textStyle(text_color).text(function () { return 'Partial: '+ checklists_status().closing.data()[1][0]; }).top(h*1.8).left(100);
+        vis_closing.add(pv.Label).textStyle(text_color).text(function () { return 'Complete: '+ checklists_status().closing.data()[2][0]; }).top(h*1.8).left(200);
+
+        vis_counting = new pv.Panel().canvas('counting').width(w+10).height(h).bottom(h).left(0).right(0);
+        vis_counting.add(pv.Layout.Stack)
+            .layers(checklists_status().counting.data)
+            .y(function (d) { return d / checklists_status().counting.total() * w; })
+            .orient('left-top')
+            .layer.add(pv.Bar)
+                .fillStyle(pv.colors(missing_color,partial_color,complete_color).by(function () { return this.parent.index; }))
+                .anchor("left").add(pv.Label).textStyle(text_color).text(function(d) { return d; }).visible(function (d) { return d / checklists_status().counting.total() > 0.03;});
+
+        vis_counting.add(pv.Label).textStyle(text_color).text(function () { return 'Missing: '+ checklists_status().counting.data()[0][0]; }).top(h*1.8).left(0);
+        vis_counting.add(pv.Label).textStyle(text_color).text(function () { return 'Partial: '+ checklists_status().counting.data()[1][0]; }).top(h*1.8).left(100);
+        vis_counting.add(pv.Label).textStyle(text_color).text(function () { return 'Complete: '+ checklists_status().counting.data()[2][0]; }).top(h*1.8).left(200);
+
+        vis_setup.render();
+        vis_voting.render();
+        vis_closing.render();
+        vis_counting.render();
+
+        // set frequency to redraw the charts
+        setInterval(function () { vis_setup.render(); },    1000);
+        setInterval(function () { vis_voting.render(); },   1000);
+        setInterval(function () { vis_closing.render(); },  1000);
+        setInterval(function () { vis_counting.render(); }, 1000);
+
+        // set frequency for fetching data
+        setInterval(function () { fetch_stats(); }, 1000);
     },
     
     checklists: function () {

@@ -1841,3 +1841,6 @@ p.style .textbox{display: block; float:left; width:80px;font-size:.8em;}
 	width:158px;
 	margin-left:10px;
 }
+
+/* dashboard chart settings */
+.chart_data { width: 625px; font-size: 1.8em;margin-bottom:0.8em;}

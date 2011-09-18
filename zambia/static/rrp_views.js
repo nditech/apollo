@@ -22,28 +22,17 @@ DashboardView = Backbone.View.extend({
        
        search: function (e) {
            var self = this;
-           var params = {};
+           params = {};
            $(".search_field").each(function (index, field) {
                if ($(field).val()) {
                    params[$(field).attr('title')] = $('option:selected', field).attr('title');
                }
            });
+           
            $.get('/zambia/dashboard_stats/', params, function (result) {
-               $('#setup_missing', this.el).html(result.setup_missing);
-               $('#voting_missing', this.el).html(result.voting_missing);
-               $('#closing_missing', this.el).html(result.closing_missing);
-               $('#counting_missing', this.el).html(result.counting_missing);
-               
-               $('#setup_partial', this.el).html(result.setup_partial);
-               $('#voting_partial', this.el).html(result.voting_partial);
-               $('#closing_partial', this.el).html(result.closing_partial);
-               $('#counting_partial', this.el).html(result.counting_partial);
-               
-               $('#setup_complete', this.el).html(result.setup_complete);
-               $('#voting_complete', this.el).html(result.voting_complete);
-               $('#closing_complete', this.el).html(result.closing_complete);
-               $('#counting_complete', this.el).html(result.counting_complete);
+               update_stats(result);
            });
+           
            return false;
        },
        
@@ -78,22 +67,9 @@ DashboardView = Backbone.View.extend({
                   $('select[title="province"] option:first').html('- Province -');
               }
             });
-            
+                        
             $.get('/zambia/dashboard_stats/', function (result) {
-                $('#setup_missing', this.el).html(result.setup_missing);
-                $('#voting_missing', this.el).html(result.voting_missing);
-                $('#closing_missing', this.el).html(result.closing_missing);
-                $('#counting_missing', this.el).html(result.counting_missing);
-                
-                $('#setup_partial', this.el).html(result.setup_partial);
-                $('#voting_partial', this.el).html(result.voting_partial);
-                $('#closing_partial', this.el).html(result.closing_partial);
-                $('#counting_partial', this.el).html(result.counting_partial);
-                
-                $('#setup_complete', this.el).html(result.setup_complete);
-                $('#voting_complete', this.el).html(result.voting_complete);
-                $('#closing_complete', this.el).html(result.closing_complete);
-                $('#counting_complete', this.el).html(result.counting_complete);
+                update_stats(result);
             });
 
             return this.el;

@@ -5,6 +5,10 @@ Screen = Backbone.Model.extend({
 		title: null,
 		contents: null,
 	},
+	
+	initialize: function () {
+	    clearAllIntervals();
+	}
 });
 
 Location = Backbone.RelationalModel.extend({

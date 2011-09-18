@@ -162,6 +162,21 @@ $(function () {
         }
         return false;
     });
+    
+    // custom setInterval
+    periodic_fns = [];
+    
+    window.oldSetInterval = window.setInterval;
+    window.setInterval = function (fn, interval) {
+        var interval_id = window.oldSetInterval(fn, interval);
+        periodic_fns.push(interval_id);
+    }
+    window.clearAllIntervals = function () {
+        var interval_id = 0;
+        while (interval_id = periodic_fns.pop()) {
+            clearInterval(interval_id);
+        }
+    }
 
     $.widget("custom.catcomplete", $.ui.autocomplete, {
         _create: function () {
