@@ -117,8 +117,8 @@ $(function () {
     
 	// Removes white space from contact phone when save button is clicked
 	$('.sub').live('click', function(){                    
-		str = $('.txt').val().replace(/ /g,'');
-		alert(str);
+		//str = $('.txt').val().replace(/ /g,'');
+		//alert(str);
     });
 	
     // Uncheck a radio button if clicked twice  
