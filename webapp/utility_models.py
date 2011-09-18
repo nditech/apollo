@@ -29,6 +29,9 @@ class Location(MPTTModel):
     class Admin:
         list_display = ('',)
         search_fields = ('',)
+    
+    class Meta:
+        ordering = ['name']
 
     def __unicode__(self):
         return self.name

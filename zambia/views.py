@@ -8,18 +8,31 @@ import json
 def dashboard_stats(request):
     province = request.GET.get('province', None)
     district = request.GET.get('district', None)
+    polling_district = request.GET.get('polling_district', None)
+    polling_stream = request.GET.get('polling_stream', None)
     sample = request.GET.get('sample', None)
     
     # checklist statistics
     checklist_filter = {}
-    if province:
+    
+    if polling_stream:
         try:
-            checklist_filter['location__parent__parent__parent__parent__parent__parent__id'] = int(province)
+            checklist_filter['location__id'] = int(polling_stream)
         except ValueError:
             pass
-    if district:
+    elif polling_district:
+        try:
+            checklist_filter['location__parent__parent__id'] = int(polling_district)
+        except ValueError:
+            pass
+    elif district:
         try:
             checklist_filter['location__parent__parent__parent__parent__parent__id'] = int(district)
+        except ValueError:
+            pass
+    elif province:
+        try:
+            checklist_filter['location__parent__parent__parent__parent__parent__parent__id'] = int(province)
         except ValueError:
             pass
     if sample:

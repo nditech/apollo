@@ -48,22 +48,35 @@
 	<div class="search_pane_dashboard">
 		<form id="search">
 			<div class="input_el">
-				<select name="province" title="province" id="province" class="input_smoke search_field field location_select" style="width:20em">
+				<select name="province" title="province" id="province" class="input_smoke search_field field location_select">
 					<option value="">- Province -</option>
 				</select>
 			</div>
 			<div class="input_el">
-				<select name="district" title="district" id="district" class="input_smoke search_field field location_select" style="width:20em">
+				<select name="district" title="district" id="district" class="input_smoke search_field field location_select">
 					<option value="">- Select a province -</option>
 				</select>
 			</div>
+% if settings.ZAMBIA_DEPLOYMENT == 'GENERAL':
 			<div class="input_el">
-				<select name="sample" title="sample" id="sample" class="input_smoke search_field field" style="width:20em">
+				<select name="polling_district" title="polling_district" id="polling_district" class="input_smoke search_field field location_select">
+					<option value="">- Select a district -</option>
+				</select>
+			</div>
+			<div class="input_el">
+				<select name="polling_stream" title="polling_stream" id="polling_stream" class="input_smoke search_field field location_select">
+					<option value="">- Select a polling district -</option>
+				</select>
+			</div>
+% else:
+			<div class="input_el">
+				<select name="sample" title="sample" id="sample" class="input_smoke search_field field">
 					<option value="" title="">- Sample -</option>
 					<option value="Caritas" title="Caritas">Caritas</option>
 					<option value="FODEP" title="FODEP">FODEP</option>
 				</select>
 			</div>
+% endif
 			<div class="input_el">
 				<span class="btn_blue btn_space"><input type="submit" name="submit" value="Search" class="search_btn"><span>&nbsp;</span></span><span class="btn_gray btn_space"><a href="javascript:;" id="form_reset">Reset</a><span>&nbsp;</span></span>
 			</div>
@@ -134,7 +147,11 @@
 <script type="text/x-handlebars-template" id="checklist-header-template" charset="utf-8">
 	<tbody>
 % if settings.ZAMBIA_DEPLOYMENT == 'GENERAL':
-		<tr><th><a href="javascript:;" class="sortable_column" id="sort_location__parent__parent__parent__parent__parent__parent__name">Province</a></th><th><a href="javascript:;" class="sortable_column" id="sort_location__parent__parent__parent__parent__parent__name">District</a></th><th><a href="javascript:;" class="sortable_column" id="sort_location__parent__parent__parent__parent__name">Constituency</a></th><th><a href="javascript:;" class="sortable_column" id="sort_location__parent__name">Polling Station</a></th><th><a href="javascript:;" class="sortable_column" id="sort_observer__supervisor__name">Supervisor</a></th><th><a href="javascript:;" class="sortable_column" id="sort_response__monitor_name">Monitor</a></th><th style="text-align:center"><span title="Setup">S</span></th><th style="text-align:center"><span title="Voting">V</span></th><th style="text-align:center"><span title="Closing">Cl</span></th><th style="text-align:center"><span title="Counting">Co</span></th><th style="text-align:center">Edit</th></tr>
+	% if user.has_perm('webapp.delete_checklist'):
+		<tr><th><a href="javascript:;" class="sortable_column" id="sort_location__parent__parent__parent__parent__parent__parent__name">Province</a></th><th><a href="javascript:;" class="sortable_column" id="sort_location__parent__parent__parent__parent__parent__name">District</a></th><th><a href="javascript:;" class="sortable_column" id="sort_location__parent__parent__parent__parent__name">Constituency</a></th><th><a href="javascript:;" class="sortable_column" id="sort_location__parent__name">Polling Station</a></th><th><a href="javascript:;" class="sortable_column" id="sort_response__monitor_name">Monitor</a></th><th style="text-align:center"><span title="Setup">S</span></th><th style="text-align:center"><span title="Voting">V</span></th><th style="text-align:center"><span title="Closing">Cl</span></th><th style="text-align:center"><span title="Counting">Co</span></th><th style="text-align:center">Edit</th><th style="text-align:center">Del</th></tr>
+	% else:
+		<tr><th><a href="javascript:;" class="sortable_column" id="sort_location__parent__parent__parent__parent__parent__parent__name">Province</a></th><th><a href="javascript:;" class="sortable_column" id="sort_location__parent__parent__parent__parent__parent__name">District</a></th><th><a href="javascript:;" class="sortable_column" id="sort_location__parent__parent__parent__parent__name">Constituency</a></th><th><a href="javascript:;" class="sortable_column" id="sort_location__parent__name">Polling Station</a></th><th><a href="javascript:;" class="sortable_column" id="sort_response__monitor_name">Monitor</a></th><th style="text-align:center"><span title="Setup">S</span></th><th style="text-align:center"><span title="Voting">V</span></th><th style="text-align:center"><span title="Closing">Cl</span></th><th style="text-align:center"><span title="Counting">Co</span></th><th style="text-align:center">Edit</th></tr>
+	% endif
 % else:
 		<tr><th><a href="javascript:;" class="sortable_column" id="sort_observer__observer_id">Monitor Id</a></th><th><a href="javascript:;" class="sortable_column" id="sort_location__parent__parent__parent__parent__parent__parent__name">Province</a></th><th><a href="javascript:;" class="sortable_column" id="sort_location__parent__parent__parent__parent__parent__name">District</a></th><th><a href="javascript:;" class="sortable_column" id="sort_location__parent__name">Polling Station</a></th><th><a href="javascript:;" class="sortable_column" id="sort_observer__supervisor__name">Supervisor</a></th><th><a href="javascript:;" class="sortable_column" id="sort_observer__name">Monitor</a></th><th style="text-align:center"><span title="Setup">S</span></th><th style="text-align:center"><span title="Voting">V</span></th><th style="text-align:center"><span title="Closing">Cl</span></th><th style="text-align:center"><span title="Counting">Co</span></th><th style="text-align:center">Edit</th></tr>
 % endif
@@ -142,13 +159,21 @@
 </script>
 <script type="text/x-handlebars-template" id="checklist-template" charset="utf-8">
 % if settings.ZAMBIA_DEPLOYMENT == 'GENERAL':
-	<td>{{location.attributes.parent.attributes.parent.attributes.parent.attributes.parent.attributes.parent.attributes.parent.attributes.name}}</td><td>{{location.attributes.parent.attributes.parent.attributes.parent.attributes.parent.attributes.parent.attributes.name}}</td><td>{{location.attributes.parent.attributes.parent.attributes.parent.attributes.parent.attributes.name}}</td><td>{{location.attributes.parent.attributes.name}}</td><td>-</td><td>{{response.attributes.monitor_name}}{{#if response.attributes.monitor_phone}} (<strong>{{response.attributes.monitor_phone}}</strong>){{/if}}</td><td align="center">{{setup_flag response}}</td><td align="center">{{voting_flag response}}</td><td align="center">{{closing_flag response}}</td><td align="center">{{general_counting_flag response}}</td><td align="center"><a href="#!/elections/checklist/{{id}}">Edit</a></td>
+	% if user.has_perm('webapp.delete_checklist'):
+		<td>{{location.attributes.parent.attributes.parent.attributes.parent.attributes.parent.attributes.parent.attributes.parent.attributes.name}}</td><td>{{location.attributes.parent.attributes.parent.attributes.parent.attributes.parent.attributes.parent.attributes.name}}</td><td>{{location.attributes.parent.attributes.parent.attributes.parent.attributes.parent.attributes.name}}</td><td>{{location.attributes.parent.attributes.name}}</td><td>{{response.attributes.monitor_name}}{{#if response.attributes.monitor_phone}} (<strong>{{response.attributes.monitor_phone}}</strong>){{/if}}</td><td align="center">{{setup_flag response}}</td><td align="center">{{voting_flag response}}</td><td align="center">{{closing_flag response}}</td><td align="center">{{general_counting_flag response}}</td><td align="center"><a href="#!/elections/checklist/{{id}}">Edit</a></td><td align="center"><a href="javascript:;" class="del_checklist" title="{{resource_uri}}"><img src="/assets/images/delete.png" alt="Delete" /></a></td>
+	% else:
+		<td>{{location.attributes.parent.attributes.parent.attributes.parent.attributes.parent.attributes.parent.attributes.parent.attributes.name}}</td><td>{{location.attributes.parent.attributes.parent.attributes.parent.attributes.parent.attributes.parent.attributes.name}}</td><td>{{location.attributes.parent.attributes.parent.attributes.parent.attributes.parent.attributes.name}}</td><td>{{location.attributes.parent.attributes.name}}</td><td>{{response.attributes.monitor_name}}{{#if response.attributes.monitor_phone}} (<strong>{{response.attributes.monitor_phone}}</strong>){{/if}}</td><td align="center">{{setup_flag response}}</td><td align="center">{{voting_flag response}}</td><td align="center">{{closing_flag response}}</td><td align="center">{{general_counting_flag response}}</td><td align="center"><a href="#!/elections/checklist/{{id}}">Edit</a></td>
+	% endif
 % else:
 	<td>{{observer.attributes.observer_id}}</td><td>{{location.attributes.parent.attributes.parent.attributes.parent.attributes.parent.attributes.parent.attributes.parent.attributes.name}}</td><td>{{location.attributes.parent.attributes.parent.attributes.parent.attributes.parent.attributes.parent.attributes.name}}</td><td>{{location.attributes.parent.attributes.name}}</td><td>{{#if observer.attributes.supervisor}}{{observer.attributes.supervisor.attributes.name}}{{#iflen observer.attributes.supervisor.attributes.connections.models}} (<strong>{{observer.attributes.supervisor.attributes.connections.models.0.attributes.identity}}</strong>){{/iflen}}{{else}}&nbsp;{{/if}}</td><td>{{observer.attributes.name}}{{#iflen observer.attributes.connections.models}} (<strong>{{observer.attributes.connections.models.0.attributes.identity}}</strong>){{/iflen}}</td><td align="center">{{setup_flag response}}</td><td align="center">{{voting_flag response}}</td><td align="center">{{closing_flag response}}</td><td align="center">{{counting_flag response}}</td><td align="center"><a href="#!/elections/checklist/{{id}}">Edit</a></td>
 % endif
 </script>
 <script type="text/x-handlebars-template" id="checklist-empty-template" charset="utf-8">
+% if user.has_perm('webapp.delete_checklist') or settings.ZAMBIA_DEPLOYMENT == 'RRP':
 	<tr><td colspan="11" class="empty"><em>No checklists to display</em></td></tr>
+% else:
+	<tr><td colspan="10" class="empty"><em>No checklists to display</em></td></tr>
+% endif
 </script>
 <script type="text/x-handlebars-template" id="checklist-section-tabs-template" charset="utf-8">
 	<div class="section_tabs">
@@ -1831,6 +1856,12 @@
 		<div class="fb_2buttons"><span class="btn_red btn_space"><a href="javascript:;" title="{{resource_uri}}" id="del_btn">Delete</a><span></span></span><span class="btn_gray"><a href="javascript:;" id="del_cancel">Cancel</a><span></span></span></div>
 	</div>
 </script>
+<script type="text/x-handlebars-template" id="checklist-delete-dialog-template" charset="utf-8">
+	<div class="fb_dialog">
+		<p>Are you sure you want to delete this checklist?</p>
+		<div class="fb_2buttons"><span class="btn_red btn_space"><a href="javascript:;" title="{{resource_uri}}" id="del_btn">Delete</a><span></span></span><span class="btn_gray"><a href="javascript:;" id="del_cancel">Cancel</a><span></span></span></div>
+	</div>
+</script>
 <script type="text/x-handlebars-template" id="location-options-template" charset="utf-8">
 	<option value="">- select one -</option>
 	{{#each locations}}
@@ -2109,5 +2140,6 @@
 % endif
 	Templates.IncidentEdit = Handlebars.compile($('#incident-edit-template').html());
 	Templates.IncidentDelDialog = Handlebars.compile($('#incident-delete-dialog-template').html());
+	Templates.ChecklistDelDialog = Handlebars.compile($('#checklist-delete-dialog-template').html());
 	Templates.LocationOptions = Handlebars.compile($('#location-options-template').html());
 </script>

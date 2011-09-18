@@ -11,6 +11,7 @@ class ChecklistResponseResource(ModelResource):
         allowed_methods = ['get', 'put', 'post', 'delete']
         authentication = Authentication()
         authorization = Authorization()
+        ordering = ['monitor_name']
 
 
 class ChecklistsResource(ModelResource):
@@ -21,7 +22,7 @@ class ChecklistsResource(ModelResource):
     class Meta:
         queryset = Checklist.objects.select_related()
         resource_name = 'checklists'
-        allowed_methods = ['get']
+        allowed_methods = ['get', 'delete']
         authentication = Authentication()
         authorization = Authorization()
         filtering = {
@@ -30,7 +31,7 @@ class ChecklistsResource(ModelResource):
             'observer': ALL_WITH_RELATIONS,
             'location': ALL_WITH_RELATIONS,
         }
-        ordering = ['location', 'date', 'observer']
+        ordering = ['location', 'date', 'observer', 'response']
 
     def build_filters(self, filters=None):
         if not filters:
@@ -269,6 +270,7 @@ class IncidentResponseResource(ModelResource):
         allowed_methods = ['get', 'put', 'post', 'delete']
         authentication = Authentication()
         authorization = Authorization()
+        ordering = ['monitor_name']
 
 
 class IncidentsResource(ModelResource):
@@ -288,7 +290,7 @@ class IncidentsResource(ModelResource):
             'location': ALL_WITH_RELATIONS,
             'response': ALL_WITH_RELATIONS,
         }
-        ordering = ['location', 'date', 'observer']
+        ordering = ['location', 'date', 'observer', 'response']
 
     def build_filters(self, filters=None):
         if not filters:

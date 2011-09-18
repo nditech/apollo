@@ -1,4 +1,135 @@
 // Backbone.js views
+DashboardView = Backbone.View.extend({
+       tagName: 'div',
+       
+       initialize: function () {
+           _.bindAll(this, "render", "search", "resetForm");
+       },
+       
+       events: {
+           "change .location_select": "locationChanged",
+           "click #form_reset": "resetForm",
+           "submit": "search"
+       },
+       
+       resetForm: function () {
+           $("select[title='province']").val("");
+           $("select[title='district']").html('<option value="">- Select a province -</option>');
+           $("select[title='polling_district']").html('<option value="">- Select a district -</option>');
+           $("select[title='polling_stream']").html('<option value="">- Select a polling district -</option>');
+           $(this.el).trigger('submit');
+           return false;
+       },
+       
+       search: function (e) {
+           var self = this;
+           var params = {};
+           $(".search_field").each(function (index, field) {
+               if ($(field).val()) {
+                   params[$(field).attr('title')] = $('option:selected', field).attr('title');
+               }
+           });
+           $.get('/zambia/dashboard_stats/', params, function (result) {
+               $('#setup_missing', this.el).html(result.setup_missing);
+               $('#voting_missing', this.el).html(result.voting_missing);
+               $('#closing_missing', this.el).html(result.closing_missing);
+               $('#counting_missing', this.el).html(result.counting_missing);
+               
+               $('#setup_partial', this.el).html(result.setup_partial);
+               $('#voting_partial', this.el).html(result.voting_partial);
+               $('#closing_partial', this.el).html(result.closing_partial);
+               $('#counting_partial', this.el).html(result.counting_partial);
+               
+               $('#setup_complete', this.el).html(result.setup_complete);
+               $('#voting_complete', this.el).html(result.voting_complete);
+               $('#closing_complete', this.el).html(result.closing_complete);
+               $('#counting_complete', this.el).html(result.counting_complete);
+           });
+           return false;
+       },
+       
+       locationChanged: function (e) {
+           var el = $(e.currentTarget);
+           var location_type = $(el).attr("title");
+           var id = $('option:selected', el).attr('title');
+
+           if (id) {
+               if (location_type == 'province') {
+                   $('select[title="district"]').html(Templates.LocationOptions({'locations':[]}));
+                   $('select[title="district"] option:first').html('- Select a province -');
+                   $('select[title="polling_district"]').html(Templates.LocationOptions({'locations':[]}));
+                   $('select[title="polling_district"] option:first').html('- Select a district -');
+                   $('select[title="polling_stream"]').html(Templates.LocationOptions({'locations':[]}));
+                   $('select[title="polling_stream"] option:first').html('- Select a polling district -');
+
+                   var districts = new LocationCollection();
+                   districts.filtrate({'limit': 0, 'type__name': 'District', 'parent__id': id}, {
+                       success: function (coll, response) {
+                           $('select[title="district"]').html(Templates.LocationOptions({'locations':coll.models}));
+                           $('select[title="district"] option:first').html('- District -');
+                       }
+                   });
+               } else if (location_type == 'district') {
+                   $('select[title="polling_district"]').html(Templates.LocationOptions({'locations':[]}));
+                   $('select[title="polling_district"] option:first').html('- Select a district -');
+                   $('select[title="polling_stream"]').html(Templates.LocationOptions({'locations':[]}));
+                   $('select[title="polling_stream"] option:first').html('- Select a polling district -');
+
+                   var polling_districts = new LocationCollection();
+                   polling_districts.filtrate({'limit': 0, 'type__name': 'Polling District', 'parent__parent__parent__id': id}, {
+                      success: function (coll, response) {
+                          $('select[title="polling_district"]').html(Templates.LocationOptions({'locations':coll.models}));
+                          $('select[title="polling_district"] option:first').html('- Polling District -');
+                      }
+                   });
+               } else if (location_type == 'polling_district') {
+                  $('select[title="polling_stream"]').html(Templates.LocationOptions({'locations':[]}));
+                  $('select[title="polling_stream"] option:first').html('- Select a polling district -');
+
+                  var polling_streams = new LocationCollection();
+                  polling_streams.filtrate({'limit': 0, 'type__name': 'Polling Stream', 'parent__parent__id': id}, {
+                     success: function (coll, response) {
+                         $('select[title="polling_stream"]').html(Templates.LocationOptions({'locations':coll.models}));
+                         $('select[title="polling_stream"] option:first').html('- Polling Stream -');
+                     }
+                  });
+              }
+           }
+       },
+       
+       render: function () {           
+            $(this.el).html(Templates.ZambiaDashboardFilter());
+            $(this.el).append(Templates.ZambiaDashboard());
+
+            var provinces = new LocationCollection();
+            provinces.filtrate({'limit': 0, 'type__name':'Province'}, {
+              success: function (coll, response) {
+                  $('select[title="province"]').html(Templates.LocationOptions({'locations':coll.models}));
+                  $('select[title="province"] option:first').html('- Province -');
+              }
+            });
+            
+            $.get('/zambia/dashboard_stats/', function (result) {
+                $('#setup_missing', this.el).html(result.setup_missing);
+                $('#voting_missing', this.el).html(result.voting_missing);
+                $('#closing_missing', this.el).html(result.closing_missing);
+                $('#counting_missing', this.el).html(result.counting_missing);
+                
+                $('#setup_partial', this.el).html(result.setup_partial);
+                $('#voting_partial', this.el).html(result.voting_partial);
+                $('#closing_partial', this.el).html(result.closing_partial);
+                $('#counting_partial', this.el).html(result.counting_partial);
+                
+                $('#setup_complete', this.el).html(result.setup_complete);
+                $('#voting_complete', this.el).html(result.voting_complete);
+                $('#closing_complete', this.el).html(result.closing_complete);
+                $('#counting_complete', this.el).html(result.counting_complete);
+            });
+
+            return this.el;
+       }
+});
+
 ContactEditView = Backbone.View.extend({
 	tagName: 'div',
 	
@@ -214,7 +345,7 @@ ChecklistEditView = Backbone.View.extend({
                 $('.location_select').not(el).html('');
                 
                 var districts = new LocationCollection();
-                districts.filtrate({'type__name': 'District', 'parent__id': id}, {
+                districts.filtrate({'limit': 0, 'type__name': 'District', 'parent__id': id}, {
                     success: function (coll, response) {
                         $('select[title="district"]').html(Templates.LocationOptions({'locations':coll.models}));
                         $('select[title="district"]').removeAttr('disabled');
@@ -225,7 +356,7 @@ ChecklistEditView = Backbone.View.extend({
                 $('.location_select').not('select[title="province"]').not(el).html('');
                 
                 var constituencies = new LocationCollection();
-                constituencies.filtrate({'type__name': 'Constituency', 'parent__id': id}, {
+                constituencies.filtrate({'limit': 0, 'type__name': 'Constituency', 'parent__id': id}, {
                     success: function (coll, response) {
                         $('select[title="constituency"]').html(Templates.LocationOptions({'locations':coll.models}));
                         $('select[title="constituency"]').removeAttr('disabled');
@@ -236,7 +367,7 @@ ChecklistEditView = Backbone.View.extend({
                 $('.location_select').not('select[title="district"]').not('select[title="province"]').not(el).html('');
                 
                 var wards = new LocationCollection();
-                wards.filtrate({'type__name': 'Ward', 'parent__id': id}, {
+                wards.filtrate({'limit': 0, 'type__name': 'Ward', 'parent__id': id}, {
                     success: function (coll, response) {
                         $('select[title="ward"]').html(Templates.LocationOptions({'locations':coll.models}));
                         $('select[title="ward"]').removeAttr('disabled');
@@ -247,7 +378,7 @@ ChecklistEditView = Backbone.View.extend({
                 $('.location_select').not('select[title="constituency"]').not('select[title="district"]').not('select[title="province"]').not(el).html('');
                 
                 var polling_districts = new LocationCollection();
-                polling_districts.filtrate({'type__name': 'Polling District', 'parent__id': id}, {
+                polling_districts.filtrate({'limit': 0, 'type__name': 'Polling District', 'parent__id': id}, {
                     success: function (coll, response) {
                         $('select[title="polling_district"]').html(Templates.LocationOptions({'locations':coll.models}));
                         $('select[title="polling_district"]').removeAttr('disabled');
@@ -258,7 +389,7 @@ ChecklistEditView = Backbone.View.extend({
                 $('.location_select').not('select[title="ward"]').not('select[title="constituency"]').not('select[title="district"]').not('select[title="province"]').not(el).html('');
 
                 var polling_streams = new LocationCollection();
-                polling_streams.filtrate({'type__name': 'Polling Stream', 'parent__parent__id': id}, {
+                polling_streams.filtrate({'limit': 0, 'type__name': 'Polling Stream', 'parent__parent__id': id}, {
                     success: function (coll, response) {
                         $('select[title="polling_stream"]').html(Templates.LocationOptions({'locations':coll.models}));
                         $('select[title="polling_stream"]').removeAttr('disabled');
@@ -319,27 +450,27 @@ ChecklistEditView = Backbone.View.extend({
 		$("input[name='response.attributes.J']", self.el).trigger('keyup');
         
         var provinces = new LocationCollection();
-        provinces.filtrate({'type__name':'Province'}, {
+        provinces.filtrate({'limit': 0, 'type__name':'Province'}, {
            success: function (coll, response) {
                $('select[title="province"]').html(Templates.LocationOptions({'locations':coll.models, 'selected_id': self.model.get('location').get('parent').get('parent').get('parent').get('parent').get('parent').get('parent').get('id')}));
                var districts = new LocationCollection();
-               districts.filtrate({'type__name':'District', 'parent__id':self.model.get('location').get('parent').get('parent').get('parent').get('parent').get('parent').get('parent').get('id')}, {
+               districts.filtrate({'limit': 0, 'type__name':'District', 'parent__id':self.model.get('location').get('parent').get('parent').get('parent').get('parent').get('parent').get('parent').get('id')}, {
                    success: function (coll, response) {
                        $('select[title="district"]').html(Templates.LocationOptions({'locations':coll.models, 'selected_id': self.model.get('location').get('parent').get('parent').get('parent').get('parent').get('parent').get('id')}));
                        var constituencies = new LocationCollection();
-                       constituencies.filtrate({'type__name':'Constituency', 'parent__id':self.model.get('location').get('parent').get('parent').get('parent').get('parent').get('parent').get('id')}, {
+                       constituencies.filtrate({'limit': 0, 'type__name':'Constituency', 'parent__id':self.model.get('location').get('parent').get('parent').get('parent').get('parent').get('parent').get('id')}, {
                            success: function (coll, response) {
                                $('select[title="constituency"]').html(Templates.LocationOptions({'locations':coll.models, 'selected_id': self.model.get('location').get('parent').get('parent').get('parent').get('parent').get('id')}))
                                var wards = new LocationCollection();
-                               wards.filtrate({'type__name':'Ward', 'parent__id':self.model.get('location').get('parent').get('parent').get('parent').get('parent').get('id')}, {
+                               wards.filtrate({'limit': 0, 'type__name':'Ward', 'parent__id':self.model.get('location').get('parent').get('parent').get('parent').get('parent').get('id')}, {
                                    success: function (coll, response) {
                                        $('select[title="ward"]').html(Templates.LocationOptions({'locations':coll.models, 'selected_id': self.model.get('location').get('parent').get('parent').get('parent').get('id')}));
                                        var polling_districts = new LocationCollection();
-                                       polling_districts.filtrate({'type__name':'Polling District', 'parent__id':self.model.get('location').get('parent').get('parent').get('parent').get('id')}, {
+                                       polling_districts.filtrate({'limit': 0, 'type__name':'Polling District', 'parent__id':self.model.get('location').get('parent').get('parent').get('parent').get('id')}, {
                                            success: function (coll, response) {
                                                $('select[title="polling_district"]').html(Templates.LocationOptions({'locations':coll.models, 'selected_id': self.model.get('location').get('parent').get('parent').get('id')}));
                                                var polling_streams = new LocationCollection();
-                                               polling_streams.filtrate({'type__name':'Polling Stream', 'parent__parent__id':self.model.get('location').get('parent').get('parent').get('id')}, {
+                                               polling_streams.filtrate({'limit': 0, 'type__name':'Polling Stream', 'parent__parent__id':self.model.get('location').get('parent').get('parent').get('id')}, {
                                                    success: function (coll, response) {
                                                        $('select[title="polling_stream"]').html(Templates.LocationOptions({'locations':coll.models, 'selected_id': self.model.get('location').get('id')}));
                                                    }
@@ -385,7 +516,7 @@ ChecklistAddView = Backbone.View.extend({
                 $('.location_select').not(el).html('');
                 
                 var districts = new LocationCollection();
-                districts.filtrate({'type__name': 'District', 'parent__id': id}, {
+                districts.filtrate({'limit': 0, 'type__name': 'District', 'parent__id': id}, {
                     success: function (coll, response) {
                         $('select[title="district"]').html(Templates.LocationOptions({'locations':coll.models}));
                         $('select[title="district"]').removeAttr('disabled');
@@ -396,7 +527,7 @@ ChecklistAddView = Backbone.View.extend({
                 $('.location_select').not('select[title="province"]').not(el).html('');
                 
                 var constituencies = new LocationCollection();
-                constituencies.filtrate({'type__name': 'Constituency', 'parent__id': id}, {
+                constituencies.filtrate({'limit': 0, 'type__name': 'Constituency', 'parent__id': id}, {
                     success: function (coll, response) {
                         $('select[title="constituency"]').html(Templates.LocationOptions({'locations':coll.models}));
                         $('select[title="constituency"]').removeAttr('disabled');
@@ -407,7 +538,7 @@ ChecklistAddView = Backbone.View.extend({
                 $('.location_select').not('select[title="district"]').not('select[title="province"]').not(el).html('');
                 
                 var wards = new LocationCollection();
-                wards.filtrate({'type__name': 'Ward', 'parent__id': id}, {
+                wards.filtrate({'limit': 0, 'type__name': 'Ward', 'parent__id': id}, {
                     success: function (coll, response) {
                         $('select[title="ward"]').html(Templates.LocationOptions({'locations':coll.models}));
                         $('select[title="ward"]').removeAttr('disabled');
@@ -418,7 +549,7 @@ ChecklistAddView = Backbone.View.extend({
                 $('.location_select').not('select[title="constituency"]').not('select[title="district"]').not('select[title="province"]').not(el).html('');
                 
                 var polling_districts = new LocationCollection();
-                polling_districts.filtrate({'type__name': 'Polling District', 'parent__id': id}, {
+                polling_districts.filtrate({'limit': 0, 'type__name': 'Polling District', 'parent__id': id}, {
                     success: function (coll, response) {
                         $('select[title="polling_district"]').html(Templates.LocationOptions({'locations':coll.models}));
                         $('select[title="polling_district"]').removeAttr('disabled');
@@ -429,7 +560,7 @@ ChecklistAddView = Backbone.View.extend({
                 $('.location_select').not('select[title="ward"]').not('select[title="constituency"]').not('select[title="district"]').not('select[title="province"]').not(el).html('');
 
                 var polling_streams = new LocationCollection();
-                polling_streams.filtrate({'type__name': 'Polling Stream', 'parent__parent__id': id}, {
+                polling_streams.filtrate({'limit': 0, 'type__name': 'Polling Stream', 'parent__parent__id': id}, {
                     success: function (coll, response) {
                         $('select[title="polling_stream"]').html(Templates.LocationOptions({'locations':coll.models}));
                         $('select[title="polling_stream"]').removeAttr('disabled');
@@ -484,7 +615,7 @@ ChecklistAddView = Backbone.View.extend({
 		$('div.pane:last', self.el).after(Templates.ChecklistSectionTabs());
 		        
         var provinces = new LocationCollection();
-        provinces.filtrate({'type__name':'Province'}, {
+        provinces.filtrate({'limit': 0, 'type__name':'Province'}, {
            success: function (coll, response) {
                $('select[title="province"]').html(Templates.LocationOptions({'locations':coll.models}));
            }
@@ -538,7 +669,7 @@ IncidentEditView = Backbone.View.extend({
                 $('.location_select').not(el).html('');
                 
                 var districts = new LocationCollection();
-                districts.filtrate({'type__name': 'District', 'parent__id': id}, {
+                districts.filtrate({'limit': 0, 'type__name': 'District', 'parent__id': id}, {
                     success: function (coll, response) {
                         $('select[title="district"]').html(Templates.LocationOptions({'locations':coll.models}));
                         $('select[title="district"]').removeAttr('disabled');
@@ -549,7 +680,7 @@ IncidentEditView = Backbone.View.extend({
                 $('.location_select').not('select[title="province"]').not(el).html('');
                 
                 var constituencies = new LocationCollection();
-                constituencies.filtrate({'type__name': 'Constituency', 'parent__id': id}, {
+                constituencies.filtrate({'limit': 0, 'type__name': 'Constituency', 'parent__id': id}, {
                     success: function (coll, response) {
                         $('select[title="constituency"]').html(Templates.LocationOptions({'locations':coll.models}));
                         $('select[title="constituency"]').removeAttr('disabled');
@@ -560,7 +691,7 @@ IncidentEditView = Backbone.View.extend({
                 $('.location_select').not('select[title="district"]').not('select[title="province"]').not(el).html('');
                 
                 var wards = new LocationCollection();
-                wards.filtrate({'type__name': 'Ward', 'parent__id': id}, {
+                wards.filtrate({'limit': 0, 'type__name': 'Ward', 'parent__id': id}, {
                     success: function (coll, response) {
                         $('select[title="ward"]').html(Templates.LocationOptions({'locations':coll.models}));
                         $('select[title="ward"]').removeAttr('disabled');
@@ -571,7 +702,7 @@ IncidentEditView = Backbone.View.extend({
                 $('.location_select').not('select[title="constituency"]').not('select[title="district"]').not('select[title="province"]').not(el).html('');
                 
                 var polling_districts = new LocationCollection();
-                polling_districts.filtrate({'type__name': 'Polling District', 'parent__id': id}, {
+                polling_districts.filtrate({'limit': 0, 'type__name': 'Polling District', 'parent__id': id}, {
                     success: function (coll, response) {
                         $('select[title="polling_district"]').html(Templates.LocationOptions({'locations':coll.models}));
                         $('select[title="polling_district"]').removeAttr('disabled');
@@ -582,7 +713,7 @@ IncidentEditView = Backbone.View.extend({
                 $('.location_select').not('select[title="ward"]').not('select[title="constituency"]').not('select[title="district"]').not('select[title="province"]').not(el).html('');
 
                 var polling_streams = new LocationCollection();
-                polling_streams.filtrate({'type__name': 'Polling Stream', 'parent__parent__id': id}, {
+                polling_streams.filtrate({'limit': 0, 'type__name': 'Polling Stream', 'parent__parent__id': id}, {
                     success: function (coll, response) {
                         $('select[title="polling_stream"]').html(Templates.LocationOptions({'locations':coll.models}));
                         $('select[title="polling_stream"]').removeAttr('disabled');
@@ -644,27 +775,27 @@ IncidentEditView = Backbone.View.extend({
 		$('textarea[name="response.attributes.description"]', self.el).val(self.model.get('response').get('description'));
 				
         var provinces = new LocationCollection();
-        provinces.filtrate({'type__name':'Province'}, {
+        provinces.filtrate({'limit': 0, 'type__name':'Province'}, {
            success: function (coll, response) {
                $('select[title="province"]').html(Templates.LocationOptions({'locations':coll.models, 'selected_id': self.model.get('location').get('parent').get('parent').get('parent').get('parent').get('parent').get('parent').get('id')}));
                var districts = new LocationCollection();
-               districts.filtrate({'type__name':'District', 'parent__id':self.model.get('location').get('parent').get('parent').get('parent').get('parent').get('parent').get('parent').get('id')}, {
+               districts.filtrate({'limit': 0, 'type__name':'District', 'parent__id':self.model.get('location').get('parent').get('parent').get('parent').get('parent').get('parent').get('parent').get('id')}, {
                    success: function (coll, response) {
                        $('select[title="district"]').html(Templates.LocationOptions({'locations':coll.models, 'selected_id': self.model.get('location').get('parent').get('parent').get('parent').get('parent').get('parent').get('id')}));
                        var constituencies = new LocationCollection();
-                       constituencies.filtrate({'type__name':'Constituency', 'parent__id':self.model.get('location').get('parent').get('parent').get('parent').get('parent').get('parent').get('id')}, {
+                       constituencies.filtrate({'limit': 0, 'type__name':'Constituency', 'parent__id':self.model.get('location').get('parent').get('parent').get('parent').get('parent').get('parent').get('id')}, {
                            success: function (coll, response) {
                                $('select[title="constituency"]').html(Templates.LocationOptions({'locations':coll.models, 'selected_id': self.model.get('location').get('parent').get('parent').get('parent').get('parent').get('id')}))
                                var wards = new LocationCollection();
-                               wards.filtrate({'type__name':'Ward', 'parent__id':self.model.get('location').get('parent').get('parent').get('parent').get('parent').get('id')}, {
+                               wards.filtrate({'limit': 0, 'type__name':'Ward', 'parent__id':self.model.get('location').get('parent').get('parent').get('parent').get('parent').get('id')}, {
                                    success: function (coll, response) {
                                        $('select[title="ward"]').html(Templates.LocationOptions({'locations':coll.models, 'selected_id': self.model.get('location').get('parent').get('parent').get('parent').get('id')}));
                                        var polling_districts = new LocationCollection();
-                                       polling_districts.filtrate({'type__name':'Polling District', 'parent__id':self.model.get('location').get('parent').get('parent').get('parent').get('id')}, {
+                                       polling_districts.filtrate({'limit': 0, 'type__name':'Polling District', 'parent__id':self.model.get('location').get('parent').get('parent').get('parent').get('id')}, {
                                            success: function (coll, response) {
                                                $('select[title="polling_district"]').html(Templates.LocationOptions({'locations':coll.models, 'selected_id': self.model.get('location').get('parent').get('parent').get('id')}));
                                                var polling_streams = new LocationCollection();
-                                               polling_streams.filtrate({'type__name':'Polling Stream', 'parent__parent__id':self.model.get('location').get('parent').get('parent').get('id')}, {
+                                               polling_streams.filtrate({'limit': 0, 'type__name':'Polling Stream', 'parent__parent__id':self.model.get('location').get('parent').get('parent').get('id')}, {
                                                    success: function (coll, response) {
                                                        $('select[title="polling_stream"]').html(Templates.LocationOptions({'locations':coll.models, 'selected_id': self.model.get('location').get('id')}));
                                                    }
@@ -713,7 +844,7 @@ IncidentAddView = Backbone.View.extend({
                 $('.location_select').not(el).html('');
                 
                 var districts = new LocationCollection();
-                districts.filtrate({'type__name': 'District', 'parent__id': id}, {
+                districts.filtrate({'limit': 0, 'type__name': 'District', 'parent__id': id}, {
                     success: function (coll, response) {
                         $('select[title="district"]').html(Templates.LocationOptions({'locations':coll.models}));
                         $('select[title="district"]').removeAttr('disabled');
@@ -724,7 +855,7 @@ IncidentAddView = Backbone.View.extend({
                 $('.location_select').not('select[title="province"]').not(el).html('');
                 
                 var constituencies = new LocationCollection();
-                constituencies.filtrate({'type__name': 'Constituency', 'parent__id': id}, {
+                constituencies.filtrate({'limit': 0, 'type__name': 'Constituency', 'parent__id': id}, {
                     success: function (coll, response) {
                         $('select[title="constituency"]').html(Templates.LocationOptions({'locations':coll.models}));
                         $('select[title="constituency"]').removeAttr('disabled');
@@ -735,7 +866,7 @@ IncidentAddView = Backbone.View.extend({
                 $('.location_select').not('select[title="district"]').not('select[title="province"]').not(el).html('');
                 
                 var wards = new LocationCollection();
-                wards.filtrate({'type__name': 'Ward', 'parent__id': id}, {
+                wards.filtrate({'limit': 0, 'type__name': 'Ward', 'parent__id': id}, {
                     success: function (coll, response) {
                         $('select[title="ward"]').html(Templates.LocationOptions({'locations':coll.models}));
                         $('select[title="ward"]').removeAttr('disabled');
@@ -746,7 +877,7 @@ IncidentAddView = Backbone.View.extend({
                 $('.location_select').not('select[title="constituency"]').not('select[title="district"]').not('select[title="province"]').not(el).html('');
                 
                 var polling_districts = new LocationCollection();
-                polling_districts.filtrate({'type__name': 'Polling District', 'parent__id': id}, {
+                polling_districts.filtrate({'limit': 0, 'type__name': 'Polling District', 'parent__id': id}, {
                     success: function (coll, response) {
                         $('select[title="polling_district"]').html(Templates.LocationOptions({'locations':coll.models}));
                         $('select[title="polling_district"]').removeAttr('disabled');
@@ -757,7 +888,7 @@ IncidentAddView = Backbone.View.extend({
                 $('.location_select').not('select[title="ward"]').not('select[title="constituency"]').not('select[title="district"]').not('select[title="province"]').not(el).html('');
 
                 var polling_streams = new LocationCollection();
-                polling_streams.filtrate({'type__name': 'Polling Stream', 'parent__parent__id': id}, {
+                polling_streams.filtrate({'limit': 0, 'type__name': 'Polling Stream', 'parent__parent__id': id}, {
                     success: function (coll, response) {
                         $('select[title="polling_stream"]').html(Templates.LocationOptions({'locations':coll.models}));
                         $('select[title="polling_stream"]').removeAttr('disabled');
@@ -813,7 +944,7 @@ IncidentAddView = Backbone.View.extend({
 		$('.location_select', self.el).attr('disabled', 'disabled');
 		
 		provinces = new LocationCollection();
-        provinces.filtrate({'type__name':'Province'}, {
+        provinces.filtrate({'limit': 0, 'type__name':'Province'}, {
            success: function (coll, response) {
                $('select[title="province"]', self.el).html(Templates.LocationOptions({'locations':coll.models})).removeAttr('disabled');
            }
