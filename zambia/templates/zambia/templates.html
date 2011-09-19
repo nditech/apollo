@@ -788,8 +788,8 @@
 	<form id="checklist_form">
 	<div class="pane" id="pane1">
 		<h1>Identification</h1>
-		<p class="style"><span class="span"><label>Monitor Name</label></span><span class="input"><input type="text" name="response.attributes.monitor_name" id="response.attributes.monitor_name"  class="input_smoke field"></span></p>
-		<p class="style"><span class="span"><label>Monitor Phone</label></span><span class="input"><input type="text" name="response.attributes.monitor_phone" id="response.attributes.monitor_phone"  class="input_smoke field"></span></p>
+		<p class="style"><span class="span"><label>Monitor Name</label></span><span class="input"><input type="text" name="response.attributes.monitor_name" id="response.attributes.monitor_name"  class="input_smoke field" required></span></p>
+		<p class="style"><span class="span"><label>Monitor Phone</label></span><span class="input"><input type="text" name="response.attributes.monitor_phone" id="response.attributes.monitor_phone"  class="input_smoke field" pattern=".*[0-9]" title="Numeric figures only"></span></p>
 		<p class="style"><span class="span"><label>Province</label></span><span class="input"><select name="province" title="province" class="input_smoke location_select"></select></span></p>
 		<p class="style"><span class="span"><label>District</label></span><span class="input"><select name="district" title="district" class="input_smoke location_select"></select></span></p>
 		<p class="style"><span class="span"><label>Constituency</label></span><span class="input"><select name="constituency" title="constituency" class="input_smoke location_select"></select></span></p>
@@ -1604,7 +1604,7 @@
 </script>
 <script type="text/x-handlebars-template" id='general-contact-edit-template' charset="utf-8">
 	<form id="contact_form" class="edit_form_floated">
-	<label for="name"><span class="label">Name</span> <input type="text" name="name" id="name" class="input_smoke field" value="{{name}}"></label>
+	<label for="name"><span class="label">Name</span> <input type="text" name="name" id="name" class="input_smoke field" value="{{name}}" required></label>
 	<label for="phone"><span class="label">Phone</span> <input type="text" name="phone" id="connections.models[0].attributes.identity" class="input_smoke field" value="{{connections.models.0.attributes.identity}}" class="txt" pattern="[\s\d]*"></label>
 	<label for="nrc"><span class="label">NRC No.</span> <input type="text" id="nrc" name="nrc" class="input_smoke field" value="{{nrc}}"></label>
 	<label for="role"><span class="label">Role</span> <select name="role" id="role" class="input_smoke field">
