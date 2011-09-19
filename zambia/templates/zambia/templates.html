@@ -1530,7 +1530,11 @@
 <script type="text/x-handlebars-template" id="contact-header-template" charset="utf-8">
 	<tbody>
 % if user.has_perm('rapidsms.change_contact') or settings.ZAMBIA_DEPLOYMENT == 'GENERAL':
+	% if settings.ZAMBIA_DEPLOYMENT == 'GENERAL':
+		<tr><th><a href="javascript:;" class="sortable_column" id="sort_name">Name</a></th><th><a href="javascript:;" class="sortable_column" id="sort_role__name">Role</a></th><th><a href="javascript:;" class="sortable_column" id="sort_connections__identity">Phone No.</a></th><th><a href="javascript:;" class="sortable_column" id="sort_location__name">Location</a></th><th><a href="javascript:;" class="sortable_column" id="sort_partner">Partner</a></th><th style="text-align:center">Edit</th></tr>
+	% else:
 		<tr><th><a href="javascript:;" class="sortable_column" id="sort_observer_id">Monitor Id</a></th><th><a href="javascript:;" class="sortable_column" id="sort_name">Name</a></th><th><a href="javascript:;" class="sortable_column" id="sort_role__name">Role</a></th><th><a href="javascript:;" class="sortable_column" id="sort_connections__identity">Phone No.</a></th><th><a href="javascript:;" class="sortable_column" id="sort_location__name">Location</a></th><th><a href="javascript:;" class="sortable_column" id="sort_partner">Partner</a></th><th style="text-align:center">Edit</th></tr>
+	% endif
 % else:
 		<tr><th><a href="javascript:;" class="sortable_column" id="sort_observer_id">Monitor Id</a></th><th><a href="javascript:;" class="sortable_column" id="sort_name">Name</a></th><th><a href="javascript:;" class="sortable_column" id="sort_role__name">Role</a></th><th><a href="javascript:;" class="sortable_column" id="sort_connections__identity">Phone No.</a></th><th><a href="javascript:;" class="sortable_column" id="sort_location__name">Location</a></th><th><a href="javascript:;" class="sortable_column" id="sort_partner">Partner</a></th></tr>
 % endif
@@ -1538,14 +1542,22 @@
 </script>
 <script type="text/x-handlebars-template" id="contact-template" charset="utf-8">
 % if user.has_perm('rapidsms.change_contact') or settings.ZAMBIA_DEPLOYMENT == 'GENERAL':
-	<td>{{observer_id}}</td><td>{{name}}</td><td>{{#if role}}{{role.attributes.name}}{{else}}-{{/if}}</td><td>{{#iflen connections.models }}{{connections.models.0.attributes.identity}}{{else}}-{{/iflen}}</td><td>{{#if location}}{{location.attributes.name}} ({{location.attributes.type.name}}){{else}}-{{/if}}</td><td>{{partner}}</td><td style="text-align:center"><a href="#!/contact/{{id}}">Edit</a></td>
+	% if settings.ZAMBIA_DEPLOYMENT == 'GENERAL':
+		<td>{{name}}</td><td>{{#if role}}{{role.attributes.name}}{{else}}-{{/if}}</td><td>{{#iflen connections.models }}{{connections.models.0.attributes.identity}}{{else}}-{{/iflen}}</td><td>{{#if location}}{{location.attributes.name}} ({{location.attributes.type.name}}){{else}}-{{/if}}</td><td>{{partner}}</td><td style="text-align:center"><a href="#!/contact/{{id}}">Edit</a></td>
+	% else:
+		<td>{{observer_id}}</td><td>{{name}}</td><td>{{#if role}}{{role.attributes.name}}{{else}}-{{/if}}</td><td>{{#iflen connections.models }}{{connections.models.0.attributes.identity}}{{else}}-{{/iflen}}</td><td>{{#if location}}{{location.attributes.name}} ({{location.attributes.type.name}}){{else}}-{{/if}}</td><td>{{partner}}</td><td style="text-align:center"><a href="#!/contact/{{id}}">Edit</a></td>
+	% endif
 % else:
 	<td>{{observer_id}}</td><td>{{name}}</td><td>{{#if role}}{{role.attributes.name}}{{else}}-{{/if}}</td><td>{{#iflen connections.models }}{{connections.models.0.attributes.identity}}{{else}}-{{/iflen}}</td><td>{{#if location}}{{location.attributes.name}} ({{location.attributes.type.name}}){{else}}-{{/if}}</td><td>{{partner}}</td>
 % endif
 </script>
 <script type="text/x-handlebars-template" id="contact-empty-template" charset="utf-8">
 % if user.has_perm('rapidsms.change_contact') or settings.ZAMBIA_DEPLOYMENT == 'GENERAL':
-	<tr><td colspan="7" class="empty"><em>No contacts to display</em></td></tr>
+	% if settings.ZAMBIA_DEPLOYMENT == 'GENERAL':
+		<tr><td colspan="6" class="empty"><em>No contacts to display</em></td></tr>
+	% else:
+		<tr><td colspan="7" class="empty"><em>No contacts to display</em></td></tr>
+	% endif
 % else:
 	<tr><td colspan="6" class="empty"><em>No contacts to display</em></td></tr>
 % endif
