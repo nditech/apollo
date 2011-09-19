@@ -1,5 +1,5 @@
 from django.db import models
-from webapp.models import ChecklistResponse, Checklist, IncidentResponse, Incident
+from webapp.models import ChecklistResponse, Checklist, IncidentResponse, Incident, Location
 from django.core.validators import RegexValidator
 from django.db.models.signals import post_save
 
@@ -174,6 +174,25 @@ class ZambiaIncidentResponse(IncidentResponse):
 
     def __unicode__(self):
         return str(self.incident.id)
+
+class Sample(models.Model):
+    """Election data sample"""
+    SAMPLES = (
+        ('FODEP', 'FODEP'),
+        ('Caritas', 'Caritas'),
+    )
+    sample = models.CharField(blank=True, choices=SAMPLES, max_length=100)
+    location = models.ForeignKey(Location)
+    
+    class Meta:
+        app_label = 'zambia'
+
+    class Admin:
+        list_display = ('',)
+        search_fields = ('',)
+
+    def __unicode__(self):
+        return "%s" % self.id
 
 
 def checklist_callback(sender, **kwargs):

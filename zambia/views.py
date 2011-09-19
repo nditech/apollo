@@ -1,6 +1,7 @@
 # Create your views here.
 from django.http import HttpResponse
 from webapp.models import *
+from zambia.models import *
 from queries import checklist_status
 from djangomako.shortcuts import render_to_string
 import json
@@ -36,7 +37,7 @@ def dashboard_stats(request):
         except ValueError:
             pass
     if sample:
-        pass
+        checklist_filter['location__pk__in'] = Sample.objects.filter(sample=sample).values_list('location__pk', flat=True)
     
     dashboard_checklist_status = {
         'setup_complete': Checklist.objects.filter(**checklist_filter).filter(**checklist_status['setup_complete']).count(),

@@ -22,7 +22,7 @@ class Observer(models.Model):
     )
     observer_id = models.CharField(max_length=100, null=True, blank=True, validators=[RegexValidator(re.compile(r'\d+', re.I), message='Observer IDs can only contain numerals')])
     role = models.ForeignKey(ObserverRole)
-    location = models.ForeignKey(Location)
+    location = models.ForeignKey(Location, related_name="observers")
     supervisor = models.ForeignKey('Contact', null=True, blank=True)
     gender = models.CharField(max_length=1, null=True, blank=True, choices=GENDER, db_index=True)
     partner = models.CharField(blank=True, null=True, max_length=100, choices=PARTNERS)
@@ -37,4 +37,4 @@ class Observer(models.Model):
         ordering = ['observer_id']
 
     def __unicode__(self):
-        return self.name
+        return getattr(self, 'observer_id', "") 
