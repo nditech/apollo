@@ -319,7 +319,7 @@ class IncidentsResource(ModelResource):
         return orm_filters
 
 class IncidentResource(ModelResource):
-    location = fields.ForeignKey(LocationResource, 'location', full=True)
+    location = fields.ForeignKey(LocationResource, 'location', full=True, null=True)
     form     = fields.ForeignKey(IncidentFormResource, 'form')
     observer = fields.ForeignKey(ContactResource, 'observer', full=True, null=True)
     response = fields.ToOneField(IncidentResponseResource, 'response', full=True, readonly=True)

@@ -517,6 +517,12 @@ IncidentEditView = Backbone.View.extend({
                 });
             }  
         }
+        
+        // We want to force the appropriate setting of the chosen location
+        // each time a location which is not a polling stream gets changed
+        if (location_type != 'polling_stream') {
+            this.selectionChanged({currentTarget: $('select[title="polling_stream"]')});
+        }
     },
     
     radioChanged: function (e) {
@@ -527,7 +533,7 @@ IncidentEditView = Backbone.View.extend({
     
     selectionChanged: function (e) {
         var field = $(e.currentTarget);
-        var value = $("option:selected", field).val() || null;
+        var value = $(field).val() || null;
         eval('this.model.attributes.'+field.attr('name')+' = value');
     },
     
@@ -569,7 +575,10 @@ IncidentEditView = Backbone.View.extend({
 		    }
 		});
 		$('textarea[name="response.attributes.description"]', self.el).val(self.model.get('response').get('description'));
+		
+
 		$('.location_select', self.el).attr('disabled', 'disabled');
+		
 		
 		$('#observer_name', self.el).html(self.model.get('observer').get('name'));
         $('#monitor_id', self.el).val(self.model.get('observer').get('observer_id'));
@@ -587,28 +596,28 @@ IncidentEditView = Backbone.View.extend({
                        constituencies.filtrate({'limit': 0, 'type__name':'Constituency', 'parent__id':self.model.get('location').get('parent').get('parent').get('parent').get('parent').get('parent').get('id')}, {
                            success: function (coll, response) {
                                $('select[title="constituency"]').html(Templates.LocationOptions({'locations':coll.models, 'selected_id': self.model.get('location').get('parent').get('parent').get('parent').get('parent').get('id')}))
-                               if (self.model.get('observer').get('role').name == 'District Supervisor') {
+                               if (self.model.get('observer').get('role').get('name') == 'District Supervisor') {
                                    $('select[title="constituency"]').removeAttr('disabled');
                                }
                                var wards = new LocationCollection();
                                wards.filtrate({'limit': 0, 'type__name':'Ward', 'parent__id':self.model.get('location').get('parent').get('parent').get('parent').get('parent').get('id')}, {
                                    success: function (coll, response) {
                                        $('select[title="ward"]').html(Templates.LocationOptions({'locations':coll.models, 'selected_id': self.model.get('location').get('parent').get('parent').get('parent').get('id')}));
-                                       if (self.model.get('observer').get('role').name == 'District Supervisor') {
+                                       if (self.model.get('observer').get('role').get('name') == 'District Supervisor') {
                                            $('select[title="ward"]').removeAttr('disabled');
                                        }
                                        var polling_districts = new LocationCollection();
                                        polling_districts.filtrate({'limit': 0, 'type__name':'Polling District', 'parent__id':self.model.get('location').get('parent').get('parent').get('parent').get('id')}, {
                                            success: function (coll, response) {
                                                $('select[title="polling_district"]').html(Templates.LocationOptions({'locations':coll.models, 'selected_id': self.model.get('location').get('parent').get('parent').get('id')}));
-                                               if (self.model.get('observer').get('role').name == 'District Supervisor') {
+                                               if (self.model.get('observer').get('role').get('name') == 'District Supervisor') {
                                                    $('select[title="polling_district"]').removeAttr('disabled');
                                                }
                                                var polling_streams = new LocationCollection();
                                                polling_streams.filtrate({'limit': 0, 'type__name':'Polling Stream', 'parent__parent__id':self.model.get('location').get('parent').get('parent').get('id')}, {
                                                    success: function (coll, response) {
                                                        $('select[title="polling_stream"]').html(Templates.LocationOptions({'locations':coll.models, 'selected_id': self.model.get('location').get('id')}));
-                                                       if (self.model.get('observer').get('role').name == 'District Supervisor') {
+                                                       if (self.model.get('observer').get('role').get('name') == 'District Supervisor') {
                                                            $('select[title="polling_stream"]').removeAttr('disabled');
                                                        }
                                                    }

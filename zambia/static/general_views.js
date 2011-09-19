@@ -121,7 +121,7 @@ ContactEditView = Backbone.View.extend({
     
     selectionChanged: function (e) {
         var field = $(e.currentTarget);
-        var value = $("option:selected", field).val() || null;
+        var value = $(field).val() || null;
         eval('this.model.attributes.'+field.attr('id')+' = value');
     },
     
@@ -209,7 +209,7 @@ ContactAddView = Backbone.View.extend({
     
     selectionChanged: function (e) {
         var field = $(e.currentTarget);
-        var value = $("option:selected", field).val() || null;
+        var value = $(field).val() || null;
         eval('this.model.attributes.'+field.attr('id')+' = value');
     },
     
@@ -371,7 +371,13 @@ ChecklistEditView = Backbone.View.extend({
                     }
                 });
             }
-        }   
+        }
+        
+        // We want to force the appropriate setting of the chosen location
+        // each time a location which is not a polling stream gets changed
+        if (location_type != 'polling_stream') {
+            this.selectionChanged({currentTarget: $('select[title="polling_stream"]')});
+        }
     },
     
     radioChanged: function (e) {
@@ -382,7 +388,7 @@ ChecklistEditView = Backbone.View.extend({
     
     selectionChanged: function (e) {
         var field = $(e.currentTarget);
-        var value = $("option:selected", field).val() || null;
+        var value = $(field).val() || null;
         eval('this.model.attributes.'+field.attr('name')+' = value');
     },
     
@@ -542,6 +548,12 @@ ChecklistAddView = Backbone.View.extend({
                     }
                 });
             }
+        }
+        
+        // We want to force the appropriate setting of the chosen location
+        // each time a location which is not a polling stream gets changed
+        if (location_type != 'polling_stream') {
+            this.selectionChanged({currentTarget: $('select[title="polling_stream"]')});
         }   
     },
     
@@ -553,7 +565,7 @@ ChecklistAddView = Backbone.View.extend({
     
     selectionChanged: function (e) {
         var field = $(e.currentTarget);
-        var value = $("option:selected", field).val() || null;
+        var value = $(field).val() || null;
         eval('this.model.attributes.'+field.attr('name')+' = value');
     },
     
@@ -696,6 +708,12 @@ IncidentEditView = Backbone.View.extend({
                 });
             }  
         }
+        
+        // We want to force the appropriate setting of the chosen location
+        // each time a location which is not a polling stream gets changed
+        if (location_type != 'polling_stream') {
+            this.selectionChanged({currentTarget: $('select[title="polling_stream"]')});
+        }
     },
     
     radioChanged: function (e) {
@@ -706,7 +724,7 @@ IncidentEditView = Backbone.View.extend({
     
     selectionChanged: function (e) {
         var field = $(e.currentTarget);
-        var value = $("option:selected", field).val() || null;
+        var value = $(field).val() || null;
         eval('this.model.attributes.'+field.attr('name')+' = value');
     },
     
@@ -870,7 +888,13 @@ IncidentAddView = Backbone.View.extend({
                     }
                 });
             }
-        }   
+        }
+        
+        // We want to force the appropriate setting of the chosen location
+        // each time a location which is not a polling stream gets changed
+        if (location_type != 'polling_stream') {
+            this.selectionChanged({currentTarget: $('select[title="polling_stream"]')});
+        }
     },
     
     radioChanged: function (e) {
@@ -881,7 +905,7 @@ IncidentAddView = Backbone.View.extend({
     
     selectionChanged: function (e) {
         var field = $(e.currentTarget);
-        var value = $("option:selected", field).val() || null;
+        var value = $(field).val() || null;
         eval('this.model.attributes.'+field.attr('name')+' = value');
     },
     
