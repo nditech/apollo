@@ -20,7 +20,9 @@ class ChecklistsResource(ModelResource):
     response = fields.ToOneField(ChecklistResponseResource, 'response', full=True)
 
     class Meta:
-        queryset = Checklist.objects.select_related()
+        queryset = Checklist.objects.select_related('response', 'location__parent', 'location__parent__parent',
+            'location__parent__parent__parent', 'location__parent__parent__parent__parent',
+            'location__parent__parent__parent__parent__parent', 'location__parent__parent__parent__parent__parent__parent')
         resource_name = 'checklists'
         allowed_methods = ['get', 'delete']
         authentication = Authentication()
@@ -256,7 +258,7 @@ class ChecklistResource(ModelResource):
     response = fields.ToOneField(ChecklistResponseResource, 'response', full=True, readonly=True)
 
     class Meta:
-        queryset = Checklist.objects.select_related()
+        queryset = Checklist.objects.select_related('response')
         resource_name = 'checklist'
         allowed_methods = ['get', 'put', 'post', 'delete']
         authentication = Authentication()

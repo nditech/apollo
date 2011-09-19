@@ -54,6 +54,11 @@ ChecklistCollectionView = Backbone.View.extend({
         "click #del_cancel": "cancelDelete",
     },
     
+    exportChecklist: function () {
+        var url = "/zambia/export_checklists?" + $.param(paginated_collection.filter_options);
+        window.open(url, "_blank");
+    },
+    
     deleteChecklistDialog: function (e) {
         var resource_uri = $(e.currentTarget).attr('title');
         $.facebox(Templates.ChecklistDelDialog({'resource_uri': resource_uri}))
@@ -75,6 +80,7 @@ ChecklistCollectionView = Backbone.View.extend({
     render: function(){
         $('#del_btn').die('click');
         $('#del_cancel').die('click');
+        $('#form_export_checklist').die('click');
         
         var self = this;
         // Store the heading of the table so it can be reused
@@ -92,6 +98,7 @@ ChecklistCollectionView = Backbone.View.extend({
 		
 		$('#del_btn').live('click', self.deleteChecklist);
         $('#del_cancel').live('click', self.cancelDelete);
+        $('#form_export_checklist').live('click', self.exportChecklist);
 		
 		return self.el;
     },

@@ -176,6 +176,7 @@ class Application(models.Model):
         permissions = (
             ('can_sms', 'Can send SMS'),
             ('can_analyse', 'Can view analyses'),
+            ('can_export', 'Can export data'),
         )
     def __unicode__(self):
         return self.name
