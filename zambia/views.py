@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from djangomako.shortcuts import render_to_string
 import json
 from xlwt import *
+from datetime import datetime
 
 @login_required
 def dashboard_stats(request):
@@ -114,7 +115,8 @@ def export_checklists(request):
             ws.write(row+1, j, str(value))
     
     response = HttpResponse(mimetype='application/vnd.ms-excel')
-    response['Content-Disposition'] = 'attachment; filename=checklist_export.xls'
+    response['Content-Disposition'] = 'attachment; filename=checklist_export-%d%02d%02d-%02d%02d.xls' % \
+        (datetime.today().year, datetime.today().month, datetime.today().day, datetime.today().hour, datetime.today().minute)
 
     wb.save(response)
     return response
