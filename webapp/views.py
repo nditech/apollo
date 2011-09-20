@@ -31,9 +31,9 @@ def send_sms(request):
         if collection_type == 'contact':
             resource = ContactResource()
         elif collection_type == 'incident':
-            resource = IncidentResource()
+            resource = IncidentsResource()
         elif collection_type == 'checklist':
-            resource = ChecklistResource()
+            resource = ChecklistsResource()
         
         request_params = request.POST
         applicable_filters = resource.build_filters(request_params)
