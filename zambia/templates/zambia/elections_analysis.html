@@ -1,42 +1,17 @@
-{% load webapp_tags %}
 <!DOCTYPE html>
 <html>
 <head>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-<title>Page Title</title>
+<title>{{title}} - Apollo</title>
 <link rel="stylesheet" type="text/css" href="/assets/css/ui-lightness/style.css" />
 <link rel="stylesheet" type="text/css" href="/assets/css/style.css" />
 <link rel="stylesheet" type="text/css" href="/assets/css/facebox.css" />
 <script src="/assets/js/application-min.js" type="text/javascript" charset="utf-8"></script>
-<script src="/assets/js/handlebars.1.0.0.beta.3.js" type="text/javascript" charset="utf-8"></script>
-<script src="/static/webapp/models.js" type="text/javascript" charset="utf-8"></script>
-<script src="/static/webapp/collections.js" type="text/javascript" charset="utf-8"></script>
-<script src="/static/webapp/views.js" type="text/javascript" charset="utf-8"></script>
-<script src="/static/webapp/routers.js" type="text/javascript" charset="utf-8"></script>
-<script src="/static/zambia/models.js" type="text/javascript" charset="utf-8"></script>
-<script src="/static/zambia/collections.js" type="text/javascript" charset="utf-8"></script>
-<script src="/static/zambia/views.js" type="text/javascript" charset="utf-8"></script>
-{% if context_instance.settings.ZAMBIA_DEPLOYMENT == 'RRP' %}
-<script src="/static/zambia/rrp_views.js" type="text/javascript" charset="utf-8"></script>
-{% else %}
-<script src="/static/zambia/general_views.js" type="text/javascript" charset="utf-8"></script>
-{% endif %}
-<script src="/static/zambia/routers.js" type="text/javascript" charset="utf-8"></script>
-{% app_templates context_instance %}
-<script type="text/javascript" charset="utf-8">
-	$(function() {
-		new WebappRouter();
-		new ZambiaRouter();
-		Backbone.history.start();
-	});
-</script>
-<style type="text/css" media="screen">
-</style>
 </head>
 <body>
 <div id="wrapper">
 	<div id="header">
-{% if context_instance.settings.ZAMBIA_DEPLOYMENT == 'RRP' %}
+{% if settings.ZAMBIA_DEPLOYMENT == 'RRP' %}
 		<div id="logo"><a href="#"><img src="/assets/images/logo_csec_rrp.png" alt="" /></a></div>
 {% else %}
 		<div id="logo"><a href="#"><img src="/assets/images/logo_csec.png" alt="" /></a></div>
@@ -49,7 +24,7 @@
 							<ul class="sub-menu"> 
 								<li><a href="/#!/elections/checklists">Checklists</a></li>
 								<li><a href="/#!/elections/incidents">Incidents</a></li> 
-								{% if context_instance.perms.webapp.can_analyse %}
+								{% if perms.webapp.can_analyse %}
 								<li><a href="/zambia/elections/process_analysis">Process Analysis</a></li> 
 								<li><a href="/zambia/elections/results_analysis">Results Analysis</a></li> 
 								{% endif %}
@@ -66,7 +41,7 @@
 		<div class="page-title">
 			<div class="page-title-content">
 				<div class="page-title-info left">
-					<h1>&nbsp;</h1>
+					<h1>{{title}}</h1>
 				</div>
 				<div class="page-title-link">
 					<a href="#">Back to Dashboard &raquo;</a>
@@ -75,7 +50,7 @@
 			</div><!--/page-title-content-->
 		</div><!--/page-title-->
 		<div class="full_width_content">
-			:)
+			{% block content %}:){% endblock %}
 		</div><!--/full_width_content-->
 	</div><!--/container-->
 	<div id="footer">

@@ -5,6 +5,8 @@ from models import *
 from api import *
 from queries import checklist_status
 from django.conf import settings
+from django.template import RequestContext
+from django.shortcuts import render_to_response
 from django.contrib.auth.decorators import login_required, permission_required
 from djangomako.shortcuts import render_to_string
 import json
@@ -84,9 +86,9 @@ def export_checklists(request):
         '5b', '5c', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16',
         '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', 
         '28a1', '28a2', '28b1', '28b2', '28c1', '28c2', '28d1', '28d2', '28e1', '28e2',
-        '29a1', '29a2', '29b1', '29b2', '29c1', '29c2', '29d1', '29d2', '29e1', '29e2',
-        '29f1', '29f2', '29g1', '29g2', '29h1', '29h2', '29i1', '29i2', '29j1', '29j2',
-        '29k1', '29k2', '29l1', '29l2', '30', '31', '32', '33']
+        '29a1', '29b1', '29c1', '29d1', '29e1', '29f1', '29g1', '29h1', '29i1', '29j1', '29k1', '29l1', 
+        '29a2', '29b2', '29c2', '29d2', '29e2', '29f2', '29g2', '29h2', '29i2', '29j2', '29k2', '29l2',  
+        '30', '31', '32', '33']
     
     data_fields = ['location.parent.code', 'observer.observer_id', 'updated', 'location.parent.parent.parent.parent.parent.parent.name', 
         'location.parent.parent.parent.parent.parent.name', 'location.parent.parent.parent.parent.name', 
@@ -100,12 +102,9 @@ def export_checklists(request):
         'response.AA', 'response.AB', 'response.AC', 'response.AD', 
         'response.AEAA', 'response.AEAB', 'response.AEBA', 'response.AEBB', 'response.AECA', 'response.AECB', 
         'response.AEDA', 'response.AEDB', 'response.AEEA', 'response.AEEB',
-        'response.AGA', 'response.AGB', 'response.AHA', 'response.AHB', 'response.AJA', 'response.AJB', 
-        'response.AKA', 'response.AKB', 'response.AMA', 'response.AMB',
-        'response.ANA', 'response.ANB', 'response.APA', 'response.APB', 'response.AQA', 'response.AQB', 
-        'response.ARA', 'response.ARB', 'response.ASA', 'response.ASB',
-        'response.ATA', 'response.ATB', 'response.AUA', 'response.AUB', 'response.AV', 'response.AW', 'response.AX',
-        'response.AY']
+        'response.AGA', 'response.AHA', 'response.AJA', 'response.AKA', 'response.AMA', 'response.ANA', 'response.APA', 'response.AQA', 'response.ARA', 'response.ASA', 'response.ATA', 'response.AUA', 
+        'response.AGB', 'response.AHB', 'response.AJB', 'response.AKB', 'response.AMB', 'response.ANB', 'response.APB', 'response.AQB', 'response.ARB', 'response.ASB', 'response.ATB', 'response.AUB',  
+        'response.AV', 'response.AW', 'response.AX', 'response.AY']
     
     for i, column in enumerate(columns):
         ws.write(0, i, column)
@@ -177,6 +176,18 @@ def export_incidents(request):
 
     wb.save(response)
     return response
-        
+
+@login_required
+@permission_required('webapp.can_analyse')
+def process_analysis(request):
+    context = {'title': 'Elections Process Analysis'}
+    return render_to_response('zambia/process_analysis.html', RequestContext(request, context))
+
+@login_required
+@permission_required('webapp.can_analyse')
+def results_analysis(request):
+    context = {'title': 'Elections Results Analysis'}
+    return render_to_response('zambia/results_analysis.html', RequestContext(request, context))
+    
 def app_templates(context):
     return render_to_string('zambia/templates.html', {}, context)
