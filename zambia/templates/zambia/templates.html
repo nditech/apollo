@@ -1,3 +1,27 @@
+<script type="text/javascript" charset="utf-8">
+	userinfo = {};
+	userinfo.username = "${user.username}";
+	
+	function session_setitem(key, value) {
+		if (sessionStorage) {
+			key = userinfo.username + '-' + key;
+			sessionStorage.setItem(key, value);
+		}
+	}
+	
+	function session_getitem(key, value) {
+		if (sessionStorage) {
+			key = userinfo.username + '-' + key;
+			return sessionStorage.getItem(key);
+		}
+	}
+	
+	function session_clear() {
+		if (sessionStorage) {
+			sessionStorage.clear();
+		}
+	}
+</script>
 <script type="text/x-handlebars-template" id="screen-zambia-dashboard-template" charset="utf-8">
 	<div class="page-title">
 		<div class="page-title-content">
@@ -89,13 +113,13 @@
 	<div id="filter" class="filter_pane">
 		<form id="search">
 % if settings.ZAMBIA_DEPLOYMENT == 'RRP':
-		<div class="input_el"><input type="text" name="observer_id" class="input_smoke search_field" placeholder="Monitor Id" id="search_observer__observer_id__exact" pattern=".*[0-9]" title="Numeric figures only"></div>
+		<div class="input_el"><input type="text" name="observer_id" class="input_smoke search_field persist" placeholder="Monitor Id" id="search_observer__observer_id__exact" pattern=".*[0-9]" title="Numeric figures only"></div>
 % endif
-		<div class="input_el"><input type="text" name="date" class="input_smoke search_field date_field" placeholder="Date" id="search_date__exact"></div>
-		<div class="input_el"><input type="text" name="location" class="input_smoke" placeholder="Location" id="location__id" style="width:30.5em"></div>
+		<div class="input_el"><input type="text" name="date" class="input_smoke search_field date_field persist" placeholder="Date" id="search_date__exact"></div>
+		<div class="input_el"><input type="text" name="location" class="input_smoke persist" placeholder="Location" id="location__id" style="width:30.5em"></div>
 		<div class="clear"></div>
 		<div class="input_el">
-			<select name="setup_status" id="search_setup_status" class="input_smoke search_field">
+			<select name="setup_status" id="search_setup_status" class="input_smoke search_field persist">
 				<option value="">Setup Status</option>
 				<option value="1">Setup Complete</option>
 				<option value="2">Setup Missing</option>
@@ -103,7 +127,7 @@
 			</select>
 		</div>
 		<div class="input_el">
-			<select name="voting_status" id="search_voting_status" class="input_smoke search_field">
+			<select name="voting_status" id="search_voting_status" class="input_smoke search_field persist">
 				<option value="">Voting Status</option>
 				<option value="1">Voting Complete</option>
 				<option value="2">Voting Missing</option>
@@ -111,7 +135,7 @@
 			</select>
 		</div>
 		<div class="input_el">
-			<select name="closing_status" id="search_closing_status" class="input_smoke search_field">
+			<select name="closing_status" id="search_closing_status" class="input_smoke search_field persist">
 				<option value="">Closing Status</option>
 				<option value="1">Closing Complete</option>
 				<option value="2">Closing Missing</option>
@@ -119,7 +143,7 @@
 			</select>
 		</div>
 		<div class="input_el">
-			<select name="counting_status" id="search_counting_status" class="input_smoke search_field">
+			<select name="counting_status" id="search_counting_status" class="input_smoke search_field persist">
 				<option value="">Counting Status</option>
 				<option value="1">Counting Complete</option>
 				<option value="2">Counting Missing</option>
@@ -128,7 +152,7 @@
 		</div>
 % if settings.ZAMBIA_DEPLOYMENT == 'RRP':
 		<div class="input_el">
-			<select name="ecz_match" id="search_ecz_match" class="input_smoke search_field">
+			<select name="ecz_match" id="search_ecz_match" class="input_smoke search_field persist">
 				<option value="">ECZ ID Match Status</option>
 				<option value="1">ECZ ID Match</option>
 				<option value="2">ECZ ID Mismatch</option>
@@ -1683,10 +1707,10 @@
 	<div class="search_pane_dashboard">
 		<form id="search">
 % if settings.ZAMBIA_DEPLOYMENT == 'RRP':
-		<div class="input_el"><input type="text" name="observer_id" class="input_smoke search_field" placeholder="Monitor Id" id="search_observer__observer_id__exact" pattern=".*[0-9]" title="Numeric figures only"></div>
+		<div class="input_el"><input type="text" name="observer_id" class="input_smoke search_field persist" placeholder="Monitor Id" id="search_observer__observer_id__exact" pattern=".*[0-9]" title="Numeric figures only"></div>
 % endif
-		<div class="input_el"><input type="text" name="date" class="input_smoke search_field date_field" placeholder="Date" id="search_date__exact"></div>
-		<div class="input_el"><input type="text" name="location" class="input_smoke" placeholder="Location" id="location__id" style="width:30.5em"></div>
+		<div class="input_el"><input type="text" name="date" class="input_smoke search_field date_field persist" placeholder="Date" id="search_date__exact"></div>
+		<div class="input_el"><input type="text" name="location" class="input_smoke persist" placeholder="Location" id="location__id" style="width:30.5em"></div>
 		<div class="input_el">
 % if user.has_perm('webapp.can_sms') and settings.ZAMBIA_DEPLOYMENT == 'RRP':
 			<span class="btn_blue btn_space"><input type="submit" name="submit" value="Filter" class="search_btn"><span>&nbsp;</span></span><span class="btn_gray btn_space"><a href="javascript:;" id="form_reset">Reset</a><span>&nbsp;</span></span><span class="btn_yellow btn_space"><a href='javascript:;' class="sms_sender">SMS</a><span>&nbsp;</span></span><span class="btn_red btn_space"><a href="javascript:;" id="form_add_incident">Add</a><span>&nbsp;</span></span>

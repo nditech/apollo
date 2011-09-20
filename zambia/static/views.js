@@ -81,6 +81,7 @@ ChecklistCollectionView = Backbone.View.extend({
         $('#del_btn').die('click');
         $('#del_cancel').die('click');
         $('#form_export_checklist').die('click');
+        $('form#search').die('submit.persist');
         
         var self = this;
         // Store the heading of the table so it can be reused
@@ -99,6 +100,13 @@ ChecklistCollectionView = Backbone.View.extend({
 		$('#del_btn').live('click', self.deleteChecklist);
         $('#del_cancel').live('click', self.cancelDelete);
         $('#form_export_checklist').live('click', self.exportChecklist);
+        
+        $('form#search').live('submit.persist', function () {
+            $.each($('.persist'), function (idx, el) {
+                session_setitem('checklist-'+$(el).attr('id'), $(el).val());
+            });
+            return false;
+        });
 		
 		return self.el;
     },
@@ -141,6 +149,7 @@ IncidentCollectionView = Backbone.View.extend({
     render: function(){
         $('#del_btn').die('click');
         $('#del_cancel').die('click');
+        $('form#search').die('submit.persist');
         
         var self = this;
         // Store the heading of the table so it can be reused
@@ -158,6 +167,13 @@ IncidentCollectionView = Backbone.View.extend({
 		
 		$('#del_btn').live('click', self.deleteIncident);
         $('#del_cancel').live('click', self.cancelDelete);
+        
+        $('form#search').live('submit.persist', function () {
+            $.each($('.persist'), function (idx, el) {
+                session_setitem('incident-'+$(el).attr('id'), $(el).val());
+            });
+            return false;
+        });
 		
 		return self.el;
     },

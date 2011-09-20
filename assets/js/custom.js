@@ -24,7 +24,7 @@ $(function () {
     
     // Search
     $('form#search').live('submit', function () {
-        search_options = {};
+        var search_options = {};
         
         $.each($('.search_field'), function (idx, el) {
             match = /^search_(.*)/.exec($(el).attr('id'));
@@ -181,7 +181,7 @@ $(function () {
     $.widget("custom.catcomplete", $.ui.autocomplete, {
         _create: function () {
             var element_id = this.element.attr('id');
-            this.element.after('<input type="hidden" class="search_field input_smoke" id="search_'+element_id+'" />');
+            this.element.after('<input type="hidden" class="search_field input_smoke persist" id="search_'+element_id+'" />');
             $.ui.autocomplete.prototype._create.apply(this);
         },
         _renderMenu: function( ul, items ) {

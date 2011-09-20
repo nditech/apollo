@@ -12,6 +12,12 @@ ZambiaRouter = Backbone.Router.extend({
        "!/elections/incident/:id": "incident_edit", // #!/elections/incident/1
        "!/elections/process_analysis": "process_analysis", // #!/elections/process_analysis
        "!/elections/results_analysis": "results_analysis", // #!/elections/results_analysis
+       "!/logout": "user_logout", // #!/logout
+    },
+    
+    user_logout: function () {
+        session_clear();
+        location.href='/accounts/logout';
     },
 
     dashboard: function () {
@@ -154,11 +160,37 @@ ZambiaRouter = Backbone.Router.extend({
     checklists: function () {
         screen_model = new Screen({title: 'Election Checklists', contents: '', link: '#!/elections/checklists'});
         screen_view = new ScreenView({model: screen_model});
+        
+        var search_options = {};
 
         paginated_collection = new ChecklistCollection();
         $('div.full_width_content').html(Templates.ChecklistFilter);
         
-        paginated_collection.fetch({
+        // Autocomplete for location input textbox
+        $("#location__id").catcomplete({
+            source: '/api/v1/location/search/',
+            position: { my: 'left top', at: 'left bottom', collision: 'none', offset: '0 -4'},
+            focus: function (event, ui) {
+                //$('#location__id').val(ui.item.name);
+                return false;
+            },
+            select: function (event, ui) {
+                $('#location__id').val(ui.item.name);
+                $('#search_location__id').val(ui.item.id);
+                return false;
+            }
+        });
+        
+        $.each($('.persist'), function (idx, el) {
+            session_val = session_getitem('checklist-'+$(el).attr('id'));
+            $(el).val(session_val);
+            match = /^search_(.*)/.exec($(el).attr('id'));
+            if (session_val && match){
+                search_options[match[1]] = session_val;
+            }
+        });
+                
+        paginated_collection.filtrate(search_options, {
           success: function (coll, response) {
               checklists_view = new ChecklistCollectionView({collection: coll}).render();
               $('div.full_width_content').append(checklists_view);
@@ -178,21 +210,6 @@ ZambiaRouter = Backbone.Router.extend({
                      coll.gotoPage(page);
                      return false;
                  });
-              });
-              
-              // Autocomplete for location input textbox
-              $("#location__id").catcomplete({
-                 source: '/api/v1/location/search/',
-                 position: { my: 'left top', at: 'left bottom', collision: 'none', offset: '0 -4'},
-                 focus: function (event, ui) {
-                     //$('#location__id').val(ui.item.name);
-                     return false;
-                 },
-                 select: function (event, ui) {
-                     $('#location__id').val(ui.item.name);
-                     $('#search_location__id').val(ui.item.id);
-                     return false;
-                 }
               });
               
               $("#location__id").blur(function () {
@@ -244,10 +261,32 @@ ZambiaRouter = Backbone.Router.extend({
        screen_model = new Screen({title: 'Election Incidents', contents: '', link: '#!/elections/incidents'});
        screen_view = new ScreenView({model: screen_model});
        
+       var search_options = {};
+       
        paginated_collection = new IncidentCollection();
        $('div.full_width_content').html(Templates.IncidentFilter);
        
-       paginated_collection.fetch({
+        // Autocomplete for location input textbox
+        $("#location__id").catcomplete({
+            source: '/api/v1/location/search/',
+            position: { my: 'left top', at: 'left bottom', collision: 'none', offset: '0 -4'},
+            select: function (event, ui) {
+                $('#location__id').val(ui.item.name);
+                $('#search_location__id').val(ui.item.id);
+                return false;
+            }
+        });
+        
+        $.each($('.persist'), function (idx, el) {
+            session_val = session_getitem('incident-'+$(el).attr('id'));
+            $(el).val(session_val);
+            match = /^search_(.*)/.exec($(el).attr('id'));
+            if (session_val && match){
+                search_options[match[1]] = session_val;
+            }
+        });
+       
+       paginated_collection.filtrate(search_options, {
          success: function (coll, response) {
              incidents_view = new IncidentCollectionView({collection: coll}).render();
              $('div.full_width_content').append(incidents_view);
@@ -267,21 +306,6 @@ ZambiaRouter = Backbone.Router.extend({
                     coll.gotoPage(page);
                     return false;
                 });
-             });
-             
-             // Autocomplete for location input textbox
-             $("#location__id").catcomplete({
-                source: '/api/v1/location/search/',
-                position: { my: 'left top', at: 'left bottom', collision: 'none', offset: '0 -4'},
-                focus: function (event, ui) {
-                    //$('#location__id').val(ui.item.name);
-                    return false;
-                },
-                select: function (event, ui) {
-                    $('#location__id').val(ui.item.name);
-                    $('#search_location__id').val(ui.item.id);
-                    return false;
-                }
              });
              
              $("#location__id").blur(function () {
