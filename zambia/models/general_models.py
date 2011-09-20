@@ -206,6 +206,8 @@ class ZambiaChecklistResponse(ChecklistResponse):
     AH   = models.IntegerField(blank=True, null=True, choices=YES_NO, validators=[RegexValidator(r'[1-2]')], help_text='Did all polling agents present agree with the presidentialresults for your polling stream?')
     AJ   = models.IntegerField(blank=True, null=True, choices=YES_NO, validators=[RegexValidator(r'[1-2]')], help_text='Were all polling agents present given a copy of the official results for the polling station?')
     AK   = models.IntegerField(blank=True, null=True, choices=YES_NO, validators=[RegexValidator(r'[1-2]')], help_text='Were the official results for the polling station posted for the public to see?')
+    created = models.DateTimeField(blank=False, auto_now_add=True)
+    updated = models.DateTimeField(blank=False, auto_now=True)
     
     class Admin:
         list_display = ('',)
@@ -247,6 +249,8 @@ class ZambiaIncidentResponse(IncidentResponse):
     N = models.NullBooleanField(blank=False, help_text='Voting or counting suspended during the process for more than 30 minutes')
     O = models.TextField(blank=False, help_text='Others')
     description = models.TextField(blank=True, help_text='Description of incident')
+    created = models.DateTimeField(blank=False, auto_now_add=True)
+    updated = models.DateTimeField(blank=False, auto_now=True)
 
     class Admin:
         list_display = ('',)
