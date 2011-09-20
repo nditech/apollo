@@ -1,6 +1,10 @@
 {% extends "zambia/elections_analysis.html" %}
 {% load calc %}
 {% block content %}
+<style type="text/css" media="screen">
+	html, body { color:#000; }
+	#process_analysis { font-size: 140%;}
+</style>
 <script type="text/javascript" charset="utf-8">
 	userinfo = {};
 	userinfo.username = "{{user.username}}";
@@ -54,7 +58,6 @@
 		});
 	});
 </script>
-
 <div class="search_pane_dashboard">
 	<form id="search" method="post">{% csrf_token %}
 		<div class="input_el"><input type="text" class="input_smoke persist" placeholder="Location" id="location__id" style="width:30.5em"></div>
@@ -73,7 +76,7 @@
 </div>
 
 <h3>{{location.name}} ({{location.type}})</h3>
-<table id="checklists" class="datagrid">
+<table id="process_analysis" class="datagrid">
 	<tbody>
 		<tr><th style="text-align:center">No.</th><th>Question</th><th style="text-align:center">N</th><th style="text-align:center">n</th><th>Analysis</th></tr>
 		
