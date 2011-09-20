@@ -271,8 +271,8 @@ ChecklistView = Backbone.View.extend({
 		|| this.model.get('response').get('CE') || this.model.get('response').get('CF') || this.model.get('response').get('CG')
 		|| this.model.get('response').get('CH') || this.model.get('response').get('D') || this.model.get('response').get('E')
 		|| this.model.get('response').get('EA') || this.model.get('response').get('EB') || this.model.get('response').get('EC')
-		|| this.model.get('response').get('F') || this.model.get('response').get('G') || this.model.get('response').get('H')
-		|| this.model.get('response').get('J')) && !this.model.get('response').get('J')) {
+		|| this.model.get('response').get('F') || this.model.get('response').get('G') || this.model.get('response').get('H'))
+		&& !this.model.get('response').get('J')) {
 		    $(this.el).addClass('ecz_code_incorrect');
 		}
 		

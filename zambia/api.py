@@ -1,7 +1,7 @@
 from webapp.api import *
 from webapp.models import *
 from models import *
-from django.db.models import Q
+from django.db.models import F, Q
 from django.conf import settings
 
 class ChecklistResponseResource(ModelResource):    
@@ -247,6 +247,62 @@ class ChecklistsResource(ModelResource):
                             exec 'complete_query &= Q(response__%s__isnull=False)' % field
                 exec 'query &= ~(complete_query)'
                 orm_filters['pk__in'] = Checklist.objects.filter(query).values_list('id', flat=True)
+        
+        if 'ecz_match' in filters:
+            ecz_status = filters.get('ecz_match')
+            if ecz_status == '1': # match
+                query = Q(response__A__isnull=False)
+                query |= Q(response__B__isnull=False)
+                query |= Q(response__CA__isnull=False)
+                query |= Q(response__CB__isnull=False)
+                query |= Q(response__CC__isnull=False)
+                query |= Q(response__CD__isnull=False)
+                query |= Q(response__CE__isnull=False)
+                query |= Q(response__CF__isnull=False)
+                query |= Q(response__CG__isnull=False)
+                query |= Q(response__CH__isnull=False)
+                query |= Q(response__D__isnull=False)
+                query |= Q(response__E__isnull=False)
+                query |= Q(response__EA__isnull=False)
+                query |= Q(response__EB__isnull=False)
+                query |= Q(response__EC__isnull=False)
+                query |= Q(response__F__isnull=False)
+                query |= Q(response__G__isnull=False)
+                query |= Q(response__H__isnull=False)
+                
+                pks = Checklist.objects.filter(query).filter(response__J=F('location__parent__code')).values_list('id', flat=True)
+                
+                if orm_filters.has_key('pk__in'):
+                    orm_filters['pk__in'] = list(set(orm_filters['pk__in']) & set(pks))
+                else:
+                    orm_filters['pk__in'] = pks
+                
+            elif ecz_status == '2': # mismatch
+                query = Q(response__A__isnull=False)
+                query |= Q(response__B__isnull=False)
+                query |= Q(response__CA__isnull=False)
+                query |= Q(response__CB__isnull=False)
+                query |= Q(response__CC__isnull=False)
+                query |= Q(response__CD__isnull=False)
+                query |= Q(response__CE__isnull=False)
+                query |= Q(response__CF__isnull=False)
+                query |= Q(response__CG__isnull=False)
+                query |= Q(response__CH__isnull=False)
+                query |= Q(response__D__isnull=False)
+                query |= Q(response__E__isnull=False)
+                query |= Q(response__EA__isnull=False)
+                query |= Q(response__EB__isnull=False)
+                query |= Q(response__EC__isnull=False)
+                query |= Q(response__F__isnull=False)
+                query |= Q(response__G__isnull=False)
+                query |= Q(response__H__isnull=False)
+                
+                pks = Checklist.objects.filter(query).exclude(response__J=F('location__parent__code')).values_list('id', flat=True)
+                
+                if orm_filters.has_key('pk__in'):
+                    orm_filters['pk__in'] = list(set(orm_filters['pk__in']) & set(pks))
+                else:
+                    orm_filters['pk__in'] = pks
 
         return orm_filters
 
