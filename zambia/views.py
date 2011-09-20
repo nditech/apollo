@@ -90,7 +90,7 @@ def export_checklists(request):
         '29a2', '29b2', '29c2', '29d2', '29e2', '29f2', '29g2', '29h2', '29i2', '29j2', '29k2', '29l2',  
         '30', '31', '32', '33']
     
-    data_fields = ['location.parent.code', 'observer.observer_id', 'updated', 'location.parent.parent.parent.parent.parent.parent.name', 
+    data_fields = ['location.parent.code', 'observer.observer_id', 'response.updated', 'location.parent.parent.parent.parent.parent.parent.name', 
         'location.parent.parent.parent.parent.parent.name', 'location.parent.parent.parent.parent.name', 
         'location.parent.parent.parent.name', 
         'location.parent.parent.name', 'location.parent.name', 'location.name',
@@ -140,7 +140,7 @@ def export_incidents(request):
             '1', '2a', '2b', '2c', '2d', '2e', '2f', '2g', '2h', '2i', '2j', '2k',
             '2k1', '2k2', '2k4', '2l', '2m', '2n', '2o', '3']
     
-        data_fields = ['location.parent.code', 'observer.observer_id', 'updated', 'location.parent.parent.parent.parent.parent.parent.name', 
+        data_fields = ['location.parent.code', 'observer.observer_id', 'response.updated', 'location.parent.parent.parent.parent.parent.parent.name', 
             'location.parent.parent.parent.parent.parent.name', 'location.parent.parent.parent.parent.name', 
             'location.parent.parent.parent.name', 
             'location.parent.parent.name', 'location.parent.name', 'location.name',
@@ -180,6 +180,13 @@ def export_incidents(request):
 @login_required
 @permission_required('webapp.can_analyse')
 def process_analysis(request):
+    request_params = request.GET
+    resource = ChecklistsResource()
+    
+    applicable_filters = resource.build_filters(request_params)
+    obj_list = list(resource.apply_filters(request, applicable_filters))
+    
+    
     context = {'title': 'Elections Process Analysis'}
     return render_to_response('zambia/process_analysis.html', RequestContext(request, context))
 
