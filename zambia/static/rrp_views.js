@@ -265,6 +265,17 @@ ChecklistView = Backbone.View.extend({
 		if (this.model.get('response').get('J') && this.model.get('location').get('parent').get('code') != this.model.get('response').get('J')) {
 		    $(this.el).addClass('ecz_code_incorrect');
 		}
+		
+		if ((this.model.get('response').get('A') || this.model.get('response').get('B') || this.model.get('response').get('CA') 
+		|| this.model.get('response').get('CB') || this.model.get('response').get('CC') || this.model.get('response').get('CD') 
+		|| this.model.get('response').get('CE') || this.model.get('response').get('CF') || this.model.get('response').get('CG')
+		|| this.model.get('response').get('CH') || this.model.get('response').get('D') || this.model.get('response').get('E')
+		|| this.model.get('response').get('EA') || this.model.get('response').get('EB') || this.model.get('response').get('EC')
+		|| this.model.get('response').get('F') || this.model.get('response').get('G') || this.model.get('response').get('H')
+		|| this.model.get('response').get('J')) && !this.model.get('response').get('J')) {
+		    $(this.el).addClass('ecz_code_incorrect');
+		}
+		
 		return this.el;
 	}
 });
