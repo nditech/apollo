@@ -303,6 +303,15 @@ class ChecklistsResource(ModelResource):
                     orm_filters['pk__in'] = list(set(orm_filters['pk__in']) & set(pks))
                 else:
                     orm_filters['pk__in'] = pks
+                    
+        if 'pd_id' in filters:
+            pd_id = filters.get('pd_id')
+            pks = Checklist.objects.filter(location__parent__code=pd_id.strip().replace(" ", "")).values_list('id', flat=True)
+
+            if orm_filters.has_key('pk__in'):
+                orm_filters['pk__in'] = list(set(orm_filters['pk__in']) & set(pks))
+            else:
+                orm_filters['pk__in'] = pks
 
         return orm_filters
 
