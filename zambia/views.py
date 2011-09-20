@@ -7,11 +7,13 @@ from queries import checklist_status
 from django.conf import settings
 from django.template import RequestContext
 from django.shortcuts import render_to_response
+from django.db.models import Q
 from django.contrib.auth.decorators import login_required, permission_required
 from djangomako.shortcuts import render_to_string
 import json
 from xlwt import *
 from datetime import datetime
+from stats import *
 
 @login_required
 def dashboard_stats(request):
@@ -180,14 +182,90 @@ def export_incidents(request):
 @login_required
 @permission_required('webapp.can_analyse')
 def process_analysis(request):
-    request_params = request.GET
-    resource = ChecklistsResource()
-    
-    applicable_filters = resource.build_filters(request_params)
-    obj_list = list(resource.apply_filters(request, applicable_filters))
-    
+    if request.POST:
+        request_params = request.POST.copy()
+        sample = request.POST.get('sample', None)
+    else:
+        request_params = {}
+        sample = None
     
     context = {'title': 'Elections Process Analysis'}
+    # remove empty parameters
+    for key in request_params.keys():
+        if not request_params.get(key):
+            del request_params[key]
+        
+    resource = ChecklistsResource()
+    applicable_filters = resource.build_filters(request_params)
+            
+    if sample:
+        if applicable_filters.has_key('location__id__in'):
+            applicable_filters['location__id__in'] = [int(id) for id in list(set(Sample.objects.filter(sample=sample).values_list('location__pk', flat=True)) & set(applicable_filters['location__id__in']))]
+        else:
+            applicable_filters['location__id__in'] = [int(id) for id in Sample.objects.filter(sample=sample).values_list('location__pk', flat=True)]
+    
+    # remove empty attributes
+    for key in applicable_filters.keys():
+        if applicable_filters.get(key) == []:
+            del applicable_filters[key]
+        
+    query = ",".join(['%s=%s' % (key, applicable_filters[key]) for key in applicable_filters.keys()])
+    
+    if query:
+        exec 'q = Q(%s)' % query
+    else:
+        q = Q()
+    
+    location_id = request.POST.get('location__id', None)
+    if location_id:
+        context['location'] = Location.objects.get(pk=location_id)
+    else:
+        context['location'] = Location.objects.get(name="Zambia",type__name="Country")
+        
+    context['total'] = checklist_N(q)
+    
+    context['A'] = checklist_Q_options('A', q)
+    context['B'] = checklist_Q_options('B', q)
+    context['CA'] = checklist_Q_options('CA', q)
+    context['CB'] = checklist_Q_options('CB', q)
+    context['CC'] = checklist_Q_options('CC', q)
+    context['CD'] = checklist_Q_options('CD', q)
+    context['CE'] = checklist_Q_options('CE', q)
+    context['CF'] = checklist_Q_options('CF', q)
+    context['CG'] = checklist_Q_options('CG', q)
+    context['CH'] = checklist_Q_options('CH', q)
+    context['EA'] = checklist_Q_options('EA', q)
+    context['EB'] = checklist_Q_options('EB', q)
+    context['EC'] = checklist_Q_options('EC', q)
+    context['F'] = checklist_Q_options('F', q)
+    context['G'] = checklist_Q_options('G', q)
+    context['K'] = checklist_Q_options('K', q)
+    context['M'] = checklist_Q_options('M', q)
+    context['N'] = checklist_Q_options('N', q)
+    context['P'] = checklist_Q_options('P', q)
+    context['Q'] = checklist_Q_options('Q', q)
+    context['R'] = checklist_Q_options('R', q)
+    context['S'] = checklist_Q_options('S', q)
+    context['T'] = checklist_Q_options('T', q)
+    context['U'] = checklist_Q_options('U', q)
+    context['V'] = checklist_Q_options('V', q)
+    context['W'] = checklist_Q_options('W', q)
+    context['X'] = checklist_Q_options('X', q)
+    context['Y'] = checklist_Q_options('Y', q)
+    context['Z'] = checklist_Q_options('Z', q)
+    context['AA'] = checklist_Q_options('AA', q)
+    context['AB'] = checklist_Q_options('AB', q)
+    context['AC'] = checklist_Q_options('AC', q)
+    context['AD'] = checklist_Q_options('AD', q)
+    context['AV'] = checklist_Q_options('AV', q)
+    context['AW'] = checklist_Q_options('AW', q)
+    context['AX'] = checklist_Q_options('AX', q)
+    context['AY'] = checklist_Q_options('AY', q)
+    
+    context['D'] = checklist_Q_mean('D', q)
+    context['E'] = checklist_Q_mean('E', q)
+    context['H'] = checklist_Q_mean('H', q)
+        
     return render_to_response('zambia/process_analysis.html', RequestContext(request, context))
 
 @login_required

@@ -45,19 +45,19 @@ class ChecklistsResource(ModelResource):
             id = orm_filters.pop('location__id__exact')
             loc = Location.objects.get(id=id)
             if loc.type.name == 'Province':
-                orm_filters['location__id__in'] = Location.objects.filter(parent__parent__parent__parent__parent__parent__id=id,type__name="Polling Stream").values_list('id', flat=True)
+                orm_filters['location__parent__parent__parent__parent__parent__parent__pk'] = id
             elif loc.type.name == 'District':
-                orm_filters['location__id__in'] = Location.objects.filter(parent__parent__parent__parent__parent__id=id,type__name="Polling Stream").values_list('id', flat=True)
+                orm_filters['location__parent__parent__parent__parent__parent__pk'] = id
             elif loc.type.name == 'Constituency':
-                orm_filters['location__id__in'] = Location.objects.filter(parent__parent__parent__parent__id=id,type__name="Polling Stream").values_list('id', flat=True)
+                orm_filters['location__parent__parent__parent__parent__pk'] = id
             elif loc.type.name == 'Ward':
-                orm_filters['location__id__in'] = Location.objects.filter(parent__parent__parent__id=id,type__name="Polling Stream").values_list('id', flat=True)
+                orm_filters['location__parent__parent__parent__pk'] = id
             elif loc.type.name == 'Polling District':
-                orm_filters['location__id__in'] = Location.objects.filter(parent__parent__id=id,type__name="Polling Stream").values_list('id', flat=True)
+                orm_filters['location__parent__parent__pk'] = id
             elif loc.type.name == 'Polling Station':
-                orm_filters['location__id__in'] = Location.objects.filter(parent__id=id,type__name="Polling Stream").values_list('id', flat=True)
+                orm_filters['location__parent__pk'] = id
             elif loc.type.name == 'Polling Stream':
-                orm_filters['location__id__in'] = Location.objects.filter(id=id,type__name="Polling Stream").values_list('id', flat=True)
+                orm_filters['location__pk'] = id
             
                 
         if 'setup_status' in filters:

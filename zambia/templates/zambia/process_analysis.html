@@ -1,3 +1,403 @@
 {% extends "zambia/elections_analysis.html" %}
+{% load calc %}
 {% block content %}
+<script type="text/javascript" charset="utf-8">
+	userinfo = {};
+	userinfo.username = "{{user.username}}";
+
+	function session_setitem(key, value) {
+		if (sessionStorage) {
+			key = userinfo.username + '-' + key;
+			sessionStorage.setItem(key, value);
+		}
+	}
+
+	function session_getitem(key, value) {
+		if (sessionStorage) {
+			key = userinfo.username + '-' + key;
+			return sessionStorage.getItem(key);
+		}
+	}
+
+	$(function () {
+		// Autocomplete for location input textbox
+        $("#location__id").catcomplete({
+            source: '/api/v1/location/search/',
+            position: { my: 'left top', at: 'left bottom', collision: 'none', offset: '0 -4'},
+            focus: function (event, ui) {
+                //$('#location__id').val(ui.item.name);
+                return false;
+            },
+            select: function (event, ui) {
+                $('#location__id').val(ui.item.name);
+                $('#search_location__id').val(ui.item.id);
+                return false;
+            }
+        });
+
+		$('form#search').die('submit');
+		$('form#search').live('submit', function () {
+            $.each($('.persist'), function (idx, el) {
+                session_setitem('process_analysis-'+$(el).attr('id'), $(el).val());
+            });
+            return true;
+        });
+
+		$.each($('.persist'), function (idx, el) {
+            session_val = session_getitem('process_analysis-'+$(el).attr('id'));
+            $(el).val(session_val);
+        });
+
+		$('#form_reset').click(function () {
+			$(':input').not('input:submit').not('input[name="csrfmiddlewaretoken"]').val("");
+			$('form#search').submit();
+		});
+	});
+</script>
+
+<div class="search_pane_dashboard">
+	<form id="search" method="post">{% csrf_token %}
+		<div class="input_el"><input type="text" class="input_smoke persist" placeholder="Location" id="location__id" style="width:30.5em"></div>
+		<div class="input_el">
+			<select name="sample" title="sample" id="sample" class="input_smoke search_field field persist">
+				<option value="">- Sample -</option>
+				<option value="Caritas" title="Caritas">Caritas</option>
+				<option value="FODEP" title="FODEP">FODEP</option>
+			</select>
+		</div>
+		<div class="input_el">
+			<span class="btn_blue btn_space"><input type="submit" name="submit" value="Filter" class="search_btn"><span>&nbsp;</span></span><span class="btn_gray btn_space"><a href="javascript:;" id="form_reset">Reset</a><span>&nbsp;</span></span>
+		</div>
+		<div class="clear"></div>
+	</form>
+</div>
+
+<h3>{{location.name}} ({{location.type}})</h3>
+<table id="checklists" class="datagrid">
+	<tbody>
+		<tr><th style="text-align:center">No.</th><th>Question</th><th style="text-align:center">N</th><th style="text-align:center">n</th><th>Analysis</th></tr>
+		
+		<tr><td rowspan="2" style="text-align:center">1</td><td rowspan="2">At what time did people start voting at your polling stream?</td><td style="text-align:center">&nbsp;</td><td style="text-align:center">&nbsp;</td><td rowspan="2">
+			<table width="100%">
+				<tr><td style="text-align:center">Before 6am</td><td style="text-align:center">At 6am</td><td style="text-align:center">Between 6am and 7am</td><td style="text-align:center">Between 7am and 9am</td><td style="text-align:center">After 9am</td></tr>
+				<tr><td style="text-align:center"><strong>{{A.counts.1|default:"0"}}</strong> <br /> {{A.counts.1|percentage:A.n}}</td><td style="text-align:center"><strong>{{A.counts.2|default:"0"}}</strong> <br /> {{A.counts.2|percentage:A.n}}</td><td style="text-align:center"><strong>{{A.counts.3|default:"0"}}</strong> <br /> {{A.counts.3|percentage:A.n}}</td><td style="text-align:center"><strong>{{A.counts.4|default:"0"}}</strong> <br /> {{A.counts.4|percentage:A.n}}</td><td style="text-align:center"><strong>{{A.counts.5|default:"0"}}</strong> <br /> {{A.counts.5|percentage:A.n}}</td></tr>
+			</table>
+		</td></tr>
+		<tr><td style="text-align:center"><strong>{{total}}</strong></td><td style="text-align:center"><strong>{{A.n}}</strong></td></tr>
+		
+		<tr><td rowspan="2" style="text-align:center">2</td><td rowspan="2">Was the polling stream setup so that voters could mark their ballot in secret?</td><td style="text-align:center">&nbsp;</td><td style="text-align:center">&nbsp;</td><td rowspan="2">
+			<table width="100%">
+				<tr><td style="text-align:center">Yes</td><td style="text-align:center">No</td></tr>
+				<tr><td style="text-align:center"><strong>{{B.counts.1|default:"0"}}</strong> <br /> {{B.counts.1|percentage:B.n}}</td><td style="text-align:center"><strong>{{B.counts.2|default:"0"}}</strong> <br /> {{B.counts.2|percentage:B.n}}</td></tr>
+			</table>
+		</td></tr>
+		<tr><td style="text-align:center"><strong>{{total}}</strong></td><td style="text-align:center"><strong>{{B.n}}</strong></td></tr>
+		
+		<tr><td rowspan="2" style="text-align:center">3a</td><td rowspan="2">Did the polling stream have indelible markers?</td><td style="text-align:center">&nbsp;</td><td style="text-align:center">&nbsp;</td><td rowspan="2">
+			<table width="100%">
+				<tr><td style="text-align:center">Yes</td><td style="text-align:center">No</td></tr>
+				<tr><td style="text-align:center"><strong>{{CA.counts.1|default:"0"}}</strong> <br /> {{CA.counts.1|percentage:CA.n}}</td><td style="text-align:center"><strong>{{CA.counts.2|default:"0"}}</strong> <br /> {{CA.counts.2|percentage:CA.n}}</td></tr>
+			</table>
+		</td></tr>
+		<tr><td style="text-align:center"><strong>{{total}}</strong></td><td style="text-align:center"><strong>{{CA.n}}</strong></td></tr>
+		
+		<tr><td rowspan="2" style="text-align:center">3b</td><td rowspan="2">Did the polling stream have three ballot boxes?</td><td style="text-align:center">&nbsp;</td><td style="text-align:center">&nbsp;</td><td rowspan="2">
+			<table width="100%">
+				<tr><td style="text-align:center">3 boxes present</td><td style="text-align:center">2 boxes present</td><td style="text-align:center">1 box present</td><td style="text-align:center">No boxes</td></tr>
+				<tr><td style="text-align:center"><strong>{{CB.counts.1|default:"0"}}</strong> <br /> {{CB.counts.1|percentage:CB.n}}</td><td style="text-align:center"><strong>{{CB.counts.2|default:"0"}}</strong> <br /> {{CB.counts.2|percentage:CB.n}}</td><td style="text-align:center"><strong>{{CB.counts.3|default:"0"}}</strong> <br /> {{CB.counts.3|percentage:CB.n}}</td><td style="text-align:center"><strong>{{CB.counts.4|default:"0"}}</strong> <br /> {{CB.counts.4|percentage:CB.n}}</td></tr>
+			</table>
+		</td></tr>
+		<tr><td style="text-align:center"><strong>{{total}}</strong></td><td style="text-align:center"><strong>{{CB.n}}</strong></td></tr>
+		
+		<tr><td rowspan="2" style="text-align:center">3c</td><td rowspan="2">Did the polling stream have Presidential ballot papers?</td><td style="text-align:center">&nbsp;</td><td style="text-align:center">&nbsp;</td><td rowspan="2">
+			<table width="100%">
+				<tr><td style="text-align:center">Correct ballots</td><td style="text-align:center">No ballots</td></tr>
+				<tr><td style="text-align:center"><strong>{{CC.counts.1|default:"0"}}</strong> <br /> {{CC.counts.1|percentage:CC.n}}</td><td style="text-align:center"><strong>{{CC.counts.2|default:"0"}}</strong> <br /> {{CC.counts.2|percentage:CC.n}}</td></tr>
+			</table>
+		</td></tr>
+		<tr><td style="text-align:center"><strong>{{total}}</strong></td><td style="text-align:center"><strong>{{CC.n}}</strong></td></tr>
+		
+		<tr><td rowspan="2" style="text-align:center">3d</td><td rowspan="2">Did the polling stream have Parliamentary/National Assembly ballot papers?</td><td style="text-align:center">&nbsp;</td><td style="text-align:center">&nbsp;</td><td rowspan="2">
+			<table width="100%">
+				<tr><td style="text-align:center">Correct ballots</td><td style="text-align:center">Wrong ballots</td><td style="text-align:center">No ballots</td></tr>
+				<tr><td style="text-align:center"><strong>{{CD.counts.1|default:"0"}}</strong> <br /> {{CD.counts.1|percentage:CD.n}}</td><td style="text-align:center"><strong>{{CD.counts.2|default:"0"}}</strong> <br /> {{CD.counts.2|percentage:CD.n}}</td><td style="text-align:center"><strong>{{CD.counts.3|default:"0"}}</strong> <br /> {{CD.counts.3|percentage:CD.n}}</td></tr>
+			</table>
+		</td></tr>
+		<tr><td style="text-align:center"><strong>{{total}}</strong></td><td style="text-align:center"><strong>{{CD.n}}</strong></td></tr>
+		
+		<tr><td rowspan="2" style="text-align:center">3e</td><td rowspan="2">Did the polling stream have Local Government ballot papers?</td><td style="text-align:center">&nbsp;</td><td style="text-align:center">&nbsp;</td><td rowspan="2">
+			<table width="100%">
+				<tr><td style="text-align:center">Correct ballots</td><td style="text-align:center">Wrong ballots</td><td style="text-align:center">No ballots</td></tr>
+				<tr><td style="text-align:center"><strong>{{CE.counts.1|default:"0"}}</strong> <br /> {{CE.counts.1|percentage:CE.n}}</td><td style="text-align:center"><strong>{{CE.counts.2|default:"0"}}</strong> <br /> {{CE.counts.2|percentage:CE.n}}</td><td style="text-align:center"><strong>{{CE.counts.3|default:"0"}}</strong> <br /> {{CE.counts.3|percentage:CE.n}}</td></tr>
+			</table>
+		</td></tr>
+		<tr><td style="text-align:center"><strong>{{total}}</strong></td><td style="text-align:center"><strong>{{CE.n}}</strong></td></tr>
+		
+		
+		<tr><td rowspan="2" style="text-align:center">3f</td><td rowspan="2">Did the polling stream have an official stamp/mark?</td><td style="text-align:center">&nbsp;</td><td style="text-align:center">&nbsp;</td><td rowspan="2">
+			<table width="100%">
+				<tr><td style="text-align:center">Yes</td><td style="text-align:center">No</td></tr>
+				<tr><td style="text-align:center"><strong>{{CF.counts.1|default:"0"}}</strong> <br /> {{CF.counts.1|percentage:CF.n}}</td><td style="text-align:center"><strong>{{CF.counts.2|default:"0"}}</strong> <br /> {{CF.counts.2|percentage:CF.n}}</td></tr>
+			</table>
+		</td></tr>
+		<tr><td style="text-align:center"><strong>{{total}}</strong></td><td style="text-align:center"><strong>{{CF.n}}</strong></td></tr>
+		
+		<tr><td rowspan="2" style="text-align:center">3g</td><td rowspan="2">Did the polling stream have the final voters' register?</td><td style="text-align:center">&nbsp;</td><td style="text-align:center">&nbsp;</td><td rowspan="2">
+			<table width="100%">
+				<tr><td style="text-align:center">Yes</td><td style="text-align:center">No</td></tr>
+				<tr><td style="text-align:center"><strong>{{CG.counts.1|default:"0"}}</strong> <br /> {{CG.counts.1|percentage:CG.n}}</td><td style="text-align:center"><strong>{{CG.counts.2|default:"0"}}</strong> <br /> {{CG.counts.2|percentage:CG.n}}</td></tr>
+			</table>
+		</td></tr>
+		<tr><td style="text-align:center"><strong>{{total}}</strong></td><td style="text-align:center"><strong>{{CG.n}}</strong></td></tr>
+		
+		<tr><td rowspan="2" style="text-align:center">3h</td><td rowspan="2">Did the polling stream have polling booths?</td><td style="text-align:center">&nbsp;</td><td style="text-align:center">&nbsp;</td><td rowspan="2">
+			<table width="100%">
+				<tr><td style="text-align:center">Yes</td><td style="text-align:center">No</td></tr>
+				<tr><td style="text-align:center"><strong>{{CH.counts.1|default:"0"}}</strong> <br /> {{CH.counts.1|percentage:CH.n}}</td><td style="text-align:center"><strong>{{CH.counts.2|default:"0"}}</strong> <br /> {{CH.counts.2|percentage:CH.n}}</td></tr>
+			</table>
+		</td></tr>
+		<tr><td style="text-align:center"><strong>{{total}}</strong></td><td style="text-align:center"><strong>{{CH.n}}</strong></td></tr>
+		
+		<tr><td rowspan="2" style="text-align:center">4</td><td rowspan="2">How many polling officials were present at the polling stream?</td><td style="text-align:center">&nbsp;</td><td style="text-align:center">&nbsp;</td><td rowspan="2">
+			<table width="100%">
+				<tr><td style="text-align:center">Average</td></tr>
+				<tr><td style="text-align:center"><strong>{{D.mean|default:"0"}}</strong></td></tr>
+			</table>
+		</td></tr>
+		<tr><td style="text-align:center"><strong>{{total}}</strong></td><td style="text-align:center"><strong>{{D.n}}</strong></td></tr>
+		
+		<tr><td rowspan="2" style="text-align:center">5</td><td rowspan="2">How many political party polling agents were present at the polling stream?</td><td style="text-align:center">&nbsp;</td><td style="text-align:center">&nbsp;</td><td rowspan="2">
+			<table width="100%">
+				<tr><td style="text-align:center">Average</td></tr>
+				<tr><td style="text-align:center"><strong>{{E.mean|default:"0"}}</strong></td></tr>
+			</table>
+		</td></tr>
+		<tr><td style="text-align:center"><strong>{{total}}</strong></td><td style="text-align:center"><strong>{{E.n}}</strong></td></tr>
+		
+		<tr><td rowspan="2" style="text-align:center">5a</td><td rowspan="2">Was a polling agent present for MMD?</td><td style="text-align:center">&nbsp;</td><td style="text-align:center">&nbsp;</td><td rowspan="2">
+			<table width="100%">
+				<tr><td style="text-align:center">Yes</td><td style="text-align:center">No</td></tr>
+				<tr><td style="text-align:center"><strong>{{EA.counts.1|default:"0"}}</strong> <br /> {{EA.counts.1|percentage:EA.n}}</td><td style="text-align:center"><strong>{{EA.counts.2|default:"0"}}</strong> <br /> {{EA.counts.2|percentage:EA.n}}</td></tr>
+			</table>
+		</td></tr>
+		<tr><td style="text-align:center"><strong>{{total}}</strong></td><td style="text-align:center"><strong>{{EA.n}}</strong></td></tr>
+		
+		<tr><td rowspan="2" style="text-align:center">5b</td><td rowspan="2">Was a polling agent present for Patriotic Front?</td><td style="text-align:center">&nbsp;</td><td style="text-align:center">&nbsp;</td><td rowspan="2">
+			<table width="100%">
+				<tr><td style="text-align:center">Yes</td><td style="text-align:center">No</td></tr>
+				<tr><td style="text-align:center"><strong>{{EB.counts.1|default:"0"}}</strong> <br /> {{EB.counts.1|percentage:EB.n}}</td><td style="text-align:center"><strong>{{EB.counts.2|default:"0"}}</strong> <br /> {{EB.counts.2|percentage:EB.n}}</td></tr>
+			</table>
+		</td></tr>
+		<tr><td style="text-align:center"><strong>{{total}}</strong></td><td style="text-align:center"><strong>{{EB.n}}</strong></td></tr>
+		
+		<tr><td rowspan="2" style="text-align:center">5c</td><td rowspan="2">Was a polling agent present for UPND?</td><td style="text-align:center">&nbsp;</td><td style="text-align:center">&nbsp;</td><td rowspan="2">
+			<table width="100%">
+				<tr><td style="text-align:center">Yes</td><td style="text-align:center">No</td></tr>
+				<tr><td style="text-align:center"><strong>{{EC.counts.1|default:"0"}}</strong> <br /> {{EC.counts.1|percentage:EC.n}}</td><td style="text-align:center"><strong>{{EC.counts.2|default:"0"}}</strong> <br /> {{EC.counts.2|percentage:EC.n}}</td></tr>
+			</table>
+		</td></tr>
+		<tr><td style="text-align:center"><strong>{{total}}</strong></td><td style="text-align:center"><strong>{{EC.n}}</strong></td></tr>
+		
+		<tr><td rowspan="2" style="text-align:center">6</td><td rowspan="2">Were uniformed police present at the polling stream?</td><td style="text-align:center">&nbsp;</td><td style="text-align:center">&nbsp;</td><td rowspan="2">
+			<table width="100%">
+				<tr><td style="text-align:center">Yes</td><td style="text-align:center">No</td></tr>
+				<tr><td style="text-align:center"><strong>{{F.counts.1|default:"0"}}</strong> <br /> {{F.counts.1|percentage:F.n}}</td><td style="text-align:center"><strong>{{F.counts.2|default:"0"}}</strong> <br /> {{F.counts.2|percentage:F.n}}</td></tr>
+			</table>
+		</td></tr>
+		<tr><td style="text-align:center"><strong>{{total}}</strong></td><td style="text-align:center"><strong>{{F.n}}</strong></td></tr>
+		
+		<tr><td rowspan="2" style="text-align:center">7</td><td rowspan="2">Were all ballot boxes present shown to be empty before they were closed and sealed?</td><td style="text-align:center">&nbsp;</td><td style="text-align:center">&nbsp;</td><td rowspan="2">
+			<table width="100%">
+				<tr><td style="text-align:center">Yes</td><td style="text-align:center">No</td></tr>
+				<tr><td style="text-align:center"><strong>{{G.counts.1|default:"0"}}</strong> <br /> {{G.counts.1|percentage:G.n}}</td><td style="text-align:center"><strong>{{G.counts.2|default:"0"}}</strong> <br /> {{G.counts.2|percentage:G.n}}</td></tr>
+			</table>
+		</td></tr>
+		<tr><td style="text-align:center"><strong>{{total}}</strong></td><td style="text-align:center"><strong>{{G.n}}</strong></td></tr>
+		
+		<tr><td rowspan="2" style="text-align:center">8</td><td rowspan="2">How many people were registered at the polling stream?</td><td style="text-align:center">&nbsp;</td><td style="text-align:center">&nbsp;</td><td rowspan="2">
+			<table width="100%">
+				<tr><td style="text-align:center">Average</td></tr>
+				<tr><td style="text-align:center"><strong>{{H.mean|default:"0"}}</strong></td></tr>
+			</table>
+		</td></tr>
+		<tr><td style="text-align:center"><strong>{{total}}</strong></td><td style="text-align:center"><strong>{{H.n}}</strong></td></tr>
+		
+		<tr><td rowspan="2" style="text-align:center">10</td><td rowspan="2">How many people with a NRC and voter's card were not permitted to vote because their name did not appear on the voter's register?</td><td style="text-align:center">&nbsp;</td><td style="text-align:center">&nbsp;</td><td rowspan="2">
+			<table width="100%">
+				<tr><td style="text-align:center">None (0)</td><td style="text-align:center">Few (1-5)</td><td style="text-align:center">Some (6-25)</td><td style="text-align:center">Many (26+)</td></tr>
+				<tr><td style="text-align:center"><strong>{{K.counts.1|default:"0"}}</strong> <br /> {{K.counts.1|percentage:K.n}}</td><td style="text-align:center"><strong>{{K.counts.2|default:"0"}}</strong> <br /> {{K.counts.2|percentage:K.n}}</td><td style="text-align:center"><strong>{{K.counts.3|default:"0"}}</strong> <br /> {{K.counts.3|percentage:K.n}}</td><td style="text-align:center"><strong>{{K.counts.4|default:"0"}}</strong> <br /> {{K.counts.4|percentage:K.n}}</td></tr>
+			</table>
+		</td></tr>
+		<tr><td style="text-align:center"><strong>{{total}}</strong></td><td style="text-align:center"><strong>{{K.n}}</strong></td></tr>
+		
+		<tr><td rowspan="2" style="text-align:center">11</td><td rowspan="2">How many people were permitted to vote even though they did not have their NRC and voter's card?</td><td style="text-align:center">&nbsp;</td><td style="text-align:center">&nbsp;</td><td rowspan="2">
+			<table width="100%">
+				<tr><td style="text-align:center">None (0)</td><td style="text-align:center">Few (1-5)</td><td style="text-align:center">Some (6-25)</td><td style="text-align:center">Many (26+)</td></tr>
+				<tr><td style="text-align:center"><strong>{{M.counts.1|default:"0"}}</strong> <br /> {{M.counts.1|percentage:M.n}}</td><td style="text-align:center"><strong>{{M.counts.2|default:"0"}}</strong> <br /> {{M.counts.2|percentage:M.n}}</td><td style="text-align:center"><strong>{{M.counts.3|default:"0"}}</strong> <br /> {{M.counts.3|percentage:M.n}}</td><td style="text-align:center"><strong>{{M.counts.4|default:"0"}}</strong> <br /> {{M.counts.4|percentage:M.n}}</td></tr>
+			</table>
+		</td></tr>
+		<tr><td style="text-align:center"><strong>{{total}}</strong></td><td style="text-align:center"><strong>{{M.n}}</strong></td></tr>
+		
+		<tr><td rowspan="2" style="text-align:center">12</td><td rowspan="2">How many people were permitted to vote even though their name was not on the voter's register?</td><td style="text-align:center">&nbsp;</td><td style="text-align:center">&nbsp;</td><td rowspan="2">
+			<table width="100%">
+				<tr><td style="text-align:center">None (0)</td><td style="text-align:center">Few (1-5)</td><td style="text-align:center">Some (6-25)</td><td style="text-align:center">Many (26+)</td></tr>
+				<tr><td style="text-align:center"><strong>{{N.counts.1|default:"0"}}</strong> <br /> {{N.counts.1|percentage:N.n}}</td><td style="text-align:center"><strong>{{N.counts.2|default:"0"}}</strong> <br /> {{N.counts.2|percentage:N.n}}</td><td style="text-align:center"><strong>{{N.counts.3|default:"0"}}</strong> <br /> {{N.counts.3|percentage:N.n}}</td><td style="text-align:center"><strong>{{N.counts.4|default:"0"}}</strong> <br /> {{N.counts.4|percentage:N.n}}</td></tr>
+			</table>
+		</td></tr>
+		<tr><td style="text-align:center"><strong>{{total}}</strong></td><td style="text-align:center"><strong>{{N.n}}</strong></td></tr>
+		
+		<tr><td rowspan="2" style="text-align:center">13</td><td rowspan="2">How many people who requested assistance in voting were denied assistance?</td><td style="text-align:center">&nbsp;</td><td style="text-align:center">&nbsp;</td><td rowspan="2">
+			<table width="100%">
+				<tr><td style="text-align:center">None (0)</td><td style="text-align:center">Few (1-5)</td><td style="text-align:center">Some (6-25)</td><td style="text-align:center">Many (26+)</td></tr>
+				<tr><td style="text-align:center"><strong>{{P.counts.1|default:"0"}}</strong> <br /> {{P.counts.1|percentage:P.n}}</td><td style="text-align:center"><strong>{{P.counts.2|default:"0"}}</strong> <br /> {{P.counts.2|percentage:P.n}}</td><td style="text-align:center"><strong>{{P.counts.3|default:"0"}}</strong> <br /> {{P.counts.3|percentage:P.n}}</td><td style="text-align:center"><strong>{{P.counts.4|default:"0"}}</strong> <br /> {{P.counts.4|percentage:P.n}}</td></tr>
+			</table>
+		</td></tr>
+		<tr><td style="text-align:center"><strong>{{total}}</strong></td><td style="text-align:center"><strong>{{P.n}}</strong></td></tr>
+		
+		<tr><td rowspan="2" style="text-align:center">14</td><td rowspan="2">How many people were permitted to vote on behalf of someone other than themselves?</td><td style="text-align:center">&nbsp;</td><td style="text-align:center">&nbsp;</td><td rowspan="2">
+			<table width="100%">
+				<tr><td style="text-align:center">None (0)</td><td style="text-align:center">Few (1-5)</td><td style="text-align:center">Some (6-25)</td><td style="text-align:center">Many (26+)</td></tr>
+				<tr><td style="text-align:center"><strong>{{Q.counts.1|default:"0"}}</strong> <br /> {{Q.counts.1|percentage:Q.n}}</td><td style="text-align:center"><strong>{{Q.counts.2|default:"0"}}</strong> <br /> {{Q.counts.2|percentage:Q.n}}</td><td style="text-align:center"><strong>{{Q.counts.3|default:"0"}}</strong> <br /> {{Q.counts.3|percentage:Q.n}}</td><td style="text-align:center"><strong>{{Q.counts.4|default:"0"}}</strong> <br /> {{Q.counts.4|percentage:Q.n}}</td></tr>
+			</table>
+		</td></tr>
+		<tr><td style="text-align:center"><strong>{{total}}</strong></td><td style="text-align:center"><strong>{{Q.n}}</strong></td></tr>
+		
+		<tr><td rowspan="2" style="text-align:center">15</td><td rowspan="2">How many people who voted were not marked with indelible ink?</td><td style="text-align:center">&nbsp;</td><td style="text-align:center">&nbsp;</td><td rowspan="2">
+			<table width="100%">
+				<tr><td style="text-align:center">None (0)</td><td style="text-align:center">Few (1-5)</td><td style="text-align:center">Some (6-25)</td><td style="text-align:center">Many (26+)</td></tr>
+				<tr><td style="text-align:center"><strong>{{R.counts.1|default:"0"}}</strong> <br /> {{R.counts.1|percentage:R.n}}</td><td style="text-align:center"><strong>{{R.counts.2|default:"0"}}</strong> <br /> {{R.counts.2|percentage:R.n}}</td><td style="text-align:center"><strong>{{R.counts.3|default:"0"}}</strong> <br /> {{R.counts.3|percentage:R.n}}</td><td style="text-align:center"><strong>{{R.counts.4|default:"0"}}</strong> <br /> {{R.counts.4|percentage:R.n}}</td></tr>
+			</table>
+		</td></tr>
+		<tr><td style="text-align:center"><strong>{{total}}</strong></td><td style="text-align:center"><strong>{{R.n}}</strong></td></tr>
+				
+		<tr><td rowspan="2" style="text-align:center">16</td><td rowspan="2">At any time, did any campaigning occur inside or near the polling stream?</td><td style="text-align:center">&nbsp;</td><td style="text-align:center">&nbsp;</td><td rowspan="2">
+			<table width="100%">
+				<tr><td style="text-align:center">Yes</td><td style="text-align:center">No</td></tr>
+				<tr><td style="text-align:center"><strong>{{S.counts.1|default:"0"}}</strong> <br /> {{S.counts.1|percentage:S.n}}</td><td style="text-align:center"><strong>{{S.counts.2|default:"0"}}</strong> <br /> {{S.counts.2|percentage:S.n}}</td></tr>
+			</table>
+		</td></tr>
+		<tr><td style="text-align:center"><strong>{{total}}</strong></td><td style="text-align:center"><strong>{{S.n}}</strong></td></tr>
+		
+		<tr><td rowspan="2" style="text-align:center">17</td><td rowspan="2">At any time, were uniformed security personnel present in the polling stream without permission of the election officials?</td><td style="text-align:center">&nbsp;</td><td style="text-align:center">&nbsp;</td><td rowspan="2">
+			<table width="100%">
+				<tr><td style="text-align:center">Yes</td><td style="text-align:center">No</td></tr>
+				<tr><td style="text-align:center"><strong>{{T.counts.1|default:"0"}}</strong> <br /> {{T.counts.1|percentage:T.n}}</td><td style="text-align:center"><strong>{{T.counts.2|default:"0"}}</strong> <br /> {{T.counts.2|percentage:T.n}}</td></tr>
+			</table>
+		</td></tr>
+		<tr><td style="text-align:center"><strong>{{total}}</strong></td><td style="text-align:center"><strong>{{T.n}}</strong></td></tr>
+		
+		<tr><td rowspan="2" style="text-align:center">18</td><td rowspan="2">At any time, where unauthorized persons permitted in the polling stream?</td><td style="text-align:center">&nbsp;</td><td style="text-align:center">&nbsp;</td><td rowspan="2">
+			<table width="100%">
+				<tr><td style="text-align:center">Yes</td><td style="text-align:center">No</td></tr>
+				<tr><td style="text-align:center"><strong>{{U.counts.1|default:"0"}}</strong> <br /> {{U.counts.1|percentage:U.n}}</td><td style="text-align:center"><strong>{{U.counts.2|default:"0"}}</strong> <br /> {{U.counts.2|percentage:U.n}}</td></tr>
+			</table>
+		</td></tr>
+		<tr><td style="text-align:center"><strong>{{total}}</strong></td><td style="text-align:center"><strong>{{U.n}}</strong></td></tr>
+		
+		<tr><td rowspan="2" style="text-align:center">19</td><td rowspan="2">Were there any incidents of intimidation or violence at the polling stream?</td><td style="text-align:center">&nbsp;</td><td style="text-align:center">&nbsp;</td><td rowspan="2">
+			<table width="100%">
+				<tr><td style="text-align:center">Yes</td><td style="text-align:center">No</td></tr>
+				<tr><td style="text-align:center"><strong>{{V.counts.1|default:"0"}}</strong> <br /> {{V.counts.1|percentage:V.n}}</td><td style="text-align:center"><strong>{{V.counts.2|default:"0"}}</strong> <br /> {{V.counts.2|percentage:V.n}}</td></tr>
+			</table>
+		</td></tr>
+		<tr><td style="text-align:center"><strong>{{total}}</strong></td><td style="text-align:center"><strong>{{V.n}}</strong></td></tr>
+		
+		<tr><td rowspan="2" style="text-align:center">20</td><td rowspan="2">At any time, was the voting process suspended for more than 30 minutes?</td><td style="text-align:center">&nbsp;</td><td style="text-align:center">&nbsp;</td><td rowspan="2">
+			<table width="100%">
+				<tr><td style="text-align:center">Yes</td><td style="text-align:center">No</td></tr>
+				<tr><td style="text-align:center"><strong>{{W.counts.1|default:"0"}}</strong> <br /> {{W.counts.1|percentage:W.n}}</td><td style="text-align:center"><strong>{{W.counts.2|default:"0"}}</strong> <br /> {{W.counts.2|percentage:W.n}}</td></tr>
+			</table>
+		</td></tr>
+		<tr><td style="text-align:center"><strong>{{total}}</strong></td><td style="text-align:center"><strong>{{W.n}}</strong></td></tr>
+		
+		<tr><td rowspan="2" style="text-align:center">21</td><td rowspan="2">How many people were still in the queue waiting to vote at 1800hrs?</td><td style="text-align:center">&nbsp;</td><td style="text-align:center">&nbsp;</td><td rowspan="2">
+			<table width="100%">
+				<tr><td style="text-align:center">None (0)</td><td style="text-align:center">Few (1-5)</td><td style="text-align:center">Some (6-25)</td><td style="text-align:center">Many (26+)</td></tr>
+				<tr><td style="text-align:center"><strong>{{X.counts.1|default:"0"}}</strong> <br /> {{X.counts.1|percentage:X.n}}</td><td style="text-align:center"><strong>{{X.counts.2|default:"0"}}</strong> <br /> {{X.counts.2|percentage:X.n}}</td><td style="text-align:center"><strong>{{X.counts.3|default:"0"}}</strong> <br /> {{X.counts.3|percentage:X.n}}</td><td style="text-align:center"><strong>{{X.counts.4|default:"0"}}</strong> <br /> {{X.counts.4|percentage:X.n}}</td></tr>
+			</table>
+		</td></tr>
+		<tr><td style="text-align:center"><strong>{{total}}</strong></td><td style="text-align:center"><strong>{{X.n}}</strong></td></tr>
+		
+		<tr><td rowspan="2" style="text-align:center">22</td><td rowspan="2">Was everyone in the queue waiting to vote at 1800hrs permitted to vote?</td><td style="text-align:center">&nbsp;</td><td style="text-align:center">&nbsp;</td><td rowspan="2">
+			<table width="100%">
+				<tr><td style="text-align:center">Yes</td><td style="text-align:center">No</td><td style="text-align:center">No one in queue</td></tr>
+				<tr><td style="text-align:center"><strong>{{Y.counts.1|default:"0"}}</strong> <br /> {{Y.counts.1|percentage:Y.n}}</td><td style="text-align:center"><strong>{{Y.counts.2|default:"0"}}</strong> <br /> {{Y.counts.2|percentage:Y.n}}</td><td style="text-align:center"><strong>{{Y.counts.3|default:"0"}}</strong> <br /> {{Y.counts.3|percentage:Y.n}}</td></tr>
+			</table>
+		</td></tr>
+		<tr><td style="text-align:center"><strong>{{total}}</strong></td><td style="text-align:center"><strong>{{Y.n}}</strong></td></tr>
+		
+		<tr><td rowspan="2" style="text-align:center">23</td><td rowspan="2">Was anyone permitted to join the queue and vote after 1800hrs?</td><td style="text-align:center">&nbsp;</td><td style="text-align:center">&nbsp;</td><td rowspan="2">
+			<table width="100%">
+				<tr><td style="text-align:center">Yes</td><td style="text-align:center">No</td></tr>
+				<tr><td style="text-align:center"><strong>{{Z.counts.1|default:"0"}}</strong> <br /> {{Z.counts.1|percentage:Z.n}}</td><td style="text-align:center"><strong>{{Z.counts.2|default:"0"}}</strong> <br /> {{Z.counts.2|percentage:Z.n}}</td></tr>
+			</table>
+		</td></tr>
+		<tr><td style="text-align:center"><strong>{{total}}</strong></td><td style="text-align:center"><strong>{{Z.n}}</strong></td></tr>
+		
+		<tr><td rowspan="2" style="text-align:center">24</td><td rowspan="2">Were the opening slots of all ballot boxes sealed closed after everyone had voted?</td><td style="text-align:center">&nbsp;</td><td style="text-align:center">&nbsp;</td><td rowspan="2">
+			<table width="100%">
+				<tr><td style="text-align:center">Yes</td><td style="text-align:center">No</td></tr>
+				<tr><td style="text-align:center"><strong>{{AA.counts.1|default:"0"}}</strong> <br /> {{AA.counts.1|percentage:AA.n}}</td><td style="text-align:center"><strong>{{AA.counts.2|default:"0"}}</strong> <br /> {{AA.counts.2|percentage:AA.n}}</td></tr>
+			</table>
+		</td></tr>
+		<tr><td style="text-align:center"><strong>{{total}}</strong></td><td style="text-align:center"><strong>{{AA.n}}</strong></td></tr>
+		
+		<tr><td rowspan="2" style="text-align:center">25</td><td rowspan="2">Were all polling agents permitted to observe the counting of ballot papers?</td><td style="text-align:center">&nbsp;</td><td style="text-align:center">&nbsp;</td><td rowspan="2">
+			<table width="100%">
+				<tr><td style="text-align:center">Yes</td><td style="text-align:center">No</td></tr>
+				<tr><td style="text-align:center"><strong>{{AB.counts.1|default:"0"}}</strong> <br /> {{AB.counts.1|percentage:AB.n}}</td><td style="text-align:center"><strong>{{AB.counts.2|default:"0"}}</strong> <br /> {{AB.counts.2|percentage:AB.n}}</td></tr>
+			</table>
+		</td></tr>
+		<tr><td style="text-align:center"><strong>{{total}}</strong></td><td style="text-align:center"><strong>{{AB.n}}</strong></td></tr>
+		
+		<tr><td rowspan="2" style="text-align:center">26</td><td rowspan="2">Were any authorized persons present during counting?</td><td style="text-align:center">&nbsp;</td><td style="text-align:center">&nbsp;</td><td rowspan="2">
+			<table width="100%">
+				<tr><td style="text-align:center">Yes</td><td style="text-align:center">No</td></tr>
+				<tr><td style="text-align:center"><strong>{{AC.counts.1|default:"0"}}</strong> <br /> {{AC.counts.1|percentage:AC.n}}</td><td style="text-align:center"><strong>{{AC.counts.2|default:"0"}}</strong> <br /> {{AC.counts.2|percentage:AC.n}}</td></tr>
+			</table>
+		</td></tr>
+		<tr><td style="text-align:center"><strong>{{total}}</strong></td><td style="text-align:center"><strong>{{AC.n}}</strong></td></tr>
+		
+		<tr><td rowspan="2" style="text-align:center">27</td><td rowspan="2">Were there any incidents of intimidation during counting?</td><td style="text-align:center">&nbsp;</td><td style="text-align:center">&nbsp;</td><td rowspan="2">
+			<table width="100%">
+				<tr><td style="text-align:center">Yes</td><td style="text-align:center">No</td></tr>
+				<tr><td style="text-align:center"><strong>{{AD.counts.1|default:"0"}}</strong> <br /> {{AD.counts.1|percentage:AD.n}}</td><td style="text-align:center"><strong>{{AD.counts.2|default:"0"}}</strong> <br /> {{AD.counts.2|percentage:AD.n}}</td></tr>
+			</table>
+		</td></tr>
+		<tr><td style="text-align:center"><strong>{{total}}</strong></td><td style="text-align:center"><strong>{{AD.n}}</strong></td></tr>
+		
+		<tr><td rowspan="2" style="text-align:center">30</td><td rowspan="2">Did you agree with the presidential results of your polling stream?</td><td style="text-align:center">&nbsp;</td><td style="text-align:center">&nbsp;</td><td rowspan="2">
+			<table width="100%">
+				<tr><td style="text-align:center">Yes</td><td style="text-align:center">No</td></tr>
+				<tr><td style="text-align:center"><strong>{{AV.counts.1|default:"0"}}</strong> <br /> {{AV.counts.1|percentage:AV.n}}</td><td style="text-align:center"><strong>{{AV.counts.2|default:"0"}}</strong> <br /> {{AV.counts.2|percentage:AV.n}}</td></tr>
+			</table>
+		</td></tr>
+		<tr><td style="text-align:center"><strong>{{total}}</strong></td><td style="text-align:center"><strong>{{AV.n}}</strong></td></tr>
+		
+		<tr><td rowspan="2" style="text-align:center">31</td><td rowspan="2">Did all polling agents present agree with the presidential results for your polling stream?</td><td style="text-align:center">&nbsp;</td><td style="text-align:center">&nbsp;</td><td rowspan="2">
+			<table width="100%">
+				<tr><td style="text-align:center">Yes</td><td style="text-align:center">No</td></tr>
+				<tr><td style="text-align:center"><strong>{{AW.counts.1|default:"0"}}</strong> <br /> {{AW.counts.1|percentage:AW.n}}</td><td style="text-align:center"><strong>{{AW.counts.2|default:"0"}}</strong> <br /> {{AW.counts.2|percentage:AW.n}}</td></tr>
+			</table>
+		</td></tr>
+		<tr><td style="text-align:center"><strong>{{total}}</strong></td><td style="text-align:center"><strong>{{AW.n}}</strong></td></tr>
+		
+		<tr><td rowspan="2" style="text-align:center">32</td><td rowspan="2">Were all polling agents present given a copy of the official results for the polling station?</td><td style="text-align:center">&nbsp;</td><td style="text-align:center">&nbsp;</td><td rowspan="2">
+			<table width="100%">
+				<tr><td style="text-align:center">Yes</td><td style="text-align:center">No</td></tr>
+				<tr><td style="text-align:center"><strong>{{AX.counts.1|default:"0"}}</strong> <br /> {{AX.counts.1|percentage:AX.n}}</td><td style="text-align:center"><strong>{{AX.counts.2|default:"0"}}</strong> <br /> {{AX.counts.2|percentage:AX.n}}</td></tr>
+			</table>
+		</td></tr>
+		<tr><td style="text-align:center"><strong>{{total}}</strong></td><td style="text-align:center"><strong>{{AX.n}}</strong></td></tr>
+		
+		<tr><td rowspan="2" style="text-align:center">33</td><td rowspan="2">Were the official results for the polling station posted for the public to see?</td><td style="text-align:center">&nbsp;</td><td style="text-align:center">&nbsp;</td><td rowspan="2">
+			<table width="100%">
+				<tr><td style="text-align:center">Yes</td><td style="text-align:center">No</td></tr>
+				<tr><td style="text-align:center"><strong>{{AY.counts.1|default:"0"}}</strong> <br /> {{AY.counts.1|percentage:AY.n}}</td><td style="text-align:center"><strong>{{AY.counts.2|default:"0"}}</strong> <br /> {{AY.counts.2|percentage:AY.n}}</td></tr>
+			</table>
+		</td></tr>
+		<tr><td style="text-align:center"><strong>{{total}}</strong></td><td style="text-align:center"><strong>{{AY.n}}</strong></td></tr>
+		
+	</tbody>
+</table>
 {% endblock %}
