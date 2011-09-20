@@ -4,6 +4,7 @@ from webapp.models import *
 from models import *
 from api import *
 from queries import checklist_status
+from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
 from djangomako.shortcuts import render_to_string
 import json
@@ -116,6 +117,62 @@ def export_checklists(request):
     
     response = HttpResponse(mimetype='application/vnd.ms-excel')
     response['Content-Disposition'] = 'attachment; filename=checklist_export-%d%02d%02d-%02d%02d.xls' % \
+        (datetime.today().year, datetime.today().month, datetime.today().day, datetime.today().hour, datetime.today().minute)
+
+    wb.save(response)
+    return response
+
+@login_required
+@permission_required('webapp.can_export')
+def export_incidents(request):
+    request_params = request.GET
+    resource = IncidentsResource()
+    
+    applicable_filters = resource.build_filters(request_params)
+    obj_list = list(resource.apply_filters(request, applicable_filters))
+    
+    wb = Workbook()
+    ws = wb.add_sheet('Incidents');
+    
+    if settings.ZAMBIA_DEPLOYMENT == 'RRP':
+        # write row header
+        columns = ['PDID', 'Monitor Id', 'Time', 'Province', 'District', 'Constituency', 'Ward', 
+            'Polling District', 'Polling Station', 'Polling Stream',
+            '1', '2a', '2b', '2c', '2d', '2e', '2f', '2g', '2h', '2i', '2j', '2k',
+            '2k1', '2k2', '2k4', '2l', '2m', '2n', '2o', '3']
+    
+        data_fields = ['location.parent.code', 'observer.observer_id', 'updated', 'location.parent.parent.parent.parent.parent.parent.name', 
+            'location.parent.parent.parent.parent.parent.name', 'location.parent.parent.parent.parent.name', 
+            'location.parent.parent.parent.name', 
+            'location.parent.parent.name', 'location.parent.name', 'location.name',
+            'response.W', 'response.A', 'response.B', 'response.C', 'response.D', 'response.E', 'response.F', 
+            'response.G', 'response.H', 'response.I', 'response.J', 'response.K', 'response.K1',
+            'response.K2', 'response.K4', 'response.L', 'response.M', 'response.N', 'response.O', 'response.description']
+    else:
+        # write row header
+        columns = ['PDID', 'Monitor Name', 'Monitor Phone', 'Time', 'Province', 'District', 'Constituency', 'Ward', 
+            'Polling District', 'Polling Station', 'Polling Stream',
+            '1', '2a', '2b', '2c', '2d', '2e', '2f', '2g', '2h', '2i', '2j', '2k',
+            '2k1', '2k2', '2k4', '2l', '2m', '2n', '2o', '3']
+    
+        data_fields = ['location.parent.code', 'response.monitor_name', 'response.monitor_phone', 'updated', 'location.parent.parent.parent.parent.parent.parent.name', 
+            'location.parent.parent.parent.parent.parent.name', 'location.parent.parent.parent.parent.name', 
+            'location.parent.parent.parent.name', 
+            'location.parent.parent.name', 'location.parent.name', 'location.name',
+            'response.W', 'response.A', 'response.B', 'response.C', 'response.D', 'response.E', 'response.F', 
+            'response.G', 'response.H', 'response.I', 'response.J', 'response.K', 'response.K1',
+            'response.K2', 'response.K4', 'response.L', 'response.M', 'response.N', 'response.O', 'response.description']
+    
+    for i, column in enumerate(columns):
+        ws.write(0, i, column)
+
+    for row, incident in enumerate(obj_list):
+        for j, field in enumerate(data_fields):
+            exec 'value = incident.%s' % field
+            ws.write(row+1, j, str(value))
+    
+    response = HttpResponse(mimetype='application/vnd.ms-excel')
+    response['Content-Disposition'] = 'attachment; filename=incident_export-%d%02d%02d-%02d%02d.xls' % \
         (datetime.today().year, datetime.today().month, datetime.today().day, datetime.today().hour, datetime.today().minute)
 
     wb.save(response)

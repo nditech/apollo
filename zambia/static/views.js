@@ -128,6 +128,11 @@ IncidentCollectionView = Backbone.View.extend({
         "click #del_cancel": "cancelDelete",
     },
     
+    exportIncident: function () {
+        var url = "/zambia/export_incidents?" + $.param(paginated_collection.filter_options);
+        window.open(url, "_blank");
+    },
+    
     deleteIncidentDialog: function (e) {
         var resource_uri = $(e.currentTarget).attr('title');
         $.facebox(Templates.IncidentDelDialog({'resource_uri': resource_uri}))
@@ -149,6 +154,7 @@ IncidentCollectionView = Backbone.View.extend({
     render: function(){
         $('#del_btn').die('click');
         $('#del_cancel').die('click');
+        $('#form_export_incident').die('click');
         $('form#search').die('submit.persist');
         
         var self = this;
@@ -167,6 +173,7 @@ IncidentCollectionView = Backbone.View.extend({
 		
 		$('#del_btn').live('click', self.deleteIncident);
         $('#del_cancel').live('click', self.cancelDelete);
+        $('#form_export_incident').live('click', self.exportIncident);
         
         $('form#search').live('submit.persist', function () {
             $.each($('.persist'), function (idx, el) {
