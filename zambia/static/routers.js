@@ -97,7 +97,7 @@ ZambiaRouter = Backbone.Router.extend({
             .orient('left-top')
             .layer.add(pv.Bar)
                 .fillStyle(pv.colors(missing_color,partial_color,complete_color).by(function () { return this.parent.index; }))
-                .anchor("left").add(pv.Label).textStyle(text_color).text(function(d) { return (d / checklists_status().setup.total() * 100).toFixed(1) + '%'; }).visible(function (d) { return d / checklists_status().setup.total() > 0.1;});
+                .anchor("left").add(pv.Label).textStyle(text_color).text(function(d) { return (d / checklists_status().setup.total() * 100).toFixed(1) + '%'; }).visible(function (d) { return d / checklists_status().setup.total() > 0.08;});
 
         vis_setup.add(pv.Label).textStyle(text_color).text(function () { return 'Missing: '+ checklists_status().setup.data()[0][0]; }).top(h*1.8).left(0);
         vis_setup.add(pv.Label).textStyle(text_color).text(function () { return 'Partial: '+ checklists_status().setup.data()[1][0]; }).top(h*1.8).left(100);
@@ -110,7 +110,7 @@ ZambiaRouter = Backbone.Router.extend({
             .orient('left-top')
             .layer.add(pv.Bar)
                 .fillStyle(pv.colors(missing_color,partial_color,complete_color).by(function () { return this.parent.index; }))
-                .anchor("left").add(pv.Label).textStyle(text_color).text(function(d) { return (d / checklists_status().setup.total() * 100).toFixed(1) + '%'; }).visible(function (d) { return d / checklists_status().voting.total() > 0.1;});
+                .anchor("left").add(pv.Label).textStyle(text_color).text(function(d) { return (d / checklists_status().setup.total() * 100).toFixed(1) + '%'; }).visible(function (d) { return d / checklists_status().voting.total() > 0.08;});
 
         vis_voting.add(pv.Label).textStyle(text_color).text(function () { return 'Missing: '+ checklists_status().voting.data()[0][0]; }).top(h*1.8).left(0);
         vis_voting.add(pv.Label).textStyle(text_color).text(function () { return 'Partial: '+ checklists_status().voting.data()[1][0]; }).top(h*1.8).left(100);
@@ -123,7 +123,7 @@ ZambiaRouter = Backbone.Router.extend({
             .orient('left-top')
             .layer.add(pv.Bar)
                 .fillStyle(pv.colors(missing_color,partial_color,complete_color).by(function () { return this.parent.index; }))
-                .anchor("left").add(pv.Label).textStyle(text_color).text(function(d) { return (d / checklists_status().setup.total() * 100).toFixed(1) + '%'; }).visible(function (d) { return d / checklists_status().closing.total() > 0.1;});
+                .anchor("left").add(pv.Label).textStyle(text_color).text(function(d) { return (d / checklists_status().setup.total() * 100).toFixed(1) + '%'; }).visible(function (d) { return d / checklists_status().closing.total() > 0.08;});
 
         vis_closing.add(pv.Label).textStyle(text_color).text(function () { return 'Missing: '+ checklists_status().closing.data()[0][0]; }).top(h*1.8).left(0);
         vis_closing.add(pv.Label).textStyle(text_color).text(function () { return 'Partial: '+ checklists_status().closing.data()[1][0]; }).top(h*1.8).left(100);
@@ -136,7 +136,7 @@ ZambiaRouter = Backbone.Router.extend({
             .orient('left-top')
             .layer.add(pv.Bar)
                 .fillStyle(pv.colors(missing_color,partial_color,complete_color).by(function () { return this.parent.index; }))
-                .anchor("left").add(pv.Label).textStyle(text_color).text(function(d) { return (d / checklists_status().setup.total() * 100).toFixed(1) + '%'; }).visible(function (d) { return d / checklists_status().counting.total() > 0.1;});
+                .anchor("left").add(pv.Label).textStyle(text_color).text(function(d) { return (d / checklists_status().setup.total() * 100).toFixed(1) + '%'; }).visible(function (d) { return d / checklists_status().counting.total() > 0.08;});
 
         vis_counting.add(pv.Label).textStyle(text_color).text(function () { return 'Missing: '+ checklists_status().counting.data()[0][0]; }).top(h*1.8).left(0);
         vis_counting.add(pv.Label).textStyle(text_color).text(function () { return 'Partial: '+ checklists_status().counting.data()[1][0]; }).top(h*1.8).left(100);
