@@ -82,7 +82,7 @@ def export_checklists(request):
     ws = wb.add_sheet('Checklists');
     
     # write row header
-    columns = ['PDID', 'Monitor Id', 'Time', 'Province', 'District', 'Constituency', 'Ward', 
+    columns = ['PDID', 'Monitor Id', 'Monitor Name', 'Monitor Phone', 'Supervisor Name', 'Supervisor Phone', 'Time', 'Province', 'District', 'Constituency', 'Ward', 
         'Polling District', 'Polling Station', 'Polling Stream',
         '1', '2', '3a', '3b', '3c', '3d', '3e', '3f', '3g', '3h', '4', '5', '5a',
         '5b', '5c', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16',
@@ -92,7 +92,8 @@ def export_checklists(request):
         '29a2', '29b2', '29c2', '29d2', '29e2', '29f2', '29g2', '29h2', '29i2', '29j2', '29k2', '29l2',  
         '30', '31', '32', '33']
     
-    data_fields = ['location.parent.code', 'observer.observer_id', 'response.updated', 'location.parent.parent.parent.parent.parent.parent.name', 
+    data_fields = ['location.parent.code', 'observer.observer_id', 'observer.name', 'observer.connection_set.all()[0].identity', 'observer.supervisor.name', 'observer.supervisor.connection_set.all()[0].identity', 
+        'response.updated', 'location.parent.parent.parent.parent.parent.parent.name', 
         'location.parent.parent.parent.parent.parent.name', 'location.parent.parent.parent.parent.name', 
         'location.parent.parent.parent.name', 
         'location.parent.parent.name', 'location.parent.name', 'location.name',
@@ -114,7 +115,7 @@ def export_checklists(request):
     for row, checklist in enumerate(obj_list):
         for j, field in enumerate(data_fields):
             exec 'value = checklist.%s' % field
-            ws.write(row+1, j, str(value))
+            ws.write(row+1, j, unicode(value))
     
     response = HttpResponse(mimetype='application/vnd.ms-excel')
     response['Content-Disposition'] = 'attachment; filename=checklist_export-%d%02d%02d-%02d%02d.xls' % \
