@@ -14,7 +14,9 @@ import json
 from xlwt import *
 from datetime import datetime
 from stats import *
+from django.views.decorators.cache import cache_page
 
+@cache_page(5)
 @login_required
 def dashboard_stats(request):
     province = request.GET.get('province', None)
