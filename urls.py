@@ -1,6 +1,7 @@
 from django.conf.urls.defaults import *
 from django.conf import settings
 from django.contrib import admin
+from django.views.generic.simple import redirect_to
 
 admin.autodiscover()
 
@@ -19,6 +20,7 @@ urlpatterns += patterns('',
     # apolo urls for default routing
     (r'', include('webapp.urls')),
     (r'zambia/', include('zambia.urls')),
+    (r'^favicon.ico', redirect_to, {'url': '/assets/images/favicon.ico', 'permanent': True}),
     (r'^', include('rapidsms.urls.static_media')),
     (r'^comments/', include('django.contrib.comments.urls')),
 ) 
