@@ -1,0 +1,93 @@
+{% extends "zambia/elections_analysis.html" %}
+{% load webapp_tags %}
+{% block content %}
+<style type="text/css" media="print">
+	html, body { color:#000; }
+	#process_analysis { font-size: 120%;}
+</style>
+<style type="text/css" media="screen">
+	#process_analysis { font-size: 100%;}
+	.progress_light {margin-right:3px;}
+</style>
+<script type="text/javascript" charset="utf-8">
+	userinfo = {};
+	userinfo.username = "{{user.username}}";
+
+	function session_setitem(key, value) {
+		if (sessionStorage) {
+			key = userinfo.username + '-' + key;
+			sessionStorage.setItem(key, value);
+		}
+	}
+
+	function session_getitem(key, value) {
+		if (sessionStorage) {
+			key = userinfo.username + '-' + key;
+			return sessionStorage.getItem(key);
+		}
+	}
+
+	$(function () {
+		// Autocomplete for location input textbox
+        $("#location__id").catcomplete({
+            source: '/api/v1/location/search/',
+            position: { my: 'left top', at: 'left bottom', collision: 'none', offset: '0 -4'},
+            focus: function (event, ui) {
+                //$('#location__id').val(ui.item.name);
+                return false;
+            },
+            select: function (event, ui) {
+                $('#location__id').val(ui.item.name);
+                $('#search_location__id').val(ui.item.id);
+                return false;
+            }
+        });
+
+		$('form#search').die('submit');
+		$('form#search').live('submit', function () {
+            $.each($('.persist'), function (idx, el) {
+                session_setitem('stream_status-'+$(el).attr('id'), $(el).val());
+            });
+            return true;
+        });
+
+		$.each($('.persist'), function (idx, el) {
+            session_val = session_getitem('stream_status-'+$(el).attr('id'));
+            $(el).val(session_val);
+        });
+
+		$('#form_reset').click(function () {
+			$(':input').not('input:submit').not('input[name="csrfmiddlewaretoken"]').val("");
+			$('form#search').submit();
+		});
+	});
+</script>
+<div class="search_pane_dashboard">
+	<form id="search" method="post">{% csrf_token %}
+		<div class="input_el"><input type="text" class="input_smoke persist" placeholder="Location" id="location__id" style="width:30.5em"></div>
+		<div class="input_el">
+			<select name="sample" title="sample" id="sample" class="input_smoke search_field field persist">
+				<option value="">- Sample -</option>
+				<option value="Caritas" title="Caritas">Caritas</option>
+				<option value="FODEP" title="FODEP">FODEP</option>
+			</select>
+		</div>
+		<div class="input_el">
+			<span class="btn_blue btn_space"><input type="submit" name="submit" value="Filter" class="search_btn"><span>&nbsp;</span></span><span class="btn_gray btn_space"><a href="javascript:;" id="form_reset">Reset</a><span>&nbsp;</span></span>
+		</div>
+		<div class="clear"></div>
+	</form>
+</div>
+
+<h3>{{location.name}} ({{location.type}})</h3>
+<table id="process_analysis" class="datagrid">
+	<tbody>
+		<tr><th style="text-align:center">PDID</th><th>Polling Station</th><th>Stream Completion</th><th>Station Completion</th><th style="text-align:center">Match</th><th style="text-align:center">Sum</th></tr>
+		{% for station in stations %}
+		<tr><td style="text-align:center">{{station.pdid}}</td><td>{{station.name}}</td><td>{% progress_lights station.stream_in station.total %}</td><td>{% progress_lights station.station_in station.total %}</td>
+			<td style="text-align:center">{% if station.station_in > 0 and station.station_in == station.match_no %}<img src="/assets/images/tick.png">{% else %}<img src="/assets/images/delete.png">{% endif %}</td>
+			<td style="text-align:center">{% if station.station_in > 0 and station.station_in == station.match_no and station.match_no == station.sum_no %}<img src="/assets/images/tick.png">{% else %}<img src="/assets/images/delete.png">{% endif %}</td></tr>
+		{% endfor %}
+	</tbody>
+</table>
+{% endblock %}

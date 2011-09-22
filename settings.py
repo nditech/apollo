@@ -45,7 +45,6 @@ INSTALLED_APPS = [
     # the essentials.
     "webapp",
     "zambia",
-    "charts",
     "django_nose",
     "djtables",
     "rapidsms",
@@ -144,8 +143,6 @@ SMS_SENDER = ''
 SMS_USER = ''
 SMS_PASS = ''
 PHONE_CC = []
-
-RESTRICTED_USERS = {'user1':'location1'}
 
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',

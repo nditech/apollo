@@ -15,6 +15,7 @@ from xlwt import *
 from datetime import datetime
 from stats import *
 from django.views.decorators.cache import cache_page
+from stream_status_queries import *
 
 @cache_page(5)
 @login_required
@@ -268,6 +269,8 @@ def process_analysis(request):
     context['D'] = checklist_Q_mean('D', q)
     context['E'] = checklist_Q_mean('E', q)
     context['H'] = checklist_Q_mean('H', q)
+    
+    context.update({'settings': settings})
         
     return render_to_response('zambia/process_analysis.html', RequestContext(request, context))
 
@@ -275,7 +278,38 @@ def process_analysis(request):
 @permission_required('webapp.can_analyse')
 def results_analysis(request):
     context = {'title': 'Elections Results Analysis'}
+    context.update({'settings': settings})
     return render_to_response('zambia/results_analysis.html', RequestContext(request, context))
+
+@login_required
+@permission_required('webapp.can_analyse')
+def station_status(request):
+    context = {'title': 'Station Status'}
+    location_id = request.POST.get('location__id', None)
+    sample = request.POST.get('sample', None)
+    
+    where_we_at = Location.objects.get(pk=location_id if location_id else 1)
+    locations = [str(value) for value in Location.objects.get(pk=location_id if location_id else 1).get_descendants(include_self=True).filter(type__name="Polling Station").values_list('id', flat=True)]
+    if not sample:
+        locations = list(set(locations) & set([str(value) for value in Sample.objects.all().values_list('location__parent__id', flat=True)]))
+    else:
+        locations = list(set(locations) & set([str(value) for value in Sample.objects.filter(sample=sample).values_list('location__parent__id', flat=True)]))
+        
+    stream_stats = stream_status_calc()
+    station_data = []
+    for location in locations:
+        station_data.append({
+            'pdid': stream_stats['stream_completion'][location]['code'],
+            'name': stream_stats['stream_completion'][location]['name'],
+            'total': stream_stats['stream_completion'][location]['total_streams'],
+            'stream_in': stream_stats['stream_completion'][location]['stream_count'],
+            'station_in': stream_stats['station_completion'][location]['stream_count'],
+            'match_no': stream_stats['station_match'][location]['match_count'],
+            'sum_no': stream_stats['station_sum'][location]['matches']
+        })
+    
+    context.update({'stations': station_data, 'location': where_we_at, 'settings': settings})
+    return render_to_response('zambia/stream_status.html', RequestContext(request, context))
     
 def app_templates(context):
     return render_to_string('zambia/templates.html', {}, context)

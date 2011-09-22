@@ -3,7 +3,7 @@
 <html>
 <head>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-<title>Page Title</title>
+<title></title>
 <link rel="stylesheet" type="text/css" href="/assets/css/ui-lightness/style.css" />
 <link rel="stylesheet" type="text/css" href="/assets/css/style.css" />
 <link rel="stylesheet" type="text/css" href="/assets/css/facebox.css" />
@@ -50,8 +50,10 @@
 								<li><a href="/#!/elections/checklists">Checklists</a></li>
 								<li><a href="/#!/elections/incidents">Incidents</a></li> 
 								{% if context_instance.perms.webapp.can_analyse %}
+								{% if context_instance.settings.ZAMBIA_DEPLOYMENT == 'RRP' %}
+								<li><a href="/zambia/elections/station_status">Station Status</a></li> 
+								{% endif %}
 								<li><a href="/zambia/elections/process_analysis">Process Analysis</a></li> 
-								<li><a href="/zambia/elections/results_analysis">Results Analysis</a></li> 
 								{% endif %}
 							</ul> 
 						</li> 		

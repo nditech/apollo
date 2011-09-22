@@ -7,4 +7,5 @@ urlpatterns = patterns('',
     url(r'export_incidents/?', export_incidents),
     url(r'elections/process_analysis/?', process_analysis),
     url(r'elections/results_analysis/?', results_analysis),
+    url(r'elections/station_status/?', station_status),
 )

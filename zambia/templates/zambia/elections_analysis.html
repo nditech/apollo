@@ -25,8 +25,10 @@
 								<li><a href="/#!/elections/checklists">Checklists</a></li>
 								<li><a href="/#!/elections/incidents">Incidents</a></li> 
 								{% if perms.webapp.can_analyse %}
+								{% if settings.ZAMBIA_DEPLOYMENT == 'RRP' %}
+								<li><a href="/zambia/elections/station_status">Station Status</a></li> 
+								{% endif %}
 								<li><a href="/zambia/elections/process_analysis">Process Analysis</a></li> 
-								<li><a href="/zambia/elections/results_analysis">Results Analysis</a></li> 
 								{% endif %}
 							</ul> 
 						</li> 		
