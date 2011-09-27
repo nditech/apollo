@@ -166,6 +166,9 @@
 % else:
 			<span class="btn_blue btn_space"><input type="submit" name="submit" value="Search" class="search_btn"><span>&nbsp;</span></span><span class="btn_gray btn_space"><a href="javascript:;" id="form_reset">Reset</a><span>&nbsp;</span></span>
 % endif
+% if user.has_perm('webapp.can_export') and settings.ZAMBIA_DEPLOYMENT == 'GENERAL':
+			<span class="btn_red btn_space"><a href="javascript:;" id="form_export_checklist">Export</a><span>&nbsp;</span></span>
+% endif
 		</div>
 		</form>
 		<div class="clear"></div>
