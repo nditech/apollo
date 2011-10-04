@@ -321,10 +321,17 @@ def process_analysis(request):
     context['AB'] = checklist_Q_options('AB', q)
     context['AC'] = checklist_Q_options('AC', q)
     context['AD'] = checklist_Q_options('AD', q)
-    context['AV'] = checklist_Q_options('AV', q)
-    context['AW'] = checklist_Q_options('AW', q)
-    context['AX'] = checklist_Q_options('AX', q)
-    context['AY'] = checklist_Q_options('AY', q)
+    
+    if settings.ZAMBIA_DEPLOYMENT == 'RRP':
+        context['AV'] = checklist_Q_options('AV', q)
+        context['AW'] = checklist_Q_options('AW', q)
+        context['AX'] = checklist_Q_options('AX', q)
+        context['AY'] = checklist_Q_options('AY', q)
+    else:
+        context['AG'] = checklist_Q_options('AG', q)
+        context['AH'] = checklist_Q_options('AH', q)
+        context['AJ'] = checklist_Q_options('AJ', q)
+        context['AK'] = checklist_Q_options('AK', q)
     
     context['D'] = checklist_Q_mean('D', q)
     context['E'] = checklist_Q_mean('E', q)

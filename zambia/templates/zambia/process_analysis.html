@@ -375,34 +375,66 @@
 		<tr><td rowspan="2" style="text-align:center">30</td><td rowspan="2">Did you agree with the presidential results of your polling stream?</td><td style="text-align:center">&nbsp;</td><td style="text-align:center">&nbsp;</td><td rowspan="2">
 			<table width="100%">
 				<tr><td style="text-align:center">Yes</td><td style="text-align:center">No</td></tr>
+				{% if settings.ZAMBIA_DEPLOYMENT == 'RRP' %}
 				<tr><td style="text-align:center"><strong>{{AV.counts.1|default:"0"}}</strong> <br /> {{AV.counts.1|percentage:AV.n}}</td><td style="text-align:center"><strong>{{AV.counts.2|default:"0"}}</strong> <br /> {{AV.counts.2|percentage:AV.n}}</td></tr>
+				{% else %}
+				<tr><td style="text-align:center"><strong>{{AG.counts.1|default:"0"}}</strong> <br /> {{AG.counts.1|percentage:AG.n}}</td><td style="text-align:center"><strong>{{AG.counts.2|default:"0"}}</strong> <br /> {{AG.counts.2|percentage:AG.n}}</td></tr>
+				{% endif %}
 			</table>
 		</td></tr>
+		{% if settings.ZAMBIA_DEPLOYMENT == 'RRP' %}
 		<tr><td style="text-align:center"><strong>{{total}}</strong></td><td style="text-align:center"><strong>{{AV.n}}</strong></td></tr>
+		{% else %}
+		<tr><td style="text-align:center"><strong>{{total}}</strong></td><td style="text-align:center"><strong>{{AG.n}}</strong></td></tr>
+		{% endif %}
 		
 		<tr><td rowspan="2" style="text-align:center">31</td><td rowspan="2">Did all polling agents present agree with the presidential results for your polling stream?</td><td style="text-align:center">&nbsp;</td><td style="text-align:center">&nbsp;</td><td rowspan="2">
 			<table width="100%">
 				<tr><td style="text-align:center">Yes</td><td style="text-align:center">No</td></tr>
+				{% if settings.ZAMBIA_DEPLOYMENT == 'RRP' %}
 				<tr><td style="text-align:center"><strong>{{AW.counts.1|default:"0"}}</strong> <br /> {{AW.counts.1|percentage:AW.n}}</td><td style="text-align:center"><strong>{{AW.counts.2|default:"0"}}</strong> <br /> {{AW.counts.2|percentage:AW.n}}</td></tr>
+				{% else %}
+				<tr><td style="text-align:center"><strong>{{AH.counts.1|default:"0"}}</strong> <br /> {{AH.counts.1|percentage:AH.n}}</td><td style="text-align:center"><strong>{{AH.counts.2|default:"0"}}</strong> <br /> {{AH.counts.2|percentage:AH.n}}</td></tr>
+				{% endif %}
 			</table>
 		</td></tr>
+		{% if settings.ZAMBIA_DEPLOYMENT == 'RRP' %}
 		<tr><td style="text-align:center"><strong>{{total}}</strong></td><td style="text-align:center"><strong>{{AW.n}}</strong></td></tr>
+		{% else %}
+		<tr><td style="text-align:center"><strong>{{total}}</strong></td><td style="text-align:center"><strong>{{AH.n}}</strong></td></tr>
+		{% endif %}
 		
 		<tr><td rowspan="2" style="text-align:center">32</td><td rowspan="2">Were all polling agents present given a copy of the official results for the polling station?</td><td style="text-align:center">&nbsp;</td><td style="text-align:center">&nbsp;</td><td rowspan="2">
 			<table width="100%">
 				<tr><td style="text-align:center">Yes</td><td style="text-align:center">No</td></tr>
+				{% if settings.ZAMBIA_DEPLOYMENT == 'RRP' %}
 				<tr><td style="text-align:center"><strong>{{AX.counts.1|default:"0"}}</strong> <br /> {{AX.counts.1|percentage:AX.n}}</td><td style="text-align:center"><strong>{{AX.counts.2|default:"0"}}</strong> <br /> {{AX.counts.2|percentage:AX.n}}</td></tr>
+				{% else %}
+				<tr><td style="text-align:center"><strong>{{AJ.counts.1|default:"0"}}</strong> <br /> {{AJ.counts.1|percentage:AJ.n}}</td><td style="text-align:center"><strong>{{AJ.counts.2|default:"0"}}</strong> <br /> {{AJ.counts.2|percentage:AJ.n}}</td></tr>
+				{% endif %}
 			</table>
 		</td></tr>
+		{% if settings.ZAMBIA_DEPLOYMENT == 'RRP' %}
 		<tr><td style="text-align:center"><strong>{{total}}</strong></td><td style="text-align:center"><strong>{{AX.n}}</strong></td></tr>
+		{% else %}
+		<tr><td style="text-align:center"><strong>{{total}}</strong></td><td style="text-align:center"><strong>{{AJ.n}}</strong></td></tr>
+		{% endif %}
 		
 		<tr><td rowspan="2" style="text-align:center">33</td><td rowspan="2">Were the official results for the polling station posted for the public to see?</td><td style="text-align:center">&nbsp;</td><td style="text-align:center">&nbsp;</td><td rowspan="2">
 			<table width="100%">
 				<tr><td style="text-align:center">Yes</td><td style="text-align:center">No</td></tr>
+				{% if settings.ZAMBIA_DEPLOYMENT == 'RRP' %}
 				<tr><td style="text-align:center"><strong>{{AY.counts.1|default:"0"}}</strong> <br /> {{AY.counts.1|percentage:AY.n}}</td><td style="text-align:center"><strong>{{AY.counts.2|default:"0"}}</strong> <br /> {{AY.counts.2|percentage:AY.n}}</td></tr>
+				{% else %}
+				<tr><td style="text-align:center"><strong>{{AK.counts.1|default:"0"}}</strong> <br /> {{AK.counts.1|percentage:AK.n}}</td><td style="text-align:center"><strong>{{AK.counts.2|default:"0"}}</strong> <br /> {{AK.counts.2|percentage:AK.n}}</td></tr>
+				{% endif %}
 			</table>
 		</td></tr>
+		{% if settings.ZAMBIA_DEPLOYMENT == 'RRP' %}
 		<tr><td style="text-align:center"><strong>{{total}}</strong></td><td style="text-align:center"><strong>{{AY.n}}</strong></td></tr>
+		{% else %}
+		<tr><td style="text-align:center"><strong>{{total}}</strong></td><td style="text-align:center"><strong>{{AK.n}}</strong></td></tr>
+		{% endif %}
 		
 	</tbody>
 </table>
