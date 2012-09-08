@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     # the essentials.
     "webapp",
     "zambia",
+    "formbuilder",
     "django_nose",
     "djtables",
     "rapidsms",
