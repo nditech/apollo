@@ -2,44 +2,44 @@ import re
 from django.db import models
 
 
-class ExtensibleForm(models.Model):
-    name = models.CharField(max_length=32)
-    trigger = models.CharField(max_length=32, unique=True)
+class Form(models.Model):
+    name = models.CharField(max_length=255)
+    trigger = models.CharField(max_length=255, unique=True)
 
     def __unicode__(self):
         return self.name
 
-    # defined as a method so implementation can be overridden without
-    # plenty of trouble
     def match(self, text):
-        if self.trigger.lower() in text.lower():
+        if re.match(self.trigger, text, re.I):
             return True
 
     @staticmethod
     def parse(text):
-        forms = ExtensibleForm.objects.all()
+        forms = Form.objects.all()
         submission = {}
-        text_buffer = text.lower()
 
         # iterate over all forms, until we get a match
         for form in forms:
             if form.match(text):
                 # begin submission processing
-                text_buffer = text_buffer.replace(form.trigger.lower(), '')
                 submission['form_id'] = form.pk
 
                 for group in form.groups.all():
                     for field in group.fields.all():
-                        text_buffer = field.parse(text_buffer)
-                        submission[field.tag] = field.value
+                        text = field.parse(text)
+                        submission[field.tag.upper()] = field.value
                 break
-
-        return (submission, text_buffer)
+        else:
+            raise Form.DoesNotExist
+        return (submission, text)
 
 
 class FormGroup(models.Model):
     name = models.CharField(max_length=32, blank=True)
-    form = models.ForeignKey(ExtensibleForm, related_name='groups')
+    form = models.ForeignKey(Form, related_name='groups')
+
+    class Meta:
+        order_with_respect_to = 'form'
 
 
 class FormField(models.Model):
@@ -52,8 +52,11 @@ class FormField(models.Model):
     present_true = models.BooleanField(default=False)
     value = None
 
+    class Meta:
+        order_with_respect_to = 'group'
+
     def parse(self, text):
-        pattern = r'{0}(?P<tagged>\d?)'.format(self.tag)
+        pattern = r'{0}(?P<tagged>\d*)'.format(self.tag)
 
         match = re.search(pattern, text, re.I)
 
@@ -66,8 +69,4 @@ class FormField(models.Model):
                 # a value of 1 indicates presence/truth
                 self.value = 1
 
-        subtext = self.tag.lower()
-        if self.value:
-            subtext = subtext + str(self.value)
-
-        return text.lower().replace(subtext, '')
+        return re.sub(pattern, '', text, re.I) if self.value else text

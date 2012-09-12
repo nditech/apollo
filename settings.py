@@ -2,9 +2,6 @@
 # vim: ai ts=4 sts=4 et sw=4
 # encoding=utf-8
 
-import djcelery
-djcelery.setup_loader()
-
 
 # -------------------------------------------------------------------- #
 #                          MAIN CONFIGURATION                          #
@@ -20,7 +17,7 @@ DATABASES = {
     }
 }
 
-TIME_ZONE = 'Africa/Harare'
+TIME_ZONE = 'Africa/Lagos'
 
 # the rapidsms backend configuration is designed to resemble django's
 # database configuration, as a nested dict of (name, configuration).
@@ -33,9 +30,12 @@ TIME_ZONE = 'Africa/Harare'
 # to configure it. see the documentation in those modules for a list of
 # the valid options for each.
 INSTALLED_BACKENDS = {
-    "message_tester": {
-        "ENGINE": "rapidsms.backends.bucket",
+    "httptester": {
+        "ENGINE": "threadless_router.backends.httptester.backend",
     },
+    "mockbackend": {
+        "ENGINE": "rapidsms.tests.harness",
+    }
 }
 
 # to help you get started quickly, many django/rapidsms apps are enabled
@@ -43,14 +43,13 @@ INSTALLED_BACKENDS = {
 INSTALLED_APPS = [
 
     # the essentials.
-    "webapp",
-    "zambia",
-    "formbuilder",
     "django_nose",
     "djtables",
     "rapidsms",
+    "core",
+    "formbuilder",
     "mptt",
-    
+
     # enable the django admin using a little shim app (which includes
     # the required urlpatterns), and a bunch of undocumented apps that
     # the AdminSite seems to explode without.
@@ -62,8 +61,6 @@ INSTALLED_APPS = [
     "django.contrib.comments",
 
     # the rapidsms contrib apps.
-    "rapidsms.contrib.messagelog",
-    'south',
     "djcelery",
     "reversion",
 ]
@@ -110,7 +107,7 @@ LOG_BACKUPS = 256  # number of logs to keep
 # these weird dependencies should be handled by their respective apps,
 # but they're not, so here they are. most of them are for django admin.
 TEMPLATE_CONTEXT_PROCESSORS = [
-    "django.core.context_processors.auth",
+    "django.contrib.auth.context_processors.auth",
     "django.core.context_processors.debug",
     "django.core.context_processors.i18n",
     "django.core.context_processors.media",
@@ -131,8 +128,7 @@ TEST_EXCLUDED_APPS = [
     "django.contrib.contenttypes",
     "django.contrib.auth",
     "rapidsms",
-    "rapidsms.contrib.ajax",
-    "rapidsms.contrib.httptester",
+    "djcelery",
 ]
 
 # the project-level url patterns
@@ -157,7 +153,7 @@ MIDDLEWARE_CLASSES = (
     'djangomako.middleware.MakoMiddleware')
 
 # celery queue settings
-BROKER_TRANSPORT = "redis"
+BROKER_URL = 'librabbitmq://guest:guest@localhost:5672/apollo'
 
 # since we might hit the database from any thread during testing, the
 # in-memory sqlite database isn't sufficient. it spawns a separate
@@ -179,3 +175,5 @@ try:
 except ImportError:
     pass
 
+import djcelery
+djcelery.setup_loader()

@@ -9,7 +9,7 @@ from django.test import TestCase
 from .models import *
 
 
-class ExtensibleFormTest(TestCase):
+class FormTest(TestCase):
     def setUp(self):
         form1 = ExtensibleForm.objects.create(name='Form1', trigger='PSC')
         form2 = ExtensibleForm.objects.create(name='Form2', trigger='#')
