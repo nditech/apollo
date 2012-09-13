@@ -49,10 +49,12 @@ INSTALLED_APPS = [
     "core",
     "formbuilder",
     "mptt",
+    "djangorestframework",
 
     # enable the django admin using a little shim app (which includes
     # the required urlpatterns), and a bunch of undocumented apps that
     # the AdminSite seems to explode without.
+    "django.contrib.staticfiles",
     "django.contrib.sites",
     "django.contrib.auth",
     "django.contrib.admin",
@@ -91,6 +93,8 @@ TEST_RUNNER = "django_nose.NoseTestSuiteRunner"
 # for some reason this setting is blank in django's global_settings.py,
 # but it is needed for static assets to be linkable.
 MEDIA_URL = "/static/"
+
+STATIC_URL = "/assets/"
 
 # this is required for the django.contrib.sites tests to run, but also
 # not included in global_settings.py, and is almost always ``1``.
