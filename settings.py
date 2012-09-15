@@ -49,7 +49,6 @@ INSTALLED_APPS = [
     "core",
     "formbuilder",
     "mptt",
-    "djangorestframework",
 
     # enable the django admin using a little shim app (which includes
     # the required urlpatterns), and a bunch of undocumented apps that
@@ -154,6 +153,7 @@ MIDDLEWARE_CLASSES = (
     'reversion.middleware.RevisionMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'audit_log.middleware.UserLoggingMiddleware',
+    'core.middleware.AllowOriginMiddleware',
     'djangomako.middleware.MakoMiddleware')
 
 # celery queue settings
