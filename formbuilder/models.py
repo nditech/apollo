@@ -41,6 +41,9 @@ class FormGroup(models.Model):
     class Meta:
         order_with_respect_to = 'form'
 
+    def __unicode__(self):
+        return self.name
+
 
 class FormField(models.Model):
     name = models.CharField(max_length=32)
@@ -54,6 +57,9 @@ class FormField(models.Model):
 
     class Meta:
         order_with_respect_to = 'group'
+
+    def __unicode__(self):
+        return '%s -> %s' % (self.group, self.tag,)
 
     def parse(self, text):
         pattern = r'{0}(?P<tagged>\d*)'.format(self.tag)

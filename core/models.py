@@ -106,7 +106,7 @@ class Submission(models.Model):
     objects = hstore.HStoreManager()
 
     def __unicode__(self):
-        return u"%s -> %s" % (self.pk, self.location,)
+        return u"%s -> %s" % (self.pk, self.observer,)
 
 
 @receiver(models.signals.post_save, sender=Observer, dispatch_uid='create_contact')

@@ -10,6 +10,7 @@ v1_api.register(LocationTypeResource())
 v1_api.register(PartnerResource())
 v1_api.register(RoleResource())
 v1_api.register(FormResource())
+v1_api.register(FormGroupResource())
 v1_api.register(SubmissionResource())
 
 

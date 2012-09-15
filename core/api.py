@@ -3,7 +3,7 @@ from tastypie import fields
 from tastypie.authorization import DjangoAuthorization, Authorization
 from tastypie.resources import ModelResource
 from .models import *
-from formbuilder.models import Form
+from formbuilder.models import Form, FormGroup
 
 
 class LocationTypeResource(ModelResource):
@@ -55,6 +55,14 @@ class FormResource(ModelResource):
         queryset = Form.objects.all()
         resource_name = 'form'
         fields = ['name']
+
+
+class FormGroupResource(ModelResource):
+    form = fields.ForeignKey(FormResource, 'form', readonly=True, full=True)
+
+    class Meta:
+        queryset = Form.objects.all()
+        resource_name = 'formgroup'
 
 
 class SubmissionResource(ModelResource):
