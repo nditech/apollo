@@ -3,7 +3,6 @@ from tastypie import fields
 from tastypie.authorization import DjangoAuthorization, Authorization
 from tastypie.resources import ModelResource
 from .models import *
-from formbuilder.models import Form, FormGroup
 
 
 class LocationTypeResource(ModelResource):
