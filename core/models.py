@@ -4,6 +4,7 @@ from django_orm.postgresql import hstore
 from mptt.models import MPTTModel, TreeForeignKey
 from rapidsms.models import Contact, Backend, Connection
 from datetime import datetime
+from .managers import SubmissionManager
 import re
 
 
@@ -179,7 +180,7 @@ class Submission(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
-    objects = hstore.HStoreManager()
+    objects = SubmissionManager()
 
     def __unicode__(self):
         return u"%s -> %s" % (self.pk, self.observer,)
