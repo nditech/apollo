@@ -47,7 +47,6 @@ INSTALLED_APPS = [
     "djtables",
     "rapidsms",
     "core",
-    "formbuilder",
     "mptt",
 
     # enable the django admin using a little shim app (which includes
