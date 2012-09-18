@@ -5,12 +5,16 @@ when you run "manage.py test".
 Replace this with more appropriate tests for your application.
 """
 
-from django.test import TestCase
+from rapidsms.tests.scripted import TestScript
+from .models import *
 
 
-class SimpleTest(TestCase):
-    def test_basic_addition(self):
-        """
-        Tests that 1 + 1 always equals 2.
-        """
-        self.assertEqual(1 + 1, 2)
+class MessageLogTestScript(TestScript):
+    def test_logging(self):
+        logcount = MessageLog.objects.count()
+        self.assertInteraction('''
+            12345 > Hello
+            12345 > Goodbye
+        ''')
+        count = MessageLog.objects.filter(direction=MESSAGE_OUTGOING).count()
+        self.assertEqual((logcount + 2), count)
