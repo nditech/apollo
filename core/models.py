@@ -140,6 +140,8 @@ class FormGroup(models.Model):
 
 
 class FormField(models.Model):
+    # TODO: Add field type property and provide validation
+    # for choice fields.
     name = models.CharField(max_length=32)
     description = models.CharField(max_length=255, blank=True)
     group = models.ForeignKey(FormGroup, related_name='fields')
@@ -170,6 +172,12 @@ class FormField(models.Model):
                 self.value = 1
 
         return re.sub(pattern, '', text, re.I) if self.value else text
+
+
+class FormFieldOption(models.Model):
+    field = models.ForeignKey(FormField, related_name="options")
+    description = models.CharField(max_length=255)
+    option = models.PositiveIntegerField()
 
 
 class Submission(models.Model):
