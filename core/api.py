@@ -8,7 +8,7 @@ from .models import *
 class LocationTypeResource(ModelResource):
     class Meta:
         queryset = LocationType.objects.all()
-        resource_name = 'locationtype'
+        resource_name = 'locationtypes'
         excludes = ['level', 'lft', 'rght', 'tree_id', 'in_form']
 
 
@@ -18,20 +18,20 @@ class LocationResource(ModelResource):
 
     class Meta:
         queryset = Location.objects.all()
-        resource_name = 'location'
+        resource_name = 'locations'
         excludes = ['level', 'lft', 'rght', 'tree_id', 'in_form']
 
 
 class PartnerResource(ModelResource):
     class Meta:
         queryset = Partner.objects.all()
-        resource_name = 'partner'
+        resource_name = 'partners'
 
 
 class RoleResource(ModelResource):
     class Meta:
         queryset = ObserverRole.objects.all()
-        resource_name = 'role'
+        resource_name = 'roles'
 
 
 class ContactResource(ModelResource):
@@ -42,7 +42,7 @@ class ContactResource(ModelResource):
 
     class Meta:
         queryset = Observer.objects.all()
-        resource_name = 'contact'
+        resource_name = 'contacts'
         authorization = DjangoAuthorization()
 
     def dehydrate_data(self, bundle):
@@ -52,7 +52,7 @@ class ContactResource(ModelResource):
 class FormResource(ModelResource):
     class Meta:
         queryset = Form.objects.all()
-        resource_name = 'form'
+        resource_name = 'forms'
         fields = ['name']
 
 
@@ -61,7 +61,7 @@ class FormGroupResource(ModelResource):
 
     class Meta:
         queryset = Form.objects.all()
-        resource_name = 'formgroup'
+        resource_name = 'formgroups'
 
 
 class SubmissionResource(ModelResource):
@@ -70,7 +70,7 @@ class SubmissionResource(ModelResource):
 
     class Meta:
         queryset = Submission.objects.all()
-        resource_name = 'submission'
+        resource_name = 'submissions'
         authorization = Authorization()
         excludes = ['created', 'updated']
 
