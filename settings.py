@@ -35,7 +35,7 @@ INSTALLED_BACKENDS = {
     },
     "mockbackend": {
         "ENGINE": "rapidsms.tests.harness",
-    }
+    },
 }
 
 # to help you get started quickly, many django/rapidsms apps are enabled
@@ -48,6 +48,13 @@ INSTALLED_APPS = [
     "rapidsms",
     "core",
     "mptt",
+    "messagelog",
+
+    # threadless router replacements
+    "threadless_router.backends.httptester",
+    "threadless_router.celery",
+
+    "rapidsms.contrib.default",
 
     # enable the django admin using a little shim app (which includes
     # the required urlpatterns), and a bunch of undocumented apps that
@@ -90,7 +97,7 @@ TEST_RUNNER = "django_nose.NoseTestSuiteRunner"
 
 # for some reason this setting is blank in django's global_settings.py,
 # but it is needed for static assets to be linkable.
-MEDIA_URL = "/static/"
+MEDIA_URL = "/media/"
 
 STATIC_URL = "/assets/"
 
@@ -116,12 +123,7 @@ TEMPLATE_CONTEXT_PROCESSORS = [
     "django.core.context_processors.request",
 ]
 
-
-# -------------------------------------------------------------------- #
-#                           HERE BE DRAGONS!                           #
-#        these settings are pure hackery, and will go away soon        #
-# -------------------------------------------------------------------- #
-
+TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
 # these apps should not be started by rapidsms in your tests, however,
 # the models and bootstrap will still be available through django.
@@ -136,6 +138,7 @@ TEST_EXCLUDED_APPS = [
 # the project-level url patterns
 ROOT_URLCONF = "urls"
 #SESSION_COOKIE_AGE=900
+PROJECT_NAME = 'Apollo'
 
 SMS_PREFIX = ''
 SMS_SENDER = ''
