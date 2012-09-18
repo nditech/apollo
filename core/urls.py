@@ -5,6 +5,7 @@ from .api import *
 v2_api = Api(api_name='v2')
 
 v2_api.register(ContactResource())
+v2_api.register(MessageLogResource())
 v2_api.register(LocationResource())
 v2_api.register(LocationTypeResource())
 v2_api.register(PartnerResource())

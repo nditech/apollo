@@ -3,6 +3,13 @@ from tastypie import fields
 from tastypie.authorization import DjangoAuthorization, Authorization
 from tastypie.resources import ModelResource
 from .models import *
+from messagelog.models import MessageLog
+
+
+class MessageLogResource(ModelResource):
+    class Meta:
+        queryset = MessageLog.objects.all()
+        resource_name = 'messagelog'
 
 
 class LocationTypeResource(ModelResource):
