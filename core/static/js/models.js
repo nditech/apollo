@@ -86,5 +86,22 @@ var SubmissionModel = Backbone.RelationalModel.extend({
 		type: Backbone.HasOne,
 		key: 'form',
 		relatedModel: FormModel
-	}]
+	}],
+
+	save: function(attrs, options) {
+		var data = attrs.data;
+
+		if ((data === undefined) || (data === null))
+			return Backbone.RelationalModel.save.call(this, attrs, options);
+
+		for (key in data) {
+			// remove empty key-value pairs
+			if ((data[key] === undefined) || (data[key] === null))
+				delete data[key];
+		}
+
+		attrs.data = data;
+
+		return Backbone.RelationalModel.save.call(this, attrs, options);
+	}
 });

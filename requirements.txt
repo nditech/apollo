@@ -16,3 +16,5 @@ rapidsms-threadless-router=0.1.4
 xlrd==0.8.0
 xlutils==1.5.2
 xlwt==0.74
+WebTest==1.4.0
+django-webtest==1.5.4
