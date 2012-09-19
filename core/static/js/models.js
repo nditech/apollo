@@ -1,5 +1,18 @@
+var apiRoot = '/api/v1';
+
+
+var MessageLogModel = Backbone.RelationalModel.extend({
+	resourceName: 'messagelog',
+	urlRoot: function() {
+		return (apiRoot + '/' + this.resourceName);
+	}
+});
+
 var LocationTypeModel = Backbone.RelationalModel.extend({
-	urlRoot: '/api/v1/locationtypes'
+	resourceName: 'locationtypes',
+	urlRoot: function() {
+		return (apiRoot + '/' + this.resourceName);
+	}
 });
 
 var LocationModel = Backbone.RelationalModel.extend({
@@ -59,5 +72,19 @@ var ContactModel = Backbone.RelationalModel.extend({
 		type: Backbone.HasOne,
 		key: 'partner',
 		relatedModel: PartnerModel
+	}]
+});
+
+var SubmissionModel = Backbone.RelationalModel.extend({
+	urlRoot: '/api/v1/submissions',
+
+	relations: [{
+		type: Backbone.HasOne,
+		key: 'observer',
+		relatedModel: ContactModel
+	}, {
+		type: Backbone.HasOne,
+		key: 'form',
+		relatedModel: FormModel
 	}]
 });
