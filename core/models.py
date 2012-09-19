@@ -171,7 +171,7 @@ class FormField(models.Model):
                 # a value of 1 indicates presence/truth
                 self.value = 1
 
-        return re.sub(pattern, '', text, re.I) if self.value else text
+        return re.sub(pattern, '', text, flags=re.I) if self.value else text
 
 
 class FormFieldOption(models.Model):
