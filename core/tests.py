@@ -11,49 +11,63 @@ from .models import *
 
 class CoreTest(TestCase):
     def setUp(self):
-        form1 = ExtensibleForm.objects.create(name='Form1', trigger='PSC')
-        form2 = ExtensibleForm.objects.create(name='Form2', trigger='#')
+        form1 = Form.objects.create(name='Form1',
+            trigger=r'^PSC\d{6}(?P<fields>([A-Z]+\d+)+)@?.*$',
+            field_pattern='(?P<key>[A-Z]+)(?P<value>\d+)')
+        form2 = Form.objects.create(name='Form2',
+            trigger='#(?P<fields>([A-Z]{1})+)',
+            field_pattern=r'(?P<key>[A-Z]{1})')
 
         group1 = FormGroup.objects.create(form=form1)
         group2 = FormGroup.objects.create(form=form1)
         group3 = FormGroup.objects.create(form=form2, name='Default')
 
-        field1 = FormField.objects.create(group=group1, name='field1', tag='AA')
-        field2 = FormField.objects.create(group=group1, name='field2', tag='AB')
-        field3 = FormField.objects.create(group=group1, name='field3', tag='AC')
-        field4 = FormField.objects.create(group=group2, name='field4', tag='BA')
-        field5 = FormField.objects.create(group=group2, name='field5', tag='BB')
-        field6 = FormField.objects.create(group=group2, name='field6', tag='BC')
+        FormField.objects.create(group=group1, name='field1', tag='AA')
+        FormField.objects.create(group=group1, name='field2', tag='AB')
+        FormField.objects.create(group=group1, name='field3', tag='AC')
+        FormField.objects.create(group=group2, name='field4', tag='BA')
+        FormField.objects.create(group=group2, name='field5', tag='BB')
+        BC = FormField.objects.create(group=group2, name='field6', tag='BC')
 
-        field7 = FormField.objects.create(group=group3, name='field7',
-            tag='YUM', present_true=True)
+        FormField.objects.create(group=group3, name='field7',
+            tag='Y', present_true=True)
+
+        FormFieldOption.objects.create(field=BC, description='Yes', option=1)
+        FormFieldOption.objects.create(field=BC, description='No', option=2)
 
     def test_failed_parsing(self):
         '''Test what happens when parsing fails completely'''
-        sample_text = 'Loop-de-loop'
-        submission, remainder = ExtensibleForm.parse(sample_text)
-        self.assertEqual(sample_text.lower(), remainder)
-        self.assertEqual(submission, {})
+        self.assertRaises(Form.DoesNotExist, Form.parse, 'Loop-de-loop')
 
     def test_complete_parsing(self):
         '''Tests what happens when parsing is complete, that is, no
         "leftover" text, and all fields have values'''
-        sample_text = 'pscaa1ab2ac3ba1bb2bc3'
-        submission, remainder = ExtensibleForm.parse(sample_text)
-        self.assertEqual(remainder, '')
+        submission = Form.parse('psc111111aa1ab2ac3ba1bb2bc2')
         self.assertNotEqual(submission, {})
         self.assertEqual(submission['AA'], 1)
         self.assertEqual(submission['AB'], 2)
         self.assertEqual(submission['AC'], 3)
         self.assertEqual(submission['BA'], 1)
         self.assertEqual(submission['BB'], 2)
-        self.assertEqual(submission['BC'], 3)
+        self.assertEqual(submission['BC'], 2)
 
     def test_incomplete_parsing(self):
         '''Tests what happens when parsing is incomplete'''
-        sample_text = 'Jimmy Crocket ate the #1. It was yummy!'
-        submission, remainder = ExtensibleForm.parse(sample_text)
-        self.assertNotEqual('', remainder)
+        submission = Form.parse('#YN')
         self.assertNotEqual(submission, {})
-        self.assertNotEqual(submission['YUM'], None)
-        self.assertEqual(submission['YUM'], 1)
+        self.assertNotEqual(submission['Y'], None)
+        self.assertEqual(submission['Y'], 1)
+
+    def test_form_validation(self):
+        '''Tests the validation of fields and field values'''
+        submission = Form.parse('PSC111111AA1AB2AC3BA10000BB2BC3BD4')
+        self.assertNotEqual(submission, {})
+        self.assertEqual(submission['AA'], 1)
+        self.assertEqual(submission['AB'], 2)
+        self.assertEqual(submission['AC'], 3)
+        self.assertTrue('BA' not in submission)
+        self.assertTrue('BA' in submission['range_error_fields'])
+        self.assertEqual(submission['BB'], 2)
+        self.assertTrue('BC' not in submission)
+        self.assertTrue('BC' in submission['range_error_fields'])
+        self.assertTrue('BD' in submission['attribute_error_fields'])

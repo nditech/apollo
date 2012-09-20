@@ -97,14 +97,37 @@ class Observer(models.Model):
 
 
 class Form(models.Model):
+    '''
+    Defines the schema for forms that will be managed
+    by the application. Of important note are the
+    `trigger` and `field_pattern` fields.
+
+    `trigger` stores a regular expression that matches
+    the entire text message string (after preliminary
+    sanitization) and must contain a "fields" group
+    match. This enables the parser to locate the
+    section that handles fields parsing.
+
+    It's most likely that the pattern for the "fields"
+    group will match with that of `field_pattern`. This
+    parameter is used to locate other fields that may
+    parse correctly in the general form matching phase
+    but not be a valid field in the individual field
+    parsing phase.
+
+    `field_pattern` must be defined to include groups with
+    the names: "key" representing the field tag and "value"
+    representing the expected value.
+    '''
     name = models.CharField(max_length=255)
     trigger = models.CharField(max_length=255, unique=True)
+    field_pattern = models.CharField(max_length=255)
 
     def __unicode__(self):
         return self.name
 
     def match(self, text):
-        if re.match(self.trigger, text, re.I):
+        if re.match(self.trigger, text, flags=re.I):
             return True
 
     @staticmethod
@@ -115,17 +138,33 @@ class Form(models.Model):
         # iterate over all forms, until we get a match
         for form in forms:
             if form.match(text):
+                fields_text = re.match(form.trigger, text, flags=re.I).group('fields')
                 # begin submission processing
                 submission['form_id'] = form.pk
+                submission['range_error_fields'] = []
+                submission['attribute_error_fields'] = []
 
+                '''
+                In each loop, each field is expected to parse
+                their own values out and remove their tags from
+                the field text. If any text is left after parsing
+                every field, then we're likely to have a field
+                attribute error
+                '''
                 for group in form.groups.all():
                     for field in group.fields.all():
-                        text = field.parse(text)
-                        submission[field.tag.upper()] = field.value
+                        fields_text = field.parse(fields_text)
+                        if field.value == -1:
+                            submission['range_error_fields'].append(field.tag)
+                        elif field.value:
+                            submission[field.tag.upper()] = field.value
+                if fields_text:
+                    for field in re.finditer(form.field_pattern, fields_text, flags=re.I):
+                        submission['attribute_error_fields'].append(field.group('key'))
                 break
         else:
             raise Form.DoesNotExist
-        return (submission, text)
+        return submission
 
 
 class FormGroup(models.Model):
@@ -140,14 +179,12 @@ class FormGroup(models.Model):
 
 
 class FormField(models.Model):
-    # TODO: Add field type property and provide validation
-    # for choice fields.
     name = models.CharField(max_length=32)
     description = models.CharField(max_length=255, blank=True)
     group = models.ForeignKey(FormGroup, related_name='fields')
     tag = models.CharField(max_length=8)
-    upper_limit = models.IntegerField(null=True)
-    lower_limit = models.IntegerField(null=True)
+    upper_limit = models.IntegerField(null=True, default=9999)
+    lower_limit = models.IntegerField(null=True, default=0)
     present_true = models.BooleanField(default=False)
     value = None
 
@@ -158,15 +195,27 @@ class FormField(models.Model):
         return '%s -> %s' % (self.group, self.tag,)
 
     def parse(self, text):
-        pattern = r'{0}(?P<tagged>\d*)'.format(self.tag)
+        pattern = r'{0}(?P<value>\d*)'.format(self.tag)
 
-        match = re.search(pattern, text, re.I)
+        match = re.match(pattern, text, re.I)
 
         if match:
-            tagged = match.group('tagged')
+            field_value = int(match.group('value')) \
+                if match.group('value') else None
 
-            if tagged:
-                self.value = int(tagged)
+            if field_value:
+                if self.options.all().count():
+                    for option in self.options.all():
+                        if option.option == field_value:
+                            self.value = field_value
+                            break
+                    else:
+                        self.value = -1
+                else:
+                    if field_value < self.lower_limit or field_value > self.upper_limit:
+                        self.value = -1
+                    else:
+                        self.value = field_value
             elif self.present_true:
                 # a value of 1 indicates presence/truth
                 self.value = 1
@@ -178,6 +227,12 @@ class FormFieldOption(models.Model):
     field = models.ForeignKey(FormField, related_name="options")
     description = models.CharField(max_length=255)
     option = models.PositiveIntegerField()
+
+    class Meta:
+        order_with_respect_to = 'field'
+
+    def __unicode__(self):
+        return '%s -> %s' % (self.field, self.option,)
 
 
 class Submission(models.Model):
