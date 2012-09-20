@@ -96,7 +96,7 @@ var SubmissionModel = Backbone.RelationalModel.extend({
 
 		for (key in data) {
 			// remove empty key-value pairs
-			if ((data[key] === undefined) || (data[key] === null))
+			if (!data[key])
 				delete data[key];
 		}
 
