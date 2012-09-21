@@ -1,3 +1,4 @@
+import string
 from django.db import models
 from django.dispatch import receiver
 from django_orm.postgresql import hstore
@@ -136,7 +137,7 @@ class Form(models.Model):
     @staticmethod
     def parse(text):
         forms = Form.objects.all()
-        submission = {}
+        submission = {'data': {}}
         observer = None
 
         # iterate over all forms, until we get a match
@@ -169,7 +170,7 @@ class Form(models.Model):
                         if field.value == -1:
                             submission['range_error_fields'].append(field.tag)
                         elif field.value:
-                            submission[field.tag.upper()] = field.value
+                            submission['data'][field.tag.upper()] = str(field.value)
                 if fields_text:
                     for field in re.finditer(form.field_pattern, fields_text, flags=re.I):
                         submission['attribute_error_fields'].append(field.group('key'))

@@ -44,30 +44,30 @@ class CoreTest(TestCase):
         "leftover" text, and all fields have values'''
         submission, _ = Form.parse('psc111111aa1ab2ac3ba1bb2bc2')
         self.assertNotEqual(submission, {})
-        self.assertEqual(submission['AA'], 1)
-        self.assertEqual(submission['AB'], 2)
-        self.assertEqual(submission['AC'], 3)
-        self.assertEqual(submission['BA'], 1)
-        self.assertEqual(submission['BB'], 2)
-        self.assertEqual(submission['BC'], 2)
+        self.assertEqual(submission['data']['AA'], '1')
+        self.assertEqual(submission['data']['AB'], '2')
+        self.assertEqual(submission['data']['AC'], '3')
+        self.assertEqual(submission['data']['BA'], '1')
+        self.assertEqual(submission['data']['BB'], '2')
+        self.assertEqual(submission['data']['BC'], '2')
 
     def test_incomplete_parsing(self):
         '''Tests what happens when parsing is incomplete'''
         submission, _ = Form.parse('#YN')
         self.assertNotEqual(submission, {})
-        self.assertNotEqual(submission['Y'], None)
-        self.assertEqual(submission['Y'], 1)
+        self.assertNotEqual(submission['data']['Y'], None)
+        self.assertEqual(submission['data']['Y'], '1')
 
     def test_form_validation(self):
         '''Tests the validation of fields and field values'''
         submission, _ = Form.parse('PSC111111AA1AB2AC3BA10000BB2BC3BD4')
         self.assertNotEqual(submission, {})
-        self.assertEqual(submission['AA'], 1)
-        self.assertEqual(submission['AB'], 2)
-        self.assertEqual(submission['AC'], 3)
+        self.assertEqual(submission['data']['AA'], '1')
+        self.assertEqual(submission['data']['AB'], '2')
+        self.assertEqual(submission['data']['AC'], '3')
         self.assertTrue('BA' not in submission)
         self.assertTrue('BA' in submission['range_error_fields'])
-        self.assertEqual(submission['BB'], 2)
+        self.assertEqual(submission['data']['BB'], '2')
         self.assertTrue('BC' not in submission)
         self.assertTrue('BC' in submission['range_error_fields'])
         self.assertTrue('BD' in submission['attribute_error_fields'])
