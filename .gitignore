@@ -1,14 +1,13 @@
 *.sqlite3
-*.sql
 *.pyc
 rapidsms.log*
 schema.png
 local_settings.py
 *.swp
 nbproject
-webapp/fixtures/registrationcenters.json
 supervise/
 fabfile.py
 .DS_Store
 src/
 *.log
+.env
