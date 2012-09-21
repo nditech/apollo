@@ -42,7 +42,7 @@ class CoreTest(TestCase):
     def test_complete_parsing(self):
         '''Tests what happens when parsing is complete, that is, no
         "leftover" text, and all fields have values'''
-        submission = Form.parse('psc111111aa1ab2ac3ba1bb2bc2')
+        submission, _ = Form.parse('psc111111aa1ab2ac3ba1bb2bc2')
         self.assertNotEqual(submission, {})
         self.assertEqual(submission['AA'], 1)
         self.assertEqual(submission['AB'], 2)
@@ -53,14 +53,14 @@ class CoreTest(TestCase):
 
     def test_incomplete_parsing(self):
         '''Tests what happens when parsing is incomplete'''
-        submission = Form.parse('#YN')
+        submission, _ = Form.parse('#YN')
         self.assertNotEqual(submission, {})
         self.assertNotEqual(submission['Y'], None)
         self.assertEqual(submission['Y'], 1)
 
     def test_form_validation(self):
         '''Tests the validation of fields and field values'''
-        submission = Form.parse('PSC111111AA1AB2AC3BA10000BB2BC3BD4')
+        submission, _ = Form.parse('PSC111111AA1AB2AC3BA10000BB2BC3BD4')
         self.assertNotEqual(submission, {})
         self.assertEqual(submission['AA'], 1)
         self.assertEqual(submission['AB'], 2)

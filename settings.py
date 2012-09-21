@@ -139,6 +139,7 @@ TEST_EXCLUDED_APPS = [
 ROOT_URLCONF = "urls"
 #SESSION_COOKIE_AGE=900
 PROJECT_NAME = 'Apollo'
+AUTHENTICATE_OBSERVER = False  # determines whether to authenticate the observer's phone number
 
 SMS_PREFIX = ''
 SMS_SENDER = ''

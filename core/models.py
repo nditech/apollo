@@ -106,7 +106,10 @@ class Form(models.Model):
     the entire text message string (after preliminary
     sanitization) and must contain a "fields" group
     match. This enables the parser to locate the
-    section that handles fields parsing.
+    section that handles fields parsing. Optionally,
+    the `trigger` may contain a "observer" group that
+    specifies the string pattern used in searching for
+    the observer.
 
     It's most likely that the pattern for the "fields"
     group will match with that of `field_pattern`. This
@@ -134,11 +137,20 @@ class Form(models.Model):
     def parse(text):
         forms = Form.objects.all()
         submission = {}
+        observer = None
 
         # iterate over all forms, until we get a match
         for form in forms:
             if form.match(text):
-                fields_text = re.match(form.trigger, text, flags=re.I).group('fields')
+                match = re.match(form.trigger, text, flags=re.I)
+                fields_text = match.group('fields')
+
+                if 'observer' in match.groups():
+                    try:
+                        observer = Observer.objects.get(observer_id=match.group('observer'))
+                    except Observer.DoesNotExist:
+                        pass
+
                 # begin submission processing
                 submission['form_id'] = form.pk
                 submission['range_error_fields'] = []
@@ -164,7 +176,7 @@ class Form(models.Model):
                 break
         else:
             raise Form.DoesNotExist
-        return submission
+        return (submission, observer)
 
 
 class FormGroup(models.Model):
