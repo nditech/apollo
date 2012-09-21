@@ -20,10 +20,8 @@ describe('Submission model', function() {
         this.submission.save();
 
         var response = this.server.requests[0].requestBody;
-        console.log(response);
 
         var data = JSON.parse(response).data;
-        console.log(data);
 
         expect(data['aa']).toBe(0);
         expect(data['ab']).toBe(1);

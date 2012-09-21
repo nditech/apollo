@@ -96,7 +96,6 @@ var SubmissionModel = Backbone.RelationalModel.extend({
 	// the overridden save method
 	save: function(key, value, options) {
 		// call the default setter
-		console.log(this);
 		this.set(key, value, options);
 
 		// remove any invalid data in the data attribute
@@ -121,7 +120,6 @@ var SubmissionModel = Backbone.RelationalModel.extend({
 					delete data[property];
 			}
 		}
-		console.log(data);
 
 		// revert to the default save
 		this._defaultSave('data', data);
