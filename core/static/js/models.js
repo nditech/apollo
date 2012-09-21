@@ -88,20 +88,42 @@ var SubmissionModel = Backbone.RelationalModel.extend({
 		relatedModel: FormModel
 	}],
 
-	save: function(attrs, options) {
-		var data = attrs.data;
+	// the default save method
+	_defaultSave: function(key, value, options) {
+		Backbone.RelationalModel.prototype.save.call(this, key, value, options);
+	},
 
-		if ((data === undefined) || (data === null))
-			return Backbone.RelationalModel.save.call(this, attrs, options);
+	// the overridden save method
+	save: function(key, value, options) {
+		// call the default setter
+		console.log(this);
+		this.set(key, value, options);
 
-		for (key in data) {
-			// remove empty key-value pairs
-			if (!data[key])
-				delete data[key];
+		// remove any invalid data in the data attribute
+		var data = this.get('data');
+
+		if (!_.isObject(data))
+			// data is supposed to be a hash
+			data = {};
+		else {
+			for (property in data) {
+				var prop = data[property];
+				var val = Number(prop);
+
+				// from underscore's implementation of _.isNaN()!
+				if (val !== val) {
+					delete data[property];
+					continue;
+				}
+
+				// nulls and empty strings are converted to 0 by Number
+				if (prop == null)
+					delete data[property];
+			}
 		}
+		console.log(data);
 
-		attrs.data = data;
-
-		return Backbone.RelationalModel.save.call(this, attrs, options);
+		// revert to the default save
+		this._defaultSave('data', data);
 	}
 });
