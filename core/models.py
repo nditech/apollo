@@ -26,7 +26,9 @@ class Location(MPTTModel):
     code = models.CharField(max_length=100, db_index=True)
     type = models.ForeignKey(LocationType)
     parent = TreeForeignKey('self', null=True, blank=True, related_name='children')
-    path = models.TextField(blank=True, help_text='SVG path data for location')
+    data = hstore.DictionaryField(db_index=True, null=True, blank=True)
+
+    objects = hstore.HStoreManager()
 
     class Meta:
         ordering = ['name']
@@ -91,6 +93,9 @@ class Observer(models.Model):
 
     class Meta:
         ordering = ['observer_id']
+        permissions = (
+            ("view_observer", "Can view observers"),
+        )
 
     def __unicode__(self):
         return getattr(self, 'observer_id', "")
@@ -261,6 +266,11 @@ class Submission(models.Model):
 
     def __unicode__(self):
         return u"%s -> %s" % (self.pk, self.observer,)
+
+    class Meta:
+        permissions = (
+            ("view_submission", "Can view submissions"),
+        )
 
 
 @receiver(models.signals.post_save, sender=Observer, dispatch_uid='create_contact')
