@@ -1,4 +1,3 @@
-import string
 from django.db import models
 from django.dispatch import receiver
 from django_orm.postgresql import hstore
@@ -126,6 +125,8 @@ class Form(models.Model):
     name = models.CharField(max_length=255)
     trigger = models.CharField(max_length=255, unique=True)
     field_pattern = models.CharField(max_length=255)
+    autocreate_submission = models.BooleanField(default=False,
+        help_text="Whether to create a new record if a submission doesn't exist")
 
     def __unicode__(self):
         return self.name
@@ -153,7 +154,7 @@ class Form(models.Model):
                         pass
 
                 # begin submission processing
-                submission['form_id'] = form.pk
+                submission['form'] = form
                 submission['range_error_fields'] = []
                 submission['attribute_error_fields'] = []
 
