@@ -140,6 +140,13 @@ ROOT_URLCONF = "urls"
 #SESSION_COOKIE_AGE=900
 PROJECT_NAME = 'Apollo'
 AUTHENTICATE_OBSERVER = False  # determines whether to authenticate the observer's phone number
+ALLOWED_PUNCTUATIONS = '!'  # allowed punctuations in SMS forms
+CHARACTER_TRANSLATIONS = (
+    ('i', '1'),
+    ('o', '0'),
+    ('l', '1'),
+    )
+BACKLOG_DAYS = 4  # Number of days allowed for a submission to be updated by an observer
 
 SMS_PREFIX = ''
 SMS_SENDER = ''
