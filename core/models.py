@@ -147,7 +147,7 @@ class Form(models.Model):
                 match = re.match(form.trigger, text, flags=re.I)
                 fields_text = match.group('fields')
 
-                if 'observer' in match.groups():
+                if 'observer' in match.groupdict().keys():
                     try:
                         observer = Observer.objects.get(observer_id=match.group('observer'))
                     except Observer.DoesNotExist:
@@ -211,7 +211,7 @@ class FormField(models.Model):
     def parse(self, text):
         pattern = r'{0}(?P<value>\d*)'.format(self.tag)
 
-        match = re.match(pattern, text, re.I)
+        match = re.search(pattern, text, re.I)
 
         if match:
             field_value = int(match.group('value')) \
