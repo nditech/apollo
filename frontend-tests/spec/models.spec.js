@@ -16,7 +16,7 @@ describe('Submission model', function() {
         this.server.restore();
     });
 
-    it('only data.ab should exist, and should be 1', function() {
+    it('only data.aa & data.ab should exist, and should be 0 & 1 respectively', function() {
         this.submission.save();
 
         var response = this.server.requests[0].requestBody;

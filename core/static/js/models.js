@@ -16,7 +16,10 @@ var LocationTypeModel = Backbone.RelationalModel.extend({
 });
 
 var LocationModel = Backbone.RelationalModel.extend({
-	urlRoot: '/api/v1/locations',
+	resourceName: 'locations',
+	urlRoot: function() {
+		return (apiRoot + '/' + this.resourceName);
+	},
 
 	relations: [{
 		type: Backbone.HasOne,
@@ -33,28 +36,42 @@ var LocationModel = Backbone.RelationalModel.extend({
 		reverseRelation: {
 			key: 'children'
 		}
-	}
-	]
+	}]
 });
 
 var PartnerModel = Backbone.RelationalModel.extend({
-	urlRoot: '/api/v1/partners'
+	resourceName: 'partners',
+	urlRoot: function() {
+		return (apiRoot + '/' + this.resourceName);
+	}
 });
 
 var FormModel = Backbone.RelationalModel.extend({
-	urlRoot: '/api/v1/forms'
+	resourceName: 'forms',
+	urlRoot: function() {
+		return (apiRoot + '/' + this.resourceName);
+	}
 });
 
 var FormGroupModel = Backbone.RelationalModel.extend({
-	urlRoot: '/api/v1/formgroups'
+	resourceName: 'formgroups',
+	urlRoot: function() {
+		return (apiRoot + '/' + this.resourceName);
+	}
 });
 
-var ObserverRoleModel = Backbone.RelationalModel.extend({
-	urlRoot: '/api/v1/roles'
+var RoleModel = Backbone.RelationalModel.extend({
+	resourceName: 'roles',
+	urlRoot: function() {
+		return (apiRoot + '/' + this.resourceName);
+	}
 });
 
 var ContactModel = Backbone.RelationalModel.extend({
-	urlRoot: '/api/v1/contacts',
+	resourceName: 'contacts',
+	urlRoot: function() {
+		return (apiRoot + '/' + this.resourceName);
+	},
 
 	relations: [{
 		type: Backbone.HasOne,
@@ -76,7 +93,10 @@ var ContactModel = Backbone.RelationalModel.extend({
 });
 
 var SubmissionModel = Backbone.RelationalModel.extend({
-	urlRoot: '/api/v1/submissions',
+	resourceName: 'submissions',
+	urlRoot: function() {
+		return (apiRoot + '/' + this.resourceName);
+	},
 
 	relations: [{
 		type: Backbone.HasOne,
