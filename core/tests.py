@@ -6,10 +6,13 @@ Replace this with more appropriate tests for your application.
 """
 
 from django.test import TestCase
+from .forms import generate_custom_form
 from .models import *
 
 
 class CoreTest(TestCase):
+    test_form = None
+
     def setUp(self):
         form1 = Form.objects.create(name='Form1',
             trigger=r'^PSC\d{6}(?P<fields>([A-Z]+\d+)+)@?.*$',
@@ -17,6 +20,8 @@ class CoreTest(TestCase):
         form2 = Form.objects.create(name='Form2',
             trigger='#(?P<fields>([A-Z]{1})+)',
             field_pattern=r'(?P<key>[A-Z]{1})')
+
+        self.test_form = form1
 
         group1 = FormGroup.objects.create(form=form1)
         group2 = FormGroup.objects.create(form=form1)
@@ -71,3 +76,10 @@ class CoreTest(TestCase):
         self.assertTrue('BC' not in submission)
         self.assertTrue('BC' in submission['range_error_fields'])
         self.assertTrue('BD' in submission['attribute_error_fields'])
+
+    def test_form_generation(self):
+        '''Tests the Django form generator'''
+        form_class = generate_custom_form(self.test_form.pk)
+        t_form = form_class()
+
+        self.assertEqual(len(t_form.fields), 6)
