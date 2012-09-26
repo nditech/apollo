@@ -12,7 +12,7 @@ def generate_custom_form(form_id):
     for group in form.groups.all():
         for field in group.fields.all():
             # are there any field options?
-            options = field.options.all()
+            options = list(field.options.all())
 
             if options == []:
                 fields[field.tag] = forms.IntegerField(help_text=field.description,
