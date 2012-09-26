@@ -83,3 +83,7 @@ class CoreTest(TestCase):
         t_form = form_class()
 
         self.assertEqual(len(t_form.fields), 6)
+        self.assertTrue('AA' in t_form.fields)
+        self.assertTrue('AB' in t_form.fields)
+        self.assertTrue('BC' in t_form.fields)
+        self.assertEqual(len(t_form.fields['BC'].choices), 2)
