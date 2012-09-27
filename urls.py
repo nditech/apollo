@@ -1,5 +1,4 @@
 from django.conf.urls.defaults import *
-from django.conf import settings
 from django.contrib import admin
 from django.views.generic.simple import redirect_to
 
@@ -13,14 +12,14 @@ urlpatterns += patterns('',
     # helper URLs file that automatically serves the 'static' folder in
     # INSTALLED_APPS via the Django static media server (NOT for use in
     # production)
-    (r'^assets/(?P<path>.*)$', 'django.views.static.serve', {'document_root': 'assets'}), 
+    (r'^assets/(?P<path>.*)$', 'django.views.static.serve', {'document_root': 'assets'}),
 )
 
 urlpatterns += patterns('',
     # apolo urls for default routing
-    (r'', include('webapp.urls')),
-    (r'zambia/', include('zambia.urls')),
+    (r'^kannel/', include('threadless_router.backends.kannel.urls')),
+    (r'', include('core.urls')),
     (r'^favicon.ico', redirect_to, {'url': '/assets/images/favicon.ico', 'permanent': True}),
     (r'^', include('rapidsms.urls.static_media')),
-    (r'^comments/', include('django.contrib.comments.urls')),
-) 
+    (r'^messagelog/', include('messagelog.urls')),
+)

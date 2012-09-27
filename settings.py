@@ -2,9 +2,6 @@
 # vim: ai ts=4 sts=4 et sw=4
 # encoding=utf-8
 
-import djcelery
-djcelery.setup_loader()
-
 
 # -------------------------------------------------------------------- #
 #                          MAIN CONFIGURATION                          #
@@ -20,7 +17,7 @@ DATABASES = {
     }
 }
 
-TIME_ZONE = 'Africa/Harare'
+TIME_ZONE = 'Africa/Lagos'
 
 # the rapidsms backend configuration is designed to resemble django's
 # database configuration, as a nested dict of (name, configuration).
@@ -33,8 +30,11 @@ TIME_ZONE = 'Africa/Harare'
 # to configure it. see the documentation in those modules for a list of
 # the valid options for each.
 INSTALLED_BACKENDS = {
-    "message_tester": {
-        "ENGINE": "rapidsms.backends.bucket",
+    "httptester": {
+        "ENGINE": "threadless_router.backends.httptester.backend",
+    },
+    "mockbackend": {
+        "ENGINE": "rapidsms.tests.harness",
     },
 }
 
@@ -43,17 +43,23 @@ INSTALLED_BACKENDS = {
 INSTALLED_APPS = [
 
     # the essentials.
-    "webapp",
-    "zambia",
-    "formbuilder",
     "django_nose",
     "djtables",
     "rapidsms",
+    "core",
     "mptt",
-    
+    "messagelog",
+
+    # threadless router replacements
+    "threadless_router.backends.httptester",
+    "threadless_router.celery",
+
+    "rapidsms.contrib.default",
+
     # enable the django admin using a little shim app (which includes
     # the required urlpatterns), and a bunch of undocumented apps that
     # the AdminSite seems to explode without.
+    "django.contrib.staticfiles",
     "django.contrib.sites",
     "django.contrib.auth",
     "django.contrib.admin",
@@ -62,8 +68,6 @@ INSTALLED_APPS = [
     "django.contrib.comments",
 
     # the rapidsms contrib apps.
-    "rapidsms.contrib.messagelog",
-    'south',
     "djcelery",
     "reversion",
 ]
@@ -93,7 +97,9 @@ TEST_RUNNER = "django_nose.NoseTestSuiteRunner"
 
 # for some reason this setting is blank in django's global_settings.py,
 # but it is needed for static assets to be linkable.
-MEDIA_URL = "/static/"
+MEDIA_URL = "/media/"
+
+STATIC_URL = "/assets/"
 
 # this is required for the django.contrib.sites tests to run, but also
 # not included in global_settings.py, and is almost always ``1``.
@@ -110,19 +116,14 @@ LOG_BACKUPS = 256  # number of logs to keep
 # these weird dependencies should be handled by their respective apps,
 # but they're not, so here they are. most of them are for django admin.
 TEMPLATE_CONTEXT_PROCESSORS = [
-    "django.core.context_processors.auth",
+    "django.contrib.auth.context_processors.auth",
     "django.core.context_processors.debug",
     "django.core.context_processors.i18n",
     "django.core.context_processors.media",
     "django.core.context_processors.request",
 ]
 
-
-# -------------------------------------------------------------------- #
-#                           HERE BE DRAGONS!                           #
-#        these settings are pure hackery, and will go away soon        #
-# -------------------------------------------------------------------- #
-
+TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
 # these apps should not be started by rapidsms in your tests, however,
 # the models and bootstrap will still be available through django.
@@ -131,13 +132,21 @@ TEST_EXCLUDED_APPS = [
     "django.contrib.contenttypes",
     "django.contrib.auth",
     "rapidsms",
-    "rapidsms.contrib.ajax",
-    "rapidsms.contrib.httptester",
+    "djcelery",
 ]
 
 # the project-level url patterns
 ROOT_URLCONF = "urls"
 #SESSION_COOKIE_AGE=900
+PROJECT_NAME = 'Apollo'
+AUTHENTICATE_OBSERVER = False  # determines whether to authenticate the observer's phone number
+ALLOWED_PUNCTUATIONS = '!'  # allowed punctuations in SMS forms
+CHARACTER_TRANSLATIONS = (
+    ('i', '1'),
+    ('o', '0'),
+    ('l', '1'),
+    )
+BACKLOG_DAYS = 4  # Number of days allowed for a submission to be updated by an observer
 
 SMS_PREFIX = ''
 SMS_SENDER = ''
@@ -154,10 +163,11 @@ MIDDLEWARE_CLASSES = (
     'reversion.middleware.RevisionMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'audit_log.middleware.UserLoggingMiddleware',
+    'core.middleware.AllowOriginMiddleware',
     'djangomako.middleware.MakoMiddleware')
 
 # celery queue settings
-BROKER_TRANSPORT = "redis"
+BROKER_URL = 'librabbitmq://guest:guest@localhost:5672/apollo'
 
 # since we might hit the database from any thread during testing, the
 # in-memory sqlite database isn't sufficient. it spawns a separate
@@ -179,3 +189,5 @@ try:
 except ImportError:
     pass
 
+import djcelery
+djcelery.setup_loader()
