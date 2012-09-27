@@ -1,4 +1,5 @@
 from django.conf.urls.defaults import *
+from django.views.generic.base import TemplateView
 from tastypie.api import Api
 from .api import *
 
@@ -15,8 +16,15 @@ v2_api.register(FormGroupResource())
 v2_api.register(SubmissionResource())
 
 
+class TemplatePreview(TemplateView):
+    def dispatch(self, request, *args, **kwargs):
+        self.template_name = kwargs['template_name']
+        return super(TemplateView, self).dispatch(request, *args, **kwargs)
+
+
 urlpatterns = patterns('',
     url(r'^api/', include(v2_api.urls)),
+    url(r'^tpl/(?P<template_name>.+)/?', TemplatePreview.as_view())
 )
 
 #authentication urls
