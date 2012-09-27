@@ -22,24 +22,26 @@
   <body>
     <div class="container-fluid">
       <div class="row-fluid">
-        <div class="span4 offset4">
+        <div class="span3 offset4">
           <legend>User Login</legend>
-          <form class="form-horizontal">
+          <form class="form-vertical" action="" method="POST" accept-charset="utf-8">
+            {% csrf_token %}
+            {% if form.errors %}
+            <div class="alert alert-danger">Your username and password <strong>did not match</strong>. Please try again.</div>
+            {% endif %}
             <div class="control-group">
-              <label class="control-label" for="name">Username</label>
               <div class="controls">
-                <input type="text" id="name" placeholder="username">
+                <input type="text" name="username" id="username" class="input-xlarge" placeholder="Username">
               </div>
             </div>
             <div class="control-group">
-              <label class="control-label" for="password">Password</label>
               <div class="controls">
-                <input type="password" id="password" placeholder="Password">
+                <input type="password" name="password" id="password" class="input-xlarge" placeholder="Password">
               </div>
             </div>
             <div class="control-group">
               <div class="controls">
-                <button type="submit" class="btn">Sign in</button>
+                <button type="submit" class="btn">Sign In</button>
               </div>
             </div>
           </form>
