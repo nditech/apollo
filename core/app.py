@@ -11,7 +11,7 @@ PUNCTUATIONS = filter(lambda s: s not in settings.ALLOWED_PUNCTUATIONS, string.p
 TRANS_TABLE = dict((ord(fro), ord(to)) for fro, to in settings.CHARACTER_TRANSLATIONS)
 
 RANGE_ERROR = _('Invalid response(s) for question(s): "%(attributes)s". You sent: %(text)s')
-ATTRIBUTE_ERROR = _('Invalid responses for the checklist code: "%(attributes)s". You sent: %(text)s')
+ATTRIBUTE_ERROR = _('Unknown question codes: "%(attributes)s". You sent: %(text)s')
 UNKNOWN_OBSERVER = _('Observer ID not found. Please resend with valid Observer ID. You sent: %(text)s')
 INVALID_MESSAGE = _('Invalid message: "%(message)s". Please check and resend!')
 SUBMISSION_RECEIVED = _('Your submission was received! You sent: %(message)s')
@@ -32,28 +32,28 @@ class App(AppBase):
             submission, observer = Form.parse(working_text)
             if not observer:
                 return message.respond(UNKNOWN_OBSERVER % {'text': message.text}) or True
-
-            # Find submission for observer and persist valid data
-            try:
-                if submission['form'].autocreate_submission:
-                    entry, dummy = Submission.objects.get_or_create(observer=observer, date=message.date,
-                        form=submission['form'])
-                else:
-                    entry = Submission.objects.get(observer=observer, form=submission['form'],
-                        date__range=(message.date - timedelta(settings.BACKLOG_DAYS), message.date))
-                entry.data.update(submission['data'])
-                entry.save()
-            except Submission.DoesNotExist:
-                pass
-
-            if 'range_error_fields' in submission and submission['range_error_fields']:
-                return message.respond(RANGE_ERROR % \
-                    {'attributes': ', '.join(submission['range_error_fields']), 'text': message.text})
-            elif 'attribute_error_fields' in submission and submission['attribute_error_fields']:
-                return message.respond(ATTRIBUTE_ERROR % \
-                    {'attributes': ', '.join(submission['attribute_error_fields']), 'text': message.text})
             else:
-                return message.respond(SUBMISSION_RECEIVED % {'message': message.text})
+                # Find submission for observer and persist valid data
+                try:
+                    if submission['form'].autocreate_submission:
+                        entry, dummy = Submission.objects.get_or_create(observer=observer, date=message.date,
+                            form=submission['form'])
+                    else:
+                        entry = Submission.objects.get(observer=observer, form=submission['form'],
+                            date__range=(message.date - timedelta(settings.BACKLOG_DAYS), message.date))
+                    entry.data.update(submission['data'])
+                    entry.save()
+                except Submission.DoesNotExist:
+                    pass
+
+                if 'range_error_fields' in submission and submission['range_error_fields']:
+                    return message.respond(RANGE_ERROR % \
+                        {'attributes': ', '.join(submission['range_error_fields']), 'text': message.text})
+                elif 'attribute_error_fields' in submission and submission['attribute_error_fields']:
+                    return message.respond(ATTRIBUTE_ERROR % \
+                        {'attributes': ', '.join(submission['attribute_error_fields']), 'text': message.text})
+                else:
+                    return message.respond(SUBMISSION_RECEIVED % {'message': message.text})
         except Form.DoesNotExist:
             # We couldn't parse the message hence it's invalid
             return self.default(message)
