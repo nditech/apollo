@@ -5,12 +5,12 @@ from .models import *
 
 # please see https://bitbucket.org/carljm/django-form-utils/overview for
 # info on using inside a Django template
-def generate_custom_form(form_id):
+def generate_submission_form(form_id):
     # get the form, but allow any exceptions "bubble up"
     form = Form.objects.get(pk=form_id)
 
-    fields = {} # necessary for the individual fields
-    groups = [] # necessary for the internal Meta class definition
+    fields = {}  # necessary for the individual fields
+    groups = []  # necessary for the internal Meta class definition
 
     for group in form.groups.all():
         groupspec = (group.name, {'fields': [], 'legend': group.name})
@@ -32,4 +32,4 @@ def generate_custom_form(form_id):
     metaclass = type('Meta', (), {'fieldsets': groups})
     fields['Meta'] = metaclass
 
-    return type('CustomForm', (BetterForm,), fields)
+    return type('SubmissionForm', (BetterForm,), fields)
