@@ -17,4 +17,4 @@ rapidsms-threadless-router==0.1.4
 tablib==0.9.11
 xlrd==0.8.0
 xlutils==1.5.2
-xlwt==0.74
+xlwt==0.7.4
