@@ -260,6 +260,7 @@ class Submission(models.Model):
     location = models.ForeignKey(Location, related_name="submissions")
     date = models.DateField(default=datetime.today())
     data = hstore.DictionaryField(db_index=True, null=True, blank=True)
+    overrides = hstore.DictionaryField(db_index=True, null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 

@@ -13,8 +13,20 @@ class SubmissionModelForm(BetterForm):
     def save(self):
         data = self.cleaned_data
         for key in data.keys():
-            data[key] = str(data[key])
+            if data[key]:
+                data[key] = str(data[key])
+            else:
+                del data[key]
+
+        # test for overriden values and indicate
+        for tag in frozenset(data.keys() + self.instance.data.keys()):
+            # the XOR operator is used to check for cases where they are
+            # not the same
+            if ((tag in data) ^ (tag in self.instance.data)) or (data[tag] != self.instance.data[tag]):
+                self.instance.overrides.update({tag: '1'})
+
         self.instance.data = data
+
         return self.instance.save()
 
 
