@@ -8,6 +8,7 @@ django-filter==0.5.3
 django-form-utils==0.2.0
 django-mako==0.1.5pre
 django-mptt==0.5.4
+django-orm-extensions==3.0b3
 django-reversion==1.6.3
 django-tastypie==0.9.11
 librabbitmq==0.9.9

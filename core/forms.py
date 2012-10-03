@@ -20,8 +20,10 @@ def generate_submission_form(form_id):
             options = list(field.options.all())
 
             if options == []:
+                upper_limit = field.upper_limit if field.upper_limit != None else 9999
+                lower_limit = field.lower_limit if field.lower_limit != None else 0
                 fields[field.tag] = forms.IntegerField(help_text=field.description,
-                    max_value=9999, min_value=0)
+                    max_value=upper_limit, min_value=lower_limit)
             else:
                 choices = [(option.option, option.description) for option in options]
                 fields[field.tag] = forms.ChoiceField(choices=choices,

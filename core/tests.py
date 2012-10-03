@@ -6,7 +6,7 @@ Replace this with more appropriate tests for your application.
 """
 
 from django.test import TestCase
-from .forms import generate_custom_form
+from .forms import generate_submission_form
 from .models import *
 
 
@@ -31,7 +31,8 @@ class CoreTest(TestCase):
         FormField.objects.create(group=group1, name='field2', tag='AB')
         FormField.objects.create(group=group1, name='field3', tag='AC')
         FormField.objects.create(group=group2, name='field4', tag='BA')
-        FormField.objects.create(group=group2, name='field5', tag='BB')
+        FormField.objects.create(group=group2, name='field5', tag='BB',
+            lower_limit=0, upper_limit=15)
         BC = FormField.objects.create(group=group2, name='field6', tag='BC')
 
         FormField.objects.create(group=group3, name='field7',
@@ -79,7 +80,7 @@ class CoreTest(TestCase):
 
     def test_form_generation(self):
         '''Tests the Django form generator'''
-        form_class = generate_custom_form(self.test_form.pk)
+        form_class = generate_submission_form(self.test_form.pk)
         t_form = form_class()
 
         self.assertEqual(len(t_form.fields), 6)
@@ -89,3 +90,11 @@ class CoreTest(TestCase):
         self.assertEqual(len(t_form.fields['BC'].choices), 2)
         self.assertEqual(len(t_form.fieldsets), 2)
 
+    def test_form_validator(self):
+        '''Tests that the generated form validates properly'''
+        form_class = generate_submission_form(self.test_form.pk)
+        # should be invalid when bound because BB is limited to 0-15
+        data = {'AA': '1', 'AB': '2', 'AC': '3', 'BB': '27', 'BC': '5'}
+        t_form = form_class(data)
+
+        self.assertEqual(t_form.is_valid(), False)
