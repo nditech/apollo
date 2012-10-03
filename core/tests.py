@@ -80,7 +80,7 @@ class CoreTest(TestCase):
 
     def test_form_generation(self):
         '''Tests the Django form generator'''
-        form_class = generate_submission_form(self.test_form.pk)
+        form_class = generate_submission_form(self.test_form)
         t_form = form_class()
 
         self.assertEqual(len(t_form.fields), 6)
@@ -92,7 +92,7 @@ class CoreTest(TestCase):
 
     def test_form_validator(self):
         '''Tests that the generated form validates properly'''
-        form_class = generate_submission_form(self.test_form.pk)
+        form_class = generate_submission_form(self.test_form)
         # should be invalid when bound because BB is limited to 0-15
         data = {'AA': '1', 'AB': '2', 'AC': '3', 'BB': '27', 'BC': '5'}
         t_form = form_class(data)
