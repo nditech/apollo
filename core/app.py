@@ -19,7 +19,7 @@ SUBMISSION_RECEIVED = _('Your submission was received! You sent: %(message)s')
 
 class App(AppBase):
     def handle(self, message):
-        working_text = message.text
+        working_text = unicode(message.text)
         # strip all unwanted whitespace and punctuation marks
         at_position = working_text.find('@')
         working_text = filter(lambda s: s not in PUNCTUATIONS, working_text[:at_position]).translate(TRANS_TABLE) + working_text[at_position:] \
