@@ -283,6 +283,39 @@ class Submission(models.Model):
         except Submission.DoesNotExist:
             return None
 
+    def _get_completion(self, group):
+        if not group in self.form.groups.all():
+            return None
+
+        tags = [field.tag for field in group.fields.all()]
+
+        truthy = [tag in self.data for tag in tags]
+
+        return truthy
+
+    def is_complete(self, group):
+        truthy = self._get_completion(group)
+
+        if truthy is None:
+            return None
+
+        return all(truthy)
+
+    def is_partial(self, group):
+        truthy = self._get_completion(group)
+
+        if truthy is None:
+            return None
+
+        return any(truthy)
+
+    def is_missing(self, group):
+        truthy = self._get_completion(group)
+
+        if truthy is None:
+            return None
+
+        return not any(truthy)
 
 @receiver(models.signals.post_save, sender=Observer, dispatch_uid='create_contact')
 def create_contact(sender, **kwargs):

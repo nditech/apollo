@@ -11,27 +11,6 @@ COMPLETION_STATUS = (
     (2, 'Empty'),
 )
 
-
-def get_completion_status(submission):
-    groups = submission.form.groups.all()
-    statuses = {}
-    for group in groups:
-        tags = [field.tag for field in group.fields.all()]
-        temp = [tag in submission.data for tag in tags]
-
-        if all(temp):
-            # complete
-            statuses[group.pk] = 0
-        elif any(temp):
-            # partial
-            statuses[group.pk] = 1
-        else:
-            # unfilled
-            statuses[group.pk] = 2
-
-    return statuses
-
-
 def list_submissions(queryset, page_num):
     '''Utility function to return a set of submissions from a queryset'''
     paginator = Paginator(queryset, settings.SUBMISSIONS_PER_PAGE)
