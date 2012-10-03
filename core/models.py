@@ -257,6 +257,7 @@ class FormFieldOption(models.Model):
 class Submission(models.Model):
     form = models.ForeignKey(Form, related_name='submissions')
     observer = models.ForeignKey(Observer, blank=True, null=True)
+    location = models.ForeignKey(Location, related_name="submissions")
     date = models.DateField(default=datetime.today())
     data = hstore.DictionaryField(db_index=True, null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)
@@ -271,6 +272,16 @@ class Submission(models.Model):
         permissions = (
             ("view_submission", "Can view submissions"),
         )
+
+    def siblings(self):
+        return Submission.objects.exclude(pk=self.pk).exclude(observer=None).filter(location=self.location)
+
+    def master(self):
+        # should only return one object for this method
+        try:
+            return Submission.objects.exclude(pk=self.pk).get(location=self.location, observer=None)
+        except Submission.DoesNotExist:
+            return None
 
 
 @receiver(models.signals.post_save, sender=Observer, dispatch_uid='create_contact')
