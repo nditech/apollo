@@ -329,3 +329,71 @@ def create_contact(sender, **kwargs):
 @receiver(models.signals.post_delete, sender=Observer, dispatch_uid='delete_contact')
 def delete_contact(sender, **kwargs):
     kwargs['instance'].contact.delete()
+
+# the below function generates a comparison function
+def make_value_check(a):
+    def value_check(b):
+        if a is None and b is not None:
+            return 0
+        if a is not None and b is None:
+            return 0 # either but not both values exist
+        if a == b:
+            return 1 # values match
+        return -1 # value exists but doesn't match
+
+
+    return value_check
+
+
+@receiver(models.signals.post_save, sender=Submission, dispatch_uid='sync_checklists')
+def sync_checklists(sender, **kwargs):
+    # grab sibling and master checklists
+    instance = kwargs['instance']
+
+    # quit if this is the master
+    if instance.observer is None:
+        return
+
+    siblings = list(instance.siblings())
+    master = instance.master()
+
+    # if no siblings exist, copy to master and quit
+    if not siblings:
+        for key in instance.data.keys():
+            if key in master.overrides:
+                continue
+            master.data[key] = instance.data[key]
+
+        master.save()
+
+    # get all possible keys
+    key_set = set(instance.data.keys())
+    for sibling in siblings:
+        key_set.update(sibling.data.keys)
+
+    # this be pure hackery
+    for key in key_set:
+        # if the key has already been overridden, don't do anything
+        if key in master.overrides:
+            continue
+
+        # get the value set for this key, and create a comparison function
+        # for that value (see make_value_check definition).
+        current = instance.data.get(key, None)
+        checker_function = make_value_check(current)
+
+        # the map() call executes the inner value_check function with a = current
+        # and b = each item from the list comprehension
+        checked_values = map(checker_function, [sibling.data.get(key, None) for sibling in siblings])
+
+        if -1 in checked_values:
+            # only if the key is set to different values across all siblings
+            master.data.pop(key, None)
+            continue
+
+        if master.data.get(key, None) is None and current is not None:
+            # if the key has not been set on the master and this instance
+            # has it set
+            master.data[key] = current
+
+    master.save()
