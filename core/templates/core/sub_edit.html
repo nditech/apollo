@@ -1,369 +1,351 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <title>Submission list</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <!-- Le styles -->
-    <link href="{{ STATIC_URL }}css/bootstrap.css" rel="stylesheet">
-    <link href="{{ STATIC_URL }}css/bootstrap-responsive.css" rel="stylesheet">
+{% extends "core/layout.html" %}
+{% block title %}<title>Submission Edit</title>{% endblock %}
 
-    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
-    <!--[if lt IE 9]>
-      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-
-    <!-- Le fav and touch icons -->
-    <link rel="shortcut icon" href="{{ STATIC_URL }}ico/favicon.ico">
-  </head>
-
-  <body>
-    <div class="container">
-      <div class="navbar navbar-static-top">
-        <div class="navbar-inner">
-          <a class="brand" href="#">Apollo</a>
-          <ul class="nav pull-right">
-            <li class="active"><a href="#">Dashboard</a></li>
-            <li class="divider-vertical"></li>
-            <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-th-large"></i> Elections<b class="caret"></b>
-            </a>
-              <ul class="dropdown-menu">
-                <li class=""><a href="#">Submission list</a></li>
-              </ul>
-            </li>
-            <li class="divider-vertical"></li>
-            <li><a href="#"><i class="icon-book"></i> Contacts</a></li>
-            <li class="divider-vertical"></li>
-            <li><button class="btn btn-default">logout</button></li>
-          </ul>
-        </div>
+{% block content %}
+  <div class="row">
+    <div class="span12">
+      <legend>Submission Editing Page</legend>
+      <form class="form-inline" action="">
+      </form>
+    </div>
+  </div>
+  <div class="row-fluid">
+    <div class="span12">
+      <div class="span4">
+        <h4>Monitor:</h4>
+        <h4>Location:</h4>
+        <h4>Polling Location:</h4>
+        <h4>Supervisor</h4>
       </div>
-      <div class="row">
-        <div class="span12">
-          <legend>Submission Editing Page</legend>
-          <form class="form-inline" action="">
-          </form>
-        </div>
-      </div>
-      <div class="row-fluid">
-        <div class="span12">
-          <div class="span4">
-            <h4>Monitor:</h4>
-            <h4>Location:</h4>
-            <h4>Polling Location:</h4>
-            <h4>Supervisor</h4>
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="span12">
-          <div class="tabbable tabs-right">
-            <ul class="nav nav-tabs">
-              <li class="active"><a href="#setup" data-toggle="tab">Setup</a></li>
-              <li class=""><a href="#voting" data-toggle="tab">Voting</a></li>
-              <li class=""><a href="#counting" data-toggle="tab">Counting</a></li>
-              <li class=""><a href="#counting" data-toggle="tab">Closing</a></li>
-            </ul>
-            <div class="tab-content">
-              <div class="tab-pane active" id="setup">
-                <legend>Setup</legend>
-                <div class="row">
-                    <p class="span1">1</p>
-                    <p class="span2">What time did the polling station open?</p>
-                    <p class="span6">
-                      <label class="radio inline">
-                        <input type="radio" name="optionsRadios" id="" value="1" checked>before 6am
-                      </label>
-                      <label class="radio inline">
-                        <input type="radio" name="optionsRadios" id="" value="2">At 6am
-                      </label>
-                      <label class="radio inline">
-                        <input type="radio" name="optionsRadios" id="" value="3">between 6am & 7am
-                      </label>
-                      <label class="radio inline">
-                        <input type="radio" name="optionsRadios" id="" value="4">between 7am & 8am
-                      </label>
-                      <label class="radio inline">
-                        <input type="radio" name="optionsRadios" id="" value="5">after 8am
-                      </label>
-                    </p>
-                </div>
-                <hr>
-                <div class="row">
-                    <p class="span1">2</p>
-                    <p class="span2">Was the polling stream set up so that voters could mark their ballot in secret?</p>
-                    <p class="span6">
-                      <label class="radio inline">
-                        <input type="radio" name="optionsRadios" id="" value="1"> Yes 
-                      </label>
-                      <label class="radio inline">
-                        <input type="radio" name="optionsRadios" id="" value="2"> No 
-                      </label>
-                    </p>
-                </div>
-                <hr>
-                <div class="row">
-                    <p class="span1">3a</p>
-                    <p class="span2">Did your Polling Stream have Indelible Markers?</p>
-                    <p class="span6">
-                      <label class="radio inline">
-                        <input type="radio" name="optionsRadios" id="" value="1"> Yes 
-                      </label>
-                      <label class="radio inline">
-                        <input type="radio" name="optionsRadios" id="" value="2"> No 
-                      </label>
-                    </p>
-                </div>
-                <hr>
-                <div class="row">
-                    <p class="span1">3b</p>
-                    <p class="span2">Did your Polling Stream have Three Ballot Boxes (Presidential, Parliamentary/National Assembly and Local Government)?</p>
-                    <p class="span6">
-                      <label class="radio inline">
-                        <input type="radio" name="optionsRadios" id="" value="1" checked>3 Boxes Present
-                      </label>
-                      <label class="radio inline">
-                        <input type="radio" name="optionsRadios" id="" value="2">2 Boxes Present
-                      </label>
-                      <label class="radio inline">
-                        <input type="radio" name="optionsRadios" id="" value="3">1 Box Present
-                      </label>
-                      <label class="radio inline">
-                        <input type="radio" name="optionsRadios" id="" value="4">No Boxes
-                      </label>
-                    </p>
-                </div>
-                <hr>
-                <div class="row">
-                    <p class="span1">3c</p>
-                    <p class="span2">Did your Polling Stream have Presidential Ballot Papers - Orange</p>
-                    <p class="span6">
-                      <label class="radio inline">
-                        <input type="radio" name="optionsRadios" id="" value="1" checked>Correct Ballots
-                      </label>
-                      <label class="radio inline">
-                        <input type="radio" name="optionsRadios" id="" value="2">No Ballots
-                      </label>
-                    </p>
-                </div>
-                <hr>
-                <div class="row">
-                    <p class="span1">3d</p>
-                    <p class="span2">Did your Polling Stream have Parliamentary/National Assembly Ballot Papers - Red</p>
-                    <p class="span6">
-                      <label class="radio inline">
-                        <input type="radio" name="optionsRadios" id="" value="1" checked>Correct Ballots
-                      </label>
-                      <label class="radio inline">
-                        <input type="radio" name="optionsRadios" id="" value="1" checked>Wrong Ballots
-                      </label>
-                      <label class="radio inline">
-                        <input type="radio" name="optionsRadios" id="" value="2">No Ballots
-                      </label>
-                    </p>
-                </div>
-                <hr>
-                <div class="row">
-                    <p class="span1">3e</p>
-                    <p class="span2">Did your Polling Stream have Local Government Ballot Papers - Black and White</p>
-                    <p class="span6">
-                      <label class="radio inline">
-                        <input type="radio" name="optionsRadios" id="" value="1" checked>Correct Ballots
-                      </label>
-                      <label class="radio inline">
-                        <input type="radio" name="optionsRadios" id="" value="1" checked>Wrong Ballots
-                      </label>
-                      <label class="radio inline">
-                        <input type="radio" name="optionsRadios" id="" value="2">No Ballots
-                      </label>
-                    </p>
-                </div>
-                <hr>
-                <div class="row">
-                    <p class="span1">3f</p>
-                    <p class="span2">Did your Polling Stream have Official Stamp/Mark</p>
-                    <p class="span6">
-                      <label class="radio inline">
-                        <input type="radio" name="optionsRadios" id="" value="1"> Yes 
-                      </label>
-                      <label class="radio inline">
-                        <input type="radio" name="optionsRadios" id="" value="2"> No 
-                      </label>
-                    </p>
-                </div>
-                <hr>
-                <div class="row">
-                    <p class="span1">3g</p>
-                    <p class="span2">Did your Polling Stream have the Final Voters’ Register</p>
-                    <p class="span6">
-                      <label class="radio inline">
-                        <input type="radio" name="optionsRadios" id="" value="1"> Yes 
-                      </label>
-                      <label class="radio inline">
-                        <input type="radio" name="optionsRadios" id="" value="2"> No 
-                      </label>
-                    </p>
-                </div>
-                <hr>
-                <div class="row">
-                    <p class="span1">3h</p>
-                    <p class="span2">Did your Polling Stream have Polling Booths</p>
-                    <p class="span6">
-                      <label class="radio inline">
-                        <input type="radio" name="optionsRadios" id="" value="1"> Yes 
-                      </label>
-                      <label class="radio inline">
-                        <input type="radio" name="optionsRadios" id="" value="2"> No 
-                      </label>
-                    </p>
-                </div>
-                <hr>
-                <div class="row">
-                    <p class="span1">4</p>
-                    <p class="span2">How many polling officials were present at the polling stream?</p>
-                    <p class="span6">
-                      <input type="text" name="text">
-                    </p>
-                </div>
-                <hr>
-                <div class="row">
-                    <p class="span1">5</p>
-                    <p class="span2">How many political party polling agents were present at the polling stream?</p>
-                    <p class="span6">
-                      <input type="text" name="text">
-                    </p>
-                </div>
-                <hr>
-                <div class="row">
-                  <div class="10">
-                    <p class="span1">5a</p>
-                    <p class="span2">Was a polling agent present for MMD?</p>
-                    <p class="span6">
-                      <label class="radio inline">
-                        <input type="radio" name="optionsRadios" id="" value="1"> Yes 
-                      </label>
-                      <label class="radio inline">
-                        <input type="radio" name="optionsRadios" id="" value="2"> No 
-                      </label>
-                    </p>
-                  </div>
-                </div>
-                <hr>
-                <div class="row">
-                    <p class="span1">5b</p>
-                    <p class="span2">Was a polling agent present for Patriotic Front?</p>
-                    <p class="span6">
-                      <label class="radio inline">
-                        <input type="radio" name="optionsRadios" id="" value="1"> Yes 
-                      </label>
-                      <label class="radio inline">
-                        <input type="radio" name="optionsRadios" id="" value="2"> No 
-                      </label>
-                    </p>
-                </div>
-                <hr>
-                <div class="row">
-                    <p class="span1">5c</p>
-                    <p class="span2">Was a polling agent present for UPND?</p>
-                    <p class="span6">
-                      <label class="radio inline">
-                        <input type="radio" name="optionsRadios" id="" value="1"> Yes 
-                      </label>
-                      <label class="radio inline">
-                        <input type="radio" name="optionsRadios" id="" value="2"> No 
-                      </label>
-                    </p>
-                </div>
-                <hr>
-                <div class="row">
-                    <p class="span1">6</p>
-                    <p class="span2">Were uniformed police present at the polling stream?</p>
-                    <p class="span6">
-                      <label class="radio inline">
-                        <input type="radio" name="optionsRadios" id="" value="1"> Yes 
-                      </label>
-                      <label class="radio inline">
-                        <input type="radio" name="optionsRadios" id="" value="2"> No 
-                      </label>
-                    </p>
-                </div>
-                <hr>
-                <div class="row">
-                    <p class="span1">7</p>
-                    <p class="span2">Did your Polling Stream have Indelible Markers?</p>
-                    <p class="span6">
-                      <label class="radio inline">
-                        <input type="radio" name="optionsRadios" id="" value="1"> Yes 
-                      </label>
-                      <label class="radio inline">
-                        <input type="radio" name="optionsRadios" id="" value="2"> No 
-                      </label>
-                    </p>
-                </div>
-                <hr>
-                <div class="row">
-                  <div class="10">
-                    <p class="span1">8</p>
-                    <p class="span2">How many people are registered at the polling stream?</p>
-                    <p class="span6">
-                      <input type="text" name="text">
-                    </p>
-                  </div>
-                </div>
-                <hr>
-                <div class="row">
-                    <p class="span1">9</p>
-                    <p class="span2">What is the ECZ’s six digit ID number of the Polling Station of your Polling Stream</p>
-                    <p class="span6">
-                      <input type="text" name="text">
-                    </p>
-                  </div>
-                <hr>
-                 <div class="row">
-                    <p class="span1"></p>
-                    <p class="span2"</p>
-                    <p class="span6">
-                      <button class="btn btn-info">save</button>
-                    </p>
-                </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="span12">
+      <div class="tabbable tabs-right">
+        <ul class="nav nav-tabs">
+          <li class="active"><a href="#setup" data-toggle="tab">Setup</a></li>
+          <li class=""><a href="#voting" data-toggle="tab">Voting</a></li>
+          <li class=""><a href="#counting" data-toggle="tab">Counting</a></li>
+          <li class=""><a href="#counting" data-toggle="tab">Closing</a></li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane active" id="setup">
+            <legend>Setup</legend>
+            <div class="row">
+                <p class="span1">1</p>
+                <p class="span2">What time did the polling station open?</p>
+                <p class="span6">
+                  <label class="radio inline">
+                    <input type="radio" name="optionsRadios" id="" value="1" checked>before 6am
+                  </label>
+                  <label class="radio inline">
+                    <input type="radio" name="optionsRadios" id="" value="2">At 6am
+                  </label>
+                  <label class="radio inline">
+                    <input type="radio" name="optionsRadios" id="" value="3">between 6am & 7am
+                  </label>
+                  <label class="radio inline">
+                    <input type="radio" name="optionsRadios" id="" value="4">between 7am & 8am
+                  </label>
+                  <label class="radio inline">
+                    <input type="radio" name="optionsRadios" id="" value="5">after 8am
+                  </label>
+                </p>
+            </div>
+            <hr>
+            <div class="row">
+                <p class="span1">2</p>
+                <p class="span2">Was the polling stream set up so that voters could mark their ballot in secret?</p>
+                <p class="span6">
+                  <label class="radio inline">
+                    <input type="radio" name="optionsRadios" id="" value="1"> Yes 
+                  </label>
+                  <label class="radio inline">
+                    <input type="radio" name="optionsRadios" id="" value="2"> No 
+                  </label>
+                </p>
+            </div>
+            <hr>
+            <div class="row">
+                <p class="span1">3a</p>
+                <p class="span2">Did your Polling Stream have Indelible Markers?</p>
+                <p class="span6">
+                  <label class="radio inline">
+                    <input type="radio" name="optionsRadios" id="" value="1"> Yes 
+                  </label>
+                  <label class="radio inline">
+                    <input type="radio" name="optionsRadios" id="" value="2"> No 
+                  </label>
+                </p>
+            </div>
+            <hr>
+            <div class="row">
+                <p class="span1">3b</p>
+                <p class="span2">Did your Polling Stream have Three Ballot Boxes (Presidential, Parliamentary/National Assembly and Local Government)?</p>
+                <p class="span6">
+                  <label class="radio inline">
+                    <input type="radio" name="optionsRadios" id="" value="1" checked>3 Boxes Present
+                  </label>
+                  <label class="radio inline">
+                    <input type="radio" name="optionsRadios" id="" value="2">2 Boxes Present
+                  </label>
+                  <label class="radio inline">
+                    <input type="radio" name="optionsRadios" id="" value="3">1 Box Present
+                  </label>
+                  <label class="radio inline">
+                    <input type="radio" name="optionsRadios" id="" value="4">No Boxes
+                  </label>
+                </p>
+            </div>
+            <hr>
+            <div class="row">
+                <p class="span1">3c</p>
+                <p class="span2">Did your Polling Stream have Presidential Ballot Papers - Orange</p>
+                <p class="span6">
+                  <label class="radio inline">
+                    <input type="radio" name="optionsRadios" id="" value="1" checked>Correct Ballots
+                  </label>
+                  <label class="radio inline">
+                    <input type="radio" name="optionsRadios" id="" value="2">No Ballots
+                  </label>
+                </p>
+            </div>
+            <hr>
+            <div class="row">
+                <p class="span1">3d</p>
+                <p class="span2">Did your Polling Stream have Parliamentary/National Assembly Ballot Papers - Red</p>
+                <p class="span6">
+                  <label class="radio inline">
+                    <input type="radio" name="optionsRadios" id="" value="1" checked>Correct Ballots
+                  </label>
+                  <label class="radio inline">
+                    <input type="radio" name="optionsRadios" id="" value="1" checked>Wrong Ballots
+                  </label>
+                  <label class="radio inline">
+                    <input type="radio" name="optionsRadios" id="" value="2">No Ballots
+                  </label>
+                </p>
+            </div>
+            <hr>
+            <div class="row">
+                <p class="span1">3e</p>
+                <p class="span2">Did your Polling Stream have Local Government Ballot Papers - Black and White</p>
+                <p class="span6">
+                  <label class="radio inline">
+                    <input type="radio" name="optionsRadios" id="" value="1" checked>Correct Ballots
+                  </label>
+                  <label class="radio inline">
+                    <input type="radio" name="optionsRadios" id="" value="1" checked>Wrong Ballots
+                  </label>
+                  <label class="radio inline">
+                    <input type="radio" name="optionsRadios" id="" value="2">No Ballots
+                  </label>
+                </p>
+            </div>
+            <hr>
+            <div class="row">
+                <p class="span1">3f</p>
+                <p class="span2">Did your Polling Stream have Official Stamp/Mark</p>
+                <p class="span6">
+                  <label class="radio inline">
+                    <input type="radio" name="optionsRadios" id="" value="1"> Yes 
+                  </label>
+                  <label class="radio inline">
+                    <input type="radio" name="optionsRadios" id="" value="2"> No 
+                  </label>
+                </p>
+            </div>
+            <hr>
+            <div class="row">
+                <p class="span1">3g</p>
+                <p class="span2">Did your Polling Stream have the Final Voters’ Register</p>
+                <p class="span6">
+                  <label class="radio inline">
+                    <input type="radio" name="optionsRadios" id="" value="1"> Yes 
+                  </label>
+                  <label class="radio inline">
+                    <input type="radio" name="optionsRadios" id="" value="2"> No 
+                  </label>
+                </p>
+            </div>
+            <hr>
+            <div class="row">
+                <p class="span1">3h</p>
+                <p class="span2">Did your Polling Stream have Polling Booths</p>
+                <p class="span6">
+                  <label class="radio inline">
+                    <input type="radio" name="optionsRadios" id="" value="1"> Yes 
+                  </label>
+                  <label class="radio inline">
+                    <input type="radio" name="optionsRadios" id="" value="2"> No 
+                  </label>
+                </p>
+            </div>
+            <hr>
+            <div class="row">
+                <p class="span1">4</p>
+                <p class="span2">How many polling officials were present at the polling stream?</p>
+                <p class="span6">
+                  <input type="text" name="text">
+                </p>
+            </div>
+            <hr>
+            <div class="row">
+                <p class="span1">5</p>
+                <p class="span2">How many political party polling agents were present at the polling stream?</p>
+                <p class="span6">
+                  <input type="text" name="text">
+                </p>
+            </div>
+            <hr>
+            <div class="row">
+              <div class="10">
+                <p class="span1">5a</p>
+                <p class="span2">Was a polling agent present for MMD?</p>
+                <p class="span6">
+                  <label class="radio inline">
+                    <input type="radio" name="optionsRadios" id="" value="1"> Yes 
+                  </label>
+                  <label class="radio inline">
+                    <input type="radio" name="optionsRadios" id="" value="2"> No 
+                  </label>
+                </p>
               </div>
-              <div class="tab-pane" id="voting">
-                <legend>Voting</legend>
-                <div class="row">
-                    <p class="span1">10</p>
-                    <p class="span2">How many people with a NRC and voter’s card were not permitted to vote because their name did not appear on the voter’s register</p>
-                    <p class="span6">
-                      <label class="radio inline">
-                        <input type="radio" name="optionsRadios" id="1" value="1" checked>None(0)
-                      </label>
-                      <label class="radio inline">
-                        <input type="radio" name="optionsRadios" id="1" value="2">Few(1-5)
-                      </label>
-                      <label class="radio inline">
-                        <input type="radio" name="optionsRadios" id="1" value="3">Some(6-25)
-                      </label>
-                      <label class="radio inline">
-                        <input type="radio" name="optionsRadios" id="1" value="4">Many(26+)
-                      </label>
-                    </p>
-                </div>
-                <hr>
-                 <div class="row">
-                    <p class="span1"></p>
-                    <p class="span2"</p>
-                    <p class="span6">
-                      <button class="btn btn-info">save</button>
-                    </p>
-                </div>
+            </div>
+            <hr>
+            <div class="row">
+                <p class="span1">5b</p>
+                <p class="span2">Was a polling agent present for Patriotic Front?</p>
+                <p class="span6">
+                  <label class="radio inline">
+                    <input type="radio" name="optionsRadios" id="" value="1"> Yes 
+                  </label>
+                  <label class="radio inline">
+                    <input type="radio" name="optionsRadios" id="" value="2"> No 
+                  </label>
+                </p>
+            </div>
+            <hr>
+            <div class="row">
+                <p class="span1">5c</p>
+                <p class="span2">Was a polling agent present for UPND?</p>
+                <p class="span6">
+                  <label class="radio inline">
+                    <input type="radio" name="optionsRadios" id="" value="1"> Yes 
+                  </label>
+                  <label class="radio inline">
+                    <input type="radio" name="optionsRadios" id="" value="2"> No 
+                  </label>
+                </p>
+            </div>
+            <hr>
+            <div class="row">
+                <p class="span1">6</p>
+                <p class="span2">Were uniformed police present at the polling stream?</p>
+                <p class="span6">
+                  <label class="radio inline">
+                    <input type="radio" name="optionsRadios" id="" value="1"> Yes 
+                  </label>
+                  <label class="radio inline">
+                    <input type="radio" name="optionsRadios" id="" value="2"> No 
+                  </label>
+                </p>
+            </div>
+            <hr>
+            <div class="row">
+                <p class="span1">7</p>
+                <p class="span2">Did your Polling Stream have Indelible Markers?</p>
+                <p class="span6">
+                  <label class="radio inline">
+                    <input type="radio" name="optionsRadios" id="" value="1"> Yes 
+                  </label>
+                  <label class="radio inline">
+                    <input type="radio" name="optionsRadios" id="" value="2"> No 
+                  </label>
+                </p>
+            </div>
+            <hr>
+            <div class="row">
+              <div class="10">
+                <p class="span1">8</p>
+                <p class="span2">How many people are registered at the polling stream?</p>
+                <p class="span6">
+                  <input type="text" name="text">
+                </p>
               </div>
-              <div class="tab-pane" id="counting"></div>
-              <div class="tab-pane" id="closing"></div>
+            </div>
+            <hr>
+            <div class="row">
+                <p class="span1">9</p>
+                <p class="span2">What is the ECZ’s six digit ID number of the Polling Station of your Polling Stream</p>
+                <p class="span6">
+                  <input type="text" name="text">
+                </p>
+              </div>
+            <hr>
+             <div class="row">
+                <p class="span1"></p>
+                <p class="span2"</p>
+                <p class="span6">
+                  <button class="btn btn-info">save</button>
+                </p>
             </div>
           </div>
+          <div class="tab-pane" id="voting">
+            <legend>Voting</legend>
+            <div class="row">
+                <p class="span1">11</p>
+                <p class="span2">How many people with a NRC and voter’s card were not permitted to vote because their name did not appear on the voter’s register</p>
+                <p class="span6">
+                  <label class="radio inline">
+                    <input type="radio" name="optionsRadios" id="1" value="1" checked>None(0)
+                  </label>
+                  <label class="radio inline">
+                    <input type="radio" name="optionsRadios" id="1" value="2">Few(1-5)
+                  </label>
+                  <label class="radio inline">
+                    <input type="radio" name="optionsRadios" id="1" value="3">Some(6-25)
+                  </label>
+                  <label class="radio inline">
+                    <input type="radio" name="optionsRadios" id="1" value="4">Many(26+)
+                  </label>
+                </p>
+            </div>
+            <hr>
+             <div class="row">
+                <p class="span1"></p>
+                <p class="span2"</p>
+                <p class="span6">
+                  <button class="btn btn-info">save</button>
+                </p>
+            </div>
+          </div>
+          <div class="tab-pane" id="counting">
+            <legend>Counting</legend>
+            <div class="row">
+                <p class="span1">12</p>
+                <p class="span2">Presidential Ballot Paper Reconciliation (Presidential Election Only)</p>
+                <p class="span6">
+                  <label class="radio inline">
+                   <input type="text" name="" id="1" value=""> 
+                  </label>
+                  <label class="radio inline">
+                    <input type="text" name="" id="1" value="">
+                  </label>
+                </p>
+            </div>
+            <hr>
+             <div class="row">
+                <p class="span1"></p>
+                <p class="span2"</p>
+                <p class="span6">
+                  <button class="btn btn-info">save</button>
+                </p>
+            </div>
+          </div>
+          <div class="tab-pane" id="closing"></div>
         </div>
       </div>
-    </div><!--Container-->
-  </body>
-</html>
+    </div>
+  </div>
+{% endblock %}

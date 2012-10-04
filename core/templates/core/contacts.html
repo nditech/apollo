@@ -1,58 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <title>Contacts</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <!-- Le styles -->
-    <link href="{{ STATIC_URL }}css/bootstrap.css" rel="stylesheet">
-    <link href="{{ STATIC_URL }}css/bootstrap-responsive.css" rel="stylesheet">
-
-    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
-    <!--[if lt IE 9]>
-      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-
-    <!-- Le fav and touch icons -->
-    <link rel="shortcut icon" href="{{ STATIC_URL }}ico/favicon.ico">
-  </head>
-
-  <body>
-    <div class="container">
-      <div class="navbar navbar-static-top">
-        <div class="navbar-inner">
-          <a class="brand" href="#">Apollo</a>
-          <ul class="nav pull-right">
-            <li class="active"><a href="#">Dashboard</a></li>
-            <li class="divider-vertical"></li>
-            <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-th-large"></i> Elections<b class="caret"></b>
-            </a>
-              <ul class="dropdown-menu">
-                <li class=""><a href="#">Submission list</a></li>
-              </ul>
-            </li>
-            <li class="divider-vertical"></li>
-            <li><a href="#"><i class="icon-book"></i> Contacts</a></li>
-            <li class="divider-vertical"></li>
-            <li><button class="btn btn-default">logout</button></li>
-          </ul>
-        </div>
-      </div>
-      <div class="row">
-        <div class="span12">
-          <legend>Contacts</legend>
-          <form class="form-inline well" action="">
-              <input type="text" class="" placeholder="Monitor ID">
-              <input type="text" class="" placeholder="Monitor Name">
-              <input type="text" class="" placeholder="Location">
-              <button class="btn btn-info btn" type="submit">Filter</button>
-              <button class="btn btn-danger" type="submit">Reset</button>
-              <button class="btn btn-success" type="submit">SMS</button>
-          </form>
-        </div>
-      </div>
+{% extends "core/layout.html" %}
+{% block title %}<title>Contacts</title>{% endblock %}
+{% block content %}
+ <div class="row">
+    <div class="span12">
+      <legend>Contacts</legend>
+      <form class="form-inline well" action="">
+          <input type="text" class="" placeholder="Monitor ID">
+          <input type="text" class="" placeholder="Monitor Name">
+          <input type="text" class="" placeholder="Location">
+          <button class="btn btn-info btn" type="submit">Filter</button>
+          <button class="btn btn-danger" type="submit">Reset</button>
+          <button class="btn btn-success" type="submit">SMS</button>
+      </form>
     </div>
-  </body>
-</html>
+  </div>
+  {% endblock %}
+  
