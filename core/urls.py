@@ -1,7 +1,7 @@
 from django.conf.urls.defaults import *
-from django.views.generic.base import TemplateView
 from tastypie.api import Api
 from .api import *
+from .views import *
 
 v2_api = Api(api_name='v2')
 
@@ -16,19 +16,14 @@ v2_api.register(FormGroupResource())
 v2_api.register(SubmissionResource())
 
 
-class TemplatePreview(TemplateView):
-    def dispatch(self, request, *args, **kwargs):
-        self.template_name = kwargs['template_name']
-        return super(TemplateView, self).dispatch(request, *args, **kwargs)
-
-
 urlpatterns = patterns('',
+    url(r'^$', DashboardView.as_view(), name='dashboard'),
     url(r'^api/', include(v2_api.urls)),
     url(r'^tpl/(?P<template_name>.+)/?', TemplatePreview.as_view())
 )
 
-#authentication urls
+# authentication urls
 urlpatterns += patterns('',
-    (r'^accounts/login/$', 'django.contrib.auth.views.login', {'template_name': 'core/login.html'}),
-    (r'^accounts/logout/$', 'django.contrib.auth.views.logout_then_login')
+    url(r'^accounts/login/$', 'django.contrib.auth.views.login', {'template_name': 'core/login.html'}, name="user-login"),
+    url(r'^accounts/logout/$', 'django.contrib.auth.views.logout_then_login', name="user-logout")
 )
