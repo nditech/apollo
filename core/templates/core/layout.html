@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+{% load apollo %}<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
@@ -35,6 +35,7 @@
               </ul>
             </li>
             <li class="divider-vertical"></li>
+            {% forms_menu %}
             <li><a href="contacts.html"><i class="icon-user"></i> Contacts</a></li>
             <li class="divider-vertical"></li>
             <a href="{% url user-logout %}" class="btn btn-default">logout</a>
