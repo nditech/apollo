@@ -26,7 +26,15 @@ class DashboardView(TemplateView):
 
 
 class SubmissionListView(ListView):
-    context_object_name = 'submission_list'
-    template_name = 'core/sub_list.html'
+    context_object_name = 'submissions'
+    template_name = 'core/submission_list.html'
     paginate_by = settings.SUBMISSIONS_PER_PAGE
     queryset = Submission.objects.all()
+
+    def get_queryset(self):
+        return Submission.objects.filter(form__pk=self.kwargs['form']).exclude(observer=None)
+
+    def get_context_data(self, **kwargs):
+        context = super(SubmissionListView, self).get_context_data(**kwargs)
+        context['form'] = Form.objects.get(pk=self.kwargs['form'])
+        return context

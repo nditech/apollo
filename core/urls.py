@@ -19,7 +19,8 @@ v2_api.register(SubmissionResource())
 urlpatterns = patterns('',
     url(r'^$', DashboardView.as_view(), name='dashboard'),
     url(r'^api/', include(v2_api.urls)),
-    url(r'^tpl/(?P<template_name>.+)/?', TemplatePreview.as_view())
+    url(r'^submissions/(?P<form>\d+)/?', SubmissionListView.as_view(), name='submissions'),
+    url(r'^tpl/(?P<template_name>.+)/?', TemplatePreview.as_view()),
 )
 
 # authentication urls
