@@ -1,0 +1,15 @@
+{% load apollo %}
+{% for submission in submissions %}
+<tr>
+    <td>{{ submission.observer.observer_id }}</td>
+    {% for location_type in location_types %}
+    <td>{% get_location_for_type submission location_type %}</td>
+    {% endfor %}
+    <td>{{ submission.observer.supervisor.name }}</td>
+    <td>{{ submission.observer.name }}</td>
+    {% for group in form_groups %}
+    <td>{% is_complete submission group %}</td>
+    {% endfor %}
+    <td><a href="{% url submission_edit submission.pk %}">Edit</a></td>
+</tr>
+{% endfor %}

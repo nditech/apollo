@@ -1,0 +1,54 @@
+{% extends "core/layout.html" %}{% load apollo %}
+{% block title %}Submission List{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="span12">
+    <table class="table table-striped well">
+      <thead >
+        {% submission_header form %}
+      </thead>
+      <tbody>
+        {% submission_items submissions form %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="row">
+  <div class="span12">
+    <div class="pagination pagination-centered">
+      <ul>
+        <li>
+          <a href="#">1</a>
+        </li>
+        <li>
+          <a href="#">2</a>
+        </li>
+        <li>
+          <a href="#">3</a>
+        </li>
+        <li>
+          <a href="#">4</a>
+        </li>
+        <li>
+          <a href="#">5</a>
+        </li>
+        <li>
+          <a href="#">6</a>
+        </li>
+        <li>
+          <a href="#">7</a>
+        </li>
+        <li>
+          <a href="#">8</a>
+        </li>
+        <li>
+          <a href="#">>></a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

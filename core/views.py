@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
-from django.views.generic import TemplateView, ListView
+from django.views.generic import TemplateView, ListView, FormView
 from .models import *
 
 COMPLETION_STATUS = (
@@ -26,17 +26,42 @@ class DashboardView(TemplateView):
 
 
 class SubmissionListView(ListView):
-    context_object_name = 'submission_list'
-    template_name = 'core/sub_list.html'
+    context_object_name = 'submissions'
+    template_name = 'core/submission_list.html'
     paginate_by = settings.PAGE_SIZE
-    queryset = Submission.objects.all()
+
+    def get_queryset(self):
+        return Submission.objects.filter(form__pk=self.kwargs['form']).exclude(observer=None)
+
+    def get_context_data(self, **kwargs):
+        context = super(SubmissionListView, self).get_context_data(**kwargs)
+        context['form'] = Form.objects.get(pk=self.kwargs['form'])
+        return context
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(SubmissionListView, self).dispatch(*args, **kwargs)
 
 
-class ContactEditView(TemplateView):
-    template_name = 'core/contact_edit.html'
+class SubmissionEditView(FormView):
+    pass
 
 
 class ContactListView(ListView):
-    paginate_by = settings.PAGE_SIZE
-    queryset = Observer.objects.all()
+    context_object_name = 'contacts'
     template_name = 'core/contact_list.html'
+    paginate_by = settings.PAGE_SIZE
+
+    def get_queryset(self):
+        return super(ContactListView, self).get_queryset()
+
+    def get_context_data(self, **kwargs):
+        return super(ContactListView, self).get_context_data(**kwargs)
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(ContactListView, self).dispatch(*args, **kwargs)
+
+
+class ContactEditView(FormView):
+    pass
