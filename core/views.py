@@ -28,5 +28,15 @@ class DashboardView(TemplateView):
 class SubmissionListView(ListView):
     context_object_name = 'submission_list'
     template_name = 'core/sub_list.html'
-    paginate_by = settings.SUBMISSIONS_PER_PAGE
+    paginate_by = settings.PAGE_SIZE
     queryset = Submission.objects.all()
+
+
+class ContactEditView(TemplateView):
+    template_name = 'core/contact_edit.html'
+
+
+class ContactListView(ListView):
+    paginate_by = settings.PAGE_SIZE
+    queryset = Observer.objects.all()
+    template_name = 'core/contact_list.html'

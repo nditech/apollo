@@ -98,3 +98,8 @@ class CoreTest(TestCase):
         t_form = form_class(data)
 
         self.assertEqual(t_form.is_valid(), False)
+
+    def test_submission_completeness(self):
+        '''Tests whether checking if a submission is complete, partial or empty works'''
+        pass
+

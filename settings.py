@@ -149,7 +149,7 @@ CHARACTER_TRANSLATIONS = (
     )
 BACKLOG_DAYS = 4  # Number of days allowed for a submission to be updated by an observer
 
-SUBMISSIONS_PER_PAGE = 30 # Number of submissions viewable per page
+PAGE_SIZE = 30 # Number of submissions viewable per page
 
 DEFAULT_CONNECTION_INDEX = 0
 

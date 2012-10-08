@@ -42,7 +42,7 @@ class App(AppBase):
             # Let's determine if we have a valid contact for this message
             match = self.pattern.match(message.text)
             try:
-                message.observer = Contact.objects.get(observer_id=match.group('observer_id'))
+                message.observer = Contact.objects.get(observer__id=match.group('observer_id'))
             except Contact.DoesNotExist:
                 return message.respond(self.unknown_observer % message.message_only)
             try:
