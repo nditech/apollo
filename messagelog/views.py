@@ -15,14 +15,14 @@ def export_message_log(request, format='xls'):
     # tablib supports JSON, XLS, XLSX, CSV, YAML OOB, so maybe only for
     # something like PDF will we need anything else
     # (CAVEAT: tablib has dependencies for JSON & YAML output)
-    data = tablib.DataSet()
+    data = tablib.Dataset()
     for log in message_log:
         row = [log.sender, log.text, directions[log.direction],
             log.created, log.delivered]
 
         data.append(row)
 
-    data.headers = ['Sender', 'Text', 'Message direction', 'Created',
+    data.headers = ['Mobile', 'Text', 'Message direction', 'Created',
         'Delivered']
 
     # create the response
@@ -30,7 +30,7 @@ def export_message_log(request, format='xls'):
     if not format in export_formats:
         format = 'xls'
 
-    response = HttpResponse(getatt(data, format),
+    response = HttpResponse(getattr(data, format),
         content_type=export_formats[format])
 
     # force a download
