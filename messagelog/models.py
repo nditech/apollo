@@ -11,7 +11,7 @@ MESSAGE_DIRECTION = (
 
 
 class MessageLog(models.Model):
-    sender = models.CharField(max_length=16)
+    mobile = models.CharField(max_length=16)
     text = models.TextField()
     direction = models.SmallIntegerField(choices=MESSAGE_DIRECTION)
     created = models.DateTimeField(auto_now_add=True)
@@ -19,6 +19,6 @@ class MessageLog(models.Model):
 
     def __unicode__(self):
         if self.direction == MESSAGE_INCOMING:
-            return u'(IN) %s' % (self.sender,)
+            return u'(IN) %s' % (self.mobile,)
         else:
-            return u'(OUT) %s' % (self.sender,)
+            return u'(OUT) %s' % (self.mobile,)
