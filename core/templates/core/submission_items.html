@@ -1,0 +1,14 @@
+{% for submission in submissions %}
+<tr>
+    <td>{{ submission.observer.observer_id }}</td>
+    {% for location_type in location_types %}
+    <td>{{ submission.get_location_for_type location_type }}</td>
+    {% endfor %}
+    <td>{{ submission.observer.supervisor.name }}</td>
+    <td>{{ submission.observer.name }}</td>
+    {% for group in form_groups %}
+    <td>{{ submission.is_complete group }}</td>
+    {% endfor %}
+    <td>Edit</td>
+</tr>
+{% endfor %}

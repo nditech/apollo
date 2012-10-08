@@ -15,6 +15,7 @@ class LocationType(MPTTModel):
     # code is used mainly in the SMS processing logic
     code = models.CharField(blank=True, max_length=10, db_index=True)
     parent = TreeForeignKey('self', null=True, blank=True, related_name='children')
+    on_display = models.BooleanField(default=False, help_text="Controls the display of this location type on the form lists")
     in_form = models.BooleanField(default=False, db_index=True, help_text="Determines whether this LocationType can be used in SMS forms")
 
     def __unicode__(self):
@@ -329,6 +330,15 @@ class Submission(models.Model):
             return None
 
         return not any(truthy)
+
+    def get_location_for_type(self, location_type):
+        try:
+            location = self.location.get_ancestors(include_self=True).get(type=location_type)
+        except Location.DoesNotExist:
+            location = None
+
+        return location
+
 
 @receiver(models.signals.post_save, sender=Observer, dispatch_uid='create_contact')
 def create_contact(sender, **kwargs):

@@ -1,0 +1,12 @@
+<tr>
+    <th>Monitor ID</th>
+    {% for location_type in location_types %}
+    <th>{{ location_type.name }}</th>
+    {% endfor %}
+    <th>Supervisor</th>
+    <th>Monitor</th>
+    {% for group in form_groups %}
+    <th>{{ group.name }}</th>
+    {% endfor %}
+    <th>Edit</th>
+</tr>
