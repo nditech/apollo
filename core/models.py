@@ -101,6 +101,17 @@ class Observer(models.Model):
         return getattr(self, 'observer_id', "")
 
 
+class ObserverDataManager(models.Model):
+    '''Storage for observer data. Should be a singleton'''
+    pass
+
+
+class ObserverDataField(models.Model):
+    data_manager = models.ForeignKey(ObserverDataManager, related_name='fields')
+    name = models.CharField(max_length=32) # will allow name to double as key
+    description = models.CharField(max_length=255)
+
+
 class Form(models.Model):
     '''
     Defines the schema for forms that will be managed
