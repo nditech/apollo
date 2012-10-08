@@ -10,6 +10,6 @@
     {% for group in form_groups %}
     <td>{% is_complete submission group %}</td>
     {% endfor %}
-    <td>Edit</td>
+    <td><a href="{% url submission_edit submission.pk %}">Edit</a></td>
 </tr>
 {% endfor %}
