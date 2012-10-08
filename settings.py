@@ -151,6 +151,8 @@ BACKLOG_DAYS = 4  # Number of days allowed for a submission to be updated by an 
 
 SUBMISSIONS_PER_PAGE = 30 # Number of submissions viewable per page
 
+DEFAULT_CONNECTION_INDEX = 0
+
 SMS_PREFIX = ''
 SMS_SENDER = ''
 SMS_USER = ''

@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 from django.dispatch import receiver
 from django_orm.postgresql import hstore
@@ -74,7 +75,7 @@ class Observer(models.Model):
     objects = hstore.HStoreManager()
 
     def _get_phone(self):
-        return self.contact.connection_set.all()[0].identity \
+        return self.contact.connection_set.all()[settings.DEFAULT_CONNECTION_INDEX].identity \
             if self.contact and self.contact.connection_set.count() else None
 
     def _set_phone(self, phone):
