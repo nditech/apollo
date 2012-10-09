@@ -8,6 +8,7 @@ class SubmissionModelForm(BetterForm):
         if 'instance' in kwargs:
             self.instance = kwargs['instance']
             del kwargs['instance']
+            kwargs['initial'] = self.instance.data
         return super(BetterForm, self).__init__(*args, **kwargs)
 
     def save(self):
@@ -47,11 +48,11 @@ def generate_submission_form(form):
                 choices = [(option.option, option.description) for option in options]
                 fields[field.tag] = forms.ChoiceField(choices=choices,
                     help_text=field.description, required=False, label=field.tag,
-                    widget=forms.TextInput)
+                    widget=forms.TextInput(attrs={'class': 'input-mini'}))
             else:
                 fields[field.tag] = forms.IntegerField(help_text=field.description,
                     max_value=field.upper_limit or 9999, min_value=field.lower_limit or 0,
-                    required=False, label=field.tag)
+                    required=False, label=field.tag, widget=forms.TextInput(attrs={'class': 'input-mini'}))
 
         groups.append(groupspec)
 
