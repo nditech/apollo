@@ -1,6 +1,8 @@
 from django.conf import settings
 from django.db import models
 from django.dispatch import receiver
+from django_dag.models import Graph
+from django_dag.mixins import GraphMixin
 from django_orm.postgresql import hstore
 from mptt.models import MPTTModel, TreeForeignKey
 from rapidsms.models import Contact, Backend, Connection
@@ -22,12 +24,12 @@ class LocationType(MPTTModel):
         return self.name
 
 
-class Location(MPTTModel):
+class Location(GraphMixin):
     """Location"""
+    default_graph, _ = Graph.objects.get_or_create(name='location')
     name = models.CharField(max_length=100, db_index=True)
     code = models.CharField(max_length=100, db_index=True)
     type = models.ForeignKey(LocationType)
-    parent = TreeForeignKey('self', null=True, blank=True, related_name='children')
     data = hstore.DictionaryField(db_index=True, null=True, blank=True)
 
     objects = hstore.HStoreManager()

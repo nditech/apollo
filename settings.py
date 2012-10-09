@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     "djtables",
     "rapidsms",
     "core",
+    "django_dag",
     "mptt",
     "messagelog",
 
