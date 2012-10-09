@@ -13,7 +13,7 @@
           <th>Phone No.</th>
           <th>Location</th>
           <th>Partner</th>
-          <th>Edit</th>
+          <th></th>
         </tr>
       </thead>
       <tbody>
@@ -25,7 +25,7 @@
           <td>{{ contact.phone }}</td>
           <td>{{ contact.location }}</td>
           <td>{{ contact.partner }}</td>
-          <td>{{ contact.partner }}</td>
+          <td><a href="{% url contact_edit contact.pk %}">Edit</a></td>
         </tr>
         {% endfor %}
       </tbody>

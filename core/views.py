@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
-from django.views.generic import TemplateView, ListView, FormView, UpdateView
+from django.views.generic import TemplateView, ListView, UpdateView
 from .forms import ContactForm, generate_submission_form
 from .models import *
 
@@ -85,11 +85,11 @@ class ContactListView(ListView):
         return super(ContactListView, self).dispatch(*args, **kwargs)
 
 
-class ContactEditView(FormView):
+class ContactEditView(UpdateView):
     template_name = 'core/contact_edit.html'
+    model = Observer
     form_class = ContactForm
     success_url = '/contacts/'
 
-    def form_valid(self, form):
-        pass
-    pass
+    def get_object(self, queryset=None):
+        return get_object_or_404(Observer, pk=self.kwargs['pk'])
