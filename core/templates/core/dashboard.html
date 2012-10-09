@@ -1,10 +1,10 @@
 {% extends "core/layout.html" %}
-{% block title %}Dashboard{% endblock %}
+{{ page_title }}
 
 {% block content %}
+
 <div class="row">
   <div class="span12">
-    <legend>Dashboard</legend>
     <form class="form-horizontal well" action="" method="" accept-charset="utf-8">
       <select class="">
           <option disabled selected style='display:none;'>- - Province - -</option>
@@ -26,25 +26,6 @@
 </div>
 <div class="row-fluid">
   <div class="span6 well">
-    <legend>Setup</legend>
-    <div class="progress">
-      <div class="bar bar-success" style="width: 30%;"></div>
-      <div class="bar bar-warning" style="width: 50%;"></div>
-      <div class="bar bar-danger" style="width: 20%;"></div>
-    </div>
-    <legend>Voting</legend>
-    <div class="progress">
-      <div class="bar bar-success" style="width: 30%;"></div>
-      <div class="bar bar-warning" style="width: 50%;"></div>
-      <div class="bar bar-danger" style="width: 20%;"></div>
-    </div>
-    <legend>Couting</legend>
-    <div class="progress">
-      <div class="bar bar-success" style="width: 30%;"></div>
-      <div class="bar bar-warning" style="width: 50%;"></div>
-      <div class="bar bar-danger" style="width: 20%;"></div>
-    </div>
-    <legend>Closing</legend>
     <div class="progress">
       <div class="bar bar-success" style="width: 30%;"></div>
       <div class="bar bar-warning" style="width: 50%;"></div>
@@ -52,7 +33,30 @@
     </div>
   </div>
   <div class="span6 well">
-    <legend>Maps</legend>
+    <legend>Voting</legend>
+    <div class="progress">
+      <div class="bar bar-success" style="width: 30%;"></div>
+      <div class="bar bar-warning" style="width: 50%;"></div>
+      <div class="bar bar-danger" style="width: 20%;"></div>
+    </div>
+  </div>
+</div>
+<div class="row-fluid">
+  <div class="span6 well">
+    <legend>Counting</legend>
+    <div class="progress">
+      <div class="bar bar-success" style="width: 30%;"></div>
+      <div class="bar bar-warning" style="width: 50%;"></div>
+      <div class="bar bar-danger" style="width: 20%;"></div>
+    </div>
+  </div>
+  <div class="span6 well">
+    <legend>Closing</legend>
+    <div class="progress">
+      <div class="bar bar-success" style="width: 30%;"></div>
+      <div class="bar bar-warning" style="width: 50%;"></div>
+      <div class="bar bar-danger" style="width: 20%;"></div>
+    </div>
   </div>
 </div>
 {% endblock %}

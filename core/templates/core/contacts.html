@@ -1,13 +1,18 @@
 {% extends "core/layout.html" %}
-{% block title %}Contacts{% endblock %}
+{{ page_title }}
+
 {% block content %}
  <div class="row">
     <div class="span12">
-      <legend>Contacts</legend>
       <form class="form-inline well" action="">
           <input type="text" class="" placeholder="Monitor ID">
           <input type="text" class="" placeholder="Monitor Name">
+          <input type="text" class="" placeholder="Phone Number">
           <input type="text" class="" placeholder="Location">
+          <select class="">
+          <option disabled selected style='display:none;'>- - Setup Status - -</option>
+          <option>All</option>
+          </select>
           <button class="btn btn-info btn" type="submit">Filter</button>
           <button class="btn btn-danger" type="submit">Reset</button>
           <button class="btn btn-success" type="submit">SMS</button>
