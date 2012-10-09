@@ -298,21 +298,34 @@ class Submission(models.Model):
             ("view_submission", "Can view submissions"),
         )
 
+    @property
     def siblings(self):
-        return Submission.objects.exclude(pk=self.pk).exclude(observer=None).filter(location=self.location)
+        if hasattr(self, '_siblings'):
+            return self._siblings
+        else:
+            self._siblings = Submission.objects.exclude(pk=self.pk).exclude(observer=None).filter(location=self.location)
+        return self._siblings
 
+    @property
     def master(self):
         # should only return one object for this method
-        try:
-            return Submission.objects.exclude(pk=self.pk).get(location=self.location, observer=None)
-        except Submission.DoesNotExist:
-            return None
+        if hasattr(self, '_master'):
+            return self._master
+        else:
+            try:
+                self._master = Submission.objects.exclude(pk=self.pk).get(location=self.location, observer=None)
+            except Submission.DoesNotExist:
+                self._master = None
+        return self._master
 
     def _get_completion(self, group):
-        if not group in self.form.groups.all():
-            return None
-        tags = [field.tag for field in group.fields.all()]
-        truthy = [tag in self.data for tag in tags]
+        tags = group.fields.values_list('tag', flat=True)
+        truthy = []
+        for tag in tags:
+            if tag in self.data or tag in getattr(self.master, 'data', {}):
+                truthy.append(True)
+            else:
+                truthy.append(False)
         return truthy
 
     def is_complete(self, group):

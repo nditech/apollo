@@ -54,7 +54,7 @@ class SubmissionEditView(UpdateView):
     template_name = 'core/submission_edit.html'
 
     def get_object(self, queryset=None):
-        return self.submission.master()
+        return self.submission.master
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
