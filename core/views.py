@@ -50,10 +50,8 @@ class SubmissionEditView(FormView):
 class ContactListView(ListView):
     context_object_name = 'contacts'
     template_name = 'core/contact_list.html'
+    model = Observer
     paginate_by = settings.PAGE_SIZE
-
-    def get_queryset(self):
-        return super(ContactListView, self).get_queryset()
 
     def get_context_data(self, **kwargs):
         return super(ContactListView, self).get_context_data(**kwargs)
