@@ -4,6 +4,11 @@ from ..models import *
 register = template.Library()
 
 
+@register.filter
+def keyvalue(value, key):
+    return value.get(key, '')
+
+
 @register.inclusion_tag('core/forms_menu.html')
 def forms_menu():
     forms = Form.objects.all()
