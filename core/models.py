@@ -146,7 +146,12 @@ class Form(models.Model):
     the names: "key" representing the field tag and "value"
     representing the expected value.
     '''
+    FORM_TYPES = (
+        ('CHECKLIST', 'Checklist'),
+        ('INCIDENT', 'Incident'),
+    )
     name = models.CharField(max_length=255)
+    type = models.CharField(max_length=100, choices=FORM_TYPES, default='CHECKLIST')
     trigger = models.CharField(max_length=255, unique=True)
     field_pattern = models.CharField(max_length=255)
     autocreate_submission = models.BooleanField(default=False,
