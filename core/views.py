@@ -29,13 +29,16 @@ class SubmissionListView(ListView):
     context_object_name = 'submissions'
     template_name = 'core/submission_list.html'
     paginate_by = settings.PAGE_SIZE
+    page_title = ''
 
     def get_queryset(self):
+        self.page_title = Form.objects.get(pk=self.kwargs['form']).name
         return Submission.objects.filter(form__pk=self.kwargs['form']).exclude(observer=None)
 
     def get_context_data(self, **kwargs):
         context = super(SubmissionListView, self).get_context_data(**kwargs)
         context['form'] = Form.objects.get(pk=self.kwargs['form'])
+        context['page_title'] = self.page_title
         return context
 
     @method_decorator(login_required)
