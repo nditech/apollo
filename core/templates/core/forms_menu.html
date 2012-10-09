@@ -1,4 +1,3 @@
 {% for form in forms %}
-<li><a href=""><i class="icon-check"></i> {{ form.name }}</a></li>
+<li><a href="{% url submissions_list form.pk %}"><i class="icon-check"></i> {{ form.name }}</a></li>
 {% endfor %}
-

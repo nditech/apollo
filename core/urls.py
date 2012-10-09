@@ -19,7 +19,7 @@ v2_api.register(SubmissionResource())
 urlpatterns = patterns('',
     url(r'^$', DashboardView.as_view(), name='dashboard'),
     url(r'^api/', include(v2_api.urls)),
-    url(r'^submissions/(?P<form>\d+)/?', SubmissionListView.as_view(), name='submissions'),
+    url(r'^submissions/(?P<form>\d+)/?', SubmissionListView.as_view(), name='submissions_list'),
     url(r'^submission/(?P<pk>\d+)/?', SubmissionEditView.as_view(), name='submission_edit'),
     url(r'^contacts/?', ContactListView.as_view(), name='contacts'),
     url(r'^contact/(?P<pl>\d+)/?', ContactEditView.as_view(), name='contact_edit'),

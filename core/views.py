@@ -68,7 +68,7 @@ class SubmissionEditView(UpdateView):
         return context
 
     def get_success_url(self):
-        return reverse('submissions', args=[self.submission.form.pk])
+        return reverse('submissions_list', args=[self.submission.form.pk])
 
 
 class ContactListView(ListView):
