@@ -2,6 +2,7 @@ Django==1.4.1
 RapidSMS==0.9.6a
 South==0.7.2
 django-audit-log==0.2.1
+django-bootstrap-pagination==0.1.10
 django-celery==3.0.9
 django-directed-acyclic-graph==0.3
 django-extensions==0.5
