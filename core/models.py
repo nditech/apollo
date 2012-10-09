@@ -26,7 +26,6 @@ class LocationType(MPTTModel):
 
 class Location(GraphMixin):
     """Location"""
-    default_graph, _ = Graph.objects.get_or_create(name='location')
     name = models.CharField(max_length=100, db_index=True)
     code = models.CharField(max_length=100, db_index=True)
     type = models.ForeignKey(LocationType)
@@ -39,6 +38,11 @@ class Location(GraphMixin):
 
     def __unicode__(self):
         return self.name
+
+    def __init__(self, *args, **kwargs):
+        graph, _ = Graph.objects.get_or_create(name='location')
+        self.default_graph = graph
+        return super(Location, self).__init__(*args, **kwargs)
 
 
 class Partner(models.Model):
@@ -334,12 +338,11 @@ class Submission(models.Model):
         return not any(truthy)
 
     def get_location_for_type(self, location_type):
-        try:
-            location = self.location.get_ancestors(include_self=True).get(type=location_type)
-        except Location.DoesNotExist:
-            location = None
-
-        return location
+        locations = filter(lambda x: x.type == location_type, self.location.get_ancestors(include_self=True))
+        if locations:
+            return locations[0]
+        else:
+            return None
 
 
 @receiver(models.signals.post_save, sender=Observer, dispatch_uid='create_contact')
