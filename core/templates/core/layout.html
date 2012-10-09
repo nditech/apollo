@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>{% block title %}{% endblock %}</title>
+    <title>{{ page_title }}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -21,8 +21,7 @@
     <link rel="shortcut icon" href="{{ STATIC_URL }}ico/favicon.ico">
   </head>
   <body>
-    <div class="container">
-      <div class="navbar navbar-static-top">
+    <div class="navbar navbar-static-top">
         <div class="navbar-inner">
           <a class="brand" href="#">Apollo</a>
           <ul class="nav pull-right">
@@ -42,7 +41,8 @@
           </ul>
         </div>
       </div>
-      {% block content %}{% endblock %}
+    <div class="container">
+      {% block content %}<h2>{{ page_title }}</h2>{% endblock %}
       <div class="footer">
         <footer></footer>
       </div>
