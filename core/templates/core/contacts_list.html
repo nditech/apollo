@@ -1,15 +1,33 @@
 {% extends "core/layout.html" %}{% load apollo %}
-{{ page_title }}
+{% block title %}Contact List{% endblock %}
 
 {% block content %}
 <div class="row">
   <div class="span12">
     <table class="table table-striped well">
-      <thead >
-        {% submission_header form %}
+      <thead>
+        <tr>
+          <th>Observer ID</th>
+          <th>Name</th>
+          <th>Role</th>
+          <th>Phone No.</th>
+          <th>Location</th>
+          <th>Partner</th>
+          <th>Edit</th>
+        </tr>
       </thead>
       <tbody>
-        {% submission_items submissions form %}
+        {% for contact in contacts %}
+        <tr>
+          <td>{{ contact.observer_id }}</td>
+          <td>{{ contact.name }}</td>
+          <td>{{ contact.role }}</td>
+          <td>{{ contact.phone }}</td>
+          <td>{{ contact.location }}</td>
+          <td>{{ contact.partner }}</td>
+          <td>{{ contact.partner }}</td>
+        </tr>
+        {% endfor %}
       </tbody>
     </table>
   </div>
@@ -44,7 +62,7 @@
           <a href="#">8</a>
         </li>
         <li>
-          <a href="#">>></a>
+          <a href="#">9</a>
         </li>
       </ul>
     </div>

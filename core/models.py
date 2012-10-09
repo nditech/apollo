@@ -1,6 +1,8 @@
 from django.conf import settings
 from django.db import models
 from django.dispatch import receiver
+from django_dag.models import Graph
+from django_dag.mixins import GraphMixin
 from django_orm.postgresql import hstore
 from mptt.models import MPTTModel, TreeForeignKey
 from rapidsms.models import Contact, Backend, Connection
@@ -22,12 +24,11 @@ class LocationType(MPTTModel):
         return self.name
 
 
-class Location(MPTTModel):
+class Location(GraphMixin):
     """Location"""
     name = models.CharField(max_length=100, db_index=True)
     code = models.CharField(max_length=100, db_index=True)
     type = models.ForeignKey(LocationType)
-    parent = TreeForeignKey('self', null=True, blank=True, related_name='children')
     data = hstore.DictionaryField(db_index=True, null=True, blank=True)
 
     objects = hstore.HStoreManager()
@@ -37,6 +38,11 @@ class Location(MPTTModel):
 
     def __unicode__(self):
         return self.name
+
+    def __init__(self, *args, **kwargs):
+        graph, _ = Graph.objects.get_or_create(name='location')
+        self.default_graph = graph
+        return super(Location, self).__init__(*args, **kwargs)
 
 
 class Partner(models.Model):
@@ -332,12 +338,11 @@ class Submission(models.Model):
         return not any(truthy)
 
     def get_location_for_type(self, location_type):
-        try:
-            location = self.location.get_ancestors(include_self=True).get(type=location_type)
-        except Location.DoesNotExist:
-            location = None
-
-        return location
+        locations = filter(lambda x: x.type == location_type, self.location.get_ancestors(include_self=True))
+        if locations:
+            return locations[0]
+        else:
+            return None
 
 
 @receiver(models.signals.post_save, sender=Observer, dispatch_uid='create_contact')

@@ -1,3 +1,8 @@
 {% for form in forms %}
+<<<<<<< HEAD
 <li><a href=""><i class="icon-check"></i> {{ form.name }}</a></li>
 {% endfor %}
+=======
+<li><a href="{% url submissions form.pk %}"><i class="icon-check"></i> {{ form.name }}</a></li>
+{% endfor %}
+>>>>>>> 6924d441f34fe74438f3357a203820ea1f1caef9
