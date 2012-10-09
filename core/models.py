@@ -106,7 +106,7 @@ class Observer(models.Model):
         )
 
     def __unicode__(self):
-        return getattr(self, 'observer_id', "")
+        return getattr(self, 'name', "")
 
 
 class ObserverDataManager(models.Model):
@@ -116,7 +116,7 @@ class ObserverDataManager(models.Model):
 
 class ObserverDataField(models.Model):
     data_manager = models.ForeignKey(ObserverDataManager, related_name='fields')
-    name = models.CharField(max_length=32) # will allow name to double as key
+    name = models.CharField(max_length=32)  # will allow name to double as key
     description = models.CharField(max_length=255)
 
 
@@ -306,35 +306,26 @@ class Submission(models.Model):
     def _get_completion(self, group):
         if not group in self.form.groups.all():
             return None
-
         tags = [field.tag for field in group.fields.all()]
-
         truthy = [tag in self.data for tag in tags]
-
         return truthy
 
     def is_complete(self, group):
         truthy = self._get_completion(group)
-
         if truthy is None:
             return None
-
         return all(truthy)
 
     def is_partial(self, group):
         truthy = self._get_completion(group)
-
         if truthy is None:
             return None
-
         return any(truthy)
 
     def is_missing(self, group):
         truthy = self._get_completion(group)
-
         if truthy is None:
             return None
-
         return not any(truthy)
 
     def get_location_for_type(self, location_type):
@@ -345,6 +336,7 @@ class Submission(models.Model):
             return None
 
 
+# auto create Contacts when an observer is created
 @receiver(models.signals.post_save, sender=Observer, dispatch_uid='create_contact')
 def create_contact(sender, **kwargs):
     if kwargs['created']:
@@ -353,33 +345,33 @@ def create_contact(sender, **kwargs):
         contact.save()
 
 
+# if an observer gets deleted, also delete the associated contact
 @receiver(models.signals.post_delete, sender=Observer, dispatch_uid='delete_contact')
 def delete_contact(sender, **kwargs):
     kwargs['instance'].contact.delete()
 
+
 # the below function generates a comparison function
 def make_value_check(a):
     def value_check(b):
-        if a is None and b is not None:
-            return 0
-        if a is not None and b is None:
-            return 0 # either but not both values exist
+        # perform exclusive or operation
+        if bool(a) ^ bool(b):
+            return 0  # either but not both values exist
         if a == b:
-            return 1 # values match
-        return -1 # value exists but doesn't match
-
+            return 1  # values match
+        return -1  # value exists but doesn't match
 
     return value_check
 
 
-@receiver(models.signals.post_save, sender=Submission, dispatch_uid='sync_checklists')
-def sync_checklists(sender, **kwargs):
+@receiver(models.signals.post_save, sender=Submission, dispatch_uid='sync_submissions')
+def sync_submissions(sender, **kwargs):
     # grab sibling and master checklists
     instance = kwargs['instance']
 
     # quit if this is the master
     if instance.observer is None:
-        return
+        return True
 
     siblings = list(instance.siblings())
     master = instance.master()
@@ -392,11 +384,12 @@ def sync_checklists(sender, **kwargs):
             master.data[key] = instance.data[key]
 
         master.save()
+        return True
 
     # get all possible keys
     key_set = set(instance.data.keys())
     for sibling in siblings:
-        key_set.update(sibling.data.keys)
+        key_set.update(sibling.data.keys())
 
     # this be pure hackery
     for key in key_set:
@@ -418,9 +411,10 @@ def sync_checklists(sender, **kwargs):
             master.data.pop(key, None)
             continue
 
-        if master.data.get(key, None) is None and current is not None:
+        if current is not None:
             # if the key has not been set on the master and this instance
             # has it set
             master.data[key] = current
 
     master.save()
+    return True
