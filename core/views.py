@@ -2,6 +2,7 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView, ListView, FormView
+from .forms import ContactForm
 from .models import *
 
 COMPLETION_STATUS = (
@@ -62,4 +63,10 @@ class ContactListView(ListView):
 
 
 class ContactEditView(FormView):
+    template_name = 'core/contact_edit.html'
+    form_class = ContactForm
+    success_url = '/contacts/'
+
+    def form_valid(self, form):
+        pass
     pass

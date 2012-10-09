@@ -59,3 +59,10 @@ def generate_submission_form(form):
     fields['Meta'] = metaclass
 
     return type('SubmissionForm', (SubmissionModelForm,), fields)
+
+
+class ContactForm(forms.ModelForm):
+    class Meta:
+        model = Observer
+        fields = ('observer_id', 'name', 'role', 'location', 'gender',
+            'partner',)
