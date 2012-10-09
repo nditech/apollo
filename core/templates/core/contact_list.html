@@ -32,14 +32,16 @@
     </table>
   </div>
 </div>
-
+{% if is_paginated %}
 <div class="row">
   <div class="span12">
     <div class="pagination pagination-centered">
       <ul>
+        {% if page_obj.has_previous %}
         <li>
           <a href="#">1</a>
         </li>
+        {% endif %}
         <li>
           <a href="#">2</a>
         </li>
@@ -61,12 +63,14 @@
         <li>
           <a href="#">8</a>
         </li>
+        {% if page_obj.has_next %}
         <li>
           <a href="#">9</a>
         </li>
+        {% endif %}
       </ul>
     </div>
   </div>
 </div>
-
+{% endif %}
 {% endblock %}
