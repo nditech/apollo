@@ -1,7 +1,9 @@
 {% extends "core/layout.html" %}
+{% load apollo %}
 {% block title %}Submission Edit{% endblock %}
 
 {% block content %}
+  {% with submission.siblings as siblings %}
   <style type="text/css">
     .options {
       display: block;
@@ -14,78 +16,78 @@
     </div>
   </div>
 
+  <form action="" method="post">
+    {% csrf_token %}
   <div class="row">
     <div class="span12">
       <table class="table table-bordered">
         <thead>
-          <tr><th>&nbsp;</th><th>A</th></tr>
-          <tr><th>Monitor</th><td>Joy Okomowho (08034920032)</td></tr>
-          <tr><th>Location</th><td>Opebi</td></tr>
-          <tr><th>Supervisor</th><td>Greg Emuze (07033049258)</td></tr>
+          <tr>
+            <th>&nbsp;</th>
+            <th>1</th>
+            {% for sibling in siblings %}
+            <th>{{ forloop.counter|add:"1" }}</th>
+            {% endfor %}
+          </tr>
+          <tr>
+            <th>Monitor</th>
+            <td>{{ submission.observer }}</td>
+            {% for sibling in siblings %}
+            <td>{{ sibling.observer }}</td>
+            {% endfor %}
+          </tr>
+          <tr>
+            <th>Location</th>
+            <td>{{ submission.location }}</td>
+            {% for sibling in siblings %}
+            <td>{{ sibling.location }}</td>
+            {% endfor %}
+          </tr>
+          <tr>
+            <th>Supervisor</th>
+            <td>{{ submission.observer.supervisor }}</td>
+            {% for sibling in siblings %}
+            <td>{{ sibling.observer.supervisor }}</td>
+            {% endfor %}
+          </tr>
         </thead>
       </table>
       <table class="table table-striped table-bordered">
         <tbody>
           <tr>
-            <td colspan="2">&nbsp;</td><td style="text-align:center"><strong>A</strong></td><td>&nbsp;</td>
+            <td colspan="2">&nbsp;</td>
+            <td style="text-align:center"><strong>1</strong></td>
+            {% for sibling in siblings %}
+            <td style="text-align:center"><strong>{{ forloop.counter|add:"1" }}</strong></td>
+            {% endfor %}
+            <td>&nbsp;</td>
           </tr>
+          {% for fieldset in form.fieldsets %}
+          {% if fieldset.legend %}
           <tr>
-            <td colspan="4"><h4>Setup</h4></td>
+            <td colspan="{{ siblings.count|add:"4" }}"><h4 class="{{ fieldset.classes }}">{{ fieldset.legend }}</h4></td>
           </tr>
+          {% endif %}
+          {% for field in fieldset %}
           <tr>
-            <td>AA</td>
-            <td>What time did the polling station open?<span class="options">Before 6am <strong>(1)</strong> At 6am <strong>(2)</strong> Between 6am &amp; 7am <strong>(3)</strong> Between 7am &amp; 8am <strong>(4)</strong> After 8am <strong>(5)</strong></span></td>
-            <td style="text-align:center"><input class="input-mini" type="text" name="bla" /></td>
-            <td style="text-align:center"><input class="input-mini" type="text" name="bla" /></td>
+            <td>{{ field.name }}</td>
+            <td>{{ field.help_text }}
+              {% if field.field.choices %}
+              <span class="options">
+                {% for choice in field.field.choices %}
+                {{ choice.1 }} <strong>({{ choice.0 }})</strong>
+                {% endfor %}
+              </span>
+              {% endif %}
+            </td>
+            <td style="text-align:center"><input class="input-mini uneditable-input" value="{{ submission.data|keyvalue:field.name }}" type="text" /></td>
+            {% for sibling in siblings %}
+            <td style="text-align:center"><input class="input-mini uneditable-input" value="{{ sibling.data|keyvalue:field.name }}" type="text" /></td>
+            {% endfor %}
+            <td style="text-align:center">{{ field }}</td>
           </tr>
-          <tr>
-            <td colspan="4"><h4>Voting</h4></td>
-          </tr>
-          <tr>
-            <td>AA</td>
-            <td>What time did the polling station open?<span class="options">Before 6am <strong>(1)</strong> At 6am <strong>(2)</strong> Between 6am &amp; 7am <strong>(3)</strong> Between 7am &amp; 8am <strong>(4)</strong> After 8am <strong>(5)</strong></span></td>
-            <td style="text-align:center"><input class="input-mini" type="text" name="bla" /></td>
-            <td style="text-align:center"><input class="input-mini" type="text" name="bla" /></td>
-          </tr>
-          <tr>
-            <td>AA</td>
-            <td>What time did the polling station open?<span class="options">Before 6am <strong>(1)</strong> At 6am <strong>(2)</strong> Between 6am &amp; 7am <strong>(3)</strong> Between 7am &amp; 8am <strong>(4)</strong> After 8am <strong>(5)</strong></span></td>
-            <td style="text-align:center"><input class="input-mini" type="text" name="bla" /></td>
-            <td style="text-align:center"><input class="input-mini" type="text" name="bla" /></td>
-          </tr>
-          <tr>
-            <td>AA</td>
-            <td>What time did the polling station open?<span class="options">Before 6am <strong>(1)</strong> At 6am <strong>(2)</strong> Between 6am &amp; 7am <strong>(3)</strong> Between 7am &amp; 8am <strong>(4)</strong> After 8am <strong>(5)</strong></span></td>
-            <td style="text-align:center"><input class="input-mini" type="text" name="bla" /></td>
-            <td style="text-align:center"><input class="input-mini" type="text" name="bla" /></td>
-          </tr>
-          <tr>
-            <td>AA</td>
-            <td>What time did the polling station open?<span class="options">Before 6am <strong>(1)</strong> At 6am <strong>(2)</strong> Between 6am &amp; 7am <strong>(3)</strong> Between 7am &amp; 8am <strong>(4)</strong> After 8am <strong>(5)</strong></span></td>
-            <td style="text-align:center"><input class="input-mini" type="text" name="bla" /></td>
-            <td style="text-align:center"><input class="input-mini" type="text" name="bla" /></td>
-          </tr>
-          <tr>
-            <td colspan="4"><h4>Counting</h4></td>
-          </tr>
-          <tr>
-            <td>AA</td>
-            <td>What time did the polling station open?<span class="options">Before 6am <strong>(1)</strong> At 6am <strong>(2)</strong> Between 6am &amp; 7am <strong>(3)</strong> Between 7am &amp; 8am <strong>(4)</strong> After 8am <strong>(5)</strong></span></td>
-            <td style="text-align:center"><input class="input-mini" type="text" name="bla" /></td>
-            <td style="text-align:center"><input class="input-mini" type="text" name="bla" /></td>
-          </tr>
-          <tr>
-            <td>AA</td>
-            <td>What time did the polling station open?<span class="options">Before 6am <strong>(1)</strong> At 6am <strong>(2)</strong> Between 6am &amp; 7am <strong>(3)</strong> Between 7am &amp; 8am <strong>(4)</strong> After 8am <strong>(5)</strong></span></td>
-            <td style="text-align:center"><input class="input-mini" type="text" name="bla" /></td>
-            <td style="text-align:center"><input class="input-mini" type="text" name="bla" /></td>
-          </tr>
-          <tr>
-            <td>AA</td>
-            <td>What time did the polling station open?<span class="options">Before 6am <strong>(1)</strong> At 6am <strong>(2)</strong> Between 6am &amp; 7am <strong>(3)</strong> Between 7am &amp; 8am <strong>(4)</strong> After 8am <strong>(5)</strong></span></td>
-            <td style="text-align:center"><input class="input-mini" type="text" name="bla" /></td>
-            <td style="text-align:center"><input class="input-mini" type="text" name="bla" /></td>
-          </tr>
+          {% endfor %}
+          {% endfor %}
         </tbody>
       </table>
     </div>
@@ -93,14 +95,16 @@
 
   <div class="row">
     <div class="offset8 span2">
-      <button class="btn btn-info btn-large btn-block">Save</button>
+      <button type="submit" class="btn btn-info btn-large btn-block">Save</button>
     </div>
     <div class="span2">
       <button class="btn btn-large btn-block">Cancel</button>
     </div>
   </div>
+  </form>
 
   <div class="row">
     <p>&nbsp;</p>
   </div>
+  {% endwith %}
 {% endblock %}

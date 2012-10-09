@@ -1,8 +1,10 @@
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
+from django.core.urlresolvers import reverse
+from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
-from django.views.generic import TemplateView, ListView, FormView
-from .forms import ContactForm
+from django.views.generic import TemplateView, ListView, FormView, UpdateView
+from .forms import ContactForm, generate_submission_form
 from .models import *
 
 COMPLETION_STATUS = (
@@ -33,22 +35,40 @@ class SubmissionListView(ListView):
     page_title = ''
 
     def get_queryset(self):
-        self.page_title = Form.objects.get(pk=self.kwargs['form']).name
-        return Submission.objects.filter(form__pk=self.kwargs['form']).exclude(observer=None)
+        self.page_title = self.form.name
+        return Submission.objects.filter(form=self.form).exclude(observer=None)
 
     def get_context_data(self, **kwargs):
         context = super(SubmissionListView, self).get_context_data(**kwargs)
-        context['form'] = Form.objects.get(pk=self.kwargs['form'])
+        context['form'] = self.form
         context['page_title'] = self.page_title
         return context
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
+        self.form = get_object_or_404(Form, pk=kwargs['form'])
         return super(SubmissionListView, self).dispatch(*args, **kwargs)
 
 
-class SubmissionEditView(FormView):
-    pass
+class SubmissionEditView(UpdateView):
+    template_name = 'core/submission_edit.html'
+
+    def get_object(self, queryset=None):
+        return self.submission.master()
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        self.submission = get_object_or_404(Submission, pk=kwargs['pk'])
+        self.form_class = generate_submission_form(self.submission.form)
+        return super(SubmissionEditView, self).dispatch(*args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(SubmissionEditView, self).get_context_data(**kwargs)
+        context['submission'] = self.submission
+        return context
+
+    def get_success_url(self):
+        return reverse('submissions', args=[self.submission.form.pk])
 
 
 class ContactListView(ListView):
