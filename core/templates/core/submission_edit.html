@@ -2,18 +2,6 @@
 {% load apollo %}
 {% block content %}
   {% with submission.siblings as siblings %}
-  <style type="text/css">
-    .options {
-      display: block;
-      margin-top: 0.5em;
-    }
-  </style>
-  <div class="row">
-    <div class="span12">
-      <h2>Submission Edit</h2>
-    </div>
-  </div>
-
   <form action="" method="post">
     {% csrf_token %}
   <div class="row">
