@@ -212,6 +212,7 @@ class Form(models.Model):
 
 class FormGroup(models.Model):
     name = models.CharField(max_length=32, blank=True)
+    abbr = models.CharField(max_length=10, blank=True, null=True, help_text="Abbreviated version of the group name")
     form = models.ForeignKey(Form, related_name='groups')
 
     class Meta:
