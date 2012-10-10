@@ -91,5 +91,9 @@ class ContactEditView(UpdateView):
     form_class = ContactForm
     success_url = '/contacts/'
 
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(ContactEditView, self).dispatch(*args, **kwargs)
+
     def get_object(self, queryset=None):
         return get_object_or_404(Observer, pk=self.kwargs['pk'])

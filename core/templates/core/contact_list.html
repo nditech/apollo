@@ -24,7 +24,7 @@
           <td>{{ contact.role }}</td>
           <td>{{ contact.phone }}</td>
           <td>{{ contact.location }}</td>
-          <td>{{ contact.partner }}</td>
+          <td>{{ contact.partner|default_if_none: "" }}</td>
           <td><a href="{% url contact_edit contact.pk %}">Edit</a></td>
         </tr>
         {% endfor %}
@@ -32,45 +32,9 @@
     </table>
   </div>
 </div>
-{% if is_paginated %}
 <div class="row">
   <div class="span12">
-    <div class="pagination pagination-centered">
-      <ul>
-        {% if page_obj.has_previous %}
-        <li>
-          <a href="#">1</a>
-        </li>
-        {% endif %}
-        <li>
-          <a href="#">2</a>
-        </li>
-        <li>
-          <a href="#">3</a>
-        </li>
-        <li>
-          <a href="#">4</a>
-        </li>
-        <li>
-          <a href="#">5</a>
-        </li>
-        <li>
-          <a href="#">6</a>
-        </li>
-        <li>
-          <a href="#">7</a>
-        </li>
-        <li>
-          <a href="#">8</a>
-        </li>
-        {% if page_obj.has_next %}
-        <li>
-          <a href="#">9</a>
-        </li>
-        {% endif %}
-      </ul>
-    </div>
+    {% bootstrap_paginate page_obj range=10 %}
   </div>
 </div>
-{% endif %}
 {% endblock %}
