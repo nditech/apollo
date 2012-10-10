@@ -7,6 +7,7 @@ from mptt.admin import MPTTModelAdmin
 from models import *
 
 admin.site.register(LocationType, MPTTModelAdmin)
+admin.site.register(Location)
 admin.site.register(Observer)
 admin.site.register(ObserverRole)
 admin.site.register(Partner)

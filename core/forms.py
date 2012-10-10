@@ -65,5 +65,5 @@ def generate_submission_form(form):
 class ContactForm(forms.ModelForm):
     class Meta:
         model = Observer
-        fields = ('observer_id', 'name', 'role', 'location', 'gender',
-            'partner',)
+        fields = ('observer_id', 'name', 'gender', 'role', 'supervisor',
+            'location', 'partner',)
