@@ -391,8 +391,8 @@ def sync_submissions(sender, **kwargs):
     if instance.observer is None:
         return True
 
-    siblings = list(instance.siblings())
-    master = instance.master()
+    siblings = list(instance.siblings)
+    master = instance.master
 
     # if no siblings exist, copy to master and quit
     if not siblings:
