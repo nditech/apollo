@@ -21,7 +21,7 @@ urlpatterns = patterns('',
     url(r'^api/', include(v2_api.urls)),
     url(r'^submissions/(?P<form>\d+)/?', SubmissionListView.as_view(), name='submissions_list'),
     url(r'^submission/(?P<pk>\d+)/?', SubmissionEditView.as_view(), name='submission_edit'),
-    url(r'^contacts/?', ContactListView.as_view(), name='contacts'),
+    url(r'^contacts/?', ContactListView.as_view(), name='contacts_list'),
     url(r'^contact/(?P<pk>\d+)/?', ContactEditView.as_view(), name='contact_edit'),
     url(r'^tpl/(?P<template_name>.+)/?', TemplatePreview.as_view()),
 )
