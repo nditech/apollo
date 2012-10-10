@@ -109,15 +109,17 @@ class Observer(models.Model):
         return getattr(self, 'name', "")
 
 
-class ObserverDataManager(models.Model):
-    '''Storage for observer data. Should be a singleton'''
-    pass
+class AbstractDataField(models.Model):
+    class Meta:
+        abstract = True
 
 
-class ObserverDataField(models.Model):
-    data_manager = models.ForeignKey(ObserverDataManager, related_name='fields')
+class ObserverDataField(AbstractDataField):
     name = models.CharField(max_length=32)  # will allow name to double as key
     description = models.CharField(max_length=255)
+
+    def __unicode__(self):
+        return self.name
 
 
 class Form(models.Model):
