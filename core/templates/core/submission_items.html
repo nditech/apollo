@@ -1,4 +1,4 @@
-{% load apollo %}
+{% load apollo %}{% load static %}
 {% for submission in submissions %}
 <tr>
     <td>{{ submission.observer.observer_id }}</td>
@@ -8,8 +8,13 @@
     <td>{{ submission.observer.supervisor.name }}</td>
     <td>{{ submission.observer.name }}</td>
     {% for group in form_groups %}
-    <td>{% is_complete submission group %}</td>
+    <td style="text-align:center">
+        {% if submission|is_complete:group %}<img src="{% static "img/tick.png" %}" title="complete" alt="complete" />
+        {% elif submission|is_partial:group %}<img src="{% static "img/caution.png" %}" title="partial" alt="partial" />
+        {% elif submission|is_missing:group %}<img src="{% static "img/red_dot.png" %}" title="missing" alt="missing" />
+        {% endif %}
+    </td>
     {% endfor %}
-    <td><a href="{% url submission_edit submission.pk %}">Edit</a></td>
+    <td style="text-align:center"><a href="{% url submission_edit submission.pk %}">Edit</a></td>
 </tr>
 {% endfor %}

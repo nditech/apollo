@@ -35,16 +35,16 @@ def get_location_for_type(submission, location_type):
     return submission.get_location_for_type(location_type) or ''
 
 
-@register.simple_tag
+@register.filter
 def is_complete(submission, group):
     return submission.is_complete(group)
 
 
-@register.simple_tag
+@register.filter
 def is_missing(submission, group):
     return submission.is_missing(group)
 
 
-@register.simple_tag
+@register.filter
 def is_partial(submission, group):
     return submission.is_partial(group)
