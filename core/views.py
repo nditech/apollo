@@ -15,9 +15,16 @@ COMPLETION_STATUS = (
 
 
 class TemplatePreview(TemplateView):
+    page_title = ''
+
     def dispatch(self, request, *args, **kwargs):
         self.template_name = kwargs['template_name']
         return super(TemplateView, self).dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(TemplatePreview, self).get_context_data(**kwargs)
+        context['page_title'] = self.page_title
+        return context
 
 
 class DashboardView(TemplateView):
@@ -25,6 +32,7 @@ class DashboardView(TemplateView):
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
+        self.page_title = 'Dashboard'
         return super(DashboardView, self).dispatch(*args, **kwargs)
 
 
@@ -52,6 +60,7 @@ class SubmissionListView(ListView):
 
 class SubmissionEditView(UpdateView):
     template_name = 'core/submission_edit.html'
+    page_title = 'Submission Edit'
 
     def get_object(self, queryset=None):
         return self.submission.master
@@ -65,6 +74,7 @@ class SubmissionEditView(UpdateView):
     def get_context_data(self, **kwargs):
         context = super(SubmissionEditView, self).get_context_data(**kwargs)
         context['submission'] = self.submission
+        context['page_title'] = self.page_title
         return context
 
     def get_success_url(self):
@@ -76,9 +86,12 @@ class ContactListView(ListView):
     template_name = 'core/contact_list.html'
     model = Observer
     paginate_by = settings.PAGE_SIZE
+    page_title = 'Contacts List'
 
     def get_context_data(self, **kwargs):
-        return super(ContactListView, self).get_context_data(**kwargs)
+        context = super(ContactListView, self).get_context_data(**kwargs)
+        context['page_title'] = self.page_title
+        return context
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
@@ -90,6 +103,7 @@ class ContactEditView(UpdateView):
     model = Observer
     form_class = ContactForm
     success_url = '/contacts/'
+    page_title = 'Contact Edit'
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
@@ -97,3 +111,8 @@ class ContactEditView(UpdateView):
 
     def get_object(self, queryset=None):
         return get_object_or_404(Observer, pk=self.kwargs['pk'])
+
+    def get_context_data(self, **kwargs):
+        context = super(ContactEditView, self).get_context_data(**kwargs)
+        context['page_title'] = self.page_title
+        return context

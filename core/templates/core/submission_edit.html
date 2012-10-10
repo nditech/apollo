@@ -1,7 +1,5 @@
 {% extends "core/layout.html" %}
 {% load apollo %}
-{% block title %}Submission Edit{% endblock %}
-
 {% block content %}
   {% with submission.siblings as siblings %}
   <style type="text/css">
@@ -80,9 +78,9 @@
               </span>
               {% endif %}
             </td>
-            <td style="text-align:center"><input class="input-mini uneditable-input" value="{{ submission.data|keyvalue:field.name }}" type="text" /></td>
+            <td style="text-align:center"><input class="input-mini uneditable-input" disabled="disabled" value="{{ submission.data|keyvalue:field.name }}" type="text" /></td>
             {% for sibling in siblings %}
-            <td style="text-align:center"><input class="input-mini uneditable-input" value="{{ sibling.data|keyvalue:field.name }}" type="text" /></td>
+            <td style="text-align:center"><input class="input-mini uneditable-input" disabled="disabled"  value="{{ sibling.data|keyvalue:field.name }}" type="text" /></td>
             {% endfor %}
             <td style="text-align:center">{{ field }}</td>
           </tr>
@@ -98,7 +96,7 @@
       <button type="submit" class="btn btn-info btn-large btn-block">Save</button>
     </div>
     <div class="span2">
-      <button class="btn btn-large btn-block">Cancel</button>
+      <a class="btn btn-large btn-block" href="{% url submissions_list object.form.pk %}">Cancel</a>
     </div>
   </div>
   </form>
