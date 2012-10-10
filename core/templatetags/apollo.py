@@ -15,6 +15,12 @@ def forms_menu():
     return {'forms': forms}
 
 
+@register.inclusion_tag('core/submission_filter.html')
+def submission_filter(form):
+    form_groups = FormGroup.objects.filter(form=form) if isinstance(form, Form) else FormGroup.objects.filter(form__pk=form)
+    return {'form_groups': form_groups}
+
+
 @register.inclusion_tag('core/submission_header.html')
 def submission_header(form):
     location_types = LocationType.objects.filter(on_display=True)

@@ -2,34 +2,7 @@
 {% block content %}
 <div class="row">
   <div class="span12">
-    <div class="well" style="padding-bottom:0">
-      <form action="" method="post" id="filter">
-        {% csrf_token %}
-      <div class="controls controls-row">
-        <input class="span2" type="text" name="monitor" placeholder="Monitor ID">
-        <div class="input-append date span2 datesel" id="dp3" data-date="" data-date-format="dd-mm-yyyy">
-          <input class="span2" name="date" placeholder="Date" style="width:129px" size="16" type="text" value="" readonly="readonly">
-          <span class="add-on"><i class="icon-calendar"></i></span>
-        </div>
-        <input class="span4" type="text" name="location" class="input-xlarge" placeholder="Location">
-      </div>
-      <div class="controls controls-row">
-        <select class="span2" name="setup">
-          <option>Setup Status</option>
-          <option>Setup Partial</option>
-          <option>Setup Missing</option>
-          <option>Setup Complete</option>
-        </select>
-        <select class="span2" name="voting">
-          <option>Voting Status</option>
-          <option>Voting Partial</option>
-          <option>Voting Missing</option>
-          <option>Voting Complete</option>
-        </select>
-        <a type="submit" class="span1 btn btn-warning" href="javascript:document.getElementById('filter').submit();"><i class="icon-search icon-white"></i> Search</a>
-      </div>
-      </form>
-    </div>
+    {% submission_filter form %}
   </div>
 </div>
 
