@@ -19,10 +19,10 @@
       <tbody>
         {% for contact in contacts %}
         <tr>
-          <td>{{ contact.observer_id }}</td>
+          <td>{{ contact.observer_id|default_if_none: "" }}</td>
           <td>{{ contact.name }}</td>
           <td>{{ contact.role }}</td>
-          <td>{{ contact.phone }}</td>
+          <td>{{ contact.phone|default_if_none: "" }}</td>
           <td>{{ contact.location }}</td>
           <td>{{ contact.partner|default_if_none: "" }}</td>
           <td><a href="{% url contact_edit contact.pk %}">Edit</a></td>
