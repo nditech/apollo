@@ -2,7 +2,39 @@
 {% block content %}
 <div class="row">
   <div class="span12">
-    <table class="table table-striped well">
+    <div class="well" style="padding-bottom:0">
+      <form>
+      <div class="controls controls-row">
+        <input class="span2" type="text" placeholder="Monitor ID">
+        <input class="span2" type="text" placeholder="Date">
+        <input class="span5" type="text" class="input-xlarge" placeholder="Location">
+      </div>
+      <div class="controls controls-row">
+        <select class="span2">
+          <option>Setup Status</option>
+          <option>Setup Partial</option>
+          <option>Setup Missing</option>
+          <option>Setup Complete</option>
+        </select>
+        <select class="span2">
+          <option>Voting Status</option>
+          <option>Voting Partial</option>
+          <option>Voting Missing</option>
+          <option>Voting Complete</option>
+        </select>
+        <a type="submit" class="span1 btn btn-warning"><i class="icon-search icon-white"></i> Search</a>
+      </div>
+      <div class="controls controls-row">
+        
+      </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="span12">
+    <table class="table table-striped table-bordered table-hover">
       <thead >
         {% submission_header form %}
       </thead>
@@ -13,10 +45,12 @@
   </div>
 </div>
 
+{% if is_paginated %}
 <div class="row">
   <div class="span12">
   {% bootstrap_paginate page_obj range=10 %}
   </div>
 </div>
+{% endif %}
 
 {% endblock %}

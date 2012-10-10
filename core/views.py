@@ -35,6 +35,11 @@ class DashboardView(TemplateView):
         self.page_title = 'Dashboard'
         return super(DashboardView, self).dispatch(*args, **kwargs)
 
+    def get_context_data(self, **kwargs):
+        context = super(DashboardView, self).get_context_data(**kwargs)
+        context['page_title'] = self.page_title
+        return context
+
 
 class SubmissionListView(ListView):
     context_object_name = 'submissions'

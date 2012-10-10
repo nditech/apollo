@@ -2,6 +2,7 @@
 {% for submission in submissions %}
 <tr>
     <td>{{ submission.observer.observer_id }}</td>
+    <td>{{ submission.date|date:"D j-M" }}</td>
     {% for location_type in location_types %}
     <td>{% get_location_for_type submission location_type %}</td>
     {% endfor %}
@@ -17,4 +18,12 @@
     {% endfor %}
     <td style="text-align:center"><a href="{% url submission_edit submission.pk %}">Edit</a></td>
 </tr>
+{% empty %}
+{% with location_types|length|add:"5" as lt_count %}
+{% with form_groups|length|add:lt_count as colspan %}
+<tr class="warning">
+    <td style="text-align:center" colspan="{{ colspan }}">No Data Available</td>
+</tr>
+{% endwith %}
+{% endwith %}
 {% endfor %}
