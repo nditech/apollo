@@ -80,9 +80,9 @@
               </span>
               {% endif %}
             </td>
-            <td style="text-align:center"><input class="input-mini uneditable-input" value="{{ submission.data|keyvalue:field.name }}" type="text" /></td>
+            <td style="text-align:center"><input class="input-mini uneditable-input" disabled="disabled" value="{{ submission.data|keyvalue:field.name }}" type="text" /></td>
             {% for sibling in siblings %}
-            <td style="text-align:center"><input class="input-mini uneditable-input" value="{{ sibling.data|keyvalue:field.name }}" type="text" /></td>
+            <td style="text-align:center"><input class="input-mini uneditable-input" disabled="disabled"  value="{{ sibling.data|keyvalue:field.name }}" type="text" /></td>
             {% endfor %}
             <td style="text-align:center">{{ field }}</td>
           </tr>
