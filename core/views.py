@@ -62,6 +62,9 @@ class SubmissionListView(ListView):
         self.form = get_object_or_404(Form, pk=kwargs['form'])
         return super(SubmissionListView, self).dispatch(*args, **kwargs)
 
+    def post(self, request, *args, **kwargs):
+        return self.get(request, *args, **kwargs)
+
 
 class SubmissionEditView(UpdateView):
     template_name = 'core/submission_edit.html'
