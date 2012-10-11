@@ -41,19 +41,15 @@ class ContactModelForm(forms.ModelForm):
         # sort out 'regular' fields
         super(forms.ModelForm, self).__init__(*args, **kwargs)
 
-        if 'instance' in kwargs:
-            self.instance = kwargs.pop('instance')
-            kwargs['initial'].update(self.instance.data)
+        # add phone numbers
+        if self.instance.contact:
+            phone_set = set([connection.identity for connection in self.instance.contact.connection_set.all()])
 
-            # add phone numbers
-            if self.instance.contact:
-                phone_set = set([connection.identity for connection in self.instance.contact.connection_set.all()])
-
-                for index, number in enumerate(phone_set):
-                    label = 'Phone #%d' % (index + 1)
-                    name = 'conn_%d' % index
-                    self.fields[name] = forms.CharField(label=label)
-                    kwargs['initial'][name] = number
+            for index, number in enumerate(phone_set):
+                label = 'Phone #%d' % (index + 1)
+                name = 'conn_%d' % index
+                self.fields[name] = forms.CharField(label=label, initial=number)
+                kwargs['initial'][name] = number
 
         # now for the hstore field
         for data_field in ObserverDataField.objects.all():
@@ -132,10 +128,3 @@ def generate_submission_form(form):
     fields['Meta'] = metaclass
 
     return type('SubmissionForm', (SubmissionModelForm,), fields)
-
-
-class ContactForm(forms.ModelForm):
-    class Meta:
-        model = Observer
-        fields = ('observer_id', 'name', 'gender', 'role', 'supervisor',
-            'location', 'partner',)
