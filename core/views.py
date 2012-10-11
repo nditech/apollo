@@ -4,7 +4,7 @@ from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView, ListView, UpdateView
-from .forms import ContactForm, ContactModelForm, generate_submission_form
+from .forms import ContactModelForm, generate_submission_form
 from .models import *
 
 COMPLETION_STATUS = (
