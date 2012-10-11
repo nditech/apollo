@@ -1,0 +1,77 @@
+{% extends "core/layout.html" %}
+{% block content %}
+<script type="text/javascript">
+$(function(){
+	$('#setup').hide();
+	$('#voting').hide();
+	$('#closing').hide();
+	$('#counting').hide();
+});
+</script>
+<div class="row">
+  <div class="span12">
+    <form class="form-horizontal well" action="" method="" accept-charset="utf-8">
+      <select class="">
+          <option disabled selected style='display:none;'>- - Province - -</option>
+          <option>All</option>
+        </select>
+        <select class="">
+          <option disabled selected style='display:none;'>- - Select Province - -</option>
+          <option>All</option>
+        </select>   
+        <select class="">
+          <option disabled selected style='display:none;'>- - Sample - -</option>
+          <option>All</option>
+        </select class="">                 
+        <button class="btn btn-danger" type="submit">Filter</button>
+        <button class="btn btn-info" type="submit">Reset</button>
+      </select>
+    </form>
+  </div>
+</div>
+<div class="row-fluid">
+  <div class="span12">
+    <div id="">
+      <table class="">
+	    <thead>
+	        <tr>
+	            <th>AA</th>
+	            <th>BA</th>
+	            <th>CA</th>
+	            <th>CB</th>
+	        </tr>
+	    </thead>
+	    <tbody>
+	        <tr>
+	            <td><strong>N </strong>500</td>
+	            <td><strong>N </strong>1390</td>
+	            <td><strong>N </strong>349</td>
+	            <td><strong>N </strong>568</td>
+	        </tr>
+	        <tr>
+	            <td><strong>n </strong>250</td>
+	            <td><strong>n </strong>377</td>
+	            <td><strong>n </strong>456</td>
+	            <td><strong>n </strong>762</td>
+	        </tr>
+	        <tr style="width:60em;">
+	            <td id="setup"></td>
+	            <td id="voting"></td>
+	            <td id="closing"></td>
+	            <td id="counting"></td>
+	            <td id="aa" style="width:15em;"></td>
+	            <td id="ba" style="width:15em;"></td>
+	            <td id="ca" style="width:15em;"></td>
+	            <td id="da" style="width:15em;"></td>
+	        </tr>
+	        <tr>
+	            <td>At what time did people start voting at your polling stream?</td>
+	            <td>Was the polling stream set up so that voters could mark their ballot in secret?</td>
+	            <td>Did your Polling Stream have Presidential Ballot Papers</td>
+	            <td>How many polling officials were present at the polling stream?</td>
+	        </tr>
+	    </tbody>
+	</table>​
+    </div>
+  </div>
+{% endblock %}
