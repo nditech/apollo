@@ -31,6 +31,78 @@ class SubmissionModelForm(BetterForm):
         return self.instance.save()
 
 
+class ContactModelForm(forms.ModelForm):
+    class Meta:
+        model = Observer
+        fields = ('observer_id', 'name', 'gender', 'role', 'supervisor',
+            'location', 'partner',)
+
+    def __init__(self, *args, **kwargs):
+        # sort out 'regular' fields
+        super(forms.ModelForm, self).__init__(*args, **kwargs)
+
+        # now for the hstore field
+        for data_field in ObserverDataField.objects.all():
+            key = data_field.name
+            value = self.instance.data.get(key, None) if self.instance.data else None
+            self.fields[key] = forms.CharField(label=data_field.description,
+                initial=value, required=False)
+
+        if 'instance' in kwargs:
+            self.instance = kwargs.pop('instance')
+            kwargs['initial'].update(self.instance.data)
+
+            # add phone numbers
+            if self.instance.contact:
+                phone_set = set([connection.identity for connection in self.instance.contact.connection_set.all()])
+
+                for index, number in enumerate(phone_set):
+                    label = 'Phone #%d' % (index + 1)
+                    name = 'conn_%d' % index
+                    self.fields[name] = forms.CharField(label=label)
+                    kwargs['initial'][name] = number
+
+    def save(self):
+        clean_data = self.cleaned_data
+        data_keys = [field.name for field in ObserverDataField.objects.all()]
+
+        # first off, set data keys
+        self.instance.data = {}
+        for key in data_keys:
+            # remove data key after using it
+            value = clean_data.pop(key)
+            if value:
+                self.instance.data[key] = value
+
+        # set phone numbers
+        backends = Backend.objects.all()
+
+        if not self.instance.contact:
+            self.instance.contact = Contact.objects.create()
+
+        # clean any attached numbers (no, this doesn't delete any Connection,
+        # it just unlinks them from the Contact)
+        self.instance.contact.connection_set.clear()
+
+        connection_keys = filter(lambda k: k.startswith('conn'),
+            [key for key in clean_data.keys()])
+
+        for key in connection_keys:
+            identity = clean_data.pop(key)
+            for backend in backends:
+                connection, created = Connection.objects.get_or_create(identity=identity,
+                    backend=backend)
+
+                self.instance.contact.connection_set.add(connection)
+
+        for key in clean_data:
+            setattr(self.instance, key, clean_data[key])
+
+        self.instance.save()
+
+        return self.instance
+
+
 # please see https://bitbucket.org/carljm/django-form-utils/overview for
 # info on using inside a Django template
 def generate_submission_form(form):

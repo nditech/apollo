@@ -4,7 +4,7 @@ from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView, ListView, UpdateView
-from .forms import ContactForm, generate_submission_form
+from .forms import ContactForm, ContactModelForm, generate_submission_form
 from .models import *
 
 COMPLETION_STATUS = (
@@ -109,7 +109,7 @@ class ContactListView(ListView):
 class ContactEditView(UpdateView):
     template_name = 'core/contact_edit.html'
     model = Observer
-    form_class = ContactForm
+    form_class = ContactModelForm
     success_url = '/contacts/'
     page_title = 'Contact Edit'
 
