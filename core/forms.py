@@ -41,13 +41,6 @@ class ContactModelForm(forms.ModelForm):
         # sort out 'regular' fields
         super(forms.ModelForm, self).__init__(*args, **kwargs)
 
-        # now for the hstore field
-        for data_field in ObserverDataField.objects.all():
-            key = data_field.name
-            value = self.instance.data.get(key, None) if self.instance.data else None
-            self.fields[key] = forms.CharField(label=data_field.description,
-                initial=value, required=False)
-
         if 'instance' in kwargs:
             self.instance = kwargs.pop('instance')
             kwargs['initial'].update(self.instance.data)
@@ -61,6 +54,13 @@ class ContactModelForm(forms.ModelForm):
                     name = 'conn_%d' % index
                     self.fields[name] = forms.CharField(label=label)
                     kwargs['initial'][name] = number
+
+        # now for the hstore field
+        for data_field in ObserverDataField.objects.all():
+            key = data_field.name
+            value = self.instance.data.get(key, None) if self.instance.data else None
+            self.fields[key] = forms.CharField(label=data_field.description,
+                initial=value, required=False)
 
     def save(self):
         clean_data = self.cleaned_data
