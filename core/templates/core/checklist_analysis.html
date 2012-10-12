@@ -1,12 +1,7 @@
 {% extends "core/layout.html" %}
 {% block content %}
 <script type="text/javascript">
-$(function(){
-	$('#setup').hide();
-	$('#voting').hide();
-	$('#closing').hide();
-	$('#counting').hide();
-});
+
 </script>
 <div class="row">
   <div class="span12">
@@ -55,20 +50,160 @@ $(function(){
 	            <td><strong>n </strong>762</td>
 	        </tr>
 	        <tr style="width:60em;">
-	            <td id="setup"></td>
-	            <td id="voting"></td>
-	            <td id="closing"></td>
-	            <td id="counting"></td>
-	            <td id="aa" style="width:15em;"></td>
-	            <td id="ba" style="width:15em;"></td>
-	            <td id="ca" style="width:15em;"></td>
-	            <td id="da" style="width:15em;"></td>
+	            <td id="aa">
+	            	<script type="text/javascript+protovis">
+				        width = 250,
+				        height = 200,
+				        offset = 10,
+				        r = width/2 - offset;
+				        data = [1000, 800];
+				        colors = ["#39e639","#ff0d00"];
+				        labels = ['Yes', 'No'];
+
+				        var pie = new pv.Panel().width(width).height(height);
+				            pie.add(pv.Wedge)
+				            .data(pv.normalize(data))
+				            .outerRadius(70)
+				            .angle(function(d) d * 2 * Math.PI)
+				            .left(70)
+				            .top(70)
+				            .fillStyle(pv.colors(colors).by(function () { return this.index;}))
+				            .anchor("center")
+				            .add(pv.Label)
+				            .textAngle(0)
+				            .text(function(d){ return (d*100).toFixed(0) + "%"});
+				            
+				        //legends   
+				        pie.add(pv.Dot) 
+				            .data(labels) 
+				            .top(function() 70 + this.index * 18)
+				            .right(90) 
+				            .size(20) 
+				            .strokeStyle(null) 
+				            .fillStyle(pv.colors(colors)) 
+				            .anchor("right").add(pv.Label)
+				            .textMargin(8);
+				            
+				        pie.render();
+				    </script>
+	            </td>
+	            <td id="ba">
+	            	<script type="text/javascript+protovis">
+				        width = 250,
+				        height = 200,
+				        offset = 10,
+				        r = width/2 - offset;
+				        data = [1000, 800];
+				        colors = ["#39e639","#ff0d00"];
+				        labels = ['Correct ballot', 'Wrong ballot'];
+
+				        var pie = new pv.Panel().width(width).height(height);
+				            pie.add(pv.Wedge)
+				            .data(pv.normalize(data))
+				            .outerRadius(70)
+				            .angle(function(d) d * 2 * Math.PI)
+				            .left(70)
+				            .top(70)
+				            .fillStyle(pv.colors(colors).by(function () { return this.index;}))
+				            .anchor("center")
+				            .add(pv.Label)
+				            .textAngle(0)
+				            .text(function(d){ return (d*100).toFixed(0) + "%"});
+				            
+				        //legends   
+				        pie.add(pv.Dot) 
+				            .data(labels) 
+				            .top(function() 70 + this.index * 18)
+				            .right(90) 
+				            .size(20) 
+				            .strokeStyle(null) 
+				            .fillStyle(pv.colors(colors)) 
+				            .anchor("right").add(pv.Label)
+				            .textMargin(8);
+				            
+				        pie.render();
+				    </script>
+	            </td>
+	            <td id="ca">
+	            	<script type="text/javascript+protovis">
+				        width = 250,
+				        height = 200,
+				        offset = 10,
+				        r = width/2 - offset;
+				        data = [1000, 800, 500, 3490];
+				        colors = ["#fff800","#ff0d00","#39e639","#ffa500", "#deda65"];
+				        labels = ["None", "Few", "Some", "Many"];
+
+				        var pie = new pv.Panel().width(width).height(height);
+				            pie.add(pv.Wedge)
+				            .data(pv.normalize(data))
+				            .outerRadius(70)
+				            .angle(function(d) d * 2 * Math.PI)
+				            .left(70)
+				            .top(70)
+				            .fillStyle(pv.colors(colors).by(function () { return this.index;}))
+				            .anchor("center")
+				            .add(pv.Label)
+				            .textAngle(0)
+				            .text(function(d){ return (d*100).toFixed(0) + "%"});
+				            
+				        //legends   
+				        pie.add(pv.Dot) 
+				            .data(labels) 
+				            .top(function() 70 + this.index * 18)
+				            .right(90) 
+				            .size(20) 
+				            .strokeStyle(null) 
+				            .fillStyle(pv.colors(colors)) 
+				            .anchor("right").add(pv.Label)
+				            .textMargin(8);
+				            
+				        pie.render();
+				    </script>
+	            </td>
+	            <td id="da">
+	            	<script type="text/javascript+protovis">
+				        width = 250,
+				        height = 200,
+				        offset = 10,
+				        r = width/2 - offset;
+				        data = [100, 700, 1600, 400];
+				        colors = ["#fff800","#ff0d00","#39e639","#ffa500", "#deda65"];
+				        labels = ["3 Boxes Present", "2 Boxes Present", "1 Box Present", "No Box Present"];
+
+				        var pie = new pv.Panel().width(width).height(height);
+				            pie.add(pv.Wedge)
+				            .data(pv.normalize(data))
+				            .outerRadius(70)
+				            .angle(function(d) d * 2 * Math.PI)
+				            .left(70)
+				            .top(70)
+				            .fillStyle(pv.colors(colors).by(function () { return this.index;}))
+				            .anchor("center")
+				            .add(pv.Label)
+				            .textAngle(0)
+				            .text(function(d){ return (d*100).toFixed(0) + "%"});
+				            
+				        //legends   
+				        pie.add(pv.Dot) 
+				            .data(labels) 
+				            .top(function() 70 + this.index * 18)
+				            .right(90) 
+				            .size(20) 
+				            .strokeStyle(null) 
+				            .fillStyle(pv.colors(colors)) 
+				            .anchor("right").add(pv.Label)
+				            .textMargin(8);
+				            
+				        pie.render();
+				    </script>
+	            </td>
 	        </tr>
 	        <tr>
-	            <td>At what time did people start voting at your polling stream?</td>
-	            <td>Was the polling stream set up so that voters could mark their ballot in secret?</td>
-	            <td>Did your Polling Stream have Presidential Ballot Papers</td>
-	            <td>How many polling officials were present at the polling stream?</td>
+	            <td style="width:20em;">At what time did people start voting at your polling stream?</td>
+	            <td style="width:20em;">Was the polling stream set up so that voters could mark their ballot in secret?</td>
+	            <td style="width:20em;">Did your Polling Stream have Presidential Ballot Papers</td>
+	            <td style="width:20em;">Did your Polling Stream have Three Ballot Boxes (Presidential, Parliamentary/National Assembly and Local Government)?</td>
 	        </tr>
 	    </tbody>
 	</table>​
