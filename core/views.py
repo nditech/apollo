@@ -41,6 +41,20 @@ class DashboardView(TemplateView):
         return context
 
 
+class SubmissionAnalysisView(TemplateView):
+    template_name = 'core/checklist_analysis.html'
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        self.page_title = 'Elections Checklist Analysis'
+        return super(SubmissionAnalysisView, self).dispatch(*args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(SubmissionAnalysisView, self).get_context_data(**kwargs)
+        context['page_title'] = self.page_title
+        return context
+
+
 class SubmissionListView(ListView):
     context_object_name = 'submissions'
     template_name = 'core/submission_list.html'
