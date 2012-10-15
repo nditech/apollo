@@ -13,6 +13,8 @@ COMPLETION_STATUS = (
     (2, 'Empty'),
 )
 
+export_formats = ['csv', 'xls', 'xlsx', 'ods']
+
 
 class TemplatePreview(TemplateView):
     page_title = ''
@@ -156,5 +158,6 @@ def export(queryset, *fields, **kwargs):
 
     # get the format from the keyword args
     format = kwargs.pop('format', 'xls')
+    format = format if format in export_formats else 'xls'
 
     return StringIO.StringIO(getattr(dataset, format))
