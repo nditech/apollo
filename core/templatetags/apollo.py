@@ -23,17 +23,22 @@ def submission_filter(form):
 
 @register.inclusion_tag('core/submission_header.html')
 def submission_header(form):
+    form = form if isinstance(form, Form) else Form.objects.get(pk=form)
     location_types = LocationType.objects.filter(on_display=True)
-    form_groups = FormGroup.objects.filter(form=form) if isinstance(form, Form) else FormGroup.objects.filter(form__pk=form)
-    return {'location_types': location_types, 'form_groups': form_groups}
+    form_groups = FormGroup.objects.filter(form=form)
+    form_fields = FormField.objects.filter(group__form=form)
+    return {'location_types': location_types, 'form_groups': form_groups,
+        'form': form, 'form_fields': form_fields}
 
 
 @register.inclusion_tag('core/submission_items.html')
 def submission_items(submissions, form):
+    form = form if isinstance(form, Form) else Form.objects.get(pk=form)
     location_types = LocationType.objects.filter(on_display=True)
-    form_groups = FormGroup.objects.filter(form=form) if isinstance(form, Form) else FormGroup.objects.filter(form__pk=form)
-
-    return {'submissions': submissions, 'location_types': location_types, 'form_groups': form_groups}
+    form_groups = FormGroup.objects.filter(form=form)
+    form_fields = FormField.objects.filter(group__form=form)
+    return {'submissions': submissions, 'location_types': location_types,
+        'form_groups': form_groups, 'form': form, 'form_fields': form_fields}
 
 
 @register.simple_tag

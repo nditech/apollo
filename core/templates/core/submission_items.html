@@ -8,6 +8,7 @@
     {% endfor %}
     <td>{{ submission.observer.supervisor.name }}</td>
     <td>{{ submission.observer.name }}</td>
+    {% if form.type == 'CHECKLIST' %}
     {% for group in form_groups %}
     <td style="text-align:center">
         {% if submission|is_complete:group %}<img src="{% static "img/tick.png" %}" title="complete" alt="complete" />
@@ -16,9 +17,15 @@
         {% endif %}
     </td>
     {% endfor %}
+    {% else %}
+    {% for field in form_fields %}
+    <td style="text-align:center">{% if submission.data|keyvalue:field.tag %}<img src="{% static "img/red_dot.png" %}" title="missing" alt="missing" />{% else %}&nbsp;{% endif %}</td>
+    {% endfor %}
+    {% endif %}
     <td style="text-align:center"><a href="{% url submission_edit submission.pk %}">Edit</a></td>
 </tr>
 {% empty %}
+{% if form.type == 'CHECKLIST' %}
 {% with location_types|length|add:"5" as lt_count %}
 {% with form_groups|length|add:lt_count as colspan %}
 <tr class="warning">
@@ -26,4 +33,13 @@
 </tr>
 {% endwith %}
 {% endwith %}
+{% else %}
+{% with location_types|length|add:"5" as lt_count %}
+{% with form_fields|length|add:lt_count as colspan %}
+<tr class="warning">
+    <td style="text-align:center" colspan="{{ colspan }}">No Data Available</td>
+</tr>
+{% endwith %}
+{% endwith %}
+{% endif %}
 {% endfor %}

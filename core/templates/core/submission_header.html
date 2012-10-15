@@ -6,8 +6,14 @@
     {% endfor %}
     <th>Supervisor</th>
     <th>Monitor</th>
+    {% if form.type == 'CHECKLIST' %}
     {% for group in form_groups %}
     <th style="text-align:center">{% if group.abbr %}{{ group.abbr }}{% else %}{{ group.name }}{% endif %}</th>
     {% endfor %}
+    {% else %}
+    {% for field in form_fields %}
+    <th style="text-align:center">{{ field.tag }}</th>
+    {% endfor %}
+    {% endif %}
     <th style="text-align:center">Edit</th>
 </tr>

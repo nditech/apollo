@@ -318,7 +318,7 @@ class Submission(models.Model):
             try:
                 self._master = Submission.objects.exclude(pk=self.pk).get(location=self.location, observer=None)
             except Submission.DoesNotExist:
-                self._master = None
+                self._master = self
         return self._master
 
     def _get_completion(self, group):
@@ -396,6 +396,9 @@ def sync_submissions(sender, **kwargs):
 
     siblings = list(instance.siblings)
     master = instance.master
+
+    if master == instance:
+        return True
 
     # if no siblings exist, copy to master and quit
     if not siblings:

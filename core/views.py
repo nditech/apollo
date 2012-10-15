@@ -71,7 +71,7 @@ class SubmissionEditView(UpdateView):
     page_title = 'Submission Edit'
 
     def get_object(self, queryset=None):
-        return self.submission.master
+        return self.submission.master if self.submission.form.type == 'CHECKLIST' else self.submission
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
