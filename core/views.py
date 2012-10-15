@@ -138,3 +138,23 @@ class ContactEditView(UpdateView):
         context = super(ContactEditView, self).get_context_data(**kwargs)
         context['page_title'] = self.page_title
         return context
+
+
+def reformat_field_name(field_name):
+    return re.sub('_+', ' ', field_name).title()
+
+
+def export(queryset, *fields, **kwargs):
+    dataset = tablib.Dataset()
+
+    # no provision yet for HStore fields
+    dataset.headers = map(reformat_field_name, fields)
+
+    # add the values
+    for row in queryset.order_by('id').values_list(*fields):
+        dataset.append(row)
+
+    # get the format from the keyword args
+    format = kwargs.pop('format', 'xls')
+
+    return StringIO.StringIO(getattr(dataset, format))

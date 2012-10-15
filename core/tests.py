@@ -5,9 +5,11 @@ when you run "manage.py test".
 Replace this with more appropriate tests for your application.
 """
 
+from csv import DictReader
 from django.test import TestCase
 from .forms import generate_submission_form
 from .models import *
+from .views import export
 
 
 class CoreTest(TestCase):
@@ -103,3 +105,12 @@ class CoreTest(TestCase):
         '''Tests whether checking if a submission is complete, partial or empty works'''
         pass
 
+    def test_export_function(self):
+        '''Checks that the export function works correctly'''
+        exported_doc = export(FormField.objects.all(), 'name', 'tag', format='csv')
+
+        reader = DictReader(exported_doc)
+        row = reader.next()
+
+        self.assertEquals(row.get('Name', None), 'field1')
+        self.assertEquals(row.get('Tag', None), 'AA')
