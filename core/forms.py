@@ -15,16 +15,20 @@ class SubmissionModelForm(BetterForm):
         data = self.cleaned_data
         for key in data.keys():
             if data[key]:
-                data[key] = str(data[key])
+                # the forced casting to integer enables the conversion of boolean values
+                # as is the case for incidents that are returned as boolean and need to
+                # be converted to integer (and then string) before storage
+                data[key] = str(int(data[key]))
             else:
                 del data[key]
 
         # test for overriden values and indicate
-        for tag in frozenset(data.keys() + self.instance.data.keys()):
-            # the XOR operator is used to check for cases where they are
-            # not the same
-            if ((tag in data) ^ (tag in self.instance.data)) or (data[tag] != self.instance.data[tag]):
-                self.instance.overrides.update({tag: '1'})
+        if self.instance.form.type == 'CHECKLIST':
+            for tag in frozenset(data.keys() + self.instance.data.keys()):
+                # the XOR operator is used to check for cases where they are
+                # not the same
+                if ((tag in data) ^ (tag in self.instance.data)) or (data[tag] != self.instance.data[tag]):
+                    self.instance.overrides.update({tag: '1'})
 
         self.instance.data = data
 
@@ -118,9 +122,13 @@ def generate_submission_form(form):
                     help_text=field.description, required=False, label=field.tag,
                     widget=forms.TextInput(attrs={'class': 'input-mini'}))
             else:
-                fields[field.tag] = forms.IntegerField(help_text=field.description,
-                    max_value=field.upper_limit or 9999, min_value=field.lower_limit or 0,
-                    required=False, label=field.tag, widget=forms.TextInput(attrs={'class': 'input-mini'}))
+                if form.type == 'CHECKLIST':
+                    fields[field.tag] = forms.IntegerField(help_text=field.description,
+                        max_value=field.upper_limit or 9999, min_value=field.lower_limit or 0,
+                        required=False, label=field.tag, widget=forms.TextInput(attrs={'class': 'input-mini'}))
+                else:
+                    fields[field.tag] = forms.BooleanField(help_text=field.description,
+                        required=False, label=field.tag, widget=forms.CheckboxInput())
 
         groups.append(groupspec)
 

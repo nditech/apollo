@@ -21,6 +21,11 @@
     <!--[if lt IE 9]>
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
+    
+    <!-- abbr tag for IE 7 and below -->
+    <!--[if lte IE 7]>
+      <script type="text/javascript">document.createElement('abbr');</script>
+    <![endif]-->
 
     <!-- Le fav and touch icons -->
     <link rel="shortcut icon" href="{{ STATIC_URL }}ico/favicon.ico">
