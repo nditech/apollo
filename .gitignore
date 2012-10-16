@@ -11,3 +11,4 @@ fabfile.py
 src/
 *.log
 .env
+assets/
