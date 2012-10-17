@@ -160,7 +160,21 @@ def export(queryset, *args, **kwargs):
 
     `queryset` is the queryset to be exported, the fields to be exported
     are specified as a set of positional arguments, and other arguments
-    follow
+    follow.
+
+    This function requires `hstore` arguments specified as keyword
+    arguments, as so:
+
+    hstore={'data': {'position': 5, 'fields': ['AA', 'BB', 'CC']},
+        'overrides': {'position': 8, 'fields': ['AB', 'BA', 'CB']}
+    }
+
+    position is the index *BEFORE* which the hstore field is inserted
+    (please see list.insert() for details)
+
+    Also, a `format` keyword argument may be specified (defaulting to 'xls')
+    that specifies the format to which the spreadsheet should be exported.
+    Allowed values for the `format` argument are: 'ods', 'xls', 'xlsx', 'csv'
     '''
     dataset = tablib.Dataset()
 
@@ -172,16 +186,24 @@ def export(queryset, *args, **kwargs):
     # reorder queryset
     queryset = queryset.order_by('id')
 
-    # set headers
-    headers = list(args)
-    if hstore_spec:
-        headers.extend(itertools.chain.from_iterable(hstore_spec.values()))
-
-    dataset.headers = map(reformat_field_name, headers)
-
     # grab lengths of argument 'parts'
     field_size = len(args)
     data_size = len(hstore_spec) if hstore_spec else 0
+
+    # set positions for insertion
+    insert_postions = [(item['position'] - field_size) for item in hstore_spec.values()]
+
+    # set headers
+    headers = list(args)
+    if hstore_spec:
+        for item in hstore_spec.values():
+            tmp = item['fields']
+            pos = item['position'] - field_size
+
+            for label in tmp:
+                headers.insert(pos, label)
+
+    dataset.headers = map(reformat_field_name, headers)
 
     # set fields to retrieve
     all_fields = list(args)
@@ -194,12 +216,12 @@ def export(queryset, *args, **kwargs):
             # if so, first retrieve 'regular' fields
             row = list(record[:-data_size])
 
-            data_keys = hstore_spec.values()
+            hstore_field_spec = hstore_spec.values()
 
             # now, tag on each value for each hstore field, in order
-            for index in range(field_size, (field_size + data_size)):
-                for key in data_keys[index - field_size]:
-                    row.append(record[index].get(key, ''))
+            for index in range(field_size, (field_size + data_size)):            
+                for key in hstore_field_spec[index - field_size]['fields']:
+                    row.insert(insert_postions[index - field_size], record[index].get(key, ''))
         else:
             row = record
 
