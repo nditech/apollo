@@ -2,7 +2,7 @@ try:
     from cStringIO import StringIO
 except ImportError:
     from StringIO import StringIO
-
+import itertools
 import re
 
 from django.conf import settings
@@ -155,46 +155,51 @@ def reformat_field_name(field_name):
 
 
 def export(queryset, *args, **kwargs):
+    '''Handles exporting a queryset to a StringIO instance, with its
+    contents being a spreadsheet in a specified format.
+
+    `queryset` is the queryset to be exported, the fields to be exported
+    are specified as a set of positional arguments, and other arguments
+    follow
+    '''
     dataset = tablib.Dataset()
 
-    # grab the name of the hstore field if it exists
-    hstore_field = kwargs.pop('hstore_field', None)
-
-    # also, grab the list of keys for the hstore field as well
-    hstore_keys = kwargs.pop('hstore_keys', None)
-
-    # finally, grab the format specifier
+    # grab keyword arguments
+    hstore_spec = kwargs.pop('hstore', None)
     format = kwargs.pop('format', 'xls')
-
-    # make sure we snap back to the default if we get something unsupported
     format = 'xls' if format not in export_formats else format
 
-    # reorder querysets
+    # reorder queryset
     queryset = queryset.order_by('id')
 
-    stripped_args = list(args)
+    # set headers
+    headers = list(args)
+    if hstore_spec:
+        headers.extend(itertools.chain.from_iterable(hstore_spec.values()))
 
-    try:
-        index = stripped_args.index(hstore_field)
-        stripped_args.remove(hstore_field)
-    except ValueError:
-        index = None
+    dataset.headers = map(reformat_field_name, headers)
 
-    headers = map(reformat_field_name, stripped_args)
+    # grab lengths of argument 'parts'
+    field_size = len(args)
+    data_size = len(hstore_spec) if hstore_spec else 0
 
-    if hstore_keys is not None:
-        headers.extend(map(reformat_field_name, hstore_keys))
+    # set fields to retrieve
+    all_fields = list(args)
+    all_fields.extend(hstore_spec.keys())
 
-    dataset.headers = headers
+    # retrieve fields from database
+    for record in queryset.values_list(*all_fields):
+        # confirm if hstore fields are specified
+        if data_size:
+            # if so, first retrieve 'regular' fields
+            row = list(record[:-data_size])
 
-    for record in queryset.values_list(*args):
-        if index is not None:
-            row = list(record[:index])
+            data_keys = hstore_spec.values()
 
-            for key in hstore_keys:
-                row.append(record[index].get(key, None))
-
-            row.extend(record[index + 1:])
+            # now, tag on each value for each hstore field, in order
+            for index in range(field_size, (field_size + data_size)):
+                for key in data_keys[index - field_size]:
+                    row.append(record[index].get(key, ''))
         else:
             row = record
 
