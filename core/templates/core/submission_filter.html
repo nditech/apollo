@@ -2,17 +2,19 @@
   <form action="" method="post" id="filter">
     {% csrf_token %}
     <div class="controls controls-row">
-      <input class="span2" type="text" name="monitor" placeholder="Monitor ID">
-      <div class="input-append date span2 datesel" data-date="" data-date-format="dd-mm-yyyy">
-        <input class="span2" name="date" placeholder="Date" style="width:129px" size="16" type="text" value="" readonly="readonly">
+      <input class="span2" type="text" name="observer__observer_id" value="{{ filter_form.observer__observer_id.value|default_if_none:"" }}" placeholder="Monitor ID">
+      <div class="input-append date span2 datesel" data-date="" data-date-format="yyyy-mm-dd">
+        <input class="span2" name="date" placeholder="Date" style="width:129px" size="16" type="text" value="{{ filter_form.date.value|default_if_none:"" }}" readonly="readonly">
         <span class="add-on"><i class="icon-calendar"></i></span>
       </div>
       <input class="span4" type="text" name="location" class="input-xlarge" placeholder="Location">
+      {% if form.type != 'CHECKLIST' %}<a type="submit" class="span1 btn btn-warning" href="javascript:document.getElementById('filter').submit();"><i class="icon-search icon-white"></i> Search</a>{% endif %}
     </div>
+    {% if form.type == 'CHECKLIST' %}
     <div class="controls controls-row">
       {% for group in form_groups %}
       <select class="span2" name="group_{{ group.pk }}">
-        <option value="">{{ group.name }} Status</option>
+        <option value="0">{{ group.name }} Status</option>
         <option value="1">{{ group.name }} Partial</option>
         <option value="2">{{ group.name }} Missing</option>
         <option value="3">{{ group.name }} Complete</option>
@@ -20,5 +22,6 @@
       {% endfor %}
       <a type="submit" class="span1 btn btn-warning" href="javascript:document.getElementById('filter').submit();"><i class="icon-search icon-white"></i> Search</a>
     </div>
+    {% endif %}
   </form>
 </div>

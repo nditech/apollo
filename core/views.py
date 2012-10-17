@@ -14,6 +14,7 @@ from django.views.generic import TemplateView, ListView, UpdateView
 import tablib
 from .forms import ContactModelForm, generate_submission_form
 from .models import *
+from .filters import *
 
 COMPLETION_STATUS = (
     (0, 'Complete'),
@@ -73,21 +74,30 @@ class SubmissionListView(ListView):
 
     def get_queryset(self):
         self.page_title = self.form.name
-        return Submission.objects.filter(form=self.form).exclude(observer=None)
+        return self.filter_set.qs
 
     def get_context_data(self, **kwargs):
         context = super(SubmissionListView, self).get_context_data(**kwargs)
         context['form'] = self.form
+        context['filter_form'] = self.filter_set.form
         context['page_title'] = self.page_title
         return context
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
         self.form = get_object_or_404(Form, pk=kwargs['form'])
+        self.submission_filter = generate_submission_filter(self.form)
         return super(SubmissionListView, self).dispatch(*args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        return self.get(request, *args, **kwargs)
+        self.filter_set = self.submission_filter(self.request.POST,
+            queryset=Submission.objects.filter(form=self.form).exclude(observer=None))
+        return super(SubmissionListView, self).get(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        self.filter_set = self.submission_filter(None,
+            queryset=Submission.objects.filter(form=self.form).exclude(observer=None))
+        return super(SubmissionListView, self).get(request, *args, **kwargs)
 
 
 class SubmissionEditView(UpdateView):

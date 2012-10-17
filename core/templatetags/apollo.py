@@ -16,9 +16,10 @@ def forms_menu():
 
 
 @register.inclusion_tag('core/submission_filter.html')
-def submission_filter(form):
-    form_groups = FormGroup.objects.filter(form=form) if isinstance(form, Form) else FormGroup.objects.filter(form__pk=form)
-    return {'form_groups': form_groups}
+def submission_filter(form, filter_form):
+    form = form if isinstance(form, Form) else Form.objects.get(pk=form)
+    form_groups = FormGroup.objects.filter(form=form)
+    return {'form_groups': form_groups, 'form': form, 'filter_form': filter_form}
 
 
 @register.inclusion_tag('core/submission_header.html')
