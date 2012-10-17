@@ -190,12 +190,15 @@ def export(queryset, *args, **kwargs):
     field_size = len(args)
     data_size = len(hstore_spec) if hstore_spec else 0
 
-    # set positions for insertion
-    insert_postions = [(item['position'] - field_size) for item in hstore_spec.values()]
+    # set various
+    headers = list(args)        # headers
+    all_fields = list(args)     # fields to retrieve from database
 
-    # set headers
-    headers = list(args)
     if hstore_spec:
+        # set positions for insertion
+        insert_postions = [(item['position'] - field_size) for item in hstore_spec.values()]
+        all_fields.extend(hstore_spec.keys())
+
         for item in hstore_spec.values():
             tmp = item['fields']
             pos = item['position'] - field_size
@@ -204,10 +207,6 @@ def export(queryset, *args, **kwargs):
                 headers.insert(pos, label)
 
     dataset.headers = map(reformat_field_name, headers)
-
-    # set fields to retrieve
-    all_fields = list(args)
-    all_fields.extend(hstore_spec.keys())
 
     # retrieve fields from database
     for record in queryset.values_list(*all_fields):
