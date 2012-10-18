@@ -2,9 +2,7 @@ try:
     from cStringIO import StringIO
 except ImportError:
     from StringIO import StringIO
-import itertools
 import re
-
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
@@ -160,27 +158,55 @@ class ContactEditView(UpdateView):
         return context
 
 
-def reformat_field_name(field_name):
-    return re.sub('_+', ' ', field_name).title()
+def create_column_header(field_name):
+    if ':' in field_name:
+        # get the last part. it should be an alpha code
+        return field_name.split('__')[-1].upper()
+
+    return field_name.replace('__', ' ').title()
+
+
+def generate_value_list(args):
+    pattern = re.compile(r'^hstore:(?P<var>\w+?)__\w+$')
+    value_set = set()
+
+    for item in args:
+        match = pattern.match(item)
+
+        if match:
+            value_set.add(match.group('var'))
+        else:
+            value_set.add(item)
+
+    return value_set
+
+def make_item_row(record, args):
+    row = []
+    pattern = re.compile(r'^hstore:(?P<dict>\w+?)__(?P<key>\w+)$')
+
+    for item in args:
+        match = pattern.match(item)
+
+        if match:
+            row.append(record[match.group('dict')].get(match.group('key'), ''))
+        else:
+            row.append(record[item])
+
+    return row
 
 
 def export(queryset, *args, **kwargs):
-    '''Handles exporting a queryset to a StringIO instance, with its
+    '''Handles exporting a queryset to a (c)StringIO instance, with its
     contents being a spreadsheet in a specified format.
 
     `queryset` is the queryset to be exported, the fields to be exported
     are specified as a set of positional arguments, and other arguments
     follow.
 
-    This function requires `hstore` arguments specified as keyword
-    arguments, as so:
-
-    hstore={'data': {'position': 5, 'fields': ['AA', 'BB', 'CC']},
-        'overrides': {'position': 8, 'fields': ['AB', 'BA', 'CB']}
-    }
-
-    position is the index *BEFORE* which the hstore field is inserted
-    (please see list.insert() for details)
+    hstore arguments are positional, and are specified as such:
+        'hstore:data__AA'
+    in order to get the value stored with the 'AA' key in the hstore data
+    field
 
     Also, a `format` keyword argument may be specified (defaulting to 'xls')
     that specifies the format to which the spreadsheet should be exported.
@@ -188,52 +214,19 @@ def export(queryset, *args, **kwargs):
     '''
     dataset = tablib.Dataset()
 
-    # grab keyword arguments
-    hstore_spec = kwargs.pop('hstore', None)
+    # grab keyword argument
     format = kwargs.pop('format', 'xls')
     format = 'xls' if format not in export_formats else format
+
+    # set headers
+    dataset.headers = map(create_column_header, args)
 
     # reorder queryset
     queryset = queryset.order_by('id')
 
-    # grab lengths of argument 'parts'
-    field_size = len(args)
-    data_size = len(hstore_spec) if hstore_spec else 0
-
-    # set various
-    headers = list(args)        # headers
-    all_fields = list(args)     # fields to retrieve from database
-
-    if hstore_spec:
-        # set positions for insertion
-        insert_postions = [(item['position'] - field_size) for item in hstore_spec.values()]
-        all_fields.extend(hstore_spec.keys())
-
-        for item in hstore_spec.values():
-            tmp = item['fields']
-            pos = item['position'] - field_size
-
-            for label in tmp:
-                headers.insert(pos, label)
-
-    dataset.headers = map(reformat_field_name, headers)
-
-    # retrieve fields from database
-    for record in queryset.values_list(*all_fields):
-        # confirm if hstore fields are specified
-        if data_size:
-            # if so, first retrieve 'regular' fields
-            row = list(record[:-data_size])
-
-            hstore_field_spec = hstore_spec.values()
-
-            # now, tag on each value for each hstore field, in order
-            for index in range(field_size, (field_size + data_size)):            
-                for key in hstore_field_spec[index - field_size]['fields']:
-                    row.insert(insert_postions[index - field_size], record[index].get(key, ''))
-        else:
-            row = record
-
-        dataset.append(row)
+    # retrieve data and build table
+    fields = generate_value_list(args)
+    for record in queryset.values(*fields):
+        dataset.append(make_item_row(record, args))
 
     return StringIO(getattr(dataset, format))
