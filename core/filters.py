@@ -1,5 +1,7 @@
 from .models import *
 import django_filters
+from django import forms
+
 
 class FormGroupFilter(django_filters.ChoiceFilter):
     ''' FormGroupFilter enables filtering of submissions
@@ -24,6 +26,7 @@ class FormGroupFilter(django_filters.ChoiceFilter):
         else:
             return qs
 
+
 class BaseSubmissionFilter(django_filters.FilterSet):
     class Meta:
         model = Submission
@@ -35,7 +38,7 @@ def generate_submission_filter(form):
         ['observer__observer_id', 'date', 'location']}
     for group in form.groups.all():
         metafields['fields'].append('group_%d' % (group.pk,))
-    
+
     metaclass = type('Meta', (), metafields)
     fields = {'Meta': metaclass}
     for group in form.groups.all():
@@ -45,6 +48,7 @@ def generate_submission_filter(form):
             ('2', '%s Missing' % group.name),
             ('3', '%s Complete' % group.name)
             ]
-        fields['group_%d' % (group.pk,)] = FormGroupFilter(label=group.name, choices=CHOICES)
+        fields['group_%d' % (group.pk,)] = FormGroupFilter(label=group.name,
+            choices=CHOICES, widget=forms.Select(attrs={'class': 'span2'}))
     fields['location'] = django_filters.CharFilter()
     return type('SubmissionFilter', (BaseSubmissionFilter,), fields)

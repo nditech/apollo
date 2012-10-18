@@ -9,6 +9,14 @@ def keyvalue(value, key):
     return value.get(key, '')
 
 
+@register.filter
+def groupsel(value, pk):
+    try:
+        return value['group_%d' % pk]
+    except KeyError:
+        return None
+
+
 @register.inclusion_tag('core/forms_menu.html')
 def forms_menu():
     forms = Form.objects.all()

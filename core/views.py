@@ -92,10 +92,12 @@ class SubmissionListView(ListView):
     def post(self, request, *args, **kwargs):
         self.filter_set = self.submission_filter(self.request.POST,
             queryset=Submission.objects.filter(form=self.form).exclude(observer=None))
+        request.session['submission_filter_%d' % self.form.pk] = self.filter_set.form.data
         return super(SubmissionListView, self).get(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
-        self.filter_set = self.submission_filter(None,
+        initial_data = request.session.get('submission_filter_%d' % self.form.pk, None)
+        self.filter_set = self.submission_filter(initial_data,
             queryset=Submission.objects.filter(form=self.form).exclude(observer=None))
         return super(SubmissionListView, self).get(request, *args, **kwargs)
 
