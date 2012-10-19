@@ -1,8 +1,8 @@
 {% for form in forms %}
 <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-check"></i> {{ form.name }} <b class="caret"></b></a>
     <ul class="dropdown-menu">
-        <li><a href="{% url submissions_list form.pk %}"><i class="icon-list"></i> {{ form.name }}</a></li>
-        <li><a href="{% url submissions_analysis form.pk %}"><i class="icon-tasks"></i> {{ form.name }} Analysis</a></li>
+        <li><a href="{% url submissions_list form.pk %}"><i class="icon-list"></i> {% if form.type == 'CHECKLIST' %}Checklist{% else %}Incident{% endif %} Forms</a></li>
+        <li><a href="{% url submissions_analysis form.pk %}"><i class="icon-tasks"></i> {% if form.type == 'CHECKLIST' %}Checklists{% else %}Incidents{% endif %} Analysis</a></li>
     </ul>
 </li>
 {% endfor %}
