@@ -40,6 +40,9 @@ class CoreTest(TestCase):
         FormField.objects.create(group=group3, name='field7',
             tag='Y', present_true=True)
 
+        self.test_field = FormField.objects.create(group=group3, name='field8', tag='BD',
+            lower_limit=0, upper_limit=5, allow_multiple=True)
+
         FormFieldOption.objects.create(field=BC, description='Yes', option=1)
         FormFieldOption.objects.create(field=BC, description='No', option=2)
 
@@ -114,3 +117,15 @@ class CoreTest(TestCase):
 
         self.assertEquals(row.get('Name', None), 'field1')
         self.assertEquals(row.get('Tag', None), 'AA')
+
+    def test_mutiple_value_parsing(self):
+        # check that the 'correct' thing is happening
+        other = self.test_field.parse('AA23BD234')
+        self.assertEqual(other, 'AA23')
+        self.assertEqual(self.test_field.value, '2,3,4')
+
+        # should be out-of-range
+        print self.test_field.upper_limit, self.test_field.lower_limit
+        other = self.test_field.parse('AA23BD237BA15')
+        self.assertEqual(other, 'AA23BA15')
+        self.assertEqual(self.test_field.value, -1)

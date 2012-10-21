@@ -232,6 +232,7 @@ class FormField(models.Model):
     upper_limit = models.IntegerField(null=True, default=9999)
     lower_limit = models.IntegerField(null=True, default=0)
     present_true = models.BooleanField(default=False)
+    allow_multiple = models.BooleanField(default=False)
     value = None
 
     class Meta:
@@ -246,25 +247,50 @@ class FormField(models.Model):
         match = re.search(pattern, text, re.I)
 
         if match:
-            field_value = int(match.group('value')) \
-                if match.group('value') else None
+            if self.allow_multiple:
+                # for a match value like '23', produce a list with
+                # 2 and 3 as `field_values`
+                field_values = [int(i[0]) for i in zip(match.group('value'))] \
+                    if match.group('value') else None
 
-            if field_value:
-                if self.options.all().count():
-                    for option in self.options.all():
-                        if option.option == field_value:
-                            self.value = field_value
+                if field_values:
+                    options = self.options.all()
+
+                    allowed_values = [option.option for option in options] if options else None
+
+                    for item in field_values:
+                        # check that all the values are allowed options
+                        if allowed_values and (item not in allowed_values):
+                            self.value = -1
                             break
+
+                        # and they're within the specified limits
+                        if item < self.lower_limit or item > self.upper_limit:
+                            self.value = -1
+                            break
+
+                    if self.value != -1:
+                        self.value = ','.join(map(str, field_values))
+            else:
+                field_value = int(match.group('value')) \
+                    if match.group('value') else None
+
+                if field_value:
+                    if self.options.all().count():
+                        for option in self.options.all():
+                            if option.option == field_value:
+                                self.value = field_value
+                                break
+                        else:
+                            self.value = -1
                     else:
-                        self.value = -1
-                else:
-                    if field_value < self.lower_limit or field_value > self.upper_limit:
-                        self.value = -1
-                    else:
-                        self.value = field_value
-            elif self.present_true:
-                # a value of 1 indicates presence/truth
-                self.value = 1
+                        if field_value < self.lower_limit or field_value > self.upper_limit:
+                            self.value = -1
+                        else:
+                            self.value = field_value
+                elif self.present_true:
+                    # a value of 1 indicates presence/truth
+                    self.value = 1
 
         return re.sub(pattern, '', text, flags=re.I) if self.value else text
 
