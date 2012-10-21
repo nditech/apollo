@@ -118,9 +118,15 @@ def generate_submission_form(form):
 
             if options:
                 choices = [(option.option, option.description) for option in options]
-                fields[field.tag] = forms.ChoiceField(choices=choices,
-                    help_text=field.description, required=False, label=field.tag,
-                    widget=forms.TextInput(attrs={'class': 'input-mini'}))
+
+                if field.allow_multiple:
+                    fields[field.tag] = forms.MultipleChoiceField(choices=choices,
+                        help_text=field.description, required=False, label=field.tag,
+                        widget=forms.CheckboxSelectMultiple)
+                else:
+                    fields[field.tag] = forms.ChoiceField(choices=choices,
+                        help_text=field.description, required=False, label=field.tag,
+                        widget=forms.TextInput(attrs={'class': 'input-mini'}))
             else:
                 if form.type == 'CHECKLIST':
                     fields[field.tag] = forms.IntegerField(help_text=field.description,
