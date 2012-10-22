@@ -49,7 +49,6 @@ INSTALLED_APPS = [
     "zimbabwe",
     "core",
     "django_dag",
-    "mptt",
     "messagelog",
 
     # threadless router replacements

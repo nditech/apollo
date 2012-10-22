@@ -4,24 +4,27 @@ from django.dispatch import receiver
 from django_dag.models import Graph
 from django_dag.mixins import GraphMixin
 from django_orm.postgresql import hstore
-from mptt.models import MPTTModel, TreeForeignKey
 from rapidsms.models import Contact, Backend, Connection
 from datetime import datetime
 from .managers import SubmissionManager
 import re
 
 
-class LocationType(MPTTModel):
+class LocationType(GraphMixin):
     """Location Type"""
     name = models.CharField(max_length=100)
     # code is used mainly in the SMS processing logic
     code = models.CharField(blank=True, max_length=10, db_index=True)
-    parent = TreeForeignKey('self', null=True, blank=True, related_name='children')
     on_display = models.BooleanField(default=False, help_text="Controls the display of this location type on the form lists")
     in_form = models.BooleanField(default=False, db_index=True, help_text="Determines whether this LocationType can be used in SMS forms")
 
     def __unicode__(self):
         return self.name
+
+    def __init__(self, *args, **kwargs):
+        graph, _ = Graph.objects.get_or_create(name='location_type')
+        self.default_graph = graph
+        return super(LocationType, self).__init__(*args, **kwargs)
 
 
 class Location(GraphMixin):
