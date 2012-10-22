@@ -390,9 +390,9 @@ class Submission(models.Model):
 @receiver(models.signals.post_save, sender=Observer, dispatch_uid='create_contact')
 def create_contact(sender, **kwargs):
     if kwargs['created']:
-        contact = Contact()
-        contact.observer = kwargs['instance']
-        contact.save()
+        contact = Contact.objects.create()
+        kwargs['instance'].contact = contact
+        kwargs['instance'].save()
 
 
 # if an observer gets deleted, also delete the associated contact

@@ -33,7 +33,7 @@
           </tr>
           <tr>
             <th>Supervisor</th>
-            <td>{{ submission.observer.supervisor }}</td>
+            <td>{{ submission.observer.supervisor|default_if_none:"" }}</td>
             {% for sibling in siblings %}
             <td>{{ sibling.observer.supervisor|default_if_none:"" }}</td>
             {% endfor %}
