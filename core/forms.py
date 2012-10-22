@@ -18,7 +18,10 @@ class SubmissionModelForm(BetterForm):
                 # the forced casting to integer enables the conversion of boolean values
                 # as is the case for incidents that are returned as boolean and need to
                 # be converted to integer (and then string) before storage
-                data[key] = str(int(data[key]))
+                if isinstance(data[key], list):
+                    data[key] = ','.join(data[key])
+                else:
+                    data[key] = str(int(data[key]))
             else:
                 del data[key]
 
