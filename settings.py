@@ -53,7 +53,7 @@ INSTALLED_APPS = [
 
     # threadless router replacements
     "threadless_router.backends.httptester",
-    "threadless_router.celery",
+    "threadless_router.backends.kannel",
 
     "rapidsms.contrib.default",
 
