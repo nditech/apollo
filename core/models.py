@@ -204,7 +204,7 @@ class Form(models.Model):
                         fields_text = field.parse(fields_text)
                         if field.value == -1:
                             submission['range_error_fields'].append(field.tag)
-                        elif field.value:
+                        elif field.value != None:
                             submission['data'][field.tag.upper()] = str(field.value)
                 if fields_text:
                     for field in re.finditer(form.field_pattern, fields_text, flags=re.I):
