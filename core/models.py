@@ -398,7 +398,8 @@ def create_contact(sender, **kwargs):
 # if an observer gets deleted, also delete the associated contact
 @receiver(models.signals.post_delete, sender=Observer, dispatch_uid='delete_contact')
 def delete_contact(sender, **kwargs):
-    kwargs['instance'].contact.delete()
+    if kwargs['instance'].contact:
+        kwargs['instance'].contact.delete()
 
 
 # the below function generates a comparison function
