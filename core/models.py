@@ -204,6 +204,8 @@ class Form(models.Model):
                         fields_text = field.parse(fields_text)
                         if field.value == -1:
                             submission['range_error_fields'].append(field.tag)
+
+                        # this prevents a situation where 0 (a valid input) is ignored
                         elif field.value != None:
                             submission['data'][field.tag.upper()] = str(field.value)
                 if fields_text:
