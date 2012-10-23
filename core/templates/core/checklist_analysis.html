@@ -3,6 +3,7 @@
 <style type="text/css">
 	.td_width{width: 20em;}
 	td, th {padding: .3em;}
+	table{margin-bottom: 0px;}
 </style>
 <div class="row">
   <div class="span12">
@@ -27,7 +28,7 @@
 </div>
 <div class="row-fluid">
   <div class="span12">
-      <table class="" cellspacing="10">
+      <table class="">
 	    <thead>
 	    	<h4 class="well">Yes or No Questions</h4>	
 	        <tr>
@@ -38,6 +39,12 @@
 	        </tr>
 	    </thead>
 	    <tbody>
+	    	<tr>
+	            <td class="td_width">Had any polling officials arrived by 7:30am?</td>
+	            <td class="td_width">Was everyone at the polling unit accredited?</td>
+	            <td class="td_width"> Was there under age voting in the polling unit?</td>
+	            <td class="td_width">Did anyone intimidate voters/polling officials during the voting process?<br></td>
+	        </tr>
 	        <tr>
 	            <td><strong>N </strong>506</td>
 	            <td><strong>N </strong>506</td>
@@ -67,7 +74,7 @@
 				            .outerRadius(70)
 				            .angle(function(d) d * 2 * Math.PI)
 				            .left(70)
-				            .top(70)
+				            .top(100)
 				            .fillStyle(pv.colors(colors).by(function () { return this.index;}))
 				            .anchor("center")
 				            .add(pv.Label)
@@ -104,7 +111,7 @@
 				            .outerRadius(70)
 				            .angle(function(d) d * 2 * Math.PI)
 				            .left(70)
-				            .top(70)
+				            .top(100)
 				            .fillStyle(pv.colors(colors).by(function () { return this.index;}))
 				            .anchor("center")
 				            .add(pv.Label)
@@ -141,7 +148,7 @@
 				            .outerRadius(70)
 				            .angle(function(d) d * 2 * Math.PI)
 				            .left(70)
-				            .top(70)
+				            .top(100)
 				            .fillStyle(pv.colors(colors).by(function () { return this.index;}))
 				            .anchor("center")
 				            .add(pv.Label)
@@ -178,7 +185,7 @@
 				            .outerRadius(70)
 				            .angle(function(d) d * 2 * Math.PI)
 				            .left(70)
-				            .top(70)
+				            .top(100)
 				            .fillStyle(pv.colors(colors).by(function () { return this.index;}))
 				            .anchor("center")
 				            .add(pv.Label)
@@ -200,12 +207,6 @@
 				    </script>
 	            </td>        
 	        </tr>
-	        <tr>
-	            <td class="td_width">Had any polling officials arrived by 7:30am?</td>
-	            <td class="td_width">Was everyone accredited?</td>
-	            <td class="td_width"> Was there under age voting?</td>
-	            <td class="td_width">Did anyone intimidate voters/polling officials during the voting process?</td>
-	        </tr>
 	    </tbody>
 	</table>​
     </div>
@@ -213,7 +214,7 @@
   <div class="row-fluid">
   <div class="span12">
     <div class="">
-	   <table class="" cellspacing="10">
+	   <table class="">
 		    <thead>
 		    	<h4 class="well">Option Questions</h4>	
 		        <tr>
@@ -224,6 +225,12 @@
 		        </tr>
 		    </thead>
 		    <tbody>
+		    	<tr>
+		            <td style="width:20em;">Did polling officials mark the cuticle on a left finger of every accredited voter?</td>
+		            <td style="width:20em;">Was anyone permitted to vote who didn't have a voter’s card?</td>
+		            <td style="width:20em;">Did polling officials mark the cuticle on a left finger of every accredited voter?</td>
+		            <td style="width:20em;">Did polling officials check for every voters name in the register of voters? <br></td>
+		        </tr>
 		        <tr>
 		            <td><strong>N </strong>506</td>
 		            <td><strong>N </strong>506</td>
@@ -253,7 +260,7 @@
 					            .outerRadius(70)
 					            .angle(function(d) d * 2 * Math.PI)
 					            .left(70)
-					            .top(70)
+					            .top(100)
 					            .fillStyle(pv.colors(colors).by(function () { return this.index;}))
 					            .anchor("center")
 					            .add(pv.Label)
@@ -290,7 +297,7 @@
 					            .outerRadius(70)
 					            .angle(function(d) d * 2 * Math.PI)
 					            .left(70)
-					            .top(70)
+					            .top(100)
 					            .fillStyle(pv.colors(colors).by(function () { return this.index;}))
 					            .anchor("center")
 					            .add(pv.Label)
@@ -327,7 +334,7 @@
 					            .outerRadius(70)
 					            .angle(function(d) d * 2 * Math.PI)
 					            .left(70)
-					            .top(70)
+					            .top(100)
 					            .fillStyle(pv.colors(colors).by(function () { return this.index;}))
 					            .anchor("center")
 					            .add(pv.Label)
@@ -364,7 +371,7 @@
 					            .outerRadius(70)
 					            .angle(function(d) d * 2 * Math.PI)
 					            .left(70)
-					            .top(70)
+					            .top(100)
 					            .fillStyle(pv.colors(colors).by(function () { return this.index;}))
 					            .anchor("center")
 					            .add(pv.Label)
@@ -385,12 +392,6 @@
 					        pie.render();
 					    </script>
 		            </td>
-		        </tr>
-		        <tr>
-		            <td style="width:20em;">Did polling officials mark the cuticle on a left finger of every accredited voter?</td>
-		            <td style="width:20em;">Was anyone permitted to vote who didn't have a voter’s card?</td>
-		            <td style="width:20em;">Did polling officials mark the cuticle on a left finger of every accredited voter?</td>
-		            <td style="width:20em;">Did polling officials check for every voters name in the register of voters?</td>
 		        </tr>
 		    </tbody>
 		</table>​
