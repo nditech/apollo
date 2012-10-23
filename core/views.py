@@ -116,6 +116,7 @@ class SubmissionEditView(UpdateView):
     def get_context_data(self, **kwargs):
         context = super(SubmissionEditView, self).get_context_data(**kwargs)
         context['submission'] = self.submission
+        context['location_types'] = LocationType.objects.filter(on_display=True)
         context['page_title'] = self.page_title
         return context
 

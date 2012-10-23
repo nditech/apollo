@@ -19,18 +19,27 @@
           {% endif %}
           <tr>
             <th>Observer</th>
-            <td>{{ submission.observer }}</td>
+            <td><strong>{{ submission.observer.name }}</strong>{% if submission.observer.phone %} ({{ submission.observer.phone }}){% endif %} &mdash; <strong>{{ submission.observer.observer_id }}</strong></td>
             {% for sibling in siblings %}
-            <td>{{ sibling.observer }}</td>
+            <td><strong>{{ sibling.observer.name }}</strong>{% if sibling.observer.phone %} ({{ sibling.observer.phone }}){% endif %} &mdash; <strong>{{ sibling.observer.observer_id }}</strong></td>
             {% endfor %}
           </tr>
           <tr>
             <th>Location</th>
-            <td>{{ submission.location }}</td>
+            <td><strong>{{ submission.location }}</strong></td>
             {% for sibling in siblings %}
-            <td>{{ sibling.location }}</td>
+            <td><strong>{{ sibling.location }}</strong></td>
             {% endfor %}
           </tr>
+          {% if location_types %}
+          <tr>
+            <th>&nbsp;</th>
+            <td>{% for location_type in location_types %}{% get_location_for_type submission location_type %}{% if not forloop.last %} / {% endif %}{% endfor %}</td>
+            {% for sibling in siblings %}
+            <td>{% for location_type in location_types %}{% get_location_for_type sibling location_type %}{% if not forloop.last %} / {% endif %}{% endfor %}</td>
+            {% endfor %}
+          </tr>
+          {% endif %}
           <tr>
             <th>Supervisor</th>
             <td>{{ submission.observer.supervisor|default_if_none:"" }}</td>
