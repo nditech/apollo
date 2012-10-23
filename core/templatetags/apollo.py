@@ -19,7 +19,7 @@ def groupsel(value, pk):
 
 @register.inclusion_tag('core/forms_menu.html')
 def forms_menu():
-    forms = Form.objects.all()
+    forms = Form.objects.all().order_by('pk')
     return {'forms': forms}
 
 
