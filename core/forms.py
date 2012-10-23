@@ -6,9 +6,14 @@ from .models import *
 class SubmissionModelForm(BetterForm):
     def __init__(self, *args, **kwargs):
         if 'instance' in kwargs:
-            self.instance = kwargs['instance']
-            del kwargs['instance']
+            self.instance = kwargs.pop('instance')
+
             kwargs['initial'] = self.instance.data
+
+            for key in kwargs['initial'].keys():
+                if ',' in kwargs['initial'][key]:
+                    kwargs['initial'][key] = kwargs['initial'][key].split(',')
+
         return super(BetterForm, self).__init__(*args, **kwargs)
 
     def save(self):

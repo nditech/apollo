@@ -253,7 +253,7 @@ class FormField(models.Model):
             if self.allow_multiple:
                 # for a match value like '23', produce a list with
                 # 2 and 3 as `field_values`
-                field_values = [int(i[0]) for i in zip(match.group('value'))] \
+                field_values = [int(i) for i in list(match.group('value'))] \
                     if match.group('value') else None
 
                 if field_values:
