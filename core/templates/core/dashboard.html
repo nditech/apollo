@@ -23,7 +23,47 @@
   </div>
 </div>
 <div class="row-fluid">
-  <div class="span3 well">
+  <div class="span4 well">
+    <legend>Arrival</legend>
+    <div>
+      <script type="text/javascript+protovis">
+        width = 250,
+        height = 200,
+        offset = 10,
+        r = width/2 - offset;
+        data = [3200, 500, 450];
+        colors = ["#ff0d00", "#fff800", "#39e639"];
+        labels = ['Missing', 'Partial', 'Complete'];
+
+        var pie = new pv.Panel().width(width).height(height);
+            pie.add(pv.Wedge)
+            .data(pv.normalize(data))
+            .outerRadius(70)
+            .angle(function(d) d * 2 * Math.PI)
+            .left(100)
+            .top(100)
+            .fillStyle(pv.colors(colors).by(function () { return this.index;}))
+            .anchor("center")
+            .add(pv.Label)
+            .textAngle(0)
+            .text(function(d){ return (d*100).toFixed(0) + "%"});
+            
+        //legends   
+        pie.add(pv.Dot) 
+            .data(labels) 
+            .top(function() 70 + this.index * 18)
+            .right(50) 
+            .size(20) 
+            .strokeStyle(null) 
+            .fillStyle(pv.colors(colors)) 
+            .anchor("right").add(pv.Label)
+            .textMargin(8);
+            
+        pie.render();
+      </script>
+    </div>
+  </div>
+  <div class="span4 well">
     <legend>Setup</legend>
     <div>
       <script type="text/javascript+protovis">
@@ -40,7 +80,7 @@
             .data(pv.normalize(data))
             .outerRadius(70)
             .angle(function(d) d * 2 * Math.PI)
-            .left(70)
+            .left(100)
             .top(100)
             .fillStyle(pv.colors(colors).by(function () { return this.index;}))
             .anchor("center")
@@ -52,7 +92,7 @@
         pie.add(pv.Dot) 
             .data(labels) 
             .top(function() 70 + this.index * 18)
-            .right(90) 
+            .right(50) 
             .size(20) 
             .strokeStyle(null) 
             .fillStyle(pv.colors(colors)) 
@@ -63,7 +103,7 @@
       </script>
     </div>
   </div>
-  <div class="span3 well">
+  <div class="span4 well">
     <legend>Voting</legend>
     <script type="text/javascript+protovis">
         width = 250,
@@ -79,7 +119,7 @@
             .data(pv.normalize(data))
             .outerRadius(70)
             .angle(function(d) d * 2 * Math.PI)
-            .left(70)
+            .left(100)
             .top(100)
             .fillStyle(pv.colors(colors).by(function () { return this.index;}))
             .anchor("center")
@@ -91,7 +131,7 @@
         pie.add(pv.Dot) 
             .data(labels) 
             .top(function() 70 + this.index * 18)
-            .right(90) 
+            .right(50) 
             .size(20) 
             .strokeStyle(null) 
             .fillStyle(pv.colors(colors)) 
@@ -104,84 +144,88 @@
       
   </div>
 </div>
-  <div class="span3 well">
-    <legend>Counting</legend>
-    <div>
-     <script type="text/javascript+protovis">
-        width = 250,
-        height = 200,
-        offset = 10,
-        r = width/2 - offset;
-        data = [2929, 999, 444];
-        colors = ["#ff0d00", "#fff800", "#39e639"];
-        labels = ['Missing', 'Partial', 'Complete'];
+<div class="row-fluid">
+    <div class="span12">
+        <div class="span4 well">
+            <legend>Counting</legend>
+            <div>
+             <script type="text/javascript+protovis">
+                width = 250,
+                height = 200,
+                offset = 10,
+                r = width/2 - offset;
+                data = [929, 2999, 444];
+                colors = ["#ff0d00", "#fff800", "#39e639"];
+                labels = ['Missing', 'Partial', 'Complete'];
 
-        var pie = new pv.Panel().width(width).height(height);
-            pie.add(pv.Wedge)
-            .data(pv.normalize(data))
-            .outerRadius(70)
-            .angle(function(d) d * 2 * Math.PI)
-            .left(70)
-            .top(100)
-            .fillStyle(pv.colors(colors).by(function () { return this.index;}))
-            .anchor("center")
-            .add(pv.Label)
-            .textAngle(0)
-            .text(function(d){ return (d*100).toFixed(0) + "%"});
-            
-        //legends   
-        pie.add(pv.Dot) 
-            .data(labels) 
-            .top(function() 70 + this.index * 18)
-            .right(90) 
-            .size(20) 
-            .strokeStyle(null) 
-            .fillStyle(pv.colors(colors)) 
-            .anchor("right").add(pv.Label)
-            .textMargin(8);
-            
-        pie.render();
-      </script> 
-    </div>
-  </div>
-  <div class="span3 well">
-    <legend>Official Results</legend>
-    <div>
-      <script type="text/javascript+protovis">
-        width = 250,
-        height = 200,
-        offset = 10,
-        r = width/2 - offset;
-        data = [299, 350, 3000];
-        colors = ["#ff0d00", "#fff800", "#39e639"];
-        labels = ['Missing', 'Partial', 'Complete'];
+                var pie = new pv.Panel().width(width).height(height);
+                    pie.add(pv.Wedge)
+                    .data(pv.normalize(data))
+                    .outerRadius(70)
+                    .angle(function(d) d * 2 * Math.PI)
+                    .left(100)
+                    .top(100)
+                    .fillStyle(pv.colors(colors).by(function () { return this.index;}))
+                    .anchor("center")
+                    .add(pv.Label)
+                    .textAngle(0)
+                    .text(function(d){ return (d*100).toFixed(0) + "%"});
+                    
+                //legends   
+                pie.add(pv.Dot) 
+                    .data(labels) 
+                    .top(function() 70 + this.index * 18)
+                    .right(50) 
+                    .size(20) 
+                    .strokeStyle(null) 
+                    .fillStyle(pv.colors(colors)) 
+                    .anchor("right").add(pv.Label)
+                    .textMargin(8);
+                    
+                pie.render();
+              </script> 
+            </div>
+        </div>
+        <div class="span4 well">
+            <legend>Official Results</legend>
+            <div>
+              <script type="text/javascript+protovis">
+                width = 250,
+                height = 200,
+                offset = 10,
+                r = width/2 - offset;
+                data = [299, 350, 3000];
+                colors = ["#ff0d00", "#fff800", "#39e639"];
+                labels = ['Missing', 'Partial', 'Complete'];
 
-        var pie = new pv.Panel().width(width).height(height);
-            pie.add(pv.Wedge)
-            .data(pv.normalize(data))
-            .outerRadius(70)
-            .angle(function(d) d * 2 * Math.PI)
-            .left(70)
-            .top(100)
-            .fillStyle(pv.colors(colors).by(function () { return this.index;}))
-            .anchor("center")
-            .add(pv.Label)
-            .textAngle(0)
-            .text(function(d){ return (d*100).toFixed(0) + "%"});
-            
-        //legends   
-        pie.add(pv.Dot) 
-            .data(labels) 
-            .top(function() 70 + this.index * 18)
-            .right(90) 
-            .size(20) 
-            .strokeStyle(null) 
-            .fillStyle(pv.colors(colors)) 
-            .anchor("right").add(pv.Label)
-            .textMargin(8);
-            
-        pie.render();
-      </script>
+                var pie = new pv.Panel().width(width).height(height);
+                    pie.add(pv.Wedge)
+                    .data(pv.normalize(data))
+                    .outerRadius(70)
+                    .angle(function(d) d * 2 * Math.PI)
+                    .left(100)
+                    .top(100)
+                    .fillStyle(pv.colors(colors).by(function () { return this.index;}))
+                    .anchor("center")
+                    .add(pv.Label)
+                    .textAngle(0)
+                    .text(function(d){ return (d*100).toFixed(0) + "%"});
+                    
+                //legends   
+                pie.add(pv.Dot) 
+                    .data(labels) 
+                    .top(function() 70 + this.index * 18)
+                    .right(50) 
+                    .size(20) 
+                    .strokeStyle(null) 
+                    .fillStyle(pv.colors(colors)) 
+                    .anchor("right").add(pv.Label)
+                    .textMargin(8);
+                    
+                pie.render();
+              </script>
+            </div>
+          </div>
     </div>
   </div>
   <div class="row-fluid">
