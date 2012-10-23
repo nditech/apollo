@@ -256,7 +256,7 @@ class FormField(models.Model):
                 field_values = [int(i) for i in list(match.group('value'))] \
                     if match.group('value') else None
 
-                if field_values:
+                if field_values != None:
                     options = self.options.all()
 
                     allowed_values = [option.option for option in options] if options else None
@@ -278,7 +278,7 @@ class FormField(models.Model):
                 field_value = int(match.group('value')) \
                     if match.group('value') else None
 
-                if field_value:
+                if field_value != None:
                     if self.options.all().count():
                         for option in self.options.all():
                             if option.option == field_value:
@@ -295,7 +295,7 @@ class FormField(models.Model):
                     # a value of 1 indicates presence/truth
                     self.value = 1
 
-        return re.sub(pattern, '', text, flags=re.I) if self.value else text
+        return re.sub(pattern, '', text, flags=re.I) if self.value != None else text
 
 
 class FormFieldOption(models.Model):
