@@ -72,7 +72,7 @@ class SubmissionListView(ListView):
 
     def get_queryset(self):
         self.page_title = self.form.name
-        return self.filter_set.qs.order_by('date', 'observer__observer_id')
+        return self.filter_set.qs.order_by('-date', 'observer__observer_id')
 
     def get_context_data(self, **kwargs):
         context = super(SubmissionListView, self).get_context_data(**kwargs)
