@@ -337,7 +337,7 @@ class Submission(models.Model):
         if hasattr(self, '_siblings'):
             return self._siblings
         else:
-            self._siblings = Submission.objects.exclude(pk=self.pk).exclude(observer=None).filter(location=self.location)
+            self._siblings = Submission.objects.exclude(pk=self.pk).exclude(observer=None).filter(location=self.location, date=self.date, form=self.form)
         return self._siblings
 
     @property
@@ -347,7 +347,7 @@ class Submission(models.Model):
             return self._master
         else:
             try:
-                self._master = Submission.objects.exclude(pk=self.pk).get(location=self.location, observer=None)
+                self._master = Submission.objects.exclude(pk=self.pk).get(location=self.location, observer=None, date=self.date, form=self.form)
             except Submission.DoesNotExist:
                 self._master = self
         return self._master
