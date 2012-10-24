@@ -5,7 +5,7 @@
     <th>{{ location_type.name }}</th>
     {% endfor %}
     <th>Supervisor</th>
-    <th>Monitor</th>
+    <th>Observer</th>
     {% if form.type == 'CHECKLIST' %}
     {% for group in form_groups %}
     <th style="text-align:center">{% if group.abbr %}<abbr title="{{ group.name }}">{{ group.abbr }}</abbr>{% else %}{{ group.name }}{% endif %}</th>
