@@ -50,7 +50,7 @@
         </thead>
       </table>
       {% if submission.form.type == 'CHECKLIST' %}
-      <table class="table table-striped table-bordered table-hover">
+      <table class="table table-striped table-bordered table-hover submission-table">
         <tbody>
           <tr>
             <td colspan="2">&nbsp;</td>
@@ -78,11 +78,11 @@
               </span>
               {% endif %}
             </td>
-            <td style="text-align:center"><input class="input-mini uneditable-input" disabled="disabled" value="{{ submission.data|keyvalue:field.name }}" type="text" /></td>
+            <td class="submission-field centered"><input class="input-mini uneditable-input" disabled="disabled" value="{{ submission.data|keyvalue:field.name }}" type="text" /></td>
             {% for sibling in siblings %}
-            <td style="text-align:center"><input class="input-mini uneditable-input" disabled="disabled"  value="{{ sibling.data|keyvalue:field.name }}" type="text" /></td>
+            <td class="submission-field centered"><input class="input-mini uneditable-input" disabled="disabled"  value="{{ sibling.data|keyvalue:field.name }}" type="text" /></td>
             {% endfor %}
-            <td style="text-align:center">{{ field }}</td>
+            <td class="submission-field">{{ field }}</td>
           </tr>
           {% endfor %}
           {% endfor %}
