@@ -10,6 +10,10 @@ from .managers import SubmissionManager
 import re
 
 
+LOCATIONTYPE_GRAPH, _ = Graph.objects.get_or_create(name='location_type')
+LOCATION_GRAPH, _ = Graph.objects.get_or_create(name='location')
+
+
 class LocationType(GraphMixin):
     """Location Type"""
     name = models.CharField(max_length=100)
@@ -22,8 +26,7 @@ class LocationType(GraphMixin):
         return self.name
 
     def __init__(self, *args, **kwargs):
-        graph, _ = Graph.objects.get_or_create(name='location_type')
-        self.default_graph = graph
+        self.default_graph = LOCATIONTYPE_GRAPH
         return super(LocationType, self).__init__(*args, **kwargs)
 
 
@@ -43,8 +46,7 @@ class Location(GraphMixin):
         return self.name
 
     def __init__(self, *args, **kwargs):
-        graph, _ = Graph.objects.get_or_create(name='location')
-        self.default_graph = graph
+        self.default_graph = LOCATION_GRAPH
         return super(Location, self).__init__(*args, **kwargs)
 
 
