@@ -17,3 +17,6 @@ class SubmissionQuerySet(HStoreQuerySet):
         _where = '"core_submission"."data" ?| ARRAY[%(fields)s] AND NOT "core_submission"."data" ?& ARRAY[%(fields)s]' % \
             {'fields': ','.join(['%s'] * len(fields))}
         return self.extra(where=[_where], params=fields * 2) if fields else self
+
+    def is_within(self, location):
+        return self.filter(location__pk__in=[loc.pk for loc in location.get_descendants(include_self=True)])
