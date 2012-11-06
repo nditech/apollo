@@ -80,5 +80,6 @@ def generate_submission_filter(form):
             .append((displayed_location['pk'], displayed_location['name']))
     fields['location'] = LocationFilter(widget=forms.Select(attrs={
         'class': 'span4 input-xlarge select2',
-        'placeholder': 'Location'}), choices=[[lt, filter_locations[lt]] for lt in filter_locations.keys()])
+        'data-placeholder': 'Location'}),
+        choices=[["", ""]] + [[lt, filter_locations[lt]] for lt in filter_locations.keys()])
     return type('SubmissionFilter', (BaseSubmissionFilter,), fields)
