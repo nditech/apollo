@@ -2,8 +2,21 @@
 {% load apollo %}
 {% block content %}
 <form method="POST">
-	{% csrf_token %}
-	{{ form.as_p }}
-	<input type="submit" value="Save">
+  {% csrf_token %}
+  <div class="row">
+    <div class="span8 offset2">
+      <table class="table table-hover table-striped table-bordered table-condensed">
+        <tbody>
+        {% for field in form %}
+          <tr>
+            <td><label for="{{ field.name }}">{{ field.label }}</label></td>
+            <td>{{ field }}</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+      <input type="submit" value="Save">
+    </div>
+  </div>
 </form>
 {% endblock %}
