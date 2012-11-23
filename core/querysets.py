@@ -20,3 +20,7 @@ class SubmissionQuerySet(HStoreQuerySet):
 
     def is_within(self, location):
         return self.filter(location__pk__in=[loc.pk for loc in location.get_descendants(include_self=True)])
+
+    def data(self, tags, values=[]):
+        _select = dict([(tag, '"core_submission"."data"->%s' % ("'%s'" % (tag,))) for tag in tags])
+        return self.extra(select=_select)
