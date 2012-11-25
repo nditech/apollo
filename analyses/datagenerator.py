@@ -5,6 +5,12 @@ from core.models import Location
 
 
 def generate_locations_graph():
+    '''
+    Creates a directed acyclical graph of the locations database
+    This is more performant for performing tree lookups and is 
+    faster than the alternative of running several queries to
+    retrieve this graph from the database
+    '''
     nodes = Node.objects.filter(graph__name='location').values('pk', 'object_id')
     locations = Location.objects.filter(pk__in=[node['object_id'] for node in nodes]).values('pk', 'name', 'type__name')
     DG = nx.DiGraph()
@@ -17,6 +23,11 @@ def generate_locations_graph():
 
 
 def get_locations_graph():
+    '''
+    This provides a means of caching the generated
+    graph and serving up the graph from the cache
+    as needed.
+    '''
     graph = cache.get('locations_graph')
     if not graph:
         graph = generate_locations_graph()
@@ -24,6 +35,11 @@ def get_locations_graph():
     return graph
 
 
-def get_location_ancestors_by_type(graph, location_id, types=['Province']):
+def get_location_ancestors_by_type(graph, location_id, types):
+    '''
+    This method provides a means of retrieving the ancestors of a particular location
+    of specified types as defined in the LocationType model. It uses the depth-first-search
+    algorithm in retrieving this subgraph
+    '''
     nodes = graph.subgraph(nx.dfs_tree(graph, location_id).nodes()).nodes(data=True)
     return [node[1] for node in nodes if node[1]['type'] in types]
