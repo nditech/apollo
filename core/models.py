@@ -302,6 +302,16 @@ class FormField(models.Model):
         return re.sub(pattern, '', text, flags=re.I) if self.value != None else text
 
 
+class VoteOption(models.Model):
+    form = models.ForeignKey(Form, related_name='vote_options')
+    field = models.ForeignKey(FormField)
+    abbr = models.CharField(max_length=100, blank=True)
+    name = models.CharField(max_length=255, blank=True)
+
+    def __unicode__(self):
+        return self.abbr
+
+
 class FormFieldOption(models.Model):
     field = models.ForeignKey(FormField, related_name="options")
     description = models.CharField(max_length=255)
