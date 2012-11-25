@@ -22,20 +22,27 @@ def generate_locations_graph():
     return DG
 
 
-def get_locations_graph():
+def get_locations_graph(reverse=False):
     '''
     This provides a means of caching the generated
     graph and serving up the graph from the cache
     as needed.
+
+    There's an optional parameter to retrieve the 
+    reversed version of the graph
     '''
-    graph = cache.get('locations_graph')
+    graph = cache.get('reversed_locations_graph') if reverse else cache.get('locations_graph')
     if not graph:
-        graph = generate_locations_graph()
-        cache.set('locations_graph', graph)
+        if reverse:
+            graph = generate_locations_graph().reverse()
+            cache.set('reversed_locations_graph', graph)
+        else:
+            graph = generate_locations_graph()
+            cache.set('locations_graph', graph)
     return graph
 
 
-def get_location_ancestors_by_type(graph, location_id, types):
+def get_location_ancestors_by_type(graph, location_id, types=[]):
     '''
     This method provides a means of retrieving the ancestors of a particular location
     of specified types as defined in the LocationType model. It uses the depth-first-search
