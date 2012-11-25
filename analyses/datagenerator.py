@@ -1,8 +1,55 @@
 from django.core.cache import cache
 import networkx as nx
+import pandas as pd
 from django_dag.models import Node, Edge
-from core.models import Location
+from core.models import *
 
+
+def get_data_records(form, location_types=[], location_root=0):
+    # fields that can store multiple variables are to be handled differently
+    multivariate_fields = FormField.objects.filter(group__form=form, allow_multiple=True).values_list('tag', flat=True)
+    regular_fields = FormField.objects.filter(group__form=form, allow_multiple=False).values_list('tag', flat=True)
+    all_fields = list(multivariate_fields) + list(regular_fields)
+
+    # retrieve normal and reversed locations graphs
+    locations_graph = get_locations_graph()
+    locations_graph_reversed = get_locations_graph(reverse=True)
+
+    # if the location_root is defined, then we'll retrieve all sublocations based
+    # on the location_root which will be used for retrieving submissions if not
+    # we'll just use all locations in the graph
+    if location_root:
+        sub_location_ids = nx.dfs_tree(locations_graph_reversed, location_root).nodes()
+    else:
+        sub_location_ids = locations_graph.nodes()
+
+    # in addition to retrieving field data, also retrieve the location_id
+    submissions = list(Submission.objects.filter(location__pk__in=sub_location_ids).data(all_fields).values(*(['location_id'] + all_fields)))
+
+    for submission in submissions:
+        '''
+        Annotate the submissions with their ancestral location data as specified by `location_types`
+        '''
+        if location_types:
+            ancestor_locations = get_location_ancestors_by_type(locations_graph, submission['location_id'], location_types)
+            for ancestor_location in ancestor_locations:
+                submission[ancestor_location['type']] = ancestor_location['name']
+
+        # for numerical processing, we need to convert the responses into integers
+        # note also that multivariates are converted into a list non numeric values
+        # are represented as NaNs
+        for _field in regular_fields:
+            submission[_field] = int(submission[_field]) if submission[_field] else pd.np.nan
+        for _field in multivariate_fields:
+            submission[_field] = map(lambda x: int(x) if x else pd.np.nan, submission[_field].split(",") if submission[_field] else [])
+
+    return pd.DataFrame(submissions)
+
+def generate_process_data(location_root, form):
+    pass
+
+def generate_results_data(location_root, form):
+    pass
 
 def generate_locations_graph():
     '''
