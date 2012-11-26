@@ -15,6 +15,7 @@ django-tastypie==0.9.11
 librabbitmq==0.9.9
 networkx==1.7
 numpy==1.6.1
+pandas==0.9.1
 psycopg2==2.4.5
 rapidsms-threadless-router==0.1.4
 tablib==0.9.11
