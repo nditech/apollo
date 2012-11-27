@@ -1,11 +1,17 @@
 from django.core.cache import cache
+from django.utils import simplejson as json
 import networkx as nx
 import pandas as pd
 from django_dag.models import Node, Edge
 from core.models import *
 
 
-def get_data_records(form, location_types=[], location_root=0):
+def get_data_records(form, location_root=0):
+    '''
+    Given a form model instance and a location pk, generate a pandas DataFrame
+    containing the submitted form values for locations below the specified
+    location_root. 
+    '''
     # fields that can store multiple variables are to be handled differently
     multivariate_fields = FormField.objects.filter(group__form=form, allow_multiple=True).values_list('tag', flat=True)
     regular_fields = FormField.objects.filter(group__form=form, allow_multiple=False).values_list('tag', flat=True)
@@ -14,12 +20,19 @@ def get_data_records(form, location_types=[], location_root=0):
     # retrieve normal and reversed locations graphs
     locations_graph = get_locations_graph()
     locations_graph_reversed = get_locations_graph(reverse=True)
+    location_types = None
 
     # if the location_root is defined, then we'll retrieve all sublocations based
     # on the location_root which will be used for retrieving submissions if not
     # we'll just use all locations in the graph
     if location_root:
         sub_location_ids = nx.dfs_tree(locations_graph_reversed, location_root).nodes()
+        try:
+            root_location = Location.objects.get(pk=location_root)
+
+            location_types = [ x.name for x in root_location.type.get_children() ]
+        except Location.DoesNotExist:
+            pass
     else:
         sub_location_ids = locations_graph.nodes()
 
@@ -43,9 +56,10 @@ def get_data_records(form, location_types=[], location_root=0):
         for _field in multivariate_fields:
             submission[_field] = map(lambda x: int(x) if x else pd.np.nan, submission[_field].split(",") if submission[_field] else [])
 
-    return pd.DataFrame(submissions)
+    return (pd.DataFrame(submissions), regular_fields, multivariate_fields)
 
 def generate_process_data(location_root, form):
+    data_frame, univariate_fields, multivariate_fields = get_data_records(form, location_root)
     pass
 
 def generate_results_data(location_root, form):
