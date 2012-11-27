@@ -24,7 +24,7 @@ def get_data_records(form, location_types=[], location_root=0):
         sub_location_ids = locations_graph.nodes()
 
     # in addition to retrieving field data, also retrieve the location_id
-    submissions = list(Submission.objects.filter(location__pk__in=sub_location_ids).data(all_fields).values(*(['location_id'] + all_fields)))
+    submissions = list(Submission.objects.filter(location__pk__in=sub_location_ids, observer=None).data(all_fields).values(*(['location_id'] + all_fields)))
 
     for submission in submissions:
         '''
