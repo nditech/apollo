@@ -6,11 +6,26 @@ from django_dag.models import Node, Edge
 from core.models import *
 
 
+def sub_location_types(location_id):
+    '''Given the PK for a location, retrieve the types of locations
+    lower than the specified one.'''
+    location_types = []
+
+    try:
+        root_location = Location.objects.get(pk=location_id)
+
+        location_types = [x.name for x in root_location.type.get_children()]
+    except Location.DoesNotExist:
+        location_types.append(LocationType.objects.all()[0].get_ancestors()[-1].name)
+
+    return location_types
+
+
 def get_data_records(form, location_root=0):
     '''
     Given a form model instance and a location pk, generate a pandas DataFrame
     containing the submitted form values for locations below the specified
-    location_root. 
+    location_root.
     '''
     # fields that can store multiple variables are to be handled differently
     multivariate_fields = FormField.objects.filter(group__form=form, allow_multiple=True).values_list('tag', flat=True)
@@ -27,12 +42,8 @@ def get_data_records(form, location_root=0):
     # we'll just use all locations in the graph
     if location_root:
         sub_location_ids = nx.dfs_tree(locations_graph_reversed, location_root).nodes()
-        try:
-            root_location = Location.objects.get(pk=location_root)
 
-            location_types = [ x.name for x in root_location.type.get_children() ]
-        except Location.DoesNotExist:
-            pass
+        location_types = sub_location_types(location_root)
     else:
         sub_location_ids = locations_graph.nodes()
 
@@ -58,17 +69,24 @@ def get_data_records(form, location_root=0):
 
     return (pd.DataFrame(submissions), regular_fields, multivariate_fields)
 
-def generate_process_data(location_root, form):
-    data_frame, univariate_fields, multivariate_fields = get_data_records(form, location_root)
+
+def generate_process_data(location_id, form):
+    data_frame, univariate_fields,
+    multivariate_fields = get_data_records(form, location_id)
+
+    dataset = {}
+
+    # sort univariate fields
     pass
 
 def generate_results_data(location_root, form):
     pass
 
+
 def generate_locations_graph():
     '''
     Creates a directed acyclical graph of the locations database
-    This is more performant for performing tree lookups and is 
+    This is more performant for performing tree lookups and is
     faster than the alternative of running several queries to
     retrieve this graph from the database
     '''
