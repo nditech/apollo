@@ -1,6 +1,6 @@
 from django.core.cache import cache
-from django.utils import simplejson as json
 import networkx as nx
+import numpy as np
 import pandas as pd
 from django_dag.models import Node, Edge
 from core.models import *
@@ -9,16 +9,18 @@ from core.models import *
 def sub_location_types(location_id):
     '''Given the PK for a location, retrieve the types of locations
     lower than the specified one.'''
-    location_types = []
 
     try:
         root_location = Location.objects.get(pk=location_id)
-
-        location_types = [x.name for x in root_location.type.get_children()]
     except Location.DoesNotExist:
-        location_types.append(LocationType.objects.all()[0].get_ancestors()[-1].name)
+        return None
 
-    return location_types
+    children_nodes = root_location.type.get_children()
+
+    if not children_nodes:
+        return None
+
+    return [x.name for x in children_nodes]
 
 
 def get_data_records(form, location_root=0):
@@ -35,15 +37,13 @@ def get_data_records(form, location_root=0):
     # retrieve normal and reversed locations graphs
     locations_graph = get_locations_graph()
     locations_graph_reversed = get_locations_graph(reverse=True)
-    location_types = None
+    location_types = sub_location_types(location_root)
 
     # if the location_root is defined, then we'll retrieve all sublocations based
     # on the location_root which will be used for retrieving submissions if not
     # we'll just use all locations in the graph
     if location_root:
         sub_location_ids = nx.dfs_tree(locations_graph_reversed, location_root).nodes()
-
-        location_types = sub_location_types(location_root)
     else:
         sub_location_ids = locations_graph.nodes()
 
@@ -71,13 +71,37 @@ def get_data_records(form, location_root=0):
 
 
 def generate_process_data(location_id, form):
-    data_frame, univariate_fields,
-    multivariate_fields = get_data_records(form, location_id)
+    location_types = sub_location_types(location_id)
+
+    if not location_types:
+        return {}
+
+    data_frame, univariate_fields, multivariate_fields = get_data_records(form, location_id)
 
     dataset = {}
 
-    # sort univariate fields
-    pass
+    for location_type in location_types:
+        location_data = {}
+
+        df = data_frame.groupby(location_type)
+
+        for field in univariate_fields:
+            field_data = {}
+
+            regions = df[field].aggregate({'mean': np.mean,
+                'std': lambda x: np.std(x)})
+
+            global_mean = np.mean(data_frame[field])
+            global_std = np.std(data_frame[field])
+
+            field_data['regions'] = regions.to_dict()
+            field_data['summary'] = {'mean': global_mean, 'std': global_std}
+
+            location_data[field] = field_data
+
+        dataset[location_type] = location_data
+
+    return dataset
 
 def generate_results_data(location_root, form):
     pass
@@ -107,7 +131,7 @@ def get_locations_graph(reverse=False):
     graph and serving up the graph from the cache
     as needed.
 
-    There's an optional parameter to retrieve the 
+    There's an optional parameter to retrieve the
     reversed version of the graph
     '''
     graph = cache.get('reversed_locations_graph') if reverse else cache.get('locations_graph')
