@@ -111,11 +111,24 @@ class SubmissionEditView(UpdateView):
     def dispatch(self, *args, **kwargs):
         self.submission = get_object_or_404(Submission, pk=kwargs['pk'])
         self.form_class = generate_submission_form(self.submission.form)
+        
+        # submission_form_class allows for the rendering of form elements that are readonly
+        # and disabled by default. It's only useful for rendering submission and submission
+        # sibling records. Only the master submission should be editable.
+        self.submission_form_class = generate_submission_form(self.submission.form, readonly=True)
         return super(SubmissionEditView, self).dispatch(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super(SubmissionEditView, self).get_context_data(**kwargs)
         context['submission'] = self.submission
+        
+        # A prefix is defined to prevent a confusion with the naming
+        # of the form field with other forms with the same field name
+        context['submission_form'] = self.submission_form_class(instance=self.submission, prefix=self.submission.pk)
+        
+        # uses list comprehension to generate a list of forms that can be rendered to display
+        # submission sibling form fields.
+        context['submission_sibling_forms'] = [self.submission_form_class(instance=x, prefix=x.pk) for x in self.submission.siblings]
         context['location_types'] = LocationType.objects.filter(on_display=True)
         context['page_title'] = self.page_title
         return context

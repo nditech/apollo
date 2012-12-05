@@ -113,7 +113,7 @@ class ContactModelForm(forms.ModelForm):
 
 # please see https://bitbucket.org/carljm/django-form-utils/overview for
 # info on using inside a Django template
-def generate_submission_form(form):
+def generate_submission_form(form, readonly=False):
     fields = {}  # necessary for the individual fields
     groups = []  # necessary for the internal Meta class definition
 
@@ -143,6 +143,11 @@ def generate_submission_form(form):
                 else:
                     fields[field.tag] = forms.BooleanField(help_text=field.description,
                         required=False, label=field.tag, widget=forms.CheckboxInput())
+            
+            # Disable the field if the form is readonly
+            if readonly:
+                fields[field.tag].widget.attrs['readonly'] = 'readonly'
+                fields[field.tag].widget.attrs['disabled'] = 'disabled'
 
         groups.append(groupspec)
 

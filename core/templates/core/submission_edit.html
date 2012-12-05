@@ -78,9 +78,9 @@
               </span>
               {% endif %}
             </td>
-            <td class="submission-field centered"><input class="input-mini uneditable-input" disabled="disabled" value="{{ submission.data|keyvalue:field.name }}" type="text" /></td>
-            {% for sibling in siblings %}
-            <td class="submission-field centered"><input class="input-mini uneditable-input" disabled="disabled"  value="{{ sibling.data|keyvalue:field.name }}" type="text" /></td>
+            <td class="submission-field">{{ submission_form|keyvalue:field.name }}</td>
+            {% for sibling in submission_sibling_forms %}
+            <td class="submission-field">{{ sibling|keyvalue:field.name }}</td>
             {% endfor %}
             <td class="submission-field">{{ field }}</td>
           </tr>

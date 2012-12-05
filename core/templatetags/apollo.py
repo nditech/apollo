@@ -6,7 +6,10 @@ register = template.Library()
 
 @register.filter
 def keyvalue(value, key):
-    return value.get(key, '')
+    try:
+        return value[key]
+    except AttributeError:
+        return ''
 
 
 @register.filter
