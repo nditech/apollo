@@ -23,6 +23,15 @@ def sub_location_types(location_id):
     return [x.name for x in children_nodes]
 
 
+def make_histogram(options, dataset):
+    temp = []
+
+    for option in options:
+        temp.append(dataset.count(option))
+
+    return temp
+
+
 def get_data_records(form, location_root=0):
     '''
     Given a form model instance and a location pk, generate a pandas DataFrame
@@ -85,6 +94,7 @@ def generate_process_data(location_id, form):
 
         df = data_frame.groupby(location_type)
 
+        # add in the univariate fields
         for field in univariate_fields:
             field_data = {}
 
@@ -100,6 +110,11 @@ def generate_process_data(location_id, form):
             location_data[field] = field_data
 
         dataset[location_type] = location_data
+
+        # add in the multivariate fields
+        for field in multivariate_fields:
+            field_options = [ x.option for x in FormFieldOption.objects.filter(field__tag=field)]
+            pass
 
     return dataset
 
