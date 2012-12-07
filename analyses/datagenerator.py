@@ -10,6 +10,11 @@ def sub_location_types(location_id):
     '''Given the PK for a location, retrieve the types of locations
     lower than the specified one.'''
 
+    # TODO: change this to something that allows for retrieval
+    # of the node without ancestors without ambiguity
+    if location_id == 0:
+        return [LocationType.objects.latest(field_name='pk').get_ancestors()[-1].name]
+
     try:
         root_location = Location.objects.get(pk=location_id)
     except Location.DoesNotExist:
