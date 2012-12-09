@@ -173,14 +173,31 @@ class ContactListView(ListView):
     paginate_by = settings.PAGE_SIZE
     page_title = 'Contacts List'
 
+    def get_queryset(self):
+        return self.filter_set.qs.order_by('observer_id')
+
     def get_context_data(self, **kwargs):
         context = super(ContactListView, self).get_context_data(**kwargs)
+        context['filter_form'] = self.filter_set.form
         context['page_title'] = self.page_title
         return context
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
+        self.contacts_filter = generate_contacts_filter()
         return super(ContactListView, self).dispatch(*args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        self.filter_set = self.contacts_filter(request.POST,
+            queryset=Observer.objects.all())
+        request.session['contacts_filter'] = self.filter_set.form.data
+        return super(ContactListView, self).get(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        initial_data = request.session.get('contacts_filter', None)
+        self.filter_set = self.contacts_filter(initial_data,
+            queryset=Observer.objects.all())
+        return super(ContactListView, self).get(request, *args, **kwargs)
 
 
 class ContactEditView(UpdateView):

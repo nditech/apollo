@@ -2,6 +2,27 @@
 {% block content %}
 <div class="row">
   <div class="span12">
+    <div class="well" style="padding-bottom:0">
+      <form action="" method="post" id="filter">
+        {% csrf_token %}
+        <div class="controls controls-row">
+          {{ filter_form.observer_id }}
+          {{ filter_form.name }}
+          {{ filter_form.location }}      
+        </div>
+        <div class="controls controls-row">
+          {{ filter_form.role }}
+          {{ filter_form.partner }}
+          <button type="submit" class="btn btn-warning" style="margin-left:2em"><i class="icon-search icon-white"></i> Search</button>
+          <a class="btn form-reset">Clear</a>
+        </div> 
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="span12">
     <table class="table table-striped well">
       <thead>
         <tr>

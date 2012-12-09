@@ -43,6 +43,46 @@ class LocationFilter(django_filters.ChoiceFilter):
             return qs
 
 
+class BaseContactsFilter(django_filters.FilterSet):
+    class Meta:
+        model = Observer
+        fields = ['observer_id', 'name', 'role', 'location',
+            'partner']
+
+    def __init__(self, *args, **kwargs):
+        super(BaseContactsFilter, self).__init__(*args, **kwargs)
+        self.filters['role'].extra.update(
+            {'empty_label': u'All Roles'})
+        self.filters['partner'].extra.update(
+            {'empty_label': u'All Partners'})
+        self.filters['role'].field.widget.attrs['class'] = 'span3'
+        self.filters['partner'].field.widget.attrs['class'] = 'span3'
+        self.filters['name'].field.widget.attrs['class'] = 'span3'
+        self.filters['name'].field.widget.attrs['placeholder'] = 'Name'
+        self.filters['observer_id'].field.widget.attrs['class'] = 'span3'
+        self.filters['observer_id'].field.widget.attrs['placeholder'] = 'Observer ID'
+
+
+def generate_contacts_filter():
+    metafields = {'model': Observer, 'fields':
+        ['observer_id', 'name', 'role', 'location', 'partner']}
+    metaclass = type('Meta', (), metafields)
+    fields = {'Meta': metaclass}
+
+    displayed_location_types = LocationType.objects.filter(on_display=True).values('pk', 'name')
+    displayed_locations = Location.objects.filter(type__in=[t['pk'] for t in displayed_location_types]) \
+        .order_by('type', 'name').values('pk', 'type__name', 'name')
+    filter_locations = {}
+    for displayed_location in displayed_locations:
+        filter_locations.setdefault(displayed_location['type__name'], [])\
+            .append((displayed_location['pk'], displayed_location['name']))
+    fields['location'] = LocationFilter(widget=forms.Select(attrs={
+        'class': 'span4 input-xlarge select2',
+        'data-placeholder': 'Location'}),
+        choices=[["", ""]] + [[lt, filter_locations[lt]] for lt in filter_locations.keys()])
+    return type('ContactsFilter', (BaseContactsFilter,), fields)
+
+
 class BaseSubmissionFilter(django_filters.FilterSet):
     class Meta:
         model = Submission
