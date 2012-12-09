@@ -11,11 +11,11 @@ MESSAGE_DIRECTION = (
 
 
 class MessageLog(models.Model):
-    mobile = models.CharField(max_length=16)
-    text = models.TextField()
-    direction = models.SmallIntegerField(choices=MESSAGE_DIRECTION)
-    created = models.DateTimeField(auto_now_add=True)
-    delivered = models.DateTimeField(blank=True, null=True)
+    mobile = models.CharField(max_length=16, db_index=True)
+    text = models.TextField(db_index=True)
+    direction = models.SmallIntegerField(choices=MESSAGE_DIRECTION, db_index=True)
+    created = models.DateTimeField(auto_now_add=True, db_index=True)
+    delivered = models.DateTimeField(blank=True, null=True, db_index=True)
 
     def __unicode__(self):
         if self.direction == MESSAGE_INCOMING:
