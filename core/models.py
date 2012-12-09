@@ -7,7 +7,7 @@ from django_dag.mixins import GraphMixin
 from django_orm.postgresql import hstore
 from rapidsms.models import Contact, Backend, Connection
 from datetime import datetime
-from .managers import SubmissionManager
+from .managers import SubmissionManager, ObserverManager
 import re
 
 
@@ -85,7 +85,7 @@ class Observer(models.Model):
     partner = models.ForeignKey(Partner, null=True, blank=True)
     data = hstore.DictionaryField(db_index=True, null=True, blank=True)
 
-    objects = hstore.HStoreManager()
+    objects = ObserverManager()
 
     def _get_phone(self):
         return self.contact.connection_set.all()[settings.DEFAULT_CONNECTION_INDEX].identity \
