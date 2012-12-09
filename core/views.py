@@ -3,12 +3,15 @@ try:
 except ImportError:
     from StringIO import StringIO
 import re
+from datetime import datetime
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
+from django.template.defaultfilters import slugify
 from django.utils.decorators import method_decorator
-from django.views.generic import TemplateView, ListView, UpdateView
+from django.views.generic import TemplateView, ListView, UpdateView, View
 import tablib
 from .forms import ContactModelForm, generate_submission_form
 from .models import *
@@ -111,7 +114,7 @@ class SubmissionEditView(UpdateView):
     def dispatch(self, *args, **kwargs):
         self.submission = get_object_or_404(Submission, pk=kwargs['pk'])
         self.form_class = generate_submission_form(self.submission.form)
-        
+
         # submission_form_class allows for the rendering of form elements that are readonly
         # and disabled by default. It's only useful for rendering submission and submission
         # sibling records. Only the master submission should be editable.
@@ -121,11 +124,11 @@ class SubmissionEditView(UpdateView):
     def get_context_data(self, **kwargs):
         context = super(SubmissionEditView, self).get_context_data(**kwargs)
         context['submission'] = self.submission
-        
+
         # A prefix is defined to prevent a confusion with the naming
         # of the form field with other forms with the same field name
         context['submission_form'] = self.submission_form_class(instance=self.submission, prefix=self.submission.pk)
-        
+
         # uses list comprehension to generate a list of forms that can be rendered to display
         # submission sibling form fields.
         context['submission_sibling_forms'] = [self.submission_form_class(instance=x, prefix=x.pk) for x in self.submission.siblings]
@@ -135,6 +138,32 @@ class SubmissionEditView(UpdateView):
 
     def get_success_url(self):
         return reverse('submissions_list', args=[self.submission.form.pk])
+
+
+class SubmissionListExportView(View):
+    collection = 'observers'
+
+    # TODO: refactor to support custom field labels
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        form = get_object_or_404(Form, pk=kwargs['form'])
+        self.submission_filter = generate_submission_filter(form)
+        initial_data = request.session.get('submission_filter_%d' % form.pk, None)
+        if self.collection == 'master':
+            self.filter_set = self.submission_filter(initial_data,
+                queryset=Submission.objects.filter(form=form, observer=None))
+        else:
+            self.filter_set = self.submission_filter(initial_data,
+                queryset=Submission.objects.filter(form=form).exclude(observer=None))
+        qs = self.filter_set.qs.order_by('-date', 'observer__observer_id')
+
+        fields = FormField.objects.filter(group__form=form).order_by('id').values_list('tag', flat=True)
+        export_fields = ['hstore:data__%s' % (field) for field in fields]
+        filename = slugify('%s %s %s' % (form.name, datetime.now().strftime('%Y %m %d %H%M%S'), self.collection))
+        response = HttpResponse(export(qs, *export_fields), content_type='application/vnd.ms-excel')
+        response['Content-Disposition'] = 'attachment; filename=%s.xls' % (filename,)
+
+        return response
 
 
 class ContactListView(ListView):
@@ -211,6 +240,7 @@ def make_item_row(record, args):
     return row
 
 
+# TODO: refactor to use a datalist instead of queryset and custom labels
 def export(queryset, *args, **kwargs):
     '''Handles exporting a queryset to a (c)StringIO instance, with its
     contents being a spreadsheet in a specified format.

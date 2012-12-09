@@ -1,4 +1,15 @@
 {% extends "core/layout.html" %}{% load apollo %}{% load bootstrap_pagination %}
+{% block title %}
+{{ page_title }}
+<div class="btn-group pull-right">
+  <a class="btn" href="{% url submissions_list_export_master form.pk %}">Export</a>
+  <button class="btn dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
+  <ul class="dropdown-menu">
+    <li><a href="{% url submissions_list_export_observers form.pk %}">Observers Data</a></li>
+    <li><a href="{% url submissions_list_export_master form.pk %}">Master Data</a></li>
+  </ul>
+</div>
+{% endblock %}
 {% block content %}
 <div class="row">
   <div class="span12">
