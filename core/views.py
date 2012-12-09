@@ -267,9 +267,6 @@ def export(queryset, *args, **kwargs):
     # set headers
     dataset.headers = map(create_column_header, args)
 
-    # reorder queryset
-    queryset = queryset.order_by('id')
-
     # retrieve data and build table
     fields = generate_value_list(args)
     for record in queryset.values(*fields):
