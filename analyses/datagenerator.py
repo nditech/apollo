@@ -158,10 +158,14 @@ def get_locations_graph(reverse=False):
     if not graph:
         if reverse:
             graph = generate_locations_graph().reverse()
-            cache.set('reversed_locations_graph', graph)
+            # cache for 30 days
+            cache.set('reversed_locations_graph', graph, 3592000)
         else:
             graph = generate_locations_graph()
-            cache.set('locations_graph', graph)
+            # cache for 30 days
+            # we compensate by invalidating the cache when any Location
+            # object changes
+            cache.set('locations_graph', graph, 3592000)
     return graph
 
 

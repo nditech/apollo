@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.core.cache import cache
 from django.db import models
 from django.dispatch import receiver
 from django_dag.models import Graph
@@ -486,3 +487,9 @@ def sync_submissions(sender, **kwargs):
 
     master.save()
     return True
+
+
+@receiver(models.signals.post_save, sender=Location, dispatch_uid='invalidate_locations_cache')
+def invalidate_locations_cache(sender, **kwargs):
+    cache.delete('reversed_locations_graph')
+    cache.delete('locations_graph')
