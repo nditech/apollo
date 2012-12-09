@@ -18,8 +18,8 @@ urlpatterns += patterns('',
 urlpatterns += patterns('',
     # apolo urls for default routing
     (r'^kannel/', include('threadless_router.backends.kannel.urls')),
+    (r'^messages/', include('messagelog.urls')),
     (r'', include('core.urls')),
     (r'^favicon.ico', redirect_to, {'url': '/assets/images/favicon.ico', 'permanent': True}),
     (r'^', include('rapidsms.urls.static_media')),
-    (r'^messagelog/', include('messagelog.urls')),
 )
