@@ -67,10 +67,6 @@ def summarize_options(options, series):
     return np.array(placeholder).sum(axis=0).tolist()
 
 
-def generate_multivariate_summary():
-    pass
-
-
 def get_data_records(form, location_root=0):
     '''
     Given a form model instance and a location pk, generate a pandas DataFrame
@@ -135,7 +131,7 @@ def multivariate_process_data(field, group):
 
     field_options = list(FormFieldOption.objects.filter(field__tag=field))
     #    field__group__form=form))
-    values = [ x.option for x in field_options]
+    values = [ x.option for x in field_options ]
     descriptions = [ x.description for x in field_options ]
 
     legend = {}
@@ -144,7 +140,7 @@ def multivariate_process_data(field, group):
     for index, value in enumerate(values):
         legend[value] = descriptions[index]
 
-    for name, series in group:
+    for name, series in group[field]:
         # TODO: this might be needed for the (almost certain) refactor
         # num_points = len(series)
         summary = summarize_options(values, series)
@@ -154,8 +150,9 @@ def multivariate_process_data(field, group):
         for index, value in enumerate(values):
             mapping[value] = summary[index]
 
-            field_data[name] = mapping
+            regions[name] = mapping
 
+    field_data['regions'] = regions
     field_data['legend'] = legend
 
     return field_data
