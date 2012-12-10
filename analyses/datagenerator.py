@@ -1,3 +1,4 @@
+from collections import Counter
 from django.core.cache import cache
 import networkx as nx
 import numpy as np
@@ -29,12 +30,45 @@ def sub_location_types(location_id):
 
 
 def make_histogram(options, dataset):
-    temp = []
+    '''This function simply returns the number of occurrences of each option
+    in the given dataset as a list.
 
-    for option in options:
-        temp.append(dataset.count(option))
+    For example, say options is 'abcde', and dataset is 'capable', it would
+    return [2, 1, 1, 0, 1], because there are 2 occurrences of 'a' in
+    'capable', 1 of 'b', and so on.
 
-    return temp
+    Please note that both options and dataset must be homogenous iterables
+    of the same type.
+    '''
+    counter = Counter(dataset)
+
+    histogram = [counter[option] for option in options]
+
+    return histogram
+
+
+def summarize_options(options, series):
+    '''This function returns a summary of the number of occurrences of each
+    option in a pandas Series of lists (although it can be used for any 2D
+    iterable).
+
+
+    For example, if the series contains these lists: [1, 2], [2, 5] and
+    [2, 3, 4] and options is [1, 2, 3, 4, 5, 6], it would return
+    [1, 3, 1, 1, 1, 0].
+
+    Since this merely uses make_histogram(), the same rules apply.
+    '''
+    placeholder = []
+    for row in series:
+        placeholder.append(make_histogram(options, row))
+
+    # sum the number of occurrences by column and return as a list
+    return np.array(placeholder).sum(axis=0).tolist()
+
+
+def generate_multivariate_summary():
+    pass
 
 
 def get_data_records(form, location_root=0):
@@ -84,6 +118,49 @@ def get_data_records(form, location_root=0):
     return (pd.DataFrame(submissions), regular_fields, multivariate_fields)
 
 
+def univariate_process_data(field, group):
+    field_data = {}
+
+    regions = group[field].aggregate({'mean': np.mean,
+        'std': lambda x: np.std(x)})
+
+    # tag field as a univariate field
+    field_data['type'] = 'univariate'
+    field_data['regions'] = regions.to_dict()
+
+    return field_data
+
+def multivariate_process_data(field, group):
+    field_data = {'type': 'multivariate'}
+
+    field_options = list(FormFieldOption.objects.filter(field__tag=field))
+    #    field__group__form=form))
+    values = [ x.option for x in field_options]
+    descriptions = [ x.description for x in field_options ]
+
+    legend = {}
+    regions = {}
+
+    for index, value in enumerate(values):
+        legend[value] = descriptions[index]
+
+    for name, series in group:
+        # TODO: this might be needed for the (almost certain) refactor
+        # num_points = len(series)
+        summary = summarize_options(values, series)
+
+        mapping = {}
+
+        for index, value in enumerate(values):
+            mapping[value] = summary[index]
+
+            field_data[name] = mapping
+
+    field_data['legend'] = legend
+
+    return field_data
+
+
 def generate_process_data(location_id, form):
     location_types = sub_location_types(location_id)
 
@@ -97,29 +174,26 @@ def generate_process_data(location_id, form):
     for location_type in location_types:
         location_data = {}
 
-        df = data_frame.groupby(location_type)
+        grouped = data_frame.groupby(location_type)
 
         # add in the univariate fields
         for field in univariate_fields:
-            field_data = {}
-
-            regions = df[field].aggregate({'mean': np.mean,
-                'std': lambda x: np.std(x)})
+            field_data = univariate_process_data(field, grouped)
 
             global_mean = np.mean(data_frame[field])
             global_std = np.std(data_frame[field])
 
-            field_data['regions'] = regions.to_dict()
             field_data['summary'] = {'mean': global_mean, 'std': global_std}
 
             location_data[field] = field_data
 
-        dataset[location_type] = location_data
-
         # add in the multivariate fields
         for field in multivariate_fields:
-            field_options = [ x.option for x in FormFieldOption.objects.filter(field__tag=field)]
-            pass
+            field_data = multivariate_process_data(field, grouped)            
+
+            location_data[field] = field_data
+
+        dataset[location_type] = location_data
 
     return dataset
 
@@ -158,14 +232,10 @@ def get_locations_graph(reverse=False):
     if not graph:
         if reverse:
             graph = generate_locations_graph().reverse()
-            # cache for 30 days
-            cache.set('reversed_locations_graph', graph, 3592000)
+            cache.set('reversed_locations_graph', graph)
         else:
             graph = generate_locations_graph()
-            # cache for 30 days
-            # we compensate by invalidating the cache when any Location
-            # object changes
-            cache.set('locations_graph', graph, 3592000)
+            cache.set('locations_graph', graph)
     return graph
 
 
