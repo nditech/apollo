@@ -122,7 +122,7 @@ def univariate_process_data(field, group):
 
     # tag field as a univariate field
     field_data['type'] = 'univariate'
-    field_data['regions'] = regions.to_dict()
+    field_data['regions'] = regions.transpose().to_dict()
 
     return field_data
 
