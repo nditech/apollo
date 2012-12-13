@@ -158,6 +158,18 @@ def multivariate_process_data(field, group):
     return field_data
 
 
+def filter_tags(form, univariate_tags, multivariate_tags):
+    fields = FormField.objects.filter(group__form=form)
+
+    univariate_process_tags = [field.tag for field in fields if not field.voteoption_set.all() and field.tag in univariate_tags]
+    multivariate_process_tags = [field.tag for field in fields if not field.voteoption_set.all() and field.tag in multivariate_tags]
+
+    univariate_result_tags = [x for x in univariate_tags if x not in univariate_process_tags]
+    multivariate_result_tags = [x for x in multivariate_tags if x not in multivariate_process_tags]
+
+    return (univariate_process_tags, multivariate_process_tags, univariate_result_tags, multivariate_result_tags)
+
+
 def generate_process_data(location_id, form):
     location_types = sub_location_types(location_id)
 
@@ -165,6 +177,8 @@ def generate_process_data(location_id, form):
         return {}
 
     data_frame, univariate_fields, multivariate_fields = get_data_records(form, location_id)
+
+    uni_process_tags, mul_process_tags, temp1, temp2 = filter_tags(form, univariate_fields, multivariate_fields)
 
     dataset = {}
 
@@ -174,7 +188,7 @@ def generate_process_data(location_id, form):
         grouped = data_frame.groupby(location_type)
 
         # add in the univariate fields
-        for field in univariate_fields:
+        for field in uni_process_tags:
             field_data = univariate_process_data(field, grouped)
 
             global_mean = np.mean(data_frame[field])
@@ -185,7 +199,7 @@ def generate_process_data(location_id, form):
             location_data[field] = field_data
 
         # add in the multivariate fields
-        for field in multivariate_fields:
+        for field in mul_process_tags:
             field_data = multivariate_process_data(field, grouped)            
 
             location_data[field] = field_data
