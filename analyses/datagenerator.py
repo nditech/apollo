@@ -1,32 +1,7 @@
 from collections import Counter
-from django.core.cache import cache
-import networkx as nx
 import numpy as np
 import pandas as pd
-from django_dag.models import Node, Edge
 from core.models import *
-
-
-def sub_location_types(location_id):
-    '''Given the PK for a location, retrieve the types of locations
-    lower than the specified one.'''
-
-    # TODO: change this to something that allows for retrieval
-    # of the node without ancestors without ambiguity
-    if location_id == 0:
-        return [LocationType.objects.latest(field_name='pk').get_ancestors()[-1].name]
-
-    try:
-        root_location = Location.objects.get(pk=location_id)
-    except Location.DoesNotExist:
-        return None
-
-    children_nodes = root_location.type.get_children()
-
-    if not children_nodes:
-        return None
-
-    return [x.name for x in children_nodes]
 
 
 def make_histogram(options, dataset):
@@ -126,13 +101,14 @@ def univariate_process_data(field, group):
 
     return field_data
 
+
 def multivariate_process_data(field, group):
     field_data = {'type': 'multivariate'}
 
     field_options = list(FormFieldOption.objects.filter(field__tag=field))
     #    field__group__form=form))
-    values = [ x.option for x in field_options ]
-    descriptions = [ x.description for x in field_options ]
+    values = [x.option for x in field_options]
+    descriptions = [x.description for x in field_options]
 
     legend = {}
     regions = {}
@@ -200,7 +176,7 @@ def generate_process_data(location_id, form):
 
         # add in the multivariate fields
         for field in mul_process_tags:
-            field_data = multivariate_process_data(field, grouped)            
+            field_data = multivariate_process_data(field, grouped)
 
             location_data[field] = field_data
 
@@ -208,53 +184,6 @@ def generate_process_data(location_id, form):
 
     return dataset
 
+
 def generate_results_data(location_root, form):
     pass
-
-
-def generate_locations_graph():
-    '''
-    Creates a directed acyclical graph of the locations database
-    This is more performant for performing tree lookups and is
-    faster than the alternative of running several queries to
-    retrieve this graph from the database
-    '''
-    nodes = Node.objects.filter(graph__name='location').values('pk', 'object_id')
-    locations = Location.objects.filter(pk__in=[node['object_id'] for node in nodes]).values('pk', 'name', 'type__name')
-    DG = nx.DiGraph()
-    for location in locations:
-        DG.add_node(location['pk'], name=location['name'], type=location['type__name'])
-    edges = Edge.objects.filter(graph__name='location').values_list('node_from__object_id', 'node_to__object_id')
-    for node_from, node_to in edges:
-        DG.add_edge(node_from, node_to)
-    return DG
-
-
-def get_locations_graph(reverse=False):
-    '''
-    This provides a means of caching the generated
-    graph and serving up the graph from the cache
-    as needed.
-
-    There's an optional parameter to retrieve the
-    reversed version of the graph
-    '''
-    graph = cache.get('reversed_locations_graph') if reverse else cache.get('locations_graph')
-    if not graph:
-        if reverse:
-            graph = generate_locations_graph().reverse()
-            cache.set('reversed_locations_graph', graph)
-        else:
-            graph = generate_locations_graph()
-            cache.set('locations_graph', graph)
-    return graph
-
-
-def get_location_ancestors_by_type(graph, location_id, types=[]):
-    '''
-    This method provides a means of retrieving the ancestors of a particular location
-    of specified types as defined in the LocationType model. It uses the depth-first-search
-    algorithm in retrieving this subgraph
-    '''
-    nodes = graph.subgraph(nx.dfs_tree(graph, location_id).nodes()).nodes(data=True)
-    return [node[1] for node in nodes if node[1]['type'] in types]

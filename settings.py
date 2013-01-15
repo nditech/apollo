@@ -151,7 +151,7 @@ CHARACTER_TRANSLATIONS = (
     ('l', '1'),
     )
 BACKLOG_DAYS = 4  # Number of days allowed for a submission to be updated by an observer
-
+LOCATIONS_GRAPH_MAXAGE = 25200  # number of seconds to cache the locations graph - 1wk
 PAGE_SIZE = 10  # Number of submissions viewable per page
 
 DEFAULT_CONNECTION_INDEX = 0

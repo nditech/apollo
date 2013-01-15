@@ -242,6 +242,7 @@ def generate_value_list(args):
 
     return value_set
 
+
 def make_item_row(record, args):
     row = []
     pattern = re.compile(r'^hstore:(?P<dict>\w+?)__(?P<key>\w+)$')
