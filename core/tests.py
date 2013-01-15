@@ -110,7 +110,7 @@ class CoreTest(TestCase):
 
     def test_export_function(self):
         '''Checks that the export function works correctly'''
-        exported_doc = export(FormField.objects.all(), 'name', 'tag', format='csv')
+        exported_doc = export(FormField.objects.all().order_by('pk').values('name', 'tag'), fields=['name', 'tag'], labels=['Name', 'Tag'], format='csv')
 
         reader = DictReader(exported_doc)
         row = reader.next()

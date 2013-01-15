@@ -6,6 +6,7 @@ from django.views.generic import ListView
 import tablib
 from .models import MESSAGE_DIRECTION, MessageLog
 from .filters import MessageFilter
+from core.views import export
 
 directions = dict(MESSAGE_DIRECTION)
 export_formats = {'csv': 'text/csv', 'xls': 'application/vnd.ms-excel',
@@ -48,26 +49,10 @@ class MessageListView(ListView):
 def export_message_log(request, format='xls'):
     # grab all MessageLog objects
     message_log = MessageLog.objects.all()
+    fields = ['mobile', 'text', 'direction', 'created', 'delivered']
+    labels = ['Mobile', 'Text', 'Message direction', 'Created', 'Delivered']
 
-    # tablib supports JSON, XLS, XLSX, CSV, YAML OOB, so maybe only for
-    # something like PDF will we need anything else
-    # (CAVEAT: tablib has dependencies for JSON & YAML output)
-    data = tablib.Dataset()
-    for log in message_log:
-        row = [log.sender, log.text, directions[log.direction],
-            log.created, log.delivered]
-
-        data.append(row)
-
-    data.headers = ['Mobile', 'Text', 'Message direction', 'Created',
-        'Delivered']
-
-    # create the response
-    format = format.lower()
-    if not format in export_formats:
-        format = 'xls'
-
-    response = HttpResponse(getattr(data, format),
+    response = HttpResponse(export(message_log.values(*fields), fields=fields, labels=labels, format=format),
         content_type=export_formats[format])
 
     # force a download

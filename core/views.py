@@ -157,10 +157,14 @@ class SubmissionListExportView(View):
                 queryset=Submission.objects.filter(form=form).exclude(observer=None))
         qs = self.filter_set.qs.order_by('-date', 'observer__observer_id')
 
-        fields = FormField.objects.filter(group__form=form).order_by('id').values_list('tag', flat=True)
-        export_fields = ['hstore:data__%s' % (field) for field in fields]
+        data_fields = FormField.objects.filter(group__form=form).order_by('id').values_list('tag', flat=True)
+        datalist_fields = ['observer__observer_id', 'observer__name', 'location'] + list(data_fields) + ['updated']
+        export_fields = ['observer__observer_id', 'observer__name', 'loc:location__province', 'loc:location__district'] + list(data_fields) + ['updated']
+        field_labels = ['PSZ', 'Name', 'Province', 'District'] + list(data_fields) + ['Timestamp']
+        datalist = qs.data(data_fields).values(*datalist_fields)
+
         filename = slugify('%s %s %s' % (form.name, datetime.now().strftime('%Y %m %d %H%M%S'), self.collection))
-        response = HttpResponse(export(qs, *export_fields), content_type='application/vnd.ms-excel')
+        response = HttpResponse(export(datalist, fields=export_fields, labels=field_labels), content_type='application/vnd.ms-excel')
         response['Content-Disposition'] = 'attachment; filename=%s.xls' % (filename,)
 
         return response
@@ -220,46 +224,24 @@ class ContactEditView(UpdateView):
         return context
 
 
-def create_column_header(field_name):
-    if ':' in field_name:
-        # get the last part. it should be an alpha code
-        return field_name.split('__')[-1].upper()
-
-    return field_name.replace('__', ' ').title()
-
-
-def generate_value_list(args):
-    pattern = re.compile(r'^hstore:(?P<var>\w+?)__\w+$')
-    value_set = set()
-
-    for item in args:
-        match = pattern.match(item)
-
-        if match:
-            value_set.add(match.group('var'))
-        else:
-            value_set.add(item)
-
-    return value_set
-
-
-def make_item_row(record, args):
+def make_item_row(record, fields, locations_graph):
     row = []
-    pattern = re.compile(r'^hstore:(?P<dict>\w+?)__(?P<key>\w+)$')
+    pattern = re.compile(r'^loc:(?P<field>\w+?)__(?P<location_type>\w+)$')  # pattern for location specification
 
-    for item in args:
-        match = pattern.match(item)
+    for field in fields:
+        match = pattern.match(field)
 
         if match:
-            row.append(record[match.group('dict')].get(match.group('key'), ''))
+            # if there's a match, retrieve the location name from the graph
+            location_id = record[match.group('field')]
+            row.append(get_location_ancestor_by_type(locations_graph, location_id, match.group('location_type'))[0]['name'])
         else:
-            row.append(record[item])
+            row.append(record[field])
 
     return row
 
 
-# TODO: refactor to use a datalist instead of queryset and custom labels
-def export(queryset, *args, **kwargs):
+def export(datalist, fields, labels=[], **kwargs):
     '''Handles exporting a queryset to a (c)StringIO instance, with its
     contents being a spreadsheet in a specified format.
 
@@ -276,6 +258,7 @@ def export(queryset, *args, **kwargs):
     that specifies the format to which the spreadsheet should be exported.
     Allowed values for the `format` argument are: 'ods', 'xls', 'xlsx', 'csv'
     '''
+    locations_graph = get_locations_graph()
     dataset = tablib.Dataset()
 
     # grab keyword argument
@@ -283,11 +266,10 @@ def export(queryset, *args, **kwargs):
     format = 'xls' if format not in export_formats else format
 
     # set headers
-    dataset.headers = map(create_column_header, args)
+    dataset.headers = labels or fields
 
     # retrieve data and build table
-    fields = generate_value_list(args)
-    for record in queryset.values(*fields):
-        dataset.append(make_item_row(record, args))
+    for record in datalist:
+        dataset.append(make_item_row(record, fields[:len(labels) if labels else len(fields)], locations_graph))
 
     return StringIO(getattr(dataset, format))
