@@ -242,17 +242,17 @@ def make_item_row(record, fields, locations_graph):
 
 
 def export(datalist, fields, labels=[], **kwargs):
-    '''Handles exporting a queryset to a (c)StringIO instance, with its
+    '''Handles exporting a datalist to a (c)StringIO instance, with its
     contents being a spreadsheet in a specified format.
 
-    `queryset` is the queryset to be exported, the fields to be exported
-    are specified as a set of positional arguments, and other arguments
-    follow.
+    `datalist` is the queryset to be exported with values already retrieved,
+    the fields to be exported are specified as an array in the `fields` argument
+    and there's an optional `labels` parameter for specifying column labels.
 
-    hstore arguments are positional, and are specified as such:
-        'hstore:data__AA'
-    in order to get the value stored with the 'AA' key in the hstore data
-    field
+    location fields are specified as such:
+        'loc:location__province'
+    which enable the exporter to retrieve the location name in the progeny of
+    the location of the specified location type.
 
     Also, a `format` keyword argument may be specified (defaulting to 'xls')
     that specifies the format to which the spreadsheet should be exported.
