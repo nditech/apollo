@@ -190,7 +190,7 @@ class Observer(models.Model):
         )
 
     def __unicode__(self):
-        return getattr(self, 'name', "")
+        return u"%s" % (self.name or "",)
 
 
 class AbstractDataField(models.Model):
@@ -434,13 +434,21 @@ class Submission(models.Model):
     @property
     def master(self):
         # should only return one object for this method
-        if hasattr(self, '_master'):
+        if getattr(self, '_master', None):
             return self._master
         else:
-            try:
-                self._master = Submission.objects.exclude(pk=self.pk).get(location=self.location, observer=None, date=self.date, form=self.form)
-            except Submission.DoesNotExist:
+            # a master submission is it's own master
+            if self.observer == None:
                 self._master = self
+            else:
+                try:
+                    self._master = Submission.objects.exclude(pk=self.pk).get(location=self.location, observer=None, date=self.date, form=self.form)
+                except Submission.DoesNotExist:
+                    # incident submissions are masters to themselves
+                    if self.form.type == 'INCIDENT':
+                        self._master = self
+                    else:
+                        self._master = None
         return self._master
 
     def _get_completion(self, group):
@@ -508,63 +516,70 @@ def make_value_check(a):
     return value_check
 
 
-@receiver(models.signals.post_save, sender=Submission, dispatch_uid='sync_submissions')
-def sync_submissions(sender, **kwargs):
-    # grab sibling and master checklists
+@receiver(models.signals.post_save, sender=Submission, dispatch_uid='create_or_sync_master')
+def create_or_sync_master(sender, **kwargs):
     instance = kwargs['instance']
 
-    # quit if this is the master
-    if instance.observer is None:
-        return True
+    if kwargs['created']:
+        master = instance.master
+        if not master:
+            # save a copy of instance with observer set to None
+            instance.pk = None
+            instance.observer = None
+            instance.save()
+    else:
+        # quit if this is the master
+        if instance.observer is None:
+            return True
 
-    siblings = list(instance.siblings)
-    master = instance.master
+        # grab sibling and master checklists
+        siblings = list(instance.siblings)
+        master = instance.master
 
-    if master == instance:
-        return True
+        if master == instance:
+            return True
 
-    # if no siblings exist, copy to master and quit
-    if not siblings:
-        for key in instance.data.keys():
+        # if no siblings exist, copy to master and quit
+        if not siblings:
+            for key in instance.data.keys():
+                if key in master.overrides:
+                    continue
+                master.data[key] = instance.data[key]
+
+            master.save()
+            return True
+
+        # get all possible keys
+        key_set = set(instance.data.keys())
+        for sibling in siblings:
+            key_set.update(sibling.data.keys())
+
+        # this be pure hackery
+        for key in key_set:
+            # if the key has already been overridden, don't do anything
             if key in master.overrides:
                 continue
-            master.data[key] = instance.data[key]
+
+            # get the value set for this key, and create a comparison function
+            # for that value (see make_value_check definition).
+            current = instance.data.get(key, None)
+            checker_function = make_value_check(current)
+
+            # the map() call executes the inner value_check function with a = current
+            # and b = each item from the list comprehension
+            checked_values = map(checker_function, [sibling.data.get(key, None) for sibling in siblings])
+
+            if -1 in checked_values:
+                # only if the key is set to different values across all siblings
+                master.data.pop(key, None)
+                continue
+
+            if current is not None:
+                # if the key has not been set on the master and this instance
+                # has it set
+                master.data[key] = current
 
         master.save()
-        return True
-
-    # get all possible keys
-    key_set = set(instance.data.keys())
-    for sibling in siblings:
-        key_set.update(sibling.data.keys())
-
-    # this be pure hackery
-    for key in key_set:
-        # if the key has already been overridden, don't do anything
-        if key in master.overrides:
-            continue
-
-        # get the value set for this key, and create a comparison function
-        # for that value (see make_value_check definition).
-        current = instance.data.get(key, None)
-        checker_function = make_value_check(current)
-
-        # the map() call executes the inner value_check function with a = current
-        # and b = each item from the list comprehension
-        checked_values = map(checker_function, [sibling.data.get(key, None) for sibling in siblings])
-
-        if -1 in checked_values:
-            # only if the key is set to different values across all siblings
-            master.data.pop(key, None)
-            continue
-
-        if current is not None:
-            # if the key has not been set on the master and this instance
-            # has it set
-            master.data[key] = current
-
-    master.save()
-    return True
 
 
 @receiver(models.signals.post_save, sender=Location, dispatch_uid='invalidate_locations_cache')
