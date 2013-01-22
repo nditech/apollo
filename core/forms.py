@@ -143,7 +143,7 @@ def generate_submission_form(form, readonly=False):
                 else:
                     fields[field.tag] = forms.BooleanField(help_text=field.description,
                         required=False, label=field.tag, widget=forms.CheckboxInput())
-            
+
             # Disable the field if the form is readonly
             if readonly:
                 fields[field.tag].widget.attrs['readonly'] = 'readonly'

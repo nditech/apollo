@@ -1,3 +1,5 @@
+*.sublime-workspace
+*.sublime-project
 *.sqlite3
 *.pyc
 rapidsms.log*
