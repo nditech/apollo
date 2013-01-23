@@ -9,7 +9,7 @@ RapidSMS==0.11.0
 South==0.7.6
 django-audit-log==0.2.1
 django-bootstrap-pagination==0.1.10
-django-celery==3.0.9
+django-celery==3.0.11
 django-directed-acyclic-graph==0.3
 django-extensions==0.5
 django-form-utils==0.2.0
@@ -21,8 +21,7 @@ librabbitmq==1.0.1
 networkx==1.7
 numpy==1.6.2
 pandas==0.10.1
-psycopg2==2.4.5
-rapidsms-threadless-router==0.1.4
+psycopg2==2.4.6
 tablib==0.9.11
 xlrd==0.8.0
 xlutils==1.5.2

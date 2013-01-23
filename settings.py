@@ -31,11 +31,22 @@ TIME_ZONE = 'Africa/Lagos'
 # the valid options for each.
 INSTALLED_BACKENDS = {
     "httptester": {
-        "ENGINE": "threadless_router.backends.httptester.backend",
+        "ENGINE": "rapidsms.contrib.httptester.backend",
     },
     "mockbackend": {
         "ENGINE": "rapidsms.tests.harness",
     },
+    "kannel-smsc": {
+        "ENGINE": "rapidsms.backends.kannel",
+        "sendsms_url": "http://127.0.0.1:13013/cgi-bin/sendsms",
+        "sendsms_params": {"smsc": "FAKE",
+                           "from": "123", # not set automatically by SMSC
+                           "username": "rapidsms",
+                           "password": "CHANGE-ME"}, # or set in localsettings.py
+        "coding": 0,
+        "charset": "ascii",
+        "encode_errors": "ignore", # strip out unknown (unicode) characters
+    }
 }
 
 # to help you get started quickly, many django/rapidsms apps are enabled
@@ -50,10 +61,6 @@ INSTALLED_APPS = [
     "core",
     "django_dag",
     "messagelog",
-
-    # threadless router replacements
-    "threadless_router.backends.httptester",
-    "threadless_router.backends.kannel",
 
     "rapidsms.contrib.default",
 
@@ -149,7 +156,7 @@ CHARACTER_TRANSLATIONS = (
     ('i', '1'),
     ('o', '0'),
     ('l', '1'),
-    )
+)
 BACKLOG_DAYS = 4  # Number of days allowed for a submission to be updated by an observer
 LOCATIONS_GRAPH_MAXAGE = 25200  # number of seconds to cache the locations graph - 1wk
 PAGE_SIZE = 10  # Number of submissions viewable per page

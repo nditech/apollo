@@ -1,6 +1,7 @@
 from django.conf.urls.defaults import *
 from django.contrib import admin
 from django.views.generic.simple import redirect_to
+from rapidsms.backends.kannel.views import KannelBackendView
 
 admin.autodiscover()
 
@@ -16,10 +17,9 @@ urlpatterns += patterns('',
 )
 
 urlpatterns += patterns('',
-    # apolo urls for default routing
-    (r'^kannel/', include('threadless_router.backends.kannel.urls')),
+    # apollo urls for default routing
+    (r'^kannel/', KannelBackendView.as_view(backend_name='kannel-smsc')),
     (r'^messages/', include('messagelog.urls')),
     (r'', include('core.urls')),
     (r'^favicon.ico', redirect_to, {'url': '/assets/images/favicon.ico', 'permanent': True}),
-    (r'^', include('rapidsms.urls.static_media')),
 )
