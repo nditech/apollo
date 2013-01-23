@@ -12,8 +12,22 @@ import networkx as nx
 import re
 
 
-LOCATIONTYPE_GRAPH, _ = Graph.objects.get_or_create(name='location_type')
-LOCATION_GRAPH, _ = Graph.objects.get_or_create(name='location')
+LOCATIONTYPE_GRAPH = None
+LOCATION_GRAPH = None
+
+
+def locationtype_graph():
+    global LOCATIONTYPE_GRAPH
+    if not LOCATIONTYPE_GRAPH:
+        LOCATIONTYPE_GRAPH, _ = Graph.objects.get_or_create(name='location_type')
+    return LOCATIONTYPE_GRAPH
+
+
+def location_graph():
+    global LOCATION_GRAPH
+    if not LOCATION_GRAPH:
+        LOCATION_GRAPH, _ = Graph.objects.get_or_create(name='location')
+    return LOCATION_GRAPH
 
 
 class LocationType(GraphMixin):
@@ -28,7 +42,7 @@ class LocationType(GraphMixin):
         return self.name
 
     def __init__(self, *args, **kwargs):
-        self.default_graph = LOCATIONTYPE_GRAPH
+        self.default_graph = locationtype_graph()
         return super(LocationType, self).__init__(*args, **kwargs)
 
 
@@ -48,7 +62,7 @@ class Location(GraphMixin):
         return self.name
 
     def __init__(self, *args, **kwargs):
-        self.default_graph = LOCATION_GRAPH
+        self.default_graph = location_graph()
         return super(Location, self).__init__(*args, **kwargs)
 
 
