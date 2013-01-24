@@ -61,6 +61,7 @@ INSTALLED_APPS = [
     "core",
     "django_dag",
     "messagelog",
+    "south",
 
     "rapidsms.contrib.default",
 
