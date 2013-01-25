@@ -7,10 +7,12 @@ schema.png
 local_settings.py
 *.swp
 nbproject
-supervise/
-fabfile.py
 .DS_Store
-src/
 *.log
 .env
 assets/
+.installed.cfg
+.mr.developer.cfg
+bin/
+eggs/
+parts/
