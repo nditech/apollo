@@ -9,6 +9,15 @@ backends = Backend.objects.all()
 
 
 def _get_contact(phone):
+    '''Given a phone number, returns a RapidSMS Contact linked to all
+    Connection instances having that identity on all backends.
+
+    Parameters
+    - phone: an international phone number
+
+    Returns
+    - a Contact instance that has among its connection_set all
+    Connection instances using the supplied phone number as identity'''
     connections = Connection.objects.filter(identity=phone)
 
     if connections:
@@ -35,20 +44,43 @@ def _get_contact(phone):
 def _save_observer(observer_id, name, phone1, phone2, phone3, role_name,
                    location_name, location_type, supervisor_id, gender,
                    partner_name):
+    '''Given a row of import data, attempt to create or update an Observer
+    instance with the specified observer_id, and attempt to create all related
+    objects (Partner, ObserverRole and Contact, specifically), except for the
+    Location.
+
+    Parameters
+    - observer_id: the observer id
+    - name: the observer's name
+    - phone1, phone2, phone3: up to three phone numbers that can be linked to
+      the observer
+    - role_name: the name of the observer's role
+    - location_name: the location the observer is stationed at
+    - location_type: the name of the location type
+    - supervisor_id: the observer_id of the observer's supervisor. Due to how
+      the observer data is populated, the supervisor's data *MUST* be loaded
+      before any observers under that supervisor can be loaded properly.
+    - gender: either 'M' or 'F'. Out-of-band values will be set to unspecified
+    - partner_name: the name of the partner organization the observer is
+      attached to.
+
+    Returns
+    - True if the observer could be saved, and False otherwise. If False is
+    returned, the observer was set to a location that could not be found.'''
     # attempt to find the location
     try:
         location = Location.objects.get(name__iexact=location_name,
-                                        type__name=location_type)
+                                        type__name__iexact=location_type)
     except Location.DoesNotExist:
         return False
 
-    # first, attempt to find the observer
+    # find or create an Observer instance with the specified observer id
     try:
         observer = Observer.objects.get(observer_id=observer_id)
     except Observer.DoesNotExist:
         observer = Observer(observer_id=observer_id)
 
-    # attempt to find the supervisor
+    # attempt to find the supervisor.
     try:
         supervisor = Observer.objects.get(observer_id=supervisor_id)
     except Observer.DoesNotExist:
@@ -61,11 +93,13 @@ def _save_observer(observer_id, name, phone1, phone2, phone3, role_name,
         partner = Partner.objects.create(name=partner_name,
                                          abbr=partner_name[:5].upper())
 
+    # find or create the role
     role = ObserverRole.objects.get_or_create(name__iexact=role_name)
 
     if not gender in ('M', 'F'):
         gender = 'U'
 
+    # find or create the linked contact
     contact = _get_contact(phone1)
 
     if phone2:
@@ -93,6 +127,9 @@ def csv_import(uploaded_file):
 
     Parameters:
     - uploaded_file: an UploadedFile instance
+
+    Returns:
+    - a list of rows that could not be imported
     '''
     reader = csv.DictReader(uploaded_file)
     errors = []
@@ -119,12 +156,20 @@ def csv_import(uploaded_file):
 
 
 def excel_import(uploaded_file):
+    '''Imports observer data from a pre-Excel 2007 (.xls) file.
+
+    Parameters:
+    - uploaded_file: an UploadedFile instance
+
+    Returns:
+    - a list of rows that could not be imported.'''
     # open the workbook and get the first sheet
     book = open_workbook(uploaded_file)
     sheet = book.sheet_by_index(0)
 
     errors = []
 
+    # the first row is assumed to be the header, so skip it
     for index in range(1, sheet.nrows):
         row = sheet.row_values(index)
 
@@ -140,6 +185,14 @@ action_map = {'text/plain': csv_import, 'text/csv': csv_import,
 
 
 def import_contacts(uploaded_file):
+    '''Wrapper for importing observer data from either CSV or Excel files.
+    If the file cannot be used for import, raises TypeError.
+
+    Parameters:
+    - uploaded_file: the uploaded file containing the observer data
+
+    Returns:
+    - a list of rows that could not be imported.'''
     # get file pointer location
     pos = uploaded_file.tell()
 
