@@ -10,7 +10,6 @@ nbproject
 supervise/
 fabfile.py
 .DS_Store
-src/
 *.log
 .env
 assets/
