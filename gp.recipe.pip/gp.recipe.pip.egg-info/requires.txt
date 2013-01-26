@@ -1,0 +1,9 @@
+distribute
+zc.buildout
+zc.recipe.egg
+virtualenv>=1.4
+pip
+
+[tests]
+zope.testing
+zc.buildout

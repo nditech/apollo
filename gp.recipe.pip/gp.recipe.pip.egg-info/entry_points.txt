@@ -1,0 +1,3 @@
+[zc.buildout]
+default = gp.recipe.pip:Recipe
+
