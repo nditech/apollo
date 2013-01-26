@@ -49,7 +49,7 @@ class LocationType(GraphMixin):
 class Location(GraphMixin):
     """Location"""
     name = models.CharField(max_length=100, db_index=True)
-    code = models.CharField(max_length=100, db_index=True)
+    code = models.CharField(max_length=100, db_index=True, blank=True)
     type = models.ForeignKey(LocationType)
     data = hstore.DictionaryField(db_index=True, null=True, blank=True)
 
