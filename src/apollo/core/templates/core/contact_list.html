@@ -23,7 +23,7 @@
 
 <div class="row">
   <div class="span12">
-    <table class="table table-striped well">
+    <table class="table table-striped table-bordered table-hover">
       <thead>
         <tr>
           <th>Observer ID</th>
@@ -44,7 +44,7 @@
           <td>{{ contact.phone|default_if_none:"" }}</td>
           <td>{{ contact.location }}</td>
           <td>{{ contact.partner|default_if_none:"" }}</td>
-          <td><a href="{% url contact_edit contact.pk %}">Edit</a></td>
+          <td style="text-align:center"><a href="{% url contact_edit contact.pk %}">Edit</a></td>
         </tr>
         {% endfor %}
       </tbody>

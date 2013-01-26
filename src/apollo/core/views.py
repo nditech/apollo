@@ -105,7 +105,7 @@ class SubmissionListView(ListView):
 
 class SubmissionEditView(UpdateView):
     template_name = 'core/submission_edit.html'
-    page_title = 'Submission Edit'
+    page_title = 'Edit Submission'
 
     def get_object(self, queryset=None):
         return self.submission.master if self.submission.form.type == 'CHECKLIST' else self.submission
@@ -175,7 +175,7 @@ class ContactListView(ListView):
     template_name = 'core/contact_list.html'
     model = Observer
     paginate_by = settings.PAGE_SIZE
-    page_title = 'Contacts List'
+    page_title = 'Contacts'
 
     def get_queryset(self):
         return self.filter_set.qs.order_by('observer_id')
@@ -209,7 +209,7 @@ class ContactEditView(UpdateView):
     model = Observer
     form_class = ContactModelForm
     success_url = '/contacts/'
-    page_title = 'Contact Edit'
+    page_title = 'Edit Contact'
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
