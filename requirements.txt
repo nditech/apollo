@@ -3,8 +3,7 @@
 #       doesn't install it. if numpy is not already installed, installing
 #       pandas *WILL* fail
 #
--e git+https://github.com/alex/django-filter.git@ae3e111d7a9cfef8c9cbf9a7274db2735fbab415#egg=django_filter-dev
-Django==1.4.3
+django-filter==0.5.4
 RapidSMS==0.11.0
 South==0.7.6
 django-audit-log==0.2.1
@@ -20,7 +19,7 @@ django-tastypie==0.9.11
 librabbitmq==1.0.1
 networkx==1.7
 numpy==1.6.2
-pandas==0.10.1
+http://www.timbaobjects.com/eggs/pandas-0.10.1.tar.gz
 python-magic==0.4.3
 python-memcached==1.48
 psycopg2==2.4.6
