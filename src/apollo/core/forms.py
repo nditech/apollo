@@ -155,3 +155,18 @@ def generate_submission_form(form, readonly=False):
     fields['Meta'] = metaclass
 
     return type('SubmissionForm', (SubmissionModelForm,), fields)
+
+
+class LocationModelForm(forms.ModelForm):
+    class Meta:
+        model = Location
+        fields = ('name', 'code', 'type',)
+
+    def save(self):
+        clean_data = self.cleaned_data
+
+        for key in clean_data:
+            setattr(self.instance, key, clean_data[key])
+
+        self.instance.save()
+        return self.instance

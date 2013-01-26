@@ -13,7 +13,7 @@ from django.template.defaultfilters import slugify
 from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView, ListView, UpdateView, View
 import tablib
-from .forms import ContactModelForm, generate_submission_form
+from .forms import ContactModelForm, LocationModelForm, generate_submission_form
 from .models import *
 from .filters import *
 
@@ -220,6 +220,60 @@ class ContactEditView(UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super(ContactEditView, self).get_context_data(**kwargs)
+        context['page_title'] = self.page_title
+        return context
+
+
+class LocationListView(ListView):
+    context_object_name = 'locations'
+    template_name = 'core/location_list.html'
+    model = Location
+    paginate_by = settings.PAGE_SIZE
+    page_title = 'Locations'
+
+    def get_queryset(self):
+        return self.filter_set.qs.order_by('pk')
+
+    def get_context_data(self, **kwargs):
+        context = super(LocationListView, self).get_context_data(**kwargs)
+        context['filter_form'] = self.filter_set.form
+        context['page_title'] = self.page_title
+        return context
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        self.locations_filter = LocationsFilter
+        return super(LocationListView, self).dispatch(*args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        self.filter_set = self.locations_filter(request.POST,
+            queryset=Location.objects.all())
+        request.session['locations_filter'] = self.filter_set.form.data
+        return super(LocationListView, self).get(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        initial_data = request.session.get('locations_filter', None)
+        self.filter_set = self.locations_filter(initial_data,
+            queryset=Location.objects.all())
+        return super(LocationListView, self).get(request, *args, **kwargs)
+
+
+class LocationEditView(UpdateView):
+    template_name = 'core/location_edit.html'
+    model = Location
+    form_class = LocationModelForm
+    success_url = '/locations/'
+    page_title = 'Edit Location'
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(LocationEditView, self).dispatch(*args, **kwargs)
+
+    def get_object(self, queryset=None):
+        return get_object_or_404(Location, pk=self.kwargs['pk'])
+
+    def get_context_data(self, **kwargs):
+        context = super(LocationEditView, self).get_context_data(**kwargs)
         context['page_title'] = self.page_title
         return context
 

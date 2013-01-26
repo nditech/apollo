@@ -26,6 +26,8 @@ urlpatterns = patterns('',
     url(r'^submissions/analysis/(?P<form>\d+)/?$', SubmissionAnalysisView.as_view(), name='submissions_analysis'),
     url(r'^contacts/?$', ContactListView.as_view(), name='contacts_list'),
     url(r'^contact/(?P<pk>\d+)/?$', ContactEditView.as_view(), name='contact_edit'),
+    url(r'^locations/?$', LocationListView.as_view(), name='locations_list'),
+    url(r'^location/(?P<pk>\d+)/?$', LocationEditView.as_view(), name='location_edit'),
     url(r'^tpl/(?P<template_name>.+)/?$', TemplatePreview.as_view()),
 )
 

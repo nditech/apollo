@@ -123,3 +123,19 @@ def generate_submission_filter(form):
         'data-placeholder': 'Location'}),
         choices=[["", ""]] + [[lt, filter_locations[lt]] for lt in filter_locations.keys()])
     return type('SubmissionFilter', (BaseSubmissionFilter,), fields)
+
+
+class LocationsFilter(django_filters.FilterSet):
+    name = django_filters.CharFilter(lookup_type='icontains')
+
+    class Meta:
+        model = Location
+        fields = ['name', 'type']
+
+    def __init__(self, *args, **kwargs):
+        super(LocationsFilter, self).__init__(*args, **kwargs)
+        self.filters['type'].extra.update(
+            {'empty_label': 'All Location Types'})
+        self.filters['name'].field.widget.attrs['class'] = 'span3'
+        self.filters['name'].field.widget.attrs['placeholder'] = 'Name'
+        self.filters['type'].field.widget.attrs['class'] = 'span3'
