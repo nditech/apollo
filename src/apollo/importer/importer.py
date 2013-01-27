@@ -1,5 +1,4 @@
 import csv
-import logging
 import magic
 from rapidsms.models import Backend, Connection, Contact
 from rapidsms.router.api import lookup_connections
@@ -234,7 +233,6 @@ def import_excel_location_types(uploaded_file):
 
     for index in range(1, sheet.nrows):
         row = sheet.row_values(index)
-        logging.info(row)
 
         if not _save_location_type(*row):
             errors.append(row)
