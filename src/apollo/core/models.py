@@ -95,7 +95,7 @@ def get_location_ancestors_by_type(graph, location_id, types=[]):
     types is a list of location_types names
     '''
     nodes = graph.subgraph(nx.dfs_tree(graph, location_id).nodes()).nodes(data=True)
-    return [node[1] for node in nodes if node[1]['type'].lower() in map(str.lower, types) or not types]
+    return [node[1] for node in nodes if node[1]['type'].lower() in map(unicode.lower, types) or not types]
 
 
 def get_location_ancestor_by_type(graph, location_id, location_type):
