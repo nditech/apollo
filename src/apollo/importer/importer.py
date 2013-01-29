@@ -240,10 +240,16 @@ def import_excel_location_types(uploaded_file):
     return errors
 
 
-def _save_location(name, code, type_name):
+def _save_location(name, code, parent_name, type_name):
     ''''''
     try:
         location_type = LocationType.objects.get(name__iexact=type_name)
+        if parent_name:
+            parent = Location.objects.get(name__iexact=parent_name)
+        else:
+            parent = None
+    except Location.DoesNotExist:
+        return False
     except LocationType.DoesNotExist:
         return False
 
@@ -254,6 +260,10 @@ def _save_location(name, code, type_name):
     if _ or (location.code != code and code):
         location.code = code
         location.save()
+
+    # set parent location
+    if parent:
+        parent.add_child(location)
 
     return True
 
@@ -266,9 +276,10 @@ def import_csv_locations(uploaded_file):
     for row in reader:
         name = row['Name']
         code = row['Code']
+        parent_name = row['Parent']
         location_type = row['Location Type']
 
-        if not _save_location(name, code, location_type):
+        if not _save_location(name, code, parent_name, location_type):
             errors.append(row)
 
     return errors
