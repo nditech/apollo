@@ -89,10 +89,10 @@ def get_data_records(form, location_root=0):
     return (pd.DataFrame(submissions), regular_fields, multivariate_fields)
 
 
-def univariate_process_data(field, group):
+def numeric_process_data(tag, group):
     field_data = {}
 
-    regions = group[field].aggregate({'mean': np.mean,
+    regions = group[tag].aggregate({'mean': np.mean,
         'std': lambda x: np.std(x)})
 
     # tag field as a univariate field
@@ -102,10 +102,10 @@ def univariate_process_data(field, group):
     return field_data
 
 
-def multivariate_process_data(field, group):
-    field_data = {'type': 'multivariate'}
+def univariate_process_data(tag, group):
+    field_data = {}
 
-    field_options = list(FormFieldOption.objects.filter(field__tag=field))
+    field_options = list(FormFieldOption.objects.filter(field__tag=tag))
     #    field__group__form=form))
     values = [x.option for x in field_options]
     descriptions = [x.description for x in field_options]
@@ -116,7 +116,37 @@ def multivariate_process_data(field, group):
     for index, value in enumerate(values):
         legend[value] = descriptions[index]
 
-    for name, series in group[field]:
+    group_names = group.groups.keys()
+
+    for group_name in group_names:
+        histogram = make_histogram(values, group.get_group(group_name).get(tag))
+
+        print values
+        print histogram
+
+        regions[group_name] = dict(zip(values, histogram))
+
+    field_data['regions'] = regions
+    field_data['legend'] = legend
+
+    return field_data
+
+
+def multivariate_process_data(tag, group):
+    field_data = {'type': 'multivariate'}
+
+    field_options = list(FormFieldOption.objects.filter(field__tag=tag))
+    #    field__group__form=form))
+    values = [x.option for x in field_options]
+    descriptions = [x.description for x in field_options]
+
+    legend = {}
+    regions = {}
+
+    for index, value in enumerate(values):
+        legend[value] = descriptions[index]
+
+    for name, series in group[tag]:
         # TODO: this might be needed for the (almost certain) refactor
         # num_points = len(series)
         summary = summarize_options(values, series)
@@ -164,21 +194,26 @@ def generate_process_data(location_id, form):
         grouped = data_frame.groupby(location_type)
 
         # add in the univariate fields
-        for field in uni_process_tags:
-            field_data = univariate_process_data(field, grouped)
+        for tag in uni_process_tags:
+            field_model = FormField.objects.get(tag=tag)
 
-            global_mean = np.mean(data_frame[field])
-            global_std = np.std(data_frame[field])
+            if field_model.options.count():
+                field_data = univariate_process_data(tag, grouped)
+            else:
+                field_data = numeric_process_data(tag, grouped)
+
+            global_mean = np.mean(data_frame[tag])
+            global_std = np.std(data_frame[tag])
 
             field_data['summary'] = {'mean': global_mean, 'std': global_std}
 
-            location_data[field] = field_data
+            location_data[tag] = field_data
 
         # add in the multivariate fields
-        for field in mul_process_tags:
-            field_data = multivariate_process_data(field, grouped)
+        for tag in mul_process_tags:
+            field_data = multivariate_process_data(tag, grouped)
 
-            location_data[field] = field_data
+            location_data[tag] = field_data
 
         dataset[location_type] = location_data
 
