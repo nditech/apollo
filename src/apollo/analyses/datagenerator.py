@@ -121,9 +121,6 @@ def univariate_process_data(tag, group):
     for group_name in group_names:
         histogram = make_histogram(values, group.get_group(group_name).get(tag))
 
-        print values
-        print histogram
-
         regions[group_name] = dict(zip(values, histogram))
 
     field_data['regions'] = regions
@@ -202,10 +199,10 @@ def generate_process_data(location_id, form):
             else:
                 field_data = numeric_process_data(tag, grouped)
 
-            global_mean = np.mean(data_frame[tag])
-            global_std = np.std(data_frame[tag])
+                global_mean = np.mean(data_frame[tag])
+                global_std = np.std(data_frame[tag])
 
-            field_data['summary'] = {'mean': global_mean, 'std': global_std}
+                field_data['summary'] = {'mean': global_mean, 'std': global_std}
 
             location_data[tag] = field_data
 
