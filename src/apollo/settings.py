@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     "django_dag",
     "messagelog",
     "south",
+    "tastypie",
 
     "rapidsms.contrib.default",
 

@@ -1,5 +1,6 @@
 import ast
 from tastypie import fields
+from tastypie.authentication import ApiKeyAuthentication
 from tastypie.authorization import DjangoAuthorization, Authorization
 from tastypie.resources import ModelResource
 from .models import *
@@ -11,22 +12,27 @@ class MessageLogResource(ModelResource):
         queryset = MessageLog.objects.all()
         resource_name = 'messagelog'
 
+        authentication = ApiKeyAuthentication()
+
 
 class LocationTypeResource(ModelResource):
     class Meta:
         queryset = LocationType.objects.all()
         resource_name = 'locationtypes'
-        excludes = ['level', 'lft', 'rght', 'tree_id', 'in_form']
+        excludes = ['on_display', 'in_form']
+
+        authentication = ApiKeyAuthentication()
 
 
 class LocationResource(ModelResource):
     type = fields.ForeignKey(LocationTypeResource, 'type', full=True)
-    parent = fields.ForeignKey('self', 'parent', full=True, null=True, blank=True)
 
     class Meta:
         queryset = Location.objects.all()
         resource_name = 'locations'
-        excludes = ['level', 'lft', 'rght', 'tree_id', 'in_form']
+        excludes = ['in_form']
+
+        authentication = ApiKeyAuthentication()
 
 
 class PartnerResource(ModelResource):
@@ -34,11 +40,15 @@ class PartnerResource(ModelResource):
         queryset = Partner.objects.all()
         resource_name = 'partners'
 
+        authentication = ApiKeyAuthentication()
+
 
 class RoleResource(ModelResource):
     class Meta:
         queryset = ObserverRole.objects.all()
         resource_name = 'roles'
+
+        authentication = ApiKeyAuthentication()
 
 
 class ContactResource(ModelResource):
@@ -50,7 +60,8 @@ class ContactResource(ModelResource):
     class Meta:
         queryset = Observer.objects.all()
         resource_name = 'contacts'
-        authorization = DjangoAuthorization()
+
+        authentication = ApiKeyAuthentication()
 
     def dehydrate_data(self, bundle):
         return ast.literal_eval(bundle.data['data'])
@@ -62,24 +73,30 @@ class FormResource(ModelResource):
         resource_name = 'forms'
         fields = ['name']
 
+        authentication = ApiKeyAuthentication()
+
 
 class FormGroupResource(ModelResource):
     form = fields.ForeignKey(FormResource, 'form', readonly=True, full=True)
 
     class Meta:
-        queryset = Form.objects.all()
+        queryset = FormGroup.objects.all()
         resource_name = 'formgroups'
+        excludes = ['_order']
+
+        authentication = ApiKeyAuthentication()
 
 
 class SubmissionResource(ModelResource):
-    contact = fields.ForeignKey(ContactResource, 'observer', full=True, readonly=True)
+    contact = fields.ForeignKey(ContactResource, 'observer', full=True, readonly=True, null=True)
+    location = fields.ForeignKey(LocationResource, 'location', full=True, readonly=True)
     form = fields.ForeignKey(FormResource, 'form', full=True)
 
     class Meta:
         queryset = Submission.objects.all()
         resource_name = 'submissions'
-        authorization = Authorization()
-        excludes = ['created', 'updated']
+
+        authentication = ApiKeyAuthentication()
 
     def dehydrate_data(self, bundle):
         return ast.literal_eval(bundle.data['data'])
