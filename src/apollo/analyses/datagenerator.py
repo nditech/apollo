@@ -95,9 +95,18 @@ def numeric_process_data(tag, group):
     regions = group[tag].aggregate({'mean': np.mean,
         'std': lambda x: np.std(x)})
 
-    # tag field as a univariate field
-    field_data['type'] = 'univariate'
+    # tag field as a numeric field
+    field_data['type'] = 'numeric'
     field_data['regions'] = regions.transpose().to_dict()
+
+    group_names = group.groups.keys()
+
+    for group_name in group_names:
+        temp = group[tag].get_group(group_name)
+        reported = temp.count()
+        missing = temp.size - reported
+        field_data['regions'][group_name]['reported'] = reported
+        field_data['regions'][group_name]['missing'] = missing
 
     return field_data
 
@@ -119,9 +128,13 @@ def univariate_process_data(tag, group):
     group_names = group.groups.keys()
 
     for group_name in group_names:
-        histogram = make_histogram(values, group.get_group(group_name).get(tag))
+        temp = group.get_group(group_name).get(tag)
+        histogram = make_histogram(values, temp)
 
         regions[group_name] = dict(zip(values, histogram))
+        reported = temp.count()
+        regions[group_name]['reported'] = reported
+        regions[group_name]['missing'] = temp.size - reported
 
     field_data['regions'] = regions
     field_data['legend'] = legend
@@ -154,6 +167,11 @@ def multivariate_process_data(tag, group):
             mapping[value] = summary[index]
 
             regions[name] = mapping
+
+        temp = group[tag].get_group(name)
+        missing = sum(not x for x in temp)
+        regions[name]['missing'] = missing
+        regions[name]['reported'] = temp.size - missing
 
     field_data['regions'] = regions
     field_data['legend'] = legend
