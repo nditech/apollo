@@ -503,6 +503,12 @@ class Submission(models.Model):
             return None
 
 
+class Sample(models.Model):
+    '''Used for grouping locations into samples'''
+    name = models.CharField(max_length=100)
+    locations = models.ManyToManyField(Location, related_name='samples')
+
+
 # auto create Contacts when an observer is created
 @receiver(models.signals.post_save, sender=Observer, dispatch_uid='create_contact')
 def create_contact(sender, **kwargs):
