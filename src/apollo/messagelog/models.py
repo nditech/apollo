@@ -22,3 +22,9 @@ class MessageLog(models.Model):
             return u'(IN) %s' % (self.mobile,)
         else:
             return u'(OUT) %s' % (self.mobile,)
+
+    class Meta:
+        permissions = (
+            ("view_messages", "Can view the message log"),
+            ("export_messages", "Can export the message log"),
+        )

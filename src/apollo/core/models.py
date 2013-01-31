@@ -202,7 +202,8 @@ class Observer(models.Model):
     class Meta:
         ordering = ['observer_id']
         permissions = (
-            ("view_observer", "Can view observers"),
+            ("view_observers", "Can view observers"),
+            ("export_observers", "Can export observers"),
         )
 
     def __unicode__(self):
@@ -261,6 +262,11 @@ class Form(models.Model):
 
     def __unicode__(self):
         return self.name
+
+    class Meta:
+        permissions = (
+            ("view_forms", "Can view all forms"),
+        )
 
     def match(self, text):
         if re.match(self.trigger, text, flags=re.I):
@@ -436,7 +442,10 @@ class Submission(models.Model):
 
     class Meta:
         permissions = (
-            ("view_submission", "Can view submissions"),
+            ("view_submissions", "Can view submissions"),
+            ("export_submissions", "Can export submissions"),
+            ("can_analyse", "Can access submission analyses"),
+            ("can_verify", "Can access submission verifications"),
         )
 
     @property

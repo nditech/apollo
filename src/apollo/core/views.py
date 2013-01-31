@@ -5,7 +5,7 @@ except ImportError:
 import re
 from datetime import datetime
 from django.conf import settings
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
@@ -57,6 +57,7 @@ class SubmissionAnalysisView(TemplateView):
     template_name = 'core/checklist_analysis.html'
 
     @method_decorator(login_required)
+    @method_decorator(permission_required('core.can_analyse'))
     def dispatch(self, *args, **kwargs):
         self.page_title = 'Elections Checklist Analysis'
         return super(SubmissionAnalysisView, self).dispatch(*args, **kwargs)
@@ -85,6 +86,7 @@ class SubmissionListView(ListView):
         return context
 
     @method_decorator(login_required)
+    @method_decorator(permission_required('core.view_submission'))
     def dispatch(self, *args, **kwargs):
         self.form = get_object_or_404(Form, pk=kwargs['form'])
         self.submission_filter = generate_submission_filter(self.form)
@@ -111,6 +113,7 @@ class SubmissionEditView(UpdateView):
         return self.submission.master if self.submission.form.type == 'CHECKLIST' else self.submission
 
     @method_decorator(login_required)
+    @method_decorator(permission_required('core.change_submission'))
     def dispatch(self, *args, **kwargs):
         self.submission = get_object_or_404(Submission, pk=kwargs['pk'])
         self.form_class = generate_submission_form(self.submission.form)
@@ -145,6 +148,7 @@ class SubmissionListExportView(View):
 
     # TODO: refactor to support custom field labels
     @method_decorator(login_required)
+    @method_decorator(permission_required('core.export_submissions'))
     def dispatch(self, request, *args, **kwargs):
         form = get_object_or_404(Form, pk=kwargs['form'])
         self.submission_filter = generate_submission_filter(form)
@@ -187,6 +191,7 @@ class ContactListView(ListView):
         return context
 
     @method_decorator(login_required)
+    @method_decorator(permission_required('core.view_observers'))
     def dispatch(self, *args, **kwargs):
         self.contacts_filter = generate_contacts_filter()
         return super(ContactListView, self).dispatch(*args, **kwargs)
@@ -212,6 +217,7 @@ class ContactEditView(UpdateView):
     page_title = 'Edit Observer'
 
     @method_decorator(login_required)
+    @method_decorator(permission_required('core.change_observer'))
     def dispatch(self, *args, **kwargs):
         return super(ContactEditView, self).dispatch(*args, **kwargs)
 
@@ -241,6 +247,7 @@ class LocationListView(ListView):
         return context
 
     @method_decorator(login_required)
+    @method_decorator(permission_required('core.view_locations'))
     def dispatch(self, *args, **kwargs):
         self.locations_filter = LocationsFilter
         return super(LocationListView, self).dispatch(*args, **kwargs)
@@ -266,6 +273,7 @@ class LocationEditView(UpdateView):
     page_title = 'Edit Location'
 
     @method_decorator(login_required)
+    @method_decorator(permission_required('core.change_location'))
     def dispatch(self, *args, **kwargs):
         return super(LocationEditView, self).dispatch(*args, **kwargs)
 
