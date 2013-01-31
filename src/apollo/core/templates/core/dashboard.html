@@ -1998,7 +1998,7 @@
     <legend>Arrival</legend>
     <div>
       <script type="text/javascript+protovis">
-        width = 270,
+        width = 300,
         height = 200,
         offset = 10,
         r = width/2 - offset;
@@ -2023,12 +2023,13 @@
         pie.add(pv.Dot) 
             .data(labels) 
             .top(function() 70 + this.index * 18)
-            .right(85) 
+            .right(110) 
             .size(20) 
             .strokeStyle(null) 
             .fillStyle(pv.colors(colors)) 
             .anchor("right").add(pv.Label)
-            .textMargin(8);
+            .textMargin(8)
+            .font("10pt Helvetica");
             
         pie.render();
       </script>
@@ -2038,7 +2039,7 @@
     <legend>Setup</legend>
     <div>
       <script type="text/javascript+protovis">
-        width = 270,
+        width = 300,
         height = 200,
         offset = 10,
         r = width/2 - offset;
@@ -2063,12 +2064,13 @@
         pie.add(pv.Dot) 
             .data(labels) 
             .top(function() 70 + this.index * 18)
-            .right(85) 
+            .right(110) 
             .size(20) 
             .strokeStyle(null) 
             .fillStyle(pv.colors(colors)) 
             .anchor("right").add(pv.Label)
-            .textMargin(8);
+            .textMargin(8)
+            .font("10pt Helvetica");
             
         pie.render();
       </script>
@@ -2077,13 +2079,13 @@
   <div class="span4 well">
     <legend>Voting</legend>
     <script type="text/javascript+protovis">
-        width = 270,
+        width = 300,
         height = 200,
         offset = 10,
         r = width/2 - offset;
         data = [459, 1800, 828];
         colors = ["#FF5200", "#FFE22B", "#3BDF4A"];
-        labels = ['Missing (2999)', 'Partial', 'Complete'];
+        labels = ['Missing', 'Partial', 'Complete'];
 
         var pie = new pv.Panel().width(width).height(height);
             pie.add(pv.Wedge)
@@ -2102,12 +2104,13 @@
         pie.add(pv.Dot) 
             .data(labels) 
             .top(function() 70 + this.index * 18)
-            .right(85) 
+            .right(110) 
             .size(20) 
             .strokeStyle(null) 
             .fillStyle(pv.colors(colors)) 
             .anchor("right").add(pv.Label)
-            .textMargin(8);
+            .textMargin(8)
+            .font("10pt Helvetica");
             
         pie.render();
       </script>      
@@ -2119,7 +2122,7 @@
                 <legend>Counting</legend>
                 <div>
                  <script type="text/javascript+protovis">
-                    width = 270,
+                    width = 300,
                     height = 200,
                     offset = 10,
                     r = width/2 - offset;
@@ -2144,12 +2147,13 @@
                     pie.add(pv.Dot) 
                         .data(labels) 
                         .top(function() 70 + this.index * 18)
-                        .right(85) 
+                        .right(110) 
                         .size(20) 
                         .strokeStyle(null) 
                         .fillStyle(pv.colors(colors)) 
                         .anchor("right").add(pv.Label)
-                        .textMargin(8);
+                        .textMargin(8)
+                        .font("10pt Helvetica");
                         
                     pie.render();
                   </script> 
@@ -2159,7 +2163,7 @@
                 <legend>Results</legend>
                 <div>
                   <script type="text/javascript+protovis">
-                    width = 270,
+                    width = 300,
                     height = 200,
                     offset = 10,
                     r = width/2 - offset;
@@ -2184,22 +2188,18 @@
                     pie.add(pv.Dot) 
                         .data(labels) 
                         .top(function() 70 + this.index * 18)
-                        .right(85) 
+                        .right(110) 
                         .size(20) 
                         .strokeStyle(null) 
                         .fillStyle(pv.colors(colors)) 
                         .anchor("right").add(pv.Label)
-                        .textMargin(8);
+                        .textMargin(8)
+                        .font("10pt Helvetica");
                         
                     pie.render();
                   </script>
                 </div>
               </div>
         </div>
-  </div>
-  <div class="row-fluid">
-    <div class="span12">
-      <legend>Maps</legend>
-    </div>
   </div>
 {% endblock %}
