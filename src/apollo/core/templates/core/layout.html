@@ -42,7 +42,9 @@
             <ul class="nav pull-right">
               <li><a href="{% url dashboard %}"><i class="icon-home"></i> Dashboard</a></li>
               {% forms_menu %}
-              <li><a href="{% url contacts_list %}"><i class="icon-user"></i> Contacts</a></li>
+              <li><a href=""><i class=""></i> Verification</a></li>
+              {% analysis_menu %}
+              <li><a href="{% url contacts_list %}"><i class="icon-user"></i> Observers</a></li>
               <li><a href="{% url messages_list %}"><i class="icon-envelope"></i> Messages</a></li>
               <a href="{% url user-logout %}" class="pull-left btn btn-default">Logout</a>
             </ul>

@@ -20,10 +20,20 @@ def groupsel(value, pk):
         return None
 
 
-@register.inclusion_tag('core/forms_menu.html')
-def forms_menu():
+@register.inclusion_tag('core/analysis_menu.html')
+def analysis_menu():
     forms = Form.objects.all().order_by('pk')
     return {'forms': forms}
+
+
+@register.inclusion_tag('core/forms_menu.html')
+def forms_menu():
+    checklist_forms = Form.objects.filter(type='CHECKLIST').order_by('pk')
+    incident_forms = Form.objects.filter(type='INCIDENT').order_by('pk')
+    return {
+        'checklist_forms': checklist_forms,
+        'incident_forms': incident_forms
+    }
 
 
 @register.inclusion_tag('core/submission_filter.html')
