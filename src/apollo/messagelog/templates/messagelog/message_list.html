@@ -1,7 +1,9 @@
 {% extends "core/layout.html" %}{% load bootstrap_pagination %}
 {% block title %}
 {{ page_title }}
+{% if perms.messagelog.export_messages %}
 <a class="btn pull-right" href="{% url messages_list_export "xls" %}">Export</a>
+{% endif %}
 {% endblock %}
 {% block content %}
 <div class="row">

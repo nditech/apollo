@@ -32,7 +32,7 @@
           <th>Phone No.</th>
           <th>Location</th>
           <th>Partner</th>
-          <th></th>
+          {% if perms.core.change_observer %}<th></th>{% endif %}
         </tr>
       </thead>
       <tbody>
@@ -44,7 +44,7 @@
           <td>{{ contact.phone|default_if_none:"" }}</td>
           <td>{{ contact.location }}</td>
           <td>{{ contact.partner|default_if_none:"" }}</td>
-          <td style="text-align:center"><a href="{% url contact_edit contact.pk %}">Edit</a></td>
+          {% if perms.core.change_observer %}<td style="text-align:center"><a href="{% url contact_edit contact.pk %}">Edit</a></td>{% endif %}
         </tr>
         {% endfor %}
       </tbody>

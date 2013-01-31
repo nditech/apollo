@@ -15,5 +15,5 @@
     <th style="text-align:center">{{ field.tag }}</th>
     {% endfor %}
     {% endif %}
-    <th style="text-align:center">Edit</th>
+    {% if perms.core.change_submission %}<th style="text-align:center">Edit</th>{% endif %}
 </tr>

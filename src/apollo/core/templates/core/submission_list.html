@@ -1,6 +1,7 @@
 {% extends "core/layout.html" %}{% load apollo %}{% load bootstrap_pagination %}
 {% block title %}
 {{ page_title }}
+{% if perms.core.export_submissions %}
 <div class="btn-group pull-right">
   <a class="btn" href="{% url submissions_list_export_master form.pk %}">Export</a>
   <button class="btn dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
@@ -9,6 +10,7 @@
     <li><a href="{% url submissions_list_export_master form.pk %}">Master Data</a></li>
   </ul>
 </div>
+{% endif %}
 {% endblock %}
 {% block content %}
 <div class="row">
@@ -21,10 +23,10 @@
   <div class="span12">
     <table class="table table-striped table-bordered table-hover">
       <thead >
-        {% submission_header form %}
+        {% submission_header form perms %}
       </thead>
       <tbody>
-        {% submission_items submissions form %}
+        {% submission_items submissions form perms %}
       </tbody>
     </table>
   </div>
