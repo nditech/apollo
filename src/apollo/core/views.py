@@ -175,7 +175,7 @@ class ContactListView(ListView):
     template_name = 'core/contact_list.html'
     model = Observer
     paginate_by = settings.PAGE_SIZE
-    page_title = 'Contacts'
+    page_title = 'Observers'
 
     def get_queryset(self):
         return self.filter_set.qs.order_by('observer_id')
@@ -208,8 +208,8 @@ class ContactEditView(UpdateView):
     template_name = 'core/contact_edit.html'
     model = Observer
     form_class = ContactModelForm
-    success_url = '/contacts/'
-    page_title = 'Edit Contact'
+    success_url = '/observers/'
+    page_title = 'Edit Observer'
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
