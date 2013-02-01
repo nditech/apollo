@@ -138,12 +138,13 @@ def univariate_process_data(tag, group):
 
     field_data['regions'] = regions
     field_data['legend'] = legend
+    field_data['type'] = 'single-choice'
 
     return field_data
 
 
 def multivariate_process_data(tag, group):
-    field_data = {'type': 'multivariate'}
+    field_data = {'type': 'multiple-choice'}
 
     field_options = list(FormFieldOption.objects.filter(field__tag=tag))
     #    field__group__form=form))
@@ -171,6 +172,7 @@ def multivariate_process_data(tag, group):
         temp = group[tag].get_group(name)
         missing = sum(not x for x in temp)
         regions[name]['missing'] = missing
+        regions[name]['total'] = temp.size
         regions[name]['reported'] = temp.size - missing
 
     field_data['regions'] = regions
@@ -191,48 +193,57 @@ def filter_tags(form, univariate_tags, multivariate_tags):
     return (univariate_process_tags, multivariate_process_tags, univariate_result_tags, multivariate_result_tags)
 
 
-def generate_process_data(location_id, form):
+def generate_process_data(form, location_id=0):
+    process_summary = []
+
     location_types = sub_location_types(location_id)
 
     if not location_types:
-        return {}
+        return process_summary
 
-    data_frame, univariate_fields, multivariate_fields = get_data_records(form, location_id)
+    data_frame, single_choice_tags, multichoice_tags = get_data_records(form, location_id)
 
-    uni_process_tags, mul_process_tags, temp1, temp2 = filter_tags(form, univariate_fields, multivariate_fields)
+    single_process_tags, multichoice_process_tags, single_result_tags, multichoice_result_tags = filter_tags(form,
+        single_choice_tags, multichoice_tags)
 
-    dataset = {}
+    form_groups = form.groups.all()
 
     for location_type in location_types:
-        location_data = {}
+        location_type_summary = []
 
-        grouped = data_frame.groupby(location_type)
+        data_group = data_frame.groupby(location_type)
 
-        # add in the univariate fields
-        for tag in uni_process_tags:
-            field_model = FormField.objects.get(tag=tag)
+        for group in form_groups:
+            group_summary = []
+            for form_field in group.fields.all():
+                field_summary = {}
+                global_summary = {}
 
-            if field_model.options.count():
-                field_data = univariate_process_data(tag, grouped)
-            else:
-                field_data = numeric_process_data(tag, grouped)
+                if form_field.tag in single_process_tags:
+                    if form_field.options.count():
+                        field_summary = univariate_process_data(form_field.tag, data_group)
+                    else:
+                        field_summary = numeric_process_data(form_field.tag, data_group)
 
-                global_mean = np.mean(data_frame[tag])
-                global_std = np.std(data_frame[tag])
+                        global_mean = np.mean(data_frame[form_field.tag])
+                        global_std = np.std(data_frame[form_field.tag])
 
-                field_data['summary'] = {'mean': global_mean, 'std': global_std}
+                        global_summary = {'mean': global_mean, 'std': global_std}
+                elif form_field.tag in multichoice_process_tags:
+                    field_summary = multivariate_process_data(form_field.tag, data_group)
 
-            location_data[tag] = field_data
+                if global_summary:
+                    field_summary['global'] = global_summary
 
-        # add in the multivariate fields
-        for tag in mul_process_tags:
-            field_data = multivariate_process_data(tag, grouped)
+                group_summary.append({form_field.tag: field_summary})
 
-            location_data[tag] = field_data
+            
+            group_data = {group.name.lower(): group_summary}
+            
+            location_type_summary.append(group_data)
+        process_summary.append({location_type: location_type_summary})
 
-        dataset[location_type] = location_data
-
-    return dataset
+    return process_summary
 
 
 def generate_results_data(location_root, form):
