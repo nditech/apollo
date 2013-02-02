@@ -223,6 +223,22 @@ class ObserverDataField(AbstractDataField):
         return self.name
 
 
+class Activity(models.Model):
+    '''The activity model is used for grouping forms into one activity
+    for instance, critical incident forms and checklists for a particular
+    election exercise, constitute an activity'''
+    name = models.CharField(max_length=100)
+
+    def __unicode__(self):
+        return u"{}".format(self.name)
+
+
+    class Meta:
+        permissions = (
+            ("view_activities", "Can view all activities"),
+        )
+
+
 class Form(models.Model):
     '''
     Defines the schema for forms that will be managed
@@ -259,14 +275,11 @@ class Form(models.Model):
     field_pattern = models.CharField(max_length=255)
     autocreate_submission = models.BooleanField(default=False,
         help_text="Whether to create a new record if a submission doesn't exist")
+    activity = models.ForeignKey(Activity, related_name="forms", null=True,
+        blank=True, help_text="What activity the form belongs under. Activities could be likened to elections")
 
     def __unicode__(self):
         return self.name
-
-    class Meta:
-        permissions = (
-            ("view_forms", "Can view all forms"),
-        )
 
     def match(self, text):
         if re.match(self.trigger, text, flags=re.I):
