@@ -76,12 +76,12 @@ class DashboardView(View, TemplateResponseMixin):
 
 
 class SubmissionAnalysisView(TemplateView):
-    template_name = 'core/checklist_analysis.html'
+    template_name = 'core/checklist_summary.html'
 
     @method_decorator(login_required)
     @method_decorator(permission_required('core.can_analyse'))
     def dispatch(self, *args, **kwargs):
-        self.page_title = 'Elections Checklist Analysis'
+        self.page_title = 'Checklist Analysis'
         return super(SubmissionAnalysisView, self).dispatch(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
