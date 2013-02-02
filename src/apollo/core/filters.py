@@ -32,12 +32,75 @@ class LocationFilter(django_filters.ChoiceFilter):
     by any of the parent locations (including the exact location)
     of the submission.
     '''
+    
+    def __init__(self, *args, **kwargs):
+        displayed_location_types = LocationType.objects.filter(on_display=True).values('pk', 'name')
+        displayed_locations = Location.objects.filter(type__pk__in=[t['pk'] for t in displayed_location_types]) \
+            .order_by('type', 'name').values('pk', 'type__name', 'name')
+        filter_locations = {}
+        for displayed_location in displayed_locations:
+            filter_locations.setdefault(displayed_location['type__name'], [])\
+                .append((displayed_location['pk'], displayed_location['name']))
+
+        kwargs['choices'] = [["", ""]] + [[lt, filter_locations[lt]] for lt in filter_locations.keys()]
+        super(LocationFilter, self).__init__(*args, **kwargs)
+
     def filter(self, qs, value):
         if value:
             try:
                 location = Location.objects.get(pk=value)
                 return qs.is_within(location)
             except Location.DoesNotExist:
+                return qs.none()
+        else:
+            return qs
+
+
+class ActivityFilter(django_filters.ChoiceFilter):
+    ''' LocationFilter enables filtering of submissions
+    by any of the parent locations (including the exact location)
+    of the submission.
+    '''
+
+    def __init__(self, *args, **kwargs):
+        kwargs['choices'] = [('', 'Activity')] + list(Activity.objects.all().values_list('pk', 'name'))
+        try:
+            recent_submission = Submission.objects.filter(form__type='CHECKLIST').order_by('-date')[0]
+            self.default_activity = recent_submission.form.activity
+            kwargs['initial'] = self.default_activity.pk
+        except IndexError:
+            try:
+                self.default_activity = Activity.objects.all().order_by('-pk')[0]
+                kwargs['initial'] = self.default_activity.pk
+            except IndexError:
+                self.default_activity = None
+        super(ActivityFilter, self).__init__(*args, **kwargs)
+
+    def filter(self, qs, value):
+        if value:
+            return qs.filter(form__activity__pk=value)
+        elif self.default_activity:
+            return qs.filter(form__activity=self.default_activity)
+        else:
+            return qs
+
+
+class SampleFilter(django_filters.ChoiceFilter):
+    ''' LocationFilter enables filtering of submissions
+    by any of the parent locations (including the exact location)
+    of the submission.
+    '''
+
+    def __init__(self, *args, **kwargs):
+        kwargs['choices'] = [('', 'Sample')] + list(Sample.objects.all().values_list('pk', 'name'))
+        super(SampleFilter, self).__init__(*args, **kwargs)
+
+    def filter(self, qs, value):
+        if value:
+            try:
+                sample = Sample.objects.get(pk=value)
+                return qs.filter(location__pk__in=sample.locations.all().values_list('pk', flat=True))
+            except Sample.DoesNotExist:
                 return qs.none()
         else:
             return qs
@@ -69,17 +132,9 @@ def generate_contacts_filter():
     metaclass = type('Meta', (), metafields)
     fields = {'Meta': metaclass}
 
-    displayed_location_types = LocationType.objects.filter(on_display=True).values('pk', 'name')
-    displayed_locations = Location.objects.filter(type__in=[t['pk'] for t in displayed_location_types]) \
-        .order_by('type', 'name').values('pk', 'type__name', 'name')
-    filter_locations = {}
-    for displayed_location in displayed_locations:
-        filter_locations.setdefault(displayed_location['type__name'], [])\
-            .append((displayed_location['pk'], displayed_location['name']))
     fields['location'] = LocationFilter(widget=forms.Select(attrs={
         'class': 'span4 input-xlarge select2',
-        'data-placeholder': 'Location'}),
-        choices=[["", ""]] + [[lt, filter_locations[lt]] for lt in filter_locations.keys()])
+        'data-placeholder': 'Location'}))
     return type('ContactsFilter', (BaseContactsFilter,), fields)
 
 
@@ -111,17 +166,9 @@ def generate_submission_filter(form):
         'placeholder': 'Observer ID'
         }))
 
-    displayed_location_types = LocationType.objects.filter(on_display=True).values('pk', 'name')
-    displayed_locations = Location.objects.filter(type__in=[t['pk'] for t in displayed_location_types]) \
-        .order_by('type', 'name').values('pk', 'type__name', 'name')
-    filter_locations = {}
-    for displayed_location in displayed_locations:
-        filter_locations.setdefault(displayed_location['type__name'], [])\
-            .append((displayed_location['pk'], displayed_location['name']))
     fields['location'] = LocationFilter(widget=forms.Select(attrs={
         'class': 'span4 input-xlarge select2',
-        'data-placeholder': 'Location'}),
-        choices=[["", ""]] + [[lt, filter_locations[lt]] for lt in filter_locations.keys()])
+        'data-placeholder': 'Location'}))
     return type('SubmissionFilter', (BaseSubmissionFilter,), fields)
 
 
@@ -139,3 +186,16 @@ class LocationsFilter(django_filters.FilterSet):
         self.filters['name'].field.widget.attrs['class'] = 'span3'
         self.filters['name'].field.widget.attrs['placeholder'] = 'Name'
         self.filters['type'].field.widget.attrs['class'] = 'span3'
+
+
+class DashboardFilter(django_filters.FilterSet):
+    location = LocationFilter(widget=forms.Select(attrs={
+        'class': 'span4 input-xlarge select2',
+        'data-placeholder': 'Location'}))
+    activity = ActivityFilter(widget=forms.Select(attrs={'class': 'span3'}))
+    sample = SampleFilter(widget=forms.Select(attrs={'class': 'span2'}))
+
+    class Meta:
+        model = Submission
+        fields = ['location', 'activity', 'sample']
+

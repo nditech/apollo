@@ -12,8 +12,10 @@ from django.shortcuts import get_object_or_404
 from django.template.defaultfilters import slugify
 from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView, ListView, UpdateView, View
+from django.views.generic.base import TemplateResponseMixin
 import tablib
 from .forms import ContactModelForm, LocationModelForm, generate_submission_form
+from .helpers import *
 from .models import *
 from .filters import *
 
@@ -39,18 +41,38 @@ class TemplatePreview(TemplateView):
         return context
 
 
-class DashboardView(TemplateView):
+class DashboardView(View, TemplateResponseMixin):
     template_name = 'core/dashboard.html'
 
     @method_decorator(login_required)
-    def dispatch(self, *args, **kwargs):
+    def dispatch(self, request, *args, **kwargs):
         self.page_title = 'Dashboard'
-        return super(DashboardView, self).dispatch(*args, **kwargs)
+        self.dashboard_filter = DashboardFilter
+
+        return super(DashboardView, self).dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
-        context = super(DashboardView, self).get_context_data(**kwargs)
+        context = {'params': kwargs}
         context['page_title'] = self.page_title
+        context['filter_form'] = self.filter_set.form
+        context['summary'] = generate_dashboard_summary(self.filter_set.qs)
         return context
+
+    def get(self, request, *args, **kwargs):
+        initial_data = request.session.get('dashboard_filter', None)
+        self.filter_set = self.dashboard_filter(initial_data,
+                queryset=Submission.objects.exclude(observer=None))
+        context = self.get_context_data(**kwargs)
+        return self.render_to_response(context)
+
+    def post(self, request, *args, **kwargs):
+        self.filter_set = self.dashboard_filter(request.POST,
+                queryset=Submission.objects.exclude(observer=None))
+        request.session['dashboard_filter'] = self.filter_set.form.data
+        context = self.get_context_data(**kwargs)
+        return self.render_to_response(context)
+
+
 
 
 class SubmissionAnalysisView(TemplateView):
