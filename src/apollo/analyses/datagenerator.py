@@ -107,6 +107,9 @@ def numeric_process_data(tag, group):
         missing = temp.size - reported
         field_data['regions'][group_name]['reported'] = reported
         field_data['regions'][group_name]['missing'] = missing
+        field_data['regions'][group_name]['total'] = temp.size
+        field_data['regions'][group_name]['reported_percent'] = 100 * float(reported) / temp.size
+        field_data['regions'][group_name]['missing_percent'] = 100 * float(missing) / temp.size
 
     return field_data
 
@@ -127,8 +130,12 @@ def univariate_process_data(tag, group, field_options):
 
         regions[group_name] = {'stats': histogram}
         reported = temp.count()
+        missing = temp.size - reported
         regions[group_name]['reported'] = reported
-        regions[group_name]['missing'] = temp.size - reported
+        regions[group_name]['total'] = temp.size
+        regions[group_name]['missing'] = missing
+        regions[group_name]['missing_percent'] = 100 * float(missing) / temp.size
+        regions[group_name]['reported_percent'] = 100 * float(reported) / temp.size
 
     field_data['regions'] = regions
     field_data['type'] = 'single-choice'
@@ -159,9 +166,12 @@ def multivariate_process_data(tag, group, field_options):
 
         temp = group[tag].get_group(name)
         missing = sum(not x for x in temp)
+        reported = temp.size - missing
         regions[name]['missing'] = missing
         regions[name]['total'] = temp.size
-        regions[name]['reported'] = temp.size - missing
+        regions[name]['reported'] = reported
+        regions[name]['reported_percent'] = 100 * float(reported) / temp.size
+        regions[name]['missing_percent'] = 100 * float(missing) / temp.size
 
     field_data['regions'] = regions
     field_data['legend'] = descriptions
@@ -197,7 +207,7 @@ def generate_process_data(form, location_id=0):
     form_groups = form.groups.all()
 
     for location_type in location_types:
-        location_type_summary = {}
+        location_type_summary = []
 
         data_group = data_frame.groupby(location_type)
 
@@ -233,7 +243,7 @@ def generate_process_data(form, location_id=0):
 
                 group_summary.append((form_field.tag, form_field.description, field_summary))
 
-            location_type_summary[group.name] = group_summary
+            location_type_summary.append((group.name, group_summary))
         process_summary[location_type] = location_type_summary
 
     return process_summary

@@ -36,7 +36,7 @@
 	<div class="span12">
 		{% for location_type, location_type_summary in summary.items %}
 			<h3>By {{ location_type }}</h3>
-			{% for group_name, group_summary in location_type_summary.items %}
+			{% for group_name, group_summary in location_type_summary %}
 			<h4>{{ group_name }}</h4>
 				{% for tag, question, region_data in group_summary %}
 				<p><strong>{{ tag }}: {{ question }}</strong></p>
@@ -52,21 +52,30 @@
 						{% endif %}
 						<th>Reported</th>
 						<th>Missing</th>
+						<th>Total</th>
 					</tr>
 					{% for region, stats in region_data.regions.items %}
 					<tr>
 						<td>{{ region }}</td>
 						{% if region_data.type == 'numeric' %}
-						<td>{{ stats.mean }}</td>
+						<td>{{ stats.mean|floatformat }}</td>
+						<td></td>
 						{% else %}
 						{% for value in stats.stats %}
 						<td>{{ value }}</td>
 						{% endfor %}
 						{% endif %}
-						<td>{{ stats.reported }}</td>
-						<td>{{ stats.missing }}</td>
+						<td>{{ stats.reported }} ({{ stats.reported_percent|floatformat }}%) </td>
+						<td>{{ stats.missing }} ({{ stats.missing_percent|floatformat }}%)</td>
+						<td>{{ stats.total }}</td>
 					</tr>
 					{% endfor %}
+					{% if region_data.type == 'numeric' %}
+					<tr>
+						<th>Regional mean</th>
+						<th colspan='5'>{{ region_data.global.mean|floatformat }}</th>
+					</tr>
+					{% endif %}
 				</table>
 				{% endfor %}
 			{% endfor %}
