@@ -111,19 +111,13 @@ def numeric_process_data(tag, group):
     return field_data
 
 
-def univariate_process_data(tag, group):
+def univariate_process_data(tag, group, field_options):
     field_data = {}
-
-    field_options = list(FormFieldOption.objects.filter(field__tag=tag))
     #    field__group__form=form))
     values = [x.option for x in field_options]
     descriptions = [x.description for x in field_options]
 
-    legend = {}
     regions = {}
-
-    for index, value in enumerate(values):
-        legend[value] = descriptions[index]
 
     group_names = group.groups.keys()
 
@@ -131,43 +125,37 @@ def univariate_process_data(tag, group):
         temp = group.get_group(group_name).get(tag)
         histogram = make_histogram(values, temp)
 
-        regions[group_name] = dict(zip(values, histogram))
+        regions[group_name] = {'stats': histogram}
         reported = temp.count()
         regions[group_name]['reported'] = reported
         regions[group_name]['missing'] = temp.size - reported
 
     field_data['regions'] = regions
-    field_data['legend'] = legend
     field_data['type'] = 'single-choice'
+    field_data['legend'] = descriptions
 
     return field_data
 
 
-def multivariate_process_data(tag, group):
+def multivariate_process_data(tag, group, field_options):
     field_data = {'type': 'multiple-choice'}
 
-    field_options = list(FormFieldOption.objects.filter(field__tag=tag))
-    #    field__group__form=form))
     values = [x.option for x in field_options]
     descriptions = [x.description for x in field_options]
 
-    legend = {}
     regions = {}
-
-    for index, value in enumerate(values):
-        legend[value] = descriptions[index]
 
     for name, series in group[tag]:
         # TODO: this might be needed for the (almost certain) refactor
         # num_points = len(series)
         summary = summarize_options(values, series)
 
-        mapping = {}
+        mapping = []
 
         for index, value in enumerate(values):
-            mapping[value] = summary[index]
+            mapping.append(summary[index])
 
-            regions[name] = mapping
+            regions[name] = {'stats': mapping}
 
         temp = group[tag].get_group(name)
         missing = sum(not x for x in temp)
@@ -176,7 +164,7 @@ def multivariate_process_data(tag, group):
         regions[name]['reported'] = temp.size - missing
 
     field_data['regions'] = regions
-    field_data['legend'] = legend
+    field_data['legend'] = descriptions
 
     return field_data
 
@@ -194,7 +182,7 @@ def filter_tags(form, univariate_tags, multivariate_tags):
 
 
 def generate_process_data(form, location_id=0):
-    process_summary = []
+    process_summary = {}
 
     location_types = sub_location_types(location_id)
 
@@ -209,7 +197,7 @@ def generate_process_data(form, location_id=0):
     form_groups = form.groups.all()
 
     for location_type in location_types:
-        location_type_summary = []
+        location_type_summary = {}
 
         data_group = data_frame.groupby(location_type)
 
@@ -219,29 +207,34 @@ def generate_process_data(form, location_id=0):
                 field_summary = {}
                 global_summary = {}
 
-                if form_field.tag in single_process_tags:
-                    if form_field.options.count():
-                        field_summary = univariate_process_data(form_field.tag, data_group)
+                if not form_field.options.count():
+                    # process numeric field
+                    field_summary = numeric_process_data(form_field.tag, data_group)
+
+                    global_mean = np.mean(data_frame[form_field.tag])
+                    global_std = np.std(data_frame[form_field.tag])
+
+                    global_summary = {'mean': global_mean, 'std': global_std}
+
+                else:
+                    field_options = form_field.options.all()
+
+                    if form_field.tag in single_process_tags:
+                        field_summary = univariate_process_data(form_field.tag,
+                                                                data_group,
+                                                                field_options)
                     else:
-                        field_summary = numeric_process_data(form_field.tag, data_group)
-
-                        global_mean = np.mean(data_frame[form_field.tag])
-                        global_std = np.std(data_frame[form_field.tag])
-
-                        global_summary = {'mean': global_mean, 'std': global_std}
-                elif form_field.tag in multichoice_process_tags:
-                    field_summary = multivariate_process_data(form_field.tag, data_group)
+                        field_summary = multivariate_process_data(form_field.tag,
+                                                                  data_group,
+                                                                  field_options)
 
                 if global_summary:
                     field_summary['global'] = global_summary
 
-                group_summary.append({form_field.tag: field_summary})
+                group_summary.append((form_field.tag, form_field.description, field_summary))
 
-            
-            group_data = {group.name.lower(): group_summary}
-            
-            location_type_summary.append(group_data)
-        process_summary.append({location_type: location_type_summary})
+            location_type_summary[group.name] = group_summary
+        process_summary[location_type] = location_type_summary
 
     return process_summary
 

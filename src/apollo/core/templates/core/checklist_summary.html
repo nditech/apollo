@@ -34,7 +34,44 @@
 </div>
 <div class="row">
 	<div class="span12">
-		<h5>Arrival</h5></span>
+		{% for location_type, location_type_summary in summary.items %}
+			<h3>By {{ location_type }}</h3>
+			{% for group_name, group_summary in location_type_summary.items %}
+			<h4>{{ group_name }}</h4>
+				{% for tag, question, region_data in group_summary %}
+				<p><strong>{{ tag }}: {{ question }}</strong></p>
+				<table class="table table-striped table-bordered">
+					<tr>
+						<th>Location</th>
+						{% if region_data.type == 'numeric' %}
+						<th>Mean<th>
+						{% else %}
+						{% for label in region_data.legend %}
+						<th>{{ label }}</th>
+						{% endfor %}
+						{% endif %}
+						<th>Reported</th>
+						<th>Missing</th>
+					</tr>
+					{% for region, stats in region_data.regions.items %}
+					<tr>
+						<td>{{ region }}</td>
+						{% if region_data.type == 'numeric' %}
+						<td>{{ stats.mean }}</td>
+						{% else %}
+						{% for value in stats.stats %}
+						<td>{{ value }}</td>
+						{% endfor %}
+						{% endif %}
+						<td>{{ stats.reported }}</td>
+						<td>{{ stats.missing }}</td>
+					</tr>
+					{% endfor %}
+				</table>
+				{% endfor %}
+			{% endfor %}
+		{% endfor %}
+<!-- 		<h5>Arrival</h5></span>
 		 <table width="100%" class="table table-striped table-bordered">
 				<tr>
 					<td width="30" rowspan="2"><b>AA</b></td>
@@ -109,6 +146,7 @@
 					<td align="right">20</td>
 				</tr>
 		</table>
+ -->	
 	</div>
 </div>
 {% endblock %}

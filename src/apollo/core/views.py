@@ -18,6 +18,7 @@ from .forms import ContactModelForm, LocationModelForm, generate_submission_form
 from .helpers import *
 from .models import *
 from .filters import *
+from analyses.datagenerator import generate_process_data
 
 COMPLETION_STATUS = (
     (0, 'Complete'),
@@ -73,8 +74,6 @@ class DashboardView(View, TemplateResponseMixin):
         return self.render_to_response(context)
 
 
-
-
 class SubmissionAnalysisView(TemplateView):
     template_name = 'core/checklist_summary.html'
 
@@ -82,11 +81,13 @@ class SubmissionAnalysisView(TemplateView):
     @method_decorator(permission_required('core.can_analyse'))
     def dispatch(self, *args, **kwargs):
         self.page_title = 'Checklist Analysis'
+        self.form = get_object_or_404(Form, pk=kwargs['form'])
         return super(SubmissionAnalysisView, self).dispatch(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super(SubmissionAnalysisView, self).get_context_data(**kwargs)
         context['page_title'] = self.page_title
+        context['summary'] = generate_process_data(self.form)
         return context
 
 
