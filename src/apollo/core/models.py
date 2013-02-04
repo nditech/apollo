@@ -45,6 +45,14 @@ class LocationType(GraphMixin):
         self.default_graph = locationtype_graph()
         return super(LocationType, self).__init__(*args, **kwargs)
 
+    @staticmethod
+    def root():
+        # retrieves the root location type
+        try:
+            return LocationType.objects.all()[0].get_ancestors(include_self=True)[-1]
+        except IndexError:
+            pass
+
 
 class Location(GraphMixin):
     """Location"""
@@ -64,6 +72,15 @@ class Location(GraphMixin):
     def __init__(self, *args, **kwargs):
         self.default_graph = location_graph()
         return super(Location, self).__init__(*args, **kwargs)
+
+    @staticmethod
+    def root():
+        # retrieves the root location
+        try:
+            roottype = LocationType.root()
+            return Location.objects.filter(type=roottype)[0]
+        except IndexError:
+            pass
 
 
 def get_locations_graph(reverse=False):
