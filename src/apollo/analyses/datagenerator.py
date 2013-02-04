@@ -42,18 +42,24 @@ def summarize_options(options, series):
     return np.array(placeholder).sum(axis=0).tolist()
 
 
-def get_data_records(form, location_root=0, sample=None):
+def get_data_records(form, location_root=0, sample=None, tags=None):
     '''
     Given a form model instance and a location pk, generate a pandas DataFrame
     containing the submitted form values for locations below the specified
     location_root.
     '''
-    # fields that can store multiple variables are to be handled differently
-    multivariate_fields = FormField.objects.filter(group__form=form, allow_multiple=True).values_list('tag', flat=True)
-    regular_fields = FormField.objects.filter(group__form=form, allow_multiple=False).values_list('tag', flat=True)
-    all_fields = list(multivariate_fields) + list(regular_fields)
+    if not tags:
+        # fields that can store multiple variables are to be handled differently
+        multivariate_fields = FormField.objects.filter(group__form=form, allow_multiple=True).values_list('tag', flat=True)
+        regular_fields = FormField.objects.filter(group__form=form, allow_multiple=False).values_list('tag', flat=True)
+        all_fields = list(multivariate_fields) + list(regular_fields)
+    else:
+        multivariate_fields = FormField.objects.filter(group__form=form, tag__in=tags, allow_multiple=True).values_list('tag', flat=True)
+        regular_fields = FormField.objects.filter(group__form=form, tag__in=tags, allow_multiple=False).values_list('tag', flat=True)
+        all_fields = tags
 
-    # retrieve normal and reversed locations graphs
+    # retrieve normal and reversed locations graphs if not using a sample
+    # of locations
     if not sample:
         locations_graph = get_locations_graph()
         locations_graph_reversed = get_locations_graph(reverse=True)
@@ -99,16 +105,31 @@ def percent_of(a, b):
     return (100 * float(a) / b)
 
 
-def generate_numeric_field_summary(tag, dataset):
-    field_summary = {'type': 'numeric'}
+def generate_numeric_field_stats(tag, dataset):
+    '''Returns statistics (mean, standard deviation, number/percentage
+    of actual reports, number/percentage of missing reports) for a
+    single form field tag in a set of submissions.
+
+
+    Parameters:
+    - tag: a form field tag.
+    - dataset: a pandas DataFrame or group series with the submission data
+
+    Returns
+    - a dictionary of the requested statistics. if the dataset is a series
+    group, the result will be a nested dictionary
+    '''
+    field_stats = {'type': 'numeric'}
 
     if hasattr(dataset, 'groups'):
+        # if we need grouped data, say, by a certain location type, for example
         group_names = dataset.groups.keys()
 
+        # generate the per-group statistics
         location_stats = dataset[tag].agg({'mean': np.mean,
             'std': lambda x: np.std(x)}).transpose().to_dict()
 
-        field_summary['locations'] = location_stats
+        field_stats['locations'] = location_stats
 
         for group_name in group_names:
             temp = dataset[tag].get_group(group_name)
@@ -118,12 +139,16 @@ def generate_numeric_field_summary(tag, dataset):
             percent_reported = percent_of(reported, total)
             percent_missing = percent_of(missing, total)
 
-            field_summary['locations'][group_name]['reported'] = reported
-            field_summary['locations'][group_name]['missing'] = missing
-            field_summary['locations'][group_name]['percent_reported'] = percent_reported
-            field_summary['locations'][group_name]['percent_missing'] = percent_missing
+            field_stats['locations'][group_name]['reported'] = reported
+            field_stats['locations'][group_name]['missing'] = missing
+            field_stats['locations'][group_name]['percent_reported'] = percent_reported
+            field_stats['locations'][group_name]['percent_missing'] = percent_missing
 
     else:
+        # generate the statistics over the entire data set
+        # this means there will be one set of statistics for the entire
+        # data set, as opposed to above, where each group gets its stats
+        # generated separately
         reported = dataset[tag].count()
         total = dataset[tag].size
         missing = total - reported
@@ -136,21 +161,37 @@ def generate_numeric_field_summary(tag, dataset):
                  'mean': dataset[tag].mean(),
                  'std': np.std(dataset[tag])}
 
-        field_summary.update(stats)
+        field_stats.update(stats)
 
-    return field_summary
+    return field_stats
 
 
-def generate_single_choice_field_summary(tag, dataset, field_options):
-    field_summary = {'type': 'single-choice'}
+def generate_single_choice_field_stats(tag, dataset, field_options):
+    '''Returns statistics (frequency histogram, number/percentage of actual
+    reports, number/percentage of missing reports) for a specified form field
+    tag. The associated form field takes one value of several options.
+
+
+    Parameters
+    - tag: a form field tag
+    - dataset: a pandas DataFrame or group series with the submission data
+    - field_options: an iterable (queryset or no) of form field options
+
+    Returns
+    - a dictionary (or nested dictionary, if data set is grouped) with the
+    above statistics, as well as the labels for each of the options. Both the
+    histogram and the labels are generated as lists, so they are ordered.'''
 
     options = [x.option for x in field_options]
     labels = [x.description for x in field_options]
 
+    field_stats = {'type': 'single-choice', 'labels': labels}
+
     if hasattr(dataset, 'groups'):
+        # the data is grouped, so per-group statistics will be generated
         group_names = dataset.groups.keys()
 
-        location_stats = {'labels': labels}
+        location_stats = {}
 
         for group_name in group_names:
             temp = dataset.get_group(group_name).get(tag)
@@ -167,8 +208,9 @@ def generate_single_choice_field_summary(tag, dataset, field_options):
             location_stats[group_name]['percent_reported'] = percent_reported
             location_stats[group_name]['percent_missing'] = percent_missing
 
-        field_summary['locations'] = location_stats
+        field_stats['locations'] = location_stats
     else:
+        # ungrouped data, statistics for the entire data set will be generated
         histogram = make_histogram(options, dataset[tag])
 
         reported = dataset[tag].count()
@@ -179,15 +221,28 @@ def generate_single_choice_field_summary(tag, dataset, field_options):
 
         stats = {'histogram': histogram, 'reported': reported,
                  'missing': missing, 'percent_reported': percent_reported,
-                 'percent_missing': percent_missing, 'labels': labels}
+                 'percent_missing': percent_missing}
 
-        field_summary.update(stats)
+        field_stats.update(stats)
 
-    return field_summary
+    return field_stats
 
 
-def generate_mutiple_choice_field_summary(tag, dataset, field_options):
-    field_summary = {'type': 'multiple-choice'}
+def generate_mutiple_choice_field_stats(tag, dataset, field_options):
+    '''Returns statistics for a form field which can take more than one
+    option of several. Statistics returned are frequency histogram,
+    number/percentage of actual reports, number/percentage of missing
+    reports.
+
+    Parameters
+    - tag: a form field tag
+    - dataset: a pandas DataFrame or group series
+    - field_options: an iterable of form field options
+
+    Returns
+    - a dictionary (nested in the case of dataset being a group series)
+    of the relevant statistics.'''
+    field_stats = {'type': 'multiple-choice'}
 
     options = [x.option for x in field_options]
     labels = [x.description for x in field_options]
@@ -195,7 +250,8 @@ def generate_mutiple_choice_field_summary(tag, dataset, field_options):
     if hasattr(dataset, 'groups'):
         group_names = dataset.groups.keys()
 
-        location_stats = {'labels': labels}
+        field_stats['labels'] = labels
+        location_stats = {}
 
         for group_name in group_names:
             temp = dataset.get_group(group_name).get(tag)
@@ -213,7 +269,7 @@ def generate_mutiple_choice_field_summary(tag, dataset, field_options):
             location_stats[group_name]['percent_reported'] = percent_reported
             location_stats[group_name]['percent_missing'] = percent_missing
 
-        field_summary['locations'] = location_stats
+        field_stats['locations'] = location_stats
     else:
         histogram = summarize_options(options, dataset[tag])
 
@@ -227,18 +283,37 @@ def generate_mutiple_choice_field_summary(tag, dataset, field_options):
                  'missing': missing, 'percent_reported': percent_reported,
                  'percent_missing': percent_missing, 'labels': labels}
 
-        field_summary.update(stats)
+        field_stats.update(stats)
 
-    return field_summary
+    return field_stats
 
 
-def generate_process_data(form, location_id=0, sample=None, grouped=True):
-    '''This assumes nobody will call this with both a valid location_id and sample'''
+def generate_process_data(form, location_id=0, sample=None, grouped=True, tags=None):
+    '''Generates process statistics for either a location and its descendants,
+    or for a sample. Optionally generates statistics for an entire region, or
+    for groups of regions.
+
+
+    Parameters
+    - form: a Form instance
+    - location_id: the pk of the location to retrieve statistics for
+    - sample: a sample instance, with locations to retrieve statistics for
+    - grouped: when retrieving statistics for a location, specify whether or
+    not to retrieve statistics on a per-group basis.
+    - tags: an iterable of tags to retrieve statistics for'''
     process_summary = {}
+    location_types = sub_location_types(location_id)
 
-    data_frame, single_choice_tags, multiple_choice_tags = get_data_records(form, location_id, sample)
+    try:
+        data_frame, single_choice_tags, multiple_choice_tags = get_data_records(form, location_id, sample, tags)
+    except Exception:
+        return process_summary
 
     form_groups = form.groups.all()
+
+    if not tags:
+        tags = single_choice_tags + multiple_choice_tags
+        tags.sort()
 
     if sample or not grouped:
         process_summary['type'] = 'sample'
@@ -247,31 +322,41 @@ def generate_process_data(form, location_id=0, sample=None, grouped=True):
         for group in form_groups:
             group_summary = []
 
-            for form_field in group.fields.all():
-                field_summary = {}
+            for form_field in group.fields.filter(tag__in=tags):
+                field_stats = {}
 
                 if not form_field.options.count():
                     # processing a field taking a numeric value
-                    field_summary = generate_numeric_field_summary(form_field.tag, data_frame)
+                    field_stats = generate_numeric_field_stats(form_field.tag, data_frame)
                 else:
                     # processing a choice field, but what type?
                     field_options = form_field.options.all()
 
                     if form_field.tag in single_choice_tags:
-                        field_summary = generate_single_choice_field_summary(form_field.tag, data_frame, field_options)
+                        field_stats = generate_single_choice_field_stats(form_field.tag, data_frame, field_options)
                     else:
-                        field_summary = generate_mutiple_choice_field_summary(form_field.tag, data_frame, field_options)
+                        field_stats = generate_mutiple_choice_field_stats(form_field.tag, data_frame, field_options)
 
-                group_summary.append((form_field.tag, form_field.description, field_summary))
+                group_summary.append((form_field.tag, form_field.description, field_stats))
 
             sample_summary.append((group.name, group_summary))
 
         process_summary['summary'] = sample_summary
-    else:
-        location_types = sub_location_types(location_id)
 
+        if not sample:
+            if not location_id:
+                sub_locations = Location.objects.filter(type__name__in=location_types).values_list('pk', 'name')
+            else:
+                descendants = Location.objects.get(pk=location_id).get_descendants()
+                sub_locations = [(location.pk, location.name) for location in descendants if location.type.name in location_types]
+
+        else:
+            sub_locations = sample.locations.all().values_list('pk', 'name')
+    else:
         if not location_types:
             return process_summary
+
+        location_names = []
 
         process_summary['type'] = 'grouped'
 
@@ -279,16 +364,17 @@ def generate_process_data(form, location_id=0, sample=None, grouped=True):
             location_type_summary = []
 
             data_group = data_frame.groupby(location_type)
+            location_names.extend(data_group.groups.keys())
 
             for group in form.groups.all():
                 group_summary = []
 
-                for form_field in group.fields.all():
-                    field_summary = {}
+                for form_field in group.fields.filter(tag__in=tags):
+                    field_stats = {}
                     regional_stats = {}
 
                     if not form_field.options.count():
-                        field_summary = generate_numeric_field_summary(form_field.tag, data_group)
+                        field_stats = generate_numeric_field_stats(form_field.tag, data_group)
 
                         regional_stats['mean'] = data_frame[form_field.tag].mean()
                         regional_stats['std'] = np.std(data_frame[form_field.tag])
@@ -296,17 +382,20 @@ def generate_process_data(form, location_id=0, sample=None, grouped=True):
                         field_options = form_field.options.all()
 
                         if form_field.tag in single_choice_tags:
-                            field_summary = generate_single_choice_field_summary(form_field.tag, data_group, field_options)
+                            field_stats = generate_single_choice_field_stats(form_field.tag, data_group, field_options)
                         else:
-                            field_summary = generate_mutiple_choice_field_summary(form_field.tag, data_group, field_options)
+                            field_stats = generate_mutiple_choice_field_stats(form_field.tag, data_group, field_options)
 
                     if regional_stats:
-                        field_summary['regional'] = regional_stats
+                        field_stats['regional'] = regional_stats
 
-                    group_summary.append((form_field.tag, form_field.description, field_summary))
+                    group_summary.append((form_field.tag, form_field.description, field_stats))
 
                 location_type_summary.append((group.name, group_summary))
 
-            process_summary[location_type] = location_type_summary
+            process_summary['detail'] = {location_type: location_type_summary}
 
+        sub_locations = Location.objects.filter(name__in=location_names).values_list('pk', 'name')
+
+    process_summary['sub_locations'] = sub_locations
     return process_summary
