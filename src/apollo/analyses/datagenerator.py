@@ -102,6 +102,8 @@ def get_data_records(form, location_root=0, sample=None, tags=None):
 
 def percent_of(a, b):
     '''Returns the percentage of b that is a'''
+    if a == np.nan or b == 0:
+        return 0
     return (100 * float(a) / b)
 
 
@@ -195,9 +197,7 @@ def generate_single_choice_field_stats(tag, dataset, field_options):
 
         for group_name in group_names:
             temp = dataset.get_group(group_name).get(tag)
-            histogram = make_histogram(options, temp)
-
-            location_stats[group_name] = {'histogram': histogram}
+            
             reported = temp.count()
             total = temp.size
             missing = total - reported
@@ -208,10 +208,17 @@ def generate_single_choice_field_stats(tag, dataset, field_options):
             location_stats[group_name]['percent_reported'] = percent_reported
             location_stats[group_name]['percent_missing'] = percent_missing
 
+            histogram = make_histogram(options, temp)
+
+            histogram_mod = lambda x: (x, percent_of(x, total))
+
+            histogram2 = map(histogram_mod, histogram)
+
+            location_stats[group_name] = {'histogram': histogram2}
+
         field_stats['locations'] = location_stats
     else:
         # ungrouped data, statistics for the entire data set will be generated
-        histogram = make_histogram(options, dataset[tag])
 
         reported = dataset[tag].count()
         total = dataset[tag].size
@@ -219,7 +226,13 @@ def generate_single_choice_field_stats(tag, dataset, field_options):
         percent_reported = percent_of(reported, total)
         percent_missing = percent_of(missing, total)
 
-        stats = {'histogram': histogram, 'reported': reported,
+        histogram = make_histogram(options, dataset[tag])
+
+        histogram_mod = lambda x: (x, percent_of(x, total))
+
+        histogram2 = map(histogram_mod, histogram)
+
+        stats = {'histogram': histogram2, 'reported': reported,
                  'missing': missing, 'percent_reported': percent_reported,
                  'percent_missing': percent_missing}
 
@@ -255,9 +268,6 @@ def generate_mutiple_choice_field_stats(tag, dataset, field_options):
 
         for group_name in group_names:
             temp = dataset.get_group(group_name).get(tag)
-            histogram = summarize_options(options, temp)
-
-            location_stats[group_name] = {'histogram': histogram}
 
             missing = sum(not x for x in temp)
             reported = temp.size - missing
@@ -269,17 +279,29 @@ def generate_mutiple_choice_field_stats(tag, dataset, field_options):
             location_stats[group_name]['percent_reported'] = percent_reported
             location_stats[group_name]['percent_missing'] = percent_missing
 
+            histogram = summarize_options(options, temp)
+
+            histogram_mod = lambda x: (x, percent_of(x, reported))
+
+            histogram2 = map(histogram_mod, histogram)
+
+            location_stats[group_name] = {'histogram': histogram2}
+
         field_stats['locations'] = location_stats
     else:
-        histogram = summarize_options(options, dataset[tag])
-
         missing = sum(not x for x in dataset[tag])
         total = dataset[tag].size
         reported = total - missing
         percent_reported = percent_of(reported, total)
         percent_missing = percent_of(missing, total)
 
-        stats = {'histogram': histogram, 'reported': reported,
+        histogram = summarize_options(options, dataset[tag])
+
+        histogram_mod = lambda x: (x, percent_of(x, reported))
+
+        histogram2 = map(histogram_mod, histogram)
+
+        stats = {'histogram': histogram2, 'reported': reported,
                  'missing': missing, 'percent_reported': percent_reported,
                  'percent_missing': percent_missing, 'labels': labels}
 
@@ -310,6 +332,9 @@ def generate_process_data(form, location_id=0, sample=None, grouped=True, tags=N
         return process_summary
 
     form_groups = form.groups.all()
+
+    if data_frame.empty:
+        return process_summary
 
     if not tags:
         tags = list(single_choice_tags) + list(multiple_choice_tags)

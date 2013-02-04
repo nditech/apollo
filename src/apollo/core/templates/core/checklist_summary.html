@@ -43,12 +43,12 @@
 				{% if tag_stats.type == 'numeric' %}
 				<td align="right">{{ tag_stats.mean|floatformat:0 }}</td>
 				{% else %}
-				{% for item in tag_stats.histogram %}
-				<td>{{ item }}</td>
+				{% for value, percentage in tag_stats.histogram %}
+				<td>{{ percentage|floatformat:0 }}% ({{ value }})</td>
 				{% endfor %}
 				{% endif %}
-				<td align="right">{{ tag_stats.reported }} ({{ tag_stats.percent_reported|floatformat:0 }}%)</td>
-				<td align="right">{{ tag_stats.missing }} ({{ tag_stats.percent_missing|floatformat:0 }}%)</td>
+				<td align="right">{{ tag_stats.percent_reported|floatformat:0 }}% ({{ tag_stats.reported }})</td>
+				<td align="right">{{ tag_stats.percent_missing|floatformat:0 }}% ({{ tag_stats.missing }})</td>
 			</tr>
 		</table>
 		{% endfor %}

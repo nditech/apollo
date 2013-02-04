@@ -86,6 +86,10 @@ class SubmissionAnalysisView(TemplateView):
         else:
             self.location = Location.root()
         self.page_title = '{} Analysis'.format(self.form.name)
+        if 'tag' in kwargs:
+            self.tag = [get_object_or_404(FormField, group__form=self.form, tag=kwargs['tag']).tag]
+        else:
+            self.tag = None
         return super(SubmissionAnalysisView, self).dispatch(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
@@ -93,7 +97,8 @@ class SubmissionAnalysisView(TemplateView):
         context['page_title'] = self.page_title
         context['form'] = self.form
         context['location'] = self.location
-        context['process_summary'] = generate_process_data(self.form, self.location.pk, grouped=False)
+        context['process_summary'] = generate_process_data(self.form, self.location.pk, grouped=False,
+            tags=self.tag)
         return context
 
 
