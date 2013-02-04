@@ -199,3 +199,14 @@ class DashboardFilter(django_filters.FilterSet):
         model = Submission
         fields = ['location', 'activity', 'sample']
 
+
+class SubmissionsAnalysisFilter(django_filters.FilterSet):
+    location = LocationFilter(widget=forms.Select(attrs={
+        'class': 'span4 input-xlarge select2',
+        'data-placeholder': 'Location'}))
+    sample = SampleFilter(widget=forms.Select(attrs={'class': 'span2'}))
+
+    class Meta:
+        model = Submission
+        fields = ['location', 'sample']
+

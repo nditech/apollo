@@ -74,32 +74,46 @@ class DashboardView(View, TemplateResponseMixin):
         return self.render_to_response(context)
 
 
-class SubmissionAnalysisView(TemplateView):
+class SubmissionAnalysisView(View, TemplateResponseMixin):
     template_name = 'core/checklist_summary.html'
 
     @method_decorator(login_required)
     @method_decorator(permission_required('core.can_analyse'))
-    def dispatch(self, *args, **kwargs):
+    def dispatch(self, request, *args, **kwargs):
         self.form = get_object_or_404(Form, pk=kwargs['form'])
+        self.page_title = '{} Analysis'.format(self.form.name)
+        self.analysis_filter = SubmissionsAnalysisFilter
         if 'location_id' in kwargs:
             self.location = get_object_or_404(Location, pk=kwargs['location_id'])
         else:
             self.location = Location.root()
-        self.page_title = '{} Analysis'.format(self.form.name)
         if 'tag' in kwargs:
             self.tag = [get_object_or_404(FormField, group__form=self.form, tag=kwargs['tag']).tag]
         else:
             self.tag = None
-        return super(SubmissionAnalysisView, self).dispatch(*args, **kwargs)
+        return super(SubmissionAnalysisView, self).dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
-        context = super(SubmissionAnalysisView, self).get_context_data(**kwargs)
+        context = {'params': kwargs}
         context['page_title'] = self.page_title
+        context['filter_form'] = self.filter_set.form
         context['form'] = self.form
         context['location'] = self.location
         context['process_summary'] = generate_process_data(self.form, self.location.pk, grouped=False,
             tags=self.tag)
         return context
+
+    def get(self, request, *args, **kwargs):
+        initial_filter = request.session.get('analysis_filter', None)
+        self.filter_set = self.analysis_filter(initial_filter, queryset=Submission.objects.filter(observer=None))
+        context = self.get_context_data(**kwargs)
+        return self.render_to_response(context)
+
+    def post(self, request, *args, **kwargs):
+        self.filter_set = self.analysis_filter(request.POST, queryset=Submission.objects.filter(observer=None))
+        request.session['analysis_filter'] = self.filter_set.form.data
+        context = self.get_context_data(**kwargs)
+        return self.render_to_response(context)
 
 
 class SubmissionListView(ListView):
