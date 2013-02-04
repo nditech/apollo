@@ -273,6 +273,8 @@ def generate_process_data(form, location_id=0, sample=None, grouped=True):
         if not location_types:
             return process_summary
 
+        process_summary['type'] = 'grouped'
+
         for location_type in location_types:
             location_type_summary = []
 

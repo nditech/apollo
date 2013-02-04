@@ -34,53 +34,46 @@
 </div>
 <div class="row">
 	<div class="span12">
-		{% for location_type, location_type_summary in summary.items %}
-			<h3>By {{ location_type }}</h3>
-			{% for group_name, group_summary in location_type_summary %}
-			<h4>{{ group_name }}</h4>
-				{% for tag, question, region_data in group_summary %}
-				<p><strong>{{ tag }}: {{ question }}</strong></p>
-				<table class="table table-striped table-bordered">
-					<tr>
-						<th>Location</th>
-						{% if region_data.type == 'numeric' %}
-						<th>Mean<th>
-						{% else %}
-						{% for label in region_data.legend %}
-						<th>{{ label }}</th>
-						{% endfor %}
-						{% endif %}
-						<th>Reported</th>
-						<th>Missing</th>
-						<th>Total</th>
-					</tr>
-					{% for region, stats in region_data.regions.items %}
-					<tr>
-						<td>{{ region }}</td>
-						{% if region_data.type == 'numeric' %}
-						<td>{{ stats.mean|floatformat }}</td>
-						<td></td>
-						{% else %}
-						{% for value in stats.stats %}
-						<td>{{ value }}</td>
-						{% endfor %}
-						{% endif %}
-						<td>{{ stats.reported }} ({{ stats.reported_percent|floatformat }}%) </td>
-						<td>{{ stats.missing }} ({{ stats.missing_percent|floatformat }}%)</td>
-						<td>{{ stats.total }}</td>
-					</tr>
+	{% if process_summary %}
+	{% if process_summary.type == 'sample' %}
+		{% for group, group_stats in process_summary.summary %}
+		<h5>{{ group }}</h5>
+
+		{% for tag, question, tag_stats in group_stats %}
+		<table width="100%" class="table table-striped table-bordered">
+			<tr>
+				<td width="30" rowspan="2"><b>{{ tag }}</b></td>
+				<td rowspan="2">{{ question }}</td>
+				{% if tag_stats.type == 'numeric' %}
+				<td bgcolor="#eee">Mean</td>
+				{% else %}
+					{% for label in tag_stats.labels %}
+					<td>{{ label }}</td>
 					{% endfor %}
-					{% if region_data.type == 'numeric' %}
-					<tr>
-						<th>Regional mean</th>
-						<th colspan='5'>{{ region_data.global.mean|floatformat }}</th>
-					</tr>
-					{% endif %}
-				</table>
+				{% endif %}
+				<td bgcolor="#eee">Reported</td>
+				<td bgcolor="#eee">Missing</td>
+			</tr>
+			<tr>
+				{% if tag_stats.type == 'numeric' %}
+				<td align="right">{{ tag_stats.mean|floatformat:0 }}</td>
+				{% else %}
+				{% for item in tag_stats.histogram %}
+				<td>{{ item }}</td>
 				{% endfor %}
-			{% endfor %}
+				{% endif %}
+				<td align="right">{{ tag_stats.reported }} ({{ tag_stats.percent_reported }}%)</td>
+				<td align="right">{{ tag_stats.missing }} ({{ tag_stats.percent_missing }}%)</td>
+			</tr>
+		</table>
 		{% endfor %}
-<!-- 		<h5>Arrival</h5></span>
+		{% endfor %}
+	{% else %}
+	{% endif %}
+	{% else %}
+	<h3>No records to display</h3>
+	{% endif %}
+<!-- 	<h5>Arrival</h5></span>
 		 <table width="100%" class="table table-striped table-bordered">
 				<tr>
 					<td width="30" rowspan="2"><b>AA</b></td>
@@ -154,8 +147,7 @@
 				<tr>
 					<td align="right">20</td>
 				</tr>
-		</table>
- -->	
+		</table> -->
 	</div>
 </div>
 {% endblock %}
