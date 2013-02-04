@@ -1,25 +1,10 @@
 {% extends "core/layout.html" %}
+{% load apollo %}
 {% block content %}
 <div class="row">
   <div class="span8">
-	<ul class="breadcrumb">
-	  <li><a href="#">Zimbabwe</a> <span class="divider">/</span></li>
-	</ul>
-	<ul class="nav nav-pills">
-	  <li class="active">
-	    <a href="#">Bulawayo</a>
-	  </li>
-	  <li><a href="#">Herare</a></li>
-	  <li><a href="#">Masvingo</a></li>
-	  <li><a href="#">Manicaland</a></li>
-	  <li><a href="#">Masvingo</a></li>
-	  <li><a href="#">Mashonaland Central</a></li>
-	  <li><a href="#">Mashonaland East</a></li>
-	  <li><a href="#">Mashonaland West</a></li>
-	  <li><a href="#">Matabeleland North</a></li>
-	  <li><a href="#">Matabeleland North</a></li>
-	  <li><a href="#">Midlands</a></li>
-	</ul>
+      {% analysis_breadcrumb_navigation form location %}
+      {% analysis_location_navigation form location %}
   </div>
   <div class="span4">
     <form class="form-horizontal pull-right" action="" method="" accept-charset="utf-8">  
@@ -73,81 +58,6 @@
 	{% else %}
 	<h3>No records to display</h3>
 	{% endif %}
-<!-- 	<h5>Arrival</h5></span>
-		 <table width="100%" class="table table-striped table-bordered">
-				<tr>
-					<td width="30" rowspan="2"><b>AA</b></td>
-					<td rowspan="2">How many polling officials were present at your assigned polling station upon your arrival at 6.30am?</td>
-					<td width="80" bgcolor="#eeeeee">Reported</td>
-				</tr>
-				<tr>
-					<td align="right">5</td>
-				</tr>
-		</table>
-		<h5>Setup</h5>
-		<table width="100%" class="table table-striped table-bordered">
-				<tr>
-					<td width="30" rowspan="2"><b>AB</b></td>
-					<td rowspan="2">At what time did voting start?</td>
-					<td width="100" bgcolor="#eeeeee">By 7:30</td>
-					<td width="100" bgcolor="#eeeeee">7:31 to 9:00</td>
-					<td width="100" bgcolor="#eeeeee">After 9.00am</td><td width="100" bgcolor="#eeeeee">Never Opened</td>
-					<td width="80" bgcolor="#eeeeee">Reported</td>
-					<td width="80" bgcolor="#eeeeee">Missing</td>
-				</tr>
-				<tr>
-					<td align="right">50% (733)</td>
-					<td align="right">30% (551)</td>
-					<td align="right">10% (190)</td>
-					<td align="right">5% (5)</td>
-					<td align="right">85%&nbsp;(1497)</td><td align="right">15%&nbsp;(3)</td>
-				</tr>
-		</table>
-		<h5>Voting</h5>
-		<table width="100%" class="table table-striped table-bordered">
-				<tr>
-					<td width="30" rowspan="2"><b>BA</b></td>
-					<td rowspan="2">Were all ballot papers stamped with the ZEC stamp before being given to voters?</td>
-					<td width="100" bgcolor="#eeeeee">Yes</td>
-					<td width="100" bgcolor="#eeeeee">No</td>
-			
-					<td width="80" bgcolor="#eeeeee">Reported</td>
-					<td width="80" bgcolor="#eeeeee">Missing</td>
-				</tr>
-				<tr>
-					<td align="right">60% (1152)</td>
-					<td align="right">35% (331)</td>
-					<td align="right">95%&nbsp;(1483)</td><td align="right">5%&nbsp;(17)</td>
-				</tr>
-		</table>
-		<h5>Counting</h5>
-		<table width="100%" class="table table-striped table-bordered">
-				<tr>
-					<td width="30" rowspan="2"><b>CA</b></td>
-					<td rowspan="2">Were you permitted to observe counting?</td>
-					<td width="100" bgcolor="#eeeeee">Yes</td>
-					<td width="100" bgcolor="#eeeeee">No</td>
-			
-					<td width="80" bgcolor="#eeeeee">Reported</td>
-					<td width="80" bgcolor="#eeeeee">Missing</td>
-				</tr>
-				<tr>
-					<td align="right">70% (1152)</td>
-					<td align="right">20% (331)</td>
-					<td align="right">90%&nbsp;(1483)</td><td align="right">10%&nbsp;(17)</td>
-				</tr>
-		</table>
-		<h5>Results</h5>
-		<table width="100%" class="table table-striped table-bordered">
-				<tr>
-					<td width="30" rowspan="2"><b>DA</b></td>
-					<td rowspan="2">Total Ordinary ballot papers received</td>
-					<td width="80" bgcolor="#eeeeee">Reported</td>
-				</tr>
-				<tr>
-					<td align="right">20</td>
-				</tr>
-		</table> -->
 	</div>
 </div>
 {% endblock %}

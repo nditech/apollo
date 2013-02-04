@@ -82,3 +82,25 @@ def is_missing(submission, group):
 @register.filter
 def is_partial(submission, group):
     return submission.is_partial(group)
+
+
+@register.inclusion_tag('core/analysis_breadcrumb_navigation.html')
+def analysis_breadcrumb_navigation(form, location=None, tag=None):
+    form = form if isinstance(form, Form) else Form.objects.get(pk=form)
+    try:
+        location = location if isinstance(location, Location) else Location.objects.get(pk=location)
+    except Location.DoesNotExist:
+        location = Location.root()
+
+    return {'locations': reversed(location.get_ancestors(include_self=True)), 'form': form, 'tag': tag}
+
+
+@register.inclusion_tag('core/analysis_location_navigation.html')
+def analysis_location_navigation(form, location=None, tag=None):
+    form = form if isinstance(form, Form) else Form.objects.get(pk=form)
+    try:
+        location = location if isinstance(location, Location) else Location.objects.get(pk=location)
+    except Location.DoesNotExist:
+        location = Location.root()
+
+    return {'locations': location.get_children(), 'form': form, 'tag': tag}
