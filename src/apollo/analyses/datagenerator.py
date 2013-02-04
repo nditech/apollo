@@ -312,7 +312,7 @@ def generate_process_data(form, location_id=0, sample=None, grouped=True, tags=N
     form_groups = form.groups.all()
 
     if not tags:
-        tags = single_choice_tags + multiple_choice_tags
+        tags = list(single_choice_tags) + list(multiple_choice_tags)
         tags.sort()
 
     if sample or not grouped:

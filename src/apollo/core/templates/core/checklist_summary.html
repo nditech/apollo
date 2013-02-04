@@ -5,21 +5,13 @@
 	<ul class="breadcrumb">
 	  <li><a href="#">Zimbabwe</a> <span class="divider">/</span></li>
 	</ul>
+	{% if process_summary %}
 	<ul class="nav nav-pills">
-	  <li class="active">
-	    <a href="#">Bulawayo</a>
-	  </li>
-	  <li><a href="#">Herare</a></li>
-	  <li><a href="#">Masvingo</a></li>
-	  <li><a href="#">Manicaland</a></li>
-	  <li><a href="#">Masvingo</a></li>
-	  <li><a href="#">Mashonaland Central</a></li>
-	  <li><a href="#">Mashonaland East</a></li>
-	  <li><a href="#">Mashonaland West</a></li>
-	  <li><a href="#">Matabeleland North</a></li>
-	  <li><a href="#">Matabeleland North</a></li>
-	  <li><a href="#">Midlands</a></li>
+		{% for id, name in process_summary.sub_locations %}
+	  	<li><a href="{% url submissions_analysis_location form_id id %}">{{ name }}</a></li>
+	  	{% endfor %}
 	</ul>
+	{% endif %}
   </div>
   <div class="span4">
     <form class="form-horizontal pull-right" action="" method="" accept-charset="utf-8">  
@@ -62,8 +54,8 @@
 				<td>{{ item }}</td>
 				{% endfor %}
 				{% endif %}
-				<td align="right">{{ tag_stats.reported }} ({{ tag_stats.percent_reported }}%)</td>
-				<td align="right">{{ tag_stats.missing }} ({{ tag_stats.percent_missing }}%)</td>
+				<td align="right">{{ tag_stats.reported }} ({{ tag_stats.percent_reported|floatformat:0 }}%)</td>
+				<td align="right">{{ tag_stats.missing }} ({{ tag_stats.percent_missing|floatformat:0 }}%)</td>
 			</tr>
 		</table>
 		{% endfor %}

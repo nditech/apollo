@@ -81,7 +81,7 @@ class SubmissionAnalysisView(TemplateView):
     @method_decorator(permission_required('core.can_analyse'))
     def dispatch(self, *args, **kwargs):
         self.form = get_object_or_404(Form, pk=kwargs['form'])
-        self.location = kwargs.get('location_id')
+        self.location = kwargs.get('location_id', 0)
         self.tag = kwargs.get('tag')
         self.page_title = '{} Analysis'.format(self.form.name)
         return super(SubmissionAnalysisView, self).dispatch(*args, **kwargs)
@@ -90,6 +90,10 @@ class SubmissionAnalysisView(TemplateView):
         context = super(SubmissionAnalysisView, self).get_context_data(**kwargs)
         context['page_title'] = self.page_title
         context['form_id'] = self.form.pk
+        tags = [self.tag] if self.tag else None
+        process_statistics = generate_process_data(self.form, location_id=int(self.location),
+            grouped=False, tags=tags)
+        context['process_summary'] = process_statistics
         return context
 
 
