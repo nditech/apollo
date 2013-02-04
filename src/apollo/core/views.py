@@ -80,8 +80,8 @@ class SubmissionAnalysisView(TemplateView):
     @method_decorator(login_required)
     @method_decorator(permission_required('core.can_analyse'))
     def dispatch(self, *args, **kwargs):
-        self.page_title = 'Checklist Analysis'
         self.form = get_object_or_404(Form, pk=kwargs['form'])
+        self.page_title = '{} Analysis'.format(self.form.name)
         return super(SubmissionAnalysisView, self).dispatch(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
