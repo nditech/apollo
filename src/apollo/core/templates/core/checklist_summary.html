@@ -47,8 +47,8 @@
 				<td>{{ item }}</td>
 				{% endfor %}
 				{% endif %}
-				<td align="right">{{ tag_stats.reported }} ({{ tag_stats.percent_reported }}%)</td>
-				<td align="right">{{ tag_stats.missing }} ({{ tag_stats.percent_missing }}%)</td>
+				<td align="right">{{ tag_stats.reported }} ({{ tag_stats.percent_reported|floatformat:0 }}%)</td>
+				<td align="right">{{ tag_stats.missing }} ({{ tag_stats.percent_missing|floatformat:0 }}%)</td>
 			</tr>
 		</table>
 		{% endfor %}
