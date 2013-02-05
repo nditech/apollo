@@ -1,8 +1,16 @@
 {% extends "core/layout.html" %}
 {% load apollo %}
 {% block content %}
+<script type="text/javascript">
+	$(document).ready(function(){
+      $('.table-fixed-header').fixedHeader();
+      });
+</script>
+<style>
+
+</style>
 <div class="row">
-	<div class="span12">
+	<div class="span8">
 		<ul class="breadcrumb">
 		  <li><a href="#">Zimbabwe</a> <span class="divider">/</span></li>
 		  <li><a href="#">Bulawayo</a></li>
@@ -17,23 +25,32 @@
 		  <li><a href="#">Mzilikazi</a></li>
 		</ul>
 	</div>
+	<div class="span4">
+		<form class="form-horizontal pull-right" action="" method="post" accept-charset="utf-8">
+          <select class="">
+	          <option disabled selected style='display:none;'>Sample</option>
+	          <option>All</option>
+		  </select> 
+          <button class="btn btn-warning" style="margin-left:1em" type="submit"><i class="icon-search icon-white"></i> Filter</button>
+    </form>
+	</div>
 </div>
 <div class="row">
 	<div class="span12">
 		<div class="tabbable"> <!-- Only required for left/right tabs -->
 		  <ul class="nav nav-tabs">
-		    <li class="active"><a href="#tab1" data-toggle="tab">Sub-Location Summary</a></li>
-		    <li><a href="#tab2" data-toggle="tab">Pictorial View</a></li>
+		    <li class="active"><a href="#tab1" data-toggle="tab">Table</a></li>
+		    <li><a href="#tab2" data-toggle="tab">Charts</a></li>
 		  </ul>
 		  <div class="tab-content">
 		    <div class="tab-pane active" id="tab1">
 		      <div class="row">
 				<div class="span12">
 					<h5>AA. Were any election officials present upon arrival?</h5>
-					<table class="table table-bordered">
+					<table class="table table-bordered table-fixed" id="example">
 						<tr>
-							<td bgcolor="#eeeeee">Location</td>
-							<td width="100" bgcolor="#eeeeee">Strata</td>
+							<td bgcolor="#eeeeee"></td>
+							<td width="100" bgcolor="#eeeeee"></td>
 							<td width="100" bgcolor="#eeeeee">Yes</td>
 							<td width="100" bgcolor="#eeeeee">No</td>
 					
@@ -41,12 +58,12 @@
 							<td width="80" bgcolor="#eeeeee">Missing</td>
 						</tr>
 						<tr>
-								<td rowspan="4">Bulawayo Municipality</td>
-								<td align="right">All</td>
-								<td align="right">66.7% (100)</td>
-								<td align="right">33.3% (50)</td>
-								<td align="right">75.0% (150)</td>
-								<td align="right">25.0% (50)</td>
+							<td rowspan="3">Bulawayo Municipality</td>
+							<td align="right">All</td>
+							<td align="right">66.7% (100)</td>
+							<td align="right">33.3% (50)</td>
+							<td align="right">75.0% (150)</td>
+							<td align="right">25.0% (50)</td>
 						</tr>
 						<tr>
 							<td align="right">Urban</td>
@@ -62,24 +79,21 @@
 							<td align="right">70.0% (105)</td>
 							<td align="right">30.0% (45)</td>
 						</tr>
-					</table>
-					<table class="table table-bordered">
-						<tr>
-							<td bgcolor="#eeeeee">Location</td>
-							<td width="100" bgcolor="#eeeeee">Strata</td>
-							<td width="100" bgcolor="#eeeeee">Yes</td>
-							<td width="100" bgcolor="#eeeeee">No</td>
-					
-							<td width="80" bgcolor="#eeeeee">Reported</td>
-							<td width="80" bgcolor="#eeeeee">Missing</td>
+						<tr bgcolor="#eeeeee">
+							<td></td>
+							<td width="100"></td>
+							<td width="100">Yes</td>
+							<td width="100">No</td>
+							<td width="80">Reported</td>
+							<td width="80">Missing</td>
 						</tr>
 						<tr>
-							<td rowspan="4">Emganwini</td>
-								<td align="right">All</td>
-								<td align="right">66.7% (100)</td>
-								<td align="right">33.3% (50)</td>
-								<td align="right">75.0% (150)</td>
-								<td align="right">25.0% (50)</td>
+							<td rowspan="3">Emganwini</td>
+							<td align="right">All</td>
+							<td align="right">66.7% (100)</td>
+							<td align="right">33.3% (50)</td>
+							<td align="right">75.0% (150)</td>
+							<td align="right">25.0% (50)</td>
 						</tr>
 						<tr>
 							<td align="right">Urban</td>
@@ -95,24 +109,21 @@
 							<td align="right">70.0% (105)</td>
 							<td align="right">30.0% (45)</td>
 						</tr>
-					</table>
-					<table class="table table-bordered">
-						<tr>
-							<td bgcolor="#eeeeee">Location</td>
-							<td width="100" bgcolor="#eeeeee">Strata</td>
-							<td width="100" bgcolor="#eeeeee">Yes</td>
-							<td width="100" bgcolor="#eeeeee">No</td>
-					
-							<td width="80" bgcolor="#eeeeee">Reported</td>
-							<td width="80" bgcolor="#eeeeee">Missing</td>
+						<tr bgcolor="#eeeeee">
+							<td></td>
+							<td width="100"></td>
+							<td width="100">Yes</td>
+							<td width="100">No</td>
+							<td width="80">Reported</td>
+							<td width="80">Missing</td>
 						</tr>
 						<tr>
-							<td rowspan="4">Gwabalanda</td>
-								<td align="right">All</td>
-								<td align="right">66.7% (100)</td>
-								<td align="right">33.3% (50)</td>
-								<td align="right">75.0% (150)</td>
-								<td align="right">25.0% (50)</td>
+							<td rowspan="3">Gwabalanda</td>
+							<td align="right">All</td>
+							<td align="right">66.7% (100)</td>
+							<td align="right">33.3% (50)</td>
+							<td align="right">75.0% (150)</td>
+							<td align="right">25.0% (50)</td>
 						</tr>
 						<tr>
 							<td align="right">Urban</td>
@@ -128,24 +139,21 @@
 							<td align="right">70.0% (105)</td>
 							<td align="right">30.0% (45)</td>
 						</tr>
-					</table>
-					<table class="table table-bordered">
-						<tr>
-							<td bgcolor="#eeeeee">Location</td>
-							<td width="100" bgcolor="#eeeeee">Strata</td>
-							<td width="100" bgcolor="#eeeeee">Yes</td>
-							<td width="100" bgcolor="#eeeeee">No</td>
-					
-							<td width="80" bgcolor="#eeeeee">Reported</td>
-							<td width="80" bgcolor="#eeeeee">Missing</td>
+						<tr bgcolor="#eeeeee">
+							<td></td>
+							<td width="100"></td>
+							<td width="100">Yes</td>
+							<td width="100">No</td>
+							<td width="80">Reported</td>
+							<td width="80">Missing</td>
 						</tr>
 						<tr>
-							<td rowspan="4">Khumalo</td>
-								<td align="right">All</td>
-								<td align="right">66.7% (100)</td>
-								<td align="right">33.3% (50)</td>
-								<td align="right">75.0% (150)</td>
-								<td align="right">25.0% (50)</td>
+							<td rowspan="3">Khumalo</td>
+							<td align="right">All</td>
+							<td align="right">66.7% (100)</td>
+							<td align="right">33.3% (50)</td>
+							<td align="right">75.0% (150)</td>
+							<td align="right">25.0% (50)</td>
 						</tr>
 						<tr>
 							<td align="right">Urban</td>
@@ -161,11 +169,9 @@
 							<td align="right">70.0% (105)</td>
 							<td align="right">30.0% (45)</td>
 						</tr>
-					</table>
-					<table class="table table-bordered">
 						<tr>
-							<td bgcolor="#eeeeee">Location</td>
-							<td width="100" bgcolor="#eeeeee">Strata</td>
+							<td bgcolor="#eeeeee"></td>
+							<td width="100" bgcolor="#eeeeee"></td>
 							<td width="100" bgcolor="#eeeeee">Yes</td>
 							<td width="100" bgcolor="#eeeeee">No</td>
 					
@@ -173,12 +179,12 @@
 							<td width="80" bgcolor="#eeeeee">Missing</td>
 						</tr>
 						<tr>
-							<td rowspan="4">Mabutweni</td>
-								<td align="right">All</td>
-								<td align="right">66.7% (100)</td>
-								<td align="right">33.3% (50)</td>
-								<td align="right">75.0% (150)</td>
-								<td align="right">25.0% (50)</td>
+							<td rowspan="3">Mabutweni</td>
+							<td align="right">All</td>
+							<td align="right">66.7% (100)</td>
+							<td align="right">33.3% (50)</td>
+							<td align="right">75.0% (150)</td>
+							<td align="right">25.0% (50)</td>
 						</tr>
 						<tr>
 							<td align="right">Urban</td>
@@ -194,11 +200,9 @@
 							<td align="right">70.0% (105)</td>
 							<td align="right">30.0% (45)</td>
 						</tr>
-					</table>
-					<table class="table table-bordered">
 						<tr>
-							<td bgcolor="#eeeeee">Location</td>
-							<td width="100" bgcolor="#eeeeee">Strata</th>
+							<td bgcolor="#eeeeee"></td>
+							<td width="100" bgcolor="#eeeeee"></td>
 							<td width="100" bgcolor="#eeeeee">Yes</td>
 							<td width="100" bgcolor="#eeeeee">No</td>
 					
@@ -207,11 +211,11 @@
 						</tr>
 						<tr>
 							<td rowspan="3">Masotsha Ndiovu</td>
-								<td align="right">All</td>
-								<td align="right">66.7% (100)</td>
-								<td align="right">33.3% (50)</td>
-								<td align="right">75.0% (150)</td>
-								<td align="right">25.0% (50)</td>
+							<td align="right">All</td>
+							<td align="right">66.7% (100)</td>
+							<td align="right">33.3% (50)</td>
+							<td align="right">75.0% (150)</td>
+							<td align="right">25.0% (50)</td>
 						</tr>
 						<tr>
 							<td align="right">Urban</td>
@@ -227,24 +231,22 @@
 							<td align="right">70.0% (105)</td>
 							<td align="right">30.0% (45)</td>
 						</tr>
-					</table>
-					<table class="table table-bordered">
-						<tr>
-							<td bgcolor="#eeeeee">Location</td>
-							<td width="100" bgcolor="#eeeeee">Strata</td>
-							<td width="100" bgcolor="#eeeeee">Yes</td>
-							<td width="100" bgcolor="#eeeeee">No</td>
+						<tr bgcolor="#eeeeee">
+							<td bgcolor="#eeeeee"></td>
+							<td width="100"></td>
+							<td width="100">Yes</td>
+							<td width="100">No</td>
 					
-							<td width="80" bgcolor="#eeeeee">Reported</td>
-							<td width="80" bgcolor="#eeeeee">Missing</td>
+							<td width="80">Reported</td>
+							<td width="80">Missing</td>
 						</tr>
 						<tr>
-							<td rowspan="4">Mzilikazi</td>
-								<td align="right">All</td>
-								<td align="right">66.7% (100)</td>
-								<td align="right">33.3% (50)</td>
-								<td align="right">75.0% (150)</td>
-								<td align="right">25.0% (50)</td>
+							<td rowspan="3">Mzilikazi</td>
+							<td align="right">All</td>
+							<td align="right">66.7% (100)</td>
+							<td align="right">33.3% (50)</td>
+							<td align="right">75.0% (150)</td>
+							<td align="right">25.0% (50)</td>
 						</tr>
 						<tr>
 							<td align="right">Urban</td>
