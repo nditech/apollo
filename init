@@ -1904,12 +1904,12 @@ def adjust_options(options, args):
     #options.no_site_packages = True
 
     # Use distribute instead of setuptools
-    options.use_distribute = True
+    options.use_distribute = False
 
 def after_install(options, home_dir):
     if os.path.exists('bootstrap.py'):
         logger.notify('Running bootstrap.py')
-        subprocess.call([os.path.join(home_dir, 'bin', 'python'), 'bootstrap.py', '--distribute'])
+        subprocess.call([os.path.join(home_dir, 'bin', 'python'), 'bootstrap.py'])
 
 def convert(s):
     b = base64.b64decode(s.encode('ascii'))
