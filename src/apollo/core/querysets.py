@@ -3,7 +3,7 @@ from django_orm.postgresql.hstore.queryset import HStoreQuerySet
 
 class SearchableLocationQuerySet(HStoreQuerySet):
     def is_within(self, location):
-        return self.filter(location__pk__in=[loc.pk for loc in location.get_descendants(include_self=True)])
+        return self.filter(location__pk__in=[loc['id'] for loc in location.nx_descendants(include_self=True)])
 
 
 class SubmissionQuerySet(SearchableLocationQuerySet):
