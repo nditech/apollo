@@ -74,7 +74,7 @@ class DashboardView(View, TemplateResponseMixin):
         return self.render_to_response(context)
 
 
-class SubmissionAnalysisView(View, TemplateResponseMixin):
+class SubmissionProcessAnalysisView(View, TemplateResponseMixin):
     template_name = 'core/checklist_summary.html'
 
     @method_decorator(login_required)
@@ -88,10 +88,10 @@ class SubmissionAnalysisView(View, TemplateResponseMixin):
         else:
             self.location = Location.root()
         if 'tag' in kwargs:
-            self.tag = [get_object_or_404(FormField, group__form=self.form, tag=kwargs['tag']).tag]
+            self.tags = [kwargs['tag']]
         else:
-            self.tag = None
-        return super(SubmissionAnalysisView, self).dispatch(request, *args, **kwargs)
+            self.tags = settings.PROCESS_QUESTIONS_TAGS
+        return super(SubmissionProcessAnalysisView, self).dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = {'params': kwargs}
@@ -99,7 +99,7 @@ class SubmissionAnalysisView(View, TemplateResponseMixin):
         context['filter_form'] = self.filter_set.form
         context['form'] = self.form
         context['location'] = self.location
-        context['process_summary'] = generate_process_data(self.form, self.filter_set.qs, self.location, grouped=False, tags=self.tag)
+        context['process_summary'] = generate_process_data(self.form, self.filter_set.qs, self.location, grouped=False, tags=self.tags)
         return context
 
     def get(self, request, *args, **kwargs):

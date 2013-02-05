@@ -73,6 +73,40 @@ class Location(GraphMixin):
     def sub_location_types(self):
         return self.type.get_children()
 
+    def _get_locations_graph(self, reverse=False):
+        if reverse:
+            if not hasattr(self, '_reversed_locations_graph'):
+                self._reversed_locations_graph = get_locations_graph(reverse=True)
+            return self._reversed_locations_graph
+        else:
+            if not hasattr(self, '_locations_graph'):
+                self._locations_graph = get_locations_graph(reverse=False)
+            return self._locations_graph
+
+    def nx_ancestors(self, include_self=False):
+        graph = self._get_locations_graph()
+        ancestor_ids = nx.topological_sort(graph, graph.subgraph(nx.dfs_tree(graph, self.id).nodes()).nodes())
+        if include_self:
+            return [graph.node[id] for id in ancestor_ids]
+        else:
+            return [graph.node[id] for id in ancestor_ids if id != self.id]
+
+
+    def nx_descendants(self, include_self=False):
+        reversed_graph = self._get_locations_graph(reverse=True)
+        descendant_ids = nx.topological_sort(reversed_graph, reversed_graph.subgraph(nx.dfs_tree(reversed_graph, self.id).nodes()).nodes())
+        if include_self:
+            return [reversed_graph.node[id] for id in descendant_ids]
+        else:
+            return [reversed_graph.node[id] for id in descendant_ids if id != self.id]
+
+
+    def nx_children(self):
+        reversed_graph = self._get_locations_graph(reverse=True)
+        children_ids = reversed_graph.successors(self.id)
+        return [reversed_graph.node[id] for id in children_ids]
+
+
     @staticmethod
     def root():
         # retrieves the root location
@@ -133,7 +167,7 @@ def generate_locations_graph():
     locations = Location.objects.filter(pk__in=[node['object_id'] for node in nodes]).values('pk', 'name', 'type__name')
     DG = nx.DiGraph()
     for location in locations:
-        DG.add_node(location['pk'], name=location['name'], type=location['type__name'])
+        DG.add_node(location['pk'], name=location['name'], type=location['type__name'], id=location['pk'])
     edges = Edge.objects.filter(graph__name='location').values_list('node_from__object_id', 'node_to__object_id')
     for node_from, node_to in edges:
         DG.add_edge(node_from, node_to)

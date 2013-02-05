@@ -100,7 +100,7 @@ def percent_of(a, b):
 def get_numeric_field_stats(tag, data_frame, groups):
     '''Generates statistics (mean, sample standard deviation) for a FormField
     which takes a numeric value. Generates both per-group and dataset-wide
-    statistics.
+    statistics. Also generates report statistics.
 
     Parameters
     - tag: a submission field tag
@@ -116,19 +116,22 @@ def get_numeric_field_stats(tag, data_frame, groups):
 
     # iterate over each group, and perform the statistic calculations needed
     for group in groups:
-        group_stats = {}
 
         # skip groups not contained in data frame
         if not group in data_frame:
             continue
 
+        group_stats = {}
+
         data_group = data_frame.groupby(group)
 
+        # transpose (matrix operation) to swap columns and rows
         group_stats = data_group[tag].agg({'mean': np.mean,
             'std': lambda x: np.std(x)}).transpose().to_dict()
 
         group_names = data_group.groups.keys()
 
+        # calculated report statistics
         for group_name in group_names:
             named_group = data_group[tag].get_group(group_name)
             total = named_group.size
@@ -148,6 +151,60 @@ def get_numeric_field_stats(tag, data_frame, groups):
 
         field_stats['regional_stats']['mean'] = regional_mean
         field_stats['regional_stats']['std'] = regional_std
+
+    return field_stats
+
+
+def get_single_choice_field_stats(tag, data_frame, groups, field_options):
+    '''Generates statistics (frequency histogram, report statistics) for
+    a form field which takes a single option of several.
+    '''
+
+    field_stats = {'type': 'single-choice', 'group_stats': [], 'regional_stats': {}}
+    labels = [x.description for x in field_options]
+    options = [x.option for x in field_options]
+
+    if data_frame.empty:
+        return field_stats
+
+    # group the data frame by each supplied group, and generate the stats
+    # for each
+    for group in groups:
+
+        # skip if the group does not exist
+        if not group in data_frame:
+            continue
+
+        group_stats = []
+
+        data_group = data_frame.groupby(group)
+
+        group_names = data_group.groups.keys()
+        # group_names.sort()
+
+        for group_name in group_names:
+            named_group = data_group[tag].get_group(group_name)
+
+            reported = named_group.count()
+            total = named_group.size
+            missing = total - reported
+
+            percent_reported = percent_of(reported, total)
+            percent_missing = percent_of(missing, total)
+
+            # generate frequency histogram
+            histogram = make_histogram(options, named_group)
+
+            # remap histogram so it has percentage of total as well
+            function = lambda x: (x, percent_of(x, total))
+
+            frequency_pairs = map(function, histogram)
+
+            group_stats.append({group_name: {'histogram': frequency_pairs,
+                'reported': (reported, percent_reported),
+                'missing': (missing, percent_missing)}})
+
+        field_stats[group] = group_stats
 
     return field_stats
 
@@ -373,7 +430,7 @@ def generate_process_data(form, qs, location_root=None, grouped=True, tags=None)
     process_summary = {}
     if not location_root:
         location_root = Location.root()
-    location_types = location_root.sub_location_types()
+    location_types = [ltype.name for ltype in location_root.sub_location_types()]
 
     try:
         data_frame, single_choice_tags, multiple_choice_tags = get_data_records(form, qs, location_root, tags)
@@ -383,7 +440,10 @@ def generate_process_data(form, qs, location_root=None, grouped=True, tags=None)
     # by casting the retrieval of these models to a list, we force an early evaluation
     # saving repetitive database requests for each individual object as we iterate
     # through each item
-    form_groups = list(form.groups.all())
+    if tags:
+        form_groups = list(FormGroup.objects.filter(pk__in=FormField.objects.filter(tag__in=tags).values_list('group__pk', flat=True)))
+    else:
+        form_groups = list(form.groups.all())
     form_fields = list(FormField.objects.filter(group__form=form).select_related())
     form_field_options = list(FormFieldOption.objects.filter(field__group__form=form).select_related())
 
