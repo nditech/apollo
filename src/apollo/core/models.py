@@ -63,15 +63,15 @@ class Location(GraphMixin):
 
     objects = hstore.HStoreManager()
 
-    class Meta:
-        ordering = ['name']
-
     def __unicode__(self):
         return self.name
 
     def __init__(self, *args, **kwargs):
         self.default_graph = location_graph()
         return super(Location, self).__init__(*args, **kwargs)
+
+    def sub_location_types(self):
+        return self.type.get_children()
 
     @staticmethod
     def root():
@@ -138,28 +138,6 @@ def generate_locations_graph():
     for node_from, node_to in edges:
         DG.add_edge(node_from, node_to)
     return DG
-
-
-def sub_location_types(location_id):
-    '''Given the PK for a location, retrieve the types of locations
-    lower than the specified one.'''
-
-    # TODO: change this to something that allows for retrieval
-    # of the node without ancestors without ambiguity
-    if location_id == 0:
-        return [LocationType.objects.latest(field_name='pk').get_ancestors()[-1].name]
-
-    try:
-        root_location = Location.objects.get(pk=location_id)
-    except Location.DoesNotExist:
-        return None
-
-    children_nodes = root_location.type.get_children()
-
-    if not children_nodes:
-        return None
-
-    return [x.name for x in children_nodes]
 
 
 class Partner(models.Model):

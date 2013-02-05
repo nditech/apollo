@@ -17,7 +17,7 @@
 <div class="row">
 	<div class="span12">
 	{% if process_summary %}
-	{% if process_summary.type == 'sample' %}
+	{% if process_summary.type == 'normal' %}
 		{% for group, group_stats in process_summary.summary %}
 		<h5>{{ group }}</h5>
 

@@ -103,4 +103,7 @@ def analysis_location_navigation(form, location=None, tag=None):
     except Location.DoesNotExist:
         location = Location.root()
 
-    return {'locations': location.get_children(), 'form': form, 'tag': tag}
+    sub_locations = location.get_children()
+    sub_locations.sort(key=lambda location: location.name)
+
+    return {'locations': sub_locations, 'form': form, 'tag': tag}

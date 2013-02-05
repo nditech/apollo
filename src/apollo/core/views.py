@@ -99,18 +99,17 @@ class SubmissionAnalysisView(View, TemplateResponseMixin):
         context['filter_form'] = self.filter_set.form
         context['form'] = self.form
         context['location'] = self.location
-        context['process_summary'] = generate_process_data(self.form, self.location.pk, grouped=False,
-            tags=self.tag)
+        context['process_summary'] = generate_process_data(self.form, self.filter_set.qs, self.location, grouped=False, tags=self.tag)
         return context
 
     def get(self, request, *args, **kwargs):
         initial_filter = request.session.get('analysis_filter', None)
-        self.filter_set = self.analysis_filter(initial_filter, queryset=Submission.objects.filter(observer=None))
+        self.filter_set = self.analysis_filter(initial_filter, queryset=Submission.objects.filter(observer=None).is_within(self.location))
         context = self.get_context_data(**kwargs)
         return self.render_to_response(context)
 
     def post(self, request, *args, **kwargs):
-        self.filter_set = self.analysis_filter(request.POST, queryset=Submission.objects.filter(observer=None))
+        self.filter_set = self.analysis_filter(request.POST, queryset=Submission.objects.filter(observer=None).is_within(self.location))
         request.session['analysis_filter'] = self.filter_set.form.data
         context = self.get_context_data(**kwargs)
         return self.render_to_response(context)
