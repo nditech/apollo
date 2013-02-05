@@ -9,7 +9,6 @@
   <div class="span4">
       <form class="form-horizontal pull-right" action="" method="post" accept-charset="utf-8">
           {% csrf_token %}
-          <input type="hidden" name="location" id="id_location" value="{{ location.pk }}" />
           {{ filter_form.sample }}
           <button class="btn btn-warning" style="margin-left:1em" type="submit"><i class="icon-search icon-white"></i> Filter</button>
     </form>
