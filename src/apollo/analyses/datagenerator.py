@@ -97,6 +97,61 @@ def percent_of(a, b):
     return (100 * float(a) / b)
 
 
+def get_numeric_field_stats(tag, data_frame, groups):
+    '''Generates statistics (mean, sample standard deviation) for a FormField
+    which takes a numeric value. Generates both per-group and dataset-wide
+    statistics.
+
+    Parameters
+    - tag: a submission field tag
+    - data_frame: a pandas DataFrame containing the submission data, generated
+    using get_data_records()
+    - groups: a list of group names used for grouping the data
+    '''
+    field_stats = {'type': 'numeric', 'group_stats': [], 'regional_stats': {}}
+
+    # return immediately if there are no data
+    if data_frame.empty:
+        return field_stats
+
+    # iterate over each group, and perform the statistic calculations needed
+    for group in groups:
+        group_stats = {}
+
+        # skip groups not contained in data frame
+        if not group in data_frame:
+            continue
+
+        data_group = data_frame.groupby(group)
+
+        group_stats = data_group[tag].agg({'mean': np.mean,
+            'std': lambda x: np.std(x)}).transpose().to_dict()
+
+        group_names = data_group.groups.keys()
+
+        for group_name in group_names:
+            named_group = data_group[tag].get_group(group_name)
+            total = named_group.size
+            reported = named_group.count()
+            missing = total - reported
+            percent_reported = percent_of(reported, total)
+            percent_missing = percent_of(missing, total)
+
+            group_stats[group_name]['missing'] = (missing, percent_missing)
+            group_stats[group_name]['reported'] = (reported, percent_reported)
+
+        field_stats['group_stats'].append({group: group_stats})
+
+        # calculate regional stats
+        regional_mean = data_frame[tag].mean()
+        regional_std = np.std(data_frame[tag])
+
+        field_stats['regional_stats']['mean'] = regional_mean
+        field_stats['regional_stats']['std'] = regional_std
+
+    return field_stats
+
+
 def generate_numeric_field_stats(tag, dataset):
     '''Returns statistics (mean, standard deviation, number/percentage
     of actual reports, number/percentage of missing reports) for a
