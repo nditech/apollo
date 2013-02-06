@@ -18,12 +18,13 @@
 </div>
 <div class="row">
 {% for group in summary %}
-  <div class="span4">
-      <legend>{{ group.name }}</legend>
+  {% if forloop.counter0|divisibleby:"5" %}<div class="span1"></div>{% endif %}
+  <div class="span2">
+      <legend style="text-align:center">{{ group.name }}</legend>
     <div>
       <script type="text/javascript+protovis">
-        width = 370,
-        height = 200,
+        width = 170,
+        height = 300,
         offset = 10,
         r = width/2 - offset;
         data = [{{ group.missing }}, {{ group.partial }}, {{ group.complete }}];
@@ -35,8 +36,8 @@
             .data(pv.normalize(data))
             .outerRadius(70)
             .angle(function(d) d * 2 * Math.PI)
-            .left(100)
-            .top(height/2)
+            .left(width/2)
+            .top(width/2)
             .fillStyle(pv.colors(colors).by(function () { return this.index;}))
             .anchor("center")
             .add(pv.Label)
@@ -46,8 +47,8 @@
         //legends   
         pie.add(pv.Dot) 
             .data(labels) 
-            .top(function() ((height - 36)/2) + this.index * 18)
-            .left(200) 
+            .top(function() ((height + 80)/2) + this.index * 18)
+            .left(30) 
             .size(20) 
             .strokeStyle(null) 
             .fillStyle(pv.colors(colors)) 
@@ -58,8 +59,8 @@
         // raw data 
         pie.add(pv.Dot) 
             .data(data) 
-            .top(function() ((height - 36)/2) + this.index * 18)
-            .left(272) 
+            .top(function() ((height + 80)/2) + this.index * 18)
+            .left(30 + 72) 
             .strokeStyle(null)
             .fillStyle(null)
             .anchor("right").add(pv.Label)
