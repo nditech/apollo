@@ -1,5 +1,6 @@
 $(function(){
   $('.dropdown-toggle').dropdown();
+  $('.table-fixed-header').fixedHeader();
   $('.dropdown-toggle a').click(function (e) {
      $(this).tab('show');
   });
