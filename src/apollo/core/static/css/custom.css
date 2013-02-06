@@ -5,3 +5,4 @@
 .submission-table .submission-field ul { list-style-type: none; margin: 0; }
 .submission-table .centered { text-align: center; }
 .submission-table .submission-field ul input[type="radio"], input[type="checkbox"] { margin: -2px 0 0 0;}
+.breadcrumb .locationtype { color: #DDD; }
