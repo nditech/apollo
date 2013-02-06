@@ -180,7 +180,7 @@ def get_single_choice_field_stats(tag, data_frame, groups, field_options):
         data_group = data_frame.groupby(group)
 
         group_names = data_group.groups.keys()
-        # group_names.sort()
+        group_names.sort()
 
         for group_name in group_names:
             named_group = data_group[tag].get_group(group_name)
@@ -196,15 +196,95 @@ def get_single_choice_field_stats(tag, data_frame, groups, field_options):
             histogram = make_histogram(options, named_group)
 
             # remap histogram so it has percentage of total as well
-            function = lambda x: (x, percent_of(x, total))
+            f = lambda x: (x, percent_of(x, total))
 
-            frequency_pairs = map(function, histogram)
+            frequency_pairs = map(f, histogram)
 
             group_stats.append({group_name: {'histogram': frequency_pairs,
                 'reported': (reported, percent_reported),
                 'missing': (missing, percent_missing)}})
 
-        field_stats[group] = group_stats
+        field_stats['group_stats'].append({group: group_stats})
+
+    # get regional histogram
+    regional_total = data_frame[tag].size
+    # regional_reported = data_frame[tag].count()
+    # regional_missing = regional_total - regional_reported
+    regional_histogram = make_histogram(options, data_frame[tag])
+
+    f = lambda x: (x, percent_of(x, regional_total))
+
+    regional_frequency_pairs = map(f, regional_histogram)
+
+    field_stats['regional_stats'] = {'histogram': regional_frequency_pairs}
+    field_stats['labels'] = labels
+
+    return field_stats
+
+
+def get_multiple_choice_field_stats(tag, data_frame, groups, field_options):
+    '''Generates statistics (frequency histogram, report statistics) for
+    a form field which takes any number of several options.
+    '''
+
+    field_stats = {'type': 'multiple-choice', 'group_stats': [], 'regional_stats': {}}
+    labels = [x.description for x in field_options]
+    options = [x.option for x in field_options]
+
+    if data_frame.empty:
+        return field_stats
+
+    # group the data frame by each supplied group, and generate the stats
+    # for each
+    for group in groups:
+
+        # skip if the group does not exist
+        if not group in data_frame:
+            continue
+
+        group_stats = []
+
+        data_group = data_frame.groupby(group)
+
+        group_names = data_group.groups.keys()
+        group_names.sort()
+
+        for group_name in group_names:
+            named_group = data_group[tag].get_group(group_name)
+
+            total = named_group.size
+            missing = sum(not x for x in named_group)
+            reported = total - missing
+
+            percent_reported = percent_of(reported, total)
+            percent_missing = percent_of(missing, total)
+
+            # generate frequency histogram
+            histogram = summarize_options(options, named_group)
+
+            # remap histogram so it has percentage of total as well
+            f = lambda x: (x, percent_of(x, total))
+
+            frequency_pairs = map(f, histogram)
+
+            group_stats.append({group_name: {'histogram': frequency_pairs,
+                'reported': (reported, percent_reported),
+                'missing': (missing, percent_missing)}})
+
+        field_stats['group_stats'].append({group: group_stats})
+
+    # get regional histogram
+    regional_total = data_frame[tag].size
+    regional_missing = sum(not x for x in data_frame[tag])
+    regional_reported = regional_total - regional_missing
+    regional_histogram = summarize_options(options, data_frame[tag])
+
+    f = lambda x: (x, percent_of(x, regional_reported))
+
+    regional_frequency_pairs = map(f, regional_histogram)
+
+    field_stats['regional_stats'] = {'histogram': regional_frequency_pairs}
+    field_stats['labels'] = labels
 
     return field_stats
 
