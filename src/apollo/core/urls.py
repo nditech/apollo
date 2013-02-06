@@ -1,4 +1,5 @@
 from django.conf.urls.defaults import *
+from rapidsms.backends.kannel.views import KannelBackendView
 from tastypie.api import Api
 from .api import *
 from .views import *
@@ -38,6 +39,9 @@ urlpatterns = patterns('',
     url(r'^location/(?P<pk>\d+)/?$', LocationEditView.as_view(), name='location_edit'),
 
     url(r'^tpl/(?P<template_name>.+)/?$', TemplatePreview.as_view()),
+
+    # messaging backends
+    url(r'^backends/kannel/$', KannelBackendView.as_view(backend_name="kannel")),
 )
 
 # authentication urls

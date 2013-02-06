@@ -33,11 +33,8 @@ INSTALLED_BACKENDS = {
     "httptester": {
         "ENGINE": "rapidsms.contrib.httptester.backend",
     },
-    "mockbackend": {
-        "ENGINE": "rapidsms.tests.harness",
-    },
-    "kannel-smsc": {
-        "ENGINE": "rapidsms.backends.kannel",
+    "kannel": {
+        "ENGINE": "rapidsms.backends.kannel.outgoing",
     }
 }
 
