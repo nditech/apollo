@@ -196,7 +196,7 @@ def get_single_choice_field_stats(tag, data_frame, groups, field_options):
             histogram = make_histogram(options, named_group)
 
             # remap histogram so it has percentage of total as well
-            f = lambda x: (x, percent_of(x, total))
+            f = lambda x: (x, percent_of(x, reported))
 
             frequency_pairs = map(f, histogram)
 
@@ -208,11 +208,11 @@ def get_single_choice_field_stats(tag, data_frame, groups, field_options):
 
     # get regional histogram
     regional_total = data_frame[tag].size
-    # regional_reported = data_frame[tag].count()
+    regional_reported = data_frame[tag].count()
     # regional_missing = regional_total - regional_reported
     regional_histogram = make_histogram(options, data_frame[tag])
 
-    f = lambda x: (x, percent_of(x, regional_total))
+    f = lambda x: (x, percent_of(x, regional_reported))
 
     regional_frequency_pairs = map(f, regional_histogram)
 
@@ -263,7 +263,7 @@ def get_multiple_choice_field_stats(tag, data_frame, groups, field_options):
             histogram = summarize_options(options, named_group)
 
             # remap histogram so it has percentage of total as well
-            f = lambda x: (x, percent_of(x, total))
+            f = lambda x: (x, percent_of(x, reported))
 
             frequency_pairs = map(f, histogram)
 
@@ -395,7 +395,7 @@ def generate_single_choice_field_stats(tag, dataset, field_options):
             location_stats[group_name]['percent_missing'] = percent_missing
 
             histogram = make_histogram(options, temp)
-            histogram_mod = lambda x: (x, percent_of(x, total))
+            histogram_mod = lambda x: (x, percent_of(x, reported))
             histogram2 = map(histogram_mod, histogram)
 
             location_stats[group_name] = {'histogram': histogram2}
@@ -411,7 +411,7 @@ def generate_single_choice_field_stats(tag, dataset, field_options):
         percent_missing = percent_of(missing, total)
 
         histogram = make_histogram(options, dataset[tag])
-        histogram_mod = lambda x: (x, percent_of(x, total))
+        histogram_mod = lambda x: (x, percent_of(x, reported))
         histogram2 = map(histogram_mod, histogram)
 
         stats = {'histogram': histogram2, 'reported': reported,
