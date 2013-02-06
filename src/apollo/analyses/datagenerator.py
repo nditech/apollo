@@ -92,7 +92,7 @@ def get_data_records(form, qs, location_root=None, tags=None):
 
 def percent_of(a, b):
     '''Returns the percentage of b that is a'''
-    if a == np.nan or b == 0:
+    if np.isnan(a) or b == 0:
         return 0
     return (100 * float(a) / b)
 
@@ -127,7 +127,7 @@ def get_numeric_field_stats(tag, data_frame, groups):
 
         # transpose (matrix operation) to swap columns and rows
         group_stats = data_group[tag].agg({'mean': np.mean,
-            'std': lambda x: np.std(x)}).transpose().to_dict()
+            'std': lambda x: np.std(x)}).replace(np.nan, 0, inplace=True).transpose().to_dict()
 
         group_names = data_group.groups.keys()
 
@@ -148,6 +148,9 @@ def get_numeric_field_stats(tag, data_frame, groups):
         # calculate regional stats
         regional_mean = data_frame[tag].mean()
         regional_std = np.std(data_frame[tag])
+
+        if np.isnan(regional_mean):
+            regional_mean = 0
 
         field_stats['regional_stats']['mean'] = regional_mean
         field_stats['regional_stats']['std'] = regional_std
@@ -263,7 +266,7 @@ def get_multiple_choice_field_stats(tag, data_frame, groups, field_options):
             histogram = summarize_options(options, named_group)
 
             # remap histogram so it has percentage of total as well
-            f = lambda x: (x, percent_of(x, reported))
+            f = lambda x: (x, percent_of(x, total))
 
             frequency_pairs = map(f, histogram)
 
@@ -279,7 +282,7 @@ def get_multiple_choice_field_stats(tag, data_frame, groups, field_options):
     regional_reported = regional_total - regional_missing
     regional_histogram = summarize_options(options, data_frame[tag])
 
-    f = lambda x: (x, percent_of(x, regional_reported))
+    f = lambda x: (x, percent_of(x, regional_total))
 
     regional_frequency_pairs = map(f, regional_histogram)
 
@@ -313,7 +316,7 @@ def generate_numeric_field_stats(tag, dataset):
         # the transpose and to_dict ensures that the output looks similar to
         # ['item']['mean'] for every item in the group
         location_stats = dataset[tag].agg({'mean': np.mean,
-            'std': lambda x: np.std(x)}).transpose().to_dict()
+            'std': lambda x: np.std(x)}).replace(np.nan, 0, inplace=True).transpose().to_dict()
 
         field_stats['locations'] = location_stats
 
@@ -346,6 +349,9 @@ def generate_numeric_field_stats(tag, dataset):
                  'percent_missing': percent_missing,
                  'mean': dataset[tag].mean(),
                  'std': np.std(dataset[tag])}
+
+        if np.isnan(stats['mean']):
+            stats['mean'] = 0
 
         field_stats.update(stats)
 
@@ -465,7 +471,7 @@ def generate_mutiple_choice_field_stats(tag, dataset, field_options):
 
             histogram = summarize_options(options, temp)
 
-            histogram_mod = lambda x: (x, percent_of(x, reported))
+            histogram_mod = lambda x: (x, percent_of(x, total))
 
             histogram2 = map(histogram_mod, histogram)
 
@@ -481,7 +487,7 @@ def generate_mutiple_choice_field_stats(tag, dataset, field_options):
 
         histogram = summarize_options(options, dataset[tag])
 
-        histogram_mod = lambda x: (x, percent_of(x, reported))
+        histogram_mod = lambda x: (x, percent_of(x, total))
 
         histogram2 = map(histogram_mod, histogram)
 
