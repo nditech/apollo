@@ -73,7 +73,7 @@
               {% if field.field.choices %}
               <span class="options">
                 {% for choice in field.field.choices %}
-                {{ choice.1 }} <strong>({{ choice.0 }})</strong>
+                <span class="option"><strong>({{ choice.0 }})</strong> {{ choice.1 }}</span>
                 {% endfor %}
               </span>
               {% endif %}
@@ -108,7 +108,7 @@
               {% if field.field.choices %}
               <span class="options">
                 {% for choice in field.field.choices %}
-                {{ choice.1 }} <strong>({{ choice.0 }})</strong>
+                <span class="option"><strong>({{ choice.0 }})</strong> {{ choice.1 }}</span>
                 {% endfor %}
               </span>
               {% endif %}
