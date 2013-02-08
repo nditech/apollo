@@ -19,7 +19,7 @@ class SubmissionModelForm(BetterForm):
     def save(self):
         data = self.cleaned_data
         for key in data.keys():
-            if data[key]:
+            if data[key] != None:
                 # the forced casting to integer enables the conversion of boolean values
                 # as is the case for incidents that are returned as boolean and need to
                 # be converted to integer (and then string) before storage
