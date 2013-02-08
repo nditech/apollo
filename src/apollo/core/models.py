@@ -257,6 +257,7 @@ class Activity(models.Model):
     for instance, critical incident forms and checklists for a particular
     election exercise, constitute an activity'''
     name = models.CharField(max_length=100)
+    date = models.DateField(default=datetime.today())
 
     def __unicode__(self):
         return u"{}".format(self.name)
