@@ -1,3 +1,4 @@
+from django_orm.core.sql import SqlExpression, OR, AND
 from django_orm.postgresql.hstore.queryset import HStoreQuerySet
 
 
@@ -9,19 +10,16 @@ class SearchableLocationQuerySet(HStoreQuerySet):
 class SubmissionQuerySet(SearchableLocationQuerySet):
     def is_complete(self, group):
         fields = list(group.fields.values_list('tag', flat=True))
-        _where = '"core_submission"."data" ?& ARRAY[%s]' % (','.join(['%s'] * len(fields)))
-        return self.extra(where=[_where], params=fields) if fields else self
+        return self.where(SqlExpression("data", "?&", fields)) if fields else self
 
     def is_missing(self, group):
         fields = list(group.fields.values_list('tag', flat=True))
-        _where = 'NOT "core_submission"."data" ?| ARRAY[%s]' % (','.join(['%s'] * len(fields)))
-        return self.extra(where=[_where], params=fields) if fields else self.none()
+        return self.where(~SqlExpression("data", "?|", fields)) if fields else self.none()
 
     def is_partial(self, group):
         fields = list(group.fields.values_list('tag', flat=True))
-        _where = '"core_submission"."data" ?| ARRAY[%(fields)s] AND NOT "core_submission"."data" ?& ARRAY[%(fields)s]' % \
-            {'fields': ','.join(['%s'] * len(fields))}
-        return self.extra(where=[_where], params=fields * 2) if fields else self
+        return self.where(AND(SqlExpression("data", "?|", fields), ~SqlExpression("data", "?&", fields))) \
+                if fields else self
 
     def data(self, tags):
         _select = dict([(tag, '"core_submission"."data"->%s' % ("'%s'" % (tag,))) for tag in tags])
