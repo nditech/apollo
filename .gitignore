@@ -21,6 +21,7 @@ include/
 lib/
 man/
 share/
+build/
 src/apollo.egg-info/
 .Python
 pip-log.txt
