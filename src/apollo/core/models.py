@@ -472,6 +472,7 @@ class Submission(models.Model):
     form = models.ForeignKey(Form, related_name='submissions')
     observer = models.ForeignKey(Observer, blank=True, null=True)
     location = models.ForeignKey(Location, related_name="submissions")
+    master = models.ForeignKey('self', null=True, blank=True)
     date = models.DateField(default=datetime.today())
     data = hstore.DictionaryField(db_index=True, null=True, blank=True)
     overrides = hstore.DictionaryField(db_index=True, null=True, blank=True)
@@ -499,25 +500,6 @@ class Submission(models.Model):
             self._siblings = Submission.objects.exclude(pk=self.pk).exclude(observer=None).filter(location=self.location, date=self.date, form=self.form)
         return self._siblings
 
-    @property
-    def master(self):
-        # should only return one object for this method
-        if getattr(self, '_master', None):
-            return self._master
-        else:
-            # a master submission is it's own master
-            if self.observer == None:
-                self._master = self
-            else:
-                try:
-                    self._master = Submission.objects.exclude(pk=self.pk).get(location=self.location, observer=None, date=self.date, form=self.form)
-                except Submission.DoesNotExist:
-                    # incident submissions are masters to themselves
-                    if self.form.type == 'INCIDENT':
-                        self._master = self
-                    else:
-                        self._master = None
-        return self._master
 
     def _get_completion(self, group):
         tags = group.fields.values_list('tag', flat=True)
@@ -596,10 +578,20 @@ def create_or_sync_master(sender, **kwargs):
 
     if kwargs['created']:
         master = instance.master
-        if not master:
-            # save a copy of instance with observer set to None
-            instance.pk = None
-            instance.observer = None
+        # we only want to create a submission that will be assigned
+        # as the master if this is not already a master submission
+        if not master and instance.observer:
+            # create the master
+            master = Submission.objects.create(
+                    form = instance.form,
+                    observer = None,
+                    location = instance.location,
+                    date = instance.date,
+                    data = instance.data,
+                    created = instance.created,
+                    updated = instance.updated
+                )
+            instance.master = master
             instance.save()
     else:
         # quit if this is the master
@@ -610,7 +602,7 @@ def create_or_sync_master(sender, **kwargs):
         siblings = list(instance.siblings)
         master = instance.master
 
-        if master == instance:
+        if master is None or master == instance:
             return True
 
         # if no siblings exist, copy to master and quit
