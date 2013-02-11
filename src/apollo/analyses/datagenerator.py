@@ -463,8 +463,8 @@ def generate_mutiple_choice_field_stats(tag, dataset, field_options):
             missing = sum(not x for x in temp)
             reported = temp.size - missing
             total = temp.size
-            percent_missing = percent_of(missing, reported)
-            percent_reported = percent_of(reported, reported)
+            percent_missing = percent_of(missing, total)
+            percent_reported = percent_of(reported, total)
 
             location_stats[group_name] = {}
             location_stats[group_name]['missing'] = missing
@@ -485,8 +485,8 @@ def generate_mutiple_choice_field_stats(tag, dataset, field_options):
         missing = sum(not x for x in dataset[tag])
         total = dataset[tag].size
         reported = total - missing
-        percent_reported = percent_of(reported, reported)
-        percent_missing = percent_of(missing, reported)
+        percent_reported = percent_of(reported, total)
+        percent_missing = percent_of(missing, total)
 
         histogram = summarize_options(options, dataset[tag])
 

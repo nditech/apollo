@@ -266,7 +266,7 @@
 			            		var labels_top = ["Bulawayo"];
 
 			            		width = 700;
-			            		height = 80;
+			            		height = 70;
 
 							    var vis = new pv.Panel()
 							    .width(width)
@@ -309,7 +309,7 @@
 
 							    bar.add(pv.Dot) 
 							            .data(labels) 
-							            .bottom(function() 5 + this.index * 15)
+							            .bottom(function() height - 65 + this.index * 15)
 							            .left(550) 
 							            .size(20) 
 							            .strokeStyle(null) 
@@ -318,7 +318,7 @@
 							            .textMargin(8);
 
 							   vis.add(pv.Rule)
-								.left(199).top(25);
+								.left(199).height(height);
 
 							  bar.render();
 							  
@@ -376,7 +376,7 @@
 					                .font("bold 10pt san-serif");
 
 					          vis.add(pv.Rule)
-								.left(199).top(5);
+								.left(199).height(height);
 
 							  bar.render();
 							  
