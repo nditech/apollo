@@ -13,9 +13,11 @@ django-directed-acyclic-graph==0.3
 django-extensions==0.5
 django-form-utils==0.2.0
 django-mako==0.1.5pre
-django-orm-extensions==3.0b3
 django-reversion==1.6.5
 django-tastypie==0.9.11
+djorm-ext-core==0.4.1
+djorm-ext-expressions==0.4.1
+djorm-ext-hstore==0.4.2
 librabbitmq==1.0.1
 networkx==1.7
 numpy==1.6.2

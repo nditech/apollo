@@ -4,7 +4,8 @@ from django.db import models
 from django.dispatch import receiver
 from django_dag.models import Graph, Node, Edge
 from django_dag.mixins import GraphMixin
-from django_orm.postgresql import hstore
+from djorm_hstore.fields import DictionaryField
+from djorm_hstore.models import HStoreManager
 from rapidsms.models import Contact, Backend, Connection
 from datetime import datetime
 from .managers import SubmissionManager, ObserverManager
@@ -59,9 +60,9 @@ class Location(GraphMixin):
     name = models.CharField(max_length=100, db_index=True)
     code = models.CharField(max_length=100, db_index=True, blank=True)
     type = models.ForeignKey(LocationType)
-    data = hstore.DictionaryField(db_index=True, null=True, blank=True)
+    data = DictionaryField(db_index=True, null=True, blank=True)
 
-    objects = hstore.HStoreManager()
+    objects = HStoreManager()
 
     def __unicode__(self):
         return self.name
@@ -206,7 +207,7 @@ class Observer(models.Model):
     supervisor = models.ForeignKey('self', null=True, blank=True)
     gender = models.CharField(max_length=1, null=True, blank=True, choices=GENDER, db_index=True)
     partner = models.ForeignKey(Partner, null=True, blank=True)
-    data = hstore.DictionaryField(db_index=True, null=True, blank=True)
+    data = DictionaryField(db_index=True, null=True, blank=True)
 
     objects = ObserverManager()
 
@@ -474,8 +475,8 @@ class Submission(models.Model):
     location = models.ForeignKey(Location, related_name="submissions")
     master = models.ForeignKey('self', null=True, blank=True)
     date = models.DateField(default=datetime.today())
-    data = hstore.DictionaryField(db_index=True, null=True, blank=True)
-    overrides = hstore.DictionaryField(db_index=True, null=True, blank=True)
+    data = DictionaryField(db_index=True, null=True, blank=True)
+    overrides = DictionaryField(db_index=True, null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
