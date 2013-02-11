@@ -1909,7 +1909,7 @@ def adjust_options(options, args):
 def after_install(options, home_dir):
     if os.path.exists('bootstrap.py'):
         logger.notify('Running bootstrap.py')
-        subprocess.call([os.path.join(home_dir, 'bin', 'python'), 'bootstrap.py'])
+        subprocess.call([os.path.join(home_dir, 'bin', 'python'), 'bootstrap.py', '-v 1.7.0'])
 
 def convert(s):
     b = base64.b64decode(s.encode('ascii'))
