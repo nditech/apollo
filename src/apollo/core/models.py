@@ -581,7 +581,7 @@ def create_or_sync_master(sender, **kwargs):
         master = instance.master
         # we only want to create a submission that will be assigned
         # as the master if this is not already a master submission
-        if not master and instance.observer:
+        if not master and instance.observer and instance.form.type == 'CHECKLIST':
             # create the master
             master = Submission.objects.create(
                     form = instance.form,
