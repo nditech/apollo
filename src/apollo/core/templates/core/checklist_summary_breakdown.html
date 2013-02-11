@@ -127,8 +127,263 @@
 				</div>
 			  </div>
 		    </div>
+
+		    <!-- Charts Section-->
 		    <div class="tab-pane" id="tab2">
-		      <p>Coming soon!</p>
+		      <table class="table table-bordered">
+			    <thead>
+			        <tr>
+			            <td bgcolor="#eeeeee" colspan="2">AC</td>
+			        </tr>
+			    </thead>
+			    <tbody>
+			    	<tr>
+			            <td colspan="2">Had any polling officials arrived by 7:30am?</td>
+			        </tr>
+			        <tr>
+			        	<td colspan="2">
+			            	<script type="text/javascript+protovis">
+						        var data= [[2.2],
+								             [3.4]]
+								var data1= [[1.5, 1.7, 2.2, 3.2, 1.8, 3.4, 2.3],
+								             [1.2, 3.1, 2.1, 3.4, 3.9, 2.1, 3.1]]
+								height = 300;
+								width = 700;
+								fill = ["#5F98FF","#95C8FF"];
+								labels_top =["Bulawayo"];
+								labels1 = ["no", "yes"];
+
+								var vis=new pv.Panel().width(width).height(height);
+								bar = vis.add(pv.Layout.Stack)
+								    .layers(data)
+								    .orient("left")
+								    .left(200)
+								    .top(0)
+								    .x(function() this.index * 35 + height - 25)
+								    .y(function(d) d * 40)
+								  .layer.add(pv.Bar).height(12)
+								  .fillStyle(function() fill[this.parent.index])
+								  .anchor("bottom")
+								    .add(pv.Label)
+								    .textBaseline("bottom");
+
+								  bar.anchor("bottom").textAlign("right")
+								  .add(pv.Label)
+						                .data(labels_top)
+						                .left(0)
+						                .font("10pt san-serif");
+
+						           bar1 = bar.add(pv.Layout.Stack)
+								    .layers(data1)
+								    .orient("left")
+								    .left(0)
+								    .x(function() this.index * 30)
+								    .y(function(d) d * 40)
+								    .bottom(10)
+								  .layer.add(pv.Bar).height(12)
+								  .fillStyle(function() fill[this.parent.index])
+								  .anchor("bottom")
+								    .add(pv.Label)
+								    .textBaseline("bottom");
+
+								   bar1.anchor("bottom").textAlign("right")
+								  .add(pv.Label)
+						                .data(labels_sub)
+						                .left(0)
+						                .font("10pt san-serif");
+
+						           vis.add(pv.Dot) 
+							            .data(labels1) 
+							            .top(function() height - 250 + this.index * 18)
+							            .right(150) 
+							            .size(20) 
+							            .strokeStyle(null) 
+							            .fillStyle(pv.colors(fill)) 
+							            .anchor("right").add(pv.Label)
+							            .textMargin(8);
+
+							        vis.add(pv.Rule)
+    								.left(199)
+    								.bottom(0);
+
+						         vis.render();
+						    </script>
+	            
+			            	<script type="text/javascript+protovis">
+						        width = 400,
+						        height = 350,
+						        offset = 10,
+						        r = width/2 - offset;
+						        data = [339, 484];
+						        colors = ["#FF5200","#39e639"];
+						        labels = ["Missing", "Reported"];
+
+						        var pie = new pv.Panel().width(width).height(height);
+						            pie.add(pv.Wedge)
+						            .data(pv.normalize(data))
+						            .outerRadius(70)
+						            .angle(function(d) d * 2 * Math.PI)
+						            .left(height/2 - 25)
+						            .top(100)
+						            .fillStyle(pv.colors(colors).by(function () { return this.index;}))
+						            .anchor("center")
+						            .add(pv.Label)
+						            .textAngle(0)
+						            .text(function(d){ return (d*100).toFixed(0) + "%"});
+						            
+						        //legends   
+						        pie.add(pv.Dot) 
+						            .data(labels) 
+						            .top(function() height - 250 + this.index * 18)
+						            .right(width/2 - 50) 
+						            .size(20) 
+						            .strokeStyle(null) 
+						            .fillStyle(pv.colors(colors)) 
+						            .anchor("right").add(pv.Label)
+						            .textMargin(8);
+						            
+						        pie.render();
+						    </script>
+			            </td>
+			        </tr>
+			        <tr>
+			        	<td bgcolor="#eeeeee">AD</td>
+			        </tr>
+			        <tr>
+			            <td colspan="2">Were any of the following materials missing?</td>
+			        </tr>
+			        <tr>
+			        	<td>
+			            	<script type="text/javascript+protovis">
+			            		var ballot_box = [1.7];
+			            		var	ballot_paper = [1.3];
+			            		var voters_roll = [3.1];
+			            		var zec_stamp = [2.7];
+			            		var indellible_ink = [2.5];
+			            		var	labels = ["ballot_box", "ballot_paper", "voters_roll", "zec_stamp", "indellible_ink"];
+			            		var	fill = [ '#387C7A','#8BD275',"#A6544F",'#E4AA2F','#E85A69'];
+			            		var labels_top = ["Bulawayo"];
+
+			            		width = 700;
+			            		height = 80;
+
+							    var vis = new pv.Panel()
+							    .width(width)
+							    .height(height)
+							    .bottom(70);
+								var bar = vis.add(pv.Bar)
+							    .data(ballot_box)
+							    .left(200)
+								.height(10)
+								.width(function(d) d * 80)
+								.bottom(function() this.index * 35)
+							    .fillStyle("#387C7A")
+							    .add(pv.Label)
+							    .add(pv.Bar)
+							    .data(ballot_paper)
+							    .bottom(function() this.index * 35 + 10)
+							    .fillStyle("#8BD275")
+							    .add(pv.Label)
+							    .add(pv.Bar)
+							    .data(voters_roll)
+							    .bottom(function() this.index * 80 + 20)
+							    .fillStyle("#A6544F")
+							    .add(pv.Label)
+							    .add(pv.Bar)
+							    .data(zec_stamp)
+							    .bottom(function() this.index * 80 + 30)
+							    .fillStyle("#E4AA2F")
+							    .add(pv.Label)
+							    .add(pv.Bar)
+							    .data(indellible_ink)
+							    .bottom(function() this.index * 80 + 40)
+							    .fillStyle("#E85A69")
+							    .add(pv.Label);
+
+							     bar.anchor("bottom").textAlign("right")
+							  .add(pv.Label)
+					                .data(labels_top)
+					                .left(198)
+					                .font("bold 10pt san-serif");
+
+							    bar.add(pv.Dot) 
+							            .data(labels) 
+							            .bottom(function() 5 + this.index * 15)
+							            .left(550) 
+							            .size(20) 
+							            .strokeStyle(null) 
+							            .fillStyle(pv.colors(fill)) 
+							            .anchor("right").add(pv.Label)
+							            .textMargin(8);
+
+							   vis.add(pv.Rule)
+								.left(199).top(25);
+
+							  bar.render();
+							  
+							</script>
+
+			            	<script type="text/javascript+protovis">
+			            		var ballot_box = [1, 1.2, 1.7, 1.5, .7, 2.2, 1.5];
+			            		var	ballot_paper = [.5, 1, .8, 1.1, 1.3, 3.6, 2.3];
+			            		var voters_roll = [2, 1.5, 1.2, 3.5, 1.7, 1.2, 1.8];
+			            		var	zec_stamp = [.5, 1, .8, 1.1, 1.3, 3.6, 2.3];
+			            		var indellible_ink = [1, 1.2, 1.7, 1.5, .7, 2.2, 1.5];
+			            		var label = ["Mzilikazi", "Masotsha Ndiovu", "Mabutweni", "Khumalo", "Gwabalanda", "Emganwini", "Bulawayo Municipality"];
+			            		width = 700;
+			            		height = 550;
+
+							    var vis = new pv.Panel()
+							    .width(width)
+							    .height(height)
+								var bar = vis.add(pv.Bar)
+							    .data(ballot_box)
+							    .left(200)
+								.height(10)
+								.width(function(d) d * 80)
+								.bottom(function() this.index * 80)
+							    .fillStyle("#387C7A")
+							    .add(pv.Label)
+							    .add(pv.Bar)
+							    .data(ballot_paper)
+							    .bottom(function() this.index * 80 + 10)
+							    .fillStyle("#8BD275")
+							    .add(pv.Label)
+							    .add(pv.Bar)
+							    .data(voters_roll)
+							    .bottom(function() this.index * 80 + 20)
+							    .fillStyle("#A6544F")
+							    .add(pv.Label)
+							    .add(pv.Bar)
+							    .data(zec_stamp)
+							    .bottom(function() this.index * 80 + 30)
+							    .fillStyle("#E4AA2F")
+							    .add(pv.Label)
+							    .add(pv.Bar)
+							    .data(indellible_ink)
+							    .bottom(function() this.index * 80 + 40)
+							    .fillStyle("#E85A69")
+							    .add(pv.Label);/**
+				                .anchor("left")
+				                .add(pv.Rule)
+				                .top(20);*/
+
+				              bar.anchor("bottom").textAlign("right")
+							  .add(pv.Label)
+					                .data(label)
+					                .left(198)
+					                .font("bold 10pt san-serif");
+
+					          vis.add(pv.Rule)
+								.left(199).top(5);
+
+							  bar.render();
+							  
+							</script>
+			            </td>       
+				    </tr>
+			    </tbody>
+			  </table>​
 		    </div>
 		  </div>
 		</div>
