@@ -16,7 +16,7 @@ django-mako==0.1.5pre
 django-reversion==1.6.5
 django-tastypie==0.9.11
 djorm-ext-core==0.4.1
-djorm-ext-expressions==0.4.1
+git+https://github.com/takinbo/djorm-ext-expressions.git#egg=djorm-ext-expressions
 djorm-ext-hstore==0.4.2
 librabbitmq==1.0.1
 networkx==1.7
