@@ -37,7 +37,7 @@ class App(AppBase):
                 try:
                     if submission['form'].autocreate_submission:
                         entry, dummy = Submission.objects.get_or_create(observer=observer, date=message.date,
-                            form=submission['form'])
+                            form=submission['form'], location=observer.location)
                     else:
                         entry = Submission.objects.get(observer=observer, form=submission['form'],
                             date__range=(message.date - timedelta(settings.BACKLOG_DAYS), message.date))

@@ -8,7 +8,7 @@ register = template.Library()
 def keyvalue(value, key):
     try:
         return value[key]
-    except AttributeError:
+    except KeyError:
         return ''
 
 
