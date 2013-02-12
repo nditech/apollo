@@ -1,4 +1,4 @@
-from django_orm.postgresql.hstore import HStoreManager
+from djorm_hstore.models import HStoreManager
 from .querysets import SubmissionQuerySet, SearchableLocationQuerySet
 
 
