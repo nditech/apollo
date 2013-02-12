@@ -143,68 +143,78 @@
 			        <tr>
 			        	<td colspan="2">
 			            	<script type="text/javascript+protovis">
-						        var data= [[2.2],
-								             [3.4]]
-								var data1= [[1.5, 1.7, 2.2, 3.2, 1.8, 3.4, 2.3],
-								             [1.2, 3.1, 2.1, 3.4, 3.9, 2.1, 3.1]]
+						        var data_toplevel= [[.3], [.7]];
+								var data_sublevel= [[.5, .1, .2, .6, .8, .3, .4],
+								             		[.5, .9, .8, .4, .2, .7, .6]];
 								height = 300;
 								width = 700;
-								fill = ["#5F98FF","#95C8FF"];
+								bar_height = 15;
+								colors = ["#5F98FF","#95C8FF"];
+								labels_question = ["No", "Yes"];
 								labels_top =["Bulawayo"];
-								labels1 = ["no", "yes"];
-								labels_sub =["Mzilikazi", "Masotsha Ndiovu", "Mabutweni", "Khumalo", "Gwabalanda", "Emganwini", "Bulawayo Municipality"];
+								labels_sublevel =["Mzilikazi", "Masotsha Ndiovu", "Mabutweni", "Khumalo", "Gwabalanda", "Emganwini", "Bulawayo Municipality"];
+								label_margin = 4;
+								left_margin = 200;
 
 								var vis=new pv.Panel().width(width).height(height);
 								bar = vis.add(pv.Layout.Stack)
-								    .layers(data)
+								    .layers(data_toplevel)
 								    .orient("left")
-								    .left(200)
+								    .left(left_margin)
 								    .top(0)
 								    .x(function() this.index * 35 + height - 25)
-								    .y(function(d) d * 40)
-								  .layer.add(pv.Bar).height(12)
-								  .fillStyle(function() fill[this.parent.index])
+								    .y(function(d) d * 250)
+								    .layer.add(pv.Bar).height(bar_height)
+								    .fillStyle(function() colors[this.parent.index])
+								    .strokeStyle('white')
 								  .anchor("bottom")
 								    .add(pv.Label)
-								    .textBaseline("bottom");
+								    .textBaseline("bottom")
+								    .text(function(d){ return (d*100).toFixed(0) + "%"})
+								    .textMargin(label_margin);
 
 								  bar.anchor("bottom").textAlign("right")
 								  .add(pv.Label)
 						                .data(labels_top)
 						                .left(0)
-						                .font("10pt san-serif");
+						                .font("10pt san-serif")
+						                .textMargin(label_margin);
 
 						           bar1 = bar.add(pv.Layout.Stack)
-								    .layers(data1)
-								    .orient("left")
-								    .left(0)
-								    .x(function() this.index * 30)
-								    .y(function(d) d * 40)
-								    .bottom(10)
-								  .layer.add(pv.Bar).height(12)
-								  .fillStyle(function() fill[this.parent.index])
-								  .anchor("bottom")
-								    .add(pv.Label)
-								    .textBaseline("bottom");
+									    .layers(data_sublevel)
+									    .orient("left")
+									    .left(0)
+									    .x(function() this.index * 30)
+									    .y(function(d) d * 250)
+									    .bottom(10)
+									    .layer.add(pv.Bar).height(bar_height)
+									    .fillStyle(function() colors[this.parent.index])
+									    .strokeStyle('white')
+									  .anchor("bottom")
+									    .add(pv.Label)
+									    .textBaseline("bottom")
+									    .textMargin(label_margin)
+									    .text(function(d){ return (d*100).toFixed(0) + "%"});
 
 								   bar1.anchor("bottom").textAlign("right")
 								  .add(pv.Label)
-						                .data(labels_sub)
+						                .data(labels_sublevel)
 						                .left(0)
+						                .textMargin(label_margin)
 						                .font("10pt san-serif");
 
 						           vis.add(pv.Dot) 
-							            .data(labels1) 
-							            .top(function() height - 250 + this.index * 18)
+							            .data(labels_question) 
+							            .top(function() height/8 + this.index * 18)
 							            .right(150) 
 							            .size(20) 
 							            .strokeStyle(null) 
-							            .fillStyle(pv.colors(fill)) 
+							            .fillStyle(pv.colors(colors)) 
 							            .anchor("right").add(pv.Label)
 							            .textMargin(8);
 
 							        vis.add(pv.Rule)
-    								.left(199)
+    								.left(left_margin)
     								.bottom(0);
 
 						         vis.render();
@@ -235,7 +245,7 @@
 						        //legends   
 						        pie.add(pv.Dot) 
 						            .data(labels) 
-						            .top(function() height - 250 + this.index * 18)
+						            .top(function() height/ 4 + this.index * 18)
 						            .right(width/2 - 50) 
 						            .size(20) 
 						            .strokeStyle(null) 
@@ -256,127 +266,127 @@
 			        <tr>
 			        	<td>
 			            	<script type="text/javascript+protovis">
-			            		var ballot_box = [1.7];
-			            		var	ballot_paper = [1.3];
-			            		var voters_roll = [3.1];
-			            		var zec_stamp = [2.7];
-			            		var indellible_ink = [2.5];
-			            		var	labels = ["ballot_box", "ballot_paper", "voters_roll", "zec_stamp", "indellible_ink"];
-			            		var	fill = [ '#387C7A','#8BD275',"#A6544F",'#E4AA2F','#E85A69'];
+			            		var setup = {Ballot_box: 2.1, Ballot_paper: 2.3, Voters_roll: 3.1, Zec_stamp: 2.7, Indellible_ink: 2.5};
+			            		var data = [[setup.Ballot_box], [setup.Ballot_paper], [setup.Voters_roll], [setup.Zec_stamp], [setup.Indellible_ink]];
+			            		var	labels = ["Ballot box", "Ballot paper", "Voters roll", "Zec stamp", "Indellible ink"];
+			            		var	fill = [ '#FC6C00','#FFBD70',"#E1E4CB",'#A6DAD8',"#65D1E8"];
 			            		var labels_top = ["Bulawayo"];
 
 			            		width = 700;
-			            		height = 70;
+			            		height = 100;
+			            		left_margin = 200;
+			            		bar_height = 15;
 
 							    var vis = new pv.Panel()
-							    .width(width)
-							    .height(height)
-							    .bottom(70);
+								    .width(width)
+								    .height(height)
+								    .bottom(70);
 								var bar = vis.add(pv.Bar)
-							    .data(ballot_box)
-							    .left(200)
-								.height(10)
-								.width(function(d) d * 80)
-								.bottom(function() this.index * 35)
-							    .fillStyle("#387C7A")
-							    .add(pv.Label)
-							    .add(pv.Bar)
-							    .data(ballot_paper)
-							    .bottom(function() this.index * 35 + 10)
-							    .fillStyle("#8BD275")
-							    .add(pv.Label)
-							    .add(pv.Bar)
-							    .data(voters_roll)
-							    .bottom(function() this.index * 80 + 20)
-							    .fillStyle("#A6544F")
-							    .add(pv.Label)
-							    .add(pv.Bar)
-							    .data(zec_stamp)
-							    .bottom(function() this.index * 80 + 30)
-							    .fillStyle("#E4AA2F")
-							    .add(pv.Label)
-							    .add(pv.Bar)
-							    .data(indellible_ink)
-							    .bottom(function() this.index * 80 + 40)
-							    .fillStyle("#E85A69")
-							    .add(pv.Label);
+								    .data(data[0])
+								    .left(left_margin)
+									.height(bar_height)
+									.width(function(d) d * 80)
+									.bottom(function() this.index * 35)
+								    .fillStyle(fill[0])
+								    .add(pv.Label)
+								    .add(pv.Bar)
+								    .data(data[1])
+								    .bottom(function() this.index * 35 + bar_height)
+								    .fillStyle(fill[1])
+								    .add(pv.Label)
+								    .add(pv.Bar)
+								    .data(data[2])
+								    .bottom(function() this.index * 35 + bar_height * 2)
+								    .fillStyle(fill[2])
+								    .add(pv.Label)
+								    .add(pv.Bar)
+								    .data(data[3])
+								    .bottom(function() this.index * 35 + bar_height * 3)
+								    .fillStyle(fill[3])
+								    .add(pv.Label)
+								    .add(pv.Bar)
+								    .data(data[4])
+								    .bottom(function() this.index * 35 + bar_height * 4)
+								    .fillStyle(fill[4])
+								    .add(pv.Label);
 
-							     bar.anchor("bottom").textAlign("right")
-							  .add(pv.Label)
+								 bar.anchor("bottom").textAlign("right")
+							  		.add(pv.Label)
 					                .data(labels_top)
-					                .left(198)
-					                .font("bold 10pt san-serif");
+					                .left(left_margin - 2)
+					                .font("bold 10pt san-serif")
+					                .textBaseline('top');
 
-							    bar.add(pv.Dot) 
-							            .data(labels) 
-							            .bottom(function() height - 65 + this.index * 15)
-							            .left(550) 
-							            .size(20) 
-							            .strokeStyle(null) 
-							            .fillStyle(pv.colors(fill)) 
-							            .anchor("right").add(pv.Label)
-							            .textMargin(8);
+							   bar.add(pv.Dot) 
+						            .data(labels) 
+						            .bottom(function() 5 + this.index * 15)
+						            .left(left_margin * 2 + 150) 
+						            .size(20) 
+						            .strokeStyle(null) 
+						            .fillStyle(pv.colors(fill)) 
+						            .anchor("right").add(pv.Label);
 
 							   vis.add(pv.Rule)
-								.left(199).height(height);
+								  .left(left_margin - 1).height(height);
 
 							  bar.render();
 							  
 							</script>
 
 			            	<script type="text/javascript+protovis">
-			            		var ballot_box = [1, 1.2, 1.7, 1.5, .7, 2.2, 1.5];
-			            		var	ballot_paper = [.5, 1, .8, 1.1, 1.3, 3.6, 2.3];
-			            		var voters_roll = [2, 1.5, 1.2, 3.5, 1.7, 1.2, 1.8];
-			            		var	zec_stamp = [.5, 1, .8, 1.1, 1.3, 3.6, 2.3];
-			            		var indellible_ink = [1, 1.2, 1.7, 1.5, .7, 2.2, 1.5];
+			            		var ballot_box = [1.4, 1.6, 1.2, 1.5, .7, 2.2, 1.5];
+			            		var	ballot_paper = [.5, 1.3, .9, 1.4, 1.5, 2.6, 2.3];
+			            		var voters_roll = [2, 1.5, 1.2, 2.5, 1.7, 1.2, 1.8];
+			            		var	zec_stamp = [.7, 1, .8, 1.1, 1.3, 2.3, 2.1];
+			            		var indellible_ink = [1, 1.4, 1.7, 1.3, .9, 2.2, 1.2];
 			            		var label = ["Mzilikazi", "Masotsha Ndiovu", "Mabutweni", "Khumalo", "Gwabalanda", "Emganwini", "Bulawayo Municipality"];
+			            		var	colors = [ '#FC6C00','#FFBD70',"#E1E4CB",'#A6DAD8',"#65D1E8"];
 			            		width = 700;
-			            		height = 550;
+			            		height = 700;
+			            		left_margin = 200;
+			            		bar_height = 15;
 
 							    var vis = new pv.Panel()
-							    .width(width)
-							    .height(height)
+								    .width(width)
+								    .height(height)
 								var bar = vis.add(pv.Bar)
-							    .data(ballot_box)
-							    .left(200)
-								.height(10)
-								.width(function(d) d * 80)
-								.bottom(function() this.index * 80)
-							    .fillStyle("#387C7A")
-							    .add(pv.Label)
-							    .add(pv.Bar)
-							    .data(ballot_paper)
-							    .bottom(function() this.index * 80 + 10)
-							    .fillStyle("#8BD275")
-							    .add(pv.Label)
-							    .add(pv.Bar)
-							    .data(voters_roll)
-							    .bottom(function() this.index * 80 + 20)
-							    .fillStyle("#A6544F")
-							    .add(pv.Label)
-							    .add(pv.Bar)
-							    .data(zec_stamp)
-							    .bottom(function() this.index * 80 + 30)
-							    .fillStyle("#E4AA2F")
-							    .add(pv.Label)
-							    .add(pv.Bar)
-							    .data(indellible_ink)
-							    .bottom(function() this.index * 80 + 40)
-							    .fillStyle("#E85A69")
-							    .add(pv.Label);/**
-				                .anchor("left")
-				                .add(pv.Rule)
-				                .top(20);*/
+								    .data(ballot_box)
+								    .left(left_margin)
+									.height(bar_height)
+									.width(function(d) d * 80)
+									.bottom(function() this.index * 100)
+								    .fillStyle(colors[0])
+								    .add(pv.Label)
+								    .add(pv.Bar)
+								    .data(ballot_paper)
+								    .bottom(function() this.index * 100 + bar_height)
+								    .fillStyle(colors[1])
+								    .add(pv.Label)
+								    .add(pv.Bar)
+								    .data(voters_roll)
+								    .bottom(function() this.index * 100 + bar_height * 2)
+								    .fillStyle(colors[2])
+								    .add(pv.Label)
+								    .add(pv.Bar)
+								    .data(zec_stamp)
+								    .bottom(function() this.index * 100 + bar_height * 3)
+								    .fillStyle(colors[3])
+								    .add(pv.Label)
+								    .add(pv.Bar)
+								    .data(indellible_ink)
+								    .bottom(function() this.index * 100 + bar_height * 4)
+								    .fillStyle(colors[4])
+								    .add(pv.Label);
 
 				              bar.anchor("bottom").textAlign("right")
-							  .add(pv.Label)
+							  		.add(pv.Label)
 					                .data(label)
-					                .left(198)
-					                .font("bold 10pt san-serif");
+					                .left(left_margin - 2)
+					                .font("bold 10pt san-serif")
+					                .textBaseline('top');
 
 					          vis.add(pv.Rule)
-								.left(199).height(height);
+								 .left(left_margin - 1).height(height);
 
 							  bar.render();
 							  
