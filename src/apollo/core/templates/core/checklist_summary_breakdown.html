@@ -202,7 +202,8 @@
 						                .left(0)
 						                .textMargin(label_margin)
 						                .font("10pt san-serif");
-
+						                
+						           //legends  
 						           vis.add(pv.Dot) 
 							            .data(labels_question) 
 							            .top(function() height/8 + this.index * 18)
@@ -317,6 +318,7 @@
 					                .font("bold 10pt san-serif")
 					                .textBaseline('top');
 
+					           //legends  
 							   bar.add(pv.Dot) 
 						            .data(labels) 
 						            .bottom(function() 5 + this.index * 15)
