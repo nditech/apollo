@@ -1,5 +1,6 @@
 from djorm_expressions.base import SqlExpression, OR, AND
 from djorm_hstore.models import HStoreQueryset
+from djorm_hstore.functions import HstorePeek
 
 
 class SearchableLocationQuerySet(HStoreQueryset):
@@ -34,5 +35,9 @@ class SubmissionQuerySet(SearchableLocationQuerySet):
         return self.where(expr) if fields else self
 
     def data(self, tags):
-        _select = dict([(tag, '"core_submission"."data"->%s' % ("'%s'" % (tag,))) for tag in tags])
-        return self.extra(select=_select)
+        # this method enables access to the keys in the hstore field
+        # directly from the model
+        # e.g. .data(['AA']) will make it possible to access AA
+        # viz a viz: instance.AA
+        params = {field: HstorePeek("data", field) for field in tags}
+        return self.annotate_functions(**params)
