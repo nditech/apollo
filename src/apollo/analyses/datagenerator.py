@@ -2,6 +2,7 @@ from collections import Counter
 import numpy as np
 import pandas as pd
 from core.models import *
+from django.conf import settings
 
 
 def make_histogram(options, dataset):
@@ -122,13 +123,11 @@ def get_numeric_field_stats(tag, data_frame, groups):
             if not group in data_frame:
                 continue
 
-            group_stats = {}
-
             data_group = data_frame.groupby(group)
 
             # transpose (matrix operation) to swap columns and rows
             group_stats = data_group[tag].agg({'mean': np.mean,
-                'std': lambda x: np.std(x)}).replace(np.nan, 0, inplace=True).transpose().to_dict()
+                'std': lambda x: np.std(x)}).replace(np.nan, 0).transpose().to_dict()
 
             group_names = data_group.groups.keys()
 
@@ -629,3 +628,8 @@ def generate_process_data(form, qs, location_root=None, grouped=True, tags=None)
 
     process_summary['sub_locations'] = sub_locations
     return process_summary
+
+
+def generate_rejected_ballot_stats(form, queryset, location_root=None,
+                                   location_types=None, tags=None):
+    pass
