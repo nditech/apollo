@@ -630,6 +630,96 @@ def generate_process_data(form, qs, location_root=None, grouped=True, tags=None)
     return process_summary
 
 
-def generate_rejected_ballot_stats(form, queryset, location_root=None,
-                                   location_types=None, tags=None):
+def get_convergence_points(qs, tags):
     pass
+
+
+def generate_rejected_ballot_stats(form, queryset, location_root=None,
+                                   location_types=None, group_results=True):
+    '''Generates rejected ballot statistics.
+
+    Parameters
+    - form: a checklist form
+    - queryset: a queryset of submissions
+    - location_root: a location to retrieve submissions under. defaults to
+      the root location
+    - location_types: location types used for grouping the data. defaults to
+      the location types which are children of the location_root's type
+    - group_results: a flag whether or not to group results. if results are not
+      grouped, only the top-level statistics are generated
+
+    Returns
+    Assuming a base set of statistics as a dictionary, D, of the form:
+    {reported: (number of reports, 100 * number of reports / number of locations of interest),
+    missing: (number of non-reports, 100 * number of non-reports / number of locations of interest),
+    rejected: (number of rejected ballots, 100 * number of rejected ballots / number of used ballots in locations of interest)}
+
+    The output is such that
+    {regional_stats: D for location_root as a whole,
+    group_stats: list of {location_type: [{location: D} for each location of the location_type under the location_root]}}
+    '''
+    if not location_root:
+        location_root = Location.root()
+
+    if not location_types and group_results:
+        location_types = [lt.name for lt in location_root.sub_location_types()]
+
+    tags = [settings.RESULTS_QUESTIONS[key] for key in settings.RESULTS_QUESTIONS if 'ballots' in key]
+    rejected_ballots_tag = settings.RESULTS_QUESTIONS['ballots_rejected']
+    used_ballots_tag = settings.RESULTS_QUESTIONS['ballots_used']
+
+    ballot_stats = {'regional_stats': {}, 'group_stats': []}
+
+    # calculate regional stats
+    data_frame, _, _ = get_data_records(form, queryset, location_root, tags)
+
+    if data_frame.empty:
+        return ballot_stats
+
+    submission_count = data_frame[rejected_ballots_tag].size
+    reported_submission_count = data_frame[rejected_ballots_tag].count()
+    missing_submission_count = submission_count - reported_submission_count
+
+    percent_reported = percent_of(reported_submission_count, submission_count)
+    percent_missing = 100 - percent_reported
+
+    rejected_ballots_count = data_frame[rejected_ballots_tag].sum()
+    used_ballots_count = data_frame[used_ballots_tag].sum()
+
+    percent_rejected = percent_of(rejected_ballots_count, used_ballots_count)
+
+    ballot_stats['regional_stats'].update({'reported': (reported_submission_count, percent_reported),
+        'missing': (missing_submission_count, percent_missing),
+        'rejected': (rejected_ballots_count, percent_rejected)})
+
+    if group_results:
+        for location_type in location_types:
+            if location_type not in data_frame:
+                continue
+
+            data_group = data_frame.groupby(location_type)
+
+            group_stats = []
+
+            names = data_group.groups.keys()
+
+            for name in names:
+                local_submission_count = data_group.get_group(name).get(rejected_ballots_tag).size
+                local_report_count = data_group.get_group(name).get(rejected_ballots_tag).count()
+                local_missing_count = local_submission_count - local_report_count
+
+                local_report_percentage = percent_of(local_report_count, local_submission_count)
+                local_missing_percentage = 100 - local_report_percentage
+
+                local_rejection_count = data_group.get_group(name).get(rejected_ballots_tag).sum()
+                local_usage_count = data_group.get_group(name).get(used_ballots_tag).sum()
+
+                local_rejection_percentage = percent_of(local_rejection_count, local_usage_count)
+
+                group_stats.append({name: {'reported': (local_report_count, local_report_percentage),
+                    'missing': (local_missing_count, local_missing_percentage),
+                    'rejected': (local_rejection_count, local_rejection_percentage)}})
+
+            ballot_stats['group_stats'].append({location_type: group_stats})
+    
+    return ballot_stats
