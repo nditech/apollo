@@ -631,7 +631,30 @@ def generate_process_data(form, qs, location_root=None, grouped=True, tags=None)
 
 
 def get_convergence_points(qs, tags):
-    pass
+    submissions = list(qs.order_by('updated').data(tags).values(*(['updated'] + tags)))
+
+    for submission in submissions:
+        for tag in tags:
+            if submission[tag]:
+                submission[tag] = float(submission[tag])
+
+    data_frame = pd.DataFrame(submissions).fillna(0)
+
+    # get the cumulative sum of each column, then
+    # sum across the rows
+    summed_columns = data_frame[tags].cumsum()
+    divisor = summed_columns.sum(axis=1)
+
+    convergence_points = {}
+
+    for tag in tags:
+        dividend = summed_columns[tag] / divisor
+
+        convergence_points.update({tag: dividend.tolist()})
+
+    convergence_points.update({'updated': data_frame['updated'].tolist()})
+
+    return convergence_points
 
 
 def generate_rejected_ballot_stats(form, queryset, location_root=None,
