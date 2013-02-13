@@ -631,6 +631,23 @@ def generate_process_data(form, qs, location_root=None, grouped=True, tags=None)
 
 
 def get_convergence_points(qs, tags):
+    '''Generates a set of points for a convergence graph from a queryset
+    and a set of tags.
+
+    Parameters
+    - qs: a Submission queryset
+    - tags: the tags needed for the convergence points
+
+    Returns
+    - a dictionary with the structure:
+    {
+        tag1: <list of points>,
+        tag2: <list of points>,
+        # ...,
+        tagn: <list of points>,
+        updated: <list of timestamps>
+    }
+    '''
     submissions = list(qs.order_by('updated').data(tags).values(*(['updated'] + tags)))
 
     for submission in submissions:
@@ -641,7 +658,7 @@ def get_convergence_points(qs, tags):
     data_frame = pd.DataFrame(submissions).fillna(0)
 
     # get the cumulative sum of each column, then
-    # sum across the rows
+    # sum across the rows to get the divisor
     summed_columns = data_frame[tags].cumsum()
     divisor = summed_columns.sum(axis=1)
 
