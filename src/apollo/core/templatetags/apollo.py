@@ -48,7 +48,7 @@ def submission_header(form, permissions):
     form = form if isinstance(form, Form) else Form.objects.get(pk=form)
     location_types = LocationType.objects.filter(on_display=True)
     form_groups = FormGroup.objects.filter(form=form)
-    form_fields = FormField.objects.filter(group__form=form)
+    form_fields = FormField.objects.filter(group__form=form).order_by('tag')
     return {'location_types': location_types, 'form_groups': form_groups,
             'form': form, 'form_fields': form_fields, 'perms': permissions}
 
@@ -58,7 +58,7 @@ def submission_items(submissions, form, permissions):
     form = form if isinstance(form, Form) else Form.objects.get(pk=form)
     location_types = LocationType.objects.filter(on_display=True)
     form_groups = FormGroup.objects.filter(form=form)
-    form_fields = FormField.objects.filter(group__form=form)
+    form_fields = FormField.objects.filter(group__form=form).order_by('tag')
     return {'submissions': submissions, 'location_types': location_types,
         'form_groups': form_groups, 'form': form, 'form_fields': form_fields,
         'perms': permissions}
