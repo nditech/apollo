@@ -92,7 +92,6 @@ class Location(GraphMixin):
         else:
             return [graph.node[id] for id in ancestor_ids if id != self.id]
 
-
     def nx_descendants(self, include_self=False):
         reversed_graph = self._get_locations_graph(reverse=True)
         descendant_ids = nx.topological_sort(reversed_graph, reversed_graph.subgraph(nx.dfs_tree(reversed_graph, self.id).nodes()).nodes())
@@ -101,12 +100,10 @@ class Location(GraphMixin):
         else:
             return [reversed_graph.node[id] for id in descendant_ids if id != self.id]
 
-
     def nx_children(self):
         reversed_graph = self._get_locations_graph(reverse=True)
         children_ids = reversed_graph.successors(self.id)
         return [reversed_graph.node[id] for id in children_ids]
-
 
     @staticmethod
     def root():
@@ -262,7 +259,6 @@ class Activity(models.Model):
 
     def __unicode__(self):
         return u"{}".format(self.name)
-
 
     class Meta:
         permissions = (
@@ -501,7 +497,6 @@ class Submission(models.Model):
             self._siblings = Submission.objects.exclude(pk=self.pk).exclude(observer=None).filter(location=self.location, date=self.date, form=self.form)
         return self._siblings
 
-
     def _get_completion(self, group):
         tags = group.fields.values_list('tag', flat=True)
         truthy = []
@@ -584,13 +579,13 @@ def create_or_sync_master(sender, **kwargs):
         if not master and instance.observer and instance.form.type == 'CHECKLIST':
             # create the master
             master = Submission.objects.create(
-                    form = instance.form,
-                    observer = None,
-                    location = instance.location,
-                    date = instance.date,
-                    data = instance.data,
-                    created = instance.created,
-                    updated = instance.updated
+                    form=instance.form,
+                    observer=None,
+                    location=instance.location,
+                    date=instance.date,
+                    data=instance.data,
+                    created=instance.created,
+                    updated=instance.updated
                 )
             instance.master = master
             instance.save()

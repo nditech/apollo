@@ -2,6 +2,7 @@ import ast
 from tastypie import fields
 from tastypie.authentication import ApiKeyAuthentication
 from tastypie.authorization import DjangoAuthorization, Authorization
+from tastypie.constants import ALL
 from tastypie.resources import ModelResource
 from .models import *
 from messagelog.models import MessageLog
@@ -31,8 +32,9 @@ class LocationResource(ModelResource):
         queryset = Location.objects.all()
         resource_name = 'locations'
         excludes = ['in_form']
-
-        authentication = ApiKeyAuthentication()
+        filtering = {
+            'name': ALL
+        }
 
 
 class PartnerResource(ModelResource):
@@ -60,8 +62,9 @@ class ContactResource(ModelResource):
     class Meta:
         queryset = Observer.objects.all()
         resource_name = 'contacts'
-
-        authentication = ApiKeyAuthentication()
+        filtering = {
+            'observer_id': ALL
+        }
 
     def dehydrate_data(self, bundle):
         return ast.literal_eval(bundle.data['data'])
