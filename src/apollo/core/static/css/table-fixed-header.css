@@ -1,6 +1,5 @@
 table .header-fixed {
   position: fixed;
-  left: 47.3em;
   top: 0px;
   z-index: 1020; /* 10 less than .navbar-fixed to prevent any overlap */
   border-bottom: 1px solid #d5d5d5;
