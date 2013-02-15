@@ -1,6 +1,18 @@
 {% extends "core/layout.html" %}{% load apollo %}{% load bootstrap_pagination %}
 {% block title %}
 {{ page_title }}
+{% if form.type == 'INCIDENT' %}
+{% if perms.core.add_submission %}
+<div class="btn-group pull-right">
+  <a style="margin-left:1em" class="btn btn-primary" href="{% url submission_add form.pk %}">Add Incident</a>
+</div>
+{% endif %}
+{% if perms.core.export_submissions %}
+<div class="btn-group pull-right">
+  <a class="btn" href="{% url submissions_list_export_observers form.pk %}">Export</a>
+</div>
+{% endif %}
+{% else %}
 {% if perms.core.export_submissions %}
 <div class="btn-group pull-right">
   <a class="btn" href="{% url submissions_list_export_master form.pk %}">Export</a>
@@ -10,6 +22,7 @@
     <li><a href="{% url submissions_list_export_master form.pk %}">Master Data</a></li>
   </ul>
 </div>
+{% endif %}
 {% endif %}
 {% endblock %}
 {% block content %}

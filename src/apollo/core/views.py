@@ -11,7 +11,7 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.template.defaultfilters import slugify
 from django.utils.decorators import method_decorator
-from django.views.generic import TemplateView, ListView, UpdateView, View
+from django.views.generic import TemplateView, ListView, UpdateView, View, CreateView
 from django.views.generic.base import TemplateResponseMixin
 import tablib
 from .forms import ContactModelForm, LocationModelForm, generate_submission_form
@@ -188,6 +188,30 @@ class SubmissionEditView(UpdateView):
 
     def get_success_url(self):
         return reverse('submissions_list', args=[self.submission.form.pk])
+
+
+class SubmissionCreateView(CreateView):
+    template_name = 'core/submission_add.html'
+    page_title = 'Add Submission'
+
+    @method_decorator(login_required)
+    @method_decorator(permission_required('core.add_submission'))
+    def dispatch(self, *args, **kwargs):
+        # we only want to allow creation of incident submissions
+        self.form = get_object_or_404(Form, pk=kwargs['form'], type='INCIDENT')
+        self.form_class = generate_submission_form(self.form)
+
+        return super(SubmissionCreateView, self).dispatch(*args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(SubmissionCreateView, self).get_context_data(**kwargs)
+        context['form'] = self.form_class()
+        context['form_pk'] = self.form.pk
+        context['page_title'] = self.page_title
+        return context
+
+    def get_success_url(self):
+        return reverse('submissions_list', args=[self.form.pk])
 
 
 class SubmissionListExportView(View):

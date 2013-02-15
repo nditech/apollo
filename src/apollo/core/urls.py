@@ -26,6 +26,7 @@ urlpatterns = patterns('',
     url(r'^submissions/form/(?P<form>\d+)/export/?$', SubmissionListExportView.as_view(collection='observers'), name='submissions_list_export_observers'),
     url(r'^submissions/form/(?P<form>\d+)/export/master/?$', SubmissionListExportView.as_view(collection='master'), name='submissions_list_export_master'),
     url(r'^submission/(?P<pk>\d+)/?$', SubmissionEditView.as_view(), name='submission_edit'),
+    url(r'^submissions/form/(?P<form>\d+)/add/?$', SubmissionCreateView.as_view(), name='submission_add'),
     
     url(r'^submissions/analysis/process/form/(?P<form>\d+)/?$', SubmissionProcessAnalysisView.as_view(), name='submissions_analysis'),
     url(r'^submissions/analysis/process/form/(?P<form>\d+)/location/(?P<location_id>\d+)/?$', SubmissionProcessAnalysisView.as_view(), name='submissions_analysis_location'),
