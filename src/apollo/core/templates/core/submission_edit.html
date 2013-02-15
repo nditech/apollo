@@ -67,8 +67,8 @@
           </tr>
           {% endif %}
           {% for field in fieldset %}
-          <tr{% if field.name in object.overrides %} class="warning"{% endif %}>
-            <td>{{ field.name }}</td>
+          <tr{% if field.label in object.overrides %} class="warning"{% endif %}>
+            <td>{{ field.label }}</td>
             <td>{{ field.help_text }}
               {% if field.field.choices %}
               <span class="options">
@@ -102,8 +102,8 @@
           </tr>
           {% endif %}
           {% for field in fieldset %}
-          <tr{% if field.name in object.overrides %} class="warning"{% endif %}>
-            <td>{{ field.name }}</td>
+          <tr{% if field.label in object.overrides %} class="warning"{% endif %}>
+            <td>{{ field.label }}</td>
             <td>{{ field.help_text }}
               {% if field.field.choices %}
               <span class="options">

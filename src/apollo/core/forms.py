@@ -1,23 +1,41 @@
 from django import forms
 from form_utils.forms import BetterForm
-from .models import *
+from apollo.core.models import (Form, Observer, ObserverDataField, Location, Submission)
+from rapidsms.models import (Backend, Contact, Connection)
 
 
 class SubmissionModelForm(BetterForm):
+    FORM = None  # The form this submission will be saved to
+
+    location = forms.ModelChoiceField(queryset=Location.objects.all(),
+        required=False, widget=forms.HiddenInput(
+            attrs={'class': 'span6 select2-locations', 'placeholder': 'Location'}))
+    observer = forms.ModelChoiceField(queryset=Observer.objects.all(),
+        required=False, widget=forms.HiddenInput(
+            attrs={'class': 'span5 select2-observers', 'placeholder': 'Observer'}))
+
     def __init__(self, *args, **kwargs):
         if 'instance' in kwargs:
             self.instance = kwargs.pop('instance')
 
-            kwargs['initial'] = self.instance.data
-
-            for key in kwargs['initial'].keys():
-                if ',' in kwargs['initial'][key]:
-                    kwargs['initial'][key] = kwargs['initial'][key].split(',')
+            if self.instance:
+                kwargs['initial'] = {
+                    'location': self.instance.location,
+                    'observer': self.instance.observer,
+                    'form': self.instance.form
+                }
+                kwargs['initial'].update(
+                    {'data__{}'.format(k): v.split(',') if ',' in v else v for k, v in self.instance.data.items()}
+                )
 
         return super(BetterForm, self).__init__(*args, **kwargs)
 
     def save(self):
-        data = self.cleaned_data
+        cleaned_data = self.cleaned_data
+
+        # retrieve submission data fields
+        data = {k.replace('data__', ''): v for k, v in cleaned_data.items() if k.startswith('data__')}
+
         for key in data.keys():
             if data[key] != None and data[key] != False:
                 # the forced casting to integer enables the conversion of boolean values
@@ -30,17 +48,30 @@ class SubmissionModelForm(BetterForm):
             else:
                 del data[key]
 
-        # test for overriden values and indicate
-        if self.instance.form.type == 'CHECKLIST':
-            for tag in frozenset(data.keys() + self.instance.data.keys()):
-                # the XOR operator is used to check for cases where they are
-                # not the same
-                if ((tag in data) ^ (tag in self.instance.data)) or (data[tag] != self.instance.data[tag]):
-                    self.instance.overrides.update({tag: '1'})
+        if hasattr(self, 'instance') and self.instance:
+            # test for overriden values and indicate
+            if self.instance.form.type == 'CHECKLIST':
+                for tag in frozenset(data.keys() + self.instance.data.keys()):
+                    # the XOR operator is used to check for cases where they are
+                    # not the same
+                    if ((tag in data) ^ (tag in self.instance.data)) or (data[tag] != self.instance.data[tag]):
+                        self.instance.overrides.update({tag: '1'})
 
-        self.instance.data = data
+            self.instance.data = data
 
-        return self.instance.save()
+            return self.instance.save()
+        else:
+            # retrict creation of submissions to only INCIDENTS
+            if self.FORM and self.FORM.type == 'INCIDENT' and cleaned_data['observer']:
+                # if the location isn't explicitly specified, use that of the observer
+                location = cleaned_data['location'] or cleaned_data['observer'].location
+
+                return Submission.objects.create(
+                    observer=cleaned_data['observer'],
+                    form=self.FORM,
+                    location=location,
+                    data=data
+                    )
 
 
 class ContactModelForm(forms.ModelForm):
@@ -114,40 +145,42 @@ class ContactModelForm(forms.ModelForm):
 # please see https://bitbucket.org/carljm/django-form-utils/overview for
 # info on using inside a Django template
 def generate_submission_form(form, readonly=False):
-    fields = {}  # necessary for the individual fields
+    fields = {'FORM': form}  # necessary for the individual fields
     groups = []  # necessary for the internal Meta class definition
 
     for group in form.groups.all():
         groupspec = (group.name, {'fields': [], 'legend': group.name})
         for field in group.fields.all():
+            field_name = 'data__{}'.format(field.tag)
+
             # are there any field options?
-            groupspec[1]['fields'].append(field.tag)
+            groupspec[1]['fields'].append(field_name)
             options = list(field.options.all())
 
             if options:
                 choices = [(option.option, option.description) for option in options]
 
                 if field.allow_multiple:
-                    fields[field.tag] = forms.MultipleChoiceField(choices=choices,
+                    fields[field_name] = forms.MultipleChoiceField(choices=choices,
                         help_text=field.description, required=False, label=field.tag,
                         widget=forms.CheckboxSelectMultiple)
                 else:
-                    fields[field.tag] = forms.ChoiceField(choices=choices,
+                    fields[field_name] = forms.ChoiceField(choices=choices,
                         help_text=field.description, required=False, label=field.tag,
                         widget=forms.TextInput(attrs={'class': 'input-mini'}))
             else:
                 if form.type == 'CHECKLIST':
-                    fields[field.tag] = forms.IntegerField(help_text=field.description,
+                    fields[field_name] = forms.IntegerField(help_text=field.description,
                         max_value=field.upper_limit or 9999, min_value=field.lower_limit or 0,
                         required=False, label=field.tag, widget=forms.TextInput(attrs={'class': 'input-mini'}))
                 else:
-                    fields[field.tag] = forms.BooleanField(help_text=field.description,
+                    fields[field_name] = forms.BooleanField(help_text=field.description,
                         required=False, label=field.tag, widget=forms.CheckboxInput())
 
             # Disable the field if the form is readonly
             if readonly:
-                fields[field.tag].widget.attrs['readonly'] = 'readonly'
-                fields[field.tag].widget.attrs['disabled'] = 'disabled'
+                fields[field_name].widget.attrs['readonly'] = 'readonly'
+                fields[field_name].widget.attrs['disabled'] = 'disabled'
 
         groups.append(groupspec)
 
