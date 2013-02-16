@@ -2,209 +2,273 @@
 {% load apollo %}
 {% block content %}
 <div class="row">
-  <div class="span8">
-      <ul class="breadcrumb">
-		  <li><a href="#">Zimbabwe</a></li>
-	  </ul>
-	  <ul class="nav nav-pills">
-		  <li><a href="#">Bulawayo</a></li>
-		  <li><a href="#">Harare</a></li>
-		  <li><a href="#">Mashonaland Central</a></li>
-		  <li><a href="#">Mashonaland East</a></li>
-		  <li><a href="#">Mashonaland West</a></li>
-		  <li><a href="#">Masvingo</a></li>
-		  <li><a href="#">Matabeleland North</a></li>
-		  <li><a href="#">Matabeleland South</a></li>
-		  <li><a href="#">Midlands</a></li>
-		</ul>
-  </div>
-  <div class="span4">
-      <form class="form-horizontal pull-right" action="" method="post" accept-charset="utf-8">
-          <button class="btn btn-warning" style="margin-left:1em" type="submit"><i class="icon-search icon-white"></i> Filter</button>
-    </form>
-  </div>
-</div>
-<div class="row">
 	<div class="span12">
-		<table class="table table-bordered">
-			<tr bgcolor="#eeeeee">
-				<td width="250">Location</td>
-				<td width="100">N</td>
-				<td width="100">A</td>
-				<td width="100">B</td>
-				<td width="100">C</td>
-				<td width="100">D</td>
-				<td width="100">E</td>
-				<td width="100">F</td>
-				<td width="100">G</td>
-				<td width="100">H</td>
-				<td width="100">I</td>
-				<td width="100">J</td>
-				<td width="100">K</td>
-				<td width="100">L</td>
-			</tr>
-			<tr>
-				<td>Zimbabwe</td>
-				<td>1000</td>
-				<td>30% (300)</td>
-				<td>20% (200)</td>
-				<td>50% (500)</td>
-				<td>85% (850)</td>
-				<td>2% (20)</td>
-				<td>35% (350)</td>
-				<td>15% (150)</td>
-				<td>60% (600)</td>
-				<td>45% (450)</td>
-				<td>73% (730)</td>
-				<td>29% (290)</td>
-				<td>13% (130)</td>
-			</tr>
-			<tr>
-				<td>Bulawayo</td>
-				<td>1000</td>
-				<td>30% (300)</td>
-				<td>20% (200)</td>
-				<td>50% (500)</td>
-				<td>85% (850)</td>
-				<td>2% (20)</td>
-				<td>35% (350)</td>
-				<td>15% (150)</td>
-				<td>60% (600)</td>
-				<td>45% (450)</td>
-				<td>73% (730)</td>
-				<td>29% (290)</td>
-				<td>13% (130)</td>
-			</tr>
-			<tr>
-				<td>Harare</td>
-				<td>1000</td>
-				<td>30% (300)</td>
-				<td>20% (200)</td>
-				<td>50% (500)</td>
-				<td>85% (850)</td>
-				<td>2% (20)</td>
-				<td>35% (350)</td>
-				<td>15% (150)</td>
-				<td>60% (600)</td>
-				<td>45% (450)</td>
-				<td>73% (730)</td>
-				<td>29% (290)</td>
-				<td>13% (130)</td>
-			</tr>
-			<tr>
-				<td>Mashonaland Central</td>
-				<td>1000</td>
-				<td>30% (300)</td>
-				<td>20% (200)</td>
-				<td>50% (500)</td>
-				<td>85% (850)</td>
-				<td>2% (20)</td>
-				<td>35% (350)</td>
-				<td>15% (150)</td>
-				<td>60% (600)</td>
-				<td>45% (450)</td>
-				<td>73% (730)</td>
-				<td>29% (290)</td>
-				<td>13% (130)</td>
-			</tr>
-			<tr>
-				<td>Mashonaland East</td>
-				<td>1000</td>
-				<td>30% (300)</td>
-				<td>20% (200)</td>
-				<td>50% (500)</td>
-				<td>85% (850)</td>
-				<td>2% (20)</td>
-				<td>35% (350)</td>
-				<td>15% (150)</td>
-				<td>60% (600)</td>
-				<td>45% (450)</td>
-				<td>73% (730)</td>
-				<td>29% (290)</td>
-				<td>13% (130)</td>
-			</tr>
-			<tr>
-				<td>Mashonaland West</td>
-				<td>1000</td>
-				<td>30% (300)</td>
-				<td>20% (200)</td>
-				<td>50% (500)</td>
-				<td>85% (850)</td>
-				<td>2% (20)</td>
-				<td>35% (350)</td>
-				<td>15% (150)</td>
-				<td>60% (600)</td>
-				<td>45% (450)</td>
-				<td>73% (730)</td>
-				<td>29% (290)</td>
-				<td>13% (130)</td>
-			</tr>
-			<tr>
-				<td>Masvingo</td>
-				<td>1000</td>
-				<td>30% (300)</td>
-				<td>20% (200)</td>
-				<td>50% (500)</td>
-				<td>85% (850)</td>
-				<td>2% (20)</td>
-				<td>35% (350)</td>
-				<td>15% (150)</td>
-				<td>60% (600)</td>
-				<td>45% (450)</td>
-				<td>73% (730)</td>
-				<td>29% (290)</td>
-				<td>13% (130)</td>
-			</tr>
-			<tr>
-				<td>Matabeleland North</td>
-				<td>1000</td>
-				<td>30% (300)</td>
-				<td>20% (200)</td>
-				<td>50% (500)</td>
-				<td>85% (850)</td>
-				<td>2% (20)</td>
-				<td>35% (350)</td>
-				<td>15% (150)</td>
-				<td>60% (600)</td>
-				<td>45% (450)</td>
-				<td>73% (730)</td>
-				<td>29% (290)</td>
-				<td>13% (130)</td>
-			</tr>
-			<tr>
-				<td>Matabeleland South</td>
-				<td>1000</td>
-				<td>30% (300)</td>
-				<td>20% (200)</td>
-				<td>50% (500)</td>
-				<td>85% (850)</td>
-				<td>2% (20)</td>
-				<td>35% (350)</td>
-				<td>15% (150)</td>
-				<td>60% (600)</td>
-				<td>45% (450)</td>
-				<td>73% (730)</td>
-				<td>29% (290)</td>
-				<td>13% (130)</td>
-			</tr>
-			<tr>
-				<td>Midlands</td>
-				<td>1000</td>
-				<td>30% (300)</td>
-				<td>20% (200)</td>
-				<td>50% (500)</td>
-				<td>85% (850)</td>
-				<td>2% (20)</td>
-				<td>35% (350)</td>
-				<td>15% (150)</td>
-				<td>60% (600)</td>
-				<td>45% (450)</td>
-				<td>73% (730)</td>
-				<td>29% (290)</td>
-				<td>13% (130)</td>
-			</tr>
-		</table>
+		<div class="tabbable"> <!-- Only required for left/right tabs -->
+			  <ul class="nav nav-tabs">
+			    <li class="active"><a href="#tab1" data-toggle="tab">Table</a></li>
+			    <li><a href="#tab2" data-toggle="tab">Charts</a></li>
+			  </ul>
+			  <div class="tab-content">
+			    <div class="tab-pane active" id="tab1">
+			    	<div class="row">
+					  <div class="span8">
+					      <ul class="breadcrumb">
+							  <li><a href="#">Zimbabwe</a></li>
+						  </ul>
+						  <ul class="nav nav-pills">
+							  <li><a href="#">Bulawayo</a></li>
+							  <li><a href="#">Harare</a></li>
+							  <li><a href="#">Mashonaland Central</a></li>
+							  <li><a href="#">Mashonaland East</a></li>
+							  <li><a href="#">Mashonaland West</a></li>
+							  <li><a href="#">Masvingo</a></li>
+							  <li><a href="#">Matabeleland North</a></li>
+							  <li><a href="#">Matabeleland South</a></li>
+							  <li><a href="#">Midlands</a></li>
+							</ul>
+					  </div>
+					  <div class="span4">
+					      <form class="form-horizontal pull-right" action="" method="post" accept-charset="utf-8">
+					          <button class="btn btn-warning" style="margin-left:1em" type="submit"><i class="icon-search icon-white"></i> Filter</button>
+					    </form>
+					  </div>
+					</div>
+			    	<div class="row">
+						<div class="span12">
+							<table class="table table-bordered">
+								<tr bgcolor="#eeeeee">
+									<td width="250">Location</td>
+									<td width="100">N</td>
+									<td width="100">A</td>
+									<td width="100">B</td>
+									<td width="100">C</td>
+									<td width="100">D</td>
+									<td width="100">E</td>
+									<td width="100">F</td>
+									<td width="100">G</td>
+									<td width="100">H</td>
+									<td width="100">I</td>
+									<td width="100">J</td>
+									<td width="100">K</td>
+									<td width="100">L</td>
+								</tr>
+								<tr>
+									<td>Zimbabwe</td>
+									<td>1000</td>
+									<td>30% (300)</td>
+									<td>20% (200)</td>
+									<td>50% (500)</td>
+									<td>85% (850)</td>
+									<td>2% (20)</td>
+									<td>35% (350)</td>
+									<td>15% (150)</td>
+									<td>60% (600)</td>
+									<td>45% (450)</td>
+									<td>73% (730)</td>
+									<td>29% (290)</td>
+									<td>13% (130)</td>
+								</tr>
+								<tr>
+									<td>Bulawayo</td>
+									<td>1000</td>
+									<td>30% (300)</td>
+									<td>20% (200)</td>
+									<td>50% (500)</td>
+									<td>85% (850)</td>
+									<td>2% (20)</td>
+									<td>35% (350)</td>
+									<td>15% (150)</td>
+									<td>60% (600)</td>
+									<td>45% (450)</td>
+									<td>73% (730)</td>
+									<td>29% (290)</td>
+									<td>13% (130)</td>
+								</tr>
+								<tr>
+									<td>Harare</td>
+									<td>1000</td>
+									<td>30% (300)</td>
+									<td>20% (200)</td>
+									<td>50% (500)</td>
+									<td>85% (850)</td>
+									<td>2% (20)</td>
+									<td>35% (350)</td>
+									<td>15% (150)</td>
+									<td>60% (600)</td>
+									<td>45% (450)</td>
+									<td>73% (730)</td>
+									<td>29% (290)</td>
+									<td>13% (130)</td>
+								</tr>
+								<tr>
+									<td>Mashonaland Central</td>
+									<td>1000</td>
+									<td>30% (300)</td>
+									<td>20% (200)</td>
+									<td>50% (500)</td>
+									<td>85% (850)</td>
+									<td>2% (20)</td>
+									<td>35% (350)</td>
+									<td>15% (150)</td>
+									<td>60% (600)</td>
+									<td>45% (450)</td>
+									<td>73% (730)</td>
+									<td>29% (290)</td>
+									<td>13% (130)</td>
+								</tr>
+								<tr>
+									<td>Mashonaland East</td>
+									<td>1000</td>
+									<td>30% (300)</td>
+									<td>20% (200)</td>
+									<td>50% (500)</td>
+									<td>85% (850)</td>
+									<td>2% (20)</td>
+									<td>35% (350)</td>
+									<td>15% (150)</td>
+									<td>60% (600)</td>
+									<td>45% (450)</td>
+									<td>73% (730)</td>
+									<td>29% (290)</td>
+									<td>13% (130)</td>
+								</tr>
+								<tr>
+									<td>Mashonaland West</td>
+									<td>1000</td>
+									<td>30% (300)</td>
+									<td>20% (200)</td>
+									<td>50% (500)</td>
+									<td>85% (850)</td>
+									<td>2% (20)</td>
+									<td>35% (350)</td>
+									<td>15% (150)</td>
+									<td>60% (600)</td>
+									<td>45% (450)</td>
+									<td>73% (730)</td>
+									<td>29% (290)</td>
+									<td>13% (130)</td>
+								</tr>
+								<tr>
+									<td>Masvingo</td>
+									<td>1000</td>
+									<td>30% (300)</td>
+									<td>20% (200)</td>
+									<td>50% (500)</td>
+									<td>85% (850)</td>
+									<td>2% (20)</td>
+									<td>35% (350)</td>
+									<td>15% (150)</td>
+									<td>60% (600)</td>
+									<td>45% (450)</td>
+									<td>73% (730)</td>
+									<td>29% (290)</td>
+									<td>13% (130)</td>
+								</tr>
+								<tr>
+									<td>Matabeleland North</td>
+									<td>1000</td>
+									<td>30% (300)</td>
+									<td>20% (200)</td>
+									<td>50% (500)</td>
+									<td>85% (850)</td>
+									<td>2% (20)</td>
+									<td>35% (350)</td>
+									<td>15% (150)</td>
+									<td>60% (600)</td>
+									<td>45% (450)</td>
+									<td>73% (730)</td>
+									<td>29% (290)</td>
+									<td>13% (130)</td>
+								</tr>
+								<tr>
+									<td>Matabeleland South</td>
+									<td>1000</td>
+									<td>30% (300)</td>
+									<td>20% (200)</td>
+									<td>50% (500)</td>
+									<td>85% (850)</td>
+									<td>2% (20)</td>
+									<td>35% (350)</td>
+									<td>15% (150)</td>
+									<td>60% (600)</td>
+									<td>45% (450)</td>
+									<td>73% (730)</td>
+									<td>29% (290)</td>
+									<td>13% (130)</td>
+								</tr>
+								<tr>
+									<td>Midlands</td>
+									<td>1000</td>
+									<td>30% (300)</td>
+									<td>20% (200)</td>
+									<td>50% (500)</td>
+									<td>85% (850)</td>
+									<td>2% (20)</td>
+									<td>35% (350)</td>
+									<td>15% (150)</td>
+									<td>60% (600)</td>
+									<td>45% (450)</td>
+									<td>73% (730)</td>
+									<td>29% (290)</td>
+									<td>13% (130)</td>
+								</tr>
+							</table>
+						</div>
+					</div>
+				</div>
+
+				<!--Chart-->
+				<div class="tab-pane" id="tab2">
+					<div class="row">
+						<div class="span4 offset4">
+							<script type="text/javascript+protovis">
+						        width = 400,
+						        height = 450,
+						        offset = 10,
+						        r = width/2 - offset;
+						        data = [1000, 800, 3490, 500, 320];
+						        colors = ["#FF4400","#FFCB00","#39e639","#9269BF", "#FF9A96"];
+						        labels = ["A", "B", "C", "D", "E"];
+
+						        var pie = new pv.Panel().width(width).height(height);
+						            pie.add(pv.Wedge)
+						            .data(pv.normalize(data))
+						            .outerRadius(height/3)
+						            .angle(function(d) d * 2 * Math.PI)
+						            .left(height/3)
+						            .top(height/2 + 25)
+						            .fillStyle(pv.colors(colors).by(function () { return this.index;}))
+						            .anchor("center")
+						            .add(pv.Label)
+						            .textAngle(0)
+						            .text(function(d){ return (d*100).toFixed(0) + "%"});
+						            
+						        //legends   
+						        pie.add(pv.Dot) 
+						            .data(labels) 
+						            .top(function() (height/2 - 25) + this.index * 18)
+						            .right(height/9) 
+						            .size(20) 
+						            .strokeStyle(null) 
+						            .fillStyle(pv.colors(colors)) 
+						            .anchor("right").add(pv.Label)
+						            .textMargin(8);
+
+						        //chart title
+						         pie.add(pv.Label)
+								    .left(height/3)
+								    .top(height/9)
+								    .textAlign("center")
+								    .text("Zimbabwe Incidents Analysis")
+								    .font("12pt Helvetica");
+						            
+						        pie.render();
+						    </script>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
 </div>
-
 {% endblock %}
