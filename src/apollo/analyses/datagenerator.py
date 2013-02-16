@@ -88,7 +88,7 @@ def get_data_records(form, qs, location_root=None, tags=None):
         for _field in multivariate_fields:
             submission[_field] = map(lambda x: int(x) if x else pd.np.nan, submission[_field].split(",") if submission[_field] else [])
 
-    return (pd.DataFrame(submissions), regular_fields, multivariate_fields)
+    return pd.DataFrame(submissions)
 
 
 def percent_of(a, b):
@@ -96,202 +96,6 @@ def percent_of(a, b):
     if np.isnan(a) or b == 0:
         return 0
     return (100 * float(a) / b)
-
-
-def get_numeric_field_stats(tag, data_frame, groups):
-    '''Generates statistics (mean, sample standard deviation) for a FormField
-    which takes a numeric value. Generates both per-group and dataset-wide
-    statistics. Also generates report statistics.
-
-    Parameters
-    - tag: a submission field tag
-    - data_frame: a pandas DataFrame containing the submission data, generated
-    using get_data_records()
-    - groups: a list of group names used for grouping the data
-    '''
-    field_stats = {'type': 'numeric', 'group_stats': [], 'regional_stats': {}}
-
-    # return immediately if there are no data
-    if data_frame.empty:
-        return field_stats
-
-    # iterate over each group, and perform the statistic calculations needed
-    if groups:
-        for group in groups:
-
-            # skip groups not contained in data frame
-            if not group in data_frame:
-                continue
-
-            data_group = data_frame.groupby(group)
-
-            # transpose (matrix operation) to swap columns and rows
-            group_stats = data_group[tag].agg({'mean': np.mean,
-                'std': lambda x: np.std(x)}).replace(np.nan, 0).transpose().to_dict()
-
-            group_names = data_group.groups.keys()
-
-            # calculated report statistics
-            for group_name in group_names:
-                named_group = data_group[tag].get_group(group_name)
-                total = named_group.size
-                reported = named_group.count()
-                missing = total - reported
-                percent_reported = percent_of(reported, total)
-                percent_missing = percent_of(missing, total)
-
-                group_stats[group_name]['missing'] = (missing, percent_missing)
-                group_stats[group_name]['reported'] = (reported, percent_reported)
-
-            field_stats['group_stats'].append({group: group_stats})
-
-    # calculate regional stats
-    regional_mean = data_frame[tag].mean()
-    regional_std = np.std(data_frame[tag])
-
-    if np.isnan(regional_mean):
-        regional_mean = 0
-
-    field_stats['regional_stats']['mean'] = regional_mean
-    field_stats['regional_stats']['std'] = regional_std
-
-    return field_stats
-
-
-def get_single_choice_field_stats(tag, data_frame, field_options, groups=None):
-    '''Generates statistics (frequency histogram, report statistics) for
-    a form field which takes a single option of several.
-    '''
-
-    field_stats = {'type': 'single-choice', 'group_stats': [], 'regional_stats': {}}
-    labels = [x.description for x in field_options]
-    options = [x.option for x in field_options]
-
-    if data_frame.empty:
-        return field_stats
-
-    # group the data frame by each supplied group, and generate the stats
-    # for each
-    if groups:
-        for group in groups:
-
-            # skip if the group does not exist
-            if not group in data_frame:
-                continue
-
-            group_stats = []
-
-            data_group = data_frame.groupby(group)
-
-            group_names = data_group.groups.keys()
-            group_names.sort()
-
-            for group_name in group_names:
-                named_group = data_group[tag].get_group(group_name)
-
-                reported = named_group.count()
-                total = named_group.size
-                missing = total - reported
-
-                percent_reported = percent_of(reported, total)
-                percent_missing = percent_of(missing, total)
-
-                # generate frequency histogram
-                histogram = make_histogram(options, named_group)
-
-                # remap histogram so it has percentage of total as well
-                f = lambda x: (x, percent_of(x, reported))
-
-                frequency_pairs = map(f, histogram)
-
-                group_stats.append({group_name: {'histogram': frequency_pairs,
-                    'reported': (reported, percent_reported),
-                    'missing': (missing, percent_missing)}})
-
-        field_stats['group_stats'].append({group: group_stats})
-
-    # get regional histogram
-    regional_total = data_frame[tag].size
-    regional_reported = data_frame[tag].count()
-    # regional_missing = regional_total - regional_reported
-    regional_histogram = make_histogram(options, data_frame[tag])
-
-    f = lambda x: (x, percent_of(x, regional_reported))
-
-    regional_frequency_pairs = map(f, regional_histogram)
-
-    field_stats['regional_stats'] = {'histogram': regional_frequency_pairs}
-    field_stats['labels'] = labels
-
-    return field_stats
-
-
-def get_multiple_choice_field_stats(tag, data_frame, field_options, groups=None):
-    '''Generates statistics (frequency histogram, report statistics) for
-    a form field which takes any number of several options.
-    '''
-
-    field_stats = {'type': 'multiple-choice', 'group_stats': [], 'regional_stats': {}}
-    labels = [x.description for x in field_options]
-    options = [x.option for x in field_options]
-
-    if data_frame.empty:
-        return field_stats
-
-    # group the data frame by each supplied group, and generate the stats
-    # for each
-    if groups:
-        for group in groups:
-
-            # skip if the group does not exist
-            if not group in data_frame:
-                continue
-
-            group_stats = []
-
-            data_group = data_frame.groupby(group)
-
-            group_names = data_group.groups.keys()
-            group_names.sort()
-
-            for group_name in group_names:
-                named_group = data_group[tag].get_group(group_name)
-
-                total = named_group.size
-                missing = sum(not x for x in named_group)
-                reported = total - missing
-
-                percent_reported = percent_of(reported, total)
-                percent_missing = percent_of(missing, total)
-
-                # generate frequency histogram
-                histogram = summarize_options(options, named_group)
-
-                # remap histogram so it has percentage of total as well
-                f = lambda x: (x, percent_of(x, total))
-
-                frequency_pairs = map(f, histogram)
-
-                group_stats.append({group_name: {'histogram': frequency_pairs,
-                    'reported': (reported, percent_reported),
-                    'missing': (missing, percent_missing)}})
-
-            field_stats['group_stats'].append({group: group_stats})
-
-    # get regional histogram
-    regional_total = data_frame[tag].size
-    regional_missing = sum(not x for x in data_frame[tag])
-    regional_reported = regional_total - regional_missing
-    regional_histogram = summarize_options(options, data_frame[tag])
-
-    f = lambda x: (x, percent_of(x, regional_total))
-
-    regional_frequency_pairs = map(f, regional_histogram)
-
-    field_stats['regional_stats'] = {'histogram': regional_frequency_pairs}
-    field_stats['labels'] = labels
-
-    return field_stats
 
 
 def generate_numeric_field_stats(tag, dataset):
@@ -389,7 +193,7 @@ def generate_single_choice_field_stats(tag, dataset, field_options):
 
         for group_name in group_names:
             temp = dataset.get_group(group_name).get(tag)
-            
+
             reported = temp.count()
             total = temp.size
             missing = total - reported
@@ -406,7 +210,7 @@ def generate_single_choice_field_stats(tag, dataset, field_options):
             histogram_mod = lambda x: (x, percent_of(x, reported))
             histogram2 = map(histogram_mod, histogram)
 
-            location_stats[group_name] = {'histogram': histogram2}
+            location_stats[group_name]['histogram'] = histogram2
 
         field_stats['locations'] = location_stats
     else:
@@ -477,7 +281,7 @@ def generate_mutiple_choice_field_stats(tag, dataset, field_options):
 
             histogram2 = map(histogram_mod, histogram)
 
-            location_stats[group_name] = {'histogram': histogram2}
+            location_stats[group_name]['histogram'] = histogram2
 
         field_stats['locations'] = location_stats
     else:
@@ -502,6 +306,19 @@ def generate_mutiple_choice_field_stats(tag, dataset, field_options):
     return field_stats
 
 
+def generate_field_stats(field, dataset):
+    ''' In order to simplify the choice on what analysis to perform
+    this method will check a few conditions and return the appropriate
+    analysis for the field'''
+    if field.options.exists():
+        if field.allow_multiple:
+            return generate_mutiple_choice_field_stats(field.tag, dataset, field.options.all())
+        else:
+            return generate_single_choice_field_stats(field.tag, dataset, field.options.all())
+    else:
+        return generate_numeric_field_stats(field.tag, dataset)
+
+
 def generate_process_data(form, qs, location_root=None, grouped=True, tags=None):
     '''Generates process statistics for either a location and its descendants,
     or for a sample. Optionally generates statistics for an entire region, or
@@ -516,12 +333,14 @@ def generate_process_data(form, qs, location_root=None, grouped=True, tags=None)
     not to retrieve statistics on a per-group basis.
     - tags: an iterable of tags to retrieve statistics for'''
     process_summary = {}
+
     if not location_root:
         location_root = Location.root()
+
     location_types = [ltype.name for ltype in location_root.sub_location_types()]
 
     try:
-        data_frame, single_choice_tags, multiple_choice_tags = get_data_records(form, qs, location_root, tags)
+        data_frame = get_data_records(form, qs, location_root, tags)
     except Exception:
         return process_summary
 
@@ -533,13 +352,12 @@ def generate_process_data(form, qs, location_root=None, grouped=True, tags=None)
     else:
         form_groups = list(form.groups.all())
     form_fields = list(FormField.objects.filter(group__form=form).select_related())
-    form_field_options = list(FormFieldOption.objects.filter(field__group__form=form).select_related())
 
     if data_frame.empty:
         return process_summary
 
     if not tags:
-        tags = single_choice_tags + multiple_choice_tags
+        tags = [field.tag for field in form_fields]
         tags.sort()
 
     if not grouped:
@@ -550,83 +368,59 @@ def generate_process_data(form, qs, location_root=None, grouped=True, tags=None)
             group_summary = []
 
             for form_field in filter(lambda field: field.group == group and field.tag in tags, form_fields):
-                field_stats = {}
-
-                if not filter(lambda option: option.field == form_field, form_field_options):
-                    # processing a field taking a numeric value
-                    field_stats = generate_numeric_field_stats(form_field.tag, data_frame)
-                else:
-                    # processing a choice field, but what type?
-                    field_options = filter(lambda option: option.field == form_field, form_field_options)
-
-                    if form_field.tag in single_choice_tags:
-                        field_stats = generate_single_choice_field_stats(form_field.tag, data_frame, field_options)
-                    else:
-                        field_stats = generate_mutiple_choice_field_stats(form_field.tag, data_frame, field_options)
+                field_stats = generate_field_stats(form_field, data_frame)
 
                 group_summary.append((form_field.tag, form_field.description, field_stats))
 
             sample_summary.append((group.name, group_summary))
 
         process_summary['summary'] = sample_summary
-
-        children = list(location_root.get_children())
-        sub_locations = [(location.pk, location.name) for location in children]
     else:
         if not location_types:
             return process_summary
 
-        location_names = []
-
         process_summary['type'] = 'grouped'
+        process_summary['groups'] = []
+        process_summary['top'] = []
+
+        # top level summaries
+        for form_field in filter(lambda field: field.tag in tags, form_fields):
+            field_stats = generate_field_stats(form_field, data_frame)
+
+            process_summary['top'].append((form_field.tag, form_field.description, field_stats))
 
         for location_type in location_types:
             location_type_summary = []
 
             data_group = data_frame.groupby(location_type)
-            location_names.extend(data_group.groups.keys())
 
-            for group in form_groups:
-                group_summary = []
+            for form_field in filter(lambda field: field.tag in tags, form_fields):
+                field_stats = generate_field_stats(form_field, data_group)
+                '''
+                regional_stats = {}
 
-                for form_field in filter(lambda field: field.group == group and field.tag in tags, form_fields):
-                    field_stats = {}
-                    regional_stats = {}
+                reported = data_frame[form_field.tag].count()
+                total = data_frame[form_field.tag].size
+                missing = total - reported
+                percent_reported = percent_of(reported, total)
+                percent_missing = percent_of(missing, total)
 
-                    if not filter(lambda option: option.field == form_field, form_field_options):
-                        field_stats = generate_numeric_field_stats(form_field.tag, data_group)
+                regional_stats['reported'] = reported
+                regional_stats['missing'] = missing
+                regional_stats['percent_reported'] = percent_reported
+                regional_stats['percent_missing'] = percent_missing
 
-                        reported = data_frame[form_field.tag].count()
-                        total = data_frame[form_field.tag].size
-                        missing = total - reported
-                        percent_reported = percent_of(reported, total)
-                        percent_missing = percent_of(missing, total)
+                regional_stats['mean'] = data_frame[form_field.tag].mean()
+                regional_stats['std'] = np.std(data_frame[form_field.tag])
 
-                        regional_stats['reported'] = reported
-                        regional_stats['missing'] = missing
-                        regional_stats['percent_reported'] = percent_reported
-                        regional_stats['percent_missing'] = percent_missing
+                if regional_stats:
+                    field_stats['regional'] = regional_stats
+                '''
 
-                        regional_stats['mean'] = data_frame[form_field.tag].mean()
-                        regional_stats['std'] = np.std(data_frame[form_field.tag])
-                    else:
-                        field_options = filter(lambda option: option.field == form_field, form_field_options)
+                location_type_summary.append((form_field.tag, form_field.description, field_stats))
 
-                        if form_field.tag in single_choice_tags:
-                            field_stats = generate_single_choice_field_stats(form_field.tag, data_group, field_options)
-                        else:
-                            field_stats = generate_mutiple_choice_field_stats(form_field.tag, data_group, field_options)
+            process_summary['groups'].append((location_type, location_type_summary))
 
-                    if regional_stats:
-                        field_stats['regional'] = regional_stats
-
-                    group_summary.append((form_field.tag, form_field.description, field_stats))
-                location_type_summary.append((group.name, group_summary))
-
-            process_summary['detail'] = {location_type: location_type_summary}
-        sub_locations = Location.objects.filter(name__in=location_names).values_list('pk', 'name')
-
-    process_summary['sub_locations'] = sub_locations
     return process_summary
 
 
@@ -711,7 +505,7 @@ def generate_rejected_ballot_stats(form, queryset, location_root=None,
     ballot_stats = {'regional_stats': {}, 'group_stats': []}
 
     # calculate regional stats
-    data_frame, _, _ = get_data_records(form, queryset, location_root, tags)
+    data_frame = get_data_records(form, queryset, location_root, tags)
 
     if data_frame.empty:
         return ballot_stats
@@ -761,5 +555,5 @@ def generate_rejected_ballot_stats(form, queryset, location_root=None,
                     'rejected': (local_rejection_count, local_rejection_percentage)}})
 
             ballot_stats['group_stats'].append({location_type: group_stats})
-    
+
     return ballot_stats

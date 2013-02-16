@@ -88,9 +88,13 @@ class SubmissionProcessAnalysisView(View, TemplateResponseMixin):
         else:
             self.location = Location.root()
         if 'tag' in kwargs:
+            self.template_name = 'core/checklist_summary_breakdown.html'
             self.tags = [kwargs['tag']]
+            self.display_tag = kwargs['tag']
+            self.grouped = True
         else:
             self.tags = settings.PROCESS_QUESTIONS_TAGS
+            self.grouped = False
         return super(SubmissionProcessAnalysisView, self).dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
@@ -99,7 +103,8 @@ class SubmissionProcessAnalysisView(View, TemplateResponseMixin):
         context['filter_form'] = self.filter_set.form
         context['form'] = self.form
         context['location'] = self.location
-        context['process_summary'] = generate_process_data(self.form, self.filter_set.qs, self.location, grouped=False, tags=self.tags)
+        context['display_tag'] = self.display_tag if self.grouped else None
+        context['process_summary'] = generate_process_data(self.form, self.filter_set.qs, self.location, grouped=self.grouped, tags=self.tags)
         return context
 
     def get(self, request, *args, **kwargs):

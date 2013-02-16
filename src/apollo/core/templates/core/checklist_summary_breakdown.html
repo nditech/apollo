@@ -3,133 +3,83 @@
 {% block content %}
 <div class="row">
 	<div class="span8">
-		<ul class="breadcrumb">
-		  <li><a href="#">Zimbabwe</a> <span class="divider">/</span></li>
-		  <li><a href="#">Bulawayo</a></li>
-		</ul>
-		<ul class="nav nav-pills">
-		  <li><a href="#">Bulawayo Municipality</a></li>
-		  <li><a href="#">Emganwini</a></li>
-		  <li><a href="#">Gwabalanda</a></li>
-		  <li><a href="#">Khumalo</a></li>
-		  <li><a href="#">Mabutweni</a></li>
-		  <li><a href="#">Masotsha Ndiovu</a></li>
-		  <li><a href="#">Mzilikazi</a></li>
-		</ul>
+		{% analysis_breadcrumb_navigation form location display_tag %}
+		{% analysis_location_navigation form location display_tag %}
 	</div>
 	<div class="span4">
 		<form class="form-horizontal pull-right" action="" method="post" accept-charset="utf-8">
-          <select class="">
-	          <option disabled selected style='display:none;'>Sample</option>
-	          <option>All</option>
-		  </select> 
+          {% csrf_token %}
+          {{ filter_form.sample }}
           <button class="btn btn-warning" style="margin-left:1em" type="submit"><i class="icon-search icon-white"></i> Filter</button>
-    </form>
+        </form>
 	</div>
 </div>
 <div class="row">
 	<div class="span12">
 		<div class="tabbable"> <!-- Only required for left/right tabs -->
 		  <ul class="nav nav-tabs">
-		    <li class="active"><a href="#tab1" data-toggle="tab">Table</a></li>
-		    <li><a href="#tab2" data-toggle="tab">Charts</a></li>
+		    <li class="active"><a href="#table" data-toggle="tab">Table</a></li>
+		    <li><a href="#charts" data-toggle="tab">Charts</a></li>
 		  </ul>
 		  <div class="tab-content">
-		    <div class="tab-pane active" id="tab1">
-		      <div class="row">
-				<div class="span12">
-					<h5>AA. Were any election officials present upon arrival?</h5>
-					<table  id="mytable" class="table table-bordered">
-						<thead class="header">
-							<tr>
-								<td bgcolor="#eeeeee"></td>
-								<td width="100" bgcolor="#eeeeee"></td>
-								<td width="100" bgcolor="#eeeeee">Yes</td>
-								<td width="100" bgcolor="#eeeeee">No</td>
-						
-								<td width="80" bgcolor="#eeeeee">Reported</td>
-								<td width="80" bgcolor="#eeeeee">Missing</td>
-							</tr>
-						</thead>
+		    <div class="tab-pane active" id="table">
+		    	{% for tag, question, tag_stats in process_summary.top %}
+				<div class="row">
+					<div class="span12">
+					<table id="mytable" class="table table-bordered table-striped">
 						<tr>
-							<td rowspan="3">Bulawayo</td>
-							<td align="right">All</td>
-							<td align="right">66.7% (100)</td>
-							<td align="right">33.3% (50)</td>
-							<td align="right">75.0% (150)</td>
-							<td align="right">25.0% (50)</td>
+							<td colspan="{% if tag_stats.type == 'numeric' %}4{% else %}{{ tag_stats.labels|length|add:'3' }}{% endif %}"><strong>{{ tag }}</strong> · {{ question }}</td>
 						</tr>
 						<tr>
-							<td align="right">Urban</td>
-							<td align="right">88.9% (40)</td>
-							<td align="right">11.1% (5)</td>
-							<td align="right">90.0% (45)</td>
-							<td align="right">10.0% (5)</td>
+							<th></th>
+							{% if tag_stats.type == 'numeric' %}
+							<th width="80">Mean</th>
+							{% else %}
+							{% for label in tag_stats.labels %}
+							<th>{{ label }}</th>
+							{% endfor %}
+							{% endif %}
+							<th width="80">Reported</th>
+							<th width="80">Missing</th>
 						</tr>
 						<tr>
-							<td align="right">Rural</td>
-							<td align="right">57.1% (60)</td>
-							<td align="right">42.9% (45)</td>
-							<td align="right">70.0% (105)</td>
-							<td align="right">30.0% (45)</td>
+							<td><strong>{{ location }}</strong></td>
+							{% if tag_stats.type == 'numeric' %}
+							<td align="right">{{ tag_stats.mean|floatformat:0 }}</td>
+							{% else %}
+							{% for value, percentage in tag_stats.histogram %}
+							<td>{{ percentage|floatformat:0 }}% ({{ value }})</td>
+							{% endfor %}
+							{% endif %}
+							<td align="right">{{ tag_stats.percent_reported|floatformat:0 }}% ({{ tag_stats.reported }})</td>
+							<td align="right">{{ tag_stats.percent_missing|floatformat:0 }}% ({{ tag_stats.missing }})</td>
 						</tr>
-						<tr bgcolor="#eeeeee"><th></th><td colspan="5"></td></tr>
+						{% for location_type, location_type_summary in process_summary.groups %}
+						{% for tag, question, tag_stats in location_type_summary %}
+						{% for location, location_stats in tag_stats.locations.items %}
 						<tr>
-							<td colspan="2">Bulawayo Municipality</td>
-							<td align="right">66.7% (100)</td>
-							<td align="right">33.3% (50)</td>
-							<td align="right">75.0% (150)</td>
-							<td align="right">25.0% (50)</td>
+							<td><span style="margin-left:2em">{{ location }}</span></td>
+							{% if tag_stats.type == 'numeric' %}
+							<td align="right">{{ location_stats.mean|floatformat:0 }}</td>
+							{% else %}
+							{% for value, percentage in location_stats.histogram %}
+							<td>{{ percentage|floatformat:0 }}% ({{ value }})</td>
+							{% endfor %}
+							{% endif %}
+							<td align="right">{{ location_stats.percent_reported|floatformat:0 }}% ({{ location_stats.reported }})</td>
+							<td align="right">{{ location_stats.percent_missing|floatformat:0 }}% ({{ location_stats.missing }})</td>
 						</tr>
-						<tr>
-							<td colspan="2">Emganwini</td>
-							<td align="right">66.7% (100)</td>
-							<td align="right">33.3% (50)</td>
-							<td align="right">75.0% (150)</td>
-							<td align="right">25.0% (50)</td>
-						</tr>
-						<tr>
-							<td colspan="2">Gwabalanda</td>
-							<td align="right">66.7% (100)</td>
-							<td align="right">33.3% (50)</td>
-							<td align="right">75.0% (150)</td>
-							<td align="right">25.0% (50)</td>
-						</tr>
-						<tr>
-							<td colspan="2">Khumalo</td>
-							<td align="right">66.7% (100)</td>
-							<td align="right">33.3% (50)</td>
-							<td align="right">75.0% (150)</td>
-							<td align="right">25.0% (50)</td>
-						</tr>
-						<tr>
-							<td colspan="2">Mabutweni</td>
-							<td align="right">66.7% (100)</td>
-							<td align="right">33.3% (50)</td>
-							<td align="right">75.0% (150)</td>
-							<td align="right">25.0% (50)</td>
-						</tr>
-						<tr>
-							<td colspan="2">Masotsha Ndiovu</td>
-							<td align="right">66.7% (100)</td>
-							<td align="right">33.3% (50)</td>
-							<td align="right">75.0% (150)</td>
-							<td align="right">25.0% (50)</td>
-						</tr>
-						<tr>
-							<td colspan="2">Mzilikazi</td>
-							<td align="right">66.7% (100)</td>
-							<td align="right">33.3% (50)</td>
-							<td align="right">75.0% (150)</td>
-							<td align="right">25.0% (50)</td>
-						</tr>
+						{% endfor %}
+						{% endfor %}
+						{% endfor %}
 					</table>	
 				</div>
+				{% endfor %}
 			  </div>
 		    </div>
 
 		    <!-- Charts Section-->
-		    <div class="tab-pane" id="tab2">
+		    <div class="tab-pane" id="charts">
 		      <table class="table table-bordered">
 			    <thead>
 			        <tr>
@@ -146,9 +96,9 @@
 						        var data_toplevel= [[.3], [.7]];
 								var data_sublevel= [[.5, .1, .2, .6, .8, .3, .4],
 								             		[.5, .9, .8, .4, .2, .7, .6]];
-								height = 300;
+								height = 50 * data_sublevel[0].length;
 								width = 700;
-								bar_height = 15;
+								bar_height = 25;
 								colors = ["#5F98FF","#95C8FF"];
 								labels_question = ["No", "Yes"];
 								labels_top =["Bulawayo"];
