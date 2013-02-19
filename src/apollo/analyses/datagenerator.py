@@ -164,7 +164,7 @@ def generate_numeric_field_stats(tag, dataset):
     return field_stats
 
 
-def generate_single_choice_field_stats(tag, dataset, field_options):
+def generate_single_choice_field_stats(tag, dataset, options, labels=None):
     '''Returns statistics (frequency histogram, number/percentage of actual
     reports, number/percentage of missing reports) for a specified form field
     tag. The associated form field takes one value of several options.
@@ -179,9 +179,6 @@ def generate_single_choice_field_stats(tag, dataset, field_options):
     - a dictionary (or nested dictionary, if data set is grouped) with the
     above statistics, as well as the labels for each of the options. Both the
     histogram and the labels are generated as lists, so they are ordered.'''
-
-    options = [x.option for x in field_options]
-    labels = [x.description for x in field_options]
 
     field_stats = {'type': 'single-choice', 'labels': labels}
 
@@ -203,6 +200,7 @@ def generate_single_choice_field_stats(tag, dataset, field_options):
             location_stats[group_name] = {}
             location_stats[group_name]['missing'] = missing
             location_stats[group_name]['reported'] = reported
+            location_stats[group_name]['total'] = reported + missing
             location_stats[group_name]['percent_reported'] = percent_reported
             location_stats[group_name]['percent_missing'] = percent_missing
 
@@ -228,14 +226,15 @@ def generate_single_choice_field_stats(tag, dataset, field_options):
 
         stats = {'histogram': histogram2, 'reported': reported,
                  'missing': missing, 'percent_reported': percent_reported,
-                 'percent_missing': percent_missing}
+                 'percent_missing': percent_missing,
+                 'total': reported + missing}
 
         field_stats.update(stats)
 
     return field_stats
 
 
-def generate_mutiple_choice_field_stats(tag, dataset, field_options):
+def generate_mutiple_choice_field_stats(tag, dataset, options, labels=None):
     '''Returns statistics for a form field which can take more than one
     option of several. Statistics returned are frequency histogram,
     number/percentage of actual reports, number/percentage of missing
@@ -250,9 +249,6 @@ def generate_mutiple_choice_field_stats(tag, dataset, field_options):
     - a dictionary (nested in the case of dataset being a group series)
     of the relevant statistics.'''
     field_stats = {'type': 'multiple-choice'}
-
-    options = [x.option for x in field_options]
-    labels = [x.description for x in field_options]
 
     if hasattr(dataset, 'groups'):
         group_names = dataset.groups.keys()
@@ -310,11 +306,14 @@ def generate_field_stats(field, dataset):
     ''' In order to simplify the choice on what analysis to perform
     this method will check a few conditions and return the appropriate
     analysis for the field'''
-    if field.options.exists():
+    options = field.options.all().values_list('option', flat=True)
+    labels = field.options.all().values_list('description', flat=True)
+
+    if options:
         if field.allow_multiple:
-            return generate_mutiple_choice_field_stats(field.tag, dataset, field.options.all())
+            return generate_mutiple_choice_field_stats(field.tag, dataset, options=options, labels=labels)
         else:
-            return generate_single_choice_field_stats(field.tag, dataset, field.options.all())
+            return generate_single_choice_field_stats(field.tag, dataset, options=options, labels=labels)
     else:
         return generate_numeric_field_stats(field.tag, dataset)
 
@@ -396,26 +395,6 @@ def generate_process_data(form, qs, location_root=None, grouped=True, tags=None)
 
             for form_field in filter(lambda field: field.tag in tags, form_fields):
                 field_stats = generate_field_stats(form_field, data_group)
-                '''
-                regional_stats = {}
-
-                reported = data_frame[form_field.tag].count()
-                total = data_frame[form_field.tag].size
-                missing = total - reported
-                percent_reported = percent_of(reported, total)
-                percent_missing = percent_of(missing, total)
-
-                regional_stats['reported'] = reported
-                regional_stats['missing'] = missing
-                regional_stats['percent_reported'] = percent_reported
-                regional_stats['percent_missing'] = percent_missing
-
-                regional_stats['mean'] = data_frame[form_field.tag].mean()
-                regional_stats['std'] = np.std(data_frame[form_field.tag])
-
-                if regional_stats:
-                    field_stats['regional'] = regional_stats
-                '''
 
                 location_type_summary.append((form_field.tag, form_field.description, field_stats))
 
