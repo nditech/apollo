@@ -80,273 +80,401 @@
 
 		    <!-- Charts Section-->
 		    <div class="tab-pane" id="charts">
-		      <table class="table table-bordered">
-			    <thead>
+{% for tag, question, tag_stats in process_summary.top %}
+		      <table class="table table-bordered table-striped">
 			        <tr>
-			            <td bgcolor="#eeeeee" colspan="2">AC</td>
+			            <td colspan="2"><strong>{{ tag }}</strong> · {{ question }}</td>
 			        </tr>
-			    </thead>
-			    <tbody>
-			    	<tr>
-			            <td colspan="2">Had any polling officials arrived by 7:30am?</td>
-			        </tr>
-			        <tr>
-			        	<td colspan="2">
-			            	<script type="text/javascript+protovis">
-						        var data_toplevel= [[.3], [.7]];
-								var data_sublevel= [[.5, .1, .2, .6, .8, .3, .4],
-								             		[.5, .9, .8, .4, .2, .7, .6]];
-								height = 50 * data_sublevel[0].length;
-								width = 700;
-								bar_height = 25;
-								colors = ["#5F98FF","#95C8FF"];
-								labels_question = ["No", "Yes"];
-								labels_top =["Bulawayo"];
-								labels_sublevel =["Mzilikazi", "Masotsha Ndiovu", "Mabutweni", "Khumalo", "Gwabalanda", "Emganwini", "Bulawayo Municipality"];
-								label_margin = 4;
-								left_margin = 200;
-
-								var vis=new pv.Panel().width(width).height(height);
-								bar = vis.add(pv.Layout.Stack)
-								    .layers(data_toplevel)
-								    .orient("left")
-								    .left(left_margin)
-								    .top(0)
-								    .x(function() this.index * 35 + height - 25)
-								    .y(function(d) d * 250)
-								    .layer.add(pv.Bar).height(bar_height)
-								    .fillStyle(function() colors[this.parent.index])
-								    .strokeStyle('white')
-								  .anchor("bottom")
-								    .add(pv.Label)
-								    .textBaseline("bottom")
-								    .text(function(d){ return (d*100).toFixed(0) + "%"})
-								    .textMargin(label_margin);
-
-								  bar.anchor("bottom").textAlign("right")
-								  .add(pv.Label)
-						                .data(labels_top)
-						                .left(0)
-						                .font("10pt san-serif")
-						                .textMargin(label_margin);
-
-						           bar1 = bar.add(pv.Layout.Stack)
-									    .layers(data_sublevel)
-									    .orient("left")
-									    .left(0)
-									    .x(function() this.index * 30)
-									    .y(function(d) d * 250)
-									    .bottom(10)
-									    .layer.add(pv.Bar).height(bar_height)
-									    .fillStyle(function() colors[this.parent.index])
-									    .strokeStyle('white')
-									  .anchor("bottom")
-									    .add(pv.Label)
-									    .textBaseline("bottom")
-									    .textMargin(label_margin)
-									    .text(function(d){ return (d*100).toFixed(0) + "%"});
-
-								   bar1.anchor("bottom").textAlign("right")
-								  .add(pv.Label)
-						                .data(labels_sublevel)
-						                .left(0)
-						                .textMargin(label_margin)
-						                .font("10pt san-serif");
-						                
-						           //legends  
-						           vis.add(pv.Dot) 
-							            .data(labels_question) 
-							            .top(function() height/8 + this.index * 18)
-							            .right(150) 
-							            .size(20) 
-							            .strokeStyle(null) 
-							            .fillStyle(pv.colors(colors)) 
-							            .anchor("right").add(pv.Label)
-							            .textMargin(8);
-
-							        vis.add(pv.Rule)
-    								.left(left_margin)
-    								.bottom(0);
-
-						         vis.render();
-						    </script>
-	            
-			            	<script type="text/javascript+protovis">
-						        width = 400,
-						        height = 350,
-						        offset = 10,
-						        r = width/2 - offset;
-						        data = [339, 484];
-						        colors = ["#FF5200","#39e639"];
-						        labels = ["Missing", "Reported"];
-
-						        var pie = new pv.Panel().width(width).height(height);
-						            pie.add(pv.Wedge)
-						            .data(pv.normalize(data))
-						            .outerRadius(70)
-						            .angle(function(d) d * 2 * Math.PI)
-						            .left(height/2 - 25)
-						            .top(100)
-						            .fillStyle(pv.colors(colors).by(function () { return this.index;}))
-						            .anchor("center")
-						            .add(pv.Label)
-						            .textAngle(0)
-						            .text(function(d){ return (d*100).toFixed(0) + "%"});
-						            
-						        //legends   
-						        pie.add(pv.Dot) 
-						            .data(labels) 
-						            .top(function() height/ 4 + this.index * 18)
-						            .right(width/2 - 50) 
-						            .size(20) 
-						            .strokeStyle(null) 
-						            .fillStyle(pv.colors(colors)) 
-						            .anchor("right").add(pv.Label)
-						            .textMargin(8);
-						            
-						        pie.render();
-						    </script>
-			            </td>
-			        </tr>
-			        <tr>
-			        	<td bgcolor="#eeeeee">AD</td>
-			        </tr>
-			        <tr>
-			            <td colspan="2">Were any of the following materials missing?</td>
-			        </tr>
+{% for tag, question, tag_stats in process_summary.top %}
+	{% if tag_stats.type == 'single-choice' %}
 			        <tr>
 			        	<td>
-			            	<script type="text/javascript+protovis">
-			            		var setup = {Ballot_box: 2.1, Ballot_paper: 2.3, Voters_roll: 3.1, Zec_stamp: 2.7, Indellible_ink: 2.5};
-			            		var data = [[setup.Ballot_box], [setup.Ballot_paper], [setup.Voters_roll], [setup.Zec_stamp], [setup.Indellible_ink]];
-			            		var	labels = ["Ballot box", "Ballot paper", "Voters roll", "Zec stamp", "Indellible ink"];
-			            		var	fill = [ '#FC6C00','#FFBD70',"#E1E4CB",'#A6DAD8',"#65D1E8"];
-			            		var labels_top = ["Bulawayo"];
+<script type="text/javascript+protovis">
+	var legend = [{% for label in tag_stats.labels %}"{{ label }}",{% endfor %}];
+	var data = [{% for value, percentage in tag_stats.histogram %}[{{ percentage }}],{% endfor %}];
+	var labels = ["{{ location }}"];
 
-			            		width = 700;
-			            		height = 100;
-			            		left_margin = 200;
-			            		bar_height = 15;
+{% for location_type, location_type_summary in process_summary.groups %}
+  {% for tag, question, tag_stats in location_type_summary %}
+    {% for location, location_stats in tag_stats.locations.items %}
+	labels.push("{{ location }}");
+	{% for value, percentage in location_stats.histogram %}data[{{forloop.counter0}}].push({{ percentage }});
+	{% endfor %}
+    {% endfor %}
+  {% endfor %}
+{% endfor %}
 
-							    var vis = new pv.Panel()
-								    .width(width)
-								    .height(height)
-								    .bottom(70);
-								var bar = vis.add(pv.Bar)
-								    .data(data[0])
-								    .left(left_margin)
-									.height(bar_height)
-									.width(function(d) d * 80)
-									.bottom(function() this.index * 35)
-								    .fillStyle(fill[0])
-								    .add(pv.Label)
-								    .add(pv.Bar)
-								    .data(data[1])
-								    .bottom(function() this.index * 35 + bar_height)
-								    .fillStyle(fill[1])
-								    .add(pv.Label)
-								    .add(pv.Bar)
-								    .data(data[2])
-								    .bottom(function() this.index * 35 + bar_height * 2)
-								    .fillStyle(fill[2])
-								    .add(pv.Label)
-								    .add(pv.Bar)
-								    .data(data[3])
-								    .bottom(function() this.index * 35 + bar_height * 3)
-								    .fillStyle(fill[3])
-								    .add(pv.Label)
-								    .add(pv.Bar)
-								    .data(data[4])
-								    .bottom(function() this.index * 35 + bar_height * 4)
-								    .fillStyle(fill[4])
-								    .add(pv.Label);
+	colors = [ '#FC6C00','#FFBD70',"#E1E4CB",'#A6DAD8',"#65D1E8"];
 
-								 bar.anchor("bottom").textAlign("right")
-							  		.add(pv.Label)
-					                .data(labels_top)
-					                .left(left_margin - 2)
-					                .font("bold 10pt san-serif")
-					                .textBaseline('top');
+	bar_height = 25,
+	bar_spacing = 15,
+	bar_width = 300;
+	
+	left_margin = 200;
 
-					           //legends  
-							   bar.add(pv.Dot) 
-						            .data(labels) 
-						            .bottom(function() 5 + this.index * 15)
-						            .left(left_margin * 2 + 150) 
-						            .size(20) 
-						            .strokeStyle(null) 
-						            .fillStyle(pv.colors(fill)) 
-						            .anchor("right").add(pv.Label);
+	height = (bar_height + bar_spacing) * data[0].length + (bar_height * 1.5);
+	width = left_margin + bar_width + 300;
+	
+	
+	label_margin = (bar_height - 10) / 2;
+	
 
-							   vis.add(pv.Rule)
-								  .left(left_margin - 1).height(height);
+	var vis = new pv.Panel().width(width).height(height);
+	bar = vis.add(pv.Layout.Stack)
+		.layers(data)
+		.orient("left")
+		.left(left_margin)
+		.top(height)
+		.x(function() height - ((this.index ? this.index + 1.5 : 1) * (bar_height + bar_spacing)))
+		.y(function(d) d / 100 * bar_width)
+		.layer.add(pv.Bar).height(bar_height)
+		.fillStyle(function() colors[this.parent.index])
+		.anchor("bottom")
+	    .add(pv.Label)
+			.textBaseline("bottom")
+			.text(function(d){ return (d) ? Math.round(d) + "%" : ""})
+			.textMargin(label_margin)
+			.font('9pt sans-serif');
 
-							  bar.render();
-							  
-							</script>
+	vis.add(pv.Label)
+		.data(labels)
+		.left(left_margin)
+		.textAlign('right')
+		.top(function() ((this.index ? this.index + 1.5 : 1) * (bar_height + bar_spacing)))
+		.textMargin(label_margin)
+		.font('10pt sans-serif');
 
-			            	<script type="text/javascript+protovis">
-			            		var ballot_box = [1.4, 1.6, 1.2, 1.5, .7, 2.2, 1.5];
-			            		var	ballot_paper = [.5, 1.3, .9, 1.4, 1.5, 2.6, 2.3];
-			            		var voters_roll = [2, 1.5, 1.2, 2.5, 1.7, 1.2, 1.8];
-			            		var	zec_stamp = [.7, 1, .8, 1.1, 1.3, 2.3, 2.1];
-			            		var indellible_ink = [1, 1.4, 1.7, 1.3, .9, 2.2, 1.2];
-			            		var label = ["Mzilikazi", "Masotsha Ndiovu", "Mabutweni", "Khumalo", "Gwabalanda", "Emganwini", "Bulawayo Municipality"];
-			            		var	colors = [ '#FC6C00','#FFBD70',"#E1E4CB",'#A6DAD8',"#65D1E8"];
-			            		width = 700;
-			            		height = 700;
-			            		left_margin = 200;
-			            		bar_height = 15;
+	// Legends  
+	vis.add(pv.Dot) 
+		.data(legend) 
+		.top(function() (height - (20 * legend.length)) / 2 + (this.index * 20))
+		.left(left_margin + bar_width + 50) 
+		.size(40) 
+		.strokeStyle(null) 
+		.fillStyle(pv.colors(colors)) 
+		.anchor("right").add(pv.Label)
+		.textMargin(8)
+		.font('10pt sans-serif');
 
-							    var vis = new pv.Panel()
-								    .width(width)
-								    .height(height)
-								var bar = vis.add(pv.Bar)
-								    .data(ballot_box)
-								    .left(left_margin)
-									.height(bar_height)
-									.width(function(d) d * 80)
-									.bottom(function() this.index * 100)
-								    .fillStyle(colors[0])
-								    .add(pv.Label)
-								    .add(pv.Bar)
-								    .data(ballot_paper)
-								    .bottom(function() this.index * 100 + bar_height)
-								    .fillStyle(colors[1])
-								    .add(pv.Label)
-								    .add(pv.Bar)
-								    .data(voters_roll)
-								    .bottom(function() this.index * 100 + bar_height * 2)
-								    .fillStyle(colors[2])
-								    .add(pv.Label)
-								    .add(pv.Bar)
-								    .data(zec_stamp)
-								    .bottom(function() this.index * 100 + bar_height * 3)
-								    .fillStyle(colors[3])
-								    .add(pv.Label)
-								    .add(pv.Bar)
-								    .data(indellible_ink)
-								    .bottom(function() this.index * 100 + bar_height * 4)
-								    .fillStyle(colors[4])
-								    .add(pv.Label);
+	vis.render();
+</script>
+	</td>
+	<td>            
+<script type="text/javascript+protovis">
+    width = 300,
+    top_margin = 20,
+    height = 350,
+    offset = 10,
+    radius = 100,
+    diameter = radius * 2;
+    data = [{{ tag_stats.percent_missing|floatformat:0 }}/100, {{ tag_stats.percent_reported|floatformat:0 }}/100];
+    colors = ["#FF5200","#39e639"];
+    labels = ["Missing", "Reported"];
 
-				              bar.anchor("bottom").textAlign("right")
-							  		.add(pv.Label)
-					                .data(label)
-					                .left(left_margin - 2)
-					                .font("bold 10pt san-serif")
-					                .textBaseline('top');
+    var pie = new pv.Panel().width(width).height(height);
+        pie.add(pv.Wedge)
+        .data(pv.normalize(data))
+        .outerRadius(radius)
+        .angle(function(d) d * 2 * Math.PI)
+        .left(width / 2)
+        .top(radius + top_margin)
+        .fillStyle(pv.colors(colors).by(function () { return this.index;}))
+        .anchor("center")
+        .add(pv.Label)
+        .textAngle(0)
+        .text(function(d){ return (d) ? (d*100).toFixed(0) + "%": ""})
+        .font('20pt sans-serif');
+        
+    //legends   
+    pie.add(pv.Dot) 
+        .data(labels) 
+        .top(function() diameter + (top_margin * 4) + (this.index * 30))
+        .left(width / 2 - radius / 4) 
+        .size(80) 
+        .strokeStyle(null) 
+        .fillStyle(pv.colors(colors)) 
+        .anchor("right").add(pv.Label)
+        .textMargin(8)
+        .font('12pt sans-serif');
+        
+    pie.render();
+</script>
+			            </td>
+			        </tr>
+	{% elif tag_stats.type == 'multiple-choice' %}
+			        <tr>
+			        	<td>
+<script type="text/javascript+protovis">
+	var data = [[{% for value, percentage in tag_stats.histogram %}{{ percentage }},{% endfor %}]];
+	var labels = ["{{ location }}"];
+	var legend = [{% for label in tag_stats.labels %}"{{ label|safe }}",{% endfor %}];
 
-					          vis.add(pv.Rule)
-								 .left(left_margin - 1).height(height);
+	{% for location_type, location_type_summary in process_summary.groups %}
+	  {% for tag, question, tag_stats in location_type_summary %}
+	    {% for location, location_stats in tag_stats.locations.items %}
+		labels.push("{{ location }}");
+		data.push([{% for value, percentage in location_stats.histogram %}{{ percentage }},{% endfor %}]);
+	    {% endfor %}
+	  {% endfor %}
+	{% endfor %}
 
-							  bar.render();
-							  
-							</script>
-			            </td>       
+	var colors = ['#FC6C00','#FFBD70','#E1E4CB','#A6DAD8','#65D1E8'];
+	
+
+var n = data.length, m = data[0].length;
+
+/* Sizing and scales. */
+var w = 600,
+	bar_width = 300,
+	bar_height = 25,
+	margin_left = 200,
+    h = ((data[0].length * bar_height) + bar_height) * data.length,
+    max_value = pv.max(pv.blend(data)),
+
+    x = pv.Scale.linear(0, 100).range(0, bar_width),
+    x_rule = pv.Scale.linear(0, 100).range(margin_left, bar_width + margin_left),
+    y = pv.Scale.ordinal(pv.range(n)).splitBanded(0, h, 4/5);
+
+/* The root panel. */
+var vis = new pv.Panel()
+    .width(w+margin_left)
+    .bottom(bar_height)
+    .height(h);
+
+/* The bars. */
+var bar = vis.add(pv.Panel)
+    .data(data)
+    .left(margin_left)
+    .top(function() y(this.index))
+    .height(y.range().band)
+  .add(pv.Bar)
+    .data(function(d) d)
+    .top(function() this.index * y.range().band / m)
+    .height(y.range().band / m)
+    .left(0)
+    .width(x)
+    .strokeStyle('white')
+    .fillStyle(pv.colors(colors).by(pv.index));
+
+/* The value label. */
+bar.anchor(function (d) d < 13 ? "left" : "right").add(pv.Label)
+	.textMargin(5)
+    .text(function(d) d.toFixed(0) + '%');
+
+/* The variable label. */
+bar.parent.anchor("left").add(pv.Label)
+    .textAlign("right")
+    .textMargin(5)
+    .font('10pt sans-serif')
+    .text(function () labels[this.parent.index]);
+
+/* legend */
+bar.parent
+	.add(pv.Dot) 
+    .data(legend)
+    .left(bar_width + 50)
+    .top(function() this.index * 20 + (((data[0].length * bar_height) - (20 * data[0].length))) / 2)
+    .size(20)
+    .strokeStyle(null) 
+    .fillStyle(pv.colors(colors)) 
+    .anchor("right").add(pv.Label);
+
+/* X-axis ticks. */
+vis.add(pv.Rule)
+    .data(x_rule.ticks(5))
+    .left(x_rule)
+    .strokeStyle(function(d) d ? "rgba(255,255,255,.3)" : "null")
+  .add(pv.Rule)
+    .bottom(0)
+    .height(5)
+    .strokeStyle("#000")
+  .anchor("bottom").add(pv.Label)
+    .text(function (d) x_rule.tickFormat(d) + '%');
+
+vis.render();
+
+</script>
+			            </td>
+			            </td>
+	<td>            
+<script type="text/javascript+protovis">
+    width = 300,
+    top_margin = 20,
+    height = 350,
+    offset = 10,
+    radius = 100,
+    diameter = radius * 2;
+    data = [{{ tag_stats.percent_missing|floatformat:0 }}/100, {{ tag_stats.percent_reported|floatformat:0 }}/100];
+    colors = ["#FF5200","#39e639"];
+    labels = ["Missing", "Reported"];
+
+    var pie = new pv.Panel().width(width).height(height);
+        pie.add(pv.Wedge)
+        .data(pv.normalize(data))
+        .outerRadius(radius)
+        .angle(function(d) d * 2 * Math.PI)
+        .left(width / 2)
+        .top(radius + top_margin)
+        .fillStyle(pv.colors(colors).by(function () { return this.index;}))
+        .anchor("center")
+        .add(pv.Label)
+        .textAngle(0)
+        .text(function(d){ return (d) ? (d*100).toFixed(0) + "%": ""})
+        .font('20pt sans-serif');
+        
+    //legends   
+    pie.add(pv.Dot) 
+        .data(labels) 
+        .top(function() diameter + (top_margin * 4) + (this.index * 30))
+        .left(width / 2 - radius / 4) 
+        .size(80) 
+        .strokeStyle(null) 
+        .fillStyle(pv.colors(colors)) 
+        .anchor("right").add(pv.Label)
+        .textMargin(8)
+        .font('12pt sans-serif');
+        
+    pie.render();
+</script>
+			            </td>
 				    </tr>
-			    </tbody>
-			  </table>​
+	{% elif tag_stats.type == 'numeric' %}
+			        <tr>
+			        	<td>
+<script type="text/javascript+protovis">
+	var data = [{{ tag_stats.mean|floatformat:0 }}, 0];
+	var labels = ["{{ location }}", ""];
+	var legend = ['Mean']
+
+	{% for location_type, location_type_summary in process_summary.groups %}
+	  {% for tag, question, tag_stats in location_type_summary %}
+	    {% for location, location_stats in tag_stats.locations.items %}
+		labels.push("{{ location }}");
+		data.push({{ location_stats.mean|floatformat:0 }})
+	    {% endfor %}
+	  {% endfor %}
+	{% endfor %}
+
+	var colors = ['#FC6C00'];
+	
+
+var n = data.length, m = data.length;
+
+/* Sizing and scales. */
+var w = 600,
+	bar_width = 300,
+	bar_height = 25,
+	margin_left = 200,
+    h = n * bar_height,
+    max_value = pv.max(data),
+
+    x = pv.Scale.linear(0, max_value).range(0, bar_width),
+    x_rule = pv.Scale.linear(0, max_value).range(margin_left, bar_width + margin_left),
+    y = pv.Scale.ordinal(pv.range(n)).splitBanded(0, h, 1);
+
+/* The root panel. */
+var vis = new pv.Panel()
+    .width(w+margin_left)
+    .top(bar_height)
+    .bottom(bar_height)
+    .height(h + bar_height);
+
+/* The bars. */
+var bar = vis.add(pv.Bar)
+	.data(data)
+  	.left(margin_left)
+    .top(function() this.index * y.range().band)
+    .height(y.range().band)
+    .width(x)
+    .strokeStyle('white')
+    .fillStyle(pv.colors(colors).by(pv.index));
+
+/* The value label. */
+bar.anchor("right").add(pv.Label)
+	.textMargin(5)
+    .text(function(d) d ? d.toFixed(0) : "");
+
+/* The variable label. */
+bar.anchor("left").add(pv.Label)
+    .textAlign("right")
+    .textMargin(5)
+    .font('10pt sans-serif')
+    .text(function () labels[this.index]);
+
+/* legend */
+bar.parent
+	.add(pv.Dot) 
+    .data(legend)
+    .left(bar_width + margin_left + 50)
+    .top(function() ((data.length * bar_height) - 20) / 2)
+    .size(20)
+    .strokeStyle(null) 
+    .fillStyle(pv.colors(colors)) 
+    .anchor("right").add(pv.Label);
+
+/* X-axis ticks. */
+vis.add(pv.Rule)
+    .data(x_rule.ticks(5))
+    .left(x_rule)
+    .strokeStyle(function(d) d ? "rgba(255,255,255,.3)" : "null")
+  .add(pv.Rule)
+    .bottom(0)
+    .height(5)
+    .strokeStyle("#000")
+  .anchor("bottom").add(pv.Label)
+    .text(function (d) x_rule.tickFormat(d));
+
+vis.render();
+
+</script>
+			            </td>
+			            </td>
+	<td>            
+<script type="text/javascript+protovis">
+    width = 300,
+    top_margin = 20,
+    height = 350,
+    offset = 10,
+    radius = 100,
+    diameter = radius * 2;
+    data = [{{ tag_stats.percent_missing|floatformat:0 }}/100, {{ tag_stats.percent_reported|floatformat:0 }}/100];
+    colors = ["#FF5200","#39e639"];
+    labels = ["Missing", "Reported"];
+
+    var pie = new pv.Panel().width(width).height(height);
+        pie.add(pv.Wedge)
+        .data(pv.normalize(data))
+        .outerRadius(radius)
+        .angle(function(d) d * 2 * Math.PI)
+        .left(width / 2)
+        .top(radius + top_margin)
+        .fillStyle(pv.colors(colors).by(function () { return this.index;}))
+        .anchor("center")
+        .add(pv.Label)
+        .textAngle(0)
+        .text(function(d){ return (d) ? (d*100).toFixed(0) + "%": ""})
+        .font('20pt sans-serif');
+        
+    //legends   
+    pie.add(pv.Dot) 
+        .data(labels) 
+        .top(function() diameter + (top_margin * 4) + (this.index * 30))
+        .left(width / 2 - radius / 4) 
+        .size(80) 
+        .strokeStyle(null) 
+        .fillStyle(pv.colors(colors)) 
+        .anchor("right").add(pv.Label)
+        .textMargin(8)
+        .font('12pt sans-serif');
+        
+    pie.render();
+</script>
+			            </td>
+				    </tr>
+	{% endif %}
+{% endfor %}
+			</table>
+{% endfor %}
 		    </div>
 		  </div>
 		</div>
