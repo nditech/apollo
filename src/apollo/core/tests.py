@@ -18,10 +18,10 @@ class CoreTest(TestCase):
     def setUp(self):
         form1 = Form.objects.create(name='Form1',
             trigger=r'^PSC\d{6}(?P<fields>([A-Z]+\d+)+)@?.*$',
-            field_pattern='(?P<key>[A-Z]+)(?P<value>\d+)')
+            field_pattern='(?P<key>[A-Z]+)(?P<value>\d+)', type='CHECKLIST')
         form2 = Form.objects.create(name='Form2',
             trigger='#(?P<fields>([A-Z]{1})+)',
-            field_pattern=r'(?P<key>[A-Z]{1})')
+            field_pattern=r'(?P<key>[A-Z]{1})', type='INCIDENT')
 
         self.test_form = form1
 
@@ -88,18 +88,18 @@ class CoreTest(TestCase):
         form_class = generate_submission_form(self.test_form)
         t_form = form_class()
 
-        self.assertEqual(len(t_form.fields), 6)
-        self.assertTrue('AA' in t_form.fields)
-        self.assertTrue('AB' in t_form.fields)
-        self.assertTrue('BC' in t_form.fields)
-        self.assertEqual(len(t_form.fields['BC'].choices), 2)
+        self.assertEqual(len(t_form.fields), 8)
+        self.assertTrue('data__AA' in t_form.fields)
+        self.assertTrue('data__AB' in t_form.fields)
+        self.assertTrue('data__BC' in t_form.fields)
+        self.assertEqual(len(t_form.fields['data__BC'].choices), 2)
         self.assertEqual(len(t_form.fieldsets), 2)
 
     def test_form_validator(self):
         '''Tests that the generated form validates properly'''
         form_class = generate_submission_form(self.test_form)
         # should be invalid when bound because BB is limited to 0-15
-        data = {'AA': '1', 'AB': '2', 'AC': '3', 'BB': '27', 'BC': '5'}
+        data = {'data__AA': '1', 'data__AB': '2', 'data__AC': '3', 'data__BB': '27', 'data__BC': '5'}
         t_form = form_class(data)
 
         self.assertEqual(t_form.is_valid(), False)
