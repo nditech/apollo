@@ -18,7 +18,7 @@ from .forms import ContactModelForm, LocationModelForm, generate_submission_form
 from .helpers import *
 from .models import *
 from .filters import *
-from analyses.datagenerator import generate_process_data
+from analyses.datagenerator import generate_process_data, generate_incidents_data
 
 COMPLETION_STATUS = (
     (0, 'Complete'),
@@ -95,6 +95,15 @@ class SubmissionProcessAnalysisView(View, TemplateResponseMixin):
         else:
             self.tags = settings.PROCESS_QUESTIONS_TAGS
             self.grouped = False
+
+        # critical incidents are processed differently
+        if self.form.type == 'INCIDENT':
+            self.grouped = True
+            self.template_name = 'core/critical_incidents_summary.html'
+            self.initial_qs = Submission.objects.filter(form=self.form).is_within(self.location)
+        else:
+            self.initial_qs = Submission.objects.filter(form=self.form, observer=None).is_within(self.location)
+
         return super(SubmissionProcessAnalysisView, self).dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
@@ -103,18 +112,21 @@ class SubmissionProcessAnalysisView(View, TemplateResponseMixin):
         context['filter_form'] = self.filter_set.form
         context['form'] = self.form
         context['location'] = self.location
-        context['display_tag'] = self.display_tag if self.grouped else None
-        context['process_summary'] = generate_process_data(self.form, self.filter_set.qs, self.location, grouped=self.grouped, tags=self.tags)
+        context['display_tag'] = self.display_tag if hasattr(self, 'display_tag') else None
+        if self.form.type == 'INCIDENT':
+            context['incidents_summary'] = generate_incidents_data(self.form, self.filter_set.qs, self.location, grouped=self.grouped)
+        else:
+            context['process_summary'] = generate_process_data(self.form, self.filter_set.qs, self.location, grouped=self.grouped, tags=self.tags)
         return context
 
     def get(self, request, *args, **kwargs):
         initial_filter = request.session.get('analysis_filter', None)
-        self.filter_set = self.analysis_filter(initial_filter, queryset=Submission.objects.filter(observer=None).is_within(self.location))
+        self.filter_set = self.analysis_filter(initial_filter, queryset=self.initial_qs)
         context = self.get_context_data(**kwargs)
         return self.render_to_response(context)
 
     def post(self, request, *args, **kwargs):
-        self.filter_set = self.analysis_filter(request.POST, queryset=Submission.objects.filter(observer=None).is_within(self.location))
+        self.filter_set = self.analysis_filter(request.POST, queryset=self.initial_qs)
         request.session['analysis_filter'] = self.filter_set.form.data
         context = self.get_context_data(**kwargs)
         return self.render_to_response(context)

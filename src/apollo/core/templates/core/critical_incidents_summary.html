@@ -2,273 +2,181 @@
 {% load apollo %}
 {% block content %}
 <div class="row">
+	<div class="span8">
+		{% analysis_breadcrumb_navigation form location %}
+		{% analysis_location_navigation form location %}
+  	</div>
+  	<div class="span4">
+        <form class="form-horizontal pull-right" action="" method="post" accept-charset="utf-8">
+          {% csrf_token %}
+          {{ filter_form.sample }}
+          <button class="btn btn-warning" style="margin-left:1em" type="submit"><i class="icon-search icon-white"></i> Filter</button>
+        </form>
+  	</div>
+ </div>
+ <div class="row">
 	<div class="span12">
-		<div class="tabbable"> <!-- Only required for left/right tabs -->
-			  <ul class="nav nav-tabs">
-			    <li class="active"><a href="#tab1" data-toggle="tab">Table</a></li>
-			    <li><a href="#tab2" data-toggle="tab">Charts</a></li>
-			  </ul>
-			  <div class="tab-content">
+		{% if incidents_summary.top %}
+		<div class="tabbable tabs-right"> <!-- Only required for left/right tabs -->
+			<ul class="nav nav-tabs">
+				<li class="active"><a href="#tab1" data-toggle="tab">Table</a></li>
+				<li><a href="#tab2" data-toggle="tab">Charts</a></li>
+			</ul>
+			<div class="tab-content">
 			    <div class="tab-pane active" id="tab1">
-			    	<div class="row">
-					  <div class="span8">
-					      <ul class="breadcrumb">
-							  <li><a href="#">Zimbabwe</a></li>
-						  </ul>
-						  <ul class="nav nav-pills">
-							  <li><a href="#">Bulawayo</a></li>
-							  <li><a href="#">Harare</a></li>
-							  <li><a href="#">Mashonaland Central</a></li>
-							  <li><a href="#">Mashonaland East</a></li>
-							  <li><a href="#">Mashonaland West</a></li>
-							  <li><a href="#">Masvingo</a></li>
-							  <li><a href="#">Matabeleland North</a></li>
-							  <li><a href="#">Matabeleland South</a></li>
-							  <li><a href="#">Midlands</a></li>
-							</ul>
-					  </div>
-					  <div class="span4">
-					      <form class="form-horizontal pull-right" action="" method="post" accept-charset="utf-8">
-					          <button class="btn btn-warning" style="margin-left:1em" type="submit"><i class="icon-search icon-white"></i> Filter</button>
-					    </form>
-					  </div>
-					</div>
-			    	<div class="row">
-						<div class="span12">
-							<table class="table table-bordered">
-								<tr bgcolor="#eeeeee">
-									<td width="250">Location</td>
-									<td width="100">N</td>
-									<td width="100">A</td>
-									<td width="100">B</td>
-									<td width="100">C</td>
-									<td width="100">D</td>
-									<td width="100">E</td>
-									<td width="100">F</td>
-									<td width="100">G</td>
-									<td width="100">H</td>
-									<td width="100">I</td>
-									<td width="100">J</td>
-									<td width="100">K</td>
-									<td width="100">L</td>
-								</tr>
-								<tr>
-									<td>Zimbabwe</td>
-									<td>1000</td>
-									<td>30% (300)</td>
-									<td>20% (200)</td>
-									<td>50% (500)</td>
-									<td>85% (850)</td>
-									<td>2% (20)</td>
-									<td>35% (350)</td>
-									<td>15% (150)</td>
-									<td>60% (600)</td>
-									<td>45% (450)</td>
-									<td>73% (730)</td>
-									<td>29% (290)</td>
-									<td>13% (130)</td>
-								</tr>
-								<tr>
-									<td>Bulawayo</td>
-									<td>1000</td>
-									<td>30% (300)</td>
-									<td>20% (200)</td>
-									<td>50% (500)</td>
-									<td>85% (850)</td>
-									<td>2% (20)</td>
-									<td>35% (350)</td>
-									<td>15% (150)</td>
-									<td>60% (600)</td>
-									<td>45% (450)</td>
-									<td>73% (730)</td>
-									<td>29% (290)</td>
-									<td>13% (130)</td>
-								</tr>
-								<tr>
-									<td>Harare</td>
-									<td>1000</td>
-									<td>30% (300)</td>
-									<td>20% (200)</td>
-									<td>50% (500)</td>
-									<td>85% (850)</td>
-									<td>2% (20)</td>
-									<td>35% (350)</td>
-									<td>15% (150)</td>
-									<td>60% (600)</td>
-									<td>45% (450)</td>
-									<td>73% (730)</td>
-									<td>29% (290)</td>
-									<td>13% (130)</td>
-								</tr>
-								<tr>
-									<td>Mashonaland Central</td>
-									<td>1000</td>
-									<td>30% (300)</td>
-									<td>20% (200)</td>
-									<td>50% (500)</td>
-									<td>85% (850)</td>
-									<td>2% (20)</td>
-									<td>35% (350)</td>
-									<td>15% (150)</td>
-									<td>60% (600)</td>
-									<td>45% (450)</td>
-									<td>73% (730)</td>
-									<td>29% (290)</td>
-									<td>13% (130)</td>
-								</tr>
-								<tr>
-									<td>Mashonaland East</td>
-									<td>1000</td>
-									<td>30% (300)</td>
-									<td>20% (200)</td>
-									<td>50% (500)</td>
-									<td>85% (850)</td>
-									<td>2% (20)</td>
-									<td>35% (350)</td>
-									<td>15% (150)</td>
-									<td>60% (600)</td>
-									<td>45% (450)</td>
-									<td>73% (730)</td>
-									<td>29% (290)</td>
-									<td>13% (130)</td>
-								</tr>
-								<tr>
-									<td>Mashonaland West</td>
-									<td>1000</td>
-									<td>30% (300)</td>
-									<td>20% (200)</td>
-									<td>50% (500)</td>
-									<td>85% (850)</td>
-									<td>2% (20)</td>
-									<td>35% (350)</td>
-									<td>15% (150)</td>
-									<td>60% (600)</td>
-									<td>45% (450)</td>
-									<td>73% (730)</td>
-									<td>29% (290)</td>
-									<td>13% (130)</td>
-								</tr>
-								<tr>
-									<td>Masvingo</td>
-									<td>1000</td>
-									<td>30% (300)</td>
-									<td>20% (200)</td>
-									<td>50% (500)</td>
-									<td>85% (850)</td>
-									<td>2% (20)</td>
-									<td>35% (350)</td>
-									<td>15% (150)</td>
-									<td>60% (600)</td>
-									<td>45% (450)</td>
-									<td>73% (730)</td>
-									<td>29% (290)</td>
-									<td>13% (130)</td>
-								</tr>
-								<tr>
-									<td>Matabeleland North</td>
-									<td>1000</td>
-									<td>30% (300)</td>
-									<td>20% (200)</td>
-									<td>50% (500)</td>
-									<td>85% (850)</td>
-									<td>2% (20)</td>
-									<td>35% (350)</td>
-									<td>15% (150)</td>
-									<td>60% (600)</td>
-									<td>45% (450)</td>
-									<td>73% (730)</td>
-									<td>29% (290)</td>
-									<td>13% (130)</td>
-								</tr>
-								<tr>
-									<td>Matabeleland South</td>
-									<td>1000</td>
-									<td>30% (300)</td>
-									<td>20% (200)</td>
-									<td>50% (500)</td>
-									<td>85% (850)</td>
-									<td>2% (20)</td>
-									<td>35% (350)</td>
-									<td>15% (150)</td>
-									<td>60% (600)</td>
-									<td>45% (450)</td>
-									<td>73% (730)</td>
-									<td>29% (290)</td>
-									<td>13% (130)</td>
-								</tr>
-								<tr>
-									<td>Midlands</td>
-									<td>1000</td>
-									<td>30% (300)</td>
-									<td>20% (200)</td>
-									<td>50% (500)</td>
-									<td>85% (850)</td>
-									<td>2% (20)</td>
-									<td>35% (350)</td>
-									<td>15% (150)</td>
-									<td>60% (600)</td>
-									<td>45% (450)</td>
-									<td>73% (730)</td>
-									<td>29% (290)</td>
-									<td>13% (130)</td>
-								</tr>
-							</table>
-						</div>
-					</div>
+<table class="table table-bordered">
+	<tr bgcolor="#eeeeee">
+		<th width="250">Location</th>
+		<th width="100" style="text-align:center">N</th>
+		{% for tag, tag_description, tag_stats in incidents_summary.top %}
+		<th width="100" style="text-align:center"><abbr title="{{ tag_description}}">{{ tag }}</abbr></th>
+		{% endfor %}
+	</tr>
+	<tr>
+		<th>{{ location }}</th>
+		<th style="text-align:center">{{ incidents_summary.top.0.2.total }}</th>
+		{% for tag, tag_description, tag_stats in incidents_summary.top %}
+		<th style="text-align:center">{{ tag_stats.percent_reported|floatformat:"0" }}%<br />({{ tag_stats.reported }})</th>
+		{% endfor %}
+	</tr>
+	{% for location_type, location_stats in incidents_summary.groups %}
+	{% for location in incidents_summary.locations %}
+	<tr>
+		<td>{{ location }}</td>
+		{% with incidents_summary.top.0 as tag_data %}
+		{% with location_stats|keyvalue:location|keyvalue:tag_data.0 as field_stats %}
+		<td style="text-align:center">{{ field_stats.1.total }}</td>
+		{% endwith %}
+		{% endwith %}
+		{% for tag, tag_description, tag_stats in incidents_summary.top %}
+		{% with location_stats|keyvalue:location|keyvalue:tag as field_stats %}
+		<td style="text-align:center">{{ field_stats.1.percent_reported }}%<br />({{ field_stats.1.reported}})</td>
+		{% endwith %}
+		{% endfor %}
+	</tr>
+	{% endfor %}
+	{% endfor %}
+</table>
 				</div>
-
 				<!--Chart-->
 				<div class="tab-pane" id="tab2">
-					<div class="row">
-						<div class="span4 offset4">
-							<script type="text/javascript+protovis">
-						        width = 400,
-						        height = 450,
-						        offset = 10,
-						        r = width/2 - offset;
-						        data = [1000, 800, 3490, 500, 320];
-						        colors = ["#FF4400","#FFCB00","#39e639","#9269BF", "#FF9A96"];
-						        labels = ["A", "B", "C", "D", "E"];
+<script type="text/javascript+protovis">
+	var data = [[{% for tag, tag_description, tag_stats in incidents_summary.top %}{{ tag_stats.percent_reported }},{% endfor %}]];
+	var labels = ["{{ location }}"];
+	var legend = [{% for tag, tag_description, tag_stats in incidents_summary.top %}"{{ tag|safe }}",{% endfor %}];
 
-						        var pie = new pv.Panel().width(width).height(height);
-						            pie.add(pv.Wedge)
-						            .data(pv.normalize(data))
-						            .outerRadius(height/3)
-						            .angle(function(d) d * 2 * Math.PI)
-						            .left(height/3)
-						            .top(height/2 + 25)
-						            .fillStyle(pv.colors(colors).by(function () { return this.index;}))
-						            .anchor("center")
-						            .add(pv.Label)
-						            .textAngle(0)
-						            .text(function(d){ return (d*100).toFixed(0) + "%"});
-						            
-						        //legends   
-						        pie.add(pv.Dot) 
-						            .data(labels) 
-						            .top(function() (height/2 - 25) + this.index * 18)
-						            .right(height/9) 
-						            .size(20) 
-						            .strokeStyle(null) 
-						            .fillStyle(pv.colors(colors)) 
-						            .anchor("right").add(pv.Label)
-						            .textMargin(8);
+	{% for location_type, location_stats in incidents_summary.groups %}
+	{% for location in incidents_summary.locations %}
+	labels.push("{{ location }}");
+	data.push([
+	{% for tag, tag_description, tag_stats in incidents_summary.top %}
+		{% with location_stats|keyvalue:location|keyvalue:tag as field_stats %}
+			{{ field_stats.1.percent_reported }},
+	    {% endwith %}
+	{% endfor %}
+	]);
+	{% endfor %}
+	{% endfor %}
 
-						        //chart title
-						         pie.add(pv.Label)
-								    .left(height/3)
-								    .top(height/9)
-								    .textAlign("center")
-								    .text("Zimbabwe Incidents Analysis")
-								    .font("12pt Helvetica");
-						            
-						        pie.render();
-						    </script>
-						</div>
-					</div>
+	var colors = ['#FC6C00','#FFBD70','#E1E4CB','#A6DAD8','#65D1E8'];
+	
+
+var n = data.length, m = data[0].length;
+
+/* Sizing and scales. */
+var w = 800,
+	bar_width = 200,
+	bar_height = 30,
+	margin_left = 200,
+	panel_spacing = 100,
+    h = ((data[0].length * bar_height) + bar_height) * data.length,
+    max_value = pv.max(pv.blend(data)),
+
+    x = pv.Scale.linear(0, 100).range(0, bar_width),
+    x_rule = pv.Scale.linear(0, 100).range(margin_left, bar_width + margin_left),
+    x_rule2 = pv.Scale.linear(0, 100).range(margin_left * 2 + bar_width + panel_spacing, bar_width * 2 + margin_left * 2 + panel_spacing),
+    y = pv.Scale.ordinal(pv.range(n)).splitBanded(0, h, 4/5);
+
+/* The root panel. */
+var vis = new pv.Panel()
+    .width(w+margin_left)
+    .bottom(bar_height)
+    .height(h/2);
+
+/* The bars. */
+var bar = vis.add(pv.Panel)
+    .data(data)
+    .left(function () this.index % 2 ? margin_left * 2 + bar_width + panel_spacing : margin_left )
+    .top(function() y(Math.floor(this.index/2)))
+    .height(y.range().band)
+  .add(pv.Bar)
+    .data(function(d) d)
+    .top(function() this.index * y.range().band / m)
+    .height(y.range().band / m)
+    .left(0)
+    .width(x)
+    .strokeStyle('white')
+    .fillStyle(pv.colors(colors).by(pv.index));
+
+/* The value label. */
+bar.anchor(function (d) d < 13 ? "left" : "right").add(pv.Label)
+	.textMargin(5)
+    .text(function(d) d.toFixed(0) + '%');
+
+/* The variable label. */
+bar.parent.anchor("left").add(pv.Label)
+    .textAlign("right")
+    .textMargin(5)
+    .font('10pt sans-serif')
+    .text(function () labels[this.parent.index]);
+
+/* legend */
+bar.parent
+	.add(pv.Dot) 
+    .data(legend)
+    .left(bar_width + 50)
+    .top(function() this.index * 20 + (((data[0].length * bar_height) - ((28 - data.length) * data[0].length))) / 2)
+    .size(20)
+    .strokeStyle(null) 
+    .fillStyle(pv.colors(colors)) 
+    .anchor("right").add(pv.Label);
+
+/* X-axis ticks. */
+vis.add(pv.Rule)
+    .data(x_rule.ticks(5))
+    .left(x_rule)
+    .strokeStyle(function(d) d ? "rgba(255,255,255,.3)" : "null")
+  .add(pv.Rule)
+    .bottom(0)
+    .height(5)
+    .strokeStyle("#000")
+  .anchor("bottom").add(pv.Label)
+    .text(function (d) x_rule.tickFormat(d) + '%');
+
+vis.add(pv.Rule)
+    .data(x_rule2.ticks(5))
+    .left(x_rule2)
+    .strokeStyle(function(d) d ? "rgba(255,255,255,.3)" : "null")
+  .add(pv.Rule)
+    .bottom(0)
+    .height(5)
+    .strokeStyle("#000")
+  .anchor("bottom").add(pv.Label)
+    .text(function (d) x_rule2.tickFormat(d) + '%');
+
+vis.render();
+
+</script>
 				</div>
 			</div>
 		</div>
+		{% else %}
+		<table class="table table-striped table-bordered table-hover">
+			<tr class="warning">
+				<td style="text-align:center">No Data Available</td>
+			</tr>
+		</table>
+		{% endif %}
 	</div>
 </div>
 {% endblock %}

@@ -16,7 +16,7 @@
 </div>
 <div class="row">
 	<div class="span12">
-		<div class="tabbable"> <!-- Only required for left/right tabs -->
+		<div class="tabbable tabs-right"> <!-- Only required for left/right tabs -->
 		  <ul class="nav nav-tabs">
 		    <li class="active"><a href="#table" data-toggle="tab">Table</a></li>
 		    <li><a href="#charts" data-toggle="tab">Charts</a></li>
@@ -24,8 +24,6 @@
 		  <div class="tab-content">
 		    <div class="tab-pane active" id="table">
 		    	{% for tag, question, tag_stats in process_summary.top %}
-				<div class="row">
-					<div class="span12">
 					<table id="mytable" class="table table-bordered table-striped">
 						<tr>
 							<td colspan="{% if tag_stats.type == 'numeric' %}4{% else %}{{ tag_stats.labels|length|add:'3' }}{% endif %}"><strong>{{ tag }}</strong> · {{ question }}</td>
@@ -73,9 +71,7 @@
 						{% endfor %}
 						{% endfor %}
 					</table>	
-				</div>
 				{% endfor %}
-			  </div>
 		    </div>
 
 		    <!-- Charts Section-->
@@ -113,7 +109,7 @@
 	left_margin = 200;
 
 	height = (bar_height + bar_spacing) * data[0].length + (bar_height * 1.5);
-	width = left_margin + bar_width + 300;
+	width = left_margin + bar_width + 200;
 	
 	
 	label_margin = (bar_height - 10) / 2;
@@ -148,13 +144,12 @@
 	vis.add(pv.Dot) 
 		.data(legend) 
 		.top(function() (height - (20 * legend.length)) / 2 + (this.index * 20))
-		.left(left_margin + bar_width + 50) 
+		.left(left_margin + bar_width + 30) 
 		.size(40) 
 		.strokeStyle(null) 
 		.fillStyle(pv.colors(colors)) 
 		.anchor("right").add(pv.Label)
-		.textMargin(8)
-		.font('10pt sans-serif');
+		.textMargin(8);
 
 	vis.render();
 </script>
@@ -224,7 +219,7 @@
 var n = data.length, m = data[0].length;
 
 /* Sizing and scales. */
-var w = 600,
+var w = 500,
 	bar_width = 300,
 	bar_height = 25,
 	margin_left = 200,
@@ -361,7 +356,7 @@ vis.render();
 var n = data.length, m = data.length;
 
 /* Sizing and scales. */
-var w = 600,
+var w = 500,
 	bar_width = 300,
 	bar_height = 25,
 	margin_left = 200,

@@ -403,6 +403,97 @@ def generate_process_data(form, qs, location_root=None, grouped=True, tags=None)
     return process_summary
 
 
+def generate_incidents_data(form, qs, location_root=None, grouped=True, tags=None):
+    '''Generates process statistics for either a location and its descendants,
+    or for a sample. Optionally generates statistics for an entire region, or
+    for groups of regions.
+
+
+    Parameters
+    - form: a Form instance
+    - location_id: the pk of the location to retrieve statistics for
+    - sample: a sample instance, with locations to retrieve statistics for
+    - grouped: when retrieving statistics for a location, specify whether or
+    not to retrieve statistics on a per-group basis.
+    - tags: an iterable of tags to retrieve statistics for'''
+    incidents_summary = {}
+
+    if not location_root:
+        location_root = Location.root()
+
+    location_types = [ltype.name for ltype in location_root.sub_location_types()]
+
+    try:
+        data_frame = get_data_records(form, qs, location_root, tags)
+    except Exception:
+        return incidents_summary
+
+    # by casting the retrieval of these models to a list, we force an early evaluation
+    # saving repetitive database requests for each individual object as we iterate
+    # through each item
+    if tags:
+        form_groups = list(FormGroup.objects.filter(pk__in=FormField.objects.filter(tag__in=tags).values_list('group__pk', flat=True)))
+    else:
+        form_groups = list(form.groups.all())
+    form_fields = list(FormField.objects.filter(group__form=form).select_related())
+
+    if data_frame.empty:
+        return incidents_summary
+
+    if not tags:
+        tags = [field.tag for field in form_fields]
+        tags.sort()
+
+    if not grouped:
+        incidents_summary['type'] = 'normal'
+        sample_summary = []
+
+        for group in form_groups:
+            group_summary = []
+
+            for form_field in filter(lambda field: field.group == group and field.tag in tags, form_fields):
+                field_stats = generate_single_choice_field_stats(form_field.tag, data_frame, ['1'])
+
+                group_summary.append((form_field.tag, form_field.description, field_stats))
+
+            sample_summary.append((group.name, group_summary))
+
+        incidents_summary['summary'] = sample_summary
+    else:
+        if not location_types:
+            return incidents_summary
+
+        incidents_summary['type'] = 'grouped'
+        incidents_summary['groups'] = []
+        incidents_summary['top'] = []
+        incidents_summary['tags'] = tags
+
+        # top level summaries
+        for form_field in filter(lambda field: field.tag in tags, form_fields):
+            field_stats = generate_single_choice_field_stats(form_field.tag, data_frame, ['1'])
+
+            incidents_summary['top'].append((form_field.tag, form_field.description, field_stats))
+
+        for location_type in location_types:
+
+            data_group = data_frame.groupby(location_type)
+            location_stats = {}
+
+            for form_field in filter(lambda field: field.tag in tags, form_fields):
+                field_stats = generate_single_choice_field_stats(form_field.tag, data_group, ['1'])
+
+                incidents_summary['locations'] = field_stats['locations'].keys()
+
+                for location in field_stats['locations'].keys():
+                    if not location in location_stats:
+                        location_stats[location] = {}
+                    location_stats[location].update({form_field.tag: (form_field.description, field_stats['locations'][location])})
+
+            incidents_summary['groups'].append((location_type, location_stats))
+
+    return incidents_summary
+
+
 def get_convergence_points(qs, tags):
     '''Generates a set of points for a convergence graph from a queryset
     and a set of tags.
