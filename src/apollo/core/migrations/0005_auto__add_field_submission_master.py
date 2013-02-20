@@ -68,7 +68,7 @@ class Migration(SchemaMigration):
         'core.location': {
             'Meta': {'object_name': 'Location'},
             'code': ('django.db.models.fields.CharField', [], {'db_index': 'True', 'max_length': '100', 'blank': 'True'}),
-            'data': ('django_orm.postgresql.hstore.fields.DictionaryField', [], {'db_index': 'True', 'null': 'True', 'blank': 'True'}),
+            'data': ('djorm_hstore.fields.DictionaryField', [], {'db_index': 'True', 'null': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100', 'db_index': 'True'}),
             'type': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['core.LocationType']"})
@@ -84,7 +84,7 @@ class Migration(SchemaMigration):
         'core.observer': {
             'Meta': {'ordering': "['observer_id']", 'object_name': 'Observer'},
             'contact': ('django.db.models.fields.related.OneToOneField', [], {'blank': 'True', 'related_name': "'observer'", 'unique': 'True', 'null': 'True', 'to': "orm['rapidsms.Contact']"}),
-            'data': ('django_orm.postgresql.hstore.fields.DictionaryField', [], {'db_index': 'True', 'null': 'True', 'blank': 'True'}),
+            'data': ('djorm_hstore.fields.DictionaryField', [], {'db_index': 'True', 'null': 'True', 'blank': 'True'}),
             'gender': ('django.db.models.fields.CharField', [], {'db_index': 'True', 'max_length': '1', 'null': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'location': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'observers'", 'to': "orm['core.Location']"}),
@@ -121,14 +121,14 @@ class Migration(SchemaMigration):
         'core.submission': {
             'Meta': {'object_name': 'Submission'},
             'created': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
-            'data': ('django_orm.postgresql.hstore.fields.DictionaryField', [], {'db_index': 'True', 'null': 'True', 'blank': 'True'}),
+            'data': ('djorm_hstore.fields.DictionaryField', [], {'db_index': 'True', 'null': 'True', 'blank': 'True'}),
             'date': ('django.db.models.fields.DateField', [], {'default': 'datetime.datetime(2013, 2, 8, 0, 0)'}),
             'form': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'submissions'", 'to': "orm['core.Form']"}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'location': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'submissions'", 'to': "orm['core.Location']"}),
             'master': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['core.Submission']", 'null': 'True', 'blank': 'True'}),
             'observer': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['core.Observer']", 'null': 'True', 'blank': 'True'}),
-            'overrides': ('django_orm.postgresql.hstore.fields.DictionaryField', [], {'db_index': 'True', 'null': 'True', 'blank': 'True'}),
+            'overrides': ('djorm_hstore.fields.DictionaryField', [], {'db_index': 'True', 'null': 'True', 'blank': 'True'}),
             'updated': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'})
         },
         'core.voteoption': {
