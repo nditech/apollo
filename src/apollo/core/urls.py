@@ -21,21 +21,21 @@ urlpatterns = patterns('',
     url(r'^$', DashboardView.as_view(), name='dashboard'),
 
     url(r'^api/', include(v2_api.urls)),
-    
+
     url(r'^submissions/form/(?P<form>\d+)/?$', SubmissionListView.as_view(), name='submissions_list'),
     url(r'^submissions/form/(?P<form>\d+)/export/?$', SubmissionListExportView.as_view(collection='observers'), name='submissions_list_export_observers'),
     url(r'^submissions/form/(?P<form>\d+)/export/master/?$', SubmissionListExportView.as_view(collection='master'), name='submissions_list_export_master'),
     url(r'^submission/(?P<pk>\d+)/?$', SubmissionEditView.as_view(), name='submission_edit'),
     url(r'^submissions/form/(?P<form>\d+)/add/?$', SubmissionCreateView.as_view(), name='submission_add'),
-    
+
     url(r'^submissions/analysis/process/form/(?P<form>\d+)/?$', SubmissionProcessAnalysisView.as_view(), name='submissions_analysis'),
     url(r'^submissions/analysis/process/form/(?P<form>\d+)/location/(?P<location_id>\d+)/?$', SubmissionProcessAnalysisView.as_view(), name='submissions_analysis_location'),
     url(r'^submissions/analysis/process/form/(?P<form>\d+)/tag/(?P<tag>[A-Z]+)/?$', SubmissionProcessAnalysisView.as_view(), name='submissions_analysis_tag'),
     url(r'^submissions/analysis/process/form/(?P<form>\d+)/location/(?P<location_id>\d+)/tag/(?P<tag>[A-Z]+)/?$', SubmissionProcessAnalysisView.as_view(), name='submissions_analysis_location_tag'),
-    
+
     url(r'^observers/?$', ContactListView.as_view(), name='contacts_list'),
     url(r'^observer/(?P<pk>\d+)/?$', ContactEditView.as_view(), name='contact_edit'),
-    
+
     url(r'^locations/?$', LocationListView.as_view(), name='locations_list'),
     url(r'^location/(?P<pk>\d+)/?$', LocationEditView.as_view(), name='location_edit'),
 
