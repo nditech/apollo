@@ -8,7 +8,7 @@
 .breadcrumb .locationtype { color: #DDD; }
 abbr[data-original-title] {cursor: help;border-bottom: 1px dotted #999999;}
 
-.ajax_loader{width:42px;float:right;}
+.ajax_loader{width:42px;}
 
 .ajax_loader .ajax_loader_block{
 background-color:#333;
