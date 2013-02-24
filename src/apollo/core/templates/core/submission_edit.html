@@ -131,10 +131,25 @@
       <a class="btn btn-large btn-block" href="{% url submissions_list object.form.pk %}">Cancel</a>
     </div>
   </div>
-  </form>
-
   <div class="row">
     <p>&nbsp;</p>
+    <div class="span12">
+      <legend>Comments</legend>
+    </div>
   </div>
+  <div class="row">
+    <div class="span6">
+      <div class="example-obtuse" style="margin-bottom:2em;">Things are going on smoothly at the polling unit. God bless ZESN</div>
+      <textarea rows="5"></textarea>
+    </div>
+  </div>
+  <div class="row">
+    <div class="span2">
+        <a class="btn btn-large btn-block">Add Comment</a>
+    </div>
+  </div>
+  </form>
+  </div>
+</div>
   {% endwith %}
 {% endblock %}
