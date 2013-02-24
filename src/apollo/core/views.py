@@ -6,10 +6,13 @@ import re
 from datetime import datetime
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.comments.models import Comment
+from django.contrib.sites.models import Site
 from django.core.urlresolvers import reverse
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404
 from django.template.defaultfilters import slugify
+from django.utils import simplejson as json
 from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView, ListView, UpdateView, View, CreateView
 from django.views.generic.base import TemplateResponseMixin
@@ -372,6 +375,32 @@ class LocationEditView(UpdateView):
         context = super(LocationEditView, self).get_context_data(**kwargs)
         context['page_title'] = self.page_title
         return context
+
+
+class CommentCreateView(View):
+    http_method_names = ['post']
+
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        return super(CommentCreateView, self).dispatch(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        submission = get_object_or_404(Submission, pk=request.POST['submission'])
+        comment_text = request.POST['comment']
+
+        if comment_text:
+            comment = Comment.objects.create(content_object=submission,
+                user_name=request.user.get_full_name() or request.user.username,
+                user=request.user,
+                site=Site.objects.get_current(), comment=comment_text, submit_date=datetime.now())
+            response = {
+                'comment': comment.comment,
+                'date': 'now',
+                'username': comment.user_name
+            }
+            return HttpResponse(json.dumps(response), mimetype='application/json')
+        else:
+            return HttpResponseBadRequest("")
 
 
 def make_item_row(record, fields, locations_graph):

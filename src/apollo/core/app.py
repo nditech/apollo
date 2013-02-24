@@ -4,8 +4,10 @@ import string
 from django.conf import settings
 from rapidsms.apps.base import AppBase
 from models import *
-from datetime import timedelta
+from datetime import (datetime, timedelta)
 from django.utils.translation import ugettext as _
+from django.contrib.sites.models import Site
+from django.contrib.comments.models import Comment
 
 PUNCTUATIONS = filter(lambda s: s not in settings.ALLOWED_PUNCTUATIONS, string.punctuation) + ' '
 TRANS_TABLE = dict((ord(fro), ord(to)) for fro, to in settings.CHARACTER_TRANSLATIONS)
@@ -27,9 +29,10 @@ class App(AppBase):
 
         at_position = working_text.find('@')
         message.text = working_text[:at_position] if at_position != -1 else working_text
+        comment = working_text[at_position + 1:] if at_position != -1 else None
 
         try:
-            submission, observer = Form.parse(working_text)
+            submission, observer = Form.parse(message.text)
             if not observer:
                 return message.respond(UNKNOWN_OBSERVER % {'text': message.text}) or True
             else:
@@ -43,6 +46,12 @@ class App(AppBase):
                             date__range=(message.date - timedelta(settings.BACKLOG_DAYS), message.date))
                     entry.data.update(submission['data'])
                     entry.save()
+
+                    # If there's a comment, save it
+                    if comment:
+                        Comment.objects.create(content_object=entry,
+                            user_name=observer.name or observer.observer_id, site=Site.objects.get_current(),
+                            comment=comment, submit_date=datetime.now())
                 except Submission.DoesNotExist:
                     pass
 
