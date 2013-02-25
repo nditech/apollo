@@ -24,8 +24,16 @@
 </div>
 {% endif %}
 {% endif %}
+{% if perms.core.message_observers %}
+<div class="btn-group pull-right">
+  <a style="margin-right:1em" id="send_message_modal_btn" href="#send_message" role="button" class="btn btn-success">Send Message</a>
+</div>
+{% endif %}
 {% endblock %}
 {% block content %}
+{% if perms.core.message_observers %}
+{% send_message paginator.count %}
+{% endif %}
 <div class="row">
   <div class="span12">
     {% submission_filter form filter_form %}

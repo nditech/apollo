@@ -9,13 +9,15 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.comments.models import Comment
 from django.contrib.sites.models import Site
 from django.core.urlresolvers import reverse
-from django.http import HttpResponse, HttpResponseBadRequest
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden
 from django.shortcuts import get_object_or_404
 from django.template.defaultfilters import slugify
 from django.utils import simplejson as json
 from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView, ListView, UpdateView, View, CreateView
 from django.views.generic.base import TemplateResponseMixin
+from rapidsms.models import Connection, Backend
+from rapidsms.router.api import send
 import tablib
 from .forms import ContactModelForm, LocationModelForm, generate_submission_form
 from .helpers import *
@@ -160,10 +162,22 @@ class SubmissionListView(ListView):
         return super(SubmissionListView, self).dispatch(*args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        self.filter_set = self.submission_filter(self.request.POST,
-            queryset=Submission.objects.filter(form=self.form).exclude(observer=None).select_related())
-        request.session['submission_filter_%d' % self.form.pk] = self.filter_set.form.data
-        return super(SubmissionListView, self).get(request, *args, **kwargs)
+        # handle messaging requests
+        if 'action' in self.request.POST and self.request.POST['action'] == 'send_message':
+            # messaging
+            if request.user.has_perm('core.message_observers'):
+                initial_data = request.session.get('submission_filter_%d' % self.form.pk, None)
+                self.filter_set = self.submission_filter(initial_data,
+                    queryset=Submission.objects.filter(form=self.form).exclude(observer=None).select_related())
+                send_bulk_message(self.filter_set.qs.all().values_list('observer__pk', flat=True), self.request.POST['message'])
+                return HttpResponse('OK')
+            else:
+                return HttpResponseForbidden()
+        else:
+            self.filter_set = self.submission_filter(self.request.POST,
+                queryset=Submission.objects.filter(form=self.form).exclude(observer=None).select_related())
+            request.session['submission_filter_%d' % self.form.pk] = self.filter_set.form.data
+            return super(SubmissionListView, self).get(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
         initial_data = request.session.get('submission_filter_%d' % self.form.pk, None)
@@ -288,10 +302,22 @@ class ContactListView(ListView):
         return super(ContactListView, self).dispatch(*args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        self.filter_set = self.contacts_filter(request.POST,
-            queryset=Observer.objects.all())
-        request.session['contacts_filter'] = self.filter_set.form.data
-        return super(ContactListView, self).get(request, *args, **kwargs)
+        # handle messaging requests
+        if 'action' in self.request.POST and self.request.POST['action'] == 'send_message':
+            # messaging
+            if request.user.has_perm('core.message_observers'):
+                initial_data = request.session.get('contacts_filter', None)
+                self.filter_set = self.contacts_filter(initial_data,
+                    queryset=Observer.objects.all())
+                send_bulk_message(self.filter_set.qs.values_list('pk', flat=True), self.request.POST['message'])
+                return HttpResponse('OK')
+            else:
+                return HttpResponseForbidden()
+        else:
+            self.filter_set = self.contacts_filter(request.POST,
+                queryset=Observer.objects.all())
+            request.session['contacts_filter'] = self.filter_set.form.data
+            return super(ContactListView, self).get(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
         initial_data = request.session.get('contacts_filter', None)
@@ -401,6 +427,18 @@ class CommentCreateView(View):
             return HttpResponse(json.dumps(response), mimetype='application/json')
         else:
             return HttpResponseBadRequest("")
+
+
+def send_bulk_message(observers, message):
+    connections = []
+    backend, _ = Backend.objects.get_or_create(name=settings.BULKSMS_BACKEND)
+    for observer in Observer.objects.filter(pk__in=observers):
+        if observer.phone:
+            connection, _ = Connection.objects.get_or_create(
+                identity=observer.phone, backend=backend, contact=observer.contact)
+            connections.append(connection)
+    if connections:
+        send(message, connections)
 
 
 def make_item_row(record, fields, locations_graph):

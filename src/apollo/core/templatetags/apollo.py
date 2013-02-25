@@ -107,3 +107,8 @@ def analysis_location_navigation(form, location=None, tag=None):
     sub_locations.sort(key=lambda location: location.name)
 
     return {'locations': sub_locations, 'form': form, 'tag': tag}
+
+
+@register.inclusion_tag('core/send_message_modal.html')
+def send_message(recipients=0):
+    return {'recipients': recipients}

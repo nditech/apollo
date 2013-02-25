@@ -1,5 +1,16 @@
 {% extends "core/layout.html" %}{% load apollo %}{% load bootstrap_pagination %}
+{% block title %}
+{{ page_title }}
+{% if perms.core.message_observers %}
+<div class="btn-group pull-right">
+  <a style="margin-right:1em" id="send_message_modal_btn" href="#send_message" role="button" class="btn btn-success">Send Message</a>
+</div>
+{% endif %}
+{% endblock %}
 {% block content %}
+{% if perms.core.message_observers %}
+{% send_message paginator.count %}
+{% endif %}
 <div class="row">
   <div class="span12">
     <div class="well" style="padding-bottom:0">

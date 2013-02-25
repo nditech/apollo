@@ -31,12 +31,16 @@ TIME_ZONE = 'Africa/Lagos'
 # the valid options for each.
 INSTALLED_BACKENDS = {
     "httptester": {
-        "ENGINE": "rapidsms.contrib.httptester.backend",
+        "ENGINE": "rapidsms.contrib.httptester.backend.HttpTesterCacheBackend",
     },
     "kannel": {
-        "ENGINE": "rapidsms.backends.kannel.outgoing",
+        "ENGINE": "rapidsms.backends.kannel.outgoing.KannelBackend",
     }
 }
+
+BULKSMS_BACKEND = 'kannel'
+
+RAPIDSMS_ROUTER = "rapidsms.router.db.DatabaseRouter"
 
 # to help you get started quickly, many django/rapidsms apps are enabled
 # by default. you may wish to remove some and/or add your own.
@@ -54,6 +58,7 @@ INSTALLED_APPS = [
     "tastypie",
 
     "rapidsms.contrib.default",
+    "rapidsms.router.db",
 
     # enable the django admin using a little shim app (which includes
     # the required urlpatterns), and a bunch of undocumented apps that
@@ -184,7 +189,6 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.middleware.transaction.TransactionMiddleware',
     'reversion.middleware.RevisionMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'audit_log.middleware.UserLoggingMiddleware',

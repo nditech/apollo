@@ -231,6 +231,7 @@ class Observer(models.Model):
         permissions = (
             ("view_observers", "Can view observers"),
             ("export_observers", "Can export observers"),
+            ("message_observers", "Can message observers"),
         )
 
     def __unicode__(self):
