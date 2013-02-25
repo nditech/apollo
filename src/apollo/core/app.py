@@ -34,7 +34,8 @@ class App(AppBase):
         try:
             submission, observer = Form.parse(message.text)
             if not observer:
-                return message.respond(UNKNOWN_OBSERVER % {'text': message.text}) or True
+                message.respond(UNKNOWN_OBSERVER % {'text': message.text})
+                return True
             else:
                 # Find submission for observer and persist valid data
                 try:
@@ -56,16 +57,20 @@ class App(AppBase):
                     pass
 
                 if 'range_error_fields' in submission and submission['range_error_fields']:
-                    return message.respond(RANGE_ERROR % \
+                    message.respond(RANGE_ERROR % \
                         {'attributes': ', '.join(submission['range_error_fields']), 'text': message.text})
+                    return True
                 elif 'attribute_error_fields' in submission and submission['attribute_error_fields']:
-                    return message.respond(ATTRIBUTE_ERROR % \
+                    message.respond(ATTRIBUTE_ERROR % \
                         {'attributes': ', '.join(submission['attribute_error_fields']), 'text': message.text})
+                    return True
                 else:
-                    return message.respond(SUBMISSION_RECEIVED % {'message': message.text})
+                    message.respond(SUBMISSION_RECEIVED % {'message': message.text})
+                    return True
         except Form.DoesNotExist:
             # We couldn't parse the message hence it's invalid
             return self.default(message)
 
     def default(self, message):
-        return message.respond(INVALID_MESSAGE % {'message': message.text})
+        message.respond(INVALID_MESSAGE % {'message': message.text})
+        return True
