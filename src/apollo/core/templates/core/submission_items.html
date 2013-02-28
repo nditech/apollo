@@ -19,7 +19,7 @@
     {% endfor %}
     {% else %}
     {% for field in form_fields %}
-    <td style="text-align:center">{% if submission.data|keyvalue:field.tag %}<img src="{% static "img/red_dot.png" %}" title="missing" alt="missing" />{% else %}&nbsp;{% endif %}</td>
+    <td style="text-align:center">{% if submission.data|keyvalue:field.tag %}<img src="{% static "img/red_dot.png" %}" />{% else %}&nbsp;{% endif %}</td>
     {% endfor %}
     {% endif %}
     {% if perms.core.change_submission %}<td style="text-align:center"><a href="{% url submission_edit submission.pk %}">Edit</a></td>{% endif %}
