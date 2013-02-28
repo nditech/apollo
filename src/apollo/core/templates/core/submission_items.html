@@ -6,7 +6,9 @@
     {% for location_type in location_types %}
     <td>{% get_location_for_type submission location_type %}</td>
     {% endfor %}
+    {% if form.type == 'CHECKLIST' %}
     <td>{{ submission.observer.supervisor.name }}</td>
+    {% endif %}
     <td>{{ submission.observer.name }}</td>
     {% if form.type == 'CHECKLIST' %}
     {% for group in form_groups %}
@@ -35,7 +37,7 @@
 {% endwith %}
 {% endwith %}
 {% else %}
-{% with location_types|length|add:"5" as lt_count %}
+{% with location_types|length|add:"4" as lt_count %}
 {% with form_fields|length|add:lt_count as colspan %}
 <tr class="warning">
     <td style="text-align:center" colspan="{{ colspan }}">No Data Available</td>
@@ -53,7 +55,7 @@
 {% endwith %}
 {% endwith %}
 {% else %}
-{% with location_types|length|add:"4" as lt_count %}
+{% with location_types|length|add:"3" as lt_count %}
 {% with form_fields|length|add:lt_count as colspan %}
 <tr class="warning">
     <td style="text-align:center" colspan="{{ colspan }}">No Data Available</td>
