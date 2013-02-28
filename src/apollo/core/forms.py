@@ -1,14 +1,29 @@
 from django import forms
+from django.utils.encoding import force_unicode
 from form_utils.forms import BetterForm
 from apollo.core.models import (Form, Observer, ObserverDataField, Location, Submission)
 from rapidsms.models import (Backend, Contact, Connection)
+
+
+# custom hidden input widget for locations
+class LocationHiddenInput(forms.HiddenInput):
+    def render(self, name, value, attrs=None, choices=()):
+        if value:
+            try:
+                obj = self.choices.queryset.get(pk=value)
+                selected_choice = self.choices.choice(obj)
+                attrs.update({'data-name': force_unicode(selected_choice[1]),
+                    'data-type': force_unicode(obj.type.name)})
+            except self.choices.queryset.__class__.DoesNotExist:
+                pass
+        return super(LocationHiddenInput, self).render(name, value, attrs)
 
 
 class SubmissionModelForm(BetterForm):
     FORM = None  # The form this submission will be saved to
 
     location = forms.ModelChoiceField(queryset=Location.objects.all(),
-        required=False, widget=forms.HiddenInput(
+        required=False, widget=LocationHiddenInput(
             attrs={'class': 'span6 select2-locations', 'placeholder': 'Location'}))
     observer = forms.ModelChoiceField(queryset=Observer.objects.all(),
         required=False, widget=forms.HiddenInput(
@@ -56,6 +71,10 @@ class SubmissionModelForm(BetterForm):
                     # not the same
                     if ((tag in data) ^ (tag in self.instance.data)) or (data[tag] != self.instance.data[tag]):
                         self.instance.overrides.update({tag: '1'})
+
+            # save updated location information if this is an incident report
+            if self.instance.form.type == 'INCIDENT':
+                self.instance.location = cleaned_data['location']
 
             self.instance.data = data
 

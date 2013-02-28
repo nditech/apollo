@@ -48,7 +48,14 @@ $(function(){
     },
     formatResult: function (location, container, query) { return location.name + ' · <i>' + location.type.name + '</i>'; },
     formatSelection: function (location, container) { return location.name + ' · <i>' + location.type.name + '</i>'; },
-    escapeMarkup: function(m) { return m; }
+    escapeMarkup: function(m) { return m; },
+    initSelection : function (element, callback) {
+      var location_id = element.val();
+      if (location_id) {
+        var data = {name: element.data('name'), type: {name: element.data('type')}};
+        callback(data);
+      }
+    }
   });
 
   $('.select2-observers').select2({
