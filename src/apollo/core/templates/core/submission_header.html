@@ -12,7 +12,7 @@
     {% endfor %}
     {% else %}
     {% for field in form_fields %}
-    <th style="text-align:center">{{ field.tag }}</th>
+    <th style="text-align:center"><abbr title="{{ field.description }}">{{ field.tag }}</abbr></th>
     {% endfor %}
     {% endif %}
     {% if perms.core.change_submission %}<th style="text-align:center">Edit</th>{% endif %}
