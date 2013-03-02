@@ -13,15 +13,15 @@
     {% if form.type == 'CHECKLIST' %}
     {% for group in form_groups %}
     <td style="text-align:center">
-        {% if submission|is_complete:group %}<img src="{% static "img/tick.png" %}" title="complete" alt="complete" />
-        {% elif submission|is_partial:group %}<img src="{% static "img/caution.png" %}" title="partial" alt="partial" />
-        {% elif submission|is_missing:group %}<img src="{% static "img/red_dot.png" %}" title="missing" alt="missing" />
+        {% if submission|is_complete:group %}<img src="{% static "img/tick.png" %}" title="complete" alt="complete" height="11" width="11" />
+        {% elif submission|is_partial:group %}<img src="{% static "img/caution.png" %}" title="partial" alt="partial" height="11" width="11" />
+        {% elif submission|is_missing:group %}<img src="{% static "img/red_dot.png" %}" title="missing" alt="missing" height="11" width="11" />
         {% endif %}
     </td>
     {% endfor %}
     {% else %}
     {% for field in form_fields %}
-    <td style="text-align:center">{% if submission.data|keyvalue:field.tag %}<img src="{% static "img/red_dot.png" %}" />{% else %}&nbsp;{% endif %}</td>
+    <td style="text-align:center">{% if submission.data|keyvalue:field.tag %}<img src="{% static "img/red_dot.png" %}" height="11" width="11" />{% else %}&nbsp;{% endif %}</td>
     {% endfor %}
     {% endif %}
     {% if perms.core.change_submission %}<td style="text-align:center"><a href="{% url submission_edit submission.pk %}">Edit</a></td>{% endif %}
