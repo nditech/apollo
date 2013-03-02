@@ -23,6 +23,17 @@
     {% for field in form_fields %}
     <td style="text-align:center">{% if submission.data|keyvalue:field.tag %}<img src="{% static "img/red_dot.png" %}" height="11" width="11" />{% else %}&nbsp;{% endif %}</td>
     {% endfor %}
+    <td style="text-align: center">
+        {% with submission.data|keyvalue:"status" as status %}
+        {% if status == 'confirmed' %}
+        <img src="{% static "img/tick.png" %}" title="Confirmed" alt="Confirmed" height="11" width="11" />
+        {% elif status == 'rejected' %}
+        <img src="{% static "img/red_dot.png" %}" title="Rejected" alt="Rejected" height="11" width="11" />
+        {% else %}
+        <img src="{% static "img/caution.png" %}" title="Unmarked" alt="Unmarked" height="11" width="11" />
+        {% endif %}
+        {% endwith %}
+    </td>
     {% endif %}
     {% if perms.core.change_submission %}<td style="text-align:center"><a href="{% url submission_edit submission.pk %}">Edit</a></td>{% endif %}
 </tr>
@@ -37,7 +48,7 @@
 {% endwith %}
 {% endwith %}
 {% else %}
-{% with location_types|length|add:"4" as lt_count %}
+{% with location_types|length|add:"5" as lt_count %}
 {% with form_fields|length|add:lt_count as colspan %}
 <tr class="warning">
     <td style="text-align:center" colspan="{{ colspan }}">No Data Available</td>
@@ -55,7 +66,7 @@
 {% endwith %}
 {% endwith %}
 {% else %}
-{% with location_types|length|add:"3" as lt_count %}
+{% with location_types|length|add:"4" as lt_count %}
 {% with form_fields|length|add:lt_count as colspan %}
 <tr class="warning">
     <td style="text-align:center" colspan="{{ colspan }}">No Data Available</td>

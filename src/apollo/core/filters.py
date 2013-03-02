@@ -1,6 +1,22 @@
 from .models import *
 import django_filters
 from django import forms
+from djorm_hstore.expressions import HstoreExpression
+
+
+class HstoreChoiceFilter(django_filters.ChoiceFilter):
+    ''' HstoreChoiceFilter is useful in filtering
+    by specified values that an attribute in a Hstore field
+    can contain'''
+    def filter(self, qs, value):
+        if value:
+            # if the intent is to find records with a
+            if not value == "NULL":
+                return qs.where(HstoreExpression("data").contains({self.name: value}))
+            else:
+                return qs.where(~HstoreExpression("data").contains(self.name))
+        else:
+            return qs
 
 
 class FormGroupFilter(django_filters.ChoiceFilter):
@@ -32,7 +48,7 @@ class LocationFilter(django_filters.ChoiceFilter):
     by any of the parent locations (including the exact location)
     of the submission.
     '''
-    
+
     def __init__(self, *args, **kwargs):
         displayed_location_types = LocationType.objects.filter(on_display=True).values('pk', 'name')
         displayed_locations = Location.objects.filter(type__pk__in=[t['pk'] for t in displayed_location_types]) \
@@ -150,6 +166,10 @@ def generate_submission_filter(form):
     for group in form.groups.all():
         metafields['fields'].append('group_%d' % (group.pk,))
 
+    if form.type == 'INCIDENT':
+        # add the status filter option
+        metafields['fields'].append('status')
+
     metaclass = type('Meta', (), metafields)
     fields = {'Meta': metaclass}
     for group in form.groups.all():
@@ -167,8 +187,14 @@ def generate_submission_filter(form):
         }))
 
     fields['location'] = LocationFilter(widget=forms.Select(attrs={
-        'class': 'span4 input-xlarge select2',
+        'class': 'span3 input-xlarge select2',
         'data-placeholder': 'Location'}))
+
+    if form.type == 'INCIDENT':
+        fields['status'] = HstoreChoiceFilter(
+            widget=forms.Select(attrs={'class': 'span2'}), label='Status',
+            choices=(('', 'Status'), ('NULL', 'Unmarked'), ('confirmed', 'Confirmed'),
+                ('rejected', 'Rejected')))
     return type('SubmissionFilter', (BaseSubmissionFilter,), fields)
 
 

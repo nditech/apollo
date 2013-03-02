@@ -9,7 +9,7 @@
         <span class="add-on"><i class="icon-calendar"></i></span>
       </div>
       {{ filter_form.location }}
-      {% if form.type != 'CHECKLIST' %}<button type="submit" style="margin-left:1em" class="btn btn-warning"><i class="icon-search icon-white"></i> Search</button> <a class="btn form-reset" style="margin-left:0.5em">Clear</a>{% endif %}
+      {% if form.type != 'CHECKLIST' %}{{ filter_form.status }}<button type="submit" style="margin-left:1em" class="btn btn-warning"><i class="icon-search icon-white"></i> Search</button> <a class="btn form-reset" style="margin-left:0.5em">Clear</a>{% endif %}
     </div>
     {% if form.type == 'CHECKLIST' %}
     <div class="controls controls-row">
