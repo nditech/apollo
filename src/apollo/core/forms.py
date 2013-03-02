@@ -26,6 +26,12 @@ class SubmissionModelForm(BetterForm):
         ('confirmed', 'Confirmed'),
         ('rejected', 'Rejected')
     )
+    WITNESS_CHOICES = (
+        ('', 'Unspecified'),
+        ('witnessed', 'I witnessed the incident'),
+        ('after', 'I arrived just after the incident'),
+        ('reported', 'The incident was reported to me by someone else'),
+    )
 
     location = forms.ModelChoiceField(queryset=Location.objects.all(),
         required=False, widget=LocationHiddenInput(
@@ -36,6 +42,7 @@ class SubmissionModelForm(BetterForm):
     data__description = forms.CharField(widget=forms.Textarea(attrs={'cols': '40', 'rows': '5', 'style': 'width:40%'}), required=False)
     data__location = forms.CharField(required=False, widget=forms.HiddenInput())
     data__status = forms.ChoiceField(required=False, choices=STATUS_CHOICES)
+    data__witness = forms.ChoiceField(required=False, choices=WITNESS_CHOICES)
 
     def __init__(self, *args, **kwargs):
         if 'instance' in kwargs:
