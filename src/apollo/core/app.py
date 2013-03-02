@@ -40,7 +40,7 @@ class App(AppBase):
                 # Find submission for observer and persist valid data
                 try:
                     if submission['form'].autocreate_submission:
-                        entry, dummy = Submission.objects.get_or_create(observer=observer, date=message.date,
+                        entry = Submission.objects.create(observer=observer, date=message.date,
                             form=submission['form'], location=observer.location)
                     else:
                         entry = Submission.objects.get(observer=observer, form=submission['form'],
@@ -50,9 +50,15 @@ class App(AppBase):
 
                     # If there's a comment, save it
                     if comment:
-                        Comment.objects.create(content_object=entry,
-                            user_name=observer.name or observer.observer_id, site=Site.objects.get_current(),
-                            comment=comment, submit_date=datetime.now())
+                        # the comment field stores additional location information
+                        # for incidents
+                        if submission['form'].type == 'INCIDENT':
+                            entry.data.update({'location': comment})
+                            entry.save()
+                        else:
+                            Comment.objects.create(content_object=entry,
+                                user_name=observer.name or observer.observer_id, site=Site.objects.get_current(),
+                                comment=comment, submit_date=datetime.now())
                 except Submission.DoesNotExist:
                     pass
 

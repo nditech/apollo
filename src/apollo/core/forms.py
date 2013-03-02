@@ -21,6 +21,11 @@ class LocationHiddenInput(forms.HiddenInput):
 
 class SubmissionModelForm(BetterForm):
     FORM = None  # The form this submission will be saved to
+    STATUS_CHOICES = (
+        ('', 'Unmarked'),
+        ('confirmed', 'Confirmed'),
+        ('rejected', 'Rejected')
+    )
 
     location = forms.ModelChoiceField(queryset=Location.objects.all(),
         required=False, widget=LocationHiddenInput(
@@ -28,6 +33,9 @@ class SubmissionModelForm(BetterForm):
     observer = forms.ModelChoiceField(queryset=Observer.objects.all(),
         required=False, widget=forms.HiddenInput(
             attrs={'class': 'span5 select2-observers', 'placeholder': 'Observer'}))
+    data__description = forms.CharField(widget=forms.Textarea(attrs={'cols': '40', 'rows': '5', 'style': 'width:40%'}), required=False)
+    data__location = forms.CharField(required=False, widget=forms.HiddenInput())
+    data__status = forms.ChoiceField(required=False, choices=STATUS_CHOICES)
 
     def __init__(self, *args, **kwargs):
         if 'instance' in kwargs:
@@ -52,13 +60,13 @@ class SubmissionModelForm(BetterForm):
         data = {k.replace('data__', ''): v for k, v in cleaned_data.items() if k.startswith('data__')}
 
         for key in data.keys():
-            if data[key] != None and data[key] != False:
+            if data[key] != None and data[key] != False and data[key] != '':
                 # the forced casting to integer enables the conversion of boolean values
                 # as is the case for incidents that are returned as boolean and need to
                 # be converted to integer (and then string) before storage
                 if isinstance(data[key], list):
                     data[key] = ','.join(data[key])
-                else:
+                elif not (isinstance(data[key], unicode) or isinstance(data[key], str)):
                     data[key] = str(int(data[key]))
             else:
                 del data[key]

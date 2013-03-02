@@ -19,7 +19,7 @@ urlpatterns += patterns('',
 
 urlpatterns += patterns('',
     # apollo urls for default routing
-    (r'^kannel/', KannelBackendView.as_view(backend_name='kannel-smsc')),
+    (r'^kannel/', KannelBackendView.as_view(backend_name='kannel')),
     (r'^telerivet/', TelerivetBackendView.as_view(backend_name='telerivet')),
     (r'^messages/', include('messagelog.urls')),
     (r'', include('core.urls')),
