@@ -177,7 +177,7 @@ def generate_submission_form(form, readonly=False):
 
     for group in form.groups.all():
         groupspec = (group.name, {'fields': [], 'legend': group.name})
-        for field in group.fields.all():
+        for field in group.fields.all().order_by('tag'):
             field_name = 'data__{}'.format(field.tag)
 
             # are there any field options?
