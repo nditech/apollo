@@ -8,6 +8,15 @@
 .breadcrumb .locationtype { color: #DDD; }
 abbr[data-original-title] {cursor: help;border-bottom: 1px dotted #999999;}
 
+/* override default img style */
+img {
+  width: auto\9;
+  height: auto;
+  vertical-align: middle;
+  border: 0;
+  -ms-interpolation-mode: bicubic;
+}
+
 .ajax_loader{width:42px;}
 
 .ajax_loader .ajax_loader_block{
