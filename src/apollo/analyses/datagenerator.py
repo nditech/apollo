@@ -51,7 +51,7 @@ def get_data_records(form, qs, location_root=None, tags=None):
     '''
     if not tags:
         # fields that can store multiple variables are to be handled differently
-        _all = FormField.objects.filter(group__form=form).values('tag', 'allow_multiple')
+        _all = FormField.objects.filter(group__form=form).order_by('tag').values('tag', 'allow_multiple')
         multivariate_fields = map(lambda x: x['tag'], filter(lambda x: x['allow_multiple'], _all))
         regular_fields = map(lambda x: x['tag'], filter(lambda x: not x['allow_multiple'], _all))
         all_fields = multivariate_fields + regular_fields
@@ -302,6 +302,64 @@ def generate_mutiple_choice_field_stats(tag, dataset, options, labels=None):
     return field_stats
 
 
+def generate_incident_field_stats(tag, dataset, options, labels=None, all_tags=None):
+    '''Returns statistics (frequency histogram, number/percentage of actual
+    reports, number/percentage of missing reports) for a specified form field
+    tag. The associated form field takes one value of several options.
+
+
+    Parameters
+    - tag: a form field tag
+    - dataset: a pandas DataFrame or group series with the submission data
+    - field_options: an iterable (queryset or no) of form field options
+
+    Returns
+    - a dictionary (or nested dictionary, if data set is grouped) with the
+    above statistics, as well as the labels for each of the options. Both the
+    histogram and the labels are generated as lists, so they are ordered.'''
+
+    field_stats = {'type': 'incidents', 'labels': labels}
+
+    if hasattr(dataset, 'groups'):
+        # the data is grouped, so per-group statistics will be generated
+        group_names = dataset.groups.keys()
+
+        location_stats = {}
+
+        for group_name in group_names:
+            reported = dataset.get_group(group_name).get(tag).count()
+            total = sum([dataset.get_group(group_name).get(field_tag).count() for field_tag in all_tags])
+            missing = total - reported
+            percent_reported = float(reported) / float(total) * 100.0
+            percent_missing = float(missing) / float(total) * 100.0
+
+            location_stats[group_name] = {}
+            location_stats[group_name]['missing'] = missing
+            location_stats[group_name]['reported'] = reported
+            location_stats[group_name]['total'] = total
+            location_stats[group_name]['percent_reported'] = percent_reported
+            location_stats[group_name]['percent_missing'] = percent_missing
+
+        field_stats['locations'] = location_stats
+    else:
+        # ungrouped data, statistics for the entire data set will be generated
+
+        reported = dataset[tag].count()
+        total = sum([dataset[field_tag].count() for field_tag in all_tags])
+        missing = total - reported
+        percent_reported = float(reported) / float(total) * 100.0
+        percent_missing = float(missing) / float(total) * 100.0
+
+        stats = {'reported': reported,
+                 'missing': missing, 'percent_reported': percent_reported,
+                 'percent_missing': percent_missing,
+                 'total': total}
+
+        field_stats.update(stats)
+
+    return field_stats
+
+
 def generate_field_stats(field, dataset):
     ''' In order to simplify the choice on what analysis to perform
     this method will check a few conditions and return the appropriate
@@ -435,14 +493,14 @@ def generate_incidents_data(form, qs, location_root=None, grouped=True, tags=Non
         form_groups = list(FormGroup.objects.filter(pk__in=FormField.objects.filter(tag__in=tags).values_list('group__pk', flat=True)))
     else:
         form_groups = list(form.groups.all())
-    form_fields = list(FormField.objects.filter(group__form=form).select_related())
+    form_fields = list(FormField.objects.filter(group__form=form).order_by('tag').select_related())
 
     if data_frame.empty:
         return incidents_summary
 
     if not tags:
         tags = [field.tag for field in form_fields]
-        tags.sort()
+    tags.sort()
 
     if not grouped:
         incidents_summary['type'] = 'normal'
@@ -452,7 +510,7 @@ def generate_incidents_data(form, qs, location_root=None, grouped=True, tags=Non
             group_summary = []
 
             for form_field in filter(lambda field: field.group == group and field.tag in tags, form_fields):
-                field_stats = generate_single_choice_field_stats(form_field.tag, data_frame, ['1'])
+                field_stats = generate_incident_field_stats(form_field.tag, data_frame, ['1'], all_tags=tags)
 
                 group_summary.append((form_field.tag, form_field.description, field_stats))
 
@@ -465,12 +523,13 @@ def generate_incidents_data(form, qs, location_root=None, grouped=True, tags=Non
 
         incidents_summary['type'] = 'grouped'
         incidents_summary['groups'] = []
+        incidents_summary['locations'] = set()
         incidents_summary['top'] = []
         incidents_summary['tags'] = tags
 
         # top level summaries
         for form_field in filter(lambda field: field.tag in tags, form_fields):
-            field_stats = generate_single_choice_field_stats(form_field.tag, data_frame, ['1'])
+            field_stats = generate_incident_field_stats(form_field.tag, data_frame, ['1'], all_tags=tags)
 
             incidents_summary['top'].append((form_field.tag, form_field.description, field_stats))
 
@@ -480,16 +539,17 @@ def generate_incidents_data(form, qs, location_root=None, grouped=True, tags=Non
             location_stats = {}
 
             for form_field in filter(lambda field: field.tag in tags, form_fields):
-                field_stats = generate_single_choice_field_stats(form_field.tag, data_group, ['1'])
+                field_stats = generate_incident_field_stats(form_field.tag, data_group, ['1'], all_tags=tags)
 
-                incidents_summary['locations'] = field_stats['locations'].keys()
+                incidents_summary['locations'] = set(field_stats['locations'].keys())
 
                 for location in field_stats['locations'].keys():
                     if not location in location_stats:
                         location_stats[location] = {}
                     location_stats[location].update({form_field.tag: (form_field.description, field_stats['locations'][location])})
 
-            incidents_summary['groups'].append((location_type, location_stats))
+            group_location_stats = [(location, location_stats[location]) for location in location_stats.keys()]
+            incidents_summary['groups'].append((location_type, group_location_stats))
 
     return incidents_summary
 

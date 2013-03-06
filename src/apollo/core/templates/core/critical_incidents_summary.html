@@ -39,19 +39,27 @@
 		<th style="text-align:center">{{ tag_stats.percent_reported|floatformat:"0" }}%<br />({{ tag_stats.reported }})</th>
 		{% endfor %}
 	</tr>
-	{% for location_type, location_stats in incidents_summary.groups %}
-	{% for location in incidents_summary.locations %}
+	{% for location_type, group_location_stats in incidents_summary.groups %}
+	{% for location, location_data in group_location_stats %}
 	<tr>
-		<td>{{ location }}</td>
+		<td>{{ location }}<br /><em>{{ location_type }}</em></td>
 		{% with incidents_summary.top.0 as tag_data %}
-		{% with location_stats|keyvalue:location|keyvalue:tag_data.0 as field_stats %}
+		{% if location_data %}
+		{% with location_data|keyvalue:tag_data.0 as field_stats %}
 		<td style="text-align:center">{{ field_stats.1.total }}</td>
 		{% endwith %}
+		{% else %}
+		<td style="text-align:center">0</td>
+		{% endif %}
 		{% endwith %}
-		{% for tag, tag_description, tag_stats in incidents_summary.top %}
-		{% with location_stats|keyvalue:location|keyvalue:tag as field_stats %}
-		<td style="text-align:center">{{ field_stats.1.percent_reported }}%<br />({{ field_stats.1.reported}})</td>
+		{% for tag, tag_description, _ in incidents_summary.top %}
+		{% if location_data %}
+		{% with location_data|keyvalue:tag as field_stats %}
+		<td style="text-align:center">{{ field_stats.1.percent_reported|floatformat:"0" }}%<br />({{ field_stats.1.reported}})</td>
 		{% endwith %}
+		{% else %}
+		<td style="text-align:center">0%<br />(0)</td>
+		{% endif %}
 		{% endfor %}
 	</tr>
 	{% endfor %}
@@ -65,14 +73,18 @@
 	var labels = ["{{ location }}"];
 	var legend = [{% for tag, tag_description, tag_stats in incidents_summary.top %}"{{ tag|safe }}",{% endfor %}];
 
-	{% for location_type, location_stats in incidents_summary.groups %}
-	{% for location in incidents_summary.locations %}
+	{% for location_type, group_location_stats in incidents_summary.groups %}
+	{% for location, location_data in group_location_stats %}
 	labels.push("{{ location }}");
 	data.push([
 	{% for tag, tag_description, tag_stats in incidents_summary.top %}
-		{% with location_stats|keyvalue:location|keyvalue:tag as field_stats %}
+		{% if location_data %}
+		{% with location_data|keyvalue:tag as field_stats %}
 			{{ field_stats.1.percent_reported }},
 	    {% endwith %}
+	    {% else %}
+	    	0,
+	    {% endif %}
 	{% endfor %}
 	]);
 	{% endfor %}
