@@ -13,6 +13,11 @@ def keyvalue(value, key):
 
 
 @register.filter
+def sortedlist(value):
+    return sorted(value)
+
+
+@register.filter
 def groupsel(value, pk):
     try:
         return value['group_%d' % pk]

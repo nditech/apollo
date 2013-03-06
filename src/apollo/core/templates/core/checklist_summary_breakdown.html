@@ -54,7 +54,8 @@
 						</tr>
 						{% for location_type, location_type_summary in process_summary.groups %}
 						{% for tag, question, tag_stats in location_type_summary %}
-						{% for location, location_stats in tag_stats.locations.items %}
+						{% for location in tag_stats.locations.keys|sortedlist %}
+                        {% with tag_stats.locations|keyvalue:location as location_stats %}
 						<tr>
 							<td><span style="margin-left:2em">{{ location }}</span></td>
 							{% if tag_stats.type == 'numeric' %}
@@ -67,6 +68,7 @@
 							<td align="right">{{ location_stats.percent_reported|floatformat:0 }}% ({{ location_stats.reported }})</td>
 							<td align="right">{{ location_stats.percent_missing|floatformat:0 }}% ({{ location_stats.missing }})</td>
 						</tr>
+                        {% endwith %}
 						{% endfor %}
 						{% endfor %}
 						{% endfor %}
@@ -92,10 +94,12 @@
 
 {% for location_type, location_type_summary in process_summary.groups %}
   {% for tag, question, tag_stats in location_type_summary %}
-    {% for location, location_stats in tag_stats.locations.items %}
+    {% for location in tag_stats.locations.keys|sortedlist %}
+    {% with tag_stats.locations|keyvalue:location as location_stats %}
 	labels.push("{{ location }}");
 	{% for value, percentage in location_stats.histogram %}data[{{forloop.counter0}}].push({{ percentage }});
 	{% endfor %}
+    {% endwith %}
     {% endfor %}
   {% endfor %}
 {% endfor %}
@@ -206,10 +210,12 @@
 
 	{% for location_type, location_type_summary in process_summary.groups %}
 	  {% for tag, question, tag_stats in location_type_summary %}
-	    {% for location, location_stats in tag_stats.locations.items %}
+        {% for location in tag_stats.locations.keys|sortedlist %}
+        {% with tag_stats.locations|keyvalue:location as location_stats %}
 		labels.push("{{ location }}");
 		data.push([{% for value, percentage in location_stats.histogram %}{{ percentage }},{% endfor %}]);
-	    {% endfor %}
+	    {% endwith %}
+        {% endfor %}
 	  {% endfor %}
 	{% endfor %}
 
@@ -343,10 +349,12 @@ vis.render();
 
 	{% for location_type, location_type_summary in process_summary.groups %}
 	  {% for tag, question, tag_stats in location_type_summary %}
-	    {% for location, location_stats in tag_stats.locations.items %}
+        {% for location in tag_stats.locations.keys|sortedlist %}
+        {% with tag_stats.locations|keyvalue:location as location_stats %}
 		labels.push("{{ location }}");
 		data.push({{ location_stats.mean|floatformat:0 }})
-	    {% endfor %}
+	    {% endwith %}
+        {% endfor %}
 	  {% endfor %}
 	{% endfor %}
 

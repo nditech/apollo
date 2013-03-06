@@ -552,7 +552,7 @@ def generate_incidents_data(form, qs, location_root=None, grouped=True, tags=Non
                         location_stats[location] = {}
                     location_stats[location].update({form_field.tag: (form_field.description, field_stats['locations'][location])})
 
-            group_location_stats = [(location, location_stats[location]) for location in location_stats.keys()]
+            group_location_stats = [(location, location_stats[location]) for location in sorted(location_stats.keys())]
             incidents_summary['groups'].append((location_type, group_location_stats))
 
     return incidents_summary
