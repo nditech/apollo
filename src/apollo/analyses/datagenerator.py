@@ -117,6 +117,7 @@ def generate_numeric_field_stats(tag, dataset):
     if hasattr(dataset, 'groups'):
         # if we need grouped data, say, by a certain location type, for example
         group_names = dataset.groups.keys()
+        group_names.sort()
 
         # generate the per-group statistics
         # the transpose and to_dict ensures that the output looks similar to
@@ -185,6 +186,7 @@ def generate_single_choice_field_stats(tag, dataset, options, labels=None):
     if hasattr(dataset, 'groups'):
         # the data is grouped, so per-group statistics will be generated
         group_names = dataset.groups.keys()
+        group_names.sort()
 
         location_stats = {}
 
@@ -252,6 +254,7 @@ def generate_mutiple_choice_field_stats(tag, dataset, options, labels=None):
 
     if hasattr(dataset, 'groups'):
         group_names = dataset.groups.keys()
+        group_names.sort()
 
         field_stats['labels'] = labels
         location_stats = {}
@@ -323,6 +326,7 @@ def generate_incident_field_stats(tag, dataset, options, labels=None, all_tags=N
     if hasattr(dataset, 'groups'):
         # the data is grouped, so per-group statistics will be generated
         group_names = dataset.groups.keys()
+        group_names.sort()
 
         location_stats = {}
 
