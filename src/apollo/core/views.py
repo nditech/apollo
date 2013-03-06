@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 try:
     from cStringIO import StringIO
 except ImportError:
@@ -52,7 +53,13 @@ class DashboardView(View, TemplateResponseMixin):
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
-        self.page_title = 'Dashboard'
+        if 'group' in kwargs:
+            self.form_group = get_object_or_404(FormGroup, pk=kwargs['group'])
+            self.page_title = 'Dashboard · {}'.format(self.form_group.name)
+            self.template_name = 'core/dashboard_status_breakdown.html'
+        else:
+            self.form_group = None
+            self.page_title = 'Dashboard'
         self.dashboard_filter = DashboardFilter
 
         return super(DashboardView, self).dispatch(request, *args, **kwargs)
@@ -61,7 +68,7 @@ class DashboardView(View, TemplateResponseMixin):
         context = {'params': kwargs}
         context['page_title'] = self.page_title
         context['filter_form'] = self.filter_set.form
-        context['summary'] = generate_dashboard_summary(self.filter_set.qs)
+        context['summary'] = generate_dashboard_summary(self.filter_set.qs, self.form_group)
         return context
 
     def get(self, request, *args, **kwargs):

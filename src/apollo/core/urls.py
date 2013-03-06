@@ -19,6 +19,7 @@ v2_api.register(SubmissionResource())
 
 urlpatterns = patterns('',
     url(r'^$', DashboardView.as_view(), name='dashboard'),
+    url(r'^dashboard/(?P<group>\d+)/?', DashboardView.as_view(), name='grouped_dashboard'),
 
     url(r'^api/', include(v2_api.urls)),
 

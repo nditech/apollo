@@ -20,7 +20,7 @@
 {% for group in summary %}
   {% if forloop.counter0|divisibleby:"5" %}<div class="span1"></div>{% endif %}
   <div class="span2">
-      <legend style="text-align:center">{{ group.name }}</legend>
+      <legend style="text-align:center"><a href="{% url grouped_dashboard group.id %}">{{ group.name }}</a></legend>
     <div>
       <script type="text/javascript+protovis">
         width = 170,
