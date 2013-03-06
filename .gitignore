@@ -25,3 +25,4 @@ build/
 src/apollo.egg-info/
 .Python
 pip-log.txt
+gp.recipe.pip/gp.recipe.pip.egg-info/
