@@ -244,7 +244,7 @@ class ActivitySelectionForm(forms.Form):
         request = kwargs.pop('request', None)
         super(ActivitySelectionForm, self).__init__(*args, **kwargs)
         self.fields['activity'] = forms.ModelChoiceField(
-            queryset=Activity.objects.all(),
+            queryset=Activity.objects.all().order_by('date'),
             initial=request.session.get('activity', Activity.default())
                 if request else None,
             empty_label=None,
