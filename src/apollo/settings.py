@@ -95,9 +95,7 @@ INTERNAL_IPS = ('127.0.0.1',)
 
 # after login (which is handled by django.contrib.auth), redirect to the
 # dashboard rather than 'accounts/profile' (the default).
-LOGIN_REDIRECT_URL = "/activity"
-
-LOGIN_URL = '/accounts/login/?next=/activity'
+LOGIN_REDIRECT_URL = "/"
 
 # use django-nose to run tests. rapidsms contains lots of packages and
 # modules which django does not find automatically, and importing them

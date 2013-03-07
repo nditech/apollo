@@ -20,7 +20,7 @@ v2_api.register(SubmissionResource())
 urlpatterns = patterns('',
     url(r'^$', DashboardView.as_view(), name='dashboard'),
     url(r'^dashboard/(?P<group>\d+)/?', DashboardView.as_view(), name='grouped_dashboard'),
-    url(r'^activity/?', ActivitySelectionView.as_view(), name="activity_selection"),
+    url(r'^activity/$', ActivitySelectionView.as_view(), name="activity_selection"),
 
     url(r'^api/', include(v2_api.urls)),
 
@@ -50,6 +50,6 @@ urlpatterns = patterns('',
 
 # authentication urls
 urlpatterns += patterns('',
-    url(r'^accounts/login/$', 'django.contrib.auth.views.login', {'template_name': 'core/login.html'}, name="user-login"),
+    url(r'^accounts/login/$', 'apollo.core.views.login', {'template_name': 'core/login.html'}, name="user-login"),
     url(r'^accounts/logout/$', 'django.contrib.auth.views.logout_then_login', name="user-logout")
 )
