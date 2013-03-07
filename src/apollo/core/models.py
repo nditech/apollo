@@ -265,6 +265,7 @@ class Activity(models.Model):
         permissions = (
             ("view_activities", "Can view all activities"),
         )
+        verbose_name_plural = 'activities'
 
 
 class Form(models.Model):
