@@ -25,6 +25,12 @@ def groupsel(value, pk):
         return None
 
 
+@register.inclusion_tag('core/activity_info.html')
+def activity_name(request=None):
+    activity = request.session.get('activity', Activity.default())
+    return {'activity': activity}
+
+
 @register.inclusion_tag('core/analysis_menu.html')
 def analysis_menu(request=None):
     activity = request.session.get('activity', Activity.default())
