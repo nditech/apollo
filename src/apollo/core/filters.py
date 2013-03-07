@@ -1,6 +1,8 @@
 from .models import *
+from datetime import timedelta
 import django_filters
 from django import forms
+from django.conf import settings
 from djorm_hstore.expressions import HstoreExpression
 
 
@@ -79,24 +81,19 @@ class ActivityFilter(django_filters.ChoiceFilter):
     '''
 
     def __init__(self, *args, **kwargs):
+        request = kwargs.pop('request', None)
         kwargs['choices'] = [('', 'Activity')] + list(Activity.objects.all().values_list('pk', 'name'))
-        try:
-            recent_submission = Submission.objects.filter(form__type='CHECKLIST').order_by('-date')[0]
-            self.default_activity = recent_submission.form.activity
+        self.default_activity = request.session.get('activity', Activity.default()) if request else Activity.default()
+        if self.default_activity:
             kwargs['initial'] = self.default_activity.pk
-        except IndexError:
-            try:
-                self.default_activity = Activity.objects.all().order_by('-pk')[0]
-                kwargs['initial'] = self.default_activity.pk
-            except IndexError:
-                self.default_activity = None
         super(ActivityFilter, self).__init__(*args, **kwargs)
 
     def filter(self, qs, value):
         if value:
-            return qs.filter(form__activity__pk=value)
+            activity = Activity.objects.get(pk=value)
+            return qs.filter(date__range=(activity.date, activity.date + timedelta(settings.BACKLOG_DAYS)))
         elif self.default_activity:
-            return qs.filter(form__activity=self.default_activity)
+            return qs.filter(date__range=(self.default_activity.date, self.default_activity.date + timedelta(settings.BACKLOG_DAYS)))
         else:
             return qs
 
@@ -155,14 +152,17 @@ def generate_contacts_filter():
 
 
 class BaseSubmissionFilter(django_filters.FilterSet):
-    class Meta:
-        model = Submission
-        fields = ['observer__observer_id', 'date', 'location']
+    def __init__(self, *args, **kwargs):
+        request = kwargs.pop('request', None)
+        super(BaseSubmissionFilter, self).__init__(*args, **kwargs)
+        self.filters['activity'] = ActivityFilter(
+            widget=forms.HiddenInput(),
+            request=request)
 
 
 def generate_submission_filter(form):
     metafields = {'model': Submission, 'fields':
-        ['observer__observer_id', 'date', 'location']}
+        ['observer__observer_id', 'date', 'location', 'activity']}
     for group in form.groups.all():
         metafields['fields'].append('group_%d' % (group.pk,))
 
@@ -187,8 +187,9 @@ def generate_submission_filter(form):
         }))
 
     fields['location'] = LocationFilter(widget=forms.Select(attrs={
-        'class': 'span3 input-xlarge select2',
+        'class': 'span4 input-xlarge select2',
         'data-placeholder': 'Location'}))
+    fields['activity'] = ActivityFilter(widget=forms.HiddenInput())
 
     if form.type == 'INCIDENT':
         fields['status'] = HstoreChoiceFilter(
@@ -225,11 +226,25 @@ class DashboardFilter(django_filters.FilterSet):
         model = Submission
         fields = ['location', 'activity', 'sample']
 
+    def __init__(self, *args, **kwargs):
+        request = kwargs.pop('request', None)
+        super(DashboardFilter, self).__init__(*args, **kwargs)
+        self.filters['activity'] = ActivityFilter(
+            widget=forms.HiddenInput(),
+            request=request)
+
 
 class SubmissionsAnalysisFilter(django_filters.FilterSet):
     sample = SampleFilter(widget=forms.Select(attrs={'class': 'span2'}))
+    activity = ActivityFilter(widget=forms.HiddenInput())
 
     class Meta:
         model = Submission
         fields = ['sample']
 
+    def __init__(self, *args, **kwargs):
+        request = kwargs.pop('request', None)
+        super(SubmissionsAnalysisFilter, self).__init__(*args, **kwargs)
+        self.filters['activity'] = ActivityFilter(
+            widget=forms.HiddenInput(),
+            request=request)

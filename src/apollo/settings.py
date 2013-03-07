@@ -95,7 +95,7 @@ INTERNAL_IPS = ('127.0.0.1',)
 
 # after login (which is handled by django.contrib.auth), redirect to the
 # dashboard rather than 'accounts/profile' (the default).
-LOGIN_REDIRECT_URL = "/"
+LOGIN_REDIRECT_URL = "/activity"
 
 # use django-nose to run tests. rapidsms contains lots of packages and
 # modules which django does not find automatically, and importing them
@@ -156,7 +156,7 @@ CHARACTER_TRANSLATIONS = (
     ('o', '0'),
     ('l', '1'),
 )
-BACKLOG_DAYS = 4  # Number of days allowed for a submission to be updated by an observer
+BACKLOG_DAYS = 1  # Number of days allowed for a submission to be updated by an observer
 LOCATIONS_GRAPH_MAXAGE = 25200  # number of seconds to cache the locations graph - 1wk
 PAGE_SIZE = 10  # Number of submissions viewable per page
 PROCESS_QUESTIONS_TAGS = [

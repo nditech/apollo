@@ -26,15 +26,24 @@ def groupsel(value, pk):
 
 
 @register.inclusion_tag('core/analysis_menu.html')
-def analysis_menu():
-    forms = Form.objects.all().order_by('pk')
+def analysis_menu(request=None):
+    activity = request.session.get('activity', Activity.default())
+    if activity:
+        forms = activity.forms.all().order_by('pk')
+    else:
+        forms = Form.objects.all().order_by('pk')
     return {'forms': forms}
 
 
 @register.inclusion_tag('core/forms_menu.html')
-def forms_menu():
-    checklist_forms = Form.objects.filter(type='CHECKLIST').order_by('pk')
-    incident_forms = Form.objects.filter(type='INCIDENT').order_by('pk')
+def forms_menu(request=None):
+    activity = request.session.get('activity', Activity.default())
+    if activity:
+        checklist_forms = activity.forms.filter(type='CHECKLIST').order_by('pk')
+        incident_forms = activity.forms.filter(type='INCIDENT').order_by('pk')
+    else:
+        checklist_forms = Form.objects.filter(type='CHECKLIST').order_by('pk')
+        incident_forms = Form.objects.filter(type='INCIDENT').order_by('pk')
     return {
         'checklist_forms': checklist_forms,
         'incident_forms': incident_forms

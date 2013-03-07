@@ -10,7 +10,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.comments.models import Comment
 from django.contrib.sites.models import Site
 from django.core.urlresolvers import reverse
-from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.template.defaultfilters import slugify
 from django.utils import simplejson as json
@@ -20,7 +20,7 @@ from django.views.generic.base import TemplateResponseMixin
 from rapidsms.models import Connection, Backend
 from rapidsms.router.api import send
 import tablib
-from .forms import ContactModelForm, LocationModelForm, generate_submission_form
+from .forms import ActivitySelectionForm, ContactModelForm, LocationModelForm, generate_submission_form
 from .helpers import *
 from .models import *
 from .filters import *
@@ -35,6 +35,14 @@ COMPLETION_STATUS = (
 export_formats = ['csv', 'xls', 'xlsx', 'ods']
 
 
+def set_activity(request, activity):
+    request.session['activity'] = activity
+
+
+def get_activity(request):
+    return request.session.get('activity', Activity.default())
+
+
 class TemplatePreview(TemplateView):
     page_title = ''
 
@@ -46,6 +54,38 @@ class TemplatePreview(TemplateView):
         context = super(TemplatePreview, self).get_context_data(**kwargs)
         context['page_title'] = self.page_title
         return context
+
+
+class ActivitySelectionView(View, TemplateResponseMixin):
+    template_name = 'core/activity_selection.html'
+
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        self.form_class = ActivitySelectionForm
+        return super(ActivitySelectionView, self).dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = {'params': kwargs}
+        context['form'] = self.form
+        return context
+
+    def get(self, request, *args, **kwargs):
+        self.form = self.form_class(request=request)
+        context = self.get_context_data(**kwargs)
+        # only display the activity selection form if this user has the right permissions
+        if request.user.has_perm('core.view_activities'):
+            return self.render_to_response(context)
+        else:
+            return HttpResponseRedirect(reverse('dashboard'))
+
+    @method_decorator(permission_required('core.view_activities'))
+    def post(self, request, *args, **kwargs):
+        self.form = self.form_class(request.POST, request=request)
+        if self.form.is_valid():
+            set_activity(request, self.form.cleaned_data['activity'])
+            return HttpResponseRedirect(reverse('dashboard'))
+        context = self.get_context_data(**kwargs)
+        return self.render_to_response(context)
 
 
 class DashboardView(View, TemplateResponseMixin):
@@ -74,13 +114,13 @@ class DashboardView(View, TemplateResponseMixin):
     def get(self, request, *args, **kwargs):
         initial_data = request.session.get('dashboard_filter', None)
         self.filter_set = self.dashboard_filter(initial_data,
-                queryset=Submission.objects.exclude(observer=None))
+                queryset=Submission.objects.exclude(observer=None), request=request)
         context = self.get_context_data(**kwargs)
         return self.render_to_response(context)
 
     def post(self, request, *args, **kwargs):
         self.filter_set = self.dashboard_filter(request.POST,
-                queryset=Submission.objects.exclude(observer=None))
+                queryset=Submission.objects.exclude(observer=None), request=request)
         request.session['dashboard_filter'] = self.filter_set.form.data
         context = self.get_context_data(**kwargs)
         return self.render_to_response(context)
@@ -133,12 +173,12 @@ class SubmissionProcessAnalysisView(View, TemplateResponseMixin):
 
     def get(self, request, *args, **kwargs):
         initial_filter = request.session.get('analysis_filter', None)
-        self.filter_set = self.analysis_filter(initial_filter, queryset=self.initial_qs)
+        self.filter_set = self.analysis_filter(initial_filter, queryset=self.initial_qs, request=request)
         context = self.get_context_data(**kwargs)
         return self.render_to_response(context)
 
     def post(self, request, *args, **kwargs):
-        self.filter_set = self.analysis_filter(request.POST, queryset=self.initial_qs)
+        self.filter_set = self.analysis_filter(request.POST, queryset=self.initial_qs, request=request)
         request.session['analysis_filter'] = self.filter_set.form.data
         context = self.get_context_data(**kwargs)
         return self.render_to_response(context)
@@ -175,21 +215,24 @@ class SubmissionListView(ListView):
             if request.user.has_perm('core.message_observers'):
                 initial_data = request.session.get('submission_filter_%d' % self.form.pk, None)
                 self.filter_set = self.submission_filter(initial_data,
-                    queryset=Submission.objects.filter(form=self.form).exclude(observer=None).select_related())
+                    queryset=Submission.objects.filter(form=self.form).exclude(observer=None).select_related(),
+                    request=request)
                 send_bulk_message(self.filter_set.qs.all().values_list('observer__pk', flat=True), self.request.POST['message'])
                 return HttpResponse('OK')
             else:
                 return HttpResponseForbidden()
         else:
             self.filter_set = self.submission_filter(self.request.POST,
-                queryset=Submission.objects.filter(form=self.form).exclude(observer=None).select_related())
+                queryset=Submission.objects.filter(form=self.form).exclude(observer=None).select_related(),
+                request=request)
             request.session['submission_filter_%d' % self.form.pk] = self.filter_set.form.data
             return super(SubmissionListView, self).get(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
         initial_data = request.session.get('submission_filter_%d' % self.form.pk, None)
         self.filter_set = self.submission_filter(initial_data,
-            queryset=Submission.objects.filter(form=self.form).exclude(observer=None).select_related())
+            queryset=Submission.objects.filter(form=self.form).exclude(observer=None).select_related(),
+            request=request)
         return super(SubmissionListView, self).get(request, *args, **kwargs)
 
 
@@ -267,10 +310,10 @@ class SubmissionListExportView(View):
         initial_data = request.session.get('submission_filter_%d' % form.pk, None)
         if self.collection == 'master':
             self.filter_set = self.submission_filter(initial_data,
-                queryset=Submission.objects.filter(form=form, observer=None))
+                queryset=Submission.objects.filter(form=form, observer=None), request=request)
         else:
             self.filter_set = self.submission_filter(initial_data,
-                queryset=Submission.objects.filter(form=form).exclude(observer=None))
+                queryset=Submission.objects.filter(form=form).exclude(observer=None), request=request)
         qs = self.filter_set.qs.order_by('-date', 'observer__observer_id')
 
         data_fields = FormField.objects.filter(group__form=form).order_by('id').values_list('tag', flat=True)

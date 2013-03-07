@@ -1,7 +1,7 @@
 from django import forms
 from django.utils.encoding import force_unicode
 from form_utils.forms import BetterForm
-from apollo.core.models import (Form, Observer, ObserverDataField, Location, Submission)
+from apollo.core.models import (Form, Observer, ObserverDataField, Location, Submission, Activity)
 from rapidsms.models import (Backend, Contact, Connection)
 
 
@@ -237,3 +237,15 @@ class LocationModelForm(forms.ModelForm):
 
         self.instance.save()
         return self.instance
+
+
+class ActivitySelectionForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        request = kwargs.pop('request', None)
+        super(ActivitySelectionForm, self).__init__(*args, **kwargs)
+        self.fields['activity'] = forms.ModelChoiceField(
+            queryset=Activity.objects.all(),
+            initial=request.session.get('activity', Activity.default())
+                if request else None,
+            empty_label=None,
+            widget=forms.Select(attrs={'class': 'input-xlarge'}))

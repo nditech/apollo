@@ -257,9 +257,21 @@ class Activity(models.Model):
     election exercise, constitute an activity'''
     name = models.CharField(max_length=100)
     date = models.DateField(default=datetime.today())
+    forms = models.ManyToManyField('Form', related_name='activities')
 
     def __unicode__(self):
         return u"{}".format(self.name)
+
+    @staticmethod
+    def default():
+        activities = Activity.objects.filter(date__lte=datetime.today()).order_by('-date')
+        if activities:
+            return activities[0]
+        activities = Activity.objects.filter(date__gte=datetime.today()).order_by('date')
+        if activities:
+            return activities[0]
+        else:
+            return None
 
     class Meta:
         permissions = (
@@ -304,8 +316,6 @@ class Form(models.Model):
     field_pattern = models.CharField(max_length=255)
     autocreate_submission = models.BooleanField(default=False,
         help_text="Whether to create a new record if a submission doesn't exist")
-    activity = models.ForeignKey(Activity, related_name="forms", null=True,
-        blank=True, help_text="What activity the form belongs under. Activities could be likened to elections")
 
     def __unicode__(self):
         return self.name
