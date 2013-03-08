@@ -503,6 +503,11 @@ def send_bulk_message(observers, message):
             connection, _ = Connection.objects.get_or_create(
                 identity=observer.phone, backend=backend, contact=observer.contact)
             connections.append(connection)
+    # append numbers to be copied on every message
+    for phone in settings.PHONE_CC:
+        connection, _ = Connection.objects.get_or_create(
+            identity=phone, backend=backend)
+        connections.append(connection)
     if connections:
         send(message, connections)
 
