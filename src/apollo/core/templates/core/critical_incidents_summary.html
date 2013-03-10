@@ -90,94 +90,49 @@
 	{% endfor %}
 	{% endfor %}
 
-	var colors = ['#FC6C00','#FFBD70','#E1E4CB','#A6DAD8','#65D1E8'];
-	
+	var colors = ['#1f77b4', '#62a1ef', '#aec7e8', '#ff7f0e', '#ffbb78', '#2ca02c', '#98df8a', '#d62728', '#f04a54', '#ff9896', '#7d50ea', '#9467bd', '#c5b0d5', '#8c564b', '#c49c94', '#e377c2', '#f7b6d2', '#7f7f7f', '#c7c7c7', '#bcbd22', '#dbdb8d', '#17becf','#44f2fe', '#9edae5', '#ff0000','#fff000'];
 
-var n = data.length, m = data[0].length;
+	var n = data.length, m = data[0].length;
 
-/* Sizing and scales. */
-var w = 800,
-	bar_width = 200,
-	bar_height = 30,
-	margin_left = 200,
-	panel_spacing = 100,
-    h = ((data[0].length * bar_height) + bar_height) * data.length,
-    max_value = pv.max(pv.blend(data)),
+	/* Sizing and scales. */
+	width = 350,
+    height = 470,
+    offset = 10,
+    r = width/2 - offset;
 
-    x = pv.Scale.linear(0, 100).range(0, bar_width),
-    x_rule = pv.Scale.linear(0, 100).range(margin_left, bar_width + margin_left),
-    x_rule2 = pv.Scale.linear(0, 100).range(margin_left * 2 + bar_width + panel_spacing, bar_width * 2 + margin_left * 2 + panel_spacing),
-    y = pv.Scale.ordinal(pv.range(n)).splitBanded(0, h, 4/5);
+    var panel = new pv.Panel().width(width).height(height).data(data);
 
-/* The root panel. */
-var vis = new pv.Panel()
-    .width(w+margin_left)
-    .bottom(bar_height)
-    .height(h/2);
+    var pie = panel.add(pv.Panel);
+        pie.add(pv.Wedge)
+        .data(function (d) pv.normalize(d))
+        .outerRadius(100)
+        .angle(function(d) d * 2 * Math.PI)
+        .left(width/2)
+        .top(height/2)
+        .fillStyle(pv.colors(colors).by(function () { return this.index;}))
+        .anchor("center")
+        .add(pv.Label)
+        .textAngle(0)
+        .text(function(d){ return d ? (d*100).toFixed(0) + "%" : "" });
 
-/* The bars. */
-var bar = vis.add(pv.Panel)
-    .data(data)
-    .left(function () this.index % 2 ? margin_left * 2 + bar_width + panel_spacing : margin_left )
-    .top(function() y(Math.floor(this.index/2)))
-    .height(y.range().band)
-  .add(pv.Bar)
-    .data(function(d) d)
-    .top(function() this.index * y.range().band / m)
-    .height(y.range().band / m)
-    .left(0)
-    .width(x)
-    .strokeStyle('white')
-    .fillStyle(pv.colors(colors).by(pv.index));
-
-/* The value label. */
-bar.anchor(function (d) d < 13 ? "left" : "right").add(pv.Label)
-	.textMargin(5)
-    .text(function(d) d.toFixed(0) + '%');
-
-/* The variable label. */
-bar.parent.anchor("left").add(pv.Label)
-    .textAlign("right")
-    .textMargin(5)
-    .font('10pt sans-serif')
-    .text(function () labels[this.parent.index]);
-
-/* legend */
-bar.parent
-	.add(pv.Dot) 
+        pie.anchor("top").add(pv.Label)
+	    .textAlign("center")
+	    .textMargin(5)
+	    .top(height/8)
+	    .font('11pt sans-serif')
+	    .text(function () labels[this.parent.parent.index]);
+        
+    //legends
+    pie.add(pv.Dot) 
     .data(legend)
-    .left(bar_width + 50)
-    .top(function() this.index * 20 + (((data[0].length * bar_height) - ((28 - data.length) * data[0].length))) / 2)
-    .size(20)
+    .left(width - 20)
+    .top(function() this.index * 15 + ((height - (15 * parent.data.length)) / 4) + 15)
+    .size(15)
     .strokeStyle(null) 
     .fillStyle(pv.colors(colors)) 
-    .anchor("right").add(pv.Label);
+    .anchor("right").add(pv.Label);  
 
-/* X-axis ticks. */
-vis.add(pv.Rule)
-    .data(x_rule.ticks(5))
-    .left(x_rule)
-    .strokeStyle(function(d) d ? "rgba(255,255,255,.3)" : "null")
-  .add(pv.Rule)
-    .bottom(0)
-    .height(5)
-    .strokeStyle("#000")
-  .anchor("bottom").add(pv.Label)
-    .text(function (d) x_rule.tickFormat(d) + '%');
-
-vis.add(pv.Rule)
-    .data(x_rule2.ticks(5))
-    .left(x_rule2)
-    .strokeStyle(function(d) d ? "rgba(255,255,255,.3)" : "null")
-  .add(pv.Rule)
-    .bottom(0)
-    .height(5)
-    .strokeStyle("#000")
-  .anchor("bottom").add(pv.Label)
-    .text(function (d) x_rule2.tickFormat(d) + '%');
-
-vis.render();
-
+    panel.render();
 </script>
 				</div>
 			</div>
