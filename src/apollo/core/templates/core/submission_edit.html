@@ -27,7 +27,7 @@
             {% endif %}
           </tr>
           <tr>
-            <th>Source</th>
+            <th>Phone</th>
             <td><em>{% if submission.observer.last_connection %}{{ submission.observer.last_connection.identity }}{% else %}{{ submission.observer.phone }}{% endif %}</em>
               {% with submission.observer.phone|slugify as known_number %}{% with submission.observer.last_connection.identity|slugify|default:known_number as texting_number %} <img src="{% if texting_number == known_number %}{% static "img/tick.png" %}{% else %}{% static "img/caution.png" %}{% endif %}" style="vertical-align:text-bottom" />{% endwith %}{% endwith %}</td>
             {% if submission.form.type == 'CHECKLIST' %}
