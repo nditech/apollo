@@ -205,6 +205,7 @@ class Observer(models.Model):
     gender = models.CharField(max_length=1, null=True, blank=True, choices=GENDER, db_index=True)
     partner = models.ForeignKey(Partner, null=True, blank=True)
     data = DictionaryField(db_index=True, null=True, blank=True)
+    last_connection = models.ForeignKey(Connection, null=True, blank=True)
 
     objects = ObserverManager()
 

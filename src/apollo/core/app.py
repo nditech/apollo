@@ -37,6 +37,10 @@ class App(AppBase):
                 message.respond(UNKNOWN_OBSERVER % {'text': message.text})
                 return True
             else:
+                # update the observer's last known connection
+                observer.last_connection = message.connection
+                observer.save()
+
                 # Find submission for observer and persist valid data
                 try:
                     if submission['form'].autocreate_submission:

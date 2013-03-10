@@ -1,5 +1,5 @@
 {% extends "core/layout.html" %}
-{% load apollo %}{% load comments %}{% load humanize %}
+{% load apollo %}{% load comments %}{% load humanize %}{% load static %}
 {% block content %}
   {% with submission.siblings as siblings %}
   <form action="" method="post">
@@ -10,7 +10,7 @@
         <thead>
           {% if submission.form.type == 'CHECKLIST' %}
           <tr>
-            <th>&nbsp;</th>
+            <th width="15%">&nbsp;</th>
             <th>1</th>
             {% for sibling in siblings %}
             <th>{{ forloop.counter|add:"1" }}</th>
@@ -23,6 +23,17 @@
             {% if submission.form.type == 'CHECKLIST' %}
             {% for sibling in siblings %}
             <td><strong>{{ sibling.observer.name }}</strong>{% if sibling.observer.phone %} ({{ sibling.observer.phone }}){% endif %} &mdash; <strong>{{ sibling.observer.observer_id }}</strong></td>
+            {% endfor %}
+            {% endif %}
+          </tr>
+          <tr>
+            <th>Source</th>
+            <td><em>{% if submission.observer.last_connection %}{{ submission.observer.last_connection.identity }}{% else %}{{ submission.observer.phone }}{% endif %}</em>
+              {% with submission.observer.phone|slugify as known_number %}{% with submission.observer.last_connection.identity|slugify|default:known_number as texting_number %} <img src="{% if texting_number == known_number %}{% static "img/tick.png" %}{% else %}{% static "img/caution.png" %}{% endif %}" style="vertical-align:text-bottom" />{% endwith %}{% endwith %}</td>
+            {% if submission.form.type == 'CHECKLIST' %}
+            {% for sibling in siblings %}
+            <td><em>{% if sibling.observer.last_connection %}{{ sibling.observer.last_connection.identity }}{% else %}{{ sibling.observer.phone }}{% endif %}</em>
+              {% with sibling.observer.phone|slugify as known_number %}{% with sibling.observer.last_connection.identity|slugify|default:known_number as texting_number %} <img src="{% if texting_number == known_number %}{% static "img/tick.png" %}{% else %}{% static "img/caution.png" %}{% endif %}" style="vertical-align:text-bottom" />{% endwith %}{% endwith %}</td>
             {% endfor %}
             {% endif %}
           </tr>
