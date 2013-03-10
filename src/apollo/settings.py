@@ -158,7 +158,6 @@ CHARACTER_TRANSLATIONS = (
     ('o', '0'),
     ('l', '1'),
 )
-BACKLOG_DAYS = 1  # Number of days allowed for a submission to be updated by an observer
 LOCATIONS_GRAPH_MAXAGE = 25200  # number of seconds to cache the locations graph - 1wk
 PAGE_SIZE = 10  # Number of submissions viewable per page
 PROCESS_QUESTIONS_TAGS = [

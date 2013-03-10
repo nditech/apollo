@@ -91,9 +91,9 @@ class ActivityFilter(django_filters.ChoiceFilter):
     def filter(self, qs, value):
         if value:
             activity = Activity.objects.get(pk=value)
-            return qs.filter(date__range=(activity.date, activity.date + timedelta(settings.BACKLOG_DAYS)))
+            return qs.filter(date__range=(activity.start_date, activity.end_date))
         elif self.default_activity:
-            return qs.filter(date__range=(self.default_activity.date, self.default_activity.date + timedelta(settings.BACKLOG_DAYS)))
+            return qs.filter(date__range=(self.default_activity.start_date, self.default_activity.end_date))
         else:
             return qs
 

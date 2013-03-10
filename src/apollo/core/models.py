@@ -257,7 +257,8 @@ class Activity(models.Model):
     for instance, critical incident forms and checklists for a particular
     election exercise, constitute an activity'''
     name = models.CharField(max_length=100)
-    date = models.DateField(default=datetime.today())
+    start_date = models.DateField(default=datetime.today())
+    end_date = models.DateField(default=datetime.today())
     forms = models.ManyToManyField('Form', related_name='activities')
 
     def __unicode__(self):
@@ -265,14 +266,25 @@ class Activity(models.Model):
 
     @staticmethod
     def default():
-        activities = Activity.objects.filter(date__lte=datetime.today()).order_by('-date')
+        activities = Activity.objects.filter(start_date__lte=datetime.today(), end_date__gte=datetime.today()).order_by('-start_date')
         if activities:
             return activities[0]
-        activities = Activity.objects.filter(date__gte=datetime.today()).order_by('date')
+        activities = Activity.objects.filter(end_date__lte=datetime.today()).order_by('-end_date')
+        if activities:
+            return activities[0]
+        activities = Activity.objects.filter(start_date__gte=datetime.today()).order_by('start_date')
         if activities:
             return activities[0]
         else:
             return None
+
+    @staticmethod
+    def for_today():
+        activities = Activity.objects.filter(start_date__lte=datetime.today(), end_date__gte=datetime.today()).order_by('-start_date')
+        if activities:
+            return activities[0]
+        else:
+            raise Activity.DoesNotExist
 
     class Meta:
         permissions = (

@@ -88,7 +88,7 @@ class CoreTest(TestCase):
         form_class = generate_submission_form(self.test_form)
         t_form = form_class()
 
-        self.assertEqual(len(t_form.fields), 8)
+        self.assertEqual(len(t_form.fields), 12)
         self.assertTrue('data__AA' in t_form.fields)
         self.assertTrue('data__AB' in t_form.fields)
         self.assertTrue('data__BC' in t_form.fields)

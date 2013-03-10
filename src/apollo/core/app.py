@@ -4,7 +4,7 @@ import string
 from django.conf import settings
 from rapidsms.apps.base import AppBase
 from models import *
-from datetime import (datetime, timedelta)
+from datetime import datetime
 from django.utils.translation import ugettext as _
 from django.contrib.sites.models import Site
 from django.contrib.comments.models import Comment
@@ -43,27 +43,36 @@ class App(AppBase):
 
                 # Find submission for observer and persist valid data
                 try:
-                    if submission['form'].autocreate_submission:
-                        entry = Submission.objects.create(observer=observer, date=message.date,
-                            form=submission['form'], location=observer.location)
-                    else:
-                        entry = Submission.objects.get(observer=observer, form=submission['form'],
-                            date__range=(message.date - timedelta(settings.BACKLOG_DAYS), message.date))
-                    entry.data.update(submission['data'])
-                    entry.save()
+                    activity = Activity.for_today()
 
-                    # If there's a comment, save it
-                    if comment:
-                        # the comment field stores additional location information
-                        # for incidents
-                        if submission['form'].type == 'INCIDENT':
-                            entry.data.update({'location': comment})
-                            entry.save()
+                    try:
+                        if submission['form'].autocreate_submission:
+                            entry = Submission.objects.create(observer=observer, date=message.date,
+                                form=submission['form'], location=observer.location)
                         else:
-                            Comment.objects.create(content_object=entry,
-                                user_name=observer.name or observer.observer_id, site=Site.objects.get_current(),
-                                comment=comment, submit_date=datetime.now())
-                except Submission.DoesNotExist:
+                            try:
+                                entry = Submission.objects.get(observer=observer, form=submission['form'],
+                                    date__range=(activity.start_date, activity.end_date))
+                            except Submission.MultipleObjectsReturned:
+                                entry = Submission.objects.filter(observer=observer, form=submission['form'],
+                                    date__range=(activity.start_date, activity.end_date)).order_by('date')[0]
+                        entry.data.update(submission['data'])
+                        entry.save()
+
+                        # If there's a comment, save it
+                        if comment:
+                            # the comment field stores additional location information
+                            # for incidents
+                            if submission['form'].type == 'INCIDENT':
+                                entry.data.update({'location': comment})
+                                entry.save()
+                            else:
+                                Comment.objects.create(content_object=entry,
+                                    user_name=observer.name or observer.observer_id, site=Site.objects.get_current(),
+                                    comment=comment, submit_date=datetime.now())
+                    except Submission.DoesNotExist:
+                        pass
+                except Acvity.DoesNotExist:
                     pass
 
                 if 'range_error_fields' in submission and submission['range_error_fields']:
