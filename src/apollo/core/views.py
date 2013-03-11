@@ -4,7 +4,7 @@ try:
 except ImportError:
     from StringIO import StringIO
 import re
-from datetime import datetime
+from datetime import (date, datetime)
 from django.conf import settings
 from django.contrib.auth import REDIRECT_FIELD_NAME, login as auth_login
 from django.contrib.auth.decorators import login_required, permission_required
@@ -332,10 +332,24 @@ class SubmissionListExportView(View):
                 queryset=Submission.objects.filter(form=form).exclude(observer=None), request=request)
         qs = self.filter_set.qs.order_by('-date', 'observer__observer_id')
 
-        data_fields = FormField.objects.filter(group__form=form).order_by('id').values_list('tag', flat=True)
-        datalist_fields = ['observer__observer_id', 'observer__name', 'location'] + list(data_fields) + ['updated']
-        export_fields = ['observer__observer_id', 'observer__name', 'loc:location__province', 'loc:location__district'] + list(data_fields) + ['updated']
-        field_labels = ['PSZ', 'Name', 'Province', 'District'] + list(data_fields) + ['Timestamp']
+        location_types = list(LocationType.objects.filter(on_display=True).values_list('name', flat=True))
+        location_type_fields = ['loc:location__{}'.format(lt.lower()) for lt in location_types]
+
+        if form.type == 'CHECKLIST':
+            data_fields = list(FormField.objects.filter(group__form=form).order_by('tag').values_list('tag', flat=True))
+            datalist_fields = ['observer__observer_id', 'observer__name', 'location'] + data_fields + ['updated']
+
+            export_fields = ['observer__observer_id', 'observer__name'] + location_type_fields + data_fields + ['updated']
+            field_labels = ['PSZ', 'Name'] + location_types + data_fields + ['Timestamp']
+        else:
+            data_fields = list(FormField.objects.filter(group__form=form).order_by('tag').values_list('tag', flat=True))
+
+            export_fields = ['observer__observer_id', 'observer__name'] + location_type_fields + data_fields + ['status', 'witness', 'description', 'updated']
+            field_labels = ['PSZ', 'Name'] + location_types + data_fields + ['Status', 'Witness', 'Description', 'Timestamp']
+
+            data_fields.extend(['status', 'witness', 'description'])
+            datalist_fields = ['observer__observer_id', 'observer__name', 'location'] + data_fields + ['updated']
+
         datalist = qs.data(data_fields).values(*datalist_fields)
 
         filename = slugify('%s %s %s' % (form.name, datetime.now().strftime('%Y %m %d %H%M%S'), self.collection))
@@ -522,9 +536,13 @@ def make_item_row(record, fields, locations_graph):
         if match:
             # if there's a match, retrieve the location name from the graph
             location_id = record[match.group('field')]
-            row.append(get_location_ancestor_by_type(locations_graph, location_id, match.group('location_type'))[0]['name'])
+            location = get_location_ancestor_by_type(locations_graph, location_id, match.group('location_type'))
+            row.append(location[0]['name'] if location else "")
         else:
-            row.append(record[field])
+            if type(record[field]) == datetime or type(record[field]) == date:
+                row.append(record[field].strftime('%Y-%m-%d %H:%M:%S'))
+            else:
+                row.append(record[field])
 
     return row
 
