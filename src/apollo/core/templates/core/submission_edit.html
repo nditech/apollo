@@ -48,9 +48,9 @@
           {% if location_types %}
           <tr>
             <th>&nbsp;</th>
-            <td>{% for location_type in location_types %}{% get_location_for_type submission location_type %}{% if not forloop.last %} / {% endif %}{% endfor %}</td>
+            <td>{% for location_type in location_types %}{% get_location_for_type submission location_type "True" %}{% if not forloop.last %} / {% endif %}{% endfor %}</td>
             {% for sibling in siblings %}
-            <td>{% for location_type in location_types %}{% get_location_for_type sibling location_type %}{% if not forloop.last %} / {% endif %}{% endfor %}</td>
+            <td>{% for location_type in location_types %}{% get_location_for_type sibling location_type "True" %}{% if not forloop.last %} / {% endif %}{% endfor %}</td>
             {% endfor %}
           </tr>
           {% endif %}
@@ -62,7 +62,7 @@
           {% if location_types %}
           <tr>
             <th>&nbsp;</th>
-            <td>{% for location_type in location_types %}{% get_location_for_type submission location_type %}{% if not forloop.last %} / {% endif %}{% endfor %}</td>
+            <td>{% for location_type in location_types %}{% get_location_for_type submission location_type "True" %}{% if not forloop.last %} / {% endif %}{% endfor %}</td>
           </tr>
           {% endif %}
           {% if form.data__location.value %}

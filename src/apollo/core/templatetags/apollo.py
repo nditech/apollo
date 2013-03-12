@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from django import template
 from ..models import *
 
@@ -85,8 +86,12 @@ def submission_items(submissions, form, permissions):
 
 
 @register.simple_tag
-def get_location_for_type(submission, location_type):
-    return submission.get_location_for_type(location_type) or ''
+def get_location_for_type(submission, location_type, display_type=False):
+    location = submission.get_location_for_type(location_type)
+    if display_type:
+        return '{} · <em class="muted">{}</em>'.format(location, location.type) or ''
+    else:
+        return location or ''
 
 
 @register.filter
