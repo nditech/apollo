@@ -47,10 +47,10 @@ RAPIDSMS_ROUTER = "rapidsms.router.db.DatabaseRouter"
 INSTALLED_APPS = [
 
     # the essentials.
+    "zimbabwe",
     "django_nose",
     "djtables",
     "rapidsms",
-    "zimbabwe",
     "core",
     "django_dag",
     "messagelog",
