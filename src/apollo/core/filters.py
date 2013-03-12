@@ -1,8 +1,6 @@
 from .models import *
-from datetime import timedelta
 import django_filters
 from django import forms
-from django.conf import settings
 from djorm_hstore.expressions import HstoreExpression
 
 
@@ -13,10 +11,12 @@ class HstoreChoiceFilter(django_filters.ChoiceFilter):
     def filter(self, qs, value):
         if value:
             # if the intent is to find records with a
-            if not value == "NULL":
-                return qs.where(HstoreExpression("data").contains({self.name: value}))
-            else:
+            if value == "NULL":
                 return qs.where(~HstoreExpression("data").contains(self.name))
+            elif value == "NOT_NULL":
+                return qs.where(HstoreExpression("data").contains(self.name))
+            else:
+                return qs.where(HstoreExpression("data").contains({self.name: value}))
         else:
             return qs
 
@@ -248,3 +248,32 @@ class SubmissionsAnalysisFilter(django_filters.FilterSet):
         self.filters['activity'] = ActivityFilter(
             widget=forms.HiddenInput(),
             request=request)
+
+
+class BaseCriticalIncidentsLocationFilter(django_filters.FilterSet):
+    sample = SampleFilter(widget=forms.Select(attrs={'class': 'span2'}))
+    activity = ActivityFilter(widget=forms.HiddenInput())
+
+    class Meta:
+        model = Submission
+        fields = ['sample']
+
+    def __init__(self, *args, **kwargs):
+        request = kwargs.pop('request', None)
+        super(BaseCriticalIncidentsLocationFilter, self).__init__(*args, **kwargs)
+        self.filters['activity'] = ActivityFilter(
+            widget=forms.HiddenInput(),
+            request=request)
+
+
+def generate_critical_incidents_location_filter(tag):
+    metafields = {'model': Submission, 'fields':
+        ['sample']}
+
+    metaclass = type('Meta', (), metafields)
+    fields = {'Meta': metaclass}
+
+    fields[tag] = HstoreChoiceFilter(widget=forms.HiddenInput(), choices=(('NOT_NULL', ''),), initial='NOT_NULL')
+    fields['activity'] = ActivityFilter(widget=forms.HiddenInput())
+
+    return type('CriticalIncidentsLocationFilter', (BaseCriticalIncidentsLocationFilter,), fields)

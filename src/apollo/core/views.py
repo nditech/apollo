@@ -155,22 +155,30 @@ class SubmissionProcessAnalysisView(View, TemplateResponseMixin):
             self.location = get_object_or_404(Location, pk=kwargs['location_id'])
         else:
             self.location = Location.root()
-        if 'tag' in kwargs:
-            self.template_name = 'core/checklist_summary_breakdown.html'
-            self.tags = [kwargs['tag']]
-            self.display_tag = kwargs['tag']
-            self.grouped = True
-        else:
-            self.tags = settings.PROCESS_QUESTIONS_TAGS
-            self.grouped = False
 
-        # critical incidents are processed differently
-        if self.form.type == 'INCIDENT':
+        if self.form.type == 'CHECKLIST':
+            # checklists
+            if 'tag' in kwargs:
+                self.template_name = 'core/checklist_summary_breakdown.html'
+                self.tags = [kwargs['tag']]
+                self.display_tag = kwargs['tag']
+                self.grouped = True
+            else:
+                self.tags = settings.PROCESS_QUESTIONS_TAGS
+                self.grouped = False
+            self.initial_qs = Submission.objects.filter(form=self.form, observer=None).is_within(self.location)
+        else:
+            # critical incidents are processed differently
             self.grouped = True
             self.template_name = 'core/critical_incidents_summary.html'
             self.initial_qs = Submission.objects.filter(form=self.form).is_within(self.location)
-        else:
-            self.initial_qs = Submission.objects.filter(form=self.form, observer=None).is_within(self.location)
+
+            # the presence of a tag indicates interest in display location of incidents
+            if 'tag' in kwargs:
+                self.display_tag = kwargs['tag']
+                self.analysis_filter = generate_critical_incidents_location_filter(self.display_tag)
+                self.template_name = 'core/critical_incidents_locations.html'
+                self.page_title = '{} Analysis'.format(self.form.name)
 
         return super(SubmissionProcessAnalysisView, self).dispatch(request, *args, **kwargs)
 
@@ -182,7 +190,11 @@ class SubmissionProcessAnalysisView(View, TemplateResponseMixin):
         context['location'] = self.location
         context['display_tag'] = self.display_tag if hasattr(self, 'display_tag') else None
         if self.form.type == 'INCIDENT':
-            context['incidents_summary'] = generate_incidents_data(self.form, self.filter_set.qs, self.location, grouped=self.grouped)
+            if context['display_tag']:
+                context['form_field'] = FormField.objects.get(group__form=self.form, tag=self.display_tag)
+                context['incidents'] = self.filter_set.qs
+            else:
+                context['incidents_summary'] = generate_incidents_data(self.form, self.filter_set.qs, self.location, grouped=self.grouped)
         else:
             context['process_summary'] = generate_process_data(self.form, self.filter_set.qs, self.location, grouped=self.grouped, tags=self.tags)
         return context
@@ -190,8 +202,25 @@ class SubmissionProcessAnalysisView(View, TemplateResponseMixin):
     def get(self, request, *args, **kwargs):
         initial_filter = request.session.get('analysis_filter', None)
         self.filter_set = self.analysis_filter(initial_filter, queryset=self.initial_qs, request=request)
-        context = self.get_context_data(**kwargs)
-        return self.render_to_response(context)
+
+        if request.GET.get('export', None) and self.form.type == 'INCIDENT':
+            location_types = list(LocationType.objects.filter(on_display=True).values_list('name', flat=True))
+            location_type_fields = ['loc:location__{}'.format(lt.lower()) for lt in location_types]
+            data_fields = ['witness', 'status', 'description']
+            datalist_fields = ['observer__observer_id', 'observer__name', 'location'] + data_fields
+
+            export_fields = ['observer__observer_id', 'observer__name'] + location_type_fields + data_fields
+            export_field_labels = ['PSZ', 'Name'] + location_types + ['Witness', 'Status', 'Description']
+
+            datalist = self.filter_set.qs.data(data_fields).values(*datalist_fields)
+            filename = slugify('%s %s analysis locations %s' % (self.display_tag, self.form.name, datetime.now().strftime('%Y %m %d %H%M%S')))
+            response = HttpResponse(export(datalist, fields=export_fields, labels=export_field_labels), content_type='application/vnd.ms-excel')
+            response['Content-Disposition'] = 'attachment; filename=%s.xls' % (filename,)
+
+            return response
+        else:
+            context = self.get_context_data(**kwargs)
+            return self.render_to_response(context)
 
     def post(self, request, *args, **kwargs):
         self.filter_set = self.analysis_filter(request.POST, queryset=self.initial_qs, request=request)

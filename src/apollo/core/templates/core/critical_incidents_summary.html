@@ -24,12 +24,12 @@
 			</ul>
 			<div class="tab-content">
 			    <div class="tab-pane active" id="tab1">
-<table class="table table-bordered">
-	<tr bgcolor="#eeeeee">
+<table class="table table-bordered table-striped">
+	<tr>
 		<th width="250">Location</th>
 		<th width="100" style="text-align:center">N</th>
 		{% for tag, tag_description, tag_stats in incidents_summary.top %}
-		<th width="100" style="text-align:center"><abbr title="{{ tag_description}}">{{ tag }}</abbr></th>
+		<th width="100" style="text-align:center"><abbr title="{{ tag_description}}"><a href="{% url submissions_analysis_location_tag form.pk location.pk tag %}">{{ tag }}</a></abbr></th>
 		{% endfor %}
 	</tr>
 	<tr>
