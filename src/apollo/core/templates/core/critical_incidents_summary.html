@@ -46,7 +46,7 @@
 		{% with incidents_summary.top.0 as tag_data %}
 		{% if location_data %}
 		{% with location_data|keyvalue:tag_data.0 as field_stats %}
-		<td style="text-align:center">{{ field_stats.1.total }}</td>
+		<td style="text-align:center">{{ field_stats.1.total|percent_of:incidents_summary.top.0.2.total|floatformat:"0" }}%<br />({{ field_stats.1.total }})</td>
 		{% endwith %}
 		{% else %}
 		<td style="text-align:center">0</td>

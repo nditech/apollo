@@ -26,6 +26,14 @@ def groupsel(value, pk):
         return None
 
 
+@register.filter
+def percent_of(numerator, denominator):
+    try:
+        return float(numerator) / float(denominator) * 100
+    except ZeroDivisionError:
+        return 0
+
+
 @register.inclusion_tag('core/activity_info.html')
 def activity_name(request=None):
     activity = request.session.get('activity', Activity.default())
