@@ -539,6 +539,7 @@ class CommentCreateView(View):
 
 
 def send_bulk_message(observers, message):
+    observers = list(observers)  # cast to ValuesListQuery to list
     connections = []
     backend, _ = Backend.objects.get_or_create(name=settings.BULKSMS_BACKEND)
     for observer in Observer.objects.filter(pk__in=observers):
