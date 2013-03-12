@@ -30,21 +30,33 @@
           </tr>
           {% endif %}
           {% for field in fieldset %}
-          <tr{% if field.label in object.overrides %} class="warning"{% endif %}>
-            <td>{{ field.label }}</td>
-            <td>{{ field.help_text }}
+          <tr>
+            <td style="text-align: center">{{ field.label }}</td>
+            <td width="100%"><label for="{{ field.auto_id }}">{{ field.help_text }}
               {% if field.field.choices %}
               <span class="options">
                 {% for choice in field.field.choices %}
                 <span class="option"><strong>({{ choice.0 }})</strong> {{ choice.1 }}</span>
                 {% endfor %}
               </span>
-              {% endif %}
+              {% endif %}</label>
             </td>
             <td style="text-align:center">{{ field }}</td>
           </tr>
           {% endfor %}
           {% endfor %}
+          <tr>
+            <td style="text-align: right">Witness</td>
+            <td colspan="2">{{ form.data__witness }}</td>
+          </tr>
+          <tr>
+            <td style="text-align: right">Description</td>
+            <td colspan="2">{{ form.data__description }}</td>
+          </tr>
+          <tr>
+            <td style="text-align: right">Status</td>
+            <td colspan="2">{{ form.data__status }}</td>
+          </tr>
         </tbody>
       </table>
     </div>
