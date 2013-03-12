@@ -150,7 +150,7 @@ class SubmissionProcessAnalysisView(View, TemplateResponseMixin):
     def dispatch(self, request, *args, **kwargs):
         self.form = get_object_or_404(Form, pk=kwargs['form'])
         self.page_title = '{} Analysis'.format(self.form.name)
-        self.analysis_filter = SubmissionsAnalysisFilter
+        self.analysis_filter = generate_submission_analysis_filter(self.form)
         if 'location_id' in kwargs:
             self.location = get_object_or_404(Location, pk=kwargs['location_id'])
         else:

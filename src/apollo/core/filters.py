@@ -234,7 +234,7 @@ class DashboardFilter(django_filters.FilterSet):
             request=request)
 
 
-class SubmissionsAnalysisFilter(django_filters.FilterSet):
+class BaseSubmissionsAnalysisFilter(django_filters.FilterSet):
     sample = SampleFilter(widget=forms.Select(attrs={'class': 'span2'}))
     activity = ActivityFilter(widget=forms.HiddenInput())
 
@@ -244,10 +244,31 @@ class SubmissionsAnalysisFilter(django_filters.FilterSet):
 
     def __init__(self, *args, **kwargs):
         request = kwargs.pop('request', None)
-        super(SubmissionsAnalysisFilter, self).__init__(*args, **kwargs)
+        super(BaseSubmissionsAnalysisFilter, self).__init__(*args, **kwargs)
         self.filters['activity'] = ActivityFilter(
             widget=forms.HiddenInput(),
             request=request)
+
+
+def generate_submission_analysis_filter(form):
+    metafields = {'model': Submission, 'fields':
+        ['sample']}
+
+    metaclass = type('Meta', (), metafields)
+    fields = {'Meta': metaclass}
+
+    fields['activity'] = ActivityFilter(widget=forms.HiddenInput())
+    if form.type == 'INCIDENT':
+        fields['status'] = HstoreChoiceFilter(
+            widget=forms.Select(attrs={'class': 'span2'}), label='Status',
+            choices=(('', 'Status'), ('NULL', 'Unmarked'), ('confirmed', 'Confirmed'),
+                ('rejected', 'Rejected')))
+        fields['witness'] = HstoreChoiceFilter(
+            widget=forms.Select(attrs={'class': 'span2'}), label='Status',
+            choices=(('', 'Witness'), ('NULL', 'Unspecified'), ('witnessed', 'Witnessed incident'),
+                ('after', 'Arrived after incident'), ('reported', 'Incident was reported')))
+
+    return type('SubmissionsAnalysisFilter', (BaseSubmissionsAnalysisFilter,), fields)
 
 
 class BaseCriticalIncidentsLocationFilter(django_filters.FilterSet):
@@ -274,6 +295,14 @@ def generate_critical_incidents_location_filter(tag):
     fields = {'Meta': metaclass}
 
     fields[tag] = HstoreChoiceFilter(widget=forms.HiddenInput(), choices=(('NOT_NULL', ''),), initial='NOT_NULL')
+    fields['status'] = HstoreChoiceFilter(
+        widget=forms.Select(attrs={'class': 'span2'}), label='Status',
+        choices=(('', 'Status'), ('NULL', 'Unmarked'), ('confirmed', 'Confirmed'),
+            ('rejected', 'Rejected')))
+    fields['witness'] = HstoreChoiceFilter(
+        widget=forms.Select(attrs={'class': 'span2'}), label='Status',
+        choices=(('', 'Witness'), ('NULL', 'Unspecified'), ('witnessed', 'Witnessed incident'),
+            ('after', 'Arrived after incident'), ('reported', 'Incident was reported')))
     fields['activity'] = ActivityFilter(widget=forms.HiddenInput())
 
     return type('CriticalIncidentsLocationFilter', (BaseCriticalIncidentsLocationFilter,), fields)

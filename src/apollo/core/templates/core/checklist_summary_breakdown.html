@@ -2,17 +2,19 @@
 {% load apollo %}
 {% block content %}
 <div class="row">
-	<div class="span8">
+	<div class="span9">
 		{% analysis_breadcrumb_navigation form location display_tag %}
-		{% analysis_location_navigation form location display_tag %}
 	</div>
-	<div class="span4">
+	<div class="span3">
 		<form class="form-horizontal pull-right" action="" method="post" accept-charset="utf-8">
           {% csrf_token %}
           {{ filter_form.sample }}
-          <button class="btn btn-warning" style="margin-left:1em" type="submit"><i class="icon-search icon-white"></i> Filter</button>
+          <button class="btn btn-warning" type="submit"><i class="icon-search icon-white"></i> Filter</button>
         </form>
 	</div>
+    <div class="span12">
+        {% analysis_location_navigation form location display_tag %}
+    </div>
 </div>
 <div class="row">
 	<div class="span12">
