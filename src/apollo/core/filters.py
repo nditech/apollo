@@ -133,8 +133,6 @@ class BaseContactsFilter(django_filters.FilterSet):
             {'empty_label': u'All Partners'})
         self.filters['role'].field.widget.attrs['class'] = 'span3'
         self.filters['partner'].field.widget.attrs['class'] = 'span3'
-        self.filters['name'].field.widget.attrs['class'] = 'span3'
-        self.filters['name'].field.widget.attrs['placeholder'] = 'Name'
         self.filters['observer_id'].field.widget.attrs['class'] = 'span3'
         self.filters['observer_id'].field.widget.attrs['placeholder'] = 'Observer ID'
 
@@ -148,6 +146,8 @@ def generate_contacts_filter():
     fields['location'] = LocationFilter(widget=forms.Select(attrs={
         'class': 'span4 input-xlarge select2',
         'data-placeholder': 'Location'}))
+    fields['name'] = django_filters.CharFilter(widget=forms.TextInput(attrs={
+        'class': 'span3', 'placeholder': 'Name'}), lookup_type='icontains')
     return type('ContactsFilter', (BaseContactsFilter,), fields)
 
 
