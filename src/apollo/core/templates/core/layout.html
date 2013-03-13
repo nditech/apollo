@@ -36,6 +36,10 @@
     <link rel="shortcut icon" href="{{ STATIC_URL }}ico/favicon.ico">
     {% block head %}{% endblock %}
   </head>
+  <style type="text/css">
+     .nav .dropdown-toggle .caret{border-top-color:#ffffff;}
+     .nav .dropdown-toggle .caret:hover{border-top-color:#ffffff;}
+  </style>
   <body>
     <div class="navbar navbar-static-top">
         <div class="navbar-inner">
@@ -48,7 +52,14 @@
               {% if perms.core.can_analyse %}{% analysis_menu request %}{% endif %}
               {% if perms.core.view_observers %}<li><a href="{% url contacts_list %}"><i class="icon-user"></i> Observers</a></li>{% endif %}
               {% if perms.messagelog.view_messages %}<li><a href="{% url messages_list %}"><i class="icon-envelope"></i> Messages</a></li>{% endif %}
-              <a href="{% url user-logout %}" class="pull-left btn btn-default">Logout</a>
+              <li>
+                <div class="btn-group">
+                  <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-user icon-white"></i> {{ request.user.username }} <span class="caret"></span></a>
+                  <ul class="dropdown-menu pull-right">
+                    <li><a href="#">Logout</a></li>
+                  </ul>
+                </div>
+              </li>
             </ul>
           </div>
         </div>
