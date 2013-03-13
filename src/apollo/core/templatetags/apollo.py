@@ -97,7 +97,7 @@ def submission_items(submissions, form, permissions):
 def get_location_for_type(submission, location_type, display_type=False):
     location = submission.get_location_for_type(location_type)
     if display_type:
-        return '{} · <em class="muted">{}</em>'.format(location, location.type) or ''
+        return '{} · <em class="muted">{}</em>'.format(location, location.type) if location else ''
     else:
         return location or ''
 

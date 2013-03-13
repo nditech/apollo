@@ -24,7 +24,8 @@ class SubmissionModelForm(BetterForm):
     STATUS_CHOICES = (
         ('', 'Unmarked'),
         ('confirmed', 'Confirmed'),
-        ('rejected', 'Rejected')
+        ('rejected', 'Rejected'),
+        ('citizen', 'Citizen Report'),
     )
     WITNESS_CHOICES = (
         ('', 'Unspecified'),

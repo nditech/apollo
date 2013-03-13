@@ -366,18 +366,18 @@ class SubmissionListExportView(View):
 
         if form.type == 'CHECKLIST':
             data_fields = list(FormField.objects.filter(group__form=form).order_by('tag').values_list('tag', flat=True))
-            datalist_fields = ['observer__observer_id', 'observer__name', 'location'] + data_fields + ['updated']
+            datalist_fields = ['observer__observer_id', 'observer__name', 'observer__last_connection__identity', 'location', 'observer'] + data_fields + ['updated']
 
-            export_fields = ['observer__observer_id', 'observer__name'] + location_type_fields + data_fields + ['updated']
-            field_labels = ['PSZ', 'Name'] + location_types + data_fields + ['Timestamp']
+            export_fields = ['observer__observer_id', 'observer__name', 'obs:observer__phone', 'observer__last_connection__identity'] + location_type_fields + data_fields + ['updated']
+            field_labels = ['PSZ', 'Name', 'Phone', 'Texted Phone'] + location_types + data_fields + ['Timestamp']
         else:
             data_fields = list(FormField.objects.filter(group__form=form).order_by('tag').values_list('tag', flat=True))
 
-            export_fields = ['observer__observer_id', 'observer__name'] + location_type_fields + data_fields + ['status', 'witness', 'description', 'updated']
-            field_labels = ['PSZ', 'Name'] + location_types + data_fields + ['Status', 'Witness', 'Description', 'Timestamp']
+            export_fields = ['observer__observer_id', 'observer__name', 'obs:observer__phone', 'observer__last_connection__identity'] + location_type_fields + data_fields + ['status', 'witness', 'description', 'updated']
+            field_labels = ['PSZ', 'Name', 'Phone', 'Texted Phone'] + location_types + data_fields + ['Status', 'Witness', 'Description', 'Timestamp']
 
             data_fields.extend(['status', 'witness', 'description'])
-            datalist_fields = ['observer__observer_id', 'observer__name', 'location'] + data_fields + ['updated']
+            datalist_fields = ['observer__observer_id', 'observer__name', 'location', 'observer', 'observer__last_connection__identity'] + data_fields + ['updated']
 
         datalist = qs.data(data_fields).values(*datalist_fields)
 
@@ -558,16 +558,23 @@ def send_bulk_message(observers, message):
 
 def make_item_row(record, fields, locations_graph):
     row = []
-    pattern = re.compile(r'^loc:(?P<field>\w+?)__(?P<location_type>\w+)$')  # pattern for location specification
+    location_pattern = re.compile(r'^loc:(?P<field>\w+?)__(?P<location_type>\w+)$')  # pattern for location specification
+    observer_pattern = re.compile(r'^obs:(?P<field>\w+?)__(?P<observer_field>.+)$')  # pattern for observer data
 
     for field in fields:
-        match = pattern.match(field)
+        location_match = location_pattern.match(field)
+        observer_match = observer_pattern.match(field)
 
-        if match:
+        if location_match:
             # if there's a match, retrieve the location name from the graph
-            location_id = record[match.group('field')]
-            location = get_location_ancestor_by_type(locations_graph, location_id, match.group('location_type'))
+            location_id = record[location_match.group('field')]
+            location = get_location_ancestor_by_type(locations_graph, location_id, location_match.group('location_type'))
             row.append(location[0]['name'] if location else "")
+        elif observer_match:
+            # if there's an observer match, retrieve observer data from the field
+            observer_id = record[observer_match.group('field')]
+            observer = Observer.objects.get(pk=observer_id)
+            row.append(r_getattr(observer, '.'.join(observer_match.group('observer_field').split('__'))))
         else:
             if type(record[field]) == datetime or type(record[field]) == date:
                 row.append(record[field].strftime('%Y-%m-%d %H:%M:%S'))

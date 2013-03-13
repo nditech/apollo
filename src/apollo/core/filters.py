@@ -195,7 +195,7 @@ def generate_submission_filter(form):
         fields['status'] = HstoreChoiceFilter(
             widget=forms.Select(attrs={'class': 'span2'}), label='Status',
             choices=(('', 'Status'), ('NULL', 'Unmarked'), ('confirmed', 'Confirmed'),
-                ('rejected', 'Rejected')))
+                ('rejected', 'Rejected'), ('citizen', 'Citizen Report')))
     return type('SubmissionFilter', (BaseSubmissionFilter,), fields)
 
 
@@ -262,7 +262,7 @@ def generate_submission_analysis_filter(form):
         fields['status'] = HstoreChoiceFilter(
             widget=forms.Select(attrs={'class': 'span2'}), label='Status',
             choices=(('', 'Status'), ('NULL', 'Unmarked'), ('confirmed', 'Confirmed'),
-                ('rejected', 'Rejected')))
+                ('rejected', 'Rejected'), ('citizen', 'Citizen Report')))
         fields['witness'] = HstoreChoiceFilter(
             widget=forms.Select(attrs={'class': 'span2'}), label='Status',
             choices=(('', 'Witness'), ('NULL', 'Unspecified'), ('witnessed', 'Witnessed incident'),
@@ -298,7 +298,7 @@ def generate_critical_incidents_location_filter(tag):
     fields['status'] = HstoreChoiceFilter(
         widget=forms.Select(attrs={'class': 'span2'}), label='Status',
         choices=(('', 'Status'), ('NULL', 'Unmarked'), ('confirmed', 'Confirmed'),
-            ('rejected', 'Rejected')))
+            ('rejected', 'Rejected'), ('citizen', 'Citizen Report')))
     fields['witness'] = HstoreChoiceFilter(
         widget=forms.Select(attrs={'class': 'span2'}), label='Status',
         choices=(('', 'Witness'), ('NULL', 'Unspecified'), ('witnessed', 'Witnessed incident'),

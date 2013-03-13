@@ -34,3 +34,13 @@ def generate_dashboard_summary(submission_queryset, group=None):
             pass
 
     return summary
+
+
+# retrieve's attributes recursively
+def r_getattr(obj, attr=''):
+    attributes = attr.split('.')
+    _obj = getattr(obj, attributes[0])
+    if len(attributes) == 1:
+        return _obj
+    else:
+        return r_getattr(_obj, '.'.join(attributes[1:]))
