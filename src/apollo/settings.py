@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     "messagelog",
     "south",
     "tastypie",
+    "guardian",
 
     "rapidsms.contrib.default",
     "rapidsms.router.db",
@@ -133,6 +134,14 @@ TEMPLATE_CONTEXT_PROCESSORS = [
     "django.core.context_processors.request",
 ]
 
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'guardian.backends.ObjectPermissionBackend',
+)
+
+ANONYMOUS_USER_ID = -1
+GUARDIAN_RENDER_403 = True
+
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
 # these apps should not be started by rapidsms in your tests, however,
@@ -147,7 +156,7 @@ TEST_EXCLUDED_APPS = [
 
 # the project-level url patterns
 ROOT_URLCONF = "urls"
-#SESSION_COOKIE_AGE=900
+SESSION_COOKIE_AGE = 1800
 PROJECT_NAME = 'Apollo'
 AUTHENTICATE_OBSERVER = False  # determines whether to authenticate the observer's phone number
 ALLOWED_PUNCTUATIONS = '!'  # allowed punctuations in SMS forms

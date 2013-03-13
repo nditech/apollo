@@ -337,6 +337,11 @@ class Form(models.Model):
         if re.match(self.trigger, text, flags=re.I):
             return True
 
+    class Meta:
+        permissions = (
+            ("view_form", "Can view form"),
+        )
+
     @staticmethod
     def parse(text):
         forms = Form.objects.all()
