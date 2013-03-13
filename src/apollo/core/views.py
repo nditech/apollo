@@ -120,6 +120,8 @@ class DashboardView(View, TemplateResponseMixin):
             self.page_title = 'Dashboard'
         if not request.user.has_perm('core.view_activities'):
             self.viewable_forms = get_objects_for_user(request.user, 'core.view_form', Form)
+        else:
+            self.viewable_forms = Form.objects.all()
         self.dashboard_filter = DashboardFilter
 
         return super(DashboardView, self).dispatch(request, *args, **kwargs)
