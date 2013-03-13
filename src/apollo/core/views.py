@@ -7,7 +7,7 @@ import re
 from datetime import (date, datetime)
 from django.conf import settings
 from django.contrib.auth import REDIRECT_FIELD_NAME, login as auth_login
-from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.comments.models import Comment
 from django.contrib.sites.models import Site, get_current_site
@@ -25,6 +25,8 @@ from django.views.decorators.csrf import csrf_protect
 from django.views.generic import TemplateView, ListView, UpdateView, View, CreateView
 from django.views.generic.base import TemplateResponseMixin
 from rapidsms.models import Connection, Backend
+from guardian.decorators import permission_required
+from guardian.shortcuts import get_objects_for_user
 from rapidsms.router.api import send
 import tablib
 from .forms import ActivitySelectionForm, ContactModelForm, LocationModelForm, generate_submission_form
@@ -116,6 +118,7 @@ class DashboardView(View, TemplateResponseMixin):
         else:
             self.form_group = None
             self.page_title = 'Dashboard'
+        self.viewable_forms = get_objects_for_user(request.user, 'core.view_form', Form)
         self.dashboard_filter = DashboardFilter
 
         return super(DashboardView, self).dispatch(request, *args, **kwargs)
@@ -130,13 +133,13 @@ class DashboardView(View, TemplateResponseMixin):
     def get(self, request, *args, **kwargs):
         initial_data = request.session.get('dashboard_filter', None)
         self.filter_set = self.dashboard_filter(initial_data,
-                queryset=Submission.objects.exclude(observer=None), request=request)
+                queryset=Submission.objects.filter(form__in=self.viewable_forms).exclude(observer=None), request=request)
         context = self.get_context_data(**kwargs)
         return self.render_to_response(context)
 
     def post(self, request, *args, **kwargs):
         self.filter_set = self.dashboard_filter(request.POST,
-                queryset=Submission.objects.exclude(observer=None), request=request)
+                queryset=Submission.objects.filter(form__in=self.viewable_forms).exclude(observer=None), request=request)
         request.session['dashboard_filter'] = self.filter_set.form.data
         context = self.get_context_data(**kwargs)
         return self.render_to_response(context)
@@ -146,7 +149,8 @@ class SubmissionProcessAnalysisView(View, TemplateResponseMixin):
     template_name = 'core/checklist_summary.html'
 
     @method_decorator(login_required)
-    @method_decorator(permission_required('core.can_analyse'))
+    @method_decorator(permission_required('core.can_analyse', return_403=True))
+    @method_decorator(permission_required('core.view_form', (Form, 'pk', 'form'), return_403=True))
     def dispatch(self, request, *args, **kwargs):
         self.form = get_object_or_404(Form, pk=kwargs['form'])
         self.page_title = '{} Analysis'.format(self.form.name)
@@ -247,7 +251,8 @@ class SubmissionListView(ListView):
         return context
 
     @method_decorator(login_required)
-    @method_decorator(permission_required('core.view_submission'))
+    @method_decorator(permission_required('core.view_submission', return_403=True))
+    @method_decorator(permission_required('core.view_form', (Form, 'pk', 'form'), return_403=True))
     def dispatch(self, *args, **kwargs):
         self.form = get_object_or_404(Form, pk=kwargs['form'])
         self.submission_filter = generate_submission_filter(self.form)
@@ -289,7 +294,7 @@ class SubmissionEditView(UpdateView):
         return self.submission.master if self.submission.form.type == 'CHECKLIST' else self.submission
 
     @method_decorator(login_required)
-    @method_decorator(permission_required('core.change_submission'))
+    @method_decorator(permission_required('core.change_submission', return_403=True))
     def dispatch(self, *args, **kwargs):
         self.submission = get_object_or_404(Submission, pk=kwargs['pk'])
         self.form_class = generate_submission_form(self.submission.form)
@@ -324,7 +329,8 @@ class SubmissionCreateView(CreateView):
     page_title = 'Add Submission'
 
     @method_decorator(login_required)
-    @method_decorator(permission_required('core.add_submission'))
+    @method_decorator(permission_required('core.add_submission', return_403=True))
+    @method_decorator(permission_required('core.view_form', (Form, 'pk', 'form'), return_403=True))
     def dispatch(self, *args, **kwargs):
         # we only want to allow creation of incident submissions
         self.form = get_object_or_404(Form, pk=kwargs['form'], type='INCIDENT')
@@ -348,7 +354,7 @@ class SubmissionListExportView(View):
 
     # TODO: refactor to support custom field labels
     @method_decorator(login_required)
-    @method_decorator(permission_required('core.export_submissions'))
+    @method_decorator(permission_required('core.export_submissions', return_403=True))
     def dispatch(self, request, *args, **kwargs):
         form = get_object_or_404(Form, pk=kwargs['form'])
         self.submission_filter = generate_submission_filter(form)
@@ -405,7 +411,7 @@ class ContactListView(ListView):
         return context
 
     @method_decorator(login_required)
-    @method_decorator(permission_required('core.view_observers'))
+    @method_decorator(permission_required('core.view_observers', return_403=True))
     def dispatch(self, *args, **kwargs):
         self.contacts_filter = generate_contacts_filter()
         return super(ContactListView, self).dispatch(*args, **kwargs)
@@ -443,7 +449,7 @@ class ContactEditView(UpdateView):
     page_title = 'Edit Observer'
 
     @method_decorator(login_required)
-    @method_decorator(permission_required('core.change_observer'))
+    @method_decorator(permission_required('core.change_observer', return_403=True))
     def dispatch(self, *args, **kwargs):
         return super(ContactEditView, self).dispatch(*args, **kwargs)
 
@@ -473,7 +479,7 @@ class LocationListView(ListView):
         return context
 
     @method_decorator(login_required)
-    @method_decorator(permission_required('core.view_locations'))
+    @method_decorator(permission_required('core.view_locations', return_403=True))
     def dispatch(self, *args, **kwargs):
         self.locations_filter = LocationsFilter
         return super(LocationListView, self).dispatch(*args, **kwargs)
@@ -499,7 +505,7 @@ class LocationEditView(UpdateView):
     page_title = 'Edit Location'
 
     @method_decorator(login_required)
-    @method_decorator(permission_required('core.change_location'))
+    @method_decorator(permission_required('core.change_location', return_403=True))
     def dispatch(self, *args, **kwargs):
         return super(LocationEditView, self).dispatch(*args, **kwargs)
 

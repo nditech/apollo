@@ -47,6 +47,7 @@ def analysis_menu(request=None):
         forms = activity.forms.all().order_by('pk')
     else:
         forms = Form.objects.all().order_by('pk')
+    forms = filter(lambda form: request.user.has_perm('core.view_form', form), forms)
     return {'forms': forms}
 
 
@@ -59,6 +60,11 @@ def forms_menu(request=None):
     else:
         checklist_forms = Form.objects.filter(type='CHECKLIST').order_by('pk')
         incident_forms = Form.objects.filter(type='INCIDENT').order_by('pk')
+
+    # only add forms that the user has permission for
+    checklist_forms = filter(lambda form: request.user.has_perm('core.view_form', form), checklist_forms)
+    incident_forms = filter(lambda form: request.user.has_perm('core.view_form', form), incident_forms)
+
     return {
         'checklist_forms': checklist_forms,
         'incident_forms': incident_forms

@@ -3,13 +3,14 @@
 
 from django.contrib import admin
 from models import *
+from guardian.admin import GuardedModelAdmin
 
 admin.site.register(LocationType)
 admin.site.register(Location)
 admin.site.register(Observer)
 admin.site.register(ObserverRole)
 admin.site.register(Partner)
-admin.site.register(Form)
+admin.site.register(Form, GuardedModelAdmin)
 admin.site.register(FormGroup)
 admin.site.register(FormField)
 admin.site.register(FormFieldOption)

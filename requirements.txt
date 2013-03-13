@@ -11,6 +11,7 @@ django-celery==3.0.11
 django-directed-acyclic-graph==0.3
 django-extensions==0.5
 django-form-utils==0.2.0
+django-guardian==1.1.0.beta
 django-mako==0.1.5pre
 django-reversion==1.6.5
 django-tastypie==0.9.11

@@ -1,9 +1,9 @@
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
+from guardian.decorators import permission_required
 from django.http import HttpResponse
 from django.utils.decorators import method_decorator
 from django.views.generic import ListView
-import tablib
 from .models import MESSAGE_DIRECTION, MessageLog
 from .filters import MessageFilter
 from core.views import export
@@ -30,6 +30,7 @@ class MessageListView(ListView):
         return context
 
     @method_decorator(login_required)
+    @method_decorator(permission_required('messagelog.view_messages', return_403=True))
     def dispatch(self, *args, **kwargs):
         return super(MessageListView, self).dispatch(*args, **kwargs)
 
