@@ -1,6 +1,6 @@
 {% load apollo %}
 <div class="well" style="padding-bottom:0">
-  <form action="" method="post" id="filter">
+  <form action="{% url submissions_list form.pk %}" method="post" id="filter">
     {% csrf_token %}
     <div class="controls controls-row">
       {{ filter_form.observer__observer_id }}
