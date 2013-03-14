@@ -23,5 +23,5 @@ urlpatterns += patterns('',
     (r'^telerivet/', TelerivetBackendView.as_view(backend_name='telerivet')),
     (r'^messages/', include('messagelog.urls')),
     (r'', include('core.urls')),
-    (r'^favicon.ico', redirect_to, {'url': '/assets/images/favicon.ico', 'permanent': True}),
+    (r'^favicon.ico', redirect_to, {'url': '/assets/ico/favicon.ico', 'permanent': True}),
 )
