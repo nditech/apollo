@@ -16,7 +16,7 @@ RANGE_ERROR = _('Invalid response(s) for question(s): "%(attributes)s". You sent
 ATTRIBUTE_ERROR = _('Unknown question codes: "%(attributes)s". You sent: %(text)s')
 UNKNOWN_OBSERVER = _('Observer ID not found. Please resend with valid Observer ID. You sent: %(text)s')
 INVALID_MESSAGE = _('Invalid message: "%(message)s". Please check and resend!')
-SUBMISSION_RECEIVED = _('Your submission was received! You sent: %(message)s')
+SUBMISSION_RECEIVED = _('Thank you! Your report was received! You sent: %(message)s')
 
 
 class App(AppBase):
