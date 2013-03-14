@@ -9,7 +9,7 @@
 <div class="row">
   <div class="span12">
     <div class="well" style="padding-bottom:0">
-      <form action="" method="post" id="filter">
+      <form action="{% url messages_list %}" method="post" id="filter">
         {% csrf_token %}
         <div class="controls controls-row">
           {{ filter_form.mobile }}
