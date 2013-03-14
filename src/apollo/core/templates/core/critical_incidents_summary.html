@@ -1,6 +1,19 @@
 {% extends "core/layout.html" %}
 {% load apollo %}
 {% block content %}
+  <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCk3QNCVPzkE75lgmHt_iOM4v0x2ZU-swI&sensor=false"></script>
+  <script type="text/javascript" src="http://google-maps-utility-library-v3.googlecode.com/svn/trunk/markerclusterer/src/markerclusterer.js"></script>
+  <script type="text/javascript">
+	  $(document).ready(function(){
+	  });
+	  var initialized = false;
+	  function init() {
+	  	if (!initialized) {
+	  		initialize();
+	  	}
+	  	initialize = true;
+	  }
+  </script>
 <div class="row">
 	<div class="span5">
 		{% analysis_breadcrumb_navigation form location %}
@@ -23,119 +36,154 @@
 			<ul class="nav nav-tabs">
 				<li class="active"><a href="#tab1" data-toggle="tab">Table</a></li>
 				<li><a href="#tab2" data-toggle="tab">Charts</a></li>
+				<li><a href="#tab3" data-toggle="tab" onclick="init();">Map</a></li>
 			</ul>
 			<div class="tab-content">
 			    <div class="tab-pane active" id="tab1">
-<table class="table table-bordered table-striped">
-	<tr>
-		<th width="250">Location</th>
-		<th width="100" style="text-align:center">N</th>
-		{% for tag, tag_description, tag_stats in incidents_summary.top %}
-		<th width="100" style="text-align:center"><abbr title="{{ tag_description}}"><a href="{% url submissions_analysis_location_tag form.pk location.pk tag %}">{{ tag }}</a></abbr></th>
-		{% endfor %}
-	</tr>
-	<tr>
-		<th>{{ location }}</th>
-		<th style="text-align:center">{{ incidents_summary.top.0.2.total }}</th>
-		{% for tag, tag_description, tag_stats in incidents_summary.top %}
-		<th style="text-align:center">{{ tag_stats.percent_reported|floatformat:"0" }}%<br />({{ tag_stats.reported }})</th>
-		{% endfor %}
-	</tr>
-	{% for location_type, group_location_stats in incidents_summary.groups %}
-	{% for location, location_data in group_location_stats %}
-	<tr>
-		<td>{{ location }} · <span class="muted"><em>{{ location_type }}</em></span></td>
-		{% with incidents_summary.top.0 as tag_data %}
-		{% if location_data %}
-		{% with location_data|keyvalue:tag_data.0 as field_stats %}
-		<td style="text-align:center">{{ field_stats.1.total|percent_of:incidents_summary.top.0.2.total|floatformat:"0" }}%<br />({{ field_stats.1.total }})</td>
-		{% endwith %}
-		{% else %}
-		<td style="text-align:center">0</td>
-		{% endif %}
-		{% endwith %}
-		{% for tag, tag_description, _ in incidents_summary.top %}
-		{% if location_data %}
-		{% with location_data|keyvalue:tag as field_stats %}
-		<td style="text-align:center">{{ field_stats.1.percent_reported|floatformat:"0" }}%<br />({{ field_stats.1.reported}})</td>
-		{% endwith %}
-		{% else %}
-		<td style="text-align:center">0%<br />(0)</td>
-		{% endif %}
-		{% endfor %}
-	</tr>
-	{% endfor %}
-	{% endfor %}
-</table>
+					<table class="table table-bordered table-striped">
+						<tr>
+							<th width="250">Location</th>
+							<th width="100" style="text-align:center">N</th>
+							{% for tag, tag_description, tag_stats in incidents_summary.top %}
+							<th width="100" style="text-align:center"><abbr title="{{ tag_description}}"><a href="{% url submissions_analysis_location_tag form.pk location.pk tag %}">{{ tag }}</a></abbr></th>
+							{% endfor %}
+						</tr>
+						<tr>
+							<th>{{ location }}</th>
+							<th style="text-align:center">{{ incidents_summary.top.0.2.total }}</th>
+							{% for tag, tag_description, tag_stats in incidents_summary.top %}
+							<th style="text-align:center">{{ tag_stats.percent_reported|floatformat:"0" }}%<br />({{ tag_stats.reported }})</th>
+							{% endfor %}
+						</tr>
+						{% for location_type, group_location_stats in incidents_summary.groups %}
+						{% for location, location_data in group_location_stats %}
+						<tr>
+							<td>{{ location }} · <span class="muted"><em>{{ location_type }}</em></span></td>
+							{% with incidents_summary.top.0 as tag_data %}
+							{% if location_data %}
+							{% with location_data|keyvalue:tag_data.0 as field_stats %}
+							<td style="text-align:center">{{ field_stats.1.total|percent_of:incidents_summary.top.0.2.total|floatformat:"0" }}%<br />({{ field_stats.1.total }})</td>
+							{% endwith %}
+							{% else %}
+							<td style="text-align:center">0</td>
+							{% endif %}
+							{% endwith %}
+							{% for tag, tag_description, _ in incidents_summary.top %}
+							{% if location_data %}
+							{% with location_data|keyvalue:tag as field_stats %}
+							<td style="text-align:center">{{ field_stats.1.percent_reported|floatformat:"0" }}%<br />({{ field_stats.1.reported}})</td>
+							{% endwith %}
+							{% else %}
+							<td style="text-align:center">0%<br />(0)</td>
+							{% endif %}
+							{% endfor %}
+						</tr>
+						{% endfor %}
+						{% endfor %}
+					</table>
 				</div>
 				<!--Chart-->
 				<div class="tab-pane" id="tab2">
-<script type="text/javascript+protovis">
-	var data = [[{% for tag, tag_description, tag_stats in incidents_summary.top %}{{ tag_stats.percent_reported }},{% endfor %}]];
-	var labels = ["{{ location }}"];
-	var legend = [{% for tag, tag_description, tag_stats in incidents_summary.top %}"{{ tag|safe }}",{% endfor %}];
+					<script type="text/javascript+protovis">
+						var data = [[{% for tag, tag_description, tag_stats in incidents_summary.top %}{{ tag_stats.percent_reported }},{% endfor %}]];
+						var labels = ["{{ location }}"];
+						var legend = [{% for tag, tag_description, tag_stats in incidents_summary.top %}"{{ tag|safe }}",{% endfor %}];
 
-	{% for location_type, group_location_stats in incidents_summary.groups %}
-	{% for location, location_data in group_location_stats %}
-	labels.push("{{ location }}");
-	data.push([
-	{% for tag, tag_description, tag_stats in incidents_summary.top %}
-		{% if location_data %}
-		{% with location_data|keyvalue:tag as field_stats %}
-			{{ field_stats.1.percent_reported }},
-	    {% endwith %}
-	    {% else %}
-	    	0,
-	    {% endif %}
-	{% endfor %}
-	]);
-	{% endfor %}
-	{% endfor %}
+						{% for location_type, group_location_stats in incidents_summary.groups %}
+						{% for location, location_data in group_location_stats %}
+						labels.push("{{ location }}");
+						data.push([
+						{% for tag, tag_description, tag_stats in incidents_summary.top %}
+							{% if location_data %}
+							{% with location_data|keyvalue:tag as field_stats %}
+								{{ field_stats.1.percent_reported }},
+						    {% endwith %}
+						    {% else %}
+						    	0,
+						    {% endif %}
+						{% endfor %}
+						]);
+						{% endfor %}
+						{% endfor %}
 
-	var colors = ['#1f77b4', '#62a1ef', '#aec7e8', '#ff7f0e', '#ffbb78', '#2ca02c', '#98df8a', '#d62728', '#f04a54', '#ff9896', '#7d50ea', '#9467bd', '#c5b0d5', '#8c564b', '#c49c94', '#e377c2', '#f7b6d2', '#7f7f7f', '#c7c7c7', '#bcbd22', '#dbdb8d', '#17becf','#44f2fe', '#9edae5', '#ff0000','#fff000'];
+						var colors = ['#1f77b4', '#62a1ef', '#aec7e8', '#ff7f0e', '#ffbb78', '#2ca02c', '#98df8a', '#d62728', '#f04a54', '#ff9896', '#7d50ea', '#9467bd', '#c5b0d5', '#8c564b', '#c49c94', '#e377c2', '#f7b6d2', '#7f7f7f', '#c7c7c7', '#bcbd22', '#dbdb8d', '#17becf','#44f2fe', '#9edae5', '#ff0000','#fff000'];
 
-	var n = data.length, m = data[0].length;
+						var n = data.length, m = data[0].length;
 
-	/* Sizing and scales. */
-	width = 350,
-    height = 470,
-    offset = 10,
-    r = width/2 - offset;
+						/* Sizing and scales. */
+						width = 350,
+					    height = 470,
+					    offset = 10,
+					    r = width/2 - offset;
 
-    var panel = new pv.Panel().width(width).height(height).data(data);
+					    var panel = new pv.Panel().width(width).height(height).data(data);
 
-    var pie = panel.add(pv.Panel);
-        pie.add(pv.Wedge)
-        .data(function (d) pv.normalize(d))
-        .outerRadius(100)
-        .angle(function(d) d * 2 * Math.PI)
-        .left(width/2)
-        .top(height/2)
-        .fillStyle(pv.colors(colors).by(function () { return this.index;}))
-        .anchor("center")
-        .add(pv.Label)
-        .textAngle(0)
-        .text(function(d){ return d ? (d*100).toFixed(0) + "%" : "" });
+					    var pie = panel.add(pv.Panel);
+					        pie.add(pv.Wedge)
+					        .data(function (d) pv.normalize(d))
+					        .outerRadius(100)
+					        .angle(function(d) d * 2 * Math.PI)
+					        .left(width/2)
+					        .top(height/2)
+					        .fillStyle(pv.colors(colors).by(function () { return this.index;}))
+					        .anchor("center")
+					        .add(pv.Label)
+					        .textAngle(0)
+					        .text(function(d){ return d ? (d*100).toFixed(0) + "%" : "" });
 
-        pie.anchor("top").add(pv.Label)
-	    .textAlign("center")
-	    .textMargin(5)
-	    .top(height/8)
-	    .font('11pt sans-serif')
-	    .text(function () labels[this.parent.parent.index]);
-        
-    //legends
-    pie.add(pv.Dot) 
-    .data(legend)
-    .left(width - 20)
-    .top(function() this.index * 15 + ((height - (15 * parent.data.length)) / 4) + 15)
-    .size(15)
-    .strokeStyle(null) 
-    .fillStyle(pv.colors(colors)) 
-    .anchor("right").add(pv.Label);  
+					        pie.anchor("top").add(pv.Label)
+						    .textAlign("center")
+						    .textMargin(5)
+						    .top(height/8)
+						    .font('11pt sans-serif')
+						    .text(function () labels[this.parent.parent.index]);
+					        
+					    //legends
+					    pie.add(pv.Dot) 
+					    .data(legend)
+					    .left(width - 20)
+					    .top(function() this.index * 15 + ((height - (15 * parent.data.length)) / 4) + 15)
+					    .size(15)
+					    .strokeStyle(null) 
+					    .fillStyle(pv.colors(colors)) 
+					    .anchor("right").add(pv.Label);  
 
-    panel.render();
-</script>
+					    panel.render();
+					</script>
+				</div>
+				<!--Map-->
+				<div class="tab-pane" id="tab3">
+					<div id="map_canvas" style="width:100%; height:700px;"></div>
+					<script type="text/javascript">
+					function initialize() {
+					  var mapOptions = {
+					    center: new google.maps.LatLng(-19, 29),
+					    zoom: 7,
+					    mapTypeId: google.maps.MapTypeId.ROADMAP
+					  };
+
+					  var map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
+					  var levelOne = new google.maps.KmlLayer('http://geocommons.com/overlays/798.kml', {suppressInfoWindows: true, preserveViewport: true});
+					  levelOne.setMap(map);
+					  
+					  var markers = [];
+
+					  for (i = 0; i < 100; i++) {
+					    markers.push(new google.maps.Marker({
+					      position: new google.maps.LatLng(-19, 29),
+					      title: "Harare"
+					    }));
+					  }
+
+					  cluster = new MarkerClusterer(map, markers);
+
+					  /*var infowindow = new google.maps.InfoWindow({
+  							content:"Gweru"
+  						});
+						infowindow.open(map,marker);*/
+					}
+					</script>
+				</div>
 				</div>
 			</div>
 		</div>
