@@ -40,6 +40,7 @@ urlpatterns = patterns('',
     url(r'^observer/(?P<pk>\d+)/?$', ContactEditView.as_view(), name='contact_edit'),
 
     url(r'^locations/?$', LocationListView.as_view(), name='locations_list'),
+    url(r'^locations/(?P<type_name>.+)\.(kml|kmz)$', LocationShapeListView.as_view(), name="locations_shapes"),
     url(r'^location/(?P<pk>\d+)/?$', LocationEditView.as_view(), name='location_edit'),
 
     url(r'^tpl/(?P<template_name>.+)/?$', TemplatePreview.as_view()),

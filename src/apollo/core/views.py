@@ -200,8 +200,10 @@ class SubmissionProcessAnalysisView(View, TemplateResponseMixin):
             if context['display_tag']:
                 context['form_field'] = FormField.objects.get(group__form=self.form, tag=self.display_tag)
                 context['incidents'] = self.filter_set.qs
+                context['incidents_markers'] = get_incident_markers(self.form, self.filter_set.qs, 'Constituency', tag=True)
             else:
                 context['incidents_summary'] = generate_incidents_data(self.form, self.filter_set.qs, self.location, grouped=self.grouped)
+                context['incidents_markers'] = get_incident_markers(self.form, self.filter_set.qs, 'Constituency')
         else:
             context['process_summary'] = generate_process_data(self.form, self.filter_set.qs, self.location, grouped=self.grouped, tags=self.tags)
         return context
@@ -519,6 +521,27 @@ class LocationEditView(UpdateView):
         context = super(LocationEditView, self).get_context_data(**kwargs)
         context['page_title'] = self.page_title
         return context
+
+
+class LocationShapeListView(ListView):
+    context_object_name = 'locations'
+    template_name = 'core/poly.kml'
+    model = Location
+    allowed_methods = ['GET']
+
+    def get_queryset(self):
+        return Location.objects.filter(type__name__iexact=self.type_name).select_related()
+
+    def get_context_data(self, **kwargs):
+        context = super(LocationShapeListView, self).get_context_data(**kwargs)
+        return context
+
+    def dispatch(self, *args, **kwargs):
+        self.type_name = kwargs['type_name']
+        return super(LocationShapeListView, self).dispatch(*args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        return super(LocationShapeListView, self).get(request, *args, **kwargs)
 
 
 class CommentCreateView(View):

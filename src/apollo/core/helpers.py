@@ -1,4 +1,19 @@
-from .models import Form, Activity, Location
+from .models import Form, FormField, Activity, Location
+
+
+def memoize(f):
+    """ Memoization decorator for functions taking one or more arguments. """
+    class memodict(dict):
+        def __init__(self, f):
+            self.f = f
+
+        def __call__(self, *args):
+            return self[args]
+
+        def __missing__(self, key):
+            ret = self[key] = self.f(*key)
+            return ret
+    return memodict(f)
 
 
 def generate_dashboard_summary(submission_queryset, group=None):
@@ -44,3 +59,28 @@ def r_getattr(obj, attr=''):
         return _obj
     else:
         return r_getattr(_obj, '.'.join(attributes[1:]))
+
+
+@memoize
+def get_centroid_coords(pk):
+    loc = Location.objects.get(pk=pk)
+    return (loc.poly.centroid.y, loc.poly.centroid.x)
+
+
+# obtain the markers for incident
+def get_incident_markers(form, submissions, location_type, tag=False):
+    markers = []
+    tags = FormField.objects.filter(group__form=form).values_list('tag', flat=True)
+
+    for submission in submissions:
+        locations = filter(lambda x: x['type'] == location_type, submission.location.nx_ancestors(include_self=True))
+        if locations:
+            incidents = filter(lambda x: x in tags, submission.data.keys()) if not tag else [0]
+            for x in range(len(incidents)):
+                markers.append(get_centroid_coords(locations[0]['id']))
+        elif submission.location.poly:
+            incidents = filter(lambda x: x in tags, submission.data.keys()) if not tag else [0]
+            for x in range(len(incidents)):
+                markers.append(get_centroid_coords(submission.location.pk))
+
+    return markers

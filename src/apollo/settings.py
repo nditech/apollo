@@ -72,6 +72,7 @@ INSTALLED_APPS = [
     "django.contrib.contenttypes",
     "django.contrib.comments",
     "django.contrib.humanize",
+    "django.contrib.gis",
 
     "djcelery",
     "reversion",
@@ -199,7 +200,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'audit_log.middleware.UserLoggingMiddleware',
     'core.middleware.AllowOriginMiddleware',
-    'djangomako.middleware.MakoMiddleware')
+    'core.middleware.KMLMiddleware')
 
 # celery queue settings
 BROKER_URL = 'librabbitmq://guest:guest@localhost:5672/apollo'

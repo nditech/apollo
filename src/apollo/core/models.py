@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.core.cache import cache
-from django.db import models
+from django.contrib.gis.db import models
 from django.dispatch import receiver
 from django_dag.models import Graph, Node, Edge
 from django_dag.mixins import GraphMixin
@@ -61,8 +61,10 @@ class Location(GraphMixin):
     code = models.CharField(max_length=100, db_index=True, blank=True)
     type = models.ForeignKey(LocationType)
     data = DictionaryField(db_index=True, null=True, blank=True)
+    poly = models.PolygonField(null=True, blank=True)
 
-    objects = HStoreManager()
+    objects = models.GeoManager()
+    hstore = HStoreManager()
 
     def __unicode__(self):
         return self.name
@@ -76,13 +78,13 @@ class Location(GraphMixin):
 
     def _get_locations_graph(self, reverse=False):
         if reverse:
-            if not hasattr(self, '_reversed_locations_graph'):
-                self._reversed_locations_graph = get_locations_graph(reverse=True)
-            return self._reversed_locations_graph
+            if not hasattr(Location, '_reversed_locations_graph'):
+                Location._reversed_locations_graph = get_locations_graph(reverse=True)
+            return Location._reversed_locations_graph
         else:
-            if not hasattr(self, '_locations_graph'):
-                self._locations_graph = get_locations_graph(reverse=False)
-            return self._locations_graph
+            if not hasattr(Location, '_locations_graph'):
+                Location._locations_graph = get_locations_graph(reverse=False)
+            return Location._locations_graph
 
     def nx_ancestors(self, include_self=False):
         graph = self._get_locations_graph()
@@ -676,5 +678,13 @@ def create_or_sync_master(sender, **kwargs):
 
 @receiver(models.signals.post_save, sender=Location, dispatch_uid='invalidate_locations_cache')
 def invalidate_locations_cache(sender, **kwargs):
+    try:
+        delattr(Location, '_reversed_locations_graph')
+    except AttributeError:
+        pass
+    try:
+        delattr(Location, '_locations_graph')
+    except AttributeError:
+        pass
     cache.delete('reversed_locations_graph')
     cache.delete('locations_graph')
