@@ -201,7 +201,7 @@ MIDDLEWARE_CLASSES = (
     'audit_log.middleware.UserLoggingMiddleware',
     'core.middleware.AllowOriginMiddleware',
     'core.middleware.KMLMiddleware',
-    'core.SessionIdleTimeout')
+    'core.middleware.SessionIdleTimeout')
 
 # celery queue settings
 BROKER_URL = 'librabbitmq://guest:guest@localhost:5672/apollo'
