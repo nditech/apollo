@@ -93,35 +93,55 @@
 				</div>
 				<!--Map-->
 				<div class="tab-pane" id="tab2">
-                    <div id="map_canvas" style="width:100%; height:700px;"></div>
+                    <p>
+                        Province <input type="checkbox" id="layer0" onclick="toggleLevels(0)" checked>
+                        District <input type="checkbox" id="layer1" onclick="toggleLevels(1)" checked>
+                    </p>
+                    <div id="map_canvas" style="width:100%; height:450px;"></div>
                     <script type="text/javascript">
-                    function initialize() {
-                      var mapOptions = {
-                        center: new google.maps.LatLng(-19, 29),
-                        zoom: 7,
-                        mapTypeId: google.maps.MapTypeId.ROADMAP
-                      };
+                        var map; 
+                        var levels = [];
 
-                      var map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
-                      var levelOne = new google.maps.KmlLayer('http://geocommons.com/overlays/798.kml', {suppressInfoWindows: true, preserveViewport: true});
-                      levelOne.setMap(map);
-                      
-                      var markers = [];
+                        function initialize() {
+                          var zim = new google.maps.LatLng (-19, 27);
+                          var myOptions = {
+                            zoom: 6,
+                            center: zim,
+                            mapTypeId: google.maps.MapTypeId.ROADMAP
+                              }
+                            map = new google.maps.Map(document.getElementById("map_canvas"),
+                              myOptions);
+                            marker = new google.maps.Marker({map:map});
 
-                      for (i = 0; i < 100; i++) {
-                        markers.push(new google.maps.Marker({
-                          position: new google.maps.LatLng(-17.49, 31.3),
-                          title: "Harare"
-                        }));
-                      }
+                            levels[0] = new google.maps.KmlLayer('http://geocommons.com/overlays/798.kml', {preserveViewport: true});
+                            levels[1] = new google.maps.KmlLayer('http://geocommons.com/overlays/156552.kml', {preserveViewport: true});
+                            for (var i = 0; i < levels.length; i++) {
+                              levels[i].setMap(map);
+                            }
+                            var markers = [];
 
-                      cluster = new MarkerClusterer(map, markers);
+                            for (i = 0; i < 100; i++) {
+                              markers.push(new google.maps.Marker({
+                                position: new google.maps.LatLng(-17.49, 31.3),
+                                title: "Harare"
+                              }));
+                            }
 
+                            cluster = new MarkerClusterer(map, markers);
+                        }
+                    
                       /*var infowindow = new google.maps.InfoWindow({
                             content:"Gweru"
                         });
                         infowindow.open(map,marker);*/
-                    }
+                        function toggleLevels(i) {
+                          if(levels[i].getMap() === null) {
+                            levels[i].setMap(map);
+                          }
+                          else {
+                            levels[i].setMap(null);
+                          }
+                        }
                     </script>
 				</div>
 			</div>
