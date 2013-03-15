@@ -56,7 +56,7 @@ class SessionIdleTimeout:
             # Timeout if idle time period is exceeded.
             if 'last_activity' in request.session and \
                 (current_datetime - request.session['last_activity']).seconds > \
-                settings.get('SESSION_IDLE_TIMEOUT', 1800):
+                getattr(settings, 'SESSION_IDLE_TIMEOUT', 1800):
                 logout(request)
             # Set last activity time in current session.
             else:
