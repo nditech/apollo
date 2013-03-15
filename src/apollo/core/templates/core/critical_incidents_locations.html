@@ -1,5 +1,9 @@
 {% extends "core/layout.html" %}
 {% load apollo %}{% load static %}
+{% block javascripts %}
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCk3QNCVPzkE75lgmHt_iOM4v0x2ZU-swI&sensor=false"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/markerclusterer.js"></script>
+{% endblock %}
 {% block title %}
 {{ page_title }}
 {% if perms.core.export_submissions %}
@@ -9,8 +13,6 @@
 {% endif %}
 {% endblock %}
 {% block content %}
-<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCk3QNCVPzkE75lgmHt_iOM4v0x2ZU-swI&sensor=false"></script>
-  <script type="text/javascript" src="http://google-maps-utility-library-v3.googlecode.com/svn/trunk/markerclusterer/src/markerclusterer.js"></script>
   <script type="text/javascript">
       var initialized = false;
       function init_map() {
