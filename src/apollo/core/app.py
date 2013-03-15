@@ -72,7 +72,7 @@ class App(AppBase):
                                     comment=comment, submit_date=datetime.now())
                     except Submission.DoesNotExist:
                         pass
-                except Acvity.DoesNotExist:
+                except Activity.DoesNotExist:
                     pass
 
                 if 'range_error_fields' in submission and submission['range_error_fields']:
