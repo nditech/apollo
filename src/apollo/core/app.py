@@ -21,18 +21,18 @@ SUBMISSION_RECEIVED = _('Thank you! Your report was received! You sent: %(messag
 
 class App(AppBase):
     def handle(self, message):
-        working_text = unicode(message.text)
+        temp = unicode(message.text)
         # strip all unwanted whitespace and punctuation marks
-        at_position = working_text.find('@')
-        working_text = filter(lambda s: s not in PUNCTUATIONS, working_text[:at_position]).translate(TRANS_TABLE) + working_text[at_position:] \
-            if at_position != -1 else filter(lambda s: s not in PUNCTUATIONS, working_text).translate(TRANS_TABLE)
+        at_position = temp.find('@')
+        temp = filter(lambda s: s not in PUNCTUATIONS, temp[:at_position]).translate(TRANS_TABLE) + temp[at_position:] \
+            if at_position != -1 else filter(lambda s: s not in PUNCTUATIONS, temp).translate(TRANS_TABLE)
 
-        at_position = working_text.find('@')
-        message.text = working_text[:at_position] if at_position != -1 else working_text
-        comment = working_text[at_position + 1:] if at_position != -1 else None
+        at_position = temp.find('@')
+        working_text = temp[:at_position] if at_position != -1 else temp
+        comment = temp[at_position + 1:] if at_position != -1 else None
 
         try:
-            submission, observer = Form.parse(message.text)
+            submission, observer = Form.parse(working_text)
             if not observer:
                 message.respond(UNKNOWN_OBSERVER % {'text': message.text})
                 return True
