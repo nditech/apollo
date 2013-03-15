@@ -1,5 +1,6 @@
 from django.conf.urls.defaults import *
 from django.contrib import admin
+from django.http import HttpResponse
 from django.views.generic.simple import redirect_to
 from rapidsms.backends.kannel.views import KannelBackendView
 from rapidsms_telerivet.views import TelerivetBackendView
@@ -24,4 +25,5 @@ urlpatterns += patterns('',
     (r'^messages/', include('messagelog.urls')),
     (r'', include('core.urls')),
     (r'^favicon.ico', redirect_to, {'url': '/assets/ico/favicon.ico', 'permanent': True}),
+    (r'^robots\.txt$', lambda r: HttpResponse("User-agent: *\nDisallow: /", mimetype="text/plain"))
 )

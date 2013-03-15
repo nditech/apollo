@@ -157,7 +157,7 @@ TEST_EXCLUDED_APPS = [
 
 # the project-level url patterns
 ROOT_URLCONF = "urls"
-SESSION_COOKIE_AGE = 1800
+SESSION_IDLE_TIMEOUT = 1800
 PROJECT_NAME = 'Apollo'
 AUTHENTICATE_OBSERVER = False  # determines whether to authenticate the observer's phone number
 ALLOWED_PUNCTUATIONS = '!'  # allowed punctuations in SMS forms
@@ -200,7 +200,8 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'audit_log.middleware.UserLoggingMiddleware',
     'core.middleware.AllowOriginMiddleware',
-    'core.middleware.KMLMiddleware')
+    'core.middleware.KMLMiddleware',
+    'core.SessionIdleTimeout')
 
 # celery queue settings
 BROKER_URL = 'librabbitmq://guest:guest@localhost:5672/apollo'

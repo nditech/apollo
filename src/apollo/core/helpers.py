@@ -1,4 +1,4 @@
-from .models import Form, FormField, Activity, Location
+from .models import FormField, Location
 
 
 def memoize(f):
