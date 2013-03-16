@@ -374,7 +374,10 @@ class SubmissionListExportView(View):
             data_fields = list(FormField.objects.filter(group__form=form).order_by('tag').values_list('tag', flat=True))
             datalist_fields = ['observer__observer_id', 'observer__name', 'observer__last_connection__identity', 'location', 'observer'] + data_fields + ['updated']
 
-            export_fields = ['observer__observer_id', 'observer__name', 'obs:observer__phone', 'observer__last_connection__identity'] + location_type_fields + data_fields + ['updated']
+            if self.collection == 'master':
+                export_fields = ['locobs:location__observer_id', 'locobs:location__name', 'locobs:location__phone', 'locobs:location__last_connection__identity'] + location_type_fields + data_fields + ['updated']
+            else:
+                export_fields = ['observer__observer_id', 'observer__name', 'obs:observer__phone', 'observer__last_connection__identity'] + location_type_fields + data_fields + ['updated']
             field_labels = ['PSZ', 'Name', 'Phone', 'Texted Phone'] + location_types + data_fields + ['Timestamp']
 
             datalist = qs.intdata(data_fields).values(*datalist_fields)
@@ -590,10 +593,14 @@ def make_item_row(record, fields, locations_graph):
     row = []
     location_pattern = re.compile(r'^loc:(?P<field>\w+?)__(?P<location_type>\w+)$')  # pattern for location specification
     observer_pattern = re.compile(r'^obs:(?P<field>\w+?)__(?P<observer_field>.+)$')  # pattern for observer data
+    # for master checklists, you cannot retrieve the observer because it's set to None the following attempts to
+    # get this information from the location instead
+    locationobserver_pattern = re.compile(r'^locobs:(?P<field>\w+?)__(?P<observer_field>\w+)$')
 
     for field in fields:
         location_match = location_pattern.match(field)
         observer_match = observer_pattern.match(field)
+        locationobserver_match = locationobserver_pattern.match(field)
 
         if location_match:
             # if there's a match, retrieve the location name from the graph
@@ -607,6 +614,17 @@ def make_item_row(record, fields, locations_graph):
                 observer = Observer.objects.get(pk=observer_id)
                 row.append(r_getattr(observer, '.'.join(observer_match.group('observer_field').split('__'))))
             except Observer.DoesNotExist:
+                row.append("")
+        elif locationobserver_match:
+            location_id = record[locationobserver_match.group('field')]
+            try:
+                observers = Location.objects.get(pk=location_id).observers.all()
+                if observers:
+                    observer = observers[0]
+                    row.append(r_getattr(observer, '.'.join(locationobserver_match.group('observer_field').split('__'))))
+                else:
+                    row.append("")
+            except Location.DoesNotExist:
                 row.append("")
         else:
             if type(record[field]) == datetime or type(record[field]) == date:
