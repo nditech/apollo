@@ -8,6 +8,10 @@ class HstoreChoiceFilter(django_filters.ChoiceFilter):
     ''' HstoreChoiceFilter is useful in filtering
     by specified values that an attribute in a Hstore field
     can contain'''
+    def __init__(self, *args, **kwargs):
+        self.contains = kwargs.pop('contains', None)
+        return super(HstoreChoiceFilter, self).__init__(*args, **kwargs)
+
     def filter(self, qs, value):
         if value:
             # if the intent is to find records with a
@@ -17,6 +21,8 @@ class HstoreChoiceFilter(django_filters.ChoiceFilter):
                 return qs.where(HstoreExpression("data").contains(self.name))
             else:
                 return qs.where(HstoreExpression("data").contains({self.name: value}))
+        elif self.contains:
+            return qs.where(HstoreExpression("data").contains(self.name))
         else:
             return qs
 
@@ -294,7 +300,7 @@ def generate_critical_incidents_location_filter(tag):
     metaclass = type('Meta', (), metafields)
     fields = {'Meta': metaclass}
 
-    fields[tag] = HstoreChoiceFilter(widget=forms.HiddenInput(), choices=(('NOT_NULL', ''),), initial='NOT_NULL')
+    fields[tag] = HstoreChoiceFilter(widget=forms.HiddenInput(), choices=(('NOT_NULL', ''),), initial='NOT_NULL', contains=True)
     fields['status'] = HstoreChoiceFilter(
         widget=forms.Select(attrs={'class': 'span2'}), label='Status',
         choices=(('', 'Status'), ('NULL', 'Unmarked'), ('confirmed', 'Confirmed'),
