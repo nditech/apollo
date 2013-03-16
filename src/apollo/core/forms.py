@@ -82,7 +82,7 @@ class SubmissionModelForm(BetterForm):
         data = {k.replace('data__', ''): v for k, v in cleaned_data.items() if k.startswith('data__')}
 
         for key in data.keys():
-            if data[key] != None and data[key] != False and data[key] != '':
+            if data[key] != None and data[key] != '' and (data[key] != False or (data[key] == 0 and type(data[key]) == int)):
                 # the forced casting to integer enables the conversion of boolean values
                 # as is the case for incidents that are returned as boolean and need to
                 # be converted to integer (and then string) before storage
