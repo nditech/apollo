@@ -1,6 +1,7 @@
 from djorm_expressions.base import SqlExpression, OR, AND
 from djorm_hstore.models import HStoreQueryset
 from djorm_hstore.functions import HstorePeek
+from .functions import *
 
 
 class SearchableLocationQuerySet(HStoreQueryset):
@@ -48,4 +49,12 @@ class SubmissionQuerySet(SearchableLocationQuerySet):
         # e.g. .data(['AA']) will make it possible to access AA
         # viz a viz: instance.AA
         params = {field: HstorePeek("data", field) for field in tags}
+        return self.annotate_functions(**params)
+
+    def intdata(self, tags):
+        # returns the integer version of `data` defined above
+        # NOTE: This does not work well for fields that store multiple
+        # integers in a comma separated fashion. It will only return
+        # the first integer in such cases
+        params = {field: HstoreIntegerValue("data", field) for field in tags}
         return self.annotate_functions(**params)

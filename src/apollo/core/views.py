@@ -376,6 +376,8 @@ class SubmissionListExportView(View):
 
             export_fields = ['observer__observer_id', 'observer__name', 'obs:observer__phone', 'observer__last_connection__identity'] + location_type_fields + data_fields + ['updated']
             field_labels = ['PSZ', 'Name', 'Phone', 'Texted Phone'] + location_types + data_fields + ['Timestamp']
+
+            datalist = qs.intdata(data_fields).values(*datalist_fields)
         else:
             data_fields = list(FormField.objects.filter(group__form=form).order_by('tag').values_list('tag', flat=True))
 
@@ -385,7 +387,7 @@ class SubmissionListExportView(View):
             data_fields.extend(['status', 'witness', 'description'])
             datalist_fields = ['observer__observer_id', 'observer__name', 'location', 'observer', 'observer__last_connection__identity'] + data_fields + ['updated']
 
-        datalist = qs.data(data_fields).values(*datalist_fields)
+            datalist = qs.data(data_fields).values(*datalist_fields)
 
         filename = slugify('%s %s %s' % (form.name, datetime.now().strftime('%Y %m %d %H%M%S'), self.collection))
         response = HttpResponse(export(datalist, fields=export_fields, labels=field_labels), content_type='application/vnd.ms-excel')
@@ -601,8 +603,11 @@ def make_item_row(record, fields, locations_graph):
         elif observer_match:
             # if there's an observer match, retrieve observer data from the field
             observer_id = record[observer_match.group('field')]
-            observer = Observer.objects.get(pk=observer_id)
-            row.append(r_getattr(observer, '.'.join(observer_match.group('observer_field').split('__'))))
+            try:
+                observer = Observer.objects.get(pk=observer_id)
+                row.append(r_getattr(observer, '.'.join(observer_match.group('observer_field').split('__'))))
+            except Observer.DoesNotExist:
+                row.append("")
         else:
             if type(record[field]) == datetime or type(record[field]) == date:
                 row.append(record[field].strftime('%Y-%m-%d %H:%M:%S'))
