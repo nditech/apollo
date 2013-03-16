@@ -408,6 +408,7 @@ class ContactListView(ListView):
         context = super(ContactListView, self).get_context_data(**kwargs)
         context['filter_form'] = self.filter_set.form
         context['page_title'] = self.page_title
+        context['location_types'] = LocationType.objects.filter(on_display=True)
         return context
 
     @method_decorator(login_required)

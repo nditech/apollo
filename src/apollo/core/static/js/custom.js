@@ -26,61 +26,82 @@ $(function(){
     matcher: function(term, text) { return text.toUpperCase().indexOf(term.toUpperCase()) === 0; }
   });
 
-  $('.select2-locations').select2({
-    allowClear: true,
-    minimumInputLength: 1,
-    loadMorePadding: 5,
-    ajax: {
-      url: '/api/v2/locations/',
-      dataType: 'json',
-      quietMillis: 500,
-      data: function (term, page) {
-        return {
-          name__istartswith: term,
-          limit: 20,
-          offset: (page - 1) * 20
-        };
-      },
-      results: function (data, page) {
-        var more = (page * 20) < data.meta.total_count;
-        return {results: data.objects, more: more};
-      }
-    },
-    formatResult: function (location, container, query) { return location.name + ' · <i>' + location.type.name + '</i>'; },
-    formatSelection: function (location, container) { return location.name + ' · <i>' + location.type.name + '</i>'; },
-    escapeMarkup: function(m) { return m; },
-    initSelection : function (element, callback) {
-      var location_id = element.val();
-      if (location_id) {
-        var data = {name: element.data('name'), type: {name: element.data('type')}};
-        callback(data);
-      }
-    }
-  });
+  var locationsOptionsString = "{ \
+    allowClear: true, \
+    minimumInputLength: 1, \
+    loadMorePadding: 5, \
+    ajax: { \
+      url: '/api/v2/locations/', \
+      dataType: 'json', \
+      quietMillis: 500, \
+      data: function (term, page) { \
+        return { \
+          name__istartswith: term, \
+          limit: 20, \
+          offset: (page - 1) * 20 \
+        }; \
+      }, \
+      results: function (data, page) { \
+        var more = (page * 20) < data.meta.total_count; \
+        return {results: data.objects, more: more}; \
+      } \
+    }, \
+    formatResult: function (location, container, query) { return location.name + ' · <i>' + location.type.name + '</i>'; }, \
+    formatSelection: function (location, container) { return location.name + ' · <i>' + location.type.name + '</i>'; }, \
+    escapeMarkup: function(m) { return m; }, \
+    initSelection : function (element, callback) { \
+      var location_id = element.val(); \
+      if (location_id) { \
+        var data = {name: element.data('name'), type: {name: element.data('type')}}; \
+        callback(data); \
+      } \
+    } \
+  }";
 
-  $('.select2-observers').select2({
-    minimumInputLength: 1,
-    loadMorePadding: 5,
-    ajax: {
-      url: '/api/v2/contacts/',
-      dataType: 'json',
-      quietMillis: 500,
-      data: function (term, page) {
-        return {
-          observer_id__istartswith: term,
-          limit: 20,
-          offset: (page - 1) * 20
-        };
-      },
-      results: function (data, page) {
-        var more = (page * 20) < data.meta.total_count;
-        return {results: data.objects, more: more};
-      }
-    },
-    formatResult: function (observer, container, query) { return observer.observer_id + ' · <i>' + observer.name + '</i>'; },
-    formatSelection: function (observer, container) { return observer.observer_id + ' · <i>' + observer.name + '</i>'; },
-    escapeMarkup: function(m) { return m; }
-  });
+  eval('var locations_select2_options = ' + locationsOptionsString);
+  eval('var locations_select2_noclear_options = ' + locationsOptionsString);
+  locations_select2_noclear_options.allowClear = false;
+
+  $('.select2-locations').select2(locations_select2_options);
+  $('.select2-locations-noclear').select2(locations_select2_noclear_options);
+
+  var observerOptionsString = "{ \
+    minimumInputLength: 1, \
+    loadMorePadding: 5, \
+    ajax: { \
+      url: '/api/v2/contacts/', \
+      dataType: 'json', \
+      quietMillis: 500, \
+      data: function (term, page) { \
+        return { \
+          observer_id__istartswith: term, \
+          limit: 20, \
+          offset: (page - 1) * 20 \
+        }; \
+      }, \
+      results: function (data, page) { \
+        var more = (page * 20) < data.meta.total_count; \
+        return {results: data.objects, more: more}; \
+      } \
+    }, \
+    formatResult: function (observer, container, query) { return observer.observer_id + ' · <i>' + observer.name + '</i>'; }, \
+    formatSelection: function (observer, container) { return observer.observer_id + ' · <i>' + observer.name + '</i>'; }, \
+    escapeMarkup: function(m) { return m; }, \
+    initSelection : function (element, callback) { \
+      var location_id = element.val(); \
+      if (location_id) { \
+        var data = {name: element.data('name'), observer_id: element.data('id')}; \
+        callback(data); \
+      } \
+    } \
+  }"
+
+  eval('var observer_select2_options = ' + observerOptionsString);
+  eval('var observer_select2_clearable_options = ' + observerOptionsString);
+  observer_select2_clearable_options.allowClear = true;
+
+  $('.select2-observers').select2(observer_select2_options);
+  $('.select2-observers-clear').select2(observer_select2_clearable_options);
 
   // ajax
   jQuery(document).ajaxSend(function(event, xhr, settings) {

@@ -37,7 +37,8 @@
     <table class="table table-striped table-bordered table-hover">
       <thead>
         <tr>
-          <th>Observer ID</th>
+          <th>Observer ID</th>{% for location_type in location_types %}
+          <th>{{ location_type.name }}</th>{% endfor %}
           <th>Name</th>
           <th>Role</th>
           <th>Phone No.</th>
@@ -49,7 +50,8 @@
       <tbody>
         {% for contact in contacts %}
         <tr>
-          <td>{{ contact.observer_id|default_if_none:"" }}</td>
+          <td>{{ contact.observer_id|default_if_none:"" }}</td>{% for location_type in location_types %}
+          <td>{% get_location_for_type contact location_type %}</td>{% endfor %}
           <td>{{ contact.name }}</td>
           <td>{{ contact.role }}</td>
           <td>{{ contact.phone|default_if_none:"" }}</td>

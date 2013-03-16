@@ -19,6 +19,20 @@ class LocationHiddenInput(forms.HiddenInput):
         return super(LocationHiddenInput, self).render(name, value, attrs)
 
 
+# custom hidden input widget for observers
+class ObserverHiddenInput(forms.HiddenInput):
+    def render(self, name, value, attrs=None, choices=()):
+        if value:
+            try:
+                obj = self.choices.queryset.get(pk=value)
+                selected_choice = self.choices.choice(obj)
+                attrs.update({'data-name': force_unicode(selected_choice[1]),
+                    'data-id': force_unicode(obj.observer_id)})
+            except self.choices.queryset.__class__.DoesNotExist:
+                pass
+        return super(ObserverHiddenInput, self).render(name, value, attrs)
+
+
 class SubmissionModelForm(BetterForm):
     FORM = None  # The form this submission will be saved to
     STATUS_CHOICES = (
@@ -110,6 +124,13 @@ class SubmissionModelForm(BetterForm):
 
 
 class ContactModelForm(forms.ModelForm):
+    location = forms.ModelChoiceField(queryset=Location.objects.all(),
+        required=True, widget=LocationHiddenInput(
+            attrs={'class': 'span6 select2-locations-noclear', 'data-noclear': 'true', 'placeholder': 'Location'}))
+    supervisor = forms.ModelChoiceField(queryset=Observer.objects.all(),
+        required=False, widget=ObserverHiddenInput(
+            attrs={'class': 'span5 select2-observers-clear', 'placeholder': 'Supervisor'}))
+
     class Meta:
         model = Observer
         fields = ('observer_id', 'name', 'gender', 'role', 'supervisor',
