@@ -1,5 +1,6 @@
 from django.conf import settings
-from django.core.cache import cache
+from django.core.cache import cache as default_cache
+from django.core.cache import get_cache, InvalidCacheBackendError
 from django.contrib.gis.db import models
 from django.dispatch import receiver
 from django_dag.models import Graph, Node, Edge
@@ -126,6 +127,11 @@ def get_locations_graph(reverse=False):
     There's an optional parameter to retrieve the
     reversed version of the graph
     '''
+    try:
+        cache = get_cache('graphs')
+    except InvalidCacheBackendError:
+        cache = default_cache
+
     graph = cache.get('reversed_locations_graph') if reverse else cache.get('locations_graph')
     if not graph:
         if reverse:
