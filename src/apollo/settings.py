@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     "south",
     "tastypie",
     "guardian",
+    "jimmypage",
 
     "rapidsms.contrib.default",
     "rapidsms.router.db",
@@ -192,6 +193,8 @@ DEFAULT_CONNECTION_INDEX = 0
 PHONE_CC = []
 
 MIDDLEWARE_CLASSES = (
+    'johnny.middleware.LocalStoreClearMiddleware',
+    'johnny.middleware.QueryCacheMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -205,6 +208,10 @@ MIDDLEWARE_CLASSES = (
 
 # celery queue settings
 BROKER_URL = 'librabbitmq://guest:guest@localhost:5672/apollo'
+
+# caching
+JOHNNY_MIDDLEWARE_KEY_PREFIX = 'jc_apollo'
+JIMMY_PAGE_CACHE_PREFIX = "jp_apollo"
 
 # since we might hit the database from any thread during testing, the
 # in-memory sqlite database isn't sufficient. it spawns a separate

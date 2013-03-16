@@ -558,9 +558,9 @@ class Submission(models.Model):
         return not any(truthy)
 
     def get_location_for_type(self, location_type):
-        locations = filter(lambda x: x.type == location_type, self.location.get_ancestors(include_self=True))
+        locations = filter(lambda x: x['type'] == location_type.name, self.location.nx_ancestors(include_self=True))
         if locations:
-            return locations[0]
+            return Location.objects.get(pk=locations[0]['id'])
         else:
             return None
 

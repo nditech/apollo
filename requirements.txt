@@ -18,6 +18,7 @@ django-tastypie==0.9.11
 djorm-ext-core==0.4.1
 djorm-ext-expressions==0.4.2
 djorm-ext-hstore==0.4.2
+johnny-cache==1.4
 librabbitmq==1.0.1
 networkx==1.7
 numpy==1.6.2
@@ -27,6 +28,7 @@ python-memcached==1.48
 psycopg2==2.4.6
 git+https://github.com/timbaobjects/rapidsms-telerivet.git#egg=rapidsms-telerivet
 git+https://github.com/rapidsms/rapidsms.git@feature/bulk-messaging-api#egg=rapidsms
+-e git+https://github.com/timbaobjects/django-jimmypage.git@20df6ab7e58a537707575de5340966e35836605e#egg=django_jimmypage-dev
 tablib==0.9.11
 xlrd==0.8.0
 xlutils==1.5.2

@@ -101,11 +101,11 @@ def submission_items(submissions, form, permissions):
 
 @register.simple_tag
 def get_location_for_type(submission, location_type, display_type=False):
-    location = submission.get_location_for_type(location_type)
+    locations = filter(lambda loc: loc['type'] == location_type.name, submission.location.nx_ancestors(include_self=True))
     if display_type:
-        return '{} · <em class="muted">{}</em>'.format(location, location.type) if location else ''
+        return '{} · <em class="muted">{}</em>'.format(locations[0]['name'], locations[0]['type']) if locations else ''
     else:
-        return location or ''
+        return locations[0]['name'] if locations else ''
 
 
 @register.filter
