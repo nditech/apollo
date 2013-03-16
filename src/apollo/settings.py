@@ -210,8 +210,24 @@ MIDDLEWARE_CLASSES = (
 BROKER_URL = 'librabbitmq://guest:guest@localhost:5672/apollo'
 
 # caching
+CACHES = {
+    'graph': {
+        'BACKEND': 'apollo.core.memcached.BigMemcachedCache',
+        'OPTIONS': {
+            'MAX_VALUE_LENGTH': 2 * 1024 * 1024
+        },
+        'LOCATION': '127.0.0.1:11211',
+    },
+    'default': {
+        'BACKEND': 'johnny.backends.memcached.MemcachedCache',
+        'LOCATION': ['127.0.0.1:11211'],
+        'JOHNNY_CACHE': True,
+    }
+}
+
 JOHNNY_MIDDLEWARE_KEY_PREFIX = 'jc_apollo'
 JIMMY_PAGE_CACHE_PREFIX = "jp_apollo"
+JIMMY_PAGE_DISABLED = True
 
 # since we might hit the database from any thread during testing, the
 # in-memory sqlite database isn't sufficient. it spawns a separate
