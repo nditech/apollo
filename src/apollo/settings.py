@@ -171,7 +171,7 @@ LOCATIONS_GRAPH_MAXAGE = 25200  # number of seconds to cache the locations graph
 PAGE_SIZE = 10  # Number of submissions viewable per page
 PROCESS_QUESTIONS_TAGS = [
         'AA',  # Arrival
-        'AB', 'AC', 'AD', 'AE', 'AF', 'AG', 'AH', 'AJ', 'AK', 'AM', 'AN'  # Setup
+        'AB', 'AC', 'AD', 'AE', 'AF', 'AG', 'AH', 'AJ', 'AK', 'AM', 'AN',  # Setup
         'BA', 'BB', 'BC', 'BD', 'BE', 'BF', 'BG', 'BH', 'BJ',  # Voting
         'BK', 'BM', 'BN', 'BP', 'BQ',
         'CA', 'CB', 'CC', 'CD', 'CE', 'CF', 'CG', 'CH',  # Couting
