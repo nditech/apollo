@@ -19,8 +19,7 @@
 		{% analysis_breadcrumb_navigation form location %}
   	</div>
   	<div class="span7">
-        <form class="form-horizontal pull-right" action="" method="post" accept-charset="utf-8">
-          {% csrf_token %}
+        <form class="form-horizontal pull-right" action="" method="get" accept-charset="utf-8">
           {{ filter_form.status }} {{ filter_form.witness }} {{ filter_form.sample }}
           <button class="btn btn-warning" type="submit"><i class="icon-search icon-white"></i> Filter</button>
         </form>

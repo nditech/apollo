@@ -24,6 +24,7 @@ from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_protect
 from django.views.generic import TemplateView, ListView, UpdateView, View, CreateView
 from django.views.generic.base import TemplateResponseMixin
+from jimmypage.cache import cache_page
 from rapidsms.models import Connection, Backend
 from guardian.decorators import permission_required
 from guardian.shortcuts import get_objects_for_user
@@ -154,6 +155,7 @@ class SubmissionProcessAnalysisView(View, TemplateResponseMixin):
     @method_decorator(login_required)
     @method_decorator(permission_required('core.can_analyse', return_403=True))
     @method_decorator(permission_required('core.view_form', (Form, 'pk', 'form'), return_403=True))
+    @method_decorator(cache_page)
     def dispatch(self, request, *args, **kwargs):
         self.form = get_object_or_404(Form, pk=kwargs['form'])
         self.page_title = '{} Analysis'.format(self.form.name)
@@ -209,8 +211,7 @@ class SubmissionProcessAnalysisView(View, TemplateResponseMixin):
         return context
 
     def get(self, request, *args, **kwargs):
-        initial_filter = request.session.get('analysis_filter', None)
-        self.filter_set = self.analysis_filter(initial_filter, queryset=self.initial_qs, request=request)
+        self.filter_set = self.analysis_filter(request.GET, queryset=self.initial_qs, request=request)
 
         if request.GET.get('export', None) and self.form.type == 'INCIDENT':
             location_types = list(LocationType.objects.filter(on_display=True).values_list('name', flat=True))
@@ -230,12 +231,6 @@ class SubmissionProcessAnalysisView(View, TemplateResponseMixin):
         else:
             context = self.get_context_data(**kwargs)
             return self.render_to_response(context)
-
-    def post(self, request, *args, **kwargs):
-        self.filter_set = self.analysis_filter(request.POST, queryset=self.initial_qs, request=request)
-        request.session['analysis_filter'] = self.filter_set.form.data
-        context = self.get_context_data(**kwargs)
-        return self.render_to_response(context)
 
 
 class SubmissionListView(ListView):
