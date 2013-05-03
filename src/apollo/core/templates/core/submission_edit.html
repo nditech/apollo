@@ -2,7 +2,7 @@
 {% load apollo %}{% load comments %}{% load humanize %}{% load static %}
 {% block content %}
   {% with submission.siblings as siblings %}
-  <form action="" method="post">
+  <form action="" method="post" style="margin-bottom:.5em;">
     {% csrf_token %}
   <div class="row">
     <div class="span12">
@@ -171,7 +171,7 @@
     </div>
   </div>
 
-  <div class="row">
+  <div class="row navbar-fixed-bottom" style="bottom:0px; margin-left:1.75em; background:#fff; padding-top:1em; padding-bottom:1em;">
     <div class="offset8 span2">
       <button type="submit" class="btn btn-info btn-large btn-block">Save</button>
     </div>
@@ -185,7 +185,7 @@
 {% if submission.form.type == 'CHECKLIST' %}
 <div class="row">
   <div class="span12">
-    <table class="table table-striped table-bordered" id="comments">
+    <table class="table table-striped table-bordered" id="comments" style="margin-bottom:5.5em;">
       {% get_comment_list for submission as comments %}
       {% for comment in comments %}
       <tr>
