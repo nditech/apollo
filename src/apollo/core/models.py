@@ -692,5 +692,9 @@ def invalidate_locations_cache(sender, **kwargs):
         delattr(Location, '_locations_graph')
     except AttributeError:
         pass
+    try:
+        cache = get_cache('graphs')
+    except InvalidCacheBackendError:
+        cache = default_cache
     cache.delete('reversed_locations_graph')
     cache.delete('locations_graph')
