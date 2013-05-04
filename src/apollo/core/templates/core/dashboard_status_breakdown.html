@@ -1,58 +1,58 @@
 {% extends "core/layout.html" %}{% load apollo %}
 {% block content %}
-<div class="row">
-{% for location in summary %}
-	<div class="span3">
-  	  <legend style="text-align:center;border:0">{{ location.name }}</legend>
-      <script type="text/javascript+protovis">
-        width = 270,
-        height = 300,
-        offset = 10,
-        r = width/2 - offset;
-        data = [{{ location.missing }}, {{ location.partial }}, {{ location.complete }}];
-        colors = ["#FF5200", "#FFE22B", "#3BDF4A"];
-        labels = ["Missing", 'Partial', 'Complete'];
+    {% for location in summary %}
+    {% if forloop.counter0|divisibleby:"5" %}<div class="row"><div class="span1"></div>{% endif %}
+    	<div class="span2">
+      	  <legend style="text-align:center;border:0">{{ location.name }}</legend>
+          <script type="text/javascript+protovis">
+            width = 170,
+            height = 300,
+            offset = 10,
+            r = width/2 - offset;
+            data = [{{ location.missing }}, {{ location.partial }}, {{ location.complete }}];
+            colors = ["#FF5200", "#FFE22B", "#3BDF4A"];
+            labels = ["Missing", 'Partial', 'Complete'];
 
-        var pie = new pv.Panel().width(width).height(height);
-            pie.add(pv.Wedge)
-            .data(pv.normalize(data))
-            .outerRadius(70)
-            .angle(function(d) d * 2 * Math.PI)
-            .left(width/2)
-            .top(width/2 - 50)
-            .fillStyle(pv.colors(colors).by(function () { return this.index;}))
-            .anchor("center")
-            .add(pv.Label)
-            .textAngle(0)
-            .text(function(d){ return d ? (d*100).toFixed(0) + "%" : "" });
-            
-        //legends   
-        pie.add(pv.Dot) 
-            .data(labels) 
-            .top(function() ((height + 80)/2) + this.index * 18)
-            .left(80) 
-            .size(20) 
-            .strokeStyle(null) 
-            .fillStyle(pv.colors(colors)) 
-            .anchor("right").add(pv.Label)
-            .textMargin(8)
-            .font("10pt Courier");
-            
-        // raw data 
-        pie.add(pv.Dot) 
-            .data(data) 
-            .top(function() ((height + 80)/2) + this.index * 18)
-            .left(150) 
-            .strokeStyle(null)
-            .fillStyle(null)
-            .anchor("right").add(pv.Label)
-            .textMargin(8)
-            .text(function(d){ return "· " + d })
-            .font("10pt Courier");
+            var pie = new pv.Panel().width(width).height(height);
+                pie.add(pv.Wedge)
+                .data(pv.normalize(data))
+                .outerRadius(70)
+                .angle(function(d) d * 2 * Math.PI)
+                .left(width/2)
+                .top(width/2)
+                .fillStyle(pv.colors(colors).by(function () { return this.index;}))
+                .anchor("center")
+                .add(pv.Label)
+                .textAngle(0)
+                .text(function(d){ return d ? (d*100).toFixed(0) + "%" : "" });
+                
+            //legends   
+            pie.add(pv.Dot) 
+                .data(labels) 
+                .top(function() ((height + 80)/2) + this.index * 18)
+                .left(30) 
+                .size(20) 
+                .strokeStyle(null) 
+                .fillStyle(pv.colors(colors)) 
+                .anchor("right").add(pv.Label)
+                .textMargin(8)
+                .font("10pt Courier");
+                
+            // raw data 
+            pie.add(pv.Dot) 
+                .data(data) 
+                .top(function() ((height + 80)/2) + this.index * 18)
+                .left(30 + 72) 
+                .strokeStyle(null)
+                .fillStyle(null)
+                .anchor("right").add(pv.Label)
+                .textMargin(8)
+                .text(function(d){ return "· " + d })
+                .font("10pt Courier");
 
-        pie.render();
-      </script>
-    </div>
-{% endfor %}
-</div>
+            pie.render();
+          </script>
+        </div>
+        {% if forloop.counter|divisibleby:"5" %}</div>{% endif %}
+    {% endfor %}
 {% endblock %}
