@@ -23,6 +23,7 @@ librabbitmq==1.0.1
 networkx==1.7
 numpy==1.6.2
 http://www.timbaobjects.com/eggs/pandas-0.10.1.tar.gz
+parsimonious==0.4
 python-magic==0.4.3
 python-memcached==1.48
 psycopg2==2.4.6
