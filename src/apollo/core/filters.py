@@ -1,6 +1,8 @@
 from .models import *
+from .helpers import get_flag_attributes
 import django_filters
 from django import forms
+from django.conf import settings
 from djorm_hstore.expressions import HstoreExpression
 
 
@@ -312,3 +314,31 @@ def generate_critical_incidents_location_filter(tag):
     fields['activity'] = ActivityFilter(widget=forms.HiddenInput())
 
     return type('CriticalIncidentsLocationFilter', (BaseCriticalIncidentsLocationFilter,), fields)
+
+
+def generate_submission_flags_filter(form):
+    metafields = {'model': Submission, 'fields':
+        ['observer_id', 'date', 'location', 'activity']}
+    for flag in get_flag_attributes('storage'):
+        metafields['fields'].append(flag)
+
+    metaclass = type('Meta', (), metafields)
+    fields = {'Meta': metaclass}
+    for name, storage in zip(get_flag_attributes('name'), get_flag_attributes('storage')):
+        CHOICES = [
+            ('',  name),
+            ] + list(settings.FLAG_CHOICES)
+        fields[storage] = HstoreChoiceFilter(
+            widget=forms.Select(attrs={'class': 'span2'}), label=name,
+            choices=CHOICES)
+    fields['observer_id'] = django_filters.CharFilter(widget=forms.TextInput(attrs={
+        'class': 'span2',
+        'placeholder': 'Observer ID'
+        }), name="submissions__observer__observer_id")
+
+    fields['location'] = LocationFilter(widget=forms.Select(attrs={
+        'class': 'span4 input-xlarge select2',
+        'data-placeholder': 'Location'}))
+    fields['activity'] = ActivityFilter(widget=forms.HiddenInput())
+
+    return type('SubmissionFlagsFilter', (BaseSubmissionFilter,), fields)

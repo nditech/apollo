@@ -1,8 +1,28 @@
 # -*- coding: utf-8 -*-
 from django import template
+from django.conf import settings
 from ..models import *
+from ..helpers import get_flag_attributes
 
 register = template.Library()
+
+
+@register.filter
+def flag_status(value, flag_code):
+    # returns a boolean if the value matches that of the
+    # supplied flag_code
+    try:
+        return value == settings.FLAG_STATUSES.get(flag_code, None)[0]
+    except IndexError:
+        return None
+
+
+@register.filter
+def getvalue(value, attr):
+    try:
+        return getattr(value, attr)
+    except AttributeError:
+        return ''
 
 
 @register.filter
@@ -151,3 +171,27 @@ def analysis_location_navigation(form, location=None, tag=None):
 @register.inclusion_tag('core/send_message_modal.html')
 def send_message(recipients=0):
     return {'recipients': recipients}
+
+
+@register.inclusion_tag('core/verification_filter.html')
+def verification_filter(form, filter_form):
+    form_flags = get_flag_attributes('storage')
+    return {'form_flags': form_flags, 'form': form, 'filter_form': filter_form}
+
+
+@register.inclusion_tag('core/verification_header.html')
+def verification_header(form, permissions):
+    form = form if isinstance(form, Form) else Form.objects.get(pk=form)
+    location_types = LocationType.objects.filter(on_display=True)
+    form_flags = get_flag_attributes('name')
+    return {'location_types': location_types, 'form_flags': form_flags,
+            'form': form, 'perms': permissions}
+
+
+@register.inclusion_tag('core/verification_items.html')
+def verification_items(submissions, form, permissions):
+    form = form if isinstance(form, Form) else Form.objects.get(pk=form)
+    location_types = LocationType.objects.filter(on_display=True)
+    form_flags = get_flag_attributes('storage')
+    return {'submissions': submissions, 'location_types': location_types,
+        'form_flags': form_flags, 'form': form, 'perms': permissions}

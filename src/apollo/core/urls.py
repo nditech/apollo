@@ -31,6 +31,9 @@ urlpatterns = patterns('',
     url(r'^submission/(?P<pk>\d+)/?$', SubmissionEditView.as_view(), name='submission_edit'),
     url(r'^submissions/form/(?P<form>\d+)/add/?$', SubmissionCreateView.as_view(), name='submission_add'),
 
+    url(r'^verifications/form/(?P<form>\d+)/?$', VerificationListView.as_view(), name='verifications_list'),
+    url(r'^verification/(?P<pk>\d+)/?$', VerificationEditView.as_view(), name='verification_edit'),
+
     url(r'^submissions/analysis/process/form/(?P<form>\d+)/?$', SubmissionProcessAnalysisView.as_view(), name='submissions_analysis'),
     url(r'^submissions/analysis/process/form/(?P<form>\d+)/location/(?P<location_id>\d+)/?$', SubmissionProcessAnalysisView.as_view(), name='submissions_analysis_location'),
     url(r'^submissions/analysis/process/form/(?P<form>\d+)/tag/(?P<tag>[A-Z]+)/?$', SubmissionProcessAnalysisView.as_view(), name='submissions_analysis_tag'),

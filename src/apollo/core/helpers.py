@@ -1,4 +1,5 @@
 from .models import FormField, Location
+from django.conf import settings
 
 
 def memoize(f):
@@ -87,3 +88,7 @@ def get_incident_markers(form, submissions, location_type, tag=False):
                 markers.append(get_centroid_coords(submission.location.pk))
 
     return markers
+
+
+def get_flag_attributes(attribute):
+    return [flag.get(attribute, None) for flag in settings.FLAGS]

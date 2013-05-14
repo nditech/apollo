@@ -1,0 +1,11 @@
+<tr>
+    <th>Observer ID</th>
+    {% for location_type in location_types %}
+    <th>{{ location_type.name }}</th>
+    {% endfor %}
+    <th>Observer</th>
+    {% for flag in form_flags %}
+    <th style="text-align:center">{{ flag }}</th>
+    {% endfor %}
+    {% if perms.core.change_submission %}<th style="text-align:center">Edit</th>{% endif %}
+</tr>

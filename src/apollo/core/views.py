@@ -30,7 +30,7 @@ from guardian.decorators import permission_required
 from guardian.shortcuts import get_objects_for_user
 from rapidsms.router.api import send
 import tablib
-from .forms import ActivitySelectionForm, ContactModelForm, LocationModelForm, generate_submission_form
+from .forms import ActivitySelectionForm, ContactModelForm, LocationModelForm, generate_submission_form, generate_verification_form
 from .helpers import *
 from .models import *
 from .filters import *
@@ -397,6 +397,73 @@ class SubmissionListExportView(View):
         response['Content-Disposition'] = 'attachment; filename=%s.xls' % (filename,)
 
         return response
+
+
+class VerificationListView(ListView):
+    context_object_name = 'submissions'
+    template_name = 'core/verification_list.html'
+    paginate_by = settings.PAGE_SIZE
+    page_title = 'Verification'
+
+    def get_queryset(self):
+        return self.filter_set.qs.order_by('-date', '-created')
+
+    def get_context_data(self, **kwargs):
+        context = super(VerificationListView, self).get_context_data(**kwargs)
+        context['form'] = self.form
+        context['filter_form'] = self.filter_set.form
+        context['page_title'] = self.page_title
+        return context
+
+    @method_decorator(login_required)
+    @method_decorator(permission_required('core.view_submission', return_403=True))
+    @method_decorator(permission_required('core.view_form', (Form, 'pk', 'form'), return_403=True))
+    def dispatch(self, *args, **kwargs):
+        self.form = get_object_or_404(Form, pk=kwargs['form'])
+        self.submission_filter = generate_submission_flags_filter(self.form)
+        return super(VerificationListView, self).dispatch(*args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        # force filtering to only occur on master CHECKLIST forms
+        self.filter_set = self.submission_filter(self.request.POST,
+            queryset=Submission.objects.filter(form=self.form, form__type='CHECKLIST', observer=None).select_related(),
+            request=request)
+        request.session['verification_filter_%d' % self.form.pk] = self.filter_set.form.data
+        return super(VerificationListView, self).get(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        initial_data = request.session.get('verification_filter_%d' % self.form.pk, None)
+        self.filter_set = self.submission_filter(initial_data,
+            queryset=Submission.objects.filter(form=self.form, form__type='CHECKLIST', observer=None).select_related(),
+            request=request)
+        return super(VerificationListView, self).get(request, *args, **kwargs)
+
+
+class VerificationEditView(UpdateView):
+    template_name = 'core/verification_edit.html'
+    page_title = 'Edit Verification'
+
+    def get_object(self, queryset=None):
+        return self.submission
+
+    @method_decorator(login_required)
+    @method_decorator(permission_required('core.change_submission', return_403=True))
+    def dispatch(self, *args, **kwargs):
+        self.submission = get_object_or_404(Submission, pk=kwargs['pk'])
+        self.form_class = generate_verification_form(self.submission.form)
+        return super(VerificationEditView, self).dispatch(*args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(VerificationEditView, self).get_context_data(**kwargs)
+        context['submission'] = self.submission
+        context['flags'] = settings.FLAGS
+        context['submission_form'] = self.form_class(instance=self.submission)
+        context['location_types'] = LocationType.objects.filter(on_display=True)
+        context['page_title'] = self.page_title
+        return context
+
+    def get_success_url(self):
+        return reverse('verifications_list', args=[self.submission.form.pk])
 
 
 class ContactListView(ListView):

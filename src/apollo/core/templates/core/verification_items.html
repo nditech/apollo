@@ -1,0 +1,40 @@
+{% load apollo %}{% load static %}
+{% for submission in submissions %}
+<tr>
+    <td>{{ submission.submissions.all.0.observer.observer_id }}</td>
+    {% for location_type in location_types %}
+    <td>{% get_location_for_type submission location_type %}</td>
+    {% endfor %}
+    <td>{{ submission.submissions.all.0.observer.name }}</td>
+    {% for flag in form_flags %}
+    <td style="text-align:center">
+        {% if submission.data|keyvalue:flag|flag_status:'verified' %}<img src="{% static "img/blue_dot.png" %}" title="Verified" alt="Verified" height="13" width="13" />
+        {% elif submission.data|keyvalue:flag|flag_status:'rejected' %}<img src="{% static "img/black_dot.png" %}" title="Rejected" alt="Rejected" height="13" width="13" />
+        {% elif submission.data|keyvalue:flag|flag_status:'serious_problem' %}<img src="{% static "img/red_dot.png" %}" title="Serious Problem" alt="Serious Problem" height="13" width="13" />
+        {% elif submission.data|keyvalue:flag|flag_status:'problem' %}<img src="{% static "img/darkyellow_dot.png" %}" title="Problem" alt="Problem" height="13" width="13" />
+        {% elif submission.data|keyvalue:flag|flag_status:'no_problem' %}<img src="{% static "img/green_dot.png" %}" title="No Problem" alt="No Problem" height="13" width="13" />
+        {% else %}<img src="{% static "img/white_dot.png" %}" title="No Data" alt="No Data" height="13" width="13" />
+        {% endif %}
+    </td>
+    {% endfor %}
+    {% if perms.core.change_submission %}<td style="text-align:center"><a href="{% url verification_edit submission.pk %}">Edit</a></td>{% endif %}
+</tr>
+{% empty %}
+{% if perms.core.change_submission %}
+{% with location_types|length|add:"3" as lt_count %}
+{% with form_flags|length|add:lt_count as colspan %}
+<tr class="warning">
+    <td style="text-align:center" colspan="{{ colspan }}">No Data Available</td>
+</tr>
+{% endwith %}
+{% endwith %}
+{% else %}
+{% with location_types|length|add:"2" as lt_count %}
+{% with form_flags|length|add:lt_count as colspan %}
+<tr class="warning">
+    <td style="text-align:center" colspan="{{ colspan }}">No Data Available</td>
+</tr>
+{% endwith %}
+{% endwith %}
+{% endif %}
+{% endfor %}

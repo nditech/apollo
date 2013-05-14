@@ -11,6 +11,8 @@ from rapidsms.models import Contact, Backend, Connection
 from datetime import datetime
 from .managers import SubmissionManager, ObserverManager
 import networkx as nx
+import operator as op
+from parsimonious.grammar import Grammar
 import re
 
 
@@ -507,7 +509,7 @@ class Submission(models.Model):
     form = models.ForeignKey(Form, related_name='submissions')
     observer = models.ForeignKey(Observer, blank=True, null=True)
     location = models.ForeignKey(Location, related_name="submissions")
-    master = models.ForeignKey('self', null=True, blank=True)
+    master = models.ForeignKey('self', null=True, blank=True, related_name='submissions')
     date = models.DateField(default=datetime.today())
     data = DictionaryField(db_index=True, null=True, blank=True)
     overrides = DictionaryField(db_index=True, null=True, blank=True)
@@ -575,6 +577,98 @@ class Sample(models.Model):
     '''Used for grouping locations into samples'''
     name = models.CharField(max_length=100)
     locations = models.ManyToManyField(Location, related_name='samples')
+
+
+# Parsers for Checklist Verification
+
+class Evaluator(object):
+    def __init__(self, env={}):
+        self.env = env
+        self.scratch = None  # for storing temporary results
+
+    def parse(self, source):
+        grammar = '\n'.join(v.__doc__ for k, v in vars(self.__class__).items()
+                      if '__' not in k and hasattr(v, '__doc__') and v.__doc__)
+        return Grammar(grammar).parse(source)
+
+    def eval(self, source):
+        node = self.parse(source) if isinstance(source, str) else source
+        method = getattr(self, node.expr_name, lambda node, children: children)
+        return method(node, [self.eval(n) for n in node])
+
+    def expr(self, node, children):
+        'expr = operand operation*'
+        operand, operation = children
+        self.scratch = None
+        try:
+            return children[1][-1]
+        except IndexError:
+            return operand
+
+    def operand(self, node, children):
+        'operand = _ (variable / number) _'
+        _, value, _ = children
+        if self.scratch == None:
+            self.scratch = value[0]
+        return value[0]
+
+    def operation(self, node, children):
+        'operation = operator operand'
+        operator, operand = children
+        self.scratch = operator(self.scratch, operand)
+        return self.scratch
+
+    def operator(self, node, children):
+        'operator = "+" / "-" / "*" / "/"'
+        operators = {'+': op.add, '-': op.sub, '*': op.mul, '/': op.div}
+        return operators[node.text]
+
+    def variable(self, node, children):
+        'variable = ~"[a-z]+"i _'
+        return float(self.env.get(node.text.strip())) or None
+
+    def number(self, node, children):
+        'number = ~"\-?[0-9\.]+"'
+        return float(node.text)
+
+    def _(self, node, children):
+        '_ = ~"\s*"'
+        pass
+
+
+class Comparator(object):
+    def __init__(self):
+        self.param = None
+
+    def parse(self, source):
+        grammar = '\n'.join(v.__doc__ for k, v in vars(self.__class__).items()
+                      if '__' not in k and hasattr(v, '__doc__') and v.__doc__)
+        return Grammar(grammar).parse(source)
+
+    def eval(self, source, param=None):
+        if param != None:
+            self.param = float(param)
+        node = self.parse(source) if isinstance(source, str) else source
+        method = getattr(self, node.expr_name, lambda node, children: children)
+        return method(node, [self.eval(n) for n in node])
+
+    def expr(self, node, children):
+        'expr = operator _ number'
+        operator, _, number = children
+        return operator(self.param, number)
+
+    def operator(self, node, children):
+        'operator = ">=" / "<=" / ">" / "<" / "="'
+        operators = {'>': op.gt, '>=': op.ge, '<': op.lt, '<=': op.le, '=': op.eq}
+        return operators[node.text]
+
+    def number(self, node, children):
+        'number = ~"\-?[0-9\.]+"'
+        return float(node.text)
+
+    def _(self, node, children):
+        '_ = ~"\s*"'
+        pass
 
 
 # auto create Contacts when an observer is created
@@ -698,3 +792,45 @@ def invalidate_locations_cache(sender, **kwargs):
         cache = default_cache
     cache.delete('reversed_locations_graph')
     cache.delete('locations_graph')
+
+
+@receiver(models.signals.pre_save, sender=Submission, dispatch_uid='compute_verification')
+def compute_verification(sender, **kwargs):
+    verified_flag = settings.FLAG_STATUSES['verified'][0]
+    rejected_flag = settings.FLAG_STATUSES['rejected'][0]
+
+    instance = kwargs['instance']
+    comparator = Comparator()
+
+    if instance.observer == None:
+        for flag in settings.FLAGS:
+            if instance.data.get(flag['storage'], None) in [verified_flag, rejected_flag]:
+                continue
+            evaluator = Evaluator(instance.data)
+            try:
+                lvalue = evaluator.eval(flag['lvalue'])
+                rvalue = evaluator.eval(flag['rvalue'])
+                if flag['comparator'] == 'pctdiff':
+                    diff = abs(lvalue - rvalue) / float(max([lvalue, rvalue]))
+                elif flag['comparator'] == 'pct':
+                    diff = float(lvalue) / float(rvalue)
+                else:
+                    # value-based comparator
+                    diff = abs(lvalue - rvalue)
+
+                # evaluate conditions and set flag appropriately
+                if comparator.eval(flag['okay'], diff):
+                    instance.data[flag['storage']] = settings.FLAG_STATUSES['no_problem'][0]
+                elif comparator.eval(flag['serious'], diff):
+                    instance.data[flag['storage']] = settings.FLAG_STATUSES['serious_problem'][0]
+                elif comparator.eval(flag['problem'], diff):
+                    instance.data[flag['storage']] = settings.FLAG_STATUSES['problem'][0]
+                else:
+                    # if we have no way of determining, we assume it's okay
+                    instance.data[flag['storage']] = settings.FLAG_STATUSES['no_problem'][0]
+            except TypeError:
+                # no sufficient data
+                try:
+                    del instance.data[flag['storage']]
+                except KeyError:
+                    pass

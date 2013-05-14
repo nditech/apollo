@@ -1,4 +1,5 @@
 from django import forms
+from django.conf import settings
 from django.utils.encoding import force_unicode
 from form_utils.forms import BetterForm
 from apollo.core.models import (Form, Observer, ObserverDataField, Location, Submission, Activity)
@@ -244,6 +245,79 @@ def generate_submission_form(form, readonly=False):
     fields['Meta'] = metaclass
 
     return type('SubmissionForm', (SubmissionModelForm,), fields)
+
+
+class VerificationModelForm(BetterForm):
+    location = forms.ModelChoiceField(queryset=Location.objects.all(),
+        required=False, widget=LocationHiddenInput(
+            attrs={'class': 'span6 select2-locations', 'placeholder': 'Location'}))
+    observer = forms.ModelChoiceField(queryset=Observer.objects.all(),
+        required=False, widget=forms.HiddenInput(
+            attrs={'class': 'span5 select2-observers', 'placeholder': 'Observer'}))
+
+    def __init__(self, *args, **kwargs):
+        if 'instance' in kwargs:
+            self.instance = kwargs.pop('instance')
+            storage = [item['storage'] for item in settings.FLAGS]
+
+            if self.instance:
+                kwargs['initial'] = {
+                    'location': self.instance.location,
+                    'observer': self.instance.submissions.all()[0].observer,
+                    'form': self.instance.form
+                }
+                kwargs['initial'].update(
+                    {'data__{}'.format(k): self.instance.data[k] for k in filter(lambda k: k in storage, self.instance.data.keys())}
+                )
+
+        return super(BetterForm, self).__init__(*args, **kwargs)
+
+    def save(self):
+        cleaned_data = self.cleaned_data
+
+        # retrieve submission data fields
+        data = {k.replace('data__', ''): v for k, v in cleaned_data.items() if k.startswith('data__')}
+
+        for key in data.keys():
+            if data[key] != None and data[key] != '' and (data[key] != False or (data[key] == 0 and type(data[key]) == int)):
+                # the forced casting to integer enables the conversion of boolean values
+                # as is the case for incidents that are returned as boolean and need to
+                # be converted to integer (and then string) before storage
+                if isinstance(data[key], list):
+                    self.instance.data[key] = ','.join(data[key])
+                elif not (isinstance(data[key], unicode) or isinstance(data[key], str)):
+                    self.instance.data[key] = str(int(data[key]))
+                else:
+                    self.instance.data[key] = data[key]
+            else:
+                try:
+                    del self.instance.data[key]
+                except KeyError:
+                    pass
+
+        return self.instance.save()
+
+
+def generate_verification_form(form, readonly=False):
+    field_names = []
+    fields = {}
+    choices = (
+        ('', 'Default'),
+        ('4', 'Verified'),
+        ('5', 'Rejected')
+    )
+
+    for flag in settings.FLAGS:
+        field_name = 'data__{}'.format(flag['storage'])
+        field_names.append(field_name)
+
+        fields[field_name] = forms.ChoiceField(choices=choices,
+            required=False, label=flag['name'])
+
+    metaclass = type('Meta', (), {'fields': tuple(field_names)})
+    fields['Meta'] = metaclass
+
+    return type('VerificationForm', (VerificationModelForm,), fields)
 
 
 class LocationModelForm(forms.ModelForm):

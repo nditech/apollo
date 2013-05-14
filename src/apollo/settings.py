@@ -1,6 +1,6 @@
 #!/usr/bin/env python
-# vim: ai ts=4 sts=4 et sw=4
 # encoding=utf-8
+# vim: ai ts=4 sts=4 et sw=4
 
 
 # -------------------------------------------------------------------- #
@@ -187,6 +187,122 @@ RESULTS_QUESTIONS = {
         'votes_total': 'DK'
         }
 
+FLAG_STATUSES = {
+    'no_problem': ('0', 'No Problem'),
+    'problem': ('2', 'Problem'),
+    'serious_problem': ('3', 'Serious Problem'),
+    'verified': ('4', 'Verified'),
+    'rejected': ('5', 'Rejected')
+}
+
+FLAG_CHOICES = (
+    ('0', 'No Problem'),
+    ('2', 'Problem'),
+    ('3', 'Serious Problem'),
+    ('4', 'Verified'),
+    ('5', 'Rejected')
+)
+
+FLAGS = (
+    {
+    "name": "DA ≠ DF",
+    "storage": "flag_1",
+    "lvalue": "DA",
+    "rvalue": "DF",
+    "comparator": "pctdiff",
+    "okay": "= 0",
+    "serious": ">= 0.02",
+    "problem": "< 0.02"
+    },
+
+    {
+    "name": "DF ≠ DB + DC + DD + DE",
+    "storage": "flag_2",
+    "lvalue": "DF",
+    "rvalue": "DB + DC + DD + DE",
+    "comparator": "pctdiff",
+    "okay": "= 0.00",
+    "serious": ">= 0.02",
+    "problem": "< 0.02"
+    },
+
+    {
+    "name": "DE > DA",
+    "storage": "flag_3",
+    "rvalue": "DA",
+    "lvalue": "DE",
+    "comparator": "pct",
+    "okay": "< 1.02",
+    "serious": ">= 1.05",
+    "problem": "< 1.05"
+    },
+
+    {
+    "name": "DJ ≠ DG + DH",
+    "storage": "flag_4",
+    "lvalue": "DJ",
+    "rvalue": "DG + DH",
+    "comparator": "pctdiff",
+    "okay": "= 0.00",
+    "serious": ">= 0.02",
+    "problem": "< 0.02"
+    },
+
+    {
+    "name": "DG + DH » DH",
+    "storage": "flag_5",
+    "rvalue": "DG + DH",
+    "lvalue": "DG",
+    "comparator": "pct",
+    "okay": "< 0.90",
+    "serious": ">= 0.99",
+    "problem": ">= 0.90"
+    },
+
+    {
+    "name": "DG + DH » DG",
+    "storage": "flag_6",
+    "rvalue": "DG + DH",
+    "lvalue": "DH",
+    "comparator": "pct",
+    "okay": "< 0.90",
+    "serious": ">= 0.99",
+    "problem": ">= 0.90"
+    },
+
+    {
+    "name": "DK > DG + DH",
+    "storage": "flag_7",
+    "rvalue": "DG + DH",
+    "lvalue": "DK",
+    "comparator": "pct",
+    "okay": "< 0.02",
+    "serious": ">= 0.05",
+    "problem": ">= 0.02"
+    },
+
+    {
+    "name": "DM ≠ DG + DH + DK",
+    "storage": "flag_8",
+    "lvalue": "DM",
+    "rvalue": "DG + DH + DK",
+    "comparator": "pctdiff",
+    "okay": "= 0.00",
+    "serious": ">= 0.02",
+    "problem": "< 0.02"
+    },
+
+    {
+    "name": "DM ≠ DB",
+    "storage": "flag_9",
+    "lvalue": "DM",
+    "rvalue": "DB",
+    "comparator": "pctdiff",
+    "okay": "= 0.00",
+    "serious": ">= 0.02",
+    "problem": "< 0.02"
+    },
+)
 
 DEFAULT_CONNECTION_INDEX = 0
 

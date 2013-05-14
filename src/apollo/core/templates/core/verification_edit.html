@@ -1,0 +1,62 @@
+{% extends "core/layout.html" %}
+{% load apollo %}{% load comments %}{% load humanize %}{% load static %}
+{% block content %}
+  <form action="" method="post" style="margin-bottom:.5em;">
+    {% csrf_token %}
+  <div class="row" style="margin-bottom:4em">
+    <div class="span12">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th width="15%">&nbsp;</th>
+            <th>1</th>
+          </tr>
+          <tr>
+            <th>Observer</th>
+            <td><strong>{{ submission.submissions.all.0.observer.name }}</strong>{% if submission.submissions.all.0.observer.phone %} ({{ submission.submissions.all.0.observer.phone }}){% endif %} &mdash; <strong>{{ submission.submissions.all.0.observer.observer_id }}</strong></td>
+          </tr>
+          <tr>
+            <th>Location</th>
+            <td><strong>{{ submission.location }}</strong></td>
+          </tr>
+          {% if location_types %}
+          <tr>
+            <th>&nbsp;</th>
+            <td>{% for location_type in location_types %}{% get_location_for_type submission location_type "True" %}{% if not forloop.last %} / {% endif %}{% endfor %}</td>
+          </tr>
+          {% endif %}
+          <tr>
+            <th>Supervisor</th>
+            <td>{{ submission.submissions.all.0.observer.supervisor|default_if_none:"" }}</td>
+          </tr>
+        </thead>
+      </table>
+      <table class="table table-striped table-bordered table-hover">
+        <tbody>
+          <tr>
+            <td width="20%">&nbsp;</td>
+            <td>&nbsp;</td>
+          </tr>
+          {% for flag in flags %}
+          {% with 'data__'|add:flag.storage as field_name %}
+          <tr>
+            <td style="text-align: right">{{ flag.name }}</td>
+            <td>{{ submission_form|keyvalue:field_name }}</td>
+          </tr>
+          {% endwith %}
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="row navbar-fixed-bottom" style="bottom:0px; margin-left:1.75em; background:#fff; padding-top:1em; padding-bottom:1em;">
+    <div class="offset8 span2">
+      <button type="submit" class="btn btn-info btn-large btn-block">Save</button>
+    </div>
+    <div class="span2">
+      <a class="btn btn-large btn-block" href="{% url submissions_list object.form.pk %}">Cancel</a>
+    </div>
+  </div>
+  </form>
+{% endblock %}
