@@ -7,6 +7,7 @@
     <th>Supervisor</th>
     {% endif %}
     <th>Observer</th>
+    <th>Phone</th>
     {% if form.type == 'CHECKLIST' %}
     {% for group in form_groups %}
     <th style="text-align:center">{% if group.abbr %}<abbr title="{{ group.name }}">{{ group.abbr }}</abbr>{% else %}{{ group.name }}{% endif %}</th>
