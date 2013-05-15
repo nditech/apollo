@@ -496,21 +496,21 @@ class ContactListView(ListView):
             if request.user.has_perm('core.message_observers'):
                 initial_data = request.session.get('contacts_filter', None)
                 self.filter_set = self.contacts_filter(initial_data,
-                    queryset=Observer.objects.all())
+                    queryset=Observer.objects.all().distinct())
                 send_bulk_message(self.filter_set.qs.values_list('pk', flat=True), self.request.POST['message'])
                 return HttpResponse('OK')
             else:
                 return HttpResponseForbidden()
         else:
             self.filter_set = self.contacts_filter(request.POST,
-                queryset=Observer.objects.all())
+                queryset=Observer.objects.all().distinct())
             request.session['contacts_filter'] = self.filter_set.form.data
             return super(ContactListView, self).get(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
         initial_data = request.session.get('contacts_filter', None)
         self.filter_set = self.contacts_filter(initial_data,
-            queryset=Observer.objects.all())
+            queryset=Observer.objects.all().distinct())
 
         if request.GET.get('export', None):
             location_types = list(LocationType.objects.filter(on_display=True).values_list('name', flat=True))

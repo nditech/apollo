@@ -131,7 +131,7 @@ class BaseContactsFilter(django_filters.FilterSet):
     class Meta:
         model = Observer
         fields = ['observer_id', 'name', 'role', 'location',
-            'partner']
+            'partner', 'contact__connection__identity']
 
     def __init__(self, *args, **kwargs):
         super(BaseContactsFilter, self).__init__(*args, **kwargs)
@@ -143,11 +143,13 @@ class BaseContactsFilter(django_filters.FilterSet):
         self.filters['partner'].field.widget.attrs['class'] = 'span3'
         self.filters['observer_id'].field.widget.attrs['class'] = 'span3'
         self.filters['observer_id'].field.widget.attrs['placeholder'] = 'Observer ID'
+        self.filters['contact__connection__identity'].field.widget.attrs['class'] = 'span2'
+        self.filters['contact__connection__identity'].field.widget.attrs['placeholder'] = 'Phone'
 
 
 def generate_contacts_filter():
     metafields = {'model': Observer, 'fields':
-        ['observer_id', 'name', 'role', 'location', 'partner']}
+        ['observer_id', 'name', 'role', 'location', 'partner', 'contact__connection__identity']}
     metaclass = type('Meta', (), metafields)
     fields = {'Meta': metaclass}
 

@@ -27,8 +27,9 @@
         <div class="controls controls-row">
           {{ filter_form.role }}
           {{ filter_form.partner }}
-          <button type="submit" class="btn btn-warning" style="margin-left:2em"><i class="icon-search icon-white"></i> Search</button>
-          <a class="btn form-reset">Clear</a>
+          {{ filter_form.contact__connection__identity }}
+          <button type="submit" class="btn btn-warning" style="margin-left:1em"><i class="icon-search icon-white"></i> Search</button>
+          <a class="btn form-reset" style="margin-left:0.5em">Clear</a>
         </div> 
       </form>
     </div>
