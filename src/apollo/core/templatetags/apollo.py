@@ -72,7 +72,7 @@ def analysis_menu(request=None):
 
 
 @register.inclusion_tag('core/forms_menu.html')
-def forms_menu(request=None):
+def forms_menu(request=None, perms=None):
     activity = request.session.get('activity', Activity.default())
     if activity:
         checklist_forms = activity.forms.filter(type='CHECKLIST').order_by('pk')
@@ -87,7 +87,8 @@ def forms_menu(request=None):
 
     return {
         'checklist_forms': checklist_forms,
-        'incident_forms': incident_forms
+        'incident_forms': incident_forms,
+        'perms': perms
     }
 
 
