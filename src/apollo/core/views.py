@@ -511,7 +511,23 @@ class ContactListView(ListView):
         initial_data = request.session.get('contacts_filter', None)
         self.filter_set = self.contacts_filter(initial_data,
             queryset=Observer.objects.all())
-        return super(ContactListView, self).get(request, *args, **kwargs)
+
+        if request.GET.get('export', None):
+            location_types = list(LocationType.objects.filter(on_display=True).values_list('name', flat=True))
+            location_type_fields = ['loc:location__{}'.format(lt.lower()) for lt in location_types]
+            datalist_fields = ['pk', 'observer_id', 'name', 'location', 'location__name', 'role__name', 'partner__name']
+
+            export_fields = ['observer_id'] + location_type_fields + ['location__name', 'name', 'role__name', 'obs:pk__phone', 'partner__name']
+            export_field_labels = ['PSZ'] + location_types + ['Location', 'Name', 'Role', 'Phone', 'Partner']
+
+            datalist = self.filter_set.qs.values(*datalist_fields)
+            filename = slugify('contacts %s' % (datetime.now().strftime('%Y %m %d %H%M%S')))
+            response = HttpResponse(export(datalist, fields=export_fields, labels=export_field_labels), content_type='application/vnd.ms-excel')
+            response['Content-Disposition'] = 'attachment; filename=%s.xls' % (filename,)
+
+            return response
+        else:
+            return super(ContactListView, self).get(request, *args, **kwargs)
 
 
 class ContactEditView(UpdateView):
