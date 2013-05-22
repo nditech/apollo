@@ -251,7 +251,7 @@ class SubmissionListView(ListView):
         return context
 
     @method_decorator(login_required)
-    @method_decorator(permission_required('core.view_submission', return_403=True))
+    @method_decorator(permission_required('core.view_submissions', return_403=True))
     @method_decorator(permission_required('core.view_form', (Form, 'pk', 'form'), return_403=True))
     def dispatch(self, *args, **kwargs):
         self.form = get_object_or_404(Form, pk=kwargs['form'])
@@ -416,7 +416,7 @@ class VerificationListView(ListView):
         return context
 
     @method_decorator(login_required)
-    @method_decorator(permission_required('core.view_submission', return_403=True))
+    @method_decorator(permission_required('core.view_submissions', return_403=True))
     @method_decorator(permission_required('core.view_form', (Form, 'pk', 'form'), return_403=True))
     def dispatch(self, *args, **kwargs):
         self.form = get_object_or_404(Form, pk=kwargs['form'])
