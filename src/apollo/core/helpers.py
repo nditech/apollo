@@ -68,7 +68,8 @@ def r_getattr(obj, attr=''):
 @memoize
 def get_centroid_coords(pk):
     loc = Location.objects.get(pk=pk)
-    return (loc.poly.centroid.y, loc.poly.centroid.x)
+    if loc.poly:
+        return (loc.poly.centroid.y, loc.poly.centroid.x)
 
 
 # obtain the markers for incident
@@ -81,11 +82,15 @@ def get_incident_markers(form, submissions, location_type, tag=False):
         if locations:
             incidents = filter(lambda x: x in tags, submission.data.keys()) if not tag else [0]
             for x in range(len(incidents)):
-                markers.append(get_centroid_coords(locations[0]['id']))
+                marker = get_centroid_coords(locations[0]['id'])
+                if marker:
+                    markers.append(marker)
         elif submission.location.poly:
             incidents = filter(lambda x: x in tags, submission.data.keys()) if not tag else [0]
             for x in range(len(incidents)):
-                markers.append(get_centroid_coords(submission.location.pk))
+                marker = get_centroid_coords(submission.location.pk)
+                if marker:
+                    markers.append(marker)
 
     return markers
 
