@@ -1,6 +1,7 @@
 from djorm_expressions.base import SqlExpression, OR, AND
 from djorm_hstore.models import HStoreQueryset
 from djorm_hstore.functions import HstorePeek
+import pandas as pd
 from .functions import *
 
 
@@ -50,6 +51,24 @@ class SubmissionQuerySet(SearchableLocationQuerySet):
         # viz a viz: instance.AA
         params = {field: HstorePeek("data", field) for field in tags}
         return self.annotate_functions(**params)
+
+    def dataframe(self):
+        records = []
+        for submission in self.select_related('location'):
+            _submission = {}
+            location_tree = submission.location.nx_ancestors(include_self=True)
+            for k in filter(lambda key: not key.startswith('flag'), submission.data.keys()):
+                try:
+                    _submission[k] = int(submission.data[k])
+                except ValueError:
+                    pass
+            # for urban/rural groupings, include the location urban data
+            if 'urban' in submission.location.data:
+                _submission['urban'] = int(float(submission.location.data['urban']))
+            for location_item in location_tree:
+                _submission[location_item['type']] = location_item['name']
+            records.append(_submission)
+        return pd.DataFrame(records)
 
     def intdata(self, tags):
         # returns the integer version of `data` defined above
