@@ -49,7 +49,6 @@ INSTALLED_APPS = [
     # the essentials.
     "zimbabwe",
     "django_nose",
-    "djtables",
     "rapidsms",
     "core",
     "django_dag",

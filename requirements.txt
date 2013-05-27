@@ -29,7 +29,7 @@ python-magic==0.4.3
 python-memcached==1.48
 psycopg2==2.4.6
 git+https://github.com/timbaobjects/rapidsms-telerivet.git#egg=rapidsms-telerivet
-git+https://github.com/rapidsms/rapidsms.git@feature/bulk-messaging-api#egg=rapidsms
+rapidsms==0.13.0
 git+https://github.com/timbaobjects/django-jimmypage.git#egg=django_jimmypage-dev
 tablib==0.9.11
 Unidecode==0.04.12
