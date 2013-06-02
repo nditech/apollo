@@ -1,8 +1,12 @@
+import logging
 from lxml import etree
 from django.db import transaction
 import tabimport
 from unidecode import unidecode
 from .models import Form, LocationType, Location, Edge, Observer, ObserverRole, Submission
+
+
+logger = logging.getLogger(__name__)
 
 
 @transaction.commit_manually
@@ -157,7 +161,7 @@ def import_locations(filename, mapping):
                     set_location_attributes(location, lt_mapping, line, mapping)
                     set_location_parents(location, line_locations, location_type_id, location_types_hash)
                     location.save()
-                    print 'Saved: {} - {}'.format(location.type.name, location.name)  # FIXME: remove
+                    logger.debug('Saved: {} - {}'.format(location.type.name, location.name))
 
                     # save location for later retrieval
                     line_locations[location_type_id] = location
@@ -189,6 +193,7 @@ def import_observers(filename, mapping):
     imported = tabimport.FileFactory(filename)
     try:
         for line in imported:
+            logger.debug('Creating/Updating Observer: {}'.format(mapping['observer_id']))
             try:
                 observer = Observer.objects.get(observer_id=get_line_value(line, mapping['observer_id']))
             except Observer.DoesNotExist:
