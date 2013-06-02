@@ -3,9 +3,6 @@
     {% for location_type in location_types %}
     <th>{{ location_type.name }}</th>
     {% endfor %}
-    {% if form.type == 'CHECKLIST' %}
-    <th>Supervisor</th>
-    {% endif %}
     <th>Observer</th>
     <th>Phone</th>
     {% if form.type == 'CHECKLIST' %}

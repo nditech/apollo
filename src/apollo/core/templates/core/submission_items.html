@@ -5,9 +5,6 @@
     {% for location_type in location_types %}
     <td>{% get_location_for_type submission location_type %}</td>
     {% endfor %}
-    {% if form.type == 'CHECKLIST' %}
-    <td>{{ submission.observer.supervisor.name }}</td>
-    {% endif %}
     <td>{{ submission.observer.name }}</td>
     <td>{{ submission.observer.phone }}</td>
     {% if form.type == 'CHECKLIST' %}
@@ -40,7 +37,7 @@
 {% empty %}
 {% if perms.core.change_submission %}
 {% if form.type == 'CHECKLIST' %}
-{% with location_types|length|add:"5" as lt_count %}
+{% with location_types|length|add:"4" as lt_count %}
 {% with form_groups|length|add:lt_count as colspan %}
 <tr class="warning">
     <td style="text-align:center" colspan="{{ colspan }}">No Data Available</td>
@@ -58,7 +55,7 @@
 {% endif %}
 {% else %}
 {% if form.type == 'CHECKLIST' %}
-{% with location_types|length|add:"4" as lt_count %}
+{% with location_types|length|add:"3" as lt_count %}
 {% with form_groups|length|add:lt_count as colspan %}
 <tr class="warning">
     <td style="text-align:center" colspan="{{ colspan }}">No Data Available</td>
