@@ -125,6 +125,8 @@ def import_locations(filename, mapping):
                 return unidecode(unicode(value))
             else:
                 return value
+        elif key is None or key == '':
+            return key
         else:
             return unidecode(unicode(line.get(key))).strip()
 
@@ -157,7 +159,8 @@ def import_locations(filename, mapping):
                 if lt_mapping:
                     location, _ = Location.objects.get_or_create(
                         name=get_line_value(line, mapping['{}__name'.format(location_type_id)]),
-                        type=location_types_hash[location_type_id])
+                        type=location_types_hash[location_type_id],
+                        code=get_line_value(line, mapping['{}__code'.format(location_type_id)]))
                     set_location_attributes(location, lt_mapping, line, mapping)
                     set_location_parents(location, line_locations, location_type_id, location_types_hash)
                     location.save()
