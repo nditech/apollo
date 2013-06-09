@@ -204,102 +204,113 @@ FLAG_CHOICES = (
 
 FLAGS = (
     {
-    "name": "DA ≠ DF",
+    "name": "DN = 1",
     "storage": "flag_1",
-    "lvalue": "DA",
-    "rvalue": "DF",
-    "comparator": "pctdiff",
+    "lvalue": "DN",
+    "rvalue": "1",
+    "comparator": "diff",
     "okay": "= 0",
-    "serious": ">= 0.02",
-    "problem": "< 0.02"
+    "serious": "> 1",
+    "problem": "= 1"
     },
 
     {
-    "name": "DF ≠ DB + DC + DD + DE",
+    "name": "EA = EF",
     "storage": "flag_2",
-    "lvalue": "DF",
-    "rvalue": "DB + DC + DD + DE",
-    "comparator": "pctdiff",
-    "okay": "= 0.00",
-    "serious": ">= 0.02",
-    "problem": "< 0.02"
+    "lvalue": "EF",
+    "rvalue": "EA",
+    "comparator": "pct",
+    "okay": "= 1.00",
+    "serious": ">= 1.02",
+    "problem": "< 1.02"
     },
 
     {
-    "name": "DE > DA",
+    "name": "EF = EB + EC + ED",
     "storage": "flag_3",
-    "rvalue": "DA",
-    "lvalue": "DE",
-    "comparator": "pct",
-    "okay": "< 1.02",
-    "serious": ">= 1.05",
-    "problem": "< 1.05"
-    },
-
-    {
-    "name": "DJ ≠ DG + DH",
-    "storage": "flag_4",
-    "lvalue": "DJ",
-    "rvalue": "DG + DH",
+    "rvalue": "EF",
+    "lvalue": "EB + EC + ED",
     "comparator": "pctdiff",
-    "okay": "= 0.00",
-    "serious": ">= 0.02",
-    "problem": "< 0.02"
+    "okay": "= 1.00",
+    "serious": ">= 1.02",
+    "problem": "< 1.02"
     },
 
     {
-    "name": "DG + DH » DH",
+    "name": "EB = EP",
+    "storage": "flag_4",
+    "lvalue": "EP",
+    "rvalue": "EB",
+    "comparator": "pct",
+    "okay": "= 1.00",
+    "serious": ">= 1.02",
+    "problem": "< 1.02"
+    },
+
+    {
+    "name": "EP = EG + EH + EJ + EK",
     "storage": "flag_5",
-    "rvalue": "DG + DH",
-    "lvalue": "DG",
+    "rvalue": "EP",
+    "lvalue": "EG + EH + EJ + EK",
     "comparator": "pct",
-    "okay": "< 0.90",
-    "serious": ">= 0.99",
-    "problem": ">= 0.90"
+    "okay": "< 1.00",
+    "serious": ">= 1.02",
+    "problem": "< 1.02"
     },
 
     {
-    "name": "DG + DH » DG",
+    "name": "EG < EG + EH + EJ + EK",
     "storage": "flag_6",
-    "rvalue": "DG + DH",
-    "lvalue": "DH",
+    "lvalue": "EG",
+    "rvalue": "EG + EH + EJ + EK",
     "comparator": "pct",
     "okay": "< 0.90",
-    "serious": ">= 0.99",
+    "serious": ">= 0.95",
     "problem": ">= 0.90"
     },
 
     {
-    "name": "DK > DG + DH",
+    "name": "EH < EG + EH + EJ + EK",
     "storage": "flag_7",
-    "rvalue": "DG + DH",
-    "lvalue": "DK",
+    "lvalue": "EH",
+    "rvalue": "EG + EH + EJ + EK",
+    "comparator": "pct",
+    "okay": "< 0.90",
+    "serious": ">= 0.95",
+    "problem": ">= 0.90"
+    },
+
+    {
+    "name": "EJ < EG + EH + EJ + EK",
+    "storage": "flag_8",
+    "lvalue": "EJ",
+    "rvalue": "EG + EH + EJ + EK",
+    "comparator": "pct",
+    "okay": "< 0.90",
+    "serious": ">= 0.95",
+    "problem": ">= 0.90"
+    },
+
+    {
+    "name": "EK < EG + EH + EJ + EK",
+    "storage": "flag_9",
+    "lvalue": "EK",
+    "rvalue": "EG + EH + EJ + EK",
+    "comparator": "pct",
+    "okay": "< 0.90",
+    "serious": ">= 0.95",
+    "problem": ">= 0.90"
+    },
+
+    {
+    "name": "EN < EG + EH + EJ + EK + EN",
+    "storage": "flag_10",
+    "lvalue": "EN",
+    "rvalue": "EG + EH + EJ + EK + EN",
     "comparator": "pct",
     "okay": "< 0.02",
     "serious": ">= 0.05",
     "problem": ">= 0.02"
-    },
-
-    {
-    "name": "DM ≠ DG + DH + DK",
-    "storage": "flag_8",
-    "lvalue": "DM",
-    "rvalue": "DG + DH + DK",
-    "comparator": "pctdiff",
-    "okay": "= 0.00",
-    "serious": ">= 0.02",
-    "problem": "< 0.02"
-    },
-
-    {
-    "name": "DM ≠ DB",
-    "storage": "flag_9",
-    "lvalue": "DM",
-    "rvalue": "DB",
-    "comparator": "pctdiff",
-    "okay": "= 0.00",
-    "serious": ">= 0.02",
-    "problem": "< 0.02"
     },
 )
 
