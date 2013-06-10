@@ -40,6 +40,8 @@ class LocationType(GraphMixin):
     # code is used mainly in the SMS processing logic
     code = models.CharField(blank=True, max_length=10, db_index=True)
     on_display = models.BooleanField(default=False, help_text="Controls the display of this location type on the form lists")
+    on_dashboard = models.BooleanField(default=False, help_text="Controls the display of this location type on the dashboard filter")
+    on_analysis = models.BooleanField(default=False, help_text="Controls the display of this location type on the analysis filter")
     in_form = models.BooleanField(default=False, db_index=True, help_text="Determines whether this LocationType can be used in SMS forms")
 
     def __unicode__(self):
