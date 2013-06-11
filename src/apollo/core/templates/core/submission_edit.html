@@ -19,10 +19,19 @@
           {% endif %}
           <tr>
             <th>Observer</th>
-            <td><strong>{{ submission.observer.name }}</strong>{% if submission.observer.phone %} ({{ submission.observer.phone }}){% endif %} &mdash; <strong>{{ submission.observer.observer_id }}</strong></td>
+            <td><strong>{{ submission.observer.observer_id }}</strong> &mdash; <strong>{{ submission.observer.name }}</strong>{% if submission.observer.phone %} ({{ submission.observer.phone }}){% endif %}</td>
             {% if submission.form.type == 'CHECKLIST' %}
             {% for sibling in siblings %}
             <td><strong>{{ sibling.observer.name }}</strong>{% if sibling.observer.phone %} ({{ sibling.observer.phone }}){% endif %} &mdash; <strong>{{ sibling.observer.observer_id }}</strong></td>
+            {% endfor %}
+            {% endif %}
+          </tr>
+          <tr>
+            <th>Role</th>
+            <td>{{ submission.observer.role }}</td>
+            {% if submission.form.type == 'CHECKLIST' %}
+            {% for sibling in siblings %}
+            <td>{{ sibling.observer.role }}</td>
             {% endfor %}
             {% endif %}
           </tr>
