@@ -32,10 +32,31 @@
         {% endwith %}
     </td>
     {% endif %}
+    {% with submission.observer.phone|slugify as known_number %}{% with submission.observer.last_connection.identity|slugify|default:known_number as texting_number %}
+    <td style="text-align: center"><img src="{% if texting_number == known_number %}{% static "img/tick.png" %}{% else %}{% static "img/caution.png" %}{% endif %}" title="{% if texting_number == known_number %}Verified{% else %}Unverified{% endif %}" height="11" width="11" /></td>
+    {% endwith %}{% endwith %}
     {% if perms.core.change_submission %}<td style="text-align:center"><a href="{% url submission_edit submission.pk %}">Edit</a></td>{% endif %}
 </tr>
 {% empty %}
 {% if perms.core.change_submission %}
+{% if form.type == 'CHECKLIST' %}
+{% with location_types|length|add:"5" as lt_count %}
+{% with form_groups|length|add:lt_count as colspan %}
+<tr class="warning">
+    <td style="text-align:center" colspan="{{ colspan }}">No Data Available</td>
+</tr>
+{% endwith %}
+{% endwith %}
+{% else %}
+{% with location_types|length|add:"6" as lt_count %}
+{% with form_fields|length|add:lt_count as colspan %}
+<tr class="warning">
+    <td style="text-align:center" colspan="{{ colspan }}">No Data Available</td>
+</tr>
+{% endwith %}
+{% endwith %}
+{% endif %}
+{% else %}
 {% if form.type == 'CHECKLIST' %}
 {% with location_types|length|add:"4" as lt_count %}
 {% with form_groups|length|add:lt_count as colspan %}
@@ -46,24 +67,6 @@
 {% endwith %}
 {% else %}
 {% with location_types|length|add:"5" as lt_count %}
-{% with form_fields|length|add:lt_count as colspan %}
-<tr class="warning">
-    <td style="text-align:center" colspan="{{ colspan }}">No Data Available</td>
-</tr>
-{% endwith %}
-{% endwith %}
-{% endif %}
-{% else %}
-{% if form.type == 'CHECKLIST' %}
-{% with location_types|length|add:"3" as lt_count %}
-{% with form_groups|length|add:lt_count as colspan %}
-<tr class="warning">
-    <td style="text-align:center" colspan="{{ colspan }}">No Data Available</td>
-</tr>
-{% endwith %}
-{% endwith %}
-{% else %}
-{% with location_types|length|add:"4" as lt_count %}
 {% with form_fields|length|add:lt_count as colspan %}
 <tr class="warning">
     <td style="text-align:center" colspan="{{ colspan }}">No Data Available</td>
