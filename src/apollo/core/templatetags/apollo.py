@@ -152,7 +152,9 @@ def analysis_breadcrumb_navigation(form, location=None, tag=None):
     except Location.DoesNotExist:
         location = Location.root()
 
-    return {'locations': reversed(location.get_ancestors(include_self=True)), 'form': form, 'tag': tag}
+    permitted_location_types = LocationType.objects.filter(on_analysis=True)
+
+    return {'locations': reversed(filter(lambda loc: loc.type in permitted_location_types, location.get_ancestors(include_self=True))), 'form': form, 'tag': tag}
 
 
 @register.inclusion_tag('core/analysis_location_navigation.html')
@@ -163,7 +165,8 @@ def analysis_location_navigation(form, location=None, tag=None):
     except Location.DoesNotExist:
         location = Location.root()
 
-    sub_locations = location.get_children()
+    permitted_location_types = LocationType.objects.filter(on_analysis=True)
+    sub_locations = filter(lambda loc: loc.type in permitted_location_types, location.get_children())
     sub_locations.sort(key=lambda location: location.name)
 
     return {'locations': sub_locations, 'form': form, 'tag': tag}
