@@ -8,6 +8,7 @@
               <div class="controls controls-row">
                 {% if perms.core.view_activities %}{{ filter_form.activity }}{% endif %}
                 {{ filter_form.sample }}
+                {{ filter_form.form }}
                 {{ filter_form.location }}
                 <button class="btn btn-warning" style="margin-left:1em" type="submit"><i class="icon-search icon-white"></i> Filter</button>
                 <a class="btn form-reset" style="margin-left:0.5em">Reset</a>
