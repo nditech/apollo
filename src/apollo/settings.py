@@ -202,6 +202,15 @@ FLAG_CHOICES = (
     ('5', 'Rejected')
 )
 
+
+STATUS_CHOICES = (
+    ('', 'Status'),
+    ('0', 'Status — No Problem'),
+    ('2', 'Status — Unverified'),
+    ('4', 'Status — Verified'),
+    ('5', 'Status — Rejected')
+)
+
 FLAGS = (
     {
     "name": "DN = 1",

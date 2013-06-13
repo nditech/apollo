@@ -58,6 +58,7 @@ class SubmissionModelForm(BetterForm):
     data__description = forms.CharField(widget=forms.Textarea(attrs={'cols': '40', 'rows': '5', 'style': 'width:40%'}), required=False)
     data__location = forms.CharField(required=False, widget=forms.HiddenInput())
     data__status = forms.ChoiceField(required=False, choices=STATUS_CHOICES)
+    data__verification = forms.CharField(required=False, widget=forms.HiddenInput())
     data__witness = forms.ChoiceField(required=False, choices=WITNESS_CHOICES)
 
     def __init__(self, *args, **kwargs):
@@ -266,9 +267,7 @@ class VerificationModelForm(BetterForm):
                     'observer': self.instance.submissions.all()[0].observer,
                     'form': self.instance.form
                 }
-                kwargs['initial'].update(
-                    {'data__{}'.format(k): self.instance.data[k] for k in filter(lambda k: k in storage, self.instance.data.keys())}
-                )
+                kwargs['initial']['data__verification'] = self.instance.data.get('verification', None)
 
         return super(BetterForm, self).__init__(*args, **kwargs)
 
@@ -307,12 +306,7 @@ def generate_verification_form(form, readonly=False):
         ('5', 'Rejected')
     )
 
-    for flag in settings.FLAGS:
-        field_name = 'data__{}'.format(flag['storage'])
-        field_names.append(field_name)
-
-        fields[field_name] = forms.ChoiceField(choices=choices,
-            required=False, label=flag['name'])
+    fields['data__verification'] = forms.ChoiceField(choices=choices, required=False, label='Verification')
 
     metaclass = type('Meta', (), {'fields': tuple(field_names)})
     fields['Meta'] = metaclass

@@ -17,11 +17,19 @@
         {% endif %}
     </td>
     {% endfor %}
+    <td>
+        {% if submission.data.verification|flag_status:'verified' %}<img src="{% static "img/tick-white.png" %}" title="Verified" alt="Verified" height="13" width="13" />
+        {% elif submission.data.verification|flag_status:'rejected' %}<img src="{% static "img/cross.png" %}" title="Rejected" alt="Rejected" height="13" width="13" />
+        {% elif submission.data.verification|flag_status:'problem' %}<img src="{% static "img/caution.png" %}" title="Unverified" alt="Unverified" height="13" width="13" />
+        {% elif submission.data.verification|flag_status:'no_problem' %}<img src="{% static "img/tick.png" %}" title="No Problem" alt="No Problem" height="13" width="13" />
+        {% else %}<img src="{% static "img/white_dot.png" %}" title="No Data" alt="No Data" height="13" width="13" />
+        {% endif %}
+    </td>
     {% if perms.core.change_submission %}<td style="text-align:center"><a href="{% url verification_edit submission.pk %}">Edit</a></td>{% endif %}
 </tr>
 {% empty %}
 {% if perms.core.change_submission %}
-{% with location_types|length|add:"3" as lt_count %}
+{% with location_types|length|add:"4" as lt_count %}
 {% with form_flags|length|add:lt_count as colspan %}
 <tr class="warning">
     <td style="text-align:center" colspan="{{ colspan }}">No Data Available</td>
@@ -29,7 +37,7 @@
 {% endwith %}
 {% endwith %}
 {% else %}
-{% with location_types|length|add:"2" as lt_count %}
+{% with location_types|length|add:"3" as lt_count %}
 {% with form_flags|length|add:lt_count as colspan %}
 <tr class="warning">
     <td style="text-align:center" colspan="{{ colspan }}">No Data Available</td>

@@ -804,10 +804,13 @@ def compute_verification(sender, **kwargs):
     instance = kwargs['instance']
     comparator = Comparator()
 
+    NO_DATA = 0
+    OK = 1
+    UNOK = 2
+
     if instance.observer == None:
+        flags_statuses = []
         for flag in settings.FLAGS:
-            if instance.data.get(flag['storage'], None) in [verified_flag, rejected_flag]:
-                continue
             evaluator = Evaluator(instance.data)
             try:
                 lvalue = evaluator.eval(flag['lvalue'])
@@ -823,16 +826,34 @@ def compute_verification(sender, **kwargs):
                 # evaluate conditions and set flag appropriately
                 if comparator.eval(flag['okay'], diff):
                     instance.data[flag['storage']] = settings.FLAG_STATUSES['no_problem'][0]
+                    flags_statuses.append(OK)
                 elif comparator.eval(flag['serious'], diff):
                     instance.data[flag['storage']] = settings.FLAG_STATUSES['serious_problem'][0]
+                    flags_statuses.append(UNOK)
                 elif comparator.eval(flag['problem'], diff):
                     instance.data[flag['storage']] = settings.FLAG_STATUSES['problem'][0]
+                    flags_statuses.append(UNOK)
                 else:
                     # if we have no way of determining, we assume it's okay
                     instance.data[flag['storage']] = settings.FLAG_STATUSES['no_problem'][0]
+                    flags_statuses.append(OK)
             except TypeError:
                 # no sufficient data
                 try:
                     del instance.data[flag['storage']]
                 except KeyError:
                     pass
+                flags_statuses.append(NO_DATA)
+
+        # compare all flags and depending on the values, set the status
+        if not instance.data.get('verification', None) in [verified_flag, rejected_flag]:
+            print 'Not verified or rejected'
+            if all(map(lambda i: i == NO_DATA, flags_statuses)):
+                try:
+                    del instance.data['verification']
+                except KeyError:
+                    pass
+            elif any(map(lambda i: i == UNOK, flags_statuses)):
+                instance.data['verification'] = settings.FLAG_STATUSES['problem'][0]
+            elif any(map(lambda i: i == OK, flags_statuses)):
+                instance.data['verification'] = settings.FLAG_STATUSES['no_problem'][0]

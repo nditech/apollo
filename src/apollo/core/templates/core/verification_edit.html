@@ -13,7 +13,11 @@
           </tr>
           <tr>
             <th>Observer</th>
-            <td><strong>{{ submission.submissions.all.0.observer.name }}</strong>{% if submission.submissions.all.0.observer.phone %} ({{ submission.submissions.all.0.observer.phone }}){% endif %} &mdash; <strong>{{ submission.submissions.all.0.observer.observer_id }}</strong></td>
+            <td><strong>{{ submission.submissions.all.0.observer.observer_id }}</strong> &mdash; <strong>{{ submission.submissions.all.0.observer.name }}</strong>{% if submission.submissions.all.0.observer.phone %} ({{ submission.submissions.all.0.observer.phone }}){% endif %}</td>
+          </tr>
+          <tr>
+            <th>Role</th>
+            <td>{{ submission.submissions.all.0.observer.role }}</td>
           </tr>
           <tr>
             <th>Location</th>
@@ -27,24 +31,32 @@
           {% endif %}
           <tr>
             <th>Supervisor</th>
-            <td>{{ submission.submissions.all.0.observer.supervisor|default_if_none:"" }}</td>
+            <td>{{ submission.submissions.all.0.observer.supervisor|default_if_none:"<em>N/A</em>" }}</td>
           </tr>
         </thead>
       </table>
       <table class="table table-striped table-bordered table-hover">
         <tbody>
-          <tr>
-            <td width="20%">&nbsp;</td>
-            <td>&nbsp;</td>
-          </tr>
           {% for flag in flags %}
-          {% with 'data__'|add:flag.storage as field_name %}
+          {% with flag.storage as field_name %}
           <tr>
-            <td style="text-align: right">{{ flag.name }}</td>
-            <td>{{ submission_form|keyvalue:field_name }}</td>
+            <td style="text-align: right" width="20%">{{ flag.name }}</td>
+            <td>
+              {% if submission.data|keyvalue:field_name|flag_status:'verified' %}<img src="{% static "img/blue_dot.png" %}" title="Verified" alt="Verified" height="13" width="13" />
+              {% elif submission.data|keyvalue:field_name|flag_status:'rejected' %}<img src="{% static "img/black_dot.png" %}" title="Rejected" alt="Rejected" height="13" width="13" />
+              {% elif submission.data|keyvalue:field_name|flag_status:'serious_problem' %}<img src="{% static "img/red_dot.png" %}" title="Serious Problem" alt="Serious Problem" height="13" width="13" />
+              {% elif submission.data|keyvalue:field_name|flag_status:'problem' %}<img src="{% static "img/darkyellow_dot.png" %}" title="Problem" alt="Problem" height="13" width="13" />
+              {% elif submission.data|keyvalue:field_name|flag_status:'no_problem' %}<img src="{% static "img/green_dot.png" %}" title="No Problem" alt="No Problem" height="13" width="13" />
+              {% else %}<img src="{% static "img/white_dot.png" %}" title="No Data" alt="No Data" height="13" width="13" />
+              {% endif %}
+            </td>
           </tr>
           {% endwith %}
           {% endfor %}
+          <tr>
+            <td style="text-align: right; vertical-align: middle">{{ submission_form.data__verification.label }}</td>
+            <td>{{ submission_form.data__verification }}</td>
+          </tr>
         </tbody>
       </table>
     </div>
@@ -55,7 +67,7 @@
       <button type="submit" class="btn btn-info btn-large btn-block">Save</button>
     </div>
     <div class="span2">
-      <a class="btn btn-large btn-block" href="{% url submissions_list object.form.pk %}">Cancel</a>
+      <a class="btn btn-large btn-block" href="{% url verifications_list object.form.pk %}">Cancel</a>
     </div>
   </div>
   </form>

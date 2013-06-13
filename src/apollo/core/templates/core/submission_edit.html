@@ -84,10 +84,10 @@
           {% if submission.form.type == 'CHECKLIST' %}
           <tr>
             <th>Supervisor</th>
-            <td>{{ submission.observer.supervisor|default_if_none:"" }}</td>
+            <td>{{ submission.observer.supervisor|default_if_none:"<em>N/A</em>" }}</td>
             {% if submission.form.type == 'CHECKLIST' %}
             {% for sibling in siblings %}
-            <td>{{ sibling.observer.supervisor|default_if_none:"" }}</td>
+            <td>{{ sibling.observer.supervisor|default_if_none:"<em>N/A</em>" }}</td>
             {% endfor %}
             {% endif %}
           </tr>
@@ -103,7 +103,7 @@
             {% for sibling in siblings %}
             <td style="text-align:center"><strong>{{ forloop.counter|add:"1" }}</strong></td>
             {% endfor %}
-            <td>&nbsp;</td>
+            <td>{{ form.data__verification }}&nbsp;</td>
           </tr>
           {% for fieldset in form.fieldsets %}
           {% if fieldset.legend %}

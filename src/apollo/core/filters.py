@@ -331,7 +331,7 @@ def generate_critical_incidents_location_filter(tag):
 
 def generate_submission_flags_filter(form):
     metafields = {'model': Submission, 'fields':
-        ['observer_id', 'date', 'location', 'activity']}
+        ['observer_id', 'date', 'location', 'activity', 'verification']}
     for flag in get_flag_attributes('storage'):
         metafields['fields'].append(flag)
 
@@ -353,5 +353,8 @@ def generate_submission_flags_filter(form):
         'class': 'span4 input-xlarge select2',
         'data-placeholder': 'Location'}))
     fields['activity'] = ActivityFilter(widget=forms.HiddenInput())
+    fields['verification'] = HstoreChoiceFilter(
+        widget=forms.Select(attrs={'class': 'span2'}), label='Verification',
+        choices=settings.STATUS_CHOICES)
 
     return type('SubmissionFlagsFilter', (BaseSubmissionFilter,), fields)
