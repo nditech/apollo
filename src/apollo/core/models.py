@@ -847,7 +847,6 @@ def compute_verification(sender, **kwargs):
 
         # compare all flags and depending on the values, set the status
         if not instance.data.get('verification', None) in [verified_flag, rejected_flag]:
-            print 'Not verified or rejected'
             if all(map(lambda i: i == NO_DATA, flags_statuses)):
                 try:
                     del instance.data['verification']
