@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from collections import OrderedDict
 try:
     from cStringIO import StringIO
 except ImportError:
@@ -197,6 +198,13 @@ class SubmissionProcessAnalysisView(View, TemplateResponseMixin):
         context['filter_form'] = self.filter_set.form
         context['form'] = self.form
         context['location'] = self.location
+        context['dataframe'] = self.filter_set.qs.dataframe()
+        context['field_groups'] = OrderedDict()
+
+        process_fields = FormField.objects.filter(tag__in=settings.PROCESS_QUESTIONS_TAGS,
+            group__form=self.form).order_by('group', 'tag')
+        map(lambda field: context['field_groups'].setdefault(field.group.name, []).append(field), process_fields)
+
         context['display_tag'] = self.display_tag if hasattr(self, 'display_tag') else None
         if self.form.type == 'INCIDENT':
             if context['display_tag']:

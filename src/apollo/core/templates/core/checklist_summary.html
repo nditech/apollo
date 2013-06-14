@@ -1,5 +1,5 @@
 {% extends "core/layout.html" %}
-{% load apollo %}
+{% load apollo %}{% load analysis %}
 {% block content %}
 <div class="row">
   <div class="span9">
@@ -17,42 +17,14 @@
 </div>
 <div class="row">
 	<div class="span12">
-	{% if process_summary %}
-	{% if process_summary.type == 'normal' %}
-		{% for group, group_stats in process_summary.summary %}
+	{% if dataframe.count.any %}
+		{% for group in field_groups %}
 		<h5>{{ group }}</h5>
 
-		{% for tag, question, tag_stats in group_stats %}
-		<table width="100%" class="table table-striped table-bordered">
-			<tr>
-				<td width="30" rowspan="2"><b>{{ tag }}</b></td>
-                <td rowspan="2"><a href="{% url submissions_analysis_location_tag form.pk location.pk tag %}">{{ question }}</a></td>
-				{% if tag_stats.type == 'numeric' %}
-				<td bgcolor="#eee">Mean</td>
-				{% else %}
-					{% for label in tag_stats.labels %}
-					<td>{{ label }}</td>
-					{% endfor %}
-				{% endif %}
-				<td width="100" bgcolor="#eee">Reported</td>
-				<td width="100" bgcolor="#eee">Missing</td>
-			</tr>
-			<tr>
-				{% if tag_stats.type == 'numeric' %}
-				<td align="right">{{ tag_stats.mean|floatformat:0 }}</td>
-				{% else %}
-				{% for value, percentage in tag_stats.histogram %}
-				<td>{{ percentage|floatformat:0 }}% ({{ value }})</td>
-				{% endfor %}
-				{% endif %}
-				<td align="right">{{ tag_stats.percent_reported|floatformat:0 }}% ({{ tag_stats.reported }})</td>
-				<td align="right">{{ tag_stats.percent_missing|floatformat:0 }}% ({{ tag_stats.missing }})</td>
-			</tr>
-		</table>
+		{% for field in field_groups|keyvalue:group %}
+            {% checklist_question_summary form field location dataframe %}
 		{% endfor %}
 		{% endfor %}
-	{% else %}
-	{% endif %}
 	{% else %}
     <table width="100%" class="table table-striped table-bordered">
 	<tr class="warning">
