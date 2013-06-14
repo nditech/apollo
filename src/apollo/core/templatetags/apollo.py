@@ -49,7 +49,7 @@ def groupsel(value, pk):
 @register.filter
 def percent_of(numerator, denominator):
     try:
-        return float(numerator) / float(denominator) * 100
+        return float(numerator if numerator else 0) / float(denominator if denominator else 0) * 100
     except ZeroDivisionError:
         return 0
 
