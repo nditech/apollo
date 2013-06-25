@@ -233,9 +233,10 @@ class Observer(models.Model):
                 conn.save()
             except Connection.DoesNotExist:
                 conn, _ = Connection.objects.get_or_create(
-                    contact=self.contact,
                     backend=backend,
                     identity=phone)
+                conn.contact = self.contact
+                conn.save()
 
     phone = property(_get_phone, _set_phone)
 
