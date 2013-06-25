@@ -232,7 +232,7 @@ class Observer(models.Model):
                 conn.identity = phone
                 conn.save()
             except Connection.DoesNotExist:
-                conn = Connection.objects.create(
+                conn, _ = Connection.objects.get_or_create(
                     contact=self.contact,
                     backend=backend,
                     identity=phone)
