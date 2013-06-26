@@ -9,7 +9,7 @@
         <tbody>
         {% for field in form %}
           <tr>
-            <th>{{ field.label }}</th>
+            <th>{% if field.label == 'Partner' %}Organization{% else %}{{ field.label }}{% endif %}</th>
             <td>{{ field }}</td>
           </tr>
         {% endfor %}

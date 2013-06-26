@@ -145,7 +145,7 @@ class BaseContactsFilter(django_filters.FilterSet):
         self.filters['role'].extra.update(
             {'empty_label': u'All Roles'})
         self.filters['partner'].extra.update(
-            {'empty_label': u'All Partners'})
+            {'empty_label': u'All Organizations'})
         self.filters['role'].field.widget.attrs['class'] = 'span3'
         self.filters['partner'].field.widget.attrs['class'] = 'span3'
         self.filters['observer_id'].field.widget.attrs['class'] = 'span3'
