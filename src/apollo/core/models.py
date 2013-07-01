@@ -228,8 +228,8 @@ class Observer(models.Model):
     def _set_phone(self, phone):
         for backend in Backend.objects.all():
             try:
-                conn = Connection.objects.get(contact=self.contact, backend=backend)
-                conn.identity = phone
+                conn = Connection.objects.get(identity=phone, backend=backend)
+                conn.contact = self.contact
                 conn.save()
             except Connection.DoesNotExist:
                 conn, _ = Connection.objects.get_or_create(
