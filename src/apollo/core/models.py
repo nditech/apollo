@@ -226,17 +226,18 @@ class Observer(models.Model):
             if self.contact and self.contact.connection_set.count() else None
 
     def _set_phone(self, phone):
-        for backend in Backend.objects.all():
-            try:
-                conn = Connection.objects.get(identity=phone, backend=backend)
-                conn.contact = self.contact
-                conn.save()
-            except Connection.DoesNotExist:
-                conn, _ = Connection.objects.get_or_create(
-                    backend=backend,
-                    identity=phone)
-                conn.contact = self.contact
-                conn.save()
+        if phone:
+            for backend in Backend.objects.all():
+                try:
+                    conn = Connection.objects.get(identity=phone, backend=backend)
+                    conn.contact = self.contact
+                    conn.save()
+                except Connection.DoesNotExist:
+                    conn, _ = Connection.objects.get_or_create(
+                        backend=backend,
+                        identity=phone)
+                    conn.contact = self.contact
+                    conn.save()
 
     phone = property(_get_phone, _set_phone)
 
