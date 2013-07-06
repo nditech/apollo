@@ -1,4 +1,9 @@
 import logging
+import json
+try:
+    import cPickle as pickle
+except ImportError:
+    import pickle
 from lxml import etree
 from django.db import transaction
 import tabimport
@@ -22,6 +27,10 @@ def import_forms(source):
                 _form.type = form.attrib.get('data-type').upper()
                 _form.trigger = form.attrib.get('data-trigger')
                 _form.field_pattern = form.attrib.get('data-field_pattern')
+                _form.options = json.loads(form.attrib.get('data-options', '{}'))
+                verification_flags = json.loads(form.attrib.get('data-options-verification-flags', '{}'))
+                if verification_flags:
+                    _form.options['verification_flags'] = pickle.dumps(verification_flags)
                 if _form.type == 'INCIDENT':
                     _form.autocreate_submission = True
                 else:
@@ -33,8 +42,13 @@ def import_forms(source):
                     type=form.attrib.get('data-type').upper(),
                     trigger=form.attrib.get('data-trigger'),
                     field_pattern=form.attrib.get('data-field_pattern'),
+                    options=json.loads(form.attrib.get('data-options', '{}')),
                     autocreate_submission=True
                         if form.attrib.get('data-type').upper() == 'INCIDENT' else False)
+                verification_flags = json.loads(form.attrib.get('data-options-verification-flags', '{}'))
+                if verification_flags:
+                    _form.options['verification_flags'] = pickle.dumps(verification_flags)
+                _form.save()
 
             # delete existing groups
             _form.groups.all().delete()
@@ -56,7 +70,8 @@ def import_forms(source):
                     # create the field
                     _field = _group.fields.create(name=field.attrib.get('name'),
                         tag=field.attrib.get('name'),
-                        description=field.attrib.get('title', ''))
+                        description=field.attrib.get('title', ''),
+                        analysis_type=field.attrib.get('data-analysis', ''))
 
                     # the remaining configuration is dependent on the type of the field
                     if field.tag == 'input':

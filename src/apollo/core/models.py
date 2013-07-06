@@ -343,6 +343,9 @@ class Form(models.Model):
     field_pattern = models.CharField(max_length=255)
     autocreate_submission = models.BooleanField(default=False,
         help_text="Whether to create a new record if a submission doesn't exist")
+    options = DictionaryField(db_index=True, null=True, blank=True, default='')
+
+    objects = HStoreManager()
 
     def __unicode__(self):
         return self.name
@@ -417,6 +420,12 @@ class FormGroup(models.Model):
 
 
 class FormField(models.Model):
+    ANALYSIS_TYPES = (
+        ('', 'N/A'),
+        ('PROCESS', 'Process'),
+        ('VOTE', 'Candidate Vote'),
+    )
+
     name = models.CharField(max_length=32)
     description = models.CharField(max_length=255, blank=True)
     group = models.ForeignKey(FormGroup, related_name='fields')
@@ -425,6 +434,8 @@ class FormField(models.Model):
     lower_limit = models.IntegerField(null=True, default=0)
     present_true = models.BooleanField(default=False)
     allow_multiple = models.BooleanField(default=False)
+    analysis_type = models.CharField(max_length=50, choices=ANALYSIS_TYPES, db_index=True, blank=True, default='')
+
     value = None
 
     class Meta:
