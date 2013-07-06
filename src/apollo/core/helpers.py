@@ -93,7 +93,3 @@ def get_incident_markers(form, submissions, location_type, tag=False):
                     markers.append(marker)
 
     return markers
-
-
-def get_flag_attributes(attribute):
-    return [flag.get(attribute, None) for flag in settings.FLAGS]

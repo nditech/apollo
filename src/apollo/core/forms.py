@@ -1,5 +1,4 @@
 from django import forms
-from django.conf import settings
 from django.utils.encoding import force_unicode
 from form_utils.forms import BetterForm
 from apollo.core.models import (Form, Observer, ObserverDataField, Location, Submission, Activity)
@@ -259,7 +258,7 @@ class VerificationModelForm(BetterForm):
     def __init__(self, *args, **kwargs):
         if 'instance' in kwargs:
             self.instance = kwargs.pop('instance')
-            storage = [item['storage'] for item in settings.FLAGS]
+            storage = [item['storage'] for item in self.instance.form.get_verification_flags()]
 
             if self.instance:
                 kwargs['initial'] = {

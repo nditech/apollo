@@ -31,10 +31,10 @@ from guardian.decorators import permission_required
 from guardian.shortcuts import get_objects_for_user
 from rapidsms.router.api import send
 import tablib
-from .forms import ActivitySelectionForm, ContactModelForm, LocationModelForm, generate_submission_form, generate_verification_form
-from .helpers import *
-from .models import *
-from .filters import *
+from apollo.core.forms import ActivitySelectionForm, ContactModelForm, LocationModelForm, generate_submission_form, generate_verification_form
+from apollo.core.helpers import *
+from apollo.core.models import *
+from apollo.core.filters import *
 from analyses.datagenerator import generate_process_data, generate_incidents_data
 
 COMPLETION_STATUS = (
@@ -420,7 +420,7 @@ class VerificationListView(ListView):
         context = super(VerificationListView, self).get_context_data(**kwargs)
         context['form'] = self.form
         context['filter_form'] = self.filter_set.form
-        context['page_title'] = self.page_title
+        context['page_title'] = '{} {}'.format(self.form.name, self.page_title)
         return context
 
     @method_decorator(login_required)
@@ -464,7 +464,8 @@ class VerificationEditView(UpdateView):
     def get_context_data(self, **kwargs):
         context = super(VerificationEditView, self).get_context_data(**kwargs)
         context['submission'] = self.submission
-        context['flags'] = settings.FLAGS
+        context['data_form'] = generate_submission_form(self.submission.form, readonly=True)(instance=self.submission, prefix=self.submission.pk)
+        context['flags'] = self.submission.form.get_verification_flags()
         context['submission_form'] = self.form_class(instance=self.submission)
         context['location_types'] = LocationType.objects.filter(on_display=True)
         context['page_title'] = self.page_title

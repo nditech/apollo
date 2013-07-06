@@ -27,17 +27,17 @@
 {% endif %}
 
 {% if perms.core.can_verify %}
-{% if checklist_forms %}
-{% if checklist_forms|length > 1 %}
+{% if verification_forms %}
+{% if verification_forms|length > 1 %}
 <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-warning-sign"></i> Verification <b class="caret"></b></a>
     <ul class="dropdown-menu">
-        {% for form in checklist_forms %}
+        {% for form in verification_forms %}
         <li><a href="{% url verifications_list form.pk %}"><i class="icon-warning-sign"></i> {{ form.name }}</a></li>
         {% endfor %}
     </ul>
 </li>
-{% elif checklist_forms|length == 1 %}
-<li><a href="{% url verifications_list checklist_forms.0.pk %}"><i class="icon-warning-sign"></i> Verification</a></li>
+{% elif verification_forms|length == 1 %}
+<li><a href="{% url verifications_list verification_forms.0.pk %}"><i class="icon-warning-sign"></i> Verification</a></li>
 {% endif %}
 {% endif %}
 {% endif %}

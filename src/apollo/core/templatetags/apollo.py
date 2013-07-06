@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 from django import template
 from django.conf import settings
-from ..models import *
-from ..helpers import get_flag_attributes
+from core.models import *
+from djorm_hstore.expressions import HstoreExpression as HE
 
 register = template.Library()
 
@@ -76,17 +76,21 @@ def forms_menu(request=None, perms=None):
     activity = request.session.get('activity', Activity.default())
     if activity:
         checklist_forms = activity.forms.filter(type='CHECKLIST').order_by('pk')
+        verification_forms = activity.forms.filter(type='CHECKLIST').where(HE('options').contains({'is_verifiable': '1'})).order_by('pk')
         incident_forms = activity.forms.filter(type='INCIDENT').order_by('pk')
     else:
         checklist_forms = Form.objects.filter(type='CHECKLIST').order_by('pk')
+        verification_forms = Form.objects.filter(type='CHECKLIST').where(HE('options').contains({'is_verifiable': '1'})).order_by('pk')
         incident_forms = Form.objects.filter(type='INCIDENT').order_by('pk')
 
     # only add forms that the user has permission for
     checklist_forms = filter(lambda form: request.user.has_perm('core.view_form', form), checklist_forms)
+    verification_forms = filter(lambda form: request.user.has_perm('core.view_form', form), verification_forms)
     incident_forms = filter(lambda form: request.user.has_perm('core.view_form', form), incident_forms)
 
     return {
         'checklist_forms': checklist_forms,
+        'verification_forms': verification_forms,
         'incident_forms': incident_forms,
         'perms': perms
     }
@@ -179,7 +183,7 @@ def send_message(recipients=0):
 
 @register.inclusion_tag('core/verification_filter.html')
 def verification_filter(form, filter_form):
-    form_flags = get_flag_attributes('storage')
+    form_flags = form.get_verification_flag_attributes('storage')
     return {'form_flags': form_flags, 'form': form, 'filter_form': filter_form}
 
 
@@ -187,7 +191,7 @@ def verification_filter(form, filter_form):
 def verification_header(form, permissions):
     form = form if isinstance(form, Form) else Form.objects.get(pk=form)
     location_types = LocationType.objects.filter(on_display=True)
-    form_flags = get_flag_attributes('name')
+    form_flags = form.get_verification_flag_attributes('name')
     return {'location_types': location_types, 'form_flags': form_flags,
             'form': form, 'perms': permissions}
 
@@ -196,6 +200,6 @@ def verification_header(form, permissions):
 def verification_items(submissions, form, permissions):
     form = form if isinstance(form, Form) else Form.objects.get(pk=form)
     location_types = LocationType.objects.filter(on_display=True)
-    form_flags = get_flag_attributes('storage')
+    form_flags = form.get_verification_flag_attributes('storage')
     return {'submissions': submissions, 'location_types': location_types,
         'form_flags': form_flags, 'form': form, 'perms': permissions}

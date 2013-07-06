@@ -9,11 +9,15 @@ from djorm_hstore.fields import DictionaryField
 from djorm_hstore.models import HStoreManager
 from rapidsms.models import Contact, Backend, Connection
 from datetime import datetime
-from .managers import SubmissionManager, ObserverManager
+from apollo.core.managers import SubmissionManager, ObserverManager
 import networkx as nx
 import operator as op
 from parsimonious.grammar import Grammar
 import re
+try:
+    import cPickle as pickle
+except ImportError:
+    import pickle
 
 
 LOCATIONTYPE_GRAPH = None
@@ -406,6 +410,18 @@ class Form(models.Model):
             raise Form.DoesNotExist
         return (submission, observer)
 
+    def get_verification_flags(self):
+        pickled_flags = str(self.options.get('verification_flags', ''))
+        if pickled_flags:
+            flags = pickle.loads(pickled_flags)
+            return flags
+        else:
+            return []
+
+    def get_verification_flag_attributes(self, attribute):
+        return [flag.get(attribute, None) for flag in self.get_verification_flags()]
+
+
 
 class FormGroup(models.Model):
     name = models.CharField(max_length=32, blank=True)
@@ -607,7 +623,7 @@ class Evaluator(object):
         return Grammar(grammar).parse(source)
 
     def eval(self, source):
-        node = self.parse(source) if isinstance(source, str) else source
+        node = self.parse(source) if isinstance(source, str) or isinstance(source, unicode) else source
         method = getattr(self, node.expr_name, lambda node, children: children)
         return method(node, [self.eval(n) for n in node])
 
@@ -663,7 +679,7 @@ class Comparator(object):
     def eval(self, source, param=None):
         if param != None:
             self.param = float(param)
-        node = self.parse(source) if isinstance(source, str) else source
+        node = self.parse(source) if isinstance(source, str) or isinstance(source, unicode) else source
         method = getattr(self, node.expr_name, lambda node, children: children)
         return method(node, [self.eval(n) for n in node])
 
@@ -823,7 +839,7 @@ def compute_verification(sender, **kwargs):
 
     if instance.observer == None:
         flags_statuses = []
-        for flag in settings.FLAGS:
+        for flag in instance.form.get_verification_flags():
             evaluator = Evaluator(instance.data)
             try:
                 lvalue = evaluator.eval(flag['lvalue'])

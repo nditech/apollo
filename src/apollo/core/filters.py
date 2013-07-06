@@ -1,5 +1,4 @@
-from .models import *
-from .helpers import get_flag_attributes
+from apollo.core.models import *
 import django_filters
 from django import forms
 from django.conf import settings
@@ -332,12 +331,12 @@ def generate_critical_incidents_location_filter(tag):
 def generate_submission_flags_filter(form):
     metafields = {'model': Submission, 'fields':
         ['observer_id', 'date', 'location', 'activity', 'verification']}
-    for flag in get_flag_attributes('storage'):
+    for flag in form.get_verification_flag_attributes('storage'):
         metafields['fields'].append(flag)
 
     metaclass = type('Meta', (), metafields)
     fields = {'Meta': metaclass}
-    for name, storage in zip(get_flag_attributes('name'), get_flag_attributes('storage')):
+    for name, storage in zip(form.get_verification_flag_attributes('name'), form.get_verification_flag_attributes('storage')):
         CHOICES = [
             ('',  name),
             ] + list(settings.FLAG_CHOICES)
