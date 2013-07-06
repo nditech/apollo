@@ -15,9 +15,9 @@ django-guardian==1.1.0.beta
 django-mako==0.1.5pre
 django-reversion==1.6.5
 django-tastypie==0.9.11
-djorm-ext-core==0.4.1
-djorm-ext-expressions==0.4.2
-djorm-ext-hstore==0.4.2
+djorm-ext-core==0.4.2
+djorm-ext-expressions==0.4.4
+djorm-ext-hstore==0.4.3
 johnny-cache==1.4
 librabbitmq==1.0.1
 lxml==3.2.1
