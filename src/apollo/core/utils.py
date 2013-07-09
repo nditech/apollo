@@ -5,6 +5,7 @@ try:
 except ImportError:
     import pickle
 from lxml import etree
+from django.conf import settings
 from django.db import transaction
 import tabimport
 from unidecode import unidecode
@@ -221,8 +222,12 @@ def import_observers(filename, mapping):
 
             # set the phone number again in-case the observer was just created
             if 'phone' in mapping.keys():
-                observer.phone = get_line_value(line, mapping['phone'])
-                observer.save()
+                _phone = get_line_value(line, mapping['phone'])
+                if _phone:
+                    if not settings.ENABLE_MULTIPLE_PHONES:
+                        observer.contact.connection_set.all().delete()
+                    observer.phone = _phone
+                    observer.save()
         transaction.commit()
     except Exception:
         transaction.rollback()
