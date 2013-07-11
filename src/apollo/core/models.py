@@ -355,7 +355,7 @@ class Form(models.Model):
         return self.name
 
     def match(self, text):
-        if re.match(self.trigger, text, flags=re.I):
+        if self.trigger and re.match(self.trigger, text, flags=re.I):
             return True
 
     class Meta:
