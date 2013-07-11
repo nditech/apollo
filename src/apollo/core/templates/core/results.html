@@ -22,141 +22,345 @@
           <li class="active">
             <a href="#">Harare</a>
           </li>
+          <li><a href="#">Bulawayo</a></li>
           <li><a href="#">Masvingo</a></li>
-          <li><a href="#">Manicaland</a></li>
         </ul>
         <ul class="nav nav-tabs">
           <li class="active"><a href="#table" data-toggle="tab">Table</a></li>
-          <li><a href="#urban" data-toggle="tab">Urban/Rural</a></li>
+          <li><a href="#map" data-toggle="tab">Map</a></li>
         </ul>
         <div class="tab-content">
             <div class="tab-pane active" id="table">
                 <table class="table table-striped table-bordered table-hover">
                     <tr>
-                        <th width="200">Province</th>
-                        <th width="100" colspan="2">ZAPU</th>
-                        <th width="100" colspan="2">ZDP</th>
-                        <th width="100" colspan="2">ZNAPU-PF</th>
-                        <th width="100" colspan="2">MDC</th>
-                        <th width="100" colspan="2">MDC-T</th>
+                        <th width="200" rowspan="2" colspan="2" style="vertical-align:middle">Province</th>
+                        <th width="100" colspan="2" style="text-align:center">ZAPU</th>
+                        <th width="100" colspan="2" style="text-align:center">ZDP</th>
+                        <th width="100" colspan="2" style="text-align:center">ZNAPU-PF</th>
+                        <th width="100" colspan="2" style="text-align:center">MDC</th>
+                        <th width="100" colspan="2" style="text-align:center">MDC-T</th>
+                        <th>&nbsp;</th>
+                        <th>&nbsp;</th>
                     </tr>
                     <tr>
-                        <td></td>
-                        <td>N</td>
-                        <td>MoE</td>
-                        <td>N</td>
-                        <td>MoE</td>
-                        <td>N</td>
-                        <td>MoE</td>
-                        <td>N</td>
-                        <td>MoE</td>
-                        <td>N</td>
-                        <td>MoE</td>
+                        <td class="centered"><em>Votes</em></td>
+                        <td class="centered"><em>MoE</em></td>
+                        <td class="centered"><em>Votes</em></td>
+                        <td class="centered"><em>MoE</em></td>
+                        <td class="centered"><em>Votes</em></td>
+                        <td class="centered"><em>MoE</em></td>
+                        <td class="centered"><em>Votes</em></td>
+                        <td class="centered"><em>MoE</em></td>
+                        <td class="centered"><em>Votes</em></td>
+                        <td class="centered"><em>MoE</em></td>
+                        <td class="centered"><em>Reported</em></td>
+                        <td class="centered"><em>Missing</em></td>
                     </tr>
                     <tr>
-                        <td>Harare</td>
-                        <td>15%</td>
-                        <td>23%</td>
-                        <td>5%</td>
-                        <td>15%</td>
-                        <td>23%</td>
-                        <td>5%</td>
-                        <td>15%</td>
-                        <td>23%</td>
-                        <td>15%</td>
-                        <td>23%</td>
+                        <th rowspan="3" style="vertical-align:middle">Harare</th>
+                        <th width="50">All</th>
+                        <th class="numeric">15%</th>
+                        <th class="numeric">23%</th>
+                        <th class="numeric">5%</th>
+                        <th class="numeric">15%</th>
+                        <th class="numeric">23%</th>
+                        <th class="numeric">5%</th>
+                        <th class="numeric">15%</th>
+                        <th class="numeric">23%</th>
+                        <th class="numeric">15%</th>
+                        <th class="numeric">23%</th>
+                        <th class="numeric">34% (4500)</th>
+                        <th class="numeric">64% (9000)</th>
                     </tr>
                     <tr>
-                        <td>Masvingo</td>
-                        <td>15%</td>
-                        <td>23%</td>
-                        <td>5%</td>
-                        <td>15%</td>
-                        <td>23%</td>
-                        <td>5%</td>
-                        <td>15%</td>
-                        <td>23%</td>
-                        <td>15%</td>
-                        <td>23%</td>
+                        <td>Rural</td>
+                        <td class="numeric">15%</td>
+                        <td class="numeric">23%</td>
+                        <td class="numeric">5%</td>
+                        <td class="numeric">15%</td>
+                        <td class="numeric">23%</td>
+                        <td class="numeric">5%</td>
+                        <td class="numeric">15%</td>
+                        <td class="numeric">23%</td>
+                        <td class="numeric">15%</td>
+                        <td class="numeric">23%</td>
+                        <td class="numeric">34% (4500)</td>
+                        <td class="numeric">64% (9000)</td>
                     </tr>
                     <tr>
-                        <td>Masvingo</td>
-                        <td>15%</td>
-                        <td>23%</td>
-                        <td>5%</td>
-                        <td>15%</td>
-                        <td>23%</td>
-                        <td>5%</td>
-                        <td>15%</td>
-                        <td>23%</td>
-                        <td>15%</td>
-                        <td>23%</td>
+                        <td>Urban</td>
+                        <td class="numeric">15%</td>
+                        <td class="numeric">23%</td>
+                        <td class="numeric">5%</td>
+                        <td class="numeric">15%</td>
+                        <td class="numeric">23%</td>
+                        <td class="numeric">5%</td>
+                        <td class="numeric">15%</td>
+                        <td class="numeric">23%</td>
+                        <td class="numeric">15%</td>
+                        <td class="numeric">23%</td>
+                        <td class="numeric">34% (4500)</td>
+                        <td class="numeric">64% (9000)</td>
+                    </tr>
+                    <tr>
+                        <th rowspan="3" style="vertical-align:middle">Bulawayo</th>
+                        <th width="50">All</th>
+                        <th class="numeric">15%</th>
+                        <th class="numeric">23%</th>
+                        <th class="numeric">5%</th>
+                        <th class="numeric">15%</th>
+                        <th class="numeric">23%</th>
+                        <th class="numeric">5%</th>
+                        <th class="numeric">15%</th>
+                        <th class="numeric">23%</th>
+                        <th class="numeric">15%</th>
+                        <th class="numeric">23%</th>
+                        <th class="numeric">34% (4500)</th>
+                        <th class="numeric">64% (9000)</th>
+                    </tr>
+                    <tr>
+                        <td>Rural</td>
+                        <td class="numeric">15%</td>
+                        <td class="numeric">23%</td>
+                        <td class="numeric">5%</td>
+                        <td class="numeric">15%</td>
+                        <td class="numeric">23%</td>
+                        <td class="numeric">5%</td>
+                        <td class="numeric">15%</td>
+                        <td class="numeric">23%</td>
+                        <td class="numeric">15%</td>
+                        <td class="numeric">23%</td>
+                        <td class="numeric">34% (4500)</td>
+                        <td class="numeric">64% (9000)</td>
+                    </tr>
+                    <tr>
+                        <td>Urban</td>
+                        <td class="numeric">15%</td>
+                        <td class="numeric">23%</td>
+                        <td class="numeric">5%</td>
+                        <td class="numeric">15%</td>
+                        <td class="numeric">23%</td>
+                        <td class="numeric">5%</td>
+                        <td class="numeric">15%</td>
+                        <td class="numeric">23%</td>
+                        <td class="numeric">15%</td>
+                        <td class="numeric">23%</td>
+                        <td class="numeric">34% (4500)</td>
+                        <td class="numeric">64% (9000)</td>
+                    </tr>
+                    <tr>
+                        <th rowspan="3" style="vertical-align:middle">Masvingo</th>
+                        <th width="50">All</th>
+                        <th class="numeric">15%</th>
+                        <th class="numeric">23%</th>
+                        <th class="numeric">5%</th>
+                        <th class="numeric">15%</th>
+                        <th class="numeric">23%</th>
+                        <th class="numeric">5%</th>
+                        <th class="numeric">15%</th>
+                        <th class="numeric">23%</th>
+                        <th class="numeric">15%</th>
+                        <th class="numeric">23%</th>
+                        <th class="numeric">34% (4500)</th>
+                        <th class="numeric">64% (9000)</th>
+                    </tr>
+                    <tr>
+                        <td>Rural</td>
+                        <td class="numeric">15%</td>
+                        <td class="numeric">23%</td>
+                        <td class="numeric">5%</td>
+                        <td class="numeric">15%</td>
+                        <td class="numeric">23%</td>
+                        <td class="numeric">5%</td>
+                        <td class="numeric">15%</td>
+                        <td class="numeric">23%</td>
+                        <td class="numeric">15%</td>
+                        <td class="numeric">23%</td>
+                        <td class="numeric">34% (4500)</td>
+                        <td class="numeric">64% (9000)</td>
+                    </tr>
+                    <tr>
+                        <td>Urban</td>
+                        <td class="numeric">15%</td>
+                        <td class="numeric">23%</td>
+                        <td class="numeric">5%</td>
+                        <td class="numeric">15%</td>
+                        <td class="numeric">23%</td>
+                        <td class="numeric">5%</td>
+                        <td class="numeric">15%</td>
+                        <td class="numeric">23%</td>
+                        <td class="numeric">15%</td>
+                        <td class="numeric">23%</td>
+                        <td class="numeric">34% (4500)</td>
+                        <td class="numeric">64% (9000)</td>
                     </tr>
                 </table>
                 <table class="table table-striped table-bordered table-hover">
                     <tr>
-                        <th width="200">Constituency</th>
-                        <th width="100" colspan="2">ZAPU</th>
-                        <th width="100" colspan="2">ZDP</th>
-                        <th width="100" colspan="2">ZNAPU-PF</th>
-                        <th width="100" colspan="2">MDC</th>
-                        <th width="100" colspan="2">MDC-T</th>
+                        <th width="200" rowspan="2" colspan="2" style="vertical-align:middle">Constituency</th>
+                        <th width="100" colspan="2" style="text-align:center">ZAPU</th>
+                        <th width="100" colspan="2" style="text-align:center">ZDP</th>
+                        <th width="100" colspan="2" style="text-align:center">ZNAPU-PF</th>
+                        <th width="100" colspan="2" style="text-align:center">MDC</th>
+                        <th width="100" colspan="2" style="text-align:center">MDC-T</th>
+                        <th>&nbsp;</th>
+                        <th>&nbsp;</th>
                     </tr>
                     <tr>
-                        <td></td>
-                        <td>N</td>
-                        <td>MoE</td>
-                        <td>N</td>
-                        <td>MoE</td>
-                        <td>N</td>
-                        <td>MoE</td>
-                        <td>N</td>
-                        <td>MoE</td>
-                        <td>N</td>
-                        <td>MoE</td>
+                        <td class="centered"><em>Votes</em></td>
+                        <td class="centered"><em>MoE</em></td>
+                        <td class="centered"><em>Votes</em></td>
+                        <td class="centered"><em>MoE</em></td>
+                        <td class="centered"><em>Votes</em></td>
+                        <td class="centered"><em>MoE</em></td>
+                        <td class="centered"><em>Votes</em></td>
+                        <td class="centered"><em>MoE</em></td>
+                        <td class="centered"><em>Votes</em></td>
+                        <td class="centered"><em>MoE</em></td>
+                        <td class="centered"><em>Reported</em></td>
+                        <td class="centered"><em>Missing</em></td>
                     </tr>
                     <tr>
-                        <td>Epworth</td>
-                        <td>15%</td>
-                        <td>23%</td>
-                        <td>5%</td>
-                        <td>15%</td>
-                        <td>23%</td>
-                        <td>5%</td>
-                        <td>15%</td>
-                        <td>23%</td>
-                        <td>15%</td>
-                        <td>23%</td>
+                        <th rowspan="3" style="vertical-align:middle">Epworth</th>
+                        <th width="50">All</th>
+                        <th class="numeric">15%</th>
+                        <th class="numeric">23%</th>
+                        <th class="numeric">5%</th>
+                        <th class="numeric">15%</th>
+                        <th class="numeric">23%</th>
+                        <th class="numeric">5%</th>
+                        <th class="numeric">15%</th>
+                        <th class="numeric">23%</th>
+                        <th class="numeric">15%</th>
+                        <th class="numeric">23%</th>
+                        <th class="numeric">34% (4500)</th>
+                        <th class="numeric">64% (9000)</th>
                     </tr>
                     <tr>
-                        <td>Mbare</td>
-                        <td>15%</td>
-                        <td>23%</td>
-                        <td>5%</td>
-                        <td>15%</td>
-                        <td>23%</td>
-                        <td>5%</td>
-                        <td>15%</td>
-                        <td>23%</td>
-                        <td>15%</td>
-                        <td>23%</td>
+                        <td>Rural</td>
+                        <td class="numeric">15%</td>
+                        <td class="numeric">23%</td>
+                        <td class="numeric">5%</td>
+                        <td class="numeric">15%</td>
+                        <td class="numeric">23%</td>
+                        <td class="numeric">5%</td>
+                        <td class="numeric">15%</td>
+                        <td class="numeric">23%</td>
+                        <td class="numeric">15%</td>
+                        <td class="numeric">23%</td>
+                        <td class="numeric">34% (4500)</td>
+                        <td class="numeric">64% (9000)</td>
                     </tr>
                     <tr>
-                        <td>Southerton</td>
-                        <td>15%</td>
-                        <td>23%</td>
-                        <td>5%</td>
-                        <td>15%</td>
-                        <td>23%</td>
-                        <td>5%</td>
-                        <td>15%</td>
-                        <td>23%</td>
-                        <td>15%</td>
-                        <td>23%</td>
+                        <td>Urban</td>
+                        <td class="numeric">15%</td>
+                        <td class="numeric">23%</td>
+                        <td class="numeric">5%</td>
+                        <td class="numeric">15%</td>
+                        <td class="numeric">23%</td>
+                        <td class="numeric">5%</td>
+                        <td class="numeric">15%</td>
+                        <td class="numeric">23%</td>
+                        <td class="numeric">15%</td>
+                        <td class="numeric">23%</td>
+                        <td class="numeric">34% (4500)</td>
+                        <td class="numeric">64% (9000)</td>
+                    </tr>
+                    <tr>
+                        <th rowspan="3" style="vertical-align:middle">Mbare</th>
+                        <th width="50">All</th>
+                        <th class="numeric">15%</th>
+                        <th class="numeric">23%</th>
+                        <th class="numeric">5%</th>
+                        <th class="numeric">15%</th>
+                        <th class="numeric">23%</th>
+                        <th class="numeric">5%</th>
+                        <th class="numeric">15%</th>
+                        <th class="numeric">23%</th>
+                        <th class="numeric">15%</th>
+                        <th class="numeric">23%</th>
+                        <th class="numeric">34% (4500)</th>
+                        <th class="numeric">64% (9000)</th>
+                    </tr>
+                    <tr>
+                        <td>Rural</td>
+                        <td class="numeric">15%</td>
+                        <td class="numeric">23%</td>
+                        <td class="numeric">5%</td>
+                        <td class="numeric">15%</td>
+                        <td class="numeric">23%</td>
+                        <td class="numeric">5%</td>
+                        <td class="numeric">15%</td>
+                        <td class="numeric">23%</td>
+                        <td class="numeric">15%</td>
+                        <td class="numeric">23%</td>
+                        <td class="numeric">34% (4500)</td>
+                        <td class="numeric">64% (9000)</td>
+                    </tr>
+                    <tr>
+                        <td>Urban</td>
+                        <td class="numeric">15%</td>
+                        <td class="numeric">23%</td>
+                        <td class="numeric">5%</td>
+                        <td class="numeric">15%</td>
+                        <td class="numeric">23%</td>
+                        <td class="numeric">5%</td>
+                        <td class="numeric">15%</td>
+                        <td class="numeric">23%</td>
+                        <td class="numeric">15%</td>
+                        <td class="numeric">23%</td>
+                        <td class="numeric">34% (4500)</td>
+                        <td class="numeric">64% (9000)</td>
+                    </tr>
+                    <tr>
+                        <th rowspan="3" style="vertical-align:middle">Southerton</th>
+                        <th width="50">All</th>
+                        <th class="numeric">15%</th>
+                        <th class="numeric">23%</th>
+                        <th class="numeric">5%</th>
+                        <th class="numeric">15%</th>
+                        <th class="numeric">23%</th>
+                        <th class="numeric">5%</th>
+                        <th class="numeric">15%</th>
+                        <th class="numeric">23%</th>
+                        <th class="numeric">15%</th>
+                        <th class="numeric">23%</th>
+                        <th class="numeric">34% (4500)</th>
+                        <th class="numeric">64% (9000)</th>
+                    </tr>
+                    <tr>
+                        <td>Rural</td>
+                        <td class="numeric">15%</td>
+                        <td class="numeric">23%</td>
+                        <td class="numeric">5%</td>
+                        <td class="numeric">15%</td>
+                        <td class="numeric">23%</td>
+                        <td class="numeric">5%</td>
+                        <td class="numeric">15%</td>
+                        <td class="numeric">23%</td>
+                        <td class="numeric">15%</td>
+                        <td class="numeric">23%</td>
+                        <td class="numeric">34% (4500)</td>
+                        <td class="numeric">64% (9000)</td>
+                    </tr>
+                    <tr>
+                        <td>Urban</td>
+                        <td class="numeric">15%</td>
+                        <td class="numeric">23%</td>
+                        <td class="numeric">5%</td>
+                        <td class="numeric">15%</td>
+                        <td class="numeric">23%</td>
+                        <td class="numeric">5%</td>
+                        <td class="numeric">15%</td>
+                        <td class="numeric">23%</td>
+                        <td class="numeric">15%</td>
+                        <td class="numeric">23%</td>
+                        <td class="numeric">34% (4500)</td>
+                        <td class="numeric">64% (9000)</td>
                     </tr>
                 </table>
             </div>
-            <div class="tab-pane" id="urban">
+            <div class="tab-pane" id="map">
 
             </div>
         </div>
