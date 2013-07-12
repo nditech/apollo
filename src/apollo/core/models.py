@@ -195,6 +195,9 @@ class Partner(models.Model):
     def __unicode__(self):
         return self.abbr
 
+    class Meta:
+        ordering = ['abbr']
+
 
 class ObserverRole(models.Model):
     """Roles"""
@@ -203,6 +206,9 @@ class ObserverRole(models.Model):
 
     def __unicode__(self):
         return self.name
+
+    class Meta:
+        ordering = ['name']
 
 
 class Observer(models.Model):
