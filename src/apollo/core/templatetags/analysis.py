@@ -108,7 +108,7 @@ def vote_margin_of_error(dataframe, votes, vote, location_type, location, group=
             df = dataframe.ix[dataframe.groupby(location_type).groups[location]]
 
         v = round(abs(math.sqrt(variance(df, votes, vote)) * 196.0), 2)
-        if pd.np.isnan(v):
+        if pd.np.isnan(v) or pd.np.isinf(v):
             v = 0
         return '%.2f' % v if v % 1 else '%d' % v
     except:
