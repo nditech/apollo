@@ -211,6 +211,8 @@ STATUS_CHOICES = (
     ('5', 'Status — Rejected')
 )
 
+BIG_N = 6000000  # Big N
+
 DEFAULT_CONNECTION_INDEX = 0
 ENABLE_MULTIPLE_PHONES = False  # determines whether to allow for multiple numbers to be set for observers
 

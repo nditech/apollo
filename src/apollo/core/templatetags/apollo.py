@@ -68,7 +68,8 @@ def analysis_menu(request=None):
     else:
         forms = Form.objects.all().order_by('pk')
     forms = filter(lambda form: request.user.has_perm('core.view_form', form), forms)
-    return {'forms': forms}
+    voting_forms = filter(lambda form: form.options.get('party_votes', None), forms)
+    return {'forms': forms, 'voting_forms': voting_forms}
 
 
 @register.inclusion_tag('core/forms_menu.html')
@@ -149,7 +150,7 @@ def is_partial(submission, group):
 
 
 @register.inclusion_tag('core/analysis_breadcrumb_navigation.html')
-def analysis_breadcrumb_navigation(form, location=None, tag=None):
+def analysis_breadcrumb_navigation(form, location=None, tag=None, analysis_type='process'):
     form = form if isinstance(form, Form) else Form.objects.get(pk=form)
     try:
         location = location if isinstance(location, Location) else Location.objects.get(pk=location)
@@ -158,11 +159,12 @@ def analysis_breadcrumb_navigation(form, location=None, tag=None):
 
     permitted_location_types = LocationType.objects.filter(on_analysis=True)
 
-    return {'locations': reversed(filter(lambda loc: loc.type in permitted_location_types, location.get_ancestors(include_self=True))), 'form': form, 'tag': tag}
+    return {'locations': reversed(filter(lambda loc: loc.type in permitted_location_types, location.get_ancestors(include_self=True))),
+        'form': form, 'tag': tag, 'analysis_type': analysis_type}
 
 
 @register.inclusion_tag('core/analysis_location_navigation.html')
-def analysis_location_navigation(form, location=None, tag=None):
+def analysis_location_navigation(form, location=None, tag=None, analysis_type='process'):
     form = form if isinstance(form, Form) else Form.objects.get(pk=form)
     try:
         location = location if isinstance(location, Location) else Location.objects.get(pk=location)
@@ -173,7 +175,7 @@ def analysis_location_navigation(form, location=None, tag=None):
     sub_locations = filter(lambda loc: loc.type in permitted_location_types, location.get_children())
     sub_locations.sort(key=lambda location: location.name)
 
-    return {'locations': sub_locations, 'form': form, 'tag': tag}
+    return {'locations': sub_locations, 'form': form, 'tag': tag, 'analysis_type': analysis_type}
 
 
 @register.inclusion_tag('core/send_message_modal.html')

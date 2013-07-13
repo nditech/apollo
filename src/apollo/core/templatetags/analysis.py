@@ -2,6 +2,7 @@
 from collections import OrderedDict
 from django import template
 import pandas as pd
+from analyses.voting import proportion, variance
 
 
 register = template.Library()
@@ -57,3 +58,109 @@ def default_if_nan(value, default):
         return default
     else:
         return value
+
+
+@register.simple_tag
+def vote_count(dataframe, votes, vote, location_type, location, group='ALL'):
+    try:
+        if group == 'RURAL':
+            df = dataframe.ix[dataframe.groupby([location_type, 'urban']).groups[(location, 0)]]
+        elif group == 'URBAN':
+            df = dataframe.ix[dataframe.groupby([location_type, 'urban']).groups[(location, 1)]]
+        else:
+            df = dataframe.ix[dataframe.groupby(location_type).groups[location]]
+
+        c = df[vote].sum()
+        if pd.np.isnan(c):
+            c = 0
+        return '%d' % c
+    except:
+        return 0
+
+
+@register.simple_tag
+def vote_proportion(dataframe, votes, vote, location_type, location, group='ALL'):
+    try:
+        if group == 'RURAL':
+            df = dataframe.ix[dataframe.groupby([location_type, 'urban']).groups[(location, 0)]]
+        elif group == 'URBAN':
+            df = dataframe.ix[dataframe.groupby([location_type, 'urban']).groups[(location, 1)]]
+        else:
+            df = dataframe.ix[dataframe.groupby(location_type).groups[location]]
+
+        p = round(abs(proportion(df, votes, vote) * 100.0), 2)
+        if pd.np.isnan(p):
+            p = 0
+        return '%.2f' % p if p % 1 else '%d' % p
+    except:
+        return 0
+
+
+@register.simple_tag
+def vote_variance(dataframe, votes, vote, location_type, location, group='ALL'):
+    try:
+        if group == 'RURAL':
+            df = dataframe.ix[dataframe.groupby([location_type, 'urban']).groups[(location, 0)]]
+        elif group == 'URBAN':
+            df = dataframe.ix[dataframe.groupby([location_type, 'urban']).groups[(location, 1)]]
+        else:
+            df = dataframe.ix[dataframe.groupby(location_type).groups[location]]
+
+        v = round(abs(variance(df, votes, vote) * 100.0), 2)
+        if pd.np.isnan(v):
+            v = 0
+        return '%.2f' % v if v % 1 else '%d' % v
+    except:
+        return 0
+
+
+@register.simple_tag
+def reported(dataframe, votes, location_type, location, group='ALL'):
+    try:
+        if group == 'RURAL':
+            df = dataframe.ix[dataframe.groupby([location_type, 'urban']).groups[(location, 0)]]
+        elif group == 'URBAN':
+            df = dataframe.ix[dataframe.groupby([location_type, 'urban']).groups[(location, 1)]]
+        else:
+            df = dataframe.ix[dataframe.groupby(location_type).groups[location]]
+            
+        return df[eval(' | '.join(['(df.{} >= 0)'.format(v) for v in votes]))].shape[0]
+    except:
+        return 0
+
+
+@register.simple_tag
+def missing(dataframe, votes, location_type, location, group='ALL'):
+    try:
+        if group == 'RURAL':
+            df = dataframe.ix[dataframe.groupby([location_type, 'urban']).groups[(location, 0)]]
+        elif group == 'URBAN':
+            df = dataframe.ix[dataframe.groupby([location_type, 'urban']).groups[(location, 1)]]
+        else:
+            df = dataframe.ix[dataframe.groupby(location_type).groups[location]]
+            
+        return df[eval(' & '.join(['(df.{}.isnull())'.format(v) for v in votes]))].shape[0]
+    except:
+        return 0
+
+
+@register.simple_tag
+def reported_pct(dataframe, votes, location_type, location, group='ALL'):
+    m = float(missing(dataframe, votes, location_type, location, group))
+    r = float(reported(dataframe, votes, location_type, location, group))
+    try:
+        f = round((r / (m+r) * 100.0), 2)
+        return '%.2f' % f if f % 1 else '%d' % f
+    except ZeroDivisionError:
+        return 0
+
+
+@register.simple_tag
+def missing_pct(dataframe, votes, location_type, location, group='ALL'):
+    m = float(missing(dataframe, votes, location_type, location, group))
+    r = float(reported(dataframe, votes, location_type, location, group))
+    try:
+        f = round((m / (m+r) * 100.0), 2)
+        return '%.2f' % f if f % 1 else '%d' % f
+    except ZeroDivisionError:
+        return 0

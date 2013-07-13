@@ -1,364 +1,114 @@
 {% extends "core/layout.html" %}
-{% load apollo %}
+{% load apollo %}{% load analysis %}
 {% block content %}
 <div class="row">
     <div class="span9">
-    	<ul class="breadcrumb">
-    	  <li>Zimbabwe<li>
-    	</ul>
+    	{% analysis_breadcrumb_navigation form location None 'results' %}
     </div>
     <div class="span3">
-    	<form class="form-horizontal pull-right">
-    		<select class="span2">
-    			<option>Sample</option>
-    		</select>
-    		<button class="btn btn-warning"><i class="icon-search icon-white"></i> Filter</button>
-    	</form>
+    	<form class="form-horizontal pull-right" action="" method="get" accept-charset="utf-8">
+          {{ filter_form.sample }}
+          <button class="btn btn-warning" type="submit"><i class="icon-search icon-white"></i> Filter</button>
+        </form>
+    </div>
+    <div class="span12">
+        {% analysis_location_navigation form location None 'results' %}
     </div>
 </div>
 <div class="row">
     <div class="span12">
-        <ul class="nav nav-pills">
-          <li class="active">
-            <a href="#">Harare</a>
-          </li>
-          <li><a href="#">Bulawayo</a></li>
-          <li><a href="#">Masvingo</a></li>
-        </ul>
         <ul class="nav nav-tabs">
           <li class="active"><a href="#table" data-toggle="tab">Table</a></li>
           <li><a href="#map" data-toggle="tab">Map</a></li>
         </ul>
         <div class="tab-content">
             <div class="tab-pane active" id="table">
-                <table class="table table-striped table-bordered table-hover">
+                {% if form.votes %}
+                <table class="table table-bordered table-hover">
                     <tr>
-                        <th width="200" rowspan="2" colspan="2" style="vertical-align:middle">Province</th>
-                        <th width="100" colspan="2" style="text-align:center">ZAPU</th>
-                        <th width="100" colspan="2" style="text-align:center">ZDP</th>
-                        <th width="100" colspan="2" style="text-align:center">ZNAPU-PF</th>
-                        <th width="100" colspan="2" style="text-align:center">MDC</th>
-                        <th width="100" colspan="2" style="text-align:center">MDC-T</th>
-                        <th>&nbsp;</th>
-                        <th>&nbsp;</th>
+                        <th width="200" rowspan="2" {% if form.options.has_urban %}colspan="2"{% endif %} style="vertical-align:middle" class="gray">&nbsp;</th>
+                        {% for party in form.parties %}
+                        <th width="100" {% if form.options.has_moe %}colspan="2"{% endif %} class="gray" style="text-align:center">{{ party }}</th>
+                        {% endfor %}
+                        <th class="gray">&nbsp;</th>
+                        <th class="gray">&nbsp;</th>
                     </tr>
                     <tr>
+                        {% for party in form.parties %}
                         <td class="centered"><em>Votes</em></td>
-                        <td class="centered"><em>MoE</em></td>
-                        <td class="centered"><em>Votes</em></td>
-                        <td class="centered"><em>MoE</em></td>
-                        <td class="centered"><em>Votes</em></td>
-                        <td class="centered"><em>MoE</em></td>
-                        <td class="centered"><em>Votes</em></td>
-                        <td class="centered"><em>MoE</em></td>
-                        <td class="centered"><em>Votes</em></td>
-                        <td class="centered"><em>MoE</em></td>
-                        <td class="centered"><em>Reported</em></td>
-                        <td class="centered"><em>Missing</em></td>
+                        {% if form.options.has_moe %}<td class="centered"><em>MoE</em></td>{% endif %}
+                        {% endfor %}
+                        <td class="centered" width="10%"><em>Reported</em></td>
+                        <td class="centered" width="10%"><em>Missing</em></td>
                     </tr>
                     <tr>
-                        <th rowspan="3" style="vertical-align:middle">Harare</th>
-                        <th width="50">All</th>
-                        <th class="numeric">15%</th>
-                        <th class="numeric">23%</th>
-                        <th class="numeric">5%</th>
-                        <th class="numeric">15%</th>
-                        <th class="numeric">23%</th>
-                        <th class="numeric">5%</th>
-                        <th class="numeric">15%</th>
-                        <th class="numeric">23%</th>
-                        <th class="numeric">15%</th>
-                        <th class="numeric">23%</th>
-                        <th class="numeric">34% (4500)</th>
-                        <th class="numeric">64% (9000)</th>
+                        <th class="gray" {% if form.options.has_urban %}rowspan="3"{% endif %} style="vertical-align:middle">{{ location.name }} · <span class="muted"><em>{{ location.type }}</em></span></th>
+                        {% if form.options.has_urban %}<th width="50" class="gray">All</th>{% endif %}
+                        {% for vote in form.votes %}
+                        <th class="numeric gray">{% vote_proportion dataframe form.votes vote location.type.name location.name 'ALL' %}% ({% vote_count dataframe form.votes vote location.type.name location.name 'ALL' %})</th>
+                        {% if form.options.has_moe %}<th class="numeric gray">{% vote_variance dataframe form.votes vote location.type.name location.name 'ALL' %}%</th>{% endif %}
+                        {% endfor %}
+                        <th class="numeric gray">{% reported_pct dataframe form.votes location.type.name location.name 'ALL' %}% ({% reported dataframe form.votes location.type.name location.name 'ALL' %})</th>
+                        <th class="numeric gray">{% missing_pct dataframe form.votes location.type.name location.name 'ALL' %}% ({% missing dataframe form.votes location.type.name location.name 'ALL' %})</th>
                     </tr>
+                    {% if form.options.has_urban %}
                     <tr>
                         <td>Rural</td>
-                        <td class="numeric">15%</td>
-                        <td class="numeric">23%</td>
-                        <td class="numeric">5%</td>
-                        <td class="numeric">15%</td>
-                        <td class="numeric">23%</td>
-                        <td class="numeric">5%</td>
-                        <td class="numeric">15%</td>
-                        <td class="numeric">23%</td>
-                        <td class="numeric">15%</td>
-                        <td class="numeric">23%</td>
-                        <td class="numeric">34% (4500)</td>
-                        <td class="numeric">64% (9000)</td>
+                        {% for vote in form.votes %}
+                        <td class="numeric">{% vote_proportion dataframe form.votes vote location.type.name location.name 'RURAL' %}% ({% vote_count dataframe form.votes vote location.type.name location.name 'RURAL' %})</td>
+                        {% if form.options.has_moe %}<td class="numeric">{% vote_variance dataframe form.votes vote location.type.name location.name 'RURAL' %}%</td>{% endif %}
+                        {% endfor %}
+                        <td class="numeric ">{% reported_pct dataframe form.votes location.type.name location.name 'RURAL' %}% ({% reported dataframe form.votes location.type.name location.name 'RURAL' %})</td>
+                        <td class="numeric ">{% missing_pct dataframe form.votes location.type.name location.name 'RURAL' %}% ({% missing dataframe form.votes location.type.name location.name 'RURAL' %})</td>
                     </tr>
                     <tr>
                         <td>Urban</td>
-                        <td class="numeric">15%</td>
-                        <td class="numeric">23%</td>
-                        <td class="numeric">5%</td>
-                        <td class="numeric">15%</td>
-                        <td class="numeric">23%</td>
-                        <td class="numeric">5%</td>
-                        <td class="numeric">15%</td>
-                        <td class="numeric">23%</td>
-                        <td class="numeric">15%</td>
-                        <td class="numeric">23%</td>
-                        <td class="numeric">34% (4500)</td>
-                        <td class="numeric">64% (9000)</td>
+                        {% for vote in form.votes %}
+                        <td class="numeric">{% vote_proportion dataframe form.votes vote location.type.name location.name 'URBAN' %}% ({% vote_count dataframe form.votes vote location.type.name location.name 'URBAN' %})</td>
+                        {% if form.options.has_moe %}<td class="numeric">{% vote_variance dataframe form.votes vote location.type.name location.name 'URBAN' %}%</td>{% endif %}
+                        {% endfor %}
+                        <td class="numeric">{% reported_pct dataframe form.votes location.type.name location.name 'URBAN' %}% ({% reported dataframe form.votes location.type.name location.name 'URBAN' %})</td>
+                        <td class="numeric">{% missing_pct dataframe form.votes location.type.name location.name 'URBAN' %}% ({% missing dataframe form.votes location.type.name location.name 'URBAN' %})</td>
                     </tr>
+                    {% endif %}
+                    {% for sublocation in location.get_children %}
                     <tr>
-                        <th rowspan="3" style="vertical-align:middle">Bulawayo</th>
-                        <th width="50">All</th>
-                        <th class="numeric">15%</th>
-                        <th class="numeric">23%</th>
-                        <th class="numeric">5%</th>
-                        <th class="numeric">15%</th>
-                        <th class="numeric">23%</th>
-                        <th class="numeric">5%</th>
-                        <th class="numeric">15%</th>
-                        <th class="numeric">23%</th>
-                        <th class="numeric">15%</th>
-                        <th class="numeric">23%</th>
-                        <th class="numeric">34% (4500)</th>
-                        <th class="numeric">64% (9000)</th>
+                        <td class="gray" {% if form.options.has_urban %}rowspan="3"{% endif %} style="vertical-align:middle">{{ sublocation.name }} · <span class="muted"><em>{{ sublocation.type }}</em></span></td>
+                        {% if form.options.has_urban %}<th width="50" class="gray">All</th>{% endif %}
+                        {% for vote in form.votes %}
+                        <th class="numeric gray">{% vote_proportion dataframe form.votes vote sublocation.type.name sublocation.name 'ALL' %}% ({% vote_count dataframe form.votes vote sublocation.type.name sublocation.name 'ALL' %})</th>
+                        {% if form.options.has_moe %}<th class="numeric gray">{% vote_variance dataframe form.votes vote sublocation.type.name sublocation.name 'ALL' %}%</th>{% endif %}
+                        {% endfor %}
+                        <th class="numeric gray">{% reported_pct dataframe form.votes sublocation.type.name sublocation.name 'ALL' %}% ({% reported dataframe form.votes sublocation.type.name sublocation.name 'ALL' %})</th>
+                        <th class="numeric gray">{% missing_pct dataframe form.votes sublocation.type.name sublocation.name 'ALL' %}% ({% missing dataframe form.votes sublocation.type.name sublocation.name 'ALL' %})</th>
                     </tr>
+                    {% if form.options.has_urban %}
                     <tr>
                         <td>Rural</td>
-                        <td class="numeric">15%</td>
-                        <td class="numeric">23%</td>
-                        <td class="numeric">5%</td>
-                        <td class="numeric">15%</td>
-                        <td class="numeric">23%</td>
-                        <td class="numeric">5%</td>
-                        <td class="numeric">15%</td>
-                        <td class="numeric">23%</td>
-                        <td class="numeric">15%</td>
-                        <td class="numeric">23%</td>
-                        <td class="numeric">34% (4500)</td>
-                        <td class="numeric">64% (9000)</td>
+                        {% for vote in form.votes %}
+                        <td class="numeric">{% vote_proportion dataframe form.votes vote sublocation.type.name sublocation.name 'RURAL' %}% ({% vote_count dataframe form.votes vote sublocation.type.name sublocation.name 'RURAL' %})</td>
+                        {% if form.options.has_moe %}<td class="numeric">{% vote_variance dataframe form.votes vote sublocation.type.name sublocation.name 'RURAL' %}%</td>{% endif %}
+                        {% endfor %}
+                        <td class="numeric">{% reported_pct dataframe form.votes sublocation.type.name sublocation.name 'RURAL' %}% ({% reported dataframe form.votes sublocation.type.name sublocation.name 'RURAL' %})</td>
+                        <td class="numeric">{% missing_pct dataframe form.votes sublocation.type.name sublocation.name 'RURAL' %}% ({% missing dataframe form.votes sublocation.type.name sublocation.name 'RURAL' %})</td>
                     </tr>
                     <tr>
                         <td>Urban</td>
-                        <td class="numeric">15%</td>
-                        <td class="numeric">23%</td>
-                        <td class="numeric">5%</td>
-                        <td class="numeric">15%</td>
-                        <td class="numeric">23%</td>
-                        <td class="numeric">5%</td>
-                        <td class="numeric">15%</td>
-                        <td class="numeric">23%</td>
-                        <td class="numeric">15%</td>
-                        <td class="numeric">23%</td>
-                        <td class="numeric">34% (4500)</td>
-                        <td class="numeric">64% (9000)</td>
+                        {% for vote in form.votes %}
+                        <td class="numeric">{% vote_proportion dataframe form.votes vote sublocation.type.name sublocation.name 'URBAN' %}% ({% vote_count dataframe form.votes vote sublocation.type.name sublocation.name 'URBAN' %})</td>
+                        {% if form.options.has_moe %}<td class="numeric">{% vote_variance dataframe form.votes vote sublocation.type.name sublocation.name 'URBAN' %}%</td>{% endif %}
+                        {% endfor %}
+                        <td class="numeric">{% reported_pct dataframe form.votes sublocation.type.name sublocation.name 'URBAN' %}% ({% reported dataframe form.votes sublocation.type.name sublocation.name 'URBAN' %})</td>
+                        <td class="numeric">{% missing_pct dataframe form.votes sublocation.type.name sublocation.name 'URBAN' %}% ({% missing dataframe form.votes sublocation.type.name sublocation.name 'URBAN' %})</td>
                     </tr>
-                    <tr>
-                        <th rowspan="3" style="vertical-align:middle">Masvingo</th>
-                        <th width="50">All</th>
-                        <th class="numeric">15%</th>
-                        <th class="numeric">23%</th>
-                        <th class="numeric">5%</th>
-                        <th class="numeric">15%</th>
-                        <th class="numeric">23%</th>
-                        <th class="numeric">5%</th>
-                        <th class="numeric">15%</th>
-                        <th class="numeric">23%</th>
-                        <th class="numeric">15%</th>
-                        <th class="numeric">23%</th>
-                        <th class="numeric">34% (4500)</th>
-                        <th class="numeric">64% (9000)</th>
-                    </tr>
-                    <tr>
-                        <td>Rural</td>
-                        <td class="numeric">15%</td>
-                        <td class="numeric">23%</td>
-                        <td class="numeric">5%</td>
-                        <td class="numeric">15%</td>
-                        <td class="numeric">23%</td>
-                        <td class="numeric">5%</td>
-                        <td class="numeric">15%</td>
-                        <td class="numeric">23%</td>
-                        <td class="numeric">15%</td>
-                        <td class="numeric">23%</td>
-                        <td class="numeric">34% (4500)</td>
-                        <td class="numeric">64% (9000)</td>
-                    </tr>
-                    <tr>
-                        <td>Urban</td>
-                        <td class="numeric">15%</td>
-                        <td class="numeric">23%</td>
-                        <td class="numeric">5%</td>
-                        <td class="numeric">15%</td>
-                        <td class="numeric">23%</td>
-                        <td class="numeric">5%</td>
-                        <td class="numeric">15%</td>
-                        <td class="numeric">23%</td>
-                        <td class="numeric">15%</td>
-                        <td class="numeric">23%</td>
-                        <td class="numeric">34% (4500)</td>
-                        <td class="numeric">64% (9000)</td>
-                    </tr>
+                    {% endif %}
+                    {% endfor %}
                 </table>
-                <table class="table table-striped table-bordered table-hover">
-                    <tr>
-                        <th width="200" rowspan="2" colspan="2" style="vertical-align:middle">Constituency</th>
-                        <th width="100" colspan="2" style="text-align:center">ZAPU</th>
-                        <th width="100" colspan="2" style="text-align:center">ZDP</th>
-                        <th width="100" colspan="2" style="text-align:center">ZNAPU-PF</th>
-                        <th width="100" colspan="2" style="text-align:center">MDC</th>
-                        <th width="100" colspan="2" style="text-align:center">MDC-T</th>
-                        <th>&nbsp;</th>
-                        <th>&nbsp;</th>
-                    </tr>
-                    <tr>
-                        <td class="centered"><em>Votes</em></td>
-                        <td class="centered"><em>MoE</em></td>
-                        <td class="centered"><em>Votes</em></td>
-                        <td class="centered"><em>MoE</em></td>
-                        <td class="centered"><em>Votes</em></td>
-                        <td class="centered"><em>MoE</em></td>
-                        <td class="centered"><em>Votes</em></td>
-                        <td class="centered"><em>MoE</em></td>
-                        <td class="centered"><em>Votes</em></td>
-                        <td class="centered"><em>MoE</em></td>
-                        <td class="centered"><em>Reported</em></td>
-                        <td class="centered"><em>Missing</em></td>
-                    </tr>
-                    <tr>
-                        <th rowspan="3" style="vertical-align:middle">Epworth</th>
-                        <th width="50">All</th>
-                        <th class="numeric">15%</th>
-                        <th class="numeric">23%</th>
-                        <th class="numeric">5%</th>
-                        <th class="numeric">15%</th>
-                        <th class="numeric">23%</th>
-                        <th class="numeric">5%</th>
-                        <th class="numeric">15%</th>
-                        <th class="numeric">23%</th>
-                        <th class="numeric">15%</th>
-                        <th class="numeric">23%</th>
-                        <th class="numeric">34% (4500)</th>
-                        <th class="numeric">64% (9000)</th>
-                    </tr>
-                    <tr>
-                        <td>Rural</td>
-                        <td class="numeric">15%</td>
-                        <td class="numeric">23%</td>
-                        <td class="numeric">5%</td>
-                        <td class="numeric">15%</td>
-                        <td class="numeric">23%</td>
-                        <td class="numeric">5%</td>
-                        <td class="numeric">15%</td>
-                        <td class="numeric">23%</td>
-                        <td class="numeric">15%</td>
-                        <td class="numeric">23%</td>
-                        <td class="numeric">34% (4500)</td>
-                        <td class="numeric">64% (9000)</td>
-                    </tr>
-                    <tr>
-                        <td>Urban</td>
-                        <td class="numeric">15%</td>
-                        <td class="numeric">23%</td>
-                        <td class="numeric">5%</td>
-                        <td class="numeric">15%</td>
-                        <td class="numeric">23%</td>
-                        <td class="numeric">5%</td>
-                        <td class="numeric">15%</td>
-                        <td class="numeric">23%</td>
-                        <td class="numeric">15%</td>
-                        <td class="numeric">23%</td>
-                        <td class="numeric">34% (4500)</td>
-                        <td class="numeric">64% (9000)</td>
-                    </tr>
-                    <tr>
-                        <th rowspan="3" style="vertical-align:middle">Mbare</th>
-                        <th width="50">All</th>
-                        <th class="numeric">15%</th>
-                        <th class="numeric">23%</th>
-                        <th class="numeric">5%</th>
-                        <th class="numeric">15%</th>
-                        <th class="numeric">23%</th>
-                        <th class="numeric">5%</th>
-                        <th class="numeric">15%</th>
-                        <th class="numeric">23%</th>
-                        <th class="numeric">15%</th>
-                        <th class="numeric">23%</th>
-                        <th class="numeric">34% (4500)</th>
-                        <th class="numeric">64% (9000)</th>
-                    </tr>
-                    <tr>
-                        <td>Rural</td>
-                        <td class="numeric">15%</td>
-                        <td class="numeric">23%</td>
-                        <td class="numeric">5%</td>
-                        <td class="numeric">15%</td>
-                        <td class="numeric">23%</td>
-                        <td class="numeric">5%</td>
-                        <td class="numeric">15%</td>
-                        <td class="numeric">23%</td>
-                        <td class="numeric">15%</td>
-                        <td class="numeric">23%</td>
-                        <td class="numeric">34% (4500)</td>
-                        <td class="numeric">64% (9000)</td>
-                    </tr>
-                    <tr>
-                        <td>Urban</td>
-                        <td class="numeric">15%</td>
-                        <td class="numeric">23%</td>
-                        <td class="numeric">5%</td>
-                        <td class="numeric">15%</td>
-                        <td class="numeric">23%</td>
-                        <td class="numeric">5%</td>
-                        <td class="numeric">15%</td>
-                        <td class="numeric">23%</td>
-                        <td class="numeric">15%</td>
-                        <td class="numeric">23%</td>
-                        <td class="numeric">34% (4500)</td>
-                        <td class="numeric">64% (9000)</td>
-                    </tr>
-                    <tr>
-                        <th rowspan="3" style="vertical-align:middle">Southerton</th>
-                        <th width="50">All</th>
-                        <th class="numeric">15%</th>
-                        <th class="numeric">23%</th>
-                        <th class="numeric">5%</th>
-                        <th class="numeric">15%</th>
-                        <th class="numeric">23%</th>
-                        <th class="numeric">5%</th>
-                        <th class="numeric">15%</th>
-                        <th class="numeric">23%</th>
-                        <th class="numeric">15%</th>
-                        <th class="numeric">23%</th>
-                        <th class="numeric">34% (4500)</th>
-                        <th class="numeric">64% (9000)</th>
-                    </tr>
-                    <tr>
-                        <td>Rural</td>
-                        <td class="numeric">15%</td>
-                        <td class="numeric">23%</td>
-                        <td class="numeric">5%</td>
-                        <td class="numeric">15%</td>
-                        <td class="numeric">23%</td>
-                        <td class="numeric">5%</td>
-                        <td class="numeric">15%</td>
-                        <td class="numeric">23%</td>
-                        <td class="numeric">15%</td>
-                        <td class="numeric">23%</td>
-                        <td class="numeric">34% (4500)</td>
-                        <td class="numeric">64% (9000)</td>
-                    </tr>
-                    <tr>
-                        <td>Urban</td>
-                        <td class="numeric">15%</td>
-                        <td class="numeric">23%</td>
-                        <td class="numeric">5%</td>
-                        <td class="numeric">15%</td>
-                        <td class="numeric">23%</td>
-                        <td class="numeric">5%</td>
-                        <td class="numeric">15%</td>
-                        <td class="numeric">23%</td>
-                        <td class="numeric">15%</td>
-                        <td class="numeric">23%</td>
-                        <td class="numeric">34% (4500)</td>
-                        <td class="numeric">64% (9000)</td>
-                    </tr>
+                {% else %}
+                <table width="100%" class="table table-striped table-bordered">
+                    <tr class="warning"><td style="text-align:center">No Data Available</td></tr>
                 </table>
+                {% endif %}
             </div>
             <div class="tab-pane" id="map">
 

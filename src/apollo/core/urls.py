@@ -39,6 +39,9 @@ urlpatterns = patterns('',
     url(r'^submissions/analysis/process/form/(?P<form>\d+)/tag/(?P<tag>[A-Z]+)/?$', SubmissionProcessAnalysisView.as_view(), name='submissions_analysis_tag'),
     url(r'^submissions/analysis/process/form/(?P<form>\d+)/location/(?P<location_id>\d+)/tag/(?P<tag>[A-Z]+)/?$', SubmissionProcessAnalysisView.as_view(), name='submissions_analysis_location_tag'),
 
+    url(r'^submissions/analysis/results/form/(?P<form>\d+)/?$', SubmissionVotingResultsView.as_view(), name='results_analysis'),
+    url(r'^submissions/analysis/results/form/(?P<form>\d+)/location/(?P<location_id>\d+)/?$', SubmissionVotingResultsView.as_view(), name='results_analysis_location'),
+
     url(r'^observers/?$', ContactListView.as_view(), name='contacts_list'),
     url(r'^observer/(?P<pk>\d+)/?$', ContactEditView.as_view(), name='contact_edit'),
 

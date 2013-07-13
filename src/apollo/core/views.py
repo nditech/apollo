@@ -4,6 +4,10 @@ try:
     from cStringIO import StringIO
 except ImportError:
     from StringIO import StringIO
+try:
+    import cPickle as pickle
+except ImportError:
+    import pickle
 import re
 from datetime import (date, datetime)
 from django.conf import settings
@@ -25,6 +29,7 @@ from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_protect
 from django.views.generic import TemplateView, ListView, UpdateView, View, CreateView
 from django.views.generic.base import TemplateResponseMixin
+from djorm_expressions.base import SqlExpression, OR, AND
 from jimmypage.cache import cache_page
 from rapidsms.models import Connection, Backend
 from guardian.decorators import permission_required
@@ -174,7 +179,7 @@ class SubmissionProcessAnalysisView(View, TemplateResponseMixin):
                 self.display_tag = kwargs['tag']
                 self.grouped = True
             else:
-                self.tags = settings.PROCESS_QUESTIONS_TAGS
+                self.tags = FormField.objects.filter(group__form=self.form, analysis_type='PROCESS').order_by('tag').values_list('tag', flat=True)
                 self.grouped = False
             self.initial_qs = Submission.objects.filter(form=self.form, observer=None).is_within(self.location)
         else:
@@ -201,7 +206,7 @@ class SubmissionProcessAnalysisView(View, TemplateResponseMixin):
         context['dataframe'] = self.filter_set.qs.dataframe()
         context['field_groups'] = OrderedDict()
 
-        process_fields = FormField.objects.filter(tag__in=settings.PROCESS_QUESTIONS_TAGS,
+        process_fields = FormField.objects.filter(analysis_type='PROCESS',
             group__form=self.form).order_by('group', 'tag')
         map(lambda field: context['field_groups'].setdefault(field.group.name, []).append(field), process_fields)
 
@@ -239,6 +244,44 @@ class SubmissionProcessAnalysisView(View, TemplateResponseMixin):
         else:
             context = self.get_context_data(**kwargs)
             return self.render_to_response(context)
+
+
+class SubmissionVotingResultsView(View, TemplateResponseMixin):
+    template_name = 'core/results.html'
+
+    @method_decorator(login_required)
+    @method_decorator(permission_required('core.can_analyse', return_403=True))
+    @method_decorator(permission_required('core.view_form', (Form, 'pk', 'form'), return_403=True))
+    @method_decorator(cache_page)
+    def dispatch(self, request, *args, **kwargs):
+        self.form = get_object_or_404(Form, pk=kwargs['form'])
+        self.page_title = '{} Voting Results'.format(self.form.name)
+        self.analysis_filter = generate_submission_analysis_filter(self.form)
+        vote_options = []
+        if 'location_id' in kwargs:
+            self.location = get_object_or_404(Location, pk=kwargs['location_id'])
+        else:
+            self.location = Location.root()
+
+        self.initial_qs = Submission.objects.filter(form=self.form, observer=None).where(~SqlExpression("data", "@>", "verification=>%s" % settings.FLAG_STATUSES['rejected'][0]))
+
+        return super(SubmissionVotingResultsView, self).dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = {'params': kwargs}
+        context['page_title'] = self.page_title
+        context['filter_form'] = self.filter_set.form
+        context['form'] = self.form
+        context['location'] = self.location
+        context['dataframe'] = self.filter_set.qs.dataframe()
+
+        return context
+
+    def get(self, request, *args, **kwargs):
+        self.filter_set = self.analysis_filter(request.GET, queryset=self.initial_qs, request=request)
+        context = self.get_context_data(**kwargs)
+
+        return self.render_to_response(context)
 
 
 class SubmissionListView(ListView):

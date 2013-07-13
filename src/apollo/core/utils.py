@@ -30,8 +30,11 @@ def import_forms(source):
                 _form.field_pattern = form.attrib.get('data-field_pattern')
                 _form.options = json.loads(form.attrib.get('data-options', '{}'))
                 verification_flags = json.loads(form.attrib.get('data-options-verification-flags', '{}'))
+                party_votes = json.loads(form.attrib.get('data-options-party-votes', '{}'))
                 if verification_flags:
                     _form.options['verification_flags'] = pickle.dumps(verification_flags)
+                if party_votes:
+                    _form.options['party_votes'] = pickle.dumps(party_votes)
                 if _form.type == 'INCIDENT':
                     _form.autocreate_submission = True
                 else:

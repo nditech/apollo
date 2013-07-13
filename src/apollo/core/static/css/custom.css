@@ -2,6 +2,7 @@
 .con_style { padding-top:1.2em; padding-bottom:1em; }
 .options { display: block; margin-top: 0.5em; }
 .option { margin-right: 1em; }
+.gray { background-color: #f9f9f9; }
 .numeric, .table .numeric { text-align: right; }
 .submission-table .submission-field ul { list-style-type: none; margin: 0; }
 .submission-table .centered, .centered, .table .centered { text-align: center; }

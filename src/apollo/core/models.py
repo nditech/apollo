@@ -427,6 +427,20 @@ class Form(models.Model):
     def get_verification_flag_attributes(self, attribute):
         return [flag.get(attribute, None) for flag in self.get_verification_flags()]
 
+    def contestants(self):
+        if self.options.get('party_votes', None):
+            return pickle.loads(str(self.options.get('party_votes')))
+
+    def parties(self):
+        contestants = self.contestants()
+        if contestants:
+            return [str(party) for party, code in contestants]
+
+    def votes(self):
+        contestants = self.contestants()
+        if contestants:
+            return [str(code) for party, code in contestants]
+
 
 
 class FormGroup(models.Model):
