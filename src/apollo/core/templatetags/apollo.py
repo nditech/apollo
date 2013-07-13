@@ -64,9 +64,9 @@ def activity_name(request=None):
 def analysis_menu(request=None):
     activity = request.session.get('activity', Activity.default())
     if activity:
-        forms = activity.forms.all().order_by('pk')
+        forms = activity.forms.all().order_by('name')
     else:
-        forms = Form.objects.all().order_by('pk')
+        forms = Form.objects.all().order_by('name')
     forms = filter(lambda form: request.user.has_perm('core.view_form', form), forms)
     voting_forms = filter(lambda form: form.options.get('party_votes', None), forms)
     return {'forms': forms, 'voting_forms': voting_forms}
@@ -76,13 +76,13 @@ def analysis_menu(request=None):
 def forms_menu(request=None, perms=None):
     activity = request.session.get('activity', Activity.default())
     if activity:
-        checklist_forms = activity.forms.filter(type='CHECKLIST').order_by('pk')
-        verification_forms = activity.forms.filter(type='CHECKLIST').where(HE('options').contains({'is_verifiable': '1'})).order_by('pk')
-        incident_forms = activity.forms.filter(type='INCIDENT').order_by('pk')
+        checklist_forms = activity.forms.filter(type='CHECKLIST').order_by('name')
+        verification_forms = activity.forms.filter(type='CHECKLIST').where(HE('options').contains({'is_verifiable': '1'})).order_by('name')
+        incident_forms = activity.forms.filter(type='INCIDENT').order_by('name')
     else:
-        checklist_forms = Form.objects.filter(type='CHECKLIST').order_by('pk')
-        verification_forms = Form.objects.filter(type='CHECKLIST').where(HE('options').contains({'is_verifiable': '1'})).order_by('pk')
-        incident_forms = Form.objects.filter(type='INCIDENT').order_by('pk')
+        checklist_forms = Form.objects.filter(type='CHECKLIST').order_by('name')
+        verification_forms = Form.objects.filter(type='CHECKLIST').where(HE('options').contains({'is_verifiable': '1'})).order_by('name')
+        incident_forms = Form.objects.filter(type='INCIDENT').order_by('name')
 
     # only add forms that the user has permission for
     checklist_forms = filter(lambda form: request.user.has_perm('core.view_form', form), checklist_forms)
