@@ -2,6 +2,7 @@
 from collections import OrderedDict
 from django import template
 import pandas as pd
+import math
 from analyses.voting import proportion, variance
 
 
@@ -97,7 +98,7 @@ def vote_proportion(dataframe, votes, vote, location_type, location, group='ALL'
 
 
 @register.simple_tag
-def vote_variance(dataframe, votes, vote, location_type, location, group='ALL'):
+def vote_margin_of_error(dataframe, votes, vote, location_type, location, group='ALL'):
     try:
         if group == 'RURAL':
             df = dataframe.ix[dataframe.groupby([location_type, 'urban']).groups[(location, 0)]]
@@ -106,7 +107,7 @@ def vote_variance(dataframe, votes, vote, location_type, location, group='ALL'):
         else:
             df = dataframe.ix[dataframe.groupby(location_type).groups[location]]
 
-        v = round(abs(variance(df, votes, vote) * 100.0), 2)
+        v = round(abs(math.sqrt(variance(df, votes, vote)) * 196.0), 2)
         if pd.np.isnan(v):
             v = 0
         return '%.2f' % v if v % 1 else '%d' % v
