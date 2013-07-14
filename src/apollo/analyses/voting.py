@@ -4,7 +4,6 @@ from django.conf import settings
 def proportion(df, options, param):
 	m = df.ix[:, options].sum(axis=1, skipna=True)
 	mbar = m.sum(axis=0, skipna=True) / m.size
-	print 'mbar = {}\nk= {}'.format(mbar, m.size)
 	return df.ix[:, param].sum(axis=0, skipna=True) / (mbar * m.size)
 
 
