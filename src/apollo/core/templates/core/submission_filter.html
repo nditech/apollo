@@ -5,7 +5,8 @@
     <div class="controls controls-row">
       {{ filter_form.observer__observer_id }}
       {{ filter_form.location }}
-      {% if form.type != 'CHECKLIST' %}{{ filter_form.status }}<button type="submit" style="margin-left:1em" class="btn btn-warning"><i class="icon-search icon-white"></i> Search</button> <a class="btn form-reset" style="margin-left:0.5em">Clear</a>{% endif %}
+      {{ filter_form.sample }}
+      {% if form.type != 'CHECKLIST' %}{{ filter_form.status }}{% endif %}
     </div>
     {% if form.type == 'CHECKLIST' %}
     <div class="controls controls-row">
@@ -13,10 +14,10 @@
       {{ filter_form|groupsel:group.pk }}
       {% endfor %}      
     </div>
+    {% endif %}
     <div class="">
       <button type="submit" class="btn btn-warning"><i class="icon-search icon-white"></i> Search</button>
       <a class="btn form-reset">Clear</a>
     </div>
-    {% endif %}
   </form>
 </div>

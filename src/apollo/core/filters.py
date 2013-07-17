@@ -168,6 +168,8 @@ def generate_contacts_filter():
 
 
 class BaseSubmissionFilter(django_filters.FilterSet):
+    sample = SampleFilter(widget=forms.Select(attrs={'class': 'span2'}))
+
     def __init__(self, *args, **kwargs):
         request = kwargs.pop('request', None)
         super(BaseSubmissionFilter, self).__init__(*args, **kwargs)
@@ -178,7 +180,7 @@ class BaseSubmissionFilter(django_filters.FilterSet):
 
 def generate_submission_filter(form):
     metafields = {'model': Submission, 'fields':
-        ['observer__observer_id', 'date', 'location', 'activity']}
+        ['observer__observer_id', 'date', 'location', 'activity', 'sample']}
     for group in form.groups.all():
         metafields['fields'].append('group_%d' % (group.pk,))
 
