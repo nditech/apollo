@@ -629,6 +629,9 @@ class Sample(models.Model):
     name = models.CharField(max_length=100)
     locations = models.ManyToManyField(Location, related_name='samples')
 
+    def __unicode__(self):
+        return self.name
+
 
 # Parsers for Checklist Verification
 
