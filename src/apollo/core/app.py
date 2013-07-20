@@ -47,7 +47,7 @@ class App(AppBase):
 
                     try:
                         if submission['form'].autocreate_submission:
-                            entry = Submission.objects.create(observer=observer, date=message.date,
+                            entry = Submission.objects.create(observer=observer, date=datetime.now().date(),
                                 form=submission['form'], location=observer.location)
                         else:
                             try:
