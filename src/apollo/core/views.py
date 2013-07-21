@@ -426,16 +426,17 @@ class SubmissionListExportView(View):
             datalist_fields = ['observer__observer_id', 'observer__name', 'observer__last_connection__identity', 'location', 'observer'] + data_fields + ['updated']
 
             if self.collection == 'master':
-                export_fields = ['locobs:location__observer_id', 'locobs:location__name', 'locobs:location__phone', 'locobs:location__last_connection__identity'] + location_type_fields + data_fields + ['updated']
+                datalist_fields += ['location__observers__observer_id', 'location__observers__name', 'location__observers__contact__connection__identity', 'location__observers__last_connection__identity']
+                export_fields = ['location__observers__observer_id', 'location__observers__name', 'location__observers__contact__connection__identity', 'location__observers__last_connection__identity'] + location_type_fields + data_fields + ['updated']
             else:
-                export_fields = ['observer__observer_id', 'observer__name', 'obs:observer__phone', 'observer__last_connection__identity'] + location_type_fields + data_fields + ['updated']
+                export_fields = ['observer__observer_id', 'observer__name', 'observer__contact__connection__identity', 'observer__last_connection__identity'] + location_type_fields + data_fields + ['updated']
             field_labels = ['PSZ', 'Name', 'Phone', 'Texted Phone'] + location_types + data_fields + ['Timestamp']
 
             datalist = qs.intdata(data_fields).values(*datalist_fields)
         else:
             data_fields = list(FormField.objects.filter(group__form=form).order_by('tag').values_list('tag', flat=True))
 
-            export_fields = ['observer__observer_id', 'observer__name', 'obs:observer__phone', 'observer__last_connection__identity'] + location_type_fields + data_fields + ['status', 'witness', 'description', 'updated']
+            export_fields = ['observer__observer_id', 'observer__name', 'observer__contact__connection__identity', 'observer__last_connection__identity'] + location_type_fields + data_fields + ['status', 'witness', 'description', 'updated']
             field_labels = ['PSZ', 'Name', 'Phone', 'Texted Phone'] + location_types + data_fields + ['Status', 'Witness', 'Description', 'Timestamp']
 
             data_fields.extend(['status', 'witness', 'description'])
@@ -567,9 +568,9 @@ class ContactListView(ListView):
         if request.GET.get('export', None):
             location_types = list(LocationType.objects.filter(on_display=True).values_list('name', flat=True))
             location_type_fields = ['loc:location__{}'.format(lt.lower()) for lt in location_types]
-            datalist_fields = ['pk', 'observer_id', 'name', 'location', 'location__name', 'role__name', 'partner__name']
+            datalist_fields = ['observer_id', 'name', 'location', 'location__name', 'role__name', 'partner__name', 'contact__connection__identity']
 
-            export_fields = ['observer_id'] + location_type_fields + ['location__name', 'name', 'role__name', 'obs:pk__phone', 'partner__name']
+            export_fields = ['observer_id'] + location_type_fields + ['location__name', 'name', 'role__name', 'contact__connection__identity', 'partner__name']
             export_field_labels = ['PSZ'] + location_types + ['Location', 'Name', 'Role', 'Phone', 'Partner']
 
             datalist = self.filter_set.qs.values(*datalist_fields)
