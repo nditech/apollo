@@ -423,7 +423,7 @@ class SubmissionListExportView(View):
 
         if form.type == 'CHECKLIST':
             data_fields = list(FormField.objects.filter(group__form=form).order_by('tag').values_list('tag', flat=True))
-            datalist_fields = ['observer__observer_id', 'observer__name', 'observer__last_connection__identity', 'location', 'observer'] + data_fields + ['updated']
+            datalist_fields = ['observer__observer_id', 'observer__name', 'observer__last_connection__identity', 'location', 'observer__contact__connection__identity'] + data_fields + ['updated']
 
             if self.collection == 'master':
                 datalist_fields += ['location__observers__observer_id', 'location__observers__name', 'location__observers__contact__connection__identity', 'location__observers__last_connection__identity']
@@ -440,7 +440,7 @@ class SubmissionListExportView(View):
             field_labels = ['PSZ', 'Name', 'Phone', 'Texted Phone'] + location_types + data_fields + ['Status', 'Witness', 'Description', 'Timestamp']
 
             data_fields.extend(['status', 'witness', 'description'])
-            datalist_fields = ['observer__observer_id', 'observer__name', 'location', 'observer', 'observer__last_connection__identity'] + data_fields + ['updated']
+            datalist_fields = ['observer__observer_id', 'observer__name', 'location', 'observer__contact__connection__identity', 'observer__last_connection__identity'] + data_fields + ['updated']
 
             datalist = qs.data(data_fields).values(*datalist_fields)
 
