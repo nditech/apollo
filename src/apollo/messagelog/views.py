@@ -1,7 +1,9 @@
+from datetime import datetime
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from guardian.decorators import permission_required
 from django.http import HttpResponse
+from django.template.defaultfilters import slugify
 from django.utils.decorators import method_decorator
 from django.views.generic import ListView
 from .models import MESSAGE_DIRECTION, MessageLog
@@ -57,6 +59,7 @@ def export_message_log(request, format='xls'):
         content_type=export_formats[format])
 
     # force a download
-    response['Content-Disposition'] = 'attachment; filename=messagelog.' + format
+    filename = slugify('messagelog %s' % (datetime.now().strftime('%Y %m %d %H%M%S'),))
+    response['Content-Disposition'] = 'attachment; filename=%s.%s' % (filename, format)
 
     return response
