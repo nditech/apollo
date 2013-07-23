@@ -235,7 +235,7 @@ class SubmissionProcessAnalysisView(View, TemplateResponseMixin):
             export_fields = ['observer__observer_id', 'observer__name'] + location_type_fields + data_fields
             export_field_labels = ['PSZ', 'Name'] + location_types + ['Witness', 'Status', 'Description']
 
-            datalist = self.filter_set.qs.data(data_fields).values(*datalist_fields)
+            datalist = self.filter_set.qs.data(data_fields).values(*datalist_fields).distinct()
             filename = slugify('%s %s analysis locations %s' % (self.display_tag, self.form.name, datetime.now().strftime('%Y %m %d %H%M%S')))
             response = HttpResponse(export(datalist, fields=export_fields, labels=export_field_labels), content_type='application/vnd.ms-excel')
             response['Content-Disposition'] = 'attachment; filename=%s.xls' % (filename,)
@@ -432,7 +432,7 @@ class SubmissionListExportView(View):
                 export_fields = ['observer__observer_id', 'observer__name', 'observer__contact__connection__identity', 'observer__last_connection__identity'] + location_type_fields + data_fields + ['updated']
             field_labels = ['PSZ', 'Name', 'Phone', 'Texted Phone'] + location_types + data_fields + ['Timestamp']
 
-            datalist = qs.intdata(data_fields).values(*datalist_fields)
+            datalist = qs.intdata(data_fields).values(*datalist_fields).distinct()
         else:
             data_fields = list(FormField.objects.filter(group__form=form).order_by('tag').values_list('tag', flat=True))
 
@@ -442,7 +442,7 @@ class SubmissionListExportView(View):
             data_fields.extend(['status', 'witness', 'description'])
             datalist_fields = ['observer__observer_id', 'observer__name', 'location', 'observer__contact__connection__identity', 'observer__last_connection__identity'] + data_fields + ['updated']
 
-            datalist = qs.data(data_fields).values(*datalist_fields)
+            datalist = qs.data(data_fields).values(*datalist_fields).distinct()
 
         filename = slugify('%s %s %s' % (form.name, datetime.now().strftime('%Y %m %d %H%M%S'), self.collection))
         response = HttpResponse(export(datalist, fields=export_fields, labels=field_labels), content_type='application/vnd.ms-excel')
@@ -573,7 +573,7 @@ class ContactListView(ListView):
             export_fields = ['observer_id'] + location_type_fields + ['location__name', 'name', 'role__name', 'contact__connection__identity', 'partner__name']
             export_field_labels = ['PSZ'] + location_types + ['Location', 'Name', 'Role', 'Phone', 'Partner']
 
-            datalist = self.filter_set.qs.values(*datalist_fields)
+            datalist = self.filter_set.qs.values(*datalist_fields).distinct()
             filename = slugify('contacts %s' % (datetime.now().strftime('%Y %m %d %H%M%S')))
             response = HttpResponse(export(datalist, fields=export_fields, labels=export_field_labels), content_type='application/vnd.ms-excel')
             response['Content-Disposition'] = 'attachment; filename=%s.xls' % (filename,)
