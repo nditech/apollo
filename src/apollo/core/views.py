@@ -34,10 +34,10 @@ from jimmypage.cache import cache_page
 from rapidsms.models import Connection, Backend
 from guardian.decorators import permission_required
 from guardian.shortcuts import get_objects_for_user
-from rapidsms.router.api import send
 import tablib
 from apollo.core.forms import ActivitySelectionForm, ContactModelForm, LocationModelForm, generate_submission_form, generate_verification_form
 from apollo.core.helpers import *
+from apollo.core.messaging import send_bulk_message
 from apollo.core.models import *
 from apollo.core.filters import *
 from analyses.datagenerator import generate_process_data, generate_incidents_data
@@ -705,24 +705,6 @@ class CommentCreateView(View):
             return HttpResponse(json.dumps(response), mimetype='application/json')
         else:
             return HttpResponseBadRequest("")
-
-
-def send_bulk_message(observers, message):
-    observers = list(observers)  # cast to ValuesListQuery to list
-    connections = []
-    backend, _ = Backend.objects.get_or_create(name=settings.BULKSMS_BACKEND)
-    for observer in Observer.objects.filter(pk__in=observers):
-        if observer.phone:
-            connection, _ = Connection.objects.get_or_create(
-                identity=observer.phone, backend=backend, contact=observer.contact)
-            connections.append(connection)
-    # append numbers to be copied on every message
-    for phone in settings.PHONE_CC:
-        connection, _ = Connection.objects.get_or_create(
-            identity=phone, backend=backend)
-        connections.append(connection)
-    if connections:
-        send(message, connections)
 
 
 def make_item_row(record, fields, locations_graph):

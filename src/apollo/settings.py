@@ -40,6 +40,10 @@ INSTALLED_BACKENDS = {
 
 BULKSMS_BACKEND = 'kannel'
 
+BULKSMS_ROUTES = {
+    'default': 'kannel'
+}
+
 RAPIDSMS_ROUTER = "rapidsms.router.db.DatabaseRouter"
 
 # to help you get started quickly, many django/rapidsms apps are enabled
