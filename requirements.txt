@@ -27,6 +27,7 @@ http://www.timbaobjects.com/eggs/pandas-0.10.1.tar.gz
 parsimonious==0.4
 python-magic==0.4.3
 python-memcached==1.48
+pytz==2013b
 psycopg2==2.4.6
 git+https://github.com/timbaobjects/rapidsms-telerivet.git#egg=rapidsms-telerivet
 rapidsms==0.13.0
