@@ -59,8 +59,8 @@ class LocationType(GraphMixin):
     def root():
         # retrieves the root location type
         try:
-            return LocationType.objects.all()[0].get_ancestors(include_self=True)[-1]
-        except IndexError:
+            return Location.root().type
+        except IndexError, AttributeError:
             pass
 
 
@@ -120,8 +120,8 @@ class Location(GraphMixin):
     def root():
         # retrieves the root location
         try:
-            roottype = LocationType.root()
-            return Location.objects.filter(type=roottype)[0]
+            root = Location.objects.all()[0].nx_ancestors(include_self=True)[-1]
+            return Location.objects.get(pk=root.get('id'))
         except IndexError:
             pass
 
