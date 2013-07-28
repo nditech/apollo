@@ -8,7 +8,7 @@ from django.utils.decorators import method_decorator
 from django.views.generic import ListView
 from .models import MESSAGE_DIRECTION, MessageLog
 from .filters import MessageFilter
-from core.views import export
+from core.views import export, get_activity
 
 directions = dict(MESSAGE_DIRECTION)
 export_formats = {'csv': 'text/csv', 'xls': 'application/vnd.ms-excel',
@@ -37,15 +37,17 @@ class MessageListView(ListView):
         return super(MessageListView, self).dispatch(*args, **kwargs)
 
     def post(self, request, *args, **kwargs):
+        activity = get_activity(request)
         self.filter_set = MessageFilter(self.request.POST,
-            queryset=MessageLog.objects.all())
+            queryset=MessageLog.objects.filter(created__range=(activity.start_date, activity.end_date)))
         request.session['message_filter'] = self.filter_set.form.data
         return super(MessageListView, self).get(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
+        activity = get_activity(request)
         initial_data = request.session.get('message_filter', None)
         self.filter_set = MessageFilter(initial_data,
-            queryset=MessageLog.objects.all())
+            queryset=MessageLog.objects.filter(created__range=(activity.start_date, activity.end_date)))
         return super(MessageListView, self).get(request, *args, **kwargs)
 
 
