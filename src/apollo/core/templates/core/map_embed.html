@@ -1,0 +1,71 @@
+{% load apollo %}
+<html>
+<head>
+	<link href="{{ STATIC_URL }}css/bootstrap.css" rel="stylesheet">
+    <link href="{{ STATIC_URL }}css/bootstrap-responsive.css" rel="stylesheet">
+	<script type="text/javascript" src="{{ STATIC_URL }}js/jquery-1.8.1.js"></script>
+	<script type="text/javascript" src="{{ STATIC_URL }}js/raphael-min.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/kartograph.js"></script>
+	
+	<style type="text/css">
+	</style>
+	<script type="text/javascript">
+		var map = {};
+		var data = [{province: 'Masvingo'}];
+		var data_symbols = [{name: 'Masvingo', value: 12}, {name: 'Midlands', value: 13}];
+
+		function loadMap() {
+			map = $K.map('#map', 600, 600);
+			map.loadMap('/assets/zimbabwe.svg', function () {
+				addLayer('provinces');
+				map.addSymbols({
+					type: $K.PieChart,
+					data: data_symbols,
+					colors: ['#F99869', '#EF2923'],
+					border: '#fff',
+					location: function(d) {return 'provinces.'+d.name},
+					values: function(d) {return [d.value, 100 - d.value]},
+					radius: function(d) { return 30; }
+				});
+				map.addSymbols({
+				    type: $K.Bubble,
+				    data: data_symbols,
+				    location: function(d) { return 'provinces.' +d.name},
+				    radius: function(d) { return 11; },
+				    style: 'fill:white; stroke-width: 0;',
+				    title: function(d) { return d.name; }
+				});
+				map.addSymbols({
+				    type: $K.Label,
+				    data: data_symbols,
+				    location: function(d) { return 'provinces.' +d.name},
+				    text: function(d) { return d.value; }, style: 'font-size:12'
+				});
+			});
+			 
+		}
+
+		function addLayer(name) {
+			map.clear();
+			map.addLayer(name, {
+				styles: {
+					fill: '#DDDDDD',
+					'stroke-width': 1,
+					'stroke':'#fff'
+				},
+				key: 'province',
+				title: function (d) { return d.province; }
+			});
+		}
+
+	</script>
+</head>
+<body onLoad="loadMap()">
+	<div class="row">
+		<div class="span6 offset3">
+			<legend style="text-align:center;">Zimbabwe Incidents Map</legend>
+			<div id="map" style="margin-top:3em;"></div>
+		</div>
+	</div>
+</body>
+</html>

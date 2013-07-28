@@ -13,6 +13,9 @@
 	  	}
 	  	initialize = true;
 	  }
+	  $(function(){
+	  	loadMap();
+	  });
   </script>
 <div class="row">
 	<div class="span5">
@@ -138,41 +141,54 @@
 				</div>
 				<!--Map-->
 				<div class="tab-pane" id="map">
-				  <div id="map_canvas" style="width:100%; height:550px; margin-bottom:40px;"></div>
+				  <div id="map_canvas" class="span9 offset2" style="margin-bottom:20px; margin-top:15px;"></div>
 					<script type="text/javascript">
-						var map; 
+						var map = {};
+						var data = [{province: 'Masvingo'}]
+						var data_symbols = [{name: 'Masvingo', value: 12}, {name: 'Midlands', value: 13}];
 
-						function initialize() {
-							var center = new google.maps.LatLng (-19, 29);
-							var myOptions = {
-								zoom: 6,
-								center: center,
-								mapTypeId: google.maps.MapTypeId.ROADMAP,
-								panControl: true,
-								zoomControl: true,
-								zoomControlOptions: {
-    								style: google.maps.ZoomControlStyle.SMALL
-  								},
-								mapTypeControl: true,
-								mapTypeControlOptions: {
-									style: google.maps.MapTypeControlStyle.DROPDOWN_MENU
+						function loadMap() {
+							map = $K.map('#map_canvas', 600, 600);
+							map.loadMap('/assets/zimbabwe.svg', function () {
+								addLayer('provinces');
+								map.addSymbols({
+									type: $K.PieChart,
+									data: data_symbols,
+									colors: ['#F99869', '#EF2923'],
+									border: '#fff',
+									location: function(d) {return 'provinces.'+d.name},
+									values: function(d) {return [d.value, 100 - d.value]},
+									radius: function(d) { return 30; },
+								});
+								map.addSymbols({
+								    type: $K.Bubble,
+								    data: data_symbols,
+								    location: function(d) { return 'provinces.' +d.name},
+								    radius: function(d) { return 11; },
+								    style: 'fill:white; stroke-width: 0;'
+								});
+								map.addSymbols({
+								    type: $K.Label,
+								   	data: data_symbols,
+								    location: function(d) { return 'provinces.' +d.name},
+								    style: 'font-size:12;',
+								    text: function(d) { return d.value; }
+								});
+							});
+							 
+						}
+
+						function addLayer(name) {
+							map.clear();
+							map.addLayer(name, {
+								styles: {
+									fill: '#EEEEEE',
+									'stroke-width': 1,
+									'stroke':'#fff'
 								},
-								streetViewControl: false,
-								overviewMapControl: true
-							}
-							map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
-
-							provinces = new google.maps.KmlLayer('https://dl.dropbox.com/u/7849018/provinces.kml', {preserveViewport: true});
-							provinces.setMap(map);
-
-							var markers = [];
-
-							{% for marker in incidents_markers %}
-							markers.push(new google.maps.Marker({
-								position: new google.maps.LatLng({{ marker.0 }}, {{ marker.1 }})
-							}));{% endfor %}
-
-							cluster = new MarkerClusterer(map, markers);
+								key: 'province',
+								title: function (d) { return d.province; }
+							});
 						}
 					</script>
 				</div>
