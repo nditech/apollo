@@ -1,5 +1,22 @@
 {% extends "core/layout.html" %}{% load apollo %}
 {% block content %}
+<div class="row">
+  <div class="span12">
+      <div class="well" style="padding-bottom:0">
+          <form action="" method="post" accept-charset="utf-8" id="filter">
+              {% csrf_token %}
+              <div class="controls controls-row">
+                {% if perms.core.view_activities %}{{ filter_form.activity }}{% endif %}
+                {{ filter_form.sample }}
+                {{ filter_form.form }}
+                {{ filter_form.location }}
+                <button class="btn btn-warning" style="margin-left:1em" type="submit"><i class="icon-search icon-white"></i> Filter</button>
+                <a class="btn form-reset" style="margin-left:0.5em">Reset</a>
+              </div>
+          </form>
+      </div>
+  </div>
+</div>
     {% for location in summary %}
     {% if forloop.counter0|divisibleby:"5" %}<div class="row"><div class="span1"></div>{% endif %}
     	<div class="span2">
