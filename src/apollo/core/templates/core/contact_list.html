@@ -56,7 +56,7 @@
         <tr>
           <td>{{ contact.observer_id|default_if_none:"" }}</td>{% for location_type in location_types %}
           <td>{% get_location_for_type contact location_type %}</td>{% endfor %}
-          <td>{{ contact.name }}</td>
+          <td>{{ contact.name|default_if_none:"" }}</td>
           <td>{{ contact.role }}</td>
           <td>{{ contact.phone|default_if_none:"" }}</td>
           <td>{{ contact.location }}</td>
