@@ -150,7 +150,7 @@ class ContactModelForm(forms.ModelForm):
                 name = 'conn_%d' % index
                 self.fields[name] = forms.CharField(label=label, initial=number)
                 kwargs['initial'][name] = number
-            else:
+            if not phone_set:
                 self.fields['conn_1'] = forms.CharField(label='Phone #1', required=False)
 
         # now for the hstore field
