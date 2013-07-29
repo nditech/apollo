@@ -871,7 +871,10 @@ def compute_verification(sender, **kwargs):
                 lvalue = evaluator.eval(flag['lvalue'])
                 rvalue = evaluator.eval(flag['rvalue'])
                 if flag['comparator'] == 'pctdiff':
-                    diff = abs(lvalue - rvalue) / float(max([lvalue, rvalue]))
+                    try:
+                        diff = abs(lvalue - rvalue) / float(max([lvalue, rvalue]))
+                    except ZeroDivisionError:
+                        diff = 0
                 elif flag['comparator'] == 'pct':
                     try:
                         diff = float(lvalue) / float(rvalue)
