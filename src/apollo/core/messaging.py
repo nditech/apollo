@@ -17,7 +17,7 @@ def get_bulksms_backend(phone):
 
 def send_bulk_message(observers, message):
     connections = []
-    for observer in Observer.objects.filter(pk__in=observers).values('contact__connection__identity', 'contact').distinct():
+    for observer in Observer.objects.filter(pk__in=list(observers)).values('contact__connection__identity', 'contact').distinct():
         if observer.get('contact__connection__identity', None):
             phone = observer.get('contact__connection__identity')
             contact = Contact.objects.get(pk=observer.get('contact'))
