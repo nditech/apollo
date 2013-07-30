@@ -105,8 +105,9 @@ class ChecklistFormFilter(django_filters.ChoiceFilter):
     def __init__(self, *args, **kwargs):
         request = kwargs.pop('request', None)
         activity = request.session.get('activity', Activity.default()) if request else Activity.default()
-        kwargs['choices'] = list(activity.forms.filter(type="CHECKLIST").values_list('pk', 'name'))
-        if kwargs['choices']:
+        if request:
+            kwargs['choices'] = map(lambda form: [form.pk, form.name], filter(lambda form: request.user.has_perm('core.view_form', form), activity.forms.filter(type="CHECKLIST")))
+        if kwargs.get('choices', None):
             kwargs['initial'] = kwargs['choices'][0][0]
         super(ChecklistFormFilter, self).__init__(*args, **kwargs)
 
