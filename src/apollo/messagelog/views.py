@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from guardian.decorators import permission_required
@@ -39,7 +39,7 @@ class MessageListView(ListView):
     def post(self, request, *args, **kwargs):
         activity = get_activity(request)
         self.filter_set = MessageFilter(self.request.POST,
-            queryset=MessageLog.objects.filter(created__range=(activity.start_date, activity.end_date)))
+            queryset=MessageLog.objects.filter(created__range=(activity.start_date, activity.end_date + timedelta(days=1))))
         request.session['message_filter'] = self.filter_set.form.data
         return super(MessageListView, self).get(request, *args, **kwargs)
 
