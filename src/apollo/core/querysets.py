@@ -1,4 +1,4 @@
-from djorm_expressions.base import SqlExpression, OR, AND
+from djorm_expressions.base import SqlExpression, RawExpression, OR, AND
 from djorm_hstore.models import HStoreQueryset
 from djorm_hstore.functions import HstorePeek
 import pandas as pd
@@ -32,15 +32,22 @@ class SubmissionQuerySet(SearchableLocationQuerySet):
         fields = list(group.fields.values_list('tag', flat=True))
         # checks that either data is partial or master__data is partial
         # but none of either data or master__data is complete
-        expr = AND(
-            OR(
-                AND(SqlExpression("data", "?|", fields),
-                    ~SqlExpression("data", "?&", fields)),
-                AND(SqlExpression("master__data", "?|", fields),
+        expr = OR(
+            AND(
+                OR(
+                    AND(SqlExpression("data", "?|", fields),
+                        ~SqlExpression("data", "?&", fields)),
+                    AND(SqlExpression("master__data", "?|", fields),
+                        ~SqlExpression("master__data", "?&", fields))
+                ),
+                AND(~SqlExpression("data", "?&", fields),
                     ~SqlExpression("master__data", "?&", fields))
             ),
-            AND(~SqlExpression("data", "?&", fields),
-                ~SqlExpression("master__data", "?&", fields))
+            AND(
+                AND(SqlExpression("data", "?|", fields),
+                        ~SqlExpression("data", "?&", fields)),
+                RawExpression('"core_submission"."master_id" IS NULL')
+            )
         )
         return self.where(expr) if fields else self
 

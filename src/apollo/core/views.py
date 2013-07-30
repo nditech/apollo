@@ -426,8 +426,8 @@ class SubmissionListExportView(View):
             datalist_fields = ['observer__observer_id', 'observer__name', 'observer__last_connection__identity', 'location', 'observer__contact__connection__identity'] + data_fields + ['updated']
 
             if self.collection == 'master':
-                datalist_fields += ['location__observers__observer_id', 'location__observers__name', 'location__observers__contact__connection__identity', 'location__observers__last_connection__identity']
-                export_fields = ['location__observers__observer_id', 'location__observers__name', 'location__observers__contact__connection__identity', 'location__observers__last_connection__identity'] + location_type_fields + data_fields + ['updated']
+                datalist_fields += ['submissions__observer__observer_id', 'submissions__observer__name', 'submissions__observer__contact__connection__identity', 'submissions__observer__last_connection__identity']
+                export_fields = ['submissions__observer__observer_id', 'submissions__observer__name', 'submissions__observer__contact__connection__identity', 'submissions__observer__last_connection__identity'] + location_type_fields + data_fields + ['updated']
             else:
                 export_fields = ['observer__observer_id', 'observer__name', 'observer__contact__connection__identity', 'observer__last_connection__identity'] + location_type_fields + data_fields + ['updated']
             field_labels = ['PSZ', 'Name', 'Phone', 'Texted Phone'] + location_types + data_fields + ['Timestamp']
