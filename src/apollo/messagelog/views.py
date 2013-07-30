@@ -47,7 +47,7 @@ class MessageListView(ListView):
         activity = get_activity(request)
         initial_data = request.session.get('message_filter', None)
         self.filter_set = MessageFilter(initial_data,
-            queryset=MessageLog.objects.filter(created__range=(activity.start_date, activity.end_date)))
+            queryset=MessageLog.objects.filter(created__range=(activity.start_date, activity.end_date + timedelta(days=1))))
         return super(MessageListView, self).get(request, *args, **kwargs)
 
 
