@@ -134,6 +134,8 @@ class SampleFilter(django_filters.ChoiceFilter):
 
 
 class BaseContactsFilter(django_filters.FilterSet):
+    sample = SampleFilter(widget=forms.Select(attrs={'class': 'span2'}))
+
     class Meta:
         model = Observer
         fields = ['observer_id', 'name', 'role', 'location',
@@ -153,17 +155,17 @@ class BaseContactsFilter(django_filters.FilterSet):
 
 def generate_contacts_filter():
     metafields = {'model': Observer, 'fields':
-        ['observer_id', 'name', 'role', 'location', 'partner', 'contact__connection__identity']}
+        ['observer_id', 'name', 'role', 'location', 'partner', 'contact__connection__identity', 'sample']}
     metaclass = type('Meta', (), metafields)
     fields = {'Meta': metaclass}
 
     fields['location'] = LocationFilter(widget=forms.Select(attrs={
-        'class': 'span4 input-xlarge select2',
+        'class': 'span3 input-xlarge select2',
         'data-placeholder': 'Location'}))
     fields['name'] = django_filters.CharFilter(widget=forms.TextInput(attrs={
         'class': 'span3', 'placeholder': 'Name'}), lookup_type='icontains')
     fields['contact__connection__identity'] = django_filters.CharFilter(widget=forms.TextInput(attrs={
-        'class': 'span2', 'placeholder': 'Phone'}), lookup_type='startswith')
+        'class': 'span3', 'placeholder': 'Phone'}), lookup_type='startswith')
     return type('ContactsFilter', (BaseContactsFilter,), fields)
 
 
