@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from collections import OrderedDict
 from django import template
+from django.utils.formats import number_format
 import pandas as pd
 import math
 from analyses.voting import proportion, variance
@@ -62,6 +63,26 @@ def default_if_nan(value, default):
 
 
 @register.simple_tag
+def votes_total(dataframe, votes, location_type, location, group='ALL'):
+    try:
+        if group == 'RURAL':
+            df = dataframe.ix[dataframe.groupby([location_type, 'urban']).groups[(location, 0)]]
+        elif group == 'URBAN':
+            df = dataframe.ix[dataframe.groupby([location_type, 'urban']).groups[(location, 1)]]
+        else:
+            df = dataframe.ix[dataframe.groupby(location_type).groups[location]]
+
+        df = df[eval(' | '.join(['(df.{} >= 0)'.format(v) for v in votes]))]
+
+        c = df.sum(skipna=True).sum(axis=1, skipna=True)
+        if pd.np.isnan(c):
+            c = 0
+        return number_format(c, force_grouping=True)
+    except:
+        return 0
+
+
+@register.simple_tag
 def vote_count(dataframe, votes, vote, location_type, location, group='ALL'):
     try:
         if group == 'RURAL':
@@ -76,7 +97,7 @@ def vote_count(dataframe, votes, vote, location_type, location, group='ALL'):
         c = df[vote].sum()
         if pd.np.isnan(c):
             c = 0
-        return '%d' % c
+        return number_format(c, force_grouping=True)
     except:
         return 0
 
@@ -103,7 +124,7 @@ def rejected_count(form, dataframe, location_type, location, group='ALL'):
         
         if pd.np.isnan(c):
             c = 0
-        return '%d' % c
+        return number_format(c, force_grouping=True)
     except:
         return 0
 
@@ -212,7 +233,8 @@ def reported(dataframe, votes, location_type, location, group='ALL'):
         else:
             df = dataframe.ix[dataframe.groupby(location_type).groups[location]]
             
-        return df[eval(' | '.join(['(df.{} >= 0)'.format(v) for v in votes]))].shape[0]
+        rp = df[eval(' | '.join(['(df.{} >= 0)'.format(v) for v in votes]))].shape[0]
+        return number_format(rp, force_grouping=True)
     except:
         return 0
 
@@ -227,7 +249,8 @@ def missing(dataframe, votes, location_type, location, group='ALL'):
         else:
             df = dataframe.ix[dataframe.groupby(location_type).groups[location]]
             
-        return df[eval(' & '.join(['(df.{}.isnull())'.format(v) for v in votes]))].shape[0]
+        m = df[eval(' & '.join(['(df.{}.isnull())'.format(v) for v in votes]))].shape[0]
+        return number_format(m, force_grouping=True)
     except:
         return 0
 
