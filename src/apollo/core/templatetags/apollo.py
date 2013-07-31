@@ -21,7 +21,7 @@ def flag_status(value, flag_code):
 def getvalue(value, attr):
     try:
         return getattr(value, attr)
-    except AttributeError:
+    except (AttributeError, TypeError):
         return ''
 
 
@@ -29,7 +29,7 @@ def getvalue(value, attr):
 def keyvalue(value, key):
     try:
         return value[key]
-    except KeyError:
+    except (KeyError, TypeError):
         return ''
 
 

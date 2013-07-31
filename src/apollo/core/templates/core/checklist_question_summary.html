@@ -21,7 +21,7 @@
 		{% else %}
 		{% for option in stats.options %}
         {% with stats.options|keyvalue:option as option %}
-		<td><strong>{{ stats.value_counts|keyvalue:option|percent_of:stats.value_counts_sum|floatformat:0 }}% ({{ stats.value_counts|keyvalue:option|default:"0" }})</strong></td>
+		<td><strong>{{ stats.value_counts|keyvalue:option|default:0|percent_of:stats.value_counts_sum|floatformat:0 }}% ({{ stats.value_counts|keyvalue:option|default:"0" }})</strong></td>
         {% endwith %}
 		{% endfor %}
 		{% endif %}
@@ -38,7 +38,7 @@
         {% with stats.urban|keyvalue:group|keyvalue:"value_counts" as value_counts %}
         {% for option in stats.options %}
         {% with stats.options|keyvalue:option as option %}
-        <td>{{ value_counts|keyvalue:option|percent_of:value_counts_sum|floatformat:0 }}% ({{ value_counts|keyvalue:option|default:"0" }})</td>
+        <td>{{ value_counts|keyvalue:option|default:0|percent_of:value_counts_sum|floatformat:0 }}% ({{ value_counts|keyvalue:option|default:"0" }})</td>
         {% endwith %}
         {% endfor %}
         {% endwith %}{% endwith %}
