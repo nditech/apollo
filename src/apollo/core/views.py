@@ -214,11 +214,11 @@ class SubmissionProcessAnalysisView(View, TemplateResponseMixin):
         if self.form.type == 'INCIDENT':
             if context['display_tag']:
                 context['form_field'] = FormField.objects.get(group__form=self.form, tag=self.display_tag)
+                context['location_types'] = LocationType.objects.filter(on_dashboard=True)
                 context['incidents'] = self.filter_set.qs
                 context['incidents_markers'] = get_incident_markers(self.form, self.filter_set.qs, 'Constituency', tag=True)
             else:
                 context['incidents_summary'] = generate_incidents_data(self.form, self.filter_set.qs, self.location, grouped=self.grouped)
-                context['incidents_markers'] = get_incident_markers(self.form, self.filter_set.qs, 'Constituency')
         else:
             context['process_summary'] = generate_process_data(self.form, self.filter_set.qs, self.location, grouped=self.grouped, tags=self.tags)
         return context

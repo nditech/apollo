@@ -1,8 +1,6 @@
 {% extends "core/layout.html" %}
 {% load apollo %}{% load static %}
 {% block javascripts %}
-<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCk3QNCVPzkE75lgmHt_iOM4v0x2ZU-swI&sensor=false"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/markerclusterer.js"></script>
 {% endblock %}
 {% block title %}
 {{ page_title }}
@@ -13,15 +11,6 @@
 {% endif %}
 {% endblock %}
 {% block content %}
-  <script type="text/javascript">
-      var initialized = false;
-      function init_map() {
-        if (!initialized) {
-            initialize();
-        }
-        initialize = true;
-      }
-  </script>
 <div class="row">
 	<div class="span5">
 		{% analysis_breadcrumb_navigation form location %}
@@ -53,7 +42,10 @@
 	<tr>
         <th>PSZ</th>
         <th>Name</th>
-		<th>Location</th>
+        {% for lt in location_types %}
+        <th>{{ lt.name }}</th>
+        {% endfor %}
+        <th>Location</th>
         <th style="text-align: center">Witnessed</th>
         <th style="text-align: center" width="50">Status</th>
 		<th>Description</th>
@@ -62,6 +54,9 @@
 	<tr>
         <td>{{ incident.observer.observer_id|default_if_none:"" }}</td>
         <td>{{ incident.observer.name|default_if_none:"" }}</td>
+        {% for lt in location_types %}
+        <td>{% get_location_for_type incident lt %}</td>
+        {% endfor %}
         <td>{{ incident.location }} · <em class="muted">{{ incident.location.type }}</em></td>
         <td style="text-align: center">
         {% with incident.data.witness as witness %}
