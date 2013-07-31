@@ -37,7 +37,7 @@
 			    <div class="tab-pane active" id="table">
 <table class="table table-bordered table-striped">
     <tr>
-        <td colspan="6"><strong>{{ form_field.tag }}</strong> · {{ form_field.description }}</td>
+        <td colspan="{{ 6|add:location_types.count }}"><strong>{{ form_field.tag }}</strong> · {{ form_field.description }}</td>
     </tr>
 	<tr>
         <th>PSZ</th>
