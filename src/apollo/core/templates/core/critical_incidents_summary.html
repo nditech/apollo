@@ -14,7 +14,10 @@
 	  	initialize = true;
 	  }
 	  $(function(){
-	  	loadMap();
+	  	loadProv();
+	  	loadCon();
+	  	loadBula();
+	  	loadHara();
 	  });
   </script>
 <div class="row">
@@ -39,7 +42,7 @@
 				<li class="active"><a href="#table" data-toggle="tab">Table</a></li>
 				<li><a href="#charts" data-toggle="tab">Charts</a></li>
 				<li><a href="#province_map" data-toggle="tab" onclick="init_map();">Province</a></li>
-				<li><a href="#con_map" data-toggle="tab" onclick="">Contituency</a></li>
+				<li><a href="#con_map" data-toggle="tab" onclick="">Constituency</a></li>
 				<li><a href="#bula_map" data-toggle="tab" onclick="">Bulawayo</a></li>
 				<li><a href="#hara_map" data-toggle="tab" onclick="">Harare</a></li>
 			</ul>
@@ -148,7 +151,7 @@
 					<script type="text/javascript">
 						var map = {};
 
-						function loadMap() {
+						function loadProv() {
 							$.fn.qtip.defaults.style.classes = 'qtip-light';
 				        	$.fn.qtip.defaults.style.def = false;
 				        	var legends = {
@@ -229,8 +232,6 @@
 								        	}
 								        }
 									});
-
-									///
 								});
 							});
 							 
@@ -239,10 +240,10 @@
 				</div>
 				<div class="tab-pane" id="con_map">
 				  <div id="con_map_canvas" class="span9 offset2" style="margin-bottom:20px; margin-top:15px;"></div>
-				 <!-- 	<script type="text/javascript">
+				 	<script type="text/javascript">
 						var map = {};
 
-						function loadMap() {
+						function loadCon() {
 							$.fn.qtip.defaults.style.classes = 'qtip-light';
 				        	$.fn.qtip.defaults.style.def = false;
 				        	var legends = {
@@ -259,10 +260,10 @@
 				        	var options = ['A', 'B', 'C', 'D', 'E', 'F', 'X', 'Y', 'Z'];
 				        	var colors = ["#1f77b4", "#aec7e8", "#ff7f0e", "#ffbb78", "#2ca02c", "#98df8a", "#d62728", "#ED86F1", "#9467bd", "#c5b0d5"];
 
-							map = $K.map('#con_map_canvas', 600, 600);
-							map.loadMap('/assets/zimbabwe.svg', function () {
+							map1 = $K.map('#con_map_canvas', 600, 600);
+							map1.loadMap('/assets/zimbabwe.svg', function () {
 
-								map.addLayer('constituencies', {
+								map1.addLayer('constituencies', {
 									styles: {
 										fill: '#C6DBEF',
 										'stroke-width': 1,
@@ -279,7 +280,7 @@
 								$.get('incidents-constituency.csv', function(data) {
 				                	data = $.parseCSV(data);
 
-									map.addSymbols({
+									map1.addSymbols({
 										type: $K.PieChart,
 										data: data.rows.slice(0, -1),
 										colors: function (d) { return _.map(_.filter(options, function (option) { return d[option] > 0; }), function (option) { return colors[options.indexOf(option)]; }) },
@@ -291,7 +292,7 @@
 										radius: function(d) { return 22; }
 										
 									});
-									map.addSymbols({
+									map1.addSymbols({
 									    type: $K.Bubble,
 									    data: data.rows.slice(0, -1),
 									    location: function(d) { return 'constituencies.' + d.LOC},
@@ -299,7 +300,7 @@
 									    style: 'fill:white; stroke-width: 0;',
 									});
 
-									map.addSymbols({
+									map1.addSymbols({
 									    type: $K.Label,
 									    data: data.rows.slice(0, -1),
 									    location: function(d) { return 'constituencies.' + d.LOC},
@@ -323,20 +324,19 @@
 								        	}
 								        }
 									});
-
-									///
+								
 								});
 							});
 							 
 						}
-					</script>-->
+					</script>
 				 </div>
 				 <div class="tab-pane" id="bula_map">
 				  <div id="bula_map_canvas" class="span9 offset2" style="margin-bottom:20px; margin-top:15px;"></div>
-				 <!-- 	<script type="text/javascript">
+				  	<script type="text/javascript">
 						var map = {};
 
-						function loadMap() {
+						function loadBula() {
 							$.fn.qtip.defaults.style.classes = 'qtip-light';
 				        	$.fn.qtip.defaults.style.def = false;
 				        	var legends = {
@@ -353,10 +353,10 @@
 				        	var options = ['A', 'B', 'C', 'D', 'E', 'F', 'X', 'Y', 'Z'];
 				        	var colors = ["#1f77b4", "#aec7e8", "#ff7f0e", "#ffbb78", "#2ca02c", "#98df8a", "#d62728", "#ED86F1", "#9467bd", "#c5b0d5"];
 
-							map = $K.map('#bula_map_canvas', 600, 600);
-							map.loadMap('/assets/bulawayo.svg', function () {
+							map2 = $K.map('#bula_map_canvas', 600, 600);
+							map2.loadMap('/assets/bulawayo.svg', function () {
 
-								map.addLayer('bulawayo', {
+								map2.addLayer('bulawayo', {
 									styles: {
 										fill: '#C6DBEF',
 										'stroke-width': 1,
@@ -373,7 +373,7 @@
 								$.get('incidents-bulawayo.csv', function(data) {
 				                	data = $.parseCSV(data);
 
-									map.addSymbols({
+									map2.addSymbols({
 										type: $K.PieChart,
 										data: data.rows.slice(0, -1),
 										colors: function (d) { return _.map(_.filter(options, function (option) { return d[option] > 0; }), function (option) { return colors[options.indexOf(option)]; }) },
@@ -385,7 +385,7 @@
 										radius: function(d) { return 22; }
 										
 									});
-									map.addSymbols({
+									map2.addSymbols({
 									    type: $K.Bubble,
 									    data: data.rows.slice(0, -1),
 									    location: function(d) { return 'bulawayo.' + d.LOC},
@@ -393,7 +393,7 @@
 									    style: 'fill:white; stroke-width: 0;',
 									});
 
-									map.addSymbols({
+									map2.addSymbols({
 									    type: $K.Label,
 									    data: data.rows.slice(0, -1),
 									    location: function(d) { return 'bulawayo.' + d.LOC},
@@ -417,20 +417,18 @@
 								        	}
 								        }
 									});
-
-									///
 								});
 							});
 							 
 						}
-					</script>-->
+					</script>
 				</div>
 				<div class="tab-pane" id="hara_map">
 				  <div id="hara_map_canvas" class="span9 offset2" style="margin-bottom:20px; margin-top:15px;"></div>
-				 <!--	<script type="text/javascript">
+				 	<script type="text/javascript">
 						var map = {};
 
-						function loadMap() {
+						function loadHara() {
 							$.fn.qtip.defaults.style.classes = 'qtip-light';
 				        	$.fn.qtip.defaults.style.def = false;
 				        	var legends = {
@@ -447,10 +445,10 @@
 				        	var options = ['A', 'B', 'C', 'D', 'E', 'F', 'X', 'Y', 'Z'];
 				        	var colors = ["#1f77b4", "#aec7e8", "#ff7f0e", "#ffbb78", "#2ca02c", "#98df8a", "#d62728", "#ED86F1", "#9467bd", "#c5b0d5"];
 
-							map = $K.map('#hara_map_canvas', 600, 600);
-							map.loadMap('/assets/harare.svg', function () {
+							map3 = $K.map('#hara_map_canvas', 600, 600);
+							map3.loadMap('/assets/harare.svg', function () {
 
-								map.addLayer('harare', {
+								map3.addLayer('harare', {
 									styles: {
 										fill: '#C6DBEF',
 										'stroke-width': 1,
@@ -467,7 +465,7 @@
 								$.get('incidents-harare.csv', function(data) {
 				                	data = $.parseCSV(data);
 
-									map.addSymbols({
+									map3.addSymbols({
 										type: $K.PieChart,
 										data: data.rows.slice(0, -1),
 										colors: function (d) { return _.map(_.filter(options, function (option) { return d[option] > 0; }), function (option) { return colors[options.indexOf(option)]; }) },
@@ -479,7 +477,7 @@
 										radius: function(d) { return 22; }
 										
 									});
-									map.addSymbols({
+									map3.addSymbols({
 									    type: $K.Bubble,
 									    data: data.rows.slice(0, -1),
 									    location: function(d) { return 'harare.' + d.LOC},
@@ -487,7 +485,7 @@
 									    style: 'fill:white; stroke-width: 0;',
 									});
 
-									map.addSymbols({
+									map3.addSymbols({
 									    type: $K.Label,
 									    data: data.rows.slice(0, -1),
 									    location: function(d) { return 'harare.' + d.LOC},
@@ -511,13 +509,11 @@
 								        	}
 								        }
 									});
-
-									///
 								});
 							});
 							 
 						}
-					</script>-->
+					</script>
 				 </div>
 				</div>
 			</div>
