@@ -63,12 +63,26 @@ def get_activity(request):
 class TemplatePreview(TemplateView):
     page_title = ''
 
+    @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
         self.template_name = kwargs['template_name']
         return super(TemplateView, self).dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super(TemplatePreview, self).get_context_data(**kwargs)
+        context['page_title'] = self.page_title
+        return context
+
+
+class MapEmbedView(TemplateView):
+    page_title = ''
+
+    def dispatch(self, request, *args, **kwargs):
+        self.template_name = 'core/map_embed.html'
+        return super(TemplateView, self).dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(MapEmbedView, self).get_context_data(**kwargs)
         context['page_title'] = self.page_title
         return context
 

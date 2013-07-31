@@ -33,6 +33,9 @@ urlpatterns = patterns('',
 
     url(r'^incidents/form/(?P<form>\d+)/locationtype/(?P<locationtype>\d+)/incidents.csv$', IncidentsCSVView.as_view(), name='incidents_csv'),
     url(r'^incidents/form/(?P<form>\d+)/locationtype/(?P<locationtype>\d+)/location/(?P<location>\d+)/incidents.csv$', IncidentsCSVView.as_view(), name='incidents_csv_with_location'),
+    
+
+    url(r'^maps/zimbabwe/provinces\.html$', MapEmbedView.as_view(), name='map_embed'),
 
     url(r'^verifications/form/(?P<form>\d+)/?$', VerificationListView.as_view(), name='verifications_list'),
     url(r'^verification/(?P<pk>\d+)/?$', VerificationEditView.as_view(), name='verification_edit'),
