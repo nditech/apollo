@@ -1,25 +1,22 @@
 {% extends "core/layout.html" %}
 {% load apollo %}
 {% block javascripts %}
-<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCk3QNCVPzkE75lgmHt_iOM4v0x2ZU-swI&amp;sensor=false"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/markerclusterer.js"></script>
-{% endblock %}
-{% block content %}
-  <script type="text/javascript">
-	  var initialized = false;
-	  function init_map() {
-	  	if (!initialized) {
-	  		initialize();
-	  	}
-	  	initialize = true;
-	  }
-	  $(function(){
+<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/jquery.csv.js"></script>
+<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
+<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/qtip2/2.1.1/jquery.qtip.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/kartograph.js"></script>
+<script type="text/javascript">
+	$(function(){
 	  	loadProv();
 	  	loadCon();
 	  	loadBula();
 	  	loadHara();
-	  });
-  </script>
+	  	update_maps();
+	});
+</script>
+{% endblock %}
+{% block content %}
 <div class="row">
 	<div class="span5">
 		{% analysis_breadcrumb_navigation form location %}
@@ -41,10 +38,10 @@
 			<ul class="nav nav-tabs">
 				<li class="active"><a href="#table" data-toggle="tab">Table</a></li>
 				<li><a href="#charts" data-toggle="tab">Charts</a></li>
-				<li><a href="#province_map" data-toggle="tab" onclick="init_map();">Province</a></li>
-				<li><a href="#con_map" data-toggle="tab" onclick="">Constituency</a></li>
-				<li><a href="#bula_map" data-toggle="tab" onclick="">Bulawayo</a></li>
-				<li><a href="#hara_map" data-toggle="tab" onclick="">Harare</a></li>
+				<li><a href="#province_map" data-toggle="tab" data-map="map">Province</a></li>
+				<li><a href="#con_map" data-toggle="tab" data-map="map1">Constituency</a></li>
+				<li><a href="#bula_map" data-toggle="tab" data-map="map2">Bulawayo</a></li>
+				<li><a href="#hara_map" data-toggle="tab" data-map="map3">Harare</a></li>
 			</ul>
 			<div class="tab-content">
 			    <div class="tab-pane active" id="table">
@@ -146,31 +143,63 @@
 					</script>
 				</div>
 				<!--Map-->
-				<div class="tab-pane" id="province_map">
+				<div class="tab-pane" id="province_map" data-map="map">
 				  <div id="map_canvas" class="span9 offset2" style="margin-bottom:20px; margin-top:15px;"></div>
 					<script type="text/javascript">
-						var map = {};
+						var map = map1 = map2 = map3 = {};
+						var legends = {
+			        		A: 'Observer NOT Permitted to Observe (at any time)',
+			        		B: 'Serious Problems during the Setting Up of Polling Stations',
+			        		C: 'Serious Problems during Voting',
+			        		D: 'Serious Problems during Counting OF PRESIDENTIAL BALLOTS',
+			        		E: 'Incidents Away from Polling Stations',
+			        		F: 'Serious Problem during Collation of Results',
+			        		X: 'Incidents of Violence or Intimidation (at any time)',
+			        		Y: 'Other Incidents',
+			        		Z: "Observer's Security Threated (I am in DANGER!!!!)"
+			        	};
+			        	var options = ['A', 'B', 'C', 'D', 'E', 'F', 'X', 'Y', 'Z'];
+				        var colors = ["#1f77b4", "#aec7e8", "#ff7f0e", "#ffbb78", "#2ca02c", "#98df8a", "#d62728", "#ED86F1", "#9467bd", "#c5b0d5"];
+				        var sector_title = function (d, option) {
+							return '<span>' + legends[option] + '</span><span style="font-size:2em;margin-top:10em">' + '<strong>' + (parseFloat(d[option])/parseFloat(d.TOT) * 100).toFixed(1) + '%</strong> (' + d[option] + ')</span>';
+						}
 
-						function loadProv() {
+						function update_maps() {
+							$('body').on('shown', 'a[data-toggle="tab"]', function (e) {
+								var map = $(this).data('map');
+								if (map !== undefined) {
+									window[map].resize(600, 600);
+									loadQtip();
+								}
+							});
+						}
+
+						function loadQtip() {
 							$.fn.qtip.defaults.style.classes = 'qtip-light';
 				        	$.fn.qtip.defaults.style.def = false;
-				        	var legends = {
-				        		A: 'Observer NOT Permitted to Observe (at any time)',
-				        		B: 'Serious Problems during the Setting Up of Polling Stations',
-				        		C: 'Serious Problems during Voting',
-				        		D: 'Serious Problems during Counting OF PRESIDENTIAL BALLOTS',
-				        		E: 'Incidents Away from Polling Stations',
-				        		F: 'Serious Problem during Collation of Results',
-				        		X: 'Incidents of Violence or Intimidation (at any time)',
-				        		Y: 'Other Incidents',
-				        		Z: "Observer's Security Threated (I am in DANGER!!!!)"
-				        	};
-				        	var options = ['A', 'B', 'C', 'D', 'E', 'F', 'X', 'Y', 'Z'];
-				        	var colors = ["#1f77b4", "#aec7e8", "#ff7f0e", "#ffbb78", "#2ca02c", "#98df8a", "#d62728", "#ED86F1", "#9467bd", "#c5b0d5"];
 
+							$('svg a[title!=""]').qtip({
+								position: {
+							        my: 'top left',  // Position my top left...
+							        at: 'bottom right', // at the bottom right of...
+							        target: 'mouse',
+							        adjust: {
+							        	x: 5, y: 15
+							        }
+							    },
+							    content: {
+						        	title: { 
+						        		text: function (api) { return /^<span>([^\<]+)<\/span>/.test($(this).attr('title')) ? /^<span>([^\<]+)<\/span>/.exec($(this).attr('title'))[1] : ""; }
+						        	},
+						        	text: function (api) { return /^<span>[^\<]+<\/span>.+/.test($(this).attr('title')) ? /^<span>[^\<]+<\/span>(.+)/.exec($(this).attr('title'))[1] : $(this).attr('title');
+						        	}
+						        }
+							});
+						}
+
+						function loadProv() {
 							map = $K.map('#map_canvas', 600, 600);
-							map.loadMap('/assets/zimbabwe.svg', function () {
-
+							map.loadMap('{{ STATIC_URL }}zimbabwe.svg', function () {
 								map.addLayer('provinces', {
 									styles: {
 										fill: '#C6DBEF',
@@ -181,11 +210,7 @@
 									title: function (d) { return d.province; },
 								});
 
-								sector_title = function (d, option) {
-									return '<span>' + legends[option] + '</span><span style="font-size:2em;margin-top:10em">' + '<strong>' + (parseFloat(d[option])/parseFloat(d.TOT) * 100).toFixed(1) + '%</strong> (' + d[option] + ')</span>';
-								}
-
-								$.get('incidents-province.csv', function(data) {
+								$.get('{% url incidents_csv form=form.pk locationtype=2 %}', function(data) {
 				                	data = $.parseCSV(data);
 
 									map.addSymbols({
@@ -198,39 +223,22 @@
 										location: function(d) { return 'provinces.' + d.LOC },
 										values: function(d) { return _.map(_.filter(options, function (option) { return d[option] > 0; }), function (option) { return d[option]; })},
 										radius: function(d) { return 22; }
-										
 									});
+
 									map.addSymbols({
 									    type: $K.Bubble,
 									    data: data.rows.slice(0, -1),
 									    location: function(d) { return 'provinces.' + d.LOC},
 									    radius: function(d) { return 12; },
 									    style: 'fill:white; stroke-width: 0;',
+									    title: function (d) { return d.TOT; }
 									});
 
 									map.addSymbols({
 									    type: $K.Label,
 									    data: data.rows.slice(0, -1),
-									    location: function(d) { return 'provinces.' + d.LOC},
+									    location: function(d) { return 'provinces.' + d.LOC; },
 									    text: function(d) { return d.TOT; }, style: 'font:9px "Courier New" important'
-									});
-
-									$('a[title!=""]').qtip({
-										position: {
-									        my: 'top left',  // Position my top left...
-									        at: 'bottom right', // at the bottom right of...
-									        target: 'mouse',
-									        adjust: {
-									        	x: 5, y: 15
-									        }
-									    },
-									    content: {
-								        	title: { 
-								        		text: function (api) { return /^<span>([^\<]+)<\/span>/.test($(this).attr('title')) ? /^<span>([^\<]+)<\/span>/.exec($(this).attr('title'))[1] : ""; }
-								        	},
-								        	text: function (api) { return /^<span>[^\<]+<\/span>.+/.test($(this).attr('title')) ? /^<span>[^\<]+<\/span>(.+)/.exec($(this).attr('title'))[1] : $(this).attr('title');
-								        	}
-								        }
 									});
 								});
 							});
@@ -241,28 +249,9 @@
 				<div class="tab-pane" id="con_map">
 				  <div id="con_map_canvas" class="span9 offset2" style="margin-bottom:20px; margin-top:15px;"></div>
 				 	<script type="text/javascript">
-						var map = {};
-
 						function loadCon() {
-							$.fn.qtip.defaults.style.classes = 'qtip-light';
-				        	$.fn.qtip.defaults.style.def = false;
-				        	var legends = {
-				        		A: 'Observer NOT Permitted to Observe (at any time)',
-				        		B: 'Serious Problems during the Setting Up of Polling Stations',
-				        		C: 'Serious Problems during Voting',
-				        		D: 'Serious Problems during Counting OF PRESIDENTIAL BALLOTS',
-				        		E: 'Incidents Away from Polling Stations',
-				        		F: 'Serious Problem during Collation of Results',
-				        		X: 'Incidents of Violence or Intimidation (at any time)',
-				        		Y: 'Other Incidents',
-				        		Z: "Observer's Security Threated (I am in DANGER!!!!)"
-				        	};
-				        	var options = ['A', 'B', 'C', 'D', 'E', 'F', 'X', 'Y', 'Z'];
-				        	var colors = ["#1f77b4", "#aec7e8", "#ff7f0e", "#ffbb78", "#2ca02c", "#98df8a", "#d62728", "#ED86F1", "#9467bd", "#c5b0d5"];
-
 							map1 = $K.map('#con_map_canvas', 600, 600);
-							map1.loadMap('/assets/zimbabwe.svg', function () {
-
+							map1.loadMap('{{ STATIC_URL }}zimbabwe.svg', function () {
 								map1.addLayer('constituencies', {
 									styles: {
 										fill: '#C6DBEF',
@@ -273,58 +262,25 @@
 									title: function (d) { return d.constituency; },
 								});
 
-								sector_title = function (d, option) {
-									return '<span>' + legends[option] + '</span><span style="font-size:2em;margin-top:10em">' + '<strong>' + (parseFloat(d[option])/parseFloat(d.TOT) * 100).toFixed(1) + '%</strong> (' + d[option] + ')</span>';
-								}
-
-								$.get('incidents-constituency.csv', function(data) {
+								$.get('{% url incidents_csv form=form.pk locationtype=4 %}', function(data) {
 				                	data = $.parseCSV(data);
 
-									map1.addSymbols({
-										type: $K.PieChart,
-										data: data.rows.slice(0, -1),
-										colors: function (d) { return _.map(_.filter(options, function (option) { return d[option] > 0; }), function (option) { return colors[options.indexOf(option)]; }) },
-										titles: function (d) { return _.map(_.filter(options, function (option) { return d[option] > 0; }), function (option) { return sector_title(d, option); })},
-										border: '#fff',
-										borderWidth: 1,
-										location: function(d) { return 'constituencies.' + d.LOC },
-										values: function(d) { return _.map(_.filter(options, function (option) { return d[option] > 0; }), function (option) { return d[option]; })},
-										radius: function(d) { return 22; }
-										
-									});
 									map1.addSymbols({
 									    type: $K.Bubble,
 									    data: data.rows.slice(0, -1),
 									    location: function(d) { return 'constituencies.' + d.LOC},
-									    radius: function(d) { return 12; },
-									    style: 'fill:white; stroke-width: 0;',
+									    radius: function(d) { return 8; },
+									    values: function(d) {return [d.A, d.B, d.C, d.E, d.F, d.X, d.Y, d.Z]},
+									    style: 'fill:#CE1256; stroke-width: 0; fill-opacity: 0.5',
+									    title: function (d) {return d.LOC;}
 									});
 
 									map1.addSymbols({
 									    type: $K.Label,
 									    data: data.rows.slice(0, -1),
 									    location: function(d) { return 'constituencies.' + d.LOC},
-									    text: function(d) { return d.TOT; }, style: 'font:9px "Courier New" important'
-									});
-
-									$('a[title!=""]').qtip({
-										position: {
-									        my: 'top left',  // Position my top left...
-									        at: 'bottom right', // at the bottom right of...
-									        target: 'mouse',
-									        adjust: {
-									        	x: 5, y: 15
-									        }
-									    },
-									    content: {
-								        	title: { 
-								        		text: function (api) { return /^<span>([^\<]+)<\/span>/.test($(this).attr('title')) ? /^<span>([^\<]+)<\/span>/.exec($(this).attr('title'))[1] : ""; }
-								        	},
-								        	text: function (api) { return /^<span>[^\<]+<\/span>.+/.test($(this).attr('title')) ? /^<span>[^\<]+<\/span>(.+)/.exec($(this).attr('title'))[1] : $(this).attr('title');
-								        	}
-								        }
-									});
-								
+									    text: function(d) { return d.TOT; }, style: 'font:9px "Courier New" important; fill:#fff'
+									});								
 								});
 							});
 							 
@@ -334,27 +290,9 @@
 				 <div class="tab-pane" id="bula_map">
 				  <div id="bula_map_canvas" class="span9 offset2" style="margin-bottom:20px; margin-top:15px;"></div>
 				  	<script type="text/javascript">
-						var map = {};
-
 						function loadBula() {
-							$.fn.qtip.defaults.style.classes = 'qtip-light';
-				        	$.fn.qtip.defaults.style.def = false;
-				        	var legends = {
-				        		A: 'Observer NOT Permitted to Observe (at any time)',
-				        		B: 'Serious Problems during the Setting Up of Polling Stations',
-				        		C: 'Serious Problems during Voting',
-				        		D: 'Serious Problems during Counting OF PRESIDENTIAL BALLOTS',
-				        		E: 'Incidents Away from Polling Stations',
-				        		F: 'Serious Problem during Collation of Results',
-				        		X: 'Incidents of Violence or Intimidation (at any time)',
-				        		Y: 'Other Incidents',
-				        		Z: "Observer's Security Threated (I am in DANGER!!!!)"
-				        	};
-				        	var options = ['A', 'B', 'C', 'D', 'E', 'F', 'X', 'Y', 'Z'];
-				        	var colors = ["#1f77b4", "#aec7e8", "#ff7f0e", "#ffbb78", "#2ca02c", "#98df8a", "#d62728", "#ED86F1", "#9467bd", "#c5b0d5"];
-
 							map2 = $K.map('#bula_map_canvas', 600, 600);
-							map2.loadMap('/assets/bulawayo.svg', function () {
+							map2.loadMap('{{ STATIC_URL }}bulawayo.svg', function () {
 
 								map2.addLayer('bulawayo', {
 									styles: {
@@ -366,11 +304,7 @@
 									title: function (d) { return d.constituency; },
 								});
 
-								sector_title = function (d, option) {
-									return '<span>' + legends[option] + '</span><span style="font-size:2em;margin-top:10em">' + '<strong>' + (parseFloat(d[option])/parseFloat(d.TOT) * 100).toFixed(1) + '%</strong> (' + d[option] + ')</span>';
-								}
-
-								$.get('incidents-bulawayo.csv', function(data) {
+								$.get('{% url incidents_csv_with_location form=form.pk locationtype=4 location=2 %}', function(data) {
 				                	data = $.parseCSV(data);
 
 									map2.addSymbols({
@@ -399,24 +333,6 @@
 									    location: function(d) { return 'bulawayo.' + d.LOC},
 									    text: function(d) { return d.TOT; }, style: 'font:9px "Courier New" important'
 									});
-
-									$('a[title!=""]').qtip({
-										position: {
-									        my: 'top left',  // Position my top left...
-									        at: 'bottom right', // at the bottom right of...
-									        target: 'mouse',
-									        adjust: {
-									        	x: 5, y: 15
-									        }
-									    },
-									    content: {
-								        	title: { 
-								        		text: function (api) { return /^<span>([^\<]+)<\/span>/.test($(this).attr('title')) ? /^<span>([^\<]+)<\/span>/.exec($(this).attr('title'))[1] : ""; }
-								        	},
-								        	text: function (api) { return /^<span>[^\<]+<\/span>.+/.test($(this).attr('title')) ? /^<span>[^\<]+<\/span>(.+)/.exec($(this).attr('title'))[1] : $(this).attr('title');
-								        	}
-								        }
-									});
 								});
 							});
 							 
@@ -426,27 +342,9 @@
 				<div class="tab-pane" id="hara_map">
 				  <div id="hara_map_canvas" class="span9 offset2" style="margin-bottom:20px; margin-top:15px;"></div>
 				 	<script type="text/javascript">
-						var map = {};
-
 						function loadHara() {
-							$.fn.qtip.defaults.style.classes = 'qtip-light';
-				        	$.fn.qtip.defaults.style.def = false;
-				        	var legends = {
-				        		A: 'Observer NOT Permitted to Observe (at any time)',
-				        		B: 'Serious Problems during the Setting Up of Polling Stations',
-				        		C: 'Serious Problems during Voting',
-				        		D: 'Serious Problems during Counting OF PRESIDENTIAL BALLOTS',
-				        		E: 'Incidents Away from Polling Stations',
-				        		F: 'Serious Problem during Collation of Results',
-				        		X: 'Incidents of Violence or Intimidation (at any time)',
-				        		Y: 'Other Incidents',
-				        		Z: "Observer's Security Threated (I am in DANGER!!!!)"
-				        	};
-				        	var options = ['A', 'B', 'C', 'D', 'E', 'F', 'X', 'Y', 'Z'];
-				        	var colors = ["#1f77b4", "#aec7e8", "#ff7f0e", "#ffbb78", "#2ca02c", "#98df8a", "#d62728", "#ED86F1", "#9467bd", "#c5b0d5"];
-
 							map3 = $K.map('#hara_map_canvas', 600, 600);
-							map3.loadMap('/assets/harare.svg', function () {
+							map3.loadMap('{{ STATIC_URL }}harare.svg', function () {
 
 								map3.addLayer('harare', {
 									styles: {
@@ -458,11 +356,7 @@
 									title: function (d) { return d.constituency; },
 								});
 
-								sector_title = function (d, option) {
-									return '<span>' + legends[option] + '</span><span style="font-size:2em;margin-top:10em">' + '<strong>' + (parseFloat(d[option])/parseFloat(d.TOT) * 100).toFixed(1) + '%</strong> (' + d[option] + ')</span>';
-								}
-
-								$.get('incidents-harare.csv', function(data) {
+								$.get('{% url incidents_csv_with_location form=form.pk locationtype=4 location=373 %}', function(data) {
 				                	data = $.parseCSV(data);
 
 									map3.addSymbols({
@@ -477,6 +371,7 @@
 										radius: function(d) { return 22; }
 										
 									});
+
 									map3.addSymbols({
 									    type: $K.Bubble,
 									    data: data.rows.slice(0, -1),
@@ -490,24 +385,6 @@
 									    data: data.rows.slice(0, -1),
 									    location: function(d) { return 'harare.' + d.LOC},
 									    text: function(d) { return d.TOT; }, style: 'font:9px "Courier New" important'
-									});
-
-									$('a[title!=""]').qtip({
-										position: {
-									        my: 'top left',  // Position my top left...
-									        at: 'bottom right', // at the bottom right of...
-									        target: 'mouse',
-									        adjust: {
-									        	x: 5, y: 15
-									        }
-									    },
-									    content: {
-								        	title: { 
-								        		text: function (api) { return /^<span>([^\<]+)<\/span>/.test($(this).attr('title')) ? /^<span>([^\<]+)<\/span>/.exec($(this).attr('title'))[1] : ""; }
-								        	},
-								        	text: function (api) { return /^<span>[^\<]+<\/span>.+/.test($(this).attr('title')) ? /^<span>[^\<]+<\/span>(.+)/.exec($(this).attr('title'))[1] : $(this).attr('title');
-								        	}
-								        }
 									});
 								});
 							});

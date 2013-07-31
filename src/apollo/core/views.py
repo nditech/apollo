@@ -41,6 +41,7 @@ from apollo.core.messaging import send_bulk_message
 from apollo.core.models import *
 from apollo.core.filters import *
 from analyses.datagenerator import generate_process_data, generate_incidents_data
+from analyses.voting import incidents_csv
 
 COMPLETION_STATUS = (
     (0, 'Complete'),
@@ -153,6 +154,29 @@ class DashboardView(View, TemplateResponseMixin):
         request.session['dashboard_filter'] = self.filter_set.form.data
         context = self.get_context_data(**kwargs)
         return self.render_to_response(context)
+
+
+class IncidentsCSVView(View):
+    def dispatch(self, request, *args, **kwargs):
+        form = get_object_or_404(Form, pk=kwargs['form'], type="INCIDENT")
+        lt = get_object_or_404(LocationType, pk=kwargs['locationtype'])
+        if 'location' in kwargs:
+            loc = get_object_or_404(Location, pk=kwargs['location'])
+            qs = Submission.objects.filter(form=form).exclude(observer=None).is_within(loc)
+        else:
+            qs = Submission.objects.filter(form=form).exclude(observer=None)
+
+        self.submission_filter = generate_submission_filter(form)
+        self.filter_set = self.submission_filter(None,
+            queryset=qs, request=request)
+        df = self.filter_set.qs.dataframe()
+        ds = tablib.Dataset()
+        options = list(FormField.objects.filter(group__form=form).values_list('name', flat=True))
+        ds.headers = ['LOC'] + options + ['TOT']
+        for summary in incidents_csv(df, lt.name, options):
+            ds.append([summary.get(heading) for heading in ds.headers])
+
+        return HttpResponse(ds.csv, content_type='text/csv')
 
 
 class SubmissionProcessAnalysisView(View, TemplateResponseMixin):
