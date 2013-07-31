@@ -262,6 +262,15 @@
 									title: function (d) { return d.constituency; },
 								});
 
+								map1.addLayer('provinces', {
+									styles: {
+										fill: 'none',
+										'stroke-width': 0.3,
+										'stroke': '#084594'
+									},
+									key: 'province'
+								});
+
 								$.get('{% url incidents_csv form=form.pk locationtype=4 %}', function(data) {
 				                	data = $.parseCSV(data);
 
