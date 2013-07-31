@@ -5910,11 +5910,14 @@ function kdtree() {
       angleplus = 360 * value / total;
       popangle = angle + (angleplus * 0.5);
       color = colors[j];
+      title = labels[j] !== undefined ? labels[j] : "";
       ms = 500;
       delta = 30;
       p = sector(cx, cy, r, angle, angle + angleplus, {
         fill: color,
         stroke: stroke,
+        title: title,
+        'data-class': 'piechart',
         'stroke-width': 1
       });
       p.mouseover(function() {
