@@ -335,7 +335,7 @@ def generate_critical_incidents_location_filter(tag):
 
 def generate_submission_flags_filter(form):
     metafields = {'model': Submission, 'fields':
-        ['observer_id', 'date', 'location', 'activity', 'verification']}
+        ['observer_id', 'date', 'location', 'activity', 'verification', 'sample']}
     for flag in form.get_verification_flag_attributes('storage'):
         metafields['fields'].append(flag)
 
