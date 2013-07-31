@@ -17,7 +17,7 @@
     <tr>
         <td align="right" style="text-align:right"><strong>All</strong></td>
 		{% if stats.type == 'continuous' %}
-		<td align="right"><strong>{{ stats.mean|floatformat:0|default_if_nan:"N/A" }}</strong></td>
+		<td align="right"><strong>{{ stats.mean|floatformat:1|default_if_nan:"N/A" }}</strong></td>
 		{% else %}
 		{% for option in stats.options %}
         {% with stats.options|keyvalue:option as option %}
@@ -32,7 +32,7 @@
     <tr>
         <td align="right" style="text-align:right">{{ group }}</td>
         {% if stats.type == 'continuous' %}
-        <td align="right">{{ stats.urban|keyvalue:group|keyvalue:"mean"|floatformat:0|default_if_nan:"N/A" }}</td>
+        <td align="right">{{ stats.urban|keyvalue:group|keyvalue:"mean"|floatformat:1|default_if_nan:"N/A" }}</td>
         {% else %}
         {% with stats.urban|keyvalue:group|keyvalue:"value_counts_sum" as value_counts_sum %}
         {% with stats.urban|keyvalue:group|keyvalue:"value_counts" as value_counts %}
