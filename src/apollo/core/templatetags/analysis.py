@@ -18,7 +18,7 @@ def dataframe_analysis(type, dataframe, col):
             result = {'value_counts': pd.np.nan, 'value_counts_sum': 0}
     else:
         try:
-            result = {'mean': getattr(dataframe, col).mean().round()}
+            result = {'mean': getattr(dataframe, col).mean()}
         except AttributeError:
             result = {'mean': pd.np.nan}
 
