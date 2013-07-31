@@ -28,9 +28,9 @@
                     <tr>
                         <th width="200" rowspan="2" {% if form.options.has_urban %}colspan="2"{% endif %} style="vertical-align:middle" class="gray">&nbsp;</th>
                         {% for party in form.parties %}
-                        <th width="100" {% if form.options.has_moe %}colspan="2"{% endif %} class="gray" style="text-align:center">{{ party }}</th>
+                        <th width="100" {% if form.options.has_moe %}colspan="2"{% endif %} class="gray" style="text-align:center">{{ party|safe }}</th>
                         {% endfor %}
-                        <th width="100" {% if form.options.has_moe %}colspan="2"{% endif %} class="gray" style="text-align:center">&nbsp;</th>
+                        <th width="100" {% if form.options.has_moe %}colspan="2"{% endif %} class="gray" style="text-align:center">Rejected</th>
                         <th class="gray">&nbsp;</th>
                         <th class="gray">&nbsp;</th>
                     </tr>
