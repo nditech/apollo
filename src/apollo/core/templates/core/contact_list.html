@@ -1,4 +1,9 @@
 {% extends "core/layout.html" %}{% load apollo %}{% load bootstrap_pagination %}
+{% block javascripts %}
+{% if perms.core.message_observers %}
+{% send_message paginator.count %}
+{% endif %}
+{% endblock %}
 {% block title %}
 {{ page_title }}
 {% if perms.core.message_observers %}
@@ -11,9 +16,6 @@
 {% endif %}
 {% endblock %}
 {% block content %}
-{% if perms.core.message_observers %}
-{% send_message paginator.count %}
-{% endif %}
 <div class="row">
   <div class="span12">
     <div class="well" style="padding-bottom:0">
