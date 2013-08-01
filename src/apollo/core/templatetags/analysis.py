@@ -74,10 +74,10 @@ def votes_total(dataframe, votes, location_type, location, group='ALL'):
 
         df = df[eval(' | '.join(['(df.{} >= 0)'.format(v) for v in votes]))]
 
-        c = df.sum(skipna=True).sum(axis=1, skipna=True)
+        c = df.ix[:, votes].sum(skipna=True).sum(axis=1, skipna=True)
         if pd.np.isnan(c):
             c = 0
-        return number_format(c, force_grouping=True)
+        return number_format(int(c), force_grouping=True)
     except:
         return 0
 
@@ -97,7 +97,7 @@ def vote_count(dataframe, votes, vote, location_type, location, group='ALL'):
         c = df[vote].sum()
         if pd.np.isnan(c):
             c = 0
-        return number_format(c, force_grouping=True)
+        return number_format(int(c), force_grouping=True)
     except:
         return 0
 
@@ -124,7 +124,7 @@ def rejected_count(form, dataframe, location_type, location, group='ALL'):
         
         if pd.np.isnan(c):
             c = 0
-        return number_format(c, force_grouping=True)
+        return number_format(int(c), force_grouping=True)
     except:
         return 0
 
@@ -234,7 +234,7 @@ def reported(dataframe, votes, location_type, location, group='ALL'):
             df = dataframe.ix[dataframe.groupby(location_type).groups[location]]
             
         rp = df[eval(' | '.join(['(df.{} >= 0)'.format(v) for v in votes]))].shape[0]
-        return number_format(rp, force_grouping=True)
+        return number_format(int(rp), force_grouping=True)
     except:
         return 0
 
@@ -250,7 +250,7 @@ def missing(dataframe, votes, location_type, location, group='ALL'):
             df = dataframe.ix[dataframe.groupby(location_type).groups[location]]
             
         m = df[eval(' & '.join(['(df.{}.isnull())'.format(v) for v in votes]))].shape[0]
-        return number_format(m, force_grouping=True)
+        return number_format(int(m), force_grouping=True)
     except:
         return 0
 

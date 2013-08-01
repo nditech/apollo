@@ -144,6 +144,7 @@ AUTHENTICATION_BACKENDS = (
     'guardian.backends.ObjectPermissionBackend',
 )
 
+USE_L10N = True
 ANONYMOUS_USER_ID = -1
 GUARDIAN_RENDER_403 = True
 
