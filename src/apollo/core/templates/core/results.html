@@ -30,8 +30,8 @@
                         {% for party in form.parties %}
                         <th width="100" {% if form.options.has_moe %}colspan="2"{% endif %} class="gray" style="text-align:center">{{ party|safe }}</th>
                         {% endfor %}
-                        <th width="30" class="gray" style="text-align:center">Total</th>
-                        <th width="100" {% if form.options.has_moe %}colspan="2"{% endif %} class="gray" style="text-align:center">Rejected</th>
+                        <th width="30" class="gray" style="text-align:center">Total Valid</th>
+                        <th width="100" {% if form.options.has_moe %}colspan="2"{% endif %} class="gray" style="text-align:center">Rejected Ballots</th>
                         <th class="gray">&nbsp;</th>
                         <th class="gray">&nbsp;</th>
                     </tr>
@@ -40,7 +40,7 @@
                         <td class="centered"><em>Votes</em></td>
                         {% if form.options.has_moe %}<td class="centered"><em><abbr title="Margin of Error">MoE</abbr></em></td>{% endif %}
                         {% endfor %}
-                        <td class="centered"><em><abbr title="Total Votes">TV</abbr></em></td>
+                        <td class="centered"><em><abbr title="Total Valid">TV</abbr></em></td>
                         <td class="centered"><em><abbr title="Rejected Ballots">RB</abbr></em></td>
                         {% if form.options.has_moe %}<td class="centered"><em>MoE</em></td>{% endif %}
                         <td class="centered" width="10%"><em>Reported</em></td>
