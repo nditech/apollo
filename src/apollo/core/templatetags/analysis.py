@@ -224,7 +224,7 @@ def rejected_margin_of_error(form, dataframe, location_type, location, group='AL
 
 
 @register.simple_tag
-def reported(dataframe, votes, location_type, location, group='ALL'):
+def reported(dataframe, votes, location_type, location, group='ALL', pure=False):
     try:
         if group == 'RURAL':
             df = dataframe.ix[dataframe.groupby([location_type, 'urban']).groups[(location, 0)]]
@@ -234,13 +234,13 @@ def reported(dataframe, votes, location_type, location, group='ALL'):
             df = dataframe.ix[dataframe.groupby(location_type).groups[location]]
             
         rp = df[eval(' | '.join(['(df.{} >= 0)'.format(v) for v in votes]))].shape[0]
-        return number_format(int(rp), force_grouping=True)
+        return int(rp) if pure else number_format(int(rp), force_grouping=True)
     except:
         return 0
 
 
 @register.simple_tag
-def missing(dataframe, votes, location_type, location, group='ALL'):
+def missing(dataframe, votes, location_type, location, group='ALL', pure=False):
     try:
         if group == 'RURAL':
             df = dataframe.ix[dataframe.groupby([location_type, 'urban']).groups[(location, 0)]]
@@ -250,15 +250,15 @@ def missing(dataframe, votes, location_type, location, group='ALL'):
             df = dataframe.ix[dataframe.groupby(location_type).groups[location]]
             
         m = df[eval(' & '.join(['(df.{}.isnull())'.format(v) for v in votes]))].shape[0]
-        return number_format(int(m), force_grouping=True)
+        return int(m) if pure else number_format(int(m), force_grouping=True)
     except:
         return 0
 
 
 @register.simple_tag
 def reported_pct(dataframe, votes, location_type, location, group='ALL'):
-    m = float(missing(dataframe, votes, location_type, location, group))
-    r = float(reported(dataframe, votes, location_type, location, group))
+    m = float(missing(dataframe, votes, location_type, location, group, pure=True))
+    r = float(reported(dataframe, votes, location_type, location, group, pure=True))
     try:
         f = round((r / (m+r) * 100.0), 2)
         return '%.2f' % f if f % 1 else '%d' % f
@@ -268,8 +268,8 @@ def reported_pct(dataframe, votes, location_type, location, group='ALL'):
 
 @register.simple_tag
 def missing_pct(dataframe, votes, location_type, location, group='ALL'):
-    m = float(missing(dataframe, votes, location_type, location, group))
-    r = float(reported(dataframe, votes, location_type, location, group))
+    m = float(missing(dataframe, votes, location_type, location, group, pure=True))
+    r = float(reported(dataframe, votes, location_type, location, group, pure=True))
     try:
         f = round((m / (m+r) * 100.0), 2)
         return '%.2f' % f if f % 1 else '%d' % f
