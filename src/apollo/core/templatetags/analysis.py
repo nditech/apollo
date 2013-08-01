@@ -72,7 +72,7 @@ def votes_total(dataframe, votes, location_type, location, group='ALL'):
         else:
             df = dataframe.ix[dataframe.groupby(location_type).groups[location]]
 
-        df = df[eval(' | '.join(['(df.{} >= 0)'.format(v) for v in votes]))]
+        df = df[eval(' | '.join(['(df["{}"] >= 0)'.format(v) for v in votes]))]
 
         c = df.ix[:, votes].sum(skipna=True).sum(axis=1, skipna=True)
         if pd.np.isnan(c):
@@ -92,7 +92,7 @@ def vote_count(dataframe, votes, vote, location_type, location, group='ALL'):
         else:
             df = dataframe.ix[dataframe.groupby(location_type).groups[location]]
 
-        df = df[eval(' | '.join(['(df.{} >= 0)'.format(v) for v in votes]))]
+        df = df[eval(' | '.join(['(df["{}"] >= 0)'.format(v) for v in votes]))]
 
         c = df[vote].sum()
         if pd.np.isnan(c):
@@ -114,7 +114,7 @@ def rejected_count(form, dataframe, location_type, location, group='ALL'):
         else:
             df = dataframe.ix[dataframe.groupby(location_type).groups[location]]
 
-        df = df[eval(' | '.join(['(df.{} >= 0)'.format(v) for v in votes]))]
+        df = df[eval(' | '.join(['(df["{}"] >= 0)'.format(v) for v in votes]))]
         rejected = form.options.get('votes_invalid', None)
 
         if rejected:
@@ -139,7 +139,7 @@ def vote_proportion(dataframe, votes, vote, location_type, location, group='ALL'
         else:
             df = dataframe.ix[dataframe.groupby(location_type).groups[location]]
 
-        df = df[eval(' | '.join(['(df.{} >= 0)'.format(v) for v in votes]))]
+        df = df[eval(' | '.join(['(df["{}"] >= 0)'.format(v) for v in votes]))]
 
         p = round(abs(proportion(df, votes, vote) * 100.0), 2)
         if pd.np.isnan(p):
@@ -161,7 +161,7 @@ def rejected_proportion(form, dataframe, location_type, location, group='ALL'):
         else:
             df = dataframe.ix[dataframe.groupby(location_type).groups[location]]
 
-        df = df[eval(' | '.join(['(df.{} >= 0)'.format(v) for v in votes]))]
+        df = df[eval(' | '.join(['(df["{}"] >= 0)'.format(v) for v in votes]))]
         rejected = form.options.get('votes_invalid', None)
 
         if rejected:
@@ -186,7 +186,7 @@ def vote_margin_of_error(dataframe, votes, vote, location_type, location, group=
         else:
             df = dataframe.ix[dataframe.groupby(location_type).groups[location]]
 
-        df = df[eval(' | '.join(['(df.{} >= 0)'.format(v) for v in votes]))]
+        df = df[eval(' | '.join(['(df["{}"] >= 0)'.format(v) for v in votes]))]
 
         v = round(abs(math.sqrt(variance(df, votes, vote)) * 196.0), 2)
         if pd.np.isnan(v) or pd.np.isinf(v):
@@ -208,7 +208,7 @@ def rejected_margin_of_error(form, dataframe, location_type, location, group='AL
         else:
             df = dataframe.ix[dataframe.groupby(location_type).groups[location]]
 
-        df = df[eval(' | '.join(['(df.{} >= 0)'.format(v) for v in votes]))]
+        df = df[eval(' | '.join(['(df["{}"] >= 0)'.format(v) for v in votes]))]
         rejected = form.options.get('votes_invalid', None)
 
         if rejected:
@@ -233,7 +233,7 @@ def reported(dataframe, votes, location_type, location, group='ALL', pure=False)
         else:
             df = dataframe.ix[dataframe.groupby(location_type).groups[location]]
             
-        rp = df[eval(' | '.join(['(df.{} >= 0)'.format(v) for v in votes]))].shape[0]
+        rp = df[eval(' | '.join(['(df["{}"] >= 0)'.format(v) for v in votes]))].shape[0]
         return int(rp) if pure else number_format(int(rp), force_grouping=True)
     except:
         return 0
@@ -249,7 +249,7 @@ def missing(dataframe, votes, location_type, location, group='ALL', pure=False):
         else:
             df = dataframe.ix[dataframe.groupby(location_type).groups[location]]
             
-        m = df[eval(' & '.join(['(df.{}.isnull())'.format(v) for v in votes]))].shape[0]
+        m = df[eval(' & '.join(['(df["{}"].isnull())'.format(v) for v in votes]))].shape[0]
         return int(m) if pure else number_format(int(m), force_grouping=True)
     except:
         return 0
