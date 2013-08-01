@@ -223,6 +223,10 @@
     </table>
   </div>
 </div>
+{% endif %}
+{% endblock %}
+{% block javascripts %}
+{{ block.super }}
 <script type="text/javascript">
   $('#save').click(function () {
     var comment = $('#comment').val(), submission = $('#submission').val();
@@ -254,5 +258,4 @@
     }
   });
 </script>
-{% endif %}
 {% endblock %}
