@@ -153,6 +153,7 @@ class DashboardView(View, TemplateResponseMixin):
         context['page_title'] = self.page_title
         context['filter_form'] = self.filter_set.form
         context['summary'] = generate_dashboard_summary(self.filter_set.qs, self.form_group)
+        
         return context
 
     def get(self, request, *args, **kwargs):
