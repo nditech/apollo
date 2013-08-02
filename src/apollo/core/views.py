@@ -159,13 +159,13 @@ class DashboardView(View, TemplateResponseMixin):
     def get(self, request, *args, **kwargs):
         initial_data = request.session.get('dashboard_filter', None)
         self.filter_set = self.dashboard_filter(initial_data,
-                queryset=Submission.objects.filter(form__in=self.viewable_forms, observer=None), request=request)
+                queryset=Submission.objects.filter(form__in=self.viewable_forms).exclude(observer=None), request=request)
         context = self.get_context_data(**kwargs)
         return self.render_to_response(context)
 
     def post(self, request, *args, **kwargs):
         self.filter_set = self.dashboard_filter(request.POST,
-                queryset=Submission.objects.filter(form__in=self.viewable_forms, observer=None), request=request)
+                queryset=Submission.objects.filter(form__in=self.viewable_forms).exclude(observer=None), request=request)
         request.session['dashboard_filter'] = self.filter_set.form.data
         context = self.get_context_data(**kwargs)
         return self.render_to_response(context)

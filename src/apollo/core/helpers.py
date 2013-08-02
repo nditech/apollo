@@ -24,9 +24,9 @@ def generate_dashboard_summary(submission_queryset, group=None):
     if group:
         try:
             for location in Location.objects.filter(pk__in=[location['id'] for location in Location.root().nx_children()]).order_by('name'):
-                complete = submission_queryset.filter(form__type="CHECKLIST").is_within(location).is_complete(group).count()
-                missing = submission_queryset.filter(form__type="CHECKLIST").is_within(location).is_missing(group).count()
-                partial = submission_queryset.filter(form__type="CHECKLIST").is_within(location).is_partial(group).count()
+                complete = submission_queryset.filter(form__type="CHECKLIST").is_within(location).exclude(observer=None).is_complete(group).count()
+                missing = submission_queryset.filter(form__type="CHECKLIST").is_within(location).exclude(observer=None).is_missing(group).count()
+                partial = submission_queryset.filter(form__type="CHECKLIST").is_within(location).exclude(observer=None).is_partial(group).count()
 
                 location_summary = {'name': location.name, 'id': location.pk, 'complete': complete, 'missing': missing, 'partial': partial}
 
@@ -38,9 +38,9 @@ def generate_dashboard_summary(submission_queryset, group=None):
         try:
             form = submission_queryset.filter(form__type="CHECKLIST")[0].form
             for group in form.groups.all():
-                complete = submission_queryset.filter(form__type="CHECKLIST").is_complete(group).count()
-                missing = submission_queryset.filter(form__type="CHECKLIST").is_missing(group).count()
-                partial = submission_queryset.filter(form__type="CHECKLIST").is_partial(group).count()
+                complete = submission_queryset.filter(form__type="CHECKLIST").exclude(observer=None).is_complete(group).count()
+                missing = submission_queryset.filter(form__type="CHECKLIST").exclude(observer=None).is_missing(group).count()
+                partial = submission_queryset.filter(form__type="CHECKLIST").exclude(observer=None).is_partial(group).count()
 
                 group_summary = {'name': group.name, 'id': group.pk, 'complete': complete, 'missing': missing, 'partial': partial}
 
