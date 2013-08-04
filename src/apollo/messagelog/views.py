@@ -52,8 +52,9 @@ class MessageListView(ListView):
 
 
 def export_message_log(request, format='xls'):
+    activity = get_activity(request)
     # grab all MessageLog objects
-    message_log = MessageLog.objects.all()
+    message_log = MessageLog.objects.filter(created__range=(activity.start_date, activity.end_date + timedelta(days=1)))
     fields = ['mobile', 'text', 'direction', 'created', 'delivered']
     labels = ['Mobile', 'Text', 'Message direction', 'Created', 'Delivered']
 
