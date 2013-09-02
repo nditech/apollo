@@ -1,0 +1,54 @@
+{% load apollo %}{% load analysis %}
+<table width="100%" class="table table-striped table-bordered">
+	<tr>
+		<td width="30" rowspan="{% if stats.urban %}4{% else %}2{% endif %}"><b>{{ field.tag }}</b></td>
+        <td rowspan="{% if stats.urban %}4{% else %}2{% endif %}"><a href="{% url submissions_analysis_location_tag form.pk location.pk field.tag %}">{{ field.description }}</a></td>
+        <td>&nbsp;</td>
+		{% if stats.type == 'continuous' %}
+		<td bgcolor="#eee">Mean</td>
+		{% else %}
+			{% for label in stats.options %}
+			<td>{{ label }}</td>
+			{% endfor %}
+		{% endif %}
+		<td width="100" bgcolor="#eee">Reported</td>
+		<td width="100" bgcolor="#eee">Missing</td>
+	</tr>
+    <tr>
+        <td align="right" style="text-align:right"><strong>All</strong></td>
+		{% if stats.type == 'continuous' %}
+		<td align="right"><strong>{{ stats.mean|floatformat:1|default_if_nan:"N/A" }}</strong></td>
+		{% else %}
+		{% for option in stats.options %}
+        {% with stats.options|keyvalue:option as option %}
+		<td><strong>{{ stats.value_counts|keyvalue:option|default:0|percent_of:stats.value_counts_sum|floatformat:0 }}% ({{ stats.value_counts|keyvalue:option|default:"0" }})</strong></td>
+        {% endwith %}
+		{% endfor %}
+		{% endif %}
+		<td align="right"><strong>{{ stats.count|percent_of:stats.size|floatformat:0 }}% ({{ stats.count }})</strong></td>
+		<td align="right"><strong>{{ stats.diff|percent_of:stats.size|floatformat:0 }}% ({{ stats.diff }})</strong></td>
+	</tr>
+    {% for group in stats.urban %}
+    <tr>
+        <td align="right" style="text-align:right">{{ group }}</td>
+        {% if stats.type == 'continuous' %}
+        <td align="right">{{ stats.urban|keyvalue:group|keyvalue:"mean"|floatformat:1|default_if_nan:"N/A" }}</td>
+        {% else %}
+        {% with stats.urban|keyvalue:group|keyvalue:"value_counts_sum" as value_counts_sum %}
+        {% with stats.urban|keyvalue:group|keyvalue:"value_counts" as value_counts %}
+        {% for option in stats.options %}
+        {% with stats.options|keyvalue:option as option %}
+        <td>{{ value_counts|keyvalue:option|default:0|percent_of:value_counts_sum|floatformat:0 }}% ({{ value_counts|keyvalue:option|default:"0" }})</td>
+        {% endwith %}
+        {% endfor %}
+        {% endwith %}{% endwith %}
+        {% endif %}
+        {% with stats.urban|keyvalue:group|keyvalue:"count" as count %}
+        {% with stats.urban|keyvalue:group|keyvalue:"size" as size %}
+        {% with stats.urban|keyvalue:group|keyvalue:"diff" as diff %}
+        <td align="right">{{ count|percent_of:size|floatformat:0 }}% ({{ count }})</td>
+        <td align="right">{{ diff|percent_of:size|floatformat:0 }}% ({{ diff }})</td>
+        {% endwith %}{% endwith %}{% endwith %}
+    </tr>
+    {% endfor %}
+</table>

@@ -1,0 +1,416 @@
+{% extends "core/layout.html" %}
+{% load apollo %}
+{% block javascripts %}
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/jquery.csv.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/qtip2/2.1.1/jquery.qtip.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/kartograph.js"></script>
+<script type="text/javascript">
+	$(function(){
+	  	loadProv();
+	  	loadCon();
+	  	loadBula();
+	  	loadHara();
+	  	update_maps();
+	});
+</script>
+{% endblock %}
+{% block content %}
+<div class="row">
+	<div class="span5">
+		{% analysis_breadcrumb_navigation form location %}
+  	</div>
+  	<div class="span7">
+        <form class="form-horizontal pull-right" action="" method="get" accept-charset="utf-8">
+          {{ filter_form.status }} {{ filter_form.witness }} {{ filter_form.sample }}
+          <button class="btn btn-warning" type="submit"><i class="icon-search icon-white"></i> Filter</button>
+        </form>
+  	</div>
+    <div class="span12">
+        {% analysis_location_navigation form location %}
+    </div>
+ </div>
+ <div class="row">
+	<div class="span12">
+		{% if incidents_summary.top %}
+		<div class="tabbable"> <!-- Only required for left/right tabs -->
+			<ul class="nav nav-tabs">
+				<li class="active"><a href="#table" data-toggle="tab">Table</a></li>
+				<li><a href="#charts" data-toggle="tab">Charts</a></li>
+				<li><a href="#province_map" data-toggle="tab" data-map="map">Province</a></li>
+				<li><a href="#con_map" data-toggle="tab" data-map="map1">Constituency</a></li>
+				<li><a href="#bula_map" data-toggle="tab" data-map="map2">Bulawayo</a></li>
+				<li><a href="#hara_map" data-toggle="tab" data-map="map3">Harare</a></li>
+			</ul>
+			<div class="tab-content">
+			    <div class="tab-pane active" id="table">
+					<table class="table table-bordered table-striped">
+						<tr>
+							<th width="250">Location</th>
+							<th width="100" style="text-align:center">N</th>
+							{% for tag, tag_description, tag_stats in incidents_summary.top %}
+							<th width="100" style="text-align:center"><abbr title="{{ tag_description}}"><a href="{% url submissions_analysis_location_tag form.pk location.pk tag %}">{{ tag }}</a></abbr></th>
+							{% endfor %}
+						</tr>
+						<tr>
+							<th>{{ location }}</th>
+							<th style="text-align:center">{{ incidents_summary.top.0.2.total }}</th>
+							{% for tag, tag_description, tag_stats in incidents_summary.top %}
+							<th style="text-align:center">{{ tag_stats.percent_reported|floatformat:"0" }}%<br />({{ tag_stats.reported }})</th>
+							{% endfor %}
+						</tr>
+						{% for location_type, group_location_stats in incidents_summary.groups %}
+						{% for location, location_data in group_location_stats %}
+						<tr>
+							<td>{{ location }} · <span class="muted"><em>{{ location_type }}</em></span></td>
+							{% with incidents_summary.top.0 as tag_data %}
+							{% if location_data %}
+							{% with location_data|keyvalue:tag_data.0 as field_stats %}
+							<td style="text-align:center">{{ field_stats.1.total|percent_of:incidents_summary.top.0.2.total|floatformat:"0" }}%<br />({{ field_stats.1.total }})</td>
+							{% endwith %}
+							{% else %}
+							<td style="text-align:center">0</td>
+							{% endif %}
+							{% endwith %}
+							{% for tag, tag_description, _ in incidents_summary.top %}
+							{% if location_data %}
+							{% with location_data|keyvalue:tag as field_stats %}
+							<td style="text-align:center">{{ field_stats.1.percent_reported|floatformat:"0" }}%<br />({{ field_stats.1.reported}})</td>
+							{% endwith %}
+							{% else %}
+							<td style="text-align:center">0%<br />(0)</td>
+							{% endif %}
+							{% endfor %}
+						</tr>
+						{% endfor %}
+						{% endfor %}
+					</table>
+				</div>
+				<!--Chart-->
+				<div class="tab-pane" id="charts">
+					<script type="text/javascript+protovis">
+						var data = [[{% for tag, tag_description, tag_stats in incidents_summary.top %}{{ tag_stats.percent_reported }},{% endfor %}]];
+						var labels = ["{{ location }}"];
+						var legend = [{% for tag, tag_description, tag_stats in incidents_summary.top %}"{{ tag|safe }}",{% endfor %}];
+						{% for location_type, group_location_stats in incidents_summary.groups %}{% for location, location_data in group_location_stats %}
+						labels.push("{{ location }}");
+						data.push([{% for tag, tag_description, tag_stats in incidents_summary.top %}{% if location_data %}{% with location_data|keyvalue:tag as field_stats %}{{ field_stats.1.percent_reported }},{% endwith %}{% else %}0,{% endif %}{% endfor %}]);{% endfor %}{% endfor %}
+
+						var colors = ['#1f77b4', '#62a1ef', '#aec7e8', '#ff7f0e', '#ffbb78', '#2ca02c', '#98df8a', '#d62728', '#f04a54', '#ff9896', '#7d50ea', '#9467bd', '#c5b0d5', '#8c564b', '#c49c94', '#e377c2', '#f7b6d2', '#7f7f7f', '#c7c7c7', '#bcbd22', '#dbdb8d', '#17becf','#44f2fe', '#9edae5', '#ff0000','#fff000'];
+
+						var n = data.length, m = data[0].length;
+
+						/* Sizing and scales. */
+						width = 350,
+					    height = 470,
+					    offset = 10,
+					    r = width/2 - offset;
+
+					    var panel = new pv.Panel().width(width).height(height).data(data);
+
+					    var pie = panel.add(pv.Panel);
+					        pie.add(pv.Wedge)
+					        .data(function (d) pv.normalize(d))
+					        .outerRadius(100)
+					        .angle(function(d) d * 2 * Math.PI)
+					        .left(width/2)
+					        .top(height/2)
+					        .fillStyle(pv.colors(colors).by(function () { return this.index;}))
+					        .anchor("center")
+					        .add(pv.Label)
+					        .textAngle(0)
+					        .text(function(d){ return d ? (d*100).toFixed(0) + "%" : "" });
+
+					        pie.anchor("top").add(pv.Label)
+						    .textAlign("center")
+						    .textMargin(5)
+						    .top(height/8)
+						    .font('11pt sans-serif')
+						    .text(function () labels[this.parent.parent.index]);
+					        
+					    //legends
+					    pie.add(pv.Dot) 
+					    .data(legend)
+					    .left(width - 20)
+					    .top(function() this.index * 15 + ((height - (15 * parent.data.length)) / 4) + 15)
+					    .size(15)
+					    .strokeStyle(null) 
+					    .fillStyle(pv.colors(colors)) 
+					    .anchor("right").add(pv.Label);  
+
+					    panel.render();
+					</script>
+				</div>
+				<!--Map-->
+				<div class="tab-pane" id="province_map" data-map="map">
+				  <div id="map_canvas" class="span9 offset2" style="margin-bottom:20px; margin-top:15px;"></div>
+					<script type="text/javascript">
+						var map = map1 = map2 = map3 = {};
+						var legends = {
+			        		A: 'Observer NOT Permitted to Observe (at any time)',
+			        		B: 'Serious Problems during the Setting Up of Polling Stations',
+			        		C: 'Serious Problems during Voting',
+			        		D: 'Serious Problems during Counting OF PRESIDENTIAL BALLOTS',
+			        		E: 'Incidents Away from Polling Stations',
+			        		F: 'Serious Problem during Collation of Results',
+			        		X: 'Incidents of Violence or Intimidation (at any time)',
+			        		Y: 'Other Incidents',
+			        		Z: "Observer's Security Threated (I am in DANGER!!!!)"
+			        	};
+			        	var options = ['A', 'B', 'C', 'D', 'E', 'F', 'X', 'Y', 'Z'];
+				        var colors = ["#1f77b4", "#aec7e8", "#ff7f0e", "#ffbb78", "#2ca02c", "#98df8a", "#d62728", "#ED86F1", "#9467bd", "#c5b0d5"];
+				        var sector_title = function (d, option) {
+							return '<span>' + legends[option] + '</span><span style="font-size:2em;margin-top:10em">' + '<strong>' + (parseFloat(d[option])/parseFloat(d.TOT) * 100).toFixed(1) + '%</strong> (' + d[option] + ')</span>';
+						}
+
+						function update_maps() {
+							$('body').on('shown', 'a[data-toggle="tab"]', function (e) {
+								var map = $(this).data('map');
+								if (map !== undefined) {
+									window[map].resize(600, 600);
+									loadQtip();
+								}
+							});
+						}
+
+						function loadQtip() {
+							$.fn.qtip.defaults.style.classes = 'qtip-light';
+				        	$.fn.qtip.defaults.style.def = false;
+
+							$('svg a[title!=""]').qtip({
+								position: {
+							        my: 'top left',  // Position my top left...
+							        at: 'bottom right', // at the bottom right of...
+							        target: 'mouse',
+							        adjust: {
+							        	x: 5, y: 15
+							        }
+							    },
+							    content: {
+						        	title: { 
+						        		text: function (api) { return /^<span>([^\<]+)<\/span>/.test($(this).attr('title')) ? /^<span>([^\<]+)<\/span>/.exec($(this).attr('title'))[1] : ""; }
+						        	},
+						        	text: function (api) { return /^<span>[^\<]+<\/span>.+/.test($(this).attr('title')) ? /^<span>[^\<]+<\/span>(.+)/.exec($(this).attr('title'))[1] : $(this).attr('title');
+						        	}
+						        }
+							});
+						}
+
+						function loadProv() {
+							map = $K.map('#map_canvas', 600, 600);
+							map.loadMap('{{ STATIC_URL }}zimbabwe.svg', function () {
+								map.addLayer('provinces', {
+									styles: {
+										fill: '#C6DBEF',
+										'stroke-width': 1,
+										'stroke':'#fff'
+									},
+									key: 'province',
+									title: function (d) { return d.province; },
+								});
+
+								$.get('{% url incidents_csv form=form.pk locationtype=2 %}', function(data) {
+				                	data = $.parseCSV(data);
+
+									map.addSymbols({
+										type: $K.PieChart,
+										data: data.rows.slice(0, -1),
+										colors: function (d) { return _.map(_.filter(options, function (option) { return d[option] > 0; }), function (option) { return colors[options.indexOf(option)]; }) },
+										titles: function (d) { return _.map(_.filter(options, function (option) { return d[option] > 0; }), function (option) { return sector_title(d, option); })},
+										border: '#fff',
+										borderWidth: 1,
+										location: function(d) { return 'provinces.' + d.LOC },
+										values: function(d) { return _.map(_.filter(options, function (option) { return d[option] > 0; }), function (option) { return d[option]; })},
+										radius: function(d) { return 22; }
+									});
+
+									map.addSymbols({
+									    type: $K.Bubble,
+									    data: data.rows.slice(0, -1),
+									    location: function(d) { return 'provinces.' + d.LOC},
+									    radius: function(d) { return 12; },
+									    style: 'fill:white; stroke-width: 0;',
+									    title: function (d) { return d.TOT; }
+									});
+
+									map.addSymbols({
+									    type: $K.Label,
+									    data: data.rows.slice(0, -1),
+									    location: function(d) { return 'provinces.' + d.LOC; },
+									    text: function(d) { return d.TOT; }, style: 'font:9px "Courier New" important'
+									});
+								});
+							});
+							 
+						}
+					</script>
+				</div>
+				<div class="tab-pane" id="con_map">
+				  <div id="con_map_canvas" class="span9 offset2" style="margin-bottom:20px; margin-top:15px;"></div>
+				 	<script type="text/javascript">
+						function loadCon() {
+							map1 = $K.map('#con_map_canvas', 600, 600);
+							map1.loadMap('{{ STATIC_URL }}zimbabwe.svg', function () {
+								map1.addLayer('constituencies', {
+									styles: {
+										fill: '#C6DBEF',
+										'stroke-width': 1,
+										'stroke':'#fff'
+									},
+									key: 'constituency',
+									title: function (d) { return d.constituency; },
+								});
+
+								map1.addLayer('provinces', {
+									styles: {
+										fill: 'none',
+										'stroke-width': 0.3,
+										'stroke': '#084594'
+									},
+									key: 'province'
+								});
+
+								$.get('{% url incidents_csv form=form.pk locationtype=4 %}', function(data) {
+				                	data = $.parseCSV(data);
+
+									map1.addSymbols({
+									    type: $K.Bubble,
+									    data: data.rows.slice(0, -1),
+									    location: function(d) { return 'constituencies.' + d.LOC},
+									    radius: function(d) { return 8; },
+									    values: function(d) {return [d.A, d.B, d.C, d.E, d.F, d.X, d.Y, d.Z]},
+									    style: 'fill:#CE1256; stroke-width: 0; fill-opacity: 0.5',
+									    title: function (d) {return d.LOC;}
+									});
+
+									map1.addSymbols({
+									    type: $K.Label,
+									    data: data.rows.slice(0, -1),
+									    location: function(d) { return 'constituencies.' + d.LOC},
+									    text: function(d) { return d.TOT; }, style: 'font:9px "Courier New" important; fill:#fff'
+									});								
+								});
+							});
+							 
+						}
+					</script>
+				 </div>
+				 <div class="tab-pane" id="bula_map">
+				  <div id="bula_map_canvas" class="span9 offset2" style="margin-bottom:20px; margin-top:15px;"></div>
+				  	<script type="text/javascript">
+						function loadBula() {
+							map2 = $K.map('#bula_map_canvas', 600, 600);
+							map2.loadMap('{{ STATIC_URL }}bulawayo.svg', function () {
+
+								map2.addLayer('bulawayo', {
+									styles: {
+										fill: '#C6DBEF',
+										'stroke-width': 1,
+										'stroke':'#fff'
+									},
+									key: 'constituency',
+									title: function (d) { return d.constituency; },
+								});
+
+								$.get('{% url incidents_csv_with_location form=form.pk locationtype=4 location=2 %}', function(data) {
+				                	data = $.parseCSV(data);
+
+									map2.addSymbols({
+										type: $K.PieChart,
+										data: data.rows.slice(0, -1),
+										colors: function (d) { return _.map(_.filter(options, function (option) { return d[option] > 0; }), function (option) { return colors[options.indexOf(option)]; }) },
+										titles: function (d) { return _.map(_.filter(options, function (option) { return d[option] > 0; }), function (option) { return sector_title(d, option); })},
+										border: '#fff',
+										borderWidth: 1,
+										location: function(d) { return 'bulawayo.' + d.LOC },
+										values: function(d) { return _.map(_.filter(options, function (option) { return d[option] > 0; }), function (option) { return d[option]; })},
+										radius: function(d) { return 22; }
+										
+									});
+									map2.addSymbols({
+									    type: $K.Bubble,
+									    data: data.rows.slice(0, -1),
+									    location: function(d) { return 'bulawayo.' + d.LOC},
+									    radius: function(d) { return 12; },
+									    style: 'fill:white; stroke-width: 0;',
+									});
+
+									map2.addSymbols({
+									    type: $K.Label,
+									    data: data.rows.slice(0, -1),
+									    location: function(d) { return 'bulawayo.' + d.LOC},
+									    text: function(d) { return d.TOT; }, style: 'font:9px "Courier New" important'
+									});
+								});
+							});
+							 
+						}
+					</script>
+				</div>
+				<div class="tab-pane" id="hara_map">
+				  <div id="hara_map_canvas" class="span9 offset2" style="margin-bottom:20px; margin-top:15px;"></div>
+				 	<script type="text/javascript">
+						function loadHara() {
+							map3 = $K.map('#hara_map_canvas', 600, 600);
+							map3.loadMap('{{ STATIC_URL }}harare.svg', function () {
+
+								map3.addLayer('harare', {
+									styles: {
+										fill: '#C6DBEF',
+										'stroke-width': 1,
+										'stroke':'#fff'
+									},
+									key: 'constituency',
+									title: function (d) { return d.constituency; },
+								});
+
+								$.get('{% url incidents_csv_with_location form=form.pk locationtype=4 location=373 %}', function(data) {
+				                	data = $.parseCSV(data);
+
+									map3.addSymbols({
+										type: $K.PieChart,
+										data: data.rows.slice(0, -1),
+										colors: function (d) { return _.map(_.filter(options, function (option) { return d[option] > 0; }), function (option) { return colors[options.indexOf(option)]; }) },
+										titles: function (d) { return _.map(_.filter(options, function (option) { return d[option] > 0; }), function (option) { return sector_title(d, option); })},
+										border: '#fff',
+										borderWidth: 1,
+										location: function(d) { return 'harare.' + d.LOC },
+										values: function(d) { return _.map(_.filter(options, function (option) { return d[option] > 0; }), function (option) { return d[option]; })},
+										radius: function(d) { return 22; }
+										
+									});
+
+									map3.addSymbols({
+									    type: $K.Bubble,
+									    data: data.rows.slice(0, -1),
+									    location: function(d) { return 'harare.' + d.LOC},
+									    radius: function(d) { return 12; },
+									    style: 'fill:white; stroke-width: 0;',
+									});
+
+									map3.addSymbols({
+									    type: $K.Label,
+									    data: data.rows.slice(0, -1),
+									    location: function(d) { return 'harare.' + d.LOC},
+									    text: function(d) { return d.TOT; }, style: 'font:9px "Courier New" important'
+									});
+								});
+							});
+							 
+						}
+					</script>
+				 </div>
+				</div>
+			</div>
+		</div>
+		{% else %}
+		<table class="table table-striped table-bordered table-hover">
+			<tr class="warning">
+				<td style="text-align:center">No Data Available</td>
+			</tr>
+		</table>
+		{% endif %}
+	</div>
+</div>
+{% endblock %}

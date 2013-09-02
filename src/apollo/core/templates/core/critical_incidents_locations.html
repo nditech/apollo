@@ -1,0 +1,105 @@
+{% extends "core/layout.html" %}
+{% load apollo %}{% load static %}
+{% block javascripts %}
+{% endblock %}
+{% block title %}
+{{ page_title }}
+{% if perms.core.export_submissions %}
+<div class="btn-group pull-right">
+  <form method="get"><input type="hidden" name="export" value="true" /><button class="btn" type="submit">Export</a></form>
+</div>
+{% endif %}
+{% endblock %}
+{% block content %}
+<div class="row">
+	<div class="span5">
+		{% analysis_breadcrumb_navigation form location %}
+  	</div>
+  	<div class="span7">
+        <form class="form-horizontal pull-right" action="" method="get" accept-charset="utf-8">
+          {{ filter_form.status }} {{ filter_form.witness }} {{ filter_form.sample }}
+          <button class="btn btn-warning" type="submit"><i class="icon-search icon-white"></i> Filter</button>
+        </form>
+  	</div>
+    <div class="span12">
+        {% analysis_location_navigation form location %}
+    </div>
+ </div>
+ <div class="row">
+	<div class="span12">
+		{% if incidents %}
+		<div class="tabbable"> <!-- Only required for left/right tabs -->
+			<ul class="nav nav-tabs">
+				<li class="active"><a href="#table" data-toggle="tab">Table</a></li>
+				<li><a href="#map" data-toggle="tab" onclick="init_map();">Map</a></li>
+			</ul>
+			<div class="tab-content">
+			    <div class="tab-pane active" id="table">
+<table class="table table-bordered table-striped">
+    <tr>
+        <td colspan="{{ 6|add:location_types.count }}"><strong>{{ form_field.tag }}</strong> · {{ form_field.description }}</td>
+    </tr>
+	<tr>
+        <th>PSZ</th>
+        <th>Name</th>
+        {% for lt in location_types %}
+        <th>{{ lt.name }}</th>
+        {% endfor %}
+        <th>Location</th>
+        <th style="text-align: center">Witnessed</th>
+        <th style="text-align: center" width="50">Status</th>
+		<th>Description</th>
+	</tr>
+    {% for incident in incidents %}
+	<tr>
+        <td>{{ incident.observer.observer_id|default_if_none:"" }}</td>
+        <td>{{ incident.observer.name|default_if_none:"" }}</td>
+        {% for lt in location_types %}
+        <td>{% get_location_for_type incident lt %}</td>
+        {% endfor %}
+        <td>{{ incident.location }} · <em class="muted">{{ incident.location.type }}</em></td>
+        <td style="text-align: center">
+        {% with incident.data.witness as witness %}
+        {% if witness == 'witnessed' %}
+            <i class="icon-eye-open" title="Witnessed incident"></i>
+        {% elif witness == 'after' %}
+            <i class="icon-eye-close" title="Arrived after incident"></i>
+        {% elif witness == 'reported' %}
+            <i class="icon-user" title="Incident was reported"></i>
+        {% else %}
+            &nbsp;
+        {% endif %}
+        {% endwith %}
+        </td>
+        <td style="text-align: center">
+        {% with incident.data.status as status %}
+        {% if status == 'confirmed' %}
+        <img src="{% static "img/tick.png" %}" title="Confirmed" alt="Confirmed" />
+        {% elif status == 'rejected' %}
+        <img src="{% static "img/red_dot.png" %}" title="Rejected" alt="Rejected" />
+        {% else %}
+        <img src="{% static "img/caution.png" %}" title="Unmarked" alt="Unmarked" />
+        {% endif %}
+        {% endwith %}
+        </td>
+		<td>{{ incident.data.description }}</td>
+	</tr>
+    {% endfor %}
+</table>
+				</div>
+				<!--Map-->
+				<div class="tab-pane" id="map">
+					<div id="map_canvas" style="width:100%; height:550px; margin-bottom:40px;"></div>
+				</div>
+			</div>
+		</div>
+		{% else %}
+		<table class="table table-striped table-bordered table-hover">
+			<tr class="warning">
+				<td style="text-align:center">No Data Available</td>
+			</tr>
+		</table>
+		{% endif %}
+	</div>
+</div>
+{% endblock %}

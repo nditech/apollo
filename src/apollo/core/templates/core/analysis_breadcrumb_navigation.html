@@ -1,0 +1,13 @@
+<ul class="breadcrumb">
+{% for location in locations %}
+    {% if forloop.last %}
+    <li>{{ location.name }} · <em class="locationtype">{{ location.type.name }}</em></li>
+    {% else %}
+    {% if analysis_type == 'process' %}
+    <li><a href="{% if tag %}{% url submissions_analysis_location_tag form.pk location.pk tag %}{% else %}{% url submissions_analysis_location form.pk location.pk %}{% endif %}">{{ location.name }}</a>  · <em class="locationtype">{{ location.type.name }}</em><span class="divider">/</span></li>
+    {% else %}
+    <li><a href="{% url results_analysis_location form.pk location.pk %}">{{ location.name }}</a>  · <em class="locationtype">{{ location.type.name }}</em><span class="divider">/</span></li>
+    {% endif %}
+    {% endif %}
+{% endfor %}
+</ul>
