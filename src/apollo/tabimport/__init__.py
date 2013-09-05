@@ -50,7 +50,7 @@ class FileFactory(object):
         elif format == 'csv':
             return CSVImportedFile(datafile, **imp_params)
         else:
-            raise UnsupportedFileFormat(_("Unknown file extension '%s'") % format)
+            raise UnsupportedFileFormat(_("Unknown file extension '%(format)s'") % {'format': format})
 
     @classmethod
     def _sniff_format(cls, dfile):
@@ -146,12 +146,12 @@ class ImportedFile(object):
                     warnings.append((self.current_sheet_name(), h, _("Unknown header")))
                     self._ignored_headers_idx[self.current_index].append(i)
                 elif h in good_headers:
-                    errors.append(_("The column '%s' is twice in your file's headers (sheet '%s')") % (h, self.current_sheet_name()))
+                    errors.append(_("The column '%(column)s' is twice in your file's headers (sheet '%(sheet)s')") % {'column': h, 'sheet': self.current_sheet_name()})
                 else:
                     good_headers.add(h)
             for h in mandatory_headers:
                 if h not in good_headers:
-                    errors.append(_("The header '%s' is mandatory and is missing in sheet '%s' of your file") % (h, self.current_sheet_name()))
+                    errors.append(_("The header '%(header)s' is mandatory and is missing in sheet '%(sheet)s' of your file") % {'header': h, 'sheet': self.current_sheet_name()})
         self.activate_sheet(0)
         if errors:
             raise HeaderError(u"\n".join(errors))
