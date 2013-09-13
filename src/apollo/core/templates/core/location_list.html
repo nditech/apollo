@@ -1,4 +1,4 @@
-{% extends "core/layout.html" %}{% load apollo %}{% load bootstrap_pagination %}
+{% extends "core/layout.html" %}{% load apollo %}{% load bootstrap_pagination %}{% load i18n %}
 {% block content %}
 <div class="row">
   <div class="span12">
@@ -8,7 +8,7 @@
         <div class="controls controls-row">
           {{ filter_form.name }}
           {{ filter_form.type }}
-          <button type="submit" style="margin-left:1em" class="btn btn-warning"><i class="icon-search icon-white"></i> Search</button> <a class="btn form-reset" style="margin-left:0.5em">Clear</a>
+          <button type="submit" style="margin-left:1em" class="btn btn-warning"><i class="icon-search icon-white"></i> {% trans "Search" context "verb" %}</button> <a class="btn form-reset" style="margin-left:0.5em">{% trans "Clear" context "verb" %}</a>
         </div>
       </form>
     </div>
@@ -20,10 +20,10 @@
     <table class="table table-striped table-bordered table-hover">
       <thead>
         <tr>
-          <th>ID</th>
-          <th>Code</th>
-          <th>Name</th>
-          <th>Type</th>
+          <th>{% trans "ID" %}</th>
+          <th>{% trans "Code" %}</th>
+          <th>{% trans "Name" %}</th>
+          <th>{% trans "Type" %}</th>
           <th></th>
         </tr>
       </thead>
@@ -34,7 +34,7 @@
           <td>{{ location.code|default_if_none:"&nbsp;" }}</td>
           <td>{{ location.name|default_if_none:"&nbsp;" }}</td>
           <td>{{ location.type }}</td>
-          <td style="text-align:center"><a href="{% url location_edit location.pk %}">Edit</a></td>
+          <td style="text-align:center"><a href="{% url location_edit location.pk %}">{% trans "Edit" context "verb" %}</a></td>
         </tr>
         {% endfor %}
       </tbody>

@@ -5,6 +5,8 @@ from django.contrib.gis.db import models
 from django.dispatch import receiver
 from django_dag.models import Graph, Node, Edge
 from django_dag.mixins import GraphMixin
+from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import pgettext_lazy
 from djorm_hstore.fields import DictionaryField
 from djorm_hstore.models import HStoreManager
 from rapidsms.models import Contact, Backend, Connection
@@ -18,6 +20,8 @@ try:
     import cPickle as pickle
 except ImportError:
     import pickle
+
+import vinaigrette
 
 
 LOCATIONTYPE_GRAPH = None
@@ -43,10 +47,10 @@ class LocationType(GraphMixin):
     name = models.CharField(max_length=100)
     # code is used mainly in the SMS processing logic
     code = models.CharField(blank=True, max_length=10, db_index=True)
-    on_display = models.BooleanField(default=False, help_text="Controls the display of this location type on the form lists")
-    on_dashboard = models.BooleanField(default=False, help_text="Controls the display of this location type on the dashboard filter")
-    on_analysis = models.BooleanField(default=False, help_text="Controls the display of this location type on the analysis filter")
-    in_form = models.BooleanField(default=False, db_index=True, help_text="Determines whether this LocationType can be used in SMS forms")
+    on_display = models.BooleanField(default=False, help_text=_("Controls the display of this location type on the form lists"))
+    on_dashboard = models.BooleanField(default=False, help_text=_("Controls the display of this location type on the dashboard filter"))
+    on_analysis = models.BooleanField(default=False, help_text=_("Controls the display of this location type on the analysis filter"))
+    in_form = models.BooleanField(default=False, db_index=True, help_text=_("Determines whether this LocationType can be used in SMS forms"))
 
     def __unicode__(self):
         return self.name
@@ -214,9 +218,10 @@ class ObserverRole(models.Model):
 class Observer(models.Model):
     """Election Observer"""
     GENDER = (
-        ('M', 'Male'),
-        ('F', 'Female'),
-        ('U', 'Unspecified'),
+        ('M', _('Male')),
+        ('F', _('Female')),
+        # Translators: the next string describes a gender that isn't specified
+        ('U', _('Unspecified')),
     )
     observer_id = models.CharField(max_length=100, null=True, blank=True)
     name = models.CharField(max_length=100, null=True, blank=True)
@@ -344,15 +349,15 @@ class Form(models.Model):
     representing the expected value.
     '''
     FORM_TYPES = (
-        ('CHECKLIST', 'Checklist'),
-        ('INCIDENT', 'Incident'),
+        ('CHECKLIST', _('Checklist')),
+        ('INCIDENT', pgettext_lazy('Critical Incident', 'Incident')),
     )
     name = models.CharField(max_length=255)
     type = models.CharField(max_length=100, choices=FORM_TYPES, default='CHECKLIST')
     trigger = models.CharField(max_length=255, unique=True)
     field_pattern = models.CharField(max_length=255)
     autocreate_submission = models.BooleanField(default=False,
-        help_text="Whether to create a new record if a submission doesn't exist")
+        help_text=_("Whether to create a new record if a submission doesn't exist"))
     options = DictionaryField(db_index=True, null=True, blank=True, default='')
 
     objects = HStoreManager()
@@ -445,7 +450,7 @@ class Form(models.Model):
 
 class FormGroup(models.Model):
     name = models.CharField(max_length=32, blank=True)
-    abbr = models.CharField(max_length=32, blank=True, null=True, help_text="Abbreviated version of the group name")
+    abbr = models.CharField(max_length=32, blank=True, null=True, help_text=_("Abbreviated version of the group name"))
     form = models.ForeignKey(Form, related_name='groups')
 
     class Meta:
@@ -457,9 +462,9 @@ class FormGroup(models.Model):
 
 class FormField(models.Model):
     ANALYSIS_TYPES = (
-        ('', 'N/A'),
-        ('PROCESS', 'Process'),
-        ('VOTE', 'Candidate Vote'),
+        ('', _('N/A')),
+        ('PROCESS', _('Process')),
+        ('VOTE', _('Candidate Vote')),
     )
 
     name = models.CharField(max_length=32)
@@ -917,3 +922,14 @@ def compute_verification(sender, **kwargs):
                 instance.data['verification'] = settings.FLAG_STATUSES['problem'][0]
             elif any(map(lambda i: i == OK, flags_statuses)):
                 instance.data['verification'] = settings.FLAG_STATUSES['no_problem'][0]
+
+# model translation registrations
+vinaigrette.register(LocationType, ['name'])
+vinaigrette.register(ObserverRole, ['name'])
+vinaigrette.register(ObserverDataField, ['name'])
+vinaigrette.register(Activity, ['name'])
+vinaigrette.register(Form, ['name'])
+vinaigrette.register(FormGroup, ['name', 'abbr'])
+vinaigrette.register(FormField, ['description'])
+vinaigrette.register(FormFieldOption, ['description'])
+vinaigrette.register(Sample, ['name'])

@@ -1,5 +1,5 @@
 {% extends "core/layout.html" %}
-{% load apollo %}
+{% load apollo %}{% load i18n %}
 {% block content %}
 <form method="POST">
   {% csrf_token %}
@@ -15,7 +15,7 @@
         {% endfor %}
           <tr>
             <td>&nbsp;</td>
-            <td><input type="submit" class="btn btn-primary" value="Save"> <a class="btn" style="margin-left:0.5em" href="javascript:history.go(-1);">Cancel</a></td>
+            <td><input type="submit" class="btn btn-primary" value="Save"> <a class="btn" style="margin-left:0.5em" href="javascript:history.go(-1);">{% trans "Cancel" context "verb" %}</a></td>
           </tr>
         </tbody>
       </table>

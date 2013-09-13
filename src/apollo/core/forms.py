@@ -1,5 +1,6 @@
 from django import forms
 from django.utils.encoding import force_unicode
+from django.utils.translation import ugettext as _
 from form_utils.forms import BetterForm
 from apollo.core.models import (Form, Observer, ObserverDataField, Location, Submission, Activity)
 from rapidsms.models import (Backend, Contact, Connection)
@@ -36,24 +37,24 @@ class ObserverHiddenInput(forms.HiddenInput):
 class SubmissionModelForm(BetterForm):
     FORM = None  # The form this submission will be saved to
     STATUS_CHOICES = (
-        ('', 'Unmarked'),
-        ('confirmed', 'Confirmed'),
-        ('rejected', 'Rejected'),
-        ('citizen', 'Citizen Report'),
+        ('', _('Unmarked')),
+        ('confirmed', _('Confirmed')),
+        ('rejected', _('Rejected')),
+        ('citizen', _('Citizen Report')),
     )
     WITNESS_CHOICES = (
-        ('', 'Unspecified'),
-        ('witnessed', 'I witnessed the incident'),
-        ('after', 'I arrived just after the incident'),
-        ('reported', 'The incident was reported to me by someone else'),
+        ('', _('Unspecified')),
+        ('witnessed', _('I witnessed the incident')),
+        ('after', _('I arrived just after the incident')),
+        ('reported', _('The incident was reported to me by someone else')),
     )
 
     location = forms.ModelChoiceField(queryset=Location.objects.all(),
         required=False, widget=LocationHiddenInput(
-            attrs={'class': 'span6 select2-locations', 'placeholder': 'Location'}))
+            attrs={'class': 'span6 select2-locations', 'placeholder': _('Location')}))
     observer = forms.ModelChoiceField(queryset=Observer.objects.all(),
         required=False, widget=forms.HiddenInput(
-            attrs={'class': 'span5 select2-observers', 'placeholder': 'Observer'}))
+            attrs={'class': 'span5 select2-observers', 'placeholder': _('Observer')}))
     data__description = forms.CharField(widget=forms.Textarea(attrs={'cols': '40', 'rows': '5', 'style': 'width:40%'}), required=False)
     data__location = forms.CharField(required=False, widget=forms.HiddenInput())
     data__status = forms.ChoiceField(required=False, choices=STATUS_CHOICES)
@@ -127,10 +128,10 @@ class SubmissionModelForm(BetterForm):
 class ContactModelForm(forms.ModelForm):
     location = forms.ModelChoiceField(queryset=Location.objects.all(),
         required=True, widget=LocationHiddenInput(
-            attrs={'class': 'span6 select2-locations-noclear', 'data-noclear': 'true', 'placeholder': 'Location'}))
+            attrs={'class': 'span6 select2-locations-noclear', 'data-noclear': 'true', 'placeholder': _('Location')}))
     supervisor = forms.ModelChoiceField(queryset=Observer.objects.all(),
         required=False, widget=ObserverHiddenInput(
-            attrs={'class': 'span5 select2-observers-clear', 'placeholder': 'Supervisor'}))
+            attrs={'class': 'span5 select2-observers-clear', 'placeholder': _('Supervisor')}))
 
     class Meta:
         model = Observer
@@ -146,12 +147,12 @@ class ContactModelForm(forms.ModelForm):
             phone_set = set([connection.identity for connection in self.instance.contact.connection_set.all()])
 
             for index, number in enumerate(phone_set):
-                label = 'Phone #%d' % (index + 1)
+                label = _('Phone #%(index)d') % {'index': (index + 1)}
                 name = 'conn_%d' % index
                 self.fields[name] = forms.CharField(label=label, initial=number)
                 kwargs['initial'][name] = number
             if not phone_set:
-                self.fields['conn_1'] = forms.CharField(label='Phone #1', required=False)
+                self.fields['conn_1'] = forms.CharField(label=_('Phone #1'), required=False)
 
         # now for the hstore field
         for data_field in ObserverDataField.objects.all():
@@ -252,10 +253,10 @@ def generate_submission_form(form, readonly=False):
 class VerificationModelForm(BetterForm):
     location = forms.ModelChoiceField(queryset=Location.objects.all(),
         required=False, widget=LocationHiddenInput(
-            attrs={'class': 'span6 select2-locations', 'placeholder': 'Location'}))
+            attrs={'class': 'span6 select2-locations', 'placeholder': _('Location')}))
     observer = forms.ModelChoiceField(queryset=Observer.objects.all(),
         required=False, widget=forms.HiddenInput(
-            attrs={'class': 'span5 select2-observers', 'placeholder': 'Observer'}))
+            attrs={'class': 'span5 select2-observers', 'placeholder': _('Observer')}))
 
     def __init__(self, *args, **kwargs):
         if 'instance' in kwargs:
@@ -307,7 +308,7 @@ def generate_verification_form(form, readonly=False):
         ('5', 'Rejected')
     )
 
-    fields['data__verification'] = forms.ChoiceField(choices=choices, required=False, label='Verification')
+    fields['data__verification'] = forms.ChoiceField(choices=choices, required=False, label=_('Verification'))
 
     metaclass = type('Meta', (), {'fields': tuple(field_names)})
     fields['Meta'] = metaclass

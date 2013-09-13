@@ -24,6 +24,7 @@ from django.template.response import TemplateResponse
 from django.utils import simplejson as json
 from django.utils.decorators import method_decorator
 from django.utils.http import is_safe_url
+from django.utils.translation import ugettext as _
 from django.views.decorators.debug import sensitive_post_parameters
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_protect
@@ -44,9 +45,9 @@ from analyses.datagenerator import generate_process_data, generate_incidents_dat
 from analyses.voting import incidents_csv
 
 COMPLETION_STATUS = (
-    (0, 'Complete'),
-    (1, 'Partial'),
-    (2, 'Empty'),
+    (0, _('Complete')),
+    (1, _('Partial')),
+    (2, _('Empty')),
 )
 
 export_formats = ['csv', 'xls', 'xlsx', 'ods']
@@ -135,11 +136,11 @@ class DashboardView(View, TemplateResponseMixin):
     def dispatch(self, request, *args, **kwargs):
         if 'group' in kwargs:
             self.form_group = get_object_or_404(FormGroup, pk=kwargs['group'])
-            self.page_title = 'Dashboard · {}'.format(self.form_group.name)
+            self.page_title = _('Dashboard') + ' · {}'.format(self.form_group.name)
             self.template_name = 'core/dashboard_status_breakdown.html'
         else:
             self.form_group = None
-            self.page_title = 'Dashboard'
+            self.page_title = _('Dashboard')
         if not request.user.has_perm('core.view_activities'):
             self.viewable_forms = get_objects_for_user(request.user, 'core.view_form', Form)
         else:
@@ -203,7 +204,7 @@ class SubmissionProcessAnalysisView(View, TemplateResponseMixin):
     @method_decorator(cache_page)
     def dispatch(self, request, *args, **kwargs):
         self.form = get_object_or_404(Form, pk=kwargs['form'])
-        self.page_title = '{} Analysis'.format(self.form.name)
+        self.page_title = _('%(form)s Analysis') % {'form': self.form.name}
         self.analysis_filter = generate_submission_analysis_filter(self.form)
         if 'location_id' in kwargs:
             self.location = get_object_or_404(Location, pk=kwargs['location_id'])
@@ -294,7 +295,7 @@ class SubmissionVotingResultsView(View, TemplateResponseMixin):
     @method_decorator(cache_page)
     def dispatch(self, request, *args, **kwargs):
         self.form = get_object_or_404(Form, pk=kwargs['form'])
-        self.page_title = '{} Voting Results'.format(self.form.name)
+        self.page_title = _('%(form)s Voting Results') % {'form': self.form.name}
         self.analysis_filter = generate_submission_analysis_filter(self.form)
         vote_options = []
         if 'location_id' in kwargs:
@@ -378,7 +379,7 @@ class SubmissionListView(ListView):
 
 class SubmissionEditView(UpdateView):
     template_name = 'core/submission_edit.html'
-    page_title = 'Edit Submission'
+    page_title = _('Edit Submission')
 
     def get_object(self, queryset=None):
         return self.submission.master if self.submission.form.type == 'CHECKLIST' else self.submission
@@ -429,7 +430,7 @@ class SubmissionEditView(UpdateView):
 
 class SubmissionCreateView(CreateView):
     template_name = 'core/submission_add.html'
-    page_title = 'Add Submission'
+    page_title = _('Add Submission')
 
     @method_decorator(login_required)
     @method_decorator(permission_required('core.add_submission', return_403=True))
@@ -482,14 +483,14 @@ class SubmissionListExportView(View):
                 export_fields = ['submissions__observer__observer_id', 'submissions__observer__name', 'submissions__observer__contact__connection__identity', 'submissions__observer__last_connection__identity'] + location_type_fields + data_fields + ['updated']
             else:
                 export_fields = ['observer__observer_id', 'observer__name', 'observer__contact__connection__identity', 'observer__last_connection__identity'] + location_type_fields + data_fields + ['updated']
-            field_labels = ['PSZ', 'Name', 'Phone', 'Texted Phone'] + location_types + data_fields + ['Timestamp']
+            field_labels = [_('PSZ'), _('Name'), _('Phone'), _('Texted Phone')] + location_types + data_fields + [_('Timestamp')]
 
             datalist = qs.intdata(data_fields).values(*datalist_fields).distinct()
         else:
             data_fields = list(FormField.objects.filter(group__form=form).order_by('tag').values_list('tag', flat=True))
 
             export_fields = ['observer__observer_id', 'observer__name', 'observer__contact__connection__identity', 'observer__last_connection__identity'] + location_type_fields + data_fields + ['status', 'witness', 'description', 'updated']
-            field_labels = ['PSZ', 'Name', 'Phone', 'Texted Phone'] + location_types + data_fields + ['Status', 'Witness', 'Description', 'Timestamp']
+            field_labels = [_('PSZ'), _('Name'), _('Phone'), _('Texted Phone')] + location_types + data_fields + [_('Status'), _('Witness'), _('Description'), _('Timestamp')]
 
             data_fields.extend(['status', 'witness', 'description'])
             datalist_fields = ['observer__observer_id', 'observer__name', 'location', 'observer__contact__connection__identity', 'observer__last_connection__identity'] + data_fields + ['updated']
@@ -507,7 +508,7 @@ class VerificationListView(ListView):
     context_object_name = 'submissions'
     template_name = 'core/verification_list.html'
     paginate_by = settings.PAGE_SIZE
-    page_title = 'Verification'
+    page_title = _('Verification')
 
     def get_queryset(self):
         return self.filter_set.qs.order_by('-date', '-created')
@@ -545,7 +546,7 @@ class VerificationListView(ListView):
 
 class VerificationEditView(UpdateView):
     template_name = 'core/verification_edit.html'
-    page_title = 'Edit Verification'
+    page_title = _('Edit Verification')
 
     def get_object(self, queryset=None):
         return self.submission
@@ -576,7 +577,7 @@ class ContactListView(ListView):
     template_name = 'core/contact_list.html'
     model = Observer
     paginate_by = settings.PAGE_SIZE
-    page_title = 'Observers'
+    page_title = _('Observers')
 
     def get_queryset(self):
         return self.filter_set.qs.order_by('observer_id')
@@ -623,7 +624,7 @@ class ContactListView(ListView):
             datalist_fields = ['observer_id', 'name', 'location', 'location__name', 'role__name', 'partner__name', 'contact__connection__identity']
 
             export_fields = ['observer_id'] + location_type_fields + ['location__name', 'name', 'role__name', 'contact__connection__identity', 'partner__name']
-            export_field_labels = ['PSZ'] + location_types + ['Location', 'Name', 'Role', 'Phone', 'Partner']
+            export_field_labels = [_('PSZ')] + location_types + [_('Location'), _('Name'), _('Role'), _('Phone'), _('Partner')]
 
             datalist = self.filter_set.qs.values(*datalist_fields).distinct()
             filename = slugify('contacts %s' % (datetime.now().strftime('%Y %m %d %H%M%S')))
@@ -640,7 +641,7 @@ class ContactEditView(UpdateView):
     model = Observer
     form_class = ContactModelForm
     success_url = '/observers/'
-    page_title = 'Edit Observer'
+    page_title = _('Edit Observer')
 
     @method_decorator(login_required)
     @method_decorator(permission_required('core.change_observer', return_403=True))
@@ -661,7 +662,7 @@ class LocationListView(ListView):
     template_name = 'core/location_list.html'
     model = Location
     paginate_by = settings.PAGE_SIZE
-    page_title = 'Locations'
+    page_title = _('Locations')
 
     def get_queryset(self):
         return self.filter_set.qs.order_by('pk')
@@ -696,7 +697,7 @@ class LocationEditView(UpdateView):
     model = Location
     form_class = LocationModelForm
     success_url = '/locations/'
-    page_title = 'Edit Location'
+    page_title = _('Edit Location')
 
     @method_decorator(login_required)
     @method_decorator(permission_required('core.change_location', return_403=True))

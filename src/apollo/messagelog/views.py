@@ -5,6 +5,7 @@ from guardian.decorators import permission_required
 from django.http import HttpResponse
 from django.template.defaultfilters import slugify
 from django.utils.decorators import method_decorator
+from django.utils.translation import ugettext as _
 from django.views.generic import ListView
 from .models import MESSAGE_DIRECTION, MessageLog
 from .filters import MessageFilter
@@ -20,7 +21,7 @@ class MessageListView(ListView):
     context_object_name = 'messages'
     template_name = 'messagelog/message_list.html'
     paginate_by = settings.PAGE_SIZE
-    page_title = 'Messages'
+    page_title = _('Messages')
 
     def get_queryset(self):
         return self.filter_set.qs.order_by('-created')
@@ -56,7 +57,7 @@ def export_message_log(request, format='xls'):
     # grab all MessageLog objects
     message_log = MessageLog.objects.filter(created__range=(activity.start_date, activity.end_date + timedelta(days=1)))
     fields = ['mobile', 'text', 'direction', 'created', 'delivered']
-    labels = ['Mobile', 'Text', 'Message direction', 'Created', 'Delivered']
+    labels = [_('Mobile'), _('Text'), _('Message direction'), _('Created'), _('Delivered')]
 
     response = HttpResponse(export(message_log.values(*fields), fields=fields, labels=labels, format=format),
         content_type=export_formats[format])

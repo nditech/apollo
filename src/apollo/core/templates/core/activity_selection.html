@@ -1,8 +1,8 @@
-<!DOCTYPE html>
+{% load i18n %}<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Choose Activity</title>
+    <title>{% trans "Choose Activity" %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -21,7 +21,7 @@
   <body>
     <div class="row-fluid">
     	<div class="span4 offset4" style="margin-top:10em;text-align:center">
-    		<legend>Choose Activity</legend>
+    		<legend>{% trans "Choose Activity" %}</legend>
     		<form class="form-vertical" action="" method="POST" accept-charset="utf-8">{% csrf_token %}
     			<div class="control-group">
             <div class="controls">
@@ -30,7 +30,7 @@
           </div>
     			<div class="control-group">
             <div class="controls">
-                <button class="btn btn-warning" type="submit">Go</button>
+                <button class="btn btn-warning" type="submit">{% trans "Go" %}</button>
             </div>
           </div>
     		</form>

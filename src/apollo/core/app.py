@@ -5,6 +5,7 @@ from django.conf import settings
 from rapidsms.apps.base import AppBase
 from models import *
 from datetime import datetime
+from django.utils import translation
 from django.utils.translation import ugettext as _
 from django.contrib.sites.models import Site
 from django.contrib.comments.models import Comment
@@ -21,6 +22,8 @@ SUBMISSION_RECEIVED = _('Thank you! Your report was received! You sent: %(messag
 
 class App(AppBase):
     def handle(self, message):
+        translation.activate(settings.SMS_LANGUAGE_CODE)
+        
         temp = unicode(message.text)
         # strip all unwanted whitespace and punctuation marks
         at_position = temp.find('@')

@@ -1,5 +1,5 @@
 {% extends "core/layout.html" %}
-{% load apollo %}
+{% load apollo %}{% load i18n %}
 {% block javascripts %}
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.csv.js"></script>
@@ -24,7 +24,7 @@
   	<div class="span7">
         <form class="form-horizontal pull-right" action="" method="get" accept-charset="utf-8">
           {{ filter_form.status }} {{ filter_form.witness }} {{ filter_form.sample }}
-          <button class="btn btn-warning" type="submit"><i class="icon-search icon-white"></i> Filter</button>
+          <button class="btn btn-warning" type="submit"><i class="icon-search icon-white"></i> {% trans "Filter" context "verb"}</button>
         </form>
   	</div>
     <div class="span12">
@@ -36,8 +36,8 @@
 		{% if incidents_summary.top %}
 		<div class="tabbable"> <!-- Only required for left/right tabs -->
 			<ul class="nav nav-tabs">
-				<li class="active"><a href="#table" data-toggle="tab">Table</a></li>
-				<li><a href="#charts" data-toggle="tab">Charts</a></li>
+				<li class="active"><a href="#table" data-toggle="tab">{% trans "Table" %}</a></li>
+				<li><a href="#charts" data-toggle="tab">{% trans "Charts" %}</a></li>
 				<li><a href="#province_map" data-toggle="tab" data-map="map">Province</a></li>
 				<li><a href="#con_map" data-toggle="tab" data-map="map1">Constituency</a></li>
 				<li><a href="#bula_map" data-toggle="tab" data-map="map2">Bulawayo</a></li>
@@ -407,7 +407,7 @@
 		{% else %}
 		<table class="table table-striped table-bordered table-hover">
 			<tr class="warning">
-				<td style="text-align:center">No Data Available</td>
+				<td style="text-align:center">{% trans "No Data Available" %}</td>
 			</tr>
 		</table>
 		{% endif %}

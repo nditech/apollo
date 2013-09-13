@@ -1,4 +1,4 @@
-{% extends "core/layout.html" %}{% load apollo %}
+{% extends "core/layout.html" %}{% load apollo %}{% load i18n %}
 {% block content %}
 <div class="row">
   <div class="span12">
@@ -10,8 +10,8 @@
                 {{ filter_form.sample }}
                 {{ filter_form.form }}
                 {{ filter_form.location }}
-                <button class="btn btn-warning" style="margin-left:1em" type="submit"><i class="icon-search icon-white"></i> Filter</button>
-                <a class="btn form-reset" style="margin-left:0.5em">Reset</a>
+                <button class="btn btn-warning" style="margin-left:1em" type="submit"><i class="icon-search icon-white"></i> {% trans "Filter" context "verb" %}</button>
+                <a class="btn form-reset" style="margin-left:0.5em">{% trans "Reset" context "verb" %}</a>
               </div>
           </form>
       </div>
@@ -28,7 +28,7 @@
             r = width/2 - offset;
             data = [{{ location.missing }}, {{ location.partial }}, {{ location.complete }}];
             colors = ["#FF5200", "#FFE22B", "#3BDF4A"];
-            labels = ["Missing", 'Partial', 'Complete'];
+            labels = ['{% trans "Missing" %}', '{% trans "Partial" %}', '{% trans "Complete" %}'];
 
             var pie = new pv.Panel().width(width).height(height);
                 pie.add(pv.Wedge)

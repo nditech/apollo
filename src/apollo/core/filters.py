@@ -2,6 +2,7 @@ from apollo.core.models import *
 import django_filters
 from django import forms
 from django.conf import settings
+from django.utils.translation import ugettext as _
 from djorm_hstore.expressions import HstoreExpression
 
 
@@ -85,7 +86,7 @@ class LocationFilter(django_filters.ChoiceFilter):
 class ActivityFilter(django_filters.ChoiceFilter):
     def __init__(self, *args, **kwargs):
         request = kwargs.pop('request', None)
-        kwargs['choices'] = [('', 'Activity')] + list(Activity.objects.all().values_list('pk', 'name'))
+        kwargs['choices'] = [('', _('Activity'))] + list(Activity.objects.all().values_list('pk', 'name'))
         self.default_activity = request.session.get('activity', Activity.default()) if request else Activity.default()
         if self.default_activity:
             kwargs['initial'] = self.default_activity.pk
@@ -120,7 +121,7 @@ class ChecklistFormFilter(django_filters.ChoiceFilter):
 
 class SampleFilter(django_filters.ChoiceFilter):
     def __init__(self, *args, **kwargs):
-        kwargs['choices'] = [('', 'Sample')] + list(Sample.objects.all().values_list('pk', 'name'))
+        kwargs['choices'] = [('', _('Sample'))] + list(Sample.objects.all().values_list('pk', 'name'))
         super(SampleFilter, self).__init__(*args, **kwargs)
 
     def filter(self, qs, value):
@@ -145,13 +146,13 @@ class BaseContactsFilter(django_filters.FilterSet):
     def __init__(self, *args, **kwargs):
         super(BaseContactsFilter, self).__init__(*args, **kwargs)
         self.filters['role'].extra.update(
-            {'empty_label': u'All Roles'})
+            {'empty_label': _('All Roles')})
         self.filters['partner'].extra.update(
-            {'empty_label': u'All Organizations'})
+            {'empty_label': _('All Organizations')})
         self.filters['role'].field.widget.attrs['class'] = 'span3'
         self.filters['partner'].field.widget.attrs['class'] = 'span3'
         self.filters['observer_id'].field.widget.attrs['class'] = 'span3'
-        self.filters['observer_id'].field.widget.attrs['placeholder'] = 'Observer ID'
+        self.filters['observer_id'].field.widget.attrs['placeholder'] = _('Observer ID')
 
 
 def generate_contacts_filter():
@@ -162,11 +163,11 @@ def generate_contacts_filter():
 
     fields['location'] = LocationFilter(widget=forms.Select(attrs={
         'class': 'span3 input-xlarge select2',
-        'data-placeholder': 'Location'}))
+        'data-placeholder': _('Location')}))
     fields['name'] = django_filters.CharFilter(widget=forms.TextInput(attrs={
-        'class': 'span3', 'placeholder': 'Name'}), lookup_type='icontains')
+        'class': 'span3', 'placeholder': _('Name')}), lookup_type='icontains')
     fields['contact__connection__identity'] = django_filters.CharFilter(widget=forms.TextInput(attrs={
-        'class': 'span3', 'placeholder': 'Phone'}), lookup_type='startswith')
+        'class': 'span3', 'placeholder': _('Phone')}), lookup_type='startswith')
     return type('ContactsFilter', (BaseContactsFilter,), fields)
 
 
@@ -195,28 +196,28 @@ def generate_submission_filter(form):
     fields = {'Meta': metaclass}
     for group in form.groups.all():
         CHOICES = [
-            ('0', '%s Status' % group.name),
-            ('1', '%s Partial' % group.name),
-            ('2', '%s Missing' % group.name),
-            ('3', '%s Complete' % group.name)
+            ('0', _('%(group)s Status') % {'group': group.name}),
+            ('1', _('%(group)s Partial') % {'group': group.name}),
+            ('2', _('%(group)s Missing') % {'group': group.name}),
+            ('3', _('%(group)s Complete') % {'group': group.name})
             ]
         fields['group_%d' % (group.pk,)] = FormGroupFilter(label=group.name,
             choices=CHOICES, widget=forms.Select(attrs={'class': 'span2'}))
     fields['observer__observer_id'] = django_filters.CharFilter(widget=forms.TextInput(attrs={
         'class': 'span2',
-        'placeholder': 'Observer ID'
+        'placeholder': _('Observer ID')
         }))
 
     fields['location'] = LocationFilter(widget=forms.Select(attrs={
         'class': 'span4 input-xlarge select2',
-        'data-placeholder': 'Location'}))
+        'data-placeholder': _('Location')}))
     fields['activity'] = ActivityFilter(widget=forms.HiddenInput())
 
     if form.type == 'INCIDENT':
         fields['status'] = HstoreChoiceFilter(
-            widget=forms.Select(attrs={'class': 'span2'}), label='Status',
-            choices=(('', 'Status'), ('NULL', 'Unmarked'), ('confirmed', 'Confirmed'),
-                ('rejected', 'Rejected'), ('citizen', 'Citizen Report')))
+            widget=forms.Select(attrs={'class': 'span2'}), label=_('Status'),
+            choices=(('', _('Status')), ('NULL', _('Unmarked')), ('confirmed', _('Confirmed')),
+                ('rejected', _('Rejected')), ('citizen', _('Citizen Report'))))
     return type('SubmissionFilter', (BaseSubmissionFilter,), fields)
 
 
@@ -230,16 +231,16 @@ class LocationsFilter(django_filters.FilterSet):
     def __init__(self, *args, **kwargs):
         super(LocationsFilter, self).__init__(*args, **kwargs)
         self.filters['type'].extra.update(
-            {'empty_label': 'All Location Types'})
+            {'empty_label': _('All Location Types')})
         self.filters['name'].field.widget.attrs['class'] = 'span3'
-        self.filters['name'].field.widget.attrs['placeholder'] = 'Name'
+        self.filters['name'].field.widget.attrs['placeholder'] = _('Name')
         self.filters['type'].field.widget.attrs['class'] = 'span3'
 
 
 class DashboardFilter(django_filters.FilterSet):
     location = LocationFilter(widget=forms.Select(attrs={
         'class': 'span4 input-xlarge select2',
-        'data-placeholder': 'Location'}), queryset=LocationType.objects.filter(on_dashboard=True))
+        'data-placeholder': _('Location')}), queryset=LocationType.objects.filter(on_dashboard=True))
     activity = ActivityFilter(widget=forms.Select(attrs={'class': 'span3'}))
     form = ChecklistFormFilter(widget=forms.HiddenInput())
     sample = SampleFilter(widget=forms.Select(attrs={'class': 'span2'}))
@@ -285,13 +286,13 @@ def generate_submission_analysis_filter(form):
     fields['activity'] = ActivityFilter(widget=forms.HiddenInput())
     if form.type == 'INCIDENT':
         fields['status'] = HstoreChoiceFilter(
-            widget=forms.Select(attrs={'class': 'span2'}), label='Status',
-            choices=(('', 'Status'), ('NULL', 'Unmarked'), ('confirmed', 'Confirmed'),
-                ('rejected', 'Rejected'), ('citizen', 'Citizen Report')))
+            widget=forms.Select(attrs={'class': 'span2'}), label=_('Status'),
+            choices=(('', _('Status')), ('NULL', _('Unmarked')), ('confirmed', _('Confirmed')),
+                ('rejected', _('Rejected')), ('citizen', _('Citizen Report'))))
         fields['witness'] = HstoreChoiceFilter(
-            widget=forms.Select(attrs={'class': 'span2'}), label='Status',
-            choices=(('', 'Witness'), ('NULL', 'Unspecified'), ('witnessed', 'Witnessed incident'),
-                ('after', 'Arrived after incident'), ('reported', 'Incident was reported')))
+            widget=forms.Select(attrs={'class': 'span2'}), label=_('Status'),
+            choices=(('', _('Witness')), ('NULL', _('Unspecified')), ('witnessed', _('Witnessed incident')),
+                ('after', _('Arrived after incident')), ('reported', _('Incident was reported'))))
 
     return type('SubmissionsAnalysisFilter', (BaseSubmissionsAnalysisFilter,), fields)
 
@@ -321,13 +322,13 @@ def generate_critical_incidents_location_filter(tag):
 
     fields[tag] = HstoreChoiceFilter(widget=forms.HiddenInput(), choices=(('NOT_NULL', ''),), initial='NOT_NULL', contains=True)
     fields['status'] = HstoreChoiceFilter(
-        widget=forms.Select(attrs={'class': 'span2'}), label='Status',
-        choices=(('', 'Status'), ('NULL', 'Unmarked'), ('confirmed', 'Confirmed'),
-            ('rejected', 'Rejected'), ('citizen', 'Citizen Report')))
+        widget=forms.Select(attrs={'class': 'span2'}), label=_('Status'),
+        choices=(('', _('Status')), ('NULL', _('Unmarked')), ('confirmed', _('Confirmed')),
+            ('rejected', _('Rejected')), ('citizen', _('Citizen Report'))))
     fields['witness'] = HstoreChoiceFilter(
         widget=forms.Select(attrs={'class': 'span2'}), label='Status',
-        choices=(('', 'Witness'), ('NULL', 'Unspecified'), ('witnessed', 'Witnessed incident'),
-            ('after', 'Arrived after incident'), ('reported', 'Incident was reported')))
+        choices=(('', _('Witness')), ('NULL', _('Unspecified')), ('witnessed', _('Witnessed incident')),
+            ('after', _('Arrived after incident')), ('reported', _('Incident was reported'))))
     fields['activity'] = ActivityFilter(widget=forms.HiddenInput())
 
     return type('CriticalIncidentsLocationFilter', (BaseCriticalIncidentsLocationFilter,), fields)
@@ -350,15 +351,15 @@ def generate_submission_flags_filter(form):
             choices=CHOICES)
     fields['observer_id'] = django_filters.CharFilter(widget=forms.TextInput(attrs={
         'class': 'span2',
-        'placeholder': 'Observer ID'
+        'placeholder': _('Observer ID')
         }), name="submissions__observer__observer_id")
 
     fields['location'] = LocationFilter(widget=forms.Select(attrs={
         'class': 'span4 input-xlarge select2',
-        'data-placeholder': 'Location'}))
+        'data-placeholder': _('Location')}))
     fields['activity'] = ActivityFilter(widget=forms.HiddenInput())
     fields['verification'] = HstoreChoiceFilter(
-        widget=forms.Select(attrs={'class': 'span2'}), label='Verification',
+        widget=forms.Select(attrs={'class': 'span2'}), label=_('Verification'),
         choices=settings.STATUS_CHOICES)
 
     return type('SubmissionFlagsFilter', (BaseSubmissionFilter,), fields)

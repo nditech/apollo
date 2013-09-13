@@ -61,6 +61,7 @@ INSTALLED_APPS = [
     "tastypie",
     "guardian",
     "jimmypage",
+    "vinaigrette",
 
     "rapidsms.contrib.default",
     "rapidsms.router.db",
@@ -224,15 +225,16 @@ ENABLE_MULTIPLE_PHONES = False  # determines whether to allow for multiple numbe
 PHONE_CC = []
 
 MIDDLEWARE_CLASSES = (
-    'johnny.middleware.LocalStoreClearMiddleware',
-    'johnny.middleware.QueryCacheMiddleware',
-    'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'reversion.middleware.RevisionMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'audit_log.middleware.UserLoggingMiddleware',
+    'django.middleware.transaction.TransactionMiddleware',
+    'reversion.middleware.RevisionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'johnny.middleware.LocalStoreClearMiddleware',
+    'johnny.middleware.QueryCacheMiddleware',
     'core.middleware.AllowOriginMiddleware',
     'core.middleware.KMLMiddleware',
     'core.middleware.SessionIdleTimeout')
@@ -259,6 +261,15 @@ CACHES = {
 JOHNNY_MIDDLEWARE_KEY_PREFIX = 'jc_apollo'
 JIMMY_PAGE_CACHE_PREFIX = "jp_apollo"
 JIMMY_PAGE_DISABLED = True
+
+SMS_LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'en-us'
+
+ugettext = lambda s: s
+
+LANGUAGES = (
+  ('en', ugettext('English')),
+)
 
 # since we might hit the database from any thread during testing, the
 # in-memory sqlite database isn't sufficient. it spawns a separate

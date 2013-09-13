@@ -1,4 +1,4 @@
-{% load apollo %}<!DOCTYPE html>
+{% load i18n %}{% load apollo %}<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
@@ -39,16 +39,16 @@
           <div class="container">
             <a class="brand" href="#">Apollo</a>
             <ul class="nav pull-right">
-              <li><a href="{% url dashboard %}"><i class="icon-home"></i> Dashboard</a></li>
+              <li><a href="{% url dashboard %}"><i class="icon-home"></i> {% trans "Dashboard" %}</a></li>
               {% forms_menu request perms %}
               {% if perms.core.can_analyse %}{% analysis_menu request %}{% endif %}
-              {% if perms.core.view_observers %}<li><a href="{% url contacts_list %}"><i class="icon-user"></i> Observers</a></li>{% endif %}
-              {% if perms.messagelog.view_messages %}<li><a href="{% url messages_list %}"><i class="icon-envelope"></i> Messages</a></li>{% endif %}
+              {% if perms.core.view_observers %}<li><a href="{% url contacts_list %}"><i class="icon-user"></i> {% trans "Observers" %}</a></li>{% endif %}
+              {% if perms.messagelog.view_messages %}<li><a href="{% url messages_list %}"><i class="icon-envelope"></i> {% trans "Messages" %}</a></li>{% endif %}
               <li>
                 <div class="btn-group">
                   <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-user icon-white"></i> {{ request.user.username }} <span class="caret"></span></a>
                   <ul class="dropdown-menu pull-right">
-                    <li><a href="{% url user-logout %}">Logout</a></li>
+                    <li><a href="{% url user-logout %}">{% trans "Logout" %}</a></li>
                   </ul>
                 </div>
               </li>

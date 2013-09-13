@@ -1,5 +1,5 @@
-{% if forms %}
-<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-tasks"></i> Analysis <b class="caret"></b></a>
+{% load i18n %}{% if forms %}
+<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-tasks"></i> {% trans "Analysis" context "adjective" %} <b class="caret"></b></a>
     <ul class="dropdown-menu">
         {% for form in forms %}
         <li><a href="{% url submissions_analysis form.pk %}"><i class="icon-tasks"></i> {{ form.name }}</a></li>
@@ -8,7 +8,7 @@
 </li>
 {% endif %}
 {% if voting_forms %}
-<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-list-alt"></i> Results <b class="caret"></b></a>
+<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-list-alt"></i> {% trans "Results" context "noun" %} <b class="caret"></b></a>
     <ul class="dropdown-menu">
         {% for form in voting_forms %}
         <li><a href="{% url results_analysis form.pk %}"><i class="icon-list-alt"></i> {{ form.name }}</a></li>

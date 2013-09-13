@@ -1,12 +1,13 @@
 from django.db import models
+from django.utils.translation import ugettext as _
 
 
 MESSAGE_INCOMING = 1
 MESSAGE_OUTGOING = 2
 
 MESSAGE_DIRECTION = (
-    (MESSAGE_INCOMING, 'Incoming'),
-    (MESSAGE_OUTGOING, 'Outgoing')
+    (MESSAGE_INCOMING, _('Incoming')),
+    (MESSAGE_OUTGOING, _('Outgoing'))
 )
 
 

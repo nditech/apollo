@@ -1,5 +1,5 @@
 {% extends "core/layout.html" %}
-{% load apollo %}{% load comments %}{% load humanize %}{% load static %}
+{% load apollo %}{% load comments %}{% load humanize %}{% load static %}{% load i18n %}
 {% block content %}
   {% with submission.siblings as siblings %}
   <form action="" method="post" style="margin-bottom:.5em;">
@@ -18,7 +18,7 @@
           </tr>
           {% endif %}
           <tr>
-            <th>Observer</th>
+            <th>{% trans "Observer" %}</th>
             <td><strong>{{ submission.observer.observer_id }}</strong> &mdash; <strong>{{ submission.observer.name }}</strong>{% if submission.observer.phone %} ({{ submission.observer.phone }}){% endif %}</td>
             {% if submission.form.type == 'CHECKLIST' %}
             {% for sibling in siblings %}
@@ -27,7 +27,7 @@
             {% endif %}
           </tr>
           <tr>
-            <th>Role</th>
+            <th>{% trans "Role" %}</th>
             <td>{{ submission.observer.role }}</td>
             {% if submission.form.type == 'CHECKLIST' %}
             {% for sibling in siblings %}
@@ -36,7 +36,7 @@
             {% endif %}
           </tr>
           <tr>
-            <th>Phone</th>
+            <th>{% trans "Phone" %}</th>
             <td><em>{% if submission.observer.last_connection %}{{ submission.observer.last_connection.identity }}{% else %}{{ submission.observer.phone }}{% endif %}</em>
               {% with submission.observer.phone|slugify as known_number %}{% with submission.observer.last_connection.identity|slugify|default:known_number as texting_number %} <img src="{% if texting_number == known_number %}{% static "img/tick.png" %}{% else %}{% static "img/caution.png" %}{% endif %}" style="vertical-align:text-bottom" />{% endwith %}{% endwith %}</td>
             {% if submission.form.type == 'CHECKLIST' %}
@@ -48,7 +48,7 @@
           </tr>
           {% if submission.form.type == 'CHECKLIST' %}
           <tr>
-            <th>Location</th>
+            <th>{% trans "Location" %}</th>
             <td><strong>{{ submission.location }}</strong></td>
             {% for sibling in siblings %}
             <td><strong>{{ sibling.location }}</strong></td>
@@ -65,7 +65,7 @@
           {% endif %}
           {% else %}
           <tr>
-            <th>Location</th>
+            <th>{% trans "Location" %}</th>
             <td>{{ form.location }}</td>
           </tr>
           {% if location_types %}
@@ -76,14 +76,14 @@
           {% endif %}
           {% if form.data__location.value %}
           <tr>
-            <th>Texted Location</th>
+            <th>{% trans "Texted Location" %}</th>
             <td><strong><em>{{ form.data__location.value }}</em></strong>{{ form.data__location }}</td>
           </tr>
           {% endif %}
           {% endif %}
           {% if submission.form.type == 'CHECKLIST' %}
           <tr>
-            <th>Supervisor</th>
+            <th>{% trans "Supervisor" %}</th>
             <td>{{ submission.observer.supervisor|default_if_none:"<em>N/A</em>" }}</td>
             {% if submission.form.type == 'CHECKLIST' %}
             {% for sibling in siblings %}
@@ -163,15 +163,15 @@
           {% endfor %}
           {% endfor %}
           <tr>
-            <td style="text-align: right">Witness</td>
+            <td style="text-align: right">{% trans "Witness" %}</td>
             <td colspan="2">{{ form.data__witness }}</td>
           </tr>
           <tr>
-            <td style="text-align: right">Description</td>
+            <td style="text-align: right">{% trans "Description" %}</td>
             <td colspan="2">{{ form.data__description }}</td>
           </tr>
           <tr>
-            <td style="text-align: right">Status</td>
+            <td style="text-align: right">{% trans "Status" %}</td>
             <td colspan="2">{{ form.data__status }}</td>
           </tr>
         </tbody>
@@ -182,10 +182,10 @@
 
   <div class="row navbar-fixed-bottom" style="bottom:0px; margin-left:1.75em; background:#fff; padding-top:1em; padding-bottom:1em;">
     <div class="offset8 span2">
-      <button type="submit" class="btn btn-info btn-large btn-block">Save</button>
+      <button type="submit" class="btn btn-info btn-large btn-block">{% trans "Save" context "verb" %}</button>
     </div>
     <div class="span2">
-      <a class="btn btn-large btn-block" href="{% url submissions_list object.form.pk %}">Cancel</a>
+      <a class="btn btn-large btn-block" href="{% url submissions_list object.form.pk %}">{% trans "Cancel" context "verb" %}</a>
     </div>
   </div>
   </form>
@@ -205,7 +205,7 @@
       </tr>
       {% empty %}
       <tr class="warning">
-        <td style="text-align:center">No comment.</td>
+        <td style="text-align:center">{% trans "No comment." %}</td>
       </tr>
       {% endfor %}
       <tr id="save_comment">

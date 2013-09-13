@@ -1,4 +1,4 @@
-{% load apollo %}{% load static %}
+{% load apollo %}{% load static %}{% load i18n %}
 {% for submission in submissions %}
 <tr>
     <td>{{ submission.observer.observer_id }}</td>
@@ -10,9 +10,9 @@
     {% if form.type == 'CHECKLIST' %}
     {% for group in form_groups %}
     <td style="text-align:center">
-        {% if submission|is_complete:group %}<img src="{% static "img/tick.png" %}" title="complete" alt="complete" height="11" width="11" />
-        {% elif submission|is_partial:group %}<img src="{% static "img/caution.png" %}" title="partial" alt="partial" height="11" width="11" />
-        {% elif submission|is_missing:group %}<img src="{% static "img/red_dot.png" %}" title="missing" alt="missing" height="11" width="11" />
+        {% if submission|is_complete:group %}<img src="{% static "img/tick.png" %}" title="{% trans "complete" %}" alt="{% trans "complete" %}" height="11" width="11" />
+        {% elif submission|is_partial:group %}<img src="{% static "img/caution.png" %}" title="{% trans "partial" %}" alt="{% trans "partial" %}" height="11" width="11" />
+        {% elif submission|is_missing:group %}<img src="{% static "img/red_dot.png" %}" title="{% trans "missing" %}" alt="{% trans "missing" %}" height="11" width="11" />
         {% endif %}
     </td>
     {% endfor %}
@@ -23,19 +23,19 @@
     <td style="text-align: center">
         {% with submission.data|keyvalue:"status" as status %}
         {% if status == 'confirmed' %}
-        <img src="{% static "img/tick.png" %}" title="Confirmed" alt="Confirmed" height="11" width="11" />
+        <img src="{% static "img/tick.png" %}" title="{% trans "Confirmed" %}" alt="{% trans "Confirmed" %}" height="11" width="11" />
         {% elif status == 'rejected' %}
-        <img src="{% static "img/red_dot.png" %}" title="Rejected" alt="Rejected" height="11" width="11" />
+        <img src="{% static "img/red_dot.png" %}" title="{% trans "Rejected" %}" alt="{% trans "Rejected" %}" height="11" width="11" />
         {% else %}
-        <img src="{% static "img/caution.png" %}" title="Unmarked" alt="Unmarked" height="11" width="11" />
+        <img src="{% static "img/caution.png" %}" title="{% trans "Unmarked" %}" alt="{% trans "Unmarked" %}" height="11" width="11" />
         {% endif %}
         {% endwith %}
     </td>
     {% endif %}
     {% with submission.observer.phone|slugify as known_number %}{% with submission.observer.last_connection.identity|slugify|default:known_number as texting_number %}
-    <td style="text-align: center"><img src="{% if texting_number == known_number %}{% static "img/tick.png" %}{% else %}{% static "img/caution.png" %}{% endif %}" title="{% if texting_number == known_number %}Verified{% else %}Unverified{% endif %}" height="11" width="11" /></td>
+    <td style="text-align: center"><img src="{% if texting_number == known_number %}{% static "img/tick.png" %}{% else %}{% static "img/caution.png" %}{% endif %}" title="{% if texting_number == known_number %}{% trans "Verified" %}{% else %}{% trans "Unverified" %}{% endif %}" height="11" width="11" /></td>
     {% endwith %}{% endwith %}
-    {% if perms.core.change_submission %}<td style="text-align:center"><a href="{% url submission_edit submission.pk %}">Edit</a></td>{% endif %}
+    {% if perms.core.change_submission %}<td style="text-align:center"><a href="{% url submission_edit submission.pk %}">{% trans "Edit" %}</a></td>{% endif %}
 </tr>
 {% empty %}
 {% if perms.core.change_submission %}
@@ -43,7 +43,7 @@
 {% with location_types|length|add:"5" as lt_count %}
 {% with form_groups|length|add:lt_count as colspan %}
 <tr class="warning">
-    <td style="text-align:center" colspan="{{ colspan }}">No Data Available</td>
+    <td style="text-align:center" colspan="{{ colspan }}">{% trans "No Data Available" %}</td>
 </tr>
 {% endwith %}
 {% endwith %}
@@ -51,7 +51,7 @@
 {% with location_types|length|add:"6" as lt_count %}
 {% with form_fields|length|add:lt_count as colspan %}
 <tr class="warning">
-    <td style="text-align:center" colspan="{{ colspan }}">No Data Available</td>
+    <td style="text-align:center" colspan="{{ colspan }}">{% trans "No Data Available" %}</td>
 </tr>
 {% endwith %}
 {% endwith %}
@@ -61,7 +61,7 @@
 {% with location_types|length|add:"4" as lt_count %}
 {% with form_groups|length|add:lt_count as colspan %}
 <tr class="warning">
-    <td style="text-align:center" colspan="{{ colspan }}">No Data Available</td>
+    <td style="text-align:center" colspan="{{ colspan }}">{% trans "No Data Available" %}</td>
 </tr>
 {% endwith %}
 {% endwith %}
@@ -69,7 +69,7 @@
 {% with location_types|length|add:"5" as lt_count %}
 {% with form_fields|length|add:lt_count as colspan %}
 <tr class="warning">
-    <td style="text-align:center" colspan="{{ colspan }}">No Data Available</td>
+    <td style="text-align:center" colspan="{{ colspan }}">{% trans "No Data Available" %}</td>
 </tr>
 {% endwith %}
 {% endwith %}

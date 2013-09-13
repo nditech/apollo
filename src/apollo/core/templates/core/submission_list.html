@@ -1,4 +1,4 @@
-{% extends "core/layout.html" %}{% load apollo %}{% load bootstrap_pagination %}
+{% extends "core/layout.html" %}{% load apollo %}{% load bootstrap_pagination %}{% load i18n %}
 {% block javascripts %}
 {% if perms.core.message_observers %}
 {% send_message paginator.count %}
@@ -9,29 +9,29 @@
 {% if form.type == 'INCIDENT' %}
 {% if perms.core.add_submission %}
 <div class="btn-group pull-right">
-  <a style="margin-left:1em" class="btn btn-primary" href="{% url submission_add form.pk %}">Add Incident</a>
+  <a style="margin-left:1em" class="btn btn-primary" href="{% url submission_add form.pk %}">{% trans "Add Incident" %}</a>
 </div>
 {% endif %}
 {% if perms.core.export_submissions %}
 <div class="btn-group pull-right">
-  <a class="btn" href="{% url submissions_list_export_observers form.pk %}">Export</a>
+  <a class="btn" href="{% url submissions_list_export_observers form.pk %}">{% trans "Export" context "verb" %}</a>
 </div>
 {% endif %}
 {% else %}
 {% if perms.core.export_submissions %}
 <div class="btn-group pull-right">
-  <a class="btn" href="{% url submissions_list_export_master form.pk %}">Export</a>
+  <a class="btn" href="{% url submissions_list_export_master form.pk %}">{% trans "Export" context "verb" %}</a>
   <button class="btn dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
   <ul class="dropdown-menu">
-    <li><a href="{% url submissions_list_export_observers form.pk %}">Observers Data</a></li>
-    <li><a href="{% url submissions_list_export_master form.pk %}">Master Data</a></li>
+    <li><a href="{% url submissions_list_export_observers form.pk %}">{% trans "Observers Data" %}</a></li>
+    <li><a href="{% url submissions_list_export_master form.pk %}">{% trans "Master Data" %}</a></li>
   </ul>
 </div>
 {% endif %}
 {% endif %}
 {% if perms.core.message_observers %}
 <div class="btn-group pull-right">
-  <a style="margin-right:1em" id="send_message_modal_btn" href="#send_message" role="button" class="btn btn-success">Send Message</a>
+  <a style="margin-right:1em" id="send_message_modal_btn" href="#send_message" role="button" class="btn btn-success">{% trans "Send Message" %}</a>
 </div>
 {% endif %}
 {% endblock %}
