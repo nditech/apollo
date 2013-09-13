@@ -36,6 +36,9 @@ class LocationResource(ModelResource):
             'name': ALL
         }
 
+    def dehydrate_data(self, bundle):
+        return ast.literal_eval(bundle.data['data'])
+
 
 class PartnerResource(ModelResource):
     class Meta:
@@ -78,6 +81,9 @@ class FormResource(ModelResource):
 
         authentication = ApiKeyAuthentication()
 
+    def dehydrate_options(self, bundle):
+        return ast.literal_eval(bundle.data['options'])
+
 
 class FormGroupResource(ModelResource):
     form = fields.ForeignKey(FormResource, 'form', readonly=True, full=True)
@@ -103,3 +109,6 @@ class SubmissionResource(ModelResource):
 
     def dehydrate_data(self, bundle):
         return ast.literal_eval(bundle.data['data'])
+
+    def dehydrate_overrides(self, bundle):
+        return ast.literal_eval(bundle.data['overrides'])
