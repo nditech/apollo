@@ -1,5 +1,4 @@
 from django.conf.urls import patterns, url, include
-from django.conf.urls.i18n import i18n_patterns
 from rapidsms.backends.kannel.views import KannelBackendView
 from tastypie.api import Api
 from .api import *
@@ -18,7 +17,7 @@ v2_api.register(FormGroupResource())
 v2_api.register(SubmissionResource())
 
 
-urlpatterns = i18n_patterns('',
+urlpatterns = patterns('',
     url(r'^$', DashboardView.as_view(), name='dashboard'),
     url(r'^dashboard/(?P<group>\d+)/?', DashboardView.as_view(), name='grouped_dashboard'),
     url(r'^activity/$', ActivitySelectionView.as_view(), name="activity_selection"),

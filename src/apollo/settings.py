@@ -51,7 +51,6 @@ RAPIDSMS_ROUTER = "rapidsms.router.db.DatabaseRouter"
 INSTALLED_APPS = [
 
     # the essentials.
-    "zimbabwe",
     "django_nose",
     "rapidsms",
     "core",
@@ -262,8 +261,8 @@ JOHNNY_MIDDLEWARE_KEY_PREFIX = 'jc_apollo'
 JIMMY_PAGE_CACHE_PREFIX = "jp_apollo"
 JIMMY_PAGE_DISABLED = True
 
-SMS_LANGUAGE_CODE = 'en-us'
-LANGUAGE_CODE = 'en-us'
+SMS_LANGUAGE_CODE = 'en'
+LANGUAGE_CODE = 'en'
 
 ugettext = lambda s: s
 
