@@ -8,7 +8,6 @@ from lxml import etree
 from django.conf import settings
 from django.db import transaction
 import tabimport
-from unidecode import unidecode
 from .models import Form, LocationType, Location, Edge, Observer, ObserverRole, Submission
 
 
@@ -141,13 +140,13 @@ def import_locations(filename, mapping):
             value = key(line)
             # only transliterate unicode or str objects
             if type(value) in [unicode, str]:
-                return unidecode(unicode(value))
+                return unicode(value)
             else:
                 return value
         elif key is None or key == '':
             return key
         else:
-            return unidecode(unicode(line.get(key))).strip()
+            return unicode(line.get(key)).strip()
 
     def set_location_attributes(location, attributes, line, mapping):
         for attribute in attributes:
@@ -200,11 +199,11 @@ def import_observers(filename, mapping):
             value = key(line)
             # only transliterate unicode or str objects
             if type(value) in [unicode, str]:
-                return unidecode(unicode(value))
+                return unicode(value)
             else:
                 return value
         else:
-            return unidecode(unicode(line.get(key))).strip()
+            return unicode(line.get(key)).strip()
 
     def set_observer_attributes(observer, line, mapping):
         # phone numbers are saved differently
