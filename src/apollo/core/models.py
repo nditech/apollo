@@ -70,7 +70,7 @@ class LocationType(GraphMixin):
 
 class Location(GraphMixin):
     """Location"""
-    name = models.CharField(max_length=100, db_index=True)
+    name = models.CharField(max_length=255, db_index=True)
     code = models.CharField(max_length=100, db_index=True, blank=True)
     type = models.ForeignKey(LocationType)
     data = DictionaryField(db_index=True, null=True, blank=True)
