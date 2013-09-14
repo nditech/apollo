@@ -182,7 +182,7 @@ def import_locations(filename, mapping):
                     set_location_attributes(location, lt_mapping, line, mapping)
                     set_location_parents(location, line_locations, location_type_id, location_types_hash)
                     location.save()
-                    logger.debug('Saved: {} - {}'.format(location.type.name, location.name))
+                    logger.debug(u'Saved: {} - {}'.format(location.type.name, location.name))
 
                     # save location for later retrieval
                     line_locations[location_type_id] = location
@@ -214,7 +214,7 @@ def import_observers(filename, mapping):
     imported = tabimport.FileFactory(filename)
     try:
         for line in imported:
-            logger.debug('Creating/Updating Observer: {}'.format(mapping['observer_id']))
+            logger.debug(u'Creating/Updating Observer: {}'.format(mapping['observer_id']))
             try:
                 observer = Observer.objects.get(observer_id=get_line_value(line, mapping['observer_id']))
             except Observer.DoesNotExist:
