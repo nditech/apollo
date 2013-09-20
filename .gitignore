@@ -16,6 +16,7 @@ assets/
 bin/
 build/
 develop-eggs/
+django.mo
 eggs/
 fabfile.py
 gp.recipe.pip/gp.recipe.pip.egg-info/
