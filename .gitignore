@@ -7,7 +7,7 @@
 *.swp
 .DS_Store
 .Python
-.env
+.env*
 .installed.cfg
 .mr.developer.cfg
 .tx
