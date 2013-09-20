@@ -2,6 +2,13 @@
 # encoding=utf-8
 # vim: ai ts=4 sts=4 et sw=4
 
+import ast
+import os
+import dj_database_url
+import dotenv
+
+dotenv.read_dotenv(os.path.realpath('.env'))
+ugettext = lambda s: s
 
 # -------------------------------------------------------------------- #
 #                          MAIN CONFIGURATION                          #
@@ -11,13 +18,10 @@
 # you should configure your database here before doing any real work.
 # see: http://docs.djangoproject.com/en/dev/ref/settings/#databases
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": "rapidsms.sqlite3",
-    }
+    "default": dj_database_url.config(default='sqlite://rapidsms.sqlite3')
 }
 
-TIME_ZONE = 'Africa/Lagos'
+TIME_ZONE = os.environ.get('APOLLO_TIMEZONE', 'Africa/Lagos')
 
 # the rapidsms backend configuration is designed to resemble django's
 # database configuration, as a nested dict of (name, configuration).
@@ -38,7 +42,7 @@ INSTALLED_BACKENDS = {
     }
 }
 
-BULKSMS_BACKEND = 'kannel'
+BULKSMS_BACKEND = os.environ.get('APOLLO_BULKSMS_BACKEND', 'kannel')
 
 BULKSMS_ROUTES = {
     'default': 'kannel'
@@ -80,13 +84,8 @@ INSTALLED_APPS = [
 
     "djcelery",
     "reversion",
-    'bootstrap-pagination',
+    "bootstrap-pagination",
 ]
-
-MAKO_TEMPLATE_DIRS = (
-    'webapp/templates',
-    'zambia/templates',
-)
 
 # -------------------------------------------------------------------- #
 #                         BORING CONFIGURATION                         #
@@ -95,7 +94,7 @@ MAKO_TEMPLATE_DIRS = (
 # debug mode is turned on as default, since rapidsms is under heavy
 # development at the moment, and full stack traces are very useful
 # when reporting bugs. don't forget to turn this off in production.
-DEBUG = TEMPLATE_DEBUG = False
+DEBUG = TEMPLATE_DEBUG = ast.literal_eval(os.environ.get('DEBUG', 'False'))
 
 INTERNAL_IPS = ('127.0.0.1',)
 
@@ -173,23 +172,6 @@ CHARACTER_TRANSLATIONS = (
 )
 LOCATIONS_GRAPH_MAXAGE = 25200  # number of seconds to cache the locations graph - 1wk
 PAGE_SIZE = 10  # Number of submissions viewable per page
-PROCESS_QUESTIONS_TAGS = [
-        'AA',  # Arrival
-        'AB', 'AC', 'AD', 'AE', 'AF', 'AG', 'AH', 'AJ', 'AK', 'AM', 'AN',  # Setup
-        'BA', 'BB', 'BC', 'BD', 'BE', 'BF', 'BG', 'BH', 'BJ',  # Voting
-        'BK', 'BM', 'BN', 'BP', 'BQ',
-        'CA', 'CB', 'CC', 'CD', 'CE', 'CF', 'CG', 'CH',  # Couting
-        ]
-RESULTS_QUESTIONS = {
-        'ballots_total': 'DA',
-        'ballots_used': 'DB',
-        'ballots_unused': 'DC',
-        'ballots_rejected': 'DD',
-        'ballots_missing': 'DE',
-        'votes_valid': 'DH',
-        'votes_invalid': 'DJ',
-        'votes_total': 'DK'
-        }
 
 FLAG_STATUSES = {
     'no_problem': ('0', 'No Problem'),
@@ -206,7 +188,6 @@ FLAG_CHOICES = (
     ('4', 'Verified'),
     ('5', 'Rejected')
 )
-
 
 STATUS_CHOICES = (
     ('', 'Status'),
@@ -239,7 +220,7 @@ MIDDLEWARE_CLASSES = (
     'core.middleware.SessionIdleTimeout')
 
 # celery queue settings
-BROKER_URL = 'librabbitmq://guest:guest@localhost:5672/apollo'
+BROKER_URL = os.environ.get('APOLLO_BROKER_URL', 'librabbitmq://guest:guest@localhost:5672/apollo')
 
 # caching
 CACHES = {
@@ -261,13 +242,13 @@ JOHNNY_MIDDLEWARE_KEY_PREFIX = 'jc_apollo'
 JIMMY_PAGE_CACHE_PREFIX = "jp_apollo"
 JIMMY_PAGE_DISABLED = True
 
-SMS_LANGUAGE_CODE = 'en'
-LANGUAGE_CODE = 'en'
-
-ugettext = lambda s: s
+SMS_LANGUAGE_CODE = os.environ.get('APOLLO_SMS_LANGUAGE_CODE', 'en')
+LANGUAGE_CODE = 'en-us'
 
 LANGUAGES = (
   ('en', ugettext('English')),
+  ('az', ugettext('Azerbaijani')),
+  ('fr', ugettext('French')),
 )
 
 # since we might hit the database from any thread during testing, the
