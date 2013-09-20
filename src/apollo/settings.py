@@ -7,7 +7,7 @@ import os
 import dj_database_url
 import dotenv
 
-dotenv.read_dotenv(os.path.realpath('.env'))
+dotenv.read_dotenv(os.path.normpath(os.path.dirname(__file__) + os.sep + '..' + os.sep + '..' + os.sep + '.env'))
 ugettext = lambda s: s
 
 # -------------------------------------------------------------------- #
