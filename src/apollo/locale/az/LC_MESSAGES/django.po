@@ -1,21 +1,23 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
-#, fuzzy
+# 
+# Translators:
+# cdoten <cdoten@ndi.org>, 2013
+# emin.mammedli <emin.mammedli@gmail.com>, 2013
 msgid ""
 msgstr ""
-"Project-Id-Version: Apollo v0.7\n"
+"Project-Id-Version: Apollo\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-09-07 08:49+0100\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language: az\n"
+"PO-Revision-Date: 2013-09-19 09:39+0000\n"
+"Last-Translator: emin.mammedli <emin.mammedli@gmail.com>\n"
+"Language-Team: Azerbaijani (http://www.transifex.com/projects/p/apollo/language/az/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0\n"
+"Language: az\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 
 #: local_settings.py:206 settings.py:270
 msgid "English"
@@ -23,51 +25,51 @@ msgstr ""
 
 #: local_settings.py:207
 msgid "Azerbaijani"
-msgstr ""
+msgstr "Azərbaycan"
 
 #: core/app.py:16
 #, python-format
 msgid ""
 "Invalid response(s) for question(s): \"%(attributes)s\". You sent: %(text)s"
-msgstr ""
+msgstr "Sual(lar)a düzgün cavab verilməyib: \"%(attributes)s\". Sizin göndərdiyiniz: %(text)s"
 
 #: core/app.py:17
 #, python-format
 msgid "Unknown question codes: \"%(attributes)s\". You sent: %(text)s"
-msgstr ""
+msgstr "Sual kodları səhvdir: \"%(attributes)s\". Sizin göndərdiyiniz: %(text)s"
 
 #: core/app.py:18
 #, python-format
 msgid ""
 "Observer ID not found. Please resend with valid Observer ID. You sent: "
 "%(text)s"
-msgstr ""
+msgstr "Müşahidəçi kodu səhvdir. Xahiş edirik düzgün Müşahidəçi kodundan istifadə edib mesajı yenidən göndərin. Sizin göndərdiyiniz: %(text)s"
 
 #: core/app.py:19
 #, python-format
 msgid "Invalid message: \"%(message)s\". Please check and resend!"
-msgstr ""
+msgstr "Düzgün olmayan mesaj: \"%(message)s\". Xahiş edirik, yoxlayın və yenidən göndərin!"
 
 #: core/app.py:20
 #, python-format
 msgid "Thank you! Your report was received! You sent: %(message)s"
-msgstr ""
+msgstr "Təşəkkür edirik! Sizin hesabatınız qəbul olundu! Sizin göndərdiyiniz: %(message)s"
 
 #: core/filters.py:89
 msgid "Activity"
-msgstr ""
+msgstr "Fəaliyyət"
 
 #: core/filters.py:124
 msgid "Sample"
-msgstr ""
+msgstr "Nümunə"
 
 #: core/filters.py:149
 msgid "All Roles"
-msgstr ""
+msgstr "Bütün rollar"
 
 #: core/filters.py:151
 msgid "All Organizations"
-msgstr ""
+msgstr "Bütün təşkilatlar"
 
 #: core/filters.py:155 core/filters.py:208 core/filters.py:354
 #: core/templates/core/contact_list.html:47
@@ -75,7 +77,7 @@ msgstr ""
 #: core/templates/core/submission_header.html:2
 #: core/templates/core/verification_header.html:3
 msgid "Observer ID"
-msgstr ""
+msgstr "Müşahidəçi kodu"
 
 #: core/filters.py:166 core/filters.py:213 core/filters.py:243
 #: core/filters.py:359 core/forms.py:54 core/forms.py:131 core/forms.py:256
@@ -85,39 +87,39 @@ msgstr ""
 #: core/templates/core/submission_edit.html:68
 #: core/templates/core/verification_edit.html:19
 msgid "Location"
-msgstr ""
+msgstr "Yer"
 
 #: core/filters.py:168 core/filters.py:236 core/views.py:486 core/views.py:493
 #: core/views.py:627 core/templates/core/critical_incidents_locations.html:44
 #: core/templates/core/location_list.html:25
 msgid "Name"
-msgstr ""
+msgstr "Ad"
 
 #: core/filters.py:170 core/views.py:486 core/views.py:493 core/views.py:627
 #: core/templates/core/submission_edit.html:39
 #: core/templates/core/submission_header.html:7
 msgid "Phone"
-msgstr ""
+msgstr "Telefon"
 
 #: core/filters.py:199
 #, python-format
 msgid "%(group)s Status"
-msgstr ""
+msgstr "%(group)s statusu"
 
 #: core/filters.py:200
 #, python-format
 msgid "%(group)s Partial"
-msgstr ""
+msgstr "%(group)s Qismən"
 
 #: core/filters.py:201
 #, python-format
 msgid "%(group)s Missing"
-msgstr ""
+msgstr "%(group)s Çatışmır"
 
 #: core/filters.py:202
 #, python-format
 msgid "%(group)s Complete"
-msgstr ""
+msgstr "%(group)s Tamam"
 
 #: core/filters.py:218 core/filters.py:219 core/filters.py:289
 #: core/filters.py:290 core/filters.py:293 core/filters.py:325
@@ -126,19 +128,19 @@ msgstr ""
 #: core/templates/core/submission_add.html:57
 #: core/templates/core/submission_edit.html:174
 msgid "Status"
-msgstr ""
+msgstr "Status"
 
 #: core/filters.py:219 core/filters.py:290 core/filters.py:326
 #: core/forms.py:40 core/templates/core/critical_incidents_locations.html:81
 #: core/templates/core/submission_items.html:30
 msgid "Unmarked"
-msgstr ""
+msgstr "İşarələnməmiş"
 
 #: core/filters.py:219 core/filters.py:290 core/filters.py:326
 #: core/forms.py:41 core/templates/core/critical_incidents_locations.html:77
 #: core/templates/core/submission_items.html:26
 msgid "Confirmed"
-msgstr ""
+msgstr "Təsdiqlənmiş"
 
 #: core/filters.py:220 core/filters.py:291 core/filters.py:327
 #: core/forms.py:42 core/templates/core/critical_incidents_locations.html:79
@@ -147,60 +149,60 @@ msgstr ""
 #: core/templates/core/verification_items.html:12
 #: core/templates/core/verification_items.html:22
 msgid "Rejected"
-msgstr ""
+msgstr "Qəbul olunmamış"
 
 #: core/filters.py:220 core/filters.py:291 core/filters.py:327
 #: core/forms.py:43
 msgid "Citizen Report"
-msgstr ""
+msgstr "Vətəndaş hesabatı"
 
 #: core/filters.py:234
 msgid "All Location Types"
-msgstr ""
+msgstr "Bütün Yer Növləri"
 
 #: core/filters.py:294 core/filters.py:330 core/views.py:493
 #: core/templates/core/submission_add.html:49
 #: core/templates/core/submission_edit.html:166
 msgid "Witness"
-msgstr ""
+msgstr "Şahid"
 
 #. Translators: the next string describes a gender that isn't specified
 #: core/filters.py:294 core/filters.py:330 core/forms.py:46 core/models.py:222
 msgid "Unspecified"
-msgstr ""
+msgstr "Qeyd olunmayıb"
 
 #: core/filters.py:294 core/filters.py:330
 #: core/templates/core/critical_incidents_locations.html:64
 msgid "Witnessed incident"
-msgstr ""
+msgstr "Pozuntunun şahidi olub"
 
 #: core/filters.py:295 core/filters.py:331
 #: core/templates/core/critical_incidents_locations.html:66
 msgid "Arrived after incident"
-msgstr ""
+msgstr "Pozuntu baş verəndən sonra gəlib"
 
 #: core/filters.py:295 core/filters.py:331
 #: core/templates/core/critical_incidents_locations.html:68
 msgid "Incident was reported"
-msgstr ""
+msgstr "Pozuntu barədə hesabat verilib"
 
 #: core/filters.py:362 core/forms.py:311 core/views.py:511
 #: core/templates/core/forms_menu.html:32
 #: core/templates/core/forms_menu.html:40
 msgid "Verification"
-msgstr ""
+msgstr "Dəqiqləşdirmə"
 
 #: core/forms.py:47
 msgid "I witnessed the incident"
-msgstr ""
+msgstr "Mən pozuntunun şahidi olmuşam"
 
 #: core/forms.py:48
 msgid "I arrived just after the incident"
-msgstr ""
+msgstr "Mən pozuntudan sonra gəlmişəm"
 
 #: core/forms.py:49
 msgid "The incident was reported to me by someone else"
-msgstr ""
+msgstr "Pozuntu barədə mənə başqa şəxs məlumat verib"
 
 #: core/forms.py:57 core/forms.py:259
 #: core/templates/core/submission_edit.html:21
@@ -208,7 +210,7 @@ msgstr ""
 #: core/templates/core/verification_edit.html:11
 #: core/templates/core/verification_header.html:7
 msgid "Observer"
-msgstr ""
+msgstr "Müşahidəçi"
 
 #: core/forms.py:134 core/templates/core/submission_edit.html:86
 #: core/templates/core/verification_edit.html:29
@@ -218,35 +220,35 @@ msgstr ""
 #: core/forms.py:150
 #, python-format
 msgid "Phone #%(index)d"
-msgstr ""
+msgstr "Telefon #%(index)d"
 
 #: core/forms.py:155
 msgid "Phone #1"
-msgstr ""
+msgstr "Telefon #1"
 
 #: core/models.py:48
 msgid "Controls the display of this location type on the form lists"
-msgstr ""
+msgstr "Forma siyahısında bu yer növünün əks olunmasını idarə edir"
 
 #: core/models.py:49
 msgid "Controls the display of this location type on the dashboard filter"
-msgstr ""
+msgstr "Panel filterində bu yer növünün əks olunmasını idarə edir"
 
 #: core/models.py:50
 msgid "Controls the display of this location type on the analysis filter"
-msgstr ""
+msgstr "Təhlil filterində bu yer növünün əks olunmasını idarə edir"
 
 #: core/models.py:51
 msgid "Determines whether this LocationType can be used in SMS forms"
-msgstr ""
+msgstr "Bu yer növünün SMS formalarında istifadə olunub və ya oluna bilməyəcəyini müəyyən edir"
 
 #: core/models.py:219
 msgid "Male"
-msgstr ""
+msgstr "Kişi"
 
 #: core/models.py:220
 msgid "Female"
-msgstr ""
+msgstr "Qadın"
 
 #: core/models.py:350
 msgid "Checklist"
@@ -664,7 +666,6 @@ msgstr ""
 msgid "%(counter)s recipient"
 msgid_plural "%(counter|default:_(\"no\"))s recipients"
 msgstr[0] ""
-msgstr[1] ""
 
 #: core/templates/core/send_message_modal.html:12
 msgid "characters"
