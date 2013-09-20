@@ -13,6 +13,8 @@ from django.contrib.comments.models import Comment
 PUNCTUATIONS = filter(lambda s: s not in settings.ALLOWED_PUNCTUATIONS, string.punctuation) + ' '
 TRANS_TABLE = dict((ord(fro), ord(to)) for fro, to in settings.CHARACTER_TRANSLATIONS)
 
+translation.activate(settings.SMS_LANGUAGE_CODE)
+
 RANGE_ERROR = _('Invalid response(s) for question(s): "%(attributes)s". You sent: %(text)s')
 ATTRIBUTE_ERROR = _('Unknown question codes: "%(attributes)s". You sent: %(text)s')
 UNKNOWN_OBSERVER = _('Observer ID not found. Please resend with valid Observer ID. You sent: %(text)s')
@@ -21,9 +23,7 @@ SUBMISSION_RECEIVED = _('Thank you! Your report was received! You sent: %(messag
 
 
 class App(AppBase):
-    def handle(self, message):
-        translation.activate(settings.SMS_LANGUAGE_CODE)
-        
+    def handle(self, message):        
         temp = unicode(message.text)
         # strip all unwanted whitespace and punctuation marks
         at_position = temp.find('@')
