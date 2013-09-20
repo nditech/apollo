@@ -11,11 +11,13 @@
 .installed.cfg
 .mr.developer.cfg
 .tx
+.vagrant
 assets/
 bin/
 build/
 develop-eggs/
 eggs/
+fabfile.py
 gp.recipe.pip/gp.recipe.pip.egg-info/
 include/
 lib/
@@ -28,3 +30,5 @@ rapidsms.log*
 schema.png
 share/
 src/apollo.egg-info/
+Procfile
+Vagrantfile
