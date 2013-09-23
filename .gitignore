@@ -12,6 +12,7 @@
 .mr.developer.cfg
 .tx
 .vagrant
+apollo-HEAD.tar.gz
 assets/
 bin/
 build/
