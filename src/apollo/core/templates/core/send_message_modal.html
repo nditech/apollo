@@ -8,7 +8,7 @@
       <button type="button" class="close" data-dismiss="alert">×</button>
       <span id="alert_message"></span>
     </div>
-    <p><strong>{% trans "To" %}:</strong>{% blocktrans count counter=recipients %}{{ counter }} recipient{% plural %}{{ counter|default:_("no") }} recipients{% endblocktrans %}.</p>
+    <p><strong>{% trans "To" %}:</strong>{% blocktrans count counter=recipients %}{{ counter }} recipient{% plural %}{{ counter }} recipients{% endblocktrans %}.</p>
     <p><textarea id="message" rows="5" cols="40" style="width:97.5%"></textarea><br /><span id="characters">0 {% trans "characters" %}</span> · <span id="parts">1 {% trans "message part" %}</span></p>
   </div>
   <div class="modal-footer">
