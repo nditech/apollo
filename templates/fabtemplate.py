@@ -66,6 +66,8 @@ def provision(environment="app", server="staging"):
             sudo('openssl rsa -in /etc/nginx/%s.key -out /etc/nginx/%s.key' % (SCRIPT_NAME, SCRIPT_NAME))
             sudo("openssl req -new -key /etc/nginx/%s.key -out /etc/nginx/%s.csr -subj '/CN=%s'" % (SCRIPT_NAME, SCRIPT_NAME, env.host))
             sudo('openssl x509 -req -days 365 -in /etc/nginx/%s.csr -signkey /etc/nginx/%s.key -out /etc/nginx/%s.crt' % (SCRIPT_NAME, SCRIPT_NAME, SCRIPT_NAME))
+            sudo('rabbitmqctl add_vhost %s' % (SCRIPT_NAME,))
+            sudo('rabbitmqctl set_permissions -p %s guest ".*" ".*" ".*"' % (SCRIPT_NAME,))
         elif environment == "db":
             sudo('apt-get update')
             sudo('apt-get install -y software-properties-common python-software-properties')
