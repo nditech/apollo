@@ -5,13 +5,14 @@
 # Translators:
 # cdoten <cdoten@ndi.org>, 2013
 # emin.mammedli <emin.mammedli@gmail.com>, 2013
+# takinbo <takinbo@timbaobjects.com>, 2013
 msgid ""
 msgstr ""
 "Project-Id-Version: Apollo\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-09-07 08:49+0100\n"
-"PO-Revision-Date: 2013-09-19 09:39+0000\n"
-"Last-Translator: emin.mammedli <emin.mammedli@gmail.com>\n"
+"PO-Revision-Date: 2013-09-24 09:32+0000\n"
+"Last-Translator: takinbo <takinbo@timbaobjects.com>\n"
 "Language-Team: Azerbaijani (http://www.transifex.com/projects/p/apollo/language/az/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -215,7 +216,7 @@ msgstr "Müşahidəçi"
 #: core/forms.py:134 core/templates/core/submission_edit.html:86
 #: core/templates/core/verification_edit.html:29
 msgid "Supervisor"
-msgstr ""
+msgstr "Supervayzer"
 
 #: core/forms.py:150
 #, python-format
@@ -252,56 +253,56 @@ msgstr "Qadın"
 
 #: core/models.py:350
 msgid "Checklist"
-msgstr ""
+msgstr "Yoxlama vərəqi"
 
 #: core/models.py:351
 msgctxt "Critical Incident"
 msgid "Incident"
-msgstr ""
+msgstr "İnsident"
 
 #: core/models.py:358
 msgid "Whether to create a new record if a submission doesn't exist"
-msgstr ""
+msgstr "Hesabat mövcüd olmadığı halda yeni qeydiyyat yaradılsın?"
 
 #: core/models.py:451
 msgid "Abbreviated version of the group name"
-msgstr ""
+msgstr "Qrup adının qısadılmış versiyası"
 
 #: core/views.py:48 core/templates/core/dashboard.html:33
 #: core/templates/core/dashboard_status_breakdown.html:31
 msgid "Complete"
-msgstr ""
+msgstr "Tamam"
 
 #: core/views.py:49 core/templates/core/dashboard.html:33
 #: core/templates/core/dashboard_status_breakdown.html:31
 msgid "Partial"
-msgstr ""
+msgstr "Qismən"
 
 #: core/views.py:50
 msgid "Empty"
-msgstr ""
+msgstr "Boş"
 
 #: core/views.py:139 core/views.py:143 core/templates/core/layout.html:42
 msgid "Dashboard"
-msgstr ""
+msgstr "Panel"
 
 #: core/views.py:207
 #, python-format
 msgid "%(form)s Analysis"
-msgstr ""
+msgstr "%(form)s Təhlil"
 
 #: core/views.py:298
 #, python-format
 msgid "%(form)s Voting Results"
-msgstr ""
+msgstr "%(form)s Səsvermə Nəticələri"
 
 #: core/views.py:382
 msgid "Edit Submission"
-msgstr ""
+msgstr "Hesabatı Redaktə et"
 
 #: core/views.py:433
 msgid "Add Submission"
-msgstr ""
+msgstr "Hesabat Əlavə et"
 
 #: core/views.py:486 core/views.py:493 core/views.py:627
 #: core/templates/core/critical_incidents_locations.html:43
@@ -310,62 +311,62 @@ msgstr ""
 
 #: core/views.py:486 core/views.py:493
 msgid "Texted Phone"
-msgstr ""
+msgstr "SMS göndərilən Telefon"
 
 #: core/views.py:486 core/views.py:493
 msgid "Timestamp"
-msgstr ""
+msgstr "Zaman"
 
 #: core/views.py:493 core/templates/core/critical_incidents_locations.html:51
 #: core/templates/core/submission_add.html:53
 #: core/templates/core/submission_edit.html:170
 msgid "Description"
-msgstr ""
+msgstr "Təsvir"
 
 #: core/views.py:549
 msgid "Edit Verification"
-msgstr ""
+msgstr "Dəqiqləşdirməni Redaktə et"
 
 #: core/views.py:580 core/templates/core/layout.html:45
 msgid "Observers"
-msgstr ""
+msgstr "Müşahidəçilər"
 
 #: core/views.py:627 core/templates/core/submission_edit.html:30
 #: core/templates/core/verification_edit.html:15
 msgid "Role"
-msgstr ""
+msgstr "Rol"
 
 #: core/views.py:627
 msgid "Partner"
-msgstr ""
+msgstr "Partnyor"
 
 #: core/views.py:644
 msgid "Edit Observer"
-msgstr ""
+msgstr "Müşahidəçini Redaktə et"
 
 #: core/views.py:665
 msgid "Locations"
-msgstr ""
+msgstr "Yerlər"
 
 #: core/views.py:700
 msgid "Edit Location"
-msgstr ""
+msgstr "Yeri Redaktə et"
 
 #: core/templates/bootstrap-pagination/pagination.html:6
 msgid "First Page"
-msgstr ""
+msgstr "Birinci Səhifə"
 
 #: core/templates/bootstrap-pagination/pagination.html:11
 msgid "Previous Page"
-msgstr ""
+msgstr "Əvvəlki Səhifə"
 
 #: core/templates/bootstrap-pagination/pagination.html:17
 msgid "Current Page"
-msgstr ""
+msgstr "Hazırki Səhifə"
 
 #: core/templates/bootstrap-pagination/pagination.html:21
 msgid "Page"
-msgstr ""
+msgstr "Səhifə"
 
 #: core/templates/bootstrap-pagination/pagination.html:21
 #: core/templates/bootstrap-pagination/pagination.html:41
@@ -374,34 +375,34 @@ msgstr ""
 
 #: core/templates/bootstrap-pagination/pagination.html:27
 msgid "Next Page"
-msgstr ""
+msgstr "Növbəti Səhifə"
 
 #: core/templates/bootstrap-pagination/pagination.html:32
 msgid "Last Page"
-msgstr ""
+msgstr "Sonuncu Səhifə"
 
 #: core/templates/bootstrap-pagination/pagination.html:41
 msgid "Showing:"
-msgstr ""
+msgstr "Göstərir:"
 
 #: core/templates/core/activity_selection.html:5
 #: core/templates/core/activity_selection.html:24
 msgid "Choose Activity"
-msgstr ""
+msgstr "Fəaliyyəti seçin:"
 
 #: core/templates/core/activity_selection.html:33
 msgid "Go"
-msgstr ""
+msgstr "İrəli"
 
 #: core/templates/core/analysis_menu.html:2
 msgctxt "adjective"
 msgid "Analysis"
-msgstr ""
+msgstr "Təhlil"
 
 #: core/templates/core/analysis_menu.html:11
 msgctxt "noun"
 msgid "Results"
-msgstr ""
+msgstr "Nəticələr"
 
 #: core/templates/core/checklist_question_summary.html:14
 #: core/templates/core/checklist_summary_breakdown.html:41
@@ -410,7 +411,7 @@ msgstr ""
 #: core/templates/core/checklist_summary_breakdown.html:446
 #: core/templates/core/results.html:46
 msgid "Reported"
-msgstr ""
+msgstr "Hesabat verilib"
 
 #: core/templates/core/checklist_question_summary.html:15
 #: core/templates/core/checklist_summary_breakdown.html:42
@@ -421,17 +422,17 @@ msgstr ""
 #: core/templates/core/dashboard_status_breakdown.html:31
 #: core/templates/core/results.html:47
 msgid "Missing"
-msgstr ""
+msgstr "Çatışmır"
 
 #: core/templates/core/checklist_question_summary.html:18
 #: core/templates/core/results.html:51 core/templates/core/results.html:91
 msgid "All"
-msgstr ""
+msgstr "Hamısı"
 
 #: core/templates/core/checklist_question_summary.html:20
 #: core/templates/core/checklist_question_summary.html:35
 msgid "N/A"
-msgstr ""
+msgstr "Aid Deyil"
 
 #: core/templates/core/checklist_summary.html:11
 #: core/templates/core/checklist_summary_breakdown.html:11
@@ -441,7 +442,7 @@ msgstr ""
 #: core/templates/core/results.html:11
 msgctxt "verb"
 msgid "Filter"
-msgstr ""
+msgstr "Filter"
 
 #: core/templates/core/checklist_summary.html:31
 #: core/templates/core/critical_incidents_locations.html:99
@@ -455,32 +456,32 @@ msgstr ""
 #: core/templates/core/verification_items.html:43
 #: messagelog/templates/messagelog/message_list.html:51
 msgid "No Data Available"
-msgstr ""
+msgstr "Məlumat Yoxdur"
 
 #: core/templates/core/checklist_summary_breakdown.html:22
 msgctxt "html"
 msgid "Table"
-msgstr ""
+msgstr "Cədvəl"
 
 #: core/templates/core/checklist_summary_breakdown.html:23
 #: core/templates/core/critical_incidents_summary.html:40
 msgid "Charts"
-msgstr ""
+msgstr "Qrafiklər"
 
 #: core/templates/core/checklist_summary_breakdown.html:35
 #: core/templates/core/checklist_summary_breakdown.html:349
 msgctxt "statistics"
 msgid "Mean"
-msgstr ""
+msgstr "Orta həd"
 
 #: core/templates/core/contact_edit.html:12
 #: core/templates/core/contact_list.html:53
 msgid "Organization"
-msgstr ""
+msgstr "Təşkilat"
 
 #: core/templates/core/contact_edit.html:18
 msgid "Cancel"
-msgstr ""
+msgstr "İmtina etmək"
 
 #: core/templates/core/contact_list.html:11
 #: core/templates/core/critical_incidents_locations.html:9
@@ -489,13 +490,13 @@ msgstr ""
 #: messagelog/templates/messagelog/message_list.html:5
 msgctxt "verb"
 msgid "Export"
-msgstr ""
+msgstr "Eksport"
 
 #: core/templates/core/contact_list.html:14
 #: core/templates/core/send_message_modal.html:4
 #: core/templates/core/submission_list.html:34
 msgid "Send Message"
-msgstr ""
+msgstr "Mesaj Göndər"
 
 #: core/templates/core/contact_list.html:34
 #: core/templates/core/location_list.html:11
@@ -504,7 +505,7 @@ msgstr ""
 #: messagelog/templates/messagelog/message_list.html:21
 msgctxt "verb"
 msgid "Search"
-msgstr ""
+msgstr "Axtar"
 
 #: core/templates/core/contact_list.html:35
 #: core/templates/core/location_list.html:11
@@ -513,27 +514,27 @@ msgstr ""
 #: messagelog/templates/messagelog/message_list.html:21
 msgctxt "verb"
 msgid "Clear"
-msgstr ""
+msgstr "Təmizlə"
 
 #: core/templates/core/contact_list.html:49
 msgctxt "adjective"
 msgid "Name"
-msgstr ""
+msgstr "Ad"
 
 #: core/templates/core/contact_list.html:50
 msgctxt "adjective"
 msgid "Role"
-msgstr ""
+msgstr "Rol"
 
 #: core/templates/core/contact_list.html:51
 msgctxt "adjective"
 msgid "Phone No."
-msgstr ""
+msgstr "Telefon No."
 
 #: core/templates/core/contact_list.html:52
 msgctxt "adjective"
 msgid "Location"
-msgstr ""
+msgstr "Yer"
 
 #: core/templates/core/contact_list.html:67
 #: core/templates/core/location_list.html:37
@@ -541,44 +542,44 @@ msgstr ""
 #: core/templates/core/verification_items.html:28
 msgctxt "verb"
 msgid "Edit"
-msgstr ""
+msgstr "Redaktə et"
 
 #: core/templates/core/critical_incidents_locations.html:33
 #: core/templates/core/critical_incidents_summary.html:39
 #: core/templates/core/results.html:21
 msgid "Table"
-msgstr ""
+msgstr "Cədvəl"
 
 #: core/templates/core/critical_incidents_locations.html:34
 #: core/templates/core/results.html:22
 msgid "Map"
-msgstr ""
+msgstr "Xəritə"
 
 #: core/templates/core/critical_incidents_locations.html:49
 msgid "Witnessed"
-msgstr ""
+msgstr "Şahidi olub"
 
 #: core/templates/core/dashboard.html:14
 #: core/templates/core/dashboard_status_breakdown.html:14
 msgctxt "verb"
 msgid "Reset"
-msgstr ""
+msgstr "Əvvəlki Vəziyyətinə Qaytar"
 
 #: core/templates/core/forms_menu.html:3
 msgid "Checklists"
-msgstr ""
+msgstr "Yoxlama vərəqləri"
 
 #: core/templates/core/forms_menu.html:17
 msgid "Incidents"
-msgstr ""
+msgstr "İnsidentlər"
 
 #: core/templates/core/layout.html:46 messagelog/views.py:24
 msgid "Messages"
-msgstr ""
+msgstr "Mesajlar"
 
 #: core/templates/core/layout.html:51
 msgid "Logout"
-msgstr ""
+msgstr "Çıxış"
 
 #: core/templates/core/location_edit.html:18
 #: core/templates/core/send_message_modal.html:20
@@ -587,62 +588,62 @@ msgstr ""
 #: core/templates/core/verification_edit.html:93
 msgctxt "verb"
 msgid "Cancel"
-msgstr ""
+msgstr "Ləgv et"
 
 #: core/templates/core/location_list.html:23
 msgid "ID"
-msgstr ""
+msgstr "İD"
 
 #: core/templates/core/location_list.html:24
 msgid "Code"
-msgstr ""
+msgstr "Kod"
 
 #: core/templates/core/location_list.html:26
 msgid "Type"
-msgstr ""
+msgstr "Növ"
 
 #: core/templates/core/login.html:5 core/templates/core/login.html.py:26
 msgid "User Login"
-msgstr ""
+msgstr "İstifadəçi Girişi"
 
 #: core/templates/core/login.html:30
 msgid ""
 "Your username and password <strong>did not match</strong>. Please try again."
-msgstr ""
+msgstr "Sizin istifadəçi adınız və şifrəniz <strong> uyğun gəlmir </strong>. Yenidən yoxlayın."
 
 #: core/templates/core/login.html:34
 msgid "Username"
-msgstr ""
+msgstr "İstifadəçi adı"
 
 #: core/templates/core/login.html:39
 msgid "Password"
-msgstr ""
+msgstr "Şifrə"
 
 #: core/templates/core/login.html:44
 msgid "Sign In"
-msgstr ""
+msgstr "Daxil ol"
 
 #: core/templates/core/results.html:33
 msgid "Total Valid"
-msgstr ""
+msgstr "Ümumi Etibarlı Səslər"
 
 #: core/templates/core/results.html:34
 msgid "Rejected Ballots"
-msgstr ""
+msgstr "Etibarsız Bülletenlər"
 
 #: core/templates/core/results.html:40
 msgid "Votes"
-msgstr ""
+msgstr "Səslər"
 
 #: core/templates/core/results.html:41 core/templates/core/results.html:45
 msgctxt "abbreviation for margin of error"
 msgid "MoE"
-msgstr ""
+msgstr "Təhsil Nazirliyi"
 
 #: core/templates/core/results.html:43
 msgctxt "abbreviation for total votes"
 msgid "TV"
-msgstr ""
+msgstr "TV"
 
 #: core/templates/core/results.html:44
 msgctxt "abbreviation for rejected ballots"
@@ -651,261 +652,261 @@ msgstr ""
 
 #: core/templates/core/results.html:64 core/templates/core/results.html:104
 msgid "Rural"
-msgstr ""
+msgstr "Kənd"
 
 #: core/templates/core/results.html:76 core/templates/core/results.html:116
 msgid "Urban"
-msgstr ""
+msgstr "Şəhər"
 
 #: core/templates/core/send_message_modal.html:11
 msgid "To"
-msgstr ""
+msgstr "Kimə"
 
 #: core/templates/core/send_message_modal.html:11
 #, python-format
 msgid "%(counter)s recipient"
 msgid_plural "%(counter|default:_(\"no\"))s recipients"
-msgstr[0] ""
+msgstr[0] "%(counter|default:_(\"no\"))lər alıcılar "
 
 #: core/templates/core/send_message_modal.html:12
 msgid "characters"
-msgstr ""
+msgstr "işarələr"
 
 #: core/templates/core/send_message_modal.html:12
 #: core/templates/core/send_message_modal.html:42
 msgid "message part"
-msgstr ""
+msgstr "mesajın hissəsi"
 
 #: core/templates/core/send_message_modal.html:21
 msgctxt "verb"
 msgid "Send"
-msgstr ""
+msgstr "Göndər"
 
 #: core/templates/core/send_message_modal.html:41
 msgctxt "number of characters in sentence"
 msgid "characters"
-msgstr ""
+msgstr "işarələr"
 
 #: core/templates/core/send_message_modal.html:41
 msgctxt "number of characters in sentence"
 msgid "character"
-msgstr ""
+msgstr "işarə"
 
 #: core/templates/core/send_message_modal.html:42
 msgid "message parts"
-msgstr ""
+msgstr "mesajın hissələri"
 
 #: core/templates/core/send_message_modal.html:62
 msgid "Success"
-msgstr ""
+msgstr "Uğur"
 
 #: core/templates/core/send_message_modal.html:62
 msgid "Your message has been sent"
-msgstr ""
+msgstr "Sizin mesajınız göndərildi"
 
 #: core/templates/core/send_message_modal.html:71
 msgid "Error"
-msgstr ""
+msgstr "Səhv"
 
 #: core/templates/core/send_message_modal.html:71
 msgid "Please try sending again"
-msgstr ""
+msgstr "Yenidən göndərməyə çalışın"
 
 #: core/templates/core/submission_add.html:67
 #: core/templates/core/submission_edit.html:185
 #: core/templates/core/verification_edit.html:90
 msgctxt "verb"
 msgid "Save"
-msgstr ""
+msgstr "Yadda saxla"
 
 #: core/templates/core/submission_edit.html:79
 msgid "Texted Location"
-msgstr ""
+msgstr "Mesaj Göndərilmiş Yer"
 
 #: core/templates/core/submission_edit.html:208
 msgid "No comment."
-msgstr ""
+msgstr "Şərh yoxdur."
 
 #: core/templates/core/submission_header.html:19
 #: core/templates/core/submission_items.html:38
 msgid "Edit"
-msgstr ""
+msgstr "Redaktə et"
 
 #: core/templates/core/submission_items.html:13
 msgid "complete"
-msgstr ""
+msgstr "tamam"
 
 #: core/templates/core/submission_items.html:14
 msgid "partial"
-msgstr ""
+msgstr "qismən"
 
 #: core/templates/core/submission_items.html:15
 msgid "missing"
-msgstr ""
+msgstr "çatışmır"
 
 #: core/templates/core/submission_items.html:36
 #: core/templates/core/verification_edit.html:41
 #: core/templates/core/verification_items.html:11
 #: core/templates/core/verification_items.html:21
 msgid "Verified"
-msgstr ""
+msgstr "Dəqiqləşdirilmiş"
 
 #: core/templates/core/submission_items.html:36
 #: core/templates/core/verification_items.html:23
 msgid "Unverified"
-msgstr ""
+msgstr "Dəqiqləşdirilməmiş"
 
 #: core/templates/core/submission_list.html:12
 msgid "Add Incident"
-msgstr ""
+msgstr "İnsident Əlavə et"
 
 #: core/templates/core/submission_list.html:26
 msgid "Observers Data"
-msgstr ""
+msgstr "Müşahidəçi Məlumatları"
 
 #: core/templates/core/submission_list.html:27
 msgid "Master Data"
-msgstr ""
+msgstr "Master Məlumat"
 
 #: core/templates/core/verification_edit.html:30
 msgid "<em>N/A</em>"
-msgstr ""
+msgstr "<em>Aid Deyil</em>"
 
 #: core/templates/core/verification_edit.html:43
 #: core/templates/core/verification_items.html:13
 msgid "Serious Problem"
-msgstr ""
+msgstr "Ciddi Problem"
 
 #: core/templates/core/verification_edit.html:44
 #: core/templates/core/verification_items.html:14
 msgid "Problem"
-msgstr ""
+msgstr "Problem"
 
 #: core/templates/core/verification_edit.html:45
 #: core/templates/core/verification_items.html:15
 #: core/templates/core/verification_items.html:24
 msgid "No Problem"
-msgstr ""
+msgstr "Problem Yoxdur"
 
 #: core/templates/core/verification_edit.html:46
 #: core/templates/core/verification_items.html:16
 #: core/templates/core/verification_items.html:25
 msgid "No Data"
-msgstr ""
+msgstr "Məlumat Yoxdur"
 
 #: messagelog/filters.py:13 messagelog/views.py:60
 #: messagelog/templates/messagelog/message_list.html:35
 msgid "Mobile"
-msgstr ""
+msgstr "Mobil"
 
 #: messagelog/filters.py:17 messagelog/views.py:60
 #: messagelog/templates/messagelog/message_list.html:37
 msgid "Text"
-msgstr ""
+msgstr "Mesaj"
 
 #: messagelog/models.py:9
 msgid "Incoming"
-msgstr ""
+msgstr "Daxil Olan"
 
 #: messagelog/models.py:10
 msgid "Outgoing"
-msgstr ""
+msgstr "Gedən"
 
 #: messagelog/views.py:60
 msgid "Message direction"
-msgstr ""
+msgstr "Mesaj istigaməti"
 
 #: messagelog/views.py:60
 msgid "Created"
-msgstr ""
+msgstr "Yaradılmış"
 
 #: messagelog/views.py:60
 msgid "Delivered"
-msgstr ""
+msgstr "Çatdırılmış"
 
 #: messagelog/templates/messagelog/message_list.html:18
 #: messagelog/templates/messagelog/message_list.html:33
 msgid "Date"
-msgstr ""
+msgstr "Tarix"
 
 #: messagelog/templates/messagelog/message_list.html:34
 msgid "Time"
-msgstr ""
+msgstr "Vaxt"
 
 #: messagelog/templates/messagelog/message_list.html:36
 msgid "Direction"
-msgstr ""
+msgstr "İstiqamət"
 
 #: messagelog/templates/messagelog/message_list.html:46
 msgctxt "adjective"
 msgid "IN"
-msgstr ""
+msgstr "DAXİLƏ"
 
 #: messagelog/templates/messagelog/message_list.html:46
 msgctxt "adjective"
 msgid "OUT"
-msgstr ""
+msgstr "XARİCƏ"
 
 #: tabimport/__init__.py:53
 #, python-format
 msgid "Unknown file extension '%(format)s'"
-msgstr ""
+msgstr "Naməlum fayl formatı '%(format)s'"
 
 #: tabimport/__init__.py:70
 msgid "This file is not in an accepted format (ods, xls, csv)"
-msgstr ""
+msgstr "Bu fayl uyğun formatda (ods, xls, csv) deyil "
 
 #: tabimport/__init__.py:143
 msgid "Empty header"
-msgstr ""
+msgstr "Boş başlıq"
 
 #: tabimport/__init__.py:146
 msgid "Unknown header"
-msgstr ""
+msgstr "Naməlum başlıq"
 
 #: tabimport/__init__.py:149
 #, python-format
 msgid ""
 "The column '%(column)s' is twice in your file's headers (sheet '%(sheet)s')"
-msgstr ""
+msgstr "Sütün '%(column)s' sizin faylın başlığında (sheet '%(sheet)s') iki dəfə göstərilib"
 
 #: tabimport/__init__.py:154
 #, python-format
 msgid ""
 "The header '%(header)s' is mandatory and is missing in sheet '%(sheet)s' of "
 "your file"
-msgstr ""
+msgstr "Başlığın '%(header)s' qeyd olunması vacibdir və sizin faylın səhifəsində '%(sheet)s' çatışmır"
 
 #: tabimport/__init__.py:221
 msgid "Unable to read the file. Are you sure it is an XLS file?"
-msgstr ""
+msgstr "Fayl oxumaq mümkün olmadı. Faylın XLS formatında olduğuna əminsiniz?"
 
 #: tabimport/__init__.py:304
 msgid ""
 "The ODS file contains formula. Please convert them to raw values before "
 "importing the file."
-msgstr ""
+msgstr "ODS faylında formulalar var. Zəhmət olmasa faylı import etməmişdən öncə, onları təmiz dəyərlərə ççevirin"
 
 #: tabimport/forms.py:32
 msgid ""
 "The key field is the field which will determine if the entry is a new one. "
 "Typically a unique ID field."
-msgstr ""
+msgstr "Açar sahə daxil olmanın yeni olduğunu müəyyən edən bölmədir. Adətən özünəməxsus İD sahəsidir."
 
 #: tabimport/views.py:33
 #, python-format
 msgid "The import failed. Error message: %s"
-msgstr ""
+msgstr "İmport alınmadı. Səhv mesaj:  %s"
 
 #: tabimport/views.py:35
 #, python-format
 msgid "Created objects: %(cr)d, modified objects: %(mod)d"
-msgstr ""
+msgstr "Yaradılmış obyektlər: %(cr)d, yenilənmiş obyektlər: %(mod)d"
 
 #: tabimport/templates/tabimport/import.html:5
 msgid "Data import"
-msgstr ""
+msgstr "Məlumatı import et"
 
 #: tabimport/templates/tabimport/import.html:20
 msgid "submit"
-msgstr ""
+msgstr "göndər"
