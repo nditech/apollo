@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Apollo v0.7\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-09-07 08:49+0100\n"
+"POT-Creation-Date: 2013-09-24 14:46+0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: az\n"
@@ -17,38 +17,42 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0\n"
 
-#: local_settings.py:206 settings.py:270
+#: settings.py:249
 msgid "English"
 msgstr ""
 
-#: local_settings.py:207
+#: settings.py:250
 msgid "Azerbaijani"
 msgstr ""
 
-#: core/app.py:16
+#: settings.py:251
+msgid "French"
+msgstr ""
+
+#: core/app.py:18
 #, python-format
 msgid ""
 "Invalid response(s) for question(s): \"%(attributes)s\". You sent: %(text)s"
 msgstr ""
 
-#: core/app.py:17
+#: core/app.py:19
 #, python-format
 msgid "Unknown question codes: \"%(attributes)s\". You sent: %(text)s"
 msgstr ""
 
-#: core/app.py:18
+#: core/app.py:20
 #, python-format
 msgid ""
 "Observer ID not found. Please resend with valid Observer ID. You sent: "
 "%(text)s"
 msgstr ""
 
-#: core/app.py:19
+#: core/app.py:21
 #, python-format
 msgid "Invalid message: \"%(message)s\". Please check and resend!"
 msgstr ""
 
-#: core/app.py:20
+#: core/app.py:22
 #, python-format
 msgid "Thank you! Your report was received! You sent: %(message)s"
 msgstr ""
@@ -165,7 +169,7 @@ msgid "Witness"
 msgstr ""
 
 #. Translators: the next string describes a gender that isn't specified
-#: core/filters.py:294 core/filters.py:330 core/forms.py:46 core/models.py:222
+#: core/filters.py:294 core/filters.py:330 core/forms.py:46 core/models.py:224
 msgid "Unspecified"
 msgstr ""
 
@@ -224,45 +228,58 @@ msgstr ""
 msgid "Phone #1"
 msgstr ""
 
-#: core/models.py:48
+#: core/models.py:50
 msgid "Controls the display of this location type on the form lists"
 msgstr ""
 
-#: core/models.py:49
+#: core/models.py:51
 msgid "Controls the display of this location type on the dashboard filter"
 msgstr ""
 
-#: core/models.py:50
+#: core/models.py:52
 msgid "Controls the display of this location type on the analysis filter"
 msgstr ""
 
-#: core/models.py:51
+#: core/models.py:53
 msgid "Determines whether this LocationType can be used in SMS forms"
 msgstr ""
 
-#: core/models.py:219
+#: core/models.py:221
 msgid "Male"
 msgstr ""
 
-#: core/models.py:220
+#: core/models.py:222
 msgid "Female"
 msgstr ""
 
-#: core/models.py:350
+#: core/models.py:352
 msgid "Checklist"
 msgstr ""
 
-#: core/models.py:351
+#: core/models.py:353
 msgctxt "Critical Incident"
 msgid "Incident"
 msgstr ""
 
-#: core/models.py:358
+#: core/models.py:360
 msgid "Whether to create a new record if a submission doesn't exist"
 msgstr ""
 
-#: core/models.py:451
+#: core/models.py:453
 msgid "Abbreviated version of the group name"
+msgstr ""
+
+#: core/models.py:465 core/templates/core/checklist_question_summary.html:20
+#: core/templates/core/checklist_question_summary.html:35
+msgid "N/A"
+msgstr ""
+
+#: core/models.py:466
+msgid "Process"
+msgstr ""
+
+#: core/models.py:467
+msgid "Candidate Vote"
 msgstr ""
 
 #: core/views.py:48 core/templates/core/dashboard.html:33
@@ -349,6 +366,62 @@ msgstr ""
 msgid "Edit Location"
 msgstr ""
 
+#: core/templates/403.html:6
+msgid "Forbidden Error"
+msgstr ""
+
+#: core/templates/403.html:23
+msgid "Off Limits!"
+msgstr ""
+
+#: core/templates/403.html:24
+msgid ""
+"We understood your request, but we refuse to honor it! You are seeing this "
+"page because you were snooping around! Now paddle along before the buzzer "
+"goes off!"
+msgstr ""
+
+#: core/templates/404.html:6
+msgid "Page not found"
+msgstr ""
+
+#: core/templates/404.html:23
+msgid "Oh No! Looks like you're lost!"
+msgstr ""
+
+#: core/templates/404.html:24
+msgid ""
+"Don't freak out, maybe you entered the wrong address or clicked a bad link! "
+"Who knows, this could even be a fluke! :) I recommend you either verify the "
+"address or click the back arrow (&larr;) at the top left corner of the page, "
+"and cross-check the action you were trying to perform!"
+msgstr ""
+
+#: core/templates/500.html:6
+msgid "Server Error"
+msgstr ""
+
+#: core/templates/500.html:23
+msgid "Zong! We screwed up"
+msgstr ""
+
+#: core/templates/500.html:24
+msgid ""
+"You shouldn't be seeing this page but you are because you're a genius and "
+"have found a rare bug in the software. Rest assured, we now know about it "
+"and will fix it ASAP!"
+msgstr ""
+
+#: core/templates/offline.html:6 core/templates/offline.html.py:23
+msgid "Ongoing Maintenance"
+msgstr ""
+
+#: core/templates/offline.html:24
+msgid ""
+"The application is currently down due to ongoing maintenance, however, we "
+"will be up and running shortly! Thanks."
+msgstr ""
+
 #: core/templates/bootstrap-pagination/pagination.html:6
 msgid "First Page"
 msgstr ""
@@ -424,11 +497,6 @@ msgstr ""
 #: core/templates/core/checklist_question_summary.html:18
 #: core/templates/core/results.html:51 core/templates/core/results.html:91
 msgid "All"
-msgstr ""
-
-#: core/templates/core/checklist_question_summary.html:20
-#: core/templates/core/checklist_question_summary.html:35
-msgid "N/A"
 msgstr ""
 
 #: core/templates/core/checklist_summary.html:11
@@ -662,7 +730,7 @@ msgstr ""
 #: core/templates/core/send_message_modal.html:11
 #, python-format
 msgid "%(counter)s recipient"
-msgid_plural "%(counter|default:_(\"no\"))s recipients"
+msgid_plural "%(counter)s recipients"
 msgstr[0] ""
 msgstr[1] ""
 
