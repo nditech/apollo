@@ -3,6 +3,7 @@
 import string
 from django.conf import settings
 from rapidsms.apps.base import AppBase
+import reversion
 from models import *
 from datetime import datetime
 from django.utils import translation
@@ -23,6 +24,7 @@ SUBMISSION_RECEIVED = _('Thank you! Your report was received! You sent: %(messag
 
 
 class App(AppBase):
+    @reversion.create_revision()
     def handle(self, message):        
         temp = unicode(message.text)
         # strip all unwanted whitespace and punctuation marks
