@@ -7,7 +7,8 @@ from guardian.admin import GuardedModelAdmin
 import reversion
 
 class SubmissionAdmin(reversion.VersionAdmin):
-	pass
+	follow = ('master',)
+	exclude = ('form', 'observer', 'location')
 
 admin.site.register(LocationType)
 admin.site.register(Location)
