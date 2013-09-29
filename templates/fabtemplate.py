@@ -122,6 +122,9 @@ def deploy(server="staging", version="HEAD"):
             with cd('%s/%s/eggs/Django-1.4.3-py2.7.egg/django/contrib/gis/geos/' % (root_dir, SCRIPT_NAME)):
                 with settings(warn_only=True):
                     run('patch -fsr - <../../../../../../templates/libgeos.patch')
+            with cd('%s/%s/lib/python2.7/site-packages/rapidsms/router/db/' % (root_dir, SCRIPT_NAME)):
+                with settings(warn_only=True):
+                    run('patch -fsr - <../../../../../../templates/router.patch')
             with cd('%s/%s/src/%s' % (root_dir, SCRIPT_NAME, SCRIPT_NAME)):
                 run('../../bin/%s compilemessages' % (SCRIPT_NAME,), server, True)
 
