@@ -1,5 +1,9 @@
 {% extends "core/layout.html" %}
 {% load i18n %}{% load apollo %}
+{% block javascripts %}
+{{ block.super }}
+<script type="text/javascript" src="{{ STATIC_URL }}js/protovis.min.js"></script>
+{% endblock %}
 {% block content %}
 <div class="row">
 	<div class="span9">

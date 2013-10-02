@@ -59,9 +59,7 @@
         <footer>{% block footer %}{% endblock %}</footer>
       </div>
     </div>
-    {% compressed_js 'apollo' %}
-    {% block javascripts %}{% endblock %}
-
+    {% compressed_js 'apollo' %}{% block javascripts %}{% endblock %}
     {% if not debug %}
     <script type="text/javascript">
 

@@ -270,11 +270,20 @@ PIPELINE_JS = {
             'js/jquery.js',
             'js/bootstrap.js',
             'js/select2.js',
-            'js/bootstrap-datepicker.js',
             'js/table-fixed-header.js',
             'js/custom.js',
         ),
         'output_filename': 'js/apollo.js',
+    },
+    'graphs': {
+        'source_filenames': (
+            'js/underscore.js',
+            'js/jquery.csv.js',
+            'js/raphael.js',
+            'js/jquery.qtip.js',
+            'js/kartograph.js',
+        ),
+        'output_filename': 'js/graphs.js',
     }
 }
 

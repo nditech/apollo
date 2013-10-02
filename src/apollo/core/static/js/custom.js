@@ -5,7 +5,7 @@ $(function(){
   $('.dropdown-toggle a').click(function (e) {
      $(this).tab('show');
   });
-
+/*
   $('.datesel').datepicker()
     .on('changeDate', function(ev){
     $(this).datepicker('hide');
@@ -13,7 +13,7 @@ $(function(){
   $('.datesel input').click(function(){
     $(this).parent().datepicker('show');
   });
-
+*/
   $('.form-reset').click(function (){
     form = $(this).parents('form');
     $('input[name!="csrfmiddlewaretoken"]', form).each(function (id, el) { $(el).val(""); });
