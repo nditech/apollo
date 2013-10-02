@@ -86,6 +86,7 @@ INSTALLED_APPS = [
     "djcelery",
     "reversion",
     "bootstrap-pagination",
+    "pipeline",
 ]
 
 # -------------------------------------------------------------------- #
@@ -95,7 +96,7 @@ INSTALLED_APPS = [
 # debug mode is turned on as default, since rapidsms is under heavy
 # development at the moment, and full stack traces are very useful
 # when reporting bugs. don't forget to turn this off in production.
-DEBUG = TEMPLATE_DEBUG = ast.literal_eval(os.environ.get('DEBUG', 'False'))
+DEBUG = TEMPLATE_DEBUG = ast.literal_eval(os.environ.get('APOLLO_DEBUG', 'False'))
 
 INTERNAL_IPS = ('127.0.0.1',)
 
@@ -113,7 +114,7 @@ TEST_RUNNER = "django_nose.NoseTestSuiteRunner"
 MEDIA_URL = "/media/"
 
 STATIC_URL = "/assets/"
-
+STATICFILES_STORAGE = 'pipeline.storage.PipelineCachedStorage'
 STATIC_ROOT = "assets/"
 
 # this is required for the django.contrib.sites tests to run, but also
@@ -207,6 +208,7 @@ ENABLE_MULTIPLE_PHONES = False  # determines whether to allow for multiple numbe
 PHONE_CC = []
 
 MIDDLEWARE_CLASSES = (
+    'htmlmin.middleware.HtmlMinifyMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -242,6 +244,40 @@ CACHES = {
 JOHNNY_MIDDLEWARE_KEY_PREFIX = 'jc_apollo'
 JIMMY_PAGE_CACHE_PREFIX = "jp_apollo"
 JIMMY_PAGE_DISABLED = True
+
+# django-pipeline settings
+PIPELINE_CSS = {
+    'apollo': {
+        'source_filenames': (
+          'css/bootstrap.css',
+          'css/bootstrap-responsive.css',
+          'css/select2.css',
+          'css/table-fixed-header.css',
+          'css/datepicker.css',
+          'css/jquery.qtip.css',
+          'css/custom.css',
+        ),
+        'output_filename': 'css/apollo.css',
+        'extra_context': {
+            'media': 'screen,projection',
+        },
+    },
+}
+
+PIPELINE_JS = {
+    'apollo': {
+        'source_filenames': (
+            'js/jquery.js',
+            'js/bootstrap.js',
+            'js/select2.js',
+            'js/bootstrap-datepicker.js',
+            'js/table-fixed-header.js',
+            'js/protovis.js',
+            'js/custom.js',
+        ),
+        'output_filename': 'js/apollo.js',
+    }
+}
 
 SMS_LANGUAGE_CODE = os.environ.get('APOLLO_SMS_LANGUAGE_CODE', 'en')
 LANGUAGE_CODE = 'en-us'
