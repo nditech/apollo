@@ -55,11 +55,12 @@ RAPIDSMS_ROUTER = "rapidsms.router.db.DatabaseRouter"
 INSTALLED_APPS = [
 
     # the essentials.
+    "core",
+    "messagelog",
+
     "django_nose",
     "rapidsms",
-    "core",
     "django_dag",
-    "messagelog",
     "south",
     "tastypie",
     "guardian",
@@ -161,7 +162,8 @@ TEST_EXCLUDED_APPS = [
 
 # the project-level url patterns
 ROOT_URLCONF = "urls"
-SESSION_IDLE_TIMEOUT = 1800
+SESSION_SAVE_EVERY_REQUEST = True
+SESSION_COOKIE_AGE = 1800
 PROJECT_NAME = 'Apollo'
 AUTHENTICATE_OBSERVER = False  # determines whether to authenticate the observer's phone number
 ALLOWED_PUNCTUATIONS = '!'  # allowed punctuations in SMS forms
@@ -216,8 +218,7 @@ MIDDLEWARE_CLASSES = (
     'johnny.middleware.LocalStoreClearMiddleware',
     'johnny.middleware.QueryCacheMiddleware',
     'core.middleware.AllowOriginMiddleware',
-    'core.middleware.KMLMiddleware',
-    'core.middleware.SessionIdleTimeout')
+    'core.middleware.KMLMiddleware',)
 
 # celery queue settings
 BROKER_URL = os.environ.get('APOLLO_BROKER_URL', 'librabbitmq://guest:guest@localhost:5672/apollo')
