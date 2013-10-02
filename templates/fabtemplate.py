@@ -115,7 +115,7 @@ def deploy(server="staging", version="HEAD"):
                 run('python2.7 init')
                 run('set -a && source .env 2>/dev/null && bin/buildout -c production.cfg')
                 sudo('ln -sf `pwd`/parts/nginx/%s.conf /etc/nginx/conf.d/' % (SCRIPT_NAME,))
-                sudo('bin/honcho export -a %s -l `pwd`/var/log upstart /etc/init' % (SCRIPT_NAME,))
+                sudo('bin/honcho export --user `whoami` --app %s --log `pwd`/var/log upstart /etc/init' % (SCRIPT_NAME,))
                 run('mkdir -p assets')
             with cd('%s/%s/eggs/Django-1.4.3-py2.7.egg/django/contrib/gis/db/backends/postgis/' % (root_dir, SCRIPT_NAME)):
                 with settings(warn_only=True):
