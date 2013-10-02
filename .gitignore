@@ -10,7 +10,6 @@
 .env*
 .installed.cfg
 .mr.developer.cfg
-.tx
 .vagrant
 apollo-HEAD.tar.gz
 assets/
