@@ -208,7 +208,7 @@ ENABLE_MULTIPLE_PHONES = False  # determines whether to allow for multiple numbe
 PHONE_CC = []
 
 MIDDLEWARE_CLASSES = (
-    'htmlmin.middleware.HtmlMinifyMiddleware',
+    'pipeline.middleware.MinifyHTMLMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -272,7 +272,6 @@ PIPELINE_JS = {
             'js/select2.js',
             'js/bootstrap-datepicker.js',
             'js/table-fixed-header.js',
-            'js/protovis.js',
             'js/custom.js',
         ),
         'output_filename': 'js/apollo.js',
