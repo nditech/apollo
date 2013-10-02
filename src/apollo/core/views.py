@@ -136,7 +136,7 @@ class DashboardView(View, TemplateResponseMixin):
     def dispatch(self, request, *args, **kwargs):
         if 'group' in kwargs:
             self.form_group = get_object_or_404(FormGroup, pk=kwargs['group'])
-            self.page_title = _('Dashboard') + ' · {}'.format(self.form_group.name)
+            self.page_title = _('Dashboard') + u' · {}'.format(self.form_group.name)
             self.template_name = 'core/dashboard_status_breakdown.html'
         else:
             self.form_group = None
@@ -233,7 +233,7 @@ class SubmissionProcessAnalysisView(View, TemplateResponseMixin):
                 self.display_tag = kwargs['tag']
                 self.analysis_filter = generate_critical_incidents_location_filter(self.display_tag)
                 self.template_name = 'core/critical_incidents_locations.html'
-                self.page_title = '{} Analysis'.format(self.form.name)
+                self.page_title = u'{} Analysis'.format(self.form.name)
 
         return super(SubmissionProcessAnalysisView, self).dispatch(request, *args, **kwargs)
 
@@ -517,7 +517,7 @@ class VerificationListView(ListView):
         context = super(VerificationListView, self).get_context_data(**kwargs)
         context['form'] = self.form
         context['filter_form'] = self.filter_set.form
-        context['page_title'] = '{} {}'.format(self.form.name, self.page_title)
+        context['page_title'] = u'{} {}'.format(self.form.name, self.page_title)
         return context
 
     @method_decorator(login_required)
