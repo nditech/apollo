@@ -132,7 +132,7 @@ def deploy(server="staging", version="HEAD"):
             manage('collectstatic --noinput -l', server, True)
             manage('syncdb --noinput', server, True)
             manage('migrate', server, True)
-            process('restart', server, True)
+            process('start', server, True)
             sudo('service nginx reload')
         else:
             abort('Choices available for server are ["production", "staging"]')
