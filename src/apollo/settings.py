@@ -271,6 +271,7 @@ PIPELINE_JS = {
             'js/bootstrap.js',
             'js/select2.js',
             'js/table-fixed-header.js',
+            'js/bootstrap-datepicker.js',
             'js/custom.js',
         ),
         'output_filename': 'js/apollo.js',
