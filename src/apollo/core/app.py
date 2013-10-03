@@ -7,7 +7,7 @@ import reversion
 from models import *
 from datetime import datetime
 from django.utils import translation
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 from django.contrib.sites.models import Site
 from django.contrib.comments.models import Comment
 
