@@ -1,3 +1,14 @@
+.dropdown-menu li > a:hover,
+.dropdown-menu li > a:focus,
+.dropdown-submenu:hover > a {background:#BC3F17;}
+.dropdown-menu .active > a,
+.dropdown-menu .active > a:hover {background:#BC3F17;}
+.nav-list > .active > a,
+.nav-list > .active > a:hover {
+  color: #ffffff;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.2);
+  background-color: #BC3F17;
+}
 .navbar {padding: 0px;}
 .navbar .divider-vertical{margin: 0px; border-left: 1px solid gainsboro;}
 .navbar .brand{padding-left: 13px;padding-bottom:0px; padding-top:3px;}
