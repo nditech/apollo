@@ -15,6 +15,7 @@ urlpatterns += patterns('',
     # helper URLs file that automatically serves the 'static' folder in
     # INSTALLED_APPS via the Django static media server (NOT for use in
     # production)
+    (r'^i18n/', include('django.conf.urls.i18n')),
     (r'^assets/(?P<path>.*)$', 'django.views.static.serve', {'document_root': 'assets'}),
 )
 

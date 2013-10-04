@@ -24,13 +24,15 @@
     {% block head %}{% endblock %}
   </head>
   <body>
+  {% get_language_info_list for LANGUAGES as languages %}
     <div class="navbar-inner1">
       <div class="pull-right" style="cursor:pointer">
         <div class="btn-group">
-          <a class="btn btn-default btn-mini dropdown-toggle" data-toggle="dropdown" href="#">{% trans "Language" %} <span class="caret"></span></a>
+          <a class="btn btn-default btn-mini dropdown-toggle" data-toggle="dropdown" href="#">{% trans "Languages" %} <span class="caret"></span></a>
             <ul class="dropdown-menu pull-right">
-              <li><a href="#">{% trans "Azerbaijani" %}</a></li>
-              <li><a href="#">{% trans "English" %}</a></li>
+            {% for language in languages %}
+              <li><a href="javascript:;" onclick="document.lang_{{ language.code }}.submit(); return false;">{{ language.name_local }}</a></li>
+            {% endfor %}
             </ul>
         </div>
       </div>
@@ -66,6 +68,10 @@
         <footer>{% block footer %}{% endblock %}</footer>
       </div>
     </div>
+
+    {% for language in languages %}
+      <form action="/i18n/setlang/" method="POST" name="lang_{{ language.code }}"><input name="language" type="hidden" value="{{ language.code }}" />{% csrf_token %}</form>
+    {% endfor %}
 
     {% compressed_js 'apollo' %}{% block javascripts %}{% endblock %}
     {% if not debug %}
