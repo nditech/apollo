@@ -88,6 +88,7 @@ INSTALLED_APPS = [
     "reversion",
     "bootstrap-pagination",
     "pipeline",
+    "readonly",
 ]
 
 # -------------------------------------------------------------------- #
@@ -212,6 +213,7 @@ MIDDLEWARE_CLASSES = (
     'pipeline.middleware.MinifyHTMLMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    'readonly.middleware.ReadOnlySiteMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.transaction.TransactionMiddleware',
@@ -245,6 +247,10 @@ CACHES = {
 JOHNNY_MIDDLEWARE_KEY_PREFIX = 'jc_apollo'
 JIMMY_PAGE_CACHE_PREFIX = "jp_apollo"
 JIMMY_PAGE_DISABLED = True
+
+# django-read-only settings
+READ_ONLY_EXEMPT_PATH_STARTS = ('/admin/', '/assets/')
+SITE_READ_ONLY = ast.literal_eval(os.environ.get('SITE_READ_ONLY', 'False'))
 
 # django-pipeline settings
 PIPELINE_CSS = {

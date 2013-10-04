@@ -1,20 +1,18 @@
-{% load apollo %}{% load i18n %}
+{% load apollo %}{% load i18n %}{% load compressed %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
     <title>{% trans "Ongoing Maintenance" %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
-    <meta name="author" content=""><link href="/assets/css/bootstrap.css" rel="stylesheet">
-    <link href="/assets/css/bootstrap-responsive.css" rel="stylesheet">
-    <link rel="shortcut icon" href="/assets/ico/favicon.ico">
+    {% compressed_css 'apollo' %}
+    <link rel="shortcut icon" href="{{ STATIC_URL }}ico/favicon.ico">
   </head>
  <body>
     <div class="navbar navbar-static-top">
         <div class="navbar-inner">
           <div class="container">
-            <a class="brand" href="{% url dashboard %}"></a>
+            <a class="brand" href=""></a>
           </div>
         </div>
       </div>
