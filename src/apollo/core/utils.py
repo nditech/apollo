@@ -120,6 +120,11 @@ def import_location_types(source, flush=False):
 
 def process_location_type(location_type):
     lt, _ = LocationType.objects.get_or_create(name=location_type.attrib.get('name'))
+    lt.on_display = location_type.attrib.get('on_display', False)
+    lt.on_dashboard = location_type.attrib.get('on_dashboard', False)
+    lt.on_analysis = location_type.attrib.get('on_analysis', False)
+    lt.save()
+
     parent = location_type.getparent()
     if parent.tag == 'location':
         # link the parent to the location_type

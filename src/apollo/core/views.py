@@ -24,7 +24,7 @@ from django.template.response import TemplateResponse
 from django.utils import simplejson as json
 from django.utils.decorators import method_decorator
 from django.utils.http import is_safe_url
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 from django.views.decorators.debug import sensitive_post_parameters
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_protect
@@ -62,6 +62,8 @@ def get_activity(request):
 
 
 class TemplatePreview(TemplateView):
+    page_title = ''
+
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
         self.template_name = kwargs['template_name']
@@ -69,18 +71,20 @@ class TemplatePreview(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(TemplatePreview, self).get_context_data(**kwargs)
-        context['page_title'] = u''
+        context['page_title'] = self.page_title
         return context
 
 
 class MapEmbedView(TemplateView):
+    page_title = ''
+
     def dispatch(self, request, *args, **kwargs):
         self.template_name = 'core/map_embed.html'
         return super(TemplateView, self).dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super(MapEmbedView, self).get_context_data(**kwargs)
-        context['page_title'] = u''
+        context['page_title'] = self.page_title
         return context
 
 
@@ -324,6 +328,7 @@ class SubmissionListView(ListView):
     context_object_name = 'submissions'
     template_name = 'core/submission_list.html'
     paginate_by = settings.PAGE_SIZE
+    page_title = ''
 
     def get_queryset(self):
         self.page_title = self.form.name
@@ -374,6 +379,7 @@ class SubmissionListView(ListView):
 
 class SubmissionEditView(UpdateView):
     template_name = 'core/submission_edit.html'
+    page_title = _('Edit Submission')
 
     def get_object(self, queryset=None):
         return self.submission.master if self.submission.form.type == 'CHECKLIST' else self.submission
@@ -402,7 +408,7 @@ class SubmissionEditView(UpdateView):
         # submission sibling form fields.
         context['submission_sibling_forms'] = [self.submission_form_class(instance=x, prefix=x.pk) for x in self.submission.siblings]
         context['location_types'] = LocationType.objects.filter(on_display=True)
-        context['page_title'] = _('Edit Submission')
+        context['page_title'] = self.page_title
         return context
 
     def get_success_url(self):
@@ -424,6 +430,7 @@ class SubmissionEditView(UpdateView):
 
 class SubmissionCreateView(CreateView):
     template_name = 'core/submission_add.html'
+    page_title = _('Add Submission')
 
     @method_decorator(login_required)
     @method_decorator(permission_required('core.add_submission', return_403=True))
@@ -439,7 +446,7 @@ class SubmissionCreateView(CreateView):
         context = super(SubmissionCreateView, self).get_context_data(**kwargs)
         context['form'] = self.form_class()
         context['form_pk'] = self.form.pk
-        context['page_title'] = _('Add Submission')
+        context['page_title'] = self.page_title
         return context
 
     def get_success_url(self):
@@ -476,14 +483,14 @@ class SubmissionListExportView(View):
                 export_fields = ['submissions__observer__observer_id', 'submissions__observer__name', 'submissions__observer__contact__connection__identity', 'submissions__observer__last_connection__identity'] + location_type_fields + data_fields + ['updated']
             else:
                 export_fields = ['observer__observer_id', 'observer__name', 'observer__contact__connection__identity', 'observer__last_connection__identity'] + location_type_fields + data_fields + ['updated']
-            field_labels = [_('PSZ'), _('Name'), _('Phone'), _('Texted Phone')] + location_types + data_fields + [_('Timestamp')]
+            field_labels = [_('Observer ID'), _('Name'), _('Phone'), _('Texted Phone')] + location_types + data_fields + [_('Timestamp')]
 
             datalist = qs.intdata(data_fields).values(*datalist_fields).distinct()
         else:
             data_fields = list(FormField.objects.filter(group__form=form).order_by('tag').values_list('tag', flat=True))
 
             export_fields = ['observer__observer_id', 'observer__name', 'observer__contact__connection__identity', 'observer__last_connection__identity'] + location_type_fields + data_fields + ['status', 'witness', 'description', 'updated']
-            field_labels = [_('PSZ'), _('Name'), _('Phone'), _('Texted Phone')] + location_types + data_fields + [_('Status'), _('Witness'), _('Description'), _('Timestamp')]
+            field_labels = [_('Observer ID'), _('Name'), _('Phone'), _('Texted Phone')] + location_types + data_fields + [_('Status'), _('Witness'), _('Description'), _('Timestamp')]
 
             data_fields.extend(['status', 'witness', 'description'])
             datalist_fields = ['observer__observer_id', 'observer__name', 'location', 'observer__contact__connection__identity', 'observer__last_connection__identity'] + data_fields + ['updated']
@@ -501,6 +508,7 @@ class VerificationListView(ListView):
     context_object_name = 'submissions'
     template_name = 'core/verification_list.html'
     paginate_by = settings.PAGE_SIZE
+    page_title = _('Verification')
 
     def get_queryset(self):
         return self.filter_set.qs.order_by('-date', '-created')
@@ -509,7 +517,7 @@ class VerificationListView(ListView):
         context = super(VerificationListView, self).get_context_data(**kwargs)
         context['form'] = self.form
         context['filter_form'] = self.filter_set.form
-        context['page_title'] = _('Verification') + u' · {}'.format(self.form.name)
+        context['page_title'] = self.page_title + u' · {}'.format(self.form.name)
         return context
 
     @method_decorator(login_required)
@@ -538,6 +546,7 @@ class VerificationListView(ListView):
 
 class VerificationEditView(UpdateView):
     template_name = 'core/verification_edit.html'
+    page_title = _('Edit Verification')
 
     def get_object(self, queryset=None):
         return self.submission
@@ -556,7 +565,7 @@ class VerificationEditView(UpdateView):
         context['flags'] = self.submission.form.get_verification_flags()
         context['submission_form'] = self.form_class(instance=self.submission)
         context['location_types'] = LocationType.objects.filter(on_display=True)
-        context['page_title'] = _('Edit Verification')
+        context['page_title'] = self.page_title
         return context
 
     def get_success_url(self):
@@ -568,6 +577,7 @@ class ContactListView(ListView):
     template_name = 'core/contact_list.html'
     model = Observer
     paginate_by = settings.PAGE_SIZE
+    page_title = _('Observers')
 
     def get_queryset(self):
         return self.filter_set.qs.order_by('observer_id')
@@ -575,7 +585,7 @@ class ContactListView(ListView):
     def get_context_data(self, **kwargs):
         context = super(ContactListView, self).get_context_data(**kwargs)
         context['filter_form'] = self.filter_set.form
-        context['page_title'] = _('Observers')
+        context['page_title'] = self.page_title
         context['location_types'] = LocationType.objects.filter(on_display=True)
         return context
 
@@ -614,7 +624,7 @@ class ContactListView(ListView):
             datalist_fields = ['observer_id', 'name', 'location', 'location__name', 'role__name', 'partner__name', 'contact__connection__identity']
 
             export_fields = ['observer_id'] + location_type_fields + ['location__name', 'name', 'role__name', 'contact__connection__identity', 'partner__name']
-            export_field_labels = [_('PSZ')] + location_types + [_('Location'), _('Name'), _('Role'), _('Phone'), _('Partner')]
+            export_field_labels = [_('Observer ID')] + location_types + [_('Location'), _('Name'), _('Role'), _('Phone'), _('Partner')]
 
             datalist = self.filter_set.qs.values(*datalist_fields).distinct()
             filename = slugify('contacts %s' % (datetime.now().strftime('%Y %m %d %H%M%S')))
@@ -631,6 +641,7 @@ class ContactEditView(UpdateView):
     model = Observer
     form_class = ContactModelForm
     success_url = '/observers/'
+    page_title = _('Edit Observer')
 
     @method_decorator(login_required)
     @method_decorator(permission_required('core.change_observer', return_403=True))
@@ -642,7 +653,7 @@ class ContactEditView(UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super(ContactEditView, self).get_context_data(**kwargs)
-        context['page_title'] = _('Edit Observer')
+        context['page_title'] = self.page_title
         return context
 
 
@@ -651,6 +662,7 @@ class LocationListView(ListView):
     template_name = 'core/location_list.html'
     model = Location
     paginate_by = settings.PAGE_SIZE
+    page_title = _('Locations')
 
     def get_queryset(self):
         return self.filter_set.qs.order_by('pk')
@@ -658,7 +670,7 @@ class LocationListView(ListView):
     def get_context_data(self, **kwargs):
         context = super(LocationListView, self).get_context_data(**kwargs)
         context['filter_form'] = self.filter_set.form
-        context['page_title'] = _('Locations')
+        context['page_title'] = self.page_title
         return context
 
     @method_decorator(login_required)
@@ -685,6 +697,7 @@ class LocationEditView(UpdateView):
     model = Location
     form_class = LocationModelForm
     success_url = '/locations/'
+    page_title = _('Edit Location')
 
     @method_decorator(login_required)
     @method_decorator(permission_required('core.change_location', return_403=True))
@@ -696,7 +709,7 @@ class LocationEditView(UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super(LocationEditView, self).get_context_data(**kwargs)
-        context['page_title'] = _('Edit Location')
+        context['page_title'] = self.page_title
         return context
 
 

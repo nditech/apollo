@@ -5,7 +5,7 @@ from guardian.decorators import permission_required
 from django.http import HttpResponse
 from django.template.defaultfilters import slugify
 from django.utils.decorators import method_decorator
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 from django.views.generic import ListView
 from .models import MESSAGE_DIRECTION, MessageLog
 from .filters import MessageFilter

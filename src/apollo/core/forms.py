@@ -1,6 +1,6 @@
 from django import forms
 from django.utils.encoding import force_unicode
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 from form_utils.forms import BetterForm
 from apollo.core.models import (Form, Observer, ObserverDataField, Location, Submission, Activity)
 from rapidsms.models import (Backend, Contact, Connection)

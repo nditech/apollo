@@ -2,7 +2,7 @@ from apollo.core.models import *
 import django_filters
 from django import forms
 from django.conf import settings
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 from djorm_hstore.expressions import HstoreExpression
 
 
