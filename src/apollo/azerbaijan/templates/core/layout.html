@@ -40,7 +40,7 @@
     <div class="navbar">
         <div class="navbar-inner navbar_style">
           <div class="container">
-            <a class="brand" href="#"><img src="{{ STATIC_URL }}img/logo_ad.png"></a>
+            <a class="brand" href="{% url dashboard %}"><img src="{{ STATIC_URL }}img/logo_ad.png"></a>
             <ul class="nav pull-right">
               <li><a href="{% url dashboard %}"><i class="icon-home"></i> {% trans "Dashboard" %}</a></li>
               {% forms_menu request perms %}
