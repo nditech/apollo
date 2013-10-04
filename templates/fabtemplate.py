@@ -102,9 +102,6 @@ def deploy(server="staging", version="HEAD"):
             put(archive, root_dir)
 
             with cd(root_dir):
-                # Stop the process if it's running before continuing
-                if exists(APP_SCRIPT):
-                    process('stop', server, True)
                 run('tar zxvf %s' % archive)
 
             with cd('%s/%s' % (root_dir, SCRIPT_NAME)):
@@ -132,7 +129,7 @@ def deploy(server="staging", version="HEAD"):
             manage('collectstatic --noinput -l', server, True)
             manage('syncdb --noinput', server, True)
             manage('migrate', server, True)
-            process('start', server, True)
+            process('restart', server, True)
             sudo('service nginx reload')
         else:
             abort('Choices available for server are ["production", "staging"]')
