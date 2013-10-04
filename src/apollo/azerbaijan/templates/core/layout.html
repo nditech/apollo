@@ -1,4 +1,4 @@
-{% load i18n %}{% load apollo %}<!DOCTYPE html>
+{% load i18n %}{% load apollo %}{% load compressed %}<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
@@ -7,13 +7,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <!-- Le styles -->
-    <link href="{{ STATIC_URL }}css/bootstrap.css" rel="stylesheet">
-    <link href="{{ STATIC_URL }}css/bootstrap-responsive.css" rel="stylesheet">
-    <link href="{{ STATIC_URL }}css/select2.css" rel="stylesheet">
-    <link href="{{ STATIC_URL }}css/custom.css" rel="stylesheet">
-    <link href="{{ STATIC_URL }}css/table-fixed-header.css" rel="stylesheet">
-    <link href="{{ STATIC_URL }}css/datepicker.css" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/qtip2/2.1.1/jquery.qtip.css">
+    {% compressed_css 'apollo' %}
     {% block stylesheets %}{% endblock %}
     <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
@@ -30,27 +24,32 @@
     {% block head %}{% endblock %}
   </head>
    <style type="text/css">
+   .dropdown-menu li > a:hover,
+.dropdown-menu li > a:focus,
+.dropdown-submenu:hover > a {background:#BC3F17;}
   </style>
   <body>
     <div class="navbar-inner1">
       <div class="pull-right" style="cursor:pointer">
-        <a class="btn btn-default btn-mini dropdown-toggle" data-toggle="dropdown" href="#"> <img src="{{ STATIC_URL }}img/az.gif"> Azerbaijan <span class="caret"></span></a>
-        <ul class="dropdown-menu pull-right">
-          <li><a href="#"><img src="{{ STATIC_URL }}img/en.gif"> </a></li>
-        </ul>
+        <div class="btn-group">
+          <a class="btn btn-default btn-mini dropdown-toggle" data-toggle="dropdown" href="#">{% trans "Language" %} <span class="caret"></span></a>
+          <ul class="dropdown-menu pull-right">
+              <a href="#" rel="nofollow"><img src="{{ STATIC_URL }}img/az.gif"> {% trans "English" %}</a>
+              <a href="#" rel="nofollow"><img src="{{ STATIC_URL }}img/en.gif"> {% trans "Azerbaijani" %}</a>
+          </ul>
+        </div>
       </div>
-    </div>
     </div>
     <div class="navbar">
         <div class="navbar-inner navbar_style">
           <div class="container">
             <a class="brand" href="#"><img src="{{ STATIC_URL }}img/logo_ad.png"></a>
             <ul class="nav pull-right">
-              <li><a href="{% url dashboard %}"><i class="icon-home"></i> Dashboard</a></li>
+              <li><a href="{% url dashboard %}"><i class="icon-home"></i> {% trans "Dashboard" %}</a></li>
               {% forms_menu request perms %}
               {% if perms.core.can_analyse %}{% analysis_menu request %}{% endif %}
-              {% if perms.core.view_observers %}<li><a href="{% url contacts_list %}"><i class="icon-user"></i> Observers</a></li>{% endif %}
-              {% if perms.messagelog.view_messages %}<li><a href="{% url messages_list %}"><i class="icon-envelope"></i> Messages</a></li>{% endif %}
+              {% if perms.core.view_observers %}<li><a href="{% url contacts_list %}"><i class="icon-user"></i> {% trans "Observers" %}</a></li>{% endif %}
+              {% if perms.messagelog.view_messages %}<li><a href="{% url messages_list %}"><i class="icon-envelope"></i> {% trans "Messages" %}</a></li>{% endif %}
               <li>
                 <div class="btn-group">
                   <a class="btn btn-danger dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-user icon-white"></i> {{ request.user.username }} <span class="caret"></span></a>
@@ -73,16 +72,7 @@
       </div>
     </div>
 
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.10.2/jquery.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}js/select2.min.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}js/bootstrap-datepicker.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}js/table-fixed-header.js"></script>    
-    <script type="text/javascript" src="{{ STATIC_URL }}js/protovis.min.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}js/custom.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}js/highcharts.js"></script>
-    {% block javascripts %}{% endblock %}
-
+    {% compressed_js 'apollo' %}{% block javascripts %}{% endblock %}
     {% if not debug %}
     <script type="text/javascript">
 
