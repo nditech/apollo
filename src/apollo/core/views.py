@@ -24,7 +24,7 @@ from django.template.response import TemplateResponse
 from django.utils import simplejson as json
 from django.utils.decorators import method_decorator
 from django.utils.http import is_safe_url
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext, ugettext_lazy as _
 from django.views.decorators.debug import sensitive_post_parameters
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_protect
@@ -483,14 +483,14 @@ class SubmissionListExportView(View):
                 export_fields = ['submissions__observer__observer_id', 'submissions__observer__name', 'submissions__observer__contact__connection__identity', 'submissions__observer__last_connection__identity'] + location_type_fields + data_fields + ['updated']
             else:
                 export_fields = ['observer__observer_id', 'observer__name', 'observer__contact__connection__identity', 'observer__last_connection__identity'] + location_type_fields + data_fields + ['updated']
-            field_labels = [_('Observer ID'), _('Name'), _('Phone'), _('Texted Phone')] + location_types + data_fields + [_('Timestamp')]
+            field_labels = [ugettext('Observer ID'), ugettext('Name'), ugettext('Phone'), ugettext('Texted Phone')] + location_types + data_fields + [ugettext('Timestamp')]
 
             datalist = qs.intdata(data_fields).values(*datalist_fields).distinct()
         else:
             data_fields = list(FormField.objects.filter(group__form=form).order_by('tag').values_list('tag', flat=True))
 
             export_fields = ['observer__observer_id', 'observer__name', 'observer__contact__connection__identity', 'observer__last_connection__identity'] + location_type_fields + data_fields + ['status', 'witness', 'description', 'updated']
-            field_labels = [_('Observer ID'), _('Name'), _('Phone'), _('Texted Phone')] + location_types + data_fields + [_('Status'), _('Witness'), _('Description'), _('Timestamp')]
+            field_labels = [ugettext('Observer ID'), ugettext('Name'), ugettext('Phone'), ugettext('Texted Phone')] + location_types + data_fields + [ugettext('Status'), ugettext('Witness'), ugettext('Description'), ugettext('Timestamp')]
 
             data_fields.extend(['status', 'witness', 'description'])
             datalist_fields = ['observer__observer_id', 'observer__name', 'location', 'observer__contact__connection__identity', 'observer__last_connection__identity'] + data_fields + ['updated']
@@ -624,7 +624,7 @@ class ContactListView(ListView):
             datalist_fields = ['observer_id', 'name', 'location', 'location__name', 'role__name', 'partner__name', 'contact__connection__identity']
 
             export_fields = ['observer_id'] + location_type_fields + ['location__name', 'name', 'role__name', 'contact__connection__identity', 'partner__name']
-            export_field_labels = [_('Observer ID')] + location_types + [_('Location'), _('Name'), _('Role'), _('Phone'), _('Partner')]
+            export_field_labels = [ugettext('Observer ID')] + location_types + [ugettext('Location'), ugettext('Name'), ugettext('Role'), ugettext('Phone'), ugettext('Partner')]
 
             datalist = self.filter_set.qs.values(*datalist_fields).distinct()
             filename = slugify('contacts %s' % (datetime.now().strftime('%Y %m %d %H%M%S')))
