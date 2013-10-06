@@ -5,10 +5,10 @@
         <td rowspan="{% if stats.urban %}4{% else %}2{% endif %}"><a href="{% url submissions_analysis_location_tag form.pk location.pk field.tag %}">{{ field.description }}</a></td>
         <td>&nbsp;</td>
 		{% if stats.type == 'continuous' %}
-		<td bgcolor="#eee">Mean</td>
+		<td bgcolor="#eee">{% trans "Mean" context "statistical mean" %}</td>
 		{% else %}
 			{% for label in stats.options %}
-			<td>{{ label }}</td>
+			<td>{% trans label %}</td>
 			{% endfor %}
 		{% endif %}
 		<td width="100" bgcolor="#eee">{% trans "Reported" %}</td>
