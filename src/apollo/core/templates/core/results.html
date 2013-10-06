@@ -19,7 +19,7 @@
     <div class="span12">
         <ul class="nav nav-tabs">
           <li class="active"><a href="#table" data-toggle="tab">{% trans "Table" %}</a></li>
-          <li><a href="#map" data-toggle="tab">{% trans "Map" %}</a></li>
+          <!--<li><a href="#map" data-toggle="tab">{% trans "Map" %}</a></li>-->
         </ul>
         <div class="tab-content">
             <div class="tab-pane active" id="table">
@@ -38,11 +38,11 @@
                     <tr>
                         {% for party in form.parties %}
                         <td class="centered"><em>{% trans "Votes" %}</em></td>
-                        {% if form.options.has_moe %}<td class="centered"><em><abbr title="Margin of Error">{% trans "MoE" context "abbreviation for margin of error" %}</abbr></em></td>{% endif %}
+                        {% if form.options.has_moe %}<td class="centered"><em><abbr title="{% trans 'Margin of Error' %}">{% trans "MoE" context "abbreviation for margin of error" %}</abbr></em></td>{% endif %}
                         {% endfor %}
-                        <td class="centered"><em><abbr title="Total Valid">{% trans "TV" context "abbreviation for total votes" %}</abbr></em></td>
-                        <td class="centered"><em><abbr title="Rejected Ballots">{% trans "RB" context "abbreviation for rejected ballots" %}</abbr></em></td>
-                        {% if form.options.has_moe %}<td class="centered"><em><abbr title="Margin of Error">{% trans "MoE" context "abbreviation for margin of error" %}</abbr></em></td>{% endif %}
+                        <td class="centered"><em><abbr title="{% trans 'Total Valid' %}">{% trans "TV" context "abbreviation for total votes" %}</abbr></em></td>
+                        <td class="centered"><em><abbr title="{% trans 'Rejected Ballots' %}">{% trans "RB" context "abbreviation for rejected ballots" %}</abbr></em></td>
+                        {% if form.options.has_moe %}<td class="centered"><em><abbr title="{% trans 'Margin of Error' %}">{% trans "MoE" context "abbreviation for margin of error" %}</abbr></em></td>{% endif %}
                         <td class="centered" width="10%"><em>{% trans "Reported" %}</em></td>
                         <td class="centered" width="10%"><em>{% trans "Missing" %}</em></td>
                     </tr>
