@@ -129,6 +129,8 @@ def deploy(server="staging", version="HEAD"):
             manage('collectstatic --noinput -l', server, True)
             manage('syncdb --noinput', server, True)
             manage('migrate', server, True)
+            sudo('supervisorctl reread')
+            sudo('supervisorctl update')
             process('restart', server, True)
             sudo('service nginx reload')
         else:
