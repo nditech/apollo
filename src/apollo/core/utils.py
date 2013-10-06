@@ -1,5 +1,5 @@
 import logging
-import json
+import ast
 try:
     import cPickle as pickle
 except ImportError:
@@ -27,13 +27,13 @@ def import_forms(source):
                 _form.type = form.attrib.get('data-type').upper()
                 _form.trigger = form.attrib.get('data-trigger')
                 _form.field_pattern = form.attrib.get('data-field_pattern')
-                _form.options = json.loads(form.attrib.get('data-options', '{}'))
-                verification_flags = json.loads(form.attrib.get('data-options-verification-flags', '{}'))
-                party_votes = json.loads(form.attrib.get('data-options-party-votes', '{}'))
+                _form.options = ast.literal_eval(form.attrib.get('data-options', '{}'))
+                verification_flags = ast.literal_eval(form.attrib.get('data-options-verification-flags', '{}'))
+                party_votes = ast.literal_eval(unicode(form.attrib.get('data-options-party-votes', '{}')))
                 if verification_flags:
-                    _form.options['verification_flags'] = pickle.dumps(verification_flags)
+                    _form.options['verification_flags'] = verification_flags
                 if party_votes:
-                    _form.options['party_votes'] = pickle.dumps(party_votes)
+                    _form.options['party_votes'] = party_votes
                 if _form.type == 'INCIDENT':
                     _form.autocreate_submission = True
                 else:
@@ -45,12 +45,15 @@ def import_forms(source):
                     type=form.attrib.get('data-type').upper(),
                     trigger=form.attrib.get('data-trigger'),
                     field_pattern=form.attrib.get('data-field_pattern'),
-                    options=json.loads(form.attrib.get('data-options', '{}')),
+                    options=ast.literal_eval(form.attrib.get('data-options', '{}')),
                     autocreate_submission=True
                         if form.attrib.get('data-type').upper() == 'INCIDENT' else False)
-                verification_flags = json.loads(form.attrib.get('data-options-verification-flags', '{}'))
+                verification_flags = ast.literal_eval(form.attrib.get('data-options-verification-flags', '{}'))
+                party_votes = ast.literal_eval(unicode(form.attrib.get('data-options-party-votes', '{}')))
                 if verification_flags:
-                    _form.options['verification_flags'] = pickle.dumps(verification_flags)
+                    _form.options['verification_flags'] = verification_flags
+                if party_votes:
+                    _form.options['party_votes'] = party_votes
                 _form.save()
 
             # delete existing groups

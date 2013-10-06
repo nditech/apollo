@@ -15,12 +15,8 @@ from apollo.core.managers import SubmissionManager, ObserverManager
 import networkx as nx
 import operator as op
 from parsimonious.grammar import Grammar
+import ast
 import re
-try:
-    import cPickle as pickle
-except ImportError:
-    import pickle
-
 import vinaigrette
 
 
@@ -422,9 +418,9 @@ class Form(models.Model):
         return (submission, observer)
 
     def get_verification_flags(self):
-        pickled_flags = self.options.get('verification_flags', '')
-        if pickled_flags:
-            flags = pickle.loads(pickled_flags)
+        _flags = self.options.get('verification_flags', '')
+        if _flags:
+            flags = ast.literal_eval(_flags)
             return flags
         else:
             return []
@@ -434,7 +430,7 @@ class Form(models.Model):
 
     def contestants(self):
         if self.options.get('party_votes', None):
-            return pickle.loads(self.options.get('party_votes'))
+            return ast.literal_eval(self.options.get('party_votes'))
 
     def parties(self):
         contestants = self.contestants()
