@@ -101,6 +101,9 @@ def deploy(server="staging", version="HEAD"):
             run('mkdir -p %s' % root_dir)  # create the directory if it doesn't exist
             put(archive, root_dir)
 
+            with settings(warn_only=True):
+                process('stop', server, True)
+
             with cd(root_dir):
                 run('tar zxvf %s' % archive)
 
@@ -131,7 +134,7 @@ def deploy(server="staging", version="HEAD"):
             manage('migrate', server, True)
             sudo('supervisorctl reread')
             sudo('supervisorctl update')
-            process('restart', server, True)
+            process('start', server, True)
             sudo('service nginx reload')
         else:
             abort('Choices available for server are ["production", "staging"]')
