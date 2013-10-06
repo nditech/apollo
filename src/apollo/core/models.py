@@ -412,7 +412,7 @@ class Form(models.Model):
 
                         # this prevents a situation where 0 (a valid input) is ignored
                         elif field.value != None:
-                            submission['data'][field.tag.upper()] = str(field.value)
+                            submission['data'][field.tag.upper()] = unicode(field.value)
                 if fields_text:
                     for field in re.finditer(form.field_pattern, fields_text, flags=re.I):
                         submission['attribute_error_fields'].append(field.group('key'))
@@ -422,7 +422,7 @@ class Form(models.Model):
         return (submission, observer)
 
     def get_verification_flags(self):
-        pickled_flags = str(self.options.get('verification_flags', ''))
+        pickled_flags = unicode(self.options.get('verification_flags', ''))
         if pickled_flags:
             flags = pickle.loads(pickled_flags)
             return flags
@@ -434,17 +434,17 @@ class Form(models.Model):
 
     def contestants(self):
         if self.options.get('party_votes', None):
-            return pickle.loads(str(self.options.get('party_votes')))
+            return pickle.loads(unicode(self.options.get('party_votes')))
 
     def parties(self):
         contestants = self.contestants()
         if contestants:
-            return [str(party) for party, code in contestants]
+            return [unicode(party) for party, code in contestants]
 
     def votes(self):
         contestants = self.contestants()
         if contestants:
-            return [str(code) for party, code in contestants]
+            return [unicode(code) for party, code in contestants]
 
 
 
