@@ -39,7 +39,7 @@ def make_archive(version="HEAD"):
 def process(action, server="staging", noprompt=False):
     if action in ['start', 'restart', 'stop', 'status']:
         if noprompt or confirm("%s %s on %s?" % (action, SCRIPT_NAME, server)):
-            sudo('%s %s' % (action, SCRIPT_NAME), warn_only=True)
+            sudo('supervisorctl %s %s:' % (action, SCRIPT_NAME), warn_only=True)
     else:
         abort("Invalid action")
 
@@ -61,7 +61,7 @@ def provision(environment="app", server="staging"):
             sudo('add-apt-repository -y ppa:ubuntugis/ppa')
             sudo('apt-get update')
             sudo('apt-get upgrade -y')
-            sudo('apt-get install -y vim nginx memcached python-dev build-essential git-core libpq-dev postgresql-client rabbitmq-server librabbitmq-dev libxml2-dev libxslt-dev libproj-dev binutils gdal-bin gettext npm')
+            sudo('apt-get install -y vim nginx memcached python-dev build-essential git-core libpq-dev postgresql-client rabbitmq-server librabbitmq-dev libxml2-dev libxslt-dev libproj-dev binutils gdal-bin gettext npm supervisor')
             sudo('openssl genrsa -des3 -out /etc/nginx/%s.key 2048' % (SCRIPT_NAME,))
             sudo('openssl rsa -in /etc/nginx/%s.key -out /etc/nginx/%s.key' % (SCRIPT_NAME, SCRIPT_NAME))
             sudo("openssl req -new -key /etc/nginx/%s.key -out /etc/nginx/%s.csr -subj '/CN=%s'" % (SCRIPT_NAME, SCRIPT_NAME, env.host))
@@ -112,7 +112,7 @@ def deploy(server="staging", version="HEAD"):
                 run('python2.7 init')
                 run('set -a && source .env 2>/dev/null && bin/buildout -c production.cfg')
                 sudo('ln -sf `pwd`/parts/nginx/%s.conf /etc/nginx/conf.d/' % (SCRIPT_NAME,))
-                sudo('bin/honcho export --user %s --app %s --log `pwd`/var/log upstart /etc/init' % (env.user, SCRIPT_NAME,))
+                sudo('bin/honcho export --user %s --app %s --log `pwd`/var/log supervisord /etc/supervisord.d' % (env.user, SCRIPT_NAME,))
                 run('mkdir -p assets')
             with cd('%s/%s/eggs/Django-1.4.3-py2.7.egg/django/contrib/gis/db/backends/postgis/' % (root_dir, SCRIPT_NAME)):
                 with settings(warn_only=True):
