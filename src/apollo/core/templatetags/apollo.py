@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from django import template
 from django.conf import settings
+from django.utils.translation import ugettext as _
 from core.models import *
 from djorm_hstore.expressions import HstoreExpression as HE
 
@@ -127,9 +128,12 @@ def submission_items(submissions, form, permissions):
 
 @register.simple_tag
 def get_location_for_type(submission, location_type, display_type=False):
-    locations = filter(lambda loc: loc['type'] == location_type.name, submission.location.nx_ancestors(include_self=True))
+    if hasattr(location_type, 'untranslated'): # support for django-vinaigrette
+        locations = filter(lambda loc: loc['type'] == location_type.untranslated('name'), submission.location.nx_ancestors(include_self=True))
+    else:
+        locations = filter(lambda loc: loc['type'] == location_type.name, submission.location.nx_ancestors(include_self=True))
     if display_type:
-        return u'{} · <em class="muted">{}</em>'.format(locations[0]['name'], locations[0]['type']) if locations else u''
+        return u'{} · <em class="muted">{}</em>'.format(_(locations[0]['name']), _(locations[0]['type'])) if locations else u''
     else:
         return locations[0]['name'] if locations else u''
 
