@@ -422,7 +422,7 @@ class Form(models.Model):
         return (submission, observer)
 
     def get_verification_flags(self):
-        pickled_flags = unicode(self.options.get('verification_flags', ''))
+        pickled_flags = self.options.get('verification_flags', '')
         if pickled_flags:
             flags = pickle.loads(pickled_flags)
             return flags
@@ -434,7 +434,7 @@ class Form(models.Model):
 
     def contestants(self):
         if self.options.get('party_votes', None):
-            return pickle.loads(unicode(self.options.get('party_votes')))
+            return pickle.loads(self.options.get('party_votes'))
 
     def parties(self):
         contestants = self.contestants()
