@@ -65,7 +65,7 @@ def get_data_records(form, qs, location_root=None, tags=None):
         location_root = Location.root()
 
     # retrieve all child location types for this location
-    location_types = [lt.name for lt in location_root.sub_location_types()]
+    location_types = [lt.untranslated('name') if hasattr(lt, 'untranslated') else lt.name for lt in location_root.sub_location_types()]
 
     # in addition to retrieving field data, also retrieve the location_id
     submissions = list(qs.data(all_fields).values(*(['location_id'] + all_fields)))
@@ -398,7 +398,9 @@ def generate_process_data(form, qs, location_root=None, grouped=True, tags=None)
     if not location_root:
         location_root = Location.root()
 
-    location_types = [ltype.name for ltype in location_root.sub_location_types()]
+    # because of our use of django-vinaigrette, some model fields have an 'untranslated' method
+    # we want to use that instead of accessing the name directly which yields the translated version
+    location_types = [ltype.untranslated('name') if hasattr(ltype, 'untranslated') else ltype.name for ltype in location_root.sub_location_types()]
 
     try:
         data_frame = get_data_records(form, qs, location_root, tags)
@@ -630,7 +632,7 @@ def generate_rejected_ballot_stats(form, queryset, location_root=None,
         location_root = Location.root()
 
     if not location_types and group_results:
-        location_types = [lt.name for lt in location_root.sub_location_types()]
+        location_types = [lt.untranslated('name') if hasattr(lt, 'untranslated') else lt.name for lt in location_root.sub_location_types()]
 
     tags = [settings.RESULTS_QUESTIONS[key] for key in settings.RESULTS_QUESTIONS if 'ballots' in key]
     rejected_ballots_tag = settings.RESULTS_QUESTIONS['ballots_rejected']

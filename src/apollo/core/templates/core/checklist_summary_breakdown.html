@@ -39,7 +39,7 @@
 							<th width="80">{% trans "Mean" context "statistics" %}</th>
 							{% else %}
 							{% for label in tag_stats.labels %}
-							<th>{{ label }}</th>
+							<th>{% trans label %}</th>
 							{% endfor %}
 							{% endif %}
 							<th width="80">{% trans "Reported" %}</th>
@@ -62,7 +62,7 @@
 						{% for location in tag_stats.locations.keys|sortedlist %}
                         {% with tag_stats.locations|keyvalue:location as location_stats %}
 						<tr>
-							<td><span style="margin-left:2em">{{ location }} · <span class="muted"><em>{{ location_type }}</em></span></span></td>
+							<td><span style="margin-left:2em">{{ location }} · <span class="muted"><em>{% trans location_type %}</em></span></span></td>
 							{% if tag_stats.type == 'numeric' %}
 							<td align="right">{{ location_stats.mean|floatformat:0 }}</td>
 							{% else %}
@@ -93,7 +93,7 @@
 			        <tr>
 			        	<td>
 <script type="text/javascript+protovis">
-	var legend = [{% for label in tag_stats.labels %}"{{ label }}",{% endfor %}];
+	var legend = [{% for label in tag_stats.labels %}"{% trans label %}",{% endfor %}];
 	var data = [{% for value, percentage in tag_stats.histogram %}[{{ percentage }}],{% endfor %}];
 	var labels = ["{{ location }}"];
 
