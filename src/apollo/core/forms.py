@@ -303,9 +303,9 @@ def generate_verification_form(form, readonly=False):
     field_names = []
     fields = {}
     choices = (
-        ('', 'Default'),
-        ('4', 'Verified'),
-        ('5', 'Rejected')
+        ('', _('Unverified')),
+        ('4', _('Verified')),
+        ('5', _('Rejected'))
     )
 
     fields['data__verification'] = forms.ChoiceField(choices=choices, required=False, label=_('Verification'))
