@@ -15,6 +15,7 @@ from apollo.core.managers import SubmissionManager, ObserverManager
 import networkx as nx
 import operator as op
 from parsimonious.grammar import Grammar
+import reversion
 import ast
 import re
 import vinaigrette
@@ -929,3 +930,9 @@ vinaigrette.register(FormGroup, ['name', 'abbr'])
 vinaigrette.register(FormField, ['description'])
 vinaigrette.register(FormFieldOption, ['description'])
 vinaigrette.register(Sample, ['name'])
+
+# reversion
+try:
+    reversion.register(Submission, follow=('master',))
+except reversion.revisions.RegistrationError:
+    pass

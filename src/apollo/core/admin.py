@@ -6,10 +6,6 @@ from models import *
 from guardian.admin import GuardedModelAdmin
 import reversion
 
-class SubmissionAdmin(reversion.VersionAdmin):
-	follow = ('master',)
-	exclude = ('form', 'observer', 'location')
-
 admin.site.register(LocationType)
 admin.site.register(Location)
 admin.site.register(Observer)
@@ -19,6 +15,6 @@ admin.site.register(Form, GuardedModelAdmin)
 admin.site.register(FormGroup)
 admin.site.register(FormField)
 admin.site.register(FormFieldOption)
-admin.site.register(Submission, SubmissionAdmin)
+admin.site.register(Submission)
 admin.site.register(ObserverDataField)
 admin.site.register(Activity)
