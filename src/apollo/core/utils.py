@@ -171,7 +171,7 @@ def import_locations(filename, mapping):
 
     imported = tabimport.FileFactory(filename)
     map_keys = mapping.keys()
-    location_types = LocationType.objects.all()
+    location_types = LocationType.objects.all().order_by('pk')
     location_type_ids = map(lambda lt: str(lt.pk), location_types)
     location_types_hash = {}
     for lt in location_types:
