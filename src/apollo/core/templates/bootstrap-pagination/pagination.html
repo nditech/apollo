@@ -18,7 +18,7 @@
             </li>            
         {% else %}
             <li>          
-                <a title="{% trans "Page" %} {{ pagenum }} {% trans "of" %} {{ page.paginator.num_pages }}" href="{{ url }}">{{ pagenum }}</a>
+                <a title="{% blocktrans with page=pagenum pages=page.paginator.num_pages %}Page {{ page }} of {{ pages }}{% endblocktrans %}" href="{{ url }}">{{ pagenum }}</a>
             </li>   
         {% endif %}        
     {% endfor %}
@@ -38,7 +38,7 @@
 <div class="pagination {% if alignment == "center" %}pagination-centered{% endif %}{% if alignment == "right" %}pagination-right{% endif %}">    
     <ul>    
         <li class="disabled">
-            <a href="">{% trans "Showing:" %} <strong>{{ page.start_index }}-{{ page.end_index }}</strong> {% trans "of" %} <strong>{{ page.paginator.count }}</strong></a>
+            <a href="">{% blocktrans with start=page.start_index end=page.end_index count=page.paginator.count %}Showing: <strong>{{ start }}-{{ end }}</strong> of <strong>{{ count }}</strong>{% endblocktrans %}</a>
         </li>
     </ul> 
 </div>
