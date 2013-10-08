@@ -402,7 +402,11 @@ class SubmissionEditView(UpdateView):
         # submission_form_class allows for the rendering of form elements that are readonly
         # and disabled by default. It's only useful for rendering submission and submission
         # sibling records. Only the master submission should be editable.
-        self.submission_form_class = generate_submission_form(self.submission.form)
+        if settings.EDIT_OBSERVER_CHECKLIST:
+            self.submission_form_class = generate_submission_form(self.submission.form)
+        else:
+            self.submission_form_class = generate_submission_form(self.submission.form, readonly=True)
+
         return super(SubmissionEditView, self).dispatch(*args, **kwargs)
 
     def get_context_data(self, **kwargs):
@@ -442,13 +446,19 @@ class SubmissionEditView(UpdateView):
         form_class = self.get_form_class()
 
         master_form = self.get_form(form_class)
-        submission_form = self.submission_form_class(instance=self.submission, prefix=self.submission.pk, data=request.POST)
 
-        if master_form.is_valid() and submission_form.is_valid():
-            self.form_valid(master_form)
-            return self.form_valid(submission_form)
+        if settings.EDIT_OBSERVER_CHECKLIST:
+            submission_form = self.submission_form_class(instance=self.submission, prefix=self.submission.pk, data=request.POST)
+            if master_form.is_valid() and submission_form.is_valid():
+                self.form_valid(master_form)
+                return self.form_valid(submission_form)
+            else:
+                return self.form_invalid(master_form)
         else:
-            return self.form_invalid(master_form)
+            if master_form.is_valid():
+                return self.form_valid(master_form)
+            else:
+                return self.form_invalid(master_form)
 
 
 class SubmissionCreateView(CreateView):
