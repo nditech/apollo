@@ -9,7 +9,7 @@ try:
 except ImportError:
     import pickle
 import re
-from datetime import (date, datetime)
+from datetime import (date, datetime, timedelta)
 from django.conf import settings
 from django.contrib.auth import REDIRECT_FIELD_NAME, login as auth_login
 from django.contrib.auth.decorators import login_required
@@ -36,11 +36,13 @@ from rapidsms.models import Connection, Backend
 from guardian.decorators import permission_required
 from guardian.shortcuts import get_objects_for_user
 import tablib
+import reversion
 from apollo.core.forms import ActivitySelectionForm, ContactModelForm, LocationModelForm, generate_submission_form, generate_verification_form
 from apollo.core.helpers import *
 from apollo.core.messaging import send_bulk_message
 from apollo.core.models import *
 from apollo.core.filters import *
+from apollo.core.utils import submission_diff
 from analyses.datagenerator import generate_process_data, generate_incidents_data
 from analyses.voting import incidents_csv
 
@@ -382,13 +384,20 @@ class SubmissionEditView(UpdateView):
     page_title = _('Edit Submission')
 
     def get_object(self, queryset=None):
-        return self.submission.master if self.submission.form.type == 'CHECKLIST' else self.submission
+        return self.master if self.submission.form.type == 'CHECKLIST' else self.submission
 
     @method_decorator(login_required)
     @method_decorator(permission_required('core.change_submission', return_403=True))
     def dispatch(self, *args, **kwargs):
         self.submission = get_object_or_404(Submission, pk=kwargs['pk'])
         self.form_class = generate_submission_form(self.submission.form)
+        self.version = get_object_or_404(reversion.models.Version, pk=kwargs['version']) if kwargs.get('version', None) else None
+        if self.version:
+            self.submission = self.version.revision.version_set.get(object_id_int=self.submission.pk).object_version.object
+            self.master = self.version.revision.version_set.get(object_id_int=self.submission.master.pk).object_version.object
+        elif self.submission.form.type == 'CHECKLIST':
+            self.master = self.submission.master
+
 
         # submission_form_class allows for the rendering of form elements that are readonly
         # and disabled by default. It's only useful for rendering submission and submission
@@ -399,6 +408,20 @@ class SubmissionEditView(UpdateView):
     def get_context_data(self, **kwargs):
         context = super(SubmissionEditView, self).get_context_data(**kwargs)
         context['submission'] = self.submission
+        
+        context['versions'] = reversion.get_for_object(self.submission)
+        context['submission_version'] = self.version
+
+        if self.version:
+            try:
+                submission_old_version = reversion.get_for_date(self.submission, self.version.revision.date_created - timedelta(seconds=1))
+                submission_old_version_object = submission_old_version.revision.version_set.get(object_id_int=self.submission.pk).object_version.object
+                master_old_version_object = submission_old_version.revision.version_set.get(object_id_int=self.submission.master.pk).object_version.object
+                context['submission_diff'] = submission_diff(submission_old_version_object, self.submission)
+                context['master_diff'] = submission_diff(master_old_version_object, self.master)
+            except Exception:
+                context['submission_diff'] = submission_diff(Submission(), self.submission)
+                context['master_diff'] = submission_diff(Submission(), self.master)
 
         # A prefix is defined to prevent a confusion with the naming
         # of the form field with other forms with the same field name

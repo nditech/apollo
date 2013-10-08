@@ -1,5 +1,37 @@
 {% extends "core/layout.html" %}
 {% load apollo %}{% load comments %}{% load humanize %}{% load static %}{% load i18n %}
+{% block title %}
+{{ page_title }}
+<style type="text/css">
+  .added {border-right:3px solid green;}
+  .deleted {border-right:3px solid red;}
+  .changed {border-right:3px solid #c09853;}
+</style>
+{% if perms.core.can_analyse %}
+{% if versions %}
+<div class="btn-group pull-right">
+  {% if submission_version %}
+  <a class="btn" href="">{{ submission_version.revision.date_created|naturaltime }}<em> — {{ submission_version.revision.user|default_if_none:_('SMS') }}</em></a>
+  {% else %}
+  <a class="btn" href="">{% trans "History" %}</a>
+  {% endif %}
+  <button class="btn dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
+  <ul class="dropdown-menu">
+  {% if submission_version %}
+    <li>
+      <a href="{% url submission_edit submission.pk %}">{% trans "now" %}</a>
+    </li>
+  {% endif %}
+    {% for version in versions %}
+    <li>
+      <a href="{% url submission_edit_with_version submission.pk version.pk %}">{{ version.revision.date_created|naturaltime }}<em> — {{ version.revision.user|default_if_none:_('SMS') }}</em></a>
+    </li>
+    {% endfor %}
+  </ul>
+</div>
+{% endif %}
+{% endif %}
+{% endblock %}
 {% block content %}
   {% with submission.siblings as siblings %}
   <form action="" method="post" style="margin-bottom:.5em;">
@@ -123,11 +155,35 @@
               </span>
               {% endif %}
             </td>
+            {% if submission_diff %}
+              {% if field.label in submission_diff.0 %}
+                <td class="submission-field added" title="{% trans 'Added' %}">{{ submission_form|keyvalue:field.name }}</td>
+              {% elif field.label in submission_diff.1 %}
+                <td class="submission-field deleted" title="{% trans 'Deleted' %}">{{ submission_form|keyvalue:field.name }}</td>
+              {% elif field.label in submission_diff.2 %}
+                <td class="submission-field changed" title="{% trans 'Changed' %}">{{ submission_form|keyvalue:field.name }}</td>
+              {% else %}
+                <td class="submission-field">{{ submission_form|keyvalue:field.name }}</td>
+              {% endif %}
+            {% else %}
             <td class="submission-field">{{ submission_form|keyvalue:field.name }}</td>
+            {% endif %}
             {% for sibling in submission_sibling_forms %}
             <td class="submission-field">{{ sibling|keyvalue:field.name }}</td>
             {% endfor %}
+            {% if master_diff %}
+              {% if field.label in master_diff.0 %}
+              <td class="submission-field added" title="{% trans 'Added' %}">{{ field }}</td>
+              {% elif field.label in master_diff.1 %}
+              <td class="submission-field deleted" title="{% trans 'Deleted' %}">{{ field }}</td>
+              {% elif field.label in master_diff.2 %}
+              <td class="submission-field changed" title="{% trans 'Changed' %}">{{ field }}</td>
+              {% else %}
+              <td class="submission-field">{{ field }}</td>
+              {% endif %}
+            {% else %}
             <td class="submission-field">{{ field }}</td>
+            {% endif %}
           </tr>
           {% endfor %}
           {% endfor %}
@@ -179,7 +235,7 @@
       {% endif %}
     </div>
   </div>
-
+{% if not submission_version %}
   <div class="row navbar-fixed-bottom" style="bottom:0px; margin-left:1.75em; background:#fff; padding-top:1em; padding-bottom:1em;">
     <div class="offset8 span2">
       <button type="submit" class="btn btn-info btn-large btn-block">{% trans "Save" context "verb" %}</button>
@@ -188,6 +244,7 @@
       <a class="btn btn-large btn-block" href="{% url submissions_list object.form.pk %}">{% trans "Cancel" context "verb" %}</a>
     </div>
   </div>
+{% endif %}
   </form>
 {% endwith %}
 
@@ -212,7 +269,7 @@
         <td>
             <textarea id="comment" style="width:98.5%"></textarea>
             <input type="hidden" id="submission" name="submission" value="{{ submission.pk }}" />
-            <input id="save" type="button" value="Add Comment" class="btn btn-primary pull-right" />
+            <input id="save" type="button" value="{% trans 'Add Comment' %}" class="btn btn-primary pull-right" />
             <div id="loader" class="ajax_loader pull-right" style="visibility: hidden">
               <div class="ajax_loader_block block_1"></div>
               <div class="ajax_loader_block block_2"></div>
@@ -244,7 +301,6 @@
       .done(function (data) {
         // clear the value in the comment box
         $('#comment').val("");
-        console.log('Data received:' + data);
         // if there's a table row displaying "No comment.", remove it
         $('#comments tr.warning').remove();
         $('#save_comment').before('<tr><td><p><strong>' + data.username + '</strong> · <em>' + data.date + '</em></p><p>' + data.comment + '</p></td></tr>');

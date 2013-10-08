@@ -255,3 +255,17 @@ def create_checklists(form, role, date):
         Submission.objects.get_or_create(form=form,
             observer=observer, location=observer.location,
             date=date)
+
+
+def submission_diff(old, new):
+    '''
+    returns (added_keys, removed_keys, changed_keys)
+    '''
+    removed_keys = set(old.data.keys()) - set(new.data.keys())
+    added_keys = set(new.data.keys()) - set(old.data.keys())
+    remaining_keys = set(new.data.keys()) - added_keys - removed_keys
+    changed_keys = set()
+    for key in remaining_keys:
+        if new.data.get(key) != old.data.get(key):
+            changed_keys.add(key)
+    return (added_keys, removed_keys, changed_keys)
