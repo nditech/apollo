@@ -31,7 +31,7 @@
 		<div class="tabbable"> <!-- Only required for left/right tabs -->
 			<ul class="nav nav-tabs">
 				<li class="active"><a href="#table" data-toggle="tab">{% trans "Table" %}</a></li>
-				<li><a href="#map" data-toggle="tab" onclick="init_map();">{% trans "Map" %}</a></li>
+				<!--<li><a href="#map" data-toggle="tab" onclick="init_map();">{% trans "Map" %}</a></li>-->
 			</ul>
 			<div class="tab-content">
 			    <div class="tab-pane active" id="table">
@@ -40,7 +40,7 @@
         <td colspan="{{ 6|add:location_types.count }}"><strong>{{ form_field.tag }}</strong> · {{ form_field.description }}</td>
     </tr>
 	<tr>
-        <th>{% trans "PSZ" %}</th>
+        <th>{% trans "Observer ID" %}</th>
         <th>{% trans "Name" %}</th>
         {% for lt in location_types %}
         <th>{{ lt.name }}</th>

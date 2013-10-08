@@ -179,27 +179,27 @@ LOCATIONS_GRAPH_MAXAGE = 25200  # number of seconds to cache the locations graph
 PAGE_SIZE = 10  # Number of submissions viewable per page
 
 FLAG_STATUSES = {
-    'no_problem': ('0', 'No Problem'),
-    'problem': ('2', 'Problem'),
-    'serious_problem': ('3', 'Serious Problem'),
-    'verified': ('4', 'Verified'),
-    'rejected': ('5', 'Rejected')
+    'no_problem': ('0', ugettext('No Problem')),
+    'problem': ('2', ugettext('Problem')),
+    'serious_problem': ('3', ugettext('Serious Problem')),
+    'verified': ('4', ugettext('Verified')),
+    'rejected': ('5', ugettext('Rejected'))
 }
 
 FLAG_CHOICES = (
-    ('0', 'No Problem'),
-    ('2', 'Problem'),
-    ('3', 'Serious Problem'),
-    ('4', 'Verified'),
-    ('5', 'Rejected')
+    ('0', ugettext('No Problem')),
+    ('2', ugettext('Problem')),
+    ('3', ugettext('Serious Problem')),
+    ('4', ugettext('Verified')),
+    ('5', ugettext('Rejected'))
 )
 
 STATUS_CHOICES = (
-    ('', 'Status'),
-    ('0', 'Status — No Problem'),
-    ('2', 'Status — Unverified'),
-    ('4', 'Status — Verified'),
-    ('5', 'Status — Rejected')
+    ('', ugettext(u'Status')),
+    ('0', ugettext(u'Status — No Problem')),
+    ('2', ugettext(u'Status — Unverified')),
+    ('4', ugettext(u'Status — Verified')),
+    ('5', ugettext(u'Status — Rejected'))
 )
 
 BIG_N = 6000000  # Big N

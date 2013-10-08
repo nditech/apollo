@@ -63,7 +63,7 @@
 						{% for location_type, group_location_stats in incidents_summary.groups %}
 						{% for location, location_data in group_location_stats %}
 						<tr>
-							<td>{{ location }} · <span class="muted"><em>{{ location_type }}</em></span></td>
+							<td>{{ location }} · <span class="muted"><em>{% trans location_type %}</em></span></td>
 							{% with incidents_summary.top.0 as tag_data %}
 							{% if location_data %}
 							{% with location_data|keyvalue:tag_data.0 as field_stats %}

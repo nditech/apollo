@@ -485,7 +485,7 @@ def generate_incidents_data(form, qs, location_root=None, grouped=True, tags=Non
     if not location_root:
         location_root = Location.root()
 
-    location_types = [ltype.name for ltype in location_root.sub_location_types()]
+    location_types = [ltype.untranslated('name') if hasattr(ltype, 'untranslated') else ltype.name for ltype in location_root.sub_location_types()]
 
     try:
         data_frame = get_data_records(form, qs, location_root, tags)

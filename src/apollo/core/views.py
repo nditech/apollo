@@ -275,7 +275,7 @@ class SubmissionProcessAnalysisView(View, TemplateResponseMixin):
             datalist_fields = ['observer__observer_id', 'observer__name', 'location'] + data_fields
 
             export_fields = ['observer__observer_id', 'observer__name'] + location_type_fields + data_fields
-            export_field_labels = ['PSZ', 'Name'] + location_types + ['Witness', 'Status', 'Description']
+            export_field_labels = [ugettext('Observer ID'), ugettext('Name')] + location_types + [ugettext('Witness'), ugettext('Status'), ugettext('Description')]
 
             datalist = self.filter_set.qs.data(data_fields).values(*datalist_fields).distinct()
             filename = slugify('%s %s analysis locations %s' % (self.display_tag, self.form.name, datetime.now().strftime('%Y %m %d %H%M%S')))

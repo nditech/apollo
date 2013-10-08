@@ -121,7 +121,7 @@ class ChecklistFormFilter(django_filters.ChoiceFilter):
 
 class SampleFilter(django_filters.ChoiceFilter):
     def __init__(self, *args, **kwargs):
-        kwargs['choices'] = [('', _('Sample'))] + list(Sample.objects.all().values_list('pk', 'name'))
+        kwargs['choices'] = [('', _('Sample'))] + map(lambda sample: (sample[0], _(sample[1])), list(Sample.objects.all().values_list('pk', 'name')))
         super(SampleFilter, self).__init__(*args, **kwargs)
 
     def filter(self, qs, value):
@@ -345,7 +345,7 @@ def generate_submission_flags_filter(form):
     for name, storage in zip(form.get_verification_flag_attributes('name'), form.get_verification_flag_attributes('storage')):
         CHOICES = [
             ('',  name),
-            ] + list(settings.FLAG_CHOICES)
+            ] + map(lambda choice: (choice[0], _(choice[1])), list(settings.FLAG_CHOICES))
         fields[storage] = HstoreChoiceFilter(
             widget=forms.Select(attrs={'class': 'span2'}), label=name,
             choices=CHOICES)
@@ -360,6 +360,6 @@ def generate_submission_flags_filter(form):
     fields['activity'] = ActivityFilter(widget=forms.HiddenInput())
     fields['verification'] = HstoreChoiceFilter(
         widget=forms.Select(attrs={'class': 'span2'}), label=_('Verification'),
-        choices=settings.STATUS_CHOICES)
+        choices=map(lambda choice: (choice[0], _(choice[1])), list(settings.STATUS_CHOICES)))
 
     return type('SubmissionFlagsFilter', (BaseSubmissionFilter,), fields)
