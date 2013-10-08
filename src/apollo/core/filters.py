@@ -39,15 +39,15 @@ class FormGroupFilter(django_filters.ChoiceFilter):
         group = FormGroup.objects.get(pk=int(self.name.split('_')[1]))
 
         # is_partial?
-        if value == '1':
+        if value == '1' and qs:
             return qs.is_partial(group)
 
         # is_missing?
-        elif value == '2':
+        elif value == '2' and qs:
             return qs.is_missing(group)
 
         # is_complete?
-        elif value == '3':
+        elif value == '3' and qs:
             return qs.is_complete(group)
         else:
             return qs
