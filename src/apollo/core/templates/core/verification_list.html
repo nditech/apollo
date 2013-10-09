@@ -1,6 +1,11 @@
-{% extends "core/layout.html" %}{% load apollo %}{% load bootstrap_pagination %}
+{% extends "core/layout.html" %}{% load apollo %}{% load bootstrap_pagination %}{% load i18n %}
 {% block title %}
 {{ page_title }}
+{% if perms.core.export_submissions %}
+<div class="btn-group pull-right">
+  <form method="get"><input type="hidden" name="export" value="true" /><button class="btn" type="submit">{% trans "Export" context "verb" %}</button></form>
+</div>
+{% endif %}
 {% endblock %}
 {% block content %}
 <div class="row">

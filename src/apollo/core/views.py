@@ -574,7 +574,27 @@ class VerificationListView(ListView):
         self.filter_set = self.submission_filter(initial_data,
             queryset=Submission.objects.filter(form=self.form, form__type='CHECKLIST', observer=None).select_related(),
             request=request)
-        return super(VerificationListView, self).get(request, *args, **kwargs)
+
+        if request.GET.get('export', None):
+            location_types = list(LocationType.objects.filter(on_display=True).values_list('name', flat=True))
+            location_type_fields = ['loc:location__{}'.format(lt.lower()) for lt in location_types]
+
+            data_field_names = self.form.get_verification_flag_attributes('name') + [ugettext('Verified')]
+            data_field_vars = self.form.get_verification_flag_attributes('storage') + ['verification']
+            datalist_fields = ['observer__observer_id', 'observer__name', 'observer__last_connection__identity', 'location', 'observer__contact__connection__identity'] + data_field_vars + ['updated']
+            datalist_fields += ['submissions__observer__observer_id', 'submissions__observer__name', 'submissions__observer__contact__connection__identity', 'submissions__observer__last_connection__identity']
+            export_fields = ['submissions__observer__observer_id', 'submissions__observer__name', 'submissions__observer__contact__connection__identity', 'submissions__observer__last_connection__identity'] + location_type_fields + data_field_vars + ['updated']
+
+            export_field_labels = [ugettext('Observer ID'), ugettext('Name'), ugettext('Phone'), ugettext('Texted Phone')] + location_types + data_field_names + [ugettext('Timestamp')]
+
+            datalist = self.filter_set.qs.data(data_field_vars).values(*datalist_fields).distinct()
+            filename = slugify('verifications %s' % (datetime.now().strftime('%Y %m %d %H%M%S')))
+            response = HttpResponse(export(datalist, fields=export_fields, labels=export_field_labels), content_type='application/vnd.ms-excel')
+            response['Content-Disposition'] = 'attachment; filename=%s.xls' % (filename,)
+
+            return response
+        else:
+            return super(VerificationListView, self).get(request, *args, **kwargs)
 
 
 class VerificationEditView(UpdateView):
