@@ -77,6 +77,16 @@ class SubmissionModelForm(BetterForm):
 
         return super(BetterForm, self).__init__(*args, **kwargs)
 
+    def clean(self):
+        cleaned_data = super(SubmissionModelForm, self).clean()
+        observer = cleaned_data.get('observer')
+        location = cleaned_data.get('location')
+
+        if not (observer or location):
+            raise forms.ValidationError(_('You did not specify either an Observer or a Location'))
+
+        return cleaned_data
+
     def save(self):
         cleaned_data = self.cleaned_data
 

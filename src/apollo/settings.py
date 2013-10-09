@@ -169,7 +169,7 @@ SESSION_SAVE_EVERY_REQUEST = True
 SESSION_COOKIE_AGE = 1800
 PROJECT_NAME = 'Apollo'
 AUTHENTICATE_OBSERVER = False  # determines whether to authenticate the observer's phone number
-EDIT_OBSERVER_CHECKLIST = ast.literal_eval(os.environ.get('EDIT_OBSERVER_CHECKLIST', 'True'))
+EDIT_OBSERVER_CHECKLIST = ast.literal_eval(os.environ.get('EDIT_OBSERVER_CHECKLIST', 'False'))
 ALLOWED_PUNCTUATIONS = '!'  # allowed punctuations in SMS forms
 CHARACTER_TRANSLATIONS = (
     ('i', '1'),
@@ -231,7 +231,7 @@ BROKER_URL = os.environ.get('APOLLO_BROKER_URL', 'librabbitmq://guest:guest@loca
 
 # caching
 CACHES = {
-    'graph': {
+    'graphs': {
         'BACKEND': 'apollo.core.memcached.BigMemcachedCache',
         'OPTIONS': {
             'MAX_VALUE_LENGTH': 2 * 1024 * 1024

@@ -447,7 +447,7 @@ class SubmissionEditView(UpdateView):
 
         master_form = self.get_form(form_class)
 
-        if settings.EDIT_OBSERVER_CHECKLIST:
+        if settings.EDIT_OBSERVER_CHECKLIST and self.object.form.type == 'CHECKLIST':
             submission_form = self.submission_form_class(instance=self.submission, prefix=self.submission.pk, data=request.POST)
             if master_form.is_valid() and submission_form.is_valid():
                 self.form_valid(master_form)
