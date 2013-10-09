@@ -18,6 +18,7 @@ from parsimonious.grammar import Grammar
 import reversion
 import ast
 import re
+from unidecode import unidecode
 import vinaigrette
 
 
@@ -373,6 +374,7 @@ class Form(models.Model):
 
     @staticmethod
     def parse(text):
+        text = unidecode(text)
         forms = Form.objects.all()
         submission = {'data': {}}
         observer = None
