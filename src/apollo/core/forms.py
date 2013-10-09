@@ -82,7 +82,7 @@ class SubmissionModelForm(BetterForm):
         observer = cleaned_data.get('observer')
         location = cleaned_data.get('location')
 
-        if not (observer or location):
+        if not hasattr(self, 'instance') and not (observer or location):
             raise forms.ValidationError(_('You did not specify either an Observer or a Location'))
 
         return cleaned_data
