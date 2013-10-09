@@ -72,7 +72,7 @@ class SubmissionModelForm(BetterForm):
                     'form': self.instance.form
                 }
                 kwargs['initial'].update(
-                    {'data__{}'.format(k): v.split(',') if ',' in v else v for k, v in self.instance.data.items()}
+                    {'data__{}'.format(k): v for k, v in self.instance.data.items()}
                 )
 
         return super(BetterForm, self).__init__(*args, **kwargs)
