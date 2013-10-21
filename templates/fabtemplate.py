@@ -72,7 +72,7 @@ def provision(environment="app", server="staging"):
             sudo('npm -g install yuglify')
         elif environment == "db":
             sudo('apt-get update')
-            sudo('apt-get install -y software-properties-common python-software-properties')
+            sudo('apt-get install -y -m software-properties-common python-software-properties || echo -n')
             sudo('add-apt-repository -y ppa:ubuntugis/ppa')
             sudo('apt-get update')
             sudo('apt-get upgrade -y')
