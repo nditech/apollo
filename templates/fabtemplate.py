@@ -73,10 +73,10 @@ def provision(environment="app", server="staging"):
         elif environment == "db":
             sudo('apt-get update')
             sudo('for pkg in software-properties-common python-software-properties; do apt-get install -y -m $pkg || echo -n; done')
-            sudo('add-apt-repository -y ppa:ubuntugis/ppa')
+            sudo('add-apt-repository ppa:ubuntugis/ppa')
             sudo('apt-get update')
             sudo('apt-get upgrade -y')
-            sudo('apt-get install -y vim postgresql postgresql-contrib postgis')
+            sudo('apt-get install -y vim postgresql postgresql-client postgresql-contrib postgis')
 
             if database_config:
                 sudo('createdb %s' % (database_config['NAME'],), user='postgres')
