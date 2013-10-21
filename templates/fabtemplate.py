@@ -57,11 +57,12 @@ def provision(environment="app", server="staging"):
     if confirm("Provision %s server?" % (environment,)):
         if environment == "app":
             sudo('apt-get update')
-            sudo('apt-get install -y software-properties-common python-software-properties')
-            sudo('add-apt-repository -y ppa:ubuntugis/ppa')
+            sudo('for pkg in software-properties-common python-software-properties; do apt-get install -y -m $pkg || echo -n; done')
+            sudo('add-apt-repository ppa:ubuntugis/ppa')
+            sudo('add-apt-repository ppa:chris-lea/node.js')
             sudo('apt-get update')
             sudo('apt-get upgrade -y')
-            sudo('apt-get install -y vim nginx memcached python-dev build-essential git-core libpq-dev postgresql-client rabbitmq-server librabbitmq-dev libxml2-dev libxslt-dev libproj-dev binutils gdal-bin gettext npm supervisor')
+            sudo('apt-get install -y vim nginx memcached python-dev build-essential git-core libpq-dev postgresql-client rabbitmq-server libxml2-dev libxslt-dev libproj-dev binutils gdal-bin gettext npm supervisor')
             sudo('openssl genrsa -des3 -out /etc/nginx/%s.key 2048' % (SCRIPT_NAME,))
             sudo('openssl rsa -in /etc/nginx/%s.key -out /etc/nginx/%s.key' % (SCRIPT_NAME, SCRIPT_NAME))
             sudo("openssl req -new -key /etc/nginx/%s.key -out /etc/nginx/%s.csr -subj '/CN=%s'" % (SCRIPT_NAME, SCRIPT_NAME, env.host))
@@ -71,11 +72,11 @@ def provision(environment="app", server="staging"):
             sudo('npm -g install yuglify')
         elif environment == "db":
             sudo('apt-get update')
-            sudo('apt-get install -y software-properties-common python-software-properties')
-            sudo('add-apt-repository -y ppa:ubuntugis/ppa')
+            sudo('for pkg in software-properties-common python-software-properties; do apt-get install -y -m $pkg || echo -n; done')
+            sudo('add-apt-repository ppa:ubuntugis/ppa')
             sudo('apt-get update')
             sudo('apt-get upgrade -y')
-            sudo('apt-get install -y vim postgresql postgresql-contrib postgis')
+            sudo('apt-get install -y vim postgresql postgresql-client postgresql-contrib postgis')
 
             if database_config:
                 sudo('createdb %s' % (database_config['NAME'],), user='postgres')

@@ -770,16 +770,21 @@ def create_or_sync_master(sender, **kwargs):
         # we only want to create a submission that will be assigned
         # as the master if this is not already a master submission
         if not master and instance.observer and instance.form.type == 'CHECKLIST':
-            # create the master
-            master = Submission.objects.create(
-                    form=instance.form,
-                    observer=None,
-                    location=instance.location,
-                    date=instance.date,
-                    data=instance.data,
-                    created=instance.created,
-                    updated=instance.updated
-                )
+            # create the master only if none of the siblings have one
+            for sibling in instance.siblings:
+                if sibling.master:
+                    master = sibling.master
+                    break
+            else:
+                master = Submission.objects.create(
+                        form=instance.form,
+                        observer=None,
+                        location=instance.location,
+                        date=instance.date,
+                        data=instance.data,
+                        created=instance.created,
+                        updated=instance.updated
+                    )
             instance.master = master
             instance.save()
     else:
@@ -797,7 +802,7 @@ def create_or_sync_master(sender, **kwargs):
         # if no siblings exist, copy to master and quit
         if not siblings:
             for key in instance.data.keys():
-                if key in master.overrides:
+                if key in master.overrides.keys():
                     continue
                 master.data[key] = instance.data[key]
 
@@ -812,7 +817,7 @@ def create_or_sync_master(sender, **kwargs):
         # this be pure hackery
         for key in key_set:
             # if the key has already been overridden, don't do anything
-            if key in master.overrides:
+            if key in master.overrides.keys():
                 continue
 
             # get the value set for this key, and create a comparison function
