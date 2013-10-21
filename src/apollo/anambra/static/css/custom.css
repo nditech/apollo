@@ -88,7 +88,7 @@ border:none; background:;
   border-top-color: #fff;
   border-bottom-color: #fff;
 }
-.h_style {font-family: 'Antonio-Regular';font-weight: normal; padding-top:.5em; padding-bottom:.5em; padding-left:1em; }
+.h_style {font-weight: normal; padding-top:.5em; padding-bottom:.5em; padding-left:1em; }
 .con_style { padding-top:0px; padding-bottom:1em; }
 .options { display: block; margin-top: 0.5em; }
 .option { margin-right: 1em; }
