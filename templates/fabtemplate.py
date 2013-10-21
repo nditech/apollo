@@ -57,7 +57,7 @@ def provision(environment="app", server="staging"):
     if confirm("Provision %s server?" % (environment,)):
         if environment == "app":
             sudo('apt-get update')
-            sudo('apt-get install -y -m software-properties-common python-software-properties || echo -n')
+            sudo('for pkg in software-properties-common python-software-properties; do apt-get install -y -m $pkg || echo -n; done')
             sudo('add-apt-repository ppa:ubuntugis/ppa')
             sudo('add-apt-repository ppa:chris-lea/node.js')
             sudo('apt-get update')
@@ -72,7 +72,7 @@ def provision(environment="app", server="staging"):
             sudo('npm -g install yuglify')
         elif environment == "db":
             sudo('apt-get update')
-            sudo('apt-get install -y -m software-properties-common python-software-properties || echo -n')
+            sudo('for pkg in software-properties-common python-software-properties; do apt-get install -y -m $pkg || echo -n; done')
             sudo('add-apt-repository -y ppa:ubuntugis/ppa')
             sudo('apt-get update')
             sudo('apt-get upgrade -y')
