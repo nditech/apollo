@@ -61,7 +61,7 @@ def provision(environment="app", server="staging"):
             sudo('add-apt-repository ppa:ubuntugis/ppa')
             sudo('apt-get update')
             sudo('apt-get upgrade -y')
-            sudo('apt-get install -y vim nginx memcached python-dev build-essential git-core libpq-dev postgresql-client rabbitmq-server librabbitmq-dev libxml2-dev libxslt-dev libproj-dev binutils gdal-bin gettext npm supervisor')
+            sudo('apt-get install -y vim nginx memcached python-dev build-essential git-core libpq-dev postgresql-client rabbitmq-server libxml2-dev libxslt-dev libproj-dev binutils gdal-bin gettext npm supervisor')
             sudo('openssl genrsa -des3 -out /etc/nginx/%s.key 2048' % (SCRIPT_NAME,))
             sudo('openssl rsa -in /etc/nginx/%s.key -out /etc/nginx/%s.key' % (SCRIPT_NAME, SCRIPT_NAME))
             sudo("openssl req -new -key /etc/nginx/%s.key -out /etc/nginx/%s.csr -subj '/CN=%s'" % (SCRIPT_NAME, SCRIPT_NAME, env.host))
