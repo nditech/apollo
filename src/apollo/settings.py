@@ -55,7 +55,7 @@ RAPIDSMS_ROUTER = "rapidsms.router.db.DatabaseRouter"
 INSTALLED_APPS = [
 
     # the essentials.
-    "azerbaijan",
+    "anambra",
     "core",
     "messagelog",
 
