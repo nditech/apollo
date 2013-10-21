@@ -58,7 +58,7 @@ def provision(environment="app", server="staging"):
         if environment == "app":
             sudo('apt-get update')
             sudo('apt-get install -y -m software-properties-common python-software-properties || echo -n')
-            sudo('add-apt-repository -y ppa:ubuntugis/ppa')
+            sudo('add-apt-repository ppa:ubuntugis/ppa')
             sudo('apt-get update')
             sudo('apt-get upgrade -y')
             sudo('apt-get install -y vim nginx memcached python-dev build-essential git-core libpq-dev postgresql-client rabbitmq-server librabbitmq-dev libxml2-dev libxslt-dev libproj-dev binutils gdal-bin gettext npm supervisor')
