@@ -55,12 +55,12 @@ RAPIDSMS_ROUTER = "rapidsms.router.db.DatabaseRouter"
 INSTALLED_APPS = [
 
     # the essentials.
+    "rapidsms",
     "azerbaijan",
     "core",
     "messagelog",
 
     "django_nose",
-    "rapidsms",
     "django_dag",
     "south",
     "tastypie",

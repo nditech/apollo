@@ -116,7 +116,7 @@ def deploy(server="staging", version="HEAD"):
                 run('python2.7 init')
                 run('set -a && source .env 2>/dev/null && bin/buildout -c production.cfg')
                 sudo('ln -sf `pwd`/parts/nginx/%s.conf /etc/nginx/conf.d/' % (SCRIPT_NAME,))
-                sudo('bin/honcho export --user %s --app %s --log `pwd`/var/log supervisord /etc/supervisord.d' % (env.user, SCRIPT_NAME,))
+                sudo('bin/honcho export --user %s --app %s --log `pwd`/var/log supervisord /etc/supervisor/conf.d' % (env.user, SCRIPT_NAME,))
                 run('mkdir -p assets')
             with cd('%s/%s/eggs/Django-1.4.3-py2.7.egg/django/contrib/gis/db/backends/postgis/' % (root_dir, SCRIPT_NAME)):
                 with settings(warn_only=True):
@@ -131,8 +131,7 @@ def deploy(server="staging", version="HEAD"):
                 run('../../bin/%s compilemessages' % (SCRIPT_NAME,), server, True)
 
             manage('collectstatic --noinput -l', server, True)
-            manage('syncdb --noinput', server, True)
-            manage('migrate', server, True)
+            manage('syncdb --noinput --migrate', server, True)
             sudo('supervisorctl reread')
             sudo('supervisorctl update')
             process('start', server, True)
