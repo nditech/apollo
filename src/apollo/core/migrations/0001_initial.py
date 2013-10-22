@@ -7,6 +7,10 @@ from django.db import models
 
 class Migration(SchemaMigration):
 
+    depends_on = (
+        ('rapidsms', '0002_auto__add_field_contact_created_on__add_field_contact_modified_on__add'),
+    )
+
     def forwards(self, orm):
         # Adding model 'LocationType'
         db.create_table('core_locationtype', (
