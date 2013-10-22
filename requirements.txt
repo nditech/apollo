@@ -34,6 +34,7 @@ python-memcached==1.48
 pytz==2013b
 psycopg2==2.4.6
 git+https://github.com/timbaobjects/rapidsms-telerivet.git#egg=rapidsms-telerivet
+raven==3.5.0
 RapidSMS==0.15.0
 git+https://github.com/timbaobjects/django-jimmypage.git#egg=django_jimmypage-dev
 git+https://github.com/ecometrica/django-vinaigrette.git
