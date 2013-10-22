@@ -10,6 +10,7 @@ from django.utils import translation
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.sites.models import Site
 from django.contrib.comments.models import Comment
+from johnny.cache import enable
 
 PUNCTUATIONS = filter(lambda s: s not in settings.ALLOWED_PUNCTUATIONS, string.punctuation) + ' '
 TRANS_TABLE = dict((ord(fro), ord(to)) for fro, to in settings.CHARACTER_TRANSLATIONS)
@@ -25,7 +26,8 @@ SUBMISSION_RECEIVED = _('Thank you! Your report was received! You sent: %(messag
 
 class App(AppBase):
     @reversion.create_revision()
-    def handle(self, message):        
+    def handle(self, message):
+        enable()  
         temp = unicode(message.text)
         # strip all unwanted whitespace and punctuation marks
         at_position = temp.find('@')
