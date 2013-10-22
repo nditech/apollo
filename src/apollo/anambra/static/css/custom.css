@@ -48,7 +48,7 @@ filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
   -moz-border-radius: 0px;
   border-radius: 0px;
 }
-.navbar .nav{margin-bottom: .15em}
+.navbar .nav{margin-top: 1em}
 .navbar .nav > li > a{color: #610D3E;}
 .navbar-inner1:before,
 .navbar-inner1:after {
@@ -59,7 +59,7 @@ filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
 .navbar-inner1:after {
   clear: both;
 }
-.img{margin-top:.5em;}
+.img{margin-top:.9em;}
 .navbar_style{-webkit-box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.1), 0 1px 10px rgba(0, 0, 0, 0.1);
 -moz-box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.1), 0 1px 10px rgba(0, 0, 0, 0.1);
 box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.1), 0 1px 10px rgba(0, 0, 0, 0.1);
