@@ -89,6 +89,7 @@ INSTALLED_APPS = [
     "bootstrap-pagination",
     "pipeline",
     "readonly",
+    "raven.contrib.django.raven_compat",
 ]
 
 # -------------------------------------------------------------------- #
@@ -150,6 +151,48 @@ AUTHENTICATION_BACKENDS = (
 USE_L10N = True
 ANONYMOUS_USER_ID = -1
 GUARDIAN_RENDER_403 = True
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': True,
+    'root': {
+        'level': 'WARNING',
+        'handlers': ['sentry'],
+    },
+    'formatters': {
+        'verbose': {
+            'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
+        },
+    },
+    'handlers': {
+        'sentry': {
+            'level': 'ERROR',
+            'class': 'raven.contrib.django.raven_compat.handlers.SentryHandler',
+        },
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose'
+        }
+    },
+    'loggers': {
+        'django.db.backends': {
+            'level': 'ERROR',
+            'handlers': ['console'],
+            'propagate': False,
+        },
+        'raven': {
+            'level': 'DEBUG',
+            'handlers': ['console'],
+            'propagate': False,
+        },
+        'sentry.errors': {
+            'level': 'DEBUG',
+            'handlers': ['console'],
+            'propagate': False,
+        },
+    },
+}
 
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
@@ -224,7 +267,8 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'core.middleware.AllowOriginMiddleware',
-    'core.middleware.KMLMiddleware',)
+    'core.middleware.KMLMiddleware',
+    'raven.contrib.django.raven_compat.middleware.Sentry404CatchMiddleware',)
 
 # celery queue settings
 BROKER_URL = os.environ.get('APOLLO_BROKER_URL', 'librabbitmq://guest:guest@localhost:5672/apollo')
