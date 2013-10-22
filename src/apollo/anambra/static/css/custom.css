@@ -47,7 +47,7 @@ filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
 }
 .navbar .nav > li > a > i{opacity: 0.6;}
 .navbar .brand{text-align: center; vertical-align: middle;}
-.navbar .nav{margin-top:1%; margin-bottom: 1%;}
+.navbar .nav{margin-top:1.5%; margin-bottom: 1.5%;}
 .navbar .nav > li > a{color: #610D3E;}
 .navbar-inner1:before,
 .navbar-inner1:after {
