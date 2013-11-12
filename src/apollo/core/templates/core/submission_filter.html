@@ -5,6 +5,7 @@
     <div class="controls controls-row">
       {{ filter_form.observer__observer_id }}
       {{ filter_form.location }}
+      {{ filter_form.sample }}
       {% if form.type != 'CHECKLIST' %}{{ filter_form.status }}{% endif %}
     </div>
     {% if form.type == 'CHECKLIST' %}
