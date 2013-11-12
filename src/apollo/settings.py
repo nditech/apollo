@@ -216,8 +216,11 @@ EDIT_OBSERVER_CHECKLIST = ast.literal_eval(os.environ.get('EDIT_OBSERVER_CHECKLI
 ALLOWED_PUNCTUATIONS = '!'  # allowed punctuations in SMS forms
 CHARACTER_TRANSLATIONS = (
     ('i', '1'),
+    ('I', '1'),
     ('o', '0'),
+    ('O', '0'),
     ('l', '1'),
+    ('L', '1'),
 )
 LOCATIONS_GRAPH_MAXAGE = 25200  # number of seconds to cache the locations graph - 1wk
 PAGE_SIZE = 10  # Number of submissions viewable per page
