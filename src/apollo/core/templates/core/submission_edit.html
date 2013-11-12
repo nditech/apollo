@@ -116,10 +116,10 @@
           {% if submission.form.type == 'CHECKLIST' %}
           <tr>
             <th>{% trans "Supervisor" %}</th>
-            <td>{{ submission.observer.supervisor|default_if_none:"<em>N/A</em>" }}</td>
+            <td><strong>{{ submission.observer.supervisor|default_if_none:"<em>N/A</em>" }}</strong>{% if submission.observer.supervisor.phone %} ({{ submission.observer.supervisor.phone }}){% endif %}</td>
             {% if submission.form.type == 'CHECKLIST' %}
             {% for sibling in siblings %}
-            <td>{{ sibling.observer.supervisor|default_if_none:"<em>N/A</em>" }}</td>
+            <td><strong>{{ sibling.observer.supervisor|default_if_none:"<em>N/A</em>" }}</strong>{% if sibling.observer.supervisor.phone %} ({{ sibling.observer.supervisor.phone }}){% endif %}</td>
             {% endfor %}
             {% endif %}
           </tr>
