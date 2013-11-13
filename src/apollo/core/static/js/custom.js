@@ -1,4 +1,5 @@
 $(function(){
+  $('#id_sample').hide()
   $('.dropdown-toggle').dropdown();
   $('abbr').tooltip();
   $('.table-fixed-header').fixedHeader();
@@ -18,7 +19,6 @@ $(function(){
     $('select', form).each(function (id, el) { $(el).val(""); });
     $(form).submit();
   });
-
   $('.select2').select2({
     minimumInputLength: 1,
     matcher: function(term, text) { return text.toUpperCase().indexOf(term.toUpperCase()) === 0; }
