@@ -1,5 +1,4 @@
 $(function(){
-  $('#id_sample').hide()
   $('.dropdown-toggle').dropdown();
   $('abbr').tooltip();
   $('.table-fixed-header').fixedHeader();
