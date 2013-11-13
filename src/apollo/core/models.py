@@ -518,8 +518,11 @@ class FormField(models.Model):
                 field_value = int(match.group('value')) \
                     if match.group('value') else None
 
-                if field_value != None:
-                    if self.options.all().count():
+                if self.present_true:
+                    # a value of 1 indicates presence/truth
+                    self.value = 1
+                else:
+                    if self.options.exists():
                         for option in self.options.all():
                             if option.option == field_value:
                                 self.value = field_value
@@ -531,9 +534,6 @@ class FormField(models.Model):
                             self.value = -1
                         else:
                             self.value = field_value
-                elif self.present_true:
-                    # a value of 1 indicates presence/truth
-                    self.value = 1
 
         return re.sub(pattern, '', text, flags=re.I) if self.value != None else text
 
