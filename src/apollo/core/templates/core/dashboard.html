@@ -22,7 +22,7 @@
   </div>
 </div>
 {% for group in summary %}
-{% if forloop.counter0|divisibleby:"5" %}<div class="row"><div class="span1"></div>{% endif %}
+{% if forloop.counter0|divisibleby:"6" %}<div class="row">{% endif %}
   <div class="span2">
     <legend style="text-align:center"><a href="{% url grouped_dashboard group.id %}">{{ group.name }}</a></legend>
     <div>
@@ -76,7 +76,7 @@
       </script>
     </div>
   </div>
-{% if forloop.last or forloop.counter|divisibleby:"5" %}</div>{% endif %}
+{% if forloop.last or forloop.counter|divisibleby:"6" %}</div>{% endif %}
 {% empty %}
 <div class="row">
   <div class="span12">
