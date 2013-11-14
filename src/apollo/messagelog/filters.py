@@ -16,3 +16,4 @@ class MessageFilter(django_filters.FilterSet):
         'class': 'span2',
         'placeholder': _('Text')
         }), lookup_type='icontains')
+    created = django_filters.DateFilter(widget=forms.TextInput(), lookup_type="gte")

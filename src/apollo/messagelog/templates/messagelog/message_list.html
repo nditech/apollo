@@ -2,15 +2,19 @@
 {% block title %}
 {{ page_title }}
 {% if perms.messagelog.export_messages %}
-<a class="btn pull-right" href="{% url messages_list_export "xls" %}">{% trans "Export" context "verb" %}</a>
+
+<form action="{% url messages_list %}" method="get" id="export_messages" style="display:none">
+<input type="hidden" name="export" value="true" />
+</form>
+
+<a class="btn pull-right" href="javascript:document.getElementById('export_messages').submit()">{% trans "Export" context "verb" %}</a>
 {% endif %}
 {% endblock %}
 {% block content %}
 <div class="row">
   <div class="span12">
     <div class="well" style="padding-bottom:0">
-      <form action="{% url messages_list %}" method="post" id="filter">
-        {% csrf_token %}
+      <form action="{% url messages_list %}" method="get" id="filter">
         <div class="controls controls-row">
           {{ filter_form.mobile }}
           {{ filter_form.text }}

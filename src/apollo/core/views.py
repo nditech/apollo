@@ -160,16 +160,8 @@ class DashboardView(View, TemplateResponseMixin):
         return context
 
     def get(self, request, *args, **kwargs):
-        initial_data = request.session.get('dashboard_filter', None)
-        self.filter_set = self.dashboard_filter(initial_data,
+        self.filter_set = self.dashboard_filter(request.GET,
                 queryset=Submission.objects.filter(form__in=self.viewable_forms).exclude(observer=None), request=request)
-        context = self.get_context_data(**kwargs)
-        return self.render_to_response(context)
-
-    def post(self, request, *args, **kwargs):
-        self.filter_set = self.dashboard_filter(request.POST,
-                queryset=Submission.objects.filter(form__in=self.viewable_forms).exclude(observer=None), request=request)
-        request.session['dashboard_filter'] = self.filter_set.form.data
         context = self.get_context_data(**kwargs)
         return self.render_to_response(context)
 
@@ -356,8 +348,7 @@ class SubmissionListView(ListView):
         if 'action' in self.request.POST and self.request.POST['action'] == 'send_message':
             # messaging
             if request.user.has_perm('core.message_observers'):
-                initial_data = request.session.get('submission_filter_%d' % self.form.pk, None)
-                self.filter_set = self.submission_filter(initial_data,
+                self.filter_set = self.submission_filter(request.GET,
                     queryset=Submission.objects.filter(form=self.form).exclude(observer=None).select_related(),
                     request=request)
                 send_bulk_message(self.filter_set.qs.all().values_list('observer__pk', flat=True), self.request.POST['message'])
@@ -365,18 +356,57 @@ class SubmissionListView(ListView):
             else:
                 return HttpResponseForbidden()
         else:
-            self.filter_set = self.submission_filter(self.request.POST,
-                queryset=Submission.objects.filter(form=self.form).exclude(observer=None).select_related(),
-                request=request)
-            request.session['submission_filter_%d' % self.form.pk] = self.filter_set.form.data
-            return super(SubmissionListView, self).get(request, *args, **kwargs)
+            return self.get(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
-        initial_data = request.session.get('submission_filter_%d' % self.form.pk, None)
-        self.filter_set = self.submission_filter(initial_data,
-            queryset=Submission.objects.filter(form=self.form).exclude(observer=None).select_related(),
-            request=request)
-        return super(SubmissionListView, self).get(request, *args, **kwargs)
+        if 'export' in request.GET:
+            if request.GET.get('export', 'observers') == "master":
+                self.filter_set = self.submission_filter(request.GET,
+                    queryset=Submission.objects.filter(form=self.form, observer=None),
+                    request=request)
+            else:
+                self.filter_set = self.submission_filter(request.GET,
+                    queryset=Submission.objects.filter(form=self.form).exclude(observer=None),
+                    request=request)
+
+            qs = self.filter_set.qs.order_by('-date', 'observer__observer_id')
+
+            location_types = list(LocationType.objects.filter(on_display=True).values_list('name', flat=True))
+            location_type_fields = ['loc:location__{}'.format(lt.lower()) for lt in location_types]
+
+            if self.form.type == 'CHECKLIST':
+                data_fields = list(FormField.objects.filter(group__form=self.form).order_by('tag').values_list('tag', flat=True))
+                datalist_fields = ['observer__observer_id', 'observer__name', 'observer__last_connection__identity', 'location', 'observer__contact__connection__identity'] + data_fields + ['updated']
+
+                if request.GET.get('export', 'observers') == "master":
+                    datalist_fields += ['submissions__observer__observer_id', 'submissions__observer__name', 'submissions__observer__contact__connection__identity', 'submissions__observer__last_connection__identity']
+                    export_fields = ['submissions__observer__observer_id', 'submissions__observer__name', 'submissions__observer__contact__connection__identity', 'submissions__observer__last_connection__identity'] + location_type_fields + data_fields + ['updated']
+                else:
+                    export_fields = ['observer__observer_id', 'observer__name', 'observer__contact__connection__identity', 'observer__last_connection__identity'] + location_type_fields + data_fields + ['updated']
+                field_labels = [ugettext('Observer ID'), ugettext('Name'), ugettext('Phone'), ugettext('Texted Phone')] + location_types + data_fields + [ugettext('Timestamp')]
+
+                datalist = qs.intdata(data_fields).values(*datalist_fields).distinct()
+            else:
+                data_fields = list(FormField.objects.filter(group__form=self.form).order_by('tag').values_list('tag', flat=True))
+
+                export_fields = ['observer__observer_id', 'observer__name', 'observer__contact__connection__identity', 'observer__last_connection__identity'] + location_type_fields + data_fields + ['status', 'witness', 'description', 'updated']
+                field_labels = [ugettext('Observer ID'), ugettext('Name'), ugettext('Phone'), ugettext('Texted Phone')] + location_types + data_fields + [ugettext('Status'), ugettext('Witness'), ugettext('Description'), ugettext('Timestamp')]
+
+                data_fields.extend(['status', 'witness', 'description'])
+                datalist_fields = ['observer__observer_id', 'observer__name', 'location', 'observer__contact__connection__identity', 'observer__last_connection__identity'] + data_fields + ['updated']
+
+                datalist = qs.data(data_fields).values(*datalist_fields).distinct()
+
+            filename = slugify('%s %s %s' % (self.form.name, datetime.now().strftime('%Y %m %d %H%M%S'), request.GET.get('export', 'observers')))
+            response = HttpResponse(export(datalist, fields=export_fields, labels=field_labels), content_type='application/vnd.ms-excel')
+            response['Content-Disposition'] = 'attachment; filename=%s.xls' % (filename,)
+
+            return response
+        else:
+            self.filter_set = self.submission_filter(request.REQUEST,
+                queryset=Submission.objects.filter(form=self.form).exclude(observer=None).select_related(),
+                request=request)
+            return super(SubmissionListView, self).get(request, *args, **kwargs)
 
 
 class SubmissionEditView(UpdateView):
@@ -486,57 +516,6 @@ class SubmissionCreateView(CreateView):
         return reverse('submissions_list', args=[self.form.pk])
 
 
-class SubmissionListExportView(View):
-    collection = 'observers'
-
-    # TODO: refactor to support custom field labels
-    @method_decorator(login_required)
-    @method_decorator(permission_required('core.export_submissions', return_403=True))
-    def dispatch(self, request, *args, **kwargs):
-        form = get_object_or_404(Form, pk=kwargs['form'])
-        self.submission_filter = generate_submission_filter(form)
-        initial_data = request.session.get('submission_filter_%d' % form.pk, None)
-        if self.collection == 'master':
-            self.filter_set = self.submission_filter(initial_data,
-                queryset=Submission.objects.filter(form=form, observer=None), request=request)
-        else:
-            self.filter_set = self.submission_filter(initial_data,
-                queryset=Submission.objects.filter(form=form).exclude(observer=None), request=request)
-        qs = self.filter_set.qs.order_by('-date', 'observer__observer_id')
-
-        location_types = list(LocationType.objects.filter(on_display=True).values_list('name', flat=True))
-        location_type_fields = ['loc:location__{}'.format(lt.lower()) for lt in location_types]
-
-        if form.type == 'CHECKLIST':
-            data_fields = list(FormField.objects.filter(group__form=form).order_by('tag').values_list('tag', flat=True))
-            datalist_fields = ['observer__observer_id', 'observer__name', 'observer__last_connection__identity', 'location', 'observer__contact__connection__identity'] + data_fields + ['updated']
-
-            if self.collection == 'master':
-                datalist_fields += ['submissions__observer__observer_id', 'submissions__observer__name', 'submissions__observer__contact__connection__identity', 'submissions__observer__last_connection__identity']
-                export_fields = ['submissions__observer__observer_id', 'submissions__observer__name', 'submissions__observer__contact__connection__identity', 'submissions__observer__last_connection__identity'] + location_type_fields + data_fields + ['updated']
-            else:
-                export_fields = ['observer__observer_id', 'observer__name', 'observer__contact__connection__identity', 'observer__last_connection__identity'] + location_type_fields + data_fields + ['updated']
-            field_labels = [ugettext('Observer ID'), ugettext('Name'), ugettext('Phone'), ugettext('Texted Phone')] + location_types + data_fields + [ugettext('Timestamp')]
-
-            datalist = qs.intdata(data_fields).values(*datalist_fields).distinct()
-        else:
-            data_fields = list(FormField.objects.filter(group__form=form).order_by('tag').values_list('tag', flat=True))
-
-            export_fields = ['observer__observer_id', 'observer__name', 'observer__contact__connection__identity', 'observer__last_connection__identity'] + location_type_fields + data_fields + ['status', 'witness', 'description', 'updated']
-            field_labels = [ugettext('Observer ID'), ugettext('Name'), ugettext('Phone'), ugettext('Texted Phone')] + location_types + data_fields + [ugettext('Status'), ugettext('Witness'), ugettext('Description'), ugettext('Timestamp')]
-
-            data_fields.extend(['status', 'witness', 'description'])
-            datalist_fields = ['observer__observer_id', 'observer__name', 'location', 'observer__contact__connection__identity', 'observer__last_connection__identity'] + data_fields + ['updated']
-
-            datalist = qs.data(data_fields).values(*datalist_fields).distinct()
-
-        filename = slugify('%s %s %s' % (form.name, datetime.now().strftime('%Y %m %d %H%M%S'), self.collection))
-        response = HttpResponse(export(datalist, fields=export_fields, labels=field_labels), content_type='application/vnd.ms-excel')
-        response['Content-Disposition'] = 'attachment; filename=%s.xls' % (filename,)
-
-        return response
-
-
 class VerificationListView(ListView):
     context_object_name = 'submissions'
     template_name = 'core/verification_list.html'
@@ -561,17 +540,8 @@ class VerificationListView(ListView):
         self.submission_filter = generate_submission_flags_filter(self.form)
         return super(VerificationListView, self).dispatch(*args, **kwargs)
 
-    def post(self, request, *args, **kwargs):
-        # force filtering to only occur on master CHECKLIST forms
-        self.filter_set = self.submission_filter(self.request.POST,
-            queryset=Submission.objects.filter(form=self.form, form__type='CHECKLIST', observer=None).select_related(),
-            request=request)
-        request.session['verification_filter_%d' % self.form.pk] = self.filter_set.form.data
-        return super(VerificationListView, self).get(request, *args, **kwargs)
-
     def get(self, request, *args, **kwargs):
-        initial_data = request.session.get('verification_filter_%d' % self.form.pk, None)
-        self.filter_set = self.submission_filter(initial_data,
+        self.filter_set = self.submission_filter(self.request.GET,
             queryset=Submission.objects.filter(form=self.form, form__type='CHECKLIST', observer=None).select_related(),
             request=request)
 
@@ -653,23 +623,18 @@ class ContactListView(ListView):
         if 'action' in self.request.POST and self.request.POST['action'] == 'send_message':
             # messaging
             if request.user.has_perm('core.message_observers'):
-                initial_data = request.session.get('contacts_filter', None)
-                self.filter_set = self.contacts_filter(initial_data,
+                self.filter_set = self.contacts_filter(request.GET,
                     queryset=Observer.objects.all().distinct())
                 send_bulk_message(self.filter_set.qs.values_list('pk', flat=True), self.request.POST['message'])
                 return HttpResponse('OK')
             else:
                 return HttpResponseForbidden()
         else:
-            self.filter_set = self.contacts_filter(request.POST,
-                queryset=Observer.objects.all().distinct())
-            request.session['contacts_filter'] = self.filter_set.form.data
-            return super(ContactListView, self).get(request, *args, **kwargs)
+            self.get(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
-        initial_data = request.session.get('contacts_filter', None)
-        self.filter_set = self.contacts_filter(initial_data,
-            queryset=Observer.objects.all().distinct())
+        self.filter_set = self.contacts_filter(request.REQUEST,
+                queryset=Observer.objects.all().distinct())
 
         if request.GET.get('export', None):
             location_types = list(LocationType.objects.filter(on_display=True).values_list('name', flat=True))
@@ -732,15 +697,8 @@ class LocationListView(ListView):
         self.locations_filter = LocationsFilter
         return super(LocationListView, self).dispatch(*args, **kwargs)
 
-    def post(self, request, *args, **kwargs):
-        self.filter_set = self.locations_filter(request.POST,
-            queryset=Location.objects.all())
-        request.session['locations_filter'] = self.filter_set.form.data
-        return super(LocationListView, self).get(request, *args, **kwargs)
-
     def get(self, request, *args, **kwargs):
-        initial_data = request.session.get('locations_filter', None)
-        self.filter_set = self.locations_filter(initial_data,
+        self.filter_set = self.locations_filter(request.GET,
             queryset=Location.objects.all())
         return super(LocationListView, self).get(request, *args, **kwargs)
 

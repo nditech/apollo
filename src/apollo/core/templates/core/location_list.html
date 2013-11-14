@@ -3,8 +3,7 @@
 <div class="row">
   <div class="span12">
     <div class="well" style="padding-bottom:0">
-      <form action="" method="post" id="filter">
-        {% csrf_token %}
+      <form action="{% url locations_list %}" method="get" id="filter">
         <div class="controls controls-row">
           {{ filter_form.name }}
           {{ filter_form.type }}

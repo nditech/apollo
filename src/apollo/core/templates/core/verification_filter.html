@@ -1,7 +1,6 @@
 {% load apollo %}{% load i18n %}
 <div class="well" style="padding-bottom:0">
-  <form action="{% url verifications_list form.pk %}" method="post" id="filter">
-    {% csrf_token %}
+  <form action="{% url verifications_list form.pk %}" method="get" id="filter">
     <div class="controls controls-row">
       {{ filter_form.observer_id }}
       {{ filter_form.location }}

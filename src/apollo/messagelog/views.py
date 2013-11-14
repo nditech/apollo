@@ -37,33 +37,23 @@ class MessageListView(ListView):
     def dispatch(self, *args, **kwargs):
         return super(MessageListView, self).dispatch(*args, **kwargs)
 
-    def post(self, request, *args, **kwargs):
-        activity = get_activity(request)
-        self.filter_set = MessageFilter(self.request.POST,
-            queryset=MessageLog.objects.filter(created__range=(activity.start_date, activity.end_date + timedelta(days=1))))
-        request.session['message_filter'] = self.filter_set.form.data
-        return super(MessageListView, self).get(request, *args, **kwargs)
-
     def get(self, request, *args, **kwargs):
         activity = get_activity(request)
-        initial_data = request.session.get('message_filter', None)
-        self.filter_set = MessageFilter(initial_data,
+        self.filter_set = MessageFilter(self.request.GET,
             queryset=MessageLog.objects.filter(created__range=(activity.start_date, activity.end_date + timedelta(days=1))))
-        return super(MessageListView, self).get(request, *args, **kwargs)
+        if request.GET.get('export', None):
+            # grab all MessageLog objects
+            message_log = MessageLog.objects.filter(created__range=(activity.start_date, activity.end_date + timedelta(days=1)))
+            fields = ['mobile', 'text', 'direction', 'created', 'delivered']
+            labels = [ugettext('Mobile'), ugettext('Text'), ugettext('Message direction'), ugettext('Created'), ugettext('Delivered')]
 
+            response = HttpResponse(export(message_log.values(*fields), fields=fields, labels=labels, format='xls'),
+                content_type=export_formats['xls'])
 
-def export_message_log(request, format='xls'):
-    activity = get_activity(request)
-    # grab all MessageLog objects
-    message_log = MessageLog.objects.filter(created__range=(activity.start_date, activity.end_date + timedelta(days=1)))
-    fields = ['mobile', 'text', 'direction', 'created', 'delivered']
-    labels = [ugettext('Mobile'), ugettext('Text'), ugettext('Message direction'), ugettext('Created'), ugettext('Delivered')]
+            # force a download
+            filename = slugify('messagelog %s' % (datetime.now().strftime('%Y %m %d %H%M%S'),))
+            response['Content-Disposition'] = 'attachment; filename=%s.%s' % (filename, 'xls')
 
-    response = HttpResponse(export(message_log.values(*fields), fields=fields, labels=labels, format=format),
-        content_type=export_formats[format])
-
-    # force a download
-    filename = slugify('messagelog %s' % (datetime.now().strftime('%Y %m %d %H%M%S'),))
-    response['Content-Disposition'] = 'attachment; filename=%s.%s' % (filename, format)
-
-    return response
+            return response
+        else:
+            return super(MessageListView, self).get(request, *args, **kwargs)

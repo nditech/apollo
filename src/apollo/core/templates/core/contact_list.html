@@ -7,8 +7,16 @@
 {% block title %}
 {{ page_title }}
 {% if perms.core.message_observers %}
+
+<form action="{{ request.get_full_path }}" method="get" id="export_observers" style="display:none">
+{% for key, value in request.GET.items %}
+{% if key != "export" %}<input type="hidden" name="{{ key }}" value="{{ value }}" />{% endif %}
+{% endfor %}
+<input type="hidden" name="export" value="true" />
+</form>
+
 <div class="btn-group pull-right">
-  <form method="get"><input type="hidden" name="export" value="true" /><button class="btn" type="submit">{% trans "Export" context "verb" %}</button></form>
+  <a href="javascript:document.getElementById('export_observers').submit()" class="btn" type="submit">{% trans "Export" context "verb" %}</a>
 </div>
 <div class="btn-group pull-right">
   <a style="margin-right:1em" id="send_message_modal_btn" href="#send_message" role="button" class="btn btn-success">{% trans "Send Message" %}</a>
@@ -19,8 +27,7 @@
 <div class="row">
   <div class="span12">
     <div class="well" style="padding-bottom:0">
-      <form action="{% url contacts_list %}" method="post" id="filter">
-        {% csrf_token %}
+      <form action="{% url contacts_list %}" method="get" id="filter">
         <div class="controls controls-row">
           {{ filter_form.observer_id }}
           {{ filter_form.name }}
