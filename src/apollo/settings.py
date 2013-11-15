@@ -311,6 +311,7 @@ PIPELINE_CSS = {
           'css/datepicker.css',
           'css/jquery.qtip.css',
           'css/custom.css',
+          'css/nv.d3.css',
         ),
         'output_filename': 'css/apollo.css',
         'extra_context': {
@@ -328,6 +329,8 @@ PIPELINE_JS = {
             'js/table-fixed-header.js',
             'js/bootstrap-datepicker.js',
             'js/custom.js',
+            'js/d3.v3.js',
+            'js/nv.d3.js',
         ),
         'output_filename': 'js/apollo.js',
     },
