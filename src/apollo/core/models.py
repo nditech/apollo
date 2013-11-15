@@ -63,7 +63,10 @@ class LocationType(GraphMixin):
         try:
             return Location.root().type
         except IndexError, AttributeError:
-            pass
+            try:
+                return LocationType.objects.all().order_by('pk')[0]
+            except IndexError:
+                pass
 
 
 class Location(GraphMixin):

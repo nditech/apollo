@@ -23,7 +23,11 @@
     {% for location in summary %}
     {% if forloop.counter0|divisibleby:"6" %}<div class="row">{% endif %}
     	<div class="span2">
+          {% if next_location_type %}
+          <legend style="text-align:center;border:0"><a href="{% url grouped_dashboard_with_locationtype form_group.id next_location_type.pk %}">{{ location.name }}</a></legend>
+          {% else %}
       	  <legend style="text-align:center;border:0">{{ location.name }}</legend>
+          {% endif %}
           <script type="text/javascript+protovis">
             width = 170,
             height = 300,
