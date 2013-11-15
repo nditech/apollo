@@ -139,17 +139,14 @@ class DashboardView(View, TemplateResponseMixin):
         if 'group' in kwargs:
             self.form_group = get_object_or_404(FormGroup, pk=kwargs['group'])
             if kwargs.get('locationtype', None):
-                self.form_group_locationtype = get_object_or_404(LocationType, kwargs.get('locationtype'))
+                self.form_group_locationtype = get_object_or_404(LocationType, pk=kwargs.get('locationtype'))
             else:
-                try:
-                    self.form_group_locationtype = filter(lambda lt: lt.on_dashboard == True, LocationType.root().get_children())[0]
-                except:
-                    self.form_group_locationtype = None
+                self.form_group_locationtype = LocationType.root()
             self.page_title = _('Dashboard') + u' · {}'.format(self.form_group.name)
             self.template_name = 'core/dashboard_status_breakdown.html'
         else:
             self.form_group = None
-            self.form_group_locationtype = None
+            self.form_group_locationtype = LocationType.root()
             self.page_title = _('Dashboard')
         if not request.user.has_perm('core.view_activities'):
             self.viewable_forms = get_objects_for_user(request.user, 'core.view_form', Form)
@@ -167,6 +164,7 @@ class DashboardView(View, TemplateResponseMixin):
         if self.form_group_locationtype:
             try:
                 context['next_location_type'] = filter(lambda lt: lt.on_dashboard == True, self.form_group_locationtype.get_children())[0]
+                context['should_expand'] = any(filter(lambda lt: lt.on_dashboard == True, context['next_location_type'].get_children())[:1])
             except IndexError:
                 pass
         context['summary'] = generate_dashboard_summary(self.filter_set.qs, self.form_group, self.form_group_locationtype)
