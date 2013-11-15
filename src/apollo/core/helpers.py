@@ -22,9 +22,6 @@ def generate_dashboard_summary(submission_queryset, group=None, locationtype=Non
 
     print locationtype
 
-    if not locationtype:
-        locationtype = filter(lambda lt: lt.on_dashboard == True, LocationType.root().get_descendants())[0]
-
     try:
         next_location_type = filter(lambda lt: lt.on_dashboard == True, locationtype.get_children())[0]
     except IndexError:
