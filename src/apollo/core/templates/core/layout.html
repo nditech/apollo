@@ -29,27 +29,35 @@
   </style>
   <body>
     <div class="navbar navbar-static-top">
-        <div class="navbar-inner">
-          <div class="container">
-            <a class="brand" href="#">Apollo</a>
-            <ul class="nav pull-right">
-              <li><a href="{% url dashboard %}"><i class="icon-home"></i> {% trans "Dashboard" %}</a></li>
-              {% forms_menu request perms %}
-              {% if perms.core.can_analyse %}{% analysis_menu request %}{% endif %}
-              {% if perms.core.view_observers %}<li><a href="{% url contacts_list %}"><i class="icon-user"></i> {% trans "Observers" %}</a></li>{% endif %}
-              {% if perms.messagelog.view_messages %}<li><a href="{% url messages_list %}"><i class="icon-envelope"></i> {% trans "Messages" %}</a></li>{% endif %}
-              <li>
-                <div class="btn-group">
-                  <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-user icon-white"></i> {{ request.user.username }} <span class="caret"></span></a>
-                  <ul class="dropdown-menu pull-right">
-                    <li><a href="{% url user-logout %}">{% trans "Logout" %}</a></li>
-                  </ul>
-                </div>
-              </li>
-            </ul>
-          </div>
+      <div class="navbar-inner">
+        <div class="container">
+          <div class="row">
+            <div class="span1">
+              <a class="brand" href="#">Apollo</a>
+            </div>
+            <div class="span11">
+              <ul class="nav">
+                <li><a href="{% url dashboard %}"><i class="icon-home"></i> {% trans "Dashboard" %}</a></li>
+                {% forms_menu request perms %}
+                {% if perms.core.can_analyse %}{% analysis_menu request %}{% endif %}
+                {% if perms.core.view_observers %}<li><a href="{% url contacts_list %}"><i class="icon-user"></i> {% trans "Observers" %}</a></li>{% endif %}
+                {% if perms.messagelog.view_messages %}<li><a href="{% url messages_list %}"><i class="icon-envelope"></i> {% trans "Messages" %}</a></li>{% endif %}
+              </ul>
+              <ul class="nav pull-right">
+                <li class="pull-right">
+                  <div class="btn-group pull-right">
+                    <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-user icon-white"></i> {{ request.user.username }} <span class="caret"></span></a>
+                    <ul class="dropdown-menu pull-right">
+                      <li><a href="{% url user-logout %}">{% trans "Logout" %}</a></li>
+                    </ul>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>            
         </div>
       </div>
+    </div>
     <div class="container con_style">
       <h3 class="h_style">{% block title %}{{ page_title }}{% endblock %}{% activity_name request %}</h3>
     </div>
