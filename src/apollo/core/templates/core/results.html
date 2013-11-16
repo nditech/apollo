@@ -27,102 +27,102 @@
                 <table class="table table-bordered table-hover">
                     <tr>
                         <th width="200" rowspan="2" {% if form.options.has_urban %}colspan="2"{% endif %} style="vertical-align:middle" class="gray">&nbsp;</th>
+                        <th class="gray">&nbsp;</th>
+                        <th class="gray">&nbsp;</th>
+                        <th width="30" class="gray" style="text-align:center">{% trans "Total Valid" %}</th>
+                        <th width="100" {% if form.options.has_moe %}colspan="2"{% endif %} class="gray" style="text-align:center">{% trans "Rejected Ballots" %}</th>
                         {% for party in form.parties %}
                         <th width="100" {% if form.options.has_moe %}colspan="2"{% endif %} class="gray" style="text-align:center">{{ party|safe }}</th>
                         {% endfor %}
-                        <th width="30" class="gray" style="text-align:center">{% trans "Total Valid" %}</th>
-                        <th width="100" {% if form.options.has_moe %}colspan="2"{% endif %} class="gray" style="text-align:center">{% trans "Rejected Ballots" %}</th>
-                        <th class="gray">&nbsp;</th>
-                        <th class="gray">&nbsp;</th>
                     </tr>
                     <tr>
+                        <td class="centered" width="10%"><em>{% trans "Reported" %}</em></td>
+                        <td class="centered" width="10%"><em>{% trans "Missing" %}</em></td>
+                        <td class="centered"><em><abbr title="{% trans 'Total Valid' %}">{% trans "TV" context "abbreviation for total votes" %}</abbr></em></td>
+                        <td class="centered"><em><abbr title="{% trans 'Rejected Ballots' %}">{% trans "RB" context "abbreviation for rejected ballots" %}</abbr></em></td>
                         {% for party in form.parties %}
                         <td class="centered"><em>{% trans "Votes" %}</em></td>
                         {% if form.options.has_moe %}<td class="centered"><em><abbr title="{% trans 'Margin of Error' %}">{% trans "MoE" context "abbreviation for margin of error" %}</abbr></em></td>{% endif %}
                         {% endfor %}
-                        <td class="centered"><em><abbr title="{% trans 'Total Valid' %}">{% trans "TV" context "abbreviation for total votes" %}</abbr></em></td>
-                        <td class="centered"><em><abbr title="{% trans 'Rejected Ballots' %}">{% trans "RB" context "abbreviation for rejected ballots" %}</abbr></em></td>
                         {% if form.options.has_moe %}<td class="centered"><em><abbr title="{% trans 'Margin of Error' %}">{% trans "MoE" context "abbreviation for margin of error" %}</abbr></em></td>{% endif %}
-                        <td class="centered" width="10%"><em>{% trans "Reported" %}</em></td>
-                        <td class="centered" width="10%"><em>{% trans "Missing" %}</em></td>
                     </tr>
                     <tr>
                         <th class="gray" {% if form.options.has_urban %}rowspan="3"{% endif %} style="vertical-align:middle">{{ location.name }} · <span class="muted"><em>{{ location.type }}</em></span></th>
                         {% if form.options.has_urban %}<th width="50" class="gray">{% trans "All" %}</th>{% endif %}
+                        <th class="numeric gray">{% reported_pct dataframe form.votes location.type.name location.name 'ALL' %}% <br />({% reported dataframe form.votes location.type.name location.name 'ALL' %})</th>
+                        <th class="numeric gray">{% missing_pct dataframe form.votes location.type.name location.name 'ALL' %}% <br />({% missing dataframe form.votes location.type.name location.name 'ALL' %})</th>
+                        <th class="numeric gray">{% votes_total dataframe form.votes location.type.name location.name 'ALL' %}</th>
+                        <th class="numeric gray">{% rejected_proportion form dataframe location.type.name location.name 'ALL' %}%<br />({% rejected_count form dataframe location.type.name location.name 'ALL' %})</th>
                         {% for vote in form.votes %}
                         <th class="numeric gray">{% vote_proportion dataframe form.votes vote location.type.name location.name 'ALL' %}%<br />({% vote_count dataframe form.votes vote location.type.name location.name 'ALL' %})</th>
                         {% if form.options.has_moe %}<th class="numeric gray">{% vote_margin_of_error dataframe form.votes vote location.type.name location.name 'ALL' %}%</th>{% endif %}
                         {% endfor %}
-                        <th class="numeric gray">{% votes_total dataframe form.votes location.type.name location.name 'ALL' %}</th>
-                        <th class="numeric gray">{% rejected_proportion form dataframe location.type.name location.name 'ALL' %}%<br />({% rejected_count form dataframe location.type.name location.name 'ALL' %})</th>
                         {% if form.options.has_moe %}<th class="numeric gray">{% rejected_margin_of_error form dataframe location.type.name location.name 'ALL' %}%</th>{% endif %}
-                        <th class="numeric gray">{% reported_pct dataframe form.votes location.type.name location.name 'ALL' %}% <br />({% reported dataframe form.votes location.type.name location.name 'ALL' %})</th>
-                        <th class="numeric gray">{% missing_pct dataframe form.votes location.type.name location.name 'ALL' %}% <br />({% missing dataframe form.votes location.type.name location.name 'ALL' %})</th>
                     </tr>
                     {% if form.options.has_urban %}
                     <tr>
                         <td>{% trans "Rural" %}</td>
+                        <td class="numeric ">{% reported_pct dataframe form.votes location.type.name location.name 'RURAL' %}% <br />({% reported dataframe form.votes location.type.name location.name 'RURAL' %})</td>
+                        <td class="numeric ">{% missing_pct dataframe form.votes location.type.name location.name 'RURAL' %}% <br />({% missing dataframe form.votes location.type.name location.name 'RURAL' %})</td>
+                        <td class="numeric">{% votes_total dataframe form.votes location.type.name location.name 'RURAL' %}</td>
+                        <td class="numeric">{% rejected_proportion form dataframe location.type.name location.name 'RURAL' %}% <br />({% rejected_count form dataframe location.type.name location.name 'RURAL' %})</td>
                         {% for vote in form.votes %}
                         <td class="numeric">{% vote_proportion dataframe form.votes vote location.type.name location.name 'RURAL' %}% <br />({% vote_count dataframe form.votes vote location.type.name location.name 'RURAL' %})</td>
                         {% if form.options.has_moe %}<td class="numeric">{% vote_margin_of_error dataframe form.votes vote location.type.name location.name 'RURAL' %}%</td>{% endif %}
                         {% endfor %}
-                        <td class="numeric">{% votes_total dataframe form.votes location.type.name location.name 'RURAL' %}</td>
-                        <td class="numeric">{% rejected_proportion form dataframe location.type.name location.name 'RURAL' %}% <br />({% rejected_count form dataframe location.type.name location.name 'RURAL' %})</td>
                         {% if form.options.has_moe %}<td class="numeric">{% rejected_margin_of_error form dataframe location.type.name location.name 'RURAL' %}%</td>{% endif %}
-                        <td class="numeric ">{% reported_pct dataframe form.votes location.type.name location.name 'RURAL' %}% <br />({% reported dataframe form.votes location.type.name location.name 'RURAL' %})</td>
-                        <td class="numeric ">{% missing_pct dataframe form.votes location.type.name location.name 'RURAL' %}% <br />({% missing dataframe form.votes location.type.name location.name 'RURAL' %})</td>
                     </tr>
                     <tr>
                         <td>{% trans "Urban" %}</td>
+                        <td class="numeric">{% reported_pct dataframe form.votes location.type.name location.name 'URBAN' %}% <br />({% reported dataframe form.votes location.type.name location.name 'URBAN' %})</td>
+                        <td class="numeric">{% missing_pct dataframe form.votes location.type.name location.name 'URBAN' %}% <br />({% missing dataframe form.votes location.type.name location.name 'URBAN' %})</td>
+                        <td class="numeric">{% votes_total dataframe form.votes location.type.name location.name 'URBAN' %}</td>
+                        <td class="numeric">{% rejected_proportion form dataframe location.type.name location.name 'URBAN' %}% <br />({% rejected_count form dataframe location.type.name location.name 'URBAN' %})</td>
                         {% for vote in form.votes %}
                         <td class="numeric">{% vote_proportion dataframe form.votes vote location.type.name location.name 'URBAN' %}% <br />({% vote_count dataframe form.votes vote location.type.name location.name 'URBAN' %})</td>
                         {% if form.options.has_moe %}<td class="numeric">{% vote_margin_of_error dataframe form.votes vote location.type.name location.name 'URBAN' %}%</td>{% endif %}
                         {% endfor %}
-                        <td class="numeric">{% votes_total dataframe form.votes location.type.name location.name 'URBAN' %}</td>
-                        <td class="numeric">{% rejected_proportion form dataframe location.type.name location.name 'URBAN' %}% <br />({% rejected_count form dataframe location.type.name location.name 'URBAN' %})</td>
                         {% if form.options.has_moe %}<td class="numeric">{% rejected_margin_of_error form dataframe location.type.name location.name 'URBAN' %}%</td>{% endif %}
-                        <td class="numeric">{% reported_pct dataframe form.votes location.type.name location.name 'URBAN' %}% <br />({% reported dataframe form.votes location.type.name location.name 'URBAN' %})</td>
-                        <td class="numeric">{% missing_pct dataframe form.votes location.type.name location.name 'URBAN' %}% <br />({% missing dataframe form.votes location.type.name location.name 'URBAN' %})</td>
                     </tr>
                     {% endif %}
                     {% for sublocation in location.get_children %}
                     <tr>
                         <td class="gray" {% if form.options.has_urban %}rowspan="3"{% endif %} style="vertical-align:middle">{{ sublocation.name }} · <span class="muted"><em>{{ sublocation.type }}</em></span></td>
                         {% if form.options.has_urban %}<th width="50" class="gray">{% trans "All" %}</th>{% endif %}
+                        <th class="numeric gray">{% reported_pct dataframe form.votes sublocation.type.name sublocation.name 'ALL' %}% <br />({% reported dataframe form.votes sublocation.type.name sublocation.name 'ALL' %})</th>
+                        <th class="numeric gray">{% missing_pct dataframe form.votes sublocation.type.name sublocation.name 'ALL' %}% <br />({% missing dataframe form.votes sublocation.type.name sublocation.name 'ALL' %})</th>
+                        <th class="numeric gray">{% votes_total dataframe form.votes sublocation.type.name sublocation.name 'ALL' %}</th>
+                        <th class="numeric gray">{% rejected_proportion form dataframe sublocation.type.name sublocation.name 'ALL' %}% <br />({% rejected_count form dataframe sublocation.type.name sublocation.name 'ALL' %})</th>
                         {% for vote in form.votes %}
                         <th class="numeric gray">{% vote_proportion dataframe form.votes vote sublocation.type.name sublocation.name 'ALL' %}% <br />({% vote_count dataframe form.votes vote sublocation.type.name sublocation.name 'ALL' %})</th>
                         {% if form.options.has_moe %}<th class="numeric gray">{% vote_margin_of_error dataframe form.votes vote sublocation.type.name sublocation.name 'ALL' %}%</th>{% endif %}
                         {% endfor %}
-                        <th class="numeric gray">{% votes_total dataframe form.votes sublocation.type.name sublocation.name 'ALL' %}</th>
-                        <th class="numeric gray">{% rejected_proportion form dataframe sublocation.type.name sublocation.name 'ALL' %}% <br />({% rejected_count form dataframe sublocation.type.name sublocation.name 'ALL' %})</th>
                         {% if form.options.has_moe %}<th class="numeric gray">{% rejected_margin_of_error form dataframe sublocation.type.name sublocation.name 'ALL' %}%</th>{% endif %}
-                        <th class="numeric gray">{% reported_pct dataframe form.votes sublocation.type.name sublocation.name 'ALL' %}% <br />({% reported dataframe form.votes sublocation.type.name sublocation.name 'ALL' %})</th>
-                        <th class="numeric gray">{% missing_pct dataframe form.votes sublocation.type.name sublocation.name 'ALL' %}% <br />({% missing dataframe form.votes sublocation.type.name sublocation.name 'ALL' %})</th>
                     </tr>
                     {% if form.options.has_urban %}
                     <tr>
                         <td>{% trans "Rural" %}</td>
+                        <td class="numeric">{% reported_pct dataframe form.votes sublocation.type.name sublocation.name 'RURAL' %}% <br />({% reported dataframe form.votes sublocation.type.name sublocation.name 'RURAL' %})</td>
+                        <td class="numeric">{% missing_pct dataframe form.votes sublocation.type.name sublocation.name 'RURAL' %}% <br />({% missing dataframe form.votes sublocation.type.name sublocation.name 'RURAL' %})</td>
+                        <td class="numeric">{% votes_total dataframe form.votes sublocation.type.name sublocation.name 'RURAL' %}</td>
+                        <td class="numeric">{% rejected_proportion form dataframe sublocation.type.name sublocation.name 'RURAL' %}% <br />({% rejected_count form dataframe sublocation.type.name sublocation.name 'RURAL' %})</td>
                         {% for vote in form.votes %}
                         <td class="numeric">{% vote_proportion dataframe form.votes vote sublocation.type.name sublocation.name 'RURAL' %}% <br />({% vote_count dataframe form.votes vote sublocation.type.name sublocation.name 'RURAL' %})</td>
                         {% if form.options.has_moe %}<td class="numeric">{% vote_margin_of_error dataframe form.votes vote sublocation.type.name sublocation.name 'RURAL' %}%</td>{% endif %}
                         {% endfor %}
-                        <td class="numeric">{% votes_total dataframe form.votes sublocation.type.name sublocation.name 'RURAL' %}</td>
-                        <td class="numeric">{% rejected_proportion form dataframe sublocation.type.name sublocation.name 'RURAL' %}% <br />({% rejected_count form dataframe sublocation.type.name sublocation.name 'RURAL' %})</td>
                         {% if form.options.has_moe %}<td class="numeric">{% rejected_margin_of_error form dataframe sublocation.type.name sublocation.name 'RURAL' %}%</td>{% endif %}
-                        <td class="numeric">{% reported_pct dataframe form.votes sublocation.type.name sublocation.name 'RURAL' %}% <br />({% reported dataframe form.votes sublocation.type.name sublocation.name 'RURAL' %})</td>
-                        <td class="numeric">{% missing_pct dataframe form.votes sublocation.type.name sublocation.name 'RURAL' %}% <br />({% missing dataframe form.votes sublocation.type.name sublocation.name 'RURAL' %})</td>
                     </tr>
                     <tr>
                         <td>{% trans "Urban" %}</td>
+                        <td class="numeric">{% reported_pct dataframe form.votes sublocation.type.name sublocation.name 'URBAN' %}% <br />({% reported dataframe form.votes sublocation.type.name sublocation.name 'URBAN' %})</td>
+                        <td class="numeric">{% missing_pct dataframe form.votes sublocation.type.name sublocation.name 'URBAN' %}% <br />({% missing dataframe form.votes sublocation.type.name sublocation.name 'URBAN' %})</td>
+                        <td class="numeric">{% votes_total dataframe form.votes sublocation.type.name sublocation.name 'URBAN' %}</td>
+                        <td class="numeric">{% rejected_proportion form dataframe sublocation.type.name sublocation.name 'URBAN' %}% <br />({% rejected_count form dataframe sublocation.type.name sublocation.name 'URBAN' %})</td>
                         {% for vote in form.votes %}
                         <td class="numeric">{% vote_proportion dataframe form.votes vote sublocation.type.name sublocation.name 'URBAN' %}% <br />({% vote_count dataframe form.votes vote sublocation.type.name sublocation.name 'URBAN' %})</td>
                         {% if form.options.has_moe %}<td class="numeric">{% vote_margin_of_error dataframe form.votes vote sublocation.type.name sublocation.name 'URBAN' %}%</td>{% endif %}
                         {% endfor %}
-                        <td class="numeric">{% votes_total dataframe form.votes sublocation.type.name sublocation.name 'URBAN' %}</td>
-                        <td class="numeric">{% rejected_proportion form dataframe sublocation.type.name sublocation.name 'URBAN' %}% <br />({% rejected_count form dataframe sublocation.type.name sublocation.name 'URBAN' %})</td>
                         {% if form.options.has_moe %}<td class="numeric">{% rejected_margin_of_error form dataframe sublocation.type.name sublocation.name 'URBAN' %}%</td>{% endif %}
-                        <td class="numeric">{% reported_pct dataframe form.votes sublocation.type.name sublocation.name 'URBAN' %}% <br />({% reported dataframe form.votes sublocation.type.name sublocation.name 'URBAN' %})</td>
-                        <td class="numeric">{% missing_pct dataframe form.votes sublocation.type.name sublocation.name 'URBAN' %}% <br />({% missing dataframe form.votes sublocation.type.name sublocation.name 'URBAN' %})</td>
                     </tr>
                     {% endif %}
                     {% endfor %}
