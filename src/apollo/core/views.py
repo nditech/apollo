@@ -505,13 +505,17 @@ class SubmissionEditView(UpdateView):
         if settings.EDIT_OBSERVER_CHECKLIST and self.object.form.type == 'CHECKLIST':
             submission_form = self.submission_form_class(instance=self.submission, prefix=self.submission.pk, data=request.POST)
             if master_form.is_valid() and submission_form.is_valid():
-                self.form_valid(master_form)
+                if request.user.has_perm('core.can_override') or self.submission.form.type == "INCIDENT":
+                    self.form_valid(master_form)
                 return self.form_valid(submission_form)
             else:
                 return self.form_invalid(master_form)
         else:
             if master_form.is_valid():
-                return self.form_valid(master_form)
+                if request.user.has_perm('core.can_override') or self.submission.form.type == "INCIDENT":
+                    return self.form_valid(master_form)
+                else:
+                    return HttpResponseRedirect(self.get_success_url())
             else:
                 return self.form_invalid(master_form)
 
