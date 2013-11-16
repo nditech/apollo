@@ -432,7 +432,10 @@ class SubmissionEditView(UpdateView):
     @method_decorator(permission_required('core.change_submission', return_403=True))
     def dispatch(self, *args, **kwargs):
         self.submission = get_object_or_404(Submission, pk=kwargs['pk'])
-        self.form_class = generate_submission_form(self.submission.form)
+        if args[0].user.has_perm('core.can_override'):
+            self.form_class = generate_submission_form(self.submission.form)
+        else:
+            self.form_class = generate_submission_form(self.submission.form, readonly=True)
         self.version = get_object_or_404(reversion.models.Version, pk=kwargs['version']) if kwargs.get('version', None) else None
         if self.version:
             self.submission = self.version.revision.version_set.get(object_id_int=self.submission.pk).object_version.object

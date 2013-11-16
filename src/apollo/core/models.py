@@ -585,6 +585,7 @@ class Submission(models.Model):
             ("export_submissions", "Can export submissions"),
             ("can_analyse", "Can access submission analyses"),
             ("can_verify", "Can access submission verifications"),
+            ("can_override", "Can override submission master"),
         )
 
     @property
