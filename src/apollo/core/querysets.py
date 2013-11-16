@@ -9,7 +9,7 @@ class SearchableLocationQuerySet(HStoreQueryset):
     def is_within(self, location):
         return self.filter(
             location__pk__in=[
-                loc['id'] for loc in location.nx_descendants(include_self=True)
+                loc.get('id', None) for loc in location.nx_descendants(include_self=True)
             ])
 
 

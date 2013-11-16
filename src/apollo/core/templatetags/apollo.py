@@ -129,9 +129,9 @@ def submission_items(submissions, form, permissions):
 @register.simple_tag
 def get_location_for_type(submission, location_type, display_type=False):
     if hasattr(location_type, 'untranslated'): # support for django-vinaigrette
-        locations = filter(lambda loc: loc['type'] == location_type.untranslated('name'), submission.location.nx_ancestors(include_self=True))
+        locations = filter(lambda loc: loc.get('type', None) == location_type.untranslated('name'), submission.location.nx_ancestors(include_self=True))
     else:
-        locations = filter(lambda loc: loc['type'] == location_type.name, submission.location.nx_ancestors(include_self=True))
+        locations = filter(lambda loc: loc.get('type', None) == location_type.name, submission.location.nx_ancestors(include_self=True))
     if display_type:
         return u'{} · <em class="muted">{}</em>'.format(_(locations[0]['name']), _(locations[0]['type'])) if locations else u''
     else:
