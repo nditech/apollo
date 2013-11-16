@@ -61,9 +61,47 @@ def default_if_nan(value, default):
     else:
         return value
 
+@register.simple_tag
+def total_registered(dataframe, form, location_type, location, group='ALL'):
+    try:
+        if group == 'RURAL':
+            df = dataframe.ix[dataframe.groupby([location_type, 'urban']).groups[(location, 0)]]
+        elif group == 'URBAN':
+            df = dataframe.ix[dataframe.groupby([location_type, 'urban']).groups[(location, 1)]]
+        else:
+            df = dataframe.ix[dataframe.groupby(location_type).groups[location]]
+
+        c = df.ix[:, form.options.get('voters_in_register')].sum(skipna=True)
+        if pd.np.isnan(c):
+            c = 0
+        return number_format(int(c), force_grouping=True)
+    except:
+        return 0
+
 
 @register.simple_tag
-def votes_total(dataframe, votes, location_type, location, group='ALL'):
+def all_votes_total(dataframe, form, votes, location_type, location, group='ALL'):
+    try:
+        if group == 'RURAL':
+            df = dataframe.ix[dataframe.groupby([location_type, 'urban']).groups[(location, 0)]]
+        elif group == 'URBAN':
+            df = dataframe.ix[dataframe.groupby([location_type, 'urban']).groups[(location, 1)]]
+        else:
+            df = dataframe.ix[dataframe.groupby(location_type).groups[location]]
+
+        df = df[eval(' | '.join(['(df["{}"] >= 0)'.format(v) for v in votes]))]
+
+        invalid_votes = form.options.get('votes_invalid', None)
+        c = df.ix[:, votes + [invalid_votes] if invalid_votes else []].sum(skipna=True).sum(axis=1, skipna=True)
+        if pd.np.isnan(c):
+            c = 0
+        return number_format(int(c), force_grouping=True)
+    except:
+        return 0
+
+
+@register.simple_tag
+def valid_votes_total(dataframe, votes, location_type, location, group='ALL'):
     try:
         if group == 'RURAL':
             df = dataframe.ix[dataframe.groupby([location_type, 'urban']).groups[(location, 0)]]
