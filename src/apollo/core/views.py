@@ -451,12 +451,18 @@ class SubmissionEditView(UpdateView):
 
         return super(SubmissionEditView, self).dispatch(*args, **kwargs)
 
+    def get(self, request, *args, **kwargs):
+        self.request = request
+        return super(SubmissionEditView, self).get(request, *args, **kwargs)
+
     def get_context_data(self, **kwargs):
         context = super(SubmissionEditView, self).get_context_data(**kwargs)
         context['submission'] = self.submission
         
         context['versions'] = reversion.get_for_object(self.submission)
         context['submission_version'] = self.version
+        # set the url to return to after saving the submission
+        context['next_url'] = self.request.META.get('HTTP_REFERER', '')
 
         if self.version:
             try:
@@ -481,9 +487,13 @@ class SubmissionEditView(UpdateView):
         return context
 
     def get_success_url(self):
-        return reverse('submissions_list', args=[self.submission.form.pk])
+        if self.request.POST.get('next_url', None):
+            return self.request.POST.get('next_url')
+        else:
+            return reverse('submissions_list', args=[self.submission.form.pk])
 
     def post(self, request, *args, **kwargs):
+        self.request = request
         self.object = self.get_object()
         form_class = self.get_form_class()
 

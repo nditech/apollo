@@ -245,7 +245,7 @@
     </div>
   </div>
 {% endif %}
-  </form>
+  <input type="hidden" name="next_url" value="{{ next_url }}" /></form>
 {% endwith %}
 
 {% if submission.form.type == 'CHECKLIST' %}
