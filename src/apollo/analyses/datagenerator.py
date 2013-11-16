@@ -334,8 +334,12 @@ def generate_incident_field_stats(tag, dataset, options, labels=None, all_tags=N
             reported = dataset.get_group(group_name).get(tag).count()
             total = sum([dataset.get_group(group_name).get(field_tag).count() for field_tag in all_tags])
             missing = total - reported
-            percent_reported = float(reported) / float(total) * 100.0
-            percent_missing = float(missing) / float(total) * 100.0
+            try:
+                percent_reported = float(reported) / float(total) * 100.0
+                percent_missing = float(missing) / float(total) * 100.0
+            except ZeroDivisionError:
+                percent_reported = 0
+                percent_missing = 0
 
             location_stats[group_name] = {}
             location_stats[group_name]['missing'] = missing
@@ -351,8 +355,12 @@ def generate_incident_field_stats(tag, dataset, options, labels=None, all_tags=N
         reported = dataset[tag].count()
         total = sum([dataset[field_tag].count() for field_tag in all_tags])
         missing = total - reported
-        percent_reported = float(reported) / float(total) * 100.0
-        percent_missing = float(missing) / float(total) * 100.0
+        try:
+            percent_reported = float(reported) / float(total) * 100.0
+            percent_missing = float(missing) / float(total) * 100.0
+        except ZeroDivisionError:
+            percent_reported = 0
+            percent_missing = 0
 
         stats = {'reported': reported,
                  'missing': missing, 'percent_reported': percent_reported,
