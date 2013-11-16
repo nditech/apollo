@@ -373,32 +373,33 @@ class SubmissionListView(ListView):
 
     def get(self, request, *args, **kwargs):
         if 'export' in request.GET:
-            if request.GET.get('export', 'observers') == "master":
-                self.filter_set = self.submission_filter(request.GET,
-                    queryset=Submission.objects.filter(form=self.form, observer=None),
-                    request=request)
-            else:
-                self.filter_set = self.submission_filter(request.GET,
-                    queryset=Submission.objects.filter(form=self.form).exclude(observer=None),
-                    request=request)
+            self.filter_set = self.submission_filter(request.GET,
+                queryset=Submission.objects.filter(form=self.form).exclude(observer=None),
+                request=request)
 
-            qs = self.filter_set.qs.order_by('-date', 'observer__observer_id')
+            if request.GET.get('export', 'observers') == "master":
+                qs = self.filter_set.qs.order_by('master', '-date', 'observer__observer_id')
+            else:
+                qs = self.filter_set.qs.order_by('-date', 'observer__observer_id')
 
             location_types = list(LocationType.objects.filter(on_display=True).values_list('name', flat=True))
             location_type_fields = ['loc:location__{}'.format(lt.lower()) for lt in location_types]
 
             if self.form.type == 'CHECKLIST':
                 data_fields = list(FormField.objects.filter(group__form=self.form).order_by('tag').values_list('tag', flat=True))
-                datalist_fields = ['observer__observer_id', 'observer__name', 'observer__last_connection__identity', 'location', 'location__code', 'observer__contact__connection__identity'] + data_fields + ['updated']
 
                 if request.GET.get('export', 'observers') == "master":
-                    datalist_fields += ['submissions__observer__observer_id', 'submissions__observer__name', 'submissions__observer__contact__connection__identity', 'submissions__observer__last_connection__identity']
-                    export_fields = ['submissions__observer__observer_id', 'submissions__observer__name', 'submissions__observer__contact__connection__identity', 'submissions__observer__last_connection__identity'] + location_type_fields + ['location__code'] + data_fields + ['updated']
-                else:
-                    export_fields = ['observer__observer_id', 'observer__name', 'observer__contact__connection__identity', 'observer__last_connection__identity'] + location_type_fields + ['location__code'] + data_fields + ['updated']
-                field_labels = [ugettext('Observer ID'), ugettext('Name'), ugettext('Phone'), ugettext('Texted Phone')] + location_types + [ugettext('PS')] + data_fields + [ugettext('Timestamp')]
+                    datalist_fields = ['observer__observer_id', 'observer__name', 'observer__last_connection__identity', 'location', 'location__code', 'observer__contact__connection__identity', 'master__data', 'updated']
+                    export_fields = ['observer__observer_id', 'observer__name', 'observer__contact__connection__identity', 'observer__last_connection__identity'] + location_type_fields + ['location__code'] + map(lambda f: 'hstore:master__data:%s' % (f,), data_fields) + ['updated']
+                    field_labels = [ugettext('Observer ID'), ugettext('Name'), ugettext('Phone'), ugettext('Texted Phone')] + location_types + [ugettext('PS')] + data_fields + [ugettext('Timestamp')]
 
-                datalist = qs.intdata(data_fields).values(*datalist_fields).distinct()
+                    datalist = qs.values(*datalist_fields).distinct('master')
+                else:
+                    datalist_fields = ['observer__observer_id', 'observer__name', 'observer__last_connection__identity', 'location', 'location__code', 'observer__contact__connection__identity'] + data_fields + ['updated']
+                    export_fields = ['observer__observer_id', 'observer__name', 'observer__contact__connection__identity', 'observer__last_connection__identity'] + location_type_fields + ['location__code'] + data_fields + ['updated']
+                    field_labels = [ugettext('Observer ID'), ugettext('Name'), ugettext('Phone'), ugettext('Texted Phone')] + location_types + [ugettext('PS')] + data_fields + [ugettext('Timestamp')]
+
+                    datalist = qs.intdata(data_fields).values(*datalist_fields).distinct()
             else:
                 data_fields = list(FormField.objects.filter(group__form=self.form).order_by('tag').values_list('tag', flat=True))
 
@@ -810,11 +811,13 @@ def make_item_row(record, fields, locations_graph):
     # for master checklists, you cannot retrieve the observer because it's set to None the following attempts to
     # get this information from the location instead
     locationobserver_pattern = re.compile(r'^locobs:(?P<field>\w+?)__(?P<observer_field>\w+)$')
+    hstore_pattern = re.compile(r'^hstore:(?P<field>\w+?):(?P<key>\w+)$')
 
     for field in fields:
         location_match = location_pattern.match(field)
         observer_match = observer_pattern.match(field)
         locationobserver_match = locationobserver_pattern.match(field)
+        hstore_match = hstore_pattern.match(field)
 
         if location_match:
             # if there's a match, retrieve the location name from the graph
@@ -840,6 +843,9 @@ def make_item_row(record, fields, locations_graph):
                     row.append("")
             except Location.DoesNotExist:
                 row.append("")
+        elif hstore_match:
+            data = record[hstore_match.group('field')]
+            row.append(int(data.get(hstore_match.group('key'))) if data.get(hstore_match.group('key')) else "")
         else:
             if type(record[field]) == datetime or type(record[field]) == date:
                 row.append(record[field].strftime('%Y-%m-%d %H:%M:%S'))
