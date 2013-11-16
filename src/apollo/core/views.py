@@ -432,7 +432,7 @@ class SubmissionEditView(UpdateView):
     @method_decorator(permission_required('core.change_submission', return_403=True))
     def dispatch(self, *args, **kwargs):
         self.submission = get_object_or_404(Submission, pk=kwargs['pk'])
-        if args[0].user.has_perm('core.can_override'):
+        if args[0].user.has_perm('core.can_override') or self.submission.form.type == "INCIDENT":
             self.form_class = generate_submission_form(self.submission.form)
         else:
             self.form_class = generate_submission_form(self.submission.form, readonly=True)
