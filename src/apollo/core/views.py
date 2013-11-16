@@ -388,24 +388,24 @@ class SubmissionListView(ListView):
 
             if self.form.type == 'CHECKLIST':
                 data_fields = list(FormField.objects.filter(group__form=self.form).order_by('tag').values_list('tag', flat=True))
-                datalist_fields = ['observer__observer_id', 'observer__name', 'observer__last_connection__identity', 'location', 'observer__contact__connection__identity'] + data_fields + ['updated']
+                datalist_fields = ['observer__observer_id', 'observer__name', 'observer__last_connection__identity', 'location', 'location__code', 'observer__contact__connection__identity'] + data_fields + ['updated']
 
                 if request.GET.get('export', 'observers') == "master":
                     datalist_fields += ['submissions__observer__observer_id', 'submissions__observer__name', 'submissions__observer__contact__connection__identity', 'submissions__observer__last_connection__identity']
-                    export_fields = ['submissions__observer__observer_id', 'submissions__observer__name', 'submissions__observer__contact__connection__identity', 'submissions__observer__last_connection__identity'] + location_type_fields + data_fields + ['updated']
+                    export_fields = ['submissions__observer__observer_id', 'submissions__observer__name', 'submissions__observer__contact__connection__identity', 'submissions__observer__last_connection__identity'] + location_type_fields + ['location__code'] + data_fields + ['updated']
                 else:
-                    export_fields = ['observer__observer_id', 'observer__name', 'observer__contact__connection__identity', 'observer__last_connection__identity'] + location_type_fields + data_fields + ['updated']
-                field_labels = [ugettext('Observer ID'), ugettext('Name'), ugettext('Phone'), ugettext('Texted Phone')] + location_types + data_fields + [ugettext('Timestamp')]
+                    export_fields = ['observer__observer_id', 'observer__name', 'observer__contact__connection__identity', 'observer__last_connection__identity'] + location_type_fields + ['location__code'] + data_fields + ['updated']
+                field_labels = [ugettext('Observer ID'), ugettext('Name'), ugettext('Phone'), ugettext('Texted Phone')] + location_types + [ugettext('PS')] + data_fields + [ugettext('Timestamp')]
 
                 datalist = qs.intdata(data_fields).values(*datalist_fields).distinct()
             else:
                 data_fields = list(FormField.objects.filter(group__form=self.form).order_by('tag').values_list('tag', flat=True))
 
-                export_fields = ['observer__observer_id', 'observer__name', 'observer__contact__connection__identity', 'observer__last_connection__identity'] + location_type_fields + data_fields + ['status', 'witness', 'description', 'updated']
-                field_labels = [ugettext('Observer ID'), ugettext('Name'), ugettext('Phone'), ugettext('Texted Phone')] + location_types + data_fields + [ugettext('Status'), ugettext('Witness'), ugettext('Description'), ugettext('Timestamp')]
+                export_fields = ['observer__observer_id', 'observer__name', 'observer__contact__connection__identity', 'observer__last_connection__identity'] + location_type_fields + ['location__code'] + data_fields + ['status', 'witness', 'description', 'updated']
+                field_labels = [ugettext('Observer ID'), ugettext('Name'), ugettext('Phone'), ugettext('Texted Phone')] + location_types + [ugettext('PS')] + data_fields + [ugettext('Status'), ugettext('Witness'), ugettext('Description'), ugettext('Timestamp')]
 
                 data_fields.extend(['status', 'witness', 'description'])
-                datalist_fields = ['observer__observer_id', 'observer__name', 'location', 'observer__contact__connection__identity', 'observer__last_connection__identity'] + data_fields + ['updated']
+                datalist_fields = ['observer__observer_id', 'observer__name', 'location', 'observer__contact__connection__identity', 'observer__last_connection__identity', 'location__code'] + data_fields + ['updated']
 
                 datalist = qs.data(data_fields).values(*datalist_fields).distinct()
 
