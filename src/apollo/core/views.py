@@ -505,9 +505,11 @@ class SubmissionEditView(UpdateView):
 
         if settings.EDIT_OBSERVER_CHECKLIST and self.object.form.type == 'CHECKLIST':
             submission_form = self.submission_form_class(instance=self.submission, prefix=self.submission.pk, data=request.POST)
-            if master_form.is_valid() and submission_form.is_valid():
+            submission_sibling_forms = [self.submission_form_class(instance=x, prefix=x.pk, data=request.POST) for x in self.submission.siblings]
+            if master_form.is_valid() and submission_form.is_valid() and all(map(lambda f: f.is_valid(), submission_sibling_forms)):
                 if request.user.has_perm('core.can_override') or self.submission.form.type == "INCIDENT":
                     self.form_valid(master_form)
+                map(lambda f: self.form_valid(f), submission_sibling_forms)
                 return self.form_valid(submission_form)
             else:
                 return self.form_invalid(master_form)
