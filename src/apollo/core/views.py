@@ -319,6 +319,7 @@ class SubmissionVotingResultsView(View, TemplateResponseMixin):
         context['filter_form'] = self.filter_set.form
         context['form'] = self.form
         context['location'] = self.location
+        context['analysis_sections'] = filter(lambda lt: lt.on_analysis == True, LocationType.root().get_descendants())
         context['dataframe'] = self.filter_set.qs.dataframe()
 
         return context

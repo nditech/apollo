@@ -80,6 +80,9 @@ class Location(GraphMixin):
     objects = models.GeoManager()
     hstore = HStoreManager()
 
+    class Meta:
+        ordering = ['name']
+
     def __unicode__(self):
         return self.name
 

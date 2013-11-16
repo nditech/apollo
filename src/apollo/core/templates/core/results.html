@@ -11,18 +11,17 @@
           <button class="btn btn-warning" type="submit"><i class="icon-search icon-white"></i> {% trans "Filter" context "verb" %}</button>
         </form>
     </div>
-    <div class="span12">
-        {% analysis_location_navigation form location None 'results' %}
-    </div>
 </div>
 <div class="row">
     <div class="span12">
         <ul class="nav nav-tabs">
-          <li class="active"><a href="#table" data-toggle="tab">{% trans "Table" %}</a></li>
-          <!--<li><a href="#map" data-toggle="tab">{% trans "Map" %}</a></li>-->
+          {% for section in analysis_sections %}
+          <li{% if forloop.first %} class="active"{% endif %}><a href="#tab_{{ section.pk }}" data-toggle="tab">{% trans section.name %}</a></li>
+          {% endfor %}
         </ul>
         <div class="tab-content">
-            <div class="tab-pane active" id="table">
+            {% for section in analysis_sections %}
+            <div class="tab-pane{% if forloop.first %} active{% endif %}" id="tab_{{ section.pk }}">
                 {% if form.votes %}
                 <table class="table table-bordered table-hover">
                     <tr>
@@ -85,7 +84,7 @@
                         {% endfor %}
                     </tr>
                     {% endif %}
-                    {% for sublocation in location.get_children %}
+                    {% for sublocation in section.location_set.all %}
                     <tr>
                         <td class="gray" {% if form.options.has_urban %}rowspan="3"{% endif %} style="vertical-align:middle">{{ sublocation.name }} · <span class="muted"><em>{{ sublocation.type }}</em></span></td>
                         {% if form.options.has_urban %}<th width="50" class="gray">{% trans "All" %}</th>{% endif %}
@@ -133,8 +132,7 @@
                 </table>
                 {% endif %}
             </div>
-            <div class="tab-pane" id="map">
-
+            {% endfor %}
             </div>
         </div>
     </div>
