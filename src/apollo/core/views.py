@@ -798,7 +798,7 @@ class CommentCreateView(View):
 
 def make_item_row(record, fields, locations_graph):
     row = []
-    location_pattern = re.compile(r'^loc:(?P<field>\w+?)__(?P<location_type>\w+)$')  # pattern for location specification
+    location_pattern = re.compile(r'^loc:(?P<field>\w+?)__(?P<location_type>.+)$')  # pattern for location specification
     observer_pattern = re.compile(r'^obs:(?P<field>\w+?)__(?P<observer_field>.+)$')  # pattern for observer data
     # for master checklists, you cannot retrieve the observer because it's set to None the following attempts to
     # get this information from the location instead
