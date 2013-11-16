@@ -241,7 +241,7 @@
       <button type="submit" class="btn btn-info btn-large btn-block">{% trans "Save" context "verb" %}</button>
     </div>
     <div class="span2">
-      <a class="btn btn-large btn-block" href="{% url submissions_list object.form.pk %}">{% trans "Cancel" context "verb" %}</a>
+      <a class="btn btn-large btn-block" href="{% if next_url %}{{ next_url }}{% else %}{% url submissions_list object.form.pk %}{% endif %}">{% trans "Cancel" context "verb" %}</a>
     </div>
   </div>
 {% endif %}
