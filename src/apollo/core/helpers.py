@@ -20,8 +20,6 @@ def memoize(f):
 def generate_dashboard_summary(submission_queryset, group=None, locationtype=None):
     summary = []
 
-    print locationtype
-
     try:
         next_location_type = filter(lambda lt: lt.on_dashboard == True, locationtype.get_children())[0]
     except IndexError:
