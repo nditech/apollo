@@ -72,8 +72,8 @@
                         {% if form.options.has_moe %}<th class="numeric gray">{% rejected_margin_of_error form dataframe location.type.name location.name 'ALL' %}%</th>{% endif %}
                         <th class="numeric gray">{% valid_votes_total dataframe form.votes location.type.name location.name 'ALL' %}</th>
                         {% for vote in form.votes %}
-                        <th class="numeric gray">{% vote_proportion dataframe form.votes vote location.type.name location.name 'ALL' %}%<br />({% vote_count dataframe form.votes vote location.type.name location.name 'ALL' %})</th>
-                        {% if form.options.has_moe %}<th class="numeric gray">{% vote_margin_of_error dataframe form.votes vote location.type.name location.name 'ALL' %}%</th>{% endif %}
+                        <th class="numeric gray">{% vote_proportion dataframe form form.votes vote location.type.name location.name 'ALL' %}%<br />({% vote_count dataframe form.votes vote location.type.name location.name 'ALL' %})</th>
+                        {% if form.options.has_moe %}<th class="numeric gray">{% vote_margin_of_error dataframe form form.votes vote location.type.name location.name 'ALL' %}%</th>{% endif %}
                         {% endfor %}
                     </tr>
                     {% if form.options.has_urban %}
@@ -92,8 +92,8 @@
                         {% if form.options.has_moe %}<td class="numeric">{% rejected_margin_of_error form dataframe location.type.name location.name 'RURAL' %}%</td>{% endif %}
                         <td class="numeric">{% valid_votes_total dataframe form.votes location.type.name location.name 'RURAL' %}</td>
                         {% for vote in form.votes %}
-                        <td class="numeric">{% vote_proportion dataframe form.votes vote location.type.name location.name 'RURAL' %}% <br />({% vote_count dataframe form.votes vote location.type.name location.name 'RURAL' %})</td>
-                        {% if form.options.has_moe %}<td class="numeric">{% vote_margin_of_error dataframe form.votes vote location.type.name location.name 'RURAL' %}%</td>{% endif %}
+                        <td class="numeric">{% vote_proportion dataframe form form.votes vote location.type.name location.name 'RURAL' %}% <br />({% vote_count dataframe form.votes vote location.type.name location.name 'RURAL' %})</td>
+                        {% if form.options.has_moe %}<td class="numeric">{% vote_margin_of_error dataframe form form.votes vote location.type.name location.name 'RURAL' %}%</td>{% endif %}
                         {% endfor %}
                     </tr>
                     <tr>
@@ -111,8 +111,8 @@
                         {% if form.options.has_moe %}<td class="numeric">{% rejected_margin_of_error form dataframe location.type.name location.name 'URBAN' %}%</td>{% endif %}
                         <td class="numeric">{% valid_votes_total dataframe form.votes location.type.name location.name 'URBAN' %}</td>
                         {% for vote in form.votes %}
-                        <td class="numeric">{% vote_proportion dataframe form.votes vote location.type.name location.name 'URBAN' %}% <br />({% vote_count dataframe form.votes vote location.type.name location.name 'URBAN' %})</td>
-                        {% if form.options.has_moe %}<td class="numeric">{% vote_margin_of_error dataframe form.votes vote location.type.name location.name 'URBAN' %}%</td>{% endif %}
+                        <td class="numeric">{% vote_proportion dataframe form form.votes vote location.type.name location.name 'URBAN' %}% <br />({% vote_count dataframe form.votes vote location.type.name location.name 'URBAN' %})</td>
+                        {% if form.options.has_moe %}<td class="numeric">{% vote_margin_of_error dataframe form form.votes vote location.type.name location.name 'URBAN' %}%</td>{% endif %}
                         {% endfor %}
                     </tr>
                     {% endif %}
@@ -133,8 +133,8 @@
                         {% if form.options.has_moe %}<th class="numeric gray">{% rejected_margin_of_error form dataframe sublocation.type.name sublocation.name 'ALL' %}%</th>{% endif %}
                         <th class="numeric gray">{% valid_votes_total dataframe form.votes sublocation.type.name sublocation.name 'ALL' %}</th>
                         {% for vote in form.votes %}
-                        <th class="numeric gray">{% vote_proportion dataframe form.votes vote sublocation.type.name sublocation.name 'ALL' %}% <br />({% vote_count dataframe form.votes vote sublocation.type.name sublocation.name 'ALL' %})</th>
-                        {% if form.options.has_moe %}<th class="numeric gray">{% vote_margin_of_error dataframe form.votes vote sublocation.type.name sublocation.name 'ALL' %}%</th>{% endif %}
+                        <th class="numeric gray">{% vote_proportion dataframe form form.votes vote sublocation.type.name sublocation.name 'ALL' %}% <br />({% vote_count dataframe form.votes vote sublocation.type.name sublocation.name 'ALL' %})</th>
+                        {% if form.options.has_moe %}<th class="numeric gray">{% vote_margin_of_error dataframe form form.votes vote sublocation.type.name sublocation.name 'ALL' %}%</th>{% endif %}
                         {% endfor %}
                     </tr>
                     {% if form.options.has_urban %}
@@ -153,8 +153,8 @@
                         {% if form.options.has_moe %}<td class="numeric">{% rejected_margin_of_error form dataframe sublocation.type.name sublocation.name 'RURAL' %}%</td>{% endif %}
                         <td class="numeric">{% valid_votes_total dataframe form.votes sublocation.type.name sublocation.name 'RURAL' %}</td>
                         {% for vote in form.votes %}
-                        <td class="numeric">{% vote_proportion dataframe form.votes vote sublocation.type.name sublocation.name 'RURAL' %}% <br />({% vote_count dataframe form.votes vote sublocation.type.name sublocation.name 'RURAL' %})</td>
-                        {% if form.options.has_moe %}<td class="numeric">{% vote_margin_of_error dataframe form.votes vote sublocation.type.name sublocation.name 'RURAL' %}%</td>{% endif %}
+                        <td class="numeric">{% vote_proportion dataframe form form.votes vote sublocation.type.name sublocation.name 'RURAL' %}% <br />({% vote_count dataframe form.votes vote sublocation.type.name sublocation.name 'RURAL' %})</td>
+                        {% if form.options.has_moe %}<td class="numeric">{% vote_margin_of_error dataframe form form.votes vote sublocation.type.name sublocation.name 'RURAL' %}%</td>{% endif %}
                         {% endfor %}
                     </tr>
                     <tr>
@@ -172,8 +172,8 @@
                         {% if form.options.has_moe %}<td class="numeric">{% rejected_margin_of_error form dataframe sublocation.type.name sublocation.name 'URBAN' %}%</td>{% endif %}
                         <td class="numeric">{% valid_votes_total dataframe form.votes sublocation.type.name sublocation.name 'URBAN' %}</td>
                         {% for vote in form.votes %}
-                        <td class="numeric">{% vote_proportion dataframe form.votes vote sublocation.type.name sublocation.name 'URBAN' %}% <br />({% vote_count dataframe form.votes vote sublocation.type.name sublocation.name 'URBAN' %})</td>
-                        {% if form.options.has_moe %}<td class="numeric">{% vote_margin_of_error dataframe form.votes vote sublocation.type.name sublocation.name 'URBAN' %}%</td>{% endif %}
+                        <td class="numeric">{% vote_proportion dataframe form form.votes vote sublocation.type.name sublocation.name 'URBAN' %}% <br />({% vote_count dataframe form.votes vote sublocation.type.name sublocation.name 'URBAN' %})</td>
+                        {% if form.options.has_moe %}<td class="numeric">{% vote_margin_of_error dataframe form form.votes vote sublocation.type.name sublocation.name 'URBAN' %}%</td>{% endif %}
                         {% endfor %}
                     </tr>
                     {% endif %}

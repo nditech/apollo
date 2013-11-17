@@ -213,6 +213,7 @@ SESSION_COOKIE_AGE = 1800
 PROJECT_NAME = 'Apollo'
 AUTHENTICATE_OBSERVER = False  # determines whether to authenticate the observer's phone number
 EDIT_OBSERVER_CHECKLIST = ast.literal_eval(os.environ.get('EDIT_OBSERVER_CHECKLIST', 'False'))
+INCLUDE_REJECTED_IN_VOTES = ast.literal_eval(os.environ.get('INCLUDE_REJECTED_IN_VOTES', 'False'))
 ALLOWED_PUNCTUATIONS = '!'  # allowed punctuations in SMS forms
 CHARACTER_TRANSLATIONS = (
     ('i', '1'),

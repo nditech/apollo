@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from collections import OrderedDict
 from django import template
+from django.conf import settings
 from django.utils.formats import number_format
 import pandas as pd
 import math
@@ -203,7 +204,7 @@ def rejected_count(form, dataframe, location_type, location, group='ALL'):
 
 
 @register.simple_tag
-def vote_proportion(dataframe, votes, vote, location_type, location, group='ALL'):
+def vote_proportion(dataframe, form, votes, vote, location_type, location, group='ALL'):
     try:
         if group == 'RURAL':
             df = dataframe.ix[dataframe.groupby([location_type, 'urban']).groups[(location, 0)]]
@@ -213,6 +214,9 @@ def vote_proportion(dataframe, votes, vote, location_type, location, group='ALL'
             df = dataframe.ix[dataframe.groupby(location_type).groups[location]]
 
         df = df[eval(' | '.join(['(df["{}"] >= 0)'.format(v) for v in votes]))]
+
+        if settings.INCLUDE_REJECTED_IN_VOTES and form.options.get('votes_invalid', None):
+            votes += [form.options.get('votes_invalid')]
 
         p = round(abs(proportion(df, votes, [vote]) * 100.0), 2)
         if pd.np.isnan(p):
@@ -250,7 +254,7 @@ def rejected_proportion(form, dataframe, location_type, location, group='ALL'):
 
 
 @register.simple_tag
-def vote_margin_of_error(dataframe, votes, vote, location_type, location, group='ALL'):
+def vote_margin_of_error(dataframe, form, votes, vote, location_type, location, group='ALL'):
     try:
         if group == 'RURAL':
             df = dataframe.ix[dataframe.groupby([location_type, 'urban']).groups[(location, 0)]]
@@ -260,6 +264,9 @@ def vote_margin_of_error(dataframe, votes, vote, location_type, location, group=
             df = dataframe.ix[dataframe.groupby(location_type).groups[location]]
 
         df = df[eval(' | '.join(['(df["{}"] >= 0)'.format(v) for v in votes]))]
+
+        if settings.INCLUDE_REJECTED_IN_VOTES and form.options.get('votes_invalid', None):
+            votes += [form.options.get('votes_invalid')]
 
         v = round(abs(math.sqrt(variance(df, votes, [vote])) * 196.0), 2)
         if pd.np.isnan(v) or pd.np.isinf(v):
