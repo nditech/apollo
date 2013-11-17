@@ -693,7 +693,10 @@ class Evaluator(object):
 
     def variable(self, node, children):
         'variable = ~"[a-z]+"i _'
-        return float(self.env.get(node.text.strip()))
+        try:
+            return float(self.env.get(node.text.strip()))
+        except TypeError:
+            return 0
 
     def number(self, node, children):
         'number = ~"\-?[0-9\.]+"'
