@@ -62,7 +62,7 @@ def default_if_nan(value, default):
         return value
 
 @register.simple_tag
-def total_registered(dataframe, form, location_type, location, group='ALL'):
+def total_registered(dataframe, form, location_type, location, group='ALL', pure=False):
     try:
         if group == 'RURAL':
             df = dataframe.ix[dataframe.groupby([location_type, 'urban']).groups[(location, 0)]]
@@ -71,16 +71,16 @@ def total_registered(dataframe, form, location_type, location, group='ALL'):
         else:
             df = dataframe.ix[dataframe.groupby(location_type).groups[location]]
 
-        c = df.ix[:, form.options.get('voters_in_register')].sum(skipna=True)
+        c = df.ix[:, form.options.get('voters_in_register')].sum()
         if pd.np.isnan(c):
             c = 0
-        return number_format(int(c), force_grouping=True)
+        return number_format(int(c), force_grouping=True) if not pure else int(c)
     except:
         return 0
 
 
 @register.simple_tag
-def all_votes_total(dataframe, form, votes, location_type, location, group='ALL'):
+def all_votes_total(dataframe, form, votes, location_type, location, group='ALL', pure=False):
     try:
         if group == 'RURAL':
             df = dataframe.ix[dataframe.groupby([location_type, 'urban']).groups[(location, 0)]]
@@ -92,10 +92,45 @@ def all_votes_total(dataframe, form, votes, location_type, location, group='ALL'
         df = df[eval(' | '.join(['(df["{}"] >= 0)'.format(v) for v in votes]))]
 
         invalid_votes = form.options.get('votes_invalid', None)
-        c = df.ix[:, votes + [invalid_votes] if invalid_votes else []].sum(skipna=True).sum(axis=1, skipna=True)
+        c = df.ix[:, votes + [invalid_votes] if invalid_votes else []].sum().sum(axis=1)
         if pd.np.isnan(c):
             c = 0
-        return number_format(int(c), force_grouping=True)
+        return number_format(int(c), force_grouping=True) if not pure else int(c)
+    except:
+        return 0
+
+
+@register.simple_tag
+def all_votes_total_pct(dataframe, form, votes, location_type, location, group='ALL'):
+    denom = float(total_registered(dataframe, form, location_type, location, group, pure=True))
+    num = float(all_votes_total(dataframe, form, votes, location_type, location, group, pure=True))
+    try:
+        f = round((num / denom * 100.0), 2)
+        return '%.2f' % f if f % 1 else '%d' % f
+    except ZeroDivisionError:
+        return 0
+
+
+@register.simple_tag
+def all_votes_total_margin_of_error(dataframe, form, votes, location_type, location, group='ALL'):
+    try:
+        if group == 'RURAL':
+            df = dataframe.ix[dataframe.groupby([location_type, 'urban']).groups[(location, 0)]]
+        elif group == 'URBAN':
+            df = dataframe.ix[dataframe.groupby([location_type, 'urban']).groups[(location, 1)]]
+        else:
+            df = dataframe.ix[dataframe.groupby(location_type).groups[location]]
+
+        df = df[eval(' | '.join(['(df["{}"] >= 0)'.format(v) for v in votes]))]
+
+        invalid_votes = form.options.get('votes_invalid', None)
+        all_votes = votes + [invalid_votes] if invalid_votes else []
+        total_registered = [form.options.get('voters_in_register')]
+
+        v = round(abs(math.sqrt(variance(df, total_registered, all_votes)) * 196.0), 2)
+        if pd.np.isnan(v) or pd.np.isinf(v):
+            v = 0
+        return '%.2f' % v if v % 1 else '%d' % v
     except:
         return 0
 
@@ -112,7 +147,7 @@ def valid_votes_total(dataframe, votes, location_type, location, group='ALL'):
 
         df = df[eval(' | '.join(['(df["{}"] >= 0)'.format(v) for v in votes]))]
 
-        c = df.ix[:, votes].sum(skipna=True).sum(axis=1, skipna=True)
+        c = df.ix[:, votes].sum().sum(axis=1)
         if pd.np.isnan(c):
             c = 0
         return number_format(int(c), force_grouping=True)
@@ -179,7 +214,7 @@ def vote_proportion(dataframe, votes, vote, location_type, location, group='ALL'
 
         df = df[eval(' | '.join(['(df["{}"] >= 0)'.format(v) for v in votes]))]
 
-        p = round(abs(proportion(df, votes, vote) * 100.0), 2)
+        p = round(abs(proportion(df, votes, [vote]) * 100.0), 2)
         if pd.np.isnan(p):
             p = 0
         return '%.2f' % p if p % 1 else '%d' % p
@@ -203,7 +238,7 @@ def rejected_proportion(form, dataframe, location_type, location, group='ALL'):
         rejected = form.options.get('votes_invalid', None)
 
         if rejected:
-            r = round(abs(proportion(df, votes + [rejected], rejected) * 100.0), 2)
+            r = round(abs(proportion(df, votes + [rejected], [rejected]) * 100.0), 2)
         else:
             r = 0
 
@@ -226,7 +261,7 @@ def vote_margin_of_error(dataframe, votes, vote, location_type, location, group=
 
         df = df[eval(' | '.join(['(df["{}"] >= 0)'.format(v) for v in votes]))]
 
-        v = round(abs(math.sqrt(variance(df, votes, vote)) * 196.0), 2)
+        v = round(abs(math.sqrt(variance(df, votes, [vote])) * 196.0), 2)
         if pd.np.isnan(v) or pd.np.isinf(v):
             v = 0
         return '%.2f' % v if v % 1 else '%d' % v
@@ -250,7 +285,7 @@ def rejected_margin_of_error(form, dataframe, location_type, location, group='AL
         rejected = form.options.get('votes_invalid', None)
 
         if rejected:
-            r = round(abs(math.sqrt(variance(df, votes + [rejected], rejected)) * 196.0), 2)
+            r = round(abs(math.sqrt(variance(df, votes + [rejected], [rejected])) * 196.0), 2)
         else:
             r = 0
 
