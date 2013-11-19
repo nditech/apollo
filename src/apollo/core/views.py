@@ -389,8 +389,8 @@ class SubmissionListView(ListView):
                 data_fields = list(FormField.objects.filter(group__form=self.form).order_by('tag').values_list('tag', flat=True))
 
                 if request.GET.get('export', 'observers') == "master":
-                    datalist_fields = ['observer__observer_id', 'observer__name', 'observer__last_connection__identity', 'location', 'location__code', 'observer__contact__connection__identity', 'master__data', 'updated']
-                    export_fields = ['observer__observer_id', 'observer__name', 'observer__contact__connection__identity', 'observer__last_connection__identity'] + location_type_fields + ['location__code'] + map(lambda f: 'hstore:master__data:%s' % (f,), data_fields) + ['updated']
+                    datalist_fields = ['observer__observer_id', 'observer__name', 'observer__last_connection__identity', 'location', 'location__code', 'observer__contact__connection__identity', 'master__data', 'master__updated']
+                    export_fields = ['observer__observer_id', 'observer__name', 'observer__contact__connection__identity', 'observer__last_connection__identity'] + location_type_fields + ['location__code'] + map(lambda f: 'hstore:master__data:%s' % (f,), data_fields) + ['master__updated']
                     field_labels = [ugettext('Observer ID'), ugettext('Name'), ugettext('Phone'), ugettext('Texted Phone')] + location_types + [ugettext('PS')] + data_fields + [ugettext('Timestamp')]
 
                     datalist = qs.values(*datalist_fields).distinct('master')
