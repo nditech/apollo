@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.core.cache import cache as default_cache
 from django.core.cache import get_cache, InvalidCacheBackendError
+from django.contrib.auth.models import User
 from django.contrib.gis.db import models
 from django.dispatch import receiver
 from django_dag.models import Graph, Node, Edge
@@ -18,6 +19,7 @@ from parsimonious.grammar import Grammar
 import reversion
 import ast
 import re
+from tastypie.models import create_api_key
 from unidecode import unidecode
 import vinaigrette
 
@@ -953,3 +955,5 @@ try:
     reversion.register(Submission, follow=('master',))
 except reversion.revisions.RegistrationError:
     pass
+
+models.signals.post_save.connect(create_api_key, sender=User)
