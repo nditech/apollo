@@ -4,6 +4,7 @@
 from django.contrib import admin
 from models import *
 from guardian.admin import GuardedModelAdmin
+import reversion
 
 admin.site.register(LocationType)
 admin.site.register(Location)
@@ -17,3 +18,4 @@ admin.site.register(FormFieldOption)
 admin.site.register(Submission)
 admin.site.register(ObserverDataField)
 admin.site.register(Activity)
+admin.site.register(Sample)

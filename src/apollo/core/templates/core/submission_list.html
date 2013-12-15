@@ -1,4 +1,4 @@
-{% extends "core/layout.html" %}{% load apollo %}{% load bootstrap_pagination %}
+{% extends "core/layout.html" %}{% load apollo %}{% load bootstrap_pagination %}{% load i18n %}
 {% block javascripts %}
 {% if perms.core.message_observers %}
 {% send_message paginator.count %}
@@ -9,29 +9,52 @@
 {% if form.type == 'INCIDENT' %}
 {% if perms.core.add_submission %}
 <div class="btn-group pull-right">
-  <a style="margin-left:1em" class="btn btn-primary" href="{% url submission_add form.pk %}">Add Incident</a>
+  <a style="margin-left:1em" class="btn btn-primary" href="{% url submission_add form.pk %}">{% trans "Add Incident" %}</a>
 </div>
 {% endif %}
 {% if perms.core.export_submissions %}
+
+<form action="{{ request.get_full_path }}" method="get" id="export_observer_submissions" style="display:none">
+{% for key, value in request.GET.items %}
+{% if key != "export" %}<input type="hidden" name="{{ key }}" value="{{ value }}" />{% endif %}
+{% endfor %}
+<input type="hidden" name="export" value="observers" />
+</form>
+
 <div class="btn-group pull-right">
-  <a class="btn" href="{% url submissions_list_export_observers form.pk %}">Export</a>
+  <a class="btn" href="javascript:document.getElementById('export_observer_submissions').submit()">{% trans "Export" context "verb" %}</a>
 </div>
 {% endif %}
 {% else %}
 {% if perms.core.export_submissions %}
+
+<form action="{{ request.get_full_path }}" method="get" id="export_observer_submissions" style="display:none">
+{% for key, value in request.GET.items %}
+{% if key != "export" %}<input type="hidden" name="{{ key }}" value="{{ value }}" />{% endif %}
+{% endfor %}
+<input type="hidden" name="export" value="observers" />
+</form>
+
+<form action="{{ request.get_full_path }}" method="get" id="export_master_submissions" style="display:none">
+{% for key, value in request.GET.items %}
+{% if key != "export" %}<input type="hidden" name="{{ key }}" value="{{ value }}" />{% endif %}
+{% endfor %}
+<input type="hidden" name="export" value="master" />
+</form>
+
 <div class="btn-group pull-right">
-  <a class="btn" href="{% url submissions_list_export_master form.pk %}">Export</a>
+  <a class="btn" href="javascript:document.getElementById('export_master_submissions').submit()">{% trans "Export" context "verb" %}</a>
   <button class="btn dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
   <ul class="dropdown-menu">
-    <li><a href="{% url submissions_list_export_observers form.pk %}">Observers Data</a></li>
-    <li><a href="{% url submissions_list_export_master form.pk %}">Master Data</a></li>
+    <li><a href="javascript:document.getElementById('export_observer_submissions').submit()">{% trans "Observers Data" %}</a></li>
+    <li><a href="javascript:document.getElementById('export_master_submissions').submit()">{% trans "Master Data" %}</a></li>
   </ul>
 </div>
 {% endif %}
 {% endif %}
 {% if perms.core.message_observers %}
 <div class="btn-group pull-right">
-  <a style="margin-right:1em" id="send_message_modal_btn" href="#send_message" role="button" class="btn btn-success">Send Message</a>
+  <a style="margin-right:1em" id="send_message_modal_btn" href="#send_message" role="button" class="btn btn-success">{% trans "Send Message" %}</a>
 </div>
 {% endif %}
 {% endblock %}

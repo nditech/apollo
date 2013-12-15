@@ -1,0 +1,8 @@
+[main]
+host = https://www.transifex.com
+
+[apollo.Apollo]
+file_filter = src/apollo/locale/<lang>/LC_MESSAGES/django.po
+source_file = src/apollo/locale/en/LC_MESSAGES/django.po
+source_lang = en
+

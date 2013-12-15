@@ -7,14 +7,18 @@
 *.swp
 .DS_Store
 .Python
-.env
+.env*
 .installed.cfg
 .mr.developer.cfg
+.vagrant
+apollo-HEAD.tar.gz
 assets/
 bin/
 build/
 develop-eggs/
+django.mo
 eggs/
+fabfile.py
 gp.recipe.pip/gp.recipe.pip.egg-info/
 include/
 lib/
@@ -27,3 +31,5 @@ rapidsms.log*
 schema.png
 share/
 src/apollo.egg-info/
+Procfile
+Vagrantfile

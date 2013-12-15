@@ -1,4 +1,4 @@
-from .models import FormField, Location
+from .models import FormField, Location, LocationType
 from django.conf import settings
 
 
@@ -17,13 +17,18 @@ def memoize(f):
     return memodict(f)
 
 
-def generate_dashboard_summary(submission_queryset, group=None):
+def generate_dashboard_summary(submission_queryset, group=None, locationtype=None):
     summary = []
+
+    try:
+        next_location_type = filter(lambda lt: lt.on_dashboard == True, locationtype.get_children())[0]
+    except IndexError:
+        next_location_type = locationtype
 
     # filter out and only select checklists to be filled by observers
     if group:
         try:
-            for location in Location.objects.filter(pk__in=[location['id'] for location in Location.root().nx_children()]).order_by('name'):
+            for location in Location.objects.filter(type=next_location_type).order_by('name'):
                 complete = submission_queryset.filter(form__type="CHECKLIST").is_within(location).exclude(observer=None).is_complete(group).count()
                 missing = submission_queryset.filter(form__type="CHECKLIST").is_within(location).exclude(observer=None).is_missing(group).count()
                 partial = submission_queryset.filter(form__type="CHECKLIST").is_within(location).exclude(observer=None).is_partial(group).count()

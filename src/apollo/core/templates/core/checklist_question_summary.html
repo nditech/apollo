@@ -1,23 +1,23 @@
-{% load apollo %}{% load analysis %}
+{% load i18n %}{% load apollo %}{% load analysis %}
 <table width="100%" class="table table-striped table-bordered">
 	<tr>
 		<td width="30" rowspan="{% if stats.urban %}4{% else %}2{% endif %}"><b>{{ field.tag }}</b></td>
         <td rowspan="{% if stats.urban %}4{% else %}2{% endif %}"><a href="{% url submissions_analysis_location_tag form.pk location.pk field.tag %}">{{ field.description }}</a></td>
         <td>&nbsp;</td>
 		{% if stats.type == 'continuous' %}
-		<td bgcolor="#eee">Mean</td>
+		<td bgcolor="#eee">{% trans "Mean" context "statistical mean" %}</td>
 		{% else %}
 			{% for label in stats.options %}
-			<td>{{ label }}</td>
+			<td>{% trans label %}</td>
 			{% endfor %}
 		{% endif %}
-		<td width="100" bgcolor="#eee">Reported</td>
-		<td width="100" bgcolor="#eee">Missing</td>
+		<td width="100" bgcolor="#eee">{% trans "Reported" %}</td>
+		<td width="100" bgcolor="#eee">{% trans "Missing" %}</td>
 	</tr>
     <tr>
-        <td align="right" style="text-align:right"><strong>All</strong></td>
+        <td align="right" style="text-align:right"><strong>{% trans "All" %}</strong></td>
 		{% if stats.type == 'continuous' %}
-		<td align="right"><strong>{{ stats.mean|floatformat:1|default_if_nan:"N/A" }}</strong></td>
+		<td align="right"><strong>{{ stats.mean|floatformat:1|default_if_nan:_("N/A") }}</strong></td>
 		{% else %}
 		{% for option in stats.options %}
         {% with stats.options|keyvalue:option as option %}
@@ -32,7 +32,7 @@
     <tr>
         <td align="right" style="text-align:right">{{ group }}</td>
         {% if stats.type == 'continuous' %}
-        <td align="right">{{ stats.urban|keyvalue:group|keyvalue:"mean"|floatformat:1|default_if_nan:"N/A" }}</td>
+        <td align="right">{{ stats.urban|keyvalue:group|keyvalue:"mean"|floatformat:1|default_if_nan:_("N/A") }}</td>
         {% else %}
         {% with stats.urban|keyvalue:group|keyvalue:"value_counts_sum" as value_counts_sum %}
         {% with stats.urban|keyvalue:group|keyvalue:"value_counts" as value_counts %}

@@ -1,4 +1,4 @@
-from django.conf.urls.defaults import *
+from django.conf.urls import patterns, url, include
 from rapidsms.backends.kannel.views import KannelBackendView
 from tastypie.api import Api
 from .api import *
@@ -19,16 +19,15 @@ v2_api.register(SubmissionResource())
 
 urlpatterns = patterns('',
     url(r'^$', DashboardView.as_view(), name='dashboard'),
+    url(r'^dashboard/(?P<group>\d+)/(?P<locationtype>\d+)/?', DashboardView.as_view(), name='grouped_dashboard_with_locationtype'),
     url(r'^dashboard/(?P<group>\d+)/?', DashboardView.as_view(), name='grouped_dashboard'),
+    
     url(r'^activity/$', ActivitySelectionView.as_view(), name="activity_selection"),
 
-    url(r'^api/', include(v2_api.urls)),
-
     url(r'^submissions/form/(?P<form>\d+)/?$', SubmissionListView.as_view(), name='submissions_list'),
-    url(r'^submissions/form/(?P<form>\d+)/export/?$', SubmissionListExportView.as_view(collection='observers'), name='submissions_list_export_observers'),
-    url(r'^submissions/form/(?P<form>\d+)/export/master/?$', SubmissionListExportView.as_view(collection='master'), name='submissions_list_export_master'),
     url(r'^submission/comments/add/?$', CommentCreateView.as_view(), name="add_comment"),
     url(r'^submission/(?P<pk>\d+)/?$', SubmissionEditView.as_view(), name='submission_edit'),
+    url(r'^submission/(?P<pk>\d+)/version/(?P<version>\d+)/?$', SubmissionEditView.as_view(), name='submission_edit_with_version'),
     url(r'^submissions/form/(?P<form>\d+)/add/?$', SubmissionCreateView.as_view(), name='submission_add'),
 
     url(r'^incidents/form/(?P<form>\d+)/locationtype/(?P<locationtype>\d+)/incidents.csv$', IncidentsCSVView.as_view(), name='incidents_csv'),
@@ -56,13 +55,17 @@ urlpatterns = patterns('',
     url(r'^location/(?P<pk>\d+)/?$', LocationEditView.as_view(), name='location_edit'),
 
     url(r'^tpl/(?P<template_name>.+)/?$', TemplatePreview.as_view()),
-
-    # messaging backends
-    url(r'^backends/kannel/$', KannelBackendView.as_view(backend_name="kannel")),
 )
 
 # authentication urls
 urlpatterns += patterns('',
     url(r'^accounts/login/$', 'apollo.core.views.login', {'template_name': 'core/login.html'}, name="user-login"),
     url(r'^accounts/logout/$', 'django.contrib.auth.views.logout_then_login', name="user-logout")
+)
+
+urlpatterns += patterns('',
+    url(r'^i18n/', include('django.conf.urls.i18n')),
+    url(r'^api/', include(v2_api.urls)),
+    # messaging backends
+    url(r'^backends/kannel/$', KannelBackendView.as_view(backend_name="kannel")),
 )

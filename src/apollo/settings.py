@@ -2,6 +2,13 @@
 # encoding=utf-8
 # vim: ai ts=4 sts=4 et sw=4
 
+import ast
+import os
+import dj_database_url
+import dotenv
+
+dotenv.read_dotenv(os.path.normpath(os.path.dirname(__file__) + os.sep + '..' + os.sep + '..' + os.sep + '.env'))
+ugettext = lambda s: s
 
 # -------------------------------------------------------------------- #
 #                          MAIN CONFIGURATION                          #
@@ -11,13 +18,10 @@
 # you should configure your database here before doing any real work.
 # see: http://docs.djangoproject.com/en/dev/ref/settings/#databases
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": "rapidsms.sqlite3",
-    }
+    "default": dj_database_url.config(default='sqlite://rapidsms.sqlite3')
 }
 
-TIME_ZONE = 'Africa/Lagos'
+TIME_ZONE = os.environ.get('APOLLO_TIMEZONE', 'Africa/Lagos')
 
 # the rapidsms backend configuration is designed to resemble django's
 # database configuration, as a nested dict of (name, configuration).
@@ -38,7 +42,7 @@ INSTALLED_BACKENDS = {
     }
 }
 
-BULKSMS_BACKEND = 'kannel'
+BULKSMS_BACKEND = os.environ.get('APOLLO_BULKSMS_BACKEND', 'kannel')
 
 BULKSMS_ROUTES = {
     'default': 'kannel'
@@ -51,16 +55,18 @@ RAPIDSMS_ROUTER = "rapidsms.router.db.DatabaseRouter"
 INSTALLED_APPS = [
 
     # the essentials.
-    "zimbabwe",
+    "anambra",
+    "core",
+    "messagelog",
+
     "django_nose",
     "rapidsms",
-    "core",
     "django_dag",
-    "messagelog",
     "south",
     "tastypie",
     "guardian",
     "jimmypage",
+    "vinaigrette",
 
     "rapidsms.contrib.default",
     "rapidsms.router.db",
@@ -80,13 +86,11 @@ INSTALLED_APPS = [
 
     "djcelery",
     "reversion",
-    'bootstrap-pagination',
+    "bootstrap-pagination",
+    "pipeline",
+    "readonly",
+    "raven.contrib.django.raven_compat",
 ]
-
-MAKO_TEMPLATE_DIRS = (
-    'webapp/templates',
-    'zambia/templates',
-)
 
 # -------------------------------------------------------------------- #
 #                         BORING CONFIGURATION                         #
@@ -95,7 +99,7 @@ MAKO_TEMPLATE_DIRS = (
 # debug mode is turned on as default, since rapidsms is under heavy
 # development at the moment, and full stack traces are very useful
 # when reporting bugs. don't forget to turn this off in production.
-DEBUG = TEMPLATE_DEBUG = False
+DEBUG = TEMPLATE_DEBUG = ast.literal_eval(os.environ.get('APOLLO_DEBUG', 'False'))
 
 INTERNAL_IPS = ('127.0.0.1',)
 
@@ -113,7 +117,7 @@ TEST_RUNNER = "django_nose.NoseTestSuiteRunner"
 MEDIA_URL = "/media/"
 
 STATIC_URL = "/assets/"
-
+STATICFILES_STORAGE = 'pipeline.storage.PipelineCachedStorage'
 STATIC_ROOT = "assets/"
 
 # this is required for the django.contrib.sites tests to run, but also
@@ -148,6 +152,48 @@ USE_L10N = True
 ANONYMOUS_USER_ID = -1
 GUARDIAN_RENDER_403 = True
 
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': True,
+    'root': {
+        'level': 'WARNING',
+        'handlers': ['sentry'],
+    },
+    'formatters': {
+        'verbose': {
+            'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
+        },
+    },
+    'handlers': {
+        'sentry': {
+            'level': 'ERROR',
+            'class': 'raven.contrib.django.raven_compat.handlers.SentryHandler',
+        },
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose'
+        }
+    },
+    'loggers': {
+        'django.db.backends': {
+            'level': 'ERROR',
+            'handlers': ['console'],
+            'propagate': False,
+        },
+        'raven': {
+            'level': 'DEBUG',
+            'handlers': ['console'],
+            'propagate': False,
+        },
+        'sentry.errors': {
+            'level': 'DEBUG',
+            'handlers': ['console'],
+            'propagate': False,
+        },
+    },
+}
+
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
 # these apps should not be started by rapidsms in your tests, however,
@@ -162,58 +208,46 @@ TEST_EXCLUDED_APPS = [
 
 # the project-level url patterns
 ROOT_URLCONF = "urls"
-SESSION_IDLE_TIMEOUT = 1800
+SESSION_SAVE_EVERY_REQUEST = True
+SESSION_COOKIE_AGE = 1800
 PROJECT_NAME = 'Apollo'
 AUTHENTICATE_OBSERVER = False  # determines whether to authenticate the observer's phone number
+EDIT_OBSERVER_CHECKLIST = ast.literal_eval(os.environ.get('EDIT_OBSERVER_CHECKLIST', 'False'))
+INCLUDE_REJECTED_IN_VOTES = ast.literal_eval(os.environ.get('INCLUDE_REJECTED_IN_VOTES', 'False'))
 ALLOWED_PUNCTUATIONS = '!'  # allowed punctuations in SMS forms
 CHARACTER_TRANSLATIONS = (
     ('i', '1'),
+    ('I', '1'),
     ('o', '0'),
+    ('O', '0'),
     ('l', '1'),
+    ('L', '1'),
 )
 LOCATIONS_GRAPH_MAXAGE = 25200  # number of seconds to cache the locations graph - 1wk
 PAGE_SIZE = 10  # Number of submissions viewable per page
-PROCESS_QUESTIONS_TAGS = [
-        'AA',  # Arrival
-        'AB', 'AC', 'AD', 'AE', 'AF', 'AG', 'AH', 'AJ', 'AK', 'AM', 'AN',  # Setup
-        'BA', 'BB', 'BC', 'BD', 'BE', 'BF', 'BG', 'BH', 'BJ',  # Voting
-        'BK', 'BM', 'BN', 'BP', 'BQ',
-        'CA', 'CB', 'CC', 'CD', 'CE', 'CF', 'CG', 'CH',  # Couting
-        ]
-RESULTS_QUESTIONS = {
-        'ballots_total': 'DA',
-        'ballots_used': 'DB',
-        'ballots_unused': 'DC',
-        'ballots_rejected': 'DD',
-        'ballots_missing': 'DE',
-        'votes_valid': 'DH',
-        'votes_invalid': 'DJ',
-        'votes_total': 'DK'
-        }
 
 FLAG_STATUSES = {
-    'no_problem': ('0', 'No Problem'),
-    'problem': ('2', 'Problem'),
-    'serious_problem': ('3', 'Serious Problem'),
-    'verified': ('4', 'Verified'),
-    'rejected': ('5', 'Rejected')
+    'no_problem': ('0', ugettext('No Problem')),
+    'problem': ('2', ugettext('Problem')),
+    'serious_problem': ('3', ugettext('Serious Problem')),
+    'verified': ('4', ugettext('Verified')),
+    'rejected': ('5', ugettext('Rejected'))
 }
 
 FLAG_CHOICES = (
-    ('0', 'No Problem'),
-    ('2', 'Problem'),
-    ('3', 'Serious Problem'),
-    ('4', 'Verified'),
-    ('5', 'Rejected')
+    ('0', ugettext('No Problem')),
+    ('2', ugettext('Problem')),
+    ('3', ugettext('Serious Problem')),
+    ('4', ugettext('Verified')),
+    ('5', ugettext('Rejected'))
 )
 
-
 STATUS_CHOICES = (
-    ('', 'Status'),
-    ('0', 'Status — No Problem'),
-    ('2', 'Status — Unverified'),
-    ('4', 'Status — Verified'),
-    ('5', 'Status — Rejected')
+    ('', ugettext(u'Status')),
+    ('0', ugettext(u'Status — No Problem')),
+    ('2', ugettext(u'Status — Unverified')),
+    ('4', ugettext(u'Status — Verified')),
+    ('5', ugettext(u'Status — Rejected'))
 )
 
 BIG_N = 6000000  # Big N
@@ -226,23 +260,26 @@ PHONE_CC = []
 MIDDLEWARE_CLASSES = (
     'johnny.middleware.LocalStoreClearMiddleware',
     'johnny.middleware.QueryCacheMiddleware',
-    'django.middleware.common.CommonMiddleware',
+    'pipeline.middleware.MinifyHTMLMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    'readonly.middleware.ReadOnlySiteMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'reversion.middleware.RevisionMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'audit_log.middleware.UserLoggingMiddleware',
+    'django.middleware.transaction.TransactionMiddleware',
+    'reversion.middleware.RevisionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'core.middleware.AllowOriginMiddleware',
     'core.middleware.KMLMiddleware',
-    'core.middleware.SessionIdleTimeout')
+    'raven.contrib.django.raven_compat.middleware.Sentry404CatchMiddleware',)
 
 # celery queue settings
-BROKER_URL = 'librabbitmq://guest:guest@localhost:5672/apollo'
+BROKER_URL = os.environ.get('APOLLO_BROKER_URL', 'librabbitmq://guest:guest@localhost:5672/apollo')
 
 # caching
 CACHES = {
-    'graph': {
+    'graphs': {
         'BACKEND': 'apollo.core.memcached.BigMemcachedCache',
         'OPTIONS': {
             'MAX_VALUE_LENGTH': 2 * 1024 * 1024
@@ -259,6 +296,65 @@ CACHES = {
 JOHNNY_MIDDLEWARE_KEY_PREFIX = 'jc_apollo'
 JIMMY_PAGE_CACHE_PREFIX = "jp_apollo"
 JIMMY_PAGE_DISABLED = True
+
+# django-read-only settings
+READ_ONLY_EXEMPT_PATH_STARTS = ('/admin/', '/assets/')
+SITE_READ_ONLY = ast.literal_eval(os.environ.get('SITE_READ_ONLY', 'False'))
+
+# django-pipeline settings
+PIPELINE_CSS = {
+    'apollo': {
+        'source_filenames': (
+          'css/bootstrap.css',
+          'css/bootstrap-responsive.css',
+          'css/select2.css',
+          'css/table-fixed-header.css',
+          'css/datepicker.css',
+          'css/jquery.qtip.css',
+          'css/custom.css',
+          'css/nv.d3.css',
+        ),
+        'output_filename': 'css/apollo.css',
+        'extra_context': {
+            'media': 'screen,projection',
+        },
+    },
+}
+
+PIPELINE_JS = {
+    'apollo': {
+        'source_filenames': (
+            'js/jquery.js',
+            'js/bootstrap.js',
+            'js/select2.js',
+            'js/table-fixed-header.js',
+            'js/bootstrap-datepicker.js',
+            'js/custom.js',
+            'js/d3.v3.js',
+            'js/nv.d3.js',
+        ),
+        'output_filename': 'js/apollo.js',
+    },
+    'graphs': {
+        'source_filenames': (
+            'js/underscore.js',
+            'js/jquery.csv.js',
+            'js/raphael.js',
+            'js/jquery.qtip.js',
+            'js/kartograph.js',
+        ),
+        'output_filename': 'js/graphs.js',
+    }
+}
+
+SMS_LANGUAGE_CODE = os.environ.get('APOLLO_SMS_LANGUAGE_CODE', 'en')
+LANGUAGE_CODE = 'en-us'
+
+LANGUAGES = (
+  ('en', ugettext('English')),
+  ('az', ugettext('Azerbaijani')),
+  ('fr', ugettext('French')),
+)
 
 # since we might hit the database from any thread during testing, the
 # in-memory sqlite database isn't sufficient. it spawns a separate

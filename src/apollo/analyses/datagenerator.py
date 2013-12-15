@@ -65,7 +65,7 @@ def get_data_records(form, qs, location_root=None, tags=None):
         location_root = Location.root()
 
     # retrieve all child location types for this location
-    location_types = [lt.name for lt in location_root.sub_location_types()]
+    location_types = [lt.untranslated('name') if hasattr(lt, 'untranslated') else lt.name for lt in location_root.sub_location_types()]
 
     # in addition to retrieving field data, also retrieve the location_id
     submissions = list(qs.data(all_fields).values(*(['location_id'] + all_fields)))
@@ -123,7 +123,7 @@ def generate_numeric_field_stats(tag, dataset):
         # the transpose and to_dict ensures that the output looks similar to
         # ['item']['mean'] for every item in the group
         location_stats = dataset[tag].agg({'mean': np.mean,
-            'std': lambda x: np.std(x)}).replace(np.nan, 0, inplace=True).transpose().to_dict()
+            'std': lambda x: np.std(x)}).replace(np.nan, 0).transpose().to_dict()
 
         field_stats['locations'] = location_stats
 
@@ -334,8 +334,12 @@ def generate_incident_field_stats(tag, dataset, options, labels=None, all_tags=N
             reported = dataset.get_group(group_name).get(tag).count()
             total = sum([dataset.get_group(group_name).get(field_tag).count() for field_tag in all_tags])
             missing = total - reported
-            percent_reported = float(reported) / float(total) * 100.0
-            percent_missing = float(missing) / float(total) * 100.0
+            try:
+                percent_reported = float(reported) / float(total) * 100.0
+                percent_missing = float(missing) / float(total) * 100.0
+            except ZeroDivisionError:
+                percent_reported = 0
+                percent_missing = 0
 
             location_stats[group_name] = {}
             location_stats[group_name]['missing'] = missing
@@ -351,8 +355,12 @@ def generate_incident_field_stats(tag, dataset, options, labels=None, all_tags=N
         reported = dataset[tag].count()
         total = sum([dataset[field_tag].count() for field_tag in all_tags])
         missing = total - reported
-        percent_reported = float(reported) / float(total) * 100.0
-        percent_missing = float(missing) / float(total) * 100.0
+        try:
+            percent_reported = float(reported) / float(total) * 100.0
+            percent_missing = float(missing) / float(total) * 100.0
+        except ZeroDivisionError:
+            percent_reported = 0
+            percent_missing = 0
 
         stats = {'reported': reported,
                  'missing': missing, 'percent_reported': percent_reported,
@@ -398,7 +406,9 @@ def generate_process_data(form, qs, location_root=None, grouped=True, tags=None)
     if not location_root:
         location_root = Location.root()
 
-    location_types = [ltype.name for ltype in location_root.sub_location_types()]
+    # because of our use of django-vinaigrette, some model fields have an 'untranslated' method
+    # we want to use that instead of accessing the name directly which yields the translated version
+    location_types = [ltype.untranslated('name') if hasattr(ltype, 'untranslated') else ltype.name for ltype in location_root.sub_location_types()]
 
     try:
         data_frame = get_data_records(form, qs, location_root, tags)
@@ -483,7 +493,7 @@ def generate_incidents_data(form, qs, location_root=None, grouped=True, tags=Non
     if not location_root:
         location_root = Location.root()
 
-    location_types = [ltype.name for ltype in location_root.sub_location_types()]
+    location_types = [ltype.untranslated('name') if hasattr(ltype, 'untranslated') else ltype.name for ltype in location_root.sub_location_types()]
 
     try:
         data_frame = get_data_records(form, qs, location_root, tags)
@@ -630,7 +640,7 @@ def generate_rejected_ballot_stats(form, queryset, location_root=None,
         location_root = Location.root()
 
     if not location_types and group_results:
-        location_types = [lt.name for lt in location_root.sub_location_types()]
+        location_types = [lt.untranslated('name') if hasattr(lt, 'untranslated') else lt.name for lt in location_root.sub_location_types()]
 
     tags = [settings.RESULTS_QUESTIONS[key] for key in settings.RESULTS_QUESTIONS if 'ballots' in key]
     rejected_ballots_tag = settings.RESULTS_QUESTIONS['ballots_rejected']

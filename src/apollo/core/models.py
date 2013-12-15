@@ -1,10 +1,13 @@
 from django.conf import settings
 from django.core.cache import cache as default_cache
 from django.core.cache import get_cache, InvalidCacheBackendError
+from django.contrib.auth.models import User
 from django.contrib.gis.db import models
 from django.dispatch import receiver
 from django_dag.models import Graph, Node, Edge
 from django_dag.mixins import GraphMixin
+from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import pgettext_lazy
 from djorm_hstore.fields import DictionaryField
 from djorm_hstore.models import HStoreManager
 from rapidsms.models import Contact, Backend, Connection
@@ -13,11 +16,12 @@ from apollo.core.managers import SubmissionManager, ObserverManager
 import networkx as nx
 import operator as op
 from parsimonious.grammar import Grammar
+import reversion
+import ast
 import re
-try:
-    import cPickle as pickle
-except ImportError:
-    import pickle
+from tastypie.models import create_api_key
+from unidecode import unidecode
+import vinaigrette
 
 
 LOCATIONTYPE_GRAPH = None
@@ -43,10 +47,10 @@ class LocationType(GraphMixin):
     name = models.CharField(max_length=100)
     # code is used mainly in the SMS processing logic
     code = models.CharField(blank=True, max_length=10, db_index=True)
-    on_display = models.BooleanField(default=False, help_text="Controls the display of this location type on the form lists")
-    on_dashboard = models.BooleanField(default=False, help_text="Controls the display of this location type on the dashboard filter")
-    on_analysis = models.BooleanField(default=False, help_text="Controls the display of this location type on the analysis filter")
-    in_form = models.BooleanField(default=False, db_index=True, help_text="Determines whether this LocationType can be used in SMS forms")
+    on_display = models.BooleanField(default=False, help_text=_("Controls the display of this location type on the form lists"))
+    on_dashboard = models.BooleanField(default=False, help_text=_("Controls the display of this location type on the dashboard filter"))
+    on_analysis = models.BooleanField(default=False, help_text=_("Controls the display of this location type on the analysis filter"))
+    in_form = models.BooleanField(default=False, db_index=True, help_text=_("Determines whether this LocationType can be used in SMS forms"))
 
     def __unicode__(self):
         return self.name
@@ -61,12 +65,15 @@ class LocationType(GraphMixin):
         try:
             return Location.root().type
         except IndexError, AttributeError:
-            pass
+            try:
+                return LocationType.objects.all().order_by('pk')[0]
+            except IndexError:
+                pass
 
 
 class Location(GraphMixin):
     """Location"""
-    name = models.CharField(max_length=100, db_index=True)
+    name = models.CharField(max_length=255, db_index=True)
     code = models.CharField(max_length=100, db_index=True, blank=True)
     type = models.ForeignKey(LocationType)
     data = DictionaryField(db_index=True, null=True, blank=True)
@@ -74,6 +81,9 @@ class Location(GraphMixin):
 
     objects = models.GeoManager()
     hstore = HStoreManager()
+
+    class Meta:
+        ordering = ['name']
 
     def __unicode__(self):
         return self.name
@@ -214,9 +224,10 @@ class ObserverRole(models.Model):
 class Observer(models.Model):
     """Election Observer"""
     GENDER = (
-        ('M', 'Male'),
-        ('F', 'Female'),
-        ('U', 'Unspecified'),
+        ('M', _('Male')),
+        ('F', _('Female')),
+        # Translators: the next string describes a gender that isn't specified
+        ('U', _('Unspecified')),
     )
     observer_id = models.CharField(max_length=100, null=True, blank=True)
     name = models.CharField(max_length=100, null=True, blank=True)
@@ -344,15 +355,15 @@ class Form(models.Model):
     representing the expected value.
     '''
     FORM_TYPES = (
-        ('CHECKLIST', 'Checklist'),
-        ('INCIDENT', 'Incident'),
+        ('CHECKLIST', _('Checklist')),
+        ('INCIDENT', pgettext_lazy('Critical Incident', 'Incident')),
     )
     name = models.CharField(max_length=255)
     type = models.CharField(max_length=100, choices=FORM_TYPES, default='CHECKLIST')
     trigger = models.CharField(max_length=255, unique=True)
     field_pattern = models.CharField(max_length=255)
     autocreate_submission = models.BooleanField(default=False,
-        help_text="Whether to create a new record if a submission doesn't exist")
+        help_text=_("Whether to create a new record if a submission doesn't exist"))
     options = DictionaryField(db_index=True, null=True, blank=True, default='')
 
     objects = HStoreManager()
@@ -371,6 +382,7 @@ class Form(models.Model):
 
     @staticmethod
     def parse(text):
+        text = unidecode(text)
         forms = Form.objects.all()
         submission = {'data': {}}
         observer = None
@@ -407,7 +419,7 @@ class Form(models.Model):
 
                         # this prevents a situation where 0 (a valid input) is ignored
                         elif field.value != None:
-                            submission['data'][field.tag.upper()] = str(field.value)
+                            submission['data'][field.tag.upper()] = unicode(field.value)
                 if fields_text:
                     for field in re.finditer(form.field_pattern, fields_text, flags=re.I):
                         submission['attribute_error_fields'].append(field.group('key'))
@@ -417,9 +429,9 @@ class Form(models.Model):
         return (submission, observer)
 
     def get_verification_flags(self):
-        pickled_flags = str(self.options.get('verification_flags', ''))
-        if pickled_flags:
-            flags = pickle.loads(pickled_flags)
+        _flags = self.options.get('verification_flags', '')
+        if _flags:
+            flags = ast.literal_eval(_flags)
             return flags
         else:
             return []
@@ -429,23 +441,23 @@ class Form(models.Model):
 
     def contestants(self):
         if self.options.get('party_votes', None):
-            return pickle.loads(str(self.options.get('party_votes')))
+            return ast.literal_eval(self.options.get('party_votes'))
 
     def parties(self):
         contestants = self.contestants()
         if contestants:
-            return [str(party) for party, code in contestants]
+            return [unicode(party) for party, code in contestants]
 
     def votes(self):
         contestants = self.contestants()
         if contestants:
-            return [str(code) for party, code in contestants]
+            return [unicode(code) for party, code in contestants]
 
 
 
 class FormGroup(models.Model):
     name = models.CharField(max_length=32, blank=True)
-    abbr = models.CharField(max_length=32, blank=True, null=True, help_text="Abbreviated version of the group name")
+    abbr = models.CharField(max_length=32, blank=True, null=True, help_text=_("Abbreviated version of the group name"))
     form = models.ForeignKey(Form, related_name='groups')
 
     class Meta:
@@ -457,9 +469,9 @@ class FormGroup(models.Model):
 
 class FormField(models.Model):
     ANALYSIS_TYPES = (
-        ('', 'N/A'),
-        ('PROCESS', 'Process'),
-        ('VOTE', 'Candidate Vote'),
+        ('', _('N/A')),
+        ('PROCESS', _('Process')),
+        ('VOTE', _('Candidate Vote')),
     )
 
     name = models.CharField(max_length=32)
@@ -514,8 +526,11 @@ class FormField(models.Model):
                 field_value = int(match.group('value')) \
                     if match.group('value') else None
 
-                if field_value != None:
-                    if self.options.all().count():
+                if self.present_true:
+                    # a value of 1 indicates presence/truth
+                    self.value = 1
+                else:
+                    if self.options.exists():
                         for option in self.options.all():
                             if option.option == field_value:
                                 self.value = field_value
@@ -527,9 +542,6 @@ class FormField(models.Model):
                             self.value = -1
                         else:
                             self.value = field_value
-                elif self.present_true:
-                    # a value of 1 indicates presence/truth
-                    self.value = 1
 
         return re.sub(pattern, '', text, flags=re.I) if self.value != None else text
 
@@ -578,6 +590,7 @@ class Submission(models.Model):
             ("export_submissions", "Can export submissions"),
             ("can_analyse", "Can access submission analyses"),
             ("can_verify", "Can access submission verifications"),
+            ("can_override", "Can override submission master"),
         )
 
     @property
@@ -682,7 +695,10 @@ class Evaluator(object):
 
     def variable(self, node, children):
         'variable = ~"[a-z]+"i _'
-        return float(self.env.get(node.text.strip()))
+        try:
+            return float(self.env.get(node.text.strip()))
+        except TypeError:
+            return 0
 
     def number(self, node, children):
         'number = ~"\-?[0-9\.]+"'
@@ -766,16 +782,21 @@ def create_or_sync_master(sender, **kwargs):
         # we only want to create a submission that will be assigned
         # as the master if this is not already a master submission
         if not master and instance.observer and instance.form.type == 'CHECKLIST':
-            # create the master
-            master = Submission.objects.create(
-                    form=instance.form,
-                    observer=None,
-                    location=instance.location,
-                    date=instance.date,
-                    data=instance.data,
-                    created=instance.created,
-                    updated=instance.updated
-                )
+            # create the master only if none of the siblings have one
+            for sibling in instance.siblings:
+                if sibling.master:
+                    master = sibling.master
+                    break
+            else:
+                master = Submission.objects.create(
+                        form=instance.form,
+                        observer=None,
+                        location=instance.location,
+                        date=instance.date,
+                        data=instance.data,
+                        created=instance.created,
+                        updated=instance.updated
+                    )
             instance.master = master
             instance.save()
     else:
@@ -793,7 +814,7 @@ def create_or_sync_master(sender, **kwargs):
         # if no siblings exist, copy to master and quit
         if not siblings:
             for key in instance.data.keys():
-                if key in master.overrides:
+                if key in master.overrides.keys():
                     continue
                 master.data[key] = instance.data[key]
 
@@ -808,7 +829,7 @@ def create_or_sync_master(sender, **kwargs):
         # this be pure hackery
         for key in key_set:
             # if the key has already been overridden, don't do anything
-            if key in master.overrides:
+            if key in master.overrides.keys():
                 continue
 
             # get the value set for this key, and create a comparison function
@@ -917,3 +938,22 @@ def compute_verification(sender, **kwargs):
                 instance.data['verification'] = settings.FLAG_STATUSES['problem'][0]
             elif any(map(lambda i: i == OK, flags_statuses)):
                 instance.data['verification'] = settings.FLAG_STATUSES['no_problem'][0]
+
+# model translation registrations
+vinaigrette.register(LocationType, ['name'])
+vinaigrette.register(ObserverRole, ['name'])
+vinaigrette.register(ObserverDataField, ['name'])
+vinaigrette.register(Activity, ['name'])
+vinaigrette.register(Form, ['name'])
+vinaigrette.register(FormGroup, ['name', 'abbr'])
+vinaigrette.register(FormField, ['description'])
+vinaigrette.register(FormFieldOption, ['description'])
+vinaigrette.register(Sample, ['name'])
+
+# reversion
+try:
+    reversion.register(Submission, follow=('master',))
+except reversion.revisions.RegistrationError:
+    pass
+
+models.signals.post_save.connect(create_api_key, sender=User)

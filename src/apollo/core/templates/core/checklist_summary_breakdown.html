@@ -1,5 +1,9 @@
 {% extends "core/layout.html" %}
-{% load apollo %}
+{% load i18n %}{% load apollo %}
+{% block javascripts %}
+{{ block.super }}
+<script type="text/javascript" src="{{ STATIC_URL }}js/protovis.min.js"></script>
+{% endblock %}
 {% block content %}
 <div class="row">
 	<div class="span9">
@@ -7,8 +11,8 @@
 	</div>
 	<div class="span3">
 		<form class="form-horizontal pull-right" action="" method="get" accept-charset="utf-8">
-          {{ filter_form.sample }}
-          <button class="btn btn-warning" type="submit"><i class="icon-search icon-white"></i> Filter</button>
+        {{ filter_form.sample }}
+          <button class="btn btn-warning" type="submit"><i class="icon-search icon-white"></i> {% trans "Filter" context "verb" %}</button>
         </form>
 	</div>
     <div class="span12">
@@ -19,8 +23,8 @@
 	<div class="span12">
 		<div class="tabbable tabs-right"> <!-- Only required for left/right tabs -->
 		  <ul class="nav nav-tabs">
-		    <li class="active"><a href="#table" data-toggle="tab">Table</a></li>
-		    <li><a href="#charts" data-toggle="tab">Charts</a></li>
+		    <li class="active"><a href="#table" data-toggle="tab">{% trans "Table" context "html" %}</a></li>
+		    <li><a href="#charts" data-toggle="tab">{% trans "Charts" %}</a></li>
 		  </ul>
 		  <div class="tab-content">
 		    <div class="tab-pane active" id="table">
@@ -32,14 +36,14 @@
 						<tr>
 							<th></th>
 							{% if tag_stats.type == 'numeric' %}
-							<th width="80">Mean</th>
+							<th width="80">{% trans "Mean" context "statistics" %}</th>
 							{% else %}
 							{% for label in tag_stats.labels %}
-							<th>{{ label }}</th>
+							<th>{% trans label %}</th>
 							{% endfor %}
 							{% endif %}
-							<th width="80">Reported</th>
-							<th width="80">Missing</th>
+							<th width="80">{% trans "Reported" %}</th>
+							<th width="80">{% trans "Missing" %}</th>
 						</tr>
 						<tr>
 							<td><strong>{{ location }}</strong></td>
@@ -58,7 +62,7 @@
 						{% for location in tag_stats.locations.keys|sortedlist %}
                         {% with tag_stats.locations|keyvalue:location as location_stats %}
 						<tr>
-							<td><span style="margin-left:2em">{{ location }} · <span class="muted"><em>{{ location_type }}</em></span></span></td>
+							<td><span style="margin-left:2em">{{ location }} · <span class="muted"><em>{% trans location_type %}</em></span></span></td>
 							{% if tag_stats.type == 'numeric' %}
 							<td align="right">{{ location_stats.mean|floatformat:0 }}</td>
 							{% else %}
@@ -89,7 +93,7 @@
 			        <tr>
 			        	<td>
 <script type="text/javascript+protovis">
-	var legend = [{% for label in tag_stats.labels %}"{{ label }}",{% endfor %}];
+	var legend = [{% for label in tag_stats.labels %}"{% trans label %}",{% endfor %}];
 	var data = [{% for value, percentage in tag_stats.histogram %}[{{ percentage }}],{% endfor %}];
 	var labels = ["{{ location }}"];
 
@@ -169,7 +173,7 @@
     diameter = radius * 2;
     data = [{{ tag_stats.percent_missing|floatformat:0 }}/100, {{ tag_stats.percent_reported|floatformat:0 }}/100];
     colors = ["#FF5200","#39e639"];
-    labels = ["Missing", "Reported"];
+    labels = ["{% trans "Missing" %}", "{% trans "Reported" %}"];
 
     var pie = new pv.Panel().width(width).height(height);
         pie.add(pv.Wedge)
@@ -308,7 +312,7 @@ vis.render();
     diameter = radius * 2;
     data = [{{ tag_stats.percent_missing|floatformat:0 }}/100, {{ tag_stats.percent_reported|floatformat:0 }}/100];
     colors = ["#FF5200","#39e639"];
-    labels = ["Missing", "Reported"];
+    labels = ["{% trans "Missing" %}", "{% trans "Reported" %}"];
 
     var pie = new pv.Panel().width(width).height(height);
         pie.add(pv.Wedge)
@@ -346,7 +350,7 @@ vis.render();
 <script type="text/javascript+protovis">
 	var data = [{{ tag_stats.mean|floatformat:0 }}, 0];
 	var labels = ["{{ location }}", ""];
-	var legend = ['Mean']
+	var legend = ["{% trans "Mean" context "statistics" %}"]
 
 	{% for location_type, location_type_summary in process_summary.groups %}
 	  {% for tag, question, tag_stats in location_type_summary %}
@@ -443,7 +447,7 @@ vis.render();
     diameter = radius * 2;
     data = [{{ tag_stats.percent_missing|floatformat:0 }}/100, {{ tag_stats.percent_reported|floatformat:0 }}/100];
     colors = ["#FF5200","#39e639"];
-    labels = ["Missing", "Reported"];
+    labels = ["{% trans "Missing" %}", "{% trans "Reported" %}"];
 
     var pie = new pv.Panel().width(width).height(height);
         pie.add(pv.Wedge)

@@ -1,10 +1,10 @@
-<tr>
-    <th>Observer ID</th>
+{% load i18n %}<tr>
+    <th>{% trans "Observer ID" %}</th>
     {% for location_type in location_types %}
     <th>{{ location_type.name }}</th>
     {% endfor %}
-    <th>Observer</th>
-    <th>Phone</th>
+    <th>{% trans "Observer" %}</th>
+    <th>{% trans "Phone" %}</th>
     {% if form.type == 'CHECKLIST' %}
     {% for group in form_groups %}
     <th style="text-align:center">{% if group.abbr %}<abbr title="{{ group.name }}">{{ group.abbr }}</abbr>{% else %}{{ group.name }}{% endif %}</th>
@@ -13,8 +13,8 @@
     {% for field in form_fields %}
     <th style="text-align:center"><abbr title="{{ field.description }}">{{ field.tag }}</abbr></th>
     {% endfor %}
-    <th style="text-align:center"><abbr title="Status"><i class="icon-eye-open"></i></abbr></th>
+    <th style="text-align:center"><abbr title="{% trans "Status" %}"><i class="icon-eye-open"></i></abbr></th>
     {% endif %}
-    <th style="text-align:center"><abbr title="Phone Verification"><i class="icon-signal"></i></abbr></th>
-    {% if perms.core.change_submission %}<th style="text-align:center">Edit</th>{% endif %}
+    <th style="text-align:center"><abbr title="{% trans "Phone Verification" %}"><i class="icon-question-sign"></i></abbr></th>
+    {% if perms.core.change_submission %}<th style="text-align:center">{% trans "Edit" %}</th>{% endif %}
 </tr>

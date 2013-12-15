@@ -1,5 +1,5 @@
 {% extends "core/layout.html" %}
-{% load apollo %}
+{% load i18n %}{% load apollo %}
 {% block content %}
 <form method="POST">
   {% csrf_token %}
@@ -9,13 +9,13 @@
         <tbody>
         {% for field in form %}
           <tr>
-            <th>{% if field.label == 'Partner' %}Organization{% else %}{{ field.label }}{% endif %}</th>
+            <th>{% if field.label == 'Partner' %}{% trans "Organization" %}{% else %}{{ field.label }}{% endif %}</th>
             <td>{{ field }}</td>
           </tr>
         {% endfor %}
           <tr>
             <td>&nbsp;</td>
-            <td><input type="submit" class="btn btn-primary" value="Save"> <a class="btn" style="margin-left:0.5em" href="{% url contacts_list %}">Cancel</a></td>
+            <td><input type="submit" class="btn btn-primary" value="Save"> <a class="btn" style="margin-left:0.5em" href="{% url contacts_list %}">{% trans "Cancel" %}</a></td>
           </tr>
         </tbody>
       </table>

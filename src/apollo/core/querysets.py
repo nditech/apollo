@@ -9,7 +9,7 @@ class SearchableLocationQuerySet(HStoreQueryset):
     def is_within(self, location):
         return self.filter(
             location__pk__in=[
-                loc['id'] for loc in location.nx_descendants(include_self=True)
+                loc.get('id', None) for loc in location.nx_descendants(include_self=True)
             ])
 
 
@@ -61,8 +61,10 @@ class SubmissionQuerySet(SearchableLocationQuerySet):
 
     def dataframe(self):
         records = []
+        default_values = {tag: None for tag in self.values_list('form__groups__fields__tag', flat=True).distinct()}
+
         for submission in self.select_related('location'):
-            _submission = {}
+            _submission = default_values.copy()
             location_tree = submission.location.nx_ancestors(include_self=True)
             for k in filter(lambda key: not key.startswith('flag'), submission.data.keys()):
                 try:

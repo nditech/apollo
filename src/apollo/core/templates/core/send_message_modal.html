@@ -1,15 +1,15 @@
-<div class="modal" id="send_message" style="display:none" tabindex="-1" role="dialog" aria-labelledby="send_message_label" aria-hidden="true">
+{% load i18n %}<div class="modal" id="send_message" style="display:none" tabindex="-1" role="dialog" aria-labelledby="send_message_label" aria-hidden="true">
   <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-    <h3 id="send_message_label">Send Message</h3>
+    <h3 id="send_message_label">{% trans "Send Message" %}</h3>
   </div>
   <div class="modal-body">
     <div class="alert" id="alert" style="display:none">
       <button type="button" class="close" data-dismiss="alert">×</button>
       <span id="alert_message"></span>
     </div>
-    <p><strong>To:</strong> {{ recipients|default:"no" }} recipient{{ recipients|pluralize }}.</p>
-    <p><textarea id="message" rows="5" cols="40" style="width:97.5%"></textarea><br /><span id="characters">0 characters</span> · <span id="parts">1 message part</span></p>
+    <p><strong>{% trans "To" %}:</strong> {% blocktrans count counter=recipients %}{{ counter }} recipient{% plural %}{{ counter }} recipients{% endblocktrans %}.</p>
+    <p><textarea id="message" rows="5" cols="40" style="width:97.5%"></textarea><br /><span id="characters">0 {% trans "characters" %}</span> · <span id="parts">1 {% trans "message part" %}</span></p>
   </div>
   <div class="modal-footer">
     <div id="loader" class="ajax_loader" style="visibility: hidden">
@@ -17,8 +17,8 @@
       <div class="ajax_loader_block block_2"></div>
       <div class="ajax_loader_block block_3"></div>
     </div>
-    <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
-    <button class="btn btn-primary" id="send" {% if not recipients %}disabled="disabled"{% endif %}>Send</button>
+    <button class="btn" data-dismiss="modal" aria-hidden="true">{% trans "Cancel" context "verb" %}</button>
+    <button class="btn btn-primary" id="send" {% if not recipients %}disabled="disabled"{% endif %}>{% trans "Send" context "verb" %}</button>
   </div>
 </div>
 <script type="text/javascript">
@@ -38,15 +38,15 @@
     parts = message.length <= 160 ? 1 : Math.ceil(message.length / 153);
 
     $('#message').val(message);
-    $('#characters').html(message.length > 1 ? message.length + ' characters' : message.length + ' character');
-    $('#parts').html(parts > 1 ? parts + ' message parts' : parts + ' message part');
+    $('#characters').html(message.length > 1 ? message.length + ' ' + '{% trans "characters" context "number of characters in sentence" %}' : message.length + ' ' + '{% trans "character" context "number of characters in sentence" %}');
+    $('#parts').html(parts > 1 ? parts + ' ' + '{% trans "message parts" %}' : parts + ' ' + '{% trans "message part" %}');
   });
 
   $("#send").click(function () {
     var message = $('#message').val();
     if (message) {
       $.ajax({
-        url: "",
+        url: "{{ request.get_full_path }}",
         type: 'POST',
         data: {message: message, action: 'send_message'},
         beforeSend: function (xhr) {
@@ -59,7 +59,7 @@
         // Reset message textbox, display the status and hide the dialog
         $('#message').val("");
         $('#message').trigger('keyup');
-        $('#alert_message').html('<strong>Success!</strong> Your message has been sent.');
+        $('#alert_message').html('<strong>{% trans "Success" %}!</strong> {% trans "Your message has been sent" %}.');
         $('#alert').removeClass('alert-error');
         $('#alert').addClass('alert-success');
         $('#alert').fadeIn('fast');
@@ -68,7 +68,7 @@
       })
       .fail(function (){
         // Display the fail message if the request failed
-        $('#alert_message').html('<strong>Error!</strong> Please try sending again.');
+        $('#alert_message').html('<strong>{% trans "Error" %}!</strong> {% trans "Please try sending again" %}.');
         $('#alert').removeClass('alert-success');
         $('#alert').addClass('alert-error');
         $('#alert').fadeIn('fast');

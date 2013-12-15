@@ -1,0 +1,19 @@
+{% load apollo %}{% load i18n %}{% load compressed %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>{% trans "Server Error" %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% compressed_css 'apollo' %}
+    <link rel="shortcut icon" href="/assets/ico/favicon.ico">
+  </head>
+ <body>
+    <div class="row-fluid">
+		<div class="span4 offset4" style="text-align:center; margin-top:14em;">
+			<legend style="border-bottom:0px; margin-bottom:0px;">{% trans "Zong! We screwed up" %} :(</legend>
+			<p>{% blocktrans %}You shouldn't be seeing this page but you are because you're a genius and have found a rare bug in the software. Rest assured, we now know about it and will fix it ASAP!{% endblocktrans %}</p>
+		</div>
+	</div>
+  </body>
+<html>

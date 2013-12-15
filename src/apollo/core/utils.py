@@ -1,5 +1,5 @@
 import logging
-import json
+import ast
 try:
     import cPickle as pickle
 except ImportError:
@@ -8,7 +8,6 @@ from lxml import etree
 from django.conf import settings
 from django.db import transaction
 import tabimport
-from unidecode import unidecode
 from .models import Form, LocationType, Location, Edge, Observer, ObserverRole, Submission
 
 
@@ -28,13 +27,13 @@ def import_forms(source):
                 _form.type = form.attrib.get('data-type').upper()
                 _form.trigger = form.attrib.get('data-trigger')
                 _form.field_pattern = form.attrib.get('data-field_pattern')
-                _form.options = json.loads(form.attrib.get('data-options', '{}'))
-                verification_flags = json.loads(form.attrib.get('data-options-verification-flags', '{}'))
-                party_votes = json.loads(form.attrib.get('data-options-party-votes', '{}'))
+                _form.options = ast.literal_eval(form.attrib.get('data-options', '{}'))
+                verification_flags = ast.literal_eval(form.attrib.get('data-options-verification-flags', '{}'))
+                party_votes = ast.literal_eval(unicode(form.attrib.get('data-options-party-votes', '{}')))
                 if verification_flags:
-                    _form.options['verification_flags'] = pickle.dumps(verification_flags)
+                    _form.options['verification_flags'] = verification_flags
                 if party_votes:
-                    _form.options['party_votes'] = pickle.dumps(party_votes)
+                    _form.options['party_votes'] = party_votes
                 if _form.type == 'INCIDENT':
                     _form.autocreate_submission = True
                 else:
@@ -46,12 +45,15 @@ def import_forms(source):
                     type=form.attrib.get('data-type').upper(),
                     trigger=form.attrib.get('data-trigger'),
                     field_pattern=form.attrib.get('data-field_pattern'),
-                    options=json.loads(form.attrib.get('data-options', '{}')),
+                    options=ast.literal_eval(form.attrib.get('data-options', '{}')),
                     autocreate_submission=True
                         if form.attrib.get('data-type').upper() == 'INCIDENT' else False)
-                verification_flags = json.loads(form.attrib.get('data-options-verification-flags', '{}'))
+                verification_flags = ast.literal_eval(form.attrib.get('data-options-verification-flags', '{}'))
+                party_votes = ast.literal_eval(unicode(form.attrib.get('data-options-party-votes', '{}')))
                 if verification_flags:
-                    _form.options['verification_flags'] = pickle.dumps(verification_flags)
+                    _form.options['verification_flags'] = verification_flags
+                if party_votes:
+                    _form.options['party_votes'] = party_votes
                 _form.save()
 
             # delete existing groups
@@ -121,6 +123,11 @@ def import_location_types(source, flush=False):
 
 def process_location_type(location_type):
     lt, _ = LocationType.objects.get_or_create(name=location_type.attrib.get('name'))
+    lt.on_display = location_type.attrib.get('on_display', False)
+    lt.on_dashboard = location_type.attrib.get('on_dashboard', False)
+    lt.on_analysis = location_type.attrib.get('on_analysis', False)
+    lt.save()
+
     parent = location_type.getparent()
     if parent.tag == 'location':
         # link the parent to the location_type
@@ -141,13 +148,13 @@ def import_locations(filename, mapping):
             value = key(line)
             # only transliterate unicode or str objects
             if type(value) in [unicode, str]:
-                return unidecode(unicode(value))
+                return unicode(value)
             else:
                 return value
         elif key is None or key == '':
             return key
         else:
-            return unidecode(unicode(line.get(key))).strip()
+            return unicode(line.get(key)).strip()
 
     def set_location_attributes(location, attributes, line, mapping):
         for attribute in attributes:
@@ -164,7 +171,7 @@ def import_locations(filename, mapping):
 
     imported = tabimport.FileFactory(filename)
     map_keys = mapping.keys()
-    location_types = LocationType.root().get_descendants(include_self=True)
+    location_types = LocationType.objects.all().order_by('pk')
     location_type_ids = map(lambda lt: str(lt.pk), location_types)
     location_types_hash = {}
     for lt in location_types:
@@ -183,7 +190,7 @@ def import_locations(filename, mapping):
                     set_location_attributes(location, lt_mapping, line, mapping)
                     set_location_parents(location, line_locations, location_type_id, location_types_hash)
                     location.save()
-                    logger.debug('Saved: {} - {}'.format(location.type.name, location.name))
+                    logger.debug(u'Saved: {} - {}'.format(location.type.name, location.name))
 
                     # save location for later retrieval
                     line_locations[location_type_id] = location
@@ -200,11 +207,11 @@ def import_observers(filename, mapping):
             value = key(line)
             # only transliterate unicode or str objects
             if type(value) in [unicode, str]:
-                return unidecode(unicode(value))
+                return unicode(value)
             else:
                 return value
         else:
-            return unidecode(unicode(line.get(key))).strip()
+            return unicode(line.get(key)).strip()
 
     def set_observer_attributes(observer, line, mapping):
         # phone numbers are saved differently
@@ -215,7 +222,7 @@ def import_observers(filename, mapping):
     imported = tabimport.FileFactory(filename)
     try:
         for line in imported:
-            logger.debug('Creating/Updating Observer: {}'.format(mapping['observer_id']))
+            logger.debug(u'Creating/Updating Observer: {}'.format(mapping['observer_id']))
             try:
                 observer = Observer.objects.get(observer_id=get_line_value(line, mapping['observer_id']))
             except Observer.DoesNotExist:
@@ -248,3 +255,17 @@ def create_checklists(form, role, date):
         Submission.objects.get_or_create(form=form,
             observer=observer, location=observer.location,
             date=date)
+
+
+def submission_diff(old, new):
+    '''
+    returns (added_keys, removed_keys, changed_keys)
+    '''
+    removed_keys = set(old.data.keys()) - set(new.data.keys())
+    added_keys = set(new.data.keys()) - set(old.data.keys())
+    remaining_keys = set(new.data.keys()) - added_keys - removed_keys
+    changed_keys = set()
+    for key in remaining_keys:
+        if new.data.get(key) != old.data.get(key):
+            changed_keys.add(key)
+    return (added_keys, removed_keys, changed_keys)

@@ -1,4 +1,4 @@
-{% load apollo %}{% load static %}
+{% load i18n %}{% load apollo %}{% load static %}
 {% for submission in submissions %}
 <tr>
     <td>{{ submission.submissions.all.0.observer.observer_id }}</td>
@@ -8,31 +8,31 @@
     <td>{{ submission.submissions.all.0.observer.name }}</td>
     {% for flag in form_flags %}
     <td style="text-align:center">
-        {% if submission.data|keyvalue:flag|flag_status:'verified' %}<img src="{% static "img/blue_dot.png" %}" title="Verified" alt="Verified" height="13" width="13" />
-        {% elif submission.data|keyvalue:flag|flag_status:'rejected' %}<img src="{% static "img/black_dot.png" %}" title="Rejected" alt="Rejected" height="13" width="13" />
-        {% elif submission.data|keyvalue:flag|flag_status:'serious_problem' %}<img src="{% static "img/red_dot.png" %}" title="Serious Problem" alt="Serious Problem" height="13" width="13" />
-        {% elif submission.data|keyvalue:flag|flag_status:'problem' %}<img src="{% static "img/darkyellow_dot.png" %}" title="Problem" alt="Problem" height="13" width="13" />
-        {% elif submission.data|keyvalue:flag|flag_status:'no_problem' %}<img src="{% static "img/green_dot.png" %}" title="No Problem" alt="No Problem" height="13" width="13" />
-        {% else %}<img src="{% static "img/white_dot.png" %}" title="No Data" alt="No Data" height="13" width="13" />
+        {% if submission.data|keyvalue:flag|flag_status:'verified' %}<img src="{% static "img/blue_dot.png" %}" title="{% trans "Verified" %}" alt="{% trans "Verified" %}" height="13" width="13" />
+        {% elif submission.data|keyvalue:flag|flag_status:'rejected' %}<img src="{% static "img/black_dot.png" %}" title="{% trans "Rejected" %}" alt="{% trans "Rejected" %}" height="13" width="13" />
+        {% elif submission.data|keyvalue:flag|flag_status:'serious_problem' %}<img src="{% static "img/red_dot.png" %}" title="{% trans "Serious Problem" %}" alt="{% trans "Serious Problem" %}" height="13" width="13" />
+        {% elif submission.data|keyvalue:flag|flag_status:'problem' %}<img src="{% static "img/darkyellow_dot.png" %}" title="{% trans "Problem" %}" alt="{% trans "Problem" %}" height="13" width="13" />
+        {% elif submission.data|keyvalue:flag|flag_status:'no_problem' %}<img src="{% static "img/green_dot.png" %}" title="{% trans "No Problem" %}" alt="{% trans "No Problem" %}" height="13" width="13" />
+        {% else %}<img src="{% static "img/white_dot.png" %}" title="{% trans "No Data" %}" alt="{% trans "No Data" %}" height="13" width="13" />
         {% endif %}
     </td>
     {% endfor %}
     <td>
-        {% if submission.data.verification|flag_status:'verified' %}<img src="{% static "img/tick-white.png" %}" title="Verified" alt="Verified" height="13" width="13" />
-        {% elif submission.data.verification|flag_status:'rejected' %}<img src="{% static "img/cross.png" %}" title="Rejected" alt="Rejected" height="13" width="13" />
-        {% elif submission.data.verification|flag_status:'problem' %}<img src="{% static "img/caution.png" %}" title="Unverified" alt="Unverified" height="13" width="13" />
-        {% elif submission.data.verification|flag_status:'no_problem' %}<img src="{% static "img/tick.png" %}" title="No Problem" alt="No Problem" height="13" width="13" />
-        {% else %}<img src="{% static "img/white_dot.png" %}" title="No Data" alt="No Data" height="13" width="13" />
+        {% if submission.data.verification|flag_status:'verified' %}<img src="{% static "img/tick-white.png" %}" title="{% trans "Verified" %}" alt="{% trans "Verified" %}" height="13" width="13" />
+        {% elif submission.data.verification|flag_status:'rejected' %}<img src="{% static "img/cross.png" %}" title="{% trans "Rejected" %}" alt="{% trans "Rejected" %}" height="13" width="13" />
+        {% elif submission.data.verification|flag_status:'problem' %}<img src="{% static "img/caution.png" %}" title="{% trans "Unverified" %}" alt="{% trans "Unverified" %}" height="13" width="13" />
+        {% elif submission.data.verification|flag_status:'no_problem' %}<img src="{% static "img/tick.png" %}" title="{% trans "No Problem" %}" alt="{% trans "No Problem" %}" height="13" width="13" />
+        {% else %}<img src="{% static "img/white_dot.png" %}" title="{% trans "No Data" %}" alt="{% trans "No Data" %}" height="13" width="13" />
         {% endif %}
     </td>
-    {% if perms.core.change_submission %}<td style="text-align:center"><a href="{% url verification_edit submission.pk %}">Edit</a></td>{% endif %}
+    {% if perms.core.change_submission %}<td style="text-align:center"><a href="{% url verification_edit submission.pk %}">{% trans "Edit" context "verb" %}</a></td>{% endif %}
 </tr>
 {% empty %}
 {% if perms.core.change_submission %}
 {% with location_types|length|add:"4" as lt_count %}
 {% with form_flags|length|add:lt_count as colspan %}
 <tr class="warning">
-    <td style="text-align:center" colspan="{{ colspan }}">No Data Available</td>
+    <td style="text-align:center" colspan="{{ colspan }}">{% trans "No Data Available" %}</td>
 </tr>
 {% endwith %}
 {% endwith %}
@@ -40,7 +40,7 @@
 {% with location_types|length|add:"3" as lt_count %}
 {% with form_flags|length|add:lt_count as colspan %}
 <tr class="warning">
-    <td style="text-align:center" colspan="{{ colspan }}">No Data Available</td>
+    <td style="text-align:center" colspan="{{ colspan }}">{% trans "No Data Available" %}</td>
 </tr>
 {% endwith %}
 {% endwith %}

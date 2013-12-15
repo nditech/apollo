@@ -1,11 +1,9 @@
 {% extends "core/layout.html" %}
-{% load apollo %}
+{% load apollo %}{% load i18n %}{% load compressed %}
 {% block javascripts %}
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/jquery.csv.js"></script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/qtip2/2.1.1/jquery.qtip.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/kartograph.js"></script>
+{{ block.super }}
+<script type="text/javascript" src="{{ STATIC_URL }}js/protovis.min.js"></script>
+{% compressed_js 'graphs' %}
 <script type="text/javascript">
 	$(function(){
 	  	loadProv();
@@ -23,8 +21,8 @@
   	</div>
   	<div class="span7">
         <form class="form-horizontal pull-right" action="" method="get" accept-charset="utf-8">
-          {{ filter_form.status }} {{ filter_form.witness }} {{ filter_form.sample }}
-          <button class="btn btn-warning" type="submit"><i class="icon-search icon-white"></i> Filter</button>
+          {{ filter_form.sample }}{{ filter_form.status }} {{ filter_form.witness }}
+          <button class="btn btn-warning" type="submit"><i class="icon-search icon-white"></i> {% trans "Filter" context "verb" %}</button>
         </form>
   	</div>
     <div class="span12">
@@ -36,12 +34,14 @@
 		{% if incidents_summary.top %}
 		<div class="tabbable"> <!-- Only required for left/right tabs -->
 			<ul class="nav nav-tabs">
-				<li class="active"><a href="#table" data-toggle="tab">Table</a></li>
-				<li><a href="#charts" data-toggle="tab">Charts</a></li>
+				<li class="active"><a href="#table" data-toggle="tab">{% trans "Table" %}</a></li>
+				<li><a href="#charts" data-toggle="tab">{% trans "Charts" %}</a></li>
+				<!--
 				<li><a href="#province_map" data-toggle="tab" data-map="map">Province</a></li>
 				<li><a href="#con_map" data-toggle="tab" data-map="map1">Constituency</a></li>
 				<li><a href="#bula_map" data-toggle="tab" data-map="map2">Bulawayo</a></li>
 				<li><a href="#hara_map" data-toggle="tab" data-map="map3">Harare</a></li>
+				-->
 			</ul>
 			<div class="tab-content">
 			    <div class="tab-pane active" id="table">
@@ -63,7 +63,7 @@
 						{% for location_type, group_location_stats in incidents_summary.groups %}
 						{% for location, location_data in group_location_stats %}
 						<tr>
-							<td>{{ location }} · <span class="muted"><em>{{ location_type }}</em></span></td>
+							<td>{{ location }} · <span class="muted"><em>{% trans location_type %}</em></span></td>
 							{% with incidents_summary.top.0 as tag_data %}
 							{% if location_data %}
 							{% with location_data|keyvalue:tag_data.0 as field_stats %}
@@ -407,7 +407,7 @@
 		{% else %}
 		<table class="table table-striped table-bordered table-hover">
 			<tr class="warning">
-				<td style="text-align:center">No Data Available</td>
+				<td style="text-align:center">{% trans "No Data Available" %}</td>
 			</tr>
 		</table>
 		{% endif %}
