@@ -14,6 +14,8 @@ v2_api.register(PartnerResource())
 v2_api.register(RoleResource())
 v2_api.register(FormResource())
 v2_api.register(FormGroupResource())
+v2_api.register(FormFieldResource())
+v2_api.register(FormFieldOptionResource())
 v2_api.register(SubmissionResource())
 
 
