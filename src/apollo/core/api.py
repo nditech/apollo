@@ -81,6 +81,7 @@ class FormResource(ModelResource):
         resource_name = 'forms'
         always_return_data = True
         fields = ['name', 'type', 'trigger', 'field_pattern']
+        authentication = ApiKeyAuthentication()
         authorization = Authorization()
 
     def dehydrate_options(self, bundle):
@@ -96,6 +97,7 @@ class FormGroupResource(ModelResource):
         resource_name = 'formgroups'
         always_return_data = True
         excludes = ['_order']
+        authentication = ApiKeyAuthentication()
         authorization = Authorization()
 
 
@@ -108,6 +110,7 @@ class FormFieldResource(ModelResource):
         resource_name = 'formfields'
         always_return_data = True
         excludes = ['allow_multiple', '_order']
+        authentication = ApiKeyAuthentication()
         authorization = Authorization()
 
 
@@ -119,6 +122,7 @@ class FormFieldOptionResource(ModelResource):
         resource_name = 'formfieldoptions'
         always_return_data = True
         excludes = ['_order']
+        authentication = ApiKeyAuthentication()
         authorization = Authorization()
 
 
