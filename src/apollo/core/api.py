@@ -74,26 +74,52 @@ class ContactResource(ModelResource):
 
 
 class FormResource(ModelResource):
+    groups = fields.ToManyField('core.api.FormGroupResource', 'groups', full=True)
+
     class Meta:
         queryset = Form.objects.all()
         resource_name = 'forms'
-        fields = ['name']
-
-        authentication = ApiKeyAuthentication()
+        always_return_data = True
+        fields = ['name', 'type', 'trigger', 'field_pattern']
+        authorization = Authorization()
 
     def dehydrate_options(self, bundle):
         return ast.literal_eval(bundle.data['options'])
 
 
 class FormGroupResource(ModelResource):
-    form = fields.ForeignKey(FormResource, 'form', readonly=True, full=True)
+    form = fields.ForeignKey(FormResource, 'form')
+    fields = fields.ToManyField('core.api.FormFieldResource', 'fields', full=True)
 
     class Meta:
         queryset = FormGroup.objects.all()
         resource_name = 'formgroups'
+        always_return_data = True
         excludes = ['_order']
+        authorization = Authorization()
 
-        authentication = ApiKeyAuthentication()
+
+class FormFieldResource(ModelResource):
+    group = fields.ForeignKey(FormGroupResource, 'group')
+    options = fields.ToManyField('core.api.FormFieldOptionResource', 'options', full=True)
+
+    class Meta:
+        queryset = FormField.objects.all()
+        resource_name = 'formfields'
+        always_return_data = True
+        excludes = ['allow_multiple', '_order']
+        authorization = Authorization()
+
+
+class FormFieldOptionResource(ModelResource):
+    field = fields.ForeignKey(FormFieldResource, 'field')
+
+    class Meta:
+        queryset = FormFieldOption.objects.all()
+        resource_name = 'formfieldoptions'
+        always_return_data = True
+        excludes = ['_order']
+        authorization = Authorization()
 
 
 class SubmissionResource(ModelResource):
