@@ -23,6 +23,7 @@ class LocationTypeResource(ModelResource):
         excludes = ['on_display', 'in_form']
 
         authentication = ApiKeyAuthentication()
+        authorization = Authorization()
 
 
 class LocationResource(ModelResource):
@@ -35,6 +36,7 @@ class LocationResource(ModelResource):
         filtering = {
             'name': ALL
         }
+        authorization = Authorization()
 
     def dehydrate_data(self, bundle):
         return ast.literal_eval(bundle.data['data'])
@@ -46,6 +48,7 @@ class PartnerResource(ModelResource):
         resource_name = 'partners'
 
         authentication = ApiKeyAuthentication()
+        authorization = Authorization()
 
 
 class RoleResource(ModelResource):
@@ -54,6 +57,7 @@ class RoleResource(ModelResource):
         resource_name = 'roles'
 
         authentication = ApiKeyAuthentication()
+        authorization = Authorization()
 
 
 class ContactResource(ModelResource):
@@ -68,6 +72,7 @@ class ContactResource(ModelResource):
         filtering = {
             'observer_id': ALL
         }
+        authorization = Authorization()
 
     def dehydrate_data(self, bundle):
         return ast.literal_eval(bundle.data['data'])
@@ -136,6 +141,7 @@ class SubmissionResource(ModelResource):
         resource_name = 'submissions'
 
         authentication = ApiKeyAuthentication()
+        authorization = Authorization()
 
     def dehydrate_data(self, bundle):
         return ast.literal_eval(bundle.data['data'])
