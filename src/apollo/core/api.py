@@ -23,6 +23,7 @@ class LocationTypeResource(ModelResource):
         excludes = ['on_display', 'in_form']
 
         authentication = ApiKeyAuthentication()
+        authorization = Authorization()
 
 
 class LocationResource(ModelResource):
@@ -35,6 +36,7 @@ class LocationResource(ModelResource):
         filtering = {
             'name': ALL
         }
+        authorization = Authorization()
 
     def dehydrate_data(self, bundle):
         return ast.literal_eval(bundle.data['data'])
@@ -46,6 +48,7 @@ class PartnerResource(ModelResource):
         resource_name = 'partners'
 
         authentication = ApiKeyAuthentication()
+        authorization = Authorization()
 
 
 class RoleResource(ModelResource):
@@ -54,6 +57,7 @@ class RoleResource(ModelResource):
         resource_name = 'roles'
 
         authentication = ApiKeyAuthentication()
+        authorization = Authorization()
 
 
 class ContactResource(ModelResource):
@@ -68,32 +72,63 @@ class ContactResource(ModelResource):
         filtering = {
             'observer_id': ALL
         }
+        authorization = Authorization()
 
     def dehydrate_data(self, bundle):
         return ast.literal_eval(bundle.data['data'])
 
 
 class FormResource(ModelResource):
+    groups = fields.ToManyField('core.api.FormGroupResource', 'groups', full=True)
+
     class Meta:
         queryset = Form.objects.all()
         resource_name = 'forms'
-        fields = ['name']
-
+        always_return_data = True
+        fields = ['name', 'type', 'trigger', 'field_pattern']
         authentication = ApiKeyAuthentication()
+        authorization = Authorization()
 
     def dehydrate_options(self, bundle):
         return ast.literal_eval(bundle.data['options'])
 
 
 class FormGroupResource(ModelResource):
-    form = fields.ForeignKey(FormResource, 'form', readonly=True, full=True)
+    form = fields.ForeignKey(FormResource, 'form')
+    fields = fields.ToManyField('core.api.FormFieldResource', 'fields', full=True)
 
     class Meta:
         queryset = FormGroup.objects.all()
         resource_name = 'formgroups'
+        always_return_data = True
         excludes = ['_order']
-
         authentication = ApiKeyAuthentication()
+        authorization = Authorization()
+
+
+class FormFieldResource(ModelResource):
+    group = fields.ForeignKey(FormGroupResource, 'group')
+    options = fields.ToManyField('core.api.FormFieldOptionResource', 'options', full=True)
+
+    class Meta:
+        queryset = FormField.objects.all()
+        resource_name = 'formfields'
+        always_return_data = True
+        excludes = ['allow_multiple', '_order']
+        authentication = ApiKeyAuthentication()
+        authorization = Authorization()
+
+
+class FormFieldOptionResource(ModelResource):
+    field = fields.ForeignKey(FormFieldResource, 'field')
+
+    class Meta:
+        queryset = FormFieldOption.objects.all()
+        resource_name = 'formfieldoptions'
+        always_return_data = True
+        excludes = ['_order']
+        authentication = ApiKeyAuthentication()
+        authorization = Authorization()
 
 
 class SubmissionResource(ModelResource):
@@ -106,6 +141,7 @@ class SubmissionResource(ModelResource):
         resource_name = 'submissions'
 
         authentication = ApiKeyAuthentication()
+        authorization = Authorization()
 
     def dehydrate_data(self, bundle):
         return ast.literal_eval(bundle.data['data'])

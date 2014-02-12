@@ -24,6 +24,7 @@ urlpatterns += patterns('',
     (r'^kannel/', KannelBackendView.as_view(backend_name='kannel')),
     (r'^telerivet/', TelerivetBackendView.as_view(backend_name='telerivet')),
     (r'^messages/', include('messagelog.urls')),
+    (r'^formbuilder/', include('formbuilder.urls')),
     (r'', include('core.urls')),
     (r'^favicon.ico', redirect_to, {'url': '/assets/ico/favicon.ico', 'permanent': True}),
     (r'^robots\.txt$', lambda r: HttpResponse("User-agent: *\nDisallow: /", mimetype="text/plain"))

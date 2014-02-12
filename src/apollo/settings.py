@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     # the essentials.
     "anambra",
     "core",
+    "formbuilder",
     "messagelog",
 
     "django_nose",

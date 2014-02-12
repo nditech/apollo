@@ -1,0 +1,23 @@
+{% extends "formbuilder/layout.html" %}
+{% load url from future %}
+{% block content %}
+<p class="lead">Forms List</p>
+<div class="row">
+	<div class="col-sm-5">
+		<table class="table table-striped">
+			<tbody>{% for form in object_list %}
+				<tr>
+					<td width="80%"><a href="{% url 'form-detail' form.pk %}">{{ form.name }}</a></td>
+					<td width="20%">
+						<div class="btn-group btn-group-xs pull-right">
+							<a href="{% url 'form-update' form.pk %}" class="btn btn-default"><span class="glyphicon glyphicon-pencil"></span></a>
+							<a href="{% url 'form-delete' form.pk %}" class="btn btn-danger"><span class="glyphicon glyphicon-remove"></span></a>
+						</div>
+					</td>
+				</tr>{% endfor %}
+			</tbody>
+		</table>
+	</div>
+</div>
+<p><a href="{% url 'form-create' %}" class="btn btn-primary">Create Form</a></p>
+{% endblock %}
