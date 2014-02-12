@@ -55,7 +55,6 @@ RAPIDSMS_ROUTER = "rapidsms.router.db.DatabaseRouter"
 INSTALLED_APPS = [
 
     # the essentials.
-    "anambra",
     "core",
     "formbuilder",
     "messagelog",
@@ -307,7 +306,6 @@ PIPELINE_CSS = {
     'apollo': {
         'source_filenames': (
           'css/bootstrap.css',
-          'css/bootstrap-responsive.css',
           'css/select2.css',
           'css/table-fixed-header.css',
           'css/datepicker.css',
