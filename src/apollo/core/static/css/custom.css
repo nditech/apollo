@@ -1,3 +1,7 @@
+.panel-login {margin-top: 7em;}
+.panel-heading-login {font-size: 18px;}
+.panel-login-body{padding:45px;}
+
 .h_style { border-top: 1px dashed #D3DAD9; border-bottom: 1px dashed #D3DAD9; font-weight: normal; padding-top:.5em; padding-bottom:.5em; padding-left:1em; }
 .con_style { padding-top:1.2em; padding-bottom:1em; }
 .options { display: block; margin-top: 0.5em; }
