@@ -1,10 +1,11 @@
-import logging
 import ast
+import logging
 try:
     import cPickle as pickle
 except ImportError:
     import pickle
 from lxml import etree
+from types import TypeType
 from django.conf import settings
 from django.db import transaction
 import tabimport
@@ -12,6 +13,18 @@ from .models import Form, LocationType, Location, Edge, Observer, ObserverRole, 
 
 
 logger = logging.getLogger(__name__)
+
+
+def get_full_class_name(item):
+    if isinstance(item, TypeType):
+        cls = item
+    else:
+        cls = item.__class__
+    module = cls.__module__
+    if module == str.__module__:
+        return cls.__name__
+    else:
+        return '{}.{}'.format(module, cls.__name__)
 
 
 @transaction.commit_manually

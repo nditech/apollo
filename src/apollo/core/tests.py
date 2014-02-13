@@ -7,6 +7,7 @@ Replace this with more appropriate tests for your application.
 
 from csv import DictReader
 from django.test import TestCase
+from mongoengine import Document, StringField, connect
 from .forms import generate_submission_form
 from .models import *
 from .views import export
@@ -129,3 +130,19 @@ class CoreTest(TestCase):
         other = self.test_field.parse('AA23BD237BA15')
         self.assertEqual(other, 'AA23BA15')
         self.assertEqual(self.test_field.value, -1)
+
+
+class AuthTest(TestCase):
+    db_name = 'test_database'
+
+    class TreasureChest(Document):
+        location = StringField()
+
+    def setUp(self):
+        self.connection = connect(self.db_name)
+
+    def test_nothing(self):
+        self.assertEqual(2, 2)
+
+    def tearDown(self):
+        self.connection.drop_database(self.db_name)
