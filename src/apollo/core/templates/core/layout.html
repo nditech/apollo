@@ -24,42 +24,33 @@
     {% block head %}{% endblock %}
   </head>
   <style type="text/css">
-     .nav .dropdown-toggle .caret{border-top-color:#ffffff;}
-     .nav .dropdown-toggle .caret:hover{border-top-color:#ffffff;}
   </style>
   <body>
-    <div class="navbar navbar-static-top">
-      <div class="navbar-inner">
-        <div class="container">
-          <div class="row">
-            <div class="span1">
-              <a class="brand" href="#">Apollo</a>
-            </div>
-            <div class="span11">
-              <ul class="nav">
-                <li><a href="{% url dashboard %}"><i class="icon-home"></i> {% trans "Dashboard" %}</a></li>
-                {% forms_menu request perms %}
-                {% if perms.core.can_analyse %}{% analysis_menu request %}{% endif %}
-                {% if perms.core.view_observers %}<li><a href="{% url contacts_list %}"><i class="icon-user"></i> {% trans "Observers" %}</a></li>{% endif %}
-                {% if perms.messagelog.view_messages %}<li><a href="{% url messages_list %}"><i class="icon-envelope"></i> {% trans "Messages" %}</a></li>{% endif %}
+    <div class="navbar navbar-default navbar-static-top">
+      <div class="container">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="#">Apollo</a>
+        </div>
+        <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="{% url dashboard %}"><i class="glyphicon glyphicon-user glyphicon-home"></i> {% trans "Dashboard" %}</a></li>
+            {% forms_menu request perms %}
+            {% if perms.core.can_analyse %}{% analysis_menu request %}{% endif %}
+            {% if perms.core.view_observers %}<li><a href="{% url contacts_list %}"><i class="glyphicon glyphicon-user"></i> {% trans "Observers" %}</a></li>{% endif %}
+            {% if perms.messagelog.view_messages %}<li><a href="{% url messages_list %}"><i class="glyphicon glyphicon-envelope"></i> {% trans "Messages" %}</a></li>{% endif %}
+            <li class="divider-vertical"></li>
+            <li>
+              <a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="glyphicon glyphicon-user glyphicon-white"></i> {{ request.user.username }} <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li><a href="{% url user-logout %}">{% trans "Logout" %}</a></li>
               </ul>
-              <ul class="nav pull-right">
-                <li class="pull-right">
-                  <div class="btn-group pull-right">
-                    <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-user icon-white"></i> {{ request.user.username }} <span class="caret"></span></a>
-                    <ul class="dropdown-menu pull-right">
-                      <li><a href="{% url user-logout %}">{% trans "Logout" %}</a></li>
-                    </ul>
-                  </div>
-                </li>
-              </ul>
-            </div>
-          </div>            
+            </li>
+          </ul>
         </div>
       </div>
     </div>
-    <div class="container con_style">
-      <h3 class="h_style">{% block title %}{{ page_title }}{% endblock %}{% activity_name request %}</h3>
+    <div class="container">
+      <p class="lead">{% block title %}{{ page_title }}{% endblock %}{% activity_name request %}</p>
     </div>
     <div class="container">
       {% block content %}{% endblock %}
