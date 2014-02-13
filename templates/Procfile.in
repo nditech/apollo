@@ -1,2 +1,0 @@
-web: ${buildout:bin-directory}/uwsgi --ini ${buildout:parts-directory}/uwsgi/${django:control-script}.ini
-worker: ${buildout:bin-directory}/apollo celeryd -lINFO
