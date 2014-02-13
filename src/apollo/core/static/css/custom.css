@@ -2,8 +2,18 @@
 .panel-heading-login {font-size: 18px;}
 .panel-login-body{padding:45px;}
 
-.h_style { border-top: 1px dashed #D3DAD9; border-bottom: 1px dashed #D3DAD9; font-weight: normal; padding-top:.5em; padding-bottom:.5em; padding-left:1em; }
-.con_style { padding-top:1.2em; padding-bottom:1em; }
+.divider-vertical {
+height: 35px;
+margin: 0 0px;
+border-width: 0 1px;
+border-style: solid;
+border-top-style: solid;
+border-left-color: #288EE2;
+border-right-color: #64adea;
+}
+
+.navbar-nav>li>a {text-shadow: 1px 1px 2px rgba(0,0,0,0.25);}
+
 .options { display: block; margin-top: 0.5em; }
 .option { margin-right: 1em; }
 .gray { background-color: #f9f9f9; }

@@ -350,4 +350,4 @@ class ActivitySelectionForm(forms.Form):
             initial=request.session.get('activity', Activity.default())
                 if request else None,
             empty_label=None,
-            widget=forms.Select(attrs={'class': 'input-xxlarge', 'style': 'width:350px'}))
+            widget=forms.Select(attrs={'class': 'form-control center-block', 'style': 'width:350px'}))
