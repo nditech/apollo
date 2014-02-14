@@ -245,7 +245,7 @@ class DashboardFilter(django_filters.FilterSet):
         'data-placeholder': _('Location')}), queryset=LocationType.objects.filter(on_dashboard=True))
     activity = ActivityFilter(widget=forms.Select(attrs={'class': 'span3'}))
     form = ChecklistFormFilter(widget=forms.HiddenInput())
-    sample = SampleFilter(widget=forms.Select(attrs={'class': 'span2'}))
+    sample = SampleFilter(widget=forms.Select(attrs={'class': 'form-control'}))
 
     class Meta:
         model = Submission
@@ -258,7 +258,7 @@ class DashboardFilter(django_filters.FilterSet):
             widget=forms.HiddenInput(),
             request=request)
         self.filters['form'] = ChecklistFormFilter(
-            widget=forms.Select(attrs={'class': 'span2'}),
+            widget=forms.Select(attrs={'class': 'form-control'}),
             request=request)
 
 

@@ -19,16 +19,16 @@
 {% endblock %}
 {% block content %}
 <div class="row">
-  <div class="span12">
-      <div class="well" style="padding-bottom:0">
-          <form action="{{ request.get_full_path }}" method="get" accept-charset="utf-8" id="filter">
-              <div class="controls controls-row">
+  <div class="col-md-12">
+      <div class="well well-sm">
+          <form action="{{ request.get_full_path }}" method="get" accept-charset="utf-8" id="filter" class="form-inline">
+              <div class="form-group">
                 {% if perms.core.view_activities %}{{ filter_form.activity }}{% endif %}
                 {{ filter_form.sample }}
                 {{ filter_form.form }}
                 {{ filter_form.location }}
-                <button class="btn btn-warning" style="margin-left:1em" type="submit"><i class="icon-search icon-white"></i> {% trans "Filter" context "verb" %}</button>
-                <a class="btn form-reset" style="margin-left:0.5em">{% trans "Reset" context "verb" %}</a>
+                <button class="btn btn-warning" type="submit"><i class="icon-search icon-white"></i> {% trans "Filter" context "verb" %}</button>
+                <a class="btn form-reset btn-default">{% trans "Reset" context "verb" %}</a>
               </div>
           </form>
       </div>
@@ -36,7 +36,7 @@
 </div>
     {% for location in summary %}
     {% if forloop.counter0|divisibleby:"6" %}<div class="row">{% endif %}
-    	<div class="span2">
+    	<div class="col-md-2">
           {% if should_expand %}
           <legend style="text-align:center;border:0"><a href="{% url grouped_dashboard_with_locationtype form_group.id next_location_type.pk %}">{{ location.name }}</a></legend>
           {% else %}
