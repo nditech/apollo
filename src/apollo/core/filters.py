@@ -174,7 +174,7 @@ def generate_contacts_filter():
 
 
 class BaseSubmissionFilter(django_filters.FilterSet):
-    sample = SampleFilter(widget=forms.Select(attrs={'class': 'span2'}))
+    sample = SampleFilter(widget=forms.Select(attrs={'class': 'form-control'}))
 
     def __init__(self, *args, **kwargs):
         request = kwargs.pop('request', None)
@@ -204,9 +204,9 @@ def generate_submission_filter(form):
             ('3', _('%(group)s Complete') % {'group': group.name})
             ]
         fields['group_%d' % (group.pk,)] = FormGroupFilter(label=group.name,
-            choices=CHOICES, widget=forms.Select(attrs={'class': 'span2'}))
+            choices=CHOICES, widget=forms.Select(attrs={'class': 'form-control'}))
     fields['observer__observer_id'] = django_filters.CharFilter(widget=forms.TextInput(attrs={
-        'class': 'span2',
+        'class': 'form-control',
         'placeholder': _('Observer ID')
         }))
 
