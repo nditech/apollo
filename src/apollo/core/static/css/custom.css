@@ -19,6 +19,7 @@ border-right-color: #64adea;
 /*.form-inline .form-group {margin-bottom: .5em;}*/
 .form-inline > * {padding:5px 5px;}
 .h3{margin-top: 0px;}
+.input-mini{width:74px;}
 
 .options { display: block; margin-top: 0.5em; }
 .option { margin-right: 1em; }

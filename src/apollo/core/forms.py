@@ -237,12 +237,12 @@ def generate_submission_form(form, readonly=False):
                 else:
                     fields[field_name] = forms.ChoiceField(choices=choices,
                         help_text=field.description, required=False, label=field.tag,
-                        widget=forms.TextInput(attrs={'class': 'input-mini'}))
+                        widget=forms.TextInput(attrs={'class': 'form-control input-mini'}))
             else:
                 if form.type == 'CHECKLIST':
                     fields[field_name] = forms.IntegerField(help_text=field.description,
                         max_value=field.upper_limit or 9999, min_value=field.lower_limit or 0,
-                        required=False, label=field.tag, widget=forms.TextInput(attrs={'class': 'input-mini'}))
+                        required=False, label=field.tag, widget=forms.TextInput(attrs={'class': 'form-control input-mini'}))
                 else:
                     fields[field_name] = forms.BooleanField(help_text=field.description,
                         required=False, label=field.tag, widget=forms.CheckboxInput())
