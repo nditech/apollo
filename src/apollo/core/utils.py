@@ -5,7 +5,6 @@ try:
 except ImportError:
     import pickle
 from lxml import etree
-from types import TypeType
 from django.conf import settings
 from django.db import transaction
 import tabimport
@@ -16,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 
 def get_full_class_name(item):
-    if isinstance(item, TypeType):
+    if isinstance(item, type):
         cls = item
     else:
         cls = item.__class__
