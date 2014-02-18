@@ -13,9 +13,9 @@
   {% if submission_version %}
   <a class="btn" href="">{{ submission_version.revision.date_created|naturaltime }}<em> — {{ submission_version.revision.user|default_if_none:_('SMS') }}</em></a>
   {% else %}
-  <a class="btn" href="">{% trans "History" %}</a>
+  <a class="btn btn-default" href="">{% trans "History" %}</a>
   {% endif %}
-  <button class="btn dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
+  <button class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
   <ul class="dropdown-menu">
   {% if submission_version %}
     <li>

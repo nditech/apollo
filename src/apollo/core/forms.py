@@ -55,11 +55,11 @@ class SubmissionModelForm(BetterForm):
     observer = forms.ModelChoiceField(queryset=Observer.objects.all(),
         required=False, widget=forms.HiddenInput(
             attrs={'class': 'span5 select2-observers', 'placeholder': _('Observer')}))
-    data__description = forms.CharField(widget=forms.Textarea(attrs={'cols': '40', 'rows': '5', 'style': 'width:40%'}), required=False)
+    data__description = forms.CharField(widget=forms.Textarea(attrs={'cols': '40', 'rows': '5', 'style': 'width:40%', 'class': 'form-control'}), required=False)
     data__location = forms.CharField(required=False, widget=forms.HiddenInput())
-    data__status = forms.ChoiceField(required=False, choices=STATUS_CHOICES)
+    data__status = forms.ChoiceField(required=False, choices=STATUS_CHOICES, widget=forms.Select(attrs={'class': 'form-control span2'}))
     data__verification = forms.CharField(required=False, widget=forms.HiddenInput())
-    data__witness = forms.ChoiceField(required=False, choices=WITNESS_CHOICES)
+    data__witness = forms.ChoiceField(required=False, choices=WITNESS_CHOICES, widget=forms.Select(attrs={'class': 'form-control span5'}))
 
     def __init__(self, *args, **kwargs):
         if 'instance' in kwargs:

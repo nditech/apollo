@@ -174,7 +174,7 @@ def generate_contacts_filter():
 
 
 class BaseSubmissionFilter(django_filters.FilterSet):
-    sample = SampleFilter(widget=forms.Select(attrs={'class': 'form-control'}))
+    sample = SampleFilter(widget=forms.Select(attrs={'class': 'form-control span2'}))
 
     def __init__(self, *args, **kwargs):
         request = kwargs.pop('request', None)
@@ -204,9 +204,9 @@ def generate_submission_filter(form):
             ('3', _('%(group)s Complete') % {'group': group.name})
             ]
         fields['group_%d' % (group.pk,)] = FormGroupFilter(label=group.name,
-            choices=CHOICES, widget=forms.Select(attrs={'class': 'form-control'}))
+            choices=CHOICES, widget=forms.Select(attrs={'class': 'form-control span2'}))
     fields['observer__observer_id'] = django_filters.CharFilter(widget=forms.TextInput(attrs={
-        'class': 'form-control',
+        'class': 'form-control span2',
         'placeholder': _('Observer ID')
         }))
 
@@ -217,7 +217,7 @@ def generate_submission_filter(form):
 
     if form.type == 'INCIDENT':
         fields['status'] = HstoreChoiceFilter(
-            widget=forms.Select(attrs={'class': 'span2'}), label=_('Status'),
+            widget=forms.Select(attrs={'class': 'form-control span2'}), label=_('Status'),
             choices=(('', _('Status')), ('NULL', _('Unmarked')), ('confirmed', _('Confirmed')),
                 ('rejected', _('Rejected')), ('citizen', _('Citizen Report'))))
     return type('SubmissionFilter', (BaseSubmissionFilter,), fields)
@@ -245,7 +245,7 @@ class DashboardFilter(django_filters.FilterSet):
         'data-placeholder': _('Location')}), queryset=LocationType.objects.filter(on_dashboard=True))
     activity = ActivityFilter(widget=forms.Select(attrs={'class': 'span3'}))
     form = ChecklistFormFilter(widget=forms.HiddenInput())
-    sample = SampleFilter(widget=forms.Select(attrs={'class': 'form-control'}))
+    sample = SampleFilter(widget=forms.Select(attrs={'class': 'form-control span2'}))
 
     class Meta:
         model = Submission
@@ -258,7 +258,7 @@ class DashboardFilter(django_filters.FilterSet):
             widget=forms.HiddenInput(),
             request=request)
         self.filters['form'] = ChecklistFormFilter(
-            widget=forms.Select(attrs={'class': 'form-control'}),
+            widget=forms.Select(attrs={'class': 'form-control span2'}),
             request=request)
 
 
