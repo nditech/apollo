@@ -11,4 +11,5 @@ django.mo
 include/
 lib/
 local_settings.py
+share/
 src/apollo.egg-info/
