@@ -349,10 +349,10 @@ def generate_submission_flags_filter(form):
             ('',  name),
             ] + map(lambda choice: (choice[0], _(choice[1])), list(settings.FLAG_CHOICES))
         fields[storage] = HstoreChoiceFilter(
-            widget=forms.Select(attrs={'class': 'span2'}), label=name,
+            widget=forms.Select(attrs={'class': 'span2 form-control'}), label=name,
             choices=CHOICES)
     fields['observer_id'] = django_filters.CharFilter(widget=forms.TextInput(attrs={
-        'class': 'span2',
+        'class': 'span2 form-control',
         'placeholder': _('Observer ID')
         }), name="submissions__observer__observer_id")
 
@@ -361,7 +361,7 @@ def generate_submission_flags_filter(form):
         'data-placeholder': _('Location')}))
     fields['activity'] = ActivityFilter(widget=forms.HiddenInput())
     fields['verification'] = HstoreChoiceFilter(
-        widget=forms.Select(attrs={'class': 'span2'}), label=_('Verification'),
+        widget=forms.Select(attrs={'class': 'span2 form-control'}), label=_('Verification'),
         choices=map(lambda choice: (choice[0], _(choice[1])), list(settings.STATUS_CHOICES)))
 
     return type('SubmissionFlagsFilter', (BaseSubmissionFilter,), fields)
