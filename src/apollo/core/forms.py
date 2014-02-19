@@ -318,7 +318,8 @@ def generate_verification_form(form, readonly=False):
         ('5', _('Rejected'))
     )
 
-    fields['data__verification'] = forms.ChoiceField(choices=choices, required=False, label=_('Verification'))
+    fields['data__verification'] = forms.ChoiceField(choices=choices, required=False, label=_('Verification'), widget=forms.Select(
+            attrs={'class': 'form-control span2'}))
 
     metaclass = type('Meta', (), {'fields': tuple(field_names)})
     fields['Meta'] = metaclass
