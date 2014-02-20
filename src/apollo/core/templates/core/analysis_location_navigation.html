@@ -1,5 +1,5 @@
 {% if locations %}
-<ul class="nav nav-pills">
+<ul class="nav nav-pills nav-style">
     {% for location in locations %}
     	{% if analysis_type == 'process' %}
 	    <li><a href="{% if tag %}{% url submissions_analysis_location_tag form.pk location.pk tag %}{% else %}{% url submissions_analysis_location form.pk location.pk %}{% endif %}">{{ location.name }}</a></li>

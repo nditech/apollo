@@ -263,7 +263,7 @@ class DashboardFilter(django_filters.FilterSet):
 
 
 class BaseSubmissionsAnalysisFilter(django_filters.FilterSet):
-    sample = SampleFilter(widget=forms.Select(attrs={'class': 'span2'}))
+    sample = SampleFilter(widget=forms.Select(attrs={'class': 'form-control span2'}))
     activity = ActivityFilter(widget=forms.HiddenInput())
 
     class Meta:
