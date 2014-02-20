@@ -10,6 +10,7 @@ bin/
 django.mo
 include/
 lib/
+man/
 local_settings.py
 share/
 src/apollo.egg-info/
