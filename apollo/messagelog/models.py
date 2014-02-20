@@ -1,8 +1,3 @@
-from mongoengine import *
-from datetime import datetime
+from django.db import models
 
-
-class Message(Document):
-    sender = StringField()
-    text = StringField()
-    timestamp = DateTimeField(default=datetime.utcnow())
+# Create your models here.
