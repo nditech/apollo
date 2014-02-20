@@ -1,6 +1,28 @@
 from mongoengine import *
 
 
+# Deployments
+class Deployment(Document):
+    '''Multi-tenancy in Apollo is managed using a system of deployments.
+    Each deployment is separated from the other based on hostnames supplied
+    by a browser or requesting agent.
+
+    :attr:`name` A name given to the deployment.
+    :attr:`database` The name of the database where all collections for
+    the deployment will be stored.
+    :attr:`hostnames` A list of hostnames representing the deployment.'''
+
+    name = StringField()
+    database = StringField()
+    hostnames = ListField(StringField())
+
+    meta = {
+        'indexes': [
+            ['hostnames']
+        ]
+    }
+
+
 # Event
 class Event(Document):
     name = StringField()
