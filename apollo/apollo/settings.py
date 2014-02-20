@@ -44,6 +44,7 @@ INSTALLED_APPS = (
 )
 
 MIDDLEWARE_CLASSES = (
+    'core.middleware.DeploymentMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -68,12 +69,19 @@ MONGOENGINE_USER_DOCUMENT = 'mongoengine.django.auth.User'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.dummy'
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': ':memory:',
     }
 }
 
+MONGO_DATABASE_HOST = os.environ.get('MONGO_DATABASE_HOST',
+                                     'mongodb://localhost')
+MONGO_DATABASE_NAME = os.environ.get('MONGO_DATABASE_NAME', 'apollo')
 from mongoengine import connect
-connect('apollo', host=os.environ.get('DATABASE_URL'))
+connect(MONGO_DATABASE_NAME, host=MONGO_DATABASE_HOST)
+
+# Testing
+TEST_RUNNER = 'core.utils.test.MongoEngineTestSuiteRunner'
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.6/topics/i18n/
