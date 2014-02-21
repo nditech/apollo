@@ -45,14 +45,14 @@
     					<tr>
     						<td><strong>{{ location }}</strong></td>
     						{% if tag_stats.type == 'numeric' %}
-    						<td align="right">{{ tag_stats.mean|floatformat:0 }}</td>
+    						<td>{{ tag_stats.mean|floatformat:0 }}</td>
     						{% else %}
     						{% for value, percentage in tag_stats.histogram %}
     						<td>{{ percentage|floatformat:0 }}% ({{ value }})</td>
     						{% endfor %}
     						{% endif %}
-    						<td align="right">{{ tag_stats.percent_reported|floatformat:0 }}% ({{ tag_stats.reported }})</td>
-    						<td align="right">{{ tag_stats.percent_missing|floatformat:0 }}% ({{ tag_stats.missing }})</td>
+    						<td>{{ tag_stats.percent_reported|floatformat:0 }}% ({{ tag_stats.reported }})</td>
+    						<td>{{ tag_stats.percent_missing|floatformat:0 }}% ({{ tag_stats.missing }})</td>
     					</tr>
     					{% for location_type, location_type_summary in process_summary.groups %}
     					{% for tag, question, tag_stats in location_type_summary %}
@@ -61,14 +61,14 @@
     					<tr>
     						<td><span style="margin-left:2em">{{ location }} · <span class="text-muted"><em>{% trans location_type %}</em></span></span></td>
     						{% if tag_stats.type == 'numeric' %}
-    						<td align="right">{{ location_stats.mean|floatformat:0 }}</td>
+    						<td>{{ location_stats.mean|floatformat:0 }}</td>
     						{% else %}
     						{% for value, percentage in location_stats.histogram %}
     						<td>{{ percentage|floatformat:0 }}% ({{ value }})</td>
     						{% endfor %}
     						{% endif %}
-    						<td align="right">{{ location_stats.percent_reported|floatformat:0 }}% ({{ location_stats.reported }})</td>
-    						<td align="right">{{ location_stats.percent_missing|floatformat:0 }}% ({{ location_stats.missing }})</td>
+    						<td>{{ location_stats.percent_reported|floatformat:0 }}% ({{ location_stats.reported }})</td>
+    						<td>{{ location_stats.percent_missing|floatformat:0 }}% ({{ location_stats.missing }})</td>
     					</tr>
                         {% endwith %}
     					{% endfor %}
