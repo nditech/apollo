@@ -77,8 +77,11 @@ DATABASES = {
 MONGO_DATABASE_HOST = os.environ.get('MONGO_DATABASE_HOST',
                                      'mongodb://localhost')
 MONGO_DATABASE_NAME = os.environ.get('MONGO_DATABASE_NAME', 'apollo')
-from mongoengine import connect
-connect(MONGO_DATABASE_NAME, host=MONGO_DATABASE_HOST)
+from mongoengine import connection
+try:
+    connection.connect(MONGO_DATABASE_NAME, host=MONGO_DATABASE_HOST)
+except connection.ConnectionError:
+    pass
 
 # Testing
 TEST_RUNNER = 'core.utils.test.MongoEngineTestSuiteRunner'
