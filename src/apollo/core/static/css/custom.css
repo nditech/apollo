@@ -40,7 +40,7 @@ img {
   max-width: none;
 }
 
-.nav-style{margin-bottom: 20px;}
+.nav-style, .nav-tabs{margin-bottom: 20px;}
 
 .tabs-below > .nav-tabs,
 .tabs-right > .nav-tabs,
