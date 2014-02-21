@@ -25,9 +25,17 @@ class Deployment(Document):
 
 # Event
 class Event(Document):
+    deployment = ReferenceField('Deployment')
     name = StringField()
-    state_date = DateTimeField()
+    start_date = DateTimeField()
     end_date = DateTimeField()
+
+    meta = {
+        'indexes': [
+            ['deployment', 'name'],
+            ['deployment', 'start_date', '-end_date']
+        ]
+    }
 
 
 # Forms
@@ -116,6 +124,7 @@ class Form(Document):
         'indexes': [
             ['prefix'],
             ['events'],
+            ['events', 'prefix'],
             ['events', 'form_type']
         ]
     }
@@ -223,7 +232,8 @@ class Location(Document):
             ['events'],
             ['location_type'],
             ['name', 'location_type'],
-            ['code']
+            ['code'],
+            ['events', 'code']
         ]
     }
 
