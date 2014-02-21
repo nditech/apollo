@@ -288,11 +288,11 @@ def generate_submission_analysis_filter(form):
     fields['activity'] = ActivityFilter(widget=forms.HiddenInput())
     if form.type == 'INCIDENT':
         fields['status'] = HstoreChoiceFilter(
-            widget=forms.Select(attrs={'class': 'span2'}), label=_('Status'),
+            widget=forms.Select(attrs={'class': 'form-control span2'}), label=_('Status'),
             choices=(('', _('Status')), ('NULL', _('Unmarked')), ('confirmed', _('Confirmed')),
                 ('rejected', _('Rejected')), ('citizen', _('Citizen Report'))))
         fields['witness'] = HstoreChoiceFilter(
-            widget=forms.Select(attrs={'class': 'span2'}), label=_('Status'),
+            widget=forms.Select(attrs={'class': 'form-control span2'}), label=_('Status'),
             choices=(('', _('Witness')), ('NULL', _('Unspecified')), ('witnessed', _('Witnessed incident')),
                 ('after', _('Arrived after incident')), ('reported', _('Incident was reported'))))
 
