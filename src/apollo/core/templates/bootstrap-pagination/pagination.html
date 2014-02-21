@@ -1,6 +1,6 @@
 {% load bootstrap_pagination %}{% load i18n %}
-<div class="pagination {% if alignment == "center" %}pagination-centered{% endif %}{% if alignment == "right" %}pagination-right{% endif %} {% block extra_classes %}{% endblock %}">    
-    <ul>    
+<div class="text-center">    
+    <ul class="pagination {% if alignment == "center" %}pagination-centered{% endif %}{% if alignment == "right" %}pagination-right{% endif %} {% block extra_classes %}{% endblock %}">    
     {% if show_first_last %}
          <li {% if not page.has_previous %}class="disabled"{% endif %}>         
             <a title="{% trans "First Page" %}" href="{{ first_page_url|default:"#" }}">{{first_label}}</a>
@@ -29,14 +29,14 @@
     {% endif %}   
     {% if show_first_last %}
         <li {% if not page.has_next %}class="disabled"{% endif %}>            
-            <a title="{% trans "Last Page" %}" href="{{ last_page_url|default:"#" }}">{{last_label}}</a>                       
+            <a title="{% trans "Last Page" %}" href="{{ last_page_url|default:"#" }}">{{last_label}}</a>   
         </li>      
     {% endif %}
     </ul> 
 </div>
 {% if page.has_next or page.has_previous %}
-<div class="pagination {% if alignment == "center" %}pagination-centered{% endif %}{% if alignment == "right" %}pagination-right{% endif %}">    
-    <ul>    
+<div class="text-center">    
+    <ul class="pagination {% if alignment == "center" %}pagination-centered{% endif %}{% if alignment == "right" %}pagination-right{% endif %}"  style="margin-top:0px;">    
         <li class="disabled">
             <a href="">{% blocktrans with start=page.start_index end=page.end_index count=page.paginator.count %}Showing: <strong>{{ start }}-{{ end }}</strong> of <strong>{{ count }}</strong>{% endblocktrans %}</a>
         </li>

@@ -23,6 +23,7 @@ border-right-color: #64adea;
 .span6{width: 510px;}
 .select2-container .select2-choice{height: 34px; padding-top: 2.5px;}
 .form-container{padding: 0px;}
+.responsive{overflow: auto;}
 
 .options { display: block; margin-top: 0.5em; }
 .option { margin-right: 1em; }
@@ -40,7 +41,7 @@ img {
   max-width: none;
 }
 
-.nav-style{margin-bottom: 20px;}
+.nav-style, .nav-tabs{margin-bottom: 20px;}
 
 .tabs-below > .nav-tabs,
 .tabs-right > .nav-tabs,

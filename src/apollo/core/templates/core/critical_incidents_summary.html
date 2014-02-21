@@ -16,21 +16,23 @@
 {% endblock %}
 {% block content %}
 <div class="row">
-	<div class="span5">
+	<div class="col-md-5">
 		{% analysis_breadcrumb_navigation form location %}
   	</div>
-  	<div class="span7">
-        <form class="form-horizontal pull-right" action="" method="get" accept-charset="utf-8">
-          {{ filter_form.sample }}{{ filter_form.status }} {{ filter_form.witness }}
-          <button class="btn btn-warning" type="submit"><i class="icon-search icon-white"></i> {% trans "Filter" context "verb" %}</button>
+  	<div class="col-md-7">
+        <form class="form-inline pull-right" action="" method="get" accept-charset="utf-8">
+          <div class="form-group form-container">{{ filter_form.sample }} {{ filter_form.status }} {{ filter_form.witness }}</div>
+          <button class="btn btn-warning" type="submit"><i class="glyphicon glyphicon-search"></i> {% trans "Filter" context "verb" %}</button>
         </form>
   	</div>
-    <div class="span12">
+ </div>
+ <div class="row">
+ 	<div class="col-md-12">
         {% analysis_location_navigation form location %}
     </div>
  </div>
  <div class="row">
-	<div class="span12">
+	<div class="col-md-12">
 		{% if incidents_summary.top %}
 		<div class="tabbable"> <!-- Only required for left/right tabs -->
 			<ul class="nav nav-tabs">
@@ -400,7 +402,6 @@
 							 
 						}
 					</script>
-				 </div>
 				</div>
 			</div>
 		</div>
