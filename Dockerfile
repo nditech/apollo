@@ -16,7 +16,5 @@ ADD doc/ /app/doc/
 ADD Procfile.docker /app/Procfile
 
 WORKDIR /app/
-CMD ["start"]
-ENTRYPOINT ["honcho"]
-
+CMD ["honco","start"]
 EXPOSE 5000
