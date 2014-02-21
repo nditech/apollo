@@ -10,6 +10,7 @@ https://docs.djangoproject.com/en/1.6/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+import urlparse
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 ugettext = lambda s: s
 
@@ -74,9 +75,17 @@ DATABASES = {
     }
 }
 
-MONGO_DATABASE_HOST = os.environ.get('MONGO_DATABASE_HOST',
-                                     'mongodb://localhost')
+# Support for LXC-based containers
+if os.environ.get('container') == 'lxc':
+    MONGO_ENV_NAME = 'MONGODB_PORT'
+else:
+    MONGO_ENV_NAME = 'MONGO_DATABASE_HOST'
+
+MONGO_DATABASE_HOST = urlparse.urlparse(
+    os.environ.get(MONGO_ENV_NAME, 'mongodb://localhost')).netloc
 MONGO_DATABASE_NAME = os.environ.get('MONGO_DATABASE_NAME', 'apollo')
+
+
 from mongoengine import connection
 try:
     connection.connect(MONGO_DATABASE_NAME, host=MONGO_DATABASE_HOST)
