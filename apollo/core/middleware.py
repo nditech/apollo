@@ -1,7 +1,5 @@
 # Middleware
 from core.documents import Deployment
-from django.conf import settings
-from mongoengine.connection import connect, disconnect
 
 
 class DeploymentMiddleware(object):
@@ -12,7 +10,6 @@ class DeploymentMiddleware(object):
         deployment = Deployment.objects.get(
             hostnames=request.META.get('HTTP_HOST'))
         if deployment:
-            disconnect()
-            connect(deployment.database, host=settings.MONGO_DATABASE_HOST)
+            request.deployment = deployment
 
         return None
