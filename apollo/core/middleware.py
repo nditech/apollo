@@ -7,9 +7,10 @@ class DeploymentMiddleware(object):
     executing queries.'''
 
     def process_request(self, request):
-        deployment = Deployment.objects.get(
-            hostnames=request.META.get('HTTP_HOST'))
-        if deployment:
-            request.deployment = deployment
+        try:
+            request.deployment = Deployment.objects.get(
+                hostnames=request.META.get('HTTP_HOST'))
+        except Deployment.DoesNotExist:
+            request.deployment = None
 
         return None
