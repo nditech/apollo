@@ -1,7 +1,10 @@
 from __future__ import unicode_literals
+from datetime import datetime
 from django.contrib.auth.hashers import make_password
-from mongoengine import BooleanField, Document, EmailField, ListField
-from mongoengine import ObjectIdField, ReferenceField, StringField
+from mongoengine import BooleanField, DateTimeField, DictField, Document
+from mongoengine import DynamicDocument, EmailField, EmbeddedDocument
+from mongoengine import EmbeddedDocumentField, GeoPointField, IntField
+from mongoengine import ListField, ObjectIdField, ReferenceField, StringField
 from .utils import get_full_class_name
 
 
@@ -12,7 +15,9 @@ class PrincipalMixin(object):
         model_class = get_full_class_name(cls)
         permission = Permission.objects.get(codename=name, model=model_class)
 
-        permission.principals.append(self.id)
+        principals = set(permission.principals)
+        principals.add(self.id)
+        permission.principals = list(principals)
         permission.save()
 
         self._invalidate_permissions_cache()
@@ -21,31 +26,19 @@ class PrincipalMixin(object):
         model_class = get_full_class_name(cls)
         permission = Permission.objects.get(codename=name, model=model_class)
 
-        permission.principals.remove(self.id)
+        principals = set(permission.principals)
+        try:
+            principals.remove(self.id)
+        except KeyError:
+            return
+
+        permission.principals = list(principals)
         permission.save()
 
         self._invalidate_permissions_cache()
 
 
 class ProtectedResourceMixin(object):
-    '''Mixin base class for creating subclasses that require
-    class-level permissions.
-
-    To use this mixin in a model class, add this to the list of base
-    classes and if necessary, override the default permissions in the
-    meta dictionary for that model class, for example:
-
-    class MyModel(Document):
-        myfield = StringField()
-
-        meta = {
-            # ...
-            'permissions': (
-                ('edit', 'Can edit'),
-            ),
-            # ...
-        }
-    '''
     default_permissions = (
         ('add', 'Can add'),
         ('change', 'Can change'),
@@ -79,6 +72,11 @@ class Permission(Document):
     codename = StringField(max_length=50, unique_with='model')
     name = StringField(max_length=100)
     model = StringField()
+    principals = ListField(ObjectIdField())
+
+
+class ObjectPermission(Document):
+    permission = ReferenceField(Permission)
     principals = ListField(ObjectIdField())
 
 
@@ -142,6 +140,13 @@ class User(Document, PrincipalMixin):
 
         return self._group_perm_cache
 
+    @property
+    def all_permissions(self):
+
+        permissions = set()
+        permissions.update(self.group_permissions)
+        permissions.update(self.user_permissions)
+
     def has_permission(self, name, cls):
         if self.is_superuser and self.is_active:
             return True
@@ -170,36 +175,10 @@ class User(Document, PrincipalMixin):
         self.password = make_password(plaintext)
 
 
-class AnonymousUser(object):
-    id = None
-
-    @property
-    def is_active(self):
-        return False
-
-    @property
-    def is_superuser(self):
-        return False
-
-    @property
-    def groups(self):
-        return None
-
-    def is_anonymous(self):
-        return True
-
-    def has_permission(self, name, cls_or_obj):
-        return False
-
-    def add_permission(self, name, cls_or_obj):
-        raise NotImplementedError
-
-    def remove_permission(self, name, cls_or_obj):
-        raise NotImplementedError
-
-    def save(self, *args, **kwargs):
-        raise NotImplementedError
-
-    @property
-    def permissions(self):
-        return None
+class Version(Document):
+    model = StringField(required=True)
+    obj = ObjectIdField(required=True)
+    data = StringField(required=True)
+    version_number = LongField(default=0)
+    timestamp = DateTimeField(default=datetime.utcnow())
+    changed_by = ReferenceField(User)
