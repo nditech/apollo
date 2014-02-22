@@ -175,10 +175,9 @@ class User(Document, PrincipalMixin):
         self.password = make_password(plaintext)
 
 
-class Version(Document):
-    model = StringField(required=True)
+class SubmissionVersion(Document):
     obj = ObjectIdField(required=True)
     data = StringField(required=True)
     version_number = LongField(default=0)
     timestamp = DateTimeField(default=datetime.utcnow())
-    changed_by = ReferenceField(User)
+    changed_by = ReferenceField(User, required=True)
