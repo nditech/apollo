@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 from datetime import datetime
 from django.contrib.auth.hashers import make_password
+from mongoengine import signals
 from mongoengine import BooleanField, DateTimeField, DictField, Document
 from mongoengine import DynamicDocument, EmailField, EmbeddedDocument
 from mongoengine import EmbeddedDocumentField, GeoPointField, IntField
@@ -178,6 +179,21 @@ class User(Document, PrincipalMixin):
 class SubmissionVersion(Document):
     obj = ObjectIdField(required=True)
     data = StringField(required=True)
-    version_number = LongField(default=0)
+    version = LongField(default=0)
     timestamp = DateTimeField(default=datetime.utcnow())
     changed_by = ReferenceField(User, required=True)
+
+    meta = {
+        'ordering': ['-version', '-timestamp']
+    }
+
+    @classmethod
+    def update_version_counter(cls, sender, document, **kwargs):
+        # get previous version's number
+        prev_version = cls.objects.filter(obj=document.obj).first()
+        version = (prev_version.version if prev_version else 0) + 1
+        document.version = version
+
+
+##### SIGNALS #####
+signals.connect(SubmissionVersion.update_version_counter, sender=SubmissionVersion)
