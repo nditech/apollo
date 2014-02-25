@@ -48,21 +48,29 @@ def parse(form, text):
         field.name: get_field_grammar for group in form.groups for field in group.fields}
 
     for tag, grammar in grammar_set.iteritems():
+        tag = tag.upper()
         result = grammar.searchString(cojoined_pairs)
         if not result:
             continue
 
         if len(result) > 1:
-            # someone entered a tag more than once
-            status = PARSE_MULTIPLE_ENTRY
+            # someone entered a tag more than once,
+            # check if they gave different values
+            values = {r[0] for r in result}
+            if len(values) > 1:
+                status = PARSE_MULTIPLE_ENTRY
 
         for match in result:
             # really shouldn't have to do this more than once
             submission_data.update(tag=match[0])
 
         # remove matched text from search string
+        if form.form_type == 'CHECKLIST':
+            pattern = r'{}\d*'.format(tag)
+        else:
+            pattern = tag
         cojoined_pairs = re.sub(
-            r'{}\d*'.format(tag),
+            pattern,
             '',
             cojoined_pairs,
             re.I
