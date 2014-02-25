@@ -4,18 +4,18 @@
 <form method="POST">
   {% csrf_token %}
   <div class="row">
-    <div class="span8 offset2">
+    <div class="col-md-8 col-md-offset-2">
       <table class="table table-striped table-bordered table-hover">
         <tbody>
         {% for field in form %}
           <tr>
             <th>{% if field.label == 'Partner' %}{% trans "Organization" %}{% else %}{{ field.label }}{% endif %}</th>
-            <td>{{ field }}</td>
+            <td class="form-group">{{ field }}</td>
           </tr>
         {% endfor %}
           <tr>
             <td>&nbsp;</td>
-            <td><input type="submit" class="btn btn-primary" value="Save"> <a class="btn" style="margin-left:0.5em" href="{% url contacts_list %}">{% trans "Cancel" %}</a></td>
+            <td><input type="submit" class="btn btn-primary" value="Save"> <a class="btn btn-default" style="margin-left:0.5em" href="{% url contacts_list %}">{% trans "Cancel" %}</a></td>
           </tr>
         </tbody>
       </table>
