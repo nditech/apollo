@@ -138,7 +138,7 @@ class SampleFilter(django_filters.ChoiceFilter):
 
 
 class BaseContactsFilter(django_filters.FilterSet):
-    sample = SampleFilter(widget=forms.Select(attrs={'class': 'span2'}))
+    sample = SampleFilter(widget=forms.Select(attrs={'class': 'form-control span2'}))
 
     class Meta:
         model = Observer
@@ -151,9 +151,9 @@ class BaseContactsFilter(django_filters.FilterSet):
             {'empty_label': _('All Roles')})
         self.filters['partner'].extra.update(
             {'empty_label': _('All Organizations')})
-        self.filters['role'].field.widget.attrs['class'] = 'span3'
-        self.filters['partner'].field.widget.attrs['class'] = 'span3'
-        self.filters['observer_id'].field.widget.attrs['class'] = 'span3'
+        self.filters['role'].field.widget.attrs['class'] = 'form-control span3'
+        self.filters['partner'].field.widget.attrs['class'] = 'form-control span3'
+        self.filters['observer_id'].field.widget.attrs['class'] = 'form-control span3'
         self.filters['observer_id'].field.widget.attrs['placeholder'] = _('Observer ID')
 
 
@@ -167,9 +167,9 @@ def generate_contacts_filter():
         'class': 'span3 input-xlarge select2',
         'data-placeholder': _('Location')}))
     fields['name'] = django_filters.CharFilter(widget=forms.TextInput(attrs={
-        'class': 'span3', 'placeholder': _('Name')}), lookup_type='icontains')
+        'class': 'form-control span3', 'placeholder': _('Name')}), lookup_type='icontains')
     fields['contact__connection__identity'] = django_filters.CharFilter(widget=forms.TextInput(attrs={
-        'class': 'span3', 'placeholder': _('Phone')}), lookup_type='startswith')
+        'class': 'form-control span3', 'placeholder': _('Phone')}), lookup_type='startswith')
     return type('ContactsFilter', (BaseContactsFilter,), fields)
 
 

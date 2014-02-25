@@ -141,7 +141,9 @@ class ContactModelForm(forms.ModelForm):
             attrs={'class': 'span6 select2-locations-noclear', 'data-noclear': 'true', 'placeholder': _('Location')}))
     supervisor = forms.ModelChoiceField(queryset=Observer.objects.all(),
         required=False, widget=ObserverHiddenInput(
-            attrs={'class': 'span5 select2-observers-clear', 'placeholder': _('Supervisor')}))
+            attrs={'class': '         span5 select2-observers-clear', 'placeholder': _('Supervisor')}))
+    observer_id = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control span2'}), required=True)
+    name = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control span2'}), required=True)
 
     class Meta:
         model = Observer
@@ -159,7 +161,7 @@ class ContactModelForm(forms.ModelForm):
             for index, number in enumerate(phone_set):
                 label = _('Phone #%(index)d') % {'index': (index + 1)}
                 name = 'conn_%d' % index
-                self.fields[name] = forms.CharField(label=label, initial=number)
+                self.fields[name] = forms.CharField(label=label, initial=number, widget=forms.TextInput(attrs={'class': 'form-control span2'}))
                 kwargs['initial'][name] = number
             if not phone_set:
                 self.fields['conn_1'] = forms.CharField(label=_('Phone #1'), required=False)
