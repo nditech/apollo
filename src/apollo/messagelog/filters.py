@@ -9,11 +9,11 @@ class MessageFilter(django_filters.FilterSet):
         model = MessageLog
         fields = ['mobile', 'text', 'created']
     mobile = django_filters.CharFilter(widget=forms.TextInput(attrs={
-        'class': 'span2',
+        'class': 'form-control span2',
         'placeholder': _('Mobile')
         }))
     text = django_filters.CharFilter(widget=forms.TextInput(attrs={
-        'class': 'span2',
+        'class': 'form-control span2',
         'placeholder': _('Text')
         }), lookup_type='icontains')
     created = django_filters.DateFilter(widget=forms.TextInput(), lookup_type="gte")
