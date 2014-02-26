@@ -1,4 +1,5 @@
 from django import forms
+from form_utils.forms import BetterForm
 
 
 class BaseHttpForm(forms.Form):
@@ -54,7 +55,7 @@ class TelerivetForm(BaseHttpForm):
         }
 
 
-class BaseQuestionnaireForm(forms.Form):
+class BaseQuestionnaireForm(BetterForm):
     prefix = forms.CharField(required=True)
     participant = forms.CharField(required=True)
     sender = forms.CharField(required=False)
