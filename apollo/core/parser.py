@@ -27,9 +27,11 @@ def get_field_grammar(field):
 def parse(form, text):
     status = PARSE_OK
     if form.form_type == 'CHECKLIST':
-        g = pp.Regex(r'[a-z]{1,2}\d+', re.I)
-    else:
+        g = pp.Regex(r'[a-z]{1,2}\d*', re.I)
+    elif form.form_type == 'INCIDENT':
         g = pp.Word(pp.alphas, exact=1)
+    else:
+        raise TypeError('Form type not supported')
 
     # get everything that looks like a tag
     tag_pairs = [item[0] for item in g.searchString(text)]
@@ -44,8 +46,9 @@ def parse(form, text):
 
     submission_data = {}
     cojoined_pairs = ''.join(tag_pairs)
+
     grammar_set = {
-        field.name: get_field_grammar for group in form.groups for field in group.fields}
+        field.name: get_field_grammar(field) for group in form.groups for field in group.fields}
 
     for tag, grammar in grammar_set.iteritems():
         tag = tag.upper()
@@ -61,8 +64,9 @@ def parse(form, text):
                 status = PARSE_MULTIPLE_ENTRY
 
         for match in result:
+            print match
             # really shouldn't have to do this more than once
-            submission_data.update(tag=match[0])
+            submission_data.update({tag: match[0]})
 
         # remove matched text from search string
         if form.form_type == 'CHECKLIST':
@@ -76,4 +80,9 @@ def parse(form, text):
             re.I
         )
 
+    if cojoined_pairs:
+        print cojoined_pairs
+        status = PARSE_UNEXPECTED_INPUT
+
+    print submission_data, status
     return submission_data, status
