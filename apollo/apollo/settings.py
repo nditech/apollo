@@ -65,6 +65,8 @@ AUTHENTICATION_BACKENDS = (
 AUTH_USER_MODEL = 'mongo_auth.MongoUser'
 MONGOENGINE_USER_DOCUMENT = 'mongoengine.django.auth.User'
 
+SESSION_ENGINE = 'mongoengine.django.sessions'
+SESSION_SERIALIZER = 'mongoengine.django.sessions.BSONSerializer'
 
 # Database
 # https://docs.djangoproject.com/en/1.6/ref/settings/#databases
