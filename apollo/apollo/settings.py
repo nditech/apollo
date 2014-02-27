@@ -97,6 +97,10 @@ except connection.ConnectionError:
 
 # Testing
 TEST_RUNNER = 'core.utils.test.MongoEngineTestSuiteRunner'
+TEST_RUNNER_FILTER = (
+    'core',
+    'messaging'
+)
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.6/topics/i18n/
