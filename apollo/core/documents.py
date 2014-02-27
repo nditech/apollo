@@ -49,11 +49,11 @@ class Event(Document):
 # Forms
 class FormField(EmbeddedDocument):
     '''A :class:`mongoengine.EmbeddedDocument` used in storing the
-    Checklist/Critical Incident form questions in a :class:`core.models.Form`
-    model.
+    Checklist/Critical Incident form questions in a
+    :class:`core.documents.Form` model.
 
-    Each :class:`core.models.FormField` has attributes for specifying various
-    behaviour for the form field.
+    Each :class:`core.documents.FormField` has attributes for specifying
+    various behaviour for the form field.
 
     :attr:`analysis_type` which specifies the sort of data analysis to be
     performed on the field and is defined by the values stored
@@ -92,9 +92,9 @@ class FormField(EmbeddedDocument):
 
 
 class FormGroup(EmbeddedDocument):
-    '''The :class:`core.models.FormGroup` model provides storage for form
-    groups in a :class:`core.models.Form` and are the organizational structure
-    for form fields. Besides the :attr:`fields` attribute for storing
+    '''The :class:`core.documents.FormGroup` model provides storage for form
+    groups in a :class:`core.documents.Form` and are the organizational
+    structure for form fields. Besides the :attr:`fields` attribute for storing
     form fields, there's also a :attr:`name` attribute for storing the name.'''
 
     name = StringField(required=True)
@@ -105,7 +105,7 @@ class Form(Document):
     '''Primary storage for Checklist/Incident Forms.
     Defines the following attributes:
 
-    :attr:`events` a list of refernces to :class:`core.models.Event` objects
+    :attr:`events` a list of refernces to :class:`core.documents.Event` objects
     defining which events this form is to be used in.
 
     :attr:`groups` storage for the form groups in the form.
@@ -146,7 +146,7 @@ class Submission(DynamicEmbeddedDocument):
     exception is for the storage of Critical Incident reports which create
     submissions when data input is received.
 
-    The :class:`core.models.Submission` model
+    The :class:`core.documents.Submission` model
     is a :class:`mongoengine.DynamicEmbeddedDocument` and hence, most of it's
     functionality isn't stored within the model and gets defined at run time
     depending on the configuration of forms, form groups and form fields.
@@ -186,7 +186,7 @@ class Sample(Document):
 
 
 class LocationTypeAncestor(EmbeddedDocument):
-    '''An embedded document used by the :class:`core.models.LocationType`
+    '''An embedded document used by the :class:`core.document.LocationType`
     model for storing denormalized ancestry data'''
 
     name = StringField()
@@ -194,7 +194,7 @@ class LocationTypeAncestor(EmbeddedDocument):
 
 class LocationType(Document):
     '''Stores the type describing the administrative level of a Location
-    :param ancestors: This stores a list references to ancestor
+    :attr ancestors_ref: This stores a list references to ancestor
     loction types as documented in
     http://docs.mongodb.org/manual/tutorial/model-tree-structures/'''
 
@@ -276,12 +276,16 @@ class Participant(DynamicDocument):
 
 
 class VersionSequenceField(SequenceField):
+    '''A subclass of :class: `mongoengine.fields.SequenceField` for
+    automatically updating version numbers'''
     def get_sequence_name(self):
         obj_id = self.owner_document.obj
         return '_'.join(('version', 'seq', str(obj_id)))
 
 
 class SubmissionVersion(Document):
+    '''Stores versions of :class: `core.documents.Submission`
+    instances'''
     obj = ObjectIdField(required=True)
     data = StringField(required=True)
     version = VersionSequenceField()
