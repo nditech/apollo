@@ -59,6 +59,7 @@ class BaseQuestionnaireForm(BetterForm):
     prefix = forms.CharField(required=True)
     participant = forms.CharField(required=True)
     sender = forms.CharField(required=False)
+    comment = forms.CharField(required=False)
 
     # FIXME: add a 'clean' method that will look at the values in
     # self.data and raise a ValidationError if there's a key that
