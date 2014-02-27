@@ -33,6 +33,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = (
     'core',
+    'messaging',
 
     'django.contrib.admin',
     'django.contrib.auth',
@@ -119,3 +120,14 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 
 STATIC_URL = '/assets/'
+
+# Messaging
+ALLOWED_PUNCTUATIONS = '!'  # allowed punctuations in SMS forms
+CHARACTER_TRANSLATIONS = (
+    ('i', '1'),
+    ('I', '1'),
+    ('o', '0'),
+    ('O', '0'),
+    ('l', '1'),
+    ('L', '1'),
+)
