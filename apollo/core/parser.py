@@ -15,11 +15,11 @@ def get_field_grammar(field):
     if field.represents_boolean:
         grammar = tag.setParseAction(lambda t: True)
     elif field.allows_multiple_values:
-        grammar = tag + pp.OneOrMore(
+        grammar = tag.suppress() + pp.OneOrMore(
             pp.Word(pp.nums, exact=1).setParseAction(makeInt)
         )
     else:
-        grammar = tag + pp.Word(pp.nums).setParseAction(makeInt)
+        grammar = tag.suppress() + pp.Word(pp.nums).setParseAction(makeInt)
 
     return grammar
 

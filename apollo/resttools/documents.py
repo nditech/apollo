@@ -21,5 +21,5 @@ class ApiToken(Document):
 
     def save(self, *args, **kwargs):
         if not self.key:
-           self.key = self.generate_key()
+            self.key = self.generate_key()
         return super(ApiToken, self).save(*args, **kwargs)
