@@ -55,11 +55,11 @@ class SubmissionModelForm(BetterForm):
     observer = forms.ModelChoiceField(queryset=Observer.objects.all(),
         required=False, widget=forms.HiddenInput(
             attrs={'class': 'span5 select2-observers', 'placeholder': _('Observer')}))
-    data__description = forms.CharField(widget=forms.Textarea(attrs={'cols': '40', 'rows': '5', 'style': 'width:40%'}), required=False)
+    data__description = forms.CharField(widget=forms.Textarea(attrs={'cols': '40', 'rows': '5', 'style': 'width:40%', 'class': 'form-control'}), required=False)
     data__location = forms.CharField(required=False, widget=forms.HiddenInput())
-    data__status = forms.ChoiceField(required=False, choices=STATUS_CHOICES)
+    data__status = forms.ChoiceField(required=False, choices=STATUS_CHOICES, widget=forms.Select(attrs={'class': 'form-control span2'}))
     data__verification = forms.CharField(required=False, widget=forms.HiddenInput())
-    data__witness = forms.ChoiceField(required=False, choices=WITNESS_CHOICES)
+    data__witness = forms.ChoiceField(required=False, choices=WITNESS_CHOICES, widget=forms.Select(attrs={'class': 'form-control span5'}))
 
     def __init__(self, *args, **kwargs):
         if 'instance' in kwargs:
@@ -141,7 +141,9 @@ class ContactModelForm(forms.ModelForm):
             attrs={'class': 'span6 select2-locations-noclear', 'data-noclear': 'true', 'placeholder': _('Location')}))
     supervisor = forms.ModelChoiceField(queryset=Observer.objects.all(),
         required=False, widget=ObserverHiddenInput(
-            attrs={'class': 'span5 select2-observers-clear', 'placeholder': _('Supervisor')}))
+            attrs={'class': '         span5 select2-observers-clear', 'placeholder': _('Supervisor')}))
+    observer_id = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control span2'}), required=True)
+    name = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control span2'}), required=True)
 
     class Meta:
         model = Observer
@@ -159,7 +161,7 @@ class ContactModelForm(forms.ModelForm):
             for index, number in enumerate(phone_set):
                 label = _('Phone #%(index)d') % {'index': (index + 1)}
                 name = 'conn_%d' % index
-                self.fields[name] = forms.CharField(label=label, initial=number)
+                self.fields[name] = forms.CharField(label=label, initial=number, widget=forms.TextInput(attrs={'class': 'form-control span2'}))
                 kwargs['initial'][name] = number
             if not phone_set:
                 self.fields['conn_1'] = forms.CharField(label=_('Phone #1'), required=False)
@@ -237,12 +239,12 @@ def generate_submission_form(form, readonly=False):
                 else:
                     fields[field_name] = forms.ChoiceField(choices=choices,
                         help_text=field.description, required=False, label=field.tag,
-                        widget=forms.TextInput(attrs={'class': 'input-mini'}))
+                        widget=forms.TextInput(attrs={'class': 'form-control input-mini'}))
             else:
                 if form.type == 'CHECKLIST':
                     fields[field_name] = forms.IntegerField(help_text=field.description,
                         max_value=field.upper_limit or 9999, min_value=field.lower_limit or 0,
-                        required=False, label=field.tag, widget=forms.TextInput(attrs={'class': 'input-mini'}))
+                        required=False, label=field.tag, widget=forms.TextInput(attrs={'class': 'form-control input-mini'}))
                 else:
                     fields[field_name] = forms.BooleanField(help_text=field.description,
                         required=False, label=field.tag, widget=forms.CheckboxInput())
@@ -318,7 +320,8 @@ def generate_verification_form(form, readonly=False):
         ('5', _('Rejected'))
     )
 
-    fields['data__verification'] = forms.ChoiceField(choices=choices, required=False, label=_('Verification'))
+    fields['data__verification'] = forms.ChoiceField(choices=choices, required=False, label=_('Verification'), widget=forms.Select(
+            attrs={'class': 'form-control span2'}))
 
     metaclass = type('Meta', (), {'fields': tuple(field_names)})
     fields['Meta'] = metaclass
@@ -350,4 +353,4 @@ class ActivitySelectionForm(forms.Form):
             initial=request.session.get('activity', Activity.default())
                 if request else None,
             empty_label=None,
-            widget=forms.Select(attrs={'class': 'input-xxlarge', 'style': 'width:350px'}))
+            widget=forms.Select(attrs={'class': 'form-control center-block', 'style': 'width:350px'}))

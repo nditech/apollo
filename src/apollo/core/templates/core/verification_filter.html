@@ -1,7 +1,7 @@
 {% load apollo %}{% load i18n %}
-<div class="well" style="padding-bottom:0">
-  <form action="{% url verifications_list form.pk %}" method="get" id="filter">
-    <div class="controls controls-row">
+<div class="well well-sm">
+  <form action="{% url verifications_list form.pk %}" method="get" id="filter" class="form-inline">
+    <div class="form-group">
       {{ filter_form.observer_id }}
       {{ filter_form.location }}
       {{ filter_form.sample }}
@@ -9,7 +9,7 @@
     </div>
     <div class="controls">
     {% for flag in form_flags %}
-    {% if forloop.counter0|divisibleby:5 %}<div class="controls-row">{% endif %}
+    {% if forloop.counter0|divisibleby:5 %}<div class="form-group">{% endif %}
     {% with filter_form|keyvalue:flag as field %}
     {{ field }}
     {% endwith %}
@@ -18,8 +18,8 @@
     </div>
     
     <div class="">
-      <button type="submit" class="btn btn-warning"><i class="icon-search icon-white"></i> {% trans "Search" context "verb" %}</button>
-      <a class="btn form-reset">{% trans "Clear" context "verb" %}</a>
+      <button type="submit" class="btn btn-warning"><i class="glyphicon glyphicon-search"></i> {% trans "Filter" context "verb" %}</button>
+      <a class="btn btn-default form-reset">{% trans "Clear" context "verb" %}</a>
     </div>
   </form>
 </div>

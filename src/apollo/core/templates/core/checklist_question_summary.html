@@ -15,9 +15,9 @@
 		<td width="100" bgcolor="#eee">{% trans "Missing" %}</td>
 	</tr>
     <tr>
-        <td align="right" style="text-align:right"><strong>{% trans "All" %}</strong></td>
+        <td style="text-align:right"><strong>{% trans "All" %}</strong></td>
 		{% if stats.type == 'continuous' %}
-		<td align="right"><strong>{{ stats.mean|floatformat:1|default_if_nan:_("N/A") }}</strong></td>
+		<td><strong>{{ stats.mean|floatformat:1|default_if_nan:_("N/A") }}</strong></td>
 		{% else %}
 		{% for option in stats.options %}
         {% with stats.options|keyvalue:option as option %}
@@ -25,14 +25,14 @@
         {% endwith %}
 		{% endfor %}
 		{% endif %}
-		<td align="right"><strong>{{ stats.count|percent_of:stats.size|floatformat:0 }}% ({{ stats.count }})</strong></td>
-		<td align="right"><strong>{{ stats.diff|percent_of:stats.size|floatformat:0 }}% ({{ stats.diff }})</strong></td>
+		<td><strong>{{ stats.count|percent_of:stats.size|floatformat:0 }}% ({{ stats.count }})</strong></td>
+		<td><strong>{{ stats.diff|percent_of:stats.size|floatformat:0 }}% ({{ stats.diff }})</strong></td>
 	</tr>
     {% for group in stats.urban %}
     <tr>
-        <td align="right" style="text-align:right">{{ group }}</td>
+        <td>{{ group }}</td>
         {% if stats.type == 'continuous' %}
-        <td align="right">{{ stats.urban|keyvalue:group|keyvalue:"mean"|floatformat:1|default_if_nan:_("N/A") }}</td>
+        <td>{{ stats.urban|keyvalue:group|keyvalue:"mean"|floatformat:1|default_if_nan:_("N/A") }}</td>
         {% else %}
         {% with stats.urban|keyvalue:group|keyvalue:"value_counts_sum" as value_counts_sum %}
         {% with stats.urban|keyvalue:group|keyvalue:"value_counts" as value_counts %}
@@ -46,8 +46,8 @@
         {% with stats.urban|keyvalue:group|keyvalue:"count" as count %}
         {% with stats.urban|keyvalue:group|keyvalue:"size" as size %}
         {% with stats.urban|keyvalue:group|keyvalue:"diff" as diff %}
-        <td align="right">{{ count|percent_of:size|floatformat:0 }}% ({{ count }})</td>
-        <td align="right">{{ diff|percent_of:size|floatformat:0 }}% ({{ diff }})</td>
+        <td>{{ count|percent_of:size|floatformat:0 }}% ({{ count }})</td>
+        <td>{{ diff|percent_of:size|floatformat:0 }}% ({{ diff }})</td>
         {% endwith %}{% endwith %}{% endwith %}
     </tr>
     {% endfor %}

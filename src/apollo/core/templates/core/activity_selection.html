@@ -19,19 +19,13 @@
   </head>
   <body>
     <div class="row-fluid">
-    	<div class="span4 offset4" style="margin-top:10em;text-align:center">
+    	<div class="col-md-4 col-md-offset-4" style="margin-top:10em;text-align:center">
     		<legend>{% trans "Choose Activity" %}</legend>
     		<form class="form-vertical" action="" method="POST" accept-charset="utf-8">{% csrf_token %}
-    			<div class="control-group">
-            <div class="controls">
+    			<div class="form-group">
               {{ form.activity }}
-            </div>
           </div>
-    			<div class="control-group">
-            <div class="controls">
-                <button class="btn btn-warning" type="submit">{% trans "Go" %}</button>
-            </div>
-          </div>
+          <button class="btn btn-warning btn-sm" type="submit">{% trans "Go" %}</button>
     		</form>
     	</div>
     </div>

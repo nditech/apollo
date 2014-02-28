@@ -8,6 +8,6 @@
     {% for flag in form_flags %}
     <th style="text-align:center">{{ flag }}</th>
     {% endfor %}
-    <th style="text-align:center"><abbr title="Status"><i class="icon-eye-open"></i></abbr></th>
+    <th style="text-align:center"><abbr title="Status"><i class="glyphicon glyphicon-eye-open"></i></abbr></th>
     {% if perms.core.change_submission %}<th style="text-align:center">{% trans "Edit" context "verb" %}</th>{% endif %}
 </tr>

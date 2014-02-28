@@ -1,24 +1,29 @@
-{% load i18n %}<div class="modal" id="send_message" style="display:none" tabindex="-1" role="dialog" aria-labelledby="send_message_label" aria-hidden="true">
-  <div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-    <h3 id="send_message_label">{% trans "Send Message" %}</h3>
-  </div>
-  <div class="modal-body">
-    <div class="alert" id="alert" style="display:none">
-      <button type="button" class="close" data-dismiss="alert">×</button>
-      <span id="alert_message"></span>
+{% load i18n %}
+<div class="modal fade" id="send_message" style="display:none" tabindex="-1" role="dialog" aria-labelledby="send_message_label" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="send_message_label">{% trans "Send Message" %}</h3>
+      </div>
+      <div class="modal-body">
+        <div class="alert" id="alert" style="display:none">
+          <button type="button" class="close" data-dismiss="alert">×</button>
+          <span id="alert_message"></span>
+        </div>
+        <p><strong>{% trans "To" %}:</strong> {% blocktrans count counter=recipients %}{{ counter }} recipient{% plural %}{{ counter }} recipients{% endblocktrans %}.</p>
+        <p><textarea id="message" rows="5" cols="40" style="width:97.5%" class="form-control"></textarea><br /><span id="characters">0 {% trans "characters" %}</span> · <span id="parts">1 {% trans "message part" %}</span></p>
+      </div>
+      <div class="modal-footer">
+        <div id="loader" class="ajax_loader" style="visibility: hidden">
+          <div class="ajax_loader_block block_1"></div>
+          <div class="ajax_loader_block block_2"></div>
+          <div class="ajax_loader_block block_3"></div>
+        </div>
+        <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">{% trans "Cancel" context "verb" %}</button>
+        <button class="btn btn-primary" id="send" {% if not recipients %}disabled="disabled"{% endif %}>{% trans "Send" context "verb" %}</button>
+      </div>
     </div>
-    <p><strong>{% trans "To" %}:</strong> {% blocktrans count counter=recipients %}{{ counter }} recipient{% plural %}{{ counter }} recipients{% endblocktrans %}.</p>
-    <p><textarea id="message" rows="5" cols="40" style="width:97.5%"></textarea><br /><span id="characters">0 {% trans "characters" %}</span> · <span id="parts">1 {% trans "message part" %}</span></p>
-  </div>
-  <div class="modal-footer">
-    <div id="loader" class="ajax_loader" style="visibility: hidden">
-      <div class="ajax_loader_block block_1"></div>
-      <div class="ajax_loader_block block_2"></div>
-      <div class="ajax_loader_block block_3"></div>
-    </div>
-    <button class="btn" data-dismiss="modal" aria-hidden="true">{% trans "Cancel" context "verb" %}</button>
-    <button class="btn btn-primary" id="send" {% if not recipients %}disabled="disabled"{% endif %}>{% trans "Send" context "verb" %}</button>
   </div>
 </div>
 <script type="text/javascript">
