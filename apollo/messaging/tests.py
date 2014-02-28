@@ -1,9 +1,58 @@
+from core import documents
 from core.utils.test import MongoEngineTestCase
 from django.test import utils
 
 
 @utils.override_settings(DEBUG=True)
 class MessagingTest(MongoEngineTestCase):
+    def setUp(self):
+        self.deployment = documents.Deployment(
+            name='Deployment',
+            hostnames=['localhost']
+            ).save()
+        event = documents.Event(
+            deployment=self.deployment,
+            name='Event').save()
+        form_schema = {
+            'name': 'Form ABC',
+            'events': [event],
+            'form_type': 'CHECKLIST',
+            'prefix': 'ABC',
+            'groups': [{
+                'name': 'Group A',
+                'fields': [{
+                    'name': 'AA',
+                    'description': 'Field AA',
+                    'options': {'1': 'Option 1', '2': 'Option 2'},
+                    'min_value': 1,
+                    'max_value': 2,
+                    'analysis_type': 'PROCESS'
+                }]
+            }, {
+                'name': 'Group B',
+                'fields': [{
+                    'name': 'BA',
+                    'description': 'Field BA',
+                    'min_value': 0,
+                    'max_value': 999,
+                    'analysis_type': 'PROCESS'
+                }, {
+                    'name': 'BB',
+                    'description': 'Field BB',
+                    'min_value': 0,
+                    'max_value': 9,
+                    'analysis_type': 'PROCESS'
+                }]
+            }]
+        }
+        participant_schema = {
+            'name': 'John Doe',
+            'participant_id': '100001',
+            'gender': 'M'
+        }
+        self.participant = documents.Participant(**participant_schema).save()
+        self.form = documents.Form(**form_schema).save()
+
     def test_parse_text(self):
         from messaging.utils import parse_text
         self.assertEqual(
@@ -51,3 +100,40 @@ class MessagingTest(MongoEngineTestCase):
         self.assertEqual(
             parse_responses('AA1BEA2', 'INCIDENT'),
             {'A': 1, 'B': 1, 'E': 1})
+
+    def test_parse_message(self):
+        from messaging.forms import KannelForm
+        from messaging.views import parse_message
+        form = KannelForm({'sender': '123', 'text': 'ABC'})
+        self.assertEqual(
+            parse_message(form, self.deployment),
+            'Invalid message: "ABC". Please check and resend!')
+
+        form = KannelForm({'sender': '123', 'text': 'ABC100001'})
+        self.assertEqual(
+            parse_message(form, self.deployment),
+            'Invalid message: "ABC100001". Please check and resend!')
+
+        form = KannelForm({'sender': '123', 'text': 'ABC10001AA1@a comment'})
+        self.assertEqual(
+            parse_message(form, self.deployment),
+            'Observer ID not found. Please resend with valid '
+            'Observer ID. You sent: ABC10001AA1@a comment')
+
+        form = KannelForm({'sender': '123', 'text': 'ABC100001EA1EC1'})
+        self.assertEqual(
+            parse_message(form, self.deployment),
+            'Unknown question codes: "EA, EC". '
+            'You sent: ABC100001EA1EC1')
+
+        form = KannelForm({'sender': '123', 'text': 'ABC100001AA3BA1000'})
+        self.assertEqual(
+            parse_message(form, self.deployment),
+            'Invalid response(s) for question(s):'
+            ' "AA, BA". You sent: ABC100001AA3BA1000')
+
+        form = KannelForm({'sender': '123', 'text': 'ABC100001AA1BA200@good'})
+        self.assertEqual(
+            parse_message(form, self.deployment),
+            'Thank you! Your report was received!'
+            ' You sent: ABC100001AA1BA200@good')

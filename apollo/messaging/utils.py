@@ -1,6 +1,3 @@
-from core.documents import Event, Form
-from messaging.forms import BaseQuestionnaireForm
-from django import forms
 from django.conf import settings
 import re
 import string
@@ -91,68 +88,3 @@ def parse_responses(responses_text, form_type='CHECKLIST'):
             [(r.group('question'), r.group('answer'))
              for r in p.finditer(responses_text)])
     return responses
-
-
-def generate_questionnaire_from_message(request, sender, text):
-    '''
-    Generates a bound form for validating and saving form data to the database.
-
-    :param:`request` - The context for the request being processed. Useful for
-    providing access to the deployment to use.
-    :param:`sender` - The phone number of the sender of the text message
-    :param:`text` - The contents of the text message sent.
-    '''
-    form_fields = {}
-    (prefix, participant_id, form_type, responses, comment) = parse_text(text)
-    events_in_deployment = Event.objects.filter(
-        deployment=getattr(request, 'deployment'))
-
-    # find the first form that matches the prefix and optionally form type
-    # for the events in the deployment.
-    if form_type == 'INCIDENT':
-        form = Form.objects.filter(
-            events__in=events_in_deployment, prefix__iexact=prefix,
-            form_type=form_type).first()
-    else:
-        form = Form.objects.filter(
-            events__in=events_in_deployment, prefix__iexact=prefix).first()
-    if form:
-        form_groups = []
-        for group in form.groups:
-            form_group = (group.name, {'fields': [], 'legend': group.name})
-            for field in group.fields:
-                if field.options:
-                    if field.allows_multiple_values:
-                        form_fields[field.name] = forms.MultipleChoiceField(
-                            choices=field.options.items(), required=False,
-                            help_text=field.description, label=field.name)
-                    else:
-                        form_fields[field.name] = forms.ChoiceField(
-                            choices=field.options.items(), required=False,
-                            help_text=field.description, label=field.name)
-                else:
-                    if form.form_type == u'CHECKLIST':
-                        form_fields[field.name] = forms.IntegerField(
-                            max_value=field.max_value or 9999,
-                            min_value=field.min_value or 0, required=False,
-                            help_text=field.description, label=field.name)
-                    else:
-                        form_fields[field.name] = forms.BooleanField(
-                            required=False, help_text=field.description,
-                            label=field.name, widget=forms.CheckboxInput())
-
-                form_group[1]['fields'].append(field.name)
-            form_groups.append(form_group)
-
-    metaclass = type('Meta', (), {'fieldsets': form_groups})
-    form_fields['Meta'] = metaclass
-
-    form_data = {'prefix': prefix, 'participant': participant_id,
-                 'sender': sender, 'comment': comment}
-    form_data.update(parse_responses(responses))
-
-    # create a custom form based on the generated attributes
-    # (groups and fields) of the form and bind it with data extracted from
-    # the text message.
-    return type('QuesationnaireForm', (BaseQuestionnaireForm,),
-                form_fields)(form_data)

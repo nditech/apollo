@@ -61,7 +61,7 @@ class FormField(EmbeddedDocument):
 
     :attr:`options` which is a dictionary that has keys representing
     field option values and values representing the option description.
-    (e.g. {1: 'Yes'})
+    (e.g. {'1': 'Yes'})
 
     :attr:`allows_multiple_values` which is a boolean field specifying whether
     the field will accept multiple values as correct responses

@@ -1,5 +1,4 @@
 from django import forms
-from form_utils.forms import BetterForm
 
 
 class BaseHttpForm(forms.Form):
@@ -31,10 +30,11 @@ class KannelForm(forms.Form):
         return text
 
     def get_message(self):
-        return {
-            'sender': self.cleaned_data.get('sender'),
-            'text': self.cleaned_data.get('text')
-        }
+        if self.is_valid():
+            return {
+                'sender': self.cleaned_data.get('sender'),
+                'text': self.cleaned_data.get('text')
+            }
 
 
 class TelerivetForm(BaseHttpForm):
@@ -49,22 +49,8 @@ class TelerivetForm(BaseHttpForm):
     content = forms.CharField()
 
     def get_message(self):
-        return {
-            'sender': self.cleaned_data.get('from_number'),
-            'text': self.cleaned_data.get('content')
-        }
-
-
-class BaseQuestionnaireForm(BetterForm):
-    prefix = forms.CharField(required=True)
-    participant = forms.CharField(required=True)
-    sender = forms.CharField(required=False)
-    comment = forms.CharField(required=False)
-
-    # FIXME: add a 'clean' method that will look at the values in
-    # self.data and raise a ValidationError if there's a key that
-    # doesn't match with any attributes in the form object. Also
-    # there should be a to_python method for participant that takes
-    # the participant_id supplied and retrieve a Participant object
-    # if that operation fails, then an appropriate ValidationError
-    # exception should be raised.
+        if self.is_valid():
+            return {
+                'sender': self.cleaned_data.get('from_number'),
+                'text': self.cleaned_data.get('content')
+            }
