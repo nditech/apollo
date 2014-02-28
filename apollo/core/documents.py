@@ -13,7 +13,6 @@ class Deployment(Document):
     :attr:`hostnames` A list of hostnames representing the deployment.'''
 
     name = StringField()
-    database = StringField()
     hostnames = ListField(StringField())
 
     meta = {
@@ -21,6 +20,9 @@ class Deployment(Document):
             ['hostnames']
         ]
     }
+
+    def __unicode__(self):
+        return self.name
 
 
 # Event
@@ -36,6 +38,9 @@ class Event(Document):
             ['deployment', 'start_date', '-end_date']
         ]
     }
+
+    def __unicode__(self):
+        return self.name
 
 
 # Forms
@@ -129,6 +134,9 @@ class Form(Document):
         ]
     }
 
+    def __unicode__(self):
+        return self.name
+
 
 # Submissions
 class Submission(DynamicEmbeddedDocument):
@@ -203,6 +211,9 @@ class LocationType(Document):
         ]
     }
 
+    def __unicode__(self):
+        return self.name
+
 
 class LocationAncestor(EmbeddedDocument):
     '''An embedded document for storing location ancestors data to enable
@@ -237,6 +248,9 @@ class Location(Document):
         ]
     }
 
+    def __unicode__(self):
+        return self.name
+
 
 # Participants
 class ParticipantRole(Document):
@@ -244,11 +258,17 @@ class ParticipantRole(Document):
 
     name = StringField()
 
+    def __unicode__(self):
+        return self.name
+
 
 class ParticipantPartner(Document):
     '''Storage for the participant partner organization'''
 
     name = StringField()
+
+    def __unicode__(self):
+        return self.name
 
 
 class Participant(DynamicDocument):
@@ -265,3 +285,6 @@ class Participant(DynamicDocument):
     supervisor = ReferenceField('Participant')
     gender = StringField(choices=GENDER)
     events = ListField(ReferenceField('Event'))
+
+    def __unicode__(self):
+        return self.name
