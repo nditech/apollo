@@ -9,6 +9,7 @@ from core.forms import EventSelectionForm
 
 
 class EventSelectionView(View, TemplateResponseMixin):
+    page_title = 'Select Event'
     template_name = 'core/event_selection.html'
 
     def dispatch(self, request, *args, **kwargs):
@@ -18,7 +19,7 @@ class EventSelectionView(View, TemplateResponseMixin):
         ).dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
-        context = {'form': self.form}
+        context = {'form': self.form, 'page_title': self.page_title}
         return context
 
     def get(self, request, *args, **kwargs):
