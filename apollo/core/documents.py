@@ -220,6 +220,9 @@ class LocationType(Document):
         tree.append(self.id)
         return LocationType.objects(__raw__={'ancestors_ref': tree})
 
+    def __unicode__(self):
+        return self.name
+
 
 class LocationAncestor(EmbeddedDocument):
     '''An embedded document for storing location ancestors data to enable
@@ -262,6 +265,9 @@ class Location(Document):
         tree = [node.id for node in self.ancestors_ref]
         tree.append(self.id)
         return Location.objects(__raw__={'ancestors_ref': tree})
+
+    def __unicode__(self):
+        return self.name
 
 
 # Participants
