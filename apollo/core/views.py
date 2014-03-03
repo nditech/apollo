@@ -1,11 +1,12 @@
 from __future__ import unicode_literals
 from django.conf import settings
-from django.http import HttpResponse, HttpResponseRedirect
+from django.core.urlresolvers import reverse
+from django.http import HttpResponseRedirect
 from django.utils.http import is_safe_url
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic import View
 from django.views.generic.base import TemplateResponseMixin
-from core.documents import Event
+from core.documents import Event, Form
 from core.forms import EventSelectionForm
 from core.helpers import get_observer_coverage
 
@@ -50,7 +51,11 @@ class DashboardView(View, TemplateResponseMixin):
     template_name = 'core/dashboard.html'
 
     def dispatch(self, request, *args, **kwargs):
-        
+        event = request.session.get('event')
+        if not event:
+            return HttpResponseRedirect(reverse('event_selection'))
+        forms = Form.objects(events=event, form_type='CHECKLIST')
+        return super(DashboardView, self).dispatch(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
-        return HttpResponse('Hello, world!')
+        return self.render_to_response({})
