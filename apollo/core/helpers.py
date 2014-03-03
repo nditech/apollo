@@ -22,7 +22,13 @@ def get_observer_coverage(loc_qs, *groups):
             'Partial': value,
             'Missing': value
         }
-    if no error occurs in the aggregation, else None
+    if no error occurs in the aggregation, else None. In the event that
+    there is no matching data, an empty dictionary is returned.
+
+    WARNING: the use of any field-specific queryset methods (like exclude()
+    and scalar()) will make the aggregation fail to work properly.
+    We use _query to make this work, and _query returns an empty dictionary in
+    such situations.
     '''
     # use the MongoDB aggregation framework to get each permutation
     # of groups and statuses

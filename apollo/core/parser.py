@@ -64,7 +64,6 @@ def parse(form, text):
                 status = PARSE_MULTIPLE_ENTRY
 
         for match in result:
-            print match
             # really shouldn't have to do this more than once
             submission_data.update({tag: match[0]})
 
@@ -81,8 +80,6 @@ def parse(form, text):
         )
 
     if cojoined_pairs:
-        print cojoined_pairs
         status = PARSE_UNEXPECTED_INPUT
 
-    print submission_data, status
     return submission_data, status

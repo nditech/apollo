@@ -211,6 +211,15 @@ class LocationType(Document):
         ]
     }
 
+    @classmethod
+    def get_root_for_event(cls, event):
+        return cls.objects.get(events=event, __raw__={'ancestors_ref': []})
+
+    def get_children(self):
+        tree = [node.id for node in self.ancestors_ref]
+        tree.append(self.id)
+        return LocationType.objects(__raw__={'ancestors_ref': tree})
+
 
 class LocationAncestor(EmbeddedDocument):
     '''An embedded document for storing location ancestors data to enable
@@ -244,6 +253,15 @@ class Location(Document):
             ['events', 'code']
         ]
     }
+
+    @classmethod
+    def get_root_for_event(cls, event):
+        return cls.objects.get(events=event, __raw__={'ancestors_ref': []})
+
+    def get_children(self):
+        tree = [node.id for node in self.ancestors_ref]
+        tree.append(self.id)
+        return Location.objects(__raw__={'ancestors_ref': tree})
 
 
 # Participants

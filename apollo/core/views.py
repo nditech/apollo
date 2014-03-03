@@ -2,14 +2,16 @@ from __future__ import unicode_literals
 from django.conf import settings
 from django.http import HttpResponse, HttpResponseRedirect
 from django.utils.http import is_safe_url
+from django.utils.translation import ugettext_lazy as _
 from django.views.generic import View
 from django.views.generic.base import TemplateResponseMixin
 from core.documents import Event
 from core.forms import EventSelectionForm
+from core.helpers import get_observer_coverage
 
 
 class EventSelectionView(View, TemplateResponseMixin):
-    page_title = 'Select Event'
+    page_title = _('Select Event')
     template_name = 'core/event_selection.html'
 
     def dispatch(self, request, *args, **kwargs):
@@ -44,5 +46,11 @@ class EventSelectionView(View, TemplateResponseMixin):
 
 
 class DashboardView(View, TemplateResponseMixin):
+    page_title = 'Dashboard'
+    template_name = 'core/dashboard.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        
+
     def get(self, request, *args, **kwargs):
         return HttpResponse('Hello, world!')

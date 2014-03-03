@@ -86,4 +86,4 @@ STATIC_URL = '/static/'
 from mongoengine import connect
 
 DATA_SOURCE = os.getenv('MONGO_DATABASE', 'apollo')
-connect(DATA_SOURCE)
+DEFAULT_CONNECTION = connect(DATA_SOURCE)
