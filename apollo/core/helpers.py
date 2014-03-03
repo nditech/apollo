@@ -36,15 +36,16 @@ def get_observer_coverage(loc_qs, *groups):
         }]
 
     if groups:
-        projection = {'_id': 0}
+        projection = {'_id': 0, 'total': '$total'}
         projection.update({group: '$_id.{}'.format(group) for group in groups})
-        pipeline.append(projection)
+        pipeline.append({'$project': projection})
 
     try:
         results = Location._collection.aggregate(
             pipeline
         )
     except Exception, e:
+        print e
         logger.exception(e)
         return None
 
@@ -55,6 +56,11 @@ def get_observer_coverage(loc_qs, *groups):
     coverage = OrderedDict()
 
     datasrc = results.get('result')
+
+    # return empty set if no data
+    if not datasrc:
+        return coverage
+
     if groups:
         # groups were explicitly specified, use that
         for group in groups:
@@ -62,24 +68,24 @@ def get_observer_coverage(loc_qs, *groups):
             group_partial = sum((rec['total'] for rec in datasrc if rec[group] == 'Partial'))
             group_missing = sum((rec['total'] for rec in datasrc if rec[group] == 'Missing'))
 
-            coverage.update(group={
+            coverage.update({group: {
                 'Complete': group_complete,
                 'Partial': group_partial,
                 'Missing': group_missing
-            })
+            }})
     else:
         # no groups were sent, get the group names from the data
         # WARN: No guaranteed sort order if this is used!
         groups = datasrc[0]['_id'].keys()
         for group in groups:
-            group_complete = sum((rec['total'] for rec in datasrc if rec['_id'] == 'Complete'))
-            group_partial = sum((rec['total'] for rec in datasrc if rec['_id'] == 'Partial'))
-            group_missing = sum((rec['total'] for rec in datasrc if rec['_id'] == 'Missing'))
+            group_complete = sum((rec['total'] for rec in datasrc if rec['_id'][group] == 'Complete'))
+            group_partial = sum((rec['total'] for rec in datasrc if rec['_id'][group] == 'Partial'))
+            group_missing = sum((rec['total'] for rec in datasrc if rec['_id'][group] == 'Missing'))
 
-            coverage.update(group={
+            coverage.update({group: {
                 'Complete': group_complete,
                 'Partial': group_partial,
                 'Missing': group_missing
-            })
+            }})
 
     return coverage
