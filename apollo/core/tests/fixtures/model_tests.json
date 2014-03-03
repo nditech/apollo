@@ -1,0 +1,192 @@
+{
+    "event": [
+        {
+            "_id": {
+                "$oid": "53147d709388252061fee8cf"
+            },
+            "end_date": {
+                "$date": 1395666160936
+            },
+            "name": "default",
+            "start_date": {
+                "$date": 1393851760936
+            }
+        }
+    ],
+    "location_type": [
+        {
+            "_id": {
+                "$oid": "5314570a9388251b46627a67"
+            },
+            "ancestors_ref": [],
+            "events": [
+                {
+                    "$oid": "53147d709388252061fee8cf"
+                }
+            ],
+            "name": "Country",
+            "on_analysis_view": false,
+            "on_dashboard_view": false,
+            "on_submissions_view": false
+        },
+        {
+            "_id": {
+                "$oid": "531457279388251b46627a68"
+            },
+            "ancestors_ref": [
+                {
+                    "$oid": "5314570a9388251b46627a67"
+                }
+            ],
+            "events": [
+                {
+                    "$oid": "53147d709388252061fee8cf"
+                }
+            ],
+            "name": "Zone",
+            "on_analysis_view": false,
+            "on_dashboard_view": false,
+            "on_submissions_view": false
+        },
+        {
+            "_id": {
+                "$oid": "531457469388251b46627a69"
+            },
+            "ancestors_ref": [
+                {
+                    "$oid": "5314570a9388251b46627a67"
+                },
+                {
+                    "$oid": "531457279388251b46627a68"
+                }
+            ],
+            "events": [
+                {
+                    "$oid": "53147d709388252061fee8cf"
+                }
+            ],
+            "name": "State",
+            "on_analysis_view": false,
+            "on_dashboard_view": false,
+            "on_submissions_view": false
+        },
+        {
+            "_id": {
+                "$oid": "531457879388251b46627a6a"
+            },
+            "ancestors_ref": [
+                {
+                    "$oid": "5314570a9388251b46627a67"
+                },
+                {
+                    "$oid": "531457279388251b46627a68"
+                },
+                {
+                    "$oid": "531457469388251b46627a69"
+                }
+            ],
+            "events": [
+                {
+                    "$oid": "53147d709388252061fee8cf"
+                }
+            ],
+            "name": "Senatorial District",
+            "on_analysis_view": false,
+            "on_dashboard_view": false,
+            "on_submissions_view": false
+        },
+        {
+            "_id": {
+                "$oid": "5314581e9388251b46627a6b"
+            },
+            "ancestors_ref": [
+                {
+                    "$oid": "5314570a9388251b46627a67"
+                },
+                {
+                    "$oid": "531457279388251b46627a68"
+                },
+                {
+                    "$oid": "531457469388251b46627a69"
+                },
+                {
+                    "$oid": "531457879388251b46627a6a"
+                }
+            ],
+            "events": [
+                {
+                    "$oid": "53147d709388252061fee8cf"
+                }
+            ],
+            "name": "LGA",
+            "on_analysis_view": false,
+            "on_dashboard_view": false,
+            "on_submissions_view": false
+        },
+        {
+            "_id": {
+                "$oid": "5314585c9388251b46627a6c"
+            },
+            "ancestors_ref": [
+                {
+                    "$oid": "5314570a9388251b46627a67"
+                },
+                {
+                    "$oid": "531457279388251b46627a68"
+                },
+                {
+                    "$oid": "531457469388251b46627a69"
+                },
+                {
+                    "$oid": "531457879388251b46627a6a"
+                },
+                {
+                    "$oid": "5314581e9388251b46627a6b"
+                }
+            ],
+            "events": [
+                {
+                    "$oid": "53147d709388252061fee8cf"
+                }
+            ],
+            "name": "Ward",
+            "on_analysis_view": false,
+            "on_dashboard_view": false,
+            "on_submissions_view": false
+        },
+        {
+            "_id": {
+                "$oid": "531458879388251b46627a6d"
+            },
+            "ancestors_ref": [
+                {
+                    "$oid": "5314570a9388251b46627a67"
+                },
+                {
+                    "$oid": "531457279388251b46627a68"
+                },
+                {
+                    "$oid": "531457469388251b46627a69"
+                },
+                {
+                    "$oid": "531457879388251b46627a6a"
+                },
+                {
+                    "$oid": "5314581e9388251b46627a6b"
+                },
+                {
+                    "$oid": "5314585c9388251b46627a6c"
+                }
+            ],
+            "events": [
+                {
+                    "$oid": "53147d709388252061fee8cf"
+                }
+            ],
+            "name": "Polling Station",
+            "on_analysis_view": false,
+            "on_dashboard_view": false,
+            "on_submissions_view": false
+        }
+    ]
+}

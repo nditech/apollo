@@ -211,6 +211,15 @@ class LocationType(Document):
         ]
     }
 
+    @classmethod
+    def get_root_for_event(cls, event):
+        return cls.objects.get(events=event, __raw__={'ancestors_ref': []})
+
+    def get_children(self):
+        tree = [node.id for node in self.ancestors_ref]
+        tree.append(self.id)
+        return LocationType.objects(__raw__={'ancestors_ref': tree})
+
     def __unicode__(self):
         return self.name
 
@@ -247,6 +256,15 @@ class Location(Document):
             ['events', 'code']
         ]
     }
+
+    @classmethod
+    def get_root_for_event(cls, event):
+        return cls.objects.get(events=event, __raw__={'ancestors_ref': []})
+
+    def get_children(self):
+        tree = [node.id for node in self.ancestors_ref]
+        tree.append(self.id)
+        return Location.objects(__raw__={'ancestors_ref': tree})
 
     def __unicode__(self):
         return self.name
