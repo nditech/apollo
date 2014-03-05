@@ -1,6 +1,8 @@
 from core import documents
 from core.utils.test import MongoEngineTestCase
+from django.http import QueryDict
 from django.test import utils
+from django.test.client import RequestFactory
 
 
 @utils.override_settings(DEBUG=True)
@@ -137,3 +139,45 @@ class MessagingTest(MongoEngineTestCase):
             parse_message(form, self.deployment),
             'Thank you! Your report was received!'
             ' You sent: ABC100001AA1BA200@good')
+
+    def test_kannel_backend(self):
+        from messaging.views import kannel_view
+        factory = RequestFactory()
+        request = factory.get('/')  # Simulate a GET request
+        request.META['HTTP_HOST'] = 'localhost'
+        request.deployment = self.deployment
+        request.GET = QueryDict('sender=123&text=ABC100001AA1BA200@good')
+
+        response = kannel_view(request)
+        self.assertEqual(response.content,
+                         'Thank you! Your report was received!'
+                         ' You sent: ABC100001AA1BA200@good')
+
+        request.GET = QueryDict('sender=123&text=ABC100001AA3BA1000')
+        response = kannel_view(request)
+        self.assertEqual(response.content,
+                         'Invalid response(s) for question(s):'
+                         ' "AA, BA". You sent: ABC100001AA3BA1000')
+
+    def test_telerivet_backend(self):
+        from messaging.views import telerivet_view
+        factory = RequestFactory()
+        request = factory.get('/')  # Simulate a GET request
+        request.META['HTTP_HOST'] = 'localhost'
+        request.deployment = self.deployment
+        request.POST = QueryDict(
+            'id=1&from_number=123&content=ABC100001AA1BA200@good')
+
+        response = telerivet_view(request)
+        self.assertEqual(response.content,
+                         '{"messages": [{"content": "Thank you! '
+                         'Your report was received! '
+                         'You sent: ABC100001AA1BA200@good"}]}')
+
+        request.POST = QueryDict(
+            'id=1&from_number=123&content=ABC100001AA3BA1000')
+        response = telerivet_view(request)
+        self.assertEqual(response.content,
+                         '{"messages": [{"content": "Invalid response(s) for '
+                         'question(s): \\"AA, BA\\". '
+                         'You sent: ABC100001AA3BA1000"}]}')

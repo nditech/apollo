@@ -1,6 +1,7 @@
 from core.utils.forms import build_questionnaire, retrieve_form
 from django.http import HttpResponse
 from django.utils.translation import ugettext_lazy as _
+import json
 from messaging.forms import KannelForm, TelerivetForm
 from messaging.utils import parse_text, parse_responses
 
@@ -50,7 +51,7 @@ def parse_message(form, deployment):
 
 def kannel_view(request):
     form = KannelForm(request.GET)
-    if form.is_valid():
+    if form.is_bound and form.is_valid():
         response = parse_message(form, getattr(request, 'deployment', None))
         return HttpResponse(response)
     return HttpResponse('')
@@ -58,7 +59,10 @@ def kannel_view(request):
 
 def telerivet_view(request):
     form = TelerivetForm(request.POST)
-    if form.is_valid():
-        response = parse_message(form, getattr(request, 'deployment', None))
-        return HttpResponse(response)
+    if form.is_bound and form.is_valid():
+        response_text = parse_message(form, getattr(request,
+                                      'deployment', None))
+        response = {'messages': [{'content': response_text}]}
+        return HttpResponse(json.dumps(response),
+                            content_type='application/json')
     return HttpResponse('')
