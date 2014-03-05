@@ -1,2 +1,8 @@
-You will need to add the mimetype font/woff for .woff files to your mime.types 
-file.
+Apollo is an election monitoring platform that is designed
+to use the Parallel Voting Tabulation methodology of election
+monitoring to collect, store and analyse election data. This
+data is submitted by election observers using text messaging
+and provides tools to enable data managers and clerks manage
+the collected data. Apollo is capable of validating collected
+data and providing user-friendly error reports to enable
+election observers self-correct and resend their information.

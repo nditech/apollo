@@ -4,10 +4,11 @@
 
 import ast
 import os
-import dj_database_url
 import dotenv
 
-dotenv.read_dotenv(os.path.normpath(os.path.dirname(__file__) + os.sep + '..' + os.sep + '..' + os.sep + '.env'))
+dotenv.read_dotenv(os.path.normpath(
+    os.path.dirname(__file__) + os.sep + '..' + os.sep
+    + '..' + os.sep + '.env'))
 ugettext = lambda s: s
 
 # -------------------------------------------------------------------- #
@@ -18,7 +19,9 @@ ugettext = lambda s: s
 # you should configure your database here before doing any real work.
 # see: http://docs.djangoproject.com/en/dev/ref/settings/#databases
 DATABASES = {
-    "default": dj_database_url.config(default='sqlite://rapidsms.sqlite3')
+    "default": {
+        'ENGINE': 'django.db.backends.dummy'
+    }
 }
 
 TIME_ZONE = os.environ.get('APOLLO_TIMEZONE', 'Africa/Lagos')
@@ -77,6 +80,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django.contrib.sites",
     "django.contrib.auth",
+    "mongoengine.django.mongo_auth",
     "django.contrib.admin",
     "django.contrib.sessions",
     "django.contrib.contenttypes",
@@ -99,7 +103,8 @@ INSTALLED_APPS = [
 # debug mode is turned on as default, since rapidsms is under heavy
 # development at the moment, and full stack traces are very useful
 # when reporting bugs. don't forget to turn this off in production.
-DEBUG = TEMPLATE_DEBUG = ast.literal_eval(os.environ.get('APOLLO_DEBUG', 'False'))
+DEBUG = TEMPLATE_DEBUG = ast.literal_eval(
+    os.environ.get('APOLLO_DEBUG', 'False'))
 
 INTERNAL_IPS = ('127.0.0.1',)
 
@@ -144,9 +149,11 @@ TEMPLATE_CONTEXT_PROCESSORS = [
 ]
 
 AUTHENTICATION_BACKENDS = (
-    'django.contrib.auth.backends.ModelBackend',
-    'guardian.backends.ObjectPermissionBackend',
+    'mongoengine.django.auth.MongoEngineBackend',
 )
+
+AUTH_USER_MODEL = 'mongo_auth.MongoUser'
+MONGOENGINE_USER_DOCUMENT = 'mongoengine.django.auth.User'
 
 USE_L10N = True
 ANONYMOUS_USER_ID = -1
@@ -161,13 +168,14 @@ LOGGING = {
     },
     'formatters': {
         'verbose': {
-            'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
+            'format': '%(levelname)s %(asctime)s %(module)s'
+            ' %(process)d %(thread)d %(message)s'
         },
     },
     'handlers': {
         'sentry': {
             'level': 'ERROR',
-            'class': 'raven.contrib.django.raven_compat.handlers.SentryHandler',
+            'class': 'raven.contrib.django.raven_compat.handlers.SentryHandler'
         },
         'console': {
             'level': 'DEBUG',
@@ -208,12 +216,18 @@ TEST_EXCLUDED_APPS = [
 
 # the project-level url patterns
 ROOT_URLCONF = "urls"
+SESSION_ENGINE = 'mongoengine.django.sessions'
+SESSION_SERIALIZER = 'mongoengine.django.sessions.BSONSerializer'
 SESSION_SAVE_EVERY_REQUEST = True
 SESSION_COOKIE_AGE = 1800
 PROJECT_NAME = 'Apollo'
-AUTHENTICATE_OBSERVER = False  # determines whether to authenticate the observer's phone number
-EDIT_OBSERVER_CHECKLIST = ast.literal_eval(os.environ.get('EDIT_OBSERVER_CHECKLIST', 'False'))
-INCLUDE_REJECTED_IN_VOTES = ast.literal_eval(os.environ.get('INCLUDE_REJECTED_IN_VOTES', 'False'))
+
+# determines whether to authenticate the observer's phone number
+AUTHENTICATE_OBSERVER = False
+EDIT_OBSERVER_CHECKLIST = ast.literal_eval(
+    os.environ.get('EDIT_OBSERVER_CHECKLIST', 'False'))
+INCLUDE_REJECTED_IN_VOTES = ast.literal_eval(
+    os.environ.get('INCLUDE_REJECTED_IN_VOTES', 'False'))
 ALLOWED_PUNCTUATIONS = '!'  # allowed punctuations in SMS forms
 CHARACTER_TRANSLATIONS = (
     ('i', '1'),
@@ -223,8 +237,10 @@ CHARACTER_TRANSLATIONS = (
     ('l', '1'),
     ('L', '1'),
 )
-LOCATIONS_GRAPH_MAXAGE = 25200  # number of seconds to cache the locations graph - 1wk
-PAGE_SIZE = 10  # Number of submissions viewable per page
+# number of seconds to cache the locations graph - 1wk
+LOCATIONS_GRAPH_MAXAGE = 25200
+# Number of submissions viewable per page
+PAGE_SIZE = 10
 
 FLAG_STATUSES = {
     'no_problem': ('0', ugettext('No Problem')),
@@ -253,7 +269,8 @@ STATUS_CHOICES = (
 BIG_N = 6000000  # Big N
 
 DEFAULT_CONNECTION_INDEX = 0
-ENABLE_MULTIPLE_PHONES = False  # determines whether to allow for multiple numbers to be set for observers
+# determines whether to allow for multiple numbers to be set for observers
+ENABLE_MULTIPLE_PHONES = False
 
 PHONE_CC = []
 
@@ -275,7 +292,8 @@ MIDDLEWARE_CLASSES = (
     'raven.contrib.django.raven_compat.middleware.Sentry404CatchMiddleware',)
 
 # celery queue settings
-BROKER_URL = os.environ.get('APOLLO_BROKER_URL', 'librabbitmq://guest:guest@localhost:5672/apollo')
+BROKER_URL = os.environ.get('APOLLO_BROKER_URL',
+                            'librabbitmq://guest:guest@localhost:5672/apollo')
 
 # caching
 CACHES = {
@@ -305,13 +323,13 @@ SITE_READ_ONLY = ast.literal_eval(os.environ.get('SITE_READ_ONLY', 'False'))
 PIPELINE_CSS = {
     'apollo': {
         'source_filenames': (
-          'css/bootstrap.css',
-          'css/select2.css',
-          'css/table-fixed-header.css',
-          'css/datepicker.css',
-          'css/jquery.qtip.css',
-          'css/custom.css',
-          'css/nv.d3.css',
+            'css/bootstrap.css',
+            'css/select2.css',
+            'css/table-fixed-header.css',
+            'css/datepicker.css',
+            'css/jquery.qtip.css',
+            'css/custom.css',
+            'css/nv.d3.css',
         ),
         'output_filename': 'css/apollo.css',
         'extra_context': {
@@ -350,9 +368,9 @@ SMS_LANGUAGE_CODE = os.environ.get('APOLLO_SMS_LANGUAGE_CODE', 'en')
 LANGUAGE_CODE = 'en-us'
 
 LANGUAGES = (
-  ('en', ugettext('English')),
-  ('az', ugettext('Azerbaijani')),
-  ('fr', ugettext('French')),
+    ('en', ugettext('English')),
+    ('az', ugettext('Azerbaijani')),
+    ('fr', ugettext('French')),
 )
 
 # since we might hit the database from any thread during testing, the
