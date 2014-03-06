@@ -70,9 +70,9 @@ def get_observer_coverage(loc_qs, *groups):
     if groups:
         # groups were explicitly specified, use that
         for group in groups:
-            group_complete = sum((rec['total'] for rec in datasrc if rec[group] == 'Complete'))
-            group_partial = sum((rec['total'] for rec in datasrc if rec[group] == 'Partial'))
-            group_missing = sum((rec['total'] for rec in datasrc if rec[group] == 'Missing'))
+            group_complete = sum((rec['total'] for rec in datasrc if rec.get(group) == 'Complete'))
+            group_partial = sum((rec['total'] for rec in datasrc if rec.get(group) == 'Partial'))
+            group_missing = sum((rec['total'] for rec in datasrc if rec.get(group) == 'Missing'))
 
             coverage.update({group: {
                 'Complete': group_complete,
@@ -84,9 +84,9 @@ def get_observer_coverage(loc_qs, *groups):
         # WARN: No guaranteed sort order if this is used!
         groups = datasrc[0]['_id'].keys()
         for group in groups:
-            group_complete = sum((rec['total'] for rec in datasrc if rec['_id'][group] == 'Complete'))
-            group_partial = sum((rec['total'] for rec in datasrc if rec['_id'][group] == 'Partial'))
-            group_missing = sum((rec['total'] for rec in datasrc if rec['_id'][group] == 'Missing'))
+            group_complete = sum((rec['total'] for rec in datasrc if rec['_id'].get(group) == 'Complete'))
+            group_partial = sum((rec['total'] for rec in datasrc if rec['_id'].get(group) == 'Partial'))
+            group_missing = sum((rec['total'] for rec in datasrc if rec['_id'].get(group) == 'Missing'))
 
             coverage.update({group: {
                 'Complete': group_complete,
