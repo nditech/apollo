@@ -102,7 +102,7 @@ class FormGroup(EmbeddedDocument):
     form fields, there's also a :attr:`name` attribute for storing the name.'''
 
     name = StringField(required=True)
-    slug = StringField(required=True)
+    # slug = StringField(required=True)
     fields = ListField(EmbeddedDocumentField('FormField'))
 
 
@@ -144,6 +144,7 @@ class Form(Document):
 
     def __unicode__(self):
         return self.name
+
 
 # Submissions
 class Submission(DynamicEmbeddedDocument):

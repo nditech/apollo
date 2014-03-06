@@ -3,6 +3,7 @@ import os
 from unittest import TestCase
 from mongoengine.connection import connect, disconnect
 from core.tests.utils import load_fixtures
+from .test_suite import DeploymentTest, FormUtilsTest
 
 FIXTURES_PATH = os.path.join(
     os.path.abspath(os.path.dirname(os.path.dirname(__file__))),
