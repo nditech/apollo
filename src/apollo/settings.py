@@ -378,6 +378,15 @@ LANGUAGES = (
 # virtual database for each thread, and syncdb is only called for the
 # first. this leads to confusing "no such table" errors. We create
 # a named temporary instance instead.
+import os
+import tempfile
+import sys
+
+if 'test' in sys.argv:
+    for db_name in DATABASES:
+        DATABASES[db_name]['TEST_NAME'] = os.path.join(
+            tempfile.gettempdir(),
+            "%s.rapidsms.test.sqlite3" % db_name)
 
 try:
     from local_settings import *
