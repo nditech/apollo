@@ -1,7 +1,9 @@
+from __future__ import unicode_literals
 from core.documents import Participant
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 from form_utils.forms import BetterForm
+from core.documents import Event
 
 
 class BaseQuestionnaireForm(BetterForm):

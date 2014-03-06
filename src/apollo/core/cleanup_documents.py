@@ -1,12 +1,4 @@
-from __future__ import unicode_literals
-from datetime import datetime
-from mongoengine import (
-    BooleanField, DateTimeField, DictField, Document, DynamicDocument,
-    DynamicEmbeddedDocument, EmbeddedDocument, EmbeddedDocumentField,
-    GeoPointField, IntField, ListField, ObjectIdField, ReferenceField,
-    SequenceField, StringField
-)
-from altauth.documents import User
+from mongoengine import *
 
 
 # Deployments
@@ -21,6 +13,7 @@ class Deployment(Document):
     :attr:`hostnames` A list of hostnames representing the deployment.'''
 
     name = StringField()
+    database = StringField()
     hostnames = ListField(StringField())
 
     meta = {
@@ -28,9 +21,6 @@ class Deployment(Document):
             ['hostnames']
         ]
     }
-
-    def __unicode__(self):
-        return self.name
 
 
 # Event
@@ -47,17 +37,15 @@ class Event(Document):
         ]
     }
 
-    def __unicode__(self):
-        return self.name
 
 # Forms
 class FormField(EmbeddedDocument):
     '''A :class:`mongoengine.EmbeddedDocument` used in storing the
-    Checklist/Critical Incident form questions in a
-    :class:`core.documents.Form` model.
+    Checklist/Critical Incident form questions in a :class:`core.models.Form`
+    model.
 
-    Each :class:`core.documents.FormField` has attributes for specifying
-    various behaviour for the form field.
+    Each :class:`core.models.FormField` has attributes for specifying various
+    behaviour for the form field.
 
     :attr:`analysis_type` which specifies the sort of data analysis to be
     performed on the field and is defined by the values stored
@@ -68,7 +56,7 @@ class FormField(EmbeddedDocument):
 
     :attr:`options` which is a dictionary that has keys representing
     field option values and values representing the option description.
-    (e.g. {'1': 'Yes'})
+    (e.g. {1: 'Yes'})
 
     :attr:`allows_multiple_values` which is a boolean field specifying whether
     the field will accept multiple values as correct responses
@@ -96,13 +84,12 @@ class FormField(EmbeddedDocument):
 
 
 class FormGroup(EmbeddedDocument):
-    '''The :class:`core.documents.FormGroup` model provides storage for form
-    groups in a :class:`core.documents.Form` and are the organizational
-    structure for form fields. Besides the :attr:`fields` attribute for storing
+    '''The :class:`core.models.FormGroup` model provides storage for form
+    groups in a :class:`core.models.Form` and are the organizational structure
+    for form fields. Besides the :attr:`fields` attribute for storing
     form fields, there's also a :attr:`name` attribute for storing the name.'''
 
     name = StringField(required=True)
-    slug = StringField(required=True)
     fields = ListField(EmbeddedDocumentField('FormField'))
 
 
@@ -110,7 +97,7 @@ class Form(Document):
     '''Primary storage for Checklist/Incident Forms.
     Defines the following attributes:
 
-    :attr:`events` a list of refernces to :class:`core.documents.Event` objects
+    :attr:`events` a list of refernces to :class:`core.models.Event` objects
     defining which events this form is to be used in.
 
     :attr:`groups` storage for the form groups in the form.
@@ -142,8 +129,6 @@ class Form(Document):
         ]
     }
 
-    def __unicode__(self):
-        return self.name
 
 # Submissions
 class Submission(DynamicEmbeddedDocument):
@@ -153,7 +138,7 @@ class Submission(DynamicEmbeddedDocument):
     exception is for the storage of Critical Incident reports which create
     submissions when data input is received.
 
-    The :class:`core.documents.Submission` model
+    The :class:`core.models.Submission` model
     is a :class:`mongoengine.DynamicEmbeddedDocument` and hence, most of it's
     functionality isn't stored within the model and gets defined at run time
     depending on the configuration of forms, form groups and form fields.
@@ -193,7 +178,7 @@ class Sample(Document):
 
 
 class LocationTypeAncestor(EmbeddedDocument):
-    '''An embedded document used by the :class:`core.document.LocationType`
+    '''An embedded document used by the :class:`core.models.LocationType`
     model for storing denormalized ancestry data'''
 
     name = StringField()
@@ -201,7 +186,7 @@ class LocationTypeAncestor(EmbeddedDocument):
 
 class LocationType(Document):
     '''Stores the type describing the administrative level of a Location
-    :attr ancestors_ref: This stores a list references to ancestor
+    :param ancestors: This stores a list references to ancestor
     loction types as documented in
     http://docs.mongodb.org/manual/tutorial/model-tree-structures/'''
 
@@ -217,18 +202,6 @@ class LocationType(Document):
             ['events']
         ]
     }
-
-    @classmethod
-    def get_root_for_event(cls, event):
-        return cls.objects.get(events=event, __raw__={'ancestors_ref': []})
-
-    def get_children(self):
-        tree = [node.id for node in self.ancestors_ref]
-        tree.append(self.id)
-        return LocationType.objects(__raw__={'ancestors_ref': tree})
-
-    def __unicode__(self):
-        return self.name
 
 
 class LocationAncestor(EmbeddedDocument):
@@ -264,18 +237,6 @@ class Location(Document):
         ]
     }
 
-    @classmethod
-    def get_root_for_event(cls, event):
-        return cls.objects.get(events=event, __raw__={'ancestors_ref': []})
-
-    def get_children(self):
-        tree = [node.id for node in self.ancestors_ref]
-        tree.append(self.id)
-        return Location.objects(__raw__={'ancestors_ref': tree})
-
-    def __unicode__(self):
-        return self.name
-
 
 # Participants
 class ParticipantRole(Document):
@@ -283,16 +244,12 @@ class ParticipantRole(Document):
 
     name = StringField()
 
-    def __unicode__(self):
-        return self.name
 
 class ParticipantPartner(Document):
     '''Storage for the participant partner organization'''
 
     name = StringField()
 
-    def __unicode__(self):
-        return self.name
 
 class Participant(DynamicDocument):
     '''Storage for participant contact information'''
@@ -308,27 +265,3 @@ class Participant(DynamicDocument):
     supervisor = ReferenceField('Participant')
     gender = StringField(choices=GENDER)
     events = ListField(ReferenceField('Event'))
-
-    def __unicode__(self):
-        return self.name
-
-class VersionSequenceField(SequenceField):
-    '''A subclass of :class: `mongoengine.fields.SequenceField` for
-    automatically updating version numbers'''
-    def get_sequence_name(self):
-        obj_id = self.owner_document.obj
-        return '_'.join(('version', 'seq', str(obj_id)))
-
-
-class SubmissionVersion(Document):
-    '''Stores versions of :class: `core.documents.Submission`
-    instances'''
-    obj = ObjectIdField(required=True)
-    data = StringField(required=True)
-    version = VersionSequenceField()
-    timestamp = DateTimeField(default=datetime.utcnow())
-    changed_by = ReferenceField(User, required=True)
-
-    meta = {
-        'ordering': ['-version', '-timestamp']
-    }
