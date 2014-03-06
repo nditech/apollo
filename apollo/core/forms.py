@@ -1,9 +1,8 @@
 from __future__ import unicode_literals
-from core.documents import Participant
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 from form_utils.forms import BetterForm
-from core.documents import Event
+from core.documents import Event, Participant
 
 
 class BaseQuestionnaireForm(BetterForm):
@@ -42,3 +41,19 @@ class BaseQuestionnaireForm(BetterForm):
     def save(self):
         # FIXME
         pass
+
+
+class EventSelectionForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        request = kwargs.pop('request', None)
+        super(EventSelectionForm, self).__init__(*args, **kwargs)
+
+        deployment = request.deployment if request else None
+
+        self.fields['event'] = forms.ChoiceField(
+            choices=Event.objects.filter(
+                deployment=deployment,
+            )
+            .order_by('-end_date')
+            .scalar('id', 'name')
+        )
