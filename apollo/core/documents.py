@@ -6,7 +6,7 @@ from mongoengine import (
     GeoPointField, IntField, ListField, ObjectIdField, ReferenceField,
     SequenceField, StringField
 )
-from altauth.documents import User
+from mongoengine.django.auth import User
 
 
 # Deployments
