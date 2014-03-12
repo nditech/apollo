@@ -33,6 +33,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = (
     'core',
+    'accounts',
     'messaging',
 
     'django.contrib.admin',
@@ -43,6 +44,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
 
     'mongoengine.django.mongo_auth',
+    'pipeline',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -63,7 +65,7 @@ AUTHENTICATION_BACKENDS = (
     'mongoengine.django.auth.MongoEngineBackend',
 )
 AUTH_USER_MODEL = 'mongo_auth.MongoUser'
-MONGOENGINE_USER_DOCUMENT = 'mongoengine.django.auth.User'
+MONGOENGINE_USER_DOCUMENT = 'accounts.documents.User'
 
 SESSION_ENGINE = 'mongoengine.django.sessions'
 SESSION_SERIALIZER = 'mongoengine.django.sessions.BSONSerializer'
@@ -114,18 +116,54 @@ LANGUAGES = (
 )
 
 TIME_ZONE = os.environ.get('TIMEZONE', 'UTC')
-
 USE_I18N = True
-
 USE_L10N = True
-
 USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
-
 STATIC_URL = '/assets/'
+PIPELINE_CSS = {
+    'apollo': {
+        'source_filenames': (
+            'core/css/bootstrap.css',
+            'core/css/select2.css',
+            'core/css/table-fixed-header.css',
+            'core/css/datepicker.css',
+            'core/css/jquery.qtip.css',
+            'core/css/custom.css',
+        ),
+        'output_filename': 'css/apollo.css',
+        'extra_context': {
+            'media': 'screen,projection',
+        },
+    },
+}
+
+PIPELINE_JS = {
+    'apollo': {
+        'source_filenames': (
+            'core/js/jquery.js',
+            'core/js/bootstrap.js',
+            'core/js/select2.js',
+            'core/js/table-fixed-header.js',
+            'core/js/bootstrap-datepicker.js',
+            'core/js/custom.js',
+        ),
+        'output_filename': 'js/apollo.js',
+    },
+    'graphs': {
+        'source_filenames': (
+            'js/underscore.js',
+            'js/jquery.csv.js',
+            'js/raphael.js',
+            'js/jquery.qtip.js',
+            'js/kartograph.js',
+        ),
+        'output_filename': 'js/graphs.js',
+    }
+}
 
 # Messaging
 ALLOWED_PUNCTUATIONS = '!'  # allowed punctuations in SMS forms
