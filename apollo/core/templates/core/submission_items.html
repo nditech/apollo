@@ -1,0 +1,78 @@
+{% load apollo %}{% load static %}{% load i18n %}
+{% for submission in submissions %}
+<tr>
+    <td>{{ submission.observer.observer_id }}</td>
+    {% for location_type in location_types %}
+    <td>{% get_location_for_type submission location_type %}</td>
+    {% endfor %}
+    <td>{{ submission.observer.name|default_if_none:"" }}</td>
+    <td>{{ submission.observer.phone|default_if_none:"" }}</td>
+    {% if form.type == 'CHECKLIST' %}
+    {% for group in form_groups %}
+    <td style="text-align:center">
+        {% if submission|is_complete:group %}<img src="{% static "img/tick.png" %}" title="{% trans "complete" %}" alt="{% trans "complete" %}" height="11" width="11" />
+        {% elif submission|is_partial:group %}<img src="{% static "img/caution.png" %}" title="{% trans "partial" %}" alt="{% trans "partial" %}" height="11" width="11" />
+        {% elif submission|is_missing:group %}<img src="{% static "img/red_dot.png" %}" title="{% trans "missing" %}" alt="{% trans "missing" %}" height="11" width="11" />
+        {% endif %}
+    </td>
+    {% endfor %}
+    {% else %}
+    {% for field in form_fields %}
+    <td style="text-align:center">{% if submission.data|keyvalue:field.tag %}<img src="{% static "img/red_dot.png" %}" height="11" width="11" />{% else %}&nbsp;{% endif %}</td>
+    {% endfor %}
+    <td style="text-align: center">
+        {% with submission.data|keyvalue:"status" as status %}
+        {% if status == 'confirmed' %}
+        <img src="{% static "img/tick.png" %}" title="{% trans "Confirmed" %}" alt="{% trans "Confirmed" %}" height="11" width="11" />
+        {% elif status == 'rejected' %}
+        <img src="{% static "img/red_dot.png" %}" title="{% trans "Rejected" %}" alt="{% trans "Rejected" %}" height="11" width="11" />
+        {% else %}
+        <img src="{% static "img/caution.png" %}" title="{% trans "Unmarked" %}" alt="{% trans "Unmarked" %}" height="11" width="11" />
+        {% endif %}
+        {% endwith %}
+    </td>
+    {% endif %}
+    {% with submission.observer.phone|slugify as known_number %}{% with submission.observer.last_connection.identity|slugify|default:known_number as texting_number %}
+    <td style="text-align: center"><img src="{% if texting_number == known_number %}{% static "img/tick.png" %}{% else %}{% static "img/caution.png" %}{% endif %}" title="{% if texting_number == known_number %}{% trans "Verified" %}{% else %}{% trans "Unverified" %}{% endif %}" height="11" width="11" /></td>
+    {% endwith %}{% endwith %}
+    {% if perms.core.change_submission %}<td style="text-align:center"><a href="{% url submission_edit submission.pk %}">{% trans "Edit" %}</a></td>{% endif %}
+</tr>
+{% empty %}
+{% if perms.core.change_submission %}
+{% if form.type == 'CHECKLIST' %}
+{% with location_types|length|add:"5" as lt_count %}
+{% with form_groups|length|add:lt_count as colspan %}
+<tr class="warning">
+    <td style="text-align:center" colspan="{{ colspan }}">{% trans "No Data Available" %}</td>
+</tr>
+{% endwith %}
+{% endwith %}
+{% else %}
+{% with location_types|length|add:"6" as lt_count %}
+{% with form_fields|length|add:lt_count as colspan %}
+<tr class="warning">
+    <td style="text-align:center" colspan="{{ colspan }}">{% trans "No Data Available" %}</td>
+</tr>
+{% endwith %}
+{% endwith %}
+{% endif %}
+{% else %}
+{% if form.type == 'CHECKLIST' %}
+{% with location_types|length|add:"4" as lt_count %}
+{% with form_groups|length|add:lt_count as colspan %}
+<tr class="warning">
+    <td style="text-align:center" colspan="{{ colspan }}">{% trans "No Data Available" %}</td>
+</tr>
+{% endwith %}
+{% endwith %}
+{% else %}
+{% with location_types|length|add:"5" as lt_count %}
+{% with form_fields|length|add:lt_count as colspan %}
+<tr class="warning">
+    <td style="text-align:center" colspan="{{ colspan }}">{% trans "No Data Available" %}</td>
+</tr>
+{% endwith %}
+{% endwith %}
+{% endif %}
+{% endif %}
+{% endfor %}

@@ -1,7 +1,7 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
-from application import db
-from core.querysets import LocationQuerySet, SubmissionQuerySet
+from apollo.application import db
+from apollo.core.querysets import LocationQuerySet, SubmissionQuerySet
 from datetime import datetime, timedelta
 from slugify import slugify_unicode
 from flask.ext.security import MongoEngineUserDatastore, RoleMixin, UserMixin

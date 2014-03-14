@@ -2,7 +2,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from flask.ext.wtf import Form as WTForm
 from wtforms import SelectField, validators
-from core.models import Event, Form, Sample
+from apollo.core.models import Event, Form, Sample
 
 
 def _make_choices(qs):

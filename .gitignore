@@ -5,12 +5,12 @@
 .DS_Store
 .Python
 .env*
+apollo/static/
 assets/
 bin/
 django.mo
 include/
 lib/
 man/
-local_settings.py
 share/
 src/apollo.egg-info/

@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, url_for
-from core.models import User
+from apollo.core.models import User
 
 accounts = Blueprint('accounts', __name__, template_folder='templates',
                      static_folder='static')
