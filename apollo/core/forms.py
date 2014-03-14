@@ -1,8 +1,8 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 from flask.ext.wtf import Form as WTForm
-from wtforms import SelectField, validators
-from apollo.core.models import Event, Form, Sample
+from wtforms import SelectField, TextField, validators
+from core.models import Event, Form, LocationType, Sample
 
 
 def _make_choices(qs):
@@ -46,3 +46,19 @@ def generate_dashboard_filter_form(deployment, default_event, data=None):
         return DashboardFilterForm(data)
     else:
         return DashboardFilterForm(event=default_event)
+
+
+def generate_location_edit_form(event, data=None):
+    class LocationEditForm(WTForm):
+        name = TextField('Name', validators=[validators.input_required()])
+        code = TextField('Code', validators=[validators.input_required()])
+        location_type = SelectField(
+            'Location type',
+            choices=_make_choices(LocationType.objects(events=event).scalar('name', 'name')),
+            validators=[validators.input_required()]
+        )
+
+    if data:
+        return LocationEditForm(data)
+    else:
+        return LocationEditForm()

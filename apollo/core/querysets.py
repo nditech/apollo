@@ -1,8 +1,9 @@
-from mongoengine import Q, QuerySet
+from flask.ext.mongoengine import BaseQuerySet
+from mongoengine import Q
 from pandas import DataFrame
 
 
-class LocationQuerySet(QuerySet):
+class LocationQuerySet(BaseQuerySet):
     '''Custom queryset class for filtering locations under a specified
     location.'''
     def filter_in(self, location):
@@ -12,7 +13,7 @@ class LocationQuerySet(QuerySet):
         return self(Q(id=location.id) | Q(ancestors_ref=location))
 
 
-class SubmissionQuerySet(QuerySet):
+class SubmissionQuerySet(BaseQuerySet):
     # most of the fields below are DBRef fields or not useful to
     # our particular use case.
     DEFAULT_EXCLUDED_FIELDS = [
