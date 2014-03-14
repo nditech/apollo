@@ -2,9 +2,11 @@ from accounts.views import accounts
 from application import app
 from core.models import user_datastore
 from core.views import core
+from flask.ext.babel import Babel
 from flask.ext.security import Security
 from flask.ext.assets import Bundle, Environment
 
+babel = Babel(app)
 security = Security(app, user_datastore)
 
 apollo_css = Bundle('core/css/bootstrap.css',
