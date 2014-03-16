@@ -83,7 +83,7 @@ def event_selection():
 
 @core.route('/location/<pk>', methods=['GET', 'POST'])
 def location_edit(pk):
-    template_name = 'core/location_edit_2.html'
+    template_name = 'core/location_edit.html'
     event = _get_event(session)
     location = Location.objects.get_or_404(pk=pk, events=event)
     page_title = _('Edit location: %(name)s', name=location.name)
