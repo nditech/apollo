@@ -2,7 +2,10 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from flask.ext.wtf import Form as WTForm
 from wtforms import SelectField, TextField, validators
-from apollo.core.models import Event, Form, LocationType, Sample
+from apollo.core.models import (
+    Event, Form, Location, LocationType, Participant,
+    ParticipantPartner, ParticipantRole, Sample
+)
 
 
 def _make_choices(qs):
@@ -54,8 +57,57 @@ def generate_location_edit_form(event, data=None, **kwargs):
         code = TextField('Code', validators=[validators.input_required()])
         location_type = SelectField(
             'Location type',
-            choices=_make_choices(LocationType.objects(events=event).scalar('name', 'name')),
+            choices=_make_choices(
+                LocationType.objects(events=event).scalar('name', 'name')
+            ),
             validators=[validators.input_required()]
         )
 
     return LocationEditForm(data, **kwargs)
+
+
+def generate_participant_edit_form(event, data=None, **kwargs):
+    class ParticipantEditForm(WTForm):
+        participant_id = TextField(
+            'Participant ID',
+            validators=[validators.input_required()]
+        )
+        name = TextField(
+            'Name',
+            validators=[validators.input_required()]
+        )
+        gender = SelectField(
+            'Gender',
+            choices=Participant.GENDER,
+            validators=[validators.input_required()]
+        )
+        role = SelectField(
+            'Role',
+            choices=_make_choices(
+                ParticipantRole.objects.scalar('id', 'name')
+            ),
+            validators=[validators.input_required()]
+        )
+        supervisor = SelectField(
+            'Supervisor',
+            choices=_make_choices(
+                Participant.objects(event=event).scalar('id', 'name')
+            ),
+            validators=[validators.input_required()]
+        )
+        location = SelectField(
+            'Location',
+            choices=_make_choices(
+                Location.objects(events=event).scalar('id', 'name')
+            ),
+            validators=[validators.input_required()]
+        )
+        partner = SelectField(
+            'Partner',
+            choices=_make_choices(
+                ParticipantPartner.objects.scalar('id', 'name')
+            ),
+            validators=[validators.input_required()]
+        )
+
+    return ParticipantEditForm(data, **kwargs)

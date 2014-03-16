@@ -7,7 +7,8 @@ from flask import (
 )
 from flask.ext.babel import lazy_gettext as _
 from apollo.core.forms import (
-    generate_event_selection_form, generate_location_edit_form
+    generate_event_selection_form, generate_location_edit_form,
+    generate_participant_edit_form
 )
 from apollo.core.models import Event, Location, Participant
 
@@ -108,5 +109,38 @@ def participant_list(page=1):
     page_title = _('Participants')
     template_name = 'core/participant_list.html'
 
-    participants = Participant.objects(events=event).paginate(page=page, per_page=PAGE_SIZE)
-    return render_template(template_name, page_title=page_title, participants=participants)
+    participants = Participant.objects(
+        events=event
+    ).paginate(
+        page=page,
+        per_page=PAGE_SIZE
+    )
+    return render_template(
+        template_name,
+        page_title=page_title,
+        participants=participants
+    )
+
+
+@core.route('/participant/<pk>', methods=['GET', 'POST'])
+def participant_edit(pk):
+    event = _get_event(session)
+    participant = Participant.objects.get_or_404(pk=pk, events=event)
+    page_title = _(
+        'Edit participant: %(participant_id)s',
+        participant_id=participant.participant_id
+    )
+    template_name = 'core/participant_edit.html'
+
+    if request.method == 'GET':
+        form = generate_participant_edit_form(event, **participant._data)
+    else:
+        form = generate_participant_edit_form(event, request.form)
+
+        if form.validate():
+            form.populate_obj(participant)
+            participant.save()
+
+            return redirect(url_for('core.participant_list'))
+
+    return render_template(template_name, form=form, page_title=page_title)
