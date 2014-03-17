@@ -7,8 +7,9 @@ from flask import (
 )
 from flask.ext.babel import lazy_gettext as _
 from apollo.core.forms import (
+    generate_dashboard_filter_form,
     generate_event_selection_form, generate_location_edit_form,
-    generate_participant_edit_form
+    generate_participant_edit_form, generate_submission_filter_form
 )
 from apollo.core.models import (
     Event, Location, Participant, ParticipantPartner, ParticipantRole
@@ -54,7 +55,12 @@ def server_error(e):
 @core.route('/')
 def index():
     event = _get_event(session)
-    return event.to_json()
+    deployment = g.get('deployment')
+    page_title = _('Dashboard')
+    template_name = 'core/dashboard.html'
+
+    form = generate_dashboard_filter_form(deployment, event)
+    return render_template(template_name, filter_form=form, page_title=page_title)
 
 
 @core.route('/event', methods=['GET', 'POST'])
@@ -86,7 +92,7 @@ def event_selection():
 
 @core.route('/location/<pk>', methods=['GET', 'POST'])
 def location_edit(pk):
-    template_name = 'core/location_edit.html'
+    template_name = 'core/location_edit_2.html'
     deployment = g.get('deployment')
     location = Location.objects.get_or_404(pk=pk, deployment=deployment)
     page_title = _('Edit location: %(name)s', name=location.name)
@@ -152,3 +158,8 @@ def participant_edit(pk):
             return redirect(url_for('core.participant_list'))
 
     return render_template(template_name, form=form, page_title=page_title)
+
+
+@core.route('/submissions')
+def submission_list():
+    return ''

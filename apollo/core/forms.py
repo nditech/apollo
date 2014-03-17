@@ -192,4 +192,30 @@ def generate_submission_filter_form(form):
     events = Event.objects(deployment=form.deployment).scalar('id', 'name')
 
     class SubmissionFilterForm(WTForm):
-        participant_id = TextField
+        participant_id = TextField()
+        date = TextField()
+        location = SelectField(choices=_make_choices(locations, _('Location')))
+        event = SelectField(choices=_make_choices(events, _('Event')))
+        sample = SelectField(choices=_make_choices(samples, _('Sample')))
+
+    for group in form.groups:
+        choices = [
+            ('0', _('%(group)s Status', group=group.name))
+            ('1', _('%(group)s Partial', group=group.name))
+            ('2', _('%(group)s Missing', group=group.name))
+            ('3', _('%(group)s Complete', group=group.name))
+        ]
+        setattr(SubmissionFilterForm, 'group_{}'.format(group.name), SelectField(choices=choices))
+
+    if form.form_type == 'INCIDENT':
+        setattr(
+            SubmissionFilterForm,
+            'status',
+            SelectField(choices=(
+                ('', _('Status')),
+                ('NULL', _('Unmarked')),
+                ('confirmed', _('Confirmed')),
+                ('rejected', _('Rejected')),
+                ('citizen', _('Citizen report')))
+            )
+        )
