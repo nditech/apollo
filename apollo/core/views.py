@@ -10,7 +10,9 @@ from apollo.core.forms import (
     generate_event_selection_form, generate_location_edit_form,
     generate_participant_edit_form
 )
-from apollo.core.models import Event, Location, Participant
+from apollo.core.models import (
+    Event, Location, Participant, ParticipantPartner, ParticipantRole
+)
 
 PAGE_SIZE = 25
 core = Blueprint('core', __name__, template_folder='templates',
@@ -85,14 +87,14 @@ def event_selection():
 @core.route('/location/<pk>', methods=['GET', 'POST'])
 def location_edit(pk):
     template_name = 'core/location_edit.html'
-    event = _get_event(session)
-    location = Location.objects.get_or_404(pk=pk, events=event)
+    deployment = g.get('deployment')
+    location = Location.objects.get_or_404(pk=pk, deployment=deployment)
     page_title = _('Edit location: %(name)s', name=location.name)
 
     if request.method == 'GET':
-        form = generate_location_edit_form(event, **location._data)
+        form = generate_location_edit_form(location)
     else:
-        form = generate_location_edit_form(event, request.form)
+        form = generate_location_edit_form(location, request.form)
 
         if form.validate():
             form.populate_obj(location)
@@ -105,12 +107,12 @@ def location_edit(pk):
 
 @core.route('/participants/<int:page>')
 def participant_list(page=1):
-    event = _get_event(session)
+    deployment = g.get('deployment')
     page_title = _('Participants')
     template_name = 'core/participant_list.html'
 
     participants = Participant.objects(
-        events=event
+        deployment=deployment
     ).paginate(
         page=page,
         per_page=PAGE_SIZE
@@ -124,8 +126,8 @@ def participant_list(page=1):
 
 @core.route('/participant/<pk>', methods=['GET', 'POST'])
 def participant_edit(pk):
-    event = _get_event(session)
-    participant = Participant.objects.get_or_404(pk=pk, events=event)
+    deployment = g.get('deployment')
+    participant = Participant.objects.get_or_404(pk=pk, deployment=deployment)
     page_title = _(
         'Edit participant: %(participant_id)s',
         participant_id=participant.participant_id
@@ -133,12 +135,18 @@ def participant_edit(pk):
     template_name = 'core/participant_edit.html'
 
     if request.method == 'GET':
-        form = generate_participant_edit_form(event, **participant._data)
+        form = generate_participant_edit_form(participant)
     else:
-        form = generate_participant_edit_form(event, request.form)
+        form = generate_participant_edit_form(participant, request.form)
 
         if form.validate():
-            form.populate_obj(participant)
+            participant.participant_id = form.participant_id.data
+            participant.name = form.name.data
+            participant.gender = form.gender.data
+            participant.role = ParticipantRole.objects.with_id(form.role.data)
+            participant.supervisor = Participant.objects.with_id(form.supervisor.data)
+            participant.location = Location.objects.with_id(form.location.data)
+            participant.partner = ParticipantPartner.objects.with_id(form.partner.data)
             participant.save()
 
             return redirect(url_for('core.participant_list'))
