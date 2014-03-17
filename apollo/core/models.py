@@ -24,6 +24,7 @@ class Deployment(db.Document):
 class Role(db.Document, RoleMixin):
     name = db.StringField(unique=True)
     description = db.StringField()
+    deployment = db.ReferenceField(Deployment)
 
 
 class User(db.Document, UserMixin):
@@ -168,6 +169,7 @@ class Form(db.Document):
     form_type = db.StringField(choices=FORM_TYPES)
     groups = db.ListField(db.EmbeddedDocumentField('FormGroup'))
     events = db.ListField(db.ReferenceField('Event'))
+    deployment = db.ReferenceField(Deployment)
 
     meta = {
         'indexes': [
@@ -222,6 +224,7 @@ class Submission(db.DynamicDocument):
     created = db.DateTimeField()
     updated = db.DateTimeField()
     completion = db.DictField()
+    deployment = db.ReferenceField(Deployment)
 
     meta = {
         'queryset_class': SubmissionQuerySet,
@@ -249,6 +252,7 @@ class Sample(db.Document):
 
     name = db.StringField()
     events = db.ListField(db.ReferenceField('Event'))
+    deployment = db.ReferenceField(Deployment)
 
     meta = {
         'indexes': [
@@ -277,6 +281,7 @@ class LocationType(db.Document):
     on_analysis_view = db.BooleanField(default=False)
     events = db.ListField(db.ReferenceField('Event'))
     slug = db.StringField()
+    deployment = db.ReferenceField(Deployment)
 
     meta = {
         'indexes': [
@@ -321,6 +326,7 @@ class Location(db.Document):
     ancestors = db.ListField(db.EmbeddedDocumentField('LocationAncestor'))
     samples = db.ListField(db.ReferenceField('Sample'))
     events = db.ListField(db.ReferenceField('Event'))
+    deployment = db.ReferenceField(Deployment)
 
     meta = {
         'indexes': [
@@ -354,6 +360,7 @@ class ParticipantRole(db.Document):
     '''Stores the role for a participant. (e.g. Supervisor, Co-ordinator)'''
 
     name = db.StringField()
+    deployment = db.ReferenceField(Deployment)
 
     def __unicode__(self):
         return self.name
@@ -363,6 +370,7 @@ class ParticipantPartner(db.Document):
     '''Storage for the participant partner organization'''
 
     name = db.StringField()
+    deployment = db.ReferenceField(Deployment)
 
     def __unicode__(self):
         return self.name
@@ -382,6 +390,7 @@ class Participant(db.DynamicDocument):
     supervisor = db.ReferenceField('Participant')
     gender = db.StringField(choices=GENDER)
     events = db.ListField(db.ReferenceField('Event'))
+    deployment = db.ReferenceField(Deployment)
 
     def __unicode__(self):
         return self.name
@@ -404,16 +413,17 @@ class SubmissionVersion(db.Document):
     version = VersionSequenceField()
     timestamp = db.DateTimeField(default=datetime.utcnow())
     changed_by = db.ReferenceField(User, required=True)
+    deployment = db.ReferenceField(Deployment)
 
     meta = {
         'ordering': ['-version', '-timestamp']
     }
 
 
-class Comment(db.Document):
-    '''Stores user comments. An attempt to replicate the
-    django.contrib.comments mode functionality.'''
-    user_name = db.StringField()
-    email = db.EmailField()
+class SubmissionComment(db.Document):
+    '''Stores user comments.'''
+    submission = db.ReferenceField(Submission)
+    user = db.ReferenceField(User)
     comment = db.StringField()
-    submit_date = db.DateTimeField()
+    submit_date = db.DateTimeField(default=datetime.utcnow())
+    deployment = db.ReferenceField(Deployment)
