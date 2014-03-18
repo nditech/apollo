@@ -17,28 +17,31 @@ def _get_group_coverage(submission_queryset, group, location_type):
     # build MongoDB aggregation pipeline
     pipeline = [
         {'$match': submission_queryset._query},
-        {'$group': {
-            '_id': {
-                'location': '$location_name_path.{}'.format(location_type.name),
-                'completion': '$completion'
-            },
-            'total': {'$sum': 1}
+        {
+            '$group': {
+                '_id': {
+                    'location': '$location_name_path.{}'.format(location_type.name),
+                    'completion': '$completion'
+                },
+                'total': {'$sum': 1}
         }
         },
-        {'$group': {
-            '_id': {
+        {
+            '$group': {
+                '_id': {
+                    'location': '$_id.location',
+                    group: '$_id.completion.{}'.format(group)
+                },
+                'total': {'$sum': '$total'}
+        }
+        },
+        {
+            '$project': {
+                '_id': 0,
                 'location': '$_id.location',
-                group: '$_id.completion.{}'.format(group)
-            },
-            'total': {'$sum': '$total'}
-        }
-        },
-        {'$project': {
-            '_id': 0,
-            'location': '$_id.location',
-            'completion': '$_id.{}'.format(group),
-            'total': '$total'
-        }
+                'completion': '$_id.{}'.format(group),
+                'total': '$total'
+            }
         }
     ]
 
