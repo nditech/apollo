@@ -1,8 +1,8 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 from flask.ext.babel import lazy_gettext as _
-from flask.ext.wtf import Form as WTForm
-from wtforms import SelectField, TextField, validators
+from flask.ext.wtf import Form as WTSecureForm
+from wtforms import Form as WTForm, SelectField, TextField, validators
 from apollo.core.models import (
     Event, Form, Location, LocationType, Participant,
     ParticipantPartner, ParticipantRole, Sample
@@ -22,7 +22,7 @@ def generate_event_selection_form(deployment, *args, **kwargs):
     ).order_by('-end_date').scalar('id', 'name')
     choices = [(unicode(a), unicode(b)) for a, b in event_choices]
 
-    class EventSelectionForm(WTForm):
+    class EventSelectionForm(WTSecureForm):
         event = SelectField(
             'Select event',
             choices=choices,
@@ -35,7 +35,7 @@ def generate_event_selection_form(deployment, *args, **kwargs):
 def generate_location_edit_form(location, data=None):
     locations = LocationType.objects(deployment=location.deployment)
 
-    class LocationEditForm(WTForm):
+    class LocationEditForm(WTSecureForm):
         name = TextField('Name', validators=[validators.input_required()])
         code = TextField('Code', validators=[validators.input_required()])
         location_type = SelectField(
@@ -53,7 +53,7 @@ def generate_location_edit_form(location, data=None):
 def generate_participant_edit_form(participant, data=None):
     deployment = participant.deployment
 
-    class ParticipantEditForm(WTForm):
+    class ParticipantEditForm(WTSecureForm):
         participant_id = TextField(
             'Participant ID',
             validators=[validators.input_required()]
@@ -191,7 +191,7 @@ def generate_submission_filter_form(form):
     locations = Location.objects(deployment=form.deployment).scalar('id', 'name')
     events = Event.objects(deployment=form.deployment).scalar('id', 'name')
 
-    class SubmissionFilterForm(WTForm):
+    class SubmissionFilterForm(WTSecureForm):
         participant_id = TextField()
         date = TextField()
         location = SelectField(choices=_make_choices(locations, _('Location')))

@@ -2,17 +2,19 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from logging import getLogger
 from flask import (
-    Blueprint, flash, g, redirect, render_template,
+    Blueprint, abort, flash, g, redirect, render_template,
     request, session, url_for
 )
 from flask.ext.babel import lazy_gettext as _
+from apollo.analyses.dashboard import get_coverage
 from apollo.core.forms import (
     generate_dashboard_filter_form,
     generate_event_selection_form, generate_location_edit_form,
     generate_participant_edit_form, generate_submission_filter_form
 )
 from apollo.core.models import (
-    Event, Location, Participant, ParticipantPartner, ParticipantRole
+    Event, Form, Location, LocationType, Participant, ParticipantPartner,
+    ParticipantRole, Sample, Submission
 )
 
 PAGE_SIZE = 25
@@ -53,14 +55,61 @@ def server_error(e):
 
 
 @core.route('/')
-def index():
-    event = _get_event(session)
+@core.route('/<group>')
+@core.route('/<group>/location_type_id')
+def index(group=None, location_type_id=None):
+    # get variables from query params, or use (hopefully) sensible defaults
     deployment = g.get('deployment')
+    if request.args.get('event'):
+        event = Event.objects.with_id(request.args.get('event'))
+        if event is None:
+            abort(404)
+    else:
+        event = _get_event(session)
+
+    if request.args.get('form'):
+        form = Form.objects.with_id(request.args.get('form'))
+    else:
+        form = Form.objects(deployment=deployment, form_type='CHECKLIST', events=event).first()
+
+    if form is None:
+        abort(404)
+
+    
+
     page_title = _('Dashboard')
     template_name = 'core/dashboard.html'
 
-    form = generate_dashboard_filter_form(deployment, event)
-    return render_template(template_name, filter_form=form, page_title=page_title)
+    filter_form = generate_dashboard_filter_form(deployment, event)
+    # only pick observer-created submissions
+    queryset = Submission.objects(
+        contributor__ne=None,
+        deployment=deployment,
+        form=form
+    )
+
+    # activate sample filter
+    if request.args.get('sample'):
+        sample = Sample.objects.get_or_404(request.args.get('sample'))
+        locations = Location.objects(deployment=deployment, samples=sample)
+        queryset = queryset.filter(location__in=locations)
+
+    if group is None:
+        data = get_coverage(queryset)
+    else:
+        if location_type_id is None:
+            location_type = LocationType.get_root_for_event(event)
+        else:
+            location_type = LocationType.objects.get_or_404(pk=location_type_id)
+
+        data = get_coverage(group, location_type)
+
+    return render_template(
+        template_name,
+        data=data,
+        filter_form=filter_form,
+        page_title=page_title
+    )
 
 
 @core.route('/event', methods=['GET', 'POST'])
