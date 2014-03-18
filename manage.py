@@ -1,6 +1,6 @@
 #!/usr/bin/env python
-from flask.ext.script import Manager, Server
 from flask.ext.assets import ManageAssets
+from flask.ext.script import Manager, Server
 from apollo import app, assets
 
 manager = Manager(app)

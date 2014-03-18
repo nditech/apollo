@@ -1,10 +1,11 @@
+.DS_Store
+.env*
+.Python
+.webassets-cache
 *.pyc
 *.sqlite3
 *.sublime-project
 *.sublime-workspace
-.DS_Store
-.Python
-.env*
 apollo/static/
 assets/
 bin/

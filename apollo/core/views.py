@@ -6,6 +6,7 @@ from flask import (
     request, session, url_for
 )
 from flask.ext.babel import lazy_gettext as _
+from flask.ext.security import login_required
 from apollo.analyses.dashboard import get_coverage
 from apollo.core.forms import (
     generate_dashboard_filter_form,
@@ -70,12 +71,11 @@ def index(group=None, location_type_id=None):
     if request.args.get('form'):
         form = Form.objects.with_id(request.args.get('form'))
     else:
-        form = Form.objects(deployment=deployment, form_type='CHECKLIST', events=event).first()
+        form = Form.objects(deployment=deployment, form_type='CHECKLIST',
+                            events=event).first()
 
     if form is None:
         abort(404)
-
-    
 
     page_title = _('Dashboard')
     template_name = 'core/dashboard.html'
@@ -100,7 +100,8 @@ def index(group=None, location_type_id=None):
         if location_type_id is None:
             location_type = LocationType.get_root_for_event(event)
         else:
-            location_type = LocationType.objects.get_or_404(pk=location_type_id)
+            location_type = LocationType.objects.get_or_404(
+                pk=location_type_id)
 
         data = get_coverage(group, location_type)
 
@@ -199,9 +200,11 @@ def participant_edit(pk):
             participant.name = form.name.data
             participant.gender = form.gender.data
             participant.role = ParticipantRole.objects.with_id(form.role.data)
-            participant.supervisor = Participant.objects.with_id(form.supervisor.data)
+            participant.supervisor = Participant.objects.with_id(
+                form.supervisor.data)
             participant.location = Location.objects.with_id(form.location.data)
-            participant.partner = ParticipantPartner.objects.with_id(form.partner.data)
+            participant.partner = ParticipantPartner.objects.with_id(
+                form.partner.data)
             participant.save()
 
             return redirect(url_for('core.participant_list'))
