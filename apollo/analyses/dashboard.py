@@ -14,13 +14,12 @@ def get_coverage(submission_queryset, group=None, location_type=None):
 
 
 def _get_group_coverage(submission_queryset, group, location_type):
-    group_name = group.name
     # build MongoDB aggregation pipeline
     pipeline = [
         {'$match': submission_queryset._query},
         {'$group': {
             '_id': {
-                'location': '$location_tree.{}'.format(location_type.name),
+                'location': '$location_name_path.{}'.format(location_type.name),
                 'completion': '$completion'
             },
             'total': {'$sum': 1}
@@ -29,7 +28,7 @@ def _get_group_coverage(submission_queryset, group, location_type):
         {'$group': {
             '_id': {
                 'location': '$_id.location',
-                group_name: '$_id.completion.{}'.format(group_name)
+                group: '$_id.completion.{}'.format(group)
             },
             'total': {'$sum': '$total'}
         }
@@ -37,7 +36,7 @@ def _get_group_coverage(submission_queryset, group, location_type):
         {'$project': {
             '_id': 0,
             'location': '$_id.location',
-            'completion': '$_id.completion',
+            'completion': '$_id.{}'.format(group),
             'total': '$total'
         }
         }
@@ -93,9 +92,12 @@ def _get_global_coverage(submission_queryset):
     # reshape the result
     coverage = OrderedDict()
     for group in groups:
-        complete = sum((r.get('total') for r in result if r.get('completion').get(group) == 'Complete'))
-        partial = sum((r.get('total') for r in result if r.get('completion').get(group) == 'Partial'))
-        missing = sum((r.get('total') for r in result if r.get('completion').get(group) == 'Missing'))
+        complete = sum((r.get('total')
+                       for r in result if r.get('completion').get(group) == 'Complete'))
+        partial = sum((r.get('total')
+                      for r in result if r.get('completion').get(group) == 'Partial'))
+        missing = sum((r.get('total')
+                      for r in result if r.get('completion').get(group) == 'Missing'))
 
         coverage.update({group: {
             'Complete': complete,
