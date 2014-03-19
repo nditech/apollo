@@ -299,9 +299,6 @@ class LocationType(db.Document):
         return super(LocationType, self).clean()
 
     def get_children(self):
-        # tree = [node.id for node in self.ancestors_ref]
-        # tree.append(self.id)
-        # return LocationType.objects(__raw__={'ancestors_ref': tree})
         return LocationType.objects(ancestors_ref=self)
 
     def __unicode__(self):
@@ -348,9 +345,7 @@ class Location(db.Document):
         return cls.objects.get(events=event, __raw__={'ancestors_ref': []})
 
     def get_children(self):
-        tree = [node.id for node in self.ancestors_ref]
-        tree.append(self.id)
-        return Location.objects(__raw__={'ancestors_ref': tree})
+        return Location.objects(ancestors_ref=self)
 
     def __unicode__(self):
         return self.name
