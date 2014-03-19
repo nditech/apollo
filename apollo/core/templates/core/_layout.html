@@ -1,4 +1,4 @@
-{% load i18n %}{% load apollo %}{% load compressed %}<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
@@ -7,20 +7,20 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <!-- Le styles -->
-    {% compressed_css 'apollo' %}
+    {% assets 'apollo_css' %}
+    <link rel="stylesheet" href="{{ ASSET_URL }}" type="text/css" media="screen,projection" charset="utf-8">
+    {% endassets %}
     {% block stylesheets %}{% endblock %}
     <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
-    
+
     <!-- abbr tag for IE 7 and below -->
     <!--[if lte IE 7]>
       <script type="text/javascript">document.createElement('abbr');</script>
     <![endif]-->
 
-    <!-- Le fav and touch icons -->
-    <link rel="shortcut icon" href="{{ STATIC_URL }}ico/favicon.ico">
     {% block head %}{% endblock %}
   </head>
   <style type="text/css">
@@ -33,18 +33,18 @@
         </div>
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
-            <li><a href="{% url dashboard %}"><i class="glyphicon glyphicon-user glyphicon-home"></i> {% trans "Dashboard" %}</a></li>
+            <li><a href="{% url dashboard %}"><i class="glyphicon glyphicon-user glyphicon-home"></i> {% trans %}Dashboard{% endtrans %}</a></li>
             {% forms_menu request perms %}
             {% if perms.core.can_analyse %}{% analysis_menu request %}{% endif %}
-            {% if perms.core.view_observers %}<li><a href="{% url contacts_list %}"><i class="glyphicon glyphicon-user"></i> {% trans "Observers" %}</a></li>{% endif %}
-            {% if perms.messagelog.view_messages %}<li><a href="{% url messages_list %}"><i class="glyphicon glyphicon-envelope"></i> {% trans "Messages" %}</a></li>{% endif %}
+            {% if perms.core.view_observers %}<li><a href="{% url contacts_list %}"><i class="glyphicon glyphicon-user"></i> {% trans %}Observers{% endtrans %}</a></li>{% endif %}
+            {% if perms.messagelog.view_messages %}<li><a href="{% url messages_list %}"><i class="glyphicon glyphicon-envelope"></i> {% trans %}Messages{% endtrans %}</a></li>{% endif %}
             <li class="divider-vertical"></li>
             <li>
               <a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="glyphicon glyphicon-user"></i> {{ request.user.username }} <b class="caret"></b></a>
               <ul class="dropdown-menu">
-                <li><a href="{% url activity_selection %}"><i class="glyphicon glyphicon-th-list"></i> {% trans "Activity Menu" %}</a></li>
+                <li><a href="{% url activity_selection %}"><i class="glyphicon glyphicon-th-list"></i> {% trans %}Activity Menu{% endtrans %}</a></li>
                 <li class="divider"></li>
-                <li><a href="{% url user-logout %}"><i class="glyphicon glyphicon-log-out"></i> {% trans "Logout" %}</a></li>
+                <li><a href="{% url user-logout %}"><i class="glyphicon glyphicon-log-out"></i> {% trans %}Logout{% endtrans %}</a></li>
               </ul>
             </li>
           </ul>
@@ -60,7 +60,9 @@
         <footer>{% block footer %}{% endblock %}</footer>
       </div>
     </div>
-    {% compressed_js 'apollo' %}{% block javascripts %}{% endblock %}
+    {% assets 'apollo_js' %}
+    <script type="text/javascript" src="{{ ASSET_URL }}" charset="utf-8"></script>
+    {% endassets %}
     {% if not debug %}
     <script type="text/javascript">
 

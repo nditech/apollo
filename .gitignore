@@ -13,5 +13,6 @@ django.mo
 include/
 lib/
 man/
+messages.mo
 share/
 src/apollo.egg-info/
