@@ -22,7 +22,7 @@ class SubmissionQuerySet(BaseQuerySet):
 
     def filter_in(self, location):
         query_kwargs = {
-            'location_tree__{}'.format(location.location_type): location.name
+            'location_name_path__{}'.format(location.location_type): location.name
         }
         return self(Q(location=location) | Q(**query_kwargs))
 

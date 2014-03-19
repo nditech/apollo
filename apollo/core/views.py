@@ -80,14 +80,16 @@ def index():
         abort(404)
 
     page_title = _('Dashboard')
-    template_name = 'core/dashboard.html'
+    template_name = 'core/nu_dashboard.html'
 
     filter_form = generate_dashboard_filter_form(deployment, event)
     # only pick observer-created submissions
     queryset = Submission.objects(
         contributor__ne=None,
+        created__lte=event.end_date,
+        created__gte=event.start_date,
         deployment=deployment,
-        form=form
+        form=form,
     )
 
     # activate sample filter
@@ -108,7 +110,8 @@ def index():
 
         # get the requisite location type
         try:
-            sub_location_type = [lt for lt in location_type.get_children() if lt.on_dashboard_view][0]
+            sub_location_type = [
+                lt for lt in location_type.get_children() if lt.on_dashboard_view][0]
         except IndexError:
             sub_location_type = location_type
 
@@ -151,7 +154,7 @@ def event_selection():
 
 @core.route('/location/<pk>', methods=['GET', 'POST'])
 def location_edit(pk):
-    template_name = 'core/location_edit_2.html'
+    template_name = 'core/location_edit.html'
     deployment = g.get('deployment')
     location = Location.objects.get_or_404(pk=pk, deployment=deployment)
     page_title = _('Edit location: %(name)s', name=location.name)
@@ -221,7 +224,76 @@ def participant_edit(pk):
     return render_template(template_name, form=form, page_title=page_title)
 
 
-@core.route('/submissions')
-def submission_list():
+@core.route('/submissions/<form_id>', methods=['GET', 'POST'])
+def submission_list(form_id):
+    event = _get_event(session)
     deployment = g.get('deployment')
-    return ''
+    form = Form.objects.get_or_404(deployment=deployment, pk=form_id)
+    template_name = 'core/submission_list.html'
+
+    queryset = Submission.objects(
+        contributor__ne=None,
+        created__lte=event.end_date,
+        created__gte=event.start_date,
+        deployment=deployment,
+        form=form
+    )
+
+    if request.method == 'GET':
+        filter_form = generate_submission_filter_form(form, event)
+        return render_template(
+            template_name,
+            filter_form=filter_form,
+            queryset=queryset
+        )
+        print queryset._query
+    else:
+        filter_form = generate_submission_filter_form(
+            form, event, request.form)
+
+        # process filter form
+        for field in filter_form:
+            if field.errors:
+                continue
+
+            # filter on groups
+            if field.name.startswith('group_') and field.data:
+                slug = field.name.split('_', 1)[1]
+                try:
+                    group = [grp.name for grp in form.groups if grp.slug == slug][0]
+                except IndexError:
+                    continue
+                if field.data == '0':
+                    continue
+                elif field.data == '1':
+                    queryset = queryset(
+                        **{'completion__{}'.format(group): 'Partial'})
+                elif field.data == '2':
+                    queryset = queryset(
+                        **{'completion__{}'.format(group): 'Missing'})
+                elif field.data == '3':
+                    queryset = queryset(
+                        **{'completion__{}'.format(group): 'Complete'})
+            else:
+                # filter 'regular' fields
+                if field.name == 'participant_id' and field.data:
+                    # participant ID
+                    participant = Participant.objects.get_or_404(
+                        participant_id=field.data)
+                    queryset = queryset(contributor=participant)
+                elif field.name == 'location' and field.data:
+                    # location
+                    location = Location.objects.get_or_404(pk=field.data)
+                    queryset = queryset.filter_in(location)
+                elif field.name == 'sample' and field.data:
+                    # sample
+                    sample = Sample.objects.get_or_404(pk=field.data)
+                    locations = Location.objects(samples=sample)
+                    queryset = queryset(location__in=locations)
+
+        print queryset._query
+        return render_template(
+            template_name,
+            filter_form=filter_form,
+            queryset=queryset
+        )

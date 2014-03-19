@@ -2,7 +2,9 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from flask.ext.babel import lazy_gettext as _
 from flask.ext.wtf import Form as WTSecureForm
-from wtforms import Form as WTForm, SelectField, TextField, validators
+from wtforms import (
+    Form as WTForm, HiddenField, SelectField, TextField, validators
+)
 from apollo.core.models import (
     Event, Form, Location, LocationType, Participant,
     ParticipantPartner, ParticipantRole, Sample
@@ -186,26 +188,24 @@ def generate_participant_filter_form(deployment, data=None, **kwargs):
     return ObserverFilterForm(data, **kwargs)
 
 
-def generate_submission_filter_form(form):
+def generate_submission_filter_form(form, default_event, data=None):
     samples = Sample.objects(deployment=form.deployment).scalar('id', 'name')
     locations = Location.objects(deployment=form.deployment).scalar('id', 'name')
-    events = Event.objects(deployment=form.deployment).scalar('id', 'name')
 
-    class SubmissionFilterForm(WTSecureForm):
+    class SubmissionFilterForm(WTForm):
         participant_id = TextField()
-        date = TextField()
         location = SelectField(choices=_make_choices(locations, _('Location')))
-        event = SelectField(choices=_make_choices(events, _('Event')))
+        event = HiddenField(default=unicode(default_event.id))
         sample = SelectField(choices=_make_choices(samples, _('Sample')))
 
     for group in form.groups:
         choices = [
-            ('0', _('%(group)s Status', group=group.name))
-            ('1', _('%(group)s Partial', group=group.name))
-            ('2', _('%(group)s Missing', group=group.name))
+            ('0', _('%(group)s Status', group=group.name)),
+            ('1', _('%(group)s Partial', group=group.name)),
+            ('2', _('%(group)s Missing', group=group.name)),
             ('3', _('%(group)s Complete', group=group.name))
         ]
-        setattr(SubmissionFilterForm, 'group_{}'.format(group.name), SelectField(choices=choices))
+        setattr(SubmissionFilterForm, 'group_{}'.format(group.slug), SelectField(choices=choices))
 
     if form.form_type == 'INCIDENT':
         setattr(
@@ -219,3 +219,5 @@ def generate_submission_filter_form(form):
                 ('citizen', _('Citizen report')))
             )
         )
+
+    return SubmissionFilterForm(data)
