@@ -299,9 +299,10 @@ class LocationType(db.Document):
         return super(LocationType, self).clean()
 
     def get_children(self):
-        tree = [node.id for node in self.ancestors_ref]
-        tree.append(self.id)
-        return LocationType.objects(__raw__={'ancestors_ref': tree})
+        # tree = [node.id for node in self.ancestors_ref]
+        # tree.append(self.id)
+        # return LocationType.objects(__raw__={'ancestors_ref': tree})
+        return LocationType.objects(ancestors_ref=self)
 
     def __unicode__(self):
         return self.name

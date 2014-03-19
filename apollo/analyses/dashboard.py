@@ -60,9 +60,11 @@ def _get_group_coverage(submission_queryset, group, location_type):
     coverage = OrderedDict({l: {} for l in locations})
     for r in result:
         l = r.pop('location')
-        coverage[l].update({r['completion']: r['total']})
+        coverage[l].update({r['completion']: r['total'], 'name': l})
 
-    return coverage
+    coverage_list = [coverage.get(l) for l in sorted(locations)] if coverage else []
+
+    return coverage_list
 
 
 def _get_global_coverage(submission_queryset):
@@ -105,7 +107,17 @@ def _get_global_coverage(submission_queryset):
         coverage.update({group: {
             'Complete': complete,
             'Partial': partial,
-            'Missing': missing
+            'Missing': missing,
+            'name': group
         }})
 
-    return coverage
+    # find a 'logical' sort
+    submission = submission_queryset.first()
+    if submission:
+        group_names = [g.name for g in submission.form.groups]
+    else:
+        group_names = groups
+
+    coverage_list = [coverage.get(g) for g in group_names]
+
+    return coverage_list

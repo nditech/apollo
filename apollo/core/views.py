@@ -1,3 +1,4 @@
+# encoding: utf-8
 from __future__ import absolute_import
 from __future__ import unicode_literals
 from logging import getLogger
@@ -56,9 +57,7 @@ def server_error(e):
 
 
 @core.route('/')
-@core.route('/<group>')
-@core.route('/<group>/location_type_id')
-def index(group=None, location_type_id=None):
+def index():
     # get variables from query params, or use (hopefully) sensible defaults
     deployment = g.get('deployment')
     if request.args.get('event'):
@@ -67,6 +66,9 @@ def index(group=None, location_type_id=None):
             abort(404)
     else:
         event = _get_event(session)
+
+    group = request.args.get('group')
+    location_type_id = request.args.get('locationtype')
 
     if request.args.get('form'):
         form = Form.objects.with_id(request.args.get('form'))
@@ -94,16 +96,23 @@ def index(group=None, location_type_id=None):
         locations = Location.objects(deployment=deployment, samples=sample)
         queryset = queryset.filter(location__in=locations)
 
-    if group is None:
+    if not group:
         data = get_coverage(queryset)
     else:
+        page_title = page_title + ' · {}'.format(group)
         if location_type_id is None:
             location_type = LocationType.get_root_for_event(event)
         else:
             location_type = LocationType.objects.get_or_404(
                 pk=location_type_id)
 
-        data = get_coverage(group, location_type)
+        # get the requisite location type
+        try:
+            sub_location_type = [lt for lt in location_type.get_children() if lt.on_dashboard_view][0]
+        except IndexError:
+            sub_location_type = location_type
+
+        data = get_coverage(queryset, group, sub_location_type)
 
     return render_template(
         template_name,
@@ -214,4 +223,5 @@ def participant_edit(pk):
 
 @core.route('/submissions')
 def submission_list():
+    deployment = g.get('deployment')
     return ''
