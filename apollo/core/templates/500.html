@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Server Error</title>
+    <title>{% trans %}Server Error{% endtrans %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     {% assets 'apollo_css' %}
     <link rel="stylesheet" href="{{ ASSET_URL }}" type="text/css" media="screen,projection" charset="utf-8">
@@ -11,8 +11,8 @@
  <body>
     <div class="row-fluid">
 		<div class="span4 offset4" style="text-align:center; margin-top:14em;">
-			<legend style="border-bottom:0px; margin-bottom:0px;">Zong! We screwed up :(</legend>
-			<p>You shouldn't be seeing this page but you are because you're a genius and have found a rare bug in the software. Rest assured, we now know about it and will fix it ASAP!</p>
+			<legend style="border-bottom:0px; margin-bottom:0px;">{% trans %}Zong! We screwed up :({% endtrans %}</legend>
+			<p>{% trans %}You shouldn't be seeing this page but you are because you're a genius and have found a rare bug in the software. Rest assured, we now know about it and will fix it ASAP!{% endtrans %}</p>
 		</div>
 	</div>
   </body>
