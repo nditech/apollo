@@ -18,6 +18,7 @@ from .models import (
     Event, Form, Location, LocationType, Participant, ParticipantPartner,
     ParticipantRole, Sample, Submission
 )
+from . import route
 
 PAGE_SIZE = 25
 core = Blueprint('core', __name__, template_folder='templates',
@@ -41,19 +42,19 @@ def _get_event(container):
     return event
 
 
-@core.app_errorhandler(403)
-def forbidden(e):
-    return render_template('403.html'), 403
+# @core.app_errorhandler(403)
+# def forbidden(e):
+#     return render_template('403.html'), 403
 
 
-@core.app_errorhandler(404)
-def page_not_found(e):
-    return render_template('404.html'), 404
+# @core.app_errorhandler(404)
+# def page_not_found(e):
+#     return render_template('404.html'), 404
 
 
-@core.app_errorhandler(500)
-def server_error(e):
-    return render_template('500.html'), 500
+# @core.app_errorhandler(500)
+# def server_error(e):
+#     return render_template('500.html'), 500
 
 
 @core.route('/')
@@ -128,7 +129,7 @@ def index():
 @core.route('/event', methods=['GET', 'POST'])
 def event_selection():
     page_title = _('Select event')
-    template_name = 'core/event_selection.html'
+    template_name = 'frontend/event_selection.html'
 
     if request.method == 'GET':
         form = generate_event_selection_form(g.deployment)

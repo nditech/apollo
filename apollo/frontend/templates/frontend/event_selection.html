@@ -1,13 +1,15 @@
-{% load i18n %}{% load compressed %}<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>{% trans "Choose Activity" %}</title>
+    <title>{{ page_title }}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
     <!-- Le styles -->
-    {% compressed_css 'apollo' %}
+    {% assets 'apollo_css' %}
+    <link rel="stylesheet" href="{{ ASSET_URL }}" type="text/css" media="screen,projection" charset="utf-8">
+    {% endassets %}
 
     <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
@@ -15,17 +17,17 @@
     <![endif]-->
 
     <!-- Le fav and touch icons -->
-    <link rel="shortcut icon" href="{{ STATIC_URL }}ico/favicon.ico">
+    <!-- <link rel="shortcut icon" href="{{ STATIC_URL }}ico/favicon.ico"> -->
   </head>
   <body>
     <div class="row-fluid">
     	<div class="col-md-4 col-md-offset-4" style="margin-top:10em;text-align:center">
-    		<legend>{% trans "Choose Activity" %}</legend>
-    		<form class="form-vertical" action="" method="POST" accept-charset="utf-8">{% csrf_token %}
+    		<legend>{{ page_title }}</legend>
+    		<form class="form-vertical" action="" method="POST" accept-charset="utf-8">{{ form.csrf_token }}
     			<div class="form-group">
-              {{ form.activity }}
+              {{ form.event(class_='form-control center-block') }}
           </div>
-          <button class="btn btn-warning btn-sm" type="submit">{% trans "Go" %}</button>
+          <button class="btn btn-warning btn-sm" type="submit">{% trans %}Go{% endtrans %}</button>
     		</form>
     	</div>
     </div>

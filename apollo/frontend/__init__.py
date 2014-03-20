@@ -1,6 +1,7 @@
 from functools import wraps
+from urlparse import urlparse
 
-from flask import render_template
+from flask import abort, g, render_template, request
 from flask.ext.security import login_required
 
 from .. import factory
@@ -19,11 +20,24 @@ def create_app(settings_override=None):
         for e in [500, 404, 403]:
             app.errorhandler(e)(handle_error)
 
+    # register deployment selection middleware
+    app.before_request(select_deployment)
+
     return app
 
 
 def handle_error(e):
     return render_template('{errorcode}.html'.format(errorcode=e.code)), e.code
+
+
+def select_deployment():
+    from .models import Deployment
+    hostname = urlparse(request.url).hostname
+
+    try:
+        g.deployment = Deployment.objects.get(hostnames=hostname)
+    except Deployment.DoesNotExist, Deployment.MultipleObjectsReturned:
+        abort(404)
 
 
 def route(bp, *args, **kwargs):
