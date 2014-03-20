@@ -1,10 +1,10 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
-from apollo.application import db
-from apollo.core.querysets import LocationQuerySet, SubmissionQuerySet
+from apollo.core import db
 from datetime import datetime, timedelta
 from slugify import slugify_unicode
 from flask.ext.security import MongoEngineUserDatastore, RoleMixin, UserMixin
+from .querysets import LocationQuerySet, SubmissionQuerySet
 
 
 class Deployment(db.Document):

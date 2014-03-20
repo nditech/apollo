@@ -1,4 +1,4 @@
-# encoding: utf-8
+# -*- coding: utf-8 -*-
 from __future__ import absolute_import
 from __future__ import unicode_literals
 from logging import getLogger
@@ -8,13 +8,13 @@ from flask import (
 )
 from flask.ext.babel import lazy_gettext as _
 from flask.ext.security import login_required
-from apollo.analyses.dashboard import get_coverage
-from apollo.core.forms import (
+from ..analyses.dashboard import get_coverage
+from .forms import (
     generate_dashboard_filter_form,
     generate_event_selection_form, generate_location_edit_form,
     generate_participant_edit_form, generate_submission_filter_form
 )
-from apollo.core.models import (
+from .models import (
     Event, Form, Location, LocationType, Participant, ParticipantPartner,
     ParticipantRole, Sample, Submission
 )

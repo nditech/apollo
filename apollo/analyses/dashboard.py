@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 from collections import OrderedDict
 from logging import getLogger
-from apollo.core.models import Submission
+from ..frontend.models import Submission
 
 logger = getLogger(__name__)
 

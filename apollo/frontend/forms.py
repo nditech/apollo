@@ -5,7 +5,7 @@ from flask.ext.wtf import Form as WTSecureForm
 from wtforms import (
     Form as WTForm, HiddenField, SelectField, TextField, validators
 )
-from apollo.core.models import (
+from .models import (
     Event, Form, Location, LocationType, Participant,
     ParticipantPartner, ParticipantRole, Sample
 )

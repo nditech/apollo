@@ -2,7 +2,7 @@
 from flask.ext.script import Manager, Server
 
 from apollo.frontend import create_app
-from apollo.manager import \
+from apollo.manage import \
     (CreateUserCommand, DeleteUserCommand, ListUsersCommand)
 
 manager = Manager(create_app())

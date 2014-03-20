@@ -1,5 +1,6 @@
 from ..core import db
 from flask.ext.security import RoleMixin, UserMixin
+from apollo.frontend.models import Deployment
 
 
 class Role(db.Document, RoleMixin):
