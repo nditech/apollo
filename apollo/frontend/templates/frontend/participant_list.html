@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>{{ page_title }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!-- Le styles -->
+    {% assets 'apollo_css' %}
+    <link rel="stylesheet" href="{{ ASSET_URL }}" type="text/css" media="screen,projection" charset="utf-8">
+    {% endassets %}
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <!-- Le fav and touch icons -->
+    <!-- <link rel="shortcut icon" href="{{ STATIC_URL }}ico/favicon.ico"> -->
+  </head>
+  <body>
+    <div class="row-fluid">
+      <div class="col-md-10 col-offset-1">
+      	<table>
+         <thead>
+           <tr>
+             <th>Participant ID</th>
+             <th>Name</th>
+             <th>Role</th>
+             <th>Location</th>
+             <th>Organization</th>
+           </tr>
+         </thead>
+         <tbody>
+           {% for participant in participants.items %}
+           <tr>
+             <td>{{ participant.participant_id }}</td>
+             <td>{{ participant.name }}</td>
+             <td>{{ participant.role }}</td>
+             <td>{{ participant.location }}</td>
+             <td>{{ participant.partner }}</td>
+           </tr>
+           {% endfor %}
+         </tbody>
+        </table>
+        {% from 'frontend/pagination.html' import render_pager %}{{ render_pager(participants, 'core.participant_list') }}
+      </div>
+    </div>
+  </body>
+</html>
