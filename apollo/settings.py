@@ -2,6 +2,9 @@
 import os
 from urlparse import urlparse
 
+SECRET_KEY = os.environ.get('SECRET_KEY', 'SOMETHING_SECURE')
+DEBUG = os.environ.get('DEBUG', False)
+
 if os.environ.get('container') == 'lxc':
     MONGO_ENV_NAME = 'MONGODB_PORT'
 else:
@@ -9,10 +12,18 @@ else:
 
 MONGODB_SETTINGS = {
     'DB': os.environ.get('MONGO_DATABASE_NAME', 'apollo'),
-    'HOST': urlparse(os.environ.get(MONGO_ENV_NAME, 'mongodb://localhost')).netloc
+    'HOST': urlparse(
+        os.environ.get(MONGO_ENV_NAME, 'mongodb://localhost')).netloc
 }
+
+SECURITY_PASSWORD_HASH = 'pbkdf2_sha256'
+SECURITY_PASSWORD_SALT = SECRET_KEY
 SECURITY_URL_PREFIX = '/accounts'
 SECURITY_LOGIN_USER_TEMPLATE = 'frontend/login_user.html'
+SECURITY_EMAIL_SENDER = 'no-reply@apollo.la'
+SECURITY_RECOVERABLE = True
+SECURITY_TRACKABLE = True
+
 
 LANGUAGES = {
     'en': 'English',
@@ -22,6 +33,3 @@ LANGUAGES = {
     'ar': 'العربية',
     'de': 'Deutsch',
 }
-
-SECRET_KEY = os.environ.get('SECRET_KEY', 'SOMETHING_SECURE')
-DEBUG = os.environ.get('DEBUG', False)
