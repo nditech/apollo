@@ -1,0 +1,11 @@
+{% macro render_pager(pager, endpoint) %}
+<ul class="pagination pagination-centered">
+<li {% if pager.page == 1 %}class="disabled"{% endif %}><a title="{% trans %}First page{% endtrans %}" href="{{ url_for(endpoint, page=1) }}">&laquo;</a></li>
+<li {% if not pager.has_prev %}class="disabled"{% endif %}><a title="{% trans %}Previous page{% endtrans %}" href="{{ url_for(endpoint, page=pager.prev_num) }}">&larr;</a></li>
+{% for pg in pager.page|pagelist(pager.pages) %}
+<li {% if pg == pager.page %}class="active"{% endif %}><a href="{{ url_for(endpoint, page=pg) }}">{{ pg }}</a></li>
+{% endfor %}
+<li {% if not pager.has_next %}class="disabled"{% endif %}><a title="{% trans %}Next page{% endtrans %}" href="{{ url_for(endpoint, page=pager.next_num) }}">&rarr;</a></li>
+<li {% if pager.page == pager.pages %}class="disabled"{% endif %}><a title="{% trans %}Last page{% endtrans %}" href="{{ url_for(endpoint, page=pager.pages) }}">&raquo;</a></li>
+</ul>
+{% endmacro %}

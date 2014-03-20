@@ -6,6 +6,7 @@ from flask.ext.security import login_required
 
 from .. import factory
 from . import assets
+from .helpers import gen_page_list
 
 
 def create_app(settings_override=None):
@@ -22,6 +23,9 @@ def create_app(settings_override=None):
 
     # register deployment selection middleware
     app.before_request(select_deployment)
+
+    # add Jinja2 filters
+    app.jinja_env.filters.update(pagelist=gen_page_list)
 
     return app
 

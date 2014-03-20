@@ -42,22 +42,7 @@ def _get_event(container):
     return event
 
 
-# @core.app_errorhandler(403)
-# def forbidden(e):
-#     return render_template('403.html'), 403
-
-
-# @core.app_errorhandler(404)
-# def page_not_found(e):
-#     return render_template('404.html'), 404
-
-
-# @core.app_errorhandler(500)
-# def server_error(e):
-#     return render_template('500.html'), 500
-
-
-@core.route('/')
+@route(core, '/')
 def index():
     # get variables from query params, or use (hopefully) sensible defaults
     deployment = g.get('deployment')
@@ -126,7 +111,7 @@ def index():
     )
 
 
-@core.route('/event', methods=['GET', 'POST'])
+@route(core, '/event', methods=['GET', 'POST'])
 def event_selection():
     page_title = _('Select event')
     template_name = 'frontend/event_selection.html'
@@ -147,13 +132,13 @@ def event_selection():
                     page_title=page_title
                 )
 
-            session['event'] = event.id
+            session['event'] = unicode(event.id)
             return redirect(url_for('core.index'))
 
     return render_template(template_name, form=form, page_title=page_title)
 
 
-@core.route('/location/<pk>', methods=['GET', 'POST'])
+@route(core, '/location/<pk>', methods=['GET', 'POST'])
 def location_edit(pk):
     template_name = 'core/location_edit.html'
     deployment = g.get('deployment')
@@ -174,11 +159,16 @@ def location_edit(pk):
     return render_template(template_name, form=form, page_title=page_title)
 
 
-@core.route('/participants/<int:page>')
+@route(core, '/participants')
+def participant_list_default():
+    return participant_list(1)
+
+
+@route(core, '/participants/<int:page>')
 def participant_list(page=1):
     deployment = g.get('deployment')
     page_title = _('Participants')
-    template_name = 'core/participant_list.html'
+    template_name = 'frontend/participant_list.html'
 
     participants = Participant.objects(
         deployment=deployment
@@ -186,6 +176,7 @@ def participant_list(page=1):
         page=page,
         per_page=PAGE_SIZE
     )
+
     return render_template(
         template_name,
         page_title=page_title,
@@ -193,7 +184,7 @@ def participant_list(page=1):
     )
 
 
-@core.route('/participant/<pk>', methods=['GET', 'POST'])
+@route(core, '/participant/<pk>', methods=['GET', 'POST'])
 def participant_edit(pk):
     deployment = g.get('deployment')
     participant = Participant.objects.get_or_404(pk=pk, deployment=deployment)
@@ -225,7 +216,7 @@ def participant_edit(pk):
     return render_template(template_name, form=form, page_title=page_title)
 
 
-@core.route('/submissions/<form_id>', methods=['GET', 'POST'])
+@route(core, '/submissions/<form_id>', methods=['GET', 'POST'])
 def submission_list(form_id):
     event = _get_event(session)
     deployment = g.get('deployment')
