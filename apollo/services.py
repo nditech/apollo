@@ -1,7 +1,7 @@
 from .submissions import SubmissionsService
 from .participants import ParticipantsService
-from .users import UserService
+from .users import UsersService
 
 participants = ParticipantsService()
 submissions = SubmissionsService()
-users = UserService()
+users = UsersService()
