@@ -90,7 +90,7 @@ class Submission(db.DynamicDocument):
 
 
 class VersionSequenceField(db.SequenceField):
-    '''A subclass of :class: `mongoengine.fields.SequenceField` for
+    '''A subclass of :class:`mongoengine.fields.SequenceField` for
     automatically updating version numbers'''
 
     def get_sequence_name(self):
@@ -99,7 +99,7 @@ class VersionSequenceField(db.SequenceField):
 
 
 class SubmissionVersion(db.Document):
-    '''Stores versions of :class: `core.documents.Submission`
+    '''Stores versions of :class:`core.documents.Submission`
     instances'''
     submission = db.ReferenceField(Submission, required=True)
     data = db.StringField(required=True)

@@ -3,23 +3,24 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from logging import getLogger
 from flask import (
-    Blueprint, abort, flash, g, redirect, render_template,
+    Blueprint, abort, flash, g, jsonify, redirect, render_template,
     request, session, url_for
 )
 from flask.ext.babel import lazy_gettext as _
-from flask.ext.security import login_required
+from flask.ext.security.core import current_user
 from ..analyses.dashboard import get_coverage
 from ..deployments.forms import generate_event_selection_form
+from ..models import (
+    Event, Form, Location, LocationType, Participant, ParticipantPartner,
+    ParticipantRole, Sample, Submission
+)
+from ..services import submissions, submission_comments
+from . import route
 from .forms import (
     generate_dashboard_filter_form,
     generate_location_edit_form,
     generate_participant_edit_form, generate_submission_filter_form
 )
-from ..models import (
-    Event, Form, Location, LocationType, Participant, ParticipantPartner,
-    ParticipantRole, Sample, Submission
-)
-from . import route
 
 PAGE_SIZE = 25
 core = Blueprint('core', __name__, template_folder='templates',
@@ -315,6 +316,23 @@ def submission_list(form_id):
             filter_form=filter_form,
             queryset=queryset
         )
+
+
+@route(core, '/comments', methods=['POST'])
+def comment_create_view():
+    submission = submissions.get_or_404(pk=request.form.get('submission'))
+    comment = request.form.get('comment')
+    saved_comment = submission_comments.create(
+        submission=submission,
+        user=current_user,
+        comment=comment
+    )
+
+    return jsonify(
+        comment=saved_comment.comment,
+        date=saved_comment.submit_date,
+        user=saved_comment.user.email
+    )
 
 
 def select_default_event(app, user):
