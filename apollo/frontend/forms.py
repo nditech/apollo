@@ -18,22 +18,6 @@ def _make_choices(qs, placeholder=None):
         return [['', '']] + [[unicode(i[0]), i[1]] for i in list(qs)]
 
 
-def generate_event_selection_form(deployment, *args, **kwargs):
-    event_choices = Event.objects(
-        deployment=deployment
-    ).order_by('-end_date').scalar('id', 'name')
-    choices = [(unicode(a), unicode(b)) for a, b in event_choices]
-
-    class EventSelectionForm(WTSecureForm):
-        event = SelectField(
-            'Select event',
-            choices=choices,
-            validators=[validators.input_required()]
-        )
-
-    return EventSelectionForm(*args, **kwargs)
-
-
 def generate_location_edit_form(location, data=None):
     locations = LocationType.objects(deployment=location.deployment)
 

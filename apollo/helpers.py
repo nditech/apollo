@@ -21,3 +21,13 @@ def register_blueprints(app, package_name, package_path):
                 app.register_blueprint(item)
             rv.append(item)
     return rv
+
+
+def _make_choices(qs, placeholder=None):
+    """Helper method for generating choices for :class:`SelectField`
+    instances.
+    """
+    if placeholder:
+        return [['', placeholder]] + [[unicode(i[0]), i[1]] for i in list(qs)]
+    else:
+        return [['', '']] + [[unicode(i[0]), i[1]] for i in list(qs)]

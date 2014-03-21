@@ -9,9 +9,10 @@ from flask import (
 from flask.ext.babel import lazy_gettext as _
 from flask.ext.security import login_required
 from ..analyses.dashboard import get_coverage
+from ..deployments.forms import generate_event_selection_form
 from .forms import (
     generate_dashboard_filter_form,
-    generate_event_selection_form, generate_location_edit_form,
+    generate_location_edit_form,
     generate_participant_edit_form, generate_submission_filter_form
 )
 from ..models import (
@@ -136,9 +137,9 @@ def event_selection():
     template_name = 'frontend/event_selection.html'
 
     if request.method == 'GET':
-        form = generate_event_selection_form(g.deployment)
+        form = generate_event_selection_form()
     elif request.method == 'POST':
-        form = generate_event_selection_form(g.deployment, request.form)
+        form = generate_event_selection_form(request.form)
 
         if form.validate():
             try:
