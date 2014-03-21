@@ -60,6 +60,10 @@ def _get_form_context(deployment, event=None):
 
 @route(core, '/')
 def index():
+    # the user should select an event for their session.
+    if not session.get('event'):
+        return redirect(url_for('core.event_selection'))
+
     # get variables from query params, or use (hopefully) sensible defaults
     deployment = g.get('deployment')
     if request.args.get('event'):
@@ -312,3 +316,12 @@ def submission_list(form_id):
             filter_form=filter_form,
             queryset=queryset
         )
+
+
+def clear_session(app, user):
+    session.clear()
+
+
+from flask.ext.login import user_logged_out
+
+user_logged_out.connect(clear_session)
