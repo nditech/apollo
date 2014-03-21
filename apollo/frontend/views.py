@@ -42,6 +42,22 @@ def _get_event(container):
     return event
 
 
+def _get_form_context(deployment, event=None):
+    forms = Form.objects(deployment=deployment)
+
+    if event:
+        forms = forms(events=event)
+
+    checklist_forms = forms(form_type='CHECKLIST').order_by('name')
+    incident_forms = forms(form_type='INCIDENT').order_by('name')
+
+    return {
+        'forms': forms,
+        'checklist_forms': checklist_forms,
+        'incident_forms': incident_forms
+    }
+
+
 @route(core, '/')
 def index():
     # get variables from query params, or use (hopefully) sensible defaults
@@ -103,11 +119,13 @@ def index():
 
         data = get_coverage(queryset, group, sub_location_type)
 
+    # load the page context
+    context = _get_form_context(deployment, event)
+    context.update(data=data, filter_form=filter_form, page_title=page_title)
+
     return render_template(
         template_name,
-        data=data,
-        filter_form=filter_form,
-        page_title=page_title
+        **context
     )
 
 
@@ -167,8 +185,12 @@ def participant_list_default():
 @route(core, '/participants/<int:page>')
 def participant_list(page=1):
     deployment = g.get('deployment')
+    event = _get_event(session)
     page_title = _('Participants')
     template_name = 'frontend/participant_list.html'
+
+    # load form context
+    context = _get_form_context(deployment, event)
 
     participants = Participant.objects(
         deployment=deployment
@@ -177,10 +199,11 @@ def participant_list(page=1):
         per_page=PAGE_SIZE
     )
 
+    context.update(page_title=page_title, participants=participants)
+
     return render_template(
         template_name,
-        page_title=page_title,
-        participants=participants
+        **context
     )
 
 
