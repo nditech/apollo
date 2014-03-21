@@ -9,6 +9,9 @@ class Role(db.Document, RoleMixin):
 
     deployment = db.ReferenceField(Deployment)
 
+    def __unicode__(self):
+        return self.name
+
 
 class User(db.Document, UserMixin):
     email = db.EmailField()
