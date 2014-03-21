@@ -35,7 +35,7 @@ def handle_error(e):
 
 
 def select_deployment():
-    from .models import Deployment
+    from ..models import Deployment
     hostname = urlparse(request.url).hostname
 
     try:

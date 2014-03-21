@@ -14,7 +14,7 @@ from .forms import (
     generate_event_selection_form, generate_location_edit_form,
     generate_participant_edit_form, generate_submission_filter_form
 )
-from .models import (
+from ..models import (
     Event, Form, Location, LocationType, Participant, ParticipantPartner,
     ParticipantRole, Sample, Submission
 )
@@ -117,7 +117,8 @@ def index():
         # get the requisite location type
         try:
             sub_location_type = [
-                lt for lt in location_type.get_children() if lt.on_dashboard_view][0]
+                lt for lt in location_type.get_children()
+                if lt.on_dashboard_view][0]
         except IndexError:
             sub_location_type = location_type
 
@@ -279,7 +280,8 @@ def submission_list(form_id):
             if field.name.startswith('group_') and field.data:
                 slug = field.name.split('_', 1)[1]
                 try:
-                    group = [grp.name for grp in form.groups if grp.slug == slug][0]
+                    group = [grp.name for grp in form.groups
+                             if grp.slug == slug][0]
                 except IndexError:
                     continue
                 if field.data == '0':

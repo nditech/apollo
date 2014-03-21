@@ -5,7 +5,7 @@ from flask.ext.wtf import Form as WTSecureForm
 from wtforms import (
     Form as WTForm, HiddenField, SelectField, TextField, validators
 )
-from .models import (
+from ..models import (
     Event, Form, Location, LocationType, Participant,
     ParticipantPartner, ParticipantRole, Sample
 )
@@ -190,7 +190,8 @@ def generate_participant_filter_form(deployment, data=None, **kwargs):
 
 def generate_submission_filter_form(form, default_event, data=None):
     samples = Sample.objects(deployment=form.deployment).scalar('id', 'name')
-    locations = Location.objects(deployment=form.deployment).scalar('id', 'name')
+    locations = Location.objects(deployment=form.deployment) \
+        .scalar('id', 'name')
 
     class SubmissionFilterForm(WTForm):
         participant_id = TextField()
@@ -205,7 +206,8 @@ def generate_submission_filter_form(form, default_event, data=None):
             ('2', _('%(group)s Missing', group=group.name)),
             ('3', _('%(group)s Complete', group=group.name))
         ]
-        setattr(SubmissionFilterForm, 'group_{}'.format(group.slug), SelectField(choices=choices))
+        setattr(SubmissionFilterForm, 'group_{}'.format(group.slug),
+                SelectField(choices=choices))
 
     if form.form_type == 'INCIDENT':
         setattr(

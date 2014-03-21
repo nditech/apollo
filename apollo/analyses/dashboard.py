@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 from collections import OrderedDict
 from logging import getLogger
-from ..frontend.models import Submission
+from ..models import Submission
 
 logger = getLogger(__name__)
 
@@ -20,11 +20,12 @@ def _get_group_coverage(submission_queryset, group, location_type):
         {
             '$group': {
                 '_id': {
-                    'location': '$location_name_path.{}'.format(location_type.name),
+                    'location': '$location_name_path.{}'
+                    .format(location_type.name),
                     'completion': '$completion'
                 },
                 'total': {'$sum': 1}
-        }
+            }
         },
         {
             '$group': {
@@ -33,7 +34,7 @@ def _get_group_coverage(submission_queryset, group, location_type):
                     group: '$_id.completion.{}'.format(group)
                 },
                 'total': {'$sum': '$total'}
-        }
+            }
         },
         {
             '$project': {
@@ -62,7 +63,8 @@ def _get_group_coverage(submission_queryset, group, location_type):
         l = r.pop('location')
         coverage[l].update({r['completion']: r['total'], 'name': l})
 
-    coverage_list = [coverage.get(l) for l in sorted(locations)] if coverage else []
+    coverage_list = [coverage.get(l) for l in sorted(locations)] \
+        if coverage else []
 
     return coverage_list
 
@@ -98,11 +100,14 @@ def _get_global_coverage(submission_queryset):
     coverage = OrderedDict()
     for group in groups:
         complete = sum((r.get('total')
-                       for r in result if r.get('completion').get(group) == 'Complete'))
+                       for r in result
+                       if r.get('completion').get(group) == 'Complete'))
         partial = sum((r.get('total')
-                      for r in result if r.get('completion').get(group) == 'Partial'))
+                      for r in result
+                      if r.get('completion').get(group) == 'Partial'))
         missing = sum((r.get('total')
-                      for r in result if r.get('completion').get(group) == 'Missing'))
+                      for r in result
+                      if r.get('completion').get(group) == 'Missing'))
 
         coverage.update({group: {
             'Complete': complete,
