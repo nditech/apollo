@@ -26,3 +26,6 @@ class User(db.Document, UserMixin):
     roles = db.ListField(db.ReferenceField(Role), default=[])
 
     deployment = db.ReferenceField(Deployment)
+
+    def __unicode__(self):
+        return self.email
