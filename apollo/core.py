@@ -38,8 +38,9 @@ class Service(object):
         kwargs.pop('csrf_token', None)
         return kwargs
 
-    def _set_deployment(self, kwargs):
-        """Updates the kwargs by setting the current deployment if available.
+    def _set_default_filter_parameters(self, kwargs):
+        """Updates the kwargs by setting the default filter parameters
+        if available.
 
         :param kwargs: a dictionary of parameters
         """
@@ -71,7 +72,7 @@ class Service(object):
 
         :param **kwargs: filter parameters
         """
-        kwargs = self._set_deployment(kwargs)
+        kwargs = self._set_default_filter_parameters(kwargs)
 
         return self.__model__.objects.filter(**kwargs)
 
@@ -83,7 +84,7 @@ class Service(object):
 
         :param **kwargs: filter parameters
         """
-        kwargs = self._set_deployment(kwargs)
+        kwargs = self._set_default_filter_parameters(kwargs)
 
         try:
             return self.__model__.objects.get(**kwargs)
@@ -96,7 +97,7 @@ class Service(object):
 
         :param **kwargs: filter parameters
         """
-        kwargs = self._set_deployment(kwargs)
+        kwargs = self._set_default_filter_parameters(kwargs)
 
         return self.find(**kwargs)
 
@@ -107,7 +108,7 @@ class Service(object):
 
         :param **kwargs: filter parameters
         """
-        kwargs = self._set_deployment(kwargs)
+        kwargs = self._set_default_filter_parameters(kwargs)
 
         try:
             self.get(**kwargs)
@@ -120,7 +121,7 @@ class Service(object):
 
         :param **kwargs: filter parameters
         """
-        kwargs = self._set_deployment(kwargs)
+        kwargs = self._set_default_filter_parameters(kwargs)
 
         return self.find(**kwargs).first()
 
@@ -129,7 +130,7 @@ class Service(object):
 
         :param **kwargs: instance parameters
         """
-        kwargs = self._set_deployment(kwargs)
+        kwargs = self._set_default_filter_parameters(kwargs)
 
         return self.__model__(**self._preprocess_params(kwargs))
 

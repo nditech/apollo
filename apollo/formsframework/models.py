@@ -83,8 +83,8 @@ class Form(db.Document):
     prefix = db.StringField()
     form_type = db.StringField(choices=FORM_TYPES)
     groups = db.ListField(db.EmbeddedDocumentField('FormGroup'))
-    events = db.ListField(db.ReferenceField('Event'))
 
+    events = db.ListField(db.ReferenceField('Event'))
     deployment = db.ReferenceField(Deployment)
 
     meta = {

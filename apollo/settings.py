@@ -4,6 +4,7 @@ from urlparse import urlparse
 
 SECRET_KEY = os.environ.get('SECRET_KEY', 'SOMETHING_SECURE')
 DEBUG = os.environ.get('DEBUG', False)
+PAGE_SIZE = 25
 
 if os.environ.get('container') == 'lxc':
     MONGO_ENV_NAME = 'MONGODB_PORT'

@@ -1,12 +1,14 @@
 from functools import wraps
 from urlparse import urlparse
 
-from flask import abort, g, render_template, request
+from flask import abort, g, render_template, request, session
+from flask.ext.login import user_logged_in, user_logged_out
 from flask.ext.security import login_required
 
 from .. import factory
+from ..models import Deployment
 from . import assets
-from .helpers import gen_page_list
+from .helpers import gen_page_list, select_default_event
 
 
 def create_app(settings_override=None):
@@ -27,6 +29,10 @@ def create_app(settings_override=None):
     # add Jinja2 filters
     app.jinja_env.filters.update(pagelist=gen_page_list)
 
+    # Login and logout signal handlers
+    user_logged_in.connect(select_default_event)
+    user_logged_out.connect(lambda app, user: session.clear())
+
     return app
 
 
@@ -35,12 +41,11 @@ def handle_error(e):
 
 
 def select_deployment():
-    from ..models import Deployment
     hostname = urlparse(request.url).hostname
 
     try:
-        g.deployment = Deployment.objects.get(hostnames=hostname)
-    except Deployment.DoesNotExist, Deployment.MultipleObjectsReturned:
+        g.deployment = Deployment.objects(hostnames=hostname).first()
+    except Deployment.DoesNotExist:
         abort(404)
 
 
