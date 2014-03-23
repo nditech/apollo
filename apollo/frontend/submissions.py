@@ -7,19 +7,19 @@ from ..models import Form, Location, Participant, Sample, Submission
 from ..services import submissions, submission_comments
 from . import route
 from .forms import generate_submission_filter_form
-from .helpers import _get_event
+from .helpers import get_event
 
 PAGE_SIZE = 25
-core = Blueprint('core', __name__, template_folder='templates',
-                 static_folder='static', static_url_path='/core/static')
+bp = Blueprint('submissions', __name__, template_folder='templates',
+               static_folder='static', static_url_path='/core/static')
 
 
-@route(core, '/submissions/<form_id>', methods=['GET', 'POST'])
+@route(bp, '/submissions/<form_id>', methods=['GET', 'POST'])
 def submission_list(form_id):
-    event = _get_event(session)
+    event = get_event(session)
     deployment = g.get('deployment')
     form = Form.objects.get_or_404(deployment=deployment, pk=form_id)
-    template_name = 'core/submission_list.html'
+    template_name = 'frontend/submission_list.html'
 
     queryset = Submission.objects(
         contributor__ne=None,
@@ -90,7 +90,7 @@ def submission_list(form_id):
         )
 
 
-@route(core, '/comments', methods=['POST'])
+@route(bp, '/comments', methods=['POST'])
 def comment_create_view():
     submission = submissions.get_or_404(pk=request.form.get('submission'))
     comment = request.form.get('comment')

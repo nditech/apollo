@@ -12,27 +12,27 @@ from ..models import (
 )
 from . import route
 from .forms import generate_participant_edit_form
-from .helpers import _get_event, _get_form_context
+from .helpers import get_event, get_form_context
 
 PAGE_SIZE = 25
-core = Blueprint('core', __name__, template_folder='templates',
-                 static_folder='static', static_url_path='/core/static')
+bp = Blueprint('participants', __name__, template_folder='templates',
+               static_folder='static', static_url_path='/core/static')
 
 
-@route(core, '/participants')
+@route(bp, '/participants')
 def participant_list_default():
     return participant_list(1)
 
 
-@route(core, '/participants/<int:page>')
+@route(bp, '/participants/<int:page>')
 def participant_list(page=1):
     deployment = g.get('deployment')
-    event = _get_event(session)
+    event = get_event(session)
     page_title = _('Participants')
     template_name = 'frontend/participant_list.html'
 
     # load form context
-    context = _get_form_context(deployment, event)
+    context = get_form_context(deployment, event)
 
     participants = Participant.objects(
         deployment=deployment
@@ -49,7 +49,7 @@ def participant_list(page=1):
     )
 
 
-@route(core, '/participant/<pk>', methods=['GET', 'POST'])
+@route(bp, '/participant/<pk>', methods=['GET', 'POST'])
 def participant_edit(pk):
     deployment = g.get('deployment')
     participant = Participant.objects.get_or_404(pk=pk, deployment=deployment)

@@ -1,14 +1,14 @@
 from functools import wraps
-from urlparse import urlparse
 
-from flask import abort, g, render_template, request, session
-from flask.ext.login import user_logged_in, user_logged_out
+
+from flask import render_template, session
+from flask.ext.login import user_logged_out
 from flask.ext.security import login_required
 
 from .. import factory
-from ..models import Deployment
+
 from . import assets
-from .helpers import gen_page_list, select_default_event
+from .helpers import gen_page_list, set_request_presets
 
 
 def create_app(settings_override=None):
@@ -24,13 +24,12 @@ def create_app(settings_override=None):
             app.errorhandler(e)(handle_error)
 
     # register deployment selection middleware
-    app.before_request(select_deployment)
+    app.before_request(set_request_presets)
 
     # add Jinja2 filters
     app.jinja_env.filters.update(pagelist=gen_page_list)
 
     # Login and logout signal handlers
-    user_logged_in.connect(select_default_event)
     user_logged_out.connect(lambda app, user: session.clear())
 
     return app
@@ -38,15 +37,6 @@ def create_app(settings_override=None):
 
 def handle_error(e):
     return render_template('{errorcode}.html'.format(errorcode=e.code)), e.code
-
-
-def select_deployment():
-    hostname = urlparse(request.url).hostname
-
-    try:
-        g.deployment = Deployment.objects(hostnames=hostname).first()
-    except Deployment.DoesNotExist:
-        abort(404)
 
 
 def route(bp, *args, **kwargs):

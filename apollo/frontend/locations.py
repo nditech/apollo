@@ -7,11 +7,11 @@ from ..models import Location
 from . import route
 from .forms import generate_location_edit_form
 
-core = Blueprint('core', __name__, template_folder='templates',
-                 static_folder='static', static_url_path='/core/static')
+bp = Blueprint('locations', __name__, template_folder='templates',
+               static_folder='static', static_url_path='/core/static')
 
 
-@route(core, '/location/<pk>', methods=['GET', 'POST'])
+@route(bp, '/location/<pk>', methods=['GET', 'POST'])
 def location_edit(pk):
     template_name = 'core/location_edit.html'
     deployment = g.get('deployment')
