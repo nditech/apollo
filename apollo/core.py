@@ -1,12 +1,14 @@
 from flask import abort, g
 from flask.ext.babel import Babel
 from flask.ext.mail import Mail
+from flask.ext.menu import Menu
 from flask.ext.mongoengine import MongoEngine
 from flask.ext.security import Security
 
 babel = Babel()
 db = MongoEngine()
 mail = Mail()
+menu = Menu()
 security = Security()
 
 

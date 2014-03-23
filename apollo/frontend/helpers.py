@@ -18,16 +18,21 @@ def gen_page_list(page, num_pages, window_size=9):
 
 
 def get_deployment(hostname):
-    return str(Deployment.objects(hostnames=hostname).first().id)
+    return Deployment.objects(hostnames=hostname).first()
 
 
 def get_event():
     _id = session.get('event', None)
     if not _id:
-        _id = str(events.default().id)
+        _id = events.default()
         session['event'] = _id
 
     return _id
+
+
+def set_event(event):
+    session['event'] = event
+    g.event = event
 
 
 def get_form_context(deployment, event=None):

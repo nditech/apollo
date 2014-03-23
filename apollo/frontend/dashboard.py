@@ -1,23 +1,24 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 from __future__ import unicode_literals
-from flask import (
-    Blueprint, abort, flash, g, redirect, render_template,
-    request, session, url_for
-)
-from flask.ext.babel import lazy_gettext as _
+from . import route
 from ..analyses.dashboard import get_coverage
 from ..deployments.forms import generate_event_selection_form
 from ..models import Event, Form, Location, LocationType, Sample, Submission
-from . import route
+from ..services import events
 from .forms import generate_dashboard_filter_form
-from .helpers import get_form_context
+from .helpers import get_form_context, set_event
+from flask import (
+    Blueprint, abort, flash, g, redirect, render_template, request, url_for)
+from flask.ext.babel import lazy_gettext as _
+from flask.ext.menu import register_menu
 
 bp = Blueprint('dashboard', __name__, template_folder='templates',
                static_folder='static', static_url_path='/core/static')
 
 
 @route(bp, '/')
+@register_menu(bp, 'dashboard', _('Dashboard'))
 def index():
     # get variables from query params, or use (hopefully) sensible defaults
     group = request.args.get('group')
@@ -85,8 +86,9 @@ def index():
 
 
 @route(bp, '/event', methods=['GET', 'POST'])
+@register_menu(bp, 'events', _('Events'))
 def event_selection():
-    page_title = _('Select event')
+    page_title = _('Select Event')
     template_name = 'frontend/event_selection.html'
 
     if request.method == 'GET':
@@ -96,7 +98,7 @@ def event_selection():
 
         if form.validate():
             try:
-                event = Event.objects.get(pk=form.event.data)
+                event = events.get(pk=form.event.data)
             except Event.DoesNotExist:
                 flash(_('Selected event not found'))
                 return render_template(
@@ -105,7 +107,7 @@ def event_selection():
                     page_title=page_title
                 )
 
-            session['event'] = unicode(event.id)
-            return redirect(url_for('core.index'))
+            set_event(event)
+            return redirect(url_for('dashboard.index'))
 
     return render_template(template_name, form=form, page_title=page_title)
