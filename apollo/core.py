@@ -1,7 +1,7 @@
 from flask import abort, g
 from flask.ext.babel import Babel
 from flask.ext.mail import Mail
-from flask.ext.mongoengine import MongoEngine, MongoEngineSessionInterface
+from flask.ext.mongoengine import MongoEngine
 from flask.ext.security import Security
 
 babel = Babel()
@@ -112,7 +112,7 @@ class Service(object):
 
         try:
             self.get(**kwargs)
-        except __model__.DoesNotExist:
+        except self.__model__.DoesNotExist:
             abort(404)
 
     def first(self, **kwargs):

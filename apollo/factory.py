@@ -2,6 +2,7 @@ import os
 
 from celery import Celery
 from flask import Flask, request
+from flask.ext.mongoengine import MongoEngineSessionInterface
 from flask.ext.security import MongoEngineUserDatastore
 
 from .core import babel, db, mail, security
@@ -28,8 +29,10 @@ def create_app(package_name, package_path, settings_override=None,
     babel.init_app(app)
     db.init_app(app)
     mail.init_app(app)
+
     security.init_app(app, MongoEngineUserDatastore(db, User, Role),
                       register_blueprint=register_security_blueprint)
+    app.session_interface = MongoEngineSessionInterface(db)
 
     @babel.localeselector
     def get_locale():

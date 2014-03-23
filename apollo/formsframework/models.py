@@ -1,5 +1,6 @@
 from ..core import db
 from ..deployments.models import Deployment, Event
+from slugify import slugify_unicode
 
 
 # Forms
@@ -84,7 +85,7 @@ class Form(db.Document):
     form_type = db.StringField(choices=FORM_TYPES)
     groups = db.ListField(db.EmbeddedDocumentField('FormGroup'))
 
-    events = db.ListField(db.ReferenceField('Event'))
+    events = db.ListField(db.ReferenceField(Event))
     deployment = db.ReferenceField(Deployment)
 
     meta = {
