@@ -7,15 +7,17 @@ from ..users.models import User
 from datetime import datetime
 from flask.ext.mongoengine import BaseQuerySet
 from mongoengine import Q
-from pandas import DataFrame
+from pandas import DataFrame, isnull
 
 
 class SubmissionQuerySet(BaseQuerySet):
     # most of the fields below are DBRef fields or not useful to
     # our particular use case.
     DEFAULT_EXCLUDED_FIELDS = [
-        'id', 'form', 'created', 'updated', 'location', 'contributor'
+        'id', 'form', 'created', 'updated', 'location', 'contributor',
+        'deployment'
     ]
+    SUBDOCUMENT_FIELDS = ['location_name_path', 'completion']
 
     def filter_in(self, location):
         param = 'location_name_path__{}'.format(location.location_type)
@@ -28,11 +30,19 @@ class SubmissionQuerySet(BaseQuerySet):
         if excluded_fields:
             qs = self.exclude(*excluded_fields)
         else:
-            qs = self.exclude(*SubmissionQuerySet.DEFAULT_EXCLUDED_FIELDS)
+            qs = self.exclude(*self.DEFAULT_EXCLUDED_FIELDS)
         if selected_fields:
             qs = self.only(*selected_fields)
 
-        return DataFrame(list(qs.as_pymongo()))
+        df = DataFrame(list(qs.as_pymongo()))
+
+        # do cleanup of subdocument fields
+        for field in self.SUBDOCUMENT_FIELDS:
+            temp = df.pop(field).tolist()
+            temp2 = [i if not isnull(i) else {} for i in temp]
+            df = df.join(DataFrame(temp2))
+
+        return df
 
 
 # Submissions
