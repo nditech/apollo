@@ -1,10 +1,16 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 from __future__ import unicode_literals
-from flask import Blueprint, g, jsonify, render_template, request, session
+from flask import (
+    Blueprint, g, jsonify, make_response, render_template, request, session
+)
 from flask.ext.security.core import current_user
+from tablib import Dataset
+from ..analyses.incidents import incidents_csv
 from ..models import Form, Location, Participant, Sample, Submission
-from ..services import submissions, submission_comments
+from ..services import (
+    forms, location_types, submissions, submission_comments
+)
 from . import route
 from .forms import generate_submission_filter_form
 from .helpers import get_event
@@ -105,3 +111,44 @@ def comment_create_view():
         date=saved_comment.submit_date,
         user=saved_comment.user.email
     )
+
+
+def _incident_csv(form_pk, location_type_pk, location_pk=None):
+    form = forms.get_or_404(pk=form_pk, form_type='INCIDENT')
+    location_type = location_types.objects.get_or_404(pk=location_type_pk)
+    if location_pk:
+        location = Location.objects.get_or_404(pk=location_pk)
+        qs = submissions.find(contributor__ne=None, form=form) \
+            .filter_in(location)
+    else:
+        qs = submissions.find(contributor__ne=None, form=form)
+
+    event = get_event(session)
+    tags = [fi.name for group in form.groups for fi in group.fields]
+    qs = qs(created__lte=event.end_date, created__gte=event.start_date)
+    df = qs.dataframe()
+    ds = Dataset()
+    ds.headers = ['LOC'] + tags + ['TOT']
+
+    for summary in incidents_csv(df, location_type.name, tags):
+        ds.append([summary.get(heading) for heading in ds.headers])
+
+    return ds.csv
+
+
+@route(bp, '/incidents/form/<form_pk>/locationtype/<location_type_pk>/incidents.csv')
+def incidents_csv_dl(form_pk, location_type_pk):
+    response = make_response(
+        _incident_csv(form_pk, location_type_pk))
+    response.headers['Content-Type'] = 'text/csv'
+
+    return response
+
+
+@route(db, '/incidents/form/<form_pk>/locationtype/<location_type_pk>/location/<location_pk>/incidents.csv')
+def incidents_csv_with_location_dl(form_pk, location_type_pk, location_pk):
+    response = make_response(
+        _incident_csv(form_pk, location_type_pk, location_pk))
+    response.headers['Content-Type'] = 'text/csv'
+
+    return response
