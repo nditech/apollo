@@ -71,9 +71,9 @@ class Submission(db.DynamicDocument):
     made for.
     '''
 
-    form = db.ReferenceField('Form')
-    contributor = db.ReferenceField('Participant')
-    location = db.ReferenceField('Location')
+    form = db.ReferenceField(Form)
+    contributor = db.ReferenceField(Participant)
+    location = db.ReferenceField(Location)
     created = db.DateTimeField()
     updated = db.DateTimeField()
     completion = db.DictField()

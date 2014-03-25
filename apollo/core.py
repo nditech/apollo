@@ -1,9 +1,12 @@
+from collections import OrderedDict
 from flask import abort, g
 from flask.ext.babel import Babel
 from flask.ext.mail import Mail
 from flask.ext.menu import Menu
 from flask.ext.mongoengine import MongoEngine
 from flask.ext.security import Security
+import six
+from wtforms import Form, fields
 
 babel = Babel()
 db = MongoEngine()
@@ -162,3 +165,101 @@ class Service(object):
         """
         self._isinstance(model)
         return model.delete()
+
+
+class Filter(object):
+    creation_counter = 0
+    field_class = fields.Field
+
+    def __init__(self, name=None, widget=None, **kwargs):
+        self.extra = kwargs
+        self.name = name
+        self.widget = widget
+
+        self.creation_counter = Filter.creation_counter
+        Filter.creation_counter += 1
+
+    def filter(self, queryset, value):
+        raise NotImplementedError()
+
+    @property
+    def field(self):
+        if not hasattr(self, '_field'):
+            self._field = self.field_class(widget=self.widget, **self.extra)
+        return self._field
+
+
+class CharFilter(Filter):
+    field_class = fields.StringField
+
+
+class ChoiceFilter(Filter):
+    field_class = fields.SelectField
+
+
+def get_declared_filters(attrs):
+    filters = []
+    for filter_name, obj in list(attrs.items()):
+        if isinstance(obj, Filter):
+            if getattr(obj, 'name', None) is None:
+                obj.name = filter_name
+            filters.append((filter_name, obj))
+    filters.sort(key=lambda x: x[1].creation_counter)
+
+    return OrderedDict(filters)
+
+
+class FilterSetMetaclass(type):
+
+    def __new__(cls, name, bases, attrs):
+        declared_filters = get_declared_filters(attrs)
+        new_class = super(FilterSetMetaclass, cls).__new__(
+            cls, name, bases, attrs)
+        new_class.declared_filters = declared_filters
+
+        return new_class
+
+
+class BaseFilterSet(object):
+    def __init__(self, queryset, data=None):
+        self.queryset = queryset
+        self.data = data or {}
+        self.is_bound = data is not None
+
+    @property
+    def form(self):
+        if not hasattr(self, '_form'):
+            fields = OrderedDict(
+                ((name, filter_.field) for name, filter_ in six.iteritems(
+                    self.declared_filters)))
+            form_class = type(
+                str('{}Form'.format(self.__class__.__name__)),
+                (Form,),
+                fields
+            )
+            if self.is_bound:
+                self._form = form_class(self.data)
+            else:
+                self._form = form_class()
+        return self._form
+
+    @property
+    def qs(self):
+        if not hasattr(self, '_qs'):
+            qs = self.queryset
+            # force form validation – otherwise, errors won't be picked up
+            self.form.validate()
+
+            for name, filter_ in six.iteritems(self.declared_filters):
+                field = self.form[name]
+                if field.errors:
+                    continue
+                qs = filter_.filter(qs, field.data)
+
+            self._qs = qs
+
+        return self._qs
+
+
+class FilterSet(six.with_metaclass(FilterSetMetaclass, BaseFilterSet)):
+    pass
