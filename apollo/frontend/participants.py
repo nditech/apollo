@@ -2,14 +2,11 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 from flask import (
-    Blueprint, g, redirect, render_template,
-    request, session, url_for
+    Blueprint, g, redirect, render_template, request, session, url_for
 )
 from flask.ext.babel import lazy_gettext as _
-from ..models import (
-    Location, Participant, ParticipantPartner,
-    ParticipantRole
-)
+from flask.ext.menu import register_menu
+from ..models import Location, Participant, ParticipantPartner, ParticipantRole
 from . import route
 from .forms import generate_participant_edit_form
 from .helpers import get_event, get_form_context
@@ -20,6 +17,7 @@ bp = Blueprint('participants', __name__, template_folder='templates',
 
 
 @route(bp, '/participants')
+@register_menu(bp, 'participants', _('Participants'))
 def participant_list_default():
     return participant_list(1)
 

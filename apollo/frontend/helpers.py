@@ -1,6 +1,6 @@
-from ..models import Deployment, Event
-from ..services import forms, events
-from flask import session, request, abort, g
+from .. import models
+from .. import services
+from flask import session, request, abort, g, url_for
 from urlparse import urlparse
 
 
@@ -18,13 +18,13 @@ def gen_page_list(page, num_pages, window_size=9):
 
 
 def get_deployment(hostname):
-    return Deployment.objects(hostnames=hostname).first()
+    return models.Deployment.objects(hostnames=hostname).first()
 
 
 def get_event():
     _id = session.get('event', None)
     if not _id:
-        _id = events.default()
+        _id = services.events.default()
         session['event'] = _id
 
     return _id
@@ -36,13 +36,15 @@ def set_event(event):
 
 
 def get_form_context(deployment, event=None):
-    _forms = forms.get_all()
+    _forms = services.forms.get_all()
 
     if event:
-        _forms = forms.find(events=event)
+        _forms = services.forms.find(events=event)
 
-    checklist_forms = forms.find(form_type='CHECKLIST').order_by('name')
-    incident_forms = forms.find(form_type='INCIDENT').order_by('name')
+    checklist_forms = services.forms.find(
+        form_type='CHECKLIST').order_by('name')
+    incident_forms = services.forms.find(
+        form_type='INCIDENT').order_by('name')
 
     return {
         'forms': _forms,
@@ -57,5 +59,17 @@ def set_request_presets():
     try:
         g.deployment = get_deployment(hostname)
         g.event = get_event()
-    except Deployment.DoesNotExist, Event.DoesNotExist:
+    except models.Deployment.DoesNotExist, models.Event.DoesNotExist:
         abort(404)
+
+
+def get_form_list_menu(**kwargs):
+    """Retrieves a list of forms that the user has access to and returns it
+    in a format that can be rendered on the menu
+
+    :param form_type: The form type for the forms to be retrieved
+    TODO: Actually restrict forms based on user permissions
+    """
+    return [{'url': url_for('submissions.submission_list',
+             form_id=str(form.id)), 'text': form.name, 'visible': True}
+            for form in services.forms.find(**kwargs)]

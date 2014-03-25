@@ -4,7 +4,9 @@ from __future__ import unicode_literals
 from flask import (
     Blueprint, g, jsonify, make_response, render_template, request, session
 )
+from flask.ext.babel import lazy_gettext as _
 from flask.ext.security.core import current_user
+from flask.ext.menu import register_menu
 from tablib import Dataset
 from ..analyses.incidents import incidents_csv
 from ..models import Form, Location, Participant, Sample, Submission
@@ -13,7 +15,8 @@ from ..services import (
 )
 from . import route
 from .forms import generate_submission_filter_form
-from .helpers import get_event
+from .helpers import get_event, get_form_list_menu
+from functools import partial
 
 PAGE_SIZE = 25
 bp = Blueprint('submissions', __name__, template_folder='templates',
@@ -21,6 +24,12 @@ bp = Blueprint('submissions', __name__, template_folder='templates',
 
 
 @route(bp, '/submissions/<form_id>', methods=['GET', 'POST'])
+@register_menu(bp, 'forms.checklists', _('Checklists'),
+               dynamic_list_constructor=partial(get_form_list_menu,
+                                                form_type='CHECKLIST'))
+@register_menu(bp, 'forms.incidents', _('Critical Incidents'),
+               dynamic_list_constructor=partial(get_form_list_menu,
+                                                form_type='INCIDENT'))
 def submission_list(form_id):
     event = get_event(session)
     deployment = g.get('deployment')
