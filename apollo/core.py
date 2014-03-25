@@ -247,7 +247,7 @@ class BaseFilterSet(object):
     def qs(self):
         if not hasattr(self, '_qs'):
             qs = self.queryset
-            # force form validation – otherwise, errors won't be picked up
+            # force form validation - otherwise, errors won't be picked up
             self.form.validate()
 
             for name, filter_ in six.iteritems(self.declared_filters):
