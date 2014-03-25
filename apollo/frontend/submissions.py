@@ -145,7 +145,7 @@ def incidents_csv_dl(form_pk, location_type_pk):
     return response
 
 
-@route(db, '/incidents/form/<form_pk>/locationtype/<location_type_pk>/location/<location_pk>/incidents.csv')
+@route(bp, '/incidents/form/<form_pk>/locationtype/<location_type_pk>/location/<location_pk>/incidents.csv')
 def incidents_csv_with_location_dl(form_pk, location_type_pk, location_pk):
     response = make_response(
         _incident_csv(form_pk, location_type_pk, location_pk))
