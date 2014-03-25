@@ -25,7 +25,7 @@ def participant_list_default():
 @route(bp, '/participants/<int:page>')
 def participant_list(page=1):
     deployment = g.get('deployment')
-    event = get_event(session)
+    event = get_event()
     page_title = _('Participants')
     template_name = 'frontend/participant_list.html'
 
