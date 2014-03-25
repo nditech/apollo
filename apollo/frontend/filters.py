@@ -2,7 +2,9 @@ from collections import defaultdict
 from wtforms import widgets
 from ..core import CharFilter, ChoiceFilter, FilterSet
 from ..helpers import _make_choices
-from ..services import events, forms, locations, location_types, samples
+from ..services import (
+    events, forms, locations, location_types, participant_partners,
+    participant_roles, samples)
 from ..wtforms_ext import ExtendedSelectField
 
 
@@ -76,14 +78,65 @@ class SampleFilter(ChoiceFilter):
         return queryset
 
 
-class DashboardFilter(FilterSet):
+class PartnerFilter(ChoiceFilter):
+    def __init__(self, *args, **kwargs):
+        kwargs['choices'] = _make_choices(
+            participant_partners.find().scalar('id', 'name'), 'Partner'
+        )
+        super(PartnerFilter, self).__init__(*args, **kwargs)
+
+    def filter(self, queryset, value):
+        if value:
+            partner = participant_partners.get(pk=value)
+            return queryset(partner=partner)
+        return queryset
+
+
+class RoleFilter(ChoiceFilter):
+    def __init__(self, *args, **kwargs):
+        kwargs['choices'] = _make_choices(
+            participant_roles.find().scalar('id', 'name'), 'Role'
+        )
+        super(RoleFilter, self).__init__(*args, **kwargs)
+
+    def filter(self, queryset, value):
+        if value:
+            role = participant_roles.get(pk=value)
+            return queryset(role=role)
+        return queryset
+
+
+class ParticipantIDFilter(CharFilter):
+    def filter(self, queryset, value):
+        if value:
+            return queryset(participant_id=value)
+        return queryset
+
+
+class ParticipantNameFilter(CharFilter):
+    def filter(self, queryset, value):
+        if value:
+            return queryset(name__icontains=value)
+        return value
+
+
+class DashboardFilterSet(FilterSet):
     location = LocationFilter()
-    event = EventFilter(widget=widgets.HiddenInput())
+    event = EventFilter()
     checklist_form = ChecklistFormFilter()
     sample = SampleFilter()
 
     def __init__(self, *args, **kwargs):
         event = kwargs.pop('default_event', events.default())
-        super(DashboardFilter, self).__init__(*args, **kwargs)
+        super(DashboardFilterSet, self).__init__(*args, **kwargs)
         self.declared_filters['event'] = EventFilter(
             widget=widgets.HiddenInput(), default=unicode(event.id))
+
+
+class ParticipantFilterSet(FilterSet):
+    participant_id = ParticipantIDFilter()
+    name = ParticipantNameFilter()
+    location = LocationFilter()
+    sample = SampleFilter()
+    role = RoleFilter()
+    partner = PartnerFilter()

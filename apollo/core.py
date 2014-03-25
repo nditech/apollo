@@ -221,10 +221,11 @@ class FilterSetMetaclass(type):
 
 
 class BaseFilterSet(object):
-    def __init__(self, queryset, data=None):
+    def __init__(self, queryset, data=None, prefix=''):
         self.queryset = queryset
         self.data = data or {}
         self.is_bound = data is not None
+        self.prefix = prefix
 
     @property
     def form(self):
@@ -238,9 +239,9 @@ class BaseFilterSet(object):
                 fields
             )
             if self.is_bound:
-                self._form = form_class(self.data)
+                self._form = form_class(self.data, prefix=self.prefix)
             else:
-                self._form = form_class()
+                self._form = form_class(prefix=self.prefix)
         return self._form
 
     @property
