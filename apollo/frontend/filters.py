@@ -120,17 +120,22 @@ class ParticipantNameFilter(CharFilter):
         return value
 
 
-class DashboardFilterSet(FilterSet):
-    location = LocationFilter()
+class BaseSubmissionFilterSet(FilterSet):
     event = EventFilter()
-    checklist_form = ChecklistFormFilter()
     sample = SampleFilter()
 
     def __init__(self, *args, **kwargs):
         event = kwargs.pop('default_event', events.default())
-        super(DashboardFilterSet, self).__init__(*args, **kwargs)
+        super(BaseSubmissionFilterSet, self).__init__(*args, **kwargs)
         self.declared_filters['event'] = EventFilter(
             widget=widgets.HiddenInput(), default=unicode(event.id))
+
+
+class DashboardFilterSet(BaseSubmissionFilterSet):
+    location = LocationFilter()
+    event = EventFilter()
+    checklist_form = ChecklistFormFilter()
+    sample = SampleFilter()
 
 
 class ParticipantFilterSet(FilterSet):
