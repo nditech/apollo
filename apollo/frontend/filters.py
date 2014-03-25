@@ -1,7 +1,9 @@
 from collections import defaultdict
+from wtforms import widgets
 from ..core import CharFilter, ChoiceFilter, FilterSet
 from ..helpers import _make_choices
 from ..services import events, forms, locations, location_types, samples
+from ..wtforms_ext import ExtendedSelectField
 
 
 class EventFilter(ChoiceFilter):
@@ -32,6 +34,8 @@ class ChecklistFormFilter(ChoiceFilter):
 
 
 class LocationFilter(ChoiceFilter):
+    field_class = ExtendedSelectField
+
     def __init__(self, *args, **kwargs):
         displayed_location_types = kwargs.pop(
             'queryset',
@@ -51,6 +55,12 @@ class LocationFilter(ChoiceFilter):
 
         super(LocationFilter, self).__init__(*args, **kwargs)
 
+    def filter(self, queryset, value):
+        if value:
+            location = locations.get(pk=value)
+            return queryset.filter_in(location)
+        return queryset
+
 
 class SampleFilter(ChoiceFilter):
     def __init__(self, *args, **kwargs):
@@ -67,6 +77,13 @@ class SampleFilter(ChoiceFilter):
 
 
 class DashboardFilter(FilterSet):
-    event = EventFilter()
+    location = LocationFilter()
+    event = EventFilter(widget=widgets.HiddenInput())
     checklist_form = ChecklistFormFilter()
     sample = SampleFilter()
+
+    def __init__(self, *args, **kwargs):
+        event = kwargs.pop('default_event', events.default())
+        super(DashboardFilter, self).__init__(*args, **kwargs)
+        self.declared_filters['event'] = EventFilter(
+            widget=widgets.HiddenInput(), default=unicode(event.id))
