@@ -114,6 +114,25 @@ def comment_create_view():
 
 
 def _incident_csv(form_pk, location_type_pk, location_pk=None):
+    """Given an incident form id, a location type id, and optionally
+    a location id, return a CSV file of the number of incidents of each
+    type (form field tag) that has occurred, either for the entire
+    deployment or under the given location for each location of the
+    specified location type. Only submissions sent in by participants
+    are used for generating the data.
+
+    Sample output would be:
+
+    LOC | A | B | ... | Z | TOT
+    NY  | 2 | 0 | ... | 5 |  7
+
+    `param form_pk`: a `class`Form id
+    `param location_type_pk`: a `class`LocationType id
+    `param location_pk`: an optional `class`Location id. if given, only
+    submissions under that location will be queried.
+
+    `returns`: a string of bytes (str) containing the CSV data.
+    """
     form = forms.get_or_404(pk=form_pk, form_type='INCIDENT')
     location_type = location_types.objects.get_or_404(pk=location_type_pk)
     if location_pk:
