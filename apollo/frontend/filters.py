@@ -120,6 +120,29 @@ class ParticipantNameFilter(CharFilter):
         return value
 
 
+class FormGroupFilter(ChoiceFilter):
+    """Allows filtering on form groups. Each group should have a name
+    of the form <form_pk>__<group_slug>.
+    """
+    def filter(self, queryset, value):
+        if value:
+            name_parts = self.name.split('_')
+            form = forms.get(pk=name_parts[0])
+            group = [g.name for g in form.groups if g.slug == name_parts[1]][0]
+
+            params = {}
+
+            if value == '1':
+                params = {'completion__{}'.format(group): 'Partial'}
+            elif value == '2':
+                params = {'completion__{}'.format(group): 'Missing'}
+            elif value == '3':
+                params = {'completion__{}'.format(group): 'Complete'}
+
+            return queryset(**params)
+        return queryset
+
+
 class BaseSubmissionFilterSet(FilterSet):
     event = EventFilter()
     sample = SampleFilter()
