@@ -31,7 +31,7 @@ bp = Blueprint('submissions', __name__, template_folder='templates',
                dynamic_list_constructor=partial(get_form_list_menu,
                                                 form_type='INCIDENT'))
 def submission_list(form_id):
-    event = get_event(session)
+    event = get_event()
     deployment = g.get('deployment')
     form = Form.objects.get_or_404(deployment=deployment, pk=form_id)
     template_name = 'frontend/submission_list.html'
@@ -151,7 +151,7 @@ def _incident_csv(form_pk, location_type_pk, location_pk=None):
     else:
         qs = submissions.find(contributor__ne=None, form=form)
 
-    event = get_event(session)
+    event = get_event()
     tags = [fi.name for group in form.groups for fi in group.fields]
     qs = qs(created__lte=event.end_date, created__gte=event.start_date)
     df = qs.dataframe()
