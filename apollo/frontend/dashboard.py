@@ -7,7 +7,7 @@ from ..deployments.forms import generate_event_selection_form
 from ..models import Event, Form, Location, LocationType, Sample, Submission
 from ..services import events
 from .forms import generate_dashboard_filter_form
-from .helpers import get_form_context, set_event
+from .helpers import set_event
 from flask import (
     Blueprint, abort, flash, g, redirect, render_template, request, url_for)
 from flask.ext.babel import lazy_gettext as _
@@ -76,8 +76,7 @@ def index():
         data = get_coverage(queryset, group, sub_location_type)
 
     # load the page context
-    context = get_form_context(g.get('deployment'), g.get('event'))
-    context.update(data=data, filter_form=filter_form, page_title=page_title)
+    context = dict(data=data, filter_form=filter_form, page_title=page_title)
 
     return render_template(
         template_name,

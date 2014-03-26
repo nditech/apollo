@@ -18,10 +18,20 @@ def gen_page_list(page, num_pages, window_size=9):
 
 
 def get_deployment(hostname):
+    """
+    Retrieves the deployment based on the host represented in the
+    HTTP_HOST header sent by the web browser.
+
+    :param hostname: The hostname
+    """
     return models.Deployment.objects(hostnames=hostname).first()
 
 
 def get_event():
+    """
+    Retrieves the chosen event from the session and if not, selects
+    the default event and persists it in the session
+    """
     _id = session.get('event', None)
     if not _id:
         _id = services.events.default()
@@ -31,29 +41,21 @@ def get_event():
 
 
 def set_event(event):
+    """
+    Given an event, persists the event in the session
+
+    :param event: The event
+    """
     session['event'] = event
     g.event = event
 
 
-def get_form_context(deployment, event=None):
-    _forms = services.forms.get_all()
-
-    if event:
-        _forms = services.forms.find(events=event)
-
-    checklist_forms = services.forms.find(
-        form_type='CHECKLIST').order_by('name')
-    incident_forms = services.forms.find(
-        form_type='INCIDENT').order_by('name')
-
-    return {
-        'forms': _forms,
-        'checklist_forms': checklist_forms,
-        'incident_forms': incident_forms
-    }
-
-
 def set_request_presets():
+    """
+    Sets preset values for variables like deployment and event
+    globally so they can be reused by other components for restricting
+    filter results by deployment and/or event, for instance.
+    """
     hostname = urlparse(request.url).hostname
 
     try:

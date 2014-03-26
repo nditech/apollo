@@ -2,14 +2,13 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 from flask import (
-    Blueprint, g, redirect, render_template, request, session, url_for
+    Blueprint, g, redirect, render_template, request, url_for
 )
 from flask.ext.babel import lazy_gettext as _
 from flask.ext.menu import register_menu
 from ..models import Location, Participant, ParticipantPartner, ParticipantRole
 from . import route
 from .forms import generate_participant_edit_form
-from .helpers import get_event, get_form_context
 
 PAGE_SIZE = 25
 bp = Blueprint('participants', __name__, template_folder='templates',
@@ -25,12 +24,11 @@ def participant_list_default():
 @route(bp, '/participants/<int:page>')
 def participant_list(page=1):
     deployment = g.get('deployment')
-    event = get_event()
     page_title = _('Participants')
     template_name = 'frontend/participant_list.html'
 
     # load form context
-    context = get_form_context(deployment, event)
+    context = dict()
 
     participants = Participant.objects(
         deployment=deployment
