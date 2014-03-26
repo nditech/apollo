@@ -9,9 +9,11 @@ from ..services import events
 from .forms import generate_dashboard_filter_form
 from .helpers import set_event
 from flask import (
-    Blueprint, abort, flash, g, redirect, render_template, request, url_for)
+    Blueprint, abort, g, redirect, render_template, request, url_for)
 from flask.ext.babel import lazy_gettext as _
 from flask.ext.menu import register_menu
+from flask.ext.security import current_user
+from flask.ext.security.decorators import roles_accepted
 
 bp = Blueprint('dashboard', __name__, template_folder='templates',
                static_folder='static', static_url_path='/core/static')
@@ -85,9 +87,11 @@ def index():
 
 
 @route(bp, '/event', methods=['GET', 'POST'])
-@register_menu(bp, 'events', _('Events'))
+@register_menu(bp, 'events', _('Events'), visible_when=lambda: any(
+    [current_user.has_role(role) for role in ['admin', 'manager', 'analyst']]))
+@roles_accepted('admin', 'analyst', 'manager')
 def event_selection():
-    page_title = _('Select Event')
+    page_title = _('Choose Event')
     template_name = 'frontend/event_selection.html'
 
     if request.method == 'GET':
@@ -99,12 +103,8 @@ def event_selection():
             try:
                 event = events.get(pk=form.event.data)
             except Event.DoesNotExist:
-                flash(_('Selected event not found'))
-                return render_template(
-                    template_name,
-                    form=form,
-                    page_title=page_title
-                )
+                return render_template(template_name, form=form,
+                                       page_title=page_title)
 
             set_event(event)
             return redirect(url_for('dashboard.index'))

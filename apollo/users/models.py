@@ -7,8 +7,6 @@ class Role(db.Document, RoleMixin):
     name = db.StringField(unique=True)
     description = db.StringField()
 
-    deployment = db.ReferenceField(Deployment)
-
     def __unicode__(self):
         return self.name
 

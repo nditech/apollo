@@ -31,9 +31,18 @@ def create_app(package_name, package_path, settings_override=None,
     mail.init_app(app)
     menu.init_app(app)
 
-    security.init_app(app, MongoEngineUserDatastore(db, User, Role),
+    userdatastore = MongoEngineUserDatastore(db, User, Role)
+
+    security.init_app(app, userdatastore,
                       register_blueprint=register_security_blueprint)
     app.session_interface = MongoEngineSessionInterface(db)
+
+    @app.before_first_request
+    def create_user_roles():
+        userdatastore.find_or_create_role('clerk')
+        userdatastore.find_or_create_role('manager')
+        userdatastore.find_or_create_role('analyst')
+        userdatastore.find_or_create_role('admin')
 
     @babel.localeselector
     def get_locale():

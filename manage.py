@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 from flask.ext.script import Manager, Server, Shell
+from flask.ext.security import MongoEngineUserDatastore
 
 from apollo.core import db
 from apollo import models, services
@@ -11,7 +12,9 @@ app = create_app()
 
 
 def _mk_ctx():
-    return dict(app=app, db=db, models=models, services=services)
+    return dict(
+        app=app, db=db, models=models, services=services,
+        userdatastore=MongoEngineUserDatastore(db, models.User, models.Role))
 
 manager = Manager(app)
 manager.add_command('run', Server())

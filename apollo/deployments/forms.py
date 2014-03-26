@@ -9,7 +9,7 @@ def generate_event_selection_form(*args, **kwargs):
 
     class EventSelectionForm(WTSecureForm):
         event = SelectField(
-            'Select event',
+            'Choose Event',
             choices=choices,
             validators=[validators.input_required()]
         )
