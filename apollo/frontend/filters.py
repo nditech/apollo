@@ -133,9 +133,7 @@ class BaseSubmissionFilterSet(FilterSet):
 
 class DashboardFilterSet(BaseSubmissionFilterSet):
     location = LocationFilter()
-    event = EventFilter()
     checklist_form = ChecklistFormFilter()
-    sample = SampleFilter()
 
 
 class ParticipantFilterSet(FilterSet):
@@ -145,3 +143,8 @@ class ParticipantFilterSet(FilterSet):
     sample = SampleFilter()
     role = RoleFilter()
     partner = PartnerFilter()
+
+
+#########################
+# factory functions
+#########################
