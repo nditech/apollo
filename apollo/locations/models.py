@@ -1,6 +1,7 @@
 from ..core import db
 from ..deployments.models import Deployment, Event
 from flask.ext.mongoengine import BaseQuerySet
+from slugify import slugify_unicode
 from mongoengine import Q
 
 

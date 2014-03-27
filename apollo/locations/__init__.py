@@ -1,6 +1,5 @@
 from ..core import Service
 from .models import Sample, LocationType, Location
-from mongoengine import Q
 
 
 class SamplesService(Service):
