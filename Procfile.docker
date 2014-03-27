@@ -1,1 +1,1 @@
-web: uwsgi --http-socket :$PORT --cpu-affinity 1 --master --gevent 1000 --listen 100 --disable-logging --processes 2 --chdir apollo --env DJANGO_SETTINGS_MODULE=apollo.settings --wsgi-file apollo/wsgi.py
+web: uwsgi --http-socket :$PORT --cpu-affinity 1 --master --gevent 1000 --listen 100 --disable-logging --processes 2 --module apollo.wsgi:application

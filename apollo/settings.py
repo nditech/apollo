@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
+import ast
 import os
 from urlparse import urlparse
 
 SECRET_KEY = os.environ.get('SECRET_KEY', 'SOMETHING_SECURE')
-DEBUG = os.environ.get('DEBUG', False)
+DEBUG = ast.literal_eval(
+    os.environ.get('DEBUG', 'False'))
 PAGE_SIZE = 25
 
 if os.environ.get('container') == 'lxc':
