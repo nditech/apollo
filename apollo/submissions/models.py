@@ -20,6 +20,14 @@ class SubmissionQuerySet(BaseQuerySet):
     SUBDOCUMENT_FIELDS = ['location_name_path', 'completion']
 
     def filter_in(self, location_spec):
+        """Given a single `class`Location instance, or an iterable of
+        `class`Location instances, this method restricts submissions to
+        those whose location either exactly match the passed in location(s),
+        or those whose location are lower than the passed in location(s) in
+        the location hierarchy.
+
+        The multiple location case is merely an extension of the single case.
+        """
         if isinstance(location_spec, Location):
             # checking for a single location
             location = location_spec
@@ -29,7 +37,7 @@ class SubmissionQuerySet(BaseQuerySet):
             }
             return self(Q(location=location) | Q(**query_kwargs))
         elif hasattr(location_spec, '__iter__'):
-            # checking for multiple locations - simply recurse
+            # checking for multiple locations
             chain = Q()
             for location in location_spec:
                 if not isinstance(location, Location):
@@ -37,7 +45,7 @@ class SubmissionQuerySet(BaseQuerySet):
 
                 param = 'location_name_path__{}'.format(location.location_type)
                 query_kwargs = {param: location.name}
-                chain = Q(**query_kwargs) | chain
+                chain = Q(location=location) | Q(**query_kwargs) | chain
             return self(chain)
         # value is neither a Location instance nor an iterable
         # producing Location instances
