@@ -19,12 +19,29 @@ class SubmissionQuerySet(BaseQuerySet):
     ]
     SUBDOCUMENT_FIELDS = ['location_name_path', 'completion']
 
-    def filter_in(self, location):
-        param = 'location_name_path__{}'.format(location.location_type)
-        query_kwargs = {
-            param: location.name
-        }
-        return self(Q(location=location) | Q(**query_kwargs))
+    def filter_in(self, location_spec):
+        if isinstance(location_spec, Location):
+            # checking for a single location
+            location = location_spec
+            param = 'location_name_path__{}'.format(location.location_type)
+            query_kwargs = {
+                param: location.name
+            }
+            return self(Q(location=location) | Q(**query_kwargs))
+        elif hasattr(location_spec, '__iter__'):
+            # checking for multiple locations - simply recurse
+            chain = Q()
+            for location in location_spec:
+                if not isinstance(location, Location):
+                    return self.none()
+
+                param = 'location_name_path__{}'.format(location.location_type)
+                query_kwargs = {param: location.name}
+                chain = Q(**query_kwargs) | chain
+            return self(chain)
+        # value is neither a Location instance nor an iterable
+        # producing Location instances
+        return self.none()
 
     def to_dataframe(self, selected_fields=None, excluded_fields=None):
         if excluded_fields:
