@@ -71,7 +71,11 @@ class LocationType(db.Document):
         return super(LocationType, self).clean()
 
     def get_children(self):
-        return LocationType.objects(ancestors_ref=self)
+        """Returns a list of descendants sorted by the length of the
+        `attr`ancestors_ref.
+        """
+        temp = LocationType.objects(ancestors_ref=self)
+        return sorted(temp, None, lambda x: len(x.ancestors_ref))
 
     def __unicode__(self):
         return self.name

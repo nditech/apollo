@@ -37,7 +37,6 @@ def index():
         data.add('event', unicode(event.id))
     if 'form' not in data:
         form = forms.find(events=event, form_type='CHECKLIST').first()
-        print form
         data.add('checklist_form', unicode(form.id))
 
     queryset = submissions.find(contributor__ne=None)
@@ -46,6 +45,7 @@ def index():
     # activate sample filter
     filter_form = filter_.form
     queryset = filter_.qs
+    should_expand = True
 
     if not group:
         data = get_coverage(queryset)
@@ -58,17 +58,32 @@ def index():
                 pk=location_type_id)
 
         # get the requisite location type
+        le_temp = [lt for lt in location_type.get_children()
+                   if lt.on_dashboard_view]
         try:
-            sub_location_type = [
-                lt for lt in location_type.get_children()
-                if lt.on_dashboard_view][0]
+            sub_location_type = le_temp[0]
         except IndexError:
             sub_location_type = location_type
+
+        try:
+            next_location_type = le_temp[1]
+            location_type_id = next_location_type.id
+        except IndexError:
+            next_location_type = None
+            should_expand = False
+            location_type_id = None
 
         data = get_coverage(queryset, group, sub_location_type)
 
     # load the page context
-    context = dict(data=data, filter_form=filter_form, page_title=page_title)
+    context = {
+        'data': data,
+        'filter_form': filter_form,
+        'page_title': page_title,
+        'locationtype': location_type_id or '',
+        'group': group or '',
+        'should_expand': should_expand
+    }
 
     return render_template(
         template_name,

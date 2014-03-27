@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 from collections import OrderedDict
 from logging import getLogger
 from ..models import Submission
+from ..services import locations
 
 logger = getLogger(__name__)
 
@@ -10,7 +11,9 @@ def get_coverage(submission_queryset, group=None, location_type=None):
     if group is None and location_type is None:
         return _get_global_coverage(submission_queryset)
     else:
-        return _get_group_coverage(submission_queryset, group, location_type)
+        locs = locations.find(location_type=location_type.name)
+        queryset = submission_queryset.filter_in(locs)
+        return _get_group_coverage(queryset, group, location_type)
 
 
 def _get_group_coverage(submission_queryset, group, location_type):
