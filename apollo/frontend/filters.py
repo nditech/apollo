@@ -1,5 +1,6 @@
 from collections import defaultdict
 from wtforms import widgets
+from .helpers import get_event
 from ..core import CharFilter, ChoiceFilter, FilterSet
 from ..helpers import _make_choices
 from ..services import (
@@ -52,7 +53,7 @@ class LocationFilter(ChoiceFilter):
         for d_loc in displayed_locations:
             filter_locations[d_loc[2]].append(d_loc[:2])
 
-        kwargs['choices'] = [['', '']] + \
+        kwargs['choices'] = [['', 'Location']] + \
             [[k, v] for k, v in filter_locations.items()]
 
         super(LocationFilter, self).__init__(*args, **kwargs)
@@ -154,9 +155,15 @@ class BaseSubmissionFilterSet(FilterSet):
             widget=widgets.HiddenInput(), default=unicode(event.id))
 
 
-class DashboardFilterSet(BaseSubmissionFilterSet):
+class DashboardFilterSet(FilterSet):
+    sample = SampleFilter()
+    event = EventFilter()
     location = LocationFilter()
     checklist_form = ChecklistFormFilter()
+
+    def __init__(self, *args, **kwargs):
+        super(DashboardFilterSet, self).__init__(*args, **kwargs)
+        self.declared_filters['event'].field.default = get_event()
 
 
 class ParticipantFilterSet(FilterSet):

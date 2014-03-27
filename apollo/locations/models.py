@@ -21,7 +21,7 @@ class Sample(db.Document):
 
     name = db.StringField()
 
-    events = db.ListField(db.ReferenceField('Event'))
+    events = db.ListField(db.ReferenceField(Event))
     deployment = db.ReferenceField(Deployment)
 
     meta = {
@@ -95,7 +95,7 @@ class Location(db.Document):
     ancestors = db.ListField(db.EmbeddedDocumentField('LocationAncestor'))
     samples = db.ListField(db.ReferenceField('Sample'))
 
-    events = db.ListField(db.ReferenceField('Event'))
+    events = db.ListField(db.ReferenceField(Event))
     deployment = db.ReferenceField(Deployment)
 
     meta = {

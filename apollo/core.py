@@ -248,7 +248,7 @@ class BaseFilterSet(object):
     inputs do not affect the filtering process."""
     def __init__(self, queryset, data=None, prefix=''):
         self.queryset = queryset
-        self.data = data or {}
+        self.data = data
         self.is_bound = data is not None
         self.prefix = prefix
 

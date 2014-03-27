@@ -4,12 +4,13 @@ from __future__ import unicode_literals
 from . import route
 from ..analyses.dashboard import get_coverage
 from ..deployments.forms import generate_event_selection_form
-from ..models import Event, Form, Location, LocationType, Sample, Submission
-from ..services import events
-from .forms import generate_dashboard_filter_form
-from .helpers import set_event
+from ..models import LocationType
+from ..services import events, forms, submissions
+from .filters import DashboardFilterSet
+from .helpers import get_event, set_event
 from flask import (
-    Blueprint, abort, g, redirect, render_template, request, url_for)
+    Blueprint, g, redirect, render_template, request, url_for
+)
 from flask.ext.babel import lazy_gettext as _
 from flask.ext.menu import register_menu
 from flask.ext.security import current_user
@@ -26,36 +27,25 @@ def index():
     group = request.args.get('group')
     location_type_id = request.args.get('locationtype')
 
-    if request.args.get('form'):
-        form = Form.objects.with_id(request.args.get('form'))
-    else:
-        form = Form.objects(deployment=g.get('deployment'),
-                            form_type='CHECKLIST',
-                            events=g.get('event')).first()
-
-    if form is None:
-        abort(404)
-
     page_title = _('Dashboard')
-    template_name = 'core/nu_dashboard.html'
+    template_name = 'frontend/nu_dashboard.html'
 
-    filter_form = generate_dashboard_filter_form(g.get('deployment'),
-                                                 g.get('event'))
-    # only pick observer-created submissions
-    queryset = Submission.objects(
-        contributor__ne=None,
-        created__lte=g.get('event').end_date,
-        created__gte=g.get('event').start_date,
-        deployment=g.get('deployment'),
-        form=form,
-    )
+    event = get_event()
+    data = request.args.copy()
+
+    if 'event' not in data:
+        data.add('event', unicode(event.id))
+    if 'form' not in data:
+        form = forms.find(events=event, form_type='CHECKLIST').first()
+        print form
+        data.add('checklist_form', unicode(form.id))
+
+    queryset = submissions.find(contributor__ne=None)
+    filter_ = DashboardFilterSet(queryset, data=data)
 
     # activate sample filter
-    if request.args.get('sample'):
-        sample = Sample.objects.get_or_404(request.args.get('sample'))
-        locations = Location.objects(deployment=g.get('deployment'),
-                                     samples=sample)
-        queryset = queryset.filter(location__in=locations)
+    filter_form = filter_.form
+    queryset = filter_.qs
 
     if not group:
         data = get_coverage(queryset)
@@ -100,11 +90,7 @@ def event_selection():
         form = generate_event_selection_form(request.form)
 
         if form.validate():
-            try:
-                event = events.get(pk=form.event.data)
-            except Event.DoesNotExist:
-                return render_template(template_name, form=form,
-                                       page_title=page_title)
+            event = events.get_or_404(pk=form.event.data)
 
             set_event(event)
             return redirect(url_for('dashboard.index'))
