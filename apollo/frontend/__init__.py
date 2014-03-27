@@ -36,7 +36,8 @@ def create_app(settings_override=None):
 
 
 def handle_error(e):
-    return render_template('{errorcode}.html'.format(errorcode=e.code)), e.code
+    code = getattr(e, 'code', 500)
+    return render_template('{code}.html'.format(code=code)), code
 
 
 def route(bp, *args, **kwargs):
