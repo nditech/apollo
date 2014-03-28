@@ -1,4 +1,5 @@
 from collections import defaultdict
+from flask.ext.babel import lazy_gettext as _
 from wtforms import widgets
 from .helpers import get_event
 from ..core import CharFilter, ChoiceFilter, FilterSet
@@ -77,6 +78,34 @@ class SampleFilter(ChoiceFilter):
             sample = samples.get(pk=value)
             return queryset(location__in=locations.find(samples=sample))
         return queryset
+
+
+class DynamicFieldFilter(ChoiceFilter):
+    """Enables filtering on a dynamic MongoEngine document field. By default,
+    includes checks for non-existence, existence and equality.
+    """
+    def __init__(self, *args, **kwargs):
+        self.contains = kwargs.pop('contains', None)
+        super(DynamicFieldFilter, self).__init__(*args, **kwargs)
+
+    def filter(self, queryset, value):
+        if value:
+            if value == 'NULL':
+                # check that field does not exist
+                query_kwargs = {'{}__exists'.format(self.name): False}
+            elif value == 'NOT_NULL':
+                # check that field exists
+                query_kwargs = {'{}__exists'.format(self.name): True}
+            else:
+                # checking for equality
+                query_kwargs = {'{}'.format(self.name): value}
+        elif self.contains:
+            # same as check for existence
+            query_kwargs = {'{}__exists'.format(self.name): True}
+        else:
+            query_kwargs = {}
+
+        return queryset(**query_kwargs)
 
 
 class PartnerFilter(ChoiceFilter):
@@ -178,3 +207,47 @@ class ParticipantFilterSet(FilterSet):
 #########################
 # factory functions
 #########################
+def generate_submission_analysis_filter(form):
+    attributes = {}
+    if form.form_type == 'INCIDENT':
+        attributes['status'] = DynamicFieldFilter(
+            choices=(('', _('Status')), ('NULL', _('Unmarked')),
+                    ('confirmed', _('Confirmed')), ('rejected', _('Rejected')),
+                    ('citizen', _('Citizen Report')))
+        )
+        attributes['witness'] = DynamicFieldFilter(
+            choices=(('', _('Witness')), ('NULL', _('Unspecified')),
+                    ('witnessed', _('Witnessed incident')),
+                    ('after', _('Arrived after incident')),
+                    ('reported', _('Incident was reported')))
+        )
+
+    return type(
+        'SubmissionAnalysisFilterSet', (BaseSubmissionFilterSet,), attributes)
+
+
+def generate_critical_incident_location_filter(tag):
+    attributes = {}
+    attributes[tag] = DynamicFieldFilter(
+        choices=(('NOT_NULL', ''),),
+        contains=True,
+        default='NOT_NULL',
+        widget=widgets.HiddenInput()
+    )
+    attributes['status'] = DynamicFieldFilter(
+        choices=(('', _('Status')), ('NULL', _('Unmarked')),
+                ('confirmed', _('Confirmed')), ('rejected', _('Rejected')),
+                ('citizen', _('Citizen Report')))
+    )
+    attributes['witness'] = DynamicFieldFilter(
+        choices=(('', _('Witness')), ('NULL', _('Unspecified')),
+                ('witnessed', _('Witnessed incident')),
+                ('after', _('Arrived after incident')),
+                ('reported', _('Incident was reported')))
+    )
+
+    return type(
+        'CriticalIncidentsLocationFilterSet',
+        (BaseSubmissionFilterSet,),
+        attributes
+    )
