@@ -2,14 +2,14 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 from flask import (
-    Blueprint, g, jsonify, make_response, render_template, request, session
+    Blueprint, jsonify, make_response, render_template, request
 )
 from flask.ext.babel import lazy_gettext as _
 from flask.ext.security.core import current_user
 from flask.ext.menu import register_menu
 from tablib import Dataset
 from ..analyses.incidents import incidents_csv
-from ..models import Form, Location, Participant, Sample, Submission
+from ..models import Location, Participant, Sample
 from ..services import (
     forms, location_types, submissions, submission_comments
 )
@@ -32,15 +32,13 @@ bp = Blueprint('submissions', __name__, template_folder='templates',
                                                 form_type='INCIDENT'))
 def submission_list(form_id):
     event = get_event()
-    deployment = g.get('deployment')
-    form = Form.objects.get_or_404(deployment=deployment, pk=form_id)
+    form = forms.get_or_404(pk=form_id)
     template_name = 'frontend/submission_list.html'
 
-    queryset = Submission.objects(
+    queryset = submissions.find(
         contributor__ne=None,
         created__lte=event.end_date,
         created__gte=event.start_date,
-        deployment=deployment,
         form=form
     )
 
@@ -97,7 +95,6 @@ def submission_list(form_id):
                     locations = Location.objects(samples=sample)
                     queryset = queryset(location__in=locations)
 
-        print queryset._query
         return render_template(
             template_name,
             filter_form=filter_form,

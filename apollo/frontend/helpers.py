@@ -75,3 +75,8 @@ def get_form_list_menu(**kwargs):
     return [{'url': url_for('submissions.submission_list',
              form_id=str(form.id)), 'text': form.name, 'visible': True}
             for form in services.forms.find(**kwargs)]
+
+
+def displayable_location_types():
+    temp = services.location_types.find(on_submissions_view=True)
+    return sorted(temp, None, lambda x: len(x.ancestors_ref))

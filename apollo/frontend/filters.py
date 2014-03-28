@@ -5,8 +5,8 @@ from .helpers import get_event
 from ..core import CharFilter, ChoiceFilter, FilterSet
 from ..helpers import _make_choices
 from ..services import (
-    events, forms, locations, location_types, participant_partners,
-    participant_roles, samples)
+    events, forms, locations, location_types, participants,
+    participant_partners, participant_roles, samples)
 from ..wtforms_ext import ExtendedSelectField
 
 
@@ -136,10 +136,27 @@ class RoleFilter(ChoiceFilter):
         return queryset
 
 
-class ParticipantIDFilter(CharFilter):
+class ParticipantFilter(CharFilter):
+    """This is used for filtering a queryset of participants.
+    """
     def filter(self, queryset, value):
         if value:
             return queryset(participant_id=value)
+        return queryset
+
+
+class ParticipantIDFilter(CharFilter):
+    """This is used to filter on a queryset of submissions.
+    """
+    def filter(self, queryset, value):
+        if value:
+            participant = participants.find(pk=value)
+            if participant is None:
+                # this will interfere with the default
+                # filtering of master submissions, so
+                # return nothing
+                return queryset.none()
+            return queryset(contributor=participant)
         return queryset
 
 
@@ -196,7 +213,7 @@ class DashboardFilterSet(FilterSet):
 
 
 class ParticipantFilterSet(FilterSet):
-    participant_id = ParticipantIDFilter()
+    participant_id = ParticipantFilter()
     name = ParticipantNameFilter()
     location = LocationFilter()
     sample = SampleFilter()
@@ -248,6 +265,39 @@ def generate_critical_incident_location_filter(tag):
 
     return type(
         'CriticalIncidentsLocationFilterSet',
+        (BaseSubmissionFilterSet,),
+        attributes
+    )
+
+
+def generate_submission_filter(form):
+    attributes = {}
+
+    # add in form groups
+    for group in form.groups:
+        field_name = '{}__{}'.format(form.pk, group.slug)
+        choices = [
+            ('0', _('%(group)s Status') % {'group': group.name}),
+            ('1', _('%(group)s Partial') % {'group': group.name}),
+            ('2', _('%(group)s Missing') % {'group': group.name}),
+            ('3', _('%(group)s Complete') % {'group': group.name})
+        ]
+        attributes[field_name] = FormGroupFilter(choices=choices)
+
+    # participant id and location
+    attributes['participant_id'] = ParticipantIDFilter()
+    attributes['location'] = LocationFilter()
+
+    # and status for incident forms
+    if form.form_type == 'INCIDENT':
+        attributes['status'] = DynamicFieldFilter(
+            choices=(('', _('Status')), ('NULL', _('Unmarked')),
+                    ('confirmed', _('Confirmed')), ('rejected', _('Rejected')),
+                    ('citizen', _('Citizen Report')))
+        )
+
+    return type(
+        'SubmissionFilterSet',
         (BaseSubmissionFilterSet,),
         attributes
     )
