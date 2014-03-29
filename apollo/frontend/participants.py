@@ -27,7 +27,8 @@ def participant_list_default():
 def participant_list(page=1):
     page_title = _('Participants')
     queryset = participants.find()
-    queryset_filter = ParticipantFilterSet(queryset)
+    queryset_filter = ParticipantFilterSet(queryset, request.args)
+
     template_name = 'frontend/participant_list.html'
 
     # load form context

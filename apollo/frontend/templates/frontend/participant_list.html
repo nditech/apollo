@@ -1,4 +1,9 @@
-{% extends 'frontend/_layout.html' %}{% block content %}
+{% extends 'frontend/_layout.html' %}{% from 'frontend/macros/participants_filter.html' import render_filter_form %}{% block content %}
+    <div class="row-fluid">
+      <div class="well">
+        {{ render_filter_form(filter_form) }}
+      </div>
+    </div>
     <div class="row-fluid">
       <div class="col-md-10 col-offset-1">
       	<table class="table table-bordered table-striped">
@@ -23,7 +28,7 @@
            {% endfor %}
          </tbody>
         </table>
-        {% from 'frontend/pagination.html' import render_pager %}{{ render_pager(participants, 'participants.participant_list') }}
+        {% from 'frontend/macros/pagination.html' import render_pager %}{{ render_pager(participants, 'participants.participant_list') }}
       </div>
     </div>
 {%- endblock %}
