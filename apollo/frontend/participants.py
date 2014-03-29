@@ -7,7 +7,9 @@ from flask import (
 from flask.ext.babel import lazy_gettext as _
 from flask.ext.menu import register_menu
 from ..models import Location, Participant, ParticipantPartner, ParticipantRole
+from ..services import participants
 from . import route
+from .filters import ParticipantFilterSet
 from .forms import generate_participant_edit_form
 
 PAGE_SIZE = 25
@@ -23,21 +25,21 @@ def participant_list_default():
 
 @route(bp, '/participants/<int:page>')
 def participant_list(page=1):
-    deployment = g.get('deployment')
     page_title = _('Participants')
+    queryset = participants.find()
+    queryset_filter = ParticipantFilterSet(queryset)
     template_name = 'frontend/participant_list.html'
 
     # load form context
-    context = dict()
+    context = {}
 
-    participants = Participant.objects(
-        deployment=deployment
-    ).paginate(
-        page=page,
-        per_page=PAGE_SIZE
+    pager = queryset_filter.qs.paginate(page=page, per_page=PAGE_SIZE)
+
+    context.update(
+        filter_form=queryset_filter.form,
+        page_title=page_title,
+        participants=pager
     )
-
-    context.update(page_title=page_title, participants=participants)
 
     return render_template(
         template_name,
