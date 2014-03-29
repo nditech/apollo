@@ -10,8 +10,15 @@
 <li {% if pager.page == pager.pages %}class="disabled"{% endif %}><a title="{% trans %}Last page{% endtrans %}" href="{{ url_for(endpoint, page=pager.pages) }}">&raquo;</a></li>
 </ul>
 </div>
+{%- set start = (pager.page - 1) * pager.per_page + 1 -%}
+{%- if (pager.page * pager.per_page) > pager.total %}
+{%- set end = pager.total -%}
+{%- else -%}
+{%- set end = pager.page * pager.per_page -%}
+{%- endif -%}
+{%- set total = pager.total -%}
 <div class="text-center">
-<ul class="pagination pagination-centered" style="margin-top:0px;">{%- set start = (pager.page - 1) * pager.per_page + 1 -%}{%- set end = pager.page * pager.per_page -%}{% set total = pager.total %}
+<ul class="pagination pagination-centered" style="margin-top:0px;">
 <li class="disabled"><a>{% trans %}Showing <strong>{{ start }}-{{ end }}</strong> of <strong>{{ total }}</strong>{% endtrans %}</a></li>
 </ul>
 </div>
