@@ -164,7 +164,7 @@ class ParticipantNameFilter(CharFilter):
     def filter(self, queryset, value):
         if value:
             return queryset(name__icontains=value)
-        return value
+        return queryset
 
 
 class FormGroupFilter(ChoiceFilter):
@@ -173,7 +173,7 @@ class FormGroupFilter(ChoiceFilter):
     """
     def filter(self, queryset, value):
         if value:
-            name_parts = self.name.split('_')
+            name_parts = self.name.split('__')
             form = forms.get(pk=name_parts[0])
             group = [g.name for g in form.groups if g.slug == name_parts[1]][0]
 
@@ -277,10 +277,10 @@ def generate_submission_filter(form):
     for group in form.groups:
         field_name = '{}__{}'.format(form.pk, group.slug)
         choices = [
-            ('0', _('%(group)s Status') % {'group': group.name}),
-            ('1', _('%(group)s Partial') % {'group': group.name}),
-            ('2', _('%(group)s Missing') % {'group': group.name}),
-            ('3', _('%(group)s Complete') % {'group': group.name})
+            ('0', _('%(group)s Status', group=group.name)),
+            ('1', _('%(group)s Partial', group=group.name)),
+            ('2', _('%(group)s Missing', group=group.name)),
+            ('3', _('%(group)s Complete', group=group.name))
         ]
         attributes[field_name] = FormGroupFilter(choices=choices)
 
