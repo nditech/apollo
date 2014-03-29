@@ -116,7 +116,7 @@ class Service(object):
         kwargs = self._set_default_filter_parameters(kwargs)
 
         try:
-            self.get(**kwargs)
+            return self.get(**kwargs)
         except self.__model__.DoesNotExist:
             abort(404)
 
