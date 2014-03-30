@@ -19,17 +19,17 @@ bp = Blueprint('participants', __name__, template_folder='templates',
 
 @route(bp, '/participants')
 @register_menu(bp, 'participants', _('Participants'))
-def participant_list_default():
-    return participant_list(1)
-
-
-@route(bp, '/participants/<int:page>')
-def participant_list(page=1):
+def participant_list():
     page_title = _('Participants')
     queryset = participants.find()
     queryset_filter = ParticipantFilterSet(queryset, request.args)
 
     template_name = 'frontend/participant_list.html'
+
+    # request.args is immutable, so the .pop() call will fail on it.
+    # using .copy() returns a mutable version of it.
+    args = request.args.copy()
+    page = int(args.pop('page', '1'))
 
     # load form context
     context = {}
@@ -37,6 +37,7 @@ def participant_list(page=1):
     pager = queryset_filter.qs.paginate(page=page, per_page=PAGE_SIZE)
 
     context.update(
+        args=args,
         filter_form=queryset_filter.form,
         page_title=page_title,
         participants=pager
