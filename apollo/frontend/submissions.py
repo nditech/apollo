@@ -5,7 +5,7 @@ from flask import (
     Blueprint, jsonify, make_response, render_template, request
 )
 from flask.ext.babel import lazy_gettext as _
-from flask.ext.security.core import current_user
+from flask.ext.security import current_user, login_required
 from flask.ext.menu import register_menu
 from tablib import Dataset
 from ..analyses.incidents import incidents_csv
@@ -21,7 +21,7 @@ from functools import partial
 
 PAGE_SIZE = 25
 bp = Blueprint('submissions', __name__, template_folder='templates',
-               static_folder='static', static_url_path='/core/static')
+               static_folder='static')
 
 
 @route(bp, '/submissions/<form_id>', methods=['GET', 'POST'])
@@ -31,6 +31,7 @@ bp = Blueprint('submissions', __name__, template_folder='templates',
 @register_menu(bp, 'forms.incidents', _('Critical Incidents'),
                dynamic_list_constructor=partial(get_form_list_menu,
                                                 form_type='INCIDENT'))
+@login_required
 def submission_list(form_id):
     form = forms.get_or_404(pk=form_id)
     filter_class = generate_submission_filter(form)
@@ -69,6 +70,7 @@ def submission_list(form_id):
 
 
 @route(bp, '/comments', methods=['POST'])
+@login_required
 def comment_create_view():
     submission = submissions.get_or_404(pk=request.form.get('submission'))
     comment = request.form.get('comment')
@@ -128,6 +130,7 @@ def _incident_csv(form_pk, location_type_pk, location_pk=None):
 
 
 @route(bp, '/incidents/form/<form_pk>/locationtype/<location_type_pk>/incidents.csv')
+@login_required
 def incidents_csv_dl(form_pk, location_type_pk):
     response = make_response(
         _incident_csv(form_pk, location_type_pk))
@@ -137,6 +140,7 @@ def incidents_csv_dl(form_pk, location_type_pk):
 
 
 @route(bp, '/incidents/form/<form_pk>/locationtype/<location_type_pk>/location/<location_pk>/incidents.csv')
+@login_required
 def incidents_csv_with_location_dl(form_pk, location_type_pk, location_pk):
     response = make_response(
         _incident_csv(form_pk, location_type_pk, location_pk))

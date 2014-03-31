@@ -6,8 +6,10 @@ from flask import (
 )
 from flask.ext.babel import lazy_gettext as _
 from flask.ext.menu import register_menu
+from flask.ext.security import login_required
 from ..services import (
-    locations, participants, participant_partners, participant_roles)
+    participants, participant_roles, locations, participant_partners
+)
 from . import route
 from .filters import ParticipantFilterSet
 from .forms import generate_participant_edit_form
@@ -19,7 +21,8 @@ bp = Blueprint('participants', __name__, template_folder='templates',
 
 @route(bp, '/participants')
 @register_menu(bp, 'participants', _('Participants'))
-def participant_list():
+@login_required
+def participant_list(page=1):
     page_title = _('Participants')
     queryset = participants.find()
     queryset_filter = ParticipantFilterSet(queryset, request.args)
@@ -34,7 +37,8 @@ def participant_list():
     # load form context
     context = {}
 
-    pager = queryset_filter.qs.paginate(page=page, per_page=PAGE_SIZE)
+    pager = queryset_filter.qs.select_related() \
+        .paginate(page=page, per_page=PAGE_SIZE)
 
     context.update(
         args=args,
@@ -50,6 +54,7 @@ def participant_list():
 
 
 @route(bp, '/participant/<pk>', methods=['GET', 'POST'])
+@login_required
 def participant_edit(pk):
     participant = participants.get_or_404(pk=pk)
     page_title = _(

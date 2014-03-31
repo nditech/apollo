@@ -13,15 +13,16 @@ from flask import (
 )
 from flask.ext.babel import lazy_gettext as _
 from flask.ext.menu import register_menu
-from flask.ext.security import current_user
+from flask.ext.security import current_user, login_required
 from flask.ext.security.decorators import roles_accepted
 
 bp = Blueprint('dashboard', __name__, template_folder='templates',
-               static_folder='static', static_url_path='/core/static')
+               static_folder='static')
 
 
 @route(bp, '/')
 @register_menu(bp, 'dashboard', _('Dashboard'))
+@login_required
 def index():
     # get variables from query params, or use (hopefully) sensible defaults
     group = request.args.get('group')
@@ -102,6 +103,7 @@ def index():
 @register_menu(bp, 'events', _('Events'), visible_when=lambda: any(
     [current_user.has_role(role) for role in ['admin', 'manager', 'analyst']]))
 @roles_accepted('admin', 'analyst', 'manager')
+@login_required
 def event_selection():
     page_title = _('Choose Event')
     template_name = 'frontend/event_selection.html'
