@@ -1,0 +1,15 @@
+{% extends 'frontend/_layout.html' %}{% block content %}
+{% from 'frontend/nu_macros.html' import render_form %}
+<div class="well">
+{{ render_form(filter_form, method_='GET', class_='form-inline', action_text='Filter', labels=false)}}
+</div>
+<div class="row">
+{% if data %}
+{% for row in data %}
+<div class="col-md-4">
+{{ row.name }}
+</div>
+{% endfor %}
+{% endif %}
+</div>
+{% endblock %}

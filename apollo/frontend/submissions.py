@@ -15,7 +15,8 @@ from ..services import (
 )
 from . import route
 from .filters import generate_submission_filter
-from .helpers import get_event, get_form_list_menu
+from .helpers import (
+    displayable_location_types, get_event, get_form_list_menu)
 from functools import partial
 
 PAGE_SIZE = 25
@@ -33,7 +34,13 @@ bp = Blueprint('submissions', __name__, template_folder='templates',
 def submission_list(form_id):
     form = forms.get_or_404(pk=form_id)
     filter_class = generate_submission_filter(form)
-    template_name = 'frontend/submission_list.html'
+    page_title = form.name
+    template_name = 'frontend/nu_submission_list.html'
+
+    data = request.args.copy()
+    page = int(data.pop('page', 1))
+
+    loc_types = displayable_location_types()
 
     queryset = submissions.find(
         contributor__ne=None,
@@ -42,7 +49,13 @@ def submission_list(form_id):
     query_filterset = filter_class(queryset, request.args)
     # filter_form = query_filterset.form
 
-    return 'Done'
+    return render_template(
+        template_name,
+        form=form,
+        location_types=loc_types,
+        page_title=page_title,
+        pager=query_filterset.qs.paginate(page=page, per_page=PAGE_SIZE)
+    )
 
 
 @route(bp, '/comments', methods=['POST'])

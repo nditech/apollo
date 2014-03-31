@@ -1,0 +1,80 @@
+{% extends 'frontend/_layout.html' %}{% block content %}
+<div class="row-fluid">
+<div class="well"></div>
+</div>
+<div class="row-fluid">
+<div>
+<table class="table table-bordered table-striped">
+<thead>
+<tr>
+<th>{% trans %}Participant ID{% endtrans %}</th>
+{%- for location_type in location_types -%}<th>{{ location_type.name }}</th>{%- endfor -%}
+<th>{% trans %}Participant{% endtrans %}</th>
+{%- if form.form_type == 'CHECKLIST' -%}
+{%- for group in form.groups -%}
+<th class="text-center">{{ group.name }}</th>
+{%- endfor -%}
+{%- else -%}
+{%- for group in form.groups -%}
+{%- for field in group.fields -%}
+<th class="text-center"><abbr title="{{ field.description }}">{{ field.name }}</abbr></th>
+{%- endfor -%}
+{%- endfor -%}
+<th class="text-center"><abbr title="{% trans %}Status{% endtrans %}"><i class="glyphicon glyphicon-eye-open"></i></abbr></th>
+{%- endif -%}
+<th class="text-center"><abbr title="{% trans %}Phone Verification{% endtrans %}"><i class="glyphicon glyphicon-earphone"></i></abbr></th>
+</tr>
+</thead>
+<tbody>
+{% for submission in pager.items %}
+<tr>
+<td>{{ submission.contributor.participant_id }}</td>
+{%- for location_type in location_types -%}<td>{{ submission.location_name_path[location_type.name] }}</td>{%- endfor -%}
+<td>{{ submission.contributor.name }}</td>
+{%- if form.form_type == 'CHECKLIST' -%}
+{%- for group in form.groups -%}
+{% if submission.completion[group.name] == 'Complete' %}
+<td class="text-center"><img src="{{ url_for('static', filename='img/tick.png') }}" alt="{% trans %}complete{% endtrans %}" title="{% trans %}complete{% endtrans %}" height="11" width="11"></td>
+{% elif submission.completion[group.name] == 'Partial' %}
+<td class="text-center"><img src="{{ url_for('static', filename='img/caution.png') }}" alt="{% trans %}partial{% endtrans %}" title="{% trans %}partial{% endtrans %}" height="11" width="11"></td>
+{% elif submission.completion[group.name] == 'Missing' %}
+<td class="text-center"><img src="{{ url_for('static', filename='img/red_dot.png') }}" alt="{% trans %}missing{% endtrans %}" title="{% trans %}missing{% endtrans %}" height="11" width="11"></td>
+{% endif %}
+{%- endfor -%}
+{%- else -%}
+{%- for group in form.groups -%}
+{%- for field in group.fields -%}
+{%- if submission[field.name] -%}
+<td class="text-center"><img src="{{ url_for('static', filename='img/red_dot.png') }}" height="11" width="11"></td>
+{% else %}
+<td></td>
+{%- endif -%}
+{%- endfor -%}
+{%- endfor -%}
+{%- endif -%}
+</tr>
+{% else %}
+<tr class="warning">
+{%- if form.form_type == 'CHECKLIST' %}
+{%- set dynamic_len = 0 -%}
+{%- for group in form.groups -%}
+{%- set dynamic_len = dynamic_len + 1 -%}
+{%- endfor -%}
+{%- set span = 3 + (location_types|length) + dynamic_len -%}
+{%- else -%}
+{%- set dynamic_len = 0 -%}
+{%- for group in form.groups -%}
+{%- for field in group.fields -%}
+{%- set dynamic_len = dynamic_len + 1 -%}
+{%- endfor -%}
+{%- endfor -%}
+{%- set span = 4 + (location_types|length) + dynamic_len -%}
+{%- endif -%}
+<td class="text-center" colspan="{{ span }}">{% trans %}No data{% endtrans %}</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+</div>
+{%- endblock -%}

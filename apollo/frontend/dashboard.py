@@ -33,11 +33,12 @@ def index():
     event = get_event()
     data = request.args.copy()
 
-    if 'event' not in data:
-        data.add('event', unicode(event.id))
-    if 'form' not in data:
+    data.setdefault('event', unicode(event.id))
+    if not data.get('checklist_form'):
         form = forms.find(events=event, form_type='CHECKLIST').first()
-        data.add('checklist_form', unicode(form.id))
+    else:
+        form = forms.get(pk=data.get('checklist_form'))
+    data.setdefault('checklist_form', unicode(form.id))
 
     queryset = submissions.find(contributor__ne=None)
     filter_ = DashboardFilterSet(queryset, data=data)
