@@ -50,11 +50,17 @@ def submission_list(form_id):
     query_filterset = filter_class(queryset, request.args)
     filter_form = query_filterset.form
 
+    if form.form_type == 'CHECKLIST':
+        form_fields = []
+    else:
+        form_fields = [field for group in form.groups for field in group.fields]
+
     return render_template(
         template_name,
         args=data,
         filter_form=filter_form,
         form=form,
+        form_fields=form_fields,
         location_types=loc_types,
         page_title=page_title,
         pager=query_filterset.qs.paginate(page=page, per_page=PAGE_SIZE)

@@ -18,7 +18,7 @@
 {%- endfor -%}
 {%- else -%}
 <div class="form-group">
-{{ filter_form.status }}
+{{ filter_form.status(class_='form-control span2') }}
 </div>
 {%- endif -%}
 <button class="btn btn-warning" type="submit"><i class="glyphicon glyphicon-search"></i> Filter</button>

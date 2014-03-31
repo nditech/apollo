@@ -18,10 +18,8 @@
 <th class="text-center">{{ group.name }}</th>
 {%- endfor -%}
 {%- else -%}
-{%- for group in form.groups -%}
-{%- for field in group.fields -%}
+{%- for field in form_fields -%}
 <th class="text-center"><abbr title="{{ field.description }}">{{ field.name }}</abbr></th>
-{%- endfor -%}
 {%- endfor -%}
 <th class="text-center"><abbr title="{% trans %}Status{% endtrans %}"><i class="glyphicon glyphicon-eye-open"></i></abbr></th>
 {%- endif -%}
@@ -45,33 +43,21 @@
 {% endif %}
 {%- endfor -%}
 {%- else -%}
-{%- for group in form.groups -%}
-{%- for field in group.fields -%}
+{%- for field in form_fields -%}
 {%- if submission[field.name] -%}
 <td class="text-center"><img src="{{ url_for('static', filename='img/red_dot.png') }}" height="11" width="11"></td>
 {% else %}
 <td></td>
 {%- endif -%}
 {%- endfor -%}
-{%- endfor -%}
 {%- endif -%}
 </tr>
 {% else %}
 <tr class="warning">
 {%- if form.form_type == 'CHECKLIST' %}
-{%- set dynamic_len = 0 -%}
-{%- for group in form.groups -%}
-{%- set dynamic_len = dynamic_len + 1 -%}
-{%- endfor -%}
-{%- set span = 3 + (location_types|length) + dynamic_len -%}
+{%- set span = 3 + (location_types|length) + form.groups|length -%}
 {%- else -%}
-{%- set dynamic_len = 0 -%}
-{%- for group in form.groups -%}
-{%- for field in group.fields -%}
-{%- set dynamic_len = dynamic_len + 1 -%}
-{%- endfor -%}
-{%- endfor -%}
-{%- set span = 4 + (location_types|length) + dynamic_len -%}
+{%- set span = 4 + location_types|length + form_fields|length -%}
 {%- endif -%}
 <td class="text-center" colspan="{{ span }}">{% trans %}No data{% endtrans %}</td>
 </tr>
