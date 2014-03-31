@@ -34,8 +34,7 @@ def participant_list():
     # load form context
     context = {}
 
-    pager = queryset_filter.qs.select_related() \
-        .paginate(page=page, per_page=PAGE_SIZE)
+    pager = queryset_filter.qs.paginate(page=page, per_page=PAGE_SIZE)
 
     context.update(
         args=args,

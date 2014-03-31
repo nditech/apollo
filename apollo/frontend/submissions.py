@@ -53,7 +53,8 @@ def submission_list(form_id):
     if form.form_type == 'CHECKLIST':
         form_fields = []
     else:
-        form_fields = [field for group in form.groups for field in group.fields]
+        form_fields = [field for group in form.groups
+                       for field in group.fields]
 
     return render_template(
         template_name,

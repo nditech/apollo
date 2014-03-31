@@ -1,15 +1,28 @@
-{% extends 'frontend/_layout.html' %}{% block content %}
-{% from 'frontend/nu_macros.html' import render_form %}
+{% extends 'frontend/_layout.html' %}
+{% block stylesheets %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/nv.d3.min.css') }}">
+{% endblock %}
+{% block content %}
+{% from 'frontend/macros/dashboard_filter.html' import render_filter_form %}
 <div class="well">
-{{ render_form(filter_form, method_='GET', class_='form-inline', action_text='Filter', labels=false)}}
+{{ render_filter_form(filter_form)}}
 </div>
 <div class="row">
 {% if data %}
 {% for row in data %}
-<div class="col-md-4">
-{{ row.name }}
+<div class="col-md-6 text-center">
+<div class="piecontainer">
+<h3>{{ row.name }}</h3>
+<svg class="piechart" data-chart='{{ row|tojson|safe }}'></svg>
+</div>
 </div>
 {% endfor %}
 {% endif %}
 </div>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/d3.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/nv.d3.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/filters.js') }}"></script>
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
 {% endblock %}

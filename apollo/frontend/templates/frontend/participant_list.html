@@ -33,4 +33,7 @@
         {% from 'frontend/macros/pagination.html' import render_pager %}{{ render_pager(participants, 'participants.participant_list', args) }}
       </div>
     </div>
-{%- endblock %}
+{%- endblock -%}
+{%- block scripts -%}
+<script src="{{ url_for('static', filename='js/filters.js') }}"></script>
+{%- endblock -%}

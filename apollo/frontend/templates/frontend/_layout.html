@@ -89,6 +89,7 @@
     {% assets 'apollo_js' %}
     <script type="text/javascript" src="{{ ASSET_URL }}" charset="utf-8"></script>
     {% endassets %}
+    {%- block scripts -%}{%- endblock -%}
     {% if not debug %}
     <script type="text/javascript">
 

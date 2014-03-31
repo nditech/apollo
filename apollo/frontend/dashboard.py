@@ -31,17 +31,17 @@ def index():
     template_name = 'frontend/nu_dashboard.html'
 
     event = get_event()
-    data = request.args.copy()
+    args = request.args.copy()
 
-    data.setdefault('event', unicode(event.id))
-    if not data.get('checklist_form'):
+    args.setdefault('event', unicode(event.id))
+    if not args.get('checklist_form'):
         form = forms.find(events=event, form_type='CHECKLIST').first()
     else:
-        form = forms.get(pk=data.get('checklist_form'))
-    data.setdefault('checklist_form', unicode(form.id))
+        form = forms.get(pk=args.get('checklist_form'))
+    args.setdefault('checklist_form', unicode(form.id))
 
     queryset = submissions.find(contributor__ne=None)
-    filter_ = DashboardFilterSet(queryset, data=data)
+    filter_ = DashboardFilterSet(queryset, data=args)
 
     # activate sample filter
     filter_form = filter_.form
@@ -83,6 +83,7 @@ def index():
 
     # load the page context
     context = {
+        'args': args,
         'data': data,
         'filter_form': filter_form,
         'page_title': page_title,
