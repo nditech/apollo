@@ -3,11 +3,10 @@ from __future__ import unicode_literals
 from flask.ext.babel import lazy_gettext as _
 from flask.ext.wtf import Form as WTSecureForm
 from wtforms import (
-    Form as WTForm, HiddenField, SelectField, TextField, validators
+    SelectField, TextField, validators
 )
 from ..models import (
-    Event, Form, Location, LocationType, Participant,
-    ParticipantPartner, ParticipantRole, Sample
+    LocationType, Participant
 )
 from ..services import (
     locations, participants, participant_partners, participant_roles)
@@ -21,16 +20,16 @@ def _make_choices(qs, placeholder=None):
 
 
 def generate_location_edit_form(location, data=None):
-    locations = LocationType.objects(deployment=location.deployment)
+    locs = LocationType.objects(deployment=location.deployment)
 
     class LocationEditForm(WTSecureForm):
         name = TextField('Name', validators=[validators.input_required()])
         code = TextField('Code', validators=[validators.input_required()])
         location_type = SelectField(
-            'Location type',
+            _('Location type'),
             choices=_make_choices(
-                locations.scalar('name', 'name'),
-                'Location type'
+                locs.scalar('name', 'name'),
+                _('Location type')
             ),
             validators=[validators.input_required()]
         )
@@ -41,34 +40,34 @@ def generate_location_edit_form(location, data=None):
 def generate_participant_edit_form(participant, data=None):
     class ParticipantEditForm(WTSecureForm):
         participant_id = TextField(
-            'Participant ID',
+            _('Participant ID'),
             validators=[validators.input_required()]
         )
         name = TextField(
-            'Name',
+            _('Name'),
             validators=[validators.input_required()]
         )
         gender = SelectField(
-            'Gender',
+            _('Gender'),
             choices=Participant.GENDER,
             validators=[validators.input_required()]
         )
         role = SelectField(
-            'Role',
+            _('Role'),
             choices=_make_choices(
                 participant_roles.find().scalar('id', 'name')
             ),
             validators=[validators.input_required()]
         )
         supervisor = SelectField(
-            'Supervisor',
+            _('Supervisor'),
             choices=_make_choices(
                 participants.find().scalar('id', 'name')
             ),
             validators=[validators.input_required()]
         )
         location = SelectField(
-            'Location',
+            _('Location'),
             choices=_make_choices(
                 locations.find().scalar('id', 'name')
             ),
@@ -76,7 +75,7 @@ def generate_participant_edit_form(participant, data=None):
         )
         # partners are not required
         partner = SelectField(
-            'Partner',
+            _('Partner'),
             choices=_make_choices(
                 participant_partners.find().scalar('id', 'name')
             ),
