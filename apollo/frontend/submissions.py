@@ -9,12 +9,12 @@ from flask.ext.security.core import current_user
 from flask.ext.menu import register_menu
 from tablib import Dataset
 from ..analyses.incidents import incidents_csv
-from ..models import Location, Participant, Sample
+from ..models import Location
 from ..services import (
     forms, location_types, submissions, submission_comments
 )
 from . import route
-from .forms import generate_submission_filter_form
+from .filters import generate_submission_filter
 from .helpers import get_event, get_form_list_menu
 from functools import partial
 
@@ -31,75 +31,18 @@ bp = Blueprint('submissions', __name__, template_folder='templates',
                dynamic_list_constructor=partial(get_form_list_menu,
                                                 form_type='INCIDENT'))
 def submission_list(form_id):
-    event = get_event()
     form = forms.get_or_404(pk=form_id)
+    filter_class = generate_submission_filter(form)
     template_name = 'frontend/submission_list.html'
 
     queryset = submissions.find(
         contributor__ne=None,
-        created__lte=event.end_date,
-        created__gte=event.start_date,
         form=form
     )
+    query_filterset = filter_class(queryset, request.args)
+    # filter_form = query_filterset.form
 
-    if request.method == 'GET':
-        filter_form = generate_submission_filter_form(form, event)
-        return render_template(
-            template_name,
-            filter_form=filter_form,
-            queryset=queryset
-        )
-        print queryset._query
-    else:
-        filter_form = generate_submission_filter_form(
-            form, event, request.form)
-
-        # process filter form
-        for field in filter_form:
-            if field.errors:
-                continue
-
-            # filter on groups
-            if field.name.startswith('group_') and field.data:
-                slug = field.name.split('_', 1)[1]
-                try:
-                    group = [grp.name for grp in form.groups
-                             if grp.slug == slug][0]
-                except IndexError:
-                    continue
-                if field.data == '0':
-                    continue
-                elif field.data == '1':
-                    queryset = queryset(
-                        **{'completion__{}'.format(group): 'Partial'})
-                elif field.data == '2':
-                    queryset = queryset(
-                        **{'completion__{}'.format(group): 'Missing'})
-                elif field.data == '3':
-                    queryset = queryset(
-                        **{'completion__{}'.format(group): 'Complete'})
-            else:
-                # filter 'regular' fields
-                if field.name == 'participant_id' and field.data:
-                    # participant ID
-                    participant = Participant.objects.get_or_404(
-                        participant_id=field.data)
-                    queryset = queryset(contributor=participant)
-                elif field.name == 'location' and field.data:
-                    # location
-                    location = Location.objects.get_or_404(pk=field.data)
-                    queryset = queryset.filter_in(location)
-                elif field.name == 'sample' and field.data:
-                    # sample
-                    sample = Sample.objects.get_or_404(pk=field.data)
-                    locations = Location.objects(samples=sample)
-                    queryset = queryset(location__in=locations)
-
-        return render_template(
-            template_name,
-            filter_form=filter_form,
-            queryset=queryset
-        )
+    return 'Done'
 
 
 @route(bp, '/comments', methods=['POST'])

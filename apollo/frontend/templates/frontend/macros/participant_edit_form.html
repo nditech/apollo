@@ -1,0 +1,22 @@
+{% macro render_edit_form(form) %}
+<form class="form" method="POST">
+{{ form.hidden_tag() }}
+<fieldset>
+<legend>{% trans %}Edit participant{% endtrans %}</legend>
+{%- for field in form -%}
+{%- if field.type != 'CSRFTokenField' -%}
+<div class="form-group {% if field.errors %}has-error{% endif %}">
+{{ field.label }}
+{{ field(class_='form-control') }}
+{% if field.errors %}
+{% for e in field.errors %}
+<p class="help-block">{{ e }}</p>
+{% endfor %}
+{% endif %}
+</div>
+{%- endif -%}
+{%- endfor -%}
+<button class="btn btn-primary" type="submit">Save</button>
+</fieldset>
+</form>
+{% endmacro %}

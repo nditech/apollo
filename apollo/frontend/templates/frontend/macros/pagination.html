@@ -3,7 +3,7 @@
 <ul class="pagination pagination-centered">
 <li {% if pager.page == 1 %}class="disabled"{% endif %}><a title="{% trans %}First page{% endtrans %}" href="{{ url_for(endpoint, page=1, **args) }}">&laquo;</a></li>
 <li {% if not pager.has_prev %}class="disabled"{% endif %}><a title="{% trans %}Previous page{% endtrans %}" href="{{ url_for(endpoint, page=pager.prev_num, **args) }}">&larr;</a></li>
-{% for pg in pager.page|pagelist(pager.pages) %}
+{% for pg in pager|pagelist %}
 <li {% if pg == pager.page %}class="active"{% endif %}><a href="{{ url_for(endpoint, page=pg, **args) }}">{{ pg }}</a></li>
 {% endfor %}
 <li {% if not pager.has_next %}class="disabled"{% endif %}><a title="{% trans %}Next page{% endtrans %}" href="{{ url_for(endpoint, page=pager.next_num, **args) }}">&rarr;</a></li>

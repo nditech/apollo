@@ -14,6 +14,7 @@
              <th>Role</th>
              <th>Location</th>
              <th>Organization</th>
+             <th>Edit</th>
            </tr>
          </thead>
          <tbody>
@@ -24,6 +25,7 @@
              <td>{{ participant.role }}</td>
              <td>{{ participant.location }}</td>
              <td>{{ participant.partner }}</td>
+             <td><a href="{{ url_for('participants.participant_edit', pk=participant.id) }}">Edit</a></td>
            </tr>
            {% endfor %}
          </tbody>
