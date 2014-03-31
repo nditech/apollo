@@ -1,6 +1,9 @@
 {% extends 'frontend/_layout.html' %}{% block content %}
 <div class="row-fluid">
-<div class="well"></div>
+<div class="well">
+{%- from 'frontend/macros/submission_list_filter.html' import render_filter_form -%}
+{{ render_filter_form(form, filter_form) }}
+</div>
 </div>
 <div class="row-fluid">
 <div>
@@ -75,6 +78,7 @@
 {% endfor %}
 </tbody>
 </table>
+{%- from 'frontend/macros/pagination.html' import render_pager -%}{{ render_pager(pager, 'submissions.submission_list', args)}}
 </div>
 </div>
 {%- endblock -%}

@@ -38,6 +38,7 @@ def submission_list(form_id):
     template_name = 'frontend/nu_submission_list.html'
 
     data = request.args.copy()
+    data.add('form_id', form.pk)
     page = int(data.pop('page', 1))
 
     loc_types = displayable_location_types()
@@ -47,10 +48,12 @@ def submission_list(form_id):
         form=form
     )
     query_filterset = filter_class(queryset, request.args)
-    # filter_form = query_filterset.form
+    filter_form = query_filterset.form
 
     return render_template(
         template_name,
+        args=data,
+        filter_form=filter_form,
         form=form,
         location_types=loc_types,
         page_title=page_title,

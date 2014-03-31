@@ -210,7 +210,7 @@ class ChoiceFilter(Filter):
     field_class = fields.SelectField
 
 
-def get_declared_filters(attrs):
+def get_declared_filters(bases, attrs, use_base_filters=True):
     """Creates an ordered dictionary of all `class`Filter instances
     declared in a `class`FilterSet, and optionally assigns a name to
     each one that doesn't have one explicitly set. Used by
@@ -224,6 +224,11 @@ def get_declared_filters(attrs):
             filters.append((filter_name, obj))
     filters.sort(key=lambda x: x[1].creation_counter)
 
+    if use_base_filters:
+        for base in bases[::-1]:
+            if hasattr(base, 'declared_filters'):
+                filters = base.declared_filters.items() + filters
+
     return OrderedDict(filters)
 
 
@@ -231,7 +236,7 @@ class FilterSetMetaclass(type):
     """Metaclass for `class`FilterSet"""
 
     def __new__(cls, name, bases, attrs):
-        declared_filters = get_declared_filters(attrs)
+        declared_filters = get_declared_filters(bases, attrs)
         new_class = super(FilterSetMetaclass, cls).__new__(
             cls, name, bases, attrs)
         new_class.declared_filters = declared_filters
