@@ -58,7 +58,12 @@ def index():
             location_type = LocationType.objects.get_or_404(
                 pk=location_type_id)
 
-        # get the requisite location type
+        # get the requisite location type - the way the aggregation
+        # works, passing in a 'State' location type won't retrieve
+        # data for the level below the 'State' type, it will retrieve
+        # it for the 'State' type. in general, this isn't the behaviour
+        # we want, so we need to find the lower level types and get the
+        # one we want (the first of the children)
         le_temp = [lt for lt in location_type.get_children()
                    if lt.on_dashboard_view]
         try:
