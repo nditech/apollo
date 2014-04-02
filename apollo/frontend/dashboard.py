@@ -24,15 +24,16 @@ bp = Blueprint('dashboard', __name__, template_folder='templates',
 @register_menu(bp, 'dashboard', _('Dashboard'))
 @login_required
 def index():
+    args = request.args.copy()
+
     # get variables from query params, or use (hopefully) sensible defaults
-    group = request.args.get('group')
-    location_type_id = request.args.get('locationtype')
+    group = args.pop('group', None)
+    location_type_id = args.pop('locationtype', None)
 
     page_title = _('Dashboard')
     template_name = 'frontend/nu_dashboard.html'
 
     event = get_event()
-    args = request.args.copy()
 
     args.setdefault('event', unicode(event.id))
     if not args.get('checklist_form'):
@@ -53,7 +54,7 @@ def index():
         data = get_coverage(queryset)
     else:
         page_title = page_title + ' · {}'.format(group)
-        if location_type_id is None:
+        if not location_type_id:
             location_type = LocationType.get_root_for_event(g.get('event'))
         else:
             location_type = LocationType.objects.get_or_404(
