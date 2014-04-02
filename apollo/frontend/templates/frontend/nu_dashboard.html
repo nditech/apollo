@@ -25,6 +25,8 @@
 </div>
 </div>
 {% endfor %}
+{% else %}
+<div class="jumbotron text-center"><h3>{% trans %}No data available{% endtrans %}</h3></div>
 {% endif %}
 </div>
 {% endblock %}

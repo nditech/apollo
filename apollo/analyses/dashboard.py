@@ -66,8 +66,8 @@ def _get_group_coverage(submission_queryset, group, location_type):
         l = r.pop('location')
         coverage[l].update({r['completion']: r['total'], 'name': l})
 
-    coverage_list = [coverage.get(l) for l in sorted(locations)] \
-        if coverage else []
+    coverage_list = [coverage.get(l) for l in sorted(locations)
+                     if coverage.get(l)] if coverage else []
 
     return coverage_list
 
@@ -126,6 +126,6 @@ def _get_global_coverage(submission_queryset):
     else:
         group_names = groups
 
-    coverage_list = [coverage.get(g) for g in group_names]
+    coverage_list = [coverage.get(g) for g in group_names if coverage.get(g)]
 
     return coverage_list
