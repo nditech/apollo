@@ -9,7 +9,7 @@ $(function () {
 
 		nv.addGraph(function() {
 			var chart = nv.models.pieChart()
-				.x(function(d) { return d.label; })
+				.x(function(d) { return d.label + ' (' + d.value + ')'; })
 				.y(function(d) { return d.value; })
 				.width(400)
 				.height(400)
