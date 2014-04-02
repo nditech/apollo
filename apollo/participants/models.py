@@ -25,6 +25,11 @@ class ParticipantPartner(db.Document):
         return self.name
 
 
+class PhoneContact(db.EmbeddedDocument):
+    number = db.StringField()
+    verified = db.BooleanField(default=False)
+
+
 class Participant(db.DynamicDocument):
     '''Storage for participant contact information'''
 
@@ -38,6 +43,9 @@ class Participant(db.DynamicDocument):
     location = db.ReferenceField('Location')
     supervisor = db.ReferenceField('Participant')
     gender = db.StringField(choices=GENDER)
+
+    email = db.EmailField()
+    phones = db.ListField(db.EmbeddedDocumentField(PhoneContact))
 
     events = db.ListField(db.ReferenceField('Event'))
     deployment = db.ReferenceField(Deployment)
