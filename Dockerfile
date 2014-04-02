@@ -6,6 +6,7 @@ RUN apt-get update
 
 RUN apt-get install -y python-dev build-essential python-setuptools git-core
 RUN easy_install pip
+RUN pip install -U setuptools
 
 ADD requirements.txt /app/
 RUN pip install -r /app/requirements.txt
