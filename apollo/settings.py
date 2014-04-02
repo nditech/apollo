@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import ast
 import os
+import string
 from urlparse import urlparse
 
 SECRET_KEY = os.environ.get('SECRET_KEY', 'SOMETHING_SECURE')
@@ -36,3 +37,19 @@ LANGUAGES = {
     'ar': 'العربية',
     'de': 'Deutsch',
 }
+
+ALLOWED_PUNCTUATIONS = '!'
+CHARACTER_TRANSLATIONS = (
+    ('i', '1'),
+    ('I', '1'),
+    ('o', '0'),
+    ('O', '0'),
+    ('l', '1'),
+    ('L', '1'),
+)
+
+PUNCTUATIONS = filter(lambda s: s not in ALLOWED_PUNCTUATIONS,
+                      string.punctuation) + ' '
+TRANS_TABLE = dict((ord(char_from), ord(char_to))
+                   for char_from, char_to in
+                   CHARACTER_TRANSLATIONS)

@@ -3,6 +3,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from flask import Blueprint, g, redirect, render_template, request, url_for
 from flask.ext.babel import lazy_gettext as _
+from flask.ext.security import login_required
 from ..models import Location
 from . import route
 from .forms import generate_location_edit_form
@@ -12,6 +13,7 @@ bp = Blueprint('locations', __name__, template_folder='templates',
 
 
 @route(bp, '/location/<pk>', methods=['GET', 'POST'])
+@login_required
 def location_edit(pk):
     template_name = 'core/location_edit.html'
     deployment = g.get('deployment')

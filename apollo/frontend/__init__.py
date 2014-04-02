@@ -3,7 +3,6 @@ from functools import wraps
 
 from flask import render_template, session
 from flask.ext.login import user_logged_out
-from flask.ext.security import login_required
 
 from .. import factory
 
@@ -43,7 +42,6 @@ def handle_error(e):
 def route(bp, *args, **kwargs):
     def decorator(f):
         @bp.route(*args, **kwargs)
-        @login_required
         @wraps(f)
         def wrapper(*args, **kwargs):
             return f(*args, **kwargs)
