@@ -83,7 +83,6 @@ def index():
 
         data = get_coverage(queryset, group, sub_location_type)
 
-    print 'data is {}'.format(data)
     # load the page context
     context = {
         'args': args,
