@@ -1,6 +1,67 @@
 from ..core import Service
-from .models import User
+from .models import User, Need
+from flask.ext.principal import ActionNeed, ItemNeed
 
 
 class UsersService(Service):
     __model__ = User
+
+
+class PermsService(Service):
+    __model__ = Need
+
+    def _get_needs_for_user(self, user):
+        needs = []
+        needs_for_user = self.__model__.objects.filter(entities=user)
+        for need in needs_for_user:
+            if need.items:
+                needs.extend([ItemNeed(need.action, item, 'object')
+                             for item in need.items])
+            else:
+                needs.append(ActionNeed(need.action))
+        return needs
+
+    def _get_needs_for_roles(self, user):
+        needs = []
+        needs_for_roles = self.__model__.objects.filter(
+            entities__in=user.roles)
+        for need in needs_for_roles:
+            if need.items:
+                needs.extend([ItemNeed(need.action, item, 'object')
+                             for item in need.items])
+            else:
+                needs.append(ActionNeed(need.action))
+        return needs
+
+    def get_all_needs(self, user):
+        user_needs = self._get_needs_for_user(user)
+        roles_needs = self._get_needs_for_roles(user)
+        return set(user_needs + roles_needs)
+
+    def add_action_need_to_entity(self, entity, action):
+        try:
+            need = self.__model__.objects.get(action=action)
+            if entity in need.entities:
+                return need
+            need.update(add_to_set__entities=entity)
+        except self.__model__.DoesNotExist:
+            need = self.__model__(action=action, entities=[entity])
+            need.save()
+
+        return need
+
+    def add_item_need_to_entity(self, entity, action, item):
+        try:
+            need = self.__model__.objects.get(action=action)
+            if entity in need.entities and item in need.items:
+                return need
+            if not entity in need.entities:
+                need.update(add_to_set__entities=entity)
+            if not item in need.items:
+                need.update(add_to_set__items=item)
+        except self.__model__.DoesNotExist:
+            need = self.__model__(
+                action=action, entities=[entity], items=[item])
+            need.save()
+
+        return need

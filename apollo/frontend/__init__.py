@@ -4,9 +4,10 @@ from functools import wraps
 from flask import render_template, session
 from flask.ext.login import user_logged_out
 from flask.ext.mongoengine import MongoEngineSessionInterface
+from flask.ext.principal import identity_loaded
 from flask.ext.security import MongoEngineUserDatastore
 
-from .. import factory, models
+from .. import factory, models, services
 from ..core import db, menu, security
 
 from . import assets
@@ -40,6 +41,9 @@ def create_app(settings_override=None, register_security_blueprint=True):
         userdatastore.find_or_create_role('analyst')
         userdatastore.find_or_create_role('admin')
 
+        # permissions
+        services.perms.get_or_create(action='view_events')
+
     # register deployment selection middleware
     app.before_request(set_request_presets)
 
@@ -48,6 +52,14 @@ def create_app(settings_override=None, register_security_blueprint=True):
 
     # Login and logout signal handlers
     user_logged_out.connect(lambda app, user: session.clear())
+
+    @identity_loaded.connect_via(app)
+    def on_identity_loaded(sender, identity):
+        needs = services.perms.get_all_needs(
+            models.User(**identity.user._data))
+
+        for need in needs:
+            identity.provides.add(need)
 
     return app
 

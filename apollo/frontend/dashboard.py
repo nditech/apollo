@@ -6,6 +6,7 @@ from ..analyses.dashboard import get_coverage
 from ..deployments.forms import generate_event_selection_form
 from ..models import LocationType
 from ..services import events, forms, submissions
+from ..users.decorators import perm_required
 from .filters import DashboardFilterSet
 from .helpers import get_event, set_event
 from flask import (
@@ -13,8 +14,8 @@ from flask import (
 )
 from flask.ext.babel import lazy_gettext as _
 from flask.ext.menu import register_menu
+from flask.ext.principal import Permission, ActionNeed
 from flask.ext.security import current_user, login_required
-from flask.ext.security.decorators import roles_accepted
 
 bp = Blueprint('dashboard', __name__, template_folder='templates',
                static_folder='static')
@@ -101,9 +102,10 @@ def index():
 
 
 @route(bp, '/event', methods=['GET', 'POST'])
-@register_menu(bp, 'events', _('Events'), visible_when=lambda: any(
-    [current_user.has_role(role) for role in ['admin', 'manager', 'analyst']]))
-@roles_accepted('admin', 'analyst', 'manager')
+@register_menu(
+    bp, 'events', _('Events'),
+    visible_when=lambda: Permission(ActionNeed('view_events')).can())
+@perm_required(Permission(ActionNeed('view_events')))
 @login_required
 def event_selection():
     page_title = _('Choose Event')

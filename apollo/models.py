@@ -5,4 +5,4 @@ from .participants.models import \
     (ParticipantRole, ParticipantPartner, Participant)
 from .submissions.models import \
     (Submission, SubmissionVersion, SubmissionComment)
-from .users.models import Role, User
+from .users.models import Role, User, Need

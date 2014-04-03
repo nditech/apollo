@@ -21,9 +21,29 @@ class User(db.Document, UserMixin):
     current_login_ip = db.StringField(max_length=24)
     last_login_ip = db.StringField(max_length=24)
     login_count = db.IntField(default=0)
-    roles = db.ListField(db.ReferenceField(Role), default=[])
+    roles = db.ListField(db.ReferenceField(Role,
+                         reverse_delete_rule=db.PULL), default=[])
 
     deployment = db.ReferenceField(Deployment)
 
     def __unicode__(self):
         return self.email
+
+
+class Need(db.Document):
+    '''
+    Storage for object permissions in Apollo
+
+    :attr entities: Entities to apply the need to. These are references
+    for :class:`apollo.users.models.Role` and :class:`apollo.users.models.
+    User` models.
+    :attr action: The string containing the action name
+    :attr items: (Optional) a list of target object references that this
+    permission applies to.
+    '''
+    entities = db.ListField(db.GenericReferenceField())
+    action = db.StringField()
+    items = db.ListField(db.GenericReferenceField())
+
+    def __unicode__(self):
+        return self.action
