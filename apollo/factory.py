@@ -2,16 +2,12 @@ import os
 
 from celery import Celery
 from flask import Flask, request
-from flask.ext.mongoengine import MongoEngineSessionInterface
-from flask.ext.security import MongoEngineUserDatastore
 
-from .core import babel, db, mail, menu, security
+from .core import babel, db, mail
 from .helpers import register_blueprints
-from .models import User, Role
 
 
-def create_app(package_name, package_path, settings_override=None,
-               register_security_blueprint=True):
+def create_app(package_name, package_path, settings_override=None):
     """Returns a :class:`Flask` application instance configured with common
     functionality for the Overholt platform.
 
@@ -29,20 +25,6 @@ def create_app(package_name, package_path, settings_override=None,
     babel.init_app(app)
     db.init_app(app)
     mail.init_app(app)
-    menu.init_app(app)
-
-    userdatastore = MongoEngineUserDatastore(db, User, Role)
-
-    security.init_app(app, userdatastore,
-                      register_blueprint=register_security_blueprint)
-    app.session_interface = MongoEngineSessionInterface(db)
-
-    @app.before_first_request
-    def create_user_roles():
-        userdatastore.find_or_create_role('clerk')
-        userdatastore.find_or_create_role('manager')
-        userdatastore.find_or_create_role('analyst')
-        userdatastore.find_or_create_role('admin')
 
     @babel.localeselector
     def get_locale():
