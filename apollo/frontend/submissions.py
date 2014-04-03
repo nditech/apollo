@@ -38,8 +38,8 @@ def submission_list(form_id):
     page_title = form.name
     template_name = 'frontend/nu_submission_list.html'
 
-    data = request.args.copy()
-    data.add('form_id', form.pk)
+    data = request.args.to_dict()
+    data['form_id'] = unicode(form.pk)
     page = int(data.pop('page', 1))
 
     loc_types = displayable_location_types()

@@ -7,6 +7,7 @@ from urlparse import urlparse
 def gen_page_list(pager, window_size=10):
     if window_size > pager.pages:
         window_size = pager.pages
+    window_size -= 1
     start = max(pager.page - (window_size / 2), 1)
     end = min(pager.page + (window_size / 2), pager.pages)
 
