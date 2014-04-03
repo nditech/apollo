@@ -39,10 +39,10 @@ def generate_location_edit_form(location, data=None):
 
 def generate_participant_edit_form(participant, data=None):
     class ParticipantEditForm(WTSecureForm):
-        participant_id = TextField(
-            _('Participant ID'),
-            validators=[validators.input_required()]
-        )
+        # participant_id = TextField(
+        #     _('Participant ID'),
+        #     validators=[validators.input_required()]
+        # )
         name = TextField(
             _('Name'),
             validators=[validators.input_required()]
@@ -83,7 +83,7 @@ def generate_participant_edit_form(participant, data=None):
 
     return ParticipantEditForm(
         formdata=data,
-        participant_id=participant.participant_id,
+        # participant_id=participant.participant_id,
         name=participant.name,
         location=participant.location.id,
         gender=participant.gender.upper(),

@@ -4,16 +4,16 @@ from flask import session, request, abort, g, url_for
 from urlparse import urlparse
 
 
-def gen_page_list(pager, window_size=9):
+def gen_page_list(pager, window_size=10):
     if window_size > pager.pages:
-        window_size = pager.pages - 1
+        window_size = pager.pages
     start = max(pager.page - (window_size / 2), 1)
-    end = min(pager.page - (window_size / 2), pager.pages)
+    end = min(pager.page + (window_size / 2), pager.pages)
 
     diff = end - start
     if diff < window_size:
         shift = window_size - diff
-        if start - shift > 0:
+        if (start - shift) > 0:
             start -= shift
         else:
             end += shift

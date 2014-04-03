@@ -37,8 +37,7 @@ def participant_list(page=1):
     # load form context
     context = {}
 
-    pager = queryset_filter.qs.select_related() \
-        .paginate(page=page, per_page=PAGE_SIZE)
+    pager = queryset_filter.qs.paginate(page=page, per_page=PAGE_SIZE)
 
     context.update(
         args=args,
@@ -69,7 +68,7 @@ def participant_edit(pk):
         form = generate_participant_edit_form(participant, request.form)
 
         if form.validate():
-            participant.participant_id = form.participant_id.data
+            # participant.participant_id = form.participant_id.data
             participant.name = form.name.data
             participant.gender = form.gender.data
             participant.role = participant_roles.get(pk=form.role.data)

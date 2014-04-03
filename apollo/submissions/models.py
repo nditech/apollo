@@ -102,6 +102,7 @@ class Submission(db.DynamicDocument):
     created = db.DateTimeField()
     updated = db.DateTimeField()
     completion = db.DictField()
+    verified = db.BooleanField(default=False)
 
     deployment = db.ReferenceField(Deployment)
 
