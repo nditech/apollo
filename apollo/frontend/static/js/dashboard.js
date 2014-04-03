@@ -11,15 +11,13 @@ $(function () {
 			var chart = nv.models.pieChart()
 				.x(function(d) { return d.label + ' (' + d.value + ')'; })
 				.y(function(d) { return d.value; })
-				.width(400)
-				.height(400)
+				.valueFormat(d3.format('^d'))
 				.color(['#4e9a06', '#c00', '#f57900'])
+				.margin({top: 40, bottom: 40, left: 15, right: 15})
 				.showLabels(false);
 
 			d3.select(element).datum(data)
 				.transition().duration(350)
-				.attr('height', 400)
-				.attr('width', 400)
 				.call(chart);
 
 			return chart;
