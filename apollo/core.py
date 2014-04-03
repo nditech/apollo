@@ -120,6 +120,14 @@ class Service(object):
         except self.__model__.DoesNotExist:
             abort(404)
 
+    def get_or_create(self, **kwargs):
+        """Retrieves an instance based on search parameters specified by the
+        keyword arguments or if it is not found, create one.
+
+        :param **kwargs: filter parameters
+        """
+        return self.get(**kwargs) or self.create(**kwargs)
+
     def first(self, **kwargs):
         """Returns the first instance found of the service's model filtered by
         the specified key word arguments.
