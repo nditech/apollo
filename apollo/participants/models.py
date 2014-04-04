@@ -47,7 +47,7 @@ class Participant(db.DynamicDocument):
     email = db.EmailField()
     phones = db.ListField(db.EmbeddedDocumentField(PhoneContact))
 
-    events = db.ListField(db.ReferenceField('Event'))
+    event = db.ReferenceField(Event)
     deployment = db.ReferenceField(Deployment)
 
     def __unicode__(self):

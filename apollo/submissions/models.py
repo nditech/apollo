@@ -103,6 +103,7 @@ class Submission(db.DynamicDocument):
     updated = db.DateTimeField()
     completion = db.DictField()
     verified = db.BooleanField(default=False)
+    location_name_path = db.DictField()
 
     deployment = db.ReferenceField(Deployment)
 
