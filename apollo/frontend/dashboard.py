@@ -15,7 +15,7 @@ from flask import (
 from flask.ext.babel import lazy_gettext as _
 from flask.ext.menu import register_menu
 from flask.ext.principal import Permission, ActionNeed
-from flask.ext.security import current_user, login_required
+from flask.ext.security import login_required
 
 bp = Blueprint('dashboard', __name__, template_folder='templates',
                static_folder='static')
