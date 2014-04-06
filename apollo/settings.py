@@ -28,6 +28,11 @@ SECURITY_EMAIL_SENDER = 'no-reply@apollo.la'
 SECURITY_RECOVERABLE = True
 SECURITY_TRACKABLE = True
 
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
+CELERY_RESULT_BACKEND = 'redis'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_ACCEPT_CONTENT = ['json']
 
 LANGUAGES = {
     'en': 'English',
@@ -47,9 +52,14 @@ CHARACTER_TRANSLATIONS = (
     ('l', '1'),
     ('L', '1'),
 )
-
 PUNCTUATIONS = filter(lambda s: s not in ALLOWED_PUNCTUATIONS,
                       string.punctuation) + ' '
 TRANS_TABLE = dict((ord(char_from), ord(char_to))
                    for char_from, char_to in
                    CHARACTER_TRANSLATIONS)
+MESSAGING_OUTGOING_GATEWAY = {
+    'type': 'kannel',
+    'gateway_url': 'http://localhost:13013/cgi-bin/sendsms',
+    'username': 'foo',
+    'password': 'bar'
+}
