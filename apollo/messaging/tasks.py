@@ -1,3 +1,6 @@
+from flask.ext.mail import Message
+from ..core import mail
+from ..settings import SECURITY_EMAIL_SENDER
 from .outgoing import gateway_factory
 
 
@@ -12,3 +15,11 @@ def send_message(message, recipients, sender=""):
     gateway = gateway_factory()
     if gateway:
         return gateway.send(message, recipients, sender)
+
+
+def send_email(subject, body, recipients, sender=None):
+    if not sender:
+        sender = SECURITY_EMAIL_SENDER
+    msg = Message(subject, recipients=recipients, sender=sender)
+    msg.body = body
+    mail.send(msg)

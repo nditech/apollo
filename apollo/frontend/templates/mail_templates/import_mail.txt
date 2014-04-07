@@ -1,0 +1,17 @@
+{% trans %} Of {{ count }} records, {{ successful_imports }} were successfully imported, {{ suspect_imports }} were imported with warnings, and  {{ unsuccessful_imports }} could not be imported.{% endtrans %}
+{% if errors %}
+{% trans %}The following records could not be imported:{% endtrans %}
+-------------------------
+{% for e in errors %}
+{%- set pid = e[0] %}{% set msg = e[1] -%}
+{% trans %}Record for participant ID {{ pid }} raised error: {{ msg }}{% endtrans %}
+{% endfor %}
+{% endif %}
+
+{% if warnings %}
+{% trans %}The following records raised warnings:{% endtrans %}
+{% for e in warnings %}
+{%- set pid = e[0] %}{% set msg = e[1] -%}
+{% trans %}Record for participant ID {{ pid }} raised warning: {{ msg }}{% endtrans %}
+{% endfor %}
+{% endif %}

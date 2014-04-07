@@ -1,7 +1,9 @@
+from flask import render_template
 from flask.ext.babel import lazy_gettext as _
 import magic
 from mongoengine import MultipleObjectsReturned
 import pandas as pd
+from ..messaging.tasks import send_email
 from ..services import (
     locations, participants, participant_partners, participant_roles
 )
@@ -183,4 +185,37 @@ def update_participants(dataframe, event, header_map):
             participant.supervisor = supervisor
             participant.save()
 
+    # prune unused participants
+    unused_participants = participants.find(
+        event=event,
+        participant_id__nin=dataframe[PARTICIPANT_ID_COL]
+    )
+
+    for participant in unused_participants:
+        participant.delete()
+
     return dataframe.shape[0], errors, warnings
+
+
+def generate_response_email(count, errors, warnings):
+    unsuccessful_imports = len(errors)
+    successful_imports = count - unsuccessful_imports
+    suspect_imports = len(warnings)
+
+    return render_template(
+        'mail_templates/import_mail.txt',
+        count=count,
+        errors=errors,
+        warnings=warnings,
+        successful_imports=successful_imports,
+        unsuccessful_imports=unsuccessful_imports,
+        suspect_imports=suspect_imports
+    )
+
+
+def import_participants(source_file, event, user, mappings):
+    dataframe = load_source_file(source_file)
+    count, errors, warnings = update_participants(dataframe, event, mappings)
+    msg_body = generate_response_email(count, errors, warnings)
+
+    send_email(_('Import report'), msg_body, [user.email])
