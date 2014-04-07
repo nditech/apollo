@@ -91,3 +91,68 @@ def generate_participant_edit_form(participant, data=None):
         partner=participant.partner.id,
         supervisor=participant.supervisor.id
     )
+
+
+def generate_participant_import_mapping_form(headers, *args, **kwargs):
+    default_choices = [(v, v) for v in headers]
+
+    class ParticipantImportMappingForm(WTSecureForm):
+        participant_id = SelectField(
+            _('Participant ID'),
+            choices=default_choices,
+            validators=[validators.input_required()]
+        )
+        name = SelectField(
+            _('Name'),
+            choices=default_choices,
+            validators=[validators.input_required()]
+        )
+        role = SelectField(
+            _('Role'),
+            choices=default_choices,
+            validators=[validators.input_required()]
+        )
+        partner_org = SelectField(
+            _('Partner'),
+            choices=default_choices,
+            validators=[validators.input_required()]
+        )
+        location_id = SelectField(
+            _('Location ID'),
+            choices=default_choices,
+            validators=[validators.input_required()]
+        )
+        supervisor_id = SelectField(
+            _('Supervisor'),
+            choices=default_choices,
+            validators=[validators.input_required()]
+        )
+        gender = SelectField(
+            _('Gender'),
+            choices=default_choices,
+            validators=[validators.input_required()]
+        )
+        email = SelectField(
+            _('Email'),
+            choices=default_choices,
+            validators=[validators.input_required()]
+        )
+        phone = TextField(
+            _('Phone prefix'),
+            validators=[validators.input_required()]
+        )
+
+        def validate(self):
+            rv = super(ParticipantImportMappingForm, self).validate()
+
+            # check that no two fields were assigned the same value
+            form_data = {f.data for f in self}
+            if len(form_data) < len(self._fields):
+                self.errors.update(
+                    'me',
+                    _('Duplicate field assignment detected')
+                )
+                return False
+            return rv
+
+    return ParticipantImportMappingForm(*args, **kwargs)
