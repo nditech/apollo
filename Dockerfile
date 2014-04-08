@@ -4,7 +4,7 @@ MAINTAINER Tim Akinbo <takinbo@timbaobjects.com>
 
 RUN apt-get update
 
-RUN apt-get install -y python-dev build-essential python-setuptools git-core
+RUN apt-get install -y python-dev build-essential python-setuptools git-core file
 RUN easy_install pip
 RUN pip install -U setuptools
 
