@@ -1,7 +1,7 @@
 from functools import wraps
 
 
-from flask import render_template, session
+from flask import render_template, session, request, redirect, url_for
 from flask.ext.login import user_logged_out
 from flask.ext.mongoengine import MongoEngineSessionInterface
 from flask.ext.principal import identity_loaded
@@ -43,6 +43,7 @@ def create_app(settings_override=None, register_security_blueprint=True):
 
         # permissions
         services.perms.get_or_create(action='view_events')
+        services.perms.get_or_create(action='send_messages')
 
     # register deployment selection middleware
     app.before_request(set_request_presets)
@@ -66,7 +67,11 @@ def create_app(settings_override=None, register_security_blueprint=True):
 
 def handle_error(e):
     code = getattr(e, 'code', 500)
-    return render_template('{code}.html'.format(code=code)), code
+    if code == 403:
+        session['redirected_from'] = request.url
+        return redirect(url_for('security.login'))
+    else:
+        return render_template('{code}.html'.format(code=code)), code
 
 
 def route(bp, *args, **kwargs):
