@@ -10,7 +10,7 @@ from flask.ext.security import MongoEngineUserDatastore
 from .. import factory, models, services
 from ..core import db, menu, security
 
-from . import assets
+from . import assets, permissions
 from .helpers import gen_page_list, set_request_presets
 
 
@@ -61,6 +61,10 @@ def create_app(settings_override=None, register_security_blueprint=True):
 
         for need in needs:
             identity.provides.add(need)
+
+    @app.context_processor
+    def inject_permissions():
+        return dict(perms=permissions)
 
     return app
 
