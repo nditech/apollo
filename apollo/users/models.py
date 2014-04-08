@@ -1,3 +1,4 @@
+from datetime import datetime
 from ..core import db
 from ..deployments.models import Deployment
 from flask.ext.security import RoleMixin, UserMixin
@@ -47,3 +48,9 @@ class Need(db.Document):
 
     def __unicode__(self):
         return self.action
+
+
+class UserUpload(db.Document):
+    user = db.ReferenceField(User, required=True)
+    data = db.FileField()
+    created = db.DateTimeField(default=datetime.utcnow())

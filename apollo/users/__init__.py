@@ -1,10 +1,14 @@
 from ..core import Service
-from .models import User, Need
+from .models import User, Need, UserUpload
 from flask.ext.principal import ActionNeed, ItemNeed
 
 
 class UsersService(Service):
     __model__ = User
+
+
+class UserUploadsService(Service):
+    __model__ = UserUpload
 
 
 class PermsService(Service):

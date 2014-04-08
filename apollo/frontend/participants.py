@@ -6,13 +6,15 @@ from flask import (
 )
 from flask.ext.babel import lazy_gettext as _
 from flask.ext.menu import register_menu
-from flask.ext.security import login_required
+from flask.ext.security import current_user, login_required
+from ..helpers import stash_file
 from ..services import (
-    participants, participant_roles, locations, participant_partners
+    locations, participants, participant_roles, participant_partners,
+    user_uploads
 )
 from . import route
 from .filters import ParticipantFilterSet
-from .forms import generate_participant_edit_form
+from .forms import generate_participant_edit_form, ParticipantUploadForm
 
 PAGE_SIZE = 25
 bp = Blueprint('participants', __name__, template_folder='templates',
@@ -81,3 +83,33 @@ def participant_edit(pk):
             return redirect(url_for('participants.participant_list'))
 
     return render_template(template_name, form=form, page_title=page_title)
+
+
+@route(bp, '/participants/import', methods=['GET', 'POST'])
+@login_required
+def participant_list_import():
+    page_title = _('Import participants')
+    template_name = 'frontend/participant_import.html'
+
+    if request.method == 'GET':
+        form = ParticipantUploadForm()
+        return render_template(template_name, form=form, page_title=page_title)
+    else:
+        form = ParticipantUploadForm(request.form)
+
+        if not form.validate():
+            return render_template(
+                template_name,
+                form=form,
+                page_title=page_title
+            )
+        else:
+            # get the actual object from the proxy
+            user = current_user._get_current_object()
+            upload = stash_file(request.files['datafile'], user)
+            upload.save()
+
+            return redirect(url_for(
+                'frontend.participant_headers',
+                upload=unicode(upload.id)
+            ))

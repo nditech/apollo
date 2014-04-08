@@ -3,13 +3,14 @@ from __future__ import unicode_literals
 from flask.ext.babel import lazy_gettext as _
 from flask.ext.wtf import Form as WTSecureForm
 from wtforms import (
-    SelectField, TextField, validators
+    FileField, SelectField, TextField, ValidationError, validators
 )
 from ..models import (
     LocationType, Participant
 )
 from ..services import (
-    locations, participants, participant_partners, participant_roles)
+    events, locations, participants, participant_partners, participant_roles
+)
 
 
 def _make_choices(qs, placeholder=None):
@@ -97,6 +98,7 @@ def generate_participant_import_mapping_form(headers, *args, **kwargs):
     default_choices = [(v, v) for v in headers]
 
     class ParticipantImportMappingForm(WTSecureForm):
+        _headers = headers
         participant_id = SelectField(
             _('Participant ID'),
             choices=default_choices,
@@ -155,4 +157,24 @@ def generate_participant_import_mapping_form(headers, *args, **kwargs):
                 return False
             return rv
 
+        def validate_phone(self, field):
+            subset = [h for h in self._headers if h.startswith(field.data)]
+            if not subset:
+                raise ValidationError(_('Invalid prefix'))
+
     return ParticipantImportMappingForm(*args, **kwargs)
+
+
+class ParticipantUploadForm(WTSecureForm):
+    event = SelectField(
+        _('Event'),
+        choices=_make_choices(
+            events.find().scalar('id', 'name'),
+            _('Select event')
+        ),
+        validators=[validators.input_required()]
+    )
+    datafile = FileField(
+        _('Data file'),
+        validators=[validators.input_required()]
+    )
