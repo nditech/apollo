@@ -1,13 +1,35 @@
-from flask import render_template
+from flask import render_template_string
 from flask.ext.babel import lazy_gettext as _
 import magic
 from mongoengine import MultipleObjectsReturned
 import pandas as pd
 from ..messaging.tasks import send_email
 from ..services import (
-    locations, participants, participant_partners, participant_roles
+    locations, participants, participant_partners, participant_roles,
+    user_uploads
 )
 from .models import PhoneContact
+
+
+email_template = '''
+Of {{ count }} records, {{ successful_imports }} were successfully imported, {{ suspect_imports }} were imported with warnings, and  {{ unsuccessful_imports }} could not be imported.
+{% if errors %}
+The following records could not be imported:
+-------------------------
+{% for e in errors %}
+{%- set pid = e[0] %}{% set msg = e[1] -%}
+Record for participant ID {{ pid }} raised error: {{ msg }}
+{% endfor %}
+{% endif %}
+
+{% if warnings %}
+The following records raised warnings:
+{% for e in warnings %}
+{%- set pid = e[0] %}{% set msg = e[1] -%}
+Record for participant ID {{ pid }} raised warning: {{ msg }}
+{% endfor %}
+{% endif %}
+'''
 
 
 def load_source_file(source_file):
@@ -202,8 +224,8 @@ def generate_response_email(count, errors, warnings):
     successful_imports = count - unsuccessful_imports
     suspect_imports = len(warnings)
 
-    return render_template(
-        'mail_templates/import_mail.txt',
+    return render_template_string(
+        email_template,
         count=count,
         errors=errors,
         warnings=warnings,
@@ -213,9 +235,14 @@ def generate_response_email(count, errors, warnings):
     )
 
 
-def import_participants(source_file, event, user, mappings):
-    dataframe = load_source_file(source_file)
-    count, errors, warnings = update_participants(dataframe, event, mappings)
+def import_participants(upload_id, mappings):
+    upload = user_uploads.get(pk=upload_id)
+    dataframe = load_source_file(upload.data)
+    count, errors, warnings = update_participants(
+        dataframe,
+        upload.event,
+        mappings
+    )
     msg_body = generate_response_email(count, errors, warnings)
 
-    send_email(_('Import report'), msg_body, [user.email])
+    send_email(_('Import report'), msg_body, [upload.user.email])

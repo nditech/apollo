@@ -33,9 +33,9 @@ def _make_choices(qs, placeholder=None):
         return [['', '']] + [[unicode(i[0]), i[1]] for i in list(qs)]
 
 
-def stash_file(fileobj, user):
+def stash_file(fileobj, user, event=None):
     from apollo.services import user_uploads
-    upload = user_uploads.create(user=user)
+    upload = user_uploads.create(user=user, event=event)
     upload.data.put(fileobj)
     upload.save()
     upload.reload()

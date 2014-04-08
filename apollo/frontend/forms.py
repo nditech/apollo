@@ -151,8 +151,7 @@ def generate_participant_import_mapping_form(headers, *args, **kwargs):
             form_data = {f.data for f in self}
             if len(form_data) < len(self._fields):
                 self.errors.update(
-                    'me',
-                    _('Duplicate field assignment detected')
+                    me=_('Duplicate field assignment detected')
                 )
                 return False
             return rv

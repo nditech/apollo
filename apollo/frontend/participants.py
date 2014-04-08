@@ -8,13 +8,18 @@ from flask.ext.babel import lazy_gettext as _
 from flask.ext.menu import register_menu
 from flask.ext.security import current_user, login_required
 from ..helpers import stash_file
+from ..participants.tasks import load_source_file
 from ..services import (
-    locations, participants, participant_roles, participant_partners,
+    events, locations, participants, participant_roles, participant_partners,
     user_uploads
 )
+from ..tasks import import_participants
 from . import route
 from .filters import ParticipantFilterSet
-from .forms import generate_participant_edit_form, ParticipantUploadForm
+from .forms import (
+    generate_participant_edit_form, generate_participant_import_mapping_form,
+    ParticipantUploadForm
+)
 
 PAGE_SIZE = 25
 bp = Blueprint('participants', __name__, template_folder='templates',
@@ -106,10 +111,47 @@ def participant_list_import():
         else:
             # get the actual object from the proxy
             user = current_user._get_current_object()
-            upload = stash_file(request.files['datafile'], user)
+            event = events.get_or_404(pk=form.event.data)
+            upload = stash_file(request.files['datafile'], user, event)
             upload.save()
 
             return redirect(url_for(
                 'frontend.participant_headers',
                 upload=unicode(upload.id)
             ))
+
+
+@route(bp, '/participants/headers', methods=['GET', 'POST'])
+@login_required
+def participant_headers(pk):
+    user = current_user._get_current_object()
+
+    # disallow processing other users' files
+    upload = user_uploads.get_or_404(pk=pk, user=user)
+    dataframe = load_source_file(upload.data)
+    headers = dataframe.columns
+    page_title = _('Map participant columns')
+    template_name = 'frontend/participant_headers.html'
+
+    if request.method == 'GET':
+        form = generate_participant_import_mapping_form(headers)
+        return render_template(template_name, form=form, page_title=page_title)
+    else:
+        form = generate_participant_import_mapping_form(headers, request.form)
+
+        if not form.validate():
+            return render_template(
+                template_name,
+                form=form,
+                page_title=page_title
+            )
+        else:
+            # get header mappings
+            mappings = {v: k for k, v in form.data.iteritems()}
+            # invoke task asynchronously
+            kwargs = {
+                'upload_id': unicode(upload.id),
+                'mappings': mappings
+            }
+            import_participants.apply_async(kwargs=kwargs)
+            return ''

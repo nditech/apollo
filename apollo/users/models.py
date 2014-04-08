@@ -1,6 +1,6 @@
 from datetime import datetime
 from ..core import db
-from ..deployments.models import Deployment
+from ..deployments.models import Deployment, Event
 from flask.ext.security import RoleMixin, UserMixin
 
 
@@ -53,4 +53,5 @@ class Need(db.Document):
 class UserUpload(db.Document):
     user = db.ReferenceField(User, required=True)
     data = db.FileField()
+    event = db.ReferenceField(Event)
     created = db.DateTimeField(default=datetime.utcnow())
