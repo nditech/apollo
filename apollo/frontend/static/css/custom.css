@@ -1,3 +1,25 @@
+label{font-size: 13px;}
+.modal{transition: none;}
+.btn-group > .btn:first-child:not(:last-child):not(.dropdown-toggle) {
+border-top-right-radius: 3px;
+border-bottom-right-radius: 3px;
+}
+.fileUpload {
+  position: relative;
+  overflow: hidden;
+  margin-left:1.5em;
+}
+.fileUpload input.upload {
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin: 0;
+  padding: 0;
+  font-size: 20px;
+  cursor: pointer;
+  opacity: 0;
+  filter: alpha(opacity=0);
+}
 .panel-login {margin-top: 7em;}
 .panel-heading-login {font-size: 18px;}
 .panel-login-body{padding:45px;}

@@ -78,7 +78,7 @@
       </div>
     </div>
     <div class="container">
-      <h3 class="lead h3">{% block title %}{{ page_title }}{% endblock %} · <em class="text-muted">{{ g.event.name }}</em></h3>
+      <h3 class="lead h3">{% block title %}{{ page_title }}{% endblock %} · <em class="text-muted">{{ g.event.name }}</em>{% block toolbar %}{% endblock %}</h3>
     </div>
     <div class="container">
       {% block content %}{% endblock %}

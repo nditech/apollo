@@ -1,4 +1,205 @@
-{% extends 'frontend/_layout.html' %}{% from 'frontend/macros/participant_list_filter.html' import render_filter_form %}{% block content %}
+{% extends 'frontend/_layout.html' %}{% from 'frontend/macros/participant_list_filter.html' import render_filter_form %}
+{% block toolbar %}
+  <a class="btn btn-info pull-right" href="#" data-toggle="modal" data-target="#myModal"><i class="glyphicon glyphicon-upload glyphicon-white"></i> Import Participants</a>
+  <div class="modal col-md-6 col-md-offset-3" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog"> 
+      <div class="modal-content" style="margin-top:1.5em;">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title" id="myModalLabel">Step 1 - Select File</h4>
+        </div>
+        <div class="modal-body" style="padding-top:4em; padding-bottom:3.5em;">
+          <form class="form-inline">
+            <div class="form-group">
+              <div class="row">
+                <div class="col-md-offset-3 col-sm-5">
+                  <input id="uploadFile" type="text" placeholder="Choose File" class="form-control input-sm span3">
+                </div>
+                <div class="col-sm-2 col-md-offset-2">
+                  <div class="fileUpload btn btn-info btn-sm">
+                      <span><i class="glyphicon glyphicon-search glyphicon-white"></i> Browse</span>
+                      <input id="uploadBtn" type="file" class="upload" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <a href="#step2" class="btn btn-sm btn-default" id="control1"><i class="glyphicon glyphicon-arrow-right glyphicon-white"></i> Next</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal col-md-6 col-md-offset-3" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-content" style="margin-top:1.5em;">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">Step 2 - Select Fields</h4>
+      </div>
+      <div class="modal-body" style="padding-bottom:0px;">
+        <form class="form-horizontal" role="form">
+          <div class="form-group">
+            <label for="participant ID" class="col-sm-4 control-label">Participant ID</label>
+            <div class="col-sm-5">
+              <select class="form-control">
+                <option>Select Field</option>
+                <option>--------------</option>
+                <option value="PARTICIPANT ID">PARTICIPANT ID</option>
+                <option value="NAME">NAME</option>
+                <option value="ROLE">ROLE</option>
+                <option value="PARTNER">PARTNER</option>
+                <option value="LOCATION">LOCATION</option>
+                <option value="SUPERVISOR">SUPERVISOR</option>
+                <option value="GENDER">GENDER</option>
+                <option value="EMAIL">EMAIL</option>
+                <option value="PHONE">PHONE</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="name" class="col-sm-4 control-label">Name</label>
+            <div class="col-sm-5">
+              <select class="form-control">
+                <option>Select Field</option>
+                <option>--------------</option>
+                <option value="PARTICIPANT ID">PARTICIPANT ID</option>
+                <option value="NAME">NAME</option>
+                <option value="ROLE">ROLE</option>
+                <option value="PARTNER">PARTNER</option>
+                <option value="LOCATION">LOCATION</option>
+                <option value="SUPERVISOR">SUPERVISOR</option>
+                <option value="GENDER">GENDER</option>
+                <option value="EMAIL">EMAIL</option>
+                <option value="PHONE">PHONE</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="participant ID" class="col-sm-4 control-label">Role</label>
+            <div class="col-sm-5">
+              <select class="form-control">
+                <option>Select Field</option>
+                <option>--------------</option>
+                <option value="PARTICIPANT ID">PARTICIPANT ID</option>
+                <option value="NAME">NAME</option>
+                <option value="ROLE">ROLE</option>
+                <option value="PARTNER">PARTNER</option>
+                <option value="LOCATION">LOCATION</option>
+                <option value="SUPERVISOR">SUPERVISOR</option>
+                <option value="GENDER">GENDER</option>
+                <option value="EMAIL">EMAIL</option>
+                <option value="PHONE">PHONE</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="participant ID" class="col-sm-4 control-label">Partner</label>
+            <div class="col-sm-5">
+              <select class="form-control">
+                <option>Select Field</option>
+                <option>--------------</option>
+                <option value="PARTICIPANT ID">PARTICIPANT ID</option>
+                <option value="NAME">NAME</option>
+                <option value="ROLE">ROLE</option>
+                <option value="PARTNER">PARTNER</option>
+                <option value="LOCATION">LOCATION</option>
+                <option value="SUPERVISOR">SUPERVISOR</option>
+                <option value="GENDER">GENDER</option>
+                <option value="EMAIL">EMAIL</option>
+                <option value="PHONE">PHONE</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="participant ID" class="col-sm-4 control-label">Location</label>
+            <div class="col-sm-5">
+              <select class="form-control">
+                <option>Select Field</option>
+                <option>--------------</option>
+                <option value="PARTICIPANT ID">PARTICIPANT ID</option>
+                <option value="NAME">NAME</option>
+                <option value="ROLE">ROLE</option>
+                <option value="PARTNER">PARTNER</option>
+                <option value="LOCATION">LOCATION</option>
+                <option value="SUPERVISOR">SUPERVISOR</option>
+                <option value="GENDER">GENDER</option>
+                <option value="EMAIL">EMAIL</option>
+                <option value="PHONE">PHONE</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="participant ID" class="col-sm-4 control-label">Supervisor</label>
+            <div class="col-sm-5">
+              <select class="form-control">
+                <option>Select Field</option>
+                <option>--------------</option>
+                <option value="PARTICIPANT ID">PARTICIPANT ID</option>
+                <option value="NAME">NAME</option>
+                <option value="ROLE">ROLE</option>
+                <option value="PARTNER">PARTNER</option>
+                <option value="LOCATION">LOCATION</option>
+                <option value="SUPERVISOR">SUPERVISOR</option>
+                <option value="GENDER">GENDER</option>
+                <option value="EMAIL">EMAIL</option>
+                <option value="PHONE">PHONE</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="participant ID" class="col-sm-4 control-label">Gender</label>
+            <div class="col-sm-5">
+              <select class="form-control">
+                <option>Select Field</option>
+                <option>--------------</option>
+                <option value="PARTICIPANT ID">PARTICIPANT ID</option>
+                <option value="NAME">NAME</option>
+                <option value="ROLE">ROLE</option>
+                <option value="PARTNER">PARTNER</option>
+                <option value="LOCATION">LOCATION</option>
+                <option value="SUPERVISOR">SUPERVISOR</option>
+                <option value="GENDER">GENDER</option>
+                <option value="EMAIL">EMAIL</option>
+                <option value="PHONE">PHONE</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="participant ID" class="col-sm-4 control-label">Email</label>
+            <div class="col-sm-5">
+              <select class="form-control">
+                <option>Select Field</option>
+                <option>--------------</option>
+                <option value="PARTICIPANT ID">PARTICIPANT ID</option>
+                <option value="NAME">NAME</option>
+                <option value="ROLE">ROLE</option>
+                <option value="PARTNER">PARTNER</option>
+                <option value="LOCATION">LOCATION</option>
+                <option value="SUPERVISOR">SUPERVISOR</option>
+                <option value="GENDER">GENDER</option>
+                <option value="EMAIL">EMAIL</option>
+                <option value="PHONE">PHONE</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="Phone" class="col-sm-4 control-label">Phone Prefix</label>
+            <div class="col-sm-5 offset 3">
+              <input type="password" class="form-control" id="inputPassword3" placeholder="e.g +234">
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <a href="#step1" class="btn btn-sm btn-default" id="control2"><i class="glyphicon glyphicon-arrow-left glyphicon-white"></i> Back</a>
+        <a href="#" class="btn btn-sm btn-danger"><i class="glyphicon glyphicon-upload glyphicon-white"></i> Import</a>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block content %}
     <div class="row-fluid">
       <div class="well">
         {{ render_filter_form(filter_form) }}
@@ -36,4 +237,21 @@
 {%- endblock -%}
 {%- block scripts -%}
 <script src="{{ url_for('static', filename='js/filters.js') }}"></script>
+<script type="text/javascript">
+    document.getElementById("uploadBtn").onchange = function () {
+    document.getElementById("uploadFile").value = this.value;
+    };
+    $(function(){
+      $('#myModal2').modal('hide')
+      $('#control1').click(function(){
+        $('#myModal').modal('hide')
+        $('#myModal2').modal('show')
+      });
+      $('#control2').click(function(){
+        $('#myModal2').modal('hide')
+        $('#myModal').modal('show')
+      });
+
+    })
+</script>
 {%- endblock -%}
