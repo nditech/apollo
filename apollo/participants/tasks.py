@@ -12,7 +12,7 @@ from .models import PhoneContact
 
 
 email_template = '''
-Of {{ count }} records, {{ successful_imports }} were successfully imported, {{ suspect_imports }} were imported with warnings, and  {{ unsuccessful_imports }} could not be imported.
+Of {{ count }} records, {{ successful_imports }} were successfully imported, {{ suspect_imports }} were imported with warnings, and {{ unsuccessful_imports }} could not be imported.
 {% if errors %}
 The following records could not be imported:
 -------------------------
