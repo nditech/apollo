@@ -9,15 +9,10 @@ DEBUG = ast.literal_eval(
     os.environ.get('DEBUG', 'False'))
 PAGE_SIZE = 25
 
-if os.environ.get('container') == 'lxc':
-    MONGO_ENV_NAME = 'MONGODB_PORT'
-else:
-    MONGO_ENV_NAME = 'MONGO_DATABASE_HOST'
-
 MONGODB_SETTINGS = {
     'DB': os.environ.get('MONGO_DATABASE_NAME', 'apollo'),
     'HOST': urlparse(
-        os.environ.get(MONGO_ENV_NAME, 'mongodb://localhost')).netloc
+        os.environ.get('MONGODB_PORT', 'mongodb://localhost')).netloc
 }
 
 SECURITY_PASSWORD_HASH = 'pbkdf2_sha256'
@@ -28,7 +23,10 @@ SECURITY_EMAIL_SENDER = 'no-reply@apollo.la'
 SECURITY_RECOVERABLE = True
 SECURITY_TRACKABLE = True
 
-CELERY_BROKER_URL = 'redis://localhost:6379/0'
+CELERY_BROKER_URL = 'redis://{host}/{database}'.format(
+    host=urlparse(
+        os.environ.get('REDIS_PORT', 'redis://localhost')).netloc,
+    database=os.environ.get('REDIS_DATABASE', '0'))
 CELERY_RESULT_BACKEND = 'redis'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TASK_SERIALIZER = 'json'
