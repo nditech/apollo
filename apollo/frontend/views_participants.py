@@ -44,8 +44,6 @@ def participant_list(page=1):
     # load form context
     context = {}
 
-    print queryset_filter.qs._query
-
     pager = queryset_filter.qs.paginate(page=page, per_page=PAGE_SIZE)
 
     context.update(

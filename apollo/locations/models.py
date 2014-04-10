@@ -91,7 +91,6 @@ class Location(db.Document):
     coords = db.GeoPointField()
     ancestors_ref = db.ListField(db.ReferenceField('Location'))
     samples = db.ListField(db.ReferenceField('Sample'))
-
     events = db.ListField(db.ReferenceField(Event))
     deployment = db.ReferenceField(Deployment)
 
