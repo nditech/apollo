@@ -1,4 +1,6 @@
-{%- extends 'frontend/_layout.html' -%}{%- from 'frontend/macros/participant_list_filter.html' import render_filter_form -%}
+{%- extends 'frontend/_layout.html' -%}
+{%- from 'frontend/macros/participant_list_filter.html' import render_filter_form -%}
+{%- from 'frontend/macros/pagination.html' import render_pager -%}
 {% block toolbar %}
   {% if perms.export_participants.can() %}
   <form action="{{ request.url }}" method="get" id="export_observers" style="display:none">
@@ -31,13 +33,13 @@
       	<table class="table table-bordered table-striped">
          <thead>
            <tr>
-             <th>{% trans %}Participant ID{% endtrans %}</th>
+             <th>{% trans %}ID{% endtrans %}</th>
              {%- for location_type in location_types -%}
-             <th>{% trans %}{{ location_type.name }}{% endtrans %}</th>
+             <th>{{ location_type.name }}</th>
              {%- endfor -%}
+             <th>{% trans %}Location{% endtrans %}</th>
              <th>{% trans %}Name{% endtrans %}</th>
              <th>{% trans %}Role{% endtrans %}</th>
-             <th>{% trans %}Location{% endtrans %}</th>
              <th>{% trans %}Organization{% endtrans %}</th>
              {%- if perms.edit_participant.can() -%}
              <th>{% trans %}Edit{% endtrans %}</th>
@@ -49,11 +51,11 @@
            <tr>
              <td>{{ participant.participant_id }}</td>
              {%- for location_type in location_types -%}
-             <th>{% trans %}{{ participant.location.ancestor(location_type.name).name }}{% endtrans %}</th>
+             <td>{{ participant.location.ancestor(location_type.name).name }}</td>
              {%- endfor -%}
+             <td>{{ participant.location }}</td>
              <td>{{ participant.name }}</td>
              <td>{{ participant.role }}</td>
-             <td>{{ participant.location }}</td>
              <td>{{ participant.partner }}</td>
              {%- if perms.edit_participant.can() -%}
              <td><a href="{{ url_for('participants.participant_edit', pk=participant.id) }}">Edit</a></td>
@@ -64,7 +66,11 @@
            {% endfor %}
          </tbody>
         </table>
-        {% from 'frontend/macros/pagination.html' import render_pager %}{{ render_pager(participants, 'participants.participant_list', args) }}
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+      {{ render_pager(participants, 'participants.participant_list', args) }}
       </div>
     </div>
 {%- endblock -%}
