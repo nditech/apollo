@@ -23,6 +23,14 @@ SECURITY_EMAIL_SENDER = 'no-reply@apollo.la'
 SECURITY_RECOVERABLE = True
 SECURITY_TRACKABLE = True
 
+MAIL_SERVER = os.environ.get('MAIL_SERVER', 'localhost')
+MAIL_PORT = os.environ.get('MAIL_PORT', 25)
+MAIL_USE_TLS = os.environ.get('MAIL_USE_TLS', False)
+MAIL_USE_SSL = os.environ.get('MAIL_USE_SSL', False)
+MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
+MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
+DEFAULT_EMAIL_SENDER = SECURITY_EMAIL_SENDER
+
 CELERY_BROKER_URL = 'redis://{host}/{database}'.format(
     host=urlparse(
         os.environ.get('REDIS_PORT', 'redis://localhost')).netloc,

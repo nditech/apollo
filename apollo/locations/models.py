@@ -22,12 +22,12 @@ class Sample(db.Document):
 
     name = db.StringField()
 
-    events = db.ListField(db.ReferenceField(Event))
+    event = db.ReferenceField(Event)
     deployment = db.ReferenceField(Deployment)
 
     meta = {
         'indexes': [
-            ['events']
+            ['event']
         ]
     }
 
@@ -98,6 +98,7 @@ class Location(db.Document):
     coords = db.GeoPointField()
     ancestors_ref = db.ListField(db.ReferenceField('Location'))
     ancestors = db.ListField(db.EmbeddedDocumentField('LocationAncestor'))
+    location_name_path = db.DictField()
     samples = db.ListField(db.ReferenceField('Sample'))
 
     events = db.ListField(db.ReferenceField(Event))
