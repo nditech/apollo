@@ -119,11 +119,11 @@ class Submission(db.DynamicDocument):
             completed = [f.name in self for f in group.fields]
 
             if all(completed):
-                self.completion[group] = 'Complete'
+                self.completion[group.name] = 'Complete'
             elif any(completed):
-                self.completion[group] = 'Partial'
+                self.completion[group.name] = 'Partial'
             else:
-                self.completion[group] = 'Missing'
+                self.completion[group.name] = 'Missing'
 
 
 class VersionSequenceField(db.SequenceField):
