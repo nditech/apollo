@@ -13,7 +13,7 @@ from ..models import Location
 from ..services import (
     forms, location_types, submissions, submission_comments
 )
-from . import route
+from . import route, permissions
 from .filters import generate_submission_filter
 from .helpers import (
     displayable_location_types, get_event, get_form_list_menu)
@@ -36,7 +36,7 @@ def submission_list(form_id):
     form = forms.get_or_404(pk=form_id)
     filter_class = generate_submission_filter(form)
     page_title = form.name
-    template_name = 'frontend/nu_submission_list.html'
+    template_name = 'frontend/submission_list.html'
 
     data = request.args.to_dict()
     data['form_id'] = unicode(form.pk)
@@ -67,6 +67,20 @@ def submission_list(form_id):
         page_title=page_title,
         pager=query_filterset.qs.paginate(page=page, per_page=PAGE_SIZE)
     )
+
+
+@route(bp, '/submissions/<form_id>/new', methods=['GET', 'POST'])
+@permissions.add_submission.require(403)
+@login_required
+def submission_create(form_id):
+    pass
+
+
+@route(bp, '/submissions/<submission_id>', methods=['GET', 'POST'])
+@permissions.edit_submission.require(403)
+@login_required
+def submission_edit(submission_id):
+    pass
 
 
 @route(bp, '/comments', methods=['POST'])
