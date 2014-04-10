@@ -12,7 +12,7 @@ from .models import PhoneContact
 
 
 email_template = '''
-Of {{ count }} records, {{ successful_imports }} were successfully imported, {{ suspect_imports }} were imported with warnings, and {{ unsuccessful_imports }} could not be imported.
+Of {{ count }} records, {{ successful_imports }} were successfully imported, {{ suspect_imports }} raised warnings, and {{ unsuccessful_imports }} could not be imported.
 {% if errors %}
 The following records could not be imported:
 -------------------------
@@ -102,12 +102,14 @@ def update_participants(dataframe, event, header_map):
         record = dataframe.ix[idx]
         participant = participants.get(
             participant_id=record[PARTICIPANT_ID_COL],
+            deployment=event.deployment,
             event=event
         )
 
         if participant is None:
             participant = participants.new(
                 participant_id=record[PARTICIPANT_ID_COL],
+                deployment=event.deployment,
                 event=event
             )
 
@@ -138,14 +140,18 @@ def update_participants(dataframe, event, header_map):
                 deployment=deployment
             )
         except MultipleObjectsReturned:
-            errors.add((record[PARTICIPANT_ID_COL], _('Invalid location id')))
+            errors.add((
+                record[PARTICIPANT_ID_COL],
+                _('Invalid location id (%(loc_id)s)',
+                    loc_id=record[LOCATION_ID_COL])
+            ))
             continue
 
         if location is None:
             warnings.add((
                 record[PARTICIPANT_ID_COL],
-                _('Location with id %(id)s not found',
-                    id=record[LOCATION_ID_COL])
+                _('Location with id %(loc_id)s not found',
+                    loc_id=record[LOCATION_ID_COL])
             ))
         participant.location = location
 

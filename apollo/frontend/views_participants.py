@@ -2,7 +2,7 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 from flask import (
-    Blueprint, redirect, render_template, request, url_for
+    Blueprint, flash, redirect, render_template, request, url_for
 )
 from flask.ext.babel import lazy_gettext as _
 from flask.ext.menu import register_menu
@@ -43,6 +43,8 @@ def participant_list(page=1):
 
     # load form context
     context = {}
+
+    print queryset_filter.qs._query
 
     pager = queryset_filter.qs.paginate(page=page, per_page=PAGE_SIZE)
 
@@ -158,10 +160,17 @@ def participant_headers(pk):
             phone_header = form.data.get('phone')
             mappings = {v: k for k, v in form.data.iteritems()}
             mappings.update(phone=phone_header)
+
             # invoke task asynchronously
             kwargs = {
                 'upload_id': unicode(upload.id),
                 'mappings': mappings
             }
             import_participants.apply_async(kwargs=kwargs)
-            return render_template('frontend/import_started.html')
+
+            # flash notification message and redirect
+            flash(
+                unicode(_('Your file is being processed. You will get an email when it is complete.')),
+                category='task_begun'
+            )
+            return redirect(url_for('participants.participant_list'))

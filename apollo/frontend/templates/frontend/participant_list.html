@@ -3,11 +3,19 @@
   <a class="btn btn-info pull-right" href="{{ url_for('participants.participant_list_import') }}"><i class="glyphicon glyphicon-upload glyphicon-white"></i> Import Participants</a>
 {% endblock %}
 {% block content %}
+{%- set flash_msgs = get_flashed_messages(category_filter=['task_begun']) -%}
     <div class="row-fluid">
       <div class="well">
         {{ render_filter_form(filter_form) }}
       </div>
     </div>
+{%- if flash_msgs -%}
+    <div>
+    {%- for msg in flash_msgs -%}
+      <p class="alert alert-info">{{ msg }}</p>
+    {%- endfor -%}
+    </div>
+{%- endif -%}
     <div class="row-fluid">
       <div>
       	<table class="table table-bordered table-striped">
@@ -37,4 +45,7 @@
         {% from 'frontend/macros/pagination.html' import render_pager %}{{ render_pager(participants, 'participants.participant_list', args) }}
       </div>
     </div>
+{%- endblock -%}
+{%- block scripts -%}
+<script src="{{ url_for('static', filename='js/filters.js') }}"></script>
 {%- endblock -%}
