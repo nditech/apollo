@@ -10,6 +10,11 @@ class UsersService(Service):
 class UserUploadsService(Service):
     __model__ = UserUpload
 
+    def _set_default_filter_parameters(self, kwargs):
+        # need to override adding the deployment, because
+        # it's already connected to the user
+        return kwargs
+
 
 class PermsService(Service):
     __model__ = Need

@@ -2,8 +2,9 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from flask.ext.babel import lazy_gettext as _
 from flask.ext.wtf import Form as WTSecureForm
+from flask.ext.wtf.file import FileField, FileRequired
 from wtforms import (
-    FileField, SelectField, TextField, ValidationError, validators
+    SelectField, TextField, ValidationError, validators
 )
 from ..models import (
     LocationType, Participant
@@ -95,7 +96,7 @@ def generate_participant_edit_form(participant, data=None):
 
 
 def generate_participant_import_mapping_form(headers, *args, **kwargs):
-    default_choices = [(v, v) for v in headers]
+    default_choices = [['', _('Select header')]] + [(v, v) for v in headers]
 
     class ParticipantImportMappingForm(WTSecureForm):
         _headers = headers
@@ -173,7 +174,7 @@ class ParticipantUploadForm(WTSecureForm):
         ),
         validators=[validators.input_required()]
     )
-    datafile = FileField(
+    spreadsheet = FileField(
         _('Data file'),
-        validators=[validators.input_required()]
+        # validators=[FileRequired()]
     )

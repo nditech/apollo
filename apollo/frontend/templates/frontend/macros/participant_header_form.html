@@ -1,0 +1,25 @@
+{% macro render_mapping_form(form) %}
+<form class="form-horizontal" method="POST">
+{{ form.hidden_tag() }}
+<fieldset>
+<legend>{% trans %}Import participants{% endtrans %}</legend>
+{%- if form.errors.me -%}
+<div class="alert alert-danger">{{ form.errors.me }}</div>
+{%- endif -%}
+{%- for field in form -%}
+{%- if field.type != 'CSRFTokenField' -%}
+<div class="form-group {% if field.errors %}has-error{% endif %}">
+{{ field.label }}
+{{ field(class_='form-control') }}
+{% if field.errors %}
+{% for e in field.errors %}
+<p class="help-block">{{ e }}</p>
+{% endfor %}
+{% endif %}
+</div>
+{%- endif -%}
+{%- endfor -%}
+<button class="btn btn-primary" type="submit">Import</button>
+</fieldset>
+</form>
+{% endmacro %}

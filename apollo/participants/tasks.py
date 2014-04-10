@@ -243,6 +243,11 @@ def import_participants(upload_id, mappings):
         upload.event,
         mappings
     )
+
+    # delete uploaded file
+    upload.data.delete()
+    upload.delete()
+
     msg_body = generate_response_email(count, errors, warnings)
 
     send_email(_('Import report'), msg_body, [upload.user.email])

@@ -1,0 +1,22 @@
+{% macro render_import_form(form) %}
+<form class="form-horizontal" enctype="multipart/form-data" method="POST">
+{{ form.hidden_tag() }}
+<fieldset>
+<legend>{% trans %}Import participants{% endtrans %}</legend>
+{%- for field in form -%}
+{%- if field.type != 'CSRFTokenField' -%}
+<div class="form-group {% if field.errors %}has-error{% endif %}">
+{{ field.label }}
+{{ field(class_='form-control') }}
+{% if field.errors %}
+{% for e in field.errors %}
+<p class="help-block">{{ e }}</p>
+{% endfor %}
+{% endif %}
+</div>
+{%- endif -%}
+{%- endfor -%}
+<button class="btn btn-primary" type="submit">Import</button>
+</fieldset>
+</form>
+{% endmacro %}

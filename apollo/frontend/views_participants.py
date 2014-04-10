@@ -103,6 +103,7 @@ def participant_list_import():
         form = ParticipantUploadForm(request.form)
 
         if not form.validate():
+            print form.errors
             return render_template(
                 template_name,
                 form=form,
@@ -112,23 +113,30 @@ def participant_list_import():
             # get the actual object from the proxy
             user = current_user._get_current_object()
             event = events.get_or_404(pk=form.event.data)
-            upload = stash_file(request.files['datafile'], user, event)
+            upload = stash_file(request.files['spreadsheet'], user, event)
             upload.save()
 
             return redirect(url_for(
-                'frontend.participant_headers',
-                upload=unicode(upload.id)
+                'participants.participant_headers',
+                pk=unicode(upload.id)
             ))
 
 
-@route(bp, '/participants/headers', methods=['GET', 'POST'])
+@route(bp, '/participants/headers/<pk>', methods=['GET', 'POST'])
 @login_required
 def participant_headers(pk):
     user = current_user._get_current_object()
 
     # disallow processing other users' files
     upload = user_uploads.get_or_404(pk=pk, user=user)
-    dataframe = load_source_file(upload.data)
+    try:
+        dataframe = load_source_file(upload.data)
+    except Exception:
+        # delete loaded file
+        upload.data.delete()
+        upload.delete()
+        return render_template('frontend/invalid_import.html')
+
     headers = dataframe.columns
     page_title = _('Map participant columns')
     template_name = 'frontend/participant_headers.html'
@@ -147,11 +155,13 @@ def participant_headers(pk):
             )
         else:
             # get header mappings
+            phone_header = form.data.get('phone')
             mappings = {v: k for k, v in form.data.iteritems()}
+            mappings.update(phone=phone_header)
             # invoke task asynchronously
             kwargs = {
                 'upload_id': unicode(upload.id),
                 'mappings': mappings
             }
             import_participants.apply_async(kwargs=kwargs)
-            return ''
+            return render_template('frontend/import_started.html')
