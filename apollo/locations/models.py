@@ -81,13 +81,6 @@ class LocationType(db.Document):
         return self.name
 
 
-class LocationAncestor(db.EmbeddedDocument):
-    '''An embedded document for storing location ancestors data to enable
-    fast retrieval of data fields'''
-    name = db.StringField()
-    location_type = db.StringField()
-
-
 class Location(db.Document):
 
     '''A store for Locations'''
@@ -97,9 +90,7 @@ class Location(db.Document):
     location_type = db.StringField()
     coords = db.GeoPointField()
     ancestors_ref = db.ListField(db.ReferenceField('Location'))
-    ancestors = db.ListField(db.EmbeddedDocumentField('LocationAncestor'))
     samples = db.ListField(db.ReferenceField('Sample'))
-
     events = db.ListField(db.ReferenceField(Event))
     deployment = db.ReferenceField(Deployment)
 
@@ -121,8 +112,26 @@ class Location(db.Document):
     def get_root_for_event(cls, event):
         return cls.objects.get(events=event, __raw__={'ancestors_ref': []})
 
-    def get_children(self):
+    @property
+    def children(self):
+        return Location.objects(
+            ancestors_ref__all=self.ancestors_ref + [self],
+            ancestors_ref__size=len(self.ancestors_ref) + 1)
+
+    @property
+    def descendants(self):
         return Location.objects(ancestors_ref=self)
+
+    @property
+    def ancestors(self):
+        return self.ancestors_ref
+
+    def ancestor(self, location_type):
+        try:
+            return filter(lambda l: l.location_type == location_type,
+                          self.ancestors_ref)[0]
+        except IndexError:
+            pass
 
     def __unicode__(self):
         return self.name

@@ -44,6 +44,9 @@ def create_app(settings_override=None, register_security_blueprint=True):
         # permissions
         services.perms.get_or_create(action='view_events')
         services.perms.get_or_create(action='send_messages')
+        services.perms.get_or_create(action='edit_participant')
+        services.perms.get_or_create(action='export_participants')
+
         services.perms.get_or_create(action='add_submission')
         services.perms.get_or_create(action='edit_submission')
         services.perms.get_or_create(action='export_submissions')
