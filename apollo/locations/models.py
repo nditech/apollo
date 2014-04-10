@@ -126,9 +126,10 @@ class Location(db.Document):
     def ancestors(self):
         return self.ancestors_ref
 
-    def ancestor(self, location_type):
+    def ancestor(self, location_type, include_self=True):
         try:
             return filter(lambda l: l.location_type == location_type,
+                          self.ancestors_ref + [self] if include_self else
                           self.ancestors_ref)[0]
         except IndexError:
             pass
