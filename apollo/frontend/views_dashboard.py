@@ -66,7 +66,7 @@ def index():
         # it for the 'State' type. in general, this isn't the behaviour
         # we want, so we need to find the lower level types and get the
         # one we want (the first of the children)
-        le_temp = [lt for lt in location_type.get_children()
+        le_temp = [lt for lt in location_type.children
                    if lt.on_dashboard_view]
         try:
             sub_location_type = le_temp[0]

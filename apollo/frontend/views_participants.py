@@ -14,7 +14,7 @@ from ..services import (
     user_uploads
 )
 from ..tasks import import_participants
-from . import route
+from . import route, helpers
 from .filters import ParticipantFilterSet
 from .forms import (
     generate_participant_edit_form, generate_participant_import_mapping_form,
@@ -52,6 +52,8 @@ def participant_list(page=1):
         args=args,
         filter_form=queryset_filter.form,
         page_title=page_title,
+        location_types=helpers.displayable_location_types(
+            on_submissions_view=True),
         participants=pager
     )
 

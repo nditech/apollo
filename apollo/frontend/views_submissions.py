@@ -42,7 +42,7 @@ def submission_list(form_id):
     data['form_id'] = unicode(form.pk)
     page = int(data.pop('page', 1))
 
-    loc_types = displayable_location_types()
+    loc_types = displayable_location_types(on_submissions_view=True)
 
     queryset = submissions.find(
         contributor__ne=None,
