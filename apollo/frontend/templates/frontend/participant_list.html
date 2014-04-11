@@ -4,7 +4,7 @@
 {% block toolbar %}
   {% if perms.export_participants.can() %}
   <form action="{{ request.url }}" method="get" id="export_observers" style="display:none">
-  {% for key, value in request.args.items %}
+  {% for key, value in request.args.items() %}
   {% if key != "export" %}<input type="hidden" name="{{ key }}" value="{{ value }}" />{% endif %}
   {% endfor %}
   <input type="hidden" name="export" value="true" />
@@ -42,7 +42,7 @@
              <th>{% trans %}Role{% endtrans %}</th>
              <th>{% trans %}Organization{% endtrans %}</th>
              {%- if perms.edit_participant.can() -%}
-             <th>{% trans %}Edit{% endtrans %}</th>
+             <th class="text-center">{% trans %}Edit{% endtrans %}</th>
              {%- endif -%}
            </tr>
          </thead>
@@ -58,7 +58,7 @@
              <td>{{ participant.role }}</td>
              <td>{{ participant.partner }}</td>
              {%- if perms.edit_participant.can() -%}
-             <td><a href="{{ url_for('participants.participant_edit', pk=participant.id) }}">Edit</a></td>
+             <td class="text-center"><a href="{{ url_for('participants.participant_edit', pk=participant.id) }}">Edit</a></td>
              {%- endif -%}
            </tr>
            {% else %}

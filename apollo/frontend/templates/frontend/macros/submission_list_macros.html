@@ -57,7 +57,7 @@
     {# with submission.observer.phone|slugify as known_number #}{# with submission.observer.last_connection.identity|slugify|default:known_number as texting_number #}
     <td style="text-align: center"><img src="{# if texting_number == known_number #}{{ url_for('static', filename='img/tick.png') }}{# else #}{{ url_for('static', filename='img/caution.png') }}{# endif #}" title="{# if texting_number == known_number #}{% trans %}Verified{% endtrans %}{# else #}{% trans %}Unverified{% endtrans %}{# endif #}" height="11" width="11" /></td>
     {# endwith #}{# endwith #}--><td>&nbsp;</td>
-    {% if perms.edit_submission.can() %}<td class="text-center"><a href="{{ url_for('submission.submission_edit', submission.pk) }}">{% trans %}Edit{% endtrans %}</a></td>{% endif %}
+    {% if perms.edit_submission.can() %}<td class="text-center"><a href="{{ url_for('submissions.submission_edit', submission_id=submission.pk) }}">{% trans %}Edit{% endtrans %}</a></td>{% endif %}
 </tr>
 {% else %}
 {% if perms.edit_submission.can() %}
