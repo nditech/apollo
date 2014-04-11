@@ -35,14 +35,17 @@ def index():
 
     event = get_event()
 
-    args.setdefault('event', unicode(event.id))
     if not args.get('checklist_form'):
         form = forms.find(events=event, form_type='CHECKLIST').first()
     else:
         form = forms.get(pk=args.get('checklist_form'))
     args.setdefault('checklist_form', unicode(form.id))
 
-    queryset = submissions.find(contributor__ne=None)
+    queryset = submissions.find(
+        contributor__ne=None,
+        created__lte=event.end_date,
+        created__gte=event.start_date
+    )
     filter_ = DashboardFilterSet(queryset, data=args)
 
     # activate sample filter

@@ -28,7 +28,7 @@
     <td>{{ submission.location_name_path[location_type.name] }}</td>
     {% endfor %}
     <td>{{ submission.contributor.name }}</td>
-    <td>{# TODO: submission.observer.phone|default_if_none:"" #}&nbsp;</td>
+    <td>{{ submission.contributor.phone }}</td>
     {%- if form.type == 'CHECKLIST' -%}
     {% for group in form.groups %}
     <td class="text-center">
@@ -42,17 +42,16 @@
     {% for field in form_fields %}
     <td class="text-center">{%- if submission[field.name] -%}<img src="{{ url_for('static', filename='img/red_dot.png') }}" height="11" width="11" />{% else %}&nbsp;{% endif %}</td>
     {% endfor %}
-    <!-- TODO: <td style="text-align: center">
-        {# with submission.data|keyvalue:"status" as status #}
-        {# if status == 'confirmed' #}
-        <img src="{{ url_for('static', filename='img/tick.png') }}" title="{% trans %}Confirmed{% endtrans %}" alt="{% trans %}Confirmed{% endtrans %}" height="11" width="11" />
-        {# elif status == 'rejected' #}
-        <img src="{{ url_for('static', filename='img/red_dot.png') }}" title="{% trans %}Rejected{% endtrans %}" alt="{% trans %}Rejected{% endtrans %}" height="11" width="11" />
-        {# else #}
-        <img src="{{ url_for('static', filename='img/caution.png') }}" title="{% trans %}Unmarked{% endtrans %}" alt="{% trans %}Unmarked{% endtrans %}" height="11" width="11" />
-        {# endif #}
-        {# endwith #}
-    </td>--><td>&nbsp;</td>
+    <td>
+    {%- set status = submission.status -%}
+    {%- if status == 'confirmed' -%}
+    <img src="{{ url_for('static', filename='img/tick.png') }}" title="{% trans %}Confirmed{% endtrans %}" alt="{% trans %}Confirmed{% endtrans %}" height="11" width="11" />
+    {%- elif status == 'rejected' -%}
+    <img src="{{ url_for('static', filename='img/red_dot.png') }}" title="{% trans %}Rejected{% endtrans %}" alt="{% trans %}Rejected{% endtrans %}" height="11" width="11" />
+    {%- else -%}
+    <img src="{{ url_for('static', filename='img/caution.png') }}" title="{% trans %}Unmarked{% endtrans %}" alt="{% trans %}Unmarked{% endtrans %}" height="11" width="11" />
+    {%- endif -%}
+    </td>
     {% endif %}<!-- TODO:
     {# with submission.observer.phone|slugify as known_number #}{# with submission.observer.last_connection.identity|slugify|default:known_number as texting_number #}
     <td style="text-align: center"><img src="{# if texting_number == known_number #}{{ url_for('static', filename='img/tick.png') }}{# else #}{{ url_for('static', filename='img/caution.png') }}{# endif #}" title="{# if texting_number == known_number #}{% trans %}Verified{% endtrans %}{# else #}{% trans %}Unverified{% endtrans %}{# endif #}" height="11" width="11" /></td>

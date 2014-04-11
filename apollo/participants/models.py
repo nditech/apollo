@@ -52,3 +52,10 @@ class Participant(db.DynamicDocument):
 
     def __unicode__(self):
         return self.name
+
+    @property
+    def phone(self):
+        if self.phones:
+            return self.phones[0].number
+        else:
+            return None
