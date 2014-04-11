@@ -1,4 +1,5 @@
-from flask.ext.principal import Permission, ActionNeed, RoleNeed
+from flask import abort
+from flask.ext.principal import Permission, ActionNeed, RoleNeed, ItemNeed
 
 view_events = Permission(ActionNeed('view_events'), RoleNeed('admin'))
 send_messages = Permission(ActionNeed('send_messages'), RoleNeed('admin'))
@@ -13,3 +14,10 @@ edit_submission = Permission(
     ActionNeed('edit_submission'), RoleNeed('admin'))
 export_submissions = Permission(
     ActionNeed('export_submissions'), RoleNeed('admin'))
+
+
+# item permission
+def require_item_perm(action, item, http_exception=403):
+    perm = Permission(ItemNeed(action, item, 'object'), RoleNeed('admin'))
+    if not perm.can():
+        abort(http_exception, perm)
