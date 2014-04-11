@@ -54,7 +54,7 @@ class LocationFilter(ChoiceFilter):
         for d_loc in displayed_locations:
             filter_locations[d_loc[2]].append(d_loc[:2])
 
-        kwargs['choices'] = [['', 'Location']] + \
+        kwargs['choices'] = [['', '']] + \
             [[k, v] for k, v in filter_locations.items()]
 
         super(LocationFilter, self).__init__(*args, **kwargs)
