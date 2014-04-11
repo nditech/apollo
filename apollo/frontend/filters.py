@@ -52,11 +52,14 @@ class LocationFilter(ChoiceFilter):
 
         filter_locations = defaultdict(list)
         for d_loc in displayed_locations:
-            filter_locations[d_loc[2]].append(d_loc[:2])
+            filter_locations[d_loc[2]].append(
+                # need to convert ObjectId into unicode
+                (unicode(d_loc[0]), d_loc[1])
+            )
 
         # change first choice to ['', ''] and add the data-placeholder
         # attribute to rendering for the field after switching to
-        # Select2 for rendering.
+        # Select2 for rendering this
         kwargs['choices'] = [['', _('Location')]] + \
             [[k, v] for k, v in filter_locations.items()]
 
@@ -206,13 +209,8 @@ class BaseSubmissionFilterSet(FilterSet):
 
 class DashboardFilterSet(FilterSet):
     sample = SampleFilter()
-    event = EventFilter()
     location = LocationFilter()
     checklist_form = ChecklistFormFilter()
-
-    def __init__(self, *args, **kwargs):
-        super(DashboardFilterSet, self).__init__(*args, **kwargs)
-        self.declared_filters['event'].field.default = get_event()
 
 
 class ParticipantFilterSet(FilterSet):
