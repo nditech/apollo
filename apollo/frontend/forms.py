@@ -2,9 +2,9 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from flask.ext.babel import lazy_gettext as _
 from flask.ext.wtf import Form as WTSecureForm
-from flask.ext.wtf.file import FileField, FileRequired
+from flask.ext.wtf.file import FileField
 from wtforms import (
-    SelectField, TextField, ValidationError, validators
+    BooleanField, SelectField, TextField, ValidationError, validators, widgets
 )
 from ..models import (
     LocationType, Participant
@@ -178,3 +178,7 @@ class ParticipantUploadForm(WTSecureForm):
         _('Data file'),
         # validators=[FileRequired()]
     )
+
+
+class DummyForm(WTSecureForm):
+    select_superset = BooleanField(widget=widgets.HiddenInput())
