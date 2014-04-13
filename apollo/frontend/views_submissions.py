@@ -34,6 +34,8 @@ bp = Blueprint('submissions', __name__, template_folder='templates',
 @login_required
 def submission_list(form_id):
     form = forms.get_or_404(pk=form_id)
+    permissions.require_item_perm('view_forms', form)
+
     filter_class = generate_submission_filter(form)
     page_title = form.name
     template_name = 'frontend/submission_list.html'

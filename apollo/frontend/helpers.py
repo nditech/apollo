@@ -1,6 +1,7 @@
 from .. import models
 from .. import services
 from flask import session, request, abort, g, url_for
+from flask.ext.principal import Permission, ItemNeed, RoleNeed
 from urlparse import urlparse
 
 
@@ -78,7 +79,10 @@ def get_form_list_menu(**kwargs):
     """
     return [{'url': url_for('submissions.submission_list',
              form_id=str(form.id)), 'text': form.name, 'visible': True}
-            for form in services.forms.find(**kwargs)]
+            for form in filter(
+                lambda f: Permission(ItemNeed('view_forms', f, 'object'),
+                                     RoleNeed('admin')).can(),
+                services.forms.find(**kwargs))]
 
 
 def displayable_location_types(**kwargs):
