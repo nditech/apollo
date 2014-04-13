@@ -96,15 +96,15 @@ class Service(object):
         except self.__model__.DoesNotExist:
             return None
 
-    def get_all(self, **kwargs):
-        """Returns a list of instances of the service's model with the
-        specified keyword arguments as filter parameters.
+    # def get_all(self, **kwargs):
+    #     """Returns a list of instances of the service's model with the
+    #     specified keyword arguments as filter parameters.
 
-        :param **kwargs: filter parameters
-        """
-        kwargs = self._set_default_filter_parameters(kwargs)
+    #     :param **kwargs: filter parameters
+    #     """
+    #     kwargs = self._set_default_filter_parameters(kwargs)
 
-        return self.find(**kwargs)
+    #     return self.find(**kwargs)
 
     def get_or_404(self, **kwargs):
         """Returns an instance of the service's model with the specified

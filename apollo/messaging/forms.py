@@ -66,7 +66,7 @@ def retrieve_form(prefix, form_type='CHECKLIST'):
     :param:`form_type` - (optional) the form type in narrowing the result
     :returns: a Form document or None
     '''
-    events_in_deployment = services.events.get_all()
+    events_in_deployment = services.events.find()
 
     # find the first form that matches the prefix and optionally form type
     # for the events in the deployment.
