@@ -40,6 +40,8 @@ def participant_list(page=1):
     if request.method == 'POST':
         if form.validate():
             # generate CSV of participants and force download
+            # TODO: CSV is a sucky format for Unicode data.
+            # It might break hard for non-ASCII characters.
             selected_participants = participants.find(
                 pk__in=request.form.getlist('ids')
             )
