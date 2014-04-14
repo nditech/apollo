@@ -213,15 +213,6 @@ def update_participants(dataframe, event, header_map):
             participant.supervisor = supervisor
             participant.save()
 
-    # prune unused participants
-    unused_participants = participants.find(
-        event=event,
-        participant_id__nin=dataframe[PARTICIPANT_ID_COL]
-    )
-
-    for participant in unused_participants:
-        participant.delete()
-
     return dataframe.shape[0], errors, warnings
 
 

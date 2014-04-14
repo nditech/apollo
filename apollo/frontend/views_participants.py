@@ -2,7 +2,8 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 from flask import (
-    Blueprint, flash, redirect, render_template, request, url_for
+    Blueprint, flash, make_response, redirect, render_template, request,
+    url_for
 )
 from flask.ext.babel import lazy_gettext as _
 from flask.ext.menu import register_menu
@@ -18,7 +19,7 @@ from . import route, helpers
 from .filters import ParticipantFilterSet
 from .forms import (
     generate_participant_edit_form, generate_participant_import_mapping_form,
-    ParticipantUploadForm
+    DummyForm, ParticipantUploadForm
 )
 
 PAGE_SIZE = 25
@@ -26,13 +27,29 @@ bp = Blueprint('participants', __name__, template_folder='templates',
                static_folder='static', static_url_path='/core/static')
 
 
-@route(bp, '/participants')
+@route(bp, '/participants', methods=['GET', 'POST'])
 @register_menu(bp, 'participants', _('Participants'))
 @login_required
 def participant_list(page=1):
     page_title = _('Participants')
     queryset = participants.find()
     queryset_filter = ParticipantFilterSet(queryset, request.args)
+
+    form = DummyForm(request.form)
+
+    if request.method == 'POST':
+        if form.validate():
+            # generate CSV of participants and force download
+            selected_participants = participants.find(
+                pk__in=request.form.getlist('ids')
+            )
+            response = make_response(
+                participants.export_list(selected_participants).csv
+            )
+            response.headers['Content-Disposition'] = \
+                            'attachment; filename: participants.csv'
+            response.headers['Content-Type'] = 'text/csv'
+            return response
 
     template_name = 'frontend/participant_list.html'
 
@@ -49,6 +66,7 @@ def participant_list(page=1):
     context.update(
         args=args,
         filter_form=queryset_filter.form,
+        form=form,
         page_title=page_title,
         location_types=helpers.displayable_location_types(
             on_submissions_view=True),
@@ -105,7 +123,6 @@ def participant_list_import():
         form = ParticipantUploadForm(request.form)
 
         if not form.validate():
-            print form.errors
             return render_template(
                 template_name,
                 form=form,

@@ -4,7 +4,7 @@ from flask.ext.babel import lazy_gettext as _
 from flask.ext.wtf import Form as WTSecureForm
 from flask.ext.wtf.file import FileField
 from wtforms import (
-    BooleanField, SelectField, TextField, ValidationError, validators, widgets
+    SelectField, StringField, TextField, ValidationError, validators, widgets
 )
 from ..models import (
     LocationType, Participant
@@ -181,4 +181,4 @@ class ParticipantUploadForm(WTSecureForm):
 
 
 class DummyForm(WTSecureForm):
-    select_superset = BooleanField(widget=widgets.HiddenInput())
+    select_superset = StringField(widget=widgets.HiddenInput())

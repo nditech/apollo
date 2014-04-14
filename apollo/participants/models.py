@@ -1,5 +1,16 @@
+from flask.ext.mongoengine import BaseQuerySet
+from mongoengine import Q
 from ..core import db
 from ..deployments.models import Deployment, Event
+
+
+class ParticipantQuerySet(BaseQuerySet):
+    def filter_in(self, location):
+        param = 'location_name_path__{}'.format(location.location_type)
+        query_kwargs = {
+            param: location.name
+        }
+        return self(Q(location=location) | Q(**query_kwargs))
 
 
 # Participants
@@ -41,6 +52,7 @@ class Participant(db.DynamicDocument):
     role = db.ReferenceField('ParticipantRole')
     partner = db.ReferenceField('ParticipantPartner')
     location = db.ReferenceField('Location')
+    location_name_path = db.DictField()
     supervisor = db.ReferenceField('Participant')
     gender = db.StringField(choices=GENDER)
 
@@ -49,6 +61,10 @@ class Participant(db.DynamicDocument):
 
     event = db.ReferenceField(Event)
     deployment = db.ReferenceField(Deployment)
+
+    meta = {
+        'queryset_class': ParticipantQuerySet
+    }
 
     def __unicode__(self):
         return self.name

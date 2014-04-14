@@ -2,16 +2,6 @@
 {%- from 'frontend/macros/participant_list_filter.html' import render_filter_form -%}
 {%- from 'frontend/macros/pagination.html' import render_pager -%}
 {% block toolbar %}
-  {% if perms.export_participants.can() %}
-  <form action="{{ request.url }}" method="get" id="export_observers" style="display:none">
-  {% for key, value in request.args.items() %}
-  {% if key != "export" %}<input type="hidden" name="{{ key }}" value="{{ value }}" />{% endif %}
-  {% endfor %}
-  <input type="hidden" name="export" value="true" />
-  </form>
-  <a href="javascript:document.getElementById('export_observers').submit()" class="btn btn-default pull-right" type="submit">{% trans %}Export{% endtrans %}</a>
-  {% endif %}
-
   <a class="btn btn-info pull-right" href="{{ url_for('participants.participant_list_import') }}"><i class="glyphicon glyphicon-upload glyphicon-white"></i> {% trans %}Import Participants{% endtrans %}</a>
 {% endblock %}
 {% block content %}
@@ -30,42 +20,54 @@
 {%- endif -%}
     <div class="row-fluid">
       <div>
-      	<table class="table table-bordered table-striped">
-         <thead>
-           <tr>
-             <th>{% trans %}ID{% endtrans %}</th>
-             {%- for location_type in location_types -%}
-             <th>{{ location_type.name }}</th>
-             {%- endfor -%}
-             <th>{% trans %}Location{% endtrans %}</th>
-             <th>{% trans %}Name{% endtrans %}</th>
-             <th>{% trans %}Role{% endtrans %}</th>
-             <th>{% trans %}Organization{% endtrans %}</th>
-             {%- if perms.edit_participant.can() -%}
-             <th class="text-center">{% trans %}Edit{% endtrans %}</th>
-             {%- endif -%}
-           </tr>
-         </thead>
-         <tbody>
-           {% for participant in participants.items %}
-           <tr>
-             <td>{{ participant.participant_id }}</td>
-             {%- for location_type in location_types -%}
-             <td>{{ participant.location.ancestor(location_type.name).name }}</td>
-             {%- endfor -%}
-             <td>{{ participant.location }}</td>
-             <td>{{ participant.name }}</td>
-             <td>{{ participant.role }}</td>
-             <td>{{ participant.partner }}</td>
-             {%- if perms.edit_participant.can() -%}
-             <td class="text-center"><a href="{{ url_for('participants.participant_edit', pk=participant.id) }}">Edit</a></td>
-             {%- endif -%}
-           </tr>
-           {% else %}
-           <!-- no data -->
-           {% endfor %}
-         </tbody>
-        </table>
+        <form class="form-inline" action="{{ request.url }}" method="POST">
+          {{ form.csrf_token() }}{{ form.select_superset() }}
+          <div>
+          {% if perms.export_participants.can() %}
+          <div class="form-group">
+          <input type="submit" class="btn btn-default" name="export" value="{% trans %}Export{% endtrans %}">
+          </div>
+          {% endif %}
+          </div>
+        	<table class="table table-bordered table-striped">
+           <thead>
+             <tr>
+               <th><input type="checkbox" id="select_all" name="select_all"></th>
+               <th>{% trans %}ID{% endtrans %}</th>
+               {%- for location_type in location_types -%}
+               <th>{{ location_type.name }}</th>
+               {%- endfor -%}
+               <th>{% trans %}Location{% endtrans %}</th>
+               <th>{% trans %}Name{% endtrans %}</th>
+               <th>{% trans %}Role{% endtrans %}</th>
+               <th>{% trans %}Organization{% endtrans %}</th>
+               {%- if perms.edit_participant.can() -%}
+               <th class="text-center">{% trans %}Edit{% endtrans %}</th>
+               {%- endif -%}
+             </tr>
+           </thead>
+           <tbody>
+             {% for participant in participants.items %}
+             <tr>
+               <td><input type="checkbox" name="ids" value="{{ participant.id }}"></td>
+               <td>{{ participant.participant_id }}</td>
+               {%- for location_type in location_types -%}
+               <td>{{ participant.location.ancestor(location_type.name).name }}</td>
+               {%- endfor -%}
+               <td>{{ participant.location }}</td>
+               <td>{{ participant.name }}</td>
+               <td>{{ participant.role }}</td>
+               <td>{{ participant.partner }}</td>
+               {%- if perms.edit_participant.can() -%}
+               <td class="text-center"><a href="{{ url_for('participants.participant_edit', pk=participant.id) }}">Edit</a></td>
+               {%- endif -%}
+             </tr>
+             {% else %}
+             <!-- no data -->
+             {% endfor %}
+           </tbody>
+          </table>
+        </form>
       </div>
     </div>
     <div class="row">
@@ -74,8 +76,10 @@
       </div>
     </div>
 {%- endblock -%}
+</form>
 {%- block javascripts -%}
 <script src="{{ url_for('static', filename='js/filters.js') }}"></script>
+<script src="{{ url_for('static', filename='js/forms.js') }}"></script>
 {% if perms.send_messages.can() %}
 {# TODO: send_message paginator.count #}
 {% endif %}
