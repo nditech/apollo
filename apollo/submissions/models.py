@@ -5,6 +5,7 @@ from ..locations.models import Location
 from ..participants.models import Participant
 from ..users.models import User
 from datetime import datetime, timedelta
+from flask.ext.babel import lazy_gettext as _
 from flask.ext.mongoengine import BaseQuerySet
 from mongoengine import Q
 from pandas import DataFrame, isnull
@@ -162,29 +163,34 @@ class Submission(db.DynamicDocument):
         return self._siblings
 
 
-class VersionSequenceField(db.SequenceField):
-    '''A subclass of :class:`mongoengine.fields.SequenceField` for
-    automatically updating version numbers'''
-
-    def get_sequence_name(self):
-        obj_id = self.owner_document.submission._id
-        return '_'.join(('version', 'seq', str(obj_id)))
-
-
 class SubmissionVersion(db.Document):
     '''Stores versions of :class:`core.documents.Submission`
     instances'''
+    CHANNEL_CHOICES = (
+        ('SMS', _('SMS')),
+        ('Web', _('Web')),
+        ('API', _('API'))
+    )
     submission = db.ReferenceField(Submission, required=True)
     data = db.StringField(required=True)
-    version = VersionSequenceField()
     timestamp = db.DateTimeField(default=datetime.utcnow())
-    changed_by = db.ReferenceField(User, required=True)
+    channel = db.StringField(choices=CHANNEL_CHOICES, required=True)
+    identity = db.StringField(default='Unknown', required=True)
 
     deployment = db.ReferenceField(Deployment)
 
     meta = {
-        'ordering': ['-version', '-timestamp']
+        'ordering': ['-timestamp']
     }
+
+    @property
+    def version(self):
+        versions = list(SubmissionVersion.objects(
+            deployment=self.deployment,
+            submission=self.submission
+        ).only('id'))
+
+        return versions.index(self.id)
 
 
 class SubmissionComment(db.Document):
