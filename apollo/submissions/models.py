@@ -4,10 +4,12 @@ from ..formsframework.models import Form
 from ..locations.models import Location
 from ..participants.models import Participant
 from ..users.models import User
-from datetime import datetime
+from datetime import datetime, timedelta
 from flask.ext.mongoengine import BaseQuerySet
 from mongoengine import Q
 from pandas import DataFrame, isnull
+
+DEFAULT_SUBMISSION_RANGE = timedelta(hours=3)
 
 
 class SubmissionQuerySet(BaseQuerySet):
@@ -124,6 +126,40 @@ class Submission(db.DynamicDocument):
                 self.completion[group.name] = 'Partial'
             else:
                 self.completion[group.name] = 'Missing'
+
+    @property
+    def master(self):
+        if self.form.form_type == 'INCIDENT':
+            return None
+
+        if not hasattr(self, '_master'):
+            upper_bound = self.created + DEFAULT_SUBMISSION_RANGE
+            lower_bound = self.created - DEFAULT_SUBMISSION_RANGE
+
+            self._master = Submission.objects.get(
+                form=self.form,
+                location=self.location,
+                created__lte=upper_bound,
+                created__gte=lower_bound,
+                contributor=None,
+            )
+        return self._master
+
+    @property
+    def siblings(self):
+        if not hasattr(self, '_siblings'):
+            upper_bound = self.created + DEFAULT_SUBMISSION_RANGE
+            lower_bound = self.created - DEFAULT_SUBMISSION_RANGE
+
+            self._siblings = Submission.objects(
+                form=self.form,
+                location=self.location,
+                created__lte=upper_bound,
+                created__gte=lower_bound,
+                contributor__ne=None,               # exclude master
+                pk__ne=self.pk
+            )
+        return self._siblings
 
 
 class VersionSequenceField(db.SequenceField):

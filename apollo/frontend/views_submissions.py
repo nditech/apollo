@@ -15,6 +15,7 @@ from ..services import (
 )
 from . import route, permissions
 from .filters import generate_submission_filter
+from .forms import generate_submission_edit_form_class
 from .helpers import (
     displayable_location_types, get_event, get_form_list_menu)
 from functools import partial
@@ -24,7 +25,7 @@ bp = Blueprint('submissions', __name__, template_folder='templates',
                static_folder='static')
 
 
-@route(bp, '/submissions/<form_id>', methods=['GET', 'POST'])
+@route(bp, '/submissions/form/<form_id>', methods=['GET', 'POST'])
 @register_menu(bp, 'forms.checklists', _('Checklists'),
                dynamic_list_constructor=partial(get_form_list_menu,
                                                 form_type='CHECKLIST'))
@@ -82,7 +83,34 @@ def submission_create(form_id):
 @permissions.edit_submission.require(403)
 @login_required
 def submission_edit(submission_id):
-    pass
+    submission = submissions.get_or_404(pk=submission_id)
+    edit_form_class = generate_submission_edit_form_class(submission.form)
+    page_title = _('Edit submission')
+
+    if request.method == 'GET':
+        submission_form = edit_form_class(
+            obj=submission,
+            prefix=unicode(submission.pk)
+        )
+        sibling_forms = [
+            edit_form_class(
+                obj=sibling,
+                prefix=unicode(sibling.pk)
+            ) for sibling in submission.siblings
+        ] if submission.siblings else None
+        master_form = edit_form_class(
+            obj=submission.master,
+            prefix=unicode(submission.master.pk)
+        ) if submission.master else None
+
+        return render_template(
+            'frontend/nu_submission_edit.html',
+            page_title=page_title,
+            submission=submission,
+            submission_form=submission_form,
+            sibling_forms=sibling_forms,
+            master_form=master_form
+        )
 
 
 @route(bp, '/comments', methods=['POST'])
