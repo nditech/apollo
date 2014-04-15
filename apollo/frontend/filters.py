@@ -1,7 +1,6 @@
 from collections import defaultdict
 from flask.ext.babel import lazy_gettext as _
 from wtforms import widgets
-from .helpers import get_event
 from ..core import CharFilter, ChoiceFilter, FilterSet
 from ..helpers import _make_choices
 from ..services import (
