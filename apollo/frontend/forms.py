@@ -166,6 +166,24 @@ def generate_participant_import_mapping_form(headers, *args, **kwargs):
     return ParticipantImportMappingForm(*args, **kwargs)
 
 
+class BaseSubmissionEditForm(WTSecureForm):
+    STATUS_CHOICES = (
+        ('', _('Unmarked')),
+        ('confirmed', _('Confirmed')),
+        ('rejected', _('Rejected')),
+        ('citizen', _('Citizen Report')),
+    )
+    WITNESS_CHOICES = (
+        ('', _('Unspecified')),
+        ('witnessed', _('I witnessed the incident')),
+        ('after', _('I arrived just after the incident')),
+        ('reported', _('The incident was reported to me by someone else')),
+    )
+    status = SelectField(choices=STATUS_CHOICES)
+    witness = SelectField(choices=WITNESS_CHOICES)
+    incident_comment = StringField(widget=widgets.TextArea())
+
+
 def generate_submission_edit_form_class(form):
     form_fields = {}
 
@@ -202,7 +220,11 @@ def generate_submission_edit_form_class(form):
                 else:
                     form_fields[field.name] = BooleanField(field.name)
 
-    return type(str('SubmissionEditForm'), (WTSecureForm,), form_fields)
+    return type(
+        str('SubmissionEditForm'),
+        (BaseSubmissionEditForm,),
+        form_fields
+    )
 
 
 class ParticipantUploadForm(WTSecureForm):

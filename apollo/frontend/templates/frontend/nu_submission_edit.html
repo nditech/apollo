@@ -89,7 +89,34 @@ TODO: insert location path here
 {% else %}
 <table class="table table-bordered table-striped table-hover">
   <tbody>
-    
+    <tr>
+      <td colspan="2">&nbsp;</td>
+      <td>&nbsp;</td>
+    </tr>
+    {%- for group in form.groups %}
+    <tr>
+      <td colspan="3"><h4>{{ group.name }}</h4></td>
+    </tr>
+    {%- for field in group.fields %}
+    <tr>
+      <th style="text-align: center">{{ field.name }}</th>
+      <td>{{ field.description }}</td>
+      <td>{{ submission_form[field.name] }}</td>
+    </tr>
+    {% endfor -%}
+    {% endfor -%}
+    <tr>
+      <td>{%- trans -%}Witness{%- endtrans -%}</td>
+      <td colspan="2">{{ submission_form.witness }}</td>
+    </tr>
+    <tr>
+      <td>{%- trans -%}Description{%- endtrans -%}</td>
+      <td colspan="2">{{ submission_form.incident_comment(cols=40, rows=5) }}</td>
+    </tr>
+    <tr>
+      <td>{%- trans -%}Status{%- endtrans -%}</td>
+      <td colspan="2">{{ submission_form.status }}</td>
+    </tr>
   </tbody>
 </table>
 {% endif -%}
