@@ -1,10 +1,10 @@
-from flask import current_app
 from flask.ext.script import Command, prompt, prompt_pass
 from flask.ext.security.forms import RegisterForm
 from flask.ext.security.registerable import register_user
 from werkzeug.datastructures import MultiDict
 
 from ..services import users
+from ..models import Role
 
 
 class CreateUserCommand(Command):
@@ -46,3 +46,72 @@ class ListUsersCommand(Command):
     def run(self):
         for u in users.all():
             print 'User(id=%s email=%s)' % (u.id, u.email)
+
+
+class AddUserRoleCommand(Command):
+    """Add a role to a user"""
+
+    def run(self):
+        email = prompt('Email')
+        user = users.first(email=email)
+        role_name = prompt('Role')
+        role = Role.objects(name=role_name).first()
+        if not user:
+            print 'Invalid user'
+            return
+        if not role:
+            print 'Invalid role'
+            return
+        user.update(add_to_set__roles=role)
+        print 'Role added to User successfully'
+
+
+class RemoveUserRoleCommand(Command):
+    """Removes a role from a user"""
+
+    def run(self):
+        email = prompt('Email')
+        user = users.first(email=email)
+        role_name = prompt('Role')
+        role = Role.objects(name=role_name).first()
+        if not user:
+            print 'Invalid user'
+            return
+        if not role:
+            print 'Invalid role'
+            return
+        user.update(pull_all__roles=[role])
+        print 'Role removed from User successfully'
+
+
+class ListUserRolesCommand(Command):
+    """List roles a user has"""
+
+    def run(self):
+        email = prompt('Email')
+        user = users.first(email=email)
+        if not user:
+            print 'Invalid user'
+            return
+        for role in user.roles:
+            print 'Role(name=%s)' % (role.name)
+
+
+class ListRolesCommand(Command):
+    """List roles"""
+
+    def run(self):
+        for role in Role.objects.all():
+            print 'Role(name=%s)' % (role.name)
+
+
+class AddRoleCommand(Command):
+    """Add role"""
+
+    def run(self):
+        role_name = prompt('Role name')
+        role = Role.objects(name=role_name).first()
+        if not role:
+            role = Role(name=role_name)
+            role.save()
+            return

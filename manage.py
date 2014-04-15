@@ -6,7 +6,9 @@ from apollo.core import db
 from apollo import models, services
 from apollo.frontend import create_app
 from apollo.manage import \
-    (CreateUserCommand, DeleteUserCommand, ListUsersCommand)
+    (CreateUserCommand, DeleteUserCommand, ListUsersCommand,
+     AddUserRoleCommand, ListUserRolesCommand, RemoveUserRoleCommand,
+     ListRolesCommand, AddRoleCommand)
 
 app = create_app()
 
@@ -22,6 +24,11 @@ manager.add_command('shell', Shell(make_context=_mk_ctx))
 manager.add_command('createuser', CreateUserCommand())
 manager.add_command('deleteuser', DeleteUserCommand())
 manager.add_command('listusers', ListUsersCommand())
+manager.add_command('adduserrole', AddUserRoleCommand())
+manager.add_command('removeuserrole', RemoveUserRoleCommand())
+manager.add_command('listuserroles', ListUserRolesCommand())
+manager.add_command('listroles', ListRolesCommand())
+manager.add_command('addrole', AddRoleCommand())
 
 if __name__ == '__main__':
     manager.run()
