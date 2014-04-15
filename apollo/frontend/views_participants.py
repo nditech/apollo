@@ -101,7 +101,12 @@ def participant_edit(pk):
             participant.name = form.name.data
             participant.gender = form.gender.data
             participant.role = participant_roles.get(pk=form.role.data)
-            participant.supervisor = participants.get(pk=form.supervisor.data)
+            if form.supervisor.data:
+                participant.supervisor = participants.get(
+                    pk=form.supervisor.data
+                )
+            else:
+                participant.supervisor = None
             participant.location = locations.get(pk=form.location.data)
             participant.partner = participant_partners.get(
                 pk=form.partner.data)

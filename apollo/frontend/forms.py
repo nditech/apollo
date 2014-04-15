@@ -66,8 +66,7 @@ def generate_participant_edit_form(participant, data=None):
             _('Supervisor'),
             choices=_make_choices(
                 participants.find().scalar('id', 'name')
-            ),
-            validators=[validators.input_required()]
+            )
         )
         location = SelectField(
             _('Location'),
@@ -92,7 +91,7 @@ def generate_participant_edit_form(participant, data=None):
         gender=participant.gender.upper(),
         role=participant.role.id,
         partner=participant.partner.id,
-        supervisor=participant.supervisor.id
+        supervisor=participant.supervisor.id if participant.supervisor else None
     )
 
 
