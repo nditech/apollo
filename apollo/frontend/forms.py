@@ -166,7 +166,8 @@ def generate_participant_import_mapping_form(headers, *args, **kwargs):
     return ParticipantImportMappingForm(*args, **kwargs)
 
 
-class BaseSubmissionEditForm(WTSecureForm):
+def generate_submission_edit_form_class(form):
+    form_fields = {}
     STATUS_CHOICES = (
         ('', _('Unmarked')),
         ('confirmed', _('Confirmed')),
@@ -179,50 +180,52 @@ class BaseSubmissionEditForm(WTSecureForm):
         ('after', _('I arrived just after the incident')),
         ('reported', _('The incident was reported to me by someone else')),
     )
-    status = SelectField(choices=STATUS_CHOICES)
-    witness = SelectField(choices=WITNESS_CHOICES)
-    incident_comment = StringField(widget=widgets.TextArea())
-
-
-def generate_submission_edit_form_class(form):
-    form_fields = {}
 
     for index, group in enumerate(form.groups):
         for field in group.fields:
-            options = field.options
+            if field.represents_boolean:
+                form_fields[field.name] = BooleanField(field.name)
 
-            if options:
-                choices = [(v, k) for k, v in options.iteritems()]
-
+                # if field.allows_multiple_values:
+                #     form_fields[field.name] = IntegerField(field.name)
+                # else:
+                #     form_fields[field.name] = IntegerField(field.name)
+            else:
+                options = field.options
                 if field.allows_multiple_values:
+                    choices = [(v, k) for k, v in options.iteritems()]
                     form_fields[field.name] = SelectMultipleField(
                         field.name,
                         choices=choices,
                         coerce=int,
                         option_widget=widgets.CheckboxInput(),
-                        widget=widgets.ListWidget(prefix_label=False)
+                        widget=widgets.ListWidget()
                     )
                 else:
-                    form_fields[field.name] = RadioField(
-                        field.name,
-                        choices=choices,
-                        coerce=int,
-                    )
-            else:
-                if form.form_type == 'CHECKLIST':
-                    form_fields[field.name] = IntegerField(
-                        field.name,
-                        validators=[validators.number_range(
-                            min=field.min_value or 0,
-                            max=field.max_value or 9999
-                        )]
-                    )
-                else:
-                    form_fields[field.name] = BooleanField(field.name)
+                    if options:
+                        form_fields[field.name] = IntegerField(
+                            field.name,
+                            validators=[validators.AnyOf([k for k in options])]
+                        )
+                    else:
+                        form_fields[field.name] = IntegerField(
+                            field.name,
+                            validators=[validators.number_range(
+                                min=field.min_value or 0,
+                                max=field.max_value or 9999
+                            )]
+                        )
+
+    if form.form_type == 'INCIDENT':
+        form_fields['status'] = SelectField(choices=STATUS_CHOICES)
+        form_fields['witness'] = SelectField(choices=WITNESS_CHOICES)
+        form_fields['incident_comment'] = StringField(
+            widget=widgets.TextArea()
+        )
 
     return type(
         str('SubmissionEditForm'),
-        (BaseSubmissionEditForm,),
+        (WTSecureForm,),
         form_fields
     )
 

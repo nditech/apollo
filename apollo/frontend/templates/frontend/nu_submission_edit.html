@@ -75,7 +75,15 @@ TODO: insert location path here
   {% for field in group.fields %}
   <tr>
     <th>{{ field.name }}</th>
-    <td>{{ field.description }}</td>
+    <td>{{ field.description }}
+      {%- if field.options %}
+      <span class="options">
+      {% for description, value in field.options.iteritems() %}
+      <span class="option"><strong>({{ value }})</strong> {{ description }}</span>
+      {% endfor %}
+      </span>
+      {%- endif %}
+      </td>
     <td>{{ submission_form[field.name] }}</td>
     {% for sibling_form in sibling_forms %}
     <td>{{ sibling_form[field.name] }}</td>
@@ -100,7 +108,15 @@ TODO: insert location path here
     {%- for field in group.fields %}
     <tr>
       <th style="text-align: center">{{ field.name }}</th>
-      <td>{{ field.description }}</td>
+      <td>{{ field.description }}
+      {%- if field.options %}
+      <span class="options">
+      {% for description, value in field.options.iteritems() %}
+      <span class="option"><strong>({{ value }})</strong> {{ description }}</span>
+      {% endfor %}
+      </span>
+      {%- endif %}
+      </td>
       <td>{{ submission_form[field.name] }}</td>
     </tr>
     {% endfor -%}
@@ -120,6 +136,8 @@ TODO: insert location path here
   </tbody>
 </table>
 {% endif -%}
+<button type="submit" class"btn btn-primary btn-large">Save</button>
+<a class="btn btn-default btn-large" href="{{ url_for('submissions.submission_list', form_id=form.pk) }}">Cancel</a>
 </form>
 </div>
 {% endblock %}

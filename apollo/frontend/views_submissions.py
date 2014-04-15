@@ -2,7 +2,8 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 from flask import (
-    Blueprint, jsonify, make_response, render_template, request
+    Blueprint, jsonify, make_response, redirect, render_template, request,
+    url_for
 )
 from flask.ext.babel import lazy_gettext as _
 from flask.ext.security import current_user, login_required
@@ -10,6 +11,7 @@ from flask.ext.menu import register_menu
 from tablib import Dataset
 from ..analyses.incidents import incidents_csv
 from ..models import Location
+from ..settings import EDIT_OBSERVER_CHECKLIST
 from ..services import (
     forms, location_types, submissions, submission_comments
 )
@@ -111,6 +113,98 @@ def submission_edit(submission_id):
             sibling_forms=sibling_forms,
             master_form=master_form
         )
+    else:
+        if submission.form.form_type == 'CHECKLIST' and \
+                EDIT_OBSERVER_CHECKLIST:
+            submission_form = edit_form_class(
+                request.form,
+                prefix=unicode(submission.pk)
+            )
+            sibling_forms = [
+                edit_form_class(
+                    request.form,
+                    prefix=unicode(sibling.pk)
+                ) for sibling in submission.siblings
+            ] if submission.siblings else None
+            master_form = edit_form_class(
+                request.form,
+                prefix=unicode(submission.master.pk)
+            ) if submission.master else None
+
+            submission_form_valid = submission_form.validate()
+            master_form_valid = master_form.validate() if master_form else True
+            sibling_forms_valid = all(
+                [s_f.validate() for s_f in sibling_forms]
+            ) if sibling_forms else True
+
+            if submission_form_valid and master_form_valid and \
+                    sibling_forms_valid:
+                submission_form.populate_obj(submission)
+                submission.save()
+
+                if submission.siblings:
+                    for sibling, sibling_form in zip(
+                        submission.siblings, sibling_forms
+                    ):
+                        sibling_form.populate_obj(sibling)
+                        sibling.save()
+
+                if submission.master:
+                    master_form.populate_obj(submission.master)
+                    submission.master.save()
+                return redirect(
+                    url_for('submissions.submission_list',
+                            form_id=unicode(submission.form.pk))
+                    )
+            else:
+                return render_template(
+                    'frontend/nu_submission_edit.html',
+                    page_title=page_title,
+                    submission=submission,
+                    submission_form=submission_form,
+                    sibling_forms=sibling_forms,
+                    master_form=master_form
+                )
+        else:
+            submission_form = edit_form_class(
+                request.form,
+                prefix=unicode(submission.pk)
+            )
+
+            if submission_form.validate():
+                if submission.form.form_type == 'INCIDENT':
+                    submission_form.populate_obj(submission)
+                    submission.save()
+                    return redirect(
+                        url_for(
+                            'submissions.submission_list',
+                            form_id=unicode(submission.form.pk))
+                    )
+                else:
+                    return redirect(
+                        url_for(
+                            'submissions.submission_list',
+                            form_id=unicode(submission.form.pk))
+                    )
+            else:
+                sibling_forms = [
+                    edit_form_class(
+                        request.form,
+                        prefix=unicode(sibling.pk)
+                    ) for sibling in submission.siblings
+                ] if submission.siblings else None
+                master_form = edit_form_class(
+                    request.form,
+                    prefix=unicode(submission.master.pk)
+                ) if submission.master else None
+                return render_template(
+                    'frontend/nu_submission_edit.html',
+                    page_title=page_title,
+                    submission=submission,
+                    submission_form=submission_form,
+                    sibling_forms=sibling_forms,
+                    master_form=master_form
+                )
 
 
 @route(bp, '/comments', methods=['POST'])
