@@ -188,9 +188,9 @@ class SubmissionVersion(db.Document):
         versions = list(SubmissionVersion.objects(
             deployment=self.deployment,
             submission=self.submission
-        ).only('id'))
+        ).scalar('id'))
 
-        return versions.index(self.id)
+        return versions.index(self.id) + 1
 
 
 class SubmissionComment(db.Document):
