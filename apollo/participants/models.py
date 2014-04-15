@@ -78,7 +78,10 @@ class Participant(db.DynamicDocument):
     def set_phone(self, value):
         # TODO: blind overwrite is silly. find a way to ensure the number
         # doesn't already exist
-        self.phones[0].number = value
+        if not self.phones:
+            self.phones.append(PhoneContact(number=value, verified=True))
+        else:
+            self.phones[0].number = value
         self.save()
         self.reload()
 
