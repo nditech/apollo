@@ -69,9 +69,17 @@ class Participant(db.DynamicDocument):
     def __unicode__(self):
         return self.name
 
-    @property
-    def phone(self):
+    def get_phone(self):
         if self.phones:
             return self.phones[0].number
         else:
             return None
+
+    def set_phone(self, value):
+        # TODO: blind overwrite is silly. find a way to ensure the number
+        # doesn't already exist
+        self.phones[0].number = value
+        self.save()
+        self.reload()
+
+    phone = property(get_phone, set_phone)
