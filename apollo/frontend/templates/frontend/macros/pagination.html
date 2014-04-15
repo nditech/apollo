@@ -7,7 +7,7 @@
 <li {% if pg == pager.page %}class="active"{% endif %}><a href="{{ url_for(endpoint, page=pg, **args) }}">{{ pg }}</a></li>
 {% endfor %}
 <li {% if not pager.has_next %}class="disabled"{% endif %}><a title="{% trans %}Next page{% endtrans %}" href="{{ url_for(endpoint, page=pager.next_num, **args) }}">&rarr;</a></li>
-<li {% if pager.page == pager.pages %}class="disabled"{% endif %}><a title="{% trans %}Last page{% endtrans %}" href="{{ url_for(endpoint, page=pager.pages, **args) }}">&raquo;</a></li>
+<li {% if pager.page == pager.pages or not pager.pages %}class="disabled"{% endif %}><a title="{% trans %}Last page{% endtrans %}" href="{{ url_for(endpoint, page=pager.pages, **args) }}">&raquo;</a></li>
 </ul>
 </div>
 {%- set start = (pager.page - 1) * pager.per_page + 1 -%}
@@ -17,9 +17,11 @@
 {%- set end = pager.page * pager.per_page -%}
 {%- endif -%}
 {%- set total = pager.total -%}
+{% if total %}
 <div class="text-center">
 <ul class="pagination pagination-centered" style="margin-top:0px;">
 <li class="disabled"><a>{% trans %}Showing <strong>{{ start }}-{{ end }}</strong> of <strong>{{ total }}</strong>{% endtrans %}</a></li>
 </ul>
 </div>
+{% endif %}
 {% endmacro %}
