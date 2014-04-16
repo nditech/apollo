@@ -63,6 +63,8 @@ class SubmissionQuerySet(BaseQuerySet):
             qs = self.only(*selected_fields)
 
         df = DataFrame(list(qs.as_pymongo()))
+        if df.empty:
+            return df
 
         # do cleanup of subdocument fields
         for field in self.SUBDOCUMENT_FIELDS:

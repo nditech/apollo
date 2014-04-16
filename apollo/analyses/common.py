@@ -44,7 +44,7 @@ def percent_of(a, b):
     '''Returns the percentage of b that is a'''
     if np.isnan(a) or b == 0:
         return 0
-    return (100 * float(a) / b)
+    return float(100 * float(a) / b)
 
 
 def generate_numeric_field_stats(tag, dataset):
@@ -282,12 +282,9 @@ def generate_incident_field_stats(tag, dataset, all_tags, labels=None):
             reported = dataset.get_group(group_name).get(tag).count()
             total = sum([dataset.get_group(group_name).get(field_tag).count() for field_tag in all_tags])
             missing = total - reported
-            try:
-                percent_reported = float(reported) / float(total) * 100.0
-                percent_missing = float(missing) / float(total) * 100.0
-            except ZeroDivisionError:
-                percent_reported = 0
-                percent_missing = 0
+
+            percent_reported = percent_of(reported, total)
+            percent_missing = percent_of(missing, total)
 
             location_stats[group_name] = {}
             location_stats[group_name]['missing'] = missing
@@ -303,12 +300,9 @@ def generate_incident_field_stats(tag, dataset, all_tags, labels=None):
         reported = dataset[tag].count()
         total = sum([dataset[field_tag].count() for field_tag in all_tags])
         missing = total - reported
-        try:
-            percent_reported = float(reported) / float(total) * 100.0
-            percent_missing = float(missing) / float(total) * 100.0
-        except ZeroDivisionError:
-            percent_reported = 0
-            percent_missing = 0
+
+        percent_reported = percent_of(reported, total)
+        percent_missing = percent_of(missing, total)
 
         stats = {'reported': reported,
                  'missing': missing, 'percent_reported': percent_reported,
@@ -324,8 +318,8 @@ def generate_field_stats(field, dataset):
     ''' In order to simplify the choice on what analysis to perform
     this method will check a few conditions and return the appropriate
     analysis for the field'''
-    options = field.values()
-    labels = field.keys()
+    options = field.options.values()
+    labels = field.options.keys()
 
     if options:
         if field.allows_multiple_values:
@@ -338,3 +332,75 @@ def generate_field_stats(field, dataset):
             )
     else:
         return generate_numeric_field_stats(field.name, dataset)
+
+
+def generate_incidents_data(form, qs, location_root, grouped=True, tags=None):
+    '''Generates process statistics for either a location and its descendants,
+    or for a sample. Optionally generates statistics for an entire region, or
+    for groups of regions.
+
+    Parameters
+    - form: a Form instance
+    - qs: a queryset of submissions
+    - location_root: a root location to retrieve statistics for
+    - grouped: when retrieving statistics for a location, specify whether or
+    not to retrieve statistics on a per-group basis.
+    - tags: an iterable of tags to retrieve statistics for'''
+    incidents_summary = {}
+
+    location_types = {
+        child.location_type for child in location_root.children()
+    }
+
+    if not tags:
+        tags = [field.name for group in form.groups for field in group.fields]
+
+    try:
+        data_frame = qs.to_dataframe()
+
+        if data_frame.empty:
+            return incidents_summary
+    except Exception:
+        return incidents_summary
+
+    if grouped:
+        if not location_types:
+            return incidents_summary
+
+        incidents_summary['type'] = 'grouped'
+        incidents_summary['groups'] = []
+        incidents_summary['locations'] = set()
+        incidents_summary['top'] = []
+        incidents_summary['tags'] = tags
+
+        # top level summaries
+        for tag in tags:
+            field_stats = generate_incident_field_stats(tag, data_frame, tags)
+            field = form.get_field_by_tag(tag)
+
+            incidents_summary['top'].append(
+                (tag, field.description, field_stats)
+            )
+
+        # per-location level summaries
+        for location_type in location_types:
+            data_group = data_frame.groupby(location_type)
+            location_stats = {}
+
+            for tag in tags:
+                field_stats = generate_incident_field_stats(
+                    tag, data_group, tags)
+
+                incidents_summary['locations'] = \
+                    field_stats['locations'].keys()
+
+                for location in field_stats['locations']:
+                    field = form.get_field_by_tag(tag)
+                    location_stats.setdefault(location, {}).update({
+                        tag: (field.description,
+                              field_stats['locations'][location])})
+
+            group_location_stats = [(location, location_stats[location]) for location in sorted(location_stats.keys())]
+            incidents_summary['groups'].append((location_type, group_location_stats))
+
+    return incidents_summary
