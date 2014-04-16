@@ -6,3 +6,4 @@ from .participants.models import \
 from .submissions.models import \
     (Submission, SubmissionVersion, SubmissionComment)
 from .users.models import Role, User, Need
+from .messaging.models import Message

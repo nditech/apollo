@@ -6,6 +6,8 @@ from .participants import \
 from .submissions import \
     (SubmissionsService, SubmissionVersionsService, SubmissionCommentsService)
 from .users import UsersService, PermsService, UserUploadsService
+from .messaging import MessagesService
+
 
 events = EventsService()
 forms = FormsService()
@@ -21,3 +23,4 @@ submissions = SubmissionsService()
 users = UsersService()
 perms = PermsService()
 user_uploads = UserUploadsService()
+messages = MessagesService()
