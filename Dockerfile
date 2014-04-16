@@ -15,7 +15,8 @@ ADD README /app/
 ADD apollo/ /app/apollo/
 ADD doc/ /app/doc/
 ADD Procfile.docker /app/Procfile
+ADD manage.py /app/
 
 WORKDIR /app/
-CMD ["honco","start"]
+CMD ["honcho","start"]
 EXPOSE 5000
