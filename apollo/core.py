@@ -4,10 +4,12 @@ from flask.ext.babel import Babel
 from flask.ext.mail import Mail
 from flask.ext.menu import Menu
 from flask.ext.mongoengine import MongoEngine
+from flask.ext.restful import Api
 from flask.ext.security import Security
 import six
 from wtforms import Form, fields
 
+api = Api()
 babel = Babel()
 db = MongoEngine()
 mail = Mail()

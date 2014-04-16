@@ -1,7 +1,7 @@
 from celery import Celery
 from flask import Flask, request
 
-from .core import babel, db, mail
+from .core import api, babel, db, mail
 from .helpers import register_blueprints
 
 
@@ -20,6 +20,7 @@ def create_app(package_name, package_path, settings_override=None):
     app.config.from_object('apollo.settings')
     app.config.from_object(settings_override)
 
+    api.init_app(app)
     babel.init_app(app)
     db.init_app(app)
     mail.init_app(app)
