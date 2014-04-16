@@ -6998,6 +6998,18 @@ table .header-fixed {
 .qtipmodal-ie6fix{
 	position: absolute !important;
 }
+#delete{
+ margin-left:-24px;
+ position:relative;
+ border-radius:6px 0 0 6px;
+ -webkit-border-radius:6px 0 0 6px;
+ -moz-border-radius:6px 0 0 6px;
+ vertical-align:middle;
+ height:38px;
+ text-shadow: 1px 1px 2px rgba(0,0,0,0.25); 
+}
+.i_custom{vertical-align:middle; padding-top:.3em;
+}
 label{font-size: 13px;}
 .modal{transition: none;}
 .btn-group > .btn:first-child:not(:last-child):not(.dropdown-toggle) {

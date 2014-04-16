@@ -27,12 +27,19 @@
 {%- endif -%}
     <div class="row-fluid">
       <div>
+
         <form class="form-inline" action="{{ request.url }}" method="POST">
           {{ form.csrf_token() }}{{ form.select_superset() }}
+          <!--<div class="checkbox" style="margin-left:10px;">
+            <label>
+              Select All
+            </label><a href="#" class="btn btn-xs"><i class="glyphicon glyphicon-trash"></i></a>
+          </div>-->
+          <a href="#" id="delete" class="btn btn-sm btn-danger pull-left"><i class="glyphicon glyphicon-trash i_custom"></i></a>
           <table class="table table-bordered table-striped">
            <thead>
              <tr>
-               <th><input type="checkbox" id="select_all" name="select_all"></th>
+              <th><input type="checkbox" class="checked" id="select_all" name="select_all"></th>
                <th>{% trans %}ID{% endtrans %}</th>
                {%- for location_type in location_types -%}
                <th>{{ location_type.name }}</th>
@@ -49,7 +56,7 @@
            <tbody>
              {% for participant in participants.items %}
              <tr>
-               <td><input type="checkbox" name="ids" value="{{ participant.id }}"></td>
+               <td><input type="checkbox" class="checked" name="ids" value="{{ participant.id }}"></td>
                <td>{{ participant.participant_id }}</td>
                {%- for location_type in location_types -%}
                <td>{{ participant.location.ancestor(location_type.name).name }}</td>
@@ -77,9 +84,30 @@
     </div>
 {%- endblock -%}
 </form>
-{%- block javascripts -%}
+{%- block scripts -%}
 <script src="{{ url_for('static', filename='js/filters.js') }}"></script>
 <script src="{{ url_for('static', filename='js/forms.js') }}"></script>
+<script type="text/javascript">
+  $(function(){
+    $('#delete').hide();
+    $('input[type="checkbox"]').click(function() {
+      if (this.checked)
+    {
+      $('#delete').fadeIn('slow');
+    }
+    else
+    {
+        if ( !$('.checked:checked').length )
+        {
+            $('#delete').fadeOut('slow');
+        }
+    }
+
+  });
+});
+
+
+</script>
 {% if perms.send_messages.can() %}
 {# TODO: send_message paginator.count #}
 {% endif %}
