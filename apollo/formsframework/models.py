@@ -100,6 +100,20 @@ class Form(db.Document):
     def __unicode__(self):
         return self.name
 
+    # added so we don't always have to iterate over everything
+    # in the (admittedly rare) cases we need a specific field
+    def get_field_by_tag(self, tag):
+        if not hasattr(self, '_field_cache'):
+            self._field_cache = {
+                f.name: f for g in self.groups for f in g.fields}
+        return self._field_cache.get(tag)
+
+    # see comment on get_field_by_tag
+    def get_group_by_name(self, name):
+        if not hasattr(self, '_group_cache'):
+            self._group_cache = {g.name: g for g in self.groups}
+        return self._group_cache.get(name)
+
     def clean(self):
         '''Ensures all :class: `core.documents.FormGroup` instances for this
         document have their slug set.'''
