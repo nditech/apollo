@@ -10,6 +10,7 @@ assets/
 bin/
 include/
 lib/
+man/
 messages.mo
 share/
 src/
