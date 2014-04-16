@@ -1,5 +1,12 @@
 from .. import services
+from flask.ext import wtf
 import wtforms
+
+
+class MessagesFilterForm(wtf.Form):
+    mobile = wtforms.StringField()
+    text = wtforms.StringField()
+    date = wtforms.DateField(format="%d-%m-%Y")
 
 
 class BaseHttpForm(wtforms.Form):
