@@ -1,3 +1,4 @@
+from flask.ext.babel import lazy_gettext as _
 from flask.ext.mongoengine import BaseQuerySet
 from mongoengine import Q
 from ..core import db
@@ -45,8 +46,11 @@ class Participant(db.DynamicDocument):
     '''Storage for participant contact information'''
 
     GENDER = (
-        ('F', 'Female'),
-        ('M', 'Male'))
+        ('F', _('Female')),
+        ('M', _('Male')),
+        ('', _('Unspecified'))
+    )
+
     participant_id = db.StringField()
     name = db.StringField()
     role = db.ReferenceField('ParticipantRole')
