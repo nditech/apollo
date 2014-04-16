@@ -3,7 +3,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from flask import (
     Blueprint, jsonify, make_response, redirect, render_template, request,
-    url_for
+    url_for, current_app
 )
 from flask.ext.babel import lazy_gettext as _
 from flask.ext.security import current_user, login_required
@@ -24,7 +24,6 @@ from .helpers import (
     displayable_location_types, get_event, get_form_list_menu)
 from functools import partial
 
-PAGE_SIZE = 25
 bp = Blueprint('submissions', __name__, template_folder='templates',
                static_folder='static')
 
@@ -72,7 +71,8 @@ def submission_list(form_id):
         form_fields=form_fields,
         location_types=loc_types,
         page_title=page_title,
-        pager=query_filterset.qs.paginate(page=page, per_page=PAGE_SIZE)
+        pager=query_filterset.qs.paginate(
+            page=page, per_page=current_app.config.get('PAGE_SIZE'))
     )
 
 
