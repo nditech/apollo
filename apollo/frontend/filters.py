@@ -7,6 +7,7 @@ from ..services import (
     events, forms, locations, location_types, participants,
     participant_partners, participant_roles, samples)
 from ..wtforms_ext import ExtendedSelectField
+from .helpers import get_event
 
 
 class EventFilter(ChoiceFilter):
@@ -200,7 +201,7 @@ class BaseSubmissionFilterSet(FilterSet):
     sample = SampleFilter()
 
     def __init__(self, *args, **kwargs):
-        event = kwargs.pop('default_event', events.default())
+        event = kwargs.pop('default_event', get_event())
         super(BaseSubmissionFilterSet, self).__init__(*args, **kwargs)
         self.declared_filters['event'] = EventFilter(
             widget=widgets.HiddenInput(), default=unicode(event.id))
