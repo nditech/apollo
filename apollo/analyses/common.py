@@ -334,14 +334,14 @@ def generate_field_stats(field, dataset):
         return generate_numeric_field_stats(field.name, dataset)
 
 
-def generate_incidents_data(form, qs, location_root, grouped=True, tags=None):
+def generate_incidents_data(form, queryset, location_root, grouped=True, tags=None):
     '''Generates process statistics for either a location and its descendants,
     or for a sample. Optionally generates statistics for an entire region, or
     for groups of regions.
 
     Parameters
     - form: a Form instance
-    - qs: a queryset of submissions
+    - queryset: a queryset of submissions
     - location_root: a root location to retrieve statistics for
     - grouped: when retrieving statistics for a location, specify whether or
     not to retrieve statistics on a per-group basis.
@@ -356,7 +356,7 @@ def generate_incidents_data(form, qs, location_root, grouped=True, tags=None):
         tags = [field.name for group in form.groups for field in group.fields]
 
     try:
-        data_frame = qs.to_dataframe()
+        data_frame = queryset.to_dataframe()
 
         if data_frame.empty:
             return incidents_summary
@@ -402,5 +402,113 @@ def generate_incidents_data(form, qs, location_root, grouped=True, tags=None):
 
             group_location_stats = [(location, location_stats[location]) for location in sorted(location_stats.keys())]
             incidents_summary['groups'].append((location_type, group_location_stats))
+    else:
+        incidents_summary['type'] = 'normal'
+        sample_summary = []
+
+        selected_groups = set()
+        for group in form.groups:
+            for field in group.fields:
+                if field.name in tags:
+                    selected_groups.add(group)
+
+        for group in selected_groups:
+            group_summary = []
+
+            for tag in tags:
+                field_stats = generate_incident_field_stats(tag, data_frame, tags)
+                field = form.get_field_by_tag(tag)
+                group_summary.append((tag, field.description, field_stats))
+
+            sample_summary.append((group.name, group_summary))
+
+        incidents_summary['summary'] = sample_summary
 
     return incidents_summary
+
+
+def generate_process_data(form, queryset, location_root, grouped=True, tags=None):
+    '''Generates process statistics for either a location and its descendants,
+    or for a sample. Optionally generates statistics for an entire region, or
+    for groups of regions.
+
+    Parameters
+    - form: a Form instance
+    - queryset: a queryset of submissions
+    - location_root: a root location to retrieve statistics for
+    - grouped: when retrieving statistics for a location, specify whether or
+    not to retrieve statistics on a per-group basis.
+    - tags: an iterable of tags to retrieve statistics for'''
+    process_summary = {}
+
+    location_types = {
+        child.location_type for child in location_root.children()
+    }
+
+    if not tags:
+        tags = [field.name for group in form.groups for field in group.fields]
+
+    try:
+        data_frame = queryset.to_dataframe()
+
+        if data_frame.empty:
+            return process_summary
+    except Exception:
+        return process_summary
+
+    if grouped:
+        if not location_types:
+            return process_summary
+
+        process_summary['type'] = 'grouped'
+        process_summary['groups'] = []
+        process_summary['top'] = []
+
+        # top level summaries
+        for tag in tags:
+            field = form.get_field_by_tag(tag)
+            field_stats = generate_field_stats(field, data_frame)
+
+            process_summary['top'].append(
+                (tag, field.description, field_stats)
+            )
+
+        # per-location level summaries
+        for location_type in location_types:
+            data_group = data_frame.groupby(location_type)
+            location_type_summary = []
+
+            for tag in tags:
+                field = form.get_field_by_tag(tag)
+                field_stats = generate_field_stats(field, data_group)
+
+                location_type_summary.append((
+                    tag, field.description, field_stats
+                ))
+
+            process_summary['groups'].append(
+                (location_type, location_type_summary)
+            )
+    else:
+        process_summary['type'] = 'normal'
+        sample_summary = []
+
+        selected_groups = set()
+        for group in form.groups:
+            for field in group.fields:
+                if field.name in tags:
+                    selected_groups.add(group)
+
+        for group in selected_groups:
+            group_summary = []
+
+            for tag in tags:
+                field = form.get_field_by_tag(tag)
+                field_stats = generate_field_stats(field, data_frame)
+                group_summary.append((tag, field.description, field_stats))
+
+            sample_summary.append((group.name, group_summary))
+
+        process_summary['summary'] = sample_summary
+
+    return process_summary
