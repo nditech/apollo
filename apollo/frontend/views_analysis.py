@@ -5,6 +5,9 @@ from collections import OrderedDict
 from flask import Blueprint, render_template, request
 from flask.ext.babel import lazy_gettext as _
 from flask.ext.menu import register_menu
+from ..analyses.common import (
+    generate_incidents_data, generate_process_data
+)
 from ..services import forms, locations, location_types, submissions
 from .filters import (
     generate_submission_analysis_filter,
@@ -61,6 +64,7 @@ def _process_analysis(form_id, location_id=None, tag=None):
 
     # set up template context
     context = {}
+    context['dataframe'] = filter_set.qs.to_dataframe()
     context['page_title'] = page_title
     context['display_tag'] = display_tag
     context['filter_form'] = filter_set.form
@@ -82,9 +86,8 @@ def _process_analysis(form_id, location_id=None, tag=None):
                 on_analysis_view=True)
             context['incidents'] = filter_set.qs
         else:
-            # TODO: fix this
-            context['incident_summary'] = None
+            context['incident_summary'] = generate_incidents_data(form, filter_set.qs, location, grouped)
     else:
-        context['process_summary'] = None
+        context['process_summary'] = generate_process_data(form, filter_set.qs, location, grouped=True)
 
     return render_template(template_name, **context)
