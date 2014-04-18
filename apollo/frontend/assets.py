@@ -2,6 +2,7 @@ from flask.ext.assets import Bundle, Environment
 
 apollo_css = Bundle('css/bootstrap.css',
                     'css/select2.css',
+                    'css/select2-bootstrap.css',
                     'css/table-fixed-header.css',
                     'css/datepicker.css',
                     'css/jquery.qtip.css',
