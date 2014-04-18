@@ -192,7 +192,7 @@ def generate_submission_edit_form_class(form):
             else:
                 options = field.options
                 if field.allows_multiple_values:
-                    choices = [(v, k) for k, v in options.iteritems()]
+                    choices = [(k, v) for k, v in options.iteritems()]
                     form_fields[field.name] = SelectMultipleField(
                         field.name,
                         choices=choices,
@@ -204,7 +204,7 @@ def generate_submission_edit_form_class(form):
                     if options:
                         form_fields[field.name] = IntegerField(
                             field.name,
-                            validators=[validators.AnyOf([k for k in options])]
+                            validators=[validators.AnyOf([options[k] for k in options])]
                         )
                     else:
                         form_fields[field.name] = IntegerField(
