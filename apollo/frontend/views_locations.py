@@ -32,3 +32,12 @@ def location_edit(pk):
             return redirect(url_for('core.location_list'))
 
     return render_template(template_name, form=form, page_title=page_title)
+
+
+@route(bp, '/locations/builder')
+@login_required
+def locations_builder():
+    template_name = 'frontend/location_builder.html'
+    page_title = _('Locations Structure Builder')
+
+    return render_template(template_name, page_title=page_title)
