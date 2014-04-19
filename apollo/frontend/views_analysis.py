@@ -14,6 +14,7 @@ from .filters import (
     generate_submission_analysis_filter,
     generate_critical_incident_location_filter
 )
+from .helpers import analysis_breadcrumb_data, analysis_navigation_data
 
 
 bp = Blueprint('analysis', __name__, template_folder='templates',
@@ -72,6 +73,10 @@ def _process_analysis(form_id, location_id=None, tag=None):
     context['form'] = form
     context['location'] = location
     context['field_groups'] = OrderedDict()
+    context['breadcrumb_data'] = analysis_breadcrumb_data(
+        form, location, display_tag)
+    context['navigation_data'] = analysis_navigation_data(
+        form, location, display_tag)
 
     for group in form.groups:
         process_fields = sorted([
@@ -99,9 +104,11 @@ def process_analysis(form_id):
     return _process_analysis(form_id)
 
 
+@route(bp, '/submissions/analysis/process/form/<form_id>/location/<location_id>')
 def process_analysis_with_location(form_id, location_id):
     return _process_analysis(form_id, location_id)
 
 
+@route(bp, '/submissions/analysis/process/form/<form_id>/location/<location_id>/tag/<tag>')
 def process_analysis_with_location_and_tag(form_id, location_id, tag):
     return _process_analysis(form_id, location_id, tag)

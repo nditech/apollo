@@ -1,8 +1,8 @@
-{% extends 'frontend/_layout.html' %}
+{% extends 'frontend/_layout.html' -%}{% from 'frontend/macros/analysis_breadcrumb.html' import render_analysis_breadcrumb -%}{% from 'frontend/macros/analysis_navigation.html' import render_analysis_navigation %}
 {% block content %}
 <div class="row">
 	<div class="col-md-9">
-		<!-- Here be the breadcrumb -->
+	{{ render_analysis_breadcrumb(breadcrumb_data) }}
 	</div>
 	<div class="col-md-3">
 		<form class="form-inline pull-right" method="GET" accept-charset="utf-8">
@@ -13,7 +13,7 @@
 </div>
 <div class="row">
 	<div class="col-md-12">
-		<!-- Here be the navigation -->
+		{{ render_analysis_navigation(navigation_data) }}
 	</div>
 </div>
 <div class="row">
