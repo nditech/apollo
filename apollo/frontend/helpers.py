@@ -5,23 +5,6 @@ from flask.ext.principal import Permission, ItemNeed, RoleNeed
 from urlparse import urlparse
 
 
-def gen_page_list(pager, window_size=10):
-    if window_size > pager.pages:
-        window_size = pager.pages
-    window_size -= 1
-    start = max(pager.page - (window_size / 2), 1)
-    end = min(pager.page + (window_size / 2), pager.pages)
-
-    diff = end - start
-    if diff < window_size:
-        shift = window_size - diff
-        if (start - shift) > 0:
-            start -= shift
-        else:
-            end += shift
-    return range(start, end + 1)
-
-
 def get_deployment(hostname):
     """
     Retrieves the deployment based on the host represented in the

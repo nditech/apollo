@@ -9,6 +9,7 @@ from ..analyses.common import (
     generate_incidents_data, generate_process_data
 )
 from ..services import forms, locations, location_types, submissions
+from . import route
 from .filters import (
     generate_submission_analysis_filter,
     generate_critical_incident_location_filter
@@ -39,14 +40,14 @@ def _process_analysis(form_id, location_id=None, tag=None):
             display_tag = tag
             grouped = True
         else:
-            template_name = 'frontend/checklist_summary.html'
+            template_name = 'frontend/nu_checklist_summary.html'
             tags.extend([
                 field.name for group in form.groups
                 for field in group.fields if field.analysis_type == 'PROCESS'
             ])
             grouped = False
 
-        queryset = submissions(form=form, contributor=None).filter_in(location)
+        queryset = submissions.find(form=form, contributor=None).filter_in(location)
     else:
         grouped = True
         queryset = submissions(form=form).filter_in(location)
@@ -74,8 +75,8 @@ def _process_analysis(form_id, location_id=None, tag=None):
 
     for group in form.groups:
         process_fields = sorted([
-            field.name for field in group.fields
-            if field.analysis_type == 'PROCESS'])
+            field for field in group.fields
+            if field.analysis_type == 'PROCESS'], key=lambda x: x.name)
         context['field_groups'][group.name] = process_fields
 
     # processing for incident forms
@@ -91,3 +92,16 @@ def _process_analysis(form_id, location_id=None, tag=None):
         context['process_summary'] = generate_process_data(form, filter_set.qs, location, grouped=True)
 
     return render_template(template_name, **context)
+
+
+@route(bp, '/submissions/analysis/process/form/<form_id>')
+def process_analysis(form_id):
+    return _process_analysis(form_id)
+
+
+def process_analysis_with_location(form_id, location_id):
+    return _process_analysis(form_id, location_id)
+
+
+def process_analysis_with_location_and_tag(form_id, location_id, tag):
+    return _process_analysis(form_id, location_id, tag)

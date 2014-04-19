@@ -11,7 +11,8 @@ from .. import factory, models, services
 from ..core import db, menu, security
 
 from . import assets, permissions
-from .helpers import gen_page_list, set_request_presets
+from .helpers import set_request_presets
+from .template_filters import checklist_question_summary, gen_page_list
 
 
 def create_app(settings_override=None, register_security_blueprint=True):
@@ -57,6 +58,7 @@ def create_app(settings_override=None, register_security_blueprint=True):
     app.before_request(set_request_presets)
 
     # add Jinja2 filters
+    app.jinja_env.filters.update(checklist_question_summary=checklist_question_summary)
     app.jinja_env.filters.update(pagelist=gen_page_list)
 
     # Login and logout signal handlers

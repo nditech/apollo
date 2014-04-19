@@ -1,5 +1,29 @@
 from collections import Counter
 import numpy as np
+import pandas as pd
+
+
+def dataframe_analysis(kind, dataframe, col):
+    if kind == 'discrete':
+        try:
+            result = {'value_counts': dict(getattr(dataframe, col).value_counts()),
+                'value_counts_sum': getattr(dataframe, col).value_counts().sum()}
+        except AttributeError:
+            result = {'value_counts': pd.np.nan, 'value_counts_sum': 0}
+    else:
+        try:
+            result = {'mean': getattr(dataframe, col).mean()}
+        except AttributeError:
+            result = {'mean': pd.np.nan}
+
+    try:
+        result['count'] = getattr(dataframe, col).count()
+        result['size'] = getattr(dataframe, col).size
+        result['diff'] = result['size'] - result['count']
+    except AttributeError:
+        result.update({'count': 0, 'size': 0, 'diff': 0})
+
+    return result
 
 
 def make_histogram(options, dataset):
