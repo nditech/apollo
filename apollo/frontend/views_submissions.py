@@ -28,6 +28,21 @@ bp = Blueprint('submissions', __name__, template_folder='templates',
                static_folder='static')
 
 
+def update_boolean_fields(submission):
+    '''This little utility simply sets any boolean fields to None.
+    Have found that having boolean fields have the value False
+    causes problems in analysis.'''
+    fields = [
+        field for group in submission.form.groups
+        for field in group.fields if field.represents_boolean]
+
+    for field in fields:
+        if not submission[field.name]:
+            # dictionary-style access will fail. it's a MongoEngine issue
+            # submission[field.name] = None
+            setattr(submission, field.name, None)
+
+
 @route(bp, '/submissions/form/<form_id>', methods=['GET', 'POST'])
 @register_menu(bp, 'forms.checklists', _('Checklists'),
                dynamic_list_constructor=partial(get_form_list_menu,
@@ -149,6 +164,7 @@ def submission_edit(submission_id):
                 if submission_form_valid and master_form_valid and \
                         sibling_forms_valid:
                     submission_form.populate_obj(submission)
+                    update_boolean_fields(submission)
                     submission.save()
 
                     if submission.siblings:
@@ -156,10 +172,12 @@ def submission_edit(submission_id):
                             submission.siblings, sibling_forms
                         ):
                             sibling_form.populate_obj(sibling)
+                            update_boolean_fields(sibling)
                             sibling.save()
 
                     if submission.master:
                         master_form.populate_obj(submission.master)
+                        update_boolean_fields(submission.master)
                         submission.master.save()
                     return redirect(
                         url_for('submissions.submission_list',
@@ -183,6 +201,7 @@ def submission_edit(submission_id):
                 if submission_form.validate():
                     if submission.form.form_type == 'INCIDENT':
                         submission_form.populate_obj(submission)
+                        update_boolean_fields(submission)
                         submission.save()
                         return redirect(
                             url_for(

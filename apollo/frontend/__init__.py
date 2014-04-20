@@ -12,7 +12,9 @@ from ..core import db, menu, security
 
 from . import assets, permissions
 from .helpers import set_request_presets
-from .template_filters import checklist_question_summary, gen_page_list
+from .template_filters import (
+    checklist_question_summary, gen_page_list, percent_of
+)
 
 
 def create_app(settings_override=None, register_security_blueprint=True):
@@ -58,8 +60,11 @@ def create_app(settings_override=None, register_security_blueprint=True):
     app.before_request(set_request_presets)
 
     # add Jinja2 filters
-    app.jinja_env.filters.update(checklist_question_summary=checklist_question_summary)
+    app.jinja_env.filters.update(
+        checklist_question_summary=checklist_question_summary
+    )
     app.jinja_env.filters.update(pagelist=gen_page_list)
+    app.jinja_env.filters.update(percent_of=percent_of)
 
     # Login and logout signal handlers
     user_logged_out.connect(lambda app, user: session.clear())

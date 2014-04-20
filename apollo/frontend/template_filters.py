@@ -16,15 +16,19 @@ def checklist_question_summary(form, field, location, dataframe):
 
     try:
         for name, grp in dataframe.groupby('urban'):
-            stats['urban']['Urban' if name else 'Rural'] = dataframe_analysis(stats['type'], grp, field.name)
+            stats['urban']['Urban' if name else 'Rural'] = dataframe_analysis(
+                stats['type'], grp, field.name)
     except KeyError:
         pass
 
-    return {'form': form, 'location': location,
-        'field': field, 'stats': stats}
+    return {
+        'form': form, 'location': location, 'field': field, 'stats': stats
+    }
 
 
 def gen_page_list(pager, window_size=10):
+    '''Utility function for generating a list of pages numbers from a pager.
+    Shamelessly ripped from django-bootstrap-pagination.'''
     if window_size > pager.pages:
         window_size = pager.pages
     window_size -= 1
@@ -39,3 +43,12 @@ def gen_page_list(pager, window_size=10):
         else:
             end += shift
     return range(start, end + 1)
+
+
+def percent_of(a, b):
+    a_ = float(a if a else 0)
+    b_ = float(b if b else 0)
+    try:
+        return (a_ / b_) * 100
+    except ZeroDivisionError:
+        return 0

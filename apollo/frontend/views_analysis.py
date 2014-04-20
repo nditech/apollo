@@ -36,8 +36,8 @@ def _process_analysis(form_id, location_id=None, tag=None):
     # set the correct template and fill out the required data
     if form.form_type == 'CHECKLIST':
         if tag:
-            template_name = 'frontend/checklist_summary_breakdown.html'
-            tags.append[tag]
+            template_name = 'frontend/nu_checklist_summary_breakdown.html'
+            tags.append(tag)
             display_tag = tag
             grouped = True
         else:
@@ -51,8 +51,8 @@ def _process_analysis(form_id, location_id=None, tag=None):
         queryset = submissions.find(form=form, contributor=None).filter_in(location)
     else:
         grouped = True
-        queryset = submissions(form=form).filter_in(location)
-        template_name = 'frontend/critical_incident_summary.html'
+        queryset = submissions.find(form=form).filter_in(location)
+        template_name = 'frontend/nu_critical_incident_summary.html'
 
         if tag:
             # a slightly different filter, one prefiltering
@@ -92,9 +92,13 @@ def _process_analysis(form_id, location_id=None, tag=None):
                 on_analysis_view=True)
             context['incidents'] = filter_set.qs
         else:
-            context['incident_summary'] = generate_incidents_data(form, filter_set.qs, location, grouped)
+            incidents_summary = generate_incidents_data(
+                form, filter_set.qs, location, grouped, tags)
+            context['incidents_summary'] = incidents_summary
     else:
-        context['process_summary'] = generate_process_data(form, filter_set.qs, location, grouped=True)
+        process_summary = generate_process_data(
+            form, filter_set.qs, location, grouped=True, tags=tags)
+        context['process_summary'] = process_summary
 
     return render_template(template_name, **context)
 

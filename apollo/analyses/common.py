@@ -304,7 +304,7 @@ def generate_incident_field_stats(tag, dataset, all_tags, labels=None):
 
         for group_name in group_names:
             reported = dataset.get_group(group_name).get(tag).count()
-            total = sum([dataset.get_group(group_name).get(field_tag).count() for field_tag in all_tags])
+            total = sum([dataset.get_group(group_name).get(field_tag).count() for field_tag in all_tags if field_tag in dataset])
             missing = total - reported
 
             percent_reported = percent_of(reported, total)
@@ -322,7 +322,7 @@ def generate_incident_field_stats(tag, dataset, all_tags, labels=None):
         # ungrouped data, statistics for the entire data set will be generated
 
         reported = dataset[tag].count()
-        total = sum([dataset[field_tag].count() for field_tag in all_tags])
+        total = sum([dataset[field_tag].count() for field_tag in all_tags if field_tag in dataset])
         missing = total - reported
 
         percent_reported = percent_of(reported, total)
@@ -399,6 +399,8 @@ def generate_incidents_data(form, queryset, location_root, grouped=True, tags=No
 
         # top level summaries
         for tag in tags:
+            if tag not in data_frame:
+                continue
             field_stats = generate_incident_field_stats(tag, data_frame, tags)
             field = form.get_field_by_tag(tag)
 
@@ -412,6 +414,8 @@ def generate_incidents_data(form, queryset, location_root, grouped=True, tags=No
             location_stats = {}
 
             for tag in tags:
+                if tag not in data_group:
+                    continue
                 field_stats = generate_incident_field_stats(
                     tag, data_group, tags)
 
@@ -440,6 +444,8 @@ def generate_incidents_data(form, queryset, location_root, grouped=True, tags=No
             group_summary = []
 
             for tag in tags:
+                if tag not in data_frame:
+                    continue
                 field_stats = generate_incident_field_stats(tag, data_frame, tags)
                 field = form.get_field_by_tag(tag)
                 group_summary.append((tag, field.description, field_stats))
@@ -490,6 +496,8 @@ def generate_process_data(form, queryset, location_root, grouped=True, tags=None
 
         # top level summaries
         for tag in tags:
+            if tag not in data_frame:
+                continue
             field = form.get_field_by_tag(tag)
             field_stats = generate_field_stats(field, data_frame)
 
@@ -503,6 +511,8 @@ def generate_process_data(form, queryset, location_root, grouped=True, tags=None
             location_type_summary = []
 
             for tag in tags:
+                if tag not in data_group:
+                    continue
                 field = form.get_field_by_tag(tag)
                 field_stats = generate_field_stats(field, data_group)
 
@@ -527,6 +537,8 @@ def generate_process_data(form, queryset, location_root, grouped=True, tags=None
             group_summary = []
 
             for tag in tags:
+                if tag not in data_frame:
+                    continue
                 field = form.get_field_by_tag(tag)
                 field_stats = generate_field_stats(field, data_frame)
                 group_summary.append((tag, field.description, field_stats))
