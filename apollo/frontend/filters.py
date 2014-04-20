@@ -13,7 +13,7 @@ from .helpers import get_event
 class EventFilter(ChoiceFilter):
     def __init__(self, *args, **kwargs):
         kwargs['choices'] = _make_choices(
-            events.find().scalar('id', 'name'), 'Event')
+            events.find().scalar('id', 'name'), _('Choose Event'))
         super(EventFilter, self).__init__(*args, **kwargs)
 
     def filter(self, queryset, value):
@@ -27,7 +27,7 @@ class EventFilter(ChoiceFilter):
 class ChecklistFormFilter(ChoiceFilter):
     def __init__(self, *args, **kwargs):
         kwargs['choices'] = _make_choices(
-            forms.find(form_type='CHECKLIST').scalar('id', 'name'), 'Form')
+            forms.find(form_type='CHECKLIST').scalar('id', 'name'), _('Form'))
         super(ChecklistFormFilter, self).__init__(*args, **kwargs)
 
     def filter(self, queryset, value):
@@ -75,7 +75,7 @@ class LocationFilter(ChoiceFilter):
 class SampleFilter(ChoiceFilter):
     def __init__(self, *args, **kwargs):
         kwargs['choices'] = _make_choices(
-            samples.find().scalar('id', 'name'), 'Sample'
+            samples.find().scalar('id', 'name'), _('Sample')
         )
         super(SampleFilter, self).__init__(*args, **kwargs)
 
@@ -117,7 +117,8 @@ class DynamicFieldFilter(ChoiceFilter):
 class PartnerFilter(ChoiceFilter):
     def __init__(self, *args, **kwargs):
         kwargs['choices'] = _make_choices(
-            participant_partners.find().scalar('id', 'name'), 'Partner'
+            participant_partners.find().scalar('id', 'name'),
+            _('All Organizations')
         )
         super(PartnerFilter, self).__init__(*args, **kwargs)
 
@@ -131,7 +132,7 @@ class PartnerFilter(ChoiceFilter):
 class RoleFilter(ChoiceFilter):
     def __init__(self, *args, **kwargs):
         kwargs['choices'] = _make_choices(
-            participant_roles.find().scalar('id', 'name'), 'Role'
+            participant_roles.find().scalar('id', 'name'), _('All Roles')
         )
         super(RoleFilter, self).__init__(*args, **kwargs)
 
@@ -186,11 +187,11 @@ class FormGroupFilter(ChoiceFilter):
             params = {}
 
             if value == '1':
-                params = {'completion__{}'.format(group): 'Partial'}
+                params = {'completion__{}'.format(group): _('Partial')}
             elif value == '2':
-                params = {'completion__{}'.format(group): 'Missing'}
+                params = {'completion__{}'.format(group): _('Missing')}
             elif value == '3':
-                params = {'completion__{}'.format(group): 'Complete'}
+                params = {'completion__{}'.format(group): _('Complete')}
 
             return queryset(**params)
         return queryset

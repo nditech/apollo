@@ -48,8 +48,8 @@ def participant_list(page=1):
             response = make_response(
                 participants.export_list(selected_participants).csv
             )
-            response.headers['Content-Disposition'] = \
-                            'attachment; filename: participants.csv'
+            response.headers['Content-Disposition'] = 'attachment; ' + \
+                'filename: participants.csv'
             response.headers['Content-Type'] = 'text/csv'
             return response
 
