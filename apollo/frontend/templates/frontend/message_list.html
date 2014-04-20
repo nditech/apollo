@@ -16,16 +16,16 @@
     <div class="well well-sm">
       <form action="{{ request.url }}" method="GET" id="filter" class="form-inline">
         <div class="form-group">
-          {{ filter_form.mobile(class_="form-control span2", placeholder=_("Mobile")) }}
-          {{ filter_form.text(class_="form-control span2", placeholder=_("Text")) }}
+          {{ filter_form.mobile(class_="form-control span2 input-sm", placeholder=_("Mobile")) }}
+          {{ filter_form.text(class_="form-control span2 input-sm", placeholder=_("Text")) }}
         </div>
         <div class=" form-group">
           <div class="input-group date span2 datesel" data-date="" data-date-format="dd-mm-yyyy">
-            {{ filter_form.date(class_="form-control span2", placeholder=_("Date"), style="width:129px;", size="16", readonly="readonly") }}
+            {{ filter_form.date(class_="form-control span2 input-sm", placeholder=_("Date"), style="width:129px;", size="16", readonly="readonly") }}
             <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
           </div>
         </div>
-        <button type="submit" class="btn btn-warning"><i class="glyphicon glyphicon-search"></i> {% trans %}Filter{% endtrans %}</button> <a class="btn btn-default form-reset" style="margin-left:0.5em">{% trans %}Clear{% endtrans %}</a>
+        <button type="submit" class="btn btn-warning btn-sm"><i class="glyphicon glyphicon-search"></i> {% trans %}Search{% endtrans %}</button> <a class="btn btn-default form-reset btn-sm" style="margin-left:0.5em">{% trans %}Clear{% endtrans %}</a>
       </form>
     </div>
   </div>
