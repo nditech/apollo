@@ -58,7 +58,7 @@ def _process_analysis(form_id, location_id=None, tag=None):
             # a slightly different filter, one prefiltering
             # on the specified tag
             display_tag = tag
-            template_name = 'frontend/critical_incident_locations.html'
+            template_name = 'frontend/nu_critical_incident_locations.html'
             analysis_filter = generate_critical_incident_location_filter(tag)
 
     # create data filter

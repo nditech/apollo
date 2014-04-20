@@ -1,0 +1,71 @@
+{% extends 'frontend/_layout.html' %}{% from 'frontend/macros/analysis_breadcrumb.html' import render_analysis_breadcrumb -%}{% from 'frontend/macros/analysis_navigation.html' import render_analysis_navigation %}
+{% block content %}
+<div class="row">
+	<div class="col-md-5">
+		{{ render_analysis_breadcrumb(breadcrumb_data) }}
+	</div>
+	<div class="col-md-7">
+		<form class="form-inline pull-right">
+			<div class="form-group form-container">{{ filter_form.sample }} {{ filter_form.status }} {{ filter_form.witness }}</div>
+			<button class="btn btn-warning" type="submit"><i class="glyphicon glyphicon-search"></i> {% trans%}Filter{% endtrans %}</button>
+		</form>
+	</div>
+</div>
+<div class="row">
+	<div class="col-md-12">
+		{{ render_analysis_navigation(navigation_data) }}
+	</div>
+</div>
+<div class="row">
+	<div class="col-md-12">
+		{% if incidents_summary.top %}
+		<div class="tabbable">
+			<ul class="nav nav-tabs">
+				<li class="active"><a href="#table" data-toggle="tab">{% trans %}Table{% endtrans %}</a></li>
+				<li><a href="#charts" data-toggle="tab">{% trans %}Charts{% endtrans %}</a></li>
+			</ul>
+			<div class="tab-content">
+				<div class="tab-pane active" id="table">
+					<table class="table table-bordered table-striped">
+						<tr>
+							<th width="250">{% trans %}Location{% endtrans %}</th>
+							<th width="100" style="text-align:center">N</th>
+							{% for tag, tag_description, tag_stats in incidents_summary.top %}
+							<th width="100" style="text-align: center"><abbr title="{{ tag_description }}"><a href="{{ url_for('analysis.process_analysis_with_location_and_tag', form_id=form.pk, location_id=location.pk, tag=tag) }}">{{ tag }}</a></abbr></th>
+							{% endfor %}
+						</tr>
+						<tr>
+							<th>{{ location }}</th>
+							<th style="text-align:center">{{ incidents_summary.top[0][2].total }}</th>
+							{% for tag, description, tag_stats in incidents_summary.top %}
+							<th style="text-align:center">{{ tag_stats.percent_reported|round|int }}%<br>({{ tag_stats.reported }})</th>
+							{% endfor %}
+						</tr>
+						{% for location_type, group_location_stats in incidents_summary.groups %}
+						{% for location, location_data in group_location_stats %}
+						<tr>
+							<td>{{ location }} &middot; <span class="muted"><em>{{ _('%(loc_type)s', loc_type=location_type) }}</em></span></td>
+							{% set tag_data = incidents_summary.top[0] %}
+							{% if location_data %}
+							{% set field_stats = location_data[tag_data[0]] %}
+							<td style="text-align:center">{{ field_stats.1.total|percent_of(incidents_summary.top.0.2.total)|round|int }}%<br>({{ field_stats.1.total }})</td>
+							{% else %}
+							<td style="text-align:center">0%</td>
+							{% endif %}
+							{% for tag, tag_description, temp in incidents_summary.top %}
+							{% if location_data %}
+							{% set field_stats = location_data[tag] %}
+							<td style="text-align:center">{{ field_stats[1].percent_reported|round|int }}%<br>({{ field_stats[1].reported }})</td>
+							{% endif %}
+							{% endfor %}
+						</tr>
+						{% endfor %}
+						{% endfor %}
+					</table>
+				</div>
+			</div>
+		</div>
+		{% endif %}
+	</div>
+</div>
+{% endblock %}
