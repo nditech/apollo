@@ -31,7 +31,7 @@ def index():
     location_type_id = args.pop('locationtype', None)
 
     page_title = _('Dashboard')
-    template_name = 'frontend/nu_dashboard.html'
+    template_name = 'frontend/dashboard.html'
 
     event = get_event()
 

@@ -70,7 +70,8 @@ class LocationType(db.Document):
             self.slug = slugify_unicode(self.name).lower()
         return super(LocationType, self).clean()
 
-    def get_children(self):
+    @property
+    def children(self):
         """Returns a list of descendants sorted by the length of the
         `attr`ancestors_ref.
         """
