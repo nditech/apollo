@@ -6,6 +6,7 @@ from flask.ext.menu import Menu
 from flask.ext.mongoengine import MongoEngine
 from flask.ext.restful import Api
 from flask.ext.security import Security
+from flask.ext.gravatar import Gravatar
 import six
 from wtforms import Form, fields
 
@@ -15,6 +16,7 @@ db = MongoEngine()
 mail = Mail()
 menu = Menu()
 security = Security()
+gravatar = Gravatar(size=25, default="identicon")
 
 
 class Service(object):

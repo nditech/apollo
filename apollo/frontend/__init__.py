@@ -8,7 +8,7 @@ from flask.ext.principal import identity_loaded
 from flask.ext.security import MongoEngineUserDatastore
 
 from .. import factory, models, services
-from ..core import db, menu, security
+from ..core import db, menu, security, gravatar
 
 from . import assets, permissions
 from .helpers import set_request_presets
@@ -25,6 +25,7 @@ def create_app(settings_override=None, register_security_blueprint=True):
     assets.init_app(app)
 
     menu.init_app(app)
+    gravatar.init_app(app)
 
     userdatastore = MongoEngineUserDatastore(db, models.User, models.Role)
 
