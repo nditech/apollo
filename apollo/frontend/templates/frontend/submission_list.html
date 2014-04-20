@@ -8,10 +8,10 @@
 {% endif %}
 {% endblock %}
 {% block toolbar %}
-{% if form.type == 'INCIDENT' %}
+{% if form.form_type == 'INCIDENT' %}
 {% if perms.add_submission.can() %}
 <div class="btn-group pull-right">
-  <a style="margin-left:1em" class="btn btn-primary" href="{{ url_for('submissions.submission_create', form.pk) }}">{% trans %}Add Incident{% endtrans %}</a>
+  <a style="margin-left:1em" class="btn btn-primary" href="{{ url_for('submissions.submission_create', form_id=form.pk) }}">{% trans %}Add Incident{% endtrans %}</a>
 </div>
 {% endif %}
 {% if perms.export_submissions.can() %}

@@ -6,7 +6,7 @@
     {% endfor %}
     <th>{% trans %}Participant{% endtrans %}</th>
     <th>{% trans %}Phone{% endtrans %}</th>
-    {% if form.type == 'CHECKLIST' %}
+    {% if form.form_type == 'CHECKLIST' %}
     {% for group in form.groups %}
     <th class="text-center">{% if group.abbr %}<abbr title="{{ group.name }}">{{ group.abbr }}</abbr>{% else %}{{ group.name }}{% endif %}</th>
     {% endfor %}
@@ -29,7 +29,7 @@
     {% endfor %}
     <td>{{ submission.contributor.name }}</td>
     <td>{{ submission.contributor.phone }}</td>
-    {%- if form.type == 'CHECKLIST' -%}
+    {%- if form.form_type == 'CHECKLIST' -%}
     {% for group in form.groups %}
     <td class="text-center">
         {% if submission.completion[group.name] == 'Complete' %}<img src="{{ url_for('static', filename='img/tick.png') }}" alt="{% trans %}complete{% endtrans %}" title="{% trans %}complete{% endtrans %}" height="11" width="11">
@@ -76,7 +76,7 @@
 </tr>
 {% endif %}
 {% else %}
-{% if form.type == 'CHECKLIST' %}
+{% if form.form_type == 'CHECKLIST' %}
 {%- set colspan = 4 + (location_types|length) + form.groups|length -%}
 <tr class="warning">
     <td class="text-center" colspan="{{ colspan }}">{% trans %}No Data Available{% endtrans %}</td>
