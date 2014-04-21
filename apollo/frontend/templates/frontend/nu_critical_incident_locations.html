@@ -43,7 +43,7 @@
               <td>{{ incident.contributor.participant_id|default }}</td>
               <td>{{ incident.contributor.name|default }}</td>
               {% for lt in location_types %}
-              <td><!-- Here be get location for type -->&nbsp;</td>
+              <td>{{ incident|get_location_for_type(lt) }}</td>
               {% endfor %}
               <td>{{ incident.location }} &middot; <em class"muted">{{ incident.location.location_type }}</em></td>
               <td style="text-align:center">

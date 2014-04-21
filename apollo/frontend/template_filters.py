@@ -26,6 +26,22 @@ def checklist_question_summary(form, field, location, dataframe):
     }
 
 
+def get_location_for_type(submission, location_type, display_type=False):
+    locations = [loc for loc in (
+        list(submission.location.ancestors_ref) +
+        [submission.location]
+        )
+        if loc.location_type == location_type.name]
+
+    if display_type:
+        return u'{} &middot; <em class="muted">{}</em>'.format(
+            locations[0].name, locations[0].location_type
+        ) if locations else u''
+    else:
+        return locations[0].name if locations else u''
+
+
+
 def gen_page_list(pager, window_size=10):
     '''Utility function for generating a list of pages numbers from a pager.
     Shamelessly ripped from django-bootstrap-pagination.'''

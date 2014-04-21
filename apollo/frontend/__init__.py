@@ -13,7 +13,8 @@ from ..core import db, menu, security, gravatar
 from . import assets, permissions
 from .helpers import set_request_presets
 from .template_filters import (
-    checklist_question_summary, gen_page_list, percent_of
+    checklist_question_summary, get_location_for_type, gen_page_list,
+    percent_of
 )
 
 
@@ -64,6 +65,7 @@ def create_app(settings_override=None, register_security_blueprint=True):
     app.jinja_env.filters.update(
         checklist_question_summary=checklist_question_summary
     )
+    app.jinja_env.filters.update(get_location_for_type=get_location_for_type)
     app.jinja_env.filters.update(pagelist=gen_page_list)
     app.jinja_env.filters.update(percent_of=percent_of)
 
