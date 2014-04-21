@@ -7215,10 +7215,10 @@ table .header-fixed {
  -webkit-border-radius:6px 0 0 6px;
  -moz-border-radius:6px 0 0 6px;
  vertical-align:middle;
- height:38px;
+ height:58px;
  text-shadow: 1px 1px 2px rgba(0,0,0,0.25); 
 }
-.i_custom{vertical-align:middle; padding-top:.3em;
+.i_custom{vertical-align:middle; padding-top:17px;
 }
 label{font-size: 13px;}
 .modal{transition: none;}
@@ -7257,6 +7257,9 @@ border-right-color: #64adea;
 }
 
 .navbar-nav>li>a {text-shadow: 1px 1px 2px rgba(0,0,0,0.25);}*/
+.navbar-default .navbar-nav > .open > a, .navbar-default .navbar-nav > .open > a:hover, .navbar-default .navbar-nav > .open > a:focus{
+  background-color: inherit;
+}
 a.btn-sm{line-height: 1.7;}
 .h3{margin-top: 0px;}
 .input-mini{width:85px;}
