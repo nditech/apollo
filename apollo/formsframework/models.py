@@ -101,11 +101,11 @@ class Form(db.Document):
         return self.name
 
     @property
-    def field_names(self):
+    def tags(self):
         if not hasattr(self, '_field_cache'):
             self._field_cache = {
                 f.name: f for g in self.groups for f in g.fields}
-        return sorted(self._field_cache.values())
+        return sorted(self._field_cache.keys())
 
     # added so we don't always have to iterate over everything
     # in the (admittedly rare) cases we need a specific field

@@ -56,6 +56,15 @@
             {%- elif current_menu.submenu('forms.incidents').dynamic_list -%}
             <li><a href="{{ current_menu.submenu('forms.incidents').dynamic_list[0].url }}"><i class="glyphicon glyphicon-check"></i> {{ current_menu.submenu('forms.incidents').dynamic_list[0].text }}</a></li>
             {%- endif -%}
+            {%- if current_menu.submenu('analysis').visible -%}
+            <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">{% trans %}Analysis{% endtrans %} <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+              {%- for form in current_menu.submenu('analysis').dynamic_list -%}
+              <li><a href="{{ form.url }}"><i class="glyphicon glyphicon-check"></i> {{ form.text }}</a></a></li>
+              {%- endfor -%}
+              </ul>
+            </li>
+            {%- endif -%}
             {%- if current_menu.submenu('participants').visible -%}
             <li><a href="{{ current_menu.submenu('participants').url }}"><i class="glyphicon glyphicon-user"></i> {{ current_menu.submenu('participants').text }}</a></li>
             {%- endif -%}

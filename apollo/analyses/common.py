@@ -414,7 +414,7 @@ def generate_incidents_data(form, queryset, location_root, grouped=True, tags=No
             location_stats = {}
 
             for tag in tags:
-                if tag not in data_group:
+                if tag not in data_frame:
                     continue
                 field_stats = generate_incident_field_stats(
                     tag, data_group, tags)
@@ -472,7 +472,7 @@ def generate_process_data(form, queryset, location_root, grouped=True, tags=None
     process_summary = {}
 
     location_types = {
-        child.location_type for child in location_root.children()
+        child.location_type for child in location_root.children
     }
 
     if not tags:
@@ -511,7 +511,7 @@ def generate_process_data(form, queryset, location_root, grouped=True, tags=None
             location_type_summary = []
 
             for tag in tags:
-                if tag not in data_group:
+                if tag not in data_frame:
                     continue
                 field = form.get_field_by_tag(tag)
                 field_stats = generate_field_stats(field, data_group)

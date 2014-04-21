@@ -2,9 +2,11 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 from collections import OrderedDict
-from flask import Blueprint, render_template, request
+from functools import partial
+from flask import Blueprint, render_template, request, url_for
 from flask.ext.babel import lazy_gettext as _
 from flask.ext.menu import register_menu
+from flask.ext.security import login_required
 from ..analyses.common import (
     generate_incidents_data, generate_process_data
 )
@@ -15,6 +17,13 @@ from .filters import (
     generate_critical_incident_location_filter
 )
 from .helpers import analysis_breadcrumb_data, analysis_navigation_data
+
+
+def get_analysis_menu():
+    return [{
+        'url': url_for('analysis.process_analysis', form_id=unicode(form.pk)),
+        'text': form.name,
+    } for form in forms.find().order_by('form_type')]
 
 
 bp = Blueprint('analysis', __name__, template_folder='templates',
@@ -104,15 +113,20 @@ def _process_analysis(form_id, location_id=None, tag=None):
 
 
 @route(bp, '/submissions/analysis/process/form/<form_id>')
+@register_menu(bp, 'analysis', _('Analysis'),
+               dynamic_list_constructor=partial(get_analysis_menu))
+@login_required
 def process_analysis(form_id):
     return _process_analysis(form_id)
 
 
 @route(bp, '/submissions/analysis/process/form/<form_id>/location/<location_id>')
+@login_required
 def process_analysis_with_location(form_id, location_id):
     return _process_analysis(form_id, location_id)
 
 
 @route(bp, '/submissions/analysis/process/form/<form_id>/location/<location_id>/tag/<tag>')
+@login_required
 def process_analysis_with_location_and_tag(form_id, location_id, tag):
     return _process_analysis(form_id, location_id, tag)
