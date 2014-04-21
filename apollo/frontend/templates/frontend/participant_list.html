@@ -2,6 +2,7 @@
 {%- from 'frontend/macros/participant_list_filter.html' import render_filter_form -%}
 {%- from 'frontend/macros/pagination.html' import render_pager -%}
 {% block toolbar %}
+  <a class="btn btn-success pull-right" href="#"em style="margin-left:.5em;"> {% trans %}Send Message{% endtrans %}</a>
   <div class="pull-right">
     {% if perms.export_participants.can() %}
     <div class="form-group">
@@ -9,7 +10,6 @@
     </div>
     {% endif %}
   </div>
-  <a class="btn btn-success pull-right" href="#"em style="margin-right:.5em;"> {% trans %}Send Message{% endtrans %}</a>
   <a class="btn btn-info pull-right" href="{{ url_for('participants.participant_list_import') }}"em style="margin-right:.5em;"><i class="glyphicon glyphicon-upload glyphicon-white"></i> {% trans %}Import Participants{% endtrans %}</a>
 {% endblock %}
 {% block content %}
