@@ -317,7 +317,7 @@ def incidents_csv_with_location_dl(form_pk, location_type_pk, location_pk):
 
 def update_submission_version(sender, document, **kwargs):
     user = current_user._get_current_object()
-    identity = unicode(user.pk) if not user.is_anonymous() else 'Unknown'
+    identity = user.email if not user.is_anonymous() else 'Unknown'
     data = document.to_json()
     channel = 'Web'
 
