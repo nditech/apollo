@@ -100,6 +100,13 @@ class Form(db.Document):
     def __unicode__(self):
         return self.name
 
+    @property
+    def field_names(self):
+        if not hasattr(self, '_field_cache'):
+            self._field_cache = {
+                f.name: f for g in self.groups for f in g.fields}
+        return sorted(self._field_cache.values())
+
     # added so we don't always have to iterate over everything
     # in the (admittedly rare) cases we need a specific field
     def get_field_by_tag(self, tag):

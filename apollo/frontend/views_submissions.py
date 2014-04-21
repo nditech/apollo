@@ -8,14 +8,12 @@ from flask import (
 from flask.ext.babel import lazy_gettext as _
 from flask.ext.security import current_user, login_required
 from flask.ext.menu import register_menu
-from mongoengine import signals
 from tablib import Dataset
 from ..analyses.incidents import incidents_csv
 from ..models import Location
 from ..settings import EDIT_OBSERVER_CHECKLIST
 from ..services import (
-    forms, location_types, submissions, submission_comments,
-    submission_versions
+    forms, location_types, submissions, submission_comments
 )
 from . import route, permissions
 from .filters import generate_submission_filter
@@ -131,18 +129,84 @@ def submission_edit(submission_id):
             master_form=master_form
         )
     else:
-        # connect the post_save handler to the defined function
-        # while the context manager is active
-        with signals.post_save.connected_to(
-            update_submission_version,
-            sender=submissions.__model__
-        ):
-            if submission.form.form_type == 'CHECKLIST' and \
-                    EDIT_OBSERVER_CHECKLIST:
-                submission_form = edit_form_class(
+        if submission.form.form_type == 'CHECKLIST' and \
+                EDIT_OBSERVER_CHECKLIST:
+            submission_form = edit_form_class(
+                request.form,
+                prefix=unicode(submission.pk)
+            )
+            sibling_forms = [
+                edit_form_class(
                     request.form,
-                    prefix=unicode(submission.pk)
+                    prefix=unicode(sibling.pk)
+                ) for sibling in submission.siblings
+            ] if submission.siblings else None
+            master_form = edit_form_class(
+                request.form,
+                prefix=unicode(submission.master.pk)
+            ) if submission.master else None
+
+            submission_form_valid = submission_form.validate()
+            master_form_valid = master_form.validate() if master_form \
+                else True
+            sibling_forms_valid = all(
+                [s_f.validate() for s_f in sibling_forms]
+            ) if sibling_forms else True
+
+            if submission_form_valid and master_form_valid and \
+                    sibling_forms_valid:
+                submission_form.populate_obj(submission)
+                update_boolean_fields(submission)
+                submission.save()
+
+                if submission.siblings:
+                    for sibling, sibling_form in zip(
+                        submission.siblings, sibling_forms
+                    ):
+                        sibling_form.populate_obj(sibling)
+                        update_boolean_fields(sibling)
+                        sibling.save()
+
+                if submission.master:
+                    master_form.populate_obj(submission.master)
+                    update_boolean_fields(submission.master)
+                    submission.master.save()
+                return redirect(
+                    url_for('submissions.submission_list',
+                            form_id=unicode(submission.form.pk))
+                    )
+            else:
+                return render_template(
+                    'frontend/nu_submission_edit.html',
+                    page_title=page_title,
+                    submission=submission,
+                    submission_form=submission_form,
+                    sibling_forms=sibling_forms,
+                    master_form=master_form
                 )
+        else:
+            submission_form = edit_form_class(
+                request.form,
+                prefix=unicode(submission.pk)
+            )
+
+            if submission_form.validate():
+                if submission.form.form_type == 'INCIDENT':
+                    submission_form.populate_obj(submission)
+                    update_boolean_fields(submission)
+                    submission.save()
+                    return redirect(
+                        url_for(
+                            'submissions.submission_list',
+                            form_id=unicode(submission.form.pk))
+                    )
+                else:
+                    return redirect(
+                        url_for(
+                            'submissions.submission_list',
+                            form_id=unicode(submission.form.pk))
+                    )
+            else:
                 sibling_forms = [
                     edit_form_class(
                         request.form,
@@ -153,86 +217,14 @@ def submission_edit(submission_id):
                     request.form,
                     prefix=unicode(submission.master.pk)
                 ) if submission.master else None
-
-                submission_form_valid = submission_form.validate()
-                master_form_valid = master_form.validate() if master_form \
-                    else True
-                sibling_forms_valid = all(
-                    [s_f.validate() for s_f in sibling_forms]
-                ) if sibling_forms else True
-
-                if submission_form_valid and master_form_valid and \
-                        sibling_forms_valid:
-                    submission_form.populate_obj(submission)
-                    update_boolean_fields(submission)
-                    submission.save()
-
-                    if submission.siblings:
-                        for sibling, sibling_form in zip(
-                            submission.siblings, sibling_forms
-                        ):
-                            sibling_form.populate_obj(sibling)
-                            update_boolean_fields(sibling)
-                            sibling.save()
-
-                    if submission.master:
-                        master_form.populate_obj(submission.master)
-                        update_boolean_fields(submission.master)
-                        submission.master.save()
-                    return redirect(
-                        url_for('submissions.submission_list',
-                                form_id=unicode(submission.form.pk))
-                        )
-                else:
-                    return render_template(
-                        'frontend/nu_submission_edit.html',
-                        page_title=page_title,
-                        submission=submission,
-                        submission_form=submission_form,
-                        sibling_forms=sibling_forms,
-                        master_form=master_form
-                    )
-            else:
-                submission_form = edit_form_class(
-                    request.form,
-                    prefix=unicode(submission.pk)
+                return render_template(
+                    'frontend/nu_submission_edit.html',
+                    page_title=page_title,
+                    submission=submission,
+                    submission_form=submission_form,
+                    sibling_forms=sibling_forms,
+                    master_form=master_form
                 )
-
-                if submission_form.validate():
-                    if submission.form.form_type == 'INCIDENT':
-                        submission_form.populate_obj(submission)
-                        update_boolean_fields(submission)
-                        submission.save()
-                        return redirect(
-                            url_for(
-                                'submissions.submission_list',
-                                form_id=unicode(submission.form.pk))
-                        )
-                    else:
-                        return redirect(
-                            url_for(
-                                'submissions.submission_list',
-                                form_id=unicode(submission.form.pk))
-                        )
-                else:
-                    sibling_forms = [
-                        edit_form_class(
-                            request.form,
-                            prefix=unicode(sibling.pk)
-                        ) for sibling in submission.siblings
-                    ] if submission.siblings else None
-                    master_form = edit_form_class(
-                        request.form,
-                        prefix=unicode(submission.master.pk)
-                    ) if submission.master else None
-                    return render_template(
-                        'frontend/nu_submission_edit.html',
-                        page_title=page_title,
-                        submission=submission,
-                        submission_form=submission_form,
-                        sibling_forms=sibling_forms,
-                        master_form=master_form
-                    )
 
 
 @route(bp, '/comments', methods=['POST'])
@@ -313,18 +305,3 @@ def incidents_csv_with_location_dl(form_pk, location_type_pk, location_pk):
     response.headers['Content-Type'] = 'text/csv'
 
     return response
-
-
-def update_submission_version(sender, document, **kwargs):
-    user = current_user._get_current_object()
-    identity = user.email if not user.is_anonymous() else 'Unknown'
-    data = document.to_json()
-    channel = 'Web'
-
-    submission_versions.create(
-        submission=document,
-        data=data,
-        channel=channel,
-        identity=identity,
-        deployment=document.deployment
-    )
