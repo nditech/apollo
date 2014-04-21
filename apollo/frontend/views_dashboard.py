@@ -58,7 +58,7 @@ def index():
     else:
         page_title = page_title + ' · {}'.format(group)
         if not location_type_id:
-            location_type = LocationType.get_root_for_event(g.get('event'))
+            location_type = LocationType.root()
         else:
             location_type = LocationType.objects.get_or_404(
                 pk=location_type_id)

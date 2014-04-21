@@ -65,6 +65,10 @@ class LocationType(db.Document):
     def get_root_for_event(cls, event):
         return cls.objects.get(events=event, __raw__={'ancestors_ref': []})
 
+    @classmethod
+    def root(cls):
+        return cls.objects.get(__raw__={'ancestors_ref': []})
+
     def clean(self):
         if not self.slug:
             self.slug = slugify_unicode(self.name).lower()
@@ -112,6 +116,10 @@ class Location(db.Document):
     @classmethod
     def get_root_for_event(cls, event):
         return cls.objects.get(events=event, __raw__={'ancestors_ref': []})
+
+    @classmethod
+    def root(cls):
+        return cls.objects.get(__raw__={'ancestors_ref': []})
 
     @property
     def children(self):
