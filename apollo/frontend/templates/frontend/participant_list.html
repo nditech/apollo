@@ -47,6 +47,7 @@
                <th>{% trans %}Location{% endtrans %}</th>
                <th>{% trans %}Name{% endtrans %}</th>
                <th>{% trans %}Role{% endtrans %}</th>
+               <th>{% trans %}Phone{% endtrans %}</th>
                <th>{% trans %}Organization{% endtrans %}</th>
                {%- if perms.edit_participant.can() -%}
                <th class="text-center">{% trans %}Edit{% endtrans %}</th>
@@ -64,6 +65,7 @@
                <td>{{ participant.location }}</td>
                <td>{{ participant.name }}</td>
                <td>{{ participant.role }}</td>
+               <td>{{ participant.phone }}</td>
                <td>{{ participant.partner }}</td>
                {%- if perms.edit_participant.can() -%}
                <td class="text-center"><a href="{{ url_for('participants.participant_edit', pk=participant.id) }}">Edit</a></td>
