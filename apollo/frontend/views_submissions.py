@@ -29,19 +29,29 @@ bp = Blueprint('submissions', __name__, template_folder='templates',
                static_folder='static')
 
 
-def update_boolean_fields(submission):
+def update_data_fields(submission):
     '''This little utility simply sets any boolean fields to None.
     Have found that having boolean fields have the value False
     causes problems in analysis.'''
     fields = [
         field for group in submission.form.groups
-        for field in group.fields if field.represents_boolean]
+        for field in group.fields]
 
-    for field in fields:
+    boolean_fields = [field for field in fields if field.represents_boolean]
+    single_value_fields = [field for field in fields if field.options is not None and field.allows_multiple_values == False]
+
+    for field in boolean_fields:
         if not submission[field.name]:
             # dictionary-style access will fail. it's a MongoEngine issue
             # submission[field.name] = None
             setattr(submission, field.name, None)
+
+    for field in single_value_fields:
+        value = submission[field.name]
+        if value == '':
+            setattr(submission, field.name, None)
+        elif value.isdigit():
+            setattr(submission, field.name, int(value))
 
 
 @route(bp, '/submissions/form/<form_id>', methods=['GET', 'POST'])
@@ -171,7 +181,7 @@ def submission_edit(submission_id):
                         sender=submissions.__model__):
 
                     submission_form.populate_obj(submission)
-                    update_boolean_fields(submission)
+                    update_data_fields(submission)
                     submission.save()
 
                     if submission.siblings:
@@ -179,18 +189,22 @@ def submission_edit(submission_id):
                             submission.siblings, sibling_forms
                         ):
                             sibling_form.populate_obj(sibling)
-                            update_boolean_fields(sibling)
+                            update_data_fields(sibling)
                             sibling.save()
 
                     if submission.master:
                         master_form.populate_obj(submission.master)
-                        update_boolean_fields(submission.master)
+                        update_data_fields(submission.master)
                         submission.master.save()
                 return redirect(
                     url_for('submissions.submission_list',
                             form_id=unicode(submission.form.pk))
                     )
             else:
+                print submission_form.errors
+                for sibling_form in sibling_forms:
+                    print sibling_form.errors
+                print master_form.errors
                 return render_template(
                     'frontend/nu_submission_edit.html',
                     page_title=page_title,
@@ -215,7 +229,7 @@ def submission_edit(submission_id):
                     ):
 
                         submission_form.populate_obj(submission)
-                        update_boolean_fields(submission)
+                        update_data_fields(submission)
                         submission.save()
                     return redirect(
                         url_for(
@@ -327,6 +341,15 @@ def incidents_csv_with_location_dl(form_pk, location_type_pk, location_pk):
     response.headers['Content-Type'] = 'text/csv'
 
     return response
+
+
+@route(bp, '/submissions/<submission_id>/version/<version_id>')
+@login_required
+def submission_version(submission_id, version_id):
+    submission = submissions.get_or_404(pk=submission_id)
+    version = submission_versions.get_or_404(submission_version)
+
+    return ''
 
 
 def update_submission_version(sender, document, **kwargs):

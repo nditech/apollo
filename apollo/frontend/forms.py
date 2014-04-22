@@ -196,23 +196,21 @@ def generate_submission_edit_form_class(form):
                     form_fields[field.name] = SelectMultipleField(
                         field.name,
                         choices=choices,
-                        coerce=int,
                         option_widget=widgets.CheckboxInput(),
                         widget=widgets.ListWidget()
                     )
                 else:
                     if options:
-                        form_fields[field.name] = IntegerField(
+                        form_fields[field.name] = StringField(
                             field.name,
-                            validators=[validators.AnyOf([options[k] for k in options])]
+                            validators=[
+                                validators.AnyOf([''] + [unicode(o) for o in options.values()])]
                         )
                     else:
-                        form_fields[field.name] = IntegerField(
+                        choices = [''] + [unicode(x) for x in xrange(field.min_value, field.max_value + 1)]
+                        form_fields[field.name] = StringField(
                             field.name,
-                            validators=[validators.number_range(
-                                min=field.min_value or 0,
-                                max=field.max_value or 9999
-                            )]
+                            validators=[validators.AnyOf(choices)]
                         )
 
     if form.form_type == 'INCIDENT':
