@@ -76,17 +76,22 @@ def submission_list(form_id):
         form_fields = [field for group in form.groups
                        for field in group.fields]
 
-    return render_template(
-        template_name,
-        args=data,
-        filter_form=filter_form,
-        form=form,
-        form_fields=form_fields,
-        location_types=loc_types,
-        page_title=page_title,
-        pager=query_filterset.qs.paginate(
-            page=page, per_page=current_app.config.get('PAGE_SIZE'))
-    )
+    if request.args.get('export'):
+        # Export requested
+        # TODO: complete export functionality
+        return ""
+    else:
+        return render_template(
+            template_name,
+            args=data,
+            filter_form=filter_form,
+            form=form,
+            form_fields=form_fields,
+            location_types=loc_types,
+            page_title=page_title,
+            pager=query_filterset.qs.paginate(
+                page=page, per_page=current_app.config.get('PAGE_SIZE'))
+        )
 
 
 @route(bp, '/submissions/<form_id>/new', methods=['GET', 'POST'])

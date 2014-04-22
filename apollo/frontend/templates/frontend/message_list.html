@@ -2,12 +2,7 @@
 {%- from 'frontend/macros/pagination.html' import render_pager -%}
 {% block toolbar %}
 {% if perms.export_messages.can() %}
-
-<form action="{{ request.url }}" method="get" id="export_messages" style="display:none">
-  <input type="hidden" name="export" value="true" />
-</form>
-
-<a class="btn btn-default pull-right" href="javascript:document.getElementById('export_messages').submit()">{% trans %}Export{% endtrans %}</a>
+<a class="btn btn-default pull-right" href="{{ url_for('messages.message_list', export='true', **request.args) }}">{% trans %}Export{% endtrans %}</a>
 {% endif %}
 {% endblock %}
 {% block content %}

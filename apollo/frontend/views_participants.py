@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 from __future__ import unicode_literals
+from datetime import datetime
 from flask import (
     Blueprint, flash, make_response, redirect, render_template, request,
     url_for
@@ -21,6 +22,7 @@ from .forms import (
     generate_participant_edit_form, generate_participant_import_mapping_form,
     DummyForm, ParticipantUploadForm
 )
+from slugify import slugify_unicode
 
 PAGE_SIZE = 25
 bp = Blueprint('participants', __name__, template_folder='templates',
@@ -32,6 +34,8 @@ bp = Blueprint('participants', __name__, template_folder='templates',
 @login_required
 def participant_list(page=1):
     page_title = _('Participants')
+    template_name = 'frontend/participant_list.html'
+
     queryset = participants.find()
     queryset_filter = ParticipantFilterSet(queryset, request.args)
 
@@ -49,36 +53,43 @@ def participant_list(page=1):
                 participants.export_list(selected_participants).csv
             )
             response.headers['Content-Disposition'] = 'attachment; ' + \
-                'filename: participants.csv'
+                'filename=participants.csv'
             response.headers['Content-Type'] = 'text/csv'
             return response
 
-    template_name = 'frontend/participant_list.html'
+    if request.args.get('export'):
+        # Export requested
+        response = make_response(
+            participants.export_list(queryset_filter.qs).xls
+        )
+        basename = slugify_unicode('participants %s' % (
+            datetime.utcnow().strftime('%Y %m %d %H%M%S')))
+        response.headers['Content-Disposition'] = 'attachment; ' + \
+            'filename=%s.xls' % basename
+        response.headers['Content-Type'] = 'application/vnd.ms-excel'
+        return response
+    else:
+        # request.args is immutable, so the .pop() call will fail on it.
+        # using .copy() returns a mutable version of it.
+        args = request.args.copy()
+        page = int(args.pop('page', '1'))
 
-    # request.args is immutable, so the .pop() call will fail on it.
-    # using .copy() returns a mutable version of it.
-    args = request.args.copy()
-    page = int(args.pop('page', '1'))
+        # load form context
+        context = dict(
+            args=args,
+            filter_form=queryset_filter.form,
+            form=form,
+            page_title=page_title,
+            location_types=helpers.displayable_location_types(
+                on_submissions_view=True),
+            participants=queryset_filter.qs.paginate(
+                page=page, per_page=PAGE_SIZE)
+        )
 
-    # load form context
-    context = {}
-
-    pager = queryset_filter.qs.paginate(page=page, per_page=PAGE_SIZE)
-
-    context.update(
-        args=args,
-        filter_form=queryset_filter.form,
-        form=form,
-        page_title=page_title,
-        location_types=helpers.displayable_location_types(
-            on_submissions_view=True),
-        participants=pager
-    )
-
-    return render_template(
-        template_name,
-        **context
-    )
+        return render_template(
+            template_name,
+            **context
+        )
 
 
 @route(bp, '/participant/<pk>', methods=['GET', 'POST'])

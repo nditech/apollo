@@ -3,7 +3,7 @@
 {%- from 'frontend/macros/pagination.html' import render_pager -%}
 {% block toolbar %}
   {%- if perms.export_participants.can() -%}
-  <a class="btn btn-default pull-right" href="{{ request.url }}">{% trans %}Export{% endtrans %}</a>
+  <a class="btn btn-default pull-right" href="{{ url_for('participants.participant_list', export='true', **request.args) }}">{% trans %}Export{% endtrans %}</a>
   {%- endif -%}
   {%- if perms.import_participants.can() -%}
   <a class="btn btn-info pull-right" href="{{ url_for('participants.participant_list_import') }}" style="margin-right:1em;"><i class="glyphicon glyphicon-upload glyphicon-white"></i> {% trans %}Import Participants{% endtrans %}</a>
