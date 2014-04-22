@@ -109,7 +109,7 @@ class Submission(db.DynamicDocument):
     updated = db.DateTimeField()
     completion = db.DictField()
     location_name_path = db.DictField()
-    sender_verified = db.BooleanField(default=False)
+    sender_verified = db.BooleanField(default=True)
 
     deployment = db.ReferenceField(Deployment)
 
@@ -139,6 +139,7 @@ class Submission(db.DynamicDocument):
             }
 
         # update completion status
+        self._update_completion_status()
 
     @property
     def master(self):

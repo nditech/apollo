@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 from __future__ import unicode_literals
+import json
 from flask import (
     Blueprint, jsonify, make_response, redirect, render_template, request,
     url_for, current_app
@@ -8,12 +9,14 @@ from flask import (
 from flask.ext.babel import lazy_gettext as _
 from flask.ext.security import current_user, login_required
 from flask.ext.menu import register_menu
+from mongoengine import signals
 from tablib import Dataset
 from ..analyses.incidents import incidents_csv
 from ..models import Location
 from ..settings import EDIT_OBSERVER_CHECKLIST
 from ..services import (
-    forms, location_types, submissions, submission_comments
+    forms, location_types, submissions, submission_comments,
+    submission_versions
 )
 from . import route, permissions
 from .filters import generate_submission_filter
@@ -161,22 +164,28 @@ def submission_edit(submission_id):
 
             if submission_form_valid and master_form_valid and \
                     sibling_forms_valid:
-                submission_form.populate_obj(submission)
-                update_boolean_fields(submission)
-                submission.save()
 
-                if submission.siblings:
-                    for sibling, sibling_form in zip(
-                        submission.siblings, sibling_forms
-                    ):
-                        sibling_form.populate_obj(sibling)
-                        update_boolean_fields(sibling)
-                        sibling.save()
+                # connect signal handler for updating submission versions
+                with signals.post_save.connected_to(
+                    update_submission_version,
+                        sender=submissions.__model__):
 
-                if submission.master:
-                    master_form.populate_obj(submission.master)
-                    update_boolean_fields(submission.master)
-                    submission.master.save()
+                    submission_form.populate_obj(submission)
+                    update_boolean_fields(submission)
+                    submission.save()
+
+                    if submission.siblings:
+                        for sibling, sibling_form in zip(
+                            submission.siblings, sibling_forms
+                        ):
+                            sibling_form.populate_obj(sibling)
+                            update_boolean_fields(sibling)
+                            sibling.save()
+
+                    if submission.master:
+                        master_form.populate_obj(submission.master)
+                        update_boolean_fields(submission.master)
+                        submission.master.save()
                 return redirect(
                     url_for('submissions.submission_list',
                             form_id=unicode(submission.form.pk))
@@ -198,9 +207,16 @@ def submission_edit(submission_id):
 
             if submission_form.validate():
                 if submission.form.form_type == 'INCIDENT':
-                    submission_form.populate_obj(submission)
-                    update_boolean_fields(submission)
-                    submission.save()
+
+                    # connect signal handler for save operation
+                    with signals.post_save.connected_to(
+                        update_submission_version,
+                        sender=submissions.__model__
+                    ):
+
+                        submission_form.populate_obj(submission)
+                        update_boolean_fields(submission)
+                        submission.save()
                     return redirect(
                         url_for(
                             'submissions.submission_list',
@@ -311,3 +327,23 @@ def incidents_csv_with_location_dl(form_pk, location_type_pk, location_pk):
     response.headers['Content-Type'] = 'text/csv'
 
     return response
+
+
+def update_submission_version(sender, document, **kwargs):
+    # save actual version data
+    data_fields = document.form.tags
+    if document.form.form_type == 'INCIDENT':
+        data_fields.extend(['status', 'witness'])
+    version_data = {k: document[k] for k in data_fields if k in document}
+
+    # save user email as identity
+    channel = 'Web'
+    user = current_user._get_current_object()
+    identity = user.email if not user.is_anonymous() else 'Unknown'
+
+    submission_versions.create(
+        submission=document,
+        data=json.dumps(version_data),
+        channel=channel,
+        identity=identity
+    )
