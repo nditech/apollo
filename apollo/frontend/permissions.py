@@ -8,6 +8,8 @@ edit_participant = Permission(
     ActionNeed('edit_participant'), RoleNeed('admin'))
 export_participants = Permission(
     ActionNeed('export_participants'), RoleNeed('admin'))
+import_participants = Permission(
+    ActionNeed('import_participants'), RoleNeed('admin'))
 export_messages = Permission(
     ActionNeed('export_messages'), RoleNeed('admin'))
 

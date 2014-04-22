@@ -2,15 +2,15 @@
 {%- from 'frontend/macros/participant_list_filter.html' import render_filter_form -%}
 {%- from 'frontend/macros/pagination.html' import render_pager -%}
 {% block toolbar %}
-  <a class="btn btn-success pull-right" href="#"em style="margin-left:.5em;"> {% trans %}Send Message{% endtrans %}</a>
-  <div class="pull-right">
-    {% if perms.export_participants.can() %}
-    <div class="form-group">
-      <input type="submit" class="btn btn-default" name="export" value="{% trans %}Export{% endtrans %}">
-    </div>
-    {% endif %}
-  </div>
-  <a class="btn btn-info pull-right" href="{{ url_for('participants.participant_list_import') }}"em style="margin-right:.5em;"><i class="glyphicon glyphicon-upload glyphicon-white"></i> {% trans %}Import Participants{% endtrans %}</a>
+  {%- if perms.export_participants.can() -%}
+  <a class="btn btn-default pull-right" href="{{ request.url }}">{% trans %}Export{% endtrans %}</a>
+  {%- endif -%}
+  {%- if perms.import_participants.can() -%}
+  <a class="btn btn-info pull-right" href="{{ url_for('participants.participant_list_import') }}" style="margin-right:1em;"><i class="glyphicon glyphicon-upload glyphicon-white"></i> {% trans %}Import Participants{% endtrans %}</a>
+  {%- endif -%}
+  {%- if perms.send_messages.can() -%}
+  <a class="btn btn-success pull-right" href="#" style="margin-right:1em;">{% trans %}Send Message{% endtrans %}</a>
+  {%- endif -%}
 {% endblock %}
 {% block content %}
 {%- set flash_msgs = get_flashed_messages(category_filter=['task_begun']) -%}
