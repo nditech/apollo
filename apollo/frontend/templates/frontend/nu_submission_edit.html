@@ -78,17 +78,25 @@ TODO: insert location path here
     <td>{{ field.description }}
       {%- if field.options %}
       <span class="options">
-      {% for description, value in field.options.iteritems() %}
-      <span class="option"><strong>({{ value }})</strong> {{ description }}</span>
+      {% for item in field.options|dictsort(false, 'value') %}
+      <span class="option"><strong>({{ item.1 }})</strong> {{ item.0 }}</span>
       {% endfor %}
       </span>
       {%- endif %}
-      </td>
-    <td>{{ submission_form[field.name] }}</td>
-    {% for sibling_form in sibling_forms %}
-    <td>{{ sibling_form[field.name] }}</td>
-    {% endfor %}
-    <td>{{ master_form[field.name] }}</td>
+    </td>
+    {%- if readonly -%}
+    <td>{{ submission_form[field.name](class_='form-control', disabled=1) }}</td>
+    {%- else -%}
+    <td>{{ submission_form[field.name](class_='form-control') }}</td>
+    {%- endif -%}
+    {%- for sibling_form in sibling_forms -%}
+    {%- if readonly -%}
+    <td>{{ sibling_form[field.name](class_='form-control', disabled=1) }}</td>
+    {%- else -%}
+    <td>{{ sibling_form[field.name](class_='form-control') }}</td>
+    {%- endif -%}
+    {%- endfor -%}
+    <td>{{ master_form[field.name](class_='form-control') }}</td>
   </tr>
   {% endfor %}
   {% endfor %}

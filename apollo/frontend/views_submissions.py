@@ -103,6 +103,7 @@ def submission_edit(submission_id):
     submission = submissions.get_or_404(pk=submission_id)
     edit_form_class = generate_submission_edit_form_class(submission.form)
     page_title = _('Edit submission')
+    readonly = not EDIT_OBSERVER_CHECKLIST
 
     if request.method == 'GET':
         submission_form = edit_form_class(
@@ -126,11 +127,11 @@ def submission_edit(submission_id):
             submission=submission,
             submission_form=submission_form,
             sibling_forms=sibling_forms,
-            master_form=master_form
+            master_form=master_form,
+            readonly=readonly
         )
     else:
-        if submission.form.form_type == 'CHECKLIST' and \
-                EDIT_OBSERVER_CHECKLIST:
+        if submission.form.form_type == 'CHECKLIST' and not readonly:
             submission_form = edit_form_class(
                 request.form,
                 prefix=unicode(submission.pk)
