@@ -2,7 +2,8 @@
 {%- from 'frontend/macros/submission_list_filter.html' import render_filter_form -%}
 {%- from 'frontend/macros/pagination.html' import render_pager -%}
 {%- from 'frontend/macros/submission_list_macros.html' import submission_header, submission_items -%}
-{% block javascripts %}
+{% block scripts %}
+<script type="text/javascript" src="{{ url_for('static', filename='js/filters.js') }}"></script>
 {% if perms.send_messages.can() %}
 {# TODO: send_message paginator.count #}
 {% endif %}

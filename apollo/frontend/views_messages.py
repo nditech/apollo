@@ -1,11 +1,13 @@
 from . import route, permissions
 from ..services import messages
 from ..messaging.forms import MessagesFilterForm
-from flask import Blueprint, render_template, request, current_app
+from flask import (
+    Blueprint, render_template, request, current_app, make_response)
 from flask.ext.babel import lazy_gettext as _
 from flask.ext.menu import register_menu
 from datetime import datetime
 from mongoengine import Q
+from slugify import slugify_unicode
 
 
 bp = Blueprint('messages', __name__)
@@ -42,14 +44,26 @@ def message_list():
             received__lte=datetime(
                 date.year, date.month, date.day, 23, 59, 59))
 
-    data = request.args.to_dict()
-    page = int(data.pop('page', 1))
-    context = {
-        'page_title': page_title,
-        'filter_form': filter_form,
-        'args': data,
-        'pager': qs.paginate(
-            page=page, per_page=current_app.config.get('PAGE_SIZE'))
-    }
+    if request.args.get('export'):
+        # Export requested
+        response = make_response(
+            messages.export_list(qs).xls
+        )
+        basename = slugify_unicode('messages %s' % (
+            datetime.utcnow().strftime('%Y %m %d %H%M%S')))
+        response.headers['Content-Disposition'] = 'attachment; ' + \
+            'filename=%s.xls' % basename
+        response.headers['Content-Type'] = 'application/vnd.ms-excel'
+        return response
+    else:
+        data = request.args.to_dict()
+        page = int(data.pop('page', 1))
+        context = {
+            'page_title': page_title,
+            'filter_form': filter_form,
+            'args': data,
+            'pager': qs.paginate(
+                page=page, per_page=current_app.config.get('PAGE_SIZE'))
+        }
 
-    return render_template(template_name, **context)
+        return render_template(template_name, **context)

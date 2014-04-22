@@ -1,6 +1,7 @@
 from ..core import Service
 from .models import Message
 from flask import g
+from tablib import Dataset
 
 
 class MessagesService(Service):
@@ -16,3 +17,27 @@ class MessagesService(Service):
         """
         return self.__model__.objects.filter(
             deployment=g.deployment, event=g.event)
+
+    def export_list(self, queryset):
+        ds = Dataset(
+            headers=[
+                'Mobile', 'Text', 'Direction', 'Created', 'Delivered'
+            ]
+        )
+
+        for message in queryset:
+            # limit to three numbers for export and pad if less than three
+            record = [
+                message.sender if message.direction == 'IN'
+                else message.recipient,
+                message.text,
+                message.direction,
+                message.received.strftime('%Y-%m-%d %H:%M:%S')
+                if message.received else '',
+                message.delivered.strftime('%Y-%m-%d %H:%M:%S')
+                if message.delivered else ''
+            ]
+
+            ds.append(record)
+
+        return ds
