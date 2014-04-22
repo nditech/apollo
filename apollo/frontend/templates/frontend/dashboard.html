@@ -1,20 +1,32 @@
 {% extends 'frontend/_layout.html' %}
+{% block stylesheets %}
+<style type="text/css">
+.piechart svg{height:300px; margin-left: .8em; margin-top: .8em;}
+</style>
+{% endblock %}
 {% from 'frontend/macros/dashboard_filter.html' import render_filter_form %}
 {% block scripts %}
-<script type="text/javascript" src="{{ url_for('static', filename='js/protovis.min.js') }}"></script>
+ <script type="text/javascript" src="{{ url_for('static', filename='js/d3.v3.js') }}"></script>
+ <script type="text/javascript" src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
 <script type="text/javascript">
   var time = new Date().getTime();
-     $(document.body).bind("mousemove keypress", function(e) {
-         time = new Date().getTime();
-     });
+  
+  $(document.body).bind("mousemove keypress", function(e) {
+    time = new Date().getTime();
+  });
 
-     function refresh() {
-         if(new Date().getTime() - time >= 300000) 
-             window.location.reload(true);
-         else 
-             setTimeout(refresh, 10000);
-     }
-     setTimeout(refresh, 10000);
+  function refresh() {
+    if(new Date().getTime() - time >= 300000) 
+      window.location.reload(true);
+    else 
+      setTimeout(refresh, 10000);
+  }
+  
+  setTimeout(refresh, 10000);
+</script>
+<script type="text/javascript">  
+  //Create SVG element
+
 </script>
 {% endblock %}
 {% block content %}
@@ -27,62 +39,14 @@
 </div>
 {% if data %}
 {% for row in data %}
-{% if loop.index0 is divisibleby 6 %}<div class="row">{% endif %}
+{% if loop.index0 is divisibleby 6 %}<div class="row-fluid">{% endif %}
   <div class="col-md-2">
   {%- if group -%}
     <legend class="centered"><a href="{{ url_for('dashboard.index', group=group, locationtype=locationtype, **args) }}">{{ row.name }}</a></legend>
   {%- else -%}
     <legend style="text-align:center"><a href="{{ url_for('dashboard.index', group=row.name, locationtype=locationtype, **args) }}">{{ row.name }}</a></legend>
   {% endif %}
-    <div>
-      <script type="text/javascript+protovis">
-        width = 170,
-        height = 300,
-        offset = 10,
-        r = width/2 - offset;
-        data = [{{ row.Missing }}, {{ row.Partial}}, {{ row.Complete }}];
-        colors = ["#FF5200", "#FFE22B", "#3BDF4A"];
-        labels = ['{% trans %}Missing{% endtrans %}', '{% trans %}Partial{% endtrans %}', '{% trans %}Complete{% endtrans %}'];
-
-        var pie = new pv.Panel().width(width).height(height);
-            pie.add(pv.Wedge)
-            .data(pv.normalize(data))
-            .outerRadius(70)
-            .angle(function(d) d * 2 * Math.PI)
-            .left(width/2)
-            .top(width/2)
-            .fillStyle(pv.colors(colors).by(function () { return this.index;}))
-            .anchor("center")
-            .add(pv.Label)
-            .textAngle(0)
-            .text(function(d){ return d ? (d*100).toFixed(0) + "%" : "" });
-            
-        //legends   
-        pie.add(pv.Dot) 
-            .data(labels) 
-            .top(function() ((height + 80)/2) + this.index * 18)
-            .left(30) 
-            .size(20) 
-            .strokeStyle(null) 
-            .fillStyle(pv.colors(colors)) 
-            .anchor("right").add(pv.Label)
-            .textMargin(8)
-            .font("10pt Courier");
-            
-        // raw data 
-        pie.add(pv.Dot) 
-            .data(data) 
-            .top(function() ((height + 80)/2) + this.index * 18)
-            .left(30 + 72) 
-            .strokeStyle(null)
-            .fillStyle(null)
-            .anchor("right").add(pv.Label)
-            .textMargin(8)
-            .text(function(d){ return "· " + d })
-            .font("10pt Courier");
-
-        pie.render();
-      </script>
+    <div class="piechart" data-chart='{{ row|tojson|safe }}'>
     </div>
   </div>
 {% if loop.last or loop.index is divisibleby 6 %}</div>{% endif %}

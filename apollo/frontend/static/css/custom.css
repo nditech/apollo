@@ -1,14 +1,14 @@
 #delete{
- margin-left:-24px;
+ margin-left:-23px;
  position:relative;
  border-radius:6px 0 0 6px;
  -webkit-border-radius:6px 0 0 6px;
  -moz-border-radius:6px 0 0 6px;
  vertical-align:middle;
- height:58px;
+ height:35px;
  text-shadow: 1px 1px 2px rgba(0,0,0,0.25); 
 }
-.i_custom{vertical-align:middle; padding-top:17px;
+.i_custom{vertical-align:middle;
 }
 label{font-size: 13px;}
 .modal{transition: none;}
@@ -50,6 +50,8 @@ border-right-color: #64adea;
 .navbar-default .navbar-nav > .open > a, .navbar-default .navbar-nav > .open > a:hover, .navbar-default .navbar-nav > .open > a:focus{
   background-color: inherit;
 }
+.input-group-addon{padding: 4px 12px;}
+.input-sm{font-size: 12px;}
 a.btn-sm{line-height: 1.7;}
 .h3{margin-top: 0px;}
 .input-mini{width:85px;}
@@ -60,7 +62,7 @@ a.btn-sm{line-height: 1.7;}
 .span4{width:354px;}
 .span5{width: 425px;}
 .span6{width: 510px;}
-.select2-container .select2-choice{height: 30px; font-size: 12px;}
+.select2-container .select2-choice{height: 28px; font-size: 12px;}
 .form-container{padding: 0px;}
 .responsive{overflow: auto;}
 
