@@ -85,18 +85,18 @@ TODO: insert location path here
       {%- endif %}
     </td>
     {%- if readonly -%}
-    <td>{{ submission_form[field.name](class_='form-control', disabled=1) }}</td>
+    <td>{{ submission_form[field.name](class_='form-control input-mini', disabled=1) }}</td>
     {%- else -%}
-    <td>{{ submission_form[field.name](class_='form-control') }}</td>
+    <td>{{ submission_form[field.name](class_='form-control input-mini') }}</td>
     {%- endif -%}
     {%- for sibling_form in sibling_forms -%}
     {%- if readonly -%}
-    <td>{{ sibling_form[field.name](class_='form-control', disabled=1) }}</td>
+    <td>{{ sibling_form[field.name](class_='form-control input-mini', disabled=1) }}</td>
     {%- else -%}
-    <td>{{ sibling_form[field.name](class_='form-control') }}</td>
+    <td>{{ sibling_form[field.name](class_='form-control input-mini') }}</td>
     {%- endif -%}
     {%- endfor -%}
-    <td>{{ master_form[field.name](class_='form-control') }}</td>
+    <td>{{ master_form[field.name](class_='form-control input-mini') }}</td>
   </tr>
   {% endfor %}
   {% endfor %}
@@ -144,8 +144,18 @@ TODO: insert location path here
   </tbody>
 </table>
 {% endif -%}
-<button type="submit" class"btn btn-primary btn-large">Save</button>
-<a class="btn btn-default btn-large" href="{{ url_for('submissions.submission_list', form_id=form.pk) }}">Cancel</a>
+
+
+ <div class="row navbar-fixed-bottom" style="bottom:0px; background:#fff; padding-top:1em; padding-bottom:1em;">
+      <div class="container">
+        <div class="col-md-offset-8 col-md-2">
+          <button type="submit" class="btn btn-info btn-lg btn-block" style= "margin-left:1em;">Save</button>
+        </div>
+        <div class="col-md-2">
+          <a class="btn btn-default btn-lg btn-block" style= "margin-left:;" href="{{ url_for('submissions.submission_list', form_id=form.pk) }}">Cancel</a>
+        </div>
+      </div>
+    </div>
 </form>
 </div>
 {% endblock %}
