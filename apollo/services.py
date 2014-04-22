@@ -4,7 +4,7 @@ from .locations import SamplesService, LocationTypesService, LocationsService
 from .participants import \
     (ParticipantsService, ParticipantRolesService, ParticipantPartnersService)
 from .submissions import \
-    (SubmissionsService, SubmissionCommentsService)
+    (SubmissionsService, SubmissionCommentsService, SubmissionVersionsService)
 from .users import UsersService, PermsService, UserUploadsService
 from .messaging import MessagesService
 
@@ -19,6 +19,7 @@ participants = ParticipantsService()
 samples = SamplesService()
 submission_comments = SubmissionCommentsService()
 submissions = SubmissionsService()
+submission_versions = SubmissionVersionsService()
 users = UsersService()
 perms = PermsService()
 user_uploads = UserUploadsService()

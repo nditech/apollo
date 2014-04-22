@@ -1,5 +1,5 @@
 from ..core import Service
-from .models import Submission, SubmissionComment
+from .models import Submission, SubmissionComment, SubmissionVersion
 
 
 class SubmissionsService(Service):
@@ -8,3 +8,7 @@ class SubmissionsService(Service):
 
 class SubmissionCommentsService(Service):
     __model__ = SubmissionComment
+
+
+class SubmissionVersionsService(Service):
+    __model__ = SubmissionVersion

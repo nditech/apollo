@@ -75,19 +75,6 @@ class SubmissionQuerySet(BaseQuerySet):
         return df
 
 
-class SubmissionVersion(db.EmbeddedDocument):
-    CHANNEL_CHOICES = (
-        ('SMS', _('SMS')),
-        ('Web', _('Web')),
-        ('API', _('API'))
-    )
-
-    data = db.StringField(required=True)
-    timestamp = db.DateTimeField(default=datetime.utcnow())
-    channel = db.StringField()
-    identity = db.StringField(default='Unknown', required=True)
-
-
 # Submissions
 class Submission(db.DynamicDocument):
     '''Submissions represent data collected by participants in response to
@@ -120,8 +107,8 @@ class Submission(db.DynamicDocument):
     created = db.DateTimeField()
     updated = db.DateTimeField()
     completion = db.DictField()
-    versions = db.ListField(db.EmbeddedDocumentField(SubmissionVersion))
     location_name_path = db.DictField()
+    sender_verified = db.BooleanField(default=False)
 
     deployment = db.ReferenceField(Deployment)
 
@@ -186,3 +173,33 @@ class SubmissionComment(db.Document):
     submit_date = db.DateTimeField(default=datetime.utcnow())
 
     deployment = db.ReferenceField(Deployment)
+
+
+class SubmissionVersion(db.Document):
+    '''Stores versions of :class:`core.documents.Submission`
+    instances'''
+    CHANNEL_CHOICES = (
+        ('SMS', _('SMS')),
+        ('Web', _('Web')),
+        ('API', _('API'))
+    )
+    submission = db.ReferenceField(Submission, required=True)
+    data = db.StringField(required=True)
+    timestamp = db.DateTimeField(default=datetime.utcnow())
+    channel = db.StringField(choices=CHANNEL_CHOICES, required=True)
+    identity = db.StringField(default='Unknown', required=True)
+
+    deployment = db.ReferenceField(Deployment)
+
+    meta = {
+        'ordering': ['-timestamp']
+    }
+
+    @property
+    def version_number(self):
+        versions = list(SubmissionVersion.objects(
+            deployment=self.deployment,
+            submission=self.submission
+        ).scalar('id'))
+
+        return versions.index(self.id) + 1
