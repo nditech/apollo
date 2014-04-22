@@ -153,6 +153,10 @@ def update_participants(dataframe, event, header_map):
                 _('Location with id %(loc_id)s not found',
                     loc_id=record[LOCATION_ID_COL])
             ))
+        else:
+            # explicitly set the location name path
+            participant.location_name_path = {
+                l.location_type: l.name for l in location.ancestors_ref}
         participant.location = location
 
         supervisor = None

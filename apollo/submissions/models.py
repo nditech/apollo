@@ -62,7 +62,8 @@ class SubmissionQuerySet(BaseQuerySet):
         if selected_fields:
             qs = self.only(*selected_fields)
 
-        df = DataFrame(list(qs.as_pymongo()))
+        df = DataFrame(list(qs.as_pymongo())).convert_objects(
+            convert_numeric=True)
         if df.empty:
             return df
 
@@ -129,6 +130,15 @@ class Submission(db.DynamicDocument):
                 self.completion[group.name] = 'Partial'
             else:
                 self.completion[group.name] = 'Missing'
+
+    def clean(self):
+        # set location name path
+        if not self.location_name_path:
+            self.location_name_path = {
+                l.location_type: l.name for l in self.location.ancestors_ref
+            }
+
+        # update completion status
 
     @property
     def master(self):
