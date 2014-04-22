@@ -5,7 +5,7 @@ import string
 from urlparse import urlparse
 
 EDIT_OBSERVER_CHECKLIST = ast.literal_eval(
-    os.environ.get('EDIT_OBSERVER_CHECKLIST', 'False')
+    os.environ.get('EDIT_OBSERVER_CHECKLIST', 'True')
 )
 
 SECRET_KEY = os.environ.get('SECRET_KEY', 'SOMETHING_SECURE')

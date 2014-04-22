@@ -11,7 +11,7 @@ from ..analyses.common import (
     generate_incidents_data, generate_process_data
 )
 from ..services import forms, locations, location_types, submissions
-from . import route
+from . import route, permissions
 from .filters import (
     generate_submission_analysis_filter,
     generate_critical_incident_location_filter
@@ -113,20 +113,24 @@ def _process_analysis(form_id, location_id=None, tag=None):
 
 
 @route(bp, '/submissions/analysis/process/form/<form_id>')
-@register_menu(bp, 'analysis', _('Analysis'),
-               dynamic_list_constructor=partial(get_analysis_menu))
+@register_menu(bp, 'process_analysis', _('Process Analysis'),
+               dynamic_list_constructor=partial(get_analysis_menu),
+               visible_when=lambda: permissions.view_analyses.can())
+@permissions.view_analyses.require(403)
 @login_required
 def process_analysis(form_id):
     return _process_analysis(form_id)
 
 
 @route(bp, '/submissions/analysis/process/form/<form_id>/location/<location_id>')
+@permissions.view_analyses.require(403)
 @login_required
 def process_analysis_with_location(form_id, location_id):
     return _process_analysis(form_id, location_id)
 
 
 @route(bp, '/submissions/analysis/process/form/<form_id>/location/<location_id>/tag/<tag>')
+@permissions.view_analyses.require(403)
 @login_required
 def process_analysis_with_location_and_tag(form_id, location_id, tag):
     return _process_analysis(form_id, location_id, tag)
