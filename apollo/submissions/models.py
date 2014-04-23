@@ -175,6 +175,12 @@ class Submission(db.DynamicDocument):
             )
         return self._siblings
 
+    @property
+    def versions(self):
+        if not hasattr(self, '_versions'):
+            self._versions = SubmissionVersion.objects(submission=self)
+        return self._versions
+
 
 class SubmissionComment(db.Document):
     '''Stores user comments.'''
