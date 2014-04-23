@@ -58,7 +58,7 @@ TODO: insert location path here
 {{ submission_form.csrf_token() }}
 {%- if form.form_type == 'CHECKLIST' %}
 {%- for f in sibling_forms -%}{{ f.csrf_token() }}{%- endfor -%}{{ master_form.csrf_token() }}
-<table class="table table-bordered table-striped table-hover">
+<table class="table table-bordered table-striped table-hover" style="margin-bottom:5.5em;">
 <tbody>
   <tr>
     <td colspan="2">&nbsp;</td>
@@ -99,7 +99,7 @@ TODO: insert location path here
 </tbody>
 </table>
 {% else %}
-<table class="table table-bordered table-striped table-hover">
+<table class="table table-bordered table-striped table-hover" style="margin-bottom:5.5em;">
   <tbody>
     <tr>
       <td colspan="2">&nbsp;</td>
