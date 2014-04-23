@@ -1,6 +1,7 @@
 {%- extends 'frontend/_layout.html' -%}
 {%- from 'frontend/macros/participant_list_filter.html' import render_filter_form -%}
 {%- from 'frontend/macros/pagination.html' import render_pager -%}
+{%- from 'frontend/macros/send_message.html' import send_message_modal -%}
 {% block toolbar %}
   {%- if perms.export_participants.can() -%}
   <a class="btn btn-default pull-right" href="{{ url_for('participants.participant_list', export='true', **request.args) }}">{% trans %}Export{% endtrans %}</a>
@@ -9,7 +10,7 @@
   <a class="btn btn-info pull-right" href="{{ url_for('participants.participant_list_import') }}" style="margin-right:1em;"><i class="glyphicon glyphicon-upload glyphicon-white"></i> {% trans %}Import Participants{% endtrans %}</a>
   {%- endif -%}
   {%- if perms.send_messages.can() -%}
-  <a class="btn btn-success pull-right" href="#" style="margin-right:1em;">{% trans %}Send Message{% endtrans %}</a>
+  <button class="btn btn-success pull-right" id="send_message_modal_btn" style="margin-right:1em;">{% trans %}Send Message{% endtrans %}</button>
   {%- endif -%}
 {% endblock %}
 {% block content %}
@@ -86,7 +87,6 @@
       </div>
     </div>
 {%- endblock -%}
-</form>
 {%- block scripts -%}
 <script src="{{ url_for('static', filename='js/filters.js') }}"></script>
 <script src="{{ url_for('static', filename='js/forms.js') }}"></script>
@@ -108,10 +108,8 @@
 
   });
 });
-
-
 </script>
 {% if perms.send_messages.can() %}
-{# TODO: send_message paginator.count #}
+{{ send_message_modal(participants.total) }}
 {% endif %}
 {%- endblock -%}

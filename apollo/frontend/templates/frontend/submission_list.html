@@ -2,10 +2,11 @@
 {%- from 'frontend/macros/submission_list_filter.html' import render_filter_form -%}
 {%- from 'frontend/macros/pagination.html' import render_pager -%}
 {%- from 'frontend/macros/submission_list_macros.html' import submission_header, submission_items -%}
+{%- from 'frontend/macros/send_message.html' import send_message_modal -%}
 {% block scripts %}
 <script type="text/javascript" src="{{ url_for('static', filename='js/filters.js') }}"></script>
 {% if perms.send_messages.can() %}
-{# TODO: send_message paginator.count #}
+{{ send_message_modal(pager.total) }}
 {% endif %}
 {% endblock %}
 {% block toolbar %}
@@ -34,7 +35,7 @@
 {% endif %}
 {% if perms.send_messages.can() %}
 <div class="btn-group pull-right">
-  <a style="margin-right:1em" id="send_message_modal_btn" href="#send_message" role="button" class="btn btn-success">{% trans %}Send Message{% endtrans %}</a>
+  <button class="btn btn-success" id="send_message_modal_btn" style="margin-right:1em;">{% trans %}Send Message{% endtrans %}</button>
 </div>
 {% endif %}
 {% endblock %}
@@ -65,5 +66,4 @@
   {{ render_pager(pager, 'submissions.submission_list', args) }}
   </div>
 </div>
-
 {% endblock %}
