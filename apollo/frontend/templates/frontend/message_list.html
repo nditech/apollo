@@ -12,6 +12,8 @@
       <form action="{{ request.url }}" method="GET" id="filter" class="form-inline">
         <div class="form-group">
           {{ filter_form.mobile(class_="form-control span2 input-sm", placeholder=_("Mobile")) }}
+        </div>
+        <div class="form-group">
           {{ filter_form.text(class_="form-control span2 input-sm", placeholder=_("Text")) }}
         </div>
         <div class=" form-group">
@@ -20,7 +22,12 @@
             <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
           </div>
         </div>
-        <button type="submit" class="btn btn-warning btn-sm"><i class="glyphicon glyphicon-search"></i> {% trans %}Search{% endtrans %}</button> <a class="btn btn-default form-reset btn-sm" style="margin-left:0.5em">{% trans %}Clear{% endtrans %}</a>
+        <div class="form-group">
+          <button type="submit" class="btn btn-warning btn-sm"><i class="glyphicon glyphicon-search"></i> {% trans %}Search{% endtrans %}</button>
+        </div>
+        <div class="form-group">
+          <a class="btn btn-default form-reset btn-sm" style="margin-left:0.5em">{% trans %}Clear{% endtrans %}</a>
+        </div>
       </form>
     </div>
   </div>
