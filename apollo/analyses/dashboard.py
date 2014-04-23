@@ -66,8 +66,18 @@ def _get_group_coverage(submission_queryset, group, location_type):
         l = r.pop('location')
         coverage[l].update({r['completion']: r['total'], 'name': l})
 
-    coverage_list = [coverage.get(l) for l in sorted(locations)
-                     if coverage.get(l)] if coverage else []
+    # coverage_list = [coverage.get(l) for l in sorted(locations)
+                     # if coverage.get(l)] if coverage else []
+    coverage_list = []
+
+    if coverage:
+        for l in sorted(locations):
+            cov = coverage.get(l)
+            cov.setdefault('Complete', 0)
+            cov.setdefault('Partial', 0)
+            cov.setdefault('Missing', 0)
+
+            coverage_list.append(cov)
 
     return coverage_list
 

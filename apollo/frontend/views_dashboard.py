@@ -10,7 +10,7 @@ from .filters import DashboardFilterSet
 from .helpers import get_event, set_event
 from . import permissions
 from flask import (
-    Blueprint, g, redirect, render_template, request, url_for
+    Blueprint, redirect, render_template, request, url_for
 )
 from flask.ext.babel import lazy_gettext as _
 from flask.ext.menu import register_menu
