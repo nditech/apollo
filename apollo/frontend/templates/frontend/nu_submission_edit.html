@@ -87,12 +87,12 @@ TODO: insert location path here
     {%- if readonly -%}
     <td>{{ submission_form[field.name](class_='form-control input-mini', disabled=1) }}</td>
     {%- else -%}
-    <td>{{ submission_form[field.name](class_='form-control input-mini') }}</td>
+    <td {%- if submission_form[field.name].errors %} class="danger"{%- endif -%}>{{ submission_form[field.name](class_='form-control input-mini') }}</td>
     {%- endif -%}
     {%- for sibling_form in sibling_forms -%}
     <td>{{ sibling_form[field.name](class_='form-control input-mini', disabled=1) }}</td>
     {%- endfor -%}
-    <td>{{ master_form[field.name](class_='form-control input-mini') }}</td>
+    <td {%- if master_form[field.name].errors %} class="danger"{%- endif -%}>{{ master_form[field.name](class_='form-control input-mini') }}</td>
   </tr>
   {% endfor %}
   {% endfor %}
@@ -121,7 +121,7 @@ TODO: insert location path here
       </span>
       {%- endif %}
       </td>
-      <td>{{ submission_form[field.name] }}</td>
+      <td {%- if submission_form[field.name].errors %} class="danger"{%- endif -%}>{{ submission_form[field.name] }}</td>
     </tr>
     {% endfor -%}
     {% endfor -%}
