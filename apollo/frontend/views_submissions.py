@@ -161,6 +161,14 @@ def submission_edit(submission_id):
                 prefix=unicode(submission.pk)
             ) if not readonly else None
 
+            sibling_forms = [
+                edit_form_class(
+                    obj=sibling,
+                    prefix=unicode(sibling.pk))
+
+                for sibling in submission.siblings
+            ] if submission.siblings else []
+
             # if the user is allowed to edit participant submissions,
             # everything has to be valid at one go. no partial update
             if master_form:
@@ -168,14 +176,6 @@ def submission_edit(submission_id):
                     master_form.populate_obj(submission.master)
                     update_data_fields(submission.master)
                 else:
-                    sibling_forms = [
-                        edit_form_class(
-                            obj=sibling,
-                            prefix=unicode(sibling.pk))
-
-                        for sibling in submission.siblings
-                    ] if submission.siblings else []
-
                     return render_template(
                         template_name,
                         page_title=page_title,
@@ -191,14 +191,6 @@ def submission_edit(submission_id):
                     submission_form.populate_obj(submission)
                     update_data_fields(submission)
                 else:
-                    sibling_forms = [
-                        edit_form_class(
-                            obj=sibling,
-                            prefix=unicode(sibling.pk))
-
-                        for sibling in submission.siblings
-                    ] if submission.siblings else []
-
                     return render_template(
                         template_name,
                         page_title=page_title,
