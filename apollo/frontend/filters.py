@@ -188,11 +188,11 @@ class FormGroupFilter(ChoiceFilter):
             params = {}
 
             if value == '1':
-                params = {'completion__{}'.format(group): _('Partial')}
+                params = {'completion__{}'.format(group): 'Partial'}
             elif value == '2':
-                params = {'completion__{}'.format(group): _('Missing')}
+                params = {'completion__{}'.format(group): 'Missing'}
             elif value == '3':
-                params = {'completion__{}'.format(group): _('Complete')}
+                params = {'completion__{}'.format(group): 'Complete'}
 
             return queryset(**params)
         return queryset
