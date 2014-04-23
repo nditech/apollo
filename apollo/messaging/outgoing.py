@@ -56,7 +56,7 @@ class KannelGateway(Gateway):
         except r.ConnectionError:
             return False
 
-        return True if resp.code == 202 else False
+        return True if resp.status_code == 202 else False
 
 
 class TelerivetGateway(Gateway):

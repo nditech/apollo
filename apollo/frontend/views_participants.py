@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 from datetime import datetime
 from flask import (
     Blueprint, flash, make_response, redirect, render_template, request,
-    url_for
+    url_for, abort
 )
 from flask.ext.babel import lazy_gettext as _
 from flask.ext.menu import register_menu
@@ -15,7 +15,7 @@ from ..services import (
     events, locations, participants, participant_roles, participant_partners,
     user_uploads
 )
-from ..tasks import import_participants
+from ..tasks import import_participants, send_message
 from . import route, helpers, filters
 from .forms import (
     generate_participant_edit_form, generate_participant_import_mapping_form,
@@ -40,21 +40,31 @@ def participant_list(page=1):
 
     form = DummyForm(request.form)
 
-    if request.method == 'POST':
-        if form.validate():
-            # generate CSV of participants and force download
-            # TODO: CSV is a sucky format for Unicode data.
-            # It might break hard for non-ASCII characters.
-            selected_participants = participants.find(
-                pk__in=request.form.getlist('ids')
-            )
-            response = make_response(
-                participants.export_list(selected_participants).csv
-            )
-            response.headers['Content-Disposition'] = 'attachment; ' + \
-                'filename=participants.csv'
-            response.headers['Content-Type'] = 'text/csv'
-            return response
+    if request.form.get('action') == 'send_message':
+        message = request.form.get('message', '')
+        recipients = [participant.phone if participant.phone else ''
+                      for participant in queryset_filter.qs]
+
+        if message and recipients:
+            send_message.delay(message, recipients)
+            return 'OK'
+        else:
+            abort(400)
+
+    '''if form.validate():
+        # generate CSV of participants and force download
+        # TODO: CSV is a sucky format for Unicode data.
+        # It might break hard for non-ASCII characters.
+        selected_participants = participants.find(
+            pk__in=request.form.getlist('ids')
+        )
+        response = make_response(
+            participants.export_list(selected_participants).csv
+        )
+        response.headers['Content-Disposition'] = 'attachment; ' + \
+            'filename=participants.csv'
+        response.headers['Content-Type'] = 'text/csv'
+        return response'''
 
     if request.args.get('export'):
         # Export requested

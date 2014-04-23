@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 import json
 from flask import (
     Blueprint, jsonify, make_response, redirect, render_template, request,
-    url_for, current_app
+    url_for, current_app, abort
 )
 from flask.ext.babel import lazy_gettext as _
 from flask.ext.security import current_user, login_required
@@ -18,6 +18,7 @@ from ..services import (
     forms, location_types, submissions, submission_comments,
     submission_versions
 )
+from ..tasks import send_message
 from . import route, permissions
 from .filters import generate_submission_filter
 from .forms import generate_submission_edit_form_class
@@ -58,6 +59,18 @@ def submission_list(form_id):
     )
     query_filterset = filter_class(queryset, request.args)
     filter_form = query_filterset.form
+
+    if request.form.get('action') == 'send_message':
+        message = request.form.get('message', '')
+        recipients = [submission.contributor.phone
+                      if submission.contributor.phone else ''
+                      for submission in query_filterset.qs]
+
+        if message and recipients:
+            send_message.delay(message, recipients)
+            return 'OK'
+        else:
+            abort(400)
 
     if form.form_type == 'CHECKLIST':
         form_fields = []
