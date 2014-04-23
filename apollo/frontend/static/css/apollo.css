@@ -7197,10 +7197,23 @@ table .header-fixed {
 .qtipmodal-ie6fix{
 	position: absolute !important;
 }
+.modal-content{
+  font-size: 14px;
+}
+.modal-header {
+  padding: 9px 15px;
+}
+.modal-body {
+  padding: 15px;
+}
+.modal-footer{
+  margin-top:0px;
+}
 .navbar-right .dropdown-menu {
  left: 0;
 right: auto;
 }
+.btn-modal{font-size: 14px}
 .navbar-nav li a {
      line-height: 25px;
     }
