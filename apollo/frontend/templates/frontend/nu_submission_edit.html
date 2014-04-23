@@ -90,11 +90,7 @@ TODO: insert location path here
     <td>{{ submission_form[field.name](class_='form-control input-mini') }}</td>
     {%- endif -%}
     {%- for sibling_form in sibling_forms -%}
-    {%- if readonly -%}
     <td>{{ sibling_form[field.name](class_='form-control input-mini', disabled=1) }}</td>
-    {%- else -%}
-    <td>{{ sibling_form[field.name](class_='form-control input-mini') }}</td>
-    {%- endif -%}
     {%- endfor -%}
     <td>{{ master_form[field.name](class_='form-control input-mini') }}</td>
   </tr>
