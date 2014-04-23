@@ -22,36 +22,12 @@ from . import route, permissions
 from .filters import generate_submission_filter
 from .forms import generate_submission_edit_form_class
 from .helpers import (
-    displayable_location_types, get_event, get_form_list_menu)
+    displayable_location_types, get_event, get_form_list_menu,
+    update_data_fields)
 from functools import partial
 
 bp = Blueprint('submissions', __name__, template_folder='templates',
                static_folder='static')
-
-
-def update_data_fields(submission):
-    '''This little utility simply sets any boolean fields to None.
-    Have found that having boolean fields have the value False
-    causes problems in analysis.'''
-    fields = [
-        field for group in submission.form.groups
-        for field in group.fields]
-
-    boolean_fields = [field for field in fields if field.represents_boolean]
-    single_value_fields = [field for field in fields if field.options is not None and field.allows_multiple_values == False]
-
-    for field in boolean_fields:
-        if not submission[field.name]:
-            # dictionary-style access will fail. it's a MongoEngine issue
-            # submission[field.name] = None
-            setattr(submission, field.name, None)
-
-    for field in single_value_fields:
-        value = submission[field.name]
-        if value == '':
-            setattr(submission, field.name, None)
-        elif value.isdigit():
-            setattr(submission, field.name, int(value))
 
 
 @route(bp, '/submissions/form/<form_id>', methods=['GET', 'POST'])

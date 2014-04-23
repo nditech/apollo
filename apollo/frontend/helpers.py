@@ -108,3 +108,30 @@ def analysis_navigation_data(form, location, tag=None,
         'tag': tag,
         'analysis_type': analysis_type
     }
+
+
+def update_data_fields(submission):
+    '''This little utility simply sets any boolean fields to None.
+    Have found that having boolean fields have the value False
+    causes problems in analysis.'''
+    fields = [
+        field for group in submission.form.groups
+        for field in group.fields]
+
+    boolean_fields = [field for field in fields if field.represents_boolean]
+    single_value_fields = [
+        field for field in fields
+        if field.options is not None and field.allows_multiple_values is False]
+
+    for field in boolean_fields:
+        if not submission[field.name]:
+            # dictionary-style access will fail. it's a MongoEngine issue
+            # submission[field.name] = None
+            setattr(submission, field.name, None)
+
+    for field in single_value_fields:
+        value = submission[field.name]
+        if value == '':
+            setattr(submission, field.name, None)
+        elif value.isdigit():
+            setattr(submission, field.name, int(value))
