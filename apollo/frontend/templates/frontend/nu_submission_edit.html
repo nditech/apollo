@@ -58,7 +58,7 @@ TODO: insert location path here
 {{ submission_form.csrf_token() }}
 {%- if form.form_type == 'CHECKLIST' %}
 {%- for f in sibling_forms -%}{{ f.csrf_token() }}{%- endfor -%}{{ master_form.csrf_token() }}
-<table class="table table-bordered table-striped table-hover">
+<table class="table table-bordered table-striped table-hover" style="margin-bottom:5.5em;">
 <tbody>
   <tr>
     <td colspan="2">&nbsp;</td>
@@ -87,23 +87,19 @@ TODO: insert location path here
     {%- if readonly -%}
     <td>{{ submission_form[field.name](class_='form-control input-mini', disabled=1) }}</td>
     {%- else -%}
-    <td>{{ submission_form[field.name](class_='form-control input-mini') }}</td>
+    <td {%- if submission_form[field.name].errors %} class="danger"{%- endif -%}>{{ submission_form[field.name](class_='form-control input-mini') }}</td>
     {%- endif -%}
     {%- for sibling_form in sibling_forms -%}
-    {%- if readonly -%}
     <td>{{ sibling_form[field.name](class_='form-control input-mini', disabled=1) }}</td>
-    {%- else -%}
-    <td>{{ sibling_form[field.name](class_='form-control input-mini') }}</td>
-    {%- endif -%}
     {%- endfor -%}
-    <td>{{ master_form[field.name](class_='form-control input-mini') }}</td>
+    <td {%- if master_form[field.name].errors %} class="danger"{%- endif -%}>{{ master_form[field.name](class_='form-control input-mini') }}</td>
   </tr>
   {% endfor %}
   {% endfor %}
 </tbody>
 </table>
 {% else %}
-<table class="table table-bordered table-striped table-hover">
+<table class="table table-bordered table-striped table-hover" style="margin-bottom:5.5em;">
   <tbody>
     <tr>
       <td colspan="2">&nbsp;</td>
@@ -125,7 +121,7 @@ TODO: insert location path here
       </span>
       {%- endif %}
       </td>
-      <td>{{ submission_form[field.name] }}</td>
+      <td {%- if submission_form[field.name].errors %} class="danger"{%- endif -%}>{{ submission_form[field.name] }}</td>
     </tr>
     {% endfor -%}
     {% endfor -%}
