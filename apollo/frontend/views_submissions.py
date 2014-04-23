@@ -202,7 +202,7 @@ def submission_edit(submission_id):
                     )
 
             # everything validated. save.
-            with signals.connected_to(
+            with signals.post_save.connected_to(
                 update_submission_version,
                 sender=submissions.__model__
             ):
