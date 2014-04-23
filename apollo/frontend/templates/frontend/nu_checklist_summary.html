@@ -20,7 +20,7 @@
 	<div class="col-md-12">
 		{% if dataframe.count().any() %}
 			{% for group in field_groups %}
-			<h5>{{ group }}</h5>
+			<h4>{{ group }}</h4>
 				{% for field in field_groups[group] %}
 					{% set question_summary = form|checklist_question_summary(field, location, dataframe) %}
 					{% set stats = question_summary.stats %}
