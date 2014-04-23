@@ -1,3 +1,5 @@
+from flask import g
+from flask.ext.babel import lazy_gettext as _
 from flask.ext.wtf import Form as WTSecureForm
 from wtforms import SelectField, validators
 from ..services import events
@@ -9,8 +11,9 @@ def generate_event_selection_form(*args, **kwargs):
 
     class EventSelectionForm(WTSecureForm):
         event = SelectField(
-            'Choose Event',
+            _('Choose Event'),
             choices=choices,
+            default=g.event.id,
             validators=[validators.input_required()]
         )
 
