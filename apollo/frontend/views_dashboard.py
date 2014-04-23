@@ -6,7 +6,7 @@ from ..analyses.dashboard import get_coverage
 from ..deployments.forms import generate_event_selection_form
 from ..models import LocationType
 from ..services import events, forms, submissions
-from .filters import DashboardFilterSet
+from .filters import dashboard_filterset
 from .helpers import get_event, set_event
 from . import permissions
 from flask import (
@@ -46,7 +46,7 @@ def index():
         created__lte=event.end_date,
         created__gte=event.start_date
     )
-    filter_ = DashboardFilterSet(queryset, data=args)
+    filter_ = dashboard_filterset()(queryset, data=args)
 
     # activate sample filter
     filter_form = filter_.form

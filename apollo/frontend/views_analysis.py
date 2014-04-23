@@ -11,11 +11,7 @@ from ..analyses.common import (
     generate_incidents_data, generate_process_data
 )
 from ..services import forms, locations, location_types, submissions
-from . import route, permissions
-from .filters import (
-    generate_submission_analysis_filter,
-    generate_critical_incident_location_filter
-)
+from . import route, permissions, filters
 from .helpers import analysis_breadcrumb_data, analysis_navigation_data
 
 
@@ -40,7 +36,7 @@ def _process_analysis(form_id, location_id=None, tag=None):
     page_title = _('%(form)s Analysis', form=form.name)
     grouped = False
     display_tag = None
-    analysis_filter = generate_submission_analysis_filter(form)
+    analysis_filter = filters.generate_submission_analysis_filter(form)
 
     # set the correct template and fill out the required data
     if form.form_type == 'CHECKLIST':
@@ -57,7 +53,8 @@ def _process_analysis(form_id, location_id=None, tag=None):
             ])
             grouped = False
 
-        queryset = submissions.find(form=form, contributor=None).filter_in(location)
+        queryset = submissions.find(
+            form=form, contributor=None).filter_in(location)
     else:
         grouped = True
         queryset = submissions.find(form=form).filter_in(location)
@@ -68,7 +65,8 @@ def _process_analysis(form_id, location_id=None, tag=None):
             # on the specified tag
             display_tag = tag
             template_name = 'frontend/nu_critical_incident_locations.html'
-            analysis_filter = generate_critical_incident_location_filter(tag)
+            analysis_filter = \
+                filters.generate_critical_incident_location_filter(tag)
 
     # create data filter
     filter_set = analysis_filter(queryset, request.args)

@@ -16,8 +16,7 @@ from ..services import (
     user_uploads
 )
 from ..tasks import import_participants
-from . import route, helpers
-from .filters import ParticipantFilterSet
+from . import route, helpers, filters
 from .forms import (
     generate_participant_edit_form, generate_participant_import_mapping_form,
     DummyForm, ParticipantUploadForm
@@ -37,7 +36,7 @@ def participant_list(page=1):
     template_name = 'frontend/participant_list.html'
 
     queryset = participants.find()
-    queryset_filter = ParticipantFilterSet(queryset, request.args)
+    queryset_filter = filters.participant_filterset()(queryset, request.args)
 
     form = DummyForm(request.form)
 

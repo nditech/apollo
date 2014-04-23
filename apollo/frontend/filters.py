@@ -1,24 +1,22 @@
-from collections import defaultdict
-from flask.ext.babel import lazy_gettext as _
-from wtforms import widgets
 from ..core import CharFilter, ChoiceFilter, FilterSet
 from ..helpers import _make_choices
-from ..services import (
-    events, forms, locations, location_types, participants,
-    participant_partners, participant_roles, samples)
 from ..wtforms_ext import ExtendedSelectField
 from .helpers import get_event
+from collections import defaultdict
+from flask.ext.babel import lazy_gettext as _
+from .. import services
+from wtforms import widgets
 
 
 class EventFilter(ChoiceFilter):
     def __init__(self, *args, **kwargs):
         kwargs['choices'] = _make_choices(
-            events.find().scalar('id', 'name'), _('Choose Event'))
+            services.events.find().scalar('id', 'name'), _('Choose Event'))
         super(EventFilter, self).__init__(*args, **kwargs)
 
     def filter(self, queryset, value):
         if value:
-            event = events.get(pk=value)
+            event = services.events.get(pk=value)
             return queryset(created__gte=event.start_date,
                             created__lte=event.end_date)
         return queryset
@@ -27,12 +25,13 @@ class EventFilter(ChoiceFilter):
 class ChecklistFormFilter(ChoiceFilter):
     def __init__(self, *args, **kwargs):
         kwargs['choices'] = _make_choices(
-            forms.find(form_type='CHECKLIST').scalar('id', 'name'), _('Form'))
+            services.forms.find(
+                form_type='CHECKLIST').scalar('id', 'name'), _('Form'))
         super(ChecklistFormFilter, self).__init__(*args, **kwargs)
 
     def filter(self, queryset, value):
         if value:
-            form = forms.get(pk=value)
+            form = services.forms.get(pk=value)
             return queryset(form=form)
         return queryset
 
@@ -43,9 +42,9 @@ class LocationFilter(ChoiceFilter):
     def __init__(self, *args, **kwargs):
         displayed_location_types = kwargs.pop(
             'queryset',
-            location_types.find(on_submissions_view=True)
+            services.location_types.find(on_submissions_view=True)
         ).scalar('name')
-        displayed_locations = locations.find(
+        displayed_locations = services.locations.find(
             location_type__in=displayed_location_types
         ).order_by('location_type', 'name') \
             .scalar('id', 'name', 'location_type')
@@ -67,7 +66,7 @@ class LocationFilter(ChoiceFilter):
 
     def filter(self, queryset, value):
         if value:
-            location = locations.get(pk=value)
+            location = services.locations.get(pk=value)
             return queryset.filter_in(location)
         return queryset
 
@@ -75,14 +74,15 @@ class LocationFilter(ChoiceFilter):
 class SampleFilter(ChoiceFilter):
     def __init__(self, *args, **kwargs):
         kwargs['choices'] = _make_choices(
-            samples.find().scalar('id', 'name'), _('Sample')
+            services.samples.find().scalar('id', 'name'), _('Sample')
         )
         super(SampleFilter, self).__init__(*args, **kwargs)
 
     def filter(self, queryset, value):
         if value:
-            sample = samples.get(pk=value)
-            return queryset(location__in=locations.find(samples=sample))
+            sample = services.samples.get(pk=value)
+            return queryset(
+                location__in=services.locations.find(samples=sample))
         return queryset
 
 
@@ -117,14 +117,14 @@ class DynamicFieldFilter(ChoiceFilter):
 class PartnerFilter(ChoiceFilter):
     def __init__(self, *args, **kwargs):
         kwargs['choices'] = _make_choices(
-            participant_partners.find().scalar('id', 'name'),
+            services.participant_partners.find().scalar('id', 'name'),
             _('All Organizations')
         )
         super(PartnerFilter, self).__init__(*args, **kwargs)
 
     def filter(self, queryset, value):
         if value:
-            partner = participant_partners.get(pk=value)
+            partner = services.participant_partners.get(pk=value)
             return queryset(partner=partner)
         return queryset
 
@@ -132,13 +132,14 @@ class PartnerFilter(ChoiceFilter):
 class RoleFilter(ChoiceFilter):
     def __init__(self, *args, **kwargs):
         kwargs['choices'] = _make_choices(
-            participant_roles.find().scalar('id', 'name'), _('All Roles')
+            services.participant_roles.find().scalar('id', 'name'),
+            _('All Roles')
         )
         super(RoleFilter, self).__init__(*args, **kwargs)
 
     def filter(self, queryset, value):
         if value:
-            role = participant_roles.get(pk=value)
+            role = services.participant_roles.get(pk=value)
             return queryset(role=role)
         return queryset
 
@@ -157,7 +158,7 @@ class ParticipantIDFilter(CharFilter):
     """
     def filter(self, queryset, value):
         if value:
-            participant = participants.find(pk=value)
+            participant = services.participants.find(pk=value)
             if participant is None:
                 # this will interfere with the default
                 # filtering of master submissions, so
@@ -181,7 +182,7 @@ class FormGroupFilter(ChoiceFilter):
     def filter(self, queryset, value):
         if value:
             name_parts = self.name.split('__')
-            form = forms.get(pk=name_parts[0])
+            form = services.forms.get(pk=name_parts[0])
             group = [g.name for g in form.groups if g.slug == name_parts[1]][0]
 
             params = {}
@@ -197,30 +198,39 @@ class FormGroupFilter(ChoiceFilter):
         return queryset
 
 
-class BaseSubmissionFilterSet(FilterSet):
-    event = EventFilter()
-    sample = SampleFilter()
+def basesubmission_filterset():
+    class BaseSubmissionFilterSet(FilterSet):
+        event = EventFilter()
+        sample = SampleFilter()
 
-    def __init__(self, *args, **kwargs):
-        event = kwargs.pop('default_event', get_event())
-        super(BaseSubmissionFilterSet, self).__init__(*args, **kwargs)
-        self.declared_filters['event'] = EventFilter(
-            widget=widgets.HiddenInput(), default=unicode(event.id))
+        def __init__(self, *args, **kwargs):
+            event = kwargs.pop('default_event', get_event())
+            super(BaseSubmissionFilterSet, self).__init__(*args, **kwargs)
+            self.declared_filters['event'] = EventFilter(
+                widget=widgets.HiddenInput(), default=unicode(event.id))
 
-
-class DashboardFilterSet(FilterSet):
-    sample = SampleFilter()
-    location = LocationFilter()
-    checklist_form = ChecklistFormFilter()
+    return BaseSubmissionFilterSet
 
 
-class ParticipantFilterSet(FilterSet):
-    participant_id = ParticipantFilter()
-    name = ParticipantNameFilter()
-    location = LocationFilter()
-    sample = SampleFilter()
-    role = RoleFilter()
-    partner = PartnerFilter()
+def dashboard_filterset():
+    class DashboardFilterSet(FilterSet):
+        sample = SampleFilter()
+        location = LocationFilter()
+        checklist_form = ChecklistFormFilter()
+
+    return DashboardFilterSet
+
+
+def participant_filterset():
+    class ParticipantFilterSet(FilterSet):
+        participant_id = ParticipantFilter()
+        name = ParticipantNameFilter()
+        location = LocationFilter()
+        sample = SampleFilter()
+        role = RoleFilter()
+        partner = PartnerFilter()
+
+    return ParticipantFilterSet
 
 
 #########################
@@ -242,7 +252,8 @@ def generate_submission_analysis_filter(form):
         )
 
     return type(
-        'SubmissionAnalysisFilterSet', (BaseSubmissionFilterSet,), attributes)
+        'SubmissionAnalysisFilterSet', (
+            basesubmission_filterset(),), attributes)
 
 
 def generate_critical_incident_location_filter(tag):
@@ -267,7 +278,7 @@ def generate_critical_incident_location_filter(tag):
 
     return type(
         'CriticalIncidentsLocationFilterSet',
-        (BaseSubmissionFilterSet,),
+        (basesubmission_filterset(),),
         attributes
     )
 
@@ -300,6 +311,6 @@ def generate_submission_filter(form):
 
     return type(
         'SubmissionFilterSet',
-        (BaseSubmissionFilterSet,),
+        (basesubmission_filterset(),),
         attributes
     )
