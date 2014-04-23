@@ -158,7 +158,7 @@ class ParticipantIDFilter(CharFilter):
     """
     def filter(self, queryset, value):
         if value:
-            participant = services.participants.find(pk=value)
+            participant = services.participants.get(participant_id=value)
             if participant is None:
                 # this will interfere with the default
                 # filtering of master submissions, so
