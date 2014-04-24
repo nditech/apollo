@@ -1,6 +1,8 @@
+# coding: utf-8
 from ..core import db
 from ..deployments.models import Deployment
 from ..formsframework.models import Form
+from ..formsframework.parser import Comparator, Evaluator
 from ..locations.models import Location
 from ..participants.models import Participant
 from ..users.models import User
@@ -11,6 +13,30 @@ from mongoengine import Q
 from pandas import DataFrame, isnull
 
 DEFAULT_SUBMISSION_RANGE = timedelta(hours=3)
+
+FLAG_STATUSES = {
+    'no_problem': ('0', _('No Problem')),
+    'problem': ('2', _('Problem')),
+    'serious_problem': ('3', _('Serious Problem')),
+    'verified': ('4', _('Verified')),
+    'rejected': ('5', _('Rejected'))
+}
+
+FLAG_CHOICES = (
+    ('0', _('No Problem')),
+    ('2', _('Problem')),
+    ('3', _('Serious Problem')),
+    ('4', _('Verified')),
+    ('5', _('Rejected'))
+)
+
+STATUS_CHOICES = (
+    ('', _(u'Status')),
+    ('0', _(u'Status — No Problem')),
+    ('2', _(u'Status — Unverified')),
+    ('4', _(u'Status — Verified')),
+    ('5', _(u'Status — Rejected'))
+)
 
 
 class SubmissionQuerySet(BaseQuerySet):
@@ -110,6 +136,8 @@ class Submission(db.DynamicDocument):
     completion = db.DictField()
     location_name_path = db.DictField()
     sender_verified = db.BooleanField(default=True)
+    verification_flags = db.DictField()
+    verification = db.StringField()
 
     deployment = db.ReferenceField(Deployment)
 
@@ -131,6 +159,76 @@ class Submission(db.DynamicDocument):
             else:
                 self.completion[group.name] = 'Missing'
 
+    def _compute_verification(self):
+        verified_flag = FLAG_STATUSES['verified'][0]
+        rejected_flag = FLAG_STATUSES['rejected'][0]
+
+        comparator = Comparator()
+
+        NO_DATA = 0
+        OK = 1
+        UNOK = 2
+
+        if self.contributor is not None:
+            return
+
+        flags_statuses = []
+        for flag in self.form.verification_flags:
+            evaluator = Evaluator(self)
+
+            try:
+                lvalue = evaluator.eval(flag['lvalue'])
+                rvalue = evaluator.eval(flag['rvalue'])
+
+                if flag['comparator'] == 'pctdiff':
+                    try:
+                        diff = abs(lvalue - rvalue) / float(max([lvalue, rvalue]))
+                    except ZeroDivisionError:
+                        diff = 0
+                elif flag['comparator'] == 'pct':
+                    try:
+                        diff = float(lvalue) / float(rvalue)
+                    except ZeroDivisionError:
+                        diff = 0
+                else:
+                    # value-based comparator
+                    diff = abs(lvalue - rvalue)
+
+                # evaluate conditions and set flag appropriately
+                if comparator.eval(flag['okay'], diff):
+                    flag_setting = FLAG_STATUSES['no_problem'][0]
+                    flags_statuses.append(OK)
+                elif comparator.eval(flag['serious'], diff):
+                    flag_setting = FLAG_STATUSES['serious_problem'][0]
+                    flags_statuses.append(UNOK)
+                elif comparator.eval(flag['problem'], diff):
+                    flag_setting = FLAG_STATUSES['problem'][0]
+                    flags_statuses.append(UNOK)
+                else:
+                    # if we have no way of determining, we assume it's okay
+                    flag_setting = FLAG_STATUSES['no_problem'][0]
+                    flags_statuses.append(OK)
+
+                # setattr(self, flag['storage'], flag_setting)
+                self.verification_flags[flag['storage']] = flag_setting
+            except TypeError:
+                # no sufficient data
+                # setattr(self, flag['storage'], None)
+                try:
+                    self.verification_flags.pop(flag['storage'])
+                except KeyError:
+                    pass
+                flags_statuses.append(NO_DATA)
+
+        # compare all flags and depending on the values, set the status
+        if not self.verification in [verified_flag, rejected_flag]:
+            if all(map(lambda i: i == NO_DATA, flags_statuses)):
+                self.verification = None
+            elif any(map(lambda i: i == UNOK, flags_statuses)):
+                self.verification = FLAG_STATUSES['problem'][0]
+            elif any(map(lambda i: i == OK, flags_statuses)):
+                self.verification = FLAG_STATUSES['no_problem'][0]
+
     def clean(self):
         # set location name path
         if not self.location_name_path:
@@ -140,6 +238,9 @@ class Submission(db.DynamicDocument):
 
         # update completion status
         self._update_completion_status()
+
+        # and compute the verification
+        self._compute_verification()
 
     @property
     def master(self):
