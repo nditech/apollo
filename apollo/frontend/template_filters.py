@@ -1,3 +1,4 @@
+import calendar
 from collections import OrderedDict
 from ..analyses.common import dataframe_analysis
 
@@ -41,7 +42,6 @@ def get_location_for_type(submission, location_type, display_type=False):
         return locations[0].name if locations else u''
 
 
-
 def gen_page_list(pager, window_size=10):
     '''Utility function for generating a list of pages numbers from a pager.
     Shamelessly ripped from django-bootstrap-pagination.'''
@@ -68,3 +68,8 @@ def percent_of(a, b):
         return (a_ / b_) * 100
     except ZeroDivisionError:
         return 0
+
+
+def mkunixtimestamp(dt):
+    '''Creates a unix timestamp from a datetime.'''
+    return calendar.timegm(dt.utctimetuple())

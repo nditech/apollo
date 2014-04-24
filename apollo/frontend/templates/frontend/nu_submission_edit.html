@@ -1,4 +1,17 @@
 {%- extends 'frontend/_layout.html' -%}
+{% block toolbar %}
+{%- if submission.versions %}
+<div class="btn-group pull-right">
+  <a href class="btn btn-default">{%- trans -%}History{%- endtrans -%}</a>
+  <button class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
+  <ul class="dropdown-menu" role="menu">
+    {% for version in submission.versions -%}
+    <li><a href=""><span class="tonow">{{ version.timestamp|timestamp }}</span> &mdash; <em>{{ version.identity }}</em></a></li>
+    {%- endfor %}
+  </ul>
+</div>
+{% endif %}
+{% endblock %}
 {% block content %}{% set form, siblings, master = submission.form, submission.siblings, submission.master %}
 <div class="col-md-12">
 <table class="table table-bordered">
@@ -154,4 +167,8 @@ TODO: insert location path here
     </div>
 </form>
 </div>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/moment.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/timestamps.js') }}"></script>
 {% endblock %}
