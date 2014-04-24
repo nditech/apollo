@@ -84,6 +84,15 @@
                 <li><a href="{{ current_menu.submenu('events').url }}"><i class="glyphicon glyphicon-th-list"></i> {{ current_menu.submenu('events').text }}</a></li>
                 <li class="divider"></li>
               {%- endif -%}
+              {%- if current_menu.submenu('locations_builder').visible -%}
+                <li><a href="{{ current_menu.submenu('locations_builder').url }}">{{ current_menu.submenu('locations_builder').text }}</a></li>
+              {%- endif -%}
+              {%- if current_menu.submenu('formbuilder').visible -%}
+                <li><a href="{{ current_menu.submenu('formbuilder').url }}">{{ current_menu.submenu('formbuilder').text }}</a></li>
+              {%- endif -%}
+              {%- if current_menu.submenu('locations_builder').visible or current_menu.submenu('formbuilder').visible -%}
+                <li class="divider"></li>
+              {%- endif -%}
                 <li><a href="{{ url_for_security('logout') }}"><i class="glyphicon glyphicon-log-out"></i> {% trans %}Logout{% endtrans %}</a></li>
               </ul>
             </li>
