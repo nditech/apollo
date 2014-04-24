@@ -2,6 +2,8 @@ from flask import abort
 from flask.ext.principal import Permission, ActionNeed, RoleNeed, ItemNeed
 
 view_events = Permission(ActionNeed('view_events'), RoleNeed('admin'))
+edit_forms = Permission(ActionNeed('edit_forms'), RoleNeed('admin'))
+edit_locations = Permission(ActionNeed('edit_locations'), RoleNeed('admin'))
 view_messages = Permission(ActionNeed('view_messages'), RoleNeed('admin'))
 send_messages = Permission(ActionNeed('send_messages'), RoleNeed('admin'))
 view_analyses = Permission(ActionNeed('view_analyses'), RoleNeed('admin'))
@@ -20,6 +22,9 @@ edit_submission = Permission(
     ActionNeed('edit_submission'), RoleNeed('admin'))
 export_submissions = Permission(
     ActionNeed('export_submissions'), RoleNeed('admin'))
+
+role = lambda role: Permission(RoleNeed(role))
+
 
 # item permission
 def require_item_perm(action, item, http_exception=403):
