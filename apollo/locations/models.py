@@ -50,14 +50,13 @@ class LocationType(db.Document):
     on_submissions_view = db.BooleanField(default=False)
     on_dashboard_view = db.BooleanField(default=False)
     on_analysis_view = db.BooleanField(default=False)
-    events = db.ListField(db.ReferenceField('Event'))
     slug = db.StringField()
 
     deployment = db.ReferenceField(Deployment)
 
     meta = {
         'indexes': [
-            ['events']
+            ['deployment']
         ]
     }
 

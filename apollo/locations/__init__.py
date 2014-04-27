@@ -13,7 +13,7 @@ class LocationTypesService(Service):
         # a raw query is needed because querying 'normally'
         # (i.e.: ancestors_ref=[]) will raise an exception
         # about an invalid ObjectID
-        return self.get(__raw__={'ancestors_ref': []})
+        return self.find().get(__raw__={'ancestors_ref': []})
 
 
 class LocationsService(Service):
@@ -23,4 +23,4 @@ class LocationsService(Service):
         # a raw query is needed because querying 'normally'
         # (i.e.: ancestors_ref=[]) will raise an exception
         # about an invalid ObjectID
-        return self.get(__raw__={'ancestors_ref': []})
+        return self.find().get(__raw__={'ancestors_ref': []})
