@@ -104,7 +104,7 @@ a.btn-sm{line-height: 1.7;}
 .numeric, .table .numeric { text-align: right; }
 .submission-table .submission-field ul { list-style-type: none; margin: 0; }
 .submission-table .centered, .centered, .table .centered { text-align: center; }
-.submission-table .submission-field ul input[type="radio"], input[type="checkbox"] { margin: -2px 0 0 0;}
+.submission-table .submission-field ul input[type="radio"], .submission-table .submission-field ul input[type="checkbox"] { margin: -2px 0 0 0;}
 .breadcrumb .locationtype { color: #DDD; }
 abbr[data-original-title] {cursor: help;border-bottom: 1px dotted #999999;}
 
