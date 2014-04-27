@@ -1,5 +1,6 @@
 import importlib
 import pkgutil
+import re
 
 from flask import Blueprint
 
@@ -42,3 +43,7 @@ def stash_file(fileobj, user, event=None):
     upload.reload()
 
     return upload
+
+
+def is_objectid(str):
+    return bool(re.match('^[0-9a-fA-F]{24}$', str))
