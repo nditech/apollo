@@ -1,4 +1,4 @@
-function makeElement(label) {
+function makeElement(label, is_administrative, is_political) {
     var maxLineLength = _.max(label.split('\n'), function(l) { return l.length; }).length;
 
     // Compute width/height of the rectangle based on the number 
@@ -10,6 +10,8 @@ function makeElement(label) {
 
     return new joint.shapes.basic.Rect({
         label: label,
+        is_administrative: is_administrative ? true : false,
+        is_political: is_political ? true : false,
         size: { width: width, height: height },
         attrs: {
             text: { text: label, 'font-size': letterSize, 'font-family': "'Helvetica Neue', Helvetica, Arial, sans-serif" },
@@ -49,6 +51,8 @@ function getParents(element_id) {
 
 $('#addDivisionModalButton').click(function (ev) {
   $('#addDivisionName').val('');
+  $('#addDivisionAdministrative').prop('checked', false);
+  $('#addDivisionPolitical').prop('checked', false);
   $('#addDivisionParents').select2('val', '');
 
   var $el = $('#addDivisionParents');
@@ -62,11 +66,13 @@ $('#addDivisionModalButton').click(function (ev) {
 
 $('#addDivisionAddButton').click(function (ev) {
   var name = $('#addDivisionName').val();
+  var is_administrative = $('#addDivisionAdministrative').prop('checked');
+  var is_political = $('#addDivisionPolitical').prop('checked');
   var parent_ids = $('#addDivisionParents').val();
 
   if (name && !_.find(graph.getElements(), function(elem) { return elem.get('label') == name})) {
     var cells = [];
-    var element = makeElement(name);
+    var element = makeElement(name, is_administrative, is_political);
     cells.push(element);
     
     _.each(parent_ids, function(parent_id) {
@@ -110,6 +116,8 @@ $('#updateDivisionDeleteButton').click(function (ev) {
 $('#updateDivisionUpdateButton').click(function (ev) {
   var element_id = $('#updateDivisionId').val();
   var label = $('#updateDivisionName').val();
+  var is_administrative = $('#updateDivisionAdministrative').prop('checked');
+  var is_political = $('#updateDivisionPolitical').prop('checked');
   var parents = $('#updateDivisionParents').val();
 
   var element = _.find(graph.getElements(), function (el) {
@@ -119,6 +127,8 @@ $('#updateDivisionUpdateButton').click(function (ev) {
   if (element) {
     element.get('attrs').text.text = label;
     element.set('label', label);
+    element.set('is_administrative', is_administrative);
+    element.set('is_political', is_political);
 
     var maxLineLength = _.max(label.split('\n'), function(l) { return l.length; }).length;
     var letterSize = 12;
@@ -165,8 +175,10 @@ if (graph_data) {
 
 paper.on('cell:pointerdblclick', 
     function(cellView, evt, x, y) {
-        $('#updateDivisionName').val(cellView.model.get('attrs').text.text);
+        $('#updateDivisionName').val(cellView.model.get('label'));
         $('#updateDivisionId').val(cellView.model.id);
+        $('#updateDivisionAdministrative').prop('checked', cellView.model.get('is_administrative') ? true : false);
+        $('#updateDivisionPolitical').prop('checked', cellView.model.get('is_political') ? true : false);
 
         $('#updateDivisionParents').empty();
 
@@ -184,3 +196,5 @@ paper.on('cell:pointerdblclick',
         $('#updateDivision').modal('show');
     }
 );
+
+$('.alert').delay(4000).fadeOut(1000);

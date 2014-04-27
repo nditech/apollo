@@ -36,6 +36,20 @@
               </select>
             </div>
           </div>
+          <div class="form-group">
+            <div class="col-sm-10 col-sm-offset-2">
+              <div class="checkbox">
+                <label for="addDivisionAdministrative">
+                  <input type="checkbox" name="is_administrative" id="addDivisionAdministrative" value="true" /> {% trans %}Administrative Division{% endtrans %}
+                </label>
+              </div>
+              <div class="checkbox">
+                <label for="addDivisionPolitical">
+                  <input type="checkbox" name="is_political" id="addDivisionPolitical" value="true" /> {% trans %}Political Division{% endtrans %}
+                </label>
+              </div>
+            </div>
+          </div>
       </div>
       <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">{% trans %}Close{% endtrans %}</button>
@@ -68,6 +82,20 @@
               <input type="hidden" class="form-control" id="updateDivisionId" name="id">
             </div>
           </div>
+          <div class="form-group">
+            <div class="col-sm-10 col-sm-offset-2">
+              <div class="checkbox">
+                <label for="updateDivisionAdministrative">
+                  <input type="checkbox" name="is_administrative" id="updateDivisionAdministrative" value="true" /> {% trans %}Administrative Division{% endtrans %}
+                </label>
+              </div>
+              <div class="checkbox">
+                <label for="updateDivisionPolitical">
+                  <input type="checkbox" name="is_political" id="updateDivisionPolitical" value="true" /> {% trans %}Political Division{% endtrans %}
+                </label>
+              </div>
+            </div>
+          </div>
       </div>
       <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">{% trans %}Close{% endtrans %}</button>
@@ -93,7 +121,7 @@
 {%- endif -%}
 <div class="row">
   <div class="col-md-10 col-md-offset-2">
-    <div id="paper" style="margin-top: 5em" data-graph="{{ g.deployment.administrative_divisions_graph }}"></div>
+    <div id="paper" style="margin-top: 5em" data-graph='{{ g.deployment.administrative_divisions_graph }}'></div>
   </div>
 </div>
 {% endblock %}

@@ -50,6 +50,8 @@ class LocationType(db.Document):
     on_submissions_view = db.BooleanField(default=False)
     on_dashboard_view = db.BooleanField(default=False)
     on_analysis_view = db.BooleanField(default=False)
+    is_administrative = db.BooleanField(default=False)
+    is_political = db.BooleanField(default=False)
     slug = db.StringField()
 
     deployment = db.ReferenceField(Deployment)
