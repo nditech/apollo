@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 from __future__ import unicode_literals
-from flask import Blueprint, g, redirect, render_template, request, url_for
+from flask import (
+    Blueprint, g, redirect, render_template, request, url_for, flash
+)
 from flask.ext.babel import lazy_gettext as _
 from flask.ext.security import login_required
 from flask.ext.menu import register_menu
@@ -39,14 +41,25 @@ def location_edit(pk):
     return render_template(template_name, form=form, page_title=page_title)
 
 
-@route(bp, '/locationsbuilder')
+@route(bp, '/locations/builder', methods=['GET', 'POST'])
 @register_menu(
-    bp, 'locations_builder', _('Locations Builder'),
+    bp, 'locations_builder', _('Administrative Divisions'),
     visible_when=lambda: permissions.edit_locations.can())
 @permissions.edit_locations.require(403)
 @login_required
 def locations_builder():
     template_name = 'frontend/location_builder.html'
-    page_title = _('Locations Builder')
+    page_title = _('Administrative Divisions')
+
+    if request.method == 'POST' and request.form.get('divisions_graph'):
+        divisions_graph = request.form.get('divisions_graph')
+        g.deployment.administrative_divisions_graph = divisions_graph
+        g.deployment.save()
+        g.deployment.reload()
+
+        flash(
+            _('Your changes have been saved.'),
+            category='locations_builder'
+        )
 
     return render_template(template_name, page_title=page_title)
