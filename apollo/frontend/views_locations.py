@@ -7,9 +7,12 @@ from flask import (
 from flask.ext.babel import lazy_gettext as _
 from flask.ext.security import login_required
 from flask.ext.menu import register_menu
-from ..models import Location
+from mongoengine import ValidationError
+from .. import models, services, helpers
 from . import route, permissions
 from .forms import generate_location_edit_form
+import json
+import networkx as nx
 
 bp = Blueprint('locations', __name__, template_folder='templates',
                static_folder='static', static_url_path='/core/static')
@@ -24,7 +27,7 @@ bp = Blueprint('locations', __name__, template_folder='templates',
 def location_edit(pk):
     template_name = 'core/location_edit.html'
     deployment = g.get('deployment')
-    location = Location.objects.get_or_404(pk=pk, deployment=deployment)
+    location = models.Location.objects.get_or_404(pk=pk, deployment=deployment)
     page_title = _('Edit location: %(name)s', name=location.name)
 
     if request.method == 'GET':
@@ -52,8 +55,78 @@ def locations_builder():
     page_title = _('Administrative Divisions')
 
     if request.method == 'POST' and request.form.get('divisions_graph'):
-        divisions_graph = request.form.get('divisions_graph')
-        g.deployment.administrative_divisions_graph = divisions_graph
+        nx_graph = nx.DiGraph()
+        divisions_graph = json.loads(request.form.get('divisions_graph'))
+
+        nodes = filter(
+            lambda cell: cell.get('type') == 'basic.Rect',
+            divisions_graph.get('cells'))
+        links = filter(
+            lambda cell: cell.get('type') == 'link',
+            divisions_graph.get('cells'))
+
+        valid_node_ids = map(
+            lambda cell: cell.get('id'),
+            filter(
+                lambda cell: helpers.is_objectid(cell.get('id')),
+                nodes))
+
+        # 1. Delete non-referenced location types
+        services.location_types.find(id__nin=valid_node_ids).delete()
+
+        # 2. Create location types and update ids
+        for i, node in enumerate(nodes):
+            try:
+                lt = services.location_types.find().get(id=node.get('id'))
+                lt.is_administrative = node.get('is_administrative')
+                lt.is_political = node.get('is_political')
+                lt.name = node.get('label')
+                lt.ancestors_ref = []
+                lt.save()
+            except (models.LocationType.DoesNotExist, ValidationError):
+                lt = services.location_types.create(
+                    name=node.get('label'),
+                    is_administrative=node.get('is_administrative'),
+                    is_political=node.get('is_political')
+                    )
+
+                # update graph node and link ids
+                for j, link in enumerate(links):
+                    if link['source'].get('id', None) == node.get('id'):
+                        links[j]['source']['id'] = str(lt.id)
+                    if link['target'].get('id', None) == node.get('id'):
+                        links[j]['target']['id'] = str(lt.id)
+
+            nodes[i]['id'] = str(lt.id)
+
+        # 3. Build graph
+        for node in nodes:
+            nx_graph.add_node(node.get('id'))
+        for link in links:
+            if link['source'].get('id') and link['target'].get('id'):
+                nx_graph.add_edge(
+                    link['source'].get('id'),
+                    link['target'].get('id'))
+
+        # 4. Update ancestor relationships
+        for link in links:
+            if link['source'].get('id') and link['target'].get('id'):
+                ancestors = nx.topological_sort(
+                    nx_graph.reverse(),
+                    nx_graph.reverse().subgraph(
+                        nx.dfs_tree(
+                            nx_graph.reverse(),
+                            link['target'].get('id')).nodes()).nodes())
+                services.location_types.find().get(
+                    id=link['target'].get('id')).update(
+                    add_to_set__ancestors_ref=filter(
+                        lambda ancestor: ancestor != link['target'].get('id'),
+                        ancestors))
+
+        divisions_graph['cells'] = nodes + links
+
+        g.deployment.administrative_divisions_graph = json.dumps(
+            divisions_graph)
         g.deployment.save()
         g.deployment.reload()
 
