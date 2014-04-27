@@ -15663,7 +15663,7 @@ $(function(){
     $('select', form).each(function (id, el) { $(el).val(""); });
     $(form).submit();
   });
-  $('.select2').select2({
+  $('select.select2').select2({
     minimumInputLength: 1,
     matcher: function(term, text) { return text.toUpperCase().indexOf(term.toUpperCase()) === 0; }
   });
@@ -15704,8 +15704,8 @@ $(function(){
   eval('var locations_select2_noclear_options = ' + locationsOptionsString);
   locations_select2_noclear_options.allowClear = false;
 
-  $('.select2-locations').select2(locations_select2_options);
-  $('.select2-locations-noclear').select2(locations_select2_noclear_options);
+  $('select.select2-locations').select2(locations_select2_options);
+  $('select.select2-locations-noclear').select2(locations_select2_noclear_options);
 
   var observerOptionsString = "{ \
     minimumInputLength: 1, \
@@ -15742,8 +15742,8 @@ $(function(){
   eval('var observer_select2_clearable_options = ' + observerOptionsString);
   observer_select2_clearable_options.allowClear = true;
 
-  $('.select2-observers').select2(observer_select2_options);
-  $('.select2-observers-clear').select2(observer_select2_clearable_options);
+  $('select.select2-observers').select2(observer_select2_options);
+  $('select.select2-observers-clear').select2(observer_select2_clearable_options);
 
   // ajax
   jQuery(document).ajaxSend(function(event, xhr, settings) {
