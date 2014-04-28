@@ -141,7 +141,7 @@ def participant_edit(pk):
 @route(bp, '/participants/import', methods=['GET', 'POST'])
 @login_required
 def participant_list_import():
-    page_title = _('Import participants')
+    page_title = _('Import Participants')
     template_name = 'frontend/participant_import.html'
 
     if request.method == 'GET':
@@ -185,7 +185,7 @@ def participant_headers(pk):
         return render_template('frontend/invalid_import.html')
 
     headers = dataframe.columns
-    page_title = _('Map participant columns')
+    page_title = _('Map Participant Columns')
     template_name = 'frontend/participant_headers.html'
 
     if request.method == 'GET':
