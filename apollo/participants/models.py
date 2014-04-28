@@ -42,6 +42,9 @@ class ParticipantGroup(db.Document):
     name = db.StringField()
     deployment = db.ReferenceField(Deployment)
 
+    def __unicode__(self):
+        return self.name
+
 
 class PhoneContact(db.EmbeddedDocument):
     number = db.StringField()

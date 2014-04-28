@@ -42,7 +42,7 @@ class LocationFilter(ChoiceFilter):
     def __init__(self, *args, **kwargs):
         displayed_location_types = kwargs.pop(
             'queryset',
-            services.location_types.find(on_submissions_view=True)
+            services.location_types.find(is_administrative=True)
         ).scalar('name')
         displayed_locations = services.locations.find(
             location_type__in=displayed_location_types

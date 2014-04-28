@@ -92,7 +92,7 @@ def participant_list(page=1):
             form=form,
             page_title=page_title,
             location_types=helpers.displayable_location_types(
-                on_submissions_view=True),
+                is_administrative=True),
             participants=subset.paginate(
                 page=page, per_page=PAGE_SIZE)
         )
