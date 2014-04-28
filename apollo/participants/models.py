@@ -40,6 +40,7 @@ class ParticipantPartner(db.Document):
 
 class ParticipantGroup(db.Document):
     name = db.StringField()
+    deployment = db.ReferenceField(Deployment)
 
 
 class PhoneContact(db.EmbeddedDocument):
