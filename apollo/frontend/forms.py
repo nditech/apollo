@@ -245,13 +245,26 @@ class ParticipantUploadForm(WTSecureForm):
         _('Event'),
         choices=_make_choices(
             events.find().scalar('id', 'name'),
-            _('Select event')
+            _('Select Event')
         ),
         validators=[validators.input_required()]
     )
     spreadsheet = FileField(
-        _('Data file'),
-        # validators=[FileRequired()]
+        _('Data File'),
+    )
+
+
+class LocationsUploadForm(WTSecureForm):
+    event = SelectField(
+        _('Event'),
+        choices=_make_choices(
+            events.find().scalar('id', 'name'),
+            _('Select Event')
+        ),
+        validators=[validators.input_required()]
+    )
+    spreadsheet = FileField(
+        _('Data File'),
     )
 
 
