@@ -3,6 +3,7 @@ from flask.ext.mongoengine import BaseQuerySet
 from mongoengine import Q
 from ..core import db
 from ..deployments.models import Deployment, Event
+from ..helpers import compute_location_path
 
 
 class ParticipantQuerySet(BaseQuerySet):
@@ -72,6 +73,12 @@ class Participant(db.DynamicDocument):
 
     def __unicode__(self):
         return self.name
+
+    def clean(self):
+        # unlike for submissions, this always gets called, because
+        # participants are 'mobile' - they can be moved from one location
+        # to another. we want this to reflect that.
+        self.location_name_path = compute_location_path(self.location)
 
     def get_phone(self):
         if self.phones:

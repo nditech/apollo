@@ -47,3 +47,22 @@ def stash_file(fileobj, user, event=None):
 
 def is_objectid(str):
     return bool(re.match('^[0-9a-fA-F]{24}$', str))
+
+
+def compute_location_path(location):
+    '''Given a :class:`apollo.locations.models.Location` instance,
+    generates a dictionary with location type names as keys and
+    location names as values. Due to lack of joins in MongoDB,
+    this dictionary is useful for queries that retrieve submission
+    and participant information within a location hierarchy.'''
+    from apollo.locations.models import Location
+
+    # we don't really expect the latter case, but for the former,
+    # it's possible to have a participant with no location set
+    if not location or not isinstance(location, Location):
+        return None
+
+    return {
+        ancestor.location_type: ancestor.name
+        for ancestor in location.ancestors_ref
+    }

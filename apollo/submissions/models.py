@@ -3,6 +3,7 @@ from ..core import db
 from ..deployments.models import Deployment
 from ..formsframework.models import Form
 from ..formsframework.parser import Comparator, Evaluator
+from ..helpers import compute_location_path
 from ..locations.models import Location
 from ..participants.models import Participant
 from ..users.models import User
@@ -230,11 +231,12 @@ class Submission(db.DynamicDocument):
                 self.verification = FLAG_STATUSES['no_problem'][0]
 
     def clean(self):
-        # set location name path
+        # update location name path if it does not exist.
+        # unlike for participants, submissions aren't 'mobile', that is,
+        # there doesn't seem to be a use case for transferring submissions.
+        # at least, not at the time of writing
         if not self.location_name_path:
-            self.location_name_path = {
-                l.location_type: l.name for l in self.location.ancestors_ref
-            }
+            self.location_name_path = compute_location_path(self.location)
 
         # update completion status
         self._update_completion_status()
