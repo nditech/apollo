@@ -83,6 +83,8 @@ def participant_list(page=1):
         args = request.args.copy()
         page = int(args.pop('page', '1'))
 
+        subset = queryset_filter.qs.order_by('partici')
+
         # load form context
         context = dict(
             args=args,
@@ -91,7 +93,7 @@ def participant_list(page=1):
             page_title=page_title,
             location_types=helpers.displayable_location_types(
                 on_submissions_view=True),
-            participants=queryset_filter.qs.paginate(
+            participants=subset.paginate(
                 page=page, per_page=PAGE_SIZE)
         )
 
