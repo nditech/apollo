@@ -41,6 +41,7 @@ class ParticipantPartner(db.Document):
 class ParticipantGroup(db.Document):
     name = db.StringField()
     deployment = db.ReferenceField(Deployment)
+    tags = db.ListField(db.StringField())
 
     def __unicode__(self):
         return self.name
@@ -68,7 +69,7 @@ class Participant(db.DynamicDocument):
     location_name_path = db.DictField()
     supervisor = db.ReferenceField('Participant')
     gender = db.StringField(choices=GENDER)
-    groups = db.ListField(db.ReferenceField(ParticipantGroup))
+    group_tags = db.ListField()
 
     email = db.EmailField()
     phones = db.ListField(db.EmbeddedDocumentField(PhoneContact))

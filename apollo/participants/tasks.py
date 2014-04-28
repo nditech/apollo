@@ -107,6 +107,12 @@ def update_participants(dataframe, event, header_map):
     group_columns = [c for c in dataframe.columns
                      if c.startswith(GROUP_PREFIX)]
 
+    # create the groups
+    for column in group_columns:
+        group = services.participant_groups.get(name__iexact=column)
+        if not group:
+            create_group(column, event.deployment)
+
     for idx in index:
         record = dataframe.ix[idx]
         participant = services.participants.get(
@@ -204,20 +210,21 @@ def update_participants(dataframe, event, header_map):
         ]
 
         # fix up groups
-        preset_groups = set(participant.groups)
         for column in group_columns:
-            grp = record[column]
-            if pd.isnull(grp) or not grp:
-                continue
             group = services.participant_groups.get(
-                name__iexact=grp,
-                deployment=event.deployment)
-            if not group:
-                create_group(grp, event.deployment)
-            preset_groups.add(group)
+                name=column,
+                deployment=event.deployment
+            )
 
-        # can't set a ListField using a set
-        participant.groups = list(preset_groups)
+            if pd.isnull(record[column]) or not record[column]:
+                continue
+
+            group.update(add_to_set__tags=record[column])
+
+            d = set(participant.group_tags)
+            d.add(record[column])
+
+            participant.group_tags = list(d)
 
         # finally done with first pass
         participant.save()

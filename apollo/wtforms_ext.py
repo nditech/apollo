@@ -1,5 +1,5 @@
 # from https://github.com/industrydive/wtforms_extended_selectfield
-from wtforms.fields import SelectField
+from wtforms.fields import SelectField, SelectMultipleField
 from wtforms.validators import ValidationError
 from wtforms.widgets import HTMLString, html_params
 from wtforms.widgets import Select
@@ -77,3 +77,22 @@ class ExtendedSelectField(SelectField):
                 if val == self.data:
                     return
         raise ValidationError(self.gettext('Not a valid choice!'))
+
+
+class ExtendedMultipleSelectField(SelectMultipleField):
+    widget = ExtendedSelectWidget(multiple=True)
+
+    def pre_validate(self, form):
+        """
+        Don't forget to validate also values from embedded lists.
+        """
+        if self.data:
+            values = []
+            for c in self.choices:
+                if isinstance(c[1], (list, tuple)):
+                    values.extend(i[0] for i in c[1])
+                else:
+                    values.append(c[0])
+            for d in self.data:
+                if d not in values:
+                    raise ValueError(self.gettext("'%(value)s' is not a valid choice for this field") % dict(value=d))

@@ -1,6 +1,6 @@
 from ..core import CharFilter, ChoiceFilter, FilterSet
 from ..helpers import _make_choices
-from ..wtforms_ext import ExtendedSelectField
+from ..wtforms_ext import ExtendedSelectField, ExtendedMultipleSelectField
 from .helpers import get_event
 from collections import defaultdict
 from flask.ext.babel import lazy_gettext as _
@@ -145,17 +145,19 @@ class RoleFilter(ChoiceFilter):
 
 
 class ParticipantGroupFilter(ChoiceFilter):
+    field_class = ExtendedMultipleSelectField
+
     def __init__(self, *args, **kwargs):
-        kwargs['choices'] = _make_choices(
-            services.participant_groups.find().scalar('id', 'name'),
-            _('All Groups')
-        )
+        choices = defaultdict(list)
+        for group in services.participant_groups.find():
+            choices[group.name] = [(tag, tag) for tag in group.tags]
+        kwargs['choices'] = [(k, v) for k, v in choices.items()]
         super(ParticipantGroupFilter, self).__init__(*args, **kwargs)
 
-    def filter(self, queryset, value):
-        if value:
-            group = services.participant_groups.get(pk=value)
-            return queryset(groups=group)
+    def filter(self, queryset, values):
+        if values:
+            for value in values:
+                queryset = queryset(group_tags=value)
         return queryset
 
 
