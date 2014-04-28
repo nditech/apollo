@@ -144,6 +144,21 @@ class RoleFilter(ChoiceFilter):
         return queryset
 
 
+class ParticipantGroupFilter(ChoiceFilter):
+    def __init__(self, *args, **kwargs):
+        kwargs['choices'] = _make_choices(
+            services.participant_groups.find().scalar('id', 'name'),
+            _('All Groups')
+        )
+        super(ParticipantGroupFilter, self).__init__(*args, **kwargs)
+
+    def filter(self, queryset, value):
+        if value:
+            group = services.participant_groups.get(pk=value)
+            return queryset(groups=group)
+        return queryset
+
+
 class ParticipantFilter(CharFilter):
     """This is used for filtering a queryset of participants.
     """
@@ -229,6 +244,7 @@ def participant_filterset():
         sample = SampleFilter()
         role = RoleFilter()
         partner = PartnerFilter()
+        group = ParticipantGroupFilter()
 
     return ParticipantFilterSet
 

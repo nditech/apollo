@@ -38,6 +38,10 @@ class ParticipantPartner(db.Document):
         return self.name
 
 
+class ParticipantGroup(db.Document):
+    name = db.StringField()
+
+
 class PhoneContact(db.EmbeddedDocument):
     number = db.StringField()
     verified = db.BooleanField(default=False)
@@ -60,6 +64,7 @@ class Participant(db.DynamicDocument):
     location_name_path = db.DictField()
     supervisor = db.ReferenceField('Participant')
     gender = db.StringField(choices=GENDER)
+    groups = db.ListField(db.ReferenceField(ParticipantGroup))
 
     email = db.EmailField()
     phones = db.ListField(db.EmbeddedDocumentField(PhoneContact))

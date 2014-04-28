@@ -2,7 +2,8 @@ from .formsframework import FormsService
 from .deployments import EventsService
 from .locations import SamplesService, LocationTypesService, LocationsService
 from .participants import \
-    (ParticipantsService, ParticipantRolesService, ParticipantPartnersService)
+    (ParticipantsService, ParticipantGroupsService, ParticipantRolesService,
+        ParticipantPartnersService)
 from .submissions import \
     (SubmissionsService, SubmissionCommentsService, SubmissionVersionsService)
 from .users import UsersService, PermsService, UserUploadsService
@@ -24,3 +25,4 @@ users = UsersService()
 perms = PermsService()
 user_uploads = UserUploadsService()
 messages = MessagesService()
+participant_groups = ParticipantGroupsService()
