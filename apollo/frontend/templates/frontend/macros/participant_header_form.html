@@ -1,25 +1,33 @@
 {% macro render_mapping_form(form) %}
-<form class="form-horizontal" method="POST">
-{{ form.hidden_tag() }}
-<fieldset>
-<legend>{% trans %}Import participants{% endtrans %}</legend>
-{%- if form.errors.me -%}
-<div class="alert alert-danger">{{ form.errors.me }}</div>
-{%- endif -%}
-{%- for field in form -%}
-{%- if field.type != 'CSRFTokenField' -%}
-<div class="form-group {% if field.errors %}has-error{% endif %}">
-{{ field.label }}
-{{ field(class_='form-control') }}
-{% if field.errors %}
-{% for e in field.errors %}
-<p class="help-block">{{ e }}</p>
-{% endfor %}
-{% endif %}
+<div class="panel panel-default">
+	<div class="panel-heading">
+		<h3>{% trans %}Import participants{% endtrans %}</h3>
+	</div>
+	<div class="panel-body">
+		<form class="form-inline" method="POST">
+			{{ form.hidden_tag() }}
+			<fieldset>
+				{%- if form.errors.me -%}
+				<div class="alert alert-danger">{{ form.errors.me }}</div>
+				{%- endif -%}
+				{%- for field in form -%}
+				{%- if field.type != 'CSRFTokenField' -%}
+				<div class="form-group {% if field.errors %}has-error{% endif %}">
+					{{ field.label }}
+					{{ field(class_='form-control span2') }}
+					{% if field.errors %}
+					{% for e in field.errors %}
+					<p class="help-block">{{ e }}</p>
+					{% endfor %}
+					{% endif %}
+				</div>
+				{%- endif -%}
+				{%- endfor -%}
+				<div class="form-group form-group-custom">
+					<button class="btn btn-danger" type="submit"><i class="glyphicon glyphicon-import"></i> Import</button>
+				</div>
+			</fieldset>
+		</form>
+	</div>
 </div>
-{%- endif -%}
-{%- endfor -%}
-<button class="btn btn-primary" type="submit">Import</button>
-</fieldset>
-</form>
 {% endmacro %}
