@@ -83,7 +83,7 @@ def participant_list(page=1):
         args = request.args.copy()
         page = int(args.pop('page', '1'))
 
-        subset = queryset_filter.qs.order_by('partici')
+        subset = queryset_filter.qs.order_by('participant_id')
 
         # load form context
         context = dict(
