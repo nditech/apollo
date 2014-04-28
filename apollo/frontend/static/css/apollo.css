@@ -7290,7 +7290,7 @@ a.btn-sm{line-height: 1.7;}
 .btn-custom{margin-left:5px;}
 .form-inline .form-group select.span2, .form-inline .form-group input.span2, .span2{width: 170px;}
 .form-inline .form-group select.span3, .form-inline .form-group input.span3, .span3{width: 255px;}
-.span4{width:354px;}
+.span4, .form-inline .form-group select.span4{width:354px;}
 .span5{width: 425px;}
 .span6{width: 510px;}
 .select2-container .select2-choice{height: 28px; font-size: 12px;}
