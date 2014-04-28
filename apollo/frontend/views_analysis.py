@@ -96,7 +96,7 @@ def _process_analysis(form_id, location_id=None, tag=None):
         if display_tag:
             context['form_field'] = form.get_field_by_tag(display_tag)
             context['location_types'] = location_types.find(
-                on_analysis_view=True)
+                is_political=True)
             context['incidents'] = filter_set.qs
         else:
             incidents_summary = generate_incidents_data(
