@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 from datetime import datetime
 from flask import (
     Blueprint, flash, make_response, redirect, render_template, request,
-    url_for, abort
+    url_for, abort, current_app
 )
 from flask.ext.babel import lazy_gettext as _
 from flask.ext.menu import register_menu
@@ -23,7 +23,6 @@ from .forms import (
 )
 from slugify import slugify_unicode
 
-PAGE_SIZE = 25
 bp = Blueprint('participants', __name__, template_folder='templates',
                static_folder='static', static_url_path='/core/static')
 
@@ -94,7 +93,7 @@ def participant_list(page=1):
             location_types=helpers.displayable_location_types(
                 is_administrative=True),
             participants=subset.paginate(
-                page=page, per_page=PAGE_SIZE)
+                page=page, per_page=current_app.config.get('PAGE_SIZE'))
         )
 
         return render_template(

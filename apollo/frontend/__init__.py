@@ -45,19 +45,26 @@ def create_app(settings_override=None, register_security_blueprint=True):
 
         # permissions
         services.perms.get_or_create(action='view_events')
-        services.perms.get_or_create(action='edit_forms')
-        services.perms.get_or_create(action='edit_locations')
         services.perms.get_or_create(action='view_messages')
         services.perms.get_or_create(action='view_analyses')
-        services.perms.get_or_create(action='send_messages')
-        services.perms.get_or_create(action='edit_participant')
-        services.perms.get_or_create(action='export_participants')
-        services.perms.get_or_create(action='import_participants')
-        services.perms.get_or_create(action='export_messages')
 
         services.perms.get_or_create(action='add_submission')
+
+        services.perms.get_or_create(action='edit_forms')
+        services.perms.get_or_create(action='edit_locations')
+        services.perms.get_or_create(action='edit_participant')
         services.perms.get_or_create(action='edit_submission')
+        services.perms.get_or_create(action='edit_location')
+
+        services.perms.get_or_create(action='import_participants')
+        services.perms.get_or_create(action='import_locations')
+
+        services.perms.get_or_create(action='export_participants')
+        services.perms.get_or_create(action='export_messages')
         services.perms.get_or_create(action='export_submissions')
+        services.perms.get_or_create(action='export_locations')
+
+        services.perms.get_or_create(action='send_messages')
 
     # register deployment selection middleware
     app.before_request(set_request_presets)

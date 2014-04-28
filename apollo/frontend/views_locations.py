@@ -2,14 +2,15 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 from flask import (
-    Blueprint, g, redirect, render_template, request, url_for, flash
+    Blueprint, g, redirect, render_template, request, url_for, flash,
+    current_app
 )
 from flask.ext.babel import lazy_gettext as _
 from flask.ext.security import login_required
 from flask.ext.menu import register_menu
 from mongoengine import ValidationError
 from .. import models, services, helpers
-from . import route, permissions
+from . import route, permissions, filters
 from .forms import generate_location_edit_form
 import json
 import networkx as nx
@@ -18,9 +19,37 @@ bp = Blueprint('locations', __name__, template_folder='templates',
                static_folder='static', static_url_path='/core/static')
 
 
+@route(bp, '/locations/', methods=['GET'])
+@register_menu(
+    bp, 'locations_list', _('Locations'),
+    visible_when=lambda: permissions.edit_locations.can())
+@permissions.edit_locations.require(403)
+@login_required
+def locations_list():
+    template_name = 'frontend/location_list.html'
+    page_title = _('Locations')
+
+    queryset = services.locations.find()
+    queryset_filter = filters.location_filterset()(queryset, request.args)
+
+    args = request.args.copy()
+    page = int(args.pop('page', '1'))
+
+    subset = queryset_filter.qs.order_by('location_type')
+
+    ctx = dict(
+        args=args,
+        filter_form=queryset_filter.form,
+        page_title=page_title,
+        locations=subset.paginate(
+            page=page, per_page=current_app.config.get('PAGE_SIZE')))
+
+    return render_template(template_name, **ctx)
+
+
 @route(bp, '/location/<pk>', methods=['GET', 'POST'])
 @register_menu(
-    bp, 'edit_location', _('Edit Location'),
+    bp, 'location_edit', _('Edit Location'),
     visible_when=lambda: permissions.edit_locations.can())
 @permissions.edit_locations.require(403)
 @login_required
@@ -28,7 +57,7 @@ def location_edit(pk):
     template_name = 'core/location_edit.html'
     deployment = g.get('deployment')
     location = models.Location.objects.get_or_404(pk=pk, deployment=deployment)
-    page_title = _('Edit location: %(name)s', name=location.name)
+    page_title = _('Edit Location')
 
     if request.method == 'GET':
         form = generate_location_edit_form(location)
@@ -42,6 +71,16 @@ def location_edit(pk):
             return redirect(url_for('core.location_list'))
 
     return render_template(template_name, form=form, page_title=page_title)
+
+
+@route(bp, '/locations/import', methods=['GET', 'POST'])
+@register_menu(
+    bp, 'locations_import', _('Import Locations'),
+    visible_when=lambda: permissions.import_locations.can())
+@permissions.import_locations.require(403)
+@login_required
+def locations_import():
+    return ''
 
 
 @route(bp, '/locations/builder', methods=['GET', 'POST'])

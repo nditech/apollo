@@ -87,6 +87,9 @@
               {%- if current_menu.submenu('locations_builder').visible -%}
                 <li><a href="{{ current_menu.submenu('locations_builder').url }}"><i class="glyphicon glyphicon-map-marker"></i> {{ current_menu.submenu('locations_builder').text }}</a></li>
               {%- endif -%}
+              {%- if current_menu.submenu('locations_list').visible -%}
+                <li><a href="{{ current_menu.submenu('locations_list').url }}"><i class="glyphicon glyphicon-map-marker"></i> {{ current_menu.submenu('locations_list').text }}</a></li>
+              {%- endif -%}
               {%- if current_menu.submenu('formbuilder').visible -%}
                 <li><a href="{{ current_menu.submenu('formbuilder').url }}"><i class="glyphicon glyphicon-list-alt"></i> {{ current_menu.submenu('formbuilder').text }}</a></li>
               {%- endif -%}
