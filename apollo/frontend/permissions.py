@@ -1,27 +1,40 @@
 from flask import abort
 from flask.ext.principal import Permission, ActionNeed, RoleNeed, ItemNeed
 
+# View
 view_events = Permission(ActionNeed('view_events'), RoleNeed('admin'))
+view_messages = Permission(ActionNeed('view_messages'), RoleNeed('admin'))
+view_analyses = Permission(ActionNeed('view_analyses'), RoleNeed('admin'))
+
+# Add
+add_submission = Permission(ActionNeed('add_submission'), RoleNeed('admin'))
+
+# Edit
 edit_forms = Permission(ActionNeed('edit_forms'), RoleNeed('admin'))
 edit_locations = Permission(ActionNeed('edit_locations'), RoleNeed('admin'))
-view_messages = Permission(ActionNeed('view_messages'), RoleNeed('admin'))
-send_messages = Permission(ActionNeed('send_messages'), RoleNeed('admin'))
-view_analyses = Permission(ActionNeed('view_analyses'), RoleNeed('admin'))
+edit_submission = Permission(ActionNeed('edit_submission'), RoleNeed('admin'))
 edit_participant = Permission(
     ActionNeed('edit_participant'), RoleNeed('admin'))
-export_participants = Permission(
-    ActionNeed('export_participants'), RoleNeed('admin'))
+edit_location = Permission(ActionNeed('edit_location'), RoleNeed('admin'))
+
+# Import
 import_participants = Permission(
     ActionNeed('import_participants'), RoleNeed('admin'))
+import_locations = Permission(
+    ActionNeed('import_locations'), RoleNeed('admin'))
+
+# Export
+export_participants = Permission(
+    ActionNeed('export_participants'), RoleNeed('admin'))
 export_messages = Permission(
     ActionNeed('export_messages'), RoleNeed('admin'))
-
-# submissions
-add_submission = Permission(ActionNeed('add_submission'), RoleNeed('admin'))
-edit_submission = Permission(
-    ActionNeed('edit_submission'), RoleNeed('admin'))
 export_submissions = Permission(
     ActionNeed('export_submissions'), RoleNeed('admin'))
+export_locations = Permission(
+    ActionNeed('export_locations'), RoleNeed('admin'))
+
+# Others
+send_messages = Permission(ActionNeed('send_messages'), RoleNeed('admin'))
 
 role = lambda role: Permission(RoleNeed(role))
 

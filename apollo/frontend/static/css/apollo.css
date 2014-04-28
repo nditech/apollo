@@ -7197,6 +7197,14 @@ table .header-fixed {
 .qtipmodal-ie6fix{
 	position: absolute !important;
 }
+td.shrink, th.shrink {
+  white-space: nowrap;
+}
+
+td.expand, th.expand {
+  width: 99%;
+}
+
 .modal-content{
   font-size: 14px;
 }

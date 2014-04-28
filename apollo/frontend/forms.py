@@ -1,5 +1,6 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
+from collections import defaultdict
 from flask.ext.babel import lazy_gettext as _
 from flask.ext.wtf import Form as WTSecureForm
 from flask.ext.wtf.file import FileField
@@ -13,6 +14,7 @@ from ..models import (
 from ..services import (
     events, locations, participants, participant_partners, participant_roles
 )
+from ..wtforms_ext import ExtendedSelectField
 
 
 def _make_choices(qs, placeholder=None):
@@ -41,6 +43,14 @@ def generate_location_edit_form(location, data=None):
 
 
 def generate_participant_edit_form(participant, data=None):
+    location_choices = defaultdict(list)
+    location_data = locations.find().order_by('location_type', 'name').scalar('id', 'name', 'location_type')
+
+    for loc_data in location_data:
+        location_choices[loc_data[2]].append(
+            (unicode(loc_data[0]), loc_data[1])
+        )
+
     class ParticipantEditForm(WTSecureForm):
         # participant_id = TextField(
         #     _('Participant ID'),
@@ -68,10 +78,10 @@ def generate_participant_edit_form(participant, data=None):
                 participants.find().scalar('id', 'name')
             )
         )
-        location = SelectField(
+        location = ExtendedSelectField(
             _('Location'),
             choices=_make_choices(
-                locations.find().scalar('id', 'name')
+                [[k, v] for k, v in location_choices.items()]
             ),
             validators=[validators.input_required()]
         )
@@ -235,13 +245,26 @@ class ParticipantUploadForm(WTSecureForm):
         _('Event'),
         choices=_make_choices(
             events.find().scalar('id', 'name'),
-            _('Select event')
+            _('Select Event')
         ),
         validators=[validators.input_required()]
     )
     spreadsheet = FileField(
-        _('Data file'),
-        # validators=[FileRequired()]
+        _('Data File'),
+    )
+
+
+class LocationsUploadForm(WTSecureForm):
+    event = SelectField(
+        _('Event'),
+        choices=_make_choices(
+            events.find().scalar('id', 'name'),
+            _('Select Event')
+        ),
+        validators=[validators.input_required()]
+    )
+    spreadsheet = FileField(
+        _('Data File'),
     )
 
 

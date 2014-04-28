@@ -1,3 +1,11 @@
+td.shrink, th.shrink {
+  white-space: nowrap;
+}
+
+td.expand, th.expand {
+  width: 99%;
+}
+
 .modal-content{
   font-size: 14px;
 }

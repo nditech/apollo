@@ -190,6 +190,27 @@ class ParticipantNameFilter(CharFilter):
         return queryset
 
 
+class LocationNameFilter(CharFilter):
+    def filter(self, queryset, value):
+        if value:
+            return queryset(name__icontains=value)
+        return queryset
+
+
+class LocationTypeFilter(ChoiceFilter):
+    def __init__(self, *args, **kwargs):
+        kwargs['choices'] = _make_choices(
+            services.location_types.find().scalar('name', 'name'),
+            _('All Types')
+        )
+        super(LocationTypeFilter, self).__init__(*args, **kwargs)
+
+    def filter(self, queryset, value):
+        if value:
+            return queryset(location_type=value)
+        return queryset
+
+
 class FormGroupFilter(ChoiceFilter):
     """Allows filtering on form groups. Each group should have a name
     of the form <form_pk>__<group_slug>.
@@ -247,6 +268,14 @@ def participant_filterset():
         group = ParticipantGroupFilter()
 
     return ParticipantFilterSet
+
+
+def location_filterset():
+    class LocationFilterSet(FilterSet):
+        name = LocationNameFilter()
+        location_type = LocationTypeFilter()
+
+    return LocationFilterSet
 
 
 #########################
