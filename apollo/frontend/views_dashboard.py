@@ -70,7 +70,7 @@ def index():
         # we want, so we need to find the lower level types and get the
         # one we want (the first of the children)
         le_temp = [lt for lt in location_type.children
-                   if lt.on_dashboard_view]
+                   if lt.is_administrative]
         try:
             sub_location_type = le_temp[0]
         except IndexError:

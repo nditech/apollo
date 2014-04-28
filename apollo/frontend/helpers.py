@@ -78,7 +78,7 @@ def analysis_breadcrumb_data(form, location, tag=None,
     '''A helper function to populate the breadcrumb data structure
     for both analysis and verification views.'''
     loc_type_names = [
-        lt.name for lt in services.location_types.find(on_analysis_view=True)]
+        lt.name for lt in services.location_types.find(is_political=True)]
     location_branch = list(location.ancestors_ref) + [location]
     displayed_locations = [
         loc for loc in location_branch if loc.location_type in loc_type_names]
@@ -96,7 +96,7 @@ def analysis_navigation_data(form, location, tag=None,
     '''A helper function for generating data for navigation
     links for the analysis views.'''
     loc_type_names = [
-        lt.name for lt in services.location_types.find(on_analysis_view=True)]
+        lt.name for lt in services.location_types.find(is_political=True)]
     lower_locations = [
         loc for loc in location.children()
         if loc.location_type in loc_type_names]
