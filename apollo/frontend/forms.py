@@ -4,8 +4,8 @@ from flask.ext.babel import lazy_gettext as _
 from flask.ext.wtf import Form as WTSecureForm
 from flask.ext.wtf.file import FileField
 from wtforms import (
-    BooleanField, IntegerField, RadioField, SelectField, SelectMultipleField,
-    StringField, TextField, ValidationError, validators, widgets
+    BooleanField, SelectField, SelectMultipleField, StringField, TextField,
+    ValidationError, validators, widgets
 )
 from ..models import (
     LocationType, Participant
@@ -143,6 +143,9 @@ def generate_participant_import_mapping_form(headers, *args, **kwargs):
         phone = TextField(
             _('Phone prefix'),
             validators=[validators.input_required()]
+        )
+        group = TextField(
+            _('Group prefix')
         )
 
         def validate(self):

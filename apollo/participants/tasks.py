@@ -4,10 +4,7 @@ import magic
 from mongoengine import MultipleObjectsReturned
 import pandas as pd
 from ..messaging.tasks import send_email
-from ..services import (
-    locations, participants, participant_partners, participant_roles,
-    user_uploads
-)
+from .. import services
 from .models import PhoneContact
 
 
@@ -50,11 +47,18 @@ def load_source_file(source_file):
 
 
 def create_partner(name, deployment):
-    return participant_partners.create(name=name, deployment=deployment)
+    return services.participant_partners.create(name=name,
+                                                deployment=deployment)
+
+
+def create_group(name, deployment):
+    return services.participant_groups.create(name=name,
+                                              deployment=deployment)
 
 
 def create_role(name, deployment):
-    return participant_roles.create(name=name, deployment=deployment)
+    return services.participant_roles.create(name=name,
+                                             deployment=deployment)
 
 
 def update_participants(dataframe, event, header_map):
@@ -76,6 +80,8 @@ def update_participants(dataframe, event, header_map):
         email - the participant's email.
         phone - a prefix for columns starting with this string that contain
                 numbers
+        group - a prefix for columns starting with this string that contain
+                participant group names
     """
     deployment = event.deployment
     index = dataframe.index
@@ -94,20 +100,23 @@ def update_participants(dataframe, event, header_map):
     GENDER_COL = header_map['gender']
     EMAIL_COL = header_map['email']
     PHONE_PREFIX = header_map['phone']
+    GROUP_PREFIX = header_map['group']
 
     phone_columns = [c for c in dataframe.columns
                      if c.startswith(PHONE_PREFIX)]
+    group_columns = [c for c in dataframe.columns
+                     if c.startswith(GROUP_PREFIX)]
 
     for idx in index:
         record = dataframe.ix[idx]
-        participant = participants.get(
+        participant = services.participants.get(
             participant_id=record[PARTICIPANT_ID_COL],
             deployment=event.deployment,
             event=event
         )
 
         if participant is None:
-            participant = participants.new(
+            participant = services.participants.new(
                 participant_id=record[PARTICIPANT_ID_COL],
                 deployment=event.deployment,
                 event=event
@@ -115,7 +124,7 @@ def update_participants(dataframe, event, header_map):
 
         participant.name = record[NAME_COL]
 
-        role = participant_roles.get(
+        role = services.participant_roles.get(
             name=record[ROLE_COL],
             deployment=deployment
         )
@@ -125,7 +134,7 @@ def update_participants(dataframe, event, header_map):
 
         partner = None
         if record[PARTNER_COL]:
-            partner = participant_partners.get(
+            partner = services.participant_partners.get(
                 name=record[PARTNER_COL],
                 deployment=deployment
             )
@@ -135,7 +144,7 @@ def update_participants(dataframe, event, header_map):
 
         location = None
         try:
-            location = locations.get(
+            location = services.locations.get(
                 code=record[LOCATION_ID_COL],
                 deployment=deployment
             )
@@ -163,7 +172,7 @@ def update_participants(dataframe, event, header_map):
         if record[SUPERVISOR_ID_COL]:
             if record[SUPERVISOR_ID_COL] != record[PARTICIPANT_ID_COL]:
                 # ignore cases where participant is own supervisor
-                supervisor = participants.get(
+                supervisor = services.participants.get(
                     participant_id=record[SUPERVISOR_ID_COL],
                     event=event
                 )
@@ -194,16 +203,32 @@ def update_participants(dataframe, event, header_map):
                          verified=v) for k, v in phone_info.items()
         ]
 
+        # fix up groups
+        preset_groups = set(participant.groups)
+        for column in group_columns:
+            grp = record[column]
+            if pd.isnull(grp) or not grp:
+                continue
+            group = services.participant_groups.get(
+                name__iexact=grp,
+                deployment=event.deployment)
+            if not group:
+                create_group(grp, event.deployment)
+            preset_groups.add(group)
+
+        # can't set a ListField using a set
+        participant.groups = list(preset_groups)
+
         # finally done with first pass
         participant.save()
 
     # second pass - resolve missing supervisor references
     for participant_id, supervisor_id in unresolved_supervisors:
-        participant = participants.get(
+        participant = services.participants.get(
             participant_id=participant_id,
             event=event
         )
-        supervisor = participants.get(
+        supervisor = services.participants.get(
             participant_id=supervisor_id,
             event=event
         )
@@ -237,7 +262,7 @@ def generate_response_email(count, errors, warnings):
 
 
 def import_participants(upload_id, mappings):
-    upload = user_uploads.get(pk=upload_id)
+    upload = services.user_uploads.get(pk=upload_id)
     dataframe = load_source_file(upload.data)
     count, errors, warnings = update_participants(
         dataframe,
