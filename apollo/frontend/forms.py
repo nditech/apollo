@@ -154,19 +154,6 @@ def generate_participant_import_mapping_form(headers, *args, **kwargs):
             _('Group prefix')
         )
 
-        def validate(self):
-            rv = super(ParticipantImportMappingForm, self).validate()
-
-            # check that no two fields were assigned the same value
-            form_data = {f.data for f in self if f.data}
-            assigned_fields = {f for f in self if f.data}
-            if len(form_data) < len(assigned_fields):
-                self.errors.update(
-                    me=_('Duplicate field assignment detected')
-                )
-                return False
-            return rv
-
         def validate_phone(self, field):
             subset = [h for h in self._headers if h.startswith(field.data)]
             if not subset:
