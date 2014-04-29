@@ -104,16 +104,18 @@ def update_participants(dataframe, event, header_map):
 
     for idx in index:
         record = dataframe.ix[idx]
-        participant_id = unicode(record[PARTICIPANT_ID_COL])
+        participant_id = record[PARTICIPANT_ID_COL]
+        if type(participant_id) == float:
+            participant_id = int(participant_id)
         participant = services.participants.get(
-            participant_id=participant_id,
+            participant_id=unicode(participant_id),
             deployment=event.deployment,
             event=event
         )
 
         if participant is None:
             participant = services.participants.new(
-                participant_id=participant_id,
+                participant_id=unicode(participant_id),
                 deployment=event.deployment,
                 event=event
             )
@@ -147,10 +149,9 @@ def update_participants(dataframe, event, header_map):
         location = None
         try:
             if LOCATION_ID_COL:
-                try:
-                    loc_code = int(float(record[LOCATION_ID_COL]))
-                except ValueError:
-                    loc_code = record[LOCATION_ID_COL]
+                loc_code = record[LOCATION_ID_COL]
+                if type(loc_code) == 'float':
+                    loc_code = int(loc_code)
                 location = services.locations.get(
                     code=unicode(loc_code),
                     deployment=deployment
@@ -176,14 +177,18 @@ def update_participants(dataframe, event, header_map):
             if _is_valid(record[SUPERVISOR_ID_COL]):
                 if record[SUPERVISOR_ID_COL] != participant_id:
                     # ignore cases where participant is own supervisor
+                    supervisor_id = record[SUPERVISOR_ID_COL]
+                    if type(supervisor_id) == float:
+                        supervisor_id = int(supervisor_id)
                     supervisor = services.participants.get(
-                        participant_id=record[SUPERVISOR_ID_COL],
+                        participant_id=unicode(supervisor_id),
                         event=event
                     )
                     if supervisor is None:
-                        # perhaps supervisor exists further along. cache the refs
+                        # perhaps supervisor exists further along.
+                        # cache the refs
                         unresolved_supervisors.add(
-                            (participant_id, record[SUPERVISOR_ID_COL])
+                            (participant_id, unicode(supervisor_id))
                         )
         participant.supervisor = supervisor
 
@@ -200,12 +205,10 @@ def update_participants(dataframe, event, header_map):
         for column in phone_columns:
             if not _is_valid(record[column]):
                 continue
-            try:
-                mobile = float(record[column])
-            except ValueError:
-                mobile = record[column]
-            pn = unicode(int(mobile)) if isinstance(mobile, float) else mobile
-            phone_info[pn] = True
+            mobile = record[column]
+            if type(mobile) is float:
+                mobile = int(mobile)
+            phone_info[mobile] = True
 
         participant.phones = [
             PhoneContact(number=unicode(k),
