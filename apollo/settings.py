@@ -29,8 +29,8 @@ SECURITY_TRACKABLE = True
 
 MAIL_SERVER = os.environ.get('MAIL_SERVER', 'localhost')
 MAIL_PORT = os.environ.get('MAIL_PORT', 25)
-MAIL_USE_TLS = os.environ.get('MAIL_USE_TLS', False)
-MAIL_USE_SSL = os.environ.get('MAIL_USE_SSL', False)
+MAIL_USE_TLS = ast.literal_eval(os.environ.get('MAIL_USE_TLS', 'False'))
+MAIL_USE_SSL = ast.literal_eval(os.environ.get('MAIL_USE_SSL', 'False'))
 MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
 MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
 DEFAULT_EMAIL_SENDER = SECURITY_EMAIL_SENDER
