@@ -49,6 +49,9 @@ class LocationType(db.Document):
     ancestors_ref = db.ListField(db.ReferenceField('LocationType'))
     is_administrative = db.BooleanField(default=False)
     is_political = db.BooleanField(default=False)
+    has_registered_voters = db.BooleanField(db_field='has_rv', default=False)
+    has_political_code = db.BooleanField(db_field='has_pc', default=False)
+    metafields = db.ListField(db.StringField())
     slug = db.StringField()
 
     deployment = db.ReferenceField(Deployment)
@@ -84,14 +87,16 @@ class LocationType(db.Document):
         return self.name
 
 
-class Location(db.Document):
+class Location(db.DynamicDocument):
 
     '''A store for Locations'''
 
     name = db.StringField()
     code = db.StringField()
+    political_code = db.StringField(db_field='pcode')
     location_type = db.StringField()
     coords = db.GeoPointField()
+    registered_voters = db.LongField(db_field='rv', default=0)
     ancestors_ref = db.ListField(db.ReferenceField('Location'))
     samples = db.ListField(db.ReferenceField('Sample'))
     events = db.ListField(db.ReferenceField(Event))
