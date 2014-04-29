@@ -1,7 +1,8 @@
 from tablib import Dataset
 from ..core import Service
 from .models import (
-    Participant, ParticipantRole, ParticipantPartner, ParticipantGroup
+    Participant, ParticipantRole, ParticipantPartner, ParticipantGroup,
+    ParticipantGroupType
 )
 
 
@@ -50,3 +51,7 @@ class ParticipantPartnersService(Service):
 
 class ParticipantGroupsService(Service):
     __model__ = ParticipantGroup
+
+
+class ParticipantGroupTypesService(Service):
+    __model__ = ParticipantGroupType

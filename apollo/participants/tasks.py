@@ -28,14 +28,27 @@ Record for participant ID {{ pid }} raised warning: {{ msg }}
 '''
 
 
+def _is_valid(item):
+    return not pd.isnull(item) and item
+
+
 def create_partner(name, deployment):
-    return services.participant_partners.create(name=name,
-                                                deployment=deployment)
+    return services.participant_partners.create(
+        name=name,
+        deployment=deployment)
 
 
-def create_group(name, deployment):
-    return services.participant_groups.create(name=name,
-                                              deployment=deployment)
+def create_group_type(name, deployment):
+    return services.participant_group_types.create(
+        name=name,
+        deployment=deployment)
+
+
+def create_group(name, group_type, deployment):
+    return services.participant_groups.create(
+        name=name,
+        group_type=group_type.name,
+        deployment=deployment)
 
 
 def create_role(name, deployment):
@@ -75,105 +88,105 @@ def update_participants(dataframe, event, header_map):
     # set up mappings
     PARTICIPANT_ID_COL = header_map['participant_id']
     NAME_COL = header_map['name']
-    ROLE_COL = header_map['role']
+    ROLE_COL = header_map.get('role')
     PARTNER_COL = header_map['partner_org']
-    LOCATION_ID_COL = header_map['location_id']
-    SUPERVISOR_ID_COL = header_map['supervisor_id']
+    LOCATION_ID_COL = header_map.get('location_id')
+    SUPERVISOR_ID_COL = header_map.get('supervisor_id')
     GENDER_COL = header_map['gender']
-    EMAIL_COL = header_map['email']
+    EMAIL_COL = header_map.get('email')
     PHONE_PREFIX = header_map['phone']
     GROUP_PREFIX = header_map['group']
 
     phone_columns = [c for c in dataframe.columns
                      if c.startswith(PHONE_PREFIX)]
     group_columns = [c for c in dataframe.columns
-                     if c.startswith(GROUP_PREFIX)]
-
-    # create the groups
-    for column in group_columns:
-        group = services.participant_groups.get(name__iexact=column)
-        if not group:
-            create_group(column, event.deployment)
+                     if c.startswith(GROUP_PREFIX)] if GROUP_PREFIX else []
 
     for idx in index:
         record = dataframe.ix[idx]
+        participant_id = unicode(record[PARTICIPANT_ID_COL])
         participant = services.participants.get(
-            participant_id=record[PARTICIPANT_ID_COL],
+            participant_id=participant_id,
             deployment=event.deployment,
             event=event
         )
 
         if participant is None:
             participant = services.participants.new(
-                participant_id=record[PARTICIPANT_ID_COL],
+                participant_id=participant_id,
                 deployment=event.deployment,
                 event=event
             )
 
-        participant.name = record[NAME_COL]
+        name = record[NAME_COL]
+        participant.name = name if _is_valid(name) else None
 
-        role = services.participant_roles.get(
-            name=record[ROLE_COL],
-            deployment=deployment
-        )
-        if role is None:
-            role = create_role(record[ROLE_COL], deployment)
+        role = None
+        if ROLE_COL:
+            role_name = record[ROLE_COL]
+            if _is_valid(role_name):
+                role = services.participant_roles.get(
+                    name=role_name,
+                    deployment=deployment
+                )
+                if role is None:
+                    role = create_role(role_name, deployment)
         participant.role = role
 
         partner = None
-        if record[PARTNER_COL]:
+        partner_name = record[PARTNER_COL]
+        if _is_valid(partner_name):
             partner = services.participant_partners.get(
-                name=record[PARTNER_COL],
+                name=partner_name,
                 deployment=deployment
             )
             if partner is None:
-                partner = create_partner(record[PARTNER_COL], deployment)
+                partner = create_partner(partner_name, deployment)
         participant.partner = partner
 
         location = None
         try:
-            location = services.locations.get(
-                code=record[LOCATION_ID_COL],
-                deployment=deployment
-            )
+            if LOCATION_ID_COL:
+                location = services.locations.get(
+                    code=record[LOCATION_ID_COL],
+                    deployment=deployment
+                )
         except MultipleObjectsReturned:
             errors.add((
-                record[PARTICIPANT_ID_COL],
+                participant_id,
                 _('Invalid location id (%(loc_id)s)',
                     loc_id=record[LOCATION_ID_COL])
             ))
             continue
 
-        if location is None:
+        if location is None and LOCATION_ID_COL:
             warnings.add((
-                record[PARTICIPANT_ID_COL],
+                participant_id,
                 _('Location with id %(loc_id)s not found',
                     loc_id=record[LOCATION_ID_COL])
             ))
-        else:
-            # explicitly set the location name path
-            participant.location_name_path = {
-                l.location_type: l.name for l in location.ancestors_ref}
         participant.location = location
 
         supervisor = None
-        if record[SUPERVISOR_ID_COL]:
-            if record[SUPERVISOR_ID_COL] != record[PARTICIPANT_ID_COL]:
-                # ignore cases where participant is own supervisor
-                supervisor = services.participants.get(
-                    participant_id=record[SUPERVISOR_ID_COL],
-                    event=event
-                )
-                if supervisor is None:
-                    # perhaps supervisor exists further along. cache the refs
-                    unresolved_supervisors.add(
-                        (record[PARTICIPANT_ID_COL], record[SUPERVISOR_ID_COL])
+        if SUPERVISOR_ID_COL:
+            if _is_valid(record[SUPERVISOR_ID_COL]):
+                if record[SUPERVISOR_ID_COL] != participant_id:
+                    # ignore cases where participant is own supervisor
+                    supervisor = services.participants.get(
+                        participant_id=record[SUPERVISOR_ID_COL],
+                        event=event
                     )
+                    if supervisor is None:
+                        # perhaps supervisor exists further along. cache the refs
+                        unresolved_supervisors.add(
+                            (participant_id, record[SUPERVISOR_ID_COL])
+                        )
         participant.supervisor = supervisor
 
-        participant.gender = record[GENDER_COL]
+        participant.gender = record[GENDER_COL] if _is_valid(record[GENDER_COL]) else ''
 
-        participant.email = record[EMAIL_COL]
+        if EMAIL_COL:
+            participant.email = record[EMAIL_COL] if _is_valid(record[EMAIL_COL]) else None
 
         # wonky hacks to avoid doing addToSet queries
         # for events and phone numbers
@@ -181,9 +194,13 @@ def update_participants(dataframe, event, header_map):
         for phone in participant.phones:
             phone_info[phone.number] = phone.verified
         for column in phone_columns:
-            if not record[column]:
+            if not _is_valid(record[column]):
                 continue
-            pn = unicode(record[column])
+            try:
+                mobile = float(record[column])
+            except ValueError:
+                mobile = record[column]
+            pn = unicode(int(mobile)) if isinstance(mobile, float) else mobile
             phone_info[pn] = True
 
         participant.phones = [
@@ -193,21 +210,31 @@ def update_participants(dataframe, event, header_map):
 
         # fix up groups
         for column in group_columns:
-            group = services.participant_groups.get(
+            group_type = services.participant_group_types.get(
                 name=column,
                 deployment=event.deployment
             )
 
-            if pd.isnull(record[column]) or not record[column]:
+            if not group_type:
+                group_type = create_group_type(column, event.deployment)
+
+            if not _is_valid(record[column]):
                 continue
 
-            group.update(add_to_set__tags=record[column])
+            group = services.participant_groups.get(
+                name=record[column],
+                group_type=group_type.name,
+                deployment=event.deployment)
 
-            d = {group.name: record[column]}
+            if not group:
+                group = create_group(
+                    record[column], group_type, event.deployment)
 
             # TODO: confirm that this is meant to be an update,
             # not a replacement.
-            participant.group_tags.update(d)
+            group_set = set(participant.groups)
+            group_set.add(group)
+            participant.groups = list(group_set)
 
         # finally done with first pass
         participant.save()

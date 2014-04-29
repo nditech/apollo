@@ -149,23 +149,24 @@ class ParticipantGroupFilter(ChoiceFilter):
 
     def __init__(self, *args, **kwargs):
         choices = defaultdict(list)
-        for group in services.participant_groups.find():
-            choices[group.name] = [
-                ('{}__{}'.format(group.name, tag), tag) for tag in group.tags
-            ]
+        # for group in services.participant_groups.find():
+        #     choices[group.name] = [
+        #         ('{}__{}'.format(group.name, tag), tag) for tag in group.tags
+        #     ]
+        for group_type in services.participant_group_types.find():
+            for group in services.participant_groups.find(group_type=group_type.name):
+                choices[group_type.name].append(
+                    (unicode(group.pk), group.name)
+                )
         kwargs['choices'] = [(k, v) for k, v in choices.items()]
         super(ParticipantGroupFilter, self).__init__(*args, **kwargs)
 
     def filter(self, queryset, values):
         if values:
             for value in values:
-                group_name, tag = value.split('__', 1)
+                group = services.participant_groups.get(pk=value)
 
-                query_kwargs = {
-                    'group_tags__{}'.format(group_name): tag
-                }
-
-                queryset = queryset(**query_kwargs)
+                queryset = queryset(groups=group)
         return queryset
 
 

@@ -64,9 +64,9 @@
                {%- for location_type in location_types -%}
                <td>{{ participant.location.ancestor(location_type.name).name }}</td>
                {%- endfor -%}
-               <td>{{ participant.location }}</td>
+               <td>{{ participant.location|default('N/A', true) }}</td>
                <td>{{ participant.name }}</td>
-               <td>{{ participant.role }}</td>
+               <td>{{ participant.role|default('N/A', true) }}</td>
                <td>{{ participant.phone }}</td>
                <td>{{ participant.partner }}</td>
                {%- if perms.edit_participant.can() -%}

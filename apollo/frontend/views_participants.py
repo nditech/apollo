@@ -202,14 +202,18 @@ def participant_headers(pk):
             )
         else:
             # get header mappings
-            phone_header = form.data.get('phone')
-            mappings = {v: k for k, v in form.data.iteritems()}
-            mappings.update(phone=phone_header)
+            data = form.data.copy()
+
+            # phone_header = data.pop('phone')
+            # group_header = data.pop('group')
+            # mappings = {v: k for k, v in data.iteritems() if v}
+            # mappings.update(phone=phone_header)
+            # mappings.update(group=group_header)
 
             # invoke task asynchronously
             kwargs = {
                 'upload_id': unicode(upload.id),
-                'mappings': mappings
+                'mappings': data
             }
             import_participants.apply_async(kwargs=kwargs)
 

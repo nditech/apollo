@@ -3,7 +3,7 @@ from .deployments import EventsService
 from .locations import SamplesService, LocationTypesService, LocationsService
 from .participants import \
     (ParticipantsService, ParticipantGroupsService, ParticipantRolesService,
-        ParticipantPartnersService)
+        ParticipantPartnersService, ParticipantGroupTypesService)
 from .submissions import \
     (SubmissionsService, SubmissionCommentsService, SubmissionVersionsService)
 from .users import UsersService, PermsService, UserUploadsService
@@ -26,3 +26,4 @@ perms = PermsService()
 user_uploads = UserUploadsService()
 messages = MessagesService()
 participant_groups = ParticipantGroupsService()
+participant_group_types = ParticipantGroupTypesService()

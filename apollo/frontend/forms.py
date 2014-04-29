@@ -97,10 +97,10 @@ def generate_participant_edit_form(participant, data=None):
         formdata=data,
         # participant_id=participant.participant_id,
         name=participant.name,
-        location=participant.location.id,
+        location=participant.location.id if participant.location else None,
         gender=participant.gender.upper(),
-        role=participant.role.id,
-        partner=participant.partner.id,
+        role=participant.role.id if participant.role else None,
+        partner=participant.partner.id if participant.partner else None,
         supervisor=participant.supervisor.id if participant.supervisor else None
     )
 
@@ -123,7 +123,6 @@ def generate_participant_import_mapping_form(headers, *args, **kwargs):
         role = SelectField(
             _('Role'),
             choices=default_choices,
-            validators=[validators.input_required()]
         )
         partner_org = SelectField(
             _('Partner'),
@@ -133,12 +132,10 @@ def generate_participant_import_mapping_form(headers, *args, **kwargs):
         location_id = SelectField(
             _('Location ID'),
             choices=default_choices,
-            validators=[validators.input_required()]
         )
         supervisor_id = SelectField(
             _('Supervisor'),
             choices=default_choices,
-            validators=[validators.input_required()]
         )
         gender = SelectField(
             _('Gender'),
@@ -148,7 +145,6 @@ def generate_participant_import_mapping_form(headers, *args, **kwargs):
         email = SelectField(
             _('Email'),
             choices=default_choices,
-            validators=[validators.input_required()]
         )
         phone = TextField(
             _('Phone prefix'),
@@ -162,8 +158,9 @@ def generate_participant_import_mapping_form(headers, *args, **kwargs):
             rv = super(ParticipantImportMappingForm, self).validate()
 
             # check that no two fields were assigned the same value
-            form_data = {f.data for f in self}
-            if len(form_data) < len(self._fields):
+            form_data = {f.data for f in self if f.data}
+            assigned_fields = {f for f in self if f.data}
+            if len(form_data) < len(assigned_fields):
                 self.errors.update(
                     me=_('Duplicate field assignment detected')
                 )
