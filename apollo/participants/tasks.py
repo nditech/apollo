@@ -147,8 +147,12 @@ def update_participants(dataframe, event, header_map):
         location = None
         try:
             if LOCATION_ID_COL:
+                try:
+                    loc_code = int(float(record[LOCATION_ID_COL]))
+                except ValueError:
+                    loc_code = record[LOCATION_ID_COL]
                 location = services.locations.get(
-                    code=record[LOCATION_ID_COL],
+                    code=unicode(loc_code),
                     deployment=deployment
                 )
         except MultipleObjectsReturned:
