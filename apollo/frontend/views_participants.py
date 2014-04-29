@@ -131,6 +131,7 @@ def participant_edit(pk):
             participant.location = locations.get(pk=form.location.data)
             participant.partner = participant_partners.get(
                 pk=form.partner.data)
+            participant.phone = form.phone.data
             participant.save()
 
             return redirect(url_for('participants.participant_list'))

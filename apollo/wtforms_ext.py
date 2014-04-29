@@ -24,7 +24,10 @@ class ExtendedSelectWidget(Select):
                 group_items = item2
                 html.append('<optgroup %s>' % html_params(label=group_label))
                 for inner_val, inner_label in group_items:
-                    html.append(self.render_option(inner_val, inner_label, inner_val in field.data))
+                    if field.data:
+                        html.append(self.render_option(inner_val, inner_label, inner_val in field.data))
+                    else:
+                        html.append(self.render_option(inner_val, inner_label, inner_val == field.data))
                 html.append('</optgroup>')
             else:
                 val = item1
