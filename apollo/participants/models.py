@@ -69,7 +69,7 @@ class Participant(db.DynamicDocument):
     location_name_path = db.DictField()
     supervisor = db.ReferenceField('Participant')
     gender = db.StringField(choices=GENDER)
-    group_tags = db.ListField()
+    group_tags = db.DictField()
 
     email = db.EmailField()
     phones = db.ListField(db.EmbeddedDocumentField(PhoneContact))

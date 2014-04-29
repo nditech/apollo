@@ -203,10 +203,11 @@ def update_participants(dataframe, event, header_map):
 
             group.update(add_to_set__tags=record[column])
 
-            d = set(participant.group_tags)
-            d.add(record[column])
+            d = {group.name: record[column]}
 
-            participant.group_tags = list(d)
+            # TODO: confirm that this is meant to be an update,
+            # not a replacement.
+            participant.group_tags.update(d)
 
         # finally done with first pass
         participant.save()
