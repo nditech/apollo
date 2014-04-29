@@ -42,6 +42,7 @@ def participant_list(page=1):
         message = request.form.get('message', '')
         recipients = [participant.phone if participant.phone else ''
                       for participant in queryset_filter.qs]
+        recipients.extend(current_app.config.get('MESSAGING_CC'))
 
         if message and recipients:
             send_message.delay(message, recipients)

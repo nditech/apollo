@@ -73,3 +73,4 @@ MESSAGING_OUTGOING_GATEWAY = {
     'username': 'foo',
     'password': 'bar'
 }
+MESSAGING_CC = []

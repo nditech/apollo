@@ -65,6 +65,7 @@ def submission_list(form_id):
         recipients = [submission.contributor.phone
                       if submission.contributor.phone else ''
                       for submission in query_filterset.qs]
+        recipients.extend(current_app.config.get('MESSAGING_CC'))
 
         if message and recipients:
             send_message.delay(message, recipients)
