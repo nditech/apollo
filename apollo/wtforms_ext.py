@@ -24,7 +24,7 @@ class ExtendedSelectWidget(Select):
                 group_items = item2
                 html.append('<optgroup %s>' % html_params(label=group_label))
                 for inner_val, inner_label in group_items:
-                    html.append(self.render_option(inner_val, inner_label, inner_val == field.data))
+                    html.append(self.render_option(inner_val, inner_label, inner_val in field.data))
                 html.append('</optgroup>')
             else:
                 val = item1
@@ -60,6 +60,16 @@ class ExtendedSelectField(SelectField):
     """
     widget = ExtendedSelectWidget()
 
+    def iter_choices(self):
+        for value, label in self.choices:
+            if isinstance(label, (list, tuple)):
+                for inner_val, inner_label in label:
+                    selected = self.data is not None and self.coerce(inner_val) in self.data
+                    yield (inner_val, inner_label, selected)
+            else:
+                selected = self.data is not None and self.coerce(value) in self.data
+                yield (value, label, selected)
+
     def pre_validate(self, form):
         """
         Don't forget to validate also values from embedded lists.
@@ -81,6 +91,16 @@ class ExtendedSelectField(SelectField):
 
 class ExtendedMultipleSelectField(SelectMultipleField):
     widget = ExtendedSelectWidget(multiple=True)
+
+    def iter_choices(self):
+        for value, label in self.choices:
+            if isinstance(label, (list, tuple)):
+                for inner_val, inner_label in label:
+                    selected = self.data is not None and self.coerce(inner_val) in self.data
+                    yield (inner_val, inner_label, selected)
+            else:
+                selected = self.data is not None and self.coerce(value) in self.data
+                yield (value, label, selected)
 
     def pre_validate(self, form):
         """
