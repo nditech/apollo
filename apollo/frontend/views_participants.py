@@ -9,8 +9,7 @@ from flask import (
 from flask.ext.babel import lazy_gettext as _
 from flask.ext.menu import register_menu
 from flask.ext.security import current_user, login_required
-from ..helpers import stash_file
-from ..participants.tasks import load_source_file
+from ..helpers import stash_file, load_source_file
 from ..services import (
     events, locations, participants, participant_roles, participant_partners,
     user_uploads

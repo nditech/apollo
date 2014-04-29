@@ -1,10 +1,9 @@
 from flask import render_template_string
 from flask.ext.babel import lazy_gettext as _
-import magic
 from mongoengine import MultipleObjectsReturned
 import pandas as pd
 from ..messaging.tasks import send_email
-from .. import services
+from .. import services, helpers
 from .models import PhoneContact
 
 
@@ -27,23 +26,6 @@ Record for participant ID {{ pid }} raised warning: {{ msg }}
 {% endfor %}
 {% endif %}
 '''
-
-
-def load_source_file(source_file):
-    # peek into file and read first 1kB, then reset pointer
-    mimetype = magic.from_buffer(source_file.read(1024), mime=True)
-    source_file.seek(0)
-
-    if mimetype.startswith('text'):
-        # likely a CSV file
-        df = pd.read_csv(source_file).fillna('')
-    elif mimetype.startswith('application'):
-        # likely an Excel spreadsheet
-        df = pd.read_excel(source_file, 0).fillna('')
-    else:
-        raise RuntimeError('Unknown file type')
-
-    return df
 
 
 def create_partner(name, deployment):
@@ -270,7 +252,7 @@ def generate_response_email(count, errors, warnings):
 
 def import_participants(upload_id, mappings):
     upload = services.user_uploads.get(pk=upload_id)
-    dataframe = load_source_file(upload.data)
+    dataframe = helpers.load_source_file(upload.data)
     count, errors, warnings = update_participants(
         dataframe,
         upload.event,

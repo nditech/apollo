@@ -1,4 +1,6 @@
 import importlib
+import magic
+import pandas as pd
 import pkgutil
 import re
 
@@ -43,6 +45,23 @@ def stash_file(fileobj, user, event=None):
     upload.reload()
 
     return upload
+
+
+def load_source_file(source_file):
+    # peek into file and read first 1kB, then reset pointer
+    mimetype = magic.from_buffer(source_file.read(1024), mime=True)
+    source_file.seek(0)
+
+    if mimetype.startswith('text'):
+        # likely a CSV file
+        df = pd.read_csv(source_file).fillna('')
+    elif mimetype.startswith('application'):
+        # likely an Excel spreadsheet
+        df = pd.read_excel(source_file, 0).fillna('')
+    else:
+        raise RuntimeError('Unknown file type')
+
+    return df
 
 
 def is_objectid(str):
