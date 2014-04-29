@@ -39,7 +39,9 @@ def index():
         form = forms.find(events=event, form_type='CHECKLIST').first()
     else:
         form = forms.get(pk=args.get('checklist_form'))
-    args.setdefault('checklist_form', unicode(form.id))
+
+    if form:
+        args.setdefault('checklist_form', unicode(form.id))
 
     queryset = submissions.find(
         contributor__ne=None,
