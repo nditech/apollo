@@ -65,10 +65,10 @@
                <td>{{ participant.location_name_path[location_type.name] }}</td>
                {%- endfor -%}
                <td>{{ participant.location|default('N/A', true) }}</td>
-               <td>{{ participant.name }}</td>
+               <td>{{ participant.name|default('', true) }}</td>
                <td>{{ participant.role|default('N/A', true) }}</td>
-               <td>{{ participant.phone }}</td>
-               <td>{{ participant.partner }}</td>
+               <td>{{ participant.phone|default('', true) }}</td>
+               <td>{{ participant.partner|default('', true) }}</td>
                {%- if perms.edit_participant.can() -%}
                <td class="text-center"><a href="{{ url_for('participants.participant_edit', pk=participant.id) }}">Edit</a></td>
                {%- endif -%}
