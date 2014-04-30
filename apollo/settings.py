@@ -39,7 +39,10 @@ CELERY_BROKER_URL = 'redis://{host}/{database}'.format(
     host=urlparse(
         os.environ.get('REDIS_PORT', 'redis://localhost')).netloc,
     database=os.environ.get('REDIS_DATABASE', '0'))
-CELERY_RESULT_BACKEND = 'redis'
+CELERY_RESULT_BACKEND = 'redis://{host}/{database}'.format(
+    host=urlparse(
+        os.environ.get('REDIS_PORT', 'redis://localhost')).netloc,
+    database=os.environ.get('REDIS_DATABASE', '0'))
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_ACCEPT_CONTENT = ['json']
