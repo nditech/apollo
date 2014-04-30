@@ -1,6 +1,6 @@
 {% extends "frontend/_layout.html" %}
 {%- from 'frontend/macros/submission_list_filter.html' import render_filter_form -%}
-{%- from 'frontend/macros/pagination.html' import render_pager -%}
+{%- from 'frontend/macros/pagination.html' import render_pager, render_pager_counter -%}
 {%- from 'frontend/macros/submission_list_macros.html' import submission_header, submission_items -%}
 {%- from 'frontend/macros/send_message.html' import send_message_modal -%}
 {% block scripts %}
@@ -45,9 +45,9 @@
     {{ render_filter_form(form, filter_form) }}
   </div>
 </div>
-
 <div class="row">
   <div class="col-md-12">
+    {{ render_pager_counter(pager, args) }}
     <div class="table-responsive responsive">
       <table class="table table-striped table-bordered table-hover">
           <thead >
