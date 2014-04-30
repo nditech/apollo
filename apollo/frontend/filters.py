@@ -1,4 +1,4 @@
-from ..core import CharFilter, ChoiceFilter, Filter, FilterSet
+from ..core import CharFilter, ChoiceFilter, FilterSet
 from ..helpers import _make_choices
 from ..submissions.models import FLAG_CHOICES, STATUS_CHOICES
 from ..wtforms_ext import ExtendedSelectField, ExtendedMultipleSelectField
@@ -6,10 +6,10 @@ from .helpers import get_event
 from collections import defaultdict
 from flask.ext.babel import lazy_gettext as _
 from .. import services
-from wtforms import fields, widgets
+from wtforms import widgets
 
 
-class BaseEventFilter(Filter):
+class EventFilter(CharFilter):
     def filter(self, queryset, value):
         if value:
             event = services.events.get(pk=value)
@@ -18,13 +18,11 @@ class BaseEventFilter(Filter):
         return queryset
 
 
-class EventFilter(BaseEventFilter):
-    field_class = fields.SelectField
-
-    def __init__(self, *args, **kwargs):
-        kwargs['choices'] = _make_choices(
-            services.events.find().scalar('id', 'name'), _('Choose Event'))
-        super(EventFilter, self).__init__(*args, **kwargs)
+# class EventChoiceFilter(ChoiceFilter, BaseEventFilterMixin):
+#     def __init__(self, *args, **kwargs):
+#         kwargs['choices'] = _make_choices(
+#             services.events.find().scalar('id', 'name'), _('Choose Event'))
+#         super(EventChoiceFilter, self).__init__(*args, **kwargs)
 
 
 class ChecklistFormFilter(ChoiceFilter):
@@ -396,7 +394,6 @@ def generate_submission_filter(form):
 
 def generate_submission_flags_filter(form):
     attributes = {}
-    event = get_event()
     pairs = [(flag['name'], flag['storage'])
              for flag in form.verification_flags]
 
@@ -406,9 +403,6 @@ def generate_submission_flags_filter(form):
 
     attributes['participant_id'] = ParticipantIDFilter()
     attributes['location'] = LocationFilter()
-    attributes['event'] = BaseEventFilter(
-        default=event,
-        widget=widgets.HiddenInput())
     attributes['verification'] = SubmissionVerificationFilter(
         choices=STATUS_CHOICES
     )
