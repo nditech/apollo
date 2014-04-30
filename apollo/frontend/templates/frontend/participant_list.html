@@ -72,7 +72,7 @@
                <td>{{ participant.phone|default('', true) }}</td>
                <td>{{ participant.partner|default('', true) }}</td>
                {%- if perms.edit_participant.can() -%}
-               <td class="text-center"><a href="{{ url_for('participants.participant_edit', pk=participant.id) }}">Edit</a></td>
+               <td class="text-center"><a href="{{ url_for('participants.participant_edit', pk=participant.id) }}" data-toggle="modal" data-target="#edit_modal">{% trans %}Edit{% endtrans %}</a></td>
                {%- endif -%}
              </tr>
              {% else %}
@@ -95,6 +95,23 @@
       {{ render_pager(participants, 'participants.participant_list', args) }}
       </div>
     </div>
+    <div class="modal fade" id="edit_modal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+      <div class="modal-dialog" style="width:450px">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title" id="editModalLabel">{% trans %}Edit Participant{% endtrans %}</h4>
+          </div>
+          <div class="modal-body" style="height:4.5em">
+            <div id="loader" class="ajax_loader" style="margin:auto">
+              <div class="ajax_loader_block block_1"></div>
+              <div class="ajax_loader_block block_2"></div>
+              <div class="ajax_loader_block block_3"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 {%- endblock -%}
 {%- block scripts -%}
 <script src="{{ url_for('static', filename='js/filters.js') }}"></script>
@@ -114,9 +131,18 @@
             $('#delete').fadeOut('slow');
         }
     }
+    });
 
+    var edit_modal_content;
+
+    $('#edit_modal').on('show.bs.modal', function (e) {
+      edit_modal_content = $('#edit_modal').html();
+    });
+    $('#edit_modal').on('hidden.bs.modal', function(e) {
+      $('#edit_modal').removeData();
+      $('#edit_modal').html(edit_modal_content);
+    });
   });
-});
 </script>
 {% if perms.send_messages.can() %}
 {{ send_message_modal(participants.total) }}

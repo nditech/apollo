@@ -115,10 +115,14 @@ def participant_list(page=1):
 def participant_edit(pk):
     participant = participants.get_or_404(pk=pk)
     page_title = _(
-        'Edit participant: %(participant_id)s',
+        'Edit Participant · %(participant_id)s',
         participant_id=participant.participant_id
     )
-    template_name = 'frontend/participant_edit.html'
+
+    if request.is_xhr:
+        template_name = 'frontend/participant_edit_modal.html'
+    else:
+        template_name = 'frontend/participant_edit.html'
 
     if request.method == 'GET':
         form = generate_participant_edit_form(participant)
