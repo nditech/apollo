@@ -55,6 +55,7 @@
             <li><a href="{{ current_menu.submenu('forms.incidents').dynamic_list[0].url }}"><i class="glyphicon glyphicon-check"></i> {{ current_menu.submenu('forms.incidents').dynamic_list[0].text }}</a></li>
             {%- endif -%}
             {%- if perms.view_analyses.can() -%}
+            {%- if current_menu.submenu('forms.incidents').dynamic_list or current_menu.submenu('forms.checklists').dynamic_list -%}
             <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-stats"></i> {% trans %}Analyses{% endtrans %} <b class="caret"></b></a>
               <ul class="dropdown-menu">
               {%- if current_menu.submenu('process_analysis').dynamic_list -%}
@@ -69,6 +70,7 @@
               {%- endif -%}
               </ul>
             </li>
+            {%- endif -%}
             {%- endif -%}
             {%- if current_menu.submenu('participants').visible -%}
             <li><a href="{{ current_menu.submenu('participants').url }}"><i class="glyphicon glyphicon-user"></i> {{ current_menu.submenu('participants').text }}</a></li>
