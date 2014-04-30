@@ -8,7 +8,7 @@
 {% block content %}
 <div class="row">
   <div class="col-md-12">
-    <div class="well well-sm">
+    <div class="well well-sm filter">
       <form action="{{ request.url }}" method="GET" id="filter" class="form-inline">
         <div class="form-group">
           {{ filter_form.mobile(class_="form-control span2 input-sm", placeholder=_("Mobile")) }}

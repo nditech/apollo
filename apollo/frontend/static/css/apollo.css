@@ -7205,6 +7205,10 @@ td.expand, th.expand {
   width: 99%;
 }
 
+.filter .btn {
+  min-width: 80px;
+}
+
 .modal-content{
   font-size: 14px;
 }

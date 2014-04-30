@@ -16,7 +16,7 @@
 {% block content %}
 {%- set flash_msgs = get_flashed_messages(category_filter=['task_begun']) -%}
     <div class="row-fluid">
-      <div class="well well-sm">
+      <div class="well well-sm filter">
         {{ render_filter_form(filter_form) }}
       </div>
     </div>
