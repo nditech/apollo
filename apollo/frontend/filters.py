@@ -3,7 +3,7 @@ from ..helpers import _make_choices
 from ..submissions.models import FLAG_CHOICES, STATUS_CHOICES
 from ..wtforms_ext import ExtendedSelectField, ExtendedMultipleSelectField
 from .helpers import get_event
-from collections import OrderedDict
+from collections import defaultdict, OrderedDict
 from flask.ext.babel import lazy_gettext as _
 from .. import services
 from wtforms import widgets
