@@ -3,7 +3,7 @@ from ..helpers import _make_choices
 from ..submissions.models import FLAG_CHOICES, STATUS_CHOICES
 from ..wtforms_ext import ExtendedSelectField, ExtendedMultipleSelectField
 from .helpers import get_event
-from collections import defaultdict
+from collections import OrderedDict
 from flask.ext.babel import lazy_gettext as _
 from .. import services
 from wtforms import widgets
@@ -166,19 +166,20 @@ class ParticipantGroupFilter(ChoiceFilter):
     field_class = ExtendedMultipleSelectField
 
     def __init__(self, *args, **kwargs):
-        choices = defaultdict(list)
+        choices = OrderedDict()
         # for group in services.participant_groups.find():
         #     choices[group.name] = [
         #         ('{}__{}'.format(group.name, tag), tag) for tag in group.tags
         #     ]
-        for group_type in services.participant_group_types.find():
+        for group_type in services.participant_group_types.find().order_by(
+                'name'):
             for group in services.participant_groups.find(
                 group_type=group_type.name
-            ):
-                choices[group_type.name].append(
+            ).order_by('name'):
+                choices.setdefault(group_type.name, []).append(
                     (unicode(group.pk), group.name)
                 )
-        kwargs['choices'] = [(k, v) for k, v in choices.items()]
+        kwargs['choices'] = [(k, choices[k]) for k in choices]
         super(ParticipantGroupFilter, self).__init__(*args, **kwargs)
 
     def filter(self, queryset, values):
