@@ -42,12 +42,13 @@
            <thead>
              <tr>
               <th><input type="checkbox" class="checked" id="select_all" name="select_all"></th>
-               <th>{% trans %}ID{% endtrans %}</th>
+               <th><a href="{{ url_for('participants.participant_list', sort_by='id', **args) }}">{% trans %}ID{% endtrans %}</a></th>
                {%- for location_type in location_types -%}
                <th>{{ location_type.name }}</th>
                {%- endfor -%}
                <th>{% trans %}Location{% endtrans %}</th>
-               <th>{% trans %}Name{% endtrans %}</th>
+               <th><a href="{{ url_for('participants.participant_list', sort_by='name', **args) }}">{% trans %}Name{% endtrans %}</a></th>
+               <th><a href="{{ url_for('participants.participant_list', sort_by='gen', **args) }}">{% trans %}Gender{% endtrans %}</a></th>
                <th>{% trans %}Role{% endtrans %}</th>
                <th>{% trans %}Phone{% endtrans %}</th>
                <th>{% trans %}Organization{% endtrans %}</th>
@@ -66,6 +67,7 @@
                {%- endfor -%}
                <td>{{ participant.location|default('N/A', true) }}</td>
                <td>{{ participant.name|default('', true) }}</td>
+               <td>{{ participant.gender }}</td>
                <td>{{ participant.role|default('N/A', true) }}</td>
                <td>{{ participant.phone|default('', true) }}</td>
                <td>{{ participant.partner|default('', true) }}</td>

@@ -33,6 +33,12 @@ def participant_list(page=1):
     page_title = _('Participants')
     template_name = 'frontend/participant_list.html'
 
+    sortable_columns = {
+        'id': 'participant_id',
+        'name': 'name',
+        'gen': 'gender'
+    }
+
     queryset = participants.find()
     queryset_filter = filters.participant_filterset()(queryset, request.args)
 
@@ -82,7 +88,9 @@ def participant_list(page=1):
         args = request.args.copy()
         page = int(args.pop('page', '1'))
 
-        subset = queryset_filter.qs.order_by('participant_id')
+        sort_by = sortable_columns.get(args.pop('sort_by', ''), 'participant_id')
+
+        subset = queryset_filter.qs.order_by(sort_by)
 
         # load form context
         context = dict(
