@@ -3,26 +3,32 @@
   <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
   <h4 class="modal-title" id="myModalLabel">{% trans %}Edit Participant{% endtrans %}</h4>
 </div>
-<div class="modal-body" style="padding-bottom:5px">
+<div class="modal-body" style="padding-bottom:5px; padding-top:20px;">
 {{ form.hidden_tag() }}
 {%- for field in form -%}
 {%- if field.type != 'CSRFTokenField' -%}
 <div class="form-group {% if field.errors %}has-error{% endif %}">
-    {{ field.label(class_='col-sm-4 control-label') }}
-    <div class="col-sm-8">
-        {{ field(class_='form-control') }}
+    {{ field.label(class_='col-sm-3 control-label') }}
+    <div class="col-sm-7">
+        {{ field(class_='form-control span3') }}
         {% if field.errors %}
         {% for e in field.errors %}
         <p class="help-block">{{ e }}</p>
         {% endfor %}
         {% endif %}
     </div>
+    <div class="col-sm-2"></div>
 </div>
 {%- endif -%}
 {%- endfor -%}
 </div>
 <div class="modal-footer">
-  <button type="button" class="btn btn-default" data-dismiss="modal">{% trans %}Close{% endtrans %}</button>
-  <button type="submit" class="btn btn-primary">{% trans %}Save{% endtrans %}</button>
+  <div class="row">
+    <div class="col-sm-1"></div>
+      <div class="col-sm-10" style="padding-right:1.8em;">
+        <button type="submit" style="width:122px;"class="btn btn-primary">{% trans %}Save{% endtrans %}</button>
+        <button type="button" style="width:122px;"class="btn btn-default" data-dismiss="modal">{% trans %}Close{% endtrans %}</button>
+      </div>
+  </div>
 </div>
 </form>
