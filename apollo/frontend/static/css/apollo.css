@@ -7197,6 +7197,7 @@ table .header-fixed {
 .qtipmodal-ie6fix{
 	position: absolute !important;
 }
+.select2-search-field {height: 25px;}
 td.shrink, th.shrink {
   white-space: nowrap;
 }
@@ -7206,7 +7207,7 @@ td.expand, th.expand {
 }
 
 .filter .btn {
-  min-width: 80px;
+  min-width: 78px;
 }
 
 .modal-content{
