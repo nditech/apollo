@@ -92,6 +92,7 @@ def generate_participant_edit_form(participant, data=None):
                 participant_partners.find().scalar('id', 'name')
             ),
         )
+        phone = StringField(_('Phone'))
 
     return ParticipantEditForm(
         formdata=data,
@@ -101,7 +102,8 @@ def generate_participant_edit_form(participant, data=None):
         gender=participant.gender.upper(),
         role=participant.role.id if participant.role else None,
         partner=participant.partner.id if participant.partner else None,
-        supervisor=participant.supervisor.id if participant.supervisor else None
+        supervisor=participant.supervisor.id if participant.supervisor else None,
+        phone=participant.phone
     )
 
 

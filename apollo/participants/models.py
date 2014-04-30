@@ -111,6 +111,7 @@ class Participant(db.DynamicDocument):
             self.phones.append(PhoneContact(number=value, verified=True))
         else:
             self.phones[0].number = value
+            self.phones[0].verified = True
         self.save()
         self.reload()
 

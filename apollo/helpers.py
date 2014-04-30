@@ -49,7 +49,7 @@ def stash_file(fileobj, user, event=None):
 
 def load_source_file(source_file):
     # peek into file and read first 1kB, then reset pointer
-    mimetype = magic.from_buffer(source_file.read(1024), mime=True)
+    mimetype = magic.from_buffer(source_file.read(), mime=True)
     source_file.seek(0)
 
     if mimetype.startswith('text'):
