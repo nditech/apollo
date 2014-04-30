@@ -43,7 +43,7 @@ class KannelGateway(Gateway):
             'username': self.username,
             'password': self.password,
             'from': sender,
-            'to': ' '.join(recipients),
+            'to': ' '.join(set(recipients)),
             'text': text,
         }
         gateway_params.update(
@@ -84,7 +84,7 @@ https://api.telerivet.com/v1/projects/%s/messages/outgoing\
         :param recipients: An array of all the recipients to send this to
         :param sender: (Optional) sender to set for the message
         """
-        for recipient in recipients:
+        for recipient in set(recipients):
             gateway_params = {
                 'phone_id': self.phone_id,
                 'to_number': recipient,
