@@ -4,7 +4,7 @@
 {%- for field in form -%}
 {%- if field.type != 'CSRFTokenField' -%}
 <div class="form-group {% if field.errors %}has-error{% endif %}">
-    {{ field.label(class_='col-sm-2 control-label') }}
+    {{ field.label(class_='col-sm-3 control-label') }}
     <div class="col-sm-6">
         {{ field(class_='form-control') }}
         {% if field.errors %}
@@ -17,7 +17,7 @@
 {%- endif -%}
 {%- endfor -%}
 <div class="form-group">
-    <div class="col-sm-offset-2 col-sm-6">
+    <div class="col-sm-offset-3 col-sm-6">
         <button class="btn btn-primary btn-lg" type="submit">Save</button>
     </div>
 </div>
