@@ -161,6 +161,9 @@ class Submission(db.DynamicDocument):
                 self.completion[group.name] = 'Missing'
 
     def _compute_verification(self):
+        if self.contributor is not None:
+            return
+
         verified_flag = FLAG_STATUSES['verified'][0]
         rejected_flag = FLAG_STATUSES['rejected'][0]
 
@@ -169,9 +172,6 @@ class Submission(db.DynamicDocument):
         NO_DATA = 0
         OK = 1
         UNOK = 2
-
-        if self.contributor is not None:
-            return
 
         flags_statuses = []
         for flag in self.form.verification_flags:

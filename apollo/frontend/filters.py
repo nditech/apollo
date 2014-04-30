@@ -1,25 +1,30 @@
-from ..core import CharFilter, ChoiceFilter, FilterSet
+from ..core import CharFilter, ChoiceFilter, Filter, FilterSet
 from ..helpers import _make_choices
+from ..submissions.models import FLAG_CHOICES, STATUS_CHOICES
 from ..wtforms_ext import ExtendedSelectField, ExtendedMultipleSelectField
 from .helpers import get_event
 from collections import defaultdict
 from flask.ext.babel import lazy_gettext as _
 from .. import services
-from wtforms import widgets
+from wtforms import fields, widgets
 
 
-class EventFilter(ChoiceFilter):
-    def __init__(self, *args, **kwargs):
-        kwargs['choices'] = _make_choices(
-            services.events.find().scalar('id', 'name'), _('Choose Event'))
-        super(EventFilter, self).__init__(*args, **kwargs)
-
+class BaseEventFilter(Filter):
     def filter(self, queryset, value):
         if value:
             event = services.events.get(pk=value)
             return queryset(created__gte=event.start_date,
                             created__lte=event.end_date)
         return queryset
+
+
+class EventFilter(BaseEventFilter):
+    field_class = fields.SelectField
+
+    def __init__(self, *args, **kwargs):
+        kwargs['choices'] = _make_choices(
+            services.events.find().scalar('id', 'name'), _('Choose Event'))
+        super(EventFilter, self).__init__(*args, **kwargs)
 
 
 class ChecklistFormFilter(ChoiceFilter):
@@ -112,6 +117,21 @@ class DynamicFieldFilter(ChoiceFilter):
             query_kwargs = {}
 
         return queryset(**query_kwargs)
+
+
+class SubmissionVerificationFlagFilter(ChoiceFilter):
+    def filter(self, queryset, value):
+        if value is not None or value != '':
+            query_kwargs = {'{}'.format(self.name): value}
+            return queryset(**query_kwargs)
+        return queryset
+
+
+class SubmissionVerificationFilter(ChoiceFilter):
+    def filter(self, queryset, value):
+        if value is not None or value != '':
+            return queryset(verification=value)
+        return queryset
 
 
 class PartnerFilter(ChoiceFilter):
@@ -372,3 +392,27 @@ def generate_submission_filter(form):
         (basesubmission_filterset(),),
         attributes
     )
+
+
+def generate_submission_flags_filter(form):
+    attributes = {}
+    event = get_event()
+    pairs = [(flag['name'], flag['storage'])
+             for flag in form.verification_flags]
+
+    for name, storage in pairs:
+        choices = [('', name)] + list(FLAG_CHOICES)
+        attributes[storage] = SubmissionVerificationFlagFilter(choices=choices)
+
+    attributes['participant_id'] = ParticipantIDFilter()
+    attributes['location'] = LocationFilter()
+    attributes['event'] = BaseEventFilter(
+        default=event,
+        widget=widgets.HiddenInput())
+    attributes['verification'] = SubmissionVerificationFilter(
+        choices=STATUS_CHOICES
+    )
+
+    base_filter_class = basesubmission_filterset()
+
+    return type('SubmissionFlagsFilter', (base_filter_class,), attributes)

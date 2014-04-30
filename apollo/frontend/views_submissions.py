@@ -321,6 +321,14 @@ def submission_version(submission_id, version_id):
     return ''
 
 
+def verification_list(form_id):
+    form = forms.get_or_404(pk=form_id, form_type='CHECKLIST')
+    queryset = submissions.find(form=form, contributor=None)
+
+    context = {}
+
+    return ''
+
 def update_submission_version(sender, document, **kwargs):
     if sender != submissions.__model__:
         return
