@@ -43,7 +43,7 @@ class KannelGateway(Gateway):
             'username': self.username,
             'password': self.password,
             'from': sender,
-            'to': ','.join(recipients),
+            'to': ' '.join(recipients),
             'text': text,
         }
         gateway_params.update(
