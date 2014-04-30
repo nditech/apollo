@@ -76,7 +76,7 @@ class Participant(db.DynamicDocument):
     location = db.ReferenceField('Location')
     location_name_path = db.DictField()
     supervisor = db.ReferenceField('Participant')
-    gender = db.StringField(choices=GENDER)
+    gender = db.StringField(choices=GENDER, default='')
     groups = db.ListField(db.ReferenceField(ParticipantGroup))
 
     email = db.EmailField()
@@ -97,6 +97,8 @@ class Participant(db.DynamicDocument):
         # participants are 'mobile' - they can be moved from one location
         # to another. we want this to reflect that.
         self.location_name_path = compute_location_path(self.location)
+        if self.gender not in map(lambda op: op[0], self.GENDER):
+            self.gender = ''
 
     def get_phone(self):
         if self.phones:
