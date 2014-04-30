@@ -154,7 +154,9 @@ class ParticipantGroupFilter(ChoiceFilter):
         #         ('{}__{}'.format(group.name, tag), tag) for tag in group.tags
         #     ]
         for group_type in services.participant_group_types.find():
-            for group in services.participant_groups.find(group_type=group_type.name):
+            for group in services.participant_groups.find(
+                group_type=group_type.name
+            ):
                 choices[group_type.name].append(
                     (unicode(group.pk), group.name)
                 )
