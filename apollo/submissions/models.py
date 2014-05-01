@@ -183,7 +183,8 @@ class Submission(db.DynamicDocument):
 
                 if flag['comparator'] == 'pctdiff':
                     try:
-                        diff = abs(lvalue - rvalue) / float(max([lvalue, rvalue]))
+                        diff = abs(lvalue - rvalue) / float(
+                            max([lvalue, rvalue]))
                     except ZeroDivisionError:
                         diff = 0
                 elif flag['comparator'] == 'pct':
@@ -243,6 +244,9 @@ class Submission(db.DynamicDocument):
 
         # and compute the verification
         self._compute_verification()
+
+        # update the `updated` timestamp
+        self.updated = datetime.utcnow()
 
     @property
     def master(self):
