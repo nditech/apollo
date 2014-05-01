@@ -87,15 +87,17 @@ def update_participants(dataframe, event, header_map):
 
     # set up mappings
     PARTICIPANT_ID_COL = header_map['participant_id']
-    NAME_COL = header_map['name']
+    NAME_COL = header_map.get('name')
     ROLE_COL = header_map.get('role')
-    PARTNER_COL = header_map['partner_org']
+    PARTNER_COL = header_map.get('partner_org')
     LOCATION_ID_COL = header_map.get('location_id')
     SUPERVISOR_ID_COL = header_map.get('supervisor_id')
-    GENDER_COL = header_map['gender']
+    GENDER_COL = header_map.get('gender')
     EMAIL_COL = header_map.get('email')
-    PHONE_PREFIX = header_map['phone']
-    GROUP_PREFIX = header_map['group']
+    PHONE_PREFIX = header_map.get('phone')
+    GROUP_PREFIX = header_map.get('group')
+
+    extra_field_names = event.deployment.participant_extra_fields.keys()
 
     phone_columns = [c for c in dataframe.columns
                      if c.startswith(PHONE_PREFIX)]
@@ -205,51 +207,61 @@ def update_participants(dataframe, event, header_map):
 
         # wonky hacks to avoid doing addToSet queries
         # for events and phone numbers
-        phone_info = {}
-        for phone in participant.phones:
-            phone_info[phone.number] = phone.verified
-        for column in phone_columns:
-            if not _is_valid(record[column]):
-                continue
-            mobile = record[column]
-            if type(mobile) is float:
-                mobile = int(mobile)
-            phone_info[mobile] = True
+        if PHONE_PREFIX:
+            phone_info = {}
+            for phone in participant.phones:
+                phone_info[phone.number] = phone.verified
+            for column in phone_columns:
+                if not _is_valid(record[column]):
+                    continue
+                mobile = record[column]
+                if type(mobile) is float:
+                    mobile = int(mobile)
+                phone_info[mobile] = True
 
-        phones = [
-            PhoneContact(number=unicode(k),
-                         verified=v) for k, v in phone_info.items()
-        ]
-        if phone_columns:
-            participant.phones = phones
+            phones = [
+                PhoneContact(number=unicode(k),
+                             verified=v) for k, v in phone_info.items()
+            ]
+            if phone_columns:
+                participant.phones = phones
 
         # fix up groups
-        groups = []
-        for column in group_columns:
-            group_type = services.participant_group_types.get(
-                name=column,
-                deployment=event.deployment
-            )
+        if GROUP_PREFIX:
+            groups = []
+            for column in group_columns:
+                group_type = services.participant_group_types.get(
+                    name=column,
+                    deployment=event.deployment
+                )
 
-            if not group_type:
-                group_type = create_group_type(column, event.deployment)
+                if not group_type:
+                    group_type = create_group_type(column, event.deployment)
 
-            if not _is_valid(record[column]):
-                continue
+                if not _is_valid(record[column]):
+                    continue
 
-            group = services.participant_groups.get(
-                name=record[column],
-                group_type=group_type.name,
-                deployment=event.deployment)
+                group = services.participant_groups.get(
+                    name=record[column],
+                    group_type=group_type.name,
+                    deployment=event.deployment)
 
-            if not group:
-                group = create_group(
-                    record[column], group_type, event.deployment)
+                if not group:
+                    group = create_group(
+                        record[column], group_type, event.deployment)
 
-            groups.append(group)
+                groups.append(group)
 
-        if group_columns:
-            participant.groups = groups
+            if group_columns:
+                participant.groups = groups
+
+        # sort out any extra fields
+        for field_name in extra_field_names:
+            column = header_map.get(field_name)
+            if column:
+                value = record[column]
+                if _is_valid(value):
+                    setattr(participant, field_name, value)
 
         # finally done with first pass
         participant.save()

@@ -154,7 +154,7 @@ def generate_participant_import_mapping_form(deployment, headers, *args, **kwarg
         )
     }
 
-    for name, label in deployment.participant_meta_fields.iteritems():
+    for name, label in deployment.participant_extra_fields.iteritems():
         attributes[name] = SelectField(
             _('%(label)s', label=label),
             choices=default_choices
