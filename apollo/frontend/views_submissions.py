@@ -23,8 +23,7 @@ from . import route, permissions
 from .filters import generate_submission_filter
 from .forms import generate_submission_edit_form_class
 from .helpers import (
-    displayable_location_types, get_event, get_form_list_menu,
-    update_data_fields)
+    displayable_location_types, get_event, get_form_list_menu)
 from functools import partial
 
 bp = Blueprint('submissions', __name__, template_folder='templates',
@@ -156,7 +155,6 @@ def submission_edit(submission_id):
                     sender=submissions.__model__
                 ):
                     submission_form.populate_obj(submission)
-                    update_data_fields(submission)
                     submission.save()
 
                 return redirect(url_for('submissions.submission_list',
@@ -192,7 +190,6 @@ def submission_edit(submission_id):
             if master_form:
                 if master_form.validate():
                     master_form.populate_obj(submission.master)
-                    update_data_fields(submission.master)
                 else:
                     return render_template(
                         template_name,
@@ -207,7 +204,6 @@ def submission_edit(submission_id):
             if submission_form:
                 if submission_form.validate():
                     submission_form.populate_obj(submission)
-                    update_data_fields(submission)
                 else:
                     return render_template(
                         template_name,
