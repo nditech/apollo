@@ -166,6 +166,34 @@ class Submission(db.DynamicDocument):
             else:
                 self.completion[group.name] = 'Missing'
 
+    def _update_data_fields(self):
+        '''This little utility simply sets any boolean fields to None.
+        Have found that having boolean fields have the value False
+        causes problems in analysis.'''
+        fields = [
+            field for group in self.form.groups
+            for field in group.fields]
+
+        boolean_fields = [
+            field for field in fields if field.represents_boolean]
+        single_value_fields = [
+            field for field in fields
+            if field.options is not None and
+            field.allows_multiple_values is False]
+
+        for field in boolean_fields:
+            if not getattr(self, field.name, None):
+                # dictionary-style access will fail. it's a MongoEngine issue
+                # self[field.name] = None
+                setattr(self, field.name, None)
+
+        for field in single_value_fields:
+            value = getattr(self, field.name, '')
+            if value == '':
+                setattr(self, field.name, None)
+            elif value.isdigit():
+                setattr(self, field.name, int(value))
+
     def _compute_verification(self):
         if self.contributor is not None:
             return
@@ -254,6 +282,9 @@ class Submission(db.DynamicDocument):
         # update the `updated` timestamp
         self.updated = datetime.utcnow()
 
+        # cleanup data fields
+        self._update_data_fields()
+
     @property
     def master(self):
         if self.form.form_type == 'INCIDENT':
@@ -264,7 +295,10 @@ class Submission(db.DynamicDocument):
                 self._master = Submission.objects.get(
                     form=self.form,
                     location=self.location,
-                    created=self.created,
+                    created__gte=self.created.combine(self.created,
+                                                      self.created.min.time()),
+                    created__lte=self.created.combine(self.created,
+                                                      self.created.max.time()),
                     submission_type='M',
                     deployment=self.deployment,
                     event=self.event
@@ -279,7 +313,10 @@ class Submission(db.DynamicDocument):
             self._siblings = Submission.objects(
                 form=self.form,
                 location=self.location,
-                created=self.created,
+                created__gte=self.created.combine(self.created,
+                                                  self.created.min.time()),
+                created__lte=self.created.combine(self.created,
+                                                  self.created.max.time()),
                 submission_type='O',               # exclude master
                 deployment=self.deployment,
                 event=self.event,
