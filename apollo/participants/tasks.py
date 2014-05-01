@@ -97,7 +97,8 @@ def update_participants(dataframe, event, header_map):
     PHONE_PREFIX = header_map.get('phone')
     GROUP_PREFIX = header_map.get('group')
 
-    extra_field_names = event.deployment.participant_extra_fields.keys()
+    extra_field_names = [f.name for
+                         f in event.deployment.participant_extra_fields]
 
     phone_columns = [c for c in dataframe.columns
                      if c.startswith(PHONE_PREFIX)]
@@ -139,15 +140,16 @@ def update_participants(dataframe, event, header_map):
             participant.role = role
 
         partner = None
-        partner_name = record[PARTNER_COL]
-        if _is_valid(partner_name):
-            partner = services.participant_partners.get(
-                name=partner_name,
-                deployment=deployment
-            )
-            if partner is None:
-                partner = create_partner(partner_name, deployment)
-            participant.partner = partner
+        if PARTNER_COL:
+            partner_name = record[PARTNER_COL]
+            if _is_valid(partner_name):
+                partner = services.participant_partners.get(
+                    name=partner_name,
+                    deployment=deployment
+                )
+                if partner is None:
+                    partner = create_partner(partner_name, deployment)
+                participant.partner = partner
 
         location = None
         try:
@@ -261,6 +263,8 @@ def update_participants(dataframe, event, header_map):
             if column:
                 value = record[column]
                 if _is_valid(value):
+                    if isinstance(value, float):
+                        value = int(value)
                     setattr(participant, field_name, value)
 
         # finally done with first pass

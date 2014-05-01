@@ -1,12 +1,18 @@
 from ..core import db
 
 
+class CustomDataField(db.EmbeddedDocument):
+    name = db.StringField()
+    label = db.StringField()
+
+
 # Deployment
 class Deployment(db.Document):
     name = db.StringField(required=True)
     hostnames = db.ListField(db.StringField())
     administrative_divisions_graph = db.StringField()
-    participant_extra_fields = db.DictField()
+    participant_extra_fields = db.ListField(
+        db.EmbeddedDocumentField(CustomDataField))
 
     meta = {
         'indexes': [

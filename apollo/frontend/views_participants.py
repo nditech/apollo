@@ -88,13 +88,16 @@ def participant_list(page=1):
         args = request.args.copy()
         page = int(args.pop('page', '1'))
 
-        sort_by = sortable_columns.get(args.pop('sort_by', ''), 'participant_id')
-
+        sort_by = sortable_columns.get(
+            args.pop('sort_by', ''), 'participant_id')
         subset = queryset_filter.qs.order_by(sort_by)
+
+        extra_fields = g.deployment.participant_extra_fields or []
 
         # load form context
         context = dict(
             args=args,
+            extra_fields=extra_fields,
             filter_form=queryset_filter.form,
             form=form,
             page_title=page_title,
