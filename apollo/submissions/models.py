@@ -140,7 +140,7 @@ class Submission(db.DynamicDocument):
     completion = db.DictField()
     location_name_path = db.DictField()
     sender_verified = db.BooleanField(default=True)
-    verification_flags = db.DictField()
+    quality_checks = db.DictField()
     verification = db.StringField()
     submission_type = db.StringField(
         choices=SUBMISSION_TYPES, default='O', required=True)
@@ -208,7 +208,7 @@ class Submission(db.DynamicDocument):
         UNOK = 2
 
         flags_statuses = []
-        for flag in self.form.verification_flags:
+        for flag in self.form.quality_checks:
             evaluator = Evaluator(self)
 
             try:
@@ -246,12 +246,12 @@ class Submission(db.DynamicDocument):
                     flags_statuses.append(OK)
 
                 # setattr(self, flag['storage'], flag_setting)
-                self.verification_flags[flag['storage']] = flag_setting
+                self.quality_checks[flag['storage']] = flag_setting
             except TypeError:
                 # no sufficient data
                 # setattr(self, flag['storage'], None)
                 try:
-                    self.verification_flags.pop(flag['storage'])
+                    self.quality_checks.pop(flag['storage'])
                 except KeyError:
                     pass
                 flags_statuses.append(NO_DATA)

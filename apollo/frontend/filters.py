@@ -396,7 +396,7 @@ def generate_submission_filter(form):
 def generate_submission_flags_filter(form):
     attributes = {}
     pairs = [(flag['name'], flag['storage'])
-             for flag in form.verification_flags]
+             for flag in form.quality_checks]
 
     for name, storage in pairs:
         choices = [('', name)] + list(FLAG_CHOICES)

@@ -87,7 +87,7 @@ class Form(db.Document):
 
     events = db.ListField(db.ReferenceField(Event))
     deployment = db.ReferenceField(Deployment)
-    verification_flags = db.ListField(db.DictField())
+    quality_checks = db.ListField(db.DictField())
 
     meta = {
         'indexes': [
