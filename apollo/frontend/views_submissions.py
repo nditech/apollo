@@ -55,7 +55,7 @@ def submission_list(form_id):
     loc_types = displayable_location_types(is_administrative=True)
 
     queryset = submissions.find(
-        contributor__ne=None,
+        submission_type='O',
         form=form,
         created__lte=event.end_date,
         created__gte=event.start_date
@@ -66,7 +66,8 @@ def submission_list(form_id):
     if request.form.get('action') == 'send_message':
         message = request.form.get('message', '')
         recipients = [submission.contributor.phone
-                      if submission.contributor.phone else ''
+                      if submission.contributor and
+                      submission.contributor.phone else ''
                       for submission in query_filterset.qs]
         recipients.extend(current_app.config.get('MESSAGING_CC'))
 
@@ -113,7 +114,7 @@ def submission_create(form_id):
 def submission_edit(submission_id):
     submission = submissions.get_or_404(pk=submission_id)
     edit_form_class = generate_submission_edit_form_class(submission.form)
-    page_title = _('Edit submission')
+    page_title = _('Edit Submission')
     readonly = not EDIT_OBSERVER_CHECKLIST
     template_name = 'frontend/nu_submission_edit.html'
 
@@ -277,10 +278,10 @@ def _incident_csv(form_pk, location_type_pk, location_pk=None):
     location_type = location_types.objects.get_or_404(pk=location_type_pk)
     if location_pk:
         location = Location.objects.get_or_404(pk=location_pk)
-        qs = submissions.find(contributor__ne=None, form=form) \
+        qs = submissions.find(submission_type='O', form=form) \
             .filter_in(location)
     else:
-        qs = submissions.find(contributor__ne=None, form=form)
+        qs = submissions.find(submission_type='O', form=form)
 
     event = get_event()
     tags = [fi.name for group in form.groups for fi in group.fields]
@@ -326,7 +327,7 @@ def submission_version(submission_id, version_id):
 
 def verification_list(form_id):
     form = forms.get_or_404(pk=form_id, form_type='CHECKLIST')
-    queryset = submissions.find(form=form, contributor=None)
+    queryset = submissions.find(form=form, submission_type='M')
 
     context = {}
 

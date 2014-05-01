@@ -1,6 +1,6 @@
 # coding: utf-8
 from ..core import db
-from ..deployments.models import Deployment
+from ..deployments.models import Deployment, Event
 from ..formsframework.models import Form
 from ..formsframework.parser import Comparator, Evaluator
 from ..helpers import compute_location_path
@@ -12,8 +12,6 @@ from flask.ext.babel import lazy_gettext as _
 from flask.ext.mongoengine import BaseQuerySet
 from mongoengine import Q
 from pandas import DataFrame, isnull
-
-DEFAULT_SUBMISSION_RANGE = timedelta(hours=3)
 
 FLAG_STATUSES = {
     'no_problem': ('0', _('No Problem')),
@@ -129,6 +127,11 @@ class Submission(db.DynamicDocument):
     made for.
     '''
 
+    SUBMISSION_TYPES = (
+        ('O', _(u'Observer Submission')),
+        ('M', _(u'Master Submission')),
+    )
+
     form = db.ReferenceField(Form)
     contributor = db.ReferenceField(Participant)
     location = db.ReferenceField(Location)
@@ -139,8 +142,11 @@ class Submission(db.DynamicDocument):
     sender_verified = db.BooleanField(default=True)
     verification_flags = db.DictField()
     verification = db.StringField()
+    submission_type = db.StringField(
+        choices=SUBMISSION_TYPES, default='O', required=True)
 
     deployment = db.ReferenceField(Deployment)
+    event = db.ReferenceField(Event)
 
     meta = {
         'queryset_class': SubmissionQuerySet,
@@ -254,30 +260,29 @@ class Submission(db.DynamicDocument):
             return None
 
         if not hasattr(self, '_master'):
-            upper_bound = self.created + DEFAULT_SUBMISSION_RANGE
-            lower_bound = self.created - DEFAULT_SUBMISSION_RANGE
-
-            self._master = Submission.objects.get(
-                form=self.form,
-                location=self.location,
-                created__lte=upper_bound,
-                created__gte=lower_bound,
-                contributor=None,
-            )
+            try:
+                self._master = Submission.objects.get(
+                    form=self.form,
+                    location=self.location,
+                    created=self.created,
+                    submission_type='M',
+                    deployment=self.deployment,
+                    event=self.event
+                )
+            except Submission.DoesNotExist:
+                self._master = None
         return self._master
 
     @property
     def siblings(self):
         if not hasattr(self, '_siblings'):
-            upper_bound = self.created + DEFAULT_SUBMISSION_RANGE
-            lower_bound = self.created - DEFAULT_SUBMISSION_RANGE
-
             self._siblings = Submission.objects(
                 form=self.form,
                 location=self.location,
-                created__lte=upper_bound,
-                created__gte=lower_bound,
-                contributor__ne=None,               # exclude master
+                created=self.created,
+                submission_type='O',               # exclude master
+                deployment=self.deployment,
+                event=self.event,
                 pk__ne=self.pk
             )
         return self._siblings
