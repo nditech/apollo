@@ -53,7 +53,7 @@
                <th>{% trans %}Phone{% endtrans %}</th>
                <th>{% trans %}Organization{% endtrans %}</th>
                {% for field in extra_fields %}
-               <th>{{ field.label }}</th>
+               <th><a href="{{ url_for('participants.participant_list', sort_by=field.name, **args) }}">{{ field.label }}</a></th>
                {% endfor %}
                {%- if perms.edit_participant.can() -%}
                <th class="text-center">{% trans %}Edit{% endtrans %}</th>

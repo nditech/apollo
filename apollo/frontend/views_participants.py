@@ -39,6 +39,11 @@ def participant_list(page=1):
         'gen': 'gender'
     }
 
+    extra_fields = g.deployment.participant_extra_fields or []
+
+    for field in extra_fields:
+        sortable_columns.update({field.name: field.name})
+
     queryset = participants.find()
     queryset_filter = filters.participant_filterset()(queryset, request.args)
 
@@ -91,8 +96,6 @@ def participant_list(page=1):
         sort_by = sortable_columns.get(
             args.pop('sort_by', ''), 'participant_id')
         subset = queryset_filter.qs.order_by(sort_by)
-
-        extra_fields = g.deployment.participant_extra_fields or []
 
         # load form context
         context = dict(
