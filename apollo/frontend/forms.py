@@ -1,5 +1,4 @@
 from __future__ import absolute_import
-from __future__ import unicode_literals
 from collections import defaultdict
 from flask.ext.babel import lazy_gettext as _
 from flask.ext.wtf import Form as WTSecureForm
@@ -44,7 +43,9 @@ def generate_location_edit_form(location, data=None):
 
 def generate_participant_edit_form(participant, data=None):
     location_choices = defaultdict(list)
-    location_data = locations.find().order_by('location_type', 'name').scalar('id', 'name', 'location_type')
+    location_data = locations.find().order_by(
+        'location_type', 'name'
+    ).scalar('id', 'name', 'location_type')
 
     for loc_data in location_data:
         location_choices[loc_data[2]].append(
@@ -107,59 +108,74 @@ def generate_participant_edit_form(participant, data=None):
     )
 
 
-def generate_participant_import_mapping_form(headers, *args, **kwargs):
+def generate_participant_import_mapping_form(deployment, headers, *args, **kwargs):
     default_choices = [['', _('Select header')]] + [(v, v) for v in headers]
 
-    class ParticipantImportMappingForm(WTSecureForm):
-        _headers = headers
-        participant_id = SelectField(
+    attributes = {
+        '_headers': headers,
+        'participant_id': SelectField(
             _('Participant ID'),
             choices=default_choices,
             validators=[validators.input_required()]
-        )
-        name = SelectField(
+        ),
+        'name': SelectField(
             _('Name'),
             choices=default_choices,
             validators=[validators.input_required()]
-        )
-        role = SelectField(
-            _('Role'),
-            choices=default_choices,
-        )
-        partner_org = SelectField(
+        ),
+        'partner_org': SelectField(
             _('Partner'),
             choices=default_choices,
             validators=[validators.input_required()]
-        )
-        location_id = SelectField(
+        ),
+        'role': SelectField(
+            _('Role'),
+            choices=default_choices,
+        ),
+        'location_id': SelectField(
             _('Location ID'),
             choices=default_choices,
-        )
-        supervisor_id = SelectField(
+        ),
+        'supervisor_id': SelectField(
             _('Supervisor'),
             choices=default_choices,
-        )
-        gender = SelectField(
+        ),
+        'gender': SelectField(
             _('Gender'),
             choices=default_choices,
             validators=[validators.input_required()]
-        )
-        email = SelectField(
+        ),
+        'email': SelectField(
             _('Email'),
             choices=default_choices,
-        )
-        phone = TextField(
+        ),
+        'phone': TextField(
             _('Phone prefix'),
             validators=[validators.input_required()]
-        )
-        group = TextField(
+        ),
+        'group': TextField(
             _('Group prefix')
         )
+    }
 
-        def validate_phone(self, field):
-            subset = [h for h in self._headers if h.startswith(field.data)]
-            if not subset:
-                raise ValidationError(_('Invalid prefix'))
+    for name, label in deployment.participant_meta_fields.iteritems():
+        attributes[name] = SelectField(
+            _('%(label)s', label=label),
+            choices=default_choices
+        )
+
+    def validate_phone(self, field):
+        subset = [h for h in self._headers if h.startswith(field.data)]
+        if not subset:
+            raise ValidationError(_('Invalid prefix'))
+
+    attributes['validate_phone'] = validate_phone
+
+    ParticipantImportMappingForm = type(
+        'ParticipantImportMappingForm',
+        (WTSecureForm,),
+        attributes
+    )
 
     return ParticipantImportMappingForm(*args, **kwargs)
 

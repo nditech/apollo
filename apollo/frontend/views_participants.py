@@ -3,7 +3,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from datetime import datetime
 from flask import (
-    Blueprint, flash, make_response, redirect, render_template, request,
+    Blueprint, flash, g, make_response, redirect, render_template, request,
     url_for, abort, current_app
 )
 from flask.ext.babel import lazy_gettext as _
@@ -197,15 +197,17 @@ def participant_headers(pk):
         upload.delete()
         return render_template('frontend/invalid_import.html')
 
+    deployment = g.deployment
     headers = dataframe.columns
     page_title = _('Map Participant Columns')
     template_name = 'frontend/participant_headers.html'
 
     if request.method == 'GET':
-        form = generate_participant_import_mapping_form(headers)
+        form = generate_participant_import_mapping_form(deployment, headers)
         return render_template(template_name, form=form, page_title=page_title)
     else:
-        form = generate_participant_import_mapping_form(headers, request.form)
+        form = generate_participant_import_mapping_form(
+            deployment, headers, request.form)
 
         if not form.validate():
             return render_template(

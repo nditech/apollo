@@ -6,6 +6,7 @@ class Deployment(db.Document):
     name = db.StringField(required=True)
     hostnames = db.ListField(db.StringField())
     administrative_divisions_graph = db.StringField()
+    participant_meta_fields = db.DictField()
 
     meta = {
         'indexes': [
