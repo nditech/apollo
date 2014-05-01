@@ -1,6 +1,6 @@
 {%- extends 'frontend/_layout.html' -%}
 {%- from 'frontend/macros/locations_list_filter.html' import render_filter_form -%}
-{%- from 'frontend/macros/pagination.html' import render_pager -%}
+{%- from 'frontend/macros/pagination.html' import render_pager, render_pager_counter -%}
 {% block toolbar %}
   {%- if perms.export_locations.can() -%}
   <a class="btn btn-default pull-right" href="{{ url_for('locations.locations_list', export='true', **request.args) }}">{% trans %}Export{% endtrans %}</a>
@@ -30,6 +30,7 @@
 {%- endif -%}
 <div class="row-fluid">
   <div>
+    {{ render_pager_counter(locations, args) }}
     <table class="table table-striped table-bordered table-hover">
       <thead>
         <tr>
