@@ -120,8 +120,9 @@ def update_participants(dataframe, event, header_map):
                 event=event
             )
 
-        name = record[NAME_COL]
-        participant.name = name if _is_valid(name) else None
+        if NAME_COL:
+            name = record[NAME_COL]
+            participant.name = name if _is_valid(name) else ''
 
         role = None
         if ROLE_COL:
@@ -133,7 +134,7 @@ def update_participants(dataframe, event, header_map):
                 )
                 if role is None:
                     role = create_role(role_name, deployment)
-        participant.role = role
+            participant.role = role
 
         partner = None
         partner_name = record[PARTNER_COL]
@@ -144,7 +145,7 @@ def update_participants(dataframe, event, header_map):
             )
             if partner is None:
                 partner = create_partner(partner_name, deployment)
-        participant.partner = partner
+            participant.partner = partner
 
         location = None
         try:
@@ -170,7 +171,9 @@ def update_participants(dataframe, event, header_map):
                 _('Location with id %(loc_id)s not found',
                     loc_id=record[LOCATION_ID_COL])
             ))
-        participant.location = location
+
+        if location:
+            participant.location = location
 
         supervisor = None
         if SUPERVISOR_ID_COL:
@@ -190,12 +193,15 @@ def update_participants(dataframe, event, header_map):
                         unresolved_supervisors.add(
                             (participant_id, unicode(supervisor_id))
                         )
-        participant.supervisor = supervisor
+            participant.supervisor = supervisor
 
-        participant.gender = record[GENDER_COL] if _is_valid(record[GENDER_COL]) else ''
+        if GENDER_COL:
+            participant.gender = record[GENDER_COL] \
+                if _is_valid(record[GENDER_COL]) else ''
 
         if EMAIL_COL:
-            participant.email = record[EMAIL_COL] if _is_valid(record[EMAIL_COL]) else None
+            participant.email = record[EMAIL_COL] \
+                if _is_valid(record[EMAIL_COL]) else ''
 
         # wonky hacks to avoid doing addToSet queries
         # for events and phone numbers
@@ -210,12 +216,15 @@ def update_participants(dataframe, event, header_map):
                 mobile = int(mobile)
             phone_info[mobile] = True
 
-        participant.phones = [
+        phones = [
             PhoneContact(number=unicode(k),
                          verified=v) for k, v in phone_info.items()
         ]
+        if phone_columns:
+            participant.phones = phones
 
         # fix up groups
+        groups = []
         for column in group_columns:
             group_type = services.participant_group_types.get(
                 name=column,
@@ -237,11 +246,10 @@ def update_participants(dataframe, event, header_map):
                 group = create_group(
                     record[column], group_type, event.deployment)
 
-            # TODO: confirm that this is meant to be an update,
-            # not a replacement.
-            group_set = set(participant.groups)
-            group_set.add(group)
-            participant.groups = list(group_set)
+            groups.append(group)
+
+        if group_columns:
+            participant.groups = groups
 
         # finally done with first pass
         participant.save()
