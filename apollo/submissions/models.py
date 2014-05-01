@@ -295,7 +295,10 @@ class Submission(db.DynamicDocument):
                 self._master = Submission.objects.get(
                     form=self.form,
                     location=self.location,
-                    created=self.created,
+                    created__gte=self.created.combine(self.created,
+                                                      self.created.min.time()),
+                    created__lte=self.created.combine(self.created,
+                                                      self.created.max.time()),
                     submission_type='M',
                     deployment=self.deployment,
                     event=self.event
@@ -310,7 +313,10 @@ class Submission(db.DynamicDocument):
             self._siblings = Submission.objects(
                 form=self.form,
                 location=self.location,
-                created=self.created,
+                created__gte=self.created.combine(self.created,
+                                                  self.created.min.time()),
+                created__lte=self.created.combine(self.created,
+                                                  self.created.max.time()),
                 submission_type='O',               # exclude master
                 deployment=self.deployment,
                 event=self.event,
