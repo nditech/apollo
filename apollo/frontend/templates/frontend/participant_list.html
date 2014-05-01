@@ -2,6 +2,13 @@
 {%- from 'frontend/macros/participant_list_filter.html' import render_filter_form -%}
 {%- from 'frontend/macros/pagination.html' import render_pager, render_pager_counter -%}
 {%- from 'frontend/macros/send_message.html' import send_message_modal -%}
+{% block stylesheets %}
+<style type="text/css">
+.arrow-style{text-decoration:none; color:#333;}
+a:hover.arrow-style{text-decoration:none; color:#333;}
+.img{margin: 4px 0 0 -6px;}
+</style>
+{% endblock %}
 {% block toolbar %}
   {%- if perms.export_participants.can() -%}
   <a class="btn btn-default pull-right" href="{{ url_for('participants.participant_list', export='true', **request.args) }}">{% trans %}Export{% endtrans %}</a>
@@ -42,18 +49,18 @@
            <thead>
              <tr>
               <th><input type="checkbox" class="checked" id="select_all" name="select_all"></th>
-               <th><a href="{{ url_for('participants.participant_list', sort_by='id', **args) }}">{% trans %}ID{% endtrans %}</a></th>
+               <th><a href="{{ url_for('participants.participant_list', sort_by='id', **args) }}" class="arrow-style"><img src="{{ url_for('static', filename='img/double-arrow.gif') }}" class="img pull-left"></img>{% trans %}ID{% endtrans %}</a></th>
                {%- for location_type in location_types -%}
                <th>{{ location_type.name }}</th>
                {%- endfor -%}
                <th>{% trans %}Location{% endtrans %}</th>
-               <th><a href="{{ url_for('participants.participant_list', sort_by='name', **args) }}">{% trans %}Name{% endtrans %}</a></th>
-               <th><a href="{{ url_for('participants.participant_list', sort_by='gen', **args) }}">{% trans %}Gender{% endtrans %}</a></th>
+               <th><a href="{{ url_for('participants.participant_list', sort_by='name', **args) }}" class="arrow-style"><img src="{{ url_for('static', filename='img/double-arrow.gif') }}" class="img pull-left"></img>{% trans %}Name{% endtrans %}</a></th>
+               <th><a href="{{ url_for('participants.participant_list', sort_by='gen', **args) }}" class="arrow-style"><img src="{{ url_for('static', filename='img/double-arrow.gif') }}" class="img pull-left"></img>{% trans %}Gender{% endtrans %}</a></th>
                <th>{% trans %}Role{% endtrans %}</th>
                <th>{% trans %}Phone{% endtrans %}</th>
                <th>{% trans %}Organization{% endtrans %}</th>
                {% for field in extra_fields %}
-               <th><a href="{{ url_for('participants.participant_list', sort_by=field.name, **args) }}">{{ field.label }}</a></th>
+               <th><a href="{{ url_for('participants.participant_list', sort_by=field.name, **args) }}" class="arrow-style"><img src="{{ url_for('static', filename='img/double-arrow.gif') }}" class="img pull-left"></img>{{ field.label }}</a></th>
                {% endfor %}
                {%- if perms.edit_participant.can() -%}
                <th class="text-center">{% trans %}Edit{% endtrans %}</th>
