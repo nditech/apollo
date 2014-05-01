@@ -120,13 +120,11 @@ def generate_participant_import_mapping_form(deployment, headers, *args, **kwarg
         ),
         'name': SelectField(
             _('Name'),
-            choices=default_choices,
-            validators=[validators.input_required()]
+            choices=default_choices
         ),
         'partner_org': SelectField(
             _('Partner'),
-            choices=default_choices,
-            validators=[validators.input_required()]
+            choices=default_choices
         ),
         'role': SelectField(
             _('Role'),
@@ -142,16 +140,14 @@ def generate_participant_import_mapping_form(deployment, headers, *args, **kwarg
         ),
         'gender': SelectField(
             _('Gender'),
-            choices=default_choices,
-            validators=[validators.input_required()]
+            choices=default_choices
         ),
         'email': SelectField(
             _('Email'),
             choices=default_choices,
         ),
         'phone': TextField(
-            _('Phone prefix'),
-            validators=[validators.input_required()]
+            _('Phone prefix')
         ),
         'group': TextField(
             _('Group prefix')
@@ -165,11 +161,19 @@ def generate_participant_import_mapping_form(deployment, headers, *args, **kwarg
         )
 
     def validate_phone(self, field):
-        subset = [h for h in self._headers if h.startswith(field.data)]
-        if not subset:
-            raise ValidationError(_('Invalid prefix'))
+        if field.data:
+            subset = [h for h in self._headers if h.startswith(field.data)]
+            if not subset:
+                raise ValidationError(_('Invalid phone prefix'))
+
+    def validate_group(self, field):
+        if field.data:
+            subset = {h for h in self._headers if h.startswith(field.data)}
+            if not subset:
+                raise ValidationError(_('Invalid group prefix'))
 
     attributes['validate_phone'] = validate_phone
+    attributes['validate_group'] = validate_group
 
     ParticipantImportMappingForm = type(
         'ParticipantImportMappingForm',
