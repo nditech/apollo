@@ -19,7 +19,7 @@ class MyView(BaseView):
 
 class EventAdminView(ModelView):
     # disallow event creation
-    can_create = False
+    # can_create = False
 
     # what fields to be displayed in the list view
     column_list = ('name', 'start_date', 'end_date')
@@ -42,6 +42,12 @@ class EventAdminView(ModelView):
         '''For checking if the admin view is accessible.'''
         role = models.Role.objects.get(name='admin')
         return current_user.is_authenticated() and current_user.has_role(role)
+
+    def on_model_change(self, form, model, is_created):
+        # if we're creating a new event, make sure to set the
+        # deployment, since it won't appear in the form
+        if is_created:
+            model.deployment = current_user.deployment
 
 admin.add_view(MyView(name='Hello'))
 admin.add_view(EventAdminView(models.Event))
