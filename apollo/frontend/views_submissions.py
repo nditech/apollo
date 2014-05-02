@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 import json
 from flask import (
     Blueprint, jsonify, make_response, redirect, render_template, request,
-    url_for, current_app, abort
+    url_for, current_app, abort, g
 )
 from flask.ext.babel import lazy_gettext as _
 from flask.ext.security import current_user, login_required
@@ -71,7 +71,7 @@ def submission_list(form_id):
         recipients.extend(current_app.config.get('MESSAGING_CC'))
 
         if message and recipients:
-            send_messages.delay(message, recipients)
+            send_messages.delay(str(g.event.pk), message, recipients)
             return 'OK'
         else:
             abort(400)

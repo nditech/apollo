@@ -7,10 +7,10 @@ from tablib import Dataset
 class MessagesService(Service):
     __model__ = Message
 
-    def log_message(self, direction, text, recipient="", sender=""):
+    def log_message(self, event, direction, text, recipient="", sender=""):
         return self.create(
             direction=direction, recipient=recipient, sender=sender,
-            text=text, deployment=g.deployment, event=g.event)
+            text=text, deployment=event.deployment, event=event)
 
     def all(self):
         """Returns a generator containing all instances of the service's model.

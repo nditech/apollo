@@ -2,7 +2,7 @@ from . import route
 from .. import services
 from ..messaging.forms import KannelForm, TelerivetForm
 from ..messaging.helpers import parse_message
-from flask import Blueprint, make_response, request
+from flask import Blueprint, make_response, request, g
 import json
 
 
@@ -15,12 +15,14 @@ def kannel_view():
     if form.validate():
         msg = form.get_message()
         services.messages.log_message(
-            sender=msg.get('sender'), text=msg.get('text'), direction='IN')
+            event=g.event, sender=msg.get('sender'), text=msg.get('text'),
+            direction='IN')
 
         response = parse_message(form)
 
         services.messages.log_message(
-            recipient=msg.get('sender'), text=response, direction='OUT')
+            event=g.event, recipient=msg.get('sender'), text=response,
+            direction='OUT')
         return response
     print form.errors
     return ""
@@ -32,7 +34,8 @@ def telerivet_view(request):
     if form.validdate():
         msg = form.get_message()
         services.messages.log_message(
-            sender=msg.get('sender'), text=msg.get('text'), direction='IN')
+            event=g.event, sender=msg.get('sender'), text=msg.get('text'),
+            direction='IN')
 
         response_text = parse_message(form)
         response = {'messages': [{'content': response_text}]}
@@ -40,6 +43,7 @@ def telerivet_view(request):
         http_response.headers['Content-Type'] = 'application/json'
 
         services.messages.log_message(
-            recipient=msg.get('sender'), text=response_text, direction='OUT')
+            event=g.event, recipient=msg.get('sender'), text=response_text,
+            direction='OUT')
         return http_response
     return ""

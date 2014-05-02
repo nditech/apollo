@@ -56,7 +56,7 @@ def participant_list(page=1):
         recipients.extend(current_app.config.get('MESSAGING_CC'))
 
         if message and recipients:
-            send_messages.delay(message, recipients)
+            send_messages.delay(str(g.event.pk), message, recipients)
             return 'OK'
         else:
             abort(400)
