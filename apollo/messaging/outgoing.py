@@ -31,19 +31,19 @@ class KannelGateway(Gateway):
         self.charset = config.get('charset')
         self.coding = config.get('coding')
 
-    def send(self, text, recipients, sender=""):
+    def send(self, text, recipient, sender=""):
         """
         Sends the message to the specified recipients using this gateway
 
         :param text: Contents of the text message to send
-        :param recipients: An array of all the recipients to send this to
+        :param recipient: The recipient of the text message
         :param sender: (Optional) sender to set for the message
         """
         gateway_params = {
             'username': self.username,
             'password': self.password,
             'from': sender,
-            'to': ' '.join(set(recipients)),
+            'to': recipient,
             'text': text,
         }
         gateway_params.update(
@@ -54,9 +54,9 @@ class KannelGateway(Gateway):
         try:
             resp = r.get(self.gateway_url, params=gateway_params)
         except r.ConnectionError:
-            return False
+            raise
 
-        return True if resp.status_code == 202 else False
+        return 'OK %s' % (resp.status_code,)
 
 
 class TelerivetGateway(Gateway):
@@ -76,31 +76,30 @@ https://api.telerivet.com/v1/projects/%s/messages/outgoing\
         self.phone_id = config.get('phone_id')
         self.priority = config.get('priority')
 
-    def send(self, text, recipients, sender=""):
+    def send(self, text, recipient, sender=""):
         """
         Sends the message to the specified recipients using this gateway
 
         :param text: Contents of the text message to send
-        :param recipients: An array of all the recipients to send this to
+        :param recipient: The recipient of the text message
         :param sender: (Optional) sender to set for the message
         """
-        for recipient in set(recipients):
-            gateway_params = {
-                'phone_id': self.phone_id,
-                'to_number': recipient,
-                'content': text
-            }
-            gateway_params.update(
-                dict([(key, getattr(self, key))
-                     for key in ['priority']
-                     if getattr(self, key)]))
-            try:
-                r.post(self.gateway_url, data=gateway_params,
-                       auth=(self.api_key, ''))
-            except r.ConnectionError:
-                pass
+        gateway_params = {
+            'phone_id': self.phone_id,
+            'to_number': recipient,
+            'content': text
+        }
+        gateway_params.update(
+            dict([(key, getattr(self, key))
+                 for key in ['priority']
+                 if getattr(self, key)]))
+        try:
+            r.post(self.gateway_url, data=gateway_params,
+                   auth=(self.api_key, ''))
+        except r.ConnectionError:
+            raise
 
-        return True
+        return 'OK'
 
 
 def gateway_factory():

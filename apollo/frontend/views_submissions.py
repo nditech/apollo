@@ -18,7 +18,7 @@ from ..services import (
     forms, location_types, submissions, submission_comments,
     submission_versions
 )
-from ..tasks import send_message
+from ..tasks import send_messages
 from . import route, permissions
 from .filters import generate_submission_filter
 from .forms import generate_submission_edit_form_class
@@ -71,7 +71,7 @@ def submission_list(form_id):
         recipients.extend(current_app.config.get('MESSAGING_CC'))
 
         if message and recipients:
-            send_message.delay(message, recipients)
+            send_messages.delay(message, recipients)
             return 'OK'
         else:
             abort(400)

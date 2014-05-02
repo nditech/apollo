@@ -14,7 +14,7 @@ from ..services import (
     events, locations, participants, participant_roles, participant_partners,
     user_uploads
 )
-from ..tasks import import_participants, send_message
+from ..tasks import import_participants, send_messages
 from . import route, helpers, filters
 from .forms import (
     generate_participant_edit_form, generate_participant_import_mapping_form,
@@ -56,7 +56,7 @@ def participant_list(page=1):
         recipients.extend(current_app.config.get('MESSAGING_CC'))
 
         if message and recipients:
-            send_message.delay(message, recipients)
+            send_messages.delay(message, recipients)
             return 'OK'
         else:
             abort(400)

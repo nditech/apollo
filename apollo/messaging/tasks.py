@@ -2,21 +2,36 @@ from flask.ext.mail import Message
 from ..core import mail
 from ..settings import SECURITY_EMAIL_SENDER
 from .outgoing import gateway_factory
+from ..factory import create_celery_app
 
 
-def send_message(message, recipients, sender=""):
+celery = create_celery_app()
+
+
+@celery.task
+def send_message(message, recipient, sender=""):
     """
     Task for sending outgoing messages using the configured gateway
 
     :param message: The string for the contents of the message to be sent
-    :param recipients: An array of all the phone numbers of the recipients
+    :param recipient: The recipient of the text message
     :param sender: (Optional) The sender to set
     """
     gateway = gateway_factory()
     if gateway:
-        return gateway.send(message, recipients, sender)
+        return gateway.send(message, recipient, sender)
 
 
+@celery.task
+def send_messages(message, recipients, sender=""):
+    if hasattr(recipients, '__iter__'):
+        items = [(message, recipient, sender) for recipient in recipients]
+        send_message.chunks(items, 100).delay()
+    else:
+        send_message.delay(message, recipients, sender)
+
+
+@celery.task
 def send_email(subject, body, recipients, sender=None):
     if not sender:
         sender = SECURITY_EMAIL_SENDER
