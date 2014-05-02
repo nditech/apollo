@@ -1,5 +1,6 @@
 from collections import OrderedDict
 from flask import abort, g
+from flask.ext.admin import Admin
 from flask.ext.babel import Babel
 from flask.ext.mail import Mail
 from flask.ext.menu import Menu
@@ -10,6 +11,8 @@ from flask.ext.gravatar import Gravatar
 import six
 from wtforms import Form, fields
 
+
+admin = Admin(name='Apollo')
 api = Api()
 babel = Babel()
 db = MongoEngine()

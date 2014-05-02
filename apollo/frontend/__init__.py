@@ -2,17 +2,34 @@ from functools import wraps
 
 
 from flask import render_template, session, request, redirect, url_for
+from flask.ext.admin import AdminIndexView
 from flask.ext.login import user_logged_out
 from flask.ext.mongoengine import MongoEngineSessionInterface
 from flask.ext.principal import identity_loaded
-from flask.ext.security import MongoEngineUserDatastore
+from flask.ext.security import MongoEngineUserDatastore, current_user
 
 from .. import factory, models, services
-from ..core import db, menu, security, gravatar
+from ..core import admin, db, menu, security, gravatar
 
 from . import assets, permissions
 from .helpers import set_request_presets
 from . import template_filters
+
+
+def init_admin(admin, app):
+    class AdminIndex(AdminIndexView):
+        def is_accessible(self):
+            try:
+                role = models.Role.objects.get(name='admin')
+                print current_user.has_role(role)
+            except models.Role.DoesNotExist:
+                return False
+            return (
+                current_user.is_authenticated() and current_user.has_role(role)
+            )
+
+    admin.init_app(app)
+    admin.index_view = AdminIndex()
 
 
 def create_app(settings_override=None, register_security_blueprint=True):
@@ -30,6 +47,8 @@ def create_app(settings_override=None, register_security_blueprint=True):
     security.init_app(app, userdatastore,
                       register_blueprint=register_security_blueprint)
     app.session_interface = MongoEngineSessionInterface(db)
+
+    init_admin(admin, app)
 
     # Register custom error handlers
     if not app.debug:
