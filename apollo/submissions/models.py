@@ -125,6 +125,36 @@ class Submission(db.DynamicDocument):
 
     :attr:`form` provides a reference to the form that the submission was
     made for.
+
+    :attr:`completion` is a dictionary whose keys are the names of the
+    groups defined on :attr:`form` (if any) and whose values are (as at the
+    time of writing this) are Complete, Partial or Missing, based on if all
+    fields within that group have been filled out. Please see the method
+    _update_completion_status() for details.
+
+    :attr:`location_name_path` is a dictionary with location type names as
+    keys and actual location names as values. Since MongoDB doesn't support
+    joins, it was created to be a precomputed shortcut to using the location
+    hierarchy in queries and views without needing several database lookups.
+
+    :attr:`sender_verified` is set to True if the sender of a submission has
+    been verified. For instance, if it was received from a known phone number
+    in the case of SMS, or a known user account (either via the UI or API).
+
+    :attr:`quality_checks` stores the precomputed value of different logical
+    checks (created at runtime, so we can't predict in advance). An example
+    logical check would be: for this submission, was the total number of votes
+    greater than the total number of registered voters?
+
+    :attr:`verification_status` stores the overall result of all the logical
+    checks: are there problems with this data, or is everything ok, or not
+    enough data to have an opinion? see STATUS_CHOICES for the full list of
+    possible values.
+
+    IMPORTANT: submissions for incident forms get a few more dynamic fields:
+        - status: whether the incident was confirmed/rejected etc
+        - witness: whether the contributor actually witnessed the incident,
+            was reported by a third party, etc
     '''
 
     SUBMISSION_TYPES = (
@@ -141,7 +171,7 @@ class Submission(db.DynamicDocument):
     location_name_path = db.DictField()
     sender_verified = db.BooleanField(default=True)
     quality_checks = db.DictField()
-    verification = db.StringField()
+    verification_status = db.StringField()
     submission_type = db.StringField(
         choices=SUBMISSION_TYPES, default='O', required=True)
 
@@ -195,7 +225,9 @@ class Submission(db.DynamicDocument):
                 setattr(self, field.name, int(value))
 
     def _compute_verification(self):
-        if self.contributor is not None:
+        '''Precomputes the logical checks on the submission.'''
+        if self.submission_type != 'M':
+            # only for master submissions
             return
 
         verified_flag = FLAG_STATUSES['verified'][0]
@@ -215,13 +247,17 @@ class Submission(db.DynamicDocument):
                 lvalue = evaluator.eval(flag['lvalue'])
                 rvalue = evaluator.eval(flag['rvalue'])
 
+                # the comparator setting expresses the relationship between
+                # lvalue and rvalue
                 if flag['comparator'] == 'pctdiff':
+                    # percentage difference between lvalue and rvalue
                     try:
                         diff = abs(lvalue - rvalue) / float(
                             max([lvalue, rvalue]))
                     except ZeroDivisionError:
                         diff = 0
                 elif flag['comparator'] == 'pct':
+                    # absolute percentage
                     try:
                         diff = float(lvalue) / float(rvalue)
                     except ZeroDivisionError:
@@ -257,13 +293,13 @@ class Submission(db.DynamicDocument):
                 flags_statuses.append(NO_DATA)
 
         # compare all flags and depending on the values, set the status
-        if not self.verification in [verified_flag, rejected_flag]:
+        if not self.verification_status in [verified_flag, rejected_flag]:
             if all(map(lambda i: i == NO_DATA, flags_statuses)):
-                self.verification = None
+                self.verification_status = None
             elif any(map(lambda i: i == UNOK, flags_statuses)):
-                self.verification = FLAG_STATUSES['problem'][0]
+                self.verification_status = FLAG_STATUSES['problem'][0]
             elif any(map(lambda i: i == OK, flags_statuses)):
-                self.verification = FLAG_STATUSES['no_problem'][0]
+                self.verification_status = FLAG_STATUSES['no_problem'][0]
 
     def clean(self):
         # update location name path if it does not exist.
