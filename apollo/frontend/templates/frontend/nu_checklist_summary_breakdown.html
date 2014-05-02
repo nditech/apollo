@@ -5,8 +5,8 @@
 	</div>
 	<div class="col-md-3">
 		<form class="form-inline pull-right" action="" method="GET" accept-charset="utf-8">
-			<div class="form-group form-container">{{ filter_form.sample }}</div>
-			<button class="btn btn-warning" type="submit"><i class="glyphicon glyphicon-search"></i> {% trans %}Filter{% endtrans %}</button>
+			<div class="form-group form-container">{{ filter_form.sample(class_='form-control span2 input-sm') }}</div>
+			<button class="btn btn-sm btn-warning" type="submit"><i class="glyphicon glyphicon-search"></i> {% trans %}Filter{% endtrans %}</button>
 		</form>
 	</div>
 </div>
@@ -16,7 +16,7 @@
 	</div>
 </div>
 <div class="row">
-	<div class="col-md-11">
+	<div class="col-md-12">
 		<div class="tab-content">
 			<div class="tab-pane active" id="table">
 				{% for tag, question, tag_stats in process_summary.top %}
