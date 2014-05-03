@@ -21,7 +21,6 @@ def init_admin(admin, app):
         def is_accessible(self):
             try:
                 role = models.Role.objects.get(name='admin')
-                print current_user.has_role(role)
             except models.Role.DoesNotExist:
                 return False
             return (
