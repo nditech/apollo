@@ -1,5 +1,6 @@
 from ..core import db
 from ..deployments.models import Deployment, Event
+from flask.ext.babel import lazy_gettext as _
 from slugify import slugify_unicode
 
 
@@ -34,9 +35,9 @@ class FormField(db.EmbeddedDocument):
     :attr:`name` is the question code used to identify the field (e.g. AA)'''
 
     ANALYSIS_TYPES = (
-        ('N/A', 'Not Applicable'),
-        ('PROCESS', 'Process Analysis'),
-        ('RESULT', 'Results Analysis'))
+        ('N/A', _('Not Applicable')),
+        ('PROCESS', _('Process Analysis')),
+        ('RESULT', _('Results Analysis')))
 
     name = db.StringField(required=True)
     description = db.StringField(required=True)
@@ -77,8 +78,8 @@ class Form(db.Document):
     :attr:`name` is the name for this form.'''
 
     FORM_TYPES = (
-        ('CHECKLIST', 'Checklist Form'),
-        ('INCIDENT', 'Incident Form'))
+        ('CHECKLIST', _('Checklist Form')),
+        ('INCIDENT', _('Incident Form')))
 
     name = db.StringField(required=True)
     prefix = db.StringField()

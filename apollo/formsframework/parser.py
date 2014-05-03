@@ -11,11 +11,13 @@ class Evaluator(object):
 
     def parse(self, source):
         grammar = '\n'.join(v.__doc__ for k, v in vars(self.__class__).items()
-                      if '__' not in k and hasattr(v, '__doc__') and v.__doc__)
+                            if '__' not in k and hasattr(v, '__doc__')
+                            and v.__doc__)
         return Grammar(grammar).parse(source)
 
     def eval(self, source):
-        node = self.parse(source) if isinstance(source, str) or isinstance(source, unicode) else source
+        node = self.parse(source) if isinstance(source, str) \
+            or isinstance(source, unicode) else source
         method = getattr(self, node.expr_name, lambda node, children: children)
         return method(node, [self.eval(n) for n in node])
 
@@ -68,13 +70,15 @@ class Comparator(object):
 
     def parse(self, source):
         grammar = '\n'.join(v.__doc__ for k, v in vars(self.__class__).items()
-                      if '__' not in k and hasattr(v, '__doc__') and v.__doc__)
+                            if '__' not in k and hasattr(v, '__doc__')
+                            and v.__doc__)
         return Grammar(grammar).parse(source)
 
     def eval(self, source, param=None):
         if param is not None:
             self.param = float(param)
-        node = self.parse(source) if isinstance(source, str) or isinstance(source, unicode) else source
+        node = self.parse(source) if isinstance(source, str) \
+            or isinstance(source, unicode) else source
         method = getattr(self, node.expr_name, lambda node, children: children)
         return method(node, [self.eval(n) for n in node])
 
