@@ -7,7 +7,7 @@ from ..helpers import compute_location_path
 from ..locations.models import Location
 from ..participants.models import Participant
 from ..users.models import User
-from datetime import datetime, timedelta
+from datetime import datetime
 from flask.ext.babel import lazy_gettext as _
 from flask.ext.mongoengine import BaseQuerySet
 from mongoengine import Q
@@ -222,7 +222,9 @@ class Submission(db.DynamicDocument):
             value = getattr(self, field.name, '')
             if value == '':
                 setattr(self, field.name, None)
-            elif value.isdigit():
+            elif isinstance(value, int):
+                setattr(self, field.name, value)
+            elif isinstance(value, str) and value.isdigit():
                 setattr(self, field.name, int(value))
 
     def _compute_verification(self):
@@ -363,9 +365,11 @@ class Submission(db.DynamicDocument):
 
     @property
     def versions(self):
-        if not hasattr(self, '_versions'):
-            self._versions = SubmissionVersion.objects(submission=self)
-        return self._versions
+        return SubmissionVersion.objects(submission=self)
+
+    @property
+    def comments(self):
+        return SubmissionComment.objects(submission=self)
 
 
 class SubmissionComment(db.Document):

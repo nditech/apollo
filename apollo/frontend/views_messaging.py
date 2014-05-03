@@ -24,7 +24,6 @@ def kannel_view():
             event=g.event, recipient=msg.get('sender'), text=response,
             direction='OUT')
         return response
-    print form.errors
     return ""
 
 
