@@ -235,7 +235,7 @@ def generate_submission_edit_form_class(form):
     if form.form_type == 'INCIDENT':
         form_fields['status'] = SelectField(choices=STATUS_CHOICES)
         form_fields['witness'] = SelectField(choices=WITNESS_CHOICES)
-        form_fields['incident_comment'] = StringField(
+        form_fields['description'] = StringField(
             widget=widgets.TextArea()
         )
 
