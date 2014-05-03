@@ -1,5 +1,6 @@
 from ..core import Service
 from .models import Message
+from datetime import datetime
 from flask import g
 from tablib import Dataset
 
@@ -10,7 +11,8 @@ class MessagesService(Service):
     def log_message(self, event, direction, text, recipient="", sender=""):
         return self.create(
             direction=direction, recipient=recipient, sender=sender,
-            text=text, deployment=event.deployment, event=event)
+            text=text, deployment=event.deployment, event=event,
+            received=datetime.utcnow())
 
     def all(self):
         """Returns a generator containing all instances of the service's model.
