@@ -187,7 +187,8 @@ class Submission(db.DynamicDocument):
         Should be called automatically on save, preferably in the `clean`
         method.'''
         for group in self.form.groups:
-            completed = [f.name in self for f in group.fields]
+            completed = [getattr(self, f.name, None) is not None
+                         for f in group.fields]
 
             if all(completed):
                 self.completion[group.name] = 'Complete'
@@ -309,6 +310,9 @@ class Submission(db.DynamicDocument):
         if not self.location_name_path:
             self.location_name_path = compute_location_path(self.location)
 
+        # cleanup data fields
+        self._update_data_fields()
+
         # update completion status
         self._update_completion_status()
 
@@ -317,9 +321,6 @@ class Submission(db.DynamicDocument):
 
         # update the `updated` timestamp
         self.updated = datetime.utcnow()
-
-        # cleanup data fields
-        self._update_data_fields()
 
     @property
     def master(self):
