@@ -1,5 +1,6 @@
 from ..core import Service
 from .models import Submission, SubmissionComment, SubmissionVersion
+from datetime import datetime
 from flask import g
 
 
@@ -27,6 +28,11 @@ class SubmissionsService(Service):
 
 class SubmissionCommentsService(Service):
     __model__ = SubmissionComment
+
+    def create_comment(self, submission, comment, user=None):
+        return self.create(
+            submission=submission, user=user, comment=comment,
+            submit_date=datetime.utcnow())
 
 
 class SubmissionVersionsService(Service):
