@@ -40,7 +40,6 @@ bp = Blueprint('submissions', __name__, template_folder='templates',
 @login_required
 def submission_list(form_id):
     form = forms.get_or_404(pk=form_id)
-    event = get_event()
     permissions.require_item_perm('view_forms', form)
 
     filter_class = generate_submission_filter(form)
@@ -53,11 +52,12 @@ def submission_list(form_id):
 
     loc_types = displayable_location_types(is_administrative=True)
 
+    # first retrieve observer submissions for the form
+    # NOTE: this implicitly restricts selected submissions
+    # to the currently selected event.
     queryset = submissions.find(
         submission_type='O',
-        form=form,
-        created__lte=event.end_date,
-        created__gte=event.start_date
+        form=form
     )
     query_filterset = filter_class(queryset, request.args)
     filter_form = query_filterset.form
@@ -127,7 +127,7 @@ def submission_edit(submission_id):
                 obj=sibling,
                 prefix=unicode(sibling.pk)
             ) for sibling in submission.siblings
-        ] if submission.siblings else []
+        ]
         master_form = edit_form_class(
             obj=submission.master,
             prefix=unicode(submission.master.pk)
@@ -172,18 +172,23 @@ def submission_edit(submission_id):
                 prefix=unicode(submission.master.pk)
             ) if submission.master else None
 
-            submission_form = edit_form_class(
-                request.form,
-                prefix=unicode(submission.pk)
-            ) if not readonly else None
+            if readonly:
+                submission_form = edit_form_class(
+                    obj=submission,
+                    prefix=unicode(submission.pk)
+                )
+            else:
+                submission_form = edit_form_class(
+                    request.form,
+                    prefix=unicode(submission.pk)
+                )
 
             sibling_forms = [
                 edit_form_class(
                     obj=sibling,
                     prefix=unicode(sibling.pk))
-
                 for sibling in submission.siblings
-            ] if submission.siblings else []
+            ]
 
             # if the user is allowed to edit participant submissions,
             # everything has to be valid at one go. no partial update
@@ -201,7 +206,7 @@ def submission_edit(submission_id):
                         readonly=readonly
                     )
 
-            if submission_form:
+            if not readonly:
                 if submission_form.validate():
                     submission_form.populate_obj(submission)
                 else:
