@@ -4,8 +4,8 @@ from flask.ext.babel import lazy_gettext as _
 from flask.ext.wtf import Form as WTSecureForm
 from flask.ext.wtf.file import FileField
 from wtforms import (
-    BooleanField, SelectField, SelectMultipleField, StringField, TextField,
-    ValidationError, validators, widgets
+    BooleanField, IntegerField, SelectField, SelectMultipleField, StringField,
+    TextField, ValidationError, validators, widgets
 )
 from ..models import (
     LocationType, Participant
@@ -103,12 +103,15 @@ def generate_participant_edit_form(participant, data=None):
         gender=participant.gender.upper(),
         role=participant.role.id if participant.role else None,
         partner=participant.partner.id if participant.partner else None,
-        supervisor=participant.supervisor.id if participant.supervisor else None,
+        supervisor=participant.supervisor.id
+        if participant.supervisor else None,
         phone=participant.phone
     )
 
 
-def generate_participant_import_mapping_form(deployment, headers, *args, **kwargs):
+def generate_participant_import_mapping_form(
+    deployment, headers, *args, **kwargs
+):
     default_choices = [['', _('Select header')]] + [(v, v) for v in headers]
 
     attributes = {
@@ -201,36 +204,45 @@ def generate_submission_edit_form_class(form):
 
     for index, group in enumerate(form.groups):
         for field in group.fields:
-            if field.represents_boolean:
-                form_fields[field.name] = BooleanField(field.name)
+            if field.options:
+                choices = [(v, k) for k, v in field.options.iteritems()]
 
-                # if field.allows_multiple_values:
-                #     form_fields[field.name] = IntegerField(field.name)
-                # else:
-                #     form_fields[field.name] = IntegerField(field.name)
-            else:
-                options = field.options
                 if field.allows_multiple_values:
-                    choices = [(k, v) for k, v in options.iteritems()]
                     form_fields[field.name] = SelectMultipleField(
                         field.name,
                         choices=choices,
+                        coerce=int,
+                        description=field.description,
+                        validators=[validators.optional()],
                         option_widget=widgets.CheckboxInput(),
                         widget=widgets.ListWidget()
                     )
                 else:
-                    if options:
-                        form_fields[field.name] = StringField(
-                            field.name,
-                            validators=[
-                                validators.AnyOf([''] + [unicode(o) for o in options.values()])]
-                        )
-                    else:
-                        choices = [''] + [unicode(x) for x in xrange(field.min_value, field.max_value + 1)]
-                        form_fields[field.name] = StringField(
-                            field.name,
-                            validators=[validators.AnyOf(choices)]
-                        )
+                    form_fields[field.name] = IntegerField(
+                        field.name,
+                        description=field.description,
+                        validators=[
+                            validators.optional(),
+                            validators.AnyOf([v for v, k in choices])],
+                        widget=widgets.TextInput()
+                    )
+            else:
+                if form.form_type == 'CHECKLIST':
+                    form_fields[field.name] = IntegerField(
+                        field.name,
+                        description=field.description,
+                        validators=[
+                            validators.optional(),
+                            validators.NumberRange(min=field.min_value,
+                                                   max=field.max_value)]
+                    )
+                else:
+                    form_fields[field.name] = BooleanField(
+                        field.name,
+                        description=field.description,
+                        filters=[lambda data: 1 if data else None],
+                        validators=[validators.optional()]
+                    )
 
     if form.form_type == 'INCIDENT':
         form_fields['status'] = SelectField(choices=STATUS_CHOICES)

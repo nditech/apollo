@@ -2,7 +2,7 @@
 from datetime import datetime
 from wtforms import (
     Form,
-    BooleanField, IntegerField, SelectField, SelectMultipleField, StringField,
+    IntegerField, SelectField, SelectMultipleField, StringField,
     validators, widgets
 )
 from flask import g
