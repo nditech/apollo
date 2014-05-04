@@ -62,11 +62,14 @@ class BaseQuestionnaireForm(Form):
 
             form_fields = filter(lambda f: f not in ignored_fields,
                                  self.data.keys())
+            change_detected = False
             for form_field in form_fields:
                 if self.data.get(form_field):
+                    change_detected = True
                     setattr(submission, form_field, self.data.get(form_field))
 
-            submission.save()
+            if change_detected:
+                submission.save()
         except models.Submission.DoesNotExist:
             pass
 
@@ -80,12 +83,13 @@ def build_questionnaire(form, data=None):
         for field in group.fields:
             # if the field has options, create a list of choices
             if field.options:
-                choices = [(k, v) for k, v in field.options.iteritems()]
+                choices = [(v, k) for k, v in field.options.iteritems()]
 
                 if field.allows_multiple_values:
                     fields[field.name] = SelectMultipleField(
                         field.name,
                         choices=choices,
+                        coerce=int,
                         description=field.description,
                         option_widget=widgets.CheckboxInput(),
                         validators=[validators.optional()],
@@ -95,6 +99,7 @@ def build_questionnaire(form, data=None):
                     fields[field.name] = SelectField(
                         field.name,
                         choices=choices,
+                        coerce=int,
                         description=field.description,
                         validators=[validators.optional()],
                         widget=widgets.TextInput()
