@@ -342,8 +342,15 @@ class Submission(db.DynamicDocument):
                     deployment=self.deployment,
                     event=self.event
                 )
-            except Submission.DoesNotExist:
-                self._master = None
+            except self.DoesNotExist:
+                self._master = Submission.objects.create(
+                    form=self.form,
+                    location=self.location,
+                    created=self.created,
+                    submission_type='M',
+                    deployment=self.deployment,
+                    event=self.event
+                )
         return self._master
 
     @property
