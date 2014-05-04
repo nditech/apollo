@@ -73,15 +73,16 @@ def parse_responses(responses_text, form_type='CHECKLIST'):
     '''
     if form_type == 'INCIDENT':
         # one alphabet represents a critical incident
-        p = re.compile(r'(?P<question>[A-Z])')
+        p = re.compile(r'(?P<question>[A-Z])', re.I)
         responses = dict(
-            [(r.group('question'), 1) for r in p.finditer(responses_text)])
+            [(r.group('question').upper(), 1)
+             for r in p.finditer(responses_text)])
     else:
         # responses for checklist questions are in the form AA111
         # where AA is the alphabetic question code and 111 is the response.
         # This may occur more than once in the response text.
-        p = re.compile(r'(?P<question>[A-Z]+)(?P<answer>\d*)')
+        p = re.compile(r'(?P<question>[A-Z]+)(?P<answer>\d*)', re.I)
         responses = dict(
-            [(r.group('question'), r.group('answer'))
+            [(r.group('question').upper(), r.group('answer'))
              for r in p.finditer(responses_text)])
     return responses
