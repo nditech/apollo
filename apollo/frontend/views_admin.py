@@ -49,5 +49,5 @@ class EventAdminView(ModelView):
         if is_created:
             model.deployment = current_user.deployment
 
-admin.add_view(MyView(name='Hello'))
+# admin.add_view(MyView(name='Hello'))
 admin.add_view(EventAdminView(models.Event))
