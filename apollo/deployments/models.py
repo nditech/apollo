@@ -13,6 +13,7 @@ class Deployment(db.Document):
     administrative_divisions_graph = db.StringField()
     participant_extra_fields = db.ListField(
         db.EmbeddedDocumentField(CustomDataField))
+    allow_observer_submission_edit = db.BooleanField(default=True)
 
     meta = {
         'indexes': [
