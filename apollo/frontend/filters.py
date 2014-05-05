@@ -280,8 +280,9 @@ def basesubmission_filterset():
 
 
 def dashboard_filterset():
-    class DashboardFilterSet(FilterSet):
-        sample = SampleFilter()
+    baseclass = basesubmission_filterset()
+
+    class DashboardFilterSet(baseclass):
         location = LocationFilter()
         checklist_form = ChecklistFormFilter()
 
