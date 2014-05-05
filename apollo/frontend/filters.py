@@ -13,8 +13,7 @@ class EventFilter(CharFilter):
     def filter(self, queryset, value):
         if value:
             event = services.events.get(pk=value)
-            return queryset(created__gte=event.start_date,
-                            created__lte=event.end_date)
+            return queryset(event=event)
         return queryset
 
 

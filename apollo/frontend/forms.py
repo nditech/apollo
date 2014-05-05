@@ -203,11 +203,11 @@ def generate_submission_edit_form_class(form):
         ('reported', _('The incident was reported to me by someone else')),
     )
 
-    contributor_choices = [
-        (unicode(p.pk), u'{} - {}'.format(p.name, p.participant_id))
+    contributor_choices = [('', _('Participant'))] + [
+        (unicode(p.pk), u'{} - {}'.format(p.participant_id, p.name))
         for p in participants.find()
     ]
-    location_choices = []
+    location_choices = [('', _('Location'))]
 
     displayed_locations = locations.find().order_by(
         'location_type',
@@ -227,7 +227,7 @@ def generate_submission_edit_form_class(form):
 
     form_fields['location'] = ExtendedSelectField(
         _('Location'),
-        choices=contributor_choices,
+        choices=location_choices,
         validators=[validators.optional()]
     )
 

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
-from __future__ import unicode_literals
+from datetime import datetime
 import json
 from flask import (
     Blueprint, jsonify, make_response, redirect, render_template, request,
@@ -12,13 +12,9 @@ from flask.ext.menu import register_menu
 from mongoengine import signals
 from tablib import Dataset
 from wtforms import validators
+from .. import services
 from ..analyses.incidents import incidents_csv
-from ..models import Location
 from ..settings import EDIT_OBSERVER_CHECKLIST
-from ..services import (
-    forms, location_types, submissions, submission_comments,
-    submission_versions
-)
 from ..tasks import send_messages
 from . import route, permissions
 from .filters import generate_submission_filter
@@ -40,7 +36,7 @@ bp = Blueprint('submissions', __name__, template_folder='templates',
                                                 form_type='INCIDENT'))
 @login_required
 def submission_list(form_id):
-    form = forms.get_or_404(pk=form_id)
+    form = services.forms.get_or_404(pk=form_id)
     permissions.require_item_perm('view_forms', form)
 
     filter_class = generate_submission_filter(form)
@@ -56,7 +52,7 @@ def submission_list(form_id):
     # first retrieve observer submissions for the form
     # NOTE: this implicitly restricts selected submissions
     # to the currently selected event.
-    queryset = submissions.find(
+    queryset = services.submissions.find(
         submission_type='O',
         form=form
     )
@@ -105,7 +101,7 @@ def submission_list(form_id):
 @permissions.add_submission.require(403)
 @login_required
 def submission_create(form_id):
-    form = forms.get_or_404(pk=form_id, form_type='INCIDENT')
+    form = services.forms.get_or_404(pk=form_id, form_type='INCIDENT')
     edit_form_class = generate_submission_edit_form_class(form)
     page_title = _('Add Submission')
     template_name = 'frontend/incident_add.html'
@@ -121,16 +117,42 @@ def submission_create(form_id):
     else:
         submission_form = edit_form_class(request.form)
 
+        # a small hack since we're not using modelforms,
+        # these fields are required for creating a new incident
+        submission_form.contributor.validators = [validators.input_required()]
+        submission_form.location.validators = [validators.input_required()]
+
         if not submission_form.validate():
-            return redirect(
-                'submissions.submission_list', form_id=unicode(form.pk))
+            # really should redisplay the form again
+            print submission_form.errors
+            return redirect(url_for(
+                'submissions.submission_list', form_id=unicode(form.pk)))
+
+        submission = services.submissions.new()
+        submission_form.populate_obj(submission)
+
+        # properly populate all fields
+        submission.created = datetime.utcnow()
+        submission.deployment = g.deployment
+        submission.event = g.event
+        submission.form = form
+        submission.submission_type = 'O'
+        submission.contributor = services.participants.get(
+            pk=submission_form.contributor.data)
+        submission.location = services.locations.get(
+            pk=submission_form.location.data)
+
+        submission.save()
+
+        return redirect(
+            url_for('submissions.submission_list', form_id=unicode(form.pk)))
 
 
 @route(bp, '/submissions/<submission_id>', methods=['GET', 'POST'])
 @permissions.edit_submission.require(403)
 @login_required
 def submission_edit(submission_id):
-    submission = submissions.get_or_404(pk=submission_id)
+    submission = services.submissions.get_or_404(pk=submission_id)
     edit_form_class = generate_submission_edit_form_class(submission.form)
     page_title = _('Edit Submission')
     readonly = not EDIT_OBSERVER_CHECKLIST
@@ -171,7 +193,7 @@ def submission_edit(submission_id):
             if submission_form.validate():
                 with signals.post_save.connected_to(
                     update_submission_version,
-                    sender=submissions.__model__
+                    sender=services.submissions.__model__
                 ):
                     submission_form.populate_obj(submission)
                     submission.save()
@@ -242,7 +264,7 @@ def submission_edit(submission_id):
             # everything validated. save.
             with signals.post_save.connected_to(
                 update_submission_version,
-                sender=submissions.__model__
+                sender=services.submissions.__model__
             ):
                 if master_form:
                     submission.master.save()
@@ -259,9 +281,10 @@ def submission_edit(submission_id):
 @route(bp, '/comments', methods=['POST'])
 @login_required
 def comment_create_view():
-    submission = submissions.get_or_404(pk=request.form.get('submission'))
+    submission = services.submissions.get_or_404(
+        pk=request.form.get('submission'))
     comment = request.form.get('comment')
-    saved_comment = submission_comments.create(
+    saved_comment = services.submission_comments.create(
         submission=submission,
         user=current_user,
         comment=comment
@@ -294,14 +317,15 @@ def _incident_csv(form_pk, location_type_pk, location_pk=None):
 
     `returns`: a string of bytes (str) containing the CSV data.
     """
-    form = forms.get_or_404(pk=form_pk, form_type='INCIDENT')
-    location_type = location_types.objects.get_or_404(pk=location_type_pk)
+    form = services.forms.get_or_404(pk=form_pk, form_type='INCIDENT')
+    location_type = services.location_types.objects.get_or_404(
+        pk=location_type_pk)
     if location_pk:
-        location = Location.objects.get_or_404(pk=location_pk)
-        qs = submissions.find(submission_type='O', form=form) \
+        location = services.locations.get_or_404(pk=location_pk)
+        qs = services.submissions.find(submission_type='O', form=form) \
             .filter_in(location)
     else:
-        qs = submissions.find(submission_type='O', form=form)
+        qs = services.submissions.find(submission_type='O', form=form)
 
     event = get_event()
     tags = [fi.name for group in form.groups for fi in group.fields]
@@ -339,22 +363,23 @@ def incidents_csv_with_location_dl(form_pk, location_type_pk, location_pk):
 @route(bp, '/submissions/<submission_id>/version/<version_id>')
 @login_required
 def submission_version(submission_id, version_id):
-    submission = submissions.get_or_404(pk=submission_id)
-    version = submission_versions.get_or_404(submission_version)
+    submission = services.submissions.get_or_404(pk=submission_id)
+    version = services.submission_versions.get_or_404(submission_version)
 
     return ''
 
 
 def verification_list(form_id):
-    form = forms.get_or_404(pk=form_id, form_type='CHECKLIST')
-    queryset = submissions.find(form=form, submission_type='M')
+    form = services.forms.get_or_404(pk=form_id, form_type='CHECKLIST')
+    queryset = services.submissions.find(form=form, submission_type='M')
 
     context = {}
 
     return ''
 
+
 def update_submission_version(sender, document, **kwargs):
-    if sender != submissions.__model__:
+    if sender != services.submissions.__model__:
         return
 
     # save actual version data
@@ -368,7 +393,7 @@ def update_submission_version(sender, document, **kwargs):
     user = current_user._get_current_object()
     identity = user.email if not user.is_anonymous() else 'Unknown'
 
-    submission_versions.create(
+    services.submission_versions.create(
         submission=document,
         data=json.dumps(version_data),
         channel=channel,

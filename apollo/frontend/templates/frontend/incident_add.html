@@ -1,0 +1,76 @@
+{%- extends 'frontend/_layout.html' -%}
+{% block content %}
+<div class="col-md-12">
+<form method="POST">
+{{ submission_form.csrf_token() }}
+<table class="table table-bordered table-striped table-hover" style="margin-bottom:5.5em;">
+  <tbody>
+    <tr>
+      <td>{% trans %}Participant{% endtrans %}</td>
+      <td>{{ submission_form.contributor(class_='select2-container span4 input-xlarge select2') }}</td>
+    </tr>
+    <tr>
+      <td>{% trans %}Location{% endtrans %}</td>
+      <td>{{ submission_form.location(class_='select2-container span4 input-xlarge select2') }}</td>
+    </tr>
+  </tbody>
+</table>
+<table class="table table-bordered table-striped table-hover" style="margin-bottom:5.5em;">
+  <tbody>
+    <tr>
+      <td colspan="2">&nbsp;</td>
+      <td>&nbsp;</td>
+    </tr>
+    {%- for group in form.groups %}
+    <tr>
+      <td colspan="3"><h4>{{ group.name }}</h4></td>
+    </tr>
+    {%- for field in group.fields %}
+    <tr>
+      <th style="text-align: center">{{ field.name }}</th>
+      <td>{{ field.description }}
+      {%- if field.options %}
+      <span class="options">
+      {% for description, value in field.options.iteritems() %}
+      <span class="option"><strong>({{ value }})</strong> {{ description }}</span>
+      {% endfor %}
+      </span>
+      {%- endif %}
+      </td>
+      <td {%- if submission_form[field.name].errors %} class="danger"{%- endif -%}>{{ submission_form[field.name] }}</td>
+    </tr>
+    {% endfor -%}
+    {% endfor -%}
+    <tr>
+      <td>{%- trans -%}Witness{%- endtrans -%}</td>
+      <td colspan="2">{{ submission_form.witness }}</td>
+    </tr>
+    <tr>
+      <td>{%- trans -%}Description{%- endtrans -%}</td>
+      <td colspan="2">{{ submission_form.description(cols=40, rows=5) }}</td>
+    </tr>
+    <tr>
+      <td>{%- trans -%}Status{%- endtrans -%}</td>
+      <td colspan="2">{{ submission_form.status }}</td>
+    </tr>
+  </tbody>
+</table>
+
+
+ <div class="row navbar-fixed-bottom" style="bottom:0px; background:#fff; padding-top:1em; padding-bottom:1em;">
+      <div class="container">
+        <div class="col-md-offset-8 col-md-2">
+          <button type="submit" class="btn btn-info btn-lg btn-block" style= "margin-left:1em;">Save</button>
+        </div>
+        <div class="col-md-2">
+          <a class="btn btn-default btn-lg btn-block" style= "margin-left:;" href="{{ url_for('submissions.submission_list', form_id=form.pk) }}">Cancel</a>
+        </div>
+      </div>
+    </div>
+</form>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/moment.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/timestamps.js') }}"></script>
+{% endblock %}
