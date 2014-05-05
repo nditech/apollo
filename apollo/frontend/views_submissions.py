@@ -11,6 +11,7 @@ from flask.ext.security import current_user, login_required
 from flask.ext.menu import register_menu
 from mongoengine import signals
 from tablib import Dataset
+from wtforms import validators
 from ..analyses.incidents import incidents_csv
 from ..models import Location
 from ..settings import EDIT_OBSERVER_CHECKLIST
@@ -104,7 +105,25 @@ def submission_list(form_id):
 @permissions.add_submission.require(403)
 @login_required
 def submission_create(form_id):
-    pass
+    form = forms.get_or_404(pk=form_id, form_type='INCIDENT')
+    edit_form_class = generate_submission_edit_form_class(form)
+    page_title = _('Add Submission')
+    template_name = 'frontend/incident_add.html'
+
+    if request.method == 'GET':
+        submission_form = edit_form_class()
+        return render_template(
+            template_name,
+            page_title=page_title,
+            form=form,
+            submission_form=submission_form
+        )
+    else:
+        submission_form = edit_form_class(request.form)
+
+        if not submission_form.validate():
+            return redirect(
+                'submissions.submission_list', form_id=unicode(form.pk))
 
 
 @route(bp, '/submissions/<submission_id>', methods=['GET', 'POST'])
