@@ -1,13 +1,12 @@
   function drawPieChart(el) {
-    var color = d3.scale.ordinal().range(["#FF5200", "#FFE22B", "#3BDF4A"]);
     var w = 140;
     var h = 300;
-
     var outerRadius = w / 2;
     var innerRadius = 0;
     
     var json = JSON.parse(el.dataset.chart);
     var data = [json.Missing, json.Partial, json.Complete];
+    var color = d3.scale.ordinal().range(["#FF5200", "#FFE22B", "#3BDF4A"]);
     var labels = ['Missing', 'Partial', 'Complete'];
     var total = data.reduce(function (prev, curr, idx, arr) { return prev + curr; });
 
@@ -67,7 +66,7 @@
       .attr("cx", w/4 - 23)
       .attr("cy", h/2 + 24)
       .attr("r", 5)
-      .style("fill", color);
+      .style("fill", color.domain(labels));
 
     //Legend Label
     legend.append("text")
