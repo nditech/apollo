@@ -21,7 +21,7 @@ from . import route, permissions
 from .filters import generate_submission_filter
 from .forms import generate_submission_edit_form_class
 from .helpers import (
-    displayable_location_types, get_event, get_form_list_menu)
+    DictDiffer, displayable_location_types, get_event, get_form_list_menu)
 from functools import partial
 
 bp = Blueprint('submissions', __name__, template_folder='templates',
@@ -374,10 +374,12 @@ def submission_version(submission_id, version_id):
     template_name = 'frontend/submission_history.html'
 
     submission_form = edit_form_class(form_data, csrf_enabled=False)
+    diff = DictDiffer(submission._data, form_data)
 
     return render_template(
         template_name,
         page_title=page_title,
+        diff=diff,
         form=form,
         submission_form=submission_form,
         submission=submission,
