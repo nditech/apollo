@@ -368,12 +368,10 @@ def submission_version(submission_id, version_id):
     version = services.submission_versions.get_or_404(
         pk=version_id, submission=submission)
     form = submission.form
-    edit_form_class = generate_submission_edit_form_class(form)
     form_data = MultiDict(json.loads(version.data))
     page_title = _('View submission')
     template_name = 'frontend/submission_history.html'
 
-    submission_form = edit_form_class(form_data, csrf_enabled=False)
     diff = DictDiffer(submission._data, form_data)
 
     return render_template(
@@ -381,7 +379,6 @@ def submission_version(submission_id, version_id):
         page_title=page_title,
         diff=diff,
         form=form,
-        submission_form=submission_form,
         submission=submission,
         submission_version=version,
         data=form_data
