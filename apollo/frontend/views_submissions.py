@@ -11,6 +11,7 @@ from flask.ext.security import current_user, login_required
 from flask.ext.menu import register_menu
 from mongoengine import signals
 from tablib import Dataset
+from werkzeug.datastructures import MultiDict
 from wtforms import validators
 from .. import services
 from ..analyses.incidents import incidents_csv
@@ -364,9 +365,25 @@ def incidents_csv_with_location_dl(form_pk, location_type_pk, location_pk):
 @login_required
 def submission_version(submission_id, version_id):
     submission = services.submissions.get_or_404(pk=submission_id)
-    version = services.submission_versions.get_or_404(submission_version)
+    version = services.submission_versions.get_or_404(
+        pk=version_id, submission=submission)
+    form = submission.form
+    edit_form_class = generate_submission_edit_form_class(form)
+    form_data = MultiDict(json.loads(version.data))
+    page_title = _('View submission')
+    template_name = 'frontend/submission_history.html'
 
-    return ''
+    submission_form = edit_form_class(form_data, csrf_enabled=False)
+
+    return render_template(
+        template_name,
+        page_title=page_title,
+        form=form,
+        submission_form=submission_form,
+        submission=submission,
+        submission_version=version,
+        data=form_data
+    )
 
 
 def verification_list(form_id):

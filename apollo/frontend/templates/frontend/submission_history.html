@@ -1,0 +1,77 @@
+{%- extends 'frontend/_layout.html' -%}
+{% block toolbar %}
+{%- if submission.versions %}
+<div class="btn-group pull-right">
+  <a href class="btn btn-default">{%- trans -%}History{%- endtrans -%}</a>
+  <button class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
+  <ul class="dropdown-menu" role="menu">
+    {% for version in submission.versions -%}
+    {% if version == submission_version %}
+    <li><strong><a href="{{ url_for('submissions.submission_version', submission_id=submission.pk, version_id=version.pk) }}"><span class="tonow">{{ version.timestamp|timestamp }}</span> &mdash; <em>{{ version.identity }}</em></a></strong></li>
+    {% else %}
+    <li><a href="{{ url_for('submissions.submission_version', submission_id=submission.pk, version_id=version.pk) }}"><span class="tonow">{{ version.timestamp|timestamp }}</span> &mdash; <em>{{ version.identity }}</em></a></li>
+    {% endif %}
+    {%- endfor %}
+  </ul>
+</div>
+{% endif %}
+{% endblock %}
+{% block content %}
+<div class="col-md-12">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title"></h3>
+    </div>
+    <div class="panel-body">
+      <div class="list-group">
+        <div class="list-group-item">
+          <strong>{% trans %}Participant{% endtrans %}</strong>: {{ submission.contributor.name }} ({{ submission.contributor.phone }}) &mdash; <strong>{{ submission.contributor.participant_id }}</strong>
+        </div>
+        <div class="list-group-item">
+          <strong>{% trans %}Via{% endtrans %}</strong>: {{ submission_version.channel }}
+        </div>
+        <div class="list-group-item">
+          <strong>{% trans %}Edited by{% endtrans %}</strong>: {{ submission_version.identity }}
+        </div>
+        <div class="list-group-item">
+          <strong>{% trans %}Updated{% endtrans %}</strong>: <span class="timestamp">{{ submission_version.timestamp|timestamp }}</span>
+        </div>
+      </div>
+      <table class="table table-striped">
+        <tbody>
+          <tr>
+            <td colspan="2">&nbsp;</td>
+            <th>{% trans %}Saved{% endtrans %}</th>
+            <th>{% trans %}Current{% endtrans %}</th>
+          </tr>
+          {% for group in form.groups %}
+          <tr>
+            <td colspan="4"><h4>{{ group.name }}</h4></td>
+          </tr>
+          {% for field in group.fields %}
+          <tr>
+            <th>{{ field.name }}</th>
+            <td>{{ field.description }}
+              {%- if field.options %}
+              <span class="options">
+              {% for item in field.options|dictsort(false, 'value') %}
+              <span class="option"><strong>({{ item.1 }})</strong> {{ item.0 }}</span>
+              {% endfor %}
+              </span>
+              {% endif -%}
+            </td>
+            <td class="text-center">{{ data[field.name]|default('N/A', true) }}</td>
+            <td class="text-center">{{ submission[field.name]|default('N/A', true) }}</td>
+          </tr>
+          {% endfor %}
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/moment.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/timestamps.js') }}"></script>
+{% endblock %}
