@@ -96,7 +96,12 @@ class BaseQuestionnaireForm(Form):
             for form_field in form_fields:
                 if self.data.get(form_field):
                     change_detected = True
-                    setattr(submission, form_field, self.data.get(form_field))
+                    if (
+                        getattr(submission, form_field, None) !=
+                        self.data.get(form_field)
+                    ):
+                        setattr(
+                            submission, form_field, self.data.get(form_field))
 
             if change_detected:
                 g.phone = self.data.get('sender')
