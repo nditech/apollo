@@ -75,11 +75,11 @@ TODO: insert location path here
 <tbody>
   <tr>
     <td colspan="2">&nbsp;</td>
-    <td style="text-align: center"><strong>1</strong></td>
+    <td style="text-align: center"><strong>OBS 1</strong></td>
     {%- for sibling in siblings -%}
-    <td style="text-align: center"><strong>{{ loop.index + 1 }}</strong></td>
+    <td style="text-align: center"><strong>OBS {{ loop.index + 1 }}</strong></td>
     {%- endfor -%}
-    <td>&nbsp;</td>
+    <td style="text-align: center"><strong>PS</strong></td>
   </tr>
   {% for group in form.groups %}
   <tr>
