@@ -155,7 +155,7 @@ def submission_edit(submission_id):
     submission = services.submissions.get_or_404(pk=submission_id)
     edit_form_class = generate_submission_edit_form_class(submission.form)
     page_title = _('Edit Submission')
-    readonly = not current_app.config.get('EDIT_OBSERVER_CHECKLIST')
+    readonly = not g.deployment.allow_observer_submission_edit
     location_types = services.location_types.find(is_administrative=True)
     template_name = 'frontend/nu_submission_edit.html'
 
