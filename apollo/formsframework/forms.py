@@ -69,6 +69,9 @@ class BaseQuestionnaireForm(Form):
 
     def save(self):
         ignored_fields = ['form', 'participant', 'sender', 'comment']
+
+        # also ignore fields that have errors so as not to save them
+        ignored_fields.extend(self.errors.keys())
         try:
             if self.data.get('form').form_type == 'CHECKLIST':
                 submission = services.submissions.get(
