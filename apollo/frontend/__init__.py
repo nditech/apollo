@@ -1,7 +1,7 @@
 from functools import wraps
 
 
-from flask import render_template, session, request, redirect, url_for
+from flask import g, render_template, session, request, redirect, url_for
 from flask.ext.admin import AdminIndexView
 from flask.ext.login import user_logged_out
 from flask.ext.mongoengine import MongoEngineSessionInterface
@@ -99,7 +99,8 @@ def create_app(settings_override=None, register_security_blueprint=True):
     app.jinja_env.filters.update(timestamp=template_filters.mkunixtimestamp)
 
     # Login and logout signal handlers
-    user_logged_out.connect(lambda app, user: session.clear())
+    # user_logged_out.connect(lambda app, user: session.clear())
+    user_logged_out.connect(clear_session)
 
     @identity_loaded.connect_via(app)
     def on_identity_loaded(sender, identity):
@@ -114,6 +115,15 @@ def create_app(settings_override=None, register_security_blueprint=True):
         return dict(perms=permissions)
 
     return app
+
+
+def clear_session(app, user):
+    # clear session
+    session.clear()
+
+    # pop request globals
+    delattr(g, 'deployment')
+    delattr(g, 'event')
 
 
 def handle_error(e):
