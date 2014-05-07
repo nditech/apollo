@@ -259,7 +259,6 @@ msgid "Checklist"
 msgstr ""
 
 #: core/models.py:353
-msgctxt "Critical Incident"
 msgid "Incident"
 msgstr ""
 
@@ -454,7 +453,7 @@ msgid "Last Page"
 msgstr ""
 
 #: core/templates/bootstrap-pagination/pagination.html:41
-msgid "Showing:"
+msgid "Showing"
 msgstr ""
 
 #: core/templates/core/activity_selection.html:5
@@ -467,12 +466,10 @@ msgid "Go"
 msgstr ""
 
 #: core/templates/core/analysis_menu.html:2
-msgctxt "adjective"
 msgid "Analysis"
 msgstr ""
 
 #: core/templates/core/analysis_menu.html:11
-msgctxt "noun"
 msgid "Results"
 msgstr ""
 
@@ -507,7 +504,6 @@ msgstr ""
 #: core/templates/core/dashboard.html:13
 #: core/templates/core/dashboard_status_breakdown.html:13
 #: core/templates/core/results.html:11
-msgctxt "verb"
 msgid "Filter"
 msgstr ""
 
@@ -526,7 +522,6 @@ msgid "No Data Available"
 msgstr ""
 
 #: core/templates/core/checklist_summary_breakdown.html:22
-msgctxt "html"
 msgid "Table"
 msgstr ""
 
@@ -537,7 +532,6 @@ msgstr ""
 
 #: core/templates/core/checklist_summary_breakdown.html:35
 #: core/templates/core/checklist_summary_breakdown.html:349
-msgctxt "statistics"
 msgid "Mean"
 msgstr ""
 
@@ -555,7 +549,6 @@ msgstr ""
 #: core/templates/core/submission_list.html:17
 #: core/templates/core/submission_list.html:23
 #: messagelog/templates/messagelog/message_list.html:5
-msgctxt "verb"
 msgid "Export"
 msgstr ""
 
@@ -570,7 +563,6 @@ msgstr ""
 #: core/templates/core/submission_filter.html:19
 #: core/templates/core/verification_filter.html:22
 #: messagelog/templates/messagelog/message_list.html:21
-msgctxt "verb"
 msgid "Search"
 msgstr ""
 
@@ -579,27 +571,22 @@ msgstr ""
 #: core/templates/core/submission_filter.html:20
 #: core/templates/core/verification_filter.html:23
 #: messagelog/templates/messagelog/message_list.html:21
-msgctxt "verb"
 msgid "Clear"
 msgstr ""
 
 #: core/templates/core/contact_list.html:49
-msgctxt "adjective"
 msgid "Name"
 msgstr ""
 
 #: core/templates/core/contact_list.html:50
-msgctxt "adjective"
 msgid "Role"
 msgstr ""
 
 #: core/templates/core/contact_list.html:51
-msgctxt "adjective"
 msgid "Phone No."
 msgstr ""
 
 #: core/templates/core/contact_list.html:52
-msgctxt "adjective"
 msgid "Location"
 msgstr ""
 
@@ -607,7 +594,6 @@ msgstr ""
 #: core/templates/core/location_list.html:37
 #: core/templates/core/verification_header.html:12
 #: core/templates/core/verification_items.html:28
-msgctxt "verb"
 msgid "Edit"
 msgstr ""
 
@@ -628,7 +614,6 @@ msgstr ""
 
 #: core/templates/core/dashboard.html:14
 #: core/templates/core/dashboard_status_breakdown.html:14
-msgctxt "verb"
 msgid "Reset"
 msgstr ""
 
@@ -653,7 +638,6 @@ msgstr ""
 #: core/templates/core/submission_add.html:70
 #: core/templates/core/submission_edit.html:188
 #: core/templates/core/verification_edit.html:93
-msgctxt "verb"
 msgid "Cancel"
 msgstr ""
 
@@ -703,17 +687,14 @@ msgid "Votes"
 msgstr ""
 
 #: core/templates/core/results.html:41 core/templates/core/results.html:45
-msgctxt "abbreviation for margin of error"
 msgid "MoE"
 msgstr ""
 
 #: core/templates/core/results.html:43
-msgctxt "abbreviation for total votes"
 msgid "TV"
 msgstr ""
 
 #: core/templates/core/results.html:44
-msgctxt "abbreviation for rejected ballots"
 msgid "RB"
 msgstr ""
 
@@ -746,17 +727,14 @@ msgid "message part"
 msgstr ""
 
 #: core/templates/core/send_message_modal.html:21
-msgctxt "verb"
 msgid "Send"
 msgstr ""
 
 #: core/templates/core/send_message_modal.html:41
-msgctxt "number of characters in sentence"
 msgid "characters"
 msgstr ""
 
 #: core/templates/core/send_message_modal.html:41
-msgctxt "number of characters in sentence"
 msgid "character"
 msgstr ""
 
@@ -783,7 +761,6 @@ msgstr ""
 #: core/templates/core/submission_add.html:67
 #: core/templates/core/submission_edit.html:185
 #: core/templates/core/verification_edit.html:90
-msgctxt "verb"
 msgid "Save"
 msgstr ""
 
@@ -906,12 +883,10 @@ msgid "Direction"
 msgstr ""
 
 #: messagelog/templates/messagelog/message_list.html:46
-msgctxt "adjective"
 msgid "IN"
 msgstr ""
 
 #: messagelog/templates/messagelog/message_list.html:46
-msgctxt "adjective"
 msgid "OUT"
 msgstr ""
 

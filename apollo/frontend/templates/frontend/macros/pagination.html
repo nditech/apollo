@@ -1,13 +1,13 @@
 {% macro render_pager(pager, endpoint, args) %}
 <div class="text-center">
 <ul class="pagination pagination-centered">
-<li {% if pager.page == 1 %}class="disabled"{% endif %}><a title="{% trans %}First page{% endtrans %}" href="{{ url_for(endpoint, page=1, **args) }}">&laquo;</a></li>
-<li {% if not pager.has_prev %}class="disabled"{% endif %}><a title="{% trans %}Previous page{% endtrans %}" href="{{ url_for(endpoint, page=pager.prev_num, **args) }}">&larr;</a></li>
+<li {% if pager.page == 1 %}class="disabled"{% endif %}><a title="{% trans %}First Page{% endtrans %}" href="{{ url_for(endpoint, page=1, **args) }}">&laquo;</a></li>
+<li {% if not pager.has_prev %}class="disabled"{% endif %}><a title="{% trans %}Previous Page{% endtrans %}" href="{{ url_for(endpoint, page=pager.prev_num, **args) }}">&larr;</a></li>
 {% for pg in pager|pagelist %}
 <li {% if pg == pager.page %}class="active"{% endif %}><a href="{{ url_for(endpoint, page=pg, **args) }}">{{ pg }}</a></li>
 {% endfor %}
-<li {% if not pager.has_next %}class="disabled"{% endif %}><a title="{% trans %}Next page{% endtrans %}" href="{{ url_for(endpoint, page=pager.next_num, **args) }}">&rarr;</a></li>
-<li {% if pager.page == pager.pages or not pager.pages %}class="disabled"{% endif %}><a title="{% trans %}Last page{% endtrans %}" href="{{ url_for(endpoint, page=pager.pages, **args) }}">&raquo;</a></li>
+<li {% if not pager.has_next %}class="disabled"{% endif %}><a title="{% trans %}Next Page{% endtrans %}" href="{{ url_for(endpoint, page=pager.next_num, **args) }}">&rarr;</a></li>
+<li {% if pager.page == pager.pages or not pager.pages %}class="disabled"{% endif %}><a title="{% trans %}Last Page{% endtrans %}" href="{{ url_for(endpoint, page=pager.pages, **args) }}">&raquo;</a></li>
 </ul>
 </div>
 {%- set start = (pager.page - 1) * pager.per_page + 1 -%}
@@ -20,7 +20,7 @@
 {% if total %}
 <div class="text-center">
 <ul class="pagination pagination-centered" style="margin-top:0px;">
-<li class="disabled"><a>{% trans %}Showing <strong>{{ start }}-{{ end }}</strong> of <strong>{{ total }}</strong>{% endtrans %}</a></li>
+<li class="disabled"><a>{% trans %}Showing{% endtrans %} <strong>{{ start }}-{{ end }}</strong> {% trans %}of{% endtrans %} <strong>{{ total }}</strong></a></li>
 </ul>
 </div>
 {% endif %}
@@ -37,7 +37,7 @@
 {% if total %}
 <div class="text-center">
 <ul class="pagination pull-right" style="margin:-13px 0 7px 0;">
-<li style="color:#999;">{% trans %}Showing <strong>{{ start }}-{{ end }}</strong> of <strong>{{ total }}</strong>{% endtrans %}</li>
+<li style="color:#999;">{% trans %}Showing{% endtrans %} <strong>{{ start }}-{{ end }}</strong> {% trans %}of{% endtrans %} <strong>{{ total }}</strong></li>
 </ul>
 </div>
 {% endif %}

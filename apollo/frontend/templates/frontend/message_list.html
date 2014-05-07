@@ -76,6 +76,9 @@
 </div>
 {% endblock %}
 {% block scripts %}
-<script src="{{ url_for('static', filename='js/moment.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/moment-with-langs.min.js') }}"></script>
+<script type="text/javascript">
+  moment.lang('{{ g.locale }}');
+</script>
 <script src="{{ url_for('static', filename='js/timestamps.js') }}"></script>
 {% endblock %}
