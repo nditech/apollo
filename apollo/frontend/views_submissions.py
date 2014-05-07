@@ -157,6 +157,7 @@ def submission_edit(submission_id):
     edit_form_class = generate_submission_edit_form_class(submission.form)
     page_title = _('Edit Submission')
     readonly = not EDIT_OBSERVER_CHECKLIST
+    location_types = services.location_types.find(is_administrative=True)
     template_name = 'frontend/nu_submission_edit.html'
 
     if request.method == 'GET':
@@ -182,7 +183,8 @@ def submission_edit(submission_id):
             submission_form=submission_form,
             sibling_forms=sibling_forms,
             master_form=master_form,
-            readonly=readonly
+            readonly=readonly,
+            location_types=location_types
         )
     else:
         if submission.form.form_type == 'INCIDENT':
@@ -207,6 +209,7 @@ def submission_edit(submission_id):
                     page_title=page_title,
                     submission=submission,
                     submission_form=submission_form,
+                    location_types=location_types
                 )
         else:
             master_form = edit_form_class(
@@ -245,7 +248,8 @@ def submission_edit(submission_id):
                         submission_form=submission_form,
                         master_form=master_form,
                         sibling_forms=sibling_forms,
-                        readonly=readonly
+                        readonly=readonly,
+                        location_types=location_types
                     )
 
             if not readonly:
@@ -259,7 +263,8 @@ def submission_edit(submission_id):
                         submission_form=submission_form,
                         master_form=master_form,
                         sibling_forms=sibling_forms,
-                        readonly=readonly
+                        readonly=readonly,
+                        location_types=location_types
                     )
 
             # everything validated. save.

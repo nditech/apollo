@@ -53,9 +53,17 @@ TODO: insert last used identity here
   <td><strong>{{ sib.location }}</strong></td>
   {%- endfor -%}
 </tr>
-<!--
-TODO: insert location path here
--->
+<tr>
+  <td>&nbsp;</td>
+  <td>
+    {% for lt in location_types %}{{ submission.location_name_path[lt.name] }} &middot; <em>{{ lt.name }}</em>{% if not loop.last %} / {% endif %}{% endfor %}
+  </td>
+  {% for sib in siblings %}
+  <td>
+    {% for lt in location_types %}{{ sib.location_name_path[lt.name] }} &middot; <em>{{ lt.name }}</em>{% if not loop.last %} / {% endif %}{% endfor %}
+  </td>
+  {% endfor %}
+</tr>
 <tr>
   <th>{%- trans -%}Supervisor{%- endtrans %}</th>
   <td><strong>{{ submission.contributor.supervisor|default('<em>N/A</em>', true) }}</strong>{%- if submission.contributor.supervisor.phone %} ({{ submission.contributor.supervisor.phone }}){%- endif -%}</td>
