@@ -34,7 +34,9 @@ def parse_message(form):
                     return _('Unknown question codes: "{questions}". '
                              'You sent: {text}') \
                         .format(questions=', '.join(
-                                [q for q in questionnaire.errors['__all__']]),
+                                sorted([
+                                    q for q in questionnaire.errors['__all__']
+                                ])),
                                 text=message.get('text', ''))
                 else:
                     # Save any valid data
@@ -42,7 +44,8 @@ def parse_message(form):
                     return _('Invalid response(s) for question(s):'
                              ' "{questions}". You sent: {text}') \
                         .format(
-                            questions=', '.join(questionnaire.errors.keys()),
+                            questions=', '.join(sorted(
+                                questionnaire.errors.keys())),
                             text=message.get('text', ''))
     return _('Invalid message: "{text}". Please check and resend!') \
         .format(text=message.get('text', ''))
