@@ -27,8 +27,8 @@
     {% for location_type in location_types %}
     <td>{{ submission.location_name_path[location_type.name] }}</td>
     {% endfor %}
-    <td>{{ submission.contributor.name }}</td>
-    <td>{{ submission.contributor.phone }}</td>
+    <td>{{ submission.contributor.name|default('', true) }}</td>
+    <td>{{ submission.contributor.phone|default('', true) }}</td>
     {%- if form.form_type == 'CHECKLIST' -%}
     {% for group in form.groups %}
     <td class="text-center">
