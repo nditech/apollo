@@ -59,6 +59,9 @@ class PhoneContact(db.EmbeddedDocument):
     number = db.StringField()
     verified = db.BooleanField(default=False)
 
+    def __unicode__(self):
+        return self.number
+
 
 class Participant(db.DynamicDocument):
     '''Storage for participant contact information'''

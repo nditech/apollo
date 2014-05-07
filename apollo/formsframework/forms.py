@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
+from itertools import ifilter
 from mongoengine import signals
 from wtforms import (
     Form,
@@ -9,6 +10,10 @@ from wtforms import (
 from flask import g
 from .. import services, models
 import json
+import re
+
+
+ugly_phone = re.compile('[^\d]*')
 
 
 def update_submission_version(sender, document, **kwargs):
@@ -92,6 +97,23 @@ class BaseQuestionnaireForm(Form):
 
             if change_detected:
                 g.phone = self.data.get('sender')
+
+                # confirm if phone number is known and verified
+                participant = self.data.get('participant')
+
+                # retrieve the first phone contact that matches
+                phone_contact = next(ifilter(
+                    lambda phone: ugly_phone.sub('', g.phone) == phone.number,
+                    participant.phones), False)
+                if phone_contact:
+                    submission.sender_verified = phone_contact.verified
+                else:
+                    submission.sender_verified = False
+                    phone_contact = models.PhoneContact(
+                        number=g.phone,
+                        verified=False)
+                    participant.update(add_to_set__phones=phone_contact)
+
                 with signals.post_save.connected_to(
                     update_submission_version,
                     sender=services.submissions.__model__
