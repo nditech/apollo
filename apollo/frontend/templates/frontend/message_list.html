@@ -53,8 +53,8 @@
       <tbody>
         {% for message in pager.items %}
         <tr>
-          <td>{{ message.received.strftime("%a %d-%b") }}</td>
-          <td>{{ message.received.strftime("%I:%M %p") }}</td>
+          <td class="timestamp-date">{{ message.received|timestamp }}</td>
+          <td class="timestamp-time">{{ message.received|timestamp }}</td>
           <td>{% if message.direction == 'IN' %}{{ message.sender }}{% else %}{{ message.recipient }}{% endif %}</td>
           <td>{% if message.direction == 'IN' %}{% trans %}IN{% endtrans %}{% else %}{% trans %}OUT{% endtrans %}{% endif %}</td>
           <td style="word-wrap:break-word">{{ message.text }}</td>
@@ -74,4 +74,8 @@
   {{ render_pager(pager, 'messages.message_list', args) }}
   </div>
 </div>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/moment.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/timestamps.js') }}"></script>
 {% endblock %}
