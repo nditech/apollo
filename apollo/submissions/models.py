@@ -394,14 +394,14 @@ class SubmissionVersion(db.Document):
     instances'''
     CHANNEL_CHOICES = (
         ('SMS', _('SMS')),
-        ('Web', _('Web')),
+        ('WEB', _('Web')),
         ('API', _('API'))
     )
     submission = db.ReferenceField(Submission, required=True)
     data = db.StringField(required=True)
     timestamp = db.DateTimeField(default=datetime.utcnow())
     channel = db.StringField(choices=CHANNEL_CHOICES, required=True)
-    identity = db.StringField(default='Unknown', required=True)
+    identity = db.StringField(default='unknown', required=True)
 
     deployment = db.ReferenceField(Deployment)
 

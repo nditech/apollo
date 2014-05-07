@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
+from mongoengine import signals
 from wtforms import (
     Form,
     IntegerField, SelectField, SelectMultipleField, StringField,
@@ -7,6 +8,27 @@ from wtforms import (
 )
 from flask import g
 from .. import services, models
+import json
+
+
+def update_submission_version(sender, document, **kwargs):
+    if sender != services.submissions.__model__:
+        return
+
+    # save actual version data
+    data_fields = document.form.tags
+    if document.form.form_type == 'INCIDENT':
+        data_fields.extend(['status', 'witness'])
+    version_data = {k: document[k] for k in data_fields if k in document}
+
+    channel = 'SMS'
+
+    services.submission_versions.create(
+        submission=document,
+        data=json.dumps(version_data),
+        channel=channel,
+        identity=g.get('phone', '')
+    )
 
 
 class BaseQuestionnaireForm(Form):
@@ -69,7 +91,12 @@ class BaseQuestionnaireForm(Form):
                     setattr(submission, form_field, self.data.get(form_field))
 
             if change_detected:
-                submission.save()
+                g.phone = self.data.get('sender')
+                with signals.post_save.connected_to(
+                    update_submission_version,
+                    sender=services.submissions.__model__
+                ):
+                    submission.save()
         except models.Submission.DoesNotExist:
             pass
 
