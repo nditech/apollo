@@ -124,6 +124,7 @@ def clear_session(app, user):
     # pop request globals
     delattr(g, 'deployment')
     delattr(g, 'event')
+    delattr(g, 'locale')
 
 
 def handle_error(e):

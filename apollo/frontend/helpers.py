@@ -1,6 +1,7 @@
 from .. import models
 from .. import services
 from flask import session, request, abort, g, url_for
+from flask.ext.babel import get_locale
 from flask.ext.principal import Permission, ItemNeed, RoleNeed
 from urlparse import urlparse
 
@@ -49,6 +50,7 @@ def set_request_presets():
     try:
         g.deployment = get_deployment(hostname)
         g.event = get_event()
+        g.locale = get_locale()
     except models.Deployment.DoesNotExist, models.Event.DoesNotExist:
         abort(404)
 
