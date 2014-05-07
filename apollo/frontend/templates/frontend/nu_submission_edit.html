@@ -26,10 +26,10 @@
 {%- endif -%}
 <tr>
   <th>{%- trans -%}Participant{% endtrans -%}</th>
-  <td><strong>{{ submission.contributor.participant_id }}</strong> &mdash; <strong>{{ submission.contributor.name }}</strong>{%- if submission.contributor.phone %} ({{ submission.contributor.phone }}){%- endif %}</td>
+  <td>{% if submission.contributor %}<strong>{{ submission.contributor.participant_id }}</strong> &mdash; <strong>{{ submission.contributor.name }}</strong>{%- if submission.contributor.phone %} ({{ submission.contributor.phone }}){%- endif %}{% endif %}</td>
   {%- if form.form_type == 'CHECKLIST' -%}
   {%- for sib in siblings -%}
-  <td><strong>{{ sib.contributor.name }}</strong>{% if sib.contributor.phone %} ({{ sib.contributor.phone }}){% endif %} &mdash; <strong>{{ sib.contributor.participant_id }}</strong></td>
+  <td>{% if sib.contributor %}<strong>{{ sib.contributor.name }}</strong>{% if sib.contributor.phone %} ({{ sib.contributor.phone }}){% endif %} &mdash; <strong>{{ sib.contributor.participant_id }}</strong>{% endif %}</td>
   {%- endfor -%}
   {%- endif -%}
 </tr>
@@ -66,9 +66,9 @@ TODO: insert last used identity here
 </tr>
 <tr>
   <th>{%- trans -%}Supervisor{%- endtrans %}</th>
-  <td><strong>{{ submission.contributor.supervisor|default('<em>N/A</em>', true) }}</strong>{%- if submission.contributor.supervisor.phone %} ({{ submission.contributor.supervisor.phone }}){%- endif -%}</td>
+  <td><strong>{{ submission.contributor.supervisor.name|default('<em>N/A</em>', true) }}</strong>{%- if submission.contributor.supervisor.phone %} ({{ submission.contributor.supervisor.phone }}){%- endif -%}</td>
   {%- for sib in siblings -%}
-  <td><strong>{{ sib.contributor.supervisor|default('<em>N/A</em>', true) }}</strong>{%- if sib.contributor.supervisor.phone %} ({{ sib.contributor.supervisor.phone }}){%- endif -%}</td>
+  <td><strong>{{ sib.contributor.supervisor.name|default('<em>N/A</em>', true) }}</strong>{%- if sib.contributor.supervisor.phone %} ({{ sib.contributor.supervisor.phone }}){%- endif -%}</td>
   {%- endfor -%}
 </tr>
 {%- endif -%}
@@ -161,7 +161,10 @@ TODO: insert last used identity here
   </tbody>
 </table>
 {% endif -%}
-
+<input type="hidden" name="{{ submission_form['contributor'].name }}" value="{{ submission_form['contributor'].data.id }}" />
+<input type="hidden" name="{{ submission_form['location'].name }}" value="{{ submission_form['location'].data.id }}" />
+{% if master_form %}<input type="hidden" name="{{ master_form['location'].name }}" value="{{ master_form['location'].data.id }}" />
+{% endif -%}
 
  <div class="row navbar-fixed-bottom" style="bottom:0px; background:#fff; padding-top:1em; padding-bottom:1em;">
       <div class="container">

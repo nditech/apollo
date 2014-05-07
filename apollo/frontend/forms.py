@@ -1,7 +1,7 @@
 from __future__ import absolute_import
 from collections import defaultdict
-from itertools import groupby
 from flask.ext.babel import lazy_gettext as _
+from flask.ext.mongoengine.wtf.fields import ModelSelectField
 from flask.ext.wtf import Form as WTSecureForm
 from flask.ext.wtf.file import FileField
 from wtforms import (
@@ -203,33 +203,22 @@ def generate_submission_edit_form_class(form):
         ('reported', _('The incident was reported to me by someone else')),
     )
 
-    contributor_choices = [('', _('Participant'))] + [
-        (unicode(p.pk), u'{} - {}'.format(p.participant_id, p.name))
-        for p in participants.find()
-    ]
-    location_choices = [('', _('Location'))]
-
-    displayed_locations = locations.find().order_by(
-        'location_type',
-        'name'
-    ).scalar('location_type', 'id', 'name')
-
-    for key, group in groupby(displayed_locations, lambda x: x[0]):
-        location_choices.append(
-            (key, [(unicode(pk), name) for ignore, pk, name in group])
+    form_fields['contributor'] = ModelSelectField(
+        _('Participant'),
+        allow_blank=True,
+        blank_text=_('Participant'),
+        validators=[validators.optional()],
+        model=Participant,
+        queryset=participants.find()
         )
 
-    form_fields['contributor'] = SelectField(
-        _('Participant'),
-        choices=contributor_choices,
-        validators=[validators.optional()]
-    )
-
-    form_fields['location'] = ExtendedSelectField(
+    form_fields['location'] = ModelSelectField(
         _('Location'),
-        choices=location_choices,
-        validators=[validators.optional()]
-    )
+        allow_blank=True,
+        blank_text=_('Location'),
+        model=Participant,
+        queryset=locations.find()
+        )
 
     for index, group in enumerate(form.groups):
         for field in group.fields:

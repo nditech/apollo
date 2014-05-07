@@ -15,7 +15,6 @@ from werkzeug.datastructures import MultiDict
 from wtforms import validators
 from .. import services
 from ..analyses.incidents import incidents_csv
-from ..settings import EDIT_OBSERVER_CHECKLIST
 from ..tasks import send_messages
 from . import route, permissions
 from .filters import generate_submission_filter
@@ -156,7 +155,7 @@ def submission_edit(submission_id):
     submission = services.submissions.get_or_404(pk=submission_id)
     edit_form_class = generate_submission_edit_form_class(submission.form)
     page_title = _('Edit Submission')
-    readonly = not EDIT_OBSERVER_CHECKLIST
+    readonly = not current_app.config.get('EDIT_OBSERVER_CHECKLIST')
     location_types = services.location_types.find(is_administrative=True)
     template_name = 'frontend/nu_submission_edit.html'
 
@@ -235,53 +234,48 @@ def submission_edit(submission_id):
                 for sibling in submission.siblings
             ]
 
+            no_error = True
+
             # if the user is allowed to edit participant submissions,
             # everything has to be valid at one go. no partial update
             if master_form:
                 if master_form.validate():
                     master_form.populate_obj(submission.master)
+                    with signals.post_save.connected_to(
+                        update_submission_version,
+                        sender=services.submissions.__model__
+                    ):
+                        submission.master.save()
                 else:
-                    return render_template(
-                        template_name,
-                        page_title=page_title,
-                        submission=submission,
-                        submission_form=submission_form,
-                        master_form=master_form,
-                        sibling_forms=sibling_forms,
-                        readonly=readonly,
-                        location_types=location_types
-                    )
+                    no_error = False
 
             if not readonly:
                 if submission_form.validate():
                     submission_form.populate_obj(submission)
+                    with signals.post_save.connected_to(
+                        update_submission_version,
+                        sender=services.submissions.__model__
+                    ):
+                        submission.save()
                 else:
-                    return render_template(
-                        template_name,
-                        page_title=page_title,
-                        submission=submission,
-                        submission_form=submission_form,
-                        master_form=master_form,
-                        sibling_forms=sibling_forms,
-                        readonly=readonly,
-                        location_types=location_types
-                    )
+                    no_error = False
 
-            # everything validated. save.
-            with signals.post_save.connected_to(
-                update_submission_version,
-                sender=services.submissions.__model__
-            ):
-                if master_form:
-                    submission.master.save()
-
-                if submission_form:
-                    submission.save()
-
-            return redirect(url_for(
-                'submissions.submission_list',
-                form_id=unicode(submission.form.pk)
-            ))
+            if no_error:
+                return redirect(url_for(
+                    'submissions.submission_list',
+                    form_id=unicode(submission.form.pk)
+                ))
+            else:
+                return render_template(
+                    template_name,
+                    page_title=page_title,
+                    submission=submission,
+                    submission_form=submission_form,
+                    master_form=master_form,
+                    sibling_forms=sibling_forms,
+                    readonly=readonly,
+                    location_types=location_types
+                )
 
 
 @route(bp, '/comments', methods=['POST'])
@@ -410,9 +404,9 @@ def update_submission_version(sender, document, **kwargs):
     version_data = {k: document[k] for k in data_fields if k in document}
 
     # save user email as identity
-    channel = 'Web'
+    channel = 'WEB'
     user = current_user._get_current_object()
-    identity = user.email if not user.is_anonymous() else 'Unknown'
+    identity = user.email if not user.is_anonymous() else 'unknown'
 
     services.submission_versions.create(
         submission=document,
