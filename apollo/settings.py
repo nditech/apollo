@@ -70,10 +70,11 @@ PUNCTUATIONS = filter(lambda s: s not in ALLOWED_PUNCTUATIONS,
 TRANS_TABLE = dict((ord(char_from), ord(char_to))
                    for char_from, char_to in
                    CHARACTER_TRANSLATIONS)
-MESSAGING_OUTGOING_GATEWAY = {
-    'type': 'kannel',
-    'gateway_url': 'http://localhost:13013/cgi-bin/sendsms',
-    'username': 'foo',
-    'password': 'bar'
-}
-MESSAGING_CC = []
+MESSAGING_OUTGOING_GATEWAY = ast.literal_eval(
+    os.environ.get('MESSAGING_OUTGOING_GATEWAY', '''{
+        'type': 'kannel',
+        'gateway_url': 'http://localhost:13013/cgi-bin/sendsms',
+        'username': 'foo',
+        'password': 'bar'
+    }'''))
+MESSAGING_CC = ast.literal_eval(os.environ.get('MESSAGING_CC', '[]'))
