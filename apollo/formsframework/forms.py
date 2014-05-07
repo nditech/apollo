@@ -90,43 +90,46 @@ class BaseQuestionnaireForm(Form):
                 if self.data.get('comment'):
                     submission.description = self.data.get('comment')
 
-            form_fields = filter(lambda f: f not in ignored_fields,
-                                 self.data.keys())
-            change_detected = False
-            for form_field in form_fields:
-                if self.data.get(form_field):
-                    change_detected = True
-                    if (
-                        getattr(submission, form_field, None) !=
-                        self.data.get(form_field)
+            if submission:
+                form_fields = filter(lambda f: f not in ignored_fields,
+                                     self.data.keys())
+                change_detected = False
+                for form_field in form_fields:
+                    if self.data.get(form_field):
+                        change_detected = True
+                        if (
+                            getattr(submission, form_field, None) !=
+                            self.data.get(form_field)
+                        ):
+                            setattr(
+                                submission, form_field,
+                                self.data.get(form_field))
+
+                if change_detected:
+                    g.phone = self.data.get('sender')
+
+                    # confirm if phone number is known and verified
+                    participant = self.data.get('participant')
+
+                    # retrieve the first phone contact that matches
+                    phone_contact = next(ifilter(
+                        lambda phone: ugly_phone.sub('', g.phone) ==
+                        phone.number,
+                        participant.phones), False)
+                    if phone_contact:
+                        submission.sender_verified = phone_contact.verified
+                    else:
+                        submission.sender_verified = False
+                        phone_contact = models.PhoneContact(
+                            number=g.phone,
+                            verified=False)
+                        participant.update(add_to_set__phones=phone_contact)
+
+                    with signals.post_save.connected_to(
+                        update_submission_version,
+                        sender=services.submissions.__model__
                     ):
-                        setattr(
-                            submission, form_field, self.data.get(form_field))
-
-            if change_detected:
-                g.phone = self.data.get('sender')
-
-                # confirm if phone number is known and verified
-                participant = self.data.get('participant')
-
-                # retrieve the first phone contact that matches
-                phone_contact = next(ifilter(
-                    lambda phone: ugly_phone.sub('', g.phone) == phone.number,
-                    participant.phones), False)
-                if phone_contact:
-                    submission.sender_verified = phone_contact.verified
-                else:
-                    submission.sender_verified = False
-                    phone_contact = models.PhoneContact(
-                        number=g.phone,
-                        verified=False)
-                    participant.update(add_to_set__phones=phone_contact)
-
-                with signals.post_save.connected_to(
-                    update_submission_version,
-                    sender=services.submissions.__model__
-                ):
-                    submission.save()
+                        submission.save()
         except models.Submission.DoesNotExist:
             pass
 
