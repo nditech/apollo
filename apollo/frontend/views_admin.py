@@ -17,6 +17,27 @@ class MyView(BaseView):
         return current_user.is_authenticated() and current_user.has_role(role)
 
 
+class DeploymentAdminView(ModelView):
+    can_create = False
+    can_delete = False
+    column_list = ('name',)
+    form_rules = [
+        rules.FieldSet(
+            ('name', 'logo', 'allow_observer_submission_edit'),
+            _('Deployment')
+        )
+    ]
+
+    def get_query(self):
+        user = current_user._get_current_object()
+        return models.Deployment.objects(pk=user.deployment.pk)
+
+    def is_accessible(self):
+        '''For checking if the admin view is accessible.'''
+        role = models.Role.objects.get(name='admin')
+        return current_user.is_authenticated() and current_user.has_role(role)
+
+
 class EventAdminView(ModelView):
     # disallow event creation
     # can_create = False
@@ -50,4 +71,5 @@ class EventAdminView(ModelView):
             model.deployment = current_user.deployment
 
 # admin.add_view(MyView(name='Hello'))
+admin.add_view(DeploymentAdminView(models.Deployment))
 admin.add_view(EventAdminView(models.Event))
