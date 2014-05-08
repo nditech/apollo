@@ -23,6 +23,7 @@ gevent==1.0
 honcho==0.5.0
 itsdangerous==0.23
 Jinja2==2.7.2
+lxml==3.3.5
 MarkupSafe==0.19
 mongoengine==0.8.7
 networkx==1.8.1
