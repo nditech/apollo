@@ -1,15 +1,16 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
-from __future__ import unicode_literals
 from flask import (
     Blueprint, g, redirect, render_template, request, url_for, flash,
     current_app
 )
 from flask.ext.babel import lazy_gettext as _
+from flask.ext.restful import Api
 from flask.ext.security import login_required
 from flask.ext.menu import register_menu
 from mongoengine import ValidationError
 from .. import models, services, helpers
+from ..locations.api import LocationTypeItemResource, LocationTypeListResource
 from . import route, permissions, filters
 from .forms import generate_location_edit_form
 import json
@@ -17,6 +18,18 @@ import networkx as nx
 
 bp = Blueprint('locations', __name__, template_folder='templates',
                static_folder='static', static_url_path='/core/static')
+location_api = Api(bp)
+
+location_api.add_resource(
+    LocationTypeItemResource,
+    '/api/locationtypes/<loc_type_id>',
+    endpoint='api.locationtype'
+)
+location_api.add_resource(
+    LocationTypeListResource,
+    '/api/locationtypes',
+    endpoint='api.locationtypes'
+)
 
 
 @route(bp, '/locations/', methods=['GET'])
