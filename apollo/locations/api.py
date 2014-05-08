@@ -1,6 +1,6 @@
-from flask import url_for
+# from flask import url_for
 from flask.ext.restful import Resource, fields as r_fields, marshal
-from marshmallow import Serializer, fields as m_fields
+# from marshmallow import Serializer, fields as m_fields
 
 from .. import services
 
@@ -10,18 +10,19 @@ LOCATION_TYPE_FIELD_MAPPER = {
 }
 
 
-class LocationTypeSerializer(Serializer):
-    # id needs to be specified here
-    # because ObjectIDs aren't JSON serializable
-    id = m_fields.String()
-    uri = m_fields.Method('get_item_endpoint')
+# class LocationTypeSerializer(Serializer):
+#     # id needs to be specified here
+#     # because ObjectIDs aren't JSON serializable
+#     id = m_fields.String()
+#     uri = m_fields.Method('get_item_endpoint')
 
-    class Meta:
-        fields = ('id', 'name', 'uri')
+#     class Meta:
+#         fields = ('id', 'name', 'uri')
 
-    def get_item_endpoint(self, locationtype):
-        return url_for(
-            'locations.api.locationtype', loc_type_id=unicode(locationtype.pk))
+#     def get_item_endpoint(self, locationtype):
+#         return url_for(
+#             'locations.api.locationtype',
+#             loc_type_id=unicode(locationtype.pk))
 
 
 class LocationTypeItemResource(Resource):
@@ -49,21 +50,21 @@ class LocationTypeListResource(Resource):
         # marshal() can also handle a list or tuple of objects, but it only
         # checks for a list or tuple, so we need to convert the queryset
         # to a list
-        # dataset = marshal(
-        #     list(services.location_types.find()),
-        #     LOCATION_TYPE_FIELD_MAPPER
-        # )
+        dataset = marshal(
+            list(services.location_types.find()),
+            LOCATION_TYPE_FIELD_MAPPER
+        )
 
-        # for d in dataset:
-        #     urlfield = r_fields.Url('locations.api.locationtype')
-        #     d['uri'] = urlfield.output('uri', {'loc_type_id': d['id']})
+        for d in dataset:
+            urlfield = r_fields.Url('locations.api.locationtype')
+            d['uri'] = urlfield.output('uri', {'loc_type_id': d['id']})
 
-        # return dataset
+        return dataset
 
-        # same as the code commented above, except using marshmallow for
+        # same as the code above, except using marshmallow for
         # serialization. A Serializer can serialize an interable of objects
         # if you pass argument many=True to the constructor
-        return LocationTypeSerializer(
-            services.location_types.find(),
-            many=True
-        ).data
+        # return LocationTypeSerializer(
+        #     services.location_types.find(),
+        #     many=True
+        # ).data
