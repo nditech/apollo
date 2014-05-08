@@ -11,13 +11,13 @@ a:hover.arrow-style{text-decoration:none; color:#333;}
 {% endblock %}
 {% block toolbar %}
   {%- if perms.export_participants.can() -%}
-  <a class="btn btn-default pull-right" href="{{ url_for('participants.participant_list', export='true', **request.args) }}">{% trans %}Export{% endtrans %}</a>
+  <a class="btn btn-default pull-right" href="{{ url_for('participants.participant_list', export='true', **request.args) }}"><i class="glyphicon glyphicon-export"></i> {% trans %}Export{% endtrans %}</a>
   {%- endif -%}
   {%- if perms.import_participants.can() -%}
   <a class="btn btn-info pull-right" href="{{ url_for('participants.participant_list_import') }}" style="margin-right:1em;"><i class="glyphicon glyphicon-upload glyphicon-white"></i> {% trans %}Import Participants{% endtrans %}</a>
   {%- endif -%}
   {%- if perms.send_messages.can() -%}
-  <button class="btn btn-success pull-right" id="send_message_modal_btn" style="margin-right:1em;">{% trans %}Send Message{% endtrans %}</button>
+  <button class="btn btn-success pull-right" id="send_message_modal_btn" style="margin-right:1em;"><i class="glyphicon glyphicon-envelope"></i> {% trans %}Send Message{% endtrans %}</button>
   {%- endif -%}
 {% endblock %}
 {% block content %}
