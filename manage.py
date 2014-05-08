@@ -19,7 +19,7 @@ def _mk_ctx():
         userdatastore=MongoEngineUserDatastore(db, models.User, models.Role))
 
 manager = Manager(app)
-manager.add_command('run', Server())
+manager.add_command('run', Server(host='0.0.0.0'))
 manager.add_command('shell', Shell(make_context=_mk_ctx))
 manager.add_command('createuser', CreateUserCommand())
 manager.add_command('deleteuser', DeleteUserCommand())
