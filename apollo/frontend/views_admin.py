@@ -1,3 +1,4 @@
+from flask import redirect, url_for
 from flask.ext.admin import BaseView, expose
 from flask.ext.admin.contrib.mongoengine import ModelView
 from flask.ext.admin.form import rules
@@ -7,14 +8,10 @@ from ..core import admin
 from .. import models
 
 
-class MyView(BaseView):
+class DashboardView(BaseView):
     @expose('/')
     def index(self):
-        return self.render('admin/index.html')
-
-    def is_accessible(self):
-        role = models.Role.objects.get(name='admin')
-        return current_user.is_authenticated() and current_user.has_role(role)
+        return redirect(url_for('dashboard.index'))
 
 
 class DeploymentAdminView(ModelView):
@@ -70,6 +67,6 @@ class EventAdminView(ModelView):
         if is_created:
             model.deployment = current_user.deployment
 
-# admin.add_view(MyView(name='Hello'))
+admin.add_view(DashboardView(name=_('Dashboard')))
 admin.add_view(DeploymentAdminView(models.Deployment))
 admin.add_view(EventAdminView(models.Event))
