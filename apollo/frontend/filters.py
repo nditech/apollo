@@ -199,6 +199,14 @@ class ParticipantFilter(CharFilter):
         return queryset
 
 
+class ParticipantPhoneFilter(CharFilter):
+    """Used for filtering a queryset of participants by phone number."""
+    def filter(self, queryset, value):
+        if value:
+            return queryset(phones__number__startswith=value)
+        return queryset
+
+
 class ParticipantIDFilter(CharFilter):
     """This is used to filter on a queryset of submissions.
     """
