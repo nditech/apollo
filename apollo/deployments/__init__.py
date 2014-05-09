@@ -1,35 +1,32 @@
 from ..core import Service
 from .models import Event
-from datetime import datetime, timedelta
+from datetime import datetime
 
 
 class EventsService(Service):
     __model__ = Event
 
     def default(self):
-        current_timestamp = datetime.utcnow()
-        current_date = datetime(
-            year=current_timestamp.year,
-            month=current_timestamp.month,
-            day=current_timestamp.day
-        )
+        now = datetime.utcnow()
 
-        lower_bound = current_date - timedelta(hours=23)
-        upper_bound = current_date + timedelta(hours=23)
+        lower_bound = datetime.combine(now, datetime.min.time())
+        upper_bound = datetime.combine(now, datetime.max.time())
 
-        event = self.find(start_date__lte=lower_bound,
-                          end_date__gte=upper_bound) \
+        event = self.find(start_date__lte=upper_bound,
+                          end_date__gte=lower_bound) \
             .order_by('-start_date').first()
 
         if event:
             return event
 
+        # choose the past event that's closest the current date
         event = self.find(end_date__lte=lower_bound) \
             .order_by('-end_date').first()
 
         if event:
             return event
 
+        # if the previous fails, then choose the future event closes
         event = self.find(start_date__gte=upper_bound) \
             .order_by('start_date').first()
 
