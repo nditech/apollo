@@ -378,6 +378,17 @@ class Submission(db.DynamicDocument):
     def comments(self):
         return SubmissionComment.objects(submission=self)
 
+    def verify_phone(self, number):
+        latest_sms_version = self.versions.filter(channel='SMS').first()
+
+        if not latest_sms_version:
+            return False
+
+        if latest_sms_version.identity == number:
+            return True
+
+        return False
+
 
 class SubmissionComment(db.Document):
     '''Stores user comments.'''
