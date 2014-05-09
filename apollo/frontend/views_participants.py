@@ -61,21 +61,6 @@ def participant_list(page=1):
         else:
             abort(400)
 
-    '''if form.validate():
-        # generate CSV of participants and force download
-        # TODO: CSV is a sucky format for Unicode data.
-        # It might break hard for non-ASCII characters.
-        selected_participants = participants.find(
-            pk__in=request.form.getlist('ids')
-        )
-        response = make_response(
-            participants.export_list(selected_participants).csv
-        )
-        response.headers['Content-Disposition'] = 'attachment; ' + \
-            'filename=participants.csv'
-        response.headers['Content-Type'] = 'text/csv'
-        return response'''
-
     if request.args.get('export'):
         # Export requested
         response = make_response(

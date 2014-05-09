@@ -301,6 +301,7 @@ def participant_filterset():
     class ParticipantFilterSet(FilterSet):
         participant_id = ParticipantFilter()
         name = ParticipantNameFilter()
+        phone = ParticipantPhoneFilter()
         location = LocationFilter()
         sample = SampleFilter()
         role = RoleFilter()
