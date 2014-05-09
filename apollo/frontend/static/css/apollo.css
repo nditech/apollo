@@ -7297,7 +7297,7 @@ border-right-color: #64adea;
 }
 .input-group-addon{padding: 4px 12px;}
 .input-sm{font-size: 12px;}
-a.btn-sm{line-height: 1.7;}
+.filter a.btn-sm{line-height: 1.7;}
 .h3{margin-top: 0px;}
 .input-mini{width:85px;}
 .form-inline > * {padding:5px 5px;}

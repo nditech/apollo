@@ -6,11 +6,11 @@
 <div class="btn-group pull-right">
 <form id="save_form" method="POST" action="{{ request.url }}">
   <input type="hidden" name="divisions_graph" id="divisions_graph" value="" />
-  <button style="margin-left:1em" type="submit" class="btn btn-primary" id="save">{% trans %}Save{% endtrans %}</button>
+  <button style="margin-left:1em" type="submit" class="btn btn-sm btn-primary" id="save"><i class="glyphicon glyphicon-floppy-save"></i> {% trans %}Save{% endtrans %}</button>
 </form>
 </div>
 <div class="btn-group pull-right">
-  <button style="margin-left:1em" type="button" class="btn btn-default" id="addDivisionModalButton">{% trans %}Add Division{% endtrans %}</button>
+  <button style="margin-left:1em" type="button" class="btn btn-sm btn-default" id="addDivisionModalButton"><i class="glyphicon glyphicon-plus"></i> {% trans %}Add Division{% endtrans %}</button>
 </div>
 {% endblock %}
 {% block content %}

@@ -2,7 +2,7 @@
 {%- from 'frontend/macros/pagination.html' import render_pager, render_pager_counter -%}
 {% block toolbar %}
 {% if perms.export_messages.can() %}
-<a class="btn btn-default pull-right" href="{{ url_for('messages.message_list', export='true', **request.args) }}"><i class="glyphicon glyphicon-export"></i> {% trans %}Export{% endtrans %}</a>
+<a class="btn btn-sm btn-default pull-right" href="{{ url_for('messages.message_list', export='true', **request.args) }}"><i class="glyphicon glyphicon-export"></i> {% trans %}Export{% endtrans %}</a>
 {% endif %}
 {% endblock %}
 {% block content %}
