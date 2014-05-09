@@ -13,7 +13,7 @@
 {% endif %}
 {% endblock %}
 {% block content %}{% set form, siblings, master = submission.form, submission.siblings, submission.master %}
-<div class="col-md-12">
+<div>
 <table class="table table-bordered">
 {%- if form.form_type == 'CHECKLIST' -%}
 <tr>
@@ -100,7 +100,7 @@ TODO: insert last used identity here
 {%- endif -%}
 </table>
 </div>
-<div class="col-md-12">
+<div>
 <form method="POST">
 {{ submission_form.csrf_token() }}
 {%- if form.form_type == 'CHECKLIST' %}
@@ -174,15 +174,15 @@ TODO: insert last used identity here
     {% endfor -%}
     <tr>
       <td>{%- trans -%}Witness{%- endtrans -%}</td>
-      <td colspan="2">{{ submission_form.witness }}</td>
+      <td colspan="2">{{ submission_form.witness (class_='form-control span4 input-sm')}}</td>
     </tr>
     <tr>
       <td>{%- trans -%}Description{%- endtrans -%}</td>
-      <td colspan="2">{{ submission_form.description(cols=40, rows=5) }}</td>
+      <td colspan="2">{{ submission_form.description(cols=40, rows=5,class_='form-control span4') }}</td>
     </tr>
     <tr>
       <td>{%- trans -%}Status{%- endtrans -%}</td>
-      <td colspan="2">{{ submission_form.status }}</td>
+      <td colspan="2">{{ submission_form.status (class_='form-control span2 input-sm')}}</td>
     </tr>
   </tbody>
 </table>
@@ -192,16 +192,16 @@ TODO: insert last used identity here
 {% if master_form %}<input type="hidden" name="{{ master_form['location'].name }}" value="{{ master_form['location'].data.id }}" />
 {% endif -%}
 
- <div class="row navbar-fixed-bottom" style="bottom:0px; background:#fff; padding-top:1em; padding-bottom:1em;">
-      <div class="container">
-        <div class="col-md-offset-8 col-md-2">
-          <button type="submit" class="btn btn-info btn-lg btn-block" style= "margin-left:1em;">Save</button>
-        </div>
-        <div class="col-md-2">
-          <a class="btn btn-default btn-lg btn-block" style= "margin-left:;" href="{{ url_for('submissions.submission_list', form_id=form.pk) }}">Cancel</a>
-        </div>
+ <div class="row navbar-fixed-bottom" style="bottom:0px; background:#fff; padding:1em 0 1em 2.6em;">
+    <div class="container">
+      <div class="col-md-offset-8 col-md-2">
+        <button type="submit" class="btn btn-info btn-lg btn-block" style= "margin-left:1em;">Save</button>
+      </div>
+      <div class="col-md-2">
+        <a class="btn btn-default btn-lg btn-block" style= "margin-left:;" href="{{ url_for('submissions.submission_list', form_id=form.pk) }}">Cancel</a>
       </div>
     </div>
+  </div>
 </form>
 </div>
 {% endblock %}
