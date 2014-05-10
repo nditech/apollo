@@ -4,6 +4,8 @@ from flask.ext.admin.contrib.mongoengine import ModelView
 from flask.ext.admin.form import rules
 from flask.ext.babel import lazy_gettext as _
 from flask.ext.security import current_user
+from flask.ext.security.utils import encrypt_password
+from wtforms import PasswordField
 from ..core import admin
 from .. import models
 
@@ -14,7 +16,14 @@ class DashboardView(BaseView):
         return redirect(url_for('dashboard.index'))
 
 
-class DeploymentAdminView(ModelView):
+class BaseAdminView(ModelView):
+    def is_accessible(self):
+        '''For checking if the admin view is accessible.'''
+        role = models.Role.objects.get(name='admin')
+        return current_user.is_authenticated() and current_user.has_role(role)
+
+
+class DeploymentAdminView(BaseAdminView):
     can_create = False
     can_delete = False
     column_list = ('name',)
@@ -29,13 +38,8 @@ class DeploymentAdminView(ModelView):
         user = current_user._get_current_object()
         return models.Deployment.objects(pk=user.deployment.pk)
 
-    def is_accessible(self):
-        '''For checking if the admin view is accessible.'''
-        role = models.Role.objects.get(name='admin')
-        return current_user.is_authenticated() and current_user.has_role(role)
 
-
-class EventAdminView(ModelView):
+class EventAdminView(BaseAdminView):
     # disallow event creation
     # can_create = False
 
@@ -56,17 +60,37 @@ class EventAdminView(ModelView):
         user = current_user._get_current_object()
         return models.Event.objects(deployment=user.deployment)
 
-    def is_accessible(self):
-        '''For checking if the admin view is accessible.'''
-        role = models.Role.objects.get(name='admin')
-        return current_user.is_authenticated() and current_user.has_role(role)
-
     def on_model_change(self, form, model, is_created):
         # if we're creating a new event, make sure to set the
         # deployment, since it won't appear in the form
         if is_created:
             model.deployment = current_user.deployment
 
+
+class UserAdminView(BaseAdminView):
+    '''Thanks to mrjoes and this Flask-Admin issue:
+    https://github.com/mrjoes/flask-admin/issues/173
+    '''
+    column_list = ('email',)
+    form_rules = [
+        rules.FieldSet(('email', 'password', 'active', 'roles'))
+    ]
+
+    def get_query(self):
+        user = current_user._get_current_object()
+        return models.User.objects(deployment=user.deployment)
+
+    def on_model_change(self, form, model, is_created):
+        if form.password.data:
+            model.password = encrypt_password(form.password.data)
+
+    def scaffold_form(self):
+        form_class = super(UserAdminView, self).scaffold_form()
+        form_class.password = PasswordField(_('New password'))
+        return form_class
+
+
 admin.add_view(DashboardView(name=_('Dashboard')))
 admin.add_view(DeploymentAdminView(models.Deployment))
 admin.add_view(EventAdminView(models.Event))
+admin.add_view(UserAdminView(models.User))
