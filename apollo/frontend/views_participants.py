@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
-from __future__ import unicode_literals
 from datetime import datetime
 from flask import (
     Blueprint, flash, g, make_response, redirect, render_template, request,
@@ -8,12 +7,11 @@ from flask import (
 )
 from flask.ext.babel import lazy_gettext as _
 from flask.ext.menu import register_menu
+from flask.ext.restful import Api
 from flask.ext.security import current_user, login_required
 from ..helpers import stash_file, load_source_file
-from ..services import (
-    events, locations, participants, participant_roles, participant_partners,
-    user_uploads
-)
+from .. import services
+from ..participants import api
 from ..tasks import import_participants, send_messages
 from . import route, helpers, filters
 from .forms import (
@@ -24,6 +22,13 @@ from slugify import slugify_unicode
 
 bp = Blueprint('participants', __name__, template_folder='templates',
                static_folder='static', static_url_path='/core/static')
+participant_api = Api(bp)
+
+participant_api.add_resource(
+    api.ParticipantListResource,
+    '/api/participants',
+    endpoint='api.participants'
+)
 
 
 @route(bp, '/participants', methods=['GET', 'POST'])
@@ -44,7 +49,7 @@ def participant_list(page=1):
     for field in extra_fields:
         sortable_columns.update({field.name: field.name})
 
-    queryset = participants.find()
+    queryset = services.participants.find()
     queryset_filter = filters.participant_filterset()(queryset, request.args)
 
     form = DummyForm(request.form)
@@ -64,7 +69,7 @@ def participant_list(page=1):
     if request.args.get('export'):
         # Export requested
         response = make_response(
-            participants.export_list(queryset_filter.qs).xls
+            services.participants.export_list(queryset_filter.qs).xls
         )
         basename = slugify_unicode('participants %s' % (
             datetime.utcnow().strftime('%Y %m %d %H%M%S')))
@@ -104,7 +109,7 @@ def participant_list(page=1):
 @route(bp, '/participant/<pk>', methods=['GET', 'POST'])
 @login_required
 def participant_edit(pk):
-    participant = participants.get_or_404(pk=pk)
+    participant = services.participants.get_or_404(pk=pk)
     page_title = _(
         'Edit Participant · %(participant_id)s',
         participant_id=participant.participant_id
@@ -124,15 +129,17 @@ def participant_edit(pk):
             # participant.participant_id = form.participant_id.data
             participant.name = form.name.data
             participant.gender = form.gender.data
-            participant.role = participant_roles.get(pk=form.role.data)
+            participant.role = services.participant_roles.get(
+                pk=form.role.data)
             if form.supervisor.data:
-                participant.supervisor = participants.get(
+                participant.supervisor = services.participants.get(
                     pk=form.supervisor.data
                 )
             else:
                 participant.supervisor = None
-            participant.location = locations.get(pk=form.location.data)
-            participant.partner = participant_partners.get(
+            participant.location = services.locations.get(
+                pk=form.location.data)
+            participant.partner = services.participant_partners.get(
                 pk=form.partner.data)
             participant.phone = form.phone.data
             participant.save()
@@ -163,7 +170,7 @@ def participant_list_import():
         else:
             # get the actual object from the proxy
             user = current_user._get_current_object()
-            event = events.get_or_404(pk=form.event.data)
+            event = services.events.get_or_404(pk=form.event.data)
             upload = stash_file(request.files['spreadsheet'], user, event)
             upload.save()
 
@@ -179,7 +186,7 @@ def participant_headers(pk):
     user = current_user._get_current_object()
 
     # disallow processing other users' files
-    upload = user_uploads.get_or_404(pk=pk, user=user)
+    upload = services.user_uploads.get_or_404(pk=pk, user=user)
     try:
         dataframe = load_source_file(upload.data)
     except Exception:

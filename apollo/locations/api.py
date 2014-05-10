@@ -85,11 +85,11 @@ class LocationListResource(Resource):
             LOCATION_FIELD_MAPPER
         )
 
-        meta = {
+        meta = {'meta': {
             'limit': limit,
             'offset': offset,
             'total': queryset.count(False)
-        }
+        }}
 
         dataset.append(meta)
 
