@@ -1,7 +1,5 @@
 from flask import request
-from flask.ext.restful import (
-    Resource, fields as fields, marshal, marshal_with
-)
+from flask.ext.restful import Resource, fields, marshal, marshal_with
 from .. import services
 
 DEFAULT_PAGE_SIZE = 25
