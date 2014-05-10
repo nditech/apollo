@@ -8,7 +8,10 @@ from apollo.frontend import create_app
 from apollo.manage import \
     (CreateUserCommand, DeleteUserCommand, ListUsersCommand,
      AddUserRoleCommand, ListUserRolesCommand, RemoveUserRoleCommand,
-     ListRolesCommand, AddRoleCommand)
+     ListRolesCommand, AddRoleCommand,
+     AddPermissionToRole, RemovePermissionFromRole, ListPermissionsOfRole,
+     CreateDeploymentCommand, ListDeploymentsCommand, CreateEventCommand,
+     ListEventsCommand)
 
 app = create_app()
 
@@ -21,14 +24,23 @@ def _mk_ctx():
 manager = Manager(app)
 manager.add_command('run', Server(host='0.0.0.0'))
 manager.add_command('shell', Shell(make_context=_mk_ctx))
-manager.add_command('createuser', CreateUserCommand())
-manager.add_command('deleteuser', DeleteUserCommand())
-manager.add_command('listusers', ListUsersCommand())
-manager.add_command('adduserrole', AddUserRoleCommand())
-manager.add_command('removeuserrole', RemoveUserRoleCommand())
-manager.add_command('listuserroles', ListUserRolesCommand())
-manager.add_command('listroles', ListRolesCommand())
-manager.add_command('addrole', AddRoleCommand())
+manager.add_command('create_user', CreateUserCommand())
+manager.add_command('delete_user', DeleteUserCommand())
+manager.add_command('list_users', ListUsersCommand())
+manager.add_command('add_userrole', AddUserRoleCommand())
+manager.add_command('remove_userrole', RemoveUserRoleCommand())
+manager.add_command('list_userroles', ListUserRolesCommand())
+manager.add_command('list_roles', ListRolesCommand())
+manager.add_command('add_role', AddRoleCommand())
+
+manager.add_command('add_rolepermission', AddPermissionToRole())
+manager.add_command('remove_rolepermission', RemovePermissionFromRole())
+manager.add_command('list_rolepermissions', ListPermissionsOfRole())
+
+manager.add_command('create_deployment', CreateDeploymentCommand())
+manager.add_command('list_deployments', ListDeploymentsCommand())
+manager.add_command('create_event', CreateEventCommand())
+manager.add_command('list_events', ListEventsCommand())
 
 if __name__ == '__main__':
     manager.run()
