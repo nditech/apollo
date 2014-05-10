@@ -46,7 +46,8 @@ class LocationType(db.Document):
     http://docs.mongodb.org/manual/tutorial/model-tree-structures/'''
 
     name = db.StringField()
-    ancestors_ref = db.ListField(db.ReferenceField('LocationType'))
+    ancestors_ref = db.ListField(db.ReferenceField(
+        'LocationType', reverse_delete_rule=db.PULL))
     is_administrative = db.BooleanField(default=False)
     is_political = db.BooleanField(default=False)
     has_registered_voters = db.BooleanField(db_field='has_rv', default=False)
@@ -97,9 +98,12 @@ class Location(db.DynamicDocument):
     location_type = db.StringField()
     coords = db.GeoPointField()
     registered_voters = db.LongField(db_field='rv', default=0)
-    ancestors_ref = db.ListField(db.ReferenceField('Location'))
-    samples = db.ListField(db.ReferenceField('Sample'))
-    events = db.ListField(db.ReferenceField(Event))
+    ancestors_ref = db.ListField(db.ReferenceField(
+        'Location', reverse_delete_rule=db.PULL))
+    samples = db.ListField(db.ReferenceField(
+        'Sample', reverse_delete_rule=db.PULL))
+    events = db.ListField(db.ReferenceField(
+        Event, reverse_delete_rule=db.PULL))
     deployment = db.ReferenceField(Deployment)
 
     meta = {

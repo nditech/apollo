@@ -86,7 +86,8 @@ class Form(db.Document):
     form_type = db.StringField(choices=FORM_TYPES)
     groups = db.ListField(db.EmbeddedDocumentField('FormGroup'))
 
-    events = db.ListField(db.ReferenceField(Event))
+    events = db.ListField(db.ReferenceField(
+        Event, reverse_delete_rule=db.PULL))
     deployment = db.ReferenceField(Deployment)
     quality_checks = db.ListField(db.DictField())
 
