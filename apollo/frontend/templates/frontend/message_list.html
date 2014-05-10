@@ -53,8 +53,8 @@
       <tbody>
         {% for message in pager.items %}
         <tr>
-          <td class="timestamp-date">{{ message.received|timestamp }}</td>
-          <td class="timestamp-time">{{ message.received|timestamp }}</td>
+          <td class="timestamp-date" data-timestamp="{{ message.received|timestamp }}">{{ message.received.strftime('%b %d %Y') }}</td>
+          <td class="timestamp-time" data-timestamp="{{ message.received|timestamp }}">{{ message.received.strftime('%I:%M %p') }}</td>
           <td>{% if message.direction == 'IN' %}{{ message.sender }}{% else %}{{ message.recipient }}{% endif %}</td>
           <td>{% if message.direction == 'IN' %}{% trans %}IN{% endtrans %}{% else %}{% trans %}OUT{% endtrans %}{% endif %}</td>
           <td style="word-wrap:break-word">{{ message.text }}</td>
