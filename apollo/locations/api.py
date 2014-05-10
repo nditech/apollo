@@ -1,28 +1,21 @@
-# from flask import url_for
-from flask.ext.restful import Resource, fields as r_fields, marshal
-# from marshmallow import Serializer, fields as m_fields
-
+from flask import request
+from flask.ext.restful import (
+    Resource, fields as fields, marshal, marshal_with
+)
 from .. import services
 
+DEFAULT_PAGE_SIZE = 25
+
 LOCATION_TYPE_FIELD_MAPPER = {
-    'id': r_fields.String,
-    'name': r_fields.String,
+    'id': fields.String,
+    'name': fields.String,
 }
 
-
-# class LocationTypeSerializer(Serializer):
-#     # id needs to be specified here
-#     # because ObjectIDs aren't JSON serializable
-#     id = m_fields.String()
-#     uri = m_fields.Method('get_item_endpoint')
-
-#     class Meta:
-#         fields = ('id', 'name', 'uri')
-
-#     def get_item_endpoint(self, locationtype):
-#         return url_for(
-#             'locations.api.locationtype',
-#             loc_type_id=unicode(locationtype.pk))
+LOCATION_FIELD_MAPPER = {
+    'id': fields.String,
+    'name': fields.String,
+    'location_type': fields.String
+}
 
 
 class LocationTypeItemResource(Resource):
@@ -39,7 +32,7 @@ class LocationTypeItemResource(Resource):
         # convert, it will fail with a BuildError
         # also, for a single item, you really don't need the url specced,
         # but whatever
-        urlfield = r_fields.Url('locations.api.locationtype')
+        urlfield = fields.Url('locations.api.locationtype')
         data['uri'] = urlfield.output('uri', {'loc_type_id': data['id']})
 
         return data
@@ -56,15 +49,50 @@ class LocationTypeListResource(Resource):
         )
 
         for d in dataset:
-            urlfield = r_fields.Url('locations.api.locationtype')
+            urlfield = fields.Url('locations.api.locationtype')
             d['uri'] = urlfield.output('uri', {'loc_type_id': d['id']})
 
         return dataset
 
-        # same as the code above, except using marshmallow for
-        # serialization. A Serializer can serialize an interable of objects
-        # if you pass argument many=True to the constructor
-        # return LocationTypeSerializer(
-        #     services.location_types.find(),
-        #     many=True
-        # ).data
+
+class LocationItemResource(Resource):
+    @marshal_with(LOCATION_FIELD_MAPPER)
+    def get(self, location_id):
+        return services.locations.get_or_404(pk=location_id)
+
+
+class LocationListResource(Resource):
+    def get(self):
+        kwargs = request.args.copy()
+        try:
+            offset = int(kwargs.pop('offset', 0))
+        except ValueError:
+            offset = 0
+
+        try:
+            limit = int(kwargs.pop('limit', DEFAULT_PAGE_SIZE))
+        except ValueError:
+            limit = DEFAULT_PAGE_SIZE
+
+        queryset = services.locations.find().limit(limit).skip(offset)
+
+        # do location name lookups
+        if 'name__startswith' in kwargs:
+            queryset = queryset(
+                name__istartswith=kwargs.pop('name__startswith')
+            )
+
+        dataset = marshal(
+            list(queryset),
+            LOCATION_FIELD_MAPPER
+        )
+
+        meta = {
+            'limit': limit,
+            'offset': offset,
+            'total': queryset.count(False)
+        }
+
+        dataset.append(meta)
+
+        return dataset

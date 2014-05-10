@@ -10,7 +10,7 @@ from flask.ext.security import login_required
 from flask.ext.menu import register_menu
 from mongoengine import ValidationError
 from .. import models, services, helpers
-from ..locations.api import LocationTypeItemResource, LocationTypeListResource
+from ..locations import api
 from . import route, permissions, filters
 from .forms import generate_location_edit_form
 import json
@@ -21,14 +21,24 @@ bp = Blueprint('locations', __name__, template_folder='templates',
 location_api = Api(bp)
 
 location_api.add_resource(
-    LocationTypeItemResource,
+    api.LocationTypeItemResource,
     '/api/locationtypes/<loc_type_id>',
     endpoint='api.locationtype'
 )
 location_api.add_resource(
-    LocationTypeListResource,
+    api.LocationTypeListResource,
     '/api/locationtypes',
     endpoint='api.locationtypes'
+)
+location_api.add_resource(
+    api.LocationItemResource,
+    '/api/locations/<location_id>',
+    endpoint='api.location'
+)
+location_api.add_resource(
+    api.LocationListResource,
+    '/api/locations',
+    endpoint='api.locations'
 )
 
 
