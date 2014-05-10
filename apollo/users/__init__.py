@@ -23,7 +23,7 @@ class PermsService(Service):
     def _get_needs_for_user(self, user):
         needs = []
         needs_for_user = self.__model__.objects.filter(
-            entities=user, deployment=g.deployment)
+            entities=user, deployment=user.deployment)
         for need in needs_for_user:
             if need.items:
                 needs.extend([ItemNeed(need.action, item, 'object')
@@ -35,7 +35,7 @@ class PermsService(Service):
     def _get_needs_for_roles(self, user):
         needs = []
         needs_for_roles = self.__model__.objects.filter(
-            entities__in=user.roles, deployment=g.deployment)
+            entities__in=user.roles, deployment=user.deployment)
         for need in needs_for_roles:
             if need.items:
                 needs.extend([ItemNeed(need.action, item, 'object')
