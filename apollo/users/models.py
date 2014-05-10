@@ -46,6 +46,8 @@ class Need(db.Document):
     action = db.StringField()
     items = db.ListField(db.GenericReferenceField())
 
+    deployment = db.ReferenceField(Deployment)
+
     def __unicode__(self):
         return self.action
 
