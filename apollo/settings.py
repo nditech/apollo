@@ -43,6 +43,8 @@ CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_ACCEPT_CONTENT = ['json']
 
+SENTRY_DSN = os.environ.get('SENTRY_DSN')
+
 LANGUAGES = {
     'en': 'English',
     'es': 'Español',
