@@ -49,7 +49,11 @@ class ListUsersCommand(Command):
     """List all users"""
 
     def run(self):
-        for u in users.all():
+        deployments = Deployment.objects
+        option = prompt_choices('Deployment', [
+            (str(i), v) for i, v in enumerate(deployments, 1)])
+        deployment = deployments[int(option) - 1]
+        for u in users(deployment=deployment):
             print 'User(id=%s email=%s)' % (u.id, u.email)
 
 
@@ -57,8 +61,12 @@ class AddUserRoleCommand(Command):
     """Add a role to a user"""
 
     def run(self):
+        deployments = Deployment.objects
+        option = prompt_choices('Deployment', [
+            (str(i), v) for i, v in enumerate(deployments, 1)])
+        deployment = deployments[int(option) - 1]
         email = prompt('Email')
-        user = users.first(email=email)
+        user = users.first(email=email, deployment=deployment)
         role_name = prompt('Role')
         role = Role.objects(name=role_name).first()
         if not user:
@@ -75,8 +83,12 @@ class RemoveUserRoleCommand(Command):
     """Removes a role from a user"""
 
     def run(self):
+        deployments = Deployment.objects
+        option = prompt_choices('Deployment', [
+            (str(i), v) for i, v in enumerate(deployments, 1)])
+        deployment = deployments[int(option) - 1]
         email = prompt('Email')
-        user = users.first(email=email)
+        user = users.first(email=email, deployment=deployment)
         role_name = prompt('Role')
         role = Role.objects(name=role_name).first()
         if not user:
@@ -93,8 +105,12 @@ class ListUserRolesCommand(Command):
     """List roles a user has"""
 
     def run(self):
+        deployments = Deployment.objects
+        option = prompt_choices('Deployment', [
+            (str(i), v) for i, v in enumerate(deployments, 1)])
+        deployment = deployments[int(option) - 1]
         email = prompt('Email')
-        user = users.first(email=email)
+        user = users.first(email=email, deployment=deployment)
         if not user:
             print 'Invalid user'
             return
