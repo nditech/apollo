@@ -1,8 +1,7 @@
-from flask import request
+from flask import current_app
 from flask.ext.restful import Resource, fields, marshal, marshal_with
 from .. import services
-
-DEFAULT_PAGE_SIZE = 25
+from ..api.common import parser
 
 LOCATION_TYPE_FIELD_MAPPER = {
     'id': fields.String,
@@ -41,14 +40,27 @@ class LocationTypeListResource(Resource):
         # marshal() can also handle a list or tuple of objects, but it only
         # checks for a list or tuple, so we need to convert the queryset
         # to a list
+        args = parser.parse_args()
+        limit = args.get('limit') or current_app.config.get('PAGE_SIZE')
+        offset = args.get('offset') or 0
+        queryset = services.location_types.find().skip(offset).limit(limit)
+
         dataset = marshal(
-            list(services.location_types.find()),
+            list(queryset),
             LOCATION_TYPE_FIELD_MAPPER
         )
 
         for d in dataset:
             urlfield = fields.Url('locations.api.locationtype')
             d['uri'] = urlfield.output('uri', {'loc_type_id': d['id']})
+
+        meta = {'meta': {
+            'limit': limit,
+            'offset': offset,
+            'total': queryset.count(False)
+        }}
+
+        dataset.append(meta)
 
         return dataset
 
@@ -61,23 +73,16 @@ class LocationItemResource(Resource):
 
 class LocationListResource(Resource):
     def get(self):
-        kwargs = request.args.copy()
-        try:
-            offset = int(kwargs.pop('offset', 0))
-        except ValueError:
-            offset = 0
-
-        try:
-            limit = int(kwargs.pop('limit', DEFAULT_PAGE_SIZE))
-        except ValueError:
-            limit = DEFAULT_PAGE_SIZE
+        args = parser.parse_args()
+        limit = args.get('limit') or current_app.config.get('PAGE_SIZE')
+        offset = args.get('offset') or 0
 
         queryset = services.locations.find().limit(limit).skip(offset)
 
         # do location name lookups
-        if 'name__startswith' in kwargs:
+        if 'name__startswith' in args:
             queryset = queryset(
-                name__istartswith=kwargs.pop('name__startswith')
+                name__istartswith=args.pop('name__startswith')
             )
 
         dataset = marshal(

@@ -1,20 +1,5 @@
-from flask import current_app
+from flask.ext.restful import reqparse
 
-
-def get_offset(multidict):
-    try:
-        offset = int(multidict.get('offset', 0))
-    except ValueError:
-        offset = 0
-
-    return offset
-
-
-def get_limit(multidict):
-    page_size = current_app.config.get('PAGE_SIZE')
-    try:
-        limit = int(multidict.get('limit', page_size))
-    except ValueError:
-        limit = page_size
-
-    return limit
+parser = reqparse.RequestParser()
+parser.add_argument('limit', type=int)
+parser.add_argument('offset', type=int)
