@@ -1,16 +1,20 @@
-from flask.ext.script import Command, prompt, prompt_pass
+from flask.ext.script import Command, prompt, prompt_choices, prompt_pass
 from flask.ext.security.forms import RegisterForm
 from flask.ext.security.registerable import register_user
 from werkzeug.datastructures import MultiDict
 
 from ..services import users
-from ..models import Role
+from ..models import Deployment, Role
 
 
 class CreateUserCommand(Command):
     """Create a user"""
 
     def run(self):
+        deployments = Deployment.objects
+        option = prompt_choices('Deployment', [
+            (str(i), v) for i, v in enumerate(deployments, 1)])
+        deployment = deployments[int(option) - 1]
         email = prompt('Email')
         password = prompt_pass('Password')
         password_confirm = prompt_pass('Confirm Password')
@@ -19,6 +23,7 @@ class CreateUserCommand(Command):
         form = RegisterForm(data, csrf_enabled=False)
         if form.validate():
             user = register_user(email=email, password=password)
+            user.update(set__deployment=deployment)
             print '\nUser created successfully'
             print 'User(id=%s email=%s)' % (user.id, user.email)
             return
