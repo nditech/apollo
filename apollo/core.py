@@ -5,21 +5,21 @@ from flask.ext.babel import Babel
 from flask.ext.mail import Mail
 from flask.ext.menu import Menu
 from flask.ext.mongoengine import MongoEngine
-from flask.ext.restful import Api
 from flask.ext.security import Security
 from flask.ext.gravatar import Gravatar
+from raven.contrib.flask import Sentry
 import six
 from wtforms import Form, fields
 
 
 admin = Admin(name='Apollo')
-api = Api()
 babel = Babel()
 db = MongoEngine()
 mail = Mail()
 menu = Menu()
 security = Security()
 gravatar = Gravatar(size=25, default="identicon")
+sentry = Sentry()
 
 
 class Service(object):
