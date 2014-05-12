@@ -10,6 +10,7 @@ from flask.ext.security import MongoEngineUserDatastore, current_user
 
 from .. import factory, models, services
 from ..core import admin, db, menu, security, gravatar
+from ..security_ext_forms import DeploymentLoginForm
 
 from . import assets, permissions
 from .helpers import set_request_presets
@@ -44,6 +45,7 @@ def create_app(settings_override=None, register_security_blueprint=True):
     userdatastore = MongoEngineUserDatastore(db, models.User, models.Role)
 
     security.init_app(app, userdatastore,
+                      login_form=DeploymentLoginForm,
                       register_blueprint=register_security_blueprint)
     app.session_interface = MongoEngineSessionInterface(db)
 
