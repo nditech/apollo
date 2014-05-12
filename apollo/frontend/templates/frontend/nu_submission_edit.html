@@ -6,7 +6,7 @@
   <button class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
   <ul class="dropdown-menu" role="menu">
     {% for version in submission.versions -%}
-    <li><a href="{{ url_for('submissions.submission_version', submission_id=submission.pk, version_id=version.pk) }}"><span class="tonow">{{ version.timestamp|timestamp }}</span> &mdash; <em>{{ version.identity }}</em></a></li>
+    <li><a href="{{ url_for('submissions.submission_version', submission_id=submission.pk, version_id=version.pk) }}"><span class="tonow" data-timestamp="{{ version.timestamp|timestamp }}">{{ version.timestamp.strftime('%b %d %Y %I:%M %p') }}</span> &mdash; <em>{{ version.identity }}</em></a></li>
     {%- endfor %}
   </ul>
 </div>

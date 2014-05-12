@@ -7,9 +7,9 @@
   <ul class="dropdown-menu" role="menu">
     {% for version in submission.versions -%}
     {% if version == submission_version %}
-    <li><strong><a href="{{ url_for('submissions.submission_version', submission_id=submission.pk, version_id=version.pk) }}"><span class="tonow">{{ version.timestamp|timestamp }}</span> &mdash; <em>{{ version.identity }}</em></a></strong></li>
+    <li><a href="javascript:;"><strong><span class="tonow" data-timestamp="{{ version.timestamp|timestamp }}">{{ version.timestamp.strftime('%b %d %Y %I:%M %p') }}</span> &mdash; <em>{{ version.identity }}</em></strong></a></li>
     {% else %}
-    <li><a href="{{ url_for('submissions.submission_version', submission_id=submission.pk, version_id=version.pk) }}"><span class="tonow">{{ version.timestamp|timestamp }}</span> &mdash; <em>{{ version.identity }}</em></a></li>
+    <li><a href="{{ url_for('submissions.submission_version', submission_id=submission.pk, version_id=version.pk) }}"><span class="tonow" data-timestamp="{{ version.timestamp|timestamp }}">{{ version.timestamp.strftime('%b %d %Y %I:%M %p') }}</span> &mdash; <em>{{ version.identity }}</em></a></li>
     {% endif %}
     {%- endfor %}
   </ul>
@@ -34,7 +34,7 @@
           <strong>{% trans %}Edited by{% endtrans %}</strong>: {{ submission_version.identity }}
         </div>
         <div class="list-group-item">
-          <strong>{% trans %}Updated{% endtrans %}</strong>: <span class="timestamp">{{ submission_version.timestamp|timestamp }}</span>
+          <strong>{% trans %}Updated{% endtrans %}</strong>: <span class="timestamp" data-timestamp="{{ submission_version.timestamp|timestamp }}">{{ submission_version.timestamp.strftime('%b %d %Y %I:%M %p') }}</span>
         </div>
       </div>
       <table class="table table-striped">

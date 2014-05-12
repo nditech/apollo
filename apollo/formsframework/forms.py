@@ -31,6 +31,7 @@ def update_submission_version(sender, document, **kwargs):
     services.submission_versions.create(
         submission=document,
         data=json.dumps(version_data),
+        timestamp=datetime.utcnow(),
         channel=channel,
         identity=g.get('phone', '')
     )
@@ -95,7 +96,7 @@ class BaseQuestionnaireForm(Form):
                                      self.data.keys())
                 change_detected = False
                 for form_field in form_fields:
-                    if self.data.get(form_field):
+                    if isinstance(self.data.get(form_field), int):
                         change_detected = True
                         if (
                             getattr(submission, form_field, None) !=
