@@ -197,8 +197,19 @@ def submission_edit(submission_id):
                     update_submission_version,
                     sender=services.submissions.__model__
                 ):
-                    submission_form.populate_obj(submission)
-                    submission.save()
+                    form_fields = submission_form.data.keys()
+                    changed = False
+                    for form_field in form_fields:
+                        if (
+                            getattr(submission, form_field, None) !=
+                            submission_form.data.get(form_field)
+                        ):
+                            setattr(
+                                submission, form_field,
+                                submission_form.data.get(form_field))
+                            changed = True
+                    if changed:
+                        submission.save()
 
                 return redirect(url_for('submissions.submission_list',
                                         form_id=unicode(submission.form.pk)))
@@ -240,23 +251,45 @@ def submission_edit(submission_id):
             # everything has to be valid at one go. no partial update
             if master_form:
                 if master_form.validate():
-                    master_form.populate_obj(submission.master)
                     with signals.post_save.connected_to(
                         update_submission_version,
                         sender=services.submissions.__model__
                     ):
-                        submission.master.save()
+                        form_fields = master_form.data.keys()
+                        changed = False
+                        for form_field in form_fields:
+                            if (
+                                getattr(submission.master, form_field, None) !=
+                                master_form.data.get(form_field)
+                            ):
+                                setattr(
+                                    submission.master, form_field,
+                                    master_form.data.get(form_field))
+                                changed = True
+                        if changed:
+                            submission.master.save()
                 else:
                     no_error = False
 
             if not readonly:
                 if submission_form.validate():
-                    submission_form.populate_obj(submission)
                     with signals.post_save.connected_to(
                         update_submission_version,
                         sender=services.submissions.__model__
                     ):
-                        submission.save()
+                        form_fields = submission_form.data.keys()
+                        changed = False
+                        for form_field in form_fields:
+                            if (
+                                getattr(submission, form_field, None) !=
+                                submission_form.data.get(form_field)
+                            ):
+                                setattr(
+                                    submission, form_field,
+                                    submission_form.data.get(form_field))
+                                changed = True
+                        if changed:
+                            submission.save()
                 else:
                     no_error = False
 

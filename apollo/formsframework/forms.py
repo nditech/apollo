@@ -96,7 +96,7 @@ class BaseQuestionnaireForm(Form):
                                      self.data.keys())
                 change_detected = False
                 for form_field in form_fields:
-                    if self.data.get(form_field):
+                    if isinstance(self.data.get(form_field), int):
                         change_detected = True
                         if (
                             getattr(submission, form_field, None) !=
