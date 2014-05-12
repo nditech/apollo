@@ -105,7 +105,7 @@ TODO: insert last used identity here
 {{ submission_form.csrf_token() }}
 {%- if form.form_type == 'CHECKLIST' %}
 {%- for f in sibling_forms -%}{{ f.csrf_token() }}{%- endfor -%}{{ master_form.csrf_token() }}
-<table class="table table-bordered table-striped table-hover" style="margin-bottom:5.5em;">
+<table class="table table-bordered table-striped table-hover">
 <tbody>
   <tr>
     <td colspan="2">&nbsp;</td>
@@ -191,6 +191,24 @@ TODO: insert last used identity here
 <input type="hidden" name="{{ submission_form['location'].name }}" value="{{ submission_form['location'].data.id }}" />
 {% if master_form %}<input type="hidden" name="{{ master_form['location'].name }}" value="{{ master_form['location'].data.id }}" />
 {% endif -%}
+
+{%- if form.form_type == 'CHECKLIST' -%}
+<div class="row">
+  <div class="col-md-12">
+    <table class="table table-bordered" style="margin-bottom:5.7em;">
+      <tr class="warning">
+        <td style="text-align:center">{%- trans -%}No comment.{%- endtrans -%}</td>
+      </tr>
+      <tr>
+        <td>
+          <textarea class="form-control"></textarea>
+          <input type="button" class="btn btn-primary pull-right" value="Add Comment" style="margin-top:.5em;">
+        </td>
+      </tr>
+    </table>
+  </div>
+</div>
+{%- endif -%}
 
  <div class="row navbar-fixed-bottom" style="bottom:0px; background:#fff; padding:1em 0 1em 2.6em;">
     <div class="container">
