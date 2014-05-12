@@ -31,6 +31,7 @@ def update_submission_version(sender, document, **kwargs):
     services.submission_versions.create(
         submission=document,
         data=json.dumps(version_data),
+        timestamp=datetime.utcnow(),
         channel=channel,
         identity=g.get('phone', '')
     )
