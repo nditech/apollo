@@ -4,8 +4,10 @@ from mongoengine import MultipleObjectsReturned
 import pandas as pd
 from ..messaging.tasks import send_email
 from .. import services, helpers
+from ..factory import create_celery_app
 from .models import PhoneContact
 
+celery = create_celery_app()
 
 email_template = '''
 Of {{ count }} records, {{ successful_imports }} were successfully imported, {{ suspect_imports }} raised warnings, and {{ unsuccessful_imports }} could not be imported.
@@ -309,6 +311,7 @@ def generate_response_email(count, errors, warnings):
     )
 
 
+@celery.task
 def import_participants(upload_id, mappings):
     upload = services.user_uploads.get(pk=upload_id)
     dataframe = helpers.load_source_file(upload.data)
