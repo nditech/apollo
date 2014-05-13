@@ -195,14 +195,24 @@ TODO: insert last used identity here
 {%- if form.form_type == 'CHECKLIST' -%}
 <div class="row">
   <div class="col-md-12">
-    <table class="table table-bordered" style="margin-bottom:5.7em;">
+    <table class="table table-bordered" id="comments" style="margin-bottom:5.7em;">
+    {% for comment in comments %}
+      <tr>
+        <td>
+          <p><strong>{{ comment.user.email }}</strong> &middot; <em class="tonow" data-timestamp="{{ comment.submit_date|timestamp }}">{{ comment.submit_date.strftime('%b %d %Y %I:%M %p') }}</em></p>
+          <p>{{ comment.comment }}</p>
+        </td>
+      </tr>
+    {% else %}
       <tr class="warning">
         <td style="text-align:center">{%- trans -%}No comment.{%- endtrans -%}</td>
       </tr>
-      <tr>
+    {% endfor %}
+      <tr id="save_comment">
         <td>
-          <textarea class="form-control"></textarea>
-          <input type="button" class="btn btn-primary pull-right" value="Add Comment" style="margin-top:.5em;">
+          <textarea id="comment" class="form-control"></textarea>
+          <input id="submission" name="submission" type="hidden" value="{{ submission.pk|string }}">
+          <input id="postcomment" type="button" class="btn btn-primary pull-right" value="Add Comment" style="margin-top:.5em;">
         </td>
       </tr>
     </table>
@@ -224,6 +234,34 @@ TODO: insert last used identity here
 </div>
 {% endblock %}
 {% block scripts %}
-<script src="{{ url_for('static', filename='js/moment.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/moment-with-langs.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/timestamps.js') }}"></script>
+<script type="text/javascript">
+  $('#postcomment').click(function() {
+    var comment = $('#comment').val(), submission = $('#submission').val();
+
+    if (comment) {
+      $.ajax({
+        url: "{{ url_for('submissions.comment_create_view') }}",
+        type: 'POST',
+        data: {comment: comment, submission: submission},
+        beforeSend: function (xhr) {
+          $('#comment').attr('disabled', 'disabled');
+          $('#save').attr('disabled', 'disabled');
+          $('#loader').attr('style', 'visibility:visible;');
+        }
+      }).done(function(data) {
+        $('#comment').val("");  // clear the comment textbox
+        // if there's a table row displaying "No comment.", remove it
+        $('#comments tr.warning').remove();
+        $('#save_comment').before('<tr><td><p><strong>' + data.user + '</strong> · <em>' + moment.unix(data.date).fromNow() + '</em></p><p>' + data.comment + '</p></td></tr>');
+      }).always(function () {
+        // Re-enable
+        $('#comment').removeAttr('disabled');
+        $('#save').removeAttr('disabled');
+        $('#loader').attr('style', 'visibility:hidden;');
+      });
+    }
+  });
+</script>
 {% endblock %}

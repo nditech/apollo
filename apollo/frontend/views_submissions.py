@@ -159,6 +159,7 @@ def submission_edit(submission_id):
     readonly = not g.deployment.allow_observer_submission_edit
     location_types = services.location_types.find(is_administrative=True)
     template_name = 'frontend/nu_submission_edit.html'
+    comments = services.submission_comments.find(submission=submission)
 
     if request.method == 'GET':
         submission_form = edit_form_class(
@@ -184,7 +185,8 @@ def submission_edit(submission_id):
             sibling_forms=sibling_forms,
             master_form=master_form,
             readonly=readonly,
-            location_types=location_types
+            location_types=location_types,
+            comments=comments
         )
     else:
         if submission.form.form_type == 'INCIDENT':
@@ -308,7 +310,8 @@ def submission_edit(submission_id):
                     master_form=master_form,
                     sibling_forms=sibling_forms,
                     readonly=readonly,
-                    location_types=location_types
+                    location_types=location_types,
+                    comments=comments
                 )
 
 
@@ -320,13 +323,13 @@ def comment_create_view():
     comment = request.form.get('comment')
     saved_comment = services.submission_comments.create(
         submission=submission,
-        user=current_user,
+        user=current_user._get_current_object(),
         comment=comment
     )
 
     return jsonify(
         comment=saved_comment.comment,
-        date=saved_comment.submit_date,
+        date=mkunixtimestamp(saved_comment.submit_date),
         user=saved_comment.user.email
     )
 
@@ -449,30 +452,3 @@ def update_submission_version(sender, document, **kwargs):
         channel=channel,
         identity=identity
     )
-
-
-@route(bp, '/comments', methods=['POST'])
-@login_required
-def create_comment():
-    submission = services.submissions.get_or_404(
-        pk=request.form.get('submission'))
-    comment_text = request.form.get('comment')
-
-    if comment_text:
-        comment = services.submission_comments.create(
-            submission=submission,
-            user=current_user._get_current_object(),
-            comment=comment_text,
-            deployment=g.deployment
-        )
-        data = {
-            'comment': comment.comment,
-            'timestamp': mkunixtimestamp(comment.submit_date),
-            'user': comment.user.email,
-        }
-        response = make_response(jsonify(data))
-        response['Content-Type'] = 'application/json'
-
-        return response
-    else:
-        return '', 400
