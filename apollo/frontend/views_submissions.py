@@ -21,6 +21,7 @@ from .filters import generate_submission_filter
 from .forms import generate_submission_edit_form_class
 from .helpers import (
     DictDiffer, displayable_location_types, get_event, get_form_list_menu)
+from .template_filters import mkunixtimestamp
 from functools import partial
 
 bp = Blueprint('submissions', __name__, template_folder='templates',
@@ -448,3 +449,30 @@ def update_submission_version(sender, document, **kwargs):
         channel=channel,
         identity=identity
     )
+
+
+@route(bp, '/comments', methods=['POST'])
+@login_required
+def create_comment():
+    submission = services.submissions.get_or_404(
+        pk=request.form.get('submission'))
+    comment_text = request.form.get('comment')
+
+    if comment_text:
+        comment = services.submission_comments.create(
+            submission=submission,
+            user=current_user._get_current_object(),
+            comment=comment_text,
+            deployment=g.deployment
+        )
+        data = {
+            'comment': comment.comment,
+            'timestamp': mkunixtimestamp(comment.submit_date),
+            'user': comment.user.email,
+        }
+        response = make_response(jsonify(data))
+        response['Content-Type'] = 'application/json'
+
+        return response
+    else:
+        return '', 400
