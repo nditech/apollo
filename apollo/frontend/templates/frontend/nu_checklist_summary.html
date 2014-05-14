@@ -46,11 +46,11 @@
 							{% else %}
 							{% for opt in stats.options %}
 							{% set option = stats.options[opt] %}
-							<td><strong>{{ ((stats.value_counts[option]|default(0) / stats.value_counts_sum) * 100.0)|round|int }}% ({{ stats.value_counts[option]|default(0) }})</strong></td>
+							<td><strong>{{ stats.value_counts[option]|default(0)|percent_of(stats.value_counts_sum)|round|int }}% ({{ stats.value_counts[option]|default(0) }})</strong></td>
 							{% endfor %}
 							{% endif %}
-							<td><strong>{{ ((stats.count / stats.size) * 100)|round|int }}% ({{ stats.count }}) </strong></td>
-							<td><strong>{{ ((stats.diff / stats.size) * 100)|round|int }}% ({{ stats.diff }}) </strong></td>
+							<td><strong>{{ stats.count|percent_of(stats.size)|round|int }}% ({{ stats.count }}) </strong></td>
+							<td><strong>{{ stats.diff|percent_of(stats.size)|round|int }}% ({{ stats.diff }}) </strong></td>
 						</tr>
 						{% for group in stats.urban %}
 						<tr>
