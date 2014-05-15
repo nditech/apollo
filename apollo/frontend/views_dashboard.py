@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
-from __future__ import unicode_literals
 from . import route
 from ..analyses.dashboard import get_coverage
 from ..deployments.forms import generate_event_selection_form

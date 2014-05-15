@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
-from __future__ import unicode_literals
 from . import route, permissions
 from flask import (Blueprint, render_template)
 from flask.ext.babel import lazy_gettext as _
