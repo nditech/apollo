@@ -7197,6 +7197,25 @@ table .header-fixed {
 .qtipmodal-ie6fix{
 	position: absolute !important;
 }
+html {
+  position: relative;
+  min-height: 100%;
+}
+body {
+  /* Margin bottom by footer height */
+  margin-bottom: 60px;
+}
+#footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  /* Set the fixed height of the footer here */
+  height: 55px;
+  color:#858585 ;
+  background-color:#f4f4f4;
+  border-top: 2px dashed #e3e3e3;
+  box-shadow: 0 0 0 3px #ededed;
+}
 .select2-search-field {height: 25px;}
 td.shrink, th.shrink {
   white-space: nowrap;

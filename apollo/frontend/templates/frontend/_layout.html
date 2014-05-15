@@ -114,9 +114,13 @@
     </div>
     <div class="container">
       {% block content %}{% endblock %}
-      <div class="footer">
-        <footer>{% block footer %}{% endblock %}</footer>
-      </div>
+    </div>
+    <div id="footer">
+        <div class="container">
+          <footer>{% block footer %}{% endblock %}
+            <p style="padding-top:18px;">Copyright © 2014 &middot; Apollo &middot; version 2.1</p>
+          </footer>
+        </div>
     </div>
     {% assets 'apollo_js' %}
     <script type="text/javascript" src="{{ ASSET_URL }}" charset="utf-8"></script>
