@@ -13,16 +13,12 @@ class ParticipantsService(Service):
         ds = Dataset(
             headers=[
                 'Participant ID', 'Name', 'Role', 'Partner',
-                'Location ID', 'Supervisor ID', 'Gender', 'Email', 'Phone',
-                'Phone', 'Phone'
+                'Location ID', 'Supervisor ID', 'Gender', 'Email', 'Phone'
             ]
         )
 
         for participant in queryset:
             # limit to three numbers for export and pad if less than three
-            phone_numbers = [i.number for i in participant.phones][:3]
-            phone_numbers += [''] * (3 - len(phone_numbers))
-
             record = [
                 participant.participant_id,
                 participant.name,
@@ -31,10 +27,9 @@ class ParticipantsService(Service):
                 participant.location.code if participant.location else '',
                 participant.supervisor.participant_id if participant.supervisor else '',
                 participant.gender,
-                participant.email
+                participant.email,
+                participant.phone
             ]
-
-            record.extend(phone_numbers)
 
             ds.append(record)
 
