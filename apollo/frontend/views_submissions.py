@@ -316,6 +316,7 @@ def submission_edit(submission_id):
 
 
 @route(bp, '/comments', methods=['POST'])
+@permissions.edit_submission.require(403)
 @login_required
 def comment_create_view():
     submission = services.submissions.get_or_404(
@@ -324,7 +325,8 @@ def comment_create_view():
     saved_comment = services.submission_comments.create(
         submission=submission,
         user=current_user._get_current_object(),
-        comment=comment
+        comment=comment,
+        submit_date=datetime.utcnow()
     )
 
     return jsonify(
