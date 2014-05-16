@@ -42,7 +42,6 @@ class DeploymentAdminView(BaseAdminView):
         return models.Deployment.objects(pk=user.deployment.pk)
 
     def on_model_change(self, form, model, is_created):
-        # hack because something's seriously 
         raw_data = request.files[form.logo.name].read()
         if len(raw_data) == 0:
             # hack because at this point, model has already been populated
