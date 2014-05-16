@@ -1,11 +1,13 @@
-from flask import redirect, url_for
+import base64
+from flask import redirect, request, url_for
 from flask.ext.admin import BaseView, expose
 from flask.ext.admin.contrib.mongoengine import ModelView
 from flask.ext.admin.form import rules
 from flask.ext.babel import lazy_gettext as _
 from flask.ext.security import current_user
 from flask.ext.security.utils import encrypt_password
-from wtforms import PasswordField
+import magic
+from wtforms import FileField, PasswordField
 from ..core import admin
 from .. import models
 
@@ -27,6 +29,7 @@ class DeploymentAdminView(BaseAdminView):
     can_create = False
     can_delete = False
     column_list = ('name',)
+    form_excluded_columns = ('hostnames',)
     form_rules = [
         rules.FieldSet(
             ('name', 'logo', 'allow_observer_submission_edit'),
@@ -37,6 +40,28 @@ class DeploymentAdminView(BaseAdminView):
     def get_query(self):
         user = current_user._get_current_object()
         return models.Deployment.objects(pk=user.deployment.pk)
+
+    def on_model_change(self, form, model, is_created):
+        # hack because something's seriously 
+        raw_data = request.files[form.logo.name].read()
+        if len(raw_data) == 0:
+            # hack because at this point, model has already been populated
+            model_copy = models.Deployment.objects.get(pk=model.pk)
+            model.logo = model_copy.logo
+        mimetype = magic.from_buffer(raw_data, mime=True)
+
+        # if we don't have a valid image, don't do anything
+        if not mimetype.startswith('image'):
+            return
+
+        encoded = base64.b64encode(raw_data)
+        model.logo = 'data:{};base64,{}'.format(mimetype, encoded)
+
+    def scaffold_form(self):
+        form_class = super(DeploymentAdminView, self).scaffold_form()
+        form_class.logo = FileField(_('Logo'))
+
+        return form_class
 
 
 class EventAdminView(BaseAdminView):
