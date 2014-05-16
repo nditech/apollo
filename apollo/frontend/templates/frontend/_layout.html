@@ -27,7 +27,7 @@
     <div class="navbar navbar-default navbar-static-top">
       <div class="container">
         <div class="navbar-header">
-          <a class="navbar-brand" href="{{ url_for('dashboard.index') }}">Apollo</a>
+          <a class="navbar-brand" href="{{ url_for('dashboard.index') }}">{% if g.deployment.logo %}<img src="{{ g.deployment.logo }}" title="Apollo">{% else %}Apollo{% endif %}</a>
         </div>
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
