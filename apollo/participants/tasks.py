@@ -1,3 +1,4 @@
+from collections import OrderedDict
 from flask import render_template_string
 from flask.ext.babel import lazy_gettext as _
 from mongoengine import MultipleObjectsReturned
@@ -212,7 +213,7 @@ def update_participants(dataframe, event, header_map):
         # wonky hacks to avoid doing addToSet queries
         # for events and phone numbers
         if PHONE_PREFIX:
-            phone_info = {}
+            phone_info = OrderedDict()
             for phone in participant.phones:
                 phone_info[phone.number] = phone.verified
             for column in phone_columns:
