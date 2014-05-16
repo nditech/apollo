@@ -1,5 +1,4 @@
-from datetime import datetime
-from flask.ext.script import Command, prompt, prompt_choices
+from flask.ext.script import Command, prompt_choices
 from .. import services, models
 
 
@@ -23,20 +22,13 @@ class InitializeSubmissionsCommand(Command):
         option = prompt_choices('Role', [
             (str(i), v) for i, v in enumerate(forms, 1)])
         form = forms[int(option) - 1]
-        created = None
-        while True:
-            try:
-                created = datetime.strptime(
-                    prompt('Created date (YYYY-MM-DD)'), '%Y-%m-%d')
-            except ValueError:
-                pass
-            if created:
-                break
 
         for o in services.participants.find(
             role=role, deployment=deployment, event=event
         ):
-            models.Submission.objects.get_or_create(
+            submission, _ = models.Submission.objects.get_or_create(
                 form=form, contributor=o, location=o.location,
-                created=created, deployment=event.deployment,
+                created=event.start_date, deployment=event.deployment,
                 event=event, submission_type='O')
+            # hack to force creation of a master submission
+            submission.master
