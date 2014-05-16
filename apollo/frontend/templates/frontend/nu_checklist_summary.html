@@ -42,7 +42,7 @@
 						<tr>
 							<td class="text-centered"><strong>{% trans %}All{% endtrans %}</strong></td>
 							{% if stats.type == 'continuous' %}
-							<td><strong>{{ stats.mean|round(1)|default(_("N/A")) }}</strong></td>
+							<td><strong>{{ stats.mean|mean_filter }}</strong></td>
 							{% else %}
 							{% for opt in stats.options %}
 							{% set option = stats.options[opt] %}

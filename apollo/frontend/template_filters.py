@@ -1,5 +1,7 @@
 import calendar
 from collections import OrderedDict
+from flask.ext.babel import lazy_gettext as _
+from pandas import isnull
 from ..analyses.common import dataframe_analysis
 
 
@@ -68,6 +70,13 @@ def percent_of(a, b):
         return (a_ / b_) * 100
     except ZeroDivisionError:
         return 0
+
+
+def mean_filter(value):
+    if isnull(value):
+        return _('N/A')
+    else:
+        return int(round(value))
 
 
 def mkunixtimestamp(dt):

@@ -99,6 +99,7 @@ def create_app(settings_override=None, register_security_blueprint=True):
     app.jinja_env.filters.update(pagelist=template_filters.gen_page_list)
     app.jinja_env.filters.update(percent_of=template_filters.percent_of)
     app.jinja_env.filters.update(timestamp=template_filters.mkunixtimestamp)
+    app.jinja_env.filters.update(mean_filter=template_filters.mean_filter)
 
     # Login and logout signal handlers
     # user_logged_out.connect(lambda app, user: session.clear())
