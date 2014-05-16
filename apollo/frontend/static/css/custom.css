@@ -1,3 +1,6 @@
+.navbar-nav > li > a{padding-top: 15px; padding-bottom: 15px;}
+.navbrand-container {position: relative; min-height:50px; padding-top:18px;}
+.navbrand-logo{bottom: 0; margin: auto; position: absolute; top: 10%;}
 html {
   position: relative;
   min-height: 100%;
