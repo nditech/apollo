@@ -7,3 +7,4 @@ from .deployments import (
     CreateEventCommand, ListEventsCommand)
 from .permissions import (
     AddPermissionToRole, RemovePermissionFromRole, ListPermissionsOfRole)
+from .submissions import InitializeSubmissionsCommand

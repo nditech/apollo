@@ -1,5 +1,6 @@
 from tablib import Dataset
 from ..core import Service
+from flask import g
 from .models import (
     Participant, ParticipantRole, ParticipantPartner, ParticipantGroup,
     ParticipantGroupType
@@ -8,6 +9,24 @@ from .models import (
 
 class ParticipantsService(Service):
     __model__ = Participant
+
+    def _set_default_filter_parameters(self, kwargs):
+        """Updates the kwargs by setting the default filter parameters
+        if available.
+
+        :param kwargs: a dictionary of parameters
+        """
+        try:
+            deployment = kwargs.get('deployment', g.get('deployment'))
+            event = kwargs.get('event', g.get('event'))
+            if deployment:
+                kwargs.update({'deployment': deployment})
+            if event:
+                kwargs.update({'event': event})
+        except RuntimeError:
+            pass
+
+        return kwargs
 
     def export_list(self, queryset):
         ds = Dataset(
@@ -29,7 +48,8 @@ class ParticipantsService(Service):
                 participant.role.name,
                 participant.partner.name if participant.partner else '',
                 participant.location.code if participant.location else '',
-                participant.supervisor.participant_id if participant.supervisor else '',
+                participant.supervisor.participant_id if participant.supervisor
+                else '',
                 participant.gender,
                 participant.email,
             ]

@@ -11,7 +11,8 @@ from apollo.manage import \
      ListRolesCommand, AddRoleCommand,
      AddPermissionToRole, RemovePermissionFromRole, ListPermissionsOfRole,
      CreateDeploymentCommand, ListDeploymentsCommand, CreateEventCommand,
-     ListEventsCommand)
+     ListEventsCommand,
+     InitializeSubmissionsCommand)
 
 app = create_app()
 
@@ -41,6 +42,8 @@ manager.add_command('create_deployment', CreateDeploymentCommand())
 manager.add_command('list_deployments', ListDeploymentsCommand())
 manager.add_command('create_event', CreateEventCommand())
 manager.add_command('list_events', ListEventsCommand())
+
+manager.add_command('init_submissions', InitializeSubmissionsCommand())
 
 if __name__ == '__main__':
     manager.run()
