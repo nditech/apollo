@@ -96,8 +96,9 @@ class UserAdminView(BaseAdminView):
     https://github.com/mrjoes/flask-admin/issues/173
     '''
     column_list = ('email',)
+    form_excluded_columns = ('password',)
     form_rules = [
-        rules.FieldSet(('email', 'password', 'active', 'roles'))
+        rules.FieldSet(('email', 'password2', 'active', 'roles'))
     ]
 
     def get_query(self):
@@ -105,12 +106,12 @@ class UserAdminView(BaseAdminView):
         return models.User.objects(deployment=user.deployment)
 
     def on_model_change(self, form, model, is_created):
-        if form.password.data:
+        if form.password2.data:
             model.password = encrypt_password(form.password.data)
 
     def scaffold_form(self):
         form_class = super(UserAdminView, self).scaffold_form()
-        form_class.password = PasswordField(_('New password'))
+        form_class.password2 = PasswordField(_('New password'))
         return form_class
 
 
