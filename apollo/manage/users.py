@@ -53,7 +53,7 @@ class ListUsersCommand(Command):
         option = prompt_choices('Deployment', [
             (str(i), v) for i, v in enumerate(deployments, 1)])
         deployment = deployments[int(option) - 1]
-        for u in users(deployment=deployment):
+        for u in users.find(deployment=deployment):
             print 'User(id=%s email=%s)' % (u.id, u.email)
 
 
