@@ -18,7 +18,7 @@ db = MongoEngine()
 mail = Mail()
 menu = Menu()
 security = Security()
-gravatar = Gravatar(size=25, default="identicon")
+gravatar = Gravatar(size=25, default="identicon", use_ssl=True)
 sentry = Sentry()
 
 
