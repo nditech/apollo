@@ -14,7 +14,7 @@ class Deployment(db.Document):
     participant_extra_fields = db.ListField(
         db.EmbeddedDocumentField(CustomDataField))
     allow_observer_submission_edit = db.BooleanField(default=True)
-    logo = db.ImageField()
+    logo = db.StringField()
 
     meta = {
         'indexes': [
