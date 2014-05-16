@@ -57,7 +57,7 @@ def index():
     if not group:
         data = get_coverage(queryset)
     else:
-        page_title = page_title + ' · {}'.format(group)
+        page_title = page_title + u' · {}'.format(group)
         if not location_type_id:
             location_type = LocationType.root()
         else:

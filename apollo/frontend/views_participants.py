@@ -111,7 +111,7 @@ def participant_list(page=1):
 def participant_edit(pk):
     participant = services.participants.get_or_404(pk=pk)
     page_title = _(
-        'Edit Participant · %(participant_id)s',
+        u'Edit Participant · %(participant_id)s',
         participant_id=participant.participant_id
     )
 
