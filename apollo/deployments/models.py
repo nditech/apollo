@@ -15,6 +15,7 @@ class Deployment(db.Document):
         db.EmbeddedDocumentField(CustomDataField))
     allow_observer_submission_edit = db.BooleanField(default=True)
     logo = db.StringField()
+    include_rejected_in_votes = db.BooleanField(default=False)
 
     meta = {
         'indexes': [
