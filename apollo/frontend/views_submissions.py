@@ -268,8 +268,12 @@ def submission_edit(submission_id):
                                 setattr(
                                     submission.master, form_field,
                                     master_form.data.get(form_field))
+                                submission.master.overridden_fields.append(
+                                    form_field)
                                 changed = True
                         if changed:
+                            submission.master.overridden_fields = list(set(
+                                submission.master.overridden_fields))
                             submission.master.save()
                 else:
                     no_error = False

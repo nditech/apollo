@@ -172,6 +172,7 @@ class Submission(db.DynamicDocument):
     sender_verified = db.BooleanField(default=True)
     quality_checks = db.DictField()
     verification_status = db.StringField()
+    overridden_fields = db.ListField(db.StringField())
     submission_type = db.StringField(
         choices=SUBMISSION_TYPES, default='O', required=True)
 
@@ -226,6 +227,24 @@ class Submission(db.DynamicDocument):
                 setattr(self, field.name, value)
             elif isinstance(value, str) and value.isdigit():
                 setattr(self, field.name, int(value))
+
+    def _update_master(self):
+        '''TODO: update master based on agreed algorithm'''
+        master = self.master
+        if master and master != self:
+            # fetch only fields that have not been overridden
+            fields = filter(lambda f: f.name not in master.overridden_fields, [
+                field for group in self.form.groups
+                for field in group.fields])
+
+            for field in fields:
+                if (
+                    getattr(self, field.name, None) != getattr(
+                        master, field.name, None)
+                ):
+                    setattr(
+                        master, field.name, getattr(self, field.name, None))
+            master.save()
 
     def _compute_verification(self):
         '''Precomputes the logical checks on the submission.'''
@@ -323,6 +342,9 @@ class Submission(db.DynamicDocument):
 
         # update the `updated` timestamp
         self.updated = datetime.utcnow()
+
+        # update the master submission
+        self._update_master()
 
     @property
     def master(self):
