@@ -130,7 +130,7 @@ def _voting_results(form_pk, location_pk=None):
         location = locations.get_or_404(pk=location_pk)
 
     template_name = 'frontend/nu_results.html'
-    page_title = _('%(form_name)% Voting Results', form_name=form.name)
+    page_title = _('%(form_name)s Voting Results', form_name=form.name)
     filter_class = filters.generate_submission_analysis_filter(form)
 
     queryset = submissions.find(
@@ -139,13 +139,23 @@ def _voting_results(form_pk, location_pk=None):
         verification_status__ne=FLAG_STATUSES['rejected'][0])
     filter_set = filter_class(queryset, request.args)
 
+    loc_types = [lt for lt in location_types.root().children if lt.is_political == True]
+    location_tree = {
+        lt.name: locations.find(
+            location_type=lt.name
+        ).order_by('name') for lt in loc_types
+    }
+
     context = {
         'page_title': page_title,
         'filter_form': filter_set.form,
         'location': location,
         'dataframe': filter_set.qs.to_dataframe(),
         'form': form,
-        'location_types': location_types.find(is_political=True)
+        'location_types': loc_types,
+        'location_tree': location_tree,
+        'breadcrumb_data': analysis_breadcrumb_data(form, location),
+        'navigation_data': analysis_navigation_data(form, location)
     }
 
     return render_template(template_name, **context)
