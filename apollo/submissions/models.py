@@ -11,7 +11,8 @@ from datetime import datetime
 from flask.ext.babel import lazy_gettext as _
 from flask.ext.mongoengine import BaseQuerySet
 from mongoengine import Q
-from pandas import DataFrame, isnull
+from pandas import DataFrame, isnull, Series
+import numpy as np
 
 FLAG_STATUSES = {
     'no_problem': ('0', _('No Problem')),
@@ -91,6 +92,16 @@ class SubmissionQuerySet(BaseQuerySet):
             convert_numeric=True)
         if df.empty:
             return df
+
+        # add fields with no values
+        fields = filter(
+            lambda f: f not in df.columns,
+            map(lambda field: field.name, [
+                field for group in self.first().form.groups
+                for field in group.fields]))
+
+        for field in fields:
+            df[field] = Series(np.nan, index=df.index)
 
         # do cleanup of subdocument fields
         for field in self.SUBDOCUMENT_FIELDS:
