@@ -198,16 +198,31 @@ class Submission(db.DynamicDocument):
         '''Computes the completion status of each form group for a submission.
         Should be called automatically on save, preferably in the `clean`
         method.'''
-        for group in self.form.groups:
-            completed = [getattr(self, f.name, None) is not None
-                         for f in group.fields]
+        if self.master != self:
+            for group in self.form.groups:
+                completed = [getattr(self.master, f.name, None) is not None
+                             for f in group.fields]
 
-            if all(completed):
-                self.completion[group.name] = 'Complete'
-            elif any(completed):
-                self.completion[group.name] = 'Partial'
-            else:
-                self.completion[group.name] = 'Missing'
+                if all(completed):
+                    self.completion[group.name] = 'Complete'
+                elif any(completed):
+                    self.completion[group.name] = 'Partial'
+                else:
+                    self.completion[group.name] = 'Missing'
+        elif self.master == self:
+            # update sibling submissions
+            for submission in self.siblings:
+                for group in self.form.groups:
+                    completed = [getattr(self, f.name, None) is not None
+                                 for f in group.fields]
+                    if all(completed):
+                        submission.completion[group.name] = 'Complete'
+                    elif any(completed):
+                        submission.completion[group.name] = 'Partial'
+                    else:
+                        submission.completion[group.name] = 'Missing'
+
+                submission.save(clean=False)
 
     def _update_data_fields(self):
         '''This little utility simply sets any boolean fields to None.
@@ -255,7 +270,9 @@ class Submission(db.DynamicDocument):
                 ):
                     setattr(
                         master, field.name, getattr(self, field.name, None))
-            master.save()
+            master._compute_verification()
+            master.updated = datetime.utcnow()
+            master.save(clean=False)
 
     def _compute_verification(self):
         '''Precomputes the logical checks on the submission.'''
@@ -345,6 +362,9 @@ class Submission(db.DynamicDocument):
         # cleanup data fields
         self._update_data_fields()
 
+        # update the master submission
+        self._update_master()
+
         # update completion status
         self._update_completion_status()
 
@@ -354,15 +374,17 @@ class Submission(db.DynamicDocument):
         # update the `updated` timestamp
         self.updated = datetime.utcnow()
 
-        # update the master submission
-        self._update_master()
-
     @property
     def master(self):
-        if self.form.form_type == 'INCIDENT':
-            return None
+        # a master submission is its own master
+        if self.submission_type == 'M':
+            return self
 
         if not hasattr(self, '_master'):
+            if self.form.form_type == 'INCIDENT':
+                self._master = None
+                return self._master
+
             try:
                 self._master = Submission.objects.get(
                     form=self.form,
