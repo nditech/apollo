@@ -64,7 +64,7 @@ class Form(db.Document):
     '''Primary storage for Checklist/Incident Forms.
     Defines the following attributes:
 
-    :attr:`events` a list of refernces to :class:`core.documents.Event` objects
+    :attr:`events` a list of references to :class:`core.documents.Event` objects
     defining which events this form is to be used in.
 
     :attr:`groups` storage for the form groups in the form.
@@ -90,6 +90,8 @@ class Form(db.Document):
         Event, reverse_delete_rule=db.PULL))
     deployment = db.ReferenceField(Deployment)
     quality_checks = db.ListField(db.DictField())
+    party_mappings = db.DictField()
+    calculate_moe = db.BooleanField(default=False)
 
     meta = {
         'indexes': [
