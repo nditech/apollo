@@ -108,7 +108,8 @@ class UserAdminView(BaseAdminView):
     def on_model_change(self, form, model, is_created):
         if form.password2.data:
             model.password = encrypt_password(form.password.data)
-        model.deployment = current_user.deployment
+        if is_created:
+            model.deployment = current_user.deployment
 
     def scaffold_form(self):
         form_class = super(UserAdminView, self).scaffold_form()

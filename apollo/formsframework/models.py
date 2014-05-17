@@ -75,7 +75,11 @@ class Form(db.Document):
     :attr:`prefix` determines the prefix for the form. This prefix is used in
     identifying which form is to be used in parsing incoming submissions.
 
-    :attr:`name` is the name for this form.'''
+    :attr:`name` is the name for this form.
+    :attr:`party_mappings` uses party identifiers as keys, field names as
+    values.
+    :attr:`calculate_moe` is true if Margin of Error calculations are
+    going to be computed on results for this form.'''
 
     FORM_TYPES = (
         ('CHECKLIST', _('Checklist Form')),
