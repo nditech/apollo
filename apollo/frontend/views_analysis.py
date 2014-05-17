@@ -9,6 +9,7 @@ from flask.ext.security import login_required
 from ..analyses.common import (
     generate_incidents_data, generate_process_data
 )
+from ..submissions.models import FLAG_STATUSES
 from ..services import forms, locations, location_types, submissions
 from . import route, permissions, filters
 from .helpers import analysis_breadcrumb_data, analysis_navigation_data
@@ -19,6 +20,17 @@ def get_analysis_menu():
         'url': url_for('analysis.process_analysis', form_id=unicode(form.pk)),
         'text': form.name,
     } for form in forms.find().order_by('form_type')]
+
+
+def get_result_analysis_menu():
+    return [{
+        'url': url_for(
+            'analysis.results_analysis', form_id=unicode(form.pk)),
+        'text': form.name
+    } for form in forms.find(
+        form_type='CHECKLIST',
+        party_mappings__exists=True
+    ).order_by('form_type')]
 
 
 bp = Blueprint('analysis', __name__, template_folder='templates',
@@ -35,7 +47,7 @@ def _process_analysis(form_id, location_id=None, tag=None):
     page_title = _('%(form)s Analysis', form=form.name)
     grouped = False
     display_tag = None
-    analysis_filter = filters.generate_submission_analysis_filter(form)
+    filter_class = filters.generate_submission_analysis_filter(form)
 
     # set the correct template and fill out the required data
     if form.form_type == 'CHECKLIST':
@@ -64,11 +76,11 @@ def _process_analysis(form_id, location_id=None, tag=None):
             # on the specified tag
             display_tag = tag
             template_name = 'frontend/nu_critical_incident_locations.html'
-            analysis_filter = \
+            filter_class = \
                 filters.generate_critical_incident_location_filter(tag)
 
     # create data filter
-    filter_set = analysis_filter(queryset, request.args)
+    filter_set = filter_class(queryset, request.args)
 
     # set up template context
     context = {}
@@ -109,6 +121,36 @@ def _process_analysis(form_id, location_id=None, tag=None):
     return render_template(template_name, **context)
 
 
+def _voting_results(form_pk, location_pk=None):
+    form = forms.get_or_404(
+        pk=form_pk, form_type='CHECKLIST', party_mappings__exists=True)
+    if location_pk is None:
+        location = locations.root()
+    else:
+        location = locations.get_or_404(pk=location_pk)
+
+    template_name = 'frontend/nu_results.html'
+    page_title = _('%(form_name)% Voting Results', form_name=form.name)
+    filter_class = filters.generate_submission_analysis_filter(form)
+
+    queryset = submissions.find(
+        form=form,
+        submission_type='M',
+        verification_status__ne=FLAG_STATUSES['rejected'][0])
+    filter_set = filter_class(queryset, request.args)
+
+    context = {
+        'page_title': page_title,
+        'filter_form': filter_set.form,
+        'location': location,
+        'dataframe': filter_set.qs.to_dataframe(),
+        'form': form,
+        'location_types': location_types.find(is_political=True)
+    }
+
+    return render_template(template_name, **context)
+
+
 @route(bp, '/submissions/analysis/process/form/<form_id>')
 @register_menu(bp, 'process_analysis', _('Process Analysis'),
                dynamic_list_constructor=partial(get_analysis_menu),
@@ -131,3 +173,20 @@ def process_analysis_with_location(form_id, location_id):
 @login_required
 def process_analysis_with_location_and_tag(form_id, location_id, tag):
     return _process_analysis(form_id, location_id, tag)
+
+
+@route(bp, '/submissions/analysis/results/form/<form_id>')
+@register_menu(bp, 'results_analysis', _('Results Analysis'),
+               dynamic_list_constructor=partial(get_result_analysis_menu),
+               visible_when=lambda: permissions.view_analyses.can())
+@permissions.view_analyses.require(403)
+@login_required
+def results_analysis(form_id):
+    return _voting_results(form_id)
+
+
+@route(bp, '/submissions/analysis/results/form/<form_id>/location/<location_id>')
+@permissions.view_analyses.require(403)
+@login_required
+def results_analysis_with_location(form_id, location_id):
+    return _voting_results(form_id, location_id)
