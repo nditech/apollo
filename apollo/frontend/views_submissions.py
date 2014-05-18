@@ -23,6 +23,7 @@ from .helpers import (
     DictDiffer, displayable_location_types, get_event, get_form_list_menu)
 from .template_filters import mkunixtimestamp
 from functools import partial
+from slugify import slugify_unicode
 
 bp = Blueprint('submissions', __name__, template_folder='templates',
                static_folder='static')
@@ -49,6 +50,33 @@ def submission_list(form_id):
     page = int(data.pop('page', 1))
 
     loc_types = displayable_location_types(is_administrative=True)
+
+    if request.args.get('export'):
+        mode = request.args.get('export')
+        if mode == 'master':
+            queryset = services.submissions.find(
+                submission_type='M',
+                form=form
+            )
+        else:
+            queryset = services.submissions.find(
+                submission_type='O',
+                form=form
+            )
+
+        query_filterset = filter_class(queryset, request.args)
+        dataset = services.submissions.export_list(query_filterset.qs)
+        response = make_response(
+            dataset.xls
+        )
+        basename = slugify_unicode('%s %s %s' % (
+            form.name.lower(),
+            datetime.utcnow().strftime('%Y %m %d %H%M%S'),
+            mode))
+        response.headers['Content-Disposition'] = 'attachment; ' + \
+            'filename=%s.xls' % basename
+        response.headers['Content-Type'] = 'application/vnd.ms-excel'
+        return response
 
     # first retrieve observer submissions for the form
     # NOTE: this implicitly restricts selected submissions
