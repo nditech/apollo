@@ -73,7 +73,9 @@ class SubmissionsService(Service):
                     record = [
                         sibling.contributor.participant_id,
                         sibling.contributor.name,
-                        sibling.contributor.phone] + \
+                        sibling.contributor.phone,
+                        sibling.contributor.phones[-1].number
+                        if sibling.contributor.phones else ''] + \
                         [submission.location_name_path.get(
                          location_type.name, '')
                          for location_type in location_types] + \
