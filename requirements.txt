@@ -32,11 +32,10 @@ numpy==1.8.0
 pandas==0.13.1
 parsimonious==0.5
 passlib==1.6.2
-pillow==2.4.0
 pymongo==2.6.3
 python-dateutil==2.2
 pytz==2014.1
-raven==4.2.1
+raven==4.2.3
 redis==2.9.1
 requests==2.2.1
 six==1.6.1
