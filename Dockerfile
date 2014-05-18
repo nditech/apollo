@@ -9,7 +9,8 @@ RUN easy_install pip
 RUN pip install -U setuptools
 
 ADD requirements.txt /app/
-RUN pip install -r /app/requirements.txt
+RUN pip install --find-links=https://pypi.timbaobjects.com/ndi/apollo/wheels/ -r /app/requirements.txt
+#RUN pip install -r /app/requirements.txt
 
 ADD README /app/
 ADD apollo/ /app/apollo/
