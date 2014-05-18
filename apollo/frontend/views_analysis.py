@@ -154,8 +154,8 @@ def _voting_results(form_pk, location_pk=None):
         'form': form,
         'location_types': loc_types,
         'location_tree': location_tree,
-        'breadcrumb_data': analysis_breadcrumb_data(form, location),
-        'navigation_data': analysis_navigation_data(form, location)
+        'breadcrumb_data': analysis_breadcrumb_data(form, location, analysis_type='results'),
+        'navigation_data': analysis_navigation_data(form, location, analysis_type='results')
     }
 
     return render_template(template_name, **context)

@@ -20,10 +20,7 @@ def create_app(package_name, package_path, settings_override=None):
     app.config.from_object('apollo.settings')
     app.config.from_object(settings_override)
 
-    # fix to allow local debugging if Raven isn't configured
-    # only enable Raven if it's configured
-    if app.config['SENTRY_DSN']:
-        sentry.init_app(app)
+    sentry.init_app(app)
     babel.init_app(app)
     db.init_app(app)
     mail.init_app(app)

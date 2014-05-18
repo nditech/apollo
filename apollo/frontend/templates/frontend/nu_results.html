@@ -1,6 +1,5 @@
 {%- extends 'frontend/_layout.html' -%}
 {%- from 'frontend/macros/analysis_breadcrumb.html' import render_analysis_breadcrumb -%}
-{%- from 'frontend/macros/analysis_navigation.html' import render_analysis_navigation -%}
 {%- block content -%}
 <div class="row">
 	<div class="col-md-9">{{ render_analysis_breadcrumb(breadcrumb_data) }}</div>
@@ -9,11 +8,6 @@
 			<div class="form-group form-container">{{ filter_form.sample(class_='form-control span2 input-sm') }}</div>
 			<button class="btn btn-warning btn-sm" type="submit"><i class="glyphicon glyphicon-search"></i> {% trans %}Filter{% endtrans %}</button>
 		</form>
-	</div>
-</div>
-<div class="row">
-	<div class="col-md-12">
-		{{ render_analysis_navigation(navigation_data) }}
 	</div>
 </div>
 <div class="row">
@@ -90,7 +84,7 @@
 						</tr>
 						{%- for sublocation in location_tree[lt.name] -%}
 						<tr>
-							<th class="gray" style="vertical-align:middle">{{ sublocation.name }} &middot; <span class="muted"><em>{{ sublocation.location_type }}</em></span></th>
+							<td class="gray" style="vertical-align:middle">{{ sublocation.name }} &middot; <span class="muted"><em>{{ sublocation.location_type }}</em></span></td>
 							<th class="numeric gray">{{ dataframe|reported_pct(form.party_mappings.values(), sublocation.location_type, sublocation.name, 'ALL') }}% <br>({{ dataframe|reported(form.party_mappings.values(), sublocation.location_type, sublocation.name, 'ALL') }})</th>
 							<th class="numeric gray">{{ dataframe|missing_pct(form.party_mappings.values(), sublocation.location_type, sublocation.name, 'ALL') }}% <br>({{ dataframe|missing(form.party_mappings.values(), sublocation.location_type, sublocation.name, 'ALL') }})</th>
 							{%- if form.registered_voters_tag -%}

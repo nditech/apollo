@@ -9,6 +9,8 @@
         {% set linkto = url_for('analysis.process_analysis_with_location', form_id=navigation_data.form.pk, location_id=location.pk) %}
       {% endif %}
   <li><a href="{{ linkto }}">{{ location.name }}</a></li>
+  {%- elif navigation_data.analysis_type == 'results' -%}
+  <li><a href="{{ url_for('analysis.results_analysis_with_location', form_id=navigation_data.form.pk, location_id=location.pk) }}">{{ location.name }}</a></li>
     {% endif %}
   {% endfor %}
 </ul>
