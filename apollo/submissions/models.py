@@ -411,18 +411,31 @@ class Submission(db.DynamicDocument):
     @property
     def siblings(self):
         if not hasattr(self, '_siblings'):
-            self._siblings = Submission.objects(
-                form=self.form,
-                location=self.location,
-                created__gte=self.created.combine(self.created,
-                                                  self.created.min.time()),
-                created__lte=self.created.combine(self.created,
-                                                  self.created.max.time()),
-                submission_type='O',               # exclude master
-                deployment=self.deployment,
-                event=self.event,
-                pk__ne=self.pk
-            )
+            if self.pk:
+                self._siblings = Submission.objects(
+                    form=self.form,
+                    location=self.location,
+                    created__gte=self.created.combine(self.created,
+                                                      self.created.min.time()),
+                    created__lte=self.created.combine(self.created,
+                                                      self.created.max.time()),
+                    submission_type='O',               # exclude master
+                    deployment=self.deployment,
+                    event=self.event,
+                    pk__ne=self.pk
+                )
+            else:
+                self._siblings = Submission.objects(
+                    form=self.form,
+                    location=self.location,
+                    created__gte=self.created.combine(self.created,
+                                                      self.created.min.time()),
+                    created__lte=self.created.combine(self.created,
+                                                      self.created.max.time()),
+                    submission_type='O',               # exclude master
+                    deployment=self.deployment,
+                    event=self.event
+                )
         return self._siblings
 
     @property
