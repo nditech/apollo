@@ -1,10 +1,14 @@
-from tablib import Dataset
 from ..core import Service
 from flask import g
 from .models import (
     Participant, ParticipantRole, ParticipantPartner, ParticipantGroup,
     ParticipantGroupType
 )
+import csv
+try:
+    from cStringIO import StringIO
+except:
+    from StringIO import StringIO
 
 
 class ParticipantsService(Service):
@@ -29,13 +33,16 @@ class ParticipantsService(Service):
         return kwargs
 
     def export_list(self, queryset):
-        ds = Dataset(
-            headers=[
-                'Participant ID', 'Name', 'Role', 'Partner',
-                'Location ID', 'Supervisor ID', 'Gender', 'Email', 'Phone Primary',
-                'Phone Secondary #1', 'Phone Secondary #2'
-            ]
-        )
+        headers = [
+            'Participant ID', 'Name', 'Role', 'Partner',
+            'Location ID', 'Supervisor ID', 'Gender', 'Email', 'Phone Primary',
+            'Phone Secondary #1', 'Phone Secondary #2'
+        ]
+        output = StringIO()
+        writer = csv.writer(output)
+        writer.writerow(headers)
+        yield output.getvalue()
+        output.close()
 
         for participant in queryset:
             # limit to three numbers for export and pad if less than three
@@ -56,9 +63,11 @@ class ParticipantsService(Service):
 
             record.extend(phone_numbers)
 
-            ds.append(record)
-
-        return ds
+            output = StringIO()
+            writer = csv.writer(output)
+            writer.writerow(record)
+            yield output.getvalue()
+            output.close()
 
 
 class ParticipantRolesService(Service):

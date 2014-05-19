@@ -2,7 +2,11 @@ from ..core import Service
 from .models import Message
 from datetime import datetime
 from flask import g
-from tablib import Dataset
+import csv
+try:
+    from cStringIO import StringIO
+except:
+    from StringIO import StringIO
 
 
 class MessagesService(Service):
@@ -21,11 +25,14 @@ class MessagesService(Service):
             deployment=g.deployment, event=g.event)
 
     def export_list(self, queryset):
-        ds = Dataset(
-            headers=[
-                'Mobile', 'Text', 'Direction', 'Created', 'Delivered'
-            ]
-        )
+        headers = [
+            'Mobile', 'Text', 'Direction', 'Created', 'Delivered'
+        ]
+        output = StringIO()
+        writer = csv.writer(output)
+        writer.writerow(headers)
+        yield output.getvalue()
+        output.close()
 
         for message in queryset:
             # limit to three numbers for export and pad if less than three
@@ -40,6 +47,8 @@ class MessagesService(Service):
                 if message.delivered else ''
             ]
 
-            ds.append(record)
-
-        return ds
+            output = StringIO()
+            writer = csv.writer(output)
+            writer.writerow(record)
+            yield output.getvalue()
+            output.close()

@@ -2,7 +2,7 @@
 from __future__ import absolute_import
 from datetime import datetime
 from flask import (
-    Blueprint, flash, g, make_response, redirect, render_template, request,
+    Blueprint, flash, g, Response, redirect, render_template, request,
     url_for, abort, current_app
 )
 from flask.ext.babel import lazy_gettext as _
@@ -68,15 +68,14 @@ def participant_list(page=1):
 
     if request.args.get('export'):
         # Export requested
-        response = make_response(
-            services.participants.export_list(queryset_filter.qs).xls
-        )
+        dataset = services.participants.export_list(queryset_filter.qs)
         basename = slugify_unicode('participants %s' % (
             datetime.utcnow().strftime('%Y %m %d %H%M%S')))
-        response.headers['Content-Disposition'] = 'attachment; ' + \
-            'filename=%s.xls' % basename
-        response.headers['Content-Type'] = 'application/vnd.ms-excel'
-        return response
+        content_disposition = 'attachment; filename=%s.csv' % basename
+        return Response(
+            dataset, headers={'Content-Disposition': content_disposition},
+            mimetype="text/csv"
+        )
     else:
         # request.args is immutable, so the .pop() call will fail on it.
         # using .copy() returns a mutable version of it.
