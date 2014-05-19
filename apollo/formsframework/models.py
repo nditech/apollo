@@ -64,8 +64,8 @@ class Form(db.Document):
     '''Primary storage for Checklist/Incident Forms.
     Defines the following attributes:
 
-    :attr:`events` a list of references to :class:`core.documents.Event` objects
-    defining which events this form is to be used in.
+    :attr:`events` a list of references to :class:`core.documents.Event`
+    objects defining which events this form is to be used in.
 
     :attr:`groups` storage for the form groups in the form.
 
