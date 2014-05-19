@@ -304,7 +304,10 @@ def generate_incident_field_stats(tag, dataset, all_tags, labels=None):
 
         for group_name in group_names:
             reported = dataset.get_group(group_name).get(tag).count()
-            total = sum([dataset.get_group(group_name).get(field_tag).count() for field_tag in all_tags if field_tag in dataset])
+            total = sum([
+                dataset.get_group(group_name).get(field_tag).count()
+                for field_tag in all_tags
+                if field_tag in dataset.get_group(group_name)])
             missing = total - reported
 
             percent_reported = percent_of(reported, total)
