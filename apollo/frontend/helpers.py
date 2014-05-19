@@ -45,6 +45,7 @@ def set_request_presets():
     globally so they can be reused by other components for restricting
     filter results by deployment and/or event, for instance.
     """
+    session.permanent = True
     hostname = urlparse(request.url).hostname
 
     try:
