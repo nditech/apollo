@@ -242,8 +242,12 @@ def submission_edit(submission_id):
                     if changed:
                         submission.save()
 
-                return redirect(url_for('submissions.submission_list',
-                                        form_id=unicode(submission.form.pk)))
+                if request.args.get('next'):
+                    return redirect(request.args.get('next'))
+                else:
+                    return redirect(url_for(
+                        'submissions.submission_list',
+                        form_id=unicode(submission.form.pk)))
             else:
                 return render_template(
                     template_name,
@@ -329,10 +333,13 @@ def submission_edit(submission_id):
                     no_error = False
 
             if no_error:
-                return redirect(url_for(
-                    'submissions.submission_list',
-                    form_id=unicode(submission.form.pk)
-                ))
+                if request.args.get('next'):
+                    return redirect(request.args.get('next'))
+                else:
+                    return redirect(url_for(
+                        'submissions.submission_list',
+                        form_id=unicode(submission.form.pk)
+                    ))
             else:
                 return render_template(
                     template_name,
