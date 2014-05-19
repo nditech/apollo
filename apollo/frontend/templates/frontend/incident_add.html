@@ -1,9 +1,9 @@
 {%- extends 'frontend/_layout.html' -%}
 {% block content %}
-<div class="col-md-12">
+<div>
 <form method="POST">
 {{ submission_form.csrf_token() }}
-<table class="table table-bordered table-striped table-hover" style="margin-bottom:5.5em;">
+<table class="table table-bordered table-striped table-hover">
   <tbody>
     <tr>
       <td>{% trans %}Participant{% endtrans %}</td>
@@ -15,7 +15,7 @@
     </tr>
   </tbody>
 </table>
-<table class="table table-bordered table-striped table-hover" style="margin-bottom:5.5em;">
+<table class="table table-bordered table-striped table-hover">
   <tbody>
     <tr>
       <td colspan="2">&nbsp;</td>
@@ -43,21 +43,21 @@
     {% endfor -%}
     <tr>
       <td>{%- trans -%}Witness{%- endtrans -%}</td>
-      <td colspan="2">{{ submission_form.witness }}</td>
+      <td colspan="2">{{ submission_form.witness (class_='form-control span4 input-sm')}}</td>
     </tr>
     <tr>
       <td>{%- trans -%}Description{%- endtrans -%}</td>
-      <td colspan="2">{{ submission_form.description(cols=40, rows=5) }}</td>
+      <td colspan="2">{{ submission_form.description(cols=40, rows=5,class_='form-control span4') }}</td>
     </tr>
     <tr>
       <td>{%- trans -%}Status{%- endtrans -%}</td>
-      <td colspan="2">{{ submission_form.status }}</td>
+      <td colspan="2">{{ submission_form.status (class_='form-control span2 input-sm')}}</td>
     </tr>
   </tbody>
 </table>
 
 
- <div class="row navbar-fixed-bottom" style="bottom:0px; background:#fff; padding-top:1em; padding-bottom:1em;">
+ <div class="row navbar-fixed-bottom" style="bottom:0px; background:#fff; padding:1em 0 1em 2.6em;">
       <div class="container">
         <div class="col-md-offset-8 col-md-2">
           <button type="submit" class="btn btn-info btn-lg btn-block" style= "margin-left:1em;">Save</button>

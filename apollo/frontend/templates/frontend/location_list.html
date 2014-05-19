@@ -6,7 +6,7 @@
   <a class="btn btn-sm btn-default pull-right" href="{{ url_for('locations.locations_list', export='true', **request.args) }}"><i class="glyphicon glyphicon-export"></i> {% trans %}Export{% endtrans %}</a>
   {%- endif -%}
   {%- if perms.import_locations.can() -%}
-  <a class="btn btn-sm btn-info pull-right" href="{{ url_for('locations.locations_import') }}" style="margin-right:1em;"><i class="glyphicon glyphicon-upload glyphicon-white"></i> {% trans %}Import Locations{% endtrans %}</a>
+  <a class="btn btn-sm btn-info pull-right" href="{{ url_for('locations.locations_import') }}" style="margin-right:1em;"><i class="glyphicon glyphicon-import glyphicon-white"></i> {% trans %}Import Locations{% endtrans %}</a>
   {%- endif -%}
 {% endblock %}
 {% block content %}
