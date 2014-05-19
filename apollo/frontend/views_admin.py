@@ -107,7 +107,7 @@ class UserAdminView(BaseAdminView):
 
     def on_model_change(self, form, model, is_created):
         if form.password2.data:
-            model.password = encrypt_password(form.password.data)
+            model.password = encrypt_password(form.password2.data)
         if is_created:
             model.deployment = current_user.deployment
 
