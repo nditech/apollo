@@ -18,7 +18,8 @@ class InitializeSubmissionsCommand(Command):
         option = prompt_choices('Role', [
             (str(i), v) for i, v in enumerate(roles, 1)])
         role = roles[int(option) - 1]
-        forms = services.forms.find(deployment=deployment, events=event)
+        forms = services.forms.find(
+            deployment=deployment, events=event, form_type='CHECKLIST')
         option = prompt_choices('Role', [
             (str(i), v) for i, v in enumerate(forms, 1)])
         form = forms[int(option) - 1]
