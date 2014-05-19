@@ -2,7 +2,7 @@ from . import route, permissions
 from ..services import messages
 from ..messaging.forms import MessagesFilterForm
 from flask import (
-    Blueprint, render_template, request, current_app, Response)
+    Blueprint, render_template, request, current_app, Response, g)
 from flask.ext.babel import lazy_gettext as _
 from flask.ext.menu import register_menu
 from datetime import datetime
@@ -47,7 +47,8 @@ def message_list():
     if request.args.get('export'):
         # Export requested
         dataset = messages.export_list(qs)
-        basename = slugify_unicode('messages %s' % (
+        basename = slugify_unicode('%s messages %s' % (
+            g.event.name.lower(),
             datetime.utcnow().strftime('%Y %m %d %H%M%S')))
         content_disposition = 'attachment; filename=%s.csv' % basename
         return Response(

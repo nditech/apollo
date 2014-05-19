@@ -69,7 +69,8 @@ def participant_list(page=1):
     if request.args.get('export'):
         # Export requested
         dataset = services.participants.export_list(queryset_filter.qs)
-        basename = slugify_unicode('participants %s' % (
+        basename = slugify_unicode('%s participants %s' % (
+            g.event.name.lower(),
             datetime.utcnow().strftime('%Y %m %d %H%M%S')))
         content_disposition = 'attachment; filename=%s.csv' % basename
         return Response(

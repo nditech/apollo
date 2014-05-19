@@ -67,7 +67,8 @@ def submission_list(form_id):
         query_filterset = filter_class(queryset, request.args)
         dataset = services.submissions.export_list(
             query_filterset.qs, g.deployment)
-        basename = slugify_unicode('%s %s %s' % (
+        basename = slugify_unicode('%s %s %s %s' % (
+            g.event.name.lower(),
             form.name.lower(),
             datetime.utcnow().strftime('%Y %m %d %H%M%S'),
             mode))
