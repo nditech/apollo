@@ -3,7 +3,11 @@ from .models import Submission, SubmissionComment, SubmissionVersion
 from ..models import LocationType
 from datetime import datetime
 from flask import g
-from tablib import Dataset
+import csv
+try:
+    from cStringIO import StringIO
+except:
+    from StringIO import StringIO
 
 
 class SubmissionsService(Service):
@@ -27,26 +31,39 @@ class SubmissionsService(Service):
 
         return kwargs
 
-    def export_list(self, queryset):
+    def export_list(self, queryset, deployment):
+
         if queryset.count() < 1:
-            ds = Dataset()
+            yield
         else:
-            form = queryset.first().form
+            submission = queryset.first()
+            form = submission.form
             fields = [
                 field.name for group in form.groups for field in group.fields]
             location_types = LocationType.objects(
-                is_political=True, deployment=g.get('deployment'))
-            ds_headers = [
-                'Participant ID', 'Name', 'DB Phone', 'Recent Phone'] + \
-                map(lambda location_type: location_type.name, location_types)
-            ds_headers += ['Location', 'PS Code', 'RV'] + fields \
-                + ['Timestamp', 'Comment']
+                is_political=True, deployment=deployment)
 
-            ds = Dataset(
-                headers=ds_headers
-            )
+            if submission.submission_type == 'O':
+                ds_headers = [
+                    'Participant ID', 'Name', 'DB Phone', 'Recent Phone'] + \
+                    map(lambda location_type: location_type.name,
+                        location_types)
+                ds_headers += ['Location', 'PS Code', 'RV'] + fields \
+                    + ['Timestamp', 'Comment']
+            else:
+                ds_headers = \
+                    map(lambda location_type: location_type.name,
+                        location_types)
+                ds_headers += ['Location', 'PS Code', 'RV'] + fields \
+                    + ['Timestamp']
 
-            for submission in queryset.select_related():
+            output = StringIO()
+            writer = csv.writer(output)
+            writer.writerow(ds_headers)
+            yield output.getvalue()
+            output.close()
+
+            for submission in queryset:
                 if submission.submission_type == 'O':
                     record = [
                         submission.contributor.participant_id,
@@ -69,16 +86,9 @@ class SubmissionsService(Service):
                          submission.comments.first().comment
                          if submission.comments.first() else '']
                 else:
-                    sibling = submission.siblings.first().select_related()
-                    record = [
-                        sibling.contributor.participant_id,
-                        sibling.contributor.name,
-                        sibling.contributor.phone,
-                        sibling.contributor.phones[-1].number
-                        if sibling.contributor.phones else ''] + \
-                        [submission.location_name_path.get(
-                         location_type.name, '')
-                         for location_type in location_types] + \
+                    record = [submission.location_name_path.get(
+                        location_type.name, '')
+                        for location_type in location_types] + \
                         [getattr(submission.location, 'code', '')
                          if submission.location else '',
                          getattr(submission.location, 'political_code', '')
@@ -87,12 +97,13 @@ class SubmissionsService(Service):
                          if submission.location else ''] + \
                         [getattr(submission, field, '')
                          for field in fields] + \
-                        [submission.updated.strftime('%Y-%m-%d %H:%M:%S'),
-                         sibling.comments.first().comment
-                         if sibling.comments.first() else '']
+                        [submission.updated.strftime('%Y-%m-%d %H:%M:%S')]
 
-                ds.append(record)
-        return ds
+                output = StringIO()
+                writer = csv.writer(output)
+                writer.writerow(record)
+                yield output.getvalue()
+                output.close()
 
 
 class SubmissionCommentsService(Service):

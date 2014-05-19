@@ -20,6 +20,7 @@ bp = Blueprint('locations', __name__, template_folder='templates',
                static_folder='static', static_url_path='/core/static')
 location_api = Api(bp)
 
+
 location_api.add_resource(
     api.LocationTypeItemResource,
     '/api/locationtypes/<loc_type_id>',

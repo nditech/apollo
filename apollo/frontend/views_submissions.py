@@ -4,7 +4,7 @@ from datetime import datetime
 import json
 from flask import (
     Blueprint, jsonify, make_response, redirect, render_template, request,
-    url_for, current_app, abort, g
+    url_for, current_app, abort, g, Response
 )
 from flask.ext.babel import lazy_gettext as _
 from flask.ext.security import current_user, login_required
@@ -65,18 +65,18 @@ def submission_list(form_id):
             )
 
         query_filterset = filter_class(queryset, request.args)
-        dataset = services.submissions.export_list(query_filterset.qs)
-        response = make_response(
-            dataset.xls
-        )
+        dataset = services.submissions.export_list(
+            query_filterset.qs, g.deployment)
         basename = slugify_unicode('%s %s %s' % (
             form.name.lower(),
             datetime.utcnow().strftime('%Y %m %d %H%M%S'),
             mode))
-        response.headers['Content-Disposition'] = 'attachment; ' + \
-            'filename=%s.xls' % basename
-        response.headers['Content-Type'] = 'application/vnd.ms-excel'
-        return response
+        content_disposition = 'attachment; filename=%s.csv' % basename
+
+        return Response(
+            dataset, headers={'Content-Disposition': content_disposition},
+            mimetype="text/csv"
+        )
 
     # first retrieve observer submissions for the form
     # NOTE: this implicitly restricts selected submissions
