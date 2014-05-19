@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import ast
+from datetime import timedelta
 import os
 import string
 from urlparse import urlparse
@@ -22,6 +23,7 @@ SECURITY_LOGIN_USER_TEMPLATE = 'frontend/login_user.html'
 SECURITY_EMAIL_SENDER = 'no-reply@apollo.la'
 SECURITY_RECOVERABLE = True
 SECURITY_TRACKABLE = True
+PERMANENT_SESSION_LIFETIME = timedelta(hours=1)
 
 MAIL_SERVER = os.environ.get('MAIL_SERVER', 'localhost')
 MAIL_PORT = os.environ.get('MAIL_PORT', 25)
