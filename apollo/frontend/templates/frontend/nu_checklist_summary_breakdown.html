@@ -39,7 +39,7 @@
 					<tr>
 						<td><strong>{{ location }}</strong></td>
 						{% if tag_stats.type == 'numeric' %}
-						<td>{{ tag_stats.mean|round|int }}</td>
+						<td>{{ tag_stats.mean|mean_filter }}</td>
 						{% else %}
 						{% for value, percentage in tag_stats.histogram %}
 						<td>{{ percentage|round|int }}% ({{ value }})</td>
@@ -54,7 +54,7 @@
 					<tr>
 						<td><span style="margin-left:2em">{{ location }}</span> &middot; <span class="text-muted"><em>{{ _('%(loc_type)s', loc_type=location_type) }}</em></span></td>
 						{% if tag_stats.type == 'numeric' %}
-						<td>{{ location_stats.mean|round|int }}</td>
+						<td>{{ location_stats.mean|mean_filter }}</td>
 						{% else %}
 						{% for value, percentage in location_stats.histogram %}
 						<td>{{ percentage|round|int}}% ({{ value }})</td>
