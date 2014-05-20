@@ -60,7 +60,7 @@ class SubmissionsService(Service):
 
             output = StringIO()
             writer = csv.writer(output)
-            writer.writerow(ds_headers)
+            writer.writerow([unidecode(unicode(i)) for i in ds_headers])
             yield output.getvalue()
             output.close()
 
@@ -71,7 +71,8 @@ class SubmissionsService(Service):
                         getattr(submission.contributor, 'name', ''),
                         getattr(submission.contributor, 'phone', ''),
                         submission.contributor.phones[-1].number
-                        if getattr(submission.contributor, 'phones', None) else ''] + \
+                        if getattr(submission.contributor, 'phones', None)
+                        else ''] + \
                         [submission.location_name_path.get(
                          location_type.name, '')
                          for location_type in location_types] + \
@@ -100,11 +101,9 @@ class SubmissionsService(Service):
                          for field in fields] + \
                         [submission.updated.strftime('%Y-%m-%d %H:%M:%S')]
 
-                record = [unidecode(i) for i in record]
-
                 output = StringIO()
                 writer = csv.writer(output)
-                writer.writerow(record)
+                writer.writerow([unidecode(unicode(i)) for i in record])
                 yield output.getvalue()
                 output.close()
 

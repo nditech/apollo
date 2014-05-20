@@ -5,6 +5,7 @@ from .models import (
     ParticipantGroupType
 )
 import csv
+from unidecode import unidecode
 try:
     from cStringIO import StringIO
 except:
@@ -34,13 +35,13 @@ class ParticipantsService(Service):
 
     def export_list(self, queryset):
         headers = [
-            'Participant ID', 'Name', 'Role', 'Partner',
-            'Location ID', 'Supervisor ID', 'Gender', 'Email', 'Phone Primary',
-            'Phone Secondary #1', 'Phone Secondary #2'
+            u'Participant ID', u'Name', u'Role', u'Partner',
+            u'Location ID', u'Supervisor ID', u'Gender', u'Email',
+            u'Phone Primary', u'Phone Secondary #1', u'Phone Secondary #2'
         ]
         output = StringIO()
         writer = csv.writer(output)
-        writer.writerow(headers)
+        writer.writerow([unidecode(unicode(i)) for i in headers])
         yield output.getvalue()
         output.close()
 
@@ -65,7 +66,7 @@ class ParticipantsService(Service):
 
             output = StringIO()
             writer = csv.writer(output)
-            writer.writerow(record)
+            writer.writerow([unidecode(unicode(i)) for i in record])
             yield output.getvalue()
             output.close()
 

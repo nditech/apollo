@@ -31,7 +31,7 @@ class MessagesService(Service):
         ]
         output = StringIO()
         writer = csv.writer(output)
-        writer.writerow(headers)
+        writer.writerow([unidecode(unicode(i)) for i in headers])
         yield output.getvalue()
         output.close()
 
@@ -52,6 +52,6 @@ class MessagesService(Service):
 
             output = StringIO()
             writer = csv.writer(output)
-            writer.writerow(record)
+            writer.writerow([unidecode(unicode(i)) for i in record])
             yield output.getvalue()
             output.close()
