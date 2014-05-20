@@ -3,6 +3,7 @@ from .models import Submission, SubmissionComment, SubmissionVersion
 from ..models import LocationType
 from datetime import datetime
 from flask import g
+from unidecode import unidecode
 import csv
 try:
     from cStringIO import StringIO
@@ -98,6 +99,8 @@ class SubmissionsService(Service):
                         [getattr(submission, field, '')
                          for field in fields] + \
                         [submission.updated.strftime('%Y-%m-%d %H:%M:%S')]
+
+                record = [unidecode(i) for i in record]
 
                 output = StringIO()
                 writer = csv.writer(output)

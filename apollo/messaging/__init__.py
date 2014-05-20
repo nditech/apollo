@@ -2,6 +2,7 @@ from ..core import Service
 from .models import Message
 from datetime import datetime
 from flask import g
+from unidecode import unidecode
 import csv
 try:
     from cStringIO import StringIO
@@ -46,6 +47,8 @@ class MessagesService(Service):
                 message.delivered.strftime('%Y-%m-%d %H:%M:%S')
                 if message.delivered else ''
             ]
+
+            record = [unidecode(i) for i in record]
 
             output = StringIO()
             writer = csv.writer(output)
