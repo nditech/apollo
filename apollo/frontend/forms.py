@@ -276,7 +276,7 @@ def generate_submission_edit_form_class(form):
         )
 
     return type(
-        str('SubmissionEditForm'),
+        'SubmissionEditForm',
         (WTSecureForm,),
         form_fields
     )

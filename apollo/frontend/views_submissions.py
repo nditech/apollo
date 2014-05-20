@@ -167,10 +167,8 @@ def submission_create(form_id):
         submission.event = g.event
         submission.form = form
         submission.submission_type = 'O'
-        submission.contributor = services.participants.get(
-            pk=submission_form.contributor.data)
-        submission.location = services.locations.get(
-            pk=submission_form.location.data)
+        submission.contributor = submission_form.contributor.data
+        submission.location = submission_form.location.data
 
         submission.save()
 

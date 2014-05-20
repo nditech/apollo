@@ -42,7 +42,7 @@
     {% for field in form_fields %}
     <td class="text-center">{%- if submission[field.name] -%}<img src="{{ url_for('static', filename='img/red_dot.png') }}" height="11" width="11" />{% else %}&nbsp;{% endif %}</td>
     {% endfor %}
-    <td>
+    <td class="text-center">
     {% if form.form_type == 'INCIDENT' %}
     {%- set status = submission.status -%}
     {%- if status == 'confirmed' -%}
