@@ -32,7 +32,7 @@
 							{% if stats.type == 'continuous' %}
 							<td bgcolor="#eee">{% trans %}Mean{% endtrans %}</td>
 							{% else %}
-							{% for label, unused in stats.options|dictsort %}
+							{% for label, unused in stats.options|dictsort(false, 'value') %}
 							<td>{{ _('%(label)s', label=label) }}</td>
 							{% endfor %}
 							{% endif %}
@@ -44,7 +44,7 @@
 							{% if stats.type == 'continuous' %}
 							<td><strong>{{ stats.mean|mean_filter }}</strong></td>
 							{% else %}
-							{% for opt, option in stats.options|dictsort %}
+							{% for opt, option in stats.options|dictsort(false, 'value') %}
 							<td><strong>{{ stats.value_counts[option]|default(0)|percent_of(stats.value_counts_sum)|round|int }}% ({{ stats.value_counts[option]|default(0) }})</strong></td>
 							{% endfor %}
 							{% endif %}
