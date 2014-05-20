@@ -1,5 +1,4 @@
-# TODO: original used settings. change if necessary
-BIG_N = 6000000
+from flask import current_app
 
 
 def proportion(df, options, param):
@@ -21,9 +20,12 @@ def variance(df, options, param):
     mbar = m.sum(axis=0) / m.size
     mbarsquare = mbar * mbar
 
-    f = m.sum(axis=0) / BIG_N
+    f = m.sum(axis=0) / current_app.config.get('BIG_N')
     k = m.size
     am = a * m
 
-    return ((1 - f) / (k * mbarsquare)) * ((asquare.sum(axis=0) -
-        2 * p * am.sum(axis=0) + psquare * msquare.sum(axis=0)) / (k - 1))
+    return (
+        (1 - f) / (k * mbarsquare)) * ((asquare.sum(axis=0) -
+                                        2 * p * am.sum(axis=0) +
+                                        psquare *
+                                        msquare.sum(axis=0)) / (k - 1))
