@@ -265,6 +265,7 @@ def generate_submission_edit_form_class(form):
     if form.form_type == 'INCIDENT':
         form_fields['status'] = SelectField(
             choices=STATUS_CHOICES,
+            filters=[lambda data: data if data else None],
             validators=[validators.optional()]
         )
         form_fields['witness'] = SelectField(
