@@ -81,7 +81,11 @@ def compute_location_path(location):
     if not location or not isinstance(location, Location):
         return None
 
-    return {
+    path = {
         ancestor.location_type: ancestor.name
         for ancestor in location.ancestors_ref
     }
+    path.update({
+        location.location_type: location.name
+    })
+    return path
