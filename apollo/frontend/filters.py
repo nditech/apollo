@@ -6,7 +6,7 @@ from .helpers import get_event
 from collections import defaultdict, OrderedDict
 from flask.ext.babel import lazy_gettext as _
 from .. import services
-from wtforms import widgets
+from wtforms import widgets, fields
 
 
 class EventFilter(CharFilter):
@@ -273,6 +273,23 @@ class FormGroupFilter(ChoiceFilter):
         return queryset
 
 
+class SubmissionStatus(ChoiceFilter):
+    field_class = fields.SelectMultipleField
+
+    def __init__(self, *args, **kwargs):
+        kwargs['choices'] = (
+            ('None', _('Unmarked')),
+            ('confirmed', _('Confirmed')), ('rejected', _('Rejected')),
+            ('citizen', _('Citizen Report')))
+        super(SubmissionStatus, self).__init__(*args, **kwargs)
+
+    def filter(self, queryset, values):
+        if values:
+            values = map(lambda opt: None if opt == 'None' else opt, values)
+            queryset = queryset(status__in=values)
+        return queryset
+
+
 def basesubmission_filterset():
     class BaseSubmissionFilterSet(FilterSet):
         event = EventFilter()
@@ -389,11 +406,7 @@ def generate_submission_filter(form):
 
     # and status for incident forms
     if form.form_type == 'INCIDENT':
-        attributes['status'] = DynamicFieldFilter(
-            choices=(('', _('Status')), ('NULL', _('Unmarked')),
-                    ('confirmed', _('Confirmed')), ('rejected', _('Rejected')),
-                    ('citizen', _('Citizen Report')))
-        )
+        attributes['status'] = SubmissionStatus()
 
     return type(
         'SubmissionFilterSet',

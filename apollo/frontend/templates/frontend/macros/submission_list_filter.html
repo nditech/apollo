@@ -7,7 +7,11 @@
 {{ filter_form.sample(class_='form-control span2 input-sm') }}
 </div>
 <div class="form-group">
+{%- if form.form_type == 'CHECKLIST' %}
 {{ filter_form.location(class_='select2-container span4 select2') }}
+{% else -%}
+{{ filter_form.location(class_='select2-container span3 select2') }}
+{%- endif %}
 </div>
 {%- if form.form_type == 'CHECKLIST' -%}
 {%- for group in form.groups -%}
@@ -18,7 +22,7 @@
 {%- endfor -%}
 {%- else -%}
 <div class="form-group">
-{{ filter_form.status(class_='form-control span2 input-sm') }}
+{{ filter_form.status(class_='select2-container span3 select2', style='height:26px', placeholder=_('All Statuses')) }}
 </div>
 {%- endif -%}
 <div class="form-group">
