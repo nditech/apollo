@@ -56,7 +56,8 @@ class SubmissionsService(Service):
                     ds_headers += ['Location', 'PS Code', 'RV'] + fields \
                         + ['Timestamp', 'Comment']
             else:
-                ds_headers = \
+                ds_headers = [
+                    'Participant ID', 'Name', 'DB Phone', 'Recent Phone'] + \
                     map(lambda location_type: location_type.name,
                         location_types)
                 ds_headers += ['Location', 'PS Code', 'RV'] + fields \
@@ -97,9 +98,20 @@ class SubmissionsService(Service):
                          submission.comments.first().comment
                          if submission.comments.first() else '']
                 else:
-                    record = [submission.location_name_path.get(
-                        location_type.name, '')
-                        for location_type in location_types] + \
+                    sib = submission.siblings.first()
+                    record = [
+                        getattr(sib.contributor, 'participant_id', '')
+                        if sib else '',
+                        getattr(sib.contributor, 'name', '')
+                        if sib else '',
+                        getattr(sib.contributor, 'phone', '')
+                        if sib else '',
+                        sib.contributor.phones[-1].number
+                        if getattr(sib.contributor, 'phones', None)
+                        else '' if sib else ''] + \
+                        [submission.location_name_path.get(
+                            location_type.name, '')
+                         for location_type in location_types] + \
                         [getattr(submission.location, 'code', '')
                          if submission.location else '',
                          getattr(submission.location, 'political_code', '')
