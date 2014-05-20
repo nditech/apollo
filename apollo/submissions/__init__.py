@@ -49,8 +49,12 @@ class SubmissionsService(Service):
                     'Participant ID', 'Name', 'DB Phone', 'Recent Phone'] + \
                     map(lambda location_type: location_type.name,
                         location_types)
-                ds_headers += ['Location', 'PS Code', 'RV'] + fields \
-                    + ['Timestamp', 'Comment']
+                if form.form_type == 'INCIDENT':
+                    ds_headers += ['Location', 'PS Code', 'RV'] + fields \
+                        + ['Timestamp', 'Witness', 'Status', 'Description']
+                else:
+                    ds_headers += ['Location', 'PS Code', 'RV'] + fields \
+                        + ['Timestamp', 'Comment']
             else:
                 ds_headers = \
                     map(lambda location_type: location_type.name,
@@ -84,6 +88,11 @@ class SubmissionsService(Service):
                          if submission.location else ''] + \
                         [getattr(submission, field, '')
                          for field in fields] + \
+                        [submission.updated.strftime('%Y-%m-%d %H:%M:%S'),
+                         getattr(submission, 'witness', ''),
+                         getattr(submission, 'status', ''),
+                         getattr(submission, 'description', '')] \
+                        if form.form_type == 'INCIDENT' else \
                         [submission.updated.strftime('%Y-%m-%d %H:%M:%S'),
                          submission.comments.first().comment
                          if submission.comments.first() else '']
