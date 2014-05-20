@@ -13,6 +13,7 @@
 {% endif %}
 {% endblock %}
 {% block content %}{% set form, siblings, master = submission.form, submission.siblings, submission.master %}
+<form method="POST">
 <div>
 <table class="table table-bordered">
 {%- if form.form_type == 'CHECKLIST' -%}
@@ -26,7 +27,9 @@
 {%- endif -%}
 <tr>
   <th>{%- trans -%}Participant{% endtrans -%}</th>
-  <td>{% if submission.contributor %}<strong>{{ submission.contributor.participant_id }}</strong> &mdash; <strong>{{ submission.contributor.name }}</strong>{%- if submission.contributor.phone %} ({{ submission.contributor.phone }}){%- endif %}{% endif %}</td>
+  <td>{% if submission.contributor %}<strong>{{ submission.contributor.participant_id }}</strong> &mdash; <strong>{{ submission.contributor.name }}</strong>{%- if submission.contributor.phone %} ({{ submission.contributor.phone }}){%- endif %}
+  <input type="hidden" name="{{ submission_form['contributor'].name }}" value="{{ submission_form['contributor'].data.id|default('__None', true) }}" />
+  {%- else -%}{{ submission_form.contributor(class_='select2-container span4 input-xlarge select2') }}{% endif %}</td>
   {%- if form.form_type == 'CHECKLIST' -%}
   {%- for sib in siblings -%}
   <td>{% if sib.contributor %}<strong>{{ sib.contributor.name }}</strong>{% if sib.contributor.phone %} ({{ sib.contributor.phone }}){% endif %} &mdash; <strong>{{ sib.contributor.participant_id }}</strong>{% endif %}</td>
@@ -57,9 +60,9 @@ TODO: insert last used identity here
 {%- if form.form_type == 'CHECKLIST' -%}
 <tr>
   <th>{%- trans -%}Location{%- endtrans %}</th>
-  <td><strong>{{ submission.location }}</strong></td>
+  <td><strong>{{ submission.location|default('N/A', true) }}</strong></td>
   {%- for sib in siblings -%}
-  <td><strong>{{ sib.location }}</strong></td>
+  <td><strong>{{ sib.location|default('N/A', true) }}</strong></td>
   {%- endfor -%}
 </tr>
 <tr>
@@ -93,7 +96,9 @@ TODO: insert last used identity here
 {%- else -%}
 <tr>
   <th>{%- trans -%}Location{%- endtrans -%}</th>
-  <td><strong>{{ submission.location }}</strong></td>
+  <td>{% if submission.location %}<strong>{{ submission.location }}</strong><input type="hidden" name="{{ submission_form['location'].name }}" value="{{ submission_form['location'].data.id|default('__None', true) }}" />
+{% else -%}
+  {{ submission_form.location(class_='select2-container span4 input-xlarge select2') }}{% endif %}</td>
 </tr>
 <tr>
   <td>&nbsp;</td>
@@ -110,7 +115,7 @@ TODO: insert last used identity here
 </table>
 </div>
 <div>
-<form method="POST">
+
 {{ submission_form.csrf_token() }}
 {%- if form.form_type == 'CHECKLIST' %}
 {%- for f in sibling_forms -%}{{ f.csrf_token() }}{%- endfor -%}{{ master_form.csrf_token() }}
@@ -196,9 +201,7 @@ TODO: insert last used identity here
   </tbody>
 </table>
 {% endif -%}
-<input type="hidden" name="{{ submission_form['contributor'].name }}" value="{{ submission_form['contributor'].data.id }}" />
-<input type="hidden" name="{{ submission_form['location'].name }}" value="{{ submission_form['location'].data.id }}" />
-{% if master_form %}<input type="hidden" name="{{ master_form['location'].name }}" value="{{ master_form['location'].data.id }}" />
+{% if master_form %}<input type="hidden" name="{{ master_form['location'].name }}" value="{{ master_form['location'].data.id|default('__None', true) }}" />
 {% endif -%}
 
 {%- if form.form_type == 'CHECKLIST' -%}
@@ -239,8 +242,8 @@ TODO: insert last used identity here
       </div>
     </div>
   </div>
-</form>
 </div>
+</form>
 {% endblock %}
 {% block scripts %}
 <script src="{{ url_for('static', filename='js/moment-with-langs.min.js') }}"></script>
