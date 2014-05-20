@@ -119,11 +119,13 @@ class BaseQuestionnaireForm(Form):
                         participant.phones), False)
                     if phone_contact:
                         submission.sender_verified = phone_contact.verified
+                        phone_contact.last_seen = datetime.utcnow()
+                        participant.save()
                     else:
                         submission.sender_verified = False
                         phone_contact = models.PhoneContact(
                             number=g.phone,
-                            verified=False)
+                            verified=False, last_seen=datetime.utcnow())
                         participant.update(add_to_set__phones=phone_contact)
 
                     with signals.post_save.connected_to(

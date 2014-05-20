@@ -9,11 +9,12 @@ from flask.ext.babel import lazy_gettext as _
 from flask.ext.menu import register_menu
 from flask.ext.restful import Api
 from flask.ext.security import current_user, login_required
+from itertools import ifilter
 from ..helpers import stash_file, load_source_file
 from .. import services
 from ..participants import api
 from ..tasks import import_participants, send_messages
-from . import route, helpers, filters
+from . import route, helpers, filters, permissions
 from .forms import (
     generate_participant_edit_form, generate_participant_import_mapping_form,
     DummyForm, ParticipantUploadForm
@@ -106,7 +107,30 @@ def participant_list(page=1):
         )
 
 
+@route(bp, '/participant/phone/verify', methods=['POST'])
+@permissions.edit_participant.require(403)
+@login_required
+def participant_phone_verify():
+    if request.is_xhr:
+        contributor = request.form.get('contributor')
+        phone = request.form.get('phone')
+        submission_id = request.form.get('submission')
+
+        submission = services.submissions.get(id=submission_id)
+        participant = services.participants.get(id=contributor)
+        phone_contact = next(ifilter(
+            lambda p: phone == p.number, participant.phones), False)
+        phone_contact.verified = True
+        participant.save()
+        submission.sender_verified = True
+        submission.save()
+        return 'OK'
+    else:
+        abort(400)
+
+
 @route(bp, '/participant/<pk>', methods=['GET', 'POST'])
+@permissions.edit_participant.require(403)
 @login_required
 def participant_edit(pk):
     participant = services.participants.get_or_404(pk=pk)
@@ -150,6 +174,7 @@ def participant_edit(pk):
 
 
 @route(bp, '/participants/import', methods=['GET', 'POST'])
+@permissions.import_participants.require(403)
 @login_required
 def participant_list_import():
     page_title = _('Import Participants')
@@ -181,6 +206,7 @@ def participant_list_import():
 
 
 @route(bp, '/participants/headers/<pk>', methods=['GET', 'POST'])
+@permissions.import_participants.require(403)
 @login_required
 def participant_headers(pk):
     user = current_user._get_current_object()

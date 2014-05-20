@@ -12,7 +12,7 @@ class Message(db.Document):
     recipient = db.StringField()
     sender = db.StringField()
     text = db.StringField()
-    received = db.DateTimeField(default=datetime.utcnow())
+    received = db.DateTimeField(default=datetime.utcnow)
     delivered = db.DateTimeField()
 
     deployment = db.ReferenceField(Deployment)

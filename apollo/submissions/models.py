@@ -463,7 +463,7 @@ class SubmissionComment(db.Document):
     submission = db.ReferenceField(Submission)
     user = db.ReferenceField(User)
     comment = db.StringField()
-    submit_date = db.DateTimeField(default=datetime.utcnow())
+    submit_date = db.DateTimeField(default=datetime.utcnow)
 
     deployment = db.ReferenceField(Deployment)
 
@@ -478,7 +478,7 @@ class SubmissionVersion(db.Document):
     )
     submission = db.ReferenceField(Submission, required=True)
     data = db.StringField(required=True)
-    timestamp = db.DateTimeField(default=datetime.utcnow())
+    timestamp = db.DateTimeField(default=datetime.utcnow)
     channel = db.StringField(choices=CHANNEL_CHOICES, required=True)
     identity = db.StringField(default='unknown', required=True)
 
