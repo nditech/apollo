@@ -66,11 +66,11 @@ class SubmissionsService(Service):
             for submission in queryset:
                 if submission.submission_type == 'O':
                     record = [
-                        submission.contributor.participant_id,
-                        submission.contributor.name,
-                        submission.contributor.phone,
+                        getattr(submission.contributor, 'participant_id', ''),
+                        getattr(submission.contributor, 'name', ''),
+                        getattr(submission.contributor, 'phone', ''),
                         submission.contributor.phones[-1].number
-                        if submission.contributor.phones else ''] + \
+                        if getattr(submission.contributor, 'phones', None) else ''] + \
                         [submission.location_name_path.get(
                          location_type.name, '')
                          for location_type in location_types] + \
