@@ -78,3 +78,5 @@ MESSAGING_OUTGOING_GATEWAY = ast.literal_eval(
         'password': 'bar'
     }'''))
 MESSAGING_CC = ast.literal_eval(os.environ.get('MESSAGING_CC', '[]'))
+
+BIG_N = ast.literal_eval(os.environ.get('BIG_N', '60000'))
