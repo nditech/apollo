@@ -56,4 +56,4 @@ class UserUpload(db.Document):
     user = db.ReferenceField(User, required=True)
     data = db.FileField()
     event = db.ReferenceField(Event)
-    created = db.DateTimeField(default=datetime.utcnow())
+    created = db.DateTimeField(default=datetime.utcnow)

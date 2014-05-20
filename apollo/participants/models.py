@@ -1,3 +1,4 @@
+from datetime import datetime
 from flask.ext.babel import lazy_gettext as _
 from flask.ext.mongoengine import BaseQuerySet
 from mongoengine import Q
@@ -58,6 +59,7 @@ class ParticipantGroup(db.Document):
 class PhoneContact(db.EmbeddedDocument):
     number = db.StringField()
     verified = db.BooleanField(default=False)
+    last_seen = db.DateTimeField()
 
     def __unicode__(self):
         return self.number
@@ -122,3 +124,14 @@ class Participant(db.DynamicDocument):
         self.reload()
 
     phone = property(get_phone, set_phone)
+
+    @property
+    def last_seen_phone(self):
+        if self.phones:
+            phones = sorted(
+                self.phones, key=lambda p: p.last_seen if p.last_seen
+                else datetime.fromtimestamp(0))
+            phones.reverse()
+            return phones[0].number
+        else:
+            return None

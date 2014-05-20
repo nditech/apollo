@@ -34,6 +34,15 @@
   {%- endif -%}
 </tr>
 <tr>
+  <th>{%- trans -%}Texted Phone{% endtrans -%}</th>
+  <td>{% if submission.contributor and submission.contributor.last_seen_phone %}<strong>{{ submission.contributor.last_seen_phone|default('N/A', true) }}</strong> {% if submission.sender_verified %}<span id="verification_status" class="label label-success">verified</span>{% else %}<span id="verification_status" class="label label-warning">unverified</span> {% if perms.edit_participant.can() %}<button id="verify_button" data-contributor="{{ submission.contributor.id }}" data-phone="{{ submission.contributor.last_seen_phone|default('', true) }}" data-submission="{{ submission.id }}" type="button" class="btn btn-default btn-xs" title="Verify Phone"><span class="glyphicon glyphicon-ok-sign"></span></button>{% endif %}{% endif %}{% else %}N/A{% endif %}</td>
+  {%- if form.form_type == 'CHECKLIST' -%}
+  {%- for sib in siblings -%}
+  <td>{% if sib.contributor and sib.contributor.last_seen_phone %}<strong>{{ sib.contributor.last_seen_phone|default('N/A', true) }}</strong> {% if sib.sender_verified %}<span id="verification_status" class="label label-success">verified</span>{% else %}<span id="verification_status" class="label label-warning">unverified</span> {% if perms.edit_participant.can() %}<button id="verify_button" data-contributor="{{ sib.contributor.id }}" data-phone="{{ sib.contributor.last_seen_phone|default('', true) }}" data-submission="{{ sib.id }}" type="button" class="btn btn-default btn-xs" title="Verify Phone"><span class="glyphicon glyphicon-ok-sign"></span></button>{% endif %}{% endif %}{% else %}N/A{% endif %}</td>
+  {%- endfor -%}
+  {%- endif -%}
+</tr>
+<tr>
   <th>{%- trans -%}Role{% endtrans -%}</th>
   <td>{{ submission.contributor.role }}</td>
   {%- if form.form_type == 'CHECKLIST' -%}
@@ -260,6 +269,30 @@ TODO: insert last used identity here
         $('#comment').removeAttr('disabled');
         $('#save').removeAttr('disabled');
         $('#loader').attr('style', 'visibility:hidden;');
+      });
+    }
+  });
+  $('#verify_button').click(function() {
+    var phone = $(this).data('phone');
+    var contributor = $(this).data('contributor');
+    var submission = $(this).data('submission');
+
+    if (phone && contributor) {
+      $.ajax({
+        url: "{{ url_for('participants.participant_phone_verify') }}",
+        type: 'POST',
+        data: {phone: phone, contributor: contributor, submission: submission},
+        beforeSend: function (xhr) {
+          $('#verify_button').attr('disabled', 'disabled');
+        }
+      }).done(function() {
+        $('#verify_button').remove();
+        $('#verification_status').removeClass('label-warning');
+        $('#verification_status').addClass('label-success');
+        $('#verification_status').html('verified');
+      }).error(function () {
+        // Re-enable
+        $('#verify_button').removeAttr('disabled');
       });
     }
   });
