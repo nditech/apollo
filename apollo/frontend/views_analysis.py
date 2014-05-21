@@ -136,10 +136,12 @@ def _voting_results(form_pk, location_pk=None):
     queryset = submissions.find(
         form=form,
         submission_type='M',
-        verification_status__ne=FLAG_STATUSES['rejected'][0])
+        verification_status__ne=FLAG_STATUSES['rejected'][0],
+        )
     filter_set = filter_class(queryset, request.args)
 
-    loc_types = [lt for lt in location_types.root().children if lt.is_political == True]
+    loc_types = [lt for lt in location_types.root().children
+                 if lt.is_political is True]
     location_tree = {
         lt.name: locations.find(
             location_type=lt.name
@@ -154,8 +156,10 @@ def _voting_results(form_pk, location_pk=None):
         'form': form,
         'location_types': loc_types,
         'location_tree': location_tree,
-        'breadcrumb_data': analysis_breadcrumb_data(form, location, analysis_type='results'),
-        'navigation_data': analysis_navigation_data(form, location, analysis_type='results')
+        'breadcrumb_data': analysis_breadcrumb_data(
+            form, location, analysis_type='results'),
+        'navigation_data': analysis_navigation_data(
+            form, location, analysis_type='results')
     }
 
     return render_template(template_name, **context)
