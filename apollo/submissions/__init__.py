@@ -72,9 +72,15 @@ class SubmissionsService(Service):
             for submission in queryset:
                 if submission.submission_type == 'O':
                     record = [
-                        getattr(submission.contributor, 'participant_id', ''),
-                        getattr(submission.contributor, 'name', ''),
-                        getattr(submission.contributor, 'phone', ''),
+                        getattr(submission.contributor, 'participant_id', '')
+                        if getattr(
+                            submission.contributor, 'participant_id', '')
+                        else '',
+                        getattr(submission.contributor, 'name', '')
+                        if getattr(submission.contributor, 'name', '') else '',
+                        getattr(submission.contributor, 'phone', '')
+                        if getattr(
+                            submission.contributor, 'phone', '') else '',
                         submission.contributor.phones[-1].number
                         if getattr(submission.contributor, 'phones', None)
                         else ''] + \
@@ -90,9 +96,12 @@ class SubmissionsService(Service):
                         [getattr(submission, field, '')
                          for field in fields] + \
                         [submission.updated.strftime('%Y-%m-%d %H:%M:%S'),
-                         getattr(submission, 'witness', ''),
-                         getattr(submission, 'status', ''),
-                         getattr(submission, 'description', '')] \
+                         getattr(submission, 'witness', '')
+                         if getattr(submission, 'witness', '') else '',
+                         getattr(submission, 'status', '')
+                         if getattr(submission, 'status', '') else '',
+                         getattr(submission, 'description', '')
+                         if getattr(submission, 'description', '') else ''] \
                         if form.form_type == 'INCIDENT' else \
                         [submission.updated.strftime('%Y-%m-%d %H:%M:%S'),
                          submission.comments.first().comment
