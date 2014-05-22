@@ -155,7 +155,7 @@ def all_votes_total_pct(
                 form, votes, location_type, location, group, pure=True))
     try:
         f = round((num / denom * 100.0), 2)
-        return '%.2f' % f if f % 1 else '%d' % f
+        return '%.2f' % f
     except ZeroDivisionError:
         return 0
 
@@ -188,7 +188,7 @@ def all_votes_total_margin_of_error(
                 variance(df, total_registered, all_votes)) * cv), 2)
         if pd.np.isnan(v) or pd.np.isinf(v):
             v = 0
-        return '%.2f' % v if v % 1 else '%d' % v
+        return '%.2f' % v
     except:
         return 0
 
@@ -296,7 +296,7 @@ def vote_proportion(
         p = round(abs(proportion(df, votes, [vote]) * 100.0), 2)
         if pd.np.isnan(p):
             p = 0
-        return '%.2f' % p if p % 1 else '%d' % p
+        return '%.2f' % p
     except:
         return 0
 
@@ -328,7 +328,7 @@ def rejected_proportion(dataframe, form, location_type, location, group='ALL'):
 
         if pd.np.isnan(r) or pd.np.isinf(r):
             r = 0
-        return '%.2f' % r if r % 1 else '%d' % r
+        return '%.2f' % r
     except:
         return 0
 
@@ -358,7 +358,7 @@ def vote_margin_of_error(
         v = round(abs(math.sqrt(variance(df, votes, [vote])) * cv), 2)
         if pd.np.isnan(v) or pd.np.isinf(v):
             v = 0
-        return '%.2f' % v if v % 1 else '%d' % v
+        return '%.2f' % v
     except:
         return 0
 
@@ -393,7 +393,7 @@ def rejected_margin_of_error(
 
         if pd.np.isnan(r) or pd.np.isinf(r):
             r = 0
-        return '%.2f' % r if r % 1 else '%d' % r
+        return '%.2f' % r
     except:
         return 0
 
@@ -451,7 +451,7 @@ def reported_pct(dataframe, votes, location_type, location, group='ALL'):
         reported(dataframe, votes, location_type, location, group, pure=True))
     try:
         f = round((r / (m + r) * 100.0), 2)
-        return '%.2f' % f if f % 1 else '%d' % f
+        return '%.2f' % f
     except ZeroDivisionError:
         return 0
 
@@ -463,6 +463,6 @@ def missing_pct(dataframe, votes, location_type, location, group='ALL'):
         reported(dataframe, votes, location_type, location, group, pure=True))
     try:
         f = round((m / (m + r) * 100.0), 2)
-        return '%.2f' % f if f % 1 else '%d' % f
+        return '%.2f' % f
     except ZeroDivisionError:
         return 0
