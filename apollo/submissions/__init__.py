@@ -94,7 +94,8 @@ class SubmissionsService(Service):
                          getattr(submission.location, 'registered_voters', '')
                          if submission.location else ''] + \
                         [getattr(submission, field, '')
-                         for field in fields] + \
+                         for field in fields]
+                    record += \
                         [submission.updated.strftime('%Y-%m-%d %H:%M:%S'),
                          getattr(submission, 'witness', '')
                          if getattr(submission, 'witness', '') else '',
