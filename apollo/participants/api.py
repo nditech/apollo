@@ -8,6 +8,7 @@ PARTICIPANT_FIELD_MAPPER = {
     'id': fields.String,
     'name': fields.String,
     'participant_id': fields.String,
+    'role': fields.String,
 }
 
 
