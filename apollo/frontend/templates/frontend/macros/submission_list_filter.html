@@ -1,4 +1,4 @@
-{% macro render_filter_form(form, filter_form) %}
+{% macro render_filter_form(form, filter_form, location) %}
 <form class="form-inline well well-sm filter">
 <div class="form-group">
 {{ filter_form.participant_id(class_='form-control span2 input-sm', placeholder='Participant ID') }}
@@ -8,9 +8,9 @@
 </div>
 <div class="form-group">
 {%- if form.form_type == 'CHECKLIST' %}
-{{ filter_form.location(class_='select2-container span4 select2') }}
+{{ filter_form.location(class_='select2-container span4 select2 select2-locations', **{'data-name': location.name, 'data-location_type': location.location_type}) }}
 {% else -%}
-{{ filter_form.location(class_='select2-container span3 select2') }}
+{{ filter_form.location(class_='select2-container span3 select2 select2-locations', **{'data-name': location.name, 'data-location_type': location.location_type}) }}
 {%- endif %}
 </div>
 {%- if form.form_type == 'CHECKLIST' -%}

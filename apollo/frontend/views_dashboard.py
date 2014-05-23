@@ -4,7 +4,7 @@ from . import route
 from ..analyses.dashboard import get_coverage
 from ..deployments.forms import generate_event_selection_form
 from ..models import LocationType
-from ..services import events, forms, submissions
+from ..services import events, forms, submissions, locations
 from .filters import dashboard_filterset
 from .helpers import get_event, set_event
 from . import permissions
@@ -48,6 +48,10 @@ def index():
         created__gte=event.start_date
     )
     filter_ = dashboard_filterset()(queryset, data=args)
+
+    location = None
+    if args.get('location'):
+        location = locations.find(pk=args.get('location')).first()
 
     # activate sample filter
     filter_form = filter_.form
@@ -93,6 +97,7 @@ def index():
         'data': data,
         'filter_form': filter_form,
         'page_title': page_title,
+        'location': location,
         'locationtype': location_type_id or '',
         'group': group or '',
         'should_expand': should_expand

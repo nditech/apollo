@@ -51,6 +51,10 @@ def participant_list(page=1):
     }
 
     extra_fields = g.deployment.participant_extra_fields or []
+    location = None
+    if request.args.get('location'):
+        location = services.locations.find(
+            pk=request.args.get('location')).first()
 
     for field in extra_fields:
         sortable_columns.update({field.name: field.name})
@@ -99,6 +103,7 @@ def participant_list(page=1):
             extra_fields=extra_fields,
             filter_form=queryset_filter.form,
             form=form,
+            location=location,
             page_title=page_title,
             location_types=helpers.displayable_location_types(
                 is_administrative=True),

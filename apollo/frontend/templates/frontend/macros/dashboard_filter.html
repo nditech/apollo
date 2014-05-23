@@ -1,4 +1,4 @@
-{% macro render_filter_form(filter_form) %}
+{% macro render_filter_form(filter_form, location) %}
 <form class="form-inline" action="{{ request.url }}" method="GET" accept-charset="utf-8" id="filter">
 <div class="form-group">
     {{ filter_form.sample(class_='form-control span2 input-sm') }}
@@ -7,7 +7,7 @@
     {{ filter_form.checklist_form(class_='form-control span2 input-sm') }}
 </div>
 <div class="form-group">
-    {{ filter_form.location(class_='select2-container span4 input-xlarge select2') }}
+    {{ filter_form.location(class_='select2-container span4 input-xlarge select2 select2-locations', **{'data-name': location.name, 'data-location_type': location.location_type}) }}
 </div>
 <div class="form-group">
 	<button class="btn btn-warning btn-sm" type="submit"><i class="glyphicon glyphicon-search"></i> {% trans %}Filter{% endtrans %}</button>

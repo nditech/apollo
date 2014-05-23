@@ -24,70 +24,70 @@ $(function(){
   });
 
   var locationsOptionsString = "{ \
-    allowClear: true, \
     minimumInputLength: 1, \
     loadMorePadding: 5, \
+    placeholder: 'Location', \
     ajax: { \
-      url: '/api/v2/locations/', \
+      url: '/api/locations/', \
       dataType: 'json', \
       quietMillis: 500, \
       data: function (term, page) { \
         return { \
-          name__istartswith: term, \
+          q: term, \
           limit: 20, \
           offset: (page - 1) * 20 \
         }; \
       }, \
       results: function (data, page) { \
-        var more = (page * 20) < data.meta.total_count; \
-        return {results: data.objects, more: more}; \
+        var more = (page * 20) < data.pop().meta.total; \
+        return {results: data, more: more}; \
       } \
     }, \
-    formatResult: function (location, container, query) { return location.name + ' · <i>' + location.type.name + '</i>'; }, \
-    formatSelection: function (location, container) { return location.name + ' · <i>' + location.type.name + '</i>'; }, \
+    formatResult: function (location, container, query) { return location.name + ' · <i>' + location.location_type + '</i>'; }, \
+    formatSelection: function (location, container) { return location.name + ' · <i>' + location.location_type + '</i>'; }, \
     escapeMarkup: function(m) { return m; }, \
     initSelection : function (element, callback) { \
       var location_id = element.val(); \
-      if (location_id) { \
-        var data = {name: element.data('name'), type: {name: element.data('type')}}; \
+      if (location_id && element.data('name') && element.data('location_type')) { \
+        var data = {name: element.data('name'), location_type: element.data('location_type')}; \
         callback(data); \
       } \
     } \
   }";
 
   eval('var locations_select2_options = ' + locationsOptionsString);
-  eval('var locations_select2_noclear_options = ' + locationsOptionsString);
-  locations_select2_noclear_options.allowClear = false;
+  eval('var locations_select2_clearable_options = ' + locationsOptionsString);
+  locations_select2_clearable_options.allowClear = true;
 
-  $('select.select2-locations').select2(locations_select2_options);
-  $('select.select2-locations-noclear').select2(locations_select2_noclear_options);
+  $('input.select2-locations').select2(locations_select2_options);
+  $('input.select2-locations-clear').select2(locations_select2_clearable_options);
 
   var observerOptionsString = "{ \
     minimumInputLength: 1, \
     loadMorePadding: 5, \
     ajax: { \
-      url: '/api/v2/contacts/', \
+      url: '/api/participants/', \
       dataType: 'json', \
       quietMillis: 500, \
       data: function (term, page) { \
         return { \
-          observer_id__istartswith: term, \
+          q: term, \
           limit: 20, \
           offset: (page - 1) * 20 \
         }; \
       }, \
       results: function (data, page) { \
-        var more = (page * 20) < data.meta.total_count; \
-        return {results: data.objects, more: more}; \
+        var more = (page * 20) < data.pop().meta.total; \
+        return {results: data, more: more}; \
       } \
     }, \
-    formatResult: function (observer, container, query) { return observer.observer_id + ' · <i>' + observer.name + '</i>'; }, \
-    formatSelection: function (observer, container) { return observer.observer_id + ' · <i>' + observer.name + '</i>'; }, \
+    formatResult: function (observer, container, query) { return observer.participant_id + ' · <i>' + observer.name + '</i>'; }, \
+    formatSelection: function (observer, container) { return observer.participant_id + ' · <i>' + observer.name + '</i>'; }, \
     escapeMarkup: function(m) { return m; }, \
     initSelection : function (element, callback) { \
       var location_id = element.val(); \
-      if (location_id) { \
-        var data = {name: element.data('name'), observer_id: element.data('id')}; \
+      if (location_id && element.data('name') && element.data('participant_id')) { \
+        var data = {name: element.data('name'), participant_id: element.data('participant_id')}; \
         callback(data); \
       } \
     } \
@@ -97,8 +97,8 @@ $(function(){
   eval('var observer_select2_clearable_options = ' + observerOptionsString);
   observer_select2_clearable_options.allowClear = true;
 
-  $('select.select2-observers').select2(observer_select2_options);
-  $('select.select2-observers-clear').select2(observer_select2_clearable_options);
+  $('input.select2-observers').select2(observer_select2_options);
+  $('input.select2-observers-clear').select2(observer_select2_clearable_options);
 
   // ajax
   jQuery(document).ajaxSend(function(event, xhr, settings) {

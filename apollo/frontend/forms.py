@@ -9,7 +9,7 @@ from wtforms import (
     TextField, ValidationError, validators, widgets
 )
 from ..models import (
-    LocationType, Participant
+    LocationType, Participant, Location
 )
 from ..services import (
     events, locations, participants, participant_partners, participant_roles
@@ -216,7 +216,7 @@ def generate_submission_edit_form_class(form):
         _('Location'),
         allow_blank=True,
         blank_text=_('Location'),
-        model=Participant,
+        model=Location,
         queryset=locations.find()
         )
 

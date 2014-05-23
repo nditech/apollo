@@ -51,6 +51,11 @@ def submission_list(form_id):
 
     loc_types = displayable_location_types(is_administrative=True)
 
+    location = None
+    if request.args.get('location'):
+        location = services.locations.find(
+            pk=request.args.get('location')).first()
+
     if request.args.get('export'):
         mode = request.args.get('export')
         if mode == 'master':
@@ -121,6 +126,7 @@ def submission_list(form_id):
             form=form,
             form_fields=form_fields,
             location_types=loc_types,
+            location=location,
             page_title=page_title,
             pager=query_filterset.qs.paginate(
                 page=page, per_page=current_app.config.get('PAGE_SIZE'))

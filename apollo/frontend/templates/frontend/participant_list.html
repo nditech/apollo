@@ -24,7 +24,7 @@ a:hover.arrow-style{text-decoration:none; color:#333;}
 {%- set flash_msgs = get_flashed_messages(category_filter=['task_begun']) -%}
     <div class="row-fluid">
       <div class="well well-sm filter">
-        {{ render_filter_form(filter_form) }}
+        {{ render_filter_form(filter_form, location) }}
       </div>
     </div>
 {%- if flash_msgs -%}

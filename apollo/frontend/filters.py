@@ -17,13 +17,6 @@ class EventFilter(CharFilter):
         return queryset
 
 
-# class EventChoiceFilter(ChoiceFilter, BaseEventFilterMixin):
-#     def __init__(self, *args, **kwargs):
-#         kwargs['choices'] = _make_choices(
-#             services.events.find().scalar('id', 'name'), _('Choose Event'))
-#         super(EventChoiceFilter, self).__init__(*args, **kwargs)
-
-
 class ChecklistFormFilter(ChoiceFilter):
     def __init__(self, *args, **kwargs):
         kwargs['choices'] = _make_choices(
@@ -35,6 +28,18 @@ class ChecklistFormFilter(ChoiceFilter):
         if value:
             form = services.forms.get(pk=value)
             return queryset(form=form)
+        return queryset
+
+
+class AJAXLocationFilter(CharFilter):
+    def __init__(self, *args, **kwargs):
+        kwargs['widget'] = widgets.HiddenInput()
+        return super(AJAXLocationFilter, self).__init__(*args, **kwargs)
+
+    def filter(self, queryset, value):
+        if value:
+            location = services.locations.get(pk=value)
+            return queryset.filter_in(location)
         return queryset
 
 
@@ -308,7 +313,7 @@ def dashboard_filterset():
     baseclass = basesubmission_filterset()
 
     class DashboardFilterSet(baseclass):
-        location = LocationFilter()
+        location = AJAXLocationFilter()
         checklist_form = ChecklistFormFilter()
 
     return DashboardFilterSet
@@ -319,7 +324,7 @@ def participant_filterset():
         participant_id = ParticipantFilter()
         name = ParticipantNameFilter()
         phone = ParticipantPhoneFilter()
-        location = LocationFilter()
+        location = AJAXLocationFilter()
         sample = SampleFilter()
         role = RoleFilter()
         partner = PartnerFilter()
@@ -402,7 +407,7 @@ def generate_submission_filter(form):
 
     # participant id and location
     attributes['participant_id'] = ParticipantIDFilter()
-    attributes['location'] = LocationFilter()
+    attributes['location'] = AJAXLocationFilter()
 
     # and status for incident forms
     if form.form_type == 'INCIDENT':
