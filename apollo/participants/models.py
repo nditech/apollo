@@ -92,6 +92,14 @@ class Participant(db.DynamicDocument):
     deployment = db.ReferenceField(Deployment)
 
     meta = {
+        'indexes': [
+            ['participant_id'],
+            ['event'],
+            ['name'],
+            ['role'],
+            ['partner'],
+            ['groups']
+        ],
         'queryset_class': ParticipantQuerySet
     }
 

@@ -1,5 +1,6 @@
 from flask import current_app
 from flask.ext.restful import Resource, fields, marshal, marshal_with
+from mongoengine import Q
 from .. import services
 from ..api.common import parser
 
@@ -11,7 +12,8 @@ LOCATION_TYPE_FIELD_MAPPER = {
 LOCATION_FIELD_MAPPER = {
     'id': fields.String,
     'name': fields.String,
-    'location_type': fields.String
+    'location_type': fields.String,
+    'code': fields.String
 }
 
 
@@ -73,17 +75,22 @@ class LocationItemResource(Resource):
 
 class LocationListResource(Resource):
     def get(self):
+        parser.add_argument('q', type=str)
         args = parser.parse_args()
         limit = args.get('limit') or current_app.config.get('PAGE_SIZE')
         offset = args.get('offset') or 0
 
-        queryset = services.locations.find().limit(limit).skip(offset)
+        queryset = services.locations.find()
 
-        # do location name lookups
-        if 'name__startswith' in args:
-            queryset = queryset(
-                name__istartswith=args.pop('name__startswith')
+        # do location lookups
+        if 'q' in args and args.get('q'):
+            queryset = queryset.filter(
+                Q(name__icontains=args.get('q')) |
+                Q(code__istartswith=args.get('q')) |
+                Q(political_code__istartswith=args.get('q'))
             )
+
+        queryset = queryset.limit(limit).skip(offset)
 
         dataset = marshal(
             list(queryset),

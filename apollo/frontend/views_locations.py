@@ -23,22 +23,22 @@ location_api = Api(bp)
 
 location_api.add_resource(
     api.LocationTypeItemResource,
-    '/api/locationtypes/<loc_type_id>',
+    '/api/locationtype/<loc_type_id>',
     endpoint='api.locationtype'
 )
 location_api.add_resource(
     api.LocationTypeListResource,
-    '/api/locationtypes',
+    '/api/locationtypes/',
     endpoint='api.locationtypes'
 )
 location_api.add_resource(
     api.LocationItemResource,
-    '/api/locations/<location_id>',
+    '/api/location/<location_id>',
     endpoint='api.location'
 )
 location_api.add_resource(
     api.LocationListResource,
-    '/api/locations',
+    '/api/locations/',
     endpoint='api.locations'
 )
 

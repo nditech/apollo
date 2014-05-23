@@ -26,8 +26,13 @@ bp = Blueprint('participants', __name__, template_folder='templates',
 participant_api = Api(bp)
 
 participant_api.add_resource(
+    api.ParticipantItemResource,
+    '/api/participant/<participant_id>',
+    endpoint='api.participant'
+)
+participant_api.add_resource(
     api.ParticipantListResource,
-    '/api/participants',
+    '/api/participants/',
     endpoint='api.participants'
 )
 

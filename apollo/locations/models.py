@@ -113,8 +113,10 @@ class Location(db.DynamicDocument):
             ['samples'],
             ['events'],
             ['location_type'],
+            ['name'],
             ['name', 'location_type'],
             ['code'],
+            ['political_code'],
             ['events', 'code']
         ],
         'queryset_class': LocationQuerySet
