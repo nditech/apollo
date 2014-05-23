@@ -43,7 +43,7 @@ def index():
         args.setdefault('checklist_form', unicode(form.id))
 
     queryset = submissions.find(
-        contributor__ne=None,
+        submission_type='O',
         created__lte=event.end_date,
         created__gte=event.start_date
     )

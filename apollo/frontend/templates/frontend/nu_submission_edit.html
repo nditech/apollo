@@ -47,7 +47,7 @@
 </tr>
 <tr>
   <th>{%- trans -%}Role{% endtrans -%}</th>
-  <td>{{ submission.contributor.role }}</td>
+  <td>{{ submission.contributor.role|default('N/A', true) }}</td>
   {%- if form.form_type == 'CHECKLIST' -%}
   {%- for sib in siblings -%}
   <td>{{ sib.contributor.role }}</td>
@@ -88,9 +88,9 @@ TODO: insert last used identity here
 </tr>
 <tr>
   <th>{%- trans -%}Supervisor{%- endtrans %}</th>
-  <td><strong>{{ submission.contributor.supervisor.name|default('<em>N/A</em>', true) }}</strong>{%- if submission.contributor.supervisor.phone %} ({{ submission.contributor.supervisor.phone }}){%- endif -%}</td>
+  <td>{% if submission.contributor and submission.contributor.supervisor %}<strong>{{ submission.contributor.supervisor.name|default('<em>N/A</em>', true) }}</strong>{%- if submission.contributor.supervisor.phone %} ({{ submission.contributor.supervisor.phone }}){%- endif -%}{% else %}N/A{% endif %}</td>
   {%- for sib in siblings -%}
-  <td><strong>{{ sib.contributor.supervisor.name|default('<em>N/A</em>', true) }}</strong>{%- if sib.contributor.supervisor.phone %} ({{ sib.contributor.supervisor.phone }}){%- endif -%}</td>
+  <td>{% if sib.contributor and sib.contributor.supervisor %}<strong>{{ sib.contributor.supervisor.name|default('<em>N/A</em>', true) }}</strong>{%- if sib.contributor.supervisor.phone %} ({{ sib.contributor.supervisor.phone }}){%- endif -%}{% else %}N/A{% endif %}</td>
   {%- endfor -%}
 </tr>
 {%- else -%}
