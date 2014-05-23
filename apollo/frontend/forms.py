@@ -17,6 +17,16 @@ from ..services import (
 from ..wtforms_ext import ExtendedSelectField
 
 
+class CustomModelSelectField(ModelSelectField):
+    def _value(self):
+        if self.raw_data:
+            return self.raw_data[0]
+        elif self.data is not None:
+            return self.data
+        else:
+            return None
+
+
 def _make_choices(qs, placeholder=None):
     if placeholder:
         return [['', placeholder]] + [[unicode(i[0]), i[1]] for i in list(qs)]
@@ -203,19 +213,21 @@ def generate_submission_edit_form_class(form):
         ('reported', _('The incident was reported to me by someone else')),
     )
 
-    form_fields['contributor'] = ModelSelectField(
+    form_fields['contributor'] = CustomModelSelectField(
         _('Participant'),
         allow_blank=True,
         blank_text=_('Participant'),
+        widget=widgets.HiddenInput(),
         validators=[validators.optional()],
         model=Participant,
         queryset=participants.find()
         )
 
-    form_fields['location'] = ModelSelectField(
+    form_fields['location'] = CustomModelSelectField(
         _('Location'),
         allow_blank=True,
         blank_text=_('Location'),
+        widget=widgets.HiddenInput(),
         model=Location,
         queryset=locations.find()
         )

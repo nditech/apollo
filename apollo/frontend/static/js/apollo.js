@@ -15710,6 +15710,7 @@ $(function(){
   var observerOptionsString = "{ \
     minimumInputLength: 1, \
     loadMorePadding: 5, \
+    placeholder: 'Participant', \
     ajax: { \
       url: '/api/participants/', \
       dataType: 'json', \

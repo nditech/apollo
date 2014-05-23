@@ -29,7 +29,7 @@
   <th>{%- trans -%}Participant{% endtrans -%}</th>
   <td>{% if submission.contributor %}<strong>{{ submission.contributor.participant_id }}</strong> &mdash; <strong>{{ submission.contributor.name }}</strong>{%- if submission.contributor.phone %} ({{ submission.contributor.phone }}){%- endif %}
   <input type="hidden" name="{{ submission_form['contributor'].name }}" value="{{ submission_form['contributor'].data.id|default('__None', true) }}" />
-  {%- else -%}{{ submission_form.contributor(class_='select2-container span4 input-xlarge select2') }}{% endif %}</td>
+  {%- else -%}{{ submission_form.contributor(class_='select2-container span4 input-xlarge select2 select2-observers') }}{% endif %}</td>
   {%- if form.form_type == 'CHECKLIST' -%}
   {%- for sib in siblings -%}
   <td>{% if sib.contributor %}<strong>{{ sib.contributor.name }}</strong>{% if sib.contributor.phone %} ({{ sib.contributor.phone }}){% endif %} &mdash; <strong>{{ sib.contributor.participant_id }}</strong>{% endif %}</td>
@@ -60,7 +60,7 @@ TODO: insert last used identity here
 {%- if form.form_type == 'CHECKLIST' -%}
 <tr>
   <th>{%- trans -%}Location{%- endtrans %}</th>
-  <td><strong>{{ submission.location|default('N/A', true) }}</strong></td>
+  <td><strong>{{ submission.location|default('N/A', true) }}</strong><input type="hidden" name="{{ submission_form['location'].name }}" value="{{ submission.location.id|default('__None', true) }}" /></td>
   {%- for sib in siblings -%}
   <td><strong>{{ sib.location|default('N/A', true) }}</strong></td>
   {%- endfor -%}
@@ -96,9 +96,9 @@ TODO: insert last used identity here
 {%- else -%}
 <tr>
   <th>{%- trans -%}Location{%- endtrans -%}</th>
-  <td>{% if submission.location %}<strong>{{ submission.location }}</strong><input type="hidden" name="{{ submission_form['location'].name }}" value="{{ submission_form['location'].data.id|default('__None', true) }}" />
+  <td>{% if submission.location %}<strong>{{ submission.location }}</strong><input type="hidden" name="{{ submission_form['location'].name }}" value="{{ submission.location.id|default('__None', true) }}" />
 {% else -%}
-  {{ submission_form.location(class_='select2-container span4 input-xlarge select2') }}{% endif %}</td>
+  {{ submission_form.location(class_='select2-container span4 input-xlarge select2 select2-locations') }}{% endif %}</td>
 </tr>
 <tr>
   <td>&nbsp;</td>

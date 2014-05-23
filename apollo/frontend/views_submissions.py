@@ -267,16 +267,11 @@ def submission_edit(submission_id):
                 prefix=unicode(submission.master.pk)
             ) if submission.master else None
 
-            if readonly:
-                submission_form = edit_form_class(
-                    obj=submission,
-                    prefix=unicode(submission.pk)
-                )
-            else:
-                submission_form = edit_form_class(
-                    request.form,
-                    prefix=unicode(submission.pk)
-                )
+            submission_form = edit_form_class(
+                request.form,
+                obj=submission,
+                prefix=unicode(submission.pk)
+            )
 
             sibling_forms = [
                 edit_form_class(
@@ -315,27 +310,26 @@ def submission_edit(submission_id):
                 else:
                     no_error = False
 
-            if not readonly:
-                if submission_form.validate():
-                    with signals.post_save.connected_to(
-                        update_submission_version,
-                        sender=services.submissions.__model__
-                    ):
-                        form_fields = submission_form.data.keys()
-                        changed = False
-                        for form_field in form_fields:
-                            if (
-                                getattr(submission, form_field, None) !=
-                                submission_form.data.get(form_field)
-                            ):
-                                setattr(
-                                    submission, form_field,
-                                    submission_form.data.get(form_field))
-                                changed = True
-                        if changed:
-                            submission.save()
-                else:
-                    no_error = False
+            if submission_form.validate():
+                with signals.post_save.connected_to(
+                    update_submission_version,
+                    sender=services.submissions.__model__
+                ):
+                    form_fields = submission_form.data.keys()
+                    changed = False
+                    for form_field in form_fields:
+                        if (
+                            getattr(submission, form_field, None) !=
+                            submission_form.data.get(form_field)
+                        ):
+                            setattr(
+                                submission, form_field,
+                                submission_form.data.get(form_field))
+                            changed = True
+                    if changed:
+                        submission.save()
+            else:
+                no_error = False
 
             if no_error:
                 if request.args.get('next'):
