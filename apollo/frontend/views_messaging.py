@@ -28,9 +28,9 @@ def kannel_view():
 
 
 @route(bp, '/messaging/telerivet', methods=['POST'])
-def telerivet_view(request):
-    form = TelerivetForm(request.POST)
-    if form.validdate():
+def telerivet_view():
+    form = TelerivetForm(request.form)
+    if form.validate():
         msg = form.get_message()
         services.messages.log_message(
             event=g.event, sender=msg.get('sender'), text=msg.get('text'),
