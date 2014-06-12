@@ -1,25 +1,25 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
+
 from datetime import datetime
-from flask import (
-    Blueprint, flash, g, Response, redirect, render_template, request,
-    url_for, abort, current_app
-)
+from itertools import ifilter
+
+from flask import (abort, Blueprint, current_app, flash, g, redirect,
+                   render_template, request, Response, url_for)
 from flask.ext.babel import lazy_gettext as _
 from flask.ext.menu import register_menu
 from flask.ext.restful import Api
 from flask.ext.security import current_user, login_required
-from itertools import ifilter
-from ..helpers import stash_file, load_source_file
+from slugify import slugify_unicode
+
+from . import filters, helpers, permissions, route
 from .. import services
+from ..helpers import load_source_file, stash_file
 from ..participants import api
 from ..tasks import import_participants, send_messages
-from . import route, helpers, filters, permissions
-from .forms import (
-    generate_participant_edit_form, generate_participant_import_mapping_form,
-    DummyForm, ParticipantUploadForm
-)
-from slugify import slugify_unicode
+from .forms import (DummyForm, generate_participant_edit_form,
+                    generate_participant_import_mapping_form,
+                    ParticipantUploadForm)
 
 bp = Blueprint('participants', __name__, template_folder='templates',
                static_folder='static', static_url_path='/core/static')

@@ -1,20 +1,24 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
-from flask import (
-    Blueprint, g, redirect, render_template, request, url_for, flash,
-    current_app
-)
+
+import json
+from datetime import datetime
+
+import networkx as nx
+
+from flask import (Blueprint, current_app, flash, g, redirect, render_template,
+                   request, Response, url_for)
 from flask.ext.babel import lazy_gettext as _
+from flask.ext.menu import register_menu
 from flask.ext.restful import Api
 from flask.ext.security import login_required
-from flask.ext.menu import register_menu
 from mongoengine import ValidationError
-from .. import models, services, helpers
+from slugify import slugify_unicode
+
+from . import filters, permissions, route
+from .. import helpers, models, services
 from ..locations import api
-from . import route, permissions, filters
 from .forms import generate_location_edit_form
-import json
-import networkx as nx
 
 bp = Blueprint('locations', __name__, template_folder='templates',
                static_folder='static', static_url_path='/core/static')
@@ -61,14 +65,26 @@ def locations_list():
 
     subset = queryset_filter.qs.order_by('location_type')
 
-    ctx = dict(
-        args=args,
-        filter_form=queryset_filter.form,
-        page_title=page_title,
-        locations=subset.paginate(
-            page=page, per_page=current_app.config.get('PAGE_SIZE')))
+    if request.args.get('export'):
+        # Export requested
+        dataset = services.locations.export_list(queryset_filter.qs)
+        basename = slugify_unicode('%s locations %s' % (
+            g.event.name.lower(),
+            datetime.utcnow().strftime('%Y %m %d %H%M%S')))
+        content_disposition = 'attachment; filename=%s.csv' % basename
+        return Response(
+            dataset, headers={'Content-Disposition': content_disposition},
+            mimetype="text/csv"
+        )
+    else:
+        ctx = dict(
+            args=args,
+            filter_form=queryset_filter.form,
+            page_title=page_title,
+            locations=subset.paginate(
+                page=page, per_page=current_app.config.get('PAGE_SIZE')))
 
-    return render_template(template_name, **ctx)
+        return render_template(template_name, **ctx)
 
 
 @route(bp, '/location/<pk>', methods=['GET', 'POST'])
