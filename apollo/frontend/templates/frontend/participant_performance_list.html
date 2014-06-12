@@ -11,11 +11,7 @@ a:hover.arrow-style{text-decoration:none; color:#333;}
 {% endblock %}
 {% block toolbar %}
   {%- if perms.export_participants.can() -%}
-  <a class="btn btn-sm btn-default pull-right" href="{{ url_for('participants.participant_list', export='true', **request.args) }}"><i class="glyphicon glyphicon-export"></i> {% trans %}Export{% endtrans %}</a>
-  {%- endif -%}
-  <a class="btn btn-sm btn-default pull-right" href="{{ url_for('participants.participant_performance_list') }}" style="margin-right:1em;"><i class="glyphicon glyphicon-stats"></i> {% trans %}Performance Evaluation{% endtrans %}</a>
-  {%- if perms.import_participants.can() -%}
-  <a class="btn btn-sm btn-info pull-right" href="{{ url_for('participants.participant_list_import') }}" style="margin-right:1em;"><i class="glyphicon glyphicon-import glyphicon-white"></i> {% trans %}Import Participants{% endtrans %}</a>
+  <a class="btn btn-sm btn-default pull-right" href="{{ url_for('participants.participant_performance_list', export='true', **request.args) }}"><i class="glyphicon glyphicon-export"></i> {% trans %}Export{% endtrans %}</a>
   {%- endif -%}
   {%- if perms.send_messages.can() -%}
   <button class="btn btn-sm btn-success pull-right" id="send_message_modal_btn" style="margin-right:1em;"><i class="glyphicon glyphicon-envelope"></i> {% trans %}Send Message{% endtrans %}</button>
@@ -40,11 +36,6 @@ a:hover.arrow-style{text-decoration:none; color:#333;}
         {{ render_pager_counter(participants, args) }}
         <form class="form-inline" action="{{ request.url }}" method="POST">
           {{ form.csrf_token() }}{{ form.select_superset() }}
-          <!--<div class="checkbox" style="margin-left:10px;">
-            <label>
-              Select All
-            </label><a href="#" class="btn btn-xs"><i class="glyphicon glyphicon-trash"></i></a>
-          </div>-->
           <a href="#" id="delete" class="btn btn-sm btn-danger pull-left"><i class="glyphicon glyphicon-trash i_custom"></i></a>
           <table class="table table-bordered table-striped">
            <thead>
@@ -56,16 +47,13 @@ a:hover.arrow-style{text-decoration:none; color:#333;}
                {%- endfor -%}
                <th>{% trans %}Location{% endtrans %}</th>
                <th><a href="{{ url_for('participants.participant_list', sort_by='name', **args) }}" class="arrow-style"><img src="{{ url_for('static', filename='img/double-arrow.gif') }}" class="img pull-left"></img>{% trans %}Name{% endtrans %}</a></th>
-               <th><a href="{{ url_for('participants.participant_list', sort_by='gen', **args) }}" class="arrow-style"><img src="{{ url_for('static', filename='img/double-arrow.gif') }}" class="img pull-left"></img>{% trans %}Gender{% endtrans %}</a></th>
                <th>{% trans %}Role{% endtrans %}</th>
                <th>{% trans %}Phone{% endtrans %}</th>
                <th>{% trans %}Organization{% endtrans %}</th>
-               {% for field in extra_fields %}
-               <th><a href="{{ url_for('participants.participant_list', sort_by=field.name, **args) }}" class="arrow-style"><img src="{{ url_for('static', filename='img/double-arrow.gif') }}" class="img pull-left"></img>{{ field.label }}</a></th>
-               {% endfor %}
-               {%- if perms.edit_participant.can() -%}
-               <th class="text-center">{% trans %}Edit{% endtrans %}</th>
-               {%- endif -%}
+               <th class="text-right">{% trans %}Messages{% endtrans %}</th>
+               <th class="text-right">{% trans %}Accuracy{% endtrans %}</th>
+               <th class="text-right">{% trans %}Completion{% endtrans %}</th>
+               <th class="text-center">{% trans %}View{% endtrans %}</th>
              </tr>
            </thead>
            <tbody>
@@ -78,16 +66,13 @@ a:hover.arrow-style{text-decoration:none; color:#333;}
                {%- endfor -%}
                <td>{{ participant.location|default('N/A', true) }}</td>
                <td>{{ participant.name|default('', true) }}</td>
-               <td>{{ participant.gender }}</td>
                <td>{{ participant.role|default('N/A', true) }}</td>
                <td>{{ participant.phone|default('', true) }}</td>
                <td>{{ participant.partner|default('', true) }}</td>
-               {% for field in extra_fields %}
-               <td>{{ participant[field.name]|default('', true) }}</td>
-               {% endfor %}
-               {%- if perms.edit_participant.can() -%}
-               <td class="text-center"><a href="{{ url_for('participants.participant_edit', pk=participant.id) }}" data-toggle="modal" data-target="#edit_modal">{% trans %}Edit{% endtrans %}</a></td>
-               {%- endif -%}
+               <td class="text-right">{{ participant.message_count|default('0', true) }}</td>
+               <td class="text-right">{{ participant.accuracy|default('100%', true) }}</td>
+               <td class="text-right">{{ participant.completion|default('100%', true) }}</td>
+               <td class="text-center"><a href="">{% trans %}View{% endtrans %}</a></td>
              </tr>
              {% else %}
              {%- if perms.edit_participant.can() -%}
@@ -109,23 +94,6 @@ a:hover.arrow-style{text-decoration:none; color:#333;}
       {{ render_pager(participants, 'participants.participant_list', args) }}
       </div>
     </div>
-    <div class="modal fade" id="edit_modal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
-      <div class="modal-dialog" style="width:450px">
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-            <h4 class="modal-title" id="editModalLabel">{% trans %}Edit Participant{% endtrans %}</h4>
-          </div>
-          <div class="modal-body" style="height:4.5em">
-            <div id="loader" class="ajax_loader" style="margin:auto">
-              <div class="ajax_loader_block block_1"></div>
-              <div class="ajax_loader_block block_2"></div>
-              <div class="ajax_loader_block block_3"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
 {%- endblock -%}
 {%- block scripts -%}
 <script src="{{ url_for('static', filename='js/filters.js') }}"></script>
@@ -145,16 +113,6 @@ a:hover.arrow-style{text-decoration:none; color:#333;}
             $('#delete').fadeOut('slow');
         }
     }
-    });
-
-    var edit_modal_content;
-
-    $('#edit_modal').on('show.bs.modal', function (e) {
-      edit_modal_content = $('#edit_modal').html();
-    });
-    $('#edit_modal').on('hidden.bs.modal', function(e) {
-      $('#edit_modal').removeData();
-      $('#edit_modal').html(edit_modal_content);
     });
   });
 </script>

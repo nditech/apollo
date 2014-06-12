@@ -117,6 +117,85 @@ def participant_list(page=1):
         )
 
 
+@route(bp, '/participants/performance', methods=['GET', 'POST'])
+@login_required
+def participant_performance_list(page=1):
+    page_title = _('Participants Performance')
+    template_name = 'frontend/participant_performance_list.html'
+
+    sortable_columns = {
+        'id': 'participant_id',
+        'name': 'name',
+        'gen': 'gender'
+    }
+
+    extra_fields = g.deployment.participant_extra_fields or []
+    location = None
+    if request.args.get('location'):
+        location = services.locations.find(
+            pk=request.args.get('location')).first()
+
+    for field in extra_fields:
+        sortable_columns.update({field.name: field.name})
+
+    queryset = services.participants.find()
+    queryset_filter = filters.participant_filterset()(queryset, request.args)
+
+    form = DummyForm(request.form)
+
+    if request.form.get('action') == 'send_message':
+        message = request.form.get('message', '')
+        recipients = [participant.phone if participant.phone else ''
+                      for participant in queryset_filter.qs]
+        recipients.extend(current_app.config.get('MESSAGING_CC'))
+
+        if message and recipients:
+            send_messages.delay(str(g.event.pk), message, recipients)
+            return 'OK'
+        else:
+            abort(400)
+
+    if request.args.get('export'):
+        # Export requested
+        dataset = services.participants.export_list(queryset_filter.qs)
+        basename = slugify_unicode('%s participants performance %s' % (
+            g.event.name.lower(),
+            datetime.utcnow().strftime('%Y %m %d %H%M%S')))
+        content_disposition = 'attachment; filename=%s.csv' % basename
+        return Response(
+            dataset, headers={'Content-Disposition': content_disposition},
+            mimetype="text/csv"
+        )
+    else:
+        # request.args is immutable, so the .pop() call will fail on it.
+        # using .copy() returns a mutable version of it.
+        args = request.args.copy()
+        page = int(args.pop('page', '1'))
+
+        sort_by = sortable_columns.get(
+            args.pop('sort_by', ''), 'participant_id')
+        subset = queryset_filter.qs.order_by(sort_by)
+
+        # load form context
+        context = dict(
+            args=args,
+            extra_fields=extra_fields,
+            filter_form=queryset_filter.form,
+            form=form,
+            location=location,
+            page_title=page_title,
+            location_types=helpers.displayable_location_types(
+                is_administrative=True),
+            participants=subset.paginate(
+                page=page, per_page=current_app.config.get('PAGE_SIZE'))
+        )
+
+        return render_template(
+            template_name,
+            **context
+        )
+
+
 @route(bp, '/participant/phone/verify', methods=['POST'])
 @permissions.edit_participant.require(403)
 @login_required
