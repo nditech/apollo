@@ -3,6 +3,7 @@
 {%- from 'frontend/macros/pagination.html' import render_pager, render_pager_counter -%}
 {%- from 'frontend/macros/send_message.html' import send_message_modal -%}
 {% block stylesheets %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/jquery.raty.css') }}" media="screen" charset="utf-8">
 <style type="text/css">
 .arrow-style{text-decoration:none; color:#333;}
 a:hover.arrow-style{text-decoration:none; color:#333;}
@@ -49,10 +50,10 @@ a:hover.arrow-style{text-decoration:none; color:#333;}
                <th><a href="{{ url_for('participants.participant_list', sort_by='name', **args) }}" class="arrow-style"><img src="{{ url_for('static', filename='img/double-arrow.gif') }}" class="img pull-left"></img>{% trans %}Name{% endtrans %}</a></th>
                <th>{% trans %}Role{% endtrans %}</th>
                <th>{% trans %}Phone{% endtrans %}</th>
-               <th>{% trans %}Organization{% endtrans %}</th>
                <th class="text-right">{% trans %}Messages{% endtrans %}</th>
                <th class="text-right">{% trans %}Accuracy{% endtrans %}</th>
                <th class="text-right">{% trans %}Completion{% endtrans %}</th>
+               <th class="text-center">{% trans %}Rating{% endtrans %}</th>
                <th class="text-center">{% trans %}View{% endtrans %}</th>
              </tr>
            </thead>
@@ -68,10 +69,10 @@ a:hover.arrow-style{text-decoration:none; color:#333;}
                <td>{{ participant.name|default('', true) }}</td>
                <td>{{ participant.role|default('N/A', true) }}</td>
                <td>{{ participant.phone|default('', true) }}</td>
-               <td>{{ participant.partner|default('', true) }}</td>
                <td class="text-right">{{ participant.message_count|default('0', true) }}</td>
                <td class="text-right">{{ participant.accuracy|default('100%', true) }}</td>
                <td class="text-right">{{ participant.completion|default('100%', true) }}</td>
+               <td class="text-center"><div class="raty" data-score="3.5" data-number="5"></div></td>
                <td class="text-center"><a href="">{% trans %}View{% endtrans %}</a></td>
              </tr>
              {% else %}
@@ -98,6 +99,7 @@ a:hover.arrow-style{text-decoration:none; color:#333;}
 {%- block scripts -%}
 <script src="{{ url_for('static', filename='js/filters.js') }}"></script>
 <script src="{{ url_for('static', filename='js/forms.js') }}"></script>
+<script src="{{ url_for('static', filename='js/jquery.raty.js') }}"></script>
 <script type="text/javascript">
   $(function(){
     $('#delete').hide();
@@ -114,6 +116,14 @@ a:hover.arrow-style{text-decoration:none; color:#333;}
         }
     }
     });
+    $('div.raty').raty({
+        number: function() { return $(this).data('number'); },
+        score: function() { return $(this).data('score'); },
+        readOnly: true,
+        starOn: '{{ url_for('static', filename='img/star-on.png') }}',
+        starOff: '{{ url_for('static', filename='img/star-off.png') }}',
+        starHalf: '{{ url_for('static', filename='img/star-half.png') }}'
+    })
   });
 </script>
 {% if perms.send_messages.can() %}
