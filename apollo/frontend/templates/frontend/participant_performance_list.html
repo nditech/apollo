@@ -42,12 +42,12 @@ a:hover.arrow-style{text-decoration:none; color:#333;}
            <thead>
              <tr>
               <th><input type="checkbox" class="checked" id="select_all" name="select_all"></th>
-               <th><a href="{{ url_for('participants.participant_list', sort_by='id', **args) }}" class="arrow-style"><img src="{{ url_for('static', filename='img/double-arrow.gif') }}" class="img pull-left"></img>{% trans %}ID{% endtrans %}</a></th>
+               <th><a href="{{ url_for('participants.participant_performance_list', sort_by='id', **args) }}" class="arrow-style"><img src="{{ url_for('static', filename='img/double-arrow.gif') }}" class="img pull-left"></img>{% trans %}ID{% endtrans %}</a></th>
                {%- for location_type in location_types -%}
                <th>{{ location_type.name }}</th>
                {%- endfor -%}
                <th>{% trans %}Location{% endtrans %}</th>
-               <th><a href="{{ url_for('participants.participant_list', sort_by='name', **args) }}" class="arrow-style"><img src="{{ url_for('static', filename='img/double-arrow.gif') }}" class="img pull-left"></img>{% trans %}Name{% endtrans %}</a></th>
+               <th><a href="{{ url_for('participants.participant_performance_list', sort_by='name', **args) }}" class="arrow-style"><img src="{{ url_for('static', filename='img/double-arrow.gif') }}" class="img pull-left"></img>{% trans %}Name{% endtrans %}</a></th>
                <th>{% trans %}Role{% endtrans %}</th>
                <th>{% trans %}Phone{% endtrans %}</th>
                <th class="text-right">{% trans %}Messages{% endtrans %}</th>
@@ -92,7 +92,7 @@ a:hover.arrow-style{text-decoration:none; color:#333;}
     </div>
     <div class="row">
       <div class="col-md-12">
-      {{ render_pager(participants, 'participants.participant_list', args) }}
+      {{ render_pager(participants, 'participants.participant_performance_list', args) }}
       </div>
     </div>
 {%- endblock -%}

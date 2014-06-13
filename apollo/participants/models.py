@@ -87,6 +87,7 @@ class Participant(db.DynamicDocument):
 
     email = db.EmailField()
     phones = db.ListField(db.EmbeddedDocumentField(PhoneContact))
+    sent_messages = db.IntField()
 
     event = db.ReferenceField(Event)
     deployment = db.ReferenceField(Deployment)
