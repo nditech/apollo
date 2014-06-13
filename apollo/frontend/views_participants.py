@@ -347,7 +347,9 @@ def participant_headers(pk):
 
             # flash notification message and redirect
             flash(
-                unicode(_('Your file is being processed. You will get an email when it is complete.')),
+                unicode(_('''
+Your file is being processed. You will get an email when it is complete.
+'''.strip())),
                 category='task_begun'
             )
             return redirect(url_for('participants.participant_list'))
