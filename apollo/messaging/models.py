@@ -1,6 +1,7 @@
 from datetime import datetime
 from ..core import db
 from ..deployments.models import Deployment, Event
+from ..participants.models import Participant
 
 
 class Message(db.Document):
@@ -17,3 +18,4 @@ class Message(db.Document):
 
     deployment = db.ReferenceField(Deployment)
     event = db.ReferenceField(Event)
+    participant = db.ReferenceField(Participant)
