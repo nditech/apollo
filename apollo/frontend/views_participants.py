@@ -175,6 +175,29 @@ def participant_performance_list(page=1):
         sort_by = sortable_columns.get(
             args.pop('sort_by', ''), 'participant_id')
         subset = queryset_filter.qs.order_by(sort_by)
+        forms = services.forms.find(form_type='CHECKLIST')
+        dataframe = services.submissions.find(
+            contributor__in=subset,
+            form__in=forms,
+            submission_type='O'
+        ).to_dataframe()
+
+        # subset dataframe and replace completion labels with numeric
+        # weights
+        weight_map_labels = ['Missing', 'Partial', 'Complete']
+        weight_map_values = range(3)
+        columns = {'contributor', 'form'}
+        for f in forms:
+            columns.update([group.name for group in f.groups])
+
+        reduced_frame = dataframe[list(columns)].replace(
+            weight_map_labels, weight_map_values
+        )
+
+        groupset = reduced_frame.groupby(['contributor', 'form']).sum()
+
+        total_groups = len(columns) - 2     # account for contributor and form
+        max_score = total_groups * 2
 
         # load form context
         context = dict(
@@ -183,6 +206,8 @@ def participant_performance_list(page=1):
             filter_form=queryset_filter.form,
             form=form,
             location=location,
+            groupset=groupset,
+            max_score=max_score,
             page_title=page_title,
             location_types=helpers.displayable_location_types(
                 is_administrative=True),

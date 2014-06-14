@@ -6,8 +6,10 @@ import pandas as pd
 def dataframe_analysis(kind, dataframe, col):
     if kind == 'discrete':
         try:
-            result = {'value_counts': dict(getattr(dataframe, col).value_counts()),
-                'value_counts_sum': getattr(dataframe, col).value_counts().sum()}
+            result = {
+                'value_counts': dict(getattr(dataframe, col).value_counts()),
+                'value_counts_sum': getattr(dataframe,
+                                            col).value_counts().sum()}
         except AttributeError:
             result = {'value_counts': pd.np.nan, 'value_counts_sum': 0}
     else:
@@ -95,8 +97,10 @@ def generate_numeric_field_stats(tag, dataset):
         # generate the per-group statistics
         # the transpose and to_dict ensures that the output looks similar to
         # ['item']['mean'] for every item in the group
-        location_stats = dataset[tag].agg({'mean': np.mean,
-            'std': lambda x: np.std(x)}).replace(np.nan, 0).transpose().to_dict()
+        location_stats = dataset[tag].agg({
+            'mean': np.mean,
+            'std': lambda x: np.std(x)
+        }).replace(np.nan, 0).transpose().to_dict()
 
         field_stats['locations'] = location_stats
 
@@ -110,8 +114,10 @@ def generate_numeric_field_stats(tag, dataset):
 
             field_stats['locations'][group_name]['reported'] = reported
             field_stats['locations'][group_name]['missing'] = missing
-            field_stats['locations'][group_name]['percent_reported'] = percent_reported
-            field_stats['locations'][group_name]['percent_missing'] = percent_missing
+            field_stats['locations'][group_name]['percent_reported'] = \
+                percent_reported
+            field_stats['locations'][group_name]['percent_missing'] = \
+                percent_missing
 
     else:
         # generate the statistics over the entire data set
@@ -325,7 +331,10 @@ def generate_incident_field_stats(tag, dataset, all_tags, labels=None):
         # ungrouped data, statistics for the entire data set will be generated
 
         reported = dataset[tag].count()
-        total = sum([dataset[field_tag].count() for field_tag in all_tags if field_tag in dataset])
+        total = sum([
+            dataset[field_tag].count()
+            for field_tag in all_tags if field_tag in dataset
+        ])
         missing = total - reported
 
         percent_reported = percent_of(reported, total)
@@ -361,7 +370,8 @@ def generate_field_stats(field, dataset):
         return generate_numeric_field_stats(field.name, dataset)
 
 
-def generate_incidents_data(form, queryset, location_root, grouped=True, tags=None):
+def generate_incidents_data(form, queryset, location_root, grouped=True,
+                            tags=None):
     '''Generates process statistics for either a location and its descendants,
     or for a sample. Optionally generates statistics for an entire region, or
     for groups of regions.
@@ -431,8 +441,12 @@ def generate_incidents_data(form, queryset, location_root, grouped=True, tags=No
                         tag: (field.description,
                               field_stats['locations'][location])})
 
-            group_location_stats = [(location, location_stats[location]) for location in sorted(location_stats.keys())]
-            incidents_summary['groups'].append((location_type, group_location_stats))
+            group_location_stats = [
+                (location, location_stats[location])
+                for location in sorted(location_stats.keys())
+            ]
+            incidents_summary['groups'].append((location_type,
+                                                group_location_stats))
     else:
         incidents_summary['type'] = 'normal'
         sample_summary = []
@@ -449,7 +463,8 @@ def generate_incidents_data(form, queryset, location_root, grouped=True, tags=No
             for tag in tags:
                 if tag not in data_frame:
                     continue
-                field_stats = generate_incident_field_stats(tag, data_frame, tags)
+                field_stats = generate_incident_field_stats(tag, data_frame,
+                                                            tags)
                 field = form.get_field_by_tag(tag)
                 group_summary.append((tag, field.description, field_stats))
 
@@ -460,7 +475,8 @@ def generate_incidents_data(form, queryset, location_root, grouped=True, tags=No
     return incidents_summary
 
 
-def generate_process_data(form, queryset, location_root, grouped=True, tags=None):
+def generate_process_data(form, queryset, location_root, grouped=True,
+                          tags=None):
     '''Generates process statistics for either a location and its descendants,
     or for a sample. Optionally generates statistics for an entire region, or
     for groups of regions.
