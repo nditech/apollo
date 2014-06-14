@@ -71,7 +71,11 @@ a:hover.arrow-style{text-decoration:none; color:#333;}
                <td>{{ participant.phone|default('', true) }}</td>
                <td class="text-right">{{ participant.message_count|default('0', true) }}</td>
                <td class="text-right">{{ participant.accuracy|default('100%', true) }}</td>
+               {%- if participant.id in groupset.index %}
                <td class="text-right">{{ groupset.ix[participant.id].sum().sum()|percent_of(max_score) }}%</td>
+               {%- else %}
+               <td class="text-right">100.0%</td>
+               {%- endif %}
                <td class="text-center"><div class="raty" data-score="3.5" data-number="5"></div></td>
                <td class="text-center"><a href="">{% trans %}View{% endtrans %}</a></td>
              </tr>

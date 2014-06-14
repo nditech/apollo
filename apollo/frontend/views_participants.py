@@ -182,19 +182,23 @@ def participant_performance_list(page=1):
             submission_type='O'
         ).to_dataframe()
 
-        # subset dataframe and replace completion labels with numeric
-        # weights
-        weight_map_labels = ['Missing', 'Partial', 'Complete']
-        weight_map_values = range(3)
         columns = {'contributor', 'form'}
         for f in forms:
             columns.update([group.name for group in f.groups])
 
-        reduced_frame = dataframe[list(columns)].replace(
-            weight_map_labels, weight_map_values
-        )
+        if not dataframe.empty:
+            # subset dataframe and replace completion labels with numeric
+            # weights
+            weight_map_labels = ['Missing', 'Partial', 'Complete']
+            weight_map_values = range(3)
 
-        groupset = reduced_frame.groupby(['contributor', 'form']).sum()
+            reduced_frame = dataframe[list(columns)].replace(
+                weight_map_labels, weight_map_values
+            )
+
+            groupset = reduced_frame.groupby(['contributor', 'form']).sum()
+        else:
+            groupset = dataframe
 
         total_groups = len(columns) - 2     # account for contributor and form
         max_score = total_groups * 2

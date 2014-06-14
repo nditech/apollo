@@ -1,3 +1,4 @@
+import socket
 from flask.ext.script import Command, prompt, prompt_choices, prompt_pass
 from flask.ext.security.forms import RegisterForm
 from flask.ext.security.registerable import register_user
@@ -22,7 +23,13 @@ class CreateUserCommand(Command):
                          password_confirm=password_confirm))
         form = RegisterForm(data, csrf_enabled=False)
         if form.validate():
-            user = register_user(email=email, password=password)
+            try:
+                user = register_user(email=email, password=password)
+            except socket.error as e:
+                # if there's an error sending the notification email,
+                # recover
+                print 'Error sending confirmation email: {}'.format(e)
+                user = users.get(email=email, deployment=None)
             user.update(set__deployment=deployment)
             print '\nUser created successfully'
             print 'User(id=%s email=%s)' % (user.id, user.email)
