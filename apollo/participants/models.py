@@ -92,6 +92,9 @@ class Participant(db.DynamicDocument):
     event = db.ReferenceField(Event)
     deployment = db.ReferenceField(Deployment)
 
+    performance_completion = db.FloatField()
+    performance_accuracy = db.FloatField()
+
     meta = {
         'indexes': [
             ['participant_id'],

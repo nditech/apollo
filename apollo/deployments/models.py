@@ -16,6 +16,7 @@ class Deployment(db.Document):
     allow_observer_submission_edit = db.BooleanField(default=True)
     logo = db.StringField()
     include_rejected_in_votes = db.BooleanField(default=False)
+    is_initialized = db.BooleanField(default=False)
 
     meta = {
         'indexes': [
