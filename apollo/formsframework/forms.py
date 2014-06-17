@@ -70,6 +70,7 @@ class BaseQuestionnaireForm(Form):
 
     def save(self):
         ignored_fields = ['form', 'participant', 'sender', 'comment']
+        submission = None
 
         # also ignore fields that have errors so as not to save them
         ignored_fields.extend(self.errors.keys())
@@ -135,6 +136,8 @@ class BaseQuestionnaireForm(Form):
                         submission.save()
         except models.Submission.DoesNotExist:
             pass
+
+        return submission
 
 
 def build_questionnaire(form, data=None):

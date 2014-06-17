@@ -7,6 +7,7 @@ from werkzeug.datastructures import MultiDict
 
 def parse_message(form):
     message = form.get_message()
+    submission = None
     (prefix, participant_id, form_type, responses, comment) = parse_text(
         message['text'])
     if (prefix and participant_id and form_type and responses):
@@ -19,33 +20,33 @@ def parse_message(form):
             questionnaire = build_questionnaire(form_doc, form_data)
 
             if questionnaire.validate():
-                questionnaire.save()
+                submission = questionnaire.save()
                 return _('Thank you! Your report was received!'
                          ' You sent: {text}') \
-                    .format(text=message.get('text', ''))
+                    .format(text=message.get('text', '')), submission
             else:
                 if 'participant' in questionnaire.errors:
                     return _('Observer ID not found. Please resend with valid '
                              'Observer ID. You sent: {text}') \
-                        .format(text=message.get('text', ''))
+                        .format(text=message.get('text', '')), submission
                 elif '__all__' in questionnaire.errors:
                     # Save any valid data
-                    questionnaire.save()
+                    submission = questionnaire.save()
                     return _('Unknown question codes: "{questions}". '
                              'You sent: {text}') \
                         .format(questions=', '.join(
                                 sorted([
                                     q for q in questionnaire.errors['__all__']
                                 ])),
-                                text=message.get('text', ''))
+                                text=message.get('text', '')), submission
                 else:
                     # Save any valid data
-                    questionnaire.save()
+                    submission = questionnaire.save()
                     return _('Invalid response(s) for question(s):'
                              ' "{questions}". You sent: {text}') \
                         .format(
                             questions=', '.join(sorted(
                                 questionnaire.errors.keys())),
-                            text=message.get('text', ''))
+                            text=message.get('text', '')), submission
     return _('Invalid message: "{text}". Please check and resend!') \
-        .format(text=message.get('text', ''))
+        .format(text=message.get('text', '')), submission
