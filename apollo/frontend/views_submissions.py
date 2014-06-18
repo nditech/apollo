@@ -15,6 +15,7 @@ from werkzeug.datastructures import MultiDict
 from wtforms import validators
 from .. import services
 from ..analyses.incidents import incidents_csv
+from ..participants.utils import update_participant_completion_rating
 from ..tasks import send_messages
 from . import route, permissions
 from .filters import generate_submission_filter
@@ -328,6 +329,10 @@ def submission_edit(submission_id):
                             changed = True
                     if changed:
                         submission.save()
+                    # submission is for a checklist form, update
+                    # contributor completion rating
+                    update_participant_completion_rating(
+                        submission.contributor)
             else:
                 no_error = False
 

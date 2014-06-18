@@ -9,6 +9,7 @@ from wtforms import (
 )
 from flask import g
 from .. import services, models
+from ..participants.utils import update_participant_completion_rating
 import json
 import re
 
@@ -134,6 +135,10 @@ class BaseQuestionnaireForm(Form):
                         sender=services.submissions.__model__
                     ):
                         submission.save()
+
+                    # update completion rating for participant
+                    if submission.form.form_type == 'CHECKLIST':
+                        update_participant_completion_rating(participant)
         except models.Submission.DoesNotExist:
             pass
 
