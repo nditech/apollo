@@ -88,12 +88,12 @@ class Participant(db.DynamicDocument):
     email = db.EmailField()
     phones = db.ListField(db.EmbeddedDocumentField(PhoneContact))
     message_count = db.IntField()
+    accurate_message_count = db.IntField()
 
     event = db.ReferenceField(Event)
     deployment = db.ReferenceField(Deployment)
 
     completion_rating = db.FloatField()
-    accuracy_rating = db.FloatField()
 
     meta = {
         'indexes': [

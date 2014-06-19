@@ -67,13 +67,13 @@ def gen_page_list(pager, window_size=10):
     return range(start, end + 1)
 
 
-def percent_of(a, b):
+def percent_of(a, b, default=None):
     a_ = float(a if a else 0)
     b_ = float(b if b else 0)
     try:
         return (a_ / b_) * 100
     except ZeroDivisionError:
-        return 0
+        return default or 0
 
 
 def mean_filter(value):
