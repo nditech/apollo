@@ -70,6 +70,47 @@ class ParticipantsService(Service):
             yield output.getvalue()
             output.close()
 
+    def export_performance_list(self, queryset):
+        headers = [
+            'Participant ID', 'Name', 'Role', 'Partner',
+            'Phone Primary', 'Phone Secondary #1', 'Phone Secondary #2',
+            'Messages sent', 'Accuracy', 'Completion'
+        ]
+        output = StringIO()
+        writer = csv.writer(output)
+        writer.writerow(headers)
+        yield output.getvalue()
+        output.close()
+
+        for participant in queryset:
+            # limit to three numbers for export and pad if less than three
+            phone_numbers = [i.number for i in participant.phones][:3]
+            phone_numbers += [''] * (3 - len(phone_numbers))
+
+            record = [
+                participant.participant_id,
+                participant.name,
+                participant.role.name,
+                participant.partner.name if participant.partner else '',
+            ]
+
+            record.extend(phone_numbers)
+            record.append(participant.message_count)
+            try:
+                accuracy = (float(participant.accurate_message_count or 0) /
+                            participant.message_count) * 100.0
+            except ZeroDivisionError:
+                accuracy = 100.0
+
+            record.append('{:.1f}%'.format(accuracy))
+            record.append('{:.1f}%'.format(participant.completion_rating))
+
+            output = StringIO()
+            writer = csv.writer(output)
+            writer.writerow([unidecode(unicode(i)) for i in record])
+            yield output.getvalue()
+            output.close()
+
 
 class ParticipantRolesService(Service):
     __model__ = ParticipantRole
