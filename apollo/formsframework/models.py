@@ -1,6 +1,8 @@
+from operator import itemgetter
 from ..core import db
 from ..deployments.models import Deployment, Event
 from flask.ext.babel import lazy_gettext as _
+from lxml import etree
 from lxml.builder import E, ElementMaker
 from slugify import slugify_unicode
 
@@ -158,28 +160,52 @@ class Form(db.Document):
         return super(Form, self).clean()
 
     def to_xml(self):
-        binding_elements = []
-        schema_elements = []
-        for tag in self.tags:
-            field = self.get_field_by_tag(tag)
-            path = '/data/{}'.format(tag)
-            bind_element = E.bind(nodeset=path, type='int')
-            if field.options:
-                if field.allows_multiple_values:
-                    sc_elem_fac = E.select
+        root = HTML_E.html()
+        head = HTML_E.head(HTML_E.title(self.name))
+        data = E.data(id='data')
+        model = E.model(E.instance(data))
+
+        body = HTML_E.body()
+
+        for group in self.groups:
+            grp_element = E.group(E.label(group.name))
+            for field in group.fields:
+                data.append(etree.Element(field.name))
+                path = '/data/{}'.format(field.name)
+                # fields that carry options may be single- or multiselect
+                if field.options:
+                    # sort options by value
+                    sorted_options = sorted(
+                        field.options.iteritems(),
+                        key=itemgetter(1)
+                    )
+                    if field.allows_multiple_values:
+                        elem_fac = E.select
+                        model.append(E.bind(nodeset=path, type='select'))
+                    else:
+                        elem_fac = E.select1
+                        model.append(E.bind(nodeset=path, type='select1'))
+
+                    field_element = elem_fac(
+                        E.label(field.description),
+                        ref=field.name
+                    )
+
+                    for key, value in sorted_options:
+                        field_element.append(
+                            E.item(E.label(key), E.value(unicode(value)))
+                        )
                 else:
-                    sc_elem_fac = E.select1
+                    field_element = E.input(
+                        E.label(field.description),
+                        ref=field.name
+                    )
+                    model.append(E.bind(nodeset=path, type='integer'))
+                grp_element.append(field_element)
 
-                sc_element = sc_elem_fac(E.label(field.description), ref=tag)
-                for key in sorted(field.options.keys()):
-                    sc_element.append(E.item(
-                        E.label(key),
-                        E.value(unicode(field.options[key]))
-                    ))
-            else:
-                sc_element = E.input(E.label(field.description), ref=tag)
+            body.append(grp_element)
 
-            binding_elements.append(bind_element)
-            schema_elements.append(sc_element)
-
-        return binding_elements, schema_elements
+        head.append(model)
+        root.append(head)
+        root.append(body)
+        return root
