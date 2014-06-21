@@ -23,11 +23,11 @@
 </tr>
 <tr>
 <th>{% trans %}Accuracy{% endtrans %}</th>
-<td>{{ accuracy|round(0) }}%</td>
+<td>{{ accuracy|round|int }}%</td>
 </tr>
 <tr>
 <th>{% trans %}Completion{% endtrans %}</th>
-<td>{{ completion|round(0) }}%</td>
+<td>{{ completion|round|int }}%</td>
 </tr>
 <tr>
 <th>{% trans %}Rating{% endtrans %}</th>

@@ -72,8 +72,8 @@ a:hover.arrow-style{text-decoration:none; color:#333;}
                <td>{{ participant.role|default('N/A', true) }}</td>
                <td>{{ participant.phone|default('', true) }}</td>
                <td class="text-right">{{ participant.message_count|default('0', true) }}</td>
-               <td class="text-right">{{ accuracy|round(0) }}%</td>
-               <td class="text-right">{{ completion|round(0) }}%</td>
+               <td class="text-right">{{ accuracy|round|int }}%</td>
+               <td class="text-right">{{ completion|round|int }}%</td>
                <td class="text-center"><div class="raty" data-score="{{ (accuracy + completion)/200 * 5 }}" data-number="5"></div></td>
                <td class="text-center"><a href="{{ url_for('participants.participant_performance_detail', pk=participant.id) }}">{% trans %}View{% endtrans %}</a></td>
              </tr>
