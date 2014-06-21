@@ -201,10 +201,7 @@ def participant_performance_list(page=1):
 @login_required
 def participant_performance_detail(pk):
     participant = services.participants.get_or_404(id=pk)
-    page_title = _(
-        u'Participant performance · %(participant_id)s',
-        participant_id=participant.participant_id
-    )
+    page_title = _(u'Participant Performance')
     template_name = 'frontend/participant_performance_detail.html'
     checklist_forms = services.forms.find(form_type='CHECKLIST')
     messages = services.messages.find(

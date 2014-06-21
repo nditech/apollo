@@ -18,7 +18,7 @@ def update_participant_completion_rating(participant):
     }
 
     if submissions.count() == 0:
-        participant.completion_rating = 100.0
+        participant.completion_rating = 1
     else:
         for submission in submissions:
             completion_values = [
@@ -29,8 +29,8 @@ def update_participant_completion_rating(participant):
             numerator += sum(completion_values)
 
         try:
-            participant.completion_rating = (numerator / denominator) * 100.0
+            participant.completion_rating = (numerator / denominator)
         except ZeroDivisionError:
             # this should never happen
-            participant.completion_rating = 100.0
+            participant.completion_rating = 1
     participant.save()

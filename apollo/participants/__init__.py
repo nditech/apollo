@@ -74,7 +74,7 @@ class ParticipantsService(Service):
         headers = [
             'Participant ID', 'Name', 'Role', 'Partner',
             'Phone Primary', 'Phone Secondary #1', 'Phone Secondary #2',
-            'Messages sent', 'Accuracy', 'Completion'
+            'Messages Sent', 'Accuracy', 'Completion'
         ]
         output = StringIO()
         writer = csv.writer(output)
@@ -98,12 +98,12 @@ class ParticipantsService(Service):
             record.append(participant.message_count)
             try:
                 accuracy = (float(participant.accurate_message_count or 0) /
-                            participant.message_count) * 100.0
+                            participant.message_count)
             except ZeroDivisionError:
-                accuracy = 100.0
+                accuracy = 1
 
-            record.append('{:.1f}%'.format(accuracy))
-            record.append('{:.1f}%'.format(participant.completion_rating))
+            record.append(accuracy)
+            record.append(participant.completion_rating)
 
             output = StringIO()
             writer = csv.writer(output)

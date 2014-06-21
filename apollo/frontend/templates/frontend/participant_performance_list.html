@@ -59,6 +59,8 @@ a:hover.arrow-style{text-decoration:none; color:#333;}
            </thead>
            <tbody>
              {% for participant in participants.items %}
+             {% set accuracy = participant.accurate_message_count|percent_of(participant.message_count, 100.0) %}
+             {% set completion = participant.completion_rating|percent_of(1, 100.0) %}
              <tr>
                <td><input type="checkbox" class="checked" name="ids" value="{{ participant.id }}"></td>
                <td>{{ participant.participant_id }}</td>
@@ -70,9 +72,9 @@ a:hover.arrow-style{text-decoration:none; color:#333;}
                <td>{{ participant.role|default('N/A', true) }}</td>
                <td>{{ participant.phone|default('', true) }}</td>
                <td class="text-right">{{ participant.message_count|default('0', true) }}</td>
-               <td class="text-right">{{ participant.accurate_message_count|percent_of(participant.message_count, 100.0)|round(1) }}%</td>
-               <td class="text-right">{{ participant.completion_rating|round(1) }}%</td>
-               <td class="text-center"><div class="raty" data-score="3.5" data-number="5"></div></td>
+               <td class="text-right">{{ accuracy|round(0) }}%</td>
+               <td class="text-right">{{ completion|round(0) }}%</td>
+               <td class="text-center"><div class="raty" data-score="{{ (accuracy + completion)/200 * 5 }}" data-number="5"></div></td>
                <td class="text-center"><a href="{{ url_for('participants.participant_performance_detail', pk=participant.id) }}">{% trans %}View{% endtrans %}</a></td>
              </tr>
              {% else %}
