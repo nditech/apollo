@@ -1,7 +1,22 @@
 from ..core import db
 from ..deployments.models import Deployment, Event
 from flask.ext.babel import lazy_gettext as _
+from lxml.builder import E, ElementMaker
 from slugify import slugify_unicode
+
+
+NSMAP = {
+    None: 'http://www.w3.org/2002/xforms',
+    'h': 'http://www.w3.org/1999/xhtml',
+    'ev': 'http://www.w3.org/2001/xml-events',
+    'xsd': 'http://www.w3.org/2001/XMLSchema',
+    'jr': 'http://openrosa.org/javarosa'
+}
+
+HTML_E = ElementMaker(namespace=NSMAP['h'], nsmap=NSMAP)
+EVT_E = ElementMaker(namespace=NSMAP['ev'], nsmap=NSMAP)
+SCHEMA_E = ElementMaker(namespace=NSMAP['xsd'], nsmap=NSMAP)
+ROSA_E = ElementMaker(namespace=NSMAP['jr'], nsmap=NSMAP)
 
 
 # Forms
@@ -141,3 +156,30 @@ class Form(db.Document):
             if not group.slug:
                 group.slug = slugify_unicode(group.name).lower()
         return super(Form, self).clean()
+
+    def to_xml(self):
+        binding_elements = []
+        schema_elements = []
+        for tag in self.tags:
+            field = self.get_field_by_tag(tag)
+            path = '/data/{}'.format(tag)
+            bind_element = E.bind(nodeset=path, type='int')
+            if field.options:
+                if field.allows_multiple_values:
+                    sc_elem_fac = E.select
+                else:
+                    sc_elem_fac = E.select1
+
+                sc_element = sc_elem_fac(E.label(field.description), ref=tag)
+                for key in sorted(field.options.keys()):
+                    sc_element.append(E.item(
+                        E.label(key),
+                        E.value(unicode(field.options[key]))
+                    ))
+            else:
+                sc_element = E.input(E.label(field.description), ref=tag)
+
+            binding_elements.append(bind_element)
+            schema_elements.append(sc_element)
+
+        return binding_elements, schema_elements
