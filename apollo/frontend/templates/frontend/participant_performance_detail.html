@@ -2,7 +2,65 @@
 {% block content %}
 <div class="row">
 <div class="col-md-12">
-<p>Performance for {{ participant.name }} &middot; {{ participant.participant_id }}</p>
+<div class="panel panel-default">
+<div class="panel-heading">
+<h3 class="panel-title">Participant detail</h3>
+</div>
+<table class="table table-bordered">
+<tr>
+<th>Participant</th>
+<td>{{ participant.name }} (<strong>{{ participant.participant_id }}</strong>)</td>
+</tr>
+<tr>
+<th>Phone numbers</th>
+<td>{{ participant.phones|join(', ', attribute='number') }}</td>
+</tr>
+<tr>
+<th>Messages sent</th>
+<td>{{ participant.message_count }}</td>
+</tr>
+<tr>
+<th>Completion</th>
+<td>{{ participant.completion_rating|round(1) }}%</td>
+</tr>
+<tr>
+<th>Accuracy</th>
+<td>{{ participant.accurate_message_count|percent_of(participant.message_count, 100.0)|round(1) }}%</td>
+</tr>
+</table>
+</div>
+<div class="panel panel-info">
+<div class="panel-heading">
+<h3 class="panel-title">Message detail</h3>
+</div>
+<table class="table table-bordered">
+<thead>
+<tr>
+<th>Message text</th>
+<th>Received from</th>
+<th>Date received</th>
+<th>Time received</th>
+</tr>
+</thead>
+<tbody>
+{% for msg in messages %}
+<tr>
+<td>{{ msg.text }}</td>
+<td>{{ msg.sender }}</td>
+<td class="timestamp-date" data-timestamp="{{ msg.received|timestamp }}">{{ msg.received.strftime('%b %d %Y') }}</td>
+<td class="timestamp-time" data-timestamp="{{ msg.received|timestamp }}">{{ msg.received.strftime('%I:%M %p') }}</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
 </div>
 </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/moment-with-langs.min.js') }}"></script>
+<script type="text/javascript">
+  moment.lang('{{ g.locale }}');
+</script>
+<script src="{{ url_for('static', filename='js/timestamps.js') }}"></script>
 {% endblock %}

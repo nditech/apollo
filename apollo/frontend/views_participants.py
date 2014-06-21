@@ -207,7 +207,10 @@ def participant_performance_detail(pk):
     )
     template_name = 'frontend/participant_performance_detail.html'
     checklist_forms = services.forms.find(form_type='CHECKLIST')
-    messages = services.messages.find(participant=participant)
+    messages = services.messages.find(
+        participant=participant,
+        direction='IN'
+    ).order_by('received')
     submissions = services.submissions.find(
         contributor=participant,
         form__in=checklist_forms,
