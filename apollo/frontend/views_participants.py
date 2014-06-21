@@ -197,6 +197,33 @@ def participant_performance_list(page=1):
         )
 
 
+@route(bp, '/participant/performance/<pk>')
+@login_required
+def participant_performance_detail(pk):
+    participant = services.participants.get_or_404(id=pk)
+    page_title = _(
+        u'Participant performance · %(participant_id)s',
+        participant_id=participant.participant_id
+    )
+    template_name = 'frontend/participant_performance_detail.html'
+    checklist_forms = services.forms.find(form_type='CHECKLIST')
+    messages = services.messages.find(participant=participant)
+    submissions = services.submissions.find(
+        contributor=participant,
+        form__in=checklist_forms,
+        submission_type='O'
+    )
+
+    context = {
+        'participant': participant,
+        'messages': messages,
+        'submissions': submissions,
+        'page_title': page_title
+    }
+
+    return render_template(template_name, **context)
+
+
 @route(bp, '/participant/phone/verify', methods=['POST'])
 @permissions.edit_participant.require(403)
 @login_required

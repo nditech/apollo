@@ -73,7 +73,7 @@ a:hover.arrow-style{text-decoration:none; color:#333;}
                <td class="text-right">{{ participant.accurate_message_count|percent_of(participant.message_count, 100.0)|round(1) }}%</td>
                <td class="text-right">{{ participant.completion_rating|round(1) }}%</td>
                <td class="text-center"><div class="raty" data-score="3.5" data-number="5"></div></td>
-               <td class="text-center"><a href="">{% trans %}View{% endtrans %}</a></td>
+               <td class="text-center"><a href="{{ url_for('participants.participant_performance_detail', pk=participant.id) }}">{% trans %}View{% endtrans %}</a></td>
              </tr>
              {% else %}
              {%- if perms.edit_participant.can() -%}
