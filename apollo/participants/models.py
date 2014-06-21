@@ -93,7 +93,7 @@ class Participant(db.DynamicDocument):
     event = db.ReferenceField(Event)
     deployment = db.ReferenceField(Deployment)
 
-    completion_rating = db.FloatField()
+    completion_rating = db.FloatField(default=100)
 
     meta = {
         'indexes': [
