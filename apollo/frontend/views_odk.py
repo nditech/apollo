@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
 import json
-from flask import Blueprint, g, make_response, request
+from flask import Blueprint, g, make_response, render_template, request
 from lxml import etree
 from mongoengine import signals
 from .. import services
@@ -36,14 +36,21 @@ def open_rosa_default_response(**kwargs):
 bp = Blueprint('xforms', __name__, template_folder='templates')
 
 
+@route(bp, '/xforms/formList')
 def get_form_download_list():
-    pass
+    forms = services.forms.find()
+    template_name = 'frontend/xformslist.xml'
+
+    response = make_response(render_template(template_name, forms=forms))
+    response.headers['Content-Type'] = DEFAULT_CONTENT_TYPE
+    return response
 
 
 def get_form_manifest():
     pass
 
 
+@route(bp, '/xforms/forms/<form_pk>/form.xml')
 def get_form(form_pk):
     form = services.forms.get_or_404(id=form_pk)
     xform_data = etree.tostring(form.to_xml())
@@ -76,6 +83,7 @@ def submission():
     except Exception:
         return open_rosa_default_response(status_code=400)
 
+    # always overwrite the more recent submission
     submission = services.submissions.find(
         contributor=participant,
         form=form,

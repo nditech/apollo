@@ -203,21 +203,14 @@ def participant_performance_detail(pk):
     participant = services.participants.get_or_404(id=pk)
     page_title = _(u'Participant Performance')
     template_name = 'frontend/participant_performance_detail.html'
-    checklist_forms = services.forms.find(form_type='CHECKLIST')
     messages = services.messages.find(
         participant=participant,
         direction='IN'
     ).order_by('received')
-    submissions = services.submissions.find(
-        contributor=participant,
-        form__in=checklist_forms,
-        submission_type='O'
-    )
 
     context = {
         'participant': participant,
         'messages': messages,
-        'submissions': submissions,
         'page_title': page_title
     }
 
