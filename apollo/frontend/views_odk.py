@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
+from hashlib import md5
 import json
 from flask import Blueprint, g, make_response, render_template, request
 from lxml import etree
 from mongoengine import signals
+from slugify import slugify
 from .. import services
 from . import route
 
@@ -53,10 +55,16 @@ def get_form_manifest():
 @route(bp, '/xforms/forms/<form_pk>/form.xml')
 def get_form(form_pk):
     form = services.forms.get_or_404(id=form_pk)
-    xform_data = etree.tostring(form.to_xml())
+    xform_data = etree.tostring(
+        form.to_xml(),
+        encoding='UTF-8',
+        xml_declaration=True
+    )
     response = make_response(xform_data)
-    response.headers['Content-Length'] = len(xform_data)
     response.headers['Content-Type'] = DEFAULT_CONTENT_TYPE
+    response.headers['Content-Disposition'] = 'attachment; filename={}.xml'.format(
+        slugify(form.name)
+    )
 
     return response
 

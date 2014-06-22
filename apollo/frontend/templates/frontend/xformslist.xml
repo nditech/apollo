@@ -1,13 +1,5 @@
-<?xml version='1.0' encoding='UTF-8' ?>
-<xforms xmlns='http://openrosa.org/xforms/xformsList'>
+<forms>
 {% for form in forms %}
-<xform>
-<formID>{{ form.id }}</formID>
-<name>{{ form.name }}</name>
-<majorMinorVersion/>
-<version/>
-<descriptionText>{{ form.name }}</descriptionText>
-<downloadUrl>{{ url_for('xforms.get_form', form_pk=form.id) }}</downloadUrl>
-</xform>
+<form url="{{ url_for('xforms.get_form', form_pk=form.id, _external=True) }}">{{ form.name }}</form>
 {% endfor %}
-</xforms>
+</forms>
