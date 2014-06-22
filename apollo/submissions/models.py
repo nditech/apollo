@@ -463,7 +463,8 @@ class Submission(db.DynamicDocument):
         data.set('id', unicode(self.id))
 
         for tag in self.form.tags:
-            value = '' if self[tag] is None else unicode(self[tag])
+            value = getattr(self, tag, None)
+            value = '' if value is None else unicode(value)
             element = data.xpath('//{}'.format(tag))[0]
             element.text = value
 
