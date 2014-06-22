@@ -94,6 +94,7 @@ class Participant(db.DynamicDocument):
     deployment = db.ReferenceField(Deployment)
 
     completion_rating = db.FloatField(default=1)
+    device_id = db.StringField()
 
     meta = {
         'indexes': [
