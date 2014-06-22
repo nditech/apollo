@@ -162,10 +162,14 @@ class Form(db.Document):
     def to_xml(self):
         root = HTML_E.html()
         head = HTML_E.head(HTML_E.title(self.name))
-        data = E.data(id='data')
+        data = E.data(id='-1')  # will be replaced with actual submission ID
         model = E.model(E.instance(data))
 
         body = HTML_E.body()
+        model.append(E.bind(nodeset='/data/form_id', readonly='true()'))
+        form_id = etree.Element('form_id')
+        form_id.text = unicode(self.id)
+        data.append(form_id)
 
         for group in self.groups:
             grp_element = E.group(E.label(group.name))
@@ -196,11 +200,27 @@ class Form(db.Document):
                             E.item(E.label(key), E.value(unicode(value)))
                         )
                 else:
-                    field_element = E.input(
-                        E.label(field.description),
-                        ref=field.name
-                    )
-                    model.append(E.bind(nodeset=path, type='integer'))
+                    if field.represents_boolean:
+                        field_element = E.select1(
+                            E.label(field.description),
+                            E.item(E.label('True'), E.value('1')),
+                            E.item(E.label('False'), E.value('0')),
+                            ref=field.name
+                        )
+                        model.append(E.bind(nodeset=path, type='select1'))
+                    else:
+                        field_element = E.input(
+                            E.label(field.description),
+                            ref=field.name
+                        )
+                        model.append(E.bind(
+                            nodeset=path,
+                            type='integer',
+                            constraint='. >= {} and . <= {}'.format(
+                                field.min_value,
+                                field.max_value
+                            )
+                        ))
                 grp_element.append(field_element)
 
             body.append(grp_element)

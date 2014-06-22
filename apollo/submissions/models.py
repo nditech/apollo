@@ -10,6 +10,7 @@ from ..users.models import User
 from datetime import datetime
 from flask.ext.babel import lazy_gettext as _
 from flask.ext.mongoengine import BaseQuerySet
+from lxml import etree
 from mongoengine import Q
 from pandas import DataFrame, isnull, Series
 import numpy as np
@@ -455,6 +456,18 @@ class Submission(db.DynamicDocument):
             return True
 
         return False
+
+    def to_xml(self):
+        document = self.form.to_xml()
+        data = document.xpath('//model/instance/data')[0]
+        data.set('id', unicode(self.id))
+
+        for tag in self.form.tags:
+            value = '' if self[tag] is None else unicode(self[tag])
+            element = data.xpath('//{}'.format(tag))[0]
+            element.text = value
+
+        return document
 
 
 class SubmissionComment(db.Document):
