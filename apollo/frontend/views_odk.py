@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
-from hashlib import md5
 import json
 from flask import Blueprint, g, make_response, render_template, request
 from lxml import etree
