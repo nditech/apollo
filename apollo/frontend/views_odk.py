@@ -48,8 +48,14 @@ def get_form_download_list():
 
 
 @route(bp, '/xforms/xformsManifest/<form_pk>')
-def get_form_manifest():
-    pass
+def get_form_manifest(form_pk):
+    # not using the parameter since none of the forms uses
+    # external files
+    template_name = 'frontend/xformsManifest.xml'
+    response = make_response(render_template(template_name))
+    response.headers['Content-Type'] = DEFAULT_CONTENT_TYPE
+
+    return response
 
 
 @route(bp, '/xforms/forms/<form_pk>/form.xml')
@@ -87,10 +93,10 @@ def submission():
 
         if not form or not participant:
             return open_rosa_default_response(status_code=404)
-    except Exception:
+    except (IndexError, etree.LxmlError):
         return open_rosa_default_response(status_code=400)
 
-    # always overwrite the more recent submission
+    # always overwrite the most recent submission
     submission = services.submissions.find(
         contributor=participant,
         form=form,
