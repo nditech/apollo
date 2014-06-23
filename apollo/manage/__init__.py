@@ -8,3 +8,4 @@ from .deployments import (
 from .permissions import (
     AddPermissionToRole, RemovePermissionFromRole, ListPermissionsOfRole)
 from .submissions import InitializeSubmissionsCommand
+from .setup import SetupCommand
