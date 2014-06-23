@@ -171,6 +171,27 @@ class Form(db.Document):
         form_id.text = unicode(self.id)
         data.append(form_id)
 
+        # set up identifiers
+        data.append(E.device_id())
+        data.append(E.subscriber_id())
+        data.append(E.phone_number())
+
+        device_id_bind = E.bind(nodeset='/data/device_id')
+        device_id_bind.attrib['{%s}preload' % NSMAP['jr']] = 'property'
+        device_id_bind.attrib['{%s}preloadParams' % NSMAP['jr']] = 'deviceid'
+
+        subscriber_id_bind = E.bind(nodeset='/data/subscriber_id')
+        subscriber_id_bind.attrib['{%s}preload' % NSMAP['jr']] = 'property'
+        subscriber_id_bind.attrib['{%s}preloadParams' % NSMAP['jr']] = 'subscriberid'
+
+        phone_number_bind = E.bind(nodeset='/data/phone_number')
+        phone_number_bind.attrib['{%s}preload' % NSMAP['jr']] = 'property'
+        phone_number_bind.attrib['{%s}preloadParams' % NSMAP['jr']] = 'phonenumber'
+
+        model.append(device_id_bind)
+        model.append(subscriber_id_bind)
+        model.append(phone_number_bind)
+
         for group in self.groups:
             grp_element = E.group(E.label(group.name))
             for field in group.fields:

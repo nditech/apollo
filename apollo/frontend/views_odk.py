@@ -47,6 +47,7 @@ def get_form_download_list():
     return response
 
 
+@route(bp, '/xforms/xformsManifest/<form_pk>')
 def get_form_manifest():
     pass
 
@@ -61,9 +62,8 @@ def get_form(form_pk):
     )
     response = make_response(xform_data)
     response.headers['Content-Type'] = DEFAULT_CONTENT_TYPE
-    response.headers['Content-Disposition'] = 'attachment; filename={}.xml'.format(
-        slugify(form.name)
-    )
+    response.headers['Content-Disposition'] =\
+        'attachment; filename={}.xml'.format(slugify(form.name))
 
     return response
 
@@ -75,14 +75,14 @@ def submission():
         return response
 
     # only for ODK Collect
-    deviceID = request.args.get('deviceID').replace('imei:', '')
     source_file = request.files.get('xml_submission_file')
     try:
         document = etree.parse(source_file)
 
         form_pk = document.xpath('//data/form_id')[0].text
+        deviceID = document.xpath('//data/device_id')[0].text
         form = services.forms.get(id=form_pk)
-        # form = services.forms.get(id=form_pk, form_type='CHECKLIST')
+
         participant = services.participants.get(device_id=deviceID)
 
         if not form or not participant:
