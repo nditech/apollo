@@ -1,6 +1,6 @@
 from ..core import Service
 from .models import Submission, SubmissionComment, SubmissionVersion
-from ..models import LocationType
+from ..locations.models import LocationType
 from datetime import datetime
 from flask import g
 from unidecode import unidecode
