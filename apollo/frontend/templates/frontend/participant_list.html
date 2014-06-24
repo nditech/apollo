@@ -158,13 +158,13 @@ a:hover.arrow-style{text-decoration:none; color:#333;}
             <div class="col-sm-9">
               <div class="row">
                 <div class="col-sm-4">
-                  <div class="fileUpload btn btn-default btn-sm">
+                  <div class="fileUpload btn btn-default btn-sm" style="margin-left:1px;">
                       <span>Browse</span>
                       <i class="glyphicon glyphicon-search"></i>
                       <input id="uploadBtn" type="file" class="upload" name="spreadsheet" />
                   </div>
                 </div>
-                <div class="col-sm-8" style="padding-left:0px;">
+                <div class="col-sm-8" style="margin-left:-30px;">
                     <input id="uploadFile" type="text" placeholder="Data File" class="form-control input-sm" readonly>
                     <input type="hidden" name="event" value="{{ g.event.pk }}">
                 </div>
