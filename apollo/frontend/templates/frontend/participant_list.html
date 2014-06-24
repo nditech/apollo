@@ -15,7 +15,6 @@ a:hover.arrow-style{text-decoration:none; color:#333;}
       .fileUpload {
         position: relative;
         overflow: hidden;
-        margin-left: 3.4em;
       }
       .fileUpload input.upload {
         position: absolute;
@@ -28,7 +27,6 @@ a:hover.arrow-style{text-decoration:none; color:#333;}
         opacity: 0;
         filter: alpha(opacity=0);
       }
-      .col-sm-7{padding-left:0px;}
 </style>
 {% endblock %}
 {% block toolbar %}
@@ -37,11 +35,8 @@ a:hover.arrow-style{text-decoration:none; color:#333;}
   {%- endif -%}
   <a class="btn btn-sm btn-default pull-right" href="{{ url_for('participants.participant_performance_list') }}" style="margin-right:1em;"><i class="glyphicon glyphicon-stats"></i> {% trans %}Performance Evaluation{% endtrans %}</a>
   {%- if perms.import_participants.can() -%}
-  <a class="btn btn-sm btn-info pull-right" href="{{ url_for('participants.participant_list_import') }}" style="margin-right:1em;"><i class="glyphicon glyphicon-import glyphicon-white"></i> {% trans %}Import Participants{% endtrans %}</a>
+  <button id="open-wizard" class="btn btn-sm btn-primary pull-right" style="margin-right:1em;"><i class="glyphicon glyphicon-import glyphicon-white"></i> {% trans %}Import Participants{% endtrans %}</button>
   {%- endif -%}
-  <button id="open-wizard" class="btn btn-sm btn-primary pull-right" style="margin-right:1em;"><i class="glyphicon glyphicon-import glyphicon-white"></i>
-      Import wizard
-    </button>
   {%- if perms.send_messages.can() -%}
   <button class="btn btn-sm btn-success pull-right" id="send_message_modal_btn" style="margin-right:1em;"><i class="glyphicon glyphicon-envelope"></i> {% trans %}Send Message{% endtrans %}</button>
   {%- endif -%}
@@ -152,213 +147,55 @@ a:hover.arrow-style{text-decoration:none; color:#333;}
       </div>
     </div>
     <!-- IMPORT WIZARD -->
-    <div class="wizard" id="satellite-wizard" data-title="Participants Import">
-      <!-- Step 1 Name & FQDN -->
-      <div class="wizard-card" data-cardname="name">
-        <h3>Select File</h3>
+    <div class="wizard" id="import-wizard" data-title="Import Participants">
+      <!-- Step 1 -->
+      <div class="wizard-card" data-cardname="uploadFile">
+        <h3>Upload File</h3>
 
         <div class="wizard-input-section">
+        <form enctype="multipart/form-data" method="POST" id="upload-form" action="{{ url_for('participants.participant_list_import') }}">{{ form.csrf_token() }}
           <div class="form-group">
             <div class="col-sm-9">
               <div class="row">
-                <div class="col-sm-5">
-                  <label style="padding-top:4px;" class="pull-right">Events</label>
-                </div>
-                <div class="col-sm-7">
-                  <select name="notification" class="form-control input-sm">
-                    <option>Select Event</option>
-                    <option>Training of Trainers</option>
-                    <option>Training I</option>
-                    <option>Simulation I</option>
-                    <option>Elections</option>
-                    <option>Simulation II</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="form-group">
-            <div class="col-sm-9">
-              <div class="row">
-                <div class="col-sm-5">
-                  <div class="fileUpload btn btn-info btn-sm">
+                <div class="col-sm-4">
+                  <div class="fileUpload btn btn-default btn-sm">
                       <span>Browse</span>
                       <i class="glyphicon glyphicon-search"></i>
-                      <input id="uploadBtn" type="file" class="upload" />
+                      <input id="uploadBtn" type="file" class="upload" name="spreadsheet" />
                   </div>
                 </div>
-                <div class="col-sm-7" style="padding-left:0px;">
-                    <input id="uploadFile"type="text" placeholder="Data File" class="form-control input-sm" disabled>
+                <div class="col-sm-8" style="padding-left:0px;">
+                    <input id="uploadFile" type="text" placeholder="Data File" class="form-control input-sm" readonly>
+                    <input type="hidden" name="event" value="{{ g.event.pk }}">
                 </div>
               </div>
             </div>
           </div>
+        </form>
         </div>
       </div>
-      <div class="wizard-card">
+      <div class="wizard-card" data-cardname="mapFields">
         <h3>Map Fields</h3>
         <div class="wizard-input-section" style="">
-          <div class="col-sm-9">
-            <form class="form-horizontal" role="form">
-              <div class="form-group">
-                <label for="participant ID" class="col-sm-5 control-label">Participant ID</label>
-                <div class="col-sm-7">
-                  <select class="form-control input-sm">
-                    <option value="PARTICIPANT ID">PARTICIPANT ID</option>
-                    <option value="NAME">NAME</option>
-                    <option value="ROLE">ROLE</option>
-                    <option value="PARTNER">PARTNER</option>
-                    <option value="LOCATION">LOCATION</option>
-                    <option value="SUPERVISOR">SUPERVISOR</option>
-                    <option value="GENDER">GENDER</option>
-                    <option value="EMAIL">EMAIL</option>
-                    <option value="PHONE">PHONE</option>
-                  </select>
-                </div>
-              </div>
-              <div class="form-group">
-                <label for="name" class="col-sm-5 control-label">Name</label>
-                <div class="col-sm-7">
-                  <select class="form-control input-sm">
-                    <option value="PARTICIPANT ID">PARTICIPANT ID</option>
-                    <option value="NAME">NAME</option>
-                    <option value="ROLE">ROLE</option>
-                    <option value="PARTNER">PARTNER</option>
-                    <option value="LOCATION">LOCATION</option>
-                    <option value="SUPERVISOR">SUPERVISOR</option>
-                    <option value="GENDER">GENDER</option>
-                    <option value="EMAIL">EMAIL</option>
-                    <option value="PHONE">PHONE</option>
-                  </select>
-                </div>
-              </div>
-              <div class="form-group">
-                <label for="participant ID" class="col-sm-5 control-label">Role</label>
-                <div class="col-sm-7">
-                  <select class="form-control input-sm">
-                    <option value="PARTICIPANT ID">PARTICIPANT ID</option>
-                    <option value="NAME">NAME</option>
-                    <option value="ROLE">ROLE</option>
-                    <option value="PARTNER">PARTNER</option>
-                    <option value="LOCATION">LOCATION</option>
-                    <option value="SUPERVISOR">SUPERVISOR</option>
-                    <option value="GENDER">GENDER</option>
-                    <option value="EMAIL">EMAIL</option>
-                    <option value="PHONE">PHONE</option>
-                  </select>
-                </div>
-              </div>
-              <div class="form-group">
-                <label for="participant ID" class="col-sm-5 control-label">Partner</label>
-                <div class="col-sm-7">
-                  <select class="form-control input-sm">
-                    <option value="PARTICIPANT ID">PARTICIPANT ID</option>
-                    <option value="NAME">NAME</option>
-                    <option value="ROLE">ROLE</option>
-                    <option value="PARTNER">PARTNER</option>
-                    <option value="LOCATION">LOCATION</option>
-                    <option value="SUPERVISOR">SUPERVISOR</option>
-                    <option value="GENDER">GENDER</option>
-                    <option value="EMAIL">EMAIL</option>
-                    <option value="PHONE">PHONE</option>
-                  </select>
-                </div>
-              </div>
-              <div class="form-group">
-                <label for="participant ID" class="col-sm-5 control-label">Location</label>
-                <div class="col-sm-7">
-                  <select class="form-control input-sm">
-                    <option value="PARTICIPANT ID">PARTICIPANT ID</option>
-                    <option value="NAME">NAME</option>
-                    <option value="ROLE">ROLE</option>
-                    <option value="PARTNER">PARTNER</option>
-                    <option value="LOCATION">LOCATION</option>
-                    <option value="SUPERVISOR">SUPERVISOR</option>
-                    <option value="GENDER">GENDER</option>
-                    <option value="EMAIL">EMAIL</option>
-                    <option value="PHONE">PHONE</option>
-                  </select>
-                </div>
-              </div>
-              <div class="form-group">
-                <label for="participant ID" class="col-sm-5 control-label">Supervisor</label>
-                <div class="col-sm-7">
-                  <select class="form-control input-sm">
-                    <option value="PARTICIPANT ID">PARTICIPANT ID</option>
-                    <option value="NAME">NAME</option>
-                    <option value="ROLE">ROLE</option>
-                    <option value="PARTNER">PARTNER</option>
-                    <option value="LOCATION">LOCATION</option>
-                    <option value="SUPERVISOR">SUPERVISOR</option>
-                    <option value="GENDER">GENDER</option>
-                    <option value="EMAIL">EMAIL</option>
-                    <option value="PHONE">PHONE</option>
-                  </select>
-                </div>
-              </div>
-              <div class="form-group">
-                <label for="participant ID" class="col-sm-5 control-label">Gender</label>
-                <div class="col-sm-7">
-                  <select class="form-control input-sm">
-                    <option value="PARTICIPANT ID">PARTICIPANT ID</option>
-                    <option value="NAME">NAME</option>
-                    <option value="ROLE">ROLE</option>
-                    <option value="PARTNER">PARTNER</option>
-                    <option value="LOCATION">LOCATION</option>
-                    <option value="SUPERVISOR">SUPERVISOR</option>
-                    <option value="GENDER">GENDER</option>
-                    <option value="EMAIL">EMAIL</option>
-                    <option value="PHONE">PHONE</option>
-                  </select>
-                </div>
-              </div>
-              <div class="form-group">
-                <label for="participant ID" class="col-sm-5 control-label">Email</label>
-                <div class="col-sm-7">
-                  <select class="form-control input-sm">
-                    <option value="PARTICIPANT ID">PARTICIPANT ID</option>
-                    <option value="NAME">NAME</option>
-                    <option value="ROLE">ROLE</option>
-                    <option value="PARTNER">PARTNER</option>
-                    <option value="LOCATION">LOCATION</option>
-                    <option value="SUPERVISOR">SUPERVISOR</option>
-                    <option value="GENDER">GENDER</option>
-                    <option value="EMAIL">EMAIL</option>
-                    <option value="PHONE">PHONE</option>
-                  </select>
-                </div>
-              </div>
-              <div class="form-group">
-                <label for="Phone" class="col-sm-5 control-label">Phone Prefix</label>
-                <div class="col-sm-7">
-                  <input type="password" class="form-control" id="inputPassword3" placeholder="e.g +234">
-                </div>
-              </div>
-            </form>
-          </div>
         </div>
+
         <div class="wizard-error">
           <div class="alert alert-error">
-            <strong>There was a problem</strong> with your submission.
-            Please correct the errors and re-submit.
+            <strong>There was a problem</strong> with your submission. Please correct the errors and re-submit.
           </div>
         </div>
-  
+
         <div class="wizard-failure">
           <div class="alert alert-error">
-            <strong>There was a problem</strong> submitting the form.
-            Please try again in a minute.
+            <strong>There was a problem</strong> submitting the form. Please try again in a minute.
           </div>
         </div>
-  
+
         <div class="wizard-success">
           <div class="alert alert-success">
-            <span class="create-server-name">Participants is being <strong>Imported.</strong> You'll receive an email shortly.
-            </span>
+            <span class="create-server-name">Your participants file is being <strong>imported.</strong> You'll receive an email when completed.</span>
           </div>
-  
-          <a class="btn btn-default create-another-server">Import another</a>
-          <span style="padding:0 10px">or</span>
+
           <a class="btn btn-success im-done">Done</a>
         </div>
       </div>
@@ -370,145 +207,107 @@ a:hover.arrow-style{text-decoration:none; color:#333;}
 <script type="text/javascript" src="{{ url_for('static', filename='js/chosen.jquery.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/prettify.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap-wizard.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/jquery.form.js') }}"></script>
 <script type="text/javascript">
-  document.getElementById("uploadBtn").onchange = function () {
-    document.getElementById("uploadFile").value = this.value;
-  };
-  $(function(){
+var wizard;
+
+$(function(){
+    $("#uploadBtn").change(function () {
+        $("#uploadFile").val(this.files[0].name);
+    });
+
     $('#delete').hide();
+
     $('input[type="checkbox"]').click(function() {
-      if (this.checked)
-    {
-      $('#delete').fadeIn('slow');
-    }
-    else
-    {
-        if ( !$('.checked:checked').length )
+        if (this.checked)
         {
-            $('#delete').fadeOut('slow');
+            $('#delete').fadeIn('slow');
         }
-    }
+        else
+        {
+            if ( !$('.checked:checked').length )
+            {
+                $('#delete').fadeOut('slow');
+            }
+        }
     });
 
     var edit_modal_content;
 
     $('#edit_modal').on('show.bs.modal', function (e) {
-      edit_modal_content = $('#edit_modal').html();
+        edit_modal_content = $('#edit_modal').html();
     });
     $('#edit_modal').on('hidden.bs.modal', function(e) {
-      $('#edit_modal').removeData();
-      $('#edit_modal').html(edit_modal_content);
+        $('#edit_modal').removeData();
+        $('#edit_modal').html(edit_modal_content);
     });
 
-    $.fn.wizard.logging = true;
-        var wizard = $('#satellite-wizard').wizard({
-          keyboard : false,
-          contentHeight : 400,
-          contentWidth : 700,
-          backdrop: 'static'
-        });
-        
-        $(".chzn-select").chosen();
+    wizard = $('#import-wizard').wizard({
+        keyboard : true,
+        contentHeight : 500,
+        contentWidth : 700,
+        showCancel: true,
+        backdrop: 'static'
+    });
 
-        $('#fqdn').on('input', function() {
-          if ($(this).val().length != 0) {
-            $('#ip').val('').attr('disabled', 'disabled');
-            $('#fqdn, #ip').parents('.form-group').removeClass('has-error has-success');
-          } else {
-            $('#ip').val('').removeAttr('disabled');
-          }
-        });
+    wizard.on('closed', function() {
+        wizard.reset();
+        $("#uploadFile").val("");
+        $("#uploadBtn").wrap('<form>').closest('form').get(0).reset();
+        $("#uploadBtn").unwrap();
+    });
 
-        var pattern = /\b(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b/;
-        x = 46;
-
-        $('#ip').on('input', function() {
-          if ($(this).val().length != 0) {
-            $('#fqdn').val('').attr('disabled', 'disabled');
-          } else {
-            $('#fqdn').val('').removeAttr('disabled');
-          }
-        }).keypress(function(e) {
-          if (e.which != 8 && e.which != 0 && e.which != x && (e.which < 48 || e.which > 57)) {
-            console.log(e.which);
-            return false;
-          }
-        }).keyup(function() {
-          var $this = $(this);
-          if (!pattern.test($this.val())) {
-            //$('#validate_ip').text('Not Valid IP');
-            console.log('Not Valid IP');
-            $this.parents('.form-group').removeClass('has-error has-success').addClass('has-error');
-            while ($this.val().indexOf("..") !== -1) {
-              $this.val($this.val().replace('..', '.'));
+    wizard.cards['uploadFile'].on('validate', function (card) {
+        var cont = true;
+        $('#upload-form').ajaxSubmit({
+            async: false,
+            error: function (data) {
+                input = card.el.find("#uploadFile");
+                card.wizard.errorPopover(input, "{% trans %}Invalid file.{% endtrans %}");
+                cont = false;
+            },
+            success: function (data) {
+                $('.wizard-input-section', wizard.cards['mapFields'].el).html(data);
+                cont = true;
             }
-            x = 46;
-          } else {
-            x = 0;
-            var lastChar = $this.val().substr($this.val().length - 1);
-            if (lastChar == '.') {
-              $this.val($this.val().slice(0, -1));
-            }
-            var ip = $this.val().split('.');
-            if (ip.length == 4) {
-              //$('#validate_ip').text('Valid IP');
-              console.log('Valid IP');
-              $this.parents('.form-group').removeClass('has-error').addClass('has-success');
-            }
-          }
         });
+        return cont;
+    });
 
-        wizard.on('closed', function() {
-          wizard.reset();
-        });
-
-        wizard.on("reset", function() {
-          wizard.modal.find(':input').val('').removeAttr('disabled');
-          wizard.modal.find('.form-group').removeClass('has-error').removeClass('has-succes');
-          wizard.modal.find('#fqdn').data('is-valid', 0).data('lookup', 0);
-        });
-
-        wizard.on("submit", function(wizard) {
-          var submit = {
-            "hostname": $("#new-server-fqdn").val()
-          };
-          
-          this.log('seralize()');
-          this.log(this.serialize());
-          this.log('serializeArray()');
-          this.log(this.serializeArray());
-      
-          setTimeout(function() {
+    wizard.on("submit", function(wizard) {
+        $.ajax({
+            type: 'POST',
+            url: $('#form-action').val(),
+            data: wizard.serialize()
+        }).done(function (response) {
             wizard.trigger("success");
             wizard.hideButtons();
             wizard._submitting = false;
-            wizard.showSubmitCard("success");
+            wizard.submitSuccess();
             wizard.updateProgressBar(0);
-          }, 2000);
+        }).fail(function () {
+            wizard.trigger("failure");
+            wizard.hideButtons();
+            wizard._submitting = false;
+            wizard.updateProgressBar(0);
         });
-        
-        wizard.el.find(".wizard-success .im-done").click(function() {
-          wizard.hide();
-          setTimeout(function() {
-            wizard.reset(); 
-          }, 250);
-          
-        });
-      
-        wizard.el.find(".wizard-success .create-another-server").click(function() {
-          wizard.reset();
-        });
-      
-        $(".wizard-group-list").click(function() {
-          alert("Disabled for demo.");
-        });
+    });
 
-        $('#open-wizard').click(function(e) {
-          e.preventDefault();
-          wizard.show();
-        });
+    wizard.el.find(".wizard-success .im-done").click(function() {
+        wizard.hide();
+        setTimeout(function() {
+            wizard.reset();
+            $("#uploadFile").val("");
+            $("#uploadBtn").wrap('<form>').closest('form').get(0).reset();
+            $("#uploadBtn").unwrap();
+        }, 250);
+    });
 
-  });
+    $('#open-wizard').click(function(e) {
+        e.preventDefault();
+        wizard.show();
+    });
+});
 </script>
 {% if perms.send_messages.can() %}
 {{ send_message_modal(participants.total) }}

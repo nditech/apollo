@@ -283,36 +283,25 @@ def participant_edit(pk):
     return render_template(template_name, form=form, page_title=page_title)
 
 
-@route(bp, '/participants/import', methods=['GET', 'POST'])
+@route(bp, '/participants/import', methods=['POST'])
 @permissions.import_participants.require(403)
 @login_required
 def participant_list_import():
-    page_title = _('Import Participants')
-    template_name = 'frontend/participant_import.html'
+    form = ParticipantUploadForm(request.form)
 
-    if request.method == 'GET':
-        form = ParticipantUploadForm()
-        return render_template(template_name, form=form, page_title=page_title)
+    if not form.validate():
+        return abort(400)
     else:
-        form = ParticipantUploadForm(request.form)
+        # get the actual object from the proxy
+        user = current_user._get_current_object()
+        event = services.events.get_or_404(pk=form.event.data)
+        upload = stash_file(request.files['spreadsheet'], user, event)
+        upload.save()
 
-        if not form.validate():
-            return render_template(
-                template_name,
-                form=form,
-                page_title=page_title
-            )
-        else:
-            # get the actual object from the proxy
-            user = current_user._get_current_object()
-            event = services.events.get_or_404(pk=form.event.data)
-            upload = stash_file(request.files['spreadsheet'], user, event)
-            upload.save()
-
-            return redirect(url_for(
-                'participants.participant_headers',
-                pk=unicode(upload.id)
-            ))
+        return redirect(url_for(
+            'participants.participant_headers',
+            pk=unicode(upload.id)
+        ))
 
 
 @route(bp, '/participants/headers/<pk>', methods=['GET', 'POST'])
@@ -329,16 +318,15 @@ def participant_headers(pk):
         # delete loaded file
         upload.data.delete()
         upload.delete()
-        return render_template('frontend/invalid_import.html')
+        return abort(400)
 
     deployment = g.deployment
     headers = dataframe.columns
-    page_title = _('Map Participant Columns')
     template_name = 'frontend/participant_headers.html'
 
     if request.method == 'GET':
         form = generate_participant_import_mapping_form(deployment, headers)
-        return render_template(template_name, form=form, page_title=page_title)
+        return render_template(template_name, form=form)
     else:
         form = generate_participant_import_mapping_form(
             deployment, headers, request.form)
@@ -346,8 +334,7 @@ def participant_headers(pk):
         if not form.validate():
             return render_template(
                 template_name,
-                form=form,
-                page_title=page_title
+                form=form
             )
         else:
             # get header mappings
@@ -366,11 +353,4 @@ def participant_headers(pk):
             }
             import_participants.apply_async(kwargs=kwargs)
 
-            # flash notification message and redirect
-            flash(
-                unicode(_('''
-Your file is being processed. You will get an email when it is complete.
-'''.strip())),
-                category='task_begun'
-            )
             return redirect(url_for('participants.participant_list'))
