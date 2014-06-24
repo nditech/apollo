@@ -9,7 +9,7 @@
     box-shadow: 0 0 1px rgba(255,255,255,.5);
 }
 .wizard {
-	display:none;	
+	display:none;
 }
 
 .wizard-dialog {}
@@ -134,7 +134,7 @@ li.wizard-nav-item {
 	padding:35px;
 	padding-top:20px;
 	overflow-y:auto;
-	
+
 	/*
 	position:relative;
 	height:300px;
@@ -170,7 +170,7 @@ li.wizard-nav-item {
 /* Inner Card */
 .wizard-input-section {
 	margin-bottom:20px;
-	height:245px; 
+	height:345px; 
 	overflow-x:hidden;
 	overflow-y:scroll;
 }
