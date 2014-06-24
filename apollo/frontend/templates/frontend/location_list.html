@@ -1,12 +1,37 @@
 {%- extends 'frontend/_layout.html' -%}
 {%- from 'frontend/macros/locations_list_filter.html' import render_filter_form -%}
 {%- from 'frontend/macros/pagination.html' import render_pager, render_pager_counter -%}
+{% block stylesheets %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap-wizard.css') }}">
+<style type="text/css">
+.img{margin: 4px 0 0 -6px;}
+.wizard-modal p {
+        margin: 0 0 10px;
+        padding: 0;
+      }
+      .fileUpload {
+        position: relative;
+        overflow: hidden;
+      }
+      .fileUpload input.upload {
+        position: absolute;
+        top: 0;
+        right: 0;
+        margin: 0;
+        padding: 0;
+        font-size: 20px;
+        cursor: pointer;
+        opacity: 0;
+        filter: alpha(opacity=0);
+      }
+</style>
+{% endblock %}
 {% block toolbar %}
   {%- if perms.export_locations.can() -%}
   <a class="btn btn-sm btn-default pull-right" href="{{ url_for('locations.locations_list', export='true', **request.args) }}"><i class="glyphicon glyphicon-export"></i> {% trans %}Export{% endtrans %}</a>
   {%- endif -%}
   {%- if perms.import_locations.can() -%}
-  <a class="btn btn-sm btn-info pull-right" href="{{ url_for('locations.locations_import') }}" style="margin-right:1em;"><i class="glyphicon glyphicon-import glyphicon-white"></i> {% trans %}Import Locations{% endtrans %}</a>
+  <button id="open-wizard" class="btn btn-sm btn-primary pull-right" style="margin-right:1em;"><i class="glyphicon glyphicon-import glyphicon-white"></i> {% trans %}Import Locations{% endtrans %}</button>
   {%- endif -%}
 {% endblock %}
 {% block content %}
@@ -58,6 +83,88 @@
       </tbody>
     </table>
   </div>
+  <!-- IMPORT WIZARD -->
+    <div class="wizard" id="import-wizard" data-title="Import Locations">
+      <!-- Step 1 -->
+      <div class="wizard-card" data-cardname="uploadFile">
+        <h3>Upload File</h3>
+
+        <div class="wizard-input-section">
+        <form enctype="multipart/form-data" method="POST" id="upload-form" action="">
+          <div class="form-group">
+            <div class="col-sm-9">
+              <div class="row">
+                <div class="col-sm-4">
+                  <div class="fileUpload btn btn-default btn-sm" style="margin-left:1px;">
+                      <span>Browse</span>
+                      <i class="glyphicon glyphicon-search"></i>
+                      <input id="uploadBtn" type="file" class="upload" name="spreadsheet" />
+                  </div>
+                </div>
+                <div class="col-sm-8" style="margin-left:-30px;">
+                    <input id="uploadFile" type="text" placeholder="Data File" class="form-control input-sm" readonly>
+                    <input type="hidden" name="event" value="{{ g.event.pk }}">
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+        </div>
+      </div>
+      <div class="wizard-card" data-cardname="mapFields">
+        <h3>Map Fields</h3>
+        <div class="wizard-input-section" style="">
+          <div class="col-sm-9">
+            <form class="form-horizontal" role="form">
+                <div class="form-group">
+                  <label for="Locaton Code" class="col-sm-5 control-label">Location Code</label>
+                  <div class="col-sm-7">
+                    <input type="text" class="form-control" placeholder="">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="Location Name" class="col-sm-5 control-label">Location Name</label>
+                  <div class="col-sm-7">
+                    <select class="form-control input-sm">
+                      <option value="name">Location Name</option>
+                      <option value="type">Location Type</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="Location Type" class="col-sm-5 control-label">Location Type</label>
+                  <div class="col-sm-7">
+                    <select class="form-control input-sm">
+                      <option value="name">Location Name</option>
+                      <option value="type">Location Type</option>
+                    </select>
+                  </div>
+                </div>
+            </form>
+          </div>
+        </div>
+
+        <div class="wizard-error">
+          <div class="alert alert-error">
+            <strong>There was a problem</strong> with your submission. Please correct the errors and re-submit.
+          </div>
+        </div>
+
+        <div class="wizard-failure">
+          <div class="alert alert-error">
+            <strong>There was a problem</strong> submitting the form. Please try again in a minute.
+          </div>
+        </div>
+
+        <div class="wizard-success">
+          <div class="alert alert-success">
+            <span class="create-server-name">Your locations file is being <strong>imported.</strong> You'll receive an email when completed.</span>
+          </div>
+
+          <a class="btn btn-success im-done">Done</a>
+        </div>
+      </div>
+  </div>
 </div>
 <div class="row">
   <div class="col-md-12">
@@ -65,3 +172,84 @@
   </div>
 </div>
 {% endblock %}
+{%- block scripts -%}
+<script type="text/javascript" src="{{ url_for('static', filename='js/chosen.jquery.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/prettify.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap-wizard.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/jquery.form.js') }}"></script>
+<script type="text/javascript">
+var wizard;
+
+$(function(){
+    $("#uploadBtn").change(function () {
+        $("#uploadFile").val(this.files[0].name);
+    });
+
+    wizard = $('#import-wizard').wizard({
+        keyboard : true,
+        contentHeight : 500,
+        contentWidth : 700,
+        showCancel: true,
+        backdrop: 'static'
+    });
+
+    wizard.on('closed', function() {
+        wizard.reset();
+        $("#uploadFile").val("");
+        $("#uploadBtn").wrap('<form>').closest('form').get(0).reset();
+        $("#uploadBtn").unwrap();
+    });
+
+    wizard.cards['uploadFile'].on('validate', function (card) {
+        var cont = true;
+        $('#upload-form').ajaxSubmit({
+            async: false,
+        /*    error: function (data) {
+                input = card.el.find("#uploadFile");
+                card.wizard.errorPopover(input, "{% trans %}Invalid file.{% endtrans %}");
+                cont = false;
+            },*/
+            success: function (data) {
+                $('.wizard-input-section', wizard.cards['mapFields'].el).html(data);
+                cont = true;
+            }
+        });
+        return cont;
+    });
+
+    wizard.on("submit", function(wizard) {
+        $.ajax({
+            type: 'POST',
+            url: $('#form-action').val(),
+            data: wizard.serialize()
+        }).done(function (response) {
+            wizard.trigger("success");
+            wizard.hideButtons();
+            wizard._submitting = false;
+            wizard.submitSuccess();
+            wizard.updateProgressBar(0);
+        }).fail(function () {
+            wizard.trigger("failure");
+            wizard.hideButtons();
+            wizard._submitting = false;
+            wizard.updateProgressBar(0);
+        });
+    });
+
+    wizard.el.find(".wizard-success .im-done").click(function() {
+        wizard.hide();
+        setTimeout(function() {
+            wizard.reset();
+            $("#uploadFile").val("");
+            $("#uploadBtn").wrap('<form>').closest('form').get(0).reset();
+            $("#uploadBtn").unwrap();
+        }, 250);
+    });
+
+    $('#open-wizard').click(function(e) {
+        e.preventDefault();
+        wizard.show();
+    });
+});
+</script>
+{%- endblock -%}
