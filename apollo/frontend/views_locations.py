@@ -11,14 +11,17 @@ from flask import (Blueprint, current_app, flash, g, redirect, render_template,
 from flask.ext.babel import lazy_gettext as _
 from flask.ext.menu import register_menu
 from flask.ext.restful import Api
-from flask.ext.security import login_required
+from flask.ext.security import current_user, login_required
+from ..helpers import load_source_file, stash_file
 from mongoengine import ValidationError
 from slugify import slugify_unicode
 
 from . import filters, permissions, route
 from .. import helpers, models, services
 from ..locations import api
-from .forms import generate_location_edit_form
+from ..tasks import update_locations
+from .forms import (FileUploadForm, generate_location_edit_form,
+                    generate_location_update_mapping_form, DummyForm)
 
 bp = Blueprint('locations', __name__, template_folder='templates',
                static_folder='static', static_url_path='/core/static')
@@ -81,6 +84,7 @@ def locations_list():
             args=args,
             filter_form=queryset_filter.form,
             page_title=page_title,
+            form=DummyForm(),
             locations=subset.paginate(
                 page=page, per_page=current_app.config.get('PAGE_SIZE')))
 
@@ -113,14 +117,71 @@ def location_edit(pk):
     return render_template(template_name, form=form, page_title=page_title)
 
 
-@route(bp, '/locations/import', methods=['GET', 'POST'])
-@register_menu(
-    bp, 'locations_import', _('Import Locations'),
-    visible_when=lambda: permissions.import_locations.can())
+@route(bp, '/locations/import', methods=['POST'])
 @permissions.import_locations.require(403)
 @login_required
 def locations_import():
-    return ''
+    form = FileUploadForm(request.form)
+
+    if not form.validate():
+        return abort(400)
+    else:
+        # get the actual object from the proxy
+        user = current_user._get_current_object()
+        event = services.events.get_or_404(pk=form.event.data)
+        upload = stash_file(request.files['spreadsheet'], user, event)
+        upload.save()
+
+        return redirect(url_for(
+            'locations.location_headers',
+            pk=unicode(upload.id)
+        ))
+
+
+@route(bp, '/locations/headers/<pk>', methods=['GET', 'POST'])
+@permissions.import_locations.require(403)
+@login_required
+def location_headers(pk):
+    user = current_user._get_current_object()
+
+    # disallow processing other users' files
+    upload = services.user_uploads.get_or_404(pk=pk, user=user)
+    try:
+        dataframe = load_source_file(upload.data)
+    except Exception:
+        # delete loaded file
+        upload.data.delete()
+        upload.delete()
+        return abort(400)
+
+    deployment = g.deployment
+    headers = dataframe.columns
+    template_name = 'frontend/location_headers.html'
+
+    if request.method == 'GET':
+        form = generate_location_update_mapping_form(deployment, headers)
+        return render_template(template_name, form=form)
+    else:
+        form = generate_location_update_mapping_form(
+            deployment, headers, request.form)
+
+        if not form.validate():
+            return render_template(
+                template_name,
+                form=form
+            )
+        else:
+            # get header mappings
+            data = form.data.copy()
+
+            # invoke task asynchronously
+            kwargs = {
+                'upload_id': unicode(upload.id),
+                'mappings': data
+            }
+            #update_locations.apply_async(kwargs=kwargs)
+
+            return redirect(url_for('locations.locations_list'))
 
 
 @route(bp, '/locations/builder', methods=['GET', 'POST'])

@@ -1,6 +1,31 @@
 from hashlib import sha256
+
 import pandas as pd
-from .. import services
+
+from .. import helpers, services
+from ..factory import create_celery_app
+
+celery = create_celery_app()
+
+email_template = '''
+Of {{ count }} records, {{ successful_imports }} were successfully imported, {{ suspect_imports }} raised warnings, and {{ unsuccessful_imports }} could not be imported.
+{% if errors %}
+The following records could not be imported:
+-------------------------
+{% for e in errors %}
+{%- set pid = e[0] %}{% set msg = e[1] -%}
+Record for Location ID {{ pid }} raised error: {{ msg }}
+{% endfor %}
+{% endif %}
+
+{% if warnings %}
+The following records raised warnings:
+{% for e in warnings %}
+{%- set pid = e[0] %}{% set msg = e[1] -%}
+Record for Location ID {{ pid }} raised warning: {{ msg }}
+{% endfor %}
+{% endif %}
+'''
 
 field_transform = {
     'code': lambda s: str(s),
@@ -61,10 +86,8 @@ def location_kwargs(item, df_series):
     return mapping_item
 
 
-def update_locations(fh, mapping, event):
+def update_locations(df, mapping, event):
     cache = LocationCache()
-
-    df = pd.read_excel(fh, 0).fillna('')
 
     for idx in df.index:
         for lt in mapping.keys():
@@ -86,8 +109,29 @@ def update_locations(fh, mapping, event):
             ancestor_types = services.location_types.get(name=lt).ancestors_ref
             anc = filter(
                 lambda a: a, [cache.get(
-                    df.ix[idx][mapping[lt.name]['code']] if mapping[lt.name]['code'] else '',
+                    df.ix[idx][mapping[lt.name]['code']]
+                    if mapping[lt.name]['code'] else '',
                     lt.name or '',
-                    df.ix[idx][mapping[lt.name]['name']] if mapping[lt.name]['name'] else '')
+                    df.ix[idx][mapping[lt.name]['name']]
+                    if mapping[lt.name]['name'] else '')
                     for lt in ancestor_types])
             loc.update(add_to_set__events=event, add_to_set__ancestors_ref=anc)
+
+
+@celery.task
+def import_locations(upload_id, mappings):
+    upload = services.user_uploads.get(pk=upload_id)
+    dataframe = helpers.load_source_file(upload.data)
+    count, errors, warnings = update_locations(
+        dataframe,
+        upload.event,
+        mappings
+    )
+
+    # delete uploaded file
+    upload.data.delete()
+    upload.delete()
+
+    msg_body = generate_response_email(count, errors, warnings)
+
+    send_email(_('Import report'), msg_body, [upload.user.email])

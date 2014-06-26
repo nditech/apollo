@@ -1,19 +1,19 @@
 from __future__ import absolute_import
+
 from collections import defaultdict
+
 from flask.ext.babel import lazy_gettext as _
 from flask.ext.mongoengine.wtf.fields import ModelSelectField
 from flask.ext.wtf import Form as WTSecureForm
 from flask.ext.wtf.file import FileField
-from wtforms import (
-    BooleanField, IntegerField, SelectField, SelectMultipleField, StringField,
-    TextField, ValidationError, validators, widgets
-)
-from ..models import (
-    LocationType, Participant, Location
-)
-from ..services import (
-    events, locations, participants, participant_partners, participant_roles
-)
+from slugify import slugify
+from wtforms import (BooleanField, IntegerField, SelectField,
+                     SelectMultipleField, StringField, TextField,
+                     ValidationError, validators, widgets)
+
+from ..models import Location, LocationType, Participant
+from ..services import (events, location_types, locations,
+                        participant_partners, participant_roles, participants)
 from ..wtforms_ext import ExtendedSelectField
 
 
@@ -123,7 +123,7 @@ def generate_participant_edit_form(participant, data=None):
 def generate_participant_import_mapping_form(
     deployment, headers, *args, **kwargs
 ):
-    default_choices = [['', _('Select header')]] + [(v, v) for v in headers]
+    default_choices = [['', _('Select column')]] + [(v, v) for v in headers]
 
     attributes = {
         '_headers': headers,
@@ -196,6 +196,46 @@ def generate_participant_import_mapping_form(
     )
 
     return ParticipantImportMappingForm(*args, **kwargs)
+
+
+def generate_location_update_mapping_form(
+    deployment, headers, *args, **kwargs
+):
+    default_choices = [['', _('Select column')]] + [(v, v) for v in headers]
+
+    attributes = {
+        '_headers': headers,
+    }
+
+    for location_type in location_types.find():
+        name = location_type.name
+        slug = slugify(name, separator='_').lower()
+        attributes['{}_name'.format(slug)] = SelectField(
+            _('%(label)s Name', label=name),
+            choices=default_choices
+        )
+        attributes['{}_code'.format(slug)] = SelectField(
+            _('%(label)s Code', label=name),
+            choices=default_choices
+        )
+        if location_type.has_political_code:
+            attributes['{}_pcode'.format(slug)] = SelectField(
+                _('%(label)s Geopolitical Code', label=name),
+                choices=default_choices
+            )
+        if location_type.has_registered_voters:
+            attributes['{}_rv'.format(slug)] = SelectField(
+                _('%(label)s Registered Voters', label=name),
+                choices=default_choices
+            )
+
+    LocationUpdateMappingForm = type(
+        'LocationUpdateMappingForm',
+        (WTSecureForm,),
+        attributes
+    )
+
+    return LocationUpdateMappingForm(*args, **kwargs)
 
 
 def generate_submission_edit_form_class(form):
@@ -295,21 +335,7 @@ def generate_submission_edit_form_class(form):
     )
 
 
-class ParticipantUploadForm(WTSecureForm):
-    event = SelectField(
-        _('Event'),
-        choices=_make_choices(
-            events.find().scalar('id', 'name'),
-            _('Select Event')
-        ),
-        validators=[validators.input_required()]
-    )
-    spreadsheet = FileField(
-        _('Data File'),
-    )
-
-
-class LocationsUploadForm(WTSecureForm):
+class FileUploadForm(WTSecureForm):
     event = SelectField(
         _('Event'),
         choices=_make_choices(

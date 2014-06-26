@@ -90,7 +90,7 @@
         <h3>Upload File</h3>
 
         <div class="wizard-input-section">
-        <form enctype="multipart/form-data" method="POST" id="upload-form" action="">
+        <form enctype="multipart/form-data" method="POST" id="upload-form" action="{{ url_for('locations.locations_import') }}">{{ form.csrf_token() }}
           <div class="form-group">
             <div class="col-sm-9">
               <div class="row">
@@ -114,34 +114,6 @@
       <div class="wizard-card" data-cardname="mapFields">
         <h3>Map Fields</h3>
         <div class="wizard-input-section" style="">
-          <div class="col-sm-9">
-            <form class="form-horizontal" role="form">
-                <div class="form-group">
-                  <label for="Locaton Code" class="col-sm-5 control-label">Location Code</label>
-                  <div class="col-sm-7">
-                    <input type="text" class="form-control" placeholder="">
-                  </div>
-                </div>
-                <div class="form-group">
-                  <label for="Location Name" class="col-sm-5 control-label">Location Name</label>
-                  <div class="col-sm-7">
-                    <select class="form-control input-sm">
-                      <option value="name">Location Name</option>
-                      <option value="type">Location Type</option>
-                    </select>
-                  </div>
-                </div>
-                <div class="form-group">
-                  <label for="Location Type" class="col-sm-5 control-label">Location Type</label>
-                  <div class="col-sm-7">
-                    <select class="form-control input-sm">
-                      <option value="name">Location Name</option>
-                      <option value="type">Location Type</option>
-                    </select>
-                  </div>
-                </div>
-            </form>
-          </div>
         </div>
 
         <div class="wizard-error">
@@ -204,11 +176,11 @@ $(function(){
         var cont = true;
         $('#upload-form').ajaxSubmit({
             async: false,
-        /*    error: function (data) {
+            error: function (data) {
                 input = card.el.find("#uploadFile");
                 card.wizard.errorPopover(input, "{% trans %}Invalid file.{% endtrans %}");
                 cont = false;
-            },*/
+            },
             success: function (data) {
                 $('.wizard-input-section', wizard.cards['mapFields'].el).html(data);
                 cont = true;
