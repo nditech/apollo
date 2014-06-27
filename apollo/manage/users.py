@@ -43,8 +43,12 @@ class DeleteUserCommand(Command):
     """Delete a user"""
 
     def run(self):
+        deployments = Deployment.objects
+        option = prompt_choices('Deployment', [
+            (str(i), v) for i, v in enumerate(deployments, 1)])
+        deployment = deployments[int(option) - 1]
         email = prompt('Email')
-        user = users.first(email=email)
+        user = users.first(deployment=deployment, email=email)
         if not user:
             print 'Invalid user'
             return
