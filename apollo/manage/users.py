@@ -2,10 +2,30 @@ import socket
 from flask.ext.script import Command, prompt, prompt_choices, prompt_pass
 from flask.ext.security.forms import RegisterForm
 from flask.ext.security.registerable import register_user
+from flask.ext.security.utils import get_message
 from werkzeug.datastructures import MultiDict
 
 from ..services import users
 from ..models import Deployment, Role
+
+
+def can_create_user(email, password, password_confirm, deployment):
+    data = MultiDict(dict(email=email, password=password,
+                     password_confirm=password_confirm))
+    form = RegisterForm(data, csrf_enabled=False)
+
+    if form.validate():
+        return True, {}
+
+    email_errors = form.errors.get('email', [])
+    if (len(email_errors) == 1) and \
+        (email_errors[0] ==
+            get_message('EMAIL_ALREADY_ASSOCIATED', email=email)[0]):
+        user = users.first(email=email)
+        if user.deployment != deployment:
+            return True, {}
+
+    return False, form.errors
 
 
 class CreateUserCommand(Command):
@@ -19,10 +39,11 @@ class CreateUserCommand(Command):
         email = prompt('Email')
         password = prompt_pass('Password')
         password_confirm = prompt_pass('Confirm Password')
-        data = MultiDict(dict(email=email, password=password,
-                         password_confirm=password_confirm))
-        form = RegisterForm(data, csrf_enabled=False)
-        if form.validate():
+
+        can_create, form_errors = can_create_user(email, password,
+                                                  password_confirm, deployment)
+
+        if can_create:
             try:
                 user = register_user(email=email, password=password)
             except socket.error as e:
@@ -35,7 +56,7 @@ class CreateUserCommand(Command):
             print 'User(id=%s email=%s)' % (user.id, user.email)
             return
         print '\nError creating user:'
-        for errors in form.errors.values():
+        for errors in form_errors.values():
             print '\n'.join(errors)
 
 
