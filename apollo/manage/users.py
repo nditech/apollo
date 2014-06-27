@@ -21,8 +21,8 @@ def can_create_user(email, password, password_confirm, deployment):
     if (len(email_errors) == 1) and \
         (email_errors[0] ==
             get_message('EMAIL_ALREADY_ASSOCIATED', email=email)[0]):
-        user = users.first(email=email)
-        if user.deployment != deployment:
+        accounts = users.find(email=email, deployment=deployment)
+        if not accounts:
             return True, {}
 
     return False, form.errors
