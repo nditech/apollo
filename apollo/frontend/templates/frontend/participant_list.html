@@ -1,0 +1,315 @@
+{%- extends 'frontend/_layout.html' -%}
+{%- from 'frontend/macros/participant_list_filter.html' import render_filter_form -%}
+{%- from 'frontend/macros/pagination.html' import render_pager, render_pager_counter -%}
+{%- from 'frontend/macros/send_message.html' import send_message_modal -%}
+{% block stylesheets %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap-wizard.css') }}">
+<style type="text/css">
+.arrow-style{text-decoration:none; color:#333;}
+a:hover.arrow-style{text-decoration:none; color:#333;}
+.img{margin: 4px 0 0 -6px;}
+.wizard-modal p {
+        margin: 0 0 10px;
+        padding: 0;
+      }
+      .fileUpload {
+        position: relative;
+        overflow: hidden;
+      }
+      .fileUpload input.upload {
+        position: absolute;
+        top: 0;
+        right: 0;
+        margin: 0;
+        padding: 0;
+        font-size: 20px;
+        cursor: pointer;
+        opacity: 0;
+        filter: alpha(opacity=0);
+      }
+</style>
+{% endblock %}
+{% block toolbar %}
+  {%- if perms.export_participants.can() -%}
+  <a class="btn btn-sm btn-default pull-right" href="{{ url_for('participants.participant_list', export='true', **request.args) }}"><i class="glyphicon glyphicon-export"></i> {% trans %}Export{% endtrans %}</a>
+  {%- endif -%}
+  <a class="btn btn-sm btn-default pull-right" href="{{ url_for('participants.participant_performance_list') }}" style="margin-right:1em;"><i class="glyphicon glyphicon-stats"></i> {% trans %}Performance Evaluation{% endtrans %}</a>
+  {%- if perms.import_participants.can() -%}
+  <button id="open-wizard" class="btn btn-sm btn-primary pull-right" style="margin-right:1em;"><i class="glyphicon glyphicon-import glyphicon-white"></i> {% trans %}Import Participants{% endtrans %}</button>
+  {%- endif -%}
+  {%- if perms.send_messages.can() -%}
+  <button class="btn btn-sm btn-success pull-right" id="send_message_modal_btn" style="margin-right:1em;"><i class="glyphicon glyphicon-envelope"></i> {% trans %}Send Message{% endtrans %}</button>
+  {%- endif -%}
+{% endblock %}
+{% block content %}
+{%- set flash_msgs = get_flashed_messages(category_filter=['task_begun']) -%}
+    <div class="row-fluid">
+      <div class="well well-sm filter">
+        {{ render_filter_form(filter_form, location) }}
+      </div>
+    </div>
+{%- if flash_msgs -%}
+    <div>
+    {%- for msg in flash_msgs -%}
+      <p class="alert alert-info">{{ msg }}</p>
+    {%- endfor -%}
+    </div>
+{%- endif -%}
+    <div class="row-fluid">
+      <div>
+        {{ render_pager_counter(participants, args) }}
+        <form class="form-inline" action="{{ request.url }}" method="POST">
+          {{ form.csrf_token() }}{{ form.select_superset() }}
+          <!--<div class="checkbox" style="margin-left:10px;">
+            <label>
+              Select All
+            </label><a href="#" class="btn btn-xs"><i class="glyphicon glyphicon-trash"></i></a>
+          </div>-->
+          <a href="#" id="delete" class="btn btn-sm btn-danger pull-left"><i class="glyphicon glyphicon-trash i_custom"></i></a>
+          <table class="table table-bordered table-striped">
+           <thead>
+             <tr>
+              <th><input type="checkbox" class="checked" id="select_all" name="select_all"></th>
+               <th><a href="{{ url_for('participants.participant_list', sort_by='id', **args) }}" class="arrow-style"><img src="{{ url_for('static', filename='img/double-arrow.gif') }}" class="img pull-left"></img>{% trans %}ID{% endtrans %}</a></th>
+               {%- for location_type in location_types -%}
+               <th>{{ location_type.name }}</th>
+               {%- endfor -%}
+               <th>{% trans %}Location{% endtrans %}</th>
+               <th><a href="{{ url_for('participants.participant_list', sort_by='name', **args) }}" class="arrow-style"><img src="{{ url_for('static', filename='img/double-arrow.gif') }}" class="img pull-left"></img>{% trans %}Name{% endtrans %}</a></th>
+               <th><a href="{{ url_for('participants.participant_list', sort_by='gen', **args) }}" class="arrow-style"><img src="{{ url_for('static', filename='img/double-arrow.gif') }}" class="img pull-left"></img>{% trans %}Gender{% endtrans %}</a></th>
+               <th>{% trans %}Role{% endtrans %}</th>
+               <th>{% trans %}Phone{% endtrans %}</th>
+               <th>{% trans %}Organization{% endtrans %}</th>
+               {% for field in extra_fields %}
+               <th><a href="{{ url_for('participants.participant_list', sort_by=field.name, **args) }}" class="arrow-style"><img src="{{ url_for('static', filename='img/double-arrow.gif') }}" class="img pull-left"></img>{{ field.label }}</a></th>
+               {% endfor %}
+               {%- if perms.edit_participant.can() -%}
+               <th class="text-center">{% trans %}Edit{% endtrans %}</th>
+               {%- endif -%}
+             </tr>
+           </thead>
+           <tbody>
+             {% for participant in participants.items %}
+             <tr>
+               <td><input type="checkbox" class="checked" name="ids" value="{{ participant.id }}"></td>
+               <td>{{ participant.participant_id }}</td>
+               {%- for location_type in location_types -%}
+               <td>{{ participant.location_name_path[location_type.name] }}</td>
+               {%- endfor -%}
+               <td>{{ participant.location|default('N/A', true) }}</td>
+               <td>{{ participant.name|default('', true) }}</td>
+               <td>{{ participant.gender }}</td>
+               <td>{{ participant.role|default('N/A', true) }}</td>
+               <td>{{ participant.phone|default('', true) }}</td>
+               <td>{{ participant.partner|default('', true) }}</td>
+               {% for field in extra_fields %}
+               <td>{{ participant[field.name]|default('', true) }}</td>
+               {% endfor %}
+               {%- if perms.edit_participant.can() -%}
+               <td class="text-center"><a href="{{ url_for('participants.participant_edit', pk=participant.id) }}" data-toggle="modal" data-target="#edit_modal">{% trans %}Edit{% endtrans %}</a></td>
+               {%- endif -%}
+             </tr>
+             {% else %}
+             {%- if perms.edit_participant.can() -%}
+             {%- set colspan = 9 + (location_types|length) + (g.deployment.participant_extra_fields|length) -%}
+             {%- else -%}
+             {%- set colspan = 8 + (location_types|length) + (g.deployment.participant_extra_fields|length) -%}
+             {%- endif -%}
+             <tr class="warning">
+               <td class="text-center" colspan="{{ colspan }}">{% trans %}No Data Available{% endtrans %}</td>
+             </tr>
+             {% endfor %}
+           </tbody>
+          </table>
+        </form>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+      {{ render_pager(participants, 'participants.participant_list', args) }}
+      </div>
+    </div>
+    <div class="modal fade" id="edit_modal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+      <div class="modal-dialog" style="width:450px">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title" id="editModalLabel">{% trans %}Edit Participant{% endtrans %}</h4>
+          </div>
+          <div class="modal-body" style="height:4.5em">
+            <div id="loader" class="ajax_loader" style="margin:auto">
+              <div class="ajax_loader_block block_1"></div>
+              <div class="ajax_loader_block block_2"></div>
+              <div class="ajax_loader_block block_3"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- IMPORT WIZARD -->
+    <div class="wizard" id="import-wizard" data-title="Import Participants">
+      <!-- Step 1 -->
+      <div class="wizard-card" data-cardname="uploadFile">
+        <h3>Upload File</h3>
+
+        <div class="wizard-input-section">
+        <form enctype="multipart/form-data" method="POST" id="upload-form" action="{{ url_for('participants.participant_list_import') }}">{{ form.csrf_token() }}
+          <div class="form-group">
+            <div class="col-sm-9">
+              <div class="row">
+                <div class="col-sm-4">
+                  <div class="fileUpload btn btn-default btn-sm" style="margin-left:1px;">
+                      <span>Browse</span>
+                      <i class="glyphicon glyphicon-search"></i>
+                      <input id="uploadBtn" type="file" class="upload" name="spreadsheet" />
+                  </div>
+                </div>
+                <div class="col-sm-8" style="margin-left:-30px;">
+                    <input id="uploadFile" type="text" placeholder="Data File" class="form-control input-sm" readonly>
+                    <input type="hidden" name="event" value="{{ g.event.pk }}">
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+        </div>
+      </div>
+      <div class="wizard-card" data-cardname="mapFields">
+        <h3>Map Fields</h3>
+        <div class="wizard-input-section" style="">
+        </div>
+
+        <div class="wizard-error">
+          <div class="alert alert-error">
+            <strong>There was a problem</strong> with your submission. Please correct the errors and re-submit.
+          </div>
+        </div>
+
+        <div class="wizard-failure">
+          <div class="alert alert-error">
+            <strong>There was a problem</strong> submitting the form. Please try again in a minute.
+          </div>
+        </div>
+
+        <div class="wizard-success">
+          <div class="alert alert-success">
+            <span class="create-server-name">Your participants file is being <strong>imported.</strong> You'll receive an email when completed.</span>
+          </div>
+
+          <a class="btn btn-success im-done">Done</a>
+        </div>
+      </div>
+    </div>
+{%- endblock -%}
+{%- block scripts -%}
+<script src="{{ url_for('static', filename='js/filters.js') }}"></script>
+<script src="{{ url_for('static', filename='js/forms.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/chosen.jquery.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/prettify.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap-wizard.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/jquery.form.js') }}"></script>
+<script type="text/javascript">
+var wizard;
+
+$(function(){
+    $("#uploadBtn").change(function () {
+        $("#uploadFile").val(this.files[0].name);
+    });
+
+    $('#delete').hide();
+
+    $('input[type="checkbox"]').click(function() {
+        if (this.checked)
+        {
+            $('#delete').fadeIn('slow');
+        }
+        else
+        {
+            if ( !$('.checked:checked').length )
+            {
+                $('#delete').fadeOut('slow');
+            }
+        }
+    });
+
+    var edit_modal_content;
+
+    $('#edit_modal').on('show.bs.modal', function (e) {
+        edit_modal_content = $('#edit_modal').html();
+    });
+    $('#edit_modal').on('hidden.bs.modal', function(e) {
+        $('#edit_modal').removeData();
+        $('#edit_modal').html(edit_modal_content);
+    });
+
+    wizard = $('#import-wizard').wizard({
+        keyboard : true,
+        contentHeight : 500,
+        contentWidth : 700,
+        showCancel: true,
+        backdrop: 'static'
+    });
+
+    wizard.on('closed', function() {
+        wizard.reset();
+        $("#uploadFile").val("");
+        $("#uploadBtn").wrap('<form>').closest('form').get(0).reset();
+        $("#uploadBtn").unwrap();
+    });
+
+    wizard.cards['uploadFile'].on('validate', function (card) {
+        var cont = true;
+        $('#upload-form').ajaxSubmit({
+            async: false,
+            error: function (data) {
+                input = card.el.find("#uploadFile");
+                card.wizard.errorPopover(input, "{% trans %}Invalid file.{% endtrans %}");
+                cont = false;
+            },
+            success: function (data) {
+                $('.wizard-input-section', wizard.cards['mapFields'].el).html(data);
+                cont = true;
+            }
+        });
+        return cont;
+    });
+
+    wizard.on("submit", function(wizard) {
+        $.ajax({
+            type: 'POST',
+            url: $('#form-action').val(),
+            data: wizard.serialize()
+        }).done(function (response) {
+            wizard.trigger("success");
+            wizard.hideButtons();
+            wizard._submitting = false;
+            wizard.submitSuccess();
+            wizard.updateProgressBar(0);
+        }).fail(function () {
+            wizard.trigger("failure");
+            wizard.hideButtons();
+            wizard._submitting = false;
+            wizard.updateProgressBar(0);
+        });
+    });
+
+    wizard.el.find(".wizard-success .im-done").click(function() {
+        wizard.hide();
+        setTimeout(function() {
+            wizard.reset();
+            $("#uploadFile").val("");
+            $("#uploadBtn").wrap('<form>').closest('form').get(0).reset();
+            $("#uploadBtn").unwrap();
+        }, 250);
+    });
+
+    $('#open-wizard').click(function(e) {
+        e.preventDefault();
+        wizard.show();
+    });
+});
+</script>
+{% if perms.send_messages.can() %}
+{{ send_message_modal(participants.total) }}
+{% endif %}
+{%- endblock -%}

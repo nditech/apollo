@@ -1,0 +1,90 @@
+{% macro submission_header(form, form_fields, location_types, perms) %}
+<tr>
+    <th>{% trans %}ID{% endtrans %}</th>
+    {% for location_type in location_types %}
+    <th>{{ location_type.name }}</th>
+    {% endfor %}
+    <th>{% trans %}Participant{% endtrans %}</th>
+    <th>{% trans %}Phone{% endtrans %}</th>
+    {% if form.form_type == 'CHECKLIST' %}
+    {% for group in form.groups %}
+    <th class="text-center">{% if group.abbr %}<abbr title="{{ group.name }}">{{ group.abbr }}</abbr>{% else %}{{ group.name }}{% endif %}</th>
+    {% endfor %}
+    {% else %}
+    {% for field in form_fields %}
+    <th class="text-center"><abbr title="{{ field.description }}">{{ field.name }}</abbr></th>
+    {% endfor %}
+    <th class="text-center"><abbr title="{% trans %}Status{% endtrans %}"><i class="glyphicon glyphicon-eye-open"></i></abbr></th>
+    {% endif %}
+    <th class="text-center"><abbr title="{% trans %}Phone Verification{% endtrans %}"><i class="glyphicon glyphicon-phone"></i></abbr></th>
+    {% if perms.edit_submission.can() %}<th class="text-center">{% trans %}Edit{% endtrans %}</th>{% endif %}
+</tr>
+{% endmacro %}
+{% macro submission_items(submissions, form, form_fields, location_types, perms) %}
+{% for submission in submissions %}
+<tr>
+    <td>{{ submission.contributor.participant_id }}</td>
+    {% for location_type in location_types %}
+    <td>{{ submission.location_name_path[location_type.name] }}</td>
+    {% endfor %}
+    <td>{{ submission.contributor.name|default('', true) }}</td>
+    <td>{{ submission.contributor.phone|default('', true) }}</td>
+    {%- if form.form_type == 'CHECKLIST' -%}
+    {% for group in form.groups %}
+    <td class="text-center">
+        {% if submission.completion[group.name] == 'Complete' %}<img src="{{ url_for('static', filename='img/tick.png') }}" alt="{% trans %}complete{% endtrans %}" title="{% trans %}complete{% endtrans %}" height="11" width="11">
+        {%- elif submission.completion[group.name] == 'Partial' %}<img src="{{ url_for('static', filename='img/caution.png') }}" alt="{% trans %}partial{% endtrans %}" title="{% trans %}partial{% endtrans %}" height="11" width="11">
+        {%- elif submission.completion[group.name] == 'Missing' %}<img src="{{ url_for('static', filename='img/red_dot.png') }}" alt="{% trans %}missing{% endtrans %}" title="{% trans %}missing{% endtrans %}" height="11" width="11">
+        {% endif %}
+    </td>
+    {% endfor %}
+    {% else %}
+    {% for field in form_fields %}
+    <td class="text-center">{%- if submission[field.name] -%}<img src="{{ url_for('static', filename='img/red_dot.png') }}" height="11" width="11" />{% else %}&nbsp;{% endif %}</td>
+    {% endfor %}
+    <td class="text-center">
+    {% if form.form_type == 'INCIDENT' %}
+    {%- set status = submission.status -%}
+    {%- if status == 'confirmed' -%}
+    <img src="{{ url_for('static', filename='img/tick.png') }}" title="{% trans %}Confirmed{% endtrans %}" alt="{% trans %}Confirmed{% endtrans %}" height="11" width="11" />
+    {%- elif status == 'rejected' -%}
+    <img src="{{ url_for('static', filename='img/red_dot.png') }}" title="{% trans %}Rejected{% endtrans %}" alt="{% trans %}Rejected{% endtrans %}" height="11" width="11" />
+    {%- else -%}
+    <img src="{{ url_for('static', filename='img/caution.png') }}" title="{% trans %}Unmarked{% endtrans %}" alt="{% trans %}Unmarked{% endtrans %}" height="11" width="11" />
+    {%- endif -%}
+    {%- else -%}
+    &nbsp;
+    {%- endif -%}
+    </td>
+    {% endif %}
+    <td style="text-align: center"><img src="{% if submission.sender_verified %}{{ url_for('static', filename='img/tick.png') }}{% else %}{{ url_for('static', filename='img/caution.png') }}{% endif %}" title="{% if submission.sender_verified %}{% trans %}Verified{% endtrans %}{% else %}{% trans %}Unverified{% endtrans %}{% endif %}" height="11" width="11" /></td>
+    {% if perms.edit_submission.can() %}<td class="text-center"><a href="{{ url_for('submissions.submission_edit', submission_id=submission.pk, next=request.url) }}">{% trans %}Edit{% endtrans %}</a></td>{% endif %}
+</tr>
+{% else %}
+{% if perms.edit_submission.can() %}
+{% if form.form_type == 'CHECKLIST' %}
+{%- set colspan = 5 + (location_types|length) + form.groups|length -%}
+<tr class="warning">
+    <td class="text-center" colspan="{{ colspan }}">{% trans %}No Data Available{% endtrans %}</td>
+</tr>
+{% else %}
+{%- set colspan = 6 + (location_types|length) + form_fields|length -%}
+<tr class="warning">
+    <td class="text-center" colspan="{{ colspan }}">{% trans %}No Data Available{% endtrans %}</td>
+</tr>
+{% endif %}
+{% else %}
+{% if form.form_type == 'CHECKLIST' %}
+{%- set colspan = 4 + (location_types|length) + form.groups|length -%}
+<tr class="warning">
+    <td class="text-center" colspan="{{ colspan }}">{% trans %}No Data Available{% endtrans %}</td>
+</tr>
+{% else %}
+{%- set colspan = 5 + (location_types|length) + form_fields|length -%}
+<tr class="warning">
+    <td class="text-center" colspan="{{ colspan }}">{% trans %}No Data Available{% endtrans %}</td>
+</tr>
+{% endif %}
+{% endif %}
+{% endfor %}
+{% endmacro %}

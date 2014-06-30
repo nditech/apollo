@@ -1,0 +1,66 @@
+{% extends 'frontend/_layout.html' %}
+{% block stylesheets %}
+<style type="text/css">
+.piechart svg{height:300px; margin-left: .8em; margin-top: .8em;}
+</style>
+{% endblock %}
+{% from 'frontend/macros/dashboard_filter.html' import render_filter_form %}
+{% block scripts %}
+ <script type="text/javascript" src="{{ url_for('static', filename='js/d3.v3.js') }}"></script>
+ <script type="text/javascript" src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+ <script type="text/javascript" src="{{ url_for('static', filename='js/filters.js') }}"></script>
+<script type="text/javascript">
+  var time = new Date().getTime();
+  
+  $(document.body).bind("mousemove keypress", function(e) {
+    time = new Date().getTime();
+  });
+
+  function refresh() {
+    if(new Date().getTime() - time >= 300000) 
+      window.location.reload(true);
+    else 
+      setTimeout(refresh, 10000);
+  }
+  
+  setTimeout(refresh, 10000);
+</script>
+<script type="text/javascript">  
+  //Create SVG element
+
+</script>
+{% endblock %}
+{% block content %}
+<div class="row">
+  <div class="col-md-12">
+      <div class="well well-sm filter">
+          {{ render_filter_form(filter_form, location)}}
+      </div>
+  </div>
+</div>
+{% if data %}
+{% for row in data %}
+{% if loop.index0 is divisibleby 6 %}<div class="row-fluid">{% endif %}
+  <div class="col-md-2">
+  {%- if group -%}
+    <legend class="centered"><a href="{{ url_for('dashboard.index', group=group, locationtype=locationtype, **args) }}">{{ row.name }}</a></legend>
+  {%- else -%}
+    <legend style="text-align:center"><a href="{{ url_for('dashboard.index', group=row.name, locationtype=locationtype, **args) }}">{{ row.name }}</a></legend>
+  {% endif %}
+    <div class="piechart" data-chart='{{ row|tojson|safe }}'>
+    </div>
+  </div>
+{% if loop.last or loop.index is divisibleby 6 %}</div>{% endif %}
+{% endfor %}
+{% else %}
+<div class="row">
+  <div class="col-md-12">
+  <table width="100%" class="table table-striped table-bordered">
+    <tr class="warning">
+      <td style="text-align:center">{% trans %}No Data Available{% endtrans %}</td>
+    </tr>
+  </table>
+  </div>
+</div>
+{% endif %}
+{% endblock %}

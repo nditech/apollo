@@ -1,0 +1,44 @@
+{% macro render_pager(pager, endpoint, args) %}
+<div class="text-center">
+<ul class="pagination pagination-centered">
+<li {% if pager.page == 1 %}class="disabled"{% endif %}><a title="{% trans %}First Page{% endtrans %}" href="{% if pager.page == 1 %}javascript:;{% else %}{{ url_for(endpoint, page=1, **args) }}{% endif %}">&laquo;</a></li>
+<li {% if not pager.has_prev %}class="disabled"{% endif %}><a title="{% trans %}Previous Page{% endtrans %}" href="{% if not pager.has_prev %}javascript:;{% else %}{{ url_for(endpoint, page=pager.prev_num, **args) }}{% endif %}">&larr;</a></li>
+{% for pg in pager|pagelist %}
+<li {% if pg == pager.page %}class="active"{% endif %}><a href="{% if pg == pager.page %}javascript:;{% else %}{{ url_for(endpoint, page=pg, **args) }}{% endif %}">{{ pg }}</a></li>
+{% endfor %}
+<li {% if not pager.has_next %}class="disabled"{% endif %}><a title="{% trans %}Next Page{% endtrans %}" href="{% if not pager.has_next %}javascript:;{% else %}{{ url_for(endpoint, page=pager.next_num, **args) }}{% endif %}">&rarr;</a></li>
+<li {% if pager.page == pager.pages or not pager.pages %}class="disabled"{% endif %}><a title="{% trans %}Last Page{% endtrans %}" href="{% if pager.page == pager.pages or not pager.pages %}javascript:;{% else %}{{ url_for(endpoint, page=pager.pages, **args) }}{% endif %}">&raquo;</a></li>
+</ul>
+</div>
+{%- set start = (pager.page - 1) * pager.per_page + 1 -%}
+{%- if (pager.page * pager.per_page) > pager.total %}
+{%- set end = pager.total -%}
+{%- else -%}
+{%- set end = pager.page * pager.per_page -%}
+{%- endif -%}
+{%- set total = pager.total -%}
+{% if total %}
+<div class="text-center">
+<ul class="pagination pagination-centered" style="margin-top:0px;">
+<li class="disabled"><a>{% trans %}Showing{% endtrans %} <strong>{{ start }}-{{ end }}</strong> {% trans %}of{% endtrans %} <strong>{{ total }}</strong></a></li>
+</ul>
+</div>
+{% endif %}
+{% endmacro %}
+
+{% macro render_pager_counter(pager, args) %}
+{%- set start = (pager.page - 1) * pager.per_page + 1 -%}
+{%- if (pager.page * pager.per_page) > pager.total %}
+{%- set end = pager.total -%}
+{%- else -%}
+{%- set end = pager.page * pager.per_page -%}
+{%- endif -%}
+{%- set total = pager.total -%}
+{% if total %}
+<div class="text-center">
+<ul class="pagination pull-right" style="margin:-13px 0 7px 0;">
+<li style="color:#999;">{% trans %}Showing{% endtrans %} <strong>{{ start }}-{{ end }}</strong> {% trans %}of{% endtrans %} <strong>{{ total }}</strong></li>
+</ul>
+</div>
+{% endif %}
+{% endmacro %}

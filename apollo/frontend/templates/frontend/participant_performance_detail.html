@@ -1,0 +1,89 @@
+{% extends 'frontend/_layout.html' %}
+{% block content %}
+<div class="row">
+<div class="col-md-12">
+<div class="panel panel-default">
+<div class="panel-heading">
+<h3 class="panel-title">{% trans %}Participant Detail{% endtrans %}</h3>
+</div>
+{% set accuracy = participant.accurate_message_count|percent_of(participant.message_count, 100.0) %}
+{% set completion = participant.completion_rating|percent_of(1, 100.0) %}
+<table class="table table-bordered">
+<tr>
+<th>{% trans %}Participant{% endtrans %}</th>
+<td>{{ participant.name }} (<strong>{{ participant.participant_id }}</strong>)</td>
+</tr>
+<tr>
+<th>{% trans %}Phone Numbers{% endtrans %}</th>
+<td>{{ participant.phones|join(', ', attribute='number') }}</td>
+</tr>
+<tr>
+<th>{% trans %}Messages Sent{% endtrans %}</th>
+<td>{{ participant.message_count }}</td>
+</tr>
+<tr>
+<th>{% trans %}Accuracy{% endtrans %}</th>
+<td>{{ accuracy|round|int }}%</td>
+</tr>
+<tr>
+<th>{% trans %}Completion{% endtrans %}</th>
+<td>{{ completion|round|int }}%</td>
+</tr>
+<tr>
+<th>{% trans %}Rating{% endtrans %}</th>
+<td><div class="raty" data-score="{{ (accuracy + completion)/200 * 5 }}" data-number="5"></div></td>
+</tr>
+</table>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<h3 class="panel-title">{% trans %}Messages{% endtrans %}</h3>
+</div>
+<table class="table table-striped table-bordered table-hover" style="table-layout:fixed">
+<thead>
+<tr>
+    <th width="10%">{% trans %}Date{% endtrans %}</th>
+    <th width="10%">{% trans %}Time{% endtrans %}</th>
+    <th width="15%">{% trans %}Mobile{% endtrans %}</th>
+    <th width="65%">{% trans %}Text{% endtrans %}</th>
+</tr>
+</thead>
+<tbody>
+{% for msg in messages %}
+<tr>
+<td class="timestamp-date" data-timestamp="{{ msg.received|timestamp }}">{{ msg.received.strftime('%b %d %Y') }}</td>
+<td class="timestamp-time" data-timestamp="{{ msg.received|timestamp }}">{{ msg.received.strftime('%I:%M %p') }}</td>
+<td>{{ msg.sender }}</td>
+<td>{{ msg.text }}</td>
+</tr>
+{% else %}
+<tr class="warning">
+    <td class="text-center" colspan="4">
+        {% trans %}No Data Available{% endtrans %}
+    </td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+</div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/jquery.raty.js') }}"></script>
+<script src="{{ url_for('static', filename='js/moment-with-langs.min.js') }}"></script>
+<script type="text/javascript">
+$(function(){
+  moment.lang('{{ g.locale }}');
+  $('div.raty').raty({
+      number: function() { return $(this).data('number'); },
+      score: function() { return $(this).data('score'); },
+      readOnly: true,
+      starOn: '{{ url_for('static', filename='img/star-on.png') }}',
+      starOff: '{{ url_for('static', filename='img/star-off.png') }}',
+      starHalf: '{{ url_for('static', filename='img/star-half.png') }}'
+  });
+});
+</script>
+<script src="{{ url_for('static', filename='js/timestamps.js') }}"></script>
+{% endblock %}

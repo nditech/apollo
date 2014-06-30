@@ -1,0 +1,14 @@
+{%- extends 'frontend/_layout.html' -%}
+{% block content %}
+<div class="row-fluid">
+	<div class="col-md-2 col-md-offset-5 text-center" style="margin-top:5em">
+		<legend>{{ page_title }}</legend>
+		<form class="form-vertical" action="" method="POST" accept-charset="utf-8">{{ form.csrf_token }}
+			<div class="form-group">
+          {{ form.event(class_='form-control') }}
+      </div>
+      <button class="btn btn-warning btn-md" type="submit">{% trans %}Go{% endtrans %}</button>
+		</form>
+	</div>
+</div>
+{% endblock %}

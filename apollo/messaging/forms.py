@@ -1,14 +1,22 @@
-from django import forms
+from .. import services
+from flask.ext import wtf
+import wtforms
 
 
-class BaseHttpForm(forms.Form):
+class MessagesFilterForm(wtf.Form):
+    mobile = wtforms.StringField()
+    text = wtforms.StringField()
+    date = wtforms.DateField(format="%d-%m-%Y")
+
+
+class BaseHttpForm(wtforms.Form):
     '''Helper form for validating incoming messages'''
 
     def get_message(self):
         return NotImplementedError()
 
 
-class KannelForm(forms.Form):
+class KannelForm(wtforms.Form):
     '''Django-based form for validating incoming messages
     from a Kannel-based SMS gateway.
 
@@ -17,23 +25,23 @@ class KannelForm(forms.Form):
     :param charset: (Optional) character set for handling incoming message.
     :param coding: (Optional) not being used at the moment.'''
 
-    sender = forms.CharField()
-    text = forms.CharField()
-    charset = forms.CharField(required=False)
-    coding = forms.CharField(required=False)
+    sender = wtforms.StringField(validators=[wtforms.validators.required()])
+    text = wtforms.StringField(validators=[wtforms.validators.required()])
+    charset = wtforms.StringField()
+    coding = wtforms.StringField()
 
     def clean_text(self):
-        charset = self.cleaned_data.get('charset')
-        text = self.cleaned_data.get('text')
+        charset = self.charset.data
+        text = self.text.data
         if charset and not isinstance(text, unicode):
             text = text.decode(charset)
         return text
 
     def get_message(self):
-        if self.is_valid():
+        if self.validate():
             return {
-                'sender': self.cleaned_data.get('sender'),
-                'text': self.cleaned_data.get('text')
+                'sender': self.sender.data,
+                'text': self.clean_text()
             }
 
 
@@ -44,13 +52,33 @@ class TelerivetForm(BaseHttpForm):
     The parameters defined here are based on the Telerivet
     [Webhook API](http://telerivet.com/help/api/webhook/receiving)'''
 
-    id = forms.CharField()
-    from_number = forms.CharField()
-    content = forms.CharField()
+    id = wtforms.StringField()
+    from_number = wtforms.StringField(
+        validators=[wtforms.validators.required()])
+    content = wtforms.StringField(validators=[wtforms.validators.required()])
 
     def get_message(self):
-        if self.is_valid():
+        if self.validate():
             return {
-                'sender': self.cleaned_data.get('from_number'),
-                'text': self.cleaned_data.get('content')
+                'sender': self.from_number.data,
+                'text': self.content.data
             }
+
+
+def retrieve_form(prefix, form_type='CHECKLIST'):
+    '''
+    Retrieves a matching form for the given deployment, prefix and form_type.
+
+    :param:`prefix` - The form prefix
+    :param:`form_type` - (optional) the form type in narrowing the result
+    :returns: a Form document or None
+    '''
+    events_in_deployment = services.events.find()
+
+    # find the first form that matches the prefix and optionally form type
+    # for the events in the deployment.
+    form = services.forms.find(
+        events__in=events_in_deployment, prefix__iexact=prefix,
+        form_type=form_type).first()
+
+    return form

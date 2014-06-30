@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>{{ page_title }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!-- Le styles -->
+    {% assets 'apollo_css' %}
+    <link rel="stylesheet" href="{{ ASSET_URL }}" type="text/css" media="screen,projection" charset="utf-8">
+    {% endassets %}
+    {% block stylesheets %}{% endblock %}
+    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <!-- abbr tag for IE 7 and below -->
+    <!--[if lte IE 7]>
+      <script type="text/javascript">document.createElement('abbr');</script>
+    <![endif]-->
+
+    {% block head %}{% endblock %}
+  </head>
+  <body>
+    <div class="navbar navbar-default navbar-static-top">
+      <div class="container">
+        <div class="navbar-header">
+          <a class="navbar-brand navbrand-container" href="{{ url_for('dashboard.index') }}">
+            {% if g.deployment.logo %}
+            <img src="{{ g.deployment.logo }}" title="Apollo" class="navbrand-logo">
+            {% else %}Apollo{% endif %}
+          </a>
+        </div>
+        <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="{{ current_menu.submenu('dashboard').url }}"><i class="glyphicon glyphicon-user glyphicon-home"></i> {{ current_menu.submenu('dashboard').text }}</a></li>
+            {% if current_menu.submenu('forms.checklists').dynamic_list|count > 1 -%}
+            <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-check"></i> {% trans %}Checklists{% endtrans %} <b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                    {% for form in current_menu.submenu('forms.checklists').dynamic_list -%}
+                    <li><a href="{{ form.url }}"><i class="glyphicon glyphicon-check"></i> {{ form.text }}</a></li>
+                    {%- endfor %}
+                </ul>
+            </li>
+            {%- elif current_menu.submenu('forms.checklists').dynamic_list -%}
+            <li><a href="{{ current_menu.submenu('forms.checklists').dynamic_list[0].url }}"><i class="glyphicon glyphicon-check"></i> {{ current_menu.submenu('forms.checklists').dynamic_list[0].text }}</a></li>
+            {%- endif -%}
+            {% if current_menu.submenu('forms.incidents').dynamic_list|count > 1 -%}
+            <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-check"></i> {% trans %}Incidents{% endtrans %} <b class="caret"></b></a>
+                <ul class="dropdown-menu navbar-right">
+                    {% for form in current_menu.submenu('forms.incidents').dynamic_list -%}
+                    <li><a href="{{ form.url }}"><i class="glyphicon glyphicon-check"></i> {{ form.text }}</a></li>
+                    {%- endfor %}
+                </ul>
+            </li>
+            {%- elif current_menu.submenu('forms.incidents').dynamic_list -%}
+            <li><a href="{{ current_menu.submenu('forms.incidents').dynamic_list[0].url }}"><i class="glyphicon glyphicon-check"></i> {{ current_menu.submenu('forms.incidents').dynamic_list[0].text }}</a></li>
+            {%- endif -%}
+            {%- if perms.view_analyses.can() -%}
+            {%- if current_menu.submenu('forms.incidents').dynamic_list or current_menu.submenu('forms.checklists').dynamic_list -%}
+            <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-stats"></i> {% trans %}Analyses{% endtrans %} <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+              {%- if current_menu.submenu('process_analysis').dynamic_list -%}
+                <li class="dropdown-submenu"> 
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-stats"></i> {% trans %}Process{% endtrans %}</a>
+                  <ul class="dropdown-menu">
+                    {%- for form in current_menu.submenu('process_analysis').dynamic_list -%}
+                    <li><a href="{{ form.url }}"><i class="glyphicon glyphicon-stats"></i> {{ form.text }}</a></li>
+                    {%- endfor -%}
+                  </ul>
+                </li>
+              {%- endif -%}
+              {%- if current_menu.submenu('results_analysis').dynamic_list -%}
+              <li class="dropdown-submenu">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-stats"></i> {% trans %}Results{% endtrans %}</a>
+                <ul class="dropdown-menu">
+                  {%- for form in current_menu.submenu('results_analysis').dynamic_list -%}
+                  <li><a href="{{ form.url }}"><i class="glyphicon glyphicon-stats"></i> {{ form.text }}</a></li>
+                  {%- endfor %}
+                </ul>
+              </li>
+              {%- endif -%}
+              </ul>
+            </li>
+            {%- endif -%}
+            {%- endif -%}
+            {%- if current_menu.submenu('participants').visible -%}
+            <li><a href="{{ current_menu.submenu('participants').url }}"><i class="glyphicon glyphicon-user"></i> {{ current_menu.submenu('participants').text }}</a></li>
+            {%- endif -%}
+            {%- if current_menu.submenu('messages').visible -%}
+            <li><a href="{{ current_menu.submenu('messages').url }}"><i class="glyphicon glyphicon-envelope"></i> {{ current_menu.submenu('messages').text }}</a></li>
+            {%- endif -%}
+            <li class="divider-vertical"></li>
+            <li>
+              <a class="dropdown-toggle" data-toggle="dropdown" href="#"><img src="{{ current_user.email|gravatar }}" class="img-rounded" style="margin-right: 0.25em; border-radius: 12px"> {{ current_user.email }}<b class="caret"></b></a>
+              <ul class="dropdown-menu">
+              {%- if current_menu.submenu('events').visible -%}
+                <li><a href="{{ current_menu.submenu('events').url }}"><i class="glyphicon glyphicon-th-list"></i> {{ current_menu.submenu('events').text }}</a></li>
+                <li class="divider"></li>
+              {%- endif -%}
+              {%- if perms.role('admin').can() -%}
+                <li><a href="{{ url_for('admin.index') }}"><i class="glyphicon glyphicon-user"></i> {% trans %}Admin{% endtrans %}</a></li>
+                <li class="divider"></li>
+              {%- endif -%}
+              {%- if current_menu.submenu('locations_builder').visible -%}
+                <li><a href="{{ current_menu.submenu('locations_builder').url }}"><i class="glyphicon glyphicon-map-marker"></i> {{ current_menu.submenu('locations_builder').text }}</a></li>
+              {%- endif -%}
+              {%- if current_menu.submenu('locations_list').visible -%}
+                <li><a href="{{ current_menu.submenu('locations_list').url }}"><i class="glyphicon glyphicon-map-marker"></i> {{ current_menu.submenu('locations_list').text }}</a></li>
+              {%- endif -%}
+              {%- if current_menu.submenu('formbuilder').visible -%}
+                <li><a href="{{ current_menu.submenu('formbuilder').url }}"><i class="glyphicon glyphicon-list-alt"></i> {{ current_menu.submenu('formbuilder').text }}</a></li>
+              {%- endif -%}
+              {%- if current_menu.submenu('locations_builder').visible or current_menu.submenu('formbuilder').visible -%}
+                <li class="divider"></li>
+              {%- endif -%}
+                <li><a href="{{ url_for_security('logout') }}"><i class="glyphicon glyphicon-log-out"></i> {% trans %}Logout{% endtrans %}</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <h3 class="lead h3">{% block title %}{{ page_title }}{% endblock %} · <em class="text-muted">{{ g.event.name }}</em>{% block toolbar %}{% endblock %}</h3>
+    </div>
+    <div class="container">
+      {% block content %}{% endblock %}
+    </div>
+    <div id="footer">
+        <div class="container">
+          <footer>
+          {%- block footer -%}
+            <p style="padding-top:18px;">Apollo &mdash; v2.1.5</p>
+          {%- endblock -%}
+          </footer>
+        </div>
+    </div>
+    {% assets 'apollo_js' %}
+    <script type="text/javascript" src="{{ ASSET_URL }}" charset="utf-8"></script>
+    {% endassets %}
+    {%- block scripts -%}{%- endblock -%}
+    {% if not debug %}
+    <script type="text/javascript">
+
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-126343-19']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+
+    </script>
+    {% endif %}
+  </body>
+</html>
