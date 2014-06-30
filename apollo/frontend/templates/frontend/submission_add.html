@@ -1,0 +1,78 @@
+{% extends "core/layout.html" %}{% load i18n %}
+{% load apollo %}
+{% block content %}
+  <form action="" method="post">
+    {% csrf_token %}
+  <div class="row">
+    <div class="col-md-12">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>{% trans "Observer ID" %}</th>
+            <td>{{ form.observer }}</td>
+          </tr>
+          <tr>
+            <th>{% trans "Location" %}</th>
+            <td>{{ form.location }}</td>
+          </tr>
+        </thead>
+      </table>
+      <table class="table table-striped table-bordered table-hover">
+        <tbody>
+          <tr>
+            <td colspan="2">&nbsp;</td>
+            <td>&nbsp;</td>
+          </tr>
+          {% for fieldset in form.fieldsets %}
+          {% if fieldset.legend %}
+          <tr>
+            <td colspan="3"><h4 class="{{ fieldset.classes }}">{{ fieldset.legend }}</h4></td>
+          </tr>
+          {% endif %}
+          {% for field in fieldset %}
+          <tr>
+            <td style="text-align: center">{{ field.label }}</td>
+            <td width="100%"><label for="{{ field.auto_id }}">{{ field.help_text }}
+              {% if field.field.choices %}
+              <span class="options">
+                {% for choice in field.field.choices %}
+                <span class="option"><strong>({{ choice.0 }})</strong> {{ choice.1 }}</span>
+                {% endfor %}
+              </span>
+              {% endif %}</label>
+            </td>
+            <td style="text-align:center">{{ field }}</td>
+          </tr>
+          {% endfor %}
+          {% endfor %}
+          <tr>
+            <td style="text-align: right">{% trans "Witness" %}</td>
+            <td colspan="2">{{ form.data__witness }}</td>
+          </tr>
+          <tr>
+            <td style="text-align: right">{% trans "Description" %}</td>
+            <td colspan="2">{{ form.data__description }}</td>
+          </tr>
+          <tr>
+            <td style="text-align: right">{% trans "Status" %}</td>
+            <td colspan="2">{{ form.data__status }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-offset-8 col-md-2">
+      <button type="submit" class="btn btn-info btn-large btn-block">{% trans "Save" context "verb" %}</button>
+    </div>
+    <div class="col-md-2">
+      <a class="btn btn-default btn-large btn-block" href="{% url submissions_list form_pk %}">{% trans "Cancel" context "verb" %}</a>
+    </div>
+  </div>
+  </form>
+
+  <div class="row">
+    <p>&nbsp;</p>
+  </div>
+{% endblock %}

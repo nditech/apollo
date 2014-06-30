@@ -1,0 +1,21 @@
+{% macro render_mapping_form(form) %}
+<div class="col-sm-10">
+	{{ form.hidden_tag() }}
+	<input type="hidden" name="action" id="form-action" value="{{ request.url }}">
+	{%- for field in form -%}
+	{%- if field.type != 'CSRFTokenField' -%}
+	<div class="form-group {% if field.errors %}has-error{% endif %}">
+		{{ field.label(class_='col-sm-4 control-label') }}
+		<div class="col-sm-8">
+			{{ field(class_='form-control input-sm') }}
+			{% if field.errors %}
+			{% for e in field.errors %}
+			<p class="help-block">{{ e }}</p>
+			{% endfor %}
+			{% endif %}
+		</div>
+	</div>
+	{%- endif -%}
+	{%- endfor -%}
+</div>
+{% endmacro %}

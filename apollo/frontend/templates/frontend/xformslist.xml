@@ -1,0 +1,5 @@
+<forms>
+{% for form in forms %}
+<form url="{{ url_for('xforms.get_form', form_pk=form.id, _external=True) }}">{{ form.name }}</form>
+{% endfor %}
+</forms>
