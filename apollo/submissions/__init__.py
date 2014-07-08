@@ -61,7 +61,7 @@ class SubmissionsService(Service):
                     map(lambda location_type: location_type.name,
                         location_types)
                 ds_headers += ['Location', 'PS Code', 'RV'] + fields \
-                    + ['Timestamp']
+                    + ['Timestamp'] + map(lambda f: '%s-C' % f, fields)
 
             output = StringIO()
             writer = csv.writer(output)
@@ -130,7 +130,9 @@ class SubmissionsService(Service):
                          if submission.location else ''] + \
                         [getattr(submission, field, '')
                          for field in fields] + \
-                        [submission.updated.strftime('%Y-%m-%d %H:%M:%S')]
+                        [submission.updated.strftime('%Y-%m-%d %H:%M:%S')] + \
+                        [submission.confidence.get(field, '') or ''
+                         for field in fields]
 
                 output = StringIO()
                 writer = csv.writer(output)
