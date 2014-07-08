@@ -182,6 +182,7 @@ class Submission(db.DynamicDocument):
     location_name_path = db.DictField()
     sender_verified = db.BooleanField(default=True)
     quality_checks = db.DictField()
+    confidence = db.DictField()
     verification_status = db.StringField()
     overridden_fields = db.ListField(db.StringField())
     submission_type = db.StringField(
@@ -223,6 +224,56 @@ class Submission(db.DynamicDocument):
                         submission.completion[group.name] = 'Missing'
 
                 submission.save(clean=False)
+
+    def _update_confidence(self):
+        '''Computes the confidence score for the fields in the master.
+        Should be called automatically on save, preferably in the `clean`
+        method.'''
+        if self.submission_type == 'M':
+            for group in self.form.groups:
+                for field in group.fields:
+                    score = None
+                    name = field.name
+                    # if the field has been overridden then we trust the
+                    # data manager/clerk and we have 100% confidence in the
+                    # data
+                    if name in self.overridden_fields:
+                        score = 1
+                        self.confidence[name] = score
+                        continue
+
+                    values = [getattr(submission, name, None)
+                              for submission in self.siblings]
+                    unique = list(set(values))
+                    # if all values were reported and are the same then
+                    # we have 100% confidence in the reported data
+                    if (
+                        values and len(unique) == 1
+                        and unique[0] is not None
+                    ):
+                        score = 1
+                    # if no values were reported then we resort to the default
+                    elif (
+                        values and len(unique) == 1
+                        and unique[0] is None
+                    ):
+                        score = None
+                    else:
+                        # filter out only reported values
+                        n_values = filter(lambda v: v is not None, values)
+                        n_unique = list(set(n_values))
+
+                        # if there are different reported values then our score
+                        # is zero (we have no confidence in the data)
+                        if (len(n_unique) > 1):
+                            score = 0
+
+                        # we compute the score based on the reported over
+                        # the total expected
+                        else:
+                            score = len(n_values) / len(values)
+
+                    self.confidence[name] = score
 
     def _update_data_fields(self):
         '''This little utility simply sets any boolean fields to None.
@@ -271,6 +322,7 @@ class Submission(db.DynamicDocument):
                     setattr(
                         master, field.name, getattr(self, field.name, None))
             master._compute_verification()
+            master._update_confidence()
             master.updated = datetime.utcnow()
             master.save(clean=False)
 
@@ -370,6 +422,9 @@ class Submission(db.DynamicDocument):
 
         # and compute the verification
         self._compute_verification()
+
+        # update the confidence
+        self._update_confidence()
 
         # update the `updated` timestamp
         self.updated = datetime.utcnow()

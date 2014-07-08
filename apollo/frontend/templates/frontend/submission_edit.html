@@ -128,10 +128,11 @@ TODO: insert last used identity here
     <td style="text-align: center"><strong>OBS {{ loop.index + 1 }}</strong></td>
     {%- endfor -%}
     <td style="text-align: center"><strong>PS</strong></td>
+    <td style="text-align: center"><abbr title="{% trans %}Confidence Level{% endtrans %}"><i class="glyphicon glyphicon-thumbs-up"></i></abbr></td>
   </tr>
   {% for group in form.groups %}
   <tr>
-    <td colspan="{{ siblings|count + 4 }}"><h4>{{ group.name }}</h4></td>
+    <td colspan="{{ siblings|count + 5 }}"><h4>{{ group.name }}</h4></td>
   </tr>
   {% for field in group.fields %}
   <tr>
@@ -154,6 +155,12 @@ TODO: insert last used identity here
     <td>{{ sibling_form[field.name](class_='form-control input-mini', disabled=1) }}</td>
     {%- endfor -%}
     <td {%- if master_form[field.name].errors %} class="danger"{%- endif -%}>{{ master_form[field.name](class_='form-control input-mini') }}</td>
+    {% if submission.master %}{% set score = submission.master.confidence.get(field.name, None) %}{% else %}{% set score = None %}{% endif -%}
+    {% if not score %}{% set score_label = 'label-default' -%}
+    {% elif score == 0 %}{% set score_label = 'label-danger' -%}
+    {% elif score == 1 %}{% set score_label = 'label-success' -%}
+    {% else %}{% set score_label = 'label-warning' %}{% endif -%}
+    <td style="padding-top:14px"><span class="label {{ score_label }}">{% if score == None %}-{% else %}{{ score|percent_of(1, '0') }}%{% endif %}</span></td>
   </tr>
   {% endfor %}
   {% endfor %}
