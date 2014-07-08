@@ -52,12 +52,12 @@ def _process_analysis(form_id, location_id=None, tag=None):
     # set the correct template and fill out the required data
     if form.form_type == 'CHECKLIST':
         if tag:
-            template_name = 'frontend/nu_checklist_summary_breakdown.html'
+            template_name = 'frontend/checklist_summary_breakdown.html'
             tags.append(tag)
             display_tag = tag
             grouped = True
         else:
-            template_name = 'frontend/nu_checklist_summary.html'
+            template_name = 'frontend/checklist_summary.html'
             tags.extend([
                 field.name for group in form.groups
                 for field in group.fields if field.analysis_type == 'PROCESS'
@@ -69,13 +69,13 @@ def _process_analysis(form_id, location_id=None, tag=None):
     else:
         grouped = True
         queryset = submissions.find(form=form).filter_in(location)
-        template_name = 'frontend/nu_critical_incident_summary.html'
+        template_name = 'frontend/critical_incident_summary.html'
 
         if tag:
             # a slightly different filter, one prefiltering
             # on the specified tag
             display_tag = tag
-            template_name = 'frontend/nu_critical_incident_locations.html'
+            template_name = 'frontend/critical_incidents_locations.html'
             filter_class = \
                 filters.generate_critical_incident_location_filter(tag)
 
@@ -129,7 +129,7 @@ def _voting_results(form_pk, location_pk=None):
     else:
         location = locations.get_or_404(pk=location_pk)
 
-    template_name = 'frontend/nu_results.html'
+    template_name = 'frontend/results.html'
     page_title = _('%(form_name)s Voting Results', form_name=form.name)
     filter_class = filters.generate_submission_analysis_filter(form)
 
