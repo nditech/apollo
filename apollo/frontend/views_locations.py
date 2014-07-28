@@ -19,7 +19,6 @@ from slugify import slugify_unicode
 from . import filters, permissions, route
 from .. import helpers, models, services
 from ..locations import api
-from ..tasks import update_locations
 from .forms import (FileUploadForm, generate_location_edit_form,
                     generate_location_update_mapping_form, DummyForm)
 

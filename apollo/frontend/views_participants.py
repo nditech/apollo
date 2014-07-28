@@ -4,7 +4,7 @@ from __future__ import absolute_import
 from datetime import datetime
 from itertools import ifilter
 
-from flask import (abort, Blueprint, current_app, flash, g, redirect,
+from flask import (abort, Blueprint, current_app, g, redirect,
                    render_template, request, Response, url_for)
 from flask.ext.babel import lazy_gettext as _
 from flask.ext.menu import register_menu
@@ -226,8 +226,8 @@ def participant_phone_verify():
         phone = request.form.get('phone')
         submission_id = request.form.get('submission')
 
-        submission = services.submissions.get(id=submission_id)
-        participant = services.participants.get(id=contributor)
+        submission = services.submissions.get_or_404(id=submission_id)
+        participant = services.participants.get_or_404(id=contributor)
         phone_contact = next(ifilter(
             lambda p: phone == p.number, participant.phones), False)
         phone_contact.verified = True
@@ -263,17 +263,17 @@ def participant_edit(pk):
             # participant.participant_id = form.participant_id.data
             participant.name = form.name.data
             participant.gender = form.gender.data
-            participant.role = services.participant_roles.get(
+            participant.role = services.participant_roles.get_or_404(
                 pk=form.role.data)
             if form.supervisor.data:
-                participant.supervisor = services.participants.get(
+                participant.supervisor = services.participants.get_or_404(
                     pk=form.supervisor.data
                 )
             else:
                 participant.supervisor = None
             participant.location = services.locations.get(
                 pk=form.location.data)
-            participant.partner = services.participant_partners.get(
+            participant.partner = services.participant_partners.get_or_404(
                 pk=form.partner.data)
             participant.phone = form.phone.data
             participant.save()

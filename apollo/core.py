@@ -1,5 +1,5 @@
 from collections import OrderedDict
-from flask import abort, g
+from flask import g, abort
 from flask.ext.admin import Admin
 from flask.ext.babel import Babel
 from flask.ext.mail import Mail
@@ -7,6 +7,7 @@ from flask.ext.menu import Menu
 from flask.ext.mongoengine import MongoEngine
 from flask.ext.security import Security
 from flask.ext.gravatar import Gravatar
+from mongoengine.base import ValidationError
 from raven.contrib.flask import Sentry
 import six
 from wtforms import Form, fields
@@ -86,7 +87,10 @@ class Service(object):
         """
         kwargs = self._set_default_filter_parameters(kwargs)
 
-        return self.__model__.objects.filter(**kwargs)
+        try:
+            return self.__model__.objects.filter(**kwargs)
+        except ValidationError:
+            abort(404)
 
     def get(self, **kwargs):
         """Returns an instance of the service's model with the specified
@@ -100,7 +104,7 @@ class Service(object):
 
         try:
             return self.__model__.objects.get(**kwargs)
-        except self.__model__.DoesNotExist:
+        except (self.__model__.DoesNotExist, ValidationError):
             return None
 
     # def get_all(self, **kwargs):

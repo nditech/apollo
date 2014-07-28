@@ -37,7 +37,7 @@ def index():
     if not args.get('checklist_form'):
         form = forms.find(events=event, form_type='CHECKLIST').first()
     else:
-        form = forms.get(pk=args.get('checklist_form'))
+        form = forms.get_or_404(pk=args.get('checklist_form'))
 
     if form:
         args.setdefault('checklist_form', unicode(form.id))
