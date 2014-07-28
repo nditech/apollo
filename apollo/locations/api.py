@@ -1,5 +1,6 @@
 from flask import current_app
 from flask.ext.restful import Resource, fields, marshal, marshal_with
+from flask.ext.security import login_required
 from mongoengine import Q
 from .. import services
 from ..api.common import parser
@@ -18,6 +19,7 @@ LOCATION_FIELD_MAPPER = {
 
 
 class LocationTypeItemResource(Resource):
+    @login_required
     def get(self, loc_type_id):
         # marshal() converts a custom object/dictionary/list using the mapper
         # into a Python dict
@@ -38,6 +40,7 @@ class LocationTypeItemResource(Resource):
 
 
 class LocationTypeListResource(Resource):
+    @login_required
     def get(self):
         # marshal() can also handle a list or tuple of objects, but it only
         # checks for a list or tuple, so we need to convert the queryset
@@ -68,12 +71,14 @@ class LocationTypeListResource(Resource):
 
 
 class LocationItemResource(Resource):
+    @login_required
     @marshal_with(LOCATION_FIELD_MAPPER)
     def get(self, location_id):
         return services.locations.get_or_404(pk=location_id)
 
 
 class LocationListResource(Resource):
+    @login_required
     def get(self):
         parser.add_argument('q', type=str)
         args = parser.parse_args()
