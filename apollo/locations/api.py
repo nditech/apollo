@@ -44,6 +44,7 @@ class LocationTypeListResource(Resource):
         # to a list
         args = parser.parse_args()
         limit = args.get('limit') or current_app.config.get('PAGE_SIZE')
+        limit = min(limit, current_app.config.get('API_MAX_LIST_SIZE'))
         offset = args.get('offset') or 0
         queryset = services.location_types.find().skip(offset).limit(limit)
 
@@ -78,6 +79,7 @@ class LocationListResource(Resource):
         parser.add_argument('q', type=str)
         args = parser.parse_args()
         limit = args.get('limit') or current_app.config.get('PAGE_SIZE')
+        limit = min(limit, current_app.config.get('API_MAX_LIST_SIZE'))
         offset = args.get('offset') or 0
 
         queryset = services.locations.find()
