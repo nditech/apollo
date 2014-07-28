@@ -131,7 +131,8 @@ def create_app(settings_override=None, register_security_blueprint=True):
 
     @app.context_processor
     def inject_permissions():
-        return dict(perms=permissions)
+        ga_key = app.config.get('GOOGLE_ANALYTICS_KEY')
+        return dict(perms=permissions, ga_key=ga_key)
 
     return app
 

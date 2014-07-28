@@ -142,11 +142,11 @@
     <script type="text/javascript" src="{{ ASSET_URL }}" charset="utf-8"></script>
     {% endassets %}
     {%- block scripts -%}{%- endblock -%}
-    {% if not debug %}
+    {% if not debug and ga_key %}
     <script type="text/javascript">
 
       var _gaq = _gaq || [];
-      _gaq.push(['_setAccount', 'UA-126343-19']);
+      _gaq.push(['_setAccount', '{{ ga_key }}']);
       _gaq.push(['_trackPageview']);
 
       (function() {
