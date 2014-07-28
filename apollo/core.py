@@ -122,10 +122,7 @@ class Service(object):
         """
         kwargs = self._set_default_filter_parameters(kwargs)
 
-        try:
-            return self.get(**kwargs)
-        except self.__model__.DoesNotExist:
-            abort(404)
+        return self.__model__.objects.get_or_404(**kwargs)
 
     def get_or_create(self, **kwargs):
         """Retrieves an instance based on search parameters specified by the
