@@ -27,7 +27,7 @@
               {% for msg in get_flashed_messages() %}
               <div class="alert alert-info">{{ msg }}</div>
               {% endfor %}
-              <form name="login_user_form" class="form-vertical" action="{{ url_for_security('login') }}" method="POST" accept-charset="utf-8">{{ login_user_form.hidden_tag() }}
+              <form name="login_user_form" class="form-vertical" action="{{ url_for_security('login') }}" method="POST" accept-charset="utf-8" autocomplete="off">{{ login_user_form.hidden_tag() }}
                 {% if login_user_form.errors %}
                 <div class="alert alert-danger">{% trans %}Your username and password <strong>did not match</strong>. Please try again.{% endtrans %}</div>
                 {% endif %}
@@ -44,7 +44,7 @@
                     <span class="input-group-addon input-sm">
                       <i class="glyphicon glyphicon-lock"></i>
                     </span>
-                    <input type="password" name="{{ login_user_form.password.name }}" id="{{ login_user_form.password.id }}" class="input-xlarge form-control" placeholder="{% trans %}Password{% endtrans %}">
+                    <input type="password" name="{{ login_user_form.password.name }}" id="{{ login_user_form.password.id }}" class="input-xlarge form-control" placeholder="{% trans %}Password{% endtrans %}" autocomplete="off">
                   </div>
                 </div>
                 <input type="hidden" name="{{ login_user_form.next.name }}" id="{{ login_user_form.next.id }}" value="{{ login_user_form.next.value }}">
@@ -55,5 +55,8 @@
         </div>
       </div>
     </div>
+    <script type="text/javascript">
+      inptElements.setAttribute(“autocomplete”,”off”);
+    </script>
   </body>
 </html>
