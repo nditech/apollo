@@ -51,7 +51,7 @@ def index():
 
     location = None
     if args.get('location'):
-        location = locations.find(pk=args.get('location')).first()
+        location = locations.get_or_404(pk=args.get('location'))
 
     # activate sample filter
     filter_form = filter_.form

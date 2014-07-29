@@ -1,6 +1,5 @@
 from ..core import Service
 from .models import Sample, LocationType, Location
-from flask import g
 import csv
 from unidecode import unidecode
 try:
@@ -20,7 +19,7 @@ class LocationTypesService(Service):
         # a raw query is needed because querying 'normally'
         # (i.e.: ancestors_ref=[]) will raise an exception
         # about an invalid ObjectID
-        return self.find().get(__raw__={'ancestors_ref': []})
+        return self.find(__raw__={'ancestors_ref': []}).first()
 
 
 class LocationsService(Service):
@@ -30,7 +29,7 @@ class LocationsService(Service):
         # a raw query is needed because querying 'normally'
         # (i.e.: ancestors_ref=[]) will raise an exception
         # about an invalid ObjectID
-        return self.find().get(__raw__={'ancestors_ref': []})
+        return self.find(__raw__={'ancestors_ref': []}).first()
 
     def export_list(self, queryset):
         headers = []
