@@ -25,7 +25,9 @@ class ParticipantListResource(Resource):
     def get(self):
         parser.add_argument('q', type=str)
         args = parser.parse_args()
-        limit = args.get('limit') or current_app.config.get('PAGE_SIZE')
+        limit = min(
+            args.get('limit') or current_app.config.get('PAGE_SIZE'),
+            current_app.config.get('PAGE_SIZE'))
         offset = args.get('offset') or 0
 
         queryset = services.participants.find()
