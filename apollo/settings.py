@@ -45,6 +45,9 @@ CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_ACCEPT_CONTENT = ['json']
 
+FORCE_SSL = ast.literal_eval(
+    os.environ.get('FORCE_SSL', 'False'))
+
 SENTRY_DSN = os.environ.get('SENTRY_DSN')
 
 LANGUAGES = {
