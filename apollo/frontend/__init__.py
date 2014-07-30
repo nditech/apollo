@@ -4,7 +4,6 @@ from functools import wraps
 from flask import g, render_template, session, request, redirect, url_for
 from flask.ext.admin import AdminIndexView
 from flask.ext.login import user_logged_out
-from flask.ext.mongoengine import MongoEngineSessionInterface
 from flask.ext.principal import identity_loaded
 from flask.ext.security import MongoEngineUserDatastore, current_user
 
@@ -13,7 +12,7 @@ from ..core import admin, db, menu, security, gravatar
 from ..security_ext_forms import DeploymentLoginForm
 
 from . import assets, permissions
-from .helpers import set_request_presets
+from .helpers import set_request_presets, CustomMongoEngineSessionInterface
 from . import template_filters
 
 
@@ -72,7 +71,7 @@ def create_app(settings_override=None, register_security_blueprint=True):
     security.init_app(app, userdatastore,
                       login_form=DeploymentLoginForm,
                       register_blueprint=register_security_blueprint)
-    app.session_interface = MongoEngineSessionInterface(db)
+    app.session_interface = CustomMongoEngineSessionInterface(db)
 
     init_admin(admin, app)
 

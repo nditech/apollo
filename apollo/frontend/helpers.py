@@ -2,8 +2,11 @@ from .. import models
 from .. import services
 from flask import session, request, abort, g, url_for
 from flask.ext.babel import get_locale
+from flask.ext.mongoengine import MongoEngineSessionInterface
 from flask.ext.principal import Permission, ItemNeed, RoleNeed
 from urlparse import urlparse
+
+import datetime
 
 
 def get_deployment(hostname):
@@ -143,3 +146,26 @@ class DictDiffer(object):
     def unchanged(self):
         return set(o for o in self.intersect
                    if self.past_dict[o] == self.current_dict[o])
+
+
+class CustomMongoEngineSessionInterface(MongoEngineSessionInterface):
+    def save_session(self, app, session, response):
+        domain = self.get_cookie_domain(app)
+        path = self.get_cookie_path(app)
+        if not session:
+            if session.modified:
+                response.delete_cookie(app.session_cookie_name, domain=domain)
+            return
+
+        httponly = self.get_cookie_httponly(app)
+        secure = self.get_cookie_secure(app)
+        expiration = datetime.datetime.utcnow() \
+            + self.get_expiration_time(app, session)
+
+        if session.modified:
+            self.cls(
+                sid=session.sid, data=session, expiration=expiration).save()
+
+        response.set_cookie(app.session_cookie_name, session.sid,
+                            expires=expiration, httponly=httponly,
+                            domain=domain, path=path, secure=secure)
