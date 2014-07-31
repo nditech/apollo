@@ -23,6 +23,8 @@ SECURITY_LOGIN_USER_TEMPLATE = 'frontend/login_user.html'
 SECURITY_EMAIL_SENDER = 'no-reply@apollo.la'
 SECURITY_RECOVERABLE = True
 SECURITY_TRACKABLE = True
+SESSION_COOKIE_SECURE = ast.literal_eval(
+    os.environ.get('SESSION_COOKIE_SECURE', 'False'))
 PERMANENT_SESSION_LIFETIME = timedelta(hours=1)
 
 MAIL_SERVER = os.environ.get('MAIL_SERVER', 'localhost')
@@ -47,6 +49,7 @@ CELERY_ACCEPT_CONTENT = ['json']
 
 FORCE_SSL = ast.literal_eval(
     os.environ.get('FORCE_SSL', 'False'))
+X_FRAME_OPTIONS = os.environ.get('X_FRAME_OPTIONS', 'DENY')
 
 SENTRY_DSN = os.environ.get('SENTRY_DSN')
 

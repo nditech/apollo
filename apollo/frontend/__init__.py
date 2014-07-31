@@ -133,6 +133,13 @@ def create_app(settings_override=None, register_security_blueprint=True):
         ga_key = app.config.get('GOOGLE_ANALYTICS_KEY')
         return dict(perms=permissions, ga_key=ga_key)
 
+    # clickjacking protection
+    @app.after_request
+    def frame_buster(response):
+        response.headers['X-Frame-Options'] = app.config.get(
+            'X_FRAME_OPTIONS', 'DENY')
+        return response
+
     return app
 
 
