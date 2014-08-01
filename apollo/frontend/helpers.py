@@ -55,7 +55,7 @@ def set_request_presets():
         g.deployment = get_deployment(hostname)
         g.event = get_event()
         g.locale = get_locale()
-    except models.Deployment.DoesNotExist, models.Event.DoesNotExist:
+    except (models.Deployment.DoesNotExist, models.Event.DoesNotExist):
         abort(404)
 
 
