@@ -9,23 +9,26 @@ def proportion(df, options, param):
 
 def variance(df, options, param):
     p = proportion(df, options, param)
-    psquare = p * p
+    psquared = p * p
 
     m = df.ix[:, options].sum(axis=1)
-    msquare = m * m
+    msquared = m * m
 
     a = df.ix[:, param].sum(axis=1)
-    asquare = a * a
+    asquared = a * a
 
     mbar = m.sum(axis=0) / m.size
-    mbarsquare = mbar * mbar
+    mbarsquared = mbar * mbar
 
     f = m.sum(axis=0) / current_app.config.get('BIG_N')
     k = m.size
     am = a * m
+    sigma_asquared = asquared.sum(axis=0)
+    sigma_msquared = msquared.sum(axis=0)
+    sigma_am = am.sum(axis=0)
 
     return (
-        (1 - f) / (k * mbarsquare)) * ((asquare.sum(axis=0) -
-                                        2 * p * am.sum(axis=0) +
-                                        psquare *
-                                        msquare.sum(axis=0)) / (k - 1))
+        (1 - f) / (k * mbarsquared)) * ((sigma_asquared -
+                                        2 * p * sigma_am +
+                                        psquared *
+                                        sigma_msquared) / (k - 1))

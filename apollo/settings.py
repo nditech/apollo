@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
-import ast
 from datetime import timedelta
+from urlparse import urlparse
+import ast
+import numpy
 import os
 import string
-from urlparse import urlparse
 
 SECRET_KEY = os.environ.get('SECRET_KEY', 'SOMETHING_SECURE')
 DEBUG = ast.literal_eval(
@@ -85,5 +86,5 @@ MESSAGING_OUTGOING_GATEWAY = ast.literal_eval(
     }'''))
 MESSAGING_CC = ast.literal_eval(os.environ.get('MESSAGING_CC', '[]'))
 
-BIG_N = ast.literal_eval(os.environ.get('BIG_N', '60000'))
+BIG_N = ast.literal_eval(os.environ.get('BIG_N', '0')) or numpy.inf
 GOOGLE_ANALYTICS_KEY = os.environ.get('GOOGLE_ANALYTICS_KEY')
