@@ -1,5 +1,5 @@
--e git+https://github.com/ahupp/python-magic.git#egg=python-magic
--e git+https://github.com/tiborsimko/flask-menu.git#egg=Flask-Menu
+-e git+https://github.com/ahupp/python-magic.git@012f8a90501d314a694c136b73179af12b2f41e8#egg=python_magic-master
+-e git+https://github.com/tiborsimko/flask-menu.git@5f5d34812e2d9bd6c49509a3c5a479b9800d9c2b#egg=Flask_Menu-master
 Babel==1.3
 Fabric==1.8.3
 Flask-Admin==1.0.8
