@@ -21,8 +21,3 @@ class Message(db.Document):
 
     deployment = db.ReferenceField(Deployment)
     event = db.ReferenceField(Event)
-
-
-class Gateway(db.Document):
-    name = db.StringField()
-    secret = db.StringField(required=True)

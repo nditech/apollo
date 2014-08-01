@@ -3,7 +3,7 @@ from .. import services
 from ..messaging.forms import KannelForm, TelerivetForm
 from ..messaging.helpers import parse_message
 from ..messaging.utils import parse_text
-from flask import Blueprint, make_response, request, g
+from flask import Blueprint, make_response, request, g, abort, current_app
 import json
 
 
@@ -60,10 +60,9 @@ def update_datastore(inbound, outbound, submission, had_errors):
 @route(bp, '/messaging/kannel', methods=['GET'])
 def kannel_view():
     secret = request.args.get('secret')
-    gateway = services.gateways.get(secret=secret)
 
-    if not gateway:
-        # don't process message if it doesn't come from a known gateway
+    # only allow requests that contain the gateway secret
+    if secret != current_app.config.get('MESSAGING_SECRET'):
         return ''
 
     form = KannelForm(request.args)
@@ -88,10 +87,8 @@ def kannel_view():
 @route(bp, '/messaging/telerivet', methods=['POST'])
 def telerivet_view():
     secret = request.form.get('secret')
-    gateway = services.gateways.get(secret=secret)
 
-    if not gateway:
-        # don't process message if it doesn't come from a known gateway
+    if secret != current_app.config.get('MESSAGING_SECRET'):
         return ''
 
     form = TelerivetForm(request.form)

@@ -7,7 +7,7 @@ from .participants import \
 from .submissions import \
     (SubmissionsService, SubmissionCommentsService, SubmissionVersionsService)
 from .users import UsersService, PermsService, UserUploadsService
-from .messaging import MessagesService, GatewayService
+from .messaging import MessagesService
 
 
 events = EventsService()
@@ -27,4 +27,3 @@ user_uploads = UserUploadsService()
 messages = MessagesService()
 participant_groups = ParticipantGroupsService()
 participant_group_types = ParticipantGroupTypesService()
-gateways = GatewayService()
