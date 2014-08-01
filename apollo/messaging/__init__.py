@@ -1,5 +1,5 @@
 from ..core import Service
-from .models import Message
+from .models import Message, Gateway
 from datetime import datetime
 from flask import g
 from unidecode import unidecode
@@ -55,3 +55,7 @@ class MessagesService(Service):
             writer.writerow([unidecode(unicode(i)) for i in record])
             yield output.getvalue()
             output.close()
+
+
+class GatewayService(Service):
+    __model__ = Gateway

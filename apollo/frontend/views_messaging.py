@@ -59,6 +59,13 @@ def update_datastore(inbound, outbound, submission, had_errors):
 
 @route(bp, '/messaging/kannel', methods=['GET'])
 def kannel_view():
+    secret = request.args.get('secret')
+    gateway = services.gateways.get(secret=secret)
+
+    if not gateway:
+        # don't process message if it doesn't come from a known gateway
+        return ''
+
     form = KannelForm(request.args)
     if form.validate():
         msg = form.get_message()
@@ -80,6 +87,13 @@ def kannel_view():
 
 @route(bp, '/messaging/telerivet', methods=['POST'])
 def telerivet_view():
+    secret = request.form.get('secret')
+    gateway = services.gateways.get(secret=secret)
+
+    if not gateway:
+        # don't process message if it doesn't come from a known gateway
+        return ''
+
     form = TelerivetForm(request.form)
     if form.validate():
         msg = form.get_message()
