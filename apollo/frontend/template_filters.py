@@ -76,7 +76,7 @@ def percent_of(a, b, default=None):
     a_ = float(a if a else 0)
     b_ = float(b if b else 0)
     try:
-        return '%.3g' % ((a_ / b_) * 100)
+        return (a_ / b_) * 100
     except ZeroDivisionError:
         return default or 0
 

@@ -160,7 +160,7 @@ TODO: insert last used identity here
     {% elif score == 0 %}{% set score_label = 'label-danger' -%}
     {% elif score == 1 %}{% set score_label = 'label-success' -%}
     {% else %}{% set score_label = 'label-warning' %}{% endif -%}
-    <td style="padding-top:14px"><span class="label {{ score_label }}">{% if score == None %}-{% else %}{{ score|percent_of(1, '0') }}%{% endif %}</span></td>
+    <td style="padding-top:14px"><span class="label {{ score_label }}">{% if score == None %}-{% else %}{{ '%.3g' % score|percent_of(1, 0) }}%{% endif %}</span></td>
   </tr>
   {% endfor %}
   {% endfor %}
