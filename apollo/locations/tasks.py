@@ -4,8 +4,6 @@ from flask.ext.babel import lazy_gettext as _
 from hashlib import sha256
 from slugify import slugify
 
-import pandas as pd
-
 from .. import helpers, services
 from ..factory import create_celery_app
 from ..messaging.tasks import send_email
@@ -18,6 +16,7 @@ Notification
 
 Your location import task has been completed.
 '''
+
 
 class LocationCache():
     cache = cachetools.LFUCache(maxsize=50)
@@ -54,9 +53,11 @@ class LocationCache():
             location_obj.name or '')
         self.cache[cache_key] = location_obj
 
+
 def map_attribute(location_type, attribute):
     slug = slugify(location_type.name, separator='_').lower()
     return '{}_{}'.format(slug, attribute.lower())
+
 
 def update_locations(df, mapping, event):
     cache = LocationCache()
@@ -64,11 +65,19 @@ def update_locations(df, mapping, event):
 
     for idx in df.index:
         for lt in location_types:
-            location_code = df.ix[idx].get(map_attribute(lt, 'code'), '')
-            location_name = df.ix[idx].get(map_attribute(lt, 'name'))
-            location_pcode = df.ix[idx].get(map_attribute(lt, 'pcode')) \
+            location_code = str(df.ix[idx].get(
+                mapping.get(map_attribute(lt, 'code'), ''),
+                ''
+            ))
+            location_name = str(df.ix[idx].get(
+                mapping.get(map_attribute(lt, 'name'), ''),
+                ''
+            ))
+            location_pcode = str(df.ix[idx].get(
+                mapping.get(map_attribute(lt, 'pcode'), ''), '')) \
                 if lt.has_political_code else None
-            location_rv = df.ix[idx].get(map_attribute(lt, 'rv')) \
+            location_rv = df.ix[idx].get(
+                mapping.get(map_attribute(lt, 'rv'), ''), '') \
                 if lt.has_registered_voters else None
             location_type = lt.name.lower()
 
@@ -81,34 +90,45 @@ def update_locations(df, mapping, event):
                 continue
 
             kwargs = {
-                'name': location_name,
                 'location_type': lt.name,
                 'deployment': event.deployment
             }
+
             if location_code:
                 kwargs.update({'code': location_code})
-            if location_pcode:
-                kwargs.update({'political_code': location_pcode})
-            if location_rv:
-                kwargs.update({'registered_voters': location_rv})
 
             location = services.locations.get_or_create(**kwargs)
+            location_data = dict()
 
-            location.update(set__ancestors_ref=[])
+            location_data['name'] = location_name
+
+            if location_pcode:
+                location_data.update({'political_code': location_pcode})
+            if location_rv:
+                location_data.update({'registered_voters': location_rv})
+
+            update = dict(
+                [('set__{}'.format(k), v)
+                 for k, v in location_data.items()]
+            )
+
+            location.update(set__ancestors_ref=[], **update)
 
             # update ancestors
             ancestors = []
             for sub_lt in lt.ancestors_ref:
-                sub_lt_name = df.ix[idx].get(map_attribute(sub_lt, 'name'))
-                sub_lt_code = df.ix[idx].get(map_attribute(sub_lt, 'code'))
-                sub_lt_type = sub_lt.name.lower()
+                sub_lt_name = str(df.ix[idx].get(
+                    mapping.get(map_attribute(sub_lt, 'name'), '')))
+                sub_lt_code = str(df.ix[idx].get(
+                    mapping.get(map_attribute(sub_lt, 'code'), ''), ''))
+                sub_lt_type = sub_lt.name or ''
 
                 ancestor = cache.get(sub_lt_code, sub_lt_type, sub_lt_name)
                 ancestors.append(ancestor)
 
             location.update(
                 add_to_set__events=event,
-                add_to_set__ancestors_ref=ancestors)
+                set__ancestors_ref=ancestors)
             cache.set(location)
 
 
@@ -119,8 +139,8 @@ def import_locations(upload_id, mappings):
 
     update_locations(
         dataframe,
-        upload.event,
-        mappings
+        mappings,
+        upload.event
     )
 
     # delete uploaded file
