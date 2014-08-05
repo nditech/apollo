@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
-import ast
 from datetime import timedelta
+from urlparse import urlparse
+import ast
+import numpy
 import os
 import string
-from urlparse import urlparse
 
 SECRET_KEY = os.environ.get('SECRET_KEY', 'SOMETHING_SECURE')
 DEBUG = ast.literal_eval(
@@ -23,6 +24,8 @@ SECURITY_LOGIN_USER_TEMPLATE = 'frontend/login_user.html'
 SECURITY_EMAIL_SENDER = 'no-reply@apollo.la'
 SECURITY_RECOVERABLE = True
 SECURITY_TRACKABLE = True
+SESSION_COOKIE_SECURE = ast.literal_eval(
+    os.environ.get('SESSION_COOKIE_SECURE', 'False'))
 PERMANENT_SESSION_LIFETIME = timedelta(hours=1)
 
 MAIL_SERVER = os.environ.get('MAIL_SERVER', 'localhost')
@@ -44,6 +47,10 @@ CELERY_RESULT_BACKEND = 'redis://{host}/{database}'.format(
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_ACCEPT_CONTENT = ['json']
+
+FORCE_SSL = ast.literal_eval(
+    os.environ.get('FORCE_SSL', 'False'))
+X_FRAME_OPTIONS = os.environ.get('X_FRAME_OPTIONS', 'DENY')
 
 SENTRY_DSN = os.environ.get('SENTRY_DSN')
 
@@ -78,5 +85,7 @@ MESSAGING_OUTGOING_GATEWAY = ast.literal_eval(
         'password': 'bar'
     }'''))
 MESSAGING_CC = ast.literal_eval(os.environ.get('MESSAGING_CC', '[]'))
+MESSAGING_SECRET = os.environ.get('MESSAGING_SECRET')
 
-BIG_N = ast.literal_eval(os.environ.get('BIG_N', '60000'))
+BIG_N = ast.literal_eval(os.environ.get('BIG_N', '0')) or numpy.inf
+GOOGLE_ANALYTICS_KEY = os.environ.get('GOOGLE_ANALYTICS_KEY')

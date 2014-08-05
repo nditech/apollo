@@ -9,6 +9,11 @@ from ..analyses.common import dataframe_analysis
 from ..analyses.voting import proportion, variance
 
 
+def _valid_votes(df, votes):
+    return df.query(' | '.join(
+        ['({} >= 0)'.format(v) for v in votes]))
+
+
 def checklist_question_summary(form, field, location, dataframe):
     stats = {'urban': {}}
     if field.options:
@@ -134,7 +139,7 @@ def all_votes_total(
             df = dataframe.ix[
                 dataframe.groupby(location_type).groups[location]]
 
-        df = df[eval(' | '.join(['(df["{}"] >= 0)'.format(v) for v in votes]))]
+        df = _valid_votes(df, votes)
 
         invalid_votes = form.invalid_votes_tag
         c = df.ix[:, votes + [invalid_votes]
@@ -177,7 +182,7 @@ def all_votes_total_margin_of_error(
             df = dataframe.ix[
                 dataframe.groupby(location_type).groups[location]]
 
-        df = df[eval(' | '.join(['(df["{}"] >= 0)'.format(v) for v in votes]))]
+        df = _valid_votes(df, votes)
 
         invalid_votes = form.invalid_votes_tag
         all_votes = votes + [invalid_votes] if invalid_votes else []
@@ -207,7 +212,7 @@ def valid_votes_total(dataframe, votes, location_type, location, group='ALL'):
             df = dataframe.ix[
                 dataframe.groupby(location_type).groups[location]]
 
-        df = df[eval(' | '.join(['(df["{}"] >= 0)'.format(v) for v in votes]))]
+        df = _valid_votes(df, votes)
 
         c = df.ix[:, votes].sum().sum(axis=1)
         if pd.np.isnan(c):
@@ -231,7 +236,7 @@ def vote_count(dataframe, votes, vote, location_type, location, group='ALL'):
             df = dataframe.ix[
                 dataframe.groupby(location_type).groups[location]]
 
-        df = df[eval(' | '.join(['(df["{}"] >= 0)'.format(v) for v in votes]))]
+        df = _valid_votes(df, votes)
 
         c = df[vote].sum()
         if pd.np.isnan(c):
@@ -257,7 +262,7 @@ def rejected_count(dataframe, form, location_type, location, group='ALL'):
             df = dataframe.ix[
                 dataframe.groupby(location_type).groups[location]]
 
-        df = df[eval(' | '.join(['(df["{}"] >= 0)'.format(v) for v in votes]))]
+        df = _valid_votes(df, votes)
         rejected = form.invalid_votes_tag
 
         if rejected:
@@ -288,7 +293,7 @@ def vote_proportion(
             df = dataframe.ix[
                 dataframe.groupby(location_type).groups[location]]
 
-        df = df[eval(' | '.join(['(df["{}"] >= 0)'.format(v) for v in votes]))]
+        df = _valid_votes(df, votes)
 
         if g.deployment.include_rejected_in_votes and form.invalid_votes_tag:
             votes += [form.invalid_votes_tag]
@@ -317,7 +322,7 @@ def rejected_proportion(dataframe, form, location_type, location, group='ALL'):
             df = dataframe.ix[
                 dataframe.groupby(location_type).groups[location]]
 
-        df = df[eval(' | '.join(['(df["{}"] >= 0)'.format(v) for v in votes]))]
+        df = _valid_votes(df, votes)
         rejected = form.invalid_votes_tag
 
         if rejected:
@@ -350,7 +355,7 @@ def vote_margin_of_error(
             df = dataframe.ix[
                 dataframe.groupby(location_type).groups[location]]
 
-        df = df[eval(' | '.join(['(df["{}"] >= 0)'.format(v) for v in votes]))]
+        df = _valid_votes(df, votes)
 
         if g.deployment.include_rejected_in_votes and form.invalid_votes_tag:
             votes += [form.invalid_votes_tag]
@@ -381,7 +386,7 @@ def rejected_margin_of_error(
             df = dataframe.ix[
                 dataframe.groupby(location_type).groups[location]]
 
-        df = df[eval(' | '.join(['(df["{}"] >= 0)'.format(v) for v in votes]))]
+        df = _valid_votes(df, votes)
         rejected = form.invalid_votes_tag
 
         if rejected:
@@ -413,9 +418,7 @@ def reported(
             df = dataframe.ix[dataframe.groupby(
                 location_type).groups[location]]
 
-        rp = df[
-            eval(' | '.join(['(df["{}"] >= 0)'.format(v) for v in votes]))
-            ].shape[0]
+        rp = _valid_votes(df, votes).shape[0]
         return int(rp) if pure else number_format(int(rp))
     except:
         return 0
@@ -436,9 +439,9 @@ def missing(
             df = dataframe.ix[
                 dataframe.groupby(location_type).groups[location]]
 
-        m = df[
-            eval(' & '.join(
-                ['(df["{}"].isnull())'.format(v) for v in votes]))].shape[0]
+        # hack for implementing isnull is that nan * 0 != 0
+        m = df.query(
+            ' & '.join(['({} * 0 != 0)'.format(v) for v in votes])).shape[0]
         return int(m) if pure else number_format(int(m))
     except:
         return 0

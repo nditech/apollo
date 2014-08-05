@@ -11,7 +11,7 @@ _datastore = LocalProxy(lambda: current_app.extensions['security'].datastore)
 
 class DeploymentLoginForm(LoginForm):
     def validate(self):
-        if not super(LoginForm, self).validate():
+        if not super(DeploymentLoginForm, self).validate():
             return False
 
         if self.email.data.strip() == '':

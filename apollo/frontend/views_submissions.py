@@ -192,7 +192,7 @@ def submission_edit(submission_id):
     page_title = _('Edit Submission')
     readonly = not g.deployment.allow_observer_submission_edit
     location_types = services.location_types.find(is_administrative=True)
-    template_name = 'frontend/nu_submission_edit.html'
+    template_name = 'frontend/submission_edit.html'
     comments = services.submission_comments.find(submission=submission)
 
     if request.method == 'GET':

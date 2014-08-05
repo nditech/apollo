@@ -7,7 +7,7 @@ from datetime import datetime
 import networkx as nx
 
 from flask import (Blueprint, current_app, flash, g, redirect, render_template,
-                   request, Response, url_for)
+                   request, Response, url_for, abort)
 from flask.ext.babel import lazy_gettext as _
 from flask.ext.menu import register_menu
 from flask.ext.restful import Api
@@ -19,7 +19,7 @@ from slugify import slugify_unicode
 from . import filters, permissions, route
 from .. import helpers, models, services
 from ..locations import api
-from ..tasks import update_locations
+from ..tasks import import_locations
 from .forms import (FileUploadForm, generate_location_edit_form,
                     generate_location_update_mapping_form, DummyForm)
 
@@ -179,7 +179,7 @@ def location_headers(pk):
                 'upload_id': unicode(upload.id),
                 'mappings': data
             }
-            #update_locations.apply_async(kwargs=kwargs)
+            import_locations.apply_async(kwargs=kwargs)
 
             return redirect(url_for('locations.locations_list'))
 

@@ -1,12 +1,10 @@
-from . import route, permissions
+from . import filters, route, permissions
 from ..services import messages
-from ..messaging.forms import MessagesFilterForm
 from flask import (
     Blueprint, render_template, request, current_app, Response, g)
 from flask.ext.babel import lazy_gettext as _
 from flask.ext.menu import register_menu
 from datetime import datetime
-from mongoengine import Q
 from slugify import slugify_unicode
 
 
@@ -23,26 +21,7 @@ def message_list():
     template_name = 'frontend/message_list.html'
 
     qs = messages.all().order_by('-received')
-
-    filter_form = MessagesFilterForm(request.args, csrf_enabled=False)
-    filter_form.validate()
-
-    mobile = filter_form.data.get('mobile')
-    text = filter_form.data.get('text')
-    date = filter_form.data.get('date')
-
-    if mobile:
-        qs = qs.filter(
-            Q(recipient__contains=mobile) | Q(sender__contains=mobile))
-
-    if text:
-        qs = qs.filter(text__icontains=text)
-
-    if date:
-        qs = qs.filter(
-            received__gte=datetime(date.year, date.month, date.day),
-            received__lte=datetime(
-                date.year, date.month, date.day, 23, 59, 59))
+    queryset_filter = filters.messages_filterset()(qs, request.args)
 
     if request.args.get('export'):
         # Export requested
@@ -60,9 +39,9 @@ def message_list():
         page = int(data.pop('page', 1))
         context = {
             'page_title': page_title,
-            'filter_form': filter_form,
+            'filter_form': queryset_filter.form,
             'args': data,
-            'pager': qs.paginate(
+            'pager': queryset_filter.qs.paginate(
                 page=page, per_page=current_app.config.get('PAGE_SIZE'))
         }
 

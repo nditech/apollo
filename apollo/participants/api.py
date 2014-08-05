@@ -1,5 +1,6 @@
 from flask import current_app
 from flask.ext.restful import Resource, fields, marshal, marshal_with
+from flask.ext.security import login_required
 from mongoengine import Q
 from .. import services
 from ..api.common import parser
@@ -13,16 +14,20 @@ PARTICIPANT_FIELD_MAPPER = {
 
 
 class ParticipantItemResource(Resource):
+    @login_required
     @marshal_with(PARTICIPANT_FIELD_MAPPER)
     def get(self, participant_id):
         return services.participants.get_or_404(pk=participant_id)
 
 
 class ParticipantListResource(Resource):
+    @login_required
     def get(self):
         parser.add_argument('q', type=str)
         args = parser.parse_args()
-        limit = args.get('limit') or current_app.config.get('PAGE_SIZE')
+        limit = min(
+            args.get('limit') or current_app.config.get('PAGE_SIZE'),
+            current_app.config.get('PAGE_SIZE'))
         offset = args.get('offset') or 0
 
         queryset = services.participants.find()

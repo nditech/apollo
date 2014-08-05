@@ -1,41 +1,25 @@
+import cachetools
+from flask import render_template_string
+from flask.ext.babel import lazy_gettext as _
 from hashlib import sha256
-
-import pandas as pd
+from slugify import slugify
 
 from .. import helpers, services
 from ..factory import create_celery_app
+from ..messaging.tasks import send_email
 
 celery = create_celery_app()
 
 email_template = '''
-Of {{ count }} records, {{ successful_imports }} were successfully imported, {{ suspect_imports }} raised warnings, and {{ unsuccessful_imports }} could not be imported.
-{% if errors %}
-The following records could not be imported:
--------------------------
-{% for e in errors %}
-{%- set pid = e[0] %}{% set msg = e[1] -%}
-Record for Location ID {{ pid }} raised error: {{ msg }}
-{% endfor %}
-{% endif %}
+Notification
+------------
 
-{% if warnings %}
-The following records raised warnings:
-{% for e in warnings %}
-{%- set pid = e[0] %}{% set msg = e[1] -%}
-Record for Location ID {{ pid }} raised warning: {{ msg }}
-{% endfor %}
-{% endif %}
+Your location import task has been completed.
 '''
-
-field_transform = {
-    'code': lambda s: str(s),
-    'political_code': lambda s: str(s),
-    'registered_voters': lambda i: int(i)
-}
 
 
 class LocationCache():
-    cache = {}
+    cache = cachetools.LFUCache(maxsize=50)
 
     def _cache_key(self, location_code, location_type, location_name):
         # remove smart quotes
@@ -70,68 +54,101 @@ class LocationCache():
         self.cache[cache_key] = location_obj
 
 
-def location_kwargs(item, df_series):
-    mapping_item = item.copy()
-    items_to_pop = []
-    for key in mapping_item:
-        if mapping_item[key]:
-            if key in field_transform:
-                mapping_item[key] = field_transform.get(key)(
-                    df_series.get(mapping_item[key]))
-            else:
-                mapping_item[key] = df_series.get(mapping_item[key])
-        else:
-            items_to_pop.append(key)
-    map(lambda item: mapping_item.pop(item), items_to_pop)
-    return mapping_item
+def map_attribute(location_type, attribute):
+    slug = slugify(location_type.name, separator='_').lower()
+    return '{}_{}'.format(slug, attribute.lower())
 
 
 def update_locations(df, mapping, event):
     cache = LocationCache()
+    location_types = services.location_types.find().order_by('ancestor_count')
 
     for idx in df.index:
-        for lt in mapping.keys():
-            if not cache.has(
-                df.ix[idx][mapping[lt]['code']] if mapping[lt]['code'] else '',
-                lt or '',
-                df.ix[idx][mapping[lt]['name']] if mapping[lt]['name'] else ''
-            ):
-                kwargs = location_kwargs(mapping[lt], df.ix[idx])
-                kwargs['location_type'] = lt
-                kwargs['deployment'] = event.deployment
-                loc = services.locations.get_or_create(**kwargs)
-                cache.set(loc)
-        for lt in mapping.keys():
-            loc = cache.get(
-                df.ix[idx][mapping[lt]['code']] if mapping[lt]['code'] else '',
-                lt or '',
-                df.ix[idx][mapping[lt]['name']] if mapping[lt]['name'] else '')
-            ancestor_types = services.location_types.get(name=lt).ancestors_ref
-            anc = filter(
-                lambda a: a, [cache.get(
-                    df.ix[idx][mapping[lt.name]['code']]
-                    if mapping[lt.name]['code'] else '',
-                    lt.name or '',
-                    df.ix[idx][mapping[lt.name]['name']]
-                    if mapping[lt.name]['name'] else '')
-                    for lt in ancestor_types])
-            loc.update(add_to_set__events=event, add_to_set__ancestors_ref=anc)
+        for lt in location_types:
+            location_code = str(df.ix[idx].get(
+                mapping.get(map_attribute(lt, 'code'), ''),
+                ''
+            ))
+            location_name = str(df.ix[idx].get(
+                mapping.get(map_attribute(lt, 'name'), ''),
+                ''
+            ))
+            location_pcode = str(df.ix[idx].get(
+                mapping.get(map_attribute(lt, 'pcode'), ''), '')) \
+                if lt.has_political_code else None
+            location_rv = df.ix[idx].get(
+                mapping.get(map_attribute(lt, 'rv'), ''), '') \
+                if lt.has_registered_voters else None
+            location_type = lt.name.lower()
+
+            # if the location_name attribute has no value, then skip it
+            if not location_name:
+                continue
+
+            # if we have the location in the cache, then continue
+            if cache.has(location_code, location_type, location_name):
+                continue
+
+            kwargs = {
+                'location_type': lt.name,
+                'deployment': event.deployment
+            }
+
+            if location_code:
+                kwargs.update({'code': location_code})
+
+            location = services.locations.get_or_create(**kwargs)
+            location_data = dict()
+
+            location_data['name'] = location_name
+
+            if location_pcode:
+                location_data.update({'political_code': location_pcode})
+            if location_rv:
+                location_data.update({'registered_voters': location_rv})
+
+            update = dict(
+                [('set__{}'.format(k), v)
+                 for k, v in location_data.items()]
+            )
+
+            location.update(set__ancestors_ref=[], **update)
+
+            # update ancestors
+            ancestors = []
+            for sub_lt in lt.ancestors_ref:
+                sub_lt_name = str(df.ix[idx].get(
+                    mapping.get(map_attribute(sub_lt, 'name'), '')))
+                sub_lt_code = str(df.ix[idx].get(
+                    mapping.get(map_attribute(sub_lt, 'code'), ''), ''))
+                sub_lt_type = sub_lt.name or ''
+
+                ancestor = cache.get(sub_lt_code, sub_lt_type, sub_lt_name)
+                ancestors.append(ancestor)
+
+            location.update(
+                add_to_set__events=event,
+                set__ancestors_ref=ancestors)
+            cache.set(location)
 
 
 @celery.task
 def import_locations(upload_id, mappings):
     upload = services.user_uploads.get(pk=upload_id)
     dataframe = helpers.load_source_file(upload.data)
-    count, errors, warnings = update_locations(
+
+    update_locations(
         dataframe,
-        upload.event,
-        mappings
+        mappings,
+        upload.event
     )
 
     # delete uploaded file
     upload.data.delete()
     upload.delete()
 
-    msg_body = generate_response_email(count, errors, warnings)
+    msg_body = render_template_string(
+        email_template
+    )
 
-    send_email(_('Import report'), msg_body, [upload.user.email])
+    send_email(_('Locations Import Report'), msg_body, [upload.user.email])

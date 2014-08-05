@@ -48,6 +48,7 @@ class LocationType(db.Document):
     name = db.StringField()
     ancestors_ref = db.ListField(db.ReferenceField(
         'LocationType', reverse_delete_rule=db.PULL))
+    ancestor_count = db.IntField()
     is_administrative = db.BooleanField(default=False)
     is_political = db.BooleanField(default=False)
     has_registered_voters = db.BooleanField(db_field='has_rv', default=False)
@@ -74,6 +75,7 @@ class LocationType(db.Document):
     def clean(self):
         if not self.slug:
             self.slug = slugify_unicode(self.name).lower()
+        self.ancestor_count = len(self.ancestors_ref)
         return super(LocationType, self).clean()
 
     @property

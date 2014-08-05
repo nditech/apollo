@@ -47,7 +47,7 @@
   {%- else -%}
     <legend style="text-align:center"><a href="{{ url_for('dashboard.index', group=row.name, locationtype=locationtype, **args) }}">{{ row.name }}</a></legend>
   {% endif %}
-    <div class="piechart" data-chart='{{ row|tojson|safe }}'>
+    <div class="piechart" data-chart='{{ row|tojson }}'>
     </div>
   </div>
 {% if loop.last or loop.index is divisibleby 6 %}</div>{% endif %}

@@ -4,7 +4,9 @@ from ..submissions.models import FLAG_CHOICES, STATUS_CHOICES
 from ..wtforms_ext import ExtendedSelectField, ExtendedMultipleSelectField
 from .helpers import get_event
 from collections import defaultdict, OrderedDict
+from dateutil.parser import parse
 from flask.ext.babel import lazy_gettext as _
+from mongoengine import Q
 from .. import services
 from wtforms import widgets, fields
 
@@ -295,6 +297,43 @@ class SubmissionStatus(ChoiceFilter):
         return queryset
 
 
+class MobileFilter(CharFilter):
+    def filter(self, queryset, value):
+        if value:
+            return queryset.filter(
+                Q(recipient__contains=value) | Q(sender__contains=value)
+            )
+
+        return queryset
+
+
+class TextFilter(CharFilter):
+    def filter(self, queryset, value):
+        if value:
+            return queryset.filter(text__icontains=value)
+
+        return queryset
+
+
+class DateFilter(CharFilter):
+    def filter(self, queryset, value):
+        if value:
+            try:
+                timestamp = parse(value)
+            except Exception:
+                return queryset.none()
+
+            upper = timestamp.replace(hour=23, minute=59, second=59)
+            lower = timestamp.replace(hour=0, minute=0, second=0)
+
+            return queryset.filter(
+                received__gte=lower,
+                received__lte=upper
+            )
+
+        return queryset
+
+
 def basesubmission_filterset():
     class BaseSubmissionFilterSet(FilterSet):
         event = EventFilter()
@@ -307,6 +346,15 @@ def basesubmission_filterset():
                 widget=widgets.HiddenInput(), default=unicode(event.id))
 
     return BaseSubmissionFilterSet
+
+
+def messages_filterset():
+    class MessagesFilterSet(FilterSet):
+        mobile = MobileFilter()
+        text = TextFilter()
+        date = DateFilter()
+
+    return MessagesFilterSet
 
 
 def dashboard_filterset():
