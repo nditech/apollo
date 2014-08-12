@@ -50,6 +50,8 @@ CELERY_ACCEPT_CONTENT = ['json']
 
 FORCE_SSL = ast.literal_eval(
     os.environ.get('FORCE_SSL', 'False'))
+ENABLE_MOE = ast.literal_eval(
+    os.environ.get('ENABLE_MOE', 'True'))
 X_FRAME_OPTIONS = os.environ.get('X_FRAME_OPTIONS', 'DENY')
 
 SENTRY_DSN = os.environ.get('SENTRY_DSN')
