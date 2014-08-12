@@ -32,11 +32,11 @@
 							{%- if form.registered_voters_tag -%}
 							<th class="gray">&nbsp;</th>
 							{%- endif -%}
-							<th width="30"{% if form.registered_voters_tag and form.calculate_moe %} colspan="3"{%- endif -%} class="gray" style="text-align:center">{%- trans -%}Total votes{%- endtrans -%}</th>
-							<th width="100"{% if form.calculate_moe %} colspan="3"{%- endif -%} class="gray" style="text-align:center">{%- trans -%}Rejected ballots{%- endtrans -%}</th>
+							<th width="30"{% if form.registered_voters_tag and form.calculate_moe and config.ENABLE_MOE %} colspan="3"{%- endif -%} class="gray" style="text-align:center">{%- trans -%}Total votes{%- endtrans -%}</th>
+							<th width="100"{% if form.calculate_moe and config.ENABLE_MOE %} colspan="3"{%- endif -%} class="gray" style="text-align:center">{%- trans -%}Rejected ballots{%- endtrans -%}</th>
 							<th width="30" class="gray" style="text-align:center">{%- trans -%}Total valid{%- endtrans -%}</th>
 							{%- for party in party_names -%}
-							<th width="100"{%- if form.calculate_moe %} colspan="3"{%- endif -%} class="gray" style="text-align:center">{{ party }}</th>
+							<th width="100"{%- if form.calculate_moe and config.ENABLE_MOE %} colspan="3"{%- endif -%} class="gray" style="text-align:center">{{ party }}</th>
 							{%- endfor -%}
 						</tr>
 						<tr>
@@ -46,19 +46,19 @@
 							<td><em><abbr title="{%- trans -%}Total registered{%- endtrans -%}">{%- trans -%}TR{%- endtrans -%}</abbr></em></td>
 							{%- endif -%}
 							<td class="centered" width="10%">{%- trans -%}Votes{%- endtrans -%}</td>
-							{%- if form.registered_voters_tag and form.calculate_moe -%}
+							{%- if form.registered_voters_tag and form.calculate_moe and config.ENABLE_MOE -%}
 							<td class="centered"><em><abbr title="{%- trans -%}Margin of error{%- endtrans -%}">{%- trans -%}MoE 95%{%- endtrans -%}</abbr></em></td>
 							<td class="centered"><em><abbr title="{%- trans -%}Margin of error{%- endtrans -%}">{%- trans -%}MoE 99%{%- endtrans -%}</abbr></em></td>
 							{%- endif -%}
 							<td class="centered"><em><abbr title="{%- trans -%}Rejected ballots{%- endtrans -%}">{%- trans -%}RB{%- endtrans -%}</abbr></em></td>
-							{%- if form.calculate_moe -%}
+							{%- if form.calculate_moe and config.ENABLE_MOE -%}
 							<td class="centered"><em><abbr title="{%- trans -%}Margin of error{%- endtrans -%}">{%- trans -%}MoE 95%{%- endtrans -%}</abbr></em></td>
 							<td class="centered"><em><abbr title="{%- trans -%}Margin of error{%- endtrans -%}">{%- trans -%}MoE 99%{%- endtrans -%}</abbr></em></td>
 							{%- endif -%}
 							<td><em><abbr title="{%- trans -%}Total valid{%- endtrans -%}">{%- trans -%}TV{%- endtrans -%}</abbr></em></td>
 							{%- for party in party_names -%}
 							<td class="centered"><em>{%- trans -%}Votes{%- endtrans -%}</em></td>
-							{%- if form.calculate_moe -%}
+							{%- if form.calculate_moe and config.ENABLE_MOE -%}
 							<td class="centered"><em><abbr title="{%- trans -%}Margin of error{%- endtrans -%}">{%- trans -%}MoE 95%{%- endtrans -%}</abbr></em></td>
 							<td class="centered"><em><abbr title="{%- trans -%}Margin of error{%- endtrans -%}">{%- trans -%}MoE 99%{%- endtrans -%}</abbr></em></td>
 							{%- endif -%}
@@ -72,19 +72,19 @@
 							<th class="numeric gray">{{ dataframe|total_registered(form, location.location_type, location.name, 'ALL') }}</th>
 							{%- endif -%}
 							<th class="numeric gray">{{ dataframe|all_votes_total_pct(form, party_codes, location.location_type, location.name, 'ALL') }}% ({{ dataframe|all_votes_total(form, party_codes, location.location_type, location.name, 'ALL') }})</th>
-							{%- if form.registered_voters_tag and form.calculate_moe -%}
+							{%- if form.registered_voters_tag and form.calculate_moe and config.ENABLE_MOE -%}
 							<th class="numeric gray">{{ dataframe|all_votes_total_moe(form, party_codes, location.location_type, location.name, 'ALL') }}%</th>
 							<th class="numeric gray">{{ dataframe|all_votes_total_moe(form, party_codes, location.location_type, location.name, 'ALL', 258.0) }}%</th>
 							{%- endif -%}
 							<th class="numeric gray">{{ dataframe|rejected_proportion(form, location.location_type, location.name, 'ALL') }}%<br />({{ dataframe|rejected_count(form, location.location_type, location.name, 'ALL') }})</th>
-                            {%- if form.calculate_moe -%}
+                            {%- if form.calculate_moe and config.ENABLE_MOE -%}
                             <th class="numeric gray">{{ dataframe|rejected_moe(form, location.location_type, location.name, 'ALL') }}%</th>
                             <th class="numeric gray">{{ dataframe|rejected_moe(form, location.location_type, location.name, 'ALL', 258.0) }}%</th>
                             {%- endif -%}
                             <th class="numeric gray">{{ dataframe|valid_votes_total(party_codes, location.location_type, location.name, 'ALL') }}</th>
                             {%- for vote in party_codes -%}
                             <th class="numeric gray">{{ dataframe|vote_proportion(form, party_codes, vote, location.location_type, location.name, 'ALL') }}%<br />({{ dataframe|vote_count(party_codes, vote, location.location_type, location.name, 'ALL') }})</th>
-                            {%- if form.calculate_moe -%}
+                            {%- if form.calculate_moe and config.ENABLE_MOE -%}
                             <th class="numeric gray">{{ dataframe|vote_moe(form, party_codes, vote, location.location_type, location.name, 'ALL') }}%</th>
                             <th class="numeric gray">{{ dataframe|vote_moe(form, party_codes, vote, location.location_type, location.name, 'ALL', 258.0) }}%</th>
                             {%- endif -%}
@@ -99,19 +99,19 @@
 							<th class="numeric gray">{{ dataframe|total_registered(form, sublocation.location_type, sublocation.name, 'ALL') }}</th>
 							{%- endif -%}
 							<th class="numeric gray">{{ dataframe|all_votes_total_pct(form, party_codes, sublocation.location_type, sublocation.name, 'ALL') }}% ({{ dataframe|all_votes_total(form, party_codes, sublocation.location_type, sublocation.name, 'ALL') }})</th>
-							{%- if form.registered_voters_tag and form.calculate_moe -%}
+							{%- if form.registered_voters_tag and form.calculate_moe and config.ENABLE_MOE -%}
 							<th class="numeric gray">{{ dataframe|all_votes_total_moe(form, party_codes, sublocation.location_type, sublocation.name, 'ALL') }}%</th>
 							<th class="numeric gray">{{ dataframe|all_votes_total_moe(form, party_codes, sublocation.location_type, sublocation.name, 'ALL', 258.0) }}%</th>
 							{%- endif -%}
 							<th class="numeric gray">{{ dataframe|rejected_proportion(form, sublocation.location_type, sublocation.name, 'ALL') }}%<br />({{ dataframe|rejected_count(form, sublocation.location_type, sublocation.name, 'ALL') }})</th>
-                            {%- if form.calculate_moe -%}
+                            {%- if form.calculate_moe and config.ENABLE_MOE -%}
                             <th class="numeric gray">{{ dataframe|rejected_moe(form, sublocation.location_type, sublocation.name, 'ALL') }}%</th>
                             <th class="numeric gray">{{ dataframe|rejected_moe(form, sublocation.location_type, sublocation.name, 'ALL', 258.0) }}%</th>
                             {%- endif -%}
                             <th class="numeric gray">{{ dataframe|valid_votes_total(party_codes, sublocation.location_type, sublocation.name, 'ALL') }}</th>
                             {%- for vote in party_codes -%}
                             <th class="numeric gray">{{ dataframe|vote_proportion(form, party_codes, vote, sublocation.location_type, sublocation.name, 'ALL') }}%<br />({{ dataframe|vote_count(party_codes, vote, sublocation.location_type, sublocation.name, 'ALL') }})</th>
-                            {%- if form.calculate_moe -%}
+                            {%- if form.calculate_moe and config.ENABLE_MOE -%}
                             <th class="numeric gray">{{ dataframe|vote_moe(form, party_codes, vote, sublocation.location_type, sublocation.name, 'ALL') }}%</th>
                             <th class="numeric gray">{{ dataframe|vote_moe(form, party_codes, vote, sublocation.location_type, sublocation.name, 'ALL', 258.0) }}%</th>
                             {%- endif -%}
