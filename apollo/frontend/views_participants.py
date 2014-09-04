@@ -19,7 +19,7 @@ from ..participants import api
 from ..tasks import import_participants, send_messages
 from .forms import (DummyForm, generate_participant_edit_form,
                     generate_participant_import_mapping_form,
-                    FileUploadForm)
+                    file_upload_form)
 
 bp = Blueprint('participants', __name__, template_folder='templates',
                static_folder='static', static_url_path='/core/static')
@@ -287,7 +287,7 @@ def participant_edit(pk):
 @permissions.import_participants.require(403)
 @login_required
 def participant_list_import():
-    form = FileUploadForm(request.form)
+    form = file_upload_form(request.form)
 
     if not form.validate():
         return abort(400)

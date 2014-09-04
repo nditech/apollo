@@ -161,7 +161,6 @@ def submission_create(form_id):
 
         if not submission_form.validate():
             # really should redisplay the form again
-            print submission_form.errors
             return redirect(url_for(
                 'submissions.submission_list', form_id=unicode(form.pk)))
 
