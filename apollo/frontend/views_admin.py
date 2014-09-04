@@ -29,10 +29,9 @@ class DeploymentAdminView(BaseAdminView):
     can_create = False
     can_delete = False
     column_list = ('name',)
-    form_excluded_columns = ('hostnames',)
     form_rules = [
         rules.FieldSet(
-            ('name', 'logo', 'allow_observer_submission_edit'),
+            ('name', 'logo', 'allow_observer_submission_edit', 'hostnames'),
             _('Deployment')
         )
     ]
