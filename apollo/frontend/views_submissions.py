@@ -247,8 +247,8 @@ def submission_edit(submission_id):
                     if changed:
                         submission.save()
 
-                if request.args.get('next'):
-                    return redirect(request.args.get('next'))
+                if request.form.get('next'):
+                    return redirect(request.form.get('next'))
                 else:
                     return redirect(url_for(
                         'submissions.submission_list',
@@ -336,8 +336,8 @@ def submission_edit(submission_id):
                 no_error = False
 
             if no_error:
-                if request.args.get('next'):
-                    return redirect(request.args.get('next'))
+                if request.form.get('next'):
+                    return redirect(request.form.get('next'))
                 else:
                     return redirect(url_for(
                         'submissions.submission_list',
