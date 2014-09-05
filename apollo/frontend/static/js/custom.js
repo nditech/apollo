@@ -44,8 +44,8 @@ $(function(){
           };
         },
         results: function (data, page) {
-          var more = (page * 20) < data.pop().meta.total;
-          return {results: data, more: more};
+          var more = (page * 20) < data.meta.total;
+          return {results: data.objects, more: more};
         }
       },
       formatResult: function (location, container, query) { return _safe(location.name) + ' · <i>' + _safe(location.location_type) + '</i>'; },
@@ -85,8 +85,8 @@ $(function(){
           };
         },
         results: function (data, page) {
-          var more = (page * 20) < data.pop().meta.total;
-          return {results: data, more: more};
+          var more = (page * 20) < data.meta.total;
+          return {results: data.objects, more: more};
         }
       },
       formatResult: function (observer, container, query) { return _safe(observer.participant_id) + ' · <i>' + _safe(observer.name) + '</i>'; },

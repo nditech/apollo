@@ -1,4 +1,4 @@
-from flask import current_app
+from flask import current_app, jsonify
 from flask.ext.restful import Resource, fields, marshal, marshal_with
 from flask.ext.security import login_required
 from mongoengine import Q
@@ -36,7 +36,7 @@ class LocationTypeItemResource(Resource):
         urlfield = fields.Url('locations.api.locationtype')
         data['uri'] = urlfield.output('uri', {'loc_type_id': data['id']})
 
-        return data
+        return jsonify(data)
 
 
 class LocationTypeListResource(Resource):
@@ -61,22 +61,23 @@ class LocationTypeListResource(Resource):
             urlfield = fields.Url('locations.api.locationtype')
             d['uri'] = urlfield.output('uri', {'loc_type_id': d['id']})
 
-        meta = {'meta': {
-            'limit': limit,
-            'offset': offset,
-            'total': queryset.count(False)
-        }}
+        result = {
+            'meta': {
+                'limit': limit,
+                'offset': offset,
+                'total': queryset.count(False)
+            },
+            'objects': dataset
+        }
 
-        dataset.append(meta)
-
-        return dataset
+        return jsonify(result)
 
 
 class LocationItemResource(Resource):
     @login_required
     @marshal_with(LOCATION_FIELD_MAPPER)
     def get(self, location_id):
-        return services.locations.get_or_404(pk=location_id)
+        return jsonify(services.locations.get_or_404(pk=location_id))
 
 
 class LocationListResource(Resource):
@@ -106,12 +107,13 @@ class LocationListResource(Resource):
             LOCATION_FIELD_MAPPER
         )
 
-        meta = {'meta': {
-            'limit': limit,
-            'offset': offset,
-            'total': queryset.count(False)
-        }}
+        result = {
+            'meta': {
+                'limit': limit,
+                'offset': offset,
+                'total': queryset.count(False)
+            },
+            'objects': dataset
+        }
 
-        dataset.append(meta)
-
-        return dataset
+        return jsonify(result)
