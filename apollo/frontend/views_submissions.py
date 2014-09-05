@@ -103,7 +103,7 @@ def submission_list(form_id):
                       for submission in query_filterset.qs]
         recipients.extend(current_app.config.get('MESSAGING_CC'))
 
-        if message and recipients:
+        if message and recipients and permissions.send_messages.can():
             send_messages.delay(str(g.event.pk), message, recipients)
             return 'OK'
         else:
