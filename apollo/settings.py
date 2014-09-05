@@ -6,7 +6,11 @@ import numpy
 import os
 import string
 
-SECRET_KEY = os.environ.get('SECRET_KEY', 'SOMETHING_SECURE')
+try:
+    SECRET_KEY = os.environ['SECRET_KEY']
+except KeyError:
+    raise KeyError('A SECRET_KEY value must be defined in the environment.')
+
 DEBUG = ast.literal_eval(
     os.environ.get('DEBUG', 'False'))
 PAGE_SIZE = 25
@@ -21,7 +25,8 @@ SECURITY_PASSWORD_HASH = 'pbkdf2_sha256'
 SECURITY_PASSWORD_SALT = SECRET_KEY
 SECURITY_URL_PREFIX = '/accounts'
 SECURITY_LOGIN_USER_TEMPLATE = 'frontend/login_user.html'
-SECURITY_EMAIL_SENDER = 'no-reply@apollo.la'
+SECURITY_EMAIL_SENDER = os.environ.get(
+    'SECURITY_EMAIL_SENDER', 'no-reply@apollo.la')
 SECURITY_RECOVERABLE = True
 SECURITY_TRACKABLE = True
 SESSION_COOKIE_SECURE = ast.literal_eval(
