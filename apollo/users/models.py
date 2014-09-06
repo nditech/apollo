@@ -19,8 +19,8 @@ class User(db.Document, UserMixin):
     confirnmed_at = db.DateTimeField()
     current_login_at = db.DateTimeField()
     last_login_at = db.DateTimeField()
-    current_login_ip = db.StringField(max_length=24)
-    last_login_ip = db.StringField(max_length=24)
+    current_login_ip = db.StringField(max_length=45)
+    last_login_ip = db.StringField(max_length=45)
     login_count = db.IntField(default=0)
     roles = db.ListField(db.ReferenceField(Role,
                          reverse_delete_rule=db.PULL), default=[])
