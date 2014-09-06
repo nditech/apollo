@@ -30,7 +30,7 @@ SECURITY_EMAIL_SENDER = os.environ.get(
 SECURITY_RECOVERABLE = True
 SECURITY_TRACKABLE = True
 SESSION_COOKIE_SECURE = ast.literal_eval(
-    os.environ.get('SESSION_COOKIE_SECURE', 'False'))
+    os.environ.get('SESSION_COOKIE_SECURE', 'True'))
 PERMANENT_SESSION_LIFETIME = timedelta(hours=1)
 
 MAIL_SERVER = os.environ.get('MAIL_SERVER', 'localhost')
@@ -54,7 +54,7 @@ CELERY_TASK_SERIALIZER = 'json'
 CELERY_ACCEPT_CONTENT = ['json']
 
 FORCE_SSL = ast.literal_eval(
-    os.environ.get('FORCE_SSL', 'False'))
+    os.environ.get('FORCE_SSL', 'True'))
 ENABLE_MOE = ast.literal_eval(
     os.environ.get('ENABLE_MOE', 'False'))
 X_FRAME_OPTIONS = os.environ.get('X_FRAME_OPTIONS', 'DENY')
