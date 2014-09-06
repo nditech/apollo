@@ -23,7 +23,7 @@ def message_list():
     qs = messages.all().order_by('-received')
     queryset_filter = filters.messages_filterset()(qs, request.args)
 
-    if request.args.get('export'):
+    if request.args.get('export') and permissions.export_messages.can():
         # Export requested
         dataset = messages.export_list(qs)
         basename = slugify_unicode('%s messages %s' % (

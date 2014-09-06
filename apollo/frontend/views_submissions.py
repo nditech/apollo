@@ -57,7 +57,7 @@ def submission_list(form_id):
         location = services.locations.find(
             pk=request.args.get('location')).first()
 
-    if request.args.get('export'):
+    if request.args.get('export') and permissions.export_submissions.can():
         mode = request.args.get('export')
         if mode == 'master':
             queryset = services.submissions.find(
@@ -115,23 +115,18 @@ def submission_list(form_id):
         form_fields = [field for group in form.groups
                        for field in group.fields]
 
-    if request.args.get('export'):
-        # Export requested
-        # TODO: complete export functionality
-        return ""
-    else:
-        return render_template(
-            template_name,
-            args=data,
-            filter_form=filter_form,
-            form=form,
-            form_fields=form_fields,
-            location_types=loc_types,
-            location=location,
-            page_title=page_title,
-            pager=query_filterset.qs.paginate(
-                page=page, per_page=current_app.config.get('PAGE_SIZE'))
-        )
+    return render_template(
+        template_name,
+        args=data,
+        filter_form=filter_form,
+        form=form,
+        form_fields=form_fields,
+        location_types=loc_types,
+        location=location,
+        page_title=page_title,
+        pager=query_filterset.qs.paginate(
+            page=page, per_page=current_app.config.get('PAGE_SIZE'))
+    )
 
 
 @route(bp, '/submissions/<form_id>/new', methods=['GET', 'POST'])

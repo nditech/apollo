@@ -68,7 +68,7 @@ def locations_list():
 
     subset = queryset_filter.qs.order_by('location_type')
 
-    if request.args.get('export'):
+    if request.args.get('export') and permissions.export_locations.can():
         # Export requested
         dataset = services.locations.export_list(queryset_filter.qs)
         basename = slugify_unicode('%s locations %s' % (

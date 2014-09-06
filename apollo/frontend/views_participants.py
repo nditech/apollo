@@ -76,7 +76,7 @@ def participant_list(page=1):
         else:
             abort(400)
 
-    if request.args.get('export'):
+    if request.args.get('export') and permissions.export_participants.can():
         # Export requested
         dataset = services.participants.export_list(queryset_filter.qs)
         basename = slugify_unicode('%s participants %s' % (
@@ -155,7 +155,7 @@ def participant_performance_list(page=1):
         else:
             abort(400)
 
-    if request.args.get('export'):
+    if request.args.get('export') and permissions.export_participants.can():
         # Export requested
         dataset = services.participants.export_performance_list(
             queryset_filter.qs)
