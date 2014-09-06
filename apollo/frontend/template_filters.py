@@ -1,6 +1,7 @@
 import calendar
 from collections import OrderedDict
 import math
+import re
 from babel.numbers import format_number
 from flask import g
 from flask.ext.babel import get_locale, lazy_gettext as _
@@ -9,9 +10,14 @@ from ..analyses.common import dataframe_analysis
 from ..analyses.voting import proportion, variance
 
 
+def _clean(fieldname):
+    '''Returns a sanitized fieldname'''
+    return re.sub(r'[^A-Z]', '', fieldname, re.I)
+
+
 def _valid_votes(df, votes):
     return df.query(' | '.join(
-        ['({} >= 0)'.format(v) for v in votes]))
+        ['({} >= 0)'.format(_clean(v)) for v in votes]))
 
 
 def checklist_question_summary(form, field, location, dataframe):
@@ -441,7 +447,8 @@ def missing(
 
         # hack for implementing isnull is that nan * 0 != 0
         m = df.query(
-            ' & '.join(['({} * 0 != 0)'.format(v) for v in votes])).shape[0]
+            ' & '.join(['({} * 0 != 0)'.format(
+                _clean(v)) for v in votes])).shape[0]
         return int(m) if pure else number_format(int(m))
     except:
         return 0
