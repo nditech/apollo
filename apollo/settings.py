@@ -27,6 +27,12 @@ ENABLE_MOE = ast.literal_eval(
     os.environ.get('ENABLE_MOE', 'False'))
 X_FRAME_OPTIONS = os.environ.get('X_FRAME_OPTIONS', 'DENY')
 
+# This setting informs the application server of the number of
+# upstream proxies to account for. Useful to determining true IP address
+# for the request and preventing spoofing. Because this application is
+# designed to be run behind a proper webserver, the default is set to 1
+UPSTREAM_PROXY_COUNT = os.environ.get('UPSTREAM_PROXY_COUNT', 1)
+
 SENTRY_DSN = os.environ.get('SENTRY_DSN')
 
 SECURITY_PASSWORD_HASH = 'pbkdf2_sha256'
