@@ -21,16 +21,22 @@ MONGODB_SETTINGS = {
         os.environ.get('MONGODB_PORT', 'mongodb://localhost')).netloc
 }
 
+SSL_REQUIRED = ast.literal_eval(
+    os.environ.get('SSL_REQUIRED', 'True'))
+ENABLE_MOE = ast.literal_eval(
+    os.environ.get('ENABLE_MOE', 'False'))
+X_FRAME_OPTIONS = os.environ.get('X_FRAME_OPTIONS', 'DENY')
+
+SENTRY_DSN = os.environ.get('SENTRY_DSN')
+
 SECURITY_PASSWORD_HASH = 'pbkdf2_sha256'
 SECURITY_PASSWORD_SALT = SECRET_KEY
 SECURITY_URL_PREFIX = '/accounts'
 SECURITY_LOGIN_USER_TEMPLATE = 'frontend/login_user.html'
-SECURITY_EMAIL_SENDER = os.environ.get(
-    'SECURITY_EMAIL_SENDER', 'no-reply@apollo.la')
+SECURITY_EMAIL_SENDER = os.environ.get('SECURITY_EMAIL_SENDER')
 SECURITY_RECOVERABLE = True
 SECURITY_TRACKABLE = True
-SESSION_COOKIE_SECURE = ast.literal_eval(
-    os.environ.get('SESSION_COOKIE_SECURE', 'True'))
+SESSION_COOKIE_SECURE = True if SSL_REQUIRED else False
 PERMANENT_SESSION_LIFETIME = timedelta(hours=1)
 
 MAIL_SERVER = os.environ.get('MAIL_SERVER', 'localhost')
@@ -52,14 +58,6 @@ CELERY_RESULT_BACKEND = 'redis://{host}/{database}'.format(
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_ACCEPT_CONTENT = ['json']
-
-FORCE_SSL = ast.literal_eval(
-    os.environ.get('FORCE_SSL', 'True'))
-ENABLE_MOE = ast.literal_eval(
-    os.environ.get('ENABLE_MOE', 'False'))
-X_FRAME_OPTIONS = os.environ.get('X_FRAME_OPTIONS', 'DENY')
-
-SENTRY_DSN = os.environ.get('SENTRY_DSN')
 
 LANGUAGES = {
     'en': 'English',
