@@ -51,15 +51,16 @@ class ParticipantsService(Service):
             phone_numbers += [''] * (3 - len(phone_numbers))
 
             record = [
-                participant.participant_id,
-                participant.name,
-                participant.role.name,
+                participant.participant_id if participant.participant_id
+                else '',
+                participant.name if participant.name else '',
+                participant.role.name if participant.role.name else '',
                 participant.partner.name if participant.partner else '',
                 participant.location.code if participant.location else '',
                 participant.supervisor.participant_id if participant.supervisor
                 else '',
-                participant.gender,
-                participant.email,
+                participant.gender if participant.gender else '',
+                participant.email if participant.email else '',
             ]
 
             record.extend(phone_numbers)

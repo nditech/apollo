@@ -208,7 +208,7 @@ def update_participants(dataframe, event, header_map):
 
         if EMAIL_COL:
             participant.email = record[EMAIL_COL] \
-                if _is_valid(record[EMAIL_COL]) else ''
+                if _is_valid(record[EMAIL_COL]) else None
 
         # wonky hacks to avoid doing addToSet queries
         # for events and phone numbers
