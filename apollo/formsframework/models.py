@@ -250,3 +250,93 @@ class Form(db.Document):
         root.append(head)
         root.append(body)
         return root
+
+
+class FormBuilderSerializer(object):
+    @classmethod
+    def serialize_field(cls, field):
+        data = {
+            'label': field.name,
+            'cid': field.name,
+            'field_options': {
+                'description': field.description
+            }
+        }
+
+        if not field.options:
+            data['field_type'] = 'number'
+            if field.represents_boolean:
+                data['field_options']['integer_only'] = True
+        else:
+            sorted_options = sorted(
+                field.options.iteritems(), key=itemgetter(1))
+            data['field_options'] = {
+                'options': [{
+                    'label': o[0],
+                    'checked': False
+                } for o in sorted_options]
+            }
+
+            if not field.allows_multiple_values:
+                data['field_type'] = 'radio'
+            else:
+                data['field_type'] = 'checkboxes'
+
+        return data
+
+    @classmethod
+    def serialize_group(cls, group):
+        field_data = []
+
+        # add group's description
+        field_data.append({
+            'label': group.name,
+            'cid': group.slug,
+            'field_type': 'group',
+        })
+
+        field_data.extend([cls.serialize_field(f) for f in group.fields])
+
+        return field_data
+
+    @classmethod
+    def serialize(cls, form):
+        group_data = []
+        for group in form.groups:
+            group_data.extend(cls.serialize_group(group))
+        data = {'fields': group_data}
+        return data
+
+    @classmethod
+    def deserialize(cls, form, data):
+        groups = []
+        for f in data['fields']:
+            if f['field_type'] == 'group':
+                group = FormGroup(
+                    name=f['label'],
+                    slug=slugify_unicode(f['label'])
+                )
+                groups.append(group)
+                continue
+
+            field = FormField(
+                name=f['label'],
+                description=f['field_options']['description'],
+            )
+
+            if f['field_type'] == 'number':
+                field.min_value = int(f['field_options'].get('min', 0))
+                field.max_value = int(f['field_options'].get('max', 9999))
+                field.represents_boolean = f['field_options'].get(
+                    'integer_only', False)
+            else:
+                labels = [o['label'] for o in f['field_options']['options']]
+                field.options = {k: v for v, k in enumerate(labels, 1)}
+
+                if f['field_type'] == 'checkboxes':
+                    field.allows_multiple_values = True
+
+            group.fields.append(field)
+
+        form.groups = groups
+        form.save()
