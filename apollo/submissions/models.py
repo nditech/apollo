@@ -10,7 +10,6 @@ from ..users.models import User
 from datetime import datetime
 from flask.ext.babel import lazy_gettext as _
 from flask.ext.mongoengine import BaseQuerySet
-from lxml import etree
 from mongoengine import Q
 from pandas import DataFrame, isnull, Series
 import numpy as np
