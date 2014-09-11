@@ -8,6 +8,8 @@ from wtforms import (
     validators, widgets
 )
 from flask import g
+from flask.ext.mongoengine.wtf import model_form
+from flask.ext.wtf import Form as SecureForm
 from .. import services, models
 from ..participants.utils import update_participant_completion_rating
 import json
@@ -197,3 +199,5 @@ def build_questionnaire(form, data=None):
     form_class = type('QuestionnaireForm', (BaseQuestionnaireForm,), fields)
 
     return form_class(data)
+
+FormForm = model_form(models.Form, SecureForm, only=['name', 'prefix', 'form_type'])
