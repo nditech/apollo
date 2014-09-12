@@ -270,12 +270,12 @@ class FormBuilderSerializer(object):
         else:
             sorted_options = sorted(
                 field.options.iteritems(), key=itemgetter(1))
-            data['field_options'] = {
+            data['field_options'].update({
                 'options': [{
                     'label': o[0],
                     'checked': False
                 } for o in sorted_options]
-            }
+            })
 
             if not field.allows_multiple_values:
                 data['field_type'] = 'radio'

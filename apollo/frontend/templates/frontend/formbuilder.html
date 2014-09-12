@@ -13,11 +13,29 @@
 <script src="{{ url_for('static', filename='js/formbuilder-min.js') }}"></script>
 <script type="text/javascript">
 var fb = null;
+var csrf_token = "{{ csrf_token() }}";
 Formbuilder.options.AUTOSAVE = false;
 $(function () {
   fb = new Formbuilder({
     selector: '#formbuilder',
     bootstrapData: JSON.parse(document.getElementById('formbuilder').dataset.form).fields
+  });
+
+  fb.on('save', function(payload) {
+    $.ajax({
+      beforeSend: function(xhr, settings) {
+        if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain){
+          xhr.setRequestHeader('X-CSRFToken', csrf_token);
+        }
+      },
+      contentType: 'application/json; charset=utf-8',
+      data: payload,
+      error: function(obj, status, error) {
+        console.log('Raised error ' +  error + ' with status code ' + status);
+        console.log(obj);
+      },
+      type: 'POST',
+    });
   });
 });
 </script>
