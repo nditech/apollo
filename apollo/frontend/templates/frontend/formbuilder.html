@@ -1,0 +1,24 @@
+{% extends 'frontend/_layout.html' %}
+{% block stylesheets %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/font-awesome.min.css') }}">
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/formbuilder-min.css') }}">
+{% endblock %}
+{% block content %}
+<div class="row">
+  <div class="col-md-12" id="formbuilder" data-form='{{ form_data|tojson }}'></div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/formbuilderdeps.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/formbuilder-min.js') }}"></script>
+<script type="text/javascript">
+var fb = null;
+Formbuilder.options.AUTOSAVE = false;
+$(function () {
+  fb = new Formbuilder({
+    selector: '#formbuilder',
+    bootstrapData: JSON.parse(document.getElementById('formbuilder').dataset.form).fields
+  });
+});
+</script>
+{% endblock %}
