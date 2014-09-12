@@ -1,0 +1,30 @@
+{% extends "frontend/_layout.html" %}
+{% block toolbar %}
+<a class="btn btn-sm btn-default pull-right" href="{{ url_for('forms.new_form') }}"><span class="glyphicon glyphicon-plus"></span> {% trans %}Add form{% endtrans %}</a>
+{% endblock %}
+{% block content %}
+<div class="row">
+	<div class="col-md-12">
+    <table class="table table-striped table-bordered table-hover">
+      <thead>
+        <tr>
+          <th>{% trans %}Name{% endtrans %}</th>
+          <th>{% trans %}Type{% endtrans %}</th>
+          <th>{% trans %}Edit properties{% endtrans %}</th>
+          <th>{% trans %}Edit fields{% endtrans %}</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for form in forms %}
+        <tr>
+          <td>{{ form.name }}</td>
+          <td>{{ form.form_type }}</td>
+          <td><a href="{{ url_for('forms.edit_form', pk=form.pk) }}">{% trans %}Edit{% endtrans %}</a></td>
+          <td><a href="{{ url_for('forms.form_builder', pk=form.pk) }}">{% trans %}Form designer{% endtrans %}</a></td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
