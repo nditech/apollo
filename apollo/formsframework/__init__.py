@@ -18,7 +18,7 @@ class FormsService(Service):
             if deployment:
                 kwargs.update({'deployment': deployment})
             if event:
-                kwargs.update({'events': event})
+                kwargs.update({'events': [event]})
         except RuntimeError:
             pass
 
