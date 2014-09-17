@@ -1,42 +1,77 @@
 {% extends 'frontend/_layout.html' %}
 {% block stylesheets %}
-<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/font-awesome.min.css') }}">
-<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/formbuilder-min.css') }}">
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/angular-form-builder.css') }}">
 {% endblock %}
 {% block content %}
-<div class="row">
-  <div class="col-md-12" id="formbuilder" data-form='{{ form_data|tojson }}'></div>
+<div ng-app="app">
+<div class="row" ng-controller="BuilderController">
+  <div class="col-md-6">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">Builder</h3>
+      </div>
+      <div fb-builder="default"></div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div fb-components></div>
+  </div>
+</div>
 </div>
 {% endblock %}
 {% block scripts %}
-<script src="{{ url_for('static', filename='js/formbuilderdeps.min.js') }}"></script>
-<script src="{{ url_for('static', filename='js/formbuilder-min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/angular.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/angular-form-builder.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/angular-formbuilder-components.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/angular-validator.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/angular-validator-rules.min.js') }}"></script>
 <script type="text/javascript">
-var fb = null;
-var csrf_token = "{{ csrf_token() }}";
-Formbuilder.options.AUTOSAVE = false;
-$(function () {
-  fb = new Formbuilder({
-    selector: '#formbuilder',
-    bootstrapData: JSON.parse(document.getElementById('formbuilder').dataset.form).fields
-  });
+(function() {
+  angular.module('app', ['builder', 'builder.components', 'validator.rules']).run([
+    '$builder', function($builder) {
+      return $builder;
+    }
+  ]).controller('BuilderController', [
+    '$scope', '$builder', '$validator', function($scope, $builder, $validator) {
+      var checkbox, textbox;
+      textbox = $builder.addFormObject('default', {
+        id: 'textbox',
+        component: 'textInput',
+        label: 'Name',
+        description: 'Your name',
+        placeholder: 'Your name',
+        required: true,
+        editable: false
+      });
+      checkbox = $builder.addFormObject('default', {
+        id: 'checkbox',
+        component: 'checkbox',
+        label: 'Pets',
+        description: 'Do you have any pets?',
+        options: ['Dog', 'Cat']
+      });
+      $builder.addFormObject('default', {
+        id: 'grp',
+        component: 'group',
+        label: 'Default Group'
+      })
+      $scope.form = $builder.forms['default'];
+      $scope.input = [];
+      $scope.defaultValue = {};
+      $scope.defaultValue[textbox.id] = 'default value';
+      $scope.defaultValue[checkbox.id] = [true, true];
+      return $scope.submit = function() {
+        return $validator.validate($scope, 'default').success(function() {
+          console.log(JSON.stringify($scope.form));
+          return console.log('success');
+        }).error(function() {
+          return console.log('error');
+        });
+      };
+    }
+  ]);
 
-  fb.on('save', function(payload) {
-    $.ajax({
-      beforeSend: function(xhr, settings) {
-        if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain){
-          xhr.setRequestHeader('X-CSRFToken', csrf_token);
-        }
-      },
-      contentType: 'application/json; charset=utf-8',
-      data: payload,
-      error: function(obj, status, error) {
-        console.log('Raised error ' +  error + ' with status code ' + status);
-        console.log(obj);
-      },
-      type: 'POST',
-    });
-  });
-});
+}).call(this);
+
 </script>
 {% endblock %}
