@@ -262,6 +262,7 @@ class FormBuilderSerializer(object):
 
         if not field.options:
             data['component'] = 'textInput'
+            data['required'] = field.represents_boolean
         else:
             sorted_options = sorted(
                 field.options.iteritems(), key=itemgetter(1))
@@ -299,7 +300,7 @@ class FormBuilderSerializer(object):
     def deserialize(cls, form, data):
         groups = []
         for f in data['fields']:
-            if f['field_type'] == 'group':
+            if f['component'] == 'group':
                 group = FormGroup(
                     name=f['label'],
                     slug=slugify_unicode(f['label'])
@@ -309,19 +310,15 @@ class FormBuilderSerializer(object):
 
             field = FormField(
                 name=f['label'],
-                description=f['field_options']['description'],
+                description=f['description'],
             )
 
-            if f['field_type'] == 'number':
-                field.min_value = int(f['field_options'].get('min', 0))
-                field.max_value = int(f['field_options'].get('max', 9999))
-                field.represents_boolean = f['field_options'].get(
-                    'integer_only', False)
+            if f['component'] == 'textInput':
+                field.represents_boolean = f['required']
             else:
-                labels = [o['label'] for o in f['field_options']['options']]
-                field.options = {k: v for v, k in enumerate(labels, 1)}
+                field.options = {k: v for v, k in enumerate(f['options'], 1)}
 
-                if f['field_type'] == 'checkboxes':
+                if f['field_type'] == 'checkbox':
                     field.allows_multiple_values = True
 
             group.fields.append(field)
