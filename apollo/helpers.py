@@ -5,6 +5,7 @@ import pkgutil
 import re
 
 from flask import Blueprint
+from apollo.locations.models import Location
 
 
 def register_blueprints(app, package_name, package_path):
@@ -74,7 +75,6 @@ def compute_location_path(location):
     location names as values. Due to lack of joins in MongoDB,
     this dictionary is useful for queries that retrieve submission
     and participant information within a location hierarchy.'''
-    from apollo.locations.models import Location
 
     # we don't really expect the latter case, but for the former,
     # it's possible to have a participant with no location set

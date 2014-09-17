@@ -142,6 +142,14 @@ def import_locations(upload_id, mappings):
         mappings,
         upload.event
     )
+    
+    # fetch and update all submissions
+    deployment = upload.event.deployment
+    submissions = services.submissions.all().filter(deployment=deployment)
+    for submission in submissions:
+        if submission.location:
+            submission.location_name_path = helpers.compute_location_path(submission.location)
+            submission.save(clean=False)
 
     # delete uploaded file
     upload.data.delete()
