@@ -257,30 +257,19 @@ class FormBuilderSerializer(object):
     def serialize_field(cls, field):
         data = {
             'label': field.name,
-            'cid': field.name,
-            'field_options': {
-                'description': field.description
-            }
+            'description': field.description
         }
 
         if not field.options:
-            data['field_type'] = 'number'
-            if field.represents_boolean:
-                data['field_options']['integer_only'] = True
+            data['component'] = 'textInput'
         else:
             sorted_options = sorted(
                 field.options.iteritems(), key=itemgetter(1))
-            data['field_options'].update({
-                'options': [{
-                    'label': o[0],
-                    'checked': False
-                } for o in sorted_options]
-            })
-
-            if not field.allows_multiple_values:
-                data['field_type'] = 'radio'
+            data['options'] = [s[0] for s in sorted_options]
+            if field.allows_multiple_values:
+                data['component'] = 'checkbox'
             else:
-                data['field_type'] = 'checkboxes'
+                data['component'] = 'radio'
 
         return data
 
@@ -291,8 +280,7 @@ class FormBuilderSerializer(object):
         # add group's description
         field_data.append({
             'label': group.name,
-            'cid': group.slug,
-            'field_type': 'group',
+            'component': 'group',
         })
 
         field_data.extend([cls.serialize_field(f) for f in group.fields])

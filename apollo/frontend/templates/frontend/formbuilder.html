@@ -4,7 +4,7 @@
 {% endblock %}
 {% block content %}
 <div ng-app="app">
-<div class="row" ng-controller="BuilderController">
+<div class="row" id="formbuilder" ng-controller="BuilderController" data-form='{{ form_data|tojson }}'>
   <div class="col-md-6">
     <div class="panel panel-default">
       <div class="panel-heading">
@@ -33,33 +33,13 @@
     }
   ]).controller('BuilderController', [
     '$scope', '$builder', '$validator', function($scope, $builder, $validator) {
-      var checkbox, textbox;
-      textbox = $builder.addFormObject('default', {
-        id: 'textbox',
-        component: 'textInput',
-        label: 'Name',
-        description: 'Your name',
-        placeholder: 'Your name',
-        required: true,
-        editable: false
-      });
-      checkbox = $builder.addFormObject('default', {
-        id: 'checkbox',
-        component: 'checkbox',
-        label: 'Pets',
-        description: 'Do you have any pets?',
-        options: ['Dog', 'Cat']
-      });
-      $builder.addFormObject('default', {
-        id: 'grp',
-        component: 'group',
-        label: 'Default Group'
-      })
+      var bootstrapData = JSON.parse(document.getElementById('formbuilder').dataset.form);
+
+      for (var i = 0; i < bootstrapData.fields.length; i++)
+        $builder.addFormObject('default', bootstrapData.fields[i]);
       $scope.form = $builder.forms['default'];
       $scope.input = [];
       $scope.defaultValue = {};
-      $scope.defaultValue[textbox.id] = 'default value';
-      $scope.defaultValue[checkbox.id] = [true, true];
       return $scope.submit = function() {
         return $validator.validate($scope, 'default').success(function() {
           console.log(JSON.stringify($scope.form));
