@@ -19,7 +19,7 @@ Your location import task has been completed.
 
 
 class LocationCache():
-    cache = cachetools.LFUCache(maxsize=50)
+    cache = cachetools.LRUCache(maxsize=50)
 
     def _cache_key(self, location_code, location_type, location_name):
         # remove smart quotes
@@ -79,7 +79,7 @@ def update_locations(df, mapping, event):
             location_rv = df.ix[idx].get(
                 mapping.get(map_attribute(lt, 'rv'), ''), '') \
                 if lt.has_registered_voters else None
-            location_type = lt.name.lower()
+            location_type = lt.name
 
             # if the location_name attribute has no value, then skip it
             if not location_name:
