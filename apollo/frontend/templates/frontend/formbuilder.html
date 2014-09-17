@@ -4,7 +4,7 @@
 {% endblock %}
 {% block content %}
 <div ng-app="app">
-<div class="row" id="formbuilder" ng-controller="BuilderController" data-form='{{ form_data|tojson }}'>
+<div class="row" id="formbuilder" ng-controller="BuilderController" data-form='{{ form_data|tojson }}' data-csrf="{{ csrf_token() }}">
   <div class="col-md-6">
     <div class="panel panel-default">
       <div class="panel-heading">
@@ -14,7 +14,13 @@
     </div>
   </div>
   <div class="col-md-6">
-    <div fb-components></div>
+    <div class="panel panel-default">
+      <h3 class="panel-heading">Components</h3>
+      <div class="panel-body">
+        <div fb-components></div>
+      </div>
+    </div>
+    <button class="btn btn-primary" ng-click="submit();"><span class="glyphicon glyphicon-save"></span> Save</button>
   </div>
 </div>
 </div>
@@ -33,7 +39,8 @@
     }
   ]).controller('BuilderController', [
     '$scope', '$builder', '$validator', function($scope, $builder, $validator) {
-      var bootstrapData = JSON.parse(document.getElementById('formbuilder').dataset.form);
+      var datasets = document.getElementById('formbuilder').dataset;
+      var bootstrapData = JSON.parse(datasets.form);
 
       for (var i = 0; i < bootstrapData.fields.length; i++)
         $builder.addFormObject('default', bootstrapData.fields[i]);
@@ -42,7 +49,19 @@
       $scope.defaultValue = {};
       return $scope.submit = function() {
         return $validator.validate($scope, 'default').success(function() {
-          console.log(JSON.stringify($scope.form));
+          $.ajax({
+            beforeSend: function(xhr, settings) {
+              if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain){
+                xhr.setRequestHeader('X-CSRFToken', datasets.csrf);
+              }
+            },
+            contentType: 'application/json; charset=utf-8',
+            data: JSON.stringify({fields: $scope.form}),
+            error: function(obj, status, error) {
+              console.log('Raised error ' +  error + ' with status code ' + status);
+            },
+            type: 'POST',
+          });
           return console.log('success');
         }).error(function() {
           return console.log('error');

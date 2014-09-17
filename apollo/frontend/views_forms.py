@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 from . import route, permissions
-from flask import (Blueprint, redirect, render_template, request, url_for)
+from flask import (Blueprint, g, redirect, render_template, request, url_for)
 from flask.ext.babel import lazy_gettext as _
 from flask.ext.menu import register_menu
 from flask.ext.security import login_required
@@ -58,9 +58,12 @@ def new_form():
 
         return render_template(template_name, **context)
 
-    form = services.forms.new()
-    web_form.populate_obj(form)
+    deployment = g.get('deployment')
+    event = g.get('event')
 
+    # hack because of nasty bug with forms service
+    form = services.forms.__model__(deployment=deployment, events=[event])
+    web_form.populate_obj(form)
     form.save()
 
     return redirect(url_for('.list_forms'))
