@@ -299,6 +299,12 @@ class FormBuilderSerializer(object):
     @classmethod
     def deserialize(cls, form, data):
         groups = []
+
+        # verify that first field is always a group
+        if len(data['fields']) > 0:
+            if data['fields'][0]['component'] != 'group':
+                raise ValueError('Fields specified outside of group')
+
         for f in data['fields']:
             if f['component'] == 'group':
                 group = FormGroup(
