@@ -26,6 +26,7 @@
 </div>
 {% endblock %}
 {% block scripts %}
+<script src="{{ url_for('static', filename='js/simply-toast.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/angular.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/angular-form-builder.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/angular-formbuilder-components.min.js') }}"></script>
@@ -58,7 +59,7 @@
             contentType: 'application/json; charset=utf-8',
             data: JSON.stringify({fields: $scope.form}),
             error: function(obj, status, error) {
-              console.log('Raised error ' +  error + ' with status code ' + status);
+              $.simplyToast('Error: ' + error, 'danger', {delay: 5000});
             },
             type: 'POST',
           });
