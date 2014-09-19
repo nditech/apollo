@@ -3,7 +3,7 @@
     '$builderProvider', function($builderProvider) {
       $builderProvider.registerComponent('group', {
         group: 'Default',
-        label: 'Group',
+        label: 'Section Break',
         description: 'description',
         placeholder: 'placeholder',
         required: false,
