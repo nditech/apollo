@@ -24,17 +24,17 @@ class LocationCache():
     def _cache_key(self, location_code, location_type, location_name):
         # remove smart quotes
         location_code = unicode(location_code).replace(
-            u"\u2018", "").replace(
-            u"\u2019", "").replace(u"\u201c", "").replace(u"\u201d", "")
+            u"\u2018", u"").replace(
+            u"\u2019", u"").replace(u"\u201c", u"").replace(u"\u201d", u"")
         location_type = unicode(location_type).replace(
-            u"\u2018", "").replace(
-            u"\u2019", "").replace(u"\u201c", "").replace(u"\u201d", "")
+            u"\u2018", u"").replace(
+            u"\u2019", u"").replace(u"\u201c", u"").replace(u"\u201d", u"")
         location_name = unicode(location_name).replace(
-            u"\u2018", "").replace(
-            u"\u2019", "").replace(u"\u201c", "").replace(u"\u201d", "")
+            u"\u2018", u"").replace(
+            u"\u2019", u"").replace(u"\u201c", u"").replace(u"\u201d", u"")
         return sha256(
-            '{}:{}:{}'.format(
-                location_code, location_type, location_name)).hexdigest()
+            u'{}:{}:{}'.format(
+                location_code, location_type, location_name).encode('utf-8')).hexdigest()
 
     def get(self, location_code, location_type, location_name):
         cache_key = self._cache_key(
@@ -56,29 +56,34 @@ class LocationCache():
 
 def map_attribute(location_type, attribute):
     slug = slugify(location_type.name, separator='_').lower()
-    return '{}_{}'.format(slug, attribute.lower())
+    return u'{}_{}'.format(slug, attribute.lower())
 
 
 def update_locations(df, mapping, event):
     cache = LocationCache()
-    location_types = services.location_types.find().order_by('ancestor_count')
+    location_types = services.location_types.all().filter(
+        deployment=event.deployment).order_by('ancestor_count')
 
     for idx in df.index:
         for lt in location_types:
-            location_code = str(df.ix[idx].get(
-                mapping.get(map_attribute(lt, 'code'), ''),
-                ''
-            ))
+            location_code = df.ix[idx].get(mapping.get(map_attribute(lt, 'code'), u''), u'')
+            location_code = int(location_code) if type(location_code) in [int, float] else location_code
+            location_code = str(location_code).decode('utf-8')
             location_name = str(df.ix[idx].get(
-                mapping.get(map_attribute(lt, 'name'), ''),
-                ''
-            ))
-            location_pcode = str(df.ix[idx].get(
-                mapping.get(map_attribute(lt, 'pcode'), ''), '')) \
+                mapping.get(map_attribute(lt, 'name'), u''),
+                u''
+            )).decode('utf-8')
+            location_pcode = df.ix[idx].get(
+                mapping.get(map_attribute(lt, 'pcode'), u''), u'') \
                 if lt.has_political_code else None
+            if location_pcode:
+                location_pcode = int(location_pcode) if type(location_pcode) in [int, float] else location_pcode
+                location_pcode = str(location_pcode).decode('utf-8')
             location_rv = df.ix[idx].get(
                 mapping.get(map_attribute(lt, 'rv'), ''), '') \
                 if lt.has_registered_voters else None
+            if location_rv:
+                location_rv = int(location_rv) if type(location_rv) in [int, float] else location_rv
             location_type = lt.name
 
             # if the location_name attribute has no value, then skip it
@@ -118,10 +123,12 @@ def update_locations(df, mapping, event):
             ancestors = []
             for sub_lt in lt.ancestors_ref:
                 sub_lt_name = str(df.ix[idx].get(
-                    mapping.get(map_attribute(sub_lt, 'name'), '')))
-                sub_lt_code = str(df.ix[idx].get(
-                    mapping.get(map_attribute(sub_lt, 'code'), ''), ''))
-                sub_lt_type = sub_lt.name or ''
+                    mapping.get(map_attribute(sub_lt, 'name'), u''))).decode('utf-8')
+                sub_lt_code = df.ix[idx].get(
+                    mapping.get(map_attribute(sub_lt, 'code'), u''), u'')
+                sub_lt_code = int(sub_lt_code) if type(sub_lt_code) in [int, float] else sub_lt_code
+                sub_lt_code = str(sub_lt_code).decode('utf-8')
+                sub_lt_type = sub_lt.name or u''
 
                 ancestor = cache.get(sub_lt_code, sub_lt_type, sub_lt_name)
                 ancestors.append(ancestor)
