@@ -270,7 +270,10 @@ class Submission(db.DynamicDocument):
                         # we compute the score based on the reported over
                         # the total expected
                         else:
-                            score = len(n_values) / len(values)
+                            try:
+                                score = len(n_values) / len(values)
+                            except ZeroDivisionError:
+                                score = 0
 
                     self.confidence[name] = score
 
