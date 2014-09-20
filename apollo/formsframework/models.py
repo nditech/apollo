@@ -257,12 +257,15 @@ class FormBuilderSerializer(object):
     def serialize_field(cls, field):
         data = {
             'label': field.name,
-            'description': field.description
+            'description': field.description,
+            'analysis': field.analysis_type
         }
 
         if not field.options:
             data['component'] = 'textInput'
             data['required'] = field.represents_boolean
+            data['min'] = field.min_value
+            data['max'] = field.max_value
         else:
             sorted_options = sorted(
                 field.options.iteritems(), key=itemgetter(1))
@@ -318,13 +321,20 @@ class FormBuilderSerializer(object):
                 name=f['label'],
                 description=f['description'],
             )
+            
+            if f['analysis']:
+                field.analysis_type = f['analysis']
 
             if f['component'] == 'textInput':
                 field.represents_boolean = f['required']
+                if f['min']:
+                    field.min_value = f['min']
+                if f['max']:
+                    field.max_value = f['max']
             else:
                 field.options = {k: v for v, k in enumerate(f['options'], 1)}
 
-                if f['field_type'] == 'checkbox':
+                if f['component'] == 'checkbox':
                     field.allows_multiple_values = True
 
             group.fields.append(field)
