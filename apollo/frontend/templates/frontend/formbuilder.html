@@ -1,0 +1,80 @@
+{% extends 'frontend/_layout.html' %}
+{% block stylesheets %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/angular-form-builder.css') }}">
+{% endblock %}
+{% block content %}
+<div ng-app="app">
+<div class="row" id="formbuilder" ng-controller="BuilderController" data-form='{{ form_data|tojson }}' data-csrf="{{ csrf_token() }}">
+  <div class="col-md-6">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">{{ form }}</h3>
+      </div>
+      <div fb-builder="default"></div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">Form Components</h3>
+      </div>
+      <div class="panel-body">
+        <div fb-components></div>
+      </div>
+    </div>
+    <button class="btn btn-primary btn-lg" ng-click="submit();"><span class="glyphicon glyphicon-save"></span> Save</button>
+    <a href="{{ url_for('forms.list_forms') }}" class="btn btn-default btn-lg">Cancel</a>
+  </div>
+</div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/simply-toast.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/angular.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/angular-form-builder.js') }}"></script>
+<script src="{{ url_for('static', filename='js/angular-form-builder-components.js') }}"></script>
+<script src="{{ url_for('static', filename='js/angular-validator.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/angular-validator-rules.min.js') }}"></script>
+<script type="text/javascript">
+(function() {
+  angular.module('app', ['builder', 'builder.components', 'validator.rules']).run([
+    '$builder', function($builder) {
+      return $builder;
+    }
+  ]).controller('BuilderController', [
+    '$scope', '$builder', '$validator', function($scope, $builder, $validator) {
+      var datasets = document.getElementById('formbuilder').dataset;
+      var bootstrapData = JSON.parse(datasets.form);
+
+      for (var i = 0; i < bootstrapData.fields.length; i++)
+        $builder.addFormObject('default', bootstrapData.fields[i]);
+      $scope.form = $builder.forms['default'];
+      $scope.input = [];
+      $scope.defaultValue = {};
+      return $scope.submit = function() {
+        return $validator.validate($scope, 'default').success(function() {
+          $.ajax({
+            beforeSend: function(xhr, settings) {
+              if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain){
+                xhr.setRequestHeader('X-CSRFToken', datasets.csrf);
+              }
+            },
+            contentType: 'application/json; charset=utf-8',
+            data: JSON.stringify({fields: $scope.form}),
+            error: function(obj, status, error) {
+              $.simplyToast('Error: ' + error, 'danger', {delay: 5000});
+            },
+            type: 'POST',
+          });
+          window.location.href = "{{ url_for('forms.list_forms') }}";
+        }).error(function() {
+          return console.log('error');
+        });
+      };
+    }
+  ]);
+
+}).call(this);
+
+</script>
+{% endblock %}

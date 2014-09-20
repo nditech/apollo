@@ -250,3 +250,94 @@ class Form(db.Document):
         root.append(head)
         root.append(body)
         return root
+
+
+class FormBuilderSerializer(object):
+    @classmethod
+    def serialize_field(cls, field):
+        data = {
+            'label': field.name,
+            'description': field.description,
+            'analysis': field.analysis_type
+        }
+
+        if not field.options:
+            data['component'] = 'textInput'
+            data['required'] = field.represents_boolean
+            data['min'] = field.min_value
+            data['max'] = field.max_value
+        else:
+            sorted_options = sorted(
+                field.options.iteritems(), key=itemgetter(1))
+            data['options'] = [s[0] for s in sorted_options]
+            if field.allows_multiple_values:
+                data['component'] = 'checkbox'
+            else:
+                data['component'] = 'radio'
+
+        return data
+
+    @classmethod
+    def serialize_group(cls, group):
+        field_data = []
+
+        # add group's description
+        field_data.append({
+            'label': group.name,
+            'component': 'group',
+        })
+
+        field_data.extend([cls.serialize_field(f) for f in group.fields])
+
+        return field_data
+
+    @classmethod
+    def serialize(cls, form):
+        group_data = []
+        for group in form.groups:
+            group_data.extend(cls.serialize_group(group))
+        data = {'fields': group_data}
+        return data
+
+    @classmethod
+    def deserialize(cls, form, data):
+        groups = []
+
+        # verify that first field is always a group
+        if len(data['fields']) > 0:
+            if data['fields'][0]['component'] != 'group':
+                raise ValueError('Fields specified outside of group')
+
+        for f in data['fields']:
+            if f['component'] == 'group':
+                group = FormGroup(
+                    name=f['label'],
+                    slug=slugify_unicode(f['label'])
+                )
+                groups.append(group)
+                continue
+
+            field = FormField(
+                name=f['label'],
+                description=f['description'],
+            )
+            
+            if f['analysis']:
+                field.analysis_type = f['analysis']
+
+            if f['component'] == 'textInput':
+                field.represents_boolean = f['required']
+                if f['min']:
+                    field.min_value = f['min']
+                if f['max']:
+                    field.max_value = f['max']
+            else:
+                field.options = {k: v for v, k in enumerate(f['options'], 1)}
+
+                if f['component'] == 'checkbox':
+                    field.allows_multiple_values = True
+
+            group.fields.append(field)
+
+        form.groups = groups
+        form.save()

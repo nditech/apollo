@@ -1,0 +1,9 @@
+{% extends 'frontend/_layout.html' %}
+{%- from 'frontend/macros/form_edit_form.html' import render_edit_form -%}
+{% block content %}
+<div class="row">
+<div class="col-md-8 col-md-offset-2">
+{{ render_edit_form(form) }}
+</div>
+</div>
+{% endblock %}
