@@ -8,19 +8,22 @@
   <div class="col-md-6">
     <div class="panel panel-default">
       <div class="panel-heading">
-        <h3 class="panel-title">Builder</h3>
+        <h3 class="panel-title">{{ form }}</h3>
       </div>
       <div fb-builder="default"></div>
     </div>
   </div>
   <div class="col-md-6">
     <div class="panel panel-default">
-      <h3 class="panel-heading">Components</h3>
+      <div class="panel-heading">
+        <h3 class="panel-title">Form Components</h3>
+      </div>
       <div class="panel-body">
         <div fb-components></div>
       </div>
     </div>
-    <button class="btn btn-primary" ng-click="submit();"><span class="glyphicon glyphicon-save"></span> Save</button>
+    <button class="btn btn-primary btn-lg" ng-click="submit();"><span class="glyphicon glyphicon-save"></span> Save</button>
+    <a href="{{ url_for('forms.list_forms') }}" class="btn btn-default btn-lg">Cancel</a>
   </div>
 </div>
 </div>
@@ -28,8 +31,8 @@
 {% block scripts %}
 <script src="{{ url_for('static', filename='js/simply-toast.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/angular.min.js') }}"></script>
-<script src="{{ url_for('static', filename='js/angular-form-builder.min.js') }}"></script>
-<script src="{{ url_for('static', filename='js/angular-formbuilder-components.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/angular-form-builder.js') }}"></script>
+<script src="{{ url_for('static', filename='js/angular-form-builder-components.js') }}"></script>
 <script src="{{ url_for('static', filename='js/angular-validator.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/angular-validator-rules.min.js') }}"></script>
 <script type="text/javascript">
@@ -63,7 +66,7 @@
             },
             type: 'POST',
           });
-          return console.log('success');
+          window.location.href = "{{ url_for('forms.list_forms') }}";
         }).error(function() {
           return console.log('error');
         });

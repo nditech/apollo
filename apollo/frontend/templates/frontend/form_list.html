@@ -10,8 +10,8 @@
         <tr>
           <th>{% trans %}Name{% endtrans %}</th>
           <th>{% trans %}Type{% endtrans %}</th>
-          <th>{% trans %}Edit properties{% endtrans %}</th>
-          <th>{% trans %}Edit fields{% endtrans %}</th>
+          <th>{% trans %}Edit Properties{% endtrans %}</th>
+          <th>{% trans %}Edit Fields{% endtrans %}</th>
         </tr>
       </thead>
       <tbody>
@@ -20,7 +20,7 @@
           <td>{{ form.name }}</td>
           <td>{{ form.form_type }}</td>
           <td><a href="{{ url_for('forms.edit_form', pk=form.pk) }}">{% trans %}Edit{% endtrans %}</a></td>
-          <td><a href="{{ url_for('forms.form_builder', pk=form.pk) }}">{% trans %}Form designer{% endtrans %}</a></td>
+          <td><a href="{{ url_for('forms.form_builder', pk=form.pk) }}">{% trans %}Form Designer{% endtrans %}</a></td>
         </tr>
       {% endfor %}
       </tbody>

@@ -26,7 +26,8 @@ def form_builder(pk):
     form = services.forms.get_or_404(pk=pk)
 
     ctx = dict(
-        page_title=page_title
+        page_title=page_title,
+        form=form.name
     )
 
     if request.method == 'GET':
@@ -94,6 +95,9 @@ def edit_form(pk):
 
 
 @route(bp, '/forms')
+@register_menu(
+    bp, 'forms', _('Forms'),
+    visible_when=lambda: permissions.edit_forms.can())
 @permissions.edit_forms.require(403)
 @login_required
 def list_forms():

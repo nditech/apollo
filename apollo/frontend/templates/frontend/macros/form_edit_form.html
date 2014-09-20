@@ -19,6 +19,7 @@
 <div class="form-group">
     <div class="col-sm-offset-4 col-sm-4">
         <button class="btn btn-primary input-mini" type="submit">{% trans %}Save{% endtrans %}</button>
+        <a href="{{ url_for('forms.list_forms')}}" class="btn btn-default input-mini">{% trans %}Cancel{% endtrans %}</a>
     </div>
 </div>
 </form>
