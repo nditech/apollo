@@ -4,28 +4,30 @@
 {% endblock %}
 {% block content %}
 <div ng-app="app">
-<div class="row" id="formbuilder" ng-controller="BuilderController" data-form='{{ form_data|tojson }}' data-csrf="{{ csrf_token() }}">
-  <div class="col-md-6">
-    <div class="panel panel-default">
-      <div class="panel-heading">
-        <h3 class="panel-title">{{ form }}</h3>
-      </div>
-      <div fb-builder="default"></div>
-    </div>
-  </div>
-  <div class="col-md-6">
-    <div class="panel panel-default">
-      <div class="panel-heading">
-        <h3 class="panel-title">Form Components</h3>
-      </div>
-      <div class="panel-body">
-        <div fb-components></div>
+  <div class="row" id="formbuilder" ng-controller="BuilderController" data-form='{{ form_data|tojson }}' data-csrf="{{ csrf_token() }}">
+    <div class="col-md-6">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">{{ form }}</h3>
+        </div>
+        <div fb-builder="default"></div>
       </div>
     </div>
-    <button class="btn btn-primary" ng-click="submit();"><span class="glyphicon glyphicon-save"></span> Save</button>
-    <a href="{{ url_for('forms.list_forms') }}" class="btn btn-default">Cancel</a>
+    <div class="col-md-6">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">Form Components</h3>
+        </div>
+        <div class="panel-body">
+          <div fb-components></div>
+        </div>
+      </div>
+      <div class="col-md-offset-6 col-md-6 navbar-fixed-bottom" style="z-index:1000; bottom:76px;">
+        <button class="btn btn-primary" ng-click="submit();"><span class="glyphicon glyphicon-save"></span> Save</button>
+        <a href="{{ url_for('forms.list_forms') }}" class="btn btn-default">Cancel</a>
+      </div>
+    </div>
   </div>
-</div>
 </div>
 {% endblock %}
 {% block scripts %}
