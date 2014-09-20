@@ -35,7 +35,7 @@ class ParticipantsService(Service):
 
     def export_list(self, queryset):
         headers = [
-            u'Participant ID', u'Name', u'Role', u'Partner',
+            u'Participant ID', u'Name', u'Partner', u'Role',
             u'Location ID', u'Supervisor ID', u'Gender', u'Email',
             u'Phone Primary', u'Phone Secondary #1', u'Phone Secondary #2'
         ]
@@ -54,8 +54,8 @@ class ParticipantsService(Service):
                 participant.participant_id if participant.participant_id
                 else '',
                 participant.name if participant.name else '',
-                participant.role.name if participant.role.name else '',
                 participant.partner.name if participant.partner else '',
+                participant.role.name if participant.role else '',
                 participant.location.code if participant.location else '',
                 participant.supervisor.participant_id if participant.supervisor
                 else '',
