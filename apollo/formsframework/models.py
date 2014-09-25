@@ -128,7 +128,7 @@ class Form(db.Document):
     }
 
     def __unicode__(self):
-        return self.name
+        return self.name or u''
 
     @property
     def tags(self):

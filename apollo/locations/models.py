@@ -87,7 +87,7 @@ class LocationType(db.Document):
         return sorted(temp, None, lambda x: len(x.ancestors_ref))
 
     def __unicode__(self):
-        return self.name
+        return self.name or u''
 
 
 class Location(db.DynamicDocument):
@@ -155,4 +155,4 @@ class Location(db.DynamicDocument):
             pass
 
     def __unicode__(self):
-        return self.name
+        return self.name or u''

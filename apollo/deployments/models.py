@@ -25,7 +25,7 @@ class Deployment(db.Document):
     }
 
     def __unicode__(self):
-        return self.name
+        return self.name or u''
 
 
 # Event
@@ -44,4 +44,4 @@ class Event(db.Document):
     }
 
     def __unicode__(self):
-        return self.name
+        return self.name or u''
