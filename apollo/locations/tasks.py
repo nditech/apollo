@@ -118,6 +118,7 @@ def update_locations(df, mapping, event):
             )
 
             location.update(set__ancestors_ref=[], **update)
+            location.reload()
 
             # update ancestors
             ancestors = []
@@ -131,7 +132,12 @@ def update_locations(df, mapping, event):
                 sub_lt_type = sub_lt.name or u''
 
                 ancestor = cache.get(sub_lt_code, sub_lt_type, sub_lt_name)
-                ancestors.append(ancestor)
+                if not ancestor:
+                    ancestor = services.locations.get(
+                        deployment=event.deployment, code=sub_lt_code, location_type=sub_lt_type,
+                        name=sub_lt_name)
+                if ancestor:
+                    ancestors.append(ancestor)
 
             location.update(
                 add_to_set__events=event,
