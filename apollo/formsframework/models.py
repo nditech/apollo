@@ -21,6 +21,13 @@ SCHEMA_E = ElementMaker(namespace=NSMAP['xsd'], nsmap=NSMAP)
 ROSA_E = ElementMaker(namespace=NSMAP['jr'], nsmap=NSMAP)
 
 
+class FormFieldNameField(db.StringField):
+    def validate(self, value):
+        from ..submissions.models import Submission
+        if value in Submission._fields.keys():
+            self.error('Form field name cannot be one of the disallowed field names')
+        super(FormFieldNameField, self).validate(value)
+
 # Forms
 class FormField(db.EmbeddedDocument):
     '''A :class:`mongoengine.EmbeddedDocument` used in storing the
@@ -56,7 +63,7 @@ class FormField(db.EmbeddedDocument):
         ('PROCESS', _('Process Analysis')),
         ('RESULT', _('Results Analysis')))
 
-    name = db.StringField(required=True)
+    name = FormFieldNameField(required=True)
     description = db.StringField(required=True)
     max_value = db.IntField(default=9999)
     min_value = db.IntField(default=0)
