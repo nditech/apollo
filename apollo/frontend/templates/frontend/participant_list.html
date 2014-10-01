@@ -111,9 +111,9 @@ a:hover.arrow-style{text-decoration:none; color:#333;}
              </tr>
              {% else %}
              {%- if perms.edit_participant.can() -%}
-             {%- set colspan = 9 + (location_types|length) + (g.deployment.participant_extra_fields|length) -%}
+             {%- set colspan = 9 + (location_types|length) + (extra_fields|length) -%}
              {%- else -%}
-             {%- set colspan = 8 + (location_types|length) + (g.deployment.participant_extra_fields|length) -%}
+             {%- set colspan = 8 + (location_types|length) + (extra_fields|length) -%}
              {%- endif -%}
              <tr class="warning">
                <td class="text-center" colspan="{{ colspan }}">{% trans %}No Data Available{% endtrans %}</td>

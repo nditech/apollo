@@ -50,7 +50,12 @@ def participant_list(page=1):
         'gen': 'gender'
     }
 
-    extra_fields = g.deployment.participant_extra_fields or []
+    try:
+        extra_fields = filter(
+            lambda f: getattr(f, 'listview_visibility', False)==True,
+            g.deployment.participant_extra_fields)
+    except AttributeError:
+        extra_fields = []
     location = None
     if request.args.get('location'):
         location = services.locations.find(
@@ -276,6 +281,9 @@ def participant_edit(pk):
             participant.partner = services.participant_partners.get_or_404(
                 pk=form.partner.data)
             participant.phone = form.phone.data
+            for extra_field in g.deployment.participant_extra_fields:
+                field_data = getattr(getattr(form, extra_field.name, object()), 'data', '')
+                setattr(participant, extra_field.name, field_data)
             participant.save()
 
             return redirect(url_for('participants.participant_list'))

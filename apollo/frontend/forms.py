@@ -1,7 +1,7 @@
 from __future__ import absolute_import
 
 from collections import defaultdict
-
+from flask import g
 from flask.ext.babel import lazy_gettext as _
 from flask.ext.mongoengine.wtf.fields import ModelSelectField
 from flask.ext.wtf import Form as WTSecureForm
@@ -63,7 +63,7 @@ def generate_participant_edit_form(participant, data=None):
             (unicode(loc_data[0]), loc_data[1])
         )
 
-    class ParticipantEditForm(WTSecureForm):
+    class ParticipantEditBaseForm(WTSecureForm):
         # participant_id = TextField(
         #     _('Participant ID'),
         #     validators=[validators.input_required()]
@@ -105,6 +105,15 @@ def generate_participant_edit_form(participant, data=None):
             ),
         )
         phone = StringField(_('Phone'))
+    
+    attributes = {
+        field.name: TextField(field.label)
+        for field in g.deployment.participant_extra_fields
+    }
+    
+    ParticipantEditForm = type('ParticipantEditForm', (ParticipantEditBaseForm,), attributes)
+    
+    kwargs = {field: getattr(participant, field, '') for field in attributes.keys()}
 
     return ParticipantEditForm(
         formdata=data,
@@ -116,7 +125,8 @@ def generate_participant_edit_form(participant, data=None):
         partner=participant.partner.id if participant.partner else None,
         supervisor=participant.supervisor.id
         if participant.supervisor else None,
-        phone=participant.phone
+        phone=participant.phone,
+        **kwargs
     )
 
 

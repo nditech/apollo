@@ -1,9 +1,21 @@
 from ..core import db
 
 
+class ParticipantPropertyName(db.StringField):
+    def validate(self, value):
+        from ..participants.models import Participant
+        if value in Participant._fields.keys():
+            self.error('String value cannot be one of the disallowed field names')
+        super(ParticipantPropertyName, self).validate(value)
+
+
 class CustomDataField(db.EmbeddedDocument):
-    name = db.StringField()
+    name = ParticipantPropertyName()
     label = db.StringField()
+    listview_visibility = db.BooleanField(default=False)
+    
+    def __unicode__(self):
+        return self.name or u''
 
 
 # Deployment

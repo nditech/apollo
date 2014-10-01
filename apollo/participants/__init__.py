@@ -39,6 +39,11 @@ class ParticipantsService(Service):
             u'Location ID', u'Supervisor ID', u'Gender', u'Email',
             u'Phone Primary', u'Phone Secondary #1', u'Phone Secondary #2'
         ]
+        
+        if queryset.count():
+            for extra_field in queryset.first().deployment.participant_extra_fields:
+                headers.append(extra_field.label)
+
         output = StringIO()
         writer = csv.writer(output)
         writer.writerow([unidecode(unicode(i)) for i in headers])
@@ -64,6 +69,9 @@ class ParticipantsService(Service):
             ]
 
             record.extend(phone_numbers)
+            
+            for extra_field in participant.deployment.participant_extra_fields:
+                record.append(getattr(participant, extra_field.name, ''))
 
             output = StringIO()
             writer = csv.writer(output)
