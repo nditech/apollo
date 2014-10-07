@@ -94,7 +94,7 @@ class UserAdminView(BaseAdminView):
     '''Thanks to mrjoes and this Flask-Admin issue:
     https://github.com/mrjoes/flask-admin/issues/173
     '''
-    column_list = ('email',)
+    column_list = ('email', 'roles')
     form_excluded_columns = ('password',)
     form_rules = [
         rules.FieldSet(('email', 'password2', 'active', 'roles'))
