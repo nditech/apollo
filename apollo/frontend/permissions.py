@@ -15,7 +15,6 @@ edit_locations = Permission(ActionNeed('edit_locations'), RoleNeed('admin'))
 edit_submission = Permission(ActionNeed('edit_submission'), RoleNeed('admin'))
 edit_participant = Permission(
     ActionNeed('edit_participant'), RoleNeed('admin'))
-edit_location = Permission(ActionNeed('edit_location'), RoleNeed('admin'))
 
 # Import
 import_participants = Permission(
