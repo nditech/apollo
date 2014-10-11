@@ -1,5 +1,5 @@
 {% macro render_edit_form(form) %}
-<form class="form-horizontal" method="POST" action='{{ request.url }}'>
+<form class="form-horizontal" method="POST" action="{{ request.url }}">
 {{ form.hidden_tag() }}
 {%- for field in form -%}
 {%- if field.type != 'CSRFTokenField' -%}
@@ -19,6 +19,7 @@
 <div class="form-group">
     <div class="col-sm-offset-4 col-sm-4">
         <button class="btn btn-primary input-mini" type="submit">{% trans %}Save{% endtrans %}</button>
+        <a href="{{ url_for('forms.list_forms')}}" class="btn btn-default input-mini">{% trans %}Cancel{% endtrans %}</a>
     </div>
 </div>
 </form>

@@ -25,7 +25,7 @@ class ParticipantRole(db.Document):
     deployment = db.ReferenceField(Deployment)
 
     def __unicode__(self):
-        return self.name
+        return self.name or u''
 
 
 class ParticipantPartner(db.Document):
@@ -36,7 +36,7 @@ class ParticipantPartner(db.Document):
     deployment = db.ReferenceField(Deployment)
 
     def __unicode__(self):
-        return self.name
+        return self.name or u''
 
 
 class ParticipantGroupType(db.Document):
@@ -44,7 +44,7 @@ class ParticipantGroupType(db.Document):
     deployment = db.ReferenceField(Deployment)
 
     def __unicode__(self):
-        return self.name
+        return self.name or u''
 
 
 class ParticipantGroup(db.Document):
@@ -53,7 +53,7 @@ class ParticipantGroup(db.Document):
     group_type = db.StringField()
 
     def __unicode__(self):
-        return self.name
+        return self.name or u''
 
 
 class PhoneContact(db.EmbeddedDocument):
@@ -62,7 +62,7 @@ class PhoneContact(db.EmbeddedDocument):
     last_seen = db.DateTimeField()
 
     def __unicode__(self):
-        return self.number
+        return self.number or u''
 
 
 class Participant(db.DynamicDocument):
@@ -109,7 +109,7 @@ class Participant(db.DynamicDocument):
     }
 
     def __unicode__(self):
-        return self.name
+        return self.name or u''
 
     def clean(self):
         # unlike for submissions, this always gets called, because

@@ -15,11 +15,12 @@ OPEN_ROSA_VERSION = '1.0'
 OPEN_ROSA_VERSION_HEADER = 'X-OpenRosa-Version'
 
 
-OPEN_ROSA_HEADERS = {
-    OPEN_ROSA_VERSION_HEADER: OPEN_ROSA_VERSION,
-    'Date': datetime.utcnow().strftime('%a, %d %b %Y %H:%M:%S %Z'),
-    'X-OpenRosa-Accept-Content-Length': DEFAULT_CONTENT_LENGTH
-}
+def make_open_rosa_headers():
+    return {
+        OPEN_ROSA_VERSION_HEADER: OPEN_ROSA_VERSION,
+        'Date': datetime.utcnow().strftime('%a, %d %b %Y %H:%M:%S %Z'),
+        'X-OpenRosa-Accept-Content-Length': DEFAULT_CONTENT_LENGTH
+    }
 
 
 def open_rosa_default_response(**kwargs):
@@ -29,7 +30,7 @@ def open_rosa_default_response(**kwargs):
 </OpenRosaResponse>'''.format(kwargs.get('content', ''))
     response = make_response(content, kwargs.get('status_code', 201))
 
-    response.headers.extend(OPEN_ROSA_HEADERS)
+    response.headers.extend(make_open_rosa_headers())
 
     return response
 
@@ -83,7 +84,8 @@ def submission():
     # only for ODK Collect
     source_file = request.files.get('xml_submission_file')
     try:
-        document = etree.parse(source_file)
+        parser = etree.XMLParser(resolve_entities=False)
+        document = etree.parse(source_file, parser)
 
         form_pk = document.xpath('//data/form_id')[0].text
         deviceID = document.xpath('//data/device_id')[0].text

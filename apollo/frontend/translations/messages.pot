@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2014-07-02 19:37+0100\n"
+"POT-Creation-Date: 2014-10-07 20:53+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -30,132 +30,133 @@ msgstr ""
 msgid "Choose Event"
 msgstr ""
 
-#: formsframework/models.py:55
+#: formsframework/models.py:62
 msgid "Not Applicable"
 msgstr ""
 
-#: formsframework/models.py:56 frontend/views_analysis.py:169
+#: formsframework/models.py:63 frontend/views_analysis.py:169
 msgid "Process Analysis"
 msgstr ""
 
-#: formsframework/models.py:57 frontend/views_analysis.py:193
+#: formsframework/models.py:64 frontend/views_analysis.py:193
 msgid "Results Analysis"
 msgstr ""
 
-#: formsframework/models.py:102
+#: formsframework/models.py:109
 msgid "Checklist Form"
 msgstr ""
 
-#: formsframework/models.py:103
+#: formsframework/models.py:110
 msgid "Incident Form"
 msgstr ""
 
-#: frontend/filters.py:24
+#: frontend/filters.py:26
 msgid "Form"
 msgstr ""
 
-#: frontend/filters.py:69 frontend/forms.py:94 frontend/forms.py:267
-#: frontend/forms.py:269 frontend/templates/frontend/incident_add.html:13
-#: frontend/templates/frontend/nu_critical_incident_locations.html:36
-#: frontend/templates/frontend/nu_critical_incident_summary.html:31
-#: frontend/templates/frontend/nu_submission_edit.html:62
-#: frontend/templates/frontend/nu_submission_edit.html:98
+#: frontend/filters.py:71 frontend/forms.py:94 frontend/forms.py:277
+#: frontend/forms.py:279
+#: frontend/templates/frontend/critical_incident_summary.html:31
+#: frontend/templates/frontend/critical_incidents_locations.html:36
+#: frontend/templates/frontend/incident_add.html:13
 #: frontend/templates/frontend/participant_list.html:77
 #: frontend/templates/frontend/participant_performance_list.html:49
+#: frontend/templates/frontend/submission_edit.html:63
+#: frontend/templates/frontend/submission_edit.html:99
 msgid "Location"
 msgstr ""
 
-#: frontend/filters.py:84
+#: frontend/filters.py:86
 msgid "Sample"
 msgstr ""
 
-#: frontend/filters.py:143
+#: frontend/filters.py:145
 msgid "All Organizations"
 msgstr ""
 
-#: frontend/filters.py:158
+#: frontend/filters.py:160
 msgid "All Roles"
 msgstr ""
 
-#: frontend/filters.py:248
+#: frontend/filters.py:250
 msgid "All Types"
 msgstr ""
 
-#: frontend/filters.py:286 frontend/filters.py:351 frontend/filters.py:376
-#: frontend/forms.py:244
-#: frontend/templates/frontend/nu_critical_incident_locations.html:66
+#: frontend/filters.py:288 frontend/filters.py:399 frontend/filters.py:424
+#: frontend/forms.py:254
+#: frontend/templates/frontend/critical_incidents_locations.html:66
 #: frontend/templates/frontend/macros/submission_list_macros.html:53
 msgid "Unmarked"
 msgstr ""
 
-#: frontend/filters.py:287 frontend/filters.py:352 frontend/filters.py:377
-#: frontend/forms.py:245
-#: frontend/templates/frontend/nu_critical_incident_locations.html:62
+#: frontend/filters.py:289 frontend/filters.py:400 frontend/filters.py:425
+#: frontend/forms.py:255
+#: frontend/templates/frontend/critical_incidents_locations.html:62
 #: frontend/templates/frontend/macros/submission_list_macros.html:49
 msgid "Confirmed"
 msgstr ""
 
-#: frontend/filters.py:287 frontend/filters.py:352 frontend/filters.py:377
-#: frontend/forms.py:246
-#: frontend/templates/frontend/nu_critical_incident_locations.html:64
+#: frontend/filters.py:289 frontend/filters.py:400 frontend/filters.py:425
+#: frontend/forms.py:256
+#: frontend/templates/frontend/critical_incidents_locations.html:64
 #: frontend/templates/frontend/macros/submission_list_macros.html:51
-#: submissions/models.py:23 submissions/models.py:31
+#: submissions/models.py:22 submissions/models.py:30
 msgid "Rejected"
 msgstr ""
 
-#: frontend/filters.py:288 frontend/filters.py:353 frontend/filters.py:378
-#: frontend/forms.py:247
+#: frontend/filters.py:290 frontend/filters.py:401 frontend/filters.py:426
+#: frontend/forms.py:257
 msgid "Citizen Report"
 msgstr ""
 
-#: frontend/filters.py:351 frontend/filters.py:376
+#: frontend/filters.py:399 frontend/filters.py:424
+#: frontend/templates/frontend/critical_incidents_locations.html:38
 #: frontend/templates/frontend/incident_add.html:53
-#: frontend/templates/frontend/nu_critical_incident_locations.html:38
-#: frontend/templates/frontend/nu_submission_edit.html:198
+#: frontend/templates/frontend/submission_edit.html:206
 #: frontend/templates/frontend/macros/submission_list_macros.html:17
-#: submissions/models.py:35
+#: submissions/models.py:34
 msgid "Status"
 msgstr ""
 
-#: frontend/filters.py:356 frontend/filters.py:381
+#: frontend/filters.py:404 frontend/filters.py:429
 #: frontend/templates/frontend/incident_add.html:45
-#: frontend/templates/frontend/nu_submission_edit.html:190
+#: frontend/templates/frontend/submission_edit.html:198
 msgid "Witness"
 msgstr ""
 
-#: frontend/filters.py:356 frontend/filters.py:381 frontend/forms.py:250
+#: frontend/filters.py:404 frontend/filters.py:429 frontend/forms.py:260
 #: participants/models.py:74
 msgid "Unspecified"
 msgstr ""
 
-#: frontend/filters.py:357 frontend/filters.py:382
+#: frontend/filters.py:405 frontend/filters.py:430
 msgid "Witnessed incident"
 msgstr ""
 
-#: frontend/filters.py:358 frontend/filters.py:383
+#: frontend/filters.py:406 frontend/filters.py:431
 msgid "Arrived after incident"
 msgstr ""
 
-#: frontend/filters.py:359 frontend/filters.py:384
+#: frontend/filters.py:407 frontend/filters.py:432
 msgid "Incident was reported"
 msgstr ""
 
-#: frontend/filters.py:401
+#: frontend/filters.py:449
 #, python-format
 msgid "%(group)s Status"
 msgstr ""
 
-#: frontend/filters.py:402
+#: frontend/filters.py:450
 #, python-format
 msgid "%(group)s Partial"
 msgstr ""
 
-#: frontend/filters.py:403
+#: frontend/filters.py:451
 #, python-format
 msgid "%(group)s Missing"
 msgstr ""
 
-#: frontend/filters.py:404
+#: frontend/filters.py:452
 #, python-format
 msgid "%(group)s Complete"
 msgstr ""
@@ -164,35 +165,36 @@ msgstr ""
 msgid "Location type"
 msgstr ""
 
-#: frontend/forms.py:72 frontend/forms.py:136
-#: frontend/templates/frontend/location_builder.html:27
-#: frontend/templates/frontend/location_builder.html:72
+#: frontend/forms.py:72 frontend/forms.py:146
+#: frontend/templates/frontend/critical_incidents_locations.html:32
+#: frontend/templates/frontend/form_list.html:11
+#: frontend/templates/frontend/location_builder.html:28
+#: frontend/templates/frontend/location_builder.html:73
 #: frontend/templates/frontend/location_list.html:64
-#: frontend/templates/frontend/nu_critical_incident_locations.html:32
 #: frontend/templates/frontend/participant_list.html:78
 #: frontend/templates/frontend/participant_performance_list.html:50
 #: frontend/templates/frontend/macros/participant_list_filter.html:8
 msgid "Name"
 msgstr ""
 
-#: frontend/forms.py:76 frontend/forms.py:156
+#: frontend/forms.py:76 frontend/forms.py:166
 #: frontend/templates/frontend/participant_list.html:79
 msgid "Gender"
 msgstr ""
 
-#: frontend/forms.py:81 frontend/forms.py:144
-#: frontend/templates/frontend/nu_submission_edit.html:49
+#: frontend/forms.py:81 frontend/forms.py:154
 #: frontend/templates/frontend/participant_list.html:80
 #: frontend/templates/frontend/participant_performance_list.html:51
+#: frontend/templates/frontend/submission_edit.html:50
 msgid "Role"
 msgstr ""
 
-#: frontend/forms.py:88 frontend/forms.py:152
-#: frontend/templates/frontend/nu_submission_edit.html:90
+#: frontend/forms.py:88 frontend/forms.py:162
+#: frontend/templates/frontend/submission_edit.html:91
 msgid "Supervisor"
 msgstr ""
 
-#: frontend/forms.py:102 frontend/forms.py:140
+#: frontend/forms.py:102 frontend/forms.py:150
 msgid "Partner"
 msgstr ""
 
@@ -203,116 +205,115 @@ msgstr ""
 msgid "Phone"
 msgstr ""
 
-#: frontend/forms.py:126 frontend/forms.py:204
+#: frontend/forms.py:136 frontend/forms.py:214
 msgid "Select column"
 msgstr ""
 
-#: frontend/forms.py:131
+#: frontend/forms.py:141
 #: frontend/templates/frontend/macros/participant_list_filter.html:5
 msgid "Participant ID"
 msgstr ""
 
-#: frontend/forms.py:148
+#: frontend/forms.py:158
 msgid "Location ID"
 msgstr ""
 
-#: frontend/forms.py:160
+#: frontend/forms.py:170
 msgid "Email"
 msgstr ""
 
-#: frontend/forms.py:164
+#: frontend/forms.py:174
 msgid "Phone prefix"
 msgstr ""
 
-#: frontend/forms.py:167
+#: frontend/forms.py:177
 msgid "Group prefix"
 msgstr ""
 
-#: frontend/forms.py:173
-#: frontend/templates/frontend/nu_checklist_summary.html:36
-#: frontend/templates/frontend/nu_checklist_summary_breakdown.html:33
+#: frontend/forms.py:183 frontend/templates/frontend/checklist_summary.html:36
+#: frontend/templates/frontend/checklist_summary_breakdown.html:33
 #, python-format
 msgid "%(label)s"
 msgstr ""
 
-#: frontend/forms.py:181
+#: frontend/forms.py:191
 msgid "Invalid phone prefix"
 msgstr ""
 
-#: frontend/forms.py:187
+#: frontend/forms.py:197
 msgid "Invalid group prefix"
 msgstr ""
 
-#: frontend/forms.py:214
+#: frontend/forms.py:224
 #, python-format
 msgid "%(label)s Name"
 msgstr ""
 
-#: frontend/forms.py:218
+#: frontend/forms.py:228
 #, python-format
 msgid "%(label)s Code"
 msgstr ""
 
-#: frontend/forms.py:223
+#: frontend/forms.py:233
 #, python-format
 msgid "%(label)s Geopolitical Code"
 msgstr ""
 
-#: frontend/forms.py:228
+#: frontend/forms.py:238
 #, python-format
 msgid "%(label)s Registered Voters"
 msgstr ""
 
-#: frontend/forms.py:251
+#: frontend/forms.py:261
 msgid "I witnessed the incident"
 msgstr ""
 
-#: frontend/forms.py:252
+#: frontend/forms.py:262
 msgid "I arrived just after the incident"
 msgstr ""
 
-#: frontend/forms.py:253
+#: frontend/forms.py:263
 msgid "The incident was reported to me by someone else"
 msgstr ""
 
-#: frontend/forms.py:257 frontend/forms.py:259
+#: frontend/forms.py:267 frontend/forms.py:269
 #: frontend/templates/frontend/incident_add.html:9
-#: frontend/templates/frontend/nu_submission_edit.html:29
 #: frontend/templates/frontend/participant_performance_detail.html:13
+#: frontend/templates/frontend/submission_edit.html:30
 #: frontend/templates/frontend/submission_history.html:28
 #: frontend/templates/frontend/macros/submission_list_macros.html:7
 msgid "Participant"
 msgstr ""
 
-#: frontend/forms.py:340 frontend/views_admin.py:79
+#: frontend/forms.py:351 frontend/views_admin.py:78
 msgid "Event"
 msgstr ""
 
-#: frontend/forms.py:343
+#: frontend/forms.py:354
 msgid "Select Event"
 msgstr ""
 
-#: frontend/forms.py:348
+#: frontend/forms.py:359
 msgid "Data File"
 msgstr ""
 
-#: frontend/template_filters.py:81
+#: frontend/template_filters.py:92
 msgid "N/A"
 msgstr ""
 
-#: frontend/views_admin.py:36
+#: frontend/views_admin.py:35
 msgid "Deployment"
 msgstr ""
 
-#: frontend/views_admin.py:61
+#: frontend/views_admin.py:60
 msgid "Logo"
 msgstr ""
 
-#: frontend/views_admin.py:116
+#: frontend/views_admin.py:115
 msgid "New password"
 msgstr ""
 
-#: frontend/views_admin.py:120 frontend/views_dashboard.py:23
+#: frontend/views_admin.py:119 frontend/views_dashboard.py:23
 #: frontend/views_dashboard.py:32
 msgid "Dashboard"
 msgstr ""
@@ -331,8 +332,21 @@ msgstr ""
 msgid "Events"
 msgstr ""
 
-#: frontend/views_forms.py:15 frontend/views_forms.py:20
+#: frontend/views_forms.py:19 frontend/views_forms.py:24
 msgid "Form Builder"
+msgstr ""
+
+#: frontend/views_forms.py:49
+msgid "Create form"
+msgstr ""
+
+#: frontend/views_forms.py:78
+#, python-format
+msgid "Edit %(name)s"
+msgstr ""
+
+#: frontend/views_forms.py:99 frontend/views_forms.py:104
+msgid "Forms"
 msgstr ""
 
 #: frontend/views_locations.py:55 frontend/views_locations.py:61
@@ -351,7 +365,7 @@ msgstr ""
 msgid "Your changes have been saved."
 msgstr ""
 
-#: frontend/views_messages.py:18 frontend/views_messages.py:22
+#: frontend/views_messages.py:16 frontend/views_messages.py:20
 #: frontend/templates/frontend/participant_performance_detail.html:40
 #: frontend/templates/frontend/participant_performance_list.html:53
 msgid "Messages"
@@ -361,15 +375,15 @@ msgstr ""
 msgid "Participants"
 msgstr ""
 
-#: frontend/views_participants.py:123
+#: frontend/views_participants.py:128
 msgid "Participants Performance"
 msgstr ""
 
-#: frontend/views_participants.py:204
+#: frontend/views_participants.py:209
 msgid "Participant Performance"
 msgstr ""
 
-#: frontend/views_participants.py:247
+#: frontend/views_participants.py:252
 #, python-format
 msgid "Edit Participant · %(participant_id)s"
 msgstr ""
@@ -382,25 +396,90 @@ msgstr ""
 msgid "Critical Incidents"
 msgstr ""
 
-#: frontend/views_submissions.py:143
+#: frontend/views_submissions.py:138
 msgid "Add Submission"
 msgstr ""
 
-#: frontend/views_submissions.py:192
+#: frontend/views_submissions.py:186
 msgid "Edit Submission"
 msgstr ""
 
-#: frontend/views_submissions.py:453
+#: frontend/views_submissions.py:448
 msgid "View submission"
+msgstr ""
+
+#: frontend/templates/frontend/checklist_summary.html:10
+#: frontend/templates/frontend/checklist_summary_breakdown.html:9
+#: frontend/templates/frontend/critical_incident_summary.html:10
+#: frontend/templates/frontend/critical_incidents_locations.html:10
+#: frontend/templates/frontend/results.html:9
+#: frontend/templates/frontend/macros/dashboard_filter.html:13
+#: frontend/templates/frontend/macros/participant_list_filter.html:31
+#: frontend/templates/frontend/macros/submission_list_filter.html:29
+msgid "Filter"
+msgstr ""
+
+#: frontend/templates/frontend/checklist_summary.html:33
+#: frontend/templates/frontend/checklist_summary_breakdown.html:30
+msgid "Mean"
+msgstr ""
+
+#: frontend/templates/frontend/checklist_summary.html:39
+#: frontend/templates/frontend/checklist_summary_breakdown.html:36
+#: frontend/templates/frontend/results.html:43
+msgid "Reported"
+msgstr ""
+
+#: frontend/templates/frontend/checklist_summary.html:40
+#: frontend/templates/frontend/checklist_summary_breakdown.html:37
+#: frontend/templates/frontend/results.html:44
+msgid "Missing"
+msgstr ""
+
+#: frontend/templates/frontend/checklist_summary.html:43
+msgid "All"
+msgstr ""
+
+#: frontend/templates/frontend/checklist_summary.html:65
+msgid "No data available"
+msgstr ""
+
+#: frontend/templates/frontend/checklist_summary_breakdown.html:55
+#: frontend/templates/frontend/critical_incident_summary.html:47
+#, python-format
+msgid "%(loc_type)s"
+msgstr ""
+
+#: frontend/templates/frontend/critical_incident_summary.html:24
+#: frontend/templates/frontend/critical_incidents_locations.html:22
+msgid "Table"
+msgstr ""
+
+#: frontend/templates/frontend/critical_incident_summary.html:25
+msgid "Charts"
+msgstr ""
+
+#: frontend/templates/frontend/critical_incidents_locations.html:31
+msgid "Observer ID"
+msgstr ""
+
+#: frontend/templates/frontend/critical_incidents_locations.html:37
+msgid "Witnessed"
+msgstr ""
+
+#: frontend/templates/frontend/critical_incidents_locations.html:39
+#: frontend/templates/frontend/incident_add.html:49
+#: frontend/templates/frontend/submission_edit.html:202
+msgid "Description"
 msgstr ""
 
 #: frontend/templates/frontend/dashboard.html:60
 #: frontend/templates/frontend/location_list.html:80
 #: frontend/templates/frontend/message_list.html:64
-#: frontend/templates/frontend/nu_results.html:125
 #: frontend/templates/frontend/participant_list.html:119
 #: frontend/templates/frontend/participant_performance_detail.html:62
 #: frontend/templates/frontend/participant_performance_list.html:87
+#: frontend/templates/frontend/results.html:125
 #: frontend/templates/frontend/macros/submission_list_macros.html:68
 #: frontend/templates/frontend/macros/submission_list_macros.html:73
 #: frontend/templates/frontend/macros/submission_list_macros.html:80
@@ -412,56 +491,83 @@ msgstr ""
 msgid "Go"
 msgstr ""
 
-#: frontend/templates/frontend/incident_add.html:49
-#: frontend/templates/frontend/nu_critical_incident_locations.html:39
-#: frontend/templates/frontend/nu_submission_edit.html:194
-msgid "Description"
+#: frontend/templates/frontend/form_list.html:3
+msgid "Add form"
 msgstr ""
 
-#: frontend/templates/frontend/location_builder.html:9
+#: frontend/templates/frontend/form_list.html:12
+#: frontend/templates/frontend/location_list.html:65
+msgid "Type"
+msgstr ""
+
+#: frontend/templates/frontend/form_list.html:13
+msgid "Edit Properties"
+msgstr ""
+
+#: frontend/templates/frontend/form_list.html:14
+msgid "Edit Fields"
+msgstr ""
+
+#: frontend/templates/frontend/form_list.html:22
+#: frontend/templates/frontend/location_list.html:66
+#: frontend/templates/frontend/location_list.html:76
+#: frontend/templates/frontend/participant_list.html:87
+#: frontend/templates/frontend/participant_list.html:109
+#: frontend/templates/frontend/macros/submission_list_macros.html:20
+#: frontend/templates/frontend/macros/submission_list_macros.html:61
+msgid "Edit"
+msgstr ""
+
+#: frontend/templates/frontend/form_list.html:23
+msgid "Form Designer"
+msgstr ""
+
+#: frontend/templates/frontend/location_builder.html:10
 #: frontend/templates/frontend/participant_edit_modal.html:29
+#: frontend/templates/frontend/macros/form_edit_form.html:21
+#: frontend/templates/frontend/macros/participant_edit_form.html:21
 msgid "Save"
 msgstr ""
 
-#: frontend/templates/frontend/location_builder.html:13
-#: frontend/templates/frontend/location_builder.html:22
+#: frontend/templates/frontend/location_builder.html:14
+#: frontend/templates/frontend/location_builder.html:23
 msgid "Add Division"
 msgstr ""
 
-#: frontend/templates/frontend/location_builder.html:33
-#: frontend/templates/frontend/location_builder.html:78
+#: frontend/templates/frontend/location_builder.html:34
+#: frontend/templates/frontend/location_builder.html:79
 msgid "Parents"
 msgstr ""
 
-#: frontend/templates/frontend/location_builder.html:43
-#: frontend/templates/frontend/location_builder.html:89
+#: frontend/templates/frontend/location_builder.html:44
+#: frontend/templates/frontend/location_builder.html:90
 msgid "Administrative Division"
 msgstr ""
 
-#: frontend/templates/frontend/location_builder.html:48
-#: frontend/templates/frontend/location_builder.html:94
+#: frontend/templates/frontend/location_builder.html:49
+#: frontend/templates/frontend/location_builder.html:95
 msgid "Political Division"
 msgstr ""
 
-#: frontend/templates/frontend/location_builder.html:55
-#: frontend/templates/frontend/location_builder.html:101
+#: frontend/templates/frontend/location_builder.html:56
+#: frontend/templates/frontend/location_builder.html:102
 #: frontend/templates/frontend/participant_edit_modal.html:30
 msgid "Close"
 msgstr ""
 
-#: frontend/templates/frontend/location_builder.html:56
+#: frontend/templates/frontend/location_builder.html:57
 msgid "Add"
 msgstr ""
 
-#: frontend/templates/frontend/location_builder.html:67
+#: frontend/templates/frontend/location_builder.html:68
 msgid "Update Division"
 msgstr ""
 
-#: frontend/templates/frontend/location_builder.html:102
+#: frontend/templates/frontend/location_builder.html:103
 msgid "Delete"
 msgstr ""
 
-#: frontend/templates/frontend/location_builder.html:103
+#: frontend/templates/frontend/location_builder.html:104
 msgid "Update"
 msgstr ""
 
@@ -480,19 +586,6 @@ msgstr ""
 
 #: frontend/templates/frontend/location_list.html:63
 msgid "Code"
-msgstr ""
-
-#: frontend/templates/frontend/location_list.html:65
-msgid "Type"
-msgstr ""
-
-#: frontend/templates/frontend/location_list.html:66
-#: frontend/templates/frontend/location_list.html:76
-#: frontend/templates/frontend/participant_list.html:87
-#: frontend/templates/frontend/participant_list.html:109
-#: frontend/templates/frontend/macros/submission_list_macros.html:20
-#: frontend/templates/frontend/macros/submission_list_macros.html:61
-msgid "Edit"
 msgstr ""
 
 #: frontend/templates/frontend/location_list.html:181
@@ -543,135 +636,6 @@ msgstr ""
 
 #: frontend/templates/frontend/message_list.html:59
 msgid "OUT"
-msgstr ""
-
-#: frontend/templates/frontend/nu_checklist_summary.html:10
-#: frontend/templates/frontend/nu_checklist_summary_breakdown.html:9
-#: frontend/templates/frontend/nu_critical_incident_locations.html:10
-#: frontend/templates/frontend/nu_critical_incident_summary.html:10
-#: frontend/templates/frontend/nu_results.html:9
-#: frontend/templates/frontend/macros/dashboard_filter.html:13
-#: frontend/templates/frontend/macros/participant_list_filter.html:31
-#: frontend/templates/frontend/macros/submission_list_filter.html:29
-msgid "Filter"
-msgstr ""
-
-#: frontend/templates/frontend/nu_checklist_summary.html:33
-#: frontend/templates/frontend/nu_checklist_summary_breakdown.html:30
-msgid "Mean"
-msgstr ""
-
-#: frontend/templates/frontend/nu_checklist_summary.html:39
-#: frontend/templates/frontend/nu_checklist_summary_breakdown.html:36
-#: frontend/templates/frontend/nu_results.html:43
-msgid "Reported"
-msgstr ""
-
-#: frontend/templates/frontend/nu_checklist_summary.html:40
-#: frontend/templates/frontend/nu_checklist_summary_breakdown.html:37
-#: frontend/templates/frontend/nu_results.html:44
-msgid "Missing"
-msgstr ""
-
-#: frontend/templates/frontend/nu_checklist_summary.html:43
-msgid "All"
-msgstr ""
-
-#: frontend/templates/frontend/nu_checklist_summary.html:65
-#: frontend/templates/frontend/nu_dashboard.html:29
-msgid "No data available"
-msgstr ""
-
-#: frontend/templates/frontend/nu_checklist_summary_breakdown.html:55
-#: frontend/templates/frontend/nu_critical_incident_summary.html:47
-#, python-format
-msgid "%(loc_type)s"
-msgstr ""
-
-#: frontend/templates/frontend/nu_critical_incident_locations.html:22
-#: frontend/templates/frontend/nu_critical_incident_summary.html:24
-msgid "Table"
-msgstr ""
-
-#: frontend/templates/frontend/nu_critical_incident_locations.html:31
-msgid "Observer ID"
-msgstr ""
-
-#: frontend/templates/frontend/nu_critical_incident_locations.html:37
-msgid "Witnessed"
-msgstr ""
-
-#: frontend/templates/frontend/nu_critical_incident_summary.html:25
-msgid "Charts"
-msgstr ""
-
-#: frontend/templates/frontend/nu_results.html:35
-msgid "Total votes"
-msgstr ""
-
-#: frontend/templates/frontend/nu_results.html:36
-#: frontend/templates/frontend/nu_results.html:53
-msgid "Rejected ballots"
-msgstr ""
-
-#: frontend/templates/frontend/nu_results.html:37
-#: frontend/templates/frontend/nu_results.html:58
-msgid "Total valid"
-msgstr ""
-
-#: frontend/templates/frontend/nu_results.html:46
-msgid "Total registered"
-msgstr ""
-
-#: frontend/templates/frontend/nu_results.html:46
-msgid "TR"
-msgstr ""
-
-#: frontend/templates/frontend/nu_results.html:48
-#: frontend/templates/frontend/nu_results.html:60
-msgid "Votes"
-msgstr ""
-
-#: frontend/templates/frontend/nu_results.html:50
-#: frontend/templates/frontend/nu_results.html:51
-#: frontend/templates/frontend/nu_results.html:55
-#: frontend/templates/frontend/nu_results.html:56
-#: frontend/templates/frontend/nu_results.html:62
-#: frontend/templates/frontend/nu_results.html:63
-msgid "Margin of error"
-msgstr ""
-
-#: frontend/templates/frontend/nu_results.html:50
-#: frontend/templates/frontend/nu_results.html:55
-#: frontend/templates/frontend/nu_results.html:62
-msgid "MoE 95%"
-msgstr ""
-
-#: frontend/templates/frontend/nu_results.html:51
-#: frontend/templates/frontend/nu_results.html:56
-#: frontend/templates/frontend/nu_results.html:63
-msgid "MoE 99%"
-msgstr ""
-
-#: frontend/templates/frontend/nu_results.html:53
-msgid "RB"
-msgstr ""
-
-#: frontend/templates/frontend/nu_results.html:58
-msgid "TV"
-msgstr ""
-
-#: frontend/templates/frontend/nu_submission_edit.html:5
-#: frontend/templates/frontend/submission_history.html:5
-msgid "History"
-msgstr ""
-
-#: frontend/templates/frontend/nu_submission_edit.html:40
-msgid "Texted Phone"
-msgstr ""
-
-#: frontend/templates/frontend/nu_submission_edit.html:220
-msgid "No comment."
 msgstr ""
 
 #: frontend/templates/frontend/participant_edit_modal.html:4
@@ -736,6 +700,79 @@ msgstr ""
 msgid "View"
 msgstr ""
 
+#: frontend/templates/frontend/results.html:35
+msgid "Total votes"
+msgstr ""
+
+#: frontend/templates/frontend/results.html:36
+#: frontend/templates/frontend/results.html:53
+msgid "Rejected ballots"
+msgstr ""
+
+#: frontend/templates/frontend/results.html:37
+#: frontend/templates/frontend/results.html:58
+msgid "Total valid"
+msgstr ""
+
+#: frontend/templates/frontend/results.html:46
+msgid "Total registered"
+msgstr ""
+
+#: frontend/templates/frontend/results.html:46
+msgid "TR"
+msgstr ""
+
+#: frontend/templates/frontend/results.html:48
+#: frontend/templates/frontend/results.html:60
+msgid "Votes"
+msgstr ""
+
+#: frontend/templates/frontend/results.html:50
+#: frontend/templates/frontend/results.html:51
+#: frontend/templates/frontend/results.html:55
+#: frontend/templates/frontend/results.html:56
+#: frontend/templates/frontend/results.html:62
+#: frontend/templates/frontend/results.html:63
+msgid "Margin of error"
+msgstr ""
+
+#: frontend/templates/frontend/results.html:50
+#: frontend/templates/frontend/results.html:55
+#: frontend/templates/frontend/results.html:62
+msgid "MoE 95%"
+msgstr ""
+
+#: frontend/templates/frontend/results.html:51
+#: frontend/templates/frontend/results.html:56
+#: frontend/templates/frontend/results.html:63
+msgid "MoE 99%"
+msgstr ""
+
+#: frontend/templates/frontend/results.html:53
+msgid "RB"
+msgstr ""
+
+#: frontend/templates/frontend/results.html:58
+msgid "TV"
+msgstr ""
+
+#: frontend/templates/frontend/submission_edit.html:5
+#: frontend/templates/frontend/submission_history.html:5
+msgid "History"
+msgstr ""
+
+#: frontend/templates/frontend/submission_edit.html:41
+msgid "Texted Phone"
+msgstr ""
+
+#: frontend/templates/frontend/submission_edit.html:132
+msgid "Confidence Level"
+msgstr ""
+
+#: frontend/templates/frontend/submission_edit.html:228
+msgid "No comment."
+msgstr ""
+
 #: frontend/templates/frontend/submission_history.html:31
 msgid "Via"
 msgstr ""
@@ -770,6 +807,11 @@ msgstr ""
 
 #: frontend/templates/frontend/macros/dashboard_filter.html:16
 msgid "Reset"
+msgstr ""
+
+#: frontend/templates/frontend/macros/form_edit_form.html:22
+#: frontend/templates/frontend/macros/send_message.html:23
+msgid "Cancel"
 msgstr ""
 
 #: frontend/templates/frontend/macros/pagination.html:4
@@ -823,10 +865,6 @@ msgstr ""
 msgid "message part"
 msgstr ""
 
-#: frontend/templates/frontend/macros/send_message.html:23
-msgid "Cancel"
-msgstr ""
-
 #: frontend/templates/frontend/macros/send_message.html:24
 msgid "Send"
 msgstr ""
@@ -839,19 +877,19 @@ msgstr ""
 msgid "message parts"
 msgstr ""
 
-#: frontend/templates/frontend/macros/send_message.html:67
+#: frontend/templates/frontend/macros/send_message.html:70
 msgid "Success"
 msgstr ""
 
-#: frontend/templates/frontend/macros/send_message.html:67
+#: frontend/templates/frontend/macros/send_message.html:70
 msgid "Your message has been sent"
 msgstr ""
 
-#: frontend/templates/frontend/macros/send_message.html:76
+#: frontend/templates/frontend/macros/send_message.html:79
 msgid "Error"
 msgstr ""
 
-#: frontend/templates/frontend/macros/send_message.html:76
+#: frontend/templates/frontend/macros/send_message.html:79
 msgid "Please try sending again"
 msgstr ""
 
@@ -876,7 +914,7 @@ msgid "missing"
 msgstr ""
 
 #: frontend/templates/frontend/macros/submission_list_macros.html:60
-#: submissions/models.py:22 submissions/models.py:30
+#: submissions/models.py:21 submissions/models.py:29
 msgid "Verified"
 msgstr ""
 
@@ -884,8 +922,8 @@ msgstr ""
 msgid "Unverified"
 msgstr ""
 
-#: locations/tasks.py:137 participants/tasks.py:331
-msgid "Import report"
+#: locations/tasks.py:175
+msgid "Locations Import Report"
 msgstr ""
 
 #: messaging/helpers.py:26
@@ -933,51 +971,55 @@ msgstr ""
 msgid "Supervisor with ID %(id)s not found"
 msgstr ""
 
-#: submissions/models.py:19 submissions/models.py:27
+#: participants/tasks.py:331
+msgid "Import report"
+msgstr ""
+
+#: submissions/models.py:18 submissions/models.py:26
 msgid "No Problem"
 msgstr ""
 
-#: submissions/models.py:20 submissions/models.py:28
+#: submissions/models.py:19 submissions/models.py:27
 msgid "Problem"
 msgstr ""
 
-#: submissions/models.py:21 submissions/models.py:29
+#: submissions/models.py:20 submissions/models.py:28
 msgid "Serious Problem"
 msgstr ""
 
-#: submissions/models.py:36
+#: submissions/models.py:35
 msgid "Status — No Problem"
 msgstr ""
 
-#: submissions/models.py:37
+#: submissions/models.py:36
 msgid "Status — Unverified"
 msgstr ""
 
-#: submissions/models.py:38
+#: submissions/models.py:37
 msgid "Status — Verified"
 msgstr ""
 
-#: submissions/models.py:39
+#: submissions/models.py:38
 msgid "Status — Rejected"
 msgstr ""
 
-#: submissions/models.py:172
+#: submissions/models.py:171
 msgid "Observer Submission"
 msgstr ""
 
-#: submissions/models.py:173
+#: submissions/models.py:172
 msgid "Master Submission"
 msgstr ""
 
-#: submissions/models.py:488
+#: submissions/models.py:545
 msgid "SMS"
 msgstr ""
 
-#: submissions/models.py:489
+#: submissions/models.py:546
 msgid "Web"
 msgstr ""
 
-#: submissions/models.py:490
+#: submissions/models.py:547
 msgid "API"
 msgstr ""
 

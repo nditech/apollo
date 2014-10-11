@@ -111,9 +111,9 @@ a:hover.arrow-style{text-decoration:none; color:#333;}
              </tr>
              {% else %}
              {%- if perms.edit_participant.can() -%}
-             {%- set colspan = 9 + (location_types|length) + (g.deployment.participant_extra_fields|length) -%}
+             {%- set colspan = 9 + (location_types|length) + (extra_fields|length) -%}
              {%- else -%}
-             {%- set colspan = 8 + (location_types|length) + (g.deployment.participant_extra_fields|length) -%}
+             {%- set colspan = 8 + (location_types|length) + (extra_fields|length) -%}
              {%- endif -%}
              <tr class="warning">
                <td class="text-center" colspan="{{ colspan }}">{% trans %}No Data Available{% endtrans %}</td>
@@ -153,7 +153,7 @@ a:hover.arrow-style{text-decoration:none; color:#333;}
         <h3>Upload File</h3>
 
         <div class="wizard-input-section">
-        <form enctype="multipart/form-data" method="POST" id="upload-form" action="{{ url_for('participants.participant_list_import') }}">{{ form.csrf_token() }}
+        <form enctype="multipart/form-data" method="POST" id="upload-form" action="{{ url_for('participants.participant_list_import') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
           <div class="form-group">
             <div class="col-sm-9">
               <div class="row">

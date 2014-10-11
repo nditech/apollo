@@ -90,7 +90,7 @@
         <h3>Upload File</h3>
 
         <div class="wizard-input-section">
-        <form enctype="multipart/form-data" method="POST" id="upload-form" action="{{ url_for('locations.locations_import') }}">{{ form.csrf_token() }}
+        <form enctype="multipart/form-data" method="POST" id="upload-form" action="{{ url_for('locations.locations_import') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
           <div class="form-group">
             <div class="col-sm-9">
               <div class="row">

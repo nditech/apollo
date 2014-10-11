@@ -29,10 +29,9 @@ class DeploymentAdminView(BaseAdminView):
     can_create = False
     can_delete = False
     column_list = ('name',)
-    form_excluded_columns = ('hostnames',)
     form_rules = [
         rules.FieldSet(
-            ('name', 'logo', 'allow_observer_submission_edit'),
+            ('name', 'logo', 'allow_observer_submission_edit', 'hostnames'),
             _('Deployment')
         )
     ]
@@ -95,7 +94,7 @@ class UserAdminView(BaseAdminView):
     '''Thanks to mrjoes and this Flask-Admin issue:
     https://github.com/mrjoes/flask-admin/issues/173
     '''
-    column_list = ('email',)
+    column_list = ('email', 'roles')
     form_excluded_columns = ('password',)
     form_rules = [
         rules.FieldSet(('email', 'password2', 'active', 'roles'))

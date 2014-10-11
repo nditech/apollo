@@ -5,6 +5,7 @@
 {% block toolbar %}
 <div class="btn-group pull-right">
 <form id="save_form" method="POST" action="{{ request.url }}">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
   <input type="hidden" name="divisions_graph" id="divisions_graph" value="" />
   <button style="margin-left:1em" type="submit" class="btn btn-sm btn-primary" id="save"><i class="glyphicon glyphicon-floppy-save"></i> {% trans %}Save{% endtrans %}</button>
 </form>

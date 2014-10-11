@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <!-- Le styles -->
     {% assets 'apollo_css' %}
     <link rel="stylesheet" href="{{ ASSET_URL }}" type="text/css" media="screen,projection" charset="utf-8">
@@ -110,9 +111,9 @@
               {%- if current_menu.submenu('locations_list').visible -%}
                 <li><a href="{{ current_menu.submenu('locations_list').url }}"><i class="glyphicon glyphicon-map-marker"></i> {{ current_menu.submenu('locations_list').text }}</a></li>
               {%- endif -%}
-              {#- if current_menu.submenu('formbuilder').visible -%}
-                <li><a href="{{ current_menu.submenu('formbuilder').url }}"><i class="glyphicon glyphicon-list-alt"></i> {{ current_menu.submenu('formbuilder').text }}</a></li>
-              {%- endif -#}
+              {%- if current_menu.submenu('forms').visible -%}
+                <li><a href="{{ current_menu.submenu('forms').url }}"><i class="glyphicon glyphicon-list-alt"></i> {{ current_menu.submenu('forms').text }}</a></li>
+              {%- endif -%}
               {%- if current_menu.submenu('locations_builder').visible or current_menu.submenu('formbuilder').visible -%}
                 <li class="divider"></li>
               {%- endif -%}
@@ -133,7 +134,7 @@
         <div class="container">
           <footer>
           {%- block footer -%}
-            <p style="padding-top:18px;">Apollo &mdash; v2.1.5</p>
+            <p style="padding-top:18px;">Apollo &mdash; v2.1.6</p>
           {%- endblock -%}
           </footer>
         </div>

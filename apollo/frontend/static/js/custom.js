@@ -23,6 +23,10 @@ $(function(){
     matcher: function(term, text) { return text.toUpperCase().indexOf(term.toUpperCase()) === 0; }
   });
 
+  function _safe(str) {
+    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') ;
+  }
+
   function locationsOptionsString() {
     return {
       minimumInputLength: 1,
@@ -40,12 +44,12 @@ $(function(){
           };
         },
         results: function (data, page) {
-          var more = (page * 20) < data.pop().meta.total;
-          return {results: data, more: more};
+          var more = (page * 20) < data.meta.total;
+          return {results: data.objects, more: more};
         }
       },
-      formatResult: function (location, container, query) { return location.name + ' · <i>' + location.location_type + '</i>'; },
-      formatSelection: function (location, container) { return location.name + ' · <i>' + location.location_type + '</i>'; },
+      formatResult: function (location, container, query) { return _safe(location.name) + ' · <i>' + _safe(location.location_type) + '</i>'; },
+      formatSelection: function (location, container) { return _safe(location.name) + ' · <i>' + _safe(location.location_type) + '</i>'; },
       escapeMarkup: function(m) { return m; },
       initSelection : function (element, callback) {
         var location_id = element.val();
@@ -81,12 +85,12 @@ $(function(){
           };
         },
         results: function (data, page) {
-          var more = (page * 20) < data.pop().meta.total;
-          return {results: data, more: more};
+          var more = (page * 20) < data.meta.total;
+          return {results: data.objects, more: more};
         }
       },
-      formatResult: function (observer, container, query) { return observer.participant_id + ' · <i>' + observer.name + '</i>'; },
-      formatSelection: function (observer, container) { return observer.participant_id + ' · <i>' + observer.name + '</i>'; },
+      formatResult: function (observer, container, query) { return _safe(observer.participant_id) + ' · <i>' + _safe(observer.name) + '</i>'; },
+      formatSelection: function (observer, container) { return _safe(observer.participant_id) + ' · <i>' + _safe(observer.name) + '</i>'; },
       escapeMarkup: function(m) { return m; },
       initSelection : function (element, callback) {
         var location_id = element.val();

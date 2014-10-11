@@ -57,7 +57,7 @@ def submission_list(form_id):
         location = services.locations.find(
             pk=request.args.get('location')).first()
 
-    if request.args.get('export'):
+    if request.args.get('export') and permissions.export_submissions.can():
         mode = request.args.get('export')
         if mode == 'master':
             queryset = services.submissions.find(
@@ -103,7 +103,7 @@ def submission_list(form_id):
                       for submission in query_filterset.qs]
         recipients.extend(current_app.config.get('MESSAGING_CC'))
 
-        if message and recipients:
+        if message and recipients and permissions.send_messages.can():
             send_messages.delay(str(g.event.pk), message, recipients)
             return 'OK'
         else:
@@ -115,23 +115,18 @@ def submission_list(form_id):
         form_fields = [field for group in form.groups
                        for field in group.fields]
 
-    if request.args.get('export'):
-        # Export requested
-        # TODO: complete export functionality
-        return ""
-    else:
-        return render_template(
-            template_name,
-            args=data,
-            filter_form=filter_form,
-            form=form,
-            form_fields=form_fields,
-            location_types=loc_types,
-            location=location,
-            page_title=page_title,
-            pager=query_filterset.qs.paginate(
-                page=page, per_page=current_app.config.get('PAGE_SIZE'))
-        )
+    return render_template(
+        template_name,
+        args=data,
+        filter_form=filter_form,
+        form=form,
+        form_fields=form_fields,
+        location_types=loc_types,
+        location=location,
+        page_title=page_title,
+        pager=query_filterset.qs.paginate(
+            page=page, per_page=current_app.config.get('PAGE_SIZE'))
+    )
 
 
 @route(bp, '/submissions/<form_id>/new', methods=['GET', 'POST'])
@@ -161,7 +156,6 @@ def submission_create(form_id):
 
         if not submission_form.validate():
             # really should redisplay the form again
-            print submission_form.errors
             return redirect(url_for(
                 'submissions.submission_list', form_id=unicode(form.pk)))
 
@@ -248,8 +242,8 @@ def submission_edit(submission_id):
                     if changed:
                         submission.save()
 
-                if request.args.get('next'):
-                    return redirect(request.args.get('next'))
+                if request.form.get('next'):
+                    return redirect(request.form.get('next'))
                 else:
                     return redirect(url_for(
                         'submissions.submission_list',
@@ -311,34 +305,35 @@ def submission_edit(submission_id):
                 else:
                     no_error = False
 
-            if submission_form.validate():
-                with signals.post_save.connected_to(
-                    update_submission_version,
-                    sender=services.submissions.__model__
-                ):
-                    form_fields = submission_form.data.keys()
-                    changed = False
-                    for form_field in form_fields:
-                        if (
-                            getattr(submission, form_field, None) !=
-                            submission_form.data.get(form_field)
-                        ):
-                            setattr(
-                                submission, form_field,
-                                submission_form.data.get(form_field))
-                            changed = True
-                    if changed:
-                        submission.save()
-                    # submission is for a checklist form, update
-                    # contributor completion rating
-                    update_participant_completion_rating(
-                        submission.contributor)
-            else:
-                no_error = False
+            if not readonly:
+                if submission_form.validate():
+                    with signals.post_save.connected_to(
+                        update_submission_version,
+                        sender=services.submissions.__model__
+                    ):
+                        form_fields = submission_form.data.keys()
+                        changed = False
+                        for form_field in form_fields:
+                            if (
+                                getattr(submission, form_field, None) !=
+                                submission_form.data.get(form_field)
+                            ):
+                                setattr(
+                                    submission, form_field,
+                                    submission_form.data.get(form_field))
+                                changed = True
+                        if changed:
+                            submission.save()
+                        # submission is for a checklist form, update
+                        # contributor completion rating
+                        update_participant_completion_rating(
+                            submission.contributor)
+                else:
+                    no_error = False
 
             if no_error:
-                if request.args.get('next'):
-                    return redirect(request.args.get('next'))
+                if request.form.get('next'):
+                    return redirect(request.form.get('next'))
                 else:
                     return redirect(url_for(
                         'submissions.submission_list',

@@ -19,7 +19,7 @@ from ..participants import api
 from ..tasks import import_participants, send_messages
 from .forms import (DummyForm, generate_participant_edit_form,
                     generate_participant_import_mapping_form,
-                    FileUploadForm)
+                    file_upload_form)
 
 bp = Blueprint('participants', __name__, template_folder='templates',
                static_folder='static', static_url_path='/core/static')
@@ -50,7 +50,12 @@ def participant_list(page=1):
         'gen': 'gender'
     }
 
-    extra_fields = g.deployment.participant_extra_fields or []
+    try:
+        extra_fields = filter(
+            lambda f: getattr(f, 'listview_visibility', False)==True,
+            g.deployment.participant_extra_fields)
+    except AttributeError:
+        extra_fields = []
     location = None
     if request.args.get('location'):
         location = services.locations.find(
@@ -70,13 +75,13 @@ def participant_list(page=1):
                       for participant in queryset_filter.qs]
         recipients.extend(current_app.config.get('MESSAGING_CC'))
 
-        if message and recipients:
+        if message and recipients and permissions.send_messages.can():
             send_messages.delay(str(g.event.pk), message, recipients)
             return 'OK'
         else:
             abort(400)
 
-    if request.args.get('export'):
+    if request.args.get('export') and permissions.export_participants.can():
         # Export requested
         dataset = services.participants.export_list(queryset_filter.qs)
         basename = slugify_unicode('%s participants %s' % (
@@ -149,13 +154,13 @@ def participant_performance_list(page=1):
                       for participant in queryset_filter.qs]
         recipients.extend(current_app.config.get('MESSAGING_CC'))
 
-        if message and recipients:
+        if message and recipients and permissions.send_messages.can():
             send_messages.delay(str(g.event.pk), message, recipients)
             return 'OK'
         else:
             abort(400)
 
-    if request.args.get('export'):
+    if request.args.get('export') and permissions.export_participants.can():
         # Export requested
         dataset = services.participants.export_performance_list(
             queryset_filter.qs)
@@ -276,6 +281,9 @@ def participant_edit(pk):
             participant.partner = services.participant_partners.get_or_404(
                 pk=form.partner.data)
             participant.phone = form.phone.data
+            for extra_field in g.deployment.participant_extra_fields:
+                field_data = getattr(getattr(form, extra_field.name, object()), 'data', '')
+                setattr(participant, extra_field.name, field_data)
             participant.save()
 
             return redirect(url_for('participants.participant_list'))
@@ -287,7 +295,7 @@ def participant_edit(pk):
 @permissions.import_participants.require(403)
 @login_required
 def participant_list_import():
-    form = FileUploadForm(request.form)
+    form = file_upload_form(request.form)
 
     if not form.validate():
         return abort(400)

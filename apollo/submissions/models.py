@@ -10,7 +10,6 @@ from ..users.models import User
 from datetime import datetime
 from flask.ext.babel import lazy_gettext as _
 from flask.ext.mongoengine import BaseQuerySet
-from lxml import etree
 from mongoengine import Q
 from pandas import DataFrame, isnull, Series
 import numpy as np
@@ -271,7 +270,10 @@ class Submission(db.DynamicDocument):
                         # we compute the score based on the reported over
                         # the total expected
                         else:
-                            score = len(n_values) / len(values)
+                            try:
+                                score = len(n_values) / len(values)
+                            except ZeroDivisionError:
+                                score = 0
 
                     self.confidence[name] = score
 

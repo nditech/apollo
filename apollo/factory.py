@@ -26,7 +26,7 @@ def create_app(package_name, package_path, settings_override=None):
     db.init_app(app)
     mail.init_app(app)
 
-    if app.config.get('FORCE_SSL'):
+    if app.config.get('SSL_REQUIRED'):
         SSLify(app)
 
     @babel.localeselector

@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+import os
+import warnings
 from flask.ext.script import Manager, Server, Shell
 from flask.ext.security import MongoEngineUserDatastore
 
@@ -14,6 +16,33 @@ from apollo.manage import \
      ListEventsCommand,
      InitializeSubmissionsCommand,
      SetupCommand)
+
+
+def read_env(env_path=None):
+    if env_path is None:
+        env_path = os.path.join(os.path.dirname(__file__), '.env')
+    if not os.path.exists(env_path):
+        warnings.warn('No environment file found. Skipping load.')
+        return
+
+    for k, v in parse_env(env_path):
+        os.environ.setdefault(k, v)
+
+
+def parse_env(env_path):
+    with open(env_path) as f:
+        for line in f:
+            line = line.strip()
+            if not line or line.startswith('#') or '=' not in line:
+                continue
+            k, v = line.split('=', 1)
+            v = v.strip('"').strip("'")
+            yield k, v
+
+
+# load the environment (if found) *before* creating the app
+if __name__ == '__main__':
+    read_env()
 
 app = create_app()
 

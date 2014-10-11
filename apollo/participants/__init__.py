@@ -35,10 +35,15 @@ class ParticipantsService(Service):
 
     def export_list(self, queryset):
         headers = [
-            u'Participant ID', u'Name', u'Role', u'Partner',
+            u'Participant ID', u'Name', u'Partner', u'Role',
             u'Location ID', u'Supervisor ID', u'Gender', u'Email',
             u'Phone Primary', u'Phone Secondary #1', u'Phone Secondary #2'
         ]
+        
+        if queryset.count():
+            for extra_field in queryset.first().deployment.participant_extra_fields:
+                headers.append(extra_field.label)
+
         output = StringIO()
         writer = csv.writer(output)
         writer.writerow([unidecode(unicode(i)) for i in headers])
@@ -51,18 +56,22 @@ class ParticipantsService(Service):
             phone_numbers += [''] * (3 - len(phone_numbers))
 
             record = [
-                participant.participant_id,
-                participant.name,
-                participant.role.name,
+                participant.participant_id if participant.participant_id
+                else '',
+                participant.name if participant.name else '',
                 participant.partner.name if participant.partner else '',
+                participant.role.name if participant.role else '',
                 participant.location.code if participant.location else '',
                 participant.supervisor.participant_id if participant.supervisor
                 else '',
-                participant.gender,
-                participant.email,
+                participant.gender if participant.gender else '',
+                participant.email if participant.email else '',
             ]
 
             record.extend(phone_numbers)
+            
+            for extra_field in participant.deployment.participant_extra_fields:
+                record.append(getattr(participant, extra_field.name, ''))
 
             output = StringIO()
             writer = csv.writer(output)

@@ -20,7 +20,7 @@ from . import filters, permissions, route
 from .. import helpers, models, services
 from ..locations import api
 from ..tasks import import_locations
-from .forms import (FileUploadForm, generate_location_edit_form,
+from .forms import (file_upload_form, generate_location_edit_form,
                     generate_location_update_mapping_form, DummyForm)
 
 bp = Blueprint('locations', __name__, template_folder='templates',
@@ -68,7 +68,7 @@ def locations_list():
 
     subset = queryset_filter.qs.order_by('location_type')
 
-    if request.args.get('export'):
+    if request.args.get('export') and permissions.export_locations.can():
         # Export requested
         dataset = services.locations.export_list(queryset_filter.qs)
         basename = slugify_unicode('%s locations %s' % (
@@ -121,7 +121,7 @@ def location_edit(pk):
 @permissions.import_locations.require(403)
 @login_required
 def locations_import():
-    form = FileUploadForm(request.form)
+    form = file_upload_form(request.form)
 
     if not form.validate():
         return abort(400)
