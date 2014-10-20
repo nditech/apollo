@@ -328,7 +328,7 @@ class FormBuilderSerializer(object):
                 name=f['label'],
                 description=f['description'],
             )
-            
+
             if f['analysis']:
                 field.analysis_type = f['analysis']
 
