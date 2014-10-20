@@ -99,15 +99,25 @@
             align: 'left'
         },
 
+         legend: {
+            enabled: true,
+            align: 'center',
+            verticalAlign: 'top',
+            floating: true,
+            x: 0,
+            y: 0
+        },
         series : [{
             name : '{% trans %}Incoming Messages{% endtrans %}',
             data : data.incoming,
+            color: '#ff7f0e',
             tooltip: {
                 valueDecimals: 0
             }
         },{
             name: '{% trans %}Outgoing Messages{% endtrans %}',
             data: data.outgoing,
+            color: '#7777ff',
             tooltip: {
                 valueDecimals: 0
             }
