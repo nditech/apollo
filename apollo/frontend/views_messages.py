@@ -44,7 +44,8 @@ def message_list():
             'filter_form': queryset_filter.form,
             'args': data,
             'pager': queryset_filter.qs.paginate(
-                page=page, per_page=current_app.config.get('PAGE_SIZE'))
+                page=page, per_page=current_app.config.get('PAGE_SIZE')),
+            'chart_data': message_time_series(queryset_filter.qs)
         }
 
         return render_template(template_name, **context)
@@ -64,7 +65,8 @@ def message_time_series(message_queryset):
     # do a cumulative sum of each row in the dataframe
     d = df.cumsum()
 
-    data = [(calendar.timegm(i[0].utctimetuple()), int(i[1]))
+    # return as UNIX timestamp, value pairs
+    data = [(calendar.timegm(i[0].utctimetuple()) * 1000, int(i[1]))
             for i in sorted(d.to_dict()['marker'].items())
             ]
 

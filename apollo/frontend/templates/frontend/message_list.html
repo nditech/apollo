@@ -8,7 +8,7 @@
 {% block content %}
 <div class="row">
   <div class="col-md-12">
-    <div id="container" style="height: 300px; min-width: 600px"></div>
+    <div id="container" style="height: 300px; min-width: 600px" data-chart='{{ chart_data|tojson }}'></div>
   </div>
 </div>
 <div class="row">
@@ -85,31 +85,30 @@
 <script type="text/javascript">
   moment.lang('{{ g.locale }}');
   $(function () {
+    // load the data
+    var data = $('#container').data('chart');
 
-    $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=aapl-c.json&callback=?', function (data) {
-        // Create the chart
-        $('#container').highcharts('StockChart', {
+    // Create the chart
+    $('#container').highcharts('StockChart', {
 
 
-            rangeSelector : {
-                enabled : false
-            },
+        rangeSelector : {
+            enabled : false
+        },
 
-            title : {
-                text : 'Incoming SMS Flow'
-            },
+        title : {
+            text : '{% trans %}Incoming SMS Flow{% endtrans %}'
+        },
 
-            series : [{
-                name : 'Incoming Messages',
-                data : data,
-                tooltip: {
-                    valueDecimals: 0
-                }
-            }]
-        });
+        series : [{
+            name : '{% trans %}Incoming Messages{% endtrans %}',
+            data : data,
+            tooltip: {
+                valueDecimals: 0
+            }
+        }]
     });
-
-});
+  });
 </script>
 <script src="{{ url_for('static', filename='js/timestamps.js') }}"></script>
 <script src="{{ url_for('static', filename='js/highstock.js') }}"></script>
