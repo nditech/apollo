@@ -8,6 +8,11 @@
 {% block content %}
 <div class="row">
   <div class="col-md-12">
+    <div id="container" style="height: 300px; min-width: 600px"></div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12">
     <div class="well well-sm filter">
       <form action="{{ request.url }}" method="GET" id="filter" class="form-inline">
         <div class="form-group">
@@ -79,6 +84,33 @@
 <script src="{{ url_for('static', filename='js/moment-with-langs.min.js') }}"></script>
 <script type="text/javascript">
   moment.lang('{{ g.locale }}');
+  $(function () {
+
+    $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=aapl-c.json&callback=?', function (data) {
+        // Create the chart
+        $('#container').highcharts('StockChart', {
+
+
+            rangeSelector : {
+                enabled : false
+            },
+
+            title : {
+                text : 'Incoming SMS Flow'
+            },
+
+            series : [{
+                name : 'Incoming Messages',
+                data : data,
+                tooltip: {
+                    valueDecimals: 0
+                }
+            }]
+        });
+    });
+
+});
 </script>
 <script src="{{ url_for('static', filename='js/timestamps.js') }}"></script>
+<script src="{{ url_for('static', filename='js/highstock.js') }}"></script>
 {% endblock %}
