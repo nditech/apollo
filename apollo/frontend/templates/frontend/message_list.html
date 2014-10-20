@@ -97,17 +97,28 @@
         },
 
         title : {
-            text : '{% trans %}Incoming SMS Flow{% endtrans %}'
+            text : '{% trans %}SMS Flow{% endtrans %}'
         },
 
         series : [{
             name : '{% trans %}Incoming Messages{% endtrans %}',
-            data : data,
+            data : data.incoming,
+            tooltip: {
+                valueDecimals: 0
+            }
+        },{
+            name: '{% trans %}Outgoing Messages{% endtrans %}',
+            data: data.outgoing,
             tooltip: {
                 valueDecimals: 0
             }
         }]
     });
+
+    var chart = $('#container').highcharts();
+
+    // set the y axis minimum to 0
+    chart.yAxis[0].update({min: 0});
   });
 </script>
 <script src="{{ url_for('static', filename='js/timestamps.js') }}"></script>
