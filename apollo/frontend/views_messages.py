@@ -4,7 +4,9 @@ from flask import (
     Blueprint, render_template, request, current_app, Response, g)
 from flask.ext.babel import lazy_gettext as _
 from flask.ext.menu import register_menu
+import calendar
 from datetime import datetime
+import pandas as pd
 from slugify import slugify_unicode
 
 
@@ -46,3 +48,24 @@ def message_list():
         }
 
         return render_template(template_name, **context)
+
+
+def message_time_series(message_queryset):
+    subset = message_queryset(direction='IN')
+    df = pd.DataFrame(list(subset.only('received').as_pymongo()))
+
+    # set a marker for each message
+    df['marker'] = 1
+
+    # set the index to the message timestamp, resample to hourly
+    # and sum all markers in each hour, filling NaNs with 0
+    df = df.set_index('received').resample('1Min', how='sum').fillna(0)
+
+    # do a cumulative sum of each row in the dataframe
+    d = df.cumsum()
+
+    data = [(calendar.timegm(i[0].utctimetuple()), int(i[1]))
+            for i in sorted(d.to_dict()['marker'].items())
+            ]
+
+    return data
