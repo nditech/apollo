@@ -13,6 +13,7 @@
 {% endif %}
 {% endblock %}
 {% block content %}{% set form, siblings, master = submission.form, submission.siblings, submission.master %}
+{%- from 'frontend/macros/submission_field_macros.html' import render_submission_field %}
 <form method="POST">
 <input type="hidden" name="next" value="{{ request.environ.get('HTTP_REFERER', '') }}" />
 <div>
@@ -138,24 +139,16 @@ TODO: insert last used identity here
   {% for field in group.fields %}
   <tr>
     <th>{{ field.name }}</th>
-    <td>{{ field.description }}
-      {%- if field.options %}
-      <span class="options">
-      {% for item in field.options|dictsort(false, 'value') %}
-      <span class="option"><strong>({{ item.1 }})</strong> {{ item.0 }}</span>
-      {% endfor %}
-      </span>
-      {%- endif %}
-    </td>
+    <td>{{ field.description }}</td>
     {%- if readonly -%}
-    <td>{{ submission_form[field.name](class_='form-control input-mini', disabled=1) }}</td>
+    <td>{{ render_submission_field(submission_form[field.name], disabled=1)}}</td>
     {%- else -%}
-    <td {%- if submission_form[field.name].errors %} class="danger"{%- endif -%}>{{ submission_form[field.name](class_='form-control input-mini') }}</td>
+    <td {%- if submission_form[field.name].errors %} class="danger"{%- endif -%}>{{ render_submission_field(submission_form[field.name]) }}</td>
     {%- endif -%}
     {%- for sibling_form in sibling_forms -%}
-    <td>{{ sibling_form[field.name](class_='form-control input-mini', disabled=1) }}</td>
+    <td>{{ render_submission_field(sibling_form[field.name], disabled=1) }}</td>
     {%- endfor -%}
-    <td {%- if master_form[field.name].errors %} class="danger"{%- endif -%}>{{ master_form[field.name](class_='form-control input-mini') }}</td>
+    <td {%- if master_form[field.name].errors %} class="danger"{%- endif -%}>{{ render_submission_field(master_form[field.name]) }}</td>
     {% if submission.master %}{% set score = submission.master.confidence.get(field.name, None) %}{% else %}{% set score = None %}{% endif -%}
     {% if not score %}{% set score_label = 'label-default' -%}
     {% elif score == 0 %}{% set score_label = 'label-danger' -%}

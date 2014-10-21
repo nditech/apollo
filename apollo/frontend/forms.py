@@ -105,14 +105,14 @@ def generate_participant_edit_form(participant, data=None):
             ),
         )
         phone = StringField(_('Phone'))
-    
+
     attributes = {
         field.name: TextField(field.label)
         for field in g.deployment.participant_extra_fields
     }
-    
+
     ParticipantEditForm = type('ParticipantEditForm', (ParticipantEditBaseForm,), attributes)
-    
+
     kwargs = {field: getattr(participant, field, '') for field in attributes.keys()}
 
     return ParticipantEditForm(

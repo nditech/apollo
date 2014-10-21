@@ -1,0 +1,29 @@
+{% macro render_checkbox_field(field) -%}
+    {% for value, label, selected in field.iter_choices()|sort %}
+    <div class="checkbox">
+        <label>
+            <input type="checkbox" value="{{ value }}" {% if selected %}checked{% endif %}> {{ label }} ({{ value|int }})
+        </label>
+    </div>
+    {% endfor %}
+{%- endmacro %}
+{% macro render_radio_field(field) -%}
+    {% for subfield in field %}
+        <div class="radio">
+            <label>
+                {{ subfield }} {{ subfield.label}}
+            </label>
+        </div>
+    {% endfor %}
+{%- endmacro %}
+{%- macro render_submission_field(f, v) -%}
+{% if f.type == 'BooleanField' %}
+{{ render_checkbox_field(f) }}
+{% elif f.type == 'RadioField' %}
+{{ render_radio_field(f) }}
+{% elif f.type == 'SelectMultipleField' %}
+{{ render_checkbox_field(f) }}
+{% else %}
+{{ f(class_='form-control input-mini', **kwargs) }}
+{% endif %}
+{%- endmacro -%}
