@@ -8,7 +8,7 @@
 {% block content %}
 <div class="row">
   <div class="col-md-12">
-    <div id="container" style="height: 300px; min-width: 600px" data-chart='{{ chart_data|tojson }}'></div>
+    <div id="container" style="height: 200px; min-width: 600px" data-chart='{{ chart_data|tojson }}'></div>
   </div>
 </div>
 <div class="row">
@@ -94,19 +94,11 @@
             enabled : false
         },
 
-        title : {
-            text : '{% trans %}SMS Flow{% endtrans %}',
-            align: 'left'
+        navigator: {
+          height: 30,
+          margin: 10
         },
 
-         legend: {
-            enabled: true,
-            align: 'center',
-            verticalAlign: 'top',
-            floating: true,
-            x: 0,
-            y: 0
-        },
         series : [{
             name : '{% trans %}Incoming Messages{% endtrans %}',
             data : data.incoming,
@@ -114,14 +106,15 @@
             tooltip: {
                 valueDecimals: 0
             }
-        },{
+          },{
             name: '{% trans %}Outgoing Messages{% endtrans %}',
             data: data.outgoing,
             color: '#7777ff',
             tooltip: {
                 valueDecimals: 0
             }
-        }],
+          }],
+
         yAxis: {
           min: 0
         }
@@ -130,5 +123,4 @@
 </script>
 <script src="{{ url_for('static', filename='js/timestamps.js') }}"></script>
 <script src="{{ url_for('static', filename='js/highstock.js') }}"></script>
-<script src="{{ url_for('static', filename='js/exporting.js') }}"></script>
 {% endblock %}
