@@ -111,6 +111,17 @@ class BaseQuestionnaireForm(Form):
                                 submission, form_field,
                                 self.data.get(form_field))
 
+                    if (
+                        isinstance(self.data.get(form_field), list) and
+                            self.data.get(form_field)):
+                        change_detected = True
+                        if (
+                            sorted(
+                                set(getattr(submission, form_field, []))
+                                ) != self.data.get(form_field)):
+                            setattr(submission, form_field,
+                                    self.data.get(form_field))
+
                 if change_detected:
                     g.phone = self.data.get('sender')
 
