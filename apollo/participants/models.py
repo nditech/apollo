@@ -99,11 +99,16 @@ class Participant(db.DynamicDocument):
     meta = {
         'indexes': [
             ['participant_id'],
+            ['device_id'],
+            ['location'],
+            ['phones.number'],
             ['event'],
             ['name'],
             ['role'],
             ['partner'],
-            ['groups']
+            ['groups'],
+            ['deployment'],
+            ['deployment', 'event']
         ],
         'queryset_class': ParticipantQuerySet
     }

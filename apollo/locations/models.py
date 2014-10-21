@@ -27,7 +27,9 @@ class Sample(db.Document):
 
     meta = {
         'indexes': [
-            ['event']
+            ['event'],
+            ['deployment'],
+            ['deployment', 'event']
         ]
     }
 
@@ -119,7 +121,9 @@ class Location(db.DynamicDocument):
             ['name', 'location_type'],
             ['code'],
             ['political_code'],
-            ['events', 'code']
+            ['events', 'code'],
+            ['deployment'],
+            ['deployment', 'events']
         ],
         'queryset_class': LocationQuerySet
     }

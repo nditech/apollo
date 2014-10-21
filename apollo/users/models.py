@@ -27,6 +27,14 @@ class User(db.Document, UserMixin):
 
     deployment = db.ReferenceField(Deployment)
 
+    meta = {
+        'indexes': [
+            ['deployment'],
+            ['deployment', 'email'],
+            ['deployment', 'email', 'password']
+        ]
+    }
+
     def __unicode__(self):
         return self.email or u''
 

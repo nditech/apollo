@@ -28,6 +28,7 @@ class FormFieldNameField(db.StringField):
             self.error('Form field name cannot be one of the disallowed field names')
         super(FormFieldNameField, self).validate(value)
 
+
 # Forms
 class FormField(db.EmbeddedDocument):
     '''A :class:`mongoengine.EmbeddedDocument` used in storing the
@@ -130,7 +131,9 @@ class Form(db.Document):
             ['prefix'],
             ['events'],
             ['events', 'prefix'],
-            ['events', 'form_type']
+            ['events', 'form_type'],
+            ['deployment'],
+            ['deployment', 'events']
         ]
     }
 

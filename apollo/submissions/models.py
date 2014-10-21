@@ -191,6 +191,16 @@ class Submission(db.DynamicDocument):
     event = db.ReferenceField(Event)
 
     meta = {
+        'indexes': [
+            ['location'],
+            ['form'],
+            ['contributor'],
+            ['completion'],
+            ['quality_checks'],
+            ['submission_type'],
+            ['deployment'],
+            ['deployment', 'event']
+        ],
         'queryset_class': SubmissionQuerySet,
     }
 

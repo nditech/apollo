@@ -21,3 +21,17 @@ class Message(db.Document):
 
     deployment = db.ReferenceField(Deployment)
     event = db.ReferenceField(Event)
+
+    meta = {
+        'indexes': [
+            ['sender'],
+            ['recipient'],
+            ['text'],
+            ['participant'],
+            ['submission'],
+            ['received'],
+            ['delivered'],
+            ['deployment'],
+            ['deployment', 'event']
+        ]
+    }
