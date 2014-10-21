@@ -12,6 +12,7 @@ from flask.ext.mongoengine.wtf import model_form
 from flask.ext.wtf import Form as SecureForm
 from .. import services, models
 from ..participants.utils import update_participant_completion_rating
+from .custom_fields import IntegerSplitterField
 import json
 import re
 
@@ -159,14 +160,11 @@ def build_questionnaire(form, data=None):
                 choices = [(v, k) for k, v in field.options.iteritems()]
 
                 if field.allows_multiple_values:
-                    fields[field.name] = SelectMultipleField(
+                    fields[field.name] = IntegerSplitterField(
                         field.name,
                         choices=choices,
-                        coerce=int,
                         description=field.description,
-                        option_widget=widgets.CheckboxInput(),
                         validators=[validators.optional()],
-                        widget=widgets.ListWidget(prefix_label=False)
                     )
                 else:
                     fields[field.name] = SelectField(
