@@ -63,7 +63,7 @@
       .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
 
     legend.append("circle")
-      .attr("cx", w/4 - 25)
+      .attr("cx", w/4 - 26)
       .attr("cy", h/2 + 24)
       .attr("r", 5)
       .style("fill", color.domain(labels));
@@ -71,7 +71,7 @@
     //Legend Label
     legend.append("text")
       .data(labels)
-      .attr("x", w/4 - 14)
+      .attr("x", w/4 - 16)
       .attr("y", h/2 + 24)
       .attr("dy", ".35em")
       .style('font-family', 'courier')
