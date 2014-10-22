@@ -6,7 +6,8 @@ from babel.numbers import format_number
 from flask import g
 from flask.ext.babel import get_locale, lazy_gettext as _
 import pandas as pd
-from ..analyses.common import dataframe_analysis
+from ..analyses.common import (
+    dataframe_analysis, multiselect_dataframe_analysis)
 from ..analyses.voting import proportion, variance
 
 
@@ -30,7 +31,11 @@ def checklist_question_summary(form, field, location, dataframe):
     else:
         stats['type'] = 'continuous'
 
-    stats.update(dataframe_analysis(stats['type'], dataframe, field.name))
+    if field.allows_multiple_values:
+        stats.update(multiselect_dataframe_analysis(
+            dataframe, field.name, sorted(field.options.values())))
+    else:
+        stats.update(dataframe_analysis(stats['type'], dataframe, field.name))
 
     try:
         for name, grp in dataframe.groupby('urban'):
