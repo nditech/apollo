@@ -40,7 +40,7 @@
 </div>
 {% if data %}
 {% for row in data %}
-{% if loop.index0 is divisibleby 6 %}<div class="row-fluid">{% endif %}
+{% if loop.index0 is divisibleby 6 %}<div class="row">{% endif %}
   <div class="col-md-2">
   {%- if group -%}
     <legend class="centered"><a href="{{ url_for('dashboard.index', group=group, locationtype=locationtype, **args) }}">{{ row.name }}</a></legend>
