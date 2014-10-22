@@ -1,4 +1,5 @@
 from collections import Counter
+from operator import itemgetter
 import numpy as np
 import pandas as pd
 
@@ -372,8 +373,9 @@ def generate_field_stats(field, dataset):
     ''' In order to simplify the choice on what analysis to perform
     this method will check a few conditions and return the appropriate
     analysis for the field'''
-    options = field.options.values()
-    labels = field.options.keys()
+    sorted_options = sorted(field.options.iteritems(), key=itemgetter(1))
+    options = [i[1] for i in sorted_options]
+    labels = [i[0] for i in sorted_options]
 
     if options:
         if field.allows_multiple_values:
