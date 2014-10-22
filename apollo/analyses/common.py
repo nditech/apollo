@@ -28,7 +28,7 @@ def dataframe_analysis(kind, dataframe, col):
     return result
 
 
-def make_histogram(options, dataset):
+def make_histogram(options, dataset, multi=False):
     '''This function simply returns the number of occurrences of each option
     in the given dataset as a list.
 
@@ -39,6 +39,10 @@ def make_histogram(options, dataset):
     Please note that both options and dataset must be homogenous iterables
     of the same type.
     '''
+    if multi:
+        if not isinstance(dataset, list) and pd.isnull(dataset):
+            return [0 for option in options]
+
     counter = Counter(dataset)
 
     histogram = [counter[option] for option in options]
@@ -60,7 +64,7 @@ def summarize_options(options, series):
     '''
     placeholder = []
     for row in series:
-        placeholder.append(make_histogram(options, row))
+        placeholder.append(make_histogram(options, row, True))
 
     # sum the number of occurrences by column and return as a list
     return np.array(placeholder).sum(axis=0).tolist()
