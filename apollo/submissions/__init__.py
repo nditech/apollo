@@ -47,12 +47,16 @@ class SubmissionsService(Service):
         return kwargs
 
     def export_list(self, queryset, deployment):
-        samples = Sample.objects(deployment=g.deployment, event=g.event)
-
         if queryset.count() < 1:
             yield
         else:
             submission = queryset.first()
+            sample_kwargs = {}
+            if hasattr(g, 'event'):
+                sample_kwargs['event'] = g.event
+            if hasattr(g, 'deployment'):
+                sample_kwargs['deployment'] = g.deployment
+            samples = Sample.objects(**sample_kwargs)
             form = submission.form
             fields = [
                 field.name for group in form.groups for field in group.fields]
