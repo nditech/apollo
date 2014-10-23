@@ -64,7 +64,7 @@ def index():
         page_title = page_title + u' · {}'.format(group)
         if not location_type_id:
             location_type = location_types.find(
-                is_administrative=True).order_by('ancestors_ref').first()
+                is_administrative=True).order_by('ancestor_count').first()
         else:
             location_type = LocationType.objects.get_or_404(
                 pk=location_type_id)
