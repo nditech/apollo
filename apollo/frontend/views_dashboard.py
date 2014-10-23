@@ -4,7 +4,7 @@ from . import route
 from ..analyses.dashboard import get_coverage
 from ..deployments.forms import generate_event_selection_form
 from ..models import LocationType
-from ..services import events, forms, submissions, locations
+from ..services import events, forms, submissions, locations, location_types
 from .filters import dashboard_filterset
 from .helpers import get_event, set_event
 from . import permissions
@@ -56,14 +56,15 @@ def index():
     # activate sample filter
     filter_form = filter_.form
     queryset = filter_.qs
-    should_expand = True
+    next_location_type = False
 
     if not group:
         data = get_coverage(queryset)
     else:
         page_title = page_title + u' · {}'.format(group)
         if not location_type_id:
-            location_type = LocationType.root()
+            location_type = location_types.find(
+                is_administrative=True).order_by('ancestor_ref').first()
         else:
             location_type = LocationType.objects.get_or_404(
                 pk=location_type_id)
@@ -76,31 +77,26 @@ def index():
         # one we want (the first of the children)
         le_temp = [lt for lt in location_type.children
                    if lt.is_administrative]
-        try:
-            sub_location_type = le_temp[0]
-        except IndexError:
-            sub_location_type = location_type
 
         try:
-            next_location_type = le_temp[1]
-            location_type_id = next_location_type.id
+            next_location_type = le_temp[0]
         except IndexError:
             next_location_type = None
-            should_expand = False
-            location_type_id = None
 
-        data = get_coverage(queryset, group, sub_location_type)
+        data = get_coverage(queryset, group, location_type)
 
     # load the page context
+    location_id = args.pop('location', '')
     context = {
         'args': args,
+        'location_id': location_id,
+        'next_location': bool(next_location_type),
         'data': data,
         'filter_form': filter_form,
         'page_title': page_title,
         'location': location,
-        'locationtype': location_type_id or '',
-        'group': group or '',
-        'should_expand': should_expand
+        'locationtype': getattr(next_location_type, 'id', ''),
+        'group': group or ''
     }
 
     return render_template(

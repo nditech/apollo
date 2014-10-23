@@ -31,7 +31,10 @@ class DeploymentAdminView(BaseAdminView):
     column_list = ('name',)
     form_rules = [
         rules.FieldSet(
-            ('name', 'logo', 'allow_observer_submission_edit', 'hostnames'),
+            (
+                'name', 'logo', 'allow_observer_submission_edit',
+                'dashboard_full_locations', 'hostnames'
+            ),
             _('Deployment')
         )
     ]
