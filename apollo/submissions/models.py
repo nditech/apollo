@@ -63,17 +63,21 @@ class SubmissionQuerySet(BaseQuerySet):
             query_kwargs = {
                 param: location.name
             }
-            return self(Q(location=location) | Q(**query_kwargs))
+            return self(**query_kwargs)
         elif hasattr(location_spec, '__iter__'):
             # checking for multiple locations
             chain = Q()
+            location_query = {}
             for location in location_spec:
                 if not isinstance(location, Location):
                     return self.none()
+                location_query.setdefault(location.location_type, [])
+                location_query[location.location_type].append(location.name)
 
-                param = 'location_name_path__{}'.format(location.location_type)
-                query_kwargs = {param: location.name}
-                chain = Q(location=location) | Q(**query_kwargs) | chain
+            for key in location_query.keys():
+                param = 'location_name_path__{}__in'.format(key)
+                query_kwargs = {param: location_query[key]}
+                chain = Q(**query_kwargs) | chain
             return self(chain)
         # value is neither a Location instance nor an iterable
         # producing Location instances
