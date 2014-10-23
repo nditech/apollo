@@ -1,6 +1,6 @@
 from ..core import Service
 from .models import Submission, SubmissionComment, SubmissionVersion
-from ..locations.models import LocationType
+from ..locations.models import LocationType, Sample
 from datetime import datetime
 from flask import g
 from unidecode import unidecode
@@ -9,6 +9,20 @@ try:
     from cStringIO import StringIO
 except:
     from StringIO import StringIO
+
+
+def export_field(form, submission, field_name):
+    field = form.get_field_by_tag(field_name)
+
+    if not field.allows_multiple_values:
+        return getattr(submission, field_name, '')
+
+    data = getattr(submission, field_name, '')
+    if isinstance(data, list) and data:
+        # only export if there's a non empty list
+        return ','.join(sorted([str(i) for i in data]))
+
+    return ''
 
 
 class SubmissionsService(Service):
@@ -33,6 +47,7 @@ class SubmissionsService(Service):
         return kwargs
 
     def export_list(self, queryset, deployment):
+        samples = Sample.objects()
 
         if queryset.count() < 1:
             yield
@@ -62,6 +77,8 @@ class SubmissionsService(Service):
                         location_types)
                 ds_headers += ['Location', 'PS Code', 'RV'] + fields \
                     + ['Timestamp'] + map(lambda f: '%s-C' % f, fields)
+
+            ds_headers.extend(list(samples.scalar('name')))
 
             output = StringIO()
             writer = csv.writer(output)
@@ -93,8 +110,7 @@ class SubmissionsService(Service):
                          if submission.location else '',
                          getattr(submission.location, 'registered_voters', '')
                          if submission.location else ''] + \
-                        [getattr(submission, field, '')
-                         for field in fields]
+                        [export_field(form, submission, f) for f in fields]
                     record += \
                         [submission.updated.strftime('%Y-%m-%d %H:%M:%S'),
                          getattr(submission, 'witness', '')
@@ -107,6 +123,9 @@ class SubmissionsService(Service):
                         [submission.updated.strftime('%Y-%m-%d %H:%M:%S'),
                          submission.comments.first().comment
                          if submission.comments.first() else '']
+                    record.extend([
+                        1 if sample in submission.location.samples else 0
+                        for sample in samples])
                 else:
                     sib = submission.siblings.first()
                     record = [
@@ -128,11 +147,13 @@ class SubmissionsService(Service):
                          if submission.location else '',
                          getattr(submission.location, 'registered_voters', '')
                          if submission.location else ''] + \
-                        [getattr(submission, field, '')
-                         for field in fields] + \
+                        [export_field(form, submission, f) for f in fields] + \
                         [submission.updated.strftime('%Y-%m-%d %H:%M:%S')] + \
                         [submission.confidence.get(field, '') or ''
                          for field in fields]
+                    record.extend([
+                        1 if sample in submission.location.samples else 0
+                        for sample in samples])
 
                 output = StringIO()
                 writer = csv.writer(output)
