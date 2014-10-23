@@ -63,12 +63,12 @@ def submission_list(form_id):
             queryset = services.submissions.find(
                 submission_type='M',
                 form=form
-            )
+            ).order_by('location')
         else:
             queryset = services.submissions.find(
                 submission_type='O',
                 form=form
-            )
+            ).order_by('location')
 
         query_filterset = filter_class(queryset, request.args)
         dataset = services.submissions.export_list(
@@ -91,7 +91,7 @@ def submission_list(form_id):
     queryset = services.submissions.find(
         submission_type='O',
         form=form
-    )
+    ).order_by('location')
     query_filterset = filter_class(queryset, request.args)
     filter_form = query_filterset.form
 
