@@ -461,13 +461,18 @@ def submission_version(submission_id, version_id):
     )
 
 
+@route(bp, '/submissions/verification/<form_id>')
+@login_required
 def verification_list(form_id):
     form = services.forms.get_or_404(pk=form_id, form_type='CHECKLIST')
-    queryset = services.submissions.find(form=form, submission_type='M')
+    # queryset = services.submissions.find(form=form, submission_type='M')
+    page_title = _('Verification for %(name)s', name=form.name)
 
-    context = {}
+    context = {'page_title': page_title}
 
-    return ''
+    template_name = 'frontend/verification_list.html'
+
+    return render_template(template_name, **context)
 
 
 def update_submission_version(sender, document, **kwargs):
