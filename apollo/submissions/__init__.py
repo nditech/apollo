@@ -47,7 +47,7 @@ class SubmissionsService(Service):
         return kwargs
 
     def export_list(self, queryset, deployment):
-        samples = Sample.objects()
+        samples = Sample.objects(deployment=g.deployment, event=g.event)
 
         if queryset.count() < 1:
             yield
