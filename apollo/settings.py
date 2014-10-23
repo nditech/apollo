@@ -75,6 +75,7 @@ LANGUAGES = {
     'ar': 'العربية',
     'de': 'Deutsch',
 }
+BABEL_DEFAULT_LOCALE = os.environ.get('BABEL_DEFAULT_LOCALE', 'en')
 
 ALLOWED_PUNCTUATIONS = '!'
 CHARACTER_TRANSLATIONS = (
