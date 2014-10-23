@@ -1,1 +1,33 @@
 {% extends "frontend/_layout.html" %}
+{% block scripts %}
+{% endblock %}
+{% block content %}
+<div class="row">
+	<div class="col-md-12 filter">
+	</div>
+</div>
+<div class="row">
+	<div class="col-md-12">
+		<table class="table table-condensed table-bordered table-striped table-hovered">
+			<thead>
+				<tr>
+					<th>Logical Checks</th>
+					<th width="200">Missing</th>
+					<th width="200">Flagged</th>
+					<th width="200">Flagged - Clear</th>
+					<th width="200">All fine/Clear</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<th>Turnout > Registered Voters</th>
+					<td><a href="{{ current_menu.submenu('forms.checklists').dynamic_list[0].url }}">500</a></td>
+					<td><a href="{{ current_menu.submenu('forms.checklists').dynamic_list[0].url }}">500</a></td>
+					<td><a href="{{ current_menu.submenu('forms.checklists').dynamic_list[0].url }}">500</a></td>
+					<td><a href="{{ current_menu.submenu('forms.checklists').dynamic_list[0].url }}">500</a></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+{% endblock %}
