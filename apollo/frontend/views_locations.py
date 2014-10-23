@@ -263,6 +263,10 @@ def locations_builder():
                         lambda ancestor: ancestor != link['target'].get('id'),
                         ancestors))
 
+        # 5. Update ancestor count
+        for location_type in services.location_types.find():
+            location_type.save()
+
         divisions_graph['cells'] = nodes + links
 
         g.deployment.administrative_divisions_graph = json.dumps(
