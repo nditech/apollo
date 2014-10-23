@@ -63,6 +63,8 @@ class SubmissionsService(Service):
             location_types = LocationType.objects(
                 is_political=True, deployment=deployment)
 
+            sample_headers = list(samples.scalar('name'))
+
             if submission.submission_type == 'O':
                 ds_headers = [
                     'Participant ID', 'Name', 'DB Phone', 'Recent Phone'] + \
@@ -73,7 +75,9 @@ class SubmissionsService(Service):
                         + ['Timestamp', 'Witness', 'Status', 'Description']
                 else:
                     ds_headers += ['Location', 'PS Code', 'RV'] + fields \
-                        + ['Timestamp', 'Comment']
+                        + ['Timestamp']
+                    ds_headers.extend(sample_headers)
+                    ds_headers.append('Comment')
             else:
                 ds_headers = [
                     'Participant ID', 'Name', 'DB Phone', 'Recent Phone'] + \
@@ -81,8 +85,7 @@ class SubmissionsService(Service):
                         location_types)
                 ds_headers += ['Location', 'PS Code', 'RV'] + fields \
                     + ['Timestamp'] + map(lambda f: '%s-C' % f, fields)
-
-            ds_headers.extend(list(samples.scalar('name')))
+                ds_headers.extend(sample_headers)
 
             output = StringIO()
             writer = csv.writer(output)
@@ -124,12 +127,11 @@ class SubmissionsService(Service):
                          getattr(submission, 'description', '')
                          if getattr(submission, 'description', '') else ''] \
                         if form.form_type == 'INCIDENT' else \
-                        [submission.updated.strftime('%Y-%m-%d %H:%M:%S'),
-                         submission.comments.first().comment
-                         if submission.comments.first() else '']
-                    record.extend([
-                        1 if sample in submission.location.samples else 0
-                        for sample in samples])
+                        ([submission.updated.strftime('%Y-%m-%d %H:%M:%S')] +
+                            [1 if sample in submission.location.samples else 0
+                                for sample in samples] +
+                            [submission.comments.first().comment
+                             if submission.comments.first() else ''])
                 else:
                     sib = submission.siblings.first()
                     record = [
