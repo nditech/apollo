@@ -260,7 +260,9 @@ def generate_mutiple_choice_field_stats(tag, dataset, options, labels=None):
         for group_name in group_names:
             temp = dataset.get_group(group_name).get(tag)
 
-            missing = sum(not x for x in temp)
+            t = [0 if not isinstance(x, float) and x else 1 for x
+                 in temp]
+            missing = sum(t)
             reported = temp.size - missing
             total = temp.size
             percent_missing = percent_of(missing, total)
@@ -282,7 +284,8 @@ def generate_mutiple_choice_field_stats(tag, dataset, options, labels=None):
 
         field_stats['locations'] = location_stats
     else:
-        missing = sum(not x for x in dataset[tag])
+        t = [0 if not isinstance(x, float) and x else 1 for x in dataset[tag]]
+        missing = sum(t)
         total = dataset[tag].size
         reported = total - missing
         percent_reported = percent_of(reported, total)
