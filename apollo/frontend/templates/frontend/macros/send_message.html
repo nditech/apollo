@@ -51,7 +51,7 @@
     var message = $('#message').val();
     if (message) {
       $.ajax({
-        url: "{{ request.url }}",
+        url: "{{ request.url | safe }}",
         type: 'POST',
         data: {message: message, action: 'send_message', },
         beforeSend: function (xhr, settings) {

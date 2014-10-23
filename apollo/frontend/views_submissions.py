@@ -97,10 +97,13 @@ def submission_list(form_id):
 
     if request.form.get('action') == 'send_message':
         message = request.form.get('message', '')
-        recipients = [submission.contributor.phone
-                      if submission.contributor and
-                      submission.contributor.phone else ''
-                      for submission in query_filterset.qs]
+        recipients = filter(
+            lambda x: x is not '',
+            [submission.contributor.phone
+                if submission.contributor and
+                submission.contributor.phone else ''
+                for submission in query_filterset.qs.only(
+                    'contributor').select_related(1)])
         recipients.extend(current_app.config.get('MESSAGING_CC'))
 
         if message and recipients and permissions.send_messages.can():

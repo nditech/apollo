@@ -71,8 +71,10 @@ def participant_list(page=1):
 
     if request.form.get('action') == 'send_message':
         message = request.form.get('message', '')
-        recipients = [participant.phone if participant.phone else ''
-                      for participant in queryset_filter.qs]
+        recipients = filter(
+            lambda x: x is not '',
+            [participant.phone if participant.phone else ''
+                for participant in queryset_filter.qs])
         recipients.extend(current_app.config.get('MESSAGING_CC'))
 
         if message and recipients and permissions.send_messages.can():
