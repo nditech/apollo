@@ -139,7 +139,15 @@ TODO: insert last used identity here
   {% for field in group.fields %}
   <tr>
     <th>{{ field.name }}</th>
-    <td>{{ field.description }}</td>
+    <td><td>{{ field.description }}
+      {%- if field.options and not field.allows_multiple_values %}
+      <span class="options">
+      {% for item in field.options|dictsort(false, 'value') %}
+      <span class="option"><strong>({{ item.1 }})</strong> {{ item.0 }}</span>
+      {% endfor %}
+      </span>
+      {%- endif %}
+    </td>
     {%- if readonly -%}
     <td>{{ render_submission_field(submission_form[field.name], disabled=1)}}</td>
     {%- else -%}

@@ -33,7 +33,7 @@ def multiselect_dataframe_analysis(dataframe, col, options):
     option_summary = summarize_options(options, dataframe[col])
     result = {
         'value_counts': dict(zip(options, option_summary)),
-        'value_counts_sum': dataframe[col].size,
+        'value_counts_sum': dataframe[col].count(),
     }
 
     result['count'] = dataframe[col].count()

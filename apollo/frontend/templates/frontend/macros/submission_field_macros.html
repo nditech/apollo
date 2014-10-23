@@ -2,7 +2,7 @@
     {% for value, label, selected in field.iter_choices()|sort %}
     <div class="checkbox">
         <label>
-            <input type="checkbox" value="{{ value }}" {% if selected %}checked{% endif %}> ({{ value|int }}) {{ label }}
+            <input name="{{ field.name }}" type="checkbox" value="{{ value }}" {% if selected %}checked{% endif %}> ({{ value|int }}) {{ label }}
         </label>
     </div>
     {% endfor %}
