@@ -53,7 +53,8 @@ def message_list():
 
 def message_time_series(message_queryset):
     df = pd.DataFrame(
-        list(message_queryset.only('received', 'direction').as_pymongo())
+        list(message_queryset(direction='IN')
+             .only('received').as_pymongo())
     )
 
     # set a marker for each message
@@ -62,28 +63,18 @@ def message_time_series(message_queryset):
     # set the index to the message timestamp, resample to hourly
     # and sum all markers in each hour, filling NaNs with 0
     if df.empty is not True:
-        df = df.set_index('received')
-
-        incoming = df[df.direction == 'IN']
-        outgoing = df[df.direction == 'OUT']
-        incoming = incoming.resample('1Min', how='sum').fillna(0)
-        outgoing = outgoing.resample('1Min', how='sum').fillna(0)
+        df = df.set_index('received').resample('1Min', how='sum').fillna(0)
 
         # return as UNIX timestamp, value pairs
         data = {
             'incoming': [
                 (calendar.timegm(i[0].utctimetuple()) * 1000, int(i[1]))
-                for i in sorted(incoming.to_dict()['marker'].items())
-            ],
-            'outgoing': [
-                (calendar.timegm(i[0].utctimetuple()) * 1000, int(i[1]))
-                for i in sorted(outgoing.to_dict()['marker'].items())
+                for i in sorted(df.to_dict()['marker'].items())
             ]
         }
     else:
         data = {
-            'incoming': [],
-            'outgoing': []
+            'incoming': []
         }
 
     return data
