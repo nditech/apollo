@@ -71,11 +71,14 @@ class SubmissionsService(Service):
                     map(lambda location_type: location_type.name,
                         location_types)
                 if form.form_type == 'INCIDENT':
-                    ds_headers += ['Location', 'PS Code', 'RV'] + fields \
-                        + ['Timestamp', 'Witness', 'Status', 'Description']
+                    ds_headers += [
+                        'Location', 'Location Code', 'PS Code', 'RV'
+                    ] + fields + \
+                        ['Timestamp', 'Witness', 'Status', 'Description']
                 else:
-                    ds_headers += ['Location', 'PS Code', 'RV'] + fields \
-                        + ['Timestamp']
+                    ds_headers += [
+                        'Location', 'Location Code', 'PS Code', 'RV'
+                    ] + fields + ['Timestamp']
                     ds_headers.extend(sample_headers)
                     ds_headers.append('Comment')
             else:
@@ -83,10 +86,12 @@ class SubmissionsService(Service):
                     'Participant ID', 'Name', 'DB Phone', 'Recent Phone'] + \
                     map(lambda location_type: location_type.name,
                         location_types)
-                ds_headers += ['Location', 'PS Code', 'RV'] + fields \
-                    + ['Timestamp'] + map(
-                        lambda f: '%s-CONFIDENCE' % f, fields)
+                ds_headers += [
+                    'Location', 'Location Code', 'PS Code', 'RV'] + \
+                    fields + ['Timestamp']
+
                 ds_headers.extend(sample_headers)
+                ds_headers.extend(map(lambda f: '%s-CONFIDENCE' % f, fields))
 
             output = StringIO()
             writer = csv.writer(output)
@@ -112,7 +117,9 @@ class SubmissionsService(Service):
                         [submission.location_name_path.get(
                          location_type.name, '')
                          for location_type in location_types] + \
-                        [getattr(submission.location, 'code', '')
+                        [getattr(submission.location, 'name', '')
+                         if submission.location else '',
+                         getattr(submission.location, 'code', '')
                          if submission.location else '',
                          getattr(submission.location, 'political_code', '')
                          if submission.location else '',
@@ -148,7 +155,9 @@ class SubmissionsService(Service):
                         [submission.location_name_path.get(
                             location_type.name, '')
                          for location_type in location_types] + \
-                        [getattr(submission.location, 'code', '')
+                        [getattr(submission.location, 'name', '')
+                         if submission.location else '',
+                         getattr(submission.location, 'code', '')
                          if submission.location else '',
                          getattr(submission.location, 'political_code', '')
                          if submission.location else '',
