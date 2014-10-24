@@ -111,3 +111,18 @@ def list_forms():
     }
 
     return render_template(template_name, **context)
+
+
+@route(bp, '/forms/<pk>/logical_checks', methods=['GET'])
+@permissions.edit_forms.require(403)
+@login_required
+def logical_checks(pk):
+    form = services.forms.get_or_404(pk=pk)
+    page_title = _('Logical checks - %(name)s', name=form.name)
+    template_name = 'frontend/form_checks.html'
+
+    context = {
+        'page_title': page_title
+    }
+
+    return render_template(template_name, **context)
