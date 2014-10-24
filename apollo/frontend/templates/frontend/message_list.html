@@ -8,7 +8,7 @@
 {% block content %}
 <div class="row">
   <div class="col-md-12">
-    <div id="container" style="height: 200px; min-width: 600px" data-chart='{{ chart_data|tojson }}'></div>
+    <div id="container" style="height: 160px; min-width: 600px" data-chart='{{ chart_data|tojson }}'></div>
   </div>
 </div>
 <div class="row">
@@ -105,6 +105,10 @@
 
         exporting: {
           enabled: false
+        },
+
+        scrollbar : {
+          enabled : false
         },
 
         series : [{
