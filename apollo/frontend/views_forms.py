@@ -121,8 +121,14 @@ def logical_checks(pk):
     page_title = _('Logical checks - %(name)s', name=form.name)
     template_name = 'frontend/form_checks.html'
 
+    check_data = [
+        (c['name'], c['lvalue'], c['comparator'], c['rvalue'])
+        for c in form.quality_checks
+    ]
+
     context = {
-        'page_title': page_title
+        'page_title': page_title,
+        'check_data': check_data
     }
 
     return render_template(template_name, **context)
