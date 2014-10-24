@@ -468,7 +468,28 @@ def verification_list(form_id):
     # queryset = services.submissions.find(form=form, submission_type='M')
     page_title = _('Verification for %(name)s', name=form.name)
 
-    context = {'page_title': page_title}
+    submissions = services.submissions.find(form=form, submission_type='M')
+
+    data_records = []
+    for check in form.quality_checks:
+        record = {'name': check['name']}
+        kwarg_name = 'quality_checks__{}'.format(check['storage'])
+        missing_kwargs = {kwarg_name: 'missing'}
+        flagged_kwargs = {kwarg_name: 'flagged'}
+        verified_kwargs = {kwarg_name: 'verified'}
+        clear_kwargs = {kwarg_name: 'clear'}
+
+        record['missing'] = submissions(missing_kwargs).count()
+        record['flagged'] = submissions(flagged_kwargs).count()
+        record['verified'] = submissions(verified_kwargs).count()
+        record['clear'] = submissions(clear_kwargs).count()
+
+        data_records.append(record)
+
+    context = {
+        'page_title': page_title,
+        'verification_records': data_records
+    }
 
     template_name = 'frontend/verification_list.html'
 
