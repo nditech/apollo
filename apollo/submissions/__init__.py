@@ -84,7 +84,8 @@ class SubmissionsService(Service):
                     map(lambda location_type: location_type.name,
                         location_types)
                 ds_headers += ['Location', 'PS Code', 'RV'] + fields \
-                    + ['Timestamp'] + map(lambda f: '%s-C' % f, fields)
+                    + ['Timestamp'] + map(
+                        lambda f: '%s-CONFIDENCE' % f, fields)
                 ds_headers.extend(sample_headers)
 
             output = StringIO()
@@ -135,11 +136,11 @@ class SubmissionsService(Service):
                 else:
                     sib = submission.siblings.first()
                     record = [
-                        getattr(sib.contributor, 'participant_id', '')
+                        getattr(sib.contributor, 'participant_id', '') or ''
                         if sib else '',
-                        getattr(sib.contributor, 'name', '')
+                        getattr(sib.contributor, 'name', '') or ''
                         if sib else '',
-                        getattr(sib.contributor, 'phone', '')
+                        getattr(sib.contributor, 'phone', '') or ''
                         if sib else '',
                         sib.contributor.phones[-1].number
                         if getattr(sib.contributor, 'phones', None)
