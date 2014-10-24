@@ -99,14 +99,24 @@
           margin: 10
         },
 
+        credits: {
+          enabled: false
+        },
+
+        exporting: {
+          enabled: false
+        },
+
         series : [{
             name : '{% trans %}Incoming Messages{% endtrans %}',
             data : data.incoming,
             color: '#ff7f0e',
+            type: 'column',
             tooltip: {
                 valueDecimals: 0
             }
           }],
+
         yAxis: {
           min: 0
         }
