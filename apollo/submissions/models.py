@@ -285,7 +285,8 @@ class Submission(db.DynamicDocument):
                         # the total expected
                         else:
                             try:
-                                score = len(n_values) / len(values)
+                                score = float(
+                                    len(n_values)) / float(len(values))
                             except ZeroDivisionError:
                                 score = 0
 
@@ -331,12 +332,35 @@ class Submission(db.DynamicDocument):
                 for field in group.fields])
 
             for field in fields:
+                submission_field_value = getattr(self, field.name, None)
+                master_field_value = getattr(master, field.name, None)
+                values_match = map(
+                    lambda val: submission_field_value == val,
+                    filter(
+                        lambda val: val is not None,
+                        [submission_field_value] +
+                        [
+                            getattr(
+                                sibling,
+                                field.name, None) for sibling in self.siblings
+                        ]
+                    )
+                )
                 if (
-                    getattr(self, field.name, None) != getattr(
-                        master, field.name, None)
+                    submission_field_value != master_field_value
                 ):
-                    setattr(
-                        master, field.name, getattr(self, field.name, None))
+                    # if all values match, then set the value to the master
+                    if all(values_match):
+                        setattr(
+                            master,
+                            field.name,
+                            submission_field_value)
+                    else:
+                    # if not, then set none to the master
+                        setattr(
+                            master,
+                            field.name,
+                            None)
             master._compute_verification()
             master._update_confidence()
             master.updated = datetime.utcnow()
@@ -429,6 +453,9 @@ class Submission(db.DynamicDocument):
 
         # cleanup data fields
         self._update_data_fields()
+
+        # save the submission without cleaning to prevent an infinite loop
+        self.save(clean=False)
 
         # update the master submission
         self._update_master()
