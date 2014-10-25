@@ -19,7 +19,7 @@
 				</tr>
 			</thead>
 			<tbody>
-			{% for record in verfication_records %}
+			{% for record in verification_records %}
 				<tr>
 					<th>{{ record.get('name') }}</th>
 					<td><a href="{{ current_menu.submenu('forms.checklists').dynamic_list[0].url }}">{{ record.get('missing', 0) }}</a></td>

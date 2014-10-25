@@ -9,7 +9,7 @@ from flask import (
 from flask.ext.babel import lazy_gettext as _
 from flask.ext.security import current_user, login_required
 from flask.ext.menu import register_menu
-from mongoengine import signals
+from mongoengine import Q, signals
 from tablib import Dataset
 from werkzeug.datastructures import MultiDict
 from wtforms import validators
@@ -473,17 +473,23 @@ def verification_list(form_id):
 
     data_records = []
     for check in form.quality_checks:
+        print check
         record = {'name': check['name']}
         kwarg_name = 'quality_checks__{}'.format(check['storage'])
         missing_kwargs = {kwarg_name: FLAG_STATUSES['rejected'][0]}
-        # flagged_kwargs = {kwarg_name: 'flagged'}
         verified_kwargs = {kwarg_name: FLAG_STATUSES['verified'][0]}
         clear_kwargs = {kwarg_name: FLAG_STATUSES['no_problem'][0]}
 
-        record['missing'] = submissions(missing_kwargs).count()
-        # record['flagged'] = submissions(flagged_kwargs).count()
-        record['verified'] = submissions(verified_kwargs).count()
-        record['clear'] = submissions(clear_kwargs).count()
+        flagged_query = Q(**{
+            kwarg_name: FLAG_STATUSES['problem'][0]
+        }) | Q(**{
+            kwarg_name: FLAG_STATUSES['serious_problem'][0]
+        })
+
+        record['missing'] = submissions(**missing_kwargs).count()
+        record['flagged'] = submissions(flagged_query).count()
+        record['verified'] = submissions(**verified_kwargs).count()
+        record['clear'] = submissions(**clear_kwargs).count()
 
         record['flagged'] = submissions.count() - record['missing'] - \
             record['verified'] - record['clear']
