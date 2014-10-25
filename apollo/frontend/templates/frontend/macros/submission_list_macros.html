@@ -35,7 +35,7 @@
         {% if submission.completion[group.name] == 'Complete' %}<img src="{{ url_for('static', filename='img/tick.png') }}" alt="{% trans %}complete{% endtrans %}" title="{% trans %}complete{% endtrans %}" height="11" width="11">
         {%- elif submission.completion[group.name] == 'Partial' %}<img src="{{ url_for('static', filename='img/caution.png') }}" alt="{% trans %}partial{% endtrans %}" title="{% trans %}partial{% endtrans %}" height="11" width="11">
         {%- elif submission.completion[group.name] == 'Missing' %}<img src="{{ url_for('static', filename='img/red_dot.png') }}" alt="{% trans %}missing{% endtrans %}" title="{% trans %}missing{% endtrans %}" height="11" width="11">
-        {%- elif submission.completion[group.name] == 'Conflict' %}<img src="{{ url_for('static', filename='img/exclaim-red.png') }}" alt="{% trans %}conflict{% endtrans %}" title="{% trans %}conflict{% endtrans %}" height="11" width="11">
+        {%- elif submission.completion[group.name] == 'Conflict' %}<img src="{{ url_for('static', filename='img/slash.png') }}" alt="{% trans %}conflict{% endtrans %}" title="{% trans %}conflict{% endtrans %}" height="11" width="11">
         {% endif %}
     </td>
     {% endfor %}
