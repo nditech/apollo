@@ -1,5 +1,6 @@
 import operator as op
 from parsimonious.grammar import Grammar
+from parsimonious.nodes import NodeVisitor
 
 
 # Parsers for Checklist Verification
@@ -99,4 +100,23 @@ class Comparator(object):
 
     def _(self, node, children):
         '_ = ~"\s*"'
+        pass
+
+
+class ExpressionParser(NodeVisitor):
+    def __init__(self, text):
+        self.entries = {
+            'operators': [],
+            'operands': []
+        }
+        ast = Evaluator().parse(text.replace(' ', ''))
+        self.visit(ast)
+
+    def visit_operator(self, node, vc):
+        self.entries['operators'].append(node.text)
+
+    def visit_operand(self, node, vc):
+        self.entries['operands'].append(node.text)
+
+    def generic_visit(self, node, vc):
         pass
