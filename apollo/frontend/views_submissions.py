@@ -16,6 +16,7 @@ from wtforms import validators
 from .. import services
 from ..analyses.incidents import incidents_csv
 from ..participants.utils import update_participant_completion_rating
+from ..submissions.models import FLAG_STATUSES
 from ..tasks import send_messages
 from . import route, permissions
 from .filters import generate_submission_filter
@@ -474,15 +475,18 @@ def verification_list(form_id):
     for check in form.quality_checks:
         record = {'name': check['name']}
         kwarg_name = 'quality_checks__{}'.format(check['storage'])
-        missing_kwargs = {kwarg_name: 'missing'}
-        flagged_kwargs = {kwarg_name: 'flagged'}
-        verified_kwargs = {kwarg_name: 'verified'}
-        clear_kwargs = {kwarg_name: 'clear'}
+        missing_kwargs = {kwarg_name: FLAG_STATUSES['rejected'][0]}
+        # flagged_kwargs = {kwarg_name: 'flagged'}
+        verified_kwargs = {kwarg_name: FLAG_STATUSES['verified'][0]}
+        clear_kwargs = {kwarg_name: FLAG_STATUSES['no_problem'][0]}
 
         record['missing'] = submissions(missing_kwargs).count()
-        record['flagged'] = submissions(flagged_kwargs).count()
+        # record['flagged'] = submissions(flagged_kwargs).count()
         record['verified'] = submissions(verified_kwargs).count()
         record['clear'] = submissions(clear_kwargs).count()
+
+        record['flagged'] = submissions.count() - record['missing'] - \
+            record['verified'] - record['clear']
 
         data_records.append(record)
 

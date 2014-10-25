@@ -19,13 +19,19 @@
 				</tr>
 			</thead>
 			<tbody>
+			{% for record in verfication_records %}
 				<tr>
-					<th>Turnout > Registered Voters</th>
-					<td><a href="{{ current_menu.submenu('forms.checklists').dynamic_list[0].url }}">500</a></td>
-					<td><a href="{{ current_menu.submenu('forms.checklists').dynamic_list[0].url }}">500</a></td>
-					<td><a href="{{ current_menu.submenu('forms.checklists').dynamic_list[0].url }}">500</a></td>
-					<td><a href="{{ current_menu.submenu('forms.checklists').dynamic_list[0].url }}">500</a></td>
+					<th>{{ record.get('name') }}</th>
+					<td><a href="{{ current_menu.submenu('forms.checklists').dynamic_list[0].url }}">{{ record.get('missing', 0) }}</a></td>
+					<td><a href="{{ current_menu.submenu('forms.checklists').dynamic_list[0].url }}">{{ record.get('flagged', 0) }}</a></td>
+					<td><a href="{{ current_menu.submenu('forms.checklists').dynamic_list[0].url }}">{{ record.get('verified', 0) }}</a></td>
+					<td><a href="{{ current_menu.submenu('forms.checklists').dynamic_list[0].url }}">{{ record.get('clear', 0) }}</a></td>
 				</tr>
+			{% else %}
+				<tr>
+					<td colspan="5" class="warning">{% trans %}No data available{% endtrans %}</td>
+				</tr>
+			{% endfor %}
 			</tbody>
 		</table>
 	</div>
