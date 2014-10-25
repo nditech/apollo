@@ -1,7 +1,6 @@
 from ..core import Service
 from .models import Sample, LocationType, Location
-import csv
-from unidecode import unidecode
+import unicodecsv
 try:
     from cStringIO import StringIO
 except:
@@ -50,17 +49,15 @@ class LocationsService(Service):
                 ))
 
         output = StringIO()
-        writer = csv.writer(output)
-        writer.writerow([unidecode(unicode(i)) for i in headers])
+        writer = unicodecsv.writer(output, encoding='utf-8')
+        writer.writerow([unicode(i) for i in headers])
         yield output.getvalue()
         output.close()
 
         if queryset.count() < 1:
             yield
         else:
-            locations = queryset.filter(
-                location_type=last_location_type) if last_location_type \
-                else queryset
+            locations = queryset
             locations = locations.order_by('code')
             for location in locations:
                 record = []
@@ -90,7 +87,7 @@ class LocationsService(Service):
                                       if this_location else '')
 
                 output = StringIO()
-                writer = csv.writer(output)
-                writer.writerow([unidecode(unicode(i)) for i in record])
+                writer = unicodecsv.writer(output, encoding='utf-8')
+                writer.writerow([unicode(i) for i in record])
                 yield output.getvalue()
                 output.close()

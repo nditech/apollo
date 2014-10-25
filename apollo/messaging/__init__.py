@@ -2,8 +2,7 @@ from ..core import Service
 from .models import Message
 from datetime import datetime
 from flask import g
-from unidecode import unidecode
-import csv
+import unicodecsv
 try:
     from cStringIO import StringIO
 except:
@@ -30,8 +29,8 @@ class MessagesService(Service):
             'Mobile', 'Text', 'Direction', 'Created', 'Delivered'
         ]
         output = StringIO()
-        writer = csv.writer(output)
-        writer.writerow([unidecode(unicode(i)) for i in headers])
+        writer = unicodecsv.writer(output, encoding='utf-8')
+        writer.writerow([unicode(i) for i in headers])
         yield output.getvalue()
         output.close()
 
@@ -48,10 +47,8 @@ class MessagesService(Service):
                 if message.delivered else ''
             ]
 
-            record = [unidecode(i) for i in record]
-
             output = StringIO()
-            writer = csv.writer(output)
-            writer.writerow([unidecode(unicode(i)) for i in record])
+            writer = unicodecsv.writer(output, encoding='utf-8')
+            writer.writerow([unicode(i) for i in record])
             yield output.getvalue()
             output.close()

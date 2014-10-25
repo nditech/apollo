@@ -3,8 +3,7 @@ from .models import Submission, SubmissionComment, SubmissionVersion
 from ..locations.models import LocationType, Sample
 from datetime import datetime
 from flask import g
-from unidecode import unidecode
-import csv
+import unicodecsv
 try:
     from cStringIO import StringIO
 except:
@@ -94,8 +93,8 @@ class SubmissionsService(Service):
                 ds_headers.extend(map(lambda f: '%s-CONFIDENCE' % f, fields))
 
             output = StringIO()
-            writer = csv.writer(output)
-            writer.writerow([unidecode(unicode(i)) for i in ds_headers])
+            writer = unicodecsv.writer(output, encoding='utf-8')
+            writer.writerow([unicode(i) for i in ds_headers])
             yield output.getvalue()
             output.close()
 
@@ -144,13 +143,14 @@ class SubmissionsService(Service):
                     sib = submission.siblings.first()
                     record = [
                         getattr(sib.contributor, 'participant_id', '') or ''
-                        if sib else '',
+                        if sib and hasattr(sib, 'contributor') else '',
                         getattr(sib.contributor, 'name', '') or ''
-                        if sib else '',
+                        if sib and hasattr(sib, 'contributor') else '',
                         getattr(sib.contributor, 'phone', '') or ''
-                        if sib else '',
+                        if sib and hasattr(sib, 'contributor') else '',
                         sib.contributor.phones[-1].number
-                        if getattr(sib.contributor, 'phones', None)
+                        if hasattr(sib, 'contributor') and getattr(
+                            sib.contributor, 'phones', None)
                         else '' if sib else ''] + \
                         [submission.location_name_path.get(
                             location_type.name, '')
@@ -165,15 +165,15 @@ class SubmissionsService(Service):
                          if submission.location else ''] + \
                         [export_field(form, submission, f) for f in fields] + \
                         [submission.updated.strftime('%Y-%m-%d %H:%M:%S')] + \
+                        [1 if hasattr(submission.location, 'samples') and
+                         sample in submission.location.samples else 0
+                         for sample in samples] + \
                         [submission.confidence.get(field, '') or ''
                          for field in fields]
-                    record.extend([
-                        1 if sample in submission.location.samples else 0
-                        for sample in samples])
 
                 output = StringIO()
-                writer = csv.writer(output)
-                writer.writerow([unidecode(unicode(i)) for i in record])
+                writer = unicodecsv.writer(output, encoding='utf-8')
+                writer.writerow([unicode(i) for i in record])
                 yield output.getvalue()
                 output.close()
 
