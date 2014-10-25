@@ -5,8 +5,7 @@ from .models import (
     ParticipantGroupType
 )
 from ..locations.models import LocationType
-import csv
-from unidecode import unidecode
+import unicodecsv
 try:
     from cStringIO import StringIO
 except:
@@ -51,8 +50,8 @@ class ParticipantsService(Service):
                 headers.append(extra_field.label)
 
         output = StringIO()
-        writer = csv.writer(output)
-        writer.writerow([unidecode(unicode(i)) for i in headers])
+        writer = unicodecsv.writer(output, encoding='utf-8')
+        writer.writerow([unicode(i) for i in headers])
         yield output.getvalue()
         output.close()
 
@@ -83,8 +82,8 @@ class ParticipantsService(Service):
                 record.append(getattr(participant, extra_field.name, ''))
 
             output = StringIO()
-            writer = csv.writer(output)
-            writer.writerow([unidecode(unicode(i)) for i in record])
+            writer = unicodecsv.writer(output, encoding='utf-8')
+            writer.writerow([unicode(i) for i in record])
             yield output.getvalue()
             output.close()
 
@@ -95,7 +94,7 @@ class ParticipantsService(Service):
             'Messages Sent', 'Accuracy', 'Completion'
         ]
         output = StringIO()
-        writer = csv.writer(output)
+        writer = unicodecsv.writer(output, encoding='utf-8')
         writer.writerow(headers)
         yield output.getvalue()
         output.close()
@@ -124,8 +123,8 @@ class ParticipantsService(Service):
             record.append(participant.completion_rating)
 
             output = StringIO()
-            writer = csv.writer(output)
-            writer.writerow([unidecode(unicode(i)) for i in record])
+            writer = unicodecsv.writer(output, encoding='utf-8')
+            writer.writerow([unicode(i) for i in record])
             yield output.getvalue()
             output.close()
 
