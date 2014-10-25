@@ -126,7 +126,7 @@ class DynamicFieldFilter(ChoiceFilter):
 class SubmissionVerificationFlagFilter(ChoiceFilter):
     def filter(self, queryset, value):
         if value is not None or value != '':
-            query_kwargs = {'{}'.format(self.name): value}
+            query_kwargs = {'quality_checks__{}'.format(self.name): value}
             return queryset(**query_kwargs)
         return queryset
 
@@ -452,6 +452,13 @@ def generate_submission_filter(form):
             ('3', _('%(group)s Complete', group=group.name))
         ]
         attributes[field_name] = FormGroupFilter(choices=choices)
+
+    pairs = [(flag['name'], flag['storage'])
+             for flag in form.quality_checks]
+
+    for name, storage in pairs:
+        choices = [('', name)] + list(FLAG_CHOICES)
+        attributes[storage] = SubmissionVerificationFlagFilter(choices=choices)
 
     # participant id and location
     attributes['participant_id'] = ParticipantIDFilter()

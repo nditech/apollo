@@ -16,7 +16,7 @@ from wtforms import validators
 from .. import services
 from ..analyses.incidents import incidents_csv
 from ..participants.utils import update_participant_completion_rating
-from ..submissions.models import FLAG_STATUSES
+from ..submissions.models import FLAG_CHOICES, FLAG_STATUSES
 from ..tasks import send_messages
 from . import route, permissions
 from .filters import generate_submission_filter
@@ -473,8 +473,7 @@ def verification_list(form_id):
 
     data_records = []
     for check in form.quality_checks:
-        print check
-        record = {'name': check['name']}
+        record = {'name': check['name'], 'storage': check['storage']}
         kwarg_name = 'quality_checks__{}'.format(check['storage'])
         missing_kwargs = {kwarg_name: FLAG_STATUSES['rejected'][0]}
         verified_kwargs = {kwarg_name: FLAG_STATUSES['verified'][0]}
@@ -497,8 +496,10 @@ def verification_list(form_id):
         data_records.append(record)
 
     context = {
+        'form': form,
         'page_title': page_title,
-        'verification_records': data_records
+        'verification_records': data_records,
+        'flag_choices': [i[0] for i in FLAG_CHOICES]
     }
 
     template_name = 'frontend/verification_list.html'

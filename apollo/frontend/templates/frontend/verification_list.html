@@ -22,10 +22,10 @@
 			{% for record in verification_records %}
 				<tr>
 					<th>{{ record.get('name') }}</th>
-					<td><a href="{{ current_menu.submenu('forms.checklists').dynamic_list[0].url }}">{{ record.get('missing', 0) }}</a></td>
-					<td><a href="{{ current_menu.submenu('forms.checklists').dynamic_list[0].url }}">{{ record.get('flagged', 0) }}</a></td>
-					<td><a href="{{ current_menu.submenu('forms.checklists').dynamic_list[0].url }}">{{ record.get('verified', 0) }}</a></td>
-					<td><a href="{{ current_menu.submenu('forms.checklists').dynamic_list[0].url }}">{{ record.get('clear', 0) }}</a></td>
+					<td><a href="{{ url_for('submissions.submission_list', form_id=form.pk, **{record.get('storage'): flag_choices[4]}) }}">{{ record.get('missing', 0) }}</a></td>
+					<td><a href="{{ url_for('submissions.submission_list', form_id=form.pk, **{record.get('storage'): flag_choices[2]}) }}">{{ record.get('flagged', 0) }}</a></td>
+					<td><a href="{{ url_for('submissions.submission_list', form_id=form.pk, **{record.get('storage'): flag_choices[3]}) }}">{{ record.get('verified', 0) }}</a></td>
+					<td><a href="{{ url_for('submissions.submission_list', form_id=form.pk, **{record.get('storage'): flag_choices[0]}) }}">{{ record.get('clear', 0) }}</a></td>
 				</tr>
 			{% else %}
 				<tr>
