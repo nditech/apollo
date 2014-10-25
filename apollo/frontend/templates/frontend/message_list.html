@@ -88,6 +88,12 @@
     // load the data
     var data = $('#container').data('chart');
 
+    Highcharts.setOptions({
+      global: {
+        useUTC: false
+      }
+    });
+
     // Create the chart
     $('#container').highcharts('StockChart', {
         rangeSelector : {
