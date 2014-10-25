@@ -153,7 +153,11 @@
     {%- for sibling_form in sibling_forms -%}
     <td>{{ render_submission_field(sibling_form[field.name], disabled=1) }}</td>
     {%- endfor -%}
+    {%- if readonly -%}
     <td {%- if master_form[field.name].errors %} class="danger"{%- endif -%}>{{ render_submission_field(master_form[field.name]) }}</td>
+    {%- else -%}
+    <td {%- if master_form[field.name].errors %} class="danger"{%- endif -%}>{{ render_submission_field(master_form[field.name], disabled=1) }}</td>
+    {%- endif -%}
     {% if submission.master %}{% set score = submission.master.confidence.get(field.name, None) %}{% else %}{% set score = None %}{% endif -%}
     {% if score == 0 %}{% set score_label = 'label-danger' -%}
     {% elif score == 1 %}{% set score_label = 'label-success' -%}

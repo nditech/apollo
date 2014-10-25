@@ -275,6 +275,8 @@ class FormGroupFilter(ChoiceFilter):
                 params = {'completion__{}'.format(group): 'Missing'}
             elif value == '3':
                 params = {'completion__{}'.format(group): 'Complete'}
+            elif value == '4':
+                params = {'completion__{}'.format(group): 'Conflict'}
 
             return queryset(**params)
         return queryset
@@ -449,7 +451,8 @@ def generate_submission_filter(form):
             ('0', _('%(group)s Status', group=group.name)),
             ('1', _('%(group)s Partial', group=group.name)),
             ('2', _('%(group)s Missing', group=group.name)),
-            ('3', _('%(group)s Complete', group=group.name))
+            ('3', _('%(group)s Complete', group=group.name)),
+            ('4', _('%(group)s Conflict', group=group.name))
         ]
         attributes[field_name] = FormGroupFilter(choices=choices)
 

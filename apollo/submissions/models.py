@@ -226,18 +226,48 @@ class Submission(db.DynamicDocument):
 
         elif self.master == self:
             # update sibling submissions
-            for submission in self.siblings:
-                for group in self.form.groups:
-                    completed = [getattr(self, f.name, None) is not None
-                                 for f in group.fields]
-                    if all(completed):
-                        submission.completion[group.name] = 'Complete'
-                    elif any(completed):
-                        submission.completion[group.name] = 'Partial'
-                    else:
-                        submission.completion[group.name] = 'Missing'
+            for group in self.form.groups:
+                completed = [getattr(self, f.name, None) is not None
+                             for f in group.fields]
+                if all(completed):
+                    self.completion[group.name] = 'Complete'
+                elif any(completed):
+                    self.completion[group.name] = 'Partial'
+                else:
+                    self.completion[group.name] = 'Missing'
 
-                submission.save(clean=False)
+            for group in self.form.groups:
+                fields_to_check = filter(
+                    lambda f: f not in self.overridden_fields,
+                    [f.name for f in group.fields])
+
+                observer_submissions = list(self.siblings)
+
+                for submission in observer_submissions:
+                    # check for conflicting values in the submissions
+                    for field in fields_to_check:
+                        field_values = set(
+                            map(
+                                lambda x: frozenset(x)
+                                if isinstance(x, list) else x,
+                                filter(lambda value: value is not None,
+                                       [getattr(s, field, None)
+                                        for s in observer_submissions])))
+                        if len(field_values) > 1:  # there are different values
+                            submission.completion[group.name] = 'Conflict'
+                            break
+                    else:
+                        completed = [
+                            getattr(submission, field, None) is not None
+                            for field in fields_to_check]
+                        if all(completed):
+                            submission.completion[group.name] = 'Complete'
+                        elif any(completed):
+                            submission.completion[group.name] = 'Partial'
+                        else:
+                            submission.completion[group.name] = 'Missing'
+
+                    submission.save(clean=False)
 
     def _update_confidence(self):
         '''Computes the confidence score for the fields in the master.
@@ -378,6 +408,7 @@ class Submission(db.DynamicDocument):
                             field.name,
                             None)
             master._compute_verification()
+            master._update_completion_status()
             master._update_confidence()
             master.updated = datetime.utcnow()
             master.save(clean=False)
@@ -476,8 +507,9 @@ class Submission(db.DynamicDocument):
         # update the master submission
         self._update_master()
 
-        # update completion status
-        self._update_completion_status()
+        if self.master == self:
+            # update completion status
+            self._update_completion_status()
 
         # and compute the verification
         self._compute_verification()

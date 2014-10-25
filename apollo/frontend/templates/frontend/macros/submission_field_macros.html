@@ -24,6 +24,10 @@
 {% elif field.type == 'SelectMultipleField' %}
 {{ render_checkbox_field(field, disabled) }}
 {% else %}
-{{ field(class_='form-control input-mini', disabled=disabled) }}
+{% if disabled %}
+{{ field(class_='form-control input-mini', disabled='disabled') }}
+{% else %}
+{{ field(class_='form-control input-mini') }}
+{% endif %}
 {% endif %}
 {%- endmacro -%}

@@ -282,7 +282,7 @@ def submission_edit(submission_id):
 
             # if the user is allowed to edit participant submissions,
             # everything has to be valid at one go. no partial update
-            if master_form:
+            if master_form and readonly:
                 if master_form.validate():
                     with signals.post_save.connected_to(
                         update_submission_version,
