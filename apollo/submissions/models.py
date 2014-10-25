@@ -17,7 +17,6 @@ import numpy as np
 FLAG_STATUSES = {
     'no_problem': ('0', _('No Problem')),
     'problem': ('2', _('Problem')),
-    'serious_problem': ('3', _('Serious Problem')),
     'verified': ('4', _('Verified')),
     'rejected': ('5', _('Rejected'))
 }
@@ -25,7 +24,6 @@ FLAG_STATUSES = {
 FLAG_CHOICES = (
     ('0', _('No Problem')),
     ('2', _('Problem')),
-    ('3', _('Serious Problem')),
     ('4', _('Verified')),
     ('5', _('Rejected'))
 )
@@ -388,9 +386,6 @@ class Submission(db.DynamicDocument):
                 if comparator.eval(flag['okay'], diff):
                     flag_setting = FLAG_STATUSES['no_problem'][0]
                     flags_statuses.append(OK)
-                elif comparator.eval(flag['serious'], diff):
-                    flag_setting = FLAG_STATUSES['serious_problem'][0]
-                    flags_statuses.append(UNOK)
                 elif comparator.eval(flag['problem'], diff):
                     flag_setting = FLAG_STATUSES['problem'][0]
                     flags_statuses.append(UNOK)
