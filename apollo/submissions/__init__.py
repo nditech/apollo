@@ -165,12 +165,11 @@ class SubmissionsService(Service):
                          if submission.location else ''] + \
                         [export_field(form, submission, f) for f in fields] + \
                         [submission.updated.strftime('%Y-%m-%d %H:%M:%S')] + \
+                        [1 if hasattr(submission.location, 'samples') and
+                         sample in submission.location.samples else 0
+                         for sample in samples] + \
                         [submission.confidence.get(field, '') or ''
                          for field in fields]
-                    record.extend([
-                        1 if hasattr(submission.location, 'samples') and
-                        sample in submission.location.samples else 0
-                        for sample in samples])
 
                 output = StringIO()
                 writer = unicodecsv.writer(output, encoding='utf-8')
