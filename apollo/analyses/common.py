@@ -1,4 +1,5 @@
 from collections import Counter
+from operator import itemgetter
 import numpy as np
 import pandas as pd
 
@@ -28,6 +29,20 @@ def dataframe_analysis(kind, dataframe, col):
     return result
 
 
+def multiselect_dataframe_analysis(dataframe, col, options):
+    option_summary = summarize_options(options, dataframe[col])
+    result = {
+        'value_counts': dict(zip(options, option_summary)),
+        'value_counts_sum': dataframe[col].count(),
+    }
+
+    result['count'] = dataframe[col].count()
+    result['size'] = dataframe[col].size
+    result['diff'] = result['size'] - result['count']
+
+    return result
+
+
 def make_histogram(options, dataset, multi=False):
     '''This function simply returns the number of occurrences of each option
     in the given dataset as a list.
@@ -39,9 +54,12 @@ def make_histogram(options, dataset, multi=False):
     Please note that both options and dataset must be homogenous iterables
     of the same type.
     '''
+    if not isinstance(dataset, list):
+        return [0] * len(options)
+
     if multi:
         if not isinstance(dataset, list) and pd.isnull(dataset):
-            return [0 for option in options]
+            return [0] * len(options)
 
     counter = Counter(dataset)
 
@@ -245,7 +263,9 @@ def generate_mutiple_choice_field_stats(tag, dataset, options, labels=None):
         for group_name in group_names:
             temp = dataset.get_group(group_name).get(tag)
 
-            missing = sum(not x for x in temp)
+            t = [0 if not isinstance(x, float) and x else 1 for x
+                 in temp]
+            missing = sum(t)
             reported = temp.size - missing
             total = temp.size
             percent_missing = percent_of(missing, total)
@@ -267,7 +287,8 @@ def generate_mutiple_choice_field_stats(tag, dataset, options, labels=None):
 
         field_stats['locations'] = location_stats
     else:
-        missing = sum(not x for x in dataset[tag])
+        t = [0 if not isinstance(x, float) and x else 1 for x in dataset[tag]]
+        missing = sum(t)
         total = dataset[tag].size
         reported = total - missing
         percent_reported = percent_of(reported, total)
@@ -358,8 +379,9 @@ def generate_field_stats(field, dataset):
     ''' In order to simplify the choice on what analysis to perform
     this method will check a few conditions and return the appropriate
     analysis for the field'''
-    options = field.options.values()
-    labels = field.options.keys()
+    sorted_options = sorted(field.options.iteritems(), key=itemgetter(1))
+    options = [i[1] for i in sorted_options]
+    labels = [i[0] for i in sorted_options]
 
     if options:
         if field.allows_multiple_values:

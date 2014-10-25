@@ -25,7 +25,8 @@ class FormFieldNameField(db.StringField):
     def validate(self, value):
         from ..submissions.models import Submission
         if value in Submission._fields.keys():
-            self.error('Form field name cannot be one of the disallowed field names')
+            self.error(
+                'Form field name cannot be one of the disallowed field names')
         super(FormFieldNameField, self).validate(value)
 
 

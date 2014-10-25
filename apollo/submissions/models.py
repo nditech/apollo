@@ -223,6 +223,7 @@ class Submission(db.DynamicDocument):
                     self.completion[group.name] = 'Partial'
                 else:
                     self.completion[group.name] = 'Missing'
+
         elif self.master == self:
             # update sibling submissions
             for submission in self.siblings:
@@ -255,8 +256,12 @@ class Submission(db.DynamicDocument):
                         self.confidence[name] = score
                         continue
 
-                    values = [getattr(submission, name, None)
-                              for submission in self.siblings]
+                    values = map(
+                        lambda value: frozenset(value)
+                        if isinstance(value, list) else value,
+                        [getattr(submission, name, None)
+                            for submission in self.siblings]
+                    )
                     unique = list(set(values))
                     # if all values were reported and are the same then
                     # we have 100% confidence in the reported data
@@ -306,6 +311,10 @@ class Submission(db.DynamicDocument):
             field for field in fields
             if field.options is not None and
             field.allows_multiple_values is False]
+        multi_value_fields = [
+            field for field in fields
+            if field.options is not None and
+            field.allows_multiple_values is True]
 
         for field in boolean_fields:
             if not getattr(self, field.name, None):
@@ -321,6 +330,13 @@ class Submission(db.DynamicDocument):
                 setattr(self, field.name, value)
             elif isinstance(value, str) and value.isdigit():
                 setattr(self, field.name, int(value))
+
+        for field in multi_value_fields:
+            value = getattr(self, field.name, '')
+            if value == '':
+                setattr(self, field.name, None)
+            elif isinstance(value, list):
+                setattr(self, field.name, sorted(value))
 
     def _update_master(self):
         '''TODO: update master based on agreed algorithm'''

@@ -12,6 +12,7 @@ from flask.ext.mongoengine.wtf import model_form
 from flask.ext.wtf import Form as SecureForm
 from .. import services, models
 from ..participants.utils import update_participant_completion_rating
+from .custom_fields import IntegerSplitterField
 import json
 import re
 
@@ -110,6 +111,18 @@ class BaseQuestionnaireForm(Form):
                                 submission, form_field,
                                 self.data.get(form_field))
 
+                    if (
+                        isinstance(self.data.get(form_field), list) and
+                            self.data.get(form_field)
+                    ):
+                        change_detected = True
+                        original_value = getattr(submission, form_field, None)
+                        if isinstance(original_value, list):
+                            original_value = sorted(original_value)
+                        if (original_value != self.data.get(form_field)):
+                            setattr(submission, form_field,
+                                    self.data.get(form_field))
+
                 if change_detected:
                     g.phone = self.data.get('sender')
 
@@ -159,14 +172,11 @@ def build_questionnaire(form, data=None):
                 choices = [(v, k) for k, v in field.options.iteritems()]
 
                 if field.allows_multiple_values:
-                    fields[field.name] = SelectMultipleField(
+                    fields[field.name] = IntegerSplitterField(
                         field.name,
                         choices=choices,
-                        coerce=int,
                         description=field.description,
-                        option_widget=widgets.CheckboxInput(),
                         validators=[validators.optional()],
-                        widget=widgets.ListWidget(prefix_label=False)
                     )
                 else:
                     fields[field.name] = SelectField(
