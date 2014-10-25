@@ -273,24 +273,33 @@ def participant_edit(pk):
             participant.role = services.participant_roles.get_or_404(
                 pk=form.role.data)
             if form.supervisor.data:
-                participant.supervisor = services.participants.get_or_404(
+                participant.supervisor = services.participants.get(
                     pk=form.supervisor.data
                 )
             else:
                 participant.supervisor = None
-            participant.location = services.locations.get(
-                pk=form.location.data)
-            participant.partner = services.participant_partners.get_or_404(
-                pk=form.partner.data)
+            if form.location.data:
+                participant.location = services.locations.get_or_404(
+                    pk=form.location.data)
+            if form.partner.data:
+                participant.partner = services.participant_partners.get_or_404(
+                    pk=form.partner.data)
+            else:
+                participant.partner = None
             participant.phone = form.phone.data
             for extra_field in g.deployment.participant_extra_fields:
-                field_data = getattr(getattr(form, extra_field.name, object()), 'data', '')
+                field_data = getattr(
+                    getattr(form, extra_field.name, object()), 'data', '')
                 setattr(participant, extra_field.name, field_data)
             participant.save()
 
+            print 'redirecting'
+
             return redirect(url_for('participants.participant_list'))
 
-    return render_template(template_name, form=form, page_title=page_title)
+    return render_template(
+        template_name, form=form, page_title=page_title,
+        participant=participant)
 
 
 @route(bp, '/participants/import', methods=['POST'])

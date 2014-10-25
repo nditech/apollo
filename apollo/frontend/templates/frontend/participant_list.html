@@ -307,6 +307,11 @@ $(function(){
         e.preventDefault();
         wizard.show();
     });
+
+    $('#edit_modal').on('shown.bs.modal', function (e) {
+      $('#edit_modal input.select2-observers-clear').select2(observer_select2_clearable_options);
+      $('#edit_modal input.select2-locations').select2(locations_select2_options);
+    });
 });
 </script>
 {% if perms.send_messages.can() %}

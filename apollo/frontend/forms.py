@@ -53,15 +53,6 @@ def generate_location_edit_form(location, data=None):
 
 
 def generate_participant_edit_form(participant, data=None):
-    location_choices = defaultdict(list)
-    location_data = locations.find().order_by(
-        'location_type', 'name'
-    ).scalar('id', 'name', 'location_type')
-
-    for loc_data in location_data:
-        location_choices[loc_data[2]].append(
-            (unicode(loc_data[0]), loc_data[1])
-        )
 
     class ParticipantEditBaseForm(WTSecureForm):
         # participant_id = TextField(
@@ -69,13 +60,11 @@ def generate_participant_edit_form(participant, data=None):
         #     validators=[validators.input_required()]
         # )
         name = TextField(
-            _('Name'),
-            validators=[validators.input_required()]
+            _('Name')
         )
         gender = SelectField(
             _('Gender'),
-            choices=Participant.GENDER,
-            validators=[validators.input_required()]
+            choices=Participant.GENDER
         )
         role = SelectField(
             _('Role'),
@@ -84,17 +73,11 @@ def generate_participant_edit_form(participant, data=None):
             ),
             validators=[validators.input_required()]
         )
-        supervisor = SelectField(
-            _('Supervisor'),
-            choices=_make_choices(
-                participants.find().scalar('id', 'name')
-            )
+        supervisor = TextField(
+            _('Supervisor')
         )
-        location = ExtendedSelectField(
+        location = TextField(
             _('Location'),
-            choices=_make_choices(
-                [[k, v] for k, v in location_choices.items()]
-            ),
             validators=[validators.input_required()]
         )
         # partners are not required
