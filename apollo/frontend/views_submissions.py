@@ -293,6 +293,7 @@ def submission_edit(submission_id):
                         for form_field in form_fields:
                             if (
                                 getattr(submission.master, form_field, None) !=
+                                master_form.data.get(form_field) and
                                 master_form.data.get(form_field)
                             ):
                                 setattr(
@@ -319,6 +320,7 @@ def submission_edit(submission_id):
                         for form_field in form_fields:
                             if (
                                 getattr(submission, form_field, None) !=
+                                submission_form.data.get(form_field) and
                                 submission_form.data.get(form_field)
                             ):
                                 setattr(
