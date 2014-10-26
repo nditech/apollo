@@ -297,8 +297,8 @@ def submission_edit(submission_id):
                             ):
                                 if (
                                     not master_form.data.get(form_field) and
-                                    master_form.data.get(
-                                        form_field) is not None
+                                    isinstance(master_form.data.get(
+                                        form_field), list)
                                 ):
                                     setattr(
                                         submission.master, form_field,
@@ -334,8 +334,8 @@ def submission_edit(submission_id):
                                 if (
                                     not submission_form.data.get(
                                         form_field) and
-                                    submission_form.data.get(
-                                        form_field) is not None
+                                    isinstance(submission_form.data.get(
+                                        form_field), list)
                                 ):
                                     setattr(
                                         submission, form_field,
