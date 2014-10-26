@@ -54,9 +54,6 @@ def make_histogram(options, dataset, multi=False):
     Please note that both options and dataset must be homogenous iterables
     of the same type.
     '''
-    if not isinstance(dataset, list):
-        return [0] * len(options)
-
     if multi:
         if not isinstance(dataset, list) and pd.isnull(dataset):
             return [0] * len(options)
