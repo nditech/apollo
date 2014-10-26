@@ -13,7 +13,8 @@ except KeyError:
 
 DEBUG = ast.literal_eval(
     os.environ.get('DEBUG', 'False'))
-PAGE_SIZE = 25
+PAGE_SIZE = ast.literal_eval(
+    os.environ.get('PAGE_SIZE', '25'))
 
 MONGODB_SETTINGS = {
     'DB': os.environ.get('MONGO_DATABASE_NAME', 'apollo'),
