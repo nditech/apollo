@@ -293,12 +293,21 @@ def submission_edit(submission_id):
                         for form_field in form_fields:
                             if (
                                 getattr(submission.master, form_field, None) !=
-                                master_form.data.get(form_field) and
                                 master_form.data.get(form_field)
                             ):
-                                setattr(
-                                    submission.master, form_field,
-                                    master_form.data.get(form_field))
+                                if (
+                                    not master_form.data.get(form_field) and
+                                    master_form.data.get(
+                                        form_field) is not None
+                                ):
+                                    setattr(
+                                        submission.master, form_field,
+                                        None)
+                                else:
+                                    setattr(
+                                        submission.master, form_field,
+                                        master_form.data.get(form_field))
+
                                 submission.master.overridden_fields.append(
                                     form_field)
                                 changed = True
@@ -320,12 +329,21 @@ def submission_edit(submission_id):
                         for form_field in form_fields:
                             if (
                                 getattr(submission, form_field, None) !=
-                                submission_form.data.get(form_field) and
                                 submission_form.data.get(form_field)
                             ):
-                                setattr(
-                                    submission, form_field,
-                                    submission_form.data.get(form_field))
+                                if (
+                                    not submission_form.data.get(
+                                        form_field) and
+                                    submission_form.data.get(
+                                        form_field) is not None
+                                ):
+                                    setattr(
+                                        submission, form_field,
+                                        None)
+                                else:
+                                    setattr(
+                                        submission, form_field,
+                                        submission_form.data.get(form_field))
                                 changed = True
                         if changed:
                             submission.save()
