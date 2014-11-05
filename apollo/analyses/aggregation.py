@@ -37,3 +37,22 @@ def generate_single_choice_field_stats(queryset, tag):
     collection = queryset._collection
 
     return collection.aggregate(pipeline)
+
+
+def generate_multi_choice_field_stats(queryset, tag):
+    token = '${}'.format(tag)
+    pipeline = [
+        {'$match': queryset._query},
+        {'$project': {
+            'var': token
+        }},
+        {'$unwind': '$var'},
+        {'$group': {
+            '_id': '$var',
+            'count': {'$sum': 1}
+        }}
+    ]
+
+    collection = queryset._collection
+
+    return collection.aggregate(pipeline)
