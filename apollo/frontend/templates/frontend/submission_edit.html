@@ -127,11 +127,11 @@
     <td style="text-align: center"><strong>OBS {{ loop.index + 1 }}</strong></td>
     {%- endfor -%}
     <td style="text-align: center"><strong>PS</strong></td>
-    <td style="text-align: center"><abbr title="{% trans %}Confidence Level{% endtrans %}"><i class="glyphicon glyphicon-thumbs-up"></i></abbr></td>
+    <td colspan="2"><abbr title="{% trans %}Confidence Level{% endtrans %}"><i class="glyphicon glyphicon-thumbs-up"></i></abbr></td>
   </tr>
   {% for group in form.groups %}
   <tr>
-    <td colspan="{{ siblings|count + 5 }}"><h4>{{ group.name }}</h4></td>
+    <td colspan="{{ siblings|count + 6 }}"><h4>{{ group.name }}</h4></td>
   </tr>
   {% for field in group.fields %}
   <tr>
@@ -164,6 +164,7 @@
     {% elif not score %}{% set score_label = 'label-default' -%}
     {% else %}{% set score_label = 'label-warning' %}{% endif -%}
     <td style="padding-top:14px"><span class="label {{ score_label }}">{% if score == None %}-{% else %}{{ '%.3g' % score|percent_of(1, 0) }}%{% endif %}</span></td>
+    <th style="padding-top:14px"><span>{{ field.name }}</span></th>
   </tr>
   {% endfor %}
   {% endfor %}
