@@ -257,9 +257,11 @@ class Submission(db.DynamicDocument):
                             submission.completion[group.name] = 'Conflict'
                             break
                     else:
+                        # if there's no conflicting fields then compute the
+                        # the normal completion status
                         completed = [
-                            getattr(submission, field, None) is not None
-                            for field in fields_to_check]
+                            getattr(submission, f.name, None) is not None
+                            for f in group.fields]
                         if all(completed):
                             submission.completion[group.name] = 'Complete'
                         elif any(completed):
@@ -380,8 +382,11 @@ class Submission(db.DynamicDocument):
             for field in fields:
                 submission_field_value = getattr(self, field.name, None)
                 master_field_value = getattr(master, field.name, None)
+
+                # determines whether all field values are the same or conflict
                 values_match = map(
-                    lambda val: submission_field_value == val,
+                    lambda val: submission_field_value == val
+                    if submission_field_value is not None else True,
                     filter(
                         lambda val: val is not None,
                         [submission_field_value] +
@@ -393,7 +398,8 @@ class Submission(db.DynamicDocument):
                     )
                 )
                 if (
-                    submission_field_value != master_field_value
+                    submission_field_value != master_field_value and
+                    submission_field_value is not None
                 ):
                     # if all values match, then set the value to the master
                     if all(values_match):
