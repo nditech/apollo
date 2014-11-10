@@ -155,7 +155,7 @@ def import_locations(upload_id, mappings):
         mappings,
         upload.event
     )
-    
+
     # fetch and update all submissions
     deployment = upload.event.deployment
     submissions = services.submissions.all().filter(deployment=deployment)

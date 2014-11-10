@@ -9,6 +9,7 @@ from flask.ext.security import login_required
 from ..analyses.common import (
     generate_incidents_data, generate_process_data
 )
+from mongoengine import Q
 from ..submissions.models import FLAG_STATUSES
 from ..services import forms, locations, location_types, submissions
 from . import route, permissions, filters
@@ -19,7 +20,10 @@ def get_analysis_menu():
     return [{
         'url': url_for('analysis.process_analysis', form_id=unicode(form.pk)),
         'text': form.name,
-    } for form in forms.find().order_by('form_type')]
+    } for form in forms.find().filter(
+        Q(form_type='INCIDENT') |
+        Q(form_type='CHECKLIST', groups__fields__analysis_type='PROCESS')
+    ).order_by('form_type')]
 
 
 def get_result_analysis_menu():
@@ -29,7 +33,7 @@ def get_result_analysis_menu():
         'text': form.name
     } for form in forms.find(
         form_type='CHECKLIST',
-        party_mappings__exists=True
+        groups__fields__analysis_type='RESULT'
     ).order_by('form_type')]
 
 
