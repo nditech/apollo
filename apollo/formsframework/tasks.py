@@ -13,7 +13,7 @@ def update_submissions(form_pk):
     form = services.forms.get(pk=form_pk)
     tags = form.tags
     for submission in services.submissions.find(form=form):
-        kwargs = {
-            'set__{}'.format(tag): getattr(submission, tag) for tag in tags
-        }
-        submission.update(**kwargs)
+        for tag in tags:
+            if not hasattr(submission, tag):
+                setattr(submission, tag, None)
+        submission.save()
