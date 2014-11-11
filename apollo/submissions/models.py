@@ -17,17 +17,21 @@ import numpy as np
 FLAG_STATUSES = {
     'no_problem': ('0', _('No Problem')),
     'problem': ('2', _('Problem')),
-    'serious_problem': ('3', _('Serious Problem')),
     'verified': ('4', _('Verified')),
     'rejected': ('5', _('Rejected'))
 }
 
+QUALITY_STATUSES = {
+    'OK': '0',
+    'FLAGGED': '2',
+    'VERIFIED': '3'
+}
+
 FLAG_CHOICES = (
-    ('0', _('No Problem')),
-    ('2', _('Problem')),
-    ('3', _('Serious Problem')),
-    ('4', _('Verified')),
-    ('5', _('Rejected'))
+    ('0', _('OK')),
+    ('-1', _('MISSING')),
+    ('2', _('FLAGGED')),
+    ('3', _('VERIFIED'))
 )
 
 STATUS_CHOICES = (
@@ -203,7 +207,9 @@ class Submission(db.DynamicDocument):
             ['quality_checks'],
             ['submission_type'],
             ['deployment'],
-            ['deployment', 'event']
+            ['deployment', 'event'],
+            ['quality_checks', 'submission_type', 'event',
+             'form', 'deployment']
         ],
         'queryset_class': SubmissionQuerySet,
     }
@@ -413,30 +419,30 @@ class Submission(db.DynamicDocument):
                             master,
                             field.name,
                             None)
-            master._compute_verification()
+            master._compute_data_quality()
             master._update_completion_status()
             master._update_confidence()
             master.updated = datetime.utcnow()
             master.save(clean=False)
 
-    def _compute_verification(self):
+    def _compute_data_quality(self):
         '''Precomputes the logical checks on the submission.'''
         if self.submission_type != 'M':
             # only for master submissions
             return
 
-        verified_flag = FLAG_STATUSES['verified'][0]
-        rejected_flag = FLAG_STATUSES['rejected'][0]
+        observer_submissions = list(self.siblings)
 
-        comparator = Comparator()
-
-        NO_DATA = 0
-        OK = 1
-        UNOK = 2
-
-        flags_statuses = []
         for flag in self.form.quality_checks:
+            # skip processing if this has either been verified
+            if (
+                self.quality_checks.get(flag['name'], None) ==
+                QUALITY_STATUSES['VERIFIED']
+            ):
+                continue
+
             evaluator = Evaluator(self)
+            comparator = Comparator()
 
             try:
                 lvalue = evaluator.eval(flag['lvalue'])
@@ -444,57 +450,38 @@ class Submission(db.DynamicDocument):
 
                 # the comparator setting expresses the relationship between
                 # lvalue and rvalue
-                if flag['comparator'] == 'pctdiff':
-                    # percentage difference between lvalue and rvalue
-                    try:
-                        diff = abs(lvalue - rvalue) / float(
-                            max([lvalue, rvalue]))
-                    except ZeroDivisionError:
-                        diff = 0
-                elif flag['comparator'] == 'pct':
-                    # absolute percentage
-                    try:
-                        diff = float(lvalue) / float(rvalue)
-                    except ZeroDivisionError:
-                        diff = 0
-                else:
-                    # value-based comparator
-                    diff = abs(lvalue - rvalue)
+                comparator.param = lvalue
+                ok = comparator.eval(
+                    '{} {}'.format(flag['comparator'], rvalue))
 
-                # evaluate conditions and set flag appropriately
-                if comparator.eval(flag['okay'], diff):
-                    flag_setting = FLAG_STATUSES['no_problem'][0]
-                    flags_statuses.append(OK)
-                elif comparator.eval(flag['serious'], diff):
-                    flag_setting = FLAG_STATUSES['serious_problem'][0]
-                    flags_statuses.append(UNOK)
-                elif comparator.eval(flag['problem'], diff):
-                    flag_setting = FLAG_STATUSES['problem'][0]
-                    flags_statuses.append(UNOK)
+                if not ok:
+                    self.quality_checks[flag['name']] = \
+                        QUALITY_STATUSES['FLAGGED']
+                    for submission in observer_submissions:
+                        submission.quality_checks[flag['name']] = \
+                            QUALITY_STATUSES['FLAGGED']
                 else:
-                    # if we have no way of determining, we assume it's okay
-                    flag_setting = FLAG_STATUSES['no_problem'][0]
-                    flags_statuses.append(OK)
-
-                # setattr(self, flag['storage'], flag_setting)
-                self.quality_checks[flag['storage']] = flag_setting
-            except TypeError:
+                    self.quality_checks[flag['name']] = \
+                        QUALITY_STATUSES['OK']
+                    for submission in observer_submissions:
+                        submission.quality_checks[flag['name']] = \
+                            QUALITY_STATUSES['OK']
+            except (AttributeError, TypeError):
                 # no sufficient data
                 # setattr(self, flag['storage'], None)
                 try:
-                    self.quality_checks.pop(flag['storage'])
+                    self.quality_checks.pop(flag['name'])
                 except KeyError:
                     pass
-                flags_statuses.append(NO_DATA)
 
-        # compare all flags and depending on the values, set the status
-        if not self.verification_status in [verified_flag, rejected_flag]:
-            if all(map(lambda i: i == NO_DATA, flags_statuses)):
-                self.verification_status = None
-            elif any(map(lambda i: i == UNOK, flags_statuses)):
-                self.verification_status = FLAG_STATUSES['problem'][0]
-            elif any(map(lambda i: i == OK, flags_statuses)):
-                self.verification_status = FLAG_STATUSES['no_problem'][0]
+                for submission in observer_submissions:
+                    try:
+                        submission.quality_checks.pop(flag['name'])
+                    except KeyError:
+                        pass
+
+        for submission in observer_submissions:
+            submission.save(clean=False)
 
     def clean(self):
         # update location name path if it does not exist.
@@ -518,7 +505,7 @@ class Submission(db.DynamicDocument):
             self._update_completion_status()
 
         # and compute the verification
-        self._compute_verification()
+        self._compute_data_quality()
 
         # update the confidence
         self._update_confidence()

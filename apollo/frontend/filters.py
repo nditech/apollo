@@ -123,10 +123,14 @@ class DynamicFieldFilter(ChoiceFilter):
         return queryset(**query_kwargs)
 
 
-class SubmissionVerificationFlagFilter(ChoiceFilter):
+class SubmissionQualityCheckFilter(CharFilter):
     def filter(self, queryset, value):
-        if value is not None or value != '':
-            query_kwargs = {'{}'.format(self.name): value}
+        if value is not None and value != '':
+            if value == '-1':
+                query_kwargs = {
+                    'quality_checks__{}__exists'.format(self.name): False}
+            else:
+                query_kwargs = {'quality_checks__{}'.format(self.name): value}
             return queryset(**query_kwargs)
         return queryset
 
@@ -456,6 +460,14 @@ def generate_submission_filter(form):
         ]
         attributes[field_name] = FormGroupFilter(choices=choices)
 
+    pairs = [(qc['description'], qc['name'])
+             for qc in form.quality_checks]
+
+    for description, name in pairs:
+        choices = [('', description)] + list(FLAG_CHOICES)
+        attributes[name] = SubmissionQualityCheckFilter(
+            widget=widgets.HiddenInput())
+
     # participant id and location
     attributes['participant_id'] = ParticipantIDFilter()
     attributes['location'] = AJAXLocationFilter()
@@ -473,12 +485,12 @@ def generate_submission_filter(form):
 
 def generate_submission_flags_filter(form):
     attributes = {}
-    pairs = [(flag['name'], flag['storage'])
-             for flag in form.quality_checks]
+    pairs = [(quality_check['description'], quality_check['name'])
+             for quality_check in form.quality_checks]
 
-    for name, storage in pairs:
-        choices = [('', name)] + list(FLAG_CHOICES)
-        attributes[storage] = SubmissionVerificationFlagFilter(choices=choices)
+    for description, name in pairs:
+        choices = [('', description)] + list(FLAG_CHOICES)
+        attributes[name] = SubmissionQualityCheckFilter()
 
     attributes['participant_id'] = ParticipantIDFilter()
     attributes['location'] = LocationFilter()

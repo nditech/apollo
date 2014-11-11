@@ -1,5 +1,7 @@
+from __future__ import division
 import operator as op
 from parsimonious.grammar import Grammar
+from parsimonious.nodes import NodeVisitor
 
 
 # Parsers for Checklist Verification
@@ -31,7 +33,7 @@ class Evaluator(object):
             return operand
 
     def operand(self, node, children):
-        'operand = _ (variable / number) _'
+        'operand = _ (variable / number / attribute) _'
         _, value, _ = children
         if self.scratch is None:
             self.scratch = value[0]
@@ -50,14 +52,22 @@ class Evaluator(object):
 
     def variable(self, node, children):
         'variable = ~"[a-z]+"i _'
-        try:
-            return float(getattr(self.env, node.text.strip(), 0))
-        except TypeError:
-            return 0
+        var = getattr(self.env, node.text.strip())
+        if var is not None:
+            # ensure that the value is not None as that indicates no value
+            return var
+        else:
+            raise AttributeError
+
+    def attribute(self, node, children):
+        'attribute = ~"\$[a-z\.\_]+"i'
+        return int(
+            reduce(lambda obj, attr: getattr(obj, attr, None),
+                   [self.env] + node.text.strip()[1:].split('.')))
 
     def number(self, node, children):
         'number = ~"\-?[0-9\.]+"'
-        return float(node.text)
+        return float(node.text) if '.' in node.text else int(node.text)
 
     def _(self, node, children):
         '_ = ~"\s*"'
@@ -88,9 +98,11 @@ class Comparator(object):
         return operator(self.param, number)
 
     def operator(self, node, children):
-        'operator = ">=" / "<=" / ">" / "<" / "="'
+        'operator = ">=" / "<=" / ">" / "<" / "=" / "!="'
         operators = {
-            '>': op.gt, '>=': op.ge, '<': op.lt, '<=': op.le, '=': op.eq}
+            '>': op.gt, '>=': op.ge,
+            '<': op.lt, '<=': op.le,
+            '=': op.eq, '!=': op.ne}
         return operators[node.text]
 
     def number(self, node, children):
@@ -99,4 +111,23 @@ class Comparator(object):
 
     def _(self, node, children):
         '_ = ~"\s*"'
+        pass
+
+
+class ExpressionParser(NodeVisitor):
+    def __init__(self, text):
+        self.entries = {
+            'operators': [],
+            'operands': []
+        }
+        ast = Evaluator().parse(text.replace(' ', ''))
+        self.visit(ast)
+
+    def visit_operator(self, node, vc):
+        self.entries['operators'].append(node.text)
+
+    def visit_operand(self, node, vc):
+        self.entries['operands'].append(node.text)
+
+    def generic_visit(self, node, vc):
         pass

@@ -74,6 +74,19 @@ def get_form_list_menu(**kwargs):
                 services.forms.find(**kwargs))]
 
 
+def get_quality_assurance_form_list_menu(**kwargs):
+    """Retrieves a list of forms that have the verification flag set
+
+    :param form_type: The form type for the forms to be retrieved
+    """
+    return [{'url': url_for('submissions.quality_assurance_list',
+             form_id=str(form.id)), 'text': form.name, 'visible': True}
+            for form in filter(
+                lambda f: Permission(ItemNeed('view_forms', f, 'object'),
+                                     RoleNeed('admin')).can(),
+                services.forms.find(**kwargs))]
+
+
 def displayable_location_types(**kwargs):
     temp = services.location_types.find(**kwargs)
     return sorted(temp, None, lambda x: len(x.ancestors_ref))
@@ -82,7 +95,7 @@ def displayable_location_types(**kwargs):
 def analysis_breadcrumb_data(form, location, tag=None,
                              analysis_type='process'):
     '''A helper function to populate the breadcrumb data structure
-    for both analysis and verification views.'''
+    for both analysis and quality assurance views.'''
     loc_type_names = [
         lt.name for lt in services.location_types.find(is_political=True)]
     location_branch = list(location.ancestors_ref) + [location]

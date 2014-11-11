@@ -16,12 +16,14 @@ from wtforms import validators
 from .. import services
 from ..analyses.incidents import incidents_csv
 from ..participants.utils import update_participant_completion_rating
+from ..submissions.models import QUALITY_STATUSES
 from ..tasks import send_messages
 from . import route, permissions
 from .filters import generate_submission_filter
 from .forms import generate_submission_edit_form_class
 from .helpers import (
-    DictDiffer, displayable_location_types, get_event, get_form_list_menu)
+    DictDiffer, displayable_location_types, get_event,
+    get_form_list_menu, get_quality_assurance_form_list_menu)
 from .template_filters import mkunixtimestamp
 from functools import partial
 from slugify import slugify_unicode
@@ -484,13 +486,87 @@ def submission_version(submission_id, version_id):
     )
 
 
-def verification_list(form_id):
+@route(bp, '/submissions/qa/<form_id>')
+@register_menu(
+    bp, 'qa.checklists', _('Quality Assurance'),
+    dynamic_list_constructor=partial(get_quality_assurance_form_list_menu,
+                                     form_type='CHECKLIST', verifiable=True))
+@login_required
+def quality_assurance_list(form_id):
     form = services.forms.get_or_404(pk=form_id, form_type='CHECKLIST')
-    queryset = services.submissions.find(form=form, submission_type='M')
+    page_title = _(u'Quality Assurance — %(name)s', name=form.name)
 
-    context = {}
+    submissions = services.submissions.find(form=form, submission_type='M')
 
-    return ''
+    data_records = []
+    quality_check_statistics = {}
+    record_count = submissions.count()
+
+    mapreduce_result = submissions.map_reduce('''
+        function () {
+            if (this.quality_checks) {
+                for (key in this.quality_checks) {
+                    emit(key + '|%(verified)s', 0);
+                    emit(key + '|%(ok)s', 0);
+                    emit(key + '|%(flagged)s', 0);
+
+                    value = this.quality_checks[key];
+                    emit(key + '|' + value, 1);
+                }
+            }
+        }
+        ''' % {'verified': QUALITY_STATUSES['VERIFIED'],
+               'ok': QUALITY_STATUSES['OK'],
+               'flagged': QUALITY_STATUSES['FLAGGED']},
+        'function (key, values) { return Array.sum(values); }',
+        'inline')
+
+    for result in mapreduce_result:
+        (qc_name, qc_value) = result.key.split('|')
+        quality_check_statistics.setdefault(qc_name, {})
+        quality_check_statistics[qc_name][qc_value] = int(result.value)
+
+    for check in form.quality_checks:
+        record = {'description': check['description'], 'name': check['name']}
+
+        try:
+            record['verified'] = quality_check_statistics[check['name']][
+                str(QUALITY_STATUSES['VERIFIED'])
+            ]
+        except:
+            record['verified'] = 0
+        try:
+            record['ok'] = quality_check_statistics[check['name']][
+                str(QUALITY_STATUSES['OK'])
+            ]
+        except:
+            record['clear'] = 0
+        try:
+            record['flagged'] = quality_check_statistics[check['name']][
+                str(QUALITY_STATUSES['FLAGGED'])
+            ]
+        except:
+            record['flagged'] = 0
+
+        try:
+            record['missing'] = record_count - (
+                record['verified'] + record['ok'] + record['flagged']
+            )
+        except:
+            record['missing'] = 0
+
+        data_records.append(record)
+
+    context = {
+        'form': form,
+        'page_title': page_title,
+        'qa_records': data_records,
+        'quality_statuses': QUALITY_STATUSES
+    }
+
+    template_name = 'frontend/quality_assurance_list.html'
+
+    return render_template(template_name, **context)
 
 
 def update_submission_version(sender, document, **kwargs):

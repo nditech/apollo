@@ -24,7 +24,8 @@
 <div class="form-group">
 {{ filter_form.status(class_='select2-container span3 select2', style='height:26px', placeholder=_('All Statuses')) }}
 </div>
-{%- endif -%}
+{%- endif %}
+{% for quality_check in form.quality_checks %}{% if quality_check['name'] in filter_form and filter_form[quality_check['name']].data %}{{ filter_form[quality_check['name']] }}{% endif %}{%- endfor %}
 <div class="form-group">
 	<button class="btn btn-warning btn-sm btn-custom" type="submit"><i class="glyphicon glyphicon-search"></i> {% trans %}Filter{% endtrans %}</button>
 </div>
