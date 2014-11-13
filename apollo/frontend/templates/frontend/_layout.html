@@ -60,15 +60,6 @@
             <li><a href="{{ current_menu.submenu('forms.incidents').dynamic_list[0].url }}"><i class="glyphicon glyphicon-check"></i> {{ current_menu.submenu('forms.incidents').dynamic_list[0].text }}</a></li>
             {%- endif -%}
             {%- if perms.view_analyses.can() -%}
-            {% if current_menu.submenu('qa.checklists').dynamic_list -%}
-            <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-eye-open"></i> {% trans %}Quality Assurance{% endtrans %} <b class="caret"></b></a>
-                <ul class="dropdown-menu">
-                    {% for form in current_menu.submenu('qa.checklists').dynamic_list -%}
-                    <li><a href="{{ form.url }}"><i class="glyphicon glyphicon-eye-open"></i> {{ form.text }}</a></li>
-                    {%- endfor %}
-                </ul>
-            </li>
-            {%- endif -%}
             {%- if current_menu.submenu('forms.incidents').dynamic_list or current_menu.submenu('forms.checklists').dynamic_list -%}
             <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-stats"></i> {% trans %}Analyses{% endtrans %} <b class="caret"></b></a>
               <ul class="dropdown-menu">
@@ -104,8 +95,8 @@
             {%- endif -%}
             <li class="divider-vertical"></li>
             <li>
-              <a class="dropdown-toggle" data-toggle="dropdown" href="#"><img src="{{ current_user.email|gravatar }}" class="img-rounded" style="margin-right: 0.25em; border-radius: 12px"> {{ current_user.email }}<b class="caret"></b></a>
-              <ul class="dropdown-menu">
+              <a class="dropdown-toggle" data-toggle="dropdown" href="#"><img src="{{ current_user.email|gravatar }}" class="img-rounded" style="margin-right: 0.25em; border-radius: 12px"><b class="caret"></b></a>
+              <ul class="dropdown-menu left-submenu">
               {%- if current_menu.submenu('events').visible -%}
                 <li><a href="{{ current_menu.submenu('events').url }}"><i class="glyphicon glyphicon-th-list"></i> {{ current_menu.submenu('events').text }}</a></li>
                 <li class="divider"></li>
