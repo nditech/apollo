@@ -34,7 +34,7 @@ class KannelForm(wtforms.Form):
         charset = self.charset.data
         text = self.text.data
         if charset and not isinstance(text, unicode):
-            text = text.decode(charset)
+            text = text.decode(charset).replace('\x00', '')
         return text
 
     def get_message(self):
@@ -61,7 +61,7 @@ class TelerivetForm(BaseHttpForm):
         if self.validate():
             return {
                 'sender': self.from_number.data,
-                'text': self.content.data
+                'text': self.content.data.replace('\x00', '')
             }
 
 
