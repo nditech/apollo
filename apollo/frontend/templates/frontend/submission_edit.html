@@ -122,12 +122,30 @@
 <tbody>
   <tr>
     <td colspan="2">&nbsp;</td>
-    <td style="text-align: center"><strong>OBS 1</strong></td>
+    <td style="text-align: center">
+    {%- if perms.edit_both_submissions.can() -%}
+    <label for="{{ submission.pk }}" style="margin-bottom: 0"><strong>OBS 1</strong><p style="margin-top: 0.25em"><input type="radio" id="{{ submission.pk }}" name="submission_selection" value="participant"></p></label>
+    {%- else -%}
+    <strong>OBS 1</strong>
+    {%- endif -%}
+    </td>
     {%- for sibling in siblings -%}
-    <td style="text-align: center"><strong>OBS {{ loop.index + 1 }}</strong></td>
+    <td style="text-align: center">
+    {%- if perms.edit_both_submissions.can() -%}
+    <label for="{{ sibling.pk }}" style="margin-bottom: 0"><strong>OBS {{ loop.index + 1 }}</strong><p style="margin-top: 0.25em"><input type="radio" id="{{ sibling.pk }}" name="submission_selection" value="" disabled></p></label>
+    {%- else -%}
+    <strong>OBS {{ loop.index + 1 }}</strong>
+    {%- endif -%}
+    </td>
     {%- endfor -%}
-    <td style="text-align: center"><strong>PS</strong></td>
-    <td colspan="2"><abbr title="{% trans %}Confidence Level{% endtrans %}"><i class="glyphicon glyphicon-thumbs-up"></i></abbr></td>
+    <td style="text-align: center">
+    {%- if perms.edit_both_submissions.can() -%}
+    <label for="{{ submission.master.pk }}" style="margin-bottom: 0"><strong>PS</strong><p style="margin-top: 0.25em"><input type="radio" id="{{ submission.master.pk }}" name="submission_selection" value="master" /></p></label>
+    {%- else -%}
+    <strong>PS</strong>
+    {%- endif -%}
+    </td>
+    <td colspan="2" style="vertical-align: middle; padding-left: 1.5em"><abbr title="{% trans %}Confidence Level{% endtrans %}"><i class="glyphicon glyphicon-thumbs-up"></i></abbr></td>
   </tr>
   {% for group in form.groups %}
   <tr>
@@ -309,6 +327,10 @@
         $('#verify_button').removeAttr('disabled');
       });
     }
+  });
+  
+  $('input[name="submission_selection"]').change(function () {
+    var prefix = $(this).attr('id');
   });
 </script>
 {% endblock %}

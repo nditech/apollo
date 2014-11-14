@@ -13,6 +13,8 @@ add_submission = Permission(ActionNeed('add_submission'), RoleNeed('admin'))
 edit_forms = Permission(ActionNeed('edit_forms'), RoleNeed('admin'))
 edit_locations = Permission(ActionNeed('edit_locations'), RoleNeed('admin'))
 edit_submission = Permission(ActionNeed('edit_submission'), RoleNeed('admin'))
+edit_both_submissions = Permission(
+    ActionNeed('edit_both_submissions'), RoleNeed('admin'))
 edit_participant = Permission(
     ActionNeed('edit_participant'), RoleNeed('admin'))
 
