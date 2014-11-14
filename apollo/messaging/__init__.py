@@ -15,8 +15,8 @@ class MessagesService(Service):
     def log_message(self, event, direction, text, recipient="", sender=""):
         return self.create(
             direction=direction, recipient=recipient, sender=sender,
-            text=text, deployment=event.deployment, event=event,
-            received=datetime.utcnow())
+            text=text.replace('\x00', ''), deployment=event.deployment,
+            event=event, received=datetime.utcnow())
 
     def all(self):
         """Returns a generator containing all instances of the service's model.
@@ -49,6 +49,6 @@ class MessagesService(Service):
 
             output = StringIO()
             writer = unicodecsv.writer(output, encoding='utf-8')
-            writer.writerow([unicode(i) for i in record])
+            writer.writerow([unicode(i).replace('\x00', '') for i in record])
             yield output.getvalue()
             output.close()
