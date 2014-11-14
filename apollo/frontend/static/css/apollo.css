@@ -7268,6 +7268,8 @@ right: auto;
     margin-left: 10px;
     right: .1%;
 }
+.dropdown-menu > li:first-child a{background-color: #fff;cursor: text;}
+
 #delete{
  margin-left:-23px;
  position:relative;
