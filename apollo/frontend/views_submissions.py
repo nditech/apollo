@@ -540,7 +540,7 @@ def quality_assurance_list(form_id):
                 str(QUALITY_STATUSES['OK'])
             ]
         except:
-            record['clear'] = 0
+            record['ok'] = 0
         try:
             record['flagged'] = quality_check_statistics[check['name']][
                 str(QUALITY_STATUSES['FLAGGED'])

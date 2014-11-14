@@ -9,18 +9,25 @@
       <thead>
         <tr>
           <th>{% trans %}Name{% endtrans %}</th>
-          <th>{% trans %}Type{% endtrans %}</th>
-          <th>{% trans %}Edit Properties{% endtrans %}</th>
-          <th>{% trans %}Edit Fields{% endtrans %}</th>
+          <th width="100px">{% trans %}Type{% endtrans %}</th>
+          <th width="132px" class="text-center">{% trans %}Form Actions{% endtrans %}</th>
         </tr>
       </thead>
       <tbody>
       {% for form in forms %}
         <tr>
-          <td>{{ form.name }}</td>
-          <td>{{ form.form_type }}</td>
-          <td><a href="{{ url_for('forms.edit_form', pk=form.pk) }}">{% trans %}Edit{% endtrans %}</a></td>
-          <td><a href="{{ url_for('forms.form_builder', pk=form.pk) }}">{% trans %}Form Designer{% endtrans %}</a></td>
+          <td style="vertical-align: middle">{{ form.name }}</td>
+          <td style="vertical-align: middle"><span class="label {% if form.form_type == 'CHECKLIST' %}label-primary{% else %}label-default{% endif %}">{{ form.form_type }}</span></td>
+          <td><ul class="nav nav-pills">
+            <li role="presentation" class="dropdown">
+              <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">{% trans %}Form Actions{% endtrans %} <span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="{{ url_for('forms.edit_form', pk=form.pk) }}">{% trans %}Properties{% endtrans %}</a></li>
+                <li><a href="{{ url_for('forms.form_builder', pk=form.pk) }}">{% trans %}Builder{% endtrans %}</a></li>
+                {% if form.form_type == 'CHECKLIST' %}<li><a href="{{ url_for('forms.quality_assurance', pk=form.pk) }}">{% trans %}Quality Assurance{% endtrans %}</a></li>{% endif %}
+              </ul>
+            </li>
+          </ul></td>
         </tr>
       {% endfor %}
       </tbody>

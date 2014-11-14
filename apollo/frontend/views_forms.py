@@ -5,6 +5,7 @@ from flask import (Blueprint, g, redirect, render_template, request, url_for)
 from flask.ext.babel import lazy_gettext as _
 from flask.ext.menu import register_menu
 from flask.ext.security import login_required
+import json
 
 from .. import services
 from ..formsframework.forms import FormForm
@@ -110,6 +111,44 @@ def list_forms():
     context = {
         'forms': forms,
         'page_title': page_title
+    }
+
+    return render_template(template_name, **context)
+
+
+@route(bp, '/forms/<pk>/qa', methods=['GET', 'POST'])
+@permissions.edit_forms.require(403)
+@login_required
+def quality_assurance(pk):
+    form = services.forms.get_or_404(pk=pk)
+    page_title = _(u'Quality Assurance — %(name)s', name=form.name)
+    template_name = 'frontend/quality_assurance.html'
+
+    if request.method == 'POST':
+        try:
+            postdata = json.loads(request.form.get('postdata'))
+            form.quality_checks = []
+            for (name, desc, lhs, comp, rhs) in postdata:
+                if name and desc and lhs and comp and rhs:
+                    form.quality_checks.append({
+                        'name': name, 'description': desc,
+                        'lvalue': lhs, 'comparator': comp,
+                        'rvalue': rhs
+                    })
+            form.save()
+            return redirect(url_for('.list_forms'))
+        except ValueError:
+            pass
+
+    check_data = [
+        (c['name'],
+         c['description'], c['lvalue'], c['comparator'], c['rvalue'])
+        for c in form.quality_checks
+    ]
+
+    context = {
+        'page_title': page_title,
+        'check_data': check_data
     }
 
     return render_template(template_name, **context)
