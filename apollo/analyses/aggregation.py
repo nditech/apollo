@@ -1,11 +1,25 @@
-def generate_numeric_field_stats(queryset, tag):
+def _numeric_field_stats(queryset, tag):
+    # for numeric fields, 0 is a legal value, so some
+    # jiggery is required
     token = '${}'.format(tag)
     pipeline = [
         {'$match': queryset._query},
         {'$project': {
-            'status': {'$cond': [token, 'reported', 'missing']},
+            'status': {'$ifNull': [token, 'missing']},
             'var': token,
             '_id': 0
+        }},
+        # need two $project steps because 0 is a valid value, and $ifNull
+        # will replace the token by its value, not the flag 'reported'
+        {'$project': {
+            'status': {
+                '$cond': [
+                    # if status is missing, keep that flag, else, replace
+                    # with the 'reported' flag
+                    {'$eq': ['$status', 'missing']}, 'missing', 'reported'
+                ]
+            },
+            'var': 1,
         }},
         {'$group': {
             '_id': '$status',
@@ -16,29 +30,13 @@ def generate_numeric_field_stats(queryset, tag):
 
     collection = queryset._collection
 
-    result = collection.aggregate(pipeline).get('result')
-    data = {
-        'type': 'numeric',
-        'missing': 0,
-        'reported': 0,
-        'mean': 0,
-        'percent_missing': 0,
-        'percent_reported': 0
-    }
-
-    for r in result:
-        if r['_id'] == 'missing':
-            data['missing'] = r['count']
-            data['percent_missing'] = float(r['count']) / queryset.count()
-        if r['_id'] == 'reported':
-            data['reported'] = r['count']
-            data['mean'] = r['mean']
-            data['percent_reported'] = float(r['count']) / queryset.count()
-
-    return data
+    return collection.aggregate(pipeline)
 
 
-def generate_single_choice_field_stats(queryset, tag):
+def _single_choice_field_stats(queryset, tag):
+    # for single-choice fields, 0 is not (currently) a valid
+    # selection, so we don't need to do two $project
+    # steps like for numeric stats
     token = '${}'.format(tag)
     pipeline = [
         {'$match': queryset._query},
@@ -55,25 +53,10 @@ def generate_single_choice_field_stats(queryset, tag):
 
     collection = queryset._collection
 
-    result = collection.aggregate(pipeline).get('result')
-    form = queryset[0].form
-    field = form.get_field_by_tag(tag)
-    data = {
-        'labels': field.options.keys(),  # need to change this so it's sorted
-        'missing': 0,
-        'reported': 0,
-        'total': queryset.count(),
-        'percent_missing': 0,
-        'percent_reported': 0,
-        'type': 'single-choice'
-    }
-
-    
-
-    return data
+    return collection.aggregate(pipeline)
 
 
-def generate_multi_choice_field_stats(queryset, tag):
+def _multi_choice_field_stats(queryset, tag):
     token = '${}'.format(tag)
     pipeline = [
         {'$match': queryset._query},
