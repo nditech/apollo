@@ -282,9 +282,15 @@ def submission_edit(submission_id):
 
             no_error = True
 
+            selection = request.form.get('submission_selection', None)
+            if not selection and readonly:
+                selection = 'ps'
+            elif not selection and not readonly:
+                selection = 'obs'
+
             # if the user is allowed to edit participant submissions,
             # everything has to be valid at one go. no partial update
-            if master_form and readonly:
+            if master_form and selection == 'ps':
                 if master_form.validate():
                     with signals.post_save.connected_to(
                         update_submission_version,
@@ -320,7 +326,7 @@ def submission_edit(submission_id):
                 else:
                     no_error = False
 
-            if not readonly:
+            if selection == 'obs':
                 if submission_form.validate():
                     with signals.post_save.connected_to(
                         update_submission_version,

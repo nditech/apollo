@@ -125,7 +125,7 @@
         <td colspan="2">&nbsp;</td>
         <td style="text-align: center">
         {%- if perms.edit_both_submissions.can() -%}
-        <label for="{{ submission.pk }}" style="margin-bottom: 0"><strong>OBS 1</strong><p style="margin-top: 0.25em"><input type="radio" id="{{ submission.pk }}" class="obs1" name="submission_selection" value="participant"></p></label>
+        <label for="{{ submission.pk }}" style="margin-bottom: 0"><strong>OBS 1</strong><p style="margin-top: 0.25em"><input type="radio" id="{{ submission.pk }}" class="obs1" name="submission_selection" value="obs"{% if not readonly %} checked{% endif %} /></p></label>
         {%- else -%}
         <strong>OBS 1</strong>
         {%- endif -%}
@@ -141,7 +141,7 @@
         {%- endfor -%}
         <td style="text-align: center">
         {%- if perms.edit_both_submissions.can() -%}
-        <label for="{{ submission.master.pk }}" style="margin-bottom: 0"><strong>PS</strong><p style="margin-top: 0.25em"><input type="radio" id="{{ submission.master.pk }}" class="ps" name="submission_selection" value="master" /></p></label>
+        <label for="{{ submission.master.pk }}" style="margin-bottom: 0"><strong>PS</strong><p style="margin-top: 0.25em"><input type="radio" id="{{ submission.master.pk }}" class="ps" name="submission_selection" value="ps"{% if readonly %} checked{% endif %} /></p></label>
         {%- else -%}
         <strong>PS</strong>
         {%- endif -%}
