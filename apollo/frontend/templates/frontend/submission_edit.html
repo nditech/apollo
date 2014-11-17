@@ -167,15 +167,15 @@
         {%- if readonly -%}
         <td class="obs-on">{{ render_submission_field(submission_form[field.name], disabled=1)}}</td>
         {%- else -%}
-        <td class="obs-on"{%- if submission_form[field.name].errors %} class="danger"{%- endif -%}>{{ render_submission_field(submission_form[field.name]) }}</td>
+        <td class="obs-on{%- if submission_form[field.name].errors %} danger{%- endif -%}">{{ render_submission_field(submission_form[field.name]) }}</td>
         {%- endif -%}
         {%- for sibling_form in sibling_forms -%}
         <td >{{ render_submission_field(sibling_form[field.name], disabled=1) }}</td>
         {%- endfor -%}
         {%- if readonly -%}
-        <td class="ps-on"{%- if master_form[field.name].errors %} class="danger"{%- endif -%}>{{ render_submission_field(master_form[field.name]) }}</td>
+        <td class="ps-on{%- if master_form[field.name].errors %} danger{% elif field.name in submission.master.overridden_fields %} warning{%- endif -%}"{% if field.name in submission.master.overridden_fields %} title="{% trans %}Overridden Field{% endtrans %}"{%- endif -%}>{{ render_submission_field(master_form[field.name]) }}</td>
         {%- else -%}
-        <td class="ps-on"{%- if master_form[field.name].errors %} class="danger"{%- endif -%}>{{ render_submission_field(master_form[field.name], disabled=1) }}</td>
+        <td class="ps-on{%- if master_form[field.name].errors %} danger{% elif field.name in submission.master.overridden_fields %} warning{%- endif -%}"{% if field.name in submission.master.overridden_fields %} title="{% trans %}Overridden Field{% endtrans %}"{%- endif -%}>{{ render_submission_field(master_form[field.name], disabled=1) }}</td>
         {%- endif -%}
         {% if submission.master %}{% set score = submission.master.confidence.get(field.name, None) %}{% else %}{% set score = None %}{% endif -%}
         {% if score == 0 %}{% set score_label = 'label-danger' -%}
