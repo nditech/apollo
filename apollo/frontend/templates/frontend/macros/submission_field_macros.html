@@ -25,9 +25,9 @@
 {{ render_checkbox_field(field, disabled) }}
 {% else %}
 {% if disabled %}
-{{ field(class_='form-control input-mini', disabled='disabled') }}
+{{ field(class_='form-control', disabled='disabled') }}
 {% else %}
-{{ field(class_='form-control input-mini') }}
+{{ field(class_='form-control') }}
 {% endif %}
 {% endif %}
 {%- endmacro -%}
