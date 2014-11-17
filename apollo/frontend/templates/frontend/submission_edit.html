@@ -167,15 +167,15 @@
         {%- if readonly -%}
         <td class="obs-on">{{ render_submission_field(submission_form[field.name], disabled=1)}}</td>
         {%- else -%}
-        <td {%- if submission_form[field.name].errors %} class="danger"{%- endif -%}>{{ render_submission_field(submission_form[field.name]) }}</td>
+        <td class="obs-on"{%- if submission_form[field.name].errors %} class="danger"{%- endif -%}>{{ render_submission_field(submission_form[field.name]) }}</td>
         {%- endif -%}
         {%- for sibling_form in sibling_forms -%}
         <td >{{ render_submission_field(sibling_form[field.name], disabled=1) }}</td>
         {%- endfor -%}
         {%- if readonly -%}
-        <td class="ps-on" {%- if master_form[field.name].errors %} class="danger"{%- endif -%}>{{ render_submission_field(master_form[field.name]) }}</td>
+        <td class="ps-on"{%- if master_form[field.name].errors %} class="danger"{%- endif -%}>{{ render_submission_field(master_form[field.name]) }}</td>
         {%- else -%}
-        <td {%- if master_form[field.name].errors %} class="danger"{%- endif -%}>{{ render_submission_field(master_form[field.name], disabled=1) }}</td>
+        <td class="ps-on"{%- if master_form[field.name].errors %} class="danger"{%- endif -%}>{{ render_submission_field(master_form[field.name], disabled=1) }}</td>
         {%- endif -%}
         {% if submission.master %}{% set score = submission.master.confidence.get(field.name, None) %}{% else %}{% set score = None %}{% endif -%}
         {% if score == 0 %}{% set score_label = 'label-danger' -%}
@@ -187,6 +187,25 @@
       </tr>
       {% endfor %}
       {% endfor %}
+      {% if perms.edit_submission_quarantine_status.can() %}
+      <tr>
+        <td colspan="2" style="vertical-align: middle"><h4>{% trans %}Quarantine Status{% endtrans %}</h4></td>
+        {%- if readonly -%}
+        <td class="obs-on"{{ render_submission_field(submission_form['quarantine_status'], disabled=1)}}</td>
+        {%- else -%}
+        <td class="obs-on"{%- if submission_form['quarantine_status'].errors %} class="danger"{%- endif -%}>{{ render_submission_field(submission_form['quarantine_status']) }}</td>
+        {%- endif -%}
+        {%- for sibling_form in sibling_forms -%}
+        <td >{{ render_submission_field(sibling_form['quarantine_status'], disabled=1) }}</td>
+        {%- endfor -%}
+        {%- if readonly -%}
+        <td class="ps-on"{%- if master_form['quarantine_status'].errors %} class="danger"{%- endif -%}>{{ render_submission_field(master_form['quarantine_status']) }}</td>
+        {%- else -%}
+        <td class="ps-on"{%- if master_form['quarantine_status'].errors %} class="danger"{%- endif -%}>{{ render_submission_field(master_form['quarantine_status'], disabled=1) }}</td>
+        {%- endif -%}
+        <td colspan="2">&nbsp;</td>
+      </tr>
+      {% endif %}
     </tbody>
   </table>
 </div>
@@ -331,21 +350,22 @@
     }
   });
   
-  $('input[name="submission_selection"]').change(function () {
-    var prefix = $(this).attr('id');
-  });
   $('.obs1').click(function(){
     var isDisabled = $('table tbody tr td.obs-on input').is(':disabled');
     if (isDisabled) {
         $('table tbody tr td.obs-on input').prop('disabled', false);
+        $('table tbody tr td.obs-on select').prop('disabled', false);
         $('table tbody tr td.ps-on input').prop('disabled', true);
+        $('table tbody tr td.ps-on select').prop('disabled', true);
     }
   })
   $('.ps').click(function(){
     var isDisabled = $('table tbody tr td.ps-on input').is(':disabled');
     if (isDisabled) {
         $('table tbody tr td.ps-on input').prop('disabled', false);
+        $('table tbody tr td.ps-on select').prop('disabled', false);
         $('table tbody tr td.obs-on input').prop('disabled', true);
+        $('table tbody tr td.obs-on select').prop('disabled', true);
     }
   })
 </script>

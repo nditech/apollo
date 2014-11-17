@@ -20,6 +20,9 @@
 {{ filter_form[field](class_='form-control span2 input-sm') }}
 </div>
 {%- endfor -%}
+<div class="form-group">
+{{ filter_form['quarantine_status'](class_='form-control span2 input-sm') }}
+</div>
 {%- else -%}
 <div class="form-group">
 {{ filter_form.status(class_='select2-container span3 select2', style='height:26px', placeholder=_('All Statuses')) }}

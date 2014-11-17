@@ -102,6 +102,8 @@ def create_app(settings_override=None, register_security_blueprint=True):
         services.perms.get_or_create(action='edit_participant')
         services.perms.get_or_create(action='edit_submission')
         services.perms.get_or_create(action='edit_both_submissions')
+        services.perms.get_or_create(
+            action='edit_submission_quarantine_status')
 
         services.perms.get_or_create(action='import_participants')
         services.perms.get_or_create(action='import_locations')

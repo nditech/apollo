@@ -135,6 +135,18 @@ class SubmissionQualityCheckFilter(CharFilter):
         return queryset
 
 
+class SubmissionQuarantineStatusFilter(ChoiceFilter):
+    def filter(self, queryset, value):
+        if value is not None:
+            if not value:
+                query_kwargs = {
+                    'quarantine_status__exists': False}
+            else:
+                query_kwargs = {'quarantine_status': value}
+            return queryset(**query_kwargs)
+        return queryset
+
+
 class SubmissionVerificationFilter(ChoiceFilter):
     def filter(self, queryset, value):
         if value is not None or value != '':
@@ -467,6 +479,15 @@ def generate_submission_filter(form):
         choices = [('', description)] + list(FLAG_CHOICES)
         attributes[name] = SubmissionQualityCheckFilter(
             widget=widgets.HiddenInput())
+
+    # quarantine status
+    attributes['quarantine_status'] = SubmissionQuarantineStatusFilter(
+        choices=(
+            ('', _(u'Quarantine Status')),
+            ('A', _(u'Quarantine All')),
+            ('R', _(u'Quarantine Results')),
+            ('P', _(u'Quarantine Process'))
+        ))
 
     # participant id and location
     attributes['participant_id'] = ParticipantIDFilter()

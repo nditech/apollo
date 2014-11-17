@@ -316,8 +316,9 @@ def submission_edit(submission_id):
                                         submission.master, form_field,
                                         master_form.data.get(form_field))
 
-                                submission.master.overridden_fields.append(
-                                    form_field)
+                                if form_field != "quarantine_status":
+                                    submission.master.overridden_fields.append(
+                                        form_field)
                                 changed = True
                         if changed:
                             submission.master.overridden_fields = list(set(
@@ -328,12 +329,24 @@ def submission_edit(submission_id):
 
             if selection == 'obs':
                 if submission_form.validate():
+                    changed = False
+
+                    # update the quarantine status if it was set
+                    if (
+                        'quarantine_status' in submission_form.data.keys() and
+                        submission_form.data.get('quarantine_status') !=
+                        submission.quarantine_status
+                    ):
+                        submission.quarantine_status = \
+                            submission_form.data.get('quarantine_status')
+                        submission.save(clean=False)
+                        changed = True
+
                     with signals.post_save.connected_to(
                         update_submission_version,
                         sender=services.submissions.__model__
                     ):
                         form_fields = submission_form.data.keys()
-                        changed = False
                         for form_field in form_fields:
                             if (
                                 getattr(submission, form_field, None) !=

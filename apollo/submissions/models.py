@@ -179,6 +179,12 @@ class Submission(db.DynamicDocument):
         ('O', _(u'Observer Submission')),
         ('M', _(u'Master Submission')),
     )
+    QUARANTINE_STATUSES = (
+        ('', _(u'None')),
+        ('A', _(u'All')),
+        ('R', _(u'Results')),
+        ('P', _(u'Process'))
+    )
 
     form = db.ReferenceField(Form)
     contributor = db.ReferenceField(Participant)
@@ -194,6 +200,8 @@ class Submission(db.DynamicDocument):
     overridden_fields = db.ListField(db.StringField())
     submission_type = db.StringField(
         choices=SUBMISSION_TYPES, default='O', required=True)
+    quarantine_status = db.StringField(
+        choices=QUARANTINE_STATUSES, required=False)
 
     deployment = db.ReferenceField(Deployment)
     event = db.ReferenceField(Event)
@@ -248,6 +256,11 @@ class Submission(db.DynamicDocument):
                     [f.name for f in group.fields])
 
                 observer_submissions = list(self.siblings)
+                not_quarantined = filter(lambda s: not s.quarantine_status,
+                                         observer_submissions)
+
+                if not not_quarantined:
+                    self.quarantine_status = 'A'  # quarantine all records
 
                 for submission in observer_submissions:
                     # check for conflicting values in the submissions
@@ -258,7 +271,7 @@ class Submission(db.DynamicDocument):
                                 if isinstance(x, list) else x,
                                 filter(lambda value: value is not None,
                                        [getattr(s, field, None)
-                                        for s in observer_submissions])))
+                                        for s in not_quarantined])))
                         if len(field_values) > 1:  # there are different values
                             submission.completion[group.name] = 'Conflict'
                             break
@@ -298,7 +311,8 @@ class Submission(db.DynamicDocument):
                         lambda value: frozenset(value)
                         if isinstance(value, list) else value,
                         [getattr(submission, name, None)
-                            for submission in self.siblings]
+                            for submission in self.siblings.filter(
+                                quarantine_status__exists=False)]
                     )
                     unique = list(set(values))
                     # if all values were reported and are the same then
@@ -377,7 +391,6 @@ class Submission(db.DynamicDocument):
                 setattr(self, field.name, sorted(value))
 
     def _update_master(self):
-        '''TODO: update master based on agreed algorithm'''
         master = self.master
         if master and master != self:
             # fetch only fields that have not been overridden
@@ -385,9 +398,17 @@ class Submission(db.DynamicDocument):
                 field for group in self.form.groups
                 for field in group.fields])
 
+            next_sibling = self.siblings.filter(
+                quarantine_status__exists=False).first()
+
             for field in fields:
                 submission_field_value = getattr(self, field.name, None)
                 master_field_value = getattr(master, field.name, None)
+                next_sibling_field_value = getattr(
+                    next_sibling, field.name, None)
+
+                if self.quarantine_status:
+                    submission_field_value = next_sibling_field_value
 
                 # determines whether all field values are the same or conflict
                 values_match = map(
@@ -399,13 +420,14 @@ class Submission(db.DynamicDocument):
                         [
                             getattr(
                                 sibling,
-                                field.name, None) for sibling in self.siblings
+                                field.name, None)
+                            for sibling in self.siblings.filter(
+                                quarantine_status__exists=False)
                         ]
                     )
                 )
                 if (
-                    submission_field_value != master_field_value and
-                    submission_field_value is not None
+                    submission_field_value != master_field_value
                 ):
                     # if all values match, then set the value to the master
                     if all(values_match):

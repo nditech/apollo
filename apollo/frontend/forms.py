@@ -11,7 +11,7 @@ from wtforms import (BooleanField, IntegerField, SelectField,
                      SelectMultipleField, StringField, TextField,
                      ValidationError, validators, widgets)
 
-from ..models import Location, LocationType, Participant
+from ..models import Location, LocationType, Participant, Submission
 from ..services import (events, location_types, locations,
                         participant_partners, participant_roles, participants)
 from ..wtforms_ext import ExtendedSelectField
@@ -306,6 +306,12 @@ def generate_submission_edit_form_class(form):
                         filters=[lambda data: 1 if data else None],
                         validators=[validators.optional()]
                     )
+
+    form_fields['quarantine_status'] = SelectField(
+        choices=Submission.QUARANTINE_STATUSES,
+        filters=[lambda data: data if data else None],
+        validators=[validators.optional()]
+        )
 
     if form.form_type == 'INCIDENT':
         form_fields['status'] = SelectField(
