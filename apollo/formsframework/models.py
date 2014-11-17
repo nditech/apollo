@@ -351,4 +351,10 @@ class FormBuilderSerializer(object):
             group.fields.append(field)
 
         form.groups = groups
+
+        # frag the field cache so it's regenerated
+        try:
+            delattr(form, '_field_cache')
+        except AttributeError:
+            pass
         form.save()
