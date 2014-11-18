@@ -307,11 +307,12 @@ def generate_submission_edit_form_class(form):
                         validators=[validators.optional()]
                     )
 
-    form_fields['quarantine_status'] = SelectField(
-        choices=Submission.QUARANTINE_STATUSES,
-        filters=[lambda data: data if data else None],
-        validators=[validators.optional()]
-        )
+    if form.form_type == 'CHECKLIST':
+        form_fields['quarantine_status'] = SelectField(
+            choices=Submission.QUARANTINE_STATUSES,
+            filters=[lambda data: data if data else ''],
+            validators=[validators.optional()]
+            )
 
     if form.form_type == 'INCIDENT':
         form_fields['status'] = SelectField(
