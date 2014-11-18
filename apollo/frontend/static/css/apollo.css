@@ -7269,7 +7269,7 @@ right: auto;
     right: .1%;
 }
 .dropdown-menu > li:first-child a{background-color: #fff;cursor: text;}
-
+.table-responsive{overflow: auto;}
 #delete{
  margin-left:-23px;
  position:relative;
