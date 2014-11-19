@@ -137,8 +137,8 @@ class SubmissionQualityCheckFilter(CharFilter):
 
 class SubmissionQuarantineStatusFilter(ChoiceFilter):
     def filter(self, queryset, value):
-        if value is not None:
-            if not value:
+        if value:
+            if value == 'N':
                 query_kwargs = {
                     'quarantine_status__exists': False}
             else:
@@ -484,6 +484,7 @@ def generate_submission_filter(form):
     attributes['quarantine_status'] = SubmissionQuarantineStatusFilter(
         choices=(
             ('', _(u'Quarantine Status')),
+            ('N', _(u'Quarantine None')),
             ('A', _(u'Quarantine All')),
             ('R', _(u'Quarantine Results')),
             ('P', _(u'Quarantine Process'))
