@@ -258,7 +258,7 @@ def vote_count(dataframe, votes, vote, location_type, location, group='ALL'):
 
 
 def rejected_count(dataframe, form, location_type, location, group='ALL'):
-    votes = form.party_mappings.values()
+    votes = form.party_mappings.keys()
 
     try:
         if group == 'RURAL':
@@ -318,7 +318,7 @@ def vote_proportion(
 
 
 def rejected_proportion(dataframe, form, location_type, location, group='ALL'):
-    votes = form.party_mappings.values()
+    votes = form.party_mappings.keys()
 
     try:
         if group == 'RURAL':
@@ -382,7 +382,7 @@ def vote_margin_of_error(
 def rejected_margin_of_error(
     dataframe, form, location_type, location, group='ALL', cv=196.0
 ):
-    votes = form.party_mappings.values()
+    votes = form.party_mappings.keys()
 
     try:
         if group == 'RURAL':
