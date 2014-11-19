@@ -102,7 +102,7 @@ class Form(db.Document):
     identifying which form is to be used in parsing incoming submissions.
 
     :attr:`name` is the name for this form.
-    :attr:`party_mappings` uses party identifiers as keys, field names as
+    :attr:`party_mappings` uses field names as keys, party identifiers as
     values.
     :attr:`calculate_moe` is true if Margin of Error calculations are
     going to be computed on results for this form.'''
@@ -123,7 +123,8 @@ class Form(db.Document):
     party_mappings = db.DictField()
     calculate_moe = db.BooleanField(default=False)
     accredited_voters_tag = db.StringField()
-    verifiable = db.BooleanField(default=False, verbose_name="Quality Assurance")
+    verifiable = db.BooleanField(default=False,
+                                 verbose_name="Quality Assurance")
     invalid_votes_tag = db.StringField()
     registered_voters_tag = db.StringField()
 

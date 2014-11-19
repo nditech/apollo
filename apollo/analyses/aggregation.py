@@ -147,6 +147,10 @@ def generate_process_data(form, queryset, location_root, grouped=True,
                     continue
 
                 field = form.get_field_by_tag(tag)
+                if field.analysis_type != 'PROCESS':
+                    # skip fields which won't feature in process analysis
+                    continue
+
                 field_stats = generate_field_stats(subset, field)
 
                 location_type_summary.append(
