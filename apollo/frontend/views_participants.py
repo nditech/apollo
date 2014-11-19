@@ -38,7 +38,10 @@ participant_api.add_resource(
 
 
 @route(bp, '/participants', methods=['GET', 'POST'])
-@register_menu(bp, 'participants', _('Participants'))
+@register_menu(
+    bp, 'participants', _('Participants'),
+    visible_when=lambda: permissions.view_participants.can())
+@permissions.view_participants.require(403)
 @login_required
 def participant_list(page=1):
     page_title = _('Participants')
@@ -52,7 +55,7 @@ def participant_list(page=1):
 
     try:
         extra_fields = filter(
-            lambda f: getattr(f, 'listview_visibility', False)==True,
+            lambda f: getattr(f, 'listview_visibility', False) is True,
             g.deployment.participant_extra_fields)
     except AttributeError:
         extra_fields = []
@@ -125,6 +128,7 @@ def participant_list(page=1):
 
 
 @route(bp, '/participants/performance', methods=['GET', 'POST'])
+@permissions.view_participants.require(403)
 @login_required
 def participant_performance_list(page=1):
     page_title = _('Participants Performance')
@@ -205,6 +209,7 @@ def participant_performance_list(page=1):
 
 
 @route(bp, '/participant/performance/<pk>')
+@permissions.view_participants.require(403)
 @login_required
 def participant_performance_detail(pk):
     participant = services.participants.get_or_404(id=pk)

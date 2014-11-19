@@ -3,6 +3,8 @@ from flask.ext.principal import Permission, ActionNeed, RoleNeed, ItemNeed
 
 # View
 view_events = Permission(ActionNeed('view_events'), RoleNeed('admin'))
+view_participants = Permission(
+    ActionNeed('view_participants'), RoleNeed('admin'))
 view_messages = Permission(ActionNeed('view_messages'), RoleNeed('admin'))
 view_analyses = Permission(ActionNeed('view_analyses'), RoleNeed('admin'))
 
