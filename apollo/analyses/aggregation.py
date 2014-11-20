@@ -1,4 +1,5 @@
 from operator import itemgetter
+from mongoengine import Q
 
 def _is_numeric(val):
     try:
@@ -103,6 +104,9 @@ def _single_choice_field_stats(queryset, tag):
     field = form.get_field_by_tag(tag) if form else None
     options = sorted(field.options.iteritems(),
                      key=itemgetter(1)) if field else []
+
+    result_sort_key = lambda x: x['_id'].get('option')
+
     data = {
         'histogram': [],
         'labels': [i[0] for i in options],
@@ -121,18 +125,15 @@ def _single_choice_field_stats(queryset, tag):
         data['reported'] = reported
         data['percent_reported'] = _percent_of(reported, total)
 
-        for result in output['result']:
+        for result in sorted(output['result'], key=result_sort_key):
             if 'option' in result['_id']:
                 data['histogram'].append(
-                    (result['_id']['option'],
-                        _percent_of(result['count'], reported))
+                    (result['count'], _percent_of(result['count'], reported))
                 )
             else:
                 missing = result['count']
                 data['missing'] = missing
                 data['percent_missing'] = _percent_of(missing, total)
-
-        data['histogram'] = sorted(data['histogram'])
 
     return data
 
@@ -153,7 +154,42 @@ def _multi_choice_field_stats(queryset, tag):
 
     collection = queryset._collection
 
-    return collection.aggregate(pipeline)
+    output = collection.aggregate(pipeline)
+    total = queryset.count()
+
+    result_sort_key = lambda x: x['_id']
+
+    # get records where the field in question is neither
+    # null or an empty array
+    chain = Q(**{'{}__ne'.format(tag): None}) & Q(**{'{}__ne'.format(tag): []})
+    subset = queryset(chain)
+
+    reported = subset.count()
+    missing = total - reported
+
+    form = queryset[0].form if total else None
+    field = form.get_field_by_tag(tag) if form else None
+    options = sorted(field.options.iteritems(),
+                     key=itemgetter(1)) if field else []
+
+    data = {
+        'histogram': [],
+        'labels': [i[0] for i in options],
+        'missing': missing,
+        'percent_missing': _percent_of(missing, total),
+        'reported': reported,
+        'percent_reported': _percent_of(reported, total),
+        'total': total,
+        'type': 'multiple-choice'
+    }
+
+    if output['ok'] == 1.0:
+        for result in sorted(output['result'], key=result_sort_key):
+            data['histogram'].append(
+                (result['count'], _percent_of(result['count'], reported))
+            )
+
+    return data
 
 
 def generate_field_stats(queryset, field):
