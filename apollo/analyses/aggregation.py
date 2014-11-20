@@ -1,3 +1,5 @@
+from operator import itemgetter
+
 def _is_numeric(val):
     try:
         float(val)
@@ -61,13 +63,13 @@ def _numeric_field_stats(queryset, tag):
         for result in output['result']:
             if result['_id'] == 'missing':
                 missing = result['count']
-                pct_missing = float(missing) / total * 100
+                pct_missing = _percent_of(missing, total)
 
                 data['missing'] = missing
                 data['percent_missing'] = pct_missing
             else:
                 reported = result['count']
-                pct_reported = float(reported) / total * 100
+                pct_reported = _percent_of(missing, total)
 
                 data['reported'] = reported
                 data['percent_reported'] = pct_reported
@@ -95,7 +97,44 @@ def _single_choice_field_stats(queryset, tag):
 
     collection = queryset._collection
 
-    return collection.aggregate(pipeline)
+    output = collection.aggregate(pipeline)
+    total = queryset.count()
+    form = queryset[0].form if total else None
+    field = form.get_field_by_tag(tag) if form else None
+    options = sorted(field.options.iteritems(),
+                     key=itemgetter(1)) if field else []
+    data = {
+        'histogram': [],
+        'labels': [i[0] for i in options],
+        'missing': None,
+        'reported': None,
+        'percent_missing': 0,
+        'percent_reported': 0,
+        'total': total,
+        'type': 'single-choice'
+    }
+
+    if output['ok'] == 1.0:
+        # need the reported count on the next loop
+        reported = sum(
+            i['count'] for i in output['result'] if 'option' in i['_id'])
+        data['reported'] = reported
+        data['percent_reported'] = _percent_of(reported, total)
+
+        for result in output['result']:
+            if 'option' in result['_id']:
+                data['histogram'].append(
+                    (result['_id']['option'],
+                        _percent_of(result['count'], reported))
+                )
+            else:
+                missing = result['count']
+                data['missing'] = missing
+                data['percent_missing'] = _percent_of(missing, total)
+
+        data['histogram'] = sorted(data['histogram'])
+
+    return data
 
 
 def _multi_choice_field_stats(queryset, tag):
