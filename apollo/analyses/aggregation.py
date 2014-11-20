@@ -45,7 +45,34 @@ def _numeric_field_stats(queryset, tag):
 
     collection = queryset._collection
 
-    return collection.aggregate(pipeline)
+    output = collection.aggregate(pipeline)
+    total = queryset.count()
+    data = {
+        'mean': 0,
+        'missing': None,
+        'percent_missing': 0,
+        'percent_reported': 0,
+        'reported': None,
+        'type': 'numeric',
+        'total': total
+    }
+
+    if output['ok'] == 1.0:
+        for result in output['result']:
+            if result['_id'] == 'missing':
+                missing = result['count']
+                pct_missing = float(missing) / total * 100
+
+                data['missing'] = missing
+                data['percent_missing'] = pct_missing
+            else:
+                reported = result['count']
+                pct_reported = float(reported) / total * 100
+
+                data['reported'] = reported
+                data['percent_reported'] = pct_reported
+
+    return data
 
 
 def _single_choice_field_stats(queryset, tag):
