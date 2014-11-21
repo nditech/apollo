@@ -4,6 +4,7 @@ from .. import models
 
 
 class CreateDeploymentCommand(Command):
+
     """Create a deployment"""
 
     def run(self):
@@ -17,8 +18,51 @@ class CreateDeploymentCommand(Command):
 
         deployment.update(add_to_set__hostnames=hostname.strip())
 
+        # create permissions
+        models.Need.objects.create(action='view_events', deployment=deployment)
+        models.Need.objects.create(
+            action='view_participants', deployment=deployment)
+        models.Need.objects.create(
+            action='view_messages', deployment=deployment)
+        models.Need.objects.create(
+            action='view_analyses', deployment=deployment)
+        models.Need.objects.create(action='view_forms', deployment=deployment)
+
+        models.Need.objects.create(
+            action='add_submission', deployment=deployment)
+
+        models.Need.objects.create(action='edit_forms', deployment=deployment)
+        models.Need.objects.create(
+            action='edit_locations', deployment=deployment)
+        models.Need.objects.create(
+            action='edit_participant', deployment=deployment)
+        models.Need.objects.create(
+            action='edit_submission', deployment=deployment)
+        models.Need.objects.create(
+            action='edit_both_submission', deployment=deployment)
+        models.Need.objects.create(
+            action='edit_submission_quarantine_status', deployment=deployment)
+
+        models.Need.objects.create(
+            action='import_participants', deployment=deployment)
+        models.Need.objects.create(
+            action='import_locations', deployment=deployment)
+
+        models.Need.objects.create(
+            action='export_participants', deployment=deployment)
+        models.Need.objects.create(
+            action='export_messages', deployment=deployment)
+        models.Need.objects.create(
+            action='export_submissions', deployment=deployment)
+        models.Need.objects.create(
+            action='export_locations', deployment=deployment)
+
+        models.Need.objects.create(
+            action='send_messages', deployment=deployment)
+
 
 class ListDeploymentsCommand(Command):
+
     """List deployments"""
 
     def run(self):
@@ -28,6 +72,7 @@ class ListDeploymentsCommand(Command):
 
 
 class CreateEventCommand(Command):
+
     """Create an event"""
 
     def run(self):
@@ -63,6 +108,7 @@ class CreateEventCommand(Command):
 
 
 class ListEventsCommand(Command):
+
     """List events in a deployment"""
 
     def run(self):

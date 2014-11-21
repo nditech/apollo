@@ -1,7 +1,9 @@
 from operator import itemgetter
 from mongoengine import Q
 
+
 def _is_numeric(val):
+    '''Safety check for trying to check if a value is numeric.'''
     try:
         float(val)
     except TypeError:
@@ -11,7 +13,7 @@ def _is_numeric(val):
 
 
 def _percent_of(a, b):
-    if not _is_numeric(a) or b == 0:
+    if not _is_numeric(a) or not _is_numeric(b) or b == 0:
         return 0
     return float(100 * float(a) / b)
 
