@@ -47,7 +47,7 @@ class SubmissionQuerySet(BaseQuerySet):
     # most of the fields below are DBRef fields or not useful to
     # our particular use case.
     DEFAULT_EXCLUDED_FIELDS = [
-        'id', 'created', 'updated', 'location', 'deployment'
+        'id', 'created', 'location', 'deployment'
     ]
     SUBDOCUMENT_FIELDS = ['location_name_path', 'completion']
 

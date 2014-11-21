@@ -137,12 +137,25 @@ def _voting_results(form_pk, location_pk=None):
     page_title = _('%(form_name)s Voting Results', form_name=form.name)
     filter_class = filters.generate_submission_analysis_filter(form)
 
+    # define the condition for which a submission should be included
+    result_fields = filter(
+        lambda field: field.analysis_type == 'RESULT',
+        [field for group in form.groups
+         for field in group.fields])
+    result_field_labels = [field.name for field in result_fields]
+
+    valid_conditions = dict(
+        ('{}__exists'.format(field), True) for field in result_field_labels)
+
     queryset = submissions.find(
         form=form,
         submission_type='M',
         verification_status__ne=FLAG_STATUSES['rejected'][0],
+        quarantine_status__nin=['A', 'R'],
+        **valid_conditions
         )
     filter_set = filter_class(queryset, request.args)
+    dataset = filter_set.qs.to_dataframe()
 
     loc_types = [lt for lt in location_types.root().children
                  if lt.is_political is True]
@@ -152,12 +165,31 @@ def _voting_results(form_pk, location_pk=None):
         ).order_by('name') for lt in loc_types
     }
 
+    # restrict the convergence dataframe to result fields and compute the
+    # cummulative sum
+    convergence_df = dataset.sort('updated')[['updated'] + result_field_labels]
+    for field in result_field_labels:
+        convergence_df[field] = convergence_df[field].cumsum()
+
+    # compute vote proportions A / (A + B + C + ...)
+    convergence_df[result_field_labels] = \
+        convergence_df[result_field_labels].div(
+            convergence_df[result_field_labels].sum(axis=1), axis=0)
+
+    chart_data = {}
+    for component in result_field_labels:
+        chart_data[component] = map(
+            lambda (ts, f): (int(ts.strftime('%s')) * 1000, f * 100),
+            convergence_df.as_matrix(['updated', component]))
+
     context = {
         'page_title': page_title,
         'filter_form': filter_set.form,
         'location': location,
-        'dataframe': filter_set.qs.to_dataframe(),
+        'dataframe': dataset,
         'form': form,
+        'chart_data': chart_data,
+        'chart_series': result_field_labels,
         'location_types': loc_types,
         'location_tree': location_tree,
         'breadcrumb_data': analysis_breadcrumb_data(

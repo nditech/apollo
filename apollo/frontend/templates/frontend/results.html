@@ -11,6 +11,11 @@
 	</div>
 </div>
 <div class="row">
+  <div class="col-md-12">
+    <div id="container" style="height: 300px; min-width: 600px" data-chart='{{ chart_data|tojson }}'></div>
+  </div>
+</div>
+<div class="row">
 	<div class="col-md-12">
 		<ul class="nav nav-tabs">
 			{%- for lt in location_types -%}
@@ -131,3 +136,81 @@
 	</div>
 </div>
 {%- endblock -%}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/moment-with-langs.min.js') }}"></script>
+<script type="text/javascript">
+  moment.lang('{{ g.locale }}');
+  $(function () {
+    // load the data
+    var data = $('#container').data('chart');
+
+    Highcharts.setOptions({
+      global: {
+        useUTC: false
+      }
+    });
+
+    // Create the chart
+    $('#container').highcharts('StockChart', {
+        rangeSelector : {
+            enabled : false
+        },
+        title: {
+            text: "{% trans %}Convergence Chart{% endtrans %}"
+        },
+        navigator: {
+            height: 30,
+            margin: 10
+        },
+        credits: {
+            enabled: false
+        },
+        exporting: {
+            enabled: false
+        },
+        scrollbar : {
+            enabled : false
+        },
+        legend: {
+            enabled: true
+        },
+        series : [
+{% for series in chart_series %}
+        {
+            name : '{{ series }}',
+            data : data.{{ series }},
+            type: 'line',
+            dataLabels: {
+                format: '{y}%%'
+            },
+            tooltip: {
+                valueDecimals: 1
+            }
+        },
+{% endfor %}
+        ],
+
+        yAxis: {
+            min: 0,
+            labels: {
+                formatter: function() {
+                    return this.value + '%';
+                }
+            },
+            gridLineColor: "#DDD"
+        },
+        tooltip: {
+            valueSuffix: '%',
+            headerFormat: '<small>{point.key}</small><table>',
+            pointFormat: '<tr><td style="color: {series.color}">{series.name}:</td>' +
+                '<td style="text-align: right"><b>{point.y}</b></td></tr>',
+            shadow: false,
+            footerFormat: '</table>',
+            useHTML: true,
+        }
+    });
+  });
+</script>
+<script src="{{ url_for('static', filename='js/timestamps.js') }}"></script>
+<script src="{{ url_for('static', filename='js/highstock.js') }}"></script>
+{% endblock %}
