@@ -10,7 +10,7 @@
 {%- if form.form_type == 'CHECKLIST' %}
 {{ filter_form.location(class_='select2-container span4 select2 select2-locations', **{'data-name': location.name, 'data-location_type': location.location_type}) }}
 {% else -%}
-{{ filter_form.location(class_='select2-container span3 select2 select2-locations', **{'data-name': location.name, 'data-location_type': location.location_type}) }}
+{{ filter_form.location(class_='select2-container span4 select2 select2-locations', **{'data-name': location.name, 'data-location_type': location.location_type}) }}
 {%- endif %}
 </div>
 {%- if form.form_type == 'CHECKLIST' -%}
@@ -25,7 +25,7 @@
 </div>
 {%- else -%}
 <div class="form-group">
-{{ filter_form.status(class_='select2-container span3 select2', style='height:26px', placeholder=_('All Statuses')) }}
+{{ filter_form.status(class_='select2-container span2 select2', style='height:26px', placeholder=_('All Statuses')) }}
 </div>
 {%- endif %}
 {% for quality_check in form.quality_checks %}{% if quality_check['name'] in filter_form and filter_form[quality_check['name']].data %}{{ filter_form[quality_check['name']] }}{% endif %}{%- endfor %}
