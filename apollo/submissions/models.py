@@ -8,7 +8,7 @@ from ..locations.models import Location
 from ..participants.models import Participant
 from ..users.models import User
 from datetime import datetime
-from flask.ext.babel import lazy_gettext as _
+from flask.ext.babel import gettext as _
 from flask.ext.mongoengine import BaseQuerySet
 from mongoengine import Q
 from pandas import DataFrame, isnull, Series
@@ -312,7 +312,11 @@ class Submission(db.DynamicDocument):
                         if isinstance(value, list) else value,
                         [getattr(submission, name, None)
                             for submission in self.siblings.filter(
-                                quarantine_status__exists=False)]
+                                quarantine_status__nin=map(
+                                    lambda i: i[0],
+                                    filter(
+                                        lambda s: s[0],
+                                        self.QUARANTINE_STATUSES)))]
                     )
                     unique = list(set(values))
                     # if all values were reported and are the same then
@@ -399,7 +403,11 @@ class Submission(db.DynamicDocument):
                 for field in group.fields])
 
             next_sibling = self.siblings.filter(
-                quarantine_status__exists=False).first()
+                quarantine_status__nin=map(
+                    lambda i: i[0],
+                    filter(
+                        lambda s: s[0],
+                        self.QUARANTINE_STATUSES))).first()
 
             for field in fields:
                 submission_field_value = getattr(self, field.name, None)
@@ -422,7 +430,11 @@ class Submission(db.DynamicDocument):
                                 sibling,
                                 field.name, None)
                             for sibling in self.siblings.filter(
-                                quarantine_status__exists=False)
+                                quarantine_status__nin=map(
+                                    lambda i: i[0],
+                                    filter(
+                                        lambda s: s[0],
+                                        self.QUARANTINE_STATUSES)))
                         ]
                     )
                 )

@@ -13,6 +13,7 @@ from wtforms import (BooleanField, IntegerField, SelectField,
 from ..models import Location, LocationType, Participant, Submission
 from ..services import (events, location_types, locations,
                         participant_partners, participant_roles, participants)
+from . import permissions
 
 
 class CustomModelSelectField(ModelSelectField):
@@ -305,10 +306,13 @@ def generate_submission_edit_form_class(form):
                         validators=[validators.optional()]
                     )
 
-    if form.form_type == 'CHECKLIST':
+    if (
+        form.form_type == 'CHECKLIST' and
+        permissions.edit_submission_quarantine_status.can()
+    ):
         form_fields['quarantine_status'] = SelectField(
             choices=Submission.QUARANTINE_STATUSES,
-            filters=[lambda data: data if data else None],
+            filters=[lambda data: data if data else ''],
             validators=[validators.optional()]
             )
 

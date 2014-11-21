@@ -7,7 +7,7 @@ from collections import defaultdict, OrderedDict
 from dateutil.parser import parse
 from flask.ext.babel import lazy_gettext as _
 from mongoengine import Q
-from .. import services
+from .. import services, models
 from wtforms import widgets, fields
 
 
@@ -140,7 +140,11 @@ class SubmissionQuarantineStatusFilter(ChoiceFilter):
         if value:
             if value == 'N':
                 query_kwargs = {
-                    'quarantine_status__exists': False}
+                    'quarantine_status__nin': map(
+                        lambda i: i[0],
+                        filter(
+                            lambda s: s[0],
+                            models.Submission.QUARANTINE_STATUSES))}
             else:
                 query_kwargs = {'quarantine_status': value}
             return queryset(**query_kwargs)
