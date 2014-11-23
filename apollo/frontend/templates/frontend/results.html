@@ -67,7 +67,9 @@
 							{%- endif -%}
 							{%- endfor -%}
 						</tr>
-                        {% with df = dataframe.ix[dataframe.groupby(location.location_type).groups[location.name]] %}
+                        {% with index = dataframe.groupby(location.location_type).groups.get(location.name) %}
+                        {% if index %}
+                            {% set df = dataframe.ix[index] %}
 						<tr>
 							<th class="gray" style="vertical-align:middle">{{ location.name }} &middot; <span class="muted"><em>{{ location.location_type }}</em></span></th>
 							<th class="numeric gray">{{ df|reported_pct(result_labels) }}% <br>({{ df|reported(result_labels) }})</th>
@@ -94,9 +96,12 @@
                             {%- endif -%}
                             {%- endfor -%}
 						</tr>
+                        {% endif %}
                         {% endwith %}
 						{%- for sublocation in location_tree[lt.name] -%}
-                        {% with df = dataframe.ix[dataframe.groupby(sublocation.location_type).groups[sublocation.name]] %}
+                        {% with index = dataframe.groupby(sublocation.location_type).groups.get(sublocation.name) %}
+                        {% if index %}
+                            {% set df = dataframe.ix[index] %}
 						<tr>
 							<td class="gray" style="vertical-align:middle">{{ sublocation.name }} &middot; <span class="muted"><em>{{ sublocation.location_type }}</em></span></td>
 							<th class="numeric gray">{{ df|reported_pct(result_labels) }}% <br>({{ df|reported(result_labels) }})</th>
@@ -123,6 +128,7 @@
                             {%- endif -%}
                             {%- endfor -%}
 						</tr>
+                        {% endif %}
                         {% endwith %}
 						{%- endfor -%}
 					</table>
