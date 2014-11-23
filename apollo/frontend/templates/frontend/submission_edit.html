@@ -299,6 +299,8 @@
 <script src="{{ url_for('static', filename='js/moment-with-langs.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/timestamps.js') }}"></script>
 <script type="text/javascript">
+  var csrftoken = $('meta[name=csrf-token]').attr('content');
+  
   $('#postcomment').click(function() {
     var comment = $('#comment').val(), submission = $('#submission').val();
 
@@ -307,10 +309,13 @@
         url: "{{ url_for('submissions.comment_create_view') }}",
         type: 'POST',
         data: {comment: comment, submission: submission},
-        beforeSend: function (xhr) {
+        beforeSend: function (xhr, settings) {
           $('#comment').attr('disabled', 'disabled');
           $('#save').attr('disabled', 'disabled');
           $('#loader').attr('style', 'visibility:visible;');
+          if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+          }
         }
       }).done(function(data) {
         $('#comment').val("");  // clear the comment textbox
@@ -335,8 +340,11 @@
         url: "{{ url_for('participants.participant_phone_verify') }}",
         type: 'POST',
         data: {phone: phone, contributor: contributor, submission: submission},
-        beforeSend: function (xhr) {
+        beforeSend: function (xhr, settings) {
           $('#verify_button').attr('disabled', 'disabled');
+          if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+          }
         }
       }).done(function() {
         $('#verify_button').remove();
