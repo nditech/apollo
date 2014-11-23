@@ -295,6 +295,13 @@ class Submission(db.DynamicDocument):
         Should be called automatically on save, preferably in the `clean`
         method.'''
         if self.submission_type == 'M':
+            siblings = list(self.siblings.filter(
+                quarantine_status__nin=map(
+                    lambda i: i[0],
+                    filter(
+                        lambda s: s[0],
+                        self.QUARANTINE_STATUSES))))
+
             for group in self.form.groups:
                 for field in group.fields:
                     score = None
@@ -311,12 +318,7 @@ class Submission(db.DynamicDocument):
                         lambda value: frozenset(value)
                         if isinstance(value, list) else value,
                         [getattr(submission, name, None)
-                            for submission in self.siblings.filter(
-                                quarantine_status__nin=map(
-                                    lambda i: i[0],
-                                    filter(
-                                        lambda s: s[0],
-                                        self.QUARANTINE_STATUSES)))]
+                            for submission in siblings]
                     )
                     unique = list(set(values))
                     # if all values were reported and are the same then
@@ -402,57 +404,50 @@ class Submission(db.DynamicDocument):
                 field for group in self.form.groups
                 for field in group.fields])
 
-            next_sibling = self.siblings.filter(
+            siblings = self.siblings.filter(
                 quarantine_status__nin=map(
                     lambda i: i[0],
                     filter(
                         lambda s: s[0],
-                        self.QUARANTINE_STATUSES))).first()
+                        self.QUARANTINE_STATUSES)))
 
             for field in fields:
                 submission_field_value = getattr(self, field.name, None)
-                master_field_value = getattr(master, field.name, None)
-                next_sibling_field_value = getattr(
-                    next_sibling, field.name, None)
+                sibling_field_values = [
+                    getattr(sibling, field.name, None) for sibling in
+                    siblings]
 
                 if self.quarantine_status:
-                    submission_field_value = next_sibling_field_value
+                    submission_field_value = None
 
-                # determines whether all field values are the same or conflict
-                values_match = map(
-                    lambda val: submission_field_value == val
-                    if submission_field_value is not None else True,
-                    filter(
-                        lambda val: val is not None,
-                        [submission_field_value] +
-                        [
-                            getattr(
-                                sibling,
-                                field.name, None)
-                            for sibling in self.siblings.filter(
-                                quarantine_status__nin=map(
-                                    lambda i: i[0],
-                                    filter(
-                                        lambda s: s[0],
-                                        self.QUARANTINE_STATUSES)))
-                        ]
-                    )
-                )
-                if (
-                    submission_field_value != master_field_value
-                ):
-                    # if all values match, then set the value to the master
-                    if all(values_match):
-                        setattr(
-                            master,
-                            field.name,
-                            submission_field_value)
-                    else:
-                    # if not, then set none to the master
-                        setattr(
-                            master,
-                            field.name,
-                            None)
+                all_values = [submission_field_value] + sibling_field_values
+                non_null_values = filter(
+                    lambda val: val is not None, all_values)
+
+                # important to make the values hashable since "set" doesn't
+                # like to work directly with lists as they aren't hashable
+                hashable = map(
+                    lambda v: frozenset(v) if isinstance(v, list) else v,
+                    non_null_values)
+                unique_values = set(hashable)
+
+                # depending on the length of unique non-null values, the
+                # following will apply:
+                # a length of 1 indicates the same non-null values
+                # a length of 0 indicates all null values
+                # a length greater than 1 indicatees several non-null values
+                if len(unique_values) == 1:
+                    v = unique_values.pop()
+                    v = list(v) if isinstance(v, frozenset) else v
+                    setattr(
+                        master,
+                        field.name,
+                        v)
+                else:  # caters for both conditions where len > 1 or = 0
+                    setattr(
+                        master,
+                        field.name,
+                        None)
             master._compute_data_quality()
             master._update_completion_status()
             master._update_confidence()
