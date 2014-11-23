@@ -1,2 +1,2 @@
-web: uwsgi --http-socket [::]:$PORT --cpu-affinity 1 --master --gevent 1000 --listen 100 --disable-logging --processes 4 --module apollo.wsgi:application
+web: uwsgi --http-socket [::]:$PORT --cpu-affinity 1 --master --gevent 1000 --listen 100 --disable-logging --processes 16 --module apollo.wsgi:application
 worker: celery -A apollo.tasks worker --loglevel=INFO --concurrency=2 --without-gossip
