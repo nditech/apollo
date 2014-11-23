@@ -48,7 +48,7 @@ def _process_analysis(form_id, location_id=None, tag=None):
 
     template_name = ''
     tags = []
-    page_title = _('%(form)s Analysis', form=form.name)
+    page_title = _(u'%(form)s Analysis', form=form.name)
     grouped = False
     display_tag = None
     filter_class = filters.generate_submission_analysis_filter(form)
@@ -127,14 +127,15 @@ def _process_analysis(form_id, location_id=None, tag=None):
 
 def _voting_results(form_pk, location_pk=None):
     form = forms.get_or_404(
-        pk=form_pk, form_type='CHECKLIST', party_mappings__exists=True)
+        pk=form_pk, form_type='CHECKLIST',
+        groups__fields__analysis_type='RESULT')
     if location_pk is None:
         location = locations.root()
     else:
         location = locations.get_or_404(pk=location_pk)
 
     template_name = 'frontend/results.html'
-    page_title = _('%(form_name)s Voting Results', form_name=form.name)
+    page_title = _(u'%(form_name)s Voting Results', form_name=form.name)
     filter_class = filters.generate_submission_analysis_filter(form)
 
     # define the condition for which a submission should be included
@@ -143,6 +144,7 @@ def _voting_results(form_pk, location_pk=None):
         [field for group in form.groups
          for field in group.fields])
     result_field_labels = [field.name for field in result_fields]
+    result_field_descriptions = [field.description for field in result_fields]
 
     valid_conditions = dict(
         ('{}__exists'.format(field), True) for field in result_field_labels)
@@ -152,10 +154,11 @@ def _voting_results(form_pk, location_pk=None):
         submission_type='M',
         verification_status__ne=FLAG_STATUSES['rejected'][0],
         quarantine_status__nin=['A', 'R'],
-        **valid_conditions
         )
     filter_set = filter_class(queryset, request.args)
     dataset = filter_set.qs.to_dataframe()
+    convergence_dataset = filter_set.qs.filter(
+        **valid_conditions).to_dataframe()
 
     loc_types = [lt for lt in location_types.root().children
                  if lt.is_political is True]
@@ -167,7 +170,8 @@ def _voting_results(form_pk, location_pk=None):
 
     # restrict the convergence dataframe to result fields and compute the
     # cummulative sum
-    convergence_df = dataset.sort('updated')[['updated'] + result_field_labels]
+    convergence_df = convergence_dataset.sort(
+        'updated')[['updated'] + result_field_labels]
     for field in result_field_labels:
         convergence_df[field] = convergence_df[field].cumsum()
 
@@ -188,6 +192,8 @@ def _voting_results(form_pk, location_pk=None):
         'location': location,
         'dataframe': dataset,
         'form': form,
+        'result_labels': result_field_labels,
+        'result_descriptions': result_field_descriptions,
         'chart_data': chart_data,
         'chart_series': result_field_labels,
         'location_types': loc_types,
