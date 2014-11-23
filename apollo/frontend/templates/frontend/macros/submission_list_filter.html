@@ -30,7 +30,7 @@
 {%- endif %}
 {% for quality_check in form.quality_checks %}{% if quality_check['name'] in filter_form and filter_form[quality_check['name']].data %}{{ filter_form[quality_check['name']] }}{% endif %}{%- endfor %}
 <div class="form-group">
-	<button class="btn btn-warning btn-sm btn-custom" type="submit"><i class="glyphicon glyphicon-search"></i> {% trans %}Filter{% endtrans %}</button>
+	<button class="btn btn-warning btn-sm" type="submit"><i class="glyphicon glyphicon-search"></i> {% trans %}Filter{% endtrans %}</button>
 </div>
 <div class="form-group">
     <a class="btn btn-default btn-sm" id="filter_reset">{% trans %}Clear{% endtrans %}</a>
