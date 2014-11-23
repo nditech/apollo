@@ -275,6 +275,7 @@ def generate_submission_edit_form_class(form):
                         choices=choices,
                         coerce=int,
                         description=field.description,
+                        filters=[lambda data: data if data else None],
                         validators=[validators.optional()],
                         option_widget=widgets.CheckboxInput(),
                         widget=widgets.ListWidget()
