@@ -168,23 +168,25 @@ def _voting_results(form_pk, location_pk=None):
         ).order_by('name') for lt in loc_types
     }
 
+    chart_data = {}
+
     # restrict the convergence dataframe to result fields and compute the
     # cummulative sum
-    convergence_df = convergence_dataset.sort(
-        'updated')[['updated'] + result_field_labels]
-    for field in result_field_labels:
-        convergence_df[field] = convergence_df[field].cumsum()
+    if not convergence_dataset.empty:
+        convergence_df = convergence_dataset.sort(
+            'updated')[['updated'] + result_field_labels]
+        for field in result_field_labels:
+            convergence_df[field] = convergence_df[field].cumsum()
 
-    # compute vote proportions A / (A + B + C + ...)
-    convergence_df[result_field_labels] = \
-        convergence_df[result_field_labels].div(
-            convergence_df[result_field_labels].sum(axis=1), axis=0)
+        # compute vote proportions A / (A + B + C + ...)
+        convergence_df[result_field_labels] = \
+            convergence_df[result_field_labels].div(
+                convergence_df[result_field_labels].sum(axis=1), axis=0)
 
-    chart_data = {}
-    for component in result_field_labels:
-        chart_data[component] = map(
-            lambda (ts, f): (int(ts.strftime('%s')) * 1000, f * 100),
-            convergence_df.as_matrix(['updated', component]))
+        for component in result_field_labels:
+            chart_data[component] = map(
+                lambda (ts, f): (int(ts.strftime('%s')) * 1000, f * 100),
+                convergence_df.as_matrix(['updated', component]))
 
     context = {
         'page_title': page_title,
