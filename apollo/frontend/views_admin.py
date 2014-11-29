@@ -7,9 +7,10 @@ from flask.ext.babel import lazy_gettext as _
 from flask.ext.security import current_user
 from flask.ext.security.utils import encrypt_password
 import magic
-from wtforms import FileField, PasswordField
+from wtforms import FileField, PasswordField, SelectMultipleField
 from ..core import admin
 from .. import models
+from . import forms
 
 
 class DashboardView(BaseView):
@@ -119,7 +120,38 @@ class UserAdminView(BaseAdminView):
         return form_class
 
 
+class RoleAdminView(BaseAdminView):
+    can_delete = False
+    column_list = ('name',)
+
+    def get_one(self, pk):
+        role = super(RoleAdminView, self).get_one(pk)
+        role.permissions = [
+            unicode(i) for i in models.Need.objects(
+                entities=role).scalar('pk')]
+        return role
+
+    def after_model_change(self, form, model, is_created):
+        # remove model from all permissions that weren't granted
+        for need in models.Need.objects(pk__nin=form.permissions.data):
+            need.update(pull__entities=model)
+
+        # add only the explicitly defined permissions
+        for pk in form.permissions.data:
+            models.Need.objects(pk=pk).update_one(add_to_set__entities=model)
+
+    def scaffold_form(self):
+        form_class = super(RoleAdminView, self).scaffold_form()
+        form_class.permissions = SelectMultipleField(
+            _('Permissions'),
+            choices=forms._make_choices(
+                models.Need.objects.scalar('pk', 'action')))
+
+        return form_class
+
+
 admin.add_view(DashboardView(name=_('Dashboard')))
 admin.add_view(DeploymentAdminView(models.Deployment))
 admin.add_view(EventAdminView(models.Event))
 admin.add_view(UserAdminView(models.User))
+admin.add_view(RoleAdminView(models.Role))
