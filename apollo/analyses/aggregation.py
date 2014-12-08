@@ -18,69 +18,92 @@ def _percent_of(a, b):
     return float(100 * float(a) / b)
 
 
-def _numeric_field_stats(queryset, tag):
-    # for numeric fields, 0 is a legal value, so some
-    # jiggery is required
+def _average(queryset, tag):
+    '''Computes average for a particular field. Is faster than
+    queryset.average() because it uses the aggregation pipeline
+    instead of MapReduce like .average() does.'''
+    field = queryset[0].form.get_field_by_tag(tag)
+    if field.options:
+        raise ValueError('Cannot compute average for non-numeric fields')
+
     token = '${}'.format(tag)
     pipeline = [
         {'$match': queryset._query},
-        {'$project': {
-            'status': {'$ifNull': [token, 'missing']},
-            'var': token,
-            '_id': 0
-        }},
-        # need two $project steps because 0 is a valid value, and $ifNull
-        # will replace the token by its value, not the flag 'reported'
-        {'$project': {
-            'status': {
-                '$cond': [
-                    # if status is missing, keep that flag, else, replace
-                    # with the 'reported' flag
-                    {'$eq': ['$status', 'missing']}, 'missing', 'reported'
-                ]
-            },
-            'var': 1,
-        }},
+        {'$group': {'_id': 'null', 'mean': {'$avg': token}}},
+    ]
+
+    collection = queryset._collection
+    return collection.aggregate(pipeline).get('result')[0].get('mean')
+
+
+def _numeric_field_stats(queryset, tag, location_type=None):
+    # for numeric fields, 0 is a legal value, so some
+    # jiggery is required
+    token = '${}'.format(tag)
+    data = {'type': 'numeric'}
+
+    # build aggregation pipeline piecewise
+    pipeline = [
+        # mirror original query
+        {'$match': queryset._query},
+
+        # project variable
+        {'$project': {'var': token}},
+
+        # grouping
         {'$group': {
-            '_id': '$status',
-            'count': {'$sum': 1},
-            'mean': {'$avg': '$var'}
+            '_id': 'null',
+            'missing': {'$sum': {'$cond': [{'$eq': ['$var', 'null']}, 1, 0]}},
+            'reported': {'$sum': {'$cond': [{'$ne': ['$var', 'null']}, 1, 0]}},
+            'total': {'$sum': 1}
+        }},
+
+        # second stage projection - project stats
+        {'$project': {
+            '_id': 0,
+            'location': '$_id',  # will be 'null' by default
+            'missing': 1,
+            'reported': 1,
+            'total': 1,
+            'percent_missing': {
+                '$multiply': [{'$divide': ['$missing', '$total']}, 100]
+            },
+            'percent_reported': {
+                '$multiply': [{'$divide': ['$reported', '$total']}, 100]
+            }
         }}
     ]
+
+    if location_type:
+        # project the group key in the first projection
+        pipeline[1]['$project']['loc_group'] = '$location_name_path.{}'.format(
+            location_type)
+
+        # allow grouping by loc_group as well
+        pipeline[2]['$group']['_id'] = '$loc_group'
 
     collection = queryset._collection
 
     output = collection.aggregate(pipeline)
-    total = queryset.count()
-    data = {
-        'mean': 0,
-        'missing': None,
-        'percent_missing': 0,
-        'percent_reported': 0,
-        'reported': None,
-        'type': 'numeric',
-        'total': total
-    }
+    results = output.get('result')
 
-    if output['ok'] == 1.0:
-        for result in output['result']:
-            if result['_id'] == 'missing':
-                missing = result['count']
-                pct_missing = _percent_of(missing, total)
+    if location_type:
+        data['locations'] = {}
+        for r in results:
+            loc_data = {}
+            loc_data.update(r)
+            loc_data.pop('location')
 
-                data['missing'] = missing
-                data['percent_missing'] = pct_missing
-            else:
-                reported = result['count']
-                pct_reported = _percent_of(missing, total)
+            data['locations'][r['location']] = loc_data
+    else:
+        data.update(results[0])
 
-                data['reported'] = reported
-                data['percent_reported'] = pct_reported
+    data['mean'] = _average(queryset, tag)
 
     return data
 
 
-def _single_choice_field_stats(queryset, tag):
+def _single_choice_field_stats(queryset, tag, location_type=None):
     # for single-choice fields, 0 is not (currently) a valid
     # selection, so we don't need to do two $project
     # steps like for numeric stats
@@ -88,15 +111,26 @@ def _single_choice_field_stats(queryset, tag):
     pipeline = [
         {'$match': queryset._query},
         {'$project': {
-            'status': {'$cond': [token, 'reported', 'missing']},
             'var': token,
             '_id': 0
         }},
         {'$group': {
-            '_id': {'status': '$status', 'option': '$var'},
+            '_id': {'option': '$var', 'location': '$location'},
             'count': {'$sum': 1}
+        }},
+        {'$group': {
+            '_id': '$_id.location',
+            'histogram': {
+                '$push': {'option': '$_id.option', 'count': '$count'},
+            },
+            'total': {'$sum': '$count'}
         }}
     ]
+
+    if location_type:
+        # add location type
+        path = '$location_name_path.{}'.format(location_type)
+        pipeline[1]['$project']['location'] = path
 
     collection = queryset._collection
 
@@ -107,7 +141,7 @@ def _single_choice_field_stats(queryset, tag):
     options = sorted(field.options.iteritems(),
                      key=itemgetter(1)) if field else []
 
-    result_sort_key = lambda x: x['_id'].get('option')
+    result_sort_key = lambda x: x.get('option')
 
     data = {
         'histogram': [],
@@ -116,26 +150,62 @@ def _single_choice_field_stats(queryset, tag):
         'reported': None,
         'percent_missing': 0,
         'percent_reported': 0,
-        'total': total,
+        'total': 0,
         'type': 'single-choice'
     }
 
-    if output['ok'] == 1.0:
-        # need the reported count on the next loop
-        reported = sum(
-            i['count'] for i in output['result'] if 'option' in i['_id'])
-        data['reported'] = reported
-        data['percent_reported'] = _percent_of(reported, total)
+    if location_type:
+        location_stats = {}
+        results = output.get('result')
+        for loc_data in results:
+            total = loc_data['total']
 
-        for result in sorted(output['result'], key=result_sort_key):
-            if 'option' in result['_id']:
-                data['histogram'].append(
-                    (result['count'], _percent_of(result['count'], reported))
-                )
-            else:
-                missing = result['count']
-                data['missing'] = missing
-                data['percent_missing'] = _percent_of(missing, total)
+            missing_set = [
+                i for i in loc_data['histogram'] if 'option' not in i]
+            missing_data = missing_set[0] if missing_set else {'count': 0}
+            missing = missing_data['count']
+            reported = total - missing
+            reported_set = sorted(loc_data['histogram'], key=result_sort_key)
+            if missing_set:
+                reported_set.remove(missing_data)
+
+            percent_missing = _percent_of(missing, total)
+            percent_reported = _percent_of(reported, total)
+
+            histogram = [
+                (i['option'], _percent_of(i['count'], reported))
+                for i in reported_set
+            ]
+            location_stats[loc_data['_id']] = {
+                'missing': missing,
+                'reported': reported,
+                'total': total,
+                'percent_missing': percent_missing,
+                'percent_reported': percent_reported,
+                'histogram': histogram
+            }
+
+        data['locations'] = location_stats
+    else:
+        result = output.get('result')[0]
+        missing_data = {'count': 0}
+        missing_set = [i for i in result['histogram'] if 'option' not in i]
+        if missing_set:
+            missing_data = missing_set[0]
+
+        reported_set = sorted(result['histogram'], key=result_sort_key)
+        if missing_set:
+            reported_set.remove(missing_data)
+
+        data['total'] = result['total']
+        data['missing'] = missing_data['count']
+        data['reported'] = data['total'] - data['reported']
+        data['percent_reported'] = _percent_of(data['reported'], data['total'])
+        data['percent_missing'] = _percent_of(data['missing'], data['total'])
+        data['histogram'] = [
+            (i['option'], _percent_of(i['count'], data['reported']))
+            for i in reported_set
+        ]
 
     return data
 
@@ -208,7 +278,7 @@ def generate_process_data(form, queryset, location_root, grouped=True,
                           tags=None):
     process_summary = {}
     location_types = {
-        child.locaton_type for child in location_root.children
+        child.location_type for child in location_root.children
     }
 
     if not tags:
@@ -239,9 +309,9 @@ def generate_process_data(form, queryset, location_root, grouped=True,
             )
 
         # per-location level summaries
-        for locaton_type in location_types:
+        for location_type in location_types:
             kwargs = {
-                'location_name_path__{}__exists'.format(locaton_type): True
+                'location_name_path__{}__exists'.format(location_type): True
             }
             subset = queryset(**kwargs)
             location_type_summary = []
@@ -262,7 +332,7 @@ def generate_process_data(form, queryset, location_root, grouped=True,
                 )
 
             process_summary['groups'].append(
-                (locaton_type, location_type_summary)
+                (location_type, location_type_summary)
             )
     else:
         process_summary['type'] = 'normal'
