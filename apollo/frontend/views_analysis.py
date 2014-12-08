@@ -138,6 +138,14 @@ def _voting_results(form_pk, location_pk=None):
     page_title = _(u'%(form_name)s Voting Results', form_name=form.name)
     filter_class = filters.generate_submission_analysis_filter(form)
 
+    loc_types = [lt for lt in location_types.root().children
+                 if lt.is_political is True]
+    location_tree = {
+        lt.name: locations.find(
+            location_type=lt.name
+        ).order_by('name') for lt in loc_types
+    }
+
     # define the condition for which a submission should be included
     result_fields = filter(
         lambda field: field.analysis_type == 'RESULT',
@@ -157,16 +165,111 @@ def _voting_results(form_pk, location_pk=None):
         )
     filter_set = filter_class(queryset, request.args)
     dataset = filter_set.qs.to_dataframe()
-    convergence_dataset = filter_set.qs.filter(
-        **valid_conditions).to_dataframe()
 
-    loc_types = [lt for lt in location_types.root().children
-                 if lt.is_political is True]
-    location_tree = {
-        lt.name: locations.find(
-            location_type=lt.name
-        ).order_by('name') for lt in loc_types
+    registered_voters_field = form.registered_voters_tag or None
+    rejected_votes_field = form.invalid_votes_tag or None
+
+    # compute and store reporting status
+    dataset['reported'] = dataset[result_field_labels].count(1) == len(
+        result_field_labels)
+    dataset['missing'] = dataset[result_field_labels].count(1) != len(
+        result_field_labels)
+
+    overall_summation = dataset.groupby(
+        location.location_type).sum().ix[location.name]
+    valid_summation = dataset[dataset.reported==True].groupby(
+        location.location_type).sum().ix[location.name]
+    reporting = overall_summation[['missing', 'reported']]
+    reporting['reported_pct'] = reporting['reported']/(
+        reporting['reported'] + reporting['missing'])
+    reporting['missing_pct'] = reporting['missing']/(
+        reporting['reported'] + reporting['missing'])
+
+    data_analyses = {'overall': {}, 'grouped': {}}
+    data_analyses['overall'] = {
+        'reported_cnt': int(reporting['reported']),
+        'missing_cnt': int(reporting['missing']),
+        'reported_pct': reporting['reported_pct'],
+        'missing_pct': reporting['missing_pct'],
+        'rv': int(valid_summation.get(registered_voters_field, 0)),
+        'all_votes': int(
+            valid_summation[result_field_labels + [rejected_votes_field]].sum(
+                axis=1)),
+        'all_valid_votes': int(
+            valid_summation[result_field_labels].sum(axis=1)),
+        'all_valid_votes_pct': valid_summation[result_field_labels].sum(
+            axis=1) / valid_summation[result_field_labels +
+                                     [rejected_votes_field]].sum(axis=1),
+        'total_rejected': int(valid_summation[rejected_votes_field]),
+        'total_rejected_pct': valid_summation[rejected_votes_field] /
+        valid_summation[result_field_labels + [rejected_votes_field]].sum(
+            axis=1)
     }
+
+    for result_field_label in result_field_labels:
+        data_analyses['overall'][u'{}_cnt'.format(result_field_label)] = \
+            valid_summation.get(result_field_label, 0)
+        data_analyses['overall'][u'{}_pct'.format(result_field_label)] = \
+            valid_summation.get(result_field_label, 0) / float(
+                data_analyses['overall']['all_valid_votes'])  # all_votes?
+
+    # grouped summaries
+    for location_type in location_tree.keys():
+        data_analyses['grouped'][location_type] = []
+
+        try:
+            grouped_summation = dataset.groupby(
+                location_type).sum()
+            grouped_valid_summation = dataset[dataset.reported==True].groupby(
+                location_type).sum()
+
+            for sublocation in location_tree[location_type]:
+                _overall = grouped_summation.ix[sublocation.name]
+                _valid = grouped_valid_summation.ix[sublocation.name]
+
+                _reporting = _overall[['missing', 'reported']]
+                _reporting['reported_pct'] = _reporting['reported'] / (
+                    _reporting['reported'] + _reporting['missing'])
+                _reporting['missing_pct'] = _reporting['missing'] / (
+                    _reporting['reported'] + _reporting['missing'])
+
+                _sublocation_report = {
+                    'name': sublocation.name,
+                    'location_type': sublocation.location_type,
+                    'reported_cnt': int(_reporting['reported']),
+                    'reported_pct': _reporting['reported_pct'],
+                    'missing_cnt': int(_reporting['missing']),
+                    'missing_pct': _reporting['missing_pct'],
+                    'rv': int(_valid.get(registered_voters_field, 0)),
+                    'all_votes': int(
+                        _valid[result_field_labels +
+                              [rejected_votes_field]].sum(
+                            axis=1)),
+                    'all_valid_votes': int(
+                        _valid[result_field_labels].sum(axis=1)),
+                    'all_valid_votes_pct': _valid[result_field_labels].sum(
+                        axis=1) / _valid[result_field_labels +
+                                        [rejected_votes_field]].sum(axis=1),
+                    'total_rejected': int(_valid[rejected_votes_field]),
+                    'total_rejected_pct': _valid[rejected_votes_field] /
+                    _valid[result_field_labels + [rejected_votes_field]].sum(
+                        axis=1)
+                }
+
+                for result_field_label in result_field_labels:
+                    _sublocation_report[u'{}_cnt'.format(
+                        result_field_label)] = _valid.get(
+                        result_field_label, 0)
+                    _sublocation_report[u'{}_pct'.format(
+                        result_field_label)] = _valid.get(
+                        result_field_label, 0) / float(
+                        _sublocation_report['all_valid_votes'])
+                data_analyses['grouped'][location_type].append(
+                    _sublocation_report)
+        except IndexError:
+            pass
+
+    convergence_dataset = dataset[dataset.reported==True]
 
     chart_data = {}
 
@@ -195,6 +298,7 @@ def _voting_results(form_pk, location_pk=None):
         'dataframe': dataset,
         'form': form,
         'result_labels': result_field_labels,
+        'data_analyses': data_analyses,
         'result_descriptions': result_field_descriptions,
         'chart_data': chart_data,
         'chart_series': result_field_labels,
