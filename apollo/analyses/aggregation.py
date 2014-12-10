@@ -1,5 +1,5 @@
+from itertools import izip
 from operator import itemgetter
-from mongoengine import Q
 
 
 def _is_numeric(val):
@@ -199,7 +199,7 @@ def _single_choice_field_stats(queryset, tag, location_type=None):
 
         data['total'] = result['total']
         data['missing'] = missing_data['count']
-        data['reported'] = data['total'] - data['reported']
+        data['reported'] = data['total'] - data['missing']
         data['percent_reported'] = _percent_of(data['reported'], data['total'])
         data['percent_missing'] = _percent_of(data['missing'], data['total'])
         data['histogram'] = [
@@ -231,25 +231,52 @@ def _multi_choice_field_stats(queryset, tag, location_type=None):
         }}
     ]
 
+    stats_pipeline = [
+        {'$match': queryset._query},
+        {'$project': {
+            # replace all missing/nulls with empty arrays
+            'var': {'$ifNull': [token, []]},
+            '_id': 0
+        }},
+        {'$group': {
+            '_id': '$location',
+            'missing': {
+                # count how many documents have an empty array
+                '$sum': {
+                    '$cond': [{'$eq': [{'$size': '$var'}, 0]}, 1, 0]
+                },
+            },
+            'reported': {
+                '$sum': {
+                    '$cond': [{'$ne': [{'$size': '$var'}, 0]}, 1, 0]
+                }
+            }
+        }},
+        {'$project': {
+            '_id': 0,
+            'location': '$_id',
+            'missing': '$missing',
+            'reported': '$reported',
+            'total': {'$add': ['$missing', '$reported']}
+        }}
+    ]
+
     if location_type:
         # add location type
         path = '$location_name_path.{}'.format(location_type)
         pipeline[1]['$project']['location'] = path
+        stats_pipeline[1]['$project']['location'] = path
 
     collection = queryset._collection
 
     output = collection.aggregate(pipeline)
-    total = queryset.count()
+    stats_output = collection.aggregate(stats_pipeline)
+
+    total = sum(i.get('total', 0) for i in stats_output.get('result'))
+    missing = sum(i.get('missing', 0) for i in stats_output.get('result'))
+    reported = total - missing
 
     result_sort_key = lambda x: x['option']
-
-    # get records where the field in question is neither
-    # null or an empty array
-    chain = Q(**{'{}__ne'.format(tag): None}) & Q(**{'{}__ne'.format(tag): []})
-    subset = queryset(chain)
-
-    reported = subset.count()
-    missing = total - reported
 
     form = queryset[0].form if total else None
     field = form.get_field_by_tag(tag) if form else None
@@ -270,14 +297,12 @@ def _multi_choice_field_stats(queryset, tag, location_type=None):
     if location_type:
         location_stats = {}
         results = output.get('result')
+        stats_results = stats_output.get('result')
 
-        for loc_data in results:
-            loc_subset = queryset(**{
-                'location_name_path__{}'.format(location_type): loc_data['_id']
-            })
-            loc_total = loc_subset.count()
-            loc_reported = loc_subset(chain).count()
-            loc_missing = loc_total - loc_reported
+        for loc_data, stats_data in izip(results, stats_results):
+            loc_total = stats_data.get('total', 0)
+            loc_reported = stats_data.get('reported', 0)
+            loc_missing = stats_data.get('missing', 0)
             loc_percent_reported = _percent_of(loc_reported, loc_total)
             loc_percent_missing = _percent_of(loc_missing, loc_total)
 
