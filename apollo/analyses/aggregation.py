@@ -1,5 +1,5 @@
+from itertools import izip
 from operator import itemgetter
-from mongoengine import Q
 
 
 def _is_numeric(val):
@@ -158,28 +158,28 @@ def _single_choice_field_stats(queryset, tag, location_type=None):
         location_stats = {}
         results = output.get('result')
         for loc_data in results:
-            total = loc_data['total']
+            loc_total = loc_data['total']
 
             missing_set = [
                 i for i in loc_data['histogram'] if 'option' not in i]
             missing_data = missing_set[0] if missing_set else {'count': 0}
-            missing = missing_data['count']
-            reported = total - missing
+            loc_missing = missing_data['count']
+            loc_reported = loc_total - loc_missing
             reported_set = sorted(loc_data['histogram'], key=result_sort_key)
             if missing_set:
                 reported_set.remove(missing_data)
 
-            percent_missing = _percent_of(missing, total)
-            percent_reported = _percent_of(reported, total)
+            percent_missing = _percent_of(loc_missing, loc_total)
+            percent_reported = _percent_of(loc_reported, loc_total)
 
             histogram = [
-                (i['option'], _percent_of(i['count'], reported))
+                (i['option'], _percent_of(i['count'], loc_reported))
                 for i in reported_set
             ]
             location_stats[loc_data['_id']] = {
-                'missing': missing,
-                'reported': reported,
-                'total': total,
+                'missing': loc_missing,
+                'reported': loc_reported,
+                'total': loc_total,
                 'percent_missing': percent_missing,
                 'percent_reported': percent_reported,
                 'histogram': histogram
@@ -199,7 +199,7 @@ def _single_choice_field_stats(queryset, tag, location_type=None):
 
         data['total'] = result['total']
         data['missing'] = missing_data['count']
-        data['reported'] = data['total'] - data['reported']
+        data['reported'] = data['total'] - data['missing']
         data['percent_reported'] = _percent_of(data['reported'], data['total'])
         data['percent_missing'] = _percent_of(data['missing'], data['total'])
         data['histogram'] = [
@@ -210,34 +210,73 @@ def _single_choice_field_stats(queryset, tag, location_type=None):
     return data
 
 
-def _multi_choice_field_stats(queryset, tag):
+def _multi_choice_field_stats(queryset, tag, location_type=None):
     token = '${}'.format(tag)
     pipeline = [
         {'$match': queryset._query},
         {'$project': {
-            'var': token
+            'var': token,
+            '_id': 0
         }},
         {'$unwind': '$var'},
         {'$group': {
-            '_id': '$var',
+            '_id': {'option': '$var', 'location': '$location'},
             'count': {'$sum': 1}
+        }},
+        {'$group': {
+            '_id': '$_id.location',
+            'histogram': {
+                '$push': {'option': '$_id.option', 'count': '$count'},
+            },
         }}
     ]
+
+    stats_pipeline = [
+        {'$match': queryset._query},
+        {'$project': {
+            # replace all missing/nulls with empty arrays
+            'var': {'$ifNull': [token, []]},
+            '_id': 0
+        }},
+        {'$group': {
+            '_id': '$location',
+            'missing': {
+                # count how many documents have an empty array
+                '$sum': {
+                    '$cond': [{'$eq': [{'$size': '$var'}, 0]}, 1, 0]
+                },
+            },
+            'reported': {
+                '$sum': {
+                    '$cond': [{'$ne': [{'$size': '$var'}, 0]}, 1, 0]
+                }
+            }
+        }},
+        {'$project': {
+            '_id': 0,
+            'location': '$_id',
+            'missing': '$missing',
+            'reported': '$reported',
+            'total': {'$add': ['$missing', '$reported']}
+        }}
+    ]
+
+    if location_type:
+        # add location type
+        path = '$location_name_path.{}'.format(location_type)
+        pipeline[1]['$project']['location'] = path
+        stats_pipeline[1]['$project']['location'] = path
 
     collection = queryset._collection
 
     output = collection.aggregate(pipeline)
-    total = queryset.count()
+    stats_output = collection.aggregate(stats_pipeline)
 
-    result_sort_key = lambda x: x['_id']
+    total = sum(i.get('total', 0) for i in stats_output.get('result'))
+    missing = sum(i.get('missing', 0) for i in stats_output.get('result'))
+    reported = total - missing
 
-    # get records where the field in question is neither
-    # null or an empty array
-    chain = Q(**{'{}__ne'.format(tag): None}) & Q(**{'{}__ne'.format(tag): []})
-    subset = queryset(chain)
-
-    reported = subset.count()
-    missing = total - reported
+    result_sort_key = lambda x: x['option']
 
     form = queryset[0].form if total else None
     field = form.get_field_by_tag(tag) if form else None
@@ -255,11 +294,46 @@ def _multi_choice_field_stats(queryset, tag):
         'type': 'multiple-choice'
     }
 
-    if output['ok'] == 1.0:
-        for result in sorted(output['result'], key=result_sort_key):
-            data['histogram'].append(
-                (result['count'], _percent_of(result['count'], reported))
+    if location_type:
+        location_stats = {}
+        results = output.get('result')
+        stats_results = stats_output.get('result')
+
+        for loc_data, stats_data in izip(results, stats_results):
+            loc_total = stats_data.get('total', 0)
+            loc_reported = stats_data.get('reported', 0)
+            loc_missing = stats_data.get('missing', 0)
+            loc_percent_reported = _percent_of(loc_reported, loc_total)
+            loc_percent_missing = _percent_of(loc_missing, loc_total)
+
+            loc_reported_set = sorted(
+                loc_data['histogram'],
+                key=result_sort_key
             )
+
+            histogram = [
+                (i['option'], _percent_of(i['count'], loc_reported))
+                for i in loc_reported_set
+            ]
+
+            location_stats[loc_data['_id']] = {
+                'missing': loc_missing,
+                'reported': loc_reported,
+                'total': loc_total,
+                'percent_missing': loc_percent_missing,
+                'percent_reported': loc_percent_reported,
+                'histogram': histogram
+            }
+
+        data['locations'] = location_stats
+    else:
+        result = output.get('result')[0]
+
+        reported_set = sorted(result['histogram'], key=result_sort_key)
+        data['histogram'] = [
+            (i['option'], _percent_of(i['count'], data['reported']))
+            for i in reported_set
+        ]
 
     return data
 
