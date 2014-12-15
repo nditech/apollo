@@ -34,11 +34,11 @@
 						{%- if form.registered_voters_tag -%}
 						<th>&nbsp;</th>
 						{%- endif -%}
-						<th width="30"{% if False and form.registered_voters_tag and form.calculate_moe and config.ENABLE_MOE %} colspan="3"{%- endif -%} style="text-align:center">{%- trans -%}Total votes{%- endtrans -%}</th>
-						<th width="100"{% if False and form.calculate_moe and config.ENABLE_MOE %} colspan="3"{%- endif -%} style="text-align:center">{%- trans -%}Rejected ballots{%- endtrans -%}</th>
+						<th width="30"{% if form.registered_voters_tag and form.calculate_moe and config.ENABLE_MOE %} colspan="3"{%- endif -%} style="text-align:center">{%- trans -%}Total votes{%- endtrans -%}</th>
+						<th width="100"{% if form.calculate_moe and config.ENABLE_MOE %} colspan="3"{%- endif -%} style="text-align:center">{%- trans -%}Rejected ballots{%- endtrans -%}</th>
 						<th width="30" style="text-align:center">{%- trans -%}Total valid{%- endtrans -%}</th>
 						{%- for party in result_descriptions -%}
-						<th width="100"{%- if False and form.calculate_moe and config.ENABLE_MOE %} colspan="3"{%- endif -%} style="text-align:center">{{ party }}</th>
+						<th width="100"{%- if form.calculate_moe and config.ENABLE_MOE %} colspan="3"{%- endif -%} style="text-align:center">{{ party }}</th>
 						{%- endfor -%}
 					</tr>
 					<tr>
@@ -49,19 +49,19 @@
 						<td class="centered"><em><abbr title="{%- trans -%}Total registered{%- endtrans -%}">{%- trans -%}TR{%- endtrans -%}</abbr></em></td>
 						{%- endif -%}
 						<td class="centered" width="10%">{%- trans -%}Votes{%- endtrans -%}</td>
-						{%- if False and form.registered_voters_tag and form.calculate_moe and config.ENABLE_MOE -%}
+						{%- if form.registered_voters_tag and form.calculate_moe and config.ENABLE_MOE -%}
 						<td class="centered"><em><abbr title="{%- trans -%}Margin of error{%- endtrans -%}">{%- trans -%}MoE 95%{%- endtrans -%}</abbr></em></td>
 						<td class="centered"><em><abbr title="{%- trans -%}Margin of error{%- endtrans -%}">{%- trans -%}MoE 99%{%- endtrans -%}</abbr></em></td>
 						{%- endif -%}
 						<td class="centered"><em><abbr title="{%- trans -%}Rejected ballots{%- endtrans -%}">{%- trans -%}RB{%- endtrans -%}</abbr></em></td>
-						{%- if False and form.calculate_moe and config.ENABLE_MOE -%}
+						{%- if form.calculate_moe and config.ENABLE_MOE -%}
 						<td class="centered"><em><abbr title="{%- trans -%}Margin of error{%- endtrans -%}">{%- trans -%}MoE 95%{%- endtrans -%}</abbr></em></td>
 						<td class="centered"><em><abbr title="{%- trans -%}Margin of error{%- endtrans -%}">{%- trans -%}MoE 99%{%- endtrans -%}</abbr></em></td>
 						{%- endif -%}
 						<td class="centered"><em><abbr title="{%- trans -%}Total valid{%- endtrans -%}">{%- trans -%}TV{%- endtrans -%}</abbr></em></td>
 						{%- for party in result_descriptions -%}
 						<td class="centered"><em>{%- trans -%}Votes{%- endtrans -%}</em></td>
-						{%- if False and form.calculate_moe and config.ENABLE_MOE -%}
+						{%- if form.calculate_moe and config.ENABLE_MOE -%}
 						<td class="centered"><em><abbr title="{%- trans -%}Margin of error{%- endtrans -%}">{%- trans -%}MoE 95%{%- endtrans -%}</abbr></em></td>
 						<td class="centered"><em><abbr title="{%- trans -%}Margin of error{%- endtrans -%}">{%- trans -%}MoE 99%{%- endtrans -%}</abbr></em></td>
 						{%- endif -%}
@@ -75,23 +75,27 @@
 						<th class="numeric">{{ data_analyses.overall.rv }}</th>
 						{%- endif -%}
 						<th class="numeric">{{ '%.1f' % data_analyses.overall.all_valid_votes_pct|percent_of(1, 0) }}% ({{ data_analyses.overall.all_valid_votes }})</th>
-						{%- if False and form.registered_voters_tag and form.calculate_moe and config.ENABLE_MOE -%}
-						<th class="numeric">{{ df|all_votes_total_moe(form, result_labels) }}%</th>
-						<th class="numeric">{{ df|all_votes_total_moe(form, result_labels, 258.0) }}%</th>
+						{%- if form.registered_voters_tag and form.calculate_moe and config.ENABLE_MOE -%}
+						<th class="numeric">&plusmn;{{ '%.2f' % data_analyses.overall.all_valid_votes_moe_95 }}%</th>
+						<th class="numeric">&plusmn;{{ '%.2f' % data_analyses.overall.all_valid_votes_moe_99 }}%</th>
 						{%- endif -%}
 						<th class="numeric">{{ '%.1f' % data_analyses.overall.total_rejected_pct|percent_of(1, 0) }}%<br />({{ data_analyses.overall.total_rejected }})</th>
-                        {%- if False and form.calculate_moe and config.ENABLE_MOE -%}
-                        <th class="numeric">{{ df|rejected_moe(form) }}%</th>
-                        <th class="numeric">{{ df|rejected_moe(form, 258.0) }}%</th>
+                        {%- if form.calculate_moe and config.ENABLE_MOE -%}
+                        <th class="numeric">&plusmn;{{ '%.2f' % data_analyses.overall.total_rejected_moe_95 }}%</th>
+                        <th class="numeric">&plusmn;{{ '%.2f' % data_analyses.overall.total_rejected_moe_99 }}%</th>
                         {%- endif -%}
                         <th class="numeric">{{ data_analyses.overall.all_valid_votes }}</th>
                         {%- for vote in result_labels -%}
                         {%- with vote_cnt = data_analyses['overall']['{}_cnt'.format(vote)] -%}
                         {%- with vote_pct = data_analyses['overall']['{}_pct'.format(vote)] -%}
                         <th class="numeric">{{ '%.1f' % vote_pct|percent_of(1, 0) }}%<br />({{ vote_cnt }})</th>
-                        {%- if False and form.calculate_moe and config.ENABLE_MOE -%}
-                        <th class="numeric">{{ df|vote_moe(form, result_labels, vote) }}%</th>
-                        <th class="numeric">{{ df|vote_moe(form, result_labels, vote, 258.0) }}%</th>
+                        {%- if form.calculate_moe and config.ENABLE_MOE -%}
+                        {%- with vote_moe_95 = data_analyses['overall']['{}_moe_95'.format(vote)] -%}
+                        {%- with vote_moe_99 = data_analyses['overall']['{}_moe_99'.format(vote)] -%}
+                        <th class="numeric">&plusmn;{{ '%.2f' % vote_moe_95 }}%</th>
+                        <th class="numeric">&plusmn;{{ '%.2f' % vote_moe_99 }}%</th>
+                        {%- endwith -%}
+                        {%- endwith -%}
                         {%- endif -%}
                         {%- endwith -%}
                         {%- endwith -%}
@@ -106,23 +110,27 @@
 						<th class="numeric">{{ sublocation.rv }}</th>
 						{%- endif -%}
 						<th class="numeric">{{ '%.1f' % sublocation.all_valid_votes_pct|percent_of(1, 0) }}% ({{ sublocation.all_valid_votes }})</th>
-						{%- if False and form.registered_voters_tag and form.calculate_moe and config.ENABLE_MOE -%}
-						<th class="numeric">{{ df|all_votes_total_moe(form, result_labels) }}%</th>
-						<th class="numeric">{{ df|all_votes_total_moe(form, result_labels, 258.0) }}%</th>
+						{%- if form.registered_voters_tag and form.calculate_moe and config.ENABLE_MOE -%}
+						<th class="numeric">&plusmn;{{ '%.2f' % sublocation.all_valid_votes_moe_95 }}%</th>
+						<th class="numeric">&plusmn;{{ '%.2f' % sublocation.all_valid_votes_moe_99 }}%</th>
 						{%- endif -%}
 						<th class="numeric">{{ '%.1f' % sublocation.total_rejected_pct|percent_of(1, 0) }}%<br />({{ sublocation.total_rejected }})</th>
-                        {%- if False and form.calculate_moe and config.ENABLE_MOE -%}
-                        <th class="numeric">{{ df|rejected_moe(form) }}%</th>
-                        <th class="numeric">{{ df|rejected_moe(form, 258.0) }}%</th>
+                        {%- if form.calculate_moe and config.ENABLE_MOE -%}
+                        <th class="numeric">&plusmn;{{ '%.2f' % sublocation.total_rejected_moe_95 }}%</th>
+                        <th class="numeric">&plusmn;{{ '%.2f' % sublocation.total_rejected_moe_99 }}%</th>
                         {%- endif -%}
                         <th class="numeric">{{ sublocation.all_valid_votes }}</th>
                         {%- for vote in result_labels -%}
                         {%- with vote_cnt = sublocation['{}_cnt'.format(vote)] -%}
                         {%- with vote_pct = sublocation['{}_pct'.format(vote)] -%}
                         <th class="numeric">{{ '%.1f' % vote_pct|percent_of(1, 0) }}%<br />({{ vote_cnt }})</th>
-                        {%- if False and form.calculate_moe and config.ENABLE_MOE -%}
-                        <th class="numeric">{{ df|vote_moe(form, result_labels, vote) }}%</th>
-                        <th class="numeric">{{ df|vote_moe(form, result_labels, vote, 258.0) }}%</th>
+                        {%- if form.calculate_moe and config.ENABLE_MOE -%}
+                        {%- with vote_moe_95 = sublocation['{}_moe_95'.format(vote)] -%}
+                        {%- with vote_moe_99 = sublocation['{}_moe_99'.format(vote)] -%}
+                        <th class="numeric">&plusmn;{{ '%.2f' % vote_moe_95 }}%</th>
+                        <th class="numeric">&plusmn;{{ '%.2f' % vote_moe_99 }}%</th>
+                        {%- endwith -%}
+                        {%- endwith -%}
                         {%- endif -%}
                         {%- endwith -%}
                         {%- endwith -%}
