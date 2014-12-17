@@ -60,6 +60,7 @@
               }
             },
             contentType: 'application/json; charset=utf-8',
+            async: false,
             data: JSON.stringify({fields: $scope.form}),
             error: function(obj, status, error) {
               $.simplyToast('Error: ' + error, 'danger', {delay: 5000});
