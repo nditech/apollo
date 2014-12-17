@@ -60,7 +60,7 @@ class SubmissionsService(Service):
             fields = [
                 field.name for group in form.groups for field in group.fields]
             location_types = LocationType.objects(
-                is_political=True, deployment=deployment)
+                is_administrative=True, deployment=deployment)
 
             sample_headers = list(samples.scalar('name'))
 
