@@ -182,8 +182,7 @@ class Submission(db.DynamicDocument):
     QUARANTINE_STATUSES = (
         ('', _(u'None')),
         ('A', _(u'All')),
-        ('R', _(u'Results')),
-        ('P', _(u'Process'))
+        ('R', _(u'Results'))
     )
 
     form = db.ReferenceField(Form)

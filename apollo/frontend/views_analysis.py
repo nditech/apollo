@@ -74,7 +74,8 @@ def _process_analysis(form_id, location_id=None, tag=None):
             grouped = False
 
         queryset = submissions.find(
-            form=form, submission_type='M').filter_in(location)
+            form=form, submission_type='M',
+            quarantine_status__nin=['A']).filter_in(location)
     else:
         grouped = True
         queryset = submissions.find(form=form).filter_in(location)

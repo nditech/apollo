@@ -490,8 +490,7 @@ def generate_submission_filter(form):
             ('', _(u'Quarantine Status')),
             ('N', _(u'Quarantine None')),
             ('A', _(u'Quarantine All')),
-            ('R', _(u'Quarantine Results')),
-            ('P', _(u'Quarantine Process'))
+            ('R', _(u'Quarantine Results'))
         ))
 
     # participant id and location
