@@ -172,7 +172,7 @@ def _voting_results(form_pk, location_pk=None):
     filter_set = filter_class(queryset, request.args)
     dataset = filter_set.qs.to_dataframe()
 
-    registered_voters_field = form.registered_voters_tag or None
+    registered_voters_field = form.registered_voters_tag or 'registered_voters'
     rejected_votes_field = form.invalid_votes_tag or None
 
     # compute and store reporting status
@@ -199,10 +199,13 @@ def _voting_results(form_pk, location_pk=None):
         'missing_cnt': int(reporting['missing']),
         'reported_pct': reporting['reported_pct'],
         'missing_pct': reporting['missing_pct'],
-        'rv': int(valid_summation.get(registered_voters_field, 0)),
+        'rv': valid_summation.get(registered_voters_field, 0),
         'all_votes': int(
             valid_summation[result_field_labels + [rejected_votes_field]].sum(
                 axis=1)),
+        'turnout': valid_summation[
+            result_field_labels + [rejected_votes_field]].sum(axis=1) /
+        valid_summation.get(registered_voters_field, pd.np.inf),
         'all_valid_votes': int(
             valid_summation[result_field_labels].sum(axis=1)),
         'all_valid_votes_pct': valid_summation[result_field_labels].sum(
@@ -277,6 +280,10 @@ def _voting_results(form_pk, location_pk=None):
                         _valid[result_field_labels +
                               [rejected_votes_field]].sum(
                             axis=1)),
+                    'turnout': _valid[
+                        result_field_labels + [rejected_votes_field]].sum(
+                        axis=1) / _valid.get(
+                        registered_voters_field, pd.np.inf),
                     'all_valid_votes': int(
                         _valid[result_field_labels].sum(axis=1)),
                     'all_valid_votes_pct': _valid[result_field_labels].sum(
