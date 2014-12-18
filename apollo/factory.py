@@ -2,7 +2,7 @@ from celery import Celery
 from flask import Flask, request
 from flask.ext.sslify import SSLify
 
-from .core import babel, db, mail, sentry
+from .core import babel, cache, db, mail, sentry
 from .helpers import register_blueprints
 
 
@@ -23,6 +23,7 @@ def create_app(package_name, package_path, settings_override=None):
 
     sentry.init_app(app)
     babel.init_app(app)
+    cache.init_app(app)
     db.init_app(app)
     mail.init_app(app)
 

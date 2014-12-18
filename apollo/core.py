@@ -2,6 +2,7 @@ from collections import OrderedDict
 from flask import g, abort
 from flask.ext.admin import Admin
 from flask.ext.babel import Babel
+from flask.ext.cache import Cache
 from flask.ext.mail import Mail
 from flask.ext.menu import Menu
 from flask.ext.mongoengine import MongoEngine
@@ -15,6 +16,7 @@ from wtforms import Form, fields
 
 admin = Admin(name='Apollo')
 babel = Babel()
+cache = Cache()
 db = MongoEngine()
 mail = Mail()
 menu = Menu()

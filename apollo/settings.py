@@ -68,6 +68,12 @@ CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_ACCEPT_CONTENT = ['json']
 
+CACHE_TYPE = 'simple' if DEBUG else 'redis'
+CACHE_REDIS_URL = 'redis://{host}/{database}'.format(
+    host=urlparse(
+        os.environ.get('REDIS_PORT', 'redis://localhost')).netloc,
+    database=os.environ.get('REDIS_DATABASE', '0'))
+
 LANGUAGES = {
     'en': 'English',
     'es': 'Español',
