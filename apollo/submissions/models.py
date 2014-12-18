@@ -47,7 +47,7 @@ class SubmissionQuerySet(BaseQuerySet):
     # most of the fields below are DBRef fields or not useful to
     # our particular use case.
     DEFAULT_EXCLUDED_FIELDS = [
-        'id', 'created', 'location', 'deployment'
+        'id', 'created', 'deployment'
     ]
     SUBDOCUMENT_FIELDS = ['location_name_path', 'completion']
 
@@ -88,6 +88,8 @@ class SubmissionQuerySet(BaseQuerySet):
         return self.none()
 
     def to_dataframe(self, selected_fields=None, excluded_fields=None):
+        from ..services import locations
+
         if excluded_fields:
             qs = self.exclude(*excluded_fields)
         else:
@@ -115,6 +117,11 @@ class SubmissionQuerySet(BaseQuerySet):
             temp = df.pop(field).tolist()
             temp2 = [i if not isnull(i) else {} for i in temp]
             df = df.join(DataFrame(temp2))
+
+        rv_map = locations.registered_voters_map()
+
+        df['registered_voters'] = df.location.apply(lambda i: rv_map.get(
+            i, np.inf))
 
         return df
 

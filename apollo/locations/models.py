@@ -1,8 +1,9 @@
-from ..core import db
+from ..core import db, cache
 from ..deployments.models import Deployment, Event
 from flask.ext.mongoengine import BaseQuerySet
 from slugify import slugify_unicode
 from mongoengine import Q
+import pandas as pd
 
 
 class LocationQuerySet(BaseQuerySet):
@@ -101,7 +102,7 @@ class Location(db.DynamicDocument):
     political_code = db.StringField(db_field='pcode')
     location_type = db.StringField()
     coords = db.GeoPointField()
-    registered_voters = db.LongField(db_field='rv', default=0)
+    registered_voters = db.LongField(db_field='rv', default=pd.np.inf)
     ancestors_ref = db.ListField(db.ReferenceField(
         'Location', reverse_delete_rule=db.PULL))
     samples = db.ListField(db.ReferenceField(
@@ -160,3 +161,7 @@ class Location(db.DynamicDocument):
 
     def __unicode__(self):
         return self.name or u''
+
+    def save(self, *args, **kwargs):
+        cache.delete_memoized('registered_voters_map')
+        return super(Location, self).save(*args, **kwargs)
