@@ -102,7 +102,7 @@ class Location(db.DynamicDocument):
     political_code = db.StringField(db_field='pcode')
     location_type = db.StringField()
     coords = db.GeoPointField()
-    registered_voters = db.LongField(db_field='rv', default=pd.np.inf)
+    registered_voters = db.LongField(db_field='rv', default=0)
     ancestors_ref = db.ListField(db.ReferenceField(
         'Location', reverse_delete_rule=db.PULL))
     samples = db.ListField(db.ReferenceField(

@@ -121,7 +121,7 @@ class SubmissionQuerySet(BaseQuerySet):
         rv_map = locations.registered_voters_map()
 
         df['registered_voters'] = df.location.apply(lambda i: rv_map.get(
-            i, np.inf))
+            i, 0))
 
         return df
 

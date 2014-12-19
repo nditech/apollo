@@ -209,7 +209,7 @@ def _voting_results(form_pk, location_pk=None):
                     axis=1)),
             'turnout': valid_summation[
                 result_field_labels + rejected_votes_field].sum(axis=1) /
-            valid_summation.get(registered_voters_field, pd.np.inf),
+            valid_summation.get(registered_voters_field, 0) or pd.np.inf,
             'all_valid_votes': int(
                 valid_summation[result_field_labels].sum(axis=1)),
             'all_valid_votes_pct': valid_summation[result_field_labels].sum(
@@ -299,7 +299,7 @@ def _voting_results(form_pk, location_pk=None):
                         'reported_pct': _reporting['reported_pct'],
                         'missing_cnt': int(_reporting['missing']),
                         'missing_pct': _reporting['missing_pct'],
-                        'rv': int(_valid.get(registered_voters_field, 0)),
+                        'rv': _valid.get(registered_voters_field, 0),
                         'all_votes': int(
                             _valid[result_field_labels +
                                   rejected_votes_field].sum(
@@ -307,7 +307,7 @@ def _voting_results(form_pk, location_pk=None):
                         'turnout': _valid[
                             result_field_labels + rejected_votes_field].sum(
                             axis=1) / _valid.get(
-                            registered_voters_field, pd.np.inf),
+                            registered_voters_field, 0) or pd.np.inf,
                         'all_valid_votes': int(
                             _valid[result_field_labels].sum(axis=1)),
                         'all_valid_votes_pct': _valid[result_field_labels].sum(
