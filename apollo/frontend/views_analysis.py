@@ -173,7 +173,10 @@ def _voting_results(form_pk, location_pk=None):
     dataset = filter_set.qs.to_dataframe()
 
     registered_voters_field = form.registered_voters_tag or 'registered_voters'
-    rejected_votes_field = form.invalid_votes_tag or None
+    if form.invalid_votes_tag:
+        rejected_votes_field = [form.invalid_votes_tag]
+    else:
+        rejected_votes_field = []
 
     # compute and store reporting status
     dataset['reported'] = dataset[result_field_labels].count(1) == len(
@@ -201,34 +204,37 @@ def _voting_results(form_pk, location_pk=None):
         'missing_pct': reporting['missing_pct'],
         'rv': valid_summation.get(registered_voters_field, 0),
         'all_votes': int(
-            valid_summation[result_field_labels + [rejected_votes_field]].sum(
+            valid_summation[result_field_labels + rejected_votes_field].sum(
                 axis=1)),
         'turnout': valid_summation[
-            result_field_labels + [rejected_votes_field]].sum(axis=1) /
+            result_field_labels + rejected_votes_field].sum(axis=1) /
         valid_summation.get(registered_voters_field, pd.np.inf),
         'all_valid_votes': int(
             valid_summation[result_field_labels].sum(axis=1)),
         'all_valid_votes_pct': valid_summation[result_field_labels].sum(
             axis=1) / valid_summation[result_field_labels +
-                                     [rejected_votes_field]].sum(axis=1),
-        'total_rejected': int(valid_summation[rejected_votes_field]),
-        'total_rejected_pct': valid_summation[rejected_votes_field] /
-        valid_summation[result_field_labels + [rejected_votes_field]].sum(
-            axis=1)
+                                     rejected_votes_field].sum(axis=1),
+        'total_rejected': int(valid_summation[rejected_votes_field[0]])
+        if rejected_votes_field else 0,
+        'total_rejected_pct': valid_summation[rejected_votes_field[0]] /
+        valid_summation[result_field_labels + rejected_votes_field].sum(
+            axis=1) if rejected_votes_field else 0
     }
     if form.calculate_moe and current_app.config.get('ENABLE_MOE'):
         data_analyses['overall']['all_valid_votes_moe_95'] = _margin_of_error(
             valid_dataframe, result_field_labels,
-            result_field_labels + [rejected_votes_field])
+            result_field_labels + rejected_votes_field)
         data_analyses['overall']['all_valid_votes_moe_99'] = _margin_of_error(
             valid_dataframe, result_field_labels,
-            result_field_labels + [rejected_votes_field], 258.0)
+            result_field_labels + rejected_votes_field, 258.0)
         data_analyses['overall']['total_rejected_moe_95'] = _margin_of_error(
-            valid_dataframe, rejected_votes_field,
-            result_field_labels + [rejected_votes_field])
+            valid_dataframe, rejected_votes_field[0],
+            result_field_labels + rejected_votes_field) \
+            if rejected_votes_field else 0
         data_analyses['overall']['total_rejected_moe_99'] = _margin_of_error(
-            valid_dataframe, rejected_votes_field,
-            result_field_labels + [rejected_votes_field], 258.0)
+            valid_dataframe, rejected_votes_field[0],
+            result_field_labels + rejected_votes_field, 258.0) \
+            if rejected_votes_field else 0
 
     for result_field_label in result_field_labels:
         data_analyses['overall'][u'{}_cnt'.format(result_field_label)] = \
@@ -240,11 +246,11 @@ def _voting_results(form_pk, location_pk=None):
             data_analyses['overall'][u'{}_moe_95'.format(
                 result_field_label)] = _margin_of_error(
                 valid_dataframe, result_field_label,
-                result_field_labels + [rejected_votes_field])
+                result_field_labels + rejected_votes_field)
             data_analyses['overall'][u'{}_moe_99'.format(
                 result_field_label)] = _margin_of_error(
                 valid_dataframe, result_field_label,
-                result_field_labels + [rejected_votes_field], 258.0)
+                result_field_labels + rejected_votes_field, 258.0)
 
     # grouped summaries
     for location_type in location_tree.keys():
@@ -278,42 +284,45 @@ def _voting_results(form_pk, location_pk=None):
                     'rv': int(_valid.get(registered_voters_field, 0)),
                     'all_votes': int(
                         _valid[result_field_labels +
-                              [rejected_votes_field]].sum(
+                              rejected_votes_field].sum(
                             axis=1)),
                     'turnout': _valid[
-                        result_field_labels + [rejected_votes_field]].sum(
+                        result_field_labels + rejected_votes_field].sum(
                         axis=1) / _valid.get(
                         registered_voters_field, pd.np.inf),
                     'all_valid_votes': int(
                         _valid[result_field_labels].sum(axis=1)),
                     'all_valid_votes_pct': _valid[result_field_labels].sum(
                         axis=1) / _valid[result_field_labels +
-                                        [rejected_votes_field]].sum(axis=1),
-                    'total_rejected': int(_valid[rejected_votes_field]),
-                    'total_rejected_pct': _valid[rejected_votes_field] /
-                    _valid[result_field_labels + [rejected_votes_field]].sum(
-                        axis=1)
+                                        rejected_votes_field].sum(axis=1),
+                    'total_rejected': int(_valid[rejected_votes_field[0]])
+                    if rejected_votes_field else 0,
+                    'total_rejected_pct': _valid[rejected_votes_field[0]] /
+                    _valid[result_field_labels + rejected_votes_field].sum(
+                        axis=1) if rejected_votes_field else 0
                 }
 
                 if form.calculate_moe and current_app.config.get('ENABLE_MOE'):
                     _sublocation_report['all_valid_votes_moe_95'] = \
                         _margin_of_error(
                             _valid_dataframe, result_field_labels,
-                            result_field_labels + [rejected_votes_field])
+                            result_field_labels + rejected_votes_field)
                     _sublocation_report['all_valid_votes_moe_99'] = \
                         _margin_of_error(
                             _valid_dataframe, result_field_labels,
-                            result_field_labels + [rejected_votes_field],
+                            result_field_labels + rejected_votes_field,
                             258.0)
                     _sublocation_report['total_rejected_moe_95'] = \
                         _margin_of_error(
-                            _valid_dataframe, rejected_votes_field,
-                            result_field_labels + [rejected_votes_field])
+                            _valid_dataframe, rejected_votes_field[0],
+                            result_field_labels + rejected_votes_field) \
+                        if rejected_votes_field else 0
                     _sublocation_report['total_rejected_moe_99'] = \
                         _margin_of_error(
-                            _valid_dataframe, rejected_votes_field,
-                            result_field_labels + [rejected_votes_field],
-                            258.0)
+                            _valid_dataframe, rejected_votes_field[0],
+                            result_field_labels + rejected_votes_field,
+                            258.0) \
+                        if rejected_votes_field else 0
 
                 for result_field_label in result_field_labels:
                     _sublocation_report[u'{}_cnt'.format(
@@ -331,11 +340,11 @@ def _voting_results(form_pk, location_pk=None):
                         _sublocation_report[u'{}_moe_95'.format(
                             result_field_label)] = _margin_of_error(
                             _valid_dataframe, result_field_label,
-                            result_field_labels + [rejected_votes_field])
+                            result_field_labels + rejected_votes_field)
                         _sublocation_report[u'{}_moe_99'.format(
                             result_field_label)] = _margin_of_error(
                             _valid_dataframe, result_field_label,
-                            result_field_labels + [rejected_votes_field],
+                            result_field_labels + rejected_votes_field,
                             258.0)
                 data_analyses['grouped'][location_type].append(
                     _sublocation_report)
