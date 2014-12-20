@@ -227,14 +227,14 @@ def _voting_results(form_pk, location_pk=None):
                 result_field_labels + rejected_votes_field)
             data_analyses['overall']['all_valid_votes_moe_99'] = _margin_of_error(
                 valid_dataframe, result_field_labels,
-                result_field_labels + rejected_votes_field, 258.0)
+                result_field_labels + rejected_votes_field, 2.58)
             data_analyses['overall']['total_rejected_moe_95'] = _margin_of_error(
                 valid_dataframe, rejected_votes_field[0],
                 result_field_labels + rejected_votes_field) \
                 if rejected_votes_field else 0
             data_analyses['overall']['total_rejected_moe_99'] = _margin_of_error(
                 valid_dataframe, rejected_votes_field[0],
-                result_field_labels + rejected_votes_field, 258.0) \
+                result_field_labels + rejected_votes_field, 2.58) \
                 if rejected_votes_field else 0
         data_available = True
     except KeyError:
@@ -266,7 +266,7 @@ def _voting_results(form_pk, location_pk=None):
             data_analyses['overall'][u'{}_moe_99'.format(
                 result_field_label)] = _margin_of_error(
                 valid_dataframe, result_field_label,
-                result_field_labels, 258.0) \
+                result_field_labels, 2.58) \
                 if data_available else 0
 
     # grouped summaries
@@ -332,7 +332,7 @@ def _voting_results(form_pk, location_pk=None):
                             _margin_of_error(
                                 _valid_dataframe, result_field_labels,
                                 result_field_labels + rejected_votes_field,
-                                258.0)
+                                2.58)
                         _sublocation_report['total_rejected_moe_95'] = \
                             _margin_of_error(
                                 _valid_dataframe, rejected_votes_field[0],
@@ -342,7 +342,7 @@ def _voting_results(form_pk, location_pk=None):
                             _margin_of_error(
                                 _valid_dataframe, rejected_votes_field[0],
                                 result_field_labels + rejected_votes_field,
-                                258.0) \
+                                2.58) \
                             if rejected_votes_field else 0
                     data_available = True
                 except KeyError:
@@ -390,7 +390,7 @@ def _voting_results(form_pk, location_pk=None):
                             result_field_label)] = _margin_of_error(
                             _valid_dataframe, result_field_label,
                             result_field_labels,
-                            258.0) if data_available else 0
+                            2.58) if data_available else 0
                 data_analyses['grouped'][location_type].append(
                     _sublocation_report)
         except IndexError:
@@ -494,7 +494,10 @@ def _variance(dataframe, numerator, denominator):
     m = dataframe.ix[:, denominator].sum(axis=1)
     msquared = m * m
 
-    a = dataframe.ix[:, numerator].sum(axis=1)
+    if isinstance(numerator, list):
+        a = dataframe.ix[:, numerator].sum(axis=1)
+    else:
+        a = dataframe.ix[:, [numerator]].sum(axis=1)
     asquared = a * a
 
     mbar = m.sum(axis=0) / m.size
@@ -509,13 +512,13 @@ def _variance(dataframe, numerator, denominator):
 
     return (
         (1 - f) / (k * mbarsquared)) * ((sigma_asquared -
-                                        (2 * p * sigma_am) +
-                                        (psquared * sigma_msquared)) / (k - 1))
+                                    (2 * p * sigma_am) +
+                                    (psquared * sigma_msquared)) / (k - 1))
 
 
-def _margin_of_error(dataframe, numerator, denominator, cv=196.0):
+def _margin_of_error(dataframe, numerator, denominator, cv=1.96):
     moe = round(math.sqrt(abs(_variance(
-        dataframe, numerator, denominator)) * cv), 2)
+        dataframe, numerator, denominator)) * cv) * 100, 2)
     if pd.np.isnan(moe) or pd.np.isinf(moe):
         moe = 0
     return moe
