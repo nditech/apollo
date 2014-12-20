@@ -2,6 +2,7 @@ from ..core import Service
 from .models import Submission, SubmissionComment, SubmissionVersion
 from ..locations.models import LocationType, Sample
 from datetime import datetime
+from operator import attrgetter
 from flask import g
 import unicodecsv
 try:
@@ -21,6 +22,17 @@ def export_field(form, submission, field_name):
         # only export if there's a non empty list
         return ','.join(sorted([str(i) for i in data]))
 
+    return ''
+
+
+def recent_phone(contributor):
+    if getattr(contributor, 'phones', None):
+        phones = sorted(
+            # need to weed out cases where last_seen isn't set.
+            # we're not interested in them anyway
+            [p for p in contributor.phones if p.last_seen],
+            key=attrgetter('last_seen'), reverse=True)
+        return phones[0].number if phones else ''
     return ''
 
 
@@ -110,9 +122,7 @@ class SubmissionsService(Service):
                         getattr(submission.contributor, 'phone', '')
                         if getattr(
                             submission.contributor, 'phone', '') else '',
-                        submission.contributor.phones[-1].number
-                        if getattr(submission.contributor, 'phones', None)
-                        else ''] + \
+                        recent_phone(submission.contributor)] + \
                         [submission.location_name_path.get(
                          location_type.name, '')
                          for location_type in location_types] + \
@@ -148,9 +158,8 @@ class SubmissionsService(Service):
                         if sib and hasattr(sib, 'contributor') else '',
                         getattr(sib.contributor, 'phone', '') or ''
                         if sib and hasattr(sib, 'contributor') else '',
-                        sib.contributor.phones[-1].number
-                        if hasattr(sib, 'contributor') and getattr(
-                            sib.contributor, 'phones', None)
+                        recent_phone(sib.contributor)
+                        if hasattr(sib, 'contributor')
                         else '' if sib else ''] + \
                         [submission.location_name_path.get(
                             location_type.name, '')
