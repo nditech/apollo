@@ -70,13 +70,13 @@
 						<th class="numeric">{{ '%.1f' % data_analyses.overall.turnout|percent_of(1, 0) }}% <br>({{ '%d' % data_analyses.overall.rv }})</th>
 						<th class="numeric">{{ '%.1f' % data_analyses.overall.all_valid_votes_pct|percent_of(1, 0) }}% ({{ data_analyses.overall.all_votes }})</th>
 						{%- if form.calculate_moe and config.ENABLE_MOE -%}
-						<th class="numeric">&plusmn;{{ '%.2f' % data_analyses.overall.all_valid_votes_moe_95 }}%</th>
-						<th class="numeric">&plusmn;{{ '%.2f' % data_analyses.overall.all_valid_votes_moe_99 }}%</th>
+						<th class="numeric">&plusmn;{{ '%.1f' % data_analyses.overall.all_valid_votes_moe_95 }}%</th>
+						<th class="numeric">&plusmn;{{ '%.1f' % data_analyses.overall.all_valid_votes_moe_99 }}%</th>
 						{%- endif -%}
 						<th class="numeric">{{ '%.1f' % data_analyses.overall.total_rejected_pct|percent_of(1, 0) }}%<br />({{ data_analyses.overall.total_rejected }})</th>
                         {%- if form.calculate_moe and config.ENABLE_MOE -%}
-                        <th class="numeric">&plusmn;{{ '%.2f' % data_analyses.overall.total_rejected_moe_95 }}%</th>
-                        <th class="numeric">&plusmn;{{ '%.2f' % data_analyses.overall.total_rejected_moe_99 }}%</th>
+                        <th class="numeric">&plusmn;{{ '%.1f' % data_analyses.overall.total_rejected_moe_95 }}%</th>
+                        <th class="numeric">&plusmn;{{ '%.1f' % data_analyses.overall.total_rejected_moe_99 }}%</th>
                         {%- endif -%}
                         <th class="numeric">{{ data_analyses.overall.all_valid_votes }}</th>
                         {%- for vote in result_labels -%}
@@ -86,8 +86,8 @@
                         {%- if form.calculate_moe and config.ENABLE_MOE -%}
                         {%- with vote_moe_95 = data_analyses['overall']['{}_moe_95'.format(vote)] -%}
                         {%- with vote_moe_99 = data_analyses['overall']['{}_moe_99'.format(vote)] -%}
-                        <th class="numeric">&plusmn;{{ '%.2f' % vote_moe_95 }}%</th>
-                        <th class="numeric">&plusmn;{{ '%.2f' % vote_moe_99 }}%</th>
+                        <th class="numeric">&plusmn;{{ '%.1f' % vote_moe_95 }}%</th>
+                        <th class="numeric">&plusmn;{{ '%.1f' % vote_moe_99 }}%</th>
                         {%- endwith -%}
                         {%- endwith -%}
                         {%- endif -%}
@@ -103,13 +103,13 @@
 						<th class="numeric">{{ '%.1f' % sublocation.turnout|percent_of(1, 0) }}% <br>({{ '%d' % sublocation.rv }})</th>
 						<th class="numeric">{{ '%.1f' % sublocation.all_valid_votes_pct|percent_of(1, 0) }}% ({{ sublocation.all_votes }})</th>
 						{%- if form.calculate_moe and config.ENABLE_MOE -%}
-						<th class="numeric">&plusmn;{{ '%.2f' % sublocation.all_valid_votes_moe_95 }}%</th>
-						<th class="numeric">&plusmn;{{ '%.2f' % sublocation.all_valid_votes_moe_99 }}%</th>
+						<th class="numeric">&plusmn;{{ '%.1f' % sublocation.all_valid_votes_moe_95 }}%</th>
+						<th class="numeric">&plusmn;{{ '%.1f' % sublocation.all_valid_votes_moe_99 }}%</th>
 						{%- endif -%}
 						<th class="numeric">{{ '%.1f' % sublocation.total_rejected_pct|percent_of(1, 0) }}%<br />({{ sublocation.total_rejected }})</th>
                         {%- if form.calculate_moe and config.ENABLE_MOE -%}
-                        <th class="numeric">&plusmn;{{ '%.2f' % sublocation.total_rejected_moe_95 }}%</th>
-                        <th class="numeric">&plusmn;{{ '%.2f' % sublocation.total_rejected_moe_99 }}%</th>
+                        <th class="numeric">&plusmn;{{ '%.1f' % sublocation.total_rejected_moe_95 }}%</th>
+                        <th class="numeric">&plusmn;{{ '%.1f' % sublocation.total_rejected_moe_99 }}%</th>
                         {%- endif -%}
                         <th class="numeric">{{ sublocation.all_valid_votes }}</th>
                         {%- for vote in result_labels -%}
@@ -119,8 +119,8 @@
                         {%- if form.calculate_moe and config.ENABLE_MOE -%}
                         {%- with vote_moe_95 = sublocation['{}_moe_95'.format(vote)] -%}
                         {%- with vote_moe_99 = sublocation['{}_moe_99'.format(vote)] -%}
-                        <th class="numeric">&plusmn;{{ '%.2f' % vote_moe_95 }}%</th>
-                        <th class="numeric">&plusmn;{{ '%.2f' % vote_moe_99 }}%</th>
+                        <th class="numeric">&plusmn;{{ '%.1f' % vote_moe_95 }}%</th>
+                        <th class="numeric">&plusmn;{{ '%.1f' % vote_moe_99 }}%</th>
                         {%- endwith -%}
                         {%- endwith -%}
                         {%- endif -%}
