@@ -518,7 +518,7 @@ def _variance(dataframe, numerator, denominator):
 
 def _margin_of_error(dataframe, numerator, denominator, cv=1.96):
     moe = round(math.sqrt(abs(_variance(
-        dataframe, numerator, denominator)) * cv) * 100, 2)
+        dataframe, numerator, denominator))) * cv * 100, 2)
     if pd.np.isnan(moe) or pd.np.isinf(moe):
         moe = 0
     return moe
