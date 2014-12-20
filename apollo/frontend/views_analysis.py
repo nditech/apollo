@@ -256,17 +256,17 @@ def _voting_results(form_pk, location_pk=None):
         data_analyses['overall'][u'{}_pct'.format(result_field_label)] = \
             valid_summation.get(result_field_label, 0) / float(
                 data_analyses['overall']['all_valid_votes']) \
-            if data_available else 0  # all_votes? 
+            if data_available else 0  # all_votes?
         if form.calculate_moe and current_app.config.get('ENABLE_MOE'):
             data_analyses['overall'][u'{}_moe_95'.format(
                 result_field_label)] = _margin_of_error(
                 valid_dataframe, result_field_label,
-                result_field_labels + rejected_votes_field) \
+                result_field_labels) \
                 if data_available else 0
             data_analyses['overall'][u'{}_moe_99'.format(
                 result_field_label)] = _margin_of_error(
                 valid_dataframe, result_field_label,
-                result_field_labels + rejected_votes_field, 258.0) \
+                result_field_labels, 258.0) \
                 if data_available else 0
 
     # grouped summaries
@@ -302,7 +302,7 @@ def _voting_results(form_pk, location_pk=None):
                         'rv': _valid.get(registered_voters_field, 0),
                         'all_votes': int(
                             _valid[result_field_labels +
-                                  rejected_votes_field].sum(
+                                   rejected_votes_field].sum(
                                 axis=1)),
                         'turnout': _valid[
                             result_field_labels + rejected_votes_field].sum(
@@ -312,7 +312,7 @@ def _voting_results(form_pk, location_pk=None):
                             _valid[result_field_labels].sum(axis=1)),
                         'all_valid_votes_pct': _valid[result_field_labels].sum(
                             axis=1) / _valid[result_field_labels +
-                                            rejected_votes_field].sum(axis=1),
+                                             rejected_votes_field].sum(axis=1),
                         'total_rejected': int(_valid[rejected_votes_field[0]])
                         if rejected_votes_field else 0,
                         'total_rejected_pct': _valid[rejected_votes_field[0]] /
@@ -320,7 +320,10 @@ def _voting_results(form_pk, location_pk=None):
                             axis=1) if rejected_votes_field else 0
                     }
 
-                    if form.calculate_moe and current_app.config.get('ENABLE_MOE'):
+                    if (
+                        form.calculate_moe and current_app.config.get(
+                            'ENABLE_MOE')
+                    ):
                         _sublocation_report['all_valid_votes_moe_95'] = \
                             _margin_of_error(
                                 _valid_dataframe, result_field_labels,
@@ -381,12 +384,12 @@ def _voting_results(form_pk, location_pk=None):
                         _sublocation_report[u'{}_moe_95'.format(
                             result_field_label)] = _margin_of_error(
                             _valid_dataframe, result_field_label,
-                            result_field_labels + rejected_votes_field) \
+                            result_field_labels) \
                             if data_available else 0
                         _sublocation_report[u'{}_moe_99'.format(
                             result_field_label)] = _margin_of_error(
                             _valid_dataframe, result_field_label,
-                            result_field_labels + rejected_votes_field,
+                            result_field_labels,
                             258.0) if data_available else 0
                 data_analyses['grouped'][location_type].append(
                     _sublocation_report)
@@ -506,9 +509,8 @@ def _variance(dataframe, numerator, denominator):
 
     return (
         (1 - f) / (k * mbarsquared)) * ((sigma_asquared -
-                                        2 * p * sigma_am +
-                                        psquared *
-                                        sigma_msquared) / (k - 1))
+                                        (2 * p * sigma_am) +
+                                        (psquared * sigma_msquared)) / (k - 1))
 
 
 def _margin_of_error(dataframe, numerator, denominator, cv=196.0):
