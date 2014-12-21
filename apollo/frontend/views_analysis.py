@@ -483,6 +483,8 @@ def results_analysis_with_location(form_id, location_id):
 
 
 def _proportion(dataframe, numerator, denominator):
+    if not isinstance(numerator, list):
+        numerator = [numerator]
     m = dataframe.ix[:, denominator].sum(axis=1)
     mbar = m.sum(axis=0) / m.size
     return dataframe.ix[:, numerator].sum(axis=0).sum(axis=0) / (mbar * m.size)
