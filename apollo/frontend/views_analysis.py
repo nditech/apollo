@@ -189,7 +189,7 @@ def _voting_results(form_pk, location_pk=None):
             location.location_type).sum().ix[location.name]
         valid_dataframe = dataset[dataset.reported==True].query(u'%s==u"%s"' % (
             location.location_type, location.name))
-        valid_summation = dataset[dataset.reported==True].groupby(
+        valid_summation = dataset[dataset.reported==True].fillna(0).groupby(
             location.location_type).sum().ix[location.name]
         reporting = overall_summation[['missing', 'reported']]
         reporting['reported_pct'] = reporting['reported']/(
@@ -282,7 +282,8 @@ def _voting_results(form_pk, location_pk=None):
             for sublocation in location_tree[location_type]:
                 try:
                     _overall = grouped_summation.ix[sublocation.name]
-                    _valid = grouped_valid_summation.ix[sublocation.name]
+                    _valid = grouped_valid_summation.fillna(
+                        0).ix[sublocation.name]
                     _valid_dataframe = dataset[dataset.reported==True].query(
                         u'%s==u"%s"' % (location_type, sublocation.name))
 
