@@ -147,7 +147,8 @@ class SubmissionsService(Service):
                         ([submission.updated.strftime('%Y-%m-%d %H:%M:%S')] +
                             [1 if sample in submission.location.samples else 0
                                 for sample in samples] +
-                            [submission.comments.first().comment
+                            [submission.comments.first().comment.replace(
+                                '\n', '')
                              if submission.comments.first() else ''])
                 else:
                     sib = submission.siblings.first()
