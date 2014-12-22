@@ -122,11 +122,12 @@ class Form(db.Document):
     quality_checks = db.ListField(db.DictField())
     party_mappings = db.DictField()
     calculate_moe = db.BooleanField(default=False)
-    accredited_voters_tag = db.StringField()
+    accredited_voters_tag = db.StringField(verbose_name="Accredited Voters")
     verifiable = db.BooleanField(default=False,
                                  verbose_name="Quality Assurance")
-    invalid_votes_tag = db.StringField()
-    registered_voters_tag = db.StringField()
+    invalid_votes_tag = db.StringField(verbose_name="Invalid Votes")
+    registered_voters_tag = db.StringField(verbose_name="Registered Voters")
+    blank_votes_tag = db.StringField(verbose_name="Blank Votes")
 
     meta = {
         'indexes': [
