@@ -1,6 +1,6 @@
 import base64
 from flask import redirect, request, url_for
-from flask.ext.admin import BaseView, expose
+from flask.ext.admin import BaseView, expose, form
 from flask.ext.admin.contrib.mongoengine import ModelView
 from flask.ext.admin.form import rules
 from flask.ext.babel import lazy_gettext as _
@@ -109,6 +109,7 @@ class UserAdminView(BaseAdminView):
         return models.User.objects(deployment=user.deployment)
 
     def on_model_change(self, form, model, is_created):
+        print form.data
         if form.password2.data:
             model.password = encrypt_password(form.password2.data)
         if is_created:
@@ -145,7 +146,8 @@ class RoleAdminView(BaseAdminView):
         form_class.permissions = SelectMultipleField(
             _('Permissions'),
             choices=forms._make_choices(
-                models.Need.objects.scalar('pk', 'action')))
+                models.Need.objects.scalar('pk', 'action')),
+            widget=form.Select2Widget(multiple=True))
 
         return form_class
 
