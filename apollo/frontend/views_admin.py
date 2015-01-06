@@ -134,23 +134,20 @@ class RoleAdminView(BaseAdminView):
 
     def after_model_change(self, form, model, is_created):
         # remove model from all permissions that weren't granted
-        for need in models.Need.objects(pk__nin=form.permissions.data):
+        for need in models.Need.objects(
+                pk__nin=form.permissions.data):
             need.update(pull__entities=model)
 
         # add only the explicitly defined permissions
         for pk in form.permissions.data:
-            try:
-                models.Need.objects.get(pk=pk).update(
-                    add_to_set__entities=model)
-            except models.Need.DoesNotExist:
-                pass
+            models.Need.objects.get(pk=pk).update(add_to_set__entities=model)
 
     def scaffold_form(self):
         form_class = super(RoleAdminView, self).scaffold_form()
         form_class.permissions = SelectMultipleField(
             _('Permissions'),
             choices=forms._make_choices(
-                models.Need.objects.scalar('pk', 'action')),
+                models.Need.objects().scalar('pk', 'action')),
             widget=form.Select2Widget(multiple=True))
 
         return form_class
