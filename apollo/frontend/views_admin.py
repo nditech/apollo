@@ -139,7 +139,11 @@ class RoleAdminView(BaseAdminView):
 
         # add only the explicitly defined permissions
         for pk in form.permissions.data:
-            models.Need.objects(pk=pk).update_one(add_to_set__entities=model)
+            try:
+                models.Need.objects.get(pk=pk).update(
+                    add_to_set__entities=model)
+            except models.Need.DoesNotExist:
+                pass
 
     def scaffold_form(self):
         form_class = super(RoleAdminView, self).scaffold_form()
