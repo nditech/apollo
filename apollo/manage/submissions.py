@@ -31,13 +31,16 @@ class InitializeSubmissionsCommand(Command):
         for o in services.participants.find(
             role=role, deployment=deployment, event=event
         ):
-            location = next(
-                (a for a in o.location.ancestors_ref
-                    if a.location_type == location_type.name),
-                None)
-            if not location:
-                print 'Location level not found in location hierarchy'
-                break
+            if location_type.name == o.location.location_type:
+                location = o.location
+            else:
+                location = next(
+                    (a for a in o.location.ancestors_ref
+                        if a.location_type == location_type.name),
+                    None)
+                if not location:
+                    print 'Location level not found in location hierarchy'
+                    break
             submission, _ = models.Submission.objects.get_or_create(
                 form=form, contributor=o, location=location,
                 created=event.start_date, deployment=event.deployment,
