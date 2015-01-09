@@ -15,7 +15,7 @@ from apollo.manage import \
      CreateDeploymentCommand, ListDeploymentsCommand, CreateEventCommand,
      ListEventsCommand,
      InitializeSubmissionsCommand,
-     SetupCommand)
+     SetupCommand, MessagePlaybackCommand)
 
 
 def read_env(env_path=None):
@@ -76,6 +76,8 @@ manager.add_command('list_events', ListEventsCommand())
 manager.add_command('init_submissions', InitializeSubmissionsCommand())
 
 manager.add_command('init', SetupCommand())
+
+manager.add_command('playback', MessagePlaybackCommand())
 
 if __name__ == '__main__':
     manager.run()
