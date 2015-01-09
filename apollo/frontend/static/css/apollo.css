@@ -7542,7 +7542,6 @@ transform:scale(0.7);
   overflow: hidden;
   position: relative;
   text-decoration: none;
-  width: 100%;
   /*text-shadow: 0 1px rgba(0,0,0,0.5), 0 0 2px rgba(0,0,0,0.2);*/
 
   background: #297dc3;
@@ -7727,4 +7726,3 @@ transform:scale(0.7);
         left: 100%;
         margin-left: 15px;
     }
-.clear{clear: both;}
