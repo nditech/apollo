@@ -1,4 +1,4 @@
-from urlparse import urlunsplit
+from urlparse import urljoin
 from flask import current_app, url_for
 from flask.ext.script import Command, prompt
 import requests
@@ -10,11 +10,8 @@ class MessagePlaybackCommand(Command):
         settings = current_app.config
 
         # construct base url
-        hostname = prompt('URL of instance')
-        # scheme and other parts
-        parts = '', hostname, url_for(
-            'messaging.kannel_view'), '', ''
-        base_url = urlunsplit(parts)
+        hostname = prompt('URL of current instance')
+        base_url = urljoin(hostname, url_for('messaging.kannel_view'))
 
         filename = prompt('Path to message log')
         with open(filename) as f:
