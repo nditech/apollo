@@ -6,10 +6,9 @@ from flask.ext.admin import AdminIndexView
 from flask.ext.login import user_logged_out
 from flask.ext.principal import identity_loaded
 from flask.ext.security import MongoEngineUserDatastore, current_user
-from flask.ext.wtf.csrf import CsrfProtect
 
 from .. import factory, models, services
-from ..core import admin, db, menu, security, gravatar
+from ..core import admin, db, menu, security, gravatar, csrf
 from ..security_ext_forms import DeploymentLoginForm
 
 from . import assets, permissions
@@ -74,7 +73,7 @@ def create_app(settings_override=None, register_security_blueprint=True):
                       register_blueprint=register_security_blueprint)
     app.session_interface = CustomMongoEngineSessionInterface(db)
 
-    CsrfProtect(app)
+    csrf.init_app(app)
     init_admin(admin, app)
 
     # Register custom error handlers

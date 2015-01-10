@@ -3,7 +3,7 @@ from .. import services
 from ..messaging.forms import KannelForm, TelerivetForm
 from ..messaging.helpers import parse_message
 from ..messaging.utils import parse_text
-from flask import Blueprint, make_response, request, g, abort, current_app
+from flask import Blueprint, make_response, request, g, current_app
 import json
 
 

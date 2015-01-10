@@ -8,6 +8,7 @@ from flask.ext.menu import Menu
 from flask.ext.mongoengine import MongoEngine
 from flask.ext.security import Security
 from flask.ext.gravatar import Gravatar
+from flask.ext.wtf.csrf import CsrfProtect
 from mongoengine.base import ValidationError
 from raven.contrib.flask import Sentry
 import six
@@ -23,6 +24,7 @@ menu = Menu()
 security = Security()
 gravatar = Gravatar(size=25, default="identicon", use_ssl=True)
 sentry = Sentry()
+csrf = CsrfProtect()
 
 
 class Service(object):
