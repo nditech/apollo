@@ -23,7 +23,8 @@ class ChecklistFormFilter(ChoiceFilter):
     def __init__(self, *args, **kwargs):
         kwargs['choices'] = _make_choices(
             services.forms.find(
-                form_type='CHECKLIST').scalar('id', 'name'), _('Form'))
+                form_type='CHECKLIST'
+            ).order_by('name').scalar('id', 'name'), _('Form'))
         super(ChecklistFormFilter, self).__init__(*args, **kwargs)
 
     def filter(self, queryset, value):
