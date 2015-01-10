@@ -6,7 +6,7 @@ from ..deployments.forms import generate_event_selection_form
 from ..models import LocationType
 from ..services import events, forms, submissions, locations, location_types
 from .filters import dashboard_filterset
-from .helpers import get_event, set_event
+from .helpers import get_event, set_event, get_concurrent_events_list_menu
 from . import permissions
 from flask import (
     Blueprint, redirect, render_template, request, url_for
@@ -14,6 +14,8 @@ from flask import (
 from flask.ext.babel import lazy_gettext as _
 from flask.ext.menu import register_menu
 from flask.ext.security import login_required
+from functools import partial
+
 
 bp = Blueprint('dashboard', __name__, template_folder='templates',
                static_folder='static')
@@ -105,10 +107,23 @@ def index():
     )
 
 
+@route(bp, '/event/<event_id>', methods=['GET'])
+@register_menu(
+    bp, 'concurrent_events', _('Concurrent Events'),
+    visible_when=partial(lambda: events.current_events()),
+    dynamic_list_constructor=partial(get_concurrent_events_list_menu))
+@login_required
+def concurrent_events(event_id):
+    event = events.current_events().get_or_404(pk=event_id)
+    if event:
+        set_event(event)
+    return redirect(url_for('dashboard.index'))
+
+
 @route(bp, '/event', methods=['GET', 'POST'])
 @register_menu(
     bp, 'events', _('Events'),
-    visible_when=lambda: permissions.view_events.can())
+    visible_when=partial(lambda: permissions.view_events.can()))
 @permissions.view_events.require(403)
 @login_required
 def event_selection():

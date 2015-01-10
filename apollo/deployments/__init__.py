@@ -32,3 +32,15 @@ class EventsService(Service):
 
         if event:
             return event
+
+    def current_events(self):
+        now = datetime.utcnow()
+
+        lower_bound = datetime.combine(now, datetime.min.time())
+        upper_bound = datetime.combine(now, datetime.max.time())
+
+        events = self.find(start_date__lte=upper_bound,
+                           end_date__gte=lower_bound) \
+            .order_by('-start_date')
+
+        return events

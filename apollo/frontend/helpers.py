@@ -74,6 +74,18 @@ def get_form_list_menu(**kwargs):
                 services.forms.find(**kwargs).order_by('name'))]
 
 
+def get_concurrent_events_list_menu():
+    """Retrieves a list of events that are running concurrently and returns it
+    in a format that can be rendered on the menu
+    """
+    events_list = services.events.current_events().order_by('-start_date')
+
+    return [{'url': url_for('dashboard.concurrent_events',
+             event_id=str(event.id)), 'text': event.name, 'visible': True,
+             'active': get_event() == event}
+            for event in events_list]
+
+
 def get_quality_assurance_form_list_menu(**kwargs):
     """Retrieves a list of forms that have the verification flag set
 

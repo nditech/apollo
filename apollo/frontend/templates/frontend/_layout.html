@@ -111,9 +111,16 @@
                 <li class="eml"><a href="#">{{ current_user.email}}</a></li>
                 <li class="divider"></li>
               {%- if current_menu.submenu('events').visible -%}
-                <li><a href="{{ current_menu.submenu('events').url }}"><i class="glyphicon glyphicon-th-list"></i> {{ current_menu.submenu('events').text }}</a></li>
-                <li class="divider"></li>
+                <li><a href="{{ current_menu.submenu('events').url }}"><i class="glyphicon glyphicon-calendar"></i> {{ current_menu.submenu('events').text }}</a></li>
               {%- endif -%}
+              {% for event in current_menu.submenu('concurrent_events').dynamic_list %}
+                {% if event.active %}
+                <li><a href="javascript:;"><i class="glyphicon glyphicon-calendar"></i> <span class="text-muted">{{ event.text }}</span></a></li>
+                {% else %}
+                <li><a href="{{ event.url }}"><i class="glyphicon glyphicon-calendar"></i> <span>{{ event.text }}</span></a></li>
+                {% endif %}
+              {% endfor %}
+                <li class="divider"></li>
               {%- if perms.role('admin').can() -%}
                 <li><a href="{{ url_for('admin.index') }}"><i class="glyphicon glyphicon-user"></i> {% trans %}Admin{% endtrans %}</a></li>
                 <li class="divider"></li>
