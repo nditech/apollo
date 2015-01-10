@@ -80,19 +80,33 @@ class BaseQuestionnaireForm(Form):
         ignored_fields.extend(self.errors.keys())
         try:
             if self.data.get('form').form_type == 'CHECKLIST':
-                submission = services.submissions.get(
+                # when searching for the submission, take into cognisance
+                # that the submission may be in one of several concurrent
+                # events
+                submission = models.Submission.objects(
                     contributor=self.data.get('participant'),
-                    form=self.data.get('form'), submission_type='O')
-                if self.data.get('comment'):
+                    form=self.data.get('form'), submission_type='O',
+                    event__in=services.events.current_events(),
+                    deployment=self.data.get('form').deployment).first()
+                if self.data.get('comment') and submission:
                     services.submission_comments.create_comment(
                         submission, self.data.get('comment'))
             else:
+                # the submission event is determined by taking the intersection
+                # of form events and concurrent events and taking an arbitrary
+                # element from that set; basic idea being that we want to
+                # find what is common between the form's events and the current
+                # events
+                submission_event = set(
+                    self.data.get('form').events).intersection(
+                    set(services.events.current_events())).pop()
                 submission = models.Submission(
                     form=self.data.get('form'),
                     contributor=self.data.get('participant'),
                     location=self.data.get('participant').location,
-                    created=datetime.utcnow(), deployment=g.event.deployment,
-                    event=g.event)
+                    created=datetime.utcnow(),
+                    deployment=submission_event.deployment,
+                    event=submission_event)
                 if self.data.get('comment'):
                     submission.description = self.data.get('comment')
 
