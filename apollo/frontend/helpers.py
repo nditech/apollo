@@ -71,7 +71,7 @@ def get_form_list_menu(**kwargs):
             for form in filter(
                 lambda f: Permission(ItemNeed('view_forms', f, 'object'),
                                      RoleNeed('admin')).can(),
-                services.forms.find(**kwargs))]
+                services.forms.find(**kwargs).order_by('name'))]
 
 
 def get_quality_assurance_form_list_menu(**kwargs):
@@ -84,7 +84,7 @@ def get_quality_assurance_form_list_menu(**kwargs):
             for form in filter(
                 lambda f: Permission(ItemNeed('view_forms', f, 'object'),
                                      RoleNeed('admin')).can(),
-                services.forms.find(**kwargs))]
+                services.forms.find(**kwargs).order_by('name'))]
 
 
 def displayable_location_types(**kwargs):
