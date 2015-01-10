@@ -113,6 +113,7 @@
               {%- if current_menu.submenu('events').visible -%}
                 <li><a href="{{ current_menu.submenu('events').url }}"><i class="glyphicon glyphicon-calendar"></i> {{ current_menu.submenu('events').text }}</a></li>
               {%- endif -%}
+              {% if current_menu.submenu('concurrent_events').visible -%}
               {% for event in current_menu.submenu('concurrent_events').dynamic_list %}
                 {% if event.active %}
                 <li><a href="javascript:;"><i class="glyphicon glyphicon-calendar"></i> <span class="text-muted">{{ event.text }}</span></a></li>
@@ -120,6 +121,7 @@
                 <li><a href="{{ event.url }}"><i class="glyphicon glyphicon-calendar"></i> <span>{{ event.text }}</span></a></li>
                 {% endif %}
               {% endfor %}
+              {% endif %}
                 <li class="divider"></li>
               {%- if perms.role('admin').can() -%}
                 <li><a href="{{ url_for('admin.index') }}"><i class="glyphicon glyphicon-user"></i> {% trans %}Admin{% endtrans %}</a></li>

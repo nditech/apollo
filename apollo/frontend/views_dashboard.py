@@ -110,7 +110,7 @@ def index():
 @route(bp, '/event/<event_id>', methods=['GET'])
 @register_menu(
     bp, 'concurrent_events', _('Concurrent Events'),
-    visible_when=partial(lambda: events.current_events()),
+    visible_when=partial(lambda: events.current_events().count() > 1),
     dynamic_list_constructor=partial(get_concurrent_events_list_menu))
 @login_required
 def concurrent_events(event_id):
