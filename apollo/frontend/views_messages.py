@@ -1,5 +1,5 @@
 from . import filters, route, permissions
-from ..services import messages
+from ..services import events, messages
 from flask import (
     Blueprint, render_template, request, current_app, Response, g)
 from flask.ext.babel import lazy_gettext as _
@@ -22,7 +22,10 @@ def message_list():
     page_title = _('Messages')
     template_name = 'frontend/message_list.html'
 
-    qs = messages.all().order_by('-received')
+    deployment = g.deployment
+    qs = messages.find(
+        deployment=deployment,
+        event__in=events.current_events()).order_by('-received')
     queryset_filter = filters.messages_filterset()(qs, request.args)
 
     if request.args.get('export') and permissions.export_messages.can():
