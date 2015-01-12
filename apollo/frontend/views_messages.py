@@ -1,4 +1,5 @@
 from . import filters, route, permissions
+from ..models import Message
 from ..services import events, messages
 from flask import (
     Blueprint, render_template, request, current_app, Response, g)
@@ -23,9 +24,10 @@ def message_list():
     template_name = 'frontend/message_list.html'
 
     deployment = g.deployment
-    qs = messages.find(
+    qs = Message.objects(
         deployment=deployment,
         event__in=events.current_events()).order_by('-received')
+    print qs._query
     queryset_filter = filters.messages_filterset()(qs, request.args)
 
     if request.args.get('export') and permissions.export_messages.can():
