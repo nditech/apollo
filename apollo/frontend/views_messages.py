@@ -27,7 +27,6 @@ def message_list():
     qs = Message.objects(
         deployment=deployment,
         event__in=events.current_events()).order_by('-received')
-    print qs._query
     queryset_filter = filters.messages_filterset()(qs, request.args)
 
     if request.args.get('export') and permissions.export_messages.can():
