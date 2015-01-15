@@ -37,7 +37,8 @@ def index():
     event = get_event()
 
     if not args.get('checklist_form'):
-        form = forms.find(events=event, form_type='CHECKLIST').first()
+        form = forms.find(
+            events=event, form_type='CHECKLIST').order_by('name').first()
     else:
         form = forms.get_or_404(pk=args.get('checklist_form'))
 
