@@ -163,5 +163,6 @@ class Location(db.DynamicDocument):
         return self.name or u''
 
     def save(self, *args, **kwargs):
-        cache.delete_memoized('registered_voters_map')
+        from . import LocationsService
+        cache.delete_memoized(LocationsService.registered_voters_map)
         return super(Location, self).save(*args, **kwargs)
