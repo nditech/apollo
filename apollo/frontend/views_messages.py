@@ -6,7 +6,7 @@ from flask import (
 from flask.ext.babel import lazy_gettext as _
 from flask.ext.menu import register_menu
 import calendar
-from datetime import datetime
+from datetime import datetime, timedelta
 import pandas as pd
 from slugify import slugify_unicode
 
@@ -56,9 +56,20 @@ def message_list():
 
 
 def message_time_series(message_queryset):
+    current_events = list(events.current_events().order_by(
+        '-end_date', '-start_date'))
+    # add 30 days as an arbitrary end buffer
+    upper_bound = current_events[0].end_date + timedelta(30)
+    lower_bound = current_events[-1].start_date
+
+    # limit the range of the displayed chart to prevent possible
+    # DOS attacks
     df = pd.DataFrame(
-        list(message_queryset(direction='IN')
-             .only('received').as_pymongo())
+        list(message_queryset(
+            direction='IN',
+            received__gte=lower_bound,
+            received__lte=upper_bound).only('received').as_pymongo()
+        )
     )
 
     # set a marker for each message
