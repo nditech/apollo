@@ -9,7 +9,7 @@ from .filters import dashboard_filterset
 from .helpers import get_event, set_event, get_concurrent_events_list_menu
 from . import permissions
 from flask import (
-    Blueprint, redirect, render_template, request, url_for
+    Blueprint, redirect, render_template, request, url_for, g
 )
 from flask.ext.babel import lazy_gettext as _
 from flask.ext.menu import register_menu
@@ -111,11 +111,11 @@ def index():
 @route(bp, '/event/<event_id>', methods=['GET'])
 @register_menu(
     bp, 'concurrent_events', _('Concurrent Events'),
-    visible_when=partial(lambda: events.current_events().count() > 1),
+    visible_when=partial(lambda: events.overlapping_events(g.event).count() > 1),
     dynamic_list_constructor=partial(get_concurrent_events_list_menu))
 @login_required
 def concurrent_events(event_id):
-    event = events.current_events().get_or_404(pk=event_id)
+    event = events.overlapping_events(g.event).get_or_404(pk=event_id)
     if event:
         set_event(event)
     return redirect(url_for('dashboard.index'))

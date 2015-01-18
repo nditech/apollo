@@ -1,5 +1,6 @@
 import time
 from .. import services
+from flask import g
 from flask.ext import wtf
 import wtforms
 
@@ -78,8 +79,7 @@ def retrieve_form(prefix, form_type='CHECKLIST'):
     :param:`form_type` - (optional) the form type in narrowing the result
     :returns: a Form document or None
     '''
-    current_events = services.events.current_events() \
-        or [services.events.default()]
+    current_events = services.events.overlapping_events(g.event)
 
     # find the first form that matches the prefix and optionally form type
     # for the events in the deployment.

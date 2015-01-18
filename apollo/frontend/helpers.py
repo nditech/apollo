@@ -78,7 +78,8 @@ def get_concurrent_events_list_menu():
     """Retrieves a list of events that are running concurrently and returns it
     in a format that can be rendered on the menu
     """
-    events_list = services.events.current_events().order_by('-start_date')
+    events_list = services.events.overlapping_events(g.event).order_by(
+        '-start_date')
 
     return [{'url': url_for('dashboard.concurrent_events',
              event_id=str(event.id)), 'text': event.name, 'visible': True,

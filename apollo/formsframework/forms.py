@@ -86,7 +86,7 @@ class BaseQuestionnaireForm(Form):
                 submission = models.Submission.objects(
                     contributor=self.data.get('participant'),
                     form=self.data.get('form'), submission_type='O',
-                    event__in=services.events.current_events(),
+                    event__in=services.events.overlapping_events(g.event),
                     deployment=self.data.get('form').deployment).first()
                 if self.data.get('comment') and submission:
                     services.submission_comments.create_comment(
@@ -99,7 +99,7 @@ class BaseQuestionnaireForm(Form):
                 # events
                 submission_event = set(
                     self.data.get('form').events).intersection(
-                    set(services.events.current_events())).pop()
+                    set(services.events.overlapping_events(g.event))).pop()
                 submission = models.Submission(
                     form=self.data.get('form'),
                     contributor=self.data.get('participant'),

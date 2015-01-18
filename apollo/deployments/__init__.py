@@ -1,6 +1,7 @@
 from ..core import Service
 from .models import Event
 from datetime import datetime
+from mongoengine import Q
 
 
 class EventsService(Service):
@@ -33,14 +34,8 @@ class EventsService(Service):
         if event:
             return event
 
-    def current_events(self):
-        now = datetime.utcnow()
-
-        lower_bound = datetime.combine(now, datetime.min.time())
-        upper_bound = datetime.combine(now, datetime.max.time())
-
-        events = self.find(start_date__lte=upper_bound,
-                           end_date__gte=lower_bound) \
-            .order_by('-start_date')
-
-        return events
+    def overlapping_events(self, event):
+        return self.find().filter(
+            Q(start_date__gte=event.start_date, start_date__lte=event.end_date)
+            | Q(end_date__gte=event.start_date, end_date__lte=event.end_date)
+        )

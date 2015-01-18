@@ -26,7 +26,7 @@ def message_list():
     deployment = g.deployment
     qs = Message.objects(
         deployment=deployment,
-        event__in=events.current_events()).order_by('-received')
+        event__in=events.overlapping_events(g.event)).order_by('-received')
     queryset_filter = filters.messages_filterset()(qs, request.args)
 
     if request.args.get('export') and permissions.export_messages.can():
@@ -56,8 +56,8 @@ def message_list():
 
 
 def message_time_series(message_queryset):
-    current_events = list(events.current_events().order_by(
-        '-end_date', '-start_date'))
+    current_events = list(events.overlapping_events(g.event)).order_by(
+        '-start_date')
     # add 30 days as an arbitrary end buffer
     upper_bound = current_events[0].end_date + timedelta(30)
     lower_bound = current_events[-1].start_date
