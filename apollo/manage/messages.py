@@ -1,3 +1,5 @@
+import calendar
+from datetime import datetime
 from urlparse import urljoin
 from flask import current_app, url_for
 from flask.ext.script import Command, prompt
@@ -21,10 +23,15 @@ class MessagePlaybackCommand(Command):
                 if row['Direction'] == 'OUT':
                     continue
 
+                msg_time = datetime.strptime(
+                    row['Created'],
+                    '%Y-%m-%d %H:%M:%S')
+
                 data = {
                     'sender': row['Mobile'].strip(),
                     'text': row['Text'].strip(),
-                    'secret': settings.get('MESSAGING_SECRET')
+                    'secret': settings.get('MESSAGING_SECRET'),
+                    'timestamp': calendar.timegm(msg_time.utctimetuple())
                 }
 
                 requests.get(base_url, params=data)

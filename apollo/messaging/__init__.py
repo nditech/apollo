@@ -12,11 +12,20 @@ except:
 class MessagesService(Service):
     __model__ = Message
 
-    def log_message(self, event, direction, text, recipient="", sender=""):
+    def log_message(self, event, direction, text, recipient="", sender="",
+                    timestamp=None):
+        if timestamp:
+            try:
+                msg_time = datetime.utcfromtimestamp(timestamp)
+            except ValueError:
+                msg_time = datetime.utcnow()
+        else:
+            msg_time = datetime.utcnow()
+
         return self.create(
             direction=direction, recipient=recipient, sender=sender,
             text=text, deployment=event.deployment, event=event,
-            received=datetime.utcnow())
+            received=msg_time)
 
     def all(self):
         """Returns a generator containing all instances of the service's model.

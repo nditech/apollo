@@ -70,13 +70,13 @@ def kannel_view():
         msg = form.get_message()
         incoming = services.messages.log_message(
             event=g.event, sender=msg.get('sender'), text=msg.get('text'),
-            direction='IN')
+            direction='IN', timestamp=msg.get('timestamp'))
 
         response, submission, had_errors = parse_message(form)
 
         outgoing = services.messages.log_message(
             event=g.event, recipient=msg.get('sender'), text=response,
-            direction='OUT')
+            direction='OUT', timestamp=msg.get('timestamp'))
 
         update_datastore(incoming, outgoing, submission, had_errors)
 
@@ -96,7 +96,7 @@ def telerivet_view():
         msg = form.get_message()
         incoming = services.messages.log_message(
             event=g.event, sender=msg.get('sender'), text=msg.get('text'),
-            direction='IN')
+            direction='IN', timestamp=msg.get('timestamp'))
 
         response_text, submission, had_errors = parse_message(form)
         response = {'messages': [{'content': response_text}]}
@@ -105,7 +105,7 @@ def telerivet_view():
 
         outgoing = services.messages.log_message(
             event=g.event, recipient=msg.get('sender'), text=response_text,
-            direction='OUT')
+            direction='OUT', timestamp=msg.get('timestamp'))
 
         update_datastore(incoming, outgoing, submission, had_errors)
 
