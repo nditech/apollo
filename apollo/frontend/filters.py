@@ -267,7 +267,8 @@ class LocationNameFilter(CharFilter):
 class LocationTypeFilter(ChoiceFilter):
     def __init__(self, *args, **kwargs):
         kwargs['choices'] = _make_choices(
-            services.location_types.find().scalar('name', 'name'),
+            services.location_types.find().order_by('ancestor_count').scalar(
+                'name', 'name'),
             _('All Types')
         )
         super(LocationTypeFilter, self).__init__(*args, **kwargs)
