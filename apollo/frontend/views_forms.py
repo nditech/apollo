@@ -10,7 +10,7 @@ import json
 from .. import services
 from ..formsframework.forms import FormForm
 from ..formsframework.models import FormBuilderSerializer
-# from ..tasks import update_submissions
+from ..tasks import update_submissions
 
 bp = Blueprint('forms', __name__, template_folder='templates',
                static_folder='static')
@@ -40,7 +40,7 @@ def form_builder(pk):
 
         if data:
             FormBuilderSerializer.deserialize(form, data)
-            # update_submissions.delay(str(form.pk))
+            update_submissions.delay(str(form.pk))
 
         return ''
 
