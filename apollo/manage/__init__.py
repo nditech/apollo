@@ -4,7 +4,7 @@ from .users import (
     AddRoleCommand)
 from .deployments import (
     CreateDeploymentCommand, ListDeploymentsCommand,
-    CreateEventCommand, ListEventsCommand)
+    CreateEventCommand, ListEventsCommand, EventMigrationCommand)
 from .permissions import (
     AddPermissionToRole, RemovePermissionFromRole, ListPermissionsOfRole)
 from .submissions import InitializeSubmissionsCommand

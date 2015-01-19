@@ -1,4 +1,5 @@
 from datetime import datetime
+from bson.json_util import dumps, loads
 from flask.ext.script import Command, prompt, prompt_choices
 from .. import models
 
@@ -119,3 +120,65 @@ class ListEventsCommand(Command):
         events = models.Event.objects(deployment=deployment)
         for event in events:
             print event.name
+
+
+class EventMigrationCommand(Command):
+    '''Allows a user to migrate data from one event to another'''
+    def run(self):
+        deployments = models.Deployment.objects.all()
+        option = prompt_choices('Deployment', [
+            (str(i), v) for i, v in enumerate(deployments, 1)])
+        deployment = deployments[int(option) - 1]
+
+        events = models.Event.objects(deployment=deployment)
+        option = prompt_choices('Source event', [
+            (str(i), v) for i, v in enumerate(events, 1)])
+        source_event = events[int(option) - 1]
+
+        reduced_events = events(pk__ne=source_event.pk)
+        option = prompt_choices('Destination event', [
+            (str(i), v) for i, v in enumerate(reduced_events, 1)])
+        dest_event = reduced_events[int(option) - 1]
+
+        print '--- AVAILABLE FORMS ---'
+        forms = models.Form.objects(deployment=deployment)
+        for i, f in enumerate(forms, 1):
+            print '{} [{}]'.format(f.name, i)
+
+        form_indexes = raw_input('Enter forms to copy, separated by commas: ')
+        indexes = [
+            int(i.strip()) for i in form_indexes.split(',')
+            if i.strip().isdigit()]
+
+        copy_participants = False
+        while True:
+            response = raw_input(
+                'Copy participants from source to destination (yes/no)? ')
+            response = response.lower()
+            if response[0] == 'y':
+                copy_participants = True
+                break
+            elif response[0] == 'n':
+                break
+
+        for index in indexes:
+            form = forms[index - 1]
+            data = loads(form.to_json())
+            data.pop('_id')
+            new_form = models.Form.from_json(dumps(data))
+            new_form.events = [dest_event]
+            new_form.save()
+            form.update(pull__events=dest_event)
+
+        # copy participant data
+        if copy_participants:
+            participants = models.Participant.objects(
+                deployment=deployment, event=source_event)
+            for participant in participants:
+                data = loads(participant.to_json())
+                data.pop('_id')
+                new_participant = models.Participant.from_json(dumps(data))
+                new_participant.accurate_message_count = 0
+                new_participant.message_count = 0
+                new_participant.event = dest_event
+                new_participant.save()
