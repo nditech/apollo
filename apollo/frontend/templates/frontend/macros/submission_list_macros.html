@@ -12,7 +12,9 @@
     {% endfor %}
     {% else %}
     {% for field in form_fields %}
+    {%- if form.form_type != 'INCIDENT' or field.represents_boolean -%}
     <th class="text-center"><abbr title="{{ field.description }}">{{ field.name }}</abbr></th>
+    {%- endif -%}
     {% endfor %}
     <th class="text-center"><abbr title="{% trans %}Status{% endtrans %}"><i class="glyphicon glyphicon-eye-open"></i></abbr></th>
     {% endif %}
@@ -41,7 +43,9 @@
     {% endfor %}
     {% else %}
     {% for field in form_fields %}
+    {%- if field.represents_boolean -%}
     <td class="text-center">{%- if submission[field.name] -%}<img src="{{ url_for('static', filename='img/red_dot.png') }}" height="11" width="11" />{% else %}&nbsp;{% endif %}</td>
+    {%- endif -%}
     {% endfor %}
     <td class="text-center">
     {% if form.form_type == 'INCIDENT' %}

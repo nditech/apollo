@@ -150,7 +150,7 @@
       </tr>
       {% for group in form.groups %}
       <tr>
-        <td colspan="{{ siblings|count + 6 }}"><h4>{{ group.name }}</h4></td>
+        <td colspan="{{ siblings|count + 7 }}"><h4>{{ group.name }}</h4></td>
       </tr>
       {% for field in group.fields %}
       <tr>
@@ -226,7 +226,7 @@
       <td>{{ field.description }}
       {%- if field.options %}
       <span class="options">
-      {% for description, value in field.options.iteritems() %}
+      {% for description, value in field.options|dictsort(by='value') %}
       <span class="option"><strong>({{ value }})</strong> {{ description }}</span>
       {% endfor %}
       </span>
