@@ -3,7 +3,6 @@ from ..deployments.models import Deployment, Event
 from flask.ext.mongoengine import BaseQuerySet
 from slugify import slugify_unicode
 from mongoengine import Q
-import pandas as pd
 
 
 class LocationQuerySet(BaseQuerySet):
