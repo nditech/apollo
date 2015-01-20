@@ -23,7 +23,7 @@ class CustomModelSelectField(ModelSelectField):
         elif self.data is not None:
             return self.data
         else:
-            return None
+            return '__None'
 
 
 def _make_choices(qs, placeholder=None):
@@ -230,6 +230,19 @@ def generate_location_update_mapping_form(
     return LocationUpdateMappingForm(*args, **kwargs)
 
 
+def validate_location(form):
+    val = WTSecureForm.validate(form)
+    if not val:
+        return val
+
+    if not form.contributor.data and not form.location.data:
+        form.location.errors.append(
+            _('Contributor and location cannot both be empty'))
+        return False
+
+    return True
+
+
 def generate_submission_edit_form_class(form):
     form_fields = {}
     STATUS_CHOICES = (
@@ -330,6 +343,7 @@ def generate_submission_edit_form_class(form):
         form_fields['description'] = StringField(
             widget=widgets.TextArea()
         )
+        form_fields['validate'] = validate_location
 
     return type(
         'SubmissionEditForm',

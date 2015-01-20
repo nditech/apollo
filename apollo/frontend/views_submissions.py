@@ -156,8 +156,6 @@ def submission_create(form_id):
 
         # a small hack since we're not using modelforms,
         # these fields are required for creating a new incident
-        submission_form.contributor.validators = [validators.input_required()]
-        submission_form.location.validators = [validators.input_required()]
 
         if not submission_form.validate():
             # really should redisplay the form again
@@ -175,6 +173,8 @@ def submission_create(form_id):
         submission.submission_type = 'O'
         submission.contributor = submission_form.contributor.data
         submission.location = submission_form.location.data
+        if not submission.location:
+            submission.location = submission.contributor.location
 
         submission.save()
 
