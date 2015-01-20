@@ -12,7 +12,6 @@ from flask.ext.menu import register_menu
 from mongoengine import signals
 from tablib import Dataset
 from werkzeug.datastructures import MultiDict
-from wtforms import validators
 from .. import services
 from ..analyses.incidents import incidents_csv
 from ..participants.utils import update_participant_completion_rating
@@ -70,7 +69,7 @@ def submission_list(form_id):
             queryset = services.submissions.find(
                 submission_type='O',
                 form=form
-            ).order_by('location')
+            ).order_by('location', 'contributor')
 
         query_filterset = filter_class(queryset, request.args)
         dataset = services.submissions.export_list(
@@ -93,7 +92,7 @@ def submission_list(form_id):
     queryset = services.submissions.find(
         submission_type='O',
         form=form
-    ).order_by('location')
+    ).order_by('location', 'contributor')
     query_filterset = filter_class(queryset, request.args)
     filter_form = query_filterset.form
 
