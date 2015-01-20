@@ -41,7 +41,9 @@ export_locations = Permission(
 # Others
 send_messages = Permission(ActionNeed('send_messages'), RoleNeed('admin'))
 
-role = lambda role: Permission(RoleNeed(role))
+
+def role(role):
+    return Permission(RoleNeed(role))
 
 
 # item permission

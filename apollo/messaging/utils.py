@@ -32,8 +32,8 @@ def parse_text(text):
     text = unicode(text)
     # regular expression for a valid text message
     pattern = re.compile(
-        r'^(?P<prefix>[A-Z]+)\s*(?P<participant_id>\d+)\s*'
-        '(?P<exclamation>!?)\s*(?P<responses>[A-Z0-9]*)$', re.I)
+        r'^(?P<prefix>[A-Z]+)(?P<participant_id>\d+)'
+        '(?P<exclamation>!?)(?P<responses>[A-Z0-9]*)$', re.I)
 
     at_position = text.find("@")
 
@@ -46,6 +46,8 @@ def parse_text(text):
         if at_position != -1 \
         else filter(lambda s: s not in config.get('PUNCTUATIONS'), text) \
         .translate(config.get('TRANS_TABLE'))
+
+    at_position = text.find("@")
     match = pattern.match(text[:at_position] if at_position != -1 else text)
 
     # if there's a match, then extract the required features
