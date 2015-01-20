@@ -28,7 +28,7 @@ def get_analysis_menu():
     } for form in forms.find().filter(
         Q(form_type='INCIDENT') |
         Q(form_type='CHECKLIST', groups__fields__analysis_type='PROCESS')
-    ).order_by('form_type')]
+    ).order_by('form_type', 'name')]
 
 
 def get_result_analysis_menu():
@@ -39,7 +39,7 @@ def get_result_analysis_menu():
     } for form in forms.find(
         form_type='CHECKLIST',
         groups__fields__analysis_type='RESULT'
-    ).order_by('form_type')]
+    ).order_by('form_type', 'name')]
 
 
 bp = Blueprint('analysis', __name__, template_folder='templates',
