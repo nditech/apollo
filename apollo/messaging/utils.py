@@ -56,7 +56,7 @@ def parse_text(text):
         participant_id = match.group('participant_id') or None
         form_type = 'INCIDENT' if match.group('exclamation') else 'CHECKLIST'
         responses = match.group('responses') or None
-    comment = text[at_position + 1:] if at_position != -1 else None
+    comment = text[at_position + 1:].strip() if at_position != -1 else None
 
     return (prefix, participant_id, form_type, responses, comment)
 
