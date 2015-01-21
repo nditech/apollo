@@ -160,9 +160,6 @@ def _voting_results(form_pk, location_pk=None):
     result_field_labels = [field.name for field in result_fields]
     result_field_descriptions = [field.description for field in result_fields]
 
-    valid_conditions = dict(
-        ('{}__exists'.format(field), True) for field in result_field_labels)
-
     queryset = submissions.find(
         form=form,
         submission_type='M',
@@ -183,16 +180,18 @@ def _voting_results(form_pk, location_pk=None):
         blank_votes_field = []
 
     # compute and store reporting status
-    dataset['reported'] = dataset[result_field_labels].count(1) == len(
-        result_field_labels)
-    dataset['missing'] = dataset[result_field_labels].count(1) != len(
-        result_field_labels)
+    dataset['reported'] = dataset[
+        result_field_labels + [registered_voters_field]].count(1) == len(
+        result_field_labels) + 1
+    dataset['missing'] = dataset[
+        result_field_labels + [registered_voters_field]].count(1) != len(
+        result_field_labels) + 1
 
     try:
         overall_summation = dataset.groupby(
             location.location_type).sum().ix[location.name]
-        valid_dataframe = dataset[dataset.reported==True].query(u'%s==u"%s"' % (
-            location.location_type, location.name))
+        valid_dataframe = dataset[dataset.reported==True].query(
+            u'%s==u"%s"' % (location.location_type, location.name))
         valid_summation = dataset[dataset.reported==True].fillna(0).groupby(
             location.location_type).sum().ix[location.name]
         reporting = overall_summation[['missing', 'reported']]
