@@ -9,15 +9,19 @@ def parse_message(form):
     message = form.get_message()
     submission = None
     had_errors = False
+    response_dict = None
+
     (prefix, participant_id, form_type, responses, comment) = parse_text(
         message['text'])
     if (prefix and participant_id and form_type and responses):
         form_doc = retrieve_form(prefix, form_type)
         if form_doc:
+            response_dict = parse_responses(responses, form_doc.form_type)
+        if form_doc and response_dict:
             form_data = MultiDict(
                 {'form': form_doc.pk, 'participant': participant_id,
                  'sender': message['sender'], 'comment': comment})
-            form_data.update(parse_responses(responses, form_doc.form_type))
+            form_data.update(response_dict)
             questionnaire = build_questionnaire(form_doc, form_data)
 
             if questionnaire.validate():
