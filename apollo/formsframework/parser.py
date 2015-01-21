@@ -1,7 +1,44 @@
 from __future__ import division
 import operator as op
 from parsimonious.grammar import Grammar
-from parsimonious.nodes import NodeVisitor
+import parsley
+
+
+def calculate(start, pairs):
+    result = start
+    operators = {
+        '+': op.add, '-': op.sub, '*': op.mul, '/': op.truediv, '^': op.pow}
+
+    for operator, value in pairs:
+        if operator in operators:
+            result = operators[operator](result, value)
+
+    return result
+
+
+def grammar_factory(env={}):
+    return parsley.makeGrammar("""
+dot = '.'
+number = <digit+dot{0,1}digit*>:val -> float(val) if "." in val else int(val)
+variable = <letter+>:var -> getattr(env, var)
+attribute = exactly('$')<anything+>:attr -> int(reduce(
+    lambda obj, attr: getattr(obj, attr, None), [env] + attr.split('.')))
+parens = '(' ws expr:e ws ')' -> e
+value = number | variable | attribute | parens
+
+add = '+' ws expr2:n -> ('+', n)
+sub = '-' ws expr2:n -> ('-', n)
+mul = '*' ws expr3:n -> ('*', n)
+div = '/' ws expr3:n -> ('/', n)
+pow = '^' ws value:n -> ('^', n)
+
+addsub = ws (add | sub)
+muldiv = ws (mul | div)
+
+expr = expr2:left addsub*:right -> calculate(left, right)
+expr2 = expr3:left muldiv*:right -> calculate(left, right)
+expr3 = value:left pow*:right -> calculate(left, right)
+""", {'env': env, 'calculate': calculate})
 
 
 # Parsers for Checklist Verification
@@ -47,7 +84,7 @@ class Evaluator(object):
 
     def operator(self, node, children):
         'operator = "+" / "-" / "*" / "/"'
-        operators = {'+': op.add, '-': op.sub, '*': op.mul, '/': op.div}
+        operators = {'+': op.add, '-': op.sub, '*': op.mul, '/': op.truediv}
         return operators[node.text]
 
     def variable(self, node, children):
@@ -111,23 +148,4 @@ class Comparator(object):
 
     def _(self, node, children):
         '_ = ~"\s*"'
-        pass
-
-
-class ExpressionParser(NodeVisitor):
-    def __init__(self, text):
-        self.entries = {
-            'operators': [],
-            'operands': []
-        }
-        ast = Evaluator().parse(text.replace(' ', ''))
-        self.visit(ast)
-
-    def visit_operator(self, node, vc):
-        self.entries['operators'].append(node.text)
-
-    def visit_operand(self, node, vc):
-        self.entries['operands'].append(node.text)
-
-    def generic_visit(self, node, vc):
         pass

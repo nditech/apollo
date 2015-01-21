@@ -2,7 +2,7 @@
 from ..core import db
 from ..deployments.models import Deployment, Event
 from ..formsframework.models import Form
-from ..formsframework.parser import Comparator, Evaluator
+from ..formsframework.parser import Comparator, grammar_factory
 from ..helpers import compute_location_path
 from ..locations.models import Location
 from ..participants.models import Participant
@@ -467,6 +467,8 @@ class Submission(db.DynamicDocument):
             return
 
         observer_submissions = list(self.siblings)
+        evaluator = grammar_factory(self)
+        comparator = Comparator()
 
         for flag in self.form.quality_checks:
             # skip processing if this has either been verified
@@ -476,12 +478,9 @@ class Submission(db.DynamicDocument):
             ):
                 continue
 
-            evaluator = Evaluator(self)
-            comparator = Comparator()
-
             try:
-                lvalue = evaluator.eval(flag['lvalue'])
-                rvalue = evaluator.eval(flag['rvalue'])
+                lvalue = evaluator(flag['lvalue']).expr()
+                rvalue = evaluator(flag['rvalue']).expr()
 
                 # the comparator setting expresses the relationship between
                 # lvalue and rvalue
@@ -501,7 +500,7 @@ class Submission(db.DynamicDocument):
                     for submission in observer_submissions:
                         submission.quality_checks[flag['name']] = \
                             QUALITY_STATUSES['OK']
-            except (AttributeError, TypeError):
+            except (AttributeError, TypeError, NameError):
                 # no sufficient data
                 # setattr(self, flag['storage'], None)
                 try:

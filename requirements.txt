@@ -18,6 +18,7 @@ Flask-WTF==0.10.3
 Flask==0.10.1
 Jinja2==2.7.3
 MarkupSafe==0.23
+Parsley==1.2
 Unidecode==0.04.14
 WTForms==2.0.1
 Werkzeug==0.9.6
