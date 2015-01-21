@@ -12,6 +12,7 @@ from flask.ext.babel import gettext as _
 from flask.ext.mongoengine import BaseQuerySet
 from mongoengine import Q
 from pandas import DataFrame, isnull, Series
+from parsimonious.exceptions import ParseError
 import numpy as np
 
 FLAG_STATUSES = {
@@ -500,7 +501,7 @@ class Submission(db.DynamicDocument):
                     for submission in observer_submissions:
                         submission.quality_checks[flag['name']] = \
                             QUALITY_STATUSES['OK']
-            except (AttributeError, TypeError, NameError):
+            except (AttributeError, TypeError, NameError, ParseError):
                 # no sufficient data
                 # setattr(self, flag['storage'], None)
                 try:
