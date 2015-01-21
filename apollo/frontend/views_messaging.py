@@ -44,11 +44,11 @@ def update_datastore(inbound, outbound, submission, had_errors):
     if participant:
         inbound.update(
             set__participant=participant,
-            set__submission=submission
+            set__submission=submission if submission.pk else None
         )
         outbound.update(
             set__participant=participant,
-            set__submission=submission
+            set__submission=submission if submission.pk else None
         )
 
         if not had_errors:
