@@ -137,8 +137,8 @@
 						<th class="numeric">{{ '%d' % sublocation.rv }}</th>
                         <th class="numeric">{{ '%.1f' % sublocation.turnout|percent_of(1, 0) }}%</th>
                         {%- if form.calculate_moe and config.ENABLE_MOE -%}
-                        <th class="numeric">&plusmn;0%</th>
-                        <th class="numeric">&plusmn;0%</th>
+                        <th class="numeric">&plusmn;{{ '%.1f' % sublocation.turnout_moe_95 }}%</th>
+                        <th class="numeric">&plusmn;{{ '%.1f' % sublocation.turnout_moe_99 }}%</th>
                         {%- endif -%}
 						<th class="numeric">{{ '%.1f' % sublocation.all_valid_votes_pct|percent_of(1, 0) }}% ({{ sublocation.all_votes }})</th>
 						{%- if form.calculate_moe and config.ENABLE_MOE -%}
