@@ -2,8 +2,11 @@ import base64
 from flask import redirect, request, url_for
 from flask.ext.admin import BaseView, expose, form
 from flask.ext.admin.contrib.mongoengine import ModelView
+from flask.ext.admin.contrib.mongoengine.form import CustomModelConverter
 from flask.ext.admin.form import rules
+from flask.ext.admin.model.form import converts
 from flask.ext.babel import lazy_gettext as _
+from flask.ext.mongoengine.wtf import orm
 from flask.ext.security import current_user
 from flask.ext.security.utils import encrypt_password
 import magic
@@ -11,6 +14,12 @@ from wtforms import FileField, PasswordField, SelectMultipleField
 from ..core import admin
 from .. import models
 from . import forms
+
+
+class DeploymentModelConverter(CustomModelConverter):
+    @converts('ParticipantPropertyName')
+    def conv_PropertyField(self, model, field, kwargs):
+        return orm.ModelConverter.conv_String(self, model, field, kwargs)
 
 
 class DashboardView(BaseView):
@@ -34,11 +43,22 @@ class DeploymentAdminView(BaseAdminView):
         rules.FieldSet(
             (
                 'name', 'logo', 'allow_observer_submission_edit',
-                'dashboard_full_locations', 'hostnames'
+                'dashboard_full_locations', 'hostnames',
+                'participant_extra_fields'
             ),
             _('Deployment')
         )
     ]
+    form_subdocuments = {
+        'participant_extra_fields': {
+            'form_subdocuments': {
+                None: {
+                    'form_columns': ('name', 'label', 'listview_visibility',)
+                }
+            }
+        }
+    }
+    model_form_converter = DeploymentModelConverter
 
     def get_query(self):
         user = current_user._get_current_object()
