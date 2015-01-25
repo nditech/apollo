@@ -28,22 +28,5 @@ class InitializeSubmissionsCommand(Command):
             (str(i), v) for i, v in enumerate(location_types, 1)])
         location_type = location_types[int(option) - 1]
 
-        for o in services.participants.find(
-            role=role, deployment=deployment, event=event
-        ):
-            if location_type.name == o.location.location_type:
-                location = o.location
-            else:
-                location = next(
-                    (a for a in o.location.ancestors_ref
-                        if a.location_type == location_type.name),
-                    None)
-                if not location:
-                    print 'Location level not found in location hierarchy'
-                    break
-            submission, _ = models.Submission.objects.get_or_create(
-                form=form, contributor=o, location=location,
-                created=event.start_date, deployment=event.deployment,
-                event=event, submission_type='O')
-            # hack to force creation of a master submission
-            submission.master
+        models.Submission.init_submissions(
+            deployment, event, form, role, location_type)

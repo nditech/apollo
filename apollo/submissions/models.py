@@ -229,6 +229,31 @@ class Submission(db.DynamicDocument):
         'queryset_class': SubmissionQuerySet,
     }
 
+    @classmethod
+    def init_submissions(cls, deployment, event, form, role, location_type):
+        if form.form_type != 'CHECKLIST':
+            return
+
+        for participant in Participant.objects(
+                deployment=deployment, event=event, role=role
+                ):
+            if location_type.name == participant.location.location_type:
+                location = participant.location
+            else:
+                location = next(
+                    (a for a in participant.location.ancestors_ref
+                        if a.location_type == location_type.name),
+                    None)
+                if not location:
+                    return
+
+            submission, _ = cls.objects.get_or_create(
+                form=form, contributor=participant, location=location,
+                created=event.start_date, deployment=deployment,
+                event=event, submission_type='O')
+            # force creation of master
+            submission.master
+
     def _update_completion_status(self):
         '''Computes the completion status of each form group for a submission.
         Should be called automatically on save, preferably in the `clean`
