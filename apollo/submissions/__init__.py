@@ -4,6 +4,8 @@ from ..locations.models import LocationType, Sample
 from datetime import datetime
 from operator import attrgetter
 from flask import g
+from flask.ext.security import current_user
+import json
 import unicodecsv
 try:
     from cStringIO import StringIO
@@ -199,3 +201,33 @@ class SubmissionCommentsService(Service):
 
 class SubmissionVersionsService(Service):
     __model__ = SubmissionVersion
+
+    @classmethod
+    def make_submission_version_update_handler(cls, channel):
+        identity = None
+        if channel == 'SMS':
+            identity = g.get('phone', '')
+        elif channel == 'WEB':
+            user = current_user._get_current_object()
+            identity = user.email if not user.is_anonymous() else 'unknown'
+
+        def update_submission_version(sender, document, **kwargs):
+            if sender != Submission:
+                return
+
+            data_fields = document.form.tags
+            if document.form.form_type == 'INCIDENT':
+                data_fields.extend(['status', 'witness'])
+            version_data = {
+                k: document[k] for k in data_fields if k in document
+            }
+
+            cls().create(
+                submission=document,
+                data=json.dumps(version_data),
+                timestamp=datetime.utcnow(),
+                channel=channel,
+                identity=identity
+            )
+
+        return update_submission_version
