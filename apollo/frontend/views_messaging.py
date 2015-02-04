@@ -1,5 +1,6 @@
 from . import route
 from .. import services
+from ..core import csrf
 from ..messaging.forms import KannelForm, TelerivetForm
 from ..messaging.helpers import parse_message
 from ..messaging.utils import parse_text
@@ -84,6 +85,7 @@ def kannel_view():
     return ""
 
 
+@csrf.exempt
 @route(bp, '/messaging/telerivet', methods=['POST'])
 def telerivet_view():
     secret = request.form.get('secret')
