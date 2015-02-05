@@ -102,6 +102,7 @@ class Location(db.DynamicDocument):
     location_type = db.StringField()
     coords = db.GeoPointField()
     registered_voters = db.LongField(db_field='rv', default=0)
+    ancestor_count = db.IntField(default=0)
     ancestors_ref = db.ListField(db.ReferenceField(
         'Location', reverse_delete_rule=db.PULL))
     samples = db.ListField(db.ReferenceField(
@@ -164,4 +165,6 @@ class Location(db.DynamicDocument):
     def save(self, *args, **kwargs):
         from . import LocationsService
         cache.delete_memoized(LocationsService.registered_voters_map)
+        if not self.ancestor_count == len(self.ancestors_ref):
+            self.ancestor_count = len(self.ancestors_ref)
         return super(Location, self).save(*args, **kwargs)

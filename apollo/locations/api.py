@@ -98,7 +98,7 @@ class LocationListResource(Resource):
                 Q(name__icontains=args.get('q')) |
                 Q(code__istartswith=args.get('q')) |
                 Q(political_code__istartswith=args.get('q'))
-            )
+            ).order_by('ancestor_count')
 
         queryset = queryset.limit(limit).skip(offset)
 
