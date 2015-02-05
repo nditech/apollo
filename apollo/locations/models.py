@@ -165,6 +165,6 @@ class Location(db.DynamicDocument):
     def save(self, *args, **kwargs):
         from . import LocationsService
         cache.delete_memoized(LocationsService.registered_voters_map)
-        if not self.ancestor_count == len(self.ancestors_ref):
+        if self.ancestor_count != len(self.ancestors_ref):
             self.ancestor_count = len(self.ancestors_ref)
         return super(Location, self).save(*args, **kwargs)
