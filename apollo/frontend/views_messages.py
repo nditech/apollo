@@ -26,7 +26,8 @@ def message_list():
     deployment = g.deployment
     qs = Message.objects(
         deployment=deployment,
-        event__in=events.overlapping_events(g.event)).order_by('-received')
+        event__in=events.overlapping_events(g.event)).order_by(
+        '-received', '-direction')
     queryset_filter = filters.messages_filterset()(qs, request.args)
 
     if request.args.get('export') and permissions.export_messages.can():
