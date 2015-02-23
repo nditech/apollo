@@ -597,6 +597,18 @@ def update_submission_version(sender, document, **kwargs):
         data_fields.extend(['status', 'witness'])
     version_data = {k: document[k] for k in data_fields if k in document}
 
+    # get previous version
+    previous = services.submission_versions.find(
+        submission=document).order_by('-timestamp').first()
+
+    if previous:
+        prev_data = json.loads(previous.data)
+        diff = DictDiffer(version_data, prev_data)
+
+        # don't do anything if the data wasn't changed
+        if not diff.added() and not diff.removed() and not diff.changed():
+            return
+
     # save user email as identity
     channel = 'WEB'
     user = current_user._get_current_object()

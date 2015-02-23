@@ -7,6 +7,7 @@ from mongoengine import signals
 from slugify import slugify
 from .. import services
 from . import route
+from .helpers import DictDiffer
 
 DEFAULT_CONTENT_LENGTH = 1000000
 DEFAULT_CONTENT_TYPE = 'text/xml; charset=utf-8'
@@ -143,6 +144,18 @@ def update_submission_version(sender, document, **kwargs):
     if document.form.form_type == 'INCIDENT':
         data_fields.extend(['status', 'witness'])
     version_data = {k: document[k] for k in data_fields if k in document}
+
+    # get previous version
+    previous = services.submission_versions.find(
+        submission=document).order_by('-timestamp').first()
+
+    if previous:
+        prev_data = json.loads(previous.data)
+        diff = DictDiffer(version_data, prev_data)
+
+        # don't do anything if the data wasn't changed
+        if not diff.added() and not diff.removed() and not diff.changed():
+            return
 
     # use participant device ID as identity
     channel = 'WEB'

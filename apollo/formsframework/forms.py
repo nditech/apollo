@@ -11,6 +11,7 @@ from flask import g
 from flask.ext.mongoengine.wtf import model_form
 from flask.ext.wtf import Form as SecureForm
 from .. import services, models
+from ..frontend.helpers import DictDiffer
 from ..participants.utils import update_participant_completion_rating
 from .custom_fields import IntegerSplitterField
 import json
@@ -29,6 +30,18 @@ def update_submission_version(sender, document, **kwargs):
     if document.form.form_type == 'INCIDENT':
         data_fields.extend(['status', 'witness'])
     version_data = {k: document[k] for k in data_fields if k in document}
+
+    # get previous version
+    previous = services.submission_versions.find(
+        submission=document).order_by('-timestamp').first()
+
+    if previous:
+        prev_data = json.loads(previous.data)
+        diff = DictDiffer(version_data, prev_data)
+
+        # don't do anything if the data wasn't changed
+        if not diff.added() and not diff.removed() and not diff.changed():
+            return
 
     channel = 'SMS'
 
