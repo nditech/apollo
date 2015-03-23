@@ -174,11 +174,24 @@ class EventMigrationCommand(Command):
         if copy_participants:
             participants = models.Participant.objects(
                 deployment=deployment, event=source_event)
+            supervisor_map = {
+                p.participant_id: p.supervisor.participant_id
+                for p in participants if p.supervisor}
             for participant in participants:
                 data = loads(participant.to_json())
                 data.pop('_id')
+                data.pop('supervisor', None)
                 new_participant = models.Participant.from_json(dumps(data))
                 new_participant.accurate_message_count = 0
                 new_participant.message_count = 0
                 new_participant.event = dest_event
                 new_participant.save()
+
+            for p_id, sup_id in supervisor_map.iteritems():
+                participant = models.Participant.objects.get(
+                    deployment=deployment, event=dest_event,
+                    participant_id=p_id)
+                supervisor = models.Participant.objects.get(
+                    deployment=deployment, event=dest_event,
+                    participant_id=sup_id)
+                participant.update(set__supervisor=supervisor)
