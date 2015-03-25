@@ -30,6 +30,7 @@ class KannelGateway(Gateway):
         self.smsc = config.get('smsc')
         self.charset = config.get('charset')
         self.coding = config.get('coding')
+        self.sender = config.get('from', '')
 
     def send(self, text, recipient, sender=""):
         """
@@ -42,7 +43,7 @@ class KannelGateway(Gateway):
         gateway_params = {
             'username': self.username,
             'password': self.password,
-            'from': sender,
+            'from': sender or self.sender,
             'to': recipient,
             'text': text,
         }
