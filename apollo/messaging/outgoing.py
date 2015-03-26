@@ -94,7 +94,7 @@ https://api.telerivet.com/v1/projects/%s/messages/send\
                  for key in ['priority', 'route_id']
                  if getattr(self, key)]))
         try:
-            r.post(self.gateway_url, data=gateway_params,
+            r.post(self.gateway_url, json=gateway_params,
                    auth=(self.api_key, ''))
         except r.ConnectionError:
             raise
