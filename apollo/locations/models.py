@@ -55,6 +55,7 @@ class LocationType(db.Document):
     is_political = db.BooleanField(default=False)
     has_registered_voters = db.BooleanField(db_field='has_rv', default=False)
     has_political_code = db.BooleanField(db_field='has_pc', default=False)
+    has_other_code = db.BooleanField(db_field='has_oc', default=False)
     metafields = db.ListField(db.StringField())
     slug = db.StringField()
 
@@ -99,6 +100,7 @@ class Location(db.DynamicDocument):
     name = db.StringField()
     code = db.StringField()
     political_code = db.StringField(db_field='pcode')
+    other_code = db.StringField(db_field='ocode')
     location_type = db.StringField()
     coords = db.GeoPointField()
     registered_voters = db.LongField(db_field='rv', default=0)

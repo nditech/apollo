@@ -215,6 +215,11 @@ def generate_location_update_mapping_form(
                 _('%(label)s Geopolitical Code', label=name),
                 choices=default_choices
             )
+        if location_type.has_other_code:
+            attributes['{}_ocode'.format(slug)] = SelectField(
+                _('%(label)s Other Code', label=name),
+                choices=default_choices
+            )
         if location_type.has_registered_voters:
             attributes['{}_rv'.format(slug)] = SelectField(
                 _('%(label)s Registered Voters', label=name),
