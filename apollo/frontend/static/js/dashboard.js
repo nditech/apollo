@@ -5,9 +5,9 @@
     var innerRadius = 0;
     
     var json = JSON.parse(el.dataset.chart);
-    var data = [json.Missing, json.Partial, json.Complete, 81];
-    var color = d3.scale.ordinal().range(["#FF5200", "#FFE22B", "#3BDF4A", "#E83992"]);
-    var labels = ['Missing', 'Partial', 'Complete', 'Conflict'];
+    var data = [json.Missing, json.Partial, json.Complete];
+    var color = d3.scale.ordinal().range(["#FF5200", "#FFE22B", "#3BDF4A"]); // Conflict color #E83992
+    var labels = ['Missing', 'Partial', 'Complete']; // Conflict label
     var total = data.reduce(function (prev, curr, idx, arr) { return prev + curr; });
 
     function number_format(num) {
