@@ -52,6 +52,13 @@ def index():
     )
     filter_ = dashboard_filterset()(queryset, data=args)
 
+    obs_queryset = submissions.find(
+        submission_type='O',
+        created__lte=event.end_date,
+        created__gte=event.start_date
+    )
+    obs_filter_ = dashboard_filterset()(obs_queryset, data=args)
+
     location = None
     if args.get('location'):
         location = locations.get_or_404(pk=args.get('location'))
@@ -59,10 +66,12 @@ def index():
     # activate sample filter
     filter_form = filter_.form
     queryset = filter_.qs
+    obs_queryset = obs_filter_.qs
     next_location_type = False
 
     if not group:
         data = get_coverage(queryset)
+        obs_data = get_coverage(obs_queryset)
     else:
         page_title = page_title + u' · {}'.format(group)
         if not location_type_id:
@@ -87,6 +96,7 @@ def index():
             next_location_type = None
 
         data = get_coverage(queryset, group, location_type)
+        obs_data = get_coverage(obs_queryset, group, location_type)
 
     # load the page context
     location_id = args.pop('location', '')
@@ -95,6 +105,7 @@ def index():
         'location_id': location_id,
         'next_location': bool(next_location_type),
         'data': data,
+        'obs_data': obs_data,
         'filter_form': filter_form,
         'page_title': page_title,
         'location': location,
