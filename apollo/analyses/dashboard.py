@@ -83,6 +83,7 @@ def _get_group_coverage(submission_queryset, group, location_type):
             cov.setdefault('Complete', 0)
             cov.setdefault('Partial', 0)
             cov.setdefault('Missing', 0)
+            cov.setdefault('Conflict', 0)
 
             coverage_list.append(cov)
 
@@ -128,11 +129,15 @@ def _get_global_coverage(submission_queryset):
         missing = sum((r.get('total')
                       for r in result
                       if r.get('completion').get(group) == 'Missing'))
+        conflict = sum((r.get('total')
+                       for r in result
+                       if r.get('completion').get(group) == 'Conflict'))
 
         coverage.update({group: {
             'Complete': complete,
             'Partial': partial,
             'Missing': missing,
+            'Conflict': conflict,
             'name': group
         }})
 
