@@ -4,7 +4,7 @@ PROJECT_NAME = 'apollo'
 PROJECT_DIR = 'projects'
 
 
-def _make_archive(version="HEAD"):
+def make_archive(version="HEAD"):
     filename = "%s-%s.tar.gz" % (PROJECT_NAME, version)
     local('git archive --format=tar --prefix=%s/ %s | gzip >%s' % (
         PROJECT_NAME, version, filename))
@@ -12,7 +12,7 @@ def _make_archive(version="HEAD"):
 
 
 def build(version="HEAD"):
-    archive = _make_archive(version)
+    archive = make_archive(version)
     run('mkdir -p %s' % PROJECT_DIR)  # create target directory
     put(archive, PROJECT_DIR)
     with cd(PROJECT_DIR):
