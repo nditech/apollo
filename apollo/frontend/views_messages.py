@@ -32,7 +32,7 @@ def message_list():
 
     if request.args.get('export') and permissions.export_messages.can():
         # Export requested
-        dataset = messages.export_list(qs)
+        dataset = messages.export_list(queryset_filter.qs)
         basename = slugify_unicode('%s messages %s' % (
             g.event.name.lower(),
             datetime.utcnow().strftime('%Y %m %d %H%M%S')))
