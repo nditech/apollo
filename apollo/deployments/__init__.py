@@ -1,11 +1,22 @@
 from ..core import Service
 from .models import Event
 from datetime import datetime
+from flask.ext.principal import Permission, ItemNeed, RoleNeed
 from mongoengine import Q
 
 
 class EventsService(Service):
     __model__ = Event
+
+    def find(self, **kwargs):
+        _kwargs = self._set_default_filter_parameters({})
+
+        kwargs['pk__in'] = [event.pk for event in filter(
+                lambda f: Permission(ItemNeed('access_event', f, 'object'),
+                                     RoleNeed('admin')).can(),
+                self.__model__.objects.filter(**_kwargs))]
+
+        return super(EventsService, self).find(**kwargs)
 
     def default(self):
         now = datetime.utcnow()
