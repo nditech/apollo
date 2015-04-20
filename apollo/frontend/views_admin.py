@@ -125,12 +125,15 @@ class EventAdminView(BaseAdminView):
 
     def after_model_change(self, form, model, is_created):
         # remove event permission
-        models.Need.objects.filter(action="access_event", items=model).delete()
+        models.Need.objects.filter(
+            action="access_event", items=model,
+            deployment=model.deployment).delete()
 
         # create event permission
         roles = models.Role.objects(pk__in=form.roles.data, name__ne='admin')
         models.Need.objects.create(
-            action="access_event", items=[model], entities=roles)
+            action="access_event", items=[model], entities=roles,
+            deployment=model.deployment)
 
     def scaffold_form(self):
         form_class = super(EventAdminView, self).scaffold_form()
