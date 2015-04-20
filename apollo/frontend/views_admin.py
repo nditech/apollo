@@ -99,8 +99,18 @@ class EventAdminView(BaseAdminView):
     # rules for form editing. in this case, only the listed fields
     # and the header for the field set
     form_rules = [
-        rules.FieldSet(('name', 'start_date', 'end_date'), _('Event'))
+        rules.FieldSet(('name', 'start_date', 'end_date', 'roles'), _('Event'))
     ]
+
+    def get_one(self, pk):
+        event = super(EventAdminView, self).get_one(pk)
+        try:
+            entities = models.Need.objects.get(
+                action='access_event', items=event).entities
+        except models.Need.DoesNotExist:
+            entities = []
+        event.roles = [unicode(i.pk) for i in entities]
+        return event
 
     def get_query(self):
         '''Returns the queryset of the objects to list.'''
@@ -112,6 +122,25 @@ class EventAdminView(BaseAdminView):
         # deployment, since it won't appear in the form
         if is_created:
             model.deployment = current_user.deployment
+
+    def after_model_change(self, form, model, is_created):
+        # remove event permission
+        models.Need.objects.filter(action="access_event", items=model).delete()
+
+        # create event permission
+        roles = models.Role.objects(pk__in=form.roles.data, name__ne='admin')
+        models.Need.objects.create(
+            action="access_event", items=[model], entities=roles)
+
+    def scaffold_form(self):
+        form_class = super(EventAdminView, self).scaffold_form()
+        form_class.roles = SelectMultipleField(
+            _('Roles with access'),
+            choices=forms._make_choices(
+                models.Role.objects(name__ne='admin').scalar('pk', 'name')),
+            widget=form.Select2Widget(multiple=True))
+
+        return form_class
 
 
 class UserAdminView(BaseAdminView):
@@ -129,7 +158,6 @@ class UserAdminView(BaseAdminView):
         return models.User.objects(deployment=user.deployment)
 
     def on_model_change(self, form, model, is_created):
-        print form.data
         if form.password2.data:
             model.password = encrypt_password(form.password2.data)
         if is_created:
