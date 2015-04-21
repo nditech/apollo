@@ -1,6 +1,7 @@
 from operator import itemgetter
 from ..core import db
 from ..deployments.models import Deployment, Event
+from ..users.models import Role, Need
 from flask.ext.babel import lazy_gettext as _
 from lxml import etree
 from lxml.builder import E, ElementMaker
@@ -128,6 +129,8 @@ class Form(db.Document):
     invalid_votes_tag = db.StringField(verbose_name="Invalid Votes")
     registered_voters_tag = db.StringField(verbose_name="Registered Voters")
     blank_votes_tag = db.StringField(verbose_name="Blank Votes")
+    permitted_roles = db.ListField(db.ReferenceField(
+        Role, reverse_delete_rule=db.PULL), verbose_name="Permitted Roles")
 
     meta = {
         'indexes': [
@@ -171,6 +174,16 @@ class Form(db.Document):
             if not group.slug:
                 group.slug = slugify_unicode(group.name).lower()
         return super(Form, self).clean()
+
+    def save(self, **kwargs):
+        super(Form, self).save(**kwargs)
+        # create permissions for roles
+        Need.objects.filter(
+            action='view_forms', items=self,
+            deployment=self.deployment).delete()
+        Need.objects.create(
+            action='view_forms', items=[self], entities=self.permitted_roles,
+            deployment=self.deployment)
 
     def to_xml(self):
         root = HTML_E.html()
