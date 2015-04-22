@@ -541,7 +541,19 @@ class Submission(db.DynamicDocument):
                         pass
 
         for submission in observer_submissions:
+            # hack to prevent clashes in saves quality_check and sub keys of
+            # quality_check. e.g. you cannot update quality_check and
+            # quality_check.flag_1 in the same operation. This hack removes the
+            # need to update the subkeys and update the entire dictionary at once
+            submission._changed_fields = filter(
+                lambda f: not f.startswith('quality_checks.'),
+                submission._changed_fields
+            )
             submission.save(clean=False)
+
+        self._changed_fields = filter(
+            lambda f: not f.startswith('quality_checks.'), self._changed_fields
+        )
 
     def clean(self):
         # update location name path if it does not exist.
