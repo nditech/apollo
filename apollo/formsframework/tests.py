@@ -64,5 +64,8 @@ class QuestionnaireTest(TestCase):
     def test_checklist_parsing(self):
         q = build_questionnaire(self.checklist_form, MultiDict({'AA': 2}))
         flag = q.validate()
+        data = q.data
 
-        self.assertTrue(flag)
+        self.assertEqual(data['AA'], 2)
+        self.assertEqual(data['AB'], [])
+        self.assertFalse(flag)  # invalid since form id, participant don't exist
