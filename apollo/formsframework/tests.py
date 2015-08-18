@@ -3,6 +3,7 @@ import warnings
 from flask.ext.testing import TestCase
 from werkzeug.datastructures import MultiDict
 from apollo.frontend import create_app
+from apollo.messaging.utils import parse_responses
 from .forms import build_questionnaire
 from .models import Form, FormField, FormGroup
 
@@ -62,10 +63,26 @@ class QuestionnaireTest(TestCase):
         self.incident_form.groups.append(grp2)
 
     def test_checklist_parsing(self):
-        q = build_questionnaire(self.checklist_form, MultiDict({'AA': 2}))
+        sample_text = 'AA2AB12'
+        q = build_questionnaire(
+            self.checklist_form,
+            MultiDict(parse_responses(sample_text,
+                                      self.checklist_form.form_type)))
         flag = q.validate()
         data = q.data
 
         self.assertEqual(data['AA'], 2)
-        self.assertEqual(data['AB'], [])
-        self.assertFalse(flag)  # invalid since form id, participant don't exist
+        self.assertEqual(data['AB'], [1, 2])
+        # invalid due to missing data
+        self.assertFalse(flag)
+
+    def test_incident_parsing(self):
+        sample_text = 'AB'
+        responses = parse_responses(sample_text, self.incident_form.form_type)
+        q = build_questionnaire(self.incident_form, MultiDict(responses))
+
+        flag = q.validate()
+        data = q.data
+        self.assertEqual(data['A'], 1)
+        self.assertEqual(data['B'], 1)
+        self.assertFalse(flag)
