@@ -92,6 +92,18 @@ def parse_responses(responses_text, form_type='CHECKLIST'):
 
 
 def parse_responses_ex(responses_text, form):
+    '''
+    The :function:`parse_responses_ex` function accepts the _responses_
+    section of an incoming text message and generates a(n ordered) dictionary
+    of key value pairs response questions and answers.
+
+    :param:`responses_text` - The responses portion of the text message
+    (e.g. AA1BA2)
+    :param:`form` - A `Form` instance to match the responses against.
+    The way the matching is done is dependent on the `FormField` instances
+    defined in `form`: numeric fields are first matched, then boolean
+    fields are.
+    '''
     responses = OrderedDict()
 
     return responses
