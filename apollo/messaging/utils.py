@@ -104,6 +104,22 @@ def parse_responses_ex(responses_text, form):
     defined in `form`: numeric fields are first matched, then boolean
     fields are.
     '''
+    fields = [fi for group in form.groups for fi in group.fields]
+    numeric_fields = [f.name for f in fields if not f.represents_boolean]
+    boolean_fields = [f.name for f in fields if f.represents_boolean]
+
+    substrate = responses_text
     responses = OrderedDict()
+    for f in numeric_fields:
+        pattern = '{}(?P<answer>\d*)'.format(f)
+        result = re.match(pattern, substrate, re.I)
+        if result:
+            responses[f] = result.group('answer')
+            substrate = re.sub(pattern, '', substrate)
+
+    for f in boolean_fields:
+        if re.match(f, substrate, re.I):
+            responses[f] = 1
+            substrate = re.sub(f, '', substrate)
 
     return responses

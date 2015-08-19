@@ -222,7 +222,7 @@ class ResponseParserExTest(TestCase):
         f1 = FormField(name='AA')
         f2 = FormField(name='BA', represents_boolean=True)
         f3 = FormField(name='D', represents_boolean=True)
-        f4 = FormField(name='EA')
+        f4 = FormField(name='EA', allows_multiple_values=True)
 
         g1 = FormGroup()
         g1.fields.append(f1)
@@ -244,4 +244,7 @@ class ResponseParserExTest(TestCase):
             {})
         self.assertEqual(
             parse_responses_ex('AA1BA2', self.test_form),
-            {'AA': 1, 'BA': 1})
+            {'AA': '1', 'BA': 1})
+        self.assertEqual(
+            parse_responses_ex('EA135DBAAA3', self.test_form),
+            {'AA': '3', 'BA': 1, 'D': 1, 'EA': '135'})
