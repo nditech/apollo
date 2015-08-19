@@ -111,14 +111,14 @@ def parse_responses_ex(responses_text, form):
     substrate = responses_text
     responses = OrderedDict()
     for f in numeric_fields:
-        pattern = '{}(?P<answer>\d*)'.format(f)
-        result = re.match(pattern, substrate, re.I)
+        pattern = '{}(?P<answer>\d+)'.format(f)
+        result = re.search(pattern, substrate, re.I)
         if result:
             responses[f] = result.group('answer')
             substrate = re.sub(pattern, '', substrate)
 
     for f in boolean_fields:
-        if re.match(f, substrate, re.I):
+        if re.search(f, substrate, re.I):
             responses[f] = 1
             substrate = re.sub(f, '', substrate)
 
