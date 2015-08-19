@@ -1,3 +1,4 @@
+from collections import OrderedDict
 import re
 
 
@@ -87,4 +88,10 @@ def parse_responses(responses_text, form_type='CHECKLIST'):
         responses = dict(
             [(r.group('question').upper(), r.group('answer'))
              for r in p.finditer(responses_text)])
+    return responses
+
+
+def parse_responses_ex(responses_text, form):
+    responses = OrderedDict()
+
     return responses

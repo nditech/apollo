@@ -181,8 +181,10 @@
 #                          '{"messages": [{"content": "Invalid response(s) for '
 #                          'question(s): \\"AA, BA\\". '
 #                          'You sent: ABC100001AA3BA1000"}]}')
+from collections import OrderedDict
 from unittest import TestCase
-from .utils import parse_responses
+from apollo.formsframework.models import Form, FormGroup, FormField
+from .utils import parse_responses, parse_responses_ex
 
 
 class ResponseParserTest(TestCase):
@@ -213,3 +215,33 @@ class ResponseParserTest(TestCase):
         self.assertEqual(
             parse_responses('AA1BEA2', 'INCIDENT'),
             {'A': 1, 'B': 1, 'E': 1})
+
+
+class ResponseParserExTest(TestCase):
+    def setUp(self):
+        f1 = FormField(name='AA')
+        f2 = FormField(name='BA', represents_boolean=True)
+        f3 = FormField(name='D', represents_boolean=True)
+        f4 = FormField(name='EA')
+
+        g1 = FormGroup()
+        g1.fields.append(f1)
+        g1.fields.append(f2)
+
+        g2 = FormGroup()
+        g2.fields.append(f3)
+        g2.fields.append(f4)
+
+        form = Form()
+        form.groups.append(g1)
+        form.groups.append(g2)
+
+        self.test_form = form
+
+    def test_response_parsing(self):
+        self.assertEqual(
+            parse_responses_ex('', self.test_form),
+            {})
+        self.assertEqual(
+            parse_responses_ex('AA1BA2', self.test_form),
+            {'AA': 1, 'BA': 1})
