@@ -8,7 +8,7 @@ from .forms import build_questionnaire
 from .models import Form, FormField, FormGroup
 
 
-env_path = os.path.join(
+ENV_PATH = os.path.join(
     os.path.dirname(os.path.dirname(os.path.dirname(__file__))), '.env')
 
 
@@ -36,7 +36,7 @@ def parse_env(env_path):
 
 class QuestionnaireTest(TestCase):
     def create_app(self):
-        read_env(env_path)
+        read_env(ENV_PATH)
         return create_app()
 
     def setUp(self):
