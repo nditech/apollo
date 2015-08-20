@@ -181,43 +181,12 @@
 #                          '{"messages": [{"content": "Invalid response(s) for '
 #                          'question(s): \\"AA, BA\\". '
 #                          'You sent: ABC100001AA3BA1000"}]}')
-from collections import OrderedDict
 from unittest import TestCase
 from apollo.formsframework.models import Form, FormGroup, FormField
-from .utils import parse_responses, parse_responses_ex
+from .utils import parse_responses
 
 
 class ResponseParserTest(TestCase):
-    def test_checklist_parsing(self):
-        self.assertEqual(
-            parse_responses('AA1BA2'),
-            {'AA': '1', 'BA': '2'})
-        self.assertEqual(
-            parse_responses('AA1BA2CA200', 'CHECKLIST'),
-            {'AA': '1', 'BA': '2', 'CA': '200'})
-        self.assertEqual(
-            parse_responses('', 'CHECKLIST'),
-            {})
-        self.assertEqual(
-            parse_responses('AA1BEA', 'CHECKLIST'),
-            {'AA': '1', 'BEA': ''})
-
-    def test_incident_parsing(self):
-        self.assertEqual(
-            parse_responses('ABC101', 'INCIDENT'),
-            {'A': 1, 'B': 1, 'C': 1})
-        self.assertEqual(
-            parse_responses('ABCDEF', 'INCIDENT'),
-            {'A': 1, 'B': 1, 'C': 1, 'D': 1, 'E': 1, 'F': 1})
-        self.assertEqual(
-            parse_responses('', 'INCIDENT'),
-            {})
-        self.assertEqual(
-            parse_responses('AA1BEA2', 'INCIDENT'),
-            {'A': 1, 'B': 1, 'E': 1})
-
-
-class ResponseParserExTest(TestCase):
     def setUp(self):
         f1 = FormField(name='AA')
         f2 = FormField(name='BA', represents_boolean=True)
@@ -240,11 +209,11 @@ class ResponseParserExTest(TestCase):
 
     def test_response_parsing(self):
         self.assertEqual(
-            parse_responses_ex('', self.test_form),
+            parse_responses('', self.test_form),
             {})
         self.assertEqual(
-            parse_responses_ex('AA1BA2', self.test_form),
+            parse_responses('AA1BA2', self.test_form),
             {'AA': '1', 'BA': 1})
         self.assertEqual(
-            parse_responses_ex('EA135DBAAA3', self.test_form),
+            parse_responses('EA135DBAAA3', self.test_form),
             {'AA': '3', 'BA': 1, 'D': 1, 'EA': '135'})
