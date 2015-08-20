@@ -62,36 +62,7 @@ def parse_text(text):
     return (prefix, participant_id, form_type, responses, comment)
 
 
-def parse_responses(responses_text, form_type='CHECKLIST'):
-    '''
-    The :function:`parse_responses` method accepts the _responses_ section of
-    an incoming text message and generates a dictionary of key value pairs of
-    response questions and answers.
-
-    :param:`responses_text` - The responses portion of the text message
-    (e.g. AA1BA2)
-    :param:`form_type` - (Optional) the form type guiding the parsing of the
-    responses. Responses for Incident Forms (e.g. ABCDE) are different in
-    nature from that of Checklist Forms (e.g. AA1BA2CC10).
-    '''
-    if form_type == 'INCIDENT':
-        # one alphabet represents a critical incident
-        p = re.compile(r'(?P<question>[A-Z])', re.I)
-        responses = dict(
-            [(r.group('question').upper(), 1)
-             for r in p.finditer(responses_text)])
-    else:
-        # responses for checklist questions are in the form AA111
-        # where AA is the alphabetic question code and 111 is the response.
-        # This may occur more than once in the response text.
-        p = re.compile(r'(?P<question>[A-Z]+)(?P<answer>\d*)', re.I)
-        responses = dict(
-            [(r.group('question').upper(), r.group('answer'))
-             for r in p.finditer(responses_text)])
-    return responses
-
-
-def parse_responses_ex(responses_text, form):
+def parse_responses(responses_text, form):
     '''
     The :function:`parse_responses_ex` function accepts the _responses_
     section of an incoming text message and generates a(n ordered) dictionary
