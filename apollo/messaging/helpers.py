@@ -16,7 +16,7 @@ def parse_message(form):
     if (prefix and participant_id and form_type and responses):
         form_doc = retrieve_form(prefix, form_type)
         if form_doc:
-            response_dict = parse_responses(responses, form_doc.form_type)
+            response_dict = parse_responses(responses, form_doc)
         if form_doc and response_dict:
             form_data = MultiDict(
                 {'form': form_doc.pk, 'participant': participant_id,
