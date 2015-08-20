@@ -110,16 +110,20 @@ def parse_responses_ex(responses_text, form):
 
     substrate = responses_text
     responses = OrderedDict()
-    for f in numeric_fields:
-        pattern = '{}(?P<answer>\d+)'.format(f)
-        result = re.search(pattern, substrate, re.I)
-        if result:
-            responses[f] = result.group('answer')
-            substrate = re.sub(pattern, '', substrate)
+    # process numeric fields first
+    pattern = re.compile(r'(?P<tag>{})(?P<answer>\d+)'.format(
+        '|'.join(numeric_fields)), flags=re.I)
+    responses.update(
+        ((r.group('tag'), r.group('answer')) for r in
+            pattern.finditer(responses_text)))
 
-    for f in boolean_fields:
-        if re.search(f, substrate, re.I):
-            responses[f] = 1
-            substrate = re.sub(f, '', substrate)
+    # remove the found data
+    substrate = pattern.sub('', responses_text)
+
+    # next, process boolean fields
+    pattern2 = re.compile(r'(?P<tag>{})'.format('|'.join(boolean_fields)),
+                          flags=re.I)
+    responses.update(
+        ((r.group('tag'), 1) for r in pattern2.finditer(substrate)))
 
     return responses
