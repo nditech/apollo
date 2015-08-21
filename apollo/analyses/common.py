@@ -372,15 +372,18 @@ def generate_incident_field_stats(tag, dataset, all_tags, labels=None):
     return field_stats
 
 
-def generate_field_stats(field, dataset):
+def generate_field_stats(field, dataset, all_tags=None):
     ''' In order to simplify the choice on what analysis to perform
     this method will check a few conditions and return the appropriate
     analysis for the field'''
-    sorted_options = sorted(field.options.iteritems(), key=itemgetter(1))
-    options = [i[1] for i in sorted_options]
-    labels = [i[0] for i in sorted_options]
+    if field.represents_boolean:
+        return generate_incident_field_stats(field.name, dataset, all_tags)
 
-    if options:
+    if field.options:
+        sorted_options = sorted(field.options.iteritems(), key=itemgetter(1))
+        options = [i[1] for i in sorted_options]
+        labels = [i[0] for i in sorted_options]
+
         if field.allows_multiple_values:
             return generate_mutiple_choice_field_stats(
                 field.name, dataset, options=options, labels=labels
@@ -389,8 +392,8 @@ def generate_field_stats(field, dataset):
             return generate_single_choice_field_stats(
                 field.name, dataset, options=options, labels=labels
             )
-    else:
-        return generate_numeric_field_stats(field.name, dataset)
+
+    return generate_numeric_field_stats(field.name, dataset)
 
 
 def generate_incidents_data(form, queryset, location_root, grouped=True,
@@ -437,7 +440,8 @@ def generate_incidents_data(form, queryset, location_root, grouped=True,
         for tag in tags:
             if tag not in data_frame:
                 continue
-            field_stats = generate_incident_field_stats(tag, data_frame, tags)
+            field = form.get_field_by_tag(tag)
+            field_stats = generate_field_stats(field, data_frame, tags)
             field = form.get_field_by_tag(tag)
             if not field.represents_boolean:
                 continue
@@ -454,8 +458,8 @@ def generate_incidents_data(form, queryset, location_root, grouped=True,
             for tag in tags:
                 if tag not in data_frame:
                     continue
-                field_stats = generate_incident_field_stats(
-                    tag, data_group, tags)
+                field = form.get_field_by_tag(tag)
+                field_stats = generate_field_stats(field, data_group, tags)
 
                 incidents_summary['locations'] = \
                     field_stats['locations'].keys()
@@ -491,9 +495,8 @@ def generate_incidents_data(form, queryset, location_root, grouped=True,
             for tag in tags:
                 if tag not in data_frame:
                     continue
-                field_stats = generate_incident_field_stats(tag, data_frame,
-                                                            tags)
                 field = form.get_field_by_tag(tag)
+                field_stats = generate_field_stats(field, data_frame, tags)
                 group_summary.append((tag, field.description, field_stats))
 
             sample_summary.append((group.name, group_summary))
