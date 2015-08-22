@@ -549,7 +549,7 @@ def generate_process_data(form, queryset, location_root, grouped=True,
             if tag not in data_frame:
                 continue
             field = form.get_field_by_tag(tag)
-            field_stats = generate_field_stats(field, data_frame)
+            field_stats = generate_field_stats(field, data_frame, tags)
 
             process_summary['top'].append(
                 (tag, field.description, field_stats)
@@ -564,7 +564,7 @@ def generate_process_data(form, queryset, location_root, grouped=True,
                 if tag not in data_frame:
                     continue
                 field = form.get_field_by_tag(tag)
-                field_stats = generate_field_stats(field, data_group)
+                field_stats = generate_field_stats(field, data_group, tags)
 
                 location_type_summary.append((
                     tag, field.description, field_stats
@@ -590,7 +590,7 @@ def generate_process_data(form, queryset, location_root, grouped=True,
                 if tag not in data_frame:
                     continue
                 field = form.get_field_by_tag(tag)
-                field_stats = generate_field_stats(field, data_frame)
+                field_stats = generate_field_stats(field, data_frame, tags)
                 group_summary.append((tag, field.description, field_stats))
 
             sample_summary.append((group.name, group_summary))
