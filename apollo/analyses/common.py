@@ -443,8 +443,6 @@ def generate_incidents_data(form, queryset, location_root, grouped=True,
             field = form.get_field_by_tag(tag)
             field_stats = generate_field_stats(field, data_frame, tags)
             field = form.get_field_by_tag(tag)
-            if not field.represents_boolean:
-                continue
 
             incidents_summary['top'].append(
                 (tag, field.description, field_stats)
