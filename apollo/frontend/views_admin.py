@@ -22,12 +22,6 @@ class DeploymentModelConverter(CustomModelConverter):
         return orm.ModelConverter.conv_String(self, model, field, kwargs)
 
 
-class DashboardView(BaseView):
-    @expose('/')
-    def index(self):
-        return redirect(url_for('dashboard.index'))
-
-
 class BaseAdminView(ModelView):
     def is_accessible(self):
         '''For checking if the admin view is accessible.'''
@@ -204,7 +198,6 @@ class RoleAdminView(BaseAdminView):
         return form_class
 
 
-admin.add_view(DashboardView(name=_('Dashboard')))
 admin.add_view(DeploymentAdminView(models.Deployment))
 admin.add_view(EventAdminView(models.Event))
 admin.add_view(UserAdminView(models.User))

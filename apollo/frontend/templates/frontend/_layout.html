@@ -125,7 +125,7 @@
               {% endif %}
                 <li class="divider"></li>
               {%- if perms.role('admin').can() -%}
-                <li><a href="{{ url_for('admin.index') }}"><i class="glyphicon glyphicon-user"></i> {% trans %}Admin{% endtrans %}</a></li>
+                <li><a href="{{ url_for('deployment.index_view') }}"><i class="glyphicon glyphicon-user"></i> {% trans %}Admin{% endtrans %}</a></li>
                 <li class="divider"></li>
               {%- endif -%}
               {%- if current_menu.submenu('locations_builder').visible -%}
