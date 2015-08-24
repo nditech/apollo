@@ -464,8 +464,6 @@ def generate_incidents_data(form, queryset, location_root, grouped=True,
 
                 for location in field_stats['locations']:
                     field = form.get_field_by_tag(tag)
-                    if not field.represents_boolean:
-                        continue
 
                     location_stats.setdefault(location, {}).update({
                         tag: (field.description,
