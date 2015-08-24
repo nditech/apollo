@@ -232,7 +232,7 @@
       </span>
       {%- endif %}
       </td>
-      <td {%- if submission_form[field.name].errors %} class="danger"{%- endif -%}>{{ submission_form[field.name] }}</td>
+      <td {%- if submission_form[field.name].errors %} class="danger"{%- endif -%}>{{ render_submission_field(submission_form[field.name]) }}</td>
     </tr>
     {% endfor -%}
     {% endfor -%}
