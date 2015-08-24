@@ -1,4 +1,11 @@
 {% macro render_checkbox_field(field, disabled=0) -%}
+<div class="checkbox">
+    <label>
+        <input name="{{ field.name }}" type="checkbox" value="1" {% if selected %}checked{% endif %} {% if disabled %}disabled{% endif %}>
+    </label>
+</div>
+{%- endmacro %}
+{% macro render_select_multi_field(field, disabled=0) -%}
     {% for value, label, selected in field.iter_choices()|sort %}
     <div class="checkbox">
         <label>
@@ -22,7 +29,7 @@
 {% elif field.type == 'RadioField' %}
 {{ render_radio_field(field, disabled) }}
 {% elif field.type == 'SelectMultipleField' %}
-{{ render_checkbox_field(field, disabled) }}
+{{ render_select_multi_field(field, disabled) }}
 {% else %}
 {% if disabled %}
 {{ field(class_='form-control', disabled='disabled') }}
