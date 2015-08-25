@@ -85,7 +85,7 @@ def parse_responses(responses_text, form):
     pattern = re.compile(r'(?P<tag>{})(?P<answer>\d+)'.format(
         '|'.join(numeric_fields)), flags=re.I)
     responses.update(
-        ((r.group('tag'), r.group('answer')) for r in
+        ((r.group('tag').upper(), r.group('answer')) for r in
             pattern.finditer(responses_text)))
 
     # remove the found data
@@ -99,6 +99,6 @@ def parse_responses(responses_text, form):
     pattern2 = re.compile(r'(?P<tag>{})'.format('|'.join(boolean_fields)),
                           flags=re.I)
     responses.update(
-        ((r.group('tag'), 1) for r in pattern2.finditer(substrate)))
+        ((r.group('tag').upper(), 1) for r in pattern2.finditer(substrate)))
 
     return responses
