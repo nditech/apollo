@@ -13,7 +13,7 @@ def parse_message(form):
 
     (prefix, participant_id, exclamation, responses, comment) = parse_text(
         message['text'])
-    if (prefix and participant_id and exclamation and responses):
+    if (prefix and participant_id and responses):
         form_doc = retrieve_form(prefix, exclamation)
         if form_doc:
             response_dict = parse_responses(responses, form_doc)
