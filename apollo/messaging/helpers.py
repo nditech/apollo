@@ -11,10 +11,10 @@ def parse_message(form):
     had_errors = False
     response_dict = None
 
-    (prefix, participant_id, form_type, responses, comment) = parse_text(
+    (prefix, participant_id, exclamation, responses, comment) = parse_text(
         message['text'])
-    if (prefix and participant_id and form_type and responses):
-        form_doc = retrieve_form(prefix, form_type)
+    if (prefix and participant_id and exclamation and responses):
+        form_doc = retrieve_form(prefix, exclamation)
         if form_doc:
             response_dict = parse_responses(responses, form_doc)
         if form_doc and response_dict:
