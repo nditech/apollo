@@ -115,6 +115,9 @@ class Form(db.Document):
     name = db.StringField(required=True)
     prefix = db.StringField()
     form_type = db.StringField(choices=FORM_TYPES)
+    require_exclamation = db.BooleanField(
+        default=True,
+        verbose_name=_('Require exclamation (!) mark in text message? (Does not apply to Checklist Forms)'))
     groups = db.ListField(db.EmbeddedDocumentField('FormGroup'))
 
     events = db.ListField(db.ReferenceField(
@@ -123,14 +126,14 @@ class Form(db.Document):
     quality_checks = db.ListField(db.DictField())
     party_mappings = db.DictField()
     calculate_moe = db.BooleanField(default=False)
-    accredited_voters_tag = db.StringField(verbose_name="Accredited Voters")
+    accredited_voters_tag = db.StringField(verbose_name=_("Accredited Voters"))
     verifiable = db.BooleanField(default=False,
-                                 verbose_name="Quality Assurance")
-    invalid_votes_tag = db.StringField(verbose_name="Invalid Votes")
-    registered_voters_tag = db.StringField(verbose_name="Registered Voters")
-    blank_votes_tag = db.StringField(verbose_name="Blank Votes")
+                                 verbose_name=_("Quality Assurance"))
+    invalid_votes_tag = db.StringField(verbose_name=_("Invalid Votes"))
+    registered_voters_tag = db.StringField(verbose_name=_("Registered Voters"))
+    blank_votes_tag = db.StringField(verbose_name=_("Blank Votes"))
     permitted_roles = db.ListField(db.ReferenceField(
-        Role, reverse_delete_rule=db.PULL), verbose_name="Permitted Roles")
+        Role, reverse_delete_rule=db.PULL), verbose_name=_("Permitted Roles"))
 
     meta = {
         'indexes': [

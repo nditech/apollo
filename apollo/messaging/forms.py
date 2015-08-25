@@ -71,7 +71,7 @@ class TelerivetForm(BaseHttpForm):
             }
 
 
-def retrieve_form(prefix, form_type='CHECKLIST'):
+def retrieve_form(prefix, exclamation=False):
     '''
     Retrieves a matching form for the given deployment, prefix and form_type.
 
@@ -83,8 +83,13 @@ def retrieve_form(prefix, form_type='CHECKLIST'):
 
     # find the first form that matches the prefix and optionally form type
     # for the events in the deployment.
-    form = services.forms.find(
-        events__in=current_events, prefix__iexact=prefix,
-        form_type=form_type).first()
+    if exclamation:
+        form = services.forms.find(
+            events__in=current_events, prefix__iexact=prefix,
+            form_type='INCIDENT').first()
+    else:
+        form = services.forms.find(
+            events__in=current_events,
+            prefix__iexact=prefix).order_by('form_type').first()
 
     return form

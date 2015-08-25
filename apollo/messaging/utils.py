@@ -11,11 +11,11 @@ def parse_text(text):
     form to process the responses in the text.
     2. Participant_id: The participant_id is used to identify the participant
     contributing this submission.
-    3. Form_type: The form_type is used as a guide in searching for the form
-    to process the responses. It will contain the value of None, 'CHECKLIST' or
-    'INCIDENT'. Form_type isn't used in all cases in finding the form to
+    3. Exclamation: The exclamation is used as a guide in searching for the form
+    to process the responses. It will contain the value of True or False.
+    Exlamation isn't used in all cases in finding the form to
     process the responses it is only used when the value is explicitly
-    'INCIDENT'.
+    True.
     4. Responses: This represents the responses contained in the text that are
     returned. The responses are only returned as plain text and will need to
     be parsed by the :function:`parse_responses` method to extract individual
@@ -24,12 +24,12 @@ def parse_text(text):
     position.
 
     The method returns these values in the following order:
-    (prefix, participant_id, form_type, responses, comments)
+    (prefix, participant_id, exclamation, responses, comments)
     '''
     from flask import current_app
     config = current_app.config
 
-    prefix = participant_id = form_type = responses = comment = None
+    prefix = participant_id = exclamation = responses = comment = None
     text = unicode(text)
     # regular expression for a valid text message
     pattern = re.compile(
@@ -55,11 +55,11 @@ def parse_text(text):
     if match:
         prefix = match.group('prefix') or None
         participant_id = match.group('participant_id') or None
-        form_type = 'INCIDENT' if match.group('exclamation') else 'CHECKLIST'
+        exclamation = True if match.group('exclamation') else False
         responses = match.group('responses') or None
     comment = text[at_position + 1:].strip() if at_position != -1 else None
 
-    return (prefix, participant_id, form_type, responses, comment)
+    return (prefix, participant_id, exclamation, responses, comment)
 
 
 def parse_responses(responses_text, form):

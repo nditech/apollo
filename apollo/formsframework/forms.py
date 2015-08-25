@@ -240,6 +240,7 @@ def build_questionnaire(form, data=None):
 FormForm = model_form(
     models.Form, SecureForm,
     only=[
-        'name', 'prefix', 'form_type', 'events', 'calculate_moe',
-        'accredited_voters_tag', 'verifiable', 'invalid_votes_tag',
-        'registered_voters_tag', 'blank_votes_tag', 'permitted_roles'])
+        'name', 'prefix', 'form_type', 'require_exclamation', 'events',
+        'calculate_moe', 'accredited_voters_tag', 'verifiable',
+        'invalid_votes_tag', 'registered_voters_tag', 'blank_votes_tag',
+        'permitted_roles'])
