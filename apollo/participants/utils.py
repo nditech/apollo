@@ -14,7 +14,8 @@ def update_participant_completion_rating(participant):
     completion_map = {
         'Missing': 0,
         'Partial': 1,
-        'Complete': 2
+        'Complete': 2,
+        'Conflict': 2  # TODO: find a better way to compute the ratings
     }
 
     if submissions.count() == 0:

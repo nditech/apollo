@@ -71,7 +71,33 @@ def get_form_list_menu(**kwargs):
             for form in filter(
                 lambda f: Permission(ItemNeed('view_forms', f, 'object'),
                                      RoleNeed('admin')).can(),
-                services.forms.find(**kwargs))]
+                services.forms.find(**kwargs).order_by('name'))]
+
+
+def get_concurrent_events_list_menu():
+    """Retrieves a list of events that are running concurrently and returns it
+    in a format that can be rendered on the menu
+    """
+    events_list = services.events.overlapping_events(g.event).order_by(
+        '-start_date')
+
+    return [{'url': url_for('dashboard.concurrent_events',
+             event_id=str(event.id)), 'text': event.name, 'visible': True,
+             'active': get_event() == event}
+            for event in events_list]
+
+
+def get_quality_assurance_form_list_menu(**kwargs):
+    """Retrieves a list of forms that have the verification flag set
+
+    :param form_type: The form type for the forms to be retrieved
+    """
+    return [{'url': url_for('submissions.quality_assurance_list',
+             form_id=str(form.id)), 'text': form.name, 'visible': True}
+            for form in filter(
+                lambda f: Permission(ItemNeed('view_forms', f, 'object'),
+                                     RoleNeed('admin')).can(),
+                services.forms.find(**kwargs).order_by('name'))]
 
 
 def displayable_location_types(**kwargs):
@@ -82,7 +108,7 @@ def displayable_location_types(**kwargs):
 def analysis_breadcrumb_data(form, location, tag=None,
                              analysis_type='process'):
     '''A helper function to populate the breadcrumb data structure
-    for both analysis and verification views.'''
+    for both analysis and quality assurance views.'''
     loc_type_names = [
         lt.name for lt in services.location_types.find(is_political=True)]
     location_branch = list(location.ancestors_ref) + [location]

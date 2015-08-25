@@ -4,8 +4,8 @@ from .models import (
     Participant, ParticipantRole, ParticipantPartner, ParticipantGroup,
     ParticipantGroupType
 )
-import csv
-from unidecode import unidecode
+from ..locations.models import LocationType
+import unicodecsv
 try:
     from cStringIO import StringIO
 except:
@@ -41,12 +41,17 @@ class ParticipantsService(Service):
         ]
         
         if queryset.count():
+            location_types = LocationType.objects(
+                is_administrative=True, deployment=queryset.first().deployment)
+            headers = headers[:5] + \
+                map(lambda location_type: location_type.name, location_types) + \
+                headers[5:]
             for extra_field in queryset.first().deployment.participant_extra_fields:
                 headers.append(extra_field.label)
 
         output = StringIO()
-        writer = csv.writer(output)
-        writer.writerow([unidecode(unicode(i)) for i in headers])
+        writer = unicodecsv.writer(output, encoding='utf-8')
+        writer.writerow([unicode(i) for i in headers])
         yield output.getvalue()
         output.close()
 
@@ -61,8 +66,11 @@ class ParticipantsService(Service):
                 participant.name if participant.name else '',
                 participant.partner.name if participant.partner else '',
                 participant.role.name if participant.role else '',
-                participant.location.code if participant.location else '',
-                participant.supervisor.participant_id if participant.supervisor
+                participant.location.code if participant.location else ''] + \
+                [participant.location_name_path.get(
+                 location_type.name, '')
+                 for location_type in location_types] + \
+                [participant.supervisor.participant_id if participant.supervisor
                 else '',
                 participant.gender if participant.gender else '',
                 participant.email if participant.email else '',
@@ -74,8 +82,8 @@ class ParticipantsService(Service):
                 record.append(getattr(participant, extra_field.name, ''))
 
             output = StringIO()
-            writer = csv.writer(output)
-            writer.writerow([unidecode(unicode(i)) for i in record])
+            writer = unicodecsv.writer(output, encoding='utf-8')
+            writer.writerow([unicode(i) for i in record])
             yield output.getvalue()
             output.close()
 
@@ -86,7 +94,7 @@ class ParticipantsService(Service):
             'Messages Sent', 'Accuracy', 'Completion'
         ]
         output = StringIO()
-        writer = csv.writer(output)
+        writer = unicodecsv.writer(output, encoding='utf-8')
         writer.writerow(headers)
         yield output.getvalue()
         output.close()
@@ -115,8 +123,8 @@ class ParticipantsService(Service):
             record.append(participant.completion_rating)
 
             output = StringIO()
-            writer = csv.writer(output)
-            writer.writerow([unidecode(unicode(i)) for i in record])
+            writer = unicodecsv.writer(output, encoding='utf-8')
+            writer.writerow([unicode(i) for i in record])
             yield output.getvalue()
             output.close()
 

@@ -6,8 +6,8 @@
     
     var json = JSON.parse(el.dataset.chart);
     var data = [json.Missing, json.Partial, json.Complete];
-    var color = d3.scale.ordinal().range(["#FF5200", "#FFE22B", "#3BDF4A"]);
-    var labels = ['Missing', 'Partial', 'Complete'];
+    var color = d3.scale.ordinal().range(["#FF5200", "#FFE22B", "#3BDF4A"]); // Conflict color #E83992
+    var labels = ['Missing', 'Partial', 'Complete']; // Conflict label
     var total = data.reduce(function (prev, curr, idx, arr) { return prev + curr; });
 
     function number_format(num) {
@@ -63,7 +63,7 @@
       .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
 
     legend.append("circle")
-      .attr("cx", w/4 - 23)
+      .attr("cx", w/4 - 26)
       .attr("cy", h/2 + 24)
       .attr("r", 5)
       .style("fill", color.domain(labels));
@@ -71,7 +71,7 @@
     //Legend Label
     legend.append("text")
       .data(labels)
-      .attr("x", w/4 - 12)
+      .attr("x", w/4 - 16)
       .attr("y", h/2 + 24)
       .attr("dy", ".35em")
       .style('font-family', 'courier')
@@ -81,7 +81,7 @@
     //Legend data
     legend.append("text")
       .data(data)
-      .attr("x", w /2 + 23)
+      .attr("x", w /2 + 15)
       .attr("y", h/2 + 24)
       .attr("dy", ".35em")
       .style('font-family', 'courier')

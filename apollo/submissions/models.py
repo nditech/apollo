@@ -2,32 +2,37 @@
 from ..core import db
 from ..deployments.models import Deployment, Event
 from ..formsframework.models import Form
-from ..formsframework.parser import Comparator, Evaluator
+from ..formsframework.parser import Comparator, grammar_factory
 from ..helpers import compute_location_path
 from ..locations.models import Location
 from ..participants.models import Participant
 from ..users.models import User
 from datetime import datetime
-from flask.ext.babel import lazy_gettext as _
+from flask.ext.babel import gettext as _
 from flask.ext.mongoengine import BaseQuerySet
 from mongoengine import Q
 from pandas import DataFrame, isnull, Series
+from parsimonious.exceptions import ParseError
 import numpy as np
 
 FLAG_STATUSES = {
     'no_problem': ('0', _('No Problem')),
     'problem': ('2', _('Problem')),
-    'serious_problem': ('3', _('Serious Problem')),
     'verified': ('4', _('Verified')),
     'rejected': ('5', _('Rejected'))
 }
 
+QUALITY_STATUSES = {
+    'OK': '0',
+    'FLAGGED': '2',
+    'VERIFIED': '3'
+}
+
 FLAG_CHOICES = (
-    ('0', _('No Problem')),
-    ('2', _('Problem')),
-    ('3', _('Serious Problem')),
-    ('4', _('Verified')),
-    ('5', _('Rejected'))
+    ('0', _('OK')),
+    ('-1', _('MISSING')),
+    ('2', _('FLAGGED')),
+    ('3', _('VERIFIED'))
 )
 
 STATUS_CHOICES = (
@@ -43,7 +48,7 @@ class SubmissionQuerySet(BaseQuerySet):
     # most of the fields below are DBRef fields or not useful to
     # our particular use case.
     DEFAULT_EXCLUDED_FIELDS = [
-        'id', 'created', 'updated', 'location', 'deployment'
+        'id', 'created', 'deployment'
     ]
     SUBDOCUMENT_FIELDS = ['location_name_path', 'completion']
 
@@ -63,23 +68,29 @@ class SubmissionQuerySet(BaseQuerySet):
             query_kwargs = {
                 param: location.name
             }
-            return self(Q(location=location) | Q(**query_kwargs))
+            return self(**query_kwargs)
         elif hasattr(location_spec, '__iter__'):
             # checking for multiple locations
             chain = Q()
+            location_query = {}
             for location in location_spec:
                 if not isinstance(location, Location):
                     return self.none()
+                location_query.setdefault(location.location_type, [])
+                location_query[location.location_type].append(location.name)
 
-                param = 'location_name_path__{}'.format(location.location_type)
-                query_kwargs = {param: location.name}
-                chain = Q(location=location) | Q(**query_kwargs) | chain
+            for key in location_query.keys():
+                param = 'location_name_path__{}__in'.format(key)
+                query_kwargs = {param: location_query[key]}
+                chain = Q(**query_kwargs) | chain
             return self(chain)
         # value is neither a Location instance nor an iterable
         # producing Location instances
         return self.none()
 
     def to_dataframe(self, selected_fields=None, excluded_fields=None):
+        from ..services import locations
+
         if excluded_fields:
             qs = self.exclude(*excluded_fields)
         else:
@@ -107,6 +118,11 @@ class SubmissionQuerySet(BaseQuerySet):
             temp = df.pop(field).tolist()
             temp2 = [i if not isnull(i) else {} for i in temp]
             df = df.join(DataFrame(temp2))
+
+        rv_map = locations.registered_voters_map()
+
+        df['registered_voters'] = df.location.apply(lambda i: rv_map.get(
+            i, 0))
 
         return df
 
@@ -171,6 +187,11 @@ class Submission(db.DynamicDocument):
         ('O', _(u'Observer Submission')),
         ('M', _(u'Master Submission')),
     )
+    QUARANTINE_STATUSES = (
+        ('', _(u'None')),
+        ('A', _(u'All')),
+        ('R', _(u'Results'))
+    )
 
     form = db.ReferenceField(Form)
     contributor = db.ReferenceField(Participant)
@@ -186,13 +207,52 @@ class Submission(db.DynamicDocument):
     overridden_fields = db.ListField(db.StringField())
     submission_type = db.StringField(
         choices=SUBMISSION_TYPES, default='O', required=True)
+    quarantine_status = db.StringField(
+        choices=QUARANTINE_STATUSES, required=False)
 
     deployment = db.ReferenceField(Deployment)
     event = db.ReferenceField(Event)
 
     meta = {
+        'indexes': [
+            ['location'],
+            ['form'],
+            ['contributor'],
+            ['completion'],
+            ['quality_checks'],
+            ['submission_type'],
+            ['deployment'],
+            ['deployment', 'event'],
+            ['quality_checks', 'submission_type', 'event',
+             'form', 'deployment']
+        ],
         'queryset_class': SubmissionQuerySet,
     }
+
+    @classmethod
+    def init_submissions(cls, deployment, event, form, role, location_type):
+        if form.form_type != 'CHECKLIST':
+            return
+
+        for participant in Participant.objects(
+                deployment=deployment, event=event, role=role
+                ):
+            if location_type.name == participant.location.location_type:
+                location = participant.location
+            else:
+                location = next(
+                    (a for a in participant.location.ancestors_ref
+                        if a.location_type == location_type.name),
+                    None)
+                if not location:
+                    return
+
+            submission, _ = cls.objects.get_or_create(
+                form=form, contributor=participant, location=location,
+                created=event.start_date, deployment=deployment,
+                event=event, submission_type='O')
+            # force creation of master
+            submission.master
 
     def _update_completion_status(self):
         '''Computes the completion status of each form group for a submission.
@@ -209,26 +269,71 @@ class Submission(db.DynamicDocument):
                     self.completion[group.name] = 'Partial'
                 else:
                     self.completion[group.name] = 'Missing'
+
         elif self.master == self:
             # update sibling submissions
-            for submission in self.siblings:
-                for group in self.form.groups:
-                    completed = [getattr(self, f.name, None) is not None
-                                 for f in group.fields]
-                    if all(completed):
-                        submission.completion[group.name] = 'Complete'
-                    elif any(completed):
-                        submission.completion[group.name] = 'Partial'
-                    else:
-                        submission.completion[group.name] = 'Missing'
+            for group in self.form.groups:
+                completed = [getattr(self, f.name, None) is not None
+                             for f in group.fields]
+                if all(completed):
+                    self.completion[group.name] = 'Complete'
+                elif any(completed):
+                    self.completion[group.name] = 'Partial'
+                else:
+                    self.completion[group.name] = 'Missing'
 
-                submission.save(clean=False)
+            for group in self.form.groups:
+                fields_to_check = filter(
+                    lambda f: f not in self.overridden_fields,
+                    [f.name for f in group.fields])
+
+                observer_submissions = list(self.siblings)
+                not_quarantined = filter(lambda s: not s.quarantine_status,
+                                         observer_submissions)
+
+                if not not_quarantined:
+                    self.quarantine_status = 'A'  # quarantine all records
+
+                for submission in observer_submissions:
+                    # check for conflicting values in the submissions
+                    for field in fields_to_check:
+                        field_values = set(
+                            map(
+                                lambda x: frozenset(x)
+                                if isinstance(x, list) else x,
+                                filter(lambda value: value is not None,
+                                       [getattr(s, field, None)
+                                        for s in not_quarantined])))
+                        if len(field_values) > 1:  # there are different values
+                            submission.completion[group.name] = 'Conflict'
+                            break
+                    else:
+                        # if there's no conflicting fields then compute the
+                        # the normal completion status
+                        completed = [
+                            getattr(submission, f.name, None) is not None
+                            for f in group.fields]
+                        if all(completed):
+                            submission.completion[group.name] = 'Complete'
+                        elif any(completed):
+                            submission.completion[group.name] = 'Partial'
+                        else:
+                            submission.completion[group.name] = 'Missing'
+
+                    submission.save(clean=False)
 
     def _update_confidence(self):
         '''Computes the confidence score for the fields in the master.
         Should be called automatically on save, preferably in the `clean`
         method.'''
         if self.submission_type == 'M':
+            siblings = list(self.siblings.filter(
+                quarantine_status__nin=map(
+                    lambda i: i[0],
+                    filter(
+                        lambda s: s[0],
+                        self.QUARANTINE_STATUSES))))
+
             for group in self.form.groups:
                 for field in group.fields:
                     score = None
@@ -241,8 +346,12 @@ class Submission(db.DynamicDocument):
                         self.confidence[name] = score
                         continue
 
-                    values = [getattr(submission, name, None)
-                              for submission in self.siblings]
+                    values = map(
+                        lambda value: frozenset(value)
+                        if isinstance(value, list) else value,
+                        [getattr(submission, name, None)
+                            for submission in siblings]
+                    )
                     unique = list(set(values))
                     # if all values were reported and are the same then
                     # we have 100% confidence in the reported data
@@ -271,7 +380,8 @@ class Submission(db.DynamicDocument):
                         # the total expected
                         else:
                             try:
-                                score = len(n_values) / len(values)
+                                score = float(
+                                    len(n_values)) / float(len(values))
                             except ZeroDivisionError:
                                 score = 0
 
@@ -291,6 +401,10 @@ class Submission(db.DynamicDocument):
             field for field in fields
             if field.options is not None and
             field.allows_multiple_values is False]
+        multi_value_fields = [
+            field for field in fields
+            if field.options is not None and
+            field.allows_multiple_values is True]
 
         for field in boolean_fields:
             if not getattr(self, field.name, None):
@@ -307,8 +421,14 @@ class Submission(db.DynamicDocument):
             elif isinstance(value, str) and value.isdigit():
                 setattr(self, field.name, int(value))
 
+        for field in multi_value_fields:
+            value = getattr(self, field.name, '')
+            if value == '':
+                setattr(self, field.name, None)
+            elif isinstance(value, list):
+                setattr(self, field.name, sorted(value))
+
     def _update_master(self):
-        '''TODO: update master based on agreed algorithm'''
         master = self.master
         if master and master != self:
             # fetch only fields that have not been overridden
@@ -316,94 +436,124 @@ class Submission(db.DynamicDocument):
                 field for group in self.form.groups
                 for field in group.fields])
 
+            siblings = self.siblings.filter(
+                quarantine_status__nin=map(
+                    lambda i: i[0],
+                    filter(
+                        lambda s: s[0],
+                        self.QUARANTINE_STATUSES)))
+
             for field in fields:
-                if (
-                    getattr(self, field.name, None) != getattr(
-                        master, field.name, None)
-                ):
+                submission_field_value = getattr(self, field.name, None)
+                sibling_field_values = [
+                    getattr(sibling, field.name, None) for sibling in
+                    siblings]
+
+                if self.quarantine_status:
+                    submission_field_value = None
+
+                all_values = [submission_field_value] + sibling_field_values
+                non_null_values = filter(
+                    lambda val: val is not None, all_values)
+
+                # important to make the values hashable since "set" doesn't
+                # like to work directly with lists as they aren't hashable
+                hashable = map(
+                    lambda v: frozenset(v) if isinstance(v, list) else v,
+                    non_null_values)
+                unique_values = set(hashable)
+
+                # depending on the length of unique non-null values, the
+                # following will apply:
+                # a length of 1 indicates the same non-null values
+                # a length of 0 indicates all null values
+                # a length greater than 1 indicatees several non-null values
+                if len(unique_values) == 1:
+                    v = unique_values.pop()
+                    v = list(v) if isinstance(v, frozenset) else v
                     setattr(
-                        master, field.name, getattr(self, field.name, None))
-            master._compute_verification()
+                        master,
+                        field.name,
+                        v)
+                else:  # caters for both conditions where len > 1 or = 0
+                    setattr(
+                        master,
+                        field.name,
+                        None)
+            master._compute_data_quality()
+            master._update_completion_status()
             master._update_confidence()
             master.updated = datetime.utcnow()
             master.save(clean=False)
 
-    def _compute_verification(self):
+    def _compute_data_quality(self):
         '''Precomputes the logical checks on the submission.'''
         if self.submission_type != 'M':
             # only for master submissions
             return
 
-        verified_flag = FLAG_STATUSES['verified'][0]
-        rejected_flag = FLAG_STATUSES['rejected'][0]
-
+        observer_submissions = list(self.siblings)
+        evaluator = grammar_factory(self)
         comparator = Comparator()
 
-        NO_DATA = 0
-        OK = 1
-        UNOK = 2
-
-        flags_statuses = []
         for flag in self.form.quality_checks:
-            evaluator = Evaluator(self)
+            # skip processing if this has either been verified
+            if (
+                self.quality_checks.get(flag['name'], None) ==
+                QUALITY_STATUSES['VERIFIED']
+            ):
+                continue
 
             try:
-                lvalue = evaluator.eval(flag['lvalue'])
-                rvalue = evaluator.eval(flag['rvalue'])
+                lvalue = evaluator(flag['lvalue']).expr()
+                rvalue = evaluator(flag['rvalue']).expr()
 
                 # the comparator setting expresses the relationship between
                 # lvalue and rvalue
-                if flag['comparator'] == 'pctdiff':
-                    # percentage difference between lvalue and rvalue
-                    try:
-                        diff = abs(lvalue - rvalue) / float(
-                            max([lvalue, rvalue]))
-                    except ZeroDivisionError:
-                        diff = 0
-                elif flag['comparator'] == 'pct':
-                    # absolute percentage
-                    try:
-                        diff = float(lvalue) / float(rvalue)
-                    except ZeroDivisionError:
-                        diff = 0
-                else:
-                    # value-based comparator
-                    diff = abs(lvalue - rvalue)
+                comparator.param = lvalue
+                ok = comparator.eval(
+                    '{} {}'.format(flag['comparator'], rvalue))
 
-                # evaluate conditions and set flag appropriately
-                if comparator.eval(flag['okay'], diff):
-                    flag_setting = FLAG_STATUSES['no_problem'][0]
-                    flags_statuses.append(OK)
-                elif comparator.eval(flag['serious'], diff):
-                    flag_setting = FLAG_STATUSES['serious_problem'][0]
-                    flags_statuses.append(UNOK)
-                elif comparator.eval(flag['problem'], diff):
-                    flag_setting = FLAG_STATUSES['problem'][0]
-                    flags_statuses.append(UNOK)
+                if not ok:
+                    self.quality_checks[flag['name']] = \
+                        QUALITY_STATUSES['FLAGGED']
+                    for submission in observer_submissions:
+                        submission.quality_checks[flag['name']] = \
+                            QUALITY_STATUSES['FLAGGED']
                 else:
-                    # if we have no way of determining, we assume it's okay
-                    flag_setting = FLAG_STATUSES['no_problem'][0]
-                    flags_statuses.append(OK)
-
-                # setattr(self, flag['storage'], flag_setting)
-                self.quality_checks[flag['storage']] = flag_setting
-            except TypeError:
+                    self.quality_checks[flag['name']] = \
+                        QUALITY_STATUSES['OK']
+                    for submission in observer_submissions:
+                        submission.quality_checks[flag['name']] = \
+                            QUALITY_STATUSES['OK']
+            except (AttributeError, TypeError, NameError, ParseError):
                 # no sufficient data
                 # setattr(self, flag['storage'], None)
                 try:
-                    self.quality_checks.pop(flag['storage'])
+                    self.quality_checks.pop(flag['name'])
                 except KeyError:
                     pass
-                flags_statuses.append(NO_DATA)
 
-        # compare all flags and depending on the values, set the status
-        if not self.verification_status in [verified_flag, rejected_flag]:
-            if all(map(lambda i: i == NO_DATA, flags_statuses)):
-                self.verification_status = None
-            elif any(map(lambda i: i == UNOK, flags_statuses)):
-                self.verification_status = FLAG_STATUSES['problem'][0]
-            elif any(map(lambda i: i == OK, flags_statuses)):
-                self.verification_status = FLAG_STATUSES['no_problem'][0]
+                for submission in observer_submissions:
+                    try:
+                        submission.quality_checks.pop(flag['name'])
+                    except KeyError:
+                        pass
+
+        for submission in observer_submissions:
+            # hack to prevent clashes in saves quality_check and sub keys of
+            # quality_check. e.g. you cannot update quality_check and
+            # quality_check.flag_1 in the same operation. This hack removes the
+            # need to update the subkeys and update the entire dictionary at once
+            submission._changed_fields = filter(
+                lambda f: not f.startswith('quality_checks.'),
+                submission._changed_fields
+            )
+            submission.save(clean=False)
+
+        self._changed_fields = filter(
+            lambda f: not f.startswith('quality_checks.'), self._changed_fields
+        )
 
     def clean(self):
         # update location name path if it does not exist.
@@ -416,14 +566,18 @@ class Submission(db.DynamicDocument):
         # cleanup data fields
         self._update_data_fields()
 
+        # save the submission without cleaning to prevent an infinite loop
+        self.save(clean=False)
+
         # update the master submission
         self._update_master()
 
-        # update completion status
-        self._update_completion_status()
+        if self.master == self:
+            # update completion status
+            self._update_completion_status()
 
         # and compute the verification
-        self._compute_verification()
+        self._compute_data_quality()
 
         # update the confidence
         self._update_confidence()

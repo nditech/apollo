@@ -3,6 +3,8 @@ from flask.ext.principal import Permission, ActionNeed, RoleNeed, ItemNeed
 
 # View
 view_events = Permission(ActionNeed('view_events'), RoleNeed('admin'))
+view_participants = Permission(
+    ActionNeed('view_participants'), RoleNeed('admin'))
 view_messages = Permission(ActionNeed('view_messages'), RoleNeed('admin'))
 view_analyses = Permission(ActionNeed('view_analyses'), RoleNeed('admin'))
 
@@ -13,9 +15,12 @@ add_submission = Permission(ActionNeed('add_submission'), RoleNeed('admin'))
 edit_forms = Permission(ActionNeed('edit_forms'), RoleNeed('admin'))
 edit_locations = Permission(ActionNeed('edit_locations'), RoleNeed('admin'))
 edit_submission = Permission(ActionNeed('edit_submission'), RoleNeed('admin'))
+edit_both_submissions = Permission(
+    ActionNeed('edit_both_submissions'), RoleNeed('admin'))
+edit_submission_quarantine_status = Permission(
+    ActionNeed('edit_submission_quarantine_status'), RoleNeed('admin'))
 edit_participant = Permission(
     ActionNeed('edit_participant'), RoleNeed('admin'))
-edit_location = Permission(ActionNeed('edit_location'), RoleNeed('admin'))
 
 # Import
 import_participants = Permission(
@@ -36,7 +41,9 @@ export_locations = Permission(
 # Others
 send_messages = Permission(ActionNeed('send_messages'), RoleNeed('admin'))
 
-role = lambda role: Permission(RoleNeed(role))
+
+def role(role):
+    return Permission(RoleNeed(role))
 
 
 # item permission

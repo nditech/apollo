@@ -13,9 +13,10 @@
 {% endif %}
 {% endblock %}
 {% block content %}{% set form, siblings, master = submission.form, submission.siblings, submission.master %}
+{%- from 'frontend/macros/submission_field_macros.html' import render_submission_field %}
 <form method="POST">
-<input type="hidden" name="next" value="{{ request.environ.get('HTTP_REFERER', '') }}" />
-<div>
+<input type="hidden" name="next" value="{{ request.environ.get('HTTP_REFERER', url_for('submissions.submission_list', form_id=form.pk)) }}" />
+<div class="table-responsive">
 <table class="table table-bordered">
 {%- if form.form_type == 'CHECKLIST' -%}
 <tr>
@@ -55,9 +56,6 @@
   {%- endfor -%}
   {%- endif -%}
 </tr>
-<!--
-TODO: insert last used identity here
--->
 {%- if form.form_type == 'CHECKLIST' -%}
 <tr>
   <th>{%- trans -%}Location{%- endtrans %}</th>
@@ -120,53 +118,97 @@ TODO: insert last used identity here
 {{ submission_form.csrf_token() }}
 {%- if form.form_type == 'CHECKLIST' %}
 {%- for f in sibling_forms -%}{{ f.csrf_token() }}{%- endfor -%}{{ master_form.csrf_token() }}
-<table class="table table-bordered table-striped table-hover">
-<tbody>
-  <tr>
-    <td colspan="2">&nbsp;</td>
-    <td style="text-align: center"><strong>OBS 1</strong></td>
-    {%- for sibling in siblings -%}
-    <td style="text-align: center"><strong>OBS {{ loop.index + 1 }}</strong></td>
-    {%- endfor -%}
-    <td style="text-align: center"><strong>PS</strong></td>
-    <td style="text-align: center"><abbr title="{% trans %}Confidence Level{% endtrans %}"><i class="glyphicon glyphicon-thumbs-up"></i></abbr></td>
-  </tr>
-  {% for group in form.groups %}
-  <tr>
-    <td colspan="{{ siblings|count + 5 }}"><h4>{{ group.name }}</h4></td>
-  </tr>
-  {% for field in group.fields %}
-  <tr>
-    <th>{{ field.name }}</th>
-    <td>{{ field.description }}
-      {%- if field.options %}
-      <span class="options">
-      {% for item in field.options|dictsort(false, 'value') %}
-      <span class="option"><strong>({{ item.1 }})</strong> {{ item.0 }}</span>
+<div class="table-responsive">
+  <table class="table table-bordered table-striped table-hover">
+    <tbody>
+      <tr>
+        <td colspan="2">&nbsp;</td>
+        <td style="text-align: center">
+        {%- if perms.edit_both_submissions.can() -%}
+        <label for="{{ submission.pk }}" style="margin-bottom: 0"><strong>OBS 1</strong><p style="margin-top: 0.25em"><input type="radio" id="{{ submission.pk }}" class="obs1" name="submission_selection" value="obs"{% if not readonly %} checked{% endif %} /></p></label>
+        {%- else -%}
+        <strong>OBS 1</strong>
+        {%- endif -%}
+        </td>
+        {%- for sibling in siblings -%}
+        <td style="text-align: center">
+        {%- if perms.edit_both_submissions.can() -%}
+        <label for="{{ sibling.pk }}" style="margin-bottom: 0"><strong>OBS {{ loop.index + 1 }}</strong><p style="margin-top: 0.25em"><input type="radio" id="{{ sibling.pk }}" name="submission_selection" value="" disabled></p></label>
+        {%- else -%}
+        <strong>OBS {{ loop.index + 1 }}</strong>
+        {%- endif -%}
+        </td>
+        {%- endfor -%}
+        <td style="text-align: center">
+        {%- if perms.edit_both_submissions.can() -%}
+        <label for="{{ submission.master.pk }}" style="margin-bottom: 0"><strong>PS</strong><p style="margin-top: 0.25em"><input type="radio" id="{{ submission.master.pk }}" class="ps" name="submission_selection" value="ps"{% if readonly %} checked{% endif %} /></p></label>
+        {%- else -%}
+        <strong>PS</strong>
+        {%- endif -%}
+        </td>
+        <td colspan="2" style="vertical-align: middle; padding-left: 1.5em"><abbr title="{% trans %}Confidence Level{% endtrans %}"><i class="glyphicon glyphicon-thumbs-up"></i></abbr></td>
+      </tr>
+      {% for group in form.groups %}
+      <tr>
+        <td colspan="{{ siblings|count + 6 }}"><h4>{{ group.name }}</h4></td>
+      </tr>
+      {% for field in group.fields %}
+      <tr>
+        <th>{{ field.name }}</th>
+        <td>{{ field.description }}
+          {%- if field.options and not field.allows_multiple_values %}
+          <span class="options">
+          {% for item in field.options|dictsort(false, 'value') %}
+          <span class="option"><strong>({{ item.1 }})</strong> {{ item.0 }}</span>
+          {% endfor %}
+          </span>
+          {%- endif %}
+        </td>
+        {%- if readonly -%}
+        <td class="obs-on">{{ render_submission_field(submission_form[field.name], disabled=1)}}</td>
+        {%- else -%}
+        <td class="obs-on{%- if submission_form[field.name].errors %} danger{%- endif -%}">{{ render_submission_field(submission_form[field.name]) }}</td>
+        {%- endif -%}
+        {%- for sibling_form in sibling_forms -%}
+        <td >{{ render_submission_field(sibling_form[field.name], disabled=1) }}</td>
+        {%- endfor -%}
+        {%- if readonly -%}
+        <td class="ps-on{%- if master_form[field.name].errors %} danger{% elif field.name in submission.master.overridden_fields %} warning{%- endif -%}"{% if field.name in submission.master.overridden_fields %} title="{% trans %}Overridden Field{% endtrans %}"{%- endif -%}>{{ render_submission_field(master_form[field.name]) }}</td>
+        {%- else -%}
+        <td class="ps-on{%- if master_form[field.name].errors %} danger{% elif field.name in submission.master.overridden_fields %} warning{%- endif -%}"{% if field.name in submission.master.overridden_fields %} title="{% trans %}Overridden Field{% endtrans %}"{%- endif -%}>{{ render_submission_field(master_form[field.name], disabled=1) }}</td>
+        {%- endif -%}
+        {% if submission.master %}{% set score = submission.master.confidence.get(field.name, None) %}{% else %}{% set score = None %}{% endif -%}
+        {% if score == 0 %}{% set score_label = 'label-danger' -%}
+        {% elif score == 1 %}{% set score_label = 'label-success' -%}
+        {% elif not score %}{% set score_label = 'label-default' -%}
+        {% else %}{% set score_label = 'label-warning' %}{% endif -%}
+        <td style="padding-top:14px"><span class="label {{ score_label }}">{% if score == None %}-{% else %}{{ '%.3g' % score|percent_of(1, 0) }}%{% endif %}</span></td>
+        <th style="padding-top:14px"><span>{{ field.name }}</span></th>
+      </tr>
       {% endfor %}
-      </span>
-      {%- endif %}
-    </td>
-    {%- if readonly -%}
-    <td>{{ submission_form[field.name](class_='form-control input-mini', disabled=1) }}</td>
-    {%- else -%}
-    <td {%- if submission_form[field.name].errors %} class="danger"{%- endif -%}>{{ submission_form[field.name](class_='form-control input-mini') }}</td>
-    {%- endif -%}
-    {%- for sibling_form in sibling_forms -%}
-    <td>{{ sibling_form[field.name](class_='form-control input-mini', disabled=1) }}</td>
-    {%- endfor -%}
-    <td {%- if master_form[field.name].errors %} class="danger"{%- endif -%}>{{ master_form[field.name](class_='form-control input-mini') }}</td>
-    {% if submission.master %}{% set score = submission.master.confidence.get(field.name, None) %}{% else %}{% set score = None %}{% endif -%}
-    {% if not score %}{% set score_label = 'label-default' -%}
-    {% elif score == 0 %}{% set score_label = 'label-danger' -%}
-    {% elif score == 1 %}{% set score_label = 'label-success' -%}
-    {% else %}{% set score_label = 'label-warning' %}{% endif -%}
-    <td style="padding-top:14px"><span class="label {{ score_label }}">{% if score == None %}-{% else %}{{ '%.3g' % score|percent_of(1, 0) }}%{% endif %}</span></td>
-  </tr>
-  {% endfor %}
-  {% endfor %}
-</tbody>
-</table>
+      {% endfor %}
+      {% if perms.edit_submission_quarantine_status.can() %}
+      <tr>
+        <td colspan="2" style="vertical-align: middle"><h4>{% trans %}Quarantine Status{% endtrans %}</h4></td>
+        {%- if readonly -%}
+        <td class="obs-on"{{ render_submission_field(submission_form['quarantine_status'], disabled=1)}}</td>
+        {%- else -%}
+        <td class="obs-on"{%- if submission_form['quarantine_status'].errors %} class="danger"{%- endif -%}>{{ render_submission_field(submission_form['quarantine_status']) }}</td>
+        {%- endif -%}
+        {%- for sibling_form in sibling_forms -%}
+        <td >{{ render_submission_field(sibling_form['quarantine_status'], disabled=1) }}</td>
+        {%- endfor -%}
+        {%- if readonly -%}
+        <td class="ps-on"{%- if master_form['quarantine_status'].errors %} class="danger"{%- endif -%}>{{ render_submission_field(master_form['quarantine_status']) }}</td>
+        {%- else -%}
+        <td class="ps-on"{%- if master_form['quarantine_status'].errors %} class="danger"{%- endif -%}>{{ render_submission_field(master_form['quarantine_status'], disabled=1) }}</td>
+        {%- endif -%}
+        <td colspan="2">&nbsp;</td>
+      </tr>
+      {% endif %}
+    </tbody>
+  </table>
+</div>
 {% else %}
 <table class="table table-bordered table-striped table-hover">
   <tbody>
@@ -184,13 +226,13 @@ TODO: insert last used identity here
       <td>{{ field.description }}
       {%- if field.options %}
       <span class="options">
-      {% for description, value in field.options.iteritems() %}
+      {% for description, value in field.options|dictsort(by='value') %}
       <span class="option"><strong>({{ value }})</strong> {{ description }}</span>
       {% endfor %}
       </span>
       {%- endif %}
       </td>
-      <td {%- if submission_form[field.name].errors %} class="danger"{%- endif -%}>{{ submission_form[field.name] }}</td>
+      <td {%- if submission_form[field.name].errors %} class="danger"{%- endif -%}>{{ render_submission_field(submission_form[field.name]) }}</td>
     </tr>
     {% endfor -%}
     {% endfor -%}
@@ -200,7 +242,7 @@ TODO: insert last used identity here
     </tr>
     <tr>
       <td>{%- trans -%}Description{%- endtrans -%}</td>
-      <td colspan="2">{{ submission_form.description(cols=40, rows=5,class_='form-control span4') }}</td>
+      <td colspan="2">{{ submission_form.description(cols=40, rows=5,class_='form-control span12') }}</td>
     </tr>
     <tr>
       <td>{%- trans -%}Status{%- endtrans -%}</td>
@@ -246,7 +288,7 @@ TODO: insert last used identity here
         <button type="submit" class="btn btn-info btn-lg btn-block" style= "margin-left:1em;">Save</button>
       </div>
       <div class="col-md-2">
-        <a class="btn btn-default btn-lg btn-block" style= "margin-left:;" href="{{ url_for('submissions.submission_list', form_id=form.pk) }}">Cancel</a>
+        <a class="btn btn-default btn-lg btn-block" style= "margin-left:;" href="{{ request.environ.get('HTTP_REFERER', url_for('submissions.submission_list', form_id=form.pk)) }}">Cancel</a>
       </div>
     </div>
   </div>
@@ -257,6 +299,8 @@ TODO: insert last used identity here
 <script src="{{ url_for('static', filename='js/moment-with-langs.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/timestamps.js') }}"></script>
 <script type="text/javascript">
+  var csrftoken = $('meta[name=csrf-token]').attr('content');
+  
   $('#postcomment').click(function() {
     var comment = $('#comment').val(), submission = $('#submission').val();
 
@@ -265,10 +309,13 @@ TODO: insert last used identity here
         url: "{{ url_for('submissions.comment_create_view') }}",
         type: 'POST',
         data: {comment: comment, submission: submission},
-        beforeSend: function (xhr) {
+        beforeSend: function (xhr, settings) {
           $('#comment').attr('disabled', 'disabled');
           $('#save').attr('disabled', 'disabled');
           $('#loader').attr('style', 'visibility:visible;');
+          if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+          }
         }
       }).done(function(data) {
         $('#comment').val("");  // clear the comment textbox
@@ -293,8 +340,11 @@ TODO: insert last used identity here
         url: "{{ url_for('participants.participant_phone_verify') }}",
         type: 'POST',
         data: {phone: phone, contributor: contributor, submission: submission},
-        beforeSend: function (xhr) {
+        beforeSend: function (xhr, settings) {
           $('#verify_button').attr('disabled', 'disabled');
+          if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+          }
         }
       }).done(function() {
         $('#verify_button').remove();
@@ -307,5 +357,24 @@ TODO: insert last used identity here
       });
     }
   });
+  
+  $('.obs1').click(function(){
+    var isDisabled = $('table tbody tr td.obs-on input').is(':disabled');
+    if (isDisabled) {
+        $('table tbody tr td.obs-on input').prop('disabled', false);
+        $('table tbody tr td.obs-on select').prop('disabled', false);
+        $('table tbody tr td.ps-on input').prop('disabled', true);
+        $('table tbody tr td.ps-on select').prop('disabled', true);
+    }
+  })
+  $('.ps').click(function(){
+    var isDisabled = $('table tbody tr td.ps-on input').is(':disabled');
+    if (isDisabled) {
+        $('table tbody tr td.ps-on input').prop('disabled', false);
+        $('table tbody tr td.ps-on select').prop('disabled', false);
+        $('table tbody tr td.obs-on input').prop('disabled', true);
+        $('table tbody tr td.obs-on select').prop('disabled', true);
+    }
+  })
 </script>
 {% endblock %}

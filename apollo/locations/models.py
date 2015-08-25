@@ -1,4 +1,4 @@
-from ..core import db
+from ..core import db, cache
 from ..deployments.models import Deployment, Event
 from flask.ext.mongoengine import BaseQuerySet
 from slugify import slugify_unicode
@@ -27,7 +27,9 @@ class Sample(db.Document):
 
     meta = {
         'indexes': [
-            ['event']
+            ['event'],
+            ['deployment'],
+            ['deployment', 'event']
         ]
     }
 
@@ -53,6 +55,7 @@ class LocationType(db.Document):
     is_political = db.BooleanField(default=False)
     has_registered_voters = db.BooleanField(db_field='has_rv', default=False)
     has_political_code = db.BooleanField(db_field='has_pc', default=False)
+    has_other_code = db.BooleanField(db_field='has_oc', default=False)
     metafields = db.ListField(db.StringField())
     slug = db.StringField()
 
@@ -97,9 +100,11 @@ class Location(db.DynamicDocument):
     name = db.StringField()
     code = db.StringField()
     political_code = db.StringField(db_field='pcode')
+    other_code = db.StringField(db_field='ocode')
     location_type = db.StringField()
     coords = db.GeoPointField()
     registered_voters = db.LongField(db_field='rv', default=0)
+    ancestor_count = db.IntField(default=0)
     ancestors_ref = db.ListField(db.ReferenceField(
         'Location', reverse_delete_rule=db.PULL))
     samples = db.ListField(db.ReferenceField(
@@ -119,7 +124,9 @@ class Location(db.DynamicDocument):
             ['name', 'location_type'],
             ['code'],
             ['political_code'],
-            ['events', 'code']
+            ['events', 'code'],
+            ['deployment'],
+            ['deployment', 'events']
         ],
         'queryset_class': LocationQuerySet
     }
@@ -156,3 +163,18 @@ class Location(db.DynamicDocument):
 
     def __unicode__(self):
         return self.name or u''
+
+    def save(self, *args, **kwargs):
+        from . import LocationsService
+        cache.delete_memoized(LocationsService.registered_voters_map)
+        return super(Location, self).save(*args, **kwargs)
+
+    def _update_ancestor_count(self, save=False):
+        if self.ancestor_count != len(self.ancestors_ref):
+            self.ancestor_count = len(self.ancestors_ref)
+
+        if save:
+            self.update(set__ancestor_count=self.ancestor_count)
+
+    def clean(self):
+        self._update_ancestor_count()

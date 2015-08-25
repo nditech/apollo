@@ -76,9 +76,15 @@ def update_locations(df, mapping, event):
             location_pcode = df.ix[idx].get(
                 mapping.get(map_attribute(lt, 'pcode'), u''), u'') \
                 if lt.has_political_code else None
+            location_ocode = df.ix[idx].get(
+                mapping.get(map_attribute(lt, 'ocode'), u''), u'') \
+                if lt.has_other_code else None
             if location_pcode:
                 location_pcode = int(location_pcode) if type(location_pcode) in [int, float] else location_pcode
                 location_pcode = str(location_pcode).decode('utf-8')
+            if location_ocode:
+                location_ocode = int(location_ocode) if type(location_ocode) in [int, float] else location_ocode
+                location_ocode = str(location_ocode).decode('utf-8')
             location_rv = df.ix[idx].get(
                 mapping.get(map_attribute(lt, 'rv'), ''), '') \
                 if lt.has_registered_voters else None
@@ -109,6 +115,8 @@ def update_locations(df, mapping, event):
 
             if location_pcode:
                 location_data.update({'political_code': location_pcode})
+            if location_ocode:
+                location_data.update({'other_code': location_ocode})
             if location_rv:
                 location_data.update({'registered_voters': location_rv})
 
@@ -155,7 +163,7 @@ def import_locations(upload_id, mappings):
         mappings,
         upload.event
     )
-    
+
     # fetch and update all submissions
     deployment = upload.event.deployment
     submissions = services.submissions.all().filter(deployment=deployment)

@@ -12,16 +12,17 @@ from flask.ext.menu import register_menu
 from mongoengine import signals
 from tablib import Dataset
 from werkzeug.datastructures import MultiDict
-from wtforms import validators
 from .. import services
 from ..analyses.incidents import incidents_csv
 from ..participants.utils import update_participant_completion_rating
+from ..submissions.models import QUALITY_STATUSES
 from ..tasks import send_messages
 from . import route, permissions
 from .filters import generate_submission_filter
 from .forms import generate_submission_edit_form_class
 from .helpers import (
-    DictDiffer, displayable_location_types, get_event, get_form_list_menu)
+    DictDiffer, displayable_location_types, get_event,
+    get_form_list_menu, get_quality_assurance_form_list_menu)
 from .template_filters import mkunixtimestamp
 from functools import partial
 from slugify import slugify_unicode
@@ -63,12 +64,12 @@ def submission_list(form_id):
             queryset = services.submissions.find(
                 submission_type='M',
                 form=form
-            )
+            ).order_by('location')
         else:
             queryset = services.submissions.find(
                 submission_type='O',
                 form=form
-            )
+            ).order_by('location', 'contributor')
 
         query_filterset = filter_class(queryset, request.args)
         dataset = services.submissions.export_list(
@@ -91,16 +92,19 @@ def submission_list(form_id):
     queryset = services.submissions.find(
         submission_type='O',
         form=form
-    )
+    ).order_by('location', 'contributor')
     query_filterset = filter_class(queryset, request.args)
     filter_form = query_filterset.form
 
     if request.form.get('action') == 'send_message':
         message = request.form.get('message', '')
-        recipients = [submission.contributor.phone
-                      if submission.contributor and
-                      submission.contributor.phone else ''
-                      for submission in query_filterset.qs]
+        recipients = filter(
+            lambda x: x is not '',
+            [submission.contributor.phone
+                if submission.contributor and
+                submission.contributor.phone else ''
+                for submission in query_filterset.qs.only(
+                    'contributor').select_related(1)])
         recipients.extend(current_app.config.get('MESSAGING_CC'))
 
         if message and recipients and permissions.send_messages.can():
@@ -151,8 +155,6 @@ def submission_create(form_id):
 
         # a small hack since we're not using modelforms,
         # these fields are required for creating a new incident
-        submission_form.contributor.validators = [validators.input_required()]
-        submission_form.location.validators = [validators.input_required()]
 
         if not submission_form.validate():
             # really should redisplay the form again
@@ -170,6 +172,8 @@ def submission_create(form_id):
         submission.submission_type = 'O'
         submission.contributor = submission_form.contributor.data
         submission.location = submission_form.location.data
+        if not submission.location:
+            submission.location = submission.contributor.location
 
         submission.save()
 
@@ -277,9 +281,15 @@ def submission_edit(submission_id):
 
             no_error = True
 
+            selection = request.form.get('submission_selection', None)
+            if not selection and readonly:
+                selection = 'ps'
+            elif not selection and not readonly:
+                selection = 'obs'
+
             # if the user is allowed to edit participant submissions,
             # everything has to be valid at one go. no partial update
-            if master_form:
+            if master_form and selection == 'ps':
                 if master_form.validate():
                     with signals.post_save.connected_to(
                         update_submission_version,
@@ -292,11 +302,22 @@ def submission_edit(submission_id):
                                 getattr(submission.master, form_field, None) !=
                                 master_form.data.get(form_field)
                             ):
-                                setattr(
-                                    submission.master, form_field,
-                                    master_form.data.get(form_field))
-                                submission.master.overridden_fields.append(
-                                    form_field)
+                                if (
+                                    not master_form.data.get(form_field) and
+                                    isinstance(master_form.data.get(
+                                        form_field), list)
+                                ):
+                                    setattr(
+                                        submission.master, form_field,
+                                        None)
+                                else:
+                                    setattr(
+                                        submission.master, form_field,
+                                        master_form.data.get(form_field))
+
+                                if form_field != "quarantine_status":
+                                    submission.master.overridden_fields.append(
+                                        form_field)
                                 changed = True
                         if changed:
                             submission.master.overridden_fields = list(set(
@@ -305,22 +326,44 @@ def submission_edit(submission_id):
                 else:
                     no_error = False
 
-            if not readonly:
+            if selection == 'obs':
                 if submission_form.validate():
+                    changed = False
+
+                    # update the quarantine status if it was set
+                    if (
+                        'quarantine_status' in submission_form.data.keys() and
+                        submission_form.data.get('quarantine_status') !=
+                        submission.quarantine_status
+                    ):
+                        submission.quarantine_status = \
+                            submission_form.data.get('quarantine_status')
+                        submission.save(clean=False)
+                        changed = True
+
                     with signals.post_save.connected_to(
                         update_submission_version,
                         sender=services.submissions.__model__
                     ):
                         form_fields = submission_form.data.keys()
-                        changed = False
                         for form_field in form_fields:
                             if (
                                 getattr(submission, form_field, None) !=
                                 submission_form.data.get(form_field)
                             ):
-                                setattr(
-                                    submission, form_field,
-                                    submission_form.data.get(form_field))
+                                if (
+                                    not submission_form.data.get(
+                                        form_field) and
+                                    isinstance(submission_form.data.get(
+                                        form_field), list)
+                                ):
+                                    setattr(
+                                        submission, form_field,
+                                        None)
+                                else:
+                                    setattr(
+                                        submission, form_field,
+                                        submission_form.data.get(form_field))
                                 changed = True
                         if changed:
                             submission.save()
@@ -461,13 +504,87 @@ def submission_version(submission_id, version_id):
     )
 
 
-def verification_list(form_id):
+@route(bp, '/submissions/qa/<form_id>')
+@register_menu(
+    bp, 'qa.checklists', _('Quality Assurance'),
+    dynamic_list_constructor=partial(get_quality_assurance_form_list_menu,
+                                     form_type='CHECKLIST', verifiable=True))
+@login_required
+def quality_assurance_list(form_id):
     form = services.forms.get_or_404(pk=form_id, form_type='CHECKLIST')
-    queryset = services.submissions.find(form=form, submission_type='M')
+    page_title = _(u'Quality Assurance — %(name)s', name=form.name)
 
-    context = {}
+    submissions = services.submissions.find(form=form, submission_type='M')
 
-    return ''
+    data_records = []
+    quality_check_statistics = {}
+    record_count = submissions.count()
+
+    mapreduce_result = submissions.map_reduce('''
+        function () {
+            if (this.quality_checks) {
+                for (key in this.quality_checks) {
+                    emit(key + '|%(verified)s', 0);
+                    emit(key + '|%(ok)s', 0);
+                    emit(key + '|%(flagged)s', 0);
+
+                    value = this.quality_checks[key];
+                    emit(key + '|' + value, 1);
+                }
+            }
+        }
+        ''' % {'verified': QUALITY_STATUSES['VERIFIED'],
+               'ok': QUALITY_STATUSES['OK'],
+               'flagged': QUALITY_STATUSES['FLAGGED']},
+        'function (key, values) { return Array.sum(values); }',
+        'inline')
+
+    for result in mapreduce_result:
+        (qc_name, qc_value) = result.key.split('|')
+        quality_check_statistics.setdefault(qc_name, {})
+        quality_check_statistics[qc_name][qc_value] = int(result.value)
+
+    for check in form.quality_checks:
+        record = {'description': check['description'], 'name': check['name']}
+
+        try:
+            record['verified'] = quality_check_statistics[check['name']][
+                str(QUALITY_STATUSES['VERIFIED'])
+            ]
+        except:
+            record['verified'] = 0
+        try:
+            record['ok'] = quality_check_statistics[check['name']][
+                str(QUALITY_STATUSES['OK'])
+            ]
+        except:
+            record['ok'] = 0
+        try:
+            record['flagged'] = quality_check_statistics[check['name']][
+                str(QUALITY_STATUSES['FLAGGED'])
+            ]
+        except:
+            record['flagged'] = 0
+
+        try:
+            record['missing'] = record_count - (
+                record['verified'] + record['ok'] + record['flagged']
+            )
+        except:
+            record['missing'] = 0
+
+        data_records.append(record)
+
+    context = {
+        'form': form,
+        'page_title': page_title,
+        'qa_records': data_records,
+        'quality_statuses': QUALITY_STATUSES
+    }
+
+    template_name = 'frontend/quality_assurance_list.html'
+
+    return render_template(template_name, **context)
 
 
 def update_submission_version(sender, document, **kwargs):
@@ -479,6 +596,18 @@ def update_submission_version(sender, document, **kwargs):
     if document.form.form_type == 'INCIDENT':
         data_fields.extend(['status', 'witness'])
     version_data = {k: document[k] for k in data_fields if k in document}
+
+    # get previous version
+    previous = services.submission_versions.find(
+        submission=document).order_by('-timestamp').first()
+
+    if previous:
+        prev_data = json.loads(previous.data)
+        diff = DictDiffer(version_data, prev_data)
+
+        # don't do anything if the data wasn't changed
+        if not diff.added() and not diff.removed() and not diff.changed():
+            return
 
     # save user email as identity
     channel = 'WEB'

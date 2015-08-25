@@ -10,6 +10,7 @@
     <!-- Le styles -->
     {% assets 'apollo_css' %}
     <link rel="stylesheet" href="{{ ASSET_URL }}" type="text/css" media="screen,projection" charset="utf-8">
+    <link rel="icon" type="image/ico" href="{{ url_for('static', filename='ico/favicon.ico') }}">
     {% endassets %}
     {% block stylesheets %}{% endblock %}
     <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
@@ -60,6 +61,17 @@
             <li><a href="{{ current_menu.submenu('forms.incidents').dynamic_list[0].url }}"><i class="glyphicon glyphicon-check"></i> {{ current_menu.submenu('forms.incidents').dynamic_list[0].text }}</a></li>
             {%- endif -%}
             {%- if perms.view_analyses.can() -%}
+            {% if current_menu.submenu('qa.checklists').dynamic_list -%}
+            <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-ok"></i> {% trans %}Quality Assurance{% endtrans %} <b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                    {% for form in current_menu.submenu('qa.checklists').dynamic_list -%}
+                    <li><a href="{{ form.url }}"><i class="glyphicon glyphicon-ok"></i> {{ form.text }}</a></li>
+                    {%- endfor %}
+                </ul>
+            </li>
+            {%- endif -%}
+            {%- endif -%}
+            {%- if perms.view_analyses.can() -%}
             {%- if current_menu.submenu('forms.incidents').dynamic_list or current_menu.submenu('forms.checklists').dynamic_list -%}
             <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-stats"></i> {% trans %}Analyses{% endtrans %} <b class="caret"></b></a>
               <ul class="dropdown-menu">
@@ -95,14 +107,25 @@
             {%- endif -%}
             <li class="divider-vertical"></li>
             <li>
-              <a class="dropdown-toggle" data-toggle="dropdown" href="#"><img src="{{ current_user.email|gravatar }}" class="img-rounded" style="margin-right: 0.25em; border-radius: 12px"> {{ current_user.email }}<b class="caret"></b></a>
-              <ul class="dropdown-menu">
-              {%- if current_menu.submenu('events').visible -%}
-                <li><a href="{{ current_menu.submenu('events').url }}"><i class="glyphicon glyphicon-th-list"></i> {{ current_menu.submenu('events').text }}</a></li>
+              <a class="dropdown-toggle" data-toggle="dropdown" href="#"><img src="{{ current_user.email|gravatar }}" class="img-rounded" style="margin-right: 0.25em; border-radius: 12px"><b class="caret"></b></a>
+              <ul class="dropdown-menu left-submenu">
+                <li class="eml"><a href="#">{{ current_user.email}}</a></li>
                 <li class="divider"></li>
+              {%- if current_menu.submenu('events').visible -%}
+                <li><a href="{{ current_menu.submenu('events').url }}"><i class="glyphicon glyphicon-calendar"></i> {{ current_menu.submenu('events').text }}</a></li>
               {%- endif -%}
+              {% if current_menu.submenu('concurrent_events').visible -%}
+              {% for event in current_menu.submenu('concurrent_events').dynamic_list %}
+                {% if event.active %}
+                <li><a href="javascript:;"><i class="glyphicon glyphicon-calendar"></i> <span class="text-muted">{{ event.text }}</span></a></li>
+                {% else %}
+                <li><a href="{{ event.url }}"><i class="glyphicon glyphicon-calendar"></i> <span>{{ event.text }}</span></a></li>
+                {% endif %}
+              {% endfor %}
+              {% endif %}
+                <li class="divider"></li>
               {%- if perms.role('admin').can() -%}
-                <li><a href="{{ url_for('admin.index') }}"><i class="glyphicon glyphicon-user"></i> {% trans %}Admin{% endtrans %}</a></li>
+                <li><a href="{{ url_for('deployment.index_view') }}"><i class="glyphicon glyphicon-user"></i> {% trans %}Admin{% endtrans %}</a></li>
                 <li class="divider"></li>
               {%- endif -%}
               {%- if current_menu.submenu('locations_builder').visible -%}

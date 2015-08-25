@@ -11,7 +11,9 @@ from flask import g
 from flask.ext.mongoengine.wtf import model_form
 from flask.ext.wtf import Form as SecureForm
 from .. import services, models
+from ..frontend.helpers import DictDiffer
 from ..participants.utils import update_participant_completion_rating
+from .custom_fields import IntegerSplitterField
 import json
 import re
 
@@ -28,6 +30,18 @@ def update_submission_version(sender, document, **kwargs):
     if document.form.form_type == 'INCIDENT':
         data_fields.extend(['status', 'witness'])
     version_data = {k: document[k] for k in data_fields if k in document}
+
+    # get previous version
+    previous = services.submission_versions.find(
+        submission=document).order_by('-timestamp').first()
+
+    if previous:
+        prev_data = json.loads(previous.data)
+        diff = DictDiffer(version_data, prev_data)
+
+        # don't do anything if the data wasn't changed
+        if not diff.added() and not diff.removed() and not diff.changed():
+            return
 
     channel = 'SMS'
 
@@ -79,19 +93,33 @@ class BaseQuestionnaireForm(Form):
         ignored_fields.extend(self.errors.keys())
         try:
             if self.data.get('form').form_type == 'CHECKLIST':
-                submission = services.submissions.get(
+                # when searching for the submission, take into cognisance
+                # that the submission may be in one of several concurrent
+                # events
+                submission = models.Submission.objects(
                     contributor=self.data.get('participant'),
-                    form=self.data.get('form'), submission_type='O')
-                if self.data.get('comment'):
+                    form=self.data.get('form'), submission_type='O',
+                    event__in=services.events.overlapping_events(g.event),
+                    deployment=self.data.get('form').deployment).first()
+                if self.data.get('comment') and submission:
                     services.submission_comments.create_comment(
                         submission, self.data.get('comment'))
             else:
+                # the submission event is determined by taking the intersection
+                # of form events and concurrent events and taking an arbitrary
+                # element from that set; basic idea being that we want to
+                # find what is common between the form's events and the current
+                # events
+                submission_event = set(
+                    self.data.get('form').events).intersection(
+                    set(services.events.overlapping_events(g.event))).pop()
                 submission = models.Submission(
                     form=self.data.get('form'),
                     contributor=self.data.get('participant'),
                     location=self.data.get('participant').location,
-                    created=datetime.utcnow(), deployment=g.event.deployment,
-                    event=g.event)
+                    created=datetime.utcnow(),
+                    deployment=submission_event.deployment,
+                    event=submission_event)
                 if self.data.get('comment'):
                     submission.description = self.data.get('comment')
 
@@ -109,6 +137,18 @@ class BaseQuestionnaireForm(Form):
                             setattr(
                                 submission, form_field,
                                 self.data.get(form_field))
+
+                    if (
+                        isinstance(self.data.get(form_field), list) and
+                            self.data.get(form_field)
+                    ):
+                        change_detected = True
+                        original_value = getattr(submission, form_field, None)
+                        if isinstance(original_value, list):
+                            original_value = sorted(original_value)
+                        if (original_value != self.data.get(form_field)):
+                            setattr(submission, form_field,
+                                    self.data.get(form_field))
 
                 if change_detected:
                     g.phone = self.data.get('sender')
@@ -159,14 +199,11 @@ def build_questionnaire(form, data=None):
                 choices = [(v, k) for k, v in field.options.iteritems()]
 
                 if field.allows_multiple_values:
-                    fields[field.name] = SelectMultipleField(
+                    fields[field.name] = IntegerSplitterField(
                         field.name,
                         choices=choices,
-                        coerce=int,
                         description=field.description,
-                        option_widget=widgets.CheckboxInput(),
                         validators=[validators.optional()],
-                        widget=widgets.ListWidget(prefix_label=False)
                     )
                 else:
                     fields[field.name] = SelectField(
@@ -203,5 +240,6 @@ def build_questionnaire(form, data=None):
 FormForm = model_form(
     models.Form, SecureForm,
     only=[
-        'name', 'prefix', 'form_type', 'events', 'calculate_moe', 'accredited_voters_tag',
-        'verifiable', 'invalid_votes_tag', 'registered_voters_tag'])
+        'name', 'prefix', 'form_type', 'events', 'calculate_moe',
+        'accredited_voters_tag', 'verifiable', 'invalid_votes_tag',
+        'registered_voters_tag', 'blank_votes_tag', 'permitted_roles'])

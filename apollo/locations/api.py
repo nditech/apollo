@@ -83,7 +83,7 @@ class LocationItemResource(Resource):
 class LocationListResource(Resource):
     @login_required
     def get(self):
-        parser.add_argument('q', type=str)
+        parser.add_argument('q', type=unicode)
         args = parser.parse_args()
         limit = min(
             args.get('limit') or current_app.config.get('PAGE_SIZE'),
@@ -98,7 +98,7 @@ class LocationListResource(Resource):
                 Q(name__icontains=args.get('q')) |
                 Q(code__istartswith=args.get('q')) |
                 Q(political_code__istartswith=args.get('q'))
-            )
+            ).order_by('ancestor_count')
 
         queryset = queryset.limit(limit).skip(offset)
 

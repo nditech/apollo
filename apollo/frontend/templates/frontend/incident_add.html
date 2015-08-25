@@ -1,5 +1,6 @@
 {%- extends 'frontend/_layout.html' -%}
 {% block content %}
+{%- from 'frontend/macros/submission_field_macros.html' import render_submission_field %}
 <div>
 <form method="POST">
 {{ submission_form.csrf_token() }}
@@ -31,13 +32,13 @@
       <td>{{ field.description }}
       {%- if field.options %}
       <span class="options">
-      {% for description, value in field.options.iteritems() %}
+      {% for description, value in field.options|dictsort(false, 'value') %}
       <span class="option"><strong>({{ value }})</strong> {{ description }}</span>
       {% endfor %}
       </span>
       {%- endif %}
       </td>
-      <td {%- if submission_form[field.name].errors %} class="danger"{%- endif -%}>{{ submission_form[field.name] }}</td>
+      <td {%- if submission_form[field.name].errors %} class="danger"{%- endif -%}>{{ render_submission_field(submission_form[field.name]) }}</td>
     </tr>
     {% endfor -%}
     {% endfor -%}

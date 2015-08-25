@@ -1,21 +1,25 @@
 import base64
 from flask import redirect, request, url_for
-from flask.ext.admin import BaseView, expose
+from flask.ext.admin import BaseView, expose, form
 from flask.ext.admin.contrib.mongoengine import ModelView
+from flask.ext.admin.contrib.mongoengine.form import CustomModelConverter
 from flask.ext.admin.form import rules
+from flask.ext.admin.model.form import converts
 from flask.ext.babel import lazy_gettext as _
+from flask.ext.mongoengine.wtf import orm
 from flask.ext.security import current_user
 from flask.ext.security.utils import encrypt_password
 import magic
-from wtforms import FileField, PasswordField
+from wtforms import FileField, PasswordField, SelectMultipleField
 from ..core import admin
 from .. import models
+from . import forms
 
 
-class DashboardView(BaseView):
-    @expose('/')
-    def index(self):
-        return redirect(url_for('dashboard.index'))
+class DeploymentModelConverter(CustomModelConverter):
+    @converts('ParticipantPropertyName')
+    def conv_PropertyField(self, model, field, kwargs):
+        return orm.ModelConverter.conv_String(self, model, field, kwargs)
 
 
 class BaseAdminView(ModelView):
@@ -31,10 +35,24 @@ class DeploymentAdminView(BaseAdminView):
     column_list = ('name',)
     form_rules = [
         rules.FieldSet(
-            ('name', 'logo', 'allow_observer_submission_edit', 'hostnames'),
+            (
+                'name', 'logo', 'allow_observer_submission_edit',
+                'dashboard_full_locations', 'hostnames',
+                'participant_extra_fields'
+            ),
             _('Deployment')
         )
     ]
+    form_subdocuments = {
+        'participant_extra_fields': {
+            'form_subdocuments': {
+                None: {
+                    'form_columns': ('name', 'label', 'listview_visibility',)
+                }
+            }
+        }
+    }
+    model_form_converter = DeploymentModelConverter
 
     def get_query(self):
         user = current_user._get_current_object()
@@ -75,8 +93,18 @@ class EventAdminView(BaseAdminView):
     # rules for form editing. in this case, only the listed fields
     # and the header for the field set
     form_rules = [
-        rules.FieldSet(('name', 'start_date', 'end_date'), _('Event'))
+        rules.FieldSet(('name', 'start_date', 'end_date', 'roles'), _('Event'))
     ]
+
+    def get_one(self, pk):
+        event = super(EventAdminView, self).get_one(pk)
+        try:
+            entities = models.Need.objects.get(
+                action='access_event', items=event).entities
+        except models.Need.DoesNotExist:
+            entities = []
+        event.roles = [unicode(i.pk) for i in entities]
+        return event
 
     def get_query(self):
         '''Returns the queryset of the objects to list.'''
@@ -88,6 +116,28 @@ class EventAdminView(BaseAdminView):
         # deployment, since it won't appear in the form
         if is_created:
             model.deployment = current_user.deployment
+
+    def after_model_change(self, form, model, is_created):
+        # remove event permission
+        models.Need.objects.filter(
+            action="access_event", items=model,
+            deployment=model.deployment).delete()
+
+        # create event permission
+        roles = models.Role.objects(pk__in=form.roles.data, name__ne='admin')
+        models.Need.objects.create(
+            action="access_event", items=[model], entities=roles,
+            deployment=model.deployment)
+
+    def scaffold_form(self):
+        form_class = super(EventAdminView, self).scaffold_form()
+        form_class.roles = SelectMultipleField(
+            _('Roles with access'),
+            choices=forms._make_choices(
+                models.Role.objects(name__ne='admin').scalar('pk', 'name')),
+            widget=form.Select2Widget(multiple=True))
+
+        return form_class
 
 
 class UserAdminView(BaseAdminView):
@@ -116,7 +166,39 @@ class UserAdminView(BaseAdminView):
         return form_class
 
 
-admin.add_view(DashboardView(name=_('Dashboard')))
+class RoleAdminView(BaseAdminView):
+    can_delete = False
+    column_list = ('name',)
+
+    def get_one(self, pk):
+        role = super(RoleAdminView, self).get_one(pk)
+        role.permissions = [
+            unicode(i) for i in models.Need.objects(
+                entities=role).scalar('pk')]
+        return role
+
+    def after_model_change(self, form, model, is_created):
+        # remove model from all permissions that weren't granted
+        for need in models.Need.objects(
+                pk__nin=form.permissions.data):
+            need.update(pull__entities=model)
+
+        # add only the explicitly defined permissions
+        for pk in form.permissions.data:
+            models.Need.objects.get(pk=pk).update(add_to_set__entities=model)
+
+    def scaffold_form(self):
+        form_class = super(RoleAdminView, self).scaffold_form()
+        form_class.permissions = SelectMultipleField(
+            _('Permissions'),
+            choices=forms._make_choices(
+                models.Need.objects().scalar('pk', 'action')),
+            widget=form.Select2Widget(multiple=True))
+
+        return form_class
+
+
 admin.add_view(DeploymentAdminView(models.Deployment))
 admin.add_view(EventAdminView(models.Event))
 admin.add_view(UserAdminView(models.User))
+admin.add_view(RoleAdminView(models.Role))

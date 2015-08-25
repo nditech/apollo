@@ -1,3 +1,4 @@
+from collections import OrderedDict
 import re
 
 
@@ -32,8 +33,8 @@ def parse_text(text):
     text = unicode(text)
     # regular expression for a valid text message
     pattern = re.compile(
-        r'^(?P<prefix>[A-Z]+)(?P<participant_id>\d+)(?P<exclamation>!?)'
-        '(?P<responses>[A-Z0-9]*)$', re.I)
+        r'^(?P<prefix>[A-Z]+)(?P<participant_id>\d+)'
+        '(?P<exclamation>!?)(?P<responses>[A-Z0-9]*)$', re.I)
 
     at_position = text.find("@")
 
@@ -46,6 +47,8 @@ def parse_text(text):
         if at_position != -1 \
         else filter(lambda s: s not in config.get('PUNCTUATIONS'), text) \
         .translate(config.get('TRANS_TABLE'))
+
+    at_position = text.find("@")
     match = pattern.match(text[:at_position] if at_position != -1 else text)
 
     # if there's a match, then extract the required features
@@ -54,35 +57,48 @@ def parse_text(text):
         participant_id = match.group('participant_id') or None
         form_type = 'INCIDENT' if match.group('exclamation') else 'CHECKLIST'
         responses = match.group('responses') or None
-    comment = text[at_position + 1:] if at_position != -1 else None
+    comment = text[at_position + 1:].strip() if at_position != -1 else None
 
     return (prefix, participant_id, form_type, responses, comment)
 
 
-def parse_responses(responses_text, form_type='CHECKLIST'):
+def parse_responses(responses_text, form):
     '''
-    The :function:`parse_responses` method accepts the _responses_ section of
-    an incoming text message and generates a dictionary of key value pairs of
-    response questions and answers.
+    The :function:`parse_responses_ex` function accepts the _responses_
+    section of an incoming text message and generates a(n ordered) dictionary
+    of key value pairs response questions and answers.
 
     :param:`responses_text` - The responses portion of the text message
     (e.g. AA1BA2)
-    :param:`form_type` - (Optional) the form type guiding the parsing of the
-    responses. Responses for Incident Forms (e.g. ABCDE) are different in
-    nature from that of Checklist Forms (e.g. AA1BA2CC10).
+    :param:`form` - A `Form` instance to match the responses against.
+    The way the matching is done is dependent on the `FormField` instances
+    defined in `form`: numeric fields are first matched, then boolean
+    fields are.
     '''
-    if form_type == 'INCIDENT':
-        # one alphabet represents a critical incident
-        p = re.compile(r'(?P<question>[A-Z])', re.I)
-        responses = dict(
-            [(r.group('question').upper(), 1)
-             for r in p.finditer(responses_text)])
-    else:
-        # responses for checklist questions are in the form AA111
-        # where AA is the alphabetic question code and 111 is the response.
-        # This may occur more than once in the response text.
-        p = re.compile(r'(?P<question>[A-Z]+)(?P<answer>\d*)', re.I)
-        responses = dict(
-            [(r.group('question').upper(), r.group('answer'))
-             for r in p.finditer(responses_text)])
+    fields = [fi for group in form.groups for fi in group.fields]
+    numeric_fields = [f.name for f in fields if not f.represents_boolean]
+    boolean_fields = [f.name for f in fields if f.represents_boolean]
+
+    substrate = responses_text
+    responses = OrderedDict()
+    # process numeric fields first
+    pattern = re.compile(r'(?P<tag>{})(?P<answer>\d+)'.format(
+        '|'.join(numeric_fields)), flags=re.I)
+    responses.update(
+        ((r.group('tag').upper(), r.group('answer')) for r in
+            pattern.finditer(responses_text)))
+
+    # remove the found data
+    substrate = pattern.sub('', responses_text)
+
+    # fix for bug where boolean_fields is an empty iterable
+    if not boolean_fields:
+        return responses
+
+    # next, process boolean fields
+    pattern2 = re.compile(r'(?P<tag>{})'.format('|'.join(boolean_fields)),
+                          flags=re.I)
+    responses.update(
+        ((r.group('tag').upper(), 1) for r in pattern2.finditer(substrate)))
+
     return responses

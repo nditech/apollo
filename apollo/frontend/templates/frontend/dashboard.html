@@ -1,7 +1,11 @@
 {% extends 'frontend/_layout.html' %}
 {% block stylesheets %}
+ <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-toggle.css') }}">
 <style type="text/css">
 .piechart svg{height:300px; margin-left: .8em; margin-top: .8em;}
+.toggle.btn{min-height: 30px;}
+.toggle-on.btn{padding-right: 30px;}
+.toggle-off.btn{padding-left: 32px;}
 </style>
 {% endblock %}
 {% from 'frontend/macros/dashboard_filter.html' import render_filter_form %}
@@ -9,6 +13,7 @@
  <script type="text/javascript" src="{{ url_for('static', filename='js/d3.v3.js') }}"></script>
  <script type="text/javascript" src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
  <script type="text/javascript" src="{{ url_for('static', filename='js/filters.js') }}"></script>
+ <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap-toggle.js') }}"></script>
 <script type="text/javascript">
   var time = new Date().getTime();
   
@@ -22,14 +27,25 @@
     else 
       setTimeout(refresh, 10000);
   }
-  
-  setTimeout(refresh, 10000);
+   $(function() {
+    $('#toggle-two').bootstrapToggle({
+      on: 'Observers',
+      off: 'Polling Unit'
+    });
+  })
+
 </script>
 <script type="text/javascript">  
   //Create SVG element
 
 </script>
 {% endblock %}
+<div class="container">
+<h3 class="lead h3">
+  {% block title %}{{ page_title }}{% endblock %} · <em class="text-muted">{{ g.event.name }}</em>{% block toolbar %}
+  {% endblock %}
+</h3>
+</div>
 {% block content %}
 <div class="row">
   <div class="col-md-12">
@@ -40,12 +56,12 @@
 </div>
 {% if data %}
 {% for row in data %}
-{% if loop.index0 is divisibleby 6 %}<div class="row-fluid">{% endif %}
+{% if loop.index0 is divisibleby 6 %}<div class="row">{% endif %}
   <div class="col-md-2">
   {%- if group -%}
-    <legend class="centered"><a href="{{ url_for('dashboard.index', group=group, locationtype=locationtype, **args) }}">{{ row.name }}</a></legend>
+    <legend class="centered">{% if next_location %}<a href="{{ url_for('dashboard.index', group=group, locationtype=locationtype, location=row.get('id', ''), **args) }}">{% endif %}{{ row.name }}{% if next_location %}</a>{% endif %}</legend>
   {%- else -%}
-    <legend style="text-align:center"><a href="{{ url_for('dashboard.index', group=row.name, locationtype=locationtype, **args) }}">{{ row.name }}</a></legend>
+    <legend style="text-align:center">{% if not location %}<a href="{{ url_for('dashboard.index', group=row.name, locationtype=locationtype, **args) }}">{% endif %}{{ row.name }}{% if not location %}</a>{% endif %}</legend>
   {% endif %}
     <div class="piechart" data-chart='{{ row|tojson }}'>
     </div>

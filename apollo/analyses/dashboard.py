@@ -1,17 +1,21 @@
+from flask import g
 from collections import OrderedDict
 from logging import getLogger
 from ..models import Submission
-from ..services import locations
+from .. import services
 
 logger = getLogger(__name__)
 
 
 def get_coverage(submission_queryset, group=None, location_type=None):
     if group is None and location_type is None:
-        return _get_global_coverage(submission_queryset)
+        return _get_global_coverage(submission_queryset.only(
+            'completion', 'form'))
     else:
-        locs = locations.find(location_type=location_type.name)
-        queryset = submission_queryset.filter_in(locs)
+        locs = services.locations.find(
+            location_type=location_type.name).only('name', 'location_type')
+        queryset = submission_queryset.filter_in(locs).only(
+            'location_name_path', 'completion')
         return _get_group_coverage(queryset, group, location_type)
 
 
@@ -24,25 +28,16 @@ def _get_group_coverage(submission_queryset, group, location_type):
                 '_id': {
                     'location': '$location_name_path.{}'
                     .format(location_type.name),
-                    'completion': '$completion'
+                    'completion': '$completion.{}'.format(group)
                 },
                 'total': {'$sum': 1}
-            }
-        },
-        {
-            '$group': {
-                '_id': {
-                    'location': '$_id.location',
-                    group: '$_id.completion.{}'.format(group)
-                },
-                'total': {'$sum': '$total'}
             }
         },
         {
             '$project': {
                 '_id': 0,
                 'location': '$_id.location',
-                'completion': '$_id.{}'.format(group),
+                'completion': '$_id.completion',
                 'total': '$total'
             }
         }
@@ -60,10 +55,23 @@ def _get_group_coverage(submission_queryset, group, location_type):
         return None
 
     locations = {r.get('location') for r in result}
+    all_locations = dict(
+        services.locations.find(location_type=location_type.name).scalar(
+            'name', 'pk'))
     coverage = OrderedDict({l: {} for l in locations})
     for r in result:
         l = r.pop('location')
-        coverage[l].update({r['completion']: r['total'], 'name': l})
+        coverage[l].update({
+            r['completion']: r['total'],
+            'name': l,
+            })
+        try:
+            if not g.deployment.dashboard_full_locations:
+                coverage[l].update({
+                    'id': str(all_locations.get(l, ''))
+                    })
+        except AttributeError:
+            pass
 
     # coverage_list = [coverage.get(l) for l in sorted(locations)
                      # if coverage.get(l)] if coverage else []
@@ -75,6 +83,7 @@ def _get_group_coverage(submission_queryset, group, location_type):
             cov.setdefault('Complete', 0)
             cov.setdefault('Partial', 0)
             cov.setdefault('Missing', 0)
+            cov.setdefault('Conflict', 0)
 
             coverage_list.append(cov)
 
@@ -120,11 +129,15 @@ def _get_global_coverage(submission_queryset):
         missing = sum((r.get('total')
                       for r in result
                       if r.get('completion').get(group) == 'Missing'))
+        conflict = sum((r.get('total')
+                       for r in result
+                       if r.get('completion').get(group) == 'Conflict'))
 
         coverage.update({group: {
             'Complete': complete,
             'Partial': partial,
             'Missing': missing,
+            'Conflict': conflict,
             'name': group
         }})
 

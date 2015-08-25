@@ -1,10 +1,24 @@
 from ..core import Service
 from .models import Event
 from datetime import datetime
+from flask.ext.principal import Permission, ItemNeed, RoleNeed
+from flask.ext.security import current_user
+from mongoengine import Q
 
 
 class EventsService(Service):
     __model__ = Event
+
+    def find(self, **kwargs):
+        _kwargs = self._set_default_filter_parameters({})
+
+        if current_user.is_authenticated():
+            kwargs['pk__in'] = [event.pk for event in filter(
+                    lambda f: Permission(ItemNeed('access_event', f, 'object'),
+                                         RoleNeed('admin')).can(),
+                    self.__model__.objects.filter(**_kwargs))]
+
+        return super(EventsService, self).find(**kwargs)
 
     def default(self):
         now = datetime.utcnow()
@@ -32,3 +46,9 @@ class EventsService(Service):
 
         if event:
             return event
+
+    def overlapping_events(self, event):
+        return self.find().filter(
+            Q(start_date__gte=event.start_date, start_date__lte=event.end_date)
+            | Q(end_date__gte=event.start_date, end_date__lte=event.end_date)
+        )

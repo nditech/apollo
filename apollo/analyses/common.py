@@ -1,4 +1,5 @@
 from collections import Counter
+from operator import itemgetter
 import numpy as np
 import pandas as pd
 
@@ -28,7 +29,21 @@ def dataframe_analysis(kind, dataframe, col):
     return result
 
 
-def make_histogram(options, dataset):
+def multiselect_dataframe_analysis(dataframe, col, options):
+    option_summary = summarize_options(options, dataframe[col])
+    result = {
+        'value_counts': dict(zip(options, option_summary)),
+        'value_counts_sum': dataframe[col].count(),
+    }
+
+    result['count'] = dataframe[col].count()
+    result['size'] = dataframe[col].size
+    result['diff'] = result['size'] - result['count']
+
+    return result
+
+
+def make_histogram(options, dataset, multi=False):
     '''This function simply returns the number of occurrences of each option
     in the given dataset as a list.
 
@@ -39,6 +54,10 @@ def make_histogram(options, dataset):
     Please note that both options and dataset must be homogenous iterables
     of the same type.
     '''
+    if multi:
+        if not isinstance(dataset, list) and pd.isnull(dataset):
+            return [0] * len(options)
+
     counter = Counter(dataset)
 
     histogram = [counter[option] for option in options]
@@ -60,7 +79,7 @@ def summarize_options(options, series):
     '''
     placeholder = []
     for row in series:
-        placeholder.append(make_histogram(options, row))
+        placeholder.append(make_histogram(options, row, True))
 
     # sum the number of occurrences by column and return as a list
     return np.array(placeholder).sum(axis=0).tolist()
@@ -241,7 +260,9 @@ def generate_mutiple_choice_field_stats(tag, dataset, options, labels=None):
         for group_name in group_names:
             temp = dataset.get_group(group_name).get(tag)
 
-            missing = sum(not x for x in temp)
+            t = [0 if not isinstance(x, float) and x else 1 for x
+                 in temp]
+            missing = sum(t)
             reported = temp.size - missing
             total = temp.size
             percent_missing = percent_of(missing, total)
@@ -263,7 +284,8 @@ def generate_mutiple_choice_field_stats(tag, dataset, options, labels=None):
 
         field_stats['locations'] = location_stats
     else:
-        missing = sum(not x for x in dataset[tag])
+        t = [0 if not isinstance(x, float) and x else 1 for x in dataset[tag]]
+        missing = sum(t)
         total = dataset[tag].size
         reported = total - missing
         percent_reported = percent_of(reported, total)
@@ -310,10 +332,7 @@ def generate_incident_field_stats(tag, dataset, all_tags, labels=None):
 
         for group_name in group_names:
             reported = dataset.get_group(group_name).get(tag).count()
-            total = sum([
-                dataset.get_group(group_name).get(field_tag).count()
-                for field_tag in all_tags
-                if field_tag in dataset.get_group(group_name)])
+            total = dataset.get_group(group_name).shape[0]
             missing = total - reported
 
             percent_reported = percent_of(reported, total)
@@ -331,10 +350,7 @@ def generate_incident_field_stats(tag, dataset, all_tags, labels=None):
         # ungrouped data, statistics for the entire data set will be generated
 
         reported = dataset[tag].count()
-        total = sum([
-            dataset[field_tag].count()
-            for field_tag in all_tags if field_tag in dataset
-        ])
+        total = dataset.shape[0]
         missing = total - reported
 
         percent_reported = percent_of(reported, total)
@@ -350,14 +366,18 @@ def generate_incident_field_stats(tag, dataset, all_tags, labels=None):
     return field_stats
 
 
-def generate_field_stats(field, dataset):
+def generate_field_stats(field, dataset, all_tags=None):
     ''' In order to simplify the choice on what analysis to perform
     this method will check a few conditions and return the appropriate
     analysis for the field'''
-    options = field.options.values()
-    labels = field.options.keys()
+    if field.represents_boolean:
+        return generate_incident_field_stats(field.name, dataset, all_tags)
 
-    if options:
+    if field.options:
+        sorted_options = sorted(field.options.iteritems(), key=itemgetter(1))
+        options = [i[1] for i in sorted_options]
+        labels = [i[0] for i in sorted_options]
+
         if field.allows_multiple_values:
             return generate_mutiple_choice_field_stats(
                 field.name, dataset, options=options, labels=labels
@@ -366,8 +386,8 @@ def generate_field_stats(field, dataset):
             return generate_single_choice_field_stats(
                 field.name, dataset, options=options, labels=labels
             )
-    else:
-        return generate_numeric_field_stats(field.name, dataset)
+
+    return generate_numeric_field_stats(field.name, dataset)
 
 
 def generate_incidents_data(form, queryset, location_root, grouped=True,
@@ -414,7 +434,8 @@ def generate_incidents_data(form, queryset, location_root, grouped=True,
         for tag in tags:
             if tag not in data_frame:
                 continue
-            field_stats = generate_incident_field_stats(tag, data_frame, tags)
+            field = form.get_field_by_tag(tag)
+            field_stats = generate_field_stats(field, data_frame, tags)
             field = form.get_field_by_tag(tag)
 
             incidents_summary['top'].append(
@@ -429,14 +450,15 @@ def generate_incidents_data(form, queryset, location_root, grouped=True,
             for tag in tags:
                 if tag not in data_frame:
                     continue
-                field_stats = generate_incident_field_stats(
-                    tag, data_group, tags)
+                field = form.get_field_by_tag(tag)
+                field_stats = generate_field_stats(field, data_group, tags)
 
                 incidents_summary['locations'] = \
                     field_stats['locations'].keys()
 
                 for location in field_stats['locations']:
                     field = form.get_field_by_tag(tag)
+
                     location_stats.setdefault(location, {}).update({
                         tag: (field.description,
                               field_stats['locations'][location])})
@@ -463,9 +485,8 @@ def generate_incidents_data(form, queryset, location_root, grouped=True,
             for tag in tags:
                 if tag not in data_frame:
                     continue
-                field_stats = generate_incident_field_stats(tag, data_frame,
-                                                            tags)
                 field = form.get_field_by_tag(tag)
+                field_stats = generate_field_stats(field, data_frame, tags)
                 group_summary.append((tag, field.description, field_stats))
 
             sample_summary.append((group.name, group_summary))
@@ -518,7 +539,7 @@ def generate_process_data(form, queryset, location_root, grouped=True,
             if tag not in data_frame:
                 continue
             field = form.get_field_by_tag(tag)
-            field_stats = generate_field_stats(field, data_frame)
+            field_stats = generate_field_stats(field, data_frame, tags)
 
             process_summary['top'].append(
                 (tag, field.description, field_stats)
@@ -533,7 +554,7 @@ def generate_process_data(form, queryset, location_root, grouped=True,
                 if tag not in data_frame:
                     continue
                 field = form.get_field_by_tag(tag)
-                field_stats = generate_field_stats(field, data_group)
+                field_stats = generate_field_stats(field, data_group, tags)
 
                 location_type_summary.append((
                     tag, field.description, field_stats
@@ -559,7 +580,7 @@ def generate_process_data(form, queryset, location_root, grouped=True,
                 if tag not in data_frame:
                     continue
                 field = form.get_field_by_tag(tag)
-                field_stats = generate_field_stats(field, data_frame)
+                field_stats = generate_field_stats(field, data_frame, tags)
                 group_summary.append((tag, field.description, field_stats))
 
             sample_summary.append((group.name, group_summary))

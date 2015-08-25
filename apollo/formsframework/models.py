@@ -1,6 +1,7 @@
 from operator import itemgetter
 from ..core import db
 from ..deployments.models import Deployment, Event
+from ..users.models import Role, Need
 from flask.ext.babel import lazy_gettext as _
 from lxml import etree
 from lxml.builder import E, ElementMaker
@@ -25,8 +26,10 @@ class FormFieldNameField(db.StringField):
     def validate(self, value):
         from ..submissions.models import Submission
         if value in Submission._fields.keys():
-            self.error('Form field name cannot be one of the disallowed field names')
+            self.error(
+                'Form field name cannot be one of the disallowed field names')
         super(FormFieldNameField, self).validate(value)
+
 
 # Forms
 class FormField(db.EmbeddedDocument):
@@ -100,7 +103,7 @@ class Form(db.Document):
     identifying which form is to be used in parsing incoming submissions.
 
     :attr:`name` is the name for this form.
-    :attr:`party_mappings` uses party identifiers as keys, field names as
+    :attr:`party_mappings` uses field names as keys, party identifiers as
     values.
     :attr:`calculate_moe` is true if Margin of Error calculations are
     going to be computed on results for this form.'''
@@ -120,17 +123,23 @@ class Form(db.Document):
     quality_checks = db.ListField(db.DictField())
     party_mappings = db.DictField()
     calculate_moe = db.BooleanField(default=False)
-    accredited_voters_tag = db.StringField()
-    verifiable = db.BooleanField(default=False)
-    invalid_votes_tag = db.StringField()
-    registered_voters_tag = db.StringField()
+    accredited_voters_tag = db.StringField(verbose_name="Accredited Voters")
+    verifiable = db.BooleanField(default=False,
+                                 verbose_name="Quality Assurance")
+    invalid_votes_tag = db.StringField(verbose_name="Invalid Votes")
+    registered_voters_tag = db.StringField(verbose_name="Registered Voters")
+    blank_votes_tag = db.StringField(verbose_name="Blank Votes")
+    permitted_roles = db.ListField(db.ReferenceField(
+        Role, reverse_delete_rule=db.PULL), verbose_name="Permitted Roles")
 
     meta = {
         'indexes': [
             ['prefix'],
             ['events'],
             ['events', 'prefix'],
-            ['events', 'form_type']
+            ['events', 'form_type'],
+            ['deployment'],
+            ['deployment', 'events']
         ]
     }
 
@@ -165,6 +174,16 @@ class Form(db.Document):
             if not group.slug:
                 group.slug = slugify_unicode(group.name).lower()
         return super(Form, self).clean()
+
+    def save(self, **kwargs):
+        super(Form, self).save(**kwargs)
+        # create permissions for roles
+        Need.objects.filter(
+            action='view_forms', items=self,
+            deployment=self.deployment).delete()
+        Need.objects.create(
+            action='view_forms', items=[self], entities=self.permitted_roles,
+            deployment=self.deployment)
 
     def to_xml(self):
         root = HTML_E.html()
@@ -328,7 +347,7 @@ class FormBuilderSerializer(object):
                 name=f['label'],
                 description=f['description'],
             )
-            
+
             if f['analysis']:
                 field.analysis_type = f['analysis']
 
@@ -347,4 +366,10 @@ class FormBuilderSerializer(object):
             group.fields.append(field)
 
         form.groups = groups
+
+        # frag the field cache so it's regenerated
+        try:
+            delattr(form, '_field_cache')
+        except AttributeError:
+            pass
         form.save()

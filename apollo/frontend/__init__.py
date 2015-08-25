@@ -6,10 +6,9 @@ from flask.ext.admin import AdminIndexView
 from flask.ext.login import user_logged_out
 from flask.ext.principal import identity_loaded
 from flask.ext.security import MongoEngineUserDatastore, current_user
-from flask.ext.wtf.csrf import CsrfProtect
 
 from .. import factory, models, services
-from ..core import admin, db, menu, security, gravatar
+from ..core import admin, db, menu, security, gravatar, csrf
 from ..security_ext_forms import DeploymentLoginForm
 
 from . import assets, permissions
@@ -74,7 +73,7 @@ def create_app(settings_override=None, register_security_blueprint=True):
                       register_blueprint=register_security_blueprint)
     app.session_interface = CustomMongoEngineSessionInterface(db)
 
-    CsrfProtect(app)
+    csrf.init_app(app)
     init_admin(admin, app)
 
     # Register custom error handlers
@@ -88,29 +87,6 @@ def create_app(settings_override=None, register_security_blueprint=True):
         userdatastore.find_or_create_role('manager')
         userdatastore.find_or_create_role('analyst')
         userdatastore.find_or_create_role('admin')
-
-        # permissions
-        services.perms.get_or_create(action='view_events')
-        services.perms.get_or_create(action='view_messages')
-        services.perms.get_or_create(action='view_analyses')
-
-        services.perms.get_or_create(action='add_submission')
-
-        services.perms.get_or_create(action='edit_forms')
-        services.perms.get_or_create(action='edit_locations')
-        services.perms.get_or_create(action='edit_participant')
-        services.perms.get_or_create(action='edit_submission')
-        services.perms.get_or_create(action='edit_location')
-
-        services.perms.get_or_create(action='import_participants')
-        services.perms.get_or_create(action='import_locations')
-
-        services.perms.get_or_create(action='export_participants')
-        services.perms.get_or_create(action='export_messages')
-        services.perms.get_or_create(action='export_submissions')
-        services.perms.get_or_create(action='export_locations')
-
-        services.perms.get_or_create(action='send_messages')
 
     # register deployment selection middleware
     app.before_request(set_request_presets)

@@ -64,6 +64,14 @@ right: auto;
     .dropdown-submenu:hover>a:after{border-left-color:#ffffff;}
     .dropdown-submenu.pull-left{float:none;}.dropdown-submenu.pull-left>.dropdown-menu{left:-100%;margin-left:10px;-webkit-border-radius:6px 0 6px 6px;-moz-border-radius:6px 0 6px 6px;border-radius:6px 0 6px 6px;}
 
+.navbar-nav > li >.left-submenu{
+    left: auto;
+    margin-left: 10px;
+    right: .1%;
+}
+.eml a{cursor: text;}
+.eml:first-child a:hover{background-color: #fff;cursor: text;}
+.table-responsive{overflow: auto;}
 #delete{
  margin-left:-23px;
  position:relative;
@@ -102,7 +110,7 @@ border-bottom-right-radius: 3px;
 }
 .panel-login {margin-top: 7em;}
 .panel-heading-login {font-size: 18px;}
-.panel-login-body{padding:45px;}
+.panel-login-body{padding:45px; padding-top: 30px;}
 
 /*.divider-vertical {
 height: 35px;
@@ -324,3 +332,198 @@ transform:scale(0.7);
  0%{transform:scale(1.2);opacity:1}
  100%{transform:scale(0.7);opacity:0.1}
 }
+/* Link body */
+.persona-button{
+  color: #fff;
+  display: inline-block;
+  font-size: 13px;
+  font-family: Helvetica, Arial, sans-serif;
+  font-weight: ;
+  line-height: 1.35;
+  overflow: hidden;
+  position: relative;
+  text-decoration: none;
+  /*text-shadow: 0 1px rgba(0,0,0,0.5), 0 0 2px rgba(0,0,0,0.2);*/
+
+  background: #297dc3;
+  background: -moz-linear-gradient(top, #43a6e2, #287cc2);
+  background: -ms-linear-gradient(top, #43a6e2, #287cc2);
+  background: -o-linear-gradient(top, #43a6e2, #287cc2);
+  background: -webkit-linear-gradient(top, #43a6e2, #287cc2);
+  background: linear-gradient(top, #43a6e2, #287cc2);
+
+  -moz-border-radius:   3px;
+  -ms-border-radius:     3px;
+  -o-border-radius:     3px;
+  -webkit-border-radius:   3px;
+  border-radius:       3px;
+
+  -moz-box-shadow:   0 1px 0 rgba(0,0,0,0.2);
+  -ms-box-shadow:   0 1px 0 rgba(0,0,0,0.2);
+  -o-box-shadow:     0 1px 0 rgba(0,0,0,0.2);
+  -webkit-box-shadow: 0 1px 0 rgba(0,0,0,0.2);
+  box-shadow:     0 1px 0 rgba(0,0,0,0.2);
+}
+
+.persona-button:hover{
+  background: #21669f;
+  background: -moz-linear-gradient(top, #3788b9, #21669f);
+  background: -ms-linear-gradient(top, #3788b9, #21669f);
+  background: -o-linear-gradient(top, #3788b9, #21669f);
+  background: -webkit-linear-gradient(top, #3788b9, #21669f);
+  background: linear-gradient(top, #3788b9, #21669f);
+  color:#fff;
+}
+
+.persona-button:active, .persona-button:focus{
+  top: 1px;
+  -moz-box-shadow:   none;
+  -ms-box-shadow:   none;
+  -o-box-shadow:     none;
+  -webkit-box-shadow: none;
+  box-shadow:     none;
+  color:fff;
+}
+
+.persona-button span{
+  display: inline-block;
+  padding: 5px 10px 5px 40px;
+  color:#fff;
+}
+
+/* Icon */
+.persona-button span:after{
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAAPCAYAAAA/I0V3AAAA4klEQVR42o2RWaqEMBRE3YaCiDjPwQGcd9CrysLv4wTyoLFD90dxqbp1EgdPRB7Kskznea6Zn/aPoKoqUUrJOI5m4l2QBfSyLHKep1zXZSae3An1fS/7vst931bGkzuhaZrsLVbGkzuheZ7lOI6HyJ2QUkqv6yrbtv0LT+6E7G0UrfBfP3lZlpoXH4ZBmHgn5Pv+KwxDfqp0XQdgJp6c/RsUBIGOokiSJDE/s21bACbe5Ozp0TdAHMdSFIXUdS1N01C2wpObPT36HifwCJzI0iX29Oh7XP0E3CB9L01TzM+i/wePv4ZE5RtAngAAAABJRU5ErkJggg==) 10px center no-repeat;
+  content: '';
+  display: block;
+  width: 31px;
+
+  position: absolute;
+  bottom: 0;
+  left: -3px;
+  top: 0;
+  z-index: 10;
+}
+
+/*  Icon background */
+.persona-button span:before{
+  content: '';
+  display: block;
+  height: 100%;
+  width: 20px;
+
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  top: 0;
+  z-index: 1;
+
+  background: #42a9dd;
+  background: -moz-linear-gradient(top, #50b8e8, #3095ce);
+  background: -ms-linear-gradient(top, #50b8e8, #3095ce);
+  background: -o-linear-gradient(top, #50b8e8, #3095ce);
+  background: -webkit-linear-gradient(top, #50b8e8, #3095ce);
+  background: linear-gradient(top, #50b8e8, #3095ce);
+
+  -moz-border-radius:   3px 0 0 3px;
+  -ms-border-radius:     3px 0 0 3px;
+  -o-border-radius:     3px 0 0 3px;
+  -webkit-border-radius:   3px 0 0 3px;
+  border-radius:       3px 0 0 3px;
+  color: #fff;
+}
+
+/* Triangle */
+.persona-button:before{
+  background: #42a9dd;
+  content: '';
+  display: block;
+  height: 26px;
+  width: 26px;
+
+  position: absolute;
+  left: 2px;
+  top: 50%;
+  margin-top: -13px;
+  z-index: 0;
+
+  background: -moz-linear-gradient(-45deg, #50b8e8, #3095ce);
+  background: -ms-linear-gradient(-45deg, #50b8e8, #3095ce);
+  background: -o-linear-gradient(-45deg, #50b8e8, #3095ce);
+  background: -webkit-linear-gradient(-45deg, #50b8e8, #3095ce);
+  background: linear-gradient(-45deg, #3095ce, #50b8e8); /* flipped for updated spec */
+
+  -moz-box-shadow:   1px -1px 1px rgba(0,0,0,0.1);
+  -ms-box-shadow:   1px -1px 1px rgba(0,0,0,0.1);
+  -o-box-shadow:     1px -1px 1px rgba(0,0,0,0.1);
+  -webkit-box-shadow: 1px -1px 1px rgba(0,0,0,0.1);
+  box-shadow:     1px -1px 1px rgba(0,0,0,0.1);
+
+  -moz-transform:   rotate(45deg);
+  -ms-transform:     rotate(45deg);
+  -o-transform:     rotate(45deg);
+  -webkit-transform:   rotate(45deg);
+  transform:       rotate(45deg);
+  color:#fff;
+}
+
+/* Inset shadow (required here because the icon background clips it when on the `a` element) */
+.persona-button:after{
+  content: '';
+  display: block;
+  height: 100%;
+  width: 100%;
+
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  z-index: 10;
+
+  -moz-border-radius:   3px;
+  -ms-border-radius:     3px;
+  -o-border-radius:     3px;
+  -webkit-border-radius:   3px;
+  border-radius:       3px;
+
+  -moz-box-shadow:   inset 0 -1px 0 rgba(0,0,0,0.3);
+  -ms-box-shadow:   inset 0 -1px 0 rgba(0,0,0,0.3);
+  -o-box-shadow:     inset 0 -1px 0 rgba(0,0,0,0.3);
+  -webkit-box-shadow: inset 0 -1px 0 rgba(0,0,0,0.3);
+  box-shadow:     inset 0 -1px 0 rgba(0,0,0,0.3);
+}
+    .strike {
+        display: block;
+        text-align: center;
+        overflow: hidden;
+        white-space: nowrap; 
+        margin-top: 10px;
+        margin-bottom: 16px;
+    }
+
+    .strike > span {
+        position: relative;
+        display: inline-block;
+        color:#dddddd;
+    }
+  
+    .strike > span:before,
+    .strike > span:after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        width: 9999px;
+        height: 1px;
+        background: #ddd;
+    }
+
+    .strike > span:before {
+        right: 100%;
+        margin-right: 15px;
+    }
+
+    .strike > span:after {
+        left: 100%;
+        margin-left: 15px;
+    }

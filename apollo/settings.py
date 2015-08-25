@@ -13,7 +13,8 @@ except KeyError:
 
 DEBUG = ast.literal_eval(
     os.environ.get('DEBUG', 'False'))
-PAGE_SIZE = 25
+PAGE_SIZE = ast.literal_eval(
+    os.environ.get('PAGE_SIZE', '25'))
 
 MONGODB_SETTINGS = {
     'DB': os.environ.get('MONGO_DATABASE_NAME', 'apollo'),
@@ -38,6 +39,7 @@ SENTRY_DSN = os.environ.get('SENTRY_DSN')
 SECURITY_PASSWORD_HASH = 'pbkdf2_sha256'
 SECURITY_PASSWORD_SALT = SECRET_KEY
 SECURITY_URL_PREFIX = '/accounts'
+SECURITY_POST_LOGOUT_VIEW = '/accounts/login'
 SECURITY_LOGIN_USER_TEMPLATE = 'frontend/login_user.html'
 SECURITY_EMAIL_SENDER = os.environ.get('SECURITY_EMAIL_SENDER')
 SECURITY_SEND_REGISTER_EMAIL = ast.literal_eval(
@@ -67,6 +69,12 @@ CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_ACCEPT_CONTENT = ['json']
 
+CACHE_TYPE = 'simple' if DEBUG else 'redis'
+CACHE_REDIS_URL = 'redis://{host}/{database}'.format(
+    host=urlparse(
+        os.environ.get('REDIS_PORT', 'redis://localhost')).netloc,
+    database=os.environ.get('REDIS_DATABASE', '0'))
+
 LANGUAGES = {
     'en': 'English',
     'es': 'Español',
@@ -75,6 +83,7 @@ LANGUAGES = {
     'ar': 'العربية',
     'de': 'Deutsch',
 }
+BABEL_DEFAULT_LOCALE = os.environ.get('BABEL_DEFAULT_LOCALE', 'en')
 
 ALLOWED_PUNCTUATIONS = '!'
 CHARACTER_TRANSLATIONS = (

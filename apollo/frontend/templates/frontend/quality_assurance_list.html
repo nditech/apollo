@@ -1,0 +1,39 @@
+{% extends "frontend/_layout.html" %}
+{% block scripts %}
+{% endblock %}
+{% block content %}
+<div class="row">
+	<div class="col-md-12 filter">
+	</div>
+</div>
+<div class="row">
+	<div class="col-md-12">
+		<table class="table table-striped table-bordered table-hover">
+			<thead>
+				<tr>
+					<th>{% trans %}Quality Assurance Condition{% endtrans %}</th>
+					<th width="80" class="text-right">{% trans %}Flagged{% endtrans %}</th>
+					<th width="80" class="text-right">{% trans %}Verified{% endtrans %}</th>
+					<th width="80" class="text-right">{% trans %}OK{% endtrans %}</th>
+					<th width="80" class="text-right">{% trans %}Missing{% endtrans %}</th>
+				</tr>
+			</thead>
+			<tbody>
+			{% for record in qa_records %}
+				<tr>
+					<th>{{ record.get('description') }}</th>
+					<td align="right"><a href="{{ url_for('submissions.submission_list', form_id=form.pk, **{record.get('name'): quality_statuses['FLAGGED']}) }}">{{ record.get('flagged') }}</a></td>
+					<td align="right"><a href="{{ url_for('submissions.submission_list', form_id=form.pk, **{record.get('name'): quality_statuses['VERIFIED']}) }}">{{ record.get('verified') }}</a></td>
+					<td align="right"><a href="{{ url_for('submissions.submission_list', form_id=form.pk, **{record.get('name'): quality_statuses['OK']}) }}">{{ record.get('ok') }}</a></td>
+					<td align="right"><a href="{{ url_for('submissions.submission_list', form_id=form.pk, **{record.get('name'): -1}) }}">{{ record.get('missing') }}</a></td>
+				</tr>
+			{% else %}
+				<tr>
+					<td colspan="5" class="warning text-center">{% trans %}No Data Available{% endtrans %}</td>
+				</tr>
+			{% endfor %}
+			</tbody>
+		</table>
+	</div>
+</div>
+{% endblock %}

@@ -2,11 +2,13 @@ from collections import OrderedDict
 from flask import g, abort
 from flask.ext.admin import Admin
 from flask.ext.babel import Babel
+from flask.ext.cache import Cache
 from flask.ext.mail import Mail
 from flask.ext.menu import Menu
 from flask.ext.mongoengine import MongoEngine
 from flask.ext.security import Security
 from flask.ext.gravatar import Gravatar
+from flask.ext.wtf.csrf import CsrfProtect
 from mongoengine.base import ValidationError
 from raven.contrib.flask import Sentry
 import six
@@ -15,12 +17,14 @@ from wtforms import Form, fields
 
 admin = Admin(name='Apollo')
 babel = Babel()
+cache = Cache()
 db = MongoEngine()
 mail = Mail()
 menu = Menu()
 security = Security()
 gravatar = Gravatar(size=25, default="identicon", use_ssl=True)
 sentry = Sentry()
+csrf = CsrfProtect()
 
 
 class Service(object):

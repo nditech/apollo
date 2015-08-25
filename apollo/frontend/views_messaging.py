@@ -1,9 +1,10 @@
 from . import route
 from .. import services
+from ..core import csrf
 from ..messaging.forms import KannelForm, TelerivetForm
 from ..messaging.helpers import parse_message
 from ..messaging.utils import parse_text
-from flask import Blueprint, make_response, request, g, abort, current_app
+from flask import Blueprint, make_response, request, g, current_app
 import json
 
 
@@ -70,13 +71,13 @@ def kannel_view():
         msg = form.get_message()
         incoming = services.messages.log_message(
             event=g.event, sender=msg.get('sender'), text=msg.get('text'),
-            direction='IN')
+            direction='IN', timestamp=msg.get('timestamp'))
 
         response, submission, had_errors = parse_message(form)
 
         outgoing = services.messages.log_message(
             event=g.event, recipient=msg.get('sender'), text=response,
-            direction='OUT')
+            direction='OUT', timestamp=msg.get('timestamp'))
 
         update_datastore(incoming, outgoing, submission, had_errors)
 
@@ -84,6 +85,7 @@ def kannel_view():
     return ""
 
 
+@csrf.exempt
 @route(bp, '/messaging/telerivet', methods=['POST'])
 def telerivet_view():
     secret = request.form.get('secret')
@@ -96,7 +98,7 @@ def telerivet_view():
         msg = form.get_message()
         incoming = services.messages.log_message(
             event=g.event, sender=msg.get('sender'), text=msg.get('text'),
-            direction='IN')
+            direction='IN', timestamp=msg.get('timestamp'))
 
         response_text, submission, had_errors = parse_message(form)
         response = {'messages': [{'content': response_text}]}
@@ -105,7 +107,7 @@ def telerivet_view():
 
         outgoing = services.messages.log_message(
             event=g.event, recipient=msg.get('sender'), text=response_text,
-            direction='OUT')
+            direction='OUT', timestamp=msg.get('timestamp'))
 
         update_datastore(incoming, outgoing, submission, had_errors)
 

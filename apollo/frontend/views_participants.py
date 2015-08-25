@@ -38,7 +38,10 @@ participant_api.add_resource(
 
 
 @route(bp, '/participants', methods=['GET', 'POST'])
-@register_menu(bp, 'participants', _('Participants'))
+@register_menu(
+    bp, 'participants', _('Participants'),
+    visible_when=lambda: permissions.view_participants.can())
+@permissions.view_participants.require(403)
 @login_required
 def participant_list(page=1):
     page_title = _('Participants')
@@ -52,7 +55,7 @@ def participant_list(page=1):
 
     try:
         extra_fields = filter(
-            lambda f: getattr(f, 'listview_visibility', False)==True,
+            lambda f: getattr(f, 'listview_visibility', False) is True,
             g.deployment.participant_extra_fields)
     except AttributeError:
         extra_fields = []
@@ -71,8 +74,10 @@ def participant_list(page=1):
 
     if request.form.get('action') == 'send_message':
         message = request.form.get('message', '')
-        recipients = [participant.phone if participant.phone else ''
-                      for participant in queryset_filter.qs]
+        recipients = filter(
+            lambda x: x is not '',
+            [participant.phone if participant.phone else ''
+                for participant in queryset_filter.qs])
         recipients.extend(current_app.config.get('MESSAGING_CC'))
 
         if message and recipients and permissions.send_messages.can():
@@ -123,6 +128,7 @@ def participant_list(page=1):
 
 
 @route(bp, '/participants/performance', methods=['GET', 'POST'])
+@permissions.view_participants.require(403)
 @login_required
 def participant_performance_list(page=1):
     page_title = _('Participants Performance')
@@ -203,6 +209,7 @@ def participant_performance_list(page=1):
 
 
 @route(bp, '/participant/performance/<pk>')
+@permissions.view_participants.require(403)
 @login_required
 def participant_performance_detail(pk):
     participant = services.participants.get_or_404(id=pk)
@@ -271,24 +278,33 @@ def participant_edit(pk):
             participant.role = services.participant_roles.get_or_404(
                 pk=form.role.data)
             if form.supervisor.data:
-                participant.supervisor = services.participants.get_or_404(
+                participant.supervisor = services.participants.get(
                     pk=form.supervisor.data
                 )
             else:
                 participant.supervisor = None
-            participant.location = services.locations.get(
-                pk=form.location.data)
-            participant.partner = services.participant_partners.get_or_404(
-                pk=form.partner.data)
+            if form.location.data:
+                participant.location = services.locations.get_or_404(
+                    pk=form.location.data)
+            if form.partner.data:
+                participant.partner = services.participant_partners.get_or_404(
+                    pk=form.partner.data)
+            else:
+                participant.partner = None
             participant.phone = form.phone.data
             for extra_field in g.deployment.participant_extra_fields:
-                field_data = getattr(getattr(form, extra_field.name, object()), 'data', '')
+                field_data = getattr(
+                    getattr(form, extra_field.name, object()), 'data', '')
                 setattr(participant, extra_field.name, field_data)
             participant.save()
 
+            print 'redirecting'
+
             return redirect(url_for('participants.participant_list'))
 
-    return render_template(template_name, form=form, page_title=page_title)
+    return render_template(
+        template_name, form=form, page_title=page_title,
+        participant=participant)
 
 
 @route(bp, '/participants/import', methods=['POST'])

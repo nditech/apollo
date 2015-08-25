@@ -8,6 +8,11 @@
 {% block content %}
 <div class="row">
   <div class="col-md-12">
+    <div id="container" style="height: 160px; min-width: 600px" data-chart='{{ chart_data|tojson }}'></div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12">
     <div class="well well-sm filter">
       <form action="{{ request.url }}" method="GET" id="filter" class="form-inline">
         <div class="form-group">
@@ -79,6 +84,55 @@
 <script src="{{ url_for('static', filename='js/moment-with-langs.min.js') }}"></script>
 <script type="text/javascript">
   moment.lang('{{ g.locale }}');
+  $(function () {
+    // load the data
+    var data = $('#container').data('chart');
+
+    Highcharts.setOptions({
+      global: {
+        useUTC: false
+      }
+    });
+
+    // Create the chart
+    $('#container').highcharts('StockChart', {
+        rangeSelector : {
+            enabled : false
+        },
+
+        navigator: {
+          height: 30,
+          margin: 10
+        },
+
+        credits: {
+          enabled: false
+        },
+
+        exporting: {
+          enabled: false
+        },
+
+        scrollbar : {
+          enabled : false
+        },
+
+        series : [{
+            name : '{% trans %}Incoming Messages{% endtrans %}',
+            data : data.incoming,
+            color: '#ff7f0e',
+            type: 'column',
+            tooltip: {
+                valueDecimals: 0
+            }
+          }],
+
+        yAxis: {
+          min: 0
+        }
+    });
+  });
 </script>
 <script src="{{ url_for('static', filename='js/timestamps.js') }}"></script>
+<script src="{{ url_for('static', filename='js/highstock.js') }}"></script>
 {% endblock %}

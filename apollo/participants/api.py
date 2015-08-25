@@ -23,7 +23,7 @@ class ParticipantItemResource(Resource):
 class ParticipantListResource(Resource):
     @login_required
     def get(self):
-        parser.add_argument('q', type=str)
+        parser.add_argument('q', type=unicode)
         args = parser.parse_args()
         limit = min(
             args.get('limit') or current_app.config.get('PAGE_SIZE'),

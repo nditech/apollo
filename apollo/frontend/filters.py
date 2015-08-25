@@ -7,7 +7,7 @@ from collections import defaultdict, OrderedDict
 from dateutil.parser import parse
 from flask.ext.babel import lazy_gettext as _
 from mongoengine import Q
-from .. import services
+from .. import services, models
 from wtforms import widgets, fields
 
 
@@ -23,7 +23,8 @@ class ChecklistFormFilter(ChoiceFilter):
     def __init__(self, *args, **kwargs):
         kwargs['choices'] = _make_choices(
             services.forms.find(
-                form_type='CHECKLIST').scalar('id', 'name'), _('Form'))
+                form_type='CHECKLIST'
+            ).order_by('name').scalar('id', 'name'), _('Form'))
         super(ChecklistFormFilter, self).__init__(*args, **kwargs)
 
     def filter(self, queryset, value):
@@ -123,10 +124,30 @@ class DynamicFieldFilter(ChoiceFilter):
         return queryset(**query_kwargs)
 
 
-class SubmissionVerificationFlagFilter(ChoiceFilter):
+class SubmissionQualityCheckFilter(CharFilter):
     def filter(self, queryset, value):
-        if value is not None or value != '':
-            query_kwargs = {'{}'.format(self.name): value}
+        if value is not None and value != '':
+            if value == '-1':
+                query_kwargs = {
+                    'quality_checks__{}__exists'.format(self.name): False}
+            else:
+                query_kwargs = {'quality_checks__{}'.format(self.name): value}
+            return queryset(**query_kwargs)
+        return queryset
+
+
+class SubmissionQuarantineStatusFilter(ChoiceFilter):
+    def filter(self, queryset, value):
+        if value:
+            if value == 'N':
+                query_kwargs = {
+                    'quarantine_status__nin': map(
+                        lambda i: i[0],
+                        filter(
+                            lambda s: s[0],
+                            models.Submission.QUARANTINE_STATUSES))}
+            else:
+                query_kwargs = {'quarantine_status': value}
             return queryset(**query_kwargs)
         return queryset
 
@@ -246,7 +267,8 @@ class LocationNameFilter(CharFilter):
 class LocationTypeFilter(ChoiceFilter):
     def __init__(self, *args, **kwargs):
         kwargs['choices'] = _make_choices(
-            services.location_types.find().scalar('name', 'name'),
+            services.location_types.find().order_by('ancestor_count').scalar(
+                'name', 'name'),
             _('All Types')
         )
         super(LocationTypeFilter, self).__init__(*args, **kwargs)
@@ -275,6 +297,8 @@ class FormGroupFilter(ChoiceFilter):
                 params = {'completion__{}'.format(group): 'Missing'}
             elif value == '3':
                 params = {'completion__{}'.format(group): 'Complete'}
+            elif value == '4':
+                params = {'completion__{}'.format(group): 'Conflict'}
 
             return queryset(**params)
         return queryset
@@ -449,9 +473,27 @@ def generate_submission_filter(form):
             ('0', _('%(group)s Status', group=group.name)),
             ('1', _('%(group)s Partial', group=group.name)),
             ('2', _('%(group)s Missing', group=group.name)),
-            ('3', _('%(group)s Complete', group=group.name))
+            ('3', _('%(group)s Complete', group=group.name)),
+            ('4', _('%(group)s Conflict', group=group.name))
         ]
         attributes[field_name] = FormGroupFilter(choices=choices)
+
+    pairs = [(qc['description'], qc['name'])
+             for qc in form.quality_checks]
+
+    for description, name in pairs:
+        choices = [('', description)] + list(FLAG_CHOICES)
+        attributes[name] = SubmissionQualityCheckFilter(
+            widget=widgets.HiddenInput())
+
+    # quarantine status
+    attributes['quarantine_status'] = SubmissionQuarantineStatusFilter(
+        choices=(
+            ('', _(u'Quarantine Status')),
+            ('N', _(u'Quarantine None')),
+            ('A', _(u'Quarantine All')),
+            ('R', _(u'Quarantine Results'))
+        ))
 
     # participant id and location
     attributes['participant_id'] = ParticipantIDFilter()
@@ -470,12 +512,12 @@ def generate_submission_filter(form):
 
 def generate_submission_flags_filter(form):
     attributes = {}
-    pairs = [(flag['name'], flag['storage'])
-             for flag in form.quality_checks]
+    pairs = [(quality_check['description'], quality_check['name'])
+             for quality_check in form.quality_checks]
 
-    for name, storage in pairs:
-        choices = [('', name)] + list(FLAG_CHOICES)
-        attributes[storage] = SubmissionVerificationFlagFilter(choices=choices)
+    for description, name in pairs:
+        choices = [('', description)] + list(FLAG_CHOICES)
+        attributes[name] = SubmissionQualityCheckFilter()
 
     attributes['participant_id'] = ParticipantIDFilter()
     attributes['location'] = LocationFilter()

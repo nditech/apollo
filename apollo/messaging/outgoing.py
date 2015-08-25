@@ -30,6 +30,7 @@ class KannelGateway(Gateway):
         self.smsc = config.get('smsc')
         self.charset = config.get('charset')
         self.coding = config.get('coding')
+        self.sender = config.get('from', '')
 
     def send(self, text, recipient, sender=""):
         """
@@ -42,7 +43,7 @@ class KannelGateway(Gateway):
         gateway_params = {
             'username': self.username,
             'password': self.password,
-            'from': sender,
+            'from': sender or self.sender,
             'to': recipient,
             'text': text,
         }
@@ -70,10 +71,10 @@ class TelerivetGateway(Gateway):
         :param config: The configuration object obtained from the app settings
         """
         self.gateway_url = """\
-https://api.telerivet.com/v1/projects/%s/messages/outgoing\
+https://api.telerivet.com/v1/projects/%s/messages/send\
 """ % config.get('project_id')
         self.api_key = config.get('api_key')
-        self.phone_id = config.get('phone_id')
+        self.route_id = config.get('route_id')
         self.priority = config.get('priority')
 
     def send(self, text, recipient, sender=""):
@@ -85,16 +86,15 @@ https://api.telerivet.com/v1/projects/%s/messages/outgoing\
         :param sender: (Optional) sender to set for the message
         """
         gateway_params = {
-            'phone_id': self.phone_id,
             'to_number': recipient,
             'content': text
         }
         gateway_params.update(
             dict([(key, getattr(self, key))
-                 for key in ['priority']
+                 for key in ['priority', 'route_id']
                  if getattr(self, key)]))
         try:
-            r.post(self.gateway_url, data=gateway_params,
+            r.post(self.gateway_url, json=gateway_params,
                    auth=(self.api_key, ''))
         except r.ConnectionError:
             raise

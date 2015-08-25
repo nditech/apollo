@@ -4,16 +4,18 @@ from . import route
 from ..analyses.dashboard import get_coverage
 from ..deployments.forms import generate_event_selection_form
 from ..models import LocationType
-from ..services import events, forms, submissions, locations
+from ..services import events, forms, submissions, locations, location_types
 from .filters import dashboard_filterset
-from .helpers import get_event, set_event
+from .helpers import get_event, set_event, get_concurrent_events_list_menu
 from . import permissions
 from flask import (
-    Blueprint, redirect, render_template, request, url_for
+    Blueprint, redirect, render_template, request, url_for, g
 )
 from flask.ext.babel import lazy_gettext as _
 from flask.ext.menu import register_menu
 from flask.ext.security import login_required
+from functools import partial
+
 
 bp = Blueprint('dashboard', __name__, template_folder='templates',
                static_folder='static')
@@ -35,7 +37,8 @@ def index():
     event = get_event()
 
     if not args.get('checklist_form'):
-        form = forms.find(events=event, form_type='CHECKLIST').first()
+        form = forms.find(
+            events=event, form_type='CHECKLIST').order_by('name').first()
     else:
         form = forms.get_or_404(pk=args.get('checklist_form'))
 
@@ -43,11 +46,18 @@ def index():
         args.setdefault('checklist_form', unicode(form.id))
 
     queryset = submissions.find(
-        submission_type='O',
+        submission_type='M',
         created__lte=event.end_date,
         created__gte=event.start_date
     )
     filter_ = dashboard_filterset()(queryset, data=args)
+
+    obs_queryset = submissions.find(
+        submission_type='O',
+        created__lte=event.end_date,
+        created__gte=event.start_date
+    )
+    obs_filter_ = dashboard_filterset()(obs_queryset, data=args)
 
     location = None
     if args.get('location'):
@@ -56,14 +66,17 @@ def index():
     # activate sample filter
     filter_form = filter_.form
     queryset = filter_.qs
-    should_expand = True
+    obs_queryset = obs_filter_.qs
+    next_location_type = False
 
     if not group:
         data = get_coverage(queryset)
+        obs_data = get_coverage(obs_queryset)
     else:
         page_title = page_title + u' · {}'.format(group)
         if not location_type_id:
-            location_type = LocationType.root()
+            location_type = location_types.find(
+                is_administrative=True).order_by('ancestor_count').first()
         else:
             location_type = LocationType.objects.get_or_404(
                 pk=location_type_id)
@@ -76,31 +89,28 @@ def index():
         # one we want (the first of the children)
         le_temp = [lt for lt in location_type.children
                    if lt.is_administrative]
-        try:
-            sub_location_type = le_temp[0]
-        except IndexError:
-            sub_location_type = location_type
 
         try:
-            next_location_type = le_temp[1]
-            location_type_id = next_location_type.id
+            next_location_type = le_temp[0]
         except IndexError:
             next_location_type = None
-            should_expand = False
-            location_type_id = None
 
-        data = get_coverage(queryset, group, sub_location_type)
+        data = get_coverage(queryset, group, location_type)
+        obs_data = get_coverage(obs_queryset, group, location_type)
 
     # load the page context
+    location_id = args.pop('location', '')
     context = {
         'args': args,
+        'location_id': location_id,
+        'next_location': bool(next_location_type),
         'data': data,
+        'obs_data': obs_data,
         'filter_form': filter_form,
         'page_title': page_title,
         'location': location,
-        'locationtype': location_type_id or '',
-        'group': group or '',
-        'should_expand': should_expand
+        'locationtype': getattr(next_location_type, 'id', ''),
+        'group': group or ''
     }
 
     return render_template(
@@ -109,10 +119,23 @@ def index():
     )
 
 
+@route(bp, '/event/<event_id>', methods=['GET'])
+@register_menu(
+    bp, 'concurrent_events', _('Concurrent Events'),
+    visible_when=partial(lambda: events.overlapping_events(g.event).count() > 1),
+    dynamic_list_constructor=partial(get_concurrent_events_list_menu))
+@login_required
+def concurrent_events(event_id):
+    event = events.overlapping_events(g.event).get_or_404(pk=event_id)
+    if event:
+        set_event(event)
+    return redirect(url_for('dashboard.index'))
+
+
 @route(bp, '/event', methods=['GET', 'POST'])
 @register_menu(
     bp, 'events', _('Events'),
-    visible_when=lambda: permissions.view_events.can())
+    visible_when=partial(lambda: permissions.view_events.can()))
 @permissions.view_events.require(403)
 @login_required
 def event_selection():

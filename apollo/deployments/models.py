@@ -13,7 +13,7 @@ class CustomDataField(db.EmbeddedDocument):
     name = ParticipantPropertyName()
     label = db.StringField()
     listview_visibility = db.BooleanField(default=False)
-    
+
     def __unicode__(self):
         return self.name or u''
 
@@ -25,10 +25,14 @@ class Deployment(db.Document):
     administrative_divisions_graph = db.StringField()
     participant_extra_fields = db.ListField(
         db.EmbeddedDocumentField(CustomDataField))
-    allow_observer_submission_edit = db.BooleanField(default=True)
+    allow_observer_submission_edit = db.BooleanField(
+        default=True, verbose_name='Allow editing of Participant submissions?')
     logo = db.StringField()
     include_rejected_in_votes = db.BooleanField(default=False)
     is_initialized = db.BooleanField(default=False)
+    dashboard_full_locations = db.BooleanField(
+        default=True,
+        verbose_name='Show all locations for dashboard stats?')
 
     meta = {
         'indexes': [
