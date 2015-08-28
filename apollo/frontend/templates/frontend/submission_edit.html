@@ -191,7 +191,7 @@
       <tr>
         <td colspan="2" style="vertical-align: middle"><h4>{% trans %}Quarantine Status{% endtrans %}</h4></td>
         {%- if readonly -%}
-        <td class="obs-on"{{ render_submission_field(submission_form['quarantine_status'], disabled=1)}}</td>
+        <td class="obs-on">{{ render_submission_field(submission_form['quarantine_status'], disabled=1)}}</td>
         {%- else -%}
         <td class="obs-on"{%- if submission_form['quarantine_status'].errors %} class="danger"{%- endif -%}>{{ render_submission_field(submission_form['quarantine_status']) }}</td>
         {%- endif -%}
@@ -232,7 +232,7 @@
       </span>
       {%- endif %}
       </td>
-      <td {%- if submission_form[field.name].errors %} class="danger"{%- endif -%}>{{ render_submission_field(submission_form[field.name]) }}</td>
+      <td style="min-width:6em" {%- if submission_form[field.name].errors %} class="danger"{%- endif -%}>{{ render_submission_field(submission_form[field.name]) }}</td>
     </tr>
     {% endfor -%}
     {% endfor -%}
