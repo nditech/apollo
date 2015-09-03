@@ -1,7 +1,7 @@
 {% macro render_checkbox_field(field, disabled=0) -%}
 <div class="checkbox">
     <label>
-        <input name="{{ field.name }}" type="checkbox" value="1" {% if selected %}checked{% endif %} {% if disabled %}disabled{% endif %}>
+        <input name="{{ field.name }}" type="checkbox" value="1" {% if field.data %}checked{% endif %} {% if disabled %}disabled{% endif %}>
     </label>
 </div>
 {%- endmacro %}
