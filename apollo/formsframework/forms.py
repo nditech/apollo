@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
+from functools import partial
 from itertools import ifilter
 from mongoengine import signals
 from wtforms import (
@@ -54,13 +55,24 @@ def update_submission_version(sender, document, **kwargs):
     )
 
 
+def filter_participants(form, participant_id):
+    event = getattr(g, 'event', services.events.default())
+    events = set(services.events.overlapping_events(event)).intersection(
+        form.events)
+
+    participant = models.Participant.objects(
+            event__in=events, participant_id=participant_id).first()
+
+    if not participant:
+        raise models.Participant.DoesNotExist('No participant found')
+
+    return participant
+
+
 class BaseQuestionnaireForm(Form):
     form = StringField(
         u'Form', validators=[validators.required()],
         filters=[lambda data: services.forms.get(pk=data)])
-    participant = StringField(
-        u'Participant', validators=[validators.required()],
-        filters=[lambda data: services.participants.get(participant_id=data)])
     sender = StringField(u'Sender', validators=[validators.required()])
     comment = StringField(u'Comment', validators=[validators.optional()])
 
@@ -92,12 +104,14 @@ class BaseQuestionnaireForm(Form):
         # also ignore fields that have errors so as not to save them
         ignored_fields.extend(self.errors.keys())
         try:
+            participant = self.data.get('participant')
+
             if self.data.get('form').form_type == 'CHECKLIST':
                 # when searching for the submission, take into cognisance
                 # that the submission may be in one of several concurrent
                 # events
                 submission = models.Submission.objects(
-                    contributor=self.data.get('participant'),
+                    contributor=participant,
                     form=self.data.get('form'), submission_type='O',
                     event__in=services.events.overlapping_events(g.event),
                     deployment=self.data.get('form').deployment).first()
@@ -110,9 +124,7 @@ class BaseQuestionnaireForm(Form):
                 # element from that set; basic idea being that we want to
                 # find what is common between the form's events and the current
                 # events
-                submission_event = set(
-                    self.data.get('form').events).intersection(
-                    set(services.events.overlapping_events(g.event))).pop()
+                submission_event = participant.event
                 submission = models.Submission(
                     form=self.data.get('form'),
                     contributor=self.data.get('participant'),
@@ -189,6 +201,10 @@ class BaseQuestionnaireForm(Form):
 
 def build_questionnaire(form, data=None):
     fields = {'groups': []}
+    fields['participant'] = StringField(
+        u'Participant',
+        filters=[partial(filter_participants, form)],
+        validators=[validators.required()])
 
     for group in form.groups:
         groupspec = (group.name, [])
@@ -234,6 +250,7 @@ def build_questionnaire(form, data=None):
         fields['groups'].append(groupspec)
 
     form_class = type('QuestionnaireForm', (BaseQuestionnaireForm,), fields)
+
 
     return form_class(data)
 
