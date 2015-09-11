@@ -10,9 +10,11 @@ from wtforms import (BooleanField, IntegerField, SelectField,
                      SelectMultipleField, StringField, TextField,
                      ValidationError, validators, widgets)
 
-from ..models import Location, LocationType, Participant, Submission
+from ..models import (
+    Location, LocationType, Participant, Submission, Form, ParticipantRole)
 from ..services import (events, location_types, locations,
-                        participant_partners, participant_roles, participants)
+                        participant_partners, participant_roles, participants,
+                        forms)
 from . import permissions
 
 
@@ -376,3 +378,18 @@ def file_upload_form(*args, **kwargs):
 
 class DummyForm(WTSecureForm):
     select_superset = StringField(widget=widgets.HiddenInput())
+
+
+class ChecklistInitForm(WTSecureForm):
+    form = CustomModelSelectField(
+        _('Form'),
+        model=Form,
+        queryset=forms.find(form_type='CHECKLIST'))
+    role = CustomModelSelectField(
+        _('Role'),
+        model=ParticipantRole,
+        queryset=participant_roles.find())
+    location_type = CustomModelSelectField(
+        _('Location type'),
+        model=LocationType,
+        queryset=location_types.find())
