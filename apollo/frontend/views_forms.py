@@ -11,6 +11,7 @@ from .. import services
 from ..formsframework.forms import FormForm
 from ..formsframework.models import FormBuilderSerializer
 from ..tasks import update_submissions
+from .forms import ChecklistInitForm
 
 bp = Blueprint('forms', __name__, template_folder='templates',
                static_folder='static')
@@ -107,10 +108,12 @@ def list_forms():
     page_title = _('Forms')
     template_name = 'frontend/form_list.html'
     forms = services.forms.find()
+    checklist_init_form = ChecklistInitForm()
 
     context = {
         'forms': forms,
-        'page_title': page_title
+        'page_title': page_title,
+        'init_form': checklist_init_form
     }
 
     return render_template(template_name, **context)
