@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 from . import route, permissions
-from flask import (Blueprint, g, redirect, render_template, request, url_for)
+from flask import (
+    Blueprint, flash, g, redirect, render_template, request, url_for)
 from flask.ext.babel import lazy_gettext as _
 from flask.ext.menu import register_menu
 from flask.ext.security import login_required
@@ -15,6 +16,26 @@ from .forms import ChecklistInitForm
 
 bp = Blueprint('forms', __name__, template_folder='templates',
                static_folder='static')
+
+
+@route(bp, '/forms/init', methods=['POST'])
+@permissions.edit_forms.require(403)
+@login_required
+def checklist_init():
+    flash_message = ''
+    flash_category = ''
+    form = ChecklistInitForm()
+
+    if form.validate_on_submit():
+        flash_category = 'checklist_init_success'
+        flash_message = 'Checklists are being created for the form, role and location type you selected in the current event'
+    else:
+        flash_category = 'checklist_init_failure'
+        flash_message = 'Checklists were not created'
+
+    flash(flash_message, flash_category)
+
+    return redirect(url_for('.list_forms'))
 
 
 @route(bp, '/formbuilder/<pk>', methods=['GET', 'POST'])

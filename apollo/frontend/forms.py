@@ -381,15 +381,21 @@ class DummyForm(WTSecureForm):
 
 
 class ChecklistInitForm(WTSecureForm):
-    form = CustomModelSelectField(
+    form = SelectField(
         _('Form'),
-        model=Form,
-        queryset=forms.find(form_type='CHECKLIST'))
-    role = CustomModelSelectField(
+        choices=_make_choices(
+            forms.find(form_type='CHECKLIST').scalar('id', 'name'),
+            _('Select form')),
+        validators=[validators.input_required()])
+    role = SelectField(
         _('Role'),
-        model=ParticipantRole,
-        queryset=participant_roles.find())
-    location_type = CustomModelSelectField(
+        choices=_make_choices(
+            participant_roles.find().scalar('id', 'name'),
+            _('Select role')),
+        validators=[validators.input_required()])
+    location_type = SelectField(
         _('Location type'),
-        model=LocationType,
-        queryset=location_types.find())
+        choices=_make_choices(
+            location_types.find().scalar('id', 'name'),
+            _('Select location type')),
+        validators=[validators.input_required()])
