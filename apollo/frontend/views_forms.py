@@ -11,7 +11,7 @@ import json
 from .. import services
 from ..formsframework.forms import FormForm
 from ..formsframework.models import FormBuilderSerializer
-from ..tasks import update_submissions
+from ..tasks import init_submissions, update_submissions
 from .forms import ChecklistInitForm
 
 bp = Blueprint('forms', __name__, template_folder='templates',
@@ -29,6 +29,13 @@ def checklist_init():
     if form.validate_on_submit():
         flash_category = 'checklist_init_success'
         flash_message = 'Checklists are being created for the form, role and location type you selected in the current event'
+
+        init_submissions.delay(
+            str(g.deployment.pk),
+            str(g.event.pk),
+            form.data['form'],
+            form.data['role'],
+            form.data['location_type'])
     else:
         flash_category = 'checklist_init_failure'
         flash_message = 'Checklists were not created'
