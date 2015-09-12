@@ -26,9 +26,14 @@ def checklist_init():
     flash_category = ''
     form = ChecklistInitForm()
 
+    try:
+        str_func = unicode
+    except NameError:
+        str_func = str
+
     if form.validate_on_submit():
         flash_category = 'checklist_init_success'
-        flash_message = 'Checklists are being created for the form, role and location type you selected in the current event'
+        flash_message = _('Checklists are being created for the form, role and location type you selected in the current event')
 
         init_submissions.delay(
             str(g.deployment.pk),
@@ -38,9 +43,9 @@ def checklist_init():
             form.data['location_type'])
     else:
         flash_category = 'checklist_init_failure'
-        flash_message = 'Checklists were not created'
+        flash_message = _('Checklists were not created')
 
-    flash(flash_message, flash_category)
+    flash(str_func(flash_message), flash_category)
 
     return redirect(url_for('.list_forms'))
 
