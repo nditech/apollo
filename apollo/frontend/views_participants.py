@@ -292,6 +292,7 @@ def participant_edit(pk):
             else:
                 participant.partner = None
             participant.phone = form.phone.data
+            participant.password = form.password.data
             for extra_field in g.deployment.participant_extra_fields:
                 field_data = getattr(
                     getattr(form, extra_field.name, object()), 'data', '')

@@ -36,10 +36,10 @@ class ParticipantsService(Service):
     def export_list(self, queryset):
         headers = [
             u'Participant ID', u'Name', u'Partner', u'Role',
-            u'Location ID', u'Supervisor ID', u'Gender', u'Email',
+            u'Location ID', u'Supervisor ID', u'Gender', u'Email', u'Password',
             u'Phone Primary', u'Phone Secondary #1', u'Phone Secondary #2'
         ]
-        
+
         if queryset.count():
             location_types = LocationType.objects(
                 is_administrative=True, deployment=queryset.first().deployment)
@@ -74,10 +74,11 @@ class ParticipantsService(Service):
                 else '',
                 participant.gender if participant.gender else '',
                 participant.email if participant.email else '',
+                participant.password if participant.password else '',
             ]
 
             record.extend(phone_numbers)
-            
+
             for extra_field in participant.deployment.participant_extra_fields:
                 record.append(getattr(participant, extra_field.name, ''))
 

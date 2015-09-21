@@ -89,6 +89,7 @@ def generate_participant_edit_form(participant, data=None):
             ),
         )
         phone = StringField(_('Phone'))
+        password = StringField(_('Password'))
 
     attributes = {
         field.name: TextField(field.label)
@@ -110,6 +111,7 @@ def generate_participant_edit_form(participant, data=None):
         supervisor=participant.supervisor.id
         if participant.supervisor else None,
         phone=participant.phone,
+        password=participant.password,
         **kwargs
     )
 
@@ -152,6 +154,10 @@ def generate_participant_import_mapping_form(
         ),
         'email': SelectField(
             _('Email'),
+            choices=default_choices,
+        ),
+        'password': SelectField(
+            _('Password'),
             choices=default_choices,
         ),
         'phone': TextField(
