@@ -95,6 +95,7 @@ class Participant(db.DynamicDocument):
 
     completion_rating = db.FloatField(default=1)
     device_id = db.StringField()
+    password = db.StringField()
 
     meta = {
         'indexes': [

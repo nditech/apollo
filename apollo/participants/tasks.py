@@ -7,6 +7,8 @@ from ..messaging.tasks import send_email
 from .. import services, helpers
 from ..factory import create_celery_app
 from .models import PhoneContact
+import random
+import string
 
 celery = create_celery_app()
 
@@ -58,6 +60,9 @@ def create_role(name, deployment):
     return services.participant_roles.create(name=name,
                                              deployment=deployment)
 
+def generate_password(length):
+    return ''.join(
+        random.choice(string.ascii_uppercase + string.digits + string.ascii_lowercase) for _ in range(length))
 
 def update_participants(dataframe, event, header_map):
     """
@@ -76,6 +81,7 @@ def update_participants(dataframe, event, header_map):
             loading the participant setting it is deferred.
         gender - the participant's gender.
         email - the participant's email.
+        password - the participant's password.
         phone - a prefix for columns starting with this string that contain
                 numbers
         group - a prefix for columns starting with this string that contain
@@ -97,6 +103,7 @@ def update_participants(dataframe, event, header_map):
     SUPERVISOR_ID_COL = header_map.get('supervisor_id')
     GENDER_COL = header_map.get('gender')
     EMAIL_COL = header_map.get('email')
+    PASSWORD_COL = header_map.get('password')
     PHONE_PREFIX = header_map.get('phone')
     GROUP_PREFIX = header_map.get('group')
 
@@ -209,6 +216,12 @@ def update_participants(dataframe, event, header_map):
         if EMAIL_COL:
             participant.email = record[EMAIL_COL] \
                 if _is_valid(record[EMAIL_COL]) else None
+
+        if PASSWORD_COL:
+            participant.password = record[PASSWORD_COL] \
+                if _is_valid(record[PASSWORD_COL]) else generate_password(6)
+        else:
+            participant.password = generate_password(6)
 
         # wonky hacks to avoid doing addToSet queries
         # for events and phone numbers
