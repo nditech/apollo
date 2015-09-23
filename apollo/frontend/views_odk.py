@@ -46,6 +46,7 @@ def get_form_download_list():
 
     response = make_response(render_template(template_name, forms=forms))
     response.headers['Content-Type'] = DEFAULT_CONTENT_TYPE
+    response.headers.extend(make_open_rosa_headers())
     return response
 
 
@@ -56,7 +57,7 @@ def get_form_manifest(form_pk):
     template_name = 'frontend/xformsManifest.xml'
     response = make_response(render_template(template_name))
     response.headers['Content-Type'] = DEFAULT_CONTENT_TYPE
-
+    response.headers.extend(make_open_rosa_headers())
     return response
 
 
@@ -69,6 +70,7 @@ def get_form(form_pk):
         xml_declaration=True
     )
     response = make_response(xform_data)
+    response.headers.extend(make_open_rosa_headers())
     response.headers['Content-Type'] = DEFAULT_CONTENT_TYPE
     response.headers['Content-Disposition'] =\
         'attachment; filename={}.xml'.format(slugify(form.name))

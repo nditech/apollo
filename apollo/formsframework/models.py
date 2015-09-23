@@ -1,3 +1,4 @@
+import hashlib
 from operator import itemgetter
 from ..core import db
 from ..deployments.models import Deployment, Event
@@ -187,6 +188,16 @@ class Form(db.Document):
         Need.objects.create(
             action='view_forms', items=[self], entities=self.permitted_roles,
             deployment=self.deployment)
+
+    def hash(self):
+        xform_data = etree.tostring(
+            self.to_xml(),
+            encoding='UTF-8',
+            xml_declaration=True
+        )
+        m = hashlib.md5()
+        m.update(xform_data)
+        return "md5:%s" % m.hexdigest()
 
     def to_xml(self):
         root = HTML_E.html()
