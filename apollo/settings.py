@@ -82,6 +82,7 @@ LANGUAGES = {
     'az': 'Azərbaycanca',
     'ar': 'العربية',
     'de': 'Deutsch',
+    'ru': 'Русский',
 }
 BABEL_DEFAULT_LOCALE = os.environ.get('BABEL_DEFAULT_LOCALE', 'en')
 
