@@ -32,12 +32,21 @@ bp = Blueprint('submissions', __name__, template_folder='templates',
 
 
 @route(bp, '/submissions/form/<form_id>', methods=['GET', 'POST'])
-@register_menu(bp, 'forms.checklists', _('Checklists'),
-               dynamic_list_constructor=partial(get_form_list_menu,
-                                                form_type='CHECKLIST'))
-@register_menu(bp, 'forms.incidents', _('Critical Incidents'),
-               dynamic_list_constructor=partial(get_form_list_menu,
-                                                form_type='INCIDENT'))
+@register_menu(
+    bp, 'main.checklists',
+    '<i class="glyphicon glyphicon-check"></i> ' + _('Checklists'), order=1,
+    visible_when=lambda: len(get_form_list_menu(form_type='CHECKLIST')) > 0)
+@register_menu(bp, 'main.checklists.forms', _('Checklists'),
+               dynamic_list_constructor=partial(
+                    get_form_list_menu, form_type='CHECKLIST'))
+@register_menu(
+    bp, 'main.incidents',
+    '<i class="glyphicon glyphicon-check"></i> ' + _('Critical Incidents'),
+    order=2,
+    visible_when=lambda: len(get_form_list_menu(form_type='INCIDENT')) > 0)
+@register_menu(bp, 'main.incidents.forms', _('Critical Incidents'),
+               dynamic_list_constructor=partial(
+                    get_form_list_menu, form_type='INCIDENT'))
 @login_required
 def submission_list(form_id):
     form = services.forms.get_or_404(pk=form_id)
@@ -506,9 +515,17 @@ def submission_version(submission_id, version_id):
 
 @route(bp, '/submissions/qa/<form_id>')
 @register_menu(
-    bp, 'qa.checklists', _('Quality Assurance'),
-    dynamic_list_constructor=partial(get_quality_assurance_form_list_menu,
-                                     form_type='CHECKLIST', verifiable=True))
+    bp, 'main.qa',
+    '<i class="glyphicon glyphicon-ok"></i> ' + _('Quality Assurance'),
+    order=3,
+    visible_when=lambda: len(get_quality_assurance_form_list_menu(
+        form_type='CHECKLIST', verifiable=True)) > 0
+    and permissions.view_analyses.can())
+@register_menu(
+    bp, 'main.qa.checklists', _('Quality Assurance'),
+    dynamic_list_constructor=partial(
+        get_quality_assurance_form_list_menu,
+        form_type='CHECKLIST', verifiable=True))
 @login_required
 def quality_assurance_list(form_id):
     form = services.forms.get_or_404(pk=form_id, form_type='CHECKLIST')

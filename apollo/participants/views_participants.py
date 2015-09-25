@@ -41,8 +41,10 @@ participant_api.add_resource(
 
 @route(bp, '/participants', methods=['GET', 'POST'])
 @register_menu(
-    bp, 'participants', _('Participants'),
-    visible_when=lambda: permissions.view_participants.can())
+    bp, 'main.participants',
+    '<i class="glyphicon glyphicon-user"></i> ' + _('Participants'),
+    visible_when=lambda: permissions.view_participants.can(),
+    order=5)
 @permissions.view_participants.require(403)
 @login_required
 def participant_list(page=1):

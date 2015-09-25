@@ -24,7 +24,7 @@ import pandas as pd
 def get_analysis_menu():
     return [{
         'url': url_for('analysis.process_analysis', form_id=unicode(form.pk)),
-        'text': form.name,
+        'text': '<i class="glyphicon glyphicon-stats"></i> ' + form.name,
     } for form in forms.find().filter(
         Q(form_type='INCIDENT') |
         Q(form_type='CHECKLIST', groups__fields__analysis_type='PROCESS')
@@ -35,7 +35,7 @@ def get_result_analysis_menu():
     return [{
         'url': url_for(
             'analysis.results_analysis', form_id=unicode(form.pk)),
-        'text': form.name
+        'text': '<i class="glyphicon glyphicon-stats"></i> ' + form.name
     } for form in forms.find(
         form_type='CHECKLIST',
         groups__fields__analysis_type='RESULT'
@@ -529,9 +529,16 @@ def _voting_results(form_pk, location_pk=None):
 
 
 @route(bp, '/submissions/analysis/process/form/<form_id>')
-@register_menu(bp, 'process_analysis', _('Process Analysis'),
-               dynamic_list_constructor=partial(get_analysis_menu),
-               visible_when=lambda: permissions.view_analyses.can())
+@register_menu(
+    bp, 'main.analyses',
+    '<i class="glyphicon glyphicon-stats"></i> ' + _('Analyses'), order=4,
+    visible_when=lambda: len(get_analysis_menu()) > 0
+    and permissions.view_analyses.can())
+@register_menu(
+    bp, 'main.analyses.process_analysis',
+    '<i class="glyphicon glyphicon-stats"></i> ' + _('Process Analysis'),
+    dynamic_list_constructor=partial(get_analysis_menu),
+    visible_when=lambda: permissions.view_analyses.can())
 @permissions.view_analyses.require(403)
 @login_required
 def process_analysis(form_id):
@@ -553,9 +560,16 @@ def process_analysis_with_location_and_tag(form_id, location_id, tag):
 
 
 @route(bp, '/submissions/analysis/results/form/<form_id>')
-@register_menu(bp, 'results_analysis', _('Results Analysis'),
-               dynamic_list_constructor=partial(get_result_analysis_menu),
-               visible_when=lambda: permissions.view_analyses.can())
+@register_menu(
+    bp, 'main.analyses',
+    '<i class="glyphicon glyphicon-stats"></i> ' + _('Analyses'), order=4,
+    visible_when=lambda: len(get_result_analysis_menu()) > 0
+    and permissions.view_analyses.can())
+@register_menu(
+    bp, 'main.analyses.results_analysis',
+    '<i class="glyphicon glyphicon-stats"></i> ' + _('Results Analysis'),
+    dynamic_list_constructor=partial(get_result_analysis_menu),
+    visible_when=lambda: permissions.view_analyses.can())
 @permissions.view_analyses.require(403)
 @login_required
 def results_analysis(form_id):

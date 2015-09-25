@@ -37,85 +37,45 @@
         </div>
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
-            <li><a href="{{ current_menu.submenu('dashboard').url }}"><i class="glyphicon glyphicon-user glyphicon-home"></i> {{ current_menu.submenu('dashboard').text }}</a></li>
-            {% if current_menu.submenu('forms.checklists').dynamic_list|count > 1 -%}
-            <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-check"></i> {% trans %}Checklists{% endtrans %} <b class="caret"></b></a>
-                <ul class="dropdown-menu">
-                    {% for form in current_menu.submenu('forms.checklists').dynamic_list -%}
-                    <li><a href="{{ form.url }}"><i class="glyphicon glyphicon-check"></i> {{ form.text }}</a></li>
-                    {%- endfor %}
-                </ul>
-            </li>
-            {%- elif current_menu.submenu('forms.checklists').dynamic_list -%}
-            <li><a href="{{ current_menu.submenu('forms.checklists').dynamic_list[0].url }}"><i class="glyphicon glyphicon-check"></i> {{ current_menu.submenu('forms.checklists').dynamic_list[0].text }}</a></li>
-            {%- endif -%}
-            {% if current_menu.submenu('forms.incidents').dynamic_list|count > 1 -%}
-            <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-check"></i> {% trans %}Incidents{% endtrans %} <b class="caret"></b></a>
-                <ul class="dropdown-menu navbar-right">
-                    {% for form in current_menu.submenu('forms.incidents').dynamic_list -%}
-                    <li><a href="{{ form.url }}"><i class="glyphicon glyphicon-check"></i> {{ form.text }}</a></li>
-                    {%- endfor %}
-                </ul>
-            </li>
-            {%- elif current_menu.submenu('forms.incidents').dynamic_list -%}
-            <li><a href="{{ current_menu.submenu('forms.incidents').dynamic_list[0].url }}"><i class="glyphicon glyphicon-check"></i> {{ current_menu.submenu('forms.incidents').dynamic_list[0].text }}</a></li>
-            {%- endif -%}
-            {%- if perms.view_analyses.can() -%}
-            {% if current_menu.submenu('qa.checklists').dynamic_list -%}
-            <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-ok"></i> {% trans %}Quality Assurance{% endtrans %} <b class="caret"></b></a>
-                <ul class="dropdown-menu">
-                    {% for form in current_menu.submenu('qa.checklists').dynamic_list -%}
-                    <li><a href="{{ form.url }}"><i class="glyphicon glyphicon-ok"></i> {{ form.text }}</a></li>
-                    {%- endfor %}
-                </ul>
-            </li>
-            {%- endif -%}
-            {%- endif -%}
-            {%- if perms.view_analyses.can() -%}
-            {%- if current_menu.submenu('forms.incidents').dynamic_list or current_menu.submenu('forms.checklists').dynamic_list -%}
-            <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-stats"></i> {% trans %}Analyses{% endtrans %} <b class="caret"></b></a>
+            <!-- main menu -->
+            {% for menu_item in current_menu.submenu('main').children %}
+            {% if not menu_item.children and menu_item.visible %}
+            <li><a href="{{ menu_item.url }}">{{ menu_item.text|safe }}</a></li>
+            {% elif menu_item.visible %}
+            <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ menu_item.text|safe }} <b class="caret"></b></a>
               <ul class="dropdown-menu">
-              {%- if current_menu.submenu('process_analysis').dynamic_list -%}
-                <li class="dropdown-submenu"> 
-                  <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-stats"></i> {% trans %}Process{% endtrans %}</a>
+                {% if menu_item.children|count < 2 %}
+                {% for submenu_item in menu_item.children[0].dynamic_list %}
+                <li><a href="{{ submenu_item.url }}">{{ submenu_item.text|safe }}</a></li>
+                {% endfor %}
+                {% else %}
+                {% for submenu_item in menu_item.children %}
+                <li class="dropdown-submenu">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ submenu_item.text|safe }}</a>
                   <ul class="dropdown-menu">
-                    {%- for form in current_menu.submenu('process_analysis').dynamic_list -%}
-                    <li><a href="{{ form.url }}"><i class="glyphicon glyphicon-stats"></i> {{ form.text }}</a></li>
-                    {%- endfor -%}
+                    {% for subsubmenu_item in submenu_item.dynamic_list %}
+                    <li><a href="{{ subsubmenu_item.url }}">{{ subsubmenu_item.text|safe }}</a></li>
+                    {% endfor %}
                   </ul>
                 </li>
-              {%- endif -%}
-              {%- if current_menu.submenu('results_analysis').dynamic_list -%}
-              <li class="dropdown-submenu">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-stats"></i> {% trans %}Results{% endtrans %}</a>
-                <ul class="dropdown-menu">
-                  {%- for form in current_menu.submenu('results_analysis').dynamic_list -%}
-                  <li><a href="{{ form.url }}"><i class="glyphicon glyphicon-stats"></i> {{ form.text }}</a></li>
-                  {%- endfor %}
-                </ul>
-              </li>
-              {%- endif -%}
+                {% endfor %}
+                {% endif %}
               </ul>
             </li>
-            {%- endif -%}
-            {%- endif -%}
-            {%- if current_menu.submenu('participants').visible -%}
-            <li><a href="{{ current_menu.submenu('participants').url }}"><i class="glyphicon glyphicon-user"></i> {{ current_menu.submenu('participants').text }}</a></li>
-            {%- endif -%}
-            {%- if current_menu.submenu('messages').visible -%}
-            <li><a href="{{ current_menu.submenu('messages').url }}"><i class="glyphicon glyphicon-envelope"></i> {{ current_menu.submenu('messages').text }}</a></li>
-            {%- endif -%}
+            {% endif %}
+            {% endfor %}
+
             <li class="divider-vertical"></li>
             <li>
               <a class="dropdown-toggle" data-toggle="dropdown" href="#"><img src="{{ current_user.email|gravatar }}" class="img-rounded" style="margin-right: 0.25em; border-radius: 12px"><b class="caret"></b></a>
               <ul class="dropdown-menu left-submenu">
                 <li class="eml"><a href="#">{{ current_user.email}}</a></li>
                 <li class="divider"></li>
-              {%- if current_menu.submenu('events').visible -%}
-                <li><a href="{{ current_menu.submenu('events').url }}"><i class="glyphicon glyphicon-calendar"></i> {{ current_menu.submenu('events').text }}</a></li>
+              {%- if current_menu.submenu('user.events').visible -%}
+                <li><a href="{{ current_menu.submenu('user.events').url }}"><i class="glyphicon glyphicon-calendar"></i> {{ current_menu.submenu('user.events').text }}</a></li>
               {%- endif -%}
-              {% if current_menu.submenu('concurrent_events').visible -%}
-              {% for event in current_menu.submenu('concurrent_events').dynamic_list %}
+              {% if current_menu.submenu('user.concurrent_events').visible -%}
+              {% for event in current_menu.submenu('user.concurrent_events').dynamic_list %}
                 {% if event.active %}
                 <li><a href="javascript:;"><i class="glyphicon glyphicon-calendar"></i> <span class="text-muted">{{ event.text }}</span></a></li>
                 {% else %}
@@ -128,16 +88,16 @@
                 <li><a href="{{ url_for('deployment.index_view') }}"><i class="glyphicon glyphicon-user"></i> {% trans %}Admin{% endtrans %}</a></li>
                 <li class="divider"></li>
               {%- endif -%}
-              {%- if current_menu.submenu('locations_builder').visible -%}
-                <li><a href="{{ current_menu.submenu('locations_builder').url }}"><i class="glyphicon glyphicon-map-marker"></i> {{ current_menu.submenu('locations_builder').text }}</a></li>
+              {%- if current_menu.submenu('user.locations_builder').visible -%}
+                <li><a href="{{ current_menu.submenu('user.locations_builder').url }}"><i class="glyphicon glyphicon-map-marker"></i> {{ current_menu.submenu('user.locations_builder').text }}</a></li>
               {%- endif -%}
-              {%- if current_menu.submenu('locations_list').visible -%}
-                <li><a href="{{ current_menu.submenu('locations_list').url }}"><i class="glyphicon glyphicon-map-marker"></i> {{ current_menu.submenu('locations_list').text }}</a></li>
+              {%- if current_menu.submenu('user.locations_list').visible -%}
+                <li><a href="{{ current_menu.submenu('user.locations_list').url }}"><i class="glyphicon glyphicon-map-marker"></i> {{ current_menu.submenu('user.locations_list').text }}</a></li>
               {%- endif -%}
-              {%- if current_menu.submenu('forms').visible -%}
-                <li><a href="{{ current_menu.submenu('forms').url }}"><i class="glyphicon glyphicon-list-alt"></i> {{ current_menu.submenu('forms').text }}</a></li>
+              {%- if current_menu.submenu('user.forms').visible -%}
+                <li><a href="{{ current_menu.submenu('user.forms').url }}"><i class="glyphicon glyphicon-list-alt"></i> {{ current_menu.submenu('user.forms').text }}</a></li>
               {%- endif -%}
-              {%- if current_menu.submenu('locations_builder').visible or current_menu.submenu('formbuilder').visible -%}
+              {%- if current_menu.submenu('user.locations_builder').visible or current_menu.submenu('user.formbuilder').visible -%}
                 <li class="divider"></li>
               {%- endif -%}
                 <li><a href="{{ url_for_security('logout') }}"><i class="glyphicon glyphicon-log-out"></i> {% trans %}Logout{% endtrans %}</a></li>

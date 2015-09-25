@@ -52,9 +52,6 @@ def checklist_init():
 
 
 @route(bp, '/formbuilder/<pk>', methods=['GET', 'POST'])
-@register_menu(
-    bp, 'formbuilder', _('Form Builder'),
-    visible_when=lambda: permissions.edit_forms.can())
 @permissions.edit_forms.require(403)
 @login_required
 def form_builder(pk):
@@ -134,7 +131,7 @@ def edit_form(pk):
 
 @route(bp, '/forms')
 @register_menu(
-    bp, 'forms', _('Forms'),
+    bp, 'user.forms', _('Forms'),
     visible_when=lambda: permissions.edit_forms.can())
 @permissions.edit_forms.require(403)
 @login_required

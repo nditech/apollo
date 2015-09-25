@@ -16,8 +16,10 @@ bp = Blueprint('messages', __name__)
 
 @route(bp, '/messages', methods=['GET', 'POST'])
 @register_menu(
-    bp, 'messages', _('Messages'),
-    visible_when=lambda: permissions.view_messages.can())
+    bp, 'main.messages',
+    '<i class="glyphicon glyphicon-envelope"></i> ' + _('Messages'),
+    visible_when=lambda: permissions.view_messages.can(),
+    order=6)
 @permissions.view_messages.require(403)
 def message_list():
     page_title = _('Messages')

@@ -53,7 +53,7 @@ location_api.add_resource(
 
 @route(bp, '/locations/', methods=['GET'])
 @register_menu(
-    bp, 'locations_list', _('Locations'),
+    bp, 'user.locations_list', _('Locations'),
     visible_when=lambda: permissions.edit_locations.can())
 @permissions.edit_locations.require(403)
 @login_required
@@ -93,9 +93,6 @@ def locations_list():
 
 
 @route(bp, '/location/<pk>', methods=['GET', 'POST'])
-@register_menu(
-    bp, 'location_edit', _('Edit Location'),
-    visible_when=lambda: permissions.edit_locations.can())
 @permissions.edit_locations.require(403)
 @login_required
 def location_edit(pk):
@@ -187,7 +184,7 @@ def location_headers(pk):
 
 @route(bp, '/locations/builder', methods=['GET', 'POST'])
 @register_menu(
-    bp, 'locations_builder', _('Administrative Divisions'),
+    bp, 'user.locations_builder', _('Administrative Divisions'),
     visible_when=lambda: permissions.edit_locations.can())
 @permissions.edit_locations.require(403)
 @login_required
