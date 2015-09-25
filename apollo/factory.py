@@ -6,6 +6,7 @@ from apollo.core import babel, cache, db, mail, sentry
 from apollo.helpers import register_blueprints
 from importlib import import_module
 
+
 def create_app(
     package_name, package_path, settings_override=None,
     register_all_blueprints=True

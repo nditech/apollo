@@ -6,9 +6,9 @@ from babel.numbers import format_number
 from flask import g
 from flask.ext.babel import get_locale, lazy_gettext as _
 import pandas as pd
-from ..analyses.common import (
+from apollo.analyses.common import (
     dataframe_analysis, multiselect_dataframe_analysis)
-from ..analyses.voting import proportion, variance
+from apollo.analyses.voting import proportion, variance
 
 
 def _clean(fieldname):

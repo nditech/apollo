@@ -2,9 +2,9 @@ from datetime import datetime
 from flask.ext.babel import lazy_gettext as _
 from flask.ext.mongoengine import BaseQuerySet
 from mongoengine import Q
-from ..core import db
-from ..deployments.models import Deployment, Event
-from ..helpers import compute_location_path
+from apollo.core import db
+from apollo.deployments.models import Deployment, Event
+from apollo.helpers import compute_location_path
 
 
 class ParticipantQuerySet(BaseQuerySet):

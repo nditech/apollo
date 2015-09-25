@@ -1,11 +1,12 @@
-from ..core import db
+from apollo.core import db
 
 
 class ParticipantPropertyName(db.StringField):
     def validate(self, value):
         from ..participants.models import Participant
         if value in Participant._fields.keys():
-            self.error('String value cannot be one of the disallowed field names')
+            self.error(
+                'String value cannot be one of the disallowed field names')
         super(ParticipantPropertyName, self).validate(value)
 
 

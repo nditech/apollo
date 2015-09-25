@@ -3,15 +3,15 @@ from flask.ext.admin import AdminIndexView
 from flask.ext.login import user_logged_out
 from flask.ext.principal import identity_loaded
 from flask.ext.security import MongoEngineUserDatastore, current_user
-from . import models
+from apollo import models
 
-from frontend import assets, permissions, template_filters
-from core import admin, db, menu, security, gravatar, csrf
+from apollo.frontend import assets, permissions, template_filters
+from apollo.core import admin, db, menu, security, gravatar, csrf
 from frontend.helpers import (
     set_request_presets, CustomMongoEngineSessionInterface)
 from security_ext_forms import DeploymentLoginForm
 
-from . import services, factory
+from apollo import services, factory
 
 custom_filters = {
     'checklist_question_summary': template_filters.checklist_question_summary,

@@ -1,5 +1,5 @@
-from .. import models
-from .. import services
+from apollo import models
+from apollo import services
 from flask import session, request, abort, g, url_for
 from flask.ext.babel import get_locale
 from flask.ext.mongoengine import MongoEngineSessionInterface

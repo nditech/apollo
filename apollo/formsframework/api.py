@@ -1,6 +1,6 @@
 from flask.ext.restful import Resource, fields, marshal_with
 from flask.ext.security import login_required
-from .. import services
+from apollo import services
 
 
 SIMPLE_FORM_ITEM_MAPPER = {

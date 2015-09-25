@@ -1,8 +1,8 @@
 from flask import g
 from flask.ext.script import Command, prompt_choices
 from flask.ext.principal import Permission
-from ..frontend import permissions
-from .. import models, services
+from apollo.frontend import permissions
+from apollo import models, services
 
 
 class AddPermissionToRole(Command):

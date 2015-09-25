@@ -1,6 +1,6 @@
 from datetime import datetime
-from ..core import db
-from ..deployments.models import Deployment, Event
+from apollo.core import db
+from apollo.deployments.models import Deployment, Event
 from flask.ext.security import RoleMixin, UserMixin
 
 

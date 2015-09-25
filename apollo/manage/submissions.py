@@ -1,5 +1,5 @@
 from flask.ext.script import Command, prompt_choices
-from .. import services, models
+from apollo import services, models
 
 
 class InitializeSubmissionsCommand(Command):

@@ -1,10 +1,10 @@
-from ..core import Service
+from apollo.core import Service
 from flask import g
-from .models import (
+from apollo.participants.models import (
     Participant, ParticipantRole, ParticipantPartner, ParticipantGroup,
     ParticipantGroupType
 )
-from ..locations.models import LocationType
+from apollo.locations.models import LocationType
 import unicodecsv
 try:
     from cStringIO import StringIO

@@ -1,12 +1,12 @@
 # coding: utf-8
-from ..core import db
-from ..deployments.models import Deployment, Event
-from ..formsframework.models import Form
-from ..formsframework.parser import Comparator, grammar_factory
-from ..helpers import compute_location_path
-from ..locations.models import Location
-from ..participants.models import Participant
-from ..users.models import User
+from apollo.core import db
+from apollo.deployments.models import Deployment, Event
+from apollo.formsframework.models import Form
+from apollo.formsframework.parser import Comparator, grammar_factory
+from apollo.helpers import compute_location_path
+from apollo.locations.models import Location
+from apollo.participants.models import Participant
+from apollo.users.models import User
 from datetime import datetime
 from flask.ext.babel import gettext as _
 from flask.ext.mongoengine import BaseQuerySet

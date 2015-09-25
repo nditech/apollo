@@ -1,8 +1,8 @@
 from datetime import datetime
-from ..core import db
-from ..deployments.models import Deployment, Event
-from ..participants.models import Participant
-from ..submissions.models import Submission
+from apollo.core import db
+from apollo.deployments.models import Deployment, Event
+from apollo.participants.models import Participant
+from apollo.submissions.models import Submission
 
 
 class Message(db.Document):

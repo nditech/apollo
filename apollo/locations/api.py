@@ -2,8 +2,8 @@ from flask import current_app, jsonify
 from flask.ext.restful import Resource, fields, marshal, marshal_with
 from flask.ext.security import login_required
 from mongoengine import Q
-from .. import services
-from ..api.common import parser
+from apollo import services
+from apollo.api.common import parser
 
 LOCATION_TYPE_FIELD_MAPPER = {
     'id': fields.String,

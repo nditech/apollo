@@ -10,12 +10,12 @@ from wtforms import (BooleanField, IntegerField, SelectField,
                      SelectMultipleField, StringField, TextField,
                      ValidationError, validators, widgets)
 
-from ..models import (
-    Location, LocationType, Participant, Submission, Form, ParticipantRole)
-from ..services import (events, location_types, locations,
-                        participant_partners, participant_roles, participants,
-                        forms)
-from . import permissions
+from apollo.models import (
+    Location, LocationType, Participant, Submission)
+from apollo.services import (
+    events, location_types, locations,
+    participant_partners, participant_roles, participants, forms)
+from apollo.frontend import permissions
 
 
 class CustomModelSelectField(ModelSelectField):

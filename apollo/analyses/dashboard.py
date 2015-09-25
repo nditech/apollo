@@ -1,8 +1,8 @@
 from flask import g
 from collections import OrderedDict
 from logging import getLogger
-from ..models import Submission
-from .. import services
+from apollo.models import Submission
+from apollo import services
 
 logger = getLogger(__name__)
 

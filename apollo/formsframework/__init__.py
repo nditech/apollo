@@ -1,5 +1,5 @@
-from ..core import Service
-from .models import Form
+from apollo.core import Service
+from apollo.formsframework.models import Form
 from flask import g
 
 

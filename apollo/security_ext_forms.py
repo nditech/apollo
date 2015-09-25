@@ -3,8 +3,6 @@ from flask.ext.security.forms import LoginForm
 from flask.ext.security.confirmable import requires_confirmation
 from flask.ext.security.utils import get_message, verify_and_update_password
 from werkzeug.local import LocalProxy
-# from .participants.forms import *
-# from .submissions.forms import *
 
 _datastore = LocalProxy(lambda: current_app.extensions['security'].datastore)
 

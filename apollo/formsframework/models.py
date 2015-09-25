@@ -1,8 +1,8 @@
 import hashlib
 from operator import itemgetter
-from ..core import db
-from ..deployments.models import Deployment, Event
-from ..users.models import Role, Need
+from apollo.core import db
+from apollo.deployments.models import Deployment, Event
+from apollo.users.models import Role, Need
 from flask.ext.babel import lazy_gettext as _
 from lxml import etree
 from lxml.builder import E, ElementMaker

@@ -1,9 +1,9 @@
-from .deployments.models import Deployment, Event
-from .formsframework.models import Form
-from .locations import Sample, LocationType, Location
-from .participants.models import \
+from apollo.deployments.models import Deployment, Event
+from apollo.formsframework.models import Form
+from apollo.locations import Sample, LocationType, Location
+from apollo.participants.models import \
     (ParticipantRole, ParticipantPartner, Participant, PhoneContact)
-from .submissions.models import \
+from apollo.submissions.models import \
     (Submission, SubmissionComment)
-from .users.models import Role, User, Need
-from .messaging.models import Message
+from apollo.users.models import Role, User, Need
+from apollo.messaging.models import Message
