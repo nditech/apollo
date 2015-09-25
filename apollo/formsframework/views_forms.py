@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
-from . import route, permissions
+from apollo.frontend import route, permissions
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, url_for)
 from flask.ext.babel import lazy_gettext as _

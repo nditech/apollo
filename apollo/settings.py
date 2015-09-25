@@ -111,7 +111,14 @@ MESSAGING_CC = ast.literal_eval(os.environ.get('MESSAGING_CC', '[]'))
 MESSAGING_SECRET = os.environ.get('MESSAGING_SECRET')
 
 APPLICATIONS = ast.literal_eval(os.environ.get(
-    'APPLICATION', '("apollo.frontend", "apollo.messaging",)'))
+    'APPLICATION',
+    '''("apollo.frontend",
+        "apollo.locations",
+        "apollo.participants",
+        "apollo.formsframework",
+        "apollo.submissions",
+        "apollo.messaging",
+        "apollo.analyses")'''))
 
 BIG_N = ast.literal_eval(os.environ.get('BIG_N', '0')) or numpy.inf
 GOOGLE_ANALYTICS_KEY = os.environ.get('GOOGLE_ANALYTICS_KEY')
