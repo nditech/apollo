@@ -6,7 +6,7 @@ from slugify import slugify
 
 from .. import helpers, services
 from ..factory import create_celery_app
-from ..messaging.tasks import send_email
+from apollo.messaging.tasks import send_email
 
 celery = create_celery_app()
 

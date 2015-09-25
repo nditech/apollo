@@ -1,9 +1,9 @@
-from . import route
-from .. import services
-from ..core import csrf
-from ..messaging.forms import KannelForm, TelerivetForm
-from ..messaging.helpers import parse_message
-from ..messaging.utils import parse_text
+from apollo.frontend import route
+from apollo import services
+from apollo.core import csrf
+from apollo.messaging.forms import KannelForm, TelerivetForm
+from apollo.messaging.helpers import parse_message
+from apollo.messaging.utils import parse_text
 from flask import Blueprint, make_response, request, g, current_app
 import json
 

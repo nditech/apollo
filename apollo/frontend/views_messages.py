@@ -1,6 +1,6 @@
-from . import filters, route, permissions
-from ..models import Message
-from ..services import events, messages
+from apollo.frontend import filters, route, permissions
+from apollo.models import Message
+from apollo.services import events, messages
 from flask import (
     Blueprint, render_template, request, current_app, Response, g)
 from flask.ext.babel import lazy_gettext as _

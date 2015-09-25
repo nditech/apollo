@@ -12,18 +12,18 @@ from flask.ext.menu import register_menu
 from mongoengine import signals
 from tablib import Dataset
 from werkzeug.datastructures import MultiDict
-from .. import services
-from ..analyses.incidents import incidents_csv
-from ..participants.utils import update_participant_completion_rating
-from ..submissions.models import QUALITY_STATUSES
-from ..tasks import send_messages
-from . import route, permissions
-from .filters import generate_submission_filter
-from .forms import generate_submission_edit_form_class
-from .helpers import (
+from apollo import services
+from apollo.analyses.incidents import incidents_csv
+from apollo.participants.utils import update_participant_completion_rating
+from apollo.submissions.models import QUALITY_STATUSES
+from apollo.messaging.tasks import send_messages
+from apollo.frontend import route, permissions
+from apollo.frontend.filters import generate_submission_filter
+from apollo.frontend.forms import generate_submission_edit_form_class
+from apollo.frontend.helpers import (
     DictDiffer, displayable_location_types, get_event,
     get_form_list_menu, get_quality_assurance_form_list_menu)
-from .template_filters import mkunixtimestamp
+from apollo.frontend.template_filters import mkunixtimestamp
 from functools import partial
 from slugify import slugify_unicode
 

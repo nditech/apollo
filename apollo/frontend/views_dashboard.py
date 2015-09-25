@@ -1,16 +1,17 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
-from . import route
-from ..analyses.dashboard import get_coverage
-from ..deployments.forms import generate_event_selection_form
-from ..models import LocationType
-from ..services import events, forms, submissions, locations, location_types
-from .filters import dashboard_filterset
-from .helpers import get_event, set_event, get_concurrent_events_list_menu
-from . import permissions
+from apollo.frontend import route
+from apollo.analyses.dashboard import get_coverage
+from apollo.deployments.forms import generate_event_selection_form
+from apollo.models import LocationType
+from apollo.services import (
+    events, forms, submissions, locations, location_types)
+from apollo.frontend.filters import dashboard_filterset
+from apollo.frontend.helpers import (
+    get_event, set_event, get_concurrent_events_list_menu)
+from apollo.frontend import permissions
 from flask import (
-    Blueprint, redirect, render_template, request, url_for, g
-)
+    Blueprint, redirect, render_template, request, url_for, g)
 from flask.ext.babel import lazy_gettext as _
 from flask.ext.menu import register_menu
 from flask.ext.security import login_required

@@ -6,7 +6,7 @@ from flask.ext.security import MongoEngineUserDatastore
 
 from apollo.core import db
 from apollo import models, services
-from apollo.frontend import create_app
+from apollo import create_app
 from apollo.manage import \
     (CreateUserCommand, DeleteUserCommand, ListUsersCommand,
      AddUserRoleCommand, ListUserRolesCommand, RemoveUserRoleCommand,

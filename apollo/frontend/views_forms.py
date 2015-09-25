@@ -8,11 +8,12 @@ from flask.ext.menu import register_menu
 from flask.ext.security import login_required
 import json
 
-from .. import services
-from ..formsframework.forms import FormForm
-from ..formsframework.models import FormBuilderSerializer
-from ..tasks import init_submissions, update_submissions
-from .forms import ChecklistInitForm
+from apollo import services
+from apollo.formsframework.forms import FormForm
+from apollo.formsframework.models import FormBuilderSerializer
+from apollo.formsframework.tasks import update_submissions
+from apollo.submissions.tasks import init_submissions
+from apollo.frontend.forms import ChecklistInitForm
 
 bp = Blueprint('forms', __name__, template_folder='templates',
                static_folder='static')

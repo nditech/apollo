@@ -1,13 +1,14 @@
-from .formsframework import FormsService
-from .deployments import EventsService
-from .locations import SamplesService, LocationTypesService, LocationsService
-from .participants import \
+from apollo.formsframework import FormsService
+from apollo.deployments import EventsService
+from apollo.locations import (
+    SamplesService, LocationTypesService, LocationsService)
+from apollo.participants import \
     (ParticipantsService, ParticipantGroupsService, ParticipantRolesService,
         ParticipantPartnersService, ParticipantGroupTypesService)
-from .submissions import \
+from apollo.submissions import \
     (SubmissionsService, SubmissionCommentsService, SubmissionVersionsService)
-from .users import UsersService, PermsService, UserUploadsService
-from .messaging import MessagesService
+from apollo.users import UsersService, PermsService, UserUploadsService
+from apollo.messaging import MessagesService
 
 
 events = EventsService()

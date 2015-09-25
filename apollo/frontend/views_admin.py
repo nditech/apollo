@@ -1,6 +1,6 @@
 import base64
-from flask import redirect, request, url_for
-from flask.ext.admin import BaseView, expose, form
+from flask import request
+from flask.ext.admin import form
 from flask.ext.admin.contrib.mongoengine import ModelView
 from flask.ext.admin.contrib.mongoengine.form import CustomModelConverter
 from flask.ext.admin.form import rules
@@ -11,9 +11,9 @@ from flask.ext.security import current_user
 from flask.ext.security.utils import encrypt_password
 import magic
 from wtforms import FileField, PasswordField, SelectMultipleField
-from ..core import admin
-from .. import models
-from . import forms
+from apollo.core import admin
+from apollo import models
+from apollo.frontend import forms
 
 
 class DeploymentModelConverter(CustomModelConverter):

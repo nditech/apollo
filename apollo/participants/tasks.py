@@ -3,10 +3,10 @@ from flask import render_template_string
 from flask.ext.babel import lazy_gettext as _
 from mongoengine import MultipleObjectsReturned
 import pandas as pd
-from ..messaging.tasks import send_email
-from .. import services, helpers
-from ..factory import create_celery_app
-from .models import PhoneContact
+from apollo.messaging.tasks import send_email
+from apollo import services, helpers
+from apollo.factory import create_celery_app
+from apollo.participants.models import PhoneContact
 import random
 import string
 

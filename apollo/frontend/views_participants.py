@@ -12,14 +12,16 @@ from flask.ext.restful import Api
 from flask.ext.security import current_user, login_required
 from slugify import slugify_unicode
 
-from . import filters, helpers, permissions, route
-from .. import services
-from ..helpers import load_source_file, stash_file
-from ..participants import api
-from ..tasks import import_participants, send_messages
-from .forms import (DummyForm, generate_participant_edit_form,
-                    generate_participant_import_mapping_form,
-                    file_upload_form)
+from apollo.frontend import filters, helpers, permissions, route
+from apollo import services
+from apollo.helpers import load_source_file, stash_file
+from apollo.participants import api
+from apollo.participants.tasks import import_participants
+from apollo.messaging.tasks import send_messages
+from apollo.frontend.forms import (
+    DummyForm, generate_participant_edit_form,
+    generate_participant_import_mapping_form,
+    file_upload_form)
 
 bp = Blueprint('participants', __name__, template_folder='templates',
                static_folder='static', static_url_path='/core/static')

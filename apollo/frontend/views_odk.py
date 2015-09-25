@@ -5,9 +5,9 @@ from flask import Blueprint, g, make_response, render_template, request
 from lxml import etree
 from mongoengine import signals
 from slugify import slugify
-from .. import services
-from . import route
-from .helpers import DictDiffer
+from apollo import services
+from apollo.frontend import route
+from apollo.frontend.helpers import DictDiffer
 
 DEFAULT_CONTENT_LENGTH = 1000000
 DEFAULT_CONTENT_TYPE = 'text/xml; charset=utf-8'

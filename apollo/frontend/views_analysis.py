@@ -6,14 +6,14 @@ from flask import Blueprint, render_template, request, url_for, current_app
 from flask.ext.babel import lazy_gettext as _
 from flask.ext.menu import register_menu
 from flask.ext.security import login_required
-from ..analyses.common import (
+from apollo.analyses.common import (
     generate_incidents_data, generate_process_data
 )
 from mongoengine import Q
-from ..submissions.models import FLAG_STATUSES
-from ..services import forms, locations, location_types, submissions
-from . import route, permissions, filters
-from .helpers import (
+from apollo.submissions.models import FLAG_STATUSES
+from apollo.services import forms, locations, location_types, submissions
+from apollo.frontend import route, permissions, filters
+from apollo.frontend.helpers import (
     analysis_breadcrumb_data,
     analysis_navigation_data
 )
