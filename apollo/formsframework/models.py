@@ -72,6 +72,7 @@ class FormField(db.EmbeddedDocument):
     max_value = db.IntField(default=9999)
     min_value = db.IntField(default=0)
     allows_multiple_values = db.BooleanField(default=False)
+    is_comment_field = db.BooleanField(default=False)
     options = db.DictField()
     represents_boolean = db.BooleanField(default=False)
     analysis_type = db.StringField(choices=ANALYSIS_TYPES, default='N/A')

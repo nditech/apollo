@@ -192,14 +192,18 @@ class ResponseParserTest(TestCase):
         f2 = FormField(name='BA', represents_boolean=True)
         f3 = FormField(name='D', represents_boolean=True)
         f4 = FormField(name='EA', allows_multiple_values=True)
+        f5 = FormField(name='Comment1', is_comment_field=True)
+        f6 = FormField(name='Comment2', is_comment_field=True)
 
         g1 = FormGroup()
         g1.fields.append(f1)
         g1.fields.append(f2)
+        g1.fields.append(f5)
 
         g2 = FormGroup()
         g2.fields.append(f3)
         g2.fields.append(f4)
+        g2.fields.append(f6)
 
         form = Form()
         form.groups.append(g1)
