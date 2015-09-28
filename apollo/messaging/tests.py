@@ -221,3 +221,5 @@ class ResponseParserTest(TestCase):
         self.assertEqual(
             parse_responses('EA135DBAAA3', self.test_form),
             {'AA': '3', 'BA': 1, 'D': 1, 'EA': '135'})
+        self.assertNotIn('Comment1', parse_responses('EA135DBAAA3',
+                         self.test_form))
