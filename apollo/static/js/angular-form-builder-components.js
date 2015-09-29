@@ -47,7 +47,7 @@
 
       return $builderProvider.registerComponent('textarea', {
         group: 'Default',
-        label: 'Comment1',
+        label: 'Comment',
         description: 'Comment Question',
         placeholder: '',
         required: false,
