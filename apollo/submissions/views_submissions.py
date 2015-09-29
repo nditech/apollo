@@ -126,7 +126,7 @@ def submission_list(form_id):
         form_fields = []
     else:
         form_fields = [field for group in form.groups
-                       for field in group.fields]
+                       for field in group.fields if not field.is_comment_field]
 
     return render_template(
         template_name,

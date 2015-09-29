@@ -72,6 +72,7 @@ class FormField(db.EmbeddedDocument):
     max_value = db.IntField(default=9999)
     min_value = db.IntField(default=0)
     allows_multiple_values = db.BooleanField(default=False)
+    is_comment_field = db.BooleanField(default=False)
     options = db.DictField()
     represents_boolean = db.BooleanField(default=False)
     analysis_type = db.StringField(choices=ANALYSIS_TYPES, default='N/A')
@@ -301,7 +302,10 @@ class FormBuilderSerializer(object):
             'analysis': field.analysis_type
         }
 
-        if not field.options:
+        if field.is_comment_field:
+            data['component'] = 'textarea'
+
+        elif not field.options:
             data['component'] = 'textInput'
             data['required'] = field.represents_boolean
             data['min'] = field.min_value
@@ -365,7 +369,10 @@ class FormBuilderSerializer(object):
             if f['analysis']:
                 field.analysis_type = f['analysis']
 
-            if f['component'] == 'textInput':
+            if f['component'] == 'textarea':
+                field.is_comment_field = True
+                field.analysis_type = 'N/A'  # is always False
+            elif f['component'] == 'textInput':
                 field.represents_boolean = f['required']
                 if f['min']:
                     field.min_value = f['min']

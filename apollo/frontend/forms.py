@@ -292,7 +292,12 @@ def generate_submission_edit_form_class(form):
 
     for index, group in enumerate(form.groups):
         for field in group.fields:
-            if field.options:
+            if field.is_comment_field:
+                form_fields[field.name] = TextField(
+                    field.name,
+                    description=field.description,
+                    widget=widgets.TextArea())
+            elif field.options:
                 choices = [(v, k) for k, v in field.options.iteritems()]
 
                 if field.allows_multiple_values:

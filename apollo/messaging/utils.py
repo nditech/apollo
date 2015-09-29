@@ -75,7 +75,8 @@ def parse_responses(responses_text, form):
     defined in `form`: numeric fields are first matched, then boolean
     fields are.
     '''
-    fields = [fi for group in form.groups for fi in group.fields]
+    fields = [fi for group in form.groups for fi in group.fields
+              if not fi.is_comment_field]
     numeric_fields = [f.name for f in fields if not f.represents_boolean]
     boolean_fields = [f.name for f in fields if f.represents_boolean]
 
