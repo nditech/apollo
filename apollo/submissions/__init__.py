@@ -1,6 +1,7 @@
-from ..core import Service
-from .models import Submission, SubmissionComment, SubmissionVersion
-from ..locations.models import LocationType, Sample
+from apollo.core import Service
+from apollo.submissions.models import (
+    Submission, SubmissionComment, SubmissionVersion)
+from apollo.locations.models import LocationType, Sample
 from datetime import datetime
 from operator import attrgetter
 from flask import g

@@ -1,5 +1,5 @@
-from ..core import Service
-from .models import Message
+from apollo.core import Service
+from apollo.messaging.models import Message
 from datetime import datetime
 from flask import g
 import unicodecsv

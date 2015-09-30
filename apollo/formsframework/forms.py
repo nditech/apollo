@@ -63,9 +63,6 @@ def filter_participants(form, participant_id):
     participant = models.Participant.objects(
             event__in=events, participant_id=participant_id).first()
 
-    if not participant:
-        raise models.Participant.DoesNotExist('No participant found')
-
     return participant
 
 

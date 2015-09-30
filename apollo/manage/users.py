@@ -5,8 +5,8 @@ from flask.ext.security.registerable import register_user
 from flask.ext.security.utils import get_message
 from werkzeug.datastructures import MultiDict
 
-from ..services import users
-from ..models import Deployment, Role
+from apollo.services import users
+from apollo.models import Deployment, Role
 
 
 def can_create_user(email, password, password_confirm, deployment):

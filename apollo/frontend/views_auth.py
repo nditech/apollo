@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 from flask.ext.login import login_user
-from .helpers import get_deployment
-from . import route
-from ..models import Deployment
-from ..services import users
+from apollo.frontend.helpers import get_deployment
+from apollo.frontend import route
+from apollo.models import Deployment
+from apollo.services import users
 from flask import (
     Blueprint, abort, request, current_app, redirect, url_for
 )

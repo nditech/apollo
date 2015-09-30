@@ -12,14 +12,16 @@ from flask.ext.restful import Api
 from flask.ext.security import current_user, login_required
 from slugify import slugify_unicode
 
-from . import filters, helpers, permissions, route
-from .. import services
-from ..helpers import load_source_file, stash_file
-from ..participants import api
-from ..tasks import import_participants, send_messages
-from .forms import (DummyForm, generate_participant_edit_form,
-                    generate_participant_import_mapping_form,
-                    file_upload_form)
+from apollo.frontend import filters, helpers, permissions, route
+from apollo import services
+from apollo.helpers import load_source_file, stash_file
+from apollo.participants import api
+from apollo.participants.tasks import import_participants
+from apollo.messaging.tasks import send_messages
+from apollo.frontend.forms import (
+    DummyForm, generate_participant_edit_form,
+    generate_participant_import_mapping_form,
+    file_upload_form)
 
 bp = Blueprint('participants', __name__, template_folder='templates',
                static_folder='static', static_url_path='/core/static')
@@ -39,8 +41,10 @@ participant_api.add_resource(
 
 @route(bp, '/participants', methods=['GET', 'POST'])
 @register_menu(
-    bp, 'participants', _('Participants'),
-    visible_when=lambda: permissions.view_participants.can())
+    bp, 'main.participants',
+    '<i class="glyphicon glyphicon-user"></i> ' + _('Participants'),
+    visible_when=lambda: permissions.view_participants.can(),
+    order=5)
 @permissions.view_participants.require(403)
 @login_required
 def participant_list(page=1):
@@ -292,6 +296,7 @@ def participant_edit(pk):
             else:
                 participant.partner = None
             participant.phone = form.phone.data
+            participant.password = form.password.data
             for extra_field in g.deployment.participant_extra_fields:
                 field_data = getattr(
                     getattr(form, extra_field.name, object()), 'data', '')

@@ -13,17 +13,17 @@
         <div fb-builder="default"></div>
       </div>
     </div>
-    <div class="col-md-6"  style="position:fixed; margin-left:45%; width:45%;">
-      <div class="panel panel-default" style="margin-bottom:1.9em;">
+    <div class="col-md-6" style="position:fixed; margin-left:45%; width:45%;">
+      <div class="panel panel-default" style="margin-bottom:2.5em;">
         <div class="panel-heading">
           <h3 class="panel-title">Form Components</h3>
         </div>
         <div class="panel-body">
           <div fb-components></div>
+          <button class="btn btn-primary" ng-click="submit();"><span class="glyphicon glyphicon-save"></span> Save</button>
+          <a href="{{ url_for('forms.list_forms') }}" class="btn btn-default">Cancel</a>
         </div>
       </div>
-        <button class="btn btn-primary" ng-click="submit();"><span class="glyphicon glyphicon-save"></span> Save</button>
-        <a href="{{ url_for('forms.list_forms') }}" class="btn btn-default">Cancel</a>
     </div>
   </div>
 </div>

@@ -2,10 +2,10 @@ import os
 import warnings
 from flask.ext.testing import TestCase
 from werkzeug.datastructures import MultiDict
-from apollo.frontend import create_app
+from apollo import create_app
 from apollo.messaging.utils import parse_responses
-from .forms import build_questionnaire
-from .models import Form, FormField, FormGroup
+from apollo.formsframework.forms import build_questionnaire
+from apollo.formsframework.models import Form, FormField, FormGroup
 
 
 ENV_PATH = os.path.join(

@@ -4,7 +4,7 @@ from flask.ext.script import Command, prompt, prompt_pass
 from flask.ext.security.forms import RegisterForm
 from flask.ext.security.registerable import register_user
 from werkzeug.datastructures import MultiDict
-from .. import models, services
+from apollo import models, services
 
 
 class SetupCommand(Command):

@@ -2,7 +2,7 @@ from flask import g
 from flask.ext.babel import lazy_gettext as _
 from flask.ext.wtf import Form as WTSecureForm
 from wtforms import SelectField, validators
-from ..services import events
+from apollo.services import events
 
 
 def generate_event_selection_form(*args, **kwargs):

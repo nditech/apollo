@@ -1,5 +1,5 @@
-from ..core import db, cache
-from ..deployments.models import Deployment, Event
+from apollo.core import db, cache
+from apollo.deployments.models import Deployment, Event
 from flask.ext.mongoengine import BaseQuerySet
 from slugify import slugify_unicode
 from mongoengine import Q

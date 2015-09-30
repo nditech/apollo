@@ -12,18 +12,18 @@ from flask.ext.menu import register_menu
 from mongoengine import signals
 from tablib import Dataset
 from werkzeug.datastructures import MultiDict
-from .. import services
-from ..analyses.incidents import incidents_csv
-from ..participants.utils import update_participant_completion_rating
-from ..submissions.models import QUALITY_STATUSES
-from ..tasks import send_messages
-from . import route, permissions
-from .filters import generate_submission_filter
-from .forms import generate_submission_edit_form_class
-from .helpers import (
+from apollo import services
+from apollo.analyses.incidents import incidents_csv
+from apollo.participants.utils import update_participant_completion_rating
+from apollo.submissions.models import QUALITY_STATUSES
+from apollo.messaging.tasks import send_messages
+from apollo.frontend import route, permissions
+from apollo.frontend.filters import generate_submission_filter
+from apollo.frontend.forms import generate_submission_edit_form_class
+from apollo.frontend.helpers import (
     DictDiffer, displayable_location_types, get_event,
     get_form_list_menu, get_quality_assurance_form_list_menu)
-from .template_filters import mkunixtimestamp
+from apollo.frontend.template_filters import mkunixtimestamp
 from functools import partial
 from slugify import slugify_unicode
 
@@ -32,12 +32,21 @@ bp = Blueprint('submissions', __name__, template_folder='templates',
 
 
 @route(bp, '/submissions/form/<form_id>', methods=['GET', 'POST'])
-@register_menu(bp, 'forms.checklists', _('Checklists'),
-               dynamic_list_constructor=partial(get_form_list_menu,
-                                                form_type='CHECKLIST'))
-@register_menu(bp, 'forms.incidents', _('Critical Incidents'),
-               dynamic_list_constructor=partial(get_form_list_menu,
-                                                form_type='INCIDENT'))
+@register_menu(
+    bp, 'main.checklists',
+    '<i class="glyphicon glyphicon-check"></i> ' + _('Checklists'), order=1,
+    visible_when=lambda: len(get_form_list_menu(form_type='CHECKLIST')) > 0)
+@register_menu(bp, 'main.checklists.forms', _('Checklists'),
+               dynamic_list_constructor=partial(
+                    get_form_list_menu, form_type='CHECKLIST'))
+@register_menu(
+    bp, 'main.incidents',
+    '<i class="glyphicon glyphicon-check"></i> ' + _('Critical Incidents'),
+    order=2,
+    visible_when=lambda: len(get_form_list_menu(form_type='INCIDENT')) > 0)
+@register_menu(bp, 'main.incidents.forms', _('Critical Incidents'),
+               dynamic_list_constructor=partial(
+                    get_form_list_menu, form_type='INCIDENT'))
 @login_required
 def submission_list(form_id):
     form = services.forms.get_or_404(pk=form_id)
@@ -117,7 +126,7 @@ def submission_list(form_id):
         form_fields = []
     else:
         form_fields = [field for group in form.groups
-                       for field in group.fields]
+                       for field in group.fields if not field.is_comment_field]
 
     return render_template(
         template_name,
@@ -506,9 +515,17 @@ def submission_version(submission_id, version_id):
 
 @route(bp, '/submissions/qa/<form_id>')
 @register_menu(
-    bp, 'qa.checklists', _('Quality Assurance'),
-    dynamic_list_constructor=partial(get_quality_assurance_form_list_menu,
-                                     form_type='CHECKLIST', verifiable=True))
+    bp, 'main.qa',
+    '<i class="glyphicon glyphicon-ok"></i> ' + _('Quality Assurance'),
+    order=3,
+    visible_when=lambda: len(get_quality_assurance_form_list_menu(
+        form_type='CHECKLIST', verifiable=True)) > 0
+    and permissions.view_analyses.can())
+@register_menu(
+    bp, 'main.qa.checklists', _('Quality Assurance'),
+    dynamic_list_constructor=partial(
+        get_quality_assurance_form_list_menu,
+        form_type='CHECKLIST', verifiable=True))
 @login_required
 def quality_assurance_list(form_id):
     form = services.forms.get_or_404(pk=form_id, form_type='CHECKLIST')

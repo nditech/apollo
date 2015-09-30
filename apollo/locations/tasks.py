@@ -4,9 +4,9 @@ from flask.ext.babel import lazy_gettext as _
 from hashlib import sha256
 from slugify import slugify
 
-from .. import helpers, services
-from ..factory import create_celery_app
-from ..messaging.tasks import send_email
+from apollo import helpers, services
+from apollo.factory import create_celery_app
+from apollo.messaging.tasks import send_email
 
 celery = create_celery_app()
 

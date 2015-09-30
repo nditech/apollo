@@ -10,10 +10,12 @@ from wtforms import (BooleanField, IntegerField, SelectField,
                      SelectMultipleField, StringField, TextField,
                      ValidationError, validators, widgets)
 
-from ..models import Location, LocationType, Participant, Submission
-from ..services import (events, location_types, locations,
-                        participant_partners, participant_roles, participants)
-from . import permissions
+from apollo.models import (
+    Location, LocationType, Participant, Submission)
+from apollo.services import (
+    events, location_types, locations,
+    participant_partners, participant_roles, participants, forms)
+from apollo.frontend import permissions
 
 
 class CustomModelSelectField(ModelSelectField):
@@ -87,6 +89,7 @@ def generate_participant_edit_form(participant, data=None):
             ),
         )
         phone = StringField(_('Phone'))
+        password = StringField(_('Password'))
 
     attributes = {
         field.name: TextField(field.label)
@@ -108,6 +111,7 @@ def generate_participant_edit_form(participant, data=None):
         supervisor=participant.supervisor.id
         if participant.supervisor else None,
         phone=participant.phone,
+        password=participant.password,
         **kwargs
     )
 
@@ -150,6 +154,10 @@ def generate_participant_import_mapping_form(
         ),
         'email': SelectField(
             _('Email'),
+            choices=default_choices,
+        ),
+        'password': SelectField(
+            _('Password'),
             choices=default_choices,
         ),
         'phone': TextField(
@@ -284,7 +292,12 @@ def generate_submission_edit_form_class(form):
 
     for index, group in enumerate(form.groups):
         for field in group.fields:
-            if field.options:
+            if field.is_comment_field:
+                form_fields[field.name] = TextField(
+                    field.name,
+                    description=field.description,
+                    widget=widgets.TextArea())
+            elif field.options:
                 choices = [(v, k) for k, v in field.options.iteritems()]
 
                 if field.allows_multiple_values:
@@ -376,3 +389,24 @@ def file_upload_form(*args, **kwargs):
 
 class DummyForm(WTSecureForm):
     select_superset = StringField(widget=widgets.HiddenInput())
+
+
+class ChecklistInitForm(WTSecureForm):
+    form = SelectField(
+        _('Form'),
+        choices=_make_choices(
+            forms.find(form_type='CHECKLIST').scalar('id', 'name'),
+            _('Select form')),
+        validators=[validators.input_required()])
+    role = SelectField(
+        _('Role'),
+        choices=_make_choices(
+            participant_roles.find().scalar('id', 'name'),
+            _('Select role')),
+        validators=[validators.input_required()])
+    location_type = SelectField(
+        _('Location type'),
+        choices=_make_choices(
+            location_types.find().scalar('id', 'name'),
+            _('Select location type')),
+        validators=[validators.input_required()])

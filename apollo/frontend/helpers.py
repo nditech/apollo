@@ -1,5 +1,5 @@
-from .. import models
-from .. import services
+from apollo import models
+from apollo import services
 from flask import session, request, abort, g, url_for
 from flask.ext.babel import get_locale
 from flask.ext.mongoengine import MongoEngineSessionInterface
@@ -67,7 +67,9 @@ def get_form_list_menu(**kwargs):
     TODO: Actually restrict forms based on user permissions
     """
     return [{'url': url_for('submissions.submission_list',
-             form_id=str(form.id)), 'text': form.name, 'visible': True}
+             form_id=str(form.id)),
+             'text': '<i class="glyphicon glyphicon-check"></i> ' + form.name,
+             'visible': True}
             for form in filter(
                 lambda f: Permission(ItemNeed('view_forms', f, 'object'),
                                      RoleNeed('admin')).can(),
@@ -93,7 +95,9 @@ def get_quality_assurance_form_list_menu(**kwargs):
     :param form_type: The form type for the forms to be retrieved
     """
     return [{'url': url_for('submissions.quality_assurance_list',
-             form_id=str(form.id)), 'text': form.name, 'visible': True}
+             form_id=str(form.id)),
+             'text': '<i class="glyphicon glyphicon-ok"></i> ' + form.name,
+             'visible': True}
             for form in filter(
                 lambda f: Permission(ItemNeed('view_forms', f, 'object'),
                                      RoleNeed('admin')).can(),

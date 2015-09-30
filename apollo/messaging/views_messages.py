@@ -1,6 +1,6 @@
-from . import filters, route, permissions
-from ..models import Message
-from ..services import events, messages
+from apollo.frontend import filters, route, permissions
+from apollo.models import Message
+from apollo.services import events, messages
 from flask import (
     Blueprint, render_template, request, current_app, Response, g)
 from flask.ext.babel import lazy_gettext as _
@@ -16,8 +16,10 @@ bp = Blueprint('messages', __name__)
 
 @route(bp, '/messages', methods=['GET', 'POST'])
 @register_menu(
-    bp, 'messages', _('Messages'),
-    visible_when=lambda: permissions.view_messages.can())
+    bp, 'main.messages',
+    '<i class="glyphicon glyphicon-envelope"></i> ' + _('Messages'),
+    visible_when=lambda: permissions.view_messages.can(),
+    order=6)
 @permissions.view_messages.require(403)
 def message_list():
     page_title = _('Messages')

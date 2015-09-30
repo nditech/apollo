@@ -12,16 +12,17 @@ from flask.ext.babel import lazy_gettext as _
 from flask.ext.menu import register_menu
 from flask.ext.restful import Api
 from flask.ext.security import current_user, login_required
-from ..helpers import load_source_file, stash_file
+from apollo.helpers import load_source_file, stash_file
 from mongoengine import ValidationError
 from slugify import slugify_unicode
 
-from . import filters, permissions, route
-from .. import helpers, models, services
-from ..locations import api
-from ..tasks import import_locations
-from .forms import (file_upload_form, generate_location_edit_form,
-                    generate_location_update_mapping_form, DummyForm)
+from apollo.frontend import filters, permissions, route
+from apollo import helpers, models, services
+from apollo.locations import api
+from apollo.locations.tasks import import_locations
+from apollo.frontend.forms import (
+    file_upload_form, generate_location_edit_form,
+    generate_location_update_mapping_form, DummyForm)
 
 bp = Blueprint('locations', __name__, template_folder='templates',
                static_folder='static', static_url_path='/core/static')
@@ -52,7 +53,7 @@ location_api.add_resource(
 
 @route(bp, '/locations/', methods=['GET'])
 @register_menu(
-    bp, 'locations_list', _('Locations'),
+    bp, 'user.locations_list', _('Locations'),
     visible_when=lambda: permissions.edit_locations.can())
 @permissions.edit_locations.require(403)
 @login_required
@@ -92,9 +93,6 @@ def locations_list():
 
 
 @route(bp, '/location/<pk>', methods=['GET', 'POST'])
-@register_menu(
-    bp, 'location_edit', _('Edit Location'),
-    visible_when=lambda: permissions.edit_locations.can())
 @permissions.edit_locations.require(403)
 @login_required
 def location_edit(pk):
@@ -186,7 +184,7 @@ def location_headers(pk):
 
 @route(bp, '/locations/builder', methods=['GET', 'POST'])
 @register_menu(
-    bp, 'locations_builder', _('Administrative Divisions'),
+    bp, 'user.locations_builder', _('Administrative Divisions'),
     visible_when=lambda: permissions.edit_locations.can())
 @permissions.edit_locations.require(403)
 @login_required

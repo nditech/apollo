@@ -1,4 +1,4 @@
-from .. import services
+from apollo import services
 
 
 def update_participant_completion_rating(participant):

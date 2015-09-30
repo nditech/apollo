@@ -2,11 +2,15 @@ from celery import Celery
 from flask import Flask, request
 from flask.ext.sslify import SSLify
 
-from .core import babel, cache, db, mail, sentry
-from .helpers import register_blueprints
+from apollo.core import babel, cache, db, mail, sentry
+from apollo.helpers import register_blueprints
+from importlib import import_module
 
 
-def create_app(package_name, package_path, settings_override=None):
+def create_app(
+    package_name, package_path, settings_override=None,
+    register_all_blueprints=True
+):
     """Returns a :class:`Flask` application instance configured with common
     functionality for the Overholt platform.
 
@@ -37,11 +41,16 @@ def create_app(package_name, package_path, settings_override=None):
 
     register_blueprints(app, package_name, package_path)
 
+    if register_all_blueprints:
+        for configured_app in app.config.get('APPLICATIONS'):
+            register_blueprints(
+                app, configured_app, import_module(configured_app).__path__)
+
     return app
 
 
 def create_celery_app(app=None):
-    app = app or create_app('apollo', '')
+    app = app or create_app('apollo', '', register_all_blueprints=False)
     celery = Celery(__name__, broker=app.config['CELERY_BROKER_URL'])
     celery.conf.update(app.config)
     TaskBase = celery.Task

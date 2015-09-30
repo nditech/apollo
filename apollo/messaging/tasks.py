@@ -1,9 +1,9 @@
 from flask.ext.mail import Message
-from .. import services
-from ..core import mail
-from ..settings import SECURITY_EMAIL_SENDER
-from .outgoing import gateway_factory
-from ..factory import create_celery_app
+from apollo import services
+from apollo.core import mail
+from apollo.settings import SECURITY_EMAIL_SENDER
+from apollo.messaging.outgoing import gateway_factory
+from apollo.factory import create_celery_app
 
 
 celery = create_celery_app()

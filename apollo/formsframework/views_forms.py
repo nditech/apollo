@@ -1,25 +1,57 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
-from . import route, permissions
-from flask import (Blueprint, g, redirect, render_template, request, url_for)
+from apollo.frontend import route, permissions
+from flask import (
+    Blueprint, flash, g, redirect, render_template, request, url_for)
 from flask.ext.babel import lazy_gettext as _
 from flask.ext.menu import register_menu
 from flask.ext.security import login_required
 import json
 
-from .. import services
-from ..formsframework.forms import FormForm
-from ..formsframework.models import FormBuilderSerializer
-from ..tasks import update_submissions
+from apollo import services
+from apollo.formsframework.forms import FormForm
+from apollo.formsframework.models import FormBuilderSerializer
+from apollo.formsframework.tasks import update_submissions
+from apollo.submissions.tasks import init_submissions
+from apollo.frontend.forms import ChecklistInitForm
 
 bp = Blueprint('forms', __name__, template_folder='templates',
                static_folder='static')
 
 
+@route(bp, '/forms/init', methods=['POST'])
+@permissions.edit_forms.require(403)
+@login_required
+def checklist_init():
+    flash_message = ''
+    flash_category = ''
+    form = ChecklistInitForm()
+
+    try:
+        str_func = unicode
+    except NameError:
+        str_func = str
+
+    if form.validate_on_submit():
+        flash_category = 'checklist_init_success'
+        flash_message = _('Checklists are being created for the form, role and location type you selected in the current event')
+
+        init_submissions.delay(
+            str(g.deployment.pk),
+            str(g.event.pk),
+            form.data['form'],
+            form.data['role'],
+            form.data['location_type'])
+    else:
+        flash_category = 'checklist_init_failure'
+        flash_message = _('Checklists were not created')
+
+    flash(str_func(flash_message), flash_category)
+
+    return redirect(url_for('.list_forms'))
+
+
 @route(bp, '/formbuilder/<pk>', methods=['GET', 'POST'])
-@register_menu(
-    bp, 'formbuilder', _('Form Builder'),
-    visible_when=lambda: permissions.edit_forms.can())
 @permissions.edit_forms.require(403)
 @login_required
 def form_builder(pk):
@@ -99,7 +131,7 @@ def edit_form(pk):
 
 @route(bp, '/forms')
 @register_menu(
-    bp, 'forms', _('Forms'),
+    bp, 'user.forms', _('Forms'),
     visible_when=lambda: permissions.edit_forms.can())
 @permissions.edit_forms.require(403)
 @login_required
@@ -107,10 +139,12 @@ def list_forms():
     page_title = _('Forms')
     template_name = 'frontend/form_list.html'
     forms = services.forms.find()
+    checklist_init_form = ChecklistInitForm()
 
     context = {
         'forms': forms,
-        'page_title': page_title
+        'page_title': page_title,
+        'init_form': checklist_init_form
     }
 
     return render_template(template_name, **context)
