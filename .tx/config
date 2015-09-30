@@ -2,7 +2,7 @@
 host = https://www.transifex.com
 
 [apollo.Apollo]
-file_filter = apollo/frontend/translations/<lang>/LC_MESSAGES/messages.po
-source_file = apollo/frontend/translations/messages.pot
+file_filter = apollo/translations/<lang>/LC_MESSAGES/messages.po
+source_file = apollo/translations/messages.pot
 source_lang = en
 
