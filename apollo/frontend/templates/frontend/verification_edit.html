@@ -8,15 +8,15 @@
       <table class="table table-bordered">
         <thead>
           <tr>
-            <th width="20%">{% trans "Observer" %}</th>
+            <th width="20%">{{ _("Observer") }}</th>
             <td><strong>{{ submission.submissions.all.0.observer.observer_id }}</strong> &mdash; <strong>{{ submission.submissions.all.0.observer.name }}</strong>{% if submission.submissions.all.0.observer.phone %} ({{ submission.submissions.all.0.observer.phone }}){% endif %}</td>
           </tr>
           <tr>
-            <th>{% trans "Role" %}</th>
+            <th>{{ _("Role") }}</th>
             <td>{{ submission.submissions.all.0.observer.role }}</td>
           </tr>
           <tr>
-            <th>{% trans "Location" %}</th>
+            <th>{{ _("Location") }}</th>
             <td><strong>{{ submission.location }}</strong></td>
           </tr>
           {% if location_types %}
@@ -26,7 +26,7 @@
           </tr>
           {% endif %}
           <tr>
-            <th>{% trans "Supervisor" %}</th>
+            <th>{{ _("Supervisor") }}</th>
             <td>{{ submission.submissions.all.0.observer.supervisor|default_if_none:_("<em>N/A</em>") }}</td>
           </tr>
         </thead>
@@ -38,12 +38,12 @@
           <tr>
             <td style="text-align: right" width="20%">{{ flag.name }}</td>
             <td>
-              {% if submission.data|keyvalue:field_name|flag_status:'verified' %}<img src="{% static "img/blue_dot.png" %}" title="{% trans "Verified" %}" alt="{% trans "Verified" %}" height="13" width="13" />
-              {% elif submission.data|keyvalue:field_name|flag_status:'rejected' %}<img src="{% static "img/black_dot.png" %}" title="{% trans "Rejected" %}" alt="{% trans "Rejected" %}" height="13" width="13" />
-              {% elif submission.data|keyvalue:field_name|flag_status:'serious_problem' %}<img src="{% static "img/red_dot.png" %}" title="{% trans "Serious Problem" %}" alt="{% trans "Serious Problem" %}" height="13" width="13" />
-              {% elif submission.data|keyvalue:field_name|flag_status:'problem' %}<img src="{% static "img/darkyellow_dot.png" %}" title="{% trans "Problem" %}" alt="{% trans "Problem" %}" height="13" width="13" />
-              {% elif submission.data|keyvalue:field_name|flag_status:'no_problem' %}<img src="{% static "img/green_dot.png" %}" title="{% trans "No Problem" %}" alt="{% trans "No Problem" %}" height="13" width="13" />
-              {% else %}<img src="{% static "img/white_dot.png" %}" title="{% trans "No Data" %}" alt="{% trans "No Data" %}" height="13" width="13" />
+              {% if submission.data|keyvalue:field_name|flag_status:'verified' %}<img src="{% static "img/blue_dot.png" %}" title="{{ _("Verified") }}" alt="{{ _("Verified") }}" height="13" width="13" />
+              {% elif submission.data|keyvalue:field_name|flag_status:'rejected' %}<img src="{% static "img/black_dot.png" %}" title="{{ _("Rejected") }}" alt="{{ _("Rejected") }}" height="13" width="13" />
+              {% elif submission.data|keyvalue:field_name|flag_status:'serious_problem' %}<img src="{% static "img/red_dot.png" %}" title="{{ _("Serious Problem") }}" alt="{{ _("Serious Problem") }}" height="13" width="13" />
+              {% elif submission.data|keyvalue:field_name|flag_status:'problem' %}<img src="{% static "img/darkyellow_dot.png" %}" title="{{ _("Problem") }}" alt="{{ _("Problem") }}" height="13" width="13" />
+              {% elif submission.data|keyvalue:field_name|flag_status:'no_problem' %}<img src="{% static "img/green_dot.png" %}" title="{{ _("No Problem") }}" alt="{{ _("No Problem") }}" height="13" width="13" />
+              {% else %}<img src="{% static "img/white_dot.png" %}" title="{{ _("No Data") }}" alt="{{ _("No Data") }}" height="13" width="13" />
               {% endif %}
             </td>
           </tr>
@@ -87,10 +87,10 @@
 
   <div class="row navbar-fixed-bottom" style="bottom:0px; padding-right:5em; background:#fff; padding-top:1em; padding-bottom:1em;">
     <div class="col-md-offset-8 col-md-2">
-      <button type="submit" class="btn btn-info btn-large btn-block">{% trans "Save" context "verb" %}</button>
+      <button type="submit" class="btn btn-info btn-large btn-block">{{ _("Save") }}</button>
     </div>
     <div class="col-md-2">
-      <a class="btn btn-default btn-large btn-block" href="{% url verifications_list object.form.pk %}">{% trans "Cancel" context "verb" %}</a>
+      <a class="btn btn-default btn-large btn-block" href="{% url verifications_list object.form.pk %}">{{ _("Cancel") }}</a>
     </div>
   </div>
   </form>

@@ -6,7 +6,7 @@
 	<div class="col-md-3">
 		<form class="form-inline pull-right" action="" method="GET" accept-charset="utf-8">
 			<div class="form-group form-container">{{ filter_form.sample(class_='form-control span2 input-sm') }}</div>
-			<button class="btn btn-sm btn-warning" type="submit"><i class="glyphicon glyphicon-search"></i> {% trans %}Filter{% endtrans %}</button>
+			<button class="btn btn-sm btn-warning" type="submit"><i class="glyphicon glyphicon-search"></i> {{ _('Filter') }}</button>
 		</form>
 	</div>
 </div>
@@ -27,14 +27,14 @@
 					<tr>
 						<th></th>
 						{%- if tag_stats.type == 'numeric' %}
-						<th width="80">{% trans %}Mean{% endtrans%}</th>
+						<th width="80">{{ _('Mean') }}</th>
 						{% else %}
 						{% for label in tag_stats.labels %}
 						<th>{{ _('%(label)s', label=label) }}</th>
 						{% endfor %}
 						{% endif %}
-						<th width="80">{% trans %}Reported{% endtrans %}</th>
-						<th width="80">{% trans %}Missing{% endtrans %}</th>
+						<th width="80">{{ _('Reported') }}</th>
+						<th width="80">{{ _('Missing') }}</th>
 					</tr>
 					<tr>
 						<td><strong>{{ location }}</strong></td>

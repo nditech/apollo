@@ -7,7 +7,7 @@
   <div class="col-md-7">
     <form class="form-horizontal pull-right" method="GET" accept-charset="utf-8">
       {{ filter_form.status }} {{ filter_form.witness }} {{ filter_form.sample }}
-      <button class="btn btn-warning" type="submit"><i class="icon-search icon-white"></i> {% trans %}Filter{% endtrans %}</button>
+      <button class="btn btn-warning" type="submit"><i class="icon-search icon-white"></i> {{ _('Filter') }}</button>
     </form>
   </div>
   <div class="col-md-12">
@@ -19,7 +19,7 @@
     {% if incidents %}
     <div class="tabbable">
       <ul class="nav nav-tabs">
-        <li class="active"><a href="#table" data-toggle="tab">{% trans %}Table{% endtrans %}</a></li>
+        <li class="active"><a href="#table" data-toggle="tab">{{ _('Table') }}</a></li>
       </ul>
       <div class="tab-content">
         <div class="tab-pane active" id="table">
@@ -28,15 +28,15 @@
               <td colspan="{{ 6 + location_types.count() }}"><strong>{{ form_field.name }}</strong> &middot; {{ form_field.description }}</td>
             </tr>
             <tr>
-              <th>{% trans %}Observer ID{% endtrans %}</th>
-              <th>{% trans %}Name{% endtrans %}</th>
+              <th>{{ _('Observer ID') }}</th>
+              <th>{{ _('Name') }}</th>
               {% for lt in location_types %}
               <th>{{ lt.name }}</th>
               {% endfor %}
-              <th>{% trans %}Location{% endtrans %}</th>              
-              <th style="text-align:center">{% trans %}Witnessed{% endtrans %}</th>              
-              <th style="text-align:center" width="50">{% trans %}Status{% endtrans %}</th>              
-              <th>{% trans %}Description{% endtrans %}</th>              
+              <th>{{ _('Location') }}</th>
+              <th style="text-align:center">{{ _('Witnessed') }}</th>
+              <th style="text-align:center" width="50">{{ _('Status') }}</th>
+              <th>{{ _('Description') }}</th>
             </tr>
             {% for incident in incidents %}
             <tr>
@@ -59,11 +59,11 @@
               </td>
               <td style="text-align:center">
               {% if incident.status == 'confirmed' %}
-              <img src="{{ url_for('static', filename='img/tick.png') }}" title="{% trans %}Confirmed{% endtrans %}" alt="{% trans %}Confirmed{% endtrans %}" />
+              <img src="{{ url_for('static', filename='img/tick.png') }}" title="{{ _('Confirmed') }}" alt="{{ _('Confirmed') }}" />
               {% elif incident.status == 'rejected' %}
-              <img src="{{ url_for('static', filename='img/red_dot.png') }}" title="{% trans %}Rejected{% endtrans %}" alt="{% trans %}Rejected{% endtrans %}" />
+              <img src="{{ url_for('static', filename='img/red_dot.png') }}" title="{{ _('Rejected') }}" alt="{{ _('Rejected') }}" />
               {% else %}
-              <img src="{{ url_for('static', filename='img/caution.png') }}" title="{% trans %}Unmarked{% endtrans %}" alt="{% trans %}Unmarked{% endtrans %}" />
+              <img src="{{ url_for('static', filename='img/caution.png') }}" title="{{ _('Unmarked') }}" alt="{{ _('Unmarked') }}" />
               {% endif %}
               </td>
               <td>{{ incident.incident_comment }}</td>

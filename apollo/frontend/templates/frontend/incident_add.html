@@ -7,11 +7,11 @@
 <table class="table table-bordered table-striped table-hover">
   <tbody>
     <tr>
-      <td>{% trans %}Participant{% endtrans %}</td>
+      <td>{{ _('Participant') }}</td>
       <td>{{ submission_form.contributor(class_='select2-container span4 input-xlarge select2 select2-observers') }}</td>
     </tr>
     <tr>
-      <td>{% trans %}Location{% endtrans %}</td>
+      <td>{{ _('Location') }}</td>
       <td>{{ submission_form.location(class_='select2-container span4 input-xlarge select2 select2-locations') }}</td>
     </tr>
   </tbody>
@@ -43,15 +43,15 @@
     {% endfor -%}
     {% endfor -%}
     <tr>
-      <td>{%- trans -%}Witness{%- endtrans -%}</td>
+      <td>{{ _('Witness') }}</td>
       <td colspan="2">{{ submission_form.witness (class_='form-control span4 input-sm')}}</td>
     </tr>
     <tr>
-      <td>{%- trans -%}Description{%- endtrans -%}</td>
+      <td>{{ _('Description') }}</td>
       <td colspan="2">{{ submission_form.description(cols=40, rows=5,class_='form-control span4') }}</td>
     </tr>
     <tr>
-      <td>{%- trans -%}Status{%- endtrans -%}</td>
+      <td>{{ _('Status') }}</td>
       <td colspan="2">{{ submission_form.status (class_='form-control span2 input-sm')}}</td>
     </tr>
   </tbody>

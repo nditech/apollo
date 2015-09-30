@@ -28,10 +28,10 @@
 {% endblock %}
 {% block toolbar %}
   {%- if perms.export_locations.can() -%}
-  <a class="btn btn-sm btn-default pull-right" href="{{ url_for('locations.locations_list', export='true', **request.args) }}"><i class="glyphicon glyphicon-export"></i> {% trans %}Export{% endtrans %}</a>
+  <a class="btn btn-sm btn-default pull-right" href="{{ url_for('locations.locations_list', export='true', **request.args) }}"><i class="glyphicon glyphicon-export"></i> {{ _('Export') }}</a>
   {%- endif -%}
   {%- if perms.import_locations.can() -%}
-  <button id="open-wizard" class="btn btn-sm btn-primary pull-right" style="margin-right:1em;"><i class="glyphicon glyphicon-import glyphicon-white"></i> {% trans %}Import Locations{% endtrans %}</button>
+  <button id="open-wizard" class="btn btn-sm btn-primary pull-right" style="margin-right:1em;"><i class="glyphicon glyphicon-import glyphicon-white"></i> {{ _('Import Locations') }}</button>
   {%- endif -%}
 {% endblock %}
 {% block content %}
@@ -60,10 +60,10 @@
       <thead>
         <tr>
           <th class="shrink" width="1px"><input type="checkbox" class="checked" id="select_all" name="select_all"></th>
-          <th class="shrink" width="1px">{% trans %}Code{% endtrans %}</th>
-          <th>{% trans %}Name{% endtrans %}</th>
-          <th class="shrink">{% trans %}Type{% endtrans %}</th>
-          <th class="text-center shrink" width="1px">{% trans %}Edit{% endtrans %}</th>
+          <th class="shrink" width="1px">{{ _('Code') }}</th>
+          <th>{{ _('Name') }}</th>
+          <th class="shrink">{{ _('Type') }}</th>
+          <th class="text-center shrink" width="1px">{{ _('Edit') }}</th>
         </tr>
       </thead>
       <tbody>
@@ -73,11 +73,11 @@
           <td class="shrink">{{ location.code }}</td>
           <td>{{ location.name }}</td>
           <td class="shrink">{{ location.location_type }}</td>
-          <td class="text-center shrink"><a href="{{ url_for('locations.location_edit', pk=location.id) }}">{% trans %}Edit{% endtrans %}</a></td>
+          <td class="text-center shrink"><a href="{{ url_for('locations.location_edit', pk=location.id) }}">{{ _('Edit') }}</a></td>
         </tr>
         {% else %}
         <tr class="warning">
-          <td class="text-center" colspan="5">{% trans %}No Data Available{% endtrans %}</td>
+          <td class="text-center" colspan="5">{{ _('No Data Available') }}</td>
         </tr>
         {% endfor %}
       </tbody>
@@ -179,7 +179,7 @@ $(function(){
             async: false,
             error: function (data) {
                 input = card.el.find("#uploadFile");
-                card.wizard.errorPopover(input, "{% trans %}Invalid file.{% endtrans %}");
+                card.wizard.errorPopover(input, "{{ _('Invalid file.') }}");
                 cont = false;
             },
             success: function (data) {

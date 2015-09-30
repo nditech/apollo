@@ -1,7 +1,7 @@
 <form class="form-horizontal" method="POST" action="{{ request.url }}">
 <div class="modal-header">
   <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-  <h4 class="modal-title" id="myModalLabel">{% trans %}Edit Participant{% endtrans %}</h4>
+  <h4 class="modal-title" id="myModalLabel">{{ _('Edit Participant') }}</h4>
 </div>
 <div class="modal-body" style="padding-bottom:5px; padding-top:20px;">
 {{ form.hidden_tag() }}
@@ -32,8 +32,8 @@
   <div class="row">
     <div class="col-sm-1"></div>
       <div class="col-sm-10" style="padding-right:1.8em;">
-        <button type="submit" style="width:122px;"class="btn btn-primary">{% trans %}Save{% endtrans %}</button>
-        <button type="button" style="width:122px;"class="btn btn-default" data-dismiss="modal">{% trans %}Close{% endtrans %}</button>
+        <button type="submit" style="width:122px;"class="btn btn-primary">{{ _('Save') }}</button>
+        <button type="button" style="width:122px;"class="btn btn-default" data-dismiss="modal">{{ _('Close') }}</button>
       </div>
   </div>
 </div>

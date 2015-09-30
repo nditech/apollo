@@ -13,29 +13,29 @@
 {% if form.form_type == 'INCIDENT' %}
 {% if perms.add_submission.can() %}
 <div class="btn-group pull-right">
-  <a style="margin-left:1em" class="btn btn-sm btn-primary" href="{{ url_for('submissions.submission_create', form_id=form.pk) }}"><i class="glyphicon glyphicon-plus glyphicon-white"></i> {% trans %}Add Incident{% endtrans %}</a>
+  <a style="margin-left:1em" class="btn btn-sm btn-primary" href="{{ url_for('submissions.submission_create', form_id=form.pk) }}"><i class="glyphicon glyphicon-plus glyphicon-white"></i> {{ _('Add Incident') }}</a>
 </div>
 {% endif %}
 {% if perms.export_submissions.can() %}
 <div class="btn-group pull-right">
-  <a class="btn btn-sm btn-default" href="{{ url_for('submissions.submission_list', form_id=form.pk, export='observer', **request.args) }}"><i class="glyphicon glyphicon-export"></i> {% trans %}Export{% endtrans %}</a>
+  <a class="btn btn-sm btn-default" href="{{ url_for('submissions.submission_list', form_id=form.pk, export='observer', **request.args) }}"><i class="glyphicon glyphicon-export"></i> {{ _('Export') }}</a>
 </div>
 {% endif %}
 {% else %}
 {% if perms.export_submissions.can() %}
 <div class="btn-group pull-right">
-  <a class="btn btn-sm btn-default" href="{{ url_for('submissions.submission_list', form_id=form.pk, export='master', **request.args) }}"><i class="glyphicon glyphicon-export"></i> {% trans %}Export{% endtrans %}</a>
+  <a class="btn btn-sm btn-default" href="{{ url_for('submissions.submission_list', form_id=form.pk, export='master', **request.args) }}"><i class="glyphicon glyphicon-export"></i> {{ _('Export') }}</a>
   <button class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
   <ul class="dropdown-menu">
-    <li><a href="{{ url_for('submissions.submission_list', form_id=form.pk, export='observer', **request.args) }}">{% trans %}Observers Data{% endtrans %}</a></li>
-    <li><a href="{{ url_for('submissions.submission_list', form_id=form.pk, export='master', **request.args) }}">{% trans %}Master Data{% endtrans %}</a></li>
+    <li><a href="{{ url_for('submissions.submission_list', form_id=form.pk, export='observer', **request.args) }}">{{ _('Observers Data') }}</a></li>
+    <li><a href="{{ url_for('submissions.submission_list', form_id=form.pk, export='master', **request.args) }}">{{ _('Master Data') }}</a></li>
   </ul>
 </div>
 {% endif %}
 {% endif %}
 {% if perms.send_messages.can() %}
 <div class="btn-group pull-right">
-  <button class="btn btn-sm btn-success" id="send_message_modal_btn" style="margin-right:1em;"><i class="glyphicon glyphicon-envelope glyphicon-white"></i> {% trans %}Send Message{% endtrans %}</button>
+  <button class="btn btn-sm btn-success" id="send_message_modal_btn" style="margin-right:1em;"><i class="glyphicon glyphicon-envelope glyphicon-white"></i> {{ _('Send Message') }}</button>
 </div>
 {% endif %}
 {% endblock %}

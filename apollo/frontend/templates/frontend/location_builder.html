@@ -7,11 +7,11 @@
 <form id="save_form" method="POST" action="{{ request.url }}">
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
   <input type="hidden" name="divisions_graph" id="divisions_graph" value="" />
-  <button style="margin-left:1em" type="submit" class="btn btn-sm btn-primary" id="save"><i class="glyphicon glyphicon-floppy-save"></i> {% trans %}Save{% endtrans %}</button>
+  <button style="margin-left:1em" type="submit" class="btn btn-sm btn-primary" id="save"><i class="glyphicon glyphicon-floppy-save"></i> {{ _('Save') }}</button>
 </form>
 </div>
 <div class="btn-group pull-right">
-  <button style="margin-left:1em" type="button" class="btn btn-sm btn-default" id="addDivisionModalButton"><i class="glyphicon glyphicon-plus"></i> {% trans %}Add Division{% endtrans %}</button>
+  <button style="margin-left:1em" type="button" class="btn btn-sm btn-default" id="addDivisionModalButton"><i class="glyphicon glyphicon-plus"></i> {{ _('Add Division') }}</button>
 </div>
 {% endblock %}
 {% block content %}
@@ -20,18 +20,18 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h4 class="modal-title">{% trans %}Add Division{% endtrans %}</h4>
+        <h4 class="modal-title">{{ _('Add Division') }}</h4>
       </div>
       <form role="form" class="form-horizontal">
       <div class="modal-body" style="padding-bottom:5px">
           <div class="form-group">
-            <label for="name" class="col-sm-2 control-label">{% trans %}Name{% endtrans %}</label>
+            <label for="name" class="col-sm-2 control-label">{{ _('Name') }}</label>
             <div class="col-sm-10">
               <input type="text" class="form-control" id="addDivisionName">
             </div>
           </div>
           <div class="form-group">
-            <label for="parents" class="col-sm-2 control-label">{% trans %}Parents{% endtrans %}</label>
+            <label for="parents" class="col-sm-2 control-label">{{ _('Parents') }}</label>
             <div class="col-sm-10">
               <select multiple="multiple" class="form-control" name="parents" id="addDivisionParents">
               </select>
@@ -41,20 +41,20 @@
             <div class="col-sm-10 col-sm-offset-2">
               <div class="checkbox">
                 <label for="addDivisionAdministrative">
-                  <input type="checkbox" name="is_administrative" id="addDivisionAdministrative" value="true" /> {% trans %}Administrative Division{% endtrans %}
+                  <input type="checkbox" name="is_administrative" id="addDivisionAdministrative" value="true" /> {{ _('Administrative Division') }}
                 </label>
               </div>
               <div class="checkbox">
                 <label for="addDivisionPolitical">
-                  <input type="checkbox" name="is_political" id="addDivisionPolitical" value="true" /> {% trans %}Political Division{% endtrans %}
+                  <input type="checkbox" name="is_political" id="addDivisionPolitical" value="true" /> {{ _('Political Division') }}
                 </label>
               </div>
             </div>
           </div>
       </div>
       <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">{% trans %}Close{% endtrans %}</button>
-          <button type="submit" class="btn btn-primary" id="addDivisionAddButton">{% trans %}Add{% endtrans %}</button>
+          <button type="button" class="btn btn-default" data-dismiss="modal">{{ _('Close') }}</button>
+          <button type="submit" class="btn btn-primary" id="addDivisionAddButton">{{ _('Add') }}</button>
       </div>
       </form>
     </div><!-- /.modal-content -->
@@ -65,18 +65,18 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h4 class="modal-title">{% trans %}Update Division{% endtrans %}</h4>
+        <h4 class="modal-title">{{ _('Update Division') }}</h4>
       </div>
       <form role="form" class="form-horizontal">
       <div class="modal-body" style="padding-bottom:5px">
           <div class="form-group">
-            <label for="name" class="col-sm-2 control-label">{% trans %}Name{% endtrans %}</label>
+            <label for="name" class="col-sm-2 control-label">{{ _('Name') }}</label>
             <div class="col-sm-10">
               <input type="text" class="form-control" id="updateDivisionName" name="name">
             </div>
           </div>
           <div class="form-group">
-            <label for="parents" class="col-sm-2 control-label">{% trans %}Parents{% endtrans %}</label>
+            <label for="parents" class="col-sm-2 control-label">{{ _('Parents') }}</label>
             <div class="col-sm-10">
               <select multiple="multiple" class="form-control" name="parents" id="updateDivisionParents">
               </select>
@@ -87,21 +87,21 @@
             <div class="col-sm-10 col-sm-offset-2">
               <div class="checkbox">
                 <label for="updateDivisionAdministrative">
-                  <input type="checkbox" name="is_administrative" id="updateDivisionAdministrative" value="true" /> {% trans %}Administrative Division{% endtrans %}
+                  <input type="checkbox" name="is_administrative" id="updateDivisionAdministrative" value="true" /> {{ _('Administrative Division') }}
                 </label>
               </div>
               <div class="checkbox">
                 <label for="updateDivisionPolitical">
-                  <input type="checkbox" name="is_political" id="updateDivisionPolitical" value="true" /> {% trans %}Political Division{% endtrans %}
+                  <input type="checkbox" name="is_political" id="updateDivisionPolitical" value="true" /> {{ _('Political Division') }}
                 </label>
               </div>
             </div>
           </div>
       </div>
       <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">{% trans %}Close{% endtrans %}</button>
-          <button type="button" class="btn btn-danger" id="updateDivisionDeleteButton">{% trans %}Delete{% endtrans %}</button>
-          <button type="submit" class="btn btn-primary" id="updateDivisionUpdateButton">{% trans %}Update{% endtrans %}</button>
+          <button type="button" class="btn btn-default" data-dismiss="modal">{{ _('Close') }}</button>
+          <button type="button" class="btn btn-danger" id="updateDivisionDeleteButton">{{ _('Delete') }}</button>
+          <button type="submit" class="btn btn-primary" id="updateDivisionUpdateButton">{{ _('Update') }}</button>
       </div>
       </form>
     </div><!-- /.modal-content -->
