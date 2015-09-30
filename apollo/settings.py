@@ -118,7 +118,8 @@ APPLICATIONS = ast.literal_eval(os.environ.get(
         "apollo.formsframework",
         "apollo.submissions",
         "apollo.messaging",
-        "apollo.analyses")'''))
+        "apollo.analyses",
+        "apollo.odk")'''))
 
 BIG_N = ast.literal_eval(os.environ.get('BIG_N', '0')) or numpy.inf
 GOOGLE_ANALYTICS_KEY = os.environ.get('GOOGLE_ANALYTICS_KEY')
