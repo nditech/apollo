@@ -34,15 +34,15 @@ bp = Blueprint('submissions', __name__, template_folder='templates',
 @route(bp, '/submissions/form/<form_id>', methods=['GET', 'POST'])
 @register_menu(
     bp, 'main.checklists',
-    '<i class="glyphicon glyphicon-check"></i> ' + _('Checklists'), order=1,
+    _('Checklists'), order=1, icon='<i class="glyphicon glyphicon-check"></i>',
     visible_when=lambda: len(get_form_list_menu(form_type='CHECKLIST')) > 0)
 @register_menu(bp, 'main.checklists.forms', _('Checklists'),
                dynamic_list_constructor=partial(
                     get_form_list_menu, form_type='CHECKLIST'))
 @register_menu(
     bp, 'main.incidents',
-    '<i class="glyphicon glyphicon-check"></i> ' + _('Critical Incidents'),
-    order=2,
+    _('Critical Incidents'),
+    order=2, icon='<i class="glyphicon glyphicon-check"></i>',
     visible_when=lambda: len(get_form_list_menu(form_type='INCIDENT')) > 0)
 @register_menu(bp, 'main.incidents.forms', _('Critical Incidents'),
                dynamic_list_constructor=partial(
@@ -516,8 +516,8 @@ def submission_version(submission_id, version_id):
 @route(bp, '/submissions/qa/<form_id>')
 @register_menu(
     bp, 'main.qa',
-    '<i class="glyphicon glyphicon-ok"></i> ' + _('Quality Assurance'),
-    order=3,
+    _('Quality Assurance'),
+    order=3, icon='<i class="glyphicon glyphicon-ok"></i>',
     visible_when=lambda: len(get_quality_assurance_form_list_menu(
         form_type='CHECKLIST', verifiable=True)) > 0
     and permissions.view_analyses.can())

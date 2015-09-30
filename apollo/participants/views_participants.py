@@ -42,7 +42,8 @@ participant_api.add_resource(
 @route(bp, '/participants', methods=['GET', 'POST'])
 @register_menu(
     bp, 'main.participants',
-    '<i class="glyphicon glyphicon-user"></i> ' + _('Participants'),
+    _('Participants'),
+    icon='<i class="glyphicon glyphicon-user"></i>',
     visible_when=lambda: permissions.view_participants.can(),
     order=5)
 @permissions.view_participants.require(403)
