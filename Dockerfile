@@ -16,7 +16,7 @@ ADD doc/ /app/doc/
 ADD Procfile.docker /app/Procfile
 ADD manage.py /app/
 
-RUN pybabel compile -d /app/apollo/frontend/translations/
+RUN pybabel compile -d /app/apollo/translations/
 
 WORKDIR /app/
 CMD ["honcho","start"]
