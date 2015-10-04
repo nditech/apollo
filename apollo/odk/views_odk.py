@@ -11,7 +11,6 @@ from slugify import slugify
 from apollo import services, csrf
 from apollo.frontend import route
 from apollo.frontend.helpers import DictDiffer
-from apollo.participants import Participant
 
 DEFAULT_CONTENT_LENGTH = 1000000
 DEFAULT_CONTENT_TYPE = 'text/xml; charset=utf-8'
@@ -44,13 +43,12 @@ bp = Blueprint('xforms', __name__, template_folder='templates')
 
 participant_auth = HTTPDigestAuth()
 
+
 @participant_auth.get_password
-def get_pw(p_id):
-    try:
-        participant = Participant.objects.get(participant_id=p_id)
-        return participant.password
-    except Participant.DoesNotExist:
-        return None
+def get_pw(participant_id):
+    participant = services.participants.get(participant_id=participant_id)
+    return participant.password if participant else None
+
 
 @route(bp, '/xforms/formList')
 def get_form_download_list():
@@ -105,10 +103,9 @@ def submission():
         document = etree.parse(source_file, parser)
 
         form_pk = document.xpath('//data/form_id')[0].text
-        form = services.forms.get(id=form_pk)
+        form = services.forms.get(pk=form_pk)
 
-        participant = Participant.objects.get(participant_id=participant_auth.username())
-
+        participant = services.participants.get(participant_id=participant_auth.username())
         if not form or not participant:
             return open_rosa_default_response(status_code=404)
     except (IndexError, etree.LxmlError):

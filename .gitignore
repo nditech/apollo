@@ -15,3 +15,4 @@ man/
 messages.mo
 share/
 src/
+*test_files/gen*
