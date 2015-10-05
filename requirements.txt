@@ -23,6 +23,7 @@ Flask-RESTful==0.2.12
 Flask-Script==0.6.7
 Flask-Security==1.7.1
 Flask-SSLify==0.1.4
+Flask-Testing==0.4.2
 Flask-WTF==0.11
 Flask==0.10.1
 gevent==1.0.1
