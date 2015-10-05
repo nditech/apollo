@@ -137,10 +137,18 @@ def submission():
         return open_rosa_default_response(status_code=404)
 
     for tag in form.tags:
+        field = form.get_field_by_tag(tag)
+        if field.is_comment_field:
+            continue
+
         path_spec = '//data/{}'.format(tag)
         element = document.xpath(path_spec)[0]
         if element.text:
-            setattr(submission, tag, int(element.text))
+            if field.allows_multiple_values:
+                setattr(
+                    submission, tag, [int(i) for i in element.text.split()])
+            else:
+                setattr(submission, tag, int(element.text))
 
     with signals.post_save.connected_to(
         update_submission_version,
