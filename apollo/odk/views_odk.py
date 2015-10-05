@@ -113,13 +113,15 @@ def submission():
     except (IndexError, etree.LxmlError):
         return open_rosa_default_response(status_code=400)
 
-    submission = services.submissions.find(
-        contributor=participant,
-        form=form,
-        submission_type='O'
-    ).order_by('-created').first()
+    submission = None
 
-    if not submission:
+    if form.form_type == 'CHECKLIST':
+        submission = services.submissions.find(
+            contributor=participant,
+            form=form,
+            submission_type='O'
+        ).order_by('-created').first()
+    else:
         submission = services.submissions.new(
             contributor=participant,
             created=datetime.utcnow(),
@@ -130,10 +132,14 @@ def submission():
             submission_type='O',
         )
 
+    if not submission:
+        # no existing submission for that form and participant
+        return open_rosa_default_response(status_code=404)
+
     for tag in form.tags:
         path_spec = '//data/{}'.format(tag)
         element = document.xpath(path_spec)[0]
-        if element.text and getattr(submission, tag, None):
+        if element.text:
             setattr(submission, tag, int(element.text))
 
     with signals.post_save.connected_to(
