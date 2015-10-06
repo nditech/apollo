@@ -165,7 +165,7 @@ def update_participants(dataframe, event, header_map):
         try:
             if LOCATION_ID_COL:
                 loc_code = record[LOCATION_ID_COL]
-                if type(loc_code) == 'float':
+                if isinstance(loc_code, float):
                     loc_code = int(loc_code)
                 location = services.locations.get(
                     code=unicode(loc_code),
