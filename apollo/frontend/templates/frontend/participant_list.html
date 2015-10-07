@@ -31,14 +31,14 @@ a:hover.arrow-style{text-decoration:none; color:#333;}
 {% endblock %}
 {% block toolbar %}
   {%- if perms.export_participants.can() -%}
-  <a class="btn btn-sm btn-default pull-right" href="{{ url_for('participants.participant_list', export='true', **request.args) }}"><i class="glyphicon glyphicon-export"></i> {% trans %}Export{% endtrans %}</a>
+  <a class="btn btn-sm btn-default pull-right" href="{{ url_for('participants.participant_list', export='true', **request.args) }}"><i class="glyphicon glyphicon-export"></i> {{ _('Export') }}</a>
   {%- endif -%}
-  <a class="btn btn-sm btn-default pull-right" href="{{ url_for('participants.participant_performance_list') }}" style="margin-right:1em;"><i class="glyphicon glyphicon-stats"></i> {% trans %}Performance Evaluation{% endtrans %}</a>
+  <a class="btn btn-sm btn-default pull-right" href="{{ url_for('participants.participant_performance_list') }}" style="margin-right:1em;"><i class="glyphicon glyphicon-stats"></i> {{ _('Performance Evaluation') }}</a>
   {%- if perms.import_participants.can() -%}
-  <button id="open-wizard" class="btn btn-sm btn-primary pull-right" style="margin-right:1em;"><i class="glyphicon glyphicon-import glyphicon-white"></i> {% trans %}Import Participants{% endtrans %}</button>
+  <button id="open-wizard" class="btn btn-sm btn-primary pull-right" style="margin-right:1em;"><i class="glyphicon glyphicon-import glyphicon-white"></i> {{ _('Import Participants') }}</button>
   {%- endif -%}
   {%- if perms.send_messages.can() -%}
-  <button class="btn btn-sm btn-success pull-right" id="send_message_modal_btn" style="margin-right:1em;"><i class="glyphicon glyphicon-envelope"></i> {% trans %}Send Message{% endtrans %}</button>
+  <button class="btn btn-sm btn-success pull-right" id="send_message_modal_btn" style="margin-right:1em;"><i class="glyphicon glyphicon-envelope"></i> {{ _('Send Message') }}</button>
   {%- endif -%}
 {% endblock %}
 {% block content %}
@@ -70,21 +70,21 @@ a:hover.arrow-style{text-decoration:none; color:#333;}
            <thead>
              <tr>
               <th><input type="checkbox" class="checked" id="select_all" name="select_all"></th>
-               <th><a href="{{ url_for('participants.participant_list', sort_by='id', **args) }}" class="arrow-style"><img src="{{ url_for('static', filename='img/double-arrow.gif') }}" class="img pull-left"></img>{% trans %}ID{% endtrans %}</a></th>
+               <th><a href="{{ url_for('participants.participant_list', sort_by='id', **args) }}" class="arrow-style"><img src="{{ url_for('static', filename='img/double-arrow.gif') }}" class="img pull-left"></img>{{ _('ID') }}</a></th>
                {%- for location_type in location_types -%}
                <th>{{ location_type.name }}</th>
                {%- endfor -%}
-               <th>{% trans %}Location{% endtrans %}</th>
-               <th><a href="{{ url_for('participants.participant_list', sort_by='name', **args) }}" class="arrow-style"><img src="{{ url_for('static', filename='img/double-arrow.gif') }}" class="img pull-left"></img>{% trans %}Name{% endtrans %}</a></th>
-               <th><a href="{{ url_for('participants.participant_list', sort_by='gen', **args) }}" class="arrow-style"><img src="{{ url_for('static', filename='img/double-arrow.gif') }}" class="img pull-left"></img>{% trans %}Gender{% endtrans %}</a></th>
-               <th>{% trans %}Role{% endtrans %}</th>
-               <th>{% trans %}Phone{% endtrans %}</th>
-               <th>{% trans %}Organization{% endtrans %}</th>
+               <th>{{ _('Location') }}</th>
+               <th><a href="{{ url_for('participants.participant_list', sort_by='name', **args) }}" class="arrow-style"><img src="{{ url_for('static', filename='img/double-arrow.gif') }}" class="img pull-left"></img>{{ _('Name') }}</a></th>
+               <th><a href="{{ url_for('participants.participant_list', sort_by='gen', **args) }}" class="arrow-style"><img src="{{ url_for('static', filename='img/double-arrow.gif') }}" class="img pull-left"></img>{{ _('Gender') }}</a></th>
+               <th>{{ _('Role') }}</th>
+               <th>{{ _('Phone') }}</th>
+               <th>{{ _('Organization') }}</th>
                {% for field in extra_fields %}
                <th><a href="{{ url_for('participants.participant_list', sort_by=field.name, **args) }}" class="arrow-style"><img src="{{ url_for('static', filename='img/double-arrow.gif') }}" class="img pull-left"></img>{{ field.label }}</a></th>
                {% endfor %}
                {%- if perms.edit_participant.can() -%}
-               <th class="text-center">{% trans %}Edit{% endtrans %}</th>
+               <th class="text-center">{{ _('Edit') }}</th>
                {%- endif -%}
              </tr>
            </thead>
@@ -106,7 +106,7 @@ a:hover.arrow-style{text-decoration:none; color:#333;}
                <td>{{ participant[field.name]|default('', true) }}</td>
                {% endfor %}
                {%- if perms.edit_participant.can() -%}
-               <td class="text-center"><a href="{{ url_for('participants.participant_edit', pk=participant.id) }}" data-toggle="modal" data-target="#edit_modal">{% trans %}Edit{% endtrans %}</a></td>
+               <td class="text-center"><a href="{{ url_for('participants.participant_edit', pk=participant.id) }}" data-toggle="modal" data-target="#edit_modal">{{ _('Edit') }}</a></td>
                {%- endif -%}
              </tr>
              {% else %}
@@ -116,7 +116,7 @@ a:hover.arrow-style{text-decoration:none; color:#333;}
              {%- set colspan = 8 + (location_types|length) + (extra_fields|length) -%}
              {%- endif -%}
              <tr class="warning">
-               <td class="text-center" colspan="{{ colspan }}">{% trans %}No Data Available{% endtrans %}</td>
+               <td class="text-center" colspan="{{ colspan }}">{{ _('No Data Available') }}</td>
              </tr>
              {% endfor %}
            </tbody>
@@ -134,7 +134,7 @@ a:hover.arrow-style{text-decoration:none; color:#333;}
         <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-            <h4 class="modal-title" id="editModalLabel">{% trans %}Edit Participant{% endtrans %}</h4>
+            <h4 class="modal-title" id="editModalLabel">{{ _('Edit Participant') }}</h4>
           </div>
           <div class="modal-body" style="height:4.5em">
             <div id="loader" class="ajax_loader" style="margin:auto">
@@ -263,7 +263,7 @@ $(function(){
             async: false,
             error: function (data) {
                 input = card.el.find("#uploadFile");
-                card.wizard.errorPopover(input, "{% trans %}Invalid file.{% endtrans %}");
+                card.wizard.errorPopover(input, "{{ _('Invalid file.') }}");
                 cont = false;
             },
             success: function (data) {

@@ -12,10 +12,10 @@ a:hover.arrow-style{text-decoration:none; color:#333;}
 {% endblock %}
 {% block toolbar %}
   {%- if perms.export_participants.can() -%}
-  <a class="btn btn-sm btn-default pull-right" href="{{ url_for('participants.participant_performance_list', export='true', **request.args) }}"><i class="glyphicon glyphicon-export"></i> {% trans %}Export{% endtrans %}</a>
+  <a class="btn btn-sm btn-default pull-right" href="{{ url_for('participants.participant_performance_list', export='true', **request.args) }}"><i class="glyphicon glyphicon-export"></i> {{ _('Export') }}</a>
   {%- endif -%}
   {%- if perms.send_messages.can() -%}
-  <button class="btn btn-sm btn-success pull-right" id="send_message_modal_btn" style="margin-right:1em;"><i class="glyphicon glyphicon-envelope"></i> {% trans %}Send Message{% endtrans %}</button>
+  <button class="btn btn-sm btn-success pull-right" id="send_message_modal_btn" style="margin-right:1em;"><i class="glyphicon glyphicon-envelope"></i> {{ _('Send Message') }}</button>
   {%- endif -%}
 {% endblock %}
 {% block content %}
@@ -42,19 +42,19 @@ a:hover.arrow-style{text-decoration:none; color:#333;}
            <thead>
              <tr>
               <th><input type="checkbox" class="checked" id="select_all" name="select_all"></th>
-               <th><a href="{{ url_for('participants.participant_performance_list', sort_by='id', **args) }}" class="arrow-style"><img src="{{ url_for('static', filename='img/double-arrow.gif') }}" class="img pull-left"></img>{% trans %}ID{% endtrans %}</a></th>
+               <th><a href="{{ url_for('participants.participant_performance_list', sort_by='id', **args) }}" class="arrow-style"><img src="{{ url_for('static', filename='img/double-arrow.gif') }}" class="img pull-left"></img>{{ _('ID') }}</a></th>
                {%- for location_type in location_types -%}
                <th>{{ location_type.name }}</th>
                {%- endfor -%}
-               <th>{% trans %}Location{% endtrans %}</th>
-               <th><a href="{{ url_for('participants.participant_performance_list', sort_by='name', **args) }}" class="arrow-style"><img src="{{ url_for('static', filename='img/double-arrow.gif') }}" class="img pull-left"></img>{% trans %}Name{% endtrans %}</a></th>
-               <th>{% trans %}Role{% endtrans %}</th>
-               <th>{% trans %}Phone{% endtrans %}</th>
-               <th class="text-right">{% trans %}Messages{% endtrans %}</th>
-               <th class="text-right">{% trans %}Accuracy{% endtrans %}</th>
-               <th class="text-right">{% trans %}Completion{% endtrans %}</th>
-               <th class="text-center">{% trans %}Rating{% endtrans %}</th>
-               <th class="text-center">{% trans %}View{% endtrans %}</th>
+               <th>{{ _('Location') }}</th>
+               <th><a href="{{ url_for('participants.participant_performance_list', sort_by='name', **args) }}" class="arrow-style"><img src="{{ url_for('static', filename='img/double-arrow.gif') }}" class="img pull-left"></img>{{ _('Name') }}</a></th>
+               <th>{{ _('Role') }}</th>
+               <th>{{ _('Phone') }}</th>
+               <th class="text-right">{{ _('Messages') }}</th>
+               <th class="text-right">{{ _('Accuracy') }}</th>
+               <th class="text-right">{{ _('Completion') }}</th>
+               <th class="text-center">{{ _('Rating') }}</th>
+               <th class="text-center">{{ _('View') }}</th>
              </tr>
            </thead>
            <tbody>
@@ -75,7 +75,7 @@ a:hover.arrow-style{text-decoration:none; color:#333;}
                <td class="text-right">{{ accuracy|round|int }}%</td>
                <td class="text-right">{{ completion|round|int }}%</td>
                <td class="text-center"><div class="raty" data-score="{{ (accuracy + completion)/200 * 5 }}" data-number="5"></div></td>
-               <td class="text-center"><a href="{{ url_for('participants.participant_performance_detail', pk=participant.id) }}">{% trans %}View{% endtrans %}</a></td>
+               <td class="text-center"><a href="{{ url_for('participants.participant_performance_detail', pk=participant.id) }}">{{ _('View') }}</a></td>
              </tr>
              {% else %}
              {%- if perms.edit_participant.can() -%}
@@ -84,7 +84,7 @@ a:hover.arrow-style{text-decoration:none; color:#333;}
              {%- set colspan = 8 + (location_types|length) + (g.deployment.participant_extra_fields|length) -%}
              {%- endif -%}
              <tr class="warning">
-               <td class="text-center" colspan="{{ colspan }}">{% trans %}No Data Available{% endtrans %}</td>
+               <td class="text-center" colspan="{{ colspan }}">{{ _('No Data Available') }}</td>
              </tr>
              {% endfor %}
            </tbody>

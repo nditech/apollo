@@ -25,8 +25,8 @@ bp = Blueprint('dashboard', __name__, template_folder='templates',
 @route(bp, '/')
 @register_menu(
     bp, 'main.dashboard',
-    '<i class="glyphicon glyphicon-user glyphicon-home"></i> '
-    + _('Dashboard'), order=0)
+    _('Dashboard'), order=0,
+    icon='<i class="glyphicon glyphicon-user glyphicon-home"></i>')
 @login_required
 def index():
     args = request.args.copy()

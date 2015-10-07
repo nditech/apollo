@@ -17,7 +17,7 @@ PAGE_SIZE = ast.literal_eval(
     os.environ.get('PAGE_SIZE', '25'))
 
 MONGODB_SETTINGS = {
-    'DB': os.environ.get('MONGO_DATABASE_NAME', 'apollo'),
+    'DB': os.environ.get('MONGO_DATABASE_NAME', 'apollo').strip(),
     'HOST': urlparse(
         os.environ.get('MONGODB_PORT', 'mongodb://localhost')).netloc
 }
@@ -49,7 +49,7 @@ SECURITY_TRACKABLE = True
 SESSION_COOKIE_SECURE = True if SSL_REQUIRED else False
 PERMANENT_SESSION_LIFETIME = timedelta(hours=1)
 
-MAIL_SERVER = os.environ.get('MAIL_SERVER', 'localhost')
+MAIL_SERVER = os.environ.get('MAIL_SERVER', 'localhost').strip()
 MAIL_PORT = os.environ.get('MAIL_PORT', 25)
 MAIL_USE_TLS = ast.literal_eval(os.environ.get('MAIL_USE_TLS', 'False'))
 MAIL_USE_SSL = ast.literal_eval(os.environ.get('MAIL_USE_SSL', 'False'))
@@ -111,7 +111,7 @@ MESSAGING_CC = ast.literal_eval(os.environ.get('MESSAGING_CC', '[]'))
 MESSAGING_SECRET = os.environ.get('MESSAGING_SECRET')
 
 APPLICATIONS = ast.literal_eval(os.environ.get(
-    'APPLICATION',
+    'APPLICATIONS',
     '''("apollo.frontend",
         "apollo.locations",
         "apollo.participants",

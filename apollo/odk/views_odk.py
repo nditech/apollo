@@ -2,16 +2,16 @@
 from datetime import datetime
 import json
 
-from flask import Blueprint, g, make_response, render_template, request
+from flask import Blueprint, make_response, render_template, request
 from flask_httpauth import HTTPDigestAuth
 from lxml import etree
 from mongoengine import signals
 from slugify import slugify
 
 from apollo import services, csrf
+from apollo.formsframework.forms import filter_participants
 from apollo.frontend import route
 from apollo.frontend.helpers import DictDiffer
-from apollo.participants import Participant
 
 DEFAULT_CONTENT_LENGTH = 1000000
 DEFAULT_CONTENT_TYPE = 'text/xml; charset=utf-8'
@@ -44,13 +44,12 @@ bp = Blueprint('xforms', __name__, template_folder='templates')
 
 participant_auth = HTTPDigestAuth()
 
+
 @participant_auth.get_password
-def get_pw(p_id):
-    try:
-        participant = Participant.objects.get(participant_id=p_id)
-        return participant.password
-    except Participant.DoesNotExist:
-        return None
+def get_pw(participant_id):
+    participant = services.participants.get(participant_id=participant_id)
+    return participant.password if participant else None
+
 
 @route(bp, '/xforms/formList')
 def get_form_download_list():
@@ -90,6 +89,7 @@ def get_form(form_pk):
 
     return response
 
+
 @csrf.exempt
 @route(bp, '/xforms/submission', methods=['HEAD', 'POST'])
 @participant_auth.login_required
@@ -105,37 +105,50 @@ def submission():
         document = etree.parse(source_file, parser)
 
         form_pk = document.xpath('//data/form_id')[0].text
-        form = services.forms.get(id=form_pk)
+        form = services.forms.get(pk=form_pk)
 
-        participant = Participant.objects.get(participant_id=participant_auth.username())
-
+        participant = filter_participants(form, participant_auth.username())
         if not form or not participant:
             return open_rosa_default_response(status_code=404)
     except (IndexError, etree.LxmlError):
         return open_rosa_default_response(status_code=400)
 
-    submission = services.submissions.find(
-        contributor=participant,
-        form=form,
-        submission_type='O'
-    ).order_by('-created').first()
+    submission = None
 
-    if not submission:
+    if form.form_type == 'CHECKLIST':
+        submission = services.submissions.find(
+            contributor=participant,
+            form=form,
+            submission_type='O'
+        ).order_by('-created').first()
+    else:
         submission = services.submissions.new(
             contributor=participant,
             created=datetime.utcnow(),
-            deployment=g.deployment,
-            event=g.event,
+            deployment=participant.deployment,
+            event=participant.event,
             form=form,
             location=participant.location,
             submission_type='O',
         )
 
+    if not submission:
+        # no existing submission for that form and participant
+        return open_rosa_default_response(status_code=404)
+
     for tag in form.tags:
+        field = form.get_field_by_tag(tag)
+        if field.is_comment_field:
+            continue
+
         path_spec = '//data/{}'.format(tag)
         element = document.xpath(path_spec)[0]
-        if element.text and getattr(submission, tag, None):
-            setattr(submission, tag, int(element.text))
+        if element.text:
+            if field.allows_multiple_values:
+                setattr(
+                    submission, tag, [int(i) for i in element.text.split()])
+            else:
+                setattr(submission, tag, int(element.text))
 
     with signals.post_save.connected_to(
         update_submission_version,

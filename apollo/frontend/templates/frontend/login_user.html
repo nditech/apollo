@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>{% trans %}User Login{% endtrans %}</title>
+    <title>{{ _('User Login') }}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -23,18 +23,18 @@
       <div class="row">
         <div class="col-md-4 col-md-offset-4">
           <div class="panel panel-default panel-login">
-            <div class="panel-heading panel-heading-login">{% trans %}User Login{% endtrans %}</div>
+            <div class="panel-heading panel-heading-login">{{ _('User Login') }}</div>
             <div class="panel-body panel-login-body">
               {% for msg in get_flashed_messages() %}
               <div class="alert alert-info">{{ msg }}</div>
               {% endfor %}
                 {% if login_user_form.errors %}
-                <div class="alert alert-danger">{% trans %}Your username and password <strong>did not match</strong>. Please try again.{% endtrans %}</div>
+                <div class="alert alert-danger">{{ _('Your username and password <strong>did not match</strong>. Please try again.') }}</div>
                 {% endif %}
               <form name="persona_login_form" id="persona_login_form" class="form-vertical" action="{{ url_for('auth.persona_login') }}" method="POST" accept-charset="utf-8">
                 <input type="hidden" name="assertion" id="assertion">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                <a href="#" class="persona-button" id="persona-signin"><span>Sign In with Persona</span></a>
+                <a href="#" class="persona-button" id="persona-signin"><span>{{ _('Sign In with Persona') }}</span></a>
               </form>
                 <div class="strike">
                   <span>or</span>
@@ -45,7 +45,7 @@
                     <span class="input-group-addon input-sm">
                       <i class="glyphicon glyphicon-user"></i>
                     </span>
-                    <input type="text" name="{{ login_user_form.email.name }}" id="{{ login_user_form.email.id }}" class="form-control" placeholder="{% trans %}Email{% endtrans %}">
+                    <input type="text" name="{{ login_user_form.email.name }}" id="{{ login_user_form.email.id }}" class="form-control" placeholder="{{ _('Email') }}">
                   </div>
                 </div>
                 <div class="form-group">
@@ -53,11 +53,11 @@
                     <span class="input-group-addon input-sm">
                       <i class="glyphicon glyphicon-lock"></i>
                     </span>
-                    <input type="password" name="{{ login_user_form.password.name }}" id="{{ login_user_form.password.id }}" class="input-xlarge form-control" placeholder="{% trans %}Password{% endtrans %}" autocomplete="off">
+                    <input type="password" name="{{ login_user_form.password.name }}" id="{{ login_user_form.password.id }}" class="input-xlarge form-control" placeholder="{{ _('Password') }}" autocomplete="off">
                   </div>
                 </div>
                 <input type="hidden" name="{{ login_user_form.next.name }}" id="{{ login_user_form.next.id }}" value="{{ login_user_form.next.value }}">
-                <button type="submit" class="btn btn-sm btn-default">{% trans %}Sign In{% endtrans %}</button>
+                <button type="submit" class="btn btn-sm btn-default">{{ _('Sign In') }}</button>
               </form>
             </div>
           </div>

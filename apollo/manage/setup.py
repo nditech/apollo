@@ -49,10 +49,10 @@ class SetupCommand(Command):
 
             print '\nUser created successfully'
             print 'User(id=%s email=%s)' % (user.id, user.email)
-            return
-        print '\nError creating user:'
-        for errors in form.errors.values():
-            print '\n'.join(errors)
+        else:
+            print '\nError creating user:'
+            for errors in form.errors.values():
+                print '\n'.join(errors)
 
         # create at least one event
         name = prompt('Event name')

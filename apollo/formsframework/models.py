@@ -236,6 +236,10 @@ class Form(db.Document):
         for group in self.groups:
             grp_element = E.group(E.label(group.name))
             for field in group.fields:
+                # skip comment fields
+                if field.is_comment_field:
+                    continue
+
                 data.append(etree.Element(field.name))
                 path = '/data/{}'.format(field.name)
                 # fields that carry options may be single- or multiselect

@@ -468,7 +468,7 @@ def generate_submission_filter(form):
 
     # add in form groups
     for group in form.groups:
-        field_name = '{}__{}'.format(form.pk, group.slug)
+        field_name = u'{}__{}'.format(form.pk, group.slug)
         choices = [
             ('0', _('%(group)s Status', group=group.name)),
             ('1', _('%(group)s Partial', group=group.name)),

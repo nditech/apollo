@@ -1,7 +1,7 @@
 {% extends "frontend/_layout.html" %}
 {% block toolbar %}
-<a class="btn btn-sm btn-warning pull-right" data-toggle="modal" data-target="#checklistModal" href="#"><span class="glyphicon glyphicon-list-alt"></span> {% trans %}Create checklists{% endtrans %}</a>
-<a class="btn btn-sm btn-default pull-right" href="{{ url_for('forms.new_form') }}" style="margin-right: 1em"><span class="glyphicon glyphicon-plus"></span> {% trans %}Add form{% endtrans %}</a>
+<a class="btn btn-sm btn-warning pull-right" data-toggle="modal" data-target="#checklistModal" href="#"><span class="glyphicon glyphicon-list-alt"></span> {{ _('Create checklists') }}</a>
+<a class="btn btn-sm btn-default pull-right" href="{{ url_for('forms.new_form') }}" style="margin-right: 1em"><span class="glyphicon glyphicon-plus"></span> {{ _('Add form') }}</a>
 {% endblock %}
 {% block content %}
 {% with messages = get_flashed_messages(category_filter=['checklist_init_success']) %}
@@ -41,9 +41,9 @@
     <table class="table table-striped table-bordered table-hover">
       <thead>
         <tr>
-          <th>{% trans %}Name{% endtrans %}</th>
-          <th width="100px">{% trans %}Type{% endtrans %}</th>
-          <th width="132px" class="text-center">{% trans %}Form Actions{% endtrans %}</th>
+          <th>{{ _('Name') }}</th>
+          <th width="100px">{{ _('Type') }}</th>
+          <th width="132px" class="text-center">{{ _('Form Actions') }}</th>
         </tr>
       </thead>
       <tbody>
@@ -53,11 +53,11 @@
           <td style="vertical-align: middle"><span class="label {% if form.form_type == 'CHECKLIST' %}label-primary{% else %}label-default{% endif %}">{{ form.form_type }}</span></td>
           <td><ul class="nav nav-pills">
             <li role="presentation" class="dropdown">
-              <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">{% trans %}Form Actions{% endtrans %} <span class="caret"></span></a>
+              <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">{{ _('Form Actions') }} <span class="caret"></span></a>
               <ul class="dropdown-menu" role="menu">
-                <li><a href="{{ url_for('forms.edit_form', pk=form.pk) }}">{% trans %}Properties{% endtrans %}</a></li>
-                <li><a href="{{ url_for('forms.form_builder', pk=form.pk) }}">{% trans %}Builder{% endtrans %}</a></li>
-                {% if form.form_type == 'CHECKLIST' %}<li><a href="{{ url_for('forms.quality_assurance', pk=form.pk) }}">{% trans %}Quality Assurance{% endtrans %}</a></li>{% endif %}
+                <li><a href="{{ url_for('forms.edit_form', pk=form.pk) }}">{{ _('Properties') }}</a></li>
+                <li><a href="{{ url_for('forms.form_builder', pk=form.pk) }}">{{ _('Builder') }}</a></li>
+                {% if form.form_type == 'CHECKLIST' %}<li><a href="{{ url_for('forms.quality_assurance', pk=form.pk) }}">{{ _('Quality Assurance') }}</a></li>{% endif %}
               </ul>
             </li>
           </ul></td>
@@ -71,23 +71,23 @@
           <div class="modal-content">
             <div class="modal-header">
               <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-              <h4 class="modal-title" id="checklistModalLabel">{% trans %}Create checklists{% endtrans %}</h4>
+              <h4 class="modal-title" id="checklistModalLabel">{{ _('Create checklists') }}</h4>
             </div>
             <div class="modal-body">
                 {{ init_form.hidden_tag() }}
                 <div class="form-group">
-                  <label for="{{ init_form.form.id }}" class="col-sm-3">{% trans %}Checklist form{% endtrans %}</label> <div class="col-sm-9">{{ init_form.form(class_='form-control') }}</div>
+                  <label for="{{ init_form.form.id }}" class="col-sm-3">{{ _('Checklist form') }}</label> <div class="col-sm-9">{{ init_form.form(class_='form-control') }}</div>
                 </div>
                 <div class="form-group">
-                  <label for="{{ init_form.role.id }}" class="col-sm-3">{% trans %}Role{% endtrans %}</label> <div class="col-sm-9">{{ init_form.role(class_='form-control') }}</div>
+                  <label for="{{ init_form.role.id }}" class="col-sm-3">{{ _('Role') }}</label> <div class="col-sm-9">{{ init_form.role(class_='form-control') }}</div>
                 </div>
                 <div class="form-group">
-                  <label for="{{ init_form.location_type.id }}" class="col-sm-3">{% trans %}Location type{% endtrans %}</label> <div class="col-sm-9">{{ init_form.location_type(class_='form-control') }}</div>
+                  <label for="{{ init_form.location_type.id }}" class="col-sm-3">{{ _('Location type') }}</label> <div class="col-sm-9">{{ init_form.location_type(class_='form-control') }}</div>
                 </div>
             </div>
             <div class="modal-footer">
-              <button type="submit" class="btn btn-warning">{% trans %}Create checklists{% endtrans %}</button>
-              <button type="button" class="btn btn-default" data-dismiss="modal">{% trans %}Close{% endtrans %}</button>
+              <button type="submit" class="btn btn-warning">{{ _('Create checklists') }}</button>
+              <button type="button" class="btn btn-default" data-dismiss="modal">{{ _('Close') }}</button>
             </div>
           </div>
         </div>

@@ -68,7 +68,8 @@ def get_form_list_menu(**kwargs):
     """
     return [{'url': url_for('submissions.submission_list',
              form_id=str(form.id)),
-             'text': '<i class="glyphicon glyphicon-check"></i> ' + form.name,
+             'text': form.name,
+             'icon': '<i class="glyphicon glyphicon-check"></i>',
              'visible': True}
             for form in filter(
                 lambda f: Permission(ItemNeed('view_forms', f, 'object'),
@@ -96,7 +97,8 @@ def get_quality_assurance_form_list_menu(**kwargs):
     """
     return [{'url': url_for('submissions.quality_assurance_list',
              form_id=str(form.id)),
-             'text': '<i class="glyphicon glyphicon-ok"></i> ' + form.name,
+             'text': form.name,
+             'icon': '<i class="glyphicon glyphicon-ok"></i>',
              'visible': True}
             for form in filter(
                 lambda f: Permission(ItemNeed('view_forms', f, 'object'),

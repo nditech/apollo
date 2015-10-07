@@ -1,13 +1,13 @@
 {% load i18n %}
 <tr>
-    <th>{% trans "Observer ID" %}</th>
+    <th>{{ _("Observer ID") }}</th>
     {% for location_type in location_types %}
     <th>{{ location_type.name }}</th>
     {% endfor %}
-    <th>{% trans "Observer" %}</th>
+    <th>{{ _("Observer") }}</th>
     {% for flag in form_flags %}
     <th style="text-align:center">{{ flag }}</th>
     {% endfor %}
     <th style="text-align:center"><abbr title="Status"><i class="glyphicon glyphicon-eye-open"></i></abbr></th>
-    {% if perms.core.change_submission %}<th style="text-align:center">{% trans "Edit" context "verb" %}</th>{% endif %}
+    {% if perms.core.change_submission %}<th style="text-align:center">{{ _("Edit") }}</th>{% endif %}
 </tr>
