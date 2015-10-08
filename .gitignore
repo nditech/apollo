@@ -6,7 +6,6 @@
 .Python
 .webassets-cache
 apollo-*.tar.gz
-apollo/static/
 assets/
 bin/
 include/
