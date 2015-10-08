@@ -8,7 +8,7 @@ RUN apt-get install -y python-dev build-essential python-setuptools git-core fil
 RUN easy_install pip
 
 ADD requirements.txt /app/
-RUN pip install -r /app/requirements.txt
+RUN pip install --trusted-host pypi.timbaobjects.com --extra-index-url=http://pypi.timbaobjects.com/packages/simple/ -r /app/requirements.txt 
 
 ADD README /app/
 ADD apollo/ /app/apollo/
