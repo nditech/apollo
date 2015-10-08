@@ -138,13 +138,13 @@ def submission():
 
     for tag in form.tags:
         field = form.get_field_by_tag(tag)
-        if field.is_comment_field:
-            continue
-
         path_spec = '//data/{}'.format(tag)
         element = document.xpath(path_spec)[0]
+        print etree.tostring(element, pretty_print=True)
         if element.text:
-            if field.allows_multiple_values:
+            if field.is_comment_field:
+                setattr(submission, tag, element.text)
+            elif field.allows_multiple_values:
                 setattr(
                     submission, tag, [int(i) for i in element.text.split()])
             else:
