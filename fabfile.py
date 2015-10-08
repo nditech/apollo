@@ -39,6 +39,7 @@ def build(docker_index='docker.timbaobjects.com', version="HEAD"):
     image_version = get_latest_version()
     change_branch('master')
     archive = make_archive(version)
+    run('rm -rf %s' % PROJECT_DIR)  # remove the target directory if it exists
     run('mkdir -p %s' % PROJECT_DIR)  # create target directory
     put(archive, PROJECT_DIR)
     with cd(PROJECT_DIR):
