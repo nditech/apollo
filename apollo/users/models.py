@@ -16,7 +16,7 @@ class User(db.Document, UserMixin):
     email = db.EmailField()
     password = db.StringField(max_length=255)
     active = db.BooleanField(default=True)
-    confirnmed_at = db.DateTimeField()
+    confirmed_at = db.DateTimeField()
     current_login_at = db.DateTimeField()
     last_login_at = db.DateTimeField()
     current_login_ip = db.StringField(max_length=45)
