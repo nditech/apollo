@@ -3,9 +3,9 @@ from flask.ext.admin import AdminIndexView
 from flask.ext.login import user_logged_out
 from flask.ext.principal import identity_loaded
 from flask.ext.security import MongoEngineUserDatastore, current_user
-from apollo import models
+from apollo import models, assets
 
-from apollo.frontend import assets, permissions, template_filters
+from apollo.frontend import permissions, template_filters
 from apollo.core import admin, db, menu, security, gravatar, csrf
 from frontend.helpers import (
     set_request_presets, CustomMongoEngineSessionInterface)
