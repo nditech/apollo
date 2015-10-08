@@ -1,0 +1,16 @@
+machine:
+  services:
+    - docker
+
+dependencies:
+  override:
+    - docker info
+    - docker build -t apollo .
+
+test:
+  override:
+    - docker run -d --name redis redis
+    - docker run -d --name mongodb mongo
+    - docker run -it --rm -e SECRET_KEY=notasecret --link redis:redis --link mongodb:mongodb apollo nosetests apollo/
+
+
