@@ -50,16 +50,14 @@ def index():
         args.setdefault('checklist_form', unicode(form.id))
 
     queryset = submissions.find(
-        submission_type='M',
-        created__lte=event.end_date,
-        created__gte=event.start_date
+        form=form,
+        submission_type='M'
     )
     filter_ = dashboard_filterset()(queryset, data=args)
 
     obs_queryset = submissions.find(
-        submission_type='O',
-        created__lte=event.end_date,
-        created__gte=event.start_date
+        form=form,
+        submission_type='O'
     )
     obs_filter_ = dashboard_filterset()(obs_queryset, data=args)
 
