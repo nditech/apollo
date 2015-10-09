@@ -192,9 +192,9 @@ def _voting_results(form_pk, location_pk=None):
     try:
         overall_summation = dataset.groupby(
             location.location_type).sum().ix[location.name]
-        valid_dataframe = dataset[dataset.reported==True].query(
-            u'%s==u"%s"' % (location.location_type, location.name))
-        valid_summation = dataset[dataset.reported==True].fillna(0).groupby(
+        reported_subset = dataset[dataset.reported==True]
+        valid_dataframe = reported_subset[reported_subset[location.location_type]==reported_subset[location.name]]
+        valid_summation = reported_subset.fillna(0).groupby(
             location.location_type).sum().ix[location.name]
         reporting = overall_summation[['missing', 'reported']]
         reporting['reported_pct'] = reporting['reported']/(
@@ -330,8 +330,8 @@ def _voting_results(form_pk, location_pk=None):
                     _overall = grouped_summation.ix[sublocation.name]
                     _valid = grouped_valid_summation.fillna(
                         0).ix[sublocation.name]
-                    _valid_dataframe = dataset[dataset.reported==True].query(
-                        u'%s==u"%s"' % (location_type, sublocation.name))
+                    _reported_subset = dataset[dataset.reported==True]
+                    _valid_dataframe = _reported_subset[_reported_subset[location_type]==_reported_subset[sublocation.name]]
 
                     _reporting = _overall[['missing', 'reported']]
                     _reporting['reported_pct'] = _reporting['reported'] / (
