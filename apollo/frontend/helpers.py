@@ -16,7 +16,13 @@ def get_deployment(hostname):
 
     :param hostname: The hostname
     """
-    return models.Deployment.objects(hostnames=hostname).first()
+    deployment = models.Deployment.objects(hostnames=hostname).first()
+    if deployment:
+        return deployment
+    else:
+        # create a default deployment (if it doesn't exist) and return that
+        deployment, _ = models.Deployment.objects.get_or_create(name="default")
+        return deployment
 
 
 def get_event():
