@@ -44,7 +44,7 @@ class KannelForm(wtforms.Form):
         if self.validate():
             return {
                 'sender': self.sender.data,
-                'text': self.clean_text(),
+                'text': self.clean_text().strip(),
                 'timestamp': self.timestamp.data or int(time.time())
             }
 
@@ -66,7 +66,7 @@ class TelerivetForm(BaseHttpForm):
         if self.validate():
             return {
                 'sender': self.from_number.data,
-                'text': self.content.data.replace('\x00', ''),
+                'text': self.content.data.replace('\x00', '').strip(),
                 'timestamp': self.time_created.data
             }
 
