@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 from apollo.frontend import route
-from apollo.analyses.dashboard import get_coverage
+from apollo.frontend.dashboard import get_coverage
 from apollo.deployments.forms import generate_event_selection_form
 from apollo.models import LocationType
 from apollo.services import (

@@ -58,7 +58,7 @@ def make_histogram(options, dataset, multi=False):
         if not isinstance(dataset, list) and pd.isnull(dataset):
             return [0] * len(options)
 
-    counter = Counter(dataset)
+    counter = Counter(dataset if hasattr(dataset, '__iter__') else [dataset])
 
     histogram = [counter[option] for option in options]
 

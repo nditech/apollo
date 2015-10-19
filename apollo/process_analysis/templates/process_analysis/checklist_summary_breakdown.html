@@ -1,4 +1,4 @@
-{% extends 'frontend/_layout.html' %}{% from 'frontend/macros/analysis_breadcrumb.html' import render_analysis_breadcrumb -%}{% from 'frontend/macros/analysis_navigation.html' import render_analysis_navigation %}{% block content %}
+{% extends 'frontend/_layout.html' %}{% from 'process_analysis/macros/analysis_breadcrumb.html' import render_analysis_breadcrumb -%}{% from 'process_analysis/macros/analysis_navigation.html' import render_analysis_navigation %}{% block content %}
 <div class="row">
 	<div class="col-md-9">
 		{{ render_analysis_breadcrumb(breadcrumb_data) }}

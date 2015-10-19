@@ -20,21 +20,6 @@ custom_filters = {
     'percent_of': template_filters.percent_of,
     'timestamp': template_filters.mkunixtimestamp,
     'mean_filter': template_filters.mean_filter,
-    'total_registered': template_filters.total_registered,
-    'all_votes_total': template_filters.all_votes_total,
-    'all_votes_total_pct': template_filters.all_votes_total_pct,
-    'all_votes_total_moe': template_filters.all_votes_total_margin_of_error,
-    'valid_votes_total': template_filters.valid_votes_total,
-    'vote_count': template_filters.vote_count,
-    'rejected_count': template_filters.rejected_count,
-    'vote_proportion': template_filters.vote_proportion,
-    'rejected_proportion': template_filters.rejected_proportion,
-    'vote_moe': template_filters.vote_margin_of_error,
-    'rejected_moe': template_filters.rejected_margin_of_error,
-    'reported': template_filters.reported,
-    'missing': template_filters.missing,
-    'reported_pct': template_filters.reported_pct,
-    'missing_pct': template_filters.missing_pct
 }
 
 

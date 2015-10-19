@@ -96,7 +96,7 @@ def locations_list():
 @permissions.edit_locations.require(403)
 @login_required
 def location_edit(pk):
-    template_name = 'core/location_edit.html'
+    template_name = 'frontend/location_edit.html'
     deployment = g.get('deployment')
     location = models.Location.objects.get_or_404(pk=pk, deployment=deployment)
     page_title = _('Edit Location')

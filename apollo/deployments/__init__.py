@@ -54,4 +54,5 @@ class EventsService(Service):
         return self.find().filter(
             Q(start_date__gte=event.start_date, start_date__lte=event.end_date)
             | Q(end_date__gte=event.start_date, end_date__lte=event.end_date)
+            | Q(start_date__lte=event.start_date, end_date__gte=event.end_date)
         )

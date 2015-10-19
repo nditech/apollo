@@ -1,5 +1,5 @@
 {%- extends 'frontend/_layout.html' -%}
-{%- from 'frontend/macros/analysis_breadcrumb.html' import render_analysis_breadcrumb -%}
+{%- from 'result_analysis/macros/analysis_breadcrumb.html' import render_analysis_breadcrumb -%}
 {%- block content -%}
 <div class="row">
 	<div class="col-md-9">{{ render_analysis_breadcrumb(breadcrumb_data) }}</div>

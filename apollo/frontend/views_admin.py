@@ -52,6 +52,7 @@ class DeploymentAdminView(BaseAdminView):
             }
         }
     }
+    form_excluded_columns = ['administrative_divisions_graph']
     model_form_converter = DeploymentModelConverter
 
     def get_query(self):
