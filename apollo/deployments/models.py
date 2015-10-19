@@ -1,4 +1,6 @@
 from apollo.core import db
+from datetime import datetime
+from functools import partial
 
 
 class ParticipantPropertyName(db.StringField):
@@ -48,8 +50,10 @@ class Deployment(db.Document):
 # Event
 class Event(db.Document):
     name = db.StringField()
-    start_date = db.DateTimeField()
-    end_date = db.DateTimeField()
+    start_date = db.DateTimeField(
+        default=partial(datetime.combine, datetime.now(), datetime.min.time()))
+    end_date = db.DateTimeField(
+        default=partial(datetime.combine, datetime.now(), datetime.max.time()))
 
     deployment = db.ReferenceField(Deployment)
 

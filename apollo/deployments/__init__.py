@@ -47,6 +47,9 @@ class EventsService(Service):
         if event:
             return event
 
+        # if no event was created, create a default one
+        return self.get_or_create(name='Default')
+
     def overlapping_events(self, event):
         return self.find().filter(
             Q(start_date__gte=event.start_date, start_date__lte=event.end_date)

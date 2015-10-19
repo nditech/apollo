@@ -51,6 +51,7 @@
                 {% endfor %}
                 {% else %}
                 {% for submenu_item in menu_item.children %}
+                {% if submenu_item.visible %}
                 <li class="dropdown-submenu">
                   <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ submenu_item.icon }} {{ _(submenu_item.text) }}</a>
                   <ul class="dropdown-menu">
@@ -59,6 +60,7 @@
                     {% endfor %}
                   </ul>
                 </li>
+                {% endif %}
                 {% endfor %}
                 {% endif %}
               </ul>
@@ -72,36 +74,38 @@
               <a class="dropdown-toggle" data-toggle="dropdown" href="#"><img src="{{ current_user.email|gravatar }}" class="img-rounded" style="margin-right: 0.25em; border-radius: 12px"><b class="caret"></b></a>
               <ul class="dropdown-menu left-submenu">
                 <li class="eml"><a href="#">{{ current_user.email}}</a></li>
+              {%- if current_menu.submenu('user.events').visible %}
                 <li class="divider"></li>
-              {%- if current_menu.submenu('user.events').visible -%}
                 <li><a href="{{ current_menu.submenu('user.events').url }}"><i class="glyphicon glyphicon-calendar"></i> {{ current_menu.submenu('user.events').text }}</a></li>
-              {%- endif -%}
-              {% if current_menu.submenu('user.concurrent_events').visible -%}
-              {% for event in current_menu.submenu('user.concurrent_events').dynamic_list %}
+              {%- endif %}
+              {%- if current_menu.submenu('user.concurrent_events').visible -%}
+              {% for event in current_menu.submenu('user.concurrent_events').dynamic_list -%}
                 {% if event.active %}
                 <li><a href="javascript:;"><i class="glyphicon glyphicon-calendar"></i> <span class="text-muted">{{ event.text }}</span></a></li>
                 {% else %}
                 <li><a href="{{ event.url }}"><i class="glyphicon glyphicon-calendar"></i> <span>{{ event.text }}</span></a></li>
                 {% endif %}
-              {% endfor %}
-              {% endif %}
+              {% endfor -%}
+              {%- endif %}
+              {%- if perms.role('admin').can() %}
                 <li class="divider"></li>
-              {%- if perms.role('admin').can() -%}
                 <li><a href="{{ url_for('deployment.index_view') }}"><i class="glyphicon glyphicon-user"></i> {{ _('Admin') }}</a></li>
+              {%- endif %}
+              {%- if current_menu.submenu('user.locations_builder').visible or current_menu.submenu('user.locations_list').visible or current_menu.submenu('user.forms').visible %}
                 <li class="divider"></li>
-              {%- endif -%}
-              {%- if current_menu.submenu('user.locations_builder').visible -%}
+              {%- endif %}
+              {%- if current_menu.submenu('user.locations_builder').visible %}
                 <li><a href="{{ current_menu.submenu('user.locations_builder').url }}"><i class="glyphicon glyphicon-map-marker"></i> {{ current_menu.submenu('user.locations_builder').text }}</a></li>
-              {%- endif -%}
-              {%- if current_menu.submenu('user.locations_list').visible -%}
+              {%- endif %}
+              {%- if current_menu.submenu('user.locations_list').visible %}
                 <li><a href="{{ current_menu.submenu('user.locations_list').url }}"><i class="glyphicon glyphicon-map-marker"></i> {{ current_menu.submenu('user.locations_list').text }}</a></li>
-              {%- endif -%}
+              {%- endif %}
               {%- if current_menu.submenu('user.forms').visible -%}
                 <li><a href="{{ current_menu.submenu('user.forms').url }}"><i class="glyphicon glyphicon-list-alt"></i> {{ current_menu.submenu('user.forms').text }}</a></li>
+              {%- endif %}
+              {%- if current_menu.submenu('user.locations_builder').visible or current_menu.submenu('user.formbuilder').visible %}
               {%- endif -%}
-              {%- if current_menu.submenu('user.locations_builder').visible or current_menu.submenu('user.formbuilder').visible -%}
                 <li class="divider"></li>
-              {%- endif -%}
                 <li><a href="{{ url_for_security('logout') }}"><i class="glyphicon glyphicon-log-out"></i> {{ _('Logout') }}</a></li>
               </ul>
             </li>
@@ -119,7 +123,7 @@
         <div class="container">
           <footer>
           {%- block footer -%}
-            <p style="padding-top:18px;">Apollo &mdash; v2.3.6</p>
+            <p style="padding-top:18px;">Apollo &mdash; v2.3.7</p>
           {%- endblock -%}
           </footer>
         </div>
