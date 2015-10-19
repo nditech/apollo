@@ -13,7 +13,7 @@ from mongoengine import signals
 from tablib import Dataset
 from werkzeug.datastructures import MultiDict
 from apollo import services
-from apollo.analyses.incidents import incidents_csv
+from apollo.submissions.incidents import incidents_csv
 from apollo.participants.utils import update_participant_completion_rating
 from apollo.submissions.models import QUALITY_STATUSES
 from apollo.messaging.tasks import send_messages

@@ -1,0 +1,16 @@
+{% macro render_analysis_breadcrumb(breadcrumb_data) %}
+<ul class="breadcrumb">
+{% for location in breadcrumb_data.locations %}
+    {% if loop.last %}
+    <li>{{ location.name }} &middot; <em class="locationtype">{{ location.location_type }}</em></li>
+    {% else %}
+    {% if breadcrumb_data.tag %}
+      {% set linkto = url_for('process_analysis.process_analysis_with_location_and_tag', form_id=breadcrumb_data.form.pk, location_id=location.pk, tag=breadcrumb_data.tag) %}
+    {% else %}
+      {% set linkto = url_for('process_analysis.process_analysis_with_location', form_id=breadcrumb_data.form.pk, location_id=location.pk) %}
+    {% endif %}
+    <li><a href="{{ linkto }}">{{ location.name }}</a> &middot; <em class="locationtype">{{ location.location_type }}</em><span class="divider"></span></li>
+    {% endif %}
+{% endfor %}
+</ul>
+{% endmacro %}
