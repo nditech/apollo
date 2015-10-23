@@ -1,6 +1,8 @@
 from celery import Celery
 from flask import Flask, request
 from flask.ext.sslify import SSLify
+from raven import Client
+from raven.contrib.celery import register_signal, register_logger_signal
 
 from apollo.core import babel, cache, db, mail, sentry
 from apollo.helpers import register_blueprints
@@ -52,6 +54,12 @@ def create_app(
 def create_celery_app(app=None):
     app = app or create_app('apollo', '', register_all_blueprints=False)
     celery = Celery(__name__, broker=app.config['CELERY_BROKER_URL'])
+
+    # configure exception logging
+    client = Client(app.config.get('SENTRY_DSN', ''))
+    register_logger_signal(client)
+    register_signal(client)
+
     celery.conf.update(app.config)
     TaskBase = celery.Task
 
