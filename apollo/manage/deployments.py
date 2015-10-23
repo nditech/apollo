@@ -26,7 +26,9 @@ class CreateDeploymentCommand(Command):
         models.Need.objects.create(
             action='view_messages', deployment=deployment)
         models.Need.objects.create(
-            action='view_analyses', deployment=deployment)
+            action='view_process_analysis', deployment=deployment)
+        models.Need.objects.create(
+            action='view_result_analysis', deployment=deployment)
         models.Need.objects.create(action='view_forms', deployment=deployment)
 
         models.Need.objects.create(
