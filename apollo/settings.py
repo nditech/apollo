@@ -124,6 +124,3 @@ APPLICATIONS = ast.literal_eval(os.environ.get(
 
 BIG_N = ast.literal_eval(os.environ.get('BIG_N', '0')) or numpy.inf
 GOOGLE_ANALYTICS_KEY = os.environ.get('GOOGLE_ANALYTICS_KEY')
-
-# Ushahidi settings
-USHAHIDI_SERVER = os.environ.get('USHAHIDI_SERVER')
