@@ -133,7 +133,7 @@ class SubmissionsService(Service):
                          if submission.location else '',
                          getattr(submission.location, 'code', '')
                          if submission.location else '',
-                         getattr(submission.location, 'political_code', '')
+                         getattr(submission.location, 'political_code', '') or ''
                          if submission.location else '',
                          getattr(submission.location, 'registered_voters', '')
                          if submission.location else ''] + \
@@ -170,7 +170,7 @@ class SubmissionsService(Service):
                          if submission.location else '',
                          getattr(submission.location, 'code', '')
                          if submission.location else '',
-                         getattr(submission.location, 'political_code', '')
+                         getattr(submission.location, 'political_code', '') or ''
                          if submission.location else '',
                          getattr(submission.location, 'registered_voters', '')
                          if submission.location else ''] + \
