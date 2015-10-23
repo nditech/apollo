@@ -138,29 +138,29 @@ def _process_analysis(form_id, location_id=None, tag=None):
     _('Analyses'), order=4,
     icon='<i class="glyphicon glyphicon-stats"></i>',
     visible_when=lambda: len(get_analysis_menu()) > 0
-    and permissions.view_analyses.can())
+    and permissions.view_process_analysis.can())
 @register_menu(
     bp, 'main.analyses.process_analysis',
     _('Process Analysis'),
     icon='<i class="glyphicon glyphicon-stats"></i>',
     dynamic_list_constructor=partial(get_process_analysis_menu),
     visible_when=lambda: len(get_process_analysis_menu()) > 0
-    and permissions.view_analyses.can())
-@permissions.view_analyses.require(403)
+    and permissions.view_process_analysis.can())
+@permissions.view_process_analysis.require(403)
 @login_required
 def process_analysis(form_id):
     return _process_analysis(form_id)
 
 
 @route(bp, '/submissions/analysis/process/form/<form_id>/location/<location_id>')
-@permissions.view_analyses.require(403)
+@permissions.view_process_analysis.require(403)
 @login_required
 def process_analysis_with_location(form_id, location_id):
     return _process_analysis(form_id, location_id)
 
 
 @route(bp, '/submissions/analysis/process/form/<form_id>/location/<location_id>/tag/<tag>')
-@permissions.view_analyses.require(403)
+@permissions.view_process_analysis.require(403)
 @login_required
 def process_analysis_with_location_and_tag(form_id, location_id, tag):
     return _process_analysis(form_id, location_id, tag)

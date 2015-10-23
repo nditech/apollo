@@ -6,7 +6,10 @@ view_events = Permission(ActionNeed('view_events'), RoleNeed('admin'))
 view_participants = Permission(
     ActionNeed('view_participants'), RoleNeed('admin'))
 view_messages = Permission(ActionNeed('view_messages'), RoleNeed('admin'))
-view_analyses = Permission(ActionNeed('view_analyses'), RoleNeed('admin'))
+view_process_analysis = Permission(
+    ActionNeed('view_process_analysis'), RoleNeed('admin'))
+view_result_analysis = Permission(
+    ActionNeed('view_result_analysis'), RoleNeed('admin'))
 
 # Add
 add_submission = Permission(ActionNeed('add_submission'), RoleNeed('admin'))

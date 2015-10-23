@@ -149,7 +149,8 @@ def update_locations(df, mapping, event):
 
             location.update(
                 add_to_set__events=event,
-                set__ancestors_ref=ancestors)
+                set__ancestors_ref=ancestors,
+                set__ancestor_count=len(ancestors))
             cache.set(location)
 
 

@@ -520,7 +520,7 @@ def submission_version(submission_id, version_id):
     order=3, icon='<i class="glyphicon glyphicon-ok"></i>',
     visible_when=lambda: len(get_quality_assurance_form_list_menu(
         form_type='CHECKLIST', verifiable=True)) > 0
-    and permissions.view_analyses.can())
+    and permissions.view_result_analysis.can())
 @register_menu(
     bp, 'main.qa.checklists', _('Quality Assurance'),
     dynamic_list_constructor=partial(
