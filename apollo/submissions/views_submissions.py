@@ -611,7 +611,7 @@ def update_submission_version(sender, document, **kwargs):
     # save actual version data
     data_fields = document.form.tags
     if document.form.form_type == 'INCIDENT':
-        data_fields.extend(['status', 'witness'])
+        data_fields.extend(['status'])
     version_data = {k: document[k] for k in data_fields if k in document}
 
     # get previous version

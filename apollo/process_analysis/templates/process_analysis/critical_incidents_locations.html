@@ -6,7 +6,7 @@
   </div>
   <div class="col-md-7">
     <form class="form-horizontal pull-right" method="GET" accept-charset="utf-8">
-      {{ filter_form.status }} {{ filter_form.witness }} {{ filter_form.sample }}
+      {{ filter_form.status }} {{ filter_form.sample }}
       <button class="btn btn-warning" type="submit"><i class="icon-search icon-white"></i> {{ _('Filter') }}</button>
     </form>
   </div>
@@ -25,7 +25,7 @@
         <div class="tab-pane active" id="table">
           <table class="table table-bordered table-striped">
             <tr>
-              <td colspan="{{ 6 + location_types.count() }}"><strong>{{ form_field.name }}</strong> &middot; {{ form_field.description }}</td>
+              <td colspan="{{ 5 + location_types.count() }}"><strong>{{ form_field.name }}</strong> &middot; {{ form_field.description }}</td>
             </tr>
             <tr>
               <th>{{ _('Observer ID') }}</th>
@@ -34,7 +34,6 @@
               <th>{{ lt.name }}</th>
               {% endfor %}
               <th>{{ _('Location') }}</th>
-              <th style="text-align:center">{{ _('Witnessed') }}</th>
               <th style="text-align:center" width="50">{{ _('Status') }}</th>
               <th>{{ _('Description') }}</th>
             </tr>
@@ -46,17 +45,6 @@
               <td>{{ incident|get_location_for_type(lt) }}</td>
               {% endfor %}
               <td>{{ incident.location }} &middot; <em class"muted">{{ incident.location.location_type }}</em></td>
-              <td style="text-align:center">
-              {%- if incident.witness == 'witnessed' -%}
-              <i class="glyphicon glyphicon-eye-open"></i>
-              {%- elif incident.witness == 'after' -%}
-              <i class="glyphicon glyphicon-eye-close"></i>
-              {%- elif incident.witness == 'reported' -%}
-              <i class="glyphicon glyphicon-user"></i>
-              {%- else -%}
-              &nbsp;
-              {%- endif -%}
-              </td>
               <td style="text-align:center">
               {% if incident.status == 'confirmed' %}
               <img src="{{ url_for('static', filename='img/tick.png') }}" title="{{ _('Confirmed') }}" alt="{{ _('Confirmed') }}" />
