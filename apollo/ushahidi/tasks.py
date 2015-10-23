@@ -9,7 +9,7 @@ AM_PM_FORMAT_STRING = u'%p'
 
 
 def report_incident(title, description, dt, category_id, coordinates,
-                    location):
+                    location, firstname=None, lastname=None, email=None):
     server_url = current_app.config.get(u'USHAHIDI_SERVER')
     if not server_url:
         return
@@ -31,5 +31,14 @@ def report_incident(title, description, dt, category_id, coordinates,
         'longitude': coordinates[1],
         'location_name': location
     }
+
+    if firstname:
+        payload['person_first'] = firstname
+
+    if lastname:
+        payload['person_last'] = lastname
+
+    if email:
+        payload['person_email'] = email
 
     requests.post(server_url, payload)
