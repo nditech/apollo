@@ -179,8 +179,6 @@ class Submission(db.DynamicDocument):
 
     IMPORTANT: submissions for incident forms get a few more dynamic fields:
         - status: whether the incident was confirmed/rejected etc
-        - witness: whether the contributor actually witnessed the incident,
-            was reported by a third party, etc
     '''
 
     SUBMISSION_TYPES = (

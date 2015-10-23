@@ -264,12 +264,6 @@ def generate_submission_edit_form_class(form):
         ('rejected', _('Rejected')),
         ('citizen', _('Citizen Report')),
     )
-    WITNESS_CHOICES = (
-        ('', _('Unspecified')),
-        ('witnessed', _('I witnessed the incident')),
-        ('after', _('I arrived just after the incident')),
-        ('reported', _('The incident was reported to me by someone else')),
-    )
 
     form_fields['contributor'] = CustomModelSelectField(
         _('Participant'),
@@ -352,10 +346,6 @@ def generate_submission_edit_form_class(form):
         form_fields['status'] = SelectField(
             choices=STATUS_CHOICES,
             filters=[lambda data: data if data else None],
-            validators=[validators.optional()]
-        )
-        form_fields['witness'] = SelectField(
-            choices=WITNESS_CHOICES,
             validators=[validators.optional()]
         )
         form_fields['description'] = StringField(

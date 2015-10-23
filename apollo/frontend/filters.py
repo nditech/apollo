@@ -420,15 +420,10 @@ def generate_submission_analysis_filter(form):
     attributes = {}
     if form.form_type == 'INCIDENT':
         attributes['status'] = DynamicFieldFilter(
-            choices=(('', _('Status')), ('NULL', _('Unmarked')),
-                    ('confirmed', _('Confirmed')), ('rejected', _('Rejected')),
-                    ('citizen', _('Citizen Report')))
-        )
-        attributes['witness'] = DynamicFieldFilter(
-            choices=(('', _('Witness')), ('NULL', _('Unspecified')),
-                    ('witnessed', _('Witnessed incident')),
-                    ('after', _('Arrived after incident')),
-                    ('reported', _('Incident was reported')))
+            choices=(
+                ('', _('Status')), ('NULL', _('Unmarked')),
+                ('confirmed', _('Confirmed')), ('rejected', _('Rejected')),
+                ('citizen', _('Citizen Report')))
         )
 
     return type(
@@ -445,15 +440,10 @@ def generate_critical_incident_location_filter(tag):
         widget=widgets.HiddenInput()
     )
     attributes['status'] = DynamicFieldFilter(
-        choices=(('', _('Status')), ('NULL', _('Unmarked')),
-                ('confirmed', _('Confirmed')), ('rejected', _('Rejected')),
-                ('citizen', _('Citizen Report')))
-    )
-    attributes['witness'] = DynamicFieldFilter(
-        choices=(('', _('Witness')), ('NULL', _('Unspecified')),
-                ('witnessed', _('Witnessed incident')),
-                ('after', _('Arrived after incident')),
-                ('reported', _('Incident was reported')))
+        choices=(
+            ('', _('Status')), ('NULL', _('Unmarked')),
+            ('confirmed', _('Confirmed')), ('rejected', _('Rejected')),
+            ('citizen', _('Citizen Report')))
     )
 
     return type(

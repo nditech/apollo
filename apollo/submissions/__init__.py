@@ -88,7 +88,7 @@ class SubmissionsService(Service):
                     ds_headers += [
                         'Location', 'Location Code', 'PS Code', 'RV'
                     ] + fields + \
-                        ['Timestamp', 'Witness', 'Status', 'Description']
+                        ['Timestamp', 'Status', 'Description']
                 else:
                     ds_headers += [
                         'Location', 'Location Code', 'PS Code', 'RV'
@@ -133,15 +133,13 @@ class SubmissionsService(Service):
                          if submission.location else '',
                          getattr(submission.location, 'code', '')
                          if submission.location else '',
-                         getattr(submission.location, 'political_code', '')
+                         getattr(submission.location, 'political_code', '') or ''
                          if submission.location else '',
                          getattr(submission.location, 'registered_voters', '')
                          if submission.location else ''] + \
                         [export_field(form, submission, f) for f in fields]
                     record += \
                         [submission.updated.strftime('%Y-%m-%d %H:%M:%S'),
-                         getattr(submission, 'witness', '')
-                         if getattr(submission, 'witness', '') else '',
                          getattr(submission, 'status', '')
                          if getattr(submission, 'status', '') else '',
                          getattr(submission, 'description', '')
@@ -172,7 +170,7 @@ class SubmissionsService(Service):
                          if submission.location else '',
                          getattr(submission.location, 'code', '')
                          if submission.location else '',
-                         getattr(submission.location, 'political_code', '')
+                         getattr(submission.location, 'political_code', '') or ''
                          if submission.location else '',
                          getattr(submission.location, 'registered_voters', '')
                          if submission.location else ''] + \
@@ -218,7 +216,7 @@ class SubmissionVersionsService(Service):
 
             data_fields = document.form.tags
             if document.form.form_type == 'INCIDENT':
-                data_fields.extend(['status', 'witness'])
+                data_fields.extend(['status'])
             version_data = {
                 k: document[k] for k in data_fields if k in document
             }
