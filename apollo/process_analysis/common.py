@@ -410,7 +410,9 @@ def generate_incidents_data(form, queryset, location_root, grouped=True,
     }
 
     if not tags:
-        tags = [field.name for group in form.groups for field in group.fields]
+        tags = [field.name for group in form.groups for field in
+                group.fields if field.analysis_type == 'PROCESS'
+                and not field.is_comment_field]
 
     try:
         data_frame = queryset.to_dataframe()
@@ -516,7 +518,9 @@ def generate_process_data(form, queryset, location_root, grouped=True,
     }
 
     if not tags:
-        tags = [field.name for group in form.groups for field in group.fields]
+        tags = [field.name for group in form.groups for field
+                in group.fields if field.analysis_type == 'PROCESS'
+                and not field.is_comment_field]
 
     try:
         data_frame = queryset.to_dataframe()
