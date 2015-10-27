@@ -384,7 +384,7 @@ def _voting_results(form_pk, location_pk=None):
         except IndexError:
             pass
 
-    convergence_dataset = dataset[dataset.reported==True]
+    convergence_dataset = dataset[dataset.reported==True].fillna(0)
 
     chart_data = {}
 
