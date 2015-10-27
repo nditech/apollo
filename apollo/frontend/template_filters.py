@@ -31,8 +31,13 @@ def checklist_question_summary(form, field, location, dataframe):
 
     try:
         for name, grp in dataframe.groupby('urban'):
-            stats['urban']['Urban' if name else 'Rural'] = dataframe_analysis(
-                stats['type'], grp, field.name)
+            if field.allows_multiple_values:
+                stats['urban']['Urban' if name else 'Rural'] = \
+                    multiselect_dataframe_analysis(
+                        grp, field.name, sorted(field.options.values()))
+            else:
+                stats['urban']['Urban' if name else 'Rural'] = \
+                    dataframe_analysis(stats['type'], grp, field.name)
     except KeyError:
         pass
 
