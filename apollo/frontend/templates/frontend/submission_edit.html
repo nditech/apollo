@@ -223,6 +223,12 @@
     {%- for field in group.fields %}
     <tr>
       <th style="text-align: center">{{ field.name }}</th>
+      {% if field.is_comment_field %}
+      <td colspan="2"{%- if submission_form[field.name].errors %} class="danger"{%- endif -%}>
+        {{ render_submission_field(submission_form[field.name]) }}<br />
+        <p style="margin-top:-0.5em; margin-bottom:0">{{ field.description }}</p>
+      </td>
+      {% else %}
       <td>{{ field.description }}
       {%- if field.options %}
       <span class="options">
@@ -233,6 +239,7 @@
       {%- endif %}
       </td>
       <td style="min-width:6em" {%- if submission_form[field.name].errors %} class="danger"{%- endif -%}>{{ render_submission_field(submission_form[field.name]) }}</td>
+      {% endif %}
     </tr>
     {% endfor -%}
     {% endfor -%}
