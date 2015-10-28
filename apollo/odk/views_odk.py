@@ -140,7 +140,6 @@ def submission():
         field = form.get_field_by_tag(tag)
         path_spec = '//data/{}'.format(tag)
         element = document.xpath(path_spec)[0]
-        print etree.tostring(element, pretty_print=True)
         if element.text:
             if field.is_comment_field:
                 setattr(submission, tag, element.text)
