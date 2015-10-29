@@ -139,7 +139,13 @@ def submission():
     for tag in form.tags:
         field = form.get_field_by_tag(tag)
         path_spec = '//data/{}'.format(tag)
-        element = document.xpath(path_spec)[0]
+        try:
+            element = document.xpath(path_spec)[0]
+        except IndexError:
+            # normally shouldn't happen, but the whole file
+            # might not have been uploaded.
+            continue
+
         if element.text:
             if field.is_comment_field:
                 setattr(submission, tag, element.text)
