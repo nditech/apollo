@@ -142,8 +142,8 @@ def submission():
         try:
             element = tag_finder(document, tag=tag)[0]
         except IndexError:
-            # normally shouldn't happen, but the whole file
-            # might not have been uploaded.
+            # normally shouldn't happen, but the form might have been
+            # modified
             continue
 
         if element.text:
