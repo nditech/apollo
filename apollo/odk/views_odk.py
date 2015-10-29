@@ -136,11 +136,11 @@ def submission():
         # no existing submission for that form and participant
         return open_rosa_default_response(status_code=404)
 
+    tag_finder = etree.XPath(u'//data/*[local-name() = $tag]')
     for tag in form.tags:
         field = form.get_field_by_tag(tag)
-        path_spec = '//data/{}'.format(tag)
         try:
-            element = document.xpath(path_spec)[0]
+            element = tag_finder(document, tag=tag)[0]
         except IndexError:
             # normally shouldn't happen, but the whole file
             # might not have been uploaded.
