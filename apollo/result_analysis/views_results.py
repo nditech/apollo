@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
+from __future__ import absolute_import, division
 from functools import partial
 from flask import Blueprint, render_template, request, url_for, current_app
 from flask.ext.babel import lazy_gettext as _
