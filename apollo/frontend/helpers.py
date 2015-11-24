@@ -123,7 +123,7 @@ def analysis_breadcrumb_data(form, location, tag=None,
     for both analysis and quality assurance views.'''
     loc_type_names = [
         lt.name for lt in services.location_types.find(is_political=True)]
-    location_branch = list(location.ancestors_ref) + [location]
+    location_branch = list(location.ancestors_ref)[::-1] + [location]
     displayed_locations = [
         loc for loc in location_branch if loc.location_type in loc_type_names]
 
