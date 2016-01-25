@@ -100,6 +100,14 @@ def create_app(settings_override=None, register_security_blueprint=True):
             'X_FRAME_OPTIONS', 'DENY')
         return response
 
+    # content security policy
+    @app.after_request
+    def content_security_policy(response):
+        response.headers['Content-Security-Policy'] = "default-src 'self' " + \
+            "*.googlecode.com *.google-analytics.com *.persona.org " + \
+            "'unsafe-inline' 'unsafe-eval'; img-src * data:"
+        return response
+
     return app
 
 
