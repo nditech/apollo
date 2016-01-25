@@ -2,6 +2,7 @@ import calendar
 from collections import OrderedDict
 import re
 from babel.numbers import format_number
+from flask import Markup
 from flask.ext.babel import get_locale, lazy_gettext as _
 import pandas as pd
 from apollo.process_analysis.common import (
@@ -54,7 +55,7 @@ def get_location_for_type(submission, location_type, display_type=False):
         if loc.location_type == location_type.name]
 
     if display_type:
-        return u'{} &middot; <em class="muted">{}</em>'.format(
+        return Markup('{} &middot; <em class="muted">{}</em>').format(
             locations[0].name, locations[0].location_type
         ) if locations else u''
     else:
