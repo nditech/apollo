@@ -19,6 +19,7 @@ from apollo.submissions.models import QUALITY_STATUSES
 from apollo.messaging.tasks import send_messages
 from apollo.frontend import route, permissions
 from apollo.frontend.filters import generate_submission_filter
+from apollo.frontend.filters import generate_quality_assurance_filter
 from apollo.frontend.forms import generate_submission_edit_form_class
 from apollo.frontend.helpers import (
     DictDiffer, displayable_location_types, get_event,
@@ -519,8 +520,8 @@ def submission_version(submission_id, version_id):
     _('Quality Assurance'),
     order=3, icon='<i class="glyphicon glyphicon-ok"></i>',
     visible_when=lambda: len(get_quality_assurance_form_list_menu(
-        form_type='CHECKLIST', verifiable=True)) > 0
-    and permissions.view_result_analysis.can())
+        form_type='CHECKLIST', verifiable=True)) > 0 and
+    permissions.view_result_analysis.can())
 @register_menu(
     bp, 'main.qa.checklists', _('Quality Assurance'),
     dynamic_list_constructor=partial(
@@ -530,72 +531,53 @@ def submission_version(submission_id, version_id):
 def quality_assurance_list(form_id):
     form = services.forms.get_or_404(pk=form_id, form_type='CHECKLIST')
     page_title = _(u'Quality Assurance — %(name)s', name=form.name)
+    filter_class = generate_quality_assurance_filter(form)
+    data = request.args.to_dict()
+    data['form_id'] = unicode(form.pk)
+    page = int(data.pop('page', 1))
+    loc_types = displayable_location_types(is_administrative=True)
 
-    submissions = services.submissions.find(form=form, submission_type='M')
+    location = None
+    if request.args.get('location'):
+        location = services.locations.find(
+            pk=request.args.get('location')).first()
 
-    data_records = []
-    quality_check_statistics = {}
-    record_count = submissions.count()
+    if request.args.get('export') and permissions.export_submissions.can():
+        mode = request.args.get('export')
+        queryset = services.submissions.find(
+            submission_type='O',
+            form=form
+        ).order_by('location', 'contributor')
 
-    mapreduce_result = submissions.map_reduce('''
-        function () {
-            if (this.quality_checks) {
-                for (key in this.quality_checks) {
-                    emit(key + '|%(verified)s', 0);
-                    emit(key + '|%(ok)s', 0);
-                    emit(key + '|%(flagged)s', 0);
+        query_filterset = filter_class(queryset, request.args)
+        dataset = services.submissions.export_list(
+            query_filterset.qs, g.deployment)
+        basename = slugify_unicode('%s %s %s %s' % (
+            g.event.name.lower(),
+            form.name.lower(),
+            datetime.utcnow().strftime('%Y %m %d %H%M%S'),
+            mode))
+        content_disposition = 'attachment; filename=%s.csv' % basename
 
-                    value = this.quality_checks[key];
-                    emit(key + '|' + value, 1);
-                }
-            }
-        }
-        ''' % {'verified': QUALITY_STATUSES['VERIFIED'],
-               'ok': QUALITY_STATUSES['OK'],
-               'flagged': QUALITY_STATUSES['FLAGGED']},
-        'function (key, values) { return Array.sum(values); }',
-        'inline')
+        return Response(
+            dataset, headers={'Content-Disposition': content_disposition},
+            mimetype="text/csv"
+        )
 
-    for result in mapreduce_result:
-        (qc_name, qc_value) = result.key.split('|')
-        quality_check_statistics.setdefault(qc_name, {})
-        quality_check_statistics[qc_name][qc_value] = int(result.value)
-
-    for check in form.quality_checks:
-        record = {'description': check['description'], 'name': check['name']}
-
-        try:
-            record['verified'] = quality_check_statistics[check['name']][
-                str(QUALITY_STATUSES['VERIFIED'])
-            ]
-        except:
-            record['verified'] = 0
-        try:
-            record['ok'] = quality_check_statistics[check['name']][
-                str(QUALITY_STATUSES['OK'])
-            ]
-        except:
-            record['ok'] = 0
-        try:
-            record['flagged'] = quality_check_statistics[check['name']][
-                str(QUALITY_STATUSES['FLAGGED'])
-            ]
-        except:
-            record['flagged'] = 0
-
-        try:
-            record['missing'] = record_count - (
-                record['verified'] + record['ok'] + record['flagged']
-            )
-        except:
-            record['missing'] = 0
-
-        data_records.append(record)
+    submissions = services.submissions.find(form=form, submission_type='O')
+    query_filterset = filter_class(submissions, request.args)
+    filter_form = query_filterset.form
 
     context = {
         'form': form,
+        'args': data,
+        'filter_form': filter_form,
         'page_title': page_title,
-        'qa_records': data_records,
+        'location_types': loc_types,
+        'location': location,
+        'pager': query_filterset.qs.paginate(
+            page=page, per_page=current_app.config.get('PAGE_SIZE')),
+        'submissions': submissions,
         'quality_statuses': QUALITY_STATUSES
     }
 

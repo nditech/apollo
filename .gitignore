@@ -12,5 +12,6 @@ include/
 lib/
 man/
 messages.mo
+pip-selfcheck.json
 share/
 src/
