@@ -325,7 +325,11 @@ def submission_edit(submission_id):
                                         submission.master, form_field,
                                         master_form.data.get(form_field))
 
-                                if form_field != "quarantine_status":
+                                if (
+                                    form_field not in
+                                    ["quarantine_status",
+                                     "verification_status"]
+                                ):
                                     submission.master.overridden_fields.append(
                                         form_field)
                                 changed = True
@@ -567,6 +571,7 @@ def quality_assurance_list(form_id):
     submissions = services.submissions.find(form=form, submission_type='O')
     query_filterset = filter_class(submissions, request.args)
     filter_form = query_filterset.form
+    VERIFICATION_OPTIONS = services.submissions.__model__.VERIFICATION_OPTIONS
 
     context = {
         'form': form,
@@ -578,7 +583,8 @@ def quality_assurance_list(form_id):
         'pager': query_filterset.qs.paginate(
             page=page, per_page=current_app.config.get('PAGE_SIZE')),
         'submissions': submissions,
-        'quality_statuses': QUALITY_STATUSES
+        'quality_statuses': QUALITY_STATUSES,
+        'verification_statuses': VERIFICATION_OPTIONS
     }
 
     template_name = 'frontend/quality_assurance_list.html'

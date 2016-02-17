@@ -140,9 +140,16 @@ class QualityAssuranceFilter(ChoiceFilter):
                 query_kwargs = {
                     'quality_checks__{}__exists'.format(
                         value['criterion']): False}
+            elif value['condition'] == '4':
+                query_kwargs = {
+                    'verification_status': '4'}
+            elif value['condition'] == '5':
+                query_kwargs = {
+                    'verification_status': '5'}
             else:
                 query_kwargs = {'quality_checks__{}'.format(
-                    value['criterion']): value['condition']}
+                    value['criterion']): value['condition'],
+                    'verification_status__nin': ['4', '5']}
             return queryset(**query_kwargs)
         return queryset
 

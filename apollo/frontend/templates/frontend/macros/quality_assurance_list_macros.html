@@ -13,7 +13,7 @@
     {% if perms.edit_submission.can() %}<th class="text-center">{{ _('Edit') }}</th>{% endif %}
 </tr>
 {% endmacro %}
-{% macro submission_items(submissions, form, form_fields, location_types, quality_statuses, perms) %}
+{% macro submission_items(submissions, form, form_fields, location_types, quality_statuses, verification_statuses, perms) %}
 {% for submission in submissions %}
 <tr>
     <td>{{ submission.contributor.participant_id }}</td>
@@ -24,8 +24,9 @@
     <td>{{ submission.contributor.phone|default('', true) }}</td>
     {% for qc in form.quality_checks %}
     <td class="text-center">
-        {% if submission.quality_checks[qc.name] == quality_statuses.OK %}<img src="{{ url_for('static', filename='img/tick.png') }}" alt="{{ _('OK') }}" title="{{ _('OK') }}" height="11" width="11">
-        {%- elif submission.quality_checks[qc.name] == quality_statuses.VERIFIED %}<img src="{{ url_for('static', filename='img/blue_dot.png') }}" alt="{{ _('Verified') }}" title="{{ _('Verified') }}" height="11" width="11">
+        {%- if submission.verification_status == verification_statuses.VERIFIED %}<img src="{{ url_for('static', filename='img/blue_dot.png') }}" alt="{{ _('Verified') }}" title="{{ _('Verified') }}" height="11" width="11">
+        {%- elif submission.verification_status == verification_statuses.REJECTED %}<img src="{{ url_for('static', filename='img/slash.png') }}" alt="{{ _('Rejected') }}" title="{{ _('Rejected') }}" height="11" width="11">
+        {% elif submission.quality_checks[qc.name] == quality_statuses.OK %}<img src="{{ url_for('static', filename='img/tick.png') }}" alt="{{ _('OK') }}" title="{{ _('OK') }}" height="11" width="11">
         {%- elif submission.quality_checks[qc.name] == quality_statuses.FLAGGED %}<img src="{{ url_for('static', filename='img/red_dot.png') }}" alt="{{ _('Flagged') }}" title="{{ _('Flagged') }}" height="11" width="11">
         {%- else %}<img src="{{ url_for('static', filename='img/gray_dot.png') }}" alt="{{ _('Insufficient Data') }}" title="{{ _('Insufficient Data') }}" height="11" width="11">
         {% endif %}
