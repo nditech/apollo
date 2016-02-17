@@ -40,10 +40,10 @@
 </tr>
 <tr>
   <th>{{ _('Texted Phone') }}</th>
-  <td>{% if submission.contributor and submission.contributor.last_seen_phone %}<strong>{{ submission.contributor.last_seen_phone|default('N/A', true) }}</strong> {% if submission.sender_verified %}<span id="verification_status" class="label label-success">verified</span>{% else %}<span id="verification_status" class="label label-warning">unverified</span> {% if perms.edit_participant.can() %}<button id="verify_button" data-contributor="{{ submission.contributor.id }}" data-phone="{{ submission.contributor.last_seen_phone|default('', true) }}" data-submission="{{ submission.id }}" type="button" class="btn btn-default btn-xs" title="Verify Phone"><span class="glyphicon glyphicon-ok-sign"></span></button>{% endif %}{% endif %}{% else %}N/A{% endif %}</td>
+  <td>{% if submission.contributor and submission.contributor.last_seen_phone %}<strong>{{ submission.contributor.last_seen_phone|default('N/A', true) }}</strong> {% if submission.sender_verified %}<span id="phone_verification_status" class="label label-success">verified</span>{% else %}<span id="phone_verification_status" class="label label-warning">unverified</span> {% if perms.edit_participant.can() %}<button id="verify_button" data-contributor="{{ submission.contributor.id }}" data-phone="{{ submission.contributor.last_seen_phone|default('', true) }}" data-submission="{{ submission.id }}" type="button" class="btn btn-default btn-xs" title="Verify Phone"><span class="glyphicon glyphicon-ok-sign"></span></button>{% endif %}{% endif %}{% else %}N/A{% endif %}</td>
   {%- if form.form_type == 'CHECKLIST' -%}
   {%- for sib in siblings -%}
-  <td>{% if sib.contributor and sib.contributor.last_seen_phone %}<strong>{{ sib.contributor.last_seen_phone|default('N/A', true) }}</strong> {% if sib.sender_verified %}<span id="verification_status" class="label label-success">verified</span>{% else %}<span id="verification_status" class="label label-warning">unverified</span> {% if perms.edit_participant.can() %}<button id="verify_button" data-contributor="{{ sib.contributor.id }}" data-phone="{{ sib.contributor.last_seen_phone|default('', true) }}" data-submission="{{ sib.id }}" type="button" class="btn btn-default btn-xs" title="Verify Phone"><span class="glyphicon glyphicon-ok-sign"></span></button>{% endif %}{% endif %}{% else %}N/A{% endif %}</td>
+  <td>{% if sib.contributor and sib.contributor.last_seen_phone %}<strong>{{ sib.contributor.last_seen_phone|default('N/A', true) }}</strong> {% if sib.sender_verified %}<span id="phone_verification_status" class="label label-success">verified</span>{% else %}<span id="phone_verification_status" class="label label-warning">unverified</span> {% if perms.edit_participant.can() %}<button id="verify_button" data-contributor="{{ sib.contributor.id }}" data-phone="{{ sib.contributor.last_seen_phone|default('', true) }}" data-submission="{{ sib.id }}" type="button" class="btn btn-default btn-xs" title="Verify Phone"><span class="glyphicon glyphicon-ok-sign"></span></button>{% endif %}{% endif %}{% else %}N/A{% endif %}</td>
   {%- endfor -%}
   {%- endif -%}
 </tr>
@@ -351,9 +351,9 @@
         }
       }).done(function() {
         $('#verify_button').remove();
-        $('#verification_status').removeClass('label-warning');
-        $('#verification_status').addClass('label-success');
-        $('#verification_status').html('verified');
+        $('#phone_verification_status').removeClass('label-warning');
+        $('#phone_verification_status').addClass('label-success');
+        $('#phone_verification_status').html('verified');
       }).error(function () {
         // Re-enable
         $('#verify_button').removeAttr('disabled');
