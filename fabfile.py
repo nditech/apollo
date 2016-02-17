@@ -46,7 +46,7 @@ def build(docker_index='docker.timbaobjects.com', version="HEAD"):
         run('tar xzf %s' % archive)
 
     with cd('%s/%s' % (PROJECT_DIR, PROJECT_NAME)):
-        sudo('docker build -t %s .' % PROJECT_NAME)
+        sudo('docker build --rm=false -t %s .' % PROJECT_NAME)
     tag(docker_index, image_version)
     push(docker_index, image_version)
     change_branch(current_branch)
