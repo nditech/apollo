@@ -22,6 +22,8 @@ edit_both_submissions = Permission(
     ActionNeed('edit_both_submissions'), RoleNeed('admin'))
 edit_submission_quarantine_status = Permission(
     ActionNeed('edit_submission_quarantine_status'), RoleNeed('admin'))
+edit_submission_verification_status = Permission(
+    ActionNeed('edit_submission_verification_status'), RoleNeed('admin'))
 edit_participant = Permission(
     ActionNeed('edit_participant'), RoleNeed('admin'))
 

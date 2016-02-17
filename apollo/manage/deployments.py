@@ -45,6 +45,9 @@ class CreateDeploymentCommand(Command):
             action='edit_both_submissions', deployment=deployment)
         models.Need.objects.create(
             action='edit_submission_quarantine_status', deployment=deployment)
+        models.Need.objects.create(
+            action='edit_submission_verification_status',
+            deployment=deployment)
 
         models.Need.objects.create(
             action='import_participants', deployment=deployment)

@@ -1,6 +1,7 @@
 import base64
-from flask import request
+from flask import flash, request
 from flask.ext.admin import form
+from flask.ext.admin.actions import action
 from flask.ext.admin.contrib.mongoengine import ModelView
 from flask.ext.admin.contrib.mongoengine.form import CustomModelConverter
 from flask.ext.admin.form import rules
@@ -14,6 +15,12 @@ from wtforms import FileField, PasswordField, SelectMultipleField
 from apollo.core import admin
 from apollo import models
 from apollo.frontend import forms
+
+
+try:
+    string_type = unicode
+except NameError:
+    string_type = str
 
 
 class DeploymentModelConverter(CustomModelConverter):
@@ -166,6 +173,16 @@ class UserAdminView(BaseAdminView):
         form_class = super(UserAdminView, self).scaffold_form()
         form_class.password2 = PasswordField(_('New password'))
         return form_class
+
+    @action('disable', _('Disable'), _('Are you sure you want to disable selected users?'))
+    def action_disable(self, ids):
+        models.User.objects(pk__in=ids).update(set__active=False)
+        flash(string_type(_('User(s) successfully disabled.')))
+
+    @action('enable', _('Enable'), _('Are you sure you want to enable selected users?'))
+    def action_enable(self, ids):
+        models.User.objects(pk__in=ids).update(set__active=True)
+        flash(string_type(_('User(s) successfully enabled.')))
 
 
 class RoleAdminView(BaseAdminView):

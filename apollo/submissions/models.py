@@ -14,6 +14,7 @@ from mongoengine import Q
 from pandas import DataFrame, isnull, Series
 from parsimonious.exceptions import ParseError
 import numpy as np
+import re
 
 FLAG_STATUSES = {
     'no_problem': ('0', _('No Problem')),
@@ -32,7 +33,8 @@ FLAG_CHOICES = (
     ('0', _('OK')),
     ('-1', _('MISSING')),
     ('2', _('FLAGGED')),
-    ('3', _('VERIFIED'))
+    ('4', _('VERIFIED')),
+    ('5', _('REJECTED'))
 )
 
 STATUS_CHOICES = (
@@ -190,6 +192,15 @@ class Submission(db.DynamicDocument):
         ('A', _(u'All')),
         ('R', _(u'Results'))
     )
+    VERIFICATION_STATUSES = (
+        ('', _('Unverified')),
+        ('4', _('Verified')),
+        ('5', _('Rejected'))
+    )
+    VERIFICATION_OPTIONS = {
+        'VERIFIED': '4',
+        'REJECTED': '5'
+    }
 
     form = db.ReferenceField(Form)
     contributor = db.ReferenceField(Participant)
@@ -201,7 +212,8 @@ class Submission(db.DynamicDocument):
     sender_verified = db.BooleanField(default=True)
     quality_checks = db.DictField()
     confidence = db.DictField()
-    verification_status = db.StringField()
+    verification_status = db.StringField(
+        choices=VERIFICATION_STATUSES, required=False)
     overridden_fields = db.ListField(db.StringField())
     submission_type = db.StringField(
         choices=SUBMISSION_TYPES, default='O', required=True)
@@ -542,11 +554,13 @@ class Submission(db.DynamicDocument):
             # hack to prevent clashes in saves quality_check and sub keys of
             # quality_check. e.g. you cannot update quality_check and
             # quality_check.flag_1 in the same operation. This hack removes the
-            # need to update the subkeys and update the entire dictionary at once
+            # need to update the subkeys and update the entire dictionary at
+            # once
             submission._changed_fields = filter(
                 lambda f: not f.startswith('quality_checks.'),
                 submission._changed_fields
             )
+            submission.verification_status = self.verification_status
             submission.save(clean=False)
 
         self._changed_fields = filter(
@@ -678,6 +692,46 @@ class Submission(db.DynamicDocument):
             element.text = value
 
         return document
+
+    @property
+    def flagged_fields(self):
+        if hasattr(self, '_flagged_fields') and self._flagged_fields:
+            return self._flagged_fields
+
+        self._flagged_fields = set()
+        pattern = re.compile('^[A-Z]+$', re.I)
+        for criterion in self.form.quality_checks:
+            if (
+                criterion['name'] in self.quality_checks.keys() and
+                self.quality_checks[criterion['name']] ==
+                QUALITY_STATUSES['FLAGGED']
+            ):
+                for found in re.sub(
+                    '[\+\-\*\/\^]\s*', '', criterion['lvalue']
+                ).split(' '):
+                    if pattern.match(found):
+                        self._flagged_fields.add(found)
+                for found in re.sub(
+                    '[\+\-\*\/\^]\s*', '', criterion['rvalue']
+                ).split(' '):
+                    if pattern.match(found):
+                        self._flagged_fields.add(found)
+        return self._flagged_fields
+
+    @property
+    def flagged_criteria(self):
+        if hasattr(self, '_flagged_criteria') and self._flagged_criteria:
+            return self._flagged_criteria
+
+        self._flagged_criteria = []
+        for criterion in self.form.quality_checks:
+            if (
+                criterion['name'] in self.quality_checks.keys() and
+                self.quality_checks[criterion['name']] ==
+                QUALITY_STATUSES['FLAGGED']
+            ):
+                self._flagged_criteria.append(criterion['description'])
+        return self._flagged_criteria
 
 
 class SubmissionComment(db.Document):

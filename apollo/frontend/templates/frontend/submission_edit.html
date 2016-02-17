@@ -40,10 +40,10 @@
 </tr>
 <tr>
   <th>{{ _('Texted Phone') }}</th>
-  <td>{% if submission.contributor and submission.contributor.last_seen_phone %}<strong>{{ submission.contributor.last_seen_phone|default('N/A', true) }}</strong> {% if submission.sender_verified %}<span id="verification_status" class="label label-success">verified</span>{% else %}<span id="verification_status" class="label label-warning">unverified</span> {% if perms.edit_participant.can() %}<button id="verify_button" data-contributor="{{ submission.contributor.id }}" data-phone="{{ submission.contributor.last_seen_phone|default('', true) }}" data-submission="{{ submission.id }}" type="button" class="btn btn-default btn-xs" title="Verify Phone"><span class="glyphicon glyphicon-ok-sign"></span></button>{% endif %}{% endif %}{% else %}N/A{% endif %}</td>
+  <td>{% if submission.contributor and submission.contributor.last_seen_phone %}<strong>{{ submission.contributor.last_seen_phone|default('N/A', true) }}</strong> {% if submission.sender_verified %}<span id="phone_verification_status" class="label label-success">verified</span>{% else %}<span id="phone_verification_status" class="label label-warning">unverified</span> {% if perms.edit_participant.can() %}<button id="verify_button" data-contributor="{{ submission.contributor.id }}" data-phone="{{ submission.contributor.last_seen_phone|default('', true) }}" data-submission="{{ submission.id }}" type="button" class="btn btn-default btn-xs" title="Verify Phone"><span class="glyphicon glyphicon-ok-sign"></span></button>{% endif %}{% endif %}{% else %}N/A{% endif %}</td>
   {%- if form.form_type == 'CHECKLIST' -%}
   {%- for sib in siblings -%}
-  <td>{% if sib.contributor and sib.contributor.last_seen_phone %}<strong>{{ sib.contributor.last_seen_phone|default('N/A', true) }}</strong> {% if sib.sender_verified %}<span id="verification_status" class="label label-success">verified</span>{% else %}<span id="verification_status" class="label label-warning">unverified</span> {% if perms.edit_participant.can() %}<button id="verify_button" data-contributor="{{ sib.contributor.id }}" data-phone="{{ sib.contributor.last_seen_phone|default('', true) }}" data-submission="{{ sib.id }}" type="button" class="btn btn-default btn-xs" title="Verify Phone"><span class="glyphicon glyphicon-ok-sign"></span></button>{% endif %}{% endif %}{% else %}N/A{% endif %}</td>
+  <td>{% if sib.contributor and sib.contributor.last_seen_phone %}<strong>{{ sib.contributor.last_seen_phone|default('N/A', true) }}</strong> {% if sib.sender_verified %}<span id="phone_verification_status" class="label label-success">verified</span>{% else %}<span id="phone_verification_status" class="label label-warning">unverified</span> {% if perms.edit_participant.can() %}<button id="verify_button" data-contributor="{{ sib.contributor.id }}" data-phone="{{ sib.contributor.last_seen_phone|default('', true) }}" data-submission="{{ sib.id }}" type="button" class="btn btn-default btn-xs" title="Verify Phone"><span class="glyphicon glyphicon-ok-sign"></span></button>{% endif %}{% endif %}{% else %}N/A{% endif %}</td>
   {%- endfor -%}
   {%- endif -%}
 </tr>
@@ -115,6 +115,18 @@
 </div>
 <div>
 
+{% if submission.flagged_criteria and submission.form.verifiable and perms.edit_submission_verification_status.can() %}
+<div class="alert alert-warning alert-dismissible" role="alert">
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+  <strong>{{ _('Validation Errors!') }}</strong> {{ _('The following conditions were flagged while validating this submission.') }}
+  <ul class="list-group" style="margin-top:1em">
+    {% for criteria in submission.flagged_criteria %}
+    <li class="list-group-item text-warning">{{ criteria }}</li>
+    {% endfor %}
+  </ul>
+</div>
+{% endif %}
+
 {{ submission_form.csrf_token() }}
 {%- if form.form_type == 'CHECKLIST' %}
 {%- for f in sibling_forms -%}{{ f.csrf_token() }}{%- endfor -%}{{ master_form.csrf_token() }}
@@ -153,7 +165,7 @@
         <td colspan="{{ siblings|count + 6 }}"><h4>{{ group.name }}</h4></td>
       </tr>
       {% for field in group.fields %}
-      <tr>
+      <tr{% if field.name in submission.flagged_fields and submission.form.verifiable and perms.edit_submission_verification_status.can() %} class="warning"{% endif %}>
         <th>{{ field.name }}</th>
         <td>{{ field.description }}
           {%- if field.options and not field.allows_multiple_values %}
@@ -202,6 +214,21 @@
         <td class="ps-on"{%- if master_form['quarantine_status'].errors %} class="danger"{%- endif -%}>{{ render_submission_field(master_form['quarantine_status']) }}</td>
         {%- else -%}
         <td class="ps-on"{%- if master_form['quarantine_status'].errors %} class="danger"{%- endif -%}>{{ render_submission_field(master_form['quarantine_status'], disabled=1) }}</td>
+        {%- endif -%}
+        <td colspan="2">&nbsp;</td>
+      </tr>
+      {% endif %}
+      {% if perms.edit_submission_verification_status.can() and submission.form.verifiable %}
+      <tr>
+        <td colspan="2" style="vertical-align: middle"><h4>{{ _('Verification Status') }}</h4></td>
+        <td class="obs-on">&nbsp;</td>
+        {%- for sibling_form in sibling_forms -%}
+        <td>&nbsp;</td>
+        {%- endfor -%}
+        {%- if readonly -%}
+        <td class="ps-on"{%- if master_form['quarantine_status'].errors %} class="danger"{%- endif -%}>{{ render_submission_field(master_form['verification_status']) }}</td>
+        {%- else -%}
+        <td class="ps-on"{%- if master_form['quarantine_status'].errors %} class="danger"{%- endif -%}>{{ render_submission_field(master_form['verification_status'], disabled=1) }}</td>
         {%- endif -%}
         <td colspan="2">&nbsp;</td>
       </tr>
@@ -351,9 +378,9 @@
         }
       }).done(function() {
         $('#verify_button').remove();
-        $('#verification_status').removeClass('label-warning');
-        $('#verification_status').addClass('label-success');
-        $('#verification_status').html('verified');
+        $('#phone_verification_status').removeClass('label-warning');
+        $('#phone_verification_status').addClass('label-success');
+        $('#phone_verification_status').html('verified');
       }).error(function () {
         // Re-enable
         $('#verify_button').removeAttr('disabled');
