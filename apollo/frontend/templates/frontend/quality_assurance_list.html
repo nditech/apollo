@@ -1,39 +1,47 @@
 {% extends "frontend/_layout.html" %}
+{%- from 'frontend/macros/quality_assurance_list_filter.html' import render_filter_form -%}
+{%- from 'frontend/macros/pagination.html' import render_pager, render_pager_counter -%}
+{%- from 'frontend/macros/quality_assurance_list_macros.html' import submission_header, submission_items -%}
 {% block scripts %}
+<script type="text/javascript" src="{{ url_for('static', filename='js/filters.js') }}"></script>
+{% endblock %}
+{% block toolbar %}
+{% if perms.export_submissions.can() %}
+<div class="btn-group pull-right">
+  <a class="btn btn-sm btn-default" href="{{ url_for('submissions.quality_assurance_list', form_id=form.pk, export='observer', **request.args) }}"><i class="glyphicon glyphicon-export"></i> {{ _('Export') }}</a>
+</div>
+{% endif %}
 {% endblock %}
 {% block content %}
 <div class="row">
-	<div class="col-md-12 filter">
-	</div>
+  <div class="col-md-12">
+    {{ render_filter_form(form, filter_form, location) }}
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-12">
+     {{ render_pager_counter(pager, args) }}
+  </div>
 </div>
 <div class="row">
-	<div class="col-md-12">
-		<table class="table table-striped table-bordered table-hover">
-			<thead>
-				<tr>
-					<th>{{ _('Quality Assurance Condition') }}</th>
-					<th width="80" class="text-right">{{ _('Flagged') }}</th>
-					<th width="80" class="text-right">{{ _('Verified') }}</th>
-					<th width="80" class="text-right">{{ _('OK') }}</th>
-					<th width="80" class="text-right">{{ _('Missing') }}</th>
-				</tr>
-			</thead>
-			<tbody>
-			{% for record in qa_records %}
-				<tr>
-					<th>{{ record.get('description') }}</th>
-					<td align="right"><a href="{{ url_for('submissions.submission_list', form_id=form.pk, **{record.get('name'): quality_statuses['FLAGGED']}) }}">{{ record.get('flagged') }}</a></td>
-					<td align="right"><a href="{{ url_for('submissions.submission_list', form_id=form.pk, **{record.get('name'): quality_statuses['VERIFIED']}) }}">{{ record.get('verified') }}</a></td>
-					<td align="right"><a href="{{ url_for('submissions.submission_list', form_id=form.pk, **{record.get('name'): quality_statuses['OK']}) }}">{{ record.get('ok') }}</a></td>
-					<td align="right"><a href="{{ url_for('submissions.submission_list', form_id=form.pk, **{record.get('name'): -1}) }}">{{ record.get('missing') }}</a></td>
-				</tr>
-			{% else %}
-				<tr>
-					<td colspan="5" class="warning text-center">{{ _('No Data Available') }}</td>
-				</tr>
-			{% endfor %}
-			</tbody>
-		</table>
-	</div>
+  <div class="col-md-12">
+    <div class="table-responsive responsive">
+      <table class="table table-striped table-bordered table-hover">
+          <thead >
+            {{ submission_header(form, form_fields, location_types, perms) }}
+          </thead>
+          <tbody>
+            {{ submission_items(pager.items, form, form_fields, location_types, quality_statuses, perms) }}
+          </tbody>
+        </table>
+      </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-12">
+  {{ render_pager(pager, 'submissions.quality_assurance_list', args) }}
+  </div>
 </div>
 {% endblock %}

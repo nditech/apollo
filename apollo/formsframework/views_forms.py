@@ -13,7 +13,7 @@ from apollo.formsframework.forms import FormForm
 from apollo.formsframework.models import FormBuilderSerializer
 from apollo.formsframework.tasks import update_submissions
 from apollo.submissions.tasks import init_submissions
-from apollo.frontend.forms import ChecklistInitForm
+from apollo.frontend.forms import make_checklist_init_form
 
 bp = Blueprint('forms', __name__, template_folder='templates',
                static_folder='static')
@@ -25,7 +25,7 @@ bp = Blueprint('forms', __name__, template_folder='templates',
 def checklist_init():
     flash_message = ''
     flash_category = ''
-    form = ChecklistInitForm()
+    form = make_checklist_init_form()
 
     try:
         str_func = unicode
@@ -139,7 +139,7 @@ def list_forms():
     page_title = _('Forms')
     template_name = 'frontend/form_list.html'
     forms = services.forms.find()
-    checklist_init_form = ChecklistInitForm()
+    checklist_init_form = make_checklist_init_form()
 
     context = {
         'forms': forms,

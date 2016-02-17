@@ -1,3 +1,4 @@
+from cachetools import cached
 from celery import Celery
 from flask import Flask, request
 from flask.ext.sslify import SSLify
@@ -51,6 +52,7 @@ def create_app(
     return app
 
 
+@cached(cache={})
 def create_celery_app(app=None):
     app = app or create_app('apollo', '', register_all_blueprints=False)
     celery = Celery(__name__, broker=app.config['CELERY_BROKER_URL'])

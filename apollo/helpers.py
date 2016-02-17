@@ -55,7 +55,7 @@ def load_source_file(source_file):
 
     if mimetype.startswith('text'):
         # likely a CSV file
-        df = pd.read_csv(source_file).fillna('')
+        df = pd.read_csv(source_file, dtype=str).fillna('')
     elif mimetype.startswith('application'):
         # likely an Excel spreadsheet
         df = pd.read_excel(source_file, 0).fillna('')

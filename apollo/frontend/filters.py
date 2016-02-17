@@ -1,6 +1,6 @@
 from apollo.core import CharFilter, ChoiceFilter, FilterSet
 from apollo.helpers import _make_choices
-from apollo.submissions.models import FLAG_CHOICES, STATUS_CHOICES
+from apollo.submissions.models import FLAG_CHOICES
 from apollo.wtforms_ext import ExtendedSelectField, ExtendedMultipleSelectField
 from apollo.frontend.helpers import get_event
 from collections import defaultdict, OrderedDict
@@ -8,7 +8,7 @@ from dateutil.parser import parse
 from flask.ext.babel import lazy_gettext as _
 from mongoengine import Q
 from apollo import services, models
-from wtforms import widgets, fields
+from wtforms import widgets, fields, Form
 
 
 class EventFilter(CharFilter):
@@ -124,14 +124,25 @@ class DynamicFieldFilter(ChoiceFilter):
         return queryset(**query_kwargs)
 
 
-class SubmissionQualityCheckFilter(CharFilter):
+class QualityAssuranceFilter(ChoiceFilter):
+    field_class = fields.FormField
+
+    def __init__(self, form, *args, **kwargs):
+        kwargs['form_class'] = form
+        super(QualityAssuranceFilter, self).__init__(*args, **kwargs)
+
     def filter(self, queryset, value):
-        if value is not None and value != '':
-            if value == '-1':
+        if (
+            'criterion' in value and 'condition' in value and
+            value['criterion'] and value['condition']
+        ):
+            if value['condition'] == '-1':
                 query_kwargs = {
-                    'quality_checks__{}__exists'.format(self.name): False}
+                    'quality_checks__{}__exists'.format(
+                        value['criterion']): False}
             else:
-                query_kwargs = {'quality_checks__{}'.format(self.name): value}
+                query_kwargs = {'quality_checks__{}'.format(
+                    value['criterion']): value['condition']}
             return queryset(**query_kwargs)
         return queryset
 
@@ -468,14 +479,6 @@ def generate_submission_filter(form):
         ]
         attributes[field_name] = FormGroupFilter(choices=choices)
 
-    pairs = [(qc['description'], qc['name'])
-             for qc in form.quality_checks]
-
-    for description, name in pairs:
-        choices = [('', description)] + list(FLAG_CHOICES)
-        attributes[name] = SubmissionQualityCheckFilter(
-            widget=widgets.HiddenInput())
-
     # quarantine status
     attributes['quarantine_status'] = SubmissionQuarantineStatusFilter(
         choices=(
@@ -500,21 +503,36 @@ def generate_submission_filter(form):
     )
 
 
-def generate_submission_flags_filter(form):
+def generate_quality_assurance_filter(form):
+    quality_check_criteria = [('', _('Quality Check Criterion'))] + \
+        [(qc['name'], qc['description']) for qc in form.quality_checks]
+    quality_check_conditions = [('', _(u'Quality Check Condition'))] + \
+        list(FLAG_CHOICES)
+
+    class QualityAssuranceConditionsForm(Form):
+        criterion = fields.SelectField(choices=quality_check_criteria)
+        condition = fields.SelectField(choices=quality_check_conditions)
+
     attributes = {}
-    pairs = [(quality_check['description'], quality_check['name'])
-             for quality_check in form.quality_checks]
 
-    for description, name in pairs:
-        choices = [('', description)] + list(FLAG_CHOICES)
-        attributes[name] = SubmissionQualityCheckFilter()
+    attributes['quality_check'] = QualityAssuranceFilter(
+        QualityAssuranceConditionsForm)
 
+    # quarantine status
+    attributes['quarantine_status'] = SubmissionQuarantineStatusFilter(
+        choices=(
+            ('', _(u'Quarantine Status')),
+            ('N', _(u'Quarantine None')),
+            ('A', _(u'Quarantine All')),
+            ('R', _(u'Quarantine Results'))
+        ))
+
+    # participant id and location
     attributes['participant_id'] = ParticipantIDFilter()
-    attributes['location'] = LocationFilter()
-    attributes['verification'] = SubmissionVerificationFilter(
-        choices=STATUS_CHOICES
+    attributes['location'] = AJAXLocationFilter()
+
+    return type(
+        'QualityAssuranceFilterSet',
+        (basesubmission_filterset(),),
+        attributes
     )
-
-    base_filter_class = basesubmission_filterset()
-
-    return type('SubmissionFlagsFilter', (base_filter_class,), attributes)
