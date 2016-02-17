@@ -226,9 +226,9 @@
         <td>&nbsp;</td>
         {%- endfor -%}
         {%- if readonly -%}
-        <td class="ps-on"{%- if master_form['quarantine_status'].errors %} class="danger"{%- endif -%}>{{ render_submission_field(master_form['verification_status']) }}</td>
+        <td class="ps-on"{%- if master_form['verification_status'].errors %} class="danger"{%- endif -%}>{{ render_submission_field(master_form['verification_status']) }}</td>
         {%- else -%}
-        <td class="ps-on"{%- if master_form['quarantine_status'].errors %} class="danger"{%- endif -%}>{{ render_submission_field(master_form['verification_status'], disabled=1) }}</td>
+        <td class="ps-on"{%- if master_form['verification_status'].errors %} class="danger"{%- endif -%}>{{ render_submission_field(master_form['verification_status'], disabled=1) }}</td>
         {%- endif -%}
         <td colspan="2">&nbsp;</td>
       </tr>
