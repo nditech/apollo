@@ -221,7 +221,7 @@
       {% if perms.edit_submission_verification_status.can() and submission.form.verifiable %}
       <tr>
         <td colspan="2" style="vertical-align: middle"><h4>{{ _('Verification Status') }}</h4></td>
-        <td class="obs-on">&nbsp;</td>
+        <td class="obs-on"><input type="hidden" name="{{ submission_form['verification_status'].name }}" value="{{ submission.verification_status|default('', true) }}" /></td>
         {%- for sibling_form in sibling_forms -%}
         <td>&nbsp;</td>
         {%- endfor -%}

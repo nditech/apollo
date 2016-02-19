@@ -355,6 +355,17 @@ def submission_edit(submission_id):
                         submission.save(clean=False)
                         changed = True
 
+                    # update the verification status if it was set
+                    if (
+                        'verification_status' in submission_form.data.keys() and
+                        submission_form.data.get('verification_status') !=
+                        submission.verification_status
+                    ):
+                        submission.verification_status = \
+                            submission_form.data.get('verification_status')
+                        submission.save(clean=False)
+                        changed = True
+
                     with signals.post_save.connected_to(
                         update_submission_version,
                         sender=services.submissions.__model__
