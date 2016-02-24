@@ -10,12 +10,19 @@ from flask.ext.babel import lazy_gettext as _
 from flask.ext.mongoengine.wtf import orm
 from flask.ext.security import current_user
 from flask.ext.security.utils import encrypt_password
+from jinja2 import contextfunction
 import magic
+import pytz
 from wtforms import FileField, PasswordField, SelectMultipleField
 from apollo.core import admin
-from apollo import models
+from apollo import models, settings
 from apollo.frontend import forms
 
+
+app_time_zone = pytz.timezone(settings.TIME_ZONE)
+utc_time_zone = pytz.utc
+
+DATETIME_FORMAT_SPEC = u'%Y-%m-%d %H:%M:%S %Z'
 
 try:
     string_type = unicode
@@ -106,13 +113,33 @@ class EventAdminView(BaseAdminView):
 
     def get_one(self, pk):
         event = super(EventAdminView, self).get_one(pk)
+
+        # setup permissions list
         try:
             entities = models.Need.objects.get(
                 action='access_event', items=event).entities
         except models.Need.DoesNotExist:
             entities = []
         event.roles = [unicode(i.pk) for i in entities]
+
+        # convert start and end dates to app time zone
+        event.start_date = utc_time_zone.localize(event.start_date).astimezone(
+            app_time_zone)
+        event.end_date = utc_time_zone.localize(event.end_date).astimezone(
+            app_time_zone)
         return event
+
+    @contextfunction
+    def get_list_value(self, context, model, name):
+        if name in ['start_date', 'end_date']:
+            original = getattr(model, name, None)
+            if original:
+                return utc_time_zone.localize(original).astimezone(
+                    app_time_zone).strftime(DATETIME_FORMAT_SPEC)
+
+            return original
+
+        return super(EventAdminView, self).get_list_value(context, model, name)
 
     def get_query(self):
         '''Returns the queryset of the objects to list.'''
@@ -124,6 +151,12 @@ class EventAdminView(BaseAdminView):
         # deployment, since it won't appear in the form
         if is_created:
             model.deployment = current_user.deployment
+
+        # also, convert the time zone to UTC
+        model.start_date = app_time_zone.localize(model.start_date).astimezone(
+            utc_time_zone)
+        model.end_date = app_time_zone.localize(model.end_date).astimezone(
+            utc_time_zone)
 
     def after_model_change(self, form, model, is_created):
         # remove event permission
