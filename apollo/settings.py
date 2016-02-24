@@ -22,6 +22,9 @@ MONGODB_SETTINGS = {
         os.environ.get('MONGODB_PORT', 'mongodb://localhost')).netloc
 }
 
+# default to UTC for prior deployments
+TIME_ZONE = os.environ.get('TIME_ZONE', 'UTC')
+
 SSL_REQUIRED = ast.literal_eval(
     os.environ.get('SSL_REQUIRED', 'True'))
 ENABLE_MOE = ast.literal_eval(
