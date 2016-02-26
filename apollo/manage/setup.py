@@ -1,4 +1,3 @@
-from datetime import datetime
 import socket
 from flask.ext.script import Command, prompt, prompt_pass
 from flask.ext.security.forms import RegisterForm
@@ -55,28 +54,5 @@ class SetupCommand(Command):
                 print '\n'.join(errors)
 
         # create at least one event
-        name = prompt('Event name')
-        start = end = None
-        while True:
-            try:
-                start = datetime.strptime(
-                    prompt('Start date (YYYY-MM-DD)'), '%Y-%m-%d')
-            except ValueError:
-                pass
-            if start:
-                break
-        while True:
-            try:
-                end = datetime.strptime(
-                    prompt('End date (YYYY-MM-DD)'), '%Y-%m-%d')
-            except ValueError:
-                pass
-            if end:
-                break
-
-        event, _ = models.Event.objects.get_or_create(
-            name=name,
-            deployment=deployment)
-        event.start_date = datetime.combine(start, datetime.min.time())
-        event.end_date = datetime.combine(end, datetime.max.time())
-        event.save()
+        from apollo.manage.deployments import CreateEventCommand
+        CreateEventCommand._create_event(deployment)
