@@ -87,6 +87,11 @@ class CreateEventCommand(Command):
         option = prompt_choices('Deployment', [
             (str(i), v) for i, v in enumerate(deployments, 1)])
         deployment = deployments[int(option) - 1]
+
+        self._create_event(deployment)
+
+    @staticmethod
+    def _create_event(deployment):
         name = prompt('Event name')
         start = end = None
         while True:
