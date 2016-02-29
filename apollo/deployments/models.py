@@ -51,9 +51,11 @@ class Deployment(db.Document):
 class Event(db.Document):
     name = db.StringField()
     start_date = db.DateTimeField(
-        default=partial(datetime.combine, datetime.now(), datetime.min.time()))
+        default=partial(
+            datetime.combine, datetime.utcnow(), datetime.min.time()))
     end_date = db.DateTimeField(
-        default=partial(datetime.combine, datetime.now(), datetime.max.time()))
+        default=partial(
+            datetime.combine, datetime.utcnow(), datetime.max.time()))
 
     deployment = db.ReferenceField(Deployment)
 

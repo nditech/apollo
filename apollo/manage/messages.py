@@ -3,6 +3,7 @@ from datetime import datetime
 from urlparse import urljoin
 from flask import current_app, url_for
 from flask.ext.script import Command, prompt
+import pytz
 import requests
 import unicodecsv
 
@@ -23,9 +24,9 @@ class MessagePlaybackCommand(Command):
                 if row['Direction'] == 'OUT':
                     continue
 
-                msg_time = datetime.strptime(
+                msg_time = pytz.utc.localize(datetime.strptime(
                     row['Created'],
-                    '%Y-%m-%d %H:%M:%S')
+                    '%Y-%m-%d %H:%M:%S'))
 
                 data = {
                     'sender': row['Mobile'].strip(),
