@@ -2,7 +2,7 @@ from datetime import datetime
 from bson.json_util import dumps, loads
 from flask.ext.script import Command, prompt, prompt_choices
 import pytz
-from apollo import models, settings
+from apollo import models
 
 
 class CreateDeploymentCommand(Command):
@@ -116,6 +116,7 @@ class CreateEventCommand(Command):
         end = datetime.combine(end, datetime.max.time())
 
         # convert to UTC
+        from apollo import settings
         app_timezone = pytz.timezone(settings.TIME_ZONE)
         start_utc = app_timezone.localize(start).astimezone(
             pytz.UTC)
