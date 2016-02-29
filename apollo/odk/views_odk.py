@@ -6,6 +6,7 @@ from flask import Blueprint, make_response, render_template, request
 from flask_httpauth import HTTPDigestAuth
 from lxml import etree
 from mongoengine import signals
+import pytz
 from slugify import slugify
 
 from apollo import services, csrf
@@ -23,7 +24,8 @@ OPEN_ROSA_VERSION_HEADER = 'X-OpenRosa-Version'
 def make_open_rosa_headers():
     return {
         OPEN_ROSA_VERSION_HEADER: OPEN_ROSA_VERSION,
-        'Date': datetime.utcnow().strftime('%a, %d %b %Y %H:%M:%S %Z'),
+        'Date': pytz.utc.localize(datetime.utcnow()).strftime(
+            '%a, %d %b %Y %H:%M:%S %Z'),
         'X-OpenRosa-Accept-Content-Length': DEFAULT_CONTENT_LENGTH
     }
 
