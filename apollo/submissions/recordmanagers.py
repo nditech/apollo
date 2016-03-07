@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import abc
 import collections
+from functools import partial
 from operator import itemgetter
 
 import six
@@ -23,6 +24,16 @@ def flatten(seq):
         else:
             l.append(element)
     return l
+
+
+def location_type_comparer(location_types, left, right):
+    for location_type in location_types:
+        result = cmp(left.get(location_type), right.get(location_type))
+
+        if result != 0:
+            return result
+
+    return result
 
 
 class DKANRecordManager(six.with_metaclass(abc.ABCMeta)):
@@ -75,12 +86,13 @@ class PandasRecordManager(DKANRecordManager):
                     row = {ltypes_subset[0]: name}
                 else:
                     row = dict(zip(ltypes_subset, name))
-                row[field.description] = int(group[field.name].sum())
+
+                row[field.description] = int(group[field.name].fillna(0).sum())
                 records.append(row)
 
         # sort
-        records = sorted(records,
-                         key=lambda d: (d.get(lt) for lt in location_types))
+        comparer = partial(location_type_comparer, location_types)
+        records = sorted(records, cmp=comparer)
 
         # headers
         headers = location_types + [field.description]
@@ -106,14 +118,14 @@ class PandasRecordManager(DKANRecordManager):
                 records.append(row)
 
         # sort
-        records = sorted(records,
-                         key=lambda d: (d.get(lt) for lt in location_types))
+        comparer = partial(location_type_comparer, location_types)
+        records = sorted(records, cmp=comparer)
 
         # headers
         sorted_options = sorted(field.options.items(), key=itemgetter(1))
         headers = location_types + [
             u'{0} | {1}'.format(
-                s_opt[0], s_opt[1]) for s_opt in sorted_options]
+                field.description, s_opt[0]) for s_opt in sorted_options]
 
         return records, headers
 
@@ -137,13 +149,13 @@ class PandasRecordManager(DKANRecordManager):
                 records.append(row)
 
         # sort
-        records = sorted(records,
-                         key=lambda d: (d.get(lt) for lt in location_types))
+        comparer = partial(location_type_comparer, location_types)
+        records = sorted(records, cmp=comparer)
 
         # headers
         sorted_options = sorted(field.options.items(), key=itemgetter(1))
         headers = location_types + [
             u'{0} | {1}'.format(
-                s_opt[0], s_opt[1]) for s_opt in sorted_options]
+                field.description, s_opt[0]) for s_opt in sorted_options]
 
         return records, headers
