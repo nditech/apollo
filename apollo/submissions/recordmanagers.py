@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import abc
 import collections
-from itertools import chain, groupby
 from operator import itemgetter
 
 import six
@@ -64,94 +63,6 @@ class DKANRecordManager(six.with_metaclass(abc.ABCMeta)):
         return
 
 
-class MapReduceRecordManager(DKANRecordManager):
-    pass
-
-
-class AggregationFrameworkRecordManager(DKANRecordManager):
-    def _generate_for_numeric_field(self, queryset, field, location_types):
-        token = u'${}'.format(field.name)
-
-        project_stage = {u'var': token, u'_id': 0}
-        project_stage.update({u'location_name_path': {lt: 1 for lt in location_types}})
-
-        pipeline = [
-            {u'$match': queryset._query},
-            {u'$project': project_stage},
-            {u'$group': {
-                u'_id': u'$location_name_path',
-                u'total': {u'$sum': u'$var'}
-            }},
-            {u'$project': {u'_id': 0, u'location_name_path': u'$_id', u'total': 1}}
-        ]
-
-        collection = queryset._collection
-
-        result = collection.aggregate(pipeline).get(u'result')
-        records = []
-
-        for index, location_type in enumerate(location_types):
-            subtypes = location_types[:index + 1]
-            sort_key = lambda rec: [rec.get(u'location_name_path').get(lt) for lt in subtypes]
-            for key, group in groupby(sorted(result, key=sort_key), sort_key):
-                row = dict(zip(subtypes, key))
-
-                row.update({
-                    field.description: sum(record.get(u'total')
-                                           for record in group)})
-                records.append(row)
-
-        return records
-
-    def _generate_for_single_choice_field(self, queryset, field,
-                                          location_types):
-        token = u'${}'.format(field.name)
-
-        project_stage = {u'var': token, u'_id': 0}
-        project_stage.update({
-            u'location_name_path': {lt: 1 for lt in location_types}})
-
-        pipeline = [
-            {u'$match': queryset._query},
-            {u'$project': project_stage},
-            {u'$group': {
-                u'_id': {
-                    u'location_name_path': u'$location_name_path',
-                    u'option': u'$var'
-                },
-                u'count': {u'$sum': 1}
-            }},
-            {u'$group': {
-                u'_id': u'$_id.location_name_path',
-                u'options': {
-                    u'$push': {u'option': u'$_id.option', u'count': u'$count'}
-                }
-            }},
-            {u'$project': {
-                u'_id': 0,
-                u'location_name_path': u'$_id',
-                u'options': 1
-            }}
-        ]
-
-        collection = queryset._collection
-
-        result = collection.aggregate(pipeline).get(u'result')
-        records = []
-
-        for index, location_type in enumerate(location_types):
-            subtypes = location_types[:index + 1]
-            sort_key = lambda rec: [rec.get(u'location_name_path').get(lt) for lt in subtypes]
-            for key, group in groupby(sorted(result, key=sort_key), sort_key):
-                row = dict(zip(subtypes, key))
-
-                group_options = [i.get(u'options') for i in group]
-
-                for description, option in field.options.items():
-                    row[u'{} | {}'.format(field.description, description)] = \
-                        sum(r.get(u'count') for r in chain.from_iterable(group_options) if r.get(u'option') == option)
-
-
 class PandasRecordManager(DKANRecordManager):
     def _generate_for_numeric_field(self, queryset, field, location_types):
         dataframe = queryset.to_dataframe()
@@ -164,7 +75,7 @@ class PandasRecordManager(DKANRecordManager):
                     row = {ltypes_subset[0]: name}
                 else:
                     row = dict(zip(ltypes_subset, name))
-                row[field.description] = group[field.name].sum()
+                row[field.description] = int(group[field.name].sum())
                 records.append(row)
 
         # sort
