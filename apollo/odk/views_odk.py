@@ -110,8 +110,13 @@ def submission():
         form = services.forms.get(pk=form_pk)
 
         participant = filter_participants(form, participant_auth.username())
-        if not form or not participant:
-            return open_rosa_default_response(status_code=404)
+        if not form:
+            return open_rosa_default_response(
+                content=u'Invalid form specified', status_code=404)
+
+        if not participant:
+            return open_rosa_default_response(
+                content=u'Invalid participant ID', status_code=404)
     except (IndexError, etree.LxmlError):
         return open_rosa_default_response(status_code=400)
 
