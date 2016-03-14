@@ -141,7 +141,19 @@ def submission():
 
     if not submission:
         # no existing submission for that form and participant
-        return open_rosa_default_response(status_code=404)
+        return open_rosa_default_response(
+            content=u'Checklist not found', status_code=404)
+
+    form_modified = False
+    submitted_version_id = None
+
+    try:
+        submitted_version_id = document.xpath(u'//data/version_id')[0].text
+    except (IndexError, etree.LxmlError):
+        pass
+
+    if form.version_identifier != submitted_version_id:
+        form_modified = True
 
     tag_finder = etree.XPath(u'//data/*[local-name() = $tag]')
     for tag in form.tags:
@@ -168,6 +180,11 @@ def submission():
     ):
         submission.save()
 
+    if form_modified:
+        return open_rosa_default_response(
+            content=u'Your submission was received, '
+            'but you sent it using an outdated form. Please download a new '
+            'copy and resend. Thank you', status_code=201)
     return open_rosa_default_response(status_code=201)
 
 
