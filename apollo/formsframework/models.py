@@ -1,5 +1,6 @@
 import hashlib
 from operator import itemgetter
+from uuid import uuid4
 from apollo.core import db
 from apollo.deployments.models import Deployment, Event
 from apollo.users.models import Role, Need
@@ -121,6 +122,7 @@ class Form(db.Document):
         default=True,
         verbose_name=_('Require exclamation (!) mark in text message? (Does not apply to Checklist Forms)'))
     groups = db.ListField(db.EmbeddedDocumentField('FormGroup'))
+    version_identifier = db.StringField()
 
     events = db.ListField(db.ReferenceField(
         Event, reverse_delete_rule=db.PULL))
@@ -181,6 +183,9 @@ class Form(db.Document):
         return super(Form, self).clean()
 
     def save(self, **kwargs):
+        # overwrite version identifier
+        self.version_identifier = uuid4().hex
+
         super(Form, self).save(**kwargs)
         # create permissions for roles
         Need.objects.filter(
@@ -189,6 +194,13 @@ class Form(db.Document):
         Need.objects.create(
             action='view_forms', items=[self], entities=self.permitted_roles,
             deployment=self.deployment)
+
+    def update(self, **kwargs):
+        # overwrite version identifier
+        kwargs2 = kwargs.copy()
+        kwargs2.update(set__version_identifier=uuid4().hex)
+
+        return super(Form, self).update(**kwargs2)
 
     def hash(self):
         xform_data = etree.tostring(
@@ -208,9 +220,16 @@ class Form(db.Document):
 
         body = HTML_E.body()
         model.append(E.bind(nodeset='/data/form_id', readonly='true()'))
+        model.append(E.bind(nodeset='/data/version_id', readonly='true()'))
+
         form_id = etree.Element('form_id')
         form_id.text = unicode(self.id)
+
+        version_id = etree.Element('version_id')
+        version_id.text = self.version_identifier
+
         data.append(form_id)
+        data.append(version_id)
 
         # set up identifiers
         data.append(E.device_id())
