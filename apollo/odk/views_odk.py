@@ -33,11 +33,13 @@ def make_open_rosa_headers():
 def open_rosa_default_response(**kwargs):
     content = '''<?xml version='1.0' encoding='UTF-8'?>
 <OpenRosaResponse xmlns='http://openrosa.org/http/response'>
-<message nature=''>{}</message>
+<message>{}</message>
 </OpenRosaResponse>'''.format(kwargs.get('content', ''))
     response = make_response(content, kwargs.get('status_code', 201))
 
     response.headers.extend(make_open_rosa_headers())
+
+    print response.get_data()
 
     return response
 
@@ -184,7 +186,7 @@ def submission():
         return open_rosa_default_response(
             content=u'Your submission was received, '
             'but you sent it using an outdated form. Please download a new '
-            'copy and resend. Thank you', status_code=201)
+            'copy and resend. Thank you', status_code=202)
     return open_rosa_default_response(status_code=201)
 
 
