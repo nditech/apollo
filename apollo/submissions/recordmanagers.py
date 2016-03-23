@@ -2,6 +2,7 @@
 import abc
 import collections
 from functools import partial
+from itertools import groupby
 from operator import itemgetter
 
 import six
@@ -72,6 +73,54 @@ class DKANRecordManager(six.with_metaclass(abc.ABCMeta)):
     @abc.abstractmethod
     def _generate_for_multiselect_field(self, queryset, field, location_types):
         return
+
+
+class AggregationFrameworkRecordManager(DKANRecordManager):
+    def _generate_for_numeric_field(self, queryset, field, location_types):
+        token = u'${}'.format(field.name)
+
+        project_stage = {u'var': token, u'_id': 0}
+        project_stage.update({u'location_name_path': {
+            lt: 1 for lt in location_types
+        }})
+
+        pipeline = [
+            {u'$match': queryset._query},
+            {u'$project': project_stage},
+            {u'$group': {
+                u'_id': u'$location_name_path',
+                u'total': {u'$sum': u'$var'}
+            }},
+            {u'$project': {
+                u'_id': 0, u'location_name_path': u'$_id', u'total': 1
+            }}
+        ]
+
+        collection = queryset._collection
+        result = collection.aggregate(pipeline).get(u'result')
+        records = []
+
+        for index, location_type in enumerate(location_types):
+            subtypes = location_types[:index + 1]
+            sort_key = lambda rec: [rec.get(
+                u'location_name_path').get(lt) for lt in subtypes]
+            for key, group in groupby(sorted(result, key=sort_key), sort_key):
+                row = dict(zip(subtypes, key))
+
+                row.update({
+                    field.description: sum(record.get(u'total')
+                                           for record in group)})
+                records.append(row)
+
+        headers = location_types + [field.description]
+
+        return records, headers
+
+    def _generate_for_single_choice_field(self, queryset, field, location_types):
+        pass
+
+    def _generate_for_multiselect_field(self, queryset, field, location_types):
+        pass
 
 
 class PandasRecordManager(DKANRecordManager):
