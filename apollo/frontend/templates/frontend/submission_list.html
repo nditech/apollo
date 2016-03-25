@@ -29,6 +29,7 @@
   <ul class="dropdown-menu">
     <li><a href="{{ url_for('submissions.submission_list', form_id=form.pk, export='observer', **request.args) }}">{{ _('Observers Data') }}</a></li>
     <li><a href="{{ url_for('submissions.submission_list', form_id=form.pk, export='master', **request.args) }}">{{ _('Master Data') }}</a></li>
+    <li><a href="{{ url_for('submissions.submission_list', form_id=form.pk, export='aggregated', **request.args) }}">{{ _('Aggregated Data') }}</a></li>
   </ul>
 </div>
 {% endif %}

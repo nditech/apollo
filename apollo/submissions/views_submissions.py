@@ -15,6 +15,7 @@ from werkzeug.datastructures import MultiDict
 from apollo import services
 from apollo.submissions.incidents import incidents_csv
 from apollo.participants.utils import update_participant_completion_rating
+from apollo.submissions.aggregation import aggregated_dataframe
 from apollo.submissions.models import QUALITY_STATUSES
 from apollo.messaging.tasks import send_messages
 from apollo.frontend import route, permissions
@@ -70,7 +71,7 @@ def submission_list(form_id):
 
     if request.args.get('export') and permissions.export_submissions.can():
         mode = request.args.get('export')
-        if mode == 'master':
+        if mode in ['master', 'aggregated']:
             queryset = services.submissions.find(
                 submission_type='M',
                 form=form
@@ -82,14 +83,20 @@ def submission_list(form_id):
             ).order_by('location', 'contributor')
 
         query_filterset = filter_class(queryset, request.args)
-        dataset = services.submissions.export_list(
-            query_filterset.qs, g.deployment)
         basename = slugify_unicode('%s %s %s %s' % (
             g.event.name.lower(),
             form.name.lower(),
             datetime.utcnow().strftime('%Y %m %d %H%M%S'),
             mode))
         content_disposition = 'attachment; filename=%s.csv' % basename
+        if mode == 'aggregated':
+            # TODO: you want to change the float format or even remove it
+            # if you have columns that have float values
+            dataset = aggregated_dataframe(query_filterset.qs, form)\
+                .to_csv(encoding='utf-8', index=False, float_format='%d')
+        else:
+            dataset = services.submissions.export_list(
+                query_filterset.qs, g.deployment)
 
         return Response(
             dataset, headers={'Content-Disposition': content_disposition},
@@ -352,6 +359,17 @@ def submission_edit(submission_id):
                     ):
                         submission.quarantine_status = \
                             submission_form.data.get('quarantine_status')
+                        submission.save(clean=False)
+                        changed = True
+
+                    # update the verification status if it was set
+                    if (
+                        'verification_status' in submission_form.data.keys() and
+                        submission_form.data.get('verification_status') !=
+                        submission.verification_status
+                    ):
+                        submission.verification_status = \
+                            submission_form.data.get('verification_status')
                         submission.save(clean=False)
                         changed = True
 

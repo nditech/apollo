@@ -112,31 +112,31 @@ def _voting_results(form_pk, location_pk=None):
                 valid_summation[
                     result_field_labels + rejected_votes_field +
                     blank_votes_field].sum(
-                    axis=1)),
+                    axis=0)),
             'turnout': valid_summation[
                 result_field_labels + rejected_votes_field +
-                blank_votes_field].sum(axis=1) /
+                blank_votes_field].sum(axis=0) /
             valid_summation.get(registered_voters_field, 0) or pd.np.inf,
             'all_valid_votes': int(
-                valid_summation[result_field_labels].sum(axis=1)),
+                valid_summation[result_field_labels].sum(axis=0)),
             'all_valid_votes_pct': valid_summation[result_field_labels].sum(
-                axis=1) / valid_summation[result_field_labels +
+                axis=0) / valid_summation[result_field_labels +
                                           rejected_votes_field +
-                                          blank_votes_field].sum(axis=1),
+                                          blank_votes_field].sum(axis=0),
             'total_rejected': int(valid_summation[rejected_votes_field[0]])
             if rejected_votes_field else 0,
             'total_rejected_pct': valid_summation[rejected_votes_field[0]] /
             valid_summation[
                 result_field_labels + rejected_votes_field +
                 blank_votes_field].sum(
-                axis=1) if rejected_votes_field else 0,
+                axis=0) if rejected_votes_field else 0,
             'total_blanks': int(valid_summation[blank_votes_field[0]])
             if blank_votes_field else 0,
             'total_blanks_pct': valid_summation[blank_votes_field[0]] /
             valid_summation[
                 result_field_labels + rejected_votes_field +
                 blank_votes_field].sum(
-                axis=1) if blank_votes_field else 0
+                axis=0) if blank_votes_field else 0
         }
         if form.calculate_moe and current_app.config.get('ENABLE_MOE'):
             data_analyses['overall']['turnout_moe_95'] = \
@@ -250,30 +250,30 @@ def _voting_results(form_pk, location_pk=None):
                             _valid[result_field_labels +
                                    rejected_votes_field +
                                    blank_votes_field].sum(
-                                axis=1)),
+                                axis=0)),
                         'turnout': _valid[
                             result_field_labels + rejected_votes_field +
                             blank_votes_field].sum(
-                            axis=1) / _valid.get(
+                            axis=0) / _valid.get(
                             registered_voters_field, 0) or pd.np.inf,
                         'all_valid_votes': int(
-                            _valid[result_field_labels].sum(axis=1)),
+                            _valid[result_field_labels].sum(axis=0)),
                         'all_valid_votes_pct': _valid[result_field_labels].sum(
-                            axis=1) / _valid[result_field_labels +
+                            axis=0) / _valid[result_field_labels +
                                              rejected_votes_field +
-                                             blank_votes_field].sum(axis=1),
+                                             blank_votes_field].sum(axis=0),
                         'total_rejected': int(_valid[rejected_votes_field[0]])
                         if rejected_votes_field else 0,
                         'total_rejected_pct': _valid[rejected_votes_field[0]] /
                         _valid[result_field_labels + rejected_votes_field +
                                blank_votes_field].sum(
-                            axis=1) if rejected_votes_field else 0,
+                            axis=0) if rejected_votes_field else 0,
                         'total_blanks': int(_valid[blank_votes_field[0]])
                         if blank_votes_field else 0,
                         'total_blanks_pct': _valid[blank_votes_field[0]] /
                         _valid[result_field_labels + rejected_votes_field +
                                blank_votes_field].sum(
-                            axis=1) if blank_votes_field else 0,
+                            axis=0) if blank_votes_field else 0,
                     }
 
                     if (

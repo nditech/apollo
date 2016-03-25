@@ -6,6 +6,7 @@ from flask import Blueprint, make_response, render_template, request
 from flask_httpauth import HTTPDigestAuth
 from lxml import etree
 from mongoengine import signals
+import pytz
 from slugify import slugify
 
 from apollo import services, csrf
@@ -23,7 +24,8 @@ OPEN_ROSA_VERSION_HEADER = 'X-OpenRosa-Version'
 def make_open_rosa_headers():
     return {
         OPEN_ROSA_VERSION_HEADER: OPEN_ROSA_VERSION,
-        'Date': datetime.utcnow().strftime('%a, %d %b %Y %H:%M:%S %Z'),
+        'Date': pytz.utc.localize(datetime.utcnow()).strftime(
+            '%a, %d %b %Y %H:%M:%S %Z'),
         'X-OpenRosa-Accept-Content-Length': DEFAULT_CONTENT_LENGTH
     }
 
@@ -31,11 +33,13 @@ def make_open_rosa_headers():
 def open_rosa_default_response(**kwargs):
     content = '''<?xml version='1.0' encoding='UTF-8'?>
 <OpenRosaResponse xmlns='http://openrosa.org/http/response'>
-<message nature=''>{}</message>
+<message>{}</message>
 </OpenRosaResponse>'''.format(kwargs.get('content', ''))
     response = make_response(content, kwargs.get('status_code', 201))
 
     response.headers.extend(make_open_rosa_headers())
+
+    print response.get_data()
 
     return response
 
@@ -108,8 +112,13 @@ def submission():
         form = services.forms.get(pk=form_pk)
 
         participant = filter_participants(form, participant_auth.username())
-        if not form or not participant:
-            return open_rosa_default_response(status_code=404)
+        if not form:
+            return open_rosa_default_response(
+                content=u'Invalid form specified', status_code=404)
+
+        if not participant:
+            return open_rosa_default_response(
+                content=u'Invalid participant ID', status_code=404)
     except (IndexError, etree.LxmlError):
         return open_rosa_default_response(status_code=400)
 
@@ -134,7 +143,19 @@ def submission():
 
     if not submission:
         # no existing submission for that form and participant
-        return open_rosa_default_response(status_code=404)
+        return open_rosa_default_response(
+            content=u'Checklist not found', status_code=404)
+
+    form_modified = False
+    submitted_version_id = None
+
+    try:
+        submitted_version_id = document.xpath(u'//data/version_id')[0].text
+    except (IndexError, etree.LxmlError):
+        pass
+
+    if form.version_identifier != submitted_version_id:
+        form_modified = True
 
     tag_finder = etree.XPath(u'//data/*[local-name() = $tag]')
     for tag in form.tags:
@@ -161,6 +182,11 @@ def submission():
     ):
         submission.save()
 
+    if form_modified:
+        return open_rosa_default_response(
+            content=u'Your submission was received, '
+            'but you sent it using an outdated form. Please download a new '
+            'copy and resend. Thank you', status_code=202)
     return open_rosa_default_response(status_code=201)
 
 

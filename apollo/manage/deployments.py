@@ -1,6 +1,7 @@
 from datetime import datetime
 from bson.json_util import dumps, loads
 from flask.ext.script import Command, prompt, prompt_choices
+import pytz
 from apollo import models
 
 
@@ -86,6 +87,11 @@ class CreateEventCommand(Command):
         option = prompt_choices('Deployment', [
             (str(i), v) for i, v in enumerate(deployments, 1)])
         deployment = deployments[int(option) - 1]
+
+        self._create_event(deployment)
+
+    @staticmethod
+    def _create_event(deployment):
         name = prompt('Event name')
         start = end = None
         while True:
@@ -105,11 +111,23 @@ class CreateEventCommand(Command):
             if end:
                 break
 
+        # first, set to start and end of the days entered
+        start = datetime.combine(start, datetime.min.time())
+        end = datetime.combine(end, datetime.max.time())
+
+        # convert to UTC
+        from apollo import settings
+        app_timezone = pytz.timezone(settings.TIME_ZONE)
+        start_utc = app_timezone.localize(start).astimezone(
+            pytz.UTC)
+        end_utc = app_timezone.localize(end).astimezone(
+            pytz.UTC)
+
         event, _ = models.Event.objects.get_or_create(
             name=name,
             deployment=deployment)
-        event.start_date = datetime.combine(start, datetime.min.time())
-        event.end_date = datetime.combine(end, datetime.max.time())
+        event.start_date = start_utc
+        event.end_date = end_utc
         event.save()
 
 
