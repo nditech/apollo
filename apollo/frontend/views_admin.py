@@ -66,7 +66,8 @@ class DeploymentAdminView(BaseAdminView):
             }
         }
     }
-    form_excluded_columns = ['administrative_divisions_graph']
+    form_excluded_columns = ['administrative_divisions_graph',
+                             'is_initialized', 'include_rejected_in_votes']
     model_form_converter = DeploymentModelConverter
 
     def get_query(self):
@@ -110,6 +111,8 @@ class EventAdminView(BaseAdminView):
     form_rules = [
         rules.FieldSet(('name', 'start_date', 'end_date', 'roles'), _('Event'))
     ]
+
+    form_excluded_columns = (u'deployment')
 
     def get_one(self, pk):
         event = super(EventAdminView, self).get_one(pk)
@@ -187,7 +190,10 @@ class UserAdminView(BaseAdminView):
     '''
     column_list = ('email', 'roles', 'active')
     column_searchable_list = ('email',)
-    form_excluded_columns = ('password',)
+    form_excluded_columns = ('password', 'confirmed_at', 'login_count',
+                             'last_login_ip', 'last_login_at',
+                             'current_login_at', 'deployment',
+                             'current_login_ip')
     form_rules = [
         rules.FieldSet(('email', 'password2', 'active', 'roles'))
     ]
