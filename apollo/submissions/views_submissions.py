@@ -8,7 +8,9 @@ from flask import (
 )
 from flask.ext.babel import lazy_gettext as _
 from flask.ext.security import current_user, login_required
+from flask.ext.security.utils import verify_and_update_password
 from flask.ext.menu import register_menu
+from flask_httpauth import HTTPBasicAuth
 from mongoengine import signals
 from tablib import Dataset
 from werkzeug.datastructures import MultiDict
@@ -29,8 +31,20 @@ from apollo.frontend.template_filters import mkunixtimestamp
 from functools import partial
 from slugify import slugify_unicode
 
+
+auth = HTTPBasicAuth()
 bp = Blueprint('submissions', __name__, template_folder='templates',
                static_folder='static')
+
+
+@auth.verify_password
+def verify_pw(username, password):
+    user = services.users.get(email=username)
+
+    if not user:
+        return False
+
+    return verify_and_update_password(password, user)
 
 
 @route(bp, '/submissions/form/<form_id>', methods=['GET', 'POST'])
@@ -644,3 +658,9 @@ def update_submission_version(sender, document, **kwargs):
         channel=channel,
         identity=identity
     )
+
+
+@route(bp, u'/api/v1/submission-export')
+@auth.login_required
+def submission_export():
+    return u'Hello, world!'
