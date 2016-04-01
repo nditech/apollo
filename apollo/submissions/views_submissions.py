@@ -660,7 +660,18 @@ def update_submission_version(sender, document, **kwargs):
     )
 
 
-@route(bp, u'/api/v1/submission-export')
+@route(bp, u'/api/v1/submissions/export/aggregated/<form_id>')
 @auth.login_required
-def submission_export():
-    return u'Hello, world!'
+def submission_export(form_id):
+    form = services.forms.get_or_404(pk=form_id)
+
+    queryset = services.submissions.find(
+        form=form, submission_type='M').order_by('location')
+    dataset = aggregated_dataframe(queryset, form).to_csv(
+        encoding='utf-8', index=False, float_format='%d')
+
+    # TODO: any other way to control/stream the output?
+    # currently it just takes the name of the form ID
+    return Response(
+        dataset,
+        mimetype='text/csv')
