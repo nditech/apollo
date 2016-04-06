@@ -40,3 +40,21 @@ class AggregationManagerTest(TestCase):
 
         self.assertIn(u'_id', project_stage)
         self.assertEquals(project_stage[u'_id'], 0)
+
+    def test_numeric_field_first_group_stage(self):
+        manager = AggregationFrameworkRecordManager2()
+
+        # setup data
+        fields = [
+            FormField(name=u'AA'),
+            FormField(name=u'AB'),
+            FormField(name=u'BA'),
+            FormField(name=u'BB'),
+            FormField(name=u'BC')
+        ]
+
+        group_expr = manager._numeric_field_first_stage_group(fields[0])
+        token = u'${}'.format(fields[0].name)
+
+        self.assertIn(fields[0].name, group_expr)
+        self.assertEqual(group_expr[fields[0].name], {u'$sum': token})

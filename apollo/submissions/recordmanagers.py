@@ -338,3 +338,26 @@ class AggregationFrameworkRecordManager2(object):
         project_stage[u'_id'] = 0
 
         return project_stage
+
+    @classmethod
+    def generate_first_stage_group(cls, fields):
+        pass
+
+    @classmethod
+    def _numeric_field_first_stage_group(cls, field):
+        token = u'${0}'.format(field.name)
+        expression = {field.name: {u'$sum': token}}
+
+        return expression
+
+    @classmethod
+    def _single_choice_field_first_stage_group(cls, field):
+        expression = {}
+
+        return expression
+
+    @classmethod
+    def _multiple_choice_field_first_stage_group(cls, field):
+        expression = {}
+
+        return expression
