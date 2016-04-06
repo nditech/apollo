@@ -330,7 +330,11 @@ class PandasRecordManager(DKANRecordManager):
 
 class AggregationFrameworkRecordManager2(object):
     @classmethod
-    def generate_first_stage_project(cls, fields):
+    def generate_first_stage_project(cls, fields, location_types):
         project_stage = {fi.name: 1 for fi in fields}
+        project_stage[u'location_name_path'] = {
+            lt: 1 for lt in location_types
+        }
+        project_stage[u'_id'] = 0
 
         return project_stage
