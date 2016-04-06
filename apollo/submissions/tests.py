@@ -1,9 +1,7 @@
 from unittest import TestCase
 
 from apollo.formsframework.models import FormField
-from apollo.submissions.recordmanagers import (
-    PipelineBuilder)
-
+from apollo.submissions.recordmanagers import PipelineBuilder
 
 class AggregationManagerTest(TestCase):
     def test_first_projection_stage(self):
