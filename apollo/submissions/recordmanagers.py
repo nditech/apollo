@@ -326,3 +326,11 @@ class PandasRecordManager(DKANRecordManager):
                 field.description, s_opt[0]) for s_opt in sorted_options]
 
         return records, headers
+
+
+class AggregationFrameworkRecordManager2(object):
+    @classmethod
+    def generate_first_stage_project(cls, fields):
+        project_stage = {fi.name: 1 for fi in fields}
+
+        return project_stage
