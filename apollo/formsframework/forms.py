@@ -56,6 +56,8 @@ def update_submission_version(sender, document, **kwargs):
 
 
 def filter_participants(form, participant_id):
+    if not form:
+        return None
     event = getattr(g, 'event', services.events.default())
     events = set(services.events.overlapping_events(event)).intersection(
         form.events)

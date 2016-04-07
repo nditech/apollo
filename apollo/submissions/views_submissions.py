@@ -8,7 +8,9 @@ from flask import (
 )
 from flask.ext.babel import lazy_gettext as _
 from flask.ext.security import current_user, login_required
+from flask.ext.security.utils import verify_and_update_password
 from flask.ext.menu import register_menu
+from flask_httpauth import HTTPBasicAuth
 from mongoengine import signals
 from tablib import Dataset
 from werkzeug.datastructures import MultiDict
@@ -29,8 +31,20 @@ from apollo.frontend.template_filters import mkunixtimestamp
 from functools import partial
 from slugify import slugify_unicode
 
+
+auth = HTTPBasicAuth()
 bp = Blueprint('submissions', __name__, template_folder='templates',
                static_folder='static')
+
+
+@auth.verify_password
+def verify_pw(username, password):
+    user = services.users.get(email=username)
+
+    if not user:
+        return False
+
+    return verify_and_update_password(password, user)
 
 
 @route(bp, '/submissions/form/<form_id>', methods=['GET', 'POST'])
@@ -644,3 +658,20 @@ def update_submission_version(sender, document, **kwargs):
         channel=channel,
         identity=identity
     )
+
+
+@route(bp, u'/api/v1/submissions/export/aggregated/<form_id>')
+@auth.login_required
+def submission_export(form_id):
+    form = services.forms.get_or_404(pk=form_id)
+
+    queryset = services.submissions.find(
+        form=form, submission_type='M').order_by('location')
+    dataset = aggregated_dataframe(queryset, form).to_csv(
+        encoding='utf-8', index=False, float_format='%d')
+
+    # TODO: any other way to control/stream the output?
+    # currently it just takes the name of the form ID
+    return Response(
+        dataset,
+        mimetype='text/csv')
