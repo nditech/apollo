@@ -341,7 +341,19 @@ class AggregationFrameworkRecordManager2(object):
 
     @classmethod
     def generate_first_stage_group(cls, fields):
-        pass
+        group_expression = {u'_id': u'$location_name_path'}
+
+        for field in fields:
+            if field.analysis_type != u'PROCESS':
+                continue
+            if not field.options:
+                group_expression.update(cls._numeric_field_first_stage_group(field))
+            elif field.options and not field.allows_multiple_values:
+                group_expression.update(cls._single_choice_field_first_stage_group(field))
+            else:
+                group_expression.update(cls._multiple_choice_field_first_stage_group(field))
+
+        return {u'$group': group_expression}
 
     @classmethod
     def _numeric_field_first_stage_group(cls, field):
@@ -352,12 +364,18 @@ class AggregationFrameworkRecordManager2(object):
 
     @classmethod
     def _single_choice_field_first_stage_group(cls, field):
-        expression = {}
+        token = u'${0}'.format(field.name)
+        expression = {
+            u'{0}_{1}'.format(field.name, val): {
+                u'$push': {u'$cond': [{u'$eq': [token, val]}, 1, 0]}
+            }
+            for val in field.options.values()}
 
         return expression
 
     @classmethod
     def _multiple_choice_field_first_stage_group(cls, field):
-        expression = {}
+        token = u'${0}'.format(field.name)
+        expression = {field.name: {u'$push': token}}
 
         return expression
