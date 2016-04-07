@@ -2,12 +2,12 @@ from unittest import TestCase
 
 from apollo.formsframework.models import FormField
 from apollo.submissions.recordmanagers import (
-    AggregationFrameworkRecordManager2)
+    PipelineBuilder)
 
 
 class AggregationManagerTest(TestCase):
     def test_first_projection_stage(self):
-        manager = AggregationFrameworkRecordManager2()
+        manager = PipelineBuilder()
 
         # setup data
         first_stage_project_fields = [
@@ -42,7 +42,7 @@ class AggregationManagerTest(TestCase):
         self.assertEquals(project_stage[u'_id'], 0)
 
     def test_numeric_field_first_group_stage(self):
-        manager = AggregationFrameworkRecordManager2()
+        manager = PipelineBuilder()
 
         # setup data
         field = FormField(name=u'AA')
@@ -54,7 +54,7 @@ class AggregationManagerTest(TestCase):
         self.assertEquals(group_expr[field.name], {u'$sum': token})
 
     def test_single_choice_field_first_group_stage(self):
-        manager = AggregationFrameworkRecordManager2()
+        manager = PipelineBuilder()
 
         # setup data
         field = FormField(name='AA', options={u'Yes': 1,
@@ -73,7 +73,7 @@ class AggregationManagerTest(TestCase):
             self.assertEquals(group_expr[key_spec], value_expr)
 
     def test_multiple_choice_field_first_group_stage(self):
-        manager = AggregationFrameworkRecordManager2()
+        manager = PipelineBuilder()
 
         # setup data
         field = FormField(name='AA', options={u'Yes': 1,

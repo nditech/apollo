@@ -328,7 +328,7 @@ class PandasRecordManager(DKANRecordManager):
         return records, headers
 
 
-class AggregationFrameworkRecordManager2(object):
+class PipelineBuilder(object):
     @classmethod
     def generate_first_stage_project(cls, fields, location_types):
         project_stage = {fi.name: 1 for fi in fields}
@@ -337,7 +337,7 @@ class AggregationFrameworkRecordManager2(object):
         }
         project_stage[u'_id'] = 0
 
-        return project_stage
+        return {u'$project': project_stage}
 
     @classmethod
     def generate_first_stage_group(cls, fields):
@@ -347,11 +347,14 @@ class AggregationFrameworkRecordManager2(object):
             if field.analysis_type != u'PROCESS':
                 continue
             if not field.options:
-                group_expression.update(cls._numeric_field_first_stage_group(field))
+                group_expression.update(
+                    cls._numeric_field_first_stage_group(field))
             elif field.options and not field.allows_multiple_values:
-                group_expression.update(cls._single_choice_field_first_stage_group(field))
+                group_expression.update(
+                    cls._single_choice_field_first_stage_group(field))
             else:
-                group_expression.update(cls._multiple_choice_field_first_stage_group(field))
+                group_expression.update(
+                    cls._multiple_choice_field_first_stage_group(field))
 
         return {u'$group': group_expression}
 
@@ -379,3 +382,82 @@ class AggregationFrameworkRecordManager2(object):
         expression = {field.name: {u'$push': token}}
 
         return expression
+
+    def __init__(self, queryset):
+        self.queryset = queryset
+        sample = self.queryset.first()
+        self.form = sample.form
+        self.fields = sorted(
+            (self.form.get_field_by_tag(tag) for tag in self.form.tags),
+            key=lambda fi: fi.name)
+        self.location_types = [
+            anc.location_type for anc in sample.location.ancestors]
+        self.location_types.reverse()
+
+    def generate_pipeline(self):
+        pipeline = [
+            {u'$match': self.queryset._query},
+            self.generate_first_stage_project(
+                self.fields, self.location_types),
+            self.generate_first_stage_group(self.fields)
+        ]
+
+        return pipeline
+
+
+class AggFrameworkExporter(object):
+    def __init__(self, queryset):
+        self.queryset = queryset
+        if self.queryset.count() == 0:
+            raise ValueError(u'Empty queryset specified')
+
+        self.pipeline_builder = PipelineBuilder(queryset)
+
+    def export_dataset(self):
+        collection = self.queryset._collection
+        pipeline = self.pipeline_builder.generate_pipeline()
+
+        result = collection.aggregate(pipeline).get(u'result')
+
+        # generate headers
+        ltypes = self.pipeline_builder.location_types
+        headers = ltypes[:]
+        for field in self.pipeline_builder.fields:
+            if not field.options:
+                headers.append(field.name)
+            else:
+                headers.extend(
+                    u'{0}|{1}'.format(field.name, opt)
+                    for opt in field.options.values())
+
+        # generate records
+        records = []
+        for index, location_type in enumerate(ltypes):
+            subtypes = ltypes[:index + 1]
+            sort_key = lambda rec: [rec.get(u'_id').get(lt) for lt in subtypes]
+
+            for key, group in groupby(sorted(result, key=sort_key), sort_key):
+                row = dict(zip(subtypes, key))
+
+                for field in self.pipeline_builder.fields:
+                    if field.analysis_type != u'PROCESS':
+                        continue
+                    if not field.options:
+                        row[field.name] = sum(
+                            r.get(field.name, 0) for r in group)
+                        continue
+                    elif not field.allows_multiple_values:
+                        for opt in field.options.values():
+                            row[u'{0}|{1}'.format(field.name, opt)] = \
+                                sum(chain.from_iterable(
+                                    r.get(u'{0}_{1}'.format(field.name, opt))
+                                    for r in group))
+                        continue
+                    else:
+                        for opt in field.options.values():
+                            row[u'{0}|{1}'.format(field.name, opt)] = \
+                                sum(Counter(flatten(r.get(field.name))).get(opt, 0) for r in group)
+
+                records.append(row)
+
+        return records, headers
