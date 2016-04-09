@@ -27,6 +27,13 @@ def flatten(seq):
     return l
 
 
+def sum2(iterable):
+    '''A clone of `sum` that has the advantage of skipping
+    None if it encounters it.
+    '''
+    return sum(item for item in iterable if item)
+
+
 def location_type_comparer(location_types, left, right):
     for location_type in location_types:
         result = cmp(left.get(location_type), right.get(location_type))
@@ -331,6 +338,20 @@ class PandasRecordManager(DKANRecordManager):
 class PipelineBuilder(object):
     @classmethod
     def generate_first_stage_project(cls, fields, location_types):
+        '''Generates the $project clause for the aggregation pipeline.
+
+        Basically, this clause skips all fields in submissions except
+        the `location_name_path` (reduced to only the specified location
+        types) and any fields passed in as the second parameter.
+
+        Args:
+            - cls: this class. unused
+            - fields: `apollo.formsframework.models.FormField` instances
+            - location_types: names of location types
+
+        Returns:
+            A dict containing the $project clause for the pipeline.
+        '''
         project_stage = {fi.name: 1 for fi in fields}
         project_stage[u'location_name_path'] = {
             lt: 1 for lt in location_types
@@ -341,6 +362,18 @@ class PipelineBuilder(object):
 
     @classmethod
     def generate_first_stage_group(cls, fields):
+        '''Generates the (complex) $group clause for the aggregation pipeline.
+
+        This method delegates the actual work to other methods based on each
+        field typeand just aggregates the combined result for all the fields.
+
+        Args:
+            - cls: this class.
+            - fields: `apollo.formsframework.models.FormField` instances
+
+        Returns:
+            A dict with the $group clause for the pipeline.
+        '''
         group_expression = {u'_id': u'$location_name_path'}
 
         for field in fields:
@@ -360,6 +393,19 @@ class PipelineBuilder(object):
 
     @classmethod
     def _numeric_field_first_stage_group(cls, field):
+        '''
+        Generates a $group expression for a numeric field for the pipeline.
+
+        For numeric fields, the expression is pretty simple: sum all
+        the values for the entire group.
+
+        Args:
+            - cls: this class. unused
+            - field: an `apollo.formsframework.models.FormField` instance
+
+        Returns:
+            A $group expression as a dict
+        '''
         token = u'${0}'.format(field.name)
         expression = {field.name: {u'$sum': token}}
 
@@ -367,6 +413,24 @@ class PipelineBuilder(object):
 
     @classmethod
     def _single_choice_field_first_stage_group(cls, field):
+        '''
+        Generates a $group expression for a single-choice field for the
+        pipeline.
+
+        For single-choice fields, for each valid option, $push 1 or 0
+        to a field named <field_name>__<option>, depending on whether
+        that value was encounted or not. So a field named AA with options
+        [1-3] would have three fields generated: AA_1, AA_2, AA_3, and
+        each of them would be a list of 1s and 0s, depending on whether
+        such an option was found or not.
+
+        Args:
+            - cls: this class. unused.
+            - field: an `apollo.formsframework.models.FormField` instance
+
+        Returns:
+            A $group expression as a dict
+        '''
         token = u'${0}'.format(field.name)
         expression = {
             u'{0}_{1}'.format(field.name, val): {
@@ -378,8 +442,25 @@ class PipelineBuilder(object):
 
     @classmethod
     def _multiple_choice_field_first_stage_group(cls, field):
+        '''
+        Generates a $group expression for a multiple-choice field for
+        the pipeline.
+
+        For multiple-choice fields, $push all values (which should be a list
+        with values equal to valid options) to a field with the same name,
+        except if the field is null, in which case, push an empty list
+        (so when we're completing the aggregation in Python, we don't
+        deal with None and choke).
+
+        Args:
+            - cls: this class. unused.
+            - field: an `apollo.formsframework.models.FormField` instance
+
+        Returns:
+            A $group expression as a dict
+        '''
         token = u'${0}'.format(field.name)
-        expression = {field.name: {u'$push': token}}
+        expression = {field.name: {u'$push': {u'$ifNull': [token, []]}}}
 
         return expression
 
@@ -387,8 +468,13 @@ class PipelineBuilder(object):
         self.queryset = queryset
         sample = self.queryset.first()
         self.form = sample.form
+
+        # skip fields not used for process analysis
         self.fields = sorted(
-            (self.form.get_field_by_tag(tag) for tag in self.form.tags),
+            (self.form.get_field_by_tag(tag)
+                for tag in self.form.tags
+                if self.form.get_field_by_tag(
+                    tag).analysis_type == u'PROCESS'),
             key=lambda fi: fi.name)
         self.location_types = [
             anc.location_type for anc in sample.location.ancestors]
@@ -428,7 +514,7 @@ class AggFrameworkExporter(object):
             else:
                 headers.extend(
                     u'{0}|{1}'.format(field.name, opt)
-                    for opt in field.options.values())
+                    for opt in sorted(field.options.values()))
 
         # generate records
         records = []
@@ -440,24 +526,43 @@ class AggFrameworkExporter(object):
                 row = dict(zip(subtypes, key))
 
                 for field in self.pipeline_builder.fields:
-                    if field.analysis_type != u'PROCESS':
-                        continue
-                    if not field.options:
-                        row[field.name] = sum(
-                            r.get(field.name, 0) for r in group)
-                        continue
-                    elif not field.allows_multiple_values:
-                        for opt in field.options.values():
-                            row[u'{0}|{1}'.format(field.name, opt)] = \
-                                sum(chain.from_iterable(
-                                    r.get(u'{0}_{1}'.format(field.name, opt))
-                                    for r in group))
-                        continue
+                    # `group` is an iterator. it must be converted
+                    # to a list otherwise it'll be exhausted after
+                    # the first field runs (yeah, it bit me and i had
+                    # a hard time until i figured it out)
+                    group = list(group)
+                    if field.options:
+                        for opt in sorted(field.options.values()):
+                            row_key = u'{0}|{1}'.format(field.name, opt)
+                            if field.allows_multiple_values:
+                                # multiple-choice field
+                                row[row_key] = sum2(collections.Counter(chain.from_iterable(r.get(field.name))).get(opt) for r in group if r.get(field.name))
+                            else:
+                                # single-choice field
+                                row[row_key] = sum2(chain.from_iterable(r.get(u'{0}_{1}'.format(field.name, opt)) for r in group))
                     else:
-                        for opt in field.options.values():
-                            row[u'{0}|{1}'.format(field.name, opt)] = \
-                                sum(Counter(flatten(r.get(field.name))).get(opt, 0) for r in group)
+                        # hopefully, we have a numeric field at this point
+                        row[field.name] = sum2(r.get(field.name, 0) for r in group)
 
                 records.append(row)
 
         return records, headers
+
+
+def exporter_usage(queryset):
+    import csv
+    from cStringIO import StringIO
+
+    exporter = AggFrameworkExporter(queryset)
+    mybuffer = StringIO()
+
+    records, headers = exporter.export_dataset()
+
+    writer = csv.DictWriter(mybuffer, headers)
+    writer.writeheader()
+
+    for record in records:
+        writer.writerow(record)
+
+    # return the file for writing into a HTTP steam
+    return mybuffer
