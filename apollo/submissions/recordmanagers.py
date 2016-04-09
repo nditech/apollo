@@ -564,5 +564,5 @@ def exporter_usage(queryset):
     for record in records:
         writer.writerow(record)
 
-    # return the file for writing into a HTTP steam
+    # return the file for writing into a HTTP response
     return mybuffer
