@@ -193,9 +193,8 @@ class Submission(db.DynamicDocument):
         ('R', _(u'Results'))
     )
     VERIFICATION_STATUSES = (
-        ('', _('Unverified')),
-        ('4', _('Verified')),
-        ('5', _('Rejected'))
+        ('', _('Unconfirmed')),
+        ('4', _('Confirmed'))
     )
     VERIFICATION_OPTIONS = {
         'VERIFIED': '4',
