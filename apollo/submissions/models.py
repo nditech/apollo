@@ -555,7 +555,16 @@ class Submission(db.DynamicDocument):
             # quality_check. e.g. you cannot update quality_check and
             # quality_check.flag_1 in the same operation. This hack removes the
             # need to update the subkeys and update the entire dictionary at
-            # once
+            # once but we need to first ensure that quality_checks is
+            # added to _changed_fields before removing subkeys
+            if (
+                filter(
+                    lambda f: f.startswith('quality_checks.'),
+                    submission._changed_fields) and
+                'quality_checks' not in submission._changed_fields
+            ):
+                submission._changed_fields.append('quality_checks')
+
             submission._changed_fields = filter(
                 lambda f: not f.startswith('quality_checks.'),
                 submission._changed_fields
