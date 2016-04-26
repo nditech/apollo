@@ -1,25 +1,26 @@
 {% extends "frontend/_layout.html" %}
-{% load apollo %}{% load i18n %}
 {% block content %}
-<form method="POST">
-  {% csrf_token %}
-  <div class="row">
-    <div class="span8 offset2">
-      <table class="table table-hover table-striped table-bordered table-condensed">
-        <tbody>
-        {% for field in form %}
-          <tr>
-            <td><label for="{{ field.name }}">{{ field.label }}</label></td>
-            <td>{{ field }}</td>
-          </tr>
-        {% endfor %}
-          <tr>
-            <td>&nbsp;</td>
-            <td><input type="submit" class="btn btn-primary" value="Save"> <a class="btn" style="margin-left:0.5em" href="javascript:history.go(-1);">{{ _('Cancel') }}</a></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+<form class="form-horizontal" method="POST" action="{{ request.url }}">
+  {{ form.hidden_tag() }}
+  {%- for field in form -%}
+  {%- if field.type != 'CSRFTokenField' -%}
+  <div class="form-group {% if field.errors %}has-error{% endif %}">
+      {{ field.label(class_='col-sm-3 col-sm-offset-1 control-label') }}
+      <div class="col-sm-6">
+          {{ field(class_='form-control span3') }}
+          {% if field.errors %}
+          {% for e in field.errors %}
+          <p class="help-block">{{ e }}</p>
+          {% endfor %}
+          {% endif %}
+      </div>
+  </div>
+  {%- endif -%}
+  {%- endfor -%}
+  <div class="form-group">
+      <div class="col-sm-offset-4 col-sm-4">
+          <button class="btn btn-primary input-mini" type="submit">{{ _('Save') }}</button> <a class="btn btn-default input-mini" style="margin-left:0.5em" href="javascript:history.go(-1);">{{ _('Cancel') }}</a>
+      </div>
   </div>
 </form>
 {% endblock %}
