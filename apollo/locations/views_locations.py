@@ -110,7 +110,7 @@ def location_edit(pk):
             form.populate_obj(location)
             location.save()
 
-            return redirect(url_for('core.location_list'))
+            return redirect(url_for('locations.locations_list'))
 
     return render_template(template_name, form=form, page_title=page_title)
 
