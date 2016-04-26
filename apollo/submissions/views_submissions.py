@@ -37,6 +37,9 @@ bp = Blueprint('submissions', __name__, template_folder='templates',
                static_folder='static')
 
 
+SUB_VERIFIED = u'4'
+
+
 @auth.verify_password
 def verify_pw(username, password):
     user = services.users.get(email=username)
@@ -550,7 +553,66 @@ def submission_version(submission_id, version_id):
     )
 
 
-@route(bp, '/submissions/qa/<form_id>')
+@route(bp, u'/submissions/qa/<form_id>/dashboard')
+@login_required
+def quality_assurance_dashboard(form_id):
+    form = services.forms.get_or_404(pk=form_id, form_type='CHECKLIST')
+    page_title = _(u'Quality Assurance — %(name)s', name=form.name)
+    filter_class = generate_quality_assurance_filter(form)
+    data = request.args.to_dict()
+    data['form_id'] = unicode(form.pk)
+    page = int(data.pop('page', 1))
+    loc_types = displayable_location_types(is_administrative=True)
+
+    location = None
+    if request.args.get('location'):
+        location = services.locations.find(
+            pk=request.args.get('location')).first()
+
+    submissions = services.submissions.find(form=form, submission_type='O')
+    query_filterset = filter_class(submissions, request.args)
+    filter_form = query_filterset.form
+
+    # get quality checks
+    form_quality_checks = form.quality_checks
+    qc_names = [qc[u'name'] for qc in form_quality_checks]
+
+    # get flagged submissions
+    fs_query = {u'$or': [
+        {u'quality_checks.{}'.format(qc_name): QUALITY_STATUSES[u'FLAGGED']}
+        for qc_name in qc_names
+    ]}
+    flagged_subs = query_filterset.qs(__raw__=fs_query)
+
+    # get verified submissions
+    verified_subs = query_filterset.qs(verification_status=SUB_VERIFIED)
+
+    global_data = [
+        {u'name': u'Total', u'count': query_filterset.qs.count(), u'source': u'Submissions'},
+        {u'name': u'Flagged', u'count': flagged_subs.count(), u'source': u'Submissions'},
+        {u'name': u'Verified', u'count': verified_subs.count(), u'source': u'Submissions'},
+        {u'name': u'Not verified', u'source': u'Submissions'},
+    ]
+
+    global_data[3][u'count'] = global_data[1][u'count'] - global_data[2][u'count']
+
+    template_name = u'frontend/quality_assurance_dashboard.html'
+
+    context = {
+        u'filter_form': filter_form,
+        u'global_data': global_data,
+        u'form': form,
+        u'args': data,
+        u'location_types': loc_types,
+        u'location': location,
+        u'page_title': page_title,
+    }
+
+    return render_template(template_name, **context)
+
+
+
+@route(bp, '/submissions/qa/<form_id>/list')
 @register_menu(
     bp, 'main.qa',
     _('Quality Assurance'),
