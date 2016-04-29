@@ -1,0 +1,69 @@
+{% extends "frontend/_layout.html" %}
+{%- from 'frontend/macros/quality_assurance_list_filter.html' import render_filter_form -%}
+
+{% block toolbar %}
+{% if perms.export_submissions.can() %}
+<div class="btn-group pull-right">
+  <a class="btn btn-sm btn-default" href="{{ url_for('submissions.quality_assurance_list', form_id=form.pk, export='observer', **request.args) }}"><i class="glyphicon glyphicon-export"></i> {{ _('Export') }}</a>
+</div>
+{% endif %}
+{% endblock %}
+{% block content %}
+<div class="row">
+  <div class="col-md-12">
+    {{ render_filter_form(form, filter_form, location) }}
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-12">
+     <div class="panel panel-default">
+       <div class="panel-heading">
+         <h3 class="panel-title">Global status</h3>
+       </div>
+       <div class="panel-body">
+         <div data-chart='{{ global_data|tojson }}' id="global_chart"></div>
+       </div>
+     </div>
+  </div>
+</div>
+<div class="row" id="check_breakdown" data-checks='{{ check_data|tojson }}'>
+  <section id="check-container"></section>
+</div>
+{% endblock %}
+{% block scripts %}
+<script type="text/template" id="template">
+<%=#each checks %>
+  <div class="col-md-4">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <div class="panel-title"><h4><%= description %></h4></div>
+      </div>
+      <div class="panel-body" id="<%= name %>"></div>
+    </div>
+  </div>
+<%=/each %>
+</script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/d3.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/dimple.v2.2.0.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/ractive.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/filters.js') }}"></script>
+<script>
+var svg = dimple.newSvg('#global_chart', '100%', '350px');
+var global_data = JSON.parse(document.getElementById('global_chart').getAttribute('data-chart'));
+var chart = new dimple.chart(svg, global_data);
+var x_axis = chart.addMeasureAxis('x', 'count');
+x_axis.tickFormat = 'd';
+chart.addCategoryAxis('y', ['name', 'source']);
+chart.addSeries('name', dimple.plot.bar);
+chart.draw();
+
+var check_data = JSON.parse(document.getElementById('check_breakdown').getAttribute('data-checks'));
+var ractive = new Ractive({
+  el: 'check-container',
+  template: document.getElementById('template').innerHTML,
+  delimiters: [ '<%=', '%>' ],
+  data: {checks: check_data}
+});
+</script>
+{% endblock %}
