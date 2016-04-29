@@ -553,6 +553,74 @@ def submission_version(submission_id, version_id):
     )
 
 
+def _build_qa_dashboard_aggregation_pipeline(queryset):
+    form = queryset.first().form
+
+    project_stage = {
+        u'$project': {
+            u'_id': 0,
+            u'checks': [{
+                u'name': {u'$literal': qc[u'name']},
+                u'value': u'$quality_checks.{}'.format(
+                    qc[u'name'])} for qc in form.quality_checks
+            ]
+        }
+    }
+
+    pipeline = [
+        {u'$match': queryset._query},
+        project_stage,
+        {u'$unwind': u'$checks'},
+        {u'$group': {
+            u'_id': {u'name': u'$checks.name', u'status': u'$checks.value'},
+            u'count': {u'$sum': 1}
+        }},
+        {u'$group': {
+            u'_id': u'$_id.name',
+            u'stats': {u'$push': {
+                u'status': u'$_id.status',
+                u'count': u'$count'
+        }}}},
+        {u'$project': {
+            u'_id': 0,
+            u'name': u'$_id',
+            u'stats': 1
+        }}
+    ]
+
+    return pipeline
+
+
+def _get_aggregated_check_data(queryset):
+    collection = queryset._collection
+    pipeline = _build_qa_dashboard_aggregation_pipeline(queryset)
+    result = collection.aggregate(pipeline).get(u'result')
+
+    # swap out keys and values of QUALITY_STATUSES
+    statuses = {v: k for k, v in QUALITY_STATUSES.items()}
+    statuses[None] = u'MISSING'
+
+    # update data
+    sort_key = lambda item: item.get(u'name')
+
+    form = queryset.first().form
+    sorted_quality_checks = sorted(form.quality_checks, key=sort_key)
+    sorted_results = sorted(result, key=sort_key)
+
+    data = []
+    for check, result in zip(sorted_quality_checks, sorted_results):
+        d = {}
+        d[u'name'] = check.get(u'name')
+        d[u'description'] = check.get(u'description')
+        d[u'counts'] = [{
+            u'count': i[u'count'],
+            u'label': statuses.get(i.get(u'status'))} for i in result.get(u'stats')]
+
+        data.append(d)
+
+    return data
+
+
 @route(bp, u'/submissions/qa/<form_id>/dashboard')
 @login_required
 def quality_assurance_dashboard(form_id):
@@ -596,6 +664,9 @@ def quality_assurance_dashboard(form_id):
 
     global_data[3][u'count'] = global_data[1][u'count'] - global_data[2][u'count']
 
+    # get individual check data
+    check_data = _get_aggregated_check_data(query_filterset.qs)
+
     template_name = u'frontend/quality_assurance_dashboard.html'
 
     context = {
@@ -606,6 +677,7 @@ def quality_assurance_dashboard(form_id):
         u'location_types': loc_types,
         u'location': location,
         u'page_title': page_title,
+        u'check_data': check_data
     }
 
     return render_template(template_name, **context)
