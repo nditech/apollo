@@ -28,25 +28,22 @@
   </div>
 </div>
 <div class="row" id="check_breakdown" data-checks='{{ check_data|tojson }}'>
-  <section id="check-container"></section>
+  <section id="check-container">
+    <div class="col-md-6" v-for="check in checks">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <div class="panel-title"><h4><%= check.description %></h4></div>
+      </div>
+      <div class="panel-body" id="<%= check.name %>"></div>
+    </div>
+  </div>
+  </section>
 </div>
 {% endblock %}
 {% block scripts %}
-<script type="text/template" id="template">
-<%=#each checks %>
-  <div class="col-md-4">
-    <div class="panel panel-default">
-      <div class="panel-heading">
-        <div class="panel-title"><h4><%= description %></h4></div>
-      </div>
-      <div class="panel-body" id="<%= name %>"></div>
-    </div>
-  </div>
-<%=/each %>
-</script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/d3.min.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/dimple.v2.2.0.min.js') }}"></script>
-<script type="text/javascript" src="{{ url_for('static', filename='js/ractive.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/vue.min.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/filters.js') }}"></script>
 <script>
 var svg = dimple.newSvg('#global_chart', '100%', '350px');
@@ -59,11 +56,21 @@ chart.addSeries('name', dimple.plot.bar);
 chart.draw();
 
 var check_data = JSON.parse(document.getElementById('check_breakdown').getAttribute('data-checks'));
-var ractive = new Ractive({
-  el: 'check-container',
-  template: document.getElementById('template').innerHTML,
-  delimiters: [ '<%=', '%>' ],
+Vue.config.delimiters = [ '<%=', '%>' ];
+
+var app = new Vue({
+  el: '#check-container',
   data: {checks: check_data}
+});
+
+check_data.forEach(function (item, i){
+  var i_svg = dimple.newSvg('#' + item.name, '100%', '250px');
+  var i_chart = new dimple.chart(i_svg, item.counts);
+  var i_x_axis = i_chart.addMeasureAxis('x', 'count');
+  i_x_axis.tickFormat = 'd';
+  i_chart.addCategoryAxis('y', 'label');
+  i_chart.addSeries('label', dimple.plot.bar);
+  i_chart.draw();
 });
 </script>
 {% endblock %}
