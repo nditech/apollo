@@ -26,7 +26,8 @@ from apollo.frontend.filters import generate_quality_assurance_filter
 from apollo.frontend.forms import generate_submission_edit_form_class
 from apollo.frontend.helpers import (
     DictDiffer, displayable_location_types, get_event,
-    get_form_list_menu, get_quality_assurance_form_list_menu)
+    get_form_list_menu, get_quality_assurance_form_list_menu,
+    get_quality_assurance_form_dashboard_menu)
 from apollo.frontend.template_filters import mkunixtimestamp
 from functools import partial
 from slugify import slugify_unicode
@@ -662,6 +663,12 @@ def _get_aggregated_check_data(queryset):
 
 
 @route(bp, u'/submissions/qa/<form_id>/dashboard')
+@register_menu(
+    bp, u'main.qa.dashboard', _(u'Quality Assurance (Summary)'),
+    icon=u'<i class="glyphicon glyphicon-tasks"></i>', order=0,
+    dynamic_list_constructor=partial(
+        get_quality_assurance_form_dashboard_menu,
+        form_type=u'CHECKLIST', verifiable=True))
 @login_required
 def quality_assurance_dashboard(form_id):
     form = services.forms.get_or_404(pk=form_id, form_type='CHECKLIST')
@@ -725,6 +732,7 @@ def quality_assurance_dashboard(form_id):
     permissions.view_result_analysis.can())
 @register_menu(
     bp, 'main.qa.checklists', _('Quality Assurance'),
+    icon=u'<i class="glyphicon glyphicon-ok"></i>', order=1,
     dynamic_list_constructor=partial(
         get_quality_assurance_form_list_menu,
         form_type='CHECKLIST', verifiable=True))
