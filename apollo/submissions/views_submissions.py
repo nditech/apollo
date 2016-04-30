@@ -553,7 +553,7 @@ def submission_version(submission_id, version_id):
     )
 
 
-def _build_qa_dashboard_aggregation_pipeline(queryset):
+def _get_individual_checks_pipeline(queryset):
     form = queryset.first().form
 
     project_stage = {
@@ -591,9 +591,46 @@ def _build_qa_dashboard_aggregation_pipeline(queryset):
     return pipeline
 
 
+def _get_collated_checks_pipeline(queryset):
+    form = queryset.first().form
+
+    # projection for flagged data
+    term = {u'$or': [{u'$eq': [u'$quality_checks.{}'.format(qc[u'name']), QUALITY_STATUSES[u'FLAGGED']]} for qc in form.quality_checks]}
+    flagged_projection = {
+        u'flagged': {
+            u'$cond': [term, 1, 0]
+        }
+    }
+
+    # projection for verified data
+    verified_projection = {
+        u'verified': {u'$cond': [{u'$eq': [u'$verification_status', SUB_VERIFIED]}, 1, 0]}
+    }
+
+    project_stage = {u'$project': {}}
+    project_stage[u'$project'].update(flagged_projection)
+    project_stage[u'$project'].update(verified_projection)
+
+    pipeline = [
+        {u'$match': queryset._query},
+        project_stage,
+        {u'$group': {
+            u'_id': None,
+            u'count_flagged': {
+                u'$sum': u'$flagged'
+            },
+            u'count_verified': {
+                u'$sum': u'$verified'
+            }
+        }}
+    ]
+
+    return pipeline
+
+
 def _get_aggregated_check_data(queryset):
     collection = queryset._collection
-    pipeline = _build_qa_dashboard_aggregation_pipeline(queryset)
+    pipeline = _get_individual_checks_pipeline(queryset)
     result = collection.aggregate(pipeline).get(u'result')
 
     # swap out keys and values of QUALITY_STATUSES
