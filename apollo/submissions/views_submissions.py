@@ -621,6 +621,9 @@ def _get_collated_checks_pipeline(queryset):
             },
             u'count_verified': {
                 u'$sum': u'$verified'
+            },
+            u'count_total': {
+                u'$sum': 1
             }
         }}
     ]
@@ -678,24 +681,15 @@ def quality_assurance_dashboard(form_id):
     query_filterset = filter_class(submissions, request.args)
     filter_form = query_filterset.form
 
-    # get quality checks
-    form_quality_checks = form.quality_checks
-    qc_names = [qc[u'name'] for qc in form_quality_checks]
-
-    # get flagged submissions
-    fs_query = {u'$or': [
-        {u'quality_checks.{}'.format(qc_name): QUALITY_STATUSES[u'FLAGGED']}
-        for qc_name in qc_names
-    ]}
-    flagged_subs = query_filterset.qs(__raw__=fs_query)
-
-    # get verified submissions
-    verified_subs = query_filterset.qs(verification_status=SUB_VERIFIED)
+    # get collated data
+    collection = query_filterset.qs._collection
+    pipeline = _get_collated_checks_pipeline(query_filterset.qs)
+    result = collection.aggregate(pipeline).get(u'result')[0]
 
     global_data = [
-        {u'name': u'Total', u'count': query_filterset.qs.count(), u'source': u'Submissions'},
-        {u'name': u'Flagged', u'count': flagged_subs.count(), u'source': u'Submissions'},
-        {u'name': u'Verified', u'count': verified_subs.count(), u'source': u'Submissions'},
+        {u'name': u'Total', u'count': result.get(u'count_total'), u'source': u'Submissions'},
+        {u'name': u'Flagged', u'count': result.get(u'count_flagged'), u'source': u'Submissions'},
+        {u'name': u'Verified', u'count': result.get(u'count_verified'), u'source': u'Submissions'},
         {u'name': u'Not verified', u'source': u'Submissions'},
     ]
 
