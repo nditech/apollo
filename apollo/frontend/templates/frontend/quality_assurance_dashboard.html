@@ -51,8 +51,12 @@ var global_data = JSON.parse(document.getElementById('global_chart').getAttribut
 var chart = new dimple.chart(svg, global_data);
 var x_axis = chart.addMeasureAxis('x', 'count');
 x_axis.tickFormat = 'd';
-chart.addCategoryAxis('y', ['name', 'source']);
-chart.addSeries('name', dimple.plot.bar);
+chart.addCategoryAxis('y', 'label');
+chart.addSeries('label', dimple.plot.bar);
+chart.assignColor('total', '#789');
+chart.assignColor('flagged', '#ef2929');
+chart.assignColor('verified', '#729fcf');
+chart.assignColor('not verified', '#fc6');
 chart.draw();
 
 var check_data = JSON.parse(document.getElementById('check_breakdown').getAttribute('data-checks'));
@@ -70,6 +74,10 @@ check_data.forEach(function (item, i){
   i_x_axis.tickFormat = 'd';
   i_chart.addCategoryAxis('y', 'label');
   i_chart.addSeries('label', dimple.plot.bar);
+  i_chart.assignColor('ok', '#8ae234');
+  i_chart.assignColor('flagged', '#ef2929');
+  i_chart.assignColor('verified', '#729fcf');
+  i_chart.assignColor('missing', '#fcaf3e');
   i_chart.draw();
 });
 </script>

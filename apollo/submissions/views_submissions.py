@@ -637,8 +637,8 @@ def _get_aggregated_check_data(queryset):
     result = collection.aggregate(pipeline).get(u'result')
 
     # swap out keys and values of QUALITY_STATUSES
-    statuses = {v: k for k, v in QUALITY_STATUSES.items()}
-    statuses[None] = u'MISSING'
+    statuses = {v: k.lower() for k, v in QUALITY_STATUSES.items()}
+    statuses[None] = u'missing'
 
     # update data
     sort_key = lambda item: item.get(u'name')
@@ -687,10 +687,10 @@ def quality_assurance_dashboard(form_id):
     result = collection.aggregate(pipeline).get(u'result')[0]
 
     global_data = [
-        {u'name': u'Total', u'count': result.get(u'count_total'), u'source': u'Submissions'},
-        {u'name': u'Flagged', u'count': result.get(u'count_flagged'), u'source': u'Submissions'},
-        {u'name': u'Verified', u'count': result.get(u'count_verified'), u'source': u'Submissions'},
-        {u'name': u'Not verified', u'source': u'Submissions'},
+        {u'label': u'total', u'count': result.get(u'count_total')},
+        {u'label': u'flagged', u'count': result.get(u'count_flagged')},
+        {u'label': u'verified', u'count': result.get(u'count_verified')},
+        {u'label': u'not verified'},
     ]
 
     global_data[3][u'count'] = global_data[1][u'count'] - global_data[2][u'count']
