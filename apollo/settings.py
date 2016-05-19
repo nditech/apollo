@@ -52,8 +52,8 @@ SECURITY_TRACKABLE = True
 SESSION_COOKIE_SECURE = True if SSL_REQUIRED else False
 PERMANENT_SESSION_LIFETIME = timedelta(hours=1)
 
-MAIL_SERVER = os.environ.get('MAIL_SERVER', 'localhost').strip()
-MAIL_PORT = os.environ.get('MAIL_PORT', 25)
+MAIL_SERVER = os.environ.get('MAIL_SERVER')
+MAIL_PORT = os.environ.get('MAIL_PORT')
 MAIL_USE_TLS = ast.literal_eval(os.environ.get('MAIL_USE_TLS', 'False'))
 MAIL_USE_SSL = ast.literal_eval(os.environ.get('MAIL_USE_SSL', 'False'))
 MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
