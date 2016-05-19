@@ -11,7 +11,7 @@ from datetime import datetime
 from flask.ext.babel import gettext as _
 from flask.ext.mongoengine import BaseQuerySet
 from mongoengine import Q
-from pandas import DataFrame, isnull, Series
+from pandas import DataFrame, isnull, Series, to_numeric
 from parsimonious.exceptions import ParseError
 import numpy as np
 import re
@@ -100,10 +100,20 @@ class SubmissionQuerySet(BaseQuerySet):
         if selected_fields:
             qs = self.only(*selected_fields)
 
-        df = DataFrame(list(qs.as_pymongo())).convert_objects(
-            convert_numeric=True)
+        df = DataFrame(list(qs.as_pymongo()))
         if df.empty:
             return df
+
+        # convert any numeric data
+        # for now, that's non-comment and non-multiselect fields
+        form = self.first().form
+        for tag in form.tags:
+            field = form.get_field_by_tag(tag)
+
+            if field.allows_multiple_values or field.is_comment_field:
+                continue
+
+            df[tag] = to_numeric(df[tag])
 
         # add fields with no values
         fields = filter(
