@@ -1,0 +1,84 @@
+{% extends "frontend/_layout.html" %}
+{%- from 'frontend/macros/quality_assurance_dashboard_filter.html' import render_filter_form -%}
+
+{% block toolbar %}
+{% if perms.export_submissions.can() %}
+<div class="btn-group pull-right">
+  <a class="btn btn-sm btn-default" href="{{ url_for('submissions.quality_assurance_list', form_id=form.pk, export='observer', **request.args) }}"><i class="glyphicon glyphicon-export"></i> {{ _('Export') }}</a>
+</div>
+{% endif %}
+{% endblock %}
+{% block content %}
+<div class="row">
+  <div class="col-md-12">
+    {{ render_filter_form(form, filter_form, location) }}
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-12">
+     <div class="panel panel-default">
+       <div class="panel-heading">
+         <h3 class="panel-title">Global status</h3>
+       </div>
+       <div class="panel-body">
+         <div data-chart='{{ global_data|tojson }}' id="global_chart"></div>
+       </div>
+     </div>
+  </div>
+</div>
+<div class="row" id="check_breakdown" data-checks='{{ check_data|tojson }}'>
+  <section id="check-container">
+    <div class="col-md-6" v-for="check in checks">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <div class="panel-title"><h4><%= check.description %></h4></div>
+      </div>
+      <div class="panel-body" id="<%= check.name %>"></div>
+    </div>
+  </div>
+  </section>
+</div>
+{% endblock %}
+{% block scripts %}
+<script type="text/javascript" src="{{ url_for('static', filename='js/d3.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/dimple.v2.2.0.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/vue.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/filters.js') }}"></script>
+<script>
+var svg = dimple.newSvg('#global_chart', '100%', '350px');
+var global_data = JSON.parse(document.getElementById('global_chart').getAttribute('data-chart'));
+var chart = new dimple.chart(svg, global_data);
+var x_axis = chart.addMeasureAxis('x', 'count');
+x_axis.tickFormat = 'd';
+chart.addCategoryAxis('y', 'label');
+chart.addSeries('label', dimple.plot.bar);
+chart.assignColor('total', '#789');
+chart.assignColor('flagged', '#ef2929');
+chart.assignColor('verified', '#729fcf');
+chart.assignColor('not verified', '#fc6');
+chart.draw();
+
+var check_data = JSON.parse(document.getElementById('check_breakdown').getAttribute('data-checks'));
+Vue.config.delimiters = [ '<%=', '%>' ];
+
+var app = new Vue({
+  el: '#check-container',
+  data: {checks: check_data}
+});
+
+check_data.forEach(function (item, i){
+  var i_svg = dimple.newSvg('#' + item.name, '100%', '250px');
+  var i_chart = new dimple.chart(i_svg, item.counts);
+  var i_x_axis = i_chart.addMeasureAxis('x', 'count');
+  i_x_axis.tickFormat = 'd';
+  i_chart.addCategoryAxis('y', 'label');
+  i_chart.addSeries('label', dimple.plot.bar);
+  i_chart.assignColor('ok', '#8ae234');
+  i_chart.assignColor('flagged', '#ef2929');
+  i_chart.assignColor('verified', '#729fcf');
+  i_chart.assignColor('missing', '#fcaf3e');
+  i_chart.draw();
+});
+</script>
+{% endblock %}

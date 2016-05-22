@@ -83,6 +83,22 @@ def get_form_list_menu(**kwargs):
                 services.forms.find(**kwargs).order_by('name'))]
 
 
+def get_checklist_form_dashboard_menu(**kwargs):
+    """Retrieves a list of forms that have the verification flag set
+
+    :param form_type: The form type for the forms to be retrieved
+    """
+    return [{u'url': url_for(u'dashboard.checklists',
+             form_id=str(form.id)),
+             u'text': form.name,
+             u'icon': u'<i class="glyphicon glyphicon-check"></i>',
+             u'visible': True}
+            for form in filter(
+                lambda f: Permission(ItemNeed(u'view_forms', f, u'object'),
+                                     RoleNeed(u'admin')).can(),
+                services.forms.find(**kwargs).order_by(u'name'))]
+
+
 def get_concurrent_events_list_menu():
     """Retrieves a list of events that are running concurrently and returns it
     in a format that can be rendered on the menu
@@ -110,6 +126,22 @@ def get_quality_assurance_form_list_menu(**kwargs):
                 lambda f: Permission(ItemNeed('view_forms', f, 'object'),
                                      RoleNeed('admin')).can(),
                 services.forms.find(**kwargs).order_by('name'))]
+
+
+def get_quality_assurance_form_dashboard_menu(**kwargs):
+    """Retrieves a list of forms that have the verification flag set
+
+    :param form_type: The form type for the forms to be retrieved
+    """
+    return [{u'url': url_for(u'submissions.quality_assurance_dashboard',
+             form_id=str(form.id)),
+             u'text': form.name,
+             u'icon': u'<i class="glyphicon glyphicon-tasks"></i>',
+             u'visible': True}
+            for form in filter(
+                lambda f: Permission(ItemNeed(u'view_forms', f, u'object'),
+                                     RoleNeed(u'admin')).can(),
+                services.forms.find(**kwargs).order_by(u'name'))]
 
 
 def displayable_location_types(**kwargs):

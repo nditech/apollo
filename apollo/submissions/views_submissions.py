@@ -26,7 +26,8 @@ from apollo.frontend.filters import generate_quality_assurance_filter
 from apollo.frontend.forms import generate_submission_edit_form_class
 from apollo.frontend.helpers import (
     DictDiffer, displayable_location_types, get_event,
-    get_form_list_menu, get_quality_assurance_form_list_menu)
+    get_form_list_menu, get_quality_assurance_form_list_menu,
+    get_quality_assurance_form_dashboard_menu)
 from apollo.frontend.template_filters import mkunixtimestamp
 from functools import partial
 from slugify import slugify_unicode
@@ -35,6 +36,9 @@ from slugify import slugify_unicode
 auth = HTTPBasicAuth()
 bp = Blueprint('submissions', __name__, template_folder='templates',
                static_folder='static')
+
+
+SUB_VERIFIED = u'4'
 
 
 @auth.verify_password
@@ -54,7 +58,7 @@ def verify_pw(username, password):
     visible_when=lambda: len(get_form_list_menu(form_type='CHECKLIST')) > 0)
 @register_menu(bp, 'main.checklists.forms', _('Checklists'),
                dynamic_list_constructor=partial(
-                    get_form_list_menu, form_type='CHECKLIST'))
+               get_form_list_menu, form_type='CHECKLIST'))
 @register_menu(
     bp, 'main.incidents',
     _('Critical Incidents'),
@@ -62,7 +66,7 @@ def verify_pw(username, password):
     visible_when=lambda: len(get_form_list_menu(form_type='INCIDENT')) > 0)
 @register_menu(bp, 'main.incidents.forms', _('Critical Incidents'),
                dynamic_list_constructor=partial(
-                    get_form_list_menu, form_type='INCIDENT'))
+               get_form_list_menu, form_type='INCIDENT'))
 @login_required
 def submission_list(form_id):
     form = services.forms.get_or_404(pk=form_id)
@@ -550,7 +554,175 @@ def submission_version(submission_id, version_id):
     )
 
 
-@route(bp, '/submissions/qa/<form_id>')
+def _get_individual_checks_pipeline(queryset):
+    form = queryset.first().form
+
+    project_stage = {
+        u'$project': {
+            u'_id': 0,
+            u'checks': [{
+                u'name': {u'$literal': qc[u'name']},
+                u'value': u'$quality_checks.{}'.format(
+                    qc[u'name'])} for qc in form.quality_checks
+            ]
+        }
+    }
+
+    pipeline = [
+        {u'$match': queryset._query},
+        project_stage,
+        {u'$unwind': u'$checks'},
+        {u'$group': {
+            u'_id': {u'name': u'$checks.name', u'status': u'$checks.value'},
+            u'count': {u'$sum': 1}
+        }},
+        {u'$group': {
+            u'_id': u'$_id.name',
+            u'stats': {u'$push': {
+                u'status': u'$_id.status',
+                u'count': u'$count'
+            }}
+        }},
+        {u'$project': {
+            u'_id': 0,
+            u'name': u'$_id',
+            u'stats': 1
+        }}
+    ]
+
+    return pipeline
+
+
+def _get_collated_checks_pipeline(queryset):
+    form = queryset.first().form
+
+    # projection for flagged data
+    term = {u'$or': [{u'$eq': [u'$quality_checks.{}'.format(qc[u'name']), QUALITY_STATUSES[u'FLAGGED']]} for qc in form.quality_checks]}
+    flagged_projection = {
+        u'flagged': {
+            u'$cond': [term, 1, 0]
+        }
+    }
+
+    # projection for verified data
+    verified_projection = {
+        u'verified': {u'$cond': [{u'$eq': [u'$verification_status', SUB_VERIFIED]}, 1, 0]}
+    }
+
+    project_stage = {u'$project': {}}
+    project_stage[u'$project'].update(flagged_projection)
+    project_stage[u'$project'].update(verified_projection)
+
+    pipeline = [
+        {u'$match': queryset._query},
+        project_stage,
+        {u'$group': {
+            u'_id': None,
+            u'count_flagged': {
+                u'$sum': u'$flagged'
+            },
+            u'count_verified': {
+                u'$sum': u'$verified'
+            },
+            u'count_total': {
+                u'$sum': 1
+            }
+        }}
+    ]
+
+    return pipeline
+
+
+def _get_aggregated_check_data(queryset):
+    collection = queryset._collection
+    pipeline = _get_individual_checks_pipeline(queryset)
+    result = collection.aggregate(pipeline).get(u'result')
+
+    # swap out keys and values of QUALITY_STATUSES
+    statuses = {v: k.lower() for k, v in QUALITY_STATUSES.items()}
+    statuses[None] = u'missing'
+
+    # update data
+    def sort_key(item):
+        return item.get(u'name')
+
+    form = queryset.first().form
+    sorted_quality_checks = sorted(form.quality_checks, key=sort_key)
+    sorted_results = sorted(result, key=sort_key)
+
+    data = []
+    for check, result in zip(sorted_quality_checks, sorted_results):
+        d = {}
+        d[u'name'] = check.get(u'name')
+        d[u'description'] = check.get(u'description')
+        d[u'counts'] = [{
+            u'count': i[u'count'],
+            u'label': statuses.get(i.get(u'status'))} for i in result.get(u'stats')]
+
+        data.append(d)
+
+    return data
+
+
+@route(bp, u'/dashboard/qa/<form_id>')
+@register_menu(
+    bp, u'main.dashboard.qa', _(u'Quality Assurance'),
+    icon=u'<i class="glyphicon glyphicon-tasks"></i>', order=1,
+    dynamic_list_constructor=partial(
+        get_quality_assurance_form_dashboard_menu,
+        form_type=u'CHECKLIST', verifiable=True))
+@login_required
+def quality_assurance_dashboard(form_id):
+    form = services.forms.get_or_404(pk=form_id, form_type='CHECKLIST')
+    page_title = _(u'Quality Assurance — %(name)s', name=form.name)
+    filter_class = generate_quality_assurance_filter(form)
+    data = request.args.to_dict()
+    data['form_id'] = unicode(form.pk)
+    loc_types = displayable_location_types(is_administrative=True)
+
+    location = None
+    if request.args.get('location'):
+        location = services.locations.find(
+            pk=request.args.get('location')).first()
+
+    submissions = services.submissions.find(form=form, submission_type='O')
+    query_filterset = filter_class(submissions, request.args)
+    filter_form = query_filterset.form
+
+    # get collated data
+    collection = query_filterset.qs._collection
+    pipeline = _get_collated_checks_pipeline(query_filterset.qs)
+    result = collection.aggregate(pipeline).get(u'result')[0]
+
+    global_data = [
+        {u'label': u'total', u'count': result.get(u'count_total')},
+        {u'label': u'flagged', u'count': result.get(u'count_flagged')},
+        {u'label': u'verified', u'count': result.get(u'count_verified')},
+        {u'label': u'not verified'},
+    ]
+
+    global_data[3][u'count'] = global_data[1][u'count'] - global_data[2][u'count']
+
+    # get individual check data
+    check_data = _get_aggregated_check_data(query_filterset.qs)
+
+    template_name = u'frontend/quality_assurance_dashboard.html'
+
+    context = {
+        u'filter_form': filter_form,
+        u'global_data': global_data,
+        u'form': form,
+        u'args': data,
+        u'location_types': loc_types,
+        u'location': location,
+        u'page_title': page_title,
+        u'check_data': check_data
+    }
+
+    return render_template(template_name, **context)
+
+
+@route(bp, '/submissions/qa/<form_id>/list')
 @register_menu(
     bp, 'main.qa',
     _('Quality Assurance'),
@@ -560,6 +732,7 @@ def submission_version(submission_id, version_id):
     permissions.view_result_analysis.can())
 @register_menu(
     bp, 'main.qa.checklists', _('Quality Assurance'),
+    icon=u'<i class="glyphicon glyphicon-ok"></i>', order=1,
     dynamic_list_constructor=partial(
         get_quality_assurance_form_list_menu,
         form_type='CHECKLIST', verifiable=True))
