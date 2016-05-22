@@ -58,7 +58,7 @@ def verify_pw(username, password):
     visible_when=lambda: len(get_form_list_menu(form_type='CHECKLIST')) > 0)
 @register_menu(bp, 'main.checklists.forms', _('Checklists'),
                dynamic_list_constructor=partial(
-                    get_form_list_menu, form_type='CHECKLIST'))
+               get_form_list_menu, form_type='CHECKLIST'))
 @register_menu(
     bp, 'main.incidents',
     _('Critical Incidents'),
@@ -66,7 +66,7 @@ def verify_pw(username, password):
     visible_when=lambda: len(get_form_list_menu(form_type='INCIDENT')) > 0)
 @register_menu(bp, 'main.incidents.forms', _('Critical Incidents'),
                dynamic_list_constructor=partial(
-                    get_form_list_menu, form_type='INCIDENT'))
+               get_form_list_menu, form_type='INCIDENT'))
 @login_required
 def submission_list(form_id):
     form = services.forms.get_or_404(pk=form_id)
@@ -581,7 +581,8 @@ def _get_individual_checks_pipeline(queryset):
             u'stats': {u'$push': {
                 u'status': u'$_id.status',
                 u'count': u'$count'
-        }}}},
+            }}
+        }},
         {u'$project': {
             u'_id': 0,
             u'name': u'$_id',
@@ -642,7 +643,8 @@ def _get_aggregated_check_data(queryset):
     statuses[None] = u'missing'
 
     # update data
-    sort_key = lambda item: item.get(u'name')
+    def sort_key(item):
+        return item.get(u'name')
 
     form = queryset.first().form
     sorted_quality_checks = sorted(form.quality_checks, key=sort_key)
@@ -662,10 +664,10 @@ def _get_aggregated_check_data(queryset):
     return data
 
 
-@route(bp, u'/submissions/qa/<form_id>/dashboard')
+@route(bp, u'/dashboard/qa/<form_id>')
 @register_menu(
-    bp, u'main.qa.dashboard', _(u'Quality Assurance (Summary)'),
-    icon=u'<i class="glyphicon glyphicon-tasks"></i>', order=0,
+    bp, u'main.dashboard.qa', _(u'Quality Assurance'),
+    icon=u'<i class="glyphicon glyphicon-tasks"></i>', order=1,
     dynamic_list_constructor=partial(
         get_quality_assurance_form_dashboard_menu,
         form_type=u'CHECKLIST', verifiable=True))
@@ -676,7 +678,6 @@ def quality_assurance_dashboard(form_id):
     filter_class = generate_quality_assurance_filter(form)
     data = request.args.to_dict()
     data['form_id'] = unicode(form.pk)
-    page = int(data.pop('page', 1))
     loc_types = displayable_location_types(is_administrative=True)
 
     location = None
@@ -719,7 +720,6 @@ def quality_assurance_dashboard(form_id):
     }
 
     return render_template(template_name, **context)
-
 
 
 @route(bp, '/submissions/qa/<form_id>/list')
