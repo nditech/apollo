@@ -1,5 +1,5 @@
 {% extends "frontend/_layout.html" %}
-{%- from 'frontend/macros/quality_assurance_list_filter.html' import render_filter_form -%}
+{%- from 'frontend/macros/quality_assurance_dashboard_filter.html' import render_filter_form -%}
 
 {% block toolbar %}
 {% if perms.export_submissions.can() %}
