@@ -11,7 +11,7 @@ from datetime import datetime
 from flask.ext.babel import gettext as _
 from flask.ext.mongoengine import BaseQuerySet
 from mongoengine import Q
-from pandas import DataFrame, isnull, Series
+from pandas import DataFrame, isnull, Series, to_numeric
 from parsimonious.exceptions import ParseError
 import numpy as np
 import re
@@ -100,10 +100,21 @@ class SubmissionQuerySet(BaseQuerySet):
         if selected_fields:
             qs = self.only(*selected_fields)
 
-        df = DataFrame(list(qs.as_pymongo())).convert_objects(
-            convert_numeric=True)
+        df = DataFrame(list(qs.as_pymongo()))
         if df.empty:
             return df
+
+        # convert any numeric data
+        # for now, that's non-comment and non-multiselect fields
+        form = self.first().form
+        for tag in form.tags:
+            field = form.get_field_by_tag(tag)
+
+            if field.allows_multiple_values or field.is_comment_field:
+                continue
+
+            if tag in df:
+                df[tag] = to_numeric(df[tag])
 
         # add fields with no values
         fields = filter(
@@ -193,9 +204,8 @@ class Submission(db.DynamicDocument):
         ('R', _(u'Results'))
     )
     VERIFICATION_STATUSES = (
-        ('', _('Unverified')),
-        ('4', _('Verified')),
-        ('5', _('Rejected'))
+        ('', _('Unconfirmed')),
+        ('4', _('Confirmed'))
     )
     VERIFICATION_OPTIONS = {
         'VERIFIED': '4',
@@ -555,7 +565,16 @@ class Submission(db.DynamicDocument):
             # quality_check. e.g. you cannot update quality_check and
             # quality_check.flag_1 in the same operation. This hack removes the
             # need to update the subkeys and update the entire dictionary at
-            # once
+            # once but we need to first ensure that quality_checks is
+            # added to _changed_fields before removing subkeys
+            if (
+                filter(
+                    lambda f: f.startswith('quality_checks.'),
+                    submission._changed_fields) and
+                'quality_checks' not in submission._changed_fields
+            ):
+                submission._changed_fields.append('quality_checks')
+
             submission._changed_fields = filter(
                 lambda f: not f.startswith('quality_checks.'),
                 submission._changed_fields

@@ -8,7 +8,8 @@ from apollo.services import (
     events, forms, submissions, locations, location_types)
 from apollo.frontend.filters import dashboard_filterset
 from apollo.frontend.helpers import (
-    get_event, set_event, get_concurrent_events_list_menu)
+    get_event, set_event, get_concurrent_events_list_menu,
+    get_checklist_form_dashboard_menu)
 from apollo.frontend import permissions
 from flask import (
     Blueprint, redirect, render_template, request, url_for, g)
@@ -22,13 +23,7 @@ bp = Blueprint('dashboard', __name__, template_folder='templates',
                static_folder='static')
 
 
-@route(bp, '/')
-@register_menu(
-    bp, 'main.dashboard',
-    _('Dashboard'), order=0,
-    icon='<i class="glyphicon glyphicon-user glyphicon-home"></i>')
-@login_required
-def index():
+def main_dashboard(form_id=None):
     args = request.args.copy()
 
     # get variables from query params, or use (hopefully) sensible defaults
@@ -40,11 +35,11 @@ def index():
 
     event = get_event()
 
-    if not args.get('checklist_form'):
+    if not form_id:
         form = forms.find(
             events=event, form_type='CHECKLIST').order_by('name').first()
     else:
-        form = forms.get_or_404(pk=args.get('checklist_form'))
+        form = forms.get_or_404(pk=form_id, form_type="CHECKLIST")
 
     if form:
         args.setdefault('checklist_form', unicode(form.id))
@@ -119,6 +114,27 @@ def index():
         template_name,
         **context
     )
+
+
+@route(bp, '/')
+@register_menu(
+    bp, 'main.dashboard',
+    _('Dashboard'), order=0,
+    icon='<i class="glyphicon glyphicon-user glyphicon-home"></i>')
+@login_required
+def index():
+    return main_dashboard()
+
+
+@route(bp, '/dashboard/checklists/<form_id>')
+@register_menu(
+    bp, u'main.dashboard.checklists', _(u'Checklists'),
+    icon=u'<i class="glyphicon glyphicon-check"></i>', order=0,
+    dynamic_list_constructor=partial(
+        get_checklist_form_dashboard_menu, form_type=u'CHECKLIST'))
+@login_required
+def checklists(form_id=None):
+    return main_dashboard(form_id)
 
 
 @route(bp, '/event/<event_id>', methods=['GET'])

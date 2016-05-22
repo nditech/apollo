@@ -5,39 +5,40 @@ import pandas as pd
 
 
 def dataframe_analysis(kind, dataframe, col):
+    column_data = dataframe.get(col)
     if kind == 'discrete':
-        try:
-            result = {
-                'value_counts': dict(getattr(dataframe, col).value_counts()),
-                'value_counts_sum': getattr(dataframe,
-                                            col).value_counts().sum()}
-        except AttributeError:
+        if column_data is None:
             result = {'value_counts': pd.np.nan, 'value_counts_sum': 0}
+        else:
+            result = {
+                'value_counts': dict(column_data.value_counts()),
+                'value_counts_sum': column_data.value_counts().sum()}
     else:
-        try:
-            result = {'mean': getattr(dataframe, col).mean()}
-        except AttributeError:
+        if column_data is None:
             result = {'mean': pd.np.nan}
+        else:
+            result = {'mean': column_data.mean()}
 
-    try:
-        result['count'] = getattr(dataframe, col).count()
-        result['size'] = getattr(dataframe, col).size
-        result['diff'] = result['size'] - result['count']
-    except AttributeError:
+    if column_data is None:
         result.update({'count': 0, 'size': 0, 'diff': 0})
+    else:
+        result['count'] = column_data.count()
+        result['size'] = column_data.size
+        result['diff'] = result['size'] - result['count']
 
     return result
 
 
 def multiselect_dataframe_analysis(dataframe, col, options):
-    option_summary = summarize_options(options, dataframe[col])
+    column_data = dataframe.get(col)
+    option_summary = summarize_options(options, column_data)
     result = {
         'value_counts': dict(zip(options, option_summary)),
-        'value_counts_sum': dataframe[col].count(),
+        'value_counts_sum': column_data.count(),
     }
 
-    result['count'] = dataframe[col].count()
-    result['size'] = dataframe[col].size
+    result['count'] = column_data.count()
+    result['size'] = column_data.size
     result['diff'] = result['size'] - result['count']
 
     return result

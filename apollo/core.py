@@ -1,6 +1,6 @@
 from collections import OrderedDict
-from flask import g, abort
-from flask.ext.admin import Admin
+from flask import abort, g, redirect, url_for
+from flask.ext.admin import expose, Admin, AdminIndexView
 from flask.ext.babel import Babel
 from flask.ext.cache import Cache
 from flask.ext.mail import Mail
@@ -15,7 +15,13 @@ import six
 from wtforms import Form, fields
 
 
-admin = Admin(name='Apollo')
+class AdminHome(AdminIndexView):
+    @expose(u'/')
+    def index(self):
+        return redirect(url_for(u'dashboard.index'))
+
+
+admin = Admin(name='Apollo', index_view=AdminHome(name=u'Dashboard'))
 babel = Babel()
 cache = Cache()
 db = MongoEngine()

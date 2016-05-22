@@ -1,7 +1,6 @@
 from flask.ext.mail import Message
-from apollo import services
-from apollo.core import mail
-from apollo.settings import SECURITY_EMAIL_SENDER
+from apollo import services, settings
+from apollo.core import mail, sentry
 from apollo.messaging.outgoing import gateway_factory
 from apollo.factory import create_celery_app
 
@@ -38,8 +37,17 @@ def send_messages(event, message, recipients, sender=""):
 
 @celery.task
 def send_email(subject, body, recipients, sender=None):
+    if not (settings.MAIL_SERVER or settings.MAIL_PORT or settings.MAIL_USERNAME):
+        sentry.captureMessage('No email server configured')
+        return
+
     if not sender:
-        sender = SECURITY_EMAIL_SENDER
+        sender = settings.SECURITY_EMAIL_SENDER
     msg = Message(subject, recipients=recipients, sender=sender)
     msg.body = body
-    mail.send(msg)
+    try:
+        mail.send(msg)
+    except Exception:
+        # still log the exception to Sentry,
+        # but don't let it be uncaught
+        sentry.captureException()
