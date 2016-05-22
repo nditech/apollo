@@ -113,7 +113,8 @@ class SubmissionQuerySet(BaseQuerySet):
             if field.allows_multiple_values or field.is_comment_field:
                 continue
 
-            df[tag] = to_numeric(df[tag])
+            if tag in df:
+                df[tag] = to_numeric(df[tag])
 
         # add fields with no values
         fields = filter(
