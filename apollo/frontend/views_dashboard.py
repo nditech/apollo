@@ -130,6 +130,7 @@ def index():
 @register_menu(
     bp, u'main.dashboard.checklists', _(u'Checklists'),
     icon=u'<i class="glyphicon glyphicon-check"></i>', order=0,
+    visible_when=lambda: len(get_checklist_form_dashboard_menu(form_type='CHECKLIST')) > 0,
     dynamic_list_constructor=partial(
         get_checklist_form_dashboard_menu, form_type=u'CHECKLIST'))
 @login_required

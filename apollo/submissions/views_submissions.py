@@ -333,6 +333,10 @@ def submission_edit(submission_id):
                         form_fields = master_form.data.keys()
                         changed = False
                         for form_field in form_fields:
+                            # None is not a valid value
+                            if form_field == u'verification_status':
+                                if master_form.data.get(form_field) is None:
+                                    continue
                             if (
                                 getattr(submission.master, form_field, None) !=
                                 master_form.data.get(form_field)
@@ -381,10 +385,12 @@ def submission_edit(submission_id):
                         changed = True
 
                     # update the verification status if it was set
+                    # None is not a valid value for it (right now)
                     if (
-                        'verification_status' in submission_form.data.keys() and
-                        submission_form.data.get('verification_status') !=
-                        submission.verification_status
+                        ('verification_status' in submission_form.data.keys()) and
+                        (submission_form.data.get('verification_status') is not None) and
+                        (submission_form.data.get('verification_status') !=
+                        submission.verification_status)
                     ):
                         submission.verification_status = \
                             submission_form.data.get('verification_status')
@@ -668,6 +674,7 @@ def _get_aggregated_check_data(queryset):
 @register_menu(
     bp, u'main.dashboard.qa', _(u'Quality Assurance'),
     icon=u'<i class="glyphicon glyphicon-tasks"></i>', order=1,
+    visible_when=lambda: len(get_quality_assurance_form_dashboard_menu(form_type='CHECKLIST', verifiable=True)) > 0,
     dynamic_list_constructor=partial(
         get_quality_assurance_form_dashboard_menu,
         form_type=u'CHECKLIST', verifiable=True))
