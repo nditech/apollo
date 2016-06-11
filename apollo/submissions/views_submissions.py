@@ -674,6 +674,7 @@ def _get_aggregated_check_data(queryset):
 @register_menu(
     bp, u'main.dashboard.qa', _(u'Quality Assurance'),
     icon=u'<i class="glyphicon glyphicon-tasks"></i>', order=1,
+    visible_when=lambda: len(get_quality_assurance_form_dashboard_menu(form_type='CHECKLIST', verifiable=True)) > 0,
     dynamic_list_constructor=partial(
         get_quality_assurance_form_dashboard_menu,
         form_type=u'CHECKLIST', verifiable=True))
