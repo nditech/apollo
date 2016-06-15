@@ -123,14 +123,13 @@
         <div class="container">
           <footer>
           {%- block footer -%}
-            <p style="padding-top:18px;">Apollo &mdash; v2.6.1</p>
+            <p style="padding-top:18px;">Apollo &mdash; v2.6.2</p>
           {%- endblock -%}
           </footer>
         </div>
     </div>
     {% assets 'apollo_js' %}
-    <script type="text/javascript" src="{{ ASSET_URL }}" charset="utf-8"></script>
-    {% endassets %}
+    <script type="text/javascript" src="{{ ASSET_URL }}" charset="utf-8"></script>{% endassets %}
     {%- block scripts -%}{%- endblock -%}
     {% if not debug and ga_key %}
     <script type="text/javascript">
