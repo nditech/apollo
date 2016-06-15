@@ -127,6 +127,8 @@
 </div>
 {% endblock %}
 {% block scripts %}
+<script type="text/javascript" src="{{ url_for('static', filename='js/lodash.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/backbone-min.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/joint.min.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/joint.layout.DirectedGraph.min.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/locations_builder.js') }}"></script>
