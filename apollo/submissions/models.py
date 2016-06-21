@@ -270,7 +270,8 @@ class Submission(db.DynamicDocument):
             submission, _ = cls.objects.get_or_create(
                 form=form, contributor=participant, location=location,
                 created=event.start_date, deployment=deployment,
-                event=event, submission_type='O')
+                event=event, submission_type='O',
+                verification_status=VERIFICATION_STATUSES[0][0])
             # force creation of master
             submission.master
 
