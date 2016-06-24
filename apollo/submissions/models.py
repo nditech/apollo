@@ -327,6 +327,7 @@ class Submission(db.DynamicDocument):
                                         for s in not_quarantined])))
                         if len(field_values) > 1:  # there are different values
                             submission.completion[group.name] = 'Conflict'
+                            self.completion[group.name] = 'Conflict'
                             break
                     else:
                         # if there's no conflicting fields then compute the
