@@ -26,13 +26,28 @@ def parse_message(form):
 
             if questionnaire.validate():
                 submission = questionnaire.save()
-                return (
-                    _('Thank you! Your report was received!'
-                      ' You sent: {text}')
-                    .format(text=message.get('text', '')),
-                    submission,
-                    had_errors
-                )
+
+                # check if there were extra fields sent in
+                diff = set(response_dict.keys()).difference(
+                    set(questionnaire.data.keys()))
+                if not diff:
+                    return (
+                        _('Thank you! Your report was received!'
+                          ' You sent: {text}')
+                        .format(text=message.get('text', '')),
+                        submission,
+                        had_errors
+                    )
+                else:
+                    had_errors = True
+                    return (
+                        _('Unknown question codes: "{questions}". '
+                          'You sent: {text}')
+                        .format(questions=', '.join(sorted(diff)),
+                                text=message.get('text', '')),
+                        submission,
+                        had_errors
+                    )
             else:
                 had_errors = True
                 if 'participant' in questionnaire.errors:
@@ -40,20 +55,6 @@ def parse_message(form):
                         _('Observer ID not found. Please resend with valid '
                           'Observer ID. You sent: {text}')
                         .format(text=message.get('text', '')),
-                        submission,
-                        had_errors
-                    )
-                elif '__all__' in questionnaire.errors:
-                    # Save any valid data
-                    submission = questionnaire.save()
-                    return (
-                        _('Unknown question codes: "{questions}". '
-                          'You sent: {text}')
-                        .format(questions=', '.join(
-                                sorted([
-                                    q for q in questionnaire.errors['__all__']
-                                ])),
-                                text=message.get('text', '')),
                         submission,
                         had_errors
                     )
