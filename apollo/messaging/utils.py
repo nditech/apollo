@@ -102,4 +102,12 @@ def parse_responses(responses_text, form):
     responses.update(
         ((r.group('tag').upper(), 1) for r in pattern2.finditer(substrate)))
 
+    # remove the found data
+    substrate = pattern2.sub('', substrate)
+
+    # finally, get any unknown tags
+    default_pattern = re.compile(ur'(?P<tag>[A-Z]+)(?P<answer>\d+)', flags=re.I)
+    responses.update((r.group(u'tag').upper(), r.group(u'answer')) for r in
+        default_pattern.finditer(substrate))
+
     return responses
