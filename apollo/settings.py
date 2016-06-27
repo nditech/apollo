@@ -23,7 +23,7 @@ MONGODB_SETTINGS = {
 }
 
 # default to UTC for prior deployments
-TIME_ZONE = os.environ.get('TIME_ZONE', 'UTC')
+TIMEZONE = os.environ.get('TIMEZONE', 'UTC')
 
 SSL_REQUIRED = ast.literal_eval(
     os.environ.get('SSL_REQUIRED', 'True'))
