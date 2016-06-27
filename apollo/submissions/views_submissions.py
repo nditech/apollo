@@ -18,7 +18,7 @@ from apollo import services
 from apollo.submissions.incidents import incidents_csv
 from apollo.participants.utils import update_participant_completion_rating
 from apollo.submissions.aggregation import aggregated_dataframe
-from apollo.submissions.models import QUALITY_STATUSES
+from apollo.submissions.models import QUALITY_STATUSES, Submission
 from apollo.messaging.tasks import send_messages
 from apollo.frontend import route, permissions
 from apollo.frontend.filters import generate_submission_filter
@@ -39,6 +39,10 @@ bp = Blueprint('submissions', __name__, template_folder='templates',
 
 
 SUB_VERIFIED = u'4'
+
+
+def get_valid_values(choices):
+    return [i[0] for i in choices]
 
 
 @auth.verify_password
@@ -333,9 +337,26 @@ def submission_edit(submission_id):
                         form_fields = master_form.data.keys()
                         changed = False
                         for form_field in form_fields:
-                            # None is not a valid value
+                            # we've had issues with quarantine and verification statuses
+                            # previously. this explicitly deals with that
                             if form_field == u'verification_status':
-                                if master_form.data.get(form_field) is None:
+                                new_verification_status = master_form.data.get(form_field)
+                                if new_verification_status not in get_valid_values(Submission.VERIFICATION_STATUSES):
+                                    continue
+                                else:
+                                    if getattr(submission.master, form_field) != new_verification_status:
+                                        changed = True
+                                        setattr(submission.master, form_field, new_verification_status)
+                                    continue
+
+                            if form_field == u'quarantine_status':
+                                new_quarantine_status = master_form.data.get(form_field)
+                                if new_quarantine_status not in get_valid_values(Submission.QUARANTINE_STATUSES):
+                                    continue
+                                else:
+                                    if getattr(submission.master, form_field) != new_quarantine_status:
+                                        changed = True
+                                        setattr(submission.master, form_field, new_quarantine_status)
                                     continue
                             if (
                                 getattr(submission.master, form_field, None) !=
@@ -373,36 +394,33 @@ def submission_edit(submission_id):
                 if submission_form.validate():
                     changed = False
 
-                    # update the quarantine status if it was set
-                    if (
-                        'quarantine_status' in submission_form.data.keys() and
-                        submission_form.data.get('quarantine_status') !=
-                        submission.quarantine_status
-                    ):
-                        submission.quarantine_status = \
-                            submission_form.data.get('quarantine_status')
-                        submission.save(clean=False)
-                        changed = True
-
-                    # update the verification status if it was set
-                    # None is not a valid value for it (right now)
-                    if (
-                        ('verification_status' in submission_form.data.keys()) and
-                        (submission_form.data.get('verification_status') is not None) and
-                        (submission_form.data.get('verification_status') !=
-                        submission.verification_status)
-                    ):
-                        submission.verification_status = \
-                            submission_form.data.get('verification_status')
-                        submission.save(clean=False)
-                        changed = True
-
                     with signals.post_save.connected_to(
                         update_submission_version,
                         sender=services.submissions.__model__
                     ):
                         form_fields = submission_form.data.keys()
                         for form_field in form_fields:
+                            # we've had issues with quarantine and verification statuses
+                            # previously. this explicitly deals with that
+                            if form_field == u'verification_status':
+                                new_verification_status = submission_form.data.get(form_field)
+                                if new_verification_status not in get_valid_values(Submission.VERIFICATION_STATUSES):
+                                    continue
+                                else:
+                                    if getattr(submission, form_field) != new_verification_status:
+                                        changed = True
+                                        setattr(submission, form_field, new_verification_status)
+                                    continue
+
+                            if form_field == u'quarantine_status':
+                                new_quarantine_status = submission_form.data.get(form_field)
+                                if new_quarantine_status not in get_valid_values(Submission.QUARANTINE_STATUSES):
+                                    continue
+                                else:
+                                    if getattr(submission, form_field) != new_quarantine_status:
+                                        changed = True
+                                        setattr(submission, form_field, new_quarantine_status)
+                                    continue
                             if (
                                 getattr(submission, form_field, None) !=
                                 submission_form.data.get(form_field)
