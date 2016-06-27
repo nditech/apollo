@@ -19,7 +19,7 @@ from apollo import models, settings
 from apollo.frontend import forms
 
 
-app_time_zone = pytz.timezone(settings.TIME_ZONE)
+app_time_zone = pytz.timezone(settings.TIMEZONE)
 utc_time_zone = pytz.utc
 
 DATETIME_FORMAT_SPEC = u'%Y-%m-%d %H:%M:%S %Z'

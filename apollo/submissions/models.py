@@ -270,7 +270,8 @@ class Submission(db.DynamicDocument):
             submission, _ = cls.objects.get_or_create(
                 form=form, contributor=participant, location=location,
                 created=event.start_date, deployment=deployment,
-                event=event, submission_type='O')
+                event=event, submission_type='O',
+                verification_status=VERIFICATION_STATUSES[0][0])
             # force creation of master
             submission.master
 
@@ -326,6 +327,7 @@ class Submission(db.DynamicDocument):
                                         for s in not_quarantined])))
                         if len(field_values) > 1:  # there are different values
                             submission.completion[group.name] = 'Conflict'
+                            self.completion[group.name] = 'Conflict'
                             break
                     else:
                         # if there's no conflicting fields then compute the
