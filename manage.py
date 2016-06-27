@@ -4,19 +4,6 @@ import warnings
 from flask.ext.script import Manager, Server, Shell
 from flask.ext.security import MongoEngineUserDatastore
 
-from apollo.core import db
-from apollo import models, services
-from apollo import create_app
-from apollo.manage import \
-    (CreateUserCommand, DeleteUserCommand, ListUsersCommand,
-     AddUserRoleCommand, ListUserRolesCommand, RemoveUserRoleCommand,
-     ListRolesCommand, AddRoleCommand,
-     AddPermissionToRole, RemovePermissionFromRole, ListPermissionsOfRole,
-     CreateDeploymentCommand, ListDeploymentsCommand, CreateEventCommand,
-     ListEventsCommand,
-     InitializeSubmissionsCommand,
-     SetupCommand, MessagePlaybackCommand, EventMigrationCommand)
-
 
 def read_env(env_path=None):
     if env_path is None:
@@ -43,6 +30,23 @@ def parse_env(env_path):
 # load the environment (if found) *before* creating the app
 if __name__ == '__main__':
     read_env()
+
+
+from apollo.core import db
+from apollo import models, services
+from apollo import create_app
+from apollo.manage import \
+    (CreateUserCommand, DeleteUserCommand, ListUsersCommand,
+     AddUserRoleCommand, ListUserRolesCommand, RemoveUserRoleCommand,
+     ListRolesCommand, AddRoleCommand,
+     AddPermissionToRole, RemovePermissionFromRole, ListPermissionsOfRole,
+     CreateDeploymentCommand, ListDeploymentsCommand, CreateEventCommand,
+     ListEventsCommand,
+     InitializeSubmissionsCommand,
+     SetupCommand, MessagePlaybackCommand, EventMigrationCommand)
+
+
+
 
 app = create_app()
 
