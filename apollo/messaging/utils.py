@@ -113,4 +113,4 @@ def parse_responses(responses_text, form):
     # remove all assumed tags
     substrate = default_pattern.sub('', substrate)
 
-    return responses, substrate
+    return responses, substrate.strip()
