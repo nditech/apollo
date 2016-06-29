@@ -16,7 +16,7 @@ def parse_message(form):
     if (prefix and participant_id and responses):
         form_doc = retrieve_form(prefix, exclamation)
         if form_doc:
-            response_dict = parse_responses(responses, form_doc)
+            response_dict, extra = parse_responses(responses, form_doc)
         if form_doc and response_dict:
             form_data = MultiDict(
                 {'form': form_doc.pk, 'participant': participant_id,
@@ -30,7 +30,7 @@ def parse_message(form):
                 # check if there were extra fields sent in
                 diff = set(response_dict.keys()).difference(
                     set(questionnaire.data.keys()))
-                if not diff:
+                if not diff and not extra:
                     return (
                         _('Thank you! Your report was received!'
                           ' You sent: {text}')
@@ -38,7 +38,7 @@ def parse_message(form):
                         submission,
                         had_errors
                     )
-                else:
+                elif diff and not extra:
                     had_errors = True
                     return (
                         _('Unknown question codes: "{questions}". '
@@ -48,6 +48,21 @@ def parse_message(form):
                         submission,
                         had_errors
                     )
+                elif not diff and extra:
+                    had_errors = True
+                    return (_('Invalid text sent: "{extra}". '
+                        'You sent: {text}').format(
+                            extra=extra, text=message.get('text', '')),
+                        submission,
+                        had_errors)
+                else:
+                    had_errors = True
+                    return (_('Unknown question codes: "{questions}" '
+                        'and invalid text sent: "{extra}".'
+                        'You sent: {text}').format(
+                            questions=', '.join(sorted(diff)),
+                            extra=extra, text=message.get('text', '')),
+                        submission, had_errors)
             else:
                 had_errors = True
                 if 'participant' in questionnaire.errors:
