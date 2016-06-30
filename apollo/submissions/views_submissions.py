@@ -17,7 +17,8 @@ from werkzeug.datastructures import MultiDict
 from apollo import services
 from apollo.submissions.incidents import incidents_csv
 from apollo.participants.utils import update_participant_completion_rating
-from apollo.submissions.aggregation import aggregated_dataframe
+from apollo.submissions.aggregation import (
+    aggregated_dataframe, _quality_check_aggregation)
 from apollo.submissions.models import QUALITY_STATUSES, Submission
 from apollo.messaging.tasks import send_messages
 from apollo.frontend import route, permissions
@@ -716,28 +717,13 @@ def quality_assurance_dashboard(form_id):
     query_filterset = filter_class(submissions, request.args)
     filter_form = query_filterset.form
 
-    # get collated data
-    collection = query_filterset.qs._collection
-    pipeline = _get_collated_checks_pipeline(query_filterset.qs)
-    result = collection.aggregate(pipeline).get(u'result')[0]
-
-    global_data = [
-        {u'label': u'total', u'count': result.get(u'count_total')},
-        {u'label': u'flagged', u'count': result.get(u'count_flagged')},
-        {u'label': u'verified', u'count': result.get(u'count_verified')},
-        {u'label': u'not verified'},
-    ]
-
-    global_data[3][u'count'] = global_data[1][u'count'] - global_data[2][u'count']
-
     # get individual check data
-    check_data = _get_aggregated_check_data(query_filterset.qs)
+    check_data = _quality_check_aggregation(query_filterset.qs, form)
 
     template_name = u'frontend/quality_assurance_dashboard.html'
 
     context = {
         u'filter_form': filter_form,
-        u'global_data': global_data,
         u'form': form,
         u'args': data,
         u'location_types': loc_types,
