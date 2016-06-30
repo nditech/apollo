@@ -1,5 +1,15 @@
+from operator import itemgetter
+
 import pandas as pd
 from apollo.submissions.models import QUALITY_STATUSES, Submission
+
+# labels
+BUCKET_LABELS = {
+    u'OK': u'ok',
+    u'FLAGGED_AND_VERIFIED': u'flagged and verified',
+    u'FLAGGED_AND_UNVERIFIED': u'flagged and unverified',
+    u'MISSING': u'missing'
+}
 
 
 def aggregated_dataframe(queryset, form):
@@ -69,7 +79,7 @@ def _quality_check_aggregation(queryset, form):
                     # if this check is OK,
                     u'if': {u'$eq': [var, QUALITY_STATUSES[u'OK']]},
                     # set bucket to 'OK'
-                    u'then': u'OK',
+                    u'then': BUCKET_LABELS[u'OK'],
                     u'else': {u'$cond': {
                         # elif this check is flagged and verified
                         u'if': {u'$and': [
@@ -77,7 +87,7 @@ def _quality_check_aggregation(queryset, form):
                             {u'eq': v_stat}
                         ]},
                         # set bucket to 'FLAGGED_AND_VERIFIED'
-                        u'then': u'FLAGGED_AND_VERIFIED',
+                        u'then': BUCKET_LABELS[u'FLAGGED_AND_VERIFIED'],
                         u'else': {u'$cond': {
                             # elif the check is flagged and not verified
                             u'if': {u'$and': [
@@ -85,8 +95,9 @@ def _quality_check_aggregation(queryset, form):
                                 {u'$ne': v_stat}
                             ]},
                             # set to 'FLAGGED_AND_UNVERIFIED'
-                            u'then': u'FLAGGED_AND_UNVERIFIED',
-                            u'else': 'MISSING' # else set to 'MISSING'
+                            u'then': BUCKET_LABELS[u'FLAGGED_AND_UNVERIFIED'],
+                            # otherwise set to 'MISSING'
+                            u'else': BUCKET_LABELS[u'MISSING']
                         }}
                     }}
                 }
@@ -109,19 +120,26 @@ def _quality_check_aggregation(queryset, form):
         }},
         {u'$group': {
             u'_id': u'$_id.name',
-            u'stats': {u'$push': {
-                u'bucket': u'$_id.bucket',
+            u'counts': {u'$push': {
+                u'label': u'$_id.bucket',
                 u'count': u'$count'
             }}
         }},
         {u'$project': {
             u'_id': 0,
             u'name': u'$_id',
-            u'stats': 1
+            u'counts': 1
         }}
     ]
 
     collection = queryset._collection
     result = collection.aggregate(pipeline).get(u'result')
 
-    return result
+    sort_key = itemgetter(u'name')
+    sorted_result = sorted(result, key=sort_key)
+    sorted_checks = sorted(form.quality_checks, key=sort_key)
+
+    for check, dataset in zip(sorted_checks, sorted_result):
+        dataset.update(description=check.get(u'description'))
+
+    return sorted_result
