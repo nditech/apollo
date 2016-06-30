@@ -66,7 +66,7 @@ def aggregated_dataframe(queryset, form):
     return df_agg
 
 
-def _quality_check_aggregation(queryset, form):
+def _build_qa_pipeline(queryset, form):
     v_stat = [u'$verification_status', Submission.VERIFICATION_STATUSES[1][0]]
     checks = []
     for qc in form.quality_checks:
@@ -131,6 +131,11 @@ def _quality_check_aggregation(queryset, form):
             u'counts': 1
         }}
     ]
+
+    return pipeline
+
+def _quality_check_aggregation(queryset, form):
+    pipeline = _build_qa_pipeline(queryset, form)
 
     collection = queryset._collection
     result = collection.aggregate(pipeline).get(u'result')
