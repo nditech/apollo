@@ -6,6 +6,12 @@ import numpy
 import os
 import string
 
+from apollo.utils import read_env
+
+env_path = os.path.abspath(
+    os.path.join(os.path.dirname(os.path.dirname(__file__)), '.env'))
+read_env(env_path)
+
 try:
     SECRET_KEY = os.environ['SECRET_KEY']
 except KeyError:

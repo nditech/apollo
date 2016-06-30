@@ -110,4 +110,7 @@ def parse_responses(responses_text, form):
     responses.update((r.group(u'tag').upper(), r.group(u'answer')) for r in
         default_pattern.finditer(substrate))
 
-    return responses
+    # remove all assumed tags
+    substrate = default_pattern.sub('', substrate)
+
+    return responses, substrate.strip()

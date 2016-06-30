@@ -14,19 +14,6 @@
     {{ render_filter_form(form, filter_form, location) }}
   </div>
 </div>
-
-<div class="row">
-  <div class="col-md-12">
-     <div class="panel panel-default">
-       <div class="panel-heading">
-         <h3 class="panel-title">Global status</h3>
-       </div>
-       <div class="panel-body">
-         <div data-chart='{{ global_data|tojson }}' id="global_chart"></div>
-       </div>
-     </div>
-  </div>
-</div>
 <div class="row" id="check_breakdown" data-checks='{{ check_data|tojson }}'>
   <section id="check-container">
     <div class="col-md-6" v-for="check in checks">
@@ -46,19 +33,6 @@
 <script type="text/javascript" src="{{ url_for('static', filename='js/vue.min.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/filters.js') }}"></script>
 <script>
-var svg = dimple.newSvg('#global_chart', '100%', '350px');
-var global_data = JSON.parse(document.getElementById('global_chart').getAttribute('data-chart'));
-var chart = new dimple.chart(svg, global_data);
-var x_axis = chart.addMeasureAxis('x', 'count');
-x_axis.tickFormat = 'd';
-chart.addCategoryAxis('y', 'label');
-chart.addSeries('label', dimple.plot.bar);
-chart.assignColor('total', '#789');
-chart.assignColor('flagged', '#ef2929');
-chart.assignColor('verified', '#729fcf');
-chart.assignColor('not verified', '#fc6');
-chart.draw();
-
 var check_data = JSON.parse(document.getElementById('check_breakdown').getAttribute('data-checks'));
 Vue.config.delimiters = [ '<%=', '%>' ];
 
@@ -72,12 +46,13 @@ check_data.forEach(function (item, i){
   var i_chart = new dimple.chart(i_svg, item.counts);
   var i_x_axis = i_chart.addMeasureAxis('x', 'count');
   i_x_axis.tickFormat = 'd';
-  i_chart.addCategoryAxis('y', 'label');
+  i_chart.addCategoryAxis('y', 'label').hidden = true;
   i_chart.addSeries('label', dimple.plot.bar);
   i_chart.assignColor('ok', '#8ae234');
-  i_chart.assignColor('flagged', '#ef2929');
-  i_chart.assignColor('verified', '#729fcf');
-  i_chart.assignColor('missing', '#fcaf3e');
+  i_chart.assignColor('flagged and verified', '#fcaf3e');
+  i_chart.assignColor('flagged and unverified', '#ef2929');
+  i_chart.assignColor('missing', '#babdb6');
+  i_chart.addLegend(60, 10, 500, 20, "right");
   i_chart.draw();
 });
 </script>

@@ -17,8 +17,9 @@ from werkzeug.datastructures import MultiDict
 from apollo import services
 from apollo.submissions.incidents import incidents_csv
 from apollo.participants.utils import update_participant_completion_rating
-from apollo.submissions.aggregation import aggregated_dataframe
-from apollo.submissions.models import QUALITY_STATUSES
+from apollo.submissions.aggregation import (
+    aggregated_dataframe, _quality_check_aggregation)
+from apollo.submissions.models import QUALITY_STATUSES, Submission
 from apollo.messaging.tasks import send_messages
 from apollo.frontend import route, permissions
 from apollo.frontend.filters import generate_submission_filter
@@ -39,6 +40,10 @@ bp = Blueprint('submissions', __name__, template_folder='templates',
 
 
 SUB_VERIFIED = u'4'
+
+
+def get_valid_values(choices):
+    return [i[0] for i in choices]
 
 
 @auth.verify_password
@@ -333,9 +338,26 @@ def submission_edit(submission_id):
                         form_fields = master_form.data.keys()
                         changed = False
                         for form_field in form_fields:
-                            # None is not a valid value
+                            # we've had issues with quarantine and verification statuses
+                            # previously. this explicitly deals with that
                             if form_field == u'verification_status':
-                                if master_form.data.get(form_field) is None:
+                                new_verification_status = master_form.data.get(form_field)
+                                if new_verification_status not in get_valid_values(Submission.VERIFICATION_STATUSES):
+                                    continue
+                                else:
+                                    if getattr(submission.master, form_field) != new_verification_status:
+                                        changed = True
+                                        setattr(submission.master, form_field, new_verification_status)
+                                    continue
+
+                            if form_field == u'quarantine_status':
+                                new_quarantine_status = master_form.data.get(form_field)
+                                if new_quarantine_status not in get_valid_values(Submission.QUARANTINE_STATUSES):
+                                    continue
+                                else:
+                                    if getattr(submission.master, form_field) != new_quarantine_status:
+                                        changed = True
+                                        setattr(submission.master, form_field, new_quarantine_status)
                                     continue
                             if (
                                 getattr(submission.master, form_field, None) !=
@@ -373,36 +395,33 @@ def submission_edit(submission_id):
                 if submission_form.validate():
                     changed = False
 
-                    # update the quarantine status if it was set
-                    if (
-                        'quarantine_status' in submission_form.data.keys() and
-                        submission_form.data.get('quarantine_status') !=
-                        submission.quarantine_status
-                    ):
-                        submission.quarantine_status = \
-                            submission_form.data.get('quarantine_status')
-                        submission.save(clean=False)
-                        changed = True
-
-                    # update the verification status if it was set
-                    # None is not a valid value for it (right now)
-                    if (
-                        ('verification_status' in submission_form.data.keys()) and
-                        (submission_form.data.get('verification_status') is not None) and
-                        (submission_form.data.get('verification_status') !=
-                        submission.verification_status)
-                    ):
-                        submission.verification_status = \
-                            submission_form.data.get('verification_status')
-                        submission.save(clean=False)
-                        changed = True
-
                     with signals.post_save.connected_to(
                         update_submission_version,
                         sender=services.submissions.__model__
                     ):
                         form_fields = submission_form.data.keys()
                         for form_field in form_fields:
+                            # we've had issues with quarantine and verification statuses
+                            # previously. this explicitly deals with that
+                            if form_field == u'verification_status':
+                                new_verification_status = submission_form.data.get(form_field)
+                                if new_verification_status not in get_valid_values(Submission.VERIFICATION_STATUSES):
+                                    continue
+                                else:
+                                    if getattr(submission, form_field) != new_verification_status:
+                                        changed = True
+                                        setattr(submission, form_field, new_verification_status)
+                                    continue
+
+                            if form_field == u'quarantine_status':
+                                new_quarantine_status = submission_form.data.get(form_field)
+                                if new_quarantine_status not in get_valid_values(Submission.QUARANTINE_STATUSES):
+                                    continue
+                                else:
+                                    if getattr(submission, form_field) != new_quarantine_status:
+                                        changed = True
+                                        setattr(submission, form_field, new_quarantine_status)
+                                    continue
                             if (
                                 getattr(submission, form_field, None) !=
                                 submission_form.data.get(form_field)
@@ -560,124 +579,16 @@ def submission_version(submission_id, version_id):
     )
 
 
-def _get_individual_checks_pipeline(queryset):
-    form = queryset.first().form
-
-    project_stage = {
-        u'$project': {
-            u'_id': 0,
-            u'checks': [{
-                u'name': {u'$literal': qc[u'name']},
-                u'value': u'$quality_checks.{}'.format(
-                    qc[u'name'])} for qc in form.quality_checks
-            ]
-        }
-    }
-
-    pipeline = [
-        {u'$match': queryset._query},
-        project_stage,
-        {u'$unwind': u'$checks'},
-        {u'$group': {
-            u'_id': {u'name': u'$checks.name', u'status': u'$checks.value'},
-            u'count': {u'$sum': 1}
-        }},
-        {u'$group': {
-            u'_id': u'$_id.name',
-            u'stats': {u'$push': {
-                u'status': u'$_id.status',
-                u'count': u'$count'
-            }}
-        }},
-        {u'$project': {
-            u'_id': 0,
-            u'name': u'$_id',
-            u'stats': 1
-        }}
-    ]
-
-    return pipeline
-
-
-def _get_collated_checks_pipeline(queryset):
-    form = queryset.first().form
-
-    # projection for flagged data
-    term = {u'$or': [{u'$eq': [u'$quality_checks.{}'.format(qc[u'name']), QUALITY_STATUSES[u'FLAGGED']]} for qc in form.quality_checks]}
-    flagged_projection = {
-        u'flagged': {
-            u'$cond': [term, 1, 0]
-        }
-    }
-
-    # projection for verified data
-    verified_projection = {
-        u'verified': {u'$cond': [{u'$eq': [u'$verification_status', SUB_VERIFIED]}, 1, 0]}
-    }
-
-    project_stage = {u'$project': {}}
-    project_stage[u'$project'].update(flagged_projection)
-    project_stage[u'$project'].update(verified_projection)
-
-    pipeline = [
-        {u'$match': queryset._query},
-        project_stage,
-        {u'$group': {
-            u'_id': None,
-            u'count_flagged': {
-                u'$sum': u'$flagged'
-            },
-            u'count_verified': {
-                u'$sum': u'$verified'
-            },
-            u'count_total': {
-                u'$sum': 1
-            }
-        }}
-    ]
-
-    return pipeline
-
-
-def _get_aggregated_check_data(queryset):
-    collection = queryset._collection
-    pipeline = _get_individual_checks_pipeline(queryset)
-    result = collection.aggregate(pipeline).get(u'result')
-
-    # swap out keys and values of QUALITY_STATUSES
-    statuses = {v: k.lower() for k, v in QUALITY_STATUSES.items()}
-    statuses[None] = u'missing'
-
-    # update data
-    def sort_key(item):
-        return item.get(u'name')
-
-    form = queryset.first().form
-    sorted_quality_checks = sorted(form.quality_checks, key=sort_key)
-    sorted_results = sorted(result, key=sort_key)
-
-    data = []
-    for check, result in zip(sorted_quality_checks, sorted_results):
-        d = {}
-        d[u'name'] = check.get(u'name')
-        d[u'description'] = check.get(u'description')
-        d[u'counts'] = [{
-            u'count': i[u'count'],
-            u'label': statuses.get(i.get(u'status'))} for i in result.get(u'stats')]
-
-        data.append(d)
-
-    return data
-
-
 @route(bp, u'/dashboard/qa/<form_id>')
 @register_menu(
     bp, u'main.dashboard.qa', _(u'Quality Assurance'),
     icon=u'<i class="glyphicon glyphicon-tasks"></i>', order=1,
-    visible_when=lambda: len(get_quality_assurance_form_dashboard_menu(form_type='CHECKLIST', verifiable=True)) > 0,
+    visible_when=lambda: len(get_quality_assurance_form_dashboard_menu(form_type='CHECKLIST', verifiable=True)) > 0 \
+            and permissions.view_process_analysis.can(),
     dynamic_list_constructor=partial(
         get_quality_assurance_form_dashboard_menu,
         form_type=u'CHECKLIST', verifiable=True))
+@permissions.view_process_analysis.require(403)
 @login_required
 def quality_assurance_dashboard(form_id):
     form = services.forms.get_or_404(pk=form_id, form_type='CHECKLIST')
@@ -696,28 +607,13 @@ def quality_assurance_dashboard(form_id):
     query_filterset = filter_class(submissions, request.args)
     filter_form = query_filterset.form
 
-    # get collated data
-    collection = query_filterset.qs._collection
-    pipeline = _get_collated_checks_pipeline(query_filterset.qs)
-    result = collection.aggregate(pipeline).get(u'result')[0]
-
-    global_data = [
-        {u'label': u'total', u'count': result.get(u'count_total')},
-        {u'label': u'flagged', u'count': result.get(u'count_flagged')},
-        {u'label': u'verified', u'count': result.get(u'count_verified')},
-        {u'label': u'not verified'},
-    ]
-
-    global_data[3][u'count'] = global_data[1][u'count'] - global_data[2][u'count']
-
     # get individual check data
-    check_data = _get_aggregated_check_data(query_filterset.qs)
+    check_data = _quality_check_aggregation(query_filterset.qs, form)
 
     template_name = u'frontend/quality_assurance_dashboard.html'
 
     context = {
         u'filter_form': filter_form,
-        u'global_data': global_data,
         u'form': form,
         u'args': data,
         u'location_types': loc_types,
@@ -736,13 +632,14 @@ def quality_assurance_dashboard(form_id):
     order=3, icon='<i class="glyphicon glyphicon-ok"></i>',
     visible_when=lambda: len(get_quality_assurance_form_list_menu(
         form_type='CHECKLIST', verifiable=True)) > 0 and
-    permissions.view_result_analysis.can())
+    permissions.view_process_analysis.can())
 @register_menu(
     bp, 'main.qa.checklists', _('Quality Assurance'),
     icon=u'<i class="glyphicon glyphicon-ok"></i>', order=1,
     dynamic_list_constructor=partial(
         get_quality_assurance_form_list_menu,
         form_type='CHECKLIST', verifiable=True))
+@permissions.view_process_analysis.require(403)
 @login_required
 def quality_assurance_list(form_id):
     form = services.forms.get_or_404(pk=form_id, form_type='CHECKLIST')

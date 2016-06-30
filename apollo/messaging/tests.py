@@ -213,17 +213,26 @@ class ResponseParserTest(TestCase):
 
     def test_response_parsing(self):
         self.assertEqual(
-            parse_responses('', self.test_form),
+            parse_responses('', self.test_form)[0],
             {})
         self.assertEqual(
-            parse_responses('AA1BA2', self.test_form),
+            parse_responses('AA1BA2', self.test_form)[0],
             {'AA': '1', 'BA': 1})
         self.assertEqual(
-            parse_responses('EA135DBAAA3', self.test_form),
+            parse_responses('EA135DBAAA3', self.test_form)[0],
             {'AA': '3', 'BA': 1, 'D': 1, 'EA': '135'})
         self.assertNotIn('Comment1', parse_responses('EA135DBAAA3',
-                         self.test_form))
+                         self.test_form)[0])
 
         self.assertEqual(
-            parse_responses('ZX1CV2EA135DBAAA3', self.test_form),
+            parse_responses('ZX1CV2EA135DBAAA3', self.test_form)[0],
             {'AA': '3', 'BA': 1, 'D': 1, 'EA': '135', 'ZX': '1', 'CV': '2'})
+
+        response_dict, extra = parse_responses(
+            'ZX1CV2EA135DBAAA3THIS IS A TEST', self.test_form)
+        self.assertEqual(extra, 'THIS IS A TEST')
+
+        response_dict, extra = parse_responses(
+            'ZX1CV2EA135DBAAA3 THIS IS A TEST ', self.test_form)
+        self.assertEqual(extra, 'THIS IS A TEST')
+

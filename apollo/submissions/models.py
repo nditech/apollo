@@ -223,7 +223,8 @@ class Submission(db.DynamicDocument):
     quality_checks = db.DictField()
     confidence = db.DictField()
     verification_status = db.StringField(
-        choices=VERIFICATION_STATUSES, required=False)
+        choices=VERIFICATION_STATUSES, required=False,
+        default=VERIFICATION_STATUSES[0][0])
     overridden_fields = db.ListField(db.StringField())
     submission_type = db.StringField(
         choices=SUBMISSION_TYPES, default='O', required=True)
@@ -271,7 +272,7 @@ class Submission(db.DynamicDocument):
                 form=form, contributor=participant, location=location,
                 created=event.start_date, deployment=deployment,
                 event=event, submission_type='O',
-                verification_status=VERIFICATION_STATUSES[0][0])
+                verification_status=cls.VERIFICATION_STATUSES[0][0])
             # force creation of master
             submission.master
 
