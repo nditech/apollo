@@ -84,7 +84,7 @@ def _build_qa_pipeline(queryset, form):
                         # elif this check is flagged and verified
                         u'if': {u'$and': [
                             flagged_eq_step,
-                            {u'eq': v_stat}
+                            {u'$eq': v_stat}
                         ]},
                         # set bucket to 'FLAGGED_AND_VERIFIED'
                         u'then': BUCKET_LABELS[u'FLAGGED_AND_VERIFIED'],
