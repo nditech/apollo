@@ -1,4 +1,5 @@
 import pandas as pd
+from apollo.submissions.models import QUALITY_STATUSES, Submission
 
 
 def aggregated_dataframe(queryset, form):
@@ -53,3 +54,74 @@ def aggregated_dataframe(queryset, form):
     df_agg = df_agg.fillna("")
 
     return df_agg
+
+
+def _quality_check_aggregation(queryset, form):
+    v_stat = [u'$verification_status', Submission.VERIFICATION_STATUSES[1][0]]
+    checks = []
+    for qc in form.quality_checks:
+        var = u'$quality_checks.{}'.format(qc[u'name'])
+        flagged_eq_step = {u'$eq': [var, QUALITY_STATUSES[u'FLAGGED']]}
+        checks.append({
+            u'name': {u'$literal': qc[u'name']},
+            u'bucket': {
+                u'$cond': {
+                    # if this check is OK,
+                    u'if': {u'$eq': [var, QUALITY_STATUSES[u'OK']]},
+                    # set bucket to 'OK'
+                    u'then': u'OK',
+                    u'else': {u'$cond': {
+                        # elif this check is flagged and verified
+                        u'if': {u'$and': [
+                            flagged_eq_step,
+                            {u'eq': v_stat}
+                        ]},
+                        # set bucket to 'FLAGGED_AND_VERIFIED'
+                        u'then': u'FLAGGED_AND_VERIFIED',
+                        u'else': {u'$cond': {
+                            # elif the check is flagged and not verified
+                            u'if': {u'$and': [
+                                flagged_eq_step,
+                                {u'$ne': v_stat}
+                            ]},
+                            # set to 'FLAGGED_AND_UNVERIFIED'
+                            u'then': u'FLAGGED_AND_UNVERIFIED',
+                            u'else': 'MISSING' # else set to 'MISSING'
+                        }}
+                    }}
+                }
+            }
+        })
+    project_stage = {
+        u'$project': {
+            u'_id': 0,
+            u'checks': checks
+        }
+    }
+
+    pipeline = [
+        {u'$match': queryset._query},
+        project_stage,
+        {u'$unwind': u'$checks'},
+        {u'$group': {
+            u'_id': {u'name': u'$checks.name', u'bucket': u'$checks.bucket'},
+            u'count': {u'$sum': 1}
+        }},
+        {u'$group': {
+            u'_id': u'$_id.name',
+            u'stats': {u'$push': {
+                u'bucket': u'$_id.bucket',
+                u'count': u'$count'
+            }}
+        }},
+        {u'$project': {
+            u'_id': 0,
+            u'name': u'$_id',
+            u'stats': 1
+        }}
+    ]
+
+    collection = queryset._collection
+    result = collection.aggregate(pipeline).get(u'result')
+
+    return result
