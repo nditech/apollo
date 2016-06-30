@@ -17,7 +17,8 @@ from werkzeug.datastructures import MultiDict
 from apollo import services
 from apollo.submissions.incidents import incidents_csv
 from apollo.participants.utils import update_participant_completion_rating
-from apollo.submissions.aggregation import aggregated_dataframe
+from apollo.submissions.aggregation import (
+    aggregated_dataframe, _quality_check_aggregation)
 from apollo.submissions.models import QUALITY_STATUSES, Submission
 from apollo.messaging.tasks import send_messages
 from apollo.frontend import route, permissions
@@ -578,116 +579,6 @@ def submission_version(submission_id, version_id):
     )
 
 
-def _get_individual_checks_pipeline(queryset):
-    form = queryset.first().form
-
-    project_stage = {
-        u'$project': {
-            u'_id': 0,
-            u'checks': [{
-                u'name': {u'$literal': qc[u'name']},
-                u'value': u'$quality_checks.{}'.format(
-                    qc[u'name'])} for qc in form.quality_checks
-            ]
-        }
-    }
-
-    pipeline = [
-        {u'$match': queryset._query},
-        project_stage,
-        {u'$unwind': u'$checks'},
-        {u'$group': {
-            u'_id': {u'name': u'$checks.name', u'status': u'$checks.value'},
-            u'count': {u'$sum': 1}
-        }},
-        {u'$group': {
-            u'_id': u'$_id.name',
-            u'stats': {u'$push': {
-                u'status': u'$_id.status',
-                u'count': u'$count'
-            }}
-        }},
-        {u'$project': {
-            u'_id': 0,
-            u'name': u'$_id',
-            u'stats': 1
-        }}
-    ]
-
-    return pipeline
-
-
-def _get_collated_checks_pipeline(queryset):
-    form = queryset.first().form
-
-    # projection for flagged data
-    term = {u'$or': [{u'$eq': [u'$quality_checks.{}'.format(qc[u'name']), QUALITY_STATUSES[u'FLAGGED']]} for qc in form.quality_checks]}
-    flagged_projection = {
-        u'flagged': {
-            u'$cond': [term, 1, 0]
-        }
-    }
-
-    # projection for verified data
-    verified_projection = {
-        u'verified': {u'$cond': [{u'$eq': [u'$verification_status', SUB_VERIFIED]}, 1, 0]}
-    }
-
-    project_stage = {u'$project': {}}
-    project_stage[u'$project'].update(flagged_projection)
-    project_stage[u'$project'].update(verified_projection)
-
-    pipeline = [
-        {u'$match': queryset._query},
-        project_stage,
-        {u'$group': {
-            u'_id': None,
-            u'count_flagged': {
-                u'$sum': u'$flagged'
-            },
-            u'count_verified': {
-                u'$sum': u'$verified'
-            },
-            u'count_total': {
-                u'$sum': 1
-            }
-        }}
-    ]
-
-    return pipeline
-
-
-def _get_aggregated_check_data(queryset):
-    collection = queryset._collection
-    pipeline = _get_individual_checks_pipeline(queryset)
-    result = collection.aggregate(pipeline).get(u'result')
-
-    # swap out keys and values of QUALITY_STATUSES
-    statuses = {v: k.lower() for k, v in QUALITY_STATUSES.items()}
-    statuses[None] = u'missing'
-
-    # update data
-    def sort_key(item):
-        return item.get(u'name')
-
-    form = queryset.first().form
-    sorted_quality_checks = sorted(form.quality_checks, key=sort_key)
-    sorted_results = sorted(result, key=sort_key)
-
-    data = []
-    for check, result in zip(sorted_quality_checks, sorted_results):
-        d = {}
-        d[u'name'] = check.get(u'name')
-        d[u'description'] = check.get(u'description')
-        d[u'counts'] = [{
-            u'count': i[u'count'],
-            u'label': statuses.get(i.get(u'status'))} for i in result.get(u'stats')]
-
-        data.append(d)
-
-    return data
-
-
 @route(bp, u'/dashboard/qa/<form_id>')
 @register_menu(
     bp, u'main.dashboard.qa', _(u'Quality Assurance'),
@@ -716,28 +607,13 @@ def quality_assurance_dashboard(form_id):
     query_filterset = filter_class(submissions, request.args)
     filter_form = query_filterset.form
 
-    # get collated data
-    collection = query_filterset.qs._collection
-    pipeline = _get_collated_checks_pipeline(query_filterset.qs)
-    result = collection.aggregate(pipeline).get(u'result')[0]
-
-    global_data = [
-        {u'label': u'total', u'count': result.get(u'count_total')},
-        {u'label': u'flagged', u'count': result.get(u'count_flagged')},
-        {u'label': u'verified', u'count': result.get(u'count_verified')},
-        {u'label': u'not verified'},
-    ]
-
-    global_data[3][u'count'] = global_data[1][u'count'] - global_data[2][u'count']
-
     # get individual check data
-    check_data = _get_aggregated_check_data(query_filterset.qs)
+    check_data = _quality_check_aggregation(query_filterset.qs, form)
 
     template_name = u'frontend/quality_assurance_dashboard.html'
 
     context = {
         u'filter_form': filter_form,
-        u'global_data': global_data,
         u'form': form,
         u'args': data,
         u'location_types': loc_types,

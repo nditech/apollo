@@ -1,4 +1,15 @@
+from operator import itemgetter
+
 import pandas as pd
+from apollo.submissions.models import QUALITY_STATUSES, Submission
+
+# labels
+BUCKET_LABELS = {
+    u'OK': u'ok',
+    u'FLAGGED_AND_VERIFIED': u'flagged and verified',
+    u'FLAGGED_AND_UNVERIFIED': u'flagged and unverified',
+    u'MISSING': u'missing'
+}
 
 
 def aggregated_dataframe(queryset, form):
@@ -53,3 +64,87 @@ def aggregated_dataframe(queryset, form):
     df_agg = df_agg.fillna("")
 
     return df_agg
+
+
+def _build_qa_pipeline(queryset, form):
+    v_stat = [u'$verification_status', Submission.VERIFICATION_STATUSES[1][0]]
+    checks = []
+    for qc in form.quality_checks:
+        var = u'$quality_checks.{}'.format(qc[u'name'])
+        flagged_eq_step = {u'$eq': [var, QUALITY_STATUSES[u'FLAGGED']]}
+        checks.append({
+            u'name': {u'$literal': qc[u'name']},
+            u'bucket': {
+                u'$cond': {
+                    # if this check is OK,
+                    u'if': {u'$eq': [var, QUALITY_STATUSES[u'OK']]},
+                    # set bucket to 'OK'
+                    u'then': BUCKET_LABELS[u'OK'],
+                    u'else': {u'$cond': {
+                        # elif this check is flagged and verified
+                        u'if': {u'$and': [
+                            flagged_eq_step,
+                            {u'$eq': v_stat}
+                        ]},
+                        # set bucket to 'FLAGGED_AND_VERIFIED'
+                        u'then': BUCKET_LABELS[u'FLAGGED_AND_VERIFIED'],
+                        u'else': {u'$cond': {
+                            # elif the check is flagged and not verified
+                            u'if': {u'$and': [
+                                flagged_eq_step,
+                                {u'$ne': v_stat}
+                            ]},
+                            # set to 'FLAGGED_AND_UNVERIFIED'
+                            u'then': BUCKET_LABELS[u'FLAGGED_AND_UNVERIFIED'],
+                            # otherwise set to 'MISSING'
+                            u'else': BUCKET_LABELS[u'MISSING']
+                        }}
+                    }}
+                }
+            }
+        })
+    project_stage = {
+        u'$project': {
+            u'_id': 0,
+            u'checks': checks
+        }
+    }
+
+    pipeline = [
+        {u'$match': queryset._query},
+        project_stage,
+        {u'$unwind': u'$checks'},
+        {u'$group': {
+            u'_id': {u'name': u'$checks.name', u'bucket': u'$checks.bucket'},
+            u'count': {u'$sum': 1}
+        }},
+        {u'$group': {
+            u'_id': u'$_id.name',
+            u'counts': {u'$push': {
+                u'label': u'$_id.bucket',
+                u'count': u'$count'
+            }}
+        }},
+        {u'$project': {
+            u'_id': 0,
+            u'name': u'$_id',
+            u'counts': 1
+        }}
+    ]
+
+    return pipeline
+
+def _quality_check_aggregation(queryset, form):
+    pipeline = _build_qa_pipeline(queryset, form)
+
+    collection = queryset._collection
+    result = collection.aggregate(pipeline).get(u'result')
+
+    sort_key = itemgetter(u'name')
+    sorted_result = sorted(result, key=sort_key)
+    sorted_checks = sorted(form.quality_checks, key=sort_key)
+
+    for check, dataset in zip(sorted_checks, sorted_result):
+        dataset.update(description=check.get(u'description'))
+
+    return sorted_result
