@@ -118,22 +118,22 @@ def _build_qa_pipeline(queryset, form):
         {u'$group': {
             u'_id': {u'name': u'$checks.name', u'bucket': u'$checks.bucket'},
             u'count': {u'$sum': 1}
-        }},
-        # {u'$group': {
-        #     u'_id': u'$_id.name',
-        #     u'counts': {u'$push': {
-        #         u'label': u'$_id.bucket',
-        #         u'count': u'$count'
-        #     }}
-        # }},
-        # {u'$project': {
-        #     u'_id': 0,
-        #     u'name': u'$_id',
-        #     u'counts': 1
-        # }}
+        }}
     ]
 
     return pipeline
+
+
+def __flag_sort_key(record):
+    return record.get(u'_id').get(u'name')
+
+
+def __bucket_sort_key(record):
+    return record.get(u'_id').get(u'bucket')
+
+
+def __total_counts(bucket_data):
+    return sum(i.get(u'count') for i in bucket_data)
 
 
 def _quality_check_aggregation(queryset, form):
@@ -142,29 +142,34 @@ def _quality_check_aggregation(queryset, form):
     collection = queryset._collection
     result = collection.aggregate(pipeline).get(u'result')
 
-    flag_sort_key = lambda r: r.get(u'_id').get(u'name')
     qc_meta = {
         qc.get(u'name'): qc.get(u'description') for qc in form.quality_checks}
-    sorted_result = sorted(result, key=flag_sort_key)
+    sorted_result = sorted(result, key=__flag_sort_key)
 
     data = []
 
-    for flag_name, flag_dataset in groupby(sorted_result, key=flag_sort_key):
+    # use a two-level sort/group: first by flag name
+    for flag_name, flag_dataset in groupby(sorted_result, key=__flag_sort_key):
         d = {
             u'name': flag_name,
             u'counts': [],
             u'description': qc_meta.get(flag_name)
         }
-        bucket_sort_key = lambda r: r.get(u'_id').get(u'bucket')
-        sorted_flag_dataset = sorted(flag_dataset, key=bucket_sort_key)
+
+        # then by bucket name
+        sorted_flag_dataset = sorted(flag_dataset, key=__bucket_sort_key)
+
+        # i wish this dict creation was unnecessary, but we need to do
+        # something even when the bucket is missing from the set in
+        # BUCKET_LABELS
         flag_data_dict = {
             k: list(v)
-            for k, v in groupby(sorted_flag_dataset, key=bucket_sort_key)
+            for k, v in groupby(sorted_flag_dataset, key=__bucket_sort_key)
         }
         for bucket_name in BUCKET_LABELS.values():
             if bucket_name in flag_data_dict:
                 d[u'counts'].append({
-                    u'count': flag_data_dict.get(bucket_name)[0].get(u'count'),
+                    u'count': __total_counts(flag_data_dict.get(bucket_name)),
                     u'label': bucket_name
                 })
             else:
@@ -173,12 +178,5 @@ def _quality_check_aggregation(queryset, form):
                     u'label': bucket_name
                 })
         data.append(d)
-
-    # sort_key = itemgetter(u'name')
-    # sorted_result = sorted(result, key=sort_key)
-    # sorted_checks = sorted(form.quality_checks, key=sort_key)
-
-    # for check, dataset in zip(sorted_checks, sorted_result):
-    #     dataset.update(description=check.get(u'description'))
 
     return data
