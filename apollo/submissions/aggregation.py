@@ -1,6 +1,7 @@
-from operator import itemgetter
+from itertools import groupby
 
 import pandas as pd
+
 from apollo.submissions.models import QUALITY_STATUSES, Submission
 
 # labels
@@ -51,7 +52,7 @@ def aggregated_dataframe(queryset, form):
     # group and aggregate
     df_agg = pd.DataFrame(columns=agg_locations + all_fields)
     for idx in range(len(agg_locations)):
-        grouping = agg_locations[:idx+1]
+        grouping = agg_locations[:idx + 1]
         for group_name, group_df in df_submissions.groupby(grouping):
             data_series = group_df.sum()[all_fields]
             if len(grouping) == 1:
@@ -118,21 +119,22 @@ def _build_qa_pipeline(queryset, form):
             u'_id': {u'name': u'$checks.name', u'bucket': u'$checks.bucket'},
             u'count': {u'$sum': 1}
         }},
-        {u'$group': {
-            u'_id': u'$_id.name',
-            u'counts': {u'$push': {
-                u'label': u'$_id.bucket',
-                u'count': u'$count'
-            }}
-        }},
-        {u'$project': {
-            u'_id': 0,
-            u'name': u'$_id',
-            u'counts': 1
-        }}
+        # {u'$group': {
+        #     u'_id': u'$_id.name',
+        #     u'counts': {u'$push': {
+        #         u'label': u'$_id.bucket',
+        #         u'count': u'$count'
+        #     }}
+        # }},
+        # {u'$project': {
+        #     u'_id': 0,
+        #     u'name': u'$_id',
+        #     u'counts': 1
+        # }}
     ]
 
     return pipeline
+
 
 def _quality_check_aggregation(queryset, form):
     pipeline = _build_qa_pipeline(queryset, form)
@@ -140,11 +142,43 @@ def _quality_check_aggregation(queryset, form):
     collection = queryset._collection
     result = collection.aggregate(pipeline).get(u'result')
 
-    sort_key = itemgetter(u'name')
-    sorted_result = sorted(result, key=sort_key)
-    sorted_checks = sorted(form.quality_checks, key=sort_key)
+    flag_sort_key = lambda r: r.get(u'_id').get(u'name')
+    qc_meta = {
+        qc.get(u'name'): qc.get(u'description') for qc in form.quality_checks}
+    sorted_result = sorted(result, key=flag_sort_key)
 
-    for check, dataset in zip(sorted_checks, sorted_result):
-        dataset.update(description=check.get(u'description'))
+    data = []
 
-    return sorted_result
+    for flag_name, flag_dataset in groupby(sorted_result, key=flag_sort_key):
+        d = {
+            u'name': flag_name,
+            u'counts': [],
+            u'description': qc_meta.get(flag_name)
+        }
+        bucket_sort_key = lambda r: r.get(u'_id').get(u'bucket')
+        sorted_flag_dataset = sorted(flag_dataset, key=bucket_sort_key)
+        flag_data_dict = {
+            k: list(v)
+            for k, v in groupby(sorted_flag_dataset, key=bucket_sort_key)
+        }
+        for bucket_name in BUCKET_LABELS.values():
+            if bucket_name in flag_data_dict:
+                d[u'counts'].append({
+                    u'count': flag_data_dict.get(bucket_name)[0].get(u'count'),
+                    u'label': bucket_name
+                })
+            else:
+                d[u'counts'].append({
+                    u'count': 0,
+                    u'label': bucket_name
+                })
+        data.append(d)
+
+    # sort_key = itemgetter(u'name')
+    # sorted_result = sorted(result, key=sort_key)
+    # sorted_checks = sorted(form.quality_checks, key=sort_key)
+
+    # for check, dataset in zip(sorted_checks, sorted_result):
+    #     dataset.update(description=check.get(u'description'))
+
+    return data

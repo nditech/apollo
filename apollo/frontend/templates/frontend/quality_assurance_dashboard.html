@@ -46,13 +46,14 @@ check_data.forEach(function (item, i){
   var i_chart = new dimple.chart(i_svg, item.counts);
   var i_x_axis = i_chart.addMeasureAxis('x', 'count');
   i_x_axis.tickFormat = 'd';
-  i_chart.addCategoryAxis('y', 'label').hidden = true;
+  i_chart.setMargins(100, 50, 50, 50);
+  i_chart.addCategoryAxis('y', 'label');
   i_chart.addSeries('label', dimple.plot.bar);
-  i_chart.assignColor('ok', '#8ae234');
-  i_chart.assignColor('flagged and verified', '#fcaf3e');
-  i_chart.assignColor('flagged and unverified', '#ef2929');
-  i_chart.assignColor('missing', '#babdb6');
-  i_chart.addLegend(60, 10, 500, 20, "right");
+  i_chart.assignColor('OK', '#8ae234');
+  i_chart.assignColor('Flagged - Verified', '#fcaf3e');
+  i_chart.assignColor('Flagged - Unverified', '#ef2929');
+  i_chart.assignColor('Missing', '#babdb6');
+  // i_chart.addLegend('5%', '5%', '80%', 20, "left");
   i_chart.draw();
 });
 </script>
