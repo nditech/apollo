@@ -5,10 +5,10 @@ from apollo.submissions.models import QUALITY_STATUSES, Submission
 
 # labels
 BUCKET_LABELS = {
-    u'OK': u'ok',
-    u'FLAGGED_AND_VERIFIED': u'flagged and verified',
-    u'FLAGGED_AND_UNVERIFIED': u'flagged and unverified',
-    u'MISSING': u'missing'
+    u'OK': u'OK',
+    u'FLAGGED_AND_VERIFIED': u'Flagged - Verified',
+    u'FLAGGED_AND_UNVERIFIED': u'Flagged - Unverified',
+    u'MISSING': u'Missing'
 }
 
 
