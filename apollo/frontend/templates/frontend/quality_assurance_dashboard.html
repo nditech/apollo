@@ -47,7 +47,9 @@ check_data.forEach(function (item, i){
   var i_x_axis = i_chart.addMeasureAxis('x', 'count');
   i_x_axis.tickFormat = 'd';
   i_chart.setMargins(100, 50, 50, 50);
-  i_chart.addCategoryAxis('y', 'label');
+  i_chart.addCategoryAxis('y', 'label').addOrderRule([
+    'OK', 'Flagged - Verified', 'Flagged - Unverified', 'Missing'
+  ], true);
   i_chart.addSeries('label', dimple.plot.bar);
   i_chart.assignColor('OK', '#8ae234');
   i_chart.assignColor('Flagged - Verified', '#fcaf3e');
