@@ -228,6 +228,11 @@ class ResponseParserTest(TestCase):
             parse_responses('ZX1CV2EA135DBAAA3', self.test_form)[0],
             {'AA': '3', 'BA': 1, 'D': 1, 'EA': '135', 'ZX': '1', 'CV': '2'})
 
+    def test_leftover_processing(self):
+        response_dict, extra = parse_responses(
+            'ZX1CV2EA135DBAAA3', self.test_form)
+        self.assertEqual(extra, '')
+
         response_dict, extra = parse_responses(
             'ZX1CV2EA135DBAAA3THIS IS A TEST', self.test_form)
         self.assertEqual(extra, 'THIS IS A TEST')
