@@ -230,21 +230,22 @@ def build_questionnaire(form, data=None):
                         widget=widgets.TextInput()
                     )
             else:
-                if form.form_type == 'CHECKLIST':
-                    fields[field.name] = IntegerField(
-                        field.name,
-                        description=field.description,
-                        validators=[
-                            validators.optional(),
-                            validators.NumberRange(min=field.min_value,
-                                                   max=field.max_value)]
-                    )
+                if field.is_comment_field:
+                    continue
+
+                if field.represents_boolean:
+                    field_validators = [validators.optional()]
                 else:
-                    fields[field.name] = IntegerField(
-                        field.name,
-                        description=field.description,
-                        validators=[validators.optional()]
-                    )
+                    field_validators = [
+                        validators.optional(),
+                        validators.NumberRange(min=field.min_value,
+                                               max=field.max_value)
+                    ]
+
+                fields[field.name] = IntegerField(
+                    field.name,
+                    description=field.description,
+                    validators=field_validators)
 
         fields['groups'].append(groupspec)
 
