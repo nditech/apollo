@@ -15,8 +15,12 @@
   </div>
 </div>
 <div class="row" id="check_breakdown" data-checks='{{ check_data|tojson }}'>
-  <section id="check-container">
-    <div class="col-md-6" v-for="check in checks">
+  <section v-for="check in checks">
+    <check :check="check"></check>
+  </section>
+</div>
+<template id="chart-component">
+  <div class="col-md-6">
     <div class="panel panel-default">
       <div class="panel-heading">
         <div class="panel-title"><h4><%= check.description %></h4></div>
@@ -24,8 +28,7 @@
       <div class="panel-body" id="<%= check.name %>"></div>
     </div>
   </div>
-  </section>
-</div>
+</template>
 {% endblock %}
 {% block scripts %}
 <script type="text/javascript" src="{{ url_for('static', filename='js/d3.min.js') }}"></script>
@@ -37,8 +40,14 @@ var check_data = JSON.parse(document.getElementById('check_breakdown').getAttrib
 Vue.config.delimiters = [ '<%=', '%>' ];
 
 var app = new Vue({
-  el: '#check-container',
-  data: {checks: check_data}
+  el: '#check_breakdown',
+  data: {checks: check_data},
+  components: {
+    check: {
+      template: '#chart-component',
+      props: ['check']
+    }
+  }
 });
 
 check_data.forEach(function (item, i){
