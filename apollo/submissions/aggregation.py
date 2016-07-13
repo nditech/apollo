@@ -1,15 +1,14 @@
-from itertools import groupby
-
-import pandas as pd
-
 from apollo.submissions.models import QUALITY_STATUSES, Submission
+from flask.ext.babel import gettext as _
+from itertools import groupby
+import pandas as pd
 
 # labels
 BUCKET_LABELS = {
-    u'OK': u'OK',
-    u'FLAGGED_AND_VERIFIED': u'Flagged - Verified',
-    u'FLAGGED_AND_UNVERIFIED': u'Flagged - Unverified',
-    u'MISSING': u'Missing'
+    u'OK': _(u'OK'),
+    u'FLAGGED_AND_VERIFIED': _(u'Verified'),
+    u'FLAGGED_AND_UNVERIFIED': _(u'Flagged'),
+    u'MISSING': _(u'Missing')
 }
 
 

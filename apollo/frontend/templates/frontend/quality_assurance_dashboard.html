@@ -57,12 +57,12 @@ check_data.forEach(function (item, i){
   i_x_axis.tickFormat = 'd';
   i_chart.setMargins(100, 50, 50, 50);
   i_chart.addCategoryAxis('y', 'label').addOrderRule([
-    'OK', 'Flagged - Verified', 'Flagged - Unverified', 'Missing'
+    'OK', 'Verified', 'Flagged', 'Missing'
   ], true);
   i_chart.addSeries('label', dimple.plot.bar);
   i_chart.assignColor('OK', '#8ae234');
-  i_chart.assignColor('Flagged - Verified', '#fcaf3e');
-  i_chart.assignColor('Flagged - Unverified', '#ef2929');
+  i_chart.assignColor('Verified', '#fcaf3e');
+  i_chart.assignColor('Flagged', '#ef2929');
   i_chart.assignColor('Missing', '#babdb6');
   // i_chart.addLegend('5%', '5%', '80%', 20, "left");
   i_chart.draw();
