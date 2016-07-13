@@ -38,7 +38,7 @@ def parse_message(form):
                         submission,
                         had_errors
                     )
-                elif diff and not extra:
+                elif diff:
                     had_errors = True
                     return (
                         _('Unknown question codes: "{questions}". '
@@ -48,21 +48,13 @@ def parse_message(form):
                         submission,
                         had_errors
                     )
-                elif not diff and extra:
+                elif extra:
                     had_errors = True
                     return (_('Invalid text sent: "{extra}". '
                         'You sent: {text}').format(
                             extra=extra, text=message.get('text', '')),
                         submission,
                         had_errors)
-                else:
-                    had_errors = True
-                    return (_('Unknown question codes: "{questions}" '
-                        'and invalid text sent: "{extra}".'
-                        'You sent: {text}').format(
-                            questions=', '.join(sorted(diff)),
-                            extra=extra, text=message.get('text', '')),
-                        submission, had_errors)
             else:
                 had_errors = True
                 if 'participant' in questionnaire.errors:

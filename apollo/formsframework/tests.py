@@ -66,7 +66,7 @@ class QuestionnaireTest(TestCase):
         sample_text = 'AA2AB12'
         q = build_questionnaire(
             self.checklist_form,
-            MultiDict(parse_responses(sample_text, self.checklist_form)))
+            MultiDict(parse_responses(sample_text, self.checklist_form)[0]))
         flag = q.validate()
         data = q.data
 
@@ -77,7 +77,7 @@ class QuestionnaireTest(TestCase):
 
     def test_incident_parsing(self):
         sample_text = 'AB'
-        responses = parse_responses(sample_text, self.incident_form)
+        responses = parse_responses(sample_text, self.incident_form)[0]
         q = build_questionnaire(self.incident_form, MultiDict(responses))
 
         flag = q.validate()

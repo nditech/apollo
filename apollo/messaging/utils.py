@@ -94,7 +94,7 @@ def parse_responses(responses_text, form):
 
     # fix for bug where boolean_fields is an empty iterable
     if not boolean_fields:
-        return responses
+        return responses, substrate.strip()
 
     # next, process boolean fields
     pattern2 = re.compile(r'(?P<tag>{})'.format('|'.join(boolean_fields)),

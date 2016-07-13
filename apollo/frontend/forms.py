@@ -315,7 +315,7 @@ def generate_submission_edit_form_class(form):
                         widget=widgets.TextInput()
                     )
             else:
-                if form.form_type == 'CHECKLIST':
+                if form.form_type == 'CHECKLIST' or not field.represents_boolean:
                     form_fields[field.name] = IntegerField(
                         field.name,
                         description=field.description,

@@ -15,8 +15,12 @@
   </div>
 </div>
 <div class="row" id="check_breakdown" data-checks='{{ check_data|tojson }}'>
-  <section id="check-container">
-    <div class="col-md-6" v-for="check in checks">
+  <section v-for="check in checks">
+    <check :check="check"></check>
+  </section>
+</div>
+<template id="chart-component">
+  <div class="col-md-6">
     <div class="panel panel-default">
       <div class="panel-heading">
         <div class="panel-title"><h4><%= check.description %></h4></div>
@@ -24,8 +28,7 @@
       <div class="panel-body" id="<%= check.name %>"></div>
     </div>
   </div>
-  </section>
-</div>
+</template>
 {% endblock %}
 {% block scripts %}
 <script type="text/javascript" src="{{ url_for('static', filename='js/d3.min.js') }}"></script>
@@ -37,8 +40,14 @@ var check_data = JSON.parse(document.getElementById('check_breakdown').getAttrib
 Vue.config.delimiters = [ '<%=', '%>' ];
 
 var app = new Vue({
-  el: '#check-container',
-  data: {checks: check_data}
+  el: '#check_breakdown',
+  data: {checks: check_data},
+  components: {
+    check: {
+      template: '#chart-component',
+      props: ['check']
+    }
+  }
 });
 
 check_data.forEach(function (item, i){
@@ -46,13 +55,16 @@ check_data.forEach(function (item, i){
   var i_chart = new dimple.chart(i_svg, item.counts);
   var i_x_axis = i_chart.addMeasureAxis('x', 'count');
   i_x_axis.tickFormat = 'd';
-  i_chart.addCategoryAxis('y', 'label').hidden = true;
+  i_chart.setMargins(100, 50, 50, 50);
+  i_chart.addCategoryAxis('y', 'label').addOrderRule([
+    'OK', 'Verified', 'Flagged', 'Missing'
+  ], true);
   i_chart.addSeries('label', dimple.plot.bar);
-  i_chart.assignColor('ok', '#8ae234');
-  i_chart.assignColor('flagged and verified', '#fcaf3e');
-  i_chart.assignColor('flagged and unverified', '#ef2929');
-  i_chart.assignColor('missing', '#babdb6');
-  i_chart.addLegend(60, 10, 500, 20, "right");
+  i_chart.assignColor('OK', '#8ae234');
+  i_chart.assignColor('Verified', '#fcaf3e');
+  i_chart.assignColor('Flagged', '#ef2929');
+  i_chart.assignColor('Missing', '#babdb6');
+  // i_chart.addLegend('5%', '5%', '80%', 20, "left");
   i_chart.draw();
 });
 </script>
