@@ -14,8 +14,12 @@ class FormsService(Service):
         """
         params = {}
         try:
-            params.update(deployment=g.get(u'deployment'),
-                          events=g.get(u'event'))
+            deployment = g.get(u'deployment')
+            if deployment:
+                params[u'deployment'] = deployment
+            event = g.get(u'event')
+            if event:
+                params[u'events'] = event
         except RuntimeError:
             pass
 
