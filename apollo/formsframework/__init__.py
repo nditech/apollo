@@ -12,14 +12,18 @@ class FormsService(Service):
 
         :param kwargs: a dictionary of parameters
         """
+        params = {}
         try:
-            deployment = kwargs.get('deployment', g.get('deployment'))
-            event = kwargs.get('event', g.get('event'))
-            if deployment:
-                kwargs.update({'deployment': deployment})
-            if event:
-                kwargs.update({'events': event})
+            params.update(deployment=g.get(u'deployment'),
+                          events=g.get(u'event'))
         except RuntimeError:
             pass
 
-        return kwargs
+        # if there's an 'event' kwarg, make it overwrite the 'events'
+        # one
+        event = kwargs.pop(u'event', None)
+        params.update(kwargs)
+        if event:
+            params.update(events=event)
+
+        return params
