@@ -68,10 +68,19 @@ def filter_participants(form, participant_id):
     return participant
 
 
+def filter_form(form_pk):
+    event = getattr(g, u'event', services.events.default())
+    events = list(services.events.overlapping_events(event))
+
+    form = models.Form.objects(events=events, pk=form_pk).first()
+
+    return form
+
+
 class BaseQuestionnaireForm(Form):
     form = StringField(
         u'Form', validators=[validators.required()],
-        filters=[lambda data: services.forms.get(pk=data)])
+        filters=[lambda data: filter_form(data)])
     sender = StringField(u'Sender', validators=[validators.required()])
     comment = StringField(u'Comment', validators=[validators.optional()])
 
