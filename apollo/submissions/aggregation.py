@@ -62,7 +62,6 @@ def aggregated_dataframe(queryset, form):
             df_agg = df_agg.append(data_series, ignore_index=True)
 
     df_agg = df_agg.fillna("")
-
     return df_agg
 
 
