@@ -60,8 +60,15 @@ class EventsService(Service):
         return self.get_or_create(name='Default')
 
     def overlapping_events(self, event):
+        now = utc_time_zone.localize(datetime.utcnow()).astimezone(app_time_zone)
+
+        lower_bound = app_time_zone.localize(
+                datetime.combine(now, datetime.min.time())).astimezone(utc_time_zone)
+        upper_bound = app_time_zone.localize(
+                datetime.combine(now, datetime.max.time())).astimezone(utc_time_zone)
+
         return self.find().filter(
             Q(start_date__gte=event.start_date, start_date__lte=event.end_date)
             | Q(end_date__gte=event.start_date, end_date__lte=event.end_date)
             | Q(start_date__lte=event.start_date, end_date__gte=event.end_date)
-        )
+        ).filter(start_date__lte=upper_bound, end_date__gte=lower_bound)
