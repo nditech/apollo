@@ -29,7 +29,7 @@ def send_message(event, message, recipient, sender=""):
 def send_messages(event, message, recipients, sender=""):
     if hasattr(recipients, '__iter__'):
         items = [(event, message, recipient, sender)
-                 for recipient in recipients]
+                 for recipient in set(recipients)]
         send_message.chunks(items, 100).delay()
     else:
         send_message.delay(event, message, recipients, sender)

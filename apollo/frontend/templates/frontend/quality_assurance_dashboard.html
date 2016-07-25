@@ -45,27 +45,28 @@ var app = new Vue({
   components: {
     check: {
       template: '#chart-component',
-      props: ['check']
+      props: ['check'],
+      ready: function () {
+        this.$nextTick(function (){
+          var compSvg = dimple.newSvg('#' + this.check.name, '100%', '250px');
+          var chart = new dimple.chart(compSvg, this.check.counts);
+          var x_axis = chart.addMeasureAxis('x', 'count');
+          x_axis.tickFormat = 'd';
+          chart.setMargins(100, 50, 50, 50);
+          chart.addCategoryAxis('y', 'label').addOrderRule([
+            'OK', 'Verified', 'Flagged', 'Missing'
+          ], true);
+          chart.addSeries('label', dimple.plot.bar);
+          chart.assignColor('OK', '#8ae234');
+          chart.assignColor('Verified', '#fcaf3e');
+          chart.assignColor('Flagged', '#ef2929');
+          chart.assignColor('Missing', '#babdb6');
+          // chart.addLegend('5%', '5%', '80%', 20, "left");
+          chart.draw();
+        });
+      }
     }
   }
-});
-
-check_data.forEach(function (item, i){
-  var i_svg = dimple.newSvg('#' + item.name, '100%', '250px');
-  var i_chart = new dimple.chart(i_svg, item.counts);
-  var i_x_axis = i_chart.addMeasureAxis('x', 'count');
-  i_x_axis.tickFormat = 'd';
-  i_chart.setMargins(100, 50, 50, 50);
-  i_chart.addCategoryAxis('y', 'label').addOrderRule([
-    'OK', 'Verified', 'Flagged', 'Missing'
-  ], true);
-  i_chart.addSeries('label', dimple.plot.bar);
-  i_chart.assignColor('OK', '#8ae234');
-  i_chart.assignColor('Verified', '#fcaf3e');
-  i_chart.assignColor('Flagged', '#ef2929');
-  i_chart.assignColor('Missing', '#babdb6');
-  // i_chart.addLegend('5%', '5%', '80%', 20, "left");
-  i_chart.draw();
 });
 </script>
 {% endblock %}
