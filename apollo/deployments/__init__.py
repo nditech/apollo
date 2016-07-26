@@ -67,8 +67,9 @@ class EventsService(Service):
         upper_bound = app_time_zone.localize(
                 datetime.combine(now, datetime.max.time())).astimezone(utc_time_zone)
 
-        return self.find().filter(
+        overlapping = self.find().filter(
             Q(start_date__gte=event.start_date, start_date__lte=event.end_date)
             | Q(end_date__gte=event.start_date, end_date__lte=event.end_date)
             | Q(start_date__lte=event.start_date, end_date__gte=event.end_date)
         ).filter(start_date__lte=upper_bound, end_date__gte=lower_bound)
+        return overlapping if overlapping else self.find(pk=event.pk)
