@@ -72,9 +72,10 @@ def filter_form(form_pk):
     event = getattr(g, u'event', services.events.default())
     events = list(services.events.overlapping_events(event))
 
-    form = models.Form.objects(events__in=events, pk=form_pk).first()
+    if form_pk:
+        form = models.Form.objects(events__in=events, pk=form_pk).first()
 
-    return form
+        return form
 
 
 class BaseQuestionnaireForm(Form):
