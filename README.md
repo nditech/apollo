@@ -1,3 +1,5 @@
+## Apollo ##
+
 Apollo is an election monitoring platform that is designed
 to use the Parallel Voting Tabulation methodology of election
 monitoring to collect, store and analyse election data. This
