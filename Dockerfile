@@ -11,7 +11,7 @@ ADD requirements.txt /app/
 RUN pip install -U setuptools
 RUN pip install -r /app/requirements.txt 
 
-ADD README /app/
+ADD README.md /app/
 ADD apollo/ /app/apollo/
 ADD doc/ /app/doc/
 ADD Procfile.docker /app/Procfile
