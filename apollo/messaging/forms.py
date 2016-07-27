@@ -83,13 +83,14 @@ def retrieve_form(prefix, exclamation=False):
 
     # find the first form that matches the prefix and optionally form type
     # for the events in the deployment.
+    kwargs = {"events__in": current_events, "prefix__iexact": prefix}
+    if hasattr(g, 'deployment') and g.deployment:
+        kwargs['deployment'] = g.deployment
+
     if exclamation:
-        form = services.forms.find(
-            events__in=current_events, prefix__iexact=prefix,
-            form_type='INCIDENT').first()
+        kwargs['form_type'] = 'INCIDENT'
+        form = services.forms.all().filter(**kwargs).first()
     else:
-        form = services.forms.find(
-            events__in=current_events,
-            prefix__iexact=prefix).order_by('form_type').first()
+        form = services.forms.all().filter(**kwargs).order_by('form_type').first()
 
     return form

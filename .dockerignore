@@ -3,7 +3,10 @@
 *.sublime-workspace
 .DS_Store
 .env*
+.git
+.gitignore
 .Python
+.tx
 .webassets-cache
 apollo-*.tar.gz
 bin/
