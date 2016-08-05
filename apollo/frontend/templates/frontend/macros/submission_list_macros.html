@@ -41,7 +41,17 @@
     {% endfor %}
     {% else %}
     {% for field in form_fields %}
-    <td class="text-center">{%- if submission[field.name] -%}<img src="{{ url_for('static', filename='img/red_dot.png') }}" height="11" width="11" />{% else %}&nbsp;{% endif %}</td>
+    <td class="text-center">
+    {%- if submission[field.name] -%}
+    {%- if (field.options and not field.allows_multiple_values) or not (field.represents_boolean or field.is_comment_field) -%}
+    {{ submission[field.name] }}
+    {%- else -%}
+    <img src="{{ url_for('static', filename='img/tick.png') }}" alt="{{ _('data present') }}" title="{{ _('data present') }}" height="11" width="11" />
+    {% endif %}
+    {% else %}
+    &nbsp;
+    {% endif %}
+    </td>
     {% endfor %}
     <td class="text-center">
     {% if form.form_type == 'INCIDENT' %}
