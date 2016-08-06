@@ -1,3 +1,6 @@
+# -*- coding: utf-8 -*-
+from operator import itemgetter
+
 from apollo.core import CharFilter, ChoiceFilter, FilterSet
 from apollo.helpers import _make_choices
 from apollo.submissions.models import FLAG_CHOICES
@@ -297,6 +300,13 @@ class LocationTypeFilter(ChoiceFilter):
         return queryset
 
 
+class FieldOptionFilter(ChoiceFilter):
+    def filter(self, queryset, value):
+        if value:
+            return queryset(**{self.name: int(value)})
+        return queryset
+
+
 class FormGroupFilter(ChoiceFilter):
     """Allows filtering on form groups. Each group should have a name
     of the form <form_pk>__<group_slug>.
@@ -473,6 +483,16 @@ def generate_critical_incident_location_filter(tag):
 
 def generate_submission_filter(form):
     attributes = {}
+
+    # add in field options for critical incidents
+    if form.form_type == u'INCIDENT':
+        option_fields = [field for group in form.groups
+            for field in group.fields if field.options and not field.allows_multiple_values]
+        for field in option_fields:
+            choices = _make_choices(sorted([
+                (v, u"{} — {}".format(field.name, k)) for k, v in field.options.items()
+            ], key=itemgetter(0)), field.name)
+            attributes[field.name] = FieldOptionFilter(choices=choices)
 
     # add in form groups
     for group in form.groups:

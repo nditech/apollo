@@ -24,6 +24,15 @@
 {{ filter_form['quarantine_status'](class_='form-control span2 input-sm') }}
 </div>
 {%- else -%}
+{%- for group in form.groups -%}
+{%- for field in group.fields -%}
+{%- if field.options and not field.allows_multiple_values -%}
+<div class="form-group">
+{{ filter_form[field.name](class_='form-control span2 input-sm') }}
+</div>
+{%- endif -%}
+{%- endfor -%}
+{%- endfor -%}
 <div class="form-group">
 {{ filter_form.status(class_='select2-container span2 select2', style='height:26px', placeholder=_('All Statuses')) }}
 </div>
