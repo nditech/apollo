@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from operator import itemgetter
 
 from apollo.core import CharFilter, ChoiceFilter, FilterSet
@@ -489,7 +490,7 @@ def generate_submission_filter(form):
             for field in group.fields if field.options and not field.allows_multiple_values]
         for field in option_fields:
             choices = _make_choices(sorted([
-                (v, k) for k, v in field.options.items()
+                (v, u"{} — {}".format(field.name, k)) for k, v in field.options.items()
             ], key=itemgetter(0)), field.name)
             attributes[field.name] = FieldOptionFilter(choices=choices)
 

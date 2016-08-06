@@ -44,7 +44,7 @@
     <td class="text-center">
     {%- if submission[field.name] -%}
     {%- if (field.options and not field.allows_multiple_values) or not (field.represents_boolean or field.is_comment_field) -%}
-    {{ submission[field.name] }}
+    {% if field.options %}{%- set options = field.options|reverse_dict -%}<abbr title="{{ options[submission[field.name]] }}">{{ submission[field.name] }}</abbr>{% else %}{{ submission[field.name] }}{% endif %}
     {%- else -%}
     <img src="{{ url_for('static', filename='img/tick.png') }}" alt="{{ _('data present') }}" title="{{ _('data present') }}" height="11" width="11" />
     {% endif %}

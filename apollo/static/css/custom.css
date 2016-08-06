@@ -493,37 +493,41 @@ transform:scale(0.7);
   -webkit-box-shadow: inset 0 -1px 0 rgba(0,0,0,0.3);
   box-shadow:     inset 0 -1px 0 rgba(0,0,0,0.3);
 }
-    .strike {
-        display: block;
-        text-align: center;
-        overflow: hidden;
-        white-space: nowrap; 
-        margin-top: 10px;
-        margin-bottom: 16px;
-    }
+.strike {
+    display: block;
+    text-align: center;
+    overflow: hidden;
+    white-space: nowrap; 
+    margin-top: 10px;
+    margin-bottom: 16px;
+}
 
-    .strike > span {
-        position: relative;
-        display: inline-block;
-        color:#dddddd;
-    }
-  
-    .strike > span:before,
-    .strike > span:after {
-        content: "";
-        position: absolute;
-        top: 50%;
-        width: 9999px;
-        height: 1px;
-        background: #ddd;
-    }
+.strike > span {
+    position: relative;
+    display: inline-block;
+    color:#dddddd;
+}
 
-    .strike > span:before {
-        right: 100%;
-        margin-right: 15px;
-    }
+.strike > span:before,
+.strike > span:after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: 9999px;
+    height: 1px;
+    background: #ddd;
+}
 
-    .strike > span:after {
-        left: 100%;
-        margin-left: 15px;
-    }
+.strike > span:before {
+    right: 100%;
+    margin-right: 15px;
+}
+
+.strike > span:after {
+    left: 100%;
+    margin-left: 15px;
+}
+abbr[title] {
+    border-bottom: 1px dotted;
+    text-decoration: none;
+}

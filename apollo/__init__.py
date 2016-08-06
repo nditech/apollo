@@ -20,6 +20,7 @@ custom_filters = {
     'percent_of': template_filters.percent_of,
     'timestamp': template_filters.mkunixtimestamp,
     'mean_filter': template_filters.mean_filter,
+    'reverse_dict': template_filters.reverse_dict,
 }
 
 
