@@ -7,6 +7,8 @@ from operator import itemgetter
 
 import six
 
+from apollo import services
+
 
 # ---- helpers ----
 def flatten(seq):
@@ -477,8 +479,8 @@ class PipelineBuilder(object):
                     tag).analysis_type == u'PROCESS'),
             key=lambda fi: fi.name)
         self.location_types = [
-            anc.location_type for anc in sample.location.ancestors]
-        self.location_types.reverse()
+            lt.name for lt in services.location_types.find().order_by(
+                u'ancestor_count')][:-1]
 
     def generate_pipeline(self):
         pipeline = [
