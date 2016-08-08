@@ -126,6 +126,7 @@ def submission_list(form_id):
 
             export_buffer = StringIO()
             writer = unicodecsv.DictWriter(export_buffer, headers)
+            writer.writeheader()
             for record in records:
                 writer.writerow(record)
 
