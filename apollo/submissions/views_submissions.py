@@ -2,6 +2,10 @@
 from __future__ import absolute_import
 from datetime import datetime
 import json
+try:
+    from cStringIO import StringIO
+except ImportError:
+    from StringIO import StringIO
 from flask import (
     Blueprint, jsonify, make_response, redirect, render_template, request,
     url_for, current_app, abort, g, Response
@@ -13,6 +17,7 @@ from flask.ext.menu import register_menu
 from flask_httpauth import HTTPBasicAuth
 from mongoengine import signals
 from tablib import Dataset
+import unicodecsv
 from werkzeug.datastructures import MultiDict
 from apollo import services
 from apollo.submissions.incidents import incidents_csv
@@ -20,6 +25,7 @@ from apollo.participants.utils import update_participant_completion_rating
 from apollo.submissions.aggregation import (
     aggregated_dataframe, _quality_check_aggregation)
 from apollo.submissions.models import QUALITY_STATUSES, Submission
+from apollo.submissions.recordmanagers import AggFrameworkExporter
 from apollo.messaging.tasks import send_messages
 from apollo.frontend import route, permissions
 from apollo.frontend.filters import generate_submission_filter
@@ -115,8 +121,16 @@ def submission_list(form_id):
         if mode == 'aggregated':
             # TODO: you want to change the float format or even remove it
             # if you have columns that have float values
-            dataset = aggregated_dataframe(query_filterset.qs, form)\
-                .to_csv(encoding='utf-8', index=False, float_format='%d')
+            exporter = AggFrameworkExporter(query_filterset.qs)
+            records, headers = exporter.export_dataset()
+
+            export_buffer = StringIO()
+            writer = unicodecsv.DictWriter(export_buffer, headers)
+            writer.writeheader()
+            for record in records:
+                writer.writerow(record)
+
+            dataset = export_buffer.getvalue()
         else:
             dataset = services.submissions.export_list(
                 query_filterset.qs, g.deployment)
