@@ -90,7 +90,7 @@ class Evaluator(object):
     def variable(self, node, children):
         'variable = ~"[a-z]+"i _'
         var = getattr(self.env, node.text.strip())
-        if var is not None:
+        if var:
             # ensure that the value is not None as that indicates no value
             return var
         else:
