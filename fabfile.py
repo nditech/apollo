@@ -21,9 +21,9 @@ def make_archive(version="HEAD"):
 
 
 def tag(docker_index, image_version):
-    sudo('docker tag -f %s %s/%s:%s' % (
+    sudo('docker tag %s %s/%s:%s' % (
         PROJECT_NAME, docker_index, PROJECT_NAME, image_version))
-    sudo('docker tag -f %s %s/%s:latest' % (
+    sudo('docker tag %s %s/%s:latest' % (
         PROJECT_NAME, docker_index, PROJECT_NAME))
 
 
