@@ -519,12 +519,27 @@ class Submission(db.DynamicDocument):
         evaluator = grammar_factory(self)
         comparator = Comparator()
 
+        form_tags_pattern = re.compile(u'|'.join(self.form.tags))
+
         for flag in self.form.quality_checks:
             # skip processing if this has either been verified
             if (
                 self.quality_checks.get(flag['name'], None) ==
                 QUALITY_STATUSES['VERIFIED']
             ):
+                continue
+            flag_is_null = False
+
+            found_tags = set(form_tags_pattern.findall(u'lvalue') + form_tags_pattern.findall(u'rvalue'))
+            for tag in found_tags:
+                if getattr(self, tag, None) is None:
+                    self.quality_checks.pop(flag[u'name'], None)
+                    for obs_sub in observer_submissions:
+                        obs_sub.quality_checks.pip(flag[u'name'])
+                    flag_is_null = True
+                    break
+
+            if flag_is_null:
                 continue
 
             try:
