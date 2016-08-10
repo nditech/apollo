@@ -41,9 +41,6 @@ def main_dashboard(form_id=None):
     else:
         form = forms.get_or_404(pk=form_id, form_type="CHECKLIST")
 
-    if form:
-        args.setdefault('checklist_form', unicode(form.id))
-
     queryset = submissions.find(
         form=form,
         submission_type='M'
@@ -107,7 +104,8 @@ def main_dashboard(form_id=None):
         'page_title': page_title,
         'location': location,
         'locationtype': getattr(next_location_type, 'id', ''),
-        'group': group or ''
+        'group': group or '',
+        'form_id': unicode(form.pk)
     }
 
     return render_template(
