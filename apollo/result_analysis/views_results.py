@@ -399,7 +399,7 @@ def _voting_results(form_pk, location_pk=None):
         # compute vote proportions A / (A + B + C + ...)
         convergence_df[result_field_labels] = \
             convergence_df[result_field_labels].div(
-                convergence_df[result_field_labels].sum(axis=1), axis=0)
+                convergence_df[result_field_labels].sum(axis=1), axis=0).fillna(0)
 
         for component in result_field_labels:
             chart_data[component] = map(
