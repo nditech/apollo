@@ -6,6 +6,8 @@ view_events = Permission(ActionNeed('view_events'), RoleNeed('admin'))
 view_participants = Permission(
     ActionNeed('view_participants'), RoleNeed('admin'))
 view_messages = Permission(ActionNeed('view_messages'), RoleNeed('admin'))
+view_quality_assurance = Permission(
+    ActionNeed('view_quality_assurance'), RoleNeed('admin'))
 view_process_analysis = Permission(
     ActionNeed('view_process_analysis'), RoleNeed('admin'))
 view_result_analysis = Permission(

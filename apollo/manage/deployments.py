@@ -30,6 +30,8 @@ class CreateDeploymentCommand(Command):
             action='view_process_analysis', deployment=deployment)
         models.Need.objects.create(
             action='view_result_analysis', deployment=deployment)
+        models.Need.objects.create(
+            action='view_quality_assurance', deployment=deployment)
         models.Need.objects.create(action='view_forms', deployment=deployment)
 
         models.Need.objects.create(

@@ -598,11 +598,11 @@ def submission_version(submission_id, version_id):
     bp, u'main.dashboard.qa', _(u'Quality Assurance'),
     icon=u'<i class="glyphicon glyphicon-tasks"></i>', order=1,
     visible_when=lambda: len(get_quality_assurance_form_dashboard_menu(form_type='CHECKLIST', verifiable=True)) > 0 \
-            and permissions.view_process_analysis.can(),
+            and permissions.view_quality_assurance.can(),
     dynamic_list_constructor=partial(
         get_quality_assurance_form_dashboard_menu,
         form_type=u'CHECKLIST', verifiable=True))
-@permissions.view_process_analysis.require(403)
+@permissions.view_quality_assurance.require(403)
 @login_required
 def quality_assurance_dashboard(form_id):
     form = services.forms.get_or_404(pk=form_id, form_type='CHECKLIST')
@@ -646,14 +646,14 @@ def quality_assurance_dashboard(form_id):
     order=3, icon='<i class="glyphicon glyphicon-ok"></i>',
     visible_when=lambda: len(get_quality_assurance_form_list_menu(
         form_type='CHECKLIST', verifiable=True)) > 0 and
-    permissions.view_process_analysis.can())
+    permissions.view_quality_assurance.can())
 @register_menu(
     bp, 'main.qa.checklists', _('Quality Assurance'),
     icon=u'<i class="glyphicon glyphicon-ok"></i>', order=1,
     dynamic_list_constructor=partial(
         get_quality_assurance_form_list_menu,
         form_type='CHECKLIST', verifiable=True))
-@permissions.view_process_analysis.require(403)
+@permissions.view_quality_assurance.require(403)
 @login_required
 def quality_assurance_list(form_id):
     form = services.forms.get_or_404(pk=form_id, form_type='CHECKLIST')
