@@ -16,7 +16,7 @@ def calculate(start, pairs):
     return result
 
 def getvalue(obj, var):
-    if getattr(obj, var):
+    if getattr(obj, var) or getattr(obj, var) == 0:
         return getattr(obj, var)
     else:
         raise AttributeError

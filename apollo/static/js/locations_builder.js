@@ -125,7 +125,7 @@ $('#updateDivisionUpdateButton').click(function (ev) {
   });
 
   if (element) {
-    element.get('attrs').text.text = label;
+    element.attr({text: {text: label}});
     element.set('label', label);
     element.set('is_administrative', is_administrative);
     element.set('is_political', is_political);
@@ -136,7 +136,6 @@ $('#updateDivisionUpdateButton').click(function (ev) {
     var height = 2 * ((label.split('\n').length + 1) * letterSize);
 
     element.resize(width, height);
-    element.trigger('change:attrs', element);
 
     _.each(_.filter(graph.getLinks(), function (link) {
       return link.get('target').id == element.id

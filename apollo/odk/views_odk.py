@@ -2,7 +2,8 @@
 from datetime import datetime
 import json
 
-from flask import Blueprint, make_response, render_template, request
+from flask import Blueprint, g, make_response, render_template, request
+from flask.ext.babel import lazy_gettext as _
 from flask_httpauth import HTTPDigestAuth
 from lxml import etree
 from mongoengine import signals
@@ -31,7 +32,7 @@ def make_open_rosa_headers():
 
 
 def open_rosa_default_response(**kwargs):
-    content = '''<?xml version='1.0' encoding='UTF-8'?>
+    content = u'''<?xml version='1.0' encoding='UTF-8'?>
 <OpenRosaResponse xmlns='http://openrosa.org/http/response'>
 <message>{}</message>
 </OpenRosaResponse>'''.format(kwargs.get('content', ''))
@@ -57,7 +58,9 @@ def get_pw(participant_id):
 
 @route(bp, '/xforms/formList')
 def get_form_download_list():
-    forms = services.forms.find()
+    current_events = services.events.overlapping_events(g.event)
+    kwargs = {"events__in": current_events}
+    forms = services.forms.all().filter(**kwargs).order_by('form_type')
     template_name = 'frontend/xformslist.xml'
 
     response = make_response(render_template(template_name, forms=forms))
@@ -114,27 +117,27 @@ def submission():
         participant = filter_participants(form, participant_auth.username())
         if not form:
             return open_rosa_default_response(
-                content=u'Invalid form specified', status_code=404)
+                content=_(u'Invalid Form Specified'), status_code=404)
 
         if not participant:
             return open_rosa_default_response(
-                content=u'Invalid participant ID', status_code=404)
+                content=_(u'Invalid Participant ID'), status_code=404)
     except (IndexError, etree.LxmlError):
         return open_rosa_default_response(status_code=400)
 
     submission = None
 
     if form.form_type == 'CHECKLIST':
-        submission = services.submissions.find(
+        submission = models.Submission.objects(
             contributor=participant,
-            form=form,
-            submission_type='O'
-        ).order_by('-created').first()
+            form=form, submission_type='O',
+            event__in=services.events.overlapping_events(g.event),
+            deployment=form.deployment).first()
     else:
-        submission = services.submissions.new(
+        submission = models.Submission(
             contributor=participant,
             created=datetime.utcnow(),
-            deployment=participant.deployment,
+            deployment=participant.event.deployment,
             event=participant.event,
             form=form,
             location=participant.location,
@@ -144,7 +147,7 @@ def submission():
     if not submission:
         # no existing submission for that form and participant
         return open_rosa_default_response(
-            content=u'Checklist not found', status_code=404)
+            content=_(u'Checklist Not Found'), status_code=404)
 
     form_modified = False
     submitted_version_id = None
@@ -184,9 +187,9 @@ def submission():
 
     if form_modified:
         return open_rosa_default_response(
-            content=u'Your submission was received, '
+            content=_(u'Your submission was received, '
             'but you sent it using an outdated form. Please download a new '
-            'copy and resend. Thank you', status_code=202)
+            'copy and resend. Thank you.'), status_code=202)
     return open_rosa_default_response(status_code=201)
 
 
