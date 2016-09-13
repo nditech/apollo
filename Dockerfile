@@ -5,7 +5,7 @@ MAINTAINER Tim Akinbo <takinbo@timbaobjects.com>
 ADD . /app/
 RUN set -ex \
         && apk add --no-cache --virtual .build-deps \
-            --repository http://dl-3.alpinelinux.org/alpine/edge/testing/ \
+            --repository http://dl-3.alpinelinux.org/alpine/edge/community/ \
             build-base \
             libxml2-dev \
             libxslt-dev \
@@ -14,7 +14,7 @@ RUN set -ex \
             py-pip \
             linux-headers \
         && apk add --no-cache --virtual .python-deps \
-            --repository http://dl-3.alpinelinux.org/alpine/edge/testing/ \
+            --repository http://dl-3.alpinelinux.org/alpine/edge/community/ \
             python \
             py-setuptools \
             libmagic \
