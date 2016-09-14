@@ -67,9 +67,9 @@ class Comparator(object):
         return method(node, [self.eval(n) for n in node])
 
     def expr(self, node, children):
-        'expr = operator _ number'
-        operator, _, number = children
-        return operator(self.param, number)
+        'expr = operator _ operand'
+        operator, _, operand = children
+        return operator(self.param, operand)
 
     def operator(self, node, children):
         'operator = ">=" / "<=" / ">" / "<" / "=" / "!="'
@@ -79,9 +79,14 @@ class Comparator(object):
             '=': op.eq, '!=': op.ne}
         return operators[node.text]
 
-    def number(self, node, children):
-        'number = ~"\-?[0-9\.]+"'
-        return float(node.text)
+    def operand(self, node, children):
+        'operand = ~"\-?[0-9\.]+" / "True" / "False"'
+        if node.text == "True":
+            return True
+        elif node.text == "False":
+            return False
+        else:
+            return float(node.text)
 
     def _(self, node, children):
         '_ = ~"\s*"'
