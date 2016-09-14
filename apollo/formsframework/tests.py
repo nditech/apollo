@@ -6,6 +6,7 @@ from apollo import create_app
 from apollo.messaging.utils import parse_responses
 from apollo.formsframework.forms import build_questionnaire
 from apollo.formsframework.models import Form, FormField, FormGroup
+from apollo.formsframework.parser import Comparator
 
 
 ENV_PATH = os.path.join(
@@ -85,3 +86,32 @@ class QuestionnaireTest(TestCase):
         self.assertEqual(data['A'], 1)
         self.assertEqual(data['B'], 1)
         self.assertFalse(flag)
+
+
+class ComparatorTest(TestCase):
+    def create_app(self):
+        read_env(ENV_PATH)
+        return create_app()
+
+    def test_numeric_comparisons(self):
+        comparator = Comparator()
+        comparator.param = 4
+        self.assertTrue(comparator.eval('> 3'))
+        self.assertFalse(comparator.eval('> 5'))
+        self.assertTrue(comparator.eval('< 5'))
+        self.assertFalse(comparator.eval('< 4'))
+        self.assertTrue(comparator.eval('<= 4'))
+        self.assertTrue(comparator.eval('>= 4'))
+        self.assertTrue(comparator.eval('= 4'))
+        self.assertFalse(comparator.eval('!= 4'))
+        self.assertTrue(comparator.eval('!= 10'))
+
+    def test_boolean_comparisons(self):
+        comparator = Comparator()
+        comparator.param = True
+        self.assertTrue(comparator.eval('= True'))
+        self.assertTrue(comparator.eval('!= False'))
+        self.assertFalse(comparator.eval('= False'))
+        self.assertFalse(comparator.eval('!= True'))
+        self.assertTrue(comparator.eval('>= True'))
+        self.assertTrue(comparator.eval('<= True'))
