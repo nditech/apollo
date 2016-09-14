@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2016-05-24 07:49+0100\n"
+"POT-Creation-Date: 2016-09-14 17:25+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -26,7 +26,7 @@ msgstr ""
 msgid "'%(value)s' is not a valid choice for this field"
 msgstr ""
 
-#: deployments/forms.py:14 frontend/views_dashboard.py:161
+#: deployments/forms.py:14 frontend/views_dashboard.py:160
 msgid "Choose Event"
 msgstr ""
 
@@ -61,8 +61,8 @@ msgid "Accredited Voters"
 msgstr ""
 
 #: formsframework/models.py:135 frontend/templates/frontend/form_list.html:60
-#: submissions/views_submissions.py:669 submissions/views_submissions.py:728
-#: submissions/views_submissions.py:734
+#: submissions/views_submissions.py:598 submissions/views_submissions.py:645
+#: submissions/views_submissions.py:651
 msgid "Quality Assurance"
 msgstr ""
 
@@ -109,17 +109,17 @@ msgstr ""
 msgid "Forms"
 msgstr ""
 
-#: formsframework/views_forms.py:158 submissions/views_submissions.py:677
-#: submissions/views_submissions.py:742
+#: formsframework/views_forms.py:158 submissions/views_submissions.py:609
+#: submissions/views_submissions.py:660
 #, python-format
 msgid "Quality Assurance — %(name)s"
 msgstr ""
 
-#: frontend/filters.py:27 frontend/forms.py:397
+#: frontend/filters.py:30 frontend/forms.py:397
 msgid "Form"
 msgstr ""
 
-#: frontend/filters.py:72 frontend/forms.py:81 frontend/forms.py:279
+#: frontend/filters.py:75 frontend/forms.py:81 frontend/forms.py:279
 #: frontend/forms.py:281 frontend/templates/frontend/incident_add.html:14
 #: frontend/templates/frontend/participant_list.html:77
 #: frontend/templates/frontend/participant_performance_list.html:49
@@ -130,52 +130,52 @@ msgstr ""
 msgid "Location"
 msgstr ""
 
-#: frontend/filters.py:87
+#: frontend/filters.py:90
 msgid "Sample"
 msgstr ""
 
-#: frontend/filters.py:184
+#: frontend/filters.py:187
 msgid "All Organizations"
 msgstr ""
 
-#: frontend/filters.py:199
+#: frontend/filters.py:202
 msgid "All Roles"
 msgstr ""
 
-#: frontend/filters.py:290
+#: frontend/filters.py:293
 msgid "All Types"
 msgstr ""
 
-#: frontend/filters.py:330 frontend/filters.py:442 frontend/filters.py:462
+#: frontend/filters.py:340 frontend/filters.py:452 frontend/filters.py:472
 #: frontend/forms.py:262
-#: frontend/templates/frontend/macros/submission_list_macros.html:54
+#: frontend/templates/frontend/macros/submission_list_macros.html:64
 #: process_analysis/templates/process_analysis/critical_incidents_locations.html:54
 msgid "Unmarked"
 msgstr ""
 
-#: frontend/filters.py:331 frontend/filters.py:443 frontend/filters.py:463
+#: frontend/filters.py:341 frontend/filters.py:453 frontend/filters.py:473
 #: frontend/forms.py:263
-#: frontend/templates/frontend/macros/submission_list_macros.html:50
+#: frontend/templates/frontend/macros/submission_list_macros.html:60
 #: process_analysis/templates/process_analysis/critical_incidents_locations.html:50
 #: submissions/models.py:208
 msgid "Confirmed"
 msgstr ""
 
-#: frontend/filters.py:331 frontend/filters.py:443 frontend/filters.py:463
+#: frontend/filters.py:341 frontend/filters.py:453 frontend/filters.py:473
 #: frontend/forms.py:264
 #: frontend/templates/frontend/macros/quality_assurance_list_macros.html:28
-#: frontend/templates/frontend/macros/submission_list_macros.html:52
+#: frontend/templates/frontend/macros/submission_list_macros.html:62
 #: process_analysis/templates/process_analysis/critical_incidents_locations.html:52
 #: submissions/models.py:23
 msgid "Rejected"
 msgstr ""
 
-#: frontend/filters.py:332 frontend/filters.py:444 frontend/filters.py:464
+#: frontend/filters.py:342 frontend/filters.py:454 frontend/filters.py:474
 #: frontend/forms.py:265
 msgid "Citizen Report"
 msgstr ""
 
-#: frontend/filters.py:442 frontend/filters.py:462
+#: frontend/filters.py:452 frontend/filters.py:472
 #: frontend/templates/frontend/incident_add.html:50
 #: frontend/templates/frontend/submission_edit.html:278
 #: frontend/templates/frontend/macros/submission_list_macros.html:17
@@ -184,53 +184,53 @@ msgstr ""
 msgid "Status"
 msgstr ""
 
-#: frontend/filters.py:481
+#: frontend/filters.py:501
 #, python-format
 msgid "%(group)s Status"
 msgstr ""
 
-#: frontend/filters.py:482
+#: frontend/filters.py:502
 #, python-format
 msgid "%(group)s Partial"
 msgstr ""
 
-#: frontend/filters.py:483
+#: frontend/filters.py:503
 #, python-format
 msgid "%(group)s Missing"
 msgstr ""
 
-#: frontend/filters.py:484
+#: frontend/filters.py:504
 #, python-format
 msgid "%(group)s Complete"
 msgstr ""
 
-#: frontend/filters.py:485
+#: frontend/filters.py:505
 #, python-format
 msgid "%(group)s Conflict"
 msgstr ""
 
-#: frontend/filters.py:492 frontend/filters.py:531
+#: frontend/filters.py:512 frontend/filters.py:551
 #: frontend/templates/frontend/submission_edit.html:204
 msgid "Quarantine Status"
 msgstr ""
 
-#: frontend/filters.py:493 frontend/filters.py:532
+#: frontend/filters.py:513 frontend/filters.py:552
 msgid "Quarantine None"
 msgstr ""
 
-#: frontend/filters.py:494 frontend/filters.py:533
+#: frontend/filters.py:514 frontend/filters.py:553
 msgid "Quarantine All"
 msgstr ""
 
-#: frontend/filters.py:495 frontend/filters.py:534
+#: frontend/filters.py:515 frontend/filters.py:554
 msgid "Quarantine Results"
 msgstr ""
 
-#: frontend/filters.py:514
+#: frontend/filters.py:534
 msgid "Quality Check Criterion"
 msgstr ""
 
-#: frontend/filters.py:516
+#: frontend/filters.py:536
 msgid "Quality Check Condition"
 msgstr ""
 
@@ -438,20 +438,20 @@ msgstr ""
 msgid "Permissions"
 msgstr ""
 
-#: frontend/views_dashboard.py:33 frontend/views_dashboard.py:122
+#: frontend/views_dashboard.py:33 frontend/views_dashboard.py:120
 msgid "Dashboard"
 msgstr ""
 
-#: frontend/views_dashboard.py:131 submissions/views_submissions.py:57
-#: submissions/views_submissions.py:59
+#: frontend/views_dashboard.py:129 submissions/views_submissions.py:68
+#: submissions/views_submissions.py:70
 msgid "Checklists"
 msgstr ""
 
-#: frontend/views_dashboard.py:142
+#: frontend/views_dashboard.py:141
 msgid "Concurrent Events"
 msgstr ""
 
-#: frontend/views_dashboard.py:156
+#: frontend/views_dashboard.py:155
 msgid "Events"
 msgstr ""
 
@@ -518,10 +518,10 @@ msgstr ""
 #: frontend/templates/frontend/participant_performance_list.html:87
 #: frontend/templates/frontend/macros/quality_assurance_list_macros.html:42
 #: frontend/templates/frontend/macros/quality_assurance_list_macros.html:47
-#: frontend/templates/frontend/macros/submission_list_macros.html:69
-#: frontend/templates/frontend/macros/submission_list_macros.html:74
-#: frontend/templates/frontend/macros/submission_list_macros.html:81
-#: frontend/templates/frontend/macros/submission_list_macros.html:86
+#: frontend/templates/frontend/macros/submission_list_macros.html:79
+#: frontend/templates/frontend/macros/submission_list_macros.html:84
+#: frontend/templates/frontend/macros/submission_list_macros.html:91
+#: frontend/templates/frontend/macros/submission_list_macros.html:96
 #: result_analysis/templates/result_analysis/results.html:183
 msgid "No Data Available"
 msgstr ""
@@ -652,7 +652,7 @@ msgstr ""
 #: frontend/templates/frontend/macros/quality_assurance_list_macros.html:13
 #: frontend/templates/frontend/macros/quality_assurance_list_macros.html:36
 #: frontend/templates/frontend/macros/submission_list_macros.html:20
-#: frontend/templates/frontend/macros/submission_list_macros.html:62
+#: frontend/templates/frontend/macros/submission_list_macros.html:72
 msgid "Edit"
 msgstr ""
 
@@ -706,7 +706,7 @@ msgstr ""
 #: frontend/templates/frontend/macros/locations_list_filter.html:13
 #: frontend/templates/frontend/macros/participant_list_filter.html:31
 #: frontend/templates/frontend/macros/quality_assurance_list_filter.html:21
-#: frontend/templates/frontend/macros/submission_list_filter.html:35
+#: frontend/templates/frontend/macros/submission_list_filter.html:44
 msgid "Clear"
 msgstr ""
 
@@ -875,7 +875,7 @@ msgstr ""
 #: frontend/templates/frontend/macros/participant_list_filter.html:28
 #: frontend/templates/frontend/macros/quality_assurance_dashboard_filter.html:10
 #: frontend/templates/frontend/macros/quality_assurance_list_filter.html:18
-#: frontend/templates/frontend/macros/submission_list_filter.html:32
+#: frontend/templates/frontend/macros/submission_list_filter.html:41
 #: process_analysis/templates/process_analysis/checklist_summary.html:10
 #: process_analysis/templates/process_analysis/checklist_summary_breakdown.html:9
 #: process_analysis/templates/process_analysis/critical_incident_summary.html:10
@@ -926,17 +926,18 @@ msgstr ""
 
 #: frontend/templates/frontend/macros/quality_assurance_list_macros.html:27
 #: frontend/templates/frontend/macros/quality_assurance_list_macros.html:35
-#: frontend/templates/frontend/macros/submission_list_macros.html:61
-#: submissions/models.py:22
+#: frontend/templates/frontend/macros/submission_list_macros.html:71
+#: submissions/aggregation.py:9 submissions/models.py:22
 msgid "Verified"
 msgstr ""
 
 #: frontend/templates/frontend/macros/quality_assurance_list_macros.html:29
-#: submissions/models.py:33
+#: submissions/aggregation.py:8 submissions/models.py:33
 msgid "OK"
 msgstr ""
 
 #: frontend/templates/frontend/macros/quality_assurance_list_macros.html:30
+#: submissions/aggregation.py:10
 msgid "Flagged"
 msgstr ""
 
@@ -945,7 +946,7 @@ msgid "Insufficient Data"
 msgstr ""
 
 #: frontend/templates/frontend/macros/quality_assurance_list_macros.html:35
-#: frontend/templates/frontend/macros/submission_list_macros.html:61
+#: frontend/templates/frontend/macros/submission_list_macros.html:71
 msgid "Unverified"
 msgstr ""
 
@@ -998,7 +999,7 @@ msgstr ""
 msgid "Please try sending again"
 msgstr ""
 
-#: frontend/templates/frontend/macros/submission_list_filter.html:28
+#: frontend/templates/frontend/macros/submission_list_filter.html:37
 msgid "All Statuses"
 msgstr ""
 
@@ -1016,6 +1017,10 @@ msgstr ""
 
 #: frontend/templates/frontend/macros/submission_list_macros.html:38
 msgid "conflict"
+msgstr ""
+
+#: frontend/templates/frontend/macros/submission_list_macros.html:49
+msgid "data present"
 msgstr ""
 
 #: locations/tasks.py:184
@@ -1038,26 +1043,48 @@ msgstr ""
 msgid "Your changes have been saved."
 msgstr ""
 
-#: messaging/helpers.py:30
+#: messaging/helpers.py:35
 msgid "Thank you! Your report was received! You sent: {text}"
 msgstr ""
 
-#: messaging/helpers.py:40
+#: messaging/helpers.py:44
+msgid "Unknown question codes: \"{questions}\". You sent: {text}"
+msgstr ""
+
+#: messaging/helpers.py:53
+msgid "Invalid text sent: \"{extra}\". You sent: {text}"
+msgstr ""
+
+#: messaging/helpers.py:62
 msgid ""
 "Observer ID not found. Please resend with valid Observer ID. You sent: "
 "{text}"
 msgstr ""
 
-#: messaging/helpers.py:50
-msgid "Unknown question codes: \"{questions}\". You sent: {text}"
-msgstr ""
-
-#: messaging/helpers.py:64
+#: messaging/helpers.py:72
 msgid "Invalid response(s) for question(s): \"{questions}\". You sent: {text}"
 msgstr ""
 
-#: messaging/helpers.py:75
+#: messaging/helpers.py:83
 msgid "Invalid message: \"{text}\". Please check and resend!"
+msgstr ""
+
+#: odk/views_odk.py:120
+msgid "Invalid Form Specified"
+msgstr ""
+
+#: odk/views_odk.py:124
+msgid "Invalid Participant ID"
+msgstr ""
+
+#: odk/views_odk.py:150
+msgid "Checklist Not Found"
+msgstr ""
+
+#: odk/views_odk.py:190
+msgid ""
+"Your submission was received, but you sent it using an outdated form. "
+"Please download a new copy and resend. Thank you."
 msgstr ""
 
 #: participants/models.py:72
@@ -1134,6 +1161,7 @@ msgstr ""
 #: process_analysis/templates/process_analysis/checklist_summary_breakdown.html:37
 #: process_analysis/templates/process_analysis/critical_incident_summary.html:87
 #: result_analysis/templates/result_analysis/results.html:51
+#: submissions/aggregation.py:11
 msgid "Missing"
 msgstr ""
 
@@ -1324,31 +1352,31 @@ msgstr ""
 msgid "Unconfirmed"
 msgstr ""
 
-#: submissions/models.py:770
+#: submissions/models.py:773
 msgid "SMS"
 msgstr ""
 
-#: submissions/models.py:771
+#: submissions/models.py:774
 msgid "Web"
 msgstr ""
 
-#: submissions/models.py:772
+#: submissions/models.py:775
 msgid "API"
 msgstr ""
 
-#: submissions/views_submissions.py:64 submissions/views_submissions.py:67
+#: submissions/views_submissions.py:75 submissions/views_submissions.py:78
 msgid "Critical Incidents"
 msgstr ""
 
-#: submissions/views_submissions.py:177
+#: submissions/views_submissions.py:196
 msgid "Add Submission"
 msgstr ""
 
-#: submissions/views_submissions.py:225
+#: submissions/views_submissions.py:244
 msgid "Edit Submission"
 msgstr ""
 
-#: submissions/views_submissions.py:541
+#: submissions/views_submissions.py:580
 msgid "View submission"
 msgstr ""
 
