@@ -40,10 +40,11 @@ pow = '^' ws value:n -> ('^', n)
 
 addsub = ws (add | sub)
 muldiv = ws (mul | div)
+power  = ws pow
 
 expr = expr2:left addsub*:right -> calculate(left, right)
 expr2 = expr3:left muldiv*:right -> calculate(left, right)
-expr3 = value:left pow*:right -> calculate(left, right)
+expr3 = value:left power*:right -> calculate(left, right)
 """, {'env': env, 'calculate': calculate, 'getvalue': getvalue})
 
 
