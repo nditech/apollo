@@ -174,3 +174,5 @@ class GrammarTest(TestCase):
         self.assertTrue(evaluator('AC + AD > AB').expr())
         self.assertTrue(evaluator('(AB + AA) < 9').expr())
         self.assertTrue(evaluator('AB + AA < 9').expr())
+        self.assertTrue(evaluator('AA + AB == 8').expr())
+        self.assertTrue(evaluator('(AA + AC) != ((AB + AD))').expr())

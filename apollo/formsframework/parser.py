@@ -8,7 +8,7 @@ def calculate(start, pairs):
     result = start
     operators = {
         '+': op.add, '-': op.sub, '*': op.mul, '/': op.truediv, '^': op.pow,
-        '>': op.gt, '>=': op.ge, '<': op.lt, '<=': op.le}
+        '>': op.gt, '>=': op.ge, '<': op.lt, '<=': op.le, '==': op.eq, '!=': op.ne}
 
     for operator, value in pairs:
         if operator in operators:
@@ -42,11 +42,13 @@ gt  = '>' ws value:n -> ('>', n)
 gte = '>=' ws value:n -> ('>=', n)
 lt  = '<' ws value:n -> ('<', n)
 lte = '<=' ws value:n -> ('<=', n)
+eq  = '==' ws value:n -> ('==', n)
+ne  = '!=' ws value:n -> ('!=', n)
 
 addsub = ws (add | sub)
 muldiv = ws (mul | div)
 power  = ws pow
-comparison = ws (gt | gte | lt | lte)
+comparison = ws (gt | gte | lt | lte | eq | ne)
 
 expr = expr2:left comparison*:right -> calculate(left, right)
 expr2 = expr3:left addsub*:right -> calculate(left, right)
