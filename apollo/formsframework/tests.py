@@ -176,3 +176,15 @@ class GrammarTest(TestCase):
         self.assertTrue(evaluator('AB + AA < 9').expr())
         self.assertTrue(evaluator('AA + AB == 8').expr())
         self.assertTrue(evaluator('(AA + AC) != ((AB + AD))').expr())
+
+    def test_logic_operators(self):
+        self.env.set('AA', 5)
+        self.env.set('AB', 3)
+        self.env.set('AC', 2)
+        self.env.set('AD', 2)
+
+        evaluator = grammar_factory(self.env)
+
+        self.assertTrue(evaluator('AA > AB && AC >= AD').expr())
+        self.assertTrue(evaluator('AA < AB || (AC >= AD)').expr())
+        self.assertTrue(evaluator('AA < AB || AC >= AD && AA == 5').expr())

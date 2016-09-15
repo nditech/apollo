@@ -8,7 +8,8 @@ def calculate(start, pairs):
     result = start
     operators = {
         '+': op.add, '-': op.sub, '*': op.mul, '/': op.truediv, '^': op.pow,
-        '>': op.gt, '>=': op.ge, '<': op.lt, '<=': op.le, '==': op.eq, '!=': op.ne}
+        '>': op.gt, '>=': op.ge, '<': op.lt, '<=': op.le, '==': op.eq, '!=': op.ne,
+        '||': op.or_, '&&': op.and_}
 
     for operator, value in pairs:
         if operator in operators:
@@ -33,24 +34,28 @@ attribute = exactly('$')<anything+>:attr -> int(reduce(
 parens = '(' ws expr:e ws ')' -> e
 value = number | variable | attribute | parens
 
-add = '+' ws expr2:n -> ('+', n)
-sub = '-' ws expr2:n -> ('-', n)
-mul = '*' ws expr3:n -> ('*', n)
-div = '/' ws expr3:n -> ('/', n)
+add = '+' ws expr3:n -> ('+', n)
+sub = '-' ws expr3:n -> ('-', n)
+mul = '*' ws expr4:n -> ('*', n)
+div = '/' ws expr4:n -> ('/', n)
 pow = '^' ws value:n -> ('^', n)
-gt  = '>' ws value:n -> ('>', n)
-gte = '>=' ws value:n -> ('>=', n)
-lt  = '<' ws value:n -> ('<', n)
-lte = '<=' ws value:n -> ('<=', n)
-eq  = '==' ws value:n -> ('==', n)
-ne  = '!=' ws value:n -> ('!=', n)
+gt  = '>' ws expr2:n -> ('>', n)
+gte = '>=' ws expr2:n -> ('>=', n)
+lt  = '<' ws expr2:n -> ('<', n)
+lte = '<=' ws expr2:n -> ('<=', n)
+eq  = '==' ws expr2:n -> ('==', n)
+ne  = '!=' ws expr2:n -> ('!=', n)
+or  = '||' ws expr1:n -> ('||', n)
+and = '&&' ws expr1:n -> ('&&', n)
 
 addsub = ws (add | sub)
 muldiv = ws (mul | div)
 power  = ws pow
 comparison = ws (gt | gte | lt | lte | eq | ne)
+logic  = ws (or | and)
 
-expr = expr2:left comparison*:right -> calculate(left, right)
+expr = expr1:left logic*:right -> calculate(left, right)
+expr1 = expr2:left comparison*:right -> calculate(left, right)
 expr2 = expr3:left addsub*:right -> calculate(left, right)
 expr3 = expr4:left muldiv*:right -> calculate(left, right)
 expr4 = value:left power*:right -> calculate(left, right)
