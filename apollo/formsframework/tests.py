@@ -155,3 +155,22 @@ class GrammarTest(TestCase):
         self.assertEqual(evaluator('AA + 10').expr(), 15)
         self.assertEqual(evaluator('AA + 5 ^ 3').expr(), 130)
         self.assertEqual(evaluator('(AA + 5) ^ 3').expr(), 1000)
+
+    def test_comparison_operators(self):
+        self.env.set('AA', 5)
+        self.env.set('AB', 3)
+        self.env.set('AC', 2)
+        self.env.set('AD', 2)
+
+        evaluator = grammar_factory(self.env)
+
+        self.assertTrue(evaluator('AA > AB').expr())
+        self.assertTrue(evaluator('AC < AB').expr())
+        self.assertFalse(evaluator('AC > AB').expr())
+        self.assertTrue(evaluator('AC <= AB').expr())
+        self.assertTrue(evaluator('AC <= AD').expr())
+        self.assertTrue(evaluator('AC >= AD').expr())
+        self.assertTrue(evaluator('(AC + AD) > AB').expr())
+        self.assertTrue(evaluator('AC + AD > AB').expr())
+        self.assertTrue(evaluator('(AB + AA) < 9').expr())
+        self.assertTrue(evaluator('AB + AA < 9').expr())

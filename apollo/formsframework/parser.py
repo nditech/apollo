@@ -7,7 +7,8 @@ import parsley
 def calculate(start, pairs):
     result = start
     operators = {
-        '+': op.add, '-': op.sub, '*': op.mul, '/': op.truediv, '^': op.pow}
+        '+': op.add, '-': op.sub, '*': op.mul, '/': op.truediv, '^': op.pow,
+        '>': op.gt, '>=': op.ge, '<': op.lt, '<=': op.le}
 
     for operator, value in pairs:
         if operator in operators:
@@ -37,14 +38,20 @@ sub = '-' ws expr2:n -> ('-', n)
 mul = '*' ws expr3:n -> ('*', n)
 div = '/' ws expr3:n -> ('/', n)
 pow = '^' ws value:n -> ('^', n)
+gt  = '>' ws value:n -> ('>', n)
+gte = '>=' ws value:n -> ('>=', n)
+lt  = '<' ws value:n -> ('<', n)
+lte = '<=' ws value:n -> ('<=', n)
 
 addsub = ws (add | sub)
 muldiv = ws (mul | div)
 power  = ws pow
+comparison = ws (gt | gte | lt | lte)
 
-expr = expr2:left addsub*:right -> calculate(left, right)
-expr2 = expr3:left muldiv*:right -> calculate(left, right)
-expr3 = value:left power*:right -> calculate(left, right)
+expr = expr2:left comparison*:right -> calculate(left, right)
+expr2 = expr3:left addsub*:right -> calculate(left, right)
+expr3 = expr4:left muldiv*:right -> calculate(left, right)
+expr4 = value:left power*:right -> calculate(left, right)
 """, {'env': env, 'calculate': calculate, 'getvalue': getvalue})
 
 
