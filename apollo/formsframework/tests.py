@@ -6,6 +6,7 @@ from apollo import create_app
 from apollo.messaging.utils import parse_responses
 from apollo.formsframework.forms import build_questionnaire
 from apollo.formsframework.models import Form, FormField, FormGroup
+from apollo.formsframework.parser import Comparator, grammar_factory
 
 
 ENV_PATH = os.path.join(
@@ -85,3 +86,105 @@ class QuestionnaireTest(TestCase):
         self.assertEqual(data['A'], 1)
         self.assertEqual(data['B'], 1)
         self.assertFalse(flag)
+
+
+class ComparatorTest(TestCase):
+    def create_app(self):
+        read_env(ENV_PATH)
+        return create_app()
+
+    def test_numeric_comparisons(self):
+        comparator = Comparator()
+        comparator.param = 4
+        self.assertTrue(comparator.eval('> 3'))
+        self.assertFalse(comparator.eval('> 5'))
+        self.assertTrue(comparator.eval('< 5'))
+        self.assertFalse(comparator.eval('< 4'))
+        self.assertTrue(comparator.eval('<= 4'))
+        self.assertTrue(comparator.eval('>= 4'))
+        self.assertTrue(comparator.eval('= 4'))
+        self.assertFalse(comparator.eval('!= 4'))
+        self.assertTrue(comparator.eval('!= 10'))
+
+    def test_boolean_comparisons(self):
+        comparator = Comparator()
+        comparator.param = True
+        self.assertTrue(comparator.eval('= True'))
+        self.assertTrue(comparator.eval('!= False'))
+        self.assertFalse(comparator.eval('= False'))
+        self.assertFalse(comparator.eval('!= True'))
+        self.assertTrue(comparator.eval('>= True'))
+        self.assertTrue(comparator.eval('<= True'))
+
+
+class GrammarTest(TestCase):
+    def create_app(self):
+        read_env(ENV_PATH)
+        return create_app()
+
+    def setUp(self):
+        class AttributeHolder(object):
+            def set(self, attr, value):
+                setattr(self, attr, value)
+
+        self.env = AttributeHolder()
+
+    def test_operands(self):
+        self.env.set('AA', 5)
+        self.env.set('AB', 3)
+        self.env.set('AC', 2)
+
+        evaluator = grammar_factory(self.env)
+
+        self.assertEqual(evaluator('AA').expr(), 5)
+        self.assertEqual(evaluator('AB').expr(), 3)
+        self.assertEqual(evaluator('15').expr(), 15)
+
+    def test_operations(self):
+        self.env.set('AA', 5)
+        self.env.set('AB', 3)
+        self.env.set('AC', 2)
+
+        evaluator = grammar_factory(self.env)
+
+        self.assertEqual(evaluator('AA + AB').expr(), 8)
+        self.assertEqual(evaluator('AA - AB').expr(), 2)
+        self.assertEqual(evaluator('AA * AB').expr(), 15)
+        self.assertEqual(evaluator('AB / AC').expr(), 1.5)
+        self.assertEqual(evaluator('AC ^ AB').expr(), 8)
+        self.assertEqual(evaluator('AA + 10').expr(), 15)
+        self.assertEqual(evaluator('AA + 5 ^ 3').expr(), 130)
+        self.assertEqual(evaluator('(AA + 5) ^ 3').expr(), 1000)
+
+    def test_comparison_operators(self):
+        self.env.set('AA', 5)
+        self.env.set('AB', 3)
+        self.env.set('AC', 2)
+        self.env.set('AD', 2)
+
+        evaluator = grammar_factory(self.env)
+
+        self.assertTrue(evaluator('AA > AB').expr())
+        self.assertTrue(evaluator('AC < AB').expr())
+        self.assertFalse(evaluator('AC > AB').expr())
+        self.assertTrue(evaluator('AC <= AB').expr())
+        self.assertTrue(evaluator('AC <= AD').expr())
+        self.assertTrue(evaluator('AC >= AD').expr())
+        self.assertTrue(evaluator('(AC + AD) > AB').expr())
+        self.assertTrue(evaluator('AC + AD > AB').expr())
+        self.assertTrue(evaluator('(AB + AA) < 9').expr())
+        self.assertTrue(evaluator('AB + AA < 9').expr())
+        self.assertTrue(evaluator('AA + AB == 8').expr())
+        self.assertTrue(evaluator('(AA + AC) != ((AB + AD))').expr())
+
+    def test_logic_operators(self):
+        self.env.set('AA', 5)
+        self.env.set('AB', 3)
+        self.env.set('AC', 2)
+        self.env.set('AD', 2)
+
+        evaluator = grammar_factory(self.env)
+
+        self.assertTrue(evaluator('AA > AB && AC >= AD').expr())
+        self.assertTrue(evaluator('AA < AB || (AC >= AD)').expr())
+        self.assertTrue(evaluator('AA < AB || AC >= AD && AA == 5').expr())

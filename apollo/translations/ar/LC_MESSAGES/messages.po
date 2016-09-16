@@ -1,15 +1,16 @@
 # Translations template for PROJECT.
-# Copyright (C) 2015 ORGANIZATION
+# Copyright (C) 2016 ORGANIZATION
 # This file is distributed under the same license as the PROJECT project.
 # 
 # Translators:
 # AR C2 <e2f458fd4s512@outlook.com>, 2015
+# Nathalie Sleimane <nsleimane@ndi.org>, 2016
 msgid ""
 msgstr ""
 "Project-Id-Version: Elections DemTool\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2015-09-30 19:46+0100\n"
-"PO-Revision-Date: 2015-09-30 18:50+0000\n"
+"POT-Creation-Date: 2016-09-14 17:25+0100\n"
+"PO-Revision-Date: 2016-09-14 16:27+0000\n"
 "Last-Translator: Tim Akinbo <takinbo@timbaobjects.com>\n"
 "Language-Team: Arabic (http://www.transifex.com/nditech/apollo/language/ar/)\n"
 "MIME-Version: 1.0\n"
@@ -28,72 +29,59 @@ msgstr "ليست اختيارًا صالحًا!"
 msgid "'%(value)s' is not a valid choice for this field"
 msgstr "'%(value)s' ليست اختيارًا صالحًا لهذا الحقل"
 
-#: analyses/views_analysis.py:56
-#, python-format
-msgid "%(form)s Analysis"
-msgstr "تحليل %(form)s "
-
-#: analyses/views_analysis.py:144
-#, python-format
-msgid "%(form_name)s Voting Results"
-msgstr "نتائج التصويت %(form_name)s "
-
-#: analyses/views_analysis.py:534 analyses/views_analysis.py:565
-msgid "Analyses"
-msgstr ""
-
-#: analyses/views_analysis.py:539 formsframework/models.py:67
-msgid "Process Analysis"
-msgstr "تحليل العملية"
-
-#: analyses/views_analysis.py:570 formsframework/models.py:68
-msgid "Results Analysis"
-msgstr "تحليل النتائج"
-
-#: deployments/forms.py:14 frontend/views_dashboard.py:147
+#: deployments/forms.py:14 frontend/views_dashboard.py:160
 msgid "Choose Event"
 msgstr "حدد حدثًا"
 
-#: formsframework/models.py:66
+#: formsframework/models.py:67
 msgid "Not Applicable"
 msgstr "لا ينطبق"
 
-#: formsframework/models.py:114
+#: formsframework/models.py:68 process_analysis/views_process.py:144
+msgid "Process Analysis"
+msgstr "تحليل العملية"
+
+#: formsframework/models.py:69 result_analysis/views_results.py:435
+msgid "Results Analysis"
+msgstr "تحليل النتائج"
+
+#: formsframework/models.py:115
 msgid "Checklist Form"
 msgstr "نموذج قائمة المراجعة"
 
-#: formsframework/models.py:115
+#: formsframework/models.py:116
 msgid "Incident Form"
 msgstr "نموذج الحادث"
 
-#: formsframework/models.py:122
+#: formsframework/models.py:123
 msgid ""
 "Require exclamation (!) mark in text message? (Does not apply to Checklist "
 "Forms)"
 msgstr "يتطلب علامة تعجب (!) في رسالة نصية؟ (لا ينطبق على نماذج قوائم المراجعة)"
 
-#: formsframework/models.py:131
+#: formsframework/models.py:133
 msgid "Accredited Voters"
 msgstr "الناخبون المعتمدون"
 
-#: formsframework/models.py:133 frontend/templates/frontend/form_list.html:60
-#: submissions/views_submissions.py:519 submissions/views_submissions.py:525
+#: formsframework/models.py:135 frontend/templates/frontend/form_list.html:60
+#: submissions/views_submissions.py:598 submissions/views_submissions.py:645
+#: submissions/views_submissions.py:651
 msgid "Quality Assurance"
 msgstr "ضمان الجودة"
 
-#: formsframework/models.py:134
+#: formsframework/models.py:136
 msgid "Invalid Votes"
 msgstr "الأصوات غير الصحيحة"
 
-#: formsframework/models.py:135
+#: formsframework/models.py:137
 msgid "Registered Voters"
 msgstr "الناخبون المسجلون"
 
-#: formsframework/models.py:136
+#: formsframework/models.py:138
 msgid "Blank Votes"
 msgstr "الأصوات الفارغة"
 
-#: formsframework/models.py:138
+#: formsframework/models.py:140
 msgid "Permitted Roles"
 msgstr "الأدوار المسموح بها"
 
@@ -101,11 +89,11 @@ msgstr "الأدوار المسموح بها"
 msgid ""
 "Checklists are being created for the form, role and location type you "
 "selected in the current event"
-msgstr ""
+msgstr "تمّ إنشاء قوائم المراجعة للنموذج والدور ونوع الموقع الذي اخترته في إطار الحدث الحالي"
 
 #: formsframework/views_forms.py:47
 msgid "Checklists were not created"
-msgstr ""
+msgstr "لم يتمّ إنشاء قوائم المراجعة "
 
 #: formsframework/views_forms.py:58
 msgid "Form Builder"
@@ -124,151 +112,137 @@ msgstr "تحرير %(name)s  "
 msgid "Forms"
 msgstr "النماذج"
 
-#: formsframework/views_forms.py:158 submissions/views_submissions.py:532
+#: formsframework/views_forms.py:158 submissions/views_submissions.py:609
+#: submissions/views_submissions.py:660
 #, python-format
 msgid "Quality Assurance — %(name)s"
 msgstr "ضمان الجودة - %(name)s"
 
-#: frontend/filters.py:27 frontend/forms.py:396
+#: frontend/filters.py:30 frontend/forms.py:397
 msgid "Form"
 msgstr "النموذج"
 
-#: frontend/filters.py:72 frontend/forms.py:81 frontend/forms.py:285
-#: frontend/forms.py:287
-#: frontend/templates/frontend/critical_incident_summary.html:32
-#: frontend/templates/frontend/critical_incidents_locations.html:36
-#: frontend/templates/frontend/incident_add.html:14
+#: frontend/filters.py:75 frontend/forms.py:81 frontend/forms.py:279
+#: frontend/forms.py:281 frontend/templates/frontend/incident_add.html:14
 #: frontend/templates/frontend/participant_list.html:77
 #: frontend/templates/frontend/participant_performance_list.html:49
 #: frontend/templates/frontend/submission_edit.html:61
 #: frontend/templates/frontend/submission_edit.html:97
+#: process_analysis/templates/process_analysis/critical_incident_summary.html:32
+#: process_analysis/templates/process_analysis/critical_incidents_locations.html:36
 msgid "Location"
-msgstr "المكان"
+msgstr "الموقع"
 
-#: frontend/filters.py:87
+#: frontend/filters.py:90
 msgid "Sample"
 msgstr "العينة"
 
-#: frontend/filters.py:166
+#: frontend/filters.py:187
 msgid "All Organizations"
 msgstr "كل المنظمات"
 
-#: frontend/filters.py:181
+#: frontend/filters.py:202
 msgid "All Roles"
 msgstr "كل الأدوار"
 
-#: frontend/filters.py:272
+#: frontend/filters.py:293
 msgid "All Types"
 msgstr "كل الأنواع"
 
-#: frontend/filters.py:312 frontend/filters.py:423 frontend/filters.py:448
+#: frontend/filters.py:340 frontend/filters.py:452 frontend/filters.py:472
 #: frontend/forms.py:262
-#: frontend/templates/frontend/critical_incidents_locations.html:66
-#: frontend/templates/frontend/macros/submission_list_macros.html:54
+#: frontend/templates/frontend/macros/submission_list_macros.html:64
+#: process_analysis/templates/process_analysis/critical_incidents_locations.html:54
 msgid "Unmarked"
 msgstr "غير محدد"
 
-#: frontend/filters.py:313 frontend/filters.py:424 frontend/filters.py:449
+#: frontend/filters.py:341 frontend/filters.py:453 frontend/filters.py:473
 #: frontend/forms.py:263
-#: frontend/templates/frontend/critical_incidents_locations.html:62
-#: frontend/templates/frontend/macros/submission_list_macros.html:50
+#: frontend/templates/frontend/macros/submission_list_macros.html:60
+#: process_analysis/templates/process_analysis/critical_incidents_locations.html:50
+#: submissions/models.py:208
 msgid "Confirmed"
 msgstr "مؤكد"
 
-#: frontend/filters.py:313 frontend/filters.py:424 frontend/filters.py:449
+#: frontend/filters.py:341 frontend/filters.py:453 frontend/filters.py:473
 #: frontend/forms.py:264
-#: frontend/templates/frontend/critical_incidents_locations.html:64
-#: frontend/templates/frontend/macros/submission_list_macros.html:52
-#: submissions/models.py:22
+#: frontend/templates/frontend/macros/quality_assurance_list_macros.html:28
+#: frontend/templates/frontend/macros/submission_list_macros.html:62
+#: process_analysis/templates/process_analysis/critical_incidents_locations.html:52
+#: submissions/models.py:23
 msgid "Rejected"
 msgstr "مرفوض"
 
-#: frontend/filters.py:314 frontend/filters.py:425 frontend/filters.py:450
+#: frontend/filters.py:342 frontend/filters.py:454 frontend/filters.py:474
 #: frontend/forms.py:265
 msgid "Citizen Report"
 msgstr "تقرير المواطن"
 
-#: frontend/filters.py:423 frontend/filters.py:448
-#: frontend/templates/frontend/critical_incidents_locations.html:38
-#: frontend/templates/frontend/incident_add.html:54
-#: frontend/templates/frontend/submission_edit.html:248
+#: frontend/filters.py:452 frontend/filters.py:472
+#: frontend/templates/frontend/incident_add.html:50
+#: frontend/templates/frontend/submission_edit.html:278
 #: frontend/templates/frontend/macros/submission_list_macros.html:17
-#: submissions/models.py:39
+#: process_analysis/templates/process_analysis/critical_incidents_locations.html:37
+#: submissions/models.py:41
 msgid "Status"
 msgstr "الحالة"
 
-#: frontend/filters.py:428 frontend/filters.py:453
-#: frontend/templates/frontend/incident_add.html:46
-#: frontend/templates/frontend/submission_edit.html:240
-msgid "Witness"
-msgstr "الشاهد"
-
-#: frontend/filters.py:428 frontend/filters.py:453 frontend/forms.py:268
-#: participants/models.py:74
-msgid "Unspecified"
-msgstr "غير محدد"
-
-#: frontend/filters.py:429 frontend/filters.py:454
-msgid "Witnessed incident"
-msgstr "حادث مشهود"
-
-#: frontend/filters.py:430 frontend/filters.py:455
-msgid "Arrived after incident"
-msgstr "وصل بعد الحادث"
-
-#: frontend/filters.py:431 frontend/filters.py:456
-msgid "Incident was reported"
-msgstr "حادث تم الإبلاغ عنه"
-
-#: frontend/filters.py:473
+#: frontend/filters.py:501
 #, python-format
 msgid "%(group)s Status"
 msgstr "حالة %(group)s "
 
-#: frontend/filters.py:474
+#: frontend/filters.py:502
 #, python-format
 msgid "%(group)s Partial"
 msgstr "%(group)s الجزئية"
 
-#: frontend/filters.py:475
+#: frontend/filters.py:503
 #, python-format
 msgid "%(group)s Missing"
 msgstr "%(group)s المفقودة"
 
-#: frontend/filters.py:476
+#: frontend/filters.py:504
 #, python-format
 msgid "%(group)s Complete"
 msgstr "%(group)s المكتملة"
 
-#: frontend/filters.py:477
+#: frontend/filters.py:505
 #, python-format
 msgid "%(group)s Conflict"
 msgstr "تضارب %(group)s  "
 
-#: frontend/filters.py:492
-#: frontend/templates/frontend/submission_edit.html:192
+#: frontend/filters.py:512 frontend/filters.py:551
+#: frontend/templates/frontend/submission_edit.html:204
 msgid "Quarantine Status"
 msgstr "حالة الحجر"
 
-#: frontend/filters.py:493
+#: frontend/filters.py:513 frontend/filters.py:552
 msgid "Quarantine None"
 msgstr "حجر لا شيء"
 
-#: frontend/filters.py:494
+#: frontend/filters.py:514 frontend/filters.py:553
 msgid "Quarantine All"
 msgstr "حجر الكل"
 
-#: frontend/filters.py:495
+#: frontend/filters.py:515 frontend/filters.py:554
 msgid "Quarantine Results"
 msgstr "نتائج الحجر"
 
-#: frontend/forms.py:45 frontend/forms.py:48 frontend/forms.py:408
+#: frontend/filters.py:534
+msgid "Quality Check Criterion"
+msgstr "معيار فحص الجودة"
+
+#: frontend/filters.py:536
+msgid "Quality Check Condition"
+msgstr "شرط فحص الجودة"
+
+#: frontend/forms.py:45 frontend/forms.py:48 frontend/forms.py:411
 #: frontend/templates/frontend/form_list.html:85
 msgid "Location type"
-msgstr "نوع المكان"
+msgstr "نوع الموقع"
 
 #: frontend/forms.py:64 frontend/forms.py:132
-#: frontend/templates/frontend/critical_incidents_locations.html:32
 #: frontend/templates/frontend/form_list.html:44
 #: frontend/templates/frontend/location_builder.html:28
 #: frontend/templates/frontend/location_builder.html:73
@@ -276,6 +250,7 @@ msgstr "نوع المكان"
 #: frontend/templates/frontend/participant_list.html:78
 #: frontend/templates/frontend/participant_performance_list.html:50
 #: frontend/templates/frontend/macros/participant_list_filter.html:7
+#: process_analysis/templates/process_analysis/critical_incidents_locations.html:32
 msgid "Name"
 msgstr "الاسم"
 
@@ -284,7 +259,7 @@ msgstr "الاسم"
 msgid "Gender"
 msgstr "الجنس"
 
-#: frontend/forms.py:71 frontend/forms.py:140 frontend/forms.py:402
+#: frontend/forms.py:71 frontend/forms.py:140 frontend/forms.py:405
 #: frontend/templates/frontend/form_list.html:82
 #: frontend/templates/frontend/participant_list.html:80
 #: frontend/templates/frontend/participant_performance_list.html:51
@@ -304,13 +279,15 @@ msgstr "الشريك"
 #: frontend/forms.py:91 frontend/templates/frontend/participant_list.html:81
 #: frontend/templates/frontend/participant_performance_list.html:52
 #: frontend/templates/frontend/macros/participant_list_filter.html:16
+#: frontend/templates/frontend/macros/quality_assurance_list_macros.html:8
 #: frontend/templates/frontend/macros/submission_list_macros.html:8
 msgid "Phone"
 msgstr "الهاتف"
 
 #: frontend/forms.py:92 frontend/forms.py:160
+#: frontend/templates/frontend/login_user.html:56
 msgid "Password"
-msgstr ""
+msgstr "كلمة المرور"
 
 #: frontend/forms.py:122 frontend/forms.py:204
 msgid "Select column"
@@ -325,7 +302,7 @@ msgstr "هوية المشارك"
 msgid "Location ID"
 msgstr "هوية الموقع"
 
-#: frontend/forms.py:156
+#: frontend/forms.py:156 frontend/templates/frontend/login_user.html:48
 msgid "Email"
 msgstr "البريد الإلكتروني"
 
@@ -337,9 +314,10 @@ msgstr "بادئة الهاتف"
 msgid "Group prefix"
 msgstr "بادئة المجموعة"
 
-#: frontend/forms.py:173 frontend/templates/frontend/checklist_summary.html:37
-#: frontend/templates/frontend/checklist_summary_breakdown.html:33
-#: frontend/templates/frontend/critical_incident_summary.html:83
+#: frontend/forms.py:173
+#: process_analysis/templates/process_analysis/checklist_summary.html:37
+#: process_analysis/templates/process_analysis/checklist_summary_breakdown.html:33
+#: process_analysis/templates/process_analysis/critical_incident_summary.html:83
 #, python-format
 msgid "%(label)s"
 msgstr "%(label)s"
@@ -381,28 +359,17 @@ msgstr "الناخبون المسجلون %(label)s "
 msgid "Contributor and location cannot both be empty"
 msgstr "لا يمكن ترك حقول المساهم والموقع فارغين"
 
-#: frontend/forms.py:269
-msgid "I witnessed the incident"
-msgstr "شاهدت الحادثة"
-
-#: frontend/forms.py:270
-msgid "I arrived just after the incident"
-msgstr "وصلت للتو بعد الحادثة"
-
-#: frontend/forms.py:271
-msgid "The incident was reported to me by someone else"
-msgstr "علمت بالحادثة من قبل شخص آخر"
-
-#: frontend/forms.py:275 frontend/forms.py:277
+#: frontend/forms.py:269 frontend/forms.py:271
 #: frontend/templates/frontend/incident_add.html:10
 #: frontend/templates/frontend/participant_performance_detail.html:13
 #: frontend/templates/frontend/submission_edit.html:31
 #: frontend/templates/frontend/submission_history.html:28
+#: frontend/templates/frontend/macros/quality_assurance_list_macros.html:7
 #: frontend/templates/frontend/macros/submission_list_macros.html:7
 msgid "Participant"
 msgstr "المشارك"
 
-#: frontend/forms.py:376 frontend/views_admin.py:96
+#: frontend/forms.py:376 frontend/views_admin.py:112
 msgid "Event"
 msgstr "الحدث"
 
@@ -414,134 +381,136 @@ msgstr "حدد الحدث"
 msgid "Data File"
 msgstr "ملف البيانات"
 
-#: frontend/forms.py:399
+#: frontend/forms.py:402
 msgid "Select form"
-msgstr ""
+msgstr "إختر النموذج"
 
-#: frontend/forms.py:405
+#: frontend/forms.py:408
 msgid "Select role"
-msgstr ""
+msgstr "إختر الدور"
 
-#: frontend/forms.py:411
+#: frontend/forms.py:414
 msgid "Select location type"
-msgstr ""
+msgstr "إختر نوع الموقع"
 
-#: frontend/template_filters.py:97
+#: frontend/template_filters.py:95
 msgid "N/A"
 msgstr "لا ينطبق"
 
-#: frontend/views_admin.py:43
+#: frontend/views_admin.py:57
 msgid "Deployment"
 msgstr "الانتشار"
 
-#: frontend/views_admin.py:78
+#: frontend/views_admin.py:94
 msgid "Logo"
 msgstr "الشعار"
 
-#: frontend/views_admin.py:135
+#: frontend/views_admin.py:179
 msgid "Roles with access"
 msgstr "الأدوار التي تتمتع بالوصول"
 
-#: frontend/views_admin.py:165
+#: frontend/views_admin.py:213
 msgid "New password"
 msgstr "كلمة المرور الجديدة"
 
-#: frontend/views_admin.py:193
+#: frontend/views_admin.py:216
+msgid "Disable"
+msgstr "عطّل"
+
+#: frontend/views_admin.py:216
+msgid "Are you sure you want to disable selected users?"
+msgstr "هل أنت واثق من تعطيل المستخدمين المختارين؟"
+
+#: frontend/views_admin.py:219
+msgid "User(s) successfully disabled."
+msgstr "تمّ تعطيل المستخدم (المستخدمين)  بنجاح"
+
+#: frontend/views_admin.py:221
+msgid "Enable"
+msgstr "فعّل"
+
+#: frontend/views_admin.py:221
+msgid "Are you sure you want to enable selected users?"
+msgstr "هل أنت واثق من أنك تريد تفعيل المستخدمين المختارين؟"
+
+#: frontend/views_admin.py:224
+msgid "User(s) successfully enabled."
+msgstr "تمّ تفعيل المستخدم (المستخدمين) بنجاح"
+
+#: frontend/views_admin.py:251
 msgid "Permissions"
 msgstr "الأذون"
 
-#: frontend/views_dashboard.py:29 frontend/views_dashboard.py:38
+#: frontend/views_dashboard.py:33 frontend/views_dashboard.py:120
 msgid "Dashboard"
 msgstr "لوحة التحكم"
 
-#: frontend/views_dashboard.py:128
+#: frontend/views_dashboard.py:129 submissions/views_submissions.py:68
+#: submissions/views_submissions.py:70
+msgid "Checklists"
+msgstr "قوائم المراجعة"
+
+#: frontend/views_dashboard.py:141
 msgid "Concurrent Events"
 msgstr "الأحداث المتزامنة"
 
-#: frontend/views_dashboard.py:142
+#: frontend/views_dashboard.py:155
 msgid "Events"
 msgstr "الأحداث"
 
-#: frontend/templates/frontend/checklist_summary.html:10
-#: frontend/templates/frontend/checklist_summary_breakdown.html:9
-#: frontend/templates/frontend/critical_incident_summary.html:10
-#: frontend/templates/frontend/critical_incidents_locations.html:10
-#: frontend/templates/frontend/results.html:9
-#: frontend/templates/frontend/macros/dashboard_filter.html:13
-#: frontend/templates/frontend/macros/locations_list_filter.html:10
-#: frontend/templates/frontend/macros/participant_list_filter.html:28
-#: frontend/templates/frontend/macros/submission_list_filter.html:33
-msgid "Filter"
-msgstr "فلتر"
+#: frontend/templates/403.html:5
+msgid "Forbidden Error"
+msgstr "خطأ ممنوع"
 
-#: frontend/templates/frontend/checklist_summary.html:34
-#: frontend/templates/frontend/checklist_summary_breakdown.html:30
-#: frontend/templates/frontend/critical_incident_summary.html:80
-msgid "Mean"
-msgstr "الوسيلة"
+#: frontend/templates/403.html:16
+msgid "Off Limits!"
+msgstr "محظور!"
 
-#: frontend/templates/frontend/checklist_summary.html:40
-#: frontend/templates/frontend/checklist_summary_breakdown.html:36
-#: frontend/templates/frontend/critical_incident_summary.html:86
-#: frontend/templates/frontend/results.html:50
-msgid "Reported"
-msgstr "مذكور"
+#: frontend/templates/403.html:17
+msgid ""
+"We understood your request, but we refuse to honor it! You are seeing this "
+"page because you were snooping around! Now paddle along before the buzzer "
+"goes off!"
+msgstr "نتفهّم طلبك، لكننا نرفض تنفيذه! فقد سُمح لك بمعاينة هذه الصفحة لأنك تحاول الوصول إليها! فابتعد عنها الآن قبل انطلاق جرس التحذير!"
 
-#: frontend/templates/frontend/checklist_summary.html:41
-#: frontend/templates/frontend/checklist_summary_breakdown.html:37
-#: frontend/templates/frontend/critical_incident_summary.html:87
-#: frontend/templates/frontend/quality_assurance_list.html:18
-#: frontend/templates/frontend/results.html:51
-msgid "Missing"
-msgstr "مفقود"
+#: frontend/templates/404.html:5
+msgid "Page not found"
+msgstr "لم يتمّ العثور على الصفحة"
 
-#: frontend/templates/frontend/checklist_summary.html:44
-#: frontend/templates/frontend/critical_incident_summary.html:90
-#: submissions/models.py:192
-msgid "All"
-msgstr "الكل"
+#: frontend/templates/404.html:16
+msgid "Oh No! Looks like you're lost!"
+msgstr "تبّاً! يبدو أنك أضعت الطريق!"
 
-#: frontend/templates/frontend/checklist_summary.html:67
-#: frontend/templates/frontend/critical_incident_summary.html:113
-msgid "No data available"
-msgstr "لا توجد بيانات متاحة"
+#: frontend/templates/404.html:17
+msgid ""
+"Don't freak out, maybe you entered the wrong address or clicked a bad link! "
+"Who knows, this could even be a fluke! :) I recommend you either verify the "
+"address or click the back arrow (&larr;) at the top left corner of the page,"
+" and cross-check the action you were trying to perform!"
+msgstr "لا تخف، ربما أدخلت عنواناً خاطئاً أو نقرت على رابط غير صحيح! أو لعلّ الأمر مجرد خطأ يحصل!) لذلك، أنصحك إما التأكّد من العنوان أو النقر على سهم العودة للخلف  (&larr;) الموجود في أعلى الصفحة، من الجهة اليسرى، والتحقق مجدداً من العمل الذي كنت تحاول تنفيذه!"
 
-#: frontend/templates/frontend/checklist_summary_breakdown.html:55
-#: frontend/templates/frontend/critical_incident_summary.html:48
-#, python-format
-msgid "%(loc_type)s"
-msgstr "%(loc_type)s"
+#: frontend/templates/500.html:5
+msgid "Server Error"
+msgstr "خطأ في الخادم"
 
-#: frontend/templates/frontend/critical_incident_summary.html:24
-#: frontend/templates/frontend/critical_incidents_locations.html:22
-msgid "Table"
-msgstr "الجدول"
+#: frontend/templates/500.html:16
+msgid "Zong! We screwed up :("
+msgstr "تبّاً! أفسدنا الأمر:("
 
-#: frontend/templates/frontend/critical_incident_summary.html:25
-msgid "Charts"
-msgstr "المخططات"
+#: frontend/templates/500.html:17
+msgid ""
+"You shouldn't be seeing this page but you are because you're a genius and "
+"have found a rare bug in the software. Rest assured, we now know about it "
+"and will fix it ASAP!"
+msgstr "ما كان يُفترَض بك أن تعاين تلك الصفحة، إنما فعلت لأنك عبقري ونجحت في العثور على خلل نادر في البرنامج. كن مطمئناً، فنحن واعون الآن لوجود ذلك الخلل وسنعمل على تصحيحه بأسرع ما يمكن!"
 
-#: frontend/templates/frontend/critical_incident_summary.html:29
-msgid "Summary"
-msgstr "الملخص"
+#: frontend/templates/frontend/_layout.html:92
+msgid "Admin"
+msgstr "المسؤول"
 
-#: frontend/templates/frontend/critical_incident_summary.html:66
-msgid "Detail"
-msgstr "البيانات"
-
-#: frontend/templates/frontend/critical_incidents_locations.html:31
-msgid "Observer ID"
-msgstr "هوية المراقب"
-
-#: frontend/templates/frontend/critical_incidents_locations.html:37
-msgid "Witnessed"
-msgstr "مشهود"
-
-#: frontend/templates/frontend/critical_incidents_locations.html:39
-#: frontend/templates/frontend/incident_add.html:50
-#: frontend/templates/frontend/submission_edit.html:244
-msgid "Description"
-msgstr "الوصف"
+#: frontend/templates/frontend/_layout.html:109
+msgid "Logout"
+msgstr "تسجيل الخروج"
 
 #: frontend/templates/frontend/dashboard.html:76
 #: frontend/templates/frontend/location_list.html:80
@@ -549,12 +518,13 @@ msgstr "الوصف"
 #: frontend/templates/frontend/participant_list.html:119
 #: frontend/templates/frontend/participant_performance_detail.html:62
 #: frontend/templates/frontend/participant_performance_list.html:87
-#: frontend/templates/frontend/quality_assurance_list.html:32
-#: frontend/templates/frontend/results.html:183
-#: frontend/templates/frontend/macros/submission_list_macros.html:69
-#: frontend/templates/frontend/macros/submission_list_macros.html:74
-#: frontend/templates/frontend/macros/submission_list_macros.html:81
-#: frontend/templates/frontend/macros/submission_list_macros.html:86
+#: frontend/templates/frontend/macros/quality_assurance_list_macros.html:42
+#: frontend/templates/frontend/macros/quality_assurance_list_macros.html:47
+#: frontend/templates/frontend/macros/submission_list_macros.html:79
+#: frontend/templates/frontend/macros/submission_list_macros.html:84
+#: frontend/templates/frontend/macros/submission_list_macros.html:91
+#: frontend/templates/frontend/macros/submission_list_macros.html:96
+#: result_analysis/templates/result_analysis/results.html:183
 msgid "No Data Available"
 msgstr "لا توجد بيانات متاحة"
 
@@ -566,7 +536,7 @@ msgstr "اذهب"
 #: frontend/templates/frontend/form_list.html:74
 #: frontend/templates/frontend/form_list.html:89
 msgid "Create checklists"
-msgstr ""
+msgstr "إنشاء قوائم المراجعة"
 
 #: frontend/templates/frontend/form_list.html:4
 msgid "Add form"
@@ -592,7 +562,7 @@ msgstr "المنشئ"
 
 #: frontend/templates/frontend/form_list.html:79
 msgid "Checklist form"
-msgstr ""
+msgstr "نموذج قائمة المراجعة"
 
 #: frontend/templates/frontend/form_list.html:90
 #: frontend/templates/frontend/location_builder.html:56
@@ -601,7 +571,14 @@ msgstr ""
 msgid "Close"
 msgstr "إغلاق"
 
+#: frontend/templates/frontend/incident_add.html:46
+#: frontend/templates/frontend/submission_edit.html:274
+#: process_analysis/templates/process_analysis/critical_incidents_locations.html:38
+msgid "Description"
+msgstr "الوصف"
+
 #: frontend/templates/frontend/location_builder.html:10
+#: frontend/templates/frontend/location_edit.html:22
 #: frontend/templates/frontend/participant_edit_modal.html:35
 #: frontend/templates/frontend/quality_assurance.html:3
 #: frontend/templates/frontend/macros/form_edit_form.html:21
@@ -645,10 +622,18 @@ msgstr "حذف"
 msgid "Update"
 msgstr "تحديث"
 
+#: frontend/templates/frontend/location_edit.html:22
+#: frontend/templates/frontend/macros/form_edit_form.html:22
+#: frontend/templates/frontend/macros/send_message.html:23
+msgid "Cancel"
+msgstr "إلغاء"
+
 #: frontend/templates/frontend/location_list.html:31
 #: frontend/templates/frontend/message_list.html:5
 #: frontend/templates/frontend/participant_list.html:34
 #: frontend/templates/frontend/participant_performance_list.html:15
+#: frontend/templates/frontend/quality_assurance_dashboard.html:7
+#: frontend/templates/frontend/quality_assurance_list.html:11
 #: frontend/templates/frontend/submission_list.html:21
 #: frontend/templates/frontend/submission_list.html:27
 msgid "Export"
@@ -666,8 +651,10 @@ msgstr "الرمز"
 #: frontend/templates/frontend/location_list.html:76
 #: frontend/templates/frontend/participant_list.html:87
 #: frontend/templates/frontend/participant_list.html:109
+#: frontend/templates/frontend/macros/quality_assurance_list_macros.html:13
+#: frontend/templates/frontend/macros/quality_assurance_list_macros.html:36
 #: frontend/templates/frontend/macros/submission_list_macros.html:20
-#: frontend/templates/frontend/macros/submission_list_macros.html:62
+#: frontend/templates/frontend/macros/submission_list_macros.html:72
 msgid "Edit"
 msgstr "تحرير"
 
@@ -675,6 +662,24 @@ msgstr "تحرير"
 #: frontend/templates/frontend/participant_list.html:266
 msgid "Invalid file."
 msgstr "ملف غير صالح"
+
+#: frontend/templates/frontend/login_user.html:5
+#: frontend/templates/frontend/login_user.html:26
+msgid "User Login"
+msgstr "تسجيل دخول المستخدم"
+
+#: frontend/templates/frontend/login_user.html:32
+msgid ""
+"Your username and password <strong>did not match</strong>. Please try again."
+msgstr "إنّ إسم المستخدم وكلمة المرور <strong>غير مطابقين</strong>. يُرجى المحاولة مجدداً."
+
+#: frontend/templates/frontend/login_user.html:37
+msgid "Sign In with Persona"
+msgstr "سجّل دخولك باستخدام Persona"
+
+#: frontend/templates/frontend/login_user.html:60
+msgid "Sign In"
+msgstr "سجّل دخولك"
 
 #: frontend/templates/frontend/message_list.html:19
 #: frontend/templates/frontend/message_list.html:53
@@ -701,7 +706,8 @@ msgstr "بحث"
 #: frontend/templates/frontend/message_list.html:34
 #: frontend/templates/frontend/macros/locations_list_filter.html:13
 #: frontend/templates/frontend/macros/participant_list_filter.html:31
-#: frontend/templates/frontend/macros/submission_list_filter.html:36
+#: frontend/templates/frontend/macros/quality_assurance_list_filter.html:21
+#: frontend/templates/frontend/macros/submission_list_filter.html:44
 msgid "Clear"
 msgstr "مسح"
 
@@ -741,13 +747,14 @@ msgstr "استيراد مشاركين"
 
 #: frontend/templates/frontend/participant_list.html:41
 #: frontend/templates/frontend/participant_performance_list.html:18
-#: frontend/templates/frontend/submission_list.html:38
+#: frontend/templates/frontend/submission_list.html:39
 #: frontend/templates/frontend/macros/send_message.html:7
 msgid "Send Message"
 msgstr "إرسال رسالة"
 
 #: frontend/templates/frontend/participant_list.html:73
 #: frontend/templates/frontend/participant_performance_list.html:45
+#: frontend/templates/frontend/macros/quality_assurance_list_macros.html:3
 #: frontend/templates/frontend/macros/submission_list_macros.html:3
 msgid "ID"
 msgstr "الهوية"
@@ -785,7 +792,7 @@ msgstr "التصنيف"
 
 #: frontend/templates/frontend/participant_performance_detail.html:40
 #: frontend/templates/frontend/participant_performance_list.html:53
-#: messaging/views_messages.py:20 messaging/views_messages.py:25
+#: messaging/views_messages.py:20 messaging/views_messages.py:26
 msgid "Messages"
 msgstr "الرسائل"
 
@@ -793,107 +800,6 @@ msgstr "الرسائل"
 #: frontend/templates/frontend/participant_performance_list.html:78
 msgid "View"
 msgstr "عرض"
-
-#: frontend/templates/frontend/quality_assurance_list.html:14
-msgid "Quality Assurance Condition"
-msgstr "حالة ضمان الجودة"
-
-#: frontend/templates/frontend/quality_assurance_list.html:15
-msgid "Flagged"
-msgstr "محدد بعلامة"
-
-#: frontend/templates/frontend/quality_assurance_list.html:16
-#: frontend/templates/frontend/macros/submission_list_macros.html:61
-#: submissions/models.py:21
-msgid "Verified"
-msgstr "محقق"
-
-#: frontend/templates/frontend/quality_assurance_list.html:17
-#: submissions/models.py:32
-msgid "OK"
-msgstr "موافق"
-
-#: frontend/templates/frontend/results.html:35
-#: frontend/templates/frontend/results.html:53
-msgid "Turnout"
-msgstr "الإقبال"
-
-#: frontend/templates/frontend/results.html:36
-msgid "Total Votes"
-msgstr "إجمالي الأصوات "
-
-#: frontend/templates/frontend/results.html:38
-#: frontend/templates/frontend/results.html:64
-msgid "Rejected Ballots"
-msgstr "أوراق الاقتراع المرفوضة"
-
-#: frontend/templates/frontend/results.html:41
-#: frontend/templates/frontend/results.html:71
-msgid "Blank Ballots"
-msgstr "أوراق الاقتراع الفارغة"
-
-#: frontend/templates/frontend/results.html:43
-#: frontend/templates/frontend/results.html:77
-msgid "Total Valid"
-msgstr "الإجمالي الصحيح"
-
-#: frontend/templates/frontend/results.html:52
-msgid "Total Registered"
-msgstr "الإجمالي المسجل"
-
-#: frontend/templates/frontend/results.html:52
-msgid "TR"
-msgstr "الإجمالي المسجل"
-
-#: frontend/templates/frontend/results.html:55
-#: frontend/templates/frontend/results.html:56
-#: frontend/templates/frontend/results.html:60
-#: frontend/templates/frontend/results.html:61
-#: frontend/templates/frontend/results.html:66
-#: frontend/templates/frontend/results.html:67
-#: frontend/templates/frontend/results.html:73
-#: frontend/templates/frontend/results.html:74
-#: frontend/templates/frontend/results.html:81
-#: frontend/templates/frontend/results.html:82
-msgid "Margin of Error"
-msgstr "هامش الخطأ"
-
-#: frontend/templates/frontend/results.html:55
-#: frontend/templates/frontend/results.html:60
-#: frontend/templates/frontend/results.html:66
-#: frontend/templates/frontend/results.html:73
-#: frontend/templates/frontend/results.html:81
-msgid "MoE 95%"
-msgstr "هامش الخطأ 95% "
-
-#: frontend/templates/frontend/results.html:56
-#: frontend/templates/frontend/results.html:61
-#: frontend/templates/frontend/results.html:67
-#: frontend/templates/frontend/results.html:74
-#: frontend/templates/frontend/results.html:82
-msgid "MoE 99%"
-msgstr "هامش الخطأ 99%  "
-
-#: frontend/templates/frontend/results.html:58
-#: frontend/templates/frontend/results.html:79
-msgid "Votes"
-msgstr "الأصوات"
-
-#: frontend/templates/frontend/results.html:64
-msgid "RB"
-msgstr "أوراق الاقتراع المسجلة "
-
-#: frontend/templates/frontend/results.html:71
-msgid "BB"
-msgstr "أوراق الاقتراع الفارغة "
-
-#: frontend/templates/frontend/results.html:77
-msgid "TV"
-msgstr "الإجمالي الصحيح"
-
-#: frontend/templates/frontend/results.html:212
-msgid "Convergence Chart"
-msgstr "مخطط التقارب"
 
 #: frontend/templates/frontend/submission_edit.html:5
 #: frontend/templates/frontend/submission_history.html:5
@@ -904,16 +810,29 @@ msgstr "التاريخ"
 msgid "Texted Phone"
 msgstr "الهاتف النصي"
 
-#: frontend/templates/frontend/submission_edit.html:149
+#: frontend/templates/frontend/submission_edit.html:121
+msgid "Validation Errors!"
+msgstr "أخطاء عند التثبّت من البيانات!"
+
+#: frontend/templates/frontend/submission_edit.html:121
+msgid ""
+"The following conditions were flagged while validating this submission."
+msgstr "وضعت إشارة إلى جانب الشروط التالية عند التثبّت من البيانات المقدّمة."
+
+#: frontend/templates/frontend/submission_edit.html:161
 msgid "Confidence Level"
 msgstr "مستوى الثقة"
 
-#: frontend/templates/frontend/submission_edit.html:176
-#: frontend/templates/frontend/submission_edit.html:178
+#: frontend/templates/frontend/submission_edit.html:188
+#: frontend/templates/frontend/submission_edit.html:190
 msgid "Overridden Field"
 msgstr "حقل تم تجاوزه"
 
-#: frontend/templates/frontend/submission_edit.html:270
+#: frontend/templates/frontend/submission_edit.html:223
+msgid "Verification Status"
+msgstr "وضعية التثبّت من البيانات"
+
+#: frontend/templates/frontend/submission_edit.html:300
 msgid "No comment."
 msgstr "لا تعليق."
 
@@ -949,14 +868,28 @@ msgstr "بيانات المراقبين"
 msgid "Master Data"
 msgstr "البيانات الرئيسية"
 
-#: frontend/templates/frontend/macros/dashboard_filter.html:16
+#: frontend/templates/frontend/submission_list.html:32
+msgid "Aggregated Data"
+msgstr "بيانات مجمّعة"
+
+#: frontend/templates/frontend/macros/dashboard_filter.html:10
+#: frontend/templates/frontend/macros/locations_list_filter.html:10
+#: frontend/templates/frontend/macros/participant_list_filter.html:28
+#: frontend/templates/frontend/macros/quality_assurance_dashboard_filter.html:10
+#: frontend/templates/frontend/macros/quality_assurance_list_filter.html:18
+#: frontend/templates/frontend/macros/submission_list_filter.html:41
+#: process_analysis/templates/process_analysis/checklist_summary.html:10
+#: process_analysis/templates/process_analysis/checklist_summary_breakdown.html:9
+#: process_analysis/templates/process_analysis/critical_incident_summary.html:10
+#: process_analysis/templates/process_analysis/critical_incidents_locations.html:10
+#: result_analysis/templates/result_analysis/results.html:9
+msgid "Filter"
+msgstr "فلتر"
+
+#: frontend/templates/frontend/macros/dashboard_filter.html:13
+#: frontend/templates/frontend/macros/quality_assurance_dashboard_filter.html:13
 msgid "Reset"
 msgstr "إعادة الضبط"
-
-#: frontend/templates/frontend/macros/form_edit_form.html:22
-#: frontend/templates/frontend/macros/send_message.html:23
-msgid "Cancel"
-msgstr "إلغاء"
 
 #: frontend/templates/frontend/macros/pagination.html:4
 msgid "First Page"
@@ -987,6 +920,37 @@ msgstr "من"
 #: frontend/templates/frontend/macros/participant_list_filter.html:25
 msgid "All Groups"
 msgstr "كل المجموعات"
+
+#: frontend/templates/frontend/macros/quality_assurance_list_macros.html:12
+#: frontend/templates/frontend/macros/submission_list_macros.html:19
+msgid "Phone Verification"
+msgstr "التحقق من الهاتف"
+
+#: frontend/templates/frontend/macros/quality_assurance_list_macros.html:27
+#: frontend/templates/frontend/macros/quality_assurance_list_macros.html:35
+#: frontend/templates/frontend/macros/submission_list_macros.html:71
+#: submissions/aggregation.py:9 submissions/models.py:22
+msgid "Verified"
+msgstr "محقق"
+
+#: frontend/templates/frontend/macros/quality_assurance_list_macros.html:29
+#: submissions/aggregation.py:8 submissions/models.py:33
+msgid "OK"
+msgstr "موافق"
+
+#: frontend/templates/frontend/macros/quality_assurance_list_macros.html:30
+#: submissions/aggregation.py:10
+msgid "Flagged"
+msgstr "محدد بعلامة"
+
+#: frontend/templates/frontend/macros/quality_assurance_list_macros.html:31
+msgid "Insufficient Data"
+msgstr "بيانات ناقصة"
+
+#: frontend/templates/frontend/macros/quality_assurance_list_macros.html:35
+#: frontend/templates/frontend/macros/submission_list_macros.html:71
+msgid "Unverified"
+msgstr "غير محقق"
 
 #: frontend/templates/frontend/macros/send_message.html:14
 msgid "To"
@@ -1041,13 +1005,9 @@ msgstr "خطأ"
 msgid "Please try sending again"
 msgstr "يرجى محاولة الإرسال مرة خرى"
 
-#: frontend/templates/frontend/macros/submission_list_filter.html:28
+#: frontend/templates/frontend/macros/submission_list_filter.html:37
 msgid "All Statuses"
 msgstr "كل الحالات"
-
-#: frontend/templates/frontend/macros/submission_list_macros.html:19
-msgid "Phone Verification"
-msgstr "التحقق من الهاتف"
 
 #: frontend/templates/frontend/macros/submission_list_macros.html:35
 msgid "complete"
@@ -1065,11 +1025,11 @@ msgstr "مفقود"
 msgid "conflict"
 msgstr "تضارب"
 
-#: frontend/templates/frontend/macros/submission_list_macros.html:61
-msgid "Unverified"
-msgstr "غير محقق"
+#: frontend/templates/frontend/macros/submission_list_macros.html:49
+msgid "data present"
+msgstr ""
 
-#: locations/tasks.py:183
+#: locations/tasks.py:184
 msgid "Locations Import Report"
 msgstr "تقرير استيراد المواقع"
 
@@ -1089,27 +1049,49 @@ msgstr "الأقسام الإدارية"
 msgid "Your changes have been saved."
 msgstr "لقد تم حفظ التغييرات التي أجريتها."
 
-#: messaging/helpers.py:30
+#: messaging/helpers.py:35
 msgid "Thank you! Your report was received! You sent: {text}"
 msgstr "شكرًا لك! لقد تم استلام تقريرك! لقد أرسلت: {نص}"
 
-#: messaging/helpers.py:40
+#: messaging/helpers.py:44
+msgid "Unknown question codes: \"{questions}\". You sent: {text}"
+msgstr "رموز أسئلة غير معروفة: \"}الأسئلة{\" لقد أرسلت: {نص}"
+
+#: messaging/helpers.py:53
+msgid "Invalid text sent: \"{extra}\". You sent: {text}"
+msgstr ""
+
+#: messaging/helpers.py:62
 msgid ""
 "Observer ID not found. Please resend with valid Observer ID. You sent: "
 "{text}"
 msgstr "هوية المراقب غير موجودة. يرجى إعادة الإرسال بهوية مراقب صالحة. لقد أرسلت: {نص}"
 
-#: messaging/helpers.py:50
-msgid "Unknown question codes: \"{questions}\". You sent: {text}"
-msgstr "رموز أسئلة غير معروفة: \"}الأسئلة{\" لقد أرسلت: {نص}"
-
-#: messaging/helpers.py:64
+#: messaging/helpers.py:72
 msgid "Invalid response(s) for question(s): \"{questions}\". You sent: {text}"
 msgstr "إجابات (إجابة) غير صحيحة على الأسئلة (السؤال): \"}الأسئلة{\" لقد أرسلت: }نص{ "
 
-#: messaging/helpers.py:75
+#: messaging/helpers.py:83
 msgid "Invalid message: \"{text}\". Please check and resend!"
 msgstr "رسالة غير صحيحة: }نص{. يرجى التحقق وإعادة الإرسال!"
+
+#: odk/views_odk.py:120
+msgid "Invalid Form Specified"
+msgstr ""
+
+#: odk/views_odk.py:124
+msgid "Invalid Participant ID"
+msgstr ""
+
+#: odk/views_odk.py:150
+msgid "Checklist Not Found"
+msgstr ""
+
+#: odk/views_odk.py:190
+msgid ""
+"Your submission was received, but you sent it using an outdated form. Please"
+" download a new copy and resend. Thank you."
+msgstr ""
 
 #: participants/models.py:72
 msgid "Female"
@@ -1118,6 +1100,10 @@ msgstr "أنثى"
 #: participants/models.py:73
 msgid "Male"
 msgstr "ذكر"
+
+#: participants/models.py:74
+msgid "Unspecified"
+msgstr "غير محدد"
 
 #: participants/tasks.py:177
 #, python-format
@@ -1138,103 +1124,264 @@ msgstr "مشرف بهوية%(id)s  غير موجودة "
 msgid "Import report"
 msgstr "استيراد تقرير"
 
-#: participants/views_participants.py:45 participants/views_participants.py:51
+#: participants/views_participants.py:45 participants/views_participants.py:52
 msgid "Participants"
 msgstr "المشاركون"
 
-#: participants/views_participants.py:138
+#: participants/views_participants.py:139
 msgid "Participants Performance"
 msgstr "أداء المشاركين"
 
-#: participants/views_participants.py:220
+#: participants/views_participants.py:221
 msgid "Participant Performance"
 msgstr "أداء المشارك"
 
-#: participants/views_participants.py:263
+#: participants/views_participants.py:264
 #, python-format
 msgid "Edit Participant · %(participant_id)s"
 msgstr "تحرير المشارك %(participant_id)s"
 
-#: submissions/models.py:19
+#: process_analysis/views_process.py:57
+#, python-format
+msgid "%(form)s Analysis"
+msgstr "تحليل %(form)s "
+
+#: process_analysis/views_process.py:138
+msgid "Analyses"
+msgstr "تحاليل"
+
+#: process_analysis/templates/process_analysis/checklist_summary.html:34
+#: process_analysis/templates/process_analysis/checklist_summary_breakdown.html:30
+#: process_analysis/templates/process_analysis/critical_incident_summary.html:80
+msgid "Mean"
+msgstr "الوسيلة"
+
+#: process_analysis/templates/process_analysis/checklist_summary.html:40
+#: process_analysis/templates/process_analysis/checklist_summary_breakdown.html:36
+#: process_analysis/templates/process_analysis/critical_incident_summary.html:86
+#: result_analysis/templates/result_analysis/results.html:50
+msgid "Reported"
+msgstr "مذكور"
+
+#: process_analysis/templates/process_analysis/checklist_summary.html:41
+#: process_analysis/templates/process_analysis/checklist_summary_breakdown.html:37
+#: process_analysis/templates/process_analysis/critical_incident_summary.html:87
+#: result_analysis/templates/result_analysis/results.html:51
+#: submissions/aggregation.py:11
+msgid "Missing"
+msgstr "مفقود"
+
+#: process_analysis/templates/process_analysis/checklist_summary.html:44
+#: process_analysis/templates/process_analysis/critical_incident_summary.html:90
+#: submissions/models.py:203
+msgid "All"
+msgstr "الكل"
+
+#: process_analysis/templates/process_analysis/checklist_summary.html:67
+#: process_analysis/templates/process_analysis/critical_incident_summary.html:113
+msgid "No data available"
+msgstr "لا توجد بيانات متاحة"
+
+#: process_analysis/templates/process_analysis/checklist_summary_breakdown.html:55
+#: process_analysis/templates/process_analysis/critical_incident_summary.html:48
+#, python-format
+msgid "%(loc_type)s"
+msgstr "%(loc_type)s"
+
+#: process_analysis/templates/process_analysis/critical_incident_summary.html:24
+#: process_analysis/templates/process_analysis/critical_incidents_locations.html:22
+msgid "Table"
+msgstr "الجدول"
+
+#: process_analysis/templates/process_analysis/critical_incident_summary.html:25
+msgid "Charts"
+msgstr "المخططات"
+
+#: process_analysis/templates/process_analysis/critical_incident_summary.html:29
+msgid "Summary"
+msgstr "الملخص"
+
+#: process_analysis/templates/process_analysis/critical_incident_summary.html:66
+msgid "Detail"
+msgstr "البيانات"
+
+#: process_analysis/templates/process_analysis/critical_incidents_locations.html:31
+msgid "Observer ID"
+msgstr "هوية المراقب"
+
+#: result_analysis/views_results.py:45
+#, python-format
+msgid "%(form_name)s Voting Results"
+msgstr "نتائج التصويت %(form_name)s "
+
+#: result_analysis/templates/result_analysis/results.html:35
+#: result_analysis/templates/result_analysis/results.html:53
+msgid "Turnout"
+msgstr "الإقبال"
+
+#: result_analysis/templates/result_analysis/results.html:36
+msgid "Total Votes"
+msgstr "إجمالي الأصوات "
+
+#: result_analysis/templates/result_analysis/results.html:38
+#: result_analysis/templates/result_analysis/results.html:64
+msgid "Rejected Ballots"
+msgstr "أوراق الاقتراع المرفوضة"
+
+#: result_analysis/templates/result_analysis/results.html:41
+#: result_analysis/templates/result_analysis/results.html:71
+msgid "Blank Ballots"
+msgstr "أوراق الاقتراع الفارغة"
+
+#: result_analysis/templates/result_analysis/results.html:43
+#: result_analysis/templates/result_analysis/results.html:77
+msgid "Total Valid"
+msgstr "الإجمالي الصحيح"
+
+#: result_analysis/templates/result_analysis/results.html:52
+msgid "Total Registered"
+msgstr "الإجمالي المسجل"
+
+#: result_analysis/templates/result_analysis/results.html:52
+msgid "TR"
+msgstr "الإجمالي المسجل"
+
+#: result_analysis/templates/result_analysis/results.html:55
+#: result_analysis/templates/result_analysis/results.html:56
+#: result_analysis/templates/result_analysis/results.html:60
+#: result_analysis/templates/result_analysis/results.html:61
+#: result_analysis/templates/result_analysis/results.html:66
+#: result_analysis/templates/result_analysis/results.html:67
+#: result_analysis/templates/result_analysis/results.html:73
+#: result_analysis/templates/result_analysis/results.html:74
+#: result_analysis/templates/result_analysis/results.html:81
+#: result_analysis/templates/result_analysis/results.html:82
+msgid "Margin of Error"
+msgstr "هامش الخطأ"
+
+#: result_analysis/templates/result_analysis/results.html:55
+#: result_analysis/templates/result_analysis/results.html:60
+#: result_analysis/templates/result_analysis/results.html:66
+#: result_analysis/templates/result_analysis/results.html:73
+#: result_analysis/templates/result_analysis/results.html:81
+#, python-format
+msgid "MoE 95%%"
+msgstr "هامش الخطأ 95%%"
+
+#: result_analysis/templates/result_analysis/results.html:56
+#: result_analysis/templates/result_analysis/results.html:61
+#: result_analysis/templates/result_analysis/results.html:67
+#: result_analysis/templates/result_analysis/results.html:74
+#: result_analysis/templates/result_analysis/results.html:82
+#, python-format
+msgid "MoE 99%%"
+msgstr "هامش الخطأ 99%%"
+
+#: result_analysis/templates/result_analysis/results.html:58
+#: result_analysis/templates/result_analysis/results.html:79
+msgid "Votes"
+msgstr "الأصوات"
+
+#: result_analysis/templates/result_analysis/results.html:64
+msgid "RB"
+msgstr "أوراق الاقتراع المسجلة "
+
+#: result_analysis/templates/result_analysis/results.html:71
+msgid "BB"
+msgstr "أوراق الاقتراع الفارغة "
+
+#: result_analysis/templates/result_analysis/results.html:77
+msgid "TV"
+msgstr "الإجمالي الصحيح"
+
+#: result_analysis/templates/result_analysis/results.html:212
+msgid "Convergence Chart"
+msgstr "مخطط التقارب"
+
+#: submissions/models.py:20
 msgid "No Problem"
 msgstr "لا توجد مشكلة "
 
-#: submissions/models.py:20
+#: submissions/models.py:21
 msgid "Problem"
 msgstr "المشكلة"
 
-#: submissions/models.py:33
+#: submissions/models.py:34
 msgid "MISSING"
 msgstr "مفقود "
 
-#: submissions/models.py:34
+#: submissions/models.py:35
 msgid "FLAGGED"
 msgstr "محدد بعلامة"
 
-#: submissions/models.py:35
+#: submissions/models.py:36
 msgid "VERIFIED"
 msgstr "محقق"
 
-#: submissions/models.py:40
+#: submissions/models.py:37
+msgid "REJECTED"
+msgstr "مرفوض"
+
+#: submissions/models.py:42
 msgid "Status — No Problem"
 msgstr "الحالة - لا توجد مشكلة"
 
-#: submissions/models.py:41
+#: submissions/models.py:43
 msgid "Status — Unverified"
 msgstr "الحالة – غير محقق"
 
-#: submissions/models.py:42
+#: submissions/models.py:44
 msgid "Status — Verified"
 msgstr "الحالة – محقق"
 
-#: submissions/models.py:43
+#: submissions/models.py:45
 msgid "Status — Rejected"
 msgstr "الحالة - مرفوض "
 
-#: submissions/models.py:187
+#: submissions/models.py:198
 msgid "Observer Submission"
 msgstr "البيانات المقدمة من المراقب"
 
-#: submissions/models.py:188
+#: submissions/models.py:199
 msgid "Master Submission"
 msgstr "البيانات المقدمة الرئيسية"
 
-#: submissions/models.py:191
+#: submissions/models.py:202
 msgid "None"
 msgstr "لا يوجد "
 
-#: submissions/models.py:193
+#: submissions/models.py:204
 msgid "Results"
 msgstr "النتائج"
 
-#: submissions/models.py:699
+#: submissions/models.py:207
+msgid "Unconfirmed"
+msgstr "غير مؤكّد"
+
+#: submissions/models.py:773
 msgid "SMS"
 msgstr "الرسائل القصيرة"
 
-#: submissions/models.py:700
+#: submissions/models.py:774
 msgid "Web"
 msgstr "الويب"
 
-#: submissions/models.py:701
+#: submissions/models.py:775
 msgid "API"
 msgstr "API"
 
-#: submissions/views_submissions.py:37 submissions/views_submissions.py:39
-msgid "Checklists"
-msgstr "قوائم المراجعة"
-
-#: submissions/views_submissions.py:44 submissions/views_submissions.py:47
+#: submissions/views_submissions.py:75 submissions/views_submissions.py:78
 msgid "Critical Incidents"
 msgstr "الحوادث الخطيرة"
 
-#: submissions/views_submissions.py:151
+#: submissions/views_submissions.py:196
 msgid "Add Submission"
 msgstr "إضافة معلومات مقدمة"
 
-#: submissions/views_submissions.py:199
+#: submissions/views_submissions.py:244
 msgid "Edit Submission"
 msgstr "تحرير معلومات مقدمة"
 
-#: submissions/views_submissions.py:500
+#: submissions/views_submissions.py:580
 msgid "View submission"
 msgstr "عرض معلومات مقدمة"

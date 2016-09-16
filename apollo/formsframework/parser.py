@@ -7,7 +7,9 @@ import parsley
 def calculate(start, pairs):
     result = start
     operators = {
-        '+': op.add, '-': op.sub, '*': op.mul, '/': op.truediv, '^': op.pow}
+        '+': op.add, '-': op.sub, '*': op.mul, '/': op.truediv, '^': op.pow,
+        '>': op.gt, '>=': op.ge, '<': op.lt, '<=': op.le, '==': op.eq, '!=': op.ne,
+        '||': op.or_, '&&': op.and_}
 
     for operator, value in pairs:
         if operator in operators:
@@ -32,18 +34,31 @@ attribute = exactly('$')<anything+>:attr -> int(reduce(
 parens = '(' ws expr:e ws ')' -> e
 value = number | variable | attribute | parens
 
-add = '+' ws expr2:n -> ('+', n)
-sub = '-' ws expr2:n -> ('-', n)
-mul = '*' ws expr3:n -> ('*', n)
-div = '/' ws expr3:n -> ('/', n)
+add = '+' ws expr3:n -> ('+', n)
+sub = '-' ws expr3:n -> ('-', n)
+mul = '*' ws expr4:n -> ('*', n)
+div = '/' ws expr4:n -> ('/', n)
 pow = '^' ws value:n -> ('^', n)
+gt  = '>' ws expr2:n -> ('>', n)
+gte = '>=' ws expr2:n -> ('>=', n)
+lt  = '<' ws expr2:n -> ('<', n)
+lte = '<=' ws expr2:n -> ('<=', n)
+eq  = '==' ws expr2:n -> ('==', n)
+ne  = '!=' ws expr2:n -> ('!=', n)
+or  = '||' ws expr1:n -> ('||', n)
+and = '&&' ws expr1:n -> ('&&', n)
 
 addsub = ws (add | sub)
 muldiv = ws (mul | div)
+power  = ws pow
+comparison = ws (gt | gte | lt | lte | eq | ne)
+logic  = ws (or | and)
 
-expr = expr2:left addsub*:right -> calculate(left, right)
-expr2 = expr3:left muldiv*:right -> calculate(left, right)
-expr3 = value:left pow*:right -> calculate(left, right)
+expr = expr1:left logic*:right -> calculate(left, right)
+expr1 = expr2:left comparison*:right -> calculate(left, right)
+expr2 = expr3:left addsub*:right -> calculate(left, right)
+expr3 = expr4:left muldiv*:right -> calculate(left, right)
+expr4 = value:left power*:right -> calculate(left, right)
 """, {'env': env, 'calculate': calculate, 'getvalue': getvalue})
 
 
@@ -67,9 +82,9 @@ class Comparator(object):
         return method(node, [self.eval(n) for n in node])
 
     def expr(self, node, children):
-        'expr = operator _ number'
-        operator, _, number = children
-        return operator(self.param, number)
+        'expr = operator _ operand'
+        operator, _, operand = children
+        return operator(self.param, operand)
 
     def operator(self, node, children):
         'operator = ">=" / "<=" / ">" / "<" / "=" / "!="'
@@ -79,9 +94,14 @@ class Comparator(object):
             '=': op.eq, '!=': op.ne}
         return operators[node.text]
 
-    def number(self, node, children):
-        'number = ~"\-?[0-9\.]+"'
-        return float(node.text)
+    def operand(self, node, children):
+        'operand = ~"\-?[0-9\.]+" / "True" / "False"'
+        if node.text == "True":
+            return True
+        elif node.text == "False":
+            return False
+        else:
+            return float(node.text)
 
     def _(self, node, children):
         '_ = ~"\s*"'
