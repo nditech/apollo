@@ -10,7 +10,7 @@ from mongoengine import signals
 import pytz
 from slugify import slugify
 
-from apollo import services, csrf
+from apollo import services, models, csrf
 from apollo.formsframework.forms import filter_participants
 from apollo.frontend import route
 from apollo.frontend.helpers import DictDiffer
@@ -39,8 +39,6 @@ def open_rosa_default_response(**kwargs):
     response = make_response(content, kwargs.get('status_code', 201))
 
     response.headers.extend(make_open_rosa_headers())
-
-    print response.get_data()
 
     return response
 
