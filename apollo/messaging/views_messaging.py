@@ -6,6 +6,7 @@ from apollo.messaging.helpers import parse_message
 from apollo.messaging.utils import parse_text
 from flask import Blueprint, make_response, request, g, current_app
 import json
+import re
 
 
 bp = Blueprint('messaging', __name__)
@@ -91,6 +92,10 @@ def telerivet_view():
     secret = request.form.get('secret')
 
     if secret != current_app.config.get('MESSAGING_SECRET'):
+        return ''
+
+    # if the sender is the same as the recipient, then don't respond
+    if re.sub(r'[^\d]', '', request.form.get('from_number')) == re.sub(r'[^\d]', '', request.form.get('to_number')):
         return ''
 
     form = TelerivetForm(request.form)
