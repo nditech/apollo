@@ -34,7 +34,7 @@ def parse_text(text):
     # regular expression for a valid text message
     pattern = re.compile(
         r'^(?P<prefix>[A-Z]+)(?P<participant_id>\d+)'
-        '(?P<exclamation>!?)(?P<responses>[A-Z0-9]*)$', re.I)
+        '(?P<exclamation>!?)(?P<responses>[A-Z0-9\s]*)$', re.I|re.M)
 
     at_position = text.find("@")
 
@@ -80,17 +80,17 @@ def parse_responses(responses_text, form):
     numeric_fields = [f.name for f in fields if not f.represents_boolean]
     boolean_fields = [f.name for f in fields if f.represents_boolean]
 
-    substrate = responses_text
+    substrate = re.sub(r'\s', '', responses_text)
     responses = OrderedDict()
     # process numeric fields first
     pattern = re.compile(r'(?P<tag>{})(?P<answer>\d+)'.format(
         '|'.join(numeric_fields)), flags=re.I)
     responses.update(
         ((r.group('tag').upper(), r.group('answer')) for r in
-            pattern.finditer(responses_text)))
+            pattern.finditer(substrate)))
 
     # remove the found data
-    substrate = pattern.sub('', responses_text)
+    substrate = pattern.sub('', substrate)
 
     # fix for bug where boolean_fields is an empty iterable
     if not boolean_fields:
