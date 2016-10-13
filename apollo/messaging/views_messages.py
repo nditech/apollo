@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from apollo.frontend import filters, route, permissions
 from apollo.models import Message
 from apollo.services import events, messages

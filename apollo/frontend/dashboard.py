@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from flask import g
 from collections import OrderedDict
 from logging import getLogger

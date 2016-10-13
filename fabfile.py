@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from fabric.api import sudo, run, local, put, cd
 
 PROJECT_NAME = 'apollo'

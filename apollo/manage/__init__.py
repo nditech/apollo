@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from apollo.manage.users import (
     CreateUserCommand, DeleteUserCommand, ListUsersCommand, AddUserRoleCommand,
     RemoveUserRoleCommand, ListUserRolesCommand, ListRolesCommand,

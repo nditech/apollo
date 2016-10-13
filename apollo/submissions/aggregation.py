@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from apollo.submissions.models import QUALITY_STATUSES, Submission
 from flask.ext.babel import gettext as _
 from itertools import groupby

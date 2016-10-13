@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from datetime import datetime
 from bson.json_util import dumps, loads
 from flask.ext.script import Command, prompt, prompt_choices

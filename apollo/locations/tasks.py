@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import cachetools
 from flask import render_template_string
 from flask.ext.babel import lazy_gettext as _

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from __future__ import division
 import operator as op
 from parsimonious.grammar import Grammar

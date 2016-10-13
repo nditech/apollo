@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from apollo.core import Service
 from apollo.users.models import User, Need, UserUpload
 from flask import g

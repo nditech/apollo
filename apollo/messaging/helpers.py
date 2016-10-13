@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from apollo.formsframework.forms import build_questionnaire
 from apollo.messaging.forms import retrieve_form
 from apollo.messaging.utils import parse_text, parse_responses

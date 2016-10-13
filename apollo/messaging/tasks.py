@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from flask.ext.mail import Message
 from apollo import services, settings
 from apollo.core import mail, sentry

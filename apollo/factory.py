@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from cachetools import cached
 from celery import Celery
 from flask import Flask, request

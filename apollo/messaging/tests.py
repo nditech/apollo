@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from unittest import TestCase
 from apollo.formsframework.models import Form, FormGroup, FormField
 from .utils import parse_responses

@@ -1,4 +1,4 @@
-# coding: utf-8
+# -*- coding: utf-8 -*-
 from apollo.core import db
 from apollo.deployments.models import Deployment, Event
 from apollo.formsframework.models import Form

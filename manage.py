@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 import os
 import warnings
 from flask.ext.script import Manager, Server, Shell

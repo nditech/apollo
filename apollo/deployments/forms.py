@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from flask import g
 from flask.ext.babel import lazy_gettext as _
 from flask.ext.wtf import Form as WTSecureForm

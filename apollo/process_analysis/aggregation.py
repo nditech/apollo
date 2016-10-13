@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from itertools import izip
 from operator import itemgetter
 

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from apollo.formsframework import FormsService
 from apollo.deployments import EventsService
 from apollo.locations import (

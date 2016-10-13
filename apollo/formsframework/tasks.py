@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from .. import services
 from ..factory import create_celery_app
 

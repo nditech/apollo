@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from collections import OrderedDict
 from flask import abort, g, redirect, url_for
 from flask.ext.admin import expose, Admin, AdminIndexView

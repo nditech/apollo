@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 def incidents_csv(df, groupby, options):
     incidents = []
     if df.shape[0]:

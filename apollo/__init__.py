@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from flask import g, render_template, session, request, redirect, url_for
 from flask.ext.admin import AdminIndexView
 from flask.ext.login import user_logged_out

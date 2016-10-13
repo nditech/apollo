@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import base64
 from flask import flash, request
 from flask.ext.admin import form

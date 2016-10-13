@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import socket
 from flask.ext.script import Command, prompt, prompt_choices, prompt_pass
 from flask.ext.security.forms import RegisterForm

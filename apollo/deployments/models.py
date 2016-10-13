@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from apollo.core import db
 from datetime import datetime
 from functools import partial

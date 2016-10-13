@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from flask.ext.assets import Bundle, Environment
 
 apollo_css = Bundle('css/bootstrap.css',

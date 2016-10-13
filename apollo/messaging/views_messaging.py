@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from apollo.frontend import route
 from apollo import services
 from apollo.core import csrf

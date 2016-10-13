@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import hashlib
 from operator import itemgetter
 from uuid import uuid4
