@@ -280,6 +280,7 @@ class Submission(db.DynamicDocument):
         '''Computes the completion status of each form group for a submission.
         Should be called automatically on save, preferably in the `clean`
         method.'''
+        self.completion = {}
         if self.master != self:
             for group in self.form.groups:
                 completed = [getattr(self.master, f.name, None) is not None
