@@ -28,9 +28,10 @@ def message_list():
     template_name = 'frontend/message_list.html'
 
     deployment = g.deployment
+    message_events = set(events.overlapping_events(g.event)).union({g.event})
     qs = Message.objects(
         deployment=deployment,
-        event__in=events.overlapping_events(g.event)).order_by(
+        event__in=message_events).order_by(
         '-received', '-direction')
     queryset_filter = filters.messages_filterset()(qs, request.args)
 
