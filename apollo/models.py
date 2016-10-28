@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from apollo.deployments.models import Deployment, Event
 from apollo.formsframework.models import Form
 from apollo.locations import Sample, LocationType, Location

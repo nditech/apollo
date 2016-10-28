@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from apollo import models
 from apollo.factory import create_celery_app
 

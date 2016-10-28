@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from flask import current_app, jsonify
 from flask.ext.restful import Resource, fields, marshal, marshal_with
 from flask.ext.security import login_required

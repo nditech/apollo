@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from datetime import datetime
 from apollo.core import db
 from apollo.deployments.models import Deployment, Event

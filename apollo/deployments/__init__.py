@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from apollo import settings
 from apollo.core import Service
 from apollo.deployments.models import Event

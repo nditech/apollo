@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import importlib
 import magic
 import pandas as pd

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import base64
 from flask import flash, request
 from flask.ext.admin import form
@@ -21,6 +22,8 @@ from apollo.frontend import forms
 
 app_time_zone = pytz.timezone(settings.TIMEZONE)
 utc_time_zone = pytz.utc
+
+excluded_perm_actions = [u'view_forms', u'access_event']
 
 DATETIME_FORMAT_SPEC = u'%Y-%m-%d %H:%M:%S %Z'
 
@@ -232,7 +235,7 @@ class RoleAdminView(BaseAdminView):
         role = super(RoleAdminView, self).get_one(pk)
         role.permissions = [
             unicode(i) for i in models.Need.objects(
-                entities=role).scalar('pk')]
+                entities=role, action__nin=excluded_perm_actions).scalar('pk')]
         return role
 
     def after_model_change(self, form, model, is_created):
@@ -250,7 +253,8 @@ class RoleAdminView(BaseAdminView):
         form_class.permissions = SelectMultipleField(
             _('Permissions'),
             choices=forms._make_choices(
-                models.Need.objects().scalar('pk', 'action')),
+                models.Need.objects(
+                    action__nin=excluded_perm_actions).scalar('pk', 'action')),
             widget=form.Select2Widget(multiple=True))
 
         return form_class

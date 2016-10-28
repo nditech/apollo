@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from flask import abort
 from flask.ext.principal import Permission, ActionNeed, RoleNeed, ItemNeed
 

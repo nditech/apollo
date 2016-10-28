@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # from https://github.com/industrydive/wtforms_extended_selectfield
 from wtforms.fields import SelectField, SelectMultipleField
 from wtforms.validators import ValidationError

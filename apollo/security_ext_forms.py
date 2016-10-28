@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from flask import current_app, g
 from flask.ext.security.forms import LoginForm
 from flask.ext.security.confirmable import requires_confirmation

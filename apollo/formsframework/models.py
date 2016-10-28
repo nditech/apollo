@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import hashlib
 from operator import itemgetter
 from uuid import uuid4
@@ -8,6 +9,7 @@ from flask.ext.babel import lazy_gettext as _
 from lxml import etree
 from lxml.builder import E, ElementMaker
 from slugify import slugify_unicode
+from unidecode import unidecode
 
 
 NSMAP = {
@@ -179,7 +181,7 @@ class Form(db.Document):
         document have their slug set.'''
         for group in self.groups:
             if not group.slug:
-                group.slug = slugify_unicode(group.name).lower()
+                group.slug = unidecode(slugify_unicode(group.name)).lower()
         return super(Form, self).clean()
 
     def save(self, **kwargs):
@@ -382,7 +384,7 @@ class FormBuilderSerializer(object):
             if f['component'] == 'group':
                 group = FormGroup(
                     name=f['label'],
-                    slug=slugify_unicode(f['label'])
+                    slug=unidecode(slugify_unicode(f['label']))
                 )
                 groups.append(group)
                 continue

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from apollo.core import db, cache
 from apollo.deployments.models import Deployment, Event
 from flask.ext.mongoengine import BaseQuerySet

@@ -18,12 +18,13 @@ RUN set -ex \
             python \
             py-setuptools \
             libmagic \
+            uwsgi-python \
         && cd /app/ \
         && rm Dockerfile* circle.yml fabfile.py \
         && mv Procfile.docker Procfile \
         && ln -s /usr/include/locale.h /usr/include/xlocale.h \
-        && pip install numpy==1.11.1 uwsgi==2.0.13 \
-        && pip install -r /app/requirements.txt \
+        && pip install numpy==1.11.1 \
+        && pip install -r /app/requirements-docker.txt \
         && find /usr -depth \
             \( -type f -a -name '*.pyc' -o -name '*.pyo' \) \
             -exec rm -rf '{}' + \

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from apollo.core import Service
 from apollo.formsframework.models import Form
 from flask import g

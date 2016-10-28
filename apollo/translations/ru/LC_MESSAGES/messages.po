@@ -1,5 +1,5 @@
 # Translations template for PROJECT.
-# Copyright (C) 2015 ORGANIZATION
+# Copyright (C) 2016 ORGANIZATION
 # This file is distributed under the same license as the PROJECT project.
 # 
 # Translators:
@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Elections DemTool\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2015-09-30 19:46+0100\n"
-"PO-Revision-Date: 2015-09-30 18:50+0000\n"
+"POT-Creation-Date: 2016-09-14 17:25+0100\n"
+"PO-Revision-Date: 2016-09-14 16:27+0000\n"
 "Last-Translator: Tim Akinbo <takinbo@timbaobjects.com>\n"
 "Language-Team: Russian (http://www.transifex.com/nditech/apollo/language/ru/)\n"
 "MIME-Version: 1.0\n"
@@ -28,72 +28,59 @@ msgstr "Неверный выбор!"
 msgid "'%(value)s' is not a valid choice for this field"
 msgstr "В этом поле 'нельзя выбрать %(value)s'."
 
-#: analyses/views_analysis.py:56
-#, python-format
-msgid "%(form)s Analysis"
-msgstr "%(form)s: анализ"
-
-#: analyses/views_analysis.py:144
-#, python-format
-msgid "%(form_name)s Voting Results"
-msgstr "%(form_name)s: результаты голосования"
-
-#: analyses/views_analysis.py:534 analyses/views_analysis.py:565
-msgid "Analyses"
-msgstr ""
-
-#: analyses/views_analysis.py:539 formsframework/models.py:67
-msgid "Process Analysis"
-msgstr "Анализ процесса"
-
-#: analyses/views_analysis.py:570 formsframework/models.py:68
-msgid "Results Analysis"
-msgstr "Анализ результатов"
-
-#: deployments/forms.py:14 frontend/views_dashboard.py:147
+#: deployments/forms.py:14 frontend/views_dashboard.py:160
 msgid "Choose Event"
 msgstr "Выберите событие"
 
-#: formsframework/models.py:66
+#: formsframework/models.py:67
 msgid "Not Applicable"
 msgstr "Неприменимо"
 
-#: formsframework/models.py:114
+#: formsframework/models.py:68 process_analysis/views_process.py:144
+msgid "Process Analysis"
+msgstr "Анализ процесса"
+
+#: formsframework/models.py:69 result_analysis/views_results.py:435
+msgid "Results Analysis"
+msgstr "Анализ результатов"
+
+#: formsframework/models.py:115
 msgid "Checklist Form"
 msgstr "Форма списка"
 
-#: formsframework/models.py:115
+#: formsframework/models.py:116
 msgid "Incident Form"
 msgstr "Форма происшествия"
 
-#: formsframework/models.py:122
+#: formsframework/models.py:123
 msgid ""
 "Require exclamation (!) mark in text message? (Does not apply to Checklist "
 "Forms)"
 msgstr "В сообщении необходим восклицательный (!) знак? (Неприменимо к спискам.)"
 
-#: formsframework/models.py:131
+#: formsframework/models.py:133
 msgid "Accredited Voters"
 msgstr "Аккредитованные избиратели"
 
-#: formsframework/models.py:133 frontend/templates/frontend/form_list.html:60
-#: submissions/views_submissions.py:519 submissions/views_submissions.py:525
+#: formsframework/models.py:135 frontend/templates/frontend/form_list.html:60
+#: submissions/views_submissions.py:598 submissions/views_submissions.py:645
+#: submissions/views_submissions.py:651
 msgid "Quality Assurance"
 msgstr "Контроль качества"
 
-#: formsframework/models.py:134
+#: formsframework/models.py:136
 msgid "Invalid Votes"
 msgstr "Недействительные бюллетени"
 
-#: formsframework/models.py:135
+#: formsframework/models.py:137
 msgid "Registered Voters"
 msgstr "Зарегистрированные избиратели"
 
-#: formsframework/models.py:136
+#: formsframework/models.py:138
 msgid "Blank Votes"
 msgstr "Незаполненные бюллетени"
 
-#: formsframework/models.py:138
+#: formsframework/models.py:140
 msgid "Permitted Roles"
 msgstr "Разрешенные роли"
 
@@ -124,151 +111,137 @@ msgstr "Редактировать «%(name)s»"
 msgid "Forms"
 msgstr "Формы"
 
-#: formsframework/views_forms.py:158 submissions/views_submissions.py:532
+#: formsframework/views_forms.py:158 submissions/views_submissions.py:609
+#: submissions/views_submissions.py:660
 #, python-format
 msgid "Quality Assurance — %(name)s"
 msgstr "Контроль качества — %(name)s"
 
-#: frontend/filters.py:27 frontend/forms.py:396
+#: frontend/filters.py:30 frontend/forms.py:397
 msgid "Form"
 msgstr "Форма"
 
-#: frontend/filters.py:72 frontend/forms.py:81 frontend/forms.py:285
-#: frontend/forms.py:287
-#: frontend/templates/frontend/critical_incident_summary.html:32
-#: frontend/templates/frontend/critical_incidents_locations.html:36
-#: frontend/templates/frontend/incident_add.html:14
+#: frontend/filters.py:75 frontend/forms.py:81 frontend/forms.py:279
+#: frontend/forms.py:281 frontend/templates/frontend/incident_add.html:14
 #: frontend/templates/frontend/participant_list.html:77
 #: frontend/templates/frontend/participant_performance_list.html:49
 #: frontend/templates/frontend/submission_edit.html:61
 #: frontend/templates/frontend/submission_edit.html:97
+#: process_analysis/templates/process_analysis/critical_incident_summary.html:32
+#: process_analysis/templates/process_analysis/critical_incidents_locations.html:36
 msgid "Location"
 msgstr "Место"
 
-#: frontend/filters.py:87
+#: frontend/filters.py:90
 msgid "Sample"
 msgstr "Образец"
 
-#: frontend/filters.py:166
+#: frontend/filters.py:187
 msgid "All Organizations"
 msgstr "Все организации"
 
-#: frontend/filters.py:181
+#: frontend/filters.py:202
 msgid "All Roles"
 msgstr "Все роли"
 
-#: frontend/filters.py:272
+#: frontend/filters.py:293
 msgid "All Types"
 msgstr "Все виды"
 
-#: frontend/filters.py:312 frontend/filters.py:423 frontend/filters.py:448
+#: frontend/filters.py:340 frontend/filters.py:452 frontend/filters.py:472
 #: frontend/forms.py:262
-#: frontend/templates/frontend/critical_incidents_locations.html:66
-#: frontend/templates/frontend/macros/submission_list_macros.html:54
+#: frontend/templates/frontend/macros/submission_list_macros.html:64
+#: process_analysis/templates/process_analysis/critical_incidents_locations.html:54
 msgid "Unmarked"
 msgstr "Непомеченные"
 
-#: frontend/filters.py:313 frontend/filters.py:424 frontend/filters.py:449
+#: frontend/filters.py:341 frontend/filters.py:453 frontend/filters.py:473
 #: frontend/forms.py:263
-#: frontend/templates/frontend/critical_incidents_locations.html:62
-#: frontend/templates/frontend/macros/submission_list_macros.html:50
+#: frontend/templates/frontend/macros/submission_list_macros.html:60
+#: process_analysis/templates/process_analysis/critical_incidents_locations.html:50
+#: submissions/models.py:208
 msgid "Confirmed"
 msgstr "Подтвержденные"
 
-#: frontend/filters.py:313 frontend/filters.py:424 frontend/filters.py:449
+#: frontend/filters.py:341 frontend/filters.py:453 frontend/filters.py:473
 #: frontend/forms.py:264
-#: frontend/templates/frontend/critical_incidents_locations.html:64
-#: frontend/templates/frontend/macros/submission_list_macros.html:52
-#: submissions/models.py:22
+#: frontend/templates/frontend/macros/quality_assurance_list_macros.html:28
+#: frontend/templates/frontend/macros/submission_list_macros.html:62
+#: process_analysis/templates/process_analysis/critical_incidents_locations.html:52
+#: submissions/models.py:23
 msgid "Rejected"
 msgstr "Отклоненные"
 
-#: frontend/filters.py:314 frontend/filters.py:425 frontend/filters.py:450
+#: frontend/filters.py:342 frontend/filters.py:454 frontend/filters.py:474
 #: frontend/forms.py:265
 msgid "Citizen Report"
 msgstr "Отчет гражданина"
 
-#: frontend/filters.py:423 frontend/filters.py:448
-#: frontend/templates/frontend/critical_incidents_locations.html:38
-#: frontend/templates/frontend/incident_add.html:54
-#: frontend/templates/frontend/submission_edit.html:248
+#: frontend/filters.py:452 frontend/filters.py:472
+#: frontend/templates/frontend/incident_add.html:50
+#: frontend/templates/frontend/submission_edit.html:278
 #: frontend/templates/frontend/macros/submission_list_macros.html:17
-#: submissions/models.py:39
+#: process_analysis/templates/process_analysis/critical_incidents_locations.html:37
+#: submissions/models.py:41
 msgid "Status"
 msgstr "Статус"
 
-#: frontend/filters.py:428 frontend/filters.py:453
-#: frontend/templates/frontend/incident_add.html:46
-#: frontend/templates/frontend/submission_edit.html:240
-msgid "Witness"
-msgstr "Свидетель"
-
-#: frontend/filters.py:428 frontend/filters.py:453 frontend/forms.py:268
-#: participants/models.py:74
-msgid "Unspecified"
-msgstr "Не уточнено"
-
-#: frontend/filters.py:429 frontend/filters.py:454
-msgid "Witnessed incident"
-msgstr "Присутствовал при происшествии"
-
-#: frontend/filters.py:430 frontend/filters.py:455
-msgid "Arrived after incident"
-msgstr "Прибыл после происшествия"
-
-#: frontend/filters.py:431 frontend/filters.py:456
-msgid "Incident was reported"
-msgstr "О происшествии сообщено"
-
-#: frontend/filters.py:473
+#: frontend/filters.py:501
 #, python-format
 msgid "%(group)s Status"
 msgstr "%(group)s: статус"
 
-#: frontend/filters.py:474
+#: frontend/filters.py:502
 #, python-format
 msgid "%(group)s Partial"
 msgstr "%(group)s: частичное присутствие"
 
-#: frontend/filters.py:475
+#: frontend/filters.py:503
 #, python-format
 msgid "%(group)s Missing"
 msgstr "%(group)s: отсутствие "
 
-#: frontend/filters.py:476
+#: frontend/filters.py:504
 #, python-format
 msgid "%(group)s Complete"
 msgstr "%(group)s: в полном составе"
 
-#: frontend/filters.py:477
+#: frontend/filters.py:505
 #, python-format
 msgid "%(group)s Conflict"
 msgstr "%(group)s: конфликт"
 
-#: frontend/filters.py:492
-#: frontend/templates/frontend/submission_edit.html:192
+#: frontend/filters.py:512 frontend/filters.py:551
+#: frontend/templates/frontend/submission_edit.html:204
 msgid "Quarantine Status"
 msgstr "Статус карантина"
 
-#: frontend/filters.py:493
+#: frontend/filters.py:513 frontend/filters.py:552
 msgid "Quarantine None"
 msgstr "Нет карантина"
 
-#: frontend/filters.py:494
+#: frontend/filters.py:514 frontend/filters.py:553
 msgid "Quarantine All"
 msgstr "Все на карантине"
 
-#: frontend/filters.py:495
+#: frontend/filters.py:515 frontend/filters.py:554
 msgid "Quarantine Results"
 msgstr "Результаты карантина"
 
-#: frontend/forms.py:45 frontend/forms.py:48 frontend/forms.py:408
+#: frontend/filters.py:534
+msgid "Quality Check Criterion"
+msgstr ""
+
+#: frontend/filters.py:536
+msgid "Quality Check Condition"
+msgstr ""
+
+#: frontend/forms.py:45 frontend/forms.py:48 frontend/forms.py:411
 #: frontend/templates/frontend/form_list.html:85
 msgid "Location type"
 msgstr "Тип местоположения"
 
 #: frontend/forms.py:64 frontend/forms.py:132
-#: frontend/templates/frontend/critical_incidents_locations.html:32
 #: frontend/templates/frontend/form_list.html:44
 #: frontend/templates/frontend/location_builder.html:28
 #: frontend/templates/frontend/location_builder.html:73
@@ -276,6 +249,7 @@ msgstr "Тип местоположения"
 #: frontend/templates/frontend/participant_list.html:78
 #: frontend/templates/frontend/participant_performance_list.html:50
 #: frontend/templates/frontend/macros/participant_list_filter.html:7
+#: process_analysis/templates/process_analysis/critical_incidents_locations.html:32
 msgid "Name"
 msgstr "Имя"
 
@@ -284,7 +258,7 @@ msgstr "Имя"
 msgid "Gender"
 msgstr "Пол"
 
-#: frontend/forms.py:71 frontend/forms.py:140 frontend/forms.py:402
+#: frontend/forms.py:71 frontend/forms.py:140 frontend/forms.py:405
 #: frontend/templates/frontend/form_list.html:82
 #: frontend/templates/frontend/participant_list.html:80
 #: frontend/templates/frontend/participant_performance_list.html:51
@@ -304,11 +278,13 @@ msgstr "Партнер"
 #: frontend/forms.py:91 frontend/templates/frontend/participant_list.html:81
 #: frontend/templates/frontend/participant_performance_list.html:52
 #: frontend/templates/frontend/macros/participant_list_filter.html:16
+#: frontend/templates/frontend/macros/quality_assurance_list_macros.html:8
 #: frontend/templates/frontend/macros/submission_list_macros.html:8
 msgid "Phone"
 msgstr "Телефон"
 
 #: frontend/forms.py:92 frontend/forms.py:160
+#: frontend/templates/frontend/login_user.html:56
 msgid "Password"
 msgstr ""
 
@@ -325,7 +301,7 @@ msgstr "Идентификатор участника"
 msgid "Location ID"
 msgstr "Идентификатор места"
 
-#: frontend/forms.py:156
+#: frontend/forms.py:156 frontend/templates/frontend/login_user.html:48
 msgid "Email"
 msgstr "Электронная почта"
 
@@ -337,9 +313,10 @@ msgstr "Код телефонного номера"
 msgid "Group prefix"
 msgstr "Код группы"
 
-#: frontend/forms.py:173 frontend/templates/frontend/checklist_summary.html:37
-#: frontend/templates/frontend/checklist_summary_breakdown.html:33
-#: frontend/templates/frontend/critical_incident_summary.html:83
+#: frontend/forms.py:173
+#: process_analysis/templates/process_analysis/checklist_summary.html:37
+#: process_analysis/templates/process_analysis/checklist_summary_breakdown.html:33
+#: process_analysis/templates/process_analysis/critical_incident_summary.html:83
 #, python-format
 msgid "%(label)s"
 msgstr "%(label)s"
@@ -381,28 +358,17 @@ msgstr "%(label)s: зарегистрированные избиратели"
 msgid "Contributor and location cannot both be empty"
 msgstr "Поля «участник» и «место» не могут быть пустыми одновременно."
 
-#: frontend/forms.py:269
-msgid "I witnessed the incident"
-msgstr "Я присутствовал при происшествии"
-
-#: frontend/forms.py:270
-msgid "I arrived just after the incident"
-msgstr "Я прибыл сразу после происшествия"
-
-#: frontend/forms.py:271
-msgid "The incident was reported to me by someone else"
-msgstr "Я знаю о происшествии с чужих слов"
-
-#: frontend/forms.py:275 frontend/forms.py:277
+#: frontend/forms.py:269 frontend/forms.py:271
 #: frontend/templates/frontend/incident_add.html:10
 #: frontend/templates/frontend/participant_performance_detail.html:13
 #: frontend/templates/frontend/submission_edit.html:31
 #: frontend/templates/frontend/submission_history.html:28
+#: frontend/templates/frontend/macros/quality_assurance_list_macros.html:7
 #: frontend/templates/frontend/macros/submission_list_macros.html:7
 msgid "Participant"
 msgstr "Участник"
 
-#: frontend/forms.py:376 frontend/views_admin.py:96
+#: frontend/forms.py:376 frontend/views_admin.py:112
 msgid "Event"
 msgstr "Событие"
 
@@ -414,134 +380,136 @@ msgstr "Выбрать событие"
 msgid "Data File"
 msgstr "Файл с данными"
 
-#: frontend/forms.py:399
+#: frontend/forms.py:402
 msgid "Select form"
 msgstr ""
 
-#: frontend/forms.py:405
+#: frontend/forms.py:408
 msgid "Select role"
 msgstr ""
 
-#: frontend/forms.py:411
+#: frontend/forms.py:414
 msgid "Select location type"
 msgstr ""
 
-#: frontend/template_filters.py:97
+#: frontend/template_filters.py:95
 msgid "N/A"
 msgstr "Недоступно"
 
-#: frontend/views_admin.py:43
+#: frontend/views_admin.py:57
 msgid "Deployment"
 msgstr "Распределение"
 
-#: frontend/views_admin.py:78
+#: frontend/views_admin.py:94
 msgid "Logo"
 msgstr "Логотип"
 
-#: frontend/views_admin.py:135
+#: frontend/views_admin.py:179
 msgid "Roles with access"
 msgstr "Роли и доступ"
 
-#: frontend/views_admin.py:165
+#: frontend/views_admin.py:213
 msgid "New password"
 msgstr "Новый пароль"
 
-#: frontend/views_admin.py:193
+#: frontend/views_admin.py:216
+msgid "Disable"
+msgstr ""
+
+#: frontend/views_admin.py:216
+msgid "Are you sure you want to disable selected users?"
+msgstr ""
+
+#: frontend/views_admin.py:219
+msgid "User(s) successfully disabled."
+msgstr ""
+
+#: frontend/views_admin.py:221
+msgid "Enable"
+msgstr ""
+
+#: frontend/views_admin.py:221
+msgid "Are you sure you want to enable selected users?"
+msgstr ""
+
+#: frontend/views_admin.py:224
+msgid "User(s) successfully enabled."
+msgstr ""
+
+#: frontend/views_admin.py:251
 msgid "Permissions"
 msgstr "Разрешения"
 
-#: frontend/views_dashboard.py:29 frontend/views_dashboard.py:38
+#: frontend/views_dashboard.py:33 frontend/views_dashboard.py:120
 msgid "Dashboard"
 msgstr "Панель управления"
 
-#: frontend/views_dashboard.py:128
+#: frontend/views_dashboard.py:129 submissions/views_submissions.py:68
+#: submissions/views_submissions.py:70
+msgid "Checklists"
+msgstr "Списки"
+
+#: frontend/views_dashboard.py:141
 msgid "Concurrent Events"
 msgstr "Одновременные события"
 
-#: frontend/views_dashboard.py:142
+#: frontend/views_dashboard.py:155
 msgid "Events"
 msgstr "События"
 
-#: frontend/templates/frontend/checklist_summary.html:10
-#: frontend/templates/frontend/checklist_summary_breakdown.html:9
-#: frontend/templates/frontend/critical_incident_summary.html:10
-#: frontend/templates/frontend/critical_incidents_locations.html:10
-#: frontend/templates/frontend/results.html:9
-#: frontend/templates/frontend/macros/dashboard_filter.html:13
-#: frontend/templates/frontend/macros/locations_list_filter.html:10
-#: frontend/templates/frontend/macros/participant_list_filter.html:28
-#: frontend/templates/frontend/macros/submission_list_filter.html:33
-msgid "Filter"
-msgstr "Отфильтровать"
+#: frontend/templates/403.html:5
+msgid "Forbidden Error"
+msgstr ""
 
-#: frontend/templates/frontend/checklist_summary.html:34
-#: frontend/templates/frontend/checklist_summary_breakdown.html:30
-#: frontend/templates/frontend/critical_incident_summary.html:80
-msgid "Mean"
-msgstr "Средние"
+#: frontend/templates/403.html:16
+msgid "Off Limits!"
+msgstr ""
 
-#: frontend/templates/frontend/checklist_summary.html:40
-#: frontend/templates/frontend/checklist_summary_breakdown.html:36
-#: frontend/templates/frontend/critical_incident_summary.html:86
-#: frontend/templates/frontend/results.html:50
-msgid "Reported"
-msgstr "Переданные"
+#: frontend/templates/403.html:17
+msgid ""
+"We understood your request, but we refuse to honor it! You are seeing this "
+"page because you were snooping around! Now paddle along before the buzzer "
+"goes off!"
+msgstr ""
 
-#: frontend/templates/frontend/checklist_summary.html:41
-#: frontend/templates/frontend/checklist_summary_breakdown.html:37
-#: frontend/templates/frontend/critical_incident_summary.html:87
-#: frontend/templates/frontend/quality_assurance_list.html:18
-#: frontend/templates/frontend/results.html:51
-msgid "Missing"
-msgstr "Отсутствующие"
+#: frontend/templates/404.html:5
+msgid "Page not found"
+msgstr ""
 
-#: frontend/templates/frontend/checklist_summary.html:44
-#: frontend/templates/frontend/critical_incident_summary.html:90
-#: submissions/models.py:192
-msgid "All"
-msgstr "Все"
+#: frontend/templates/404.html:16
+msgid "Oh No! Looks like you're lost!"
+msgstr ""
 
-#: frontend/templates/frontend/checklist_summary.html:67
-#: frontend/templates/frontend/critical_incident_summary.html:113
-msgid "No data available"
-msgstr "Нет данных"
+#: frontend/templates/404.html:17
+msgid ""
+"Don't freak out, maybe you entered the wrong address or clicked a bad link! "
+"Who knows, this could even be a fluke! :) I recommend you either verify the "
+"address or click the back arrow (&larr;) at the top left corner of the page,"
+" and cross-check the action you were trying to perform!"
+msgstr ""
 
-#: frontend/templates/frontend/checklist_summary_breakdown.html:55
-#: frontend/templates/frontend/critical_incident_summary.html:48
-#, python-format
-msgid "%(loc_type)s"
-msgstr "%(loc_type)s"
+#: frontend/templates/500.html:5
+msgid "Server Error"
+msgstr ""
 
-#: frontend/templates/frontend/critical_incident_summary.html:24
-#: frontend/templates/frontend/critical_incidents_locations.html:22
-msgid "Table"
-msgstr "Таблица"
+#: frontend/templates/500.html:16
+msgid "Zong! We screwed up :("
+msgstr ""
 
-#: frontend/templates/frontend/critical_incident_summary.html:25
-msgid "Charts"
-msgstr "Диаграмма"
+#: frontend/templates/500.html:17
+msgid ""
+"You shouldn't be seeing this page but you are because you're a genius and "
+"have found a rare bug in the software. Rest assured, we now know about it "
+"and will fix it ASAP!"
+msgstr ""
 
-#: frontend/templates/frontend/critical_incident_summary.html:29
-msgid "Summary"
-msgstr "Сводка"
+#: frontend/templates/frontend/_layout.html:92
+msgid "Admin"
+msgstr ""
 
-#: frontend/templates/frontend/critical_incident_summary.html:66
-msgid "Detail"
-msgstr "Подробности"
-
-#: frontend/templates/frontend/critical_incidents_locations.html:31
-msgid "Observer ID"
-msgstr "Идентификатор наблюдателя"
-
-#: frontend/templates/frontend/critical_incidents_locations.html:37
-msgid "Witnessed"
-msgstr "Засвидетельствовано"
-
-#: frontend/templates/frontend/critical_incidents_locations.html:39
-#: frontend/templates/frontend/incident_add.html:50
-#: frontend/templates/frontend/submission_edit.html:244
-msgid "Description"
-msgstr "Описание"
+#: frontend/templates/frontend/_layout.html:109
+msgid "Logout"
+msgstr ""
 
 #: frontend/templates/frontend/dashboard.html:76
 #: frontend/templates/frontend/location_list.html:80
@@ -549,12 +517,13 @@ msgstr "Описание"
 #: frontend/templates/frontend/participant_list.html:119
 #: frontend/templates/frontend/participant_performance_detail.html:62
 #: frontend/templates/frontend/participant_performance_list.html:87
-#: frontend/templates/frontend/quality_assurance_list.html:32
-#: frontend/templates/frontend/results.html:183
-#: frontend/templates/frontend/macros/submission_list_macros.html:69
-#: frontend/templates/frontend/macros/submission_list_macros.html:74
-#: frontend/templates/frontend/macros/submission_list_macros.html:81
-#: frontend/templates/frontend/macros/submission_list_macros.html:86
+#: frontend/templates/frontend/macros/quality_assurance_list_macros.html:42
+#: frontend/templates/frontend/macros/quality_assurance_list_macros.html:47
+#: frontend/templates/frontend/macros/submission_list_macros.html:79
+#: frontend/templates/frontend/macros/submission_list_macros.html:84
+#: frontend/templates/frontend/macros/submission_list_macros.html:91
+#: frontend/templates/frontend/macros/submission_list_macros.html:96
+#: result_analysis/templates/result_analysis/results.html:183
 msgid "No Data Available"
 msgstr "Данные недоступны"
 
@@ -601,7 +570,14 @@ msgstr ""
 msgid "Close"
 msgstr "Закрыть"
 
+#: frontend/templates/frontend/incident_add.html:46
+#: frontend/templates/frontend/submission_edit.html:274
+#: process_analysis/templates/process_analysis/critical_incidents_locations.html:38
+msgid "Description"
+msgstr "Описание"
+
 #: frontend/templates/frontend/location_builder.html:10
+#: frontend/templates/frontend/location_edit.html:22
 #: frontend/templates/frontend/participant_edit_modal.html:35
 #: frontend/templates/frontend/quality_assurance.html:3
 #: frontend/templates/frontend/macros/form_edit_form.html:21
@@ -645,10 +621,18 @@ msgstr "Удалить"
 msgid "Update"
 msgstr "Обновить"
 
+#: frontend/templates/frontend/location_edit.html:22
+#: frontend/templates/frontend/macros/form_edit_form.html:22
+#: frontend/templates/frontend/macros/send_message.html:23
+msgid "Cancel"
+msgstr "Отменить"
+
 #: frontend/templates/frontend/location_list.html:31
 #: frontend/templates/frontend/message_list.html:5
 #: frontend/templates/frontend/participant_list.html:34
 #: frontend/templates/frontend/participant_performance_list.html:15
+#: frontend/templates/frontend/quality_assurance_dashboard.html:7
+#: frontend/templates/frontend/quality_assurance_list.html:11
 #: frontend/templates/frontend/submission_list.html:21
 #: frontend/templates/frontend/submission_list.html:27
 msgid "Export"
@@ -666,8 +650,10 @@ msgstr "Код"
 #: frontend/templates/frontend/location_list.html:76
 #: frontend/templates/frontend/participant_list.html:87
 #: frontend/templates/frontend/participant_list.html:109
+#: frontend/templates/frontend/macros/quality_assurance_list_macros.html:13
+#: frontend/templates/frontend/macros/quality_assurance_list_macros.html:36
 #: frontend/templates/frontend/macros/submission_list_macros.html:20
-#: frontend/templates/frontend/macros/submission_list_macros.html:62
+#: frontend/templates/frontend/macros/submission_list_macros.html:72
 msgid "Edit"
 msgstr "Редактировать"
 
@@ -675,6 +661,24 @@ msgstr "Редактировать"
 #: frontend/templates/frontend/participant_list.html:266
 msgid "Invalid file."
 msgstr "Поврежденный файл."
+
+#: frontend/templates/frontend/login_user.html:5
+#: frontend/templates/frontend/login_user.html:26
+msgid "User Login"
+msgstr ""
+
+#: frontend/templates/frontend/login_user.html:32
+msgid ""
+"Your username and password <strong>did not match</strong>. Please try again."
+msgstr ""
+
+#: frontend/templates/frontend/login_user.html:37
+msgid "Sign In with Persona"
+msgstr ""
+
+#: frontend/templates/frontend/login_user.html:60
+msgid "Sign In"
+msgstr ""
 
 #: frontend/templates/frontend/message_list.html:19
 #: frontend/templates/frontend/message_list.html:53
@@ -701,7 +705,8 @@ msgstr "Искать"
 #: frontend/templates/frontend/message_list.html:34
 #: frontend/templates/frontend/macros/locations_list_filter.html:13
 #: frontend/templates/frontend/macros/participant_list_filter.html:31
-#: frontend/templates/frontend/macros/submission_list_filter.html:36
+#: frontend/templates/frontend/macros/quality_assurance_list_filter.html:21
+#: frontend/templates/frontend/macros/submission_list_filter.html:44
 msgid "Clear"
 msgstr "Очистить"
 
@@ -741,13 +746,14 @@ msgstr "Импортировать участников"
 
 #: frontend/templates/frontend/participant_list.html:41
 #: frontend/templates/frontend/participant_performance_list.html:18
-#: frontend/templates/frontend/submission_list.html:38
+#: frontend/templates/frontend/submission_list.html:39
 #: frontend/templates/frontend/macros/send_message.html:7
 msgid "Send Message"
 msgstr "Отправить сообщение"
 
 #: frontend/templates/frontend/participant_list.html:73
 #: frontend/templates/frontend/participant_performance_list.html:45
+#: frontend/templates/frontend/macros/quality_assurance_list_macros.html:3
 #: frontend/templates/frontend/macros/submission_list_macros.html:3
 msgid "ID"
 msgstr "Идентификатор"
@@ -785,7 +791,7 @@ msgstr "Оценка"
 
 #: frontend/templates/frontend/participant_performance_detail.html:40
 #: frontend/templates/frontend/participant_performance_list.html:53
-#: messaging/views_messages.py:20 messaging/views_messages.py:25
+#: messaging/views_messages.py:20 messaging/views_messages.py:26
 msgid "Messages"
 msgstr "Сообщения"
 
@@ -793,107 +799,6 @@ msgstr "Сообщения"
 #: frontend/templates/frontend/participant_performance_list.html:78
 msgid "View"
 msgstr "Просмотреть"
-
-#: frontend/templates/frontend/quality_assurance_list.html:14
-msgid "Quality Assurance Condition"
-msgstr "Условие контроля качества"
-
-#: frontend/templates/frontend/quality_assurance_list.html:15
-msgid "Flagged"
-msgstr "Помечено"
-
-#: frontend/templates/frontend/quality_assurance_list.html:16
-#: frontend/templates/frontend/macros/submission_list_macros.html:61
-#: submissions/models.py:21
-msgid "Verified"
-msgstr "Подтверждено"
-
-#: frontend/templates/frontend/quality_assurance_list.html:17
-#: submissions/models.py:32
-msgid "OK"
-msgstr "ОК"
-
-#: frontend/templates/frontend/results.html:35
-#: frontend/templates/frontend/results.html:53
-msgid "Turnout"
-msgstr "Явка"
-
-#: frontend/templates/frontend/results.html:36
-msgid "Total Votes"
-msgstr "Общее количество голосов"
-
-#: frontend/templates/frontend/results.html:38
-#: frontend/templates/frontend/results.html:64
-msgid "Rejected Ballots"
-msgstr "Недействительные бюллетени"
-
-#: frontend/templates/frontend/results.html:41
-#: frontend/templates/frontend/results.html:71
-msgid "Blank Ballots"
-msgstr "Незаполненные бюллетени"
-
-#: frontend/templates/frontend/results.html:43
-#: frontend/templates/frontend/results.html:77
-msgid "Total Valid"
-msgstr "Общее число действительных"
-
-#: frontend/templates/frontend/results.html:52
-msgid "Total Registered"
-msgstr "Всего зарегистрировано"
-
-#: frontend/templates/frontend/results.html:52
-msgid "TR"
-msgstr "Всего зарегистрировано"
-
-#: frontend/templates/frontend/results.html:55
-#: frontend/templates/frontend/results.html:56
-#: frontend/templates/frontend/results.html:60
-#: frontend/templates/frontend/results.html:61
-#: frontend/templates/frontend/results.html:66
-#: frontend/templates/frontend/results.html:67
-#: frontend/templates/frontend/results.html:73
-#: frontend/templates/frontend/results.html:74
-#: frontend/templates/frontend/results.html:81
-#: frontend/templates/frontend/results.html:82
-msgid "Margin of Error"
-msgstr "Предел погрешности"
-
-#: frontend/templates/frontend/results.html:55
-#: frontend/templates/frontend/results.html:60
-#: frontend/templates/frontend/results.html:66
-#: frontend/templates/frontend/results.html:73
-#: frontend/templates/frontend/results.html:81
-msgid "MoE 95%"
-msgstr "Предел погрешности 95%"
-
-#: frontend/templates/frontend/results.html:56
-#: frontend/templates/frontend/results.html:61
-#: frontend/templates/frontend/results.html:67
-#: frontend/templates/frontend/results.html:74
-#: frontend/templates/frontend/results.html:82
-msgid "MoE 99%"
-msgstr "Предел погрешности 99%"
-
-#: frontend/templates/frontend/results.html:58
-#: frontend/templates/frontend/results.html:79
-msgid "Votes"
-msgstr "Голоса"
-
-#: frontend/templates/frontend/results.html:64
-msgid "RB"
-msgstr "Недействительные бюллетени"
-
-#: frontend/templates/frontend/results.html:71
-msgid "BB"
-msgstr "Незаполненные бюллетени"
-
-#: frontend/templates/frontend/results.html:77
-msgid "TV"
-msgstr "Общее число действительных"
-
-#: frontend/templates/frontend/results.html:212
-msgid "Convergence Chart"
-msgstr "Диаграмма сходимости"
 
 #: frontend/templates/frontend/submission_edit.html:5
 #: frontend/templates/frontend/submission_history.html:5
@@ -904,16 +809,29 @@ msgstr "История"
 msgid "Texted Phone"
 msgstr "Отправленный номер телефона"
 
-#: frontend/templates/frontend/submission_edit.html:149
+#: frontend/templates/frontend/submission_edit.html:121
+msgid "Validation Errors!"
+msgstr ""
+
+#: frontend/templates/frontend/submission_edit.html:121
+msgid ""
+"The following conditions were flagged while validating this submission."
+msgstr ""
+
+#: frontend/templates/frontend/submission_edit.html:161
 msgid "Confidence Level"
 msgstr "Уровень конфиденциальности"
 
-#: frontend/templates/frontend/submission_edit.html:176
-#: frontend/templates/frontend/submission_edit.html:178
+#: frontend/templates/frontend/submission_edit.html:188
+#: frontend/templates/frontend/submission_edit.html:190
 msgid "Overridden Field"
 msgstr "Аннулированные поля"
 
-#: frontend/templates/frontend/submission_edit.html:270
+#: frontend/templates/frontend/submission_edit.html:223
+msgid "Verification Status"
+msgstr ""
+
+#: frontend/templates/frontend/submission_edit.html:300
 msgid "No comment."
 msgstr "Нет комментариев."
 
@@ -949,14 +867,28 @@ msgstr "Данные наблюдателей"
 msgid "Master Data"
 msgstr "Основные данные"
 
-#: frontend/templates/frontend/macros/dashboard_filter.html:16
+#: frontend/templates/frontend/submission_list.html:32
+msgid "Aggregated Data"
+msgstr ""
+
+#: frontend/templates/frontend/macros/dashboard_filter.html:10
+#: frontend/templates/frontend/macros/locations_list_filter.html:10
+#: frontend/templates/frontend/macros/participant_list_filter.html:28
+#: frontend/templates/frontend/macros/quality_assurance_dashboard_filter.html:10
+#: frontend/templates/frontend/macros/quality_assurance_list_filter.html:18
+#: frontend/templates/frontend/macros/submission_list_filter.html:41
+#: process_analysis/templates/process_analysis/checklist_summary.html:10
+#: process_analysis/templates/process_analysis/checklist_summary_breakdown.html:9
+#: process_analysis/templates/process_analysis/critical_incident_summary.html:10
+#: process_analysis/templates/process_analysis/critical_incidents_locations.html:10
+#: result_analysis/templates/result_analysis/results.html:9
+msgid "Filter"
+msgstr "Отфильтровать"
+
+#: frontend/templates/frontend/macros/dashboard_filter.html:13
+#: frontend/templates/frontend/macros/quality_assurance_dashboard_filter.html:13
 msgid "Reset"
 msgstr "Перезагрузить"
-
-#: frontend/templates/frontend/macros/form_edit_form.html:22
-#: frontend/templates/frontend/macros/send_message.html:23
-msgid "Cancel"
-msgstr "Отменить"
 
 #: frontend/templates/frontend/macros/pagination.html:4
 msgid "First Page"
@@ -987,6 +919,37 @@ msgstr "из"
 #: frontend/templates/frontend/macros/participant_list_filter.html:25
 msgid "All Groups"
 msgstr "Все группы"
+
+#: frontend/templates/frontend/macros/quality_assurance_list_macros.html:12
+#: frontend/templates/frontend/macros/submission_list_macros.html:19
+msgid "Phone Verification"
+msgstr "Подтверждение телефона"
+
+#: frontend/templates/frontend/macros/quality_assurance_list_macros.html:27
+#: frontend/templates/frontend/macros/quality_assurance_list_macros.html:35
+#: frontend/templates/frontend/macros/submission_list_macros.html:71
+#: submissions/aggregation.py:9 submissions/models.py:22
+msgid "Verified"
+msgstr "Подтверждено"
+
+#: frontend/templates/frontend/macros/quality_assurance_list_macros.html:29
+#: submissions/aggregation.py:8 submissions/models.py:33
+msgid "OK"
+msgstr "ОК"
+
+#: frontend/templates/frontend/macros/quality_assurance_list_macros.html:30
+#: submissions/aggregation.py:10
+msgid "Flagged"
+msgstr "Помечено"
+
+#: frontend/templates/frontend/macros/quality_assurance_list_macros.html:31
+msgid "Insufficient Data"
+msgstr ""
+
+#: frontend/templates/frontend/macros/quality_assurance_list_macros.html:35
+#: frontend/templates/frontend/macros/submission_list_macros.html:71
+msgid "Unverified"
+msgstr "Не подтвержден"
 
 #: frontend/templates/frontend/macros/send_message.html:14
 msgid "To"
@@ -1039,13 +1002,9 @@ msgstr "Ошибка"
 msgid "Please try sending again"
 msgstr "Попробуйте ещё раз"
 
-#: frontend/templates/frontend/macros/submission_list_filter.html:28
+#: frontend/templates/frontend/macros/submission_list_filter.html:37
 msgid "All Statuses"
 msgstr "Все статусы"
-
-#: frontend/templates/frontend/macros/submission_list_macros.html:19
-msgid "Phone Verification"
-msgstr "Подтверждение телефона"
 
 #: frontend/templates/frontend/macros/submission_list_macros.html:35
 msgid "complete"
@@ -1063,11 +1022,11 @@ msgstr "отсутствует"
 msgid "conflict"
 msgstr "проблема"
 
-#: frontend/templates/frontend/macros/submission_list_macros.html:61
-msgid "Unverified"
-msgstr "Не подтвержден"
+#: frontend/templates/frontend/macros/submission_list_macros.html:49
+msgid "data present"
+msgstr ""
 
-#: locations/tasks.py:183
+#: locations/tasks.py:184
 msgid "Locations Import Report"
 msgstr "Отчет об импорте местоположения"
 
@@ -1087,27 +1046,49 @@ msgstr "Административные подразделения"
 msgid "Your changes have been saved."
 msgstr "Изменения сохранены."
 
-#: messaging/helpers.py:30
+#: messaging/helpers.py:35
 msgid "Thank you! Your report was received! You sent: {text}"
 msgstr "Спасибо, ваш отчет получен! Вы написали: {text}"
 
-#: messaging/helpers.py:40
+#: messaging/helpers.py:44
+msgid "Unknown question codes: \"{questions}\". You sent: {text}"
+msgstr "Неопознанные коды вопросов: «{questions}». Вы написали: {text}"
+
+#: messaging/helpers.py:53
+msgid "Invalid text sent: \"{extra}\". You sent: {text}"
+msgstr ""
+
+#: messaging/helpers.py:62
 msgid ""
 "Observer ID not found. Please resend with valid Observer ID. You sent: "
 "{text}"
 msgstr "Этот идентификатор наблюдателя не обнаружен. Повторите отправку с использованием корректного идентификатора наблюдателя. Вы написали: {text}"
 
-#: messaging/helpers.py:50
-msgid "Unknown question codes: \"{questions}\". You sent: {text}"
-msgstr "Неопознанные коды вопросов: «{questions}». Вы написали: {text}"
-
-#: messaging/helpers.py:64
+#: messaging/helpers.py:72
 msgid "Invalid response(s) for question(s): \"{questions}\". You sent: {text}"
 msgstr "Недопустимый ответ на вопрос(ы): «{questions}». Вы написали: {text}"
 
-#: messaging/helpers.py:75
+#: messaging/helpers.py:83
 msgid "Invalid message: \"{text}\". Please check and resend!"
 msgstr "Недопустимое сообщение: «{text}». Проверьте и попробуйте еще раз!"
+
+#: odk/views_odk.py:120
+msgid "Invalid Form Specified"
+msgstr ""
+
+#: odk/views_odk.py:124
+msgid "Invalid Participant ID"
+msgstr ""
+
+#: odk/views_odk.py:150
+msgid "Checklist Not Found"
+msgstr ""
+
+#: odk/views_odk.py:190
+msgid ""
+"Your submission was received, but you sent it using an outdated form. Please"
+" download a new copy and resend. Thank you."
+msgstr ""
 
 #: participants/models.py:72
 msgid "Female"
@@ -1116,6 +1097,10 @@ msgstr "Женский"
 #: participants/models.py:73
 msgid "Male"
 msgstr "Мужской"
+
+#: participants/models.py:74
+msgid "Unspecified"
+msgstr "Не уточнено"
 
 #: participants/tasks.py:177
 #, python-format
@@ -1136,103 +1121,264 @@ msgstr "Супервизор с таким идентификатором (%(id)
 msgid "Import report"
 msgstr "Импортировать отчет"
 
-#: participants/views_participants.py:45 participants/views_participants.py:51
+#: participants/views_participants.py:45 participants/views_participants.py:52
 msgid "Participants"
 msgstr "Участники"
 
-#: participants/views_participants.py:138
+#: participants/views_participants.py:139
 msgid "Participants Performance"
 msgstr "Работа участников"
 
-#: participants/views_participants.py:220
+#: participants/views_participants.py:221
 msgid "Participant Performance"
 msgstr "Работа участника"
 
-#: participants/views_participants.py:263
+#: participants/views_participants.py:264
 #, python-format
 msgid "Edit Participant · %(participant_id)s"
 msgstr "Редактировать участника · %(participant_id)s"
 
-#: submissions/models.py:19
+#: process_analysis/views_process.py:57
+#, python-format
+msgid "%(form)s Analysis"
+msgstr "%(form)s: анализ"
+
+#: process_analysis/views_process.py:138
+msgid "Analyses"
+msgstr ""
+
+#: process_analysis/templates/process_analysis/checklist_summary.html:34
+#: process_analysis/templates/process_analysis/checklist_summary_breakdown.html:30
+#: process_analysis/templates/process_analysis/critical_incident_summary.html:80
+msgid "Mean"
+msgstr "Средние"
+
+#: process_analysis/templates/process_analysis/checklist_summary.html:40
+#: process_analysis/templates/process_analysis/checklist_summary_breakdown.html:36
+#: process_analysis/templates/process_analysis/critical_incident_summary.html:86
+#: result_analysis/templates/result_analysis/results.html:50
+msgid "Reported"
+msgstr "Переданные"
+
+#: process_analysis/templates/process_analysis/checklist_summary.html:41
+#: process_analysis/templates/process_analysis/checklist_summary_breakdown.html:37
+#: process_analysis/templates/process_analysis/critical_incident_summary.html:87
+#: result_analysis/templates/result_analysis/results.html:51
+#: submissions/aggregation.py:11
+msgid "Missing"
+msgstr "Отсутствующие"
+
+#: process_analysis/templates/process_analysis/checklist_summary.html:44
+#: process_analysis/templates/process_analysis/critical_incident_summary.html:90
+#: submissions/models.py:203
+msgid "All"
+msgstr "Все"
+
+#: process_analysis/templates/process_analysis/checklist_summary.html:67
+#: process_analysis/templates/process_analysis/critical_incident_summary.html:113
+msgid "No data available"
+msgstr "Нет данных"
+
+#: process_analysis/templates/process_analysis/checklist_summary_breakdown.html:55
+#: process_analysis/templates/process_analysis/critical_incident_summary.html:48
+#, python-format
+msgid "%(loc_type)s"
+msgstr "%(loc_type)s"
+
+#: process_analysis/templates/process_analysis/critical_incident_summary.html:24
+#: process_analysis/templates/process_analysis/critical_incidents_locations.html:22
+msgid "Table"
+msgstr "Таблица"
+
+#: process_analysis/templates/process_analysis/critical_incident_summary.html:25
+msgid "Charts"
+msgstr "Диаграмма"
+
+#: process_analysis/templates/process_analysis/critical_incident_summary.html:29
+msgid "Summary"
+msgstr "Сводка"
+
+#: process_analysis/templates/process_analysis/critical_incident_summary.html:66
+msgid "Detail"
+msgstr "Подробности"
+
+#: process_analysis/templates/process_analysis/critical_incidents_locations.html:31
+msgid "Observer ID"
+msgstr "Идентификатор наблюдателя"
+
+#: result_analysis/views_results.py:45
+#, python-format
+msgid "%(form_name)s Voting Results"
+msgstr "%(form_name)s: результаты голосования"
+
+#: result_analysis/templates/result_analysis/results.html:35
+#: result_analysis/templates/result_analysis/results.html:53
+msgid "Turnout"
+msgstr "Явка"
+
+#: result_analysis/templates/result_analysis/results.html:36
+msgid "Total Votes"
+msgstr "Общее количество голосов"
+
+#: result_analysis/templates/result_analysis/results.html:38
+#: result_analysis/templates/result_analysis/results.html:64
+msgid "Rejected Ballots"
+msgstr "Недействительные бюллетени"
+
+#: result_analysis/templates/result_analysis/results.html:41
+#: result_analysis/templates/result_analysis/results.html:71
+msgid "Blank Ballots"
+msgstr "Незаполненные бюллетени"
+
+#: result_analysis/templates/result_analysis/results.html:43
+#: result_analysis/templates/result_analysis/results.html:77
+msgid "Total Valid"
+msgstr "Общее число действительных"
+
+#: result_analysis/templates/result_analysis/results.html:52
+msgid "Total Registered"
+msgstr "Всего зарегистрировано"
+
+#: result_analysis/templates/result_analysis/results.html:52
+msgid "TR"
+msgstr "Всего зарегистрировано"
+
+#: result_analysis/templates/result_analysis/results.html:55
+#: result_analysis/templates/result_analysis/results.html:56
+#: result_analysis/templates/result_analysis/results.html:60
+#: result_analysis/templates/result_analysis/results.html:61
+#: result_analysis/templates/result_analysis/results.html:66
+#: result_analysis/templates/result_analysis/results.html:67
+#: result_analysis/templates/result_analysis/results.html:73
+#: result_analysis/templates/result_analysis/results.html:74
+#: result_analysis/templates/result_analysis/results.html:81
+#: result_analysis/templates/result_analysis/results.html:82
+msgid "Margin of Error"
+msgstr "Предел погрешности"
+
+#: result_analysis/templates/result_analysis/results.html:55
+#: result_analysis/templates/result_analysis/results.html:60
+#: result_analysis/templates/result_analysis/results.html:66
+#: result_analysis/templates/result_analysis/results.html:73
+#: result_analysis/templates/result_analysis/results.html:81
+#, python-format
+msgid "MoE 95%%"
+msgstr ""
+
+#: result_analysis/templates/result_analysis/results.html:56
+#: result_analysis/templates/result_analysis/results.html:61
+#: result_analysis/templates/result_analysis/results.html:67
+#: result_analysis/templates/result_analysis/results.html:74
+#: result_analysis/templates/result_analysis/results.html:82
+#, python-format
+msgid "MoE 99%%"
+msgstr ""
+
+#: result_analysis/templates/result_analysis/results.html:58
+#: result_analysis/templates/result_analysis/results.html:79
+msgid "Votes"
+msgstr "Голоса"
+
+#: result_analysis/templates/result_analysis/results.html:64
+msgid "RB"
+msgstr "Недействительные бюллетени"
+
+#: result_analysis/templates/result_analysis/results.html:71
+msgid "BB"
+msgstr "Незаполненные бюллетени"
+
+#: result_analysis/templates/result_analysis/results.html:77
+msgid "TV"
+msgstr "Общее число действительных"
+
+#: result_analysis/templates/result_analysis/results.html:212
+msgid "Convergence Chart"
+msgstr "Диаграмма сходимости"
+
+#: submissions/models.py:20
 msgid "No Problem"
 msgstr "Нет проблем"
 
-#: submissions/models.py:20
+#: submissions/models.py:21
 msgid "Problem"
 msgstr "Проблема"
 
-#: submissions/models.py:33
+#: submissions/models.py:34
 msgid "MISSING"
 msgstr "ОТСУТСТВУЕТ"
 
-#: submissions/models.py:34
+#: submissions/models.py:35
 msgid "FLAGGED"
 msgstr "ПОМЕЧЕНО"
 
-#: submissions/models.py:35
+#: submissions/models.py:36
 msgid "VERIFIED"
 msgstr "ПОДТВЕРЖДЕНО"
 
-#: submissions/models.py:40
+#: submissions/models.py:37
+msgid "REJECTED"
+msgstr ""
+
+#: submissions/models.py:42
 msgid "Status — No Problem"
 msgstr "Статус: нет проблем"
 
-#: submissions/models.py:41
+#: submissions/models.py:43
 msgid "Status — Unverified"
 msgstr "Статус: не подтверждено"
 
-#: submissions/models.py:42
+#: submissions/models.py:44
 msgid "Status — Verified"
 msgstr "Статус: подтверждено"
 
-#: submissions/models.py:43
+#: submissions/models.py:45
 msgid "Status — Rejected"
 msgstr "Статус: отклонено"
 
-#: submissions/models.py:187
+#: submissions/models.py:198
 msgid "Observer Submission"
 msgstr "Подтверждение наблюдателя"
 
-#: submissions/models.py:188
+#: submissions/models.py:199
 msgid "Master Submission"
 msgstr "Основное подтверждение"
 
-#: submissions/models.py:191
+#: submissions/models.py:202
 msgid "None"
 msgstr "Нет"
 
-#: submissions/models.py:193
+#: submissions/models.py:204
 msgid "Results"
 msgstr "Результаты"
 
-#: submissions/models.py:699
+#: submissions/models.py:207
+msgid "Unconfirmed"
+msgstr ""
+
+#: submissions/models.py:773
 msgid "SMS"
 msgstr "СМС"
 
-#: submissions/models.py:700
+#: submissions/models.py:774
 msgid "Web"
 msgstr "Веб"
 
-#: submissions/models.py:701
+#: submissions/models.py:775
 msgid "API"
 msgstr "API"
 
-#: submissions/views_submissions.py:37 submissions/views_submissions.py:39
-msgid "Checklists"
-msgstr "Списки"
-
-#: submissions/views_submissions.py:44 submissions/views_submissions.py:47
+#: submissions/views_submissions.py:75 submissions/views_submissions.py:78
 msgid "Critical Incidents"
 msgstr "Критические события"
 
-#: submissions/views_submissions.py:151
+#: submissions/views_submissions.py:196
 msgid "Add Submission"
 msgstr "Добавить подчинение"
 
-#: submissions/views_submissions.py:199
+#: submissions/views_submissions.py:244
 msgid "Edit Submission"
 msgstr "Редактировать подчинение"
 
-#: submissions/views_submissions.py:500
+#: submissions/views_submissions.py:580
 msgid "View submission"
 msgstr "Просмотреть подчинение"

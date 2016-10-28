@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from apollo.core import Service, cache
 from apollo.locations.models import Sample, LocationType, Location
 import unicodecsv

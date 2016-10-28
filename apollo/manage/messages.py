@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import calendar
 from datetime import datetime
 from urlparse import urljoin

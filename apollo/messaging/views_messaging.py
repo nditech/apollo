@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from apollo.frontend import route
 from apollo import services
 from apollo.core import csrf
@@ -6,6 +7,8 @@ from apollo.messaging.helpers import parse_message
 from apollo.messaging.utils import parse_text
 from flask import Blueprint, make_response, request, g, current_app
 import json
+import re
+from unidecode import unidecode
 
 
 bp = Blueprint('messaging', __name__)
@@ -75,6 +78,9 @@ def kannel_view():
 
         response, submission, had_errors = parse_message(form)
 
+        if current_app.config.get(u'TRANSLITERATE_OUTPUT'):
+            response = unidecode(response)
+
         outgoing = services.messages.log_message(
             event=g.event, recipient=msg.get('sender'), text=response,
             direction='OUT', timestamp=msg.get('timestamp'))
@@ -93,6 +99,10 @@ def telerivet_view():
     if secret != current_app.config.get('MESSAGING_SECRET'):
         return ''
 
+    # if the sender is the same as the recipient, then don't respond
+    if re.sub(r'[^\d]', '', request.form.get('from_number')) == re.sub(r'[^\d]', '', request.form.get('to_number')):
+        return ''
+
     form = TelerivetForm(request.form)
     if form.validate():
         msg = form.get_message()
@@ -101,6 +111,8 @@ def telerivet_view():
             direction='IN', timestamp=msg.get('timestamp'))
 
         response_text, submission, had_errors = parse_message(form)
+        if current_app.config.get(u'TRANSLITERATE_OUTPUT'):
+            response_text = unidecode(response_text)
         response = {'messages': [{'content': response_text}]}
         http_response = make_response(json.dumps(response))
         http_response.headers['Content-Type'] = 'application/json'

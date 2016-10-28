@@ -1,4 +1,4 @@
-# coding: utf-8
+# -*- coding: utf-8 -*-
 from apollo.core import db
 from apollo.deployments.models import Deployment, Event
 from apollo.formsframework.models import Form
@@ -280,17 +280,18 @@ class Submission(db.DynamicDocument):
         '''Computes the completion status of each form group for a submission.
         Should be called automatically on save, preferably in the `clean`
         method.'''
+        completion = {}
         if self.master != self:
             for group in self.form.groups:
                 completed = [getattr(self.master, f.name, None) is not None
                              for f in group.fields]
 
                 if all(completed):
-                    self.completion[group.name] = 'Complete'
+                    completion[group.name] = 'Complete'
                 elif any(completed):
-                    self.completion[group.name] = 'Partial'
+                    completion[group.name] = 'Partial'
                 else:
-                    self.completion[group.name] = 'Missing'
+                    completion[group.name] = 'Missing'
 
         elif self.master == self:
             # update sibling submissions
@@ -298,11 +299,11 @@ class Submission(db.DynamicDocument):
                 completed = [getattr(self, f.name, None) is not None
                              for f in group.fields]
                 if all(completed):
-                    self.completion[group.name] = 'Complete'
+                    completion[group.name] = 'Complete'
                 elif any(completed):
-                    self.completion[group.name] = 'Partial'
+                    completion[group.name] = 'Partial'
                 else:
-                    self.completion[group.name] = 'Missing'
+                    completion[group.name] = 'Missing'
 
             for group in self.form.groups:
                 fields_to_check = filter(
@@ -317,6 +318,7 @@ class Submission(db.DynamicDocument):
                     self.quarantine_status = 'A'  # quarantine all records
 
                 for submission in observer_submissions:
+                    sub_completion = {}
                     # check for conflicting values in the submissions
                     for field in fields_to_check:
                         field_values = set(
@@ -327,8 +329,8 @@ class Submission(db.DynamicDocument):
                                        [getattr(s, field, None)
                                         for s in not_quarantined])))
                         if len(field_values) > 1:  # there are different values
-                            submission.completion[group.name] = 'Conflict'
-                            self.completion[group.name] = 'Conflict'
+                            sub_completion[group.name] = 'Conflict'
+                            completion[group.name] = 'Conflict'
                             break
                     else:
                         # if there's no conflicting fields then compute the
@@ -337,13 +339,16 @@ class Submission(db.DynamicDocument):
                             getattr(submission, f.name, None) is not None
                             for f in group.fields]
                         if all(completed):
-                            submission.completion[group.name] = 'Complete'
+                            sub_completion[group.name] = 'Complete'
                         elif any(completed):
-                            submission.completion[group.name] = 'Partial'
+                            sub_completion[group.name] = 'Partial'
                         else:
-                            submission.completion[group.name] = 'Missing'
+                            sub_completion[group.name] = 'Missing'
 
+                    submission.completion = sub_completion
                     submission.save(clean=False)
+
+        self.completion = completion
 
     def _update_confidence(self):
         '''Computes the confidence score for the fields in the master.

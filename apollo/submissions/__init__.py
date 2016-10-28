@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from apollo.core import Service
 from apollo.submissions.models import (
     Submission, SubmissionComment, SubmissionVersion)

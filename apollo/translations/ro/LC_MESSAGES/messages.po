@@ -3,124 +3,127 @@
 # This file is distributed under the same license as the PROJECT project.
 # 
 # Translators:
-# AR C2 <e2f458fd4s512@outlook.com>, 2015
-# Nathalie Sleimane <nsleimane@ndi.org>, 2016
+# Amanda Pleasant <apleasant@ndi.org>, 2016
+# Ben Mindes <bmindes@ndi.org>, 2016
+# Bradley McCandless <bmccandless@ndi.org>, 2016
+# Margaret <msuter@ndi.org>, 2016
+# Vadim Vieru <vadim.wieru@gmail.com>, 2016
 msgid ""
 msgstr ""
 "Project-Id-Version: Elections DemTool\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2016-09-14 17:25+0100\n"
-"PO-Revision-Date: 2016-09-14 16:27+0000\n"
-"Last-Translator: Tim Akinbo <takinbo@timbaobjects.com>\n"
-"Language-Team: Arabic (http://www.transifex.com/nditech/apollo/language/ar/)\n"
+"PO-Revision-Date: 2016-10-28 07:22+0000\n"
+"Last-Translator: Vadim Vieru <vadim.wieru@gmail.com>\n"
+"Language-Team: Romanian (http://www.transifex.com/nditech/apollo/language/ro/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 1.3\n"
-"Language: ar\n"
-"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+"Language: ro\n"
+"Plural-Forms: nplurals=3; plural=(n==1?0:(((n%100>19)||((n%100==0)&&(n!=0)))?2:1));\n"
 
 #: wtforms_ext.py:92
 msgid "Not a valid choice!"
-msgstr "ليست اختيارًا صالحًا!"
+msgstr "Nu este o optiune valida!"
 
 #: wtforms_ext.py:121 formsframework/custom_fields.py:32
 #, python-format
 msgid "'%(value)s' is not a valid choice for this field"
-msgstr "'%(value)s' ليست اختيارًا صالحًا لهذا الحقل"
+msgstr "%(value)s nu este o opțiune validă pentru acest domeniu"
 
 #: deployments/forms.py:14 frontend/views_dashboard.py:160
 msgid "Choose Event"
-msgstr "حدد حدثًا"
+msgstr "Alegeti Evenimentul"
 
 #: formsframework/models.py:67
 msgid "Not Applicable"
-msgstr "لا ينطبق"
+msgstr "Nu se aplica"
 
 #: formsframework/models.py:68 process_analysis/views_process.py:144
 msgid "Process Analysis"
-msgstr "تحليل العملية"
+msgstr "Analiza proceselor"
 
 #: formsframework/models.py:69 result_analysis/views_results.py:435
 msgid "Results Analysis"
-msgstr "تحليل النتائج"
+msgstr "Rezultate Analiza"
 
 #: formsframework/models.py:115
 msgid "Checklist Form"
-msgstr "نموذج قائمة المراجعة"
+msgstr "Lista de verificare Formular OTS"
 
 #: formsframework/models.py:116
 msgid "Incident Form"
-msgstr "نموذج الحادث"
+msgstr "Formular de incident"
 
 #: formsframework/models.py:123
 msgid ""
 "Require exclamation (!) mark in text message? (Does not apply to Checklist "
 "Forms)"
-msgstr "يتطلب علامة تعجب (!) في رسالة نصية؟ (لا ينطبق على نماذج قوائم المراجعة)"
+msgstr "Solicite exclamarii (!) În semn de mesaj de tip text? (Nu se aplică Formulare Lista de verificare)"
 
 #: formsframework/models.py:133
 msgid "Accredited Voters"
-msgstr "الناخبون المعتمدون"
+msgstr "Alegători acreditați"
 
 #: formsframework/models.py:135 frontend/templates/frontend/form_list.html:60
 #: submissions/views_submissions.py:598 submissions/views_submissions.py:645
 #: submissions/views_submissions.py:651
 msgid "Quality Assurance"
-msgstr "ضمان الجودة"
+msgstr "Asigurarea calității"
 
 #: formsframework/models.py:136
 msgid "Invalid Votes"
-msgstr "الأصوات غير الصحيحة"
+msgstr "Voturi nevalabile"
 
 #: formsframework/models.py:137
 msgid "Registered Voters"
-msgstr "الناخبون المسجلون"
+msgstr "Alegători înregistrați"
 
 #: formsframework/models.py:138
 msgid "Blank Votes"
-msgstr "الأصوات الفارغة"
+msgstr "Voturi neutilizate"
 
 #: formsframework/models.py:140
 msgid "Permitted Roles"
-msgstr "الأدوار المسموح بها"
+msgstr "Roluri permise"
 
 #: formsframework/views_forms.py:37
 msgid ""
 "Checklists are being created for the form, role and location type you "
 "selected in the current event"
-msgstr "تمّ إنشاء قوائم المراجعة للنموذج والدور ونوع الموقع الذي اخترته في إطار الحدث الحالي"
+msgstr "Liste de verificare sunt create pentru tipul de formular, rolul și locul în care ați selectat evenimentul curentă"
 
 #: formsframework/views_forms.py:47
 msgid "Checklists were not created"
-msgstr "لم يتمّ إنشاء قوائم المراجعة "
+msgstr "Listele de control nu au fost create"
 
 #: formsframework/views_forms.py:58
 msgid "Form Builder"
-msgstr "منشئ النموذج"
+msgstr "Constructor de formulare"
 
 #: formsframework/views_forms.py:84
 msgid "Create form"
-msgstr "إنشاء نموذج"
+msgstr "Crează un formular"
 
 #: formsframework/views_forms.py:113
 #, python-format
 msgid "Edit %(name)s"
-msgstr "تحرير %(name)s  "
+msgstr "Editează%(name)s"
 
 #: formsframework/views_forms.py:134 formsframework/views_forms.py:139
 msgid "Forms"
-msgstr "النماذج"
+msgstr "Formulare"
 
 #: formsframework/views_forms.py:158 submissions/views_submissions.py:609
 #: submissions/views_submissions.py:660
 #, python-format
 msgid "Quality Assurance — %(name)s"
-msgstr "ضمان الجودة - %(name)s"
+msgstr "Asigurarea calității — %(name)s"
 
 #: frontend/filters.py:30 frontend/forms.py:397
 msgid "Form"
-msgstr "النموذج"
+msgstr "Formular"
 
 #: frontend/filters.py:75 frontend/forms.py:81 frontend/forms.py:279
 #: frontend/forms.py:281 frontend/templates/frontend/incident_add.html:14
@@ -131,30 +134,30 @@ msgstr "النموذج"
 #: process_analysis/templates/process_analysis/critical_incident_summary.html:32
 #: process_analysis/templates/process_analysis/critical_incidents_locations.html:36
 msgid "Location"
-msgstr "الموقع"
+msgstr "Locație"
 
 #: frontend/filters.py:90
 msgid "Sample"
-msgstr "العينة"
+msgstr "Eșantion"
 
 #: frontend/filters.py:187
 msgid "All Organizations"
-msgstr "كل المنظمات"
+msgstr "toate organizațiile"
 
 #: frontend/filters.py:202
 msgid "All Roles"
-msgstr "كل الأدوار"
+msgstr "toate rolurile"
 
 #: frontend/filters.py:293
 msgid "All Types"
-msgstr "كل الأنواع"
+msgstr "Toate tipurile"
 
 #: frontend/filters.py:340 frontend/filters.py:452 frontend/filters.py:472
 #: frontend/forms.py:262
 #: frontend/templates/frontend/macros/submission_list_macros.html:64
 #: process_analysis/templates/process_analysis/critical_incidents_locations.html:54
 msgid "Unmarked"
-msgstr "غير محدد"
+msgstr "nemarcată"
 
 #: frontend/filters.py:341 frontend/filters.py:453 frontend/filters.py:473
 #: frontend/forms.py:263
@@ -162,7 +165,7 @@ msgstr "غير محدد"
 #: process_analysis/templates/process_analysis/critical_incidents_locations.html:50
 #: submissions/models.py:208
 msgid "Confirmed"
-msgstr "مؤكد"
+msgstr "Confirmat"
 
 #: frontend/filters.py:341 frontend/filters.py:453 frontend/filters.py:473
 #: frontend/forms.py:264
@@ -171,12 +174,12 @@ msgstr "مؤكد"
 #: process_analysis/templates/process_analysis/critical_incidents_locations.html:52
 #: submissions/models.py:23
 msgid "Rejected"
-msgstr "مرفوض"
+msgstr "Respins"
 
 #: frontend/filters.py:342 frontend/filters.py:454 frontend/filters.py:474
 #: frontend/forms.py:265
 msgid "Citizen Report"
-msgstr "تقرير المواطن"
+msgstr "Raport recepționat de la cetățean"
 
 #: frontend/filters.py:452 frontend/filters.py:472
 #: frontend/templates/frontend/incident_add.html:50
@@ -185,62 +188,62 @@ msgstr "تقرير المواطن"
 #: process_analysis/templates/process_analysis/critical_incidents_locations.html:37
 #: submissions/models.py:41
 msgid "Status"
-msgstr "الحالة"
+msgstr "Stare"
 
 #: frontend/filters.py:501
 #, python-format
 msgid "%(group)s Status"
-msgstr "حالة %(group)s "
+msgstr "%(group)s Stare"
 
 #: frontend/filters.py:502
 #, python-format
 msgid "%(group)s Partial"
-msgstr "%(group)s الجزئية"
+msgstr "%(group)s parțial"
 
 #: frontend/filters.py:503
 #, python-format
 msgid "%(group)s Missing"
-msgstr "%(group)s المفقودة"
+msgstr "%(group)s Lipseste"
 
 #: frontend/filters.py:504
 #, python-format
 msgid "%(group)s Complete"
-msgstr "%(group)s المكتملة"
+msgstr "%(group)s complet"
 
 #: frontend/filters.py:505
 #, python-format
 msgid "%(group)s Conflict"
-msgstr "تضارب %(group)s  "
+msgstr "%(group)s Conflict"
 
 #: frontend/filters.py:512 frontend/filters.py:551
 #: frontend/templates/frontend/submission_edit.html:204
 msgid "Quarantine Status"
-msgstr "حالة الحجر"
+msgstr "Stare de carantină"
 
 #: frontend/filters.py:513 frontend/filters.py:552
 msgid "Quarantine None"
-msgstr "حجر لا شيء"
+msgstr "Lipsă stare de carantină"
 
 #: frontend/filters.py:514 frontend/filters.py:553
 msgid "Quarantine All"
-msgstr "حجر الكل"
+msgstr "Carantină Toate"
 
 #: frontend/filters.py:515 frontend/filters.py:554
 msgid "Quarantine Results"
-msgstr "نتائج الحجر"
+msgstr "Carantină Rezultate"
 
 #: frontend/filters.py:534
 msgid "Quality Check Criterion"
-msgstr "معيار فحص الجودة"
+msgstr "Criteriu de verificare a calității"
 
 #: frontend/filters.py:536
 msgid "Quality Check Condition"
-msgstr "شرط فحص الجودة"
+msgstr "Calitate Verificați starea"
 
 #: frontend/forms.py:45 frontend/forms.py:48 frontend/forms.py:411
 #: frontend/templates/frontend/form_list.html:85
 msgid "Location type"
-msgstr "نوع الموقع"
+msgstr "tipul de locație"
 
 #: frontend/forms.py:64 frontend/forms.py:132
 #: frontend/templates/frontend/form_list.html:44
@@ -252,12 +255,12 @@ msgstr "نوع الموقع"
 #: frontend/templates/frontend/macros/participant_list_filter.html:7
 #: process_analysis/templates/process_analysis/critical_incidents_locations.html:32
 msgid "Name"
-msgstr "الاسم"
+msgstr "Nume"
 
 #: frontend/forms.py:67 frontend/forms.py:152
 #: frontend/templates/frontend/participant_list.html:79
 msgid "Gender"
-msgstr "الجنس"
+msgstr "Gen"
 
 #: frontend/forms.py:71 frontend/forms.py:140 frontend/forms.py:405
 #: frontend/templates/frontend/form_list.html:82
@@ -265,16 +268,16 @@ msgstr "الجنس"
 #: frontend/templates/frontend/participant_performance_list.html:51
 #: frontend/templates/frontend/submission_edit.html:51
 msgid "Role"
-msgstr "الدور"
+msgstr "Rol"
 
 #: frontend/forms.py:78 frontend/forms.py:148
 #: frontend/templates/frontend/submission_edit.html:89
 msgid "Supervisor"
-msgstr "المشرف"
+msgstr "Supraveghetor"
 
 #: frontend/forms.py:86 frontend/forms.py:136
 msgid "Partner"
-msgstr "الشريك"
+msgstr "Partener"
 
 #: frontend/forms.py:91 frontend/templates/frontend/participant_list.html:81
 #: frontend/templates/frontend/participant_performance_list.html:52
@@ -282,37 +285,37 @@ msgstr "الشريك"
 #: frontend/templates/frontend/macros/quality_assurance_list_macros.html:8
 #: frontend/templates/frontend/macros/submission_list_macros.html:8
 msgid "Phone"
-msgstr "الهاتف"
+msgstr "Telefon"
 
 #: frontend/forms.py:92 frontend/forms.py:160
 #: frontend/templates/frontend/login_user.html:56
 msgid "Password"
-msgstr "كلمة المرور"
+msgstr "Parola"
 
 #: frontend/forms.py:122 frontend/forms.py:204
 msgid "Select column"
-msgstr "حدد عمود "
+msgstr "Selectați o coloană"
 
 #: frontend/forms.py:127
 #: frontend/templates/frontend/macros/participant_list_filter.html:4
 msgid "Participant ID"
-msgstr "هوية المشارك"
+msgstr "ID-ul participantului"
 
 #: frontend/forms.py:144
 msgid "Location ID"
-msgstr "هوية الموقع"
+msgstr "ID-ul Locul de amplasare"
 
 #: frontend/forms.py:156 frontend/templates/frontend/login_user.html:48
 msgid "Email"
-msgstr "البريد الإلكتروني"
+msgstr "Email"
 
 #: frontend/forms.py:164
 msgid "Phone prefix"
-msgstr "بادئة الهاتف"
+msgstr "Prefix telefon"
 
 #: frontend/forms.py:167
 msgid "Group prefix"
-msgstr "بادئة المجموعة"
+msgstr "Prefix de grup"
 
 #: frontend/forms.py:173
 #: process_analysis/templates/process_analysis/checklist_summary.html:37
@@ -324,40 +327,40 @@ msgstr "%(label)s"
 
 #: frontend/forms.py:181
 msgid "Invalid phone prefix"
-msgstr "بادئة هاتف غير صالحة "
+msgstr "Prefix de telefon nevalid"
 
 #: frontend/forms.py:187
 msgid "Invalid group prefix"
-msgstr "بادئة مجموعة غير صالحة"
+msgstr "Prefix de grup nevalid"
 
 #: frontend/forms.py:214
 #, python-format
 msgid "%(label)s Name"
-msgstr "اسم %(label)s   "
+msgstr "%(label)s Nume"
 
 #: frontend/forms.py:218
 #, python-format
 msgid "%(label)s Code"
-msgstr "رمز %(label)s  "
+msgstr "%(label)s Codul"
 
 #: frontend/forms.py:223
 #, python-format
 msgid "%(label)s Geopolitical Code"
-msgstr "الرمز الجيوسياسي %(label)s "
+msgstr "%(label)s Codul Geopolitic"
 
 #: frontend/forms.py:228
 #, python-format
 msgid "%(label)s Other Code"
-msgstr "رمز آخر %(label)s"
+msgstr "%(label)s Alte Coduri"
 
 #: frontend/forms.py:233
 #, python-format
 msgid "%(label)s Registered Voters"
-msgstr "الناخبون المسجلون %(label)s "
+msgstr "%(label)s Alegătorii înregistrați"
 
 #: frontend/forms.py:253
 msgid "Contributor and location cannot both be empty"
-msgstr "لا يمكن ترك حقول المساهم والموقع فارغين"
+msgstr "Contributor și locație nu pot fi ambele necompletate"
 
 #: frontend/forms.py:269 frontend/forms.py:271
 #: frontend/templates/frontend/incident_add.html:10
@@ -367,119 +370,119 @@ msgstr "لا يمكن ترك حقول المساهم والموقع فارغين
 #: frontend/templates/frontend/macros/quality_assurance_list_macros.html:7
 #: frontend/templates/frontend/macros/submission_list_macros.html:7
 msgid "Participant"
-msgstr "المشارك"
+msgstr "Participant"
 
 #: frontend/forms.py:376 frontend/views_admin.py:112
 msgid "Event"
-msgstr "الحدث"
+msgstr "Eveniment"
 
 #: frontend/forms.py:379
 msgid "Select Event"
-msgstr "حدد الحدث"
+msgstr "Selectați Eveniment"
 
 #: frontend/forms.py:384
 msgid "Data File"
-msgstr "ملف البيانات"
+msgstr "Fisier de date"
 
 #: frontend/forms.py:402
 msgid "Select form"
-msgstr "إختر النموذج"
+msgstr "Selectați forma"
 
 #: frontend/forms.py:408
 msgid "Select role"
-msgstr "إختر الدور"
+msgstr "Selectați rolul"
 
 #: frontend/forms.py:414
 msgid "Select location type"
-msgstr "إختر نوع الموقع"
+msgstr "Selectați tipul de locație"
 
 #: frontend/template_filters.py:95
 msgid "N/A"
-msgstr "لا ينطبق"
+msgstr "Nu este aplicabil"
 
 #: frontend/views_admin.py:57
 msgid "Deployment"
-msgstr "الانتشار"
+msgstr "Implementare"
 
 #: frontend/views_admin.py:94
 msgid "Logo"
-msgstr "الشعار"
+msgstr "Siglă"
 
 #: frontend/views_admin.py:179
 msgid "Roles with access"
-msgstr "الأدوار التي تتمتع بالوصول"
+msgstr "Rolurile cu acces"
 
 #: frontend/views_admin.py:213
 msgid "New password"
-msgstr "كلمة المرور الجديدة"
+msgstr "Parolă Nouă"
 
 #: frontend/views_admin.py:216
 msgid "Disable"
-msgstr "عطّل"
+msgstr "Dezactivează"
 
 #: frontend/views_admin.py:216
 msgid "Are you sure you want to disable selected users?"
-msgstr "هل أنت واثق من تعطيل المستخدمين المختارين؟"
+msgstr "Sunteți sigur că doriți să dezactivați utilizatorii selectați?"
 
 #: frontend/views_admin.py:219
 msgid "User(s) successfully disabled."
-msgstr "تمّ تعطيل المستخدم (المستخدمين)  بنجاح"
+msgstr "Utilizator (i) dezactivat cu succes."
 
 #: frontend/views_admin.py:221
 msgid "Enable"
-msgstr "فعّل"
+msgstr "Permite"
 
 #: frontend/views_admin.py:221
 msgid "Are you sure you want to enable selected users?"
-msgstr "هل أنت واثق من أنك تريد تفعيل المستخدمين المختارين؟"
+msgstr "Sunteți sigur că doriți să activați utilizatorii selectați?"
 
 #: frontend/views_admin.py:224
 msgid "User(s) successfully enabled."
-msgstr "تمّ تفعيل المستخدم (المستخدمين) بنجاح"
+msgstr "Utilizator (i) activat cu succes."
 
 #: frontend/views_admin.py:251
 msgid "Permissions"
-msgstr "الأذون"
+msgstr "Permisiuni"
 
 #: frontend/views_dashboard.py:33 frontend/views_dashboard.py:120
 msgid "Dashboard"
-msgstr "لوحة التحكم"
+msgstr "Bord de navigare"
 
 #: frontend/views_dashboard.py:129 submissions/views_submissions.py:68
 #: submissions/views_submissions.py:70
 msgid "Checklists"
-msgstr "قوائم المراجعة"
+msgstr "Liste de verificare"
 
 #: frontend/views_dashboard.py:141
 msgid "Concurrent Events"
-msgstr "الأحداث المتزامنة"
+msgstr "Evenimente concurente"
 
 #: frontend/views_dashboard.py:155
 msgid "Events"
-msgstr "الأحداث"
+msgstr "Evenimente"
 
 #: frontend/templates/403.html:5
 msgid "Forbidden Error"
-msgstr "خطأ ممنوع"
+msgstr "Eroare interzisă"
 
 #: frontend/templates/403.html:16
 msgid "Off Limits!"
-msgstr "محظور!"
+msgstr "În afara limitelor!"
 
 #: frontend/templates/403.html:17
 msgid ""
 "We understood your request, but we refuse to honor it! You are seeing this "
 "page because you were snooping around! Now paddle along before the buzzer "
 "goes off!"
-msgstr "نتفهّم طلبك، لكننا نرفض تنفيذه! فقد سُمح لك بمعاينة هذه الصفحة لأنك تحاول الوصول إليها! فابتعد عنها الآن قبل انطلاق جرس التحذير!"
+msgstr "Am înțeles solicitarea, dar refuzăm să o executăm! "
 
 #: frontend/templates/404.html:5
 msgid "Page not found"
-msgstr "لم يتمّ العثور على الصفحة"
+msgstr "Pagina nu a fost gasita"
 
 #: frontend/templates/404.html:16
 msgid "Oh No! Looks like you're lost!"
-msgstr "تبّاً! يبدو أنك أضعت الطريق!"
+msgstr "Oh nu! Se pare că te-ai pierdut!"
 
 #: frontend/templates/404.html:17
 msgid ""
@@ -487,30 +490,30 @@ msgid ""
 "Who knows, this could even be a fluke! :) I recommend you either verify the "
 "address or click the back arrow (&larr;) at the top left corner of the page,"
 " and cross-check the action you were trying to perform!"
-msgstr "لا تخف، ربما أدخلت عنواناً خاطئاً أو نقرت على رابط غير صحيح! أو لعلّ الأمر مجرد خطأ يحصل!) لذلك، أنصحك إما التأكّد من العنوان أو النقر على سهم العودة للخلف  (&larr;) الموجود في أعلى الصفحة، من الجهة اليسرى، والتحقق مجدداً من العمل الذي كنت تحاول تنفيذه!"
+msgstr "Nu te speria, poate că ați introdus o adresă greșită sau dat clic pe o adresă greșită Cine știe, acest lucru ar putea fi chiar o întâmplare! :) Vă recomandăm să fie verificați adresa sau faceți clic pe săgeata din spate (& larr;) în colțul din stânga sus al paginii și verificarea încrucișată a acțiunii pe care încercați să efectuați!"
 
 #: frontend/templates/500.html:5
 msgid "Server Error"
-msgstr "خطأ في الخادم"
+msgstr "Eroare de server"
 
 #: frontend/templates/500.html:16
 msgid "Zong! We screwed up :("
-msgstr "تبّاً! أفسدنا الأمر:("
+msgstr "Zong! Am comis o eroare"
 
 #: frontend/templates/500.html:17
 msgid ""
 "You shouldn't be seeing this page but you are because you're a genius and "
 "have found a rare bug in the software. Rest assured, we now know about it "
 "and will fix it ASAP!"
-msgstr "ما كان يُفترَض بك أن تعاين تلك الصفحة، إنما فعلت لأنك عبقري ونجحت في العثور على خلل نادر في البرنامج. كن مطمئناً، فنحن واعون الآن لوجود ذلك الخلل وسنعمل على تصحيحه بأسرع ما يمكن!"
+msgstr "Nu ar trebui să vedeți această pagină, dar ești pentru că tu ești un geniu și-au găsit un bug rar în software-ul. Vă asigurăm că acum știm despre el si va repara cat mai repede posibil!"
 
 #: frontend/templates/frontend/_layout.html:92
 msgid "Admin"
-msgstr "المسؤول"
+msgstr "Admin"
 
 #: frontend/templates/frontend/_layout.html:109
 msgid "Logout"
-msgstr "تسجيل الخروج"
+msgstr "Deconectare"
 
 #: frontend/templates/frontend/dashboard.html:76
 #: frontend/templates/frontend/location_list.html:80
@@ -526,56 +529,56 @@ msgstr "تسجيل الخروج"
 #: frontend/templates/frontend/macros/submission_list_macros.html:96
 #: result_analysis/templates/result_analysis/results.html:183
 msgid "No Data Available"
-msgstr "لا توجد بيانات متاحة"
+msgstr "Nici o informatie disponibila"
 
 #: frontend/templates/frontend/event_selection.html:10
 msgid "Go"
-msgstr "اذهب"
+msgstr "Accesează"
 
 #: frontend/templates/frontend/form_list.html:3
 #: frontend/templates/frontend/form_list.html:74
 #: frontend/templates/frontend/form_list.html:89
 msgid "Create checklists"
-msgstr "إنشاء قوائم المراجعة"
+msgstr "Creați liste de verificare"
 
 #: frontend/templates/frontend/form_list.html:4
 msgid "Add form"
-msgstr "إضافة نموذج"
+msgstr "Adăugaţi o formă"
 
 #: frontend/templates/frontend/form_list.html:45
 #: frontend/templates/frontend/location_list.html:65
 msgid "Type"
-msgstr "النوع"
+msgstr "Tip"
 
 #: frontend/templates/frontend/form_list.html:46
 #: frontend/templates/frontend/form_list.html:56
 msgid "Form Actions"
-msgstr "إجراءات النموذج"
+msgstr "Formular Acțiuni"
 
 #: frontend/templates/frontend/form_list.html:58
 msgid "Properties"
-msgstr "الخصائص"
+msgstr "Proprietăţi"
 
 #: frontend/templates/frontend/form_list.html:59
 msgid "Builder"
-msgstr "المنشئ"
+msgstr "Constructor"
 
 #: frontend/templates/frontend/form_list.html:79
 msgid "Checklist form"
-msgstr "نموذج قائمة المراجعة"
+msgstr "Formularul Lista de verificare"
 
 #: frontend/templates/frontend/form_list.html:90
 #: frontend/templates/frontend/location_builder.html:56
 #: frontend/templates/frontend/location_builder.html:102
 #: frontend/templates/frontend/participant_edit_modal.html:36
 msgid "Close"
-msgstr "إغلاق"
+msgstr "Închide"
 
 #: frontend/templates/frontend/incident_add.html:46
 #: frontend/templates/frontend/submission_edit.html:274
 #: process_analysis/templates/process_analysis/critical_incidents_locations.html:38
 msgid "Description"
-msgstr "الوصف"
+msgstr "Descriere"
 
 #: frontend/templates/frontend/location_builder.html:10
 #: frontend/templates/frontend/location_edit.html:22
@@ -584,49 +587,49 @@ msgstr "الوصف"
 #: frontend/templates/frontend/macros/form_edit_form.html:21
 #: frontend/templates/frontend/macros/participant_edit_form.html:27
 msgid "Save"
-msgstr "حفظ"
+msgstr "Salvați"
 
 #: frontend/templates/frontend/location_builder.html:14
 #: frontend/templates/frontend/location_builder.html:23
 msgid "Add Division"
-msgstr "إضافة قسم"
+msgstr "Adaugă o diviziune"
 
 #: frontend/templates/frontend/location_builder.html:34
 #: frontend/templates/frontend/location_builder.html:79
 msgid "Parents"
-msgstr "أولياء الأمور"
+msgstr "Parental"
 
 #: frontend/templates/frontend/location_builder.html:44
 #: frontend/templates/frontend/location_builder.html:90
 msgid "Administrative Division"
-msgstr "قسم إداري"
+msgstr "Diviziune administrativă"
 
 #: frontend/templates/frontend/location_builder.html:49
 #: frontend/templates/frontend/location_builder.html:95
 msgid "Political Division"
-msgstr "قسم سياسي"
+msgstr "Diviziune politică"
 
 #: frontend/templates/frontend/location_builder.html:57
 msgid "Add"
-msgstr "إضافة "
+msgstr "Adăuga"
 
 #: frontend/templates/frontend/location_builder.html:68
 msgid "Update Division"
-msgstr "تحديث قسم"
+msgstr "Diviziune de actualizare"
 
 #: frontend/templates/frontend/location_builder.html:103
 msgid "Delete"
-msgstr "حذف"
+msgstr "Șterge"
 
 #: frontend/templates/frontend/location_builder.html:104
 msgid "Update"
-msgstr "تحديث"
+msgstr "Actualizați"
 
 #: frontend/templates/frontend/location_edit.html:22
 #: frontend/templates/frontend/macros/form_edit_form.html:22
 #: frontend/templates/frontend/macros/send_message.html:23
 msgid "Cancel"
-msgstr "إلغاء"
+msgstr "Anulare"
 
 #: frontend/templates/frontend/location_list.html:31
 #: frontend/templates/frontend/message_list.html:5
@@ -637,15 +640,15 @@ msgstr "إلغاء"
 #: frontend/templates/frontend/submission_list.html:21
 #: frontend/templates/frontend/submission_list.html:27
 msgid "Export"
-msgstr "تصدير"
+msgstr "Export"
 
 #: frontend/templates/frontend/location_list.html:34
 msgid "Import Locations"
-msgstr "استيراد المواقع"
+msgstr "Importă locațiile"
 
 #: frontend/templates/frontend/location_list.html:63
 msgid "Code"
-msgstr "الرمز"
+msgstr "Cod"
 
 #: frontend/templates/frontend/location_list.html:66
 #: frontend/templates/frontend/location_list.html:76
@@ -656,52 +659,52 @@ msgstr "الرمز"
 #: frontend/templates/frontend/macros/submission_list_macros.html:20
 #: frontend/templates/frontend/macros/submission_list_macros.html:72
 msgid "Edit"
-msgstr "تحرير"
+msgstr "Editează"
 
 #: frontend/templates/frontend/location_list.html:182
 #: frontend/templates/frontend/participant_list.html:266
 msgid "Invalid file."
-msgstr "ملف غير صالح"
+msgstr "Fișier nevalabil"
 
 #: frontend/templates/frontend/login_user.html:5
 #: frontend/templates/frontend/login_user.html:26
 msgid "User Login"
-msgstr "تسجيل دخول المستخدم"
+msgstr "Logare utilizator"
 
 #: frontend/templates/frontend/login_user.html:32
 msgid ""
 "Your username and password <strong>did not match</strong>. Please try again."
-msgstr "إنّ إسم المستخدم وكلمة المرور <strong>غير مطابقين</strong>. يُرجى المحاولة مجدداً."
+msgstr "numele de utilizator și parola <strong> nu a coincid</strong>. Vă rugăm să încercați din nou."
 
 #: frontend/templates/frontend/login_user.html:37
 msgid "Sign In with Persona"
-msgstr "سجّل دخولك باستخدام Persona"
+msgstr "Conectați-vă cu Persona"
 
 #: frontend/templates/frontend/login_user.html:60
 msgid "Sign In"
-msgstr "سجّل دخولك"
+msgstr "Conectare"
 
 #: frontend/templates/frontend/message_list.html:19
 #: frontend/templates/frontend/message_list.html:53
 #: frontend/templates/frontend/participant_performance_detail.html:47
 msgid "Mobile"
-msgstr "الهاتف المحمول"
+msgstr "Mobil"
 
 #: frontend/templates/frontend/message_list.html:22
 #: frontend/templates/frontend/message_list.html:55
 #: frontend/templates/frontend/participant_performance_detail.html:48
 msgid "Text"
-msgstr "النص"
+msgstr "Text"
 
 #: frontend/templates/frontend/message_list.html:26
 #: frontend/templates/frontend/message_list.html:51
 #: frontend/templates/frontend/participant_performance_detail.html:45
 msgid "Date"
-msgstr "التاريخ"
+msgstr "Data"
 
 #: frontend/templates/frontend/message_list.html:31
 msgid "Search"
-msgstr "بحث"
+msgstr "Căutare"
 
 #: frontend/templates/frontend/message_list.html:34
 #: frontend/templates/frontend/macros/locations_list_filter.html:13
@@ -709,168 +712,168 @@ msgstr "بحث"
 #: frontend/templates/frontend/macros/quality_assurance_list_filter.html:21
 #: frontend/templates/frontend/macros/submission_list_filter.html:44
 msgid "Clear"
-msgstr "مسح"
+msgstr "Curățire"
 
 #: frontend/templates/frontend/message_list.html:52
 #: frontend/templates/frontend/participant_performance_detail.html:46
 msgid "Time"
-msgstr "الوقت"
+msgstr "Timp"
 
 #: frontend/templates/frontend/message_list.html:54
 msgid "Direction"
-msgstr "الاتجاه"
+msgstr "Direcţie"
 
 #: frontend/templates/frontend/message_list.html:64
 msgid "IN"
-msgstr "دخول"
+msgstr "ÎN"
 
 #: frontend/templates/frontend/message_list.html:64
 msgid "OUT"
-msgstr "خروج"
+msgstr "Afară"
 
 #: frontend/templates/frontend/message_list.html:121
 msgid "Incoming Messages"
-msgstr "الرسائل الواردة"
+msgstr "Mesajele primite"
 
 #: frontend/templates/frontend/participant_edit_modal.html:4
 #: frontend/templates/frontend/participant_list.html:137
 msgid "Edit Participant"
-msgstr "تحرير مشارك"
+msgstr "Editează participantul "
 
 #: frontend/templates/frontend/participant_list.html:36
 msgid "Performance Evaluation"
-msgstr "تقييم الأداء"
+msgstr "Evaluarea performanței"
 
 #: frontend/templates/frontend/participant_list.html:38
 msgid "Import Participants"
-msgstr "استيراد مشاركين"
+msgstr "Importă Participanți"
 
 #: frontend/templates/frontend/participant_list.html:41
 #: frontend/templates/frontend/participant_performance_list.html:18
 #: frontend/templates/frontend/submission_list.html:39
 #: frontend/templates/frontend/macros/send_message.html:7
 msgid "Send Message"
-msgstr "إرسال رسالة"
+msgstr "Trimite mesaj"
 
 #: frontend/templates/frontend/participant_list.html:73
 #: frontend/templates/frontend/participant_performance_list.html:45
 #: frontend/templates/frontend/macros/quality_assurance_list_macros.html:3
 #: frontend/templates/frontend/macros/submission_list_macros.html:3
 msgid "ID"
-msgstr "الهوية"
+msgstr "Identificare"
 
 #: frontend/templates/frontend/participant_list.html:82
 msgid "Organization"
-msgstr "المنظمة"
+msgstr "Organizare"
 
 #: frontend/templates/frontend/participant_performance_detail.html:7
 msgid "Participant Detail"
-msgstr "بيانات المشارك"
+msgstr "Participant Detalii"
 
 #: frontend/templates/frontend/participant_performance_detail.html:17
 msgid "Phone Numbers"
-msgstr "أرقام الهاتف"
+msgstr "Numere de telefon"
 
 #: frontend/templates/frontend/participant_performance_detail.html:21
 msgid "Messages Sent"
-msgstr "تم إرسال الرسائل"
+msgstr "Mesaje trimise"
 
 #: frontend/templates/frontend/participant_performance_detail.html:25
 #: frontend/templates/frontend/participant_performance_list.html:54
 msgid "Accuracy"
-msgstr "الدقة"
+msgstr "Precizie"
 
 #: frontend/templates/frontend/participant_performance_detail.html:29
 #: frontend/templates/frontend/participant_performance_list.html:55
 msgid "Completion"
-msgstr "الإكمال"
+msgstr "Completare"
 
 #: frontend/templates/frontend/participant_performance_detail.html:33
 #: frontend/templates/frontend/participant_performance_list.html:56
 msgid "Rating"
-msgstr "التصنيف"
+msgstr "Evaluare"
 
 #: frontend/templates/frontend/participant_performance_detail.html:40
 #: frontend/templates/frontend/participant_performance_list.html:53
 #: messaging/views_messages.py:20 messaging/views_messages.py:26
 msgid "Messages"
-msgstr "الرسائل"
+msgstr "Mesaje"
 
 #: frontend/templates/frontend/participant_performance_list.html:57
 #: frontend/templates/frontend/participant_performance_list.html:78
 msgid "View"
-msgstr "عرض"
+msgstr "Vedere"
 
 #: frontend/templates/frontend/submission_edit.html:5
 #: frontend/templates/frontend/submission_history.html:5
 msgid "History"
-msgstr "التاريخ"
+msgstr "Istorie"
 
 #: frontend/templates/frontend/submission_edit.html:42
 msgid "Texted Phone"
-msgstr "الهاتف النصي"
+msgstr "Telefon texted"
 
 #: frontend/templates/frontend/submission_edit.html:121
 msgid "Validation Errors!"
-msgstr "أخطاء عند التثبّت من البيانات!"
+msgstr "Erori de validare!"
 
 #: frontend/templates/frontend/submission_edit.html:121
 msgid ""
 "The following conditions were flagged while validating this submission."
-msgstr "وضعت إشارة إلى جانب الشروط التالية عند التثبّت من البيانات المقدّمة."
+msgstr "Următoarele condiții au fost marcate în timp ce validarea această trimitere."
 
 #: frontend/templates/frontend/submission_edit.html:161
 msgid "Confidence Level"
-msgstr "مستوى الثقة"
+msgstr "Nivel de încredere"
 
 #: frontend/templates/frontend/submission_edit.html:188
 #: frontend/templates/frontend/submission_edit.html:190
 msgid "Overridden Field"
-msgstr "حقل تم تجاوزه"
+msgstr "Rubrică suprascrisă"
 
 #: frontend/templates/frontend/submission_edit.html:223
 msgid "Verification Status"
-msgstr "وضعية التثبّت من البيانات"
+msgstr "Starea de verificare"
 
 #: frontend/templates/frontend/submission_edit.html:300
 msgid "No comment."
-msgstr "لا تعليق."
+msgstr "Fără comentarii."
 
 #: frontend/templates/frontend/submission_history.html:31
 msgid "Via"
-msgstr "عبر"
+msgstr "Prin"
 
 #: frontend/templates/frontend/submission_history.html:34
 msgid "Edited by"
-msgstr "حرر بواسطة"
+msgstr "Editat de"
 
 #: frontend/templates/frontend/submission_history.html:37
 msgid "Updated"
-msgstr "تم التحديث"
+msgstr "Actualizat"
 
 #: frontend/templates/frontend/submission_history.html:44
 msgid "Saved"
-msgstr "تم الحفظ"
+msgstr "Salvate"
 
 #: frontend/templates/frontend/submission_history.html:45
 msgid "Current"
-msgstr "حالي"
+msgstr "Actual"
 
 #: frontend/templates/frontend/submission_list.html:16
 msgid "Add Incident"
-msgstr "إضافة حادثة"
+msgstr "Adauga Incident"
 
 #: frontend/templates/frontend/submission_list.html:30
 msgid "Observers Data"
-msgstr "بيانات المراقبين"
+msgstr "Observatorii date"
 
 #: frontend/templates/frontend/submission_list.html:31
 msgid "Master Data"
-msgstr "البيانات الرئيسية"
+msgstr "Datele de bază"
 
 #: frontend/templates/frontend/submission_list.html:32
 msgid "Aggregated Data"
-msgstr "بيانات مجمّعة"
+msgstr "Aggregated Data"
 
 #: frontend/templates/frontend/macros/dashboard_filter.html:10
 #: frontend/templates/frontend/macros/locations_list_filter.html:10
@@ -884,77 +887,77 @@ msgstr "بيانات مجمّعة"
 #: process_analysis/templates/process_analysis/critical_incidents_locations.html:10
 #: result_analysis/templates/result_analysis/results.html:9
 msgid "Filter"
-msgstr "فلتر"
+msgstr "Filtru"
 
 #: frontend/templates/frontend/macros/dashboard_filter.html:13
 #: frontend/templates/frontend/macros/quality_assurance_dashboard_filter.html:13
 msgid "Reset"
-msgstr "إعادة الضبط"
+msgstr "restabili"
 
 #: frontend/templates/frontend/macros/pagination.html:4
 msgid "First Page"
-msgstr "الصفحة الأولى "
+msgstr "Prima pagina"
 
 #: frontend/templates/frontend/macros/pagination.html:5
 msgid "Previous Page"
-msgstr "الصفحة السابقة"
+msgstr "Pagina anterioară"
 
 #: frontend/templates/frontend/macros/pagination.html:9
 msgid "Next Page"
-msgstr "الصفحة التالية"
+msgstr "Pagina următoare"
 
 #: frontend/templates/frontend/macros/pagination.html:10
 msgid "Last Page"
-msgstr "الصفحة الأخيرة "
+msgstr "Ultima pagina"
 
 #: frontend/templates/frontend/macros/pagination.html:23
 #: frontend/templates/frontend/macros/pagination.html:40
 msgid "Showing"
-msgstr "عرض"
+msgstr "Se afișează"
 
 #: frontend/templates/frontend/macros/pagination.html:23
 #: frontend/templates/frontend/macros/pagination.html:40
 msgid "of"
-msgstr "من"
+msgstr "de"
 
 #: frontend/templates/frontend/macros/participant_list_filter.html:25
 msgid "All Groups"
-msgstr "كل المجموعات"
+msgstr "toate grupurile"
 
 #: frontend/templates/frontend/macros/quality_assurance_list_macros.html:12
 #: frontend/templates/frontend/macros/submission_list_macros.html:19
 msgid "Phone Verification"
-msgstr "التحقق من الهاتف"
+msgstr "verificare telefon"
 
 #: frontend/templates/frontend/macros/quality_assurance_list_macros.html:27
 #: frontend/templates/frontend/macros/quality_assurance_list_macros.html:35
 #: frontend/templates/frontend/macros/submission_list_macros.html:71
 #: submissions/aggregation.py:9 submissions/models.py:22
 msgid "Verified"
-msgstr "محقق"
+msgstr "verificate"
 
 #: frontend/templates/frontend/macros/quality_assurance_list_macros.html:29
 #: submissions/aggregation.py:8 submissions/models.py:33
 msgid "OK"
-msgstr "موافق"
+msgstr "O.K"
 
 #: frontend/templates/frontend/macros/quality_assurance_list_macros.html:30
 #: submissions/aggregation.py:10
 msgid "Flagged"
-msgstr "محدد بعلامة"
+msgstr "semnalat"
 
 #: frontend/templates/frontend/macros/quality_assurance_list_macros.html:31
 msgid "Insufficient Data"
-msgstr "بيانات ناقصة"
+msgstr "date insuficiente"
 
 #: frontend/templates/frontend/macros/quality_assurance_list_macros.html:35
 #: frontend/templates/frontend/macros/submission_list_macros.html:71
 msgid "Unverified"
-msgstr "غير محقق"
+msgstr "neverificată"
 
 #: frontend/templates/frontend/macros/send_message.html:14
 msgid "To"
-msgstr "إلى "
+msgstr "La"
 
 #: frontend/templates/frontend/macros/send_message.html:14
 #, python-format
@@ -963,205 +966,202 @@ msgid_plural "%(counter)s recipients"
 msgstr[0] ""
 msgstr[1] ""
 msgstr[2] ""
-msgstr[3] ""
-msgstr[4] ""
-msgstr[5] ""
 
 #: frontend/templates/frontend/macros/send_message.html:15
 #: frontend/templates/frontend/macros/send_message.html:46
 msgid "characters"
-msgstr "الحروف"
+msgstr "caractere"
 
 #: frontend/templates/frontend/macros/send_message.html:15
 #: frontend/templates/frontend/macros/send_message.html:47
 msgid "message part"
-msgstr "جزء الرسالة  "
+msgstr "parte mesaj"
 
 #: frontend/templates/frontend/macros/send_message.html:24
 msgid "Send"
-msgstr "إرسال"
+msgstr "Trimite"
 
 #: frontend/templates/frontend/macros/send_message.html:46
 msgid "character"
-msgstr "حرف"
+msgstr "caracter"
 
 #: frontend/templates/frontend/macros/send_message.html:47
 msgid "message parts"
-msgstr "أجزاء الرسالة  "
+msgstr "Piese de mesaje"
 
 #: frontend/templates/frontend/macros/send_message.html:70
 msgid "Success"
-msgstr "النجاح"
+msgstr "Success"
 
 #: frontend/templates/frontend/macros/send_message.html:70
 msgid "Your message has been sent"
-msgstr "لقد تم إرسال رسالتك"
+msgstr "Mesajul tau a fost trimis"
 
 #: frontend/templates/frontend/macros/send_message.html:79
 msgid "Error"
-msgstr "خطأ"
+msgstr "Eroare"
 
 #: frontend/templates/frontend/macros/send_message.html:79
 msgid "Please try sending again"
-msgstr "يرجى محاولة الإرسال مرة خرى"
+msgstr "Vă rugăm să încercați să trimiteți din nou"
 
 #: frontend/templates/frontend/macros/submission_list_filter.html:37
 msgid "All Statuses"
-msgstr "كل الحالات"
+msgstr "toate Stările"
 
 #: frontend/templates/frontend/macros/submission_list_macros.html:35
 msgid "complete"
-msgstr "مكتمل "
+msgstr "complet"
 
 #: frontend/templates/frontend/macros/submission_list_macros.html:36
 msgid "partial"
-msgstr "جزئي"
+msgstr "parțial"
 
 #: frontend/templates/frontend/macros/submission_list_macros.html:37
 msgid "missing"
-msgstr "مفقود"
+msgstr "Lipsă"
 
 #: frontend/templates/frontend/macros/submission_list_macros.html:38
 msgid "conflict"
-msgstr "تضارب"
+msgstr "conflict"
 
 #: frontend/templates/frontend/macros/submission_list_macros.html:49
 msgid "data present"
-msgstr ""
+msgstr "datele prezente"
 
 #: locations/tasks.py:184
 msgid "Locations Import Report"
-msgstr "تقرير استيراد المواقع"
+msgstr "Locatii Import Report"
 
 #: locations/views_locations.py:56 locations/views_locations.py:62
 msgid "Locations"
-msgstr "المواقع"
+msgstr "locaţii"
 
 #: locations/views_locations.py:102
 msgid "Edit Location"
-msgstr "تحرير الموقع "
+msgstr "editaţi locația"
 
 #: locations/views_locations.py:187 locations/views_locations.py:193
 msgid "Administrative Divisions"
-msgstr "الأقسام الإدارية"
+msgstr "Diviziuni administrative"
 
 #: locations/views_locations.py:276
 msgid "Your changes have been saved."
-msgstr "لقد تم حفظ التغييرات التي أجريتها."
+msgstr "Schimbarile tale au fost salvate."
 
 #: messaging/helpers.py:35
 msgid "Thank you! Your report was received! You sent: {text}"
-msgstr "شكرًا لك! لقد تم استلام تقريرك! لقد أرسلت: {نص}"
+msgstr "Multumesc! Raportul dvs. a fost primit! Ati expediat {text}"
 
 #: messaging/helpers.py:44
 msgid "Unknown question codes: \"{questions}\". You sent: {text}"
-msgstr "رموز أسئلة غير معروفة: \"}الأسئلة{\" لقد أرسلت: {نص}"
+msgstr "Cod intrebare: \"necunoscut {intrebari}\". Ati expediat: {text}"
 
 #: messaging/helpers.py:53
 msgid "Invalid text sent: \"{extra}\". You sent: {text}"
-msgstr ""
+msgstr "Text eronat. ati texpediat: \"{} suplimentar\". Ati expediat: {text}"
 
 #: messaging/helpers.py:62
 msgid ""
 "Observer ID not found. Please resend with valid Observer ID. You sent: "
 "{text}"
-msgstr "هوية المراقب غير موجودة. يرجى إعادة الإرسال بهوية مراقب صالحة. لقد أرسلت: {نص}"
+msgstr "ID-ul de Dvs de observator nu a fost identificat. Vă rugam să trimiteti din nou cu ID-ul de observator valabil. Dvs. ati expediat: {text}"
 
 #: messaging/helpers.py:72
 msgid "Invalid response(s) for question(s): \"{questions}\". You sent: {text}"
-msgstr "إجابات (إجابة) غير صحيحة على الأسئلة (السؤال): \"}الأسئلة{\" لقد أرسلت: }نص{ "
+msgstr "raspuns (uri) incorect pentru întrebarea (ile): \"{întrebari}\". Ati expediat {text}"
 
 #: messaging/helpers.py:83
 msgid "Invalid message: \"{text}\". Please check and resend!"
-msgstr "رسالة غير صحيحة: }نص{. يرجى التحقق وإعادة الإرسال!"
+msgstr "Mesaj incorect: \"{text}\". Va rugam sa verificati si sa expediati din nou!"
 
 #: odk/views_odk.py:120
 msgid "Invalid Form Specified"
-msgstr ""
+msgstr "Formular specificat nevalabil"
 
 #: odk/views_odk.py:124
 msgid "Invalid Participant ID"
-msgstr ""
+msgstr "ID OTS nevalid"
 
 #: odk/views_odk.py:150
 msgid "Checklist Not Found"
-msgstr ""
+msgstr "Lista de verificare nu a fost gasita"
 
 #: odk/views_odk.py:190
 msgid ""
 "Your submission was received, but you sent it using an outdated form. Please"
 " download a new copy and resend. Thank you."
-msgstr ""
+msgstr "Raportul dvs. a fost receptiona dar ati raportat utilizand un formular invechit. Va rugam sa descarcati o copie noua și retrimiteti. Multumesc."
 
 #: participants/models.py:72
 msgid "Female"
-msgstr "أنثى"
+msgstr "Feminin"
 
 #: participants/models.py:73
 msgid "Male"
-msgstr "ذكر"
+msgstr "Masculin"
 
 #: participants/models.py:74
 msgid "Unspecified"
-msgstr "غير محدد"
+msgstr "nespecificata"
 
 #: participants/tasks.py:177
 #, python-format
 msgid "Invalid location id (%(loc_id)s)"
-msgstr "هوية موقع غير صالحة  (%(loc_id)s) "
+msgstr "Invalidă locație id (%(loc_id)s)"
 
 #: participants/tasks.py:185
 #, python-format
 msgid "Location with id %(loc_id)s not found"
-msgstr "موقع بهوية  %(loc_id)sغير موجودة "
+msgstr "Locație cu id %(loc_id)s nu au găsit"
 
 #: participants/tasks.py:304
 #, python-format
 msgid "Supervisor with ID %(id)s not found"
-msgstr "مشرف بهوية%(id)s  غير موجودة "
+msgstr "Supraveghetor cu ID-ul %(id)s nu a fost găsit"
 
 #: participants/tasks.py:344
 msgid "Import report"
-msgstr "استيراد تقرير"
+msgstr "Importa raportul"
 
 #: participants/views_participants.py:45 participants/views_participants.py:52
 msgid "Participants"
-msgstr "المشاركون"
+msgstr "participanți"
 
 #: participants/views_participants.py:139
 msgid "Participants Performance"
-msgstr "أداء المشاركين"
+msgstr "Performanta participantilor"
 
 #: participants/views_participants.py:221
 msgid "Participant Performance"
-msgstr "أداء المشارك"
+msgstr "Performanță participant"
 
 #: participants/views_participants.py:264
 #, python-format
 msgid "Edit Participant · %(participant_id)s"
-msgstr "تحرير المشارك %(participant_id)s"
+msgstr "Editeaza participant- %(participant_id)s"
 
 #: process_analysis/views_process.py:57
 #, python-format
 msgid "%(form)s Analysis"
-msgstr "تحليل %(form)s "
+msgstr "%(form)s Analiză"
 
 #: process_analysis/views_process.py:138
 msgid "Analyses"
-msgstr "تحاليل"
+msgstr "Analize"
 
 #: process_analysis/templates/process_analysis/checklist_summary.html:34
 #: process_analysis/templates/process_analysis/checklist_summary_breakdown.html:30
 #: process_analysis/templates/process_analysis/critical_incident_summary.html:80
 msgid "Mean"
-msgstr "الوسيلة"
+msgstr "Înseamna"
 
 #: process_analysis/templates/process_analysis/checklist_summary.html:40
 #: process_analysis/templates/process_analysis/checklist_summary_breakdown.html:36
 #: process_analysis/templates/process_analysis/critical_incident_summary.html:86
 #: result_analysis/templates/result_analysis/results.html:50
 msgid "Reported"
-msgstr "مذكور"
+msgstr "Raportat"
 
 #: process_analysis/templates/process_analysis/checklist_summary.html:41
 #: process_analysis/templates/process_analysis/checklist_summary_breakdown.html:37
@@ -1169,18 +1169,18 @@ msgstr "مذكور"
 #: result_analysis/templates/result_analysis/results.html:51
 #: submissions/aggregation.py:11
 msgid "Missing"
-msgstr "مفقود"
+msgstr "Dispărut"
 
 #: process_analysis/templates/process_analysis/checklist_summary.html:44
 #: process_analysis/templates/process_analysis/critical_incident_summary.html:90
 #: submissions/models.py:203
 msgid "All"
-msgstr "الكل"
+msgstr "Toate"
 
 #: process_analysis/templates/process_analysis/checklist_summary.html:67
 #: process_analysis/templates/process_analysis/critical_incident_summary.html:113
 msgid "No data available"
-msgstr "لا توجد بيانات متاحة"
+msgstr "Nici o informatie disponibila"
 
 #: process_analysis/templates/process_analysis/checklist_summary_breakdown.html:55
 #: process_analysis/templates/process_analysis/critical_incident_summary.html:48
@@ -1191,60 +1191,60 @@ msgstr "%(loc_type)s"
 #: process_analysis/templates/process_analysis/critical_incident_summary.html:24
 #: process_analysis/templates/process_analysis/critical_incidents_locations.html:22
 msgid "Table"
-msgstr "الجدول"
+msgstr "Tabel"
 
 #: process_analysis/templates/process_analysis/critical_incident_summary.html:25
 msgid "Charts"
-msgstr "المخططات"
+msgstr "diagrame"
 
 #: process_analysis/templates/process_analysis/critical_incident_summary.html:29
 msgid "Summary"
-msgstr "الملخص"
+msgstr "rezumat"
 
 #: process_analysis/templates/process_analysis/critical_incident_summary.html:66
 msgid "Detail"
-msgstr "البيانات"
+msgstr "Detaliu"
 
 #: process_analysis/templates/process_analysis/critical_incidents_locations.html:31
 msgid "Observer ID"
-msgstr "هوية المراقب"
+msgstr "ID-ul de observator"
 
 #: result_analysis/views_results.py:45
 #, python-format
 msgid "%(form_name)s Voting Results"
-msgstr "نتائج التصويت %(form_name)s "
+msgstr "%(form_name)s Rezultatele votului"
 
 #: result_analysis/templates/result_analysis/results.html:35
 #: result_analysis/templates/result_analysis/results.html:53
 msgid "Turnout"
-msgstr "الإقبال"
+msgstr "Participarea la vot (Turnout)"
 
 #: result_analysis/templates/result_analysis/results.html:36
 msgid "Total Votes"
-msgstr "إجمالي الأصوات "
+msgstr "total voturi"
 
 #: result_analysis/templates/result_analysis/results.html:38
 #: result_analysis/templates/result_analysis/results.html:64
 msgid "Rejected Ballots"
-msgstr "أوراق الاقتراع المرفوضة"
+msgstr "Buletinele de vot "
 
 #: result_analysis/templates/result_analysis/results.html:41
 #: result_analysis/templates/result_analysis/results.html:71
 msgid "Blank Ballots"
-msgstr "أوراق الاقتراع الفارغة"
+msgstr "buletinelor de vot"
 
 #: result_analysis/templates/result_analysis/results.html:43
 #: result_analysis/templates/result_analysis/results.html:77
 msgid "Total Valid"
-msgstr "الإجمالي الصحيح"
+msgstr "Total valabile"
 
 #: result_analysis/templates/result_analysis/results.html:52
 msgid "Total Registered"
-msgstr "الإجمالي المسجل"
+msgstr "totalul inregistrat"
 
 #: result_analysis/templates/result_analysis/results.html:52
 msgid "TR"
-msgstr "الإجمالي المسجل"
+msgstr "TR"
 
 #: result_analysis/templates/result_analysis/results.html:55
 #: result_analysis/templates/result_analysis/results.html:56
@@ -1257,7 +1257,7 @@ msgstr "الإجمالي المسجل"
 #: result_analysis/templates/result_analysis/results.html:81
 #: result_analysis/templates/result_analysis/results.html:82
 msgid "Margin of Error"
-msgstr "هامش الخطأ"
+msgstr "Marja de eroare"
 
 #: result_analysis/templates/result_analysis/results.html:55
 #: result_analysis/templates/result_analysis/results.html:60
@@ -1266,7 +1266,7 @@ msgstr "هامش الخطأ"
 #: result_analysis/templates/result_analysis/results.html:81
 #, python-format
 msgid "MoE 95%%"
-msgstr "هامش الخطأ 95%%"
+msgstr "95 %% MoE"
 
 #: result_analysis/templates/result_analysis/results.html:56
 #: result_analysis/templates/result_analysis/results.html:61
@@ -1275,96 +1275,96 @@ msgstr "هامش الخطأ 95%%"
 #: result_analysis/templates/result_analysis/results.html:82
 #, python-format
 msgid "MoE 99%%"
-msgstr "هامش الخطأ 99%%"
+msgstr "99 %% MoE"
 
 #: result_analysis/templates/result_analysis/results.html:58
 #: result_analysis/templates/result_analysis/results.html:79
 msgid "Votes"
-msgstr "الأصوات"
+msgstr "voturi"
 
 #: result_analysis/templates/result_analysis/results.html:64
 msgid "RB"
-msgstr "أوراق الاقتراع المسجلة "
+msgstr "RB"
 
 #: result_analysis/templates/result_analysis/results.html:71
 msgid "BB"
-msgstr "أوراق الاقتراع الفارغة "
+msgstr "BB"
 
 #: result_analysis/templates/result_analysis/results.html:77
 msgid "TV"
-msgstr "الإجمالي الصحيح"
+msgstr "TV"
 
 #: result_analysis/templates/result_analysis/results.html:212
 msgid "Convergence Chart"
-msgstr "مخطط التقارب"
+msgstr "Grafic de convergență"
 
 #: submissions/models.py:20
 msgid "No Problem"
-msgstr "لا توجد مشكلة "
+msgstr "Nici o problema"
 
 #: submissions/models.py:21
 msgid "Problem"
-msgstr "المشكلة"
+msgstr "Problemă"
 
 #: submissions/models.py:34
 msgid "MISSING"
-msgstr "مفقود "
+msgstr "DISPĂRUT"
 
 #: submissions/models.py:35
 msgid "FLAGGED"
-msgstr "محدد بعلامة"
+msgstr "Semnalat"
 
 #: submissions/models.py:36
 msgid "VERIFIED"
-msgstr "محقق"
+msgstr "VERIFICAT"
 
 #: submissions/models.py:37
 msgid "REJECTED"
-msgstr "مرفوض"
+msgstr "RESPINS"
 
 #: submissions/models.py:42
 msgid "Status — No Problem"
-msgstr "الحالة - لا توجد مشكلة"
+msgstr "Stare - Nici o problema"
 
 #: submissions/models.py:43
 msgid "Status — Unverified"
-msgstr "الحالة – غير محقق"
+msgstr "Stare - neverificat"
 
 #: submissions/models.py:44
 msgid "Status — Verified"
-msgstr "الحالة – محقق"
+msgstr "Stare - verificate"
 
 #: submissions/models.py:45
 msgid "Status — Rejected"
-msgstr "الحالة - مرفوض "
+msgstr "Stare - Respins"
 
 #: submissions/models.py:198
 msgid "Observer Submission"
-msgstr "البيانات المقدمة من المراقب"
+msgstr "Raport observator"
 
 #: submissions/models.py:199
 msgid "Master Submission"
-msgstr "البيانات المقدمة الرئيسية"
+msgstr "Raport operator"
 
 #: submissions/models.py:202
 msgid "None"
-msgstr "لا يوجد "
+msgstr "Nici unul"
 
 #: submissions/models.py:204
 msgid "Results"
-msgstr "النتائج"
+msgstr "rezultate obținute"
 
 #: submissions/models.py:207
 msgid "Unconfirmed"
-msgstr "غير مؤكّد"
+msgstr "Neconfirmat"
 
 #: submissions/models.py:773
 msgid "SMS"
-msgstr "الرسائل القصيرة"
+msgstr "SMS"
 
 #: submissions/models.py:774
 msgid "Web"
-msgstr "الويب"
+msgstr "Web"
 
 #: submissions/models.py:775
 msgid "API"
@@ -1372,16 +1372,16 @@ msgstr "API"
 
 #: submissions/views_submissions.py:75 submissions/views_submissions.py:78
 msgid "Critical Incidents"
-msgstr "الحوادث الخطيرة"
+msgstr "Incidente "
 
 #: submissions/views_submissions.py:196
 msgid "Add Submission"
-msgstr "إضافة معلومات مقدمة"
+msgstr "Adauga un raport"
 
 #: submissions/views_submissions.py:244
 msgid "Edit Submission"
-msgstr "تحرير معلومات مقدمة"
+msgstr "Editeaza raport"
 
 #: submissions/views_submissions.py:580
 msgid "View submission"
-msgstr "عرض معلومات مقدمة"
+msgstr "Vizualizeaza raport"

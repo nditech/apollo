@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from flask import g
 from flask.ext.script import Command, prompt_choices
 from flask.ext.principal import Permission

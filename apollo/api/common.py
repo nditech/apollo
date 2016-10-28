@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from flask.ext.restful import reqparse
 
 parser = reqparse.RequestParser()
