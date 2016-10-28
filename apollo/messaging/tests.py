@@ -53,9 +53,9 @@ class ResponseParserTest(TestCase):
 
         response_dict, extra = parse_responses(
             'ZX1CV2EA135DBAAA3THIS IS A TEST', self.test_form)
-        self.assertEqual(extra, 'THIS IS A TEST')
+        self.assertEqual(extra, 'THISISATEST')
 
         response_dict, extra = parse_responses(
             'ZX1CV2EA135DBAAA3 THIS IS A TEST ', self.test_form)
-        self.assertEqual(extra, 'THIS IS A TEST')
+        self.assertEqual(extra, 'THISISATEST')
 
