@@ -96,7 +96,7 @@ def parse_responses(responses_text, form):
     numeric_fields = [f.name for f in fields if not f.represents_boolean]
     boolean_fields = [f.name for f in fields if f.represents_boolean]
 
-    substrate = re.sub(r'\s', '', responses_text)
+    substrate = re.sub(r'(\n|\r|\r\n)', '', responses_text)
     responses = OrderedDict()
     # process numeric fields first
     pattern = re.compile(r'(?P<tag>{})(?P<answer>\d+)'.format(
