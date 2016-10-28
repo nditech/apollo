@@ -33,7 +33,7 @@ def parse_text(text):
     config = current_app.config
 
     prefix = participant_id = exclamation = responses = comment = None
-    text = unidecode(unicode(text)) if config.get(u'TRANSLITERATE_INPUT') else unicode(text)
+    text = unicode(text)
     # regular expression for a valid text message
     pattern = re.compile(
         r'^(?P<prefix>[A-Z]+)(?P<participant_id>\d+)'
@@ -41,19 +41,21 @@ def parse_text(text):
 
     at_position = text.find("@")
 
+    ident_func = unidecode if config.get(u'TRANSLITERATE_INPUT') else unicode
+
     # remove unwanted punctuation characters and convert known characters
     # like i, l to 1 and o to 0. This will not be applied to the comment
     # section.
     if config.get(u'TRANSLATE_CHARS'):
-        text = filter(lambda s: s not in config.get('PUNCTUATIONS'),
+        text = ident_func(filter(lambda s: s not in config.get('PUNCTUATIONS'),
                       text[:at_position]) \
-            .translate(config.get('TRANS_TABLE')) + text[at_position:] \
+            .translate(config.get('TRANS_TABLE'))) + text[at_position:] \
             if at_position != -1 \
             else filter(lambda s: s not in config.get('PUNCTUATIONS'), text) \
             .translate(config.get('TRANS_TABLE'))
     else:
-        text = filter(lambda s: s not in config.get('PUNCTUATIONS'),
-                        text[:at_position]) + text[at_position:] \
+        text = ident_func(filter(lambda s: s not in config.get('PUNCTUATIONS'),
+                        text[:at_position])) + text[at_position:] \
             if at_position != -1 \
             else filter(lambda s: s not in config.get('PUNCTUATIONS'), text)
 
