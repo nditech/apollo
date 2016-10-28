@@ -8,6 +8,7 @@ from apollo.messaging.utils import parse_text
 from flask import Blueprint, make_response, request, g, current_app
 import json
 import re
+from unidecode import unidecode
 
 
 bp = Blueprint('messaging', __name__)
@@ -77,6 +78,9 @@ def kannel_view():
 
         response, submission, had_errors = parse_message(form)
 
+        if current_app.config.get(u'TRANSLITERATE_OUTPUT'):
+            response = unidecode(response)
+
         outgoing = services.messages.log_message(
             event=g.event, recipient=msg.get('sender'), text=response,
             direction='OUT', timestamp=msg.get('timestamp'))
@@ -107,6 +111,8 @@ def telerivet_view():
             direction='IN', timestamp=msg.get('timestamp'))
 
         response_text, submission, had_errors = parse_message(form)
+        if current_app.config.get(u'TRANSLITERATE_OUTPUT'):
+            response_text = unidecode(response_text)
         response = {'messages': [{'content': response_text}]}
         http_response = make_response(json.dumps(response))
         http_response.headers['Content-Type'] = 'application/json'

@@ -2,6 +2,8 @@
 from collections import OrderedDict
 import re
 
+from unidecode import unidecode
+
 
 def parse_text(text):
     '''
@@ -31,7 +33,7 @@ def parse_text(text):
     config = current_app.config
 
     prefix = participant_id = exclamation = responses = comment = None
-    text = unicode(text)
+    text = unidecode(unicode(text)) if config.get(u'TRANSLITERATE_INPUT') else unicode(text)
     # regular expression for a valid text message
     pattern = re.compile(
         r'^(?P<prefix>[A-Z]+)(?P<participant_id>\d+)'

@@ -136,3 +136,5 @@ BIG_N = ast.literal_eval(os.environ.get('BIG_N', '0')) or numpy.inf
 GOOGLE_ANALYTICS_KEY = os.environ.get('GOOGLE_ANALYTICS_KEY')
 
 TRANSLATE_CHARS = ast.literal_eval(os.environ.get(u'TRANSLATE_CHARS', u'True'))
+TRANSLITERATE_INPUT = ast.literal_eval(os.environ.get(u'TRANSLITERATE_INPUT', u'False'))
+TRANSLITERATE_OUTPUT = ast.literal_eval(os.environ.get(u'TRANSLITERATE_OUTPUT', u'False'))
