@@ -86,13 +86,14 @@ CACHE_REDIS_URL = 'redis://{host}/{database}'.format(
     database=os.environ.get('REDIS_DATABASE', '0'))
 
 LANGUAGES = {
-    'en': 'English',
-    'es': 'Español',
-    'fr': 'Français',
-    'az': 'Azərbaycanca',
-    'ar': 'العربية',
-    'de': 'Deutsch',
-    'ru': 'Русский',
+    'en': u'English',
+    'es': u'Español',
+    'fr': u'Français',
+    'az': u'Azərbaycanca',
+    'ar': u'العربية',
+    'de': u'Deutsch',
+    'ru': u'Русский',
+    'ro': u'Română',
 }
 BABEL_DEFAULT_LOCALE = os.environ.get('BABEL_DEFAULT_LOCALE', 'en')
 
