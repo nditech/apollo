@@ -42,12 +42,18 @@ def parse_text(text):
     # remove unwanted punctuation characters and convert known characters
     # like i, l to 1 and o to 0. This will not be applied to the comment
     # section.
-    text = filter(lambda s: s not in config.get('PUNCTUATIONS'),
-                  text[:at_position]) \
-        .translate(config.get('TRANS_TABLE')) + text[at_position:] \
-        if at_position != -1 \
-        else filter(lambda s: s not in config.get('PUNCTUATIONS'), text) \
-        .translate(config.get('TRANS_TABLE'))
+    if config.get(u'TRANSLATE_CHARS'):
+        text = filter(lambda s: s not in config.get('PUNCTUATIONS'),
+                      text[:at_position]) \
+            .translate(config.get('TRANS_TABLE')) + text[at_position:] \
+            if at_position != -1 \
+            else filter(lambda s: s not in config.get('PUNCTUATIONS'), text) \
+            .translate(config.get('TRANS_TABLE'))
+    else:
+        text = filter(lambda s: s not in config.get('PUNCTUATIONS'),
+                        text[:at_position]) + text[at_position:] \
+            if at_position != -1 \
+            else filter(lambda s: s not in config.get('PUNCTUATIONS'), text)
 
     at_position = text.find("@")
     match = pattern.match(text[:at_position] if at_position != -1 else text)

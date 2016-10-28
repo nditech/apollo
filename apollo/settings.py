@@ -134,3 +134,5 @@ APPLICATIONS = ast.literal_eval(os.environ.get(
 
 BIG_N = ast.literal_eval(os.environ.get('BIG_N', '0')) or numpy.inf
 GOOGLE_ANALYTICS_KEY = os.environ.get('GOOGLE_ANALYTICS_KEY')
+
+TRANSLATE_CHARS = ast.literal_eval(os.environ.get(u'TRANSLATE_CHARS', u'True'))
