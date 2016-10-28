@@ -41,21 +41,26 @@ def parse_text(text):
 
     at_position = text.find("@")
 
-    ident_func = unidecode if config.get(u'TRANSLITERATE_INPUT') else unicode
+    if config.get(u'TRANSLITERATE_INPUT'):
+        if at_position != -1:
+            text = unidecode(text[:at_position]) + text[at_position:]
+        else:
+            text = unidecode(text)
+        at_position = text.find(u'@')
 
     # remove unwanted punctuation characters and convert known characters
     # like i, l to 1 and o to 0. This will not be applied to the comment
     # section.
     if config.get(u'TRANSLATE_CHARS'):
-        text = ident_func(filter(lambda s: s not in config.get('PUNCTUATIONS'),
+        text = filter(lambda s: s not in config.get('PUNCTUATIONS'),
                       text[:at_position]) \
-            .translate(config.get('TRANS_TABLE'))) + text[at_position:] \
+            .translate(config.get('TRANS_TABLE')) + text[at_position:] \
             if at_position != -1 \
             else filter(lambda s: s not in config.get('PUNCTUATIONS'), text) \
             .translate(config.get('TRANS_TABLE'))
     else:
-        text = ident_func(filter(lambda s: s not in config.get('PUNCTUATIONS'),
-                        text[:at_position])) + text[at_position:] \
+        text = filter(lambda s: s not in config.get('PUNCTUATIONS'),
+                        text[:at_position]) + text[at_position:] \
             if at_position != -1 \
             else filter(lambda s: s not in config.get('PUNCTUATIONS'), text)
 
