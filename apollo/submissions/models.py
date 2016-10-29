@@ -345,7 +345,7 @@ class Submission(db.DynamicDocument):
                         else:
                             sub_completion[group.name] = 'Missing'
 
-                    submission.completion = sub_completion
+                    submission.completion.update(sub_completion)
                     submission.save(clean=False)
 
         self.completion = completion
