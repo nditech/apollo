@@ -297,6 +297,8 @@ class Submission(db.DynamicDocument):
 
         elif self.master == self:
             # update sibling submissions
+            observer_submissions = list(self.siblings)
+
             for group in self.form.groups:
                 completed = [getattr(self, f.name, None) is not None
                              for f in group.fields]
@@ -307,21 +309,20 @@ class Submission(db.DynamicDocument):
                 else:
                     completion[group.name] = 'Missing'
 
-            for group in self.form.groups:
                 fields_to_check = filter(
                     lambda f: f not in self.overridden_fields,
                     [f.name for f in group.fields])
 
-                observer_submissions = list(self.siblings)
                 not_quarantined = filter(lambda s: not s.quarantine_status,
                                          observer_submissions)
 
                 if not not_quarantined:
                     self.quarantine_status = 'A'  # quarantine all records
 
-                for submission in observer_submissions:
-                    sub_completion = {} if submission.completion is None else submission.completion.copy()
+            for submission in observer_submissions:
+                sub_completion = {} if submission.completion is None else submission.completion.copy()
 
+                for group in self.form.groups:
                     # remove any keys that aren't in the form
                     diff = set(sub_completion.keys()).difference(group_names)
                     for k in diff:
@@ -353,8 +354,8 @@ class Submission(db.DynamicDocument):
                         else:
                             sub_completion[group.name] = 'Missing'
 
-                    submission.completion = sub_completion
-                    submission.save(clean=False)
+                submission.completion = sub_completion
+                submission.save(clean=False)
 
         self.completion = completion
 
