@@ -258,6 +258,9 @@ class Submission(db.DynamicDocument):
         for participant in Participant.objects(
                 deployment=deployment, event=event, role=role
                 ):
+            if not participant.location:
+                continue
+
             if location_type.name == participant.location.location_type:
                 location = participant.location
             else:
