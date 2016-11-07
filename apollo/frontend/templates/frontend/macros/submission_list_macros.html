@@ -46,7 +46,7 @@
     {%- if (field.options and not field.allows_multiple_values) or not (field.represents_boolean or field.is_comment_field) -%}
     {% if field.options %}{%- set options = field.options|reverse_dict -%}<abbr title="{{ options[submission[field.name]] }}">{{ submission[field.name] }}</abbr>{% else %}{{ submission[field.name] }}{% endif %}
     {%- else -%}
-    <img src="{{ url_for('static', filename='img/tick.png') }}" alt="{{ _('data present') }}" title="{{ _('data present') }}" height="11" width="11" />
+    <i class="fa fa-check success" aria-hidden="true" title="{{ _('data present') }}"></i>
     {% endif %}
     {% else %}
     &nbsp;
@@ -57,18 +57,26 @@
     {% if form.form_type == 'INCIDENT' %}
     {%- set status = submission.status -%}
     {%- if status == 'confirmed' -%}
-    <img src="{{ url_for('static', filename='img/tick.png') }}" title="{{ _('Confirmed') }}" alt="{{ _('Confirmed') }}" height="11" width="11" />
+    <i class="fa fa-check success" aria-hidden="true" title="{{ _('Confirmed') }}"></i>
     {%- elif status == 'rejected' -%}
-    <img src="{{ url_for('static', filename='img/red_dot.png') }}" title="{{ _('Rejected') }}" alt="{{ _('Rejected') }}" height="11" width="11" />
+    <i class="fa fa-circle error" aria-hidden="true" title="{{ _('Rejected') }}"></i>
+    {%- elif status == 'citizen' -%}
+    <i class="fa fa-users neutral" aria-hidden="true" title="{{ _('Citizen Report') }}"></i>
     {%- else -%}
-    <img src="{{ url_for('static', filename='img/caution.png') }}" title="{{ _('Unmarked') }}" alt="{{ _('Unmarked') }}" height="11" width="11" />
+    <i class="fa fa-exclamation-triangle warning" aria-hidden="true" title="{{ _('Unmarked') }}"></i>
     {%- endif -%}
     {%- else -%}
     &nbsp;
     {%- endif -%}
     </td>
     {% endif %}
-    <td style="text-align: center"><img src="{% if submission.sender_verified %}{{ url_for('static', filename='img/tick.png') }}{% else %}{{ url_for('static', filename='img/caution.png') }}{% endif %}" title="{% if submission.sender_verified %}{{ _('Verified') }}{% else %}{{ _('Unverified') }}{% endif %}" height="11" width="11" /></td>
+    <td style="text-align: center">
+      {% if submission.sender_verified -%}
+      <i class="fa fa-check success" aria-hidden="true" title="{{ _('Verified') }}"></i>
+      {%- else -%}
+      <i class="fa fa-exclamation-triangle warning" aria-hidden="true" title="{{ _('Unverified') }}"></i>
+      {% endif %}
+    </td>
     {% if perms.edit_submission.can() %}<td class="text-center"><a href="{{ url_for('submissions.submission_edit', submission_id=submission.pk) }}">{{ _('Edit') }}</a></td>{% endif %}
 </tr>
 {% else %}
