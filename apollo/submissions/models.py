@@ -258,6 +258,9 @@ class Submission(db.DynamicDocument):
         for participant in Participant.objects(
                 deployment=deployment, event=event, role=role
                 ):
+            if not participant.location:
+                continue
+
             if location_type.name == participant.location.location_type:
                 location = participant.location
             else:
@@ -327,6 +330,10 @@ class Submission(db.DynamicDocument):
                     diff = set(sub_completion.keys()).difference(group_names)
                     for k in diff:
                         sub_completion.pop(k)
+
+                    fields_to_check = filter(
+                        lambda f: f not in self.overridden_fields,
+                        [f.name for f in group.fields])
 
                     # check for conflicting values in the submissions
                     for field in fields_to_check:

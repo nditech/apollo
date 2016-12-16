@@ -240,8 +240,9 @@ class RoleAdminView(BaseAdminView):
 
     def after_model_change(self, form, model, is_created):
         # remove model from all permissions that weren't granted
-        for need in models.Need.objects(
-                pk__nin=form.permissions.data):
+        # except for the excluded actions
+        for need in models.Need.objects(pk__nin=form.permissions.data,
+                                        action__nin=excluded_perm_actions):
             need.update(pull__entities=model)
 
         # add only the explicitly defined permissions

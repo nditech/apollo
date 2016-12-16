@@ -7,6 +7,7 @@ apollo_css = Bundle('css/bootstrap.css',
                     'css/table-fixed-header.css',
                     'css/datepicker.css',
                     'css/jquery.qtip.css',
+                    'css/font-awesome.min.css',
                     'css/custom.css',
                     output='css/apollo.css')
 apollo_js = Bundle('js/jquery.js',
