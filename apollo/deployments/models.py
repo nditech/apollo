@@ -9,7 +9,7 @@ class ParticipantPropertyName(db.StringField):
         from ..participants.models import Participant
         if value in Participant._fields.keys():
             self.error(
-                'String value cannot be one of the disallowed field names')
+                u'String value cannot be one of the disallowed field names')
         super(ParticipantPropertyName, self).validate(value)
 
 
@@ -30,17 +30,18 @@ class Deployment(db.Document):
     participant_extra_fields = db.ListField(
         db.EmbeddedDocumentField(CustomDataField))
     allow_observer_submission_edit = db.BooleanField(
-        default=True, verbose_name='Allow editing of Participant submissions?')
+        default=True,
+        verbose_name=u'Allow editing of Participant submissions?')
     logo = db.StringField()
     include_rejected_in_votes = db.BooleanField(default=False)
     is_initialized = db.BooleanField(default=False)
     dashboard_full_locations = db.BooleanField(
         default=True,
-        verbose_name='Show all locations for dashboard stats?')
+        verbose_name=u'Show all locations for dashboard stats?')
 
     meta = {
-        'indexes': [
-            ['hostnames']
+        u'indexes': [
+            [u'hostnames']
         ]
     }
 
@@ -61,9 +62,9 @@ class Event(db.Document):
     deployment = db.ReferenceField(Deployment)
 
     meta = {
-        'indexes': [
-            ['deployment', 'name'],
-            ['deployment', 'start_date', '-end_date']
+        u'indexes': [
+            [u'deployment', u'name'],
+            [u'deployment', u'start_date', u'-end_date']
         ]
     }
 

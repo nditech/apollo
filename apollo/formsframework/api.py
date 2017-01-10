@@ -5,7 +5,7 @@ from apollo import services
 
 
 SIMPLE_FORM_ITEM_MAPPER = {
-    'name': fields.String,
+    u'name': fields.String,
 }
 
 
