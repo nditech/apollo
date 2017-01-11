@@ -13,7 +13,7 @@ class ApolloRavenClient(Client):
         extra.update({
             u'event': str(getattr(g, u'event', None)),
             u'apollo_version': getattr(settings, u'APOLLO_VERSION',
-                u'Unspecified'),
+                'Unspecified'),
         })
 
         return super(ApolloRavenClient, self).capture(event_type, data,
