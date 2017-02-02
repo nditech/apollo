@@ -64,8 +64,9 @@ def locations_list():
     queryset = services.locations.find()
     queryset_filter = filters.location_filterset()(queryset, request.args)
 
-    args = request.args.copy()
-    page = int(args.pop('page', '1'))
+    args = request.args.to_dict(flat=False)
+    page_spec = args.pop(u'page', None) or [1]
+    page = int(page_spec[0])
 
     subset = queryset_filter.qs.order_by('location_type')
 

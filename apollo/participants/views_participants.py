@@ -105,8 +105,9 @@ def participant_list(page=1):
     else:
         # request.args is immutable, so the .pop() call will fail on it.
         # using .copy() returns a mutable version of it.
-        args = request.args.copy()
-        page = int(args.pop('page', '1'))
+        args = request.args.to_dict(flat=False)
+        page_spec = args.pop(u'page', None) or [1]
+        page = int(page_spec[0])
 
         sort_by = sortable_columns.get(
             args.pop('sort_by', ''), 'participant_id')
@@ -186,8 +187,9 @@ def participant_performance_list(page=1):
     else:
         # request.args is immutable, so the .pop() call will fail on it.
         # using .copy() returns a mutable version of it.
-        args = request.args.copy()
-        page = int(args.pop('page', '1'))
+        args = request.args.to_dict(flat=False)
+        page_spec = args.pop(u'page', None) or [1]
+        page = int(page_spec[0])
 
         sort_by = sortable_columns.get(
             args.pop('sort_by', ''), 'participant_id')

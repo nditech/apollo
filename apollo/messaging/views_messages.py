@@ -47,8 +47,9 @@ def message_list():
             mimetype="text/csv"
         )
     else:
-        data = request.args.to_dict()
-        page = int(data.pop('page', 1))
+        data = request.args.to_dict(flat=False)
+        page_spec = data.pop(u'page', None) or [1]
+        page = int(page_spec[0])
         context = {
             'page_title': page_title,
             'filter_form': queryset_filter.form,
