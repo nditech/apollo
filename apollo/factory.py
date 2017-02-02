@@ -3,7 +3,7 @@ from cachetools import cached
 from celery import Celery
 from flask import Flask, request
 from flask.ext.sslify import SSLify
-from raven import Client
+from raven.base import Client
 from raven.contrib.celery import register_signal, register_logger_signal
 
 from apollo.core import babel, cache, db, mail, sentry
