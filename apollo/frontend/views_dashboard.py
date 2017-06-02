@@ -40,7 +40,10 @@ def main_dashboard(form_id=None):
     else:
         form = forms.get_or_404(pk=form_id, form_type="CHECKLIST")
 
-    page_title = _(u'Dashboard · %(name)s', name=form.name)
+    if form is not None:
+        page_title = _(u'Dashboard · %(name)s', name=form.name)
+    else:
+        page_title = _(u'Dashboard')
 
     queryset = submissions.find(
         form=form,
