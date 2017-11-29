@@ -15,8 +15,7 @@ from slugify import slugify_unicode
 from apollo.frontend import filters, helpers, permissions, route
 from apollo import services
 from apollo.helpers import load_source_file, stash_file
-from apollo.participants import api
-from apollo.participants.tasks import import_participants
+from apollo.participants import api, tasks
 from apollo.messaging.tasks import send_messages
 from apollo.frontend.forms import (
     DummyForm, generate_participant_edit_form,
@@ -385,7 +384,7 @@ def participant_headers(pk):
                 'upload_id': unicode(upload.id),
                 'mappings': data
             }
-            import_participants.apply_async(kwargs=kwargs)
+            tasks.import_participants.apply_async(kwargs=kwargs)
             return redirect(url_for('participants.participant_list'))
 
 
@@ -403,4 +402,7 @@ def nuke_participants():
         str_func(_('Participants, checklists, incidents and messages for this event are being deleted')),
         category='task_begun'
     )
+
+    tasks.nuke_participants.apply_async((str_func(event.pk),))
+
     return redirect(url_for('participants.participant_list'))

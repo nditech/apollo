@@ -18,8 +18,7 @@ from slugify import slugify_unicode
 
 from apollo.frontend import filters, permissions, route
 from apollo import helpers, models, services
-from apollo.locations import api
-from apollo.locations.tasks import import_locations
+from apollo.locations import api, tasks
 from apollo.frontend.forms import (
     file_upload_form, generate_location_edit_form,
     generate_location_update_mapping_form, DummyForm)
@@ -179,7 +178,7 @@ def location_headers(pk):
                 'upload_id': unicode(upload.id),
                 'mappings': data
             }
-            import_locations.apply_async(kwargs=kwargs)
+            tasks.import_locations.apply_async(kwargs=kwargs)
 
             return redirect(url_for('locations.locations_list'))
 
@@ -295,4 +294,7 @@ def nuke_locations():
         str_func(_('Locations, checklists, incidents and participants are being deleted')),
         category='locations'
     )
+
+    tasks.nuke_locations.apply_async()
+
     return redirect(url_for('locations.locations_list'))
