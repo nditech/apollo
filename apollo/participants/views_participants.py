@@ -38,6 +38,8 @@ participant_api.add_resource(
     endpoint='api.participants'
 )
 
+admin_required = permissions.role('admin').require
+
 
 @route(bp, '/participants', methods=['GET', 'POST'])
 @register_menu(
@@ -384,5 +386,12 @@ def participant_headers(pk):
                 'mappings': data
             }
             import_participants.apply_async(kwargs=kwargs)
-
             return redirect(url_for('participants.participant_list'))
+
+
+@route(bp, '/participants/nuke', methods=['POST'])
+@admin_required(403)
+@login_required
+def nuke_participants():
+    print 'No-op nuke for {}'.format(g.event)
+    return redirect(url_for('participants.participant_list'))

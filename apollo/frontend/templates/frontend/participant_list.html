@@ -146,6 +146,7 @@ a:hover.arrow-style{text-decoration:none; color:#333;}
         </div>
       </div>
     </div>
+    {%- if perms.role('admin').can() -%}
     <div class="modal fade" id="nuke_modal" tabindex="-2" role="dialog" aria-labelledby="nukeModalLabel" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
@@ -161,12 +162,16 @@ a:hover.arrow-style{text-decoration:none; color:#333;}
             </div>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            <button class="btn btn-danger" disabled="true" id="confirm_nuke">Yes, I understand</button>
+            <form action="{{ url_for('participants.nuke_participants') }}" method="POST">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              <button class="btn btn-danger" disabled="true" id="confirm_nuke">Yes, I understand</button>
+            </form>
           </div>
         </div>
       </div>
     </div>
+    {%- endif -%}
     <!-- IMPORT WIZARD -->
     <div class="wizard" id="import-wizard" data-title="Import Participants">
       <!-- Step 1 -->
@@ -265,6 +270,7 @@ $(function(){
         $('#edit_modal').html(edit_modal_content);
     });
 
+    {%- if perms.role('admin').can() -%}
     $('#nuke_modal').on('show.bs.modal', function (e) {
       var compare = new URI(window.location.href).hostname();
       $('#compare').html(compare);
@@ -272,6 +278,7 @@ $(function(){
         $('#confirm_nuke').prop('disabled', $('#prompt').val() != compare);
       }, 500));
     });
+    {%- endif -%}
 
     wizard = $('#import-wizard').wizard({
         keyboard : true,
