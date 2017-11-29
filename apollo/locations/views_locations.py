@@ -28,6 +28,7 @@ bp = Blueprint('locations', __name__, template_folder='templates',
                static_folder='static', static_url_path='/core/static')
 location_api = Api(bp)
 
+admin_required = permissions.role('admin').require
 
 location_api.add_resource(
     api.LocationTypeItemResource,
@@ -279,3 +280,11 @@ def locations_builder():
         )
 
     return render_template(template_name, page_title=page_title)
+
+
+@route(bp, '/locations/nuke', methods=['POST'])
+@admin_required
+@login_required
+def nuke_locations():
+    print 'No-op location nuke'
+    return redirect('locations.locations_list')
