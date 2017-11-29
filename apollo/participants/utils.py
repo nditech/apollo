@@ -1,5 +1,13 @@
 # -*- coding: utf-8 -*-
-from apollo import services
+from datetime import datetime
+from itertools import ifilter
+import re
+
+from flask import g
+
+from apollo import models, services
+
+ugly_phone = re.compile('[^\d]*')
 
 
 def update_participant_completion_rating(participant):
@@ -36,3 +44,49 @@ def update_participant_completion_rating(participant):
             # this should never happen
             participant.completion_rating = 1
     participant.save()
+
+
+def lookup_participant(form, participant_id):
+    current_event = getattr(g, 'event', services.events.default())
+    running_events = services.events.overlapping_events(current_event)
+    available_events = set(running_events).intersection(form.events)
+
+    # this assumes that nobody assigns the same participant ID in multiple
+    # concurrent events
+    participant = models.Participant.objects.filter(event__in=available_events,
+        participant_id=participant_id).first()
+
+    return participant
+
+
+def update_phone_contacts(participant, phone):
+    phone_contact = next(ifilter(
+        lambda contact: ugly_phone.sub('', phone) == contact.number,
+        participant.phones), False)
+    if phone_contact:
+        phone_contact.last_seen = datetime.utcnow()
+        participant.save()
+    else:
+        phone_contact = models.PhoneContact(
+            number=phone, verified=False, last_seen=datetime.utcnow())
+        participant.update(add_to_set__phones=phone_contact)
+
+    return phone_contact.verified
+
+
+def nuke_participants(event):
+    participants = services.participants.find(event=event)
+
+    # nuke messages
+    messages = services.messages.find(event=event, participant__in=participants)
+    messages.delete()
+
+    # nuke checklists
+    submissions = services.submissions.find(event=event,
+        contributor__in=participants)
+    for s in submissions:
+        s.master.delete()
+        s.delete()
+
+    # actually nuke the participants
+    participants.delete()
