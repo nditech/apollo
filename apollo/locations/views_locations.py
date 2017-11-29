@@ -283,7 +283,7 @@ def locations_builder():
 
 
 @route(bp, '/locations/nuke', methods=['POST'])
-@admin_required
+@admin_required(403)
 @login_required
 def nuke_locations():
     print 'No-op location nuke'
