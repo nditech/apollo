@@ -286,5 +286,13 @@ def locations_builder():
 @admin_required(403)
 @login_required
 def nuke_locations():
-    print 'No-op location nuke'
+    try:
+        str_func = unicode
+    except NameError:
+        str_func = str
+
+    flash(
+        str_func(_('Locations, checklists, incidents and participants are being deleted')),
+        category='locations'
+    )
     return redirect(url_for('locations.locations_list'))

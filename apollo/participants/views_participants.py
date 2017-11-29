@@ -4,7 +4,7 @@ from __future__ import absolute_import
 from datetime import datetime
 from itertools import ifilter
 
-from flask import (abort, Blueprint, current_app, g, redirect,
+from flask import (abort, Blueprint, current_app, flash, g, redirect,
                    render_template, request, Response, url_for)
 from flask.ext.babel import lazy_gettext as _
 from flask.ext.menu import register_menu
@@ -393,5 +393,14 @@ def participant_headers(pk):
 @admin_required(403)
 @login_required
 def nuke_participants():
-    print 'No-op nuke for {}'.format(g.event)
+    try:
+        str_func = unicode
+    except NameError:
+        str_func = str
+
+    event = g.event
+    flash(
+        str_func(_('Participants, checklists, incidents and messages for this event are being deleted')),
+        category='task_begun'
+    )
     return redirect(url_for('participants.participant_list'))
