@@ -287,4 +287,4 @@ def locations_builder():
 @login_required
 def nuke_locations():
     print 'No-op location nuke'
-    return redirect('locations.locations_list')
+    return redirect(url_for('locations.locations_list'))
