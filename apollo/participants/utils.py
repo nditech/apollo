@@ -78,7 +78,7 @@ def nuke_participants(event):
     participants = services.participants.find(event=event)
 
     # nuke messages
-    messages = services.messages.find(event=event, participant__in=participants)
+    messages = services.messages.find(event=event)
     messages.delete()
 
     # nuke checklists and incidents
