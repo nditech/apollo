@@ -41,7 +41,7 @@ a:hover.arrow-style{text-decoration:none; color:#333;}
   <button class="btn btn-sm btn-success pull-right" id="send_message_modal_btn" style="margin-right:1em;"><i class="glyphicon glyphicon-envelope"></i> {{ _('Send Message') }}</button>
   {%- endif -%}
   {%- if perms.role('admin').can() -%}
-  <button class="btn btn-sm btn-danger pull-right" id="nuke_participants_modal_btn" style="margin-right: 1em;" data-toggle="modal" data-target="#nuke_modal">{{ _('Purge Participants') }}</button>
+  <button class="btn btn-sm btn-danger pull-right" id="nuke_participants_modal_btn" style="margin-right: 1em;" data-toggle="modal" data-target="#nuke_modal"><i class="glyphicon glyphicon-exclamation-sign"></i> {{ _('Purge Participants') }}</button>
   {%- endif -%}
 {% endblock %}
 {% block content %}
@@ -155,7 +155,7 @@ a:hover.arrow-style{text-decoration:none; color:#333;}
             <h4 class="modal-title" id="nukeModalLabel">{{ _('Purge Participants') }}</h4>
           </div>
           <div class="modal-body">
-            <div class="alert alert-danger"><strong>WARNING:</strong> This will delete all participants, as well as any data linked to them &ndash; checklists, incidents and messages. Only use this if you're absolutely sure this is what you want, and you accept responsibility for all data lost.</div>
+            <div class="alert alert-danger"><strong>WARNING:</strong> This will delete all participants, as well as any data linked to them &ndash; checklists and incidents. Only use this if you're <strong><em>absolutely</em></strong> sure this is what you want, and you accept responsibility for all data lost.</div>
             <p>Please enter <code id="compare">{{ _('DELETE') }}</code> below to proceed:</p>
             <div class="form-group">
               <input class="form-control" id="prompt">
