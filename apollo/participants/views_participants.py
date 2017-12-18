@@ -388,7 +388,7 @@ def participant_headers(pk):
             return redirect(url_for('participants.participant_list'))
 
 
-@route(bp, '/participants/nuke', methods=['POST'])
+@route(bp, '/participants/purge', methods=['POST'])
 @admin_required(403)
 @login_required
 def nuke_participants():
@@ -399,7 +399,7 @@ def nuke_participants():
 
     event = g.event
     flash(
-        str_func(_('Participants, checklists, incidents and messages for this event are being deleted')),
+        str_func(_('Participants, Checklists, Critical Incidents and Messages for this event are being deleted.')),
         category='task_begun'
     )
 

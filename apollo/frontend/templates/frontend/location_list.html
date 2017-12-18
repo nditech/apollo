@@ -34,7 +34,7 @@
   <button id="open-wizard" class="btn btn-sm btn-primary pull-right" style="margin-right:1em;"><i class="glyphicon glyphicon-import glyphicon-white"></i> {{ _('Import Locations') }}</button>
   {%- endif -%}
   {%- if perms.role('admin').can() -%}
-  <button class="btn btn-sm btn-danger pull-right" id="nuke_locations_modal_btn" style="margin-right: 1em;" data-toggle="modal" data-target="#nuke_modal">Nuke locations</button>
+  <button class="btn btn-sm btn-danger pull-right" id="nuke_locations_modal_btn" style="margin-right: 1em;" data-toggle="modal" data-target="#nuke_modal"><i class="glyphicon glyphicon-trash"></i> {{ _('Purge Locations') }}</button>
   {%- endif -%}
 {% endblock %}
 {% block content %}
@@ -92,10 +92,10 @@
       <div class="modal-content">
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-          <h4 class="modal-title" id="nukeModalLabel">{{ _('Nuke locations') }}</h4>
+          <h4 class="modal-title" id="nukeModalLabel">{{ _('Purge Locations') }}</h4>
         </div>
         <div class="modal-body">
-          <div class="alert alert-danger"><strong>WARNING:</strong> This will delete all locations. This means that everything else &ndash; checklists, incidents, participants will be invalid, and also deleted. Only use this if you are absolutely sure that this is what you want, and you accept responsibility for the resulting data loss.</div>
+          <div class="alert alert-danger"><strong>WARNING:</strong> This will delete all locations. This means that everything else &ndash; checklists, incidents, participants will be deleted.</div>
           <p>Please enter <code id="compare"></code> below to proceed:</p>
           <div class="form-group">
             <input class="form-control" id="prompt">
@@ -191,7 +191,7 @@ $(function(){
 
     {%- if perms.role('admin').can() -%}
     $('#nuke_modal').on('show.bs.modal', function (e) {
-      var compare = new URI(window.location.href).hostname();
+      var compare = '{{ _("DELETE") }}';
       $('#compare').html(compare);
       $('#prompt').on('input', _.debounce(function () {
         $('#confirm_nuke').prop('disabled', $('#prompt').val() != compare);

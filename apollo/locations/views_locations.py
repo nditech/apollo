@@ -281,7 +281,7 @@ def locations_builder():
     return render_template(template_name, page_title=page_title)
 
 
-@route(bp, '/locations/nuke', methods=['POST'])
+@route(bp, '/locations/purge', methods=['POST'])
 @admin_required(403)
 @login_required
 def nuke_locations():
@@ -291,7 +291,7 @@ def nuke_locations():
         str_func = str
 
     flash(
-        str_func(_('Locations, checklists, incidents and participants are being deleted')),
+        str_func(_('Locations, Checklists, Critical Incidents and Participants are being deleted.')),
         category='locations'
     )
 
