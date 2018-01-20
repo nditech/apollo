@@ -70,11 +70,11 @@ def update_locations(df, mapping, event):
         for lt in location_types:
             location_code = df.ix[idx].get(mapping.get(map_attribute(lt, 'code'), ''), '')
             location_code = int(location_code) if type(location_code) in [int, float] else location_code
-            location_code = str(location_code).decode('utf-8')
+            location_code = str(location_code)
             location_name = str(df.ix[idx].get(
                 mapping.get(map_attribute(lt, 'name'), ''),
                 ''
-            )).decode('utf-8')
+            ))
             location_pcode = df.ix[idx].get(
                 mapping.get(map_attribute(lt, 'pcode'), ''), '') \
                 if lt.has_political_code else None
@@ -83,10 +83,10 @@ def update_locations(df, mapping, event):
                 if lt.has_other_code else None
             if location_pcode:
                 location_pcode = int(location_pcode) if type(location_pcode) in [int, float] else location_pcode
-                location_pcode = str(location_pcode).decode('utf-8')
+                location_pcode = str(location_pcode)
             if location_ocode:
                 location_ocode = int(location_ocode) if type(location_ocode) in [int, float] else location_ocode
-                location_ocode = str(location_ocode).decode('utf-8')
+                location_ocode = str(location_ocode)
             location_rv = df.ix[idx].get(
                 mapping.get(map_attribute(lt, 'rv'), ''), '') \
                 if lt.has_registered_voters else None
@@ -134,11 +134,11 @@ def update_locations(df, mapping, event):
             ancestors = []
             for sub_lt in lt.ancestors_ref:
                 sub_lt_name = str(df.ix[idx].get(
-                    mapping.get(map_attribute(sub_lt, 'name'), ''))).decode('utf-8')
+                    mapping.get(map_attribute(sub_lt, 'name'), '')))
                 sub_lt_code = df.ix[idx].get(
                     mapping.get(map_attribute(sub_lt, 'code'), ''), '')
                 sub_lt_code = int(sub_lt_code) if type(sub_lt_code) in [int, float] else sub_lt_code
-                sub_lt_code = str(sub_lt_code).decode('utf-8')
+                sub_lt_code = str(sub_lt_code)
                 sub_lt_type = sub_lt.name or ''
 
                 ancestor = cache.get(sub_lt_code, sub_lt_type, sub_lt_name)
