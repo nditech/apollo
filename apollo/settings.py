@@ -106,7 +106,7 @@ CHARACTER_TRANSLATIONS = (
     ('l', '1'),
     ('L', '1'),
 )
-PUNCTUATIONS = [s for s in string.punctuation if s not in ALLOWED_PUNCTUATIONS] + ' '
+PUNCTUATIONS = [s for s in string.punctuation if s not in ALLOWED_PUNCTUATIONS] + [' ']
 TRANS_TABLE = dict((ord(char_from), ord(char_to))
                    for char_from, char_to in
                    CHARACTER_TRANSLATIONS)

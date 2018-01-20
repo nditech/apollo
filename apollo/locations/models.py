@@ -155,11 +155,14 @@ class Location(db.DynamicDocument):
         return self.ancestors_ref
 
     def ancestor(self, location_type, include_self=True):
+        path = [l for l in self.ancestors_ref if l.location_type == location_type]
+        if include_self and self.location_type == location_type:
+            path = path + [self]
+
         try:
-            return [l for l in self.ancestors_ref + [self] if include_self else
-                          self.ancestors_ref if l.location_type == location_type][0]
+            return path[0]
         except IndexError:
-            pass
+            return None
 
     def __unicode__(self):
         return self.name or ''
