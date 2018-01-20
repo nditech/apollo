@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 import calendar
+import csv
 from datetime import datetime
 from urllib.parse import urljoin
 from flask import current_app, url_for
 from flask.ext.script import Command, prompt
 import pytz
 import requests
-import unicodecsv
 
 
 class MessagePlaybackCommand(Command):
@@ -19,7 +19,7 @@ class MessagePlaybackCommand(Command):
 
         filename = prompt('Path to message log')
         with open(filename) as f:
-            reader = unicodecsv.DictReader(f)
+            reader = csv.DictReader(f)
             for row in reader:
                 # ignore outbound messages
                 if row['Direction'] == 'OUT':

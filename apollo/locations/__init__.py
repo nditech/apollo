@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
+import csv
+
 from apollo.core import Service, cache
 from apollo.locations.models import Sample, LocationType, Location
-import unicodecsv
+
 try:
     from io import StringIO
 except:
@@ -61,7 +63,7 @@ class LocationsService(Service):
                 ))
 
         output = StringIO()
-        writer = unicodecsv.writer(output, encoding='utf-8')
+        writer = csv.writer(output)
         writer.writerow([str(i) for i in headers])
         yield output.getvalue()
         output.close()
@@ -96,7 +98,7 @@ class LocationsService(Service):
                                       if this_location else '')
 
                 output = StringIO()
-                writer = unicodecsv.writer(output, encoding='utf-8')
+                writer = csv.writer(output)
                 writer.writerow([str(i) for i in record])
                 yield output.getvalue()
                 output.close()

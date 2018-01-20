@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+import csv
 from datetime import datetime
 import json
 try:
@@ -17,7 +17,7 @@ from flask.ext.menu import register_menu
 from flask_httpauth import HTTPBasicAuth
 from mongoengine import signals
 from tablib import Dataset
-import unicodecsv
+
 from werkzeug.datastructures import MultiDict
 from apollo import services
 from apollo.submissions.incidents import incidents_csv
@@ -126,7 +126,7 @@ def submission_list(form_id):
             records, headers = exporter.export_dataset()
 
             export_buffer = StringIO()
-            writer = unicodecsv.DictWriter(export_buffer, headers)
+            writer = csv.DictWriter(export_buffer, headers)
             writer.writeheader()
             for record in records:
                 writer.writerow(record)

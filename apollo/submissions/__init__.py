@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import csv
+
 from apollo.core import Service
 from apollo.submissions.models import (
     Submission, SubmissionComment, SubmissionVersion)
@@ -8,7 +10,7 @@ from operator import attrgetter
 from flask import g
 from flask.ext.security import current_user
 import json
-import unicodecsv
+
 try:
     from io import StringIO
 except:
@@ -107,7 +109,7 @@ class SubmissionsService(Service):
                 ds_headers.extend(['%s-CONFIDENCE' % f for f in fields])
 
             output = StringIO()
-            writer = unicodecsv.writer(output, encoding='utf-8')
+            writer = csv.writer(output)
             writer.writerow([str(i) for i in ds_headers])
             yield output.getvalue()
             output.close()
@@ -182,7 +184,7 @@ class SubmissionsService(Service):
                          for field in fields]
 
                 output = StringIO()
-                writer = unicodecsv.writer(output, encoding='utf-8')
+                writer = csv.writer(output)
                 writer.writerow([str(i) for i in record])
                 yield output.getvalue()
                 output.close()

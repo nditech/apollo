@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import csv
+
 from apollo.core import Service
 from flask import g
 from apollo.participants.models import (
@@ -6,7 +8,7 @@ from apollo.participants.models import (
     ParticipantGroupType
 )
 from apollo.locations.models import LocationType
-import unicodecsv
+
 try:
     from io import StringIO
 except:
@@ -51,7 +53,7 @@ class ParticipantsService(Service):
                 headers.append(extra_field.label)
 
         output = StringIO()
-        writer = unicodecsv.writer(output, encoding='utf-8')
+        writer = csv.writer(output)
         writer.writerow([str(i) for i in headers])
         yield output.getvalue()
         output.close()
@@ -84,7 +86,7 @@ class ParticipantsService(Service):
                 record.append(getattr(participant, extra_field.name, ''))
 
             output = StringIO()
-            writer = unicodecsv.writer(output, encoding='utf-8')
+            writer = csv.writer(output)
             writer.writerow([str(i) for i in record])
             yield output.getvalue()
             output.close()
@@ -96,7 +98,7 @@ class ParticipantsService(Service):
             'Messages Sent', 'Accuracy', 'Completion'
         ]
         output = StringIO()
-        writer = unicodecsv.writer(output, encoding='utf-8')
+        writer = csv.writer(output)
         writer.writerow(headers)
         yield output.getvalue()
         output.close()
@@ -125,7 +127,7 @@ class ParticipantsService(Service):
             record.append(participant.completion_rating)
 
             output = StringIO()
-            writer = unicodecsv.writer(output, encoding='utf-8')
+            writer = csv.writer(output)
             writer.writerow([str(i) for i in record])
             yield output.getvalue()
             output.close()
