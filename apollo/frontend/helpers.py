@@ -139,7 +139,7 @@ def get_quality_assurance_form_dashboard_menu(**kwargs):
 
 def displayable_location_types(**kwargs):
     temp = services.location_types.find(**kwargs)
-    return sorted(temp, None, lambda x: len(x.ancestors_ref))
+    return sorted(temp, key=lambda x: len(x.ancestors_ref))
 
 
 def analysis_breadcrumb_data(form, location, tag=None,
