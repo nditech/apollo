@@ -15,18 +15,18 @@ class FormsService(Service):
         """
         params = {}
         try:
-            deployment = g.get(u'deployment')
+            deployment = g.get('deployment')
             if deployment:
-                params[u'deployment'] = deployment
-            event = g.get(u'event')
+                params['deployment'] = deployment
+            event = g.get('event')
             if event:
-                params[u'events'] = event
+                params['events'] = event
         except RuntimeError:
             pass
 
         # if there's an 'event' kwarg, make it overwrite the 'events'
         # one
-        event = kwargs.pop(u'event', None)
+        event = kwargs.pop('event', None)
         params.update(kwargs)
         if event:
             params.update(events=event)

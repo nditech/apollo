@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
+
 from apollo.frontend import route
 from apollo.frontend.dashboard import get_coverage
 from apollo.deployments.forms import generate_event_selection_form
@@ -41,9 +41,9 @@ def main_dashboard(form_id=None):
         form = forms.get_or_404(pk=form_id, form_type="CHECKLIST")
 
     if form is not None:
-        page_title = _(u'Dashboard · %(name)s', name=form.name)
+        page_title = _('Dashboard · %(name)s', name=form.name)
     else:
-        page_title = _(u'Dashboard')
+        page_title = _('Dashboard')
 
     queryset = submissions.find(
         form=form,
@@ -71,7 +71,7 @@ def main_dashboard(form_id=None):
         data = get_coverage(queryset)
         obs_data = get_coverage(obs_queryset)
     else:
-        page_title = page_title + u' · {}'.format(group)
+        page_title = page_title + ' · {}'.format(group)
         if not location_type_id:
             location_type = location_types.find(
                 is_administrative=True).order_by('ancestor_count').first()
@@ -109,7 +109,7 @@ def main_dashboard(form_id=None):
         'location': location,
         'locationtype': getattr(next_location_type, 'id', ''),
         'group': group or '',
-        'form_id': unicode(form.pk) if form else None
+        'form_id': str(form.pk) if form else None
     }
 
     return render_template(
@@ -130,11 +130,11 @@ def index():
 
 @route(bp, '/dashboard/checklists/<form_id>')
 @register_menu(
-    bp, u'main.dashboard.checklists', _(u'Checklists'),
-    icon=u'<i class="glyphicon glyphicon-check"></i>', order=0,
+    bp, 'main.dashboard.checklists', _('Checklists'),
+    icon='<i class="glyphicon glyphicon-check"></i>', order=0,
     visible_when=lambda: len(get_checklist_form_dashboard_menu(form_type='CHECKLIST')) > 0,
     dynamic_list_constructor=partial(
-        get_checklist_form_dashboard_menu, form_type=u'CHECKLIST'))
+        get_checklist_form_dashboard_menu, form_type='CHECKLIST'))
 @login_required
 def checklists(form_id=None):
     return main_dashboard(form_id)

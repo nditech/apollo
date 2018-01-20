@@ -8,9 +8,9 @@ from apollo import models, assets
 
 from apollo.frontend import permissions, template_filters
 from apollo.core import admin, db, menu, security, gravatar, csrf
-from frontend.helpers import (
+from .frontend.helpers import (
     set_request_presets, CustomMongoEngineSessionInterface)
-from security_ext_forms import DeploymentLoginForm
+from .security_ext_forms import DeploymentLoginForm
 
 from apollo import services, factory
 

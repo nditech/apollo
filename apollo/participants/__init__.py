@@ -8,9 +8,9 @@ from apollo.participants.models import (
 from apollo.locations.models import LocationType
 import unicodecsv
 try:
-    from cStringIO import StringIO
+    from io import StringIO
 except:
-    from StringIO import StringIO
+    from io import StringIO
 
 
 class ParticipantsService(Service):
@@ -36,23 +36,23 @@ class ParticipantsService(Service):
 
     def export_list(self, queryset):
         headers = [
-            u'Participant ID', u'Name', u'Partner', u'Role',
-            u'Location ID', u'Supervisor ID', u'Gender', u'Email', u'Password',
-            u'Phone Primary', u'Phone Secondary #1', u'Phone Secondary #2'
+            'Participant ID', 'Name', 'Partner', 'Role',
+            'Location ID', 'Supervisor ID', 'Gender', 'Email', 'Password',
+            'Phone Primary', 'Phone Secondary #1', 'Phone Secondary #2'
         ]
 
         if queryset.count():
             location_types = LocationType.objects(
                 is_administrative=True, deployment=queryset.first().deployment)
             headers = headers[:5] + \
-                map(lambda location_type: location_type.name, location_types) + \
+                [location_type.name for location_type in location_types] + \
                 headers[5:]
             for extra_field in queryset.first().deployment.participant_extra_fields:
                 headers.append(extra_field.label)
 
         output = StringIO()
         writer = unicodecsv.writer(output, encoding='utf-8')
-        writer.writerow([unicode(i) for i in headers])
+        writer.writerow([str(i) for i in headers])
         yield output.getvalue()
         output.close()
 
@@ -85,7 +85,7 @@ class ParticipantsService(Service):
 
             output = StringIO()
             writer = unicodecsv.writer(output, encoding='utf-8')
-            writer.writerow([unicode(i) for i in record])
+            writer.writerow([str(i) for i in record])
             yield output.getvalue()
             output.close()
 
@@ -126,7 +126,7 @@ class ParticipantsService(Service):
 
             output = StringIO()
             writer = unicodecsv.writer(output, encoding='utf-8')
-            writer.writerow([unicode(i) for i in record])
+            writer.writerow([str(i) for i in record])
             yield output.getvalue()
             output.close()
 

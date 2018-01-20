@@ -11,42 +11,42 @@ logger = getLogger(__name__)
 def get_coverage(submission_queryset, group=None, location_type=None):
     if group is None and location_type is None:
         return _get_global_coverage(submission_queryset.only(
-            u'completion', u'form'))
+            'completion', 'form'))
     else:
         locs = services.locations.find(
-            location_type=location_type.name).only(u'name', u'location_type')
+            location_type=location_type.name).only('name', 'location_type')
         queryset = submission_queryset.filter_in(locs).only(
-            u'location_name_path', u'completion')
+            'location_name_path', 'completion')
         return _get_group_coverage(queryset, group, location_type)
 
 
 def _get_group_coverage(submission_queryset, group, location_type):
     # build MongoDB aggregation pipeline
     pipeline = [
-        {u'$match': submission_queryset._query},
+        {'$match': submission_queryset._query},
         {
-            u'$group': {
-                u'_id': {
-                    u'location': u'$location_name_path.{}'
+            '$group': {
+                '_id': {
+                    'location': '$location_name_path.{}'
                     .format(location_type.name),
-                    u'completion': u'$completion.{}'.format(group)
+                    'completion': '$completion.{}'.format(group)
                 },
-                u'total': {u'$sum': 1}
+                'total': {'$sum': 1}
             }
         },
         {
-            u'$project': {
-                u'_id': 0,
-                u'location': u'$_id.location',
-                u'completion': u'$_id.completion',
-                u'total': u'$total'
+            '$project': {
+                '_id': 0,
+                'location': '$_id.location',
+                'completion': '$_id.completion',
+                'total': '$total'
             }
         }
     ]
 
     try:
         datasrc = Submission._get_collection().aggregate(pipeline)
-    except Exception, e:
+    except Exception as e:
         logger.exception(e)
         raise e
 
@@ -116,7 +116,7 @@ def _get_global_coverage(submission_queryset):
     if not result:
         return None
 
-    groups = result[0].get('completion').keys()
+    groups = list(result[0].get('completion').keys())
 
     # reshape the result
     coverage = OrderedDict()

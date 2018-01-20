@@ -3,9 +3,9 @@ from apollo.core import Service, cache
 from apollo.locations.models import Sample, LocationType, Location
 import unicodecsv
 try:
-    from cStringIO import StringIO
+    from io import StringIO
 except:
-    from StringIO import StringIO
+    from io import StringIO
 
 
 class SamplesService(Service):
@@ -62,7 +62,7 @@ class LocationsService(Service):
 
         output = StringIO()
         writer = unicodecsv.writer(output, encoding='utf-8')
-        writer.writerow([unicode(i) for i in headers])
+        writer.writerow([str(i) for i in headers])
         yield output.getvalue()
         output.close()
 
@@ -75,10 +75,7 @@ class LocationsService(Service):
                 record = []
                 for location_type in location_types:
                     try:
-                        this_location = filter(
-                            lambda l: l.location_type == location_type.name,
-                            location.ancestors_ref
-                        ).pop()
+                        this_location = [l for l in location.ancestors_ref if l.location_type == location_type.name].pop()
                     except IndexError:
                         if location.location_type == location_type.name:
                             this_location = location
@@ -100,6 +97,6 @@ class LocationsService(Service):
 
                 output = StringIO()
                 writer = unicodecsv.writer(output, encoding='utf-8')
-                writer.writerow([unicode(i) for i in record])
+                writer.writerow([str(i) for i in record])
                 yield output.getvalue()
                 output.close()

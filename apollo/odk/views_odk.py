@@ -32,7 +32,7 @@ def make_open_rosa_headers():
 
 
 def open_rosa_default_response(**kwargs):
-    content = u'''<?xml version='1.0' encoding='UTF-8'?>
+    content = '''<?xml version='1.0' encoding='UTF-8'?>
 <OpenRosaResponse xmlns='http://openrosa.org/http/response'>
 <message>{}</message>
 </OpenRosaResponse>'''.format(kwargs.get('content', ''))
@@ -115,11 +115,11 @@ def submission():
         participant = filter_participants(form, participant_auth.username())
         if not form:
             return open_rosa_default_response(
-                content=_(u'Invalid Form Specified'), status_code=404)
+                content=_('Invalid Form Specified'), status_code=404)
 
         if not participant:
             return open_rosa_default_response(
-                content=_(u'Invalid Participant ID'), status_code=404)
+                content=_('Invalid Participant ID'), status_code=404)
     except (IndexError, etree.LxmlError):
         return open_rosa_default_response(status_code=400)
 
@@ -145,20 +145,20 @@ def submission():
     if not submission:
         # no existing submission for that form and participant
         return open_rosa_default_response(
-            content=_(u'Checklist Not Found'), status_code=404)
+            content=_('Checklist Not Found'), status_code=404)
 
     form_modified = False
     submitted_version_id = None
 
     try:
-        submitted_version_id = document.xpath(u'//data/version_id')[0].text
+        submitted_version_id = document.xpath('//data/version_id')[0].text
     except (IndexError, etree.LxmlError):
         pass
 
     if form.version_identifier != submitted_version_id:
         form_modified = True
 
-    tag_finder = etree.XPath(u'//data/*[local-name() = $tag]')
+    tag_finder = etree.XPath('//data/*[local-name() = $tag]')
     for tag in form.tags:
         field = form.get_field_by_tag(tag)
         try:
@@ -185,7 +185,7 @@ def submission():
 
     if form_modified:
         return open_rosa_default_response(
-            content=_(u'Your submission was received, '
+            content=_('Your submission was received, '
             'but you sent it using an outdated form. Please download a new '
             'copy and resend. Thank you.'), status_code=202)
     return open_rosa_default_response(status_code=201)

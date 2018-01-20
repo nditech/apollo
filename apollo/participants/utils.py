@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
-from itertools import ifilter
+
 import re
 
 from flask import g
@@ -33,7 +33,7 @@ def update_participant_completion_rating(participant):
         for submission in submissions:
             completion_values = [
                 completion_map[i] for i in
-                submission.completion.values()
+                list(submission.completion.values())
             ]
             denominator += len(submission.form.groups) * 2.0
             numerator += sum(completion_values)
@@ -60,7 +60,7 @@ def lookup_participant(form, participant_id):
 
 
 def update_phone_contacts(participant, phone):
-    phone_contact = next(ifilter(
+    phone_contact = next(filter(
         lambda contact: ugly_phone.sub('', phone) == contact.number,
         participant.phones), False)
     if phone_contact:

@@ -66,14 +66,14 @@ class LocationFilter(ChoiceFilter):
         for d_loc in displayed_locations:
             filter_locations[d_loc[2]].append(
                 # need to convert ObjectId into unicode
-                (unicode(d_loc[0]), d_loc[1])
+                (str(d_loc[0]), d_loc[1])
             )
 
         # change first choice to ['', ''] and add the data-placeholder
         # attribute to rendering for the field after switching to
         # Select2 for rendering this
         kwargs['choices'] = [['', _('Location')]] + \
-            [[k, v] for k, v in filter_locations.items()]
+            [[k, v] for k, v in list(filter_locations.items())]
 
         super(LocationFilter, self).__init__(*args, **kwargs)
 
@@ -162,11 +162,7 @@ class SubmissionQuarantineStatusFilter(ChoiceFilter):
         if value:
             if value == 'N':
                 query_kwargs = {
-                    'quarantine_status__nin': map(
-                        lambda i: i[0],
-                        filter(
-                            lambda s: s[0],
-                            models.Submission.QUARANTINE_STATUSES))}
+                    'quarantine_status__nin': [i[0] for i in [s for s in models.Submission.QUARANTINE_STATUSES if s[0]]]}
             else:
                 query_kwargs = {'quarantine_status': value}
             return queryset(**query_kwargs)
@@ -225,7 +221,7 @@ class ParticipantGroupFilter(ChoiceFilter):
                 group_type=group_type.name
             ).order_by('name'):
                 choices.setdefault(group_type.name, []).append(
-                    (unicode(group.pk), group.name)
+                    (str(group.pk), group.name)
                 )
         kwargs['choices'] = [(k, choices[k]) for k in choices]
         super(ParticipantGroupFilter, self).__init__(*args, **kwargs)
@@ -313,20 +309,20 @@ class FormGroupFilter(ChoiceFilter):
     """
     def filter(self, queryset, value):
         if value:
-            name_parts = self.name.split(u'__')
+            name_parts = self.name.split('__')
             form = services.forms.get(pk=name_parts[0])
             group = [g.name for g in form.groups if g.slug == name_parts[1]][0]
 
             params = {}
 
-            if value == u'1':
-                params = {u'completion__{}'.format(group): u'Partial'}
-            elif value == u'2':
-                params = {u'completion__{}'.format(group): u'Missing'}
-            elif value == u'3':
-                params = {u'completion__{}'.format(group): u'Complete'}
-            elif value == u'4':
-                params = {u'completion__{}'.format(group): u'Conflict'}
+            if value == '1':
+                params = {'completion__{}'.format(group): 'Partial'}
+            elif value == '2':
+                params = {'completion__{}'.format(group): 'Missing'}
+            elif value == '3':
+                params = {'completion__{}'.format(group): 'Complete'}
+            elif value == '4':
+                params = {'completion__{}'.format(group): 'Conflict'}
 
             return queryset(**params)
         return queryset
@@ -344,7 +340,7 @@ class SubmissionStatus(ChoiceFilter):
 
     def filter(self, queryset, values):
         if values:
-            values = map(lambda opt: None if opt == 'None' else opt, values)
+            values = [None if opt == 'None' else opt for opt in values]
             queryset = queryset(status__in=values)
         return queryset
 
@@ -395,7 +391,7 @@ def basesubmission_filterset():
             event = kwargs.pop('default_event', get_event())
             super(BaseSubmissionFilterSet, self).__init__(*args, **kwargs)
             self.declared_filters['event'] = EventFilter(
-                widget=widgets.HiddenInput(), default=unicode(event.id))
+                widget=widgets.HiddenInput(), default=str(event.id))
 
     return BaseSubmissionFilterSet
 
@@ -485,18 +481,18 @@ def generate_submission_filter(form):
     attributes = {}
 
     # add in field options for critical incidents
-    if form.form_type == u'INCIDENT':
+    if form.form_type == 'INCIDENT':
         option_fields = [field for group in form.groups
             for field in group.fields if field.options and not field.allows_multiple_values]
         for field in option_fields:
             choices = _make_choices(sorted([
-                (v, u"{} — {}".format(field.name, k)) for k, v in field.options.items()
+                (v, "{} — {}".format(field.name, k)) for k, v in list(field.options.items())
             ], key=itemgetter(0)), field.name)
             attributes[field.name] = FieldOptionFilter(choices=choices)
 
     # add in form groups
     for group in form.groups:
-        field_name = u'{}__{}'.format(form.pk, group.slug)
+        field_name = '{}__{}'.format(form.pk, group.slug)
         choices = [
             ('0', _('%(group)s Status', group=group.name)),
             ('1', _('%(group)s Partial', group=group.name)),
@@ -509,10 +505,10 @@ def generate_submission_filter(form):
     # quarantine status
     attributes['quarantine_status'] = SubmissionQuarantineStatusFilter(
         choices=(
-            ('', _(u'Quarantine Status')),
-            ('N', _(u'Quarantine None')),
-            ('A', _(u'Quarantine All')),
-            ('R', _(u'Quarantine Results'))
+            ('', _('Quarantine Status')),
+            ('N', _('Quarantine None')),
+            ('A', _('Quarantine All')),
+            ('R', _('Quarantine Results'))
         ))
 
     # participant id and location
@@ -533,7 +529,7 @@ def generate_submission_filter(form):
 def generate_quality_assurance_filter(form):
     quality_check_criteria = [('', _('Quality Check Criterion'))] + \
         [(qc['name'], qc['description']) for qc in form.quality_checks]
-    quality_check_conditions = [('', _(u'Quality Check Condition'))] + \
+    quality_check_conditions = [('', _('Quality Check Condition'))] + \
         list(FLAG_CHOICES)
 
     class QualityAssuranceConditionsForm(Form):
@@ -548,10 +544,10 @@ def generate_quality_assurance_filter(form):
     # quarantine status
     attributes['quarantine_status'] = SubmissionQuarantineStatusFilter(
         choices=(
-            ('', _(u'Quarantine Status')),
-            ('N', _(u'Quarantine None')),
-            ('A', _(u'Quarantine All')),
-            ('R', _(u'Quarantine Results'))
+            ('', _('Quarantine Status')),
+            ('N', _('Quarantine None')),
+            ('A', _('Quarantine All')),
+            ('R', _('Quarantine Results'))
         ))
 
     # participant id and location

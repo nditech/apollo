@@ -41,7 +41,7 @@ def create_app(
     @babel.localeselector
     def get_locale():
         return request.accept_languages \
-            .best_match(app.config.get('LANGUAGES', {}).keys())
+            .best_match(list(app.config.get('LANGUAGES', {}).keys()))
 
     register_blueprints(app, package_name, package_path)
 

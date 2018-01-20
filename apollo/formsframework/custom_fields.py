@@ -21,7 +21,7 @@ class IntegerSplitterField(wtforms.IntegerField):
     def process(self, formdata, data=unset_value):
         super(wtforms.IntegerField, self).process(formdata, data)
 
-        temp = IntegerSplitterField.pattern.findall(unicode(self.data))
+        temp = IntegerSplitterField.pattern.findall(str(self.data))
         self.data = list({int(i) for i in temp})
 
     def pre_validate(self, form):
@@ -31,5 +31,5 @@ class IntegerSplitterField(wtforms.IntegerField):
                 if d not in values:
                     raise ValueError(
                         self.gettext(
-                            u"'%(value)s' is not a valid choice for this field"
+                            "'%(value)s' is not a valid choice for this field"
                         ) % dict(value=d))

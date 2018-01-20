@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
+
 from collections import OrderedDict
 from functools import partial
 from flask import Blueprint, render_template, request, url_for
@@ -20,7 +20,7 @@ from apollo.frontend.helpers import (
 
 def get_analysis_menu():
     return [{
-        'url': url_for('process_analysis.process_analysis', form_id=unicode(form.pk)),
+        'url': url_for('process_analysis.process_analysis', form_id=str(form.pk)),
         'text': form.name,
         'icon': '<i class="glyphicon glyphicon-stats"></i>'
     } for form in forms.find().filter(
@@ -34,7 +34,7 @@ def get_analysis_menu():
 
 def get_process_analysis_menu():
     return [{
-        'url': url_for('process_analysis.process_analysis', form_id=unicode(form.pk)),
+        'url': url_for('process_analysis.process_analysis', form_id=str(form.pk)),
         'text': form.name,
         'icon': '<i class="glyphicon glyphicon-stats"></i>'
     } for form in forms.find().filter(
@@ -54,7 +54,7 @@ def _process_analysis(form_id, location_id=None, tag=None):
 
     template_name = ''
     tags = []
-    page_title = _(u'%(form)s Analysis', form=form.name)
+    page_title = _('%(form)s Analysis', form=form.name)
     grouped = False
     display_tag = None
     filter_class = filters.generate_submission_analysis_filter(form)

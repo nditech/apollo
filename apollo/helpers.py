@@ -34,9 +34,9 @@ def _make_choices(qs, placeholder=None):
     instances.
     """
     if placeholder:
-        return [['', placeholder]] + [[unicode(i[0]), i[1]] for i in list(qs)]
+        return [['', placeholder]] + [[str(i[0]), i[1]] for i in list(qs)]
     else:
-        return [['', '']] + [[unicode(i[0]), i[1]] for i in list(qs)]
+        return [['', '']] + [[str(i[0]), i[1]] for i in list(qs)]
 
 
 def stash_file(fileobj, user, event=None):

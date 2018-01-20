@@ -78,7 +78,7 @@ class ListDeploymentsCommand(Command):
     def run(self):
         deployments = models.Deployment.objects.all()
         for deployment in deployments:
-            print deployment.name
+            print(deployment.name)
 
 
 class CreateEventCommand(Command):
@@ -144,7 +144,7 @@ class ListEventsCommand(Command):
         deployment = deployments[int(option) - 1]
         events = models.Event.objects(deployment=deployment)
         for event in events:
-            print event.name
+            print(event.name)
 
 
 class EventMigrationCommand(Command):
@@ -165,19 +165,19 @@ class EventMigrationCommand(Command):
             (str(i), v) for i, v in enumerate(reduced_events, 1)])
         dest_event = reduced_events[int(option) - 1]
 
-        print '--- AVAILABLE FORMS ---'
+        print('--- AVAILABLE FORMS ---')
         forms = models.Form.objects(deployment=deployment)
         for i, f in enumerate(forms, 1):
-            print '{} [{}]'.format(f.name, i)
+            print('{} [{}]'.format(f.name, i))
 
-        form_indexes = raw_input('Enter forms to copy, separated by commas: ')
+        form_indexes = input('Enter forms to copy, separated by commas: ')
         indexes = [
             int(i.strip()) for i in form_indexes.split(',')
             if i.strip().isdigit()]
 
         copy_participants = False
         while True:
-            response = raw_input(
+            response = input(
                 'Copy participants from source to destination (yes/no)? ')
             response = response.lower()
             if response[0] == 'y':
@@ -212,7 +212,7 @@ class EventMigrationCommand(Command):
                 new_participant.event = dest_event
                 new_participant.save()
 
-            for p_id, sup_id in supervisor_map.iteritems():
+            for p_id, sup_id in supervisor_map.items():
                 participant = models.Participant.objects.get(
                     deployment=deployment, event=dest_event,
                     participant_id=p_id)

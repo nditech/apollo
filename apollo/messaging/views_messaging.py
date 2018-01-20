@@ -78,7 +78,7 @@ def kannel_view():
 
         response, submission, had_errors = parse_message(form)
 
-        if current_app.config.get(u'TRANSLITERATE_OUTPUT'):
+        if current_app.config.get('TRANSLITERATE_OUTPUT'):
             response = unidecode(response)
 
         outgoing = services.messages.log_message(
@@ -111,7 +111,7 @@ def telerivet_view():
             direction='IN', timestamp=msg.get('timestamp'))
 
         response_text, submission, had_errors = parse_message(form)
-        if current_app.config.get(u'TRANSLITERATE_OUTPUT'):
+        if current_app.config.get('TRANSLITERATE_OUTPUT'):
             response_text = unidecode(response_text)
         response = {'messages': [{'content': response_text}]}
         http_response = make_response(json.dumps(response))

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
+
 
 from flask import g
 from flask.ext.babel import lazy_gettext as _
@@ -31,9 +31,9 @@ class CustomModelSelectField(ModelSelectField):
 
 def _make_choices(qs, placeholder=None):
     if placeholder:
-        return [['', placeholder]] + [[unicode(i[0]), i[1]] for i in list(qs)]
+        return [['', placeholder]] + [[str(i[0]), i[1]] for i in list(qs)]
     else:
-        return [['', '']] + [[unicode(i[0]), i[1]] for i in list(qs)]
+        return [['', '']] + [[str(i[0]), i[1]] for i in list(qs)]
 
 
 def generate_location_edit_form(location, data=None):
@@ -99,7 +99,7 @@ def generate_participant_edit_form(participant, data=None):
 
     ParticipantEditForm = type('ParticipantEditForm', (ParticipantEditBaseForm,), attributes)
 
-    kwargs = {field: getattr(participant, field, '') for field in attributes.keys()}
+    kwargs = {field: getattr(participant, field, '') for field in list(attributes.keys())}
 
     return ParticipantEditForm(
         formdata=data,
@@ -293,7 +293,7 @@ def generate_submission_edit_form_class(form):
                     description=field.description,
                     widget=widgets.TextArea())
             elif field.options:
-                choices = [(v, k) for k, v in field.options.iteritems()]
+                choices = [(v, k) for k, v in field.options.items()]
 
                 if field.allows_multiple_values:
                     form_fields[field.name] = SelectMultipleField(

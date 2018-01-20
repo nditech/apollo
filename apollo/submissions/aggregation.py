@@ -6,10 +6,10 @@ import pandas as pd
 
 # labels
 BUCKET_LABELS = {
-    u'OK': _(u'OK'),
-    u'FLAGGED_AND_VERIFIED': _(u'Verified'),
-    u'FLAGGED_AND_UNVERIFIED': _(u'Flagged'),
-    u'MISSING': _(u'Missing')
+    'OK': _('OK'),
+    'FLAGGED_AND_VERIFIED': _('Verified'),
+    'FLAGGED_AND_UNVERIFIED': _('Flagged'),
+    'MISSING': _('Missing')
 }
 
 
@@ -30,7 +30,7 @@ def aggregated_dataframe(queryset, form):
                 # e.g. (AB|1, AB|2, ...)
                 # initialize the default value counts for each option
                 default_options = {'{}|{}'.format(field.name, option): 0
-                                   for option in field.options.values()}
+                                   for option in list(field.options.values())}
                 all_fields.extend(sorted(default_options.keys()))
                 col = df_submissions.pop(field.name).tolist()
                 for i, r in enumerate(col):
@@ -38,10 +38,10 @@ def aggregated_dataframe(queryset, form):
                     # multivalued fields have a list of values
                     if type(r) == list:
                         for o in r:
-                            if o in field.options.values():
+                            if o in list(field.options.values()):
                                 options['{}|{}'.format(field.name, o)] = 1
                     else:
-                        if r in field.options.values():
+                        if r in list(field.options.values()):
                             options['{}|{}'.format(field.name, r)] = 1
                     col[i] = options
                 df = pd.DataFrame(col)
@@ -67,56 +67,56 @@ def aggregated_dataframe(queryset, form):
 
 
 def _build_qa_pipeline(queryset, form):
-    v_stat = [u'$verification_status', Submission.VERIFICATION_STATUSES[1][0]]
+    v_stat = ['$verification_status', Submission.VERIFICATION_STATUSES[1][0]]
     checks = []
     for qc in form.quality_checks:
-        var = u'$quality_checks.{}'.format(qc[u'name'])
-        flagged_eq_step = {u'$eq': [var, QUALITY_STATUSES[u'FLAGGED']]}
+        var = '$quality_checks.{}'.format(qc['name'])
+        flagged_eq_step = {'$eq': [var, QUALITY_STATUSES['FLAGGED']]}
         checks.append({
-            u'name': {u'$literal': qc[u'name']},
-            u'bucket': {
-                u'$cond': {
+            'name': {'$literal': qc['name']},
+            'bucket': {
+                '$cond': {
                     # if this check is OK,
-                    u'if': {u'$eq': [var, QUALITY_STATUSES[u'OK']]},
+                    'if': {'$eq': [var, QUALITY_STATUSES['OK']]},
                     # set bucket to 'OK'
-                    u'then': BUCKET_LABELS[u'OK'],
-                    u'else': {u'$cond': {
+                    'then': BUCKET_LABELS['OK'],
+                    'else': {'$cond': {
                         # elif this check is flagged and verified
-                        u'if': {u'$and': [
+                        'if': {'$and': [
                             flagged_eq_step,
-                            {u'$eq': v_stat}
+                            {'$eq': v_stat}
                         ]},
                         # set bucket to 'FLAGGED_AND_VERIFIED'
-                        u'then': BUCKET_LABELS[u'FLAGGED_AND_VERIFIED'],
-                        u'else': {u'$cond': {
+                        'then': BUCKET_LABELS['FLAGGED_AND_VERIFIED'],
+                        'else': {'$cond': {
                             # elif the check is flagged and not verified
-                            u'if': {u'$and': [
+                            'if': {'$and': [
                                 flagged_eq_step,
-                                {u'$ne': v_stat}
+                                {'$ne': v_stat}
                             ]},
                             # set to 'FLAGGED_AND_UNVERIFIED'
-                            u'then': BUCKET_LABELS[u'FLAGGED_AND_UNVERIFIED'],
+                            'then': BUCKET_LABELS['FLAGGED_AND_UNVERIFIED'],
                             # otherwise set to 'MISSING'
-                            u'else': BUCKET_LABELS[u'MISSING']
+                            'else': BUCKET_LABELS['MISSING']
                         }}
                     }}
                 }
             }
         })
     project_stage = {
-        u'$project': {
-            u'_id': 0,
-            u'checks': checks
+        '$project': {
+            '_id': 0,
+            'checks': checks
         }
     }
 
     pipeline = [
-        {u'$match': queryset._query},
+        {'$match': queryset._query},
         project_stage,
-        {u'$unwind': u'$checks'},
-        {u'$group': {
-            u'_id': {u'name': u'$checks.name', u'bucket': u'$checks.bucket'},
-            u'count': {u'$sum': 1}
+        {'$unwind': '$checks'},
+        {'$group': {
+            '_id': {'name': '$checks.name', 'bucket': '$checks.bucket'},
+            'count': {'$sum': 1}
         }}
     ]
 
@@ -124,25 +124,25 @@ def _build_qa_pipeline(queryset, form):
 
 
 def __flag_sort_key(record):
-    return record.get(u'_id').get(u'name')
+    return record.get('_id').get('name')
 
 
 def __bucket_sort_key(record):
-    return record.get(u'_id').get(u'bucket')
+    return record.get('_id').get('bucket')
 
 
 def __total_counts(bucket_data):
-    return sum(i.get(u'count') for i in bucket_data)
+    return sum(i.get('count') for i in bucket_data)
 
 
 def _quality_check_aggregation(queryset, form):
     pipeline = _build_qa_pipeline(queryset, form)
 
     collection = queryset._collection
-    result = collection.aggregate(pipeline).get(u'result')
+    result = collection.aggregate(pipeline).get('result')
 
     qc_meta = {
-        qc.get(u'name'): qc.get(u'description') for qc in form.quality_checks}
+        qc.get('name'): qc.get('description') for qc in form.quality_checks}
     sorted_result = sorted(result, key=__flag_sort_key)
 
     data = []
@@ -150,9 +150,9 @@ def _quality_check_aggregation(queryset, form):
     # use a two-level sort/group: first by flag name
     for flag_name, flag_dataset in groupby(sorted_result, key=__flag_sort_key):
         d = {
-            u'name': flag_name,
-            u'counts': [],
-            u'description': qc_meta.get(flag_name)
+            'name': flag_name,
+            'counts': [],
+            'description': qc_meta.get(flag_name)
         }
 
         # then by bucket name
@@ -165,16 +165,16 @@ def _quality_check_aggregation(queryset, form):
             k: list(v)
             for k, v in groupby(sorted_flag_dataset, key=__bucket_sort_key)
         }
-        for bucket_name in BUCKET_LABELS.values():
+        for bucket_name in list(BUCKET_LABELS.values()):
             if bucket_name in flag_data_dict:
-                d[u'counts'].append({
-                    u'count': __total_counts(flag_data_dict.get(bucket_name)),
-                    u'label': bucket_name
+                d['counts'].append({
+                    'count': __total_counts(flag_data_dict.get(bucket_name)),
+                    'label': bucket_name
                 })
             else:
-                d[u'counts'].append({
-                    u'count': 0,
-                    u'label': bucket_name
+                d['counts'].append({
+                    'count': 0,
+                    'label': bucket_name
                 })
         data.append(d)
 

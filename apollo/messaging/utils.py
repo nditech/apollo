@@ -33,7 +33,7 @@ def parse_text(text):
     config = current_app.config
 
     prefix = participant_id = exclamation = responses = comment = None
-    text = unicode(text)
+    text = str(text)
     # regular expression for a valid text message
     pattern = re.compile(
         r'^(?P<prefix>[A-Z]+)(?P<participant_id>\d+)'
@@ -41,28 +41,26 @@ def parse_text(text):
 
     at_position = text.find("@")
 
-    if config.get(u'TRANSLITERATE_INPUT'):
+    if config.get('TRANSLITERATE_INPUT'):
         if at_position != -1:
             text = unidecode(text[:at_position]) + text[at_position:]
         else:
             text = unidecode(text)
-        at_position = text.find(u'@')
+        at_position = text.find('@')
 
     # remove unwanted punctuation characters and convert known characters
     # like i, l to 1 and o to 0. This will not be applied to the comment
     # section.
-    if config.get(u'TRANSLATE_CHARS'):
-        text = filter(lambda s: s not in config.get('PUNCTUATIONS'),
-                      text[:at_position]) \
+    if config.get('TRANSLATE_CHARS'):
+        text = [s for s in text[:at_position] if s not in config.get('PUNCTUATIONS')] \
             .translate(config.get('TRANS_TABLE')) + text[at_position:] \
             if at_position != -1 \
-            else filter(lambda s: s not in config.get('PUNCTUATIONS'), text) \
+            else [s for s in text if s not in config.get('PUNCTUATIONS')] \
             .translate(config.get('TRANS_TABLE'))
     else:
-        text = filter(lambda s: s not in config.get('PUNCTUATIONS'),
-                        text[:at_position]) + text[at_position:] \
+        text = [s for s in text[:at_position] if s not in config.get('PUNCTUATIONS')] + text[at_position:] \
             if at_position != -1 \
-            else filter(lambda s: s not in config.get('PUNCTUATIONS'), text)
+            else [s for s in text if s not in config.get('PUNCTUATIONS')]
 
     at_position = text.find("@")
     match = pattern.match(text[:at_position] if at_position != -1 else text)
@@ -122,8 +120,8 @@ def parse_responses(responses_text, form):
     substrate = pattern2.sub('', substrate)
 
     # finally, get any unknown tags
-    default_pattern = re.compile(ur'(?P<tag>[A-Z]+)(?P<answer>\d+)', flags=re.I)
-    responses.update((r.group(u'tag').upper(), r.group(u'answer')) for r in
+    default_pattern = re.compile(r'(?P<tag>[A-Z]+)(?P<answer>\d+)', flags=re.I)
+    responses.update((r.group('tag').upper(), r.group('answer')) for r in
         default_pattern.finditer(substrate))
 
     # remove all assumed tags

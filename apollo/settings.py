@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from datetime import timedelta
-from urlparse import urlparse
+from urllib.parse import urlparse
 import ast
 import numpy
 import os
@@ -86,14 +86,14 @@ CACHE_REDIS_URL = 'redis://{host}/{database}'.format(
     database=os.environ.get('REDIS_DATABASE', '0'))
 
 LANGUAGES = {
-    'en': u'English',
-    'es': u'Español',
-    'fr': u'Français',
-    'az': u'Azərbaycanca',
-    'ar': u'العربية',
-    'de': u'Deutsch',
-    'ru': u'Русский',
-    'ro': u'Română',
+    'en': 'English',
+    'es': 'Español',
+    'fr': 'Français',
+    'az': 'Azərbaycanca',
+    'ar': 'العربية',
+    'de': 'Deutsch',
+    'ru': 'Русский',
+    'ro': 'Română',
 }
 BABEL_DEFAULT_LOCALE = os.environ.get('BABEL_DEFAULT_LOCALE', 'en')
 
@@ -106,8 +106,7 @@ CHARACTER_TRANSLATIONS = (
     ('l', '1'),
     ('L', '1'),
 )
-PUNCTUATIONS = filter(lambda s: s not in ALLOWED_PUNCTUATIONS,
-                      string.punctuation) + ' '
+PUNCTUATIONS = [s for s in string.punctuation if s not in ALLOWED_PUNCTUATIONS] + ' '
 TRANS_TABLE = dict((ord(char_from), ord(char_to))
                    for char_from, char_to in
                    CHARACTER_TRANSLATIONS)
@@ -136,6 +135,6 @@ APPLICATIONS = ast.literal_eval(os.environ.get(
 BIG_N = ast.literal_eval(os.environ.get('BIG_N', '0')) or numpy.inf
 GOOGLE_ANALYTICS_KEY = os.environ.get('GOOGLE_ANALYTICS_KEY')
 
-TRANSLATE_CHARS = ast.literal_eval(os.environ.get(u'TRANSLATE_CHARS', u'True'))
-TRANSLITERATE_INPUT = ast.literal_eval(os.environ.get(u'TRANSLITERATE_INPUT', u'False'))
-TRANSLITERATE_OUTPUT = ast.literal_eval(os.environ.get(u'TRANSLITERATE_OUTPUT', u'False'))
+TRANSLATE_CHARS = ast.literal_eval(os.environ.get('TRANSLATE_CHARS', 'True'))
+TRANSLITERATE_INPUT = ast.literal_eval(os.environ.get('TRANSLITERATE_INPUT', 'False'))
+TRANSLITERATE_OUTPUT = ast.literal_eval(os.environ.get('TRANSLITERATE_OUTPUT', 'False'))

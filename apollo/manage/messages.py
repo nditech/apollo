@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import calendar
 from datetime import datetime
-from urlparse import urljoin
+from urllib.parse import urljoin
 from flask import current_app, url_for
 from flask.ext.script import Command, prompt
 import pytz

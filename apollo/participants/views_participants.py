@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
+
 
 from datetime import datetime
-from itertools import ifilter
+
 
 from flask import (abort, Blueprint, current_app, flash, g, redirect,
                    render_template, request, Response, url_for)
@@ -60,9 +60,7 @@ def participant_list(page=1):
     }
 
     try:
-        extra_fields = filter(
-            lambda f: getattr(f, 'listview_visibility', False) is True,
-            g.deployment.participant_extra_fields)
+        extra_fields = [f for f in g.deployment.participant_extra_fields if getattr(f, 'listview_visibility', False) is True]
     except AttributeError:
         extra_fields = []
     location = None
@@ -80,10 +78,8 @@ def participant_list(page=1):
 
     if request.form.get('action') == 'send_message':
         message = request.form.get('message', '')
-        recipients = filter(
-            lambda x: x is not '',
-            [participant.phone if participant.phone else ''
-                for participant in queryset_filter.qs])
+        recipients = [x for x in [participant.phone if participant.phone else ''
+                for participant in queryset_filter.qs] if x is not '']
         recipients.extend(current_app.config.get('MESSAGING_CC'))
 
         if message and recipients and permissions.send_messages.can():
@@ -107,7 +103,7 @@ def participant_list(page=1):
         # request.args is immutable, so the .pop() call will fail on it.
         # using .copy() returns a mutable version of it.
         args = request.args.to_dict(flat=False)
-        page_spec = args.pop(u'page', None) or [1]
+        page_spec = args.pop('page', None) or [1]
         page = int(page_spec[0])
 
         sort_by = sortable_columns.get(
@@ -189,7 +185,7 @@ def participant_performance_list(page=1):
         # request.args is immutable, so the .pop() call will fail on it.
         # using .copy() returns a mutable version of it.
         args = request.args.to_dict(flat=False)
-        page_spec = args.pop(u'page', None) or [1]
+        page_spec = args.pop('page', None) or [1]
         page = int(page_spec[0])
 
         sort_by = sortable_columns.get(
@@ -221,7 +217,7 @@ def participant_performance_list(page=1):
 @login_required
 def participant_performance_detail(pk):
     participant = services.participants.get_or_404(id=pk)
-    page_title = _(u'Participant Performance')
+    page_title = _('Participant Performance')
     template_name = 'frontend/participant_performance_detail.html'
     messages = services.messages.find(
         participant=participant,
@@ -248,7 +244,7 @@ def participant_phone_verify():
 
         submission = services.submissions.get_or_404(id=submission_id)
         participant = services.participants.get_or_404(id=contributor)
-        phone_contact = next(ifilter(
+        phone_contact = next(filter(
             lambda p: phone == p.number, participant.phones), False)
         phone_contact.verified = True
         participant.save()
@@ -265,7 +261,7 @@ def participant_phone_verify():
 def participant_edit(pk):
     participant = services.participants.get_or_404(pk=pk)
     page_title = _(
-        u'Edit Participant · %(participant_id)s',
+        'Edit Participant · %(participant_id)s',
         participant_id=participant.participant_id
     )
 
@@ -307,7 +303,7 @@ def participant_edit(pk):
                 setattr(participant, extra_field.name, field_data)
             participant.save()
 
-            print 'redirecting'
+            print('redirecting')
 
             return redirect(url_for('participants.participant_list'))
 
@@ -333,7 +329,7 @@ def participant_list_import():
 
         return redirect(url_for(
             'participants.participant_headers',
-            pk=unicode(upload.id)
+            pk=str(upload.id)
         ))
 
 
@@ -381,7 +377,7 @@ def participant_headers(pk):
 
             # invoke task asynchronously
             kwargs = {
-                'upload_id': unicode(upload.id),
+                'upload_id': str(upload.id),
                 'mappings': data
             }
             tasks.import_participants.apply_async(kwargs=kwargs)
@@ -393,7 +389,7 @@ def participant_headers(pk):
 @login_required
 def nuke_participants():
     try:
-        str_func = unicode
+        str_func = str
     except NameError:
         str_func = str
 

@@ -23,12 +23,12 @@ from apollo.frontend import forms
 app_time_zone = pytz.timezone(settings.TIMEZONE)
 utc_time_zone = pytz.utc
 
-excluded_perm_actions = [u'view_forms', u'access_event']
+excluded_perm_actions = ['view_forms', 'access_event']
 
-DATETIME_FORMAT_SPEC = u'%Y-%m-%d %H:%M:%S %Z'
+DATETIME_FORMAT_SPEC = '%Y-%m-%d %H:%M:%S %Z'
 
 try:
-    string_type = unicode
+    string_type = str
 except NameError:
     string_type = str
 
@@ -115,7 +115,7 @@ class EventAdminView(BaseAdminView):
         rules.FieldSet(('name', 'start_date', 'end_date', 'roles'), _('Event'))
     ]
 
-    form_excluded_columns = (u'deployment')
+    form_excluded_columns = ('deployment')
 
     def get_one(self, pk):
         event = super(EventAdminView, self).get_one(pk)
@@ -126,7 +126,7 @@ class EventAdminView(BaseAdminView):
                 action='access_event', items=event).entities
         except models.Need.DoesNotExist:
             entities = []
-        event.roles = [unicode(i.pk) for i in entities]
+        event.roles = [str(i.pk) for i in entities]
 
         # convert start and end dates to app time zone
         event.start_date = utc_time_zone.localize(event.start_date).astimezone(
@@ -234,7 +234,7 @@ class RoleAdminView(BaseAdminView):
     def get_one(self, pk):
         role = super(RoleAdminView, self).get_one(pk)
         role.permissions = [
-            unicode(i) for i in models.Need.objects(
+            str(i) for i in models.Need.objects(
                 entities=role, action__nin=excluded_perm_actions).scalar('pk')]
         return role
 

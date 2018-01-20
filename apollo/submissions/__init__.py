@@ -10,9 +10,9 @@ from flask.ext.security import current_user
 import json
 import unicodecsv
 try:
-    from cStringIO import StringIO
+    from io import StringIO
 except:
-    from StringIO import StringIO
+    from io import StringIO
 
 
 def export_field(form, submission, field_name):
@@ -83,8 +83,7 @@ class SubmissionsService(Service):
             if submission.submission_type == 'O':
                 ds_headers = [
                     'Participant ID', 'Name', 'DB Phone', 'Recent Phone'] + \
-                    map(lambda location_type: location_type.name,
-                        location_types)
+                    [location_type.name for location_type in location_types]
                 if form.form_type == 'INCIDENT':
                     ds_headers += [
                         'Location', 'Location Code', 'PS Code', 'RV'
@@ -99,18 +98,17 @@ class SubmissionsService(Service):
             else:
                 ds_headers = [
                     'Participant ID', 'Name', 'DB Phone', 'Recent Phone'] + \
-                    map(lambda location_type: location_type.name,
-                        location_types)
+                    [location_type.name for location_type in location_types]
                 ds_headers += [
                     'Location', 'Location Code', 'PS Code', 'RV'] + \
                     fields + ['Timestamp']
 
                 ds_headers.extend(sample_headers)
-                ds_headers.extend(map(lambda f: '%s-CONFIDENCE' % f, fields))
+                ds_headers.extend(['%s-CONFIDENCE' % f for f in fields])
 
             output = StringIO()
             writer = unicodecsv.writer(output, encoding='utf-8')
-            writer.writerow([unicode(i) for i in ds_headers])
+            writer.writerow([str(i) for i in ds_headers])
             yield output.getvalue()
             output.close()
 
@@ -185,7 +183,7 @@ class SubmissionsService(Service):
 
                 output = StringIO()
                 writer = unicodecsv.writer(output, encoding='utf-8')
-                writer.writerow([unicode(i) for i in record])
+                writer.writerow([str(i) for i in record])
                 yield output.getvalue()
                 output.close()
 

@@ -123,14 +123,14 @@ def update_participants(dataframe, event, header_map):
         if type(participant_id) == float:
             participant_id = int(participant_id)
         participant = services.participants.get(
-            participant_id=unicode(participant_id),
+            participant_id=str(participant_id),
             deployment=event.deployment,
             event=event
         )
 
         if participant is None:
             participant = services.participants.new(
-                participant_id=unicode(participant_id),
+                participant_id=str(participant_id),
                 deployment=event.deployment,
                 event=event
             )
@@ -170,7 +170,7 @@ def update_participants(dataframe, event, header_map):
                 if isinstance(loc_code, float):
                     loc_code = int(loc_code)
                 location = services.locations.get(
-                    code=unicode(loc_code),
+                    code=str(loc_code),
                     deployment=deployment
                 )
         except MultipleObjectsReturned:
@@ -200,14 +200,14 @@ def update_participants(dataframe, event, header_map):
                     if type(supervisor_id) == float:
                         supervisor_id = int(supervisor_id)
                     supervisor = services.participants.get(
-                        participant_id=unicode(supervisor_id),
+                        participant_id=str(supervisor_id),
                         event=event
                     )
                     if supervisor is None:
                         # perhaps supervisor exists further along.
                         # cache the refs
                         unresolved_supervisors.add(
-                            (participant_id, unicode(supervisor_id))
+                            (participant_id, str(supervisor_id))
                         )
             participant.supervisor = supervisor
 
@@ -240,8 +240,8 @@ def update_participants(dataframe, event, header_map):
                 phone_info[mobile] = True
 
             phones = [
-                PhoneContact(number=unicode(k),
-                             verified=v) for k, v in phone_info.items()
+                PhoneContact(number=str(k),
+                             verified=v) for k, v in list(phone_info.items())
             ]
             if phone_columns:
                 participant.phones = phones

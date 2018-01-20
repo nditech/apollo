@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
+
 
 import json
 from datetime import datetime
@@ -65,7 +65,7 @@ def locations_list():
     queryset_filter = filters.location_filterset()(queryset, request.args)
 
     args = request.args.to_dict(flat=False)
-    page_spec = args.pop(u'page', None) or [1]
+    page_spec = args.pop('page', None) or [1]
     page = int(page_spec[0])
 
     subset = queryset_filter.qs.order_by('location_type')
@@ -133,7 +133,7 @@ def locations_import():
 
         return redirect(url_for(
             'locations.location_headers',
-            pk=unicode(upload.id)
+            pk=str(upload.id)
         ))
 
 
@@ -175,7 +175,7 @@ def location_headers(pk):
 
             # invoke task asynchronously
             kwargs = {
-                'upload_id': unicode(upload.id),
+                'upload_id': str(upload.id),
                 'mappings': data
             }
             tasks.import_locations.apply_async(kwargs=kwargs)
@@ -197,18 +197,10 @@ def locations_builder():
         nx_graph = nx.DiGraph()
         divisions_graph = json.loads(request.form.get('divisions_graph'))
 
-        nodes = filter(
-            lambda cell: cell.get('type') == 'basic.Rect',
-            divisions_graph.get('cells'))
-        links = filter(
-            lambda cell: cell.get('type') == 'link',
-            divisions_graph.get('cells'))
+        nodes = [cell for cell in divisions_graph.get('cells') if cell.get('type') == 'basic.Rect']
+        links = [cell for cell in divisions_graph.get('cells') if cell.get('type') == 'link']
 
-        valid_node_ids = map(
-            lambda cell: cell.get('id'),
-            filter(
-                lambda cell: helpers.is_objectid(cell.get('id')),
-                nodes))
+        valid_node_ids = [cell.get('id') for cell in [cell for cell in nodes if helpers.is_objectid(cell.get('id'))]]
 
         # 1. Delete non-referenced location types
         services.location_types.find(id__nin=valid_node_ids).delete()
@@ -258,9 +250,7 @@ def locations_builder():
                             link['target'].get('id')).nodes()).nodes())
                 services.location_types.find().get(
                     id=link['target'].get('id')).update(
-                    add_to_set__ancestors_ref=filter(
-                        lambda ancestor: ancestor != link['target'].get('id'),
-                        ancestors))
+                    add_to_set__ancestors_ref=[ancestor for ancestor in ancestors if ancestor != link['target'].get('id')])
 
         # 5. Update ancestor count
         for location_type in services.location_types.find():
@@ -286,7 +276,7 @@ def locations_builder():
 @login_required
 def nuke_locations():
     try:
-        str_func = unicode
+        str_func = str
     except NameError:
         str_func = str
 

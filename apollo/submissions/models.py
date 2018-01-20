@@ -38,11 +38,11 @@ FLAG_CHOICES = (
 )
 
 STATUS_CHOICES = (
-    ('', _(u'Status')),
-    ('0', _(u'Status — No Problem')),
-    ('2', _(u'Status — Unverified')),
-    ('4', _(u'Status — Verified')),
-    ('5', _(u'Status — Rejected'))
+    ('', _('Status')),
+    ('0', _('Status — No Problem')),
+    ('2', _('Status — Unverified')),
+    ('4', _('Status — Verified')),
+    ('5', _('Status — Rejected'))
 )
 
 
@@ -81,7 +81,7 @@ class SubmissionQuerySet(BaseQuerySet):
                 location_query.setdefault(location.location_type, [])
                 location_query[location.location_type].append(location.name)
 
-            for key in location_query.keys():
+            for key in list(location_query.keys()):
                 param = 'location_name_path__{}__in'.format(key)
                 query_kwargs = {param: location_query[key]}
                 chain = Q(**query_kwargs) | chain
@@ -117,11 +117,9 @@ class SubmissionQuerySet(BaseQuerySet):
                 df[tag] = to_numeric(df[tag])
 
         # add fields with no values
-        fields = filter(
-            lambda f: f not in df.columns,
-            map(lambda field: field.name, [
+        fields = [f for f in [field.name for field in [
                 field for group in self.first().form.groups
-                for field in group.fields]))
+                for field in group.fields]] if f not in df.columns]
 
         for field in fields:
             df[field] = Series(np.nan, index=df.index)
@@ -195,13 +193,13 @@ class Submission(db.DynamicDocument):
     '''
 
     SUBMISSION_TYPES = (
-        ('O', _(u'Observer Submission')),
-        ('M', _(u'Master Submission')),
+        ('O', _('Observer Submission')),
+        ('M', _('Master Submission')),
     )
     QUARANTINE_STATUSES = (
-        ('', _(u'None')),
-        ('A', _(u'All')),
-        ('R', _(u'Results'))
+        ('', _('None')),
+        ('A', _('All')),
+        ('R', _('Results'))
     )
     VERIFICATION_STATUSES = (
         ('', _('Unconfirmed')),
@@ -312,12 +310,9 @@ class Submission(db.DynamicDocument):
                 else:
                     completion[group.name] = 'Missing'
 
-                fields_to_check = filter(
-                    lambda f: f not in self.overridden_fields,
-                    [f.name for f in group.fields])
+                fields_to_check = [f for f in [f.name for f in group.fields] if f not in self.overridden_fields]
 
-                not_quarantined = filter(lambda s: not s.quarantine_status,
-                                         observer_submissions)
+                not_quarantined = [s for s in observer_submissions if not s.quarantine_status]
 
                 if not not_quarantined:
                     self.quarantine_status = 'A'  # quarantine all records
@@ -331,19 +326,14 @@ class Submission(db.DynamicDocument):
                     for k in diff:
                         sub_completion.pop(k)
 
-                    fields_to_check = filter(
-                        lambda f: f not in self.overridden_fields,
-                        [f.name for f in group.fields])
+                    fields_to_check = [f for f in [f.name for f in group.fields] if f not in self.overridden_fields]
 
                     # check for conflicting values in the submissions
                     for field in fields_to_check:
                         field_values = set(
-                            map(
-                                lambda x: frozenset(x)
-                                if isinstance(x, list) else x,
-                                filter(lambda value: value is not None,
-                                       [getattr(s, field, None)
-                                        for s in not_quarantined])))
+                            [frozenset(x)
+                                if isinstance(x, list) else x for x in [value for value in [getattr(s, field, None)
+                                        for s in not_quarantined] if value is not None]])
                         if len(field_values) > 1:  # there are different values
                             sub_completion[group.name] = 'Conflict'
                             completion[group.name] = 'Conflict'
@@ -372,11 +362,7 @@ class Submission(db.DynamicDocument):
         method.'''
         if self.submission_type == 'M':
             siblings = list(self.siblings.filter(
-                quarantine_status__nin=map(
-                    lambda i: i[0],
-                    filter(
-                        lambda s: s[0],
-                        self.QUARANTINE_STATUSES))))
+                quarantine_status__nin=[i[0] for i in [s for s in self.QUARANTINE_STATUSES if s[0]]]))
 
             for group in self.form.groups:
                 for field in group.fields:
@@ -390,12 +376,9 @@ class Submission(db.DynamicDocument):
                         self.confidence[name] = score
                         continue
 
-                    values = map(
-                        lambda value: frozenset(value)
-                        if isinstance(value, list) else value,
-                        [getattr(submission, name, None)
-                            for submission in siblings]
-                    )
+                    values = [frozenset(value)
+                        if isinstance(value, list) else value for value in [getattr(submission, name, None)
+                            for submission in siblings]]
                     unique = list(set(values))
                     # if all values were reported and are the same then
                     # we have 100% confidence in the reported data
@@ -412,7 +395,7 @@ class Submission(db.DynamicDocument):
                         score = None
                     else:
                         # filter out only reported values
-                        n_values = filter(lambda v: v is not None, values)
+                        n_values = [v for v in values if v is not None]
                         n_unique = list(set(n_values))
 
                         # if there are different reported values then our score
@@ -476,16 +459,12 @@ class Submission(db.DynamicDocument):
         master = self.master
         if master and master != self:
             # fetch only fields that have not been overridden
-            fields = filter(lambda f: f.name not in master.overridden_fields, [
+            fields = [f for f in [
                 field for group in self.form.groups
-                for field in group.fields])
+                for field in group.fields] if f.name not in master.overridden_fields]
 
             siblings = self.siblings.filter(
-                quarantine_status__nin=map(
-                    lambda i: i[0],
-                    filter(
-                        lambda s: s[0],
-                        self.QUARANTINE_STATUSES)))
+                quarantine_status__nin=[i[0] for i in [s for s in self.QUARANTINE_STATUSES if s[0]]])
 
             for field in fields:
                 submission_field_value = getattr(self, field.name, None)
@@ -497,14 +476,11 @@ class Submission(db.DynamicDocument):
                     submission_field_value = None
 
                 all_values = [submission_field_value] + sibling_field_values
-                non_null_values = filter(
-                    lambda val: val is not None, all_values)
+                non_null_values = [val for val in all_values if val is not None]
 
                 # important to make the values hashable since "set" doesn't
                 # like to work directly with lists as they aren't hashable
-                hashable = map(
-                    lambda v: frozenset(v) if isinstance(v, list) else v,
-                    non_null_values)
+                hashable = [frozenset(v) if isinstance(v, list) else v for v in non_null_values]
                 unique_values = set(hashable)
 
                 # depending on the length of unique non-null values, the
@@ -592,23 +568,16 @@ class Submission(db.DynamicDocument):
             # once but we need to first ensure that quality_checks is
             # added to _changed_fields before removing subkeys
             if (
-                filter(
-                    lambda f: f.startswith('quality_checks.'),
-                    submission._changed_fields) and
+                [f for f in submission._changed_fields if f.startswith('quality_checks.')] and
                 'quality_checks' not in submission._changed_fields
             ):
                 submission._changed_fields.append('quality_checks')
 
-            submission._changed_fields = filter(
-                lambda f: not f.startswith('quality_checks.'),
-                submission._changed_fields
-            )
+            submission._changed_fields = [f for f in submission._changed_fields if not f.startswith('quality_checks.')]
             submission.verification_status = self.verification_status
             submission.save(clean=False)
 
-        self._changed_fields = filter(
-            lambda f: not f.startswith('quality_checks.'), self._changed_fields
-        )
+        self._changed_fields = [f for f in self._changed_fields if not f.startswith('quality_checks.')]
 
     def clean(self):
         # update location name path if it does not exist.
@@ -726,11 +695,11 @@ class Submission(db.DynamicDocument):
     def to_xml(self):
         document = self.form.to_xml()
         data = document.xpath('//model/instance/data')[0]
-        data.set('id', unicode(self.id))
+        data.set('id', str(self.id))
 
         for tag in self.form.tags:
             value = getattr(self, tag, None)
-            value = '' if value is None else unicode(value)
+            value = '' if value is None else str(value)
             element = data.xpath('//{}'.format(tag))[0]
             element.text = value
 
@@ -745,7 +714,7 @@ class Submission(db.DynamicDocument):
         pattern = re.compile('^[A-Z]+$', re.I)
         for criterion in self.form.quality_checks:
             if (
-                criterion['name'] in self.quality_checks.keys() and
+                criterion['name'] in list(self.quality_checks.keys()) and
                 self.quality_checks[criterion['name']] ==
                 QUALITY_STATUSES['FLAGGED']
             ):
@@ -769,7 +738,7 @@ class Submission(db.DynamicDocument):
         self._flagged_criteria = []
         for criterion in self.form.quality_checks:
             if (
-                criterion['name'] in self.quality_checks.keys() and
+                criterion['name'] in list(self.quality_checks.keys()) and
                 self.quality_checks[criterion['name']] ==
                 QUALITY_STATUSES['FLAGGED']
             ):

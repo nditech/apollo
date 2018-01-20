@@ -20,7 +20,7 @@ def checklist_question_summary(form, field, location, dataframe):
     if field.options:
         stats['type'] = 'discrete'
         stats['options'] = OrderedDict(
-            sorted(field.options.items(), key=lambda x: x[1])
+            sorted(list(field.options.items()), key=lambda x: x[1])
         )
     else:
         stats['type'] = 'continuous'
@@ -58,9 +58,9 @@ def get_location_for_type(submission, location_type, display_type=False):
     if display_type:
         return Markup('{} &middot; <em class="muted">{}</em>').format(
             locations[0].name, locations[0].location_type
-        ) if locations else u''
+        ) if locations else ''
     else:
-        return locations[0].name if locations else u''
+        return locations[0].name if locations else ''
 
 
 def gen_page_list(pager, window_size=10):
@@ -79,7 +79,7 @@ def gen_page_list(pager, window_size=10):
             start -= shift
         else:
             end += shift
-    return range(start, end + 1)
+    return list(range(start, end + 1))
 
 
 def percent_of(a, b, default=None):
@@ -110,4 +110,4 @@ def number_format(number):
     return format_number(number, locale)
 
 def reverse_dict(d):
-    return {v: k for k, v in d.items()}
+    return {v: k for k, v in list(d.items())}
