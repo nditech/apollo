@@ -91,7 +91,7 @@ class LocationType(db.Document):
         return sorted(temp, None, lambda x: len(x.ancestors_ref))
 
     def __unicode__(self):
-        return self.name or u''
+        return self.name or ''
 
 
 class Location(db.DynamicDocument):
@@ -155,15 +155,17 @@ class Location(db.DynamicDocument):
         return self.ancestors_ref
 
     def ancestor(self, location_type, include_self=True):
+        path = [l for l in self.ancestors_ref if l.location_type == location_type]
+        if include_self and self.location_type == location_type:
+            path = path + [self]
+
         try:
-            return filter(lambda l: l.location_type == location_type,
-                          self.ancestors_ref + [self] if include_self else
-                          self.ancestors_ref)[0]
+            return path[0]
         except IndexError:
-            pass
+            return None
 
     def __unicode__(self):
-        return self.name or u''
+        return self.name or ''
 
     def save(self, *args, **kwargs):
         from . import LocationsService

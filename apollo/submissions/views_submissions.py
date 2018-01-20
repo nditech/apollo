@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
+import csv
 from datetime import datetime
 import json
 try:
-    from cStringIO import StringIO
+    from io import StringIO
 except ImportError:
-    from StringIO import StringIO
+    from io import StringIO
 from flask import (
     Blueprint, jsonify, make_response, redirect, render_template, request,
     url_for, current_app, abort, g, Response
@@ -17,7 +17,7 @@ from flask.ext.menu import register_menu
 from flask_httpauth import HTTPBasicAuth
 from mongoengine import signals
 from tablib import Dataset
-import unicodecsv
+
 from werkzeug.datastructures import MultiDict
 from apollo import services
 from apollo.submissions.incidents import incidents_csv
@@ -45,7 +45,7 @@ bp = Blueprint('submissions', __name__, template_folder='templates',
                static_folder='static')
 
 
-SUB_VERIFIED = u'4'
+SUB_VERIFIED = '4'
 
 
 def get_valid_values(choices):
@@ -88,8 +88,8 @@ def submission_list(form_id):
     template_name = 'frontend/submission_list.html'
 
     data = request.args.to_dict(flat=False)
-    data['form_id'] = unicode(form.pk)
-    page_spec = data.pop(u'page', None) or [1]
+    data['form_id'] = str(form.pk)
+    page_spec = data.pop('page', None) or [1]
     page = int(page_spec[0])
 
     loc_types = displayable_location_types(is_administrative=True)
@@ -126,7 +126,7 @@ def submission_list(form_id):
             records, headers = exporter.export_dataset()
 
             export_buffer = StringIO()
-            writer = unicodecsv.DictWriter(export_buffer, headers)
+            writer = csv.DictWriter(export_buffer, headers)
             writer.writeheader()
             for record in records:
                 writer.writerow(record)
@@ -153,13 +153,11 @@ def submission_list(form_id):
 
     if request.form.get('action') == 'send_message':
         message = request.form.get('message', '')
-        recipients = filter(
-            lambda x: x is not '',
-            [submission.contributor.phone
+        recipients = [x for x in [submission.contributor.phone
                 if submission.contributor and
                 submission.contributor.phone else ''
                 for submission in query_filterset.qs.only(
-                    'contributor').select_related(1)])
+                    'contributor').select_related(1)] if x is not '']
         recipients.extend(current_app.config.get('MESSAGING_CC'))
 
         if message and recipients and permissions.send_messages.can():
@@ -214,7 +212,7 @@ def submission_create(form_id):
         if not submission_form.validate():
             # really should redisplay the form again
             return redirect(url_for(
-                'submissions.submission_list', form_id=unicode(form.pk)))
+                'submissions.submission_list', form_id=str(form.pk)))
 
         submission = services.submissions.new()
         submission_form.populate_obj(submission)
@@ -233,7 +231,7 @@ def submission_create(form_id):
         submission.save()
 
         return redirect(
-            url_for('submissions.submission_list', form_id=unicode(form.pk)))
+            url_for('submissions.submission_list', form_id=str(form.pk)))
 
 
 @route(bp, '/submissions/<submission_id>', methods=['GET', 'POST'])
@@ -251,17 +249,17 @@ def submission_edit(submission_id):
     if request.method == 'GET':
         submission_form = edit_form_class(
             obj=submission,
-            prefix=unicode(submission.pk)
+            prefix=str(submission.pk)
         )
         sibling_forms = [
             edit_form_class(
                 obj=sibling,
-                prefix=unicode(sibling.pk)
+                prefix=str(sibling.pk)
             ) for sibling in submission.siblings
         ]
         master_form = edit_form_class(
             obj=submission.master,
-            prefix=unicode(submission.master.pk)
+            prefix=str(submission.master.pk)
         ) if submission.master else None
 
         return render_template(
@@ -279,7 +277,7 @@ def submission_edit(submission_id):
         if submission.form.form_type == 'INCIDENT':
             # no master or sibling submission here
             submission_form = edit_form_class(
-                request.form, prefix=unicode(submission.pk)
+                request.form, prefix=str(submission.pk)
             )
 
             if submission_form.validate():
@@ -287,7 +285,7 @@ def submission_edit(submission_id):
                     update_submission_version,
                     sender=services.submissions.__model__
                 ):
-                    form_fields = submission_form.data.keys()
+                    form_fields = list(submission_form.data.keys())
                     changed = False
                     for form_field in form_fields:
                         if (
@@ -306,7 +304,7 @@ def submission_edit(submission_id):
                 else:
                     return redirect(url_for(
                         'submissions.submission_list',
-                        form_id=unicode(submission.form.pk)))
+                        form_id=str(submission.form.pk)))
             else:
                 return render_template(
                     template_name,
@@ -318,19 +316,19 @@ def submission_edit(submission_id):
         else:
             master_form = edit_form_class(
                 request.form,
-                prefix=unicode(submission.master.pk)
+                prefix=str(submission.master.pk)
             ) if submission.master else None
 
             submission_form = edit_form_class(
                 request.form,
                 obj=submission,
-                prefix=unicode(submission.pk)
+                prefix=str(submission.pk)
             )
 
             sibling_forms = [
                 edit_form_class(
                     obj=sibling,
-                    prefix=unicode(sibling.pk))
+                    prefix=str(sibling.pk))
                 for sibling in submission.siblings
             ]
 
@@ -350,12 +348,12 @@ def submission_edit(submission_id):
                         update_submission_version,
                         sender=services.submissions.__model__
                     ):
-                        form_fields = master_form.data.keys()
+                        form_fields = list(master_form.data.keys())
                         changed = False
                         for form_field in form_fields:
                             # we've had issues with quarantine and verification statuses
                             # previously. this explicitly deals with that
-                            if form_field == u'verification_status':
+                            if form_field == 'verification_status':
                                 new_verification_status = master_form.data.get(form_field)
                                 if new_verification_status not in get_valid_values(Submission.VERIFICATION_STATUSES):
                                     continue
@@ -365,7 +363,7 @@ def submission_edit(submission_id):
                                         setattr(submission.master, form_field, new_verification_status)
                                     continue
 
-                            if form_field == u'quarantine_status':
+                            if form_field == 'quarantine_status':
                                 new_quarantine_status = master_form.data.get(form_field)
                                 if new_quarantine_status not in get_valid_values(Submission.QUARANTINE_STATUSES):
                                     continue
@@ -414,11 +412,11 @@ def submission_edit(submission_id):
                         update_submission_version,
                         sender=services.submissions.__model__
                     ):
-                        form_fields = submission_form.data.keys()
+                        form_fields = list(submission_form.data.keys())
                         for form_field in form_fields:
                             # we've had issues with quarantine and verification statuses
                             # previously. this explicitly deals with that
-                            if form_field == u'verification_status':
+                            if form_field == 'verification_status':
                                 new_verification_status = submission_form.data.get(form_field)
                                 if new_verification_status not in get_valid_values(Submission.VERIFICATION_STATUSES):
                                     continue
@@ -428,7 +426,7 @@ def submission_edit(submission_id):
                                         setattr(submission, form_field, new_verification_status)
                                     continue
 
-                            if form_field == u'quarantine_status':
+                            if form_field == 'quarantine_status':
                                 new_quarantine_status = submission_form.data.get(form_field)
                                 if new_quarantine_status not in get_valid_values(Submission.QUARANTINE_STATUSES):
                                     continue
@@ -470,7 +468,7 @@ def submission_edit(submission_id):
                 else:
                     return redirect(url_for(
                         'submissions.submission_list',
-                        form_id=unicode(submission.form.pk)
+                        form_id=str(submission.form.pk)
                     ))
             else:
                 return render_template(
@@ -594,23 +592,23 @@ def submission_version(submission_id, version_id):
     )
 
 
-@route(bp, u'/dashboard/qa/<form_id>')
+@route(bp, '/dashboard/qa/<form_id>')
 @register_menu(
-    bp, u'main.dashboard.qa', _(u'Quality Assurance'),
-    icon=u'<i class="glyphicon glyphicon-tasks"></i>', order=1,
+    bp, 'main.dashboard.qa', _('Quality Assurance'),
+    icon='<i class="glyphicon glyphicon-tasks"></i>', order=1,
     visible_when=lambda: len(get_quality_assurance_form_dashboard_menu(form_type='CHECKLIST', verifiable=True)) > 0 \
             and permissions.view_quality_assurance.can(),
     dynamic_list_constructor=partial(
         get_quality_assurance_form_dashboard_menu,
-        form_type=u'CHECKLIST', verifiable=True))
+        form_type='CHECKLIST', verifiable=True))
 @permissions.view_quality_assurance.require(403)
 @login_required
 def quality_assurance_dashboard(form_id):
     form = services.forms.get_or_404(pk=form_id, form_type='CHECKLIST')
-    page_title = _(u'Quality Assurance — %(name)s', name=form.name)
+    page_title = _('Quality Assurance — %(name)s', name=form.name)
     filter_class = generate_quality_assurance_filter(form)
     data = request.args.to_dict()
-    data['form_id'] = unicode(form.pk)
+    data['form_id'] = str(form.pk)
     loc_types = displayable_location_types(is_administrative=True)
 
     location = None
@@ -625,16 +623,16 @@ def quality_assurance_dashboard(form_id):
     # get individual check data
     check_data = _quality_check_aggregation(query_filterset.qs, form)
 
-    template_name = u'frontend/quality_assurance_dashboard.html'
+    template_name = 'frontend/quality_assurance_dashboard.html'
 
     context = {
-        u'filter_form': filter_form,
-        u'form': form,
-        u'args': data,
-        u'location_types': loc_types,
-        u'location': location,
-        u'page_title': page_title,
-        u'check_data': check_data
+        'filter_form': filter_form,
+        'form': form,
+        'args': data,
+        'location_types': loc_types,
+        'location': location,
+        'page_title': page_title,
+        'check_data': check_data
     }
 
     return render_template(template_name, **context)
@@ -650,7 +648,7 @@ def quality_assurance_dashboard(form_id):
     permissions.view_quality_assurance.can())
 @register_menu(
     bp, 'main.qa.checklists', _('Quality Assurance'),
-    icon=u'<i class="glyphicon glyphicon-ok"></i>', order=1,
+    icon='<i class="glyphicon glyphicon-ok"></i>', order=1,
     dynamic_list_constructor=partial(
         get_quality_assurance_form_list_menu,
         form_type='CHECKLIST', verifiable=True))
@@ -658,10 +656,10 @@ def quality_assurance_dashboard(form_id):
 @login_required
 def quality_assurance_list(form_id):
     form = services.forms.get_or_404(pk=form_id, form_type='CHECKLIST')
-    page_title = _(u'Quality Assurance — %(name)s', name=form.name)
+    page_title = _('Quality Assurance — %(name)s', name=form.name)
     filter_class = generate_quality_assurance_filter(form)
     data = request.args.to_dict()
-    data['form_id'] = unicode(form.pk)
+    data['form_id'] = str(form.pk)
     page = int(data.pop('page', 1))
     loc_types = displayable_location_types(is_administrative=True)
 
@@ -752,7 +750,7 @@ def update_submission_version(sender, document, **kwargs):
     )
 
 
-@route(bp, u'/api/v1/submissions/export/aggregated/<form_id>')
+@route(bp, '/api/v1/submissions/export/aggregated/<form_id>')
 @auth.login_required
 def submission_export(form_id):
     form = services.forms.get_or_404(pk=form_id)

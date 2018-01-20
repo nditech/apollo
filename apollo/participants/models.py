@@ -26,7 +26,7 @@ class ParticipantRole(db.Document):
     deployment = db.ReferenceField(Deployment)
 
     def __unicode__(self):
-        return self.name or u''
+        return self.name or ''
 
 
 class ParticipantPartner(db.Document):
@@ -37,7 +37,7 @@ class ParticipantPartner(db.Document):
     deployment = db.ReferenceField(Deployment)
 
     def __unicode__(self):
-        return self.name or u''
+        return self.name or ''
 
 
 class ParticipantGroupType(db.Document):
@@ -45,7 +45,7 @@ class ParticipantGroupType(db.Document):
     deployment = db.ReferenceField(Deployment)
 
     def __unicode__(self):
-        return self.name or u''
+        return self.name or ''
 
 
 class ParticipantGroup(db.Document):
@@ -54,7 +54,7 @@ class ParticipantGroup(db.Document):
     group_type = db.StringField()
 
     def __unicode__(self):
-        return self.name or u''
+        return self.name or ''
 
 
 class PhoneContact(db.EmbeddedDocument):
@@ -63,7 +63,7 @@ class PhoneContact(db.EmbeddedDocument):
     last_seen = db.DateTimeField()
 
     def __unicode__(self):
-        return self.number or u''
+        return self.number or ''
 
 
 class Participant(db.DynamicDocument):
@@ -116,14 +116,14 @@ class Participant(db.DynamicDocument):
     }
 
     def __unicode__(self):
-        return self.name or u''
+        return self.name or ''
 
     def clean(self):
         # unlike for submissions, this always gets called, because
         # participants are 'mobile' - they can be moved from one location
         # to another. we want this to reflect that.
         self.location_name_path = compute_location_path(self.location)
-        if self.gender not in map(lambda op: op[0], self.GENDER):
+        if self.gender not in [op[0] for op in self.GENDER]:
             self.gender = ''
 
     def get_phone(self):

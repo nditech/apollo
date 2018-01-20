@@ -37,7 +37,7 @@ class KannelForm(wtforms.Form):
     def clean_text(self):
         charset = self.charset.data
         text = self.text.data
-        if charset and not isinstance(text, unicode):
+        if charset and not isinstance(text, str):
             text = text.decode(charset)
         return text.replace('\x00', '')
 

@@ -34,7 +34,7 @@ def multiselect_dataframe_analysis(dataframe, col, options):
     column_data = dataframe.get(col)
     option_summary = summarize_options(options, column_data)
     result = {
-        'value_counts': dict(zip(options, option_summary)),
+        'value_counts': dict(list(zip(options, option_summary))),
         'value_counts_sum': column_data.count(),
     }
 
@@ -112,7 +112,7 @@ def generate_numeric_field_stats(tag, dataset):
 
     if hasattr(dataset, 'groups'):
         # if we need grouped data, say, by a certain location type, for example
-        group_names = dataset.groups.keys()
+        group_names = list(dataset.groups.keys())
         group_names.sort()
 
         # generate the per-group statistics
@@ -185,7 +185,7 @@ def generate_single_choice_field_stats(tag, dataset, options, labels=None):
 
     if hasattr(dataset, 'groups'):
         # the data is grouped, so per-group statistics will be generated
-        group_names = dataset.groups.keys()
+        group_names = list(dataset.groups.keys())
         group_names.sort()
 
         location_stats = {}
@@ -208,7 +208,7 @@ def generate_single_choice_field_stats(tag, dataset, options, labels=None):
 
             histogram = make_histogram(options, temp)
             histogram_mod = lambda x: (x, percent_of(x, reported))
-            histogram2 = map(histogram_mod, histogram)
+            histogram2 = list(map(histogram_mod, histogram))
 
             location_stats[group_name]['histogram'] = histogram2
 
@@ -224,7 +224,7 @@ def generate_single_choice_field_stats(tag, dataset, options, labels=None):
 
         histogram = make_histogram(options, dataset[tag])
         histogram_mod = lambda x: (x, percent_of(x, reported))
-        histogram2 = map(histogram_mod, histogram)
+        histogram2 = list(map(histogram_mod, histogram))
 
         stats = {'histogram': histogram2, 'reported': reported,
                  'missing': missing, 'percent_reported': percent_reported,
@@ -253,7 +253,7 @@ def generate_mutiple_choice_field_stats(tag, dataset, options, labels=None):
     field_stats = {'type': 'multiple-choice'}
 
     if hasattr(dataset, 'groups'):
-        group_names = dataset.groups.keys()
+        group_names = list(dataset.groups.keys())
         group_names.sort()
 
         field_stats['labels'] = labels
@@ -280,7 +280,7 @@ def generate_mutiple_choice_field_stats(tag, dataset, options, labels=None):
 
             histogram_mod = lambda x: (x, percent_of(x, reported))
 
-            histogram2 = map(histogram_mod, histogram)
+            histogram2 = list(map(histogram_mod, histogram))
 
             location_stats[group_name]['histogram'] = histogram2
 
@@ -297,7 +297,7 @@ def generate_mutiple_choice_field_stats(tag, dataset, options, labels=None):
 
         histogram_mod = lambda x: (x, percent_of(x, reported))
 
-        histogram2 = map(histogram_mod, histogram)
+        histogram2 = list(map(histogram_mod, histogram))
 
         stats = {'histogram': histogram2, 'reported': reported,
                  'missing': missing, 'percent_reported': percent_reported,
@@ -327,7 +327,7 @@ def generate_incident_field_stats(tag, dataset, all_tags, labels=None):
 
     if hasattr(dataset, 'groups'):
         # the data is grouped, so per-group statistics will be generated
-        group_names = dataset.groups.keys()
+        group_names = list(dataset.groups.keys())
         group_names.sort()
 
         location_stats = {}
@@ -376,7 +376,7 @@ def generate_field_stats(field, dataset, all_tags=None):
         return generate_incident_field_stats(field.name, dataset, all_tags)
 
     if field.options:
-        sorted_options = sorted(field.options.iteritems(), key=itemgetter(1))
+        sorted_options = sorted(iter(field.options.items()), key=itemgetter(1))
         options = [i[1] for i in sorted_options]
         labels = [i[0] for i in sorted_options]
 
@@ -458,7 +458,7 @@ def generate_incidents_data(form, queryset, location_root, grouped=True,
                 field_stats = generate_field_stats(field, data_group, tags)
 
                 incidents_summary['locations'] = \
-                    field_stats['locations'].keys()
+                    list(field_stats['locations'].keys())
 
                 for location in field_stats['locations']:
                     field = form.get_field_by_tag(tag)

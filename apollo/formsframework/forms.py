@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
 from functools import partial
-from itertools import ifilter
+
 from mongoengine import signals
 from wtforms import (
     Form,
@@ -69,7 +69,7 @@ def filter_participants(form, participant_id):
 
 
 def filter_form(form_pk):
-    event = getattr(g, u'event', services.events.default())
+    event = getattr(g, 'event', services.events.default())
     events = list(services.events.overlapping_events(event))
 
     if form_pk:
@@ -80,10 +80,10 @@ def filter_form(form_pk):
 
 class BaseQuestionnaireForm(Form):
     form = StringField(
-        u'Form', validators=[validators.required()],
+        'Form', validators=[validators.required()],
         filters=[lambda data: filter_form(data)])
-    sender = StringField(u'Sender', validators=[validators.required()])
-    comment = StringField(u'Comment', validators=[validators.optional()])
+    sender = StringField('Sender', validators=[validators.required()])
+    comment = StringField('Comment', validators=[validators.optional()])
 
     def process(self, formdata=None, obj=None, **kwargs):
         self._formdata = formdata
@@ -93,9 +93,7 @@ class BaseQuestionnaireForm(Form):
     def validate(self, *args, **kwargs):
         success = super(BaseQuestionnaireForm, self).validate(*args, **kwargs)
         if success and self._formdata:
-            unknown_fields = filter(
-                lambda f: f not in self._fields.keys(),
-                self._formdata.keys())
+            unknown_fields = [f for f in list(self._formdata.keys()) if f not in list(self._fields.keys())]
             if unknown_fields:
                 if type(self._errors) == dict:
                     self._errors.update({'__all__': unknown_fields})
@@ -111,7 +109,7 @@ class BaseQuestionnaireForm(Form):
         submission = None
 
         # also ignore fields that have errors so as not to save them
-        ignored_fields.extend(self.errors.keys())
+        ignored_fields.extend(list(self.errors.keys()))
         try:
             participant = self.data.get('participant')
 
@@ -145,8 +143,7 @@ class BaseQuestionnaireForm(Form):
                     submission.description = self.data.get('comment')
 
             if submission:
-                form_fields = filter(lambda f: f not in ignored_fields,
-                                     self.data.keys())
+                form_fields = [f for f in list(self.data.keys()) if f not in ignored_fields]
                 change_detected = False
                 for form_field in form_fields:
                     if isinstance(self.data.get(form_field), int):
@@ -178,7 +175,7 @@ class BaseQuestionnaireForm(Form):
                     participant = self.data.get('participant')
 
                     # retrieve the first phone contact that matches
-                    phone_contact = next(ifilter(
+                    phone_contact = next(filter(
                         lambda phone: ugly_phone.sub('', g.phone) ==
                         phone.number,
                         participant.phones), False)
@@ -211,7 +208,7 @@ class BaseQuestionnaireForm(Form):
 def build_questionnaire(form, data=None):
     fields = {'groups': []}
     fields['participant'] = StringField(
-        u'Participant',
+        'Participant',
         filters=[partial(filter_participants, form)],
         validators=[validators.required()])
 
@@ -221,7 +218,7 @@ def build_questionnaire(form, data=None):
         for field in group.fields:
             # if the field has options, create a list of choices
             if field.options:
-                choices = [(v, k) for k, v in field.options.iteritems()]
+                choices = [(v, k) for k, v in field.options.items()]
 
                 if field.allows_multiple_values:
                     fields[field.name] = IntegerSplitterField(

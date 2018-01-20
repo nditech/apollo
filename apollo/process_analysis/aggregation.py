@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from itertools import izip
+
 from operator import itemgetter
 
 
@@ -139,7 +139,7 @@ def _single_choice_field_stats(queryset, tag, location_type=None):
     total = queryset.count()
     form = queryset[0].form if total else None
     field = form.get_field_by_tag(tag) if form else None
-    options = sorted(field.options.iteritems(),
+    options = sorted(iter(field.options.items()),
                      key=itemgetter(1)) if field else []
 
     result_sort_key = lambda x: x.get('option')
@@ -281,7 +281,7 @@ def _multi_choice_field_stats(queryset, tag, location_type=None):
 
     form = queryset[0].form if total else None
     field = form.get_field_by_tag(tag) if form else None
-    options = sorted(field.options.iteritems(),
+    options = sorted(iter(field.options.items()),
                      key=itemgetter(1)) if field else []
 
     data = {
@@ -300,7 +300,7 @@ def _multi_choice_field_stats(queryset, tag, location_type=None):
         results = output.get('result')
         stats_results = stats_output.get('result')
 
-        for loc_data, stats_data in izip(results, stats_results):
+        for loc_data, stats_data in zip(results, stats_results):
             loc_total = stats_data.get('total', 0)
             loc_reported = stats_data.get('reported', 0)
             loc_missing = stats_data.get('missing', 0)

@@ -12,7 +12,7 @@ class SetupCommand(Command):
 
     def run(self):
         if models.Deployment.objects.count() > 0:
-            print 'You already have deployments set up.'
+            print('You already have deployments set up.')
             return
 
         name = prompt('Name of new deployment')
@@ -43,16 +43,16 @@ class SetupCommand(Command):
             try:
                 user = register_user(email=email, password=password)
             except socket.error as e:
-                print 'Error sending registration email: {}'.format(e)
+                print('Error sending registration email: {}'.format(e))
                 user = services.users.get(email=email, deployment=None)
             user.update(set__deployment=deployment, add_to_set__roles=role)
 
-            print '\nUser created successfully'
-            print 'User(id=%s email=%s)' % (user.id, user.email)
+            print('\nUser created successfully')
+            print('User(id=%s email=%s)' % (user.id, user.email))
         else:
-            print '\nError creating user:'
-            for errors in form.errors.values():
-                print '\n'.join(errors)
+            print('\nError creating user:')
+            for errors in list(form.errors.values()):
+                print('\n'.join(errors))
 
         # create at least one event
         from apollo.manage.deployments import CreateEventCommand

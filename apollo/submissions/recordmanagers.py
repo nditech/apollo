@@ -55,7 +55,7 @@ class DKANRecordManager(six.with_metaclass(abc.ABCMeta)):
         field = form.get_field_by_tag(tag)
 
         # this doesn't make sense for fields not flagged for process analysis
-        if field.analysis_type != u'PROCESS':
+        if field.analysis_type != 'PROCESS':
             return []
 
         if field.allows_multiple_values:
@@ -86,38 +86,38 @@ class DKANRecordManager(six.with_metaclass(abc.ABCMeta)):
 
 class AggregationFrameworkRecordManager(DKANRecordManager):
     def _generate_for_numeric_field(self, queryset, field, location_types):
-        token = u'${}'.format(field.name)
+        token = '${}'.format(field.name)
 
-        project_stage = {u'var': token, u'_id': 0}
-        project_stage.update({u'location_name_path': {
+        project_stage = {'var': token, '_id': 0}
+        project_stage.update({'location_name_path': {
             lt: 1 for lt in location_types
         }})
 
         pipeline = [
-            {u'$match': queryset._query},
-            {u'$project': project_stage},
-            {u'$group': {
-                u'_id': u'$location_name_path',
-                u'total': {u'$sum': u'$var'}
+            {'$match': queryset._query},
+            {'$project': project_stage},
+            {'$group': {
+                '_id': '$location_name_path',
+                'total': {'$sum': '$var'}
             }},
-            {u'$project': {
-                u'_id': 0, u'location_name_path': u'$_id', u'total': 1
+            {'$project': {
+                '_id': 0, 'location_name_path': '$_id', 'total': 1
             }}
         ]
 
         collection = queryset._collection
-        result = collection.aggregate(pipeline).get(u'result')
+        result = collection.aggregate(pipeline).get('result')
         records = []
 
         for index, location_type in enumerate(location_types):
             subtypes = location_types[:index + 1]
             sort_key = lambda rec: [rec.get(
-                u'location_name_path').get(lt) for lt in subtypes]
+                'location_name_path').get(lt) for lt in subtypes]
             for key, group in groupby(sorted(result, key=sort_key), sort_key):
-                row = dict(zip(subtypes, key))
+                row = dict(list(zip(subtypes, key)))
 
                 row.update({
-                    field.description: sum(record.get(u'total')
+                    field.description: sum(record.get('total')
                                            for record in group)})
                 records.append(row)
 
@@ -127,124 +127,124 @@ class AggregationFrameworkRecordManager(DKANRecordManager):
 
     def _generate_for_single_choice_field(self, queryset, field,
                                           location_types):
-        token = u'${}'.format(field.name)
+        token = '${}'.format(field.name)
 
         # skip missing fields for the match stage
         match_query = queryset._query
-        match_query.update({field.name: {u'$ne': None}})
+        match_query.update({field.name: {'$ne': None}})
 
-        project_stage = {u'var': token, u'_id': 0}
-        project_stage.update({u'location_name_path': {
+        project_stage = {'var': token, '_id': 0}
+        project_stage.update({'location_name_path': {
             lt: 1 for lt in location_types
         }})
 
         pipeline = [
-            {u'$match': match_query},
-            {u'$project': project_stage},
-            {u'$group': {
-                u'_id': {
-                    u'location_name_path': u'$location_name_path',
-                    u'option': u'$var'
+            {'$match': match_query},
+            {'$project': project_stage},
+            {'$group': {
+                '_id': {
+                    'location_name_path': '$location_name_path',
+                    'option': '$var'
                 },
-                u'count': {u'$sum': 1}
+                'count': {'$sum': 1}
             }},
-            {u'$group': {
-                u'_id': u'$_id.location_name_path',
-                u'options': {
-                    u'$push': {u'option': u'$_id.option', u'count': u'$count'}
+            {'$group': {
+                '_id': '$_id.location_name_path',
+                'options': {
+                    '$push': {'option': '$_id.option', 'count': '$count'}
                 }
             }},
-            {u'$project': {
-                u'_id': 0,
-                u'location_name_path': u'$_id',
-                u'options': 1
+            {'$project': {
+                '_id': 0,
+                'location_name_path': '$_id',
+                'options': 1
             }}
         ]
 
         collection = queryset._collection
-        result = collection.aggregate(pipeline).get(u'result')
+        result = collection.aggregate(pipeline).get('result')
         records = []
 
         for index, location_type in enumerate(location_types):
             subtypes = location_types[:index + 1]
-            sort_key = lambda rec: [rec.get(u'location_name_path').get(lt) for lt in subtypes]
+            sort_key = lambda rec: [rec.get('location_name_path').get(lt) for lt in subtypes]
             for key, group in groupby(sorted(result, key=sort_key), sort_key):
-                row = dict(zip(subtypes, key))
+                row = dict(list(zip(subtypes, key)))
 
-                group_options = [i.get(u'options') for i in group]
+                group_options = [i.get('options') for i in group]
 
-                for description, option in field.options.items():
-                    row[u'{} | {}'.format(field.description, description)] = \
-                        sum(r.get(u'count') for r in chain.from_iterable(group_options) if r.get(u'option') == option)
+                for description, option in list(field.options.items()):
+                    row['{} | {}'.format(field.description, description)] = \
+                        sum(r.get('count') for r in chain.from_iterable(group_options) if r.get('option') == option)
 
                 records.append(row)
 
         # headers
-        sorted_options = sorted(field.options.items(), key=itemgetter(1))
+        sorted_options = sorted(list(field.options.items()), key=itemgetter(1))
         headers = location_types + [
-            u'{0} | {1}'.format(
+            '{0} | {1}'.format(
                 field.description, s_opt[0]) for s_opt in sorted_options]
 
         return records, headers
 
     def _generate_for_multiselect_field(self, queryset, field, location_types):
-        token = u'${}'.format(field.name)
+        token = '${}'.format(field.name)
 
         # skip missing fields for the match stage
         match_query = queryset._query
-        match_query.update({field.name: {u'$ne': None}})
+        match_query.update({field.name: {'$ne': None}})
 
-        project_stage = {u'var': token, u'_id': 0}
-        project_stage.update({u'location_name_path': {
+        project_stage = {'var': token, '_id': 0}
+        project_stage.update({'location_name_path': {
             lt: 1 for lt in location_types
         }})
 
         pipeline = [
-            {u'$match': match_query},
-            {u'$unwind': token},
-            {u'$project': project_stage},
-            {u'$group': {
-                u'_id': {
-                    u'location_name_path': u'$location_name_path',
-                    u'option': u'$var'
+            {'$match': match_query},
+            {'$unwind': token},
+            {'$project': project_stage},
+            {'$group': {
+                '_id': {
+                    'location_name_path': '$location_name_path',
+                    'option': '$var'
                 },
-                u'count': {u'$sum': 1}
+                'count': {'$sum': 1}
             }},
-            {u'$group': {
-                u'_id': u'$_id.location_name_path',
-                u'options': {
-                    u'$push': {u'option': u'$_id.option', u'count': u'$count'}
+            {'$group': {
+                '_id': '$_id.location_name_path',
+                'options': {
+                    '$push': {'option': '$_id.option', 'count': '$count'}
                 }
             }},
-            {u'$project': {
-                u'_id': 0,
-                u'location_name_path': u'$_id',
-                u'options': 1
+            {'$project': {
+                '_id': 0,
+                'location_name_path': '$_id',
+                'options': 1
             }}
         ]
 
         collection = queryset._collection
-        result = collection.aggregate(pipeline).get(u'result')
+        result = collection.aggregate(pipeline).get('result')
         records = []
 
         for index, location_type in enumerate(location_types):
             subtypes = location_types[:index + 1]
-            sort_key = lambda rec: [rec.get(u'location_name_path').get(lt) for lt in subtypes]
+            sort_key = lambda rec: [rec.get('location_name_path').get(lt) for lt in subtypes]
             for key, group in groupby(sorted(result, key=sort_key), sort_key):
-                row = dict(zip(subtypes, key))
+                row = dict(list(zip(subtypes, key)))
 
-                group_options = [i.get(u'options') for i in group]
+                group_options = [i.get('options') for i in group]
 
-                for description, option in field.options.items():
-                    row[u'{} | {}'.format(field.description, description)] = \
-                        sum(r.get(u'count') for r in chain.from_iterable(group_options) if r.get(u'option') == option)
+                for description, option in list(field.options.items()):
+                    row['{} | {}'.format(field.description, description)] = \
+                        sum(r.get('count') for r in chain.from_iterable(group_options) if r.get('option') == option)
 
                 records.append(row)
 
         # headers
-        sorted_options = sorted(field.options.items(), key=itemgetter(1))
+        sorted_options = sorted(list(field.options.items()), key=itemgetter(1))
         headers = location_types + [
-            u'{0} | {1}'.format(
+            '{0} | {1}'.format(
                 field.description, s_opt[0]) for s_opt in sorted_options]
 
         return records, headers
@@ -261,7 +261,7 @@ class PandasRecordManager(DKANRecordManager):
                 if isinstance(name, six.string_types):
                     row = {ltypes_subset[0]: name}
                 else:
-                    row = dict(zip(ltypes_subset, name))
+                    row = dict(list(zip(ltypes_subset, name)))
 
                 row[field.description] = int(group[field.name].fillna(0).sum())
                 records.append(row)
@@ -286,10 +286,10 @@ class PandasRecordManager(DKANRecordManager):
                 if isinstance(name, six.string_types):
                     row = {ltypes_subset[0]: name}
                 else:
-                    row = dict(zip(ltypes_subset, name))
+                    row = dict(list(zip(ltypes_subset, name)))
                 value_counts = group[field.name].value_counts().to_dict()
-                for description, option in field.options.items():
-                    row[u'{} | {}'.format(field.description, description)] = \
+                for description, option in list(field.options.items()):
+                    row['{} | {}'.format(field.description, description)] = \
                                         value_counts.get(option, 0)
                 records.append(row)
 
@@ -298,9 +298,9 @@ class PandasRecordManager(DKANRecordManager):
         records = sorted(records, cmp=comparer)
 
         # headers
-        sorted_options = sorted(field.options.items(), key=itemgetter(1))
+        sorted_options = sorted(list(field.options.items()), key=itemgetter(1))
         headers = location_types + [
-            u'{0} | {1}'.format(
+            '{0} | {1}'.format(
                 field.description, s_opt[0]) for s_opt in sorted_options]
 
         return records, headers
@@ -316,11 +316,11 @@ class PandasRecordManager(DKANRecordManager):
                 if isinstance(name, six.string_types):
                     row = {ltypes_subset[0]: name}
                 else:
-                    row = dict(zip(ltypes_subset, name))
+                    row = dict(list(zip(ltypes_subset, name)))
                 counter = collections.Counter(flatten(
                             group[field.name].tolist()))
-                for description, option in field.options.items():
-                    row[u'{} | {}'.format(field.description, description)] = \
+                for description, option in list(field.options.items()):
+                    row['{} | {}'.format(field.description, description)] = \
                             counter.get(option)
                 records.append(row)
 
@@ -329,9 +329,9 @@ class PandasRecordManager(DKANRecordManager):
         records = sorted(records, cmp=comparer)
 
         # headers
-        sorted_options = sorted(field.options.items(), key=itemgetter(1))
+        sorted_options = sorted(list(field.options.items()), key=itemgetter(1))
         headers = location_types + [
-            u'{0} | {1}'.format(
+            '{0} | {1}'.format(
                 field.description, s_opt[0]) for s_opt in sorted_options]
 
         return records, headers
@@ -355,12 +355,12 @@ class PipelineBuilder(object):
             A dict containing the $project clause for the pipeline.
         '''
         project_stage = {fi.name: 1 for fi in fields}
-        project_stage[u'location_name_path'] = {
+        project_stage['location_name_path'] = {
             lt: 1 for lt in location_types
         }
-        project_stage[u'_id'] = 0
+        project_stage['_id'] = 0
 
-        return {u'$project': project_stage}
+        return {'$project': project_stage}
 
     @classmethod
     def generate_first_stage_group(cls, fields):
@@ -376,10 +376,10 @@ class PipelineBuilder(object):
         Returns:
             A dict with the $group clause for the pipeline.
         '''
-        group_expression = {u'_id': u'$location_name_path'}
+        group_expression = {'_id': '$location_name_path'}
 
         for field in fields:
-            if field.analysis_type != u'PROCESS':
+            if field.analysis_type != 'PROCESS':
                 continue
             if not field.options:
                 group_expression.update(
@@ -391,7 +391,7 @@ class PipelineBuilder(object):
                 group_expression.update(
                     cls._multiple_choice_field_first_stage_group(field))
 
-        return {u'$group': group_expression}
+        return {'$group': group_expression}
 
     @classmethod
     def _numeric_field_first_stage_group(cls, field):
@@ -408,8 +408,8 @@ class PipelineBuilder(object):
         Returns:
             A $group expression as a dict
         '''
-        token = u'${0}'.format(field.name)
-        expression = {field.name: {u'$sum': token}}
+        token = '${0}'.format(field.name)
+        expression = {field.name: {'$sum': token}}
 
         return expression
 
@@ -433,12 +433,12 @@ class PipelineBuilder(object):
         Returns:
             A $group expression as a dict
         '''
-        token = u'${0}'.format(field.name)
+        token = '${0}'.format(field.name)
         expression = {
-            u'{0}_{1}'.format(field.name, val): {
-                u'$push': {u'$cond': [{u'$eq': [token, val]}, 1, 0]}
+            '{0}_{1}'.format(field.name, val): {
+                '$push': {'$cond': [{'$eq': [token, val]}, 1, 0]}
             }
-            for val in field.options.values()}
+            for val in list(field.options.values())}
 
         return expression
 
@@ -461,8 +461,8 @@ class PipelineBuilder(object):
         Returns:
             A $group expression as a dict
         '''
-        token = u'${0}'.format(field.name)
-        expression = {field.name: {u'$push': {u'$ifNull': [token, []]}}}
+        token = '${0}'.format(field.name)
+        expression = {field.name: {'$push': {'$ifNull': [token, []]}}}
 
         return expression
 
@@ -476,15 +476,15 @@ class PipelineBuilder(object):
             (self.form.get_field_by_tag(tag)
                 for tag in self.form.tags
                 if self.form.get_field_by_tag(
-                    tag).analysis_type == u'PROCESS'),
+                    tag).analysis_type == 'PROCESS'),
             key=lambda fi: fi.name)
         self.location_types = [
             lt.name for lt in services.location_types.find().order_by(
-                u'ancestor_count')][:-1]
+                'ancestor_count')][:-1]
 
     def generate_pipeline(self):
         pipeline = [
-            {u'$match': self.queryset._query},
+            {'$match': self.queryset._query},
             self.generate_first_stage_project(
                 self.fields, self.location_types),
             self.generate_first_stage_group(self.fields)
@@ -497,7 +497,7 @@ class AggFrameworkExporter(object):
     def __init__(self, queryset):
         self.queryset = queryset
         if self.queryset.count() == 0:
-            raise ValueError(u'Empty queryset specified')
+            raise ValueError('Empty queryset specified')
 
         self.pipeline_builder = PipelineBuilder(queryset)
 
@@ -505,7 +505,7 @@ class AggFrameworkExporter(object):
         collection = self.queryset._collection
         pipeline = self.pipeline_builder.generate_pipeline()
 
-        result = collection.aggregate(pipeline).get(u'result')
+        result = collection.aggregate(pipeline).get('result')
 
         # generate headers
         ltypes = self.pipeline_builder.location_types
@@ -515,17 +515,17 @@ class AggFrameworkExporter(object):
                 headers.append(field.name)
             else:
                 headers.extend(
-                    u'{0}|{1}'.format(field.name, opt)
+                    '{0}|{1}'.format(field.name, opt)
                     for opt in sorted(field.options.values()))
 
         # generate records
         records = []
         for index, location_type in enumerate(ltypes):
             subtypes = ltypes[:index + 1]
-            sort_key = lambda rec: [rec.get(u'_id').get(lt) for lt in subtypes]
+            sort_key = lambda rec: [rec.get('_id').get(lt) for lt in subtypes]
 
             for key, group in groupby(sorted(result, key=sort_key), sort_key):
-                row = dict(zip(subtypes, key))
+                row = dict(list(zip(subtypes, key)))
 
                 for field in self.pipeline_builder.fields:
                     # `group` is an iterator. it must be converted
@@ -535,13 +535,13 @@ class AggFrameworkExporter(object):
                     group = list(group)
                     if field.options:
                         for opt in sorted(field.options.values()):
-                            row_key = u'{0}|{1}'.format(field.name, opt)
+                            row_key = '{0}|{1}'.format(field.name, opt)
                             if field.allows_multiple_values:
                                 # multiple-choice field
                                 row[row_key] = sum2(collections.Counter(chain.from_iterable(r.get(field.name))).get(opt) for r in group if r.get(field.name))
                             else:
                                 # single-choice field
-                                row[row_key] = sum2(chain.from_iterable(r.get(u'{0}_{1}'.format(field.name, opt)) for r in group))
+                                row[row_key] = sum2(chain.from_iterable(r.get('{0}_{1}'.format(field.name, opt)) for r in group))
                     else:
                         # hopefully, we have a numeric field at this point
                         row[field.name] = sum2(r.get(field.name, 0) for r in group)
@@ -553,7 +553,7 @@ class AggFrameworkExporter(object):
 
 def exporter_usage(queryset):
     import csv
-    from cStringIO import StringIO
+    from io import StringIO
 
     exporter = AggFrameworkExporter(queryset)
     mybuffer = StringIO()

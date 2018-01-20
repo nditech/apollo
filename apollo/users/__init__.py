@@ -27,7 +27,7 @@ class PermsService(Service):
             entities=user, deployment=user.deployment)
         for need in needs_for_user:
             if need.items:
-                items = filter(lambda i: type(i) != dict, list(need.items))
+                items = [i for i in list(need.items) if type(i) != dict]
                 needs.extend([ItemNeed(need.action, item, 'object')
                              for item in items])
             else:
@@ -40,7 +40,7 @@ class PermsService(Service):
             entities__in=user.roles, deployment=user.deployment)
         for need in needs_for_roles:
             if need.items:
-                items = filter(lambda i: type(i) != dict, list(need.items))
+                items = [i for i in list(need.items) if type(i) != dict]
                 needs.extend([ItemNeed(need.action, item, 'object')
                              for item in items])
             else:

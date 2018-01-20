@@ -5,7 +5,7 @@ from flask import session, request, abort, g, url_for
 from flask.ext.babel import get_locale
 from flask.ext.mongoengine import MongoEngineSessionInterface
 from flask.ext.principal import Permission, ItemNeed, RoleNeed
-from urlparse import urlparse
+from urllib.parse import urlparse
 
 import datetime
 
@@ -78,10 +78,8 @@ def get_form_list_menu(**kwargs):
              'text': form.name,
              'icon': '<i class="glyphicon glyphicon-check"></i>',
              'visible': True}
-            for form in filter(
-                lambda f: Permission(ItemNeed('view_forms', f, 'object'),
-                                     RoleNeed('admin')).can(),
-                services.forms.find(**kwargs).order_by('name'))]
+            for form in [f for f in services.forms.find(**kwargs).order_by('name') if Permission(ItemNeed('view_forms', f, 'object'),
+                                     RoleNeed('admin')).can()]]
 
 
 def get_checklist_form_dashboard_menu(**kwargs):
@@ -89,15 +87,13 @@ def get_checklist_form_dashboard_menu(**kwargs):
 
     :param form_type: The form type for the forms to be retrieved
     """
-    return [{u'url': url_for(u'dashboard.checklists',
+    return [{'url': url_for('dashboard.checklists',
              form_id=str(form.id)),
-             u'text': form.name,
-             u'icon': u'<i class="glyphicon glyphicon-check"></i>',
-             u'visible': True}
-            for form in filter(
-                lambda f: Permission(ItemNeed(u'view_forms', f, u'object'),
-                                     RoleNeed(u'admin')).can(),
-                services.forms.find(**kwargs).order_by(u'name'))]
+             'text': form.name,
+             'icon': '<i class="glyphicon glyphicon-check"></i>',
+             'visible': True}
+            for form in [f for f in services.forms.find(**kwargs).order_by('name') if Permission(ItemNeed('view_forms', f, 'object'),
+                                     RoleNeed('admin')).can()]]
 
 
 def get_concurrent_events_list_menu():
@@ -123,10 +119,8 @@ def get_quality_assurance_form_list_menu(**kwargs):
              'text': form.name,
              'icon': '<i class="glyphicon glyphicon-ok"></i>',
              'visible': True}
-            for form in filter(
-                lambda f: Permission(ItemNeed('view_forms', f, 'object'),
-                                     RoleNeed('admin')).can(),
-                services.forms.find(**kwargs).order_by('name'))]
+            for form in [f for f in services.forms.find(**kwargs).order_by('name') if Permission(ItemNeed('view_forms', f, 'object'),
+                                     RoleNeed('admin')).can()]]
 
 
 def get_quality_assurance_form_dashboard_menu(**kwargs):
@@ -134,20 +128,18 @@ def get_quality_assurance_form_dashboard_menu(**kwargs):
 
     :param form_type: The form type for the forms to be retrieved
     """
-    return [{u'url': url_for(u'submissions.quality_assurance_dashboard',
+    return [{'url': url_for('submissions.quality_assurance_dashboard',
              form_id=str(form.id)),
-             u'text': form.name,
-             u'icon': u'<i class="glyphicon glyphicon-tasks"></i>',
-             u'visible': True}
-            for form in filter(
-                lambda f: Permission(ItemNeed(u'view_forms', f, u'object'),
-                                     RoleNeed(u'admin')).can(),
-                services.forms.find(**kwargs).order_by(u'name'))]
+             'text': form.name,
+             'icon': '<i class="glyphicon glyphicon-tasks"></i>',
+             'visible': True}
+            for form in [f for f in services.forms.find(**kwargs).order_by('name') if Permission(ItemNeed('view_forms', f, 'object'),
+                                     RoleNeed('admin')).can()]]
 
 
 def displayable_location_types(**kwargs):
     temp = services.location_types.find(**kwargs)
-    return sorted(temp, None, lambda x: len(x.ancestors_ref))
+    return sorted(temp, key=lambda x: len(x.ancestors_ref))
 
 
 def analysis_breadcrumb_data(form, location, tag=None,

@@ -48,7 +48,7 @@ def message_list():
         )
     else:
         data = request.args.to_dict(flat=False)
-        page_spec = data.pop(u'page', None) or [1]
+        page_spec = data.pop('page', None) or [1]
         page = int(page_spec[0])
         context = {
             'page_title': page_title,

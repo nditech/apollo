@@ -7,12 +7,12 @@ from apollo.services import events
 
 
 def generate_event_selection_form(*args, **kwargs):
-    event_choices = events.find().order_by(u'-end_date').scalar(u'id', u'name')
-    choices = [(unicode(a), unicode(b)) for a, b in event_choices]
+    event_choices = events.find().order_by('-end_date').scalar('id', 'name')
+    choices = [(str(a), str(b)) for a, b in event_choices]
 
     class EventSelectionForm(WTSecureForm):
         event = SelectField(
-            _(u'Choose Event'),
+            _('Choose Event'),
             choices=choices,
             default=g.event.id,
             validators=[validators.input_required()]

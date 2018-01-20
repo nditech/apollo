@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import, division
+
 from functools import partial
 from flask import Blueprint, render_template, request, url_for, current_app
 from flask.ext.babel import lazy_gettext as _
@@ -19,7 +19,7 @@ import pandas as pd
 def get_result_analysis_menu():
     return [{
         'url': url_for(
-            'result_analysis.results_analysis', form_id=unicode(form.pk)),
+            'result_analysis.results_analysis', form_id=str(form.pk)),
         'text': form.name,
         'icon': '<i class="glyphicon glyphicon-stats"></i>'
     } for form in forms.find(
@@ -42,7 +42,7 @@ def _voting_results(form_pk, location_pk=None):
         location = locations.get_or_404(pk=location_pk)
 
     template_name = 'result_analysis/results.html'
-    page_title = _(u'%(form_name)s Voting Results', form_name=form.name)
+    page_title = _('%(form_name)s Voting Results', form_name=form.name)
     filter_class = filters.generate_submission_analysis_filter(form)
 
     loc_types = [lt for lt in location_types.root().children
@@ -54,10 +54,8 @@ def _voting_results(form_pk, location_pk=None):
     }
 
     # define the condition for which a submission should be included
-    result_fields = filter(
-        lambda field: field.analysis_type == 'RESULT',
-        [field for group in form.groups
-         for field in group.fields])
+    result_fields = [field for field in [field for group in form.groups
+         for field in group.fields] if field.analysis_type == 'RESULT']
     result_field_labels = [field.name for field in result_fields]
     result_field_descriptions = [field.description for field in result_fields]
 
@@ -196,26 +194,26 @@ def _voting_results(form_pk, location_pk=None):
         data_available = False
 
     for result_field_label in result_field_labels:
-        data_analyses['overall'][u'{}_cnt'.format(result_field_label)] = \
+        data_analyses['overall']['{}_cnt'.format(result_field_label)] = \
             valid_summation.get(result_field_label, 0) if data_available else 0
-        data_analyses['overall'][u'{}_pct'.format(result_field_label)] = \
+        data_analyses['overall']['{}_pct'.format(result_field_label)] = \
             valid_summation.get(result_field_label, 0) / float(
                 data_analyses['overall']['all_valid_votes']) \
             if data_available else 0  # all_votes?
         if form.calculate_moe and current_app.config.get('ENABLE_MOE'):
-            data_analyses['overall'][u'{}_moe_95'.format(
+            data_analyses['overall']['{}_moe_95'.format(
                 result_field_label)] = _margin_of_error(
                 valid_dataframe, result_field_label,
                 result_field_labels) \
                 if data_available else 0
-            data_analyses['overall'][u'{}_moe_99'.format(
+            data_analyses['overall']['{}_moe_99'.format(
                 result_field_label)] = _margin_of_error(
                 valid_dataframe, result_field_label,
                 result_field_labels, 2.58) \
                 if data_available else 0
 
     # grouped summaries
-    for location_type in location_tree.keys():
+    for location_type in list(location_tree.keys()):
         data_analyses['grouped'][location_type] = []
 
         try:
@@ -356,10 +354,10 @@ def _voting_results(form_pk, location_pk=None):
                     }
 
                 for result_field_label in result_field_labels:
-                    _sublocation_report[u'{}_cnt'.format(
+                    _sublocation_report['{}_cnt'.format(
                         result_field_label)] = _valid.get(
                         result_field_label, 0) if data_available else 0
-                    _sublocation_report[u'{}_pct'.format(
+                    _sublocation_report['{}_pct'.format(
                         result_field_label)] = _valid.get(
                         result_field_label, 0) / float(
                         _sublocation_report['all_valid_votes']) \
@@ -369,12 +367,12 @@ def _voting_results(form_pk, location_pk=None):
                         form.calculate_moe and current_app.config.get(
                             'ENABLE_MOE')
                     ):
-                        _sublocation_report[u'{}_moe_95'.format(
+                        _sublocation_report['{}_moe_95'.format(
                             result_field_label)] = _margin_of_error(
                             _valid_dataframe, result_field_label,
                             result_field_labels) \
                             if data_available else 0
-                        _sublocation_report[u'{}_moe_99'.format(
+                        _sublocation_report['{}_moe_99'.format(
                             result_field_label)] = _margin_of_error(
                             _valid_dataframe, result_field_label,
                             result_field_labels,
@@ -402,9 +400,7 @@ def _voting_results(form_pk, location_pk=None):
                 convergence_df[result_field_labels].sum(axis=1), axis=0).fillna(0)
 
         for component in result_field_labels:
-            chart_data[component] = map(
-                lambda (ts, f): (int(ts.strftime('%s')) * 1000, f * 100),
-                convergence_df.as_matrix(['updated', component]))
+            chart_data[component] = [(int(ts_f[0].strftime('%s')) * 1000, ts_f[1] * 100) for ts_f in convergence_df.as_matrix(['updated', component])]
 
     context = {
         'page_title': page_title,

@@ -1,13 +1,15 @@
 # -*- coding: utf-8 -*-
+import csv
+
 from apollo.core import Service
 from apollo.messaging.models import Message
 from datetime import datetime
 from flask import g
-import unicodecsv
+
 try:
-    from cStringIO import StringIO
+    from io import StringIO
 except:
-    from StringIO import StringIO
+    from io import StringIO
 
 
 class MessagesService(Service):
@@ -39,8 +41,8 @@ class MessagesService(Service):
             'Mobile', 'Text', 'Direction', 'Created', 'Delivered'
         ]
         output = StringIO()
-        writer = unicodecsv.writer(output, encoding='utf-8')
-        writer.writerow([unicode(i) for i in headers])
+        writer = csv.writer(output)
+        writer.writerow([str(i) for i in headers])
         yield output.getvalue()
         output.close()
 
@@ -58,7 +60,7 @@ class MessagesService(Service):
             ]
 
             output = StringIO()
-            writer = unicodecsv.writer(output, encoding='utf-8')
-            writer.writerow([unicode(i) for i in record])
+            writer = csv.writer(output)
+            writer.writerow([str(i) for i in record])
             yield output.getvalue()
             output.close()

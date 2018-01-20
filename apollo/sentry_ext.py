@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from flask import g
+from flask import current_app, g
 from raven.base import Client
 
 from apollo import settings
@@ -10,11 +10,14 @@ class ApolloRavenClient(Client):
             extra=None, stack=None, tags=None, **kwargs):
 
         extra = extra or {}
-        extra.update({
-            u'event': str(getattr(g, u'event', None)),
-            u'apollo_version': getattr(settings, u'APOLLO_VERSION',
-                'Unspecified'),
-        })
+
+        with current_app.app_context():
+            extra.update({
+                'deployment': str(getattr(g, 'deployment', None)),
+                'event': str(getattr(g, 'event', None)),
+                'apollo_version': getattr(settings, 'APOLLO_VERSION',
+                    'Unspecified'),
+            })
 
         return super(ApolloRavenClient, self).capture(event_type, data,
             date, time_spent, extra, stack, tags, **kwargs)

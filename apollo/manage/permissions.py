@@ -19,16 +19,13 @@ class AddPermissionToRole(Command):
         option = prompt_choices('Role', [
             (str(i), v) for i, v in enumerate(roles, 1)])
         role = roles[int(option) - 1]
-        all_permissions = filter(
-            lambda key: isinstance(getattr(permissions, key), Permission),
-            sorted(permissions.__dict__.keys()))
+        all_permissions = [key for key in sorted(permissions.__dict__.keys()) if isinstance(getattr(permissions, key), Permission)]
 
         all_needs = set()
         for perm in all_permissions:
             all_needs.update(getattr(permissions, perm).needs)
 
-        presentable_needs = sorted(map(lambda need: need.value, filter(
-            lambda need: need.method == 'action', all_needs)))
+        presentable_needs = sorted([need.value for need in [need for need in all_needs if need.method == 'action']])
 
         option = prompt_choices('Permission', [
             (str(i), v) for i, v in enumerate(presentable_needs, 1)])
@@ -54,7 +51,7 @@ class ListPermissionsOfRole(Command):
         for need in models.Need.objects.filter(
             entities=role, deployment=g.deployment
         ):
-            print need.action
+            print(need.action)
 
 
 class RemovePermissionFromRole(Command):
@@ -70,16 +67,13 @@ class RemovePermissionFromRole(Command):
         option = prompt_choices('Role', [
             (str(i), v) for i, v in enumerate(roles, 1)])
         role = roles[int(option) - 1]
-        all_permissions = filter(
-            lambda key: isinstance(getattr(permissions, key), Permission),
-            sorted(permissions.__dict__.keys()))
+        all_permissions = [key for key in sorted(permissions.__dict__.keys()) if isinstance(getattr(permissions, key), Permission)]
 
         all_needs = set()
         for perm in all_permissions:
             all_needs.update(getattr(permissions, perm).needs)
 
-        presentable_needs = sorted(map(lambda need: need.value, filter(
-            lambda need: need.method == 'action', all_needs)))
+        presentable_needs = sorted([need.value for need in [need for need in all_needs if need.method == 'action']])
 
         option = prompt_choices('Permission', [
             (str(i), v) for i, v in enumerate(presentable_needs, 1)])

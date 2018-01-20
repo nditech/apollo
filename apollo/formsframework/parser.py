@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import division
+
 import operator as op
 from parsimonious.grammar import Grammar
 import parsley
@@ -69,7 +69,7 @@ class Comparator(object):
         self.param = None
 
     def parse(self, source):
-        grammar = '\n'.join(v.__doc__ for k, v in vars(self.__class__).items()
+        grammar = '\n'.join(v.__doc__ for k, v in list(vars(self.__class__).items())
                             if '__' not in k and hasattr(v, '__doc__')
                             and v.__doc__)
         return Grammar(grammar).parse(source)
@@ -78,7 +78,7 @@ class Comparator(object):
         if param is not None:
             self.param = float(param)
         node = self.parse(source) if isinstance(source, str) \
-            or isinstance(source, unicode) else source
+            or isinstance(source, str) else source
         method = getattr(self, node.expr_name, lambda node, children: children)
         return method(node, [self.eval(n) for n in node])
 

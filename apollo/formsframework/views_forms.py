@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import
+
 from apollo.frontend import route, permissions
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, url_for)
@@ -28,7 +28,7 @@ def checklist_init():
     form = make_checklist_init_form()
 
     try:
-        str_func = unicode
+        str_func = str
     except NameError:
         str_func = str
 
@@ -155,7 +155,7 @@ def list_forms():
 @login_required
 def quality_assurance(pk):
     form = services.forms.get_or_404(pk=pk)
-    page_title = _(u'Quality Assurance — %(name)s', name=form.name)
+    page_title = _('Quality Assurance — %(name)s', name=form.name)
     template_name = 'frontend/quality_assurance.html'
 
     if request.method == 'POST':

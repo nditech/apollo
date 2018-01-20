@@ -29,7 +29,7 @@ ROSA_E = ElementMaker(namespace=NSMAP['jr'], nsmap=NSMAP)
 class FormFieldNameField(db.StringField):
     def validate(self, value):
         from ..submissions.models import Submission
-        if value in Submission._fields.keys():
+        if value in list(Submission._fields.keys()):
             self.error(
                 'Form field name cannot be one of the disallowed field names')
         super(FormFieldNameField, self).validate(value)
@@ -153,7 +153,7 @@ class Form(db.Document):
     }
 
     def __unicode__(self):
-        return self.name or u''
+        return self.name or ''
 
     @property
     def tags(self):
@@ -225,7 +225,7 @@ class Form(db.Document):
         model.append(E.bind(nodeset='/data/version_id', readonly='true()'))
 
         form_id = etree.Element('form_id')
-        form_id.text = unicode(self.id)
+        form_id.text = str(self.id)
 
         version_id = etree.Element('version_id')
         version_id.text = self.version_identifier
@@ -263,7 +263,7 @@ class Form(db.Document):
                 if field.options:
                     # sort options by value
                     sorted_options = sorted(
-                        field.options.iteritems(),
+                        iter(field.options.items()),
                         key=itemgetter(1)
                     )
                     if field.allows_multiple_values:
@@ -280,7 +280,7 @@ class Form(db.Document):
 
                     for key, value in sorted_options:
                         field_element.append(
-                            E.item(E.label(key), E.value(unicode(value)))
+                            E.item(E.label(key), E.value(str(value)))
                         )
                 else:
                     if field.represents_boolean:
@@ -340,7 +340,7 @@ class FormBuilderSerializer(object):
             data['max'] = field.max_value
         else:
             sorted_options = sorted(
-                field.options.iteritems(), key=itemgetter(1))
+                iter(field.options.items()), key=itemgetter(1))
             data['options'] = [s[0] for s in sorted_options]
             if field.allows_multiple_values:
                 data['component'] = 'checkbox'

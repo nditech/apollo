@@ -7,9 +7,9 @@ from functools import partial
 class ParticipantPropertyName(db.StringField):
     def validate(self, value):
         from ..participants.models import Participant
-        if value in Participant._fields.keys():
+        if value in list(Participant._fields.keys()):
             self.error(
-                u'String value cannot be one of the disallowed field names')
+                'String value cannot be one of the disallowed field names')
         super(ParticipantPropertyName, self).validate(value)
 
 
@@ -19,7 +19,7 @@ class CustomDataField(db.EmbeddedDocument):
     listview_visibility = db.BooleanField(default=False)
 
     def __unicode__(self):
-        return self.name or u''
+        return self.name or ''
 
 
 # Deployment
@@ -31,22 +31,22 @@ class Deployment(db.Document):
         db.EmbeddedDocumentField(CustomDataField))
     allow_observer_submission_edit = db.BooleanField(
         default=True,
-        verbose_name=u'Allow editing of Participant submissions?')
+        verbose_name='Allow editing of Participant submissions?')
     logo = db.StringField()
     include_rejected_in_votes = db.BooleanField(default=False)
     is_initialized = db.BooleanField(default=False)
     dashboard_full_locations = db.BooleanField(
         default=True,
-        verbose_name=u'Show all locations for dashboard stats?')
+        verbose_name='Show all locations for dashboard stats?')
 
     meta = {
-        u'indexes': [
-            [u'hostnames']
+        'indexes': [
+            ['hostnames']
         ]
     }
 
     def __unicode__(self):
-        return self.name or u''
+        return self.name or ''
 
 
 # Event
@@ -62,11 +62,11 @@ class Event(db.Document):
     deployment = db.ReferenceField(Deployment)
 
     meta = {
-        u'indexes': [
-            [u'deployment', u'name'],
-            [u'deployment', u'start_date', u'-end_date']
+        'indexes': [
+            ['deployment', 'name'],
+            ['deployment', 'start_date', '-end_date']
         ]
     }
 
     def __unicode__(self):
-        return self.name or u''
+        return self.name or ''

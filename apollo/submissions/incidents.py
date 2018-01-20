@@ -4,7 +4,7 @@ def incidents_csv(df, groupby, options):
     if df.shape[0]:
         grouped = df.groupby(groupby)
 
-        for group in grouped.groups.keys():
+        for group in list(grouped.groups.keys()):
             entry = {}
             entry['LOC'] = group
             entry['TOT'] = int(df.ix[grouped.groups[group]].ix[:, options].fillna(0).sum().sum())

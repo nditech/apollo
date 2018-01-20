@@ -10,7 +10,7 @@ class Role(db.Document, RoleMixin):
     description = db.StringField()
 
     def __unicode__(self):
-        return self.name or u''
+        return self.name or ''
 
 
 class User(db.Document, UserMixin):
@@ -37,7 +37,7 @@ class User(db.Document, UserMixin):
     }
 
     def __unicode__(self):
-        return self.email or u''
+        return self.email or ''
 
 
 class Need(db.Document):
@@ -58,7 +58,7 @@ class Need(db.Document):
     deployment = db.ReferenceField(Deployment)
 
     def __unicode__(self):
-        return self.action or u''
+        return self.action or ''
 
 
 class UserUpload(db.Document):

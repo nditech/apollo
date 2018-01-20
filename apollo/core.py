@@ -19,12 +19,12 @@ from apollo.sentry_ext import ApolloRavenClient
 
 
 class AdminHome(AdminIndexView):
-    @expose(u'/')
+    @expose('/')
     def index(self):
-        return redirect(url_for(u'dashboard.index'))
+        return redirect(url_for('dashboard.index'))
 
 
-admin = Admin(name='Apollo', index_view=AdminHome(name=u'Dashboard'))
+admin = Admin(name='Apollo', index_view=AdminHome(name='Dashboard'))
 babel = Babel()
 cache = Cache()
 db = MongoEngine()
@@ -182,7 +182,7 @@ class Service(object):
         :param **kwargs: update parameters
         """
         self._isinstance(model)
-        for k, v in self._preprocess_params(kwargs).items():
+        for k, v in list(self._preprocess_params(kwargs).items()):
             setattr(model, k, v)
         self.save(model)
         return model
@@ -256,7 +256,7 @@ def get_declared_filters(bases, attrs, use_base_filters=True):
     if use_base_filters:
         for base in bases[::-1]:
             if hasattr(base, 'declared_filters'):
-                filters = base.declared_filters.items() + filters
+                filters = list(base.declared_filters.items()) + filters
 
     return OrderedDict(filters)
 
