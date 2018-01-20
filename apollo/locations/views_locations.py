@@ -18,8 +18,7 @@ from slugify import slugify_unicode
 
 from apollo.frontend import filters, permissions, route
 from apollo import helpers, models, services
-from apollo.locations import api
-from apollo.locations.tasks import import_locations
+from apollo.locations import api, tasks
 from apollo.frontend.forms import (
     file_upload_form, generate_location_edit_form,
     generate_location_update_mapping_form, DummyForm)
@@ -28,6 +27,7 @@ bp = Blueprint('locations', __name__, template_folder='templates',
                static_folder='static', static_url_path='/core/static')
 location_api = Api(bp)
 
+admin_required = permissions.role('admin').require
 
 location_api.add_resource(
     api.LocationTypeItemResource,
@@ -64,8 +64,9 @@ def locations_list():
     queryset = services.locations.find()
     queryset_filter = filters.location_filterset()(queryset, request.args)
 
-    args = request.args.copy()
-    page = int(args.pop('page', '1'))
+    args = request.args.to_dict(flat=False)
+    page_spec = args.pop(u'page', None) or [1]
+    page = int(page_spec[0])
 
     subset = queryset_filter.qs.order_by('location_type')
 
@@ -177,7 +178,7 @@ def location_headers(pk):
                 'upload_id': unicode(upload.id),
                 'mappings': data
             }
-            import_locations.apply_async(kwargs=kwargs)
+            tasks.import_locations.apply_async(kwargs=kwargs)
 
             return redirect(url_for('locations.locations_list'))
 
@@ -278,3 +279,22 @@ def locations_builder():
         )
 
     return render_template(template_name, page_title=page_title)
+
+
+@route(bp, '/locations/purge', methods=['POST'])
+@admin_required(403)
+@login_required
+def nuke_locations():
+    try:
+        str_func = unicode
+    except NameError:
+        str_func = str
+
+    flash(
+        str_func(_('Locations, Checklists, Critical Incidents and Participants are being deleted.')),
+        category='locations'
+    )
+
+    tasks.nuke_locations.apply_async()
+
+    return redirect(url_for('locations.locations_list'))

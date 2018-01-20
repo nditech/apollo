@@ -7,6 +7,7 @@ import pandas as pd
 from apollo.messaging.tasks import send_email
 from apollo import services, helpers
 from apollo.factory import create_celery_app
+from apollo.participants import utils
 from apollo.participants.models import PhoneContact
 import random
 import string
@@ -343,3 +344,10 @@ def import_participants(upload_id, mappings):
     msg_body = generate_response_email(count, errors, warnings)
 
     send_email(_('Import report'), msg_body, [upload.user.email])
+
+
+@celery.task
+def nuke_participants(event_id):
+    event = services.events.get(pk=event_id)
+    if event:
+        utils.nuke_participants(event)

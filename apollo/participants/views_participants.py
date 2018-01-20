@@ -4,7 +4,7 @@ from __future__ import absolute_import
 from datetime import datetime
 from itertools import ifilter
 
-from flask import (abort, Blueprint, current_app, g, redirect,
+from flask import (abort, Blueprint, current_app, flash, g, redirect,
                    render_template, request, Response, url_for)
 from flask.ext.babel import lazy_gettext as _
 from flask.ext.menu import register_menu
@@ -15,8 +15,7 @@ from slugify import slugify_unicode
 from apollo.frontend import filters, helpers, permissions, route
 from apollo import services
 from apollo.helpers import load_source_file, stash_file
-from apollo.participants import api
-from apollo.participants.tasks import import_participants
+from apollo.participants import api, tasks
 from apollo.messaging.tasks import send_messages
 from apollo.frontend.forms import (
     DummyForm, generate_participant_edit_form,
@@ -37,6 +36,8 @@ participant_api.add_resource(
     '/api/participants/',
     endpoint='api.participants'
 )
+
+admin_required = permissions.role('admin').require
 
 
 @route(bp, '/participants', methods=['GET', 'POST'])
@@ -105,8 +106,9 @@ def participant_list(page=1):
     else:
         # request.args is immutable, so the .pop() call will fail on it.
         # using .copy() returns a mutable version of it.
-        args = request.args.copy()
-        page = int(args.pop('page', '1'))
+        args = request.args.to_dict(flat=False)
+        page_spec = args.pop(u'page', None) or [1]
+        page = int(page_spec[0])
 
         sort_by = sortable_columns.get(
             args.pop('sort_by', ''), 'participant_id')
@@ -186,8 +188,9 @@ def participant_performance_list(page=1):
     else:
         # request.args is immutable, so the .pop() call will fail on it.
         # using .copy() returns a mutable version of it.
-        args = request.args.copy()
-        page = int(args.pop('page', '1'))
+        args = request.args.to_dict(flat=False)
+        page_spec = args.pop(u'page', None) or [1]
+        page = int(page_spec[0])
 
         sort_by = sortable_columns.get(
             args.pop('sort_by', ''), 'participant_id')
@@ -381,6 +384,25 @@ def participant_headers(pk):
                 'upload_id': unicode(upload.id),
                 'mappings': data
             }
-            import_participants.apply_async(kwargs=kwargs)
-
+            tasks.import_participants.apply_async(kwargs=kwargs)
             return redirect(url_for('participants.participant_list'))
+
+
+@route(bp, '/participants/purge', methods=['POST'])
+@admin_required(403)
+@login_required
+def nuke_participants():
+    try:
+        str_func = unicode
+    except NameError:
+        str_func = str
+
+    event = g.event
+    flash(
+        str_func(_('Participants, Checklists, Critical Incidents and Messages for this event are being deleted.')),
+        category='task_begun'
+    )
+
+    tasks.nuke_participants.apply_async((str_func(event.pk),))
+
+    return redirect(url_for('participants.participant_list'))

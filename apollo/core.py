@@ -15,6 +15,8 @@ from raven.contrib.flask import Sentry
 import six
 from wtforms import Form, fields
 
+from apollo.sentry_ext import ApolloRavenClient
+
 
 class AdminHome(AdminIndexView):
     @expose(u'/')
@@ -30,7 +32,7 @@ mail = Mail()
 menu = Menu()
 security = Security()
 gravatar = Gravatar(size=25, default="identicon", use_ssl=True)
-sentry = Sentry()
+sentry = Sentry(client_cls=ApolloRavenClient)
 csrf = CsrfProtect()
 
 

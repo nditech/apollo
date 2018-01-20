@@ -31,5 +31,5 @@ class IntegerSplitterField(wtforms.IntegerField):
                 if d not in values:
                     raise ValueError(
                         self.gettext(
-                            "'%(value)s' is not a valid choice for this field"
+                            u"'%(value)s' is not a valid choice for this field"
                         ) % dict(value=d))

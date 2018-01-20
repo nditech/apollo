@@ -313,20 +313,20 @@ class FormGroupFilter(ChoiceFilter):
     """
     def filter(self, queryset, value):
         if value:
-            name_parts = self.name.split('__')
+            name_parts = self.name.split(u'__')
             form = services.forms.get(pk=name_parts[0])
             group = [g.name for g in form.groups if g.slug == name_parts[1]][0]
 
             params = {}
 
-            if value == '1':
-                params = {'completion__{}'.format(group): 'Partial'}
-            elif value == '2':
-                params = {'completion__{}'.format(group): 'Missing'}
-            elif value == '3':
-                params = {'completion__{}'.format(group): 'Complete'}
-            elif value == '4':
-                params = {'completion__{}'.format(group): 'Conflict'}
+            if value == u'1':
+                params = {u'completion__{}'.format(group): u'Partial'}
+            elif value == u'2':
+                params = {u'completion__{}'.format(group): u'Missing'}
+            elif value == u'3':
+                params = {u'completion__{}'.format(group): u'Complete'}
+            elif value == u'4':
+                params = {u'completion__{}'.format(group): u'Conflict'}
 
             return queryset(**params)
         return queryset

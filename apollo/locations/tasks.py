@@ -7,6 +7,7 @@ from slugify import slugify
 
 from apollo import helpers, services
 from apollo.factory import create_celery_app
+from apollo.locations import utils
 from apollo.messaging.tasks import send_email
 
 celery = create_celery_app()
@@ -183,3 +184,8 @@ def import_locations(upload_id, mappings):
     )
 
     send_email(_('Locations Import Report'), msg_body, [upload.user.email])
+
+
+@celery.task
+def nuke_locations():
+    utils.nuke_locations()

@@ -30,7 +30,6 @@ def main_dashboard(form_id=None):
     group = args.pop('group', None)
     location_type_id = args.pop('locationtype', None)
 
-    page_title = _('Dashboard')
     template_name = 'frontend/dashboard.html'
 
     event = get_event()
@@ -40,6 +39,11 @@ def main_dashboard(form_id=None):
             events=event, form_type='CHECKLIST').order_by('name').first()
     else:
         form = forms.get_or_404(pk=form_id, form_type="CHECKLIST")
+
+    if form is not None:
+        page_title = _(u'Dashboard · %(name)s', name=form.name)
+    else:
+        page_title = _(u'Dashboard')
 
     queryset = submissions.find(
         form=form,

@@ -40,6 +40,9 @@ a:hover.arrow-style{text-decoration:none; color:#333;}
   {%- if perms.send_messages.can() -%}
   <button class="btn btn-sm btn-success pull-right" id="send_message_modal_btn" style="margin-right:1em;"><i class="glyphicon glyphicon-envelope"></i> {{ _('Send Message') }}</button>
   {%- endif -%}
+  {%- if perms.role('admin').can() -%}
+  <button class="btn btn-sm btn-danger pull-right" id="nuke_participants_modal_btn" style="margin-right: 1em;" data-toggle="modal" data-target="#nuke_modal"><i class="glyphicon glyphicon-trash"></i> {{ _('Purge Participants') }}</button>
+  {%- endif -%}
 {% endblock %}
 {% block content %}
 {%- set flash_msgs = get_flashed_messages(category_filter=['task_begun']) -%}
@@ -143,6 +146,32 @@ a:hover.arrow-style{text-decoration:none; color:#333;}
         </div>
       </div>
     </div>
+    {%- if perms.role('admin').can() -%}
+    <div class="modal fade" id="nuke_modal" tabindex="-2" role="dialog" aria-labelledby="nukeModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title" id="nukeModalLabel">{{ _('Purge Participants') }}</h4>
+          </div>
+          <div class="modal-body">
+            <div class="alert alert-danger"><strong>WARNING:</strong> This will delete all participants, as well as any data linked to them &ndash; checklists, critical incident reports and messages.</div>
+            <p>Please enter <code id="compare"></code> below to proceed:</p>
+            <div class="form-group">
+              <input class="form-control" id="prompt">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <form action="{{ url_for('participants.nuke_participants') }}" method="POST">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              <button class="btn btn-danger" disabled="true" id="confirm_nuke">Yes, I understand</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    {%- endif -%}
     <!-- IMPORT WIZARD -->
     <div class="wizard" id="import-wizard" data-title="Import Participants">
       <!-- Step 1 -->
@@ -205,6 +234,8 @@ a:hover.arrow-style{text-decoration:none; color:#333;}
 <script type="text/javascript" src="{{ url_for('static', filename='js/prettify.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap-wizard.min.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.form.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/underscore.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/URI.min.js') }}"></script>
 <script type="text/javascript">
 var wizard;
 
@@ -238,6 +269,16 @@ $(function(){
         $('#edit_modal').removeData();
         $('#edit_modal').html(edit_modal_content);
     });
+
+    {%- if perms.role('admin').can() -%}
+    $('#nuke_modal').on('show.bs.modal', function (e) {
+        var compare = '{{ _("DELETE") }}';
+      $('#compare').html(compare);
+      $('#prompt').on('input', _.debounce(function () {
+        $('#confirm_nuke').prop('disabled', $('#prompt').val() != compare);
+      }, 500));
+    });
+    {%- endif -%}
 
     wizard = $('#import-wizard').wizard({
         keyboard : true,

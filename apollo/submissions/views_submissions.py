@@ -87,9 +87,10 @@ def submission_list(form_id):
     page_title = form.name
     template_name = 'frontend/submission_list.html'
 
-    data = request.args.to_dict()
+    data = request.args.to_dict(flat=False)
     data['form_id'] = unicode(form.pk)
-    page = int(data.pop('page', 1))
+    page_spec = data.pop(u'page', None) or [1]
+    page = int(page_spec[0])
 
     loc_types = displayable_location_types(is_administrative=True)
 

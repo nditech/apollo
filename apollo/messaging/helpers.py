@@ -27,6 +27,10 @@ def parse_message(form):
 
             if questionnaire.validate():
                 submission = questionnaire.save()
+                
+                # if submission returns empty, then the participant
+                # was not meant to send this text.
+                # TODO: add response for no recorded submission
 
                 # check if there were extra fields sent in
                 diff = set(response_dict.keys()).difference(
