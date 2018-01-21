@@ -88,7 +88,7 @@ class LocationType(db.Document):
         `attr`ancestors_ref.
         """
         temp = LocationType.objects(ancestors_ref=self)
-        return sorted(temp, None, lambda x: len(x.ancestors_ref))
+        return sorted(temp, key=lambda x: len(x.ancestors_ref))
 
     def __unicode__(self):
         return self.name or ''
