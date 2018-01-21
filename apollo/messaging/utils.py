@@ -62,6 +62,8 @@ def parse_text(text):
             if at_position != -1 \
             else [s for s in text if s not in config.get('PUNCTUATIONS')]
 
+    text = ''.join(text)
+
     at_position = text.find("@")
     match = pattern.match(text[:at_position] if at_position != -1 else text)
 
