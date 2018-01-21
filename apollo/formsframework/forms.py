@@ -10,7 +10,7 @@ from wtforms import (
 )
 from flask import g
 from flask.ext.mongoengine.wtf import model_form
-from flask.ext.wtf import Form as SecureForm
+from flask.ext.wtf import FlaskForm as SecureForm
 from .. import services, models
 from ..frontend.helpers import DictDiffer
 from ..participants.utils import update_participant_completion_rating

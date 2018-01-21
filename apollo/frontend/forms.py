@@ -4,7 +4,7 @@
 from flask import g
 from flask.ext.babel import lazy_gettext as _
 from flask.ext.mongoengine.wtf.fields import ModelSelectField
-from flask.ext.wtf import Form as WTSecureForm
+from flask.ext.wtf import FlaskForm as WTSecureForm
 from flask.ext.wtf.file import FileField
 from slugify import slugify
 from wtforms import (BooleanField, IntegerField, SelectField,

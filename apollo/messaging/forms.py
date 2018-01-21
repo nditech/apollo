@@ -6,7 +6,7 @@ from flask.ext import wtf
 import wtforms
 
 
-class MessagesFilterForm(wtf.Form):
+class MessagesFilterForm(wtf.FlaskForm):
     mobile = wtforms.StringField()
     text = wtforms.StringField()
     date = wtforms.DateField(format="%d-%m-%Y")
