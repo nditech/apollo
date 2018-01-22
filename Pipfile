@@ -1,0 +1,76 @@
+[[source]]
+
+url = "https://pypi.python.org/simple"
+verify_ssl = true
+name = "pypi"
+
+
+[packages]
+
+amqp = "==1.4.9"
+"aniso8601" = "==0.82"
+anyjson = "==0.3.3"
+awesome-slugify = "==1.2.1"
+babel = "==1.3"
+billiard = "==3.3.0.22"
+blinker = "==1.3"
+cachetools = "==1.1.5"
+celery = "==3.1.20"
+fabric = "==1.8.3"
+flask-admin = "==1.4.0"
+flask-assets = "==0.9"
+flask-babel = "==0.9"
+flask-cache = "==0.13.1"
+flask-gravatar = "==0.5.0"
+flask-login = "==0.2.10"
+flask-mail = "==0.9.0"
+flask-menu = "==0.4.0"
+flask-mongoengine = "==0.9.3"
+flask-principal = "==0.4.0"
+flask-restful = "==0.2.12"
+flask-script = "==0.6.7"
+flask-security = "==1.7.1"
+flask-sslify = "==0.1.4"
+flask-testing = "==0.4.2"
+flask-wtf = "==0.14.2"
+flask = "==0.10.1"
+gevent = "==1.2.2"
+honcho = "==0.5.0"
+itsdangerous = "==0.24"
+"jinja2" = "==2.7.3"
+kombu = "==3.0.33"
+lxml = "==3.3.5"
+markupsafe = "==0.23"
+mongoengine = "==0.9.0"
+networkx = "==1.8.1"
+nose = "==1.3.7"
+numpy = "==1.11.1"
+pandas = "==0.17.1"
+parsimonious = "==0.5"
+parsley = "==1.3"
+passlib = "==1.6.2"
+pymongo = "==2.8"
+python-dateutil = "==2.4.2"
+python-magic = "==0.4.12"
+pytz = "==2015.7"
+raven = "==4.2.3"
+redis = "==2.9.1"
+requests = "==2.6.0"
+tablib = "==0.12.1"
+unidecode = "==0.04.14"
+uwsgi = "==2.0.13"
+webassets = "==0.9"
+werkzeug = "==0.10.4"
+wtforms = "==2.1"
+xlrd = "==0.9.2"
+flask-httpauth = "==2.7.0"
+six = "==1.10.0"
+
+
+[dev-packages]
+
+
+
+[requires]
+
+python_version = "3.6"
