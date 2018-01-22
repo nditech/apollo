@@ -389,8 +389,8 @@ def _voting_results(form_pk, location_pk=None):
     # restrict the convergence dataframe to result fields and compute the
     # cummulative sum
     if not convergence_dataset.empty:
-        convergence_df = convergence_dataset.sort(
-            'updated')[['updated'] + result_field_labels]
+        convergence_df = convergence_dataset.sort_values(
+            by='updated')[['updated'] + result_field_labels]
         for field in result_field_labels:
             convergence_df[field] = convergence_df[field].cumsum()
 
