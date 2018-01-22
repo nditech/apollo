@@ -5,7 +5,7 @@ from uuid import uuid4
 from apollo.core import db
 from apollo.deployments.models import Deployment, Event
 from apollo.users.models import Role, Need
-from flask.ext.babel import lazy_gettext as _
+from flask_babel import lazy_gettext as _
 from lxml import etree
 from lxml.builder import E, ElementMaker
 from slugify import slugify_unicode

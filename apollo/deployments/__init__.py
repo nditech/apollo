@@ -3,8 +3,8 @@ from apollo import settings
 from apollo.core import Service
 from apollo.deployments.models import Event
 from datetime import datetime
-from flask.ext.principal import Permission, ItemNeed, RoleNeed
-from flask.ext.security import current_user
+from flask_principal import Permission, ItemNeed, RoleNeed
+from flask_security import current_user
 from mongoengine import Q
 import pytz
 

@@ -2,7 +2,7 @@
 from apollo.formsframework.forms import build_questionnaire
 from apollo.messaging.forms import retrieve_form
 from apollo.messaging.utils import parse_text, parse_responses
-from flask.ext.babel import lazy_gettext as _
+from flask_babel import lazy_gettext as _
 from werkzeug.datastructures import MultiDict
 
 

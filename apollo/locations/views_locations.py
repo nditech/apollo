@@ -8,10 +8,10 @@ import networkx as nx
 
 from flask import (Blueprint, current_app, flash, g, redirect, render_template,
                    request, Response, url_for, abort)
-from flask.ext.babel import lazy_gettext as _
-from flask.ext.menu import register_menu
-from flask.ext.restful import Api
-from flask.ext.security import current_user, login_required
+from flask_babel import lazy_gettext as _
+from flask_menu import register_menu
+from flask_restful import Api
+from flask_security import current_user, login_required
 from apollo.helpers import load_source_file, stash_file
 from mongoengine import ValidationError
 from slugify import slugify_unicode

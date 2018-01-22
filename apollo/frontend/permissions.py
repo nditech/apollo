@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from flask import abort
-from flask.ext.principal import Permission, ActionNeed, RoleNeed, ItemNeed
+from flask_principal import Permission, ActionNeed, RoleNeed, ItemNeed
 
 # View
 view_events = Permission(ActionNeed('view_events'), RoleNeed('admin'))

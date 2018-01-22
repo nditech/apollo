@@ -2,7 +2,7 @@
 from apollo.core import Service
 from apollo.users.models import User, Need, UserUpload
 from flask import g
-from flask.ext.principal import ActionNeed, ItemNeed
+from flask_principal import ActionNeed, ItemNeed
 
 
 class UsersService(Service):

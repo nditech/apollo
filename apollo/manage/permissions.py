@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from flask import g
-from flask.ext.script import Command, prompt_choices
-from flask.ext.principal import Permission
+from flask_script import Command, prompt_choices
+from flask_principal import Permission
 from apollo.frontend import permissions
 from apollo import models, services
 

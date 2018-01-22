@@ -8,7 +8,7 @@ from apollo.locations.models import LocationType, Sample
 from datetime import datetime
 from operator import attrgetter
 from flask import g
-from flask.ext.security import current_user
+from flask_security import current_user
 import json
 
 try:

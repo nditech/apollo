@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 from flask import g, render_template, session, request, redirect, url_for
-from flask.ext.admin import AdminIndexView
-from flask.ext.login import user_logged_out
-from flask.ext.principal import identity_loaded
-from flask.ext.security import MongoEngineUserDatastore, current_user
+from flask_admin import AdminIndexView
+from flask_login import user_logged_out
+from flask_principal import identity_loaded
+from flask_security import MongoEngineUserDatastore, current_user
 from apollo import models, assets
 
 from apollo.frontend import permissions, template_filters

@@ -2,10 +2,10 @@
 
 
 from flask import g
-from flask.ext.babel import lazy_gettext as _
-from flask.ext.mongoengine.wtf.fields import ModelSelectField
-from flask.ext.wtf import FlaskForm as WTSecureForm
-from flask.ext.wtf.file import FileField
+from flask_babel import lazy_gettext as _
+from flask_mongoengine.wtf.fields import ModelSelectField
+from flask_wtf import FlaskForm as WTSecureForm
+from flask_wtf.file import FileField
 from slugify import slugify
 from wtforms import (BooleanField, IntegerField, SelectField,
                      SelectMultipleField, StringField, TextField,

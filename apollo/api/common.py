@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from flask.ext.restful import reqparse
+from flask_restful import reqparse
 
 parser = reqparse.RequestParser()
 parser.add_argument('limit', type=int)

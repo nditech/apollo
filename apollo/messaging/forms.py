@@ -2,7 +2,7 @@
 import time
 from apollo import services
 from flask import g
-from flask.ext import wtf
+import flask_wtf as wtf
 import wtforms
 
 

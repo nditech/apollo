@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from flask.ext.restful import Resource, fields, marshal_with
-from flask.ext.security import login_required
+from flask_restful import Resource, fields, marshal_with
+from flask_security import login_required
 from apollo import services
 
 

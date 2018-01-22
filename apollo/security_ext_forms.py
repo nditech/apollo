@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 from flask import current_app, g
-from flask.ext.security.forms import LoginForm
-from flask.ext.security.confirmable import requires_confirmation
-from flask.ext.security.utils import get_message, verify_and_update_password
+from flask_security.forms import LoginForm
+from flask_security.confirmable import requires_confirmation
+from flask_security.utils import get_message, verify_and_update_password
 from werkzeug.local import LocalProxy
 
 _datastore = LocalProxy(lambda: current_app.extensions['security'].datastore)

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 import warnings
-from flask.ext.testing import TestCase
+from flask_testing import TestCase
 from werkzeug.datastructures import MultiDict
 from apollo import create_app
 from apollo.messaging.utils import parse_responses

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
-from flask.ext.babel import lazy_gettext as _
-from flask.ext.mongoengine import BaseQuerySet
+from flask_babel import lazy_gettext as _
+from flask_mongoengine import BaseQuerySet
 from mongoengine import Q
 from apollo.core import db
 from apollo.deployments.models import Deployment, Event

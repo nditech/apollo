@@ -1,16 +1,16 @@
 # -*- coding: utf-8 -*-
 import base64
 from flask import flash, request
-from flask.ext.admin import form
-from flask.ext.admin.actions import action
-from flask.ext.admin.contrib.mongoengine import ModelView
-from flask.ext.admin.contrib.mongoengine.form import CustomModelConverter
-from flask.ext.admin.form import rules
-from flask.ext.admin.model.form import converts
-from flask.ext.babel import lazy_gettext as _
-from flask.ext.mongoengine.wtf import orm
-from flask.ext.security import current_user
-from flask.ext.security.utils import encrypt_password
+from flask_admin import form
+from flask_admin.actions import action
+from flask_admin.contrib.mongoengine import ModelView
+from flask_admin.contrib.mongoengine.form import CustomModelConverter
+from flask_admin.form import rules
+from flask_admin.model.form import converts
+from flask_babel import lazy_gettext as _
+from flask_mongoengine.wtf import orm
+from flask_security import current_user
+from flask_security.utils import encrypt_password
 from jinja2 import contextfunction
 import magic
 import pytz

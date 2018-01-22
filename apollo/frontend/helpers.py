@@ -2,9 +2,9 @@
 from apollo import models
 from apollo import services
 from flask import session, request, abort, g, url_for
-from flask.ext.babel import get_locale
-from flask.ext.mongoengine import MongoEngineSessionInterface
-from flask.ext.principal import Permission, ItemNeed, RoleNeed
+from flask_babel import get_locale
+from flask_mongoengine import MongoEngineSessionInterface
+from flask_principal import Permission, ItemNeed, RoleNeed
 from urllib.parse import urlparse
 
 import datetime

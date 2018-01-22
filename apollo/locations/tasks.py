@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import cachetools
 from flask import render_template_string
-from flask.ext.babel import lazy_gettext as _
+from flask_babel import lazy_gettext as _
 from hashlib import sha256
 from slugify import slugify
 

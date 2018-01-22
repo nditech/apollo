@@ -4,7 +4,7 @@ import csv
 from datetime import datetime
 from urllib.parse import urljoin
 from flask import current_app, url_for
-from flask.ext.script import Command, prompt
+from flask_script import Command, prompt
 import pytz
 import requests
 

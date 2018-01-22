@@ -13,9 +13,9 @@ from apollo.frontend.helpers import (
 from apollo.frontend import permissions
 from flask import (
     Blueprint, redirect, render_template, request, url_for, g)
-from flask.ext.babel import lazy_gettext as _
-from flask.ext.menu import register_menu
-from flask.ext.security import login_required
+from flask_babel import lazy_gettext as _
+from flask_menu import register_menu
+from flask_security import login_required
 from functools import partial
 
 

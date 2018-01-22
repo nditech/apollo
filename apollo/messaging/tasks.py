@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from flask.ext.mail import Message
+from flask_mail import Message
 from apollo import services, settings
 from apollo.core import mail, sentry
 from apollo.messaging.outgoing import gateway_factory

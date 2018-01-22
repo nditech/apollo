@@ -2,7 +2,7 @@
 from datetime import datetime
 from apollo.core import db
 from apollo.deployments.models import Deployment, Event
-from flask.ext.security import RoleMixin, UserMixin
+from flask_security import RoleMixin, UserMixin
 
 
 class Role(db.Document, RoleMixin):

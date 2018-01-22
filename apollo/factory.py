@@ -2,7 +2,7 @@
 from cachetools import cached
 from celery import Celery
 from flask import Flask, request
-from flask.ext.sslify import SSLify
+from flask_sslify import SSLify
 from raven.base import Client
 from raven.contrib.celery import register_signal, register_logger_signal
 

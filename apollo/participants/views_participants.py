@@ -6,10 +6,10 @@ from datetime import datetime
 
 from flask import (abort, Blueprint, current_app, flash, g, redirect,
                    render_template, request, Response, url_for)
-from flask.ext.babel import lazy_gettext as _
-from flask.ext.menu import register_menu
-from flask.ext.restful import Api
-from flask.ext.security import current_user, login_required
+from flask_babel import lazy_gettext as _
+from flask_menu import register_menu
+from flask_restful import Api
+from flask_security import current_user, login_required
 from slugify import slugify_unicode
 
 from apollo.frontend import filters, helpers, permissions, route

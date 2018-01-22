@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from flask.ext.script import Command, prompt_choices
+from flask_script import Command, prompt_choices
 from apollo import services, models
 
 

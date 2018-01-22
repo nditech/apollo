@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 import socket
-from flask.ext.script import Command, prompt, prompt_choices, prompt_pass
-from flask.ext.security.forms import RegisterForm
-from flask.ext.security.registerable import register_user
-from flask.ext.security.utils import get_message
+from flask_script import Command, prompt, prompt_choices, prompt_pass
+from flask_security.forms import RegisterForm
+from flask_security.registerable import register_user
+from flask_security.utils import get_message
 from werkzeug.datastructures import MultiDict
 
 from apollo.services import users

@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
 from collections import OrderedDict
 from flask import abort, g, redirect, url_for
-from flask.ext.admin import expose, Admin, AdminIndexView
-from flask.ext.babel import Babel
-from flask.ext.cache import Cache
-from flask.ext.mail import Mail
-from flask.ext.menu import Menu
-from flask.ext.mongoengine import MongoEngine
-from flask.ext.security import Security
-from flask.ext.gravatar import Gravatar
-from flask.ext.wtf.csrf import CSRFProtect
+from flask_admin import expose, Admin, AdminIndexView
+from flask_babel import Babel
+from flask_cache import Cache
+from flask_mail import Mail
+from flask_menu import Menu
+from flask_mongoengine import MongoEngine
+from flask_security import Security
+from flask_gravatar import Gravatar
+from flask_wtf.csrf import CSRFProtect
 from mongoengine.errors import ValidationError
 from raven.contrib.flask import Sentry
 import six
