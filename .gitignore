@@ -15,4 +15,3 @@ messages.mo
 pip-selfcheck.json
 share/
 src/
-Pipfile.lock
