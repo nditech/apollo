@@ -118,10 +118,12 @@ def generate_numeric_field_stats(tag, dataset):
         # generate the per-group statistics
         # the transpose and to_dict ensures that the output looks similar to
         # ['item']['mean'] for every item in the group
-        location_stats = dataset[tag].agg({
-            'mean': np.mean,
-            'std': lambda x: np.std(x)
-        }).replace(np.nan, 0).transpose().to_dict()
+        # location_stats = dataset[tag].agg({
+        #     'mean': np.mean,
+        #     'std': lambda x: np.std(x)
+        # }).replace(np.nan, 0).transpose().to_dict()
+        location_stats = dataset[tag].agg(
+            [np.mean, np.std]).replace(np.nan, 0).transpose().to_dict()
 
         field_stats['locations'] = location_stats
 
