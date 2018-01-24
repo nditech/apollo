@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from flask import current_app, g
+from flask import current_app
+from flask_login import current_user
 from raven.base import Client
 
 from apollo import settings
@@ -12,9 +13,16 @@ class ApolloRavenClient(Client):
         extra = extra or {}
 
         with current_app.app_context():
+            if not current_user.is_anonymous():
+                deployment = current_user.deployment
+                event = current_user.event
+            else:
+                deployment = None
+                event = None
+
             extra.update({
-                'deployment': str(getattr(g, 'deployment', None)),
-                'event': str(getattr(g, 'event', None)),
+                'deployment': getattr(deployment, 'name', 'Unspecified'),
+                'event': getattr(event, 'name', 'Unspecified'),
                 'apollo_version': getattr(settings, 'APOLLO_VERSION',
                     'Unspecified'),
             })

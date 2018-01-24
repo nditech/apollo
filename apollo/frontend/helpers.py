@@ -3,6 +3,7 @@ from apollo import models
 from apollo import services
 from flask import session, request, abort, g, url_for
 from flask_babel import get_locale
+from flask_login import current_user
 from flask_mongoengine import MongoEngineSessionInterface
 from flask_principal import Permission, ItemNeed, RoleNeed
 from urllib.parse import urlparse
@@ -62,6 +63,7 @@ def set_request_presets():
         g.deployment = get_deployment(hostname)
         g.event = get_event()
         g.locale = get_locale()
+        current_user.event = g.event
     except (models.Deployment.DoesNotExist, models.Event.DoesNotExist):
         abort(404)
 
