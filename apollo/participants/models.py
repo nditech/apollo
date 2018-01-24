@@ -25,7 +25,7 @@ class ParticipantRole(db.Document):
 
     deployment = db.ReferenceField(Deployment)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name or ''
 
 
@@ -36,7 +36,7 @@ class ParticipantPartner(db.Document):
 
     deployment = db.ReferenceField(Deployment)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name or ''
 
 
@@ -44,7 +44,7 @@ class ParticipantGroupType(db.Document):
     name = db.StringField()
     deployment = db.ReferenceField(Deployment)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name or ''
 
 
@@ -53,7 +53,7 @@ class ParticipantGroup(db.Document):
     deployment = db.ReferenceField(Deployment)
     group_type = db.StringField()
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name or ''
 
 
@@ -62,7 +62,7 @@ class PhoneContact(db.EmbeddedDocument):
     verified = db.BooleanField(default=False)
     last_seen = db.DateTimeField()
 
-    def __unicode__(self):
+    def __str__(self):
         return self.number or ''
 
 
@@ -115,7 +115,7 @@ class Participant(db.DynamicDocument):
         'queryset_class': ParticipantQuerySet
     }
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name or ''
 
     def clean(self):

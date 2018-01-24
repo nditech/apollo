@@ -18,7 +18,7 @@ class CustomDataField(db.EmbeddedDocument):
     label = db.StringField()
     listview_visibility = db.BooleanField(default=False)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name or ''
 
 
@@ -45,7 +45,7 @@ class Deployment(db.Document):
         ]
     }
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name or ''
 
 
@@ -68,5 +68,5 @@ class Event(db.Document):
         ]
     }
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name or ''
