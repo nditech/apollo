@@ -90,7 +90,7 @@ class LocationType(db.Document):
         temp = LocationType.objects(ancestors_ref=self)
         return sorted(temp, key=lambda x: len(x.ancestors_ref))
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name or ''
 
 
@@ -164,7 +164,7 @@ class Location(db.DynamicDocument):
         except IndexError:
             return None
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name or ''
 
     def save(self, *args, **kwargs):
