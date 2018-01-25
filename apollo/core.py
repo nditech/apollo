@@ -6,6 +6,7 @@ from flask_babel import Babel
 from flask_cache import Cache
 from flask_mail import Mail
 from flask_menu import Menu
+from flask_migrate import Migrate
 from flask_mongoengine import MongoEngine
 from flask_security import Security
 from flask_sqlalchemy import SQLAlchemy
@@ -32,6 +33,7 @@ db = MongoEngine()
 db2 = SQLAlchemy()
 mail = Mail()
 menu = Menu()
+migrate = Migrate()
 security = Security()
 gravatar = Gravatar(size=25, default="identicon", use_ssl=True)
 sentry = Sentry(client_cls=ApolloRavenClient)

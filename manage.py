@@ -2,8 +2,9 @@
 # -*- coding: utf-8 -*-
 import os
 import warnings
-from flask.ext.script import Manager, Server, Shell
-from flask.ext.security import MongoEngineUserDatastore
+from flask_migrate import MigrateCommand
+from flask_script import Manager, Server, Shell
+from flask_security import MongoEngineUserDatastore
 
 from apollo.core import db
 from apollo import models, services
@@ -56,6 +57,8 @@ manager.add_command('init_submissions', InitializeSubmissionsCommand())
 manager.add_command('init', SetupCommand())
 
 manager.add_command('playback', MessagePlaybackCommand())
+
+manager.add_command('db', MigrateCommand)
 
 if __name__ == '__main__':
     manager.run()
