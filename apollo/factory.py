@@ -6,7 +6,7 @@ from flask_sslify import SSLify
 from raven.base import Client
 from raven.contrib.celery import register_signal, register_logger_signal
 
-from apollo.core import babel, cache, db, mail, sentry
+from apollo.core import babel, cache, db, db2, mail, sentry
 from apollo.helpers import register_blueprints
 from importlib import import_module
 
@@ -33,6 +33,7 @@ def create_app(
     babel.init_app(app)
     cache.init_app(app)
     db.init_app(app)
+    db2.init_app(app)
     mail.init_app(app)
 
     if app.config.get('SSL_REQUIRED'):

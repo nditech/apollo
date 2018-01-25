@@ -8,6 +8,7 @@ from flask_mail import Mail
 from flask_menu import Menu
 from flask_mongoengine import MongoEngine
 from flask_security import Security
+from flask_sqlalchemy import SQLAlchemy
 from flask_gravatar import Gravatar
 from flask_wtf.csrf import CSRFProtect
 from mongoengine.errors import ValidationError
@@ -28,6 +29,7 @@ admin = Admin(name='Apollo', index_view=AdminHome(name='Dashboard'))
 babel = Babel()
 cache = Cache()
 db = MongoEngine()
+db2 = SQLAlchemy()
 mail = Mail()
 menu = Menu()
 security = Security()

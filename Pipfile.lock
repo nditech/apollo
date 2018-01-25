@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "93e9b1df927276e7342b541223d10a96f874badaf3b4ef064a2e0d158563f50a"
+            "sha256": "65cb30b674e3435063bbb1b0b0f74b28d3f55553d1ca07f82ba7192320e0dded"
         },
         "host-environment-markers": {
             "implementation_name": "cpython",
@@ -415,9 +415,9 @@
         },
         "openpyxl": {
             "hashes": [
-                "sha256:fd194bf0a8df5b46eddcd827dc9cf0cd90132396229bd31679f68767b6fef2ef"
+                "sha256:0ff2e0c2c85cbf42e82dd223e7f2401a62dc73c18cd9e5dd7763dc6c8014ebde"
             ],
-            "version": "==2.4.10"
+            "version": "==2.5.0"
         },
         "pandas": {
             "hashes": [
@@ -660,6 +660,12 @@
                 "sha256:9ede7070d6fd18f28058be88296ed67893e2637465516d6a596cd9afea97b154"
             ],
             "version": "==1.2.1"
+        },
+        "sqlalchemy-utils": {
+            "hashes": [
+                "sha256:e35431b0e57c4f7030ff598c23813c8b7b04b508ce10e8e9ebe448645b38d6d7"
+            ],
+            "version": "==0.32.21"
         },
         "tablib": {
             "hashes": [

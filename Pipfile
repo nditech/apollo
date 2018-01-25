@@ -69,6 +69,7 @@ flask-sqlalchemy = "==2.3.2"
 "psycopg2" = "==2.7.3.2"
 sqlalchemy = "==1.2.1"
 prettyconf = "==1.2.3"
+sqlalchemy-utils = "==0.32.21"
 
 
 [dev-packages]
