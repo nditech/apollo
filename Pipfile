@@ -70,6 +70,10 @@ flask-sqlalchemy = "==2.3.2"
 sqlalchemy = "==1.2.1"
 prettyconf = "==1.2.3"
 sqlalchemy-utils = "==0.32.21"
+alembic = "==0.9.7"
+flask-migrate = "==2.1.1"
+mako = "==1.0.7"
+python-editor = "==1.0.3"
 
 
 [dev-packages]

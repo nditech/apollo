@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "65cb30b674e3435063bbb1b0b0f74b28d3f55553d1ca07f82ba7192320e0dded"
+            "sha256": "0f26d90468070e027f436bc20dec5c3321cb47034f108f67233469be634289db"
         },
         "host-environment-markers": {
             "implementation_name": "cpython",
@@ -29,6 +29,12 @@
         ]
     },
     "default": {
+        "alembic": {
+            "hashes": [
+                "sha256:46f4849c6dce69f54dd5001b3215b6a983dee6b17512efee10e237fa11f20cfa"
+            ],
+            "version": "==0.9.7"
+        },
         "amqp": {
             "hashes": [
                 "sha256:e0ed0ce6b8ffe5690a2e856c7908dc557e0e605283d6885dd1361d79f2928908",
@@ -177,6 +183,13 @@
                 "sha256:41b6accfec83d3208058ec060cdb369c0a3c698452867b31e21a85c2c47eea35"
             ],
             "version": "==0.4.0"
+        },
+        "flask-migrate": {
+            "hashes": [
+                "sha256:493f9b3795985b9b4915bf3b7d16946697f027b73545384e7d9e3a79f989d2fe",
+                "sha256:b709ca8642559c3c5a81a33ab10839fa052177accd5ba821047a99db635255ed"
+            ],
+            "version": "==2.1.1"
         },
         "flask-mongoengine": {
             "hashes": [
@@ -346,6 +359,12 @@
                 "sha256:5bd97b4a96c4fb1fd32afe7a532839757427bba97dfecca24ad1b18609cfbdf5"
             ],
             "version": "==3.3.5"
+        },
+        "mako": {
+            "hashes": [
+                "sha256:4e02fde57bd4abb5ec400181e4c314f56ac3e49ba4fb8b0d50bba18cb27d25ae"
+            ],
+            "version": "==1.0.7"
         },
         "markupsafe": {
             "hashes": [
@@ -578,6 +597,12 @@
                 "sha256:3e95445c1db500a344079a47b171c45ef18f57d188dffdb0e4165c71bea8eb3d"
             ],
             "version": "==2.4.2"
+        },
+        "python-editor": {
+            "hashes": [
+                "sha256:a3c066acee22a1c94f63938341d4fb374e3fdd69366ed6603d7b24bed1efc565"
+            ],
+            "version": "==1.0.3"
         },
         "python-magic": {
             "hashes": [
