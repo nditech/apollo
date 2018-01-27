@@ -15,3 +15,4 @@ messages.mo
 pip-selfcheck.json
 share/
 src/
+.vscode/
