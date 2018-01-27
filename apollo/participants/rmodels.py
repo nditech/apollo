@@ -1,157 +1,124 @@
 # -*- coding: utf-8 -*-
-# from datetime import datetime
-# from flask_babel import lazy_gettext as _
-# from flask_mongoengine import BaseQuerySet
-# from mongoengine import Q
-# from apollo.core import db
-# from apollo.deployments.models import Deployment, Event
-# from apollo.helpers import compute_location_path
-# 
-# 
-# class ParticipantQuerySet(BaseQuerySet):
-#     def filter_in(self, location):
-#         param = 'location_name_path__{}'.format(location.location_type)
-#         query_kwargs = {
-#             param: location.name
-#         }
-#         return self(Q(location=location) | Q(**query_kwargs))
-# 
-# 
-# Participants
-# class ParticipantRole(db.Document):
-#     '''Stores the role for a participant. (e.g. Supervisor, Co-ordinator)'''
-# 
-#     name = db.StringField()
-# 
-#     deployment = db.ReferenceField(Deployment)
-# 
-#     def __str__(self):
-#         return self.name or ''
-# 
-# 
-# class ParticipantPartner(db.Document):
-#     '''Storage for the participant partner organization'''
-# 
-#     name = db.StringField()
-# 
-#     deployment = db.ReferenceField(Deployment)
-# 
-#     def __str__(self):
-#         return self.name or ''
-# 
-# 
-# class ParticipantGroupType(db.Document):
-#     name = db.StringField()
-#     deployment = db.ReferenceField(Deployment)
-# 
-#     def __str__(self):
-#         return self.name or ''
-# 
-# 
-# class ParticipantGroup(db.Document):
-#     name = db.StringField()
-#     deployment = db.ReferenceField(Deployment)
-#     group_type = db.StringField()
-# 
-#     def __str__(self):
-#         return self.name or ''
-# 
-# 
-# class PhoneContact(db.EmbeddedDocument):
-#     number = db.StringField()
-#     verified = db.BooleanField(default=False)
-#     last_seen = db.DateTimeField()
-# 
-#     def __str__(self):
-#         return self.number or ''
-# 
-# 
-# class Participant(db.DynamicDocument):
-#     '''Storage for participant contact information'''
-# 
-#     GENDER = (
-#         ('F', _('Female')),
-#         ('M', _('Male')),
-#         ('', _('Unspecified'))
-#     )
-# 
-#     participant_id = db.StringField()
-#     name = db.StringField()
-#     role = db.ReferenceField('ParticipantRole')
-#     partner = db.ReferenceField('ParticipantPartner')
-#     location = db.ReferenceField('Location')
-#     location_name_path = db.DictField()
-#     supervisor = db.ReferenceField('Participant')
-#     gender = db.StringField(choices=GENDER, default='')
-#     groups = db.ListField(db.ReferenceField(
-#         ParticipantGroup, reverse_delete_rule=db.PULL))
-# 
-#     email = db.EmailField()
-#     phones = db.ListField(db.EmbeddedDocumentField(PhoneContact))
-#     message_count = db.IntField(default=0)
-#     accurate_message_count = db.IntField(default=0)
-# 
-#     event = db.ReferenceField(Event)
-#     deployment = db.ReferenceField(Deployment)
-# 
-#     completion_rating = db.FloatField(default=1)
-#     device_id = db.StringField()
-#     password = db.StringField()
-# 
-#     meta = {
-#         'indexes': [
-#             ['participant_id'],
-#             ['device_id'],
-#             ['location'],
-#             ['phones.number'],
-#             ['event'],
-#             ['name'],
-#             ['role'],
-#             ['partner'],
-#             ['groups'],
-#             ['deployment'],
-#             ['deployment', 'event']
-#         ],
-#         'queryset_class': ParticipantQuerySet
-#     }
-# 
-#     def __str__(self):
-#         return self.name or ''
-# 
-#     def clean(self):
-#         # unlike for submissions, this always gets called, because
-#         # participants are 'mobile' - they can be moved from one location
-#         # to another. we want this to reflect that.
-#         self.location_name_path = compute_location_path(self.location)
-#         if self.gender not in [op[0] for op in self.GENDER]:
-#             self.gender = ''
-# 
-#     def get_phone(self):
-#         if self.phones:
-#             return self.phones[0].number
-#         else:
-#             return None
-# 
-#     def set_phone(self, value):
-#         # TODO: blind overwrite is silly. find a way to ensure the number
-#         # doesn't already exist
-#         if not self.phones:
-#             self.phones.append(PhoneContact(number=value, verified=True))
-#         else:
-#             self.phones[0].number = value
-#             self.phones[0].verified = True
-#         self.save()
-#         self.reload()
-# 
-#     phone = property(get_phone, set_phone)
-# 
-#     @property
-#     def last_seen_phone(self):
-#         if self.phones:
-#             phones = sorted(
-#                 self.phones, key=lambda p: p.last_seen if p.last_seen
-#                 else datetime.fromtimestamp(0))
-#             phones.reverse()
-#             return phones[0].number
-#         else:
-#             return None
+from babel import lazy_gettext as _
+from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy_utils import ChoiceType
+
+from apollo.core import db2
+from apollo.dal.models import BaseModel
+
+
+class ParticipantRole(BaseModel):
+    __tablename__ = 'participant_roles'
+
+    id = db2.Column(
+        db2.Integer, db2.Sequence('participant_role_id_seq'), primary_key=True)
+    name = db2.Column(db2.String)
+    deployment_id = db2.Column(db2.Integer, db2.ForeignKey('deployments.id'))
+
+    deployment = db2.relationship(
+        'Deployment', back_populates='participant_roles')
+
+    def __str__(self):
+        return self.name or ''
+
+
+class ParticipantPartner(BaseModel):
+    __tablename__ = 'participant_partners'
+
+    id = db2.Column(
+        db2.Integer, db2.Sequence('participant_partner_id_seq'),
+        primary_key=True)
+    name = db2.Column(db2.String)
+    deployment_id = db2.Column(db2.Integer, db2.ForeignKey('deployments.id'))
+
+    deployment = db2.relationship(
+        'Deployment', back_populates='participant_partners')
+
+    def __str__(self):
+        return self.name or ''
+
+
+class ParticipantGroupType(BaseModel):
+    __tablename__ = 'participant_group_types'
+
+    id = db2.Column(
+        db2.Integer, db2.Sequence('participant_group_type_id_seq'),
+        primary_key=True)
+    name = db2.Column(db2.String)
+    deployment_id = db2.Column(db2.Integer, db2.ForeignKey('deployments.id'))
+
+    deployment = db2.relationship(
+        'Deployment', back_populates='participant_group_types')
+
+    def __str__(self):
+        return self.name or ''
+
+
+class ParticipantGroup(BaseModel):
+    __tablename__ = 'participant_groups'
+
+    id = db2.Column(
+        db2.Integer, db2.Sequence('participant_group_id_seq'),
+        primary_key=True)
+    name = db2.Column(db2.String)
+    deployment_id = db2.Column(db2.Integer, db2.ForeignKey('deployments.id'))
+    group_type_id = db2.Column(
+        db2.Integer, db2.ForeignKey('participant_group_types.id'))
+
+    deployment = db2.relationship(
+        'Deployment', back_populates='participant_groups')
+    group_type = db2.relationship(
+        'ParticipantGroupType', back_populates='participant_groups')
+
+    def __str__(self):
+        return self.name or ''
+
+
+class Participant(BaseModel):
+    '''
+    The *proposed* structure of the phones list is as below:
+        {
+            'number': <string>,
+            'last_seen': <datetime>,
+            'verified': <boolean>,
+            'is_primary': <boolean>
+        }
+    '''
+    GENDER = (
+        (0, _('Unspecified')),
+        (1, _('Female')),
+        (2, _('Male')),
+    )
+
+    __tablename__ = 'participants'
+    id = db2.Column(
+        db2.Integer, db2.Sequence('participant_id_seq'), primary_key=True)
+    name = db2.Column(db2.String)
+    role_id = db2.Column(
+        db2.Integer, db2.ForeignKey('participant_roles.id'))
+    partner_id = db2.Column(
+        db2.Integer, db2.ForeignKey('participant_partners.id'))
+    supervisor_id = db2.Column(
+        db2.Integer, db2.ForeignKey('participants.id'))
+    gender = ChoiceType(GENDER, default=0)
+    email = db2.Column(db2.String)
+    deployment_id = db2.Column(db2.Integer, db2.ForeignKey('deployments.id'))
+    message_count = db2.Column(db2.Integer, default=0)
+    accurate_message_count = db2.Column(db2.Integer, default=0)
+    completion_rating = db2.Column(db2.Float, default=1)
+    device_id = db2.Column(db2.String)
+    password = db2.Column(db2.String)
+    phones = db2.Column(JSONB)
+
+    def __str__(self):
+        return self.name or ''
+
+    @property
+    def primary_phone(self):
+        try:
+            return next(
+                p.get('number') for p in self.phones
+                if p.get('is_primary', False)
+            )
+        except StopIteration:
+            return None
