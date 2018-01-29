@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from babel import lazy_gettext as _
+from flask_babel import lazy_gettext as _
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy_utils import ChoiceType
 
