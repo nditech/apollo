@@ -8,7 +8,7 @@ from apollo.locations.models import Location
 from apollo.participants.models import Participant
 from apollo.users.models import User
 from datetime import datetime
-from flask_babel import gettext as _
+from flask_babelex import gettext as _
 from flask_mongoengine import BaseQuerySet
 from mongoengine import Q
 from pandas import DataFrame, isnull, Series, to_numeric

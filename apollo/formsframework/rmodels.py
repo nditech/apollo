@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from flask_babel import lazy_gettext as _
+from flask_babelex import lazy_gettext as _
 from lxml import etree
 from lxml.builder import E, ElementMaker
 from sqlalchemy.dialects.postgresql import JSONB
@@ -20,7 +20,6 @@ HTML_E = ElementMaker(namespace=NSMAP['h'], nsmap=NSMAP)
 EVT_E = ElementMaker(namespace=NSMAP['ev'], nsmap=NSMAP)
 SCHEMA_E = ElementMaker(namespace=NSMAP['xsd'], nsmap=NSMAP)
 ROSA_E = ElementMaker(namespace=NSMAP['jr'], nsmap=NSMAP)
-
 
 
 class Form(BaseModel):
@@ -53,7 +52,7 @@ class Form(BaseModel):
         self._field_cache = {
             f['tag']: f for g in self.data['groups'] for f in g['fields']
         }
-    
+
     def _populate_group_cache(self):
         self._group_cache = {
             g['name']: g for g in self.data['groups']
@@ -63,13 +62,13 @@ class Form(BaseModel):
     def tags(self):
         if not hasattr(self, '_field_cache'):
             self._populate_field_cache()
-        
+
         return sorted(self._field_cache.keys())
 
     def get_field_by_tag(self, tag):
         if not hasattr(self, '_field_cache'):
             self._populate_field_cache()
-        
+
         return self._field_cache.get(tag)
 
     def to_xml(self):
@@ -96,12 +95,16 @@ class Form(BaseModel):
         data.append(E.phone_number())
 
         device_id_bind = E.bind(nodeset='/data/device_id')
-        device_id_bind.attrib['{{{}}}preload'.format(NSMAP['jr'])] = 'property'
-        device_id_bind.attrib['{{{}}}preloadParams'.format(NSMAP['jr'])] = 'deviceid'
+        device_id_bind.attrib['{{{}}}preload'.format(NSMAP['jr'])] = \
+            'property'
+        device_id_bind.attrib['{{{}}}preloadParams'.format(NSMAP['jr'])] = \
+            'deviceid'
 
         subscriber_id_bind = E.bind(nodeset='/data/subscriber_id')
-        subscriber_id_bind.attrib['{{{}}}preload'.format(NSMAP['jr'])] = 'property'
-        subscriber_id_bind.attrib['{{{}}}preloadParams'.format(NSMAP['jr'])] = 'subscriberid'
+        subscriber_id_bind.attrib['{{{}}}preload'.format(NSMAP['jr'])] = \
+            'property'
+        subscriber_id_bind.attrib['{{{}}}preloadParams'.format(NSMAP['jr'])] = \
+            'subscriberid'
 
         phone_number_bind = E.bind(nodeset='/data/phone_number')
         phone_number_bind.attrib['{{{}}}preload'.format(NSMAP['jr'])] = 'property'
@@ -118,9 +121,9 @@ class Form(BaseModel):
                 path = '/data/{}'.format(field['tag'])
 
                 # TODO: construct field data
-            
+
             body.append(grp_element)
-        
+
         head.append(model)
         root.append(head)
         root.append(body)

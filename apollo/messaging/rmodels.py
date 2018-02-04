@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
 
-from flask_babel import lazy_gettext as _
+from flask_babelex import lazy_gettext as _
 from sqlalchemy_utils import ChoiceType
 
 from apollo.core import db2

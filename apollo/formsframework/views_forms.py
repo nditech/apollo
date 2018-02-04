@@ -3,7 +3,7 @@
 from apollo.frontend import route, permissions
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, url_for)
-from flask_babel import lazy_gettext as _
+from flask_babelex import lazy_gettext as _
 from flask_menu import register_menu
 from flask_security import login_required
 import json

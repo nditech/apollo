@@ -2,7 +2,7 @@
 
 from functools import partial
 from flask import Blueprint, render_template, request, url_for, current_app
-from flask_babel import lazy_gettext as _
+from flask_babelex import lazy_gettext as _
 from flask_menu import register_menu
 from flask_security import login_required
 from apollo.submissions.models import FLAG_STATUSES

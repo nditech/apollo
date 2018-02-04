@@ -8,7 +8,7 @@ from apollo.wtforms_ext import ExtendedSelectField, ExtendedMultipleSelectField
 from apollo.frontend.helpers import get_event
 from collections import defaultdict, OrderedDict
 from dateutil.parser import parse
-from flask_babel import lazy_gettext as _
+from flask_babelex import lazy_gettext as _
 from mongoengine import Q
 from apollo import services, models
 from wtforms import widgets, fields, Form

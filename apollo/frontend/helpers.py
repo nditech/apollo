@@ -2,7 +2,7 @@
 from apollo import models
 from apollo import services
 from flask import session, request, abort, g, url_for
-from flask_babel import get_locale
+from flask_babelex import get_locale
 from flask_login import current_user
 from flask_mongoengine import MongoEngineSessionInterface
 from flask_principal import Permission, ItemNeed, RoleNeed

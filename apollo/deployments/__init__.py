@@ -18,7 +18,7 @@ class EventsService(Service):
     def find(self, **kwargs):
         _kwargs = self._set_default_filter_parameters({})
 
-        if current_user.is_authenticated():
+        if current_user.is_authenticated:
             kwargs['pk__in'] = [event.pk for event in [f for f in self.__model__.objects.filter(**_kwargs) if Permission(ItemNeed('access_event', f, 'object'),
                                          RoleNeed('admin')).can()]]
 

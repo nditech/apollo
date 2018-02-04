@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from flask import g
-from flask_babel import lazy_gettext as _
+from flask_babelex import lazy_gettext as _
 from flask_wtf import FlaskForm as WTSecureForm
 from wtforms import SelectField, validators
 from apollo.services import events

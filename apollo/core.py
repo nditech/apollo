@@ -2,8 +2,8 @@
 from collections import OrderedDict
 from flask import abort, g, redirect, url_for
 from flask_admin import expose, Admin, AdminIndexView
-from flask_babel import Babel
-from flask_cache import Cache
+from flask_babelex import Babel
+from flask_caching import Cache
 from flask_mail import Mail
 from flask_menu import Menu
 from flask_migrate import Migrate

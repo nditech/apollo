@@ -13,7 +13,7 @@ class ApolloRavenClient(Client):
         extra = extra or {}
 
         with current_app.app_context():
-            if not current_user.is_anonymous():
+            if not current_user.is_anonymous:
                 deployment = current_user.deployment
                 event = current_user.event
             else:

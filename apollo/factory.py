@@ -40,10 +40,13 @@ def create_app(
     if app.config.get('SSL_REQUIRED'):
         SSLify(app)
 
-    @babel.localeselector
-    def get_locale():
-        return request.accept_languages \
-            .best_match(list(app.config.get('LANGUAGES', {}).keys()))
+    # don't reregister the locale selector
+    # if we already have one
+    if babel.locale_selector_func is None:
+        @babel.localeselector
+        def get_locale():
+            return request.accept_languages \
+                .best_match(list(app.config.get('LANGUAGES', {}).keys()))
 
     register_blueprints(app, package_name, package_path)
 

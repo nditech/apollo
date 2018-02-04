@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
-
-
 from flask import g
-from flask_babel import lazy_gettext as _
+from flask_babelex import lazy_gettext as _
 from flask_mongoengine.wtf.fields import ModelSelectField
 from flask_wtf import FlaskForm as WTSecureForm
 from flask_wtf.file import FileField

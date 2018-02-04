@@ -7,7 +7,7 @@ from flask_admin.contrib.mongoengine import ModelView
 from flask_admin.contrib.mongoengine.form import CustomModelConverter
 from flask_admin.form import rules
 from flask_admin.model.form import converts
-from flask_babel import lazy_gettext as _
+from flask_babelex import lazy_gettext as _
 from flask_mongoengine.wtf import orm
 from flask_security import current_user
 from flask_security.utils import encrypt_password

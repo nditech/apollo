@@ -4,7 +4,7 @@ from collections import OrderedDict
 import re
 from babel.numbers import format_number
 from flask import Markup
-from flask_babel import get_locale, lazy_gettext as _
+from flask_babelex import get_locale, lazy_gettext as _
 import pandas as pd
 from apollo.process_analysis.common import (
     dataframe_analysis, multiselect_dataframe_analysis)

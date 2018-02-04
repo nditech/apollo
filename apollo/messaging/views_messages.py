@@ -4,7 +4,7 @@ from apollo.models import Message
 from apollo.services import events, messages
 from flask import (
     Blueprint, render_template, request, current_app, Response, g)
-from flask_babel import lazy_gettext as _
+from flask_babelex import lazy_gettext as _
 from flask_menu import register_menu
 import calendar
 from datetime import datetime, timedelta

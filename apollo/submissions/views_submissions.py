@@ -10,7 +10,7 @@ from flask import (
     Blueprint, jsonify, make_response, redirect, render_template, request,
     url_for, current_app, abort, g, Response
 )
-from flask_babel import lazy_gettext as _
+from flask_babelex import lazy_gettext as _
 from flask_security import current_user, login_required
 from flask_security.utils import verify_and_update_password
 from flask_menu import register_menu

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from apollo.submissions.models import QUALITY_STATUSES, Submission
-from flask_babel import gettext as _
+from flask_babelex import gettext as _
 from itertools import groupby
 import pandas as pd
 

@@ -3,7 +3,7 @@ from datetime import datetime
 import json
 
 from flask import Blueprint, g, make_response, render_template, request
-from flask_babel import lazy_gettext as _
+from flask_babelex import lazy_gettext as _
 from flask_httpauth import HTTPDigestAuth
 from lxml import etree
 from mongoengine import signals
