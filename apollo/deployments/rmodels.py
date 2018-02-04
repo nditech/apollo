@@ -1,10 +1,23 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
 
-from sqlalchemy.dialects.postgresql import ARRAY, JSONB
+from pytz import utc
+from sqlalchemy.dialects.postgresql import ARRAY
 
 from apollo.core import db2
 from apollo.dal.models import BaseModel
+
+
+def _default_event_start():
+    return datetime.combine(
+        utc.localize(datetime.utcnow()),
+        datetime.min.time())
+
+
+def _default_event_end():
+    return datetime.combine(
+        utc.localize(datetime.utcnow()),
+        datetime.max.time())
 
 
 class Deployment(BaseModel):
@@ -20,9 +33,6 @@ class Deployment(BaseModel):
     is_initialized = db2.Column(db2.Boolean, default=False)
     dashboard_full_locations = db2.Column(db2.Boolean, default=True)
 
-    # ----- RELATIONSHIP PROPERTIES -----
-    events = db2.relationship('Event', back_populates='deployment')
-
     def __str__(self):
         return self.name or ''
 
@@ -32,9 +42,10 @@ class Event(BaseModel):
 
     id = db2.Column(
         db2.Integer, db2.Sequence('event_id_seq'), primary_key=True)
-    start_date = db2.Column(db2.DateTime)
-    end_date = db2.Column(db2.DateTime)
+    start = db2.Column(db2.DateTime, default=_default_event_start)
+    end = db2.Column(db2.DateTime, default=_default_event_end)
     deployment_id = db2.Column(db2.Integer, db2.ForeignKey('deployments.id'))
+    deployment = db2.relationship('Deployment', backref='events')
 
-    # ----- RELATIONSHIP PROPERTIES -----
-    deployment = db2.relationship('Deployment', back_populates='events')
+    def __str__(self):
+        return self.name
