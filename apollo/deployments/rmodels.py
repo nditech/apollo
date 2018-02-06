@@ -37,6 +37,39 @@ class Deployment(BaseModel):
         return self.name or ''
 
 
+class FormSet(BaseModel):
+    __tablename__ = 'form_sets'
+
+    id = db2.Column(
+        db2.Integer, db2.Sequence('form_set_id_seq'), primary_key=True)
+    name = db2.Column(db2.String)
+    slug = db2.Column(db2.String)
+    deployment_id = db2.Column(db2.Integer, db2.ForeignKey('deployments.id'))
+    deployment = db2.relationship('Deployment', backref='form_sets')
+
+
+class LocationSet(BaseModel):
+    __tablename__ = 'location_sets'
+
+    id = db2.Column(
+        db2.Integer, db2.Sequence('location_set_id_seq'), primary_key=True)
+    name = db2.Column(db2.String)
+    slug = db2.Column(db2.String)
+    deployment_id = db2.Column(db2.Integer, db2.ForeignKey('deployments.id'))
+    deployment = db2.relationship('Deployment', backref='location_sets')
+
+
+class ParticipantSet(BaseModel):
+    __tablename__ = 'participant_sets'
+
+    id = db2.Column(
+        db2.Integer, db2.Sequence('participant_set_id_seq'), primary_key=True)
+    name = db2.Column(db2.String)
+    slug = db2.Column(db2.String)
+    deployment_id = db2.Column(db2.Integer, db2.ForeignKey('deployments.id'))
+    deployment = db2.relationship('Deployment', backref='participant_sets')
+
+
 class Event(BaseModel):
     __tablename__ = 'events'
 
@@ -45,7 +78,15 @@ class Event(BaseModel):
     start = db2.Column(db2.DateTime, default=_default_event_start)
     end = db2.Column(db2.DateTime, default=_default_event_end)
     deployment_id = db2.Column(db2.Integer, db2.ForeignKey('deployments.id'))
+    form_set_id = db2.Column(db2.Integer, db2.ForeignKey('form_sets.id'))
+    location_set_id = db2.Column(
+        db2.Integer, db2.ForeignKey('location_sets.id'))
+    participant_set_id = db2.Column(
+        db2.Integer, db2.ForeignKey('participant_sets.id'))
     deployment = db2.relationship('Deployment', backref='events')
+    form_set = db2.relationship('FormSet', backref='events')
+    location_set = db2.relationship('LocationSet', backref='events')
+    participant_set = db2.relationship('ParticipantSet', backref='events')
 
     def __str__(self):
         return self.name
