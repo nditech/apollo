@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import os
-import warnings
+from flask_assets import ManageAssets
 from flask_migrate import MigrateCommand
 from flask_script import Manager, Server, Shell
 from flask_security import MongoEngineUserDatastore
@@ -58,6 +57,7 @@ manager.add_command('init', SetupCommand())
 
 manager.add_command('playback', MessagePlaybackCommand())
 
+manager.add_command('assets', ManageAssets)
 manager.add_command('db', MigrateCommand)
 
 if __name__ == '__main__':

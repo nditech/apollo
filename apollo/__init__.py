@@ -4,6 +4,7 @@ from flask_admin import AdminIndexView
 from flask_login import user_logged_out
 from flask_principal import identity_loaded
 from flask_security import MongoEngineUserDatastore, current_user
+from whitenoise import WhiteNoise
 from apollo import models, assets
 
 from apollo.frontend import permissions, template_filters
@@ -43,6 +44,8 @@ def init_admin(admin, app):
 def create_app(settings_override=None, register_security_blueprint=True):
     """Returns the frontend application instance"""
     app = factory.create_app(__name__, __path__, settings_override)
+
+    app.wsgi_app = WhiteNoise(app.wsgi_app, root='static/')
 
     # Init assets
     assets.init_app(app)
