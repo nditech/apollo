@@ -19,8 +19,6 @@ from apollo.manage import \
      SetupCommand, MessagePlaybackCommand, EventMigrationCommand)
 
 
-
-
 app = create_app()
 
 
@@ -29,7 +27,10 @@ def _mk_ctx():
         app=app, db=db, models=models, services=services,
         userdatastore=MongoEngineUserDatastore(db, models.User, models.Role))
 
+
 manager = Manager(app)
+
+
 manager.add_command('run', Server(host='::'))
 manager.add_command('shell', Shell(make_context=_mk_ctx))
 manager.add_command('create_user', CreateUserCommand())
