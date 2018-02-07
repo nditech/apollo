@@ -6,7 +6,7 @@ from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy_utils import ChoiceType
 
 from apollo.core import db2
-from apollo.dal.models import BaseModel
+from apollo.dal.models import Resource
 
 NSMAP = {
     None: 'http://www.w3.org/2002/xforms',
@@ -22,12 +22,13 @@ SCHEMA_E = ElementMaker(namespace=NSMAP['xsd'], nsmap=NSMAP)
 ROSA_E = ElementMaker(namespace=NSMAP['jr'], nsmap=NSMAP)
 
 
-class Form(BaseModel):
+class Form(Resource):
     FORM_TYPES = (
         (0, _('Checklist Form')),
         (1, _('Incident Form'))
     )
 
+    __mapper_args__ = {'polymorphic_identity': 'form'}
     __tablename__ = 'forms'
 
     id = db2.Column(
@@ -39,6 +40,9 @@ class Form(BaseModel):
     data = db2.Column(JSONB)
     version_identifier = db2.Column(db2.String)
     deployment_id = db2.Column(db2.Integer, db2.ForeignKey('deployments.id'))
+    form_set_id = db2.Column(db2.Integer, db2.ForeignKey('form_sets.id'))
+    resource_id = db2.Column(
+        db2.Integer, db2.ForeignKey('resources.resource_id'))
     quality_checks = db2.Column(JSONB)
     party_mappings = db2.Column(JSONB)
     calculate_moe = db2.Column(db2.Boolean)
@@ -47,6 +51,9 @@ class Form(BaseModel):
     invalid_votes_tag = db2.Column(db2.String)
     registered_votes_tag = db2.Column(db2.String)
     blank_votes_tag = db2.Column(db2.String)
+
+    deployment = db2.relationship('Deployment', backref='forms')
+    form_set = db2.relationship('FormSet', backref='forms')
 
     def _populate_field_cache(self):
         self._field_cache = {

@@ -5,7 +5,7 @@ from pytz import utc
 from sqlalchemy.dialects.postgresql import ARRAY
 
 from apollo.core import db2
-from apollo.dal.models import BaseModel
+from apollo.dal.models import BaseModel, Resource
 
 
 def _default_event_start():
@@ -70,7 +70,8 @@ class ParticipantSet(BaseModel):
     deployment = db2.relationship('Deployment', backref='participant_sets')
 
 
-class Event(BaseModel):
+class Event(Resource):
+    __mapper_args__ = {'polymorphic_identity': 'event'}
     __tablename__ = 'events'
 
     id = db2.Column(
@@ -79,6 +80,8 @@ class Event(BaseModel):
     end = db2.Column(db2.DateTime, default=_default_event_end)
     deployment_id = db2.Column(db2.Integer, db2.ForeignKey('deployments.id'))
     form_set_id = db2.Column(db2.Integer, db2.ForeignKey('form_sets.id'))
+    resource_id = db2.Column(
+        db2.Integer, db2.ForeignKey('resources.resource_id'))
     location_set_id = db2.Column(
         db2.Integer, db2.ForeignKey('location_sets.id'))
     participant_set_id = db2.Column(

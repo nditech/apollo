@@ -14,9 +14,13 @@ class ParticipantRole(BaseModel):
         db2.Integer, db2.Sequence('participant_role_id_seq'), primary_key=True)
     name = db2.Column(db2.String)
     deployment_id = db2.Column(db2.Integer, db2.ForeignKey('deployments.id'))
+    participant_set_id = db2.Column(
+        db2.Integer, db2.ForeignKey('participant_sets.id'))
 
     deployment = db2.relationship(
-        'Deployment', back_populates='participant_roles')
+        'Deployment', backref='participant_roles')
+    participant_set = db2.relationship(
+        'ParticipantSet', backref='participant_roles')
 
     def __str__(self):
         return self.name or ''
@@ -30,9 +34,13 @@ class ParticipantPartner(BaseModel):
         primary_key=True)
     name = db2.Column(db2.String)
     deployment_id = db2.Column(db2.Integer, db2.ForeignKey('deployments.id'))
+    participant_set_id = db2.Column(
+        db2.Integer, db2.ForeignKey('participant_sets.id'))
 
     deployment = db2.relationship(
-        'Deployment', back_populates='participant_partners')
+        'Deployment', backref='participant_partners')
+    participant_set = db2.relationship(
+        'ParticipantSet', backref='participant_partners')
 
     def __str__(self):
         return self.name or ''
@@ -46,9 +54,13 @@ class ParticipantGroupType(BaseModel):
         primary_key=True)
     name = db2.Column(db2.String)
     deployment_id = db2.Column(db2.Integer, db2.ForeignKey('deployments.id'))
+    participant_set_id = db2.Column(
+        db2.Integer, db2.ForeignKey('participant_sets.id'))
 
     deployment = db2.relationship(
-        'Deployment', back_populates='participant_group_types')
+        'Deployment', backref='participant_group_types')
+    participant_set = db2.relationship(
+        'ParticipantSet', backref='participant_group_types')
 
     def __str__(self):
         return self.name or ''
@@ -100,15 +112,21 @@ class Participant(BaseModel):
         db2.Integer, db2.ForeignKey('participant_partners.id'))
     supervisor_id = db2.Column(
         db2.Integer, db2.ForeignKey('participants.id'))
-    gender = ChoiceType(GENDER, default=0)
+    gender = db2.Column(ChoiceType(GENDER), default=0)
     email = db2.Column(db2.String)
     deployment_id = db2.Column(db2.Integer, db2.ForeignKey('deployments.id'))
+    participant_set_id = db2.Column(
+        db2.Integer, db2.ForeignKey('participant_sets.id'))
     message_count = db2.Column(db2.Integer, default=0)
     accurate_message_count = db2.Column(db2.Integer, default=0)
     completion_rating = db2.Column(db2.Float, default=1)
     device_id = db2.Column(db2.String)
     password = db2.Column(db2.String)
     phones = db2.Column(JSONB)
+
+    deployment = db2.relationship('Deployment', backref='participants')
+    participant_set = db2.relationship(
+        'ParticipantSet', backref='participants')
 
     def __str__(self):
         return self.name or ''
