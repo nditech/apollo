@@ -6,6 +6,7 @@ from apollo.formsframework.rmodels import Form
 from apollo.locations.rmodels import (
     Location, LocationPath, LocationType, LocationTypePath, Sample,
     samples_locations)
+from apollo.messaging.rmodels import Message
 from apollo.participants.rmodels import (
     Participant, ParticipantGroup, ParticipantGroupType, ParticipantPartner,
     ParticipantRole)

@@ -28,6 +28,6 @@ class Message(BaseModel):
     submission_id = db2.Column(db2.Integer, db2.ForeignKey('submission.id'))
 
     # ----- RELATIONSHIP PROPERTIES ----
-    deployment = db2.relationship('Deployment', back_populates='messages')
-    event = db2.relationship('Event', back_populates='messages')
+    deployment = db2.relationship('Deployment', backref='messages')
+    event = db2.relationship('Event', backref='messages')
     submission = db2.relationship('Submission')

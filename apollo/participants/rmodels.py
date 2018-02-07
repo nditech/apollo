@@ -78,9 +78,9 @@ class ParticipantGroup(BaseModel):
         db2.Integer, db2.ForeignKey('participant_group_type.id'))
 
     deployment = db2.relationship(
-        'Deployment', back_populates='participant_groups')
+        'Deployment', backref='participant_groups')
     group_type = db2.relationship(
-        'ParticipantGroupType', back_populates='participant_groups')
+        'ParticipantGroupType', backref='participant_groups')
 
     def __str__(self):
         return self.name or ''

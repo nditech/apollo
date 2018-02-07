@@ -21,8 +21,6 @@ class Role(BaseModel, RoleMixin):
     description = db2.Column(db2.String)
 
     deployment = db2.relationship('Deployment', backref='roles')
-    users = db2.relationship(
-        'User', backref='roles', secondary=roles_users)
 
     def __str__(self):
         return self.name or ''

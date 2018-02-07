@@ -77,11 +77,11 @@ class ResourceMixin(object):
 
     @declared_attr
     def roles(self):
-        return db2.relationship('Role', secondary='role_resource_permissions')
+        return db2.relationship('Role', secondary='role_resource_permission')
 
     @declared_attr
     def users(self):
-        return db2.relationship('User', secondary='user_resource_permissions')
+        return db2.relationship('User', secondary='user_resource_permission')
 
     __mapper_args__ = {'polymorphic_on': resource_type}
 
