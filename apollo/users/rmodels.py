@@ -8,15 +8,15 @@ from apollo.dal.models import BaseModel
 
 roles_users = db2.Table(
     'roles_users',
-    db2.Column('user_id', db2.Integer, db2.ForeignKey('users.id')),
-    db2.Column('role_id', db2.Integer, db2.ForeignKey('roles.id')))
+    db2.Column('user_id', db2.Integer, db2.ForeignKey('user.id')),
+    db2.Column('role_id', db2.Integer, db2.ForeignKey('role.id')))
 
 
 class Role(BaseModel, RoleMixin):
-    __tablename__ = 'roles'
+    __tablename__ = 'role'
 
     id = db2.Column(db2.Integer, db2.Sequence('role_id_seq'), primary_key=True)
-    deployment_id = db2.Column(db2.Integer, db2.ForeignKey('deployments.id'))
+    deployment_id = db2.Column(db2.Integer, db2.ForeignKey('deployment.id'))
     name = db2.Column(db2.String, unique=True)
     description = db2.Column(db2.String)
 
@@ -29,9 +29,9 @@ class Role(BaseModel, RoleMixin):
 
 
 class User(BaseModel, UserMixin):
-    __tablename__ = 'users'
+    __tablename__ = 'user'
     id = db2.Column(db2.Integer, db2.Sequence('user_id_seq'), primary_key=True)
-    deployment_id = db2.Column(db2.Integer, db2.ForeignKey('deployments.id'))
+    deployment_id = db2.Column(db2.Integer, db2.ForeignKey('deployment.id'))
     email = db2.Column(db2.String)
     username = db2.Column(db2.String)
     password = db2.Column(db2.String)
@@ -49,42 +49,42 @@ class User(BaseModel, UserMixin):
 
 
 class RolePermission(BaseModel):
-    __tablename__ = 'role_permissions'
+    __tablename__ = 'role_permission'
 
     role_id = db2.Column(
-        db2.Integer, db2.ForeignKey('roles.id'), nullable=False,
+        db2.Integer, db2.ForeignKey('role.id'), nullable=False,
         primary_key=True)
     perm_name = db2.Column(db2.String, primary_key=True)
     description = db2.Column(db2.String)
 
 
 class UserPermission(BaseModel):
-    __tablename__ = 'user_permissions'
+    __tablename__ = 'user_permission'
 
     user_id = db2.Column(
-        db2.Integer, db2.ForeignKey('users.id'), nullable=False,
+        db2.Integer, db2.ForeignKey('user.id'), nullable=False,
         primary_key=True)
     perm_name = db2.Column(db2.String, primary_key=True)
     description = db2.Column(db2.String)
 
 
 class RoleResourcePermission(BaseModel):
-    __tablename__ = 'role_resource_permissions'
+    __tablename__ = 'role_resource_permission'
 
     role_id = db2.Column(
-        db2.Integer, db2.ForeignKey('roles.id'), primary_key=True)
+        db2.Integer, db2.ForeignKey('role.id'), primary_key=True)
     resource_id = db2.Column(
-        db2.Integer, db2.ForeignKey('resources.resource_id'), primary_key=True)
+        db2.Integer, db2.ForeignKey('resource.resource_id'), primary_key=True)
     perm_name = db2.Column(db2.String, primary_key=True)
     description = db2.Column(db2.String)
 
 
 class UserResourcePermission(BaseModel):
-    __tablename__ = 'user_resource_permissions'
+    __tablename__ = 'user_resource_permission'
 
     user_id = db2.Column(
-        db2.Integer, db2.ForeignKey('users.id'), primary_key=True)
+        db2.Integer, db2.ForeignKey('user.id'), primary_key=True)
     resource_id = db2.Column(
-        db2.Integer, db2.ForeignKey('resources.resource_id'), primary_key=True)
+        db2.Integer, db2.ForeignKey('resource.resource_id'), primary_key=True)
     perm_name = db2.Column(db2.String, primary_key=True)
     description = db2.Column(db2.String)

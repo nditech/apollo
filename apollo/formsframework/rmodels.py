@@ -29,7 +29,7 @@ class Form(Resource):
     )
 
     __mapper_args__ = {'polymorphic_identity': 'form'}
-    __tablename__ = 'forms'
+    __tablename__ = 'form'
 
     id = db2.Column(
         db2.Integer, db2.Sequence('form_id_seq'), primary_key=True)
@@ -39,10 +39,10 @@ class Form(Resource):
     require_exclamation = db2.Column(db2.Boolean, default=True)
     data = db2.Column(JSONB)
     version_identifier = db2.Column(db2.String)
-    deployment_id = db2.Column(db2.Integer, db2.ForeignKey('deployments.id'))
-    form_set_id = db2.Column(db2.Integer, db2.ForeignKey('form_sets.id'))
+    deployment_id = db2.Column(db2.Integer, db2.ForeignKey('deployment.id'))
+    form_set_id = db2.Column(db2.Integer, db2.ForeignKey('form_set.id'))
     resource_id = db2.Column(
-        db2.Integer, db2.ForeignKey('resources.resource_id'))
+        db2.Integer, db2.ForeignKey('resource.resource_id'))
     quality_checks = db2.Column(JSONB)
     party_mappings = db2.Column(JSONB)
     calculate_moe = db2.Column(db2.Boolean)

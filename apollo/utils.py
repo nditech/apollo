@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
+from datetime import datetime
 import os
 import warnings
+
+from pytz import utc
 
 
 def read_env(env_path=None):        
@@ -21,3 +24,7 @@ def parse_env(env_path):
             k, v = line.split('=', 1)
             v = v.strip('"').strip("'")
             yield k, v
+
+
+def current_timestamp():
+    return utc.localize(datetime.utcnow())

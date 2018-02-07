@@ -5,28 +5,28 @@ from apollo.dal.models import BaseModel
 
 samples_locations = db2.Table(
     'samples_locations',
-    db2.Column('sample_id', db2.Integer, db2.ForeignKey('samples.id'),
+    db2.Column('sample_id', db2.Integer, db2.ForeignKey('sample.id'),
                primary_key=True),
-    db2.Column('location_id', db2.Integer, db2.ForeignKey('locations.id'),
+    db2.Column('location_id', db2.Integer, db2.ForeignKey('location.id'),
                primary_key=True))
 
 
 class Sample(BaseModel):
-    __tablename__ = 'samples'
+    __tablename__ = 'sample'
 
     id = db2.Column(
         db2.Integer, db2.Sequence('sample_id_seq'), primary_key=True)
     name = db2.Column(db2.String)
-    deployment_id = db2.Column(db2.Integer, db2.ForeignKey('deployments.id'))
+    deployment_id = db2.Column(db2.Integer, db2.ForeignKey('deployment.id'))
     location_set_id = db2.Column(
-        db2.Integer, db2.ForeignKey('location_sets.id'))
+        db2.Integer, db2.ForeignKey('location_set.id'))
 
     deployment = db2.relationship('Deployment', backref='samples')
     location_set = db2.relationship('LocationSet', backref='samples')
 
 
 class LocationType(BaseModel):
-    __tablename__ = 'location_types'
+    __tablename__ = 'location_type'
 
     id = db2.Column(
         db2.Integer, db2.Sequence('location_type_id_seq'), primary_key=True)
@@ -37,9 +37,9 @@ class LocationType(BaseModel):
     has_political_code = db2.Column(db2.Boolean, default=False)
     has_other_code = db2.Column(db2.Boolean, default=False)
     slug = db2.Column(db2.String)
-    deployment_id = db2.Column(db2.Integer, db2.ForeignKey('deployments.id'))
+    deployment_id = db2.Column(db2.Integer, db2.ForeignKey('deployment.id'))
     location_set_id = db2.Column(
-        db2.Integer, db2.ForeignKey('location_sets.id'))
+        db2.Integer, db2.ForeignKey('location_set.id'))
 
     deployment = db2.relationship('Deployment', backref='location_types')
     location_set = db2.relationship('LocationSet', backref='location_types')
@@ -52,15 +52,15 @@ class LocationType(BaseModel):
 
 
 class LocationTypePath(db2.Model):
-    __tablename__ = 'location_type_paths'
+    __tablename__ = 'location_type_path'
     __table_args__ = (
         db2.Index('location_type_paths_ancestor_idx', 'ancestor_id'),
         db2.Index('location_type_paths_descendant_idx', 'descendant_id'))
 
-    ancestor_id = db2.Column(db2.Integer, db2.ForeignKey('location_types.id'),
+    ancestor_id = db2.Column(db2.Integer, db2.ForeignKey('location_type.id'),
                              primary_key=True)
     descendant_id = db2.Column(db2.Integer,
-                               db2.ForeignKey('location_types.id'),
+                               db2.ForeignKey('location_type.id'),
                                primary_key=True)
     depth = db2.Column(db2.Integer)
 
@@ -73,7 +73,7 @@ class LocationTypePath(db2.Model):
 
 
 class Location(BaseModel):
-    __tablename__ = 'locations'
+    __tablename__ = 'location'
 
     id = db2.Column(
         db2.Integer, db2.Sequence('location_id_seq'), primary_key=True)
@@ -82,11 +82,11 @@ class Location(BaseModel):
     political_code = db2.Column(db2.String)
     other_code = db2.Column(db2.String)
     registered_voters = db2.Column(db2.Integer, default=0)
-    deployment_id = db2.Column(db2.Integer, db2.ForeignKey('deployments.id'))
+    deployment_id = db2.Column(db2.Integer, db2.ForeignKey('deployment.id'))
     location_set_id = db2.Column(
-        db2.Integer, db2.ForeignKey('location_sets.id'))
+        db2.Integer, db2.ForeignKey('location_set.id'))
     location_type_id = db2.Column(
-        db2.Integer, db2.ForeignKey('location_types.id'))
+        db2.Integer, db2.ForeignKey('location_type.id'))
 
     deployment = db2.relationship('Deployment', backref='locations')
     location_set = db2.relationship('LocationSet', backref='locations')
@@ -102,15 +102,15 @@ class Location(BaseModel):
 
 
 class LocationPath(db2.Model):
-    __tablename__ = 'location_paths'
+    __tablename__ = 'location_path'
     __table_args__ = (
         db2.Index('location_paths_ancestor_idx', 'ancestor_id'),
         db2.Index('location_paths_descendant_idx', 'descendant_id'))
 
     ancestor_id = db2.Column(
-        db2.Integer, db2.ForeignKey('locations.id'), primary_key=True)
+        db2.Integer, db2.ForeignKey('location.id'), primary_key=True)
     descendant_id = db2.Column(
-        db2.Integer, db2.ForeignKey('locations.id'), primary_key=True)
+        db2.Integer, db2.ForeignKey('location.id'), primary_key=True)
     depth = db2.Column(db2.Integer)
 
     ancestor_location = db2.relationship(

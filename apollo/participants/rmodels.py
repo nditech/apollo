@@ -8,14 +8,14 @@ from apollo.dal.models import BaseModel
 
 
 class ParticipantRole(BaseModel):
-    __tablename__ = 'participant_roles'
+    __tablename__ = 'participant_role'
 
     id = db2.Column(
         db2.Integer, db2.Sequence('participant_role_id_seq'), primary_key=True)
     name = db2.Column(db2.String)
-    deployment_id = db2.Column(db2.Integer, db2.ForeignKey('deployments.id'))
+    deployment_id = db2.Column(db2.Integer, db2.ForeignKey('deployment.id'))
     participant_set_id = db2.Column(
-        db2.Integer, db2.ForeignKey('participant_sets.id'))
+        db2.Integer, db2.ForeignKey('participant_set.id'))
 
     deployment = db2.relationship(
         'Deployment', backref='participant_roles')
@@ -27,15 +27,15 @@ class ParticipantRole(BaseModel):
 
 
 class ParticipantPartner(BaseModel):
-    __tablename__ = 'participant_partners'
+    __tablename__ = 'participant_partner'
 
     id = db2.Column(
         db2.Integer, db2.Sequence('participant_partner_id_seq'),
         primary_key=True)
     name = db2.Column(db2.String)
-    deployment_id = db2.Column(db2.Integer, db2.ForeignKey('deployments.id'))
+    deployment_id = db2.Column(db2.Integer, db2.ForeignKey('deployment.id'))
     participant_set_id = db2.Column(
-        db2.Integer, db2.ForeignKey('participant_sets.id'))
+        db2.Integer, db2.ForeignKey('participant_set.id'))
 
     deployment = db2.relationship(
         'Deployment', backref='participant_partners')
@@ -47,15 +47,15 @@ class ParticipantPartner(BaseModel):
 
 
 class ParticipantGroupType(BaseModel):
-    __tablename__ = 'participant_group_types'
+    __tablename__ = 'participant_group_type'
 
     id = db2.Column(
         db2.Integer, db2.Sequence('participant_group_type_id_seq'),
         primary_key=True)
     name = db2.Column(db2.String)
-    deployment_id = db2.Column(db2.Integer, db2.ForeignKey('deployments.id'))
+    deployment_id = db2.Column(db2.Integer, db2.ForeignKey('deployment.id'))
     participant_set_id = db2.Column(
-        db2.Integer, db2.ForeignKey('participant_sets.id'))
+        db2.Integer, db2.ForeignKey('participant_set.id'))
 
     deployment = db2.relationship(
         'Deployment', backref='participant_group_types')
@@ -67,15 +67,15 @@ class ParticipantGroupType(BaseModel):
 
 
 class ParticipantGroup(BaseModel):
-    __tablename__ = 'participant_groups'
+    __tablename__ = 'participant_group'
 
     id = db2.Column(
         db2.Integer, db2.Sequence('participant_group_id_seq'),
         primary_key=True)
     name = db2.Column(db2.String)
-    deployment_id = db2.Column(db2.Integer, db2.ForeignKey('deployments.id'))
+    deployment_id = db2.Column(db2.Integer, db2.ForeignKey('deployment.id'))
     group_type_id = db2.Column(
-        db2.Integer, db2.ForeignKey('participant_group_types.id'))
+        db2.Integer, db2.ForeignKey('participant_group_type.id'))
 
     deployment = db2.relationship(
         'Deployment', back_populates='participant_groups')
@@ -102,21 +102,21 @@ class Participant(BaseModel):
         (2, _('Male')),
     )
 
-    __tablename__ = 'participants'
+    __tablename__ = 'participant'
     id = db2.Column(
         db2.Integer, db2.Sequence('participant_id_seq'), primary_key=True)
     name = db2.Column(db2.String)
     role_id = db2.Column(
-        db2.Integer, db2.ForeignKey('participant_roles.id'))
+        db2.Integer, db2.ForeignKey('participant_role.id'))
     partner_id = db2.Column(
-        db2.Integer, db2.ForeignKey('participant_partners.id'))
+        db2.Integer, db2.ForeignKey('participant_partner.id'))
     supervisor_id = db2.Column(
-        db2.Integer, db2.ForeignKey('participants.id'))
+        db2.Integer, db2.ForeignKey('participant.id'))
     gender = db2.Column(ChoiceType(GENDER), default=0)
     email = db2.Column(db2.String)
-    deployment_id = db2.Column(db2.Integer, db2.ForeignKey('deployments.id'))
+    deployment_id = db2.Column(db2.Integer, db2.ForeignKey('deployment.id'))
     participant_set_id = db2.Column(
-        db2.Integer, db2.ForeignKey('participant_sets.id'))
+        db2.Integer, db2.ForeignKey('participant_set.id'))
     message_count = db2.Column(db2.Integer, default=0)
     accurate_message_count = db2.Column(db2.Integer, default=0)
     completion_rating = db2.Column(db2.Float, default=1)

@@ -14,7 +14,7 @@ class Message(BaseModel):
         (2, _('OUTGOING')),
     )
 
-    __tablename__ = 'messages'
+    __tablename__ = 'message'
 
     id = db2.Column(db2.Integer, db2.Sequence('message_id_seq'), primary_key=True)
     direction = db2.Column(ChoiceType(DIRECTIONS))
@@ -23,9 +23,11 @@ class Message(BaseModel):
     text = db2.Column(db2.String)
     received = db2.Column(db2.DateTime, default=datetime.utcnow)
     delivered = db2.Column(db2.DateTime)
-    deployment_id = db2.Column(db2.Integer, db2.ForeignKey('deployments.id'))
-    event_id = db2.Column(db2.Integer, db2.ForeignKey('events.id'))
+    deployment_id = db2.Column(db2.Integer, db2.ForeignKey('deployment.id'))
+    event_id = db2.Column(db2.Integer, db2.ForeignKey('event.id'))
+    submission_id = db2.Column(db2.Integer, db2.ForeignKey('submission.id'))
 
     # ----- RELATIONSHIP PROPERTIES ----
     deployment = db2.relationship('Deployment', back_populates='messages')
     event = db2.relationship('Event', back_populates='messages')
+    submission = db2.relationship('Submission')

@@ -56,7 +56,7 @@ class ResourceMixin(object):
     '''
     @declared_attr
     def __tablename__(self):
-        return 'resources'
+        return 'resource'
 
     @declared_attr
     def resource_id(self):

@@ -9,6 +9,8 @@ from apollo.locations.rmodels import (
 from apollo.participants.rmodels import (
     Participant, ParticipantGroup, ParticipantGroupType, ParticipantPartner,
     ParticipantRole)
+from apollo.submissions.rmodels import (
+    Submission, SubmissionComment, SubmissionVersion)
 from apollo.users.rmodels import (
     Role, RolePermission, RoleResourcePermission, User, UserPermission, 
     UserResourcePermission, roles_users)
