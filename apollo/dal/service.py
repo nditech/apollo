@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+from flask import abort
+
+
 class Service(object):
     '''Database service wrapper class'''
     __model__ = None
