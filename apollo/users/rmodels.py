@@ -8,8 +8,8 @@ from apollo.dal.models import BaseModel
 
 roles_users = db2.Table(
     'roles_users',
-    db2.Column('user_id', UUIDType, db2.ForeignKey('users.id')),
-    db2.Column('role_id', UUIDType, db2.ForeignKey('roles.id')))
+    db2.Column('user_id', db2.Integer, db2.ForeignKey('users.id')),
+    db2.Column('role_id', db2.Integer, db2.ForeignKey('roles.id')))
 
 
 class Role(BaseModel, RoleMixin):
