@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 from flask_security import RoleMixin, UserMixin
-from sqlalchemy_utils import UUIDType
 
 from apollo.core import db2
 from apollo.dal.models import BaseModel
+from apollo.utils import current_timestamp
 
 
 roles_users = db2.Table(
@@ -86,3 +86,13 @@ class UserResourcePermission(BaseModel):
         db2.Integer, db2.ForeignKey('resource.resource_id'), primary_key=True)
     perm_name = db2.Column(db2.String, primary_key=True)
     description = db2.Column(db2.String)
+
+
+class UserUpload(BaseModel):
+    __tablename__ = 'user_upload'
+
+    id = db2.Column(db2.Sequence('user_upload_id_seq'), primary_key=True)
+    user_id = db2.Column(
+        db2.Integer, db2.ForeignKey('user.id'), nullable=False)
+    created = db2.Column(db2.DateTime, default=current_timestamp)
+    upload_filename = db2.Column(db2.String)

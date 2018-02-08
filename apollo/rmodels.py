@@ -14,4 +14,4 @@ from apollo.submissions.rmodels import (
     Submission, SubmissionComment, SubmissionVersion)
 from apollo.users.rmodels import (
     Role, RolePermission, RoleResourcePermission, User, UserPermission, 
-    UserResourcePermission, roles_users)
+    UserResourcePermission, UserUpload, roles_users)

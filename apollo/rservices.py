@@ -6,7 +6,7 @@ from apollo.locations.services import (
 from apollo.messaging.services import MessageService
 from apollo.participants.services import ParticipantService
 from apollo.submissions.services import SubmissionService
-from apollo.users.services import UserService
+from apollo.users.services import UserService, UserUploadService
 
 events = EventService()
 forms = FormService()
@@ -17,3 +17,4 @@ participants = ParticipantService()
 samples = SampleService()
 submissions = SubmissionService()
 users = UserService()
+user_uploads = UserUploadService()
