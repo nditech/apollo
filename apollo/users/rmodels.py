@@ -91,7 +91,8 @@ class UserResourcePermission(BaseModel):
 class UserUpload(BaseModel):
     __tablename__ = 'user_upload'
 
-    id = db2.Column(db2.Sequence('user_upload_id_seq'), primary_key=True)
+    id = db2.Column(
+        db2.Integer, db2.Sequence('user_upload_id_seq'), primary_key=True)
     user_id = db2.Column(
         db2.Integer, db2.ForeignKey('user.id'), nullable=False)
     created = db2.Column(db2.DateTime, default=current_timestamp)
