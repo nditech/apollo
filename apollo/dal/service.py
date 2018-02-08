@@ -57,3 +57,7 @@ class Service(object):
     def delete(self, model, commit=True):
         self._isinstance(model)
         return model.delete(commit=commit)
+
+    @property
+    def query(self):
+        return self.__model__.query
