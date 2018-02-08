@@ -29,6 +29,10 @@ class Deployment(BaseModel):
     is_initialized = db2.Column(db2.Boolean, default=False)
     dashboard_full_locations = db2.Column(db2.Boolean, default=True)
 
+    @classmethod
+    def find_by_hostname(cls, hostname):
+        return cls.query.filter(cls.hostnames.any(hostname)).first_or_404()
+
     def __str__(self):
         return self.name or ''
 

@@ -3,14 +3,13 @@ from flask import g, render_template, session, request, redirect, url_for
 from flask_admin import AdminIndexView
 from flask_login import user_logged_out
 from flask_principal import identity_loaded
-from flask_security import MongoEngineUserDatastore, current_user
+from flask_security import SQLAlchemyUserDatastore, current_user
 from whitenoise import WhiteNoise
-from apollo import models, assets
+from apollo import assets, models, rmodels
 
 from apollo.frontend import permissions, template_filters
-from apollo.core import admin, db, menu, security, gravatar, csrf
-from .frontend.helpers import (
-    set_request_presets, CustomMongoEngineSessionInterface)
+from apollo.core import admin, db2, menu, security, gravatar, csrf
+from .frontend.helpers import set_request_presets
 from .security_ext_forms import DeploymentLoginForm
 
 from apollo import services, factory
@@ -53,12 +52,11 @@ def create_app(settings_override=None, register_security_blueprint=True):
     menu.init_app(app)
     gravatar.init_app(app)
 
-    userdatastore = MongoEngineUserDatastore(db, models.User, models.Role)
+    userdatastore = SQLAlchemyUserDatastore(db2, rmodels.User, rmodels.Role)
 
     security.init_app(app, userdatastore,
                       login_form=DeploymentLoginForm,
                       register_blueprint=register_security_blueprint)
-    app.session_interface = CustomMongoEngineSessionInterface(db)
 
     csrf.init_app(app)
     init_admin(admin, app)
@@ -85,13 +83,13 @@ def create_app(settings_override=None, register_security_blueprint=True):
     # user_logged_out.connect(lambda app, user: session.clear())
     user_logged_out.connect(clear_session)
 
-    @identity_loaded.connect_via(app)
-    def on_identity_loaded(sender, identity):
-        needs = services.perms.get_all_needs(
-            models.User(**identity.user._data))
+    # @identity_loaded.connect_via(app)
+    # def on_identity_loaded(sender, identity):
+    #     needs = services.perms.get_all_needs(
+    #         models.User(**identity.user._data))
 
-        for need in needs:
-            identity.provides.add(need)
+    #     for need in needs:
+    #         identity.provides.add(need)
 
     @app.context_processor
     def inject_permissions():

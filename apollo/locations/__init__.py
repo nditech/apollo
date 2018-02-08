@@ -1,13 +1,9 @@
 # -*- coding: utf-8 -*-
 import csv
+from io import StringIO
 
 from apollo.core import Service, cache
 from apollo.locations.models import Sample, LocationType, Location
-
-try:
-    from io import StringIO
-except:
-    from io import StringIO
 
 
 class SamplesService(Service):
