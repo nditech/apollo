@@ -15,7 +15,7 @@ class ApolloRavenClient(Client):
             with current_app.app_context():
                 if not current_user.is_anonymous:
                     deployment = current_user.deployment
-                    event = current_user.event
+                    event = getattr(current_user, 'event', None)
                 else:
                     deployment = None
                     event = None
