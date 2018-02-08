@@ -12,7 +12,7 @@ from apollo.core import admin, db2, menu, security, gravatar, csrf
 from .frontend.helpers import set_request_presets
 from .security_ext_forms import DeploymentLoginForm
 
-from apollo import services, factory
+from apollo import factory
 
 custom_filters = {
     'checklist_question_summary': template_filters.checklist_question_summary,

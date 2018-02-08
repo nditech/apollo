@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 from apollo import models
+from apollo import rmodels
+from apollo import rservices
 from apollo import services
 from flask import session, request, abort, g, url_for
 from flask_babelex import get_locale
@@ -18,13 +20,7 @@ def get_deployment(hostname):
 
     :param hostname: The hostname
     """
-    deployment = models.Deployment.objects(hostnames=hostname).first()
-    if deployment:
-        return deployment
-    else:
-        # create a default deployment (if it doesn't exist) and return that
-        deployment, _ = models.Deployment.objects.get_or_create(name="default")
-        return deployment
+    return rmodels.Deployment.find_by_hostname(hostname)
 
 
 def get_event():
@@ -34,7 +30,7 @@ def get_event():
     """
     _id = session.get('event', None)
     if not _id:
-        _id = services.events.default()
+        _id = rservices.events.default()
         session['event'] = _id
 
     return _id
@@ -59,13 +55,10 @@ def set_request_presets():
     session.permanent = True
     hostname = urlparse(request.url).hostname
 
-    try:
-        g.deployment = get_deployment(hostname)
-        g.event = get_event()
-        g.locale = get_locale()
-        current_user.event = g.event
-    except (models.Deployment.DoesNotExist, models.Event.DoesNotExist):
-        abort(404)
+    g.deployment = get_deployment(hostname)
+    g.event = get_event()
+    g.locale = get_locale()
+    current_user.event = g.event
 
 
 def get_form_list_menu(**kwargs):
