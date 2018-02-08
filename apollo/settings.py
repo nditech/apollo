@@ -103,7 +103,8 @@ CHARACTER_TRANSLATIONS = (
     ('l', '1'),
     ('L', '1'),
 )
-PUNCTUATIONS = [s for s in string.punctuation if s not in ALLOWED_PUNCTUATIONS] + [' ']
+PUNCTUATIONS = [
+    s for s in string.punctuation if s not in ALLOWED_PUNCTUATIONS] + [' ']
 TRANS_TABLE = dict((ord(char_from), ord(char_to))
                    for char_from, char_to in
                    CHARACTER_TRANSLATIONS)
@@ -136,8 +137,10 @@ BIG_N = config('BIG_N', cast=int, default=0) or numpy.inf
 GOOGLE_ANALYTICS_KEY = config('GOOGLE_ANALYTICS_KEY', default=None)
 
 TRANSLATE_CHARS = config('TRANSLATE_CHARS', cast=config.boolean, default=True)
-TRANSLITERATE_INPUT = config('TRANSLITERATE_INPUT', cast=config.boolean, default=False)
-TRANSLITERATE_OUTPUT = config('TRANSLITERATE_OUTPUT', cast=config.boolean, default=False)
+TRANSLITERATE_INPUT = config(
+    'TRANSLITERATE_INPUT', cast=config.boolean, default=False)
+TRANSLITERATE_OUTPUT = config(
+    'TRANSLITERATE_OUTPUT', cast=config.boolean, default=False)
 
 
 # SQLAlchemy settings
