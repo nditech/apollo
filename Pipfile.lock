@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "e7829968dfa31e5566853d7881aafe5013d77dc3f9021a69a488a016fc00aa08"
+            "sha256": "c199c7a84736da4c2101cf2413b3d58500d052ecaf5dccfa5c8624cdf9c5e4d4"
         },
         "host-environment-markers": {
             "implementation_name": "cpython",
@@ -144,9 +144,9 @@
         },
         "flask-admin": {
             "hashes": [
-                "sha256:f2d58448985cf25d757be8e4764a46134a6d0a6ec7fcddc584050a6cc8732d6f"
+                "sha256:fe3a96d99f22e293cd7e83d364de6cffd36573ef25db93d6e32102527a624bc5"
             ],
-            "version": "==1.4.0"
+            "version": "==1.5.0"
         },
         "flask-assets": {
             "hashes": [
@@ -227,9 +227,9 @@
         },
         "flask-script": {
             "hashes": [
-                "sha256:9d621fcb340373da49edff2368e657a3646806b64a0b24054c99b2f232a62d0a"
+                "sha256:6425963d91054cfcc185807141c7314a9c5ad46325911bd24dcb489bd0161c65"
             ],
-            "version": "==2.0.3"
+            "version": "==2.0.6"
         },
         "flask-security": {
             "hashes": [
