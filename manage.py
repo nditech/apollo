@@ -16,7 +16,7 @@ from apollo.manage import \
      CreateDeploymentCommand, ListDeploymentsCommand, CreateEventCommand,
      ListEventsCommand,
      InitializeSubmissionsCommand,
-     SetupCommand, MessagePlaybackCommand, EventMigrationCommand)
+     SetupCommand, MessagePlaybackCommand)
 
 
 app = create_app()
@@ -50,7 +50,6 @@ manager.add_command('create_deployment', CreateDeploymentCommand())
 manager.add_command('list_deployments', ListDeploymentsCommand())
 manager.add_command('create_event', CreateEventCommand())
 manager.add_command('list_events', ListEventsCommand())
-manager.add_command('migrate_event', EventMigrationCommand())
 
 manager.add_command('init_submissions', InitializeSubmissionsCommand())
 

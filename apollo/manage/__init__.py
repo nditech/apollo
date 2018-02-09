@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
-from apollo.manage.users import (
+from apollo.manage.users import (   # noqa
     CreateUserCommand, DeleteUserCommand, ListUsersCommand, AddUserRoleCommand,
     RemoveUserRoleCommand, ListUserRolesCommand, ListRolesCommand,
     AddRoleCommand)
-from apollo.manage.deployments import (
+from apollo.manage.deployments import ( # noqa
     CreateDeploymentCommand, ListDeploymentsCommand,
-    CreateEventCommand, ListEventsCommand, EventMigrationCommand)
-from apollo.manage.permissions import (
+    CreateEventCommand, ListEventsCommand)
+from apollo.manage.permissions import ( # noqa
     AddPermissionToRole, RemovePermissionFromRole, ListPermissionsOfRole)
-from apollo.manage.submissions import InitializeSubmissionsCommand
-from apollo.manage.setup import SetupCommand
-from apollo.manage.messages import MessagePlaybackCommand
+from apollo.manage.submissions import InitializeSubmissionsCommand # noqa
+from apollo.manage.setup import SetupCommand    # noqa
+from apollo.manage.messages import MessagePlaybackCommand   # noqa

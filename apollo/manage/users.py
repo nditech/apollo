@@ -6,8 +6,8 @@ from flask_security.registerable import register_user
 from flask_security.utils import get_message
 from werkzeug.datastructures import MultiDict
 
-from apollo.services import users
-from apollo.models import Deployment, Role
+from apollo.rservices import users
+from apollo.rmodels import Deployment, Role
 
 
 def can_create_user(email, password, password_confirm, deployment):
@@ -22,7 +22,8 @@ def can_create_user(email, password, password_confirm, deployment):
     if (len(email_errors) == 1) and \
         (email_errors[0] ==
             get_message('EMAIL_ALREADY_ASSOCIATED', email=email)[0]):
-        accounts = users.find(email=email, deployment=deployment)
+        accounts = users.query.filter_by(
+            email=email, deployment=deployment).all()
         if not accounts:
             return True, {}
 
@@ -33,7 +34,7 @@ class CreateUserCommand(Command):
     """Create a user"""
 
     def run(self):
-        deployments = Deployment.objects
+        deployments = Deployment.query.all()
         option = prompt_choices('Deployment', [
             (str(i), v) for i, v in enumerate(deployments, 1)])
         deployment = deployments[int(option) - 1]
@@ -51,8 +52,10 @@ class CreateUserCommand(Command):
                 # if there's an error sending the notification email,
                 # recover
                 print('Error sending confirmation email: {}'.format(e))
-                user = users.get(email=email, deployment=None)
-            user.update(set__deployment=deployment)
+                user = users.query.filter_by(
+                    email=email, deployment_id=None).one()
+            user.deployment = deployment
+            user.save()
             print('\nUser created successfully')
             print('User(id=%s email=%s)' % (user.id, user.email))
             return
@@ -65,12 +68,13 @@ class DeleteUserCommand(Command):
     """Delete a user"""
 
     def run(self):
-        deployments = Deployment.objects
+        deployments = Deployment.query.all()
         option = prompt_choices('Deployment', [
             (str(i), v) for i, v in enumerate(deployments, 1)])
         deployment = deployments[int(option) - 1]
         email = prompt('Email')
-        user = users.first(deployment=deployment, email=email)
+        user = users.query.filter_by(
+            deployment_id=deployment.id, email=email).one_or_none()
         if not user:
             print('Invalid user')
             return
@@ -82,11 +86,11 @@ class ListUsersCommand(Command):
     """List all users"""
 
     def run(self):
-        deployments = Deployment.objects
+        deployments = Deployment.query.all()
         option = prompt_choices('Deployment', [
             (str(i), v) for i, v in enumerate(deployments, 1)])
         deployment = deployments[int(option) - 1]
-        for u in users.find(deployment=deployment):
+        for u in users.query.filter_by(deployment_id=deployment.id):
             print('User(id=%s email=%s)' % (u.id, u.email))
 
 
@@ -94,21 +98,23 @@ class AddUserRoleCommand(Command):
     """Add a role to a user"""
 
     def run(self):
-        deployments = Deployment.objects
+        deployments = Deployment.query.all()
         option = prompt_choices('Deployment', [
             (str(i), v) for i, v in enumerate(deployments, 1)])
         deployment = deployments[int(option) - 1]
         email = prompt('Email')
-        user = users.first(email=email, deployment=deployment)
+        user = users.query.filter_by(
+            email=email, deployment_id=deployment.id).one_or_none()
         role_name = prompt('Role')
-        role = Role.objects(name=role_name).first()
+        role = Role.query.filter_by(name=role_name).first()
         if not user:
             print('Invalid user')
             return
         if not role:
             print('Invalid role')
             return
-        user.update(add_to_set__roles=role)
+        user.roles.append(role)
+        user.save()
         print('Role added to User successfully')
 
 
@@ -116,7 +122,7 @@ class RemoveUserRoleCommand(Command):
     """Removes a role from a user"""
 
     def run(self):
-        deployments = Deployment.objects
+        deployments = Deployment.query.all()
         option = prompt_choices('Deployment', [
             (str(i), v) for i, v in enumerate(deployments, 1)])
         deployment = deployments[int(option) - 1]
@@ -138,12 +144,13 @@ class ListUserRolesCommand(Command):
     """List roles a user has"""
 
     def run(self):
-        deployments = Deployment.objects
+        deployments = Deployment.query.all()
         option = prompt_choices('Deployment', [
             (str(i), v) for i, v in enumerate(deployments, 1)])
         deployment = deployments[int(option) - 1]
         email = prompt('Email')
-        user = users.first(email=email, deployment=deployment)
+        user = users.query.filter_by(
+            email=email, deployment_id=deployment.id).one_or_none()
         if not user:
             print('Invalid user')
             return
@@ -155,7 +162,11 @@ class ListRolesCommand(Command):
     """List roles"""
 
     def run(self):
-        for role in Role.objects.all():
+        deployments = Deployment.query.all()
+        option = prompt_choices('Deployment', [
+            (str(i), v) for i, v in enumerate(deployments, 1)])
+        deployment = deployments[int(option) - 1]
+        for role in Role.query.filter_by(deployment_id=deployment.id).all():
             print('Role(name=%s)' % (role.name))
 
 
@@ -163,9 +174,13 @@ class AddRoleCommand(Command):
     """Add role"""
 
     def run(self):
+        deployments = Deployment.query.all()
+        option = prompt_choices('Deployment', [
+            (str(i), v) for i, v in enumerate(deployments, 1)])
+        deployment = deployments[int(option) - 1]
         role_name = prompt('Role name')
-        role = Role.objects(name=role_name).first()
+        role = Role.query.filter_by(name=role_name).first()
         if not role:
-            role = Role(name=role_name)
+            role = Role(name=role_name, deployment_id=deployment.id)
             role.save()
             return
