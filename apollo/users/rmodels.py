@@ -25,6 +25,9 @@ class Role(BaseModel, RoleMixin):
     def __str__(self):
         return self.name or ''
 
+    def get_by_name(self, name):
+        return Role.query.filter_by(name=name).one_or_none()
+
 
 class User(BaseModel, UserMixin):
     __tablename__ = 'user'
