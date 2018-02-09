@@ -77,6 +77,7 @@ class Event(Resource):
 
     id = db2.Column(
         db2.Integer, db2.Sequence('event_id_seq'), primary_key=True)
+    name = db2.Column(db2.String)
     start = db2.Column(db2.DateTime, default=_default_event_start)
     end = db2.Column(db2.DateTime, default=_default_event_end)
     deployment_id = db2.Column(db2.Integer, db2.ForeignKey('deployment.id'))
