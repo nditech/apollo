@@ -28,7 +28,7 @@ class EventService(Service):
         upper_bound = app_time_zone.localize(upper_bound).astimezone(pytz.utc)
 
         event = self.filter(
-            Event.start <= upper_bound, Event.start >= lower_bound
+            Event.start <= upper_bound, Event.end >= lower_bound
         ).order_by(Event.start.desc()).first()
 
         if event:
