@@ -14,10 +14,13 @@ roles_users = db2.Table(
 
 class Role(BaseModel, RoleMixin):
     __tablename__ = 'role'
+    __table_args__ = (
+        db2.UniqueConstraint('deployment_id', 'name'),
+    )
 
     id = db2.Column(db2.Integer, db2.Sequence('role_id_seq'), primary_key=True)
     deployment_id = db2.Column(db2.Integer, db2.ForeignKey('deployment.id'))
-    name = db2.Column(db2.String, unique=True)
+    name = db2.Column(db2.String)
     description = db2.Column(db2.String)
 
     deployment = db2.relationship('Deployment', backref='roles')
