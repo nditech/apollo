@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from apollo import models
 from apollo import rmodels
 from apollo import rservices
 from apollo import services
@@ -30,10 +29,13 @@ def get_event():
     """
     _id = session.get('event', None)
     if not _id:
-        _id = rservices.events.default()
+        event = rservices.events.default()
+        _id = event.id
         session['event'] = _id
+    else:
+        event = rservices.events.query.filter_by(id=_id).first()
 
-    return _id
+    return event
 
 
 def set_event(event):
