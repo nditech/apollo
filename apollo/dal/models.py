@@ -10,7 +10,7 @@ from uuid import uuid4
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy_utils import UUIDType
 
-from apollo.core import db2
+from apollo.core import db
 
 
 class CRUDMixin(object):
@@ -28,22 +28,22 @@ class CRUDMixin(object):
         return commit and self.save() or self
 
     def save(self, commit=True):
-        db2.session.add(self)
+        db.session.add(self)
         if commit:
-            db2.session.commit()
+            db.session.commit()
 
         return self
 
     def delete(self, commit=True):
-        db2.session.delete(self)
-        return commit and db2.session.commit()
+        db.session.delete(self)
+        return commit and db.session.commit()
 
 
-class BaseModel(CRUDMixin, db2.Model):
+class BaseModel(CRUDMixin, db.Model):
     '''Base model class'''
     __abstract__ = True
 
-    uuid = db2.Column(UUIDType, default=uuid4)
+    uuid = db.Column(UUIDType, default=uuid4)
 
 
 class ResourceMixin(object):
@@ -60,28 +60,28 @@ class ResourceMixin(object):
 
     @declared_attr
     def resource_id(self):
-        return db2.Column(
-            db2.Integer, autoincrement=True, nullable=False, primary_key=True)
+        return db.Column(
+            db.Integer, autoincrement=True, nullable=False, primary_key=True)
 
     @declared_attr
     def resource_type(self):
-        return db2.Column(db2.String, nullable=False)
+        return db.Column(db.String, nullable=False)
 
     @declared_attr
     def role_permissions(self):
-        return db2.relationship('RoleResourcePermission')
+        return db.relationship('RoleResourcePermission')
 
     @declared_attr
     def user_permissions(self):
-        return db2.relationship('UserResourcePermission')
+        return db.relationship('UserResourcePermission')
 
     @declared_attr
     def roles(self):
-        return db2.relationship('Role', secondary='role_resource_permission')
+        return db.relationship('Role', secondary='role_resource_permission')
 
     @declared_attr
     def users(self):
-        return db2.relationship('User', secondary='user_resource_permission')
+        return db.relationship('User', secondary='user_resource_permission')
 
     __mapper_args__ = {'polymorphic_on': resource_type}
 

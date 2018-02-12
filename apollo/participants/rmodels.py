@@ -3,23 +3,23 @@ from flask_babelex import lazy_gettext as _
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy_utils import ChoiceType
 
-from apollo.core import db2
+from apollo.core import db
 from apollo.dal.models import BaseModel
 
 
 class ParticipantRole(BaseModel):
     __tablename__ = 'participant_role'
 
-    id = db2.Column(
-        db2.Integer, db2.Sequence('participant_role_id_seq'), primary_key=True)
-    name = db2.Column(db2.String)
-    deployment_id = db2.Column(db2.Integer, db2.ForeignKey('deployment.id'))
-    participant_set_id = db2.Column(
-        db2.Integer, db2.ForeignKey('participant_set.id'))
+    id = db.Column(
+        db.Integer, db.Sequence('participant_role_id_seq'), primary_key=True)
+    name = db.Column(db.String)
+    deployment_id = db.Column(db.Integer, db.ForeignKey('deployment.id'))
+    participant_set_id = db.Column(
+        db.Integer, db.ForeignKey('participant_set.id'))
 
-    deployment = db2.relationship(
+    deployment = db.relationship(
         'Deployment', backref='participant_roles')
-    participant_set = db2.relationship(
+    participant_set = db.relationship(
         'ParticipantSet', backref='participant_roles')
 
     def __str__(self):
@@ -29,17 +29,17 @@ class ParticipantRole(BaseModel):
 class ParticipantPartner(BaseModel):
     __tablename__ = 'participant_partner'
 
-    id = db2.Column(
-        db2.Integer, db2.Sequence('participant_partner_id_seq'),
+    id = db.Column(
+        db.Integer, db.Sequence('participant_partner_id_seq'),
         primary_key=True)
-    name = db2.Column(db2.String)
-    deployment_id = db2.Column(db2.Integer, db2.ForeignKey('deployment.id'))
-    participant_set_id = db2.Column(
-        db2.Integer, db2.ForeignKey('participant_set.id'))
+    name = db.Column(db.String)
+    deployment_id = db.Column(db.Integer, db.ForeignKey('deployment.id'))
+    participant_set_id = db.Column(
+        db.Integer, db.ForeignKey('participant_set.id'))
 
-    deployment = db2.relationship(
+    deployment = db.relationship(
         'Deployment', backref='participant_partners')
-    participant_set = db2.relationship(
+    participant_set = db.relationship(
         'ParticipantSet', backref='participant_partners')
 
     def __str__(self):
@@ -49,17 +49,17 @@ class ParticipantPartner(BaseModel):
 class ParticipantGroupType(BaseModel):
     __tablename__ = 'participant_group_type'
 
-    id = db2.Column(
-        db2.Integer, db2.Sequence('participant_group_type_id_seq'),
+    id = db.Column(
+        db.Integer, db.Sequence('participant_group_type_id_seq'),
         primary_key=True)
-    name = db2.Column(db2.String)
-    deployment_id = db2.Column(db2.Integer, db2.ForeignKey('deployment.id'))
-    participant_set_id = db2.Column(
-        db2.Integer, db2.ForeignKey('participant_set.id'))
+    name = db.Column(db.String)
+    deployment_id = db.Column(db.Integer, db.ForeignKey('deployment.id'))
+    participant_set_id = db.Column(
+        db.Integer, db.ForeignKey('participant_set.id'))
 
-    deployment = db2.relationship(
+    deployment = db.relationship(
         'Deployment', backref='participant_group_types')
-    participant_set = db2.relationship(
+    participant_set = db.relationship(
         'ParticipantSet', backref='participant_group_types')
 
     def __str__(self):
@@ -69,17 +69,17 @@ class ParticipantGroupType(BaseModel):
 class ParticipantGroup(BaseModel):
     __tablename__ = 'participant_group'
 
-    id = db2.Column(
-        db2.Integer, db2.Sequence('participant_group_id_seq'),
+    id = db.Column(
+        db.Integer, db.Sequence('participant_group_id_seq'),
         primary_key=True)
-    name = db2.Column(db2.String)
-    deployment_id = db2.Column(db2.Integer, db2.ForeignKey('deployment.id'))
-    group_type_id = db2.Column(
-        db2.Integer, db2.ForeignKey('participant_group_type.id'))
+    name = db.Column(db.String)
+    deployment_id = db.Column(db.Integer, db.ForeignKey('deployment.id'))
+    group_type_id = db.Column(
+        db.Integer, db.ForeignKey('participant_group_type.id'))
 
-    deployment = db2.relationship(
+    deployment = db.relationship(
         'Deployment', backref='participant_groups')
-    group_type = db2.relationship(
+    group_type = db.relationship(
         'ParticipantGroupType', backref='participant_groups')
 
     def __str__(self):
@@ -103,29 +103,29 @@ class Participant(BaseModel):
     )
 
     __tablename__ = 'participant'
-    id = db2.Column(
-        db2.Integer, db2.Sequence('participant_id_seq'), primary_key=True)
-    name = db2.Column(db2.String)
-    role_id = db2.Column(
-        db2.Integer, db2.ForeignKey('participant_role.id'))
-    partner_id = db2.Column(
-        db2.Integer, db2.ForeignKey('participant_partner.id'))
-    supervisor_id = db2.Column(
-        db2.Integer, db2.ForeignKey('participant.id'))
-    gender = db2.Column(ChoiceType(GENDER), default=0)
-    email = db2.Column(db2.String)
-    deployment_id = db2.Column(db2.Integer, db2.ForeignKey('deployment.id'))
-    participant_set_id = db2.Column(
-        db2.Integer, db2.ForeignKey('participant_set.id'))
-    message_count = db2.Column(db2.Integer, default=0)
-    accurate_message_count = db2.Column(db2.Integer, default=0)
-    completion_rating = db2.Column(db2.Float, default=1)
-    device_id = db2.Column(db2.String)
-    password = db2.Column(db2.String)
-    phones = db2.Column(JSONB)
+    id = db.Column(
+        db.Integer, db.Sequence('participant_id_seq'), primary_key=True)
+    name = db.Column(db.String)
+    role_id = db.Column(
+        db.Integer, db.ForeignKey('participant_role.id'))
+    partner_id = db.Column(
+        db.Integer, db.ForeignKey('participant_partner.id'))
+    supervisor_id = db.Column(
+        db.Integer, db.ForeignKey('participant.id'))
+    gender = db.Column(ChoiceType(GENDER), default=0)
+    email = db.Column(db.String)
+    deployment_id = db.Column(db.Integer, db.ForeignKey('deployment.id'))
+    participant_set_id = db.Column(
+        db.Integer, db.ForeignKey('participant_set.id'))
+    message_count = db.Column(db.Integer, default=0)
+    accurate_message_count = db.Column(db.Integer, default=0)
+    completion_rating = db.Column(db.Float, default=1)
+    device_id = db.Column(db.String)
+    password = db.Column(db.String)
+    phones = db.Column(JSONB)
 
-    deployment = db2.relationship('Deployment', backref='participants')
-    participant_set = db2.relationship(
+    deployment = db.relationship('Deployment', backref='participants')
+    participant_set = db.relationship(
         'ParticipantSet', backref='participants')
 
     def __str__(self):

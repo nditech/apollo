@@ -1,29 +1,31 @@
 # -*- coding: utf-8 -*-
 from flask_security import RoleMixin, UserMixin
 
-from apollo.core import db2
+from apollo.core import db
 from apollo.dal.models import BaseModel
 from apollo.utils import current_timestamp
 
 
-roles_users = db2.Table(
+roles_users = db.Table(
     'roles_users',
-    db2.Column('user_id', db2.Integer, db2.ForeignKey('user.id')),
-    db2.Column('role_id', db2.Integer, db2.ForeignKey('role.id')))
+    db.Column('user_id', db.Integer, db.ForeignKey('user.id'),
+              primary_key=True),
+    db.Column('role_id', db.Integer, db.ForeignKey('role.id'),
+              primary_key=True))
 
 
 class Role(BaseModel, RoleMixin):
     __tablename__ = 'role'
     __table_args__ = (
-        db2.UniqueConstraint('deployment_id', 'name'),
+        db.UniqueConstraint('deployment_id', 'name'),
     )
 
-    id = db2.Column(db2.Integer, db2.Sequence('role_id_seq'), primary_key=True)
-    deployment_id = db2.Column(db2.Integer, db2.ForeignKey('deployment.id'))
-    name = db2.Column(db2.String)
-    description = db2.Column(db2.String)
+    id = db.Column(db.Integer, db.Sequence('role_id_seq'), primary_key=True)
+    deployment_id = db.Column(db.Integer, db.ForeignKey('deployment.id'))
+    name = db.Column(db.String)
+    description = db.Column(db.String)
 
-    deployment = db2.relationship('Deployment', backref='roles')
+    deployment = db.relationship('Deployment', backref='roles')
 
     def __str__(self):
         return self.name or ''
@@ -34,21 +36,21 @@ class Role(BaseModel, RoleMixin):
 
 class User(BaseModel, UserMixin):
     __tablename__ = 'user'
-    id = db2.Column(db2.Integer, db2.Sequence('user_id_seq'), primary_key=True)
-    deployment_id = db2.Column(db2.Integer, db2.ForeignKey('deployment.id'))
-    email = db2.Column(db2.String)
-    username = db2.Column(db2.String)
-    password = db2.Column(db2.String)
-    active = db2.Column(db2.Boolean, default=True)
-    confirmed_at = db2.Column(db2.DateTime)
-    current_login_at = db2.Column(db2.DateTime)
-    last_login_at = db2.Column(db2.DateTime)
-    current_login_ip = db2.Column(db2.String)
-    last_login_ip = db2.Column(db2.String)
-    login_count = db2.Column(db2.Integer)
+    id = db.Column(db.Integer, db.Sequence('user_id_seq'), primary_key=True)
+    deployment_id = db.Column(db.Integer, db.ForeignKey('deployment.id'))
+    email = db.Column(db.String)
+    username = db.Column(db.String)
+    password = db.Column(db.String)
+    active = db.Column(db.Boolean, default=True)
+    confirmed_at = db.Column(db.DateTime)
+    current_login_at = db.Column(db.DateTime)
+    last_login_at = db.Column(db.DateTime)
+    current_login_ip = db.Column(db.String)
+    last_login_ip = db.Column(db.String)
+    login_count = db.Column(db.Integer)
 
-    deployment = db2.relationship('Deployment', backref='users')
-    roles = db2.relationship(
+    deployment = db.relationship('Deployment', backref='users')
+    roles = db.relationship(
         'Role', backref='users', secondary=roles_users)
 
     def is_admin(self):
@@ -61,55 +63,55 @@ class User(BaseModel, UserMixin):
 class RolePermission(BaseModel):
     __tablename__ = 'role_permission'
 
-    role_id = db2.Column(
-        db2.Integer, db2.ForeignKey('role.id'), nullable=False,
+    role_id = db.Column(
+        db.Integer, db.ForeignKey('role.id'), nullable=False,
         primary_key=True)
-    perm_name = db2.Column(db2.String, primary_key=True)
-    deployment_id = db2.Column(db2.Integer, db2.ForeignKey('deployment.id'))
-    description = db2.Column(db2.String)
+    perm_name = db.Column(db.String, primary_key=True)
+    deployment_id = db.Column(db.Integer, db.ForeignKey('deployment.id'))
+    description = db.Column(db.String)
 
 
 class UserPermission(BaseModel):
     __tablename__ = 'user_permission'
 
-    user_id = db2.Column(
-        db2.Integer, db2.ForeignKey('user.id'), nullable=False,
+    user_id = db.Column(
+        db.Integer, db.ForeignKey('user.id'), nullable=False,
         primary_key=True)
-    perm_name = db2.Column(db2.String, primary_key=True)
-    deployment_id = db2.Column(db2.Integer, db2.ForeignKey('deployment.id'))
-    description = db2.Column(db2.String)
+    perm_name = db.Column(db.String, primary_key=True)
+    deployment_id = db.Column(db.Integer, db.ForeignKey('deployment.id'))
+    description = db.Column(db.String)
 
 
 class RoleResourcePermission(BaseModel):
     __tablename__ = 'role_resource_permission'
 
-    role_id = db2.Column(
-        db2.Integer, db2.ForeignKey('role.id'), primary_key=True)
-    resource_id = db2.Column(
-        db2.Integer, db2.ForeignKey('resource.resource_id'), primary_key=True)
-    perm_name = db2.Column(db2.String, primary_key=True)
-    deployment_id = db2.Column(db2.Integer, db2.ForeignKey('deployment.id'))
-    description = db2.Column(db2.String)
+    role_id = db.Column(
+        db.Integer, db.ForeignKey('role.id'), primary_key=True)
+    resource_id = db.Column(
+        db.Integer, db.ForeignKey('resource.resource_id'), primary_key=True)
+    perm_name = db.Column(db.String, primary_key=True)
+    deployment_id = db.Column(db.Integer, db.ForeignKey('deployment.id'))
+    description = db.Column(db.String)
 
 
 class UserResourcePermission(BaseModel):
     __tablename__ = 'user_resource_permission'
 
-    user_id = db2.Column(
-        db2.Integer, db2.ForeignKey('user.id'), primary_key=True)
-    resource_id = db2.Column(
-        db2.Integer, db2.ForeignKey('resource.resource_id'), primary_key=True)
-    perm_name = db2.Column(db2.String, primary_key=True)
-    deployment_id = db2.Column(db2.Integer, db2.ForeignKey('deployment.id'))
-    description = db2.Column(db2.String)
+    user_id = db.Column(
+        db.Integer, db.ForeignKey('user.id'), primary_key=True)
+    resource_id = db.Column(
+        db.Integer, db.ForeignKey('resource.resource_id'), primary_key=True)
+    perm_name = db.Column(db.String, primary_key=True)
+    deployment_id = db.Column(db.Integer, db.ForeignKey('deployment.id'))
+    description = db.Column(db.String)
 
 
 class UserUpload(BaseModel):
     __tablename__ = 'user_upload'
 
-    id = db2.Column(
-        db2.Integer, db2.Sequence('user_upload_id_seq'), primary_key=True)
-    user_id = db2.Column(
-        db2.Integer, db2.ForeignKey('user.id'), nullable=False)
-    created = db2.Column(db2.DateTime, default=current_timestamp)
-    upload_filename = db2.Column(db2.String)
+    id = db.Column(
+        db.Integer, db.Sequence('user_upload_id_seq'), primary_key=True)
+    user_id = db.Column(
+        db.Integer, db.ForeignKey('user.id'), nullable=False)
+    created = db.Column(db.DateTime, default=current_timestamp)
+    upload_filename = db.Column(db.String)

@@ -5,7 +5,7 @@ from lxml.builder import E, ElementMaker
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy_utils import ChoiceType
 
-from apollo.core import db2
+from apollo.core import db
 from apollo.dal.models import Resource
 
 NSMAP = {
@@ -31,29 +31,29 @@ class Form(Resource):
     __mapper_args__ = {'polymorphic_identity': 'form'}
     __tablename__ = 'form'
 
-    id = db2.Column(
-        db2.Integer, db2.Sequence('form_id_seq'), primary_key=True)
-    name = db2.Column(db2.String, nullable=False)
-    prefix = db2.Column(db2.String)
-    form_type = db2.Column(ChoiceType(FORM_TYPES))
-    require_exclamation = db2.Column(db2.Boolean, default=True)
-    data = db2.Column(JSONB)
-    version_identifier = db2.Column(db2.String)
-    deployment_id = db2.Column(db2.Integer, db2.ForeignKey('deployment.id'))
-    form_set_id = db2.Column(db2.Integer, db2.ForeignKey('form_set.id'))
-    resource_id = db2.Column(
-        db2.Integer, db2.ForeignKey('resource.resource_id'))
-    quality_checks = db2.Column(JSONB)
-    party_mappings = db2.Column(JSONB)
-    calculate_moe = db2.Column(db2.Boolean)
-    accreditated_voters_tag = db2.Column(db2.String)
-    quality_checks_enabled = db2.Column(db2.Boolean, default=False)
-    invalid_votes_tag = db2.Column(db2.String)
-    registered_votes_tag = db2.Column(db2.String)
-    blank_votes_tag = db2.Column(db2.String)
+    id = db.Column(
+        db.Integer, db.Sequence('form_id_seq'), primary_key=True)
+    name = db.Column(db.String, nullable=False)
+    prefix = db.Column(db.String)
+    form_type = db.Column(ChoiceType(FORM_TYPES))
+    require_exclamation = db.Column(db.Boolean, default=True)
+    data = db.Column(JSONB)
+    version_identifier = db.Column(db.String)
+    deployment_id = db.Column(db.Integer, db.ForeignKey('deployment.id'))
+    form_set_id = db.Column(db.Integer, db.ForeignKey('form_set.id'))
+    resource_id = db.Column(
+        db.Integer, db.ForeignKey('resource.resource_id'))
+    quality_checks = db.Column(JSONB)
+    party_mappings = db.Column(JSONB)
+    calculate_moe = db.Column(db.Boolean)
+    accreditated_voters_tag = db.Column(db.String)
+    quality_checks_enabled = db.Column(db.Boolean, default=False)
+    invalid_votes_tag = db.Column(db.String)
+    registered_votes_tag = db.Column(db.String)
+    blank_votes_tag = db.Column(db.String)
 
-    deployment = db2.relationship('Deployment', backref='forms')
-    form_set = db2.relationship('FormSet', backref='forms')
+    deployment = db.relationship('Deployment', backref='forms')
+    form_set = db.relationship('FormSet', backref='forms')
 
     def _populate_field_cache(self):
         self._field_cache = {
