@@ -51,6 +51,12 @@ class User(BaseModel, UserMixin):
     roles = db2.relationship(
         'Role', backref='users', secondary=roles_users)
 
+    def is_admin(self):
+        role = Role.query.join(Role.users).filter(
+            Role.deployment == self.deployment, Role.name == 'admin',
+            Role.users.contains(self)).first()
+        return bool(role)
+
 
 class RolePermission(BaseModel):
     __tablename__ = 'role_permission'
@@ -59,6 +65,7 @@ class RolePermission(BaseModel):
         db2.Integer, db2.ForeignKey('role.id'), nullable=False,
         primary_key=True)
     perm_name = db2.Column(db2.String, primary_key=True)
+    deployment_id = db2.Column(db2.Integer, db2.ForeignKey('deployment.id'))
     description = db2.Column(db2.String)
 
 
@@ -69,6 +76,7 @@ class UserPermission(BaseModel):
         db2.Integer, db2.ForeignKey('user.id'), nullable=False,
         primary_key=True)
     perm_name = db2.Column(db2.String, primary_key=True)
+    deployment_id = db2.Column(db2.Integer, db2.ForeignKey('deployment.id'))
     description = db2.Column(db2.String)
 
 
@@ -80,6 +88,7 @@ class RoleResourcePermission(BaseModel):
     resource_id = db2.Column(
         db2.Integer, db2.ForeignKey('resource.resource_id'), primary_key=True)
     perm_name = db2.Column(db2.String, primary_key=True)
+    deployment_id = db2.Column(db2.Integer, db2.ForeignKey('deployment.id'))
     description = db2.Column(db2.String)
 
 
@@ -91,6 +100,7 @@ class UserResourcePermission(BaseModel):
     resource_id = db2.Column(
         db2.Integer, db2.ForeignKey('resource.resource_id'), primary_key=True)
     perm_name = db2.Column(db2.String, primary_key=True)
+    deployment_id = db2.Column(db2.Integer, db2.ForeignKey('deployment.id'))
     description = db2.Column(db2.String)
 
 

@@ -2,6 +2,7 @@
 from flask import g, render_template, session, request, redirect, url_for
 from flask_admin import AdminIndexView
 from flask_login import user_logged_out
+from flask_migrate import upgrade
 from flask_principal import identity_loaded
 from flask_security import SQLAlchemyUserDatastore, current_user
 from whitenoise import WhiteNoise
@@ -67,11 +68,8 @@ def create_app(settings_override=None, register_security_blueprint=True):
             app.errorhandler(e)(handle_error)
 
     @app.before_first_request
-    def create_user_roles():
-        userdatastore.find_or_create_role('clerk')
-        userdatastore.find_or_create_role('manager')
-        userdatastore.find_or_create_role('analyst')
-        userdatastore.find_or_create_role('admin')
+    def upgrade_database_schema():
+        upgrade()
 
     # register deployment selection middleware
     app.before_request(set_request_presets)
