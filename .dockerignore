@@ -11,6 +11,7 @@
 **/*.pyc
 apollo-*.tar.gz
 bin/
+gunicorn.pid
 include/
 lib/
 man/
