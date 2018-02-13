@@ -89,10 +89,12 @@
                 {% endif %}
               {% endfor -%}
               {%- endif %}
-              {%- if perms.role('admin').can() %}
+              #}
+              {%- if current_user.is_admin() %}
                 <li class="divider"></li>
                 <li><a href="{{ url_for('deployment.index_view') }}"><i class="glyphicon glyphicon-user"></i> {{ _('Admin') }}</a></li>
               {%- endif %}
+              {#
               {%- if current_menu.submenu('user.locations_builder').visible or current_menu.submenu('user.locations_list').visible or current_menu.submenu('user.forms').visible %}
                 <li class="divider"></li>
               {%- endif %}
