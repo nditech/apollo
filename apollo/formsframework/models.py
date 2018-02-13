@@ -34,13 +34,14 @@ class Form(Resource):
     id = db.Column(
         db.Integer, db.Sequence('form_id_seq'), primary_key=True)
     name = db.Column(db.String, nullable=False)
-    prefix = db.Column(db.String)
-    form_type = db.Column(ChoiceType(FORM_TYPES))
+    prefix = db.Column(db.String, nullable=False)
+    form_type = db.Column(ChoiceType(FORM_TYPES), nullable=False)
     require_exclamation = db.Column(db.Boolean, default=True)
     data = db.Column(JSONB)
     version_identifier = db.Column(db.String)
     deployment_id = db.Column(db.Integer, db.ForeignKey('deployment.id'))
-    form_set_id = db.Column(db.Integer, db.ForeignKey('form_set.id'))
+    form_set_id = db.Column(
+        db.Integer, db.ForeignKey('form_set.id'), nullable=False)
     resource_id = db.Column(
         db.Integer, db.ForeignKey('resource.resource_id'))
     quality_checks = db.Column(JSONB)
@@ -136,3 +137,21 @@ class Form(Resource):
         root.append(body)
 
         return root
+
+
+class FormBuilderSerializer(object):
+    @classmethod
+    def serialize_field(cls, field):
+        pass
+
+    @classmethod
+    def serialize_group(cls, group):
+        pass
+
+    @classmethod
+    def serialize(cls, form):
+        pass
+
+    @classmethod
+    def deserialize(cls, form, data):
+        pass
