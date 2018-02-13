@@ -146,3 +146,6 @@ TRANSLITERATE_OUTPUT = config(
 # SQLAlchemy settings
 SQLALCHEMY_DATABASE_URI = config('DATABASE_URL', default='sqlite:///:memory:')
 SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+# FDT settings
+DEBUG_TB_INTERCEPT_REDIRECTS = False
