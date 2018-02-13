@@ -15,8 +15,8 @@ from jinja2 import contextfunction
 import magic
 import pytz
 from wtforms import FileField, PasswordField, SelectMultipleField
-from apollo.core import admin, db2
-from apollo import models, rmodels, settings
+from apollo.core import admin, db
+from apollo import models, models, settings
 from apollo.frontend import forms
 
 
@@ -48,7 +48,7 @@ class BaseAdminView(ModelView):
             return False
 
         deployment = current_user.deployment
-        role = rmodels.Role.query.filter_by(
+        role = models.Role.query.filter_by(
             deployment_id=deployment.id, name='admin').first()
         return current_user.has_role(role)
 
@@ -72,7 +72,7 @@ class DeploymentAdminView(BaseAdminView):
                     'allow_observer_submission_edit']
 
     def get_query(self):
-        return rmodels.Deployment.query.filter_by(
+        return models.Deployment.query.filter_by(
             id=current_user.deployment.id)
 
 
@@ -136,7 +136,7 @@ class EventAdminView(BaseAdminView):
     def get_query(self):
         '''Returns the queryset of the objects to list.'''
         user = current_user._get_current_object()
-        return rmodels.Event.query.filter_by(deployment_id=user.deployment.id)
+        return models.Event.query.filter_by(deployment_id=user.deployment.id)
 
     def on_model_change(self, form, model, is_created):
         # if we're creating a new event, make sure to set the
@@ -190,7 +190,7 @@ class UserAdminView(BaseAdminView):
 
     def get_query(self):
         user = current_user._get_current_object()
-        return rmodels.User.query.filter_by(deployment=user.deployment)
+        return models.User.query.filter_by(deployment=user.deployment)
 
     def on_model_change(self, form, model, is_created):
         if form.password2.data:
@@ -202,8 +202,8 @@ class UserAdminView(BaseAdminView):
         form = super().create_form(obj)
 
         deployment = current_user.deployment
-        role_choices = rmodels.Role.query.with_entities(
-            rmodels.Role.id, rmodels.Role.name).filter_by(
+        role_choices = models.Role.query.with_entities(
+            models.Role.id, models.Role.name).filter_by(
                 deployment_id=deployment.id).all()
 
         form.roles.choices = role_choices
@@ -214,8 +214,8 @@ class UserAdminView(BaseAdminView):
         form = super().edit_form(obj)
 
         deployment = current_user.deployment
-        role_choices = rmodels.Role.query.with_entities(
-            rmodels.Role.id, rmodels.Role.name).filter_by(
+        role_choices = models.Role.query.with_entities(
+            models.Role.id, models.Role.name).filter_by(
                 deployment_id=deployment.id).all()
 
         form.roles.choices = role_choices
@@ -232,14 +232,14 @@ class UserAdminView(BaseAdminView):
 
     @action('disable', _('Disable'), _('Are you sure you want to disable selected users?'))
     def action_disable(self, ids):
-        for role in rmodels.User.query.filter(rmodels.User.id.in_(ids)):
+        for role in models.User.query.filter(models.User.id.in_(ids)):
             role.active = False
             role.save()
         flash(string_type(_('User(s) successfully disabled.')))
 
     @action('enable', _('Enable'), _('Are you sure you want to enable selected users?'))
     def action_enable(self, ids):
-        for role in rmodels.User.query.filter(rmodels.User.id.in_(ids)):
+        for role in models.User.query.filter(models.User.id.in_(ids)):
             role.active = True
             role.save()
         flash(string_type(_('User(s) successfully enabled.')))
@@ -252,7 +252,7 @@ class RoleAdminView(BaseAdminView):
 
     def get_one(self, pk):
         deployment = current_user.deployment
-        return rmodels.Role.query.filter_by(
+        return models.Role.query.filter_by(
             deployment_id=deployment.id, id=pk).first_or_404()
 
 #     def get_one(self, pk):
@@ -285,7 +285,7 @@ class RoleAdminView(BaseAdminView):
 #         return form_class
 
 
-admin.add_view(DeploymentAdminView(rmodels.Deployment, db2.session))
-admin.add_view(EventAdminView(rmodels.Event, db2.session))
-admin.add_view(UserAdminView(rmodels.User, db2.session))
-admin.add_view(RoleAdminView(rmodels.Role, db2.session))
+admin.add_view(DeploymentAdminView(models.Deployment, db.session))
+admin.add_view(EventAdminView(models.Event, db.session))
+admin.add_view(UserAdminView(models.User, db.session))
+admin.add_view(RoleAdminView(models.Role, db.session))

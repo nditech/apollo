@@ -34,7 +34,7 @@ def create_app(
     cache.init_app(app)
     db.init_app(app)
     db2.init_app(app)
-    migrate.init_app(app, db2)
+    migrate.init_app(app, db)
     mail.init_app(app)
 
     if app.config.get('SSL_REQUIRED'):

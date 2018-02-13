@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from apollo.dal.service import Service
-from apollo.locations.rmodels import Location, LocationType, Sample
+from apollo.locations.models import Location, LocationType, Sample
 
 
 class LocationService(Service):

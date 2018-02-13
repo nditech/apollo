@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from apollo.dal.service import Service
-from apollo.participants.rmodels import (
+from apollo.participants.models import (
     Participant, ParticipantGroup, ParticipantGroupType, ParticipantPartner)
 
 

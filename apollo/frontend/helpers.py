@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
-from apollo import rmodels
-from apollo import rservices
+from apollo import models
 from apollo import services
-from flask import session, request, abort, g, url_for
+from flask import session, request, g, url_for
 from flask_babelex import get_locale
 from flask_login import current_user
 from flask_mongoengine import MongoEngineSessionInterface
@@ -19,7 +18,7 @@ def get_deployment(hostname):
 
     :param hostname: The hostname
     """
-    return rmodels.Deployment.find_by_hostname(hostname)
+    return models.Deployment.find_by_hostname(hostname)
 
 
 def get_event():
@@ -29,11 +28,11 @@ def get_event():
     """
     _id = session.get('event', None)
     if not _id:
-        event = rservices.events.default()
+        event = services.events.default()
         _id = event.id
         session['event'] = _id
     else:
-        event = rservices.events.query.filter_by(id=_id).first()
+        event = services.events.query.filter_by(id=_id).first()
 
     return event
 

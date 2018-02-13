@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from apollo.dal.service import Service
-from apollo.submissions.rmodels import (
+from apollo.submissions.models import (
     Submission, SubmissionComment, SubmissionVersion)
 
 

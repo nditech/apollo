@@ -6,7 +6,7 @@ from sqlalchemy import and_, or_
 
 from apollo import settings
 from apollo.dal.service import Service
-from apollo.deployments.rmodels import (
+from apollo.deployments.models import (
     Event, FormSet, LocationSet, ParticipantSet)
 from apollo.utils import current_timestamp
 

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from apollo.dal.service import Service
-from apollo.messaging.rmodels import Message
+from apollo.messaging.models import Message
 
 
 class MessageService(Service):

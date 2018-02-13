@@ -4,7 +4,7 @@ from flask_script import Command, prompt, prompt_choices
 import pytz
 from sqlalchemy.dialects.postgresql import array
 
-from apollo import rmodels, settings
+from apollo import models, settings
 
 
 class CreateDeploymentCommand(Command):
@@ -15,19 +15,19 @@ class CreateDeploymentCommand(Command):
         name = prompt('Name')
         hostname = prompt('Hostname')
 
-        deployment = rmodels.Deployment.query.filter_by(
+        deployment = models.Deployment.query.filter_by(
             name=name).one_or_none()
 
         if not deployment:
-            deployment = rmodels.Deployment(
+            deployment = models.Deployment(
                 name=name, hostnames=array([hostname.strip()]))
             deployment.save()
 
             # create roles
-            admin = rmodels.Role(name='admin')
-            analyst = rmodels.Role(name='analyst')
-            clerk = rmodels.Role(name='clerk')
-            manager = rmodels.Role(name='manager')
+            admin = models.Role(name='admin')
+            analyst = models.Role(name='analyst')
+            clerk = models.Role(name='clerk')
+            manager = models.Role(name='manager')
 
             admin.deployment_id = deployment.id
             analyst.deployment_id = deployment.id
@@ -47,8 +47,8 @@ class ListDeploymentsCommand(Command):
     def run(self):
         print('Name\t+\tHostnames')
         print('-----\t+\t-----')
-        for name, hostnames in rmodels.Deployment.query.with_entities(
-                rmodels.Deployment.name, rmodels.Deployment.hostnames):
+        for name, hostnames in models.Deployment.query.with_entities(
+                models.Deployment.name, models.Deployment.hostnames):
             print(f'{name}\t+\t{hostnames}')
 
 
@@ -57,7 +57,7 @@ class CreateEventCommand(Command):
     """Create an event"""
 
     def run(self):
-        deployments = rmodels.Deployment.query.all()
+        deployments = models.Deployment.query.all()
         option = prompt_choices('Deployment', [
             (str(i), v) for i, v in enumerate(deployments, 1)])
         deployment = deployments[int(option) - 1]
@@ -96,7 +96,7 @@ class CreateEventCommand(Command):
         end_utc = app_timezone.localize(end).astimezone(
             pytz.UTC)
 
-        event = rmodels.Event(
+        event = models.Event(
             name=name,
             deployment_id=deployment.id)
         event.start = start_utc
@@ -111,11 +111,11 @@ class ListEventsCommand(Command):
     def run(self):
         print('Event name\t+\tStart\t+\tEnd')
         print('-----\t+\t-----\t+\t-----')
-        deployments = rmodels.Deployment.query.all()
+        deployments = models.Deployment.query.all()
         option = prompt_choices('Deployment', [
             (str(i), v) for i, v in enumerate(deployments, 1)])
         deployment = deployments[int(option) - 1]
-        events = rmodels.Event.query.filter_by(deployment_id=deployment.id)
+        events = models.Event.query.filter_by(deployment_id=deployment.id)
         for event in events:
             print(f'{event.name}\t+\t{event.start}\t+\t{event.end}')
 

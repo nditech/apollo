@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 from apollo.dal.service import Service
-from apollo.users import rmodels
+from apollo.users import models
 
 
 class UserService(Service):
-    __model__ = rmodels.User
+    __model__ = models.User
 
     def get_permissions_cache(self, instance):
         if not self._isinstance(instance):
@@ -22,14 +22,14 @@ class UserService(Service):
 
         perm_cache = {}
         # load up role permissions
-        role_perms = rmodels.RolePermission.query.with_entities(
-            rmodels.RolePermission.perm_name).join(rmodels.Role.users).filter(
-            rmodels.Role.users.contains(instance),
-            rmodels.RolePermission.deployment == deployment).all()
+        role_perms = models.RolePermission.query.with_entities(
+            models.RolePermission.perm_name).join(models.Role.users).filter(
+            models.Role.users.contains(instance),
+            models.RolePermission.deployment == deployment).all()
 
         # load up user perms
-        user_perms = rmodels.UserPermission.query.with_entities(
-            rmodels.UserResourcePermission.perm_name).filter_by(
+        user_perms = models.UserPermission.query.with_entities(
+            models.UserResourcePermission.perm_name).filter_by(
                 user_id=instance.id, deployment_id=deployment.id).all()
 
         perm_cache['role_perms'] = role_perms
@@ -39,4 +39,4 @@ class UserService(Service):
 
 
 class UserUploadService(Service):
-    __model__ = rmodels.UserUpload
+    __model__ = models.UserUpload

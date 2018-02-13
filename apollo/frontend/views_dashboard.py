@@ -4,7 +4,7 @@ from apollo.frontend import route
 from apollo.frontend.dashboard import get_coverage
 from apollo.deployments.forms import generate_event_selection_form
 from apollo.models import LocationType
-from apollo.rservices import (
+from apollo.services import (
     events, forms, submissions, locations, location_types)
 from apollo.frontend.filters import dashboard_filterset
 from apollo.frontend.helpers import (

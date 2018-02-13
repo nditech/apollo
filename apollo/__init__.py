@@ -6,10 +6,10 @@ from flask_migrate import upgrade
 from flask_principal import identity_loaded
 from flask_security import SQLAlchemyUserDatastore, current_user
 from whitenoise import WhiteNoise
-from apollo import assets, models, rmodels
+from apollo import assets, models
 
 from apollo.frontend import permissions, template_filters
-from apollo.core import admin, db2, menu, security, gravatar, csrf
+from apollo.core import admin, db, menu, security, gravatar, csrf
 from .frontend.helpers import set_request_presets
 from .security_ext_forms import DeploymentLoginForm
 
@@ -29,13 +29,7 @@ custom_filters = {
 def init_admin(admin, app):
     class AdminIndex(AdminIndexView):
         def is_accessible(self):
-            try:
-                role = models.Role.objects.get(name='admin')
-            except models.Role.DoesNotExist:
-                return False
-            return (
-                current_user.is_authenticated() and current_user.has_role(role)
-            )
+            return current_user.is_admin()
 
     admin.init_app(app)
     admin.index_view = AdminIndex()
@@ -53,7 +47,7 @@ def create_app(settings_override=None, register_security_blueprint=True):
     menu.init_app(app)
     gravatar.init_app(app)
 
-    userdatastore = SQLAlchemyUserDatastore(db2, rmodels.User, rmodels.Role)
+    userdatastore = SQLAlchemyUserDatastore(db, models.User, models.Role)
 
     security.init_app(app, userdatastore,
                       login_form=DeploymentLoginForm,
