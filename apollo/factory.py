@@ -6,7 +6,8 @@ from flask_sslify import SSLify
 from raven.base import Client
 from raven.contrib.celery import register_signal, register_logger_signal
 
-from apollo.core import babel, cache, db, db2, mail, migrate, sentry
+from apollo.core import (
+    babel, cache, db, db2, fdt_available, debug_toolbar, mail, migrate, sentry)
 from apollo.helpers import register_blueprints
 from importlib import import_module
 
@@ -39,6 +40,9 @@ def create_app(
 
     if app.config.get('SSL_REQUIRED'):
         SSLify(app)
+
+    if app.config.get('DEBUG') and fdt_available:
+        debug_toolbar.init_app(app)
 
     # don't reregister the locale selector
     # if we already have one

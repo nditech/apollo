@@ -4,6 +4,11 @@ from flask import abort, g, redirect, url_for
 from flask_admin import expose, Admin, AdminIndexView
 from flask_babelex import Babel
 from flask_caching import Cache
+try:
+    from flask_debugtoolbar import DebugToolbarExtension
+    fdt_available = True
+except ImportError:
+    fdt_available = False
 from flask_mail import Mail
 from flask_menu import Menu
 from flask_migrate import Migrate
@@ -40,6 +45,7 @@ security = Security()
 gravatar = Gravatar(size=25, default="identicon", use_ssl=True)
 sentry = Sentry(client_cls=ApolloRavenClient)
 csrf = CSRFProtect()
+debug_toolbar = DebugToolbarExtension() if fdt_available else None
 
 
 class Service(object):
