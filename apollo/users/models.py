@@ -39,7 +39,7 @@ class User(BaseModel, UserMixin):
     __tablename__ = 'user'
     id = db.Column(db.Integer, db.Sequence('user_id_seq'), primary_key=True)
     deployment_id = db.Column(
-        db.Integer, db.ForeignKey('deployment.id'), nullable=False)
+        db.Integer, db.ForeignKey('deployment.id'))
     email = db.Column(db.String)
     username = db.Column(db.String)
     password = db.Column(db.String)
