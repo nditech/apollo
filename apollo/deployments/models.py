@@ -22,7 +22,7 @@ class Deployment(BaseModel):
     id = db.Column(
         db.Integer, db.Sequence('deployment_id_seq'), primary_key=True)
     name = db.Column(db.String, nullable=False)
-    hostnames = db.Column(ARRAY(db.String))
+    hostnames = db.Column(ARRAY(db.String), nullable=False)
     allow_observer_submission_edit = db.Column(db.Boolean, default=True)
     logo_filename = db.Column(db.String)
     logo_url = db.Column(db.String)
@@ -43,7 +43,7 @@ class FormSet(BaseModel):
 
     id = db.Column(
         db.Integer, db.Sequence('form_set_id_seq'), primary_key=True)
-    name = db.Column(db.String)
+    name = db.Column(db.String, nullable=False)
     slug = db.Column(db.String)
     deployment_id = db.Column(db.Integer, db.ForeignKey('deployment.id'))
     deployment = db.relationship('Deployment', backref='form_sets')
@@ -54,7 +54,7 @@ class LocationSet(BaseModel):
 
     id = db.Column(
         db.Integer, db.Sequence('location_set_id_seq'), primary_key=True)
-    name = db.Column(db.String)
+    name = db.Column(db.String, nullable=False)
     slug = db.Column(db.String)
     deployment_id = db.Column(db.Integer, db.ForeignKey('deployment.id'))
     deployment = db.relationship('Deployment', backref='location_sets')
@@ -65,7 +65,7 @@ class ParticipantSet(BaseModel):
 
     id = db.Column(
         db.Integer, db.Sequence('participant_set_id_seq'), primary_key=True)
-    name = db.Column(db.String)
+    name = db.Column(db.String, nullable=False)
     slug = db.Column(db.String)
     deployment_id = db.Column(db.Integer, db.ForeignKey('deployment.id'))
     deployment = db.relationship('Deployment', backref='participant_sets')
@@ -78,9 +78,10 @@ class Event(Resource):
 
     id = db.Column(
         db.Integer, db.Sequence('event_id_seq'), primary_key=True)
-    name = db.Column(db.String)
-    start = db.Column(db.DateTime, default=_default_event_start)
-    end = db.Column(db.DateTime, default=_default_event_end)
+    name = db.Column(db.String, nullable=False)
+    start = db.Column(
+        db.DateTime, default=_default_event_start, nullable=False)
+    end = db.Column(db.DateTime, default=_default_event_end, nullable=False)
     deployment_id = db.Column(db.Integer, db.ForeignKey('deployment.id'))
     form_set_id = db.Column(db.Integer, db.ForeignKey('form_set.id'))
     resource_id = db.Column(

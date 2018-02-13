@@ -16,10 +16,11 @@ class Sample(BaseModel):
 
     id = db.Column(
         db.Integer, db.Sequence('sample_id_seq'), primary_key=True)
-    name = db.Column(db.String)
-    deployment_id = db.Column(db.Integer, db.ForeignKey('deployment.id'))
+    name = db.Column(db.String, nullable=False)
+    deployment_id = db.Column(
+        db.Integer, db.ForeignKey('deployment.id'), nullable=False)
     location_set_id = db.Column(
-        db.Integer, db.ForeignKey('location_set.id'))
+        db.Integer, db.ForeignKey('location_set.id'), nullable=False)
 
     deployment = db.relationship('Deployment', backref='samples')
     location_set = db.relationship('LocationSet', backref='samples')
@@ -30,16 +31,17 @@ class LocationType(BaseModel):
 
     id = db.Column(
         db.Integer, db.Sequence('location_type_id_seq'), primary_key=True)
-    name = db.Column(db.String)
+    name = db.Column(db.String, nullable=False)
     is_administrative = db.Column(db.Boolean, default=False)
     is_political = db.Column(db.Boolean, default=False)
     has_registered_voters = db.Column(db.Boolean, default=False)
     has_political_code = db.Column(db.Boolean, default=False)
     has_other_code = db.Column(db.Boolean, default=False)
     slug = db.Column(db.String)
-    deployment_id = db.Column(db.Integer, db.ForeignKey('deployment.id'))
+    deployment_id = db.Column(
+        db.Integer, db.ForeignKey('deployment.id'), nullable=False)
     location_set_id = db.Column(
-        db.Integer, db.ForeignKey('location_set.id'))
+        db.Integer, db.ForeignKey('location_set.id'), nullable=False)
 
     deployment = db.relationship('Deployment', backref='location_types')
     location_set = db.relationship('LocationSet', backref='location_types')
@@ -74,19 +76,22 @@ class LocationTypePath(db.Model):
 
 class Location(BaseModel):
     __tablename__ = 'location'
+    __table_args__ = (
+        db.UniqueConstraint('location_set_id', 'code'),)
 
     id = db.Column(
         db.Integer, db.Sequence('location_id_seq'), primary_key=True)
-    name = db.Column(db.String)
-    code = db.Column(db.String)
+    name = db.Column(db.String, nullable=False)
+    code = db.Column(db.String, index=True, nullable=False)
     political_code = db.Column(db.String)
     other_code = db.Column(db.String)
     registered_voters = db.Column(db.Integer, default=0)
-    deployment_id = db.Column(db.Integer, db.ForeignKey('deployment.id'))
+    deployment_id = db.Column(
+        db.Integer, db.ForeignKey('deployment.id'), nullable=False)
     location_set_id = db.Column(
-        db.Integer, db.ForeignKey('location_set.id'))
+        db.Integer, db.ForeignKey('location_set.id'), nullable=False)
     location_type_id = db.Column(
-        db.Integer, db.ForeignKey('location_type.id'))
+        db.Integer, db.ForeignKey('location_type.id'), nullable=False)
 
     deployment = db.relationship('Deployment', backref='locations')
     location_set = db.relationship('LocationSet', backref='locations')

@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 from apollo.dal.service import Service
 from apollo.participants.models import (
-    Participant, ParticipantGroup, ParticipantGroupType, ParticipantPartner)
+    Participant, ParticipantGroup, ParticipantGroupType, ParticipantPartner,
+    ParticipantRole)
 
 
 class ParticipantService(Service):
@@ -18,3 +19,7 @@ class ParticipantGroupTypeService(Service):
 
 class ParticipantPartnerService(Service):
     __model__ = ParticipantPartner
+
+
+class ParticipantRoleService(Service):
+    __model__ = ParticipantRole

@@ -12,10 +12,11 @@ class ParticipantRole(BaseModel):
 
     id = db.Column(
         db.Integer, db.Sequence('participant_role_id_seq'), primary_key=True)
-    name = db.Column(db.String)
-    deployment_id = db.Column(db.Integer, db.ForeignKey('deployment.id'))
+    name = db.Column(db.String, nullable=False)
+    deployment_id = db.Column(
+        db.Integer, db.ForeignKey('deployment.id'), nullable=False)
     participant_set_id = db.Column(
-        db.Integer, db.ForeignKey('participant_set.id'))
+        db.Integer, db.ForeignKey('participant_set.id'), nullable=False)
 
     deployment = db.relationship(
         'Deployment', backref='participant_roles')
@@ -32,10 +33,11 @@ class ParticipantPartner(BaseModel):
     id = db.Column(
         db.Integer, db.Sequence('participant_partner_id_seq'),
         primary_key=True)
-    name = db.Column(db.String)
-    deployment_id = db.Column(db.Integer, db.ForeignKey('deployment.id'))
+    name = db.Column(db.String, nullable=False)
+    deployment_id = db.Column(
+        db.Integer, db.ForeignKey('deployment.id'), nullable=False)
     participant_set_id = db.Column(
-        db.Integer, db.ForeignKey('participant_set.id'))
+        db.Integer, db.ForeignKey('participant_set.id'), nullable=False)
 
     deployment = db.relationship(
         'Deployment', backref='participant_partners')
@@ -53,9 +55,10 @@ class ParticipantGroupType(BaseModel):
         db.Integer, db.Sequence('participant_group_type_id_seq'),
         primary_key=True)
     name = db.Column(db.String)
-    deployment_id = db.Column(db.Integer, db.ForeignKey('deployment.id'))
+    deployment_id = db.Column(
+        db.Integer, db.ForeignKey('deployment.id'), nullable=False)
     participant_set_id = db.Column(
-        db.Integer, db.ForeignKey('participant_set.id'))
+        db.Integer, db.ForeignKey('participant_set.id'), nullable=False)
 
     deployment = db.relationship(
         'Deployment', backref='participant_group_types')
@@ -72,10 +75,12 @@ class ParticipantGroup(BaseModel):
     id = db.Column(
         db.Integer, db.Sequence('participant_group_id_seq'),
         primary_key=True)
-    name = db.Column(db.String)
-    deployment_id = db.Column(db.Integer, db.ForeignKey('deployment.id'))
+    name = db.Column(db.String, nullable=False)
+    deployment_id = db.Column(
+        db.Integer, db.ForeignKey('deployment.id'), nullable=False)
     group_type_id = db.Column(
-        db.Integer, db.ForeignKey('participant_group_type.id'))
+        db.Integer, db.ForeignKey('participant_group_type.id'),
+        nullable=False)
 
     deployment = db.relationship(
         'Deployment', backref='participant_groups')
@@ -105,16 +110,19 @@ class Participant(BaseModel):
     __tablename__ = 'participant'
     id = db.Column(
         db.Integer, db.Sequence('participant_id_seq'), primary_key=True)
-    name = db.Column(db.String)
+    last_name = db.Column(db.String)
+    first_name = db.Column(db.String)
+    other_name = db.Column(db.String)
     role_id = db.Column(
-        db.Integer, db.ForeignKey('participant_role.id'))
+        db.Integer, db.ForeignKey('participant_role.id'), nullable=False)
     partner_id = db.Column(
         db.Integer, db.ForeignKey('participant_partner.id'))
     supervisor_id = db.Column(
         db.Integer, db.ForeignKey('participant.id'))
     gender = db.Column(ChoiceType(GENDER), default=0)
     email = db.Column(db.String)
-    deployment_id = db.Column(db.Integer, db.ForeignKey('deployment.id'))
+    deployment_id = db.Column(
+        db.Integer, db.ForeignKey('deployment.id'), nullable=False)
     participant_set_id = db.Column(
         db.Integer, db.ForeignKey('participant_set.id'))
     message_count = db.Column(db.Integer, default=0)

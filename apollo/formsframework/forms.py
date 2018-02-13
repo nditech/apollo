@@ -4,12 +4,9 @@ from functools import partial
 
 from mongoengine import signals
 from wtforms import (
-    Form,
-    IntegerField, SelectField, SelectMultipleField, StringField,
-    validators, widgets
-)
+    Form, IntegerField, SelectField, StringField, validators, widgets)
 from flask import g
-from flask_mongoengine.wtf import model_form
+from flask_babelex import lazy_gettext as _
 from flask_wtf import FlaskForm as SecureForm
 from .. import services, models
 from ..frontend.helpers import DictDiffer
@@ -17,7 +14,6 @@ from ..participants.utils import update_participant_completion_rating
 from .custom_fields import IntegerSplitterField
 import json
 import re
-
 
 ugly_phone = re.compile('[^\d]*')
 
@@ -258,13 +254,19 @@ def build_questionnaire(form, data=None):
 
     form_class = type('QuestionnaireForm', (BaseQuestionnaireForm,), fields)
 
-
     return form_class(data)
 
-FormForm = model_form(
-    models.Form, SecureForm,
-    only=[
-        'name', 'prefix', 'form_type', 'require_exclamation', 'events',
-        'calculate_moe', 'accredited_voters_tag', 'verifiable',
-        'invalid_votes_tag', 'registered_voters_tag', 'blank_votes_tag',
-        'permitted_roles'])
+
+# FormForm = model_form(
+#     models.Form, SecureForm,
+#     only=[
+#         'name', 'prefix', 'form_type', 'require_exclamation', 'events',
+#         'calculate_moe', 'accredited_voters_tag', 'verifiable',
+#         'invalid_votes_tag', 'registered_voters_tag', 'blank_votes_tag',
+#         'permitted_roles'])
+
+
+class FormForm(SecureForm):
+    name = StringField(_('Name'), validators=[validators.DataRequired()])
+    prefix = StringField(_('Prefix'), validators=[validators.DataRequired()])
+    form_type = SelectField(_('Form type'), choices=models.Form.FORM_TYPES, validators=[validators.DataRequired()])

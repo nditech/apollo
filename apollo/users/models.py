@@ -21,7 +21,8 @@ class Role(BaseModel, RoleMixin):
     )
 
     id = db.Column(db.Integer, db.Sequence('role_id_seq'), primary_key=True)
-    deployment_id = db.Column(db.Integer, db.ForeignKey('deployment.id'))
+    deployment_id = db.Column(
+        db.Integer, db.ForeignKey('deployment.id'), nullable=False)
     name = db.Column(db.String)
     description = db.Column(db.String)
 
@@ -37,7 +38,8 @@ class Role(BaseModel, RoleMixin):
 class User(BaseModel, UserMixin):
     __tablename__ = 'user'
     id = db.Column(db.Integer, db.Sequence('user_id_seq'), primary_key=True)
-    deployment_id = db.Column(db.Integer, db.ForeignKey('deployment.id'))
+    deployment_id = db.Column(
+        db.Integer, db.ForeignKey('deployment.id'), nullable=False)
     email = db.Column(db.String)
     username = db.Column(db.String)
     password = db.Column(db.String)
@@ -67,8 +69,11 @@ class RolePermission(BaseModel):
         db.Integer, db.ForeignKey('role.id'), nullable=False,
         primary_key=True)
     perm_name = db.Column(db.String, primary_key=True)
-    deployment_id = db.Column(db.Integer, db.ForeignKey('deployment.id'))
+    deployment_id = db.Column(
+        db.Integer, db.ForeignKey('deployment.id'), nullable=False)
     description = db.Column(db.String)
+    deployment = db.relationship('Deployment', backref='role_permissions')
+    role = db.relationship('Role', backref='role_permissions')
 
 
 class UserPermission(BaseModel):
@@ -78,8 +83,11 @@ class UserPermission(BaseModel):
         db.Integer, db.ForeignKey('user.id'), nullable=False,
         primary_key=True)
     perm_name = db.Column(db.String, primary_key=True)
-    deployment_id = db.Column(db.Integer, db.ForeignKey('deployment.id'))
+    deployment_id = db.Column(
+        db.Integer, db.ForeignKey('deployment.id'), nullable=False)
     description = db.Column(db.String)
+    deployment = db.relationship('Deployment', backref='user_permissions')
+    user = db.relationship('User', backref='user_permissions')
 
 
 class RoleResourcePermission(BaseModel):
@@ -90,8 +98,12 @@ class RoleResourcePermission(BaseModel):
     resource_id = db.Column(
         db.Integer, db.ForeignKey('resource.resource_id'), primary_key=True)
     perm_name = db.Column(db.String, primary_key=True)
-    deployment_id = db.Column(db.Integer, db.ForeignKey('deployment.id'))
+    deployment_id = db.Column(
+        db.Integer, db.ForeignKey('deployment.id'), nullable=False)
     description = db.Column(db.String)
+    deployment = db.relationship(
+        'Deployment', backref='role_resource_permissions')
+    role = db.relationship('Role', backref='role_resource_permissions')
 
 
 class UserResourcePermission(BaseModel):
@@ -102,8 +114,12 @@ class UserResourcePermission(BaseModel):
     resource_id = db.Column(
         db.Integer, db.ForeignKey('resource.resource_id'), primary_key=True)
     perm_name = db.Column(db.String, primary_key=True)
-    deployment_id = db.Column(db.Integer, db.ForeignKey('deployment.id'))
+    deployment_id = db.Column(
+        db.Integer, db.ForeignKey('deployment.id'), nullable=False)
     description = db.Column(db.String)
+    deployment = db.relationship(
+        'Deployment', backref='user_resource_permissions')
+    user = db.relationship('User', backref='user_resource_permissions')
 
 
 class UserUpload(BaseModel):
@@ -111,7 +127,11 @@ class UserUpload(BaseModel):
 
     id = db.Column(
         db.Integer, db.Sequence('user_upload_id_seq'), primary_key=True)
+    deployment_id = db.Column(
+        db.Integer, db.ForeignKey('deployment.id'), nullable=False)
     user_id = db.Column(
         db.Integer, db.ForeignKey('user.id'), nullable=False)
     created = db.Column(db.DateTime, default=current_timestamp)
     upload_filename = db.Column(db.String)
+    deployment = db.relationship('Deployment', backref='user_uploads')
+    user = db.relationship('User', backref='uploads')

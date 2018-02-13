@@ -18,7 +18,7 @@ logger = logging.getLogger('alembic.env')
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
 from apollo.core import db2
-from apollo.rmodels import *
+from apollo.models import *
 target_metadata = db2.metadata
 
 from flask import current_app

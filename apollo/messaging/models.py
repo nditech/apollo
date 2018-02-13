@@ -17,17 +17,19 @@ class Message(BaseModel):
     __tablename__ = 'message'
 
     id = db.Column(db.Integer, db.Sequence('message_id_seq'), primary_key=True)
-    direction = db.Column(ChoiceType(DIRECTIONS))
+    direction = db.Column(ChoiceType(DIRECTIONS), nullable=False)
     recipient = db.Column(db.String)
     sender = db.Column(db.String)
     text = db.Column(db.String)
-    received = db.Column(db.DateTime, default=datetime.utcnow)
+    received = db.Column(db.DateTime, default=datetime.utcnow, index=True)
     delivered = db.Column(db.DateTime)
-    deployment_id = db.Column(db.Integer, db.ForeignKey('deployment.id'))
-    event_id = db.Column(db.Integer, db.ForeignKey('event.id'))
+    deployment_id = db.Column(
+        db.Integer, db.ForeignKey('deployment.id'), nullable=False)
+    event_id = db.Column(
+        db.Integer, db.ForeignKey('event.id'), nullable=False)
     submission_id = db.Column(db.Integer, db.ForeignKey('submission.id'))
 
     # ----- RELATIONSHIP PROPERTIES ----
     deployment = db.relationship('Deployment', backref='messages')
     event = db.relationship('Event', backref='messages')
-    submission = db.relationship('Submission')
+    submission = db.relationship('Submission', backref='messages')

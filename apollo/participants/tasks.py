@@ -8,7 +8,7 @@ from apollo.messaging.tasks import send_email
 from apollo import services, helpers
 from apollo.factory import create_celery_app
 from apollo.participants import utils
-from apollo.participants.models import PhoneContact
+# from apollo.participants.models import PhoneContact
 import random
 import string
 
@@ -62,9 +62,11 @@ def create_role(name, deployment):
     return services.participant_roles.create(name=name,
                                              deployment=deployment)
 
+
 def generate_password(length):
     return ''.join(
         random.choice(string.ascii_uppercase + string.digits + string.ascii_lowercase) for _ in range(length))
+
 
 def update_participants(dataframe, event, header_map):
     """
@@ -239,12 +241,12 @@ def update_participants(dataframe, event, header_map):
                     mobile = int(mobile)
                 phone_info[mobile] = True
 
-            phones = [
-                PhoneContact(number=str(k),
-                             verified=v) for k, v in list(phone_info.items())
-            ]
-            if phone_columns:
-                participant.phones = phones
+            # phones = [
+            #     PhoneContact(number=str(k),
+            #                  verified=v) for k, v in list(phone_info.items())
+            # ]
+            # if phone_columns:
+            #     participant.phones = phones
 
         # fix up groups
         if GROUP_PREFIX:

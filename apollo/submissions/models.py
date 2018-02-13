@@ -7,6 +7,35 @@ from apollo.core import db
 from apollo.dal.models import BaseModel
 from apollo.utils import current_timestamp
 
+FLAG_STATUSES = {
+    'no_problem': ('0', _('No Problem')),
+    'problem': ('2', _('Problem')),
+    'verified': ('4', _('Verified')),
+    'rejected': ('5', _('Rejected'))
+}
+
+QUALITY_STATUSES = {
+    'OK': '0',
+    'FLAGGED': '2',
+    'VERIFIED': '3'
+}
+
+FLAG_CHOICES = (
+    ('0', _('OK')),
+    ('-1', _('MISSING')),
+    ('2', _('FLAGGED')),
+    ('4', _('VERIFIED')),
+    ('5', _('REJECTED'))
+)
+
+STATUS_CHOICES = (
+    ('', _('Status')),
+    ('0', _('Status — No Problem')),
+    ('2', _('Status — Unverified')),
+    ('4', _('Status — Verified')),
+    ('5', _('Status — Rejected'))
+)
+
 
 class Submission(BaseModel):
     SUBMISSION_TYPES = (
@@ -18,10 +47,13 @@ class Submission(BaseModel):
 
     id = db.Column(
         db.Integer, db.Sequence('submission_id_seq'), primary_key=True)
-    deployment_id = db.Column(db.Integer, db.ForeignKey('deployment.id'))
-    event_id = db.Column(db.Integer, db.ForeignKey('event.id'))
-    form_id = db.Column(db.Integer, db.ForeignKey('form.id'))
-    participant_id = db.Column(db.Integer, db.ForeignKey('participant.id'))
+    deployment_id = db.Column(
+        db.Integer, db.ForeignKey('deployment.id'), nullable=False)
+    event_id = db.Column(
+        db.Integer, db.ForeignKey('event.id'), nullable=False)
+    form_id = db.Column(db.Integer, db.ForeignKey('form.id'), nullable=False)
+    participant_id = db.Column(
+        db.Integer, db.ForeignKey('participant.id'), nullable=False)
     location_id = db.Column(db.Integer, db.ForeignKey('location.id'))
     data = db.Column(JSONB)
     submission_type = db.Column(ChoiceType(SUBMISSION_TYPES))
@@ -41,13 +73,15 @@ class SubmissionComment(BaseModel):
     id = db.Column(
         db.Integer, db.Sequence('submmision_comment_id_seq'),
         primary_key=True)
-    submission_id = db.Column(db.Integer, db.ForeignKey('submission.id'))
+    submission_id = db.Column(
+        db.Integer, db.ForeignKey('submission.id'), nullable=False)
     submission = db.relationship('Submission', backref='comments')
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     user = db.relationship('User', backref='submission_comments')
     comment = db.Column(db.String)
     submit_date = db.Column(db.DateTime, default=current_timestamp)
-    deployment_id = db.Column(db.Integer, db.ForeignKey('deployment.id'))
+    deployment_id = db.Column(
+        db.Integer, db.ForeignKey('deployment.id'), nullable=False)
     deployment = db.relationship('Deployment', backref='submission_comments')
 
 
@@ -63,10 +97,12 @@ class SubmissionVersion(BaseModel):
     id = db.Column(
         db.Integer, db.Sequence('submmision_version_id_seq'),
         primary_key=True)
-    submission_id = db.Column(db.Integer, db.ForeignKey('submission.id'))
+    submission_id = db.Column(
+        db.Integer, db.ForeignKey('submission.id'), nullable=False)
     submission = db.relationship('Submission', backref='versions')
     timestamp = db.Column(db.DateTime, default=current_timestamp)
     channel = db.Column(ChoiceType(CHANNEL_CHOICES))
-    deployment_id = db.Column(db.Integer, db.ForeignKey('deployment.id'))
+    deployment_id = db.Column(
+        db.Integer, db.ForeignKey('deployment.id'), nullable=False)
     deployment = db.relationship('Deployment', backref='submission_versions')
     identity = db.Column(db.String, default='unknown', nullable=False)
