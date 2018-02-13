@@ -11,6 +11,8 @@
 **/*.pyc
 apollo-*.tar.gz
 bin/
+circle.yml
+docker-compose.yml
 gunicorn.pid
 include/
 lib/
