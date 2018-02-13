@@ -17,9 +17,9 @@ logger = logging.getLogger('alembic.env')
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-from apollo.core import db2
+from apollo.core import db
 from apollo.models import *
-target_metadata = db2.metadata
+target_metadata = db.metadata
 
 from flask import current_app
 config.set_main_option('sqlalchemy.url',
