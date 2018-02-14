@@ -1,30 +1,24 @@
-FROM alpine:3.4
+FROM alpine:3.7
 
 MAINTAINER Tim Akinbo <takinbo@timbaobjects.com>
 
-ADD . /app/
+ADD Pipfile* /app/
 RUN set -ex \
         && apk add --no-cache --virtual .build-deps \
-            --repository http://dl-3.alpinelinux.org/alpine/edge/community/ \
             build-base \
             libxml2-dev \
             libxslt-dev \
-            python-dev \
-            openblas-dev \
-            py-pip \
-            linux-headers \
-        && apk add --no-cache --virtual .python-deps \
-            --repository http://dl-3.alpinelinux.org/alpine/edge/community/ \
-            python \
-            py-setuptools \
-            libmagic \
-            uwsgi-python \
+            python3-dev \
+            postgresql-dev \
+        && apk add --no-cache --virtual .python-deps python3 \
+        && python3 -m ensurepip \
+        && rm -r /usr/lib/python*/ensurepip \
+        && pip3 install --upgrade pip setuptools \
+        && if [ ! -e /usr/bin/pip ]; then ln -s pip3 /usr/bin/pip ; fi \
+        && if [[ ! -e /usr/bin/python ]]; then ln -sf /usr/bin/python3 /usr/bin/python; fi \
+        && pip install pipenv \
         && cd /app/ \
-        && rm Dockerfile* circle.yml fabfile.py \
-        && mv Procfile.docker Procfile \
-        && ln -s /usr/include/locale.h /usr/include/xlocale.h \
-        && pip install numpy==1.11.1 \
-        && pip install -r /app/requirements-docker.txt \
+        && pipenv install \
         && find /usr -depth \
             \( -type f -a -name '*.pyc' -o -name '*.pyo' \) \
             -exec rm -rf '{}' + \
@@ -35,9 +29,10 @@ RUN set -ex \
             | sort -u)" \
         && apk add --virtual .python-rundeps $runDeps \
         && apk del --purge .build-deps \
-        && rm -rf ~/.cache \
-        && pybabel compile -d /app/apollo/translations/
-
+        && rm -rf /root/.cache
+ADD . /app/
+RUN cd /app/ \
+    && pipenv run pybabel compile -d /app/apollo/translations/
 WORKDIR /app/
-CMD ["honcho","start"]
+CMD ["pipenv","run","gunicorn","-c","gunicorn.conf","--bind=[::]:5000","apollo.wsgi:application"]
 EXPOSE 5000
