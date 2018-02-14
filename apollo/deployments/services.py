@@ -71,9 +71,12 @@ class EventService(Service):
 
         overlapping = self.filter(
             or_(expr1, expr2, expr3),
-            Event.start <= upper_bound, Event.end >= lower_bound).all()
+            Event.start <= upper_bound, Event.end >= lower_bound)
 
-        return overlapping if overlapping else [event]
+        if overlapping.count() > 0:
+            return overlapping
+
+        return self.query.filter_by(id=event.id)
 
 
 class FormSetService(Service):
