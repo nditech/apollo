@@ -18,6 +18,7 @@ def generate_event_selection_form(*args, **kwargs):
         event = SelectField(
             _('Choose Event'),
             choices=choices,
+            coerce=int,
             default=g.event.id,
             validators=[validators.input_required()]
         )
