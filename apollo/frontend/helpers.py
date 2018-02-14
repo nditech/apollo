@@ -43,7 +43,7 @@ def set_event(event):
 
     :param event: The event
     """
-    session['event'] = event
+    session['event'] = event.id
     g.event = event
 
 
