@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from apollo.frontend import filters, route, permissions
-from apollo.models import Message
+from apollo.models import Event, Message
 from apollo.services import events, messages
 from flask import (
     Blueprint, render_template, request, current_app, Response, g)
@@ -29,10 +29,11 @@ def message_list():
 
     deployment = g.deployment
     message_events = set(events.overlapping_events(g.event)).union({g.event})
-    qs = Message.objects(
-        deployment=deployment,
-        event__in=message_events).order_by(
-        '-received', '-direction')
+    event_ids = [ev.id for ev in message_events]
+    qs = Message.query.filter(
+        Message.deployment == deployment,
+        Message.event_id.in_(event_ids)).order_by(
+        Message.received.desc(), Message.direction.desc())
     queryset_filter = filters.messages_filterset()(qs, request.args)
 
     if request.args.get('export') and permissions.export_messages.can():
@@ -64,21 +65,30 @@ def message_list():
 
 def message_time_series(message_queryset):
     c_events = events.overlapping_events(g.event).order_by(
-        '-start_date')
-    current_events = list(c_events) if c_events.count() > 0 else [g.event]
+        Event.start.desc())
+    current_events = c_events.all() if c_events.count() > 0 else [g.event]
 
     # add 30 days as an arbitrary end buffer
-    upper_bound = current_events[0].end_date + timedelta(30)
-    lower_bound = current_events[-1].start_date
+    upper_bound = current_events[0].end + timedelta(30)
+    lower_bound = current_events[-1].start
 
     # limit the range of the displayed chart to prevent possible
     # DOS attacks
+    time_tuples = message_queryset.with_entities(Message.received).filter(
+        Message.direction == 'IN',
+        Message.received >= lower_bound,
+        Message.received <= upper_bound
+    ).all()
+
+    timestamps = list(zip(*time_tuples))
+
     df = pd.DataFrame(
-        list(message_queryset(
-            direction='IN',
-            received__gte=lower_bound,
-            received__lte=upper_bound).only('received').as_pymongo()
-        )
+        # list(message_queryset(
+        #     direction='IN',
+        #     received__gte=lower_bound,
+        #     received__lte=upper_bound).only('received').as_pymongo()
+        # )
+        timestamps
     )
 
     # set a marker for each message
