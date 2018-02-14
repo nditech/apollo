@@ -75,11 +75,11 @@
               <a class="dropdown-toggle" data-toggle="dropdown" href="#"><img src="{{ current_user.email|gravatar }}" class="img-rounded" style="margin-right: 0.25em; border-radius: 12px"><b class="caret"></b></a>
               <ul class="dropdown-menu left-submenu">
                 <li class="eml"><a href="#">{{ current_user.email}}</a></li>
-              {#
               {%- if current_menu.submenu('user.events').visible %}
                 <li class="divider"></li>
                 <li><a href="{{ current_menu.submenu('user.events').url }}"><i class="glyphicon glyphicon-calendar"></i> {{ current_menu.submenu('user.events').text }}</a></li>
               {%- endif %}
+              {#
               {%- if current_menu.submenu('user.concurrent_events').visible -%}
               {% for event in current_menu.submenu('user.concurrent_events').dynamic_list -%}
                 {% if event.active %}
