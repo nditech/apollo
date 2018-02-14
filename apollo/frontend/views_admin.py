@@ -255,6 +255,22 @@ class RoleAdminView(BaseAdminView):
         return models.Role.query.filter_by(
             deployment_id=deployment.id, id=pk).first_or_404()
 
+
+class FormSetAdminView(BaseAdminView):
+    column_list = ('name',)
+    form_columns = ('name',)
+
+
+class LocationSetAdminView(BaseAdminView):
+    column_list = ('name',)
+    form_columns = ('name',)
+
+
+class ParticipantSetAdminView(BaseAdminView):
+    column_list = ('name',)
+    form_columns = ('name',)
+
+
 #     def get_one(self, pk):
 #         role = super(RoleAdminView, self).get_one(pk)
 #         role.permissions = [
@@ -289,3 +305,6 @@ admin.add_view(DeploymentAdminView(models.Deployment, db.session))
 admin.add_view(EventAdminView(models.Event, db.session))
 admin.add_view(UserAdminView(models.User, db.session))
 admin.add_view(RoleAdminView(models.Role, db.session))
+admin.add_view(FormSetAdminView(models.FormSet, db.session))
+admin.add_view(LocationSetAdminView(models.LocationSet, db.session))
+admin.add_view(ParticipantSetAdminView(models.ParticipantSet, db.session))
