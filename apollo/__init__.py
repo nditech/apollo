@@ -6,7 +6,7 @@ from flask_migrate import upgrade
 from flask_principal import identity_loaded
 from flask_security import SQLAlchemyUserDatastore, current_user
 from whitenoise import WhiteNoise
-from apollo import assets, models
+from apollo import assets, models, services
 
 from apollo.frontend import permissions, template_filters
 from apollo.core import admin, db, menu, security, gravatar, csrf
@@ -72,16 +72,16 @@ def create_app(settings_override=None, register_security_blueprint=True):
     app.jinja_env.filters.update(custom_filters)
 
     # Login and logout signal handlers
-    # user_logged_out.connect(lambda app, user: session.clear())
     user_logged_out.connect(clear_session)
 
-    # @identity_loaded.connect_via(app)
-    # def on_identity_loaded(sender, identity):
-    #     needs = services.perms.get_all_needs(
-    #         models.User(**identity.user._data))
+    @identity_loaded.connect_via(app)
+    def on_identity_loaded(sender, identity):
+        if current_user.is_authenticated:
+            user = current_user._get_current_object()
+            needs = services.users.get_permissions_cache(user)
 
-    #     for need in needs:
-    #         identity.provides.add(need)
+            for need in needs:
+                identity.provides.add(need)
 
     @app.context_processor
     def inject_permissions():
