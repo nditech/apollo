@@ -3,7 +3,7 @@
 from apollo.frontend import route
 from apollo.frontend.dashboard import get_coverage
 from apollo.deployments.forms import generate_event_selection_form
-from apollo.models import LocationType
+from apollo.models import Event, LocationType
 from apollo.services import (
     events, forms, submissions, locations, location_types)
 from apollo.frontend.filters import dashboard_filterset
@@ -183,7 +183,7 @@ def event_selection():
         form = generate_event_selection_form(request.form)
 
         if form.validate():
-            event = events.get_or_404(pk=form.event.data)
+            event = events.get_or_404(Event.id == form.event.data)
 
             set_event(event)
             return redirect(url_for('dashboard.index'))
