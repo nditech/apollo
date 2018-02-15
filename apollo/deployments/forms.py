@@ -4,14 +4,13 @@ from flask_babelex import lazy_gettext as _
 from flask_wtf import FlaskForm
 from wtforms import SelectField, fields, validators
 
-from apollo import services
 from apollo.deployments.models import (
     Event, FormSet, LocationSet, ParticipantSet)
 
 
 def generate_event_selection_form(*args, **kwargs):
     choices = [
-        (e.id, e.name) for e in services.events.query.with_entities(
+        (e.id, e.name) for e in Event.query.with_entities(
             Event.id, Event.name).order_by(Event.start.desc())]
 
     class EventSelectionForm(FlaskForm):
@@ -38,11 +37,11 @@ class DeploymentForm(FlaskForm):
 
 
 def event_form_factory(*args, **kwargs):
-    form_set_choices = services.form_sets.query.with_entities(
+    form_set_choices = FormSet.query.with_entities(
         FormSet.id, FormSet.name).all()
-    location_set_choices = services.location_sets.quer.with_entities(
+    location_set_choices = LocationSet.query.with_entities(
         LocationSet.id, LocationSet.name).all()
-    participant_set_choices = services.participant_sets.quer.with_entities(
+    participant_set_choices = ParticipantSet.query.with_entities(
         ParticipantSet.id, ParticipantSet.name).all()
 
     class EventForm(FlaskForm):
