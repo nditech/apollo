@@ -11,6 +11,10 @@ class SubmissionService(Service):
 class SubmissionCommentService(Service):
     __model__ = SubmissionComment
 
+    def create(self, **kwargs):
+        instance = self.__model__(**kwargs)
+        instance.save()
+
 
 class SubmissionVersionService(Service):
     __model__ = SubmissionVersion

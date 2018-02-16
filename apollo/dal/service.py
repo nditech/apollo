@@ -18,7 +18,8 @@ class Service(object):
     def _isinstance(self, model, raise_error=True):
         rv = isinstance(model, self.__model__)
         if not rv and raise_error:
-            raise ValueError(f'{model} is not of type {self.__model__}')
+            error_msg = '{0} is not of type {1}'.format(model, self.__model__)
+            raise ValueError(error_msg)
 
         return rv
 
