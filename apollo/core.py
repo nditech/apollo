@@ -36,7 +36,6 @@ admin = Admin(
     template_mode='bootstrap3')
 babel = Babel()
 cache = Cache()
-db2 = MongoEngine()
 db = SQLAlchemy()
 mail = Mail()
 menu = Menu()

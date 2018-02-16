@@ -24,6 +24,9 @@ class Service(object):
 
     def save(self, model, commit=True):
         return model.save(commit)
+    
+    def find(self, **kwargs):
+        return self.__model__.query.filter_by(**kwargs)
 
     def filter(self, *args):
         return self.__model__.query.filter(*args)
