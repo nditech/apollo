@@ -25,7 +25,7 @@ class Service(object):
 
     def save(self, model, commit=True):
         return model.save(commit)
-    
+
     def find(self, **kwargs):
         return self.__model__.query.filter_by(**kwargs)
 
@@ -44,6 +44,9 @@ class Service(object):
             abort(404)
 
         return rv
+
+    def fget_or_404(self, **kwargs):
+        return self.find(**kwargs).first_or_404()
 
     def first(self, **kwargs):
         return self.filter(**kwargs).first()
