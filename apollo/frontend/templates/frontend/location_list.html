@@ -27,9 +27,11 @@
 </style>
 {% endblock %}
 {% block toolbar %}
+  {#
   {%- if perms.export_locations.can() -%}
   <a class="btn btn-sm btn-default pull-right" href="{{ url_for('locations.locations_list', export='true', **request.args) }}"><i class="glyphicon glyphicon-export"></i> {{ _('Export') }}</a>
   {%- endif -%}
+  #}
   {%- if perms.import_locations.can() -%}
   <button id="open-wizard" class="btn btn-sm btn-primary pull-right" style="margin-right:1em;"><i class="glyphicon glyphicon-import glyphicon-white"></i> {{ _('Import Locations') }}</button>
   {%- endif -%}
@@ -75,7 +77,7 @@
           <td class="shrink"><input type="checkbox" class="checked" name="ids" value="{{ location.id }}"></td>
           <td class="shrink">{{ location.code }}</td>
           <td>{{ location.name }}</td>
-          <td class="shrink">{{ location.location_type }}</td>
+          <td class="shrink">{{ location.location_type.name }}</td>
           <td class="text-center shrink"><a href="{{ url_for('locations.location_edit', pk=location.id) }}">{{ _('Edit') }}</a></td>
         </tr>
         {% else %}
@@ -169,7 +171,7 @@
 </div>
 <div class="row">
   <div class="col-md-12">
-    {{ render_pager(locations, 'locations.locations_list', args) }}
+    {{ render_pager(locations, 'locations.location_list', args) }}
   </div>
 </div>
 {% endblock %}

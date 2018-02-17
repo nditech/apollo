@@ -57,7 +57,7 @@ location_api.add_resource(
 def location_sets_list():
     args = request.args.to_dict(flat=False)
     page_title = _('Location sets')
-    queryset = services.location_sets.find()
+    queryset = services.location_sets.find(deployment=g.deployment)
     template_name = 'frontend/location_set_list.html'
 
     page_spec = args.pop('page', [1])
@@ -74,24 +74,28 @@ def location_sets_list():
 
     return render_template(template_name, **context)
 
-@route(bp, '/locations/', methods=['GET'])
-@register_menu(
-    bp, 'user.locations_list', _('Locations'),
-    visible_when=lambda: permissions.edit_locations.can())
+
+@route(bp, '/<int:location_set_id>/locations/', methods=['GET'])
+# @register_menu(
+#     bp, 'user.locations_list', _('Locations'),
+#     visible_when=lambda: permissions.edit_locations.can())
 @permissions.edit_locations.require(403)
 @login_required
-def locations_list():
+def location_list(location_set_id):
     template_name = 'frontend/location_list.html'
     page_title = _('Locations')
 
-    queryset = services.locations.find()
+    queryset = services.locations.find(
+        deployment=g.deployment, location_set_id=location_set_id)
     queryset_filter = filters.location_filterset()(queryset, request.args)
 
     args = request.args.to_dict(flat=False)
+    args.update(location_set_id=location_set_id)
     page_spec = args.pop('page', None) or [1]
     page = int(page_spec[0])
 
-    subset = queryset_filter.qs.order_by('location_type')
+    # NOTE: this was ordered by location type
+    subset = queryset_filter.qs.order_by(models.Location.code)
 
     if request.args.get('export') and permissions.export_locations.can():
         # Export requested

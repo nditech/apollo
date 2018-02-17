@@ -26,9 +26,6 @@
 </style>
 {% endblock %}
 {% block toolbar %}
-  {%- if perms.export_locations.can() -%}
-  <a class="btn btn-sm btn-default pull-right" href="{{ url_for('locations.locations_list', export='true', **request.args) }}"><i class="glyphicon glyphicon-export"></i> {{ _('Export') }}</a>
-  {%- endif -%}
   {%- if perms.import_locations.can() -%}
   <button id="open-wizard" class="btn btn-sm btn-primary pull-right" style="margin-right:1em;"><i class="glyphicon glyphicon-import glyphicon-white"></i> {{ _('Import Locations') }}</button>
   {%- endif -%}
@@ -59,8 +56,8 @@
           <th class="shrink" width="1px"><input type="checkbox" class="checked" id="select_all" name="select_all"></th>
           <th>{{ _('Name') }}</th>
           <th>{{ _('# linked events') }}</th>
-          <th>{{ _('# administrative divisions') }}</th>
-          <th>{{ _('# locations') }}</th>
+          <th colspan="2">{{ _('Administrative divisions') }}</th>
+          <th colspan="2">{{ _('Locations') }}</th>
         </tr>
       </thead>
       <tbody>
@@ -70,7 +67,9 @@
           <td>{{ location_set.name }}</td>
           <td>{{ location_set.events|length }}</td>
           <td>{{ location_set.location_types|length }}</td>
+          <td>Manage</td>
           <td>{{ location_set.locations|length }}</td>
+          <td><a href="{{ url_for('locations.location_list', location_set_id=location_set.id) }}">Manage</a></td>
         </tr>
         {% else %}
         <tr class="warning">

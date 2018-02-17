@@ -277,22 +277,24 @@ class ParticipantNameFilter(CharFilter):
 class LocationNameFilter(CharFilter):
     def filter(self, queryset, value):
         if value:
-            return queryset(name__icontains=value)
+            return queryset.filter(models.Location.name.ilike(
+                '%{}%'.format(value)))
         return queryset
 
 
 class LocationTypeFilter(ChoiceFilter):
     def __init__(self, *args, **kwargs):
         kwargs['choices'] = _make_choices(
-            services.location_types.find().order_by('ancestor_count').scalar(
-                'name', 'name'),
+            services.location_types.find().with_entities(
+                models.LocationType.id,
+                models.LocationType.name).all(),
             _('All Types')
         )
         super(LocationTypeFilter, self).__init__(*args, **kwargs)
 
     def filter(self, queryset, value):
         if value:
-            return queryset(location_type=value)
+            return queryset.filter_by(location_type_id=value)
         return queryset
 
 
