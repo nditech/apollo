@@ -10,7 +10,7 @@ from wtforms import (BooleanField, IntegerField, SelectField,
                      ValidationError, validators, widgets)
 
 from apollo.models import (
-    Location, LocationType, Participant, Submission)
+    Location, LocationType, Participant, ParticipantPartner, Submission)
 from apollo.services import (
     events, location_types, locations,
     participant_partners, participant_roles, participants, forms)
@@ -29,23 +29,22 @@ class CustomModelSelectField(ModelSelectField):
 
 def _make_choices(qs, placeholder=None):
     if placeholder:
-        return [['', placeholder]] + [[str(i[0]), i[1]] for i in list(qs)]
+        return [['', placeholder]] + [[str(i[0]), i[1]] for i in qs]
     else:
-        return [['', '']] + [[str(i[0]), i[1]] for i in list(qs)]
+        return [['', '']] + [[str(i[0]), i[1]] for i in qs]
 
 
 def generate_location_edit_form(location, data=None):
-    locs = LocationType.objects(deployment=location.deployment)
+    locs = location_types.with_entities(
+        LocationType.name, LocationType.name).find(
+            deployment=location.deployment)
 
     class LocationEditForm(WTSecureForm):
-        name = TextField('Name', validators=[validators.input_required()])
-        code = TextField('Code', validators=[validators.input_required()])
+        name = TextField(_('Name'), validators=[validators.input_required()])
+        code = TextField(_('Code'), validators=[validators.input_required()])
         location_type = SelectField(
             _('Location type'),
-            choices=_make_choices(
-                locs.scalar('name', 'name'),
-                _('Location type')
-            ),
+            choices=_make_choices(locs('name', 'name'), _('Location type')),
             validators=[validators.input_required()]
         )
 
@@ -59,17 +58,15 @@ def generate_participant_edit_form(participant, data=None):
         #     _('Participant ID'),
         #     validators=[validators.input_required()]
         # )
-        name = TextField(
-            _('Name')
-        )
-        gender = SelectField(
-            _('Gender'),
-            choices=Participant.GENDER
-        )
+        last_name = StringField(_('Last name'))
+        first_name = StringField(_('First name'))
+        other_name = StringField(_('Other name'))
+        gender = SelectField(_('Gender'), choices=Participant.GENDER)
         role = SelectField(
             _('Role'),
             choices=_make_choices(
-                participant_roles.find().scalar('id', 'name')
+                participant_roles.find().with_entities(
+                    Participant.id, Participant.name)
             ),
             validators=[validators.input_required()]
         )
@@ -84,7 +81,9 @@ def generate_participant_edit_form(participant, data=None):
         partner = SelectField(
             _('Partner'),
             choices=_make_choices(
-                participant_partners.find().scalar('id', 'name')
+                participant_partners.find().with_entities(
+                    ParticipantPartner.id, ParticipantPartner.name
+                )
             ),
         )
         phone = StringField(_('Phone'))
@@ -102,7 +101,9 @@ def generate_participant_edit_form(participant, data=None):
     return ParticipantEditForm(
         formdata=data,
         # participant_id=participant.participant_id,
-        name=participant.name,
+        last_name=participant.last_name,
+        first_name=participant.first_name,
+        other_name=participant.other_name,
         location=participant.location.id if participant.location else None,
         gender=participant.gender.upper(),
         role=participant.role.id if participant.role else None,
@@ -127,8 +128,16 @@ def generate_participant_import_mapping_form(
             choices=default_choices,
             validators=[validators.input_required()]
         ),
-        'name': SelectField(
-            _('Name'),
+        'last_name': SelectField(
+            _('Last name'),
+            choices=default_choices
+        ),
+        'first_name': SelectField(
+            _('First name'),
+            choices=default_choices
+        ),
+        'other name': SelectField(
+            _('Other name'),
             choices=default_choices
         ),
         'partner_org': SelectField(
@@ -247,9 +256,9 @@ def validate_location(form):
     if not val:
         return val
 
-    if not form.contributor.data and not form.location.data:
+    if not form.participant.data and not form.location.data:
         form.location.errors.append(
-            _('Contributor and location cannot both be empty'))
+            _('Participant and location cannot both be empty'))
         return False
 
     return True
