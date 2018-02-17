@@ -4,7 +4,8 @@ from functools import partial
 
 from mongoengine import signals
 from wtforms import (
-    Form, IntegerField, SelectField, StringField, validators, widgets)
+    Form, BooleanField, IntegerField, SelectField, StringField, validators,
+    widgets)
 from flask import g
 from flask_babelex import lazy_gettext as _
 from flask_wtf import FlaskForm as SecureForm
@@ -55,8 +56,10 @@ def filter_participants(form, participant_id):
     if not form:
         return None
     event = getattr(g, 'event', services.events.default())
-    events = set(services.events.overlapping_events(event)).intersection(
-        form.events)
+    current_events = services.events.overlapping_events(event)
+    form_events = models.Event.query.filter_by(form_set=form.form_set)
+    participant_sets = current_events.intersect(form_events).join(
+        models.Event.participant_set).with_entities(models.ParticipantSet)
 
     participant = models.Participant.objects(
             event__in=events, participant_id=participant_id).first()
@@ -66,7 +69,7 @@ def filter_participants(form, participant_id):
 
 def filter_form(form_pk):
     event = getattr(g, 'event', services.events.default())
-    events = list(services.events.overlapping_events(event))
+    current_events = services.events.overlapping_events(event)
 
     if form_pk:
         form = models.Form.objects(events__in=events, pk=form_pk).first()
@@ -208,46 +211,46 @@ def build_questionnaire(form, data=None):
         filters=[partial(filter_participants, form)],
         validators=[validators.required()])
 
-    for group in form.groups:
-        groupspec = (group.name, [])
+    for group in form.data['groups']:
+        groupspec = (group['name'], [])
 
-        for field in group.fields:
+        for field in group['fields']:
             # if the field has options, create a list of choices
-            if field.options:
-                choices = [(v, k) for k, v in field.options.items()]
+            if field['options']:
+                choices = [(v, k) for k, v in field['options'].items()]
 
                 if field.allows_multiple_values:
-                    fields[field.name] = IntegerSplitterField(
-                        field.name,
+                    fields[field['name']] = IntegerSplitterField(
+                        field['name'],
                         choices=choices,
-                        description=field.description,
+                        description=field['description'],
                         validators=[validators.optional()],
                     )
                 else:
-                    fields[field.name] = SelectField(
-                        field.name,
+                    fields[field['name']] = SelectField(
+                        field['name'],
                         choices=choices,
                         coerce=int,
-                        description=field.description,
+                        description=field['description'],
                         validators=[validators.optional()],
                         widget=widgets.TextInput()
                     )
             else:
-                if field.is_comment_field:
+                if field['is_comment_field']:
                     continue
 
-                if field.represents_boolean:
+                if field['represents_boolean']:
                     field_validators = [validators.optional()]
                 else:
                     field_validators = [
                         validators.optional(),
-                        validators.NumberRange(min=field.min_value,
-                                               max=field.max_value)
+                        validators.NumberRange(min=field['min_value'],
+                                               max=field['max_value'])
                     ]
 
-                fields[field.name] = IntegerField(
-                    field.name,
-                    description=field.description,
+                fields[field['name']] = IntegerField(
+                    field['name'],
+                    description=field['description'],
                     validators=field_validators)
 
         fields['groups'].append(groupspec)
@@ -257,16 +260,15 @@ def build_questionnaire(form, data=None):
     return form_class(data)
 
 
-# FormForm = model_form(
-#     models.Form, SecureForm,
-#     only=[
-#         'name', 'prefix', 'form_type', 'require_exclamation', 'events',
-#         'calculate_moe', 'accredited_voters_tag', 'verifiable',
-#         'invalid_votes_tag', 'registered_voters_tag', 'blank_votes_tag',
-#         'permitted_roles'])
-
-
 class FormForm(SecureForm):
     name = StringField(_('Name'), validators=[validators.DataRequired()])
     prefix = StringField(_('Prefix'), validators=[validators.DataRequired()])
-    form_type = SelectField(_('Form type'), choices=models.Form.FORM_TYPES, validators=[validators.DataRequired()])
+    form_type = SelectField(_('Form type'), choices=models.Form.FORM_TYPES,
+                            validators=[validators.DataRequired()])
+    require_exclamation = BooleanField(_('Require exclamation'))
+    calculate_moe = BooleanField(_('Calculate MOE'))
+    quality_checks_enabled = BooleanField(_('QA enabled'))
+    accredited_voters_tag = StringField(_('Accredited voters tag'))
+    blank_votes_tag = StringField(_('Blank votes tag'))
+    invalid_votes_tag = StringField(_('Invalid votes tag'))
+    registered_votes_tag = StringField(_('Registered voters tag'))
