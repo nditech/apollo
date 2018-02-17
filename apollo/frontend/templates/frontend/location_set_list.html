@@ -1,0 +1,97 @@
+{%- extends 'frontend/_layout.html' -%}
+{%- from 'frontend/macros/pagination.html' import render_pager, render_pager_counter -%}
+{% block stylesheets %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap-wizard.css') }}">
+<style type="text/css">
+.img{margin: 4px 0 0 -6px;}
+.wizard-modal p {
+        margin: 0 0 10px;
+        padding: 0;
+      }
+      .fileUpload {
+        position: relative;
+        overflow: hidden;
+      }
+      .fileUpload input.upload {
+        position: absolute;
+        top: 0;
+        right: 0;
+        margin: 0;
+        padding: 0;
+        font-size: 20px;
+        cursor: pointer;
+        opacity: 0;
+        filter: alpha(opacity=0);
+      }
+</style>
+{% endblock %}
+{% block toolbar %}
+  {%- if perms.export_locations.can() -%}
+  <a class="btn btn-sm btn-default pull-right" href="{{ url_for('locations.locations_list', export='true', **request.args) }}"><i class="glyphicon glyphicon-export"></i> {{ _('Export') }}</a>
+  {%- endif -%}
+  {%- if perms.import_locations.can() -%}
+  <button id="open-wizard" class="btn btn-sm btn-primary pull-right" style="margin-right:1em;"><i class="glyphicon glyphicon-import glyphicon-white"></i> {{ _('Import Locations') }}</button>
+  {%- endif -%}
+  {%- if perms.role('admin').can() -%}
+  <button class="btn btn-sm btn-danger pull-right" id="nuke_locations_modal_btn" style="margin-right: 1em;" data-toggle="modal" data-target="#nuke_modal"><i class="glyphicon glyphicon-trash"></i> {{ _('Purge Locations') }}</button>
+  {%- endif -%}
+{% endblock %}
+{% block content %}
+{%- set flash_msgs = get_flashed_messages(category_filter=['locations']) -%}
+{%- if flash_msgs -%}
+<div class="row-fluid">
+  <div>
+    {%- for msg in flash_msgs -%}
+    <div class="alert alert-info alert-dismissable">
+      <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+      {{ msg }}
+    </div>
+    {%- endfor -%}
+  </div>
+</div>
+{%- endif -%}
+<div class="row-fluid">
+  <div>
+    {{ render_pager_counter(location_sets, args) }}
+    <table class="table table-striped table-bordered table-hover">
+      <thead>
+        <tr>
+          <th class="shrink" width="1px"><input type="checkbox" class="checked" id="select_all" name="select_all"></th>
+          <th>{{ _('Name') }}</th>
+          <th>{{ _('# linked events') }}</th>
+          <th>{{ _('# administrative divisions') }}</th>
+          <th>{{ _('# locations') }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for location_set in location_sets.items %}
+        <tr>
+          <td class="shrink"><input type="checkbox" class="checked" name="ids" value="{{ location_set.id }}"></td>
+          <td>{{ location_set.name }}</td>
+          <td>{{ location_set.events|length }}</td>
+          <td>{{ location_set.location_types|length }}</td>
+          <td>{{ location_set.locations|length }}</td>
+        </tr>
+        {% else %}
+        <tr class="warning">
+          <td class="text-center" colspan="5">{{ _('No location sets') }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12">
+    {{ render_pager(location_sets, 'locations.location_sets_list', args) }}
+  </div>
+</div>
+{% endblock %}
+{%- block scripts -%}
+<script type="text/javascript" src="{{ url_for('static', filename='js/chosen.jquery.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/prettify.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap-wizard.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/jquery.form.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/filters.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/underscore.js') }}"></script>
+{%- endblock -%}

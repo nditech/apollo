@@ -51,6 +51,29 @@ location_api.add_resource(
 )
 
 
+@route(bp, '/location-sets/', methods=['GET'])
+@permissions.edit_locations.require(403)
+@login_required
+def location_sets_list():
+    args = request.args.to_dict(flat=False)
+    page_title = _('Location sets')
+    queryset = services.location_sets.find()
+    template_name = 'frontend/location_set_list.html'
+
+    page_spec = args.pop('page', [1])
+    try:
+        page = int(page_spec[0])
+    except (IndexError, ValueError):
+        page = 1
+
+    context = {
+        'location_sets': queryset.paginate(
+            page=page, per_page=current_app.config.get('PAGE_SIZE')),
+        'page_title': page_title
+    }
+
+    return render_template(template_name, **context)
+
 @route(bp, '/locations/', methods=['GET'])
 @register_menu(
     bp, 'user.locations_list', _('Locations'),
