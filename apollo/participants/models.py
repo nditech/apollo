@@ -110,9 +110,7 @@ class Participant(BaseModel):
     __tablename__ = 'participant'
     id = db.Column(
         db.Integer, db.Sequence('participant_id_seq'), primary_key=True)
-    last_name = db.Column(db.String)
-    first_name = db.Column(db.String)
-    other_name = db.Column(db.String)
+    name = db.Column(db.String)
     role_id = db.Column(
         db.Integer, db.ForeignKey('participant_role.id'), nullable=False)
     partner_id = db.Column(

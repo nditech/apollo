@@ -40,6 +40,29 @@ participant_api.add_resource(
 admin_required = permissions.role('admin').require
 
 
+@route(bp, '/participant-sets', methods=['GET'])
+@permissions.edit_participant.require(403)
+def participant_set_list():
+    args = request.args.to_dict(flat=False)
+    page_title = _('Participant sets')
+    queryset = services.participant_sets.find(deployment=g.deployment)
+    template_name = 'frontend/participant_set_list.html'
+
+    page_spec = args.pop('page', [1])
+    try:
+        page = int(page_spec[0])
+    except (IndexError, ValueError):
+        page = 1
+
+    context = {
+        'participant_sets': queryset.paginate(
+            page=page, per_page=current_app.config.get('PAGE_SIZE')),
+        'page_title': page_title
+    }
+
+    return render_template(template_name, **context)
+
+
 @route(bp, '/participants', methods=['GET', 'POST'])
 @register_menu(
     bp, 'main.participants',

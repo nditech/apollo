@@ -95,9 +95,11 @@
               {%- if current_menu.submenu('user.locations_builder').visible or current_menu.submenu('user.locations_list').visible or current_menu.submenu('user.forms').visible %}
                 <li class="divider"></li>
               {%- endif %}
+              {#
               {%- if current_menu.submenu('user.locations_builder').visible %}
                 <li><a href="{{ current_menu.submenu('user.locations_builder').url }}"><i class="glyphicon glyphicon-map-marker"></i> {{ current_menu.submenu('user.locations_builder').text }}</a></li>
               {%- endif %}
+              #}
               {%- if current_menu.submenu('user.forms').visible -%}
                 <li><a href="{{ current_menu.submenu('user.forms').url }}"><i class="glyphicon glyphicon-list-alt"></i> {{ current_menu.submenu('user.forms').text }}</a></li>
               {%- endif %}

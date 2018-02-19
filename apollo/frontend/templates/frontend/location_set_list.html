@@ -1,37 +1,6 @@
 {%- extends 'frontend/_layout.html' -%}
 {%- from 'frontend/macros/pagination.html' import render_pager, render_pager_counter -%}
-{% block stylesheets %}
-<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap-wizard.css') }}">
-<style type="text/css">
-.img{margin: 4px 0 0 -6px;}
-.wizard-modal p {
-        margin: 0 0 10px;
-        padding: 0;
-      }
-      .fileUpload {
-        position: relative;
-        overflow: hidden;
-      }
-      .fileUpload input.upload {
-        position: absolute;
-        top: 0;
-        right: 0;
-        margin: 0;
-        padding: 0;
-        font-size: 20px;
-        cursor: pointer;
-        opacity: 0;
-        filter: alpha(opacity=0);
-      }
-</style>
-{% endblock %}
 {% block toolbar %}
-  {%- if perms.import_locations.can() -%}
-  <button id="open-wizard" class="btn btn-sm btn-primary pull-right" style="margin-right:1em;"><i class="glyphicon glyphicon-import glyphicon-white"></i> {{ _('Import Locations') }}</button>
-  {%- endif -%}
-  {%- if perms.role('admin').can() -%}
-  <button class="btn btn-sm btn-danger pull-right" id="nuke_locations_modal_btn" style="margin-right: 1em;" data-toggle="modal" data-target="#nuke_modal"><i class="glyphicon glyphicon-trash"></i> {{ _('Purge Locations') }}</button>
-  {%- endif -%}
 {% endblock %}
 {% block content %}
 {%- set flash_msgs = get_flashed_messages(category_filter=['locations']) -%}
@@ -58,6 +27,7 @@
           <th>{{ _('# linked events') }}</th>
           <th colspan="2">{{ _('Administrative divisions') }}</th>
           <th colspan="2">{{ _('Locations') }}</th>
+          <th colspan="2">{{ _('Samples') }}</th>
         </tr>
       </thead>
       <tbody>
@@ -70,10 +40,12 @@
           <td>Manage</td>
           <td>{{ location_set.locations|length }}</td>
           <td><a href="{{ url_for('locations.location_list', location_set_id=location_set.id) }}">Manage</a></td>
+          <td>{{ location_set.samples|length }}</td>
+          <td><a href="">Manage</a></td>
         </tr>
         {% else %}
         <tr class="warning">
-          <td class="text-center" colspan="5">{{ _('No location sets') }}</td>
+          <td class="text-center" colspan="9">{{ _('No location sets') }}</td>
         </tr>
         {% endfor %}
       </tbody>
@@ -82,7 +54,7 @@
 </div>
 <div class="row">
   <div class="col-md-12">
-    {{ render_pager(location_sets, 'locations.location_sets_list', args) }}
+    {{ render_pager(location_sets, 'locations.location_set_list', args) }}
   </div>
 </div>
 {% endblock %}

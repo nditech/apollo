@@ -58,6 +58,7 @@ class LocationSet(BaseModel):
     slug = db.Column(db.String)
     deployment_id = db.Column(db.Integer, db.ForeignKey('deployment.id'))
     deployment = db.relationship('Deployment', backref='location_sets')
+    admin_divisions_graph = db.Column(JSONB)
 
 
 class ParticipantSet(BaseModel):

@@ -19,7 +19,7 @@ from mongoengine import signals
 from tablib import Dataset
 
 from werkzeug.datastructures import MultiDict
-from apollo import services
+from apollo import models, services, utils
 from apollo.submissions.incidents import incidents_csv
 from apollo.participants.utils import update_participant_completion_rating
 from apollo.submissions.aggregation import (
@@ -54,7 +54,7 @@ def get_valid_values(choices):
 
 @auth.verify_password
 def verify_pw(username, password):
-    user = services.users.get(email=username)
+    user = services.users.find(email=username).first()
 
     if not user:
         return False
@@ -80,7 +80,8 @@ def verify_pw(username, password):
                get_form_list_menu, form_type='INCIDENT'))
 @login_required
 def submission_list(form_id):
-    form = services.forms.get_or_404(pk=form_id)
+    form = services.forms.find(
+        id=form_id).first_or_404()
     permissions.require_item_perm('view_forms', form)
 
     filter_class = generate_submission_filter(form)
@@ -88,7 +89,7 @@ def submission_list(form_id):
     template_name = 'frontend/submission_list.html'
 
     data = request.args.to_dict(flat=False)
-    data['form_id'] = str(form.pk)
+    data['form_id'] = str(form.id)
     page_spec = data.pop('page', None) or [1]
     page = int(page_spec[0])
 
@@ -97,21 +98,24 @@ def submission_list(form_id):
     location = None
     if request.args.get('location'):
         location = services.locations.find(
-            pk=request.args.get('location')).first()
+            id=request.args.get('location')).first()
 
     if request.args.get('export') and permissions.export_submissions.can():
         mode = request.args.get('export')
         if mode in ['master', 'aggregated']:
+            # TODO: this query was ordered by location
             queryset = services.submissions.find(
                 submission_type='M',
                 form=form
-            ).order_by('location')
+            )
         else:
+            # TODO: this query was ordered by location, then participant
             queryset = services.submissions.find(
                 submission_type='O',
                 form=form
-            ).order_by('location', 'contributor')
+            )
 
+        # TODO: fix this. no exports yet. nor aggregation
         query_filterset = filter_class(queryset, request.args)
         basename = slugify_unicode('%s %s %s %s' % (
             g.event.name.lower(),
@@ -144,24 +148,26 @@ def submission_list(form_id):
     # first retrieve observer submissions for the form
     # NOTE: this implicitly restricts selected submissions
     # to the currently selected event.
+    # TODO: this query was ordered by location, then participant
     queryset = services.submissions.find(
         submission_type='O',
         form=form
-    ).order_by('location', 'contributor')
+    )
     query_filterset = filter_class(queryset, request.args)
     filter_form = query_filterset.form
 
+    # TODO: rewrite this. verify what select_related does
     if request.form.get('action') == 'send_message':
         message = request.form.get('message', '')
-        recipients = [x for x in [submission.contributor.phone
-                if submission.contributor and
-                submission.contributor.phone else ''
-                for submission in query_filterset.qs.only(
-                    'contributor').select_related(1)] if x is not '']
+        recipients = [x for x in [submission.participant.phone
+                if submission.participant and
+                submission.participant.phone else ''
+                for submission in query_filterset.qs.with_entities(
+                    models.Submission.participant).select_related(1)] if x is not '']
         recipients.extend(current_app.config.get('MESSAGING_CC'))
 
         if message and recipients and permissions.send_messages.can():
-            send_messages.delay(str(g.event.pk), message, recipients)
+            send_messages.delay(str(g.event.id), message, recipients)
             return 'OK'
         else:
             abort(400)
@@ -190,7 +196,8 @@ def submission_list(form_id):
 @permissions.add_submission.require(403)
 @login_required
 def submission_create(form_id):
-    form = services.forms.get_or_404(pk=form_id, form_type='INCIDENT')
+    form = services.forms.find(
+        id=form_id, form_type='INCIDENT').first_or_404()
     edit_form_class = generate_submission_edit_form_class(form)
     page_title = _('Add Submission')
     template_name = 'frontend/incident_add.html'
@@ -212,9 +219,11 @@ def submission_create(form_id):
         if not submission_form.validate():
             # really should redisplay the form again
             return redirect(url_for(
-                'submissions.submission_list', form_id=str(form.pk)))
+                'submissions.submission_list', form_id=str(form.id)))
 
-        submission = services.submissions.new()
+        # TODO: fix this. can't populate the submission
+        # directly
+        submission = models.Submission()
         submission_form.populate_obj(submission)
 
         # properly populate all fields
@@ -231,14 +240,14 @@ def submission_create(form_id):
         submission.save()
 
         return redirect(
-            url_for('submissions.submission_list', form_id=str(form.pk)))
+            url_for('submissions.submission_list', form_id=str(form.id)))
 
 
 @route(bp, '/submissions/<submission_id>', methods=['GET', 'POST'])
 @permissions.edit_submission.require(403)
 @login_required
 def submission_edit(submission_id):
-    submission = services.submissions.get_or_404(pk=submission_id)
+    submission = services.submissions.find(id=submission_id)
     edit_form_class = generate_submission_edit_form_class(submission.form)
     page_title = _('Edit Submission')
     readonly = not g.deployment.allow_observer_submission_edit
@@ -249,17 +258,17 @@ def submission_edit(submission_id):
     if request.method == 'GET':
         submission_form = edit_form_class(
             obj=submission,
-            prefix=str(submission.pk)
+            prefix=str(submission.id)
         )
         sibling_forms = [
             edit_form_class(
                 obj=sibling,
-                prefix=str(sibling.pk)
+                prefix=str(sibling.id)
             ) for sibling in submission.siblings
         ]
         master_form = edit_form_class(
             obj=submission.master,
-            prefix=str(submission.master.pk)
+            prefix=str(submission.master.id)
         ) if submission.master else None
 
         return render_template(
@@ -277,7 +286,7 @@ def submission_edit(submission_id):
         if submission.form.form_type == 'INCIDENT':
             # no master or sibling submission here
             submission_form = edit_form_class(
-                request.form, prefix=str(submission.pk)
+                request.form, prefix=str(submission.id)
             )
 
             if submission_form.validate():
@@ -288,13 +297,12 @@ def submission_edit(submission_id):
                     form_fields = list(submission_form.data.keys())
                     changed = False
                     for form_field in form_fields:
-                        if (
-                            getattr(submission, form_field, None) !=
-                            submission_form.data.get(form_field)
-                        ):
-                            setattr(
-                                submission, form_field,
-                                submission_form.data.get(form_field))
+                        field_value = submission_form.data.get(form_field)
+                        if field_value is None:
+                            continue
+
+                        if submission.data.get(form_field) != field_value:
+                            submission.data[form_field] = field_value
                             changed = True
                     if changed:
                         submission.save()
@@ -304,7 +312,7 @@ def submission_edit(submission_id):
                 else:
                     return redirect(url_for(
                         'submissions.submission_list',
-                        form_id=str(submission.form.pk)))
+                        form_id=str(submission.form.id)))
             else:
                 return render_template(
                     template_name,
@@ -316,19 +324,19 @@ def submission_edit(submission_id):
         else:
             master_form = edit_form_class(
                 request.form,
-                prefix=str(submission.master.pk)
+                prefix=str(submission.master.id)
             ) if submission.master else None
 
             submission_form = edit_form_class(
                 request.form,
                 obj=submission,
-                prefix=str(submission.pk)
+                prefix=str(submission.id)
             )
 
             sibling_forms = [
                 edit_form_class(
                     obj=sibling,
-                    prefix=str(sibling.pk))
+                    prefix=str(sibling.id))
                 for sibling in submission.siblings
             ]
 
@@ -468,7 +476,7 @@ def submission_edit(submission_id):
                 else:
                     return redirect(url_for(
                         'submissions.submission_list',
-                        form_id=str(submission.form.pk)
+                        form_id=str(submission.form.id)
                     ))
             else:
                 return render_template(
@@ -489,7 +497,7 @@ def submission_edit(submission_id):
 @login_required
 def comment_create_view():
     submission = services.submissions.get_or_404(
-        pk=request.form.get('submission'))
+        id=request.form.get('submission'))
     comment = request.form.get('comment')
     saved_comment = services.submission_comments.create(
         submission=submission,
@@ -525,11 +533,11 @@ def _incident_csv(form_pk, location_type_pk, location_pk=None):
 
     `returns`: a string of bytes (str) containing the CSV data.
     """
-    form = services.forms.get_or_404(pk=form_pk, form_type='INCIDENT')
+    form = services.forms.get_or_404(id=form_pk, form_type='INCIDENT')
     location_type = services.location_types.objects.get_or_404(
-        pk=location_type_pk)
+        id=location_type_pk)
     if location_pk:
-        location = services.locations.get_or_404(pk=location_pk)
+        location = services.locations.get_or_404(id=location_pk)
         qs = services.submissions.find(submission_type='O', form=form) \
             .filter_in(location)
     else:
@@ -571,9 +579,9 @@ def incidents_csv_with_location_dl(form_pk, location_type_pk, location_pk):
 @route(bp, '/submissions/<submission_id>/version/<version_id>')
 @login_required
 def submission_version(submission_id, version_id):
-    submission = services.submissions.get_or_404(pk=submission_id)
+    submission = services.submissions.get_or_404(id=submission_id)
     version = services.submission_versions.get_or_404(
-        pk=version_id, submission=submission)
+        id=version_id, submission=submission)
     form = submission.form
     form_data = MultiDict(json.loads(version.data))
     page_title = _('View submission')
@@ -596,25 +604,27 @@ def submission_version(submission_id, version_id):
 @register_menu(
     bp, 'main.dashboard.qa', _('Quality Assurance'),
     icon='<i class="glyphicon glyphicon-tasks"></i>', order=1,
-    visible_when=lambda: len(get_quality_assurance_form_dashboard_menu(form_type='CHECKLIST', verifiable=True)) > 0 \
-            and permissions.view_quality_assurance.can(),
+    visible_when=lambda: len(
+        get_quality_assurance_form_dashboard_menu(
+            form_type='CHECKLIST', quality_checks_enabled=True)) > 0 \
+        and permissions.view_quality_assurance.can(),
     dynamic_list_constructor=partial(
         get_quality_assurance_form_dashboard_menu,
         form_type='CHECKLIST', verifiable=True))
 @permissions.view_quality_assurance.require(403)
 @login_required
 def quality_assurance_dashboard(form_id):
-    form = services.forms.get_or_404(pk=form_id, form_type='CHECKLIST')
+    form = services.forms.get_or_404(id=form_id, form_type='CHECKLIST')
     page_title = _('Quality Assurance — %(name)s', name=form.name)
     filter_class = generate_quality_assurance_filter(form)
     data = request.args.to_dict()
-    data['form_id'] = str(form.pk)
+    data['form_id'] = str(form.id)
     loc_types = displayable_location_types(is_administrative=True)
 
     location = None
     if request.args.get('location'):
         location = services.locations.find(
-            pk=request.args.get('location')).first()
+            id=request.args.get('location')).first()
 
     submissions = services.submissions.find(form=form, submission_type='O')
     query_filterset = filter_class(submissions, request.args)
@@ -644,7 +654,7 @@ def quality_assurance_dashboard(form_id):
     _('Quality Assurance'),
     order=3, icon='<i class="glyphicon glyphicon-ok"></i>',
     visible_when=lambda: len(get_quality_assurance_form_list_menu(
-        form_type='CHECKLIST', verifiable=True)) > 0 and
+        form_type='CHECKLIST', quality_checks_enabled=True)) > 0 and
     permissions.view_quality_assurance.can())
 @register_menu(
     bp, 'main.qa.checklists', _('Quality Assurance'),
@@ -655,18 +665,20 @@ def quality_assurance_dashboard(form_id):
 @permissions.view_quality_assurance.require(403)
 @login_required
 def quality_assurance_list(form_id):
-    form = services.forms.get_or_404(pk=form_id, form_type='CHECKLIST')
+    form = services.forms.get_or_404(
+        models.Form.id == form_id,
+        models.Form.form_type == 'CHECKLIST')
     page_title = _('Quality Assurance — %(name)s', name=form.name)
     filter_class = generate_quality_assurance_filter(form)
     data = request.args.to_dict()
-    data['form_id'] = str(form.pk)
+    data['form_id'] = str(form.id)
     page = int(data.pop('page', 1))
     loc_types = displayable_location_types(is_administrative=True)
 
     location = None
     if request.args.get('location'):
         location = services.locations.find(
-            pk=request.args.get('location')).first()
+            id=request.args.get('location')).first()
 
     if request.args.get('export') and permissions.export_submissions.can():
         mode = request.args.get('export')
@@ -753,7 +765,7 @@ def update_submission_version(sender, document, **kwargs):
 @route(bp, '/api/v1/submissions/export/aggregated/<form_id>')
 @auth.login_required
 def submission_export(form_id):
-    form = services.forms.get_or_404(pk=form_id)
+    form = services.forms.get_or_404(id=form_id)
 
     queryset = services.submissions.find(
         form=form, submission_type='M').order_by('location')

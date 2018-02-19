@@ -59,6 +59,8 @@ class LocationTypePath(db.Model):
         db.Index('location_type_paths_ancestor_idx', 'ancestor_id'),
         db.Index('location_type_paths_descendant_idx', 'descendant_id'))
 
+    location_set_id = db.Column(
+        db.Integer, db.ForeignKey('location_set.id'), nullable=False)
     ancestor_id = db.Column(db.Integer, db.ForeignKey('location_type.id'),
                             primary_key=True)
     descendant_id = db.Column(db.Integer,
@@ -112,6 +114,8 @@ class LocationPath(db.Model):
         db.Index('location_paths_ancestor_idx', 'ancestor_id'),
         db.Index('location_paths_descendant_idx', 'descendant_id'))
 
+    location_set_id = db.Column(
+        db.Integer, db.ForeignKey('location_set.id'), nullable=False)
     ancestor_id = db.Column(
         db.Integer, db.ForeignKey('location.id'), primary_key=True)
     descendant_id = db.Column(

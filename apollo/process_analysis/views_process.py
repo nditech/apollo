@@ -9,7 +9,8 @@ from flask_security import login_required
 from apollo.process_analysis.common import (
     generate_incidents_data, generate_process_data
 )
-from mongoengine import Q
+from sqlalchemy import and_, or_
+from apollo import models
 from apollo.services import forms, locations, location_types, submissions
 from apollo.frontend import route, permissions, filters
 from apollo.frontend.helpers import (
@@ -20,27 +21,35 @@ from apollo.frontend.helpers import (
 
 def get_analysis_menu():
     return [{
-        'url': url_for('process_analysis.process_analysis', form_id=str(form.pk)),
+        'url': url_for('process_analysis.process_analysis',
+                       form_id=str(form.id)),
         'text': form.name,
         'icon': '<i class="glyphicon glyphicon-stats"></i>'
-    } for form in forms.find().filter(
-        Q(form_type='INCIDENT') |
-        Q(
-            form_type='CHECKLIST',
-            groups__fields__analysis_type__in=['PROCESS', 'RESULT']
+    } for form in forms.filter(
+        or_(
+            models.Form.form_type == 'INCIDENT',
+            and_(
+                models.Form.form_type == 'CHECKLIST',
+                models.Form.data['groups'].op('@>')(
+                    [{'fields': [{'analysis_type': 'PROCESS'}]}]))
         )
-    ).order_by('form_type', 'name')]
+    ).order_by(models.Form.form_type, models.Form.name)]
 
 
 def get_process_analysis_menu():
     return [{
-        'url': url_for('process_analysis.process_analysis', form_id=str(form.pk)),
+        'url': url_for('process_analysis.process_analysis',
+                       form_id=str(form.id)),
         'text': form.name,
         'icon': '<i class="glyphicon glyphicon-stats"></i>'
-    } for form in forms.find().filter(
-        Q(form_type='INCIDENT') |
-        Q(form_type='CHECKLIST', groups__fields__analysis_type='PROCESS')
-    ).order_by('form_type', 'name')]
+    } for form in forms.filter(
+        or_(
+            models.Form.form_type == 'INCIDENT',
+            and_(
+                models.Form.form_type == 'CHECKLIST',
+                models.Form.data['groups'].op('@>')(
+                    [{'fields': [{'analysis_type': 'PROCESS'}]}])))
+    ).order_by(models.Form.form_type, models.Form.name)]
 
 
 bp = Blueprint('process_analysis', __name__, template_folder='templates',
@@ -48,8 +57,8 @@ bp = Blueprint('process_analysis', __name__, template_folder='templates',
 
 
 def _process_analysis(form_id, location_id=None, tag=None):
-    form = forms.get_or_404(pk=form_id)
-    location = locations.get_or_404(pk=location_id) \
+    form = forms.get_or_404(id=form_id)
+    location = locations.get_or_404(id=location_id) \
         if location_id else locations.root()
 
     template_name = ''

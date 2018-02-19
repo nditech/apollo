@@ -87,7 +87,9 @@ class LocationFilter(ChoiceFilter):
 class SampleFilter(ChoiceFilter):
     def __init__(self, *args, **kwargs):
         kwargs['choices'] = _make_choices(
-            services.samples.find().scalar('id', 'name'), _('Sample')
+            services.samples.find().with_entities(
+                models.Sample.id, models.Sample.name
+            ), _('Sample')
         )
         super(SampleFilter, self).__init__(*args, **kwargs)
 
@@ -179,7 +181,9 @@ class SubmissionVerificationFilter(ChoiceFilter):
 class PartnerFilter(ChoiceFilter):
     def __init__(self, *args, **kwargs):
         kwargs['choices'] = _make_choices(
-            services.participant_partners.find().scalar('id', 'name'),
+            services.participant_partners.find().with_entities(
+                models.ParticipantPartner.id,
+                models.ParticipantPartner.name),
             _('All Organizations')
         )
         super(PartnerFilter, self).__init__(*args, **kwargs)
@@ -194,7 +198,8 @@ class PartnerFilter(ChoiceFilter):
 class RoleFilter(ChoiceFilter):
     def __init__(self, *args, **kwargs):
         kwargs['choices'] = _make_choices(
-            services.participant_roles.find().scalar('id', 'name'),
+            services.participant_roles.find().with_entities(
+                models.ParticipantRole.id, models.ParticipantRole.name),
             _('All Roles')
         )
         super(RoleFilter, self).__init__(*args, **kwargs)
@@ -216,12 +221,12 @@ class ParticipantGroupFilter(ChoiceFilter):
         #         ('{}__{}'.format(group.name, tag), tag) for tag in group.tags
         #     ]
         for group_type in services.participant_group_types.find().order_by(
-                'name'):
+                models.ParticipantGroupType.name):
             for group in services.participant_groups.find(
-                group_type=group_type.name
-            ).order_by('name'):
+                group_type=group_type
+            ).order_by(models.ParticipantGroup.name):
                 choices.setdefault(group_type.name, []).append(
-                    (str(group.pk), group.name)
+                    (group.id, group.name)
                 )
         kwargs['choices'] = [(k, choices[k]) for k in choices]
         super(ParticipantGroupFilter, self).__init__(*args, **kwargs)
@@ -229,9 +234,9 @@ class ParticipantGroupFilter(ChoiceFilter):
     def filter(self, queryset, values):
         if values:
             for value in values:
-                group = services.participant_groups.get(pk=value)
+                group = services.participant_groups.get(id=value)
 
-                queryset = queryset(groups=group)
+                queryset = queryset.filter_by(participant_groups=group)
         return queryset
 
 

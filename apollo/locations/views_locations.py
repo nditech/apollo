@@ -13,8 +13,8 @@ from flask_menu import register_menu
 from flask_restful import Api
 from flask_security import current_user, login_required
 from apollo.helpers import load_source_file, stash_file
-from mongoengine import ValidationError
 from slugify import slugify_unicode
+from sqlalchemy import not_
 
 from apollo.frontend import filters, permissions, route
 from apollo import helpers, models, services
@@ -54,7 +54,7 @@ location_api.add_resource(
 @route(bp, '/location-sets/', methods=['GET'])
 @permissions.edit_locations.require(403)
 @login_required
-def location_sets_list():
+def location_set_list():
     args = request.args.to_dict(flat=False)
     page_title = _('Location sets')
     queryset = services.location_sets.find(deployment=g.deployment)
@@ -210,13 +210,14 @@ def location_headers(pk):
             return redirect(url_for('locations.locations_list'))
 
 
-@route(bp, '/locations/builder', methods=['GET', 'POST'])
+@route(bp, '/<int:location_set_id>/locations/builder', methods=['GET', 'POST'])
 @register_menu(
     bp, 'user.locations_builder', _('Administrative Divisions'),
     visible_when=lambda: permissions.edit_locations.can())
 @permissions.edit_locations.require(403)
 @login_required
-def locations_builder():
+def locations_builder(location_set_id):
+    location_set = models.LocationSet.query.get_or_404(location_set_id)
     template_name = 'frontend/location_builder.html'
     page_title = _('Administrative Divisions')
 
@@ -227,21 +228,27 @@ def locations_builder():
         nodes = [cell for cell in divisions_graph.get('cells') if cell.get('type') == 'basic.Rect']
         links = [cell for cell in divisions_graph.get('cells') if cell.get('type') == 'link']
 
-        valid_node_ids = [cell.get('id') for cell in [cell for cell in nodes if helpers.is_objectid(cell.get('id'))]]
+        valid_node_ids = [cell.get('id') for cell in nodes
+                          if cell.get('id').isdigit()]
 
         # 1. Delete non-referenced location types
-        services.location_types.find(id__nin=valid_node_ids).delete()
+        services.location_types.filter(
+            models.LocationType.deployment == g.deployment,
+            models.LocationType.location_set_id == location_set_id,
+            not_(models.LocationType.id.in_(valid_node_ids))
+        ).delete()
 
         # 2. Create location types and update ids
         for i, node in enumerate(nodes):
-            try:
-                lt = services.location_types.find().get(id=node.get('id'))
+            lt = services.location_types.find(
+                deployment=g.deployment,
+                location_set=location_set).get(node.get('id'))
+            if lt:
                 lt.is_administrative = node.get('is_administrative')
                 lt.is_political = node.get('is_political')
                 lt.name = node.get('label')
-                lt.ancestors_ref = []
                 lt.save()
-            except (models.LocationType.DoesNotExist, ValidationError):
+            else:
                 lt = services.location_types.create(
                     name=node.get('label'),
                     is_administrative=node.get('is_administrative'),
