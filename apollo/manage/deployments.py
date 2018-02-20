@@ -39,6 +39,9 @@ class CreateDeploymentCommand(Command):
             clerk.save()
             manager.save()
 
+            # Create an event
+            CreateEventCommand._create_event(deployment)
+
 
 class ListDeploymentsCommand(Command):
 
