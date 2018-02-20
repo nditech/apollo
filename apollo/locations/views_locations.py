@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
-
-
-import json
 from datetime import datetime
+import json
 
 import networkx as nx
 
@@ -17,7 +15,8 @@ from slugify import slugify_unicode
 from sqlalchemy import not_
 
 from apollo.frontend import filters, permissions, route
-from apollo import helpers, models, services
+from apollo import helpers, models, services, utils
+from apollo.core import db
 from apollo.locations import api, tasks
 from apollo.frontend.forms import (
     file_upload_form, generate_location_edit_form,
@@ -211,9 +210,9 @@ def location_headers(pk):
 
 
 @route(bp, '/<int:location_set_id>/locations/builder', methods=['GET', 'POST'])
-@register_menu(
-    bp, 'user.locations_builder', _('Administrative Divisions'),
-    visible_when=lambda: permissions.edit_locations.can())
+# @register_menu(
+#     bp, 'user.locations_builder', _('Administrative Divisions'),
+#     visible_when=lambda: permissions.edit_locations.can())
 @permissions.edit_locations.require(403)
 @login_required
 def locations_builder(location_set_id):
@@ -232,17 +231,29 @@ def locations_builder(location_set_id):
                           if cell.get('id').isdigit()]
 
         # 1. Delete non-referenced location types
-        services.location_types.filter(
+        unused_location_types = services.location_types.filter(
             models.LocationType.deployment == g.deployment,
             models.LocationType.location_set_id == location_set_id,
             not_(models.LocationType.id.in_(valid_node_ids))
-        ).delete()
+        ).all()
+
+        for unused_lt in unused_location_types:
+            if len(unused_lt.locations) > 0:
+                flash(_('Admin level %(name)s has locations assigned and cannot be deleted') % {'name': unused_lt.name},
+                      category='locations_builder')
+                continue
+            unused_lt.delete()
 
         # 2. Create location types and update ids
         for i, node in enumerate(nodes):
-            lt = services.location_types.find(
-                deployment=g.deployment,
-                location_set=location_set).get(node.get('id'))
+            # TODO: remove this hack
+            if not utils.validate_uuid(node.get('id')):
+                lt = services.location_types.find(
+                    deployment=g.deployment,
+                    location_set=location_set,
+                    id=node.get('id')).first()
+            else:
+                lt = None
             if lt:
                 lt.is_administrative = node.get('is_administrative')
                 lt.is_political = node.get('is_political')
@@ -252,7 +263,9 @@ def locations_builder(location_set_id):
                 lt = services.location_types.create(
                     name=node.get('label'),
                     is_administrative=node.get('is_administrative'),
-                    is_political=node.get('is_political')
+                    is_political=node.get('is_political'),
+                    deployment_id=g.deployment.id,
+                    location_set_id=location_set_id
                     )
 
                 # update graph node and link ids
@@ -267,13 +280,15 @@ def locations_builder(location_set_id):
         # 3. Build graph
         for node in nodes:
             nx_graph.add_node(node.get('id'))
+
         for link in links:
             if link['source'].get('id') and link['target'].get('id'):
                 nx_graph.add_edge(
                     link['source'].get('id'),
                     link['target'].get('id'))
 
-        # 4. Update ancestor relationships
+        # 4. Build db relationships
+        path_lengths = nx.all_pairs_shortest_path_length(nx_graph)
         for link in links:
             if link['source'].get('id') and link['target'].get('id'):
                 ancestors = nx.topological_sort(
@@ -282,27 +297,46 @@ def locations_builder(location_set_id):
                         nx.dfs_tree(
                             nx_graph.reverse(),
                             link['target'].get('id')).nodes()).nodes())
-                services.location_types.find().get(
-                    id=link['target'].get('id')).update(
-                    add_to_set__ancestors_ref=[ancestor for ancestor in ancestors if ancestor != link['target'].get('id')])
 
-        # 5. Update ancestor count
-        for location_type in services.location_types.find():
-            location_type.save()
+                for ancestor in ancestors:
+                    path = models.LocationTypePath.query.filter_by(
+                        ancestor_id=ancestor, descendant_id=link['target'].get(
+                            'id'), location_set_id=location_set_id).first()
+                    if not path:
+                        path = models.LocationTypePath(
+                            ancestor_id=ancestor,
+                            descendant_id=link['target'].get('id'),
+                            location_set_id=location_set_id,
+                            depth=path_lengths[ancestor][link['target'].get(
+                                'id')])
+                        db.session.add(path)
 
+        for node in nx_graph.nodes():
+            path = models.LocationTypePath.query.filter_by(
+                ancestor_id=node, descendant_id=node,
+                location_set_id=location_set_id).first()
+            if not path:
+                path = models.LocationTypePath(
+                    ancestor_id=node, descendant_id=node,
+                    depth=0,
+                    location_set_id=location_set_id)
+                db.session.add(path)
+
+        db.session.commit()
+
+        # 5. convert graph to JSON
         divisions_graph['cells'] = nodes + links
 
-        g.deployment.administrative_divisions_graph = json.dumps(
-            divisions_graph)
-        g.deployment.save()
-        g.deployment.reload()
+        location_set.admin_divisions_graph = json.dumps(divisions_graph)
+        location_set.save()
 
         flash(
             _('Your changes have been saved.'),
             category='locations_builder'
         )
 
-    return render_template(template_name, page_title=page_title)
+    return render_template(template_name, page_title=page_title,
+                           location_set=location_set)
 
 
 @route(bp, '/locations/purge', methods=['POST'])

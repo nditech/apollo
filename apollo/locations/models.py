@@ -100,7 +100,7 @@ class Location(BaseModel):
 
     deployment = db.relationship('Deployment', backref='locations')
     location_set = db.relationship('LocationSet', backref='locations')
-    location_type = db.relationship('LocationType')
+    location_type = db.relationship('LocationType', backref='locations')
     samples = db.relationship(
         'Sample', backref='locations', secondary=samples_locations)
 
