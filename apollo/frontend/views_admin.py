@@ -256,17 +256,24 @@ class RoleAdminView(BaseAdminView):
             deployment_id=deployment.id, id=pk).first_or_404()
 
 
-class FormSetAdminView(BaseAdminView):
+class SetViewMixin(object):
+    def on_model_change(self, form, model, is_created):
+        if is_created:
+            model.deployment_id = current_user.deployment.id
+        super().on_model_change(form, model, is_created)
+
+
+class FormSetAdminView(SetViewMixin, BaseAdminView):
     column_list = ('name',)
     form_columns = ('name',)
 
 
-class LocationSetAdminView(BaseAdminView):
+class LocationSetAdminView(SetViewMixin, BaseAdminView):
     column_list = ('name',)
     form_columns = ('name',)
 
 
-class ParticipantSetAdminView(BaseAdminView):
+class ParticipantSetAdminView(SetViewMixin, BaseAdminView):
     column_list = ('name',)
     form_columns = ('name',)
 
