@@ -142,10 +142,10 @@ def location_edit(pk):
     return render_template(template_name, form=form, page_title=page_title)
 
 
-@route(bp, '/locations/import', methods=['POST'])
+@route(bp, '/<int:location_set_id>/locations/import', methods=['POST'])
 @permissions.import_locations.require(403)
 @login_required
-def locations_import():
+def locations_import(location_set_id):
     form = file_upload_form(request.form)
 
     if not form.validate():
@@ -153,7 +153,7 @@ def locations_import():
     else:
         # get the actual object from the proxy
         user = current_user._get_current_object()
-        event = services.events.get_or_404(pk=form.event.data)
+        event = services.events.get_or_404(id=form.event.data)
         upload = stash_file(request.files['spreadsheet'], user, event)
         upload.save()
 
@@ -288,15 +288,14 @@ def locations_builder(location_set_id):
                     link['target'].get('id'))
 
         # 4. Build db relationships
-        path_lengths = nx.all_pairs_shortest_path_length(nx_graph)
+        path_lengths = dict(nx.all_pairs_shortest_path_length(nx_graph))
         for link in links:
             if link['source'].get('id') and link['target'].get('id'):
                 ancestors = nx.topological_sort(
-                    nx_graph.reverse(),
-                    nx_graph.reverse().subgraph(
+                    nx_graph.subgraph(
                         nx.dfs_tree(
                             nx_graph.reverse(),
-                            link['target'].get('id')).nodes()).nodes())
+                            link['target'].get('id')).nodes()))
 
                 for ancestor in ancestors:
                     path = models.LocationTypePath.query.filter_by(
