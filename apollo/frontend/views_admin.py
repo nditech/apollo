@@ -4,19 +4,16 @@ from flask import flash, request
 from flask_admin import form
 from flask_admin.actions import action
 from flask_admin.contrib.sqla import ModelView
-# from flask_admin.contrib.sqla.form import CustomModelConverter
 from flask_admin.form import rules
-from flask_admin.model.form import converts
 from flask_babelex import lazy_gettext as _
-from flask_mongoengine.wtf import orm
 from flask_security import current_user
 from flask_security.utils import encrypt_password
 from jinja2 import contextfunction
-import magic
 import pytz
 from wtforms import FileField, PasswordField, SelectMultipleField
+
 from apollo.core import admin, db
-from apollo import models, models, settings
+from apollo import models, settings
 from apollo.frontend import forms
 
 
@@ -26,17 +23,6 @@ utc_time_zone = pytz.utc
 excluded_perm_actions = ['view_forms', 'access_event']
 
 DATETIME_FORMAT_SPEC = '%Y-%m-%d %H:%M:%S %Z'
-
-try:
-    string_type = str
-except NameError:
-    string_type = str
-
-
-# class DeploymentModelConverter(CustomModelConverter):
-#     @converts('ParticipantPropertyName')
-#     def conv_PropertyField(self, model, field, kwargs):
-#         return orm.ModelConverter.conv_String(self, model, field, kwargs)
 
 
 class BaseAdminView(ModelView):
@@ -235,14 +221,14 @@ class UserAdminView(BaseAdminView):
         for role in models.User.query.filter(models.User.id.in_(ids)):
             role.active = False
             role.save()
-        flash(string_type(_('User(s) successfully disabled.')))
+        flash(_('User(s) successfully disabled.'))
 
     @action('enable', _('Enable'), _('Are you sure you want to enable selected users?'))
     def action_enable(self, ids):
         for role in models.User.query.filter(models.User.id.in_(ids)):
             role.active = True
             role.save()
-        flash(string_type(_('User(s) successfully enabled.')))
+        flash(_('User(s) successfully enabled.'))
 
 
 class RoleAdminView(BaseAdminView):
