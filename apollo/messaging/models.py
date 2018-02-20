@@ -23,10 +23,10 @@ class Message(BaseModel):
     text = db.Column(db.String)
     received = db.Column(db.DateTime, default=datetime.utcnow, index=True)
     delivered = db.Column(db.DateTime)
-    deployment_id = db.Column(
-        db.Integer, db.ForeignKey('deployment.id'), nullable=False)
-    event_id = db.Column(
-        db.Integer, db.ForeignKey('event.id'), nullable=False)
+    deployment_id = db.Column(db.Integer, db.ForeignKey(
+        'deployment.id', ondelete='CASCADE'), nullable=False)
+    event_id = db.Column(db.Integer, db.ForeignKey(
+        'event.id', ondelete='CASCADE'), nullable=False)
     submission_id = db.Column(db.Integer, db.ForeignKey('submission.id'))
 
     # ----- RELATIONSHIP PROPERTIES ----

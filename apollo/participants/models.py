@@ -13,8 +13,8 @@ class ParticipantRole(BaseModel):
     id = db.Column(
         db.Integer, db.Sequence('participant_role_id_seq'), primary_key=True)
     name = db.Column(db.String, nullable=False)
-    deployment_id = db.Column(
-        db.Integer, db.ForeignKey('deployment.id'), nullable=False)
+    deployment_id = db.Column(db.Integer, db.ForeignKey(
+        'deployment.id', ondelete='CASCADE'), nullable=False)
     participant_set_id = db.Column(
         db.Integer, db.ForeignKey('participant_set.id'), nullable=False)
 
@@ -34,10 +34,10 @@ class ParticipantPartner(BaseModel):
         db.Integer, db.Sequence('participant_partner_id_seq'),
         primary_key=True)
     name = db.Column(db.String, nullable=False)
-    deployment_id = db.Column(
-        db.Integer, db.ForeignKey('deployment.id'), nullable=False)
-    participant_set_id = db.Column(
-        db.Integer, db.ForeignKey('participant_set.id'), nullable=False)
+    deployment_id = db.Column(db.Integer, db.ForeignKey(
+         'deployment.id', ondelete='CASCADE'), nullable=False)
+    participant_set_id = db.Column(db.Integer, db.ForeignKey(
+        'participant_set.id', ondelete='CASCADE'), nullable=False)
 
     deployment = db.relationship(
         'Deployment', backref='participant_partners')
@@ -55,10 +55,10 @@ class ParticipantGroupType(BaseModel):
         db.Integer, db.Sequence('participant_group_type_id_seq'),
         primary_key=True)
     name = db.Column(db.String)
-    deployment_id = db.Column(
-        db.Integer, db.ForeignKey('deployment.id'), nullable=False)
-    participant_set_id = db.Column(
-        db.Integer, db.ForeignKey('participant_set.id'), nullable=False)
+    deployment_id = db.Column(db.Integer, db.ForeignKey(
+        'deployment.id', ondelete='CASCADE'), nullable=False)
+    participant_set_id = db.Column(db.Integer, db.ForeignKey(
+        'participant_set.id', ondelete='CASCADE'), nullable=False)
 
     deployment = db.relationship(
         'Deployment', backref='participant_group_types')
@@ -76,11 +76,10 @@ class ParticipantGroup(BaseModel):
         db.Integer, db.Sequence('participant_group_id_seq'),
         primary_key=True)
     name = db.Column(db.String, nullable=False)
-    deployment_id = db.Column(
-        db.Integer, db.ForeignKey('deployment.id'), nullable=False)
-    group_type_id = db.Column(
-        db.Integer, db.ForeignKey('participant_group_type.id'),
-        nullable=False)
+    deployment_id = db.Column(db.Integer, db.ForeignKey(
+        'deployment.id', ondelete='CASCADE'), nullable=False)
+    group_type_id = db.Column(db.Integer, db.ForeignKey(
+        'participant_group_type.id', ondelete='CASCADE'), nullable=False)
 
     deployment = db.relationship(
         'Deployment', backref='participant_groups')
@@ -111,18 +110,18 @@ class Participant(BaseModel):
     id = db.Column(
         db.Integer, db.Sequence('participant_id_seq'), primary_key=True)
     name = db.Column(db.String)
-    role_id = db.Column(
-        db.Integer, db.ForeignKey('participant_role.id'), nullable=False)
-    partner_id = db.Column(
-        db.Integer, db.ForeignKey('participant_partner.id'))
-    supervisor_id = db.Column(
-        db.Integer, db.ForeignKey('participant.id'))
+    role_id = db.Column(db.Integer, db.ForeignKey(
+        'participant_role.id', ondelete='SET NULL'))
+    partner_id = db.Column(db.Integer, db.ForeignKey(
+        'participant_partner.id', ondelete='SET NULL'))
+    supervisor_id = db.Column(db.Integer, db.ForeignKey(
+        'participant.id', ondelete='SET NULL'))
     gender = db.Column(ChoiceType(GENDER), default=0)
     email = db.Column(db.String)
-    deployment_id = db.Column(
-        db.Integer, db.ForeignKey('deployment.id'), nullable=False)
-    participant_set_id = db.Column(
-        db.Integer, db.ForeignKey('participant_set.id'))
+    deployment_id = db.Column(db.Integer, db.ForeignKey(
+        'deployment.id', ondelete='CASCADE'), nullable=False)
+    participant_set_id = db.Column(db.Integer, db.ForeignKey(
+        'participant_set.id', ondelete='CASCADE'), nullable=False)
     message_count = db.Column(db.Integer, default=0)
     accurate_message_count = db.Column(db.Integer, default=0)
     completion_rating = db.Column(db.Float, default=1)

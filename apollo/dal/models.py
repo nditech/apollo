@@ -43,7 +43,7 @@ class BaseModel(CRUDMixin, db.Model):
     '''Base model class'''
     __abstract__ = True
 
-    uuid = db.Column(UUIDType, default=uuid4)
+    # uuid = db.Column(UUIDType, default=uuid4)
 
 
 class ResourceMixin(object):

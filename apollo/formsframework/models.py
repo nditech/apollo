@@ -39,7 +39,9 @@ class Form(Resource):
     require_exclamation = db.Column(db.Boolean, default=True)
     data = db.Column(JSONB)
     version_identifier = db.Column(db.String)
-    deployment_id = db.Column(db.Integer, db.ForeignKey('deployment.id'))
+    deployment_id = db.Column(
+        db.Integer, db.ForeignKey('deployment.id', ondelete='CASCADE'),
+        nullable=False)
     form_set_id = db.Column(
         db.Integer, db.ForeignKey('form_set.id'), nullable=False)
     resource_id = db.Column(

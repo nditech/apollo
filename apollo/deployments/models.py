@@ -24,8 +24,7 @@ class Deployment(BaseModel):
     name = db.Column(db.String, nullable=False)
     hostnames = db.Column(ARRAY(db.String), nullable=False)
     allow_observer_submission_edit = db.Column(db.Boolean, default=True)
-    logo_filename = db.Column(db.String)
-    logo_url = db.Column(db.String)
+    logo = db.Column(db.String)
     include_rejected_in_votes = db.Column(db.Boolean, default=False)
     is_initialized = db.Column(db.Boolean, default=False)
     dashboard_full_locations = db.Column(db.Boolean, default=True)
@@ -45,7 +44,9 @@ class FormSet(BaseModel):
         db.Integer, db.Sequence('form_set_id_seq'), primary_key=True)
     name = db.Column(db.String, nullable=False)
     slug = db.Column(db.String)
-    deployment_id = db.Column(db.Integer, db.ForeignKey('deployment.id'))
+    deployment_id = db.Column(
+        db.Integer, db.ForeignKey('deployment.id', ondelete='CASCADE'),
+        nullable=False)
     deployment = db.relationship('Deployment', backref='form_sets')
 
 
@@ -56,7 +57,9 @@ class LocationSet(BaseModel):
         db.Integer, db.Sequence('location_set_id_seq'), primary_key=True)
     name = db.Column(db.String, nullable=False)
     slug = db.Column(db.String)
-    deployment_id = db.Column(db.Integer, db.ForeignKey('deployment.id'))
+    deployment_id = db.Column(
+        db.Integer, db.ForeignKey('deployment.id', ondelete='CASCADE'),
+        nullable=False)
     deployment = db.relationship('Deployment', backref='location_sets')
     admin_divisions_graph = db.Column(JSONB)
 
@@ -68,7 +71,9 @@ class ParticipantSet(BaseModel):
         db.Integer, db.Sequence('participant_set_id_seq'), primary_key=True)
     name = db.Column(db.String, nullable=False)
     slug = db.Column(db.String)
-    deployment_id = db.Column(db.Integer, db.ForeignKey('deployment.id'))
+    deployment_id = db.Column(
+        db.Integer, db.ForeignKey('deployment.id', ondelete='CASCADE'),
+        nullable=False)
     deployment = db.relationship('Deployment', backref='participant_sets')
     extra_fields = db.Column(JSONB)
 
@@ -83,7 +88,9 @@ class Event(Resource):
     start = db.Column(
         db.DateTime, default=_default_event_start, nullable=False)
     end = db.Column(db.DateTime, default=_default_event_end, nullable=False)
-    deployment_id = db.Column(db.Integer, db.ForeignKey('deployment.id'))
+    deployment_id = db.Column(
+        db.Integer, db.ForeignKey('deployment.id', ondelete='CASCADE'),
+        nullable=False)
     form_set_id = db.Column(db.Integer, db.ForeignKey('form_set.id'))
     resource_id = db.Column(
         db.Integer, db.ForeignKey('resource.resource_id'))

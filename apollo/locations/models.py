@@ -5,10 +5,10 @@ from apollo.dal.models import BaseModel
 
 samples_locations = db.Table(
     'samples_locations',
-    db.Column('sample_id', db.Integer, db.ForeignKey('sample.id'),
-              primary_key=True),
-    db.Column('location_id', db.Integer, db.ForeignKey('location.id'),
-              primary_key=True))
+    db.Column('sample_id', db.Integer, db.ForeignKey(
+        'sample.id', ondelete='CASCADE'), primary_key=True),
+    db.Column('location_id', db.Integer, db.ForeignKey(
+        'location.id', ondelete='CASCADE'), primary_key=True))
 
 
 class Sample(BaseModel):
@@ -18,9 +18,11 @@ class Sample(BaseModel):
         db.Integer, db.Sequence('sample_id_seq'), primary_key=True)
     name = db.Column(db.String, nullable=False)
     deployment_id = db.Column(
-        db.Integer, db.ForeignKey('deployment.id'), nullable=False)
+        db.Integer, db.ForeignKey('deployment.id', ondelete='CASCADE'),
+        nullable=False)
     location_set_id = db.Column(
-        db.Integer, db.ForeignKey('location_set.id'), nullable=False)
+        db.Integer, db.ForeignKey('location_set.id', ondelete='CASCADE'),
+        nullable=False)
 
     deployment = db.relationship('Deployment', backref='samples')
     location_set = db.relationship('LocationSet', backref='samples')
@@ -39,9 +41,11 @@ class LocationType(BaseModel):
     has_other_code = db.Column(db.Boolean, default=False)
     slug = db.Column(db.String)
     deployment_id = db.Column(
-        db.Integer, db.ForeignKey('deployment.id'), nullable=False)
+        db.Integer, db.ForeignKey('deployment.id', ondelete='CASCADE'),
+        nullable=False)
     location_set_id = db.Column(
-        db.Integer, db.ForeignKey('location_set.id'), nullable=False)
+        db.Integer, db.ForeignKey('location_set.id', ondelete='CASCADE'),
+        nullable=False)
 
     deployment = db.relationship('Deployment', backref='location_types')
     location_set = db.relationship('LocationSet', backref='location_types')
@@ -61,11 +65,10 @@ class LocationTypePath(db.Model):
 
     location_set_id = db.Column(
         db.Integer, db.ForeignKey('location_set.id'), nullable=False)
-    ancestor_id = db.Column(db.Integer, db.ForeignKey('location_type.id'),
-                            primary_key=True)
-    descendant_id = db.Column(db.Integer,
-                              db.ForeignKey('location_type.id'),
-                              primary_key=True)
+    ancestor_id = db.Column(db.Integer, db.ForeignKey(
+        'location_type.id', ondelete='CASCADE'), primary_key=True)
+    descendant_id = db.Column(db.Integer, db.ForeignKey(
+        'location_type.id', ondelete='CASCADE'), primary_key=True)
     depth = db.Column(db.Integer)
 
     ancestor_location_type = db.relationship(
@@ -88,12 +91,12 @@ class Location(BaseModel):
     political_code = db.Column(db.String)
     other_code = db.Column(db.String)
     registered_voters = db.Column(db.Integer, default=0)
-    deployment_id = db.Column(
-        db.Integer, db.ForeignKey('deployment.id'), nullable=False)
-    location_set_id = db.Column(
-        db.Integer, db.ForeignKey('location_set.id'), nullable=False)
-    location_type_id = db.Column(
-        db.Integer, db.ForeignKey('location_type.id'), nullable=False)
+    deployment_id = db.Column(db.Integer, db.ForeignKey(
+        'deployment.id', ondelete='CASCADE'), nullable=False)
+    location_set_id = db.Column(db.Integer, db.ForeignKey(
+        'location_set.id', ondelete='CASCADE'), nullable=False)
+    location_type_id = db.Column(db.Integer, db.ForeignKey(
+        'location_type.id', ondelete='CASCADE'), nullable=False)
 
     deployment = db.relationship('Deployment', backref='locations')
     location_set = db.relationship('LocationSet', backref='locations')
@@ -114,12 +117,12 @@ class LocationPath(db.Model):
         db.Index('location_paths_ancestor_idx', 'ancestor_id'),
         db.Index('location_paths_descendant_idx', 'descendant_id'))
 
-    location_set_id = db.Column(
-        db.Integer, db.ForeignKey('location_set.id'), nullable=False)
-    ancestor_id = db.Column(
-        db.Integer, db.ForeignKey('location.id'), primary_key=True)
-    descendant_id = db.Column(
-        db.Integer, db.ForeignKey('location.id'), primary_key=True)
+    location_set_id = db.Column(db.Integer, db.ForeignKey(
+        'location_set.id', ondelete='CASCADE'), nullable=False)
+    ancestor_id = db.Column(db.Integer, db.ForeignKey(
+        'location.id', ondelete='CASCADE'), primary_key=True)
+    descendant_id = db.Column(db.Integer, db.ForeignKey(
+        'location.id', ondelete='CASCADE'), primary_key=True)
     depth = db.Column(db.Integer)
 
     ancestor_location = db.relationship(

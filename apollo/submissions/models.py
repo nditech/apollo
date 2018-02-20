@@ -47,14 +47,16 @@ class Submission(BaseModel):
 
     id = db.Column(
         db.Integer, db.Sequence('submission_id_seq'), primary_key=True)
-    deployment_id = db.Column(
-        db.Integer, db.ForeignKey('deployment.id'), nullable=False)
-    event_id = db.Column(
-        db.Integer, db.ForeignKey('event.id'), nullable=False)
-    form_id = db.Column(db.Integer, db.ForeignKey('form.id'), nullable=False)
-    participant_id = db.Column(
-        db.Integer, db.ForeignKey('participant.id'), nullable=False)
-    location_id = db.Column(db.Integer, db.ForeignKey('location.id'))
+    deployment_id = db.Column(db.Integer, db.ForeignKey(
+        'deployment.id', ondelete='CASCADE'), nullable=False)
+    event_id = db.Column(db.Integer, db.ForeignKey(
+        'event.id', ondelete='CASCADE'), nullable=False)
+    form_id = db.Column(db.Integer, db.ForeignKey(
+        'form.id', ondelete='CASCADE'), nullable=False)
+    participant_id = db.Column(db.Integer, db.ForeignKey(
+        'participant.id', ondelete='CASCADE'), nullable=False)
+    location_id = db.Column(db.Integer, db.ForeignKey(
+        'location.id', ondelete='CASCADE'), nullable=False)
     data = db.Column(JSONB)
     submission_type = db.Column(ChoiceType(SUBMISSION_TYPES))
     created = db.Column(db.DateTime, default=current_timestamp)
@@ -73,15 +75,15 @@ class SubmissionComment(BaseModel):
     id = db.Column(
         db.Integer, db.Sequence('submmision_comment_id_seq'),
         primary_key=True)
-    submission_id = db.Column(
-        db.Integer, db.ForeignKey('submission.id'), nullable=False)
+    submission_id = db.Column(db.Integer, db.ForeignKey(
+        'submission.id', ondelete='CASCADE'), nullable=False)
     submission = db.relationship('Submission', backref='comments')
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     user = db.relationship('User', backref='submission_comments')
     comment = db.Column(db.String)
     submit_date = db.Column(db.DateTime, default=current_timestamp)
-    deployment_id = db.Column(
-        db.Integer, db.ForeignKey('deployment.id'), nullable=False)
+    deployment_id = db.Column(db.Integer, db.ForeignKey(
+        'deployment.id', ondelete='CASCADE'), nullable=False)
     deployment = db.relationship('Deployment', backref='submission_comments')
 
 
@@ -97,12 +99,12 @@ class SubmissionVersion(BaseModel):
     id = db.Column(
         db.Integer, db.Sequence('submmision_version_id_seq'),
         primary_key=True)
-    submission_id = db.Column(
-        db.Integer, db.ForeignKey('submission.id'), nullable=False)
+    submission_id = db.Column(db.Integer, db.ForeignKey(
+        'submission.id', ondelete='CASCADE'), nullable=False)
     submission = db.relationship('Submission', backref='versions')
     timestamp = db.Column(db.DateTime, default=current_timestamp)
     channel = db.Column(ChoiceType(CHANNEL_CHOICES))
-    deployment_id = db.Column(
-        db.Integer, db.ForeignKey('deployment.id'), nullable=False)
+    deployment_id = db.Column(db.Integer, db.ForeignKey(
+        'deployment.id', ondelete='CASCADE'), nullable=False)
     deployment = db.relationship('Deployment', backref='submission_versions')
     identity = db.Column(db.String, default='unknown', nullable=False)
