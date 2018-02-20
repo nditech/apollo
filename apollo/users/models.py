@@ -128,7 +128,7 @@ class UserUpload(BaseModel):
     deployment_id = db.Column(db.Integer, db.ForeignKey(
         'deployment.id', ondelete='CASCADE'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey(
-        'user.id',ondelete='CASCADE'), nullable=False)
+        'user.id', ondelete='CASCADE'), nullable=False)
     created = db.Column(db.DateTime, default=current_timestamp)
     upload_filename = db.Column(db.String)
     deployment = db.relationship('Deployment', backref='user_uploads')
