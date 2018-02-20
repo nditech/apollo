@@ -47,15 +47,12 @@ class CreateUserCommand(Command):
 
         if can_create:
             try:
-                user = register_user(email=email, password=password)
+                user = register_user(deployment_id=deployment.id, email=email,
+                                     password=password)
             except socket.error as e:
                 # if there's an error sending the notification email,
                 # recover
                 print('Error sending confirmation email: {}'.format(e))
-                user = users.query.filter_by(
-                    email=email, deployment_id=None).one()
-            user.deployment = deployment
-            user.save()
             print('\nUser created successfully')
             print('User(id=%s email=%s)' % (user.id, user.email))
             return
