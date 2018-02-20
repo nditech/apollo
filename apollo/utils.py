@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
 import os
+from uuid import UUID
 import warnings
 
 from pytz import utc
 
 
-def read_env(env_path=None):        
+def read_env(env_path=None):
     if not os.path.exists(env_path):
         warnings.warn('No environment file found. Skipping load.')
         return
@@ -28,3 +29,11 @@ def parse_env(env_path):
 
 def current_timestamp():
     return utc.localize(datetime.utcnow())
+
+
+def validate_uuid(uuid_string):
+    try:
+        UUID(uuid_string, version=4)
+        return True
+    except ValueError:
+        return False
