@@ -2,7 +2,6 @@
 from flask import current_app, jsonify
 from flask_restful import Resource, fields, marshal, marshal_with
 from flask_security import login_required
-from mongoengine import Q
 from apollo import services
 from apollo.api.common import parser
 
@@ -94,12 +93,12 @@ class LocationListResource(Resource):
         queryset = services.locations.find()
 
         # do location lookups
-        if 'q' in args and args.get('q'):
-            queryset = queryset.filter(
-                Q(name__icontains=args.get('q')) |
-                Q(code__istartswith=args.get('q')) |
-                Q(political_code__istartswith=args.get('q'))
-            ).order_by('ancestor_count')
+        # if 'q' in args and args.get('q'):
+        #     queryset = queryset.filter(
+        #         Q(name__icontains=args.get('q')) |
+        #         Q(code__istartswith=args.get('q')) |
+        #         Q(political_code__istartswith=args.get('q'))
+        #     ).order_by('ancestor_count')
 
         queryset = queryset.limit(limit).skip(offset)
 

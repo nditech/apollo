@@ -9,7 +9,7 @@ from apollo.frontend.helpers import get_event
 from collections import defaultdict, OrderedDict
 from dateutil.parser import parse
 from flask_babelex import lazy_gettext as _
-from mongoengine import Q
+from sqlalchemy import or_
 from apollo import services, models
 from wtforms import widgets, fields, Form
 
@@ -355,8 +355,10 @@ class SubmissionStatus(ChoiceFilter):
 class MobileFilter(CharFilter):
     def filter(self, queryset, value):
         if value:
+            query_val = '%{}%'.format(value)
             return queryset.filter(
-                Q(recipient__contains=value) | Q(sender__contains=value)
+                or_(models.Message.sender.ilike(query_val),
+                    models.Message.recipient.ilike(query_val))
             )
 
         return queryset

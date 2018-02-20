@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from flask import g
 from flask_babelex import lazy_gettext as _
-from flask_mongoengine.wtf.fields import ModelSelectField
 from flask_wtf import FlaskForm as WTSecureForm
 from flask_wtf.file import FileField
 from slugify import slugify
@@ -17,14 +16,14 @@ from apollo.services import (
 from apollo.frontend import permissions
 
 
-class CustomModelSelectField(ModelSelectField):
-    def _value(self):
-        if self.raw_data:
-            return self.raw_data[0]
-        elif self.data is not None:
-            return self.data
-        else:
-            return '__None'
+# class CustomModelSelectField(ModelSelectField):
+#     def _value(self):
+#         if self.raw_data:
+#             return self.raw_data[0]
+#         elif self.data is not None:
+#             return self.data
+#         else:
+#             return '__None'
 
 
 def _make_choices(qs, placeholder=None):
@@ -273,24 +272,24 @@ def generate_submission_edit_form_class(form):
         ('citizen', _('Citizen Report')),
     )
 
-    form_fields['contributor'] = CustomModelSelectField(
-        _('Participant'),
-        allow_blank=True,
-        blank_text=_('Participant'),
-        widget=widgets.HiddenInput(),
-        validators=[validators.optional()],
-        model=Participant,
-        queryset=participants.find()
-        )
+    # form_fields['contributor'] = CustomModelSelectField(
+    #     _('Participant'),
+    #     allow_blank=True,
+    #     blank_text=_('Participant'),
+    #     widget=widgets.HiddenInput(),
+    #     validators=[validators.optional()],
+    #     model=Participant,
+    #     queryset=participants.find()
+    #     )
 
-    form_fields['location'] = CustomModelSelectField(
-        _('Location'),
-        allow_blank=True,
-        blank_text=_('Location'),
-        widget=widgets.HiddenInput(),
-        model=Location,
-        queryset=locations.find()
-        )
+    # form_fields['location'] = CustomModelSelectField(
+    #     _('Location'),
+    #     allow_blank=True,
+    #     blank_text=_('Location'),
+    #     widget=widgets.HiddenInput(),
+    #     model=Location,
+    #     queryset=locations.find()
+    #     )
 
     for index, group in enumerate(form.groups):
         for field in group.fields:

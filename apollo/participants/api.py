@@ -2,7 +2,6 @@
 from flask import current_app, jsonify
 from flask_restful import Resource, fields, marshal, marshal_with
 from flask_security import login_required
-from mongoengine import Q
 from apollo import services
 from apollo.api.common import parser
 
@@ -34,11 +33,11 @@ class ParticipantListResource(Resource):
         queryset = services.participants.find()
 
         # do location lookups
-        if 'q' in args and args.get('q'):
-            queryset = queryset.filter(
-                Q(name__icontains=args.get('q')) |
-                Q(participant_id__istartswith=args.get('q'))
-            )
+        # if 'q' in args and args.get('q'):
+        #     queryset = queryset.filter(
+        #         Q(name__icontains=args.get('q')) |
+        #         Q(participant_id__istartswith=args.get('q'))
+        #     )
 
         queryset = queryset.limit(limit).skip(offset)
 

@@ -2,7 +2,6 @@
 from datetime import datetime
 from functools import partial
 
-from mongoengine import signals
 from wtforms import (
     Form, BooleanField, IntegerField, SelectField, StringField, validators,
     widgets)
@@ -19,10 +18,7 @@ import re
 ugly_phone = re.compile('[^\d]*')
 
 
-def update_submission_version(sender, document, **kwargs):
-    if sender != services.submissions.__model__:
-        return
-
+def update_submission_version(document):
     # save actual version data
     data_fields = document.form.tags
     if document.form.form_type == 'INCIDENT':
@@ -189,11 +185,9 @@ class BaseQuestionnaireForm(Form):
                             verified=False, last_seen=datetime.utcnow())
                         participant.update(add_to_set__phones=phone_contact)
 
-                    with signals.post_save.connected_to(
-                        update_submission_version,
-                        sender=services.submissions.__model__
-                    ):
-                        submission.save()
+                    
+                    submission.save()
+                    update_submission_version(submission)
 
                     # update completion rating for participant
                     if submission.form.form_type == 'CHECKLIST':

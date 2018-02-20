@@ -1,16 +1,18 @@
 # -*- coding: utf-8 -*-
 from collections import OrderedDict
+import random
+import string
+
 from flask import render_template_string
 from flask_babelex import lazy_gettext as _
-from mongoengine import MultipleObjectsReturned
 import pandas as pd
+from sqlalchemy.orm.exc import MultipleResultsFound 
+
 from apollo.messaging.tasks import send_email
 from apollo import services, helpers
 from apollo.factory import create_celery_app
 from apollo.participants import utils
 # from apollo.participants.models import PhoneContact
-import random
-import string
 
 celery = create_celery_app()
 
@@ -175,7 +177,7 @@ def update_participants(dataframe, event, header_map):
                     code=str(loc_code),
                     deployment=deployment
                 )
-        except MultipleObjectsReturned:
+        except MultipleResultsFound:
             errors.add((
                 participant_id,
                 _('Invalid location id (%(loc_id)s)',

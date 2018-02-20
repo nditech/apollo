@@ -6,7 +6,6 @@ from flask import Blueprint, g, make_response, render_template, request
 from flask_babelex import lazy_gettext as _
 from flask_httpauth import HTTPDigestAuth
 from lxml import etree
-from mongoengine import signals
 import pytz
 from slugify import slugify
 
@@ -177,11 +176,8 @@ def submission():
             else:
                 setattr(submission, tag, int(element.text))
 
-    with signals.post_save.connected_to(
-        update_submission_version,
-        sender=services.submissions.__model__
-    ):
-        submission.save()
+    submission.save()
+    update_submission_version(submission)
 
     if form_modified:
         return open_rosa_default_response(
@@ -191,10 +187,7 @@ def submission():
     return open_rosa_default_response(status_code=201)
 
 
-def update_submission_version(sender, document, **kwargs):
-    if sender != services.submissions.__model__:
-        return
-
+def update_submission_version(document):
     # save actual version data
     data_fields = document.form.tags
     if document.form.form_type == 'INCIDENT':

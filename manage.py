@@ -3,7 +3,7 @@
 from flask_assets import ManageAssets
 from flask_migrate import MigrateCommand
 from flask_script import Manager, Server, Shell
-from flask_security import MongoEngineUserDatastore
+from flask_security import SQLAlchemyUserDatastore
 
 from apollo.core import db
 from apollo import models, services
@@ -25,7 +25,7 @@ app = create_app()
 def _mk_ctx():
     return dict(
         app=app, db=db, models=models, services=services,
-        userdatastore=MongoEngineUserDatastore(db, models.User, models.Role))
+        userdatastore=SQLAlchemyUserDatastore(db, models.User, models.Role))
 
 
 manager = Manager(app)
