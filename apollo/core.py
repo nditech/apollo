@@ -35,7 +35,7 @@ admin = Admin(
     template_mode='bootstrap3')
 babel = Babel()
 cache = Cache()
-db = SQLAlchemy()
+db = SQLAlchemy(session_options={'expire_on_commit': False})
 mail = Mail()
 menu = Menu()
 migrate = Migrate()
