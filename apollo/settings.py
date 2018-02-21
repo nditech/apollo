@@ -7,11 +7,9 @@ import string
 
 from prettyconf import config
 
-
 PROJECT_ROOT = os.path.dirname(os.path.dirname(__file__))
 
 config.starting_path = PROJECT_ROOT
-
 
 try:
     SECRET_KEY = config('SECRET_KEY')
@@ -20,12 +18,6 @@ except KeyError:
 
 DEBUG = config('DEBUG', cast=config.boolean, default=False)
 PAGE_SIZE = config('PAGE_SIZE', cast=int, default=25)
-
-MONGODB_SETTINGS = {
-    'DB': config('MONGO_DATABASE_NAME', default='apollo').strip(),
-    'HOST': urlparse(
-        config('MONGODB_PORT', default='mongodb://localhost')).netloc
-}
 
 # default to UTC for prior deployments
 TIMEZONE = config('TIMEZONE', default='UTC')
@@ -149,3 +141,9 @@ SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 # FDT settings
 DEBUG_TB_INTERCEPT_REDIRECTS = False
+
+# Flask-Upload settings
+MAX_CONTENT_LENGTH = config(
+    'MAX_UPLOAD_SIZE_MB', cast=int, default=8) * 1024 * 1024
+default_upload_path = os.path.join(PROJECT_ROOT, 'uploads')
+UPLOADS_DEFAULT_DEST = config('UPLOADS_DIR', default=default_upload_path)
