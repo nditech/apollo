@@ -3,11 +3,13 @@ from cachetools import cached
 from celery import Celery
 from flask import Flask, request
 from flask_sslify import SSLify
+from flask_uploads import configure_uploads
 from raven.base import Client
 from raven.contrib.celery import register_signal, register_logger_signal
 
 from apollo.core import (
-    babel, cache, db, fdt_available, debug_toolbar, mail, migrate, sentry)
+    babel, cache, db, fdt_available, debug_toolbar, mail, migrate, sentry,
+    uploads)
 from apollo.helpers import register_blueprints
 from importlib import import_module
 
@@ -36,6 +38,8 @@ def create_app(
     db.init_app(app)
     migrate.init_app(app, db)
     mail.init_app(app)
+
+    configure_uploads(app, uploads)
 
     if app.config.get('SSL_REQUIRED'):
         SSLify(app)
