@@ -109,7 +109,8 @@ def update_locations(df, mapping, location_set):
             location_type = lt
 
             # if the location_name attribute has no value, then skip it
-            if not location_name:
+            # same for the location_code
+            if not location_name or not location_code:
                 continue
 
             # if we have the location in the cache, then continue
@@ -122,8 +123,7 @@ def update_locations(df, mapping, location_set):
                 'location_set_id': location_set.id
             }
 
-            if location_code:
-                kwargs.update({'code': location_code})
+            kwargs.update({'code': location_code})
 
             kwargs['name'] = location_name
 
@@ -149,6 +149,15 @@ def update_locations(df, mapping, location_set):
 
                 db.session.add(self_ref_path)
                 db.session.commit()
+            else:
+                # update the existing location instead
+                location.name = kwargs['name']
+                location.other_code = kwargs['other_code']
+                location.political_code = kwargs['political_code']
+                location.registered_voters = kwargs['registered_voters']
+
+                location.save()
+
             row_locations.append(location)
             cache.set(location)
 
