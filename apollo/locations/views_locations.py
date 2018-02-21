@@ -114,6 +114,7 @@ def location_list(location_set_id):
             filter_form=queryset_filter.form,
             page_title=page_title,
             form=DummyForm(),
+            location_set_id=location_set_id,
             locations=subset.paginate(
                 page=page, per_page=current_app.config.get('PAGE_SIZE')))
 
@@ -174,12 +175,13 @@ def location_headers(location_set_id, upload_id):
 
     # disallow processing other users' files
     upload = services.user_uploads.fget_or_404(id=upload_id, user=user)
+    filepath = uploads.path(upload.upload_filename)
     try:
-        with open(upload.upload_filename) as source_file:
+        with open(filepath) as source_file:
             dataframe = load_source_file(source_file)
     except Exception:
         # delete loaded file
-        os.remove(upload.upload_filename)
+        os.remove(filepath)
         upload.delete()
         return abort(400)
 
@@ -207,8 +209,9 @@ def location_headers(location_set_id, upload_id):
 
             # invoke task asynchronously
             kwargs = {
-                'upload_id': str(upload.id),
-                'mappings': data
+                'upload_id': upload.id,
+                'mappings': data,
+                'location_set_id': location_set_id
             }
             tasks.import_locations.apply_async(kwargs=kwargs)
 
