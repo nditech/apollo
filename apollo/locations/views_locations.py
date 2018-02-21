@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
 import json
+import os
 
 import networkx as nx
 
@@ -10,13 +11,13 @@ from flask_babelex import lazy_gettext as _
 from flask_menu import register_menu
 from flask_restful import Api
 from flask_security import current_user, login_required
-from apollo.helpers import load_source_file, stash_file
+from apollo.helpers import load_source_file
 from slugify import slugify_unicode
 from sqlalchemy import not_
 
 from apollo.frontend import filters, permissions, route
 from apollo import helpers, models, services, utils
-from apollo.core import db
+from apollo.core import db, uploads
 from apollo.locations import api, tasks
 from apollo.frontend.forms import (
     file_upload_form, generate_location_edit_form,
@@ -153,42 +154,47 @@ def locations_import(location_set_id):
     else:
         # get the actual object from the proxy
         user = current_user._get_current_object()
-        event = services.events.get_or_404(id=form.event.data)
-        upload = stash_file(request.files['spreadsheet'], user, event)
+        filename = uploads.save(request.files['spreadsheet'])
+        upload = models.UserUpload(
+            deployment_id=g.deployment.id, upload_filename=filename,
+            user_id=user.id)
         upload.save()
 
-        return redirect(url_for(
-            'locations.location_headers',
-            pk=str(upload.id)
-        ))
+        return redirect(url_for('locations.location_headers',
+                                location_set_id=location_set_id,
+                                upload_id=upload.id))
 
 
-@route(bp, '/locations/headers/<pk>', methods=['GET', 'POST'])
+@route(bp, '/<int:location_set_id>/locations/headers/<int:upload_id>',
+       methods=['GET', 'POST'])
 @permissions.import_locations.require(403)
 @login_required
-def location_headers(pk):
+def location_headers(location_set_id, upload_id):
     user = current_user._get_current_object()
 
     # disallow processing other users' files
-    upload = services.user_uploads.get_or_404(pk=pk, user=user)
+    upload = services.user_uploads.fget_or_404(id=upload_id, user=user)
     try:
-        dataframe = load_source_file(upload.data)
+        with open(upload.upload_filename) as source_file:
+            dataframe = load_source_file(source_file)
     except Exception:
         # delete loaded file
-        upload.data.delete()
+        os.remove(upload.upload_filename)
         upload.delete()
         return abort(400)
 
     deployment = g.deployment
+    location_set = services.location_sets.fget_or_404(id=location_set_id)
     headers = dataframe.columns
     template_name = 'frontend/location_headers.html'
 
     if request.method == 'GET':
-        form = generate_location_update_mapping_form(deployment, headers)
+        form = generate_location_update_mapping_form(
+            deployment, headers, location_set)
         return render_template(template_name, form=form)
     else:
         form = generate_location_update_mapping_form(
-            deployment, headers, request.form)
+            deployment, headers, location_set, request.form)
 
         if not form.validate():
             return render_template(
@@ -206,7 +212,8 @@ def location_headers(pk):
             }
             tasks.import_locations.apply_async(kwargs=kwargs)
 
-            return redirect(url_for('locations.locations_list'))
+            return redirect(url_for('locations.location_list',
+                                    location_set_id=location_set_id))
 
 
 @route(bp, '/<int:location_set_id>/locations/builder', methods=['GET', 'POST'])
