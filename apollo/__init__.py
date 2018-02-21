@@ -61,8 +61,7 @@ def create_app(settings_override=None, register_security_blueprint=True):
         for e in [500, 404, 403]:
             app.errorhandler(e)(handle_error)
 
-    @app.before_first_request
-    def upgrade_database_schema():
+    with app.app_context():
         upgrade()
 
     # register deployment selection middleware
