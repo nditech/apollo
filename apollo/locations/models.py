@@ -49,6 +49,14 @@ class LocationType(BaseModel):
 
     deployment = db.relationship('Deployment', backref='location_types')
     location_set = db.relationship('LocationSet', backref='location_types')
+    ancestor_paths = db.relationship(
+        'LocationTypePath', order_by='desc(LocationTypePath.depth)',
+        primaryjoin='LocationType.id == LocationTypePath.descendant_id',
+        backref='descendant_location_type')
+    descendant_paths = db.relationship(
+        'LocationTypePath', order_by='LocationTypePath.depth',
+        primaryjoin='LocationType.id == LocationTypePath.ancestor_id',
+        backref='ancestor_location_type')
 
     def ancestors(self):
         return [
@@ -77,13 +85,6 @@ class LocationTypePath(db.Model):
         'location_type.id', ondelete='CASCADE'), primary_key=True)
     depth = db.Column(db.Integer)
 
-    ancestor_location_type = db.relationship(
-        'LocationType', backref='descendant_paths',
-        primaryjoin=ancestor_id == LocationType.id)
-    descendant_location_type = db.relationship(
-        'LocationType', backref='ancestor_paths',
-        primaryjoin=descendant_id == LocationType.id)
-
 
 class Location(BaseModel):
     __tablename__ = 'location'
@@ -109,6 +110,15 @@ class Location(BaseModel):
     location_type = db.relationship('LocationType', backref='locations')
     samples = db.relationship(
         'Sample', backref='locations', secondary=samples_locations)
+
+    ancestor_paths = db.relationship(
+        'LocationPath', order_by='desc(LocationPath.depth)',
+        primaryjoin='Location.id == LocationPath.descendant_id',
+        backref='descendant_location')
+    descendant_paths = db.relationship(
+        'LocationPath', order_by='LocationPath.depth',
+        primaryjoin='Location.id == LocationPath.ancestor_id',
+        backref='ancestor_location')
 
     def ancestors(self):
         return [
@@ -136,10 +146,3 @@ class LocationPath(db.Model):
     descendant_id = db.Column(db.Integer, db.ForeignKey(
         'location.id', ondelete='CASCADE'), primary_key=True)
     depth = db.Column(db.Integer)
-
-    ancestor_location = db.relationship(
-        'Location', backref='descendant_paths',
-        primaryjoin=ancestor_id == Location.id)
-    descendant_location = db.relationship(
-        'Location', backref='ancestor_paths',
-        primaryjoin=descendant_id == Location.id)
