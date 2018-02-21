@@ -14,6 +14,7 @@ from flask_menu import Menu
 from flask_migrate import Migrate
 from flask_security import Security
 from flask_sqlalchemy import SQLAlchemy
+from flask_uploads import DEFAULTS, UploadSet
 from flask_gravatar import Gravatar
 from flask_wtf.csrf import CSRFProtect
 from raven.contrib.flask import Sentry
@@ -43,6 +44,7 @@ gravatar = Gravatar(size=25, default="identicon", use_ssl=True)
 sentry = Sentry(client_cls=ApolloRavenClient)
 csrf = CSRFProtect()
 debug_toolbar = DebugToolbarExtension() if fdt_available else None
+uploads = UploadSet('uploads', DEFAULTS)
 
 
 # class Service(object):

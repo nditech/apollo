@@ -5,11 +5,12 @@ from flask_login import user_logged_out
 from flask_migrate import upgrade
 from flask_principal import identity_loaded
 from flask_security import SQLAlchemyUserDatastore, current_user
+from flask_uploads import configure_uploads
 from whitenoise import WhiteNoise
 from apollo import assets, models, services
 
 from apollo.frontend import permissions, template_filters
-from apollo.core import admin, db, menu, security, gravatar, csrf
+from apollo.core import admin, db, menu, security, gravatar, csrf, uploads
 from .frontend.helpers import set_request_presets
 from .security_ext_forms import DeploymentLoginForm
 
@@ -55,6 +56,7 @@ def create_app(settings_override=None, register_security_blueprint=True):
 
     csrf.init_app(app)
     init_admin(admin, app)
+    configure_uploads(app, uploads)
 
     # Register custom error handlers
     if not app.debug:
