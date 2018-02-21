@@ -56,19 +56,10 @@
         </div>
       </div>
     </div>
+    {% block scripts -%}
     {%- assets 'apollo_js' %}
     <script type="text/javascript" src="{{ ASSET_URL }}" charset="utf-8"></script>
     {%- endassets %}
-    {% block scripts -%}
-    <script src="https://login.persona.org/include.js"></script>
-    <script type="text/javascript">
-      $('#persona-signin').click(function () {
-        navigator.id.get(function (assertion) {
-          $('#assertion').val(assertion);
-          $('#persona_login_form').submit();
-        }, {siteName: "Apollo"});
-      });
-    </script>
     {%- endblock %}
   </body>
 </html>
