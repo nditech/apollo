@@ -380,14 +380,6 @@ def generate_submission_edit_form_class(form):
 
 def file_upload_form(*args, **kwargs):
     class FileUploadForm(WTSecureForm):
-        event = SelectField(
-            _('Event'),
-            choices=_make_choices(
-                events.find().scalar('id', 'name'),
-                _('Select Event')
-            ),
-            validators=[validators.input_required()]
-        )
         spreadsheet = FileField(
             _('Data File'),
         )
