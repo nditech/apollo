@@ -7,8 +7,9 @@ import os
 from flask import render_template_string
 from flask_babelex import lazy_gettext as _
 from slugify import slugify
+from sqlalchemy import func
 
-from apollo import helpers, services
+from apollo import helpers, models, services
 from apollo.core import db, uploads
 from apollo.factory import create_celery_app
 from apollo.locations import utils
@@ -69,10 +70,17 @@ def map_attribute(location_type, attribute):
 def update_locations(df, mapping, location_set):
     cache = LocationCache()
     location_types = services.location_types.find(
-        deployment=location_set.deployment,
-        location_set=location_set)
+            deployment=location_set.deployment,
+            location_set=location_set) \
+        .join(models.LocationTypePath,
+              models.LocationType.id == models.LocationTypePath.ancestor_id) \
+        .order_by(func.count(models.LocationType.ancestor_paths)) \
+        .group_by('id').all()
+    # depth = [p.depth for p in location_types[-1].ancestor_paths]
 
     for idx in df.index:
+        row_locations = []
+
         for lt in location_types:
             location_code = df.ix[idx].get(mapping.get(map_attribute(lt, 'code'), ''), '')
             location_code = int(location_code) if type(location_code) in [int, float] else location_code
@@ -117,9 +125,6 @@ def update_locations(df, mapping, location_set):
             if location_code:
                 kwargs.update({'code': location_code})
 
-            # location = services.locations.get_or_create(**kwargs)
-            # location_data = dict()
-
             kwargs['name'] = location_name
 
             if location_pcode:
@@ -129,45 +134,93 @@ def update_locations(df, mapping, location_set):
             if location_rv:
                 kwargs.update({'registered_voters': location_rv})
 
-            # update = dict(
-            #     [('set__{}'.format(k), v)
-            #      for k, v in list(location_data.items())]
-            # )
-
-            # location.update(set__ancestors_ref=[], **update)
-            # location.reload()
-
             # skip if we have the location in the database
             location = services.locations.find(
                 deployment=lt.deployment, location_set=location_set,
                 code=kwargs['code']).first()
+
             if not location:
                 location = services.locations.create(**kwargs)
 
-            # update ancestors
-            # ancestors = []
-            # for sub_lt in lt.ancestors():
-            #     sub_lt_name = str(df.ix[idx].get(
-            #         mapping.get(map_attribute(sub_lt, 'name'), '')))
-            #     sub_lt_code = df.ix[idx].get(
-            #         mapping.get(map_attribute(sub_lt, 'code'), ''), '')
-            #     sub_lt_code = int(sub_lt_code) if type(sub_lt_code) in [int, float] else sub_lt_code
-            #     sub_lt_code = str(sub_lt_code)
-            #     sub_lt_type = sub_lt.name or ''
+                # also add the self-referencing path
+                self_ref_path = models.LocationPath(
+                    location_set_id=location_set.id, ancestor_id=location.id,
+                    descendant_id=location.id, depth=0)
 
-            #     ancestor = cache.get(sub_lt_code, sub_lt_type, sub_lt_name)
-            #     if not ancestor:
-            #         ancestor = services.locations.find(
-            #             deployment=lt.deployment, code=sub_lt_code,
-            #             location_type=sub_lt, location_set=location_set,
-            #             name=sub_lt_name)
-            #     if ancestor:
-            #         ancestors.append(ancestor)
-
-            # for ancestor in ancestors:
-            #     path = models.LocationPath(
-            #         location_set_id=location_set.id, ance)
+                db.session.add(self_ref_path)
+                db.session.commit()
+            row_locations.append(location)
             cache.set(location)
+
+        for loc in row_locations:
+            for loc2 in row_locations:
+                # we already did the self-references
+                if loc.id == loc2.id:
+                    continue
+
+                lt_path = models.LocationTypePath.query.filter_by(
+                    ancestor_id=loc.location_type.id,
+                    descendant_id=loc2.location_type.id,
+                    location_set_id=location_set.id
+                ).first()
+
+                if not lt_path:
+                    # no path between the two types means they aren't
+                    # linked
+                    continue
+
+                loc_path = models.LocationPath.query.filter_by(
+                    ancestor_id=loc.id,
+                    descendant_id=loc2.id,
+                    location_set_id=location_set.id
+                ).first()
+
+                if not loc_path:
+                    # no path between the two locations, so
+                    # create it
+                    loc_path = models.LocationPath(
+                        ancestor_id=loc,
+                        descendant_id=loc2,
+                        location_set_id=location_set.id
+                    )
+                    db.session.add(loc_path)
+
+            # update ancestors
+            for sub_lt in lt.ancestors():
+                sub_lt_name = str(df.ix[idx].get(
+                    mapping.get(map_attribute(sub_lt, 'name'), '')))
+                sub_lt_code = df.ix[idx].get(
+                    mapping.get(map_attribute(sub_lt, 'code'), ''), '')
+                sub_lt_code = int(sub_lt_code) if type(sub_lt_code) in [int, float] else sub_lt_code
+                sub_lt_code = str(sub_lt_code)
+                sub_lt_type = sub_lt.name or ''
+
+                ancestor = cache.get(sub_lt_code, sub_lt_type, sub_lt_name)
+                if not ancestor:
+                    ancestor = services.locations.find(
+                        deployment=lt.deployment, code=sub_lt_code,
+                        location_type=sub_lt, location_set=location_set,
+                        name=sub_lt_name).first()
+
+                if ancestor:
+                    loc_path = models.LocationPath.query.filter_by(
+                        location_set_id=location_set.id,
+                        ancestor_id=ancestor.id, descendant_id=location.id
+                    ).first()
+
+                    if not loc_path:
+                        depth = models.LocationTypePath.query.filter(
+                            models.LocationTypePath.location_set_id == location_set.id,
+                            models.LocationTypePath.ancestor_id == sub_lt.id,
+                            models.LocationTypePath.descendant_id == lt.id
+                        ).with_entities(models.LocationTypePath.depth).scalar()
+
+                        path = models.LocationPath(
+                            ancestor_id=ancestor.id, descendant_id=location.id,
+                            location_set_id=location_set.id, depth=depth)
+                        db.session.add(path)
+
+            db.session.commit()
 
 
 @celery.task
