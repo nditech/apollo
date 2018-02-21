@@ -1,16 +1,21 @@
 # -*- coding: utf-8 -*-
 import cachetools
+from hashlib import sha256
+import logging
+import os
+
 from flask import render_template_string
 from flask_babelex import lazy_gettext as _
-from hashlib import sha256
 from slugify import slugify
 
 from apollo import helpers, services
+from apollo.core import db, uploads
 from apollo.factory import create_celery_app
 from apollo.locations import utils
 from apollo.messaging.tasks import send_email
 
 celery = create_celery_app()
+logger = logging.getLogger(__name__)
 
 email_template = '''
 Notification
@@ -51,7 +56,7 @@ class LocationCache():
     def set(self, location_obj):
         cache_key = self._cache_key(
             location_obj.code or '',
-            location_obj.location_type or '',
+            location_obj.location_type.name or '',
             location_obj.name or '')
         self.cache[cache_key] = location_obj
 
@@ -61,10 +66,11 @@ def map_attribute(location_type, attribute):
     return '{}_{}'.format(slug, attribute.lower())
 
 
-def update_locations(df, mapping, event):
+def update_locations(df, mapping, location_set):
     cache = LocationCache()
-    location_types = services.location_types.all().filter(
-        deployment=event.deployment).order_by('ancestor_count')
+    location_types = services.location_types.find(
+        deployment=location_set.deployment,
+        location_set=location_set)
 
     for idx in df.index:
         for lt in location_types:
@@ -92,7 +98,7 @@ def update_locations(df, mapping, event):
                 if lt.has_registered_voters else None
             if location_rv:
                 location_rv = int(location_rv) if type(location_rv) in [int, float] else location_rv
-            location_type = lt.name
+            location_type = lt
 
             # if the location_name attribute has no value, then skip it
             if not location_name:
@@ -103,80 +109,99 @@ def update_locations(df, mapping, event):
                 continue
 
             kwargs = {
-                'location_type': lt.name,
-                'deployment': event.deployment
+                'location_type_id': lt.id,
+                'deployment_id': lt.deployment.id,
+                'location_set_id': location_set.id
             }
 
             if location_code:
                 kwargs.update({'code': location_code})
 
-            location = services.locations.get_or_create(**kwargs)
-            location_data = dict()
+            # location = services.locations.get_or_create(**kwargs)
+            # location_data = dict()
 
-            location_data['name'] = location_name
+            kwargs['name'] = location_name
 
             if location_pcode:
-                location_data.update({'political_code': location_pcode})
+                kwargs.update({'political_code': location_pcode})
             if location_ocode:
-                location_data.update({'other_code': location_ocode})
+                kwargs.update({'other_code': location_ocode})
             if location_rv:
-                location_data.update({'registered_voters': location_rv})
+                kwargs.update({'registered_voters': location_rv})
 
-            update = dict(
-                [('set__{}'.format(k), v)
-                 for k, v in list(location_data.items())]
-            )
+            # update = dict(
+            #     [('set__{}'.format(k), v)
+            #      for k, v in list(location_data.items())]
+            # )
 
-            location.update(set__ancestors_ref=[], **update)
-            location.reload()
+            # location.update(set__ancestors_ref=[], **update)
+            # location.reload()
+
+            # skip if we have the location in the database
+            location = services.locations.find(
+                deployment=lt.deployment, location_set=location_set,
+                code=kwargs['code']).first()
+            if not location:
+                location = services.locations.create(**kwargs)
 
             # update ancestors
-            ancestors = []
-            for sub_lt in lt.ancestors_ref:
-                sub_lt_name = str(df.ix[idx].get(
-                    mapping.get(map_attribute(sub_lt, 'name'), '')))
-                sub_lt_code = df.ix[idx].get(
-                    mapping.get(map_attribute(sub_lt, 'code'), ''), '')
-                sub_lt_code = int(sub_lt_code) if type(sub_lt_code) in [int, float] else sub_lt_code
-                sub_lt_code = str(sub_lt_code)
-                sub_lt_type = sub_lt.name or ''
+            # ancestors = []
+            # for sub_lt in lt.ancestors():
+            #     sub_lt_name = str(df.ix[idx].get(
+            #         mapping.get(map_attribute(sub_lt, 'name'), '')))
+            #     sub_lt_code = df.ix[idx].get(
+            #         mapping.get(map_attribute(sub_lt, 'code'), ''), '')
+            #     sub_lt_code = int(sub_lt_code) if type(sub_lt_code) in [int, float] else sub_lt_code
+            #     sub_lt_code = str(sub_lt_code)
+            #     sub_lt_type = sub_lt.name or ''
 
-                ancestor = cache.get(sub_lt_code, sub_lt_type, sub_lt_name)
-                if not ancestor:
-                    ancestor = services.locations.get(
-                        deployment=event.deployment, code=sub_lt_code, location_type=sub_lt_type,
-                        name=sub_lt_name)
-                if ancestor:
-                    ancestors.append(ancestor)
+            #     ancestor = cache.get(sub_lt_code, sub_lt_type, sub_lt_name)
+            #     if not ancestor:
+            #         ancestor = services.locations.find(
+            #             deployment=lt.deployment, code=sub_lt_code,
+            #             location_type=sub_lt, location_set=location_set,
+            #             name=sub_lt_name)
+            #     if ancestor:
+            #         ancestors.append(ancestor)
 
-            location.update(
-                add_to_set__events=event,
-                set__ancestors_ref=ancestors,
-                set__ancestor_count=len(ancestors))
+            # for ancestor in ancestors:
+            #     path = models.LocationPath(
+            #         location_set_id=location_set.id, ance)
             cache.set(location)
 
 
 @celery.task
-def import_locations(upload_id, mappings):
-    upload = services.user_uploads.get(pk=upload_id)
-    dataframe = helpers.load_source_file(upload.data)
+def import_locations(upload_id, mappings, location_set_id):
+    upload = services.user_uploads.find(id=upload_id).first()
+    filepath = uploads.path(upload.upload_filename)
+
+    if not os.path.exists(filepath):
+        logger.error('Upload file %s does not exist, aborting', filepath)
+        upload.delete()
+        return
+
+    with open(filepath) as f:
+        dataframe = helpers.load_source_file(f)
+
+    location_set = services.location_sets.find(
+        id=location_set_id).first()
 
     update_locations(
         dataframe,
         mappings,
-        upload.event
+        location_set
     )
 
     # fetch and update all submissions
-    deployment = upload.event.deployment
-    submissions = services.submissions.all().filter(deployment=deployment)
-    for submission in submissions:
-        if submission.location:
-            submission.location_name_path = helpers.compute_location_path(submission.location)
-            submission.save(clean=False)
+    # deployment = upload.event.deployment
+    # submissions = services.submissions.all().filter(deployment=deployment)
+    # for submission in submissions:
+    #     if submission.location:
+    #         submission.location_name_path = helpers.compute_location_path(submission.location)
+    #         submission.save(clean=False)
 
     # delete uploaded file
-    upload.data.delete()
+    os.remove(filepath)
     upload.delete()
 
     msg_body = render_template_string(
