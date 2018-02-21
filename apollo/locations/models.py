@@ -51,10 +51,16 @@ class LocationType(BaseModel):
     location_set = db.relationship('LocationSet', backref='location_types')
 
     def ancestors(self):
-        return [p.ancestor_location_type for p in self.ancestor_paths]
+        return [
+            p.ancestor_location_type for p in self.ancestor_paths
+            if p.depth != 0
+        ]
 
     def descendants(self):
-        return [p.descendant_location_type for p in self.descendant_paths]
+        return [
+            p.descendant_location_type for p in self.descendant_paths
+            if p.depth != 0
+        ]
 
 
 class LocationTypePath(db.Model):
@@ -105,10 +111,16 @@ class Location(BaseModel):
         'Sample', backref='locations', secondary=samples_locations)
 
     def ancestors(self):
-        return [p.ancestor_location for p in self.ancestor_paths]
+        return [
+            p.ancestor_location for p in self.ancestor_paths
+            if p.depth != 0
+        ]
 
     def descendants(self):
-        return [p.descendant_location for p in self.descendant_paths]
+        return [
+            p.descendant_location for p in self.descendant_paths
+            if p.depth != 0
+        ]
 
 
 class LocationPath(db.Model):
