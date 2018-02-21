@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
-from flask_script import Command, prompt, prompt_choices
+import socket
+
+from flask_script import Command, prompt, prompt_choices, prompt_pass
+from flask_security.registerable import register_user
 import pytz
 from sqlalchemy.dialects.postgresql import array
 
@@ -41,6 +44,26 @@ class CreateDeploymentCommand(Command):
 
             # Create an event
             CreateEventCommand._create_event(deployment)
+
+            # Create an admin user
+            email = prompt('Admin user email')
+            while True:
+                password = prompt_pass('Admin user password')
+                password2 = prompt_pass('Confirm password')
+
+                if password == password2:
+                    break
+
+            try:
+                user = register_user(deployment_id=deployment.id, email=email,
+                                     password=password)
+            except socket.error:
+                pass
+
+            user.roles.append(admin)
+            user.save()
+
+            print('Deployment {} successfully set up'.format(name))
 
 
 class ListDeploymentsCommand(Command):
