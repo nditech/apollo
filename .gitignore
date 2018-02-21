@@ -17,4 +17,4 @@ pip-selfcheck.json
 share/
 src/
 .vscode/
-versions/
+migrations/versions/
