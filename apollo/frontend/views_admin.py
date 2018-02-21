@@ -101,15 +101,15 @@ class EventAdminView(BaseAdminView):
 #         event.roles = [str(i.pk) for i in entities]
 
         # convert start and end dates to app time zone
-        event.start_date = utc_time_zone.localize(event.start_date).astimezone(
+        event.start = utc_time_zone.localize(event.start).astimezone(
             app_time_zone)
-        event.end_date = utc_time_zone.localize(event.end_date).astimezone(
+        event.end = utc_time_zone.localize(event.end).astimezone(
             app_time_zone)
         return event
 
     @contextfunction
     def get_list_value(self, context, model, name):
-        if name in ['start_date', 'end_date']:
+        if name in ['start', 'end']:
             original = getattr(model, name, None)
             if original:
                 return utc_time_zone.localize(original).astimezone(
@@ -131,9 +131,9 @@ class EventAdminView(BaseAdminView):
             model.deployment = current_user.deployment
 
         # also, convert the time zone to UTC
-        model.start_date = app_time_zone.localize(model.start_date).astimezone(
+        model.start = app_time_zone.localize(model.start).astimezone(
             utc_time_zone)
-        model.end_date = app_time_zone.localize(model.end_date).astimezone(
+        model.end = app_time_zone.localize(model.end).astimezone(
             utc_time_zone)
 
 #     def after_model_change(self, form, model, is_created):
