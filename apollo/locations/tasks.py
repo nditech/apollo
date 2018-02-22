@@ -151,10 +151,11 @@ def update_locations(df, mapping, location_set):
                 db.session.commit()
             else:
                 # update the existing location instead
-                location.name = kwargs['name']
-                location.other_code = kwargs['other_code']
-                location.political_code = kwargs['political_code']
-                location.registered_voters = kwargs['registered_voters']
+                
+                location.name = kwargs.get('name')
+                location.other_code = kwargs.get('other_code')
+                location.political_code = kwargs.get('political_code')
+                location.registered_voters = kwargs.get('registered_voters')
 
                 location.save()
 
@@ -188,9 +189,10 @@ def update_locations(df, mapping, location_set):
                     # no path between the two locations, so
                     # create it
                     loc_path = models.LocationPath(
-                        ancestor_id=loc,
-                        descendant_id=loc2,
-                        location_set_id=location_set.id
+                        ancestor_id=loc.id,
+                        descendant_id=loc2.id,
+                        location_set_id=location_set.id,
+                        depth=lt_path.depth
                     )
                     db.session.add(loc_path)
 
