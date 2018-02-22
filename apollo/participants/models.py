@@ -130,7 +130,7 @@ class Participant(BaseModel):
         'participant_partner.id', ondelete='SET NULL'))
     supervisor_id = db.Column(db.Integer, db.ForeignKey(
         'participant.id', ondelete='SET NULL'))
-    gender = db.Column(ChoiceType(GENDER), default=0)
+    gender = db.Column(ChoiceType(GENDER))
     email = db.Column(db.String)
     location_id = db.Column(db.Integer, db.ForeignKey('location.id'))
     deployment_id = db.Column(db.Integer, db.ForeignKey(
@@ -151,6 +151,7 @@ class Participant(BaseModel):
     groups = db.relationship(
         'ParticipantGroup', secondary=groups_participants,
         backref='participants')
+    role = db.relationship('ParticipantRole', backref='participants')
 
     def __str__(self):
         return self.name or ''

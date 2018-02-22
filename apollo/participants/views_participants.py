@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
-
-
 from datetime import datetime
-
+import logging
+import os
 
 from flask import (abort, Blueprint, current_app, flash, g, redirect,
                    render_template, request, Response, url_for)
@@ -12,18 +11,20 @@ from flask_restful import Api
 from flask_security import current_user, login_required
 from slugify import slugify_unicode
 
-from apollo.frontend import filters, helpers, permissions, route
 from apollo import services
-from apollo.helpers import load_source_file, stash_file
-from apollo.participants import api, tasks
-from apollo.messaging.tasks import send_messages
+from apollo.core import uploads
+from apollo.frontend import filters, helpers, permissions, route
 from apollo.frontend.forms import (
     DummyForm, generate_participant_edit_form,
     generate_participant_import_mapping_form,
     file_upload_form)
+from apollo.helpers import load_source_file, stash_file
+from apollo.messaging.tasks import send_messages
+from apollo.participants import api, forms, tasks
 
 bp = Blueprint('participants', __name__, template_folder='templates',
                static_folder='static', static_url_path='/core/static')
+logger = logging.getLogger(__name__)
 participant_api = Api(bp)
 
 participant_api.add_resource(
@@ -63,16 +64,16 @@ def participant_set_list():
     return render_template(template_name, **context)
 
 
-@route(bp, '/participants', methods=['GET', 'POST'])
-@register_menu(
-    bp, 'main.participants',
-    _('Participants'),
-    icon='<i class="glyphicon glyphicon-user"></i>',
-    visible_when=lambda: permissions.view_participants.can(),
-    order=5)
+@route(bp, '/<int:participant_set_id>/participants', methods=['GET', 'POST'])
+# @register_menu(
+#     bp, 'main.participants',
+#     _('Participants'),
+#     icon='<i class="glyphicon glyphicon-user"></i>',
+#     visible_when=lambda: permissions.view_participants.can(),
+#     order=5)
 @permissions.view_participants.require(403)
 @login_required
-def participant_list(page=1):
+def participant_list(participant_set_id):
     page_title = _('Participants')
     template_name = 'frontend/participant_list.html'
 
@@ -82,20 +83,23 @@ def participant_list(page=1):
         'gen': 'gender'
     }
 
-    try:
-        extra_fields = [f for f in g.deployment.participant_extra_fields if getattr(f, 'listview_visibility', False) is True]
-    except AttributeError:
-        extra_fields = []
+    # try:
+    #     extra_fields = [f for f in g.deployment.participant_extra_fields if getattr(f, 'listview_visibility', False) is True]
+    # except AttributeError:
+    #     extra_fields = []
+    extra_fields = []
     location = None
     if request.args.get('location'):
         location = services.locations.find(
-            pk=request.args.get('location')).first()
+            id=request.args.get('location')).first()
 
-    for field in extra_fields:
-        sortable_columns.update({field.name: field.name})
+    # for field in extra_fields:
+    #     sortable_columns.update({field.name: field.name})
 
-    queryset = services.participants.find()
+    queryset = services.participants.find(
+        deployment=g.deployment, participant_set_id=participant_set_id)
     queryset_filter = filters.participant_filterset()(queryset, request.args)
+    location_sets = services.location_sets.find(deployment=g.deployment)
 
     form = DummyForm(request.form)
 
@@ -128,6 +132,7 @@ def participant_list(page=1):
         args = request.args.to_dict(flat=False)
         page_spec = args.pop('page', None) or [1]
         page = int(page_spec[0])
+        args['participant_set_id'] = participant_set_id
 
         sort_by = sortable_columns.get(
             args.pop('sort_by', ''), 'participant_id')
@@ -140,7 +145,9 @@ def participant_list(page=1):
             filter_form=queryset_filter.form,
             form=form,
             location=location,
+            location_sets=location_sets,
             page_title=page_title,
+            participant_set_id=participant_set_id,
             location_types=helpers.displayable_location_types(
                 is_administrative=True),
             participants=subset.paginate(
@@ -335,53 +342,62 @@ def participant_edit(pk):
         participant=participant)
 
 
-@route(bp, '/participants/import', methods=['POST'])
+@route(bp, '/<int:participant_set_id>/participants/import', methods=['POST'])
 @permissions.import_participants.require(403)
 @login_required
-def participant_list_import():
-    form = file_upload_form(request.form)
+def participant_list_import(participant_set_id):
+    form_class = forms.participant_upload_form_factory(g.deployment)
+    form = form_class(request.form)
 
     if not form.validate():
         return abort(400)
     else:
         # get the actual object from the proxy
         user = current_user._get_current_object()
-        event = services.events.get_or_404(pk=form.event.data)
-        upload = stash_file(request.files['spreadsheet'], user, event)
-        upload.save()
+        filename = uploads.save(request.files['spreadsheet'])
+        upload = services.user_uploads.create(
+            deployment_id=g.deployment.id, upload_filename=filename,
+            user_id=user.id)
+        location_set_id = form.location_set.data
 
         return redirect(url_for(
             'participants.participant_headers',
-            pk=str(upload.id)
-        ))
+            participant_set_id=participant_set_id,
+            location_set_id=location_set_id,
+            upload_id=upload.id)
+        )
 
 
-@route(bp, '/participants/headers/<pk>', methods=['GET', 'POST'])
+@route(bp, '/<int:participant_set_id>/participants/headers/<int:location_set_id>/<int:upload_id>', methods=['GET', 'POST'])
 @permissions.import_participants.require(403)
 @login_required
-def participant_headers(pk):
+def participant_headers(participant_set_id, location_set_id, upload_id):
     user = current_user._get_current_object()
 
     # disallow processing other users' files
-    upload = services.user_uploads.get_or_404(pk=pk, user=user)
+    upload = services.user_uploads.fget_or_404(id=upload_id, user=user)
+    filepath = uploads.path(upload.upload_filename)
     try:
-        dataframe = load_source_file(upload.data)
+        with open(filepath) as source_file:
+            dataframe = load_source_file(source_file)
     except Exception:
         # delete loaded file
-        upload.data.delete()
+        os.remove(filepath)
         upload.delete()
         return abort(400)
 
-    deployment = g.deployment
     headers = dataframe.columns
+    participant_set = services.participant_sets.fget_or_404(
+        id=participant_set_id)
     template_name = 'frontend/participant_headers.html'
 
     if request.method == 'GET':
-        form = generate_participant_import_mapping_form(deployment, headers)
+        form = generate_participant_import_mapping_form(
+            headers, participant_set)
         return render_template(template_name, form=form)
     else:
         form = generate_participant_import_mapping_form(
-            deployment, headers, request.form)
+            headers, participant_set, request.form)
 
         if not form.validate():
             return render_template(
@@ -400,11 +416,14 @@ def participant_headers(pk):
 
             # invoke task asynchronously
             kwargs = {
-                'upload_id': str(upload.id),
-                'mappings': data
+                'upload_id': upload.id,
+                'mappings': data,
+                'location_set_id': location_set_id,
+                'participant_set_id': participant_set_id
             }
             tasks.import_participants.apply_async(kwargs=kwargs)
-            return redirect(url_for('participants.participant_list'))
+            return redirect(url_for('participants.participant_list',
+                                    participant_set_id=participant_set_id))
 
 
 @route(bp, '/participants/purge', methods=['POST'])

@@ -30,9 +30,11 @@ a:hover.arrow-style{text-decoration:none; color:#333;}
 </style>
 {% endblock %}
 {% block toolbar %}
+  {#
   {%- if perms.export_participants.can() -%}
   <a class="btn btn-sm btn-default pull-right" href="{{ url_for('participants.participant_list', export='true', **request.args) }}"><i class="glyphicon glyphicon-export"></i> {{ _('Export') }}</a>
   {%- endif -%}
+  #}
   <a class="btn btn-sm btn-default pull-right" href="{{ url_for('participants.participant_performance_list') }}" style="margin-right:1em;"><i class="glyphicon glyphicon-stats"></i> {{ _('Performance Evaluation') }}</a>
   {%- if perms.import_participants.can() -%}
   <button id="open-wizard" class="btn btn-sm btn-primary pull-right" style="margin-right:1em;"><i class="glyphicon glyphicon-import glyphicon-white"></i> {{ _('Import Participants') }}</button>
@@ -96,10 +98,10 @@ a:hover.arrow-style{text-decoration:none; color:#333;}
                {%- for location_type in location_types -%}
                <td>{{ participant.location_name_path[location_type.name] }}</td>
                {%- endfor -%}
-               <td>{{ participant.location|default('N/A', true) }}</td>
+               <td>{{ participant.location.name|default('N/A', true) }}</td>
                <td>{{ participant.name|default('', true) }}</td>
-               <td>{{ participant.gender }}</td>
-               <td>{{ participant.role|default('N/A', true) }}</td>
+               <td>{{ participant.gender|default(_('Unspecified'), true) }}</td>
+               <td>{{ participant.role.name|default('N/A', true) }}</td>
                <td>{{ participant.phone|default('', true) }}</td>
                <td>{{ participant.partner|default('', true) }}</td>
                {% for field in extra_fields %}
@@ -179,9 +181,22 @@ a:hover.arrow-style{text-decoration:none; color:#333;}
         <h3>Upload File</h3>
 
         <div class="wizard-input-section">
-        <form enctype="multipart/form-data" method="POST" id="upload-form" action="{{ url_for('participants.participant_list_import') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+        <form enctype="multipart/form-data" method="POST" id="upload-form" action="{{ url_for('participants.participant_list_import', participant_set_id=participant_set_id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
           <div class="form-group">
             <div class="col-sm-9">
+              <div class="row">
+                <div class="col-sm-4">
+                  <label for="location_set">{{ _('Location set') }}</label>
+                </div>
+                <div class="col-sm-8">
+                  <select name="location_set" id="id_location_set" class="form-control">
+                    <option value="">{{ _('Select one') }}</option>
+                    {% for loc_set in location_sets %}
+                    <option value="{{ loc_set.id}}">{{ loc_set.name }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
               <div class="row">
                 <div class="col-sm-4">
                   <div class="fileUpload btn btn-default btn-sm" style="margin-left:1px;">
@@ -192,7 +207,6 @@ a:hover.arrow-style{text-decoration:none; color:#333;}
                 </div>
                 <div class="col-sm-8" style="margin-left:-30px;">
                     <input id="uploadFile" type="text" placeholder="Data File" class="form-control input-sm" readonly>
-                    <input type="hidden" name="event" value="{{ g.event.pk }}">
                 </div>
               </div>
             </div>

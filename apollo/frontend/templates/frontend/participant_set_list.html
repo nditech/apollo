@@ -1,18 +1,6 @@
 {%- extends 'frontend/_layout.html' -%}
 {%- from 'frontend/macros/pagination.html' import render_pager, render_pager_counter -%}
 {% block toolbar %}
-  {#
-  {%- if perms.export_participants.can() -%}
-  <a class="btn btn-sm btn-default pull-right" href="{{ url_for('participants.participant_list', export='true', **request.args) }}"><i class="glyphicon glyphicon-export"></i> {{ _('Export') }}</a>
-  {%- endif -%}
-  #}
-  <a class="btn btn-sm btn-default pull-right" href="{{ url_for('participants.participant_performance_list') }}" style="margin-right:1em;"><i class="glyphicon glyphicon-stats"></i> {{ _('Performance Evaluation') }}</a>
-  {%- if perms.import_participants.can() -%}
-  <button id="open-wizard" class="btn btn-sm btn-primary pull-right" style="margin-right:1em;"><i class="glyphicon glyphicon-import glyphicon-white"></i> {{ _('Import Participants') }}</button>
-  {%- endif -%}
-  {%- if perms.role('admin').can() -%}
-  <button class="btn btn-sm btn-danger pull-right" id="nuke_participants_modal_btn" style="margin-right: 1em;" data-toggle="modal" data-target="#nuke_modal"><i class="glyphicon glyphicon-trash"></i> {{ _('Purge Participants') }}</button>
-  {%- endif -%}
 {% endblock %}
 {% block content %}
 {%- set flash_msgs = get_flashed_messages(category_filter=['task_begun']) -%}
@@ -31,7 +19,7 @@
             <tr>
               <th>{{ _('Name') }}</th>
               <th>{{ _('# linked events') }}</th>
-              <th colspan="2">{{ _('Participant groups') }}</th>
+              <th class="shrink">{{ _('Participant groups') }}</th>
               <th colspan="2">{{ _('Participants') }}</th>
             </tr>
           </thead>
@@ -40,14 +28,13 @@
             <tr>
               <td>{{ participant_set.name }}</td>
               <td>{{ participant_set.events|length }}</td>
-              <td>{{ participant_set.participant_groups|length }}</td>
-              <td>{{ _('Manage') }}</td>
+              <td class="shrink">{{ participant_set.participant_groups|length }}</td>
               <td>{{ participant_set.participants|length }}</td>
-              <td>{{ _('Manage') }}</td>
+              <td><a href="{{ url_for('participants.participant_list', participant_set_id=participant_set.id) }}">{{ _('Manage') }}</a></td>
             </tr>
             {% else %}
             <tr class="warning">
-              <td class="text-center" colspan="6">{{ _('No participant sets') }}</td>
+              <td class="text-center" colspan="5">{{ _('No participant sets') }}</td>
             </tr>
             {% endfor %}
           </tbody>

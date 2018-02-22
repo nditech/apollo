@@ -21,8 +21,6 @@ def participant_upload_form_factory(deployment):
             _('Location set'),
             choices=_make_choices(location_sets, _('Select one')),
             validators=[InputRequired()])
-        spreadsheet = FileField(
-            _('Data file'),
-            validators=[FileAllowed(SPREADSHEET_FORMATS), FileRequired()])
+        spreadsheet = FileField(_('Data file'))
 
     return ParticipantFileUploadForm

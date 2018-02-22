@@ -1,20 +1,24 @@
 # -*- coding: utf-8 -*-
 from collections import OrderedDict
+import logging
+import os
 import random
 import string
 
 from flask import render_template_string
 from flask_babelex import lazy_gettext as _
 import pandas as pd
-from sqlalchemy.orm.exc import MultipleResultsFound 
+from sqlalchemy.orm.exc import MultipleResultsFound
 
-from apollo.messaging.tasks import send_email
-from apollo import services, helpers
+from apollo import helpers, services
+from apollo.core import uploads
 from apollo.factory import create_celery_app
+from apollo.messaging.tasks import send_email
 from apollo.participants import utils
 # from apollo.participants.models import PhoneContact
 
 celery = create_celery_app()
+logger = logging.getLogger(__name__)
 
 email_template = '''
 Of {{ count }} records, {{ successful_imports }} were successfully imported, {{ suspect_imports }} raised warnings, and {{ unsuccessful_imports }} could not be imported.
@@ -41,36 +45,37 @@ def _is_valid(item):
     return not pd.isnull(item) and item
 
 
-def create_partner(name, deployment):
+def create_partner(name, deployment, participant_set):
     return services.participant_partners.create(
-        name=name,
-        deployment=deployment)
+        name=name, deployment_id=deployment.id,
+        participant_set_id=participant_set.id)
 
 
-def create_group_type(name, deployment):
+def create_group_type(name, deployment, participant_set):
     return services.participant_group_types.create(
-        name=name,
-        deployment=deployment)
+        name=name, deployment_id=deployment.id,
+        participant_set_id=participant_set.id)
 
 
-def create_group(name, group_type, deployment):
+def create_group(name, group_type, deployment, participant_set):
     return services.participant_groups.create(
-        name=name,
-        group_type=group_type.name,
-        deployment=deployment)
+        name=name, group_type_id=group_type.id, deployment_id=deployment.id,
+        participant_set_id=participant_set.id)
 
 
-def create_role(name, deployment):
-    return services.participant_roles.create(name=name,
-                                             deployment=deployment)
+def create_role(name, deployment, participant_set):
+    return services.participant_roles.create(
+        name=name, deployment_id=deployment.id,
+        participant_set_id=participant_set.id)
 
 
 def generate_password(length):
-    return ''.join(
-        random.choice(string.ascii_uppercase + string.digits + string.ascii_lowercase) for _ in range(length))
+    return ''.join(random.choice(
+        string.ascii_uppercase + string.digits + string.ascii_lowercase)
+        for _ in range(length))
 
 
-def update_participants(dataframe, event, header_map):
+def update_participants(dataframe, header_map, participant_set, location_set):
     """
     Given a Pandas `class`DataFrame that has participant information loaded,
     create or update the participant database with the info contained therein.
@@ -93,7 +98,7 @@ def update_participants(dataframe, event, header_map):
         group - a prefix for columns starting with this string that contain
                 participant group names
     """
-    deployment = event.deployment
+    deployment = participant_set.deployment
     index = dataframe.index
 
     unresolved_supervisors = set()
@@ -113,8 +118,9 @@ def update_participants(dataframe, event, header_map):
     PHONE_PREFIX = header_map.get('phone')
     GROUP_PREFIX = header_map.get('group')
 
-    extra_field_names = [f.name for
-                         f in event.deployment.participant_extra_fields]
+    # extra_field_names = [f.name for
+    #                      f in event.deployment.participant_extra_fields]
+    extra_field_names = []
 
     phone_columns = [c for c in dataframe.columns
                      if c.startswith(PHONE_PREFIX)]
@@ -126,17 +132,17 @@ def update_participants(dataframe, event, header_map):
         participant_id = record[PARTICIPANT_ID_COL]
         if type(participant_id) == float:
             participant_id = int(participant_id)
-        participant = services.participants.get(
+        participant = services.participants.find(
             participant_id=str(participant_id),
-            deployment=event.deployment,
-            event=event
-        )
+            deployment=deployment,
+            participant_set=participant_set
+        ).first()
 
         if participant is None:
             participant = services.participants.new(
                 participant_id=str(participant_id),
-                deployment=event.deployment,
-                event=event
+                deployment_id=deployment.id,
+                participant_set_id=participant_set.id
             )
 
         if NAME_COL:
@@ -147,24 +153,27 @@ def update_participants(dataframe, event, header_map):
         if ROLE_COL:
             role_name = record[ROLE_COL]
             if _is_valid(role_name):
-                role = services.participant_roles.get(
+                role = services.participant_roles.find(
                     name=role_name,
-                    deployment=deployment
-                )
+                    deployment=deployment,
+                    participant_set=participant_set
+                ).first()
                 if role is None:
-                    role = create_role(role_name, deployment)
+                    role = create_role(role_name, deployment, participant_set)
             participant.role = role
 
         partner = None
         if PARTNER_COL:
             partner_name = record[PARTNER_COL]
             if _is_valid(partner_name):
-                partner = services.participant_partners.get(
+                partner = services.participant_partners.find(
                     name=partner_name,
-                    deployment=deployment
+                    deployment=deployment,
+                    participant_set=participant_set
                 )
                 if partner is None:
-                    partner = create_partner(partner_name, deployment)
+                    partner = create_partner(partner_name, deployment,
+                                             participant_set)
                 participant.partner = partner
 
         location = None
@@ -173,10 +182,11 @@ def update_participants(dataframe, event, header_map):
                 loc_code = record[LOCATION_ID_COL]
                 if isinstance(loc_code, float):
                     loc_code = int(loc_code)
-                location = services.locations.get(
+                location = services.locations.find(
                     code=str(loc_code),
-                    deployment=deployment
-                )
+                    deployment=deployment,
+                    location_set=location_set
+                ).one()
         except MultipleResultsFound:
             errors.add((
                 participant_id,
@@ -203,10 +213,11 @@ def update_participants(dataframe, event, header_map):
                     supervisor_id = record[SUPERVISOR_ID_COL]
                     if type(supervisor_id) == float:
                         supervisor_id = int(supervisor_id)
-                    supervisor = services.participants.get(
+                    supervisor = services.participants.find(
                         participant_id=str(supervisor_id),
-                        event=event
-                    )
+                        participant_set=participant_set,
+                        deployment=deployment
+                    ).first()
                     if supervisor is None:
                         # perhaps supervisor exists further along.
                         # cache the refs
@@ -217,7 +228,7 @@ def update_participants(dataframe, event, header_map):
 
         if GENDER_COL:
             participant.gender = record[GENDER_COL] \
-                if _is_valid(record[GENDER_COL]) else ''
+                if _is_valid(record[GENDER_COL]) else None
 
         if EMAIL_COL:
             participant.email = record[EMAIL_COL] \
@@ -229,55 +240,55 @@ def update_participants(dataframe, event, header_map):
         else:
             participant.password = generate_password(6)
 
-        # wonky hacks to avoid doing addToSet queries
-        # for events and phone numbers
         if PHONE_PREFIX:
             phone_info = OrderedDict()
+            if not participant.phones:
+                participant.phones = []
+
             for phone in participant.phones:
-                phone_info[phone.number] = phone.verified
+                phone_info[phone['number']] = phone
             for column in phone_columns:
                 if not _is_valid(record[column]):
                     continue
                 mobile = record[column]
                 if type(mobile) is float:
                     mobile = int(mobile)
-                phone_info[mobile] = True
+                phone_info[mobile] = {'number': mobile, 'verified': True}
 
-            # phones = [
-            #     PhoneContact(number=str(k),
-            #                  verified=v) for k, v in list(phone_info.items())
-            # ]
-            # if phone_columns:
-            #     participant.phones = phones
+            participant.phones = list(phone_info.values())
 
         # fix up groups
         if GROUP_PREFIX:
             groups = []
             for column in group_columns:
-                group_type = services.participant_group_types.get(
+                group_type = services.participant_group_types.find(
                     name=column,
-                    deployment=event.deployment
-                )
+                    deployment=deployment,
+                    participant_set=participant_set
+                ).first()
 
                 if not group_type:
-                    group_type = create_group_type(column, event.deployment)
+                    group_type = create_group_type(
+                        column, deployment, participant_set)
 
                 if not _is_valid(record[column]):
                     continue
 
-                group = services.participant_groups.get(
+                group = services.participant_groups.find(
                     name=record[column],
-                    group_type=group_type.name,
-                    deployment=event.deployment)
+                    group_type=group_type,
+                    deployment=deployment,
+                    participant_set=participant_set)
 
                 if not group:
                     group = create_group(
-                        record[column], group_type, event.deployment)
+                        record[column], group_type, deployment,
+                        participant_set)
 
                 groups.append(group)
 
-            if group_columns:
-                participant.groups = groups
+            # if group_columns:
+            #     participant.groups.extend(groups)
 
         # sort out any extra fields
         for field_name in extra_field_names:
@@ -294,14 +305,16 @@ def update_participants(dataframe, event, header_map):
 
     # second pass - resolve missing supervisor references
     for participant_id, supervisor_id in unresolved_supervisors:
-        participant = services.participants.get(
+        participant = services.participants.find(
             participant_id=participant_id,
-            event=event
-        )
-        supervisor = services.participants.get(
+            deployment=deployment,
+            participant_set=participant_set
+        ).first()
+        supervisor = services.participants.find(
             participant_id=supervisor_id,
-            event=event
-        )
+            participant_set=participant_set,
+            deployment=deployment
+        ).first()
 
         if supervisor is None:
             participant.delete()
@@ -332,17 +345,35 @@ def generate_response_email(count, errors, warnings):
 
 
 @celery.task
-def import_participants(upload_id, mappings):
-    upload = services.user_uploads.get(pk=upload_id)
-    dataframe = helpers.load_source_file(upload.data)
+def import_participants(upload_id, mappings, participant_set_id,
+                        location_set_id):
+    upload = services.user_uploads.find(id=upload_id).first()
+    if not upload:
+        logger.error('Upload %s does not exist, aborting', upload_id)
+        return
+
+    filepath = uploads.path(upload.upload_filename)
+    if not os.path.exists(filepath):
+        logger.error('Upload file %s does not exist, aborting', filepath)
+        upload.delete()
+        return
+
+    with open(filepath) as f:
+        dataframe = helpers.load_source_file(f)
+
+    location_set = services.location_sets.find(
+        id=location_set_id).first()
+    participant_set = services.participant_sets.find(
+        id=participant_set_id).first()
     count, errors, warnings = update_participants(
         dataframe,
-        upload.event,
-        mappings
+        mappings,
+        participant_set,
+        location_set
     )
 
     # delete uploaded file
-    upload.data.delete()
+    os.remove(filepath)
     upload.delete()
 
     msg_body = generate_response_email(count, errors, warnings)

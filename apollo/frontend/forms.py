@@ -116,7 +116,7 @@ def generate_participant_edit_form(participant, data=None):
 
 
 def generate_participant_import_mapping_form(
-    deployment, headers, *args, **kwargs
+    headers, participant_set, *args, **kwargs
 ):
     default_choices = [['', _('Select column')]] + [(v, v) for v in headers]
 
@@ -127,16 +127,8 @@ def generate_participant_import_mapping_form(
             choices=default_choices,
             validators=[validators.input_required()]
         ),
-        'last_name': SelectField(
-            _('Last name'),
-            choices=default_choices
-        ),
-        'first_name': SelectField(
-            _('First name'),
-            choices=default_choices
-        ),
-        'other name': SelectField(
-            _('Other name'),
+        'name': SelectField(
+            _('Name'),
             choices=default_choices
         ),
         'partner_org': SelectField(
@@ -175,11 +167,11 @@ def generate_participant_import_mapping_form(
         )
     }
 
-    for field in deployment.participant_extra_fields:
-        attributes[field.name] = SelectField(
-            _('%(label)s', label=field.label),
-            choices=default_choices
-        )
+    # for field in deployment.participant_extra_fields:
+    #     attributes[field.name] = SelectField(
+    #         _('%(label)s', label=field.label),
+    #         choices=default_choices
+    #     )
 
     def validate_phone(self, field):
         if field.data:
