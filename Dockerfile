@@ -10,7 +10,7 @@ RUN set -ex \
             libxslt-dev \
             python3-dev \
             postgresql-dev \
-        && apk add --no-cache --virtual .python-deps python3 \
+        && apk add --no-cache --virtual .python-deps python3 libmagic \
         && python3 -m ensurepip \
         && rm -r /usr/lib/python*/ensurepip \
         && pip3 install --upgrade pip setuptools \
