@@ -119,6 +119,7 @@ class Participant(BaseModel):
     id = db.Column(
         db.Integer, db.Sequence('participant_id_seq'), primary_key=True)
     name = db.Column(db.String)
+    participant_id = db.Column(db.String)
     role_id = db.Column(db.Integer, db.ForeignKey(
         'participant_role.id', ondelete='SET NULL'))
     partner_id = db.Column(db.Integer, db.ForeignKey(
@@ -127,6 +128,7 @@ class Participant(BaseModel):
         'participant.id', ondelete='SET NULL'))
     gender = db.Column(ChoiceType(GENDER), default=0)
     email = db.Column(db.String)
+    location_id = db.Column(db.Integer, db.ForeignKey('location.id'))
     deployment_id = db.Column(db.Integer, db.ForeignKey(
         'deployment.id', ondelete='CASCADE'), nullable=False)
     participant_set_id = db.Column(db.Integer, db.ForeignKey(
@@ -139,6 +141,7 @@ class Participant(BaseModel):
     phones = db.Column(JSONB)
 
     deployment = db.relationship('Deployment', backref='participants')
+    location = db.relationship('Location', backref='participants')
     participant_set = db.relationship(
         'ParticipantSet', backref='participants')
     groups = db.relationship(
