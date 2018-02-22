@@ -5,7 +5,10 @@ import numpy
 import os
 import string
 
+from pathlib import Path
 from prettyconf import config
+
+postgres_password = Path('/run/secrets/postgres_password')
 
 PROJECT_ROOT = os.path.dirname(os.path.dirname(__file__))
 
@@ -35,12 +38,20 @@ UPSTREAM_PROXY_COUNT = config('UPSTREAM_PROXY_COUNT', cast=int, default=1)
 SENTRY_DSN = config('SENTRY_DSN', default=None)
 SENTRY_USER_ATTRS = ['email']
 
+MAIL_SERVER = config('MAIL_SERVER', default=None)
+MAIL_PORT = config('MAIL_PORT', default=None)
+MAIL_USE_TLS = config('MAIL_USE_TLS', cast=config.boolean, default=False)
+MAIL_USE_SSL = config('MAIL_USE_SSL', cast=config.boolean, default=False)
+MAIL_USERNAME = config('MAIL_USERNAME', default=None)
+MAIL_PASSWORD = config('MAIL_PASSWORD', default=None)
+DEFAULT_EMAIL_SENDER = config('DEFAULT_EMAIL_SENDER', default=None)
+
 SECURITY_PASSWORD_HASH = 'pbkdf2_sha256'
 SECURITY_PASSWORD_SALT = SECRET_KEY
 SECURITY_URL_PREFIX = '/accounts'
 SECURITY_POST_LOGOUT_VIEW = '/accounts/login'
 SECURITY_LOGIN_USER_TEMPLATE = 'frontend/login_user.html'
-SECURITY_EMAIL_SENDER = config('SECURITY_EMAIL_SENDER', default=None)
+SECURITY_EMAIL_SENDER = DEFAULT_EMAIL_SENDER
 SECURITY_SEND_REGISTER_EMAIL = config(
     'SECURITY_SEND_REGISTER_EMAIL', cast=config.boolean, default=False)
 SECURITY_RECOVERABLE = True
@@ -48,21 +59,11 @@ SECURITY_TRACKABLE = True
 SESSION_COOKIE_SECURE = True if SSL_REQUIRED else False
 PERMANENT_SESSION_LIFETIME = timedelta(hours=1)
 
-MAIL_SERVER = config('MAIL_SERVER', default=None)
-MAIL_PORT = config('MAIL_PORT', default=None)
-MAIL_USE_TLS = config('MAIL_USE_TLS', cast=config.boolean, default=False)
-MAIL_USE_SSL = config('MAIL_USE_SSL', cast=config.boolean, default=False)
-MAIL_USERNAME = config('MAIL_USERNAME', default=None)
-MAIL_PASSWORD = config('MAIL_PASSWORD', default=None)
-DEFAULT_EMAIL_SENDER = SECURITY_EMAIL_SENDER
-
 CELERY_BROKER_URL = 'redis://{host}/{database}'.format(
-    host=urlparse(
-        config('REDIS_PORT', default='redis://localhost')).netloc,
+    host=config('REDIS_HOSTNAME', default='redis'),
     database=config('REDIS_DATABASE', default='0'))
 CELERY_RESULT_BACKEND = 'redis://{host}/{database}'.format(
-    host=urlparse(
-        config('REDIS_PORT', default='redis://localhost')).netloc,
+    host=config('REDIS_HOSTNAME', default='redis'),
     database=config('REDIS_DATABASE', default='0'))
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TASK_SERIALIZER = 'json'
@@ -70,8 +71,7 @@ CELERY_ACCEPT_CONTENT = ['json']
 
 CACHE_TYPE = 'simple' if DEBUG else 'redis'
 CACHE_REDIS_URL = 'redis://{host}/{database}'.format(
-    host=urlparse(
-        config('REDIS_PORT', default='redis://localhost')).netloc,
+    host=config('REDIS_HOSTNAME', default='redis'),
     database=config('REDIS_DATABASE', default='0'))
 
 LANGUAGES = {
@@ -136,7 +136,23 @@ TRANSLITERATE_OUTPUT = config(
 
 
 # SQLAlchemy settings
-SQLALCHEMY_DATABASE_URI = config('DATABASE_URL', default='sqlite:///:memory:')
+DATABASE_DRIVER = config('DATABASE_DRIVER', default='postgresql')
+DATABASE_HOSTNAME = config('DATABASE_HOSTNAME', default='postgres')
+DATABASE_USERNAME = config('DATABASE_USERNAME', default='postgres')
+if postgres_password.is_file():
+    DATABASE_PASSWORD = postgres_password.open().read()
+else:
+    DATABASE_PASSWORD = config('DATABASE_PASSWORD', default='')
+DATABASE_NAME = config('DATABASE_NAME', default='apollo')
+SQLALCHEMY_DATABASE_URI = config(
+    'DATABASE_URL',
+    default="{driver}://{username}:{password}@{hostname}/{database}".format(
+        driver=DATABASE_DRIVER,
+        username=DATABASE_USERNAME,
+        password=DATABASE_PASSWORD,
+        hostname=DATABASE_HOSTNAME,
+        database=DATABASE_NAME
+    ))
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 # FDT settings
