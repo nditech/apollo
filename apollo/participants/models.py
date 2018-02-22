@@ -89,11 +89,15 @@ class ParticipantGroup(BaseModel):
         'deployment.id', ondelete='CASCADE'), nullable=False)
     group_type_id = db.Column(db.Integer, db.ForeignKey(
         'participant_group_type.id', ondelete='CASCADE'), nullable=False)
+    participant_set_id = db.Column(
+        db.Integer, db.ForeignKey('participant_set.id'))
 
     deployment = db.relationship(
         'Deployment', backref='participant_groups')
     group_type = db.relationship(
         'ParticipantGroupType', backref='participant_groups')
+    participant_set = db.relationship(
+        'ParticipantSet', backref='participant_groups')
 
     def __str__(self):
         return self.name or ''
