@@ -7,6 +7,15 @@ from apollo.core import db
 from apollo.dal.models import BaseModel
 
 
+groups_participants = db.Table(
+    'participant_groups_participants',
+    db.Column('group_id', db.Integer, db.ForeignKey('participant_group.id'),
+              nullable=False),
+    db.Column('participant_id', db.Integer,
+              db.ForeignKey('participant.id'), nullable=False)
+)
+
+
 class ParticipantRole(BaseModel):
     __tablename__ = 'participant_role'
 
@@ -132,6 +141,9 @@ class Participant(BaseModel):
     deployment = db.relationship('Deployment', backref='participants')
     participant_set = db.relationship(
         'ParticipantSet', backref='participants')
+    groups = db.relationship(
+        'ParticipantGroup', secondary=groups_participants,
+        backref='participants')
 
     def __str__(self):
         return self.name or ''
