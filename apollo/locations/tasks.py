@@ -235,6 +235,10 @@ def update_locations(df, mapping, location_set):
 @celery.task
 def import_locations(upload_id, mappings, location_set_id):
     upload = services.user_uploads.find(id=upload_id).first()
+    if not upload:
+        logger.error('Upload %s does not exist, aborting', upload_id)
+        return
+
     filepath = uploads.path(upload.upload_filename)
 
     if not os.path.exists(filepath):
@@ -254,15 +258,6 @@ def import_locations(upload_id, mappings, location_set_id):
         location_set
     )
 
-    # fetch and update all submissions
-    # deployment = upload.event.deployment
-    # submissions = services.submissions.all().filter(deployment=deployment)
-    # for submission in submissions:
-    #     if submission.location:
-    #         submission.location_name_path = helpers.compute_location_path(submission.location)
-    #         submission.save(clean=False)
-
-    # delete uploaded file
     os.remove(filepath)
     upload.delete()
 
