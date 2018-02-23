@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 from flask_babelex import lazy_gettext as _
-from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy_utils import ChoiceType
 
+from apollo import utils
 from apollo.core import db
 from apollo.dal.models import BaseModel
 
@@ -103,6 +104,15 @@ class ParticipantGroup(BaseModel):
         return self.name or ''
 
 
+class Phone(BaseModel):
+    __tablename__ = 'phone'
+
+    id = db.Column(
+        db.Integer, db.Sequence('participant_phone_id_seq'),
+        primary_key=True)
+    number = db.Column(db.String, nullable=False)
+
+
 class Participant(BaseModel):
     '''
     The *proposed* structure of the phones list is as below:
@@ -114,9 +124,9 @@ class Participant(BaseModel):
         }
     '''
     GENDER = (
-        (0, _('Unspecified')),
-        (1, _('Female')),
-        (2, _('Male')),
+        ('', _('Unspecified')),
+        ('F', _('Female')),
+        ('M', _('Male')),
     )
 
     __tablename__ = 'participant'
@@ -142,7 +152,6 @@ class Participant(BaseModel):
     completion_rating = db.Column(db.Float, default=1)
     device_id = db.Column(db.String)
     password = db.Column(db.String)
-    phones = db.Column(JSONB)
 
     deployment = db.relationship('Deployment', backref='participants')
     location = db.relationship('Location', backref='participants')
@@ -152,16 +161,30 @@ class Participant(BaseModel):
         'ParticipantGroup', secondary=groups_participants,
         backref='participants')
     role = db.relationship('ParticipantRole', backref='participants')
+    participant_phones = db.relationship(
+        'ParticipantPhone', backref='participants')
+    phones = association_proxy('participant_phones', 'number')
 
     def __str__(self):
         return self.name or ''
 
     @property
-    def primary_phone(self):
-        try:
-            return next(
-                p.get('number') for p in self.phones
-                if p.get('is_primary', False)
-            )
-        except StopIteration:
-            return None
+    def gender_display(self):
+        if not self.gender:
+            return Participant.GENDER[0][1]
+
+        d = dict(Participant.GENDER)
+        return d.get(self.gender, Participant.GENDER[0][1])
+
+
+class ParticipantPhone(BaseModel):
+    __tablename__ = 'participant_phone'
+
+    participant_id = db.Column(
+        db.Integer, db.ForeignKey('participant.id', ondelete='CASCADE'),
+        primary_key=True)
+    phone_id = db.Column(
+        db.Integer, db.ForeignKey('phone.id', ondelete='CASCADE'),
+        primary_key=True)
+    last_seen = db.Column(db.DateTime, default=utils.current_timestamp)
+    verified = db.Column(db.Boolean, default=True)
