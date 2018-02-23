@@ -78,7 +78,7 @@
           <td class="shrink">{{ location.code }}</td>
           <td>{{ location.name }}</td>
           <td class="shrink">{{ location.location_type.name }}</td>
-          <td class="text-center shrink"><a href="{{ url_for('locations.location_edit', pk=location.id) }}">{{ _('Edit') }}</a></td>
+          <td class="text-center shrink"><a href="{{ url_for('locations.location_edit', id=location.id) }}">{{ _('Edit') }}</a></td>
         </tr>
         {% else %}
         <tr class="warning">
@@ -104,7 +104,7 @@
           </div>
         </div>
         <div class="modal-footer">
-          <form action="{{ url_for('locations.nuke_locations') }}" method="POST">
+          <form action="{{ url_for('locations.nuke_locations', location_set_id=location_set_id) }}" method="POST">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             <button class="btn btn-danger" disabled="true" id="confirm_nuke">Yes, I understand</button>

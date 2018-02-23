@@ -271,5 +271,5 @@ def import_locations(upload_id, mappings, location_set_id):
 
 
 @celery.task
-def nuke_locations():
-    utils.nuke_locations()
+def nuke_locations(location_set_id):
+    utils.nuke_locations(location_set_id)

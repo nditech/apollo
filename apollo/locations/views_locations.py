@@ -15,10 +15,10 @@ from apollo.helpers import load_source_file
 from slugify import slugify_unicode
 from sqlalchemy import not_
 
-from apollo.frontend import filters, permissions, route
+from apollo.frontend import permissions, route
 from apollo import helpers, models, services, utils
 from apollo.core import db, uploads
-from apollo.locations import api, tasks
+from apollo.locations import api, filters, tasks
 from apollo.frontend.forms import (
     file_upload_form, generate_location_edit_form,
     generate_location_update_mapping_form, DummyForm)
@@ -51,7 +51,7 @@ location_api.add_resource(
 )
 
 
-@route(bp, '/location-sets/', methods=['GET'])
+@route(bp, '/location-sets', methods=['GET'])
 @permissions.edit_locations.require(403)
 @login_required
 def location_set_list():
@@ -75,7 +75,7 @@ def location_set_list():
     return render_template(template_name, **context)
 
 
-@route(bp, '/<int:location_set_id>/locations/', methods=['GET'])
+@route(bp, '/<int:location_set_id>/locations', methods=['GET'])
 # @register_menu(
 #     bp, 'user.locations_list', _('Locations'),
 #     visible_when=lambda: permissions.edit_locations.can())
@@ -87,7 +87,8 @@ def location_list(location_set_id):
 
     queryset = services.locations.find(
         deployment=g.deployment, location_set_id=location_set_id)
-    queryset_filter = filters.location_filterset()(queryset, request.args)
+    queryset_filter = filters.location_filterset(
+        location_set_id=location_set_id)(queryset, request.args)
 
     args = request.args.to_dict(flat=False)
     args.update(location_set_id=location_set_id)
@@ -121,13 +122,13 @@ def location_list(location_set_id):
         return render_template(template_name, **ctx)
 
 
-@route(bp, '/location/<pk>', methods=['GET', 'POST'])
+@route(bp, '/location/<int:id>', methods=['GET', 'POST'])
 @permissions.edit_locations.require(403)
 @login_required
-def location_edit(pk):
+def location_edit(id):
     template_name = 'frontend/location_edit.html'
     deployment = g.get('deployment')
-    location = models.Location.objects.get_or_404(pk=pk, deployment=deployment)
+    location = models.Location.query.get_or_404(id=id, deployment=deployment)
     page_title = _('Edit Location')
 
     if request.method == 'GET':
@@ -348,10 +349,10 @@ def locations_builder(location_set_id):
                            location_set=location_set)
 
 
-@route(bp, '/locations/purge', methods=['POST'])
+@route(bp, '/<int:location_set_id>/locations/purge', methods=['POST'])
 @admin_required(403)
 @login_required
-def nuke_locations():
+def nuke_locations(location_set_id):
     try:
         str_func = str
     except NameError:
@@ -362,6 +363,7 @@ def nuke_locations():
         category='locations'
     )
 
-    tasks.nuke_locations.apply_async()
+    tasks.nuke_locations.apply_async(args=(location_set_id,))
 
-    return redirect(url_for('locations.locations_list'))
+    return redirect(url_for('locations.location_list',
+                            location_set_id=location_set_id))

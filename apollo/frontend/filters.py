@@ -190,8 +190,8 @@ class PartnerFilter(ChoiceFilter):
 
     def filter(self, queryset, value):
         if value:
-            partner = services.participant_partners.get(pk=value)
-            return queryset(partner=partner)
+            partner = services.participant_partners.find(id=value).first()
+            return queryset.filter_by(partner=partner)
         return queryset
 
 
@@ -206,8 +206,8 @@ class RoleFilter(ChoiceFilter):
 
     def filter(self, queryset, value):
         if value:
-            role = services.participant_roles.get(pk=value)
-            return queryset(role=role)
+            role = services.participant_roles.find(id=value).first()
+            return queryset.filter_by(role=role)
         return queryset
 
 
@@ -279,28 +279,8 @@ class ParticipantNameFilter(CharFilter):
         return queryset
 
 
-class LocationNameFilter(CharFilter):
-    def filter(self, queryset, value):
-        if value:
-            return queryset.filter(models.Location.name.ilike(
-                '%{}%'.format(value)))
-        return queryset
 
 
-class LocationTypeFilter(ChoiceFilter):
-    def __init__(self, *args, **kwargs):
-        kwargs['choices'] = _make_choices(
-            services.location_types.find().with_entities(
-                models.LocationType.id,
-                models.LocationType.name).all(),
-            _('All Types')
-        )
-        super(LocationTypeFilter, self).__init__(*args, **kwargs)
-
-    def filter(self, queryset, value):
-        if value:
-            return queryset.filter_by(location_type_id=value)
-        return queryset
 
 
 class FieldOptionFilter(ChoiceFilter):
@@ -436,14 +416,6 @@ def participant_filterset():
         group = ParticipantGroupFilter()
 
     return ParticipantFilterSet
-
-
-def location_filterset():
-    class LocationFilterSet(FilterSet):
-        name = LocationNameFilter()
-        location_type = LocationTypeFilter()
-
-    return LocationFilterSet
 
 
 #########################
