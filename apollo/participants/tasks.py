@@ -244,6 +244,10 @@ def update_participants(dataframe, header_map, participant_set, location_set):
         else:
             participant.password = generate_password(6)
 
+        # save if this is a new participant - we need an id for lookup
+        if not participant.id:
+            participant.save()
+
         if PHONE_PREFIX:
             # check if the phone number is on record
             for column in phone_columns:
