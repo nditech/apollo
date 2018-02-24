@@ -151,7 +151,7 @@ def update_locations(df, mapping, location_set):
                 db.session.commit()
             else:
                 # update the existing location instead
-                
+
                 location.name = kwargs.get('name')
                 location.other_code = kwargs.get('other_code')
                 location.political_code = kwargs.get('political_code')
