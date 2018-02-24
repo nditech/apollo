@@ -260,14 +260,13 @@ def update_participants(dataframe, header_map, participant_set, location_set):
                 mobile_num = str(mobile)
 
                 phone = services.phones.get_by_number(mobile_num)
-                p_phone = services.participant_phones.find(
-                    participant_id=participant.id, phone_id=phone.id)
-
                 if not phone:
                     phone = services.phones.create(number=mobile_num)
 
+                p_phone = services.participant_phones.find(
+                    participant_id=participant.id, phone_id=phone.id).first()
                 if not p_phone:
-                    p_phone = services.participant_phones.create(
+                    services.participant_phones.create(
                         participant_id=participant.id,
                         phone_id=phone.id, verified=True)
 
