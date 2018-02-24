@@ -167,6 +167,17 @@ class Participant(BaseModel):
         return self.name or ''
 
     @property
+    def primary_phone(self):
+        if not self.id:
+            return None
+
+        p_phone = ParticipantPhone.query.filter_by(
+            participant_id=self.id).order_by(
+                ParticipantPhone.phone_id).first()
+
+        return p_phone.phone.number if p_phone else None
+
+    @property
     def gender_display(self):
         if not self.gender:
             return Participant.GENDER[0][1]

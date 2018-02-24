@@ -100,9 +100,9 @@ a:hover.arrow-style{text-decoration:none; color:#333;}
                {%- endfor -%}
                <td>{{ participant.location.name|default('N/A', true) }}</td>
                <td>{{ participant.name|default('', true) }}</td>
-               <td>{{ participant.gender|default(_('Unspecified'), true) }}</td>
+               <td>{{ participant.gender_display }}</td>
                <td>{{ participant.role.name|default('N/A', true) }}</td>
-               <td>{{ participant.phone|default('', true) }}</td>
+               <td>{{ participant.primary_phone|default('', true) }}</td>
                <td>{{ participant.partner|default('', true) }}</td>
                {% for field in extra_fields %}
                <td>{{ participant[field.name]|default('', true) }}</td>
