@@ -1,11 +1,15 @@
 # -*- coding: utf-8 -*-
+import re
+
 from flask_babelex import lazy_gettext as _
-from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy_utils import ChoiceType
 
 from apollo import utils
 from apollo.core import db
 from apollo.dal.models import BaseModel
+
+
+number_cleaner = re.compile(r'[^0-9]+', re.I)
 
 
 groups_participants = db.Table(
@@ -106,23 +110,20 @@ class ParticipantGroup(BaseModel):
 
 class Phone(BaseModel):
     __tablename__ = 'phone'
+    __table_args__ = (
+        db.UniqueConstraint('number'),
+    )
 
     id = db.Column(
         db.Integer, db.Sequence('participant_phone_id_seq'),
         primary_key=True)
     number = db.Column(db.String, nullable=False)
 
+    def __init__(self, number):
+        self.number = number_cleaner.sub('', number)
+
 
 class Participant(BaseModel):
-    '''
-    The *proposed* structure of the phones list is as below:
-        {
-            'number': <string>,
-            'last_seen': <datetime>,
-            'verified': <boolean>,
-            'is_primary': <boolean>
-        }
-    '''
     GENDER = (
         ('', _('Unspecified')),
         ('F', _('Female')),
@@ -163,7 +164,6 @@ class Participant(BaseModel):
     role = db.relationship('ParticipantRole', backref='participants')
     participant_phones = db.relationship(
         'ParticipantPhone', backref='participants')
-    phones = association_proxy('participant_phones', 'number')
 
     def __str__(self):
         return self.name or ''
@@ -188,3 +188,4 @@ class ParticipantPhone(BaseModel):
         primary_key=True)
     last_seen = db.Column(db.DateTime, default=utils.current_timestamp)
     verified = db.Column(db.Boolean, default=True)
+    phone = db.relationship('Phone')
