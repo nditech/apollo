@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 from datetime import timedelta
-from urllib.parse import urlparse
-import numpy
 import os
+from pathlib import Path
 import string
 
-from pathlib import Path
+import numpy
 from prettyconf import config
 
 postgres_password = Path('/run/secrets/postgres_password')
