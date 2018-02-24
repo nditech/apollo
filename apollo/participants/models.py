@@ -114,9 +114,7 @@ class Phone(BaseModel):
         db.UniqueConstraint('number'),
     )
 
-    id = db.Column(
-        db.Integer, db.Sequence('participant_phone_id_seq'),
-        primary_key=True)
+    id = db.Column(db.Integer, db.Sequence('phone_id_seq'), primary_key=True)
     number = db.Column(db.String, nullable=False)
 
     def __init__(self, number):
