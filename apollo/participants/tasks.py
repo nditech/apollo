@@ -15,8 +15,9 @@ from apollo.core import uploads
 from apollo.factory import create_celery_app
 from apollo.messaging.tasks import send_email
 from apollo.participants import utils
-# from apollo.participants.models import PhoneContact
+from apollo.participants.models import Participant
 
+APPLICABLE_GENDERS = [s[0] for s in Participant.GENDER]
 celery = create_celery_app()
 logger = logging.getLogger(__name__)
 
@@ -118,9 +119,7 @@ def update_participants(dataframe, header_map, participant_set, location_set):
     PHONE_PREFIX = header_map.get('phone')
     GROUP_PREFIX = header_map.get('group')
 
-    # extra_field_names = [f.name for
-    #                      f in event.deployment.participant_extra_fields]
-    extra_field_names = []
+    extra_field_names = [f.name for f in participant_set.extra_fields]
 
     phone_columns = [c for c in dataframe.columns
                      if c.startswith(PHONE_PREFIX)]
@@ -227,8 +226,12 @@ def update_participants(dataframe, header_map, participant_set, location_set):
             participant.supervisor = supervisor
 
         if GENDER_COL:
-            participant.gender = record[GENDER_COL] \
-                if _is_valid(record[GENDER_COL]) else None
+            gender_spec = record[GENDER_COL]
+            if _is_valid(gender_spec) and gender_spec.upper() in \
+                    APPLICABLE_GENDERS:
+                participant.gender = gender_spec.upper()
+            else:
+                participant.gender = APPLICABLE_GENDERS[0]
 
         if EMAIL_COL:
             participant.email = record[EMAIL_COL] \
@@ -241,26 +244,35 @@ def update_participants(dataframe, header_map, participant_set, location_set):
             participant.password = generate_password(6)
 
         if PHONE_PREFIX:
-            phone_info = OrderedDict()
-            if not participant.phones:
-                participant.phones = []
-
-            for phone in participant.phones:
-                phone_info[phone['number']] = phone
+            # check if the phone number is on record
             for column in phone_columns:
                 if not _is_valid(record[column]):
                     continue
+
                 mobile = record[column]
-                if type(mobile) is float:
+                if isinstance(mobile, float):
                     mobile = int(mobile)
-                phone_info[mobile] = {'number': mobile, 'verified': True}
+                mobile_num = str(mobile)
 
-            participant.phones = list(phone_info.values())
+                phone = services.phones.get_by_number(mobile_num)
+                p_phone = services.participant_phones.find(
+                    participant_id=participant.id, phone_id=phone.id)
 
+                if not phone:
+                    phone = services.phones.create(number=mobile_num)
+
+                if not p_phone:
+                    p_phone = services.participant_phones.create(
+                        participant_id=participant.id,
+                        phone_id=phone.id, verified=True)
+
+        groups = []
         # fix up groups
         if GROUP_PREFIX:
-            groups = []
             for column in group_columns:
+                if not _is_valid(record[column]):
+                    continue
+
                 group_type = services.participant_group_types.find(
                     name=column,
                     deployment=deployment,
@@ -271,14 +283,11 @@ def update_participants(dataframe, header_map, participant_set, location_set):
                     group_type = create_group_type(
                         column, deployment, participant_set)
 
-                if not _is_valid(record[column]):
-                    continue
-
                 group = services.participant_groups.find(
                     name=record[column],
                     group_type=group_type,
                     deployment=deployment,
-                    participant_set=participant_set)
+                    participant_set=participant_set).first()
 
                 if not group:
                     group = create_group(
@@ -302,6 +311,10 @@ def update_participants(dataframe, header_map, participant_set, location_set):
 
         # finally done with first pass
         participant.save()
+
+        if groups:
+            participant.groups.extend(groups)
+            participant.save()
 
     # second pass - resolve missing supervisor references
     for participant_id, supervisor_id in unresolved_supervisors:
