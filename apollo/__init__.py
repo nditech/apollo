@@ -2,7 +2,6 @@
 from flask import g, render_template, session, request, redirect, url_for
 from flask_admin import AdminIndexView
 from flask_login import user_logged_out
-from flask_migrate import upgrade
 from flask_principal import identity_loaded
 from flask_security import SQLAlchemyUserDatastore, current_user
 from whitenoise import WhiteNoise
@@ -60,9 +59,6 @@ def create_app(settings_override=None, register_security_blueprint=True):
     if not app.debug:
         for e in [500, 404, 403]:
             app.errorhandler(e)(handle_error)
-
-    with app.app_context():
-        upgrade()
 
     # register deployment selection middleware
     app.before_request(set_request_presets)
