@@ -119,7 +119,8 @@ def update_participants(dataframe, header_map, participant_set, location_set):
     PHONE_PREFIX = header_map.get('phone')
     GROUP_PREFIX = header_map.get('group')
 
-    extra_field_names = [f.name for f in participant_set.extra_fields]
+    extra_field_names = [f.name for f in participant_set.extra_fields] \
+        if participant_set.extra_fields else []
 
     phone_columns = [c for c in dataframe.columns
                      if c.startswith(PHONE_PREFIX)]
