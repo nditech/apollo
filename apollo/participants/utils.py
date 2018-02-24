@@ -6,6 +6,7 @@ import re
 from flask import g
 
 from apollo import models, services
+from apollo.core import db
 
 ugly_phone = re.compile('[^\d]*')
 
@@ -74,15 +75,10 @@ def update_phone_contacts(participant, phone):
     return phone_contact.verified
 
 
-def nuke_participants(event):
-    participants = services.participants.find(event=event)
-
-    # nuke messages
-    # messages = services.messages.find(event=event)
-    # messages.delete()
-
-    # nuke checklists and incidents
-    services.submissions.find(event=event).delete()
+def nuke_participants(participant_set):
+    participants = services.participants.find(
+        participant_set=participant_set)
 
     # actually nuke the participants
     participants.delete()
+    db.session.commit()
