@@ -9,7 +9,7 @@ from apollo.locations.models import (  # noqa
 from apollo.messaging.models import Message    # noqa
 from apollo.participants.models import (   # noqa
     Participant, ParticipantGroup, ParticipantGroupType, ParticipantPartner,
-    ParticipantRole)
+    ParticipantRole, ParticipantPhone, Phone)
 from apollo.submissions.models import (    # noqa
     Submission, SubmissionComment, SubmissionVersion)
 from apollo.users.models import (  # noqa
