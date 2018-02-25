@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-from geoalchemy2 import Geometry
-
 from apollo.core import db
 from apollo.dal.models import BaseModel
 
@@ -106,7 +104,6 @@ class Location(BaseModel):
         'location_set.id', ondelete='CASCADE'), nullable=False)
     location_type_id = db.Column(db.Integer, db.ForeignKey(
         'location_type.id', ondelete='CASCADE'), nullable=False)
-    geometry = db.Column(Geometry('POLYGON'))
 
     deployment = db.relationship('Deployment', backref='locations')
     location_set = db.relationship('LocationSet', backref='locations')
