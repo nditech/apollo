@@ -104,6 +104,8 @@ def make_participant_group_filter(participant_set_id):
 
             return query
 
+    return ParticipantGroupFilter
+
 
 class ParticipantPhoneFilter(CharFilter):
     def filter(self, query, value):
@@ -180,8 +182,7 @@ def participant_filterset(participant_set_id, location_set_id=None):
     }
 
     if location_set_id:
-        attrs.update(
-            sample=make_participant_sample_filter(location_set_id),
-            location=make_participant_location_filter(location_set_id))
+        attrs['location'] = make_participant_location_filter(location_set_id)
+        attrs['sample'] = make_participant_sample_filter(location_set_id)
 
     return type('ParticipantFilterSet', (FilterSet,), attrs)

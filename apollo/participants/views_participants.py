@@ -171,10 +171,10 @@ def participant_list(participant_set_id):
         )
 
 
-@route(bp, '/participants/performance', methods=['GET', 'POST'])
+@route(bp, '/<int:participant_set_id>/participants/performance', methods=['GET', 'POST'])
 @permissions.view_participants.require(403)
 @login_required
-def participant_performance_list(page=1):
+def participant_performance_list(participant_set_id):
     page_title = _('Participants Performance')
     template_name = 'frontend/participant_performance_list.html'
 
@@ -184,7 +184,8 @@ def participant_performance_list(page=1):
         'gen': 'gender'
     }
 
-    extra_fields = g.deployment.participant_extra_fields or []
+    # extra_fields = g.deployment.participant_extra_fields or []
+    extra_fields = []
     location = None
     if request.args.get('location'):
         location = services.locations.find(
@@ -194,7 +195,15 @@ def participant_performance_list(page=1):
         sortable_columns.update({field.name: field.name})
 
     queryset = services.participants.find()
-    queryset_filter = filters.participant_filterset()(queryset, request.args)
+    sample_participant = queryset.first()
+    if sample_participant:
+        location_set_id = sample_participant.location.location_set_id
+    else:
+        location_set_id = None
+
+    filter_class = filters.participant_filterset(
+        participant_set_id, location_set_id)
+    queryset_filter = filter_class(queryset, request.args)
 
     form = DummyForm(request.form)
 
@@ -240,7 +249,9 @@ def participant_performance_list(page=1):
             filter_form=queryset_filter.form,
             form=form,
             location=location,
+            location_set_id=location_set_id,
             page_title=page_title,
+            participant_set_id=participant_set_id,
             location_types=helpers.displayable_location_types(
                 is_administrative=True),
             participants=subset.paginate(
