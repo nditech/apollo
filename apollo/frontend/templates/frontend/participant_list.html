@@ -33,7 +33,7 @@ a:hover.arrow-style{text-decoration:none; color:#333;}
   {%- if perms.export_participants.can() -%}
   <a class="btn btn-sm btn-default pull-right" href="{{ url_for('participants.participant_list', export='true', participant_set_id=participant_set_id) }}"><i class="glyphicon glyphicon-export"></i> {{ _('Export') }}</a>
   {%- endif -%}
-  <a class="btn btn-sm btn-default pull-right" href="{{ url_for('participants.participant_performance_list') }}" style="margin-right:1em;"><i class="glyphicon glyphicon-stats"></i> {{ _('Performance Evaluation') }}</a>
+  <a class="btn btn-sm btn-default pull-right" href="{{ url_for('participants.participant_performance_list', participant_set_id=participant_set_id) }}" style="margin-right:1em;"><i class="glyphicon glyphicon-stats"></i> {{ _('Performance Evaluation') }}</a>
   {%- if perms.import_participants.can() -%}
   <button id="open-wizard" class="btn btn-sm btn-primary pull-right" style="margin-right:1em;"><i class="glyphicon glyphicon-import glyphicon-white"></i> {{ _('Import Participants') }}</button>
   {%- endif -%}
