@@ -160,6 +160,7 @@ class Participant(BaseModel):
         'ParticipantGroup', secondary=groups_participants,
         backref='participants')
     role = db.relationship('ParticipantRole', backref='participants')
+    partner = db.relationship('ParticipantPartner', backref='participants')
     participant_phones = db.relationship(
         'ParticipantPhone', backref='participants')
 
@@ -181,14 +182,16 @@ class Participant(BaseModel):
     def phones(self):
         if not self.id:
             return None
-        
+
         if not hasattr(self, '_phones'):
             phones = Phone.query.join(
                 ParticipantPhone,
                 Phone.id == ParticipantPhone.phone_id
-            ).filter(ParticipantPhone.participant_id == self.id).all()
+            ).filter(
+                ParticipantPhone.participant_id == self.id
+            ).order_by(ParticipantPhone.last_seen).all()
             self._phones = phones
-        
+
         return self._phones
 
     @property
