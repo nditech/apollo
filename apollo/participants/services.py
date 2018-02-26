@@ -15,49 +15,52 @@ class ParticipantService(Service):
     __model__ = Participant
 
     def export_list(self, query):
-        headers = [
-            'ID', 'Name', 'Partner', 'Role', 'Location ID',
-            'Supervisor ID', 'Gender', 'Email', 'Password',
-            'Phone #1', 'Phone #2', 'Phone #3'
-        ]
+        from flask import current_app
 
-        # TODO: location data missing
-        # TODO: extra fields missing
-        output_buffer = StringIO()
-        writer = csv.writer(output_buffer)
-
-        writer.writerow(headers)
-        yield output_buffer.getvalue()
-        output_buffer.close()
-
-        for participant in query:
-            phones = participant.phones
-            if phones:
-                phone_numbers = [p.number for p in phones[:3]]
-                phone_numbers += [''] * (3 - len(phone_numbers))
-            else:
-                phone_numbers = ['', '', '']
-
-            record = [
-                participant.participant_id,
-                participant.name,
-                participant.partner.name if participant.partner else '',
-                participant.role.name if participant.role else '',
-                participant.location.code,
-                # TODO: insert location tree here
-                participant.gender,
-                participant.email,
-                participant.password
+        with current_app.app_context():
+            headers = [
+                'ID', 'Name', 'Partner', 'Role', 'Location ID',
+                'Supervisor ID', 'Gender', 'Email', 'Password',
+                'Phone #1', 'Phone #2', 'Phone #3'
             ]
 
-            record.extend(phone_numbers)
-
-            # TODO: process extra fields here
+            # TODO: location data missing
+            # TODO: extra fields missing
             output_buffer = StringIO()
             writer = csv.writer(output_buffer)
-            writer.writerow(record)
+
+            writer.writerow(headers)
             yield output_buffer.getvalue()
             output_buffer.close()
+
+            for participant in query:
+                phones = participant.phones
+                if phones:
+                    phone_numbers = [p.number for p in phones[:3]]
+                    phone_numbers += [''] * (3 - len(phone_numbers))
+                else:
+                    phone_numbers = ['', '', '']
+
+                record = [
+                    participant.participant_id,
+                    participant.name,
+                    participant.partner.name if participant.partner else '',
+                    participant.role.name if participant.role else '',
+                    participant.location.code,
+                    # TODO: insert location tree here
+                    participant.gender,
+                    participant.email,
+                    participant.password
+                ]
+
+                record.extend(phone_numbers)
+
+                # TODO: process extra fields here
+                output_buffer = StringIO()
+                writer = csv.writer(output_buffer)
+                writer.writerow(record)
+                yield output_buffer.getvalue()
+                output_buffer.close()
 
 
 class ParticipantGroupService(Service):
