@@ -178,18 +178,18 @@ class Participant(BaseModel):
         return p_phone.phone.number if p_phone else None
 
     @property
-    def phone_numbers(self):
+    def phones(self):
         if not self.id:
             return None
         
-        if not hasattr(self, '_phone_numbers'):
+        if not hasattr(self, '_phones'):
             phones = Phone.query.join(
                 ParticipantPhone,
                 Phone.id == ParticipantPhone.phone_id
             ).filter(ParticipantPhone.participant_id == self.id).all()
-            self._phone_numbers = phones
+            self._phones = phones
         
-        return self._phone_numbers
+        return self._phones
 
     @property
     def gender_display(self):

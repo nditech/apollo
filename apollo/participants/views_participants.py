@@ -13,14 +13,13 @@ from slugify import slugify_unicode
 
 from apollo import services
 from apollo.core import uploads
-from apollo.frontend import filters, helpers, permissions, route
+from apollo.frontend import helpers, permissions, route
 from apollo.frontend.forms import (
     DummyForm, generate_participant_edit_form,
-    generate_participant_import_mapping_form,
-    file_upload_form)
-from apollo.helpers import load_source_file, stash_file
+    generate_participant_import_mapping_form)
+from apollo.helpers import load_source_file
 from apollo.messaging.tasks import send_messages
-from apollo.participants import api, forms, tasks
+from apollo.participants import api, filters, forms, tasks
 
 bp = Blueprint('participants', __name__, template_folder='templates',
                static_folder='static', static_url_path='/core/static')
@@ -75,6 +74,8 @@ def participant_set_list():
 @login_required
 def participant_list(participant_set_id):
     page_title = _('Participants')
+    participant_set = services.participant_sets.find(
+        id=participant_set_id).first()
     template_name = 'frontend/participant_list.html'
 
     sortable_columns = {
@@ -98,7 +99,16 @@ def participant_list(participant_set_id):
 
     queryset = services.participants.find(
         deployment=g.deployment, participant_set_id=participant_set_id)
-    queryset_filter = filters.participant_filterset()(queryset, request.args)
+    sample_participant = queryset.first()
+
+    # load the location set linked to the participants if any
+    if sample_participant:
+        location_set_id = sample_participant.location.location_set_id
+    else:
+        location_set_id = None
+    filter_class = filters.participant_filterset(
+        participant_set_id, location_set_id)
+    queryset_filter = filter_class(queryset, request.args)
     location_sets = services.location_sets.find(deployment=g.deployment)
 
     form = DummyForm(request.form)
@@ -119,7 +129,7 @@ def participant_list(participant_set_id):
         # Export requested
         dataset = services.participants.export_list(queryset_filter.qs)
         basename = slugify_unicode('%s participants %s' % (
-            g.event.name.lower(),
+            participant_set.name.lower(),
             datetime.utcnow().strftime('%Y %m %d %H%M%S')))
         content_disposition = 'attachment; filename=%s.csv' % basename
         return Response(
