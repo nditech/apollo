@@ -127,7 +127,7 @@ class ParticipantPhoneFilter(CharFilter):
 def make_participant_sample_filter(location_set_id):
     class ParticipantSampleFilter(ChoiceFilter):
         def __init__(self, *args, **kwargs):
-            choices = services.samples.query.find(
+            choices = services.samples.find(
                 location_set_id=location_set_id
             ).with_entities(
                 Sample.id, Sample.name).all()
