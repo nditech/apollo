@@ -30,11 +30,9 @@ a:hover.arrow-style{text-decoration:none; color:#333;}
 </style>
 {% endblock %}
 {% block toolbar %}
-  {#
   {%- if perms.export_participants.can() -%}
-  <a class="btn btn-sm btn-default pull-right" href="{{ url_for('participants.participant_list', export='true', **request.args) }}"><i class="glyphicon glyphicon-export"></i> {{ _('Export') }}</a>
+  <a class="btn btn-sm btn-default pull-right" href="{{ url_for('participants.participant_list', export='true', participant_set_id=participant_set_id) }}"><i class="glyphicon glyphicon-export"></i> {{ _('Export') }}</a>
   {%- endif -%}
-  #}
   <a class="btn btn-sm btn-default pull-right" href="{{ url_for('participants.participant_performance_list') }}" style="margin-right:1em;"><i class="glyphicon glyphicon-stats"></i> {{ _('Performance Evaluation') }}</a>
   {%- if perms.import_participants.can() -%}
   <button id="open-wizard" class="btn btn-sm btn-primary pull-right" style="margin-right:1em;"><i class="glyphicon glyphicon-import glyphicon-white"></i> {{ _('Import Participants') }}</button>
@@ -50,7 +48,7 @@ a:hover.arrow-style{text-decoration:none; color:#333;}
 {%- set flash_msgs = get_flashed_messages(category_filter=['task_begun']) -%}
     <div class="row-fluid">
       <div class="well well-sm filter">
-        {{ render_filter_form(filter_form, location) }}
+        {{ render_filter_form(filter_form, location, location_set_id) }}
       </div>
     </div>
 {%- if flash_msgs -%}

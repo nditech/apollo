@@ -155,6 +155,7 @@ def participant_list(participant_set_id):
             filter_form=queryset_filter.form,
             form=form,
             location=location,
+            location_set_id=location_set_id,
             location_sets=location_sets,
             page_title=page_title,
             participant_set_id=participant_set_id,
