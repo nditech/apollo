@@ -41,8 +41,8 @@ class ParticipantService(Service):
             record = [
                 participant.participant_id,
                 participant.name,
-                participant.partner.name,
-                participant.role.name,
+                participant.partner.name if participant.partner else '',
+                participant.role.name if participant.role else '',
                 participant.location.code,
                 # TODO: insert location tree here
                 participant.gender,
