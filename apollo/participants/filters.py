@@ -176,13 +176,13 @@ def participant_filterset(participant_set_id, location_set_id=None):
         'participant_id': ParticipantIDFilter(),
         'name': ParticipantNameFilter(),
         'phone': ParticipantPhoneFilter(),
-        'role': make_participant_role_filter(participant_set_id),
-        'group': make_participant_group_filter(participant_set_id),
-        'partner': make_participant_partner_filter(participant_set_id)
+        'role': make_participant_role_filter(participant_set_id)(),
+        'group': make_participant_group_filter(participant_set_id)(),
+        'partner': make_participant_partner_filter(participant_set_id)()
     }
 
     if location_set_id:
-        attrs['location'] = make_participant_location_filter(location_set_id)
-        attrs['sample'] = make_participant_sample_filter(location_set_id)
+        attrs['location'] = make_participant_location_filter(location_set_id)()
+        attrs['sample'] = make_participant_sample_filter(location_set_id)()
 
     return type('ParticipantFilterSet', (FilterSet,), attrs)
