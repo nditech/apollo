@@ -9,7 +9,8 @@ from wtforms import (BooleanField, IntegerField, SelectField,
                      ValidationError, validators, widgets)
 
 from apollo.models import (
-    Location, LocationType, Participant, ParticipantPartner, Submission)
+    Form, LocationType, Participant, ParticipantRole,
+    ParticipantPartner, Submission)
 from apollo.services import (
     events, location_types, locations,
     participant_partners, participant_roles, participants, forms)
@@ -51,22 +52,24 @@ def generate_location_edit_form(location, data=None):
 
 
 def generate_participant_edit_form(participant, data=None):
+    p_set_id = participant.participant_set_id
+    role_choices = participant_roles.find(
+        participant_set_id=p_set_id).with_entities(
+            ParticipantRole.id, ParticipantRole.name)
+    partner_choices = participant_partners.find(
+        participant_set_id=p_set_id).with_entities(
+            ParticipantPartner.id, ParticipantPartner.name)
 
     class ParticipantEditBaseForm(WTSecureForm):
         # participant_id = TextField(
         #     _('Participant ID'),
         #     validators=[validators.input_required()]
         # )
-        last_name = StringField(_('Last name'))
-        first_name = StringField(_('First name'))
-        other_name = StringField(_('Other name'))
+        name = StringField(_('Name'))
         gender = SelectField(_('Gender'), choices=Participant.GENDER)
         role = SelectField(
             _('Role'),
-            choices=_make_choices(
-                participant_roles.find().with_entities(
-                    Participant.id, Participant.name)
-            ),
+            choices=_make_choices(role_choices),
             validators=[validators.input_required()]
         )
         supervisor = TextField(
@@ -79,11 +82,7 @@ def generate_participant_edit_form(participant, data=None):
         # partners are not required
         partner = SelectField(
             _('Partner'),
-            choices=_make_choices(
-                participant_partners.find().with_entities(
-                    ParticipantPartner.id, ParticipantPartner.name
-                )
-            ),
+            choices=_make_choices(partner_choices),
         )
         phone = StringField(_('Phone'))
         password = StringField(_('Password'))
@@ -383,27 +382,38 @@ class DummyForm(WTSecureForm):
     select_superset = StringField(widget=widgets.HiddenInput())
 
 
-def make_checklist_init_form():
+def make_checklist_init_form(event):
+    form_set_id = getattr(event, 'form_set_id', None)
+    location_set_id = getattr(event, 'location_set_id', None)
+    participant_set_id = getattr(event, 'participant_set_id', None)
+
+    form_choices = forms.find(
+        form_set_id=form_set_id,
+        form_type='CHECKLIST'
+    ).with_entities(Form.id, Form.name)
+
+    location_type_choices = location_types.find(
+        location_set_id=location_set_id
+    ).with_entities(LocationType.id, LocationType.name)
+
+    participant_role_choices = participant_roles.find(
+        participant_set_id=participant_set_id
+    ).with_entities(ParticipantRole.id, ParticipantRole.name)
+
     class ChecklistInitForm(WTSecureForm):
         form = SelectField(
             _('Form'),
-            choices=_make_choices(
-                forms.find(
-                    events=g.event, form_type='CHECKLIST').scalar(
-                        'id', 'name'),
-                _('Select form')),
+            choices=_make_choices(form_choices, _('Select form')),
             validators=[validators.input_required()])
+
         role = SelectField(
             _('Role'),
-            choices=_make_choices(
-                participant_roles.find().scalar('id', 'name'),
-                _('Select role')),
+            choices=_make_choices(participant_role_choices, _('Select role')),
             validators=[validators.input_required()])
         location_type = SelectField(
             _('Location type'),
-            choices=_make_choices(
-                location_types.find().scalar('id', 'name'),
-                _('Select location type')),
+            choices=_make_choices(location_type_choices,
+                                  _('Select location type')),
             validators=[validators.input_required()])
 
     return ChecklistInitForm()
