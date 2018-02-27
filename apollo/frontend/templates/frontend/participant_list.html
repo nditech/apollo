@@ -106,7 +106,7 @@ a:hover.arrow-style{text-decoration:none; color:#333;}
                <td>{{ participant[field.name]|default('', true) }}</td>
                {% endfor %}
                {%- if perms.edit_participant.can() -%}
-               <td class="text-center"><a href="{{ url_for('participants.participant_edit', pk=participant.id) }}" data-toggle="modal" data-target="#edit_modal">{{ _('Edit') }}</a></td>
+               <td class="text-center"><a href="{{ url_for('participants.participant_edit', id=participant.id) }}" data-toggle="modal" data-target="#edit_modal">{{ _('Edit') }}</a></td>
                {%- endif -%}
              </tr>
              {% else %}
