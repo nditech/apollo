@@ -184,8 +184,7 @@ class BaseQuestionnaireForm(Form):
                             number=g.phone,
                             verified=False, last_seen=datetime.utcnow())
                         participant.update(add_to_set__phones=phone_contact)
-
-                    
+ 
                     submission.save()
                     update_submission_version(submission)
 
@@ -255,10 +254,10 @@ def build_questionnaire(form, data=None):
 
 
 class FormForm(SecureForm):
-    name = StringField(_('Name'), validators=[validators.DataRequired()])
-    prefix = StringField(_('Prefix'), validators=[validators.DataRequired()])
+    name = StringField(_('Name'), validators=[validators.InputRequired()])
+    prefix = StringField(_('Prefix'), validators=[validators.InputRequired()])
     form_type = SelectField(_('Form type'), choices=models.Form.FORM_TYPES,
-                            validators=[validators.DataRequired()])
+                            validators=[validators.InputRequired()])
     require_exclamation = BooleanField(_('Require exclamation'))
     calculate_moe = BooleanField(_('Calculate MOE'))
     quality_checks_enabled = BooleanField(_('QA enabled'))
