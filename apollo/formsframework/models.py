@@ -1,9 +1,13 @@
 # -*- coding: utf-8 -*-
+from operator import itemgetter
+
 from flask_babelex import lazy_gettext as _
 from lxml import etree
 from lxml.builder import E, ElementMaker
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy_utils import ChoiceType
+from slugify import slugify_unicode
+from unidecode import unidecode
 
 from apollo.core import db
 from apollo.dal.models import Resource
@@ -24,8 +28,8 @@ ROSA_E = ElementMaker(namespace=NSMAP['jr'], nsmap=NSMAP)
 
 class Form(Resource):
     FORM_TYPES = (
-        (0, _('Checklist Form')),
-        (1, _('Incident Form'))
+        ('CHECKLIST', _('Checklist Form')),
+        ('INCIDENT', _('Incident Form'))
     )
 
     __mapper_args__ = {'polymorphic_identity': 'form'}
@@ -67,6 +71,10 @@ class Form(Resource):
         self._group_cache = {
             g['name']: g for g in self.data['groups']
         }
+
+    def get_form_type_display(self):
+        d = dict(Form.FORM_TYPES)
+        return d[self.form_type]
 
     @property
     def tags(self):
@@ -144,16 +152,102 @@ class Form(Resource):
 class FormBuilderSerializer(object):
     @classmethod
     def serialize_field(cls, field):
-        pass
+        data = {
+            'label': field['tag'],
+            'description': field['description'],
+            'analysis': field.get('analysis_type')
+        }
+
+        if field.get('is_comment'):
+            data['component'] = 'textarea'
+        elif not field.get('options'):
+            data['component'] = 'textInput'
+            data['required'] = field.get('is_boolean', False)
+            data['min'] = field.get('min', 0)
+            data['max'] = field.get('max', 9999)
+        else:
+            sorted_options = sorted(field['options'].items(), key=itemgetter(1))
+            data['options'] = [opt[0] for opt in sorted_options]
+            if field.get('is_multi_choice'):
+                data['component'] = 'checkbox'
+            else:
+                data['compoent'] = 'radio'
+
+        return data
 
     @classmethod
     def serialize_group(cls, group):
-        pass
+        field_data = []
+
+        field_data.append({
+            'label': group['name'],
+            'component': 'group'
+        })
+
+        field_data.extend([cls.serialize_field(f) for f in group['fields']])
+
+        return field_data
 
     @classmethod
     def serialize(cls, form):
-        pass
+        group_data = []
+        if form.data:
+            for group in form.data['groups']:
+                group_data.extend(cls.serialize_group(group))
+        data = {'fields': group_data}
+        return data
 
     @classmethod
     def deserialize(cls, form, data):
-        pass
+        groups = []
+        current_group = None
+
+        if len(data['fields']) > 0:
+            if data['fields'][0]['component'] != 'group':
+                raise ValueError('Fields specified outside of group')
+
+        for f in data['fields']:
+            if f['component'] == 'group':
+                group = {
+                    'name': f['label'],
+                    'slug': unidecode(slugify_unicode(f['label'])),
+                    'fields': []
+                }
+                current_group = group
+                groups.append(group)
+                continue
+
+            field = {
+                'tag': f['label'],
+                'description': f['description']
+            }
+
+            if f['analysis']:
+                field['analysis_type'] = f['analysis']
+
+            if f['component'] == 'textarea':
+                field['is_comment'] = True
+                field['analysis_type'] = 'N/A'
+            elif f['component'] == 'textInput':
+                field['is_boolean'] = f['required']
+                if f['min']:
+                    field['min'] = f['min']
+                if f['max']:
+                    field['max'] = f['max']
+            else:
+                field['options'] = {
+                    k: v for v, k in enumerate(f['options'], 1)}
+                if f['component'] == 'checkbox':
+                    field['is_multi_choice'] = True
+
+            current_group['fields'].append(field)
+
+            # invalidate the form cache
+            try:
+                delattr(form, '_schema_cache')
+            except AttributeError:
+                pass
+
+        form.data = {'groups': groups}
+        print(groups)
+        form.save()
