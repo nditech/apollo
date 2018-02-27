@@ -35,24 +35,12 @@ def _make_choices(qs, placeholder=None):
 
 
 def generate_location_edit_form(location, data=None):
-    locs = location_types.find(
-        deployment=location.deployment).with_entities(
-        LocationType.id, LocationType.name)
-
     initial_data = {
         'name': location.name,
-        'code': location.code,
-        'location_type': location.location_type_id
     }
 
     class LocationEditForm(WTSecureForm):
         name = TextField(_('Name'), validators=[validators.input_required()])
-        code = TextField(_('Code'), validators=[validators.input_required()])
-        location_type = SelectField(
-            _('Location type'),
-            choices=_make_choices(locs, _('Location type')),
-            validators=[validators.input_required()]
-        )
 
     return LocationEditForm(formdata=data, **initial_data)
 

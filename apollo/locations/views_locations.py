@@ -139,8 +139,6 @@ def location_edit(id):
 
         if form.validate():
             location.name = form.name.data
-            location.code = form.code.data
-            location.location_type_id = form.location_type.data
             location.save()
 
             return redirect(url_for(
