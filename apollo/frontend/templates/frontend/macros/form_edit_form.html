@@ -1,4 +1,4 @@
-{% macro render_edit_form(form) %}
+{% macro render_edit_form(form, form_set_id) %}
 <form class="form-horizontal" method="POST" action="{{ request.url }}">
 {{ form.hidden_tag() }}
 {%- for field in form -%}
@@ -19,7 +19,7 @@
 <div class="form-group">
     <div class="col-sm-offset-4 col-sm-4">
         <button class="btn btn-primary input-mini" type="submit">{{ _('Save') }}</button>
-        <a href="{{ url_for('forms.list_forms')}}" class="btn btn-default input-mini">{{ _('Cancel') }}</a>
+        <a href="{{ url_for('forms.list_forms', form_set_id=form_set_id)}}" class="btn btn-default input-mini">{{ _('Cancel') }}</a>
     </div>
 </div>
 </form>

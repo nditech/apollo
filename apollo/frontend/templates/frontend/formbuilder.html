@@ -8,7 +8,7 @@
     <div class="col-md-6" style="margin-bottom:8em;">
       <div class="panel panel-default">
         <div class="panel-heading">
-          <h3 class="panel-title">{{ form }}</h3>
+          <h3 class="panel-title">{{ form.name }}</h3>
         </div>
         <div fb-builder="default"></div>
       </div>
@@ -21,7 +21,7 @@
         <div class="panel-body">
           <div fb-components></div>
           <button class="btn btn-primary" ng-click="submit();"><span class="glyphicon glyphicon-save"></span> Save</button>
-          <a href="{{ url_for('forms.list_forms') }}" class="btn btn-default">Cancel</a>
+          <a href="{{ url_for('forms.list_forms', form_set_id=form.form_set_id) }}" class="btn btn-default">Cancel</a>
         </div>
       </div>
     </div>
@@ -67,7 +67,7 @@
             },
             type: 'POST',
           });
-          window.location.href = "{{ url_for('forms.list_forms') }}";
+          window.location.href = "{{ url_for('forms.list_forms', form_set_id=form.form_set_id) }}";
         }).error(function() {
           return console.log('error');
         });
