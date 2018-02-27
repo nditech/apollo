@@ -128,7 +128,8 @@ def location_list(location_set_id):
 def location_edit(id):
     template_name = 'frontend/location_edit.html'
     deployment = g.get('deployment')
-    location = models.Location.query.get_or_404(id=id, deployment=deployment)
+    location = models.Location.query.filter_by(
+        id=id, deployment=deployment).first_or_404()
     page_title = _('Edit Location')
 
     if request.method == 'GET':
@@ -137,10 +138,14 @@ def location_edit(id):
         form = generate_location_edit_form(location, request.form)
 
         if form.validate():
-            form.populate_obj(location)
+            location.name = form.name.data
+            location.code = form.code.data
+            location.location_type_id = form.location_type.data
             location.save()
 
-            return redirect(url_for('locations.locations_list'))
+            return redirect(url_for(
+                'locations.location_list',
+                location_set_id=location.location_set_id))
 
     return render_template(template_name, form=form, page_title=page_title)
 

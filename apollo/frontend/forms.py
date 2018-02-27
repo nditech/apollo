@@ -35,20 +35,26 @@ def _make_choices(qs, placeholder=None):
 
 
 def generate_location_edit_form(location, data=None):
-    locs = location_types.with_entities(
-        LocationType.name, LocationType.name).find(
-            deployment=location.deployment)
+    locs = location_types.find(
+        deployment=location.deployment).with_entities(
+        LocationType.id, LocationType.name)
+
+    initial_data = {
+        'name': location.name,
+        'code': location.code,
+        'location_type': location.location_type_id
+    }
 
     class LocationEditForm(WTSecureForm):
         name = TextField(_('Name'), validators=[validators.input_required()])
         code = TextField(_('Code'), validators=[validators.input_required()])
         location_type = SelectField(
             _('Location type'),
-            choices=_make_choices(locs('name', 'name'), _('Location type')),
+            choices=_make_choices(locs, _('Location type')),
             validators=[validators.input_required()]
         )
 
-    return LocationEditForm(formdata=data, **location._data)
+    return LocationEditForm(formdata=data, **initial_data)
 
 
 def generate_participant_edit_form(participant, data=None):
@@ -87,10 +93,12 @@ def generate_participant_edit_form(participant, data=None):
         phone = StringField(_('Phone'))
         password = StringField(_('Password'))
 
-    attributes = {
-        field.name: TextField(field.label)
-        for field in g.deployment.participant_extra_fields
-    }
+    participant_set = participant.participant_set
+
+    attributes = {}
+    if participant_set.extra_fields:
+        attributes.update({
+            f.name: TextField(f.label) for f in participant_set.extra_fields})
 
     ParticipantEditForm = type('ParticipantEditForm', (ParticipantEditBaseForm,), attributes)
 
@@ -99,16 +107,14 @@ def generate_participant_edit_form(participant, data=None):
     return ParticipantEditForm(
         formdata=data,
         # participant_id=participant.participant_id,
-        last_name=participant.last_name,
-        first_name=participant.first_name,
-        other_name=participant.other_name,
+        name=participant.name,
         location=participant.location.id if participant.location else None,
-        gender=participant.gender.upper(),
+        gender=participant.gender.upper() if participant.gender else '',
         role=participant.role.id if participant.role else None,
         partner=participant.partner.id if participant.partner else None,
         supervisor=participant.supervisor.id
         if participant.supervisor else None,
-        phone=participant.phone,
+        phone=participant.primary_phone,
         password=participant.password,
         **kwargs
     )

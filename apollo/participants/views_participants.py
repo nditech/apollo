@@ -2,9 +2,11 @@
 from datetime import datetime
 import logging
 import os
+import re
 
 from flask import (abort, Blueprint, current_app, flash, g, redirect,
-                   render_template, request, Response, url_for)
+                   render_template, request, Response, url_for,
+                   stream_with_context)
 from flask_babelex import lazy_gettext as _
 from flask_menu import register_menu
 from flask_restful import Api
@@ -20,6 +22,8 @@ from apollo.frontend.forms import (
 from apollo.helpers import load_source_file
 from apollo.messaging.tasks import send_messages
 from apollo.participants import api, filters, forms, tasks
+
+phone_number_cleaner = re.compile(r'[^0-9]')
 
 bp = Blueprint('participants', __name__, template_folder='templates',
                static_folder='static', static_url_path='/core/static')
@@ -133,7 +137,8 @@ def participant_list(participant_set_id):
             datetime.utcnow().strftime('%Y %m %d %H%M%S')))
         content_disposition = 'attachment; filename=%s.csv' % basename
         return Response(
-            dataset, headers={'Content-Disposition': content_disposition},
+            stream_with_context(dataset),
+            headers={'Content-Disposition': content_disposition},
             mimetype="text/csv"
         )
     else:
@@ -307,11 +312,11 @@ def participant_phone_verify():
         abort(400)
 
 
-@route(bp, '/participant/<pk>', methods=['GET', 'POST'])
+@route(bp, '/participant/<int:id>', methods=['GET', 'POST'])
 @permissions.edit_participant.require(403)
 @login_required
-def participant_edit(pk):
-    participant = services.participants.get_or_404(pk=pk)
+def participant_edit(id):
+    participant = services.participants.fget_or_404(id=id)
     page_title = _(
         'Edit Participant · %(participant_id)s',
         participant_id=participant.participant_id
@@ -329,35 +334,56 @@ def participant_edit(pk):
 
         if form.validate():
             # participant.participant_id = form.participant_id.data
+            participant_set = participant.participant_set
             participant.name = form.name.data
             participant.gender = form.gender.data
-            participant.role = services.participant_roles.get_or_404(
-                pk=form.role.data)
+            if form.role.data:
+                participant.role_id = services.participant_roles.fget_or_404(
+                    id=form.role.data).id
             if form.supervisor.data:
-                participant.supervisor = services.participants.get(
-                    pk=form.supervisor.data
-                )
+                participant.supervisor_id = services.participants.find(
+                    id=form.supervisor.data).first().id
             else:
-                participant.supervisor = None
+                participant.supervisor_id = None
             if form.location.data:
-                participant.location = services.locations.get_or_404(
-                    pk=form.location.data)
+                participant.location_id = services.locations.fget_or_404(
+                    id=form.location.data).id
             if form.partner.data:
-                participant.partner = services.participant_partners.get_or_404(
-                    pk=form.partner.data)
+                participant.partner_id = \
+                    services.participant_partners.fget_or_404(
+                        id=form.partner.data).id
             else:
                 participant.partner = None
-            participant.phone = form.phone.data
+
+            phone_number = phone_number_cleaner.sub('', form.phone.data)
+            phone = services.phones.find(number=phone_number).first()
+            if not phone:
+                phone = services.phones.create(number=phone_number)
+                participant_phone = services.participant_phones.create(
+                    participant_id=participant.id, phone_id=phone.id,
+                    verified=True)
+            else:
+                participant_phone = services.participant_phones.find(
+                    phone_id=phone.id, participant_id=participant.id).first()
+                if not participant_phone:
+                    participant_phone = services.participant_phones.create(
+                        participant_id=participant.id, phone_id=phone.id,
+                        verified=True)
+                else:
+                    participant_phone.verified = True
+                    participant_phone.save()
+
             participant.password = form.password.data
-            for extra_field in g.deployment.participant_extra_fields:
-                field_data = getattr(
-                    getattr(form, extra_field.name, object()), 'data', '')
-                setattr(participant, extra_field.name, field_data)
+            if participant_set.extra_fields:
+                for extra_field in participant_set.extra_fields:
+                    field_data = getattr(
+                        getattr(form, extra_field.name, object()), 'data', '')
+                    setattr(participant, extra_field.name, field_data)
             participant.save()
 
-            print('redirecting')
-
-            return redirect(url_for('participants.participant_list'))
+            return redirect(url_for(
+                'participants.participant_list',
+                participant_set_id=participant_set.id))
 
     return render_template(
         template_name, form=form, page_title=page_title,

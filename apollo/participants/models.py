@@ -163,6 +163,7 @@ class Participant(BaseModel):
     partner = db.relationship('ParticipantPartner', backref='participants')
     participant_phones = db.relationship(
         'ParticipantPhone', backref='participants')
+    supervisor = db.relationship('Participant')
 
     def __str__(self):
         return self.name or ''
