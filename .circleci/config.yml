@@ -1,0 +1,24 @@
+version: 2
+
+jobs:
+  build:
+    docker:
+      - image: circleci/python:3.6.4
+        environment:
+          - DATABASE_PASSWORD: notapassword
+          - SECRET_KEY: notasecret
+          - REDIS_HOSTNAME: 127.0.0.1
+          - DATABASE_HOSTNAME: 127.0.0.1
+
+      - image: circleci/postgres:10-alpine-ram
+        environment:
+          - POSTGRES_USER: postgres
+          - POSTGRES_DB: apollo
+          - POSTGRES_PASSWORD: notapassword
+
+      - image: circleci/redis:4-alpine
+    steps:
+      - checkout
+      - run: sudo pip install -U pipenv
+      - run: pipenv install -d
+      - run: pipenv run nosetests apollo/
