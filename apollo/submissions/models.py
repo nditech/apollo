@@ -54,7 +54,7 @@ class Submission(BaseModel):
     form_id = db.Column(db.Integer, db.ForeignKey(
         'form.id', ondelete='CASCADE'), nullable=False)
     participant_id = db.Column(db.Integer, db.ForeignKey(
-        'participant.id', ondelete='CASCADE'), nullable=False)
+        'participant.id', ondelete='CASCADE'))
     location_id = db.Column(db.Integer, db.ForeignKey(
         'location.id', ondelete='CASCADE'), nullable=False)
     data = db.Column(JSONB)
@@ -67,6 +67,48 @@ class Submission(BaseModel):
     form = db.relationship('Form', backref='submissions')
     location = db.relationship('Location', backref='submissions')
     participant = db.relationship('Participant', backref='submissions')
+
+    @classmethod
+    def init_submissions(cls, event, form, role, location_type):
+        from apollo.participants.models import Participant
+
+        if form.form_type != 'CHECKLIST':
+            return
+
+        location_set_id = location_type.location_set_id
+        participant_set_id = role.participant_set_id
+
+        if location_set_id != event.location_set_id:
+            return
+
+        if participant_set_id != event.participant_set_id:
+            return
+
+        deployment_id = event.deployment_id
+
+        for participant in Participant.query.filter_by(role_id=role.id):
+            if not participant.location_id:
+                continue
+
+            if location_type.id == participant.location.location_type.id:
+                location = participant.location
+            else:
+                location = next(a for a in participant.location.ancestors()
+                                if a.location_type.id == location_type.id)
+                if not location:
+                    return
+
+            obs_submission = cls(
+                form_id=form.id, participant_id=participant.id,
+                location_id=location.id, deployment_id=deployment_id,
+                event_id=event.id, submission_type='O')
+            obs_submission.save()
+
+            master_submission = cls(
+                form_id=form.id, participant_id=participant.id,
+                location_id=location.id, deployment_id=deployment_id,
+                event_id=event.id, submission_type='M')
+            master_submission.save()
 
 
 class SubmissionComment(BaseModel):
