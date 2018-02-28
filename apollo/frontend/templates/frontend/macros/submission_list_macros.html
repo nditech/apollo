@@ -23,12 +23,12 @@
 {% macro submission_items(submissions, form, form_fields, location_types, perms) %}
 {% for submission in submissions %}
 <tr>
-    <td>{{ submission.contributor.participant_id }}</td>
+    <td>{{ submission.participant.participant_id }}</td>
     {% for location_type in location_types %}
     <td>{{ submission.location_name_path[location_type.name] }}</td>
     {% endfor %}
-    <td>{{ submission.contributor.name|default('', true) }}</td>
-    <td>{{ submission.contributor.phone|default('', true) }}</td>
+    <td>{{ submission.participant.name|default('', true) }}</td>
+    <td>{{ submission.participant.primary_phone|default('', true) }}</td>
     {%- if form.form_type == 'CHECKLIST' -%}
     {% for group in form.groups %}
     <td class="text-center">
