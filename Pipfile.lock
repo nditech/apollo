@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "942d6ce9375803e951d8f6a4e85585dcf058d4f8b3b8e5a926541eb933764a9e"
+            "sha256": "cd39c35c5c73096beee68328a6c2f8be65036fae30e4406fe48c15c77545491b"
         },
         "host-environment-markers": {
             "implementation_name": "cpython",
@@ -255,13 +255,6 @@
                 "sha256:5d14d55cfd35f613d99ee7cba0fc3fbbe63ba02f544d349158c14ca15561cc36"
             ],
             "version": "==0.14.2"
-        },
-        "geoalchemy2": {
-            "hashes": [
-                "sha256:540be4d6f5e32b0f621b8b7cc7881682890fbf30f1304be9a533f7875c9b1776",
-                "sha256:17fa10b0c01bd2ab036ea56975dfa850098aa394a5d6ee04d88b2aefc16751cb"
-            ],
-            "version": "==0.4.2"
         },
         "gevent": {
             "hashes": [
