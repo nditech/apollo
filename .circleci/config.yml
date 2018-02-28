@@ -21,4 +21,5 @@ jobs:
       - checkout
       - run: sudo pip install -U pipenv
       - run: pipenv install -d
+      - run: pipenv run ./manage.py db upgrade
       - run: pipenv run nosetests apollo/
