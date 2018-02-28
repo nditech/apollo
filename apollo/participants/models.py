@@ -2,6 +2,7 @@
 import re
 
 from flask_babelex import lazy_gettext as _
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy_utils import ChoiceType
 
 from apollo import utils
@@ -151,6 +152,7 @@ class Participant(BaseModel):
     completion_rating = db.Column(db.Float, default=1)
     device_id = db.Column(db.String)
     password = db.Column(db.String)
+    extra_data = db.Column(JSONB)
 
     deployment = db.relationship('Deployment', backref='participants')
     location = db.relationship('Location', backref='participants')
