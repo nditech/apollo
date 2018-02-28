@@ -6,7 +6,7 @@ import os
 import networkx as nx
 
 from flask import (Blueprint, current_app, flash, g, redirect, render_template,
-                   request, Response, url_for, abort)
+                   request, Response, url_for, abort, stream_with_context)
 from flask_babelex import lazy_gettext as _
 from flask_menu import register_menu
 from flask_restful import Api
@@ -106,7 +106,8 @@ def location_list(location_set_id):
             datetime.utcnow().strftime('%Y %m %d %H%M%S')))
         content_disposition = 'attachment; filename=%s.csv' % basename
         return Response(
-            dataset, headers={'Content-Disposition': content_disposition},
+            stream_with_context(dataset),
+            headers={'Content-Disposition': content_disposition},
             mimetype="text/csv"
         )
     else:
