@@ -33,6 +33,9 @@ class Deployment(BaseModel):
     def find_by_hostname(cls, hostname):
         return cls.query.filter(cls.hostnames.any(hostname)).first_or_404()
 
+    def __repr__(self):
+        return str(self)
+
     def __str__(self):
         return self.name or ''
 
@@ -49,6 +52,9 @@ class FormSet(BaseModel):
         nullable=False)
     deployment = db.relationship('Deployment', backref='form_sets')
 
+    def __str__(self):
+        return self.name or ''
+
 
 class LocationSet(BaseModel):
     __tablename__ = 'location_set'
@@ -63,6 +69,9 @@ class LocationSet(BaseModel):
     deployment = db.relationship('Deployment', backref='location_sets')
     admin_divisions_graph = db.Column(JSONB)
 
+    def __str__(self):
+        return self.name or ''
+
 
 class ParticipantSet(BaseModel):
     __tablename__ = 'participant_set'
@@ -76,6 +85,9 @@ class ParticipantSet(BaseModel):
         nullable=False)
     deployment = db.relationship('Deployment', backref='participant_sets')
     extra_fields = db.Column(JSONB)
+
+    def __str__(self):
+        return self.name or ''
 
 
 class Event(Resource):

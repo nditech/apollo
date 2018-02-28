@@ -31,8 +31,7 @@ class AdminHome(AdminIndexView):
 
 
 admin = Admin(
-    name='Apollo', index_view=AdminHome(name='Dashboard'),
-    template_mode='bootstrap3')
+    name='Apollo', index_view=AdminHome(name='Dashboard'))
 babel = Babel()
 cache = Cache()
 db = SQLAlchemy(session_options={'expire_on_commit': False})
