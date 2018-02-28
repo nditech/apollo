@@ -56,8 +56,7 @@ def checklist_init(form_set_id):
         flash_message = _('Checklists are being created for the form, role and location type you selected in the current event')
 
         init_submissions.delay(
-            str(g.deployment.pk),
-            str(g.event.pk),
+            g.event.id,
             form.data['form'],
             form.data['role'],
             form.data['location_type'])
