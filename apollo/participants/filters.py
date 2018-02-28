@@ -88,6 +88,7 @@ def make_participant_group_filter(participant_set_id):
                     )
 
             kwargs['choices'] = [(k, choices[k]) for k in choices]
+            kwargs['coerce'] = int
             super(ParticipantGroupFilter, self).__init__(*args, **kwargs)
 
         def filter(self, query, values):
@@ -99,7 +100,7 @@ def make_participant_group_filter(participant_set_id):
                         models.groups_participants.c.participant_id,    # noqa
                     models.ParticipantGroup.id ==
                         models.groups_participants.c.group_id,
-                    models.ParticipantGroup.name.in_(values)
+                    models.ParticipantGroup.id.in_(values)
                 )
 
             return query
