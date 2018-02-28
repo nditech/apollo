@@ -4,13 +4,13 @@
 .Python
 .tx/
 .vscode/
+*.ini
 *.sublime-project
 *.sublime-workspace
 **/.DS_Store
 **/.env*
 **/.webassets-cache
 **/*.pyc
-*.ini
 apollo-*.tar.gz
 bin/
 circle.yml
@@ -23,3 +23,4 @@ man/
 messages.mo
 share/
 src/
+uploads/

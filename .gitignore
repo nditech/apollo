@@ -1,11 +1,12 @@
+.DS_Store
+.env*
+.Python
+.vscode/
+.webassets-cache
 *.ini
 *.pyc
 *.sublime-project
 *.sublime-workspace
-.DS_Store
-.env*
-.Python
-.webassets-cache
 apollo-*.tar.gz
 assets/
 bin/
@@ -17,4 +18,4 @@ messages.mo
 pip-selfcheck.json
 share/
 src/
-.vscode/
+uploads/
