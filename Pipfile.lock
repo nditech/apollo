@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "f434c6bd69d3fb828e11a237a0f1a56d193a8a385bb300d74eff38a7ea1f83df"
+            "sha256": "942d6ce9375803e951d8f6a4e85585dcf058d4f8b3b8e5a926541eb933764a9e"
         },
         "host-environment-markers": {
             "implementation_name": "cpython",
@@ -9,9 +9,9 @@
             "os_name": "posix",
             "platform_machine": "x86_64",
             "platform_python_implementation": "CPython",
-            "platform_release": "4.4.0-112-generic",
+            "platform_release": "4.4.0-116-generic",
             "platform_system": "Linux",
-            "platform_version": "#135-Ubuntu SMP Fri Jan 19 11:48:36 UTC 2018",
+            "platform_version": "#140-Ubuntu SMP Mon Feb 12 21:23:04 UTC 2018",
             "python_full_version": "3.6.4",
             "python_version": "3.6",
             "sys_platform": "linux"
@@ -642,9 +642,9 @@
         },
         "sqlalchemy": {
             "hashes": [
-                "sha256:9e9ec143e2e246f385cfb2de8daa89d2fa466279addcb7be9e102988fdf33d24"
+                "sha256:6b55ec379c11ad696f9371ce8e0de93c7f21134323f56a56a1b0d8fbef17013c"
             ],
-            "version": "==1.2.3"
+            "version": "==1.1.17"
         },
         "sqlalchemy-utils": {
             "hashes": [
