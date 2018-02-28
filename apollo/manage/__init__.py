@@ -12,3 +12,4 @@ from apollo.manage.submissions import InitializeSubmissionsCommand  # noqa
 from apollo.manage.setup import SetupCommand  # noqa
 from apollo.manage.messages import MessagePlaybackCommand  # noqa
 from apollo.manage.gunicorn import GunicornServer  # noqa
+from apollo.manage.celery import CeleryWorker  # noqa
