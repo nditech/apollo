@@ -43,6 +43,8 @@ class User(BaseModel, UserMixin):
     email = db.Column(db.String)
     username = db.Column(db.String)
     password = db.Column(db.String)
+    last_name = db.Column(db.String)
+    first_name = db.Column(db.String)
     active = db.Column(db.Boolean, default=True)
     confirmed_at = db.Column(db.DateTime)
     current_login_at = db.Column(db.DateTime)
