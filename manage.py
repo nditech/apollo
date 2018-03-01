@@ -16,7 +16,7 @@ from apollo.manage import \
      CreateDeploymentCommand, ListDeploymentsCommand, CreateEventCommand,
      ListEventsCommand,
      InitializeSubmissionsCommand,
-     SetupCommand, MessagePlaybackCommand, GunicornServer)
+     SetupCommand, MessagePlaybackCommand, GunicornServer, CeleryWorker)
 
 
 app = create_app()
@@ -63,6 +63,7 @@ manager.add_command('playback', MessagePlaybackCommand())
 manager.add_command('assets', ManageAssets)
 manager.add_command('db', MigrateCommand)
 manager.add_command('gunicorn', GunicornServer())
+manager.add_command('worker', CeleryWorker())
 
 if __name__ == '__main__':
     manager.run()

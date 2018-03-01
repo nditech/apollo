@@ -4,7 +4,7 @@ from flask_script import Command, Option
 
 class GunicornServer(Command):
 
-    description = "Run the app within gunicorn"
+    """Run the app within gunicorn"""
 
     def get_options(self):
         from gunicorn.config import make_settings
