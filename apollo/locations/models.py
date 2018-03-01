@@ -58,6 +58,9 @@ class LocationType(BaseModel):
         primaryjoin='LocationType.id == LocationTypePath.ancestor_id',
         backref='ancestor_location_type')
 
+    def __str__(self):
+        return self.name or ''
+
     def ancestors(self):
         return [
             p.ancestor_location_type for p in self.ancestor_paths

@@ -7,7 +7,8 @@ from wtforms.widgets import HiddenInput
 from apollo import services
 from apollo.core import CharFilter, ChoiceFilter, FilterSet
 from apollo.helpers import _make_choices
-from apollo.locations.models import Location, Sample, samples_locations
+from apollo.locations.models import (
+    Location, LocationPath, Sample, samples_locations)
 from apollo.participants import models
 from apollo.wtforms_ext import ExtendedMultipleSelectField
 
@@ -165,7 +166,13 @@ def make_participant_location_filter(location_set_id):
 
         def filter(self, query, value):
             if value:
-                return query
+                location_query = Location.query.with_entities(
+                    Location.id).join(
+                    LocationPath, Location.id == LocationPath.descendant_id
+                ).filter(LocationPath.ancestor_id == value)
+
+                return query.filter(
+                    models.Participant.location_id.in_(location_query))
 
             return query
 

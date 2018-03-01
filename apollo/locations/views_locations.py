@@ -31,22 +31,22 @@ admin_required = permissions.role('admin').require
 
 location_api.add_resource(
     api.LocationTypeItemResource,
-    '/api/locationtype/<int:location_set_id>/<int:loc_type_id>',
+    '/api/locationtype/<int:loc_type_id>',
     endpoint='api.locationtype'
 )
 location_api.add_resource(
     api.LocationTypeListResource,
-    '/api/locationtypes/<int:location_set_id>',
+    '/api/locationtypes/',
     endpoint='api.locationtypes'
 )
 location_api.add_resource(
     api.LocationItemResource,
-    '/api/location/<int:location_set_id>/<int:location_id>',
+    '/api/location/<int:location_id>',
     endpoint='api.location'
 )
 location_api.add_resource(
     api.LocationListResource,
-    '/api/locations/<int:location_set_id>',
+    '/api/locations/',
     endpoint='api.locations'
 )
 

@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
-from flask import current_app, jsonify
+from flask import current_app, g, jsonify
 from flask_restful import Resource, fields, marshal, marshal_with
 from flask_security import login_required
+from sqlalchemy import or_
+
 from apollo import services
 from apollo.api.common import parser
+from apollo.locations.models import Location
 
 LOCATION_TYPE_FIELD_MAPPER = {
     'id': fields.String,
@@ -22,9 +25,10 @@ LOCATION_FIELD_MAPPER = {
 
 class LocationTypeItemResource(Resource):
     @login_required
-    def get(self, location_set_id, loc_type_id):
+    def get(self, loc_type_id):
         # marshal() converts a custom object/dictionary/list using the mapper
         # into a Python dict
+        location_set_id = getattr(g.event, 'location_id_set', None)
         data = marshal(
             services.location_types.fget_or_404(
                 id=loc_type_id, location_set_id=location_set_id),
@@ -44,11 +48,12 @@ class LocationTypeItemResource(Resource):
 
 class LocationTypeListResource(Resource):
     @login_required
-    def get(self, location_set_id):
+    def get(self):
         # marshal() can also handle a list or tuple of objects, but it only
         # checks for a list or tuple, so we need to convert the queryset
         # to a list
         args = parser.parse_args()
+        location_set_id = getattr(g.event, 'location_set_id', None)
         limit = min(
             args.get('limit') or current_app.config.get('PAGE_SIZE'),
             current_app.config.get('PAGE_SIZE'))
@@ -85,31 +90,34 @@ class LocationTypeListResource(Resource):
 class LocationItemResource(Resource):
     @login_required
     @marshal_with(LOCATION_FIELD_MAPPER)
-    def get(self, location_set_id, location_id):
+    def get(self, location_id):
+        location_set_id = getattr(g.event, 'location_set_id', None)
         return jsonify(services.locations.fget_or_404(
             id=location_id, location_set_id=location_set_id))
 
 
 class LocationListResource(Resource):
     @login_required
-    def get(self, location_set_id):
+    def get(self):
         parser.add_argument('q', type=str)
         args = parser.parse_args()
+        location_set_id = getattr(g.event, 'location_set_id', None)
         limit = min(
             args.get('limit') or current_app.config.get('PAGE_SIZE'),
             current_app.config.get('PAGE_SIZE'))
         offset = args.get('offset') or 0
 
+        lookup_args = args.get('q')
         queryset = services.locations.find(location_set_id=location_set_id)
+        if lookup_args:
+            queryset = queryset.filter(
+                or_(
+                    Location.name.ilike('%{}%'.format(lookup_args)),
+                    Location.code.ilike('{}%'.format(lookup_args)),
+                    Location.political_code.ilike('{}%'.format(lookup_args))
+                )
+            )
         count = queryset.count()
-
-        # do location lookups
-        # if 'q' in args and args.get('q'):
-        #     queryset = queryset.filter(
-        #         Q(name__icontains=args.get('q')) |
-        #         Q(code__istartswith=args.get('q')) |
-        #         Q(political_code__istartswith=args.get('q'))
-        #     ).order_by('ancestor_count')
 
         queryset = queryset.limit(limit).offset(offset)
 
