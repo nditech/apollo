@@ -13,7 +13,9 @@ LOCATION_TYPE_FIELD_MAPPER = {
 LOCATION_FIELD_MAPPER = {
     'id': fields.String,
     'name': fields.String,
-    'location_type': fields.String,
+    'location_type': fields.String(
+        attribute='location_type.name'
+    ),
     'code': fields.String
 }
 
@@ -24,7 +26,7 @@ class LocationTypeItemResource(Resource):
         # marshal() converts a custom object/dictionary/list using the mapper
         # into a Python dict
         data = marshal(
-            services.location_types.get_or_404(pk=loc_type_id),
+            services.location_types.fget_or_404(id=loc_type_id),
             LOCATION_TYPE_FIELD_MAPPER)
 
         # for the Url field, the constructor argument must be a full
@@ -50,7 +52,10 @@ class LocationTypeListResource(Resource):
             args.get('limit') or current_app.config.get('PAGE_SIZE'),
             current_app.config.get('PAGE_SIZE'))
         offset = args.get('offset') or 0
-        queryset = services.location_types.find().skip(offset).limit(limit)
+        queryset = services.location_types.find()
+        count = queryset.count()
+
+        queryset = queryset.offset(offset).limit(limit)
 
         dataset = marshal(
             list(queryset),
@@ -65,7 +70,7 @@ class LocationTypeListResource(Resource):
             'meta': {
                 'limit': limit,
                 'offset': offset,
-                'total': queryset.count(False)
+                'total': count
             },
             'objects': dataset
         }
@@ -77,7 +82,7 @@ class LocationItemResource(Resource):
     @login_required
     @marshal_with(LOCATION_FIELD_MAPPER)
     def get(self, location_id):
-        return jsonify(services.locations.get_or_404(pk=location_id))
+        return jsonify(services.locations.fget_or_404(id=location_id))
 
 
 class LocationListResource(Resource):
@@ -91,6 +96,7 @@ class LocationListResource(Resource):
         offset = args.get('offset') or 0
 
         queryset = services.locations.find()
+        count = queryset.count()
 
         # do location lookups
         # if 'q' in args and args.get('q'):
@@ -100,7 +106,7 @@ class LocationListResource(Resource):
         #         Q(political_code__istartswith=args.get('q'))
         #     ).order_by('ancestor_count')
 
-        queryset = queryset.limit(limit).skip(offset)
+        queryset = queryset.limit(limit).offset(offset)
 
         dataset = marshal(
             list(queryset),
@@ -111,7 +117,7 @@ class LocationListResource(Resource):
             'meta': {
                 'limit': limit,
                 'offset': offset,
-                'total': queryset.count(False)
+                'total': count
             },
             'objects': dataset
         }
