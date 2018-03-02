@@ -249,5 +249,4 @@ class FormBuilderSerializer(object):
                 pass
 
         form.data = {'groups': groups}
-        print(groups)
         form.save()
