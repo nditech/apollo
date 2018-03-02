@@ -43,6 +43,12 @@ class Submission(BaseModel):
         ('M', _('Master submission')),
     )
 
+    QUARANTINE_STATUSES = (
+        ('', _('None')),
+        ('A', _('All')),
+        ('R', _('Results')),
+    )
+
     __tablename__ = 'submission'
 
     id = db.Column(
@@ -62,6 +68,7 @@ class Submission(BaseModel):
     created = db.Column(db.DateTime, default=current_timestamp)
     updated = db.Column(db.DateTime, onupdate=current_timestamp)
     sender_verified = db.Column(db.Boolean, default=True)
+    quarantine_status = db.Column(ChoiceType(QUARANTINE_STATUSES), default='')
     deployment = db.relationship('Deployment', backref='submissions')
     event = db.relationship('Event', backref='submissions')
     form = db.relationship('Form', backref='submissions')
