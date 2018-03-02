@@ -243,10 +243,12 @@ class FormBuilderSerializer(object):
             current_group['fields'].append(field)
 
             # invalidate the form cache
-            try:
+            if hasattr(form, '_field_cache'):
+                delattr(form, '_field_cache')
+            if hasattr(form, '_group_cache'):
+                delattr(form, '_group_cache')
+            if hasattr(form, '_schema_cache'):
                 delattr(form, '_schema_cache')
-            except AttributeError:
-                pass
 
         form.data = {'groups': groups}
         form.save()
