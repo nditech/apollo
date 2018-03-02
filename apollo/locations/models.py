@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+from sqlalchemy import and_
+from sqlalchemy.orm import aliased
+
 from apollo.core import db
 from apollo.dal.models import BaseModel
 
@@ -73,6 +76,23 @@ class LocationType(BaseModel):
             if p.depth != 0
         ]
 
+    @classmethod
+    def root(cls, location_set_id):
+        anc = aliased(LocationTypePath)
+        q = LocationTypePath.query.with_entities(
+            LocationTypePath.descendant_id).filter_by(
+                depth=0,
+                location_set_id=location_set_id
+            ).outerjoin(
+                anc,
+                and_(
+                    anc.descendant_id == LocationTypePath.descendant_id,
+                    anc.ancestor_id != LocationTypePath.ancestor_id)
+            ).filter(anc.ancestor_id == None)   # noqa
+
+        return cls.query.filter(
+            cls.id.in_(q), cls.location_set_id == location_set_id).first()
+
 
 class LocationTypePath(db.Model):
     __tablename__ = 'location_type_path'
@@ -134,6 +154,23 @@ class Location(BaseModel):
             p.descendant_location for p in self.descendant_paths
             if p.depth != 0
         ]
+
+    @classmethod
+    def root(cls, location_set_id):
+        anc = aliased(LocationPath)
+        q = LocationPath.query.with_entities(
+            LocationPath.descendant_id).filter_by(
+                depth=0,
+                location_set_id=location_set_id
+            ).outerjoin(
+                anc,
+                and_(
+                    anc.descendant_id == LocationPath.descendant_id,
+                    anc.ancestor_id != LocationPath.ancestor_id)
+            ).filter(anc.ancestor_id == None)   # noqa
+
+        return cls.query.filter(
+            cls.id.in_(q), cls.location_set_id == location_set_id).first()
 
 
 class LocationPath(db.Model):
