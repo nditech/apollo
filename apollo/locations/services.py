@@ -58,9 +58,15 @@ class LocationService(Service):
             yield output.getvalue()
             output.close()
 
+    def root(self, location_set_id):
+        return self.__model__.root(location_set_id)
+
 
 class LocationTypeService(Service):
     __model__ = LocationType
+
+    def root(self, location_set_id):
+        return self.__model__.root(location_set_id)
 
 
 class SampleService(Service):
