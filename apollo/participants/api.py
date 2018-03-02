@@ -1,15 +1,18 @@
 # -*- coding: utf-8 -*-
-from flask import current_app, jsonify
+from flask import current_app, g, jsonify
 from flask_restful import Resource, fields, marshal, marshal_with
 from flask_security import login_required
+from sqlalchemy import or_
+
 from apollo import services
 from apollo.api.common import parser
+from apollo.participants.models import Participant
 
 PARTICIPANT_FIELD_MAPPER = {
     'id': fields.String,
     'name': fields.String,
     'participant_id': fields.String,
-    'role': fields.String,
+    'role': fields.String(attribute='role.name'),
 }
 
 
@@ -17,7 +20,9 @@ class ParticipantItemResource(Resource):
     @login_required
     @marshal_with(PARTICIPANT_FIELD_MAPPER)
     def get(self, participant_id):
-        return jsonify(services.participants.get_or_404(pk=participant_id))
+        participant_set_id = g.event.participant_set_id
+        return jsonify(services.participants.fget_or_404(
+            id=participant_id, participant_set_id=participant_set_id))
 
 
 class ParticipantListResource(Resource):
@@ -29,17 +34,20 @@ class ParticipantListResource(Resource):
             args.get('limit') or current_app.config.get('PAGE_SIZE'),
             current_app.config.get('PAGE_SIZE'))
         offset = args.get('offset') or 0
+        participant_set_id = g.event.participant_set_id
 
-        queryset = services.participants.find()
+        queryset = services.participants.find(
+            participant_set_id=participant_set_id)
 
-        # do location lookups
-        # if 'q' in args and args.get('q'):
-        #     queryset = queryset.filter(
-        #         Q(name__icontains=args.get('q')) |
-        #         Q(participant_id__istartswith=args.get('q'))
-        #     )
+        lookup_item = args.get('q')
+        if lookup_item:
+            queryset = queryset.filter(or_(
+                Participant.name.ilike('%{}%'.format(lookup_item)),
+                Participant.participant_id.ilike('{}%'.format(lookup_item))
+            ))
 
-        queryset = queryset.limit(limit).skip(offset)
+        count = queryset.count()
+        queryset = queryset.limit(limit).offset(offset)
 
         dataset = marshal(
             list(queryset),
@@ -50,7 +58,7 @@ class ParticipantListResource(Resource):
             'meta': {
                 'limit': limit,
                 'offset': offset,
-                'total': queryset.count(False)
+                'total': count
             },
             'objects': dataset
         }
