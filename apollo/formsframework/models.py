@@ -72,6 +72,14 @@ class Form(Resource):
             g['name']: g for g in self.data['groups']
         }
 
+    # def _populate_schema_cache(self):
+    #     self._schema_cache = {}
+    #     if self.data and self.data.get('groups'):
+    #         for g in self.data.get('groups'):
+    #             if g.get('fields'):
+    #                 field_cache = {f['tag']: f for f in g.get('fields')}
+    #                 self._schema_cache[g['name']] = {'fields': field_cache,}
+
     def get_form_type_display(self):
         d = dict(Form.FORM_TYPES)
         return d[self.form_type]
@@ -88,6 +96,20 @@ class Form(Resource):
             self._populate_field_cache()
 
         return self._field_cache.get(tag)
+
+    def get_group_tags(self, group_name):
+        if not hasattr(self, '_group_cache'):
+            self._populate_group_cache()
+
+        grp = self._group_cache.get(group_name)
+        tags = []
+
+        if grp and grp.get('fields'):
+            for f in grp.get('fields'):
+                if f and f.get('tag'):
+                    tags.append(f.get('tag'))
+
+        return tags
 
     def to_xml(self):
         root = HTML_E.html()
