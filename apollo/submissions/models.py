@@ -49,6 +49,13 @@ class Submission(BaseModel):
         ('R', _('Results')),
     )
 
+    INCIDENT_STATUSES = (
+        (None, _('Unmarked')),
+        ('citizen', _('Citizen Report')),
+        ('confirmed', _('Confirmed')),
+        ('rejected', _('Rejected'))
+    )
+
     __tablename__ = 'submission'
 
     id = db.Column(
@@ -64,11 +71,13 @@ class Submission(BaseModel):
     location_id = db.Column(db.Integer, db.ForeignKey(
         'location.id', ondelete='CASCADE'), nullable=False)
     data = db.Column(JSONB)
+    extra_data = db.Column(JSONB)
     submission_type = db.Column(ChoiceType(SUBMISSION_TYPES))
     created = db.Column(db.DateTime, default=current_timestamp)
     updated = db.Column(db.DateTime, onupdate=current_timestamp)
     sender_verified = db.Column(db.Boolean, default=True)
     quarantine_status = db.Column(ChoiceType(QUARANTINE_STATUSES), default='')
+    incident_status = db.Column(ChoiceType(INCIDENT_STATUSES))
     deployment = db.relationship('Deployment', backref='submissions')
     event = db.relationship('Event', backref='submissions')
     form = db.relationship('Form', backref='submissions')
@@ -116,6 +125,10 @@ class Submission(BaseModel):
                 location_id=location.id, deployment_id=deployment_id,
                 event_id=event.id, submission_type='M')
             master_submission.save()
+
+    def get_incident_status_display(self):
+        d = dict(self.INCIDENT_STATUSES)
+        return d.get(self.incident_status, _('Unmarked'))
 
 
 class SubmissionComment(BaseModel):
