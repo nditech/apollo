@@ -17,8 +17,7 @@ from wtforms import widgets, fields, Form
 class EventFilter(CharFilter):
     def filter(self, queryset, value):
         if value:
-            event = services.events.get(pk=value)
-            return queryset(event=event)
+            return queryset.filter_by(event_id=value)
         return queryset
 
 
