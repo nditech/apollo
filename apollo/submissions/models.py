@@ -144,6 +144,18 @@ class Submission(BaseModel):
         d = dict(self.INCIDENT_STATUSES)
         return d.get(self.incident_status, _('Unmarked'))
 
+    def completion(self, group_name):
+        # TODO: fix conflict status
+        group_tags = self.form.get_group_tags(group_name)
+        subset = [
+            self.data.get(tag) for tag in group_tags] if self.data else []
+        if subset and all(subset):
+            return 'Complete'
+        elif any(subset):
+            return 'Partial'
+        else:
+            return 'Missing'
+
 
 class SubmissionComment(BaseModel):
     __tablename__ = 'submission_comment'
