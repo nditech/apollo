@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "909617fd478a484ff3aa210c95d99240c810d53d8953b96724c30e1fcea09214"
+            "sha256": "e25916c2c9658b51de6943480c4b9ed3935d96fa3e180d489f75819183aabe6b"
         },
         "host-environment-markers": {
             "implementation_name": "cpython",
@@ -9,9 +9,9 @@
             "os_name": "posix",
             "platform_machine": "x86_64",
             "platform_python_implementation": "CPython",
-            "platform_release": "4.15.5-1-ARCH",
+            "platform_release": "4.4.0-116-generic",
             "platform_system": "Linux",
-            "platform_version": "#1 SMP PREEMPT Thu Feb 22 22:15:20 UTC 2018",
+            "platform_version": "#140-Ubuntu SMP Mon Feb 12 21:23:04 UTC 2018",
             "python_full_version": "3.6.4",
             "python_version": "3.6",
             "sys_platform": "linux"
@@ -318,6 +318,18 @@
                 "sha256:c189402ad2e337777283c6a12d0f4f61dc6dd20c254c9a3a4af5087fc66cea6e"
             ],
             "version": "==1.0.1"
+        },
+        "infinity": {
+            "hashes": [
+                "sha256:dc4aa138d7e366fc00d2e741e32c78a0fecd16b74f8daeb3f7408b459668005c"
+            ],
+            "version": "==1.4"
+        },
+        "intervals": {
+            "hashes": [
+                "sha256:37921da1407a5e9384e8e1350cfb8500f8d0d69fc43d03d01a4fdc6e7a7c7166"
+            ],
+            "version": "==0.8.1"
         },
         "itsdangerous": {
             "hashes": [
@@ -653,6 +665,12 @@
             ],
             "version": "==0.4.21"
         },
+        "validators": {
+            "hashes": [
+                "sha256:79855e18710be5d8ba5e0c16086d76f230af11df2b8341b64995b42153c7f204"
+            ],
+            "version": "==0.12.1"
+        },
         "vine": {
             "hashes": [
                 "sha256:6849544be74ec3638e84d90bc1cf2e1e9224cc10d96cd4383ec3f69e9bce077b",
@@ -685,6 +703,18 @@
                 "sha256:ffdf10bd1fa565b8233380cb77a304cd36fd55c73023e91d4b803c96bc11d46f"
             ],
             "version": "==2.1"
+        },
+        "wtforms-alchemy": {
+            "hashes": [
+                "sha256:1e65ab91d9a137c396526ba41663f7ade57f3935d458386d08b5c23df2bd25c2"
+            ],
+            "version": "==0.16.6"
+        },
+        "wtforms-components": {
+            "hashes": [
+                "sha256:e66cd8fa8269bfb75b40453ade387a55d55ba33aac534264043d6d283285d2e4"
+            ],
+            "version": "==0.10.3"
         },
         "xlrd": {
             "hashes": [

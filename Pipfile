@@ -70,6 +70,7 @@ wtforms = "==2.1"
 xlrd = "==1.1.0"
 xlwt = "==1.3.0"
 celery = {extras = ["redis"]}
+wtforms-alchemy = "==0.16.6"
 
 
 [dev-packages]
