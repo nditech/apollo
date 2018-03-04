@@ -14,8 +14,8 @@
 {%- endif %}
 </div>
 {%- if form.form_type == 'CHECKLIST' -%}
-{%- for group in form.groups -%}
-{% set field = form.pk|string + '__' + group.slug %}
+{%- for group in form.data.groups -%}
+{% set field = form.id|string + '__' + group.slug %}
 <div class="form-group">
 {{ filter_form[field](class_='form-control span2 input-sm') }}
 </div>

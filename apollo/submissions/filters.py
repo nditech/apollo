@@ -136,8 +136,9 @@ class FormGroupFilter(ChoiceFilter):
                 models.Submission.data.has_any(array(group_tags)))
         elif value == '2':
             # Missing
-            return query.filter(
-                models.Submission.data.has_any(array(group_tags)))
+            return query.filter(or_(
+                ~models.Submission.data.has_any(array(group_tags)),
+                models.Submission.data == None))
         elif value == '3':
             # Complete
             return query.filter(
