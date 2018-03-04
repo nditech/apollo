@@ -1,31 +1,30 @@
 # -*- coding: utf-8 -*-
 import csv
 from datetime import datetime
+from io import StringIO
 import json
-try:
-    from io import StringIO
-except ImportError:
-    from io import StringIO
+
 from flask import (
-    Blueprint, jsonify, make_response, redirect, render_template, request,
-    url_for, current_app, abort, g, Response
+    Blueprint, Response, abort, current_app, g, jsonify, make_response,
+    redirect, render_template, request, url_for
 )
 from flask_babelex import lazy_gettext as _
+from flask_httpauth import HTTPBasicAuth
+from flask_menu import register_menu
 from flask_security import current_user, login_required
 from flask_security.utils import verify_and_update_password
-from flask_menu import register_menu
-from flask_httpauth import HTTPBasicAuth
 from tablib import Dataset
-
 from werkzeug.datastructures import MultiDict
+
 from apollo import models, services, utils
-from apollo.submissions.incidents import incidents_csv
+from apollo.messaging.tasks import send_messages
 from apollo.participants.utils import update_participant_completion_rating
+from apollo.submissions import filters
+from apollo.submissions.incidents import incidents_csv
 from apollo.submissions.aggregation import (
     aggregated_dataframe, _quality_check_aggregation)
 from apollo.submissions.models import QUALITY_STATUSES, Submission
 from apollo.submissions.recordmanagers import AggFrameworkExporter
-from apollo.messaging.tasks import send_messages
 from apollo.frontend import route, permissions
 from apollo.frontend.filters import generate_submission_filter
 from apollo.frontend.filters import generate_quality_assurance_filter
@@ -79,11 +78,12 @@ def verify_pw(username, password):
                get_form_list_menu, form_type='INCIDENT'))
 @login_required
 def submission_list(form_id):
+    event = g.event
     form = services.forms.find(
         id=form_id).first_or_404()
     permissions.require_item_perm('view_forms', form)
 
-    filter_class = generate_submission_filter(form)
+    filter_class = filters.make_submission_list_filter(event, form)
     page_title = form.name
     template_name = 'frontend/submission_list.html'
 
@@ -115,7 +115,7 @@ def submission_list(form_id):
             )
 
         # TODO: fix this. no exports yet. nor aggregation
-        query_filterset = filter_class(queryset, request.args)
+        # query_filterset = filter_class(queryset, request.args)
         basename = slugify_unicode('%s %s %s %s' % (
             g.event.name.lower(),
             form.name.lower(),
@@ -125,7 +125,8 @@ def submission_list(form_id):
         if mode == 'aggregated':
             # TODO: you want to change the float format or even remove it
             # if you have columns that have float values
-            exporter = AggFrameworkExporter(query_filterset.qs)
+            # exporter = AggFrameworkExporter(query_filterset.qs)
+            exporter = AggFrameworkExporter(queryset)
             records, headers = exporter.export_dataset()
 
             export_buffer = StringIO()
@@ -137,7 +138,8 @@ def submission_list(form_id):
             dataset = export_buffer.getvalue()
         else:
             dataset = services.submissions.export_list(
-                query_filterset.qs, g.deployment)
+                # query_filterset.qs, g.deployment)
+                queryset, g.deployment)
 
         return Response(
             dataset, headers={'Content-Disposition': content_disposition},

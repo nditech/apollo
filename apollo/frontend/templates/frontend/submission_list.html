@@ -13,7 +13,7 @@
 {% if form.form_type == 'INCIDENT' %}
 {% if perms.add_submission.can() %}
 <div class="btn-group pull-right">
-  <a style="margin-left:1em" class="btn btn-sm btn-primary" href="{{ url_for('submissions.submission_create', form_id=form.pk) }}"><i class="glyphicon glyphicon-plus glyphicon-white"></i> {{ _('Add Incident') }}</a>
+  <a style="margin-left:1em" class="btn btn-sm btn-primary" href="{{ url_for('submissions.submission_create', form_id=form.id) }}"><i class="glyphicon glyphicon-plus glyphicon-white"></i> {{ _('Add Incident') }}</a>
 </div>
 {% endif %}
 {% if perms.export_submissions.can() %}
@@ -46,7 +46,6 @@
     {{ render_filter_form(form, filter_form, location) }}
   </div>
 </div>
-
 <div class="row">
   <div class="col-md-12">
      {{ render_pager_counter(pager, args) }}

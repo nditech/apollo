@@ -77,7 +77,7 @@
       <i class="fa fa-exclamation-triangle warning" aria-hidden="true" title="{{ _('Unverified') }}"></i>
       {% endif %}
     </td>
-    {% if perms.edit_submission.can() %}<td class="text-center"><a href="{{ url_for('submissions.submission_edit', submission_id=submission.pk) }}">{{ _('Edit') }}</a></td>{% endif %}
+    {% if perms.edit_submission.can() %}<td class="text-center"><a href="{{ url_for('submissions.submission_edit', submission_id=submission.id) }}">{{ _('Edit') }}</a></td>{% endif %}
 </tr>
 {% else %}
 {% if perms.edit_submission.can() %}
