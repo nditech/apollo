@@ -109,22 +109,36 @@ class Submission(BaseModel):
             if location_type.id == participant.location.location_type.id:
                 location = participant.location
             else:
-                location = next(a for a in participant.location.ancestors()
-                                if a.location_type.id == location_type.id)
-                if not location:
+                try:
+                    location = next(a for a in participant.location.ancestors()
+                                    if a.location_type.id == location_type.id)
+                    if not location:
+                        return
+                except StopIteration:
                     return
 
-            obs_submission = cls(
+            obs_submission = cls.query.filter_by(
                 form_id=form.id, participant_id=participant.id,
                 location_id=location.id, deployment_id=deployment_id,
-                event_id=event.id, submission_type='O')
-            obs_submission.save()
+                event_id=event.id, submission_type='O').first()
 
-            master_submission = cls(
-                form_id=form.id, participant_id=participant.id,
+            if not obs_submission:
+                obs_submission = cls(
+                    form_id=form.id, participant_id=participant.id,
+                    location_id=location.id, deployment_id=deployment_id,
+                    event_id=event.id, submission_type='O', data={})
+                obs_submission.save()
+
+            master_submission = cls.query.filter_by(
+                form_id=form.id, participant_id=None,
                 location_id=location.id, deployment_id=deployment_id,
                 event_id=event.id, submission_type='M')
-            master_submission.save()
+            if not master_submission:
+                master_submission = cls(
+                    form_id=form.id, participant_id=None,
+                    location_id=location.id, deployment_id=deployment_id,
+                    event_id=event.id, submission_type='M', data={})
+                master_submission.save()
 
     def get_incident_status_display(self):
         d = dict(self.INCIDENT_STATUSES)
