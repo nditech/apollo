@@ -193,7 +193,7 @@ class FormBuilderSerializer(object):
             if field.get('is_multi_choice'):
                 data['component'] = 'checkbox'
             else:
-                data['compoent'] = 'radio'
+                data['component'] = 'radio'
 
         return data
 
@@ -253,9 +253,9 @@ class FormBuilderSerializer(object):
             elif f['component'] == 'textInput':
                 field['is_boolean'] = f['required']
                 if f['min']:
-                    field['min'] = f['min']
+                    field['min'] = int(f['min'])
                 if f['max']:
-                    field['max'] = f['max']
+                    field['max'] = int(f['max'])
             else:
                 field['options'] = {
                     k: v for v, k in enumerate(f['options'], 1)}
