@@ -253,9 +253,9 @@ class FormBuilderSerializer(object):
             elif f['component'] == 'textInput':
                 field['is_boolean'] = f['required']
                 if f['min']:
-                    field['min'] = int(f['min'])
+                    field['min'] = int(f.get('min', 0))
                 if f['max']:
-                    field['max'] = int(f['max'])
+                    field['max'] = int(f.get('max', 9999))
             else:
                 field['options'] = {
                     k: v for v, k in enumerate(f['options'], 1)}
