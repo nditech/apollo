@@ -167,7 +167,11 @@ class Submission(BaseModel):
 
             all_submissions = [self] + siblings
             for tag in tags_to_check:
-                check = {sub.data.get(tag) for sub in all_submissions}
+                check_data = [sub.data.get(tag) for sub in all_submissions]
+                check = {
+                    frozenset(item)
+                    if isinstance(item, list) else item
+                    for item in check_data}
                 if len(check) > 1:
                     return 'Conflict'
 
