@@ -228,11 +228,11 @@ def make_submission_list_filter(event, form):
                 if f.get('options') and not f.get('is_multi_choice')]
             for field in option_fields:
                 choices = _make_choices(sorted(
-                    ((v, '{} - {}'.format(field['name'], k)) for k, v in
+                    ((v, '{} - {}'.format(field['tag'], k)) for k, v in
                         field['options'].items()),
                     key=itemgetter(0)
-                ), field['name'])
-                attributes[field['name']] = FieldOptionFilter(choices=choices)
+                ), field['tag'])
+                attributes[field['tag']] = FieldOptionFilter(choices=choices)
 
             attributes['status'] = IncidentStatusFilter()
 

@@ -25,10 +25,10 @@
     <div class="panel-body">
       <div class="list-group">
         <div class="list-group-item">
-          <strong>{{ _('Participant') }}</strong>: {{ submission.contributor.name }} ({{ submission.contributor.phone }}) &mdash; <strong>{{ submission.contributor.participant_id }}</strong>
+          <strong>{{ _('Participant') }}</strong>: {{ submission.participant.name }} ({{ submission.participant.primary_phone }}) &mdash; <strong>{{ submission.participant.participant_id }}</strong>
         </div>
         <div class="list-group-item">
-          <strong>{{ _('Via') }}</strong>: {{ submission_version.channel }}
+          <strong>{{ _('Via') }}</strong>: {{ submission_version.channel.value }}
         </div>
         <div class="list-group-item">
           <strong>{{ _('Edited by') }}</strong>: {{ submission_version.identity }}
@@ -44,13 +44,13 @@
             <th>{{ _('Saved') }}</th>
             <th>{{ _('Current') }}</th>
           </tr>
-          {% for group in form.groups %}
+          {% for group in form.data.groups %}
           <tr>
             <td colspan="4"><h4>{{ group.name }}</h4></td>
           </tr>
           {% for field in group.fields %}
           <tr>
-            <th>{{ field.name }}</th>
+            <th>{{ field.tag }}</th>
             <td>{{ field.description }}
               {%- if field.options %}
               <span class="options">

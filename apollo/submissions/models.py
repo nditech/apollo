@@ -225,7 +225,7 @@ class SubmissionComment(BaseModel):
     __tablename__ = 'submission_comment'
 
     id = db.Column(
-        db.Integer, db.Sequence('submmision_comment_id_seq'),
+        db.Integer, db.Sequence('submission_comment_id_seq'),
         primary_key=True)
     submission_id = db.Column(db.Integer, db.ForeignKey(
         'submission.id', ondelete='CASCADE'), nullable=False)

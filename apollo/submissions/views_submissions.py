@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 import csv
 from datetime import datetime
+from functools import partial
 from io import StringIO
-import json
 
 from flask import (
     Blueprint, Response, abort, current_app, g, jsonify, make_response,
@@ -17,8 +17,15 @@ from sqlalchemy.dialects.postgresql import array
 from tablib import Dataset
 from werkzeug.datastructures import MultiDict
 
-from apollo.core import db
 from apollo import models, services, utils
+from apollo.core import db
+from apollo.frontend import route, permissions
+from apollo.frontend.filters import generate_quality_assurance_filter
+from apollo.frontend.helpers import (
+    DictDiffer, displayable_location_types, get_event,
+    get_form_list_menu, get_quality_assurance_form_list_menu,
+    get_quality_assurance_form_dashboard_menu)
+from apollo.frontend.template_filters import mkunixtimestamp
 from apollo.messaging.tasks import send_messages
 from apollo.participants.utils import update_participant_completion_rating
 from apollo.submissions import filters, forms
@@ -27,16 +34,6 @@ from apollo.submissions.aggregation import (
     aggregated_dataframe, _quality_check_aggregation)
 from apollo.submissions.models import QUALITY_STATUSES, Submission
 from apollo.submissions.recordmanagers import AggFrameworkExporter
-from apollo.frontend import route, permissions
-from apollo.frontend.filters import generate_submission_filter
-from apollo.frontend.filters import generate_quality_assurance_filter
-from apollo.frontend.forms import generate_submission_edit_form_class
-from apollo.frontend.helpers import (
-    DictDiffer, displayable_location_types, get_event,
-    get_form_list_menu, get_quality_assurance_form_list_menu,
-    get_quality_assurance_form_dashboard_menu)
-from apollo.frontend.template_filters import mkunixtimestamp
-from functools import partial
 from slugify import slugify_unicode
 
 
@@ -62,7 +59,7 @@ def verify_pw(username, password):
     return verify_and_update_password(password, user)
 
 
-@route(bp, '/submissions/form/<form_id>', methods=['GET', 'POST'])
+@route(bp, '/submissions/form/<int:form_id>', methods=['GET', 'POST'])
 @register_menu(
     bp, 'main.checklists',
     _('Checklists'), order=1, icon='<i class="glyphicon glyphicon-check"></i>',
@@ -82,7 +79,7 @@ def verify_pw(username, password):
 def submission_list(form_id):
     event = g.event
     form = services.forms.find(
-        id=form_id).first_or_404()
+        id=form_id, form_set_id=event.form_set_id).first_or_404()
     permissions.require_item_perm('view_forms', form)
 
     filter_class = filters.make_submission_list_filter(event, form)
@@ -99,6 +96,7 @@ def submission_list(form_id):
     location = None
     if request.args.get('location'):
         location = services.locations.find(
+            location_set_id=event.location_set_id,
             id=request.args.get('location')).first()
 
     if request.args.get('export') and permissions.export_submissions.can():
@@ -154,7 +152,8 @@ def submission_list(form_id):
     # TODO: this query was ordered by location, then participant
     queryset = services.submissions.find(
         submission_type='O',
-        form=form
+        form=form,
+        event_id=event.id
     ).join(
         models.Participant,
         models.Submission.participant_id == models.Participant.id
@@ -182,8 +181,9 @@ def submission_list(form_id):
     if form.form_type == 'CHECKLIST':
         form_fields = []
     else:
-        form_fields = [field for group in form.groups
-                       for field in group.fields if not field.is_comment_field]
+        form_fields = [
+            field for group in form.data['groups']
+            for field in group['fields'] if not field.get('is_comment')]
 
     return render_template(
         template_name,
@@ -199,13 +199,16 @@ def submission_list(form_id):
     )
 
 
-@route(bp, '/submissions/<form_id>/new', methods=['GET', 'POST'])
+@route(bp, '/submissions/<int:form_id>/new', methods=['GET', 'POST'])
 @permissions.add_submission.require(403)
 @login_required
 def submission_create(form_id):
-    form = services.forms.find(
-        id=form_id, form_type='INCIDENT').first_or_404()
-    edit_form_class = generate_submission_edit_form_class(form)
+    event = g.event
+    questionnaire_form = services.forms.find(
+        id=form_id, form_type='INCIDENT', form_set_id=event.form_set_id
+    ).first_or_404()
+    edit_form_class = forms.make_submission_edit_form_class(
+        event, questionnaire_form)
     page_title = _('Add Submission')
     template_name = 'frontend/incident_add.html'
 
@@ -214,7 +217,7 @@ def submission_create(form_id):
         return render_template(
             template_name,
             page_title=page_title,
-            form=form,
+            form=questionnaire_form,
             submission_form=submission_form
         )
     else:
@@ -225,29 +228,44 @@ def submission_create(form_id):
 
         if not submission_form.validate():
             # really should redisplay the form again
-            return redirect(url_for(
-                'submissions.submission_list', form_id=str(form.id)))
+            return render_template(
+                template_name,
+                page_title=page_title,
+                form=questionnaire_form,
+                submission_form=submission_form
+            )
 
-        # TODO: fix this. can't populate the submission
-        # directly
-        submission = models.Submission()
-        submission_form.populate_obj(submission)
+        data_fields = set(submission_form.data.keys()).intersection(
+            questionnaire_form.tags)
+
+        data = {
+            k: submission_form.data.get(k)
+            for k in data_fields
+            if submission_form.data.get(k) is not None}
+
+        submission = models.Submission(
+            event_id=event.id,
+            deployment_id=event.deployment_id,
+            form_id=form_id,
+            submission_type='O',
+            created=utils.current_timestamp(),
+            data=data
+        )
 
         # properly populate all fields
-        submission.created = datetime.utcnow()
-        submission.deployment = g.deployment
-        submission.event = g.event
-        submission.form = form
-        submission.submission_type = 'O'
-        submission.contributor = submission_form.contributor.data
-        submission.location = submission_form.location.data
-        if not submission.location:
-            submission.location = submission.contributor.location
+        # either the participant or the location may be blank, but not both
+        if not submission_form.participant.data:
+            submission.location = submission_form.location
+        else:
+            submission.participant = submission_form.participant.data
 
+        if not submission_form.location.data:
+            submission.location_id = submission.participant.location_id
+        submission.incident_status = submission_form.status.data
         submission.save()
 
         return redirect(
-            url_for('submissions.submission_list', form_id=str(form.id)))
+            url_for('submissions.submission_list', form_id=form_id))
 
 
 @route(bp, '/submissions/<int:submission_id>', methods=['GET', 'POST'])
@@ -255,7 +273,8 @@ def submission_create(form_id):
 @login_required
 def submission_edit(submission_id):
     event = g.event
-    submission = services.submissions.find(id=submission_id).first_or_404()
+    submission = services.submissions.find(
+        event_id=event.id, id=submission_id).first_or_404()
     questionnaire_form = submission.form
     edit_form_class = forms.make_submission_edit_form_class(
         event, submission.form)
@@ -271,8 +290,18 @@ def submission_edit(submission_id):
     master_submission = submission.master
 
     if request.method == 'GET':
+        initial_data = submission.data.copy() if submission.data else {}
+        initial_data.update(location=submission.location_id)
+        initial_data.update(participant=submission.participant_id)
+
+        if questionnaire_form.form_type == 'INCIDENT':
+            initial_data.update(description=submission.incident_description)
+            initial_data.update(status=submission.incident_status.code)
+
+            print(initial_data)
+
         submission_form = edit_form_class(
-            data=submission.data,
+            data=initial_data,
             prefix=str(submission.id)
         )
         sibling_forms = [
@@ -325,8 +354,12 @@ def submission_edit(submission_id):
 
                 new_participant = submission_form.participant.data
                 new_location = submission_form.location.data
+                new_incident_description = submission_form.description.data
                 new_incident_status = submission_form.status.data
 
+                if new_incident_description != submission.incident_description:
+                    changed = True
+                    update_params['incident_description'] = new_incident_description
                 if new_incident_status != submission.incident_status:
                     changed = True
                     update_params['incident_status'] = new_incident_status
@@ -334,8 +367,9 @@ def submission_edit(submission_id):
                     changed = True
                     update_params['location_id'] = new_location.id
                 if new_participant != submission.participant:
-                    changed = True
-                    update_params['participant_id'] = new_participant.id
+                    if new_participant:
+                        changed = True
+                        update_params['participant_id'] = new_participant.id
 
                 update_params['data'] = data
 
@@ -525,14 +559,15 @@ def submission_edit(submission_id):
 @permissions.edit_submission.require(403)
 @login_required
 def comment_create_view():
-    submission = services.submissions.get_or_404(
+    submission = services.submissions.fget_or_404(
         id=request.form.get('submission'))
     comment = request.form.get('comment')
     saved_comment = services.submission_comments.create(
         submission=submission,
         user=current_user._get_current_object(),
         comment=comment,
-        submit_date=datetime.utcnow()
+        submit_date=utils.current_timestamp(),
+        deployment_id=submission.deployment_id
     )
 
     return jsonify(
@@ -608,15 +643,17 @@ def incidents_csv_with_location_dl(form_pk, location_type_pk, location_pk):
 @route(bp, '/submissions/<submission_id>/version/<version_id>')
 @login_required
 def submission_version(submission_id, version_id):
-    submission = services.submissions.get_or_404(id=submission_id)
-    version = services.submission_versions.get_or_404(
-        id=version_id, submission=submission)
+    event = g.event
+    submission = services.submissions.fget_or_404(
+        id=submission_id, event_id=event.id)
+    version = services.submission_versions.fget_or_404(
+        id=version_id, submission_id=submission_id)
     form = submission.form
-    form_data = MultiDict(json.loads(version.data))
+    form_data = MultiDict(version.data)
     page_title = _('View submission')
     template_name = 'frontend/submission_history.html'
 
-    diff = DictDiffer(submission._data, form_data)
+    diff = DictDiffer(submission.data, form_data)
 
     return render_template(
         template_name,
@@ -763,7 +800,8 @@ def update_submission_version(submission):
         for k in data_fields if k in submission.data}
 
     if submission.form.form_type == 'INCIDENT':
-        version_data['status'] = submission.incident_status
+        version_data['status'] = submission.incident_status.code
+        version_data['description'] = submission.incident_description
 
     # get previous version
     previous = services.submission_versions.find(
@@ -771,8 +809,7 @@ def update_submission_version(submission):
             models.SubmissionVersion.timestamp.desc()).first()
 
     if previous:
-        prev_data = json.loads(previous.data)
-        diff = DictDiffer(version_data, prev_data)
+        diff = DictDiffer(version_data, previous.data)
 
         # don't do anything if the data wasn't changed
         if not diff.added() and not diff.removed() and not diff.changed():
@@ -785,7 +822,7 @@ def update_submission_version(submission):
 
     services.submission_versions.create(
         submission_id=submission.id,
-        data=json.dumps(version_data),
+        data=version_data,
         timestamp=datetime.utcnow(),
         channel=channel,
         identity=identity,

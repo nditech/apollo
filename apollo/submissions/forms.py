@@ -8,6 +8,16 @@ from apollo import models, services
 from apollo.frontend import permissions
 
 
+class HiddenQuerySelectField(QuerySelectField):
+    def _value(self):
+        if self.raw_data:
+            return self.raw_data[0]
+        elif self.data is not None:
+            return self.data
+        else:
+            return '__None'
+
+
 def validate_location(form):
     '''Overrides the default validation for the form
     by running it first, then ensuring that the location
@@ -37,7 +47,7 @@ def make_submission_edit_form_class(event, form):
         ('citizen', _('Citizen Report')),
     )
 
-    form_fields['participant'] = QuerySelectField(
+    form_fields['participant'] = HiddenQuerySelectField(
         _('Participant'),
         allow_blank=True,
         blank_text=_('Participant'),
@@ -47,7 +57,7 @@ def make_submission_edit_form_class(event, form):
         validators=[validators.Optional()]
     )
 
-    form_fields['location'] = QuerySelectField(
+    form_fields['location'] = HiddenQuerySelectField(
         _('Location'),
         allow_blank=True,
         blank_text=_('Location'),

@@ -95,7 +95,7 @@
 {%- else -%}
 <tr>
   <th>{{ _('Location') }}</th>
-  <td>{% if submission.location %}<strong>{{ submission.location }}</strong><input type="hidden" name="{{ submission_form['location'].name }}" value="{{ submission.location.id|default('__None', true) }}" />
+  <td>{% if submission.location %}<strong>{{ submission.location.name }}</strong><input type="hidden" name="{{ submission_form['location'].name }}" value="{{ submission.location.id|default('__None', true) }}" />
 {% else -%}
   {{ submission_form.location(class_='select2-container span4 input-xlarge select2 select2-locations') }}{% endif %}</td>
 </tr>
@@ -243,7 +243,7 @@
       <td colspan="2">&nbsp;</td>
       <td>&nbsp;</td>
     </tr>
-    {%- for group in form.groups %}
+    {%- for group in form.data.groups %}
     <tr>
       <td colspan="3"><h4>{{ group.name }}</h4></td>
     </tr>

@@ -12,7 +12,7 @@
     {% endfor %}
     {% else %}
     {% for field in form_fields %}
-    <th class="text-center"><abbr title="{{ field.description }}">{{ field.name }}</abbr></th>
+    <th class="text-center"><abbr title="{{ field.description }}">{{ field.tag }}</abbr></th>
     {% endfor %}
     <th class="text-center"><abbr title="{{ _('Status') }}"><i class="glyphicon glyphicon-eye-open"></i></abbr></th>
     {% endif %}

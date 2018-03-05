@@ -24,11 +24,11 @@
 {{ filter_form['quarantine_status'](class_='form-control span2 input-sm') }}
 </div>
 {%- else -%}
-{%- for group in form.groups -%}
+{%- for group in form.data.groups -%}
 {%- for field in group.fields -%}
-{%- if field.options and not field.allows_multiple_values -%}
+{%- if field.options and not field.is_multi_choice -%}
 <div class="form-group">
-{{ filter_form[field.name](class_='form-control span2 input-sm') }}
+{{ filter_form[field.tag](class_='form-control span2 input-sm') }}
 </div>
 {%- endif -%}
 {%- endfor -%}

@@ -8,7 +8,7 @@
   <tbody>
     <tr>
       <td>{{ _('Participant') }}</td>
-      <td>{{ submission_form.contributor(class_='select2-container span4 input-xlarge select2 select2-observers') }}</td>
+      <td>{{ submission_form.participant(class_='select2-container span4 input-xlarge select2 select2-observers') }}</td>
     </tr>
     <tr>
       <td>{{ _('Location') }}</td>
@@ -22,13 +22,13 @@
       <td colspan="2">&nbsp;</td>
       <td>&nbsp;</td>
     </tr>
-    {%- for group in form.groups %}
+    {%- for group in form.data.groups %}
     <tr>
       <td colspan="3"><h4>{{ group.name }}</h4></td>
     </tr>
     {%- for field in group.fields %}
     <tr>
-      <th style="text-align: center">{{ field.name }}</th>
+      <th style="text-align: center">{{ field.tag }}</th>
       <td>{{ field.description }}
       {%- if field.options %}
       <span class="options">
@@ -38,7 +38,7 @@
       </span>
       {%- endif %}
       </td>
-      <td {%- if submission_form[field.name].errors %} class="danger"{%- endif -%}>{{ render_submission_field(submission_form[field.name]) }}</td>
+      <td {%- if submission_form[field.tag].errors %} class="danger"{%- endif -%}>{{ render_submission_field(submission_form[field.tag]) }}</td>
     </tr>
     {% endfor -%}
     {% endfor -%}
