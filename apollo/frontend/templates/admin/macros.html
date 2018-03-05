@@ -1,0 +1,7 @@
+{% macro locations_builder(model, column) %}
+  <a href="{{ url_for('locations.locations_builder', location_set_id=model.id) }}">{{ model.location_types.count() }}</a>
+{% endmacro %}
+
+{% macro locations_list(model, column) %}
+  <a href="{{ url_for('locations.location_list', location_set_id=model.id) }}">{{ model.locations.count() }}</a>
+{% endmacro %}

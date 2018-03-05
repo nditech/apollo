@@ -46,7 +46,8 @@ class Sample(BaseModel):
         nullable=False)
 
     deployment = db.relationship('Deployment', backref='samples')
-    location_set = db.relationship('LocationSet', backref='samples')
+    location_set = db.relationship('LocationSet', backref=db.backref(
+        'samples', lazy='dynamic'))
 
 
 class LocationType(BaseModel):
@@ -69,7 +70,8 @@ class LocationType(BaseModel):
         nullable=False)
 
     deployment = db.relationship('Deployment', backref='location_types')
-    location_set = db.relationship('LocationSet', backref='location_types')
+    location_set = db.relationship('LocationSet', backref=db.backref(
+        'location_types', lazy='dynamic'))
     ancestor_paths = db.relationship(
         'LocationTypePath', order_by='desc(LocationTypePath.depth)',
         primaryjoin='LocationType.id == LocationTypePath.descendant_id',
@@ -147,7 +149,8 @@ class Location(BaseModel):
         'location_type.id', ondelete='CASCADE'), nullable=False)
 
     deployment = db.relationship('Deployment', backref='locations')
-    location_set = db.relationship('LocationSet', backref='locations')
+    location_set = db.relationship('LocationSet', backref=db.backref(
+        'locations', lazy='dynamic'))
     location_type = db.relationship('LocationType', backref='locations')
     samples = db.relationship(
         'Sample', backref='locations', secondary=samples_locations)

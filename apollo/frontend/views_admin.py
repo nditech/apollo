@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
-import base64
 from flask import flash, request
 from flask_admin import form
 from flask_admin.actions import action
 from flask_admin.contrib.sqla import ModelView
 from flask_admin.form import rules
+from flask_admin.model.template import macro
 from flask_babelex import lazy_gettext as _
 from flask_security import current_user
 from flask_security.utils import encrypt_password
@@ -259,7 +259,15 @@ class FormSetAdminView(SetViewMixin, BaseAdminView):
 
 
 class LocationSetAdminView(SetViewMixin, BaseAdminView):
-    column_list = ('name',)
+    column_list = ('name', 'divisions', 'locations', 'samples')
+    column_labels = {
+        'divisions': 'Administrative Divisions'
+    }
+    column_formatters = {
+        'divisions': macro('locations_builder'),
+        'locations': macro('locations_list'),
+        'samples': lambda v, c, m, p: m.samples.count()
+    }
     form_columns = ('name',)
 
 

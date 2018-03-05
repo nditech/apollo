@@ -36,11 +36,11 @@
           <td class="shrink"><input type="checkbox" class="checked" name="ids" value="{{ location_set.id }}"></td>
           <td>{{ location_set.name }}</td>
           <td>{{ location_set.events|length }}</td>
-          <td>{{ location_set.location_types|length }}</td>
+          <td>{{ location_set.location_types.count() }}</td>
           <td><a href="{{ url_for('locations.locations_builder', location_set_id=location_set.id) }}">Manage</a></td>
-          <td>{{ location_set.locations|length }}</td>
+          <td>{{ location_set.locations.count() }}</td>
           <td><a href="{{ url_for('locations.location_list', location_set_id=location_set.id) }}">Manage</a></td>
-          <td>{{ location_set.samples|length }}</td>
+          <td>{{ location_set.samples.count() }}</td>
           <td><a href="">Manage</a></td>
         </tr>
         {% else %}
