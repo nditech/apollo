@@ -87,6 +87,7 @@ class Submission(BaseModel):
     updated = db.Column(db.DateTime, onupdate=current_timestamp)
     sender_verified = db.Column(db.Boolean, default=True)
     quarantine_status = db.Column(ChoiceType(QUARANTINE_STATUSES), default='')
+    incident_description = db.Column(db.String)
     incident_status = db.Column(ChoiceType(INCIDENT_STATUSES))
     overridden_fields = db.Column(ARRAY(db.String))
     deployment = db.relationship('Deployment', backref='submissions')
