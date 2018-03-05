@@ -241,6 +241,7 @@ class SubmissionVersion(BaseModel):
         primary_key=True)
     submission_id = db.Column(db.Integer, db.ForeignKey(
         'submission.id', ondelete='CASCADE'), nullable=False)
+    data = db.Column(JSONB)
     submission = db.relationship('Submission', backref='versions')
     timestamp = db.Column(db.DateTime, default=current_timestamp)
     channel = db.Column(ChoiceType(CHANNEL_CHOICES))
