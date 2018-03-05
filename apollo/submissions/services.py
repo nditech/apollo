@@ -7,6 +7,9 @@ from apollo.submissions.models import (
 class SubmissionService(Service):
     __model__ = Submission
 
+    def make_submission_dataframe(self, query):
+        pass
+
 
 class SubmissionCommentService(Service):
     __model__ = SubmissionComment

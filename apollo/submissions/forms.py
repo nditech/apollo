@@ -41,20 +41,20 @@ def make_submission_edit_form_class(event, form):
         _('Participant'),
         allow_blank=True,
         blank_text=_('Participant'),
+        query_factory=lambda: services.participants.find(
+            participant_set_id=event.participant_set_id),
         widget=widgets.HiddenInput(),
         validators=[validators.Optional()]
     )
-    form_fields['participant'].query = services.participants.find(
-            participant_set_id=event.participant_set_id)
 
     form_fields['location'] = QuerySelectField(
         _('Location'),
         allow_blank=True,
         blank_text=_('Location'),
+        query_factory=lambda: services.locations.find(
+            location_set_id=event.location_set_id),
         widget=widgets.HiddenInput()
     )
-    form_fields['location'].query = services.locations.find(
-            location_set_id=event.location_set_id)
 
     for index, group in enumerate(form.data['groups']):
         for field in group['fields']:

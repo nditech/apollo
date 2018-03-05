@@ -13,13 +13,15 @@ from flask_httpauth import HTTPBasicAuth
 from flask_menu import register_menu
 from flask_security import current_user, login_required
 from flask_security.utils import verify_and_update_password
+from sqlalchemy.dialects.postgresql import array
 from tablib import Dataset
 from werkzeug.datastructures import MultiDict
 
+from apollo.core import db
 from apollo import models, services, utils
 from apollo.messaging.tasks import send_messages
 from apollo.participants.utils import update_participant_completion_rating
-from apollo.submissions import filters
+from apollo.submissions import filters, forms
 from apollo.submissions.incidents import incidents_csv
 from apollo.submissions.aggregation import (
     aggregated_dataframe, _quality_check_aggregation)
@@ -153,7 +155,11 @@ def submission_list(form_id):
     queryset = services.submissions.find(
         submission_type='O',
         form=form
-    )
+    ).join(
+        models.Participant,
+        models.Submission.participant_id == models.Participant.id
+    ).order_by(models.Participant.participant_id)
+
     query_filterset = filter_class(queryset, request.args)
     filter_form = query_filterset.form
 
@@ -244,33 +250,44 @@ def submission_create(form_id):
             url_for('submissions.submission_list', form_id=str(form.id)))
 
 
-@route(bp, '/submissions/<submission_id>', methods=['GET', 'POST'])
+@route(bp, '/submissions/<int:submission_id>', methods=['GET', 'POST'])
 @permissions.edit_submission.require(403)
 @login_required
 def submission_edit(submission_id):
-    submission = services.submissions.find(id=submission_id)
-    edit_form_class = generate_submission_edit_form_class(submission.form)
+    event = g.event
+    submission = services.submissions.find(id=submission_id).first_or_404()
+    questionnaire_form = submission.form
+    edit_form_class = forms.make_submission_edit_form_class(
+        event, submission.form)
     page_title = _('Edit Submission')
     readonly = not g.deployment.allow_observer_submission_edit
-    location_types = services.location_types.find(is_administrative=True)
+    location_types = services.location_types.find(
+        location_set_id=event.location_set_id,
+        is_administrative=True)
     template_name = 'frontend/submission_edit.html'
     comments = services.submission_comments.find(submission=submission)
 
+    sibling_submissions = submission.siblings
+    master_submission = submission.master
+
     if request.method == 'GET':
         submission_form = edit_form_class(
-            obj=submission,
+            data=submission.data,
             prefix=str(submission.id)
         )
         sibling_forms = [
             edit_form_class(
-                obj=sibling,
+                data=sibling.data,
                 prefix=str(sibling.id)
-            ) for sibling in submission.siblings
+            ) for sibling in sibling_submissions
         ]
-        master_form = edit_form_class(
-            obj=submission.master,
-            prefix=str(submission.master.id)
-        ) if submission.master else None
+        if master_submission:
+            master_form = edit_form_class(
+                data=master_submission.data,
+                prefix=str(master_submission.id)
+            )
+        else:
+            master_form = None
 
         return render_template(
             template_name,
@@ -284,25 +301,48 @@ def submission_edit(submission_id):
             comments=comments
         )
     else:
-        if submission.form.form_type == 'INCIDENT':
+        if questionnaire_form.form_type == 'INCIDENT':
             # no master or sibling submission here
             submission_form = edit_form_class(
                 request.form, prefix=str(submission.id)
             )
 
             if submission_form.validate():
-                form_fields = list(submission_form.data.keys())
+                form_fields = submission_form.data.keys()
+                data_fields = set(form_fields).intersection(
+                    questionnaire_form.tags)
+                data = submission.data.copy()
+                update_params = {}
                 changed = False
-                for form_field in form_fields:
+                for form_field in data_fields:
                     field_value = submission_form.data.get(form_field)
                     if field_value is None:
                         continue
 
                     if submission.data.get(form_field) != field_value:
-                        submission.data[form_field] = field_value
+                        data[form_field] = field_value
                         changed = True
+
+                new_participant = submission_form.participant.data
+                new_location = submission_form.location.data
+                new_incident_status = submission_form.status.data
+
+                if new_incident_status != submission.incident_status:
+                    changed = True
+                    update_params['incident_status'] = new_incident_status
+                if new_location != submission.location:
+                    changed = True
+                    update_params['location_id'] = new_location.id
+                if new_participant != submission.participant:
+                    changed = True
+                    update_params['participant_id'] = new_participant.id
+
+                update_params['data'] = data
+
                 if changed:
-                    submission.save()
+                    services.submissions.find(id=submission_id).update(
+                        update_params, synchronize_session=False)
+                    db.session.commit()
                     update_submission_version(submission)
 
                 if request.form.get('next'):
@@ -320,10 +360,13 @@ def submission_edit(submission_id):
                     location_types=location_types
                 )
         else:
-            master_form = edit_form_class(
-                request.form,
-                prefix=str(submission.master.id)
-            ) if submission.master else None
+            if master_submission:
+                master_form = edit_form_class(
+                    request.form,
+                    prefix=str(master_submission.id)
+                )
+            else:
+                master_form = None
 
             submission_form = edit_form_class(
                 request.form,
@@ -331,12 +374,15 @@ def submission_edit(submission_id):
                 prefix=str(submission.id)
             )
 
-            sibling_forms = [
-                edit_form_class(
-                    obj=sibling,
-                    prefix=str(sibling.id))
-                for sibling in submission.siblings
-            ]
+            if sibling_submissions:
+                sibling_forms = [
+                    edit_form_class(
+                        obj=sibling,
+                        prefix=str(sibling.id))
+                    for sibling in sibling_submissions
+                ]
+            else:
+                sibling_forms = []
 
             no_error = True
 
@@ -350,117 +396,108 @@ def submission_edit(submission_id):
             # everything has to be valid at one go. no partial update
             if master_form and selection == 'ps':
                 if master_form.validate():
-                    form_fields = list(master_form.data.keys())
+                    form_fields = master_form.data.keys()
+                    data_fields = set(form_fields).intersection(
+                        questionnaire_form.tags)
                     changed = False
-                    for form_field in form_fields:
-                        # we've had issues with quarantine and verification statuses
-                        # previously. this explicitly deals with that
-                        if form_field == 'verification_status':
-                            new_verification_status = master_form.data.get(form_field)
-                            if new_verification_status not in get_valid_values(Submission.VERIFICATION_STATUSES):
-                                continue
-                            else:
-                                if getattr(submission.master, form_field) != new_verification_status:
-                                    changed = True
-                                    setattr(submission.master, form_field, new_verification_status)
-                                continue
+                    data = master_submission.data.copy()
+                    update_params = {}
+                    overridden_fields = master_submission.overridden_fields[:] \
+                        if master_submission.overridden_fields else []
 
-                        if form_field == 'quarantine_status':
-                            new_quarantine_status = master_form.data.get(form_field)
-                            if new_quarantine_status not in get_valid_values(Submission.QUARANTINE_STATUSES):
-                                continue
-                            else:
-                                if getattr(submission.master, form_field) != new_quarantine_status:
-                                    changed = True
-                                    setattr(submission.master, form_field, new_quarantine_status)
-                                continue
-                        if (
-                            getattr(submission.master, form_field, None) !=
-                            master_form.data.get(form_field)
-                        ):
+                    new_verification_status = master_form.data.get('verification_status')
+                    new_quarantine_status = master_form.data.get('quarantine_status')
+
+                    if new_quarantine_status in get_valid_values(Submission.QUARANTINE_STATUSES):
+                        if master_submission.quarantine_status != new_quarantine_status:
+                            changed = True
+                        update_params['quarantine_status'] = new_quarantine_status
+                    if new_verification_status in get_valid_values(Submission.VERIFICATION_STATUSES):
+                        if master_submission.verification_status != new_verification_status:
+                            changed = True
+                        update_params['verification_status'] = new_verification_status
+
+                    for form_field in data_fields:
+
+                        if data.get(form_field, None) != master_form.data.get(
+                                form_field):
                             if (
                                 not master_form.data.get(form_field) and
                                 isinstance(master_form.data.get(
                                     form_field), list)
                             ):
-                                setattr(
-                                    submission.master, form_field,
-                                    None)
+                                data.pop(form_field, None)
                             else:
-                                setattr(
-                                    submission.master, form_field,
-                                    master_form.data.get(form_field))
+                                if master_form.data.get(form_field) is not None:
+                                    data[form_field] = master_form.data.get(form_field)
 
                             if (
                                 form_field not in
                                 ["quarantine_status",
                                     "verification_status"]
                             ):
-                                submission.master.overridden_fields.append(
-                                    form_field)
+                                overridden_fields.append(form_field)
                             changed = True
                     if changed:
-                        submission.master.overridden_fields = list(set(
-                            submission.master.overridden_fields))
-                        submission.master.save()
-                        update_submission_version(submission)
+                        update_params['data'] = data
+                        update_params['overridden_fields'] = array(set(
+                            overridden_fields))     # remove duplicates
+
+                        services.submissions.find(
+                            id=master_submission.id).update(
+                                update_params, synchronize_session=False)
+                        db.session.commit()
+
                 else:
                     no_error = False
 
             if selection == 'obs':
                 if submission_form.validate():
                     changed = False
+                    data = submission.data.copy()
+                    update_params = {}
+                    form_fields = set(submission_form.data.keys()).intersection(
+                        questionnaire_form.tags)
 
-                    form_fields = list(submission_form.data.keys())
+                    new_verification_status = submission_form.data.get('verification_status')
+                    new_quarantine_status = submission_form.data.get('quarantine_status')
+
+                    if new_quarantine_status in get_valid_values(Submission.QUARANTINE_STATUSES):
+                        if submission.quarantine_status != new_quarantine_status:
+                            changed = True
+                        update_params['quarantine_status'] = new_quarantine_status
+                    if new_verification_status in get_valid_values(Submission.VERIFICATION_STATUSES):
+                        if submission.verification_status != new_verification_status:
+                            changed = True
+                        update_params['verification_status'] = new_verification_status
+
                     for form_field in form_fields:
-                        # we've had issues with quarantine and verification statuses
-                        # previously. this explicitly deals with that
-                        if form_field == 'verification_status':
-                            new_verification_status = submission_form.data.get(form_field)
-                            if new_verification_status not in get_valid_values(Submission.VERIFICATION_STATUSES):
-                                continue
-                            else:
-                                if getattr(submission, form_field) != new_verification_status:
-                                    changed = True
-                                    setattr(submission, form_field, new_verification_status)
-                                continue
-
-                        if form_field == 'quarantine_status':
-                            new_quarantine_status = submission_form.data.get(form_field)
-                            if new_quarantine_status not in get_valid_values(Submission.QUARANTINE_STATUSES):
-                                continue
-                            else:
-                                if getattr(submission, form_field) != new_quarantine_status:
-                                    changed = True
-                                    setattr(submission, form_field, new_quarantine_status)
-                                continue
-                        if (
-                            getattr(submission, form_field, None) !=
-                            submission_form.data.get(form_field)
-                        ):
+                        if data.get(form_field) != \
+                                submission_form.data.get(form_field):
                             if (
                                 not submission_form.data.get(
                                     form_field) and
                                 isinstance(submission_form.data.get(
                                     form_field), list)
                             ):
-                                setattr(
-                                    submission, form_field,
-                                    None)
+                                data.pop(form_field, None)
                             else:
-                                setattr(
-                                    submission, form_field,
-                                    submission_form.data.get(form_field))
+                                if submission_form.data.get(form_field) is not None:
+                                    data[form_field] = submission_form.data.get(form_field)
                             changed = True
                     if changed:
-                        submission.save()
+                        update_params['data'] = data
+                        services.submissions.find(id=submission.id).update(
+                            update_params)
+
+                        db.session.commit()
                         update_submission_version(submission)
                     # submission is for a checklist form, update
                     # contributor completion rating
-                    update_participant_completion_rating(
-                        submission.contributor)
-            else:
-                no_error = False
+                    # update_participant_completion_rating(
+                    #     submission.participant)
+                else:
+                    no_error = False
 
             if no_error:
                 if request.form.get('next'):
@@ -468,7 +505,7 @@ def submission_edit(submission_id):
                 else:
                     return redirect(url_for(
                         'submissions.submission_list',
-                        form_id=str(submission.form.id)
+                        form_id=str(questionnaire_form.id)
                     ))
             else:
                 return render_template(
@@ -718,16 +755,20 @@ def quality_assurance_list(form_id):
     return render_template(template_name, **context)
 
 
-def update_submission_version(document):
+def update_submission_version(submission):
     # save actual version data
-    data_fields = document.form.tags
-    if document.form.form_type == 'INCIDENT':
-        data_fields.extend(['status'])
-    version_data = {k: document[k] for k in data_fields if k in document}
+    data_fields = submission.form.tags
+    version_data = {
+        k: submission.data.get(k)
+        for k in data_fields if k in submission.data}
+
+    if submission.form.form_type == 'INCIDENT':
+        version_data['status'] = submission.incident_status
 
     # get previous version
     previous = services.submission_versions.find(
-        submission=document).order_by('-timestamp').first()
+        submission=submission).order_by(
+            models.SubmissionVersion.timestamp.desc()).first()
 
     if previous:
         prev_data = json.loads(previous.data)
@@ -740,14 +781,15 @@ def update_submission_version(document):
     # save user email as identity
     channel = 'WEB'
     user = current_user._get_current_object()
-    identity = user.email if not user.is_anonymous() else 'unknown'
+    identity = user.email if not user.is_anonymous else 'unknown'
 
     services.submission_versions.create(
-        submission=document,
+        submission_id=submission.id,
         data=json.dumps(version_data),
         timestamp=datetime.utcnow(),
         channel=channel,
-        identity=identity
+        identity=identity,
+        deployment_id=submission.deployment_id
     )
 
 

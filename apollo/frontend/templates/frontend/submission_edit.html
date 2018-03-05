@@ -6,7 +6,7 @@
   <button class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
   <ul class="dropdown-menu" role="menu">
     {% for version in submission.versions -%}
-    <li><a href="{{ url_for('submissions.submission_version', submission_id=submission.pk, version_id=version.pk) }}"><span class="tonow" data-timestamp="{{ version.timestamp|timestamp }}">{{ version.timestamp.strftime('%b %d %Y %I:%M %p') }}</span> &mdash; <em>{{ version.identity }}</em></a></li>
+    <li><a href="{{ url_for('submissions.submission_version', submission_id=submission.id, version_id=version.id) }}"><span class="tonow" data-timestamp="{{ version.timestamp|timestamp }}">{{ version.timestamp.strftime('%b %d %Y %I:%M %p') }}</span> &mdash; <em>{{ version.identity }}</em></a></li>
     {%- endfor %}
   </ul>
 </div>
@@ -15,7 +15,7 @@
 {% block content %}{% set form, siblings, master = submission.form, submission.siblings, submission.master %}
 {%- from 'frontend/macros/submission_field_macros.html' import render_submission_field %}
 <form method="POST">
-<input type="hidden" name="next" value="{{ request.environ.get('HTTP_REFERER', url_for('submissions.submission_list', form_id=form.pk)) }}" />
+<input type="hidden" name="next" value="{{ request.environ.get('HTTP_REFERER', url_for('submissions.submission_list', form_id=form.id)) }}" />
 <div class="table-responsive">
 <table class="table table-bordered">
 {%- if form.form_type == 'CHECKLIST' -%}
@@ -29,39 +29,39 @@
 {%- endif -%}
 <tr>
   <th>{{ _('Participant') }}</th>
-  <td>{% if submission.contributor %}<strong>{{ submission.contributor.participant_id }}</strong> &mdash; <strong>{{ submission.contributor.name }}</strong>{%- if submission.contributor.phone %} ({{ submission.contributor.phone }}){%- endif %}
-  <input type="hidden" name="{{ submission_form['contributor'].name }}" value="{{ submission_form['contributor'].data.id|default('__None', true) }}" />
-  {%- else -%}{{ submission_form.contributor(class_='select2-container span4 input-xlarge select2 select2-observers') }}{% endif %}</td>
+  <td>{% if submission.participant %}<strong>{{ submission.participant.participant_id }}</strong> &mdash; <strong>{{ submission.participant.name }}</strong>{%- if submission.participant.phone %} ({{ submission.participant.phone }}){%- endif %}
+  <input type="hidden" name="{{ submission_form['participant'].name }}" value="{{ submission_form['participant'].data.id|default('__None', true) }}" />
+  {%- else -%}{{ submission_form.participant(class_='select2-container span4 input-xlarge select2 select2-observers') }}{% endif %}</td>
   {%- if form.form_type == 'CHECKLIST' -%}
   {%- for sib in siblings -%}
-  <td>{% if sib.contributor %}<strong>{{ sib.contributor.name }}</strong>{% if sib.contributor.phone %} ({{ sib.contributor.phone }}){% endif %} &mdash; <strong>{{ sib.contributor.participant_id }}</strong>{% endif %}</td>
+  <td>{% if sib.participant %}<strong>{{ sib.participant.name }}</strong>{% if sib.participant.phone %} ({{ sib.participant.phone }}){% endif %} &mdash; <strong>{{ sib.participant.participant_id }}</strong>{% endif %}</td>
   {%- endfor -%}
   {%- endif -%}
 </tr>
 <tr>
   <th>{{ _('Texted Phone') }}</th>
-  <td>{% if submission.contributor and submission.contributor.last_seen_phone %}<strong>{{ submission.contributor.last_seen_phone|default('N/A', true) }}</strong> {% if submission.sender_verified %}<span id="phone_verification_status" class="label label-success">verified</span>{% else %}<span id="phone_verification_status" class="label label-warning">unverified</span> {% if perms.edit_participant.can() %}<button id="verify_button" data-contributor="{{ submission.contributor.id }}" data-phone="{{ submission.contributor.last_seen_phone|default('', true) }}" data-submission="{{ submission.id }}" type="button" class="btn btn-default btn-xs" title="Verify Phone"><span class="glyphicon glyphicon-ok-sign"></span></button>{% endif %}{% endif %}{% else %}N/A{% endif %}</td>
+  <td>{% if submission.participant and submission.participant.last_seen_phone %}<strong>{{ submission.participant.last_seen_phone|default('N/A', true) }}</strong> {% if submission.sender_verified %}<span id="phone_verification_status" class="label label-success">verified</span>{% else %}<span id="phone_verification_status" class="label label-warning">unverified</span> {% if perms.edit_participant.can() %}<button id="verify_button" data-participant="{{ submission.participant.id }}" data-phone="{{ submission.participant.last_seen_phone|default('', true) }}" data-submission="{{ submission.id }}" type="button" class="btn btn-default btn-xs" title="Verify Phone"><span class="glyphicon glyphicon-ok-sign"></span></button>{% endif %}{% endif %}{% else %}N/A{% endif %}</td>
   {%- if form.form_type == 'CHECKLIST' -%}
   {%- for sib in siblings -%}
-  <td>{% if sib.contributor and sib.contributor.last_seen_phone %}<strong>{{ sib.contributor.last_seen_phone|default('N/A', true) }}</strong> {% if sib.sender_verified %}<span id="phone_verification_status" class="label label-success">verified</span>{% else %}<span id="phone_verification_status" class="label label-warning">unverified</span> {% if perms.edit_participant.can() %}<button id="verify_button" data-contributor="{{ sib.contributor.id }}" data-phone="{{ sib.contributor.last_seen_phone|default('', true) }}" data-submission="{{ sib.id }}" type="button" class="btn btn-default btn-xs" title="Verify Phone"><span class="glyphicon glyphicon-ok-sign"></span></button>{% endif %}{% endif %}{% else %}N/A{% endif %}</td>
+  <td>{% if sib.participant and sib.participant.last_seen_phone %}<strong>{{ sib.participant.last_seen_phone|default('N/A', true) }}</strong> {% if sib.sender_verified %}<span id="phone_verification_status" class="label label-success">verified</span>{% else %}<span id="phone_verification_status" class="label label-warning">unverified</span> {% if perms.edit_participant.can() %}<button id="verify_button" data-participant="{{ sib.participant.id }}" data-phone="{{ sib.participant.last_seen_phone|default('', true) }}" data-submission="{{ sib.id }}" type="button" class="btn btn-default btn-xs" title="Verify Phone"><span class="glyphicon glyphicon-ok-sign"></span></button>{% endif %}{% endif %}{% else %}N/A{% endif %}</td>
   {%- endfor -%}
   {%- endif -%}
 </tr>
 <tr>
   <th>{{ _('Role') }}</th>
-  <td>{{ submission.contributor.role|default('N/A', true) }}</td>
+  <td>{{ submission.participant.role|default('N/A', true) }}</td>
   {%- if form.form_type == 'CHECKLIST' -%}
   {%- for sib in siblings -%}
-  <td>{{ sib.contributor.role }}</td>
+  <td>{{ sib.participant.role }}</td>
   {%- endfor -%}
   {%- endif -%}
 </tr>
 {%- if form.form_type == 'CHECKLIST' -%}
 <tr>
   <th>{{ _('Location') }}</th>
-  <td><strong>{{ submission.location|default('N/A', true) }}</strong><input type="hidden" name="{{ submission_form['location'].name }}" value="{{ submission.location.id|default('__None', true) }}" /></td>
+  <td><strong>{{ submission.location.name|default('N/A', true) }}</strong><input type="hidden" name="{{ submission_form['location'].name }}" value="{{ submission.location.id|default('__None', true) }}" /></td>
   {%- for sib in siblings -%}
-  <td><strong>{{ sib.location|default('N/A', true) }}</strong></td>
+  <td><strong>{{ sib.location.name|default('N/A', true) }}</strong></td>
   {%- endfor -%}
 </tr>
 <tr>
@@ -87,9 +87,9 @@
 </tr>
 <tr>
   <th>{{ _('Supervisor') }}</th>
-  <td>{% if submission.contributor and submission.contributor.supervisor %}<strong>{{ submission.contributor.supervisor.name|default('<em>N/A</em>', true) }}</strong>{%- if submission.contributor.supervisor.phone %} ({{ submission.contributor.supervisor.phone }}){%- endif -%}{% else %}N/A{% endif %}</td>
+  <td>{% if submission.participant and submission.participant.supervisor %}<strong>{{ submission.participant.supervisor.name|default('<em>N/A</em>', true) }}</strong>{%- if submission.participant.supervisor.phone %} ({{ submission.participant.supervisor.phone }}){%- endif -%}{% else %}N/A{% endif %}</td>
   {%- for sib in siblings -%}
-  <td>{% if sib.contributor and sib.contributor.supervisor %}<strong>{{ sib.contributor.supervisor.name|default('<em>N/A</em>', true) }}</strong>{%- if sib.contributor.supervisor.phone %} ({{ sib.contributor.supervisor.phone }}){%- endif -%}{% else %}N/A{% endif %}</td>
+  <td>{% if sib.participant and sib.participant.supervisor %}<strong>{{ sib.participant.supervisor.name|default('<em>N/A</em>', true) }}</strong>{%- if sib.participant.supervisor.phone %} ({{ sib.participant.supervisor.phone }}){%- endif -%}{% else %}N/A{% endif %}</td>
   {%- endfor -%}
 </tr>
 {%- else -%}
@@ -137,7 +137,7 @@
         <td colspan="2">&nbsp;</td>
         <td style="text-align: center">
         {%- if perms.edit_both_submissions.can() -%}
-        <label for="{{ submission.pk }}" style="margin-bottom: 0"><strong>OBS 1</strong><p style="margin-top: 0.25em"><input type="radio" id="{{ submission.pk }}" class="obs1" name="submission_selection" value="obs"{% if not readonly %} checked{% endif %} /></p></label>
+        <label for="{{ submission.id }}" style="margin-bottom: 0"><strong>OBS 1</strong><p style="margin-top: 0.25em"><input type="radio" id="{{ submission.id }}" class="obs1" name="submission_selection" value="obs"{% if not readonly %} checked{% endif %} /></p></label>
         {%- else -%}
         <strong>OBS 1</strong>
         {%- endif -%}
@@ -145,7 +145,7 @@
         {%- for sibling in siblings -%}
         <td style="text-align: center">
         {%- if perms.edit_both_submissions.can() -%}
-        <label for="{{ sibling.pk }}" style="margin-bottom: 0"><strong>OBS {{ loop.index + 1 }}</strong><p style="margin-top: 0.25em"><input type="radio" id="{{ sibling.pk }}" name="submission_selection" value="" disabled></p></label>
+        <label for="{{ sibling.id }}" style="margin-bottom: 0"><strong>OBS {{ loop.index + 1 }}</strong><p style="margin-top: 0.25em"><input type="radio" id="{{ sibling.id }}" name="submission_selection" value="" disabled></p></label>
         {%- else -%}
         <strong>OBS {{ loop.index + 1 }}</strong>
         {%- endif -%}
@@ -153,20 +153,20 @@
         {%- endfor -%}
         <td style="text-align: center">
         {%- if perms.edit_both_submissions.can() -%}
-        <label for="{{ submission.master.pk }}" style="margin-bottom: 0"><strong>PS</strong><p style="margin-top: 0.25em"><input type="radio" id="{{ submission.master.pk }}" class="ps" name="submission_selection" value="ps"{% if readonly %} checked{% endif %} /></p></label>
+        <label for="{{ submission.master.id }}" style="margin-bottom: 0"><strong>PS</strong><p style="margin-top: 0.25em"><input type="radio" id="{{ submission.master.id }}" class="ps" name="submission_selection" value="ps"{% if readonly %} checked{% endif %} /></p></label>
         {%- else -%}
         <strong>PS</strong>
         {%- endif -%}
         </td>
         <td colspan="2" style="vertical-align: middle; padding-left: 1.5em"><abbr title="{{ _('Confidence Level') }}"><i class="glyphicon glyphicon-thumbs-up"></i></abbr></td>
       </tr>
-      {% for group in form.groups %}
+      {% for group in form.data.groups %}
       <tr>
         <td colspan="{{ siblings|count + 6 }}"><h4>{{ group.name }}</h4></td>
       </tr>
       {% for field in group.fields %}
-      <tr{% if field.name in submission.flagged_fields and submission.form.verifiable and perms.edit_submission_verification_status.can() %} class="warning"{% endif %}>
-        <th>{{ field.name }}</th>
+      <tr{% if field.tag in submission.flagged_fields and submission.form.verifiable and perms.edit_submission_verification_status.can() %} class="warning"{% endif %}>
+        <th>{{ field.tag }}</th>
         <td>{{ field.description }}
           {%- if field.options and not field.allows_multiple_values %}
           <span class="options">
@@ -177,25 +177,25 @@
           {%- endif %}
         </td>
         {%- if readonly -%}
-        <td class="obs-on">{{ render_submission_field(submission_form[field.name], disabled=1)}}</td>
+        <td class="obs-on">{{ render_submission_field(submission_form[field.tag], disabled=1)}}</td>
         {%- else -%}
-        <td class="obs-on{%- if submission_form[field.name].errors %} danger{%- endif -%}">{{ render_submission_field(submission_form[field.name]) }}</td>
+        <td class="obs-on{%- if submission_form[field.tag].errors %} danger{%- endif -%}">{{ render_submission_field(submission_form[field.tag]) }}</td>
         {%- endif -%}
         {%- for sibling_form in sibling_forms -%}
-        <td >{{ render_submission_field(sibling_form[field.name], disabled=1) }}</td>
+        <td >{{ render_submission_field(sibling_form[field.tag], disabled=1) }}</td>
         {%- endfor -%}
         {%- if readonly -%}
-        <td class="ps-on{%- if master_form[field.name].errors %} danger{% elif field.name in submission.master.overridden_fields %} warning{%- endif -%}"{% if field.name in submission.master.overridden_fields %} title="{{ _('Overridden Field') }}"{%- endif -%}>{{ render_submission_field(master_form[field.name]) }}</td>
+        <td class="ps-on{%- if master_form[field.tag].errors %} danger{% elif field.tag in submission.master.overridden_fields %} warning{%- endif -%}"{% if field.tag in submission.master.overridden_fields %} title="{{ _('Overridden Field') }}"{%- endif -%}>{{ render_submission_field(master_form[field.tag]) }}</td>
         {%- else -%}
-        <td class="ps-on{%- if master_form[field.name].errors %} danger{% elif field.name in submission.master.overridden_fields %} warning{%- endif -%}"{% if field.name in submission.master.overridden_fields %} title="{{ _('Overridden Field') }}"{%- endif -%}>{{ render_submission_field(master_form[field.name], disabled=1) }}</td>
+        <td class="ps-on{%- if master_form[field.tag].errors %} danger{% elif field.tag in submission.master.overridden_fields %} warning{%- endif -%}"{% if field.tag in submission.master.overridden_fields %} title="{{ _('Overridden Field') }}"{%- endif -%}>{{ render_submission_field(master_form[field.tag], disabled=1) }}</td>
         {%- endif -%}
-        {% if submission.master %}{% set score = submission.master.confidence.get(field.name, None) %}{% else %}{% set score = None %}{% endif -%}
+        {% if submission.master %}{% set score = submission.master.confidence.get(field.tag, None) %}{% else %}{% set score = None %}{% endif -%}
         {% if score == 0 %}{% set score_label = 'label-danger' -%}
         {% elif score == 1 %}{% set score_label = 'label-success' -%}
         {% elif not score %}{% set score_label = 'label-default' -%}
         {% else %}{% set score_label = 'label-warning' %}{% endif -%}
         <td style="padding-top:14px"><span class="label {{ score_label }}">{% if score == None %}-{% else %}{{ '%.3g' % score|percent_of(1, 0) }}%{% endif %}</span></td>
-        <th style="padding-top:14px"><span>{{ field.name }}</span></th>
+        <th style="padding-top:14px"><span>{{ field.tag }}</span></th>
       </tr>
       {% endfor %}
       {% endfor %}
@@ -249,10 +249,10 @@
     </tr>
     {%- for field in group.fields %}
     <tr>
-      <th style="text-align: center">{{ field.name }}</th>
+      <th style="text-align: center">{{ field.tag }}</th>
       {% if field.is_comment_field %}
-      <td colspan="2"{%- if submission_form[field.name].errors %} class="danger"{%- endif -%}>
-        {{ render_submission_field(submission_form[field.name]) }}<br />
+      <td colspan="2"{%- if submission_form[field.tag].errors %} class="danger"{%- endif -%}>
+        {{ render_submission_field(submission_form[field.tag]) }}<br />
         <p style="margin-top:-0.5em; margin-bottom:0">{{ field.description }}</p>
       </td>
       {% else %}
@@ -265,7 +265,7 @@
       </span>
       {%- endif %}
       </td>
-      <td style="min-width:6em" {%- if submission_form[field.name].errors %} class="danger"{%- endif -%}>{{ render_submission_field(submission_form[field.name]) }}</td>
+      <td style="min-width:6em" {%- if submission_form[field.tag].errors %} class="danger"{%- endif -%}>{{ render_submission_field(submission_form[field.tag]) }}</td>
       {% endif %}
     </tr>
     {% endfor -%}
@@ -303,7 +303,7 @@
       <tr id="save_comment">
         <td>
           <textarea id="comment" class="form-control"></textarea>
-          <input id="submission" name="submission" type="hidden" value="{{ submission.pk|string }}">
+          <input id="submission" name="submission" type="hidden" value="{{ submission.id|string }}">
           <input id="postcomment" type="button" class="btn btn-primary pull-right" value="Add Comment" style="margin-top:.5em;">
         </td>
       </tr>
@@ -318,7 +318,7 @@
         <button type="submit" class="btn btn-info btn-lg btn-block" style= "margin-left:1em;">Save</button>
       </div>
       <div class="col-md-2">
-        <a class="btn btn-default btn-lg btn-block" style= "margin-left:;" href="{{ request.environ.get('HTTP_REFERER', url_for('submissions.submission_list', form_id=form.pk)) }}">Cancel</a>
+        <a class="btn btn-default btn-lg btn-block" style= "margin-left:;" href="{{ request.environ.get('HTTP_REFERER', url_for('submissions.submission_list', form_id=form.id)) }}">Cancel</a>
       </div>
     </div>
   </div>
@@ -362,14 +362,14 @@
   });
   $('#verify_button').click(function() {
     var phone = $(this).data('phone');
-    var contributor = $(this).data('contributor');
+    var participant = $(this).data('participant');
     var submission = $(this).data('submission');
 
-    if (phone && contributor) {
+    if (phone && participant) {
       $.ajax({
         url: "{{ url_for('participants.participant_phone_verify') }}",
         type: 'POST',
-        data: {phone: phone, contributor: contributor, submission: submission},
+        data: {phone: phone, participant: participant, submission: submission},
         beforeSend: function (xhr, settings) {
           $('#verify_button').attr('disabled', 'disabled');
           if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {

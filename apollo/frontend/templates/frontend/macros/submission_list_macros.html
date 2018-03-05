@@ -7,7 +7,7 @@
     <th>{{ _('Participant') }}</th>
     <th>{{ _('Phone') }}</th>
     {% if form.form_type == 'CHECKLIST' %}
-    {% for group in form.groups %}
+    {% for group in form.data.groups %}
     <th class="text-center">{% if group.abbr %}<abbr title="{{ group.name }}">{{ group.abbr }}</abbr>{% else %}{{ group.name }}{% endif %}</th>
     {% endfor %}
     {% else %}
@@ -30,12 +30,12 @@
     <td>{{ submission.participant.name|default('', true) }}</td>
     <td>{{ submission.participant.primary_phone|default('', true) }}</td>
     {%- if form.form_type == 'CHECKLIST' -%}
-    {% for group in form.groups %}
+    {% for group in form.data.groups %}
     <td class="text-center">
-        {% if submission.completion[group.name] == 'Complete' %}<img src="{{ url_for('static', filename='img/tick.png') }}" alt="{{ _('complete') }}" title="{{ _('complete') }}" height="11" width="11">
-        {%- elif submission.completion[group.name] == 'Partial' %}<img src="{{ url_for('static', filename='img/caution.png') }}" alt="{{ _('partial') }}" title="{{ _('partial') }}" height="11" width="11">
-        {%- elif submission.completion[group.name] == 'Missing' %}<img src="{{ url_for('static', filename='img/red_dot.png') }}" alt="{{ _('missing') }}" title="{{ _('missing') }}" height="11" width="11">
-        {%- elif submission.completion[group.name] == 'Conflict' %}<img src="{{ url_for('static', filename='img/slash.png') }}" alt="{{ _('conflict') }}" title="{{ _('conflict') }}" height="11" width="11">
+        {% if submission.completion(group.name) == 'Complete' %}<img src="{{ url_for('static', filename='img/tick.png') }}" alt="{{ _('complete') }}" title="{{ _('complete') }}" height="11" width="11">
+        {%- elif submission.completion(group.name) == 'Partial' %}<img src="{{ url_for('static', filename='img/caution.png') }}" alt="{{ _('partial') }}" title="{{ _('partial') }}" height="11" width="11">
+        {%- elif submission.completion(group.name) == 'Missing' %}<img src="{{ url_for('static', filename='img/red_dot.png') }}" alt="{{ _('missing') }}" title="{{ _('missing') }}" height="11" width="11">
+        {%- elif submission.completion(group.name) == 'Conflict' %}<img src="{{ url_for('static', filename='img/slash.png') }}" alt="{{ _('conflict') }}" title="{{ _('conflict') }}" height="11" width="11">
         {% endif %}
     </td>
     {% endfor %}
