@@ -9,7 +9,8 @@ from apollo.participants.services import (
     ParticipantGroupService, ParticipantGroupTypeService,
     ParticipantPartnerService, ParticipantPhoneService, ParticipantRoleService,
     ParticipantService, PhoneService)
-from apollo.submissions.services import SubmissionService
+from apollo.submissions.services import (
+    SubmissionService, SubmissionCommentService, SubmissionVersionService)
 from apollo.users.services import UserService, UserUploadService
 
 events = EventService()
@@ -29,5 +30,7 @@ participant_group_types = ParticipantGroupTypeService()
 phones = PhoneService()
 samples = SampleService()
 submissions = SubmissionService()
+submission_comments = SubmissionCommentService()
+submission_versions = SubmissionVersionService()
 users = UserService()
 user_uploads = UserUploadService()
