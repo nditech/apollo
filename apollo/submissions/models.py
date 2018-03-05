@@ -156,6 +156,39 @@ class Submission(BaseModel):
         else:
             return 'Missing'
 
+    @property
+    def siblings(self):
+        if not hasattr(self, '_siblings'):
+            self._siblings = Submission.query.filter(
+                Submission.deployment_id == self.deployment_id,
+                Submission.event_id == self.event_id,
+                Submission.form_id == self.form_id,
+                Submission.location_id == self.location_id,
+                Submission.submission_type == 'O',
+                Submission.id != self.id
+            ).all()
+
+        return self._siblings
+
+    @property
+    def master(self):
+        if self.submission_type == 'M':
+            return self
+
+        if not hasattr(self, '_master'):
+            if self.form.form_type == 'INCIDENT':
+                self._master = None
+            else:
+                self._master = Submission.query.filter(
+                    Submission.deployment_id == self.deployment_id,
+                    Submission.event_id == self.event_id,
+                    Submission.form_id == self.form_id,
+                    Submission.location_id == self.location_id,
+                    Submission.submission_type == 'M'
+                ).first()
+
+            return self._master
+
 
 class SubmissionComment(BaseModel):
     __tablename__ = 'submission_comment'
