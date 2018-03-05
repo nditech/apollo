@@ -109,5 +109,6 @@ def number_format(number):
         return format_number(number)
     return format_number(number, locale)
 
+
 def reverse_dict(d):
     return {v: k for k, v in list(d.items())}
