@@ -78,7 +78,7 @@ class Submission(BaseModel):
     sender_verified = db.Column(db.Boolean, default=True)
     quarantine_status = db.Column(ChoiceType(QUARANTINE_STATUSES), default='')
     incident_status = db.Column(ChoiceType(INCIDENT_STATUSES))
-    overidden_fields = db.Column(ARRAY(db.String))
+    overridden_fields = db.Column(ARRAY(db.String))
     deployment = db.relationship('Deployment', backref='submissions')
     event = db.relationship('Event', backref='submissions')
     form = db.relationship('Form', backref='submissions')
@@ -237,7 +237,7 @@ class SubmissionVersion(BaseModel):
         ('ODK', _('ODK')),
     )
     id = db.Column(
-        db.Integer, db.Sequence('submmision_version_id_seq'),
+        db.Integer, db.Sequence('submission_version_id_seq'),
         primary_key=True)
     submission_id = db.Column(db.Integer, db.ForeignKey(
         'submission.id', ondelete='CASCADE'), nullable=False)
