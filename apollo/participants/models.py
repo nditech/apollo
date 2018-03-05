@@ -13,6 +13,23 @@ from apollo.dal.models import BaseModel
 number_cleaner = re.compile(r'[^0-9]+', re.I)
 
 
+class ParticipantSet(BaseModel):
+    __tablename__ = 'participant_set'
+
+    id = db.Column(
+        db.Integer, db.Sequence('participant_set_id_seq'), primary_key=True)
+    name = db.Column(db.String, nullable=False)
+    slug = db.Column(db.String)
+    deployment_id = db.Column(
+        db.Integer, db.ForeignKey('deployment.id', ondelete='CASCADE'),
+        nullable=False)
+    deployment = db.relationship('Deployment', backref='participant_sets')
+    extra_fields = db.Column(JSONB)
+
+    def __str__(self):
+        return self.name or ''
+
+
 groups_participants = db.Table(
     'participant_groups_participants',
     db.Column('group_id', db.Integer, db.ForeignKey('participant_group.id'),

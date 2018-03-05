@@ -78,6 +78,7 @@ wtforms-alchemy = "==0.16.6"
 nose = "==1.3.7"
 flask-debugtoolbar = "==0.10.1"
 "flake8" = "*"
+"autopep8" = "*"
 
 
 [requires]

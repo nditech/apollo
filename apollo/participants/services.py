@@ -5,10 +5,15 @@ import re
 
 from apollo.dal.service import Service
 from apollo.participants.models import (
+    ParticipantSet,
     Participant, ParticipantGroup, ParticipantGroupType, ParticipantPartner,
     ParticipantPhone, ParticipantRole, Phone)
 
 number_regex = re.compile('^[0-9]')
+
+
+class ParticipantSetService(Service):
+    __model__ = ParticipantSet
 
 
 class ParticipantService(Service):

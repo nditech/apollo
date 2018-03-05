@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
 
-from sqlalchemy.dialects.postgresql import ARRAY, JSONB
+from sqlalchemy.dialects.postgresql import ARRAY
 
 from apollo.core import db
 from apollo.dal.models import BaseModel, Resource
@@ -35,56 +35,6 @@ class Deployment(BaseModel):
 
     def __repr__(self):
         return str(self)
-
-    def __str__(self):
-        return self.name or ''
-
-
-class FormSet(BaseModel):
-    __tablename__ = 'form_set'
-
-    id = db.Column(
-        db.Integer, db.Sequence('form_set_id_seq'), primary_key=True)
-    name = db.Column(db.String, nullable=False)
-    slug = db.Column(db.String)
-    deployment_id = db.Column(
-        db.Integer, db.ForeignKey('deployment.id', ondelete='CASCADE'),
-        nullable=False)
-    deployment = db.relationship('Deployment', backref='form_sets')
-
-    def __str__(self):
-        return self.name or ''
-
-
-class LocationSet(BaseModel):
-    __tablename__ = 'location_set'
-
-    id = db.Column(
-        db.Integer, db.Sequence('location_set_id_seq'), primary_key=True)
-    name = db.Column(db.String, nullable=False)
-    slug = db.Column(db.String)
-    deployment_id = db.Column(
-        db.Integer, db.ForeignKey('deployment.id', ondelete='CASCADE'),
-        nullable=False)
-    deployment = db.relationship('Deployment', backref='location_sets')
-    admin_divisions_graph = db.Column(JSONB)
-
-    def __str__(self):
-        return self.name or ''
-
-
-class ParticipantSet(BaseModel):
-    __tablename__ = 'participant_set'
-
-    id = db.Column(
-        db.Integer, db.Sequence('participant_set_id_seq'), primary_key=True)
-    name = db.Column(db.String, nullable=False)
-    slug = db.Column(db.String)
-    deployment_id = db.Column(
-        db.Integer, db.ForeignKey('deployment.id', ondelete='CASCADE'),
-        nullable=False)
-    deployment = db.relationship('Deployment', backref='participant_sets')
-    extra_fields = db.Column(JSONB)
 
     def __str__(self):
         return self.name or ''

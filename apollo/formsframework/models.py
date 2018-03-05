@@ -10,7 +10,7 @@ from slugify import slugify_unicode
 from unidecode import unidecode
 
 from apollo.core import db
-from apollo.dal.models import Resource
+from apollo.dal.models import BaseModel, Resource
 
 NSMAP = {
     None: 'http://www.w3.org/2002/xforms',
@@ -24,6 +24,22 @@ HTML_E = ElementMaker(namespace=NSMAP['h'], nsmap=NSMAP)
 EVT_E = ElementMaker(namespace=NSMAP['ev'], nsmap=NSMAP)
 SCHEMA_E = ElementMaker(namespace=NSMAP['xsd'], nsmap=NSMAP)
 ROSA_E = ElementMaker(namespace=NSMAP['jr'], nsmap=NSMAP)
+
+
+class FormSet(BaseModel):
+    __tablename__ = 'form_set'
+
+    id = db.Column(
+        db.Integer, db.Sequence('form_set_id_seq'), primary_key=True)
+    name = db.Column(db.String, nullable=False)
+    slug = db.Column(db.String)
+    deployment_id = db.Column(
+        db.Integer, db.ForeignKey('deployment.id', ondelete='CASCADE'),
+        nullable=False)
+    deployment = db.relationship('Deployment', backref='form_sets')
+
+    def __str__(self):
+        return self.name or ''
 
 
 class Form(Resource):
@@ -141,14 +157,12 @@ class Form(Resource):
             'deviceid'
 
         subscriber_id_bind = E.bind(nodeset='/data/subscriber_id')
-        subscriber_id_bind.attrib['{{{}}}preload'.format(NSMAP['jr'])] = \
-            'property'
-        subscriber_id_bind.attrib['{{{}}}preloadParams'.format(NSMAP['jr'])] = \
-            'subscriberid'
+        subscriber_id_bind.attrib['{{{}}}preload'.format(NSMAP['jr'])] = 'property'  # noqa
+        subscriber_id_bind.attrib['{{{}}}preloadParams'.format(NSMAP['jr'])] = 'subscriberid'  # noqa
 
         phone_number_bind = E.bind(nodeset='/data/phone_number')
-        phone_number_bind.attrib['{{{}}}preload'.format(NSMAP['jr'])] = 'property'
-        phone_number_bind.attrib['{{{}}}preloadParams'.format(NSMAP['jr'])] = 'phonenumber'
+        phone_number_bind.attrib['{{{}}}preload'.format(NSMAP['jr'])] = 'property'  # noqa
+        phone_number_bind.attrib['{{{}}}preloadParams'.format(NSMAP['jr'])] = 'phonenumber'  # noqa
 
         model.append(device_id_bind)
         model.append(subscriber_id_bind)
@@ -158,7 +172,7 @@ class Form(Resource):
             grp_element = E.group(E.label(group['name']))
             for field in group['fields']:
                 data.append(etree.Element(field['tag']))
-                path = '/data/{}'.format(field['tag'])
+                # path = '/data/{}'.format(field['tag'])
 
                 # TODO: construct field data
 
@@ -188,7 +202,8 @@ class FormBuilderSerializer(object):
             data['min'] = field.get('min', 0)
             data['max'] = field.get('max', 9999)
         else:
-            sorted_options = sorted(field['options'].items(), key=itemgetter(1))
+            sorted_options = sorted(field['options'].items(),
+                                    key=itemgetter(1))
             data['options'] = [opt[0] for opt in sorted_options]
             if field.get('is_multi_choice'):
                 data['component'] = 'checkbox'
