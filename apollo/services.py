@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
-from apollo.deployments.services import (
-    EventService, FormSetService, LocationSetService, ParticipantSetService)
-from apollo.formsframework.services import FormService
+from apollo.deployments.services import EventService
+from apollo.formsframework.services import FormService, FormSetService
 from apollo.locations.services import (
-    LocationService, LocationTypeService, SampleService)
+    LocationService, LocationSetService, LocationTypeService, SampleService)
 from apollo.messaging.services import MessageService
 from apollo.participants.services import (
+    ParticipantSetService,
     ParticipantGroupService, ParticipantGroupTypeService,
     ParticipantPartnerService, ParticipantPhoneService, ParticipantRoleService,
     ParticipantService, PhoneService)

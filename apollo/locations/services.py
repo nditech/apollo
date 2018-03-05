@@ -3,7 +3,11 @@ import csv
 from io import StringIO
 
 from apollo.dal.service import Service
-from apollo.locations.models import Location, LocationType, Sample
+from apollo.locations.models import Location, LocationSet, LocationType, Sample
+
+
+class LocationSetService(Service):
+    __model__ = LocationSet
 
 
 class LocationService(Service):

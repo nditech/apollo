@@ -6,8 +6,7 @@ from sqlalchemy import and_, or_
 
 from apollo import settings
 from apollo.dal.service import Service
-from apollo.deployments.models import (
-    Event, FormSet, LocationSet, ParticipantSet)
+from apollo.deployments.models import Event
 from apollo.utils import current_timestamp
 
 app_time_zone = pytz.timezone(settings.TIMEZONE)
@@ -77,15 +76,3 @@ class EventService(Service):
             return overlapping
 
         return self.query.filter_by(id=event.id)
-
-
-class FormSetService(Service):
-    __model__ = FormSet
-
-
-class LocationSetService(Service):
-    __model__ = LocationSet
-
-
-class ParticipantSetService(Service):
-    __model__ = ParticipantSet

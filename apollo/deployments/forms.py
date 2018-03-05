@@ -4,8 +4,10 @@ from flask_babelex import lazy_gettext as _
 from flask_wtf import FlaskForm
 from wtforms import SelectField, fields, validators
 
-from apollo.deployments.models import (
-    Event, FormSet, LocationSet, ParticipantSet)
+from apollo.deployments.models import Event
+from apollo.formsframework.models import FormSet
+from apollo.locations.models import LocationSet
+from apollo.participants.models import ParticipantSet
 
 
 def generate_event_selection_form(*args, **kwargs):
