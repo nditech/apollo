@@ -160,7 +160,16 @@ class Submission(BaseModel):
             else:
                 return 'Missing'
         else:
-            pass
+            if self.overidden_fields:
+                tags_to_check = set(group_tags) - set(self.overidden_fields)
+            else:
+                tags_to_check = group_tags
+
+            all_submissions = [self] + siblings
+            for tag in tags_to_check:
+                check = {sub.data.get(tag) for sub in all_submissions}
+                if len(check) > 1:
+                    return 'Conflict'
 
     @property
     def siblings(self):
