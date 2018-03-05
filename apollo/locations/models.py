@@ -1,9 +1,27 @@
 # -*- coding: utf-8 -*-
 from sqlalchemy import and_
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import aliased
 
 from apollo.core import db
 from apollo.dal.models import BaseModel
+
+
+class LocationSet(BaseModel):
+    __tablename__ = 'location_set'
+
+    id = db.Column(
+        db.Integer, db.Sequence('location_set_id_seq'), primary_key=True)
+    name = db.Column(db.String, nullable=False)
+    slug = db.Column(db.String)
+    deployment_id = db.Column(
+        db.Integer, db.ForeignKey('deployment.id', ondelete='CASCADE'),
+        nullable=False)
+    deployment = db.relationship('Deployment', backref='location_sets')
+    admin_divisions_graph = db.Column(JSONB)
+
+    def __str__(self):
+        return self.name or ''
 
 
 samples_locations = db.Table(
