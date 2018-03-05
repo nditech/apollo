@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from flask_babelex import lazy_gettext as _
-from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.dialects.postgresql import ARRAY, JSONB
 from sqlalchemy_utils import ChoiceType
 
 from apollo.core import db
@@ -78,6 +78,7 @@ class Submission(BaseModel):
     sender_verified = db.Column(db.Boolean, default=True)
     quarantine_status = db.Column(ChoiceType(QUARANTINE_STATUSES), default='')
     incident_status = db.Column(ChoiceType(INCIDENT_STATUSES))
+    overidden_fields = db.Column(ARRAY(db.String))
     deployment = db.relationship('Deployment', backref='submissions')
     event = db.relationship('Event', backref='submissions')
     form = db.relationship('Form', backref='submissions')
@@ -147,14 +148,19 @@ class Submission(BaseModel):
     def completion(self, group_name):
         # TODO: fix conflict status
         group_tags = self.form.get_group_tags(group_name)
-        subset = [
-            self.data.get(tag) for tag in group_tags] if self.data else []
-        if subset and all(subset):
-            return 'Complete'
-        elif any(subset):
-            return 'Partial'
+        siblings = self.siblings
+        if len(siblings) == 0:
+            subset = [
+                self.data.get(tag) for tag in group_tags] if self.data else []
+
+            if subset and all(subset):
+                return 'Complete'
+            elif any(subset):
+                return 'Partial'
+            else:
+                return 'Missing'
         else:
-            return 'Missing'
+            pass
 
     @property
     def siblings(self):
