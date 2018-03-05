@@ -56,6 +56,16 @@ class Submission(BaseModel):
         ('rejected', _('Rejected'))
     )
 
+    VERIFICATION_STATUSES = (
+        ('', _('Unconfirmed')),
+        ('4', _('Confirmed'))
+    )
+
+    VERIFICATION_OPTIONS = {
+        'VERIFIED': '4',
+        'REJECTED': '5'
+    }
+
     __tablename__ = 'submission'
 
     id = db.Column(
@@ -133,7 +143,8 @@ class Submission(BaseModel):
             master_submission = cls.query.filter_by(
                 form_id=form.id, participant_id=None,
                 location_id=location.id, deployment_id=deployment_id,
-                event_id=event.id, submission_type='M')
+                event_id=event.id, submission_type='M').first()
+
             if not master_submission:
                 master_submission = cls(
                     form_id=form.id, participant_id=None,
