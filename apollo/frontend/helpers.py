@@ -69,7 +69,7 @@ def get_form_list_menu(**kwargs):
     TODO: Actually restrict forms based on user permissions
     """
     return [{'url': url_for('submissions.submission_list',
-             form_id=str(form.id)),
+             form_id=form.id),
              'text': form.name,
              'icon': '<i class="glyphicon glyphicon-check"></i>',
              'visible': True}
@@ -83,7 +83,7 @@ def get_checklist_form_dashboard_menu(**kwargs):
     :param form_type: The form type for the forms to be retrieved
     """
     return [{'url': url_for('dashboard.checklists',
-             form_id=str(form.id)),
+             form_id=form.id),
              'text': form.name,
              'icon': '<i class="glyphicon glyphicon-check"></i>',
              'visible': True}
@@ -96,10 +96,10 @@ def get_concurrent_events_list_menu():
     in a format that can be rendered on the menu
     """
     events_list = services.events.overlapping_events(g.event).order_by(
-        '-start_date')
+        models.Event.start.desc())
 
     return [{'url': url_for('dashboard.concurrent_events',
-             event_id=str(event.id)), 'text': event.name, 'visible': True,
+             event_id=event.id), 'text': event.name, 'visible': True,
              'active': get_event() == event}
             for event in events_list]
 
@@ -110,7 +110,7 @@ def get_quality_assurance_form_list_menu(**kwargs):
     :param form_type: The form type for the forms to be retrieved
     """
     return [{'url': url_for('submissions.quality_assurance_list',
-             form_id=str(form.id)),
+             form_id=form.id),
              'text': form.name,
              'icon': '<i class="glyphicon glyphicon-ok"></i>',
              'visible': True}
@@ -124,7 +124,7 @@ def get_quality_assurance_form_dashboard_menu(**kwargs):
     :param form_type: The form type for the forms to be retrieved
     """
     return [{'url': url_for('submissions.quality_assurance_dashboard',
-             form_id=str(form.id)),
+             form_id=form.id),
              'text': form.name,
              'icon': '<i class="glyphicon glyphicon-tasks"></i>',
              'visible': True}
