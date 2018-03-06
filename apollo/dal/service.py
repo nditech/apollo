@@ -36,7 +36,7 @@ class Service(object):
         return self.__model__.query.all()
 
     def get(self, *args):
-        return self.__model__.query.get(*args)
+        return self.filter(*args).one_or_none()
 
     def get_or_404(self, *args):
         rv = self.get(*args)
