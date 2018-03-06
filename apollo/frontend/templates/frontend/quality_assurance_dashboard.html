@@ -4,7 +4,7 @@
 {% block toolbar %}
 {% if perms.export_submissions.can() %}
 <div class="btn-group pull-right">
-  <a class="btn btn-sm btn-default" href="{{ url_for('submissions.quality_assurance_list', form_id=form.pk, export='observer', **request.args) }}"><i class="glyphicon glyphicon-export"></i> {{ _('Export') }}</a>
+  <a class="btn btn-sm btn-default" href="{{ url_for('submissions.quality_assurance_list', form_id=form.id, export='observer', **request.args) }}"><i class="glyphicon glyphicon-export"></i> {{ _('Export') }}</a>
 </div>
 {% endif %}
 {% endblock %}

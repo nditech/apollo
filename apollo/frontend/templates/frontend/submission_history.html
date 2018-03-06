@@ -9,7 +9,7 @@
     {% if version == submission_version %}
     <li><a href="javascript:;"><strong><span class="tonow" data-timestamp="{{ version.timestamp|timestamp }}">{{ version.timestamp.strftime('%b %d %Y %I:%M %p') }}</span> &mdash; <em>{{ version.identity }}</em></strong></a></li>
     {% else %}
-    <li><a href="{{ url_for('submissions.submission_version', submission_id=submission.pk, version_id=version.pk) }}"><span class="tonow" data-timestamp="{{ version.timestamp|timestamp }}">{{ version.timestamp.strftime('%b %d %Y %I:%M %p') }}</span> &mdash; <em>{{ version.identity }}</em></a></li>
+    <li><a href="{{ url_for('submissions.submission_version', submission_id=submission.id, version_id=version.id) }}"><span class="tonow" data-timestamp="{{ version.timestamp|timestamp }}">{{ version.timestamp.strftime('%b %d %Y %I:%M %p') }}</span> &mdash; <em>{{ version.identity }}</em></a></li>
     {% endif %}
     {%- endfor %}
   </ul>

@@ -18,18 +18,18 @@
 {% endif %}
 {% if perms.export_submissions.can() %}
 <div class="btn-group pull-right">
-  <a class="btn btn-sm btn-default" href="{{ url_for('submissions.submission_list', form_id=form.pk, export='observer', **request.args) }}"><i class="glyphicon glyphicon-export"></i> {{ _('Export') }}</a>
+  <a class="btn btn-sm btn-default" href="{{ url_for('submissions.submission_list', form_id=form.id, export='observer', **request.args) }}"><i class="glyphicon glyphicon-export"></i> {{ _('Export') }}</a>
 </div>
 {% endif %}
 {% else %}
 {% if perms.export_submissions.can() %}
 <div class="btn-group pull-right">
-  <a class="btn btn-sm btn-default" href="{{ url_for('submissions.submission_list', form_id=form.pk, export='master', **request.args) }}"><i class="glyphicon glyphicon-export"></i> {{ _('Export') }}</a>
+  <a class="btn btn-sm btn-default" href="{{ url_for('submissions.submission_list', form_id=form.id, export='master', **request.args) }}"><i class="glyphicon glyphicon-export"></i> {{ _('Export') }}</a>
   <button class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
   <ul class="dropdown-menu">
-    <li><a href="{{ url_for('submissions.submission_list', form_id=form.pk, export='observer', **request.args) }}">{{ _('Observers Data') }}</a></li>
-    <li><a href="{{ url_for('submissions.submission_list', form_id=form.pk, export='master', **request.args) }}">{{ _('Master Data') }}</a></li>
-    <li><a href="{{ url_for('submissions.submission_list', form_id=form.pk, export='aggregated', **request.args) }}">{{ _('Aggregated Data') }}</a></li>
+    <li><a href="{{ url_for('submissions.submission_list', form_id=form.id, export='observer', **request.args) }}">{{ _('Observers Data') }}</a></li>
+    <li><a href="{{ url_for('submissions.submission_list', form_id=form.id, export='master', **request.args) }}">{{ _('Master Data') }}</a></li>
+    <li><a href="{{ url_for('submissions.submission_list', form_id=form.id, export='aggregated', **request.args) }}">{{ _('Aggregated Data') }}</a></li>
   </ul>
 </div>
 {% endif %}

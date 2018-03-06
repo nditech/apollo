@@ -33,7 +33,7 @@
     </td>
     {% endfor %}
     <td style="text-align: center"><img src="{% if submission.sender_verified %}{{ url_for('static', filename='img/tick.png') }}{% else %}{{ url_for('static', filename='img/caution.png') }}{% endif %}" title="{% if submission.sender_verified %}{{ _('Verified') }}{% else %}{{ _('Unverified') }}{% endif %}" height="11" width="11" /></td>
-    {% if perms.edit_submission.can() %}<td class="text-center"><a href="{{ url_for('submissions.submission_edit', submission_id=submission.pk) }}">{{ _('Edit') }}</a></td>{% endif %}
+    {% if perms.edit_submission.can() %}<td class="text-center"><a href="{{ url_for('submissions.submission_edit', submission_id=submission.id) }}">{{ _('Edit') }}</a></td>{% endif %}
 </tr>
 {% else %}
 {% if perms.edit_submission.can() %}
