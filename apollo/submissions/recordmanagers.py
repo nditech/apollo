@@ -8,6 +8,7 @@ from operator import itemgetter
 import six
 
 from apollo import services
+from apollo.submissions.utils import make_submission_dataframe
 
 
 # ---- helpers ----
@@ -252,7 +253,7 @@ class AggregationFrameworkRecordManager(DKANRecordManager):
 
 class PandasRecordManager(DKANRecordManager):
     def _generate_for_numeric_field(self, queryset, field, location_types):
-        dataframe = queryset.to_dataframe()
+        dataframe = make_submission_dataframe(queryset)
         records = []
         for i in range(len(location_types)):
             ltypes_subset = location_types[:i + 1]
@@ -277,7 +278,7 @@ class PandasRecordManager(DKANRecordManager):
 
     def _generate_for_single_choice_field(self, queryset, field,
                                           location_types):
-        dataframe = queryset.to_dataframe()
+        dataframe = make_submission_dataframe(queryset)
         records = []
         for i in range(len(location_types)):
             ltypes_subset = location_types[:i + 1]
@@ -307,7 +308,7 @@ class PandasRecordManager(DKANRecordManager):
 
     def _generate_for_multiselect_field(self, queryset, field,
                                         location_types):
-        dataframe = queryset.to_dataframe()
+        dataframe = make_submission_dataframe(queryset)
         records = []
         for i in range(len(location_types)):
             ltypes_subset = location_types[:i + 1]

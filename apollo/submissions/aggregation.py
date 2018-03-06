@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
-from apollo.submissions.models import QUALITY_STATUSES, Submission
 from flask_babelex import gettext as _
 from itertools import groupby
 import pandas as pd
+
+from apollo.submissions.models import QUALITY_STATUSES, Submission
+from apollo.submissions.utils import make_submission_dataframe
 
 # labels
 BUCKET_LABELS = {
@@ -18,7 +20,7 @@ def aggregated_dataframe(queryset, form):
                      queryset.first().location.ancestors]
     # change order of locations so the largest is first
     agg_locations.reverse()
-    df_submissions = queryset.to_dataframe()
+    df_submissions = make_submission_dataframe(queryset)
     all_fields = []
 
     # iterate through fields

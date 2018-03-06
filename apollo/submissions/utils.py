@@ -20,7 +20,7 @@ def make_submission_dataframe(query, selected_tags=None, excluded_tags=None):
     # remove requested tags
     if excluded_tags and isinstance(excluded_tags, list):
         df_data = df_data.drop(columns=excluded_tags)
-    
+
     # restrict to requested tags
     if selected_tags and isinstance(selected_tags, list):
         df_data = df_data.filter(items=selected_tags)

@@ -4,6 +4,8 @@ from operator import itemgetter
 import numpy as np
 import pandas as pd
 
+from apollo.submissions.utils import make_submission_dataframe
+
 
 def dataframe_analysis(kind, dataframe, col):
     column_data = dataframe.get(col)
@@ -419,7 +421,7 @@ def generate_incidents_data(form, queryset, location_root, grouped=True,
                 and not field.is_comment_field]
 
     try:
-        data_frame = queryset.to_dataframe()
+        data_frame = make_submission_dataframe(queryset)
 
         if data_frame.empty:
             return incidents_summary
@@ -527,7 +529,7 @@ def generate_process_data(form, queryset, location_root, grouped=True,
                 and not field.is_comment_field]
 
     try:
-        data_frame = queryset.to_dataframe()
+        data_frame = make_submission_dataframe(queryset)
 
         if data_frame.empty:
             return process_summary
