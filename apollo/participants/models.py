@@ -174,7 +174,8 @@ class Participant(BaseModel):
     deployment = db.relationship('Deployment', backref='participants')
     location = db.relationship('Location', backref='participants')
     participant_set = db.relationship(
-        'ParticipantSet', backref='participants')
+        'ParticipantSet', backref=db.backref(
+            'participants', lazy='dynamic'))
     groups = db.relationship(
         'ParticipantGroup', secondary=groups_participants,
         backref='participants')

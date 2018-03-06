@@ -76,7 +76,8 @@ class Form(Resource):
     blank_votes_tag = db.Column(db.String)
 
     deployment = db.relationship('Deployment', backref='forms')
-    form_set = db.relationship('FormSet', backref='forms')
+    form_set = db.relationship('FormSet', backref=db.backref(
+        'forms', lazy='dynamic'))
 
     def _populate_field_cache(self):
         self._field_cache = {

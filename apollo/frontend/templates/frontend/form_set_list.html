@@ -27,7 +27,7 @@
             <tr>
               <td>{{ form_set.name }}</td>
               <td>{{ form_set.events|length }}</td>
-              <td>{{ form_set.forms|length }}</td>
+              <td>{{ form_set.forms.count() }}</td>
               <td><a href="{{ url_for('forms.list_forms', form_set_id=form_set.id) }}">{{ _('Manage') }}</a></td>
             </tr>
             {% else %}

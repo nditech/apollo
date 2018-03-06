@@ -29,7 +29,7 @@
               <td>{{ participant_set.name }}</td>
               <td>{{ participant_set.events|length }}</td>
               <td class="shrink">{{ participant_set.participant_groups|length }}</td>
-              <td>{{ participant_set.participants|length }}</td>
+              <td>{{ participant_set.participants.count() }}</td>
               <td><a href="{{ url_for('participants.participant_list', participant_set_id=participant_set.id) }}">{{ _('Manage') }}</a></td>
             </tr>
             {% else %}

@@ -254,8 +254,11 @@ class SetViewMixin(object):
 
 
 class FormSetAdminView(SetViewMixin, BaseAdminView):
-    column_list = ('name',)
+    column_list = ('name', 'forms')
     form_columns = ('name',)
+    column_formatters = {
+        'forms': macro('forms_list')
+    }
 
 
 class LocationSetAdminView(SetViewMixin, BaseAdminView):
@@ -272,8 +275,11 @@ class LocationSetAdminView(SetViewMixin, BaseAdminView):
 
 
 class ParticipantSetAdminView(SetViewMixin, BaseAdminView):
-    column_list = ('name',)
+    column_list = ('name', 'participants')
     form_columns = ('name',)
+    column_formatters = {
+        'participants': macro('participants_list')
+    }
 
 
 #     def get_one(self, pk):
