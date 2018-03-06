@@ -520,13 +520,13 @@ def generate_process_data(form, queryset, location_root, grouped=True,
     process_summary = {}
 
     location_types = {
-        child.location_type for child in location_root.children
+        child.name for child in location_root.location_type.children()
     }
 
     if not tags:
-        tags = [field.name for group in form.groups for field
-                in group.fields if field.analysis_type == 'PROCESS'
-                and not field.is_comment_field]
+        tags = [field['tag'] for group in form.data['groups'] for field
+                in group['fields'] if field['analysis_type'] == 'PROCESS'
+                and not field.get('is_comment')]
 
     try:
         data_frame = make_submission_dataframe(queryset)
