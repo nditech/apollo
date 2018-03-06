@@ -96,6 +96,12 @@ class LocationType(BaseModel):
             if p.depth != 0
         ]
 
+    def children(self):
+        return [
+            p.descendant_location_type for p in self.descendant_paths
+            if p.depth == 1
+        ]
+
     @classmethod
     def root(cls, location_set_id):
         anc = aliased(LocationTypePath)
@@ -174,6 +180,12 @@ class Location(BaseModel):
         return [
             p.descendant_location for p in self.descendant_paths
             if p.depth != 0
+        ]
+
+    def children(self):
+        return [
+            p.descendant_location for p in self.descendant_paths
+            if p.depth == 1
         ]
 
     @classmethod
