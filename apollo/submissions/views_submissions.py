@@ -562,13 +562,17 @@ def comment_create_view():
     submission = services.submissions.fget_or_404(
         id=request.form.get('submission'))
     comment = request.form.get('comment')
-    saved_comment = services.submission_comments.create(
+
+    # TODO: fix this hack
+    saved_comment = services.submission_comments.new(
         submission=submission,
         user=current_user._get_current_object(),
         comment=comment,
         submit_date=utils.current_timestamp(),
         deployment_id=submission.deployment_id
     )
+
+    saved_comment.save()
 
     return jsonify(
         comment=saved_comment.comment,
