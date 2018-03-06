@@ -44,42 +44,40 @@ participant_api.add_resource(
 admin_required = permissions.role('admin').require
 
 
-@route(bp, '/participant-sets', methods=['GET'])
-@permissions.edit_participant.require(403)
-def participant_set_list():
-    args = request.args.to_dict(flat=False)
-    page_title = _('Participant sets')
-    queryset = services.participant_sets.find(deployment=g.deployment)
-    template_name = 'frontend/participant_set_list.html'
-
-    page_spec = args.pop('page', [1])
-    try:
-        page = int(page_spec[0])
-    except (IndexError, ValueError):
-        page = 1
-
-    context = {
-        'participant_sets': queryset.paginate(
-            page=page, per_page=current_app.config.get('PAGE_SIZE')),
-        'page_title': page_title
-    }
-
-    return render_template(template_name, **context)
+def has_participant_set():
+    return g.event.participant_set is not None
 
 
-@route(bp, '/<int:participant_set_id>/participants', methods=['GET', 'POST'])
-# @register_menu(
-#     bp, 'main.participants',
-#     _('Participants'),
-#     icon='<i class="glyphicon glyphicon-user"></i>',
-#     visible_when=lambda: permissions.view_participants.can(),
-#     order=5)
+@route(bp, '/participants/set/<int:participant_set_id>', methods=['GET'])
 @permissions.view_participants.require(403)
 @login_required
 def participant_list(participant_set_id):
+    return _participant_list(participant_set_id)
+
+
+@route(bp, '/participants', methods=['GET'])
+@register_menu(
+    bp, 'main.participants',
+    _('Participants'),
+    icon='<i class="glyphicon glyphicon-user"></i>',
+    visible_when=lambda: permissions.view_participants.can()
+    and has_participant_set(),
+    order=5)
+@permissions.view_participants.require(403)
+@login_required
+def participant_list_without_set():
+    return _participant_list()
+
+
+def _participant_list(participant_set_id=0):
     page_title = _('Participants')
-    participant_set = services.participant_sets.find(
-        id=participant_set_id).first()
+    if participant_set_id:
+        participant_set = services.participant_sets.fget_or_404(
+            id=participant_set_id)
+    else:
+        participant_set = g.event.participant_set or abort(404)
+        participant_set_id = participant_set.id
+
     template_name = 'frontend/participant_list.html'
 
     sortable_columns = {
@@ -176,7 +174,7 @@ def participant_list(participant_set_id):
         )
 
 
-@route(bp, '/<int:participant_set_id>/participants/performance', methods=['GET', 'POST'])
+@route(bp, '/<int:participant_set_id>/participants/performance', methods=['GET'])
 @permissions.view_participants.require(403)
 @login_required
 def participant_performance_list(participant_set_id):
