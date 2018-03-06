@@ -6,7 +6,7 @@ from io import StringIO
 
 from flask import (
     Blueprint, Response, abort, current_app, g, jsonify, make_response,
-    redirect, render_template, request, url_for
+    redirect, render_template, request, stream_with_context, url_for
 )
 from flask_babelex import lazy_gettext as _
 from flask_httpauth import HTTPBasicAuth
@@ -51,7 +51,8 @@ def get_valid_values(choices):
 
 @auth.verify_password
 def verify_pw(username, password):
-    user = services.users.find(email=username).first()
+    deployment = g.deployment
+    user = services.users.find(deployment=deployment, email=username).first()
 
     if not user:
         return False
@@ -91,7 +92,8 @@ def submission_list(form_id):
     page_spec = data.pop('page', None) or [1]
     page = int(page_spec[0])
 
-    loc_types = displayable_location_types(is_administrative=True)
+    loc_types = displayable_location_types(
+        is_administrative=True, location_set_id=event.location_set_id)
 
     location = None
     if request.args.get('location'):
@@ -102,17 +104,24 @@ def submission_list(form_id):
     if request.args.get('export') and permissions.export_submissions.can():
         mode = request.args.get('export')
         if mode in ['master', 'aggregated']:
-            # TODO: this query was ordered by location
             queryset = services.submissions.find(
                 submission_type='M',
-                form=form
-            )
+                form=form, event=event
+            ).join(
+                models.Location,
+                models.Submission.location_id == models.Location.id
+            ).order_by(models.Location.code)
         else:
-            # TODO: this query was ordered by location, then participant
             queryset = services.submissions.find(
                 submission_type='O',
-                form=form
-            )
+                form=form, event=event
+            ).join(
+                models.Location,
+                models.Submission.location_id == models.Location.id
+            ).join(
+                models.Participant,
+                models.Submission.participant_id == models.Participant.id
+            ).order_by(models.Location.code, models.Participant.participant_id)
 
         # TODO: fix this. no exports yet. nor aggregation
         # query_filterset = filter_class(queryset, request.args)
@@ -138,26 +147,29 @@ def submission_list(form_id):
             dataset = export_buffer.getvalue()
         else:
             dataset = services.submissions.export_list(
-                # query_filterset.qs, g.deployment)
-                queryset, g.deployment)
+                # query_filterset.qs)
+                queryset)
 
         return Response(
-            dataset, headers={'Content-Disposition': content_disposition},
+            stream_with_context(dataset),
+            headers={'Content-Disposition': content_disposition},
             mimetype="text/csv"
         )
 
     # first retrieve observer submissions for the form
     # NOTE: this implicitly restricts selected submissions
     # to the currently selected event.
-    # TODO: this query was ordered by location, then participant
     queryset = services.submissions.find(
         submission_type='O',
         form=form,
         event_id=event.id
     ).join(
+        models.Location,
+        models.Submission.location_id == models.Location.id
+    ).join(
         models.Participant,
         models.Submission.participant_id == models.Participant.id
-    ).order_by(models.Participant.participant_id)
+    ).order_by(models.Location.code, models.Participant.participant_id)
 
     query_filterset = filter_class(queryset, request.args)
     filter_form = query_filterset.form
@@ -173,7 +185,7 @@ def submission_list(form_id):
         recipients.extend(current_app.config.get('MESSAGING_CC'))
 
         if message and recipients and permissions.send_messages.can():
-            send_messages.delay(str(g.event.id), message, recipients)
+            send_messages.delay(event.id, message, recipients)
             return 'OK'
         else:
             abort(400)
@@ -599,11 +611,11 @@ def _incident_csv(form_pk, location_type_pk, location_pk=None):
 
     `returns`: a string of bytes (str) containing the CSV data.
     """
-    form = services.forms.get_or_404(id=form_pk, form_type='INCIDENT')
-    location_type = services.location_types.objects.get_or_404(
+    form = services.forms.fget_or_404(id=form_pk, form_type='INCIDENT')
+    location_type = services.location_types.objects.fget_or_404(
         id=location_type_pk)
     if location_pk:
-        location = services.locations.get_or_404(id=location_pk)
+        location = services.locations.fget_or_404(id=location_pk)
         qs = services.submissions.find(submission_type='O', form=form) \
             .filter_in(location)
     else:
