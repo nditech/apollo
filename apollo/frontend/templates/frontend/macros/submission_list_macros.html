@@ -42,9 +42,9 @@
     {% else %}
     {% for field in form_fields %}
     <td class="text-center">
-    {%- if submission[field.name] -%}
+    {%- if submission.data[field.tag] -%}
     {%- if (field.options and not field.allows_multiple_values) or not (field.represents_boolean or field.is_comment_field) -%}
-    {% if field.options %}{%- set options = field.options|reverse_dict -%}<abbr title="{{ options[submission[field.name]] }}">{{ submission[field.name] }}</abbr>{% else %}{{ submission[field.name] }}{% endif %}
+    {% if field.options %}{%- set options = field.options|reverse_dict -%}<abbr title="{{ options[submission.data[field.tag]] }}">{{ submission.data[field.tag] }}</abbr>{% else %}{{ submission.data[field.tag] }}{% endif %}
     {%- else -%}
     <i class="fa fa-check success" aria-hidden="true" title="{{ _('data present') }}"></i>
     {% endif %}
