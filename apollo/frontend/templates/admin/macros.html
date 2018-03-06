@@ -5,3 +5,11 @@
 {% macro locations_list(model, column) %}
   <a href="{{ url_for('locations.location_list', location_set_id=model.id) }}">{{ model.locations.count() }}</a>
 {% endmacro %}
+
+{% macro participants_list(model, column) %}
+  <a href="{{ url_for('participants.participant_list', participant_set_id=model.id) }}">{{ model.participants.count() }}</a>
+{% endmacro %}
+
+{% macro forms_list(model, column) %}
+  <a href="{{ url_for('forms.list_forms', form_set_id=model.id) }}">{{ model.forms.count() }}</a>
+{% endmacro %}
