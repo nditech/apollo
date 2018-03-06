@@ -193,6 +193,12 @@ class Location(BaseModel):
         return cls.query.filter(
             cls.id.in_(q), cls.location_set_id == location_set_id).first()
 
+    def make_path(self):
+        data = {ans.location_type.name: ans.name for ans in self.ancestors()}
+        data.update({self.location_type.name: self.name})
+
+        return data
+
 
 class LocationPath(db.Model):
     __tablename__ = 'location_path'
