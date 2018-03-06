@@ -263,13 +263,10 @@ class FormSetAdminView(SetViewMixin, BaseAdminView):
 
 class LocationSetAdminView(SetViewMixin, BaseAdminView):
     column_list = ('name', 'divisions', 'locations', 'samples')
-    column_labels = {
-        'divisions': 'Administrative Divisions'
-    }
     column_formatters = {
         'divisions': macro('locations_builder'),
         'locations': macro('locations_list'),
-        'samples': lambda v, c, m, p: m.samples.count()
+        'samples': macro('samples_list')
     }
     form_columns = ('name',)
 
