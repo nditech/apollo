@@ -298,8 +298,6 @@ def submission_edit(submission_id):
             initial_data.update(description=submission.incident_description)
             initial_data.update(status=submission.incident_status.code)
 
-            print(initial_data)
-
         submission_form = edit_form_class(
             data=initial_data,
             prefix=str(submission.id)
