@@ -4,7 +4,7 @@
     {% if loop.last %}
     <li>{{ location.name }} &middot; <em class="locationtype">{{ location.location_type }}</em></li>
     {% else %}
-    <li><a href="{{ url_for('result_analysis.results_analysis_with_location', form_id=breadcrumb_data.form.pk, location_id=location.pk) }}">{{ location.name }}</a> &middot; <em class="locationtype">{{ location.location_type }}</em><span class="divider"></span></li>
+    <li><a href="{{ url_for('result_analysis.results_analysis_with_location', form_id=breadcrumb_data.form.id, location_id=location.id) }}">{{ location.name }}</a> &middot; <em class="locationtype">{{ location.location_type }}</em><span class="divider"></span></li>
     {% endif %}
 {% endfor %}
 </ul>
