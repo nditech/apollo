@@ -7,8 +7,6 @@ from flask_login import current_user
 from flask_principal import Permission, ItemNeed, RoleNeed
 from urllib.parse import urlparse
 
-import datetime
-
 
 def get_deployment(hostname):
     """
@@ -66,15 +64,16 @@ def get_form_list_menu(**kwargs):
     in a format that can be rendered on the menu
 
     :param form_type: The form type for the forms to be retrieved
-    TODO: Actually restrict forms based on user permissions
     """
     return [{'url': url_for('submissions.submission_list',
              form_id=form.id),
              'text': form.name,
              'icon': '<i class="glyphicon glyphicon-check"></i>',
              'visible': True}
-            for form in [f for f in services.forms.find(**kwargs).order_by('name') if Permission(ItemNeed('view_forms', f, 'object'),
-                                     RoleNeed('admin')).can()]]
+            for form in [f for f in
+                         services.forms.find(**kwargs).order_by('name')
+                         if Permission(ItemNeed('view_forms', f, 'object'),
+                                       RoleNeed('admin')).can()]]
 
 
 def get_checklist_form_dashboard_menu(**kwargs):
@@ -87,8 +86,10 @@ def get_checklist_form_dashboard_menu(**kwargs):
              'text': form.name,
              'icon': '<i class="glyphicon glyphicon-check"></i>',
              'visible': True}
-            for form in [f for f in services.forms.find(**kwargs).order_by('name') if Permission(ItemNeed('view_forms', f, 'object'),
-                                     RoleNeed('admin')).can()]]
+            for form in [f for f in
+                         services.forms.find(**kwargs).order_by('name')
+                         if Permission(ItemNeed('view_forms', f, 'object'),
+                                       RoleNeed('admin')).can()]]
 
 
 def get_concurrent_events_list_menu():
@@ -114,8 +115,10 @@ def get_quality_assurance_form_list_menu(**kwargs):
              'text': form.name,
              'icon': '<i class="glyphicon glyphicon-ok"></i>',
              'visible': True}
-            for form in [f for f in services.forms.find(**kwargs).order_by('name') if Permission(ItemNeed('view_forms', f, 'object'),
-                                     RoleNeed('admin')).can()]]
+            for form in [f for f in
+                         services.forms.find(**kwargs).order_by('name')
+                         if Permission(ItemNeed('view_forms', f, 'object'),
+                                       RoleNeed('admin')).can()]]
 
 
 def get_quality_assurance_form_dashboard_menu(**kwargs):
@@ -128,8 +131,10 @@ def get_quality_assurance_form_dashboard_menu(**kwargs):
              'text': form.name,
              'icon': '<i class="glyphicon glyphicon-tasks"></i>',
              'visible': True}
-            for form in [f for f in services.forms.find(**kwargs).order_by('name') if Permission(ItemNeed('view_forms', f, 'object'),
-                                     RoleNeed('admin')).can()]]
+            for form in [f for f in
+                         services.forms.find(**kwargs).order_by('name')
+                         if Permission(ItemNeed('view_forms', f, 'object'),
+                                       RoleNeed('admin')).can()]]
 
 
 def displayable_location_types(**kwargs):
