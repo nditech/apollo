@@ -129,7 +129,7 @@ def new_form(form_set_id):
 @permissions.edit_forms.require(403)
 @login_required
 def edit_form(form_set_id, form_id):
-    form = services.forms.get_or_404(id=form_id, form_set_id=form_set_id)
+    form = services.forms.fget_or_404(id=form_id, form_set_id=form_set_id)
     page_title = _('Edit %(name)s', name=form.name)
     template_name = 'frontend/form_edit.html'
 
@@ -176,7 +176,7 @@ def list_forms(form_set_id):
 @permissions.edit_forms.require(403)
 @login_required
 def quality_assurance(form_set_id, form_id):
-    form = services.forms.get_or_404(id=form_id, form_set_id=form_set_id)
+    form = services.forms.fget_or_404(id=form_id, form_set_id=form_set_id)
     page_title = _('Quality Assurance — %(name)s', name=form.name)
     template_name = 'frontend/quality_assurance.html'
 
@@ -200,7 +200,7 @@ def quality_assurance(form_set_id, form_id):
         (c['name'],
          c['description'], c['lvalue'], c['comparator'], c['rvalue'])
         for c in form.quality_checks
-    ]
+    ] if form.quality_checks else []
 
     context = {
         'page_title': page_title,
