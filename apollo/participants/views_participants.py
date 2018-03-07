@@ -420,7 +420,9 @@ def participant_list_import(participant_set_id):
         )
 
 
-@route(bp, '/<int:participant_set_id>/participants/headers/<int:location_set_id>/<int:upload_id>', methods=['GET', 'POST'])
+@route(bp, '/participants/set/<int:participant_set_id>/headers/locations/set'
+           '/<int:location_set_id>/upload/<int:upload_id>',
+           methods=['GET', 'POST'])
 @permissions.import_participants.require(403)
 @login_required
 def participant_headers(participant_set_id, location_set_id, upload_id):
@@ -489,7 +491,8 @@ def nuke_participants():
 
     event = g.event
     flash(
-        str_func(_('Participants, Checklists, Critical Incidents and Messages for this event are being deleted.')),
+        str_func(_('Participants, Checklists, Critical Incidents and Messages'
+                   ' for this event are being deleted.')),
         category='task_begun'
     )
 
