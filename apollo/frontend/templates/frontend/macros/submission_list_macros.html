@@ -43,7 +43,7 @@
     {% for field in form_fields %}
     <td class="text-center">
     {%- if submission.data[field.tag] -%}
-    {%- if (field.options and not field.allows_multiple_values) or not (field.represents_boolean or field.is_comment_field) -%}
+    {%- if (field.options and not field.is_multi_choice) or not (field.is_boolean or field.is_comment) -%}
     {% if field.options %}{%- set options = field.options|reverse_dict -%}<abbr title="{{ options[submission.data[field.tag]] }}">{{ submission.data[field.tag] }}</abbr>{% else %}{{ submission.data[field.tag] }}{% endif %}
     {%- else -%}
     <i class="fa fa-check success" aria-hidden="true" title="{{ _('data present') }}"></i>
@@ -82,7 +82,7 @@
 {% else %}
 {% if perms.edit_submission.can() %}
 {% if form.form_type == 'CHECKLIST' %}
-{%- set colspan = 5 + (location_types|length) + form.groups|length -%}
+{%- set colspan = 5 + (location_types|length) + form.data.groups|length -%}
 <tr class="warning">
     <td class="text-center" colspan="{{ colspan }}">{{ _('No Data Available') }}</td>
 </tr>
@@ -94,7 +94,7 @@
 {% endif %}
 {% else %}
 {% if form.form_type == 'CHECKLIST' %}
-{%- set colspan = 4 + (location_types|length) + form.groups|length -%}
+{%- set colspan = 4 + (location_types|length) + form.data.groups|length -%}
 <tr class="warning">
     <td class="text-center" colspan="{{ colspan }}">{{ _('No Data Available') }}</td>
 </tr>

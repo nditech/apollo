@@ -96,6 +96,12 @@ class LocationType(BaseModel):
             if p.depth != 0
         ]
 
+    def children(self):
+        return [
+            p.descendant_location_type for p in self.descendant_paths
+            if p.depth == 1
+        ]
+
     @classmethod
     def root(cls, location_set_id):
         anc = aliased(LocationTypePath)
@@ -176,6 +182,12 @@ class Location(BaseModel):
             if p.depth != 0
         ]
 
+    def children(self):
+        return [
+            p.descendant_location for p in self.descendant_paths
+            if p.depth == 1
+        ]
+
     @classmethod
     def root(cls, location_set_id):
         anc = aliased(LocationPath)
@@ -192,6 +204,12 @@ class Location(BaseModel):
 
         return cls.query.filter(
             cls.id.in_(q), cls.location_set_id == location_set_id).first()
+
+    def make_path(self):
+        data = {ans.location_type.name: ans.name for ans in self.ancestors()}
+        data.update({self.location_type.name: self.name})
+
+        return data
 
 
 class LocationPath(db.Model):

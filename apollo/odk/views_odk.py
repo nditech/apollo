@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
-import json
 
 from flask import Blueprint, g, make_response, render_template, request
 from flask_babelex import lazy_gettext as _
@@ -125,15 +124,14 @@ def submission():
     submission = None
 
     if form.form_type == 'CHECKLIST':
-        submission = models.Submission.objects(
-            contributor=participant,
+        submission = models.Submission.query.filter_by(
+            participant=participant,
             form=form, submission_type='O',
-            event__in=services.events.overlapping_events(g.event),
+            # event__in=services.events.overlapping_events(g.event),
             deployment=form.deployment).first()
     else:
         submission = models.Submission(
-            contributor=participant,
-            created=datetime.utcnow(),
+            participant=participant,
             deployment=participant.event.deployment,
             event=participant.event,
             form=form,
@@ -168,9 +166,9 @@ def submission():
             continue
 
         if element.text:
-            if field.is_comment_field:
+            if field.get('is_comment'):
                 setattr(submission, tag, element.text)
-            elif field.allows_multiple_values:
+            elif field.get('is_multi_choice'):
                 setattr(
                     submission, tag, [int(i) for i in element.text.split()])
             else:
@@ -181,26 +179,31 @@ def submission():
 
     if form_modified:
         return open_rosa_default_response(
-            content=_('Your submission was received, '
-            'but you sent it using an outdated form. Please download a new '
-            'copy and resend. Thank you.'), status_code=202)
+            content=_(
+                'Your submission was received, '
+                'but you sent it using an outdated form. Please download a '
+                'new copy and resend. Thank you.'), status_code=202)
     return open_rosa_default_response(status_code=201)
 
 
-def update_submission_version(document):
+def update_submission_version(submission):
     # save actual version data
-    data_fields = document.form.tags
-    if document.form.form_type == 'INCIDENT':
-        data_fields.extend(['status'])
-    version_data = {k: document[k] for k in data_fields if k in document}
+    data_fields = submission.form.tags
+    version_data = {
+        k: submission.data.get(k)
+        for k in data_fields if k in submission.data}
+
+    if submission.form.form_type == 'INCIDENT':
+        version_data['status'] = submission.incident_status.code
+        version_data['description'] = submission.incident_description
 
     # get previous version
     previous = services.submission_versions.find(
-        submission=document).order_by('-timestamp').first()
+        submission=submission).order_by(
+            models.SubmissionVersion.timestamp.desc()).first()
 
     if previous:
-        prev_data = json.loads(previous.data)
-        diff = DictDiffer(version_data, prev_data)
+        diff = DictDiffer(version_data, previous.data)
 
         # don't do anything if the data wasn't changed
         if not diff.added() and not diff.removed() and not diff.changed():
@@ -211,8 +214,8 @@ def update_submission_version(document):
     identity = participant_auth.username()
 
     services.submission_versions.create(
-        submission=document,
-        data=json.dumps(version_data),
+        submission=submission,
+        data=version_data,
         timestamp=datetime.utcnow(),
         channel=channel,
         identity=identity

@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
-from apollo.submissions.models import QUALITY_STATUSES, Submission
 from flask_babelex import gettext as _
 from itertools import groupby
 import pandas as pd
+
+from apollo.submissions.models import QUALITY_STATUSES, Submission
+from apollo.submissions.utils import make_submission_dataframe
 
 # labels
 BUCKET_LABELS = {
@@ -18,36 +20,38 @@ def aggregated_dataframe(queryset, form):
                      queryset.first().location.ancestors]
     # change order of locations so the largest is first
     agg_locations.reverse()
-    df_submissions = queryset.to_dataframe()
+    df_submissions = make_submission_dataframe(queryset)
     all_fields = []
 
     # iterate through fields
-    for group in form.groups:
-        for field in group.fields:
-            # multiselect options field
-            if field.options:
-                # column options are in the format tagname|option
-                # e.g. (AB|1, AB|2, ...)
-                # initialize the default value counts for each option
-                default_options = {'{}|{}'.format(field.name, option): 0
-                                   for option in list(field.options.values())}
-                all_fields.extend(sorted(default_options.keys()))
-                col = df_submissions.pop(field.name).tolist()
-                for i, r in enumerate(col):
-                    options = default_options.copy()
-                    # multivalued fields have a list of values
-                    if type(r) == list:
-                        for o in r:
-                            if o in list(field.options.values()):
-                                options['{}|{}'.format(field.name, o)] = 1
-                    else:
-                        if r in list(field.options.values()):
-                            options['{}|{}'.format(field.name, r)] = 1
-                    col[i] = options
-                df = pd.DataFrame(col)
-                df_submissions = df_submissions.join(df)
-            else:
-                all_fields.append(field.name)
+    tags = form.tags
+    for tag in tags:
+        field = form.get_field_by_tag(tag)
+        # multiselect options field
+        options = field.get('options')
+        if options:
+            # column options are in the format tagname|option
+            # e.g. (AB|1, AB|2, ...)
+            # initialize the default value counts for each option
+            default_options = {'{}|{}'.format(tag, option): 0
+                               for option in options.values()}
+            all_fields.extend(sorted(default_options.keys()))
+            col = df_submissions.pop(tag).tolist()
+            for i, r in enumerate(col):
+                options = default_options.copy()
+                # multivalued fields have a list of values
+                if isinstance(r, list):
+                    for o in r:
+                        if o in options.values():
+                            options['{}|{}'.format(tag, o)] = 1
+                else:
+                    if r in options.values():
+                        options['{}|{}'.format(tag, r)] = 1
+                col[i] = options
+            df = pd.DataFrame(col)
+            df_submissions = df_submissions.join(df)
+        else:
+            all_fields.append(tag)
 
     # group and aggregate
     df_agg = pd.DataFrame(columns=agg_locations + all_fields)

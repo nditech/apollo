@@ -18,16 +18,21 @@ import re
 ugly_phone = re.compile('[^\d]*')
 
 
-def update_submission_version(document):
+def update_submission_version(submission):
     # save actual version data
-    data_fields = document.form.tags
-    if document.form.form_type == 'INCIDENT':
-        data_fields.extend(['status'])
-    version_data = {k: document[k] for k in data_fields if k in document}
+    data_fields = submission.form.tags
+    version_data = {
+        k: submission.data.get(k)
+        for k in data_fields if k in submission.data}
+
+    if submission.form.form_type == 'INCIDENT':
+        version_data['status'] = submission.incident_status.code
+        version_data['description'] = submission.incident_description
 
     # get previous version
     previous = services.submission_versions.find(
-        submission=document).order_by('-timestamp').first()
+        submission=submission).order_by(
+            models.SubmissionVersion.timestamp.desc()).first()
 
     if previous:
         prev_data = json.loads(previous.data)
@@ -40,9 +45,8 @@ def update_submission_version(document):
     channel = 'SMS'
 
     services.submission_versions.create(
-        submission=document,
+        submission=submission,
         data=json.dumps(version_data),
-        timestamp=datetime.utcnow(),
         channel=channel,
         identity=g.get('phone', '')
     )
@@ -209,10 +213,10 @@ def build_questionnaire(form, data=None):
 
         for field in group['fields']:
             # if the field has options, create a list of choices
-            if field['options']:
-                choices = [(v, k) for k, v in field['options'].items()]
+            if field.get('options'):
+                choices = [(v, k) for k, v in field.get('options').items()]
 
-                if field.allows_multiple_values:
+                if field.get('is_multi_choice'):
                     fields[field['name']] = IntegerSplitterField(
                         field['name'],
                         choices=choices,
@@ -229,10 +233,10 @@ def build_questionnaire(form, data=None):
                         widget=widgets.TextInput()
                     )
             else:
-                if field['is_comment_field']:
+                if field.get('is_comment'):
                     continue
 
-                if field['represents_boolean']:
+                if field.get('is_boolean'):
                     field_validators = [validators.optional()]
                 else:
                     field_validators = [

@@ -60,15 +60,15 @@
               </span>
               {% endif -%}
             </td>
-            {%- if field.name in diff.added() or field.name in diff.removed() -%}
+            {%- if field.tag in diff.added() or field.tag in diff.removed() -%}
             {%- set context_class = 'danger' -%}
-            {%- elif field.name in diff.changed() -%}
+            {%- elif field.tag in diff.changed() -%}
             {%- set context_class = 'warning' -%}
             {%- else -%}
             {%- set context_class = 'success' -%}
             {% endif %}
-            <td class="text-center {{ context_class }}">{{ data[field.name]|default('N/A', true) }}</td>
-            <td class="text-center {{ context_class }}">{{ submission[field.name]|default('N/A', true) }}</td>
+            <td class="text-center {{ context_class }}">{{ data[field.tag]|default('N/A', true) }}</td>
+            <td class="text-center {{ context_class }}">{{ submission.data[field.tag]|default('N/A', true) }}</td>
           </tr>
           {% endfor %}
           {% endfor %}

@@ -20,14 +20,14 @@ def parse_message(form):
             response_dict, extra = parse_responses(responses, form_doc)
         if form_doc and response_dict:
             form_data = MultiDict(
-                {'form': form_doc.pk, 'participant': participant_id,
+                {'form': form_doc.id, 'participant': participant_id,
                  'sender': message['sender'], 'comment': comment})
             form_data.update(response_dict)
             questionnaire = build_questionnaire(form_doc, form_data)
 
             if questionnaire.validate():
                 submission = questionnaire.save()
-                
+
                 # if submission returns empty, then the participant
                 # was not meant to send this text.
                 # TODO: add response for no recorded submission

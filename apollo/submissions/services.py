@@ -2,17 +2,10 @@
 import csv
 from io import StringIO
 
-import pandas as pd
-
 from apollo.dal.service import Service
-from apollo.locations.models import Location, LocationType, Sample
+from apollo.locations.models import LocationType, Sample
 from apollo.submissions.models import (
     Submission, SubmissionComment, SubmissionVersion)
-
-
-def _extract_location_path(location_id):
-    location = Location.query.get(location_id)
-    return location.make_path()
 
 
 def export_field_value(form, submission, tag):
@@ -148,19 +141,6 @@ class SubmissionService(Service):
                 writer.writerow(record)
                 yield output.getvalue()
                 output.close()
-
-    def make_submission_dataframe(self, query):
-        query2 = query.with_entities(
-            Submission.data, Submission.location_id)
-
-        df = pd.read_sql(query2.statement, query2.session.bind)
-
-        df_data = df['data'].apply(pd.Series)
-        df_locations = df['location_id'].apply(
-            _extract_location_path).apply(pd.Series)
-
-        return pd.concat(
-            [df_data, df_locations], axis=1, join_axes=[df_data.index])
 
 
 class SubmissionCommentService(Service):

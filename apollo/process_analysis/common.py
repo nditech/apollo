@@ -4,6 +4,8 @@ from operator import itemgetter
 import numpy as np
 import pandas as pd
 
+from apollo.submissions.utils import make_submission_dataframe
+
 
 def dataframe_analysis(kind, dataframe, col):
     column_data = dataframe.get(col)
@@ -374,24 +376,24 @@ def generate_field_stats(field, dataset, all_tags=None):
     ''' In order to simplify the choice on what analysis to perform
     this method will check a few conditions and return the appropriate
     analysis for the field'''
-    if field.represents_boolean:
-        return generate_incident_field_stats(field.name, dataset, all_tags)
+    if field.get('is_boolean'):
+        return generate_incident_field_stats(field['tag'], dataset, all_tags)
 
-    if field.options:
-        sorted_options = sorted(iter(field.options.items()), key=itemgetter(1))
+    if field.get('options'):
+        sorted_options = sorted(field.get('options').items(), key=itemgetter(1))
         options = [i[1] for i in sorted_options]
         labels = [i[0] for i in sorted_options]
 
-        if field.allows_multiple_values:
+        if field.get('is_multi_choice'):
             return generate_mutiple_choice_field_stats(
-                field.name, dataset, options=options, labels=labels
+                field['tag'], dataset, options=options, labels=labels
             )
         else:
             return generate_single_choice_field_stats(
-                field.name, dataset, options=options, labels=labels
+                field['tag'], dataset, options=options, labels=labels
             )
 
-    return generate_numeric_field_stats(field.name, dataset)
+    return generate_numeric_field_stats(field['tag'], dataset)
 
 
 def generate_incidents_data(form, queryset, location_root, grouped=True,
@@ -410,16 +412,16 @@ def generate_incidents_data(form, queryset, location_root, grouped=True,
     incidents_summary = {}
 
     location_types = {
-        child.location_type for child in location_root.children()
+        child.name for child in location_root.location_type.children()
     }
 
     if not tags:
-        tags = [field.name for group in form.groups for field in
-                group.fields if field.analysis_type == 'PROCESS'
-                and not field.is_comment_field]
+        tags = [field['name'] for group in form.data['groups'] for field in
+                group['fields'] if field['analysis_type'] == 'PROCESS'
+                and not field.get('is_comment')]
 
     try:
-        data_frame = queryset.to_dataframe()
+        data_frame = make_submission_dataframe(queryset)
 
         if data_frame.empty:
             return incidents_summary
@@ -480,9 +482,9 @@ def generate_incidents_data(form, queryset, location_root, grouped=True,
         sample_summary = []
 
         selected_groups = set()
-        for group in form.groups:
-            for field in group.fields:
-                if field.name in tags:
+        for group in form.data['groups']:
+            for field in group['fields']:
+                if field['tag'] in tags:
                     selected_groups.add(group)
 
         for group in selected_groups:
@@ -493,9 +495,9 @@ def generate_incidents_data(form, queryset, location_root, grouped=True,
                     continue
                 field = form.get_field_by_tag(tag)
                 field_stats = generate_field_stats(field, data_frame, tags)
-                group_summary.append((tag, field.description, field_stats))
+                group_summary.append((tag, field['description'], field_stats))
 
-            sample_summary.append((group.name, group_summary))
+            sample_summary.append((group['name'], group_summary))
 
         incidents_summary['summary'] = sample_summary
 
@@ -518,16 +520,16 @@ def generate_process_data(form, queryset, location_root, grouped=True,
     process_summary = {}
 
     location_types = {
-        child.location_type for child in location_root.children
+        child.name for child in location_root.location_type.children()
     }
 
     if not tags:
-        tags = [field.name for group in form.groups for field
-                in group.fields if field.analysis_type == 'PROCESS'
-                and not field.is_comment_field]
+        tags = [field['tag'] for group in form.data['groups'] for field
+                in group['fields'] if field['analysis_type'] == 'PROCESS'
+                and not field.get('is_comment')]
 
     try:
-        data_frame = queryset.to_dataframe()
+        data_frame = make_submission_dataframe(queryset)
 
         if data_frame.empty:
             return process_summary
@@ -576,9 +578,9 @@ def generate_process_data(form, queryset, location_root, grouped=True,
         sample_summary = []
 
         selected_groups = set()
-        for group in form.groups:
-            for field in group.fields:
-                if field.name in tags:
+        for group in form.data['groups']:
+            for field in group['fields']:
+                if field['tag'] in tags:
                     selected_groups.add(group)
 
         for group in selected_groups:
@@ -589,9 +591,9 @@ def generate_process_data(form, queryset, location_root, grouped=True,
                     continue
                 field = form.get_field_by_tag(tag)
                 field_stats = generate_field_stats(field, data_frame, tags)
-                group_summary.append((tag, field.description, field_stats))
+                group_summary.append((tag, field['description'], field_stats))
 
-            sample_summary.append((group.name, group_summary))
+            sample_summary.append((group['name'], group_summary))
 
         process_summary['summary'] = sample_summary
 

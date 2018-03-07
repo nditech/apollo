@@ -5,9 +5,9 @@
     <li>{{ location.name }} &middot; <em class="locationtype">{{ location.location_type }}</em></li>
     {% else %}
     {% if breadcrumb_data.tag %}
-      {% set linkto = url_for('process_analysis.process_analysis_with_location_and_tag', form_id=breadcrumb_data.form.pk, location_id=location.pk, tag=breadcrumb_data.tag) %}
+      {% set linkto = url_for('process_analysis.process_analysis_with_location_and_tag', form_id=breadcrumb_data.form.id, location_id=location.id, tag=breadcrumb_data.tag) %}
     {% else %}
-      {% set linkto = url_for('process_analysis.process_analysis_with_location', form_id=breadcrumb_data.form.pk, location_id=location.pk) %}
+      {% set linkto = url_for('process_analysis.process_analysis_with_location', form_id=breadcrumb_data.form.id, location_id=location.id) %}
     {% endif %}
     <li><a href="{{ linkto }}">{{ location.name }}</a> &middot; <em class="locationtype">{{ location.location_type }}</em><span class="divider"></span></li>
     {% endif %}
