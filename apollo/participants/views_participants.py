@@ -122,7 +122,7 @@ def _participant_list(participant_set_id=0):
         recipients.extend(current_app.config.get('MESSAGING_CC'))
 
         if message and recipients and permissions.send_messages.can():
-            send_messages.delay(str(g.event.pk), message, recipients)
+            send_messages.delay(g.event.id, message, recipients)
             return 'OK'
         else:
             abort(400)

@@ -2,10 +2,12 @@
 import calendar
 from collections import OrderedDict
 import re
+
 from babel.numbers import format_number
 from flask import Markup
 from flask_babelex import get_locale, lazy_gettext as _
 import pandas as pd
+
 from apollo.process_analysis.common import (
     dataframe_analysis, multiselect_dataframe_analysis)
 
@@ -17,29 +19,29 @@ def _clean(fieldname):
 
 def checklist_question_summary(form, field, location, dataframe):
     stats = {'urban': {}}
-    if field.options:
+    if field.get('options'):
         stats['type'] = 'discrete'
         stats['options'] = OrderedDict(
-            sorted(list(field.options.items()), key=lambda x: x[1])
+            sorted(field.get('options').items(), key=lambda x: x[1])
         )
     else:
         stats['type'] = 'continuous'
 
-    if field.allows_multiple_values:
+    if field.get('is_multi_choice'):
         stats.update(multiselect_dataframe_analysis(
-            dataframe, field.name, sorted(field.options.values())))
+            dataframe, field['tag'], sorted(field.get('options').values())))
     else:
-        stats.update(dataframe_analysis(stats['type'], dataframe, field.name))
+        stats.update(dataframe_analysis(stats['type'], dataframe, field['tag']))
 
     try:
         for name, grp in dataframe.groupby('urban'):
-            if field.allows_multiple_values:
+            if field.get('is_multi_choice'):
                 stats['urban']['Urban' if name else 'Rural'] = \
                     multiselect_dataframe_analysis(
-                        grp, field.name, sorted(field.options.values()))
+                        grp, field['tag'], sorted(field.get('options').values()))
             else:
                 stats['urban']['Urban' if name else 'Rural'] = \
-                    dataframe_analysis(stats['type'], grp, field.name)
+                    dataframe_analysis(stats['type'], grp, field['tag'])
     except KeyError:
         pass
 

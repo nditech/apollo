@@ -168,9 +168,9 @@ def submission():
             continue
 
         if element.text:
-            if field.is_comment_field:
+            if field.get('is_comment'):
                 setattr(submission, tag, element.text)
-            elif field.allows_multiple_values:
+            elif field.get('is_multi_choice'):
                 setattr(
                     submission, tag, [int(i) for i in element.text.split()])
             else:

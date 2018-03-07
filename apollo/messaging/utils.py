@@ -91,10 +91,10 @@ def parse_responses(responses_text, form):
     defined in `form`: numeric fields are first matched, then boolean
     fields are.
     '''
-    fields = [fi for group in form.groups for fi in group.fields
-              if not fi.is_comment_field]
-    numeric_fields = [f.name for f in fields if not f.represents_boolean]
-    boolean_fields = [f.name for f in fields if f.represents_boolean]
+    fields = [fi for group in form.data['groups'] for fi in group['fields']
+              if not fi.get('is_comment')]
+    numeric_fields = [f['tag'] for f in fields if not f.get('is_boolean')]
+    boolean_fields = [f['tag'] for f in fields if f.get('is_boolean')]
 
     substrate = re.sub(r'(\n|\r|\r\n)', '', responses_text)
     responses = OrderedDict()
@@ -123,7 +123,8 @@ def parse_responses(responses_text, form):
 
     # finally, get any unknown tags
     default_pattern = re.compile(r'(?P<tag>[A-Z]+)(?P<answer>\d+)', flags=re.I)
-    responses.update((r.group('tag').upper(), r.group('answer')) for r in
+    responses.update(
+        (r.group('tag').upper(), r.group('answer')) for r in
         default_pattern.finditer(substrate))
 
     # remove all assumed tags
