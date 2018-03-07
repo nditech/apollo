@@ -34,6 +34,7 @@ from apollo.submissions.aggregation import (
     aggregated_dataframe, _quality_check_aggregation)
 from apollo.submissions.models import QUALITY_STATUSES, Submission
 from apollo.submissions.recordmanagers import AggFrameworkExporter
+from apollo.submissions.utils import make_submission_dataframe
 from slugify import slugify_unicode
 
 
@@ -591,7 +592,7 @@ def comment_create_view():
     )
 
 
-def _incident_csv(form_pk, location_type_pk, location_pk=None):
+def _incident_csv(form_id, location_type_id, location_id=None):
     """Given an incident form id, a location type id, and optionally
     a location id, return a CSV file of the number of incidents of each
     type (form field tag) that has occurred, either for the entire
@@ -604,27 +605,38 @@ def _incident_csv(form_pk, location_type_pk, location_pk=None):
     LOC | A | B | ... | Z | TOT
     NY  | 2 | 0 | ... | 5 |  7
 
-    `param form_pk`: a `class`Form id
-    `param location_type_pk`: a `class`LocationType id
-    `param location_pk`: an optional `class`Location id. if given, only
+    `param form_id`: a `class`Form id
+    `param location_type_id`: a `class`LocationType id
+    `param location_id`: an optional `class`Location id. if given, only
     submissions under that location will be queried.
 
     `returns`: a string of bytes (str) containing the CSV data.
     """
-    form = services.forms.fget_or_404(id=form_pk, form_type='INCIDENT')
-    location_type = services.location_types.objects.fget_or_404(
-        id=location_type_pk)
-    if location_pk:
-        location = services.locations.fget_or_404(id=location_pk)
-        qs = services.submissions.find(submission_type='O', form=form) \
-            .filter_in(location)
-    else:
-        qs = services.submissions.find(submission_type='O', form=form)
-
     event = get_event()
-    tags = [fi.name for group in form.groups for fi in group.fields]
-    qs = qs(created__lte=event.end_date, created__gte=event.start_date)
-    df = qs.dataframe()
+    form = services.forms.fget_or_404(id=form_id, form_type='INCIDENT')
+    location_type = services.location_types.objects.fget_or_404(
+        id=location_type_id)
+
+    submission_query = services.submissions.find(
+        submission_type='O', form=form, event=event)
+
+    if location_id:
+        location_query = models.Location.query.with_entities(
+            models.Location.id
+        ).join(
+            models.LocationPath,
+            models.Location.id == models.LocationPath.descendant_id
+        ).filter(models.LocationPath.ancestor_id == location_id)
+
+        submission_query = submission_query.filter(
+                models.Submission.location_id.in_(location_query))
+
+    tags = form.tags
+    submission_query = submission_query.filter(
+        models.Submission.created <= event.end,
+        models.Submission.created >= event.start)
+
+    df = make_submission_dataframe(submission_query)
     ds = Dataset()
     ds.headers = ['LOC'] + tags + ['TOT']
 
@@ -634,21 +646,21 @@ def _incident_csv(form_pk, location_type_pk, location_pk=None):
     return ds.csv
 
 
-@route(bp, '/incidents/form/<form_pk>/locationtype/<location_type_pk>/incidents.csv')
+@route(bp, '/incidents/form/<form_id>/locationtype/<location_type_id>/incidents.csv')
 @login_required
-def incidents_csv_dl(form_pk, location_type_pk):
+def incidents_csv_dl(form_id, location_type_id):
     response = make_response(
-        _incident_csv(form_pk, location_type_pk))
+        _incident_csv(form_id, location_type_id))
     response.headers['Content-Type'] = 'text/csv'
 
     return response
 
 
-@route(bp, '/incidents/form/<form_pk>/locationtype/<location_type_pk>/location/<location_pk>/incidents.csv')
+@route(bp, '/incidents/form/<form_id>/locationtype/<location_type_id>/location/<location_id>/incidents.csv')
 @login_required
-def incidents_csv_with_location_dl(form_pk, location_type_pk, location_pk):
+def incidents_csv_with_location_dl(form_id, location_type_id, location_id):
     response = make_response(
-        _incident_csv(form_pk, location_type_pk, location_pk))
+        _incident_csv(form_id, location_type_id, location_id))
     response.headers['Content-Type'] = 'text/csv'
 
     return response
