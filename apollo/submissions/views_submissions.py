@@ -702,7 +702,7 @@ def submission_version(submission_id, version_id):
         and permissions.view_quality_assurance.can(),
     dynamic_list_constructor=partial(
         get_quality_assurance_form_dashboard_menu,
-        form_type='CHECKLIST', verifiable=True))
+        form_type='CHECKLIST', quality_assurance_enabled=True))
 @permissions.view_quality_assurance.require(403)
 @login_required
 def quality_assurance_dashboard(form_id):
@@ -753,7 +753,7 @@ def quality_assurance_dashboard(form_id):
     icon='<i class="glyphicon glyphicon-ok"></i>', order=1,
     dynamic_list_constructor=partial(
         get_quality_assurance_form_list_menu,
-        form_type='CHECKLIST', verifiable=True))
+        form_type='CHECKLIST', quality_assurance_enabled=True))
 @permissions.view_quality_assurance.require(403)
 @login_required
 def quality_assurance_list(form_id):
