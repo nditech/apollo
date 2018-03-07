@@ -12,7 +12,7 @@ a:hover.arrow-style{text-decoration:none; color:#333;}
 {% endblock %}
 {% block toolbar %}
   {%- if perms.export_participants.can() -%}
-  <a class="btn btn-sm btn-default pull-right" href="{{ url_for('participants.participant_performance_list', export='true', **request.args) }}"><i class="glyphicon glyphicon-export"></i> {{ _('Export') }}</a>
+  <a class="btn btn-sm btn-default pull-right" href="{{ url_for('participants.participant_performance_list_with_set', export='true', participant_set_id=participant_set_id, **request.args) }}"><i class="glyphicon glyphicon-export"></i> {{ _('Export') }}</a>
   {%- endif -%}
   {%- if perms.send_messages.can() -%}
   <button class="btn btn-sm btn-success pull-right" id="send_message_modal_btn" style="margin-right:1em;"><i class="glyphicon glyphicon-envelope"></i> {{ _('Send Message') }}</button>
@@ -42,12 +42,12 @@ a:hover.arrow-style{text-decoration:none; color:#333;}
            <thead>
              <tr>
               <th><input type="checkbox" class="checked" id="select_all" name="select_all"></th>
-               <th><a href="{{ url_for('participants.participant_performance_list', sort_by='id', **args) }}" class="arrow-style"><img src="{{ url_for('static', filename='img/double-arrow.gif') }}" class="img pull-left"></img>{{ _('ID') }}</a></th>
+               <th><a href="{{ url_for('participants.participant_performance_list_with_set', sort_by='id', **args) }}" class="arrow-style"><img src="{{ url_for('static', filename='img/double-arrow.gif') }}" class="img pull-left"></img>{{ _('ID') }}</a></th>
                {%- for location_type in location_types -%}
                <th>{{ location_type.name }}</th>
                {%- endfor -%}
                <th>{{ _('Location') }}</th>
-               <th><a href="{{ url_for('participants.participant_performance_list', sort_by='name', **args) }}" class="arrow-style"><img src="{{ url_for('static', filename='img/double-arrow.gif') }}" class="img pull-left"></img>{{ _('Name') }}</a></th>
+               <th><a href="{{ url_for('participants.participant_performance_list_with_set', sort_by='name', **args) }}" class="arrow-style"><img src="{{ url_for('static', filename='img/double-arrow.gif') }}" class="img pull-left"></img>{{ _('Name') }}</a></th>
                <th>{{ _('Role') }}</th>
                <th>{{ _('Phone') }}</th>
                <th class="text-right">{{ _('Messages') }}</th>
