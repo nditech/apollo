@@ -22,7 +22,7 @@
 {% macro participants_list(model, column) %}
 <div class="btn-group btn-group-sm" role="group" aria-label="...">
   <a href="javascript:;" class="btn btn-default disabled">{{ model.participants.count() }}</a>
-  <a href="{{ url_for('participants.participant_list', participant_set_id=model.id) }}" class="btn btn-default">Manage</a>
+  <a href="{{ url_for('participants.participant_list_with_set', participant_set_id=model.id) }}" class="btn btn-default">Manage</a>
 </div>
 {% endmacro %}
 

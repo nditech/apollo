@@ -48,14 +48,9 @@ def has_participant_set():
     return g.event.participant_set is not None
 
 
-@route(bp, '/participants/set/<int:participant_set_id>', methods=['GET'])
-@permissions.view_participants.require(403)
-@login_required
-def participant_list(participant_set_id):
-    return _participant_list(participant_set_id)
-
-
-@route(bp, '/participants', methods=['GET'])
+@route(bp, '/participants/set/<int:participant_set_id>',
+       endpoint="participant_list_with_set", methods=['GET'])
+@route(bp, '/participants', endpoint="participant_list", methods=['GET'])
 @register_menu(
     bp, 'main.participants',
     _('Participants'),
@@ -65,20 +60,16 @@ def participant_list(participant_set_id):
     order=5)
 @permissions.view_participants.require(403)
 @login_required
-def participant_list_without_set():
-    return _participant_list()
-
-
-def _participant_list(participant_set_id=0):
-    page_title = _('Participants')
+def participant_list(participant_set_id=0):
     if participant_set_id:
         participant_set = services.participant_sets.fget_or_404(
             id=participant_set_id)
+        template_name = 'frontend/participant_list_with_set.html'
     else:
         participant_set = g.event.participant_set or abort(404)
-        participant_set_id = participant_set.id
+        template_name = 'frontend/participant_list.html'
 
-    template_name = 'frontend/participant_list.html'
+    page_title = _('Participants')
 
     sortable_columns = {
         'id': 'participant_id',
@@ -87,7 +78,8 @@ def _participant_list(participant_set_id=0):
     }
 
     # try:
-    #     extra_fields = [f for f in g.deployment.participant_extra_fields if getattr(f, 'listview_visibility', False) is True]
+    #     extra_fields = [f for f in g.deployment.participant_extra_fields
+    #                     if getattr(f, 'listview_visibility', False) is True]
     # except AttributeError:
     #     extra_fields = []
     extra_fields = []
@@ -100,7 +92,7 @@ def _participant_list(participant_set_id=0):
     #     sortable_columns.update({field.name: field.name})
 
     queryset = services.participants.find(
-        deployment=g.deployment, participant_set_id=participant_set_id)
+        deployment=g.deployment, participant_set_id=participant_set.id)
     sample_participant = queryset.first()
 
     # load the location set linked to the participants if any
@@ -109,7 +101,7 @@ def _participant_list(participant_set_id=0):
     else:
         location_set_id = None
     filter_class = filters.participant_filterset(
-        participant_set_id, location_set_id)
+        participant_set.id, location_set_id)
     queryset_filter = filter_class(queryset, request.args)
     location_sets = services.location_sets.find(deployment=g.deployment)
 
@@ -117,8 +109,9 @@ def _participant_list(participant_set_id=0):
 
     if request.form.get('action') == 'send_message':
         message = request.form.get('message', '')
-        recipients = [x for x in [participant.phone if participant.phone else ''
-                for participant in queryset_filter.qs] if x is not '']
+        recipients = [x for x in [participant.phone
+                      if participant.phone else ''
+                      for participant in queryset_filter.qs] if x is not '']
         recipients.extend(current_app.config.get('MESSAGING_CC'))
 
         if message and recipients and permissions.send_messages.can():
@@ -145,7 +138,8 @@ def _participant_list(participant_set_id=0):
         args = request.args.to_dict(flat=False)
         page_spec = args.pop('page', None) or [1]
         page = int(page_spec[0])
-        args['participant_set_id'] = participant_set_id
+        if participant_set_id:
+            args['participant_set_id'] = participant_set_id
 
         sort_by = sortable_columns.get(
             args.pop('sort_by', ''), 'participant_id')
@@ -161,7 +155,7 @@ def _participant_list(participant_set_id=0):
             location_set_id=location_set_id,
             location_sets=location_sets,
             page_title=page_title,
-            participant_set_id=participant_set_id,
+            participant_set_id=participant_set.id,
             location_types=helpers.displayable_location_types(
                 is_administrative=True),
             participants=subset.paginate(
@@ -174,12 +168,22 @@ def _participant_list(participant_set_id=0):
         )
 
 
-@route(bp, '/<int:participant_set_id>/participants/performance', methods=['GET'])
+@route(bp, '/participants/set/<int:participant_set_id>/performance',
+       endpoint="participant_performance_list_with_set", methods=['GET'])
+@route(bp, '/participants/performance',
+       endpoint='participant_performance_list', methods=['GET'])
 @permissions.view_participants.require(403)
 @login_required
-def participant_performance_list(participant_set_id):
+def participant_performance_list(participant_set_id=0):
+    if participant_set_id:
+        participant_set = services.participant_sets.fget_or_404(
+            id=participant_set_id)
+        template_name = 'frontend/participant_performance_list_with_set.html'
+    else:
+        participant_set = g.event.participant_set or abort(404)
+        template_name = 'frontend/participant_performance_list.html'
+
     page_title = _('Participants Performance')
-    template_name = 'frontend/participant_performance_list.html'
 
     sortable_columns = {
         'id': 'participant_id',
@@ -205,7 +209,7 @@ def participant_performance_list(participant_set_id):
         location_set_id = None
 
     filter_class = filters.participant_filterset(
-        participant_set_id, location_set_id)
+        participant_set.id, location_set_id)
     queryset_filter = filter_class(queryset, request.args)
 
     form = DummyForm(request.form)
@@ -240,6 +244,8 @@ def participant_performance_list(participant_set_id):
         args = request.args.to_dict(flat=False)
         page_spec = args.pop('page', None) or [1]
         page = int(page_spec[0])
+        if participant_set_id:
+            args['participant_set_id'] = participant_set_id
 
         sort_by = sortable_columns.get(
             args.pop('sort_by', ''), 'participant_id')
@@ -254,7 +260,7 @@ def participant_performance_list(participant_set_id):
             location=location,
             location_set_id=location_set_id,
             page_title=page_title,
-            participant_set_id=participant_set_id,
+            participant_set_id=participant_set.id,
             location_types=helpers.displayable_location_types(
                 is_administrative=True),
             participants=subset.paginate(
