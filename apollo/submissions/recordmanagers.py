@@ -37,6 +37,10 @@ def sum2(iterable):
     return sum(item for item in iterable if item)
 
 
+def cmp(a, b):
+    return (a > b) - (a < b)
+
+
 def location_type_comparer(location_types, left, right):
     for location_type in location_types:
         result = cmp(left.get(location_type), right.get(location_type))
@@ -56,14 +60,14 @@ class DKANRecordManager(six.with_metaclass(abc.ABCMeta)):
         field = form.get_field_by_tag(tag)
 
         # this doesn't make sense for fields not flagged for process analysis
-        if field.analysis_type != 'PROCESS':
+        if field['analysis_type'] != 'PROCESS':
             return []
 
-        if field.allows_multiple_values:
+        if field['is_boolean']:
             # multiselect field
             return self._generate_for_multiselect_field(queryset, field,
                                                         location_types)
-        elif field.options:
+        elif field.get('options'):
             # single-choice field
             return self._generate_for_single_choice_field(queryset, field,
                                                           location_types)
@@ -259,12 +263,12 @@ class PandasRecordManager(DKANRecordManager):
             ltypes_subset = location_types[:i + 1]
             grouped_data = dataframe.groupby(ltypes_subset)
             for name, group in grouped_data:
-                if isinstance(name, six.string_types):
+                if isinstance(name, str):
                     row = {ltypes_subset[0]: name}
                 else:
                     row = dict(list(zip(ltypes_subset, name)))
 
-                row[field.description] = int(group[field.name].fillna(0).sum())
+                row[field['description']] = int(group[field['tag']].fillna(0).sum())
                 records.append(row)
 
         # sort
@@ -272,7 +276,7 @@ class PandasRecordManager(DKANRecordManager):
         records = sorted(records, cmp=comparer)
 
         # headers
-        headers = location_types + [field.description]
+        headers = location_types + [field['description']]
 
         return records, headers
 
@@ -288,9 +292,9 @@ class PandasRecordManager(DKANRecordManager):
                     row = {ltypes_subset[0]: name}
                 else:
                     row = dict(list(zip(ltypes_subset, name)))
-                value_counts = group[field.name].value_counts().to_dict()
-                for description, option in list(field.options.items()):
-                    row['{} | {}'.format(field.description, description)] = \
+                value_counts = group[field['tag']].value_counts().to_dict()
+                for description, option in field['options'].items():
+                    row['{} | {}'.format(field['description'], description)] = \
                                         value_counts.get(option, 0)
                 records.append(row)
 
@@ -299,10 +303,10 @@ class PandasRecordManager(DKANRecordManager):
         records = sorted(records, cmp=comparer)
 
         # headers
-        sorted_options = sorted(list(field.options.items()), key=itemgetter(1))
+        sorted_options = sorted(field['options'].items(), key=itemgetter(1))
         headers = location_types + [
             '{0} | {1}'.format(
-                field.description, s_opt[0]) for s_opt in sorted_options]
+                field['description'], s_opt[0]) for s_opt in sorted_options]
 
         return records, headers
 
@@ -317,11 +321,11 @@ class PandasRecordManager(DKANRecordManager):
                 if isinstance(name, six.string_types):
                     row = {ltypes_subset[0]: name}
                 else:
-                    row = dict(list(zip(ltypes_subset, name)))
+                    row = dict(zip(ltypes_subset, name))
                 counter = collections.Counter(flatten(
-                            group[field.name].tolist()))
-                for description, option in list(field.options.items()):
-                    row['{} | {}'.format(field.description, description)] = \
+                            group[field['tag']].tolist()))
+                for description, option in field['options'].items():
+                    row['{} | {}'.format(field['description'], description)] = \
                             counter.get(option)
                 records.append(row)
 
@@ -330,10 +334,10 @@ class PandasRecordManager(DKANRecordManager):
         records = sorted(records, cmp=comparer)
 
         # headers
-        sorted_options = sorted(list(field.options.items()), key=itemgetter(1))
+        sorted_options = sorted(list(field['options'].items()), key=itemgetter(1))
         headers = location_types + [
             '{0} | {1}'.format(
-                field.description, s_opt[0]) for s_opt in sorted_options]
+                field['description'], s_opt[0]) for s_opt in sorted_options]
 
         return records, headers
 
