@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
-from apollo import models
-from apollo import services
+from urllib.parse import urlparse
+
 from flask import session, request, g, url_for
 from flask_babelex import get_locale
 from flask_login import current_user
 from flask_principal import Permission, ItemNeed, RoleNeed
-from urllib.parse import urlparse
+from sqlalchemy import func
 
-import datetime
+from apollo import models, services
+
 
 
 def get_deployment(hostname):
@@ -133,8 +134,12 @@ def get_quality_assurance_form_dashboard_menu(**kwargs):
 
 
 def displayable_location_types(**kwargs):
-    temp = services.location_types.find(**kwargs)
-    return sorted(temp, key=lambda x: len(x.ancestors_ref))
+    return services.location_types.find(**kwargs).join(
+        models.LocationTypePath,
+        models.LocationType.id == models.LocationTypePath.descendant_id
+    ).order_by(
+        func.count(models.LocationType.deployment_id)
+    ).group_by('id').all()
 
 
 def analysis_breadcrumb_data(form, location, tag=None,
@@ -142,8 +147,9 @@ def analysis_breadcrumb_data(form, location, tag=None,
     '''A helper function to populate the breadcrumb data structure
     for both analysis and quality assurance views.'''
     loc_type_names = [
-        lt.name for lt in services.location_types.find(is_political=True)]
-    location_branch = list(location.ancestors_ref)[::-1] + [location]
+        lt.name for lt in services.location_types.find(
+            is_political=True, location_set_id=location.location_set_id)]
+    location_branch = location.ancestors() + [location]
     displayed_locations = [
         loc for loc in location_branch if loc.location_type in loc_type_names]
 
