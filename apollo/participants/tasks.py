@@ -222,9 +222,10 @@ def update_participants(dataframe, header_map, participant_set, location_set):
                         # perhaps supervisor exists further along.
                         # cache the refs
                         unresolved_supervisors.add(
-                            (participant_id, str(supervisor_id))
+                            (participant_id, supervisor_id)
                         )
-            participant.supervisor = supervisor
+                    else:
+                        participant.supervisor_id = supervisor.id
 
         if GENDER_COL:
             gender_spec = record[GENDER_COL]
@@ -339,7 +340,7 @@ def update_participants(dataframe, header_map, participant_set, location_set):
                 participant_id,
                 _('Supervisor with ID %(id)s not found', id=supervisor_id)))
         else:
-            participant.supervisor = supervisor
+            participant.supervisor_id = supervisor.id
             participant.save()
 
     return dataframe.shape[0], errors, warnings
