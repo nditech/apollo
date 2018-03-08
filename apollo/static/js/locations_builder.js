@@ -49,6 +49,10 @@ function getParents(element_id) {
     function (link) { return link.get('source').id; });
 }
 
+$('#addDivision').on('shown.bs.modal', function () {
+  $('#addDivisionName').focus();
+});
+
 $('#addDivisionModalButton').click(function (ev) {
   $('#addDivisionName').val('');
   $('#addDivisionAdministrative').prop('checked', false);

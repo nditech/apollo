@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from flask_migrate import upgrade
 from flask_script import Command, Option
 
 
@@ -25,5 +26,9 @@ class GunicornServer(Command):
 
             def load(self):
                 return app
+
+        # apply any pending database migrations before starting app server
+        with app.app_context():
+            upgrade()
 
         FlaskApplication().run()

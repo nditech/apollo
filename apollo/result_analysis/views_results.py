@@ -24,7 +24,7 @@ def get_result_analysis_menu():
         'icon': '<i class="glyphicon glyphicon-stats"></i>'
     } for form in forms.find(
         form_type='CHECKLIST',
-        groups__fields__analysis_type='RESULT'
+        # groups__fields__analysis_type='RESULT'  # TODO: critical.
     ).order_by('form_type', 'name')]
 
 

@@ -8,7 +8,6 @@ import networkx as nx
 from flask import (Blueprint, current_app, flash, g, redirect, render_template,
                    request, Response, url_for, abort, stream_with_context)
 from flask_babelex import lazy_gettext as _
-from flask_menu import register_menu
 from flask_restful import Api
 from flask_security import current_user, login_required
 from apollo.helpers import load_source_file
@@ -16,7 +15,7 @@ from slugify import slugify_unicode
 from sqlalchemy import not_
 
 from apollo.frontend import permissions, route
-from apollo import helpers, models, services, utils
+from apollo import models, services, utils
 from apollo.core import db, uploads
 from apollo.locations import api, filters, tasks
 from apollo.frontend.forms import (
@@ -51,34 +50,7 @@ location_api.add_resource(
 )
 
 
-@route(bp, '/location-sets', methods=['GET'])
-@permissions.edit_locations.require(403)
-@login_required
-def location_set_list():
-    args = request.args.to_dict(flat=False)
-    page_title = _('Location sets')
-    queryset = services.location_sets.find(deployment=g.deployment)
-    template_name = 'frontend/location_set_list.html'
-
-    page_spec = args.pop('page', [1])
-    try:
-        page = int(page_spec[0])
-    except (IndexError, ValueError):
-        page = 1
-
-    context = {
-        'location_sets': queryset.paginate(
-            page=page, per_page=current_app.config.get('PAGE_SIZE')),
-        'page_title': page_title
-    }
-
-    return render_template(template_name, **context)
-
-
-@route(bp, '/<int:location_set_id>/locations', methods=['GET'])
-# @register_menu(
-#     bp, 'user.locations_list', _('Locations'),
-#     visible_when=lambda: permissions.edit_locations.can())
+@route(bp, '/locations/set/<int:location_set_id>', methods=['GET'])
 @permissions.edit_locations.require(403)
 @login_required
 def location_list(location_set_id):
@@ -149,7 +121,7 @@ def location_edit(id):
     return render_template(template_name, form=form, page_title=page_title)
 
 
-@route(bp, '/<int:location_set_id>/locations/import', methods=['POST'])
+@route(bp, '/locations/set/<int:location_set_id>/import', methods=['POST'])
 @permissions.import_locations.require(403)
 @login_required
 def locations_import(location_set_id):
@@ -171,7 +143,8 @@ def locations_import(location_set_id):
                                 upload_id=upload.id))
 
 
-@route(bp, '/<int:location_set_id>/locations/headers/<int:upload_id>',
+@route(bp, '/locations/set/<int:location_set_id>'
+           '/headers/upload/<int:upload_id>',
        methods=['GET', 'POST'])
 @permissions.import_locations.require(403)
 @login_required
@@ -224,7 +197,8 @@ def location_headers(location_set_id, upload_id):
                                     location_set_id=location_set_id))
 
 
-@route(bp, '/<int:location_set_id>/locations/builder', methods=['GET', 'POST'])
+@route(bp, '/locations/set/<int:location_set_id>/builder',
+       methods=['GET', 'POST'])
 # @register_menu(
 #     bp, 'user.locations_builder', _('Administrative Divisions'),
 #     visible_when=lambda: permissions.edit_locations.can())
@@ -239,8 +213,10 @@ def locations_builder(location_set_id):
         nx_graph = nx.DiGraph()
         divisions_graph = json.loads(request.form.get('divisions_graph'))
 
-        nodes = [cell for cell in divisions_graph.get('cells') if cell.get('type') == 'basic.Rect']
-        links = [cell for cell in divisions_graph.get('cells') if cell.get('type') == 'link']
+        nodes = [cell for cell in divisions_graph.get('cells')
+                 if cell.get('type') == 'basic.Rect']
+        links = [cell for cell in divisions_graph.get('cells')
+                 if cell.get('type') == 'link']
 
         valid_node_ids = [cell.get('id') for cell in nodes
                           if cell.get('id').isdigit()]
@@ -254,7 +230,8 @@ def locations_builder(location_set_id):
 
         for unused_lt in unused_location_types:
             if len(unused_lt.locations) > 0:
-                flash(_('Admin level %(name)s has locations assigned and cannot be deleted') % {'name': unused_lt.name},
+                flash(_('Admin level %(name)s has locations assigned '
+                        'and cannot be deleted') % {'name': unused_lt.name},
                       category='locations_builder')
                 continue
             unused_lt.delete()
@@ -353,7 +330,7 @@ def locations_builder(location_set_id):
                            location_set=location_set)
 
 
-@route(bp, '/<int:location_set_id>/locations/purge', methods=['POST'])
+@route(bp, '/locations/set/<int:location_set_id>/purge', methods=['POST'])
 @admin_required(403)
 @login_required
 def nuke_locations(location_set_id):
@@ -363,7 +340,8 @@ def nuke_locations(location_set_id):
         str_func = str
 
     flash(
-        str_func(_('Locations, Checklists, Critical Incidents and Participants are being deleted.')),
+        str_func(_('Locations, Checklists, Critical Incidents and '
+                   'Participants are being deleted.')),
         category='locations'
     )
 
