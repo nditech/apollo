@@ -416,7 +416,7 @@ def generate_incidents_data(form, queryset, location_root, grouped=True,
     }
 
     if not tags:
-        tags = [field['name'] for group in form.data['groups'] for field in
+        tags = [field['tag'] for group in form.data['groups'] for field in
                 group['fields'] if field['analysis_type'] == 'PROCESS'
                 and not field.get('is_comment')]
 
@@ -447,7 +447,7 @@ def generate_incidents_data(form, queryset, location_root, grouped=True,
             field = form.get_field_by_tag(tag)
 
             incidents_summary['top'].append(
-                (tag, field.description, field_stats)
+                (tag, field['description'], field_stats)
             )
 
         # per-location level summaries
@@ -468,7 +468,7 @@ def generate_incidents_data(form, queryset, location_root, grouped=True,
                     field = form.get_field_by_tag(tag)
 
                     location_stats.setdefault(location, {}).update({
-                        tag: (field.description,
+                        tag: (field['description'],
                               field_stats['locations'][location])})
 
             group_location_stats = [
