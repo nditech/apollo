@@ -334,14 +334,9 @@ def locations_builder(location_set_id):
 @admin_required(403)
 @login_required
 def nuke_locations(location_set_id):
-    try:
-        str_func = str
-    except NameError:
-        str_func = str
-
     flash(
-        str_func(_('Locations, Checklists, Critical Incidents and '
-                   'Participants are being deleted.')),
+        str(_('Locations, Checklists, Critical Incidents and '
+            'Participants are being deleted.')),
         category='locations'
     )
 
