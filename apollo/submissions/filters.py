@@ -15,7 +15,7 @@ from apollo.helpers import _make_choices
 class TagLookupFilter(ChoiceFilter):
     def __init__(self, *args, **kwargs):
         self.contains = kwargs.pop('contains', None)
-        super.__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def filter(self, query, value):
         if value:
