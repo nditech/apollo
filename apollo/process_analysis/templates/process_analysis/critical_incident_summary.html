@@ -36,7 +36,7 @@
 							{% endfor %}
 						</tr>
 						<tr>
-							<th>{{ location }}</th>
+							<th>{{ location.name }}</th>
 							<th style="text-align:center">{{ incidents_summary.top[0][2].total }}</th>
 							{% for tag, description, tag_stats in incidents_summary.top %}
 							<th style="text-align:center">{{ tag_stats.percent_reported|round|int }}%<br>({{ tag_stats.reported }})</th>
