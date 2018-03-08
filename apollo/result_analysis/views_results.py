@@ -1,45 +1,52 @@
 # -*- coding: utf-8 -*-
-
 from functools import partial
+import math
+
 from flask import Blueprint, render_template, request, url_for, current_app
 from flask_babelex import lazy_gettext as _
 from flask_menu import register_menu
 from flask_security import login_required
-from apollo.submissions.models import FLAG_STATUSES
-from apollo.services import forms, locations, location_types, submissions
+import pandas as pd
+
+from apollo import models
+from apollo.formsframework.models import Form
 from apollo.frontend import route, permissions, filters
 from apollo.frontend.helpers import (
     analysis_breadcrumb_data,
     analysis_navigation_data
 )
-import math
-import pandas as pd
+from apollo.services import forms, locations, location_types, submissions
+from apollo.submissions.models import FLAG_STATUSES
+from apollo.submissions.utils import make_submission_dataframe
 
 
 def get_result_analysis_menu():
     return [{
         'url': url_for(
-            'result_analysis.results_analysis', form_id=str(form.pk)),
+            'result_analysis.results_analysis', form_id=form.id),
         'text': form.name,
         'icon': '<i class="glyphicon glyphicon-stats"></i>'
-    } for form in forms.find(
-        form_type='CHECKLIST',
-        # groups__fields__analysis_type='RESULT'  # TODO: critical.
-    ).order_by('form_type', 'name')]
+    } for form in forms.query.filter(
+        Form.form_type == 'CHECKLIST',
+        Form.data.op('@>')(
+            {'groups': [{'fields': [{'analysis_type': 'RESULT'}]}]})
+    ).order_by('name')]
 
 
 bp = Blueprint('result_analysis', __name__, template_folder='templates',
                static_folder='static', static_url_path='/core/static')
 
 
-def _voting_results(form_pk, location_pk=None):
-    form = forms.get_or_404(
-        pk=form_pk, form_type='CHECKLIST',
-        groups__fields__analysis_type='RESULT')
-    if location_pk is None:
+def _voting_results(form_id, location_id=None):
+    form = forms.filter(
+        Form.data.op('@>')(
+            {'groups': [{'fields': [{'analysis_type': 'RESULT'}]}]})
+    ).fget_or_404(
+        id=form_id, form_type='CHECKLIST')
+    if location_id is None:
         location = locations.root()
     else:
-        location = locations.get_or_404(pk=location_pk)
+        location = locations.fget_or_404(pk=location_id)
 
     template_name = 'result_analysis/results.html'
     page_title = _('%(form_name)s Voting Results', form_name=form.name)
@@ -54,19 +61,19 @@ def _voting_results(form_pk, location_pk=None):
     }
 
     # define the condition for which a submission should be included
-    result_fields = [field for field in [field for group in form.groups
-         for field in group.fields] if field.analysis_type == 'RESULT']
-    result_field_labels = [field.name for field in result_fields]
-    result_field_descriptions = [field.description for field in result_fields]
+    result_fields = [field for field in [field for group in form.data['groups']
+         for field in group['fields']] if field.analysis_type == 'RESULT']
+    result_field_labels = [field['tag'] for field in result_fields]
+    result_field_descriptions = [field['description'] for field in result_fields]
 
     queryset = submissions.find(
         form=form,
-        submission_type='M',
-        verification_status__ne=FLAG_STATUSES['rejected'][0],
-        quarantine_status__nin=['A', 'R'],
-        )
+        submission_type='M'
+    ).filter(
+        ~models.Submission.verification_status == FLAG_STATUSES['rejected'][0],
+        ~models.Submission.quarantine_status.in_(['A', 'R']))
     filter_set = filter_class(queryset, request.args)
-    dataset = filter_set.qs.to_dataframe()
+    dataset = make_submission_dataframe(filter_set.qs)
 
     registered_voters_field = form.registered_voters_tag or 'registered_voters'
     if form.invalid_votes_tag:
