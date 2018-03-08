@@ -90,14 +90,14 @@ def generate_participant_edit_form(participant, data=None):
 
     ParticipantEditForm = type('ParticipantEditForm', (ParticipantEditBaseForm,), attributes)
 
-    kwargs = {field: getattr(participant, field, '') for field in list(attributes.keys())}
+    kwargs = {field: getattr(participant, field, '') for field in attributes.keys()}
 
     return ParticipantEditForm(
         formdata=data,
         # participant_id=participant.participant_id,
         name=participant.name,
         location=participant.location.id if participant.location else None,
-        gender=participant.gender.upper() if participant.gender else '',
+        gender=participant.gender.code if participant.gender else '',
         role=participant.role.id if participant.role else None,
         partner=participant.partner.id if participant.partner else None,
         supervisor=participant.supervisor.id
