@@ -9,7 +9,7 @@ from apollo.participants.models import (
     Participant, ParticipantGroup, ParticipantGroupType, ParticipantPartner,
     ParticipantPhone, ParticipantRole, Phone)
 
-number_regex = re.compile('^[0-9]')
+number_regex = re.compile('[^0-9]')
 
 
 class ParticipantSetService(Service):
