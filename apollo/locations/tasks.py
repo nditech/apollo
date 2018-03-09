@@ -78,8 +78,17 @@ def update_locations(df, mapping, location_set):
         .group_by('id').all()
     # depth = [p.depth for p in location_types[-1].ancestor_paths]
 
+    # basically, all the info required for linking is (supposedly)
+    # already in the db. so just use it to start creating the links
+    all_lt_paths = models.LocationTypePath.query.with_entities(
+        models.LocationTypePath.ancestor_id,
+        models.LocationTypePath.descendant_id,
+        models.LocationTypePath.depth,
+    ).all()
+
     for idx in df.index:
-        row_locations = []
+        # row_locations = []
+        row_ids = {}
 
         for lt in location_types:
             location_code = df.ix[idx].get(mapping.get(map_attribute(lt, 'code'), ''), '')
@@ -115,6 +124,8 @@ def update_locations(df, mapping, location_set):
 
             # if we have the location in the cache, then continue
             if cache.has(location_code, location_type, location_name):
+                loc = cache.get(location_code, location_type, location_name)
+                row_ids[lt.id] = loc.id
                 continue
 
             kwargs = {
@@ -159,77 +170,37 @@ def update_locations(df, mapping, location_set):
 
                 location.save()
 
-            row_locations.append(location)
+            # row_locations.append(location)
+            row_ids[lt.id] = location.id
             cache.set(location)
 
-        for loc in row_locations:
-            for loc2 in row_locations:
-                # we already did the self-references
-                if loc.id == loc2.id:
-                    continue
+        for ancestor_lt_id, descendant_lt_id, depth in all_lt_paths:
+            if ancestor_lt_id == descendant_lt_id:
+                continue
 
-                lt_path = models.LocationTypePath.query.filter_by(
-                    ancestor_id=loc.location_type.id,
-                    descendant_id=loc2.location_type.id,
-                    location_set_id=location_set.id
-                ).first()
+            ancestor_loc_id = row_ids.get(ancestor_lt_id)
+            descendant_loc_id = row_ids.get(descendant_lt_id)
 
-                if not lt_path:
-                    # no path between the two types means they aren't
-                    # linked
-                    continue
+            if not descendant_loc_id:
+                # TODO: a missing ancestor_id is evil that should
+                # never be tolerated
+                continue
 
-                loc_path = models.LocationPath.query.filter_by(
-                    ancestor_id=loc.id,
-                    descendant_id=loc2.id,
-                    location_set_id=location_set.id
-                ).first()
+            path = models.LocationPath.query.filter_by(
+                ancestor_id=ancestor_loc_id,
+                descendant_id=descendant_loc_id,
+                depth=depth
+            ).first()
 
-                if not loc_path:
-                    # no path between the two locations, so
-                    # create it
-                    loc_path = models.LocationPath(
-                        ancestor_id=loc.id,
-                        descendant_id=loc2.id,
-                        location_set_id=location_set.id,
-                        depth=lt_path.depth
-                    )
-                    db.session.add(loc_path)
+            if not path:
+                path = models.LocationPath(
+                    ancestor_id=ancestor_loc_id,
+                    descendant_id=descendant_loc_id,
+                    location_set_id=location_set.id,
+                    depth=depth
+                )
 
-            # update ancestors
-            for sub_lt in lt.ancestors():
-                sub_lt_name = str(df.ix[idx].get(
-                    mapping.get(map_attribute(sub_lt, 'name'), '')))
-                sub_lt_code = df.ix[idx].get(
-                    mapping.get(map_attribute(sub_lt, 'code'), ''), '')
-                sub_lt_code = int(sub_lt_code) if type(sub_lt_code) in [int, float] else sub_lt_code
-                sub_lt_code = str(sub_lt_code)
-                sub_lt_type = sub_lt.name or ''
-
-                ancestor = cache.get(sub_lt_code, sub_lt_type, sub_lt_name)
-                if not ancestor:
-                    ancestor = services.locations.find(
-                        deployment=lt.deployment, code=sub_lt_code,
-                        location_type=sub_lt, location_set=location_set,
-                        name=sub_lt_name).first()
-
-                if ancestor:
-                    loc_path = models.LocationPath.query.filter_by(
-                        location_set_id=location_set.id,
-                        ancestor_id=ancestor.id, descendant_id=location.id
-                    ).first()
-
-                    if not loc_path:
-                        depth = models.LocationTypePath.query.filter(
-                            models.LocationTypePath.location_set_id == location_set.id,
-                            models.LocationTypePath.ancestor_id == sub_lt.id,
-                            models.LocationTypePath.descendant_id == lt.id
-                        ).with_entities(models.LocationTypePath.depth).scalar()
-
-                        path = models.LocationPath(
-                            ancestor_id=ancestor.id, descendant_id=location.id,
-                            location_set_id=location_set.id, depth=depth)
-                        db.session.add(path)
+                db.session.add(path)
 
             db.session.commit()
 
