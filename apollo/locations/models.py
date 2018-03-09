@@ -206,10 +206,14 @@ class Location(BaseModel):
             cls.id.in_(q), cls.location_set_id == location_set_id).first()
 
     def make_path(self):
-        data = {ans.location_type.name: ans.name for ans in self.ancestors()}
-        data.update({self.location_type.name: self.name})
+        self._cached_path = getattr(self, '_cached_path', None)
+        if not self._cached_path:
+            data = {ans.location_type.name: ans.name for ans in self.ancestors()}
+            data.update({self.location_type.name: self.name})
 
-        return data
+            self._cached_path = data
+
+        return self._cached_path
 
 
 class LocationPath(db.Model):
