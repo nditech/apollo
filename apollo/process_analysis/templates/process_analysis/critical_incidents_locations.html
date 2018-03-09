@@ -46,7 +46,7 @@
               {% endfor %}
               <td>{{ incident.location.name }} &middot; <em class"muted">{{ incident.location.location_type }}</em></td>
               <td style="text-align:center">
-              {% if incident.status == 'confirmed' %}
+              {% if incident.incident_status == 'confirmed' %}
               <img src="{{ url_for('static', filename='img/tick.png') }}" title="{{ _('Confirmed') }}" alt="{{ _('Confirmed') }}" />
               {% elif incident.status == 'rejected' %}
               <img src="{{ url_for('static', filename='img/red_dot.png') }}" title="{{ _('Rejected') }}" alt="{{ _('Rejected') }}" />
