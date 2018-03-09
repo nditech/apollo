@@ -268,10 +268,24 @@ class FormBuilderSerializer(object):
                 field['analysis_type'] = 'N/A'
             elif f['component'] == 'textInput':
                 field['is_boolean'] = f['required']
-                if f['min']:
-                    field['min'] = int(f.get('min', 0))
-                if f['max']:
-                    field['max'] = int(f.get('max', 9999))
+
+                if not field['is_boolean']:
+                    try:
+                        min_limit = int(f.get('min', 0))
+                    except ValueError:
+                        min_limit = 0
+
+                    try:
+                        max_limit = int(f.get('max', 9999))
+                    except ValueError:
+                        max_limit = 9999
+
+                    field['min'] = min_limit
+                    field['max'] = max_limit
+
+                else:
+                    field['min'] = 0
+                    field['max'] = 1
             else:
                 field['options'] = {
                     k: v for v, k in enumerate(f['options'], 1)}
