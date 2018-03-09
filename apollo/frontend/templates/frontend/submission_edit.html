@@ -68,18 +68,18 @@
   <td>&nbsp;</td>
   <td>
     {% for lt in location_types %}
-    {% set node = submission.location_name_path[lt.name] %}
+    {% set node = submission.location.make_path()[lt.name] %}
     {% if node %}
-    {{ submission.location_name_path[lt.name] }} &middot; <em>{{ lt.name }}</em>{% if not loop.last %} / {% endif %}
+    {{ submission.location.make_path()[lt.name] }} &middot; <em>{{ lt.name }}</em>{% if not loop.last %} / {% endif %}
     {% endif %}
     {% endfor %}
   </td>
   {% for sib in siblings %}
   <td>
     {% for lt in location_types %}
-    {% set node = sib.location_name_path[lt.name] %}
+    {% set node = sib.location.make_path()[lt.name] %}
     {% if node %}
-    {{ submission.location_name_path[lt.name] }} &middot; <em>{{ lt.name }}</em>{% if not loop.last %} / {% endif %}
+    {{ submission.location.make_path()[lt.name] }} &middot; <em>{{ lt.name }}</em>{% if not loop.last %} / {% endif %}
     {% endif %}
     {% endfor %}
   </td>
@@ -103,9 +103,9 @@
   <td>&nbsp;</td>
   <td>
     {% for lt in location_types %}
-    {% set node = submission.location_name_path[lt.name] %}
+    {% set node = submission.location.make_path()[lt.name] %}
     {% if node %}
-    {{ submission.location_name_path[lt.name] }} &middot; <em>{{ lt.name }}</em>{% if not loop.last %} / {% endif %}
+    {{ submission.location.make_path()[lt.name] }} &middot; <em>{{ lt.name }}</em>{% if not loop.last %} / {% endif %}
     {% endif %}
     {% endfor %}
   </td>
