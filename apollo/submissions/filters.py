@@ -175,10 +175,7 @@ class FieldValueFilter(CharFilter):
 class ParticipantIDFilter(CharFilter):
     def filter(self, query, value):
         if value:
-            joined_query = query.join(
-                models.Participant,
-                models.Submission.participant_id == models.Participant.id)
-            return joined_query.filter(models.Participant.participant_id == value)
+            return query.filter(models.Participant.participant_id == value)
 
         return query
 
