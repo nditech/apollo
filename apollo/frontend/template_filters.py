@@ -51,18 +51,15 @@ def checklist_question_summary(form, field, location, dataframe):
 
 
 def get_location_for_type(submission, location_type, display_type=False):
-    locations = [loc for loc in (
-        submission.location.ancestors() +
-        [submission.location]
-    )
-        if loc.location_type == location_type.name]
+    location = submission.location.make_path().get(
+        location_type.name)
 
     if display_type:
         return Markup('{} &middot; <em class="muted">{}</em>').format(
-            locations[0].name, locations[0].location_type
-        ) if locations else ''
+            location, location_type.name
+        ) if location else ''
     else:
-        return locations[0].name if locations else ''
+        return location if location else ''
 
 
 def gen_page_list(pager, window_size=10):
