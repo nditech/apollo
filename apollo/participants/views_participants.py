@@ -488,18 +488,18 @@ def participant_headers(participant_set_id, location_set_id, upload_id):
 @admin_required(403)
 @login_required
 def nuke_participants():
-    try:
-        str_func = str
-    except NameError:
-        str_func = str
-
     event = g.event
-    flash(
-        str_func(_('Participants, Checklists, Critical Incidents and Messages'
-                   ' for this event are being deleted.')),
-        category='task_begun'
-    )
 
-    tasks.nuke_participants.apply_async((str_func(event.pk),))
+    if event.participant_set_id:
+        flash(
+            str(_('Participants, Checklists, Critical Incidents and Messages'
+                ' linked to this participant set are being deleted.')),
+            category='task_begun'
+        )
+        tasks.nuke_participants.apply_async((event.participant_set_id,))
 
-    return redirect(url_for('participants.participant_list'))
+        return redirect(url_for(
+            'participants.participant_list',
+            participant_set_id=event.participant_set_id))
+
+    return redirect(url_for('dashboard.index'))

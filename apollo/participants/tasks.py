@@ -400,7 +400,8 @@ def import_participants(upload_id, mappings, participant_set_id,
 
 
 @celery.task
-def nuke_participants(event_id):
-    event = services.events.get(pk=event_id)
-    if event:
-        utils.nuke_participants(event)
+def nuke_participants(participant_set_id):
+    participant_set = services.participant_sets.find(
+        id=participant_set_id).first()
+    if participant_set:
+        utils.nuke_participants(participant_set)
