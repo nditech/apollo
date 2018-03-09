@@ -84,9 +84,11 @@ class IncidentStatusFilter(ChoiceFilter):
     def filter(self, query, value):
         if value:
             if value == 'NULL':
-                return query.filter_by(incident_status=None)
+                return query.filter(
+                    models.Submission.incident_status == None)
 
-            return query.filter_by(incident_status=value)
+            return query.filter(
+                models.Submission.incident_status == value)
 
         return query
 
