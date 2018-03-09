@@ -166,7 +166,8 @@ class Submission(BaseModel):
         siblings = self.siblings
         if len(siblings) == 0:
             subset = [
-                self.data.get(tag) for tag in group_tags] if self.data else []
+                self.data.get(tag) not in (None, '', [])
+                for tag in group_tags] if self.data else []
 
             if subset and all(subset):
                 return 'Complete'
@@ -175,8 +176,8 @@ class Submission(BaseModel):
             else:
                 return 'Missing'
         else:
-            if self.overidden_fields:
-                tags_to_check = set(group_tags) - set(self.overidden_fields)
+            if self.overridden_fields:
+                tags_to_check = set(group_tags) - set(self.overridden_fields)
             else:
                 tags_to_check = group_tags
 
