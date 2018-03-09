@@ -84,15 +84,16 @@ a:hover.arrow-style{text-decoration:none; color:#333;}
                {% for field in extra_fields %}
                <th><a href="{{ url_for('participants.participant_list_with_set', sort_by=field.name, **args) }}" class="arrow-style"><img src="{{ url_for('static', filename='img/double-arrow.gif') }}" class="img pull-left"></img>{{ field.label }}</a></th>
                {% endfor %}
-               {%- if perms.edit_participant.can() -%}
-               <th class="text-center">{{ _('Edit') }}</th>
-               {%- endif -%}
              </tr>
            </thead>
            <tbody>
              {% for participant in participants.items %}
              <tr>
-               <td>{{ participant.participant_id }}</td>
+               {%- if perms.edit_participant.can() -%}
+               <td class="text-center"><a href="{{ url_for('participants.participant_edit', id=participant.id) }}" data-toggle="modal" data-target="#edit_modal">{{ participant.participant_id }}</a></td>
+               {%- else -%}
+               <td class="text-center">{{ participant.participant_id }}</td>
+               {%- endif -%}
                {%- for location_type in location_types -%}
                <td>{{ participant.location.make_path()[location_type.name] }}</td>
                {%- endfor -%}
@@ -105,16 +106,9 @@ a:hover.arrow-style{text-decoration:none; color:#333;}
                {% for field in extra_fields %}
                <td>{{ participant[field.name]|default('', true) }}</td>
                {% endfor %}
-               {%- if perms.edit_participant.can() -%}
-               <td class="text-center"><a href="{{ url_for('participants.participant_edit', id=participant.id) }}" data-toggle="modal" data-target="#edit_modal">{{ _('Edit') }}</a></td>
-               {%- endif -%}
              </tr>
              {% else %}
-             {%- if perms.edit_participant.can() -%}
-             {%- set colspan = 8 + (location_types|length) + (extra_fields|length) -%}
-             {%- else -%}
              {%- set colspan = 7 + (location_types|length) + (extra_fields|length) -%}
-             {%- endif -%}
              <tr class="warning">
                <td class="text-center" colspan="{{ colspan }}">{{ _('No Data Available') }}</td>
              </tr>
