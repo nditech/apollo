@@ -52,7 +52,7 @@ def checklist_question_summary(form, field, location, dataframe):
 
 def get_location_for_type(submission, location_type, display_type=False):
     locations = [loc for loc in (
-        list(submission.location.ancestors_ref) +
+        submission.location.ancestors() +
         [submission.location]
     )
         if loc.location_type == location_type.name]
