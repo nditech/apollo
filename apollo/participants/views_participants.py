@@ -141,8 +141,12 @@ def participant_list(participant_set_id=0):
         if participant_set_id:
             args['participant_set_id'] = participant_set_id
 
-        sort_by = sortable_columns.get(
-            args.pop('sort_by', ''), 'participant_id')
+        sort_by_arg = args.pop('sort_by', '')
+        if isinstance(sort_by_arg, list):
+            sort_param = sort_by_arg[0]
+        else:
+            sort_param = sort_by_arg
+        sort_by = sortable_columns.get(sort_param, 'participant_id')
         subset = queryset_filter.qs.order_by(sort_by)
 
         # load form context
