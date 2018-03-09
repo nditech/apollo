@@ -1,12 +1,10 @@
 # -*- coding: utf-8 -*-
 import importlib
+
+from flask import Blueprint
 import magic
 import pandas as pd
 import pkgutil
-import re
-
-from flask import Blueprint
-from apollo.locations.models import Location
 
 
 def register_blueprints(app, package_name, package_path):
@@ -39,16 +37,6 @@ def _make_choices(qs, placeholder=None):
         return [['', '']] + [[str(i[0]), i[1]] for i in list(qs)]
 
 
-def stash_file(fileobj, user, event=None):
-    from apollo.services import user_uploads
-    upload = user_uploads.create(user=user, event=event)
-    upload.data.put(fileobj)
-    upload.save()
-    upload.reload()
-
-    return upload
-
-
 def load_source_file(source_file):
     # peek into file and read first 1kB, then reset pointer
     mimetype = magic.from_buffer(source_file.read(), mime=True)
@@ -64,29 +52,3 @@ def load_source_file(source_file):
         raise RuntimeError('Unknown file type')
 
     return df
-
-
-def is_objectid(str):
-    return bool(re.match('^[0-9a-fA-F]{24}$', str))
-
-
-def compute_location_path(location):
-    '''Given a :class:`apollo.locations.models.Location` instance,
-    generates a dictionary with location type names as keys and
-    location names as values. Due to lack of joins in MongoDB,
-    this dictionary is useful for queries that retrieve submission
-    and participant information within a location hierarchy.'''
-
-    # we don't really expect the latter case, but for the former,
-    # it's possible to have a participant with no location set
-    if not location or not isinstance(location, Location):
-        return None
-
-    path = {
-        ancestor.location_type: ancestor.name
-        for ancestor in location.ancestors_ref
-    }
-    path.update({
-        location.location_type: location.name
-    })
-    return path
