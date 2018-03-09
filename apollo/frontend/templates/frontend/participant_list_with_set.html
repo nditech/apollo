@@ -94,7 +94,7 @@ a:hover.arrow-style{text-decoration:none; color:#333;}
              <tr>
                <td>{{ participant.participant_id }}</td>
                {%- for location_type in location_types -%}
-               <td>{{ participant.location_name_path[location_type.name] }}</td>
+               <td>{{ participant.location.make_path()[location_type.name] }}</td>
                {%- endfor -%}
                <td>{{ participant.location.name|default('N/A', true) }}</td>
                <td>{{ participant.name|default('', true) }}</td>
