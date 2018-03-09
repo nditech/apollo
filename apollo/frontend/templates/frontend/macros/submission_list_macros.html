@@ -55,7 +55,7 @@
     {% endfor %}
     <td class="text-center">
     {% if form.form_type == 'INCIDENT' %}
-    {%- set status = submission.status -%}
+    {%- set status = submission.incident_status -%}
     {%- if status == 'confirmed' -%}
     <i class="fa fa-check success" aria-hidden="true" title="{{ _('Confirmed') }}"></i>
     {%- elif status == 'rejected' -%}
