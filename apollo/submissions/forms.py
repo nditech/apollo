@@ -99,12 +99,14 @@ def make_submission_edit_form_class(event, form):
                         widget=widgets.TextInput()
                     )
             else:
-                if form.form_type == 'CHECKLIST' or not field.get('is_boolean'):
+                if form.form_type == 'CHECKLIST' and not field.get('is_boolean'):
                     form_fields[field['tag']] = fields.IntegerField(
                         field['tag'], description=field['description'],
                         validators=[
                             validators.Optional(),
-                            validators.NumberRange(min=field['min'], max=field['max'])]
+                            validators.NumberRange(
+                                min=field.get('min', 0),
+                                max=field.get('max', 9999))]
                     )
                 else:
                     form_fields[field['tag']] = fields.BooleanField(
