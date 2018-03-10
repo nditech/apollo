@@ -95,12 +95,12 @@ def _process_analysis(event, form_id, location_id=None, tag=None):
 
         queryset = submissions.find(
             event=event,
-            form=form, submission_type='M',
-            quarantine_status='A').filter(
-                models.Submission.location_id.in_(location_ids))
+            form=form, submission_type='M').filter(
+                models.Submission.location_id.in_(location_ids),
+                models.Submission.quarantine_status != 'A')
     else:
         grouped = True
-        queryset = submissions.find(form=form).filter(
+        queryset = submissions.find(event=event, form=form).filter(
             models.Submission.location_id.in_(location_ids))
         template_name = 'process_analysis/critical_incident_summary.html'
 
