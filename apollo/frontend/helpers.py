@@ -157,7 +157,8 @@ def analysis_breadcrumb_data(form, location, tag=None,
             is_political=True, location_set_id=location.location_set_id)]
     location_branch = location.ancestors() + [location]
     displayed_locations = [
-        loc for loc in location_branch if loc.location_type in loc_type_names]
+        loc for loc in location_branch
+        if loc.location_type.name in loc_type_names]
 
     return {
         'form': form,
