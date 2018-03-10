@@ -277,6 +277,7 @@ class ParticipantSetAdminView(SetViewMixin, BaseAdminView):
     column_formatters = {
         'participants': macro('participants_list')
     }
+    inline_models = (models.ParticipantDataField,)
 
 
 #     def get_one(self, pk):
