@@ -184,7 +184,16 @@ def quality_assurance(form_set_id, form_id):
         try:
             postdata = json.loads(request.form.get('postdata'))
             form.quality_checks = []
-            for (name, desc, lhs, comp, rhs) in postdata:
+            for item in postdata:
+                if isinstance(item, list):
+                    (name, desc, lhs, comp, rhs) = item
+                elif isinstance(item, dict):
+                    name = item["0"]
+                    desc = item["1"]
+                    lhs = item["2"]
+                    comp = item["3"]
+                    rhs = item["4"]
+
                 if name and desc and lhs and comp and rhs:
                     form.quality_checks.append({
                         'name': name, 'description': desc,
