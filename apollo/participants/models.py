@@ -24,10 +24,20 @@ class ParticipantSet(BaseModel):
         db.Integer, db.ForeignKey('deployment.id', ondelete='CASCADE'),
         nullable=False)
     deployment = db.relationship('Deployment', backref='participant_sets')
-    extra_fields = db.Column(JSONB)
 
     def __str__(self):
         return self.name or ''
+
+
+class ParticipantDataField(db.Model):
+    __tablename__ = 'participant_data_field'
+
+    participant_set_id = db.Column(
+        db.Integer, db.ForeignKey('participant_set.id'), primary_key=True)
+    name = db.Column(db.String, nullable=False)
+    label = db.Column(db.String, nullable=False)
+    visible_in_lists = db.Column(db.Boolean, default=False)
+    participant_set = db.relationship('ParticipantSet', backref='extra_fields')
 
 
 groups_participants = db.Table(
