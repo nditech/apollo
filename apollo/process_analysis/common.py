@@ -552,7 +552,7 @@ def generate_process_data(form, queryset, location_root, grouped=True,
             field_stats = generate_field_stats(field, data_frame, tags)
 
             process_summary['top'].append(
-                (tag, field.description, field_stats)
+                (tag, field['description'], field_stats)
             )
 
         # per-location level summaries
@@ -567,7 +567,7 @@ def generate_process_data(form, queryset, location_root, grouped=True,
                 field_stats = generate_field_stats(field, data_group, tags)
 
                 location_type_summary.append((
-                    tag, field.description, field_stats
+                    tag, field['description'], field_stats
                 ))
 
             process_summary['groups'].append(
