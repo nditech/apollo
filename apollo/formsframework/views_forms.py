@@ -209,7 +209,7 @@ def quality_assurance(form_set_id, form_id):
         (c['name'],
          c['description'], c['lvalue'], c['comparator'], c['rvalue'])
         for c in form.quality_checks
-    ] if form.quality_checks else [[''] * 4]
+    ] if form.quality_checks else [[''] * 5]
 
     context = {
         'page_title': page_title,

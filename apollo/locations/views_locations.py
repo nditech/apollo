@@ -249,6 +249,9 @@ def locations_builder(location_set_id):
             if lt:
                 lt.is_administrative = node.get('is_administrative')
                 lt.is_political = node.get('is_political')
+                lt.has_political_code = node.get('has_political_code')
+                lt.has_other_code = node.get('has_other_code')
+                lt.has_registered_voters = node.get('has_registered_voters')
                 lt.name = node.get('label')
                 lt.save()
             else:
@@ -256,6 +259,9 @@ def locations_builder(location_set_id):
                     name=node.get('label'),
                     is_administrative=node.get('is_administrative'),
                     is_political=node.get('is_political'),
+                    has_political_code=node.get('has_political_code'),
+                    has_other_code=node.get('has_other_code'),
+                    has_registered_voters=node.get('is_political'),
                     deployment_id=g.deployment.id,
                     location_set_id=location_set_id
                     )

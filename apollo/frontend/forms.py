@@ -160,11 +160,12 @@ def generate_participant_import_mapping_form(
         )
     }
 
-    # for field in deployment.participant_extra_fields:
-    #     attributes[field.name] = SelectField(
-    #         _('%(label)s', label=field.label),
-    #         choices=default_choices
-    #     )
+    if participant_set.extra_fields:
+        for field in participant_set.extra_fields:
+            attributes[field.name] = SelectField(
+                _('%(label)s', label=field.label),
+                choices=default_choices
+            )
 
     def validate_phone(self, field):
         if field.data:
