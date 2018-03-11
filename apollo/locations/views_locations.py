@@ -17,7 +17,7 @@ from sqlalchemy import not_
 from apollo.frontend import permissions, route
 from apollo import models, services, utils
 from apollo.core import db, uploads
-from apollo.locations import api, filters, tasks
+from apollo.locations import api, filters, forms, tasks
 from apollo.frontend.forms import (
     file_upload_form, generate_location_edit_form,
     generate_location_update_mapping_form, DummyForm)
@@ -350,3 +350,99 @@ def nuke_locations(location_set_id):
 
     return redirect(url_for('locations.location_list',
                             location_set_id=location_set_id))
+
+
+@route(bp, '/samples/<int:location_set_id>/new', methods=['GET', 'POST'])
+@permissions.edit_locations.require(403)
+@login_required
+def sample_new(location_set_id):
+    page_title = _('Create new sample')
+    sample_form = forms.SampleForm()
+    template_name = 'frontend/sample_edit.html'
+
+    context = {
+        'form': sample_form,
+        'location_set_id': location_set_id,
+        'page_title': page_title
+    }
+
+    if not sample_form.validate_on_submit():
+        return render_template(template_name, **context)
+
+    deployment = g.deployment
+    services.samples.create(
+        location_set_id=location_set_id, name=sample_form.name.data,
+        deployment_id=deployment.id)
+
+    return redirect(url_for('.sample_list', location_set_id=location_set_id))
+
+
+@route(bp, '/samples/set/<int:location_set_id>', methods=['GET'])
+@permissions.edit_locations.require(403)
+@login_required
+def sample_list(location_set_id):
+    page_title = _('Samples')
+    samples = services.samples.find(location_set_id=location_set_id)
+    template_name = 'frontend/sample_list.html'
+
+    args = request.args.to_dict(flat=False)
+    page_spec = args.pop('page', None) or [1]
+    page = int(page_spec[0])
+
+    context = {
+        'location_set_id': location_set_id,
+        'page_title': page_title,
+        'samples': samples.paginate(
+            page=page, per_page=current_app.config.get('PAGE_SIZE'))
+    }
+
+    return render_template(template_name, **context)
+
+
+@route(bp, '/sample/<int:sample_id>', methods=['GET', 'POST'])
+@permissions.edit_locations.require(403)
+@login_required
+def sample_edit(sample_id):
+    sample = services.samples.fget_or_404(id=sample_id)
+    page_title = _('Edit sample %(name)s', name=sample.name)
+    template_name = 'frontend/sample_edit.html'
+
+    if request.method == 'GET':
+        location_data = [{
+            'code': l.code,
+            'name': l.name
+        } for l in sample.locations]
+
+        sample_form = forms.SampleForm(data={
+            'name': sample.name,
+            'location_data': json.dumps(location_data)
+        })
+
+        context = {
+            'form': sample_form,
+            'location_set_id': sample.location_set_id,
+            'page_title': page_title,
+            'sample': sample
+        }
+
+        return render_template(template_name, **context)
+
+    sample_form = forms.SampleForm()
+    if sample_form.validate_on_submit():
+        sample.name = sample_form.name.data
+        if sample_form.location_data.data:
+            location_data = json.loads(sample_form.location_data.data)
+
+        sample.save()
+
+        return redirect(url_for(
+            '.sample_list', location_set_id=sample.location_set_id))
+
+    context = {
+        'form': sample_form,
+        'location_set_id': sample.location_set_id,
+        'page_title': page_title,
+        'sample': sample
+    }
+
+    return render_template(template_name, **context)

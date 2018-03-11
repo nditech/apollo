@@ -1,0 +1,37 @@
+{%- extends 'frontend/_layout.html' -%}
+{%- from 'frontend/macros/pagination.html' import render_pager, render_pager_counter -%}
+{% block toolbar %}
+<a href="{{ url_for('locations.sample_new', location_set_id=location_set_id) }}" class="btn btn-sm btn-success pull-right"><i class="glyphicon glyphicon-plus glyphicon-white"></i> {{ _('Add sample') }}</a>
+{% endblock %}
+{% block content %}
+<div class="row-fluid">
+  <div>
+    {{ render_pager_counter(samples, args) }}
+    <table class="table table-striped table-bordered table-hover">
+      <thead>
+        <tr>
+          <th>{{ _('Name') }}</th>
+          <th class="shrink text-center">{{ _('Location count') }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for sample in samples.items %}
+        <tr>
+          <td><a href="{{ url_for('locations.sample_edit', sample_id=sample.id) }}">{{ sample.name }}</a></td>
+          <td class="shrink text-center">{{ sample.locations|length }}</td>
+        </tr>
+        {% else %}
+        <tr class="warning">
+          <td class="text-center" colspan="2">{{ _('No Data Available') }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12">
+    {{ render_pager(samples, 'locations.sample_list', args) }}
+  </div>
+</div>
+{% endblock %}
