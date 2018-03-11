@@ -89,14 +89,6 @@ class Form(Resource):
             g['name']: g for g in self.data['groups']
         }
 
-    # def _populate_schema_cache(self):
-    #     self._schema_cache = {}
-    #     if self.data and self.data.get('groups'):
-    #         for g in self.data.get('groups'):
-    #             if g.get('fields'):
-    #                 field_cache = {f['tag']: f for f in g.get('fields')}
-    #                 self._schema_cache[g['name']] = {'fields': field_cache,}
-
     def get_form_type_display(self):
         d = dict(Form.FORM_TYPES)
         return d[self.form_type]
@@ -148,7 +140,7 @@ class Form(Resource):
         data.append(version_id)
 
         data.append(E.device_id())
-        data.append(E.phone_number())
+        data.append(E.subscriber_id())
         data.append(E.phone_number())
 
         device_id_bind = E.bind(nodeset='/data/device_id')
@@ -173,10 +165,56 @@ class Form(Resource):
             grp_element = E.group(E.label(group['name']))
             for field in group['fields']:
                 data.append(etree.Element(field['tag']))
-                # path = '/data/{}'.format(field['tag'])
+                path = '/data/{}'.format(field['tag'])
 
-                # TODO: construct field data
+                field_options = field.get('options')
+                if field_options:
+                    # sort by value
+                    sorted_options = sorted(
+                        field_options.items(), key=itemgetter(1))
+                    if field.get('is_multi_choice'):
+                        element_factory = E.select
+                        model.append(E.bind(nodeset=path, type='select'))
+                    else:
+                        element_factory = E.select1
+                        model.append(E.bind(nodeset=path, type='select1'))
 
+                    field_element = element_factory(
+                        E.label(field['description']),
+                        ref=field['tag']
+                    )
+
+                    for key, value in sorted_options:
+                        field_element.append(
+                            E.item(E.label(key), E.value(str(value)))
+                        )
+                else:
+                    if field.get('is_boolean'):
+                        field_element = E.select1(
+                            E.label(field['description']),
+                            E.item(E.label('True'), E.value('1')),
+                            E.item(E.label('False'), E.value('0')),
+                            ref=field['tag']
+                        )
+                        model.append(E.bind(nodeset=path, type='select1'))
+                    elif field.get('is_comment'):
+                        field_element = E.input(
+                            E.label(field['description']),
+                            ref=field['tag']
+                        )
+                        model.append(E.bind(nodeset=path, type='string'))
+                    else:
+                        field_element = E.input(
+                            E.label(field['description']),
+                            ref=field['tag']
+                        )
+                        model.append(E.bind(
+                            nodeset=path, type='integer',
+                            constraint='. >= {} and . <= {}'.format(
+                                field.get('min', 0),
+                                field.get('max', 9999)
+                            )))
+                grp_element.append(field_element)
             body.append(grp_element)
 
         head.append(model)
