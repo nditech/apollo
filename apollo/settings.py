@@ -126,6 +126,7 @@ APPLICATIONS = config(
 
 BIG_N = config('BIG_N', cast=int, default=0) or numpy.inf
 GOOGLE_ANALYTICS_KEY = config('GOOGLE_ANALYTICS_KEY', default=None)
+GOOGLE_TAG_MANAGER_KEY = config('GOOGLE_TAG_MANAGER_KEY', default=None)
 
 TRANSLATE_CHARS = config('TRANSLATE_CHARS', cast=config.boolean, default=True)
 TRANSLITERATE_INPUT = config(

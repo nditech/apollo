@@ -81,7 +81,8 @@ def create_app(settings_override=None, register_security_blueprint=True):
     @app.context_processor
     def inject_permissions():
         ga_key = app.config.get('GOOGLE_ANALYTICS_KEY')
-        return dict(perms=permissions, ga_key=ga_key)
+        gtm_key = app.config.get('GOOGLE_TAG_MANAGER_KEY')
+        return dict(perms=permissions, ga_key=ga_key, gtm_key=gtm_key)
 
     # clickjacking protection
     @app.after_request
@@ -94,8 +95,9 @@ def create_app(settings_override=None, register_security_blueprint=True):
     @app.after_request
     def content_security_policy(response):
         response.headers['Content-Security-Policy'] = "default-src 'self' " + \
-            "*.googlecode.com *.google-analytics.com *.persona.org " + \
-            "'unsafe-inline' 'unsafe-eval'; img-src * data:"
+            "*.googlecode.com *.google-analytics.com " + \
+            "*.googletagmanager.com " + \
+            "'unsafe-inline' 'unsafe-eval' data:; img-src * data:"
         return response
 
     return app
