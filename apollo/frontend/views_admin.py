@@ -10,11 +10,10 @@ from flask_security import current_user
 from flask_security.utils import encrypt_password
 from jinja2 import contextfunction
 import pytz
-from wtforms import FileField, PasswordField, SelectMultipleField
+from wtforms import PasswordField, SelectMultipleField
 
 from apollo.core import admin, db
 from apollo import models, settings
-from apollo.frontend import forms
 
 
 app_time_zone = pytz.timezone(settings.TIMEZONE)
@@ -74,35 +73,8 @@ class EventAdminView(BaseAdminView):
             _('Event'))
     ]
 
-
-# class EventAdminView(ModelView):
-#     # disallow event creation
-#     # can_create = False
-
-#     # what fields to be displayed in the list view
-#     column_list = ('name', 'start', 'end')
-
-#     # what fields filtering is allowed by
-#     column_filters = ('name', 'start', 'end')
-
-#     # rules for form editing. in this case, only the listed fields
-#     # and the header for the field set
-#     form_rules = [
-#         rules.FieldSet(('name', 'start', 'end'), _('Event'))
-#     ]
-
-#     form_excluded_columns = ('deployment')
-
     def get_one(self, pk):
         event = super(EventAdminView, self).get_one(pk)
-
-#         # setup permissions list
-#         try:
-#             entities = models.Need.objects.get(
-#                 action='access_event', items=event).entities
-#         except models.Need.DoesNotExist:
-#             entities = []
-#         event.roles = [str(i.pk) for i in entities]
 
         # convert start and end dates to app time zone
         event.start = utc_time_zone.localize(event.start).astimezone(
@@ -139,28 +111,6 @@ class EventAdminView(BaseAdminView):
             utc_time_zone)
         model.end = app_time_zone.localize(model.end).astimezone(
             utc_time_zone)
-
-#     def after_model_change(self, form, model, is_created):
-#         # remove event permission
-#         models.Need.objects.filter(
-#             action="access_event", items=model,
-#             deployment=model.deployment).delete()
-
-#         # create event permission
-#         roles = models.Role.objects(pk__in=form.roles.data, name__ne='admin')
-#         models.Need.objects.create(
-#             action="access_event", items=[model], entities=roles,
-#             deployment=model.deployment)
-
-#     def scaffold_form(self):
-#         form_class = super(EventAdminView, self).scaffold_form()
-#         form_class.roles = SelectMultipleField(
-#             _('Roles with access'),
-#             choices=forms._make_choices(
-#                 models.Role.objects(name__ne='admin').scalar('pk', 'name')),
-#             widget=form.Select2Widget(multiple=True))
-
-#         return form_class
 
 
 class UserAdminView(BaseAdminView):
@@ -220,14 +170,16 @@ class UserAdminView(BaseAdminView):
             _('Roles'), widget=form.Select2Widget(multiple=True))
         return form_class
 
-    @action('disable', _('Disable'), _('Are you sure you want to disable selected users?'))
+    @action('disable', _('Disable'),
+            _('Are you sure you want to disable selected users?'))
     def action_disable(self, ids):
         for role in models.User.query.filter(models.User.id.in_(ids)):
             role.active = False
             role.save()
         flash(_('User(s) successfully disabled.'))
 
-    @action('enable', _('Enable'), _('Are you sure you want to enable selected users?'))
+    @action('enable', _('Enable'),
+            _('Are you sure you want to enable selected users?'))
     def action_enable(self, ids):
         for role in models.User.query.filter(models.User.id.in_(ids)):
             role.active = True
@@ -278,36 +230,6 @@ class ParticipantSetAdminView(SetViewMixin, BaseAdminView):
         'participants': macro('participants_list')
     }
     inline_models = (models.ParticipantDataField,)
-
-
-#     def get_one(self, pk):
-#         role = super(RoleAdminView, self).get_one(pk)
-#         role.permissions = [
-#             str(i) for i in models.Need.objects(
-#                 entities=role, action__nin=excluded_perm_actions).scalar('pk')]
-#         return role
-
-#     def after_model_change(self, form, model, is_created):
-#         # remove model from all permissions that weren't granted
-#         # except for the excluded actions
-#         for need in models.Need.objects(pk__nin=form.permissions.data,
-#                                         action__nin=excluded_perm_actions):
-#             need.update(pull__entities=model)
-
-#         # add only the explicitly defined permissions
-#         for pk in form.permissions.data:
-#             models.Need.objects.get(pk=pk).update(add_to_set__entities=model)
-
-#     def scaffold_form(self):
-#         form_class = super(RoleAdminView, self).scaffold_form()
-#         form_class.permissions = SelectMultipleField(
-#             _('Permissions'),
-#             choices=forms._make_choices(
-#                 models.Need.objects(
-#                     action__nin=excluded_perm_actions).scalar('pk', 'action')),
-#             widget=form.Select2Widget(multiple=True))
-
-#         return form_class
 
 
 admin.add_view(DeploymentAdminView(models.Deployment, db.session))
