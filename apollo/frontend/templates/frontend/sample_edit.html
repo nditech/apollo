@@ -1,26 +1,49 @@
 {% extends "frontend/_layout.html" %}
+{% block stylesheets %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/handsontable.min.css') }}">
+{% endblock stylesheets %}
 {% block content %}
 <form class="form-horizontal" method="POST" action="{{ request.url }}">
   {{ form.hidden_tag() }}
-  {%- for field in form -%}
-  {%- if field.type != 'CSRFTokenField' -%}
-  <div class="form-group {% if field.errors %}has-error{% endif %}">
-      {{ field.label(class_='col-sm-3 col-sm-offset-1 control-label') }}
+  <div class="form-group {% if form.name.errors %}has-error{% endif %}">
+      {{ form.name.label(class_='col-sm-3 col-sm-offset-1 control-label') }}
       <div class="col-sm-6">
-          {{ field(class_='form-control span3') }}
-          {% if field.errors %}
-          {% for e in field.errors %}
+          {{ form.name(class_='form-control span3') }}
+          {% if form.name.errors %}
+          {% for e in form.name.errors %}
           <p class="help-block">{{ e }}</p>
           {% endfor %}
           {% endif %}
       </div>
   </div>
-  {%- endif -%}
-  {%- endfor -%}
+  <div class="form-group" id="grid">
+      {{ form.location_data }}
+  </div>
   <div class="form-group">
       <div class="col-sm-offset-4 col-sm-4">
-          <button class="btn btn-primary input-mini" type="submit">{{ _('Save') }}</button> <a class="btn btn-default input-mini" style="margin-left:0.5em" href="javascript:history.go(-1);">{{ _('Cancel') }}</a>
+          <button class="btn btn-primary input-mini" id="saveButton" type="submit">{{ _('Save') }}</button> <a class="btn btn-default input-mini" style="margin-left:0.5em" href="javascript:history.go(-1);">{{ _('Cancel') }}</a>
       </div>
   </div>
 </form>
 {% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/handsontable.min.js') }}"></script>
+<script>
+    var fieldId = '{{ form.location_data.id }}';
+    var locationDataField = document.getElementById(fieldId);
+    var data = JSON.parse(locationDataField.value);
+    var gridElement = document.getElementById('grid');
+    var grid = new Handsontable(gridElement, {
+        data: data,
+        columns: [{data: 'code'}, {data: 'name', readOnly: true}],
+        minSpareRows: 1,
+        colHeaders: ['Code', 'Name'],
+        rowHeaders: true,
+        stretchH: 'all'
+    });
+    var saveButton = document.getElementById('saveButton');
+    saveButton.addEventListener('click', function (evt) {
+        locationDataField.value = JSON.stringify(grid.getData());
+    });
+</script>
+{% endblock  %}
