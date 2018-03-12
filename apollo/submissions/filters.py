@@ -47,9 +47,6 @@ def make_submission_sample_filter(location_set_id):
         def filter(self, query, value):
             if value:
                 query2 = query.join(
-                    models.Location,
-                    models.Submission.location_id == models.Location.id
-                ).join(
                     models.samples_locations,
                     models.samples_locations.c.location_id == models.Location.id
                 ).join(
