@@ -25,6 +25,11 @@ EVT_E = ElementMaker(namespace=NSMAP['ev'], nsmap=NSMAP)
 SCHEMA_E = ElementMaker(namespace=NSMAP['xsd'], nsmap=NSMAP)
 ROSA_E = ElementMaker(namespace=NSMAP['jr'], nsmap=NSMAP)
 
+FIELD_TYPES = (
+    'boolean', 'comment', 'integer', 'select', 'multiselect',
+    # 'bucket', 'string'
+)
+
 
 class FormSet(BaseModel):
     __tablename__ = 'form_set'
@@ -167,53 +172,53 @@ class Form(Resource):
                 data.append(etree.Element(field['tag']))
                 path = '/data/{}'.format(field['tag'])
 
-                field_options = field.get('options')
-                if field_options:
-                    # sort by value
-                    sorted_options = sorted(
-                        field_options.items(), key=itemgetter(1))
-                    if field.get('is_multi_choice'):
-                        element_factory = E.select
-                        model.append(E.bind(nodeset=path, type='select'))
-                    else:
-                        element_factory = E.select1
-                        model.append(E.bind(nodeset=path, type='select1'))
-
-                    field_element = element_factory(
-                        E.label(field['description']),
-                        ref=field['tag']
-                    )
-
-                    for key, value in sorted_options:
-                        field_element.append(
-                            E.item(E.label(key), E.value(str(value)))
-                        )
-                else:
-                    if field.get('is_boolean'):
-                        field_element = E.select1(
+                field_type = field.get('type')
+                if field_type == 'boolean':
+                    field_element = E.select1(
                             E.label(field['description']),
                             E.item(E.label('True'), E.value('1')),
                             E.item(E.label('False'), E.value('0')),
                             ref=field['tag']
                         )
+                    model.append(E.bind(nodeset=path, type='select1'))
+                elif field_type in ('comment', 'string'):
+                    field_element = E.input(
+                            E.label(field['description']),
+                            ref=field['tag']
+                        )
+                    model.append(E.bind(nodeset=path, type='string'))
+                elif field_type == 'integer':
+                    field_element = E.input(
+                        E.label(field['description']),
+                        ref=field['tag']
+                    )
+                    model.append(E.bind(
+                        nodeset=path, type='integer',
+                        constraint='. >= {} and . <= {}'.format(
+                            field.get('min', 0),
+                            field.get('max', 9999)
+                        )))
+                elif field_type in ('select', 'multiselect'):
+                    sorted_options = sorted(field.get('options').items(),
+                                            key=itemgetter(1))
+                    if field_type == 'select':
+                        element_factory = E.select1
                         model.append(E.bind(nodeset=path, type='select1'))
-                    elif field.get('is_comment'):
-                        field_element = E.input(
-                            E.label(field['description']),
-                            ref=field['tag']
-                        )
-                        model.append(E.bind(nodeset=path, type='string'))
                     else:
-                        field_element = E.input(
-                            E.label(field['description']),
-                            ref=field['tag']
+                        element_factory = E.select
+                        model.append(E.bind(nodeset=path, type='select'))
+
+                    field_element = element_factory(
+                        E.label(field['description']),
+                        ref=field['tag']
+                    )
+                    for key, value in sorted_options:
+                        field_element.append(
+                            E.item(E.label(key), E.value(str(value)))
                         )
-                        model.append(E.bind(
-                            nodeset=path, type='integer',
-                            constraint='. >= {} and . <= {}'.format(
-                                field.get('min', 0),
-                                field.get('max', 9999)
-                            )))
+                else:
+                    continue
+
                 grp_element.append(field_element)
             body.append(grp_element)
 
@@ -233,21 +238,28 @@ class FormBuilderSerializer(object):
             'analysis': field.get('analysis_type')
         }
 
-        if field.get('is_comment'):
+        field_type = field.get('type')
+        if field_type in ('comment', 'string'):
             data['component'] = 'textarea'
-        elif not field.get('options'):
+        elif field_type == 'boolean':
             data['component'] = 'textInput'
-            data['required'] = field.get('is_boolean', False)
+            data['required'] = True
+            data['min'] = field.get('min', 0)
+            data['max'] = field.get('max', 1)
+        elif field_type == 'integer':
+            data['component'] = 'textInput'
             data['min'] = field.get('min', 0)
             data['max'] = field.get('max', 9999)
-        else:
+        elif field_type in ('select', 'multiselect'):
             sorted_options = sorted(field['options'].items(),
                                     key=itemgetter(1))
             data['options'] = [opt[0] for opt in sorted_options]
-            if field.get('is_multi_choice'):
+            if field_type == 'multiselect':
                 data['component'] = 'checkbox'
             else:
                 data['component'] = 'radio'
+        else:
+            return {}
 
         return data
 
@@ -301,13 +313,18 @@ class FormBuilderSerializer(object):
             if f['analysis']:
                 field['analysis_type'] = f['analysis']
 
+            # TODO: this formbuilder doesn't yet support
+            # string fields
             if f['component'] == 'textarea':
-                field['is_comment'] = True
+                field['type'] = 'comment'
                 field['analysis_type'] = 'N/A'
             elif f['component'] == 'textInput':
-                field['is_boolean'] = f['required']
-
-                if not field['is_boolean']:
+                if f['required']:
+                    field['type'] = 'boolean'
+                    field['min'] = 0
+                    field['max'] = 1
+                else:
+                    field['type'] = 'integer'
                     try:
                         min_limit = int(f.get('min', 0))
                     except ValueError:
@@ -320,15 +337,13 @@ class FormBuilderSerializer(object):
 
                     field['min'] = min_limit
                     field['max'] = max_limit
-
-                else:
-                    field['min'] = 0
-                    field['max'] = 1
             else:
                 field['options'] = {
                     k: v for v, k in enumerate(f['options'], 1)}
                 if f['component'] == 'checkbox':
-                    field['is_multi_choice'] = True
+                    field['type'] = 'multiselect'
+                else:
+                    field['type'] = 'select'
 
             current_group['fields'].append(field)
 
