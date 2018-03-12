@@ -213,10 +213,11 @@ def build_questionnaire(form, data=None):
 
         for field in group['fields']:
             # if the field has options, create a list of choices
-            if field.get('options'):
+            field_type = field.get('type')
+            if field_type in ('select', 'multiselect'):
                 choices = [(v, k) for k, v in field.get('options').items()]
 
-                if field.get('is_multi_choice'):
+                if field['type'] == 'multiselect':
                     fields[field['name']] = IntegerSplitterField(
                         field['name'],
                         choices=choices,
@@ -232,11 +233,10 @@ def build_questionnaire(form, data=None):
                         validators=[validators.optional()],
                         widget=widgets.TextInput()
                     )
-            else:
-                if field.get('is_comment'):
-                    continue
-
-                if field.get('is_boolean'):
+            elif field_type == 'comment':
+                continue
+            elif field_type in ('boolean', 'integer'):
+                if field_type == 'boolean':
                     field_validators = [validators.optional()]
                 else:
                     field_validators = [

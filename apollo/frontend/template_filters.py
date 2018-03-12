@@ -18,8 +18,9 @@ def _clean(fieldname):
 
 
 def checklist_question_summary(form, field, location, dataframe):
+    field_type = field.get('type')
     stats = {'urban': {}}
-    if field.get('options'):
+    if field_type in ('select', 'multiselect'):
         stats['type'] = 'discrete'
         stats['options'] = OrderedDict(
             sorted(field.get('options').items(), key=lambda x: x[1])
@@ -27,7 +28,7 @@ def checklist_question_summary(form, field, location, dataframe):
     else:
         stats['type'] = 'continuous'
 
-    if field.get('is_multi_choice'):
+    if field_type == 'multiselect':
         stats.update(multiselect_dataframe_analysis(
             dataframe, field['tag'], sorted(field.get('options').values())))
     else:
@@ -35,7 +36,7 @@ def checklist_question_summary(form, field, location, dataframe):
 
     try:
         for name, grp in dataframe.groupby('urban'):
-            if field.get('is_multi_choice'):
+            if field_type == 'multiselect':
                 stats['urban']['Urban' if name else 'Rural'] = \
                     multiselect_dataframe_analysis(
                         grp, field['tag'], sorted(field.get('options').values()))

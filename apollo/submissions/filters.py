@@ -224,7 +224,7 @@ def make_submission_list_filter(event, form):
         if form.form_type == 'INCIDENT':
             option_fields = [
                 f for f in form._field_cache.values()
-                if f.get('options') and not f.get('is_multi_choice')]
+                if f['type'] == 'select']
             for field in option_fields:
                 choices = _make_choices(sorted(
                     ((v, '{} - {}'.format(field['tag'], k)) for k, v in

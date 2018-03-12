@@ -11,7 +11,7 @@ from apollo.submissions.models import (
 def export_field_value(form, submission, tag):
     field = form.get_field_by_tag(tag)
 
-    if not field.get('is_multi_choice'):
+    if field['type'] == 'multiselect':
         return submission.data.get(tag)
 
     data = submission.data.get(tag)

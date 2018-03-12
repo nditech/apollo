@@ -68,17 +68,18 @@ def make_submission_edit_form_class(event, form):
 
     for index, group in enumerate(form.data['groups']):
         for field in group['fields']:
-            if field.get('is_comment'):
+            field_type = field.get('type')
+            if field_type == 'comment':
                 form_fields[field['tag']] = fields.StringField(
                     field['tag'],
                     description=field['description'],
                     validators=[validators.Optional()],
                     widget=widgets.TextArea()
                 )
-            elif field.get('options'):
+            elif field_type in ('select', 'multiselect'):
                 choices = [(v, k) for k, v in field['options'].items()]
 
-                if field.get('is_multi_choice'):
+                if field_type == 'multiselect':
                     form_fields[field['tag']] = fields.SelectMultipleField(
                         field['tag'],
                         choices=choices,
@@ -99,7 +100,7 @@ def make_submission_edit_form_class(event, form):
                         widget=widgets.TextInput()
                     )
             else:
-                if form.form_type == 'CHECKLIST' and not field.get('is_boolean'):
+                if form.form_type == 'CHECKLIST' and field_type != 'boolean':
                     form_fields[field['tag']] = fields.IntegerField(
                         field['tag'], description=field['description'],
                         validators=[

@@ -92,9 +92,9 @@ def parse_responses(responses_text, form):
     fields are.
     '''
     fields = [fi for group in form.data['groups'] for fi in group['fields']
-              if not fi.get('is_comment')]
-    numeric_fields = [f['tag'] for f in fields if not f.get('is_boolean')]
-    boolean_fields = [f['tag'] for f in fields if f.get('is_boolean')]
+              if fi['type'] != 'comment']
+    numeric_fields = [f['tag'] for f in fields if f['type'] != 'boolean']
+    boolean_fields = [f['tag'] for f in fields if f['type'] == 'boolean']
 
     substrate = re.sub(r'(\n|\r|\r\n)', '', responses_text)
     responses = OrderedDict()

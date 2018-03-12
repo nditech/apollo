@@ -156,8 +156,10 @@ def submission():
         form_modified = True
 
     tag_finder = etree.XPath('//data/*[local-name() = $tag]')
+    data = {}
     for tag in form.tags:
         field = form.get_field_by_tag(tag)
+        field_type = field.get('type')
         try:
             element = tag_finder(document, tag=tag)[0]
         except IndexError:
@@ -166,14 +168,14 @@ def submission():
             continue
 
         if element.text:
-            if field.get('is_comment'):
-                setattr(submission, tag, element.text)
-            elif field.get('is_multi_choice'):
-                setattr(
-                    submission, tag, [int(i) for i in element.text.split()])
+            if field_type in ('comment', 'string'):
+                data[tag] = element.text
+            elif field_type == 'multiselect':
+                data[tag] = [int(i) for i in element.text.split()]
             else:
-                setattr(submission, tag, int(element.text))
+                data[tag] = int(element.text)
 
+    submission.data = data
     submission.save()
     update_submission_version(submission)
 

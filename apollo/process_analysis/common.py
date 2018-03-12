@@ -376,15 +376,16 @@ def generate_field_stats(field, dataset, all_tags=None):
     ''' In order to simplify the choice on what analysis to perform
     this method will check a few conditions and return the appropriate
     analysis for the field'''
-    if field.get('is_boolean'):
+    field_type = field.get('type')
+    if field_type == 'boolean':
         return generate_incident_field_stats(field['tag'], dataset, all_tags)
 
-    if field.get('options'):
+    if field_type in ('select', 'multiselect'):
         sorted_options = sorted(field.get('options').items(), key=itemgetter(1))
         options = [i[1] for i in sorted_options]
         labels = [i[0] for i in sorted_options]
 
-        if field.get('is_multi_choice'):
+        if field_type == 'multiselect':
             return generate_mutiple_choice_field_stats(
                 field['tag'], dataset, options=options, labels=labels
             )
