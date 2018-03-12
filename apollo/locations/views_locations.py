@@ -357,7 +357,7 @@ def nuke_locations(location_set_id):
 @login_required
 def sample_new(location_set_id):
     page_title = _('Create new sample')
-    sample_form = forms.SampleForm()
+    sample_form = forms.SampleForm(data={'location_data': json.dumps([])})
     template_name = 'frontend/sample_edit.html'
 
     context = {
@@ -370,9 +370,18 @@ def sample_new(location_set_id):
         return render_template(template_name, **context)
 
     deployment = g.deployment
-    services.samples.create(
+    sample = services.samples.create(
         location_set_id=location_set_id, name=sample_form.name.data,
         deployment_id=deployment.id)
+
+    location_data = json.loads(sample_form.location_data.data)
+    if location_data:
+        codes = [i[0].strip() for i in location_data if i[0]]
+        sample.locations = services.locations.filter(
+            models.Location.code.in_(codes),
+            models.Location.location_set_id == sample.location_set_id
+        ).all()
+        sample.save()
 
     return redirect(url_for('.sample_list', location_set_id=location_set_id))
 
@@ -432,7 +441,12 @@ def sample_edit(sample_id):
         sample.name = sample_form.name.data
         if sample_form.location_data.data:
             location_data = json.loads(sample_form.location_data.data)
-
+            if location_data:
+                codes = [i[0].strip() for i in location_data if i[0]]
+                sample.locations = services.locations.filter(
+                    models.Location.code.in_(codes),
+                    models.Location.location_set_id == sample.location_set_id
+                ).all()
         sample.save()
 
         return redirect(url_for(
