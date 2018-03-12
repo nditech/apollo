@@ -26,7 +26,7 @@
 {%- else -%}
 {%- for group in form.data.groups -%}
 {%- for field in group.fields -%}
-{%- if field.options and not field.is_multi_choice -%}
+{%- if field['type'] == 'select' -%}
 <div class="form-group">
 {{ filter_form[field.tag](class_='form-control span2 input-sm') }}
 </div>

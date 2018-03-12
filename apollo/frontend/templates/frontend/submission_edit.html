@@ -168,7 +168,7 @@
       <tr{% if field.tag in submission.flagged_fields and submission.form.verifiable and perms.edit_submission_verification_status.can() %} class="warning"{% endif %}>
         <th>{{ field.tag }}</th>
         <td>{{ field.description }}
-          {%- if field.options and not field.is_multi_choice %}
+          {%- if field['type'] == 'select' %}
           <span class="options">
           {% for item in field.options|dictsort(false, 'value') %}
           <span class="option"><strong>({{ item.1 }})</strong> {{ item.0 }}</span>

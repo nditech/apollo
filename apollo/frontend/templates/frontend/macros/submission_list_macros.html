@@ -46,8 +46,8 @@
     {% for field in form_fields %}
     <td class="text-center">
     {%- if submission.data[field.tag] -%}
-    {%- if (field.options and not field.is_multi_choice) or not (field.is_boolean or field.is_comment) -%}
-    {% if field.options %}{%- set options = field.options|reverse_dict -%}<abbr title="{{ options[submission.data[field.tag]] }}">{{ submission.data[field.tag] }}</abbr>{% else %}{{ submission.data[field.tag] }}{% endif %}
+    {%- if (field['type'] == 'select') or not (field['type'] == 'integer') -%}
+    {% if field['type'] == 'select' %}{%- set options = field.options|reverse_dict -%}<abbr title="{{ options[submission.data[field.tag]] }}">{{ submission.data[field.tag] }}</abbr>{% else %}{{ submission.data[field.tag] }}{% endif %}
     {%- else -%}
     <i class="fa fa-check success" aria-hidden="true" title="{{ _('data present') }}"></i>
     {% endif %}
