@@ -12,7 +12,6 @@ import json
 from apollo import services
 from apollo.formsframework.forms import FormForm
 from apollo.formsframework.models import FormBuilderSerializer
-from apollo.formsframework.tasks import update_submissions
 from apollo.submissions.tasks import init_submissions
 from apollo.frontend.forms import make_checklist_init_form
 
@@ -43,7 +42,7 @@ def form_set_list():
     return render_template(template_name, **context)
 
 
-@route(bp, '/<int:form_set_id>/forms/init', methods=['POST'])
+@route(bp, '/forms/set/<int:form_set_id>/init', methods=['POST'])
 @permissions.edit_forms.require(403)
 @login_required
 def checklist_init(form_set_id):
@@ -53,7 +52,9 @@ def checklist_init(form_set_id):
 
     if form.validate_on_submit():
         flash_category = 'checklist_init_success'
-        flash_message = _('Checklists are being created for the form, role and location type you selected in the current event')
+        flash_message = _('Checklists are being created for the form, '
+                          'role and location type you selected in the '
+                          'current event')
 
         init_submissions.delay(
             g.event.id,
@@ -90,12 +91,11 @@ def form_builder(id):
 
         if data:
             FormBuilderSerializer.deserialize(form, data)
-            # update_submissions.delay(str(form.pk))
 
         return ''
 
 
-@route(bp, '/<int:form_set_id>/forms/new', methods=['GET', 'POST'])
+@route(bp, '/forms/set/<int:form_set_id>/new', methods=['GET', 'POST'])
 @permissions.edit_forms.require(403)
 @login_required
 def new_form(form_set_id):
@@ -125,7 +125,8 @@ def new_form(form_set_id):
     return redirect(url_for('.list_forms', form_set_id=form_set_id))
 
 
-@route(bp, '/<int:form_set_id>/forms/<int:form_id>', methods=['GET', 'POST'])
+@route(bp, '/forms/set/<int:form_set_id>/<int:form_id>',
+       methods=['GET', 'POST'])
 @permissions.edit_forms.require(403)
 @login_required
 def edit_form(form_set_id, form_id):
@@ -150,7 +151,7 @@ def edit_form(form_set_id, form_id):
     return redirect(url_for('.list_forms', form_set_id=form_set_id))
 
 
-@route(bp, '/<int:form_set_id>/forms')
+@route(bp, '/forms/set/<int:form_set_id>')
 @register_menu(
     bp, 'user.forms', _('Forms'),
     visible_when=lambda: permissions.edit_forms.can())
@@ -172,7 +173,8 @@ def list_forms(form_set_id):
     return render_template(template_name, **context)
 
 
-@route(bp, '/<int:form_set_id>/forms/<int:form_id>/qa', methods=['GET', 'POST'])
+@route(bp, '/forms/set/<int:form_set_id>/<int:form_id>/qa',
+       methods=['GET', 'POST'])
 @permissions.edit_forms.require(403)
 @login_required
 def quality_assurance(form_set_id, form_id):
