@@ -457,55 +457,6 @@ def generate_critical_incident_location_filter(tag):
     )
 
 
-def generate_submission_filter(form):
-    attributes = {}
-
-    # add in field options for critical incidents
-    if form.form_type == 'INCIDENT':
-        option_fields = [field for group in form.groups
-            for field in group.fields if field.options and not field.allows_multiple_values]
-        for field in option_fields:
-            choices = _make_choices(sorted([
-                (v, "{} — {}".format(field.name, k)) for k, v in list(field.options.items())
-            ], key=itemgetter(0)), field.name)
-            attributes[field.name] = FieldOptionFilter(choices=choices)
-
-    # add in form groups
-    for group in form.groups:
-        field_name = '{}__{}'.format(form.pk, group.slug)
-        choices = [
-            ('0', _('%(group)s Status', group=group.name)),
-            ('1', _('%(group)s Partial', group=group.name)),
-            ('2', _('%(group)s Missing', group=group.name)),
-            ('3', _('%(group)s Complete', group=group.name)),
-            ('4', _('%(group)s Conflict', group=group.name))
-        ]
-        attributes[field_name] = FormGroupFilter(choices=choices)
-
-    # quarantine status
-    attributes['quarantine_status'] = SubmissionQuarantineStatusFilter(
-        choices=(
-            ('', _('Quarantine Status')),
-            ('N', _('Quarantine None')),
-            ('A', _('Quarantine All')),
-            ('R', _('Quarantine Results'))
-        ))
-
-    # participant id and location
-    attributes['participant_id'] = ParticipantIDFilter()
-    attributes['location'] = AJAXLocationFilter()
-
-    # and status for incident forms
-    if form.form_type == 'INCIDENT':
-        attributes['status'] = SubmissionStatus()
-
-    return type(
-        'SubmissionFilterSet',
-        (basesubmission_filterset(),),
-        attributes
-    )
-
-
 def generate_quality_assurance_filter(form):
     quality_check_criteria = [('', _('Quality Check Criterion'))] + \
         [(qc['name'], qc['description']) for qc in form.quality_checks]
