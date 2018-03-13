@@ -117,7 +117,7 @@ def _process_analysis(event, form_id, location_id=None, tag=None):
 
     # set up template context
     context = {}
-    context['dataframe'] = make_submission_dataframe(filter_set.qs)
+    context['dataframe'] = make_submission_dataframe(filter_set.qs, form)
     context['page_title'] = page_title
     context['display_tag'] = display_tag
     context['filter_form'] = filter_set.form

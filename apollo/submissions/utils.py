@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import numpy as np
 import pandas as pd
 
 from apollo.locations.models import Location
@@ -10,26 +11,38 @@ def _extract_location_path(location_id):
     return location.make_path()
 
 
-def make_submission_dataframe(query, selected_tags=None, excluded_tags=None):
-    query2 = query.with_entities(
-        Submission.data, Submission.location_id)
+def make_submission_dataframe(query, form, selected_tags=None, excluded_tags=None):
+    # excluded tags have higher priority than selected tags
+    fields = set(form.tags)
+    if selected_tags:
+        fields = fields.intersection(selected_tags)
+    if excluded_tags:
+        fields = fields.difference(excluded_tags)
+
+    columns = [
+        Submission.data[tag].label(tag) for tag in fields] + \
+        [Submission.location_id]
+
+    # type coercion is necessary for numeric columns
+    # if we allow Pandas to infer the column type for these,
+    # there's a risk that it will guess wrong, then it might
+    # raise exceptions when we're calculating the mean and
+    # standard deviation on those columns
+    type_coercions = {
+        tag: np.float64
+        for tag in form.tags
+        if form.get_field_by_tag(tag)['type'] == 'integer'}
+
+    query2 = query.with_entities(*columns)
 
     df = pd.read_sql(query2.statement, query2.session.bind)
-
-    df_data = df['data'].apply(pd.Series)
-    # remove requested tags
-    if excluded_tags and isinstance(excluded_tags, list):
-        df_data = df_data.drop(columns=excluded_tags)
-
-    # restrict to requested tags
-    if selected_tags and isinstance(selected_tags, list):
-        df_data = df_data.filter(items=selected_tags)
+    df = df.astype(type_coercions)
 
     df_locations = df['location_id'].apply(
         _extract_location_path).apply(pd.Series)
 
     return pd.concat(
-        [df_data, df_locations], axis=1, join_axes=[df_data.index])
+        [df, df_locations], axis=1, join_axes=[df.index])
 
 
 def update_participant_completion_rating(submission):

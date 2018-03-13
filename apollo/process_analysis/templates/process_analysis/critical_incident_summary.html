@@ -68,7 +68,7 @@
 					{% for group in field_groups %}
 					{% if field_groups[group] %}
 					<h4>{{ group }}</h4>
-						{% for field in field_groups[group] if not field.['type'] == 'boolean' %}
+						{% for field in field_groups[group] if not field['type'] == 'boolean' %}
 							{% set question_summary = form|checklist_question_summary(field, location, dataframe) %}
 							{% set stats = question_summary.stats %}
 							<table width="100%" class="table table-striped table-bordered">

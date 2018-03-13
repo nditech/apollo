@@ -636,7 +636,7 @@ def _incident_csv(form_id, location_type_id, location_id=None):
         models.Submission.created <= event.end,
         models.Submission.created >= event.start)
 
-    df = make_submission_dataframe(submission_query)
+    df = make_submission_dataframe(submission_query, form)
     ds = Dataset()
     ds.headers = ['LOC'] + tags + ['TOT']
 

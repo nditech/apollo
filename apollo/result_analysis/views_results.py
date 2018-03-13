@@ -73,7 +73,7 @@ def _voting_results(form_id, location_id=None):
         ~models.Submission.verification_status == FLAG_STATUSES['rejected'][0],
         ~models.Submission.quarantine_status.in_(['A', 'R']))
     filter_set = filter_class(queryset, request.args)
-    dataset = make_submission_dataframe(filter_set.qs)
+    dataset = make_submission_dataframe(filter_set.qs, form)
 
     registered_voters_field = form.registered_voters_tag or 'registered_voters'
     if form.invalid_votes_tag:

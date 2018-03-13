@@ -422,7 +422,7 @@ def generate_incidents_data(form, queryset, location_root, grouped=True,
                 and not field.get('is_comment')]
 
     try:
-        data_frame = make_submission_dataframe(queryset)
+        data_frame = make_submission_dataframe(queryset, form)
 
         if data_frame.empty:
             return incidents_summary
@@ -530,7 +530,7 @@ def generate_process_data(form, queryset, location_root, grouped=True,
                 and not field.get('is_comment')]
 
     try:
-        data_frame = make_submission_dataframe(queryset)
+        data_frame = make_submission_dataframe(queryset, form)
 
         if data_frame.empty:
             return process_summary
