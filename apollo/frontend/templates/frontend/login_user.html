@@ -59,6 +59,11 @@
     {% block scripts -%}
     {%- assets 'apollo_js' %}
     <script type="text/javascript" src="{{ ASSET_URL }}" charset="utf-8"></script>
+    <script type="text/javascript">
+      $(function () {
+        $('#email').focus();
+      });
+    </script>
     {%- endassets %}
     {%- endblock %}
   </body>
