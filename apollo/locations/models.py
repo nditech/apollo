@@ -215,6 +215,9 @@ class Location(BaseModel):
 
         return self._cached_path
 
+    def __repr__(self):
+        return self.name
+
 
 class LocationPath(db.Model):
     __tablename__ = 'location_path'
