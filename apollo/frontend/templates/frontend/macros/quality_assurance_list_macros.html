@@ -16,12 +16,12 @@
 {% macro submission_items(submissions, form, form_fields, location_types, quality_statuses, verification_statuses, perms) %}
 {% for submission in submissions %}
 <tr>
-    <td>{{ submission.contributor.participant_id }}</td>
+    <td>{{ submission.participant.participant_id }}</td>
     {% for location_type in location_types %}
     <td>{{ submission.location.make_path()[location_type.name] }}</td>
     {% endfor %}
-    <td>{{ submission.contributor.name|default('', true) }}</td>
-    <td>{{ submission.contributor.phone|default('', true) }}</td>
+    <td>{{ submission.participant.name|default('', true) }}</td>
+    <td>{{ submission.participant.phone|default('', true) }}</td>
     {% for qc in form.quality_checks %}
     <td class="text-center">
         {%- if submission.verification_status == verification_statuses.VERIFIED %}<img src="{{ url_for('static', filename='img/blue_dot.png') }}" alt="{{ _('Verified') }}" title="{{ _('Verified') }}" height="11" width="11">
