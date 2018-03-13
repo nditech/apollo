@@ -71,7 +71,7 @@ a:hover.arrow-style{text-decoration:none; color:#333;}
           <table class="table table-bordered table-striped">
            <thead>
              <tr>
-               <th><a href="{{ url_for('participants.participant_list', sort_by='id', **args) }}" class="arrow-style"><img src="{{ url_for('static', filename='img/double-arrow.gif') }}" class="img pull-left"></img>{{ _('ID') }}</a></th>
+               <th class="text-right shrink"><a href="{{ url_for('participants.participant_list', sort_by='id', **args) }}" class="arrow-style"><img src="{{ url_for('static', filename='img/double-arrow.gif') }}" class="img pull-left"></img>{{ _('ID') }}</a></th>
                {%- for location_type in location_types -%}
                <th>{{ location_type.name }}</th>
                {%- endfor -%}
@@ -90,9 +90,9 @@ a:hover.arrow-style{text-decoration:none; color:#333;}
              {% for participant in participants.items %}
              <tr>
                {%- if perms.edit_participant.can() -%}
-               <td class="text-center"><a href="{{ url_for('participants.participant_edit', id=participant.id) }}" data-toggle="modal" data-target="#edit_modal">{{ participant.participant_id }}</a></td>
+               <td class="text-right shrink"><a href="{{ url_for('participants.participant_edit', id=participant.id) }}" data-toggle="modal" data-target="#edit_modal">{{ participant.participant_id }}</a></td>
                {%- else -%}
-               <td class="text-center">{{ participant.participant_id }}</td>
+               <td class="text-right shrink">{{ participant.participant_id }}</td>
                {%- endif -%}
                {%- for location_type in location_types -%}
                <td>{{ participant.location.make_path()[location_type.name] }}</td>
