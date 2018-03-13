@@ -129,12 +129,6 @@ def _process_analysis(event, form_id, location_id=None, tag=None):
     context['navigation_data'] = analysis_navigation_data(
         form, location, display_tag)
 
-    for group in form.data['groups']:
-        process_fields = sorted([
-            field for field in group['fields']
-            if field['analysis_type'] == 'PROCESS'], key=itemgetter('tag'))
-        context['field_groups'][group['name']] = process_fields
-
     # processing for incident forms
     if form.form_type == 'INCIDENT':
         if display_tag:
@@ -146,7 +140,25 @@ def _process_analysis(event, form_id, location_id=None, tag=None):
             incidents_summary = generate_incidents_data(
                 form, filter_set.qs, location, grouped, tags)
             context['incidents_summary'] = incidents_summary
+
+        detail_visible = False
+        for group in form.data['groups']:
+            process_fields = sorted([
+                field for field in group['fields']
+                if field['analysis_type'] == 'PROCESS'
+                and field['type'] != 'boolean'], key=itemgetter('tag'))
+            context['field_groups'][group['name']] = process_fields
+            if process_fields:
+                detail_visible = True
+
+        context['detail_visible'] = detail_visible
     else:
+        for group in form.data['groups']:
+            process_fields = sorted([
+                field for field in group['fields']
+                if field['analysis_type'] == 'PROCESS'], key=itemgetter('tag'))
+            context['field_groups'][group['name']] = process_fields
+
         process_summary = generate_process_data(
             form, filter_set.qs, location, grouped=True, tags=tags)
         context['process_summary'] = process_summary

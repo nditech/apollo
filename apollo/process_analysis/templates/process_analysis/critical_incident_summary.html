@@ -20,10 +20,10 @@
 	<div class="col-md-12">
 		{% if incidents_summary.top %}
 		<div class="tabbable">
-			<ul class="nav nav-tabs">
+			<!-- <ul class="nav nav-tabs">
 				<li class="active"><a href="#table" data-toggle="tab">{{ _('Table') }}</a></li>
 				<li><a href="#charts" data-toggle="tab">{{ _('Charts') }}</a></li>
-			</ul>
+			</ul> -->
 			<div class="tab-content">
 				<div class="tab-pane active" id="table">
 					<h3>{{ _('Summary') }}</h3>
@@ -63,6 +63,7 @@
 						{% endfor %}
 						{% endfor %}
 					</table>
+					{% if detail_visible %}
 					<h3>{{ _('Detail') }}</h3>
 					{% if dataframe.count().any() %}
 					{% for group in field_groups %}
@@ -113,6 +114,7 @@
 						<td style="text-align:center">{{ _('No data available') }}</td>
 					</tr>
 				</table>
+				{% endif %}
 				{% endif %}
 				</div>
 			</div>
