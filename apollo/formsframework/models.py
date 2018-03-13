@@ -8,6 +8,7 @@ from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy_utils import ChoiceType
 from slugify import slugify_unicode
 from unidecode import unidecode
+from xlwt import Workbook
 
 from apollo.core import db
 from apollo.dal.models import BaseModel, Resource
@@ -124,6 +125,91 @@ class Form(Resource):
                     tags.append(f.get('tag'))
 
         return tags
+
+    def to_excel(self):
+        book = Workbook()
+        survey_sheet = book.add_sheet('survey')
+        choices_sheet = book.add_sheet('choices')
+        analysis_sheet = book.add_sheet('analysis')
+
+        survey_header = ['type', 'name', 'label', 'constraints']
+        choices_header = ['list name', 'name', 'label']
+        analysis_header = ['name', 'analysis']
+
+        # HEADERS
+        for col, value in enumerate(survey_header):
+            survey_sheet.write(0, col, value)
+
+        for col, value in enumerate(choices_header):
+            choices_sheet.write(0, col, value)
+
+        for col, value in enumerate(analysis_header):
+            analysis_sheet.write(0, col, value)
+
+        current_survey_row = 1
+        current_choices_row = 1
+        current_analysis_row = 1
+        groups = self.data.get('groups')
+        if groups and isinstance(groups, list):
+            current_group = None
+            for group in groups:
+                if not group:
+                    continue
+
+                if current_group:
+                    current_group = group
+                    survey_sheet.write(current_survey_row, 0, 'end group')
+                    current_survey_row += 1
+                survey_sheet.write(current_survey_row, 0, 'begin group')
+                survey_sheet.write(current_survey_row, 1, slugify_unicode(group['name'].lower()))
+                survey_sheet.write(current_survey_row, 2, group['name'])
+                current_survey_row += 1
+                current_group = group
+
+                fields = group.get('fields')
+                if fields and isinstance(fields, list):
+                    for field in fields:
+                        # output the type
+                        if field['type'] in ('integer', 'boolean'):
+                            survey_sheet.write(current_survey_row, 0, 'integer')
+                            if field['type'] == 'boolean':
+                                survey_sheet.write(current_survey_row, 3, '. >= 0 and . <= 1')
+                            else:
+                                survey_sheet.write(current_survey_row, 3, '. >= {} and . <= {}'.format(
+                                    field.get('min', 0), field.get('max', 9999)))
+
+                        elif field['type'] in ('comment', 'string'):
+                            survey_sheet.write(current_survey_row, 0, 'text')
+                        else:
+                            # for questions with choices, write them to the
+                            # choices sheet
+                            option_list_name = '{}_options'.format(field['tag'])
+                            options = field.get('options')
+                            for description, value in options.items():
+                                choices_sheet.write(current_choices_row, 0, option_list_name)
+                                choices_sheet.write(current_choices_row, 1, value)
+                                choices_sheet.write(current_choices_row, 2, description)
+                                current_choices_row += 1
+
+                            if field['type'] == 'select':
+                                survey_sheet.write(current_survey_row, 0, 'select_one {}'.format(option_list_name))
+                            else:
+                                survey_sheet.write(current_survey_row, 0, 'select_multiple {}'.format(option_list_name))
+
+                        # output the name and description
+                        survey_sheet.write(current_survey_row, 1, field['tag'])
+                        survey_sheet.write(current_survey_row, 2, field['description'])
+                        current_survey_row += 1
+
+                        # also output the analysis
+                        analysis_sheet.write(current_analysis_row, 0, field['tag'])
+                        analysis_sheet.write(current_analysis_row, 1, field['analysis_type'])
+                        current_analysis_row += 1
+
+            if current_group:
+                survey_sheet.write(current_survey_row, 0, 'end group')
+
+        return book
 
     def to_xml(self):
         root = HTML_E.html()
