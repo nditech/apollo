@@ -213,6 +213,17 @@ def make_submission_location_filter(location_set_id):
     return AJAXLocationFilter
 
 
+def make_dashboard_filter(event):
+    attributes = {}
+    attributes['location'] = make_submission_location_filter(
+            event.location_set_id)()
+
+    return type(
+        'SubmissionFilterSet',
+        (make_base_submission_filter(event),),
+        attributes)
+
+
 def make_submission_list_filter(event, form):
     attributes = {}
     form._populate_field_cache()
