@@ -80,10 +80,10 @@ class Form(Resource):
     quality_checks = db.Column(JSONB)
     party_mappings = db.Column(JSONB)
     calculate_moe = db.Column(db.Boolean)
-    accreditated_voters_tag = db.Column(db.String)
+    accredited_voters_tag = db.Column(db.String)
     quality_checks_enabled = db.Column(db.Boolean, default=False)
     invalid_votes_tag = db.Column(db.String)
-    registered_votes_tag = db.Column(db.String)
+    registered_voters_tag = db.Column(db.String)
     blank_votes_tag = db.Column(db.String)
 
     deployment = db.relationship('Deployment', backref='forms')
@@ -136,10 +136,16 @@ class Form(Resource):
         survey_sheet = book.add_sheet('survey')
         choices_sheet = book.add_sheet('choices')
         analysis_sheet = book.add_sheet('analysis')
+        metadata_sheet = book.add_sheet('metadata')
 
         survey_header = ['type', 'name', 'label', 'constraints']
         choices_header = ['list name', 'name', 'label']
         analysis_header = ['name', 'analysis']
+        metadata_header = ['name', 'prefix', 'form_type',
+                           'require_exclamation', 'calculate_moe',
+                           'accredited_voters_tag', 'invalid_votes_tag',
+                           'registered_voters_tag', 'blank_votes_tag',
+                           'quality_checks_enabled']
 
         # HEADERS
         for col, value in enumerate(survey_header):
@@ -150,6 +156,21 @@ class Form(Resource):
 
         for col, value in enumerate(analysis_header):
             analysis_sheet.write(0, col, value)
+
+        for col, value in enumerate(metadata_header):
+            metadata_sheet.write(0, col, value)
+
+        # fill out form metadata
+        metadata_sheet.write(1, 0, self.name)
+        metadata_sheet.write(1, 1, self.prefix)
+        metadata_sheet.write(1, 2, self.form_type.code)
+        metadata_sheet.write(1, 3, 1 if self.require_exclamation else 0)
+        metadata_sheet.write(1, 4, 1 if self.calculate_moe else 0)
+        metadata_sheet.write(1, 5, self.accredited_voters_tag)
+        metadata_sheet.write(1, 6, self.invalid_votes_tag)
+        metadata_sheet.write(1, 7, self.registered_voters_tag)
+        metadata_sheet.write(1, 8, self.blank_votes_tag)
+        metadata_sheet.write(1, 9, 1 if self.quality_checks_enabled else 0)
 
         current_survey_row = 1
         current_choices_row = 1
@@ -226,7 +247,6 @@ class Form(Resource):
                 survey_sheet.write(current_survey_row, 0, 'end group')
 
         return book
-
 
     def to_xml(self):
         root = HTML_E.html()
@@ -534,32 +554,62 @@ def _process_analysis_worksheet(analysis_data, form_schema):
         field['analysis_type'] = analysis_dict['analysis']
 
 
-def load_excel_schema(sourcefile):
+def _make_form_instance(metadata):
+    form = Form()
+    form.name = metadata.get('name')
+    form.prefix = metadata.get('prefix')
+    form.form_type = metadata.get('form_type')
+    form.accredited_voters_tag = metadata.get('accredited_voters_tag')
+    form.blank_votes_tag = metadata.get('blank_votes_tag')
+    form.invalid_votes_tag = metadata.get('invalid_votes_tag')
+    form.registered_voters_tag = metadata.get('registered_voters_tag')
+
+    try:
+        form.calculate_moe = bool(int(metadata.get('calculate_moe')))
+    except ValueError:
+        form.calculate_moe = False
+    try:
+        form.quality_checks_enabled = bool(
+            int(metadata.get('quality_checks_enabled')))
+    except ValueError:
+        form.quality_checks_enabled = False
+    try:
+        form.require_exclamation = bool(
+            int(metadata.get('require_exclamation')))
+    except ValueError:
+        form.require_exclamation = False
+
+    return form
+
+
+def import_form(sourcefile):
     try:
         file_data = xls2json.xls_to_dict(sourcefile)
     except PyXFormError:
         logger.exception('Error parsing Excel schema file')
 
-    data = {'groups': [], 'field_cache': {}}
-
     survey_data = file_data.get('survey')
     choices_data = file_data.get('choices')
     analysis_data = file_data.get('analysis')
+    metadata = file_data.get('metadata')
 
-    if not survey_data:
+    if not (survey_data and metadata):
         return
 
+    form = _make_form_instance(metadata)
+    form.data = {'groups': [], 'field_cache': {}}
+
     # go over the survey worksheet
-    _process_survey_worksheet(survey_data, data)
+    _process_survey_worksheet(survey_data, form.data)
 
     # go over the options worksheet
     if choices_data:
-        _process_choices_worksheet(choices_data, data)
+        _process_choices_worksheet(choices_data, form.data)
 
     # go over the analysis worksheet
     if analysis_data:
-        _process_analysis_worksheet(analysis_data, data)
+        _process_analysis_worksheet(analysis_data, form.data)
 
     # remove the field cache
-    data.pop('field_cache')
-    return data
+    form.data.pop('field_cache')
+    return form
