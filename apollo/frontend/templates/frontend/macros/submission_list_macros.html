@@ -1,6 +1,6 @@
 {% macro submission_header(form, form_fields, location_types, perms) %}
 <tr>
-    <th class="text-center">{{ _('ID') }}</th>
+    <th class="text-right shrink">{{ _('ID') }}</th>
     {% for location_type in location_types %}
     <th>{{ location_type.name }}</th>
     {% endfor %}
@@ -23,7 +23,7 @@
 {% for submission in submissions %}
 <tr>
     {% if perms.edit_submission.can() %}
-    <td class="text-center"><a href="{{ url_for('submissions.submission_edit', submission_id=submission.id) }}">{{ submission.participant.participant_id }}</a></td>
+    <td class="text-right shrink"><a href="{{ url_for('submissions.submission_edit', submission_id=submission.id) }}">{{ submission.participant.participant_id }}</a></td>
     {% else %}
     <td class="text-center">{{ submission.participant.participant_id }}</td>
     {% endif %}
