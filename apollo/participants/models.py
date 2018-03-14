@@ -39,7 +39,7 @@ class ParticipantDataField(db.Model):
         db.Integer, db.Sequence('participant_data_field_id_seq'),
         primary_key=True)
     participant_set_id = db.Column(
-        db.Integer, db.ForeignKey('participant_set.id'))
+        db.Integer, db.ForeignKey('participant_set.id'), nullable=False)
     name = db.Column(db.String, nullable=False)
     label = db.Column(db.String, nullable=False)
     visible_in_lists = db.Column(db.Boolean, default=False)
