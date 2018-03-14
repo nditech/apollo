@@ -20,10 +20,13 @@ class ParticipantSet(BaseModel):
         db.Integer, db.Sequence('participant_set_id_seq'), primary_key=True)
     name = db.Column(db.String, nullable=False)
     slug = db.Column(db.String)
+    # location_id = db.Column(
+    #     db.Integer, db.ForeignKey('location_set.id'), nullable=False)
     deployment_id = db.Column(
         db.Integer, db.ForeignKey('deployment.id', ondelete='CASCADE'),
         nullable=False)
     deployment = db.relationship('Deployment', backref='participant_sets')
+    # location = db.relationship('LocationSet', backref='participant_sets')
 
     def __str__(self):
         return self.name or ''
@@ -32,8 +35,11 @@ class ParticipantSet(BaseModel):
 class ParticipantDataField(db.Model):
     __tablename__ = 'participant_data_field'
 
+    id = db.Column(
+        db.Integer, db.Sequence('participant_data_field_id_seq'),
+        primary_key=True)
     participant_set_id = db.Column(
-        db.Integer, db.ForeignKey('participant_set.id'), primary_key=True)
+        db.Integer, db.ForeignKey('participant_set.id'))
     name = db.Column(db.String, nullable=False)
     label = db.Column(db.String, nullable=False)
     visible_in_lists = db.Column(db.Boolean, default=False)
