@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
+from io import BytesIO
 
 from apollo.frontend import route, permissions
 from flask import (
     Blueprint, current_app, flash, g, redirect, render_template, request,
-    url_for)
+    send_file, url_for)
 from flask_babelex import lazy_gettext as _
 from flask_menu import register_menu
 from flask_security import login_required
@@ -217,3 +218,17 @@ def quality_assurance(form_set_id, form_id):
     }
 
     return render_template(template_name, **context)
+
+
+@route(bp, '/forms/<int:id>/export', methods=['GET'])
+@permissions.edit_forms.require(403)
+@login_required
+def export_form(id):
+    form = services.forms.fget_or_404(id=id)
+    memory_file = BytesIO()
+    workbook = form.to_excel()
+    workbook.save(memory_file)
+    memory_file.seek(0)
+    filename = '{}.xls'.format(form.name)
+    return send_file(
+        memory_file, attachment_filename=filename, as_attachment=True)
