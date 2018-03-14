@@ -58,7 +58,7 @@
                 <li><a href="{{ url_for('forms.edit_form', form_set_id=form_set_id, form_id=form.id) }}">{{ _('Properties') }}</a></li>
                 <li><a href="{{ url_for('forms.form_builder', id=form.id) }}">{{ _('Builder') }}</a></li>
                 {% if form.form_type == 'CHECKLIST' %}<li><a href="{{ url_for('forms.quality_assurance', form_set_id=form_set_id, form_id=form.id) }}">{{ _('Quality Assurance') }}</a></li>{% endif %}
-                <li><a href="{{ url_for('forms.export_form', id=form.id) }}">{{ _('Export as Excel') }}</a></li>
+                <li><a href="{{ url_for('forms.export_form', id=form.id) }}">{{ _('Export') }}</a></li>
               </ul>
             </li>
           </ul></td>
