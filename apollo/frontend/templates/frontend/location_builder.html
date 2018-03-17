@@ -1,19 +1,20 @@
-{% extends "frontend/_layout.html" %}
+{% extends 'frontend/_layout.html' %}
 {% block stylesheets %}
-<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/joint.min.css') }}">
-{% endblock %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/joint.min.css') }}">
+{% endblock stylesheets %}
 {% block toolbar %}
 <div class="btn-group pull-right">
-<form id="save_form" method="POST" action="{{ request.url }}">
-  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-  <input type="hidden" name="divisions_graph" id="divisions_graph" value="" />
-  <button style="margin-left:1em" type="submit" class="btn btn-sm btn-primary" id="save"><i class="glyphicon glyphicon-floppy-save"></i> {{ _('Save') }}</button>
-</form>
+  <form action="{{ request.url }}" id="save-form" method="POST">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+    <input type="hidden" name="divisions_graph" id="divisions_graph" value="" />
+    <button style="margin-left:1em" type="submit" class="btn btn-sm btn-primary" id="save"><i class="glyphicon glyphicon-floppy-save"></i> {{ _('Save') }}</button>
+  </form>
 </div>
 <div class="btn-group pull-right">
-  <button style="margin-left:1em" type="button" class="btn btn-sm btn-default" id="addDivisionModalButton"><i class="glyphicon glyphicon-plus"></i> {{ _('Add Division') }}</button>
+  <button style="margin-left:1em" type="button" class="btn btn-sm btn-default" id="addDivisionButton"><i class="glyphicon glyphicon-plus"></i> {{ _('Add Division') }}</button>
+  <a href="{{ url_for('locations.export_divisions', location_set_id=location_set.id) }}" class="btn btn-sm btn-default"><i class="glyphicon glyphicon-download"></i> {{ _('Export') }}</a>
 </div>
-{% endblock %}
+{% endblock toolbar %}
 {% block content %}
 <div class="modal fade" id="addDivision" role="dialog">
   <div class="modal-dialog">
@@ -68,8 +69,8 @@
           </div>
       </div>
       <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">{{ _('Close') }}</button>
-          <button type="button" class="btn btn-primary" id="addDivisionAddButton">{{ _('Add') }}</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{ _('Close') }}</button>
+        <button type="button" class="btn btn-primary" id="addModalSaveButton">{{ _('Add') }}</button>
       </div>
       </form>
     </div><!-- /.modal-content -->
@@ -129,9 +130,9 @@
           </div>
       </div>
       <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">{{ _('Close') }}</button>
-          <button type="button" class="btn btn-danger" id="updateDivisionDeleteButton">{{ _('Delete') }}</button>
-          <button type="button" class="btn btn-primary" id="updateDivisionUpdateButton">{{ _('Update') }}</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{ _('Close') }}</button>
+        <button type="button" class="btn btn-danger" id="updateModalDeleteButton">{{ _('Delete') }}</button>
+        <button type="button" class="btn btn-primary" id="updateModalSaveButton">{{ _('Update') }}</button>
       </div>
       </form>
     </div><!-- /.modal-content -->
@@ -152,14 +153,15 @@
 {%- endif -%}
 <div class="row">
   <div class="col-md-10 col-md-offset-1">
-    <div id="paper" style="margin-top: 5em; border: 1px solid #000;" data-graph='{{ location_set.admin_divisions_graph }}'></div>
+    <div id="paper" style="margin-top: 5em; border: 1px solid #000;" data-graph='{{ location_set.make_admin_divisions_graph()|tojson }}'></div>
   </div>
 </div>
-{% endblock %}
+{% endblock content %}
 {% block scripts %}
 <script type="text/javascript" src="{{ url_for('static', filename='js/lodash.min.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/backbone-min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/dagre.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/graphlib.core.min.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/joint.min.js') }}"></script>
-<script type="text/javascript" src="{{ url_for('static', filename='js/joint.layout.DirectedGraph.min.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/locations_builder.js') }}"></script>
-{% endblock %}
+{% endblock scripts %}

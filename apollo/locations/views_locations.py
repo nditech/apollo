@@ -1,26 +1,28 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
+from io import BytesIO
 import json
 import os
 
-import networkx as nx
-
 from flask import (Blueprint, current_app, flash, g, redirect, render_template,
-                   request, Response, url_for, abort, stream_with_context)
+                   request, Response, url_for, abort, stream_with_context,
+                   send_file)
 from flask_babelex import lazy_gettext as _
 from flask_restful import Api
 from flask_security import current_user, login_required
-from apollo.helpers import load_source_file
 from slugify import slugify_unicode
-from sqlalchemy import not_
+from sqlalchemy import not_, or_
 
-from apollo.frontend import permissions, route
-from apollo import models, services, utils
+from apollo import models, services
 from apollo.core import db, uploads
-from apollo.locations import api, filters, forms, tasks
+from apollo.frontend import permissions, route
 from apollo.frontend.forms import (
     file_upload_form, generate_location_edit_form,
     generate_location_update_mapping_form, DummyForm)
+from apollo.helpers import load_source_file
+from apollo.locations import api, filters, forms, tasks
+from apollo.locations.utils import import_graph
+
 
 bp = Blueprint('locations', __name__, template_folder='templates',
                static_folder='static', static_url_path='/core/static')
@@ -210,122 +212,35 @@ def locations_builder(location_set_id):
     page_title = _('Administrative Divisions')
 
     if request.method == 'POST' and request.form.get('divisions_graph'):
-        nx_graph = nx.DiGraph()
         divisions_graph = json.loads(request.form.get('divisions_graph'))
+        nodes = divisions_graph.get('nodes')
 
-        nodes = [cell for cell in divisions_graph.get('cells')
-                 if cell.get('type') == 'basic.Rect']
-        links = [cell for cell in divisions_graph.get('cells')
-                 if cell.get('type') == 'link']
-
-        valid_node_ids = [cell.get('id') for cell in nodes
-                          if cell.get('id').isdigit()]
-
-        # 1. Delete non-referenced location types
+        # find any divisions that were not included in the saved graph
+        # and delete them if there are no linked locations
+        saved_node_ids = [node.get('id') for node in nodes
+                          if str(node.get('id')).isdigit()]
         unused_location_types = services.location_types.filter(
-            models.LocationType.deployment == g.deployment,
             models.LocationType.location_set_id == location_set_id,
-            not_(models.LocationType.id.in_(valid_node_ids))
+            not_(models.LocationType.id.in_(saved_node_ids))
         ).all()
 
         for unused_lt in unused_location_types:
-            if len(unused_lt.locations) > 0:
+            query = services.locations.find(location_type=unused_lt)
+            if db.session.query(query.exists()).scalar():
                 flash(_('Admin level %(name)s has locations assigned '
-                        'and cannot be deleted') % {'name': unused_lt.name},
+                        'and cannot be deleted', name=unused_lt.name),
                       category='locations_builder')
                 continue
+
+            # explicitly doing this because we didn't add a cascade
+            # to the backref
+            models.LocationTypePath.query.filter(or_(
+                models.LocationTypePath.ancestor_id == unused_lt.id,
+                models.LocationTypePath.descendant_id == unused_lt.id
+            )).delete()
             unused_lt.delete()
 
-        # 2. Create location types and update ids
-        for i, node in enumerate(nodes):
-            # TODO: remove this hack
-            if not utils.validate_uuid(node.get('id')):
-                lt = services.location_types.find(
-                    deployment=g.deployment,
-                    location_set=location_set,
-                    id=node.get('id')).first()
-            else:
-                lt = None
-            if lt:
-                lt.is_administrative = node.get('is_administrative')
-                lt.is_political = node.get('is_political')
-                lt.has_political_code = node.get('has_political_code')
-                lt.has_other_code = node.get('has_other_code')
-                lt.has_registered_voters = node.get('has_registered_voters')
-                lt.name = node.get('label')
-                lt.save()
-            else:
-                lt = services.location_types.create(
-                    name=node.get('label'),
-                    is_administrative=node.get('is_administrative'),
-                    is_political=node.get('is_political'),
-                    has_political_code=node.get('has_political_code'),
-                    has_other_code=node.get('has_other_code'),
-                    has_registered_voters=node.get('is_political'),
-                    deployment_id=g.deployment.id,
-                    location_set_id=location_set_id
-                    )
-
-                # update graph node and link ids
-                for j, link in enumerate(links):
-                    if link['source'].get('id', None) == node.get('id'):
-                        links[j]['source']['id'] = str(lt.id)
-                    if link['target'].get('id', None) == node.get('id'):
-                        links[j]['target']['id'] = str(lt.id)
-
-            nodes[i]['id'] = str(lt.id)
-
-        # 3. Build graph
-        for node in nodes:
-            nx_graph.add_node(node.get('id'))
-
-        for link in links:
-            if link['source'].get('id') and link['target'].get('id'):
-                nx_graph.add_edge(
-                    link['source'].get('id'),
-                    link['target'].get('id'))
-
-        # 4. Build db relationships
-        path_lengths = dict(nx.all_pairs_shortest_path_length(nx_graph))
-        for link in links:
-            if link['source'].get('id') and link['target'].get('id'):
-                ancestors = nx.topological_sort(
-                    nx_graph.subgraph(
-                        nx.dfs_tree(
-                            nx_graph.reverse(),
-                            link['target'].get('id')).nodes()))
-
-                for ancestor in ancestors:
-                    path = models.LocationTypePath.query.filter_by(
-                        ancestor_id=ancestor, descendant_id=link['target'].get(
-                            'id'), location_set_id=location_set_id).first()
-                    if not path:
-                        path = models.LocationTypePath(
-                            ancestor_id=ancestor,
-                            descendant_id=link['target'].get('id'),
-                            location_set_id=location_set_id,
-                            depth=path_lengths[ancestor][link['target'].get(
-                                'id')])
-                        db.session.add(path)
-
-        for node in nx_graph.nodes():
-            path = models.LocationTypePath.query.filter_by(
-                ancestor_id=node, descendant_id=node,
-                location_set_id=location_set_id).first()
-            if not path:
-                path = models.LocationTypePath(
-                    ancestor_id=node, descendant_id=node,
-                    depth=0,
-                    location_set_id=location_set_id)
-                db.session.add(path)
-
-        db.session.commit()
-
-        # 5. convert graph to JSON
-        divisions_graph['cells'] = nodes + links
-
-        location_set.admin_divisions_graph = json.dumps(divisions_graph)
-        location_set.save()
+        import_graph(divisions_graph, location_set)
 
         flash(
             _('Your changes have been saved.'),
@@ -460,3 +375,47 @@ def sample_edit(sample_id):
     }
 
     return render_template(template_name, **context)
+
+
+@route(bp, '/locations/set/<int:location_set_id>/export_divisions',
+       methods=['GET'])
+@permissions.edit_locations.require(403)
+@login_required
+def export_divisions(location_set_id):
+    location_set = services.location_sets.fget_or_404(id=location_set_id)
+    # TODO: when the representation of the graph is converted to POPOs,
+    # make sure we convert to a string first
+    graph = location_set.make_admin_divisions_graph()
+    graph_as_bytes = json.dumps(graph, indent=2).encode()
+    graph_buffer = BytesIO(graph_as_bytes)
+    graph_buffer.seek(0)
+    filename = 'admin-divisions-{}.json'.format(slugify_unicode(
+        location_set.name))
+
+    return send_file(graph_buffer, mimetype='application/json',
+                     as_attachment=True, attachment_filename=filename)
+
+
+@route(bp, '/locations/set/<int:location_set_id>/import_divisions',
+       methods=['POST'])
+@permissions.edit_locations.require(403)
+@login_required
+def import_divisions(location_set_id):
+    location_set = services.location_sets.fget_or_404(id=location_set_id)
+
+    # TODO: should this nuke all existing divisions?
+    form = forms.AdminDivisionImportForm()
+
+    if form.validate_on_submit():
+        query = services.location_types.find(
+            location_set_id=location_set_id).exists()
+
+        if db.session.query(query).scalar():
+            graph = json.load(request.files['import_file'])
+            import_graph(graph, location_set, fresh_import=True)
+
+            return redirect(url_for('.locations_builder',
+                                    location_set_id=location_set_id))
+
+    return redirect(url_for('.locations_builder',
+                    location_set_id=location_set_id))

@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import networkx as nx
 from sqlalchemy import and_
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import aliased
@@ -18,10 +19,39 @@ class LocationSet(BaseModel):
         db.Integer, db.ForeignKey('deployment.id', ondelete='CASCADE'),
         nullable=False)
     deployment = db.relationship('Deployment', backref='location_sets')
-    admin_divisions_graph = db.Column(JSONB)
 
     def __str__(self):
         return self.name or ''
+
+    def make_admin_divisions_graph(self):
+        edges = LocationTypePath.query.filter(
+            LocationTypePath.location_set_id == self.id,
+            LocationTypePath.depth > 0
+        ).with_entities(
+            LocationTypePath.ancestor_id,
+            LocationTypePath.descendant_id
+        ).all()
+
+        nodes = LocationType.query.filter(
+            LocationType.location_set_id == self.id
+        ).with_entities(
+            LocationType.id,
+            LocationType.name,
+            LocationType.has_other_code,
+            LocationType.has_political_code,
+            LocationType.has_registered_voters
+        ).all()
+
+        nx_graph = nx.DiGraph()
+        nx_graph.add_nodes_from(n[0] for n in nodes)
+        nx_graph.add_edges_from(edges)
+
+        graph = {
+            'nodes': [n._asdict() for n in nodes],
+            'edges': list(nx.dfs_edges(nx_graph))
+        }
+
+        return graph
 
 
 samples_locations = db.Table(

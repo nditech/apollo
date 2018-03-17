@@ -12,7 +12,7 @@ def nuke_locations(location_set_id):
     db.session.commit()
 
 
-def import_graph(graph, location_set):
+def import_graph(graph, location_set, fresh_import=False):
     nodes = graph.get('nodes')
     edges = graph.get('edges')
 
@@ -21,7 +21,7 @@ def import_graph(graph, location_set):
     for i, node in enumerate(nodes):
         # old implementation had ids as strings, current implementation
         # may be integers or integral strings
-        if not utils.validate_uuid(str(node.get('id'))):
+        if not utils.validate_uuid(str(node.get('id'))) and not fresh_import:
             # this is likely an existing division
             location_type = services.location_types.find(
                 location_set=location_set,
