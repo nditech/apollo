@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import networkx as nx
 from sqlalchemy import and_
-from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import aliased
 
 from apollo.core import db
