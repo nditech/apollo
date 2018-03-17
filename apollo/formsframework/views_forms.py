@@ -232,5 +232,7 @@ def export_form(id):
     workbook.save(memory_file)
     memory_file.seek(0)
     filename = '{}.xls'.format(form.name)
+
     return send_file(
-        memory_file, attachment_filename=filename, as_attachment=True)
+        memory_file, attachment_filename=filename, as_attachment=True,
+        mimetype='application/vnd.ms-excel')
