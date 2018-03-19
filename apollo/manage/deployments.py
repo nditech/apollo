@@ -42,6 +42,8 @@ class CreateDeploymentCommand(Command):
             clerk.save()
             manager.save()
 
+            print('Deployment {} created.\n'.format(name))
+
             # Create an event
             CreateEventCommand._create_event(deployment)
 
@@ -62,8 +64,9 @@ class CreateDeploymentCommand(Command):
 
             user.roles.append(admin)
             user.save()
+            print('User {} created\n'.format(email))
 
-            print('Deployment {} successfully set up'.format(name))
+            print('Deployment {} successfully set up\n'.format(name))
 
 
 class ListDeploymentsCommand(Command):
@@ -128,6 +131,7 @@ class CreateEventCommand(Command):
         event.start = start_utc
         event.end = end_utc
         event.save()
+        print('Event {} created.\n'.format(name))
 
 
 class ListEventsCommand(Command):
@@ -144,78 +148,3 @@ class ListEventsCommand(Command):
         events = models.Event.query.filter_by(deployment_id=deployment.id)
         for event in events:
             print(f'{event.name}\t+\t{event.start}\t+\t{event.end}')
-
-
-# class EventMigrationCommand(Command):
-#     '''Allows a user to migrate data from one event to another'''
-#     def run(self):
-#         deployments = models.Deployment.objects.all()
-#         option = prompt_choices('Deployment', [
-#             (str(i), v) for i, v in enumerate(deployments, 1)])
-#         deployment = deployments[int(option) - 1]
-
-#         events = models.Event.objects(deployment=deployment)
-#         option = prompt_choices('Source event', [
-#             (str(i), v) for i, v in enumerate(events, 1)])
-#         source_event = events[int(option) - 1]
-
-#         reduced_events = events(pk__ne=source_event.pk)
-#         option = prompt_choices('Destination event', [
-#             (str(i), v) for i, v in enumerate(reduced_events, 1)])
-#         dest_event = reduced_events[int(option) - 1]
-
-#         print('--- AVAILABLE FORMS ---')
-#         forms = models.Form.objects(deployment=deployment)
-#         for i, f in enumerate(forms, 1):
-#             print('{} [{}]'.format(f.name, i))
-
-#         form_indexes = input('Enter forms to copy, separated by commas: ')
-#         indexes = [
-#             int(i.strip()) for i in form_indexes.split(',')
-#             if i.strip().isdigit()]
-
-#         copy_participants = False
-#         while True:
-#             response = input(
-#                 'Copy participants from source to destination (yes/no)? ')
-#             response = response.lower()
-#             if response[0] == 'y':
-#                 copy_participants = True
-#                 break
-#             elif response[0] == 'n':
-#                 break
-
-#         for index in indexes:
-#             form = forms[index - 1]
-#             data = loads(form.to_json())
-#             data.pop('_id')
-#             new_form = models.Form.from_json(dumps(data))
-#             new_form.events = [dest_event]
-#             new_form.save()
-#             form.update(pull__events=dest_event)
-
-#         # copy participant data
-#         if copy_participants:
-#             participants = models.Participant.objects(
-#                 deployment=deployment, event=source_event)
-#             supervisor_map = {
-#                 p.participant_id: p.supervisor.participant_id
-#                 for p in participants if p.supervisor}
-#             for participant in participants:
-#                 data = loads(participant.to_json())
-#                 data.pop('_id')
-#                 data.pop('supervisor', None)
-#                 new_participant = models.Participant.from_json(dumps(data))
-#                 new_participant.accurate_message_count = 0
-#                 new_participant.message_count = 0
-#                 new_participant.event = dest_event
-#                 new_participant.save()
-
-#             for p_id, sup_id in supervisor_map.items():
-#                 participant = models.Participant.objects.get(
-#                     deployment=deployment, event=dest_event,
-#                     participant_id=p_id)
-#                 supervisor = models.Participant.objects.get(
-#                     deployment=deployment, event=dest_event,
-#                     participant_id=sup_id)
-#                 participant.update(set__supervisor=supervisor)
