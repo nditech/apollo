@@ -178,19 +178,6 @@ a:hover.arrow-style{text-decoration:none; color:#333;}
             <div class="col-sm-9">
               <div class="row">
                 <div class="col-sm-4">
-                  <label for="location_set">{{ _('Location set') }}</label>
-                </div>
-                <div class="col-sm-8">
-                  <select name="location_set" id="id_location_set" class="form-control">
-                    <option value="">{{ _('Select one') }}</option>
-                    {% for loc_set in location_sets %}
-                    <option value="{{ loc_set.id}}">{{ loc_set.name }}</option>
-                    {% endfor %}
-                  </select>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-sm-4">
                   <div class="fileUpload btn btn-default btn-sm" style="margin-left:1px;">
                       <span>Browse</span>
                       <i class="glyphicon glyphicon-search"></i>

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from flask import flash, request
+from flask import flash, g, request
 from flask_admin import form
 from flask_admin.actions import action
 from flask_admin.contrib.sqla import ModelView
@@ -225,11 +225,29 @@ class LocationSetAdminView(SetViewMixin, BaseAdminView):
 
 class ParticipantSetAdminView(SetViewMixin, BaseAdminView):
     column_list = ('name', 'participants')
-    form_columns = ('name',)
+    form_columns = ('name', 'location_set',)
     column_formatters = {
         'participants': macro('participants_list')
     }
     inline_models = (models.ParticipantDataField,)
+
+    def create_form(self, obj=None):
+        deployment = g.deployment
+        form = super().create_form(obj)
+        form.location_set.choices = models.LocationSet.query.filter_by(
+            deployment=deployment).with_entities(
+                models.LocationSet.id, models.LocationSet.name).all()
+
+        return form
+
+    def edit_form(self, obj=None):
+        deployment = g.deployment
+        form = super().edit_form(obj)
+        form.location_set.choices = models.LocationSet.query.filter_by(
+            deployment=deployment).with_entities(
+                models.LocationSet.id, models.LocationSet.name).all()
+
+        return form
 
 
 admin.add_view(DeploymentAdminView(models.Deployment, db.session))

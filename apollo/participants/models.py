@@ -9,7 +9,6 @@ from apollo import utils
 from apollo.core import db
 from apollo.dal.models import BaseModel
 
-
 number_cleaner = re.compile(r'[^0-9]+', re.I)
 
 
@@ -20,13 +19,13 @@ class ParticipantSet(BaseModel):
         db.Integer, db.Sequence('participant_set_id_seq'), primary_key=True)
     name = db.Column(db.String, nullable=False)
     slug = db.Column(db.String)
-    # location_id = db.Column(
-    #     db.Integer, db.ForeignKey('location_set.id'), nullable=False)
+    location_set_id = db.Column(
+        db.Integer, db.ForeignKey('location_set.id'), nullable=False)
     deployment_id = db.Column(
         db.Integer, db.ForeignKey('deployment.id', ondelete='CASCADE'),
         nullable=False)
     deployment = db.relationship('Deployment', backref='participant_sets')
-    # location = db.relationship('LocationSet', backref='participant_sets')
+    location_set = db.relationship('LocationSet', backref='participant_sets')
 
     def __str__(self):
         return self.name or ''

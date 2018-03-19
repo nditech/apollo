@@ -103,7 +103,6 @@ def participant_list(participant_set_id=0):
     filter_class = filters.participant_filterset(
         participant_set.id, location_set_id)
     queryset_filter = filter_class(queryset, request.args)
-    location_sets = services.location_sets.find(deployment=g.deployment)
 
     form = DummyForm(request.form)
 
@@ -157,7 +156,6 @@ def participant_list(participant_set_id=0):
             form=form,
             location=location,
             location_set_id=location_set_id,
-            location_sets=location_sets,
             page_title=page_title,
             participant_set_id=participant_set.id,
             location_types=helpers.displayable_location_types(
@@ -402,19 +400,20 @@ def participant_edit(id):
 @permissions.import_participants.require(403)
 @login_required
 def participant_list_import(participant_set_id):
-    form_class = forms.participant_upload_form_factory(g.deployment)
-    form = form_class(request.form)
+    form = forms.ParticipantFileUploadForm(request.form)
 
     if not form.validate():
         return abort(400)
     else:
         # get the actual object from the proxy
+        participant_set = services.participant_sets.fget_or_404(
+            id=participant_set_id)
         user = current_user._get_current_object()
         filename = uploads.save(request.files['spreadsheet'])
         upload = services.user_uploads.create(
             deployment_id=g.deployment.id, upload_filename=filename,
             user_id=user.id)
-        location_set_id = form.location_set.data
+        location_set_id = participant_set.location_set_id
 
         return redirect(url_for(
             'participants.participant_headers',
