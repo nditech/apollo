@@ -596,7 +596,7 @@ def import_form(sourcefile):
     if not (survey_data and metadata):
         return
 
-    form = _make_form_instance(metadata)
+    form = _make_form_instance(metadata[0])
     form.data = {'groups': [], 'field_cache': {}}
 
     # go over the survey worksheet
