@@ -210,6 +210,7 @@ def locations_builder(location_set_id):
     location_set = models.LocationSet.query.get_or_404(location_set_id)
     template_name = 'frontend/location_builder.html'
     page_title = _('Administrative Divisions')
+    form = forms.AdminDivisionImportForm()
 
     if request.method == 'POST' and request.form.get('divisions_graph'):
         divisions_graph = json.loads(request.form.get('divisions_graph'))
@@ -248,7 +249,7 @@ def locations_builder(location_set_id):
         )
 
     return render_template(template_name, page_title=page_title,
-                           location_set=location_set)
+                           location_set=location_set, form=form)
 
 
 @route(bp, '/locations/set/<int:location_set_id>/purge', methods=['POST'])
@@ -410,7 +411,7 @@ def import_divisions(location_set_id):
         query = services.location_types.find(
             location_set_id=location_set_id).exists()
 
-        if db.session.query(query).scalar():
+        if not db.session.query(query).scalar():
             graph = json.load(request.files['import_file'])
             import_graph(graph, location_set, fresh_import=True)
 

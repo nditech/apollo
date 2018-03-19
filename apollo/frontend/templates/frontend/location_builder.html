@@ -11,8 +11,9 @@
   </form>
 </div>
 <div class="btn-group pull-right">
-  <button style="margin-left:1em" type="button" class="btn btn-sm btn-default" id="addDivisionButton"><i class="glyphicon glyphicon-plus"></i> {{ _('Add Division') }}</button>
+  <button style="margin-right:1em" type="button" class="btn btn-sm btn-default" id="addDivisionButton"><i class="glyphicon glyphicon-plus"></i> {{ _('Add Division') }}</button>
   <a href="{{ url_for('locations.export_divisions', location_set_id=location_set.id) }}" class="btn btn-sm btn-default"><i class="glyphicon glyphicon-download"></i> {{ _('Export') }}</a>
+  <button class="btn btn-sm btn-default" data-toggle="modal" data-target="#importModal"><i class="glyphicon glyphicon-upload"></i> {{ _('Import') }}</button>
 </div>
 {% endblock toolbar %}
 {% block content %}
@@ -138,6 +139,28 @@
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
+<div class="modal fade" id="importModal" role="dialog" aria-labelledby="importModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="importModalLabel">{{ _('Import admin divisions') }}</h4>
+      </div>
+      <div class="modal-body">
+        <form action="{{ url_for('locations.import_divisions', location_set_id=location_set.id) }}" enctype="multipart/form-data" method="post">
+          {{ form.hidden_tag() }}
+          <div class="form-group">
+            {{ form.import_file }}
+          </div>
+          <div class="form-group">
+            <button type="submit" class="btn btn-primary">{{ _('Import') }}</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">{{ _('Close') }}</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
 {%- set flash_msgs = get_flashed_messages(category_filter=['locations_builder']) -%}
 {%- if flash_msgs -%}
 <div class="row">
