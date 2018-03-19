@@ -403,8 +403,6 @@ def export_divisions(location_set_id):
 @login_required
 def import_divisions(location_set_id):
     location_set = services.location_sets.fget_or_404(id=location_set_id)
-
-    # TODO: should this nuke all existing divisions?
     form = forms.AdminDivisionImportForm()
 
     if form.validate_on_submit():
