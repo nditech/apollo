@@ -65,11 +65,10 @@ class EventAdminView(BaseAdminView):
     column_filters = ('name', 'start', 'end')
     column_list = ('name', 'start', 'end')
     form_columns = ('name', 'start', 'end', 'form_set',
-                    'location_set', 'participant_set')
+                    'participant_set')
     form_rules = [
         rules.FieldSet(
-            ('name', 'start', 'end', 'form_set', 'location_set',
-                'participant_set'),
+            ('name', 'start', 'end', 'form_set', 'participant_set'),
             _('Event'))
     ]
 
@@ -105,6 +104,9 @@ class EventAdminView(BaseAdminView):
         # deployment, since it won't appear in the form
         if is_created:
             model.deployment = current_user.deployment
+
+        if form.participant_set.data:
+            model.location_set = form.participant_set.data.location_set
 
         # also, convert the time zone to UTC
         model.start = app_time_zone.localize(model.start).astimezone(
