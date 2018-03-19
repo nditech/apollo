@@ -22,8 +22,18 @@ class DeploymentLoginForm(LoginForm):
                 get_message('PASSWORD_NOT_PROVIDED')[0])
             return False
 
-        self.user = _datastore.find_user(email=self.email.data,
-                                         deployment=g.deployment)
+        # check by the user identity attributes defined in
+        # the settings
+        for identity_attribute in current_app.config.get(
+                'SECURITY_USER_IDENTITY_ATTRIBUTES'):
+            kwargs = {
+                'deployment': g.deployment,
+                identity_attribute: self.email.data
+            }
+            self._user = _datastore.find_user(**kwargs)
+
+            if self._user:
+                break
 
         if self.user is None:
             self.email.errors.append(get_message('USER_DOES_NOT_EXIST')[0])

@@ -57,6 +57,9 @@ SECURITY_RECOVERABLE = True
 SECURITY_TRACKABLE = True
 SESSION_COOKIE_SECURE = True if SSL_REQUIRED else False
 PERMANENT_SESSION_LIFETIME = timedelta(hours=1)
+SECURITY_USER_IDENTITY_ATTRIBUTES = config(
+    'USER_IDENTITY_ATTRIBUTES', cast=config.tuple,
+    default=('email', 'username'))
 
 CELERY_BROKER_URL = 'redis://{host}/{database}'.format(
     host=config('REDIS_HOSTNAME', default='redis'),
