@@ -1,19 +1,21 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
 from functools import partial
+import json
+import re
 
-from wtforms import (
-    Form, BooleanField, IntegerField, SelectField, StringField, validators,
-    widgets)
 from flask import g
 from flask_babelex import lazy_gettext as _
 from flask_wtf import FlaskForm as SecureForm
+from flask_wtf.file import FileField
+from wtforms import (
+    Form, BooleanField, IntegerField, SelectField, StringField, validators,
+    widgets)
+
 from .. import services, models
 from ..frontend.helpers import DictDiffer
 from ..participants.utils import update_participant_completion_rating
 from .custom_fields import IntegerSplitterField
-import json
-import re
 
 ugly_phone = re.compile('[^\d]*')
 
@@ -188,7 +190,7 @@ class BaseQuestionnaireForm(Form):
                             number=g.phone,
                             verified=False, last_seen=datetime.utcnow())
                         participant.update(add_to_set__phones=phone_contact)
- 
+
                     submission.save()
                     update_submission_version(submission)
 
@@ -269,3 +271,7 @@ class FormForm(SecureForm):
     blank_votes_tag = StringField(_('Blank votes tag'))
     invalid_votes_tag = StringField(_('Invalid votes tag'))
     registered_votes_tag = StringField(_('Registered voters tag'))
+
+
+class FormImportForm(SecureForm):
+    import_file = FileField(_('Import file'))

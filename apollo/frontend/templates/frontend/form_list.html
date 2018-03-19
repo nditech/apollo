@@ -1,6 +1,7 @@
 {% extends "frontend/_layout.html" %}
 {% block toolbar %}
 <a class="btn btn-sm btn-warning pull-right" data-toggle="modal" data-target="#checklistModal" href="#"><span class="glyphicon glyphicon-list-alt"></span> {{ _('Create checklists') }}</a>
+<a class="btn btn-sm btn-default pull-right" data-toggle="modal" data-target="#formImportModal" href="#"><span class="glyphicon glyphicon-upload"></span> {{ _('Import') }}</a>
 <a class="btn btn-sm btn-default pull-right" href="{{ url_for('forms.new_form', form_set_id=form_set_id) }}" style="margin-right: 1em"><span class="glyphicon glyphicon-plus"></span> {{ _('Add form') }}</a>
 {% endblock %}
 {% block content %}
@@ -94,6 +95,28 @@
         </div>
       </div>
     </form>
+    <div class="modal fade" id="formImportModal" role="dialog" aria-labelledby="formImportModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="formImportModalLabel">{{ _('Import form') }}</h4>
+          </div>
+          <div class="modal-body">
+            <form action="{{ url_for('forms.import_form_schema', form_set_id=form_set_id) }}" enctype="multipart/form-data" method="post">
+              {{ form_import_form.hidden_tag() }}
+              <div class="form-group">
+                {{ form_import_form.import_file }}
+              </div>
+              <div class="form-group">
+                <button class="btn btn-primary">{{ _('Import') }}</button>
+                <button class="btn btn-default" data-dismiss="modal">{{ _('Close') }}</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 {% endblock %}

@@ -11,8 +11,8 @@ from flask_security import login_required
 import json
 
 from apollo import services
-from apollo.formsframework.forms import FormForm
-from apollo.formsframework.models import FormBuilderSerializer
+from apollo.formsframework.forms import FormForm, FormImportForm
+from apollo.formsframework.models import FormBuilderSerializer, import_form
 from apollo.submissions.tasks import init_submissions
 from apollo.frontend.forms import make_checklist_init_form
 
@@ -163,12 +163,14 @@ def list_forms(form_set_id):
     template_name = 'frontend/form_list.html'
     forms = services.forms.find(form_set_id=form_set_id)
     checklist_init_form = make_checklist_init_form(g.event)
+    form_import_form = FormImportForm()
 
     context = {
         'form_set_id': form_set_id,
         'forms': forms,
         'page_title': page_title,
-        'init_form': checklist_init_form
+        'init_form': checklist_init_form,
+        'form_import_form': form_import_form
     }
 
     return render_template(template_name, **context)
@@ -236,3 +238,19 @@ def export_form(id):
     return send_file(
         memory_file, attachment_filename=filename, as_attachment=True,
         mimetype='application/vnd.ms-excel')
+
+
+@route(bp, '/forms/set/<int:form_set_id>/import', methods=['POST'])
+@permissions.edit_forms.require(403)
+@login_required
+def import_form_schema(form_set_id):
+    form_set = services.form_sets.fget_or_404(id=form_set_id)
+    web_form = FormImportForm()
+
+    if web_form.validate_on_submit():
+        form = import_form(request.files['import_file'])
+        form.form_set = form_set
+        form.deployment = form_set.deployment
+        form.save()
+
+    return redirect(url_for('.list_forms', form_set_id=form_set_id))
