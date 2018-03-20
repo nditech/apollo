@@ -121,13 +121,14 @@ class UserAdminView(BaseAdminView):
     '''
     column_list = ('email', 'roles', 'active')
     column_searchable_list = ('email',)
-    form_columns = ('email', 'username', 'active')
+    form_columns = ('email', 'username', 'active', 'permissions')
     form_excluded_columns = ('password', 'confirmed_at', 'login_count',
                              'last_login_ip', 'last_login_at',
                              'current_login_at', 'deployment',
                              'current_login_ip', 'submission_comments')
     form_rules = [
-        rules.FieldSet(('email', 'username', 'password2', 'active', 'roles'))
+        rules.FieldSet(('email', 'username', 'password2', 'active', 'roles',
+                        'permissions'))
     ]
 
     def get_query(self):
@@ -192,7 +193,7 @@ class UserAdminView(BaseAdminView):
 class RoleAdminView(BaseAdminView):
     can_delete = False
     column_list = ('name', 'description')
-    form_columns = ('name', 'description')
+    form_columns = ('name', 'description', 'permissions')
 
     def get_one(self, pk):
         deployment = current_user.deployment
