@@ -37,6 +37,7 @@ class Role(BaseModel, RoleMixin):
 
 class User(BaseModel, UserMixin):
     __tablename__ = 'user'
+
     id = db.Column(db.Integer, db.Sequence('user_id_seq'), primary_key=True)
     deployment_id = db.Column(db.Integer, db.ForeignKey(
             'deployment.id', ondelete='CASCADE'), nullable=False)
@@ -64,61 +65,70 @@ class User(BaseModel, UserMixin):
         return bool(role)
 
 
+class BasePermission(BaseModel):
+    __tablename__ = 'base_permission'
+
+    id = db.Column(
+        db.Integer, db.Sequence('base_permission_id_seq'), primary_key=True)
+    name = db.Column(db.String, nullable=False)
+    description = db.Column(db.String)
+    deployment_id = db.Column(
+        db.Integer, db.ForeignKey('deployment.id'), nullable=False)
+    deployment = db.relationship('Deployment', backref='base_permissions')
+
+    def __str__(self):
+        return self.description if self.description else self.name
+
+
 class RolePermission(BaseModel):
     __tablename__ = 'role_permission'
 
+    base_permission_id = db.Column(
+        db.Integer, db.ForeignKey('base_permission.id'), primary_key=True)
     role_id = db.Column(db.Integer, db.ForeignKey(
         'role.id', ondelete='CASCADE'), nullable=False, primary_key=True)
-    perm_name = db.Column(db.String, primary_key=True)
-    deployment_id = db.Column(db.Integer, db.ForeignKey(
-            'deployment.id', ondelete='CASCADE'), nullable=False)
-    description = db.Column(db.String)
-    deployment = db.relationship('Deployment', backref='role_permissions')
+    base_permission = db.relationship(
+        'BasePermission', backref='role_permissions')
     role = db.relationship('Role', backref='role_permissions')
 
 
 class UserPermission(BaseModel):
     __tablename__ = 'user_permission'
 
+    base_permission_id = db.Column(
+        db.Integer, db.ForeignKey('base_permission.id'), primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey(
         'user.id', ondelete='CASCADE'), nullable=False, primary_key=True)
-    perm_name = db.Column(db.String, primary_key=True)
-    deployment_id = db.Column(db.Integer, db.ForeignKey(
-            'deployment.id', ondelete='CASCADE'), nullable=False)
-    description = db.Column(db.String)
-    deployment = db.relationship('Deployment', backref='user_permissions')
+    base_permission = db.relationship(
+        'BasePermission', backref='user_permissions')
     user = db.relationship('User', backref='user_permissions')
 
 
 class RoleResourcePermission(BaseModel):
     __tablename__ = 'role_resource_permission'
 
+    base_permission_id = db.Column(
+        db.Integer, db.ForeignKey('base_permission.id'), primary_key=True)
     role_id = db.Column(db.Integer, db.ForeignKey(
         'role.id', ondelete='CASCADE'), primary_key=True)
     resource_id = db.Column(db.Integer, db.ForeignKey(
         'resource.resource_id', ondelete='CASCADE'), primary_key=True)
-    perm_name = db.Column(db.String, primary_key=True)
-    deployment_id = db.Column(db.Integer, db.ForeignKey(
-        'deployment.id', ondelete='CASCADE'), nullable=False)
-    description = db.Column(db.String)
-    deployment = db.relationship(
-        'Deployment', backref='role_resource_permissions')
-    role = db.relationship('Role', backref='role_resource_permissions')
+    base_permission = db.relationship(
+        'BasePermission', backref='role_resource_permissions')
+    role = db.relationship('Role', backref='resource_permissions')
 
 
 class UserResourcePermission(BaseModel):
     __tablename__ = 'user_resource_permission'
 
+    base_permission_id = db.Column(
+        db.Integer, db.ForeignKey('base_permission.id'), primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey(
         'user.id', ondelete='CASCADE'), primary_key=True)
     resource_id = db.Column(db.Integer, db.ForeignKey(
         'resource.resource_id', ondelete='CASCADE'), primary_key=True)
-    perm_name = db.Column(db.String, primary_key=True)
-    deployment_id = db.Column(db.Integer, db.ForeignKey(
-        'deployment.id', ondelete='CASCADE'), nullable=False)
-    description = db.Column(db.String)
-    deployment = db.relationship(
-        'Deployment', backref='user_resource_permissions')
+    base_permission = db.relationship(
+        'BasePermission', backref='user_resource_permissions')
     user = db.relationship('User', backref='user_resource_permissions')
 
 
