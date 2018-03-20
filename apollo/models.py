@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from apollo.dal.models import Resource  # noqa
+from apollo.dal.models import Permission, Resource  # noqa
 from apollo.deployments.models import (  # noqa
     Deployment, Event)
 from apollo.formsframework.models import Form, FormSet  # noqa
@@ -15,5 +15,5 @@ from apollo.participants.models import (  # noqa
 from apollo.submissions.models import (  # noqa
     Submission, SubmissionComment, SubmissionVersion)
 from apollo.users.models import (  # noqa
-    Role, RolePermission, RoleResourcePermission, User, UserPermission,
-    UserResourcePermission, UserUpload, roles_users)
+    Role, User, UserUpload, role_resource_permissions, roles_permissions,
+    roles_users, user_resource_permissions, users_permissions)

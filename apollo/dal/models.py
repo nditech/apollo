@@ -5,10 +5,8 @@ The concept of resources and the permissions implementation
 is liberally adapted (aka stolen) from the source of ziggurat_foundations
 (https://github.com/ergo/ziggurat-foundations)
 '''
-from uuid import uuid4
 
 from sqlalchemy.ext.declarative import declared_attr
-from sqlalchemy_utils import UUIDType
 
 from apollo.core import db
 
@@ -43,7 +41,20 @@ class BaseModel(CRUDMixin, db.Model):
     '''Base model class'''
     __abstract__ = True
 
-    # uuid = db.Column(UUIDType, default=uuid4)
+
+class Permission(BaseModel):
+    __tablename__ = 'permission'
+
+    id = db.Column(
+        db.Integer, db.Sequence('permission_id_seq'), primary_key=True)
+    name = db.Column(db.String, nullable=False)
+    description = db.Column(db.String)
+    deployment_id = db.Column(
+        db.Integer, db.ForeignKey('deployment.id'), nullable=False)
+    deployment = db.relationship('Deployment', backref='permissions')
+
+    def __str__(self):
+        return self.description if self.description else self.name
 
 
 class ResourceMixin(object):
@@ -68,20 +79,14 @@ class ResourceMixin(object):
         return db.Column(db.String, nullable=False)
 
     @declared_attr
-    def role_permissions(self):
-        return db.relationship('RoleResourcePermission')
-
-    @declared_attr
-    def user_permissions(self):
-        return db.relationship('UserResourcePermission')
-
-    @declared_attr
     def roles(self):
-        return db.relationship('Role', secondary='role_resource_permission')
+        return db.relationship(
+            'Role', backref='resources', secondary='role_resource_permissions')
 
     @declared_attr
     def users(self):
-        return db.relationship('User', secondary='user_resource_permission')
+        return db.relationship(
+            'User', backref='resources', secondary='user_resource_permissions')
 
     __mapper_args__ = {'polymorphic_on': resource_type}
 
