@@ -78,7 +78,8 @@ class CreateDeploymentCommand(Command):
             user.save()
             print('User {} created\n'.format(email))
 
-            print('Deployment {} successfully set up\n'.format(name))
+            print('Deployment {} successfully set up\n'.format(
+                deployment.name))
 
 
 class ListDeploymentsCommand(Command):
