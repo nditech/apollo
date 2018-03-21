@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from collections import OrderedDict
 import logging
 import os
 import random
@@ -46,28 +45,25 @@ def _is_valid(item):
     return not pd.isnull(item) and item
 
 
-def create_partner(name, deployment, participant_set):
+def create_partner(name, participant_set):
     return services.participant_partners.create(
-        name=name, deployment_id=deployment.id,
-        participant_set_id=participant_set.id)
+        name=name, participant_set_id=participant_set.id)
 
 
-def create_group_type(name, deployment, participant_set):
+def create_group_type(name, participant_set):
     return services.participant_group_types.create(
-        name=name, deployment_id=deployment.id,
-        participant_set_id=participant_set.id)
+        name=name, participant_set_id=participant_set.id)
 
 
-def create_group(name, group_type, deployment, participant_set):
+def create_group(name, group_type, participant_set):
     return services.participant_groups.create(
-        name=name, group_type_id=group_type.id, deployment_id=deployment.id,
+        name=name, group_type_id=group_type.id,
         participant_set_id=participant_set.id)
 
 
-def create_role(name, deployment, participant_set):
+def create_role(name, participant_set):
     return services.participant_roles.create(
-        name=name, deployment_id=deployment.id,
-        participant_set_id=participant_set.id)
+        name=name,  participant_set_id=participant_set.id)
 
 
 def generate_password(length):
@@ -76,7 +72,7 @@ def generate_password(length):
         for _ in range(length))
 
 
-def update_participants(dataframe, header_map, participant_set, location_set):
+def update_participants(dataframe, header_map, participant_set):
     """
     Given a Pandas `class`DataFrame that has participant information loaded,
     create or update the participant database with the info contained therein.
@@ -99,12 +95,13 @@ def update_participants(dataframe, header_map, participant_set, location_set):
         group - a prefix for columns starting with this string that contain
                 participant group names
     """
-    deployment = participant_set.deployment
     index = dataframe.index
 
     unresolved_supervisors = set()
     errors = set()
     warnings = set()
+
+    location_set = participant_set.location_set
 
     # set up mappings
     PARTICIPANT_ID_COL = header_map['participant_id']
@@ -134,14 +131,12 @@ def update_participants(dataframe, header_map, participant_set, location_set):
             participant_id = int(participant_id)
         participant = services.participants.find(
             participant_id=str(participant_id),
-            deployment=deployment,
             participant_set=participant_set
         ).first()
 
         if participant is None:
             participant = services.participants.new(
                 participant_id=str(participant_id),
-                deployment_id=deployment.id,
                 participant_set_id=participant_set.id
             )
 
@@ -155,11 +150,10 @@ def update_participants(dataframe, header_map, participant_set, location_set):
             if _is_valid(role_name):
                 role = services.participant_roles.find(
                     name=role_name,
-                    deployment=deployment,
                     participant_set=participant_set
                 ).first()
                 if role is None:
-                    role = create_role(role_name, deployment, participant_set)
+                    role = create_role(role_name, participant_set)
             participant.role = role
 
         partner = None
@@ -168,12 +162,10 @@ def update_participants(dataframe, header_map, participant_set, location_set):
             if _is_valid(partner_name):
                 partner = services.participant_partners.find(
                     name=partner_name,
-                    deployment=deployment,
                     participant_set=participant_set
                 ).first()
                 if partner is None:
-                    partner = create_partner(partner_name, deployment,
-                                             participant_set)
+                    partner = create_partner(partner_name, participant_set)
                 participant.partner = partner
 
         location = None
@@ -184,7 +176,6 @@ def update_participants(dataframe, header_map, participant_set, location_set):
                     loc_code = int(loc_code)
                 location = services.locations.find(
                     code=str(loc_code),
-                    deployment=deployment,
                     location_set=location_set
                 ).one()
         except MultipleResultsFound:
@@ -216,7 +207,6 @@ def update_participants(dataframe, header_map, participant_set, location_set):
                     supervisor = services.participants.find(
                         participant_id=str(supervisor_id),
                         participant_set=participant_set,
-                        deployment=deployment
                     ).first()
                     if supervisor is None:
                         # perhaps supervisor exists further along.
@@ -280,24 +270,21 @@ def update_participants(dataframe, header_map, participant_set, location_set):
 
                 group_type = services.participant_group_types.find(
                     name=column,
-                    deployment=deployment,
                     participant_set=participant_set
                 ).first()
 
                 if not group_type:
                     group_type = create_group_type(
-                        column, deployment, participant_set)
+                        column, participant_set)
 
                 group = services.participant_groups.find(
                     name=record[column],
                     group_type=group_type,
-                    deployment=deployment,
                     participant_set=participant_set).first()
 
                 if not group:
                     group = create_group(
-                        record[column], group_type, deployment,
-                        participant_set)
+                        record[column], group_type, participant_set)
 
                 groups.append(group)
 
@@ -325,13 +312,11 @@ def update_participants(dataframe, header_map, participant_set, location_set):
     for participant_id, supervisor_id in unresolved_supervisors:
         participant = services.participants.find(
             participant_id=participant_id,
-            deployment=deployment,
             participant_set=participant_set
         ).first()
         supervisor = services.participants.find(
             participant_id=supervisor_id,
             participant_set=participant_set,
-            deployment=deployment
         ).first()
 
         if supervisor is None:
@@ -363,8 +348,7 @@ def generate_response_email(count, errors, warnings):
 
 
 @celery.task
-def import_participants(upload_id, mappings, participant_set_id,
-                        location_set_id):
+def import_participants(upload_id, mappings, participant_set_id):
     upload = services.user_uploads.find(id=upload_id).first()
     if not upload:
         logger.error('Upload %s does not exist, aborting', upload_id)
@@ -379,15 +363,19 @@ def import_participants(upload_id, mappings, participant_set_id,
     with open(filepath) as f:
         dataframe = helpers.load_source_file(f)
 
-    location_set = services.location_sets.find(
-        id=location_set_id).first()
     participant_set = services.participant_sets.find(
         id=participant_set_id).first()
+
+    if not participant_set:
+        _cleanup_upload(filepath, upload)
+        logger.error(
+            'Participant set with id {} does not exist, aborting'.format(
+                participant_set_id))
+
     count, errors, warnings = update_participants(
         dataframe,
         mappings,
-        participant_set,
-        location_set
+        participant_set
     )
 
     # delete uploaded file
@@ -405,3 +393,8 @@ def nuke_participants(participant_set_id):
         id=participant_set_id).first()
     if participant_set:
         utils.nuke_participants(participant_set)
+
+
+def _cleanup_upload(filepath, upload):
+    os.remove(filepath)
+    upload.delete()

@@ -92,14 +92,10 @@ def participant_list(participant_set_id=0):
     #     sortable_columns.update({field.name: field.name})
 
     queryset = services.participants.find(
-        deployment=g.deployment, participant_set_id=participant_set.id)
-    sample_participant = queryset.first()
+        participant_set_id=participant_set.id)
 
-    # load the location set linked to the participants if any
-    if sample_participant:
-        location_set_id = sample_participant.location.location_set_id
-    else:
-        location_set_id = None
+    # load the location set linked to the participant set
+    location_set_id = participant_set.location_set_id
     filter_class = filters.participant_filterset(
         participant_set.id, location_set_id)
     queryset_filter = filter_class(queryset, request.args)
@@ -413,22 +409,19 @@ def participant_list_import(participant_set_id):
         upload = services.user_uploads.create(
             deployment_id=g.deployment.id, upload_filename=filename,
             user_id=user.id)
-        location_set_id = participant_set.location_set_id
 
         return redirect(url_for(
             'participants.participant_headers',
-            participant_set_id=participant_set_id,
-            location_set_id=location_set_id,
+            participant_set_id=participant_set.id,
             upload_id=upload.id)
         )
 
 
-@route(bp, '/participants/set/<int:participant_set_id>/headers/locations/set'
-           '/<int:location_set_id>/upload/<int:upload_id>',
-           methods=['GET', 'POST'])
+@route(bp, '/participants/set/<int:participant_set_id>/headers/'
+           '<int:upload_id>', methods=['GET', 'POST'])
 @permissions.import_participants.require(403)
 @login_required
-def participant_headers(participant_set_id, location_set_id, upload_id):
+def participant_headers(participant_set_id, upload_id):
     user = current_user._get_current_object()
 
     # disallow processing other users' files
@@ -465,17 +458,10 @@ def participant_headers(participant_set_id, location_set_id, upload_id):
             # get header mappings
             data = form.data.copy()
 
-            # phone_header = data.pop('phone')
-            # group_header = data.pop('group')
-            # mappings = {v: k for k, v in data.iteritems() if v}
-            # mappings.update(phone=phone_header)
-            # mappings.update(group=group_header)
-
             # invoke task asynchronously
             kwargs = {
                 'upload_id': upload.id,
                 'mappings': data,
-                'location_set_id': location_set_id,
                 'participant_set_id': participant_set_id
             }
             tasks.import_participants.apply_async(kwargs=kwargs)

@@ -60,13 +60,9 @@ class ParticipantRole(BaseModel):
     id = db.Column(
         db.Integer, db.Sequence('participant_role_id_seq'), primary_key=True)
     name = db.Column(db.String, nullable=False)
-    deployment_id = db.Column(db.Integer, db.ForeignKey(
-        'deployment.id', ondelete='CASCADE'), nullable=False)
     participant_set_id = db.Column(
         db.Integer, db.ForeignKey('participant_set.id'), nullable=False)
 
-    deployment = db.relationship(
-        'Deployment', backref='participant_roles')
     participant_set = db.relationship(
         'ParticipantSet', backref='participant_roles')
 
@@ -81,13 +77,9 @@ class ParticipantPartner(BaseModel):
         db.Integer, db.Sequence('participant_partner_id_seq'),
         primary_key=True)
     name = db.Column(db.String, nullable=False)
-    deployment_id = db.Column(db.Integer, db.ForeignKey(
-         'deployment.id', ondelete='CASCADE'), nullable=False)
     participant_set_id = db.Column(db.Integer, db.ForeignKey(
         'participant_set.id', ondelete='CASCADE'), nullable=False)
 
-    deployment = db.relationship(
-        'Deployment', backref='participant_partners')
     participant_set = db.relationship(
         'ParticipantSet', backref='participant_partners')
 
@@ -102,13 +94,9 @@ class ParticipantGroupType(BaseModel):
         db.Integer, db.Sequence('participant_group_type_id_seq'),
         primary_key=True)
     name = db.Column(db.String)
-    deployment_id = db.Column(db.Integer, db.ForeignKey(
-        'deployment.id', ondelete='CASCADE'), nullable=False)
     participant_set_id = db.Column(db.Integer, db.ForeignKey(
         'participant_set.id', ondelete='CASCADE'), nullable=False)
 
-    deployment = db.relationship(
-        'Deployment', backref='participant_group_types')
     participant_set = db.relationship(
         'ParticipantSet', backref='participant_group_types')
 
@@ -123,15 +111,11 @@ class ParticipantGroup(BaseModel):
         db.Integer, db.Sequence('participant_group_id_seq'),
         primary_key=True)
     name = db.Column(db.String, nullable=False)
-    deployment_id = db.Column(db.Integer, db.ForeignKey(
-        'deployment.id', ondelete='CASCADE'), nullable=False)
     group_type_id = db.Column(db.Integer, db.ForeignKey(
         'participant_group_type.id', ondelete='CASCADE'), nullable=False)
     participant_set_id = db.Column(
         db.Integer, db.ForeignKey('participant_set.id'))
 
-    deployment = db.relationship(
-        'Deployment', backref='participant_groups')
     group_type = db.relationship(
         'ParticipantGroupType', backref='participant_groups')
     participant_set = db.relationship(
@@ -175,8 +159,6 @@ class Participant(BaseModel):
     gender = db.Column(ChoiceType(GENDER))
     email = db.Column(db.String)
     location_id = db.Column(db.Integer, db.ForeignKey('location.id'))
-    deployment_id = db.Column(db.Integer, db.ForeignKey(
-        'deployment.id', ondelete='CASCADE'), nullable=False)
     participant_set_id = db.Column(db.Integer, db.ForeignKey(
         'participant_set.id', ondelete='CASCADE'), nullable=False)
     message_count = db.Column(db.Integer, default=0)
@@ -186,7 +168,6 @@ class Participant(BaseModel):
     password = db.Column(db.String)
     extra_data = db.Column(JSONB)
 
-    deployment = db.relationship('Deployment', backref='participants')
     location = db.relationship('Location', backref='participants')
     participant_set = db.relationship(
         'ParticipantSet', backref=db.backref(
