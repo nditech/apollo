@@ -61,6 +61,7 @@ class CreateDeploymentCommand(Command):
 
             # Create an admin user
             email = prompt('Admin user email')
+            username = prompt('Admin user username')
             while True:
                 password = prompt_pass('Admin user password')
                 password2 = prompt_pass('Confirm password')
@@ -70,7 +71,7 @@ class CreateDeploymentCommand(Command):
 
             try:
                 user = register_user(deployment_id=deployment.id, email=email,
-                                     password=password)
+                                     password=password, username=username)
             except socket.error:
                 pass
 
