@@ -114,11 +114,8 @@ def new_form(form_set_id):
 
         return render_template(template_name, **context)
 
-    deployment = g.get('deployment')
-
     # hack because of nasty bug with forms service
     form = services.forms.__model__(
-        deployment_id=deployment.id,
         form_set_id=form_set_id)
     web_form.populate_obj(form)
     form.save()
@@ -250,7 +247,6 @@ def import_form_schema(form_set_id):
     if web_form.validate_on_submit():
         form = import_form(request.files['import_file'])
         form.form_set = form_set
-        form.deployment = form_set.deployment
         form.save()
 
     return redirect(url_for('.list_forms', form_set_id=form_set_id))

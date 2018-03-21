@@ -70,9 +70,6 @@ class Form(Resource):
     require_exclamation = db.Column(db.Boolean, default=True)
     data = db.Column(JSONB)
     version_identifier = db.Column(db.String)
-    deployment_id = db.Column(
-        db.Integer, db.ForeignKey('deployment.id', ondelete='CASCADE'),
-        nullable=False)
     form_set_id = db.Column(
         db.Integer, db.ForeignKey('form_set.id'), nullable=False)
     resource_id = db.Column(
@@ -86,7 +83,6 @@ class Form(Resource):
     registered_voters_tag = db.Column(db.String)
     blank_votes_tag = db.Column(db.String)
 
-    deployment = db.relationship('Deployment', backref='forms')
     form_set = db.relationship('FormSet', backref=db.backref(
         'forms', lazy='dynamic'))
 
