@@ -170,7 +170,7 @@ def update_participants(dataframe, header_map, participant_set, location_set):
                     name=partner_name,
                     deployment=deployment,
                     participant_set=participant_set
-                )
+                ).first()
                 if partner is None:
                     partner = create_partner(partner_name, deployment,
                                              participant_set)
