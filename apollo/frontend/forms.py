@@ -192,7 +192,7 @@ def generate_participant_import_mapping_form(
 
 
 def generate_location_update_mapping_form(
-    deployment, headers, location_set, *args, **kwargs
+    headers, location_set, *args, **kwargs
 ):
     default_choices = [['', _('Select column')]] + [(v, v) for v in headers]
 
@@ -200,8 +200,7 @@ def generate_location_update_mapping_form(
         '_headers': headers,
     }
 
-    for location_type in location_types.find(
-            deployment=deployment, location_set=location_set):
+    for location_type in location_types.find(location_set=location_set):
         name = location_type.name
         slug = slugify(name, separator='_').lower()
         attributes['{}_name'.format(slug)] = SelectField(

@@ -70,13 +70,11 @@ def map_attribute(location_type, attribute):
 def update_locations(df, mapping, location_set):
     cache = LocationCache()
     location_types = services.location_types.find(
-            deployment=location_set.deployment,
             location_set=location_set) \
         .join(models.LocationTypePath,
               models.LocationType.id == models.LocationTypePath.ancestor_id) \
         .order_by(func.count(models.LocationType.ancestor_paths)) \
         .group_by('id').all()
-    # depth = [p.depth for p in location_types[-1].ancestor_paths]
 
     # basically, all the info required for linking is (supposedly)
     # already in the db. so just use it to start creating the links
@@ -130,7 +128,6 @@ def update_locations(df, mapping, location_set):
 
             kwargs = {
                 'location_type_id': lt.id,
-                'deployment_id': lt.deployment.id,
                 'location_set_id': location_set.id
             }
 
@@ -147,7 +144,7 @@ def update_locations(df, mapping, location_set):
 
             # skip if we have the location in the database
             location = services.locations.find(
-                deployment=lt.deployment, location_set=location_set,
+                location_set=location_set,
                 code=kwargs['code']).first()
 
             if not location:

@@ -59,8 +59,7 @@ def location_list(location_set_id):
     template_name = 'frontend/location_list.html'
     page_title = _('Locations')
 
-    queryset = services.locations.find(
-        deployment=g.deployment, location_set_id=location_set_id)
+    queryset = services.locations.find(location_set_id=location_set_id)
     queryset_filter = filters.location_filterset(
         location_set_id=location_set_id)(queryset, request.args)
 
@@ -102,9 +101,7 @@ def location_list(location_set_id):
 @login_required
 def location_edit(id):
     template_name = 'frontend/location_edit.html'
-    deployment = g.get('deployment')
-    location = models.Location.query.filter_by(
-        id=id, deployment=deployment).first_or_404()
+    location = models.Location.query.filter_by(id=id).first_or_404()
     page_title = _('Edit Location')
 
     if request.method == 'GET':
@@ -165,18 +162,16 @@ def location_headers(location_set_id, upload_id):
         upload.delete()
         return abort(400)
 
-    deployment = g.deployment
     location_set = services.location_sets.fget_or_404(id=location_set_id)
     headers = dataframe.columns
     template_name = 'frontend/location_headers.html'
 
     if request.method == 'GET':
-        form = generate_location_update_mapping_form(
-            deployment, headers, location_set)
+        form = generate_location_update_mapping_form(headers, location_set)
         return render_template(template_name, form=form)
     else:
         form = generate_location_update_mapping_form(
-            deployment, headers, location_set, request.form)
+            headers, location_set, request.form)
 
         if not form.validate():
             return render_template(
@@ -290,10 +285,8 @@ def sample_new(location_set_id):
     if not sample_form.validate_on_submit():
         return render_template(template_name, **context)
 
-    deployment = g.deployment
     sample = services.samples.create(
-        location_set_id=location_set_id, name=sample_form.name.data,
-        deployment_id=deployment.id)
+        location_set_id=location_set_id, name=sample_form.name.data)
 
     location_data = json.loads(sample_form.location_data.data)
     if location_data:

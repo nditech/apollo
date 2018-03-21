@@ -67,14 +67,10 @@ class Sample(BaseModel):
     id = db.Column(
         db.Integer, db.Sequence('sample_id_seq'), primary_key=True)
     name = db.Column(db.String, nullable=False)
-    deployment_id = db.Column(
-        db.Integer, db.ForeignKey('deployment.id', ondelete='CASCADE'),
-        nullable=False)
     location_set_id = db.Column(
         db.Integer, db.ForeignKey('location_set.id', ondelete='CASCADE'),
         nullable=False)
 
-    deployment = db.relationship('Deployment', backref='samples')
     location_set = db.relationship('LocationSet', backref=db.backref(
         'samples', lazy='dynamic'))
 
@@ -91,14 +87,10 @@ class LocationType(BaseModel):
     has_political_code = db.Column(db.Boolean, default=False)
     has_other_code = db.Column(db.Boolean, default=False)
     slug = db.Column(db.String)
-    deployment_id = db.Column(
-        db.Integer, db.ForeignKey('deployment.id', ondelete='CASCADE'),
-        nullable=False)
     location_set_id = db.Column(
         db.Integer, db.ForeignKey('location_set.id', ondelete='CASCADE'),
         nullable=False)
 
-    deployment = db.relationship('Deployment', backref='location_types')
     location_set = db.relationship('LocationSet', backref=db.backref(
         'location_types', lazy='dynamic'))
     ancestor_paths = db.relationship(
@@ -176,14 +168,11 @@ class Location(BaseModel):
     political_code = db.Column(db.String)
     other_code = db.Column(db.String)
     registered_voters = db.Column(db.Integer, default=0)
-    deployment_id = db.Column(db.Integer, db.ForeignKey(
-        'deployment.id', ondelete='CASCADE'), nullable=False)
     location_set_id = db.Column(db.Integer, db.ForeignKey(
         'location_set.id', ondelete='CASCADE'), nullable=False)
     location_type_id = db.Column(db.Integer, db.ForeignKey(
         'location_type.id', ondelete='CASCADE'), nullable=False)
 
-    deployment = db.relationship('Deployment', backref='locations')
     location_set = db.relationship('LocationSet', backref=db.backref(
         'locations', lazy='dynamic'))
     location_type = db.relationship('LocationType', backref='locations')

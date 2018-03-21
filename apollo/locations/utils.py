@@ -47,7 +47,6 @@ def import_graph(graph, location_set, fresh_import=False):
                 has_other_code=node.get('has_other_code', False),
                 has_registered_voters=node.get(
                     'has_registered_voters', False),
-                deployment_id=location_set.deployment_id,
                 location_set_id=location_set.id
             )
 
