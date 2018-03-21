@@ -2,12 +2,14 @@
 from datetime import datetime
 import socket
 
+from flask_principal import Permission
 from flask_script import Command, prompt, prompt_choices, prompt_pass
 from flask_security.registerable import register_user
 import pytz
 from sqlalchemy.dialects.postgresql import array
 
 from apollo import models, settings
+from apollo.frontend import permissions
 
 
 class CreateDeploymentCommand(Command):
@@ -41,6 +43,16 @@ class CreateDeploymentCommand(Command):
             analyst.save()
             clerk.save()
             manager.save()
+
+            # create permissions
+            for name in dir(permissions):
+                item = getattr(permissions, name, None)
+                if isinstance(item, Permission):
+                    for need in item.needs:
+                        if need.method == 'action':
+                            perm = models.Permission(
+                                name=need.value, deployment=deployment)
+                            perm.save()
 
             print('Deployment {} created.\n'.format(name))
 
