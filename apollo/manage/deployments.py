@@ -54,7 +54,7 @@ class CreateDeploymentCommand(Command):
                                 name=need.value, deployment=deployment)
                             perm.save()
 
-            print('Deployment {} created.\n'.format(name))
+            print('Deployment {} created.\n'.format(deployment.name))
 
             # Create an event
             CreateEventCommand._create_event(deployment)
