@@ -71,9 +71,9 @@ class User(BaseModel, UserMixin):
     id = db.Column(db.Integer, db.Sequence('user_id_seq'), primary_key=True)
     deployment_id = db.Column(db.Integer, db.ForeignKey(
             'deployment.id', ondelete='CASCADE'), nullable=False)
-    email = db.Column(db.String)
-    username = db.Column(db.String)
-    password = db.Column(db.String)
+    email = db.Column(db.String, nullable=False)
+    username = db.Column(db.String, nullable=False)
+    password = db.Column(db.String, nullable=False)
     last_name = db.Column(db.String)
     first_name = db.Column(db.String)
     active = db.Column(db.Boolean, default=True)
