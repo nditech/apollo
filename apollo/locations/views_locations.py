@@ -208,6 +208,10 @@ def location_headers(location_set_id, upload_id):
 @login_required
 def locations_builder(location_set_id):
     location_set = models.LocationSet.query.get_or_404(location_set_id)
+
+    has_admin_divisions = db.session.query(services.location_types.find(
+        location_set_id=location_set_id).exists()).scalar()
+
     template_name = 'frontend/location_builder.html'
     page_title = _('Administrative Divisions')
     form = forms.AdminDivisionImportForm()
@@ -249,7 +253,8 @@ def locations_builder(location_set_id):
         )
 
     return render_template(template_name, page_title=page_title,
-                           location_set=location_set, form=form)
+                           location_set=location_set, form=form,
+                           has_admin_divisions=has_admin_divisions)
 
 
 @route(bp, '/locations/set/<int:location_set_id>/purge', methods=['POST'])
