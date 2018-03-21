@@ -144,7 +144,7 @@ def displayable_location_types(**kwargs):
         models.LocationTypePath,
         models.LocationType.id == models.LocationTypePath.descendant_id
     ).order_by(
-        func.count(models.LocationType.deployment_id)
+        func.count(models.LocationType.id)
     ).group_by('id').all()
 
 
