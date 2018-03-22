@@ -45,7 +45,7 @@ def make_submission_dataframe(query, form, selected_tags=None,
 
     # add path extraction to the columns
     columns.append(
-        array_agg(aggregate_order_by(loc.name, loc_path.depth)).label(
+        array_agg(aggregate_order_by(loc.name, loc_path.depth.desc())).label(
             'location_data'))
 
     query2 = query.join(
