@@ -2,7 +2,7 @@
 from functools import partial
 import math
 
-from flask import Blueprint, render_template, request, url_for, current_app
+from flask import Blueprint, g, render_template, request, url_for, current_app
 from flask_babelex import lazy_gettext as _
 from flask_menu import register_menu
 from flask_security import login_required
@@ -21,12 +21,15 @@ from apollo.submissions.utils import make_submission_dataframe
 
 
 def get_result_analysis_menu():
+    event = g.event
+    form_set_id = event.form_set_id
     return [{
         'url': url_for(
             'result_analysis.results_analysis', form_id=form.id),
         'text': form.name,
         'icon': '<i class="glyphicon glyphicon-stats"></i>'
     } for form in forms.query.filter(
+        Form.form_set_id == form_set_id,
         Form.form_type == 'CHECKLIST',
         Form.data.op('@>')(
             {'groups': [{'fields': [{'analysis_type': 'RESULT'}]}]})
