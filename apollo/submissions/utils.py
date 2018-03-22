@@ -1,17 +1,32 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 import pandas as pd
+from sqlalchemy.orm import aliased
+from sqlalchemy.dialects.postgresql import array_agg, aggregate_order_by
 
-from apollo.locations.models import Location
+from apollo.core import db
+from apollo.locations.models import (Location, LocationPath, LocationType,
+                                     LocationTypePath)
 from apollo.submissions.models import Submission
 
 
-def _extract_location_path(location_id):
-    location = Location.query.get(location_id)
-    return location.make_path()
+def make_submission_dataframe(query, form, selected_tags=None,
+                              excluded_tags=None):
+    if not db.session.query(query.exists()).scalar():
+        return pd.DataFrame()
 
+    # get column headers by getting all ancestor names
+    # of the submission location's location type
+    sample_submission = query.first()
+    location_type = sample_submission.location.location_type
+    ancestor_table = aliased(LocationType)
+    ancestor_names = LocationType.query.join(
+        LocationTypePath, LocationType.id == LocationTypePath.descendant_id
+    ).join(
+        ancestor_table, ancestor_table.id == LocationTypePath.ancestor_id
+    ).filter_by(id=location_type.id).with_entities(
+        ancestor_table.name).order_by(LocationTypePath.depth).all()
 
-def make_submission_dataframe(query, form, selected_tags=None, excluded_tags=None):
     # excluded tags have higher priority than selected tags
     fields = set(form.tags)
     if selected_tags:
@@ -20,8 +35,20 @@ def make_submission_dataframe(query, form, selected_tags=None, excluded_tags=Non
         fields = fields.difference(excluded_tags)
 
     columns = [
-        Submission.data[tag].label(tag) for tag in fields] + \
-        [Submission.location_id]
+        Submission.data[tag].label(tag) for tag in fields]
+
+    # alias just in case the query is already joined to the tables below
+    loc = aliased(Location)
+    loc_path = aliased(LocationPath)
+
+    # add path extraction to the columns
+    columns.append(
+        array_agg(aggregate_order_by(loc.name, loc_path.depth)).label(
+            'location_data'))
+
+    query2 = query.join(
+        loc_path, Submission.location_id == loc_path.descendant_id
+    ).join(loc, loc.id == loc_path.ancestor_id)
 
     # type coercion is necessary for numeric columns
     # if we allow Pandas to infer the column type for these,
@@ -33,13 +60,13 @@ def make_submission_dataframe(query, form, selected_tags=None, excluded_tags=Non
         for tag in form.tags
         if form.get_field_by_tag(tag)['type'] == 'integer'}
 
-    query2 = query.with_entities(*columns)
+    dataframe_query = query2.with_entities(*columns).group_by(Submission.id)
 
-    df = pd.read_sql(query2.statement, query2.session.bind)
+    df = pd.read_sql(dataframe_query.statement, dataframe_query.session.bind)
     df = df.astype(type_coercions)
 
-    df_locations = df['location_id'].apply(
-        _extract_location_path).apply(pd.Series)
+    df_locations = df['location_data'].apply(pd.Series).rename(
+        columns=dict(enumerate(ancestor_names)))
 
     return pd.concat(
         [df, df_locations], axis=1, join_axes=[df.index])
