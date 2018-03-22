@@ -36,8 +36,11 @@ def make_submission_dataframe(query, form, selected_tags=None,
     if excluded_tags:
         fields = fields.difference(excluded_tags)
 
+    # the 'updated' field is required for results analysis
     columns = [
-        Submission.data[tag].label(tag) for tag in fields]
+        Submission.data[tag].label(tag) for tag in fields] + [
+            Submission.updated
+        ]
 
     # alias just in case the query is already joined to the tables below
     loc = aliased(Location)

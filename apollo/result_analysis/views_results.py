@@ -2,11 +2,13 @@
 from functools import partial
 import math
 
-from flask import Blueprint, g, render_template, request, url_for, current_app
+from flask import (
+    Blueprint, abort, current_app, g, render_template, request, url_for)
 from flask_babelex import lazy_gettext as _
 from flask_menu import register_menu
 from flask_security import login_required
 import pandas as pd
+from sqlalchemy import not_
 
 from apollo import models
 from apollo.formsframework.models import Form
@@ -41,13 +43,20 @@ bp = Blueprint('result_analysis', __name__, template_folder='templates',
 
 
 def _voting_results(form_id, location_id=None):
+    event = g.event
     form = forms.filter(
         Form.data.op('@>')(
-            {'groups': [{'fields': [{'analysis_type': 'RESULT'}]}]})
-    ).fget_or_404(
-        id=form_id, form_type='CHECKLIST')
+            {'groups': [{'fields': [{'analysis_type': 'RESULT'}]}]}),
+        Form.id == form_id,
+        Form.form_type == 'CHECKLIST',
+        Form.form_set_id == event.form_set_id
+    ).first()
+
+    if form is None:
+        abort(404)
+
     if location_id is None:
-        location = locations.root()
+        location = locations.root(event.location_set_id)
     else:
         location = locations.fget_or_404(pk=location_id)
 
@@ -55,7 +64,8 @@ def _voting_results(form_id, location_id=None):
     page_title = _('%(form_name)s Voting Results', form_name=form.name)
     filter_class = filters.generate_submission_analysis_filter(form)
 
-    loc_types = [lt for lt in location_types.root().children
+    loc_types = [lt for lt in location_types.root(
+                    event.location_set_id).children()
                  if lt.is_political is True]
     location_tree = {
         lt.name: locations.find(
@@ -65,7 +75,7 @@ def _voting_results(form_id, location_id=None):
 
     # define the condition for which a submission should be included
     result_fields = [field for field in [field for group in form.data['groups']
-         for field in group['fields']] if field.analysis_type == 'RESULT']
+         for field in group['fields']] if field['analysis_type'] == 'RESULT']
     result_field_labels = [field['tag'] for field in result_fields]
     result_field_descriptions = [field['description'] for field in result_fields]
 
@@ -73,8 +83,8 @@ def _voting_results(form_id, location_id=None):
         form=form,
         submission_type='M'
     ).filter(
-        ~models.Submission.verification_status == FLAG_STATUSES['rejected'][0],
-        ~models.Submission.quarantine_status.in_(['A', 'R']))
+        models.Submission.verification_status != FLAG_STATUSES['rejected'][0],
+        not_(models.Submission.quarantine_status.in_(['A', 'R'])))
     filter_set = filter_class(queryset, request.args)
     dataset = make_submission_dataframe(filter_set.qs, form)
 
@@ -98,11 +108,11 @@ def _voting_results(form_id, location_id=None):
 
     try:
         overall_summation = dataset.groupby(
-            location.location_type).sum().ix[location.name]
+            location.location_type.name).sum().ix[location.name]
         reported_subset = dataset[dataset.reported==True]
-        valid_dataframe = reported_subset[reported_subset[location.location_type]==location.name]
+        valid_dataframe = reported_subset[reported_subset[location.location_type.name]==location.name]
         valid_summation = reported_subset.fillna(0).groupby(
-            location.location_type).sum().ix[location.name]
+            location.location_type.name).sum().ix[location.name]
         reporting = overall_summation[['missing', 'reported']]
         reporting['reported_pct'] = reporting['reported']/(
             reporting['reported'] + reporting['missing'])
@@ -248,7 +258,7 @@ def _voting_results(form_id, location_id=None):
 
                     _sublocation_report = {
                         'name': sublocation.name,
-                        'location_type': sublocation.location_type,
+                        'location_type': sublocation.location_type.name,
                         'reported_cnt': int(_reporting['reported']),
                         'reported_pct': _reporting['reported_pct'],
                         'missing_cnt': int(_reporting['missing']),
@@ -341,7 +351,7 @@ def _voting_results(form_id, location_id=None):
                     data_available = False
                     _sublocation_report = {
                         'name': sublocation.name,
-                        'location_type': sublocation.location_type,
+                        'location_type': sublocation.location_type.name,
                         'reported_cnt': 0,
                         'reported_pct': 0,
                         'missing_cnt': 0,
