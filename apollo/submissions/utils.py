@@ -19,13 +19,15 @@ def make_submission_dataframe(query, form, selected_tags=None,
     # of the submission location's location type
     sample_submission = query.first()
     location_type = sample_submission.location.location_type
-    ancestor_table = aliased(LocationType)
-    ancestor_names = LocationType.query.join(
-        LocationTypePath, LocationType.id == LocationTypePath.descendant_id
-    ).join(
-        ancestor_table, ancestor_table.id == LocationTypePath.ancestor_id
-    ).filter_by(id=location_type.id).with_entities(
-        ancestor_table.name).order_by(LocationTypePath.depth).all()
+    # ancestor_table = aliased(LocationType)
+    # ancestor_names = LocationType.query.join(
+    #     LocationTypePath, LocationType.id == LocationTypePath.descendant_id
+    # ).join(
+    #     ancestor_table, ancestor_table.id == LocationTypePath.ancestor_id
+    # ).filter_by(id=location_type.id).with_entities(
+    #     ancestor_table.name).order_by(LocationTypePath.depth).all()
+    ancestor_names = [a.name for a in location_type.ancestors()] + \
+        [location_type.name]
 
     # excluded tags have higher priority than selected tags
     fields = set(form.tags)
