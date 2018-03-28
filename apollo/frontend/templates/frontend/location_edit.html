@@ -1,6 +1,6 @@
 {% extends "frontend/_layout.html" %}
 {% block content %}
-<form class="form-horizontal" method="POST" action="{{ request.url }}">
+<form class="form-horizontal" method="POST">
   {{ form.hidden_tag() }}
   {%- for field in form -%}
   {%- if field.type != 'CSRFTokenField' -%}

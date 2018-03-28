@@ -3,7 +3,7 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/handsontable.min.css') }}">
 {% endblock stylesheets %}
 {% block content %}
-<form class="form-horizontal" method="POST" action="{{ request.url }}">
+<form class="form-horizontal" method="POST">
   {{ form.hidden_tag() }}
   <div class="form-group {% if form.name.errors %}has-error{% endif %}">
       {{ form.name.label(class_='col-sm-3 col-sm-offset-1 control-label') }}

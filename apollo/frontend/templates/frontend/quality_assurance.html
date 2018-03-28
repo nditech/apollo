@@ -7,7 +7,7 @@
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/jquery.handsontable.full.min.css') }}">
 {% endblock %}
 {% block content %}
-<form action="{{ request.url|safe }}" method="post">
+<form method="post">
 <div class="row">
 	<div class="col-md-12">
 		<div id="check_builder" data-checks='{{ check_data|tojson}}'></div>
