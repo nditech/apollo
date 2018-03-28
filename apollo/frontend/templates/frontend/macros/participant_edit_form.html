@@ -1,5 +1,5 @@
 {% macro render_edit_form(form, participant) %}
-<form class="form-horizontal" method="POST" action='{{ request.url }}'>
+<form class="form-horizontal" method="POST">
 {{ form.hidden_tag() }}
 {%- for field in form -%}
 {%- if field.type != 'CSRFTokenField' -%}

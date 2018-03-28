@@ -1,5 +1,5 @@
 {% macro render_filter_form(filter_form, location) %}
-<form class="form-inline" action="{{ request.url }}" method="GET" accept-charset="utf-8" id="filter">
+<form class="form-inline" method="GET" accept-charset="utf-8" id="filter">
 <div class="form-group">
     {{ filter_form.sample(class_='form-control span2 input-sm') }}
 </div>

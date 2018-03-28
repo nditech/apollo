@@ -35,7 +35,7 @@ a:hover.arrow-style{text-decoration:none; color:#333;}
     <div class="row-fluid">
       <div>
         {{ render_pager_counter(participants, args) }}
-        <form class="form-inline" action="{{ request.url }}" method="POST">
+        <form class="form-inline" method="POST">
           {{ form.csrf_token() }}{{ form.select_superset() }}
           <a href="#" id="delete" class="btn btn-sm btn-danger pull-left"><i class="glyphicon glyphicon-trash i_custom"></i></a>
           <table class="table table-bordered table-striped">

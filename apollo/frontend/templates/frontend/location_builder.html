@@ -4,7 +4,7 @@
 {% endblock stylesheets %}
 {% block toolbar %}
 <div class="btn-group pull-right">
-  <form action="{{ request.url }}" id="save-form" method="POST">
+  <form id="save-form" method="POST">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
     <input type="hidden" name="divisions_graph" id="divisions_graph" value="" />
     <button style="margin-left:1em" type="submit" class="btn btn-sm btn-primary" id="save"><i class="glyphicon glyphicon-floppy-save"></i> {{ _('Save') }}</button>
