@@ -143,7 +143,6 @@ def _get_global_coverage(query, form):
     coverage_list = []
 
     # check that we have data
-    print(db.session.query(query.exists()).scalar())
     if not (db.session.query(query.exists()).scalar() and form):
         return coverage_list
 
