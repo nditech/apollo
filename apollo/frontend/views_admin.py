@@ -227,7 +227,7 @@ class LocationSetAdminView(SetViewMixin, BaseAdminView):
 
 
 class ParticipantSetAdminView(SetViewMixin, BaseAdminView):
-    column_list = ('name', 'participants')
+    column_list = ('name', 'location_set', 'participants')
     form_columns = ('name', 'location_set',)
     column_formatters = {
         'participants': macro('participants_list')
