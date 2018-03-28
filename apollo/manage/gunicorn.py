@@ -19,16 +19,17 @@ class GunicornServer(Command):
 
     def __call__(self, app=None, *args, **kwargs):
         from gunicorn.app.base import Application
+        from apollo.wsgi import application
 
         class FlaskApplication(Application):
             def init(self, parser, opts, args):
                 return kwargs
 
             def load(self):
-                return app
+                return application
 
         # apply any pending database migrations before starting app server
-        with app.app_context():
+        with application.app_context():
             upgrade()
 
         FlaskApplication().run()
