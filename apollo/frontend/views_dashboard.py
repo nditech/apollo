@@ -1,22 +1,23 @@
 # -*- coding: utf-8 -*-
+from functools import partial
 
-from apollo.frontend import route
-from apollo.frontend.dashboard import get_coverage
+from flask import (
+    Blueprint, abort, g, redirect, render_template, request, url_for)
+from flask_babelex import lazy_gettext as _
+from flask_menu import register_menu
+from flask_security import login_required
+from sqlalchemy import func
+
 from apollo.deployments.forms import generate_event_selection_form
-from apollo.models import Event, LocationType
-from apollo.services import (
-    events, forms, submissions, locations, location_types)
+from apollo.frontend import permissions, route
+from apollo.frontend.dashboard import get_coverage
 from apollo.frontend.filters import dashboard_filterset
 from apollo.frontend.helpers import (
     get_event, set_event, get_concurrent_events_list_menu,
     get_checklist_form_dashboard_menu)
-from apollo.frontend import permissions
-from flask import (
-    Blueprint, redirect, render_template, request, url_for, g)
-from flask_babelex import lazy_gettext as _
-from flask_menu import register_menu
-from flask_security import login_required
-from functools import partial
+from apollo.models import Event, LocationType, LocationTypePath
+from apollo.services import (
+    events, forms, submissions, locations, location_types)
 
 
 bp = Blueprint('dashboard', __name__, template_folder='templates',
@@ -24,26 +25,33 @@ bp = Blueprint('dashboard', __name__, template_folder='templates',
 
 
 def main_dashboard(form_id=None):
-    # args = request.args.copy()
+    args = request.args.copy()
 
-    # # get variables from query params, or use (hopefully) sensible defaults
-    # group = args.pop('group', None)
-    # location_type_id = args.pop('locationtype', None)
+    # get variables from query params, or use (hopefully) sensible defaults
+    group_slug = args.pop('group', None)
+    group = None
+    location_type_id = args.pop('locationtype', None)
+    next_location_type = None
 
     template_name = 'frontend/dashboard.html'
 
-    # event = get_event()
+    event = get_event()
+    if not form_id:
+        form = forms.find(
+            form_set_id=event.form_set_id, form_type='CHECKLIST'
+        ).order_by('name').first()
+    else:
+        form = forms.fget_or_404(
+            form_set_id=event.form_set_id, form_type='CHECKLIST', id=form_id)
 
-    # if not form_id:
-    #     form = forms.find(
-    #         events=event, form_type='CHECKLIST').order_by('name').first()
-    # else:
-    #     form = forms.get_or_404(pk=form_id, form_type="CHECKLIST")
+    if form is not None:
+        page_title = _('Dashboard · %(name)s', name=form.name)
+    else:
+        page_title = _('Dashboard')
 
-    # if form is not None:
-    #     page_title = _('Dashboard · %(name)s', name=form.name)
-    # else:
-    #     page_title = _('Dashboard')
+    query = submissions.find(
+        event_id=event.id, form=form, submission_type='M')
+    # dashboard_filter = dashboard_filterset()(query, data=args)
 
     # queryset = submissions.find(
     #     form=form,
@@ -57,9 +65,10 @@ def main_dashboard(form_id=None):
     # )
     # obs_filter_ = dashboard_filterset()(obs_queryset, data=args)
 
-    # location = None
-    # if args.get('location'):
-    #     location = locations.get_or_404(pk=args.get('location'))
+    location = None
+    if args.get('location'):
+        location = locations.fget_or_404(
+            id=args.get('location'), location_set_id=event.location_set_id)
 
     # # activate sample filter
     # filter_form = filter_.form
@@ -67,17 +76,49 @@ def main_dashboard(form_id=None):
     # obs_queryset = obs_filter_.qs
     # next_location_type = False
 
-    # if not group:
-    #     data = get_coverage(queryset)
-    #     obs_data = get_coverage(obs_queryset)
-    # else:
-    #     page_title = page_title + ' · {}'.format(group)
-    #     if not location_type_id:
-    #         location_type = location_types.find(
-    #             is_administrative=True).order_by('ancestor_count').first()
-    #     else:
-    #         location_type = LocationType.objects.get_or_404(
-    #             pk=location_type_id)
+    if not group_slug:
+        data = get_coverage(query, form)
+        # obs_data = get_coverage(obs_queryset)
+    else:
+        group = next(
+            (grp for grp in form.data['groups'] 
+             if grp['slug'] == group_slug), None)
+        if group is None:
+            abort(404)
+        page_title = _(
+            'Dashboard · %(name)s  · %(group)s',
+            name=form.name, group=group['name'])
+
+        admin_location_types = location_types.find(
+            is_administrative=True, location_set_id=event.location_set_id
+        ).join(
+            LocationType.ancestor_paths
+        ).group_by(
+            LocationType.id
+        ).order_by(func.count(LocationType.ancestor_paths)).all()
+
+        location_type = None
+        if location_type_id:
+            index, location_type = next(
+                (pair for pair in enumerate(admin_location_types)
+                 if pair[1].id == location_type_id),
+                (None, None))
+
+        if location_type is None and len(admin_location_types) > 0:
+            location_type = admin_location_types[0]
+            try:
+                next_location_type = admin_location_types[1]
+            except IndexError:
+                next_location_type = None
+        elif location_type is not None:
+            try:
+                next_location_type = admin_location_types[index + 1]
+            except IndexError:
+                next_location_type = None
+        else:
+            group = None
+
+        data = get_coverage(query, form, group, location_type)
 
     #     # get the requisite location type - the way the aggregation
     #     # works, passing in a 'State' location type won't retrieve
@@ -115,14 +156,14 @@ def main_dashboard(form_id=None):
         'args': {},
         'location_id': '',
         'next_location': False,
-        'data': [],
+        'data': data,
         'obs_data': [],
         'filter_form': None,
-        'page_title': 'Dashboard',
-        'location': None,
-        'locationtype': '',
-        'group': '',
-        'form_id': None
+        'page_title': page_title,
+        'location': location,
+        'locationtype': getattr(next_location_type, 'id', ''),
+        'group': group or '',
+        'form_id': form.id or None
     }
 
     return render_template(
