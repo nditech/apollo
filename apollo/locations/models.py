@@ -42,7 +42,6 @@ class LocationSet(BaseModel):
         ).all()
 
         nx_graph = nx.DiGraph()
-        nx_graph.add_nodes_from(n[0] for n in nodes)
         nx_graph.add_edges_from(edges)
 
         graph = {

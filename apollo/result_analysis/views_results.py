@@ -69,7 +69,7 @@ def _voting_results(form_id, location_id=None):
                  if lt.is_political is True]
     location_tree = {
         lt.name: locations.find(
-            location_type=lt.name
+            location_type=lt
         ).order_by('name') for lt in loc_types
     }
 
