@@ -1,154 +1,200 @@
 # -*- coding: utf-8 -*-
-from flask import g
-from collections import OrderedDict
+from collections import defaultdict
+from itertools import chain
 from logging import getLogger
-from apollo.models import Submission
-from apollo import services
+
+from sqlalchemy import and_, func, or_
+from sqlalchemy.orm import aliased
+from sqlalchemy.dialects.postgresql import array
+
+from apollo.core import db
+from apollo.locations.models import Location, LocationPath, LocationTypePath
+from apollo.submissions.models import Submission
 
 logger = getLogger(__name__)
 
 
-def get_coverage(submission_queryset, group=None, location_type=None):
+def get_coverage(query, form, group=None, location_type=None):
     if group is None and location_type is None:
-        return _get_global_coverage(submission_queryset.only(
-            'completion', 'form'))
+        return _get_global_coverage(query, form)
     else:
-        locs = services.locations.find(
-            location_type=location_type.name).only('name', 'location_type')
-        queryset = submission_queryset.filter_in(locs).only(
-            'location_name_path', 'completion')
-        return _get_group_coverage(queryset, group, location_type)
+        return _get_group_coverage(query, form, group, location_type)
 
 
-def _get_group_coverage(submission_queryset, group, location_type):
-    # build MongoDB aggregation pipeline
-    pipeline = [
-        {'$match': submission_queryset._query},
-        {
-            '$group': {
-                '_id': {
-                    'location': '$location_name_path.{}'
-                    .format(location_type.name),
-                    'completion': '$completion.{}'.format(group)
-                },
-                'total': {'$sum': 1}
-            }
-        },
-        {
-            '$project': {
-                '_id': 0,
-                'location': '$_id.location',
-                'completion': '$_id.completion',
-                'total': '$total'
-            }
-        }
-    ]
+def _get_coverage_results(query, depth):
+    ancestor_location = aliased(Location)
+    location_closure = aliased(LocationPath)
 
-    try:
-        datasrc = Submission._get_collection().aggregate(pipeline)
-    except Exception as e:
-        logger.exception(e)
-        raise e
+    return query.join(
+        location_closure,
+        location_closure.descendant_id == Submission.location_id
+    ).join(
+        ancestor_location,
+        ancestor_location.id == location_closure.ancestor_id
+    ).filter(
+        location_closure.depth == depth
+    ).with_entities(
+        ancestor_location.id,
+        ancestor_location.name,
+        func.count(Submission.id)
+    ).group_by(ancestor_location.id).all()
 
-    # reshape the result
-    result = datasrc.get('result')
-    if not result:
-        return None
 
-    locations = {r.get('location') for r in result}
-    all_locations = dict(
-        services.locations.find(location_type=location_type.name).scalar(
-            'name', 'pk'))
-    coverage = OrderedDict({l: {} for l in locations})
-    for r in result:
-        l = r.pop('location')
-        coverage[l].update({
-            r['completion']: r['total'],
-            'name': l,
-            })
-        try:
-            if not g.deployment.dashboard_full_locations:
-                coverage[l].update({
-                    'id': str(all_locations.get(l, ''))
-                    })
-        except AttributeError:
-            pass
-
-    # coverage_list = [coverage.get(l) for l in sorted(locations)
-                     # if coverage.get(l)] if coverage else []
+def _get_group_coverage(query, form, group, location_type):
     coverage_list = []
 
-    if coverage:
-        for l in sorted(locations):
-            cov = coverage.get(l)
-            cov.setdefault('Complete', 0)
-            cov.setdefault('Partial', 0)
-            cov.setdefault('Missing', 0)
-            cov.setdefault('Conflict', 0)
+    # check that we have data
+    if not (db.session.query(query.exists()).scalar() and form and location_type):  # noqa
+        return coverage_list
 
-            coverage_list.append(cov)
+    group_tags = form.get_group_tags(group['name'])
+
+    # get the location closure table depth
+    sample_sub = query.first()
+    sub_location_type = sample_sub.location.location_type
+    try:
+        depth_info = LocationTypePath.query.filter_by(
+            ancestor_id=location_type.id,
+            descendant_id=sub_location_type.id).one()
+    except Exception:
+        # TODO: replace with the proper SQLA exception classes
+        return coverage_list
+
+    # aliases for joins
+    other_submission = aliased(Submission)
+
+    # get conflict submissions first
+    conflict_query_params = [
+        and_(
+            Submission.data[tag] != None,   # noqa
+            other_submission.data[tag] != None,
+            Submission.data[tag] != other_submission.data[tag])
+        for tag in group_tags
+    ]
+
+    conflict_query = query.join(
+        other_submission,
+        other_submission.location_id == Submission.location_id
+    ).filter(or_(*conflict_query_params))
+
+    conflict_submission_ids = list(chain(
+        conflict_query.with_entities(Submission.id).all()))
+
+    missing_query = query.filter(
+        ~Submission.id.in_(conflict_submission_ids),
+        ~Submission.data.has_any(array(group_tags)))
+
+    complete_query = query.filter(
+        ~Submission.id.in_(conflict_submission_ids),
+        Submission.data.has_all(array(group_tags)))
+
+    partial_query = query.filter(
+        ~Submission.id.in_(conflict_submission_ids),
+        ~Submission.data.has_all(array(group_tags)),
+        Submission.data.has_any(array(group_tags)))
+
+    dataset = defaultdict(dict)
+
+    for loc_id, loc_name, count in _get_coverage_results(
+            complete_query, depth_info.depth):
+        dataset[loc_name].update({
+            'Complete': count,
+            'id': loc_id,
+            'name': loc_name
+        })
+
+    for loc_id, loc_name, count in _get_coverage_results(
+            conflict_query, depth_info.depth):
+        dataset[loc_name].update({
+            'Conflict': count,
+            'id': loc_id,
+            'name': loc_name
+        })
+
+    for loc_id, loc_name, count in _get_coverage_results(
+            missing_query, depth_info.depth):
+        dataset[loc_name].update({
+            'Missing': count,
+            'id': loc_id,
+            'name': loc_name
+        })
+
+    for loc_id, loc_name, count in _get_coverage_results(
+            partial_query, depth_info.depth):
+        dataset[loc_name].update({
+            'Partial': count,
+            'id': loc_id,
+            'name': loc_name
+        })
+
+    for name in sorted(dataset.keys()):
+        loc_data = dataset.get(name)
+        loc_data.setdefault('Complete', 0)
+        loc_data.setdefault('Conflict', 0)
+        loc_data.setdefault('Missing', 0)
+        loc_data.setdefault('Partial', 0)
+
+        coverage_list.append(loc_data)
 
     return coverage_list
 
 
-def _get_global_coverage(submission_queryset):
-    # build the MongoDB aggregation pipeline
-    pipeline = [
-        {'$match': submission_queryset._query},
-        {'$group': {
-            '_id': '$completion',
-            'total': {'$sum': 1},
-        }},
-        {'$project': {
-            '_id': 0,
-            'completion': '$_id',
-            'total': '$total'
-        }}
-    ]
+def _get_global_coverage(query, form):
+    coverage_list = []
 
-    try:
-        datasrc = Submission._get_collection().aggregate(pipeline)
-    except Exception as e:
-        logger.exception(e)
-        raise e
+    # check that we have data
+    print(db.session.query(query.exists()).scalar())
+    if not (db.session.query(query.exists()).scalar() and form):
+        return coverage_list
 
-    result = datasrc.get('result')
-    if not result:
-        return None
+    groups = form.data['groups']
+    if not groups:
+        return coverage_list
 
-    groups = list(result[0].get('completion').keys())
+    # aliases for joins
+    other_submission = aliased(Submission)
 
-    # reshape the result
-    coverage = OrderedDict()
     for group in groups:
-        complete = sum((r.get('total')
-                       for r in result
-                       if r.get('completion').get(group) == 'Complete'))
-        partial = sum((r.get('total')
-                      for r in result
-                      if r.get('completion').get(group) == 'Partial'))
-        missing = sum((r.get('total')
-                      for r in result
-                      if r.get('completion').get(group) == 'Missing'))
-        conflict = sum((r.get('total')
-                       for r in result
-                       if r.get('completion').get(group) == 'Conflict'))
+        group_tags = form.get_group_tags(group['name'])
 
-        coverage.update({group: {
-            'Complete': complete,
-            'Partial': partial,
-            'Missing': missing,
-            'Conflict': conflict,
-            'name': group
-        }})
+        # get conflict submissions first
+        conflict_query_params = [
+            and_(
+                Submission.data[tag] != None,   # noqa
+                other_submission.data[tag] != None,
+                Submission.data[tag] != other_submission.data[tag])
+            for tag in group_tags
+        ]
 
-    # find a 'logical' sort
-    submission = submission_queryset.first()
-    if submission:
-        group_names = [g.name for g in submission.form.groups]
-    else:
-        group_names = groups
+        conflict_query = query.join(
+            other_submission,
+            other_submission.location_id == Submission.location_id
+        ).filter(or_(*conflict_query_params))
 
-    coverage_list = [coverage.get(g) for g in group_names if coverage.get(g)]
+        conflict_submission_ids = list(chain(
+            conflict_query.with_entities(Submission.id).all()))
+
+        missing_query = query.filter(
+            ~Submission.id.in_(conflict_submission_ids),
+            ~Submission.data.has_any(array(group_tags)))
+
+        complete_query = query.filter(
+            ~Submission.id.in_(conflict_submission_ids),
+            Submission.data.has_all(array(group_tags)))
+
+        partial_query = query.filter(
+            ~Submission.id.in_(conflict_submission_ids),
+            ~Submission.data.has_all(array(group_tags)),
+            Submission.data.has_any(array(group_tags)))
+
+        data = {
+            'Complete': complete_query.count(),
+            'Conflict': conflict_query.count(),
+            'Missing': missing_query.count(),
+            'Partial': partial_query.count(),
+            'name': group['name']
+        }
+
+        coverage_list.append(data)
 
     return coverage_list
