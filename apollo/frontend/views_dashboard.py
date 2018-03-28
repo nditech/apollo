@@ -163,7 +163,7 @@ def main_dashboard(form_id=None):
         'location': location,
         'locationtype': getattr(next_location_type, 'id', ''),
         'group': group or '',
-        'form_id': form.id or None
+        'form_id': form.id if form else None
     }
 
     return render_template(
