@@ -42,7 +42,7 @@
                         {%- endif %}
 						<th width="30" style="text-align:center">{{ _('Total Valid') }}</th>
 						{%- for candidate in result_fields -%}
-						<th width="100"{%- if form.calculate_moe and config.ENABLE_MOE %} colspan="3"{%- endif -%} style="text-align:center">{{ candidate.description }}<br />({{ candidate.name }})</th>
+						<th width="100"{%- if form.calculate_moe and config.ENABLE_MOE %} colspan="3"{%- endif -%} style="text-align:center">{{ candidate.description }}<br />({{ candidate.tag }})</th>
 						{%- endfor -%}
 					</tr>
 					<tr>
