@@ -431,6 +431,8 @@ class FormBuilderSerializer(object):
 
             if f['analysis']:
                 field['analysis_type'] = f['analysis']
+            else:
+                field['analysis_type'] = 'N/A'
 
             # TODO: this formbuilder doesn't yet support
             # string fields
@@ -495,7 +497,7 @@ def _process_survey_worksheet(sheet_data, form_data):
 
         record_type = field_dict['type']
         field = {
-            'tag': field_dict['name'].upper(),
+            'tag': field_dict['name'],
             'description': field_dict['label']
         }
 
