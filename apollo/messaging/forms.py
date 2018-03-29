@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 import time
-from apollo import services
 from flask import g
 import flask_wtf as wtf
 import wtforms
+
+from apollo import models, services
 
 
 class MessagesFilterForm(wtf.FlaskForm):
@@ -83,15 +84,17 @@ def retrieve_form(prefix, exclamation=False):
     current_events = services.events.overlapping_events(g.event)
 
     # find the first form that matches the prefix and optionally form type
-    # for the events in the deployment.
-    kwargs = {"events__in": current_events, "prefix__iexact": prefix}
-    if hasattr(g, 'deployment') and g.deployment:
-        kwargs['deployment'] = g.deployment
+    # for the current events
+    query = models.Form.query.join(
+        models.Event, models.Form.form_set_id == models.Event.form_set_id
+    ).filter(
+        models.Event.id.in_(current_events.with_entities(models.Event.id)),
+        models.Form.prefix.ilike(prefix)
+    )
 
     if exclamation:
-        kwargs['form_type'] = 'INCIDENT'
-        form = services.forms.all().filter(**kwargs).first()
-    else:
-        form = services.forms.all().filter(**kwargs).order_by('form_type').first()
+        query = query.filter(models.Form.form_type == 'INCIDENT')
+
+    form = query.first()
 
     return form
