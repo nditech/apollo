@@ -7,7 +7,7 @@ import string
 from flask import render_template_string
 from flask_babelex import lazy_gettext as _
 import pandas as pd
-from sqlalchemy.orm.exc import MultipleResultsFound
+from sqlalchemy.orm.exc import MultipleResultsFound, NoResultFound
 
 from apollo import helpers, services
 from apollo.core import uploads
@@ -185,8 +185,7 @@ def update_participants(dataframe, header_map, participant_set):
                     loc_id=record[LOCATION_ID_COL])
             ))
             continue
-
-        if location is None and LOCATION_ID_COL:
+        except NoResultFound:
             warnings.add((
                 participant_id,
                 _('Location with id %(loc_id)s not found',
