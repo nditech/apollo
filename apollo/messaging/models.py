@@ -10,8 +10,8 @@ from apollo.dal.models import BaseModel
 
 class Message(BaseModel):
     DIRECTIONS = (
-        (1, _('INCOMING')),
-        (2, _('OUTGOING')),
+        ('IN', _('INCOMING')),
+        ('OUT', _('OUTGOING')),
     )
 
     __tablename__ = 'message'
