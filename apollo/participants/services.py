@@ -91,3 +91,11 @@ class PhoneService(Service):
 
 class ParticipantPhoneService(Service):
     __model__ = ParticipantPhone
+
+    def lookup(self, number, participant):
+        num = number_regex.sub('', number)
+        return self.__model__.query.join(
+            self.__model__.phone).filter(
+                self.__model__.participant_id == participant.id,
+                Phone.number == num
+            ).first()
