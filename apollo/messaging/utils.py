@@ -58,7 +58,7 @@ def parse_text(text):
             else [s for s in text if s not in config.get('PUNCTUATIONS')] \
             .translate(config.get('TRANS_TABLE'))
     else:
-        text = [s for s in text[:at_position] if s not in config.get('PUNCTUATIONS')] + text[at_position:] \
+        text = [s for s in text[:at_position] if s not in config.get('PUNCTUATIONS')] + [text[at_position:]] \
             if at_position != -1 \
             else [s for s in text if s not in config.get('PUNCTUATIONS')]
 
