@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 import pandas as pd
-from sqlalchemy.orm import aliased
+from sqlalchemy import func
 from sqlalchemy.dialects.postgresql import array_agg, aggregate_order_by
+from sqlalchemy.orm import aliased
 
 from apollo.core import db
-from apollo.locations.models import (Location, LocationPath, LocationType,
-                                     LocationTypePath)
+from apollo.locations.models import Location, LocationPath
 from apollo.submissions.models import Submission
 
 
@@ -19,13 +19,6 @@ def make_submission_dataframe(query, form, selected_tags=None,
     # of the submission location's location type
     sample_submission = query.first()
     location_type = sample_submission.location.location_type
-    # ancestor_table = aliased(LocationType)
-    # ancestor_names = LocationType.query.join(
-    #     LocationTypePath, LocationType.id == LocationTypePath.descendant_id
-    # ).join(
-    #     ancestor_table, ancestor_table.id == LocationTypePath.ancestor_id
-    # ).filter_by(id=location_type.id).with_entities(
-    #     ancestor_table.name).order_by(LocationTypePath.depth).all()
     ancestor_names = [a.name for a in location_type.ancestors()] + \
         [location_type.name]
 
@@ -45,15 +38,19 @@ def make_submission_dataframe(query, form, selected_tags=None,
     # alias just in case the query is already joined to the tables below
     loc = aliased(Location)
     loc_path = aliased(LocationPath)
+    own_loc = aliased(Location)
 
-    # add path extraction to the columns
+    # add registered voters and path extraction to the columns
+    columns.append(func.avg(own_loc.registered_voters).label(
+        'registered_voters'))
     columns.append(
         array_agg(aggregate_order_by(loc.name, loc_path.depth.desc())).label(
             'location_data'))
 
     query2 = query.join(
         loc_path, Submission.location_id == loc_path.descendant_id
-    ).join(loc, loc.id == loc_path.ancestor_id)
+    ).join(loc, loc.id == loc_path.ancestor_id).join(
+        own_loc, own_loc.id == Submission.location_id)
 
     # type coercion is necessary for numeric columns
     # if we allow Pandas to infer the column type for these,
@@ -65,7 +62,8 @@ def make_submission_dataframe(query, form, selected_tags=None,
         for tag in form.tags
         if form.get_field_by_tag(tag)['type'] == 'integer'}
 
-    dataframe_query = query2.with_entities(*columns).group_by(Submission.id)
+    dataframe_query = query2.with_entities(*columns).group_by(
+        Submission.id, )
 
     df = pd.read_sql(dataframe_query.statement, dataframe_query.session.bind)
     df = df.astype(type_coercions)
