@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 import pandas as pd
-from sqlalchemy import func
 from sqlalchemy.dialects.postgresql import array_agg, aggregate_order_by
 from sqlalchemy.orm import aliased
 
@@ -41,7 +40,7 @@ def make_submission_dataframe(query, form, selected_tags=None,
     own_loc = aliased(Location)
 
     # add registered voters and path extraction to the columns
-    columns.append(func.avg(own_loc.registered_voters).label(
+    columns.append(own_loc.registered_voters.label(
         'registered_voters'))
     columns.append(
         array_agg(aggregate_order_by(loc.name, loc_path.depth.desc())).label(
@@ -63,7 +62,7 @@ def make_submission_dataframe(query, form, selected_tags=None,
         if form.get_field_by_tag(tag)['type'] == 'integer'}
 
     dataframe_query = query2.with_entities(*columns).group_by(
-        Submission.id, )
+        Submission.id, own_loc.registered_voters)
 
     df = pd.read_sql(dataframe_query.statement, dataframe_query.session.bind)
     df = df.astype(type_coercions)
