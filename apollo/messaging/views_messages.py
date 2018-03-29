@@ -1,15 +1,18 @@
 # -*- coding: utf-8 -*-
+import calendar
+from datetime import datetime, timedelta
+
+from flask import (
+    Blueprint, Response, current_app, g, render_template, request,
+    stream_with_context)
+from flask_babelex import lazy_gettext as _
+from flask_menu import register_menu
+import pandas as pd
+from slugify import slugify_unicode
+
 from apollo.frontend import filters, route, permissions
 from apollo.models import Event, Message
 from apollo.services import events, messages
-from flask import (
-    Blueprint, render_template, request, current_app, Response, g)
-from flask_babelex import lazy_gettext as _
-from flask_menu import register_menu
-import calendar
-from datetime import datetime, timedelta
-import pandas as pd
-from slugify import slugify_unicode
 
 
 bp = Blueprint('messages', __name__)
@@ -44,7 +47,8 @@ def message_list():
             datetime.utcnow().strftime('%Y %m %d %H%M%S')))
         content_disposition = 'attachment; filename=%s.csv' % basename
         return Response(
-            dataset, headers={'Content-Disposition': content_disposition},
+            stream_with_context(dataset),
+            headers={'Content-Disposition': content_disposition},
             mimetype="text/csv"
         )
     else:
@@ -74,22 +78,13 @@ def message_time_series(message_queryset):
 
     # limit the range of the displayed chart to prevent possible
     # DOS attacks
-    time_tuples = message_queryset.with_entities(Message.received).filter(
+    query = message_queryset.filter(
         Message.direction == 'IN',
         Message.received >= lower_bound,
         Message.received <= upper_bound
-    ).all()
+    ).with_entities(Message.received)
 
-    timestamps = list(zip(*time_tuples))
-
-    df = pd.DataFrame(
-        # list(message_queryset(
-        #     direction='IN',
-        #     received__gte=lower_bound,
-        #     received__lte=upper_bound).only('received').as_pymongo()
-        # )
-        timestamps
-    )
+    df = pd.read_sql(query.statement, query.session.bind)
 
     # set a marker for each message
     df['marker'] = 1
@@ -97,7 +92,7 @@ def message_time_series(message_queryset):
     # set the index to the message timestamp, resample to hourly
     # and sum all markers in each hour, filling NaNs with 0
     if df.empty is not True:
-        df = df.set_index('received').resample('1Min', how='sum').fillna(0)
+        df = df.set_index('received').resample('1Min').sum().fillna(0)
 
         # return as UNIX timestamp, value pairs
         data = {
