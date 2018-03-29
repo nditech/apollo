@@ -1,14 +1,16 @@
 # -*- coding: utf-8 -*-
-from apollo.frontend import route
-from apollo import services
+import json
+import re
+
+from flask import Blueprint, make_response, request, g, current_app
+from unidecode import unidecode
+
+from apollo import models, services
 from apollo.core import csrf
+from apollo.frontend import route
 from apollo.messaging.forms import KannelForm, TelerivetForm
 from apollo.messaging.helpers import parse_message
 from apollo.messaging.utils import parse_text
-from flask import Blueprint, make_response, request, g, current_app
-import json
-import re
-from unidecode import unidecode
 
 
 bp = Blueprint('messaging', __name__)
@@ -21,44 +23,45 @@ def lookup_participant(msg, event=None):
     evt = getattr(g, 'event', None) or event
 
     if participant_id:
-        participant = services.participants.get(
-            event=evt,
+        participant = services.participants.find(
+            participant_set_id=evt.participant_set_id,
             participant_id=participant_id
-        )
+        ).first()
 
     if not participant:
-        try:
-            clean_number = msg.sender.replace('+', '')
-            participant = services.participants.get(
-                event=evt,
-                phones__number__contains=clean_number
-            )
-        except services.participants.__model__.MultipleObjectsReturned:
-            participant = None
+        clean_number = msg.sender.replace('+', '')
+        participant = services.participants.query.join(
+            models.ParticipantPhone,
+            models.Participant.id == models.ParticipantPhone.participant_id
+        ).join(
+            models.Phone,
+            models.ParticipantPhone.phone_id == models.Phone.id
+        ).filter(
+            models.Participant.participant_set_id == evt.participant_set_id,
+            models.Phone.number == clean_number
+        ).first()
 
     return participant
 
 
 def update_datastore(inbound, outbound, submission, had_errors):
     if submission:
-        participant = submission.contributor
+        participant = submission.participant
     else:
         participant = lookup_participant(inbound)
 
     if participant:
-        inbound.update(
-            set__participant=participant,
-            set__submission=submission
-        )
-        outbound.update(
-            set__participant=participant,
-            set__submission=submission
-        )
+        inbound.submission = submission
+        inbound.participant = participant
+
+        outbound.participant = participant
+        outbound.submission = submission
 
         if not had_errors:
-            participant.update(inc__accurate_message_count=1)
+            participant.accurate_message_count += 1
 
-        participant.update(inc__message_count=1)
+        participant.message_count += 1
+        participant.save()
 
 
 @route(bp, '/messaging/kannel', methods=['GET'])
