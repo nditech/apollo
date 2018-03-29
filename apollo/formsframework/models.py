@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import logging
 from operator import itemgetter
+import re
 
 from flask_babelex import lazy_gettext as _
 from lxml import etree
@@ -35,6 +36,9 @@ FIELD_TYPES = (
 )
 
 logger = logging.getLogger(__name__)
+
+gt_constraint_regex = re.compile('(?:.*\.\s*\>={0,1}\s*)(\d+)')
+lt_constraint_regex = re.compile('(?:.*\.\s*\<={0,1}\s*)(\d+)')
 
 
 class FormSet(BaseModel):
@@ -498,19 +502,39 @@ def _process_survey_worksheet(sheet_data, form_data):
         record_type = field_dict['type']
         field = {
             'tag': field_dict['name'],
-            'description': field_dict['label']
+            'description': field_dict['label'],
+            'analysis_type': 'N/A'
         }
 
         # integer
         if record_type == 'integer':
             field['type'] = record_type
-            # TODO: currently skipping constraints,
-            # even though they're present in this sheet
+
+            # add default constraints
+            field['min'] = 0
+            field['max'] = 9999
+
+            # TODO: probably a better way to handle this than
+            # use regexes
+            constraint_text = field_dict.get('constraints')
+            if constraint_text:
+                gt_match = gt_constraint_regex.match(constraint_text)
+                lt_match = lt_constraint_regex.match(constraint_text)
+                if gt_match:
+                    try:
+                        field['min'] = int(gt_match.group(1))
+                    except ValueError:
+                        pass
+
+                if lt_match:
+                    try:
+                        field['max'] = int(lt_match.group(1))
+                    except ValueError:
+                        pass
 
         # text
         elif record_type == 'text':
             field['type'] = 'comment'
-            field['analysis_type'] = 'N/A'
 
         # boolean
         elif 'boolean' in record_type:
