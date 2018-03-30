@@ -4,7 +4,7 @@ from apollo.deployments.models import (  # noqa
     Deployment, Event)
 from apollo.formsframework.models import Form, FormSet  # noqa
 from apollo.locations.models import (  # noqa
-    LocationSet,
+    LocationSet, LocationDataField,
     Location, LocationPath, LocationType, LocationTypePath, Sample,
     samples_locations)
 from apollo.messaging.models import Message  # noqa

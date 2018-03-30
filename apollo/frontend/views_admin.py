@@ -224,6 +224,7 @@ class LocationSetAdminView(SetViewMixin, BaseAdminView):
         'samples': macro('samples_list')
     }
     form_columns = ('name',)
+    inline_models = (models.LocationDataField,)
 
 
 class ParticipantSetAdminView(SetViewMixin, BaseAdminView):
