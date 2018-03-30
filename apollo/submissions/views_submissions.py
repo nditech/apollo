@@ -267,13 +267,13 @@ def submission_create(form_id):
 
         # properly populate all fields
         # either the participant or the location may be blank, but not both
-        if not submission_form.participant.data:
-            submission.location = submission_form.location
-        else:
+        if submission_form.participant.data:
             submission.participant = submission_form.participant.data
+            submission.location = submission.participant.location
 
-        if not submission_form.location.data:
-            submission.location_id = submission.participant.location_id
+        if submission_form.location.data:
+            submission.location = submission_form.location.data
+
         submission.incident_status = submission_form.status.data
         submission.save()
 
@@ -309,7 +309,8 @@ def submission_edit(submission_id):
 
         if questionnaire_form.form_type == 'INCIDENT':
             initial_data.update(description=submission.incident_description)
-            initial_data.update(status=submission.incident_status.code)
+            if submission.incident_status:
+                initial_data.update(status=submission.incident_status.code)
 
         submission_form = edit_form_class(
             data=initial_data,
