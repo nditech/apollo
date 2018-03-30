@@ -392,36 +392,58 @@ def participant_edit(id):
         participant=participant)
 
 
-@route(bp, '/<int:participant_set_id>/participants/import', methods=['POST'])
+@route(bp, '/participants/set/<int:participant_set_id>/import',
+       endpoint='participant_list_import_with_set', methods=['POST'])
+@route(bp, '/participants/import',
+       endpoint='participant_list_import', methods=['POST'])
 @permissions.import_participants.require(403)
 @login_required
-def participant_list_import(participant_set_id):
+def participant_list_import(participant_set_id=0):
+    if participant_set_id:
+        participant_set = services.participant_sets.fget_or_404(
+            id=participant_set_id)
+    else:
+        participant_set = g.event.participant_set or abort(404)
+
     form = forms.ParticipantFileUploadForm(request.form)
 
     if not form.validate():
         return abort(400)
     else:
         # get the actual object from the proxy
-        participant_set = services.participant_sets.fget_or_404(
-            id=participant_set_id)
         user = current_user._get_current_object()
         filename = uploads.save(request.files['spreadsheet'])
         upload = services.user_uploads.create(
             deployment_id=g.deployment.id, upload_filename=filename,
             user_id=user.id)
 
+    if participant_set_id:
+        return redirect(url_for(
+            'participants.participant_headers_with_set',
+            participant_set_id=participant_set.id,
+            upload_id=upload.id)
+        )
+    else:
         return redirect(url_for(
             'participants.participant_headers',
-            participant_set_id=participant_set.id,
             upload_id=upload.id)
         )
 
 
 @route(bp, '/participants/set/<int:participant_set_id>/headers/'
-           '<int:upload_id>', methods=['GET', 'POST'])
+       '<int:upload_id>', endpoint='participant_headers_with_set',
+       methods=['GET', 'POST'])
+@route(bp, '/participants/headers/<int:upload_id>',
+       endpoint='participant_headers', methods=['GET', 'POST'])
 @permissions.import_participants.require(403)
 @login_required
-def participant_headers(participant_set_id, upload_id):
+def participant_headers(upload_id, participant_set_id=0):
+    if participant_set_id:
+        participant_set = services.participant_sets.fget_or_404(
+            id=participant_set_id)
+    else:
+        participant_set = g.event.participant_set or abort(404)
+
     user = current_user._get_current_object()
 
     # disallow processing other users' files
@@ -437,8 +459,6 @@ def participant_headers(participant_set_id, upload_id):
         return abort(400)
 
     headers = dataframe.columns
-    participant_set = services.participant_sets.fget_or_404(
-        id=participant_set_id)
     template_name = 'frontend/participant_headers.html'
 
     if request.method == 'GET':
@@ -462,11 +482,16 @@ def participant_headers(participant_set_id, upload_id):
             kwargs = {
                 'upload_id': upload.id,
                 'mappings': data,
-                'participant_set_id': participant_set_id
+                'participant_set_id': participant_set.id
             }
             tasks.import_participants.apply_async(kwargs=kwargs)
-            return redirect(url_for('participants.participant_list',
-                                    participant_set_id=participant_set_id))
+
+            if participant_set_id:
+                return redirect(url_for(
+                    'participants.participant_list_with_set',
+                    participant_set_id=participant_set_id))
+            else:
+                return redirect(url_for('participants.participant_list'))
 
 
 @route(bp, '/participants/purge', methods=['POST'])
