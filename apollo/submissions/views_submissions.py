@@ -534,6 +534,8 @@ def submission_edit(submission_id):
                         update_params['data'] = data
                         services.submissions.find(id=submission.id).update(
                             update_params)
+                        # update the master too
+                        models.Submission._update_master(submission)
 
                         db.session.commit()
                         update_submission_version(submission)

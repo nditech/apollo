@@ -176,7 +176,9 @@ def submission():
                 data[tag] = int(element.text)
 
     submission.data = data
-    submission.save()
+    services.submissions.find(id=submission.id).update(
+        {'data': data}, synchronize_session=False)
+    models.Submission._update_master(submission)
     update_submission_version(submission)
 
     if form_modified:
