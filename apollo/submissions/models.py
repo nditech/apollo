@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from flask_babelex import lazy_gettext as _
-from sqlalchemy.dialects.postgresql import ARRAY, JSONB
+from sqlalchemy.dialects.postgresql import ARRAY, JSONB, array
 from sqlalchemy_utils import ChoiceType
 
 from apollo.core import db
@@ -80,7 +80,7 @@ class Submission(BaseModel):
         'participant.id', ondelete='CASCADE'))
     location_id = db.Column(db.Integer, db.ForeignKey(
         'location.id', ondelete='CASCADE'), nullable=False)
-    data = db.Column(JSONB)
+    data = db.Column(JSONB, default={})
     extra_data = db.Column(JSONB)
     submission_type = db.Column(ChoiceType(SUBMISSION_TYPES))
     created = db.Column(db.DateTime, default=current_timestamp)
@@ -92,7 +92,9 @@ class Submission(BaseModel):
         default=VERIFICATION_STATUSES[0][0])
     incident_description = db.Column(db.String)
     incident_status = db.Column(ChoiceType(INCIDENT_STATUSES))
-    overridden_fields = db.Column(ARRAY(db.String))
+    confidence = db.Column(JSONB, default={})
+    quality_assurance_status = db.Column(JSONB, default={})
+    overridden_fields = db.Column(ARRAY(db.String), default=[])
     deployment = db.relationship('Deployment', backref='submissions')
     event = db.relationship('Event', backref='submissions')
     form = db.relationship('Form', backref='submissions')
@@ -141,7 +143,8 @@ class Submission(BaseModel):
                 obs_submission = cls(
                     form_id=form.id, participant_id=participant.id,
                     location_id=location.id, deployment_id=deployment_id,
-                    event_id=event.id, submission_type='O', data={})
+                    event_id=event.id, submission_type='O', data={},
+                    quality_assurance_status={})
                 obs_submission.save()
 
             master_submission = cls.query.filter_by(
@@ -153,7 +156,9 @@ class Submission(BaseModel):
                 master_submission = cls(
                     form_id=form.id, participant_id=None,
                     location_id=location.id, deployment_id=deployment_id,
-                    event_id=event.id, submission_type='M', data={})
+                    event_id=event.id, submission_type='M', data={},
+                    confidence={}, quality_assurance_status={},
+                    overridden_fields=array([]))
                 master_submission.save()
 
     def get_incident_status_display(self):
@@ -191,17 +196,31 @@ class Submission(BaseModel):
                 if len(check) > 1:
                     return 'Conflict'
 
+    def __siblings(self):
+        '''Returns siblings as a SQLA query object'''
+        return Submission.query.filter(
+            Submission.deployment_id == self.deployment_id,
+            Submission.event_id == self.event_id,
+            Submission.form_id == self.form_id,
+            Submission.location_id == self.location_id,
+            Submission.submission_type == 'O',
+            Submission.id != self.id
+        )
+
+    def __master(self):
+        return Submission.query.filter(
+            Submission.deployment_id == self.deployment_id,
+            Submission.event_id == self.event_id,
+            Submission.form_id == self.form_id,
+            Submission.location_id == self.location_id,
+            Submission.submission_type == 'M'
+        ).first()
+
     @property
     def siblings(self):
+        '''Returns siblings as POPOs'''
         if not hasattr(self, '_siblings'):
-            self._siblings = Submission.query.filter(
-                Submission.deployment_id == self.deployment_id,
-                Submission.event_id == self.event_id,
-                Submission.form_id == self.form_id,
-                Submission.location_id == self.location_id,
-                Submission.submission_type == 'O',
-                Submission.id != self.id
-            ).all()
+            self._siblings = self.__siblings().all()
 
         return self._siblings
 
@@ -210,19 +229,134 @@ class Submission(BaseModel):
         if self.submission_type == 'M':
             return self
 
-        if not hasattr(self, '_master'):
-            if self.form.form_type == 'INCIDENT':
-                self._master = None
-            else:
-                self._master = Submission.query.filter(
-                    Submission.deployment_id == self.deployment_id,
-                    Submission.event_id == self.event_id,
-                    Submission.form_id == self.form_id,
-                    Submission.location_id == self.location_id,
-                    Submission.submission_type == 'M'
-                ).first()
+        if self.form.form_type == 'INCIDENT':
+            self._master = None
 
-            return self._master
+        if not hasattr(self, '_master'):
+            self._master = Submission.query.filter(
+                Submission.deployment_id == self.deployment_id,
+                Submission.event_id == self.event_id,
+                Submission.form_id == self.form_id,
+                Submission.location_id == self.location_id,
+                Submission.submission_type == 'M'
+            ).first()
+
+        return self._master
+
+    @classmethod
+    def _compute_confidence(cls, submission, siblings=None):
+        if submission.submission_type != 'M':
+            return
+
+        quarantined_status_flags = [
+            i[0] for i in
+            [s for s in cls.QUARANTINE_STATUSES if s[0]]
+        ]
+        if not siblings:
+            siblings = submission.__siblings().filter(
+                ~Submission.quarantine_status.in_(quarantined_status_flags)
+            ).all()
+        tags = submission.form.tags
+
+        confidence = {}
+
+        for tag in tags:
+            score = None
+            if submission.overridden_fields:
+                if tag in submission.overridden_fields:
+                    score = 1
+                    confidence[tag] = score
+                    continue
+
+            values = [frozenset(value) if isinstance(value, list) else value
+                      for value in [sib.data.get(tag) for sib in siblings]]
+            unique = list(set(values))
+
+            if values and len(unique) == 1 and unique[0] is not None:
+                # all values agree and are not None
+                score = 1
+            elif values and len(unique) == 1 and not unique[0]:
+                # all values agree and are None
+                score = None
+            else:
+                n_values = [v for v in values if v is not None]
+                n_unique = list(set(n_values))
+                if len(n_unique) == 0 or len(n_unique) > 1:
+                    # if there are no values or the number of values
+                    # is greater
+                    score = 0
+                else:
+                    try:
+                        score = len(n_values) / len(values)
+                    except ZeroDivisionError:
+                        score = 0
+
+            confidence[tag] = score
+
+        return confidence
+
+    @classmethod
+    def _update_master(cls, submission):
+        '''Updates a master submission data'''
+        master = submission.__master()
+        if not master or master.id == submission.id:
+            return
+
+        # get fields that have not been overridden
+        if master.overridden_fields:
+            form_tags = [
+                f for f in submission.form.tags
+                if f not in master.overridden_fields
+            ]
+        else:
+            form_tags = submission.form.tags
+
+        master_data = master.data.copy() if master.data else {}
+        changed = False
+
+        # use siblings that have not been quarantined
+        quarantined_status_flags = [
+            i[0] for i in
+            [s for s in cls.QUARANTINE_STATUSES if s[0]]
+        ]
+        siblings = submission.__siblings().filter(
+            ~Submission.quarantine_status.in_(quarantined_status_flags)
+        ).all()
+
+        for tag in form_tags:
+            submission_field_value = submission.data.get(tag)
+            sibling_field_values = [sib.data.get(tag) for sib in siblings]
+
+            if submission.quarantine_status:
+                submission_field_value = None
+
+            all_values = [submission_field_value] + sibling_field_values
+            non_null_values = [v for v in all_values if v is not None]
+
+            # reduce this to a set of unique values
+            hashable = [frozenset(v) if isinstance(v, list) else v for v in non_null_values]
+            unique_values = set(hashable)
+
+            # if the number of unique values is 0,
+            # there are no non-null values. if it is
+            # 1, then all siblings share the same value
+            # if it is more than 1, then there are
+            # conflicts. only update the master in the
+            # second case
+            if len(unique_values) == 1:
+                v = unique_values.pop()
+                v = list(v) if isinstance(v, frozenset) else v
+                master_data[tag] = v
+                changed = True
+
+        confidence = cls._compute_confidence(master, [submission] + siblings)
+
+        if changed:
+            cls.query.filter_by(id=master.id).update(
+                {'data': master_data, 'confidence': confidence},
+                synchronize_session=False
+            )
+            db.session.commit()
 
 
 class SubmissionComment(BaseModel):
