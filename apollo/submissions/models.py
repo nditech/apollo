@@ -157,8 +157,7 @@ class Submission(BaseModel):
                     form_id=form.id, participant_id=None,
                     location_id=location.id, deployment_id=deployment_id,
                     event_id=event.id, submission_type='M', data={},
-                    confidence={}, quality_assurance_status={},
-                    overridden_fields=array([]))
+                    confidence={}, quality_assurance_status={})
                 master_submission.save()
 
     def get_incident_status_display(self):
