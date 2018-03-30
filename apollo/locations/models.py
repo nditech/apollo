@@ -171,6 +171,8 @@ class Location(BaseModel):
         'location_set.id', ondelete='CASCADE'), nullable=False)
     location_type_id = db.Column(db.Integer, db.ForeignKey(
         'location_type.id', ondelete='CASCADE'), nullable=False)
+    lat = db.Column(db.Float)
+    lon = db.Column(db.Float)
 
     location_set = db.relationship('LocationSet', backref=db.backref(
         'locations', lazy='dynamic'))
@@ -249,3 +251,17 @@ class LocationPath(db.Model):
     descendant_id = db.Column(db.Integer, db.ForeignKey(
         'location.id', ondelete='CASCADE'), primary_key=True)
     depth = db.Column(db.Integer)
+
+
+class LocationDataField(db.Model):
+    __tablename__ = 'location_data_field'
+
+    id = db.Column(
+        db.Integer, db.Sequence('location_data_field_id_seq'),
+        primary_key=True)
+    location_set_id = db.Column(
+        db.Integer, db.ForeignKey('location_set.id'), nullable=False)
+    name = db.Column(db.String, nullable=False)
+    label = db.Column(db.String, nullable=False)
+    visible_in_lists = db.Column(db.Boolean, default=False)
+    location_set = db.relationship('LocationSet', backref='extra_fields')
