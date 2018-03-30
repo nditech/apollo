@@ -173,7 +173,7 @@ a:hover.arrow-style{text-decoration:none; color:#333;}
         <h3>Upload File</h3>
 
         <div class="wizard-input-section">
-        <form enctype="multipart/form-data" method="POST" id="upload-form" action="{{ url_for('participants.participant_list_import', participant_set_id=participant_set_id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+        <form enctype="multipart/form-data" method="POST" id="upload-form" action="{{ url_for('participants.participant_list_import_with_set', participant_set_id=participant_set_id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
           <div class="form-group">
             <div class="col-sm-9">
               <div class="row">
