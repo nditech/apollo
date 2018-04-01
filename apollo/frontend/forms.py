@@ -1,30 +1,18 @@
 # -*- coding: utf-8 -*-
-from flask import g
 from flask_babelex import lazy_gettext as _
 from flask_wtf import FlaskForm as WTSecureForm
 from flask_wtf.file import FileField
 from slugify import slugify
-from wtforms import (BooleanField, IntegerField, SelectField,
-                     SelectMultipleField, StringField, TextField,
-                     ValidationError, validators, widgets)
+from wtforms import (BooleanField, FloatField, IntegerField, SelectField,
+                     SelectMultipleField, StringField, ValidationError,
+                     validators, widgets)
 
 from apollo.models import (
     Form, LocationType, Participant, ParticipantRole,
     ParticipantPartner, Submission)
 from apollo.services import (
-    events, location_types, locations,
-    participant_partners, participant_roles, participants, forms)
+    forms, location_types, participant_partners, participant_roles)
 from apollo.frontend import permissions
-
-
-# class CustomModelSelectField(ModelSelectField):
-#     def _value(self):
-#         if self.raw_data:
-#             return self.raw_data[0]
-#         elif self.data is not None:
-#             return self.data
-#         else:
-#             return '__None'
 
 
 def _make_choices(qs, placeholder=None):
@@ -37,10 +25,14 @@ def _make_choices(qs, placeholder=None):
 def generate_location_edit_form(location, data=None):
     initial_data = {
         'name': location.name,
+        'lat': location.lat,
+        'lon': location.lon
     }
 
     class LocationEditForm(WTSecureForm):
-        name = TextField(_('Name'), validators=[validators.input_required()])
+        name = StringField(_('Name'), validators=[validators.input_required()])
+        lat = FloatField(_('Latitude'))
+        lon = FloatField(_('Longitude'))
 
     return LocationEditForm(formdata=data, **initial_data)
 
@@ -55,7 +47,7 @@ def generate_participant_edit_form(participant, data=None):
             ParticipantPartner.id, ParticipantPartner.name)
 
     class ParticipantEditBaseForm(WTSecureForm):
-        # participant_id = TextField(
+        # participant_id = StringField(
         #     _('Participant ID'),
         #     validators=[validators.input_required()]
         # )
@@ -66,10 +58,10 @@ def generate_participant_edit_form(participant, data=None):
             choices=_make_choices(role_choices),
             validators=[validators.input_required()]
         )
-        supervisor = TextField(
+        supervisor = StringField(
             _('Supervisor')
         )
-        location = TextField(
+        location = StringField(
             _('Location'),
             validators=[validators.input_required()]
         )
@@ -86,7 +78,7 @@ def generate_participant_edit_form(participant, data=None):
     attributes = {}
     if participant_set.extra_fields:
         attributes.update({
-            f.name: TextField(f.label) for f in participant_set.extra_fields})
+            f.name: StringField(f.label) for f in participant_set.extra_fields})
 
     ParticipantEditForm = type('ParticipantEditForm', (ParticipantEditBaseForm,), attributes)
 
@@ -152,10 +144,10 @@ def generate_participant_import_mapping_form(
             _('Password'),
             choices=default_choices,
         ),
-        'phone': TextField(
+        'phone': StringField(
             _('Phone prefix')
         ),
-        'group': TextField(
+        'group': StringField(
             _('Group prefix')
         )
     }
@@ -211,6 +203,14 @@ def generate_location_update_mapping_form(
             _('%(label)s Code', label=name),
             choices=default_choices
         )
+        attributes['lat'] = SelectField(
+            _('Latitude', label=name),
+            choices=default_choices
+        )
+        attributes['lon'] = SelectField(
+            _('Longitude', label=name),
+            choices=default_choices
+        )
         if location_type.has_political_code:
             attributes['{}_pcode'.format(slug)] = SelectField(
                 _('%(label)s Geopolitical Code', label=name),
@@ -224,6 +224,14 @@ def generate_location_update_mapping_form(
         if location_type.has_registered_voters:
             attributes['{}_rv'.format(slug)] = SelectField(
                 _('%(label)s Registered Voters', label=name),
+                choices=default_choices
+            )
+
+    # add in extra fields
+    if location_set.extra_fields:
+        for field in location_set.extra_fields:
+            attributes[field.name] = SelectField(
+                _('%(label)s', label=field.label),
                 choices=default_choices
             )
 
@@ -280,7 +288,7 @@ def generate_submission_edit_form_class(form):
     for index, group in enumerate(form.groups):
         for field in group.fields:
             if field.is_comment_field:
-                form_fields[field.name] = TextField(
+                form_fields[field.name] = StringField(
                     field.name,
                     description=field.description,
                     widget=widgets.TextArea())

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import networkx as nx
 from sqlalchemy import and_
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import aliased
 
 from apollo.core import db
@@ -173,6 +174,7 @@ class Location(BaseModel):
         'location_type.id', ondelete='CASCADE'), nullable=False)
     lat = db.Column(db.Float)
     lon = db.Column(db.Float)
+    extra_data = db.Column(JSONB)
 
     location_set = db.relationship('LocationSet', backref=db.backref(
         'locations', lazy='dynamic'))

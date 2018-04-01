@@ -6,6 +6,7 @@ import os
 
 from flask import render_template_string
 from flask_babelex import lazy_gettext as _
+from pandas import isnull
 from slugify import slugify
 from sqlalchemy import func
 
@@ -84,6 +85,10 @@ def update_locations(df, mapping, location_set):
         models.LocationTypePath.depth,
     ).all()
 
+    extra_field_names = [
+        field.name for field in location_set.extra_fields] \
+        if location_set.extra_fields else []
+
     for idx in df.index:
         # row_locations = []
         row_ids = {}
@@ -96,6 +101,15 @@ def update_locations(df, mapping, location_set):
                 mapping.get(map_attribute(lt, 'name'), ''),
                 ''
             ))
+            location_lat = None
+            location_lon = None
+
+            try:
+                location_lat = float(df.ix[idx].get('lat'))
+                location_lon = float(df.ix[idx].get('lon'))
+            except ValueError:
+                location_lat = location_lon = None
+
             location_pcode = df.ix[idx].get(
                 mapping.get(map_attribute(lt, 'pcode'), ''), '') \
                 if lt.has_political_code else None
@@ -128,7 +142,9 @@ def update_locations(df, mapping, location_set):
 
             kwargs = {
                 'location_type_id': lt.id,
-                'location_set_id': location_set.id
+                'location_set_id': location_set.id,
+                'lat': location_lat,
+                'lon': location_lon
             }
 
             kwargs.update({'code': location_code})
@@ -164,8 +180,23 @@ def update_locations(df, mapping, location_set):
                 location.other_code = kwargs.get('other_code')
                 location.political_code = kwargs.get('political_code')
                 location.registered_voters = kwargs.get('registered_voters')
+                location.lat = kwargs.get('lat')
+                location.lon = kwargs.get('lon')
 
                 location.save()
+
+            extra_data = {}
+            for field_name in extra_field_names:
+                column = mapping.get(field_name)
+                if column:
+                    value = df.ix[idx].get(column)
+                    if isnull(value):
+                        continue
+                    extra_data[field_name] = value
+
+            if extra_data:
+                services.locations.find(id=location.id).update(
+                    {'extra_data': extra_data}, synchronize_session=False)
 
             # row_locations.append(location)
             row_ids[lt.id] = location.id
