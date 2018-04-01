@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "6cf1c88319f53439b8b19b593f6b904d29fe5c6835ed149d6872ac5b29915cf7"
+            "sha256": "3ff3060314f1b3d76ab88882eb47ae927c4ec47221faa3c2de9f4c3622e1e2bb"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -628,6 +628,12 @@
             ],
             "version": "==2.6.0"
         },
+        "shortuuid": {
+            "hashes": [
+                "sha256:d08fd398f40f8baf87e15eef8355e92fa541bca4eb8465fefab7ee22f92711b9"
+            ],
+            "version": "==0.5.0"
+        },
         "six": {
             "hashes": [
                 "sha256:832dc0e10feb1aa2c68dcc57dbb658f1c7e65b9b61af69048abc87a2db00a0eb",
@@ -762,9 +768,9 @@
         },
         "autopep8": {
             "hashes": [
-                "sha256:c7be71ab0cb2f50c9c22c82f0c9acaafc6f57492c3fbfee9790c415005c2b9a5"
+                "sha256:2284d4ae2052fedb9f466c09728e30d2e231cfded5ffd7b1a20c34123fdc4ba4"
             ],
-            "version": "==1.3.4"
+            "version": "==1.3.5"
         },
         "blinker": {
             "hashes": [
