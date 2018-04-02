@@ -105,9 +105,11 @@ def update_locations(df, mapping, location_set):
             location_lon = None
 
             try:
-                location_lat = float(df.ix[idx].get('lat'))
-                location_lon = float(df.ix[idx].get('lon'))
-            except ValueError:
+                location_lat = float(df.ix[idx].get(mapping.get(map_attribute(
+                    lt, 'lat'))))
+                location_lon = float(df.ix[idx].get(mapping.get(map_attribute(
+                    lt, 'lon'))))
+            except (TypeError, ValueError):
                 location_lat = location_lon = None
 
             location_pcode = df.ix[idx].get(

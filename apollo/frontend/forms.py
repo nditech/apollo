@@ -203,12 +203,12 @@ def generate_location_update_mapping_form(
             _('%(label)s Code', label=name),
             choices=default_choices
         )
-        attributes['lat'] = SelectField(
-            _('Latitude', label=name),
+        attributes['{}_lat'.format(slug)] = SelectField(
+            _('%(label)s latitude', label=name),
             choices=default_choices
         )
-        attributes['lon'] = SelectField(
-            _('Longitude', label=name),
+        attributes['{}_lon'.format(slug)] = SelectField(
+            _('%(label)s longitude', label=name),
             choices=default_choices
         )
         if location_type.has_political_code:
