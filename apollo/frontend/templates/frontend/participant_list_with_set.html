@@ -82,7 +82,7 @@ a:hover.arrow-style{text-decoration:none; color:#333;}
                <th>{{ _('Phone') }}</th>
                <th>{{ _('Organization') }}</th>
                {% for field in extra_fields %}
-               <th><a href="{{ url_for('participants.participant_list_with_set', sort_by=field.name, **args) }}" class="arrow-style"><img src="{{ url_for('static', filename='img/double-arrow.gif') }}" class="img pull-left"></img>{{ field.label }}</a></th>
+               <th>{{ field.label }}</th>
                {% endfor %}
              </tr>
            </thead>
@@ -104,7 +104,7 @@ a:hover.arrow-style{text-decoration:none; color:#333;}
                <td>{{ participant.primary_phone|default('', true) }}</td>
                <td>{{ participant.partner|default('', true) }}</td>
                {% for field in extra_fields %}
-               <td>{{ participant[field.name]|default('', true) }}</td>
+               <td>{{ participant.extra_data[field.name]|default('', true) }}</td>
                {% endfor %}
              </tr>
              {% else %}

@@ -13,7 +13,7 @@ from flask_restful import Api
 from flask_security import current_user, login_required
 from slugify import slugify_unicode
 
-from apollo import services
+from apollo import models, services
 from apollo.core import uploads
 from apollo.frontend import helpers, permissions, route
 from apollo.frontend.forms import (
@@ -77,19 +77,17 @@ def participant_list(participant_set_id=0):
         'gen': 'gender'
     }
 
-    # try:
-    #     extra_fields = [f for f in g.deployment.participant_extra_fields
-    #                     if getattr(f, 'listview_visibility', False) is True]
-    # except AttributeError:
-    #     extra_fields = []
-    extra_fields = []
+    extra_fields = [field for field in participant_set.extra_fields
+                    if field.visible_in_lists] \
+        if participant_set.extra_fields else []
     location = None
     if request.args.get('location'):
         location = services.locations.find(
             id=request.args.get('location')).first()
 
-    # for field in extra_fields:
-    #     sortable_columns.update({field.name: field.name})
+    for field in extra_fields:
+        sortable_columns.update({
+            field.name: models.Participant.extra_data[field.name]})
 
     queryset = services.participants.find(
         participant_set_id=participant_set.id)
