@@ -291,6 +291,7 @@ def update_participants(dataframe, header_map, participant_set):
             #     participant.groups.extend(groups)
 
         # sort out any extra fields
+        extra_data = {}
         for field_name in extra_field_names:
             column = header_map.get(field_name)
             if column:
@@ -298,13 +299,21 @@ def update_participants(dataframe, header_map, participant_set):
                 if _is_valid(value):
                     if isinstance(value, float):
                         value = int(value)
-                    setattr(participant, field_name, value)
+                    extra_data[field_name] = value
 
         # finally done with first pass
         participant.save()
 
+        # if we have extra data, update the participant
+        if extra_data:
+            services.participants.find(id=participant.id).update(
+                {'extra_data': extra_data}, synchronize_session=False)
+
         if groups:
-            participant.groups.extend(groups)
+            if participant.groups:
+                participant.groups.extend(groups)
+            else:
+                participant.groups = groups
             participant.save()
 
     # second pass - resolve missing supervisor references
