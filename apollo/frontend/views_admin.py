@@ -224,7 +224,7 @@ class LocationSetAdminView(SetViewMixin, BaseAdminView):
         'samples': macro('samples_list')
     }
     form_columns = ('name',)
-    inline_models = (models.LocationDataField,)
+    #inline_models = (models.LocationDataField,)
 
 
 class ParticipantSetAdminView(SetViewMixin, BaseAdminView):
@@ -233,7 +233,7 @@ class ParticipantSetAdminView(SetViewMixin, BaseAdminView):
     column_formatters = {
         'participants': macro('participants_list')
     }
-    inline_models = (models.ParticipantDataField,)
+    #inline_models = (models.ParticipantDataField,)
 
     def create_form(self, obj=None):
         deployment = g.deployment

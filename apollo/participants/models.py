@@ -31,18 +31,18 @@ class ParticipantSet(BaseModel):
         return self.name or ''
 
 
-class ParticipantDataField(db.Model):
-    __tablename__ = 'participant_data_field'
+# class ParticipantDataField(db.Model):
+#     __tablename__ = 'participant_data_field'
 
-    id = db.Column(
-        db.Integer, db.Sequence('participant_data_field_id_seq'),
-        primary_key=True)
-    participant_set_id = db.Column(
-        db.Integer, db.ForeignKey('participant_set.id'), nullable=False)
-    name = db.Column(db.String, nullable=False)
-    label = db.Column(db.String, nullable=False)
-    visible_in_lists = db.Column(db.Boolean, default=False)
-    participant_set = db.relationship('ParticipantSet', backref='extra_fields')
+#     id = db.Column(
+#         db.Integer, db.Sequence('participant_data_field_id_seq'),
+#         primary_key=True)
+#     participant_set_id = db.Column(
+#         db.Integer, db.ForeignKey('participant_set.id'), nullable=False)
+#     name = db.Column(db.String, nullable=False)
+#     label = db.Column(db.String, nullable=False)
+#     visible_in_lists = db.Column(db.Boolean, default=False)
+#     participant_set = db.relationship('ParticipantSet', backref='extra_fields')
 
 
 groups_participants = db.Table(
