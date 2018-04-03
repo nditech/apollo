@@ -104,7 +104,7 @@ a:hover.arrow-style{text-decoration:none; color:#333;}
                <td>{{ participant.primary_phone|default('', true) }}</td>
                <td>{{ participant.partner|default('', true) }}</td>
                {% for field in extra_fields %}
-               <td>{{ participant.extra_data[field.name]|default('', true) }}</td>
+               <td>{{ participant.extra_data.get(field.name)|default('', true) }}</td>
                {% endfor %}
              </tr>
              {% else %}
