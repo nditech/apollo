@@ -3,7 +3,8 @@ from flask import flash, g, request
 from flask_admin import form
 from flask_admin.actions import action
 from flask_admin.contrib.sqla import ModelView
-from flask_admin.contrib.sqla.fields import InlineModelFormList
+from flask_admin.contrib.sqla.fields import (
+    InlineModelFormList, QuerySelectMultipleField)
 from flask_admin.contrib.sqla.form import InlineModelConverter
 from flask_admin.form import rules
 from flask_admin.model.form import InlineFormAdmin
@@ -13,7 +14,7 @@ from flask_security import current_user
 from flask_security.utils import encrypt_password
 from jinja2 import contextfunction
 import pytz
-from wtforms import PasswordField, SelectMultipleField
+from wtforms import PasswordField
 
 from apollo.core import admin, db
 from apollo import models, settings
@@ -185,11 +186,8 @@ class UserAdminView(BaseAdminView):
         form = super().create_form(obj)
 
         deployment = current_user.deployment
-        role_choices = models.Role.query.with_entities(
-            models.Role.id, models.Role.name).filter_by(
-                deployment_id=deployment.id).all()
-
-        form.roles.choices = role_choices
+        form.roles.query = models.Role.query.filter_by(
+            deployment_id=deployment.id)
 
         return form
 
@@ -197,11 +195,8 @@ class UserAdminView(BaseAdminView):
         form = super().edit_form(obj)
 
         deployment = current_user.deployment
-        role_choices = models.Role.query.with_entities(
-            models.Role.id, models.Role.name).filter_by(
-                deployment_id=deployment.id).all()
-
-        form.roles.choices = role_choices
+        form.roles.query = models.Role.query.filter_by(
+            deployment_id=deployment.id)
         form.roles.process(request.form, [role.id for role in obj.roles])
 
         return form
@@ -209,8 +204,7 @@ class UserAdminView(BaseAdminView):
     def scaffold_form(self):
         form_class = super(UserAdminView, self).scaffold_form()
         form_class.password2 = PasswordField(_('New password'))
-        form_class.roles = SelectMultipleField(
-            _('Roles'), widget=form.Select2Widget(multiple=True))
+        form_class.roles = QuerySelectMultipleField()
         return form_class
 
     @action('disable', _('Disable'),
