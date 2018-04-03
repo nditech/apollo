@@ -3,7 +3,10 @@ from flask import flash, g, request
 from flask_admin import form
 from flask_admin.actions import action
 from flask_admin.contrib.sqla import ModelView
+from flask_admin.contrib.sqla.fields import InlineModelFormList
+from flask_admin.contrib.sqla.form import InlineModelConverter
 from flask_admin.form import rules
+from flask_admin.model.form import InlineFormAdmin
 from flask_admin.model.template import macro
 from flask_babelex import lazy_gettext as _
 from flask_security import current_user
@@ -36,6 +39,43 @@ class BaseAdminView(ModelView):
         role = models.Role.query.filter_by(
             deployment_id=deployment.id, name='admin').first()
         return current_user.has_role(role)
+
+
+class ExtraDataInlineFormAdmin(InlineFormAdmin):
+    form_columns = ('id', 'name', 'label', 'visible_in_lists')
+
+
+class ExtraDataInlineFormList(InlineModelFormList):
+    def __init__(self, frm, session, model, prop, inline_view, **kwargs):
+        self.form = frm
+        self.session = session
+        self.model = model
+        self.prop = prop
+        self.inline_view = inline_view
+        self._pk = 'id'
+
+        form_opts = form.FormOpts(widget_args=getattr(inline_view, 'form_widget_args', None),
+                                  form_rules=inline_view._form_rules)
+        form_field = self.form_field_type(frm, self._pk, form_opts=form_opts)
+        super(InlineModelFormList, self).__init__(form_field, **kwargs)
+
+
+class LocationExtraDataModelConverter(InlineModelConverter):
+    inline_field_list_type = ExtraDataInlineFormList
+
+    def _calculate_mapping_key_pair(self, model, info):
+        return (
+            models.LocationSet.extra_fields.key,
+            models.LocationDataField.location_set.key)
+
+
+class ParticipantExtraDataModelConverter(InlineModelConverter):
+    inline_field_list_type = ExtraDataInlineFormList
+
+    def _calculate_mapping_key_pair(self, model, info):
+        return (
+            models.ParticipantSet.extra_fields.key,
+            models.ParticipantDataField.participant_set.key)
 
 
 class DeploymentAdminView(BaseAdminView):
@@ -224,7 +264,8 @@ class LocationSetAdminView(SetViewMixin, BaseAdminView):
         'samples': macro('samples_list')
     }
     form_columns = ('name',)
-    #inline_models = (models.LocationDataField,)
+    inline_models = (ExtraDataInlineFormAdmin(models.LocationDataField),)
+    inline_model_form_converter = LocationExtraDataModelConverter
 
 
 class ParticipantSetAdminView(SetViewMixin, BaseAdminView):
@@ -233,7 +274,8 @@ class ParticipantSetAdminView(SetViewMixin, BaseAdminView):
     column_formatters = {
         'participants': macro('participants_list')
     }
-    #inline_models = (models.ParticipantDataField,)
+    inline_models = (ExtraDataInlineFormAdmin(models.ParticipantDataField),)
+    inline_model_form_converter = ParticipantExtraDataModelConverter
 
     def create_form(self, obj=None):
         deployment = g.deployment

@@ -7,7 +7,7 @@ from sqlalchemy_utils import ChoiceType
 
 from apollo import utils
 from apollo.core import db
-from apollo.dal.models import BaseModel
+from apollo.dal.models import BaseModel, Resource
 
 number_cleaner = re.compile(r'[^0-9]+', re.I)
 
@@ -31,18 +31,20 @@ class ParticipantSet(BaseModel):
         return self.name or ''
 
 
-# class ParticipantDataField(db.Model):
-#     __tablename__ = 'participant_data_field'
+class ParticipantDataField(Resource):
+    __mapper_args__ = {'polymorphic_identity': 'participant_data_field'}
+    __tablename__ = 'participant_data_field'
 
-#     id = db.Column(
-#         db.Integer, db.Sequence('participant_data_field_id_seq'),
-#         primary_key=True)
-#     participant_set_id = db.Column(
-#         db.Integer, db.ForeignKey('participant_set.id'), nullable=False)
-#     name = db.Column(db.String, nullable=False)
-#     label = db.Column(db.String, nullable=False)
-#     visible_in_lists = db.Column(db.Boolean, default=False)
-#     participant_set = db.relationship('ParticipantSet', backref='extra_fields')
+    id = db.Column(
+        db.Integer, db.Sequence('participant_data_field_id_seq'),
+        primary_key=True)
+    participant_set_id = db.Column(
+        db.Integer, db.ForeignKey('participant_set.id'), nullable=False)
+    name = db.Column(db.String, nullable=False)
+    label = db.Column(db.String, nullable=False)
+    visible_in_lists = db.Column(db.Boolean, default=False)
+    resource_id = db.Column(db.Integer, db.ForeignKey('resource.resource_id'))
+    participant_set = db.relationship('ParticipantSet', backref='extra_fields')
 
 
 groups_participants = db.Table(
