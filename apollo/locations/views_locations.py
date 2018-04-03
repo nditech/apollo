@@ -62,6 +62,9 @@ def location_list(location_set_id):
     queryset = services.locations.find(location_set_id=location_set_id)
     queryset_filter = filters.location_filterset(
         location_set_id=location_set_id)(queryset, request.args)
+    extra_fields = [
+        field for field in models.LocationDataField.query.filter_by(
+            location_set_id=location_set_id) if field.visible_in_lists]
 
     args = request.args.to_dict(flat=False)
     args.update(location_set_id=location_set_id)
@@ -86,6 +89,7 @@ def location_list(location_set_id):
     else:
         ctx = dict(
             args=args,
+            extra_fields=extra_fields,
             filter_form=queryset_filter.form,
             page_title=page_title,
             form=DummyForm(),

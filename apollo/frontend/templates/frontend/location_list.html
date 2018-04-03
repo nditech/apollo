@@ -65,6 +65,9 @@
           <th class="text-right shrink" width="1px">{{ _('Code') }}</th>
           <th>{{ _('Name') }}</th>
           <th class="shrink">{{ _('Type') }}</th>
+          {% for field in extra_fields %}
+          <th>{{ field.label }}</th>
+          {% endfor %}
         </tr>
       </thead>
       <tbody>
@@ -73,10 +76,14 @@
           <td class="text-right shrink"><a href="{{ url_for('locations.location_edit', id=location.id) }}">{{ location.code }}</a></td>
           <td>{{ location.name }}</td>
           <td class="shrink">{{ location.location_type.name }}</td>
+          {% for field in extra_fields %}
+          <td>{{ location.extra_data.get(field.name) }}</td>
+          {% endfor %}
         </tr>
         {% else %}
         <tr class="warning">
-          <td class="text-center" colspan="3">{{ _('No Data Available') }}</td>
+          {%- set colspan = 3 + extra_fields|length -%}
+          <td class="text-center" colspan="{{ colspan }}">{{ _('No Data Available') }}</td>
         </tr>
         {% endfor %}
       </tbody>
