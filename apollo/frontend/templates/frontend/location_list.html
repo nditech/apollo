@@ -77,7 +77,11 @@
           <td>{{ location.name }}</td>
           <td class="shrink">{{ location.location_type.name }}</td>
           {% for field in extra_fields %}
-          <td>{{ location.extra_data.get(field.name) }}</td>
+          {%- if location.extra_data -%}
+          <td>{{ location.extra_data.get(field.name)|default('', true) }}</td>
+          {%- else -%}
+          <td></td>
+          {%- endif -%}
           {% endfor %}
         </tr>
         {% else %}
