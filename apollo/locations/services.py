@@ -24,8 +24,6 @@ class LocationService(Service):
             location_name = location_type.name.upper()
             headers.append('{}_N'.format(location_name))
             headers.append('{}_ID'.format(location_name))
-            if location_type.has_political_code:
-                headers.append('{}_PCODE'.format(location_name))
             if location_type.has_registered_voters:
                 headers.append('{}_RV'.format(location_name))
 
@@ -43,16 +41,12 @@ class LocationService(Service):
                 record.append(ancestor.name)
                 record.append(ancestor.code)
 
-                if ancestor.location_type.has_political_code:
-                    record.append(ancestor.political_code)
                 if ancestor.location_type.has_registered_voters:
                     record.append(ancestor.registered_voters)
 
             record.append(location.name)
             record.append(location.code)
 
-            if location.location_type.has_political_code:
-                record.append(location.political_code)
             if location.location_type.has_registered_voters:
                 record.append(location.registered_voters)
 

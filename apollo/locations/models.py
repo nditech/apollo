@@ -37,8 +37,6 @@ class LocationSet(BaseModel):
         ).with_entities(
             LocationType.id,
             LocationType.name,
-            LocationType.has_other_code,
-            LocationType.has_political_code,
             LocationType.has_registered_voters
         ).all()
 
@@ -84,8 +82,6 @@ class LocationType(BaseModel):
     is_administrative = db.Column(db.Boolean, default=False)
     is_political = db.Column(db.Boolean, default=False)
     has_registered_voters = db.Column(db.Boolean, default=False)
-    has_political_code = db.Column(db.Boolean, default=False)
-    has_other_code = db.Column(db.Boolean, default=False)
     slug = db.Column(db.String)
     location_set_id = db.Column(
         db.Integer, db.ForeignKey('location_set.id', ondelete='CASCADE'),
@@ -165,8 +161,6 @@ class Location(BaseModel):
         db.Integer, db.Sequence('location_id_seq'), primary_key=True)
     name = db.Column(db.String, nullable=False)
     code = db.Column(db.String, index=True, nullable=False)
-    political_code = db.Column(db.String)
-    other_code = db.Column(db.String)
     registered_voters = db.Column(db.Integer, default=0)
     location_set_id = db.Column(db.Integer, db.ForeignKey(
         'location_set.id', ondelete='CASCADE'), nullable=False)

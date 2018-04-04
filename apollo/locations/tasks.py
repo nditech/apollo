@@ -112,18 +112,6 @@ def update_locations(df, mapping, location_set):
             except (TypeError, ValueError):
                 location_lat = location_lon = None
 
-            location_pcode = df.ix[idx].get(
-                mapping.get(map_attribute(lt, 'pcode'), ''), '') \
-                if lt.has_political_code else None
-            location_ocode = df.ix[idx].get(
-                mapping.get(map_attribute(lt, 'ocode'), ''), '') \
-                if lt.has_other_code else None
-            if location_pcode:
-                location_pcode = int(location_pcode) if type(location_pcode) in [int, float] else location_pcode
-                location_pcode = str(location_pcode)
-            if location_ocode:
-                location_ocode = int(location_ocode) if type(location_ocode) in [int, float] else location_ocode
-                location_ocode = str(location_ocode)
             location_rv = df.ix[idx].get(
                 mapping.get(map_attribute(lt, 'rv'), ''), '') \
                 if lt.has_registered_voters else None
@@ -153,10 +141,6 @@ def update_locations(df, mapping, location_set):
 
             kwargs['name'] = location_name
 
-            if location_pcode:
-                kwargs.update({'political_code': location_pcode})
-            if location_ocode:
-                kwargs.update({'other_code': location_ocode})
             if location_rv:
                 kwargs.update({'registered_voters': location_rv})
 

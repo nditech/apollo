@@ -15,15 +15,13 @@
       return {width: width, height: height};
     };
 
-    this.addDivision = function (id, name, isAdministrative, isPolitical, hasOtherCode, hasPoliticalCode, hasRegisteredVoters) {
+    this.addDivision = function (id, name, isAdministrative, isPolitical, hasRegisteredVoters) {
       var elementSize = this.getElementSize(name);
 
       var shapeOptions = {
         name: name,
         is_administrative: isAdministrative ? true : false,
         is_political: isPolitical ? true : false,
-        has_political_code: hasPoliticalCode ? true : false,
-        has_other_code: hasOtherCode ? true : false,
         has_registered_voters: hasRegisteredVoters ? true : false,
         size: { width: elementSize.width, height: elementSize.height },
         attrs: {
@@ -104,7 +102,7 @@
         var cells = [];
 
         _.each(data.nodes, function(node) {
-          cells.push(app.addDivision(node.id, node.name, node.is_administrative, node.is_political, node.has_other_code, node.has_political_code, node.has_registered_voters));
+          cells.push(app.addDivision(node.id, node.name, node.is_administrative, node.is_political, node.has_registered_voters));
         });
         _.each(data.edges, function(edge) {
           cells.push(app.addLink(edge[0], edge[1]));
@@ -148,8 +146,6 @@
       $('#updateDivisionId').val(cellView.model.id);
       $('#updateDivisionAdministrative').prop('checked', cellView.model.get('is_administrative') ? true : false);
       $('#updateDivisionPolitical').prop('checked', cellView.model.get('is_political') ? true : false);
-      $('#updateDivisionPoliticalCode').prop('checked', cellView.model.get('has_political_code') ? true : false);
-      $('#updateDivisionOtherCode').prop('checked', cellView.model.get('has_other_code') ? true : false);
       $('#updateDivisionRegisteredVoters').prop('checked', cellView.model.get('has_registered_voters') ? true : false);
 
       $('#updateDivisionParents').empty();
@@ -190,14 +186,12 @@
       var name = $('#addDivisionName').val();
       var is_administrative = $('#addDivisionAdministrative').prop('checked');
       var is_political = $('#addDivisionPolitical').prop('checked');
-      var has_political_code = $('#addDivisionPoliticalCode').prop('checked');
-      var has_other_code = $('#addDivisionOtherCode').prop('checked');
       var has_registered_voters = $('#addDivisionRegisteredVoters').prop('checked');
       var parent_ids = $('#addDivisionParents').val();
 
       if (name && !_.find(graph.getElements(), function(elem) { return elem.get('name') == name})) {
         var cells = [];
-        var element = appRef.addDivision(null, name, is_administrative, is_political, has_political_code, has_other_code, has_registered_voters);
+        var element = appRef.addDivision(null, name, is_administrative, is_political, has_registered_voters);
         cells.push(element);
 
         _.each(parent_ids, function(parent_id) {
@@ -246,8 +240,6 @@
       var name = $('#updateDivisionName').val();
       var is_administrative = $('#updateDivisionAdministrative').prop('checked');
       var is_political = $('#updateDivisionPolitical').prop('checked');
-      var has_political_code = $('#updateDivisionPoliticalCode').prop('checked');
-      var has_other_code = $('#updateDivisionOtherCode').prop('checked');
       var has_registered_voters = $('#updateDivisionRegisteredVoters').prop('checked');
       var parents = $('#updateDivisionParents').val();
 
@@ -257,8 +249,6 @@
         cell.set('name', name);
         cell.set('is_administrative', is_administrative);
         cell.set('is_political', is_political);
-        cell.set('has_political_code', has_political_code);
-        cell.set('has_other_code', has_other_code);
         cell.set('has_registered_voters', has_registered_voters);
 
         var elementSize = appRef.getElementSize(name);
