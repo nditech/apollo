@@ -346,7 +346,8 @@ class MobileFilter(CharFilter):
 class TextFilter(CharFilter):
     def filter(self, queryset, value):
         if value:
-            return queryset.filter(text__icontains=value)
+            query_val = '%{}%'.format(value)
+            return queryset.filter(models.Message.text.ilike(query_val))
 
         return queryset
 
