@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 from flask_babelex import lazy_gettext as _
-from sqlalchemy.dialects.postgresql import ARRAY, JSONB, array
+from parsley import ParseError
+from sqlalchemy.dialects.postgresql import ARRAY, JSONB
 from sqlalchemy_utils import ChoiceType
 
 from apollo.core import db
 from apollo.dal.models import BaseModel
+from apollo.formsframework.parser import Comparator, grammar_factory
 from apollo.utils import current_timestamp
 
 FLAG_STATUSES = {
@@ -100,6 +102,7 @@ class Submission(BaseModel):
     form = db.relationship('Form', backref='submissions')
     location = db.relationship('Location', backref='submissions')
     participant = db.relationship('Participant', backref='submissions')
+    conflicts = db.Column(JSONB)
 
     @classmethod
     def init_submissions(cls, event, form, role, location_type):
@@ -242,120 +245,273 @@ class Submission(BaseModel):
 
         return self._master
 
+    # @classmethod
+    # def _compute_conflict_status(cls, group, submission, siblings, master):
+    #     if submission.submission_type == 'M':
+    #         all_submissions = siblings
+    #     else:
+    #         all_submissions = siblings + [submission]
+
+    #     group_tags = set(submission.form.get_group_tags(
+    #         group['name'])).difference(master.overridden_fields)
+
+    #     # a conflict on a tag is sufficient to mark the entire group
+    #     # as being in conflict
+    #     for tag in group_tags:
+    #         field_values = [s.data.get(tag) for s in all_submissions
+    #                         if not s.quarantine_status]
+    #         field_values_set = {frozenset(v) if isinstance(v, list) else v
+    #                             for v in field_values if v is not None}
+    #         if len(field_values_set) > 1:
+    #             return True
+
+    #     return False
+
+    # @classmethod
+    # def _compute_confidence(cls, submission, siblings=None):
+    #     if submission.submission_type != 'M':
+    #         return
+
+    #     quarantined_status_flags = [
+    #         i[0] for i in
+    #         [s for s in cls.QUARANTINE_STATUSES if s[0]]
+    #     ]
+    #     if not siblings:
+    #         siblings = submission.__siblings().filter(
+    #             ~Submission.quarantine_status.in_(quarantined_status_flags)
+    #         ).all()
+    #     tags = submission.form.tags
+
+    #     confidence = {}
+
+    #     for tag in tags:
+    #         score = None
+    #         if submission.overridden_fields:
+    #             if tag in submission.overridden_fields:
+    #                 score = 1
+    #                 confidence[tag] = score
+    #                 continue
+
+    #         values = [frozenset(value) if isinstance(value, list) else value
+    #                   for value in [sib.data.get(tag) for sib in siblings]]
+    #         unique = list(set(values))
+
+    #         if values and len(unique) == 1 and unique[0] is not None:
+    #             # all values agree and are not None
+    #             score = 1
+    #         elif values and len(unique) == 1 and not unique[0]:
+    #             # all values agree and are None
+    #             score = None
+    #         else:
+    #             n_values = [v for v in values if v is not None]
+    #             n_unique = list(set(n_values))
+    #             if len(n_unique) == 0 or len(n_unique) > 1:
+    #                 # if there are no values or the number of values
+    #                 # is greater
+    #                 score = 0
+    #             else:
+    #                 try:
+    #                     score = len(n_values) / len(values)
+    #                 except ZeroDivisionError:
+    #                     score = 0
+
+    #         confidence[tag] = score
+
+    #     return confidence
+
     @classmethod
-    def _compute_confidence(cls, submission, siblings=None):
+    def _compute_quality_assurance(cls, submission):
         if submission.submission_type != 'M':
+            return {}
+
+        form = submission.form
+        if not form.quality_checks_enabled or not form.quality_checks:
+            return {}
+
+        quality_checks_results = {}
+        evaluator = grammar_factory(submission)
+        comparator = Comparator()
+        for check in form.quality_checks:
+            if submission.quality_assurance_status.get(check['name']) == \
+                    QUALITY_STATUSES['VERIFIED']:
+                continue
+
+            try:
+                lhs = evaluator(check['lvalue']).expr()
+                rhs = evaluator(check['rvalue']).expr()
+            except (
+                    AttributeError, NameError, ParseError, ValueError,
+                    TypeError):
+                try:
+                    quality_checks_results.pop(check['name'])
+                except KeyError:
+                    continue
+
+            comparator.param = lhs
+            all_ok = comparator.eval('{} {}'.format(check['comparator'], rhs))
+
+            if all_ok:
+                quality_checks_results[check['name']] = QUALITY_STATUSES['OK']
+            else:
+                quality_checks_results[check['name']] = \
+                    QUALITY_STATUSES['FLAGGED']
+
+        return quality_checks_results
+
+    @classmethod
+    def precomp_and_update_related(cls, submission):
+        '''Does precomputation of conflict for related subs,
+        confidence for master, updates for master, and QA'''
+        form = submission.form
+        if form.form_type == 'INCIDENT':
             return
 
+        master = submission.__master()
+        all_siblings_query = master.__siblings()
         quarantined_status_flags = [
             i[0] for i in
             [s for s in cls.QUARANTINE_STATUSES if s[0]]
         ]
-        if not siblings:
-            siblings = submission.__siblings().filter(
-                ~Submission.quarantine_status.in_(quarantined_status_flags)
-            ).all()
-        tags = submission.form.tags
+        nonquarantined_siblings = all_siblings_query.filter(
+            ~cls.quarantine_status.in_(quarantined_status_flags)
+        )
+
+        form_tags = form.tags
+        if master.overridden_fields:
+            non_overridden_tags = set(form_tags).difference(master.overridden_fields)
+        else:
+            non_overridden_tags = form_tags
 
         confidence = {}
-
-        for tag in tags:
-            score = None
-            if submission.overridden_fields:
-                if tag in submission.overridden_fields:
-                    score = 1
-                    confidence[tag] = score
-                    continue
-
-            values = [frozenset(value) if isinstance(value, list) else value
-                      for value in [sib.data.get(tag) for sib in siblings]]
-            unique = list(set(values))
-
-            if values and len(unique) == 1 and unique[0] is not None:
-                # all values agree and are not None
-                score = 1
-            elif values and len(unique) == 1 and not unique[0]:
-                # all values agree and are None
-                score = None
-            else:
-                n_values = [v for v in values if v is not None]
-                n_unique = list(set(n_values))
-                if len(n_unique) == 0 or len(n_unique) > 1:
-                    # if there are no values or the number of values
-                    # is greater
-                    score = 0
-                else:
-                    try:
-                        score = len(n_values) / len(values)
-                    except ZeroDivisionError:
-                        score = 0
-
-            confidence[tag] = score
-
-        return confidence
-
-    @classmethod
-    def _update_master(cls, submission):
-        '''Updates a master submission data'''
-        master = submission.__master()
-        if not master or master.id == submission.id:
-            return
-
-        # get fields that have not been overridden
-        if master.overridden_fields:
-            form_tags = [
-                f for f in submission.form.tags
-                if f not in master.overridden_fields
-            ]
-        else:
-            form_tags = submission.form.tags
-
+        conflicts = {}
         master_data = master.data.copy() if master.data else {}
         changed = False
 
-        # use siblings that have not been quarantined
-        quarantined_status_flags = [
-            i[0] for i in
-            [s for s in cls.QUARANTINE_STATUSES if s[0]]
-        ]
-        siblings = submission.__siblings().filter(
-            ~Submission.quarantine_status.in_(quarantined_status_flags)
-        ).all()
+        for tag in non_overridden_tags:
+            # TODO: replace this if quarantined submissions
+            # are also used
+            score = None
+            field_values = [s.data.get(tag) for s in nonquarantined_siblings]
+            unique_field_values = list({frozenset(v) if isinstance(v, list) else v for v in field_values})
 
-        for tag in form_tags:
-            submission_field_value = submission.data.get(tag)
-            sibling_field_values = [sib.data.get(tag) for sib in siblings]
-
-            if submission.quarantine_status:
-                submission_field_value = None
-
-            all_values = [submission_field_value] + sibling_field_values
-            non_null_values = [v for v in all_values if v is not None]
-
-            # reduce this to a set of unique values
-            hashable = [frozenset(v) if isinstance(v, list) else v for v in non_null_values]
-            unique_values = set(hashable)
-
-            # if the number of unique values is 0,
-            # there are no non-null values. if it is
-            # 1, then all siblings share the same value
-            # if it is more than 1, then there are
-            # conflicts. only update the master in the
-            # second case
-            if len(unique_values) == 1:
-                v = unique_values.pop()
-                v = list(v) if isinstance(v, frozenset) else v
-                master_data[tag] = v
+            if field_values and len(unique_field_values) == 1 and unique_field_values[0] is not None:
+                # all non-quarantined values agree
+                # update master data in this case - this field
+                # wasn't overridden and all values agree
+                score = 1
+                master_data[tag] = unique_field_values[0]
                 changed = True
+            elif field_values and len(unique_field_values) == 1 and not unique_field_values[0]:
+                # do nothing - score is already None
+                pass
+            else:
+                normal_field_values = [v for v in field_values if v is not None]
+                normal_unique_values = list(set(normal_field_values))
+                if len(normal_unique_values) == 0 or len(normal_unique_values) > 1:
+                    score = 0
+                    if len(normal_unique_values) > 1:
+                        # conflict
+                        conflicts[tag] = True
+                else:
+                    # no conflict - not all participants
+                    # have reported a value
+                    try:
+                        score = len(normal_field_values) / len(field_values)
+                    except ZeroDivisionError:
+                        # shouldn't happen, but hey
+                        score = 0
 
-        confidence = cls._compute_confidence(master, [submission] + siblings)
+            if score is not None:
+                confidence[tag] = score
+
+        master_update_params = {}
+        # update conflict status for all related submissions
+        if conflicts:
+            all_siblings_query.update(
+                {'conflicts': conflicts}, synchronize_session=False)
+            master_update_params['conflicts'] = conflicts
+
+        if confidence:
+            master_update_params['confidence'] = confidence
 
         if changed:
-            cls.query.filter_by(id=master.id).update(
-                {'data': master_data, 'confidence': confidence},
-                synchronize_session=False
-            )
-            db.session.commit()
+            master_update_params['data'] = master_data
+            # also update the data attribute directly,
+            # as we'll need it to compute QA
+            master.data = master_data
+
+        # compute and update QA
+        qa_status = cls._compute_quality_assurance(master)
+        master_update_params['quality_assurance_status'] = qa_status
+        cls.query.filter_by(id=master.id).update(
+            master_update_params, synchronize_session=False)
+
+        # persist all changes
+        db.session.commit()
+
+    # @classmethod
+    # def _update_master(cls, submission):
+    #     '''Updates a master submission data'''
+    #     master = submission.__master()
+    #     if not master or master.id == submission.id:
+    #         return
+
+    #     # get fields that have not been overridden
+    #     if master.overridden_fields:
+    #         form_tags = [
+    #             f for f in submission.form.tags
+    #             if f not in master.overridden_fields
+    #         ]
+    #     else:
+    #         form_tags = submission.form.tags
+
+    #     master_data = master.data.copy() if master.data else {}
+    #     changed = False
+
+    #     # use siblings that have not been quarantined
+    #     quarantined_status_flags = [
+    #         i[0] for i in
+    #         [s for s in cls.QUARANTINE_STATUSES if s[0]]
+    #     ]
+    #     siblings = submission.__siblings().filter(
+    #         ~Submission.quarantine_status.in_(quarantined_status_flags)
+    #     ).all()
+
+    #     for tag in form_tags:
+    #         submission_field_value = submission.data.get(tag)
+    #         sibling_field_values = [sib.data.get(tag) for sib in siblings]
+
+    #         if submission.quarantine_status:
+    #             submission_field_value = None
+
+    #         all_values = [submission_field_value] + sibling_field_values
+    #         non_null_values = [v for v in all_values if v is not None]
+
+    #         # reduce this to a set of unique values
+    #         hashable = [frozenset(v) if isinstance(v, list) else v
+    #                     for v in non_null_values]
+    #         unique_values = set(hashable)
+
+    #         # if the number of unique values is 0,
+    #         # there are no non-null values. if it is
+    #         # 1, then all siblings share the same value
+    #         # if it is more than 1, then there are
+    #         # conflicts. only update the master in the
+    #         # second case
+    #         if len(unique_values) == 1:
+    #             v = unique_values.pop()
+    #             v = list(v) if isinstance(v, frozenset) else v
+    #             master_data[tag] = v
+    #             changed = True
+
+    #     confidence = cls._compute_confidence(master, [submission] + siblings)
+
+    #     if changed:
+    #         cls.query.filter_by(id=master.id).update(
+    #             {'data': master_data, 'confidence': confidence},
+    #             synchronize_session=False
+    #         )
+    #         db.session.commit()
 
 
 class SubmissionComment(BaseModel):

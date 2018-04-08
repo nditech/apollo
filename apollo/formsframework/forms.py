@@ -227,7 +227,7 @@ class BaseQuestionnaireForm(Form):
                             ).update(update_params, synchronize_session=False)
                             # update the master submission, since this
                             # is a checklist being updated
-                            models.Submission._update_master(submission)
+                            models.Submission.precomp_and_update_related(submission)
                         update_submission_version(submission)
 
                     # update completion rating for participant

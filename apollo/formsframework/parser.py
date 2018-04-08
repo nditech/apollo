@@ -19,22 +19,27 @@ def calculate(start, pairs):
     return result
 
 
-def getvalue(obj, var):
-    if getattr(obj, var) or getattr(obj, var) == 0:
-        return getattr(obj, var)
-    else:
+def getvalue(submission, tag):
+    if tag not in submission.data:
         raise AttributeError
+
+    value = submission.data.get(tag)
+    if value is None:
+        raise AttributeError
+
+    return value
 
 
 def grammar_factory(env={}):
     return parsley.makeGrammar("""
 dot = '.'
 number = <digit+dot{0,1}digit*>:val -> float(val) if "." in val else int(val)
+null = 'null' -> None
 variable = <letter+>:var -> getvalue(env, var)
 attribute = exactly('$')<anything+>:attr -> int(reduce(
     lambda obj, attr: getattr(obj, attr, None), [env] + attr.split('.')))
 parens = '(' ws expr:e ws ')' -> e
-value = number | variable | attribute | parens
+value = null | number | variable | attribute | parens
 
 add = '+' ws expr3:n -> ('+', n)
 sub = '-' ws expr3:n -> ('-', n)

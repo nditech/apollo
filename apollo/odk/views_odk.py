@@ -178,7 +178,7 @@ def submission():
     submission.data = data
     services.submissions.find(id=submission.id).update(
         {'data': data}, synchronize_session=False)
-    models.Submission._update_master(submission)
+    models.Submission.precomp_and_update_related(submission)
     update_submission_version(submission)
 
     if form_modified:
