@@ -26,6 +26,7 @@
       }
 </style>
 {% endblock %}
+{% block subtitle %}{{ location_set.name }}{% endblock subtitle %}
 {% block toolbar %}
   {%- if perms.export_locations.can() -%}
   <a class="btn btn-sm btn-default pull-right" href="{{ url_for('locations.location_list', export='true', location_set_id=location_set_id, **request.args) }}"><i class="glyphicon glyphicon-export"></i> {{ _('Export') }}</a>
