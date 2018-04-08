@@ -356,7 +356,7 @@ class DateFilter(CharFilter):
     def filter(self, queryset, value):
         if value:
             try:
-                timestamp = parse(value)
+                timestamp = parse(value, dayfirst=True)
             except Exception:
                 return queryset.none()
 
@@ -364,8 +364,8 @@ class DateFilter(CharFilter):
             lower = timestamp.replace(hour=0, minute=0, second=0)
 
             return queryset.filter(
-                received__gte=lower,
-                received__lte=upper
+                models.Message.received >= lower,
+                models.Message.received <= upper
             )
 
         return queryset
