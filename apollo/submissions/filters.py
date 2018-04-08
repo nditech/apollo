@@ -144,14 +144,7 @@ class FormGroupFilter(ChoiceFilter):
                 models.Submission.data.has_all(array(group_tags)))
         elif value == '4':
             # Conflict
-            other = aliased(models.Submission)
-            joined_query = query.join(
-                other, other.location_id == models.Submission.location_id)
-            conditions = [
-                models.Submission.data[tag] != other.data[tag]
-                for tag in group_tags
-            ]
-            return joined_query.filter(or_(*conditions))
+            return query.filter(models.Submission.conflicts.has_any(array(group_tags)))
 
         return query
 
