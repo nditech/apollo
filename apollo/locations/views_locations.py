@@ -59,6 +59,7 @@ def location_list(location_set_id):
     template_name = 'frontend/location_list.html'
     page_title = _('Locations')
 
+    location_set = services.location_sets.fget_or_404(id=location_set_id)
     queryset = services.locations.find(location_set_id=location_set_id)
     queryset_filter = filters.location_filterset(
         location_set_id=location_set_id)(queryset, request.args)
@@ -93,6 +94,7 @@ def location_list(location_set_id):
             filter_form=queryset_filter.form,
             page_title=page_title,
             form=DummyForm(),
+            location_set=location_set,
             location_set_id=location_set_id,
             locations=subset.paginate(
                 page=page, per_page=current_app.config.get('PAGE_SIZE')))
