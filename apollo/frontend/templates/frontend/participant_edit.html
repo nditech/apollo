@@ -1,4 +1,5 @@
 {% extends 'frontend/_layout.html' %}{% from 'frontend/macros/participant_edit_form.html' import render_edit_form %}
+{% block subtitle %}{{ participant.participant_set.name }}{% endblock subtitle %}
 {% block content %}
 <div class="row">
 <div class="col-md-8 col-md-offset-2">

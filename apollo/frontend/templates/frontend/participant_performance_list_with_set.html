@@ -10,6 +10,7 @@ a:hover.arrow-style{text-decoration:none; color:#333;}
 .img{margin: 4px 0 0 -6px;}
 </style>
 {% endblock %}
+{% block subtitle %}{{ participant_set.name }}{% endblock subtitle %}
 {% block toolbar %}
   {%- if perms.export_participants.can() -%}
   <a class="btn btn-sm btn-default pull-right" href="{{ url_for('participants.participant_performance_list_with_set', export='true', participant_set_id=participant_set_id, **request.args) }}"><i class="glyphicon glyphicon-export"></i> {{ _('Export') }}</a>

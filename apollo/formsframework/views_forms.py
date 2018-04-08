@@ -100,6 +100,7 @@ def form_builder(id):
 @permissions.edit_forms.require(403)
 @login_required
 def new_form(form_set_id):
+    form_set = services.form_sets.fget_or_404(id=form_set_id)
     page_title = _('Create form')
     template_name = 'frontend/form_edit.html'
 
@@ -109,7 +110,8 @@ def new_form(form_set_id):
         context = {
             'page_title': page_title,
             'form': web_form,
-            'form_set_id': form_set_id
+            'form_set_id': form_set_id,
+            'form_set': form_set
         }
 
         return render_template(template_name, **context)
@@ -128,6 +130,7 @@ def new_form(form_set_id):
 @permissions.edit_forms.require(403)
 @login_required
 def edit_form(form_set_id, form_id):
+    form_set = services.forms.fget_or_404(id=form_set_id)
     form = services.forms.fget_or_404(id=form_id, form_set_id=form_set_id)
     page_title = _('Edit %(name)s', name=form.name)
     template_name = 'frontend/form_edit.html'
@@ -138,7 +141,8 @@ def edit_form(form_set_id, form_id):
         context = {
             'page_title': page_title,
             'form': web_form,
-            'form_set_id': form_set_id
+            'form_set_id': form_set_id,
+            'form_set': form_set
         }
 
         return render_template(template_name, **context)
@@ -159,6 +163,7 @@ def list_forms(form_set_id):
     page_title = _('Forms')
     template_name = 'frontend/form_list.html'
     forms = services.forms.find(form_set_id=form_set_id)
+    form_set = services.form_sets.fget_or_404(id=form_set_id)
     checklist_init_form = make_checklist_init_form(g.event)
     form_import_form = FormImportForm()
 
@@ -167,7 +172,8 @@ def list_forms(form_set_id):
         'forms': forms,
         'page_title': page_title,
         'init_form': checklist_init_form,
-        'form_import_form': form_import_form
+        'form_import_form': form_import_form,
+        'form_set': form_set
     }
 
     return render_template(template_name, **context)
@@ -178,6 +184,7 @@ def list_forms(form_set_id):
 @permissions.edit_forms.require(403)
 @login_required
 def quality_assurance(form_set_id, form_id):
+    form_set = services.form_sets.fget_or_404(id=form_set_id)
     form = services.forms.fget_or_404(id=form_id, form_set_id=form_set_id)
     page_title = _('Quality Assurance — %(name)s', name=form.name)
     template_name = 'frontend/quality_assurance.html'
@@ -215,7 +222,8 @@ def quality_assurance(form_set_id, form_id):
 
     context = {
         'page_title': page_title,
-        'check_data': check_data
+        'check_data': check_data,
+        'form_set': form_set
     }
 
     return render_template(template_name, **context)
