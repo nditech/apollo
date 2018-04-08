@@ -123,7 +123,8 @@ def location_edit(id):
                 'locations.location_list',
                 location_set_id=location.location_set_id))
 
-    return render_template(template_name, form=form, page_title=page_title)
+    return render_template(template_name, form=form, page_title=page_title,
+                           location_set=location.location_set)
 
 
 @route(bp, '/locations/set/<int:location_set_id>/import', methods=['POST'])

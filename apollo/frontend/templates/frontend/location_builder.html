@@ -2,6 +2,7 @@
 {% block stylesheets %}
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/joint.min.css') }}">
 {% endblock stylesheets %}
+{% block subtitle %}{{ location_set.name }}{% endblock subtitle %}
 {% block toolbar %}
 <div class="btn-group pull-right">
   <form id="save-form" method="POST">

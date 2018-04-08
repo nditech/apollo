@@ -1,4 +1,5 @@
 {% extends "frontend/_layout.html" %}
+{% block subtitle %}{{ location_set.name }}{% endblock subtitle %}
 {% block content %}
 <form class="form-horizontal" method="POST">
   {{ form.hidden_tag() }}
