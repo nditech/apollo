@@ -4,7 +4,6 @@ from operator import itemgetter
 from flask_babelex import lazy_gettext as _
 from sqlalchemy import or_
 from sqlalchemy.dialects.postgresql import array
-from sqlalchemy.orm import aliased
 from wtforms import widgets
 
 from apollo import models, services
