@@ -47,7 +47,8 @@ class ParticipantDataField(Resource):
     participant_set = db.relationship('ParticipantSet', backref='extra_fields')
 
     def __str__(self):
-        return '<ParticipantDataField: ({}, {})>'.format(self.name, self.label)
+        return str(_('ParticipantDataField - %(name)s in %(participant_set)s',
+                     name=self.name, participant_set=self.participant_set.name))
 
 
 groups_participants = db.Table(

@@ -91,7 +91,7 @@ class Form(Resource):
         'forms', lazy='dynamic'))
 
     def __str__(self):
-        return '<Form: ({})>'.format(self.name)
+        return str(_('Form - %(name)s', name=self.name))
 
     def _populate_field_cache(self):
         self._field_cache = {

@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from flask_babelex import lazy_gettext as _
 import networkx as nx
 from sqlalchemy import and_
 from sqlalchemy.dialects.postgresql import JSONB
@@ -266,4 +267,5 @@ class LocationDataField(Resource):
     location_set = db.relationship('LocationSet', backref='extra_fields')
 
     def __str__(self):
-        return '<LocationDataField: ({}, {})>'.format(self.name, self.label)
+        return str(_('LocationDataField - %(name)s in %(location_set)s',
+                     name=self.name, location_set=self.location_set.name))

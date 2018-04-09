@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
 
+from flask_babelex import lazy_gettext as _
 from sqlalchemy.dialects.postgresql import ARRAY
 
 from apollo.core import db
@@ -62,4 +63,4 @@ class Event(Resource):
     participant_set = db.relationship('ParticipantSet', backref='events')
 
     def __str__(self):
-        return '<Event: ({})>'.format(self.name)
+        return str(_('Event - %(name)s', name=self.name))
