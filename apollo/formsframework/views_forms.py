@@ -118,6 +118,7 @@ def new_form(form_set_id):
 
     # hack because of nasty bug with forms service
     form = services.forms.__model__(
+        deployment_id=form_set.deployment_id,
         form_set_id=form_set_id)
     web_form.populate_obj(form)
     form.save()
@@ -254,6 +255,7 @@ def import_form_schema(form_set_id):
 
     if web_form.validate_on_submit():
         form = import_form(request.files['import_file'])
+        form.deployment_id = form_set.deployment_id
         form.form_set = form_set
         form.save()
 

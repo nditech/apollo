@@ -46,6 +46,9 @@ class ParticipantDataField(Resource):
     resource_id = db.Column(db.Integer, db.ForeignKey('resource.resource_id'))
     participant_set = db.relationship('ParticipantSet', backref='extra_fields')
 
+    def __str__(self):
+        return '<ParticipantDataField: ({}, {})>'.format(self.name, self.label)
+
 
 groups_participants = db.Table(
     'participant_groups_participants',

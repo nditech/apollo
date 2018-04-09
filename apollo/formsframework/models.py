@@ -90,6 +90,9 @@ class Form(Resource):
     form_set = db.relationship('FormSet', backref=db.backref(
         'forms', lazy='dynamic'))
 
+    def __str__(self):
+        return '<Form: ({})>'.format(self.name)
+
     def _populate_field_cache(self):
         self._field_cache = {
             f['tag']: f for g in self.data['groups'] for f in g['fields']

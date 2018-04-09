@@ -79,6 +79,15 @@ class ResourceMixin(object):
         return db.Column(db.String, nullable=False)
 
     @declared_attr
+    def deployment_id(self):
+        return db.Column(
+            db.Integer, db.ForeignKey('deployment.id'), nullable=False)
+
+    @declared_attr
+    def deployment(self):
+        return db.relationship('Deployment', backref='resources')
+
+    @declared_attr
     def roles(self):
         return db.relationship(
             'Role', backref='resources', secondary='role_resource_permissions')

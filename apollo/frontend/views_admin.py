@@ -45,6 +45,11 @@ class BaseAdminView(ModelView):
 class ExtraDataInlineFormAdmin(InlineFormAdmin):
     form_columns = ('id', 'name', 'label', 'visible_in_lists')
 
+    def on_model_change(self, form, model, is_created):
+        if is_created:
+            model.deployment = g.deployment
+            model.resource_type = model.__mapper_args__['polymorphic_identity']
+
 
 class ExtraDataInlineFormList(InlineModelFormList):
     def __init__(self, frm, session, model, prop, inline_view, **kwargs):
@@ -55,8 +60,9 @@ class ExtraDataInlineFormList(InlineModelFormList):
         self.inline_view = inline_view
         self._pk = 'id'
 
-        form_opts = form.FormOpts(widget_args=getattr(inline_view, 'form_widget_args', None),
-                                  form_rules=inline_view._form_rules)
+        form_opts = form.FormOpts(
+            widget_args=getattr(inline_view, 'form_widget_args', None),
+            form_rules=inline_view._form_rules)
         form_field = self.form_field_type(frm, self._pk, form_opts=form_opts)
         super(InlineModelFormList, self).__init__(form_field, **kwargs)
 
@@ -227,7 +233,23 @@ class UserAdminView(BaseAdminView):
 class RoleAdminView(BaseAdminView):
     can_delete = False
     column_list = ('name', 'description')
-    form_columns = ('name', 'description', 'permissions')
+    form_columns = ('name', 'description', 'permissions', 'resources')
+
+    def create_form(self, obj=None):
+        deployment = g.deployment
+        form = super().create_form(obj)
+        form.resources.query = models.Resource.query.filter_by(
+            deployment=deployment)
+
+        return form
+
+    def edit_form(self, obj=None):
+        deployment = g.deployment
+        form = super().edit_form(obj)
+        form.resources.query = models.Resource.query.filter_by(
+            deployment=deployment)
+
+        return form
 
     def get_one(self, pk):
         deployment = current_user.deployment

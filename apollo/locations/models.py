@@ -223,7 +223,8 @@ class Location(BaseModel):
     def make_path(self):
         self._cached_path = getattr(self, '_cached_path', None)
         if not self._cached_path:
-            data = {ans.location_type.name: ans.name for ans in self.ancestors()}
+            data = {
+                ans.location_type.name: ans.name for ans in self.ancestors()}
             data.update({self.location_type.name: self.name})
 
             self._cached_path = data
@@ -250,7 +251,7 @@ class LocationPath(db.Model):
 
 
 class LocationDataField(Resource):
-    mapper_args = {'polymorphic_identity': 'location_data_field'}
+    __mapper_args__ = {'polymorphic_identity': 'location_data_field'}
     __tablename__ = 'location_data_field'
 
     id = db.Column(
@@ -263,3 +264,6 @@ class LocationDataField(Resource):
     visible_in_lists = db.Column(db.Boolean, default=False)
     resource_id = db.Column(db.Integer, db.ForeignKey('resource.resource_id'))
     location_set = db.relationship('LocationSet', backref='extra_fields')
+
+    def __str__(self):
+        return '<LocationDataField: ({}, {})>'.format(self.name, self.label)
