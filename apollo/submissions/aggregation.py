@@ -211,7 +211,6 @@ def _qa_counts(query, form):
             ).all()
 
             dict_results = {k: v for k, v in results}
-            print(dict_results)
             for key in LABEL_MAP:
                 if key in dict_results:
                     d['counts'].append({

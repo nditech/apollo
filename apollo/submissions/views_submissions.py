@@ -31,7 +31,7 @@ from apollo.participants.utils import update_participant_completion_rating
 from apollo.submissions import filters, forms
 from apollo.submissions.incidents import incidents_csv
 from apollo.submissions.aggregation import (
-    aggregated_dataframe, _quality_check_aggregation)
+    aggregated_dataframe, _quality_check_aggregation, _qa_counts)
 from apollo.submissions.models import QUALITY_STATUSES, Submission
 from apollo.submissions.recordmanagers import AggFrameworkExporter
 from apollo.submissions.utils import make_submission_dataframe
@@ -171,6 +171,8 @@ def submission_list(form_id):
         models.Participant,
         models.Submission.participant_id == models.Participant.id
     ).order_by(models.Location.code, models.Participant.participant_id)
+
+    print(queryset.count())
 
     query_filterset = filter_class(queryset, request.args)
     filter_form = query_filterset.form
@@ -710,7 +712,7 @@ def submission_version(submission_id, version_id):
 @permissions.view_quality_assurance.require(403)
 @login_required
 def quality_assurance_dashboard(form_id):
-    form = services.forms.get_or_404(id=form_id, form_type='CHECKLIST')
+    form = services.forms.fget_or_404(id=form_id, form_type='CHECKLIST')
     page_title = _('Quality Assurance — %(name)s', name=form.name)
     filter_class = generate_quality_assurance_filter(form)
     data = request.args.to_dict()
@@ -727,7 +729,7 @@ def quality_assurance_dashboard(form_id):
     filter_form = query_filterset.form
 
     # get individual check data
-    check_data = _quality_check_aggregation(query_filterset.qs, form)
+    check_data = _qa_counts(query_filterset.qs, form)
 
     template_name = 'frontend/quality_assurance_dashboard.html'
 

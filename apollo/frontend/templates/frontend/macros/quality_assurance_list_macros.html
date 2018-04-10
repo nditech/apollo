@@ -26,8 +26,8 @@
     <td class="text-center">
         {%- if submission.verification_status == verification_statuses.VERIFIED %}<img src="{{ url_for('static', filename='img/blue_dot.png') }}" alt="{{ _('Verified') }}" title="{{ _('Verified') }}" height="11" width="11">
         {%- elif submission.verification_status == verification_statuses.REJECTED %}<img src="{{ url_for('static', filename='img/slash.png') }}" alt="{{ _('Rejected') }}" title="{{ _('Rejected') }}" height="11" width="11">
-        {% elif submission.quality_checks[qc.name] == quality_statuses.OK %}<img src="{{ url_for('static', filename='img/tick.png') }}" alt="{{ _('OK') }}" title="{{ _('OK') }}" height="11" width="11">
-        {%- elif submission.quality_checks[qc.name] == quality_statuses.FLAGGED %}<img src="{{ url_for('static', filename='img/red_dot.png') }}" alt="{{ _('Flagged') }}" title="{{ _('Flagged') }}" height="11" width="11">
+        {% elif submission.quality_assurance_status[qc.name] == quality_statuses.OK %}<img src="{{ url_for('static', filename='img/tick.png') }}" alt="{{ _('OK') }}" title="{{ _('OK') }}" height="11" width="11">
+        {%- elif submission.quality_assurance_status[qc.name] == quality_statuses.FLAGGED %}<img src="{{ url_for('static', filename='img/red_dot.png') }}" alt="{{ _('Flagged') }}" title="{{ _('Flagged') }}" height="11" width="11">
         {%- else %}<img src="{{ url_for('static', filename='img/gray_dot.png') }}" alt="{{ _('Insufficient Data') }}" title="{{ _('Insufficient Data') }}" height="11" width="11">
         {% endif %}
     </td>

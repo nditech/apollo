@@ -25,7 +25,7 @@
       <div class="panel-heading">
         <div class="panel-title"><h4><%= check.description %></h4></div>
       </div>
-      <div class="panel-body" id="<%= check.name %>"></div>
+      <div class="panel-body" :id="check.name"></div>
     </div>
   </div>
 </template>
@@ -37,36 +37,35 @@
 <script type="text/javascript" src="{{ url_for('static', filename='js/filters.js') }}"></script>
 <script>
 var check_data = JSON.parse(document.getElementById('check_breakdown').getAttribute('data-checks'));
-Vue.config.delimiters = [ '<%=', '%>' ];
+
+Vue.component('check', {
+  delimiters: [ '<%=', '%>' ],
+  props: ['check'],
+  mounted: function() {
+    this.$nextTick(function (){
+      var compSvg = dimple.newSvg('#' + this.check.name, '100%', '250px');
+      var chart = new dimple.chart(compSvg, this.check.counts);
+      var x_axis = chart.addMeasureAxis('x', 'count');
+      x_axis.tickFormat = 'd';
+      chart.setMargins(100, 50, 50, 50);
+      chart.addCategoryAxis('y', 'label').addOrderRule([
+        'OK', 'Verified', 'Flagged', 'Missing'
+      ], true);
+      chart.addSeries('label', dimple.plot.bar);
+      chart.assignColor('OK', '#8ae234');
+      chart.assignColor('Verified', '#fcaf3e');
+      chart.assignColor('Flagged', '#ef2929');
+      chart.assignColor('Missing', '#babdb6');
+      // chart.addLegend('5%', '5%', '80%', 20, "left");
+      chart.draw();
+    });
+  },
+  template: '#chart-component'
+});
 
 var app = new Vue({
   el: '#check_breakdown',
-  data: {checks: check_data},
-  components: {
-    check: {
-      template: '#chart-component',
-      props: ['check'],
-      ready: function () {
-        this.$nextTick(function (){
-          var compSvg = dimple.newSvg('#' + this.check.name, '100%', '250px');
-          var chart = new dimple.chart(compSvg, this.check.counts);
-          var x_axis = chart.addMeasureAxis('x', 'count');
-          x_axis.tickFormat = 'd';
-          chart.setMargins(100, 50, 50, 50);
-          chart.addCategoryAxis('y', 'label').addOrderRule([
-            'OK', 'Verified', 'Flagged', 'Missing'
-          ], true);
-          chart.addSeries('label', dimple.plot.bar);
-          chart.assignColor('OK', '#8ae234');
-          chart.assignColor('Verified', '#fcaf3e');
-          chart.assignColor('Flagged', '#ef2929');
-          chart.assignColor('Missing', '#babdb6');
-          // chart.addLegend('5%', '5%', '80%', 20, "left");
-          chart.draw();
-        });
-      }
-    }
-  }
+  data: {checks: check_data}
 });
 </script>
 {% endblock %}
