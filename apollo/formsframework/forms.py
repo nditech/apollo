@@ -149,6 +149,7 @@ class BaseQuestionnaireForm(Form):
                 ).order_by(models.Event.end.desc()).first()
 
                 submission = models.Submission(
+                    submission_type='O',
                     form=form,
                     participant=participant,
                     location=participant.location,
