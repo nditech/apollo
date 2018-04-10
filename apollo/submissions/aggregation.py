@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
-from flask_babelex import gettext as _
 from itertools import groupby
+
+from flask_babelex import gettext as _
 import pandas as pd
+from sqlalchemy import func
 
 from apollo.submissions.models import QUALITY_STATUSES, Submission
 from apollo.submissions.utils import make_submission_dataframe
@@ -12,6 +14,13 @@ BUCKET_LABELS = {
     'FLAGGED_AND_VERIFIED': _('Verified'),
     'FLAGGED_AND_UNVERIFIED': _('Flagged'),
     'MISSING': _('Missing')
+}
+
+LABEL_MAP = {
+    None: _('Missing'),
+    QUALITY_STATUSES['OK']: _('OK'),
+    QUALITY_STATUSES['FLAGGED']: _('Flagged'),
+    QUALITY_STATUSES['VERIFIED']: _('Verified')
 }
 
 
@@ -181,5 +190,39 @@ def _quality_check_aggregation(queryset, form):
                     'label': bucket_name
                 })
         data.append(d)
+
+    return data
+
+
+def _qa_counts(query, form):
+    data = []
+    if form.quality_checks:
+        for check in form.quality_checks:
+            d = {
+                'name': check['name'],
+                'description': check['description'],
+                'counts': []}
+
+            results = query.with_entities(
+                Submission.quality_assurance_status[check['name']],
+                func.count(Submission.id)
+            ).group_by(
+                Submission.quality_assurance_status[check['name']]
+            ).all()
+
+            dict_results = {k: v for k, v in results}
+            print(dict_results)
+            for key in LABEL_MAP:
+                if key in dict_results:
+                    d['counts'].append({
+                        'count': dict_results[key],
+                        'label': LABEL_MAP[key]
+                    })
+                else:
+                    d['counts'].append({
+                        'count': 0,
+                        'label': LABEL_MAP[key]
+                    })
+            data.append(d)
 
     return data
