@@ -5,7 +5,7 @@ from arpeggio import PTNodeVisitor, visit_parse_tree
 from arpeggio.cleanpeg import ParserPEG
 from parsimonious.grammar import Grammar
 import parsley
-from sqlalchemy import func
+from sqlalchemy import Boolean, Integer, func
 
 
 # TODO: Arpeggio's PEG syntaxes actually use the Python
@@ -47,12 +47,19 @@ OPERATIONS = {
     '||': op.or_
 }
 
+FIELD_TYPE_CASTS = {
+    'boolean': Boolean,
+    'integer': Integer,
+    'select': Integer
+}
+
 
 class QATreeVisitor(PTNodeVisitor):
     def __init__(self, defaults=True, **kwargs):
         # you *NEED* to add the submission class for now
         # the alternative is dealing with a circular dependency
         self.submission_class = kwargs.pop('submission_class')
+        self.form = kwargs.pop('form')
         super().__init__(defaults, **kwargs)
 
     def visit_number(self, node, children):
@@ -70,6 +77,13 @@ class QATreeVisitor(PTNodeVisitor):
 
     def visit_variable(self, node, children):
         var_name = node.value
+        if var_name not in self.form.tags:
+            raise ValueError('Variable ({}) not in form'.format(var_name))
+
+        field = self.form.get_field_by_tag(var_name)
+        cast_type = FIELD_TYPE_CASTS.get(field['type'])
+        if cast_type is not None:
+            return self.submission_class.data[var_name].astext.cast(cast_type)
         return self.submission_class.data[var_name]
 
     def visit_value(self, node, children):
@@ -122,7 +136,7 @@ class QATreeVisitor(PTNodeVisitor):
         return expression
 
 
-def generate_qa_query(expression):
+def generate_qa_query(expression, form):
     from apollo.models import Submission
 
     parser = ParserPEG(qa_grammar, 'qa')
@@ -131,7 +145,7 @@ def generate_qa_query(expression):
     except Exception:
         return None
 
-    visitor = QATreeVisitor(submission_class=Submission)
+    visitor = QATreeVisitor(form=form, submission_class=Submission)
     return visit_parse_tree(tree, visitor)
 
 
