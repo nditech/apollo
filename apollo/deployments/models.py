@@ -32,7 +32,7 @@ class Deployment(BaseModel):
 
     @classmethod
     def find_by_hostname(cls, hostname):
-        return cls.query.filter(cls.hostnames.any(hostname)).first_or_404()
+        return cls.query.filter(cls.hostnames.any(hostname)).first()
 
     def __repr__(self):
         return str(self)

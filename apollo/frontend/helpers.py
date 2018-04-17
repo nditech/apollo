@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from urllib.parse import urlparse
 
-from flask import session, request, g, url_for
+from flask import session, request, g, url_for, abort
 from flask_babelex import get_locale
 from flask_login import current_user
 from flask_principal import Permission, ItemNeed, RoleNeed
@@ -17,7 +17,14 @@ def get_deployment(hostname):
 
     :param hostname: The hostname
     """
-    return models.Deployment.find_by_hostname(hostname)
+    deployment = models.Deployment.find_by_hostname(hostname)
+    if not deployment:
+        deployment = models.Deployment.find_by_hostname('localhost')
+
+    if not deployment:
+        raise abort(404)
+    else:
+        return deployment
 
 
 def get_event():
