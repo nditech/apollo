@@ -10,18 +10,21 @@
     <th class="text-center"><abbr title="{{ qc.description }}">{{ loop.index }}</abbr></th>
     {% endfor %}
     <th class="text-center"><abbr title="{{ _('Phone Verification') }}"><i class="glyphicon glyphicon-phone"></i></abbr></th>
-    {% if perms.edit_submission.can() %}<th class="text-center">{{ _('Edit') }}</th>{% endif %}
 </tr>
 {% endmacro %}
 {% macro submission_items(submissions, form, form_fields, location_types, quality_statuses, verification_statuses, perms) %}
 {% for submission in submissions %}
 <tr>
+    {% if perms.edit_submission.can() %}
+    <td class="text-center"><a href="{{ url_for('submissions.submission_edit', submission_id=submission.id) }}">{{ submission.participant.participant_id }}</a></td>
+    {% else %}
     <td>{{ submission.participant.participant_id }}</td>
+    {% endif %}
     {% for location_type in location_types %}
     <td>{{ submission.location.make_path()[location_type.name] }}</td>
     {% endfor %}
     <td>{{ submission.participant.name|default('', true) }}</td>
-    <td>{{ submission.participant.phone|default('', true) }}</td>
+    <td>{{ submission.participant.primary_phone|default('', true) }}</td>
     {% for qc in form.quality_checks %}
     <td class="text-center">
         {%- if submission.verification_status == verification_statuses.VERIFIED %}<img src="{{ url_for('static', filename='img/blue_dot.png') }}" alt="{{ _('Verified') }}" title="{{ _('Verified') }}" height="11" width="11">
@@ -33,7 +36,6 @@
     </td>
     {% endfor %}
     <td style="text-align: center"><img src="{% if submission.sender_verified %}{{ url_for('static', filename='img/tick.png') }}{% else %}{{ url_for('static', filename='img/caution.png') }}{% endif %}" title="{% if submission.sender_verified %}{{ _('Verified') }}{% else %}{{ _('Unverified') }}{% endif %}" height="11" width="11" /></td>
-    {% if perms.edit_submission.can() %}<td class="text-center"><a href="{{ url_for('submissions.submission_edit', submission_id=submission.id) }}">{{ _('Edit') }}</a></td>{% endif %}
 </tr>
 {% else %}
 {% if perms.edit_submission.can() %}
