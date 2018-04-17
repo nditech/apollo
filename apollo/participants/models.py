@@ -30,6 +30,29 @@ class ParticipantSet(BaseModel):
     def __str__(self):
         return self.name or ''
 
+    def get_import_fields(self):
+        fields = {
+            'role': _('Role'),
+            'sample': _('Sample'),
+            'id': _('Participant ID'),
+            'name': _('Name'),
+            'supervisor': _('Supervisor'),
+            'phone': _('Phone'),
+            'partner': _('Partner'),
+            'location': _('Location code'),
+            'group': _('Group'),
+            'gender': _('Gender'),
+            'email': _('Email'),
+            'password': _('Password')
+        }
+
+        extra_fields = ParticipantDataField.query.filter_by(
+            participant_set_id=self.id).all()
+        for ex_field in extra_fields:
+            fields[ex_field.id] = ex_field.label
+
+        return fields
+
 
 class ParticipantDataField(Resource):
     __mapper_args__ = {'polymorphic_identity': 'participant_data_field'}

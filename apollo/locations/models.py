@@ -51,6 +51,35 @@ class LocationSet(BaseModel):
 
         return graph
 
+    def get_import_fields(self):
+        fields = {}
+
+        location_types = LocationType.query.filter_by(
+            location_set_id=self.id).all()
+        for lt in location_types:
+            lt_data = {}
+            lt_data['{}_name'.format(lt.id)] = _('%(location_type)s name',
+                                                 location_type=lt.name)
+            lt_data['{}_code'.format(lt.id)] = _('%(location_type)s code',
+                                                 location_type=lt.name)
+            lt_data['{}_lat'.format(lt.id)] = _('%(location_type)s lat',
+                                                location_type=lt.name)
+            lt_data['{}_lon'.format(lt.id)] = _('%(location_type)s lon',
+                                                location_type=lt.name)
+
+            if lt.has_registered_voters:
+                lt_data['{}_rv'.format(lt.id)] =  \
+                    _('%(location_type)s registered voters',
+                      location_type=lt.name)
+            fields.update(lt_data)
+
+        extra_fields = LocationDataField.query.filter_by(
+            location_set_id=self.id).all()
+        for ex_field in extra_fields:
+            fields[ex_field.id] = ex_field.label
+
+        return fields
+
 
 samples_locations = db.Table(
     'samples_locations',
