@@ -68,70 +68,85 @@ def map_attribute(location_type, attribute):
     return '{}_{}'.format(slug, attribute.lower())
 
 
-def update_locations(df, mapping, location_set):
+def update_locations(data_frame, header_mapping, location_set):
     cache = LocationCache()
-    location_types = services.location_types.find(
-            location_set=location_set) \
-        .join(models.LocationTypePath,
-              models.LocationType.id == models.LocationTypePath.ancestor_id) \
-        .order_by(func.count(models.LocationType.ancestor_paths)) \
-        .group_by('id').all()
 
-    # basically, all the info required for linking is (supposedly)
-    # already in the db. so just use it to start creating the links
-    all_lt_paths = models.LocationTypePath.query.with_entities(
+    location_types = services.location_types.find(
+        location_set=location_set
+    ).join(
+        models.LocationTypePath,
+        models.LocationType.id == models.LocationTypePath.ancestor_id
+    ).order_by(
+        func.count(models.LocationType.ancestor_paths)
+    ).group_by('id').all()
+
+    all_loc_type_paths = models.LocationTypePath.query.with_entities(
         models.LocationTypePath.ancestor_id,
         models.LocationTypePath.descendant_id,
         models.LocationTypePath.depth,
     ).all()
 
-    extra_field_names = [
-        field.name for field in location_set.extra_fields] \
-        if location_set.extra_fields else []
+    extra_field_cache = {
+        fi.id: fi.name for fi in location_set.extra_fields
+    } if location_set.extra_fields else {}
 
-    for idx in df.index:
-        # row_locations = []
+    for idx in data_frame.index:
+        current_row = data_frame.ix[idx]
         row_ids = {}
+        for loc_type in location_types:
+            name_column_key = '{}_name'.format(loc_type.id)
+            code_column_key = '{}_code'.format(loc_type.id)
 
-        for lt in location_types:
-            location_code = df.ix[idx].get(mapping.get(map_attribute(lt, 'code'), ''), '')
-            location_code = int(location_code) if type(location_code) in [int, float] else location_code
-            location_code = str(location_code)
-            location_name = str(df.ix[idx].get(
-                mapping.get(map_attribute(lt, 'name'), ''),
-                ''
-            ))
-            location_lat = None
-            location_lon = None
+            if header_mapping.get(name_column_key) is None or header_mapping.get(code_column_key) is None:
+                continue
 
-            try:
-                location_lat = float(df.ix[idx].get(mapping.get(map_attribute(
-                    lt, 'lat'))))
-                location_lon = float(df.ix[idx].get(mapping.get(map_attribute(
-                    lt, 'lon'))))
-            except (TypeError, ValueError):
-                location_lat = location_lon = None
+            lat_column_key = '{}_lat'.format(loc_type.id)
+            lon_column_key = '{}_lon'.format(loc_type.id)
+            reg_voters_column_key = '{}_rv'.format(loc_type.id) if loc_type.has_registered_voters else None
 
-            location_rv = df.ix[idx].get(
-                mapping.get(map_attribute(lt, 'rv'), ''), '') \
-                if lt.has_registered_voters else None
-            if location_rv:
-                location_rv = int(location_rv) if type(location_rv) in [int, float] else location_rv
-            location_type = lt
+            name_column = header_mapping.get(name_column_key)
+            code_column = header_mapping.get(code_column_key)
+            lat_column = header_mapping.get(lat_column_key)
+            lon_column = header_mapping.get(lon_column_key)
+            reg_voters_column = header_mapping.get(reg_voters_column_key)
 
-            # if the location_name attribute has no value, then skip it
-            # same for the location_code
+            location_name = current_row.get(name_column)
+            location_code = current_row.get(code_column)
+            if isinstance(location_code, (int, float)):
+                location_code = str(int(location_code))
+
+            # skip if we're missing a name or code
             if not location_name or not location_code:
                 continue
 
+            location_lat = None
+            location_lon = None
+            location_rv = None
+
+            location_lat = current_row.get(lat_column)
+            location_lon = current_row.get(lon_column)
+            location_rv = current_row.get(reg_voters_column)
+
+            try:
+                location_lat = float(location_lat)
+                location_lon = float(location_lon)
+            except (TypeError, ValueError):
+                location_lat = location_lon = None
+
+            try:
+                if loc_type.has_registered_voters:
+                    location_rv = int(location_rv)
+            except (TypeError, ValueError):
+                location_rv = None
+
             # if we have the location in the cache, then continue
-            if cache.has(location_code, location_type, location_name):
-                loc = cache.get(location_code, location_type, location_name)
-                row_ids[lt.id] = loc.id
+            if cache.has(location_code, loc_type, location_name):
+                loc = cache.get(location_code, loc_type, location_name)
+                row_ids[loc_type.id] = loc.id
                 continue
 
             kwargs = {
-                'location_type_id': lt.id,
+                'location_type_id': loc_type.id,
                 'location_set_id': location_set.id,
                 'lat': location_lat,
                 'lon': location_lon
@@ -144,12 +159,13 @@ def update_locations(df, mapping, location_set):
             if location_rv:
                 kwargs.update({'registered_voters': location_rv})
 
-            # skip if we have the location in the database
+            # is this location in the database?
             location = services.locations.find(
                 location_set=location_set,
                 code=kwargs['code']).first()
 
             if not location:
+                # no, create it
                 location = services.locations.create(**kwargs)
 
                 # also add the self-referencing path
@@ -161,34 +177,32 @@ def update_locations(df, mapping, location_set):
                 db.session.commit()
             else:
                 # update the existing location instead
-
                 location.name = kwargs.get('name')
-                location.other_code = kwargs.get('other_code')
-                location.political_code = kwargs.get('political_code')
                 location.registered_voters = kwargs.get('registered_voters')
                 location.lat = kwargs.get('lat')
                 location.lon = kwargs.get('lon')
 
                 location.save()
 
+            # each level should have its own extra data column
             extra_data = {}
-            for field_name in extra_field_names:
-                column = mapping.get(field_name)
+            for field_id in extra_field_cache.keys():
+                column_key = '{}:{}'.format(loc_type.id, field_id)
+                column = header_mapping.get(column_key)
                 if column:
-                    value = df.ix[idx].get(column)
+                    value = current_row.get(column)
                     if isnull(value):
                         continue
-                    extra_data[field_name] = value
+                    extra_data[extra_field_cache[field_id]] = value
 
             if extra_data:
                 services.locations.find(id=location.id).update(
                     {'extra_data': extra_data}, synchronize_session=False)
 
-            # row_locations.append(location)
-            row_ids[lt.id] = location.id
+            row_ids[loc_type.id] = location.id
             cache.set(location)
 
-        for ancestor_lt_id, descendant_lt_id, depth in all_lt_paths:
+        for ancestor_lt_id, descendant_lt_id, depth in all_loc_type_paths:
             if ancestor_lt_id == descendant_lt_id:
                 continue
 

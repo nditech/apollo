@@ -54,8 +54,11 @@ class LocationSet(BaseModel):
     def get_import_fields(self):
         fields = {}
 
+        extra_fields = LocationDataField.query.filter_by(
+            location_set_id=self.id).all()
         location_types = LocationType.query.filter_by(
             location_set_id=self.id).all()
+
         for lt in location_types:
             lt_data = {}
             lt_data['{}_name'.format(lt.id)] = _('%(location_type)s name',
@@ -67,16 +70,17 @@ class LocationSet(BaseModel):
             lt_data['{}_lon'.format(lt.id)] = _('%(location_type)s lon',
                                                 location_type=lt.name)
 
+            for ex_field in extra_fields:
+                lt_data['{}:{}'.format(lt.id, ex_field.id)] = _(
+                    '%(location_type)s %(field_label)s',
+                    location_type=lt.name,
+                    field_label=ex_field.label)
+
             if lt.has_registered_voters:
                 lt_data['{}_rv'.format(lt.id)] =  \
                     _('%(location_type)s registered voters',
                       location_type=lt.name)
             fields.update(lt_data)
-
-        extra_fields = LocationDataField.query.filter_by(
-            location_set_id=self.id).all()
-        for ex_field in extra_fields:
-            fields[ex_field.id] = ex_field.label
 
         return fields
 

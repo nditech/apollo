@@ -18,8 +18,7 @@ from apollo.core import db, uploads
 from apollo.frontend import permissions, route
 from apollo.frontend.forms import (
     file_upload_form, generate_location_edit_form,
-    generate_location_update_mapping_form, DummyForm)
-from apollo.helpers import load_source_file
+    DummyForm)
 from apollo.locations import api, filters, forms, tasks
 from apollo.locations.utils import import_graph
 
@@ -156,29 +155,28 @@ def locations_import(location_set_id):
 @login_required
 def location_headers(location_set_id, upload_id):
     user = current_user._get_current_object()
+    location_set = services.location_sets.fget_or_404(id=location_set_id)
 
     # disallow processing other users' files
     upload = services.user_uploads.fget_or_404(id=upload_id, user=user)
     filepath = uploads.path(upload.upload_filename)
     try:
         with open(filepath) as source_file:
-            dataframe = load_source_file(source_file)
+            mapping_form_class = forms.make_import_mapping_form(
+                source_file, location_set)
     except Exception:
         # delete loaded file
         os.remove(filepath)
         upload.delete()
         return abort(400)
 
-    location_set = services.location_sets.fget_or_404(id=location_set_id)
-    headers = dataframe.columns
     template_name = 'frontend/location_headers.html'
 
     if request.method == 'GET':
-        form = generate_location_update_mapping_form(headers, location_set)
+        form = mapping_form_class()
         return render_template(template_name, form=form)
     else:
-        form = generate_location_update_mapping_form(
-            headers, location_set, request.form)
+        form = mapping_form_class()
 
         if not form.validate():
             return render_template(
@@ -187,7 +185,7 @@ def location_headers(location_set_id, upload_id):
             )
         else:
             # get header mappings
-            data = form.data.copy()
+            data = {field.data: field.label.text for field in form if field.data}
 
             # invoke task asynchronously
             kwargs = {
