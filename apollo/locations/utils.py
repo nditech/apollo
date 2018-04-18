@@ -31,9 +31,6 @@ def import_graph(graph, location_set, fresh_import=False):
                 location_type.is_administrative = node.get(
                     'is_administrative')
                 location_type.is_political = node.get('is_political')
-                location_type.has_political_code = node.get(
-                    'has_political_code')
-                location_type.has_other_code = node.get('has_other_code')
                 location_type.has_registered_voters = node.get(
                     'has_registered_voters')
                 location_type.name = node.get('name')
@@ -43,8 +40,6 @@ def import_graph(graph, location_set, fresh_import=False):
                 name=node.get('name'),
                 is_administrative=node.get('is_administrative', False),
                 is_political=node.get('is_political', False),
-                has_political_code=node.get('has_political_code', False),
-                has_other_code=node.get('has_other_code', False),
                 has_registered_voters=node.get(
                     'has_registered_voters', False),
                 location_set_id=location_set.id
