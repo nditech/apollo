@@ -451,24 +451,19 @@ def participant_headers(upload_id, participant_set_id=0):
     filepath = uploads.path(upload.upload_filename)
     try:
         with open(filepath) as source_file:
-            dataframe = load_source_file(source_file)
+            mapping_form_class = forms.make_import_mapping_form(source_file, participant_set)
     except Exception:
         # delete loaded file
         os.remove(filepath)
         upload.delete()
         return abort(400)
 
-    headers = dataframe.columns
+    form = mapping_form_class()
     template_name = 'frontend/participant_headers.html'
 
     if request.method == 'GET':
-        form = generate_participant_import_mapping_form(
-            headers, participant_set)
         return render_template(template_name, form=form)
     else:
-        form = generate_participant_import_mapping_form(
-            headers, participant_set, request.form)
-
         if not form.validate():
             return render_template(
                 template_name,
@@ -476,7 +471,15 @@ def participant_headers(upload_id, participant_set_id=0):
             )
         else:
             # get header mappings
-            data = form.data.copy()
+            multi_column_fields = ('group', 'phone', 'sample')
+            data = {fi: [] for fi in multi_column_fields}
+            for field in form:
+                if not field.data:
+                    continue
+                if field.data in multi_column_fields:
+                    data[field.data].append(field.label.text)
+                else:
+                    data[field.data] = field.label.text
 
             # invoke task asynchronously
             kwargs = {
