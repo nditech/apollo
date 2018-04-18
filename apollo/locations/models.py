@@ -61,13 +61,13 @@ class LocationSet(BaseModel):
 
         for lt in location_types:
             lt_data = {}
-            lt_data['{}_name'.format(lt.id)] = _('%(location_type)s name',
+            lt_data['{}_name'.format(lt.id)] = _('%(location_type)s Name',
                                                  location_type=lt.name)
-            lt_data['{}_code'.format(lt.id)] = _('%(location_type)s code',
+            lt_data['{}_code'.format(lt.id)] = _('%(location_type)s Code',
                                                  location_type=lt.name)
-            lt_data['{}_lat'.format(lt.id)] = _('%(location_type)s lat',
+            lt_data['{}_lat'.format(lt.id)] = _('%(location_type)s Latitude',
                                                 location_type=lt.name)
-            lt_data['{}_lon'.format(lt.id)] = _('%(location_type)s lon',
+            lt_data['{}_lon'.format(lt.id)] = _('%(location_type)s Longitude',
                                                 location_type=lt.name)
 
             for ex_field in extra_fields:

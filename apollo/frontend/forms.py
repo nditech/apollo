@@ -204,11 +204,11 @@ def generate_location_update_mapping_form(
             choices=default_choices
         )
         attributes['{}_lat'.format(slug)] = SelectField(
-            _('%(label)s latitude', label=name),
+            _('%(label)s Latitude', label=name),
             choices=default_choices
         )
         attributes['{}_lon'.format(slug)] = SelectField(
-            _('%(label)s longitude', label=name),
+            _('%(label)s Longitude', label=name),
             choices=default_choices
         )
         if location_type.has_registered_voters:
