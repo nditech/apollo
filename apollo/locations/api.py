@@ -113,8 +113,7 @@ class LocationListResource(Resource):
             queryset = queryset.filter(
                 or_(
                     Location.name.ilike('%{}%'.format(lookup_args)),
-                    Location.code.ilike('{}%'.format(lookup_args)),
-                    Location.political_code.ilike('{}%'.format(lookup_args))
+                    Location.code.ilike('{}%'.format(lookup_args))
                 )
             )
         count = queryset.count()
