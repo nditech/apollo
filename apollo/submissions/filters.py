@@ -2,7 +2,7 @@
 from operator import itemgetter
 
 from flask_babelex import lazy_gettext as _
-from sqlalchemy import or_
+from sqlalchemy import and_, func, or_
 from sqlalchemy.dialects.postgresql import array
 from wtforms import widgets
 
@@ -136,14 +136,30 @@ class FormGroupFilter(ChoiceFilter):
             # Missing
             return query.filter(or_(
                 ~models.Submission.data.has_any(array(group_tags)),
-                models.Submission.data == None))
+                models.Submission.data == None))    # noqa
         elif value == '3':
             # Complete
             return query.filter(
                 models.Submission.data.has_all(array(group_tags)))
         elif value == '4':
             # Conflict
-            return query.filter(models.Submission.conflicts.has_any(array(group_tags)))
+            # TODO: make this idiot-proof for array fields
+            # this subquery (thanks to RhodiumToad in #postgresql on Freenode)
+            # returns all location ids where the maximum for a tag is not
+            # equal to the minimum for the same tag and the tag is not
+            # overridden
+            # This implies that every checklist submission for the same
+            # event, form and location must have their `overridden_fields`
+            # set, not just the master, anymore.
+            query_params = or_(*[and_(
+                func.max(models.Submission.data[tag].astext)
+                != func.min(models.Submission.data[tag].astext),
+                ~models.Submission.overridden_fields.contains(tag))
+                for tag in group_tags])
+            loc_query = models.Submission.query.with_entities(
+                models.Submission.location_id
+            ).filter(query_params).group_by(models.Submission.location_id)
+            return query.filter(models.Submission.location_id.in_(loc_query))
 
         return query
 

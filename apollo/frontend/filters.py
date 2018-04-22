@@ -278,39 +278,10 @@ class ParticipantNameFilter(CharFilter):
         return queryset
 
 
-
-
-
-
 class FieldOptionFilter(ChoiceFilter):
     def filter(self, queryset, value):
         if value:
             return queryset(**{self.name: int(value)})
-        return queryset
-
-
-class FormGroupFilter(ChoiceFilter):
-    """Allows filtering on form groups. Each group should have a name
-    of the form <form_pk>__<group_slug>.
-    """
-    def filter(self, queryset, value):
-        if value:
-            name_parts = self.name.split('__')
-            form = services.forms.get(pk=name_parts[0])
-            group = [g.name for g in form.groups if g.slug == name_parts[1]][0]
-
-            params = {}
-
-            if value == '1':
-                params = {'completion__{}'.format(group): 'Partial'}
-            elif value == '2':
-                params = {'completion__{}'.format(group): 'Missing'}
-            elif value == '3':
-                params = {'completion__{}'.format(group): 'Complete'}
-            elif value == '4':
-                params = {'completion__{}'.format(group): 'Conflict'}
-
-            return queryset(**params)
         return queryset
 
 
