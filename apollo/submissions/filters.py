@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from operator import itemgetter
 
+from flask import g
 from flask_babelex import lazy_gettext as _
 from sqlalchemy import and_, func, or_
 from sqlalchemy.dialects.postgresql import array
@@ -151,11 +152,12 @@ class FormGroupFilter(ChoiceFilter):
             # This implies that every checklist submission for the same
             # event, form and location must have their `overridden_fields`
             # set, not just the master, anymore.
-            query_params = or_(*[and_(
+            query_params = and_(or_(*[and_(
                 func.max(models.Submission.data[tag].astext)
                 != func.min(models.Submission.data[tag].astext),
                 ~models.Submission.overridden_fields.contains(tag))
-                for tag in group_tags])
+                for tag in group_tags]), models.Submission.form == self.form,
+                    models.Submission.event == g.event)
             loc_query = models.Submission.query.with_entities(
                 models.Submission.location_id
             ).filter(query_params).group_by(models.Submission.location_id)
