@@ -483,7 +483,9 @@ def participant_headers(upload_id, participant_set_id=0):
                     data[field.data] = field.label.text
 
             for extra_field in participant_set.extra_fields:
-                value = data[str(extra_field.id)]
+                value = data.get(str(extra_field.id))
+                if value is None:
+                    continue
                 data[extra_field.name] = value
 
             # invoke task asynchronously
