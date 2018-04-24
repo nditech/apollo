@@ -20,29 +20,6 @@ bp = Blueprint('forms', __name__, template_folder='templates',
                static_folder='static')
 
 
-@route(bp, '/form-sets', methods=['GET'])
-@permissions.edit_forms.require(403)
-def form_set_list():
-    args = request.args.to_dict(flat=False)
-    page_title = _('Form sets')
-    queryset = services.form_sets.find(deployment=g.deployment)
-    template_name = 'frontend/form_set_list.html'
-
-    page_spec = args.pop('page', [1])
-    try:
-        page = int(page_spec[0])
-    except (IndexError, ValueError):
-        page = 1
-
-    context = {
-        'form_sets': queryset.paginate(
-            page=page, per_page=current_app.config.get('PAGE_SIZE')),
-        'page_title': page_title
-    }
-
-    return render_template(template_name, **context)
-
-
 @route(bp, '/forms/set/<int:form_set_id>/init', methods=['POST'])
 @permissions.edit_forms.require(403)
 @login_required
