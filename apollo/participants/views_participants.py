@@ -451,7 +451,8 @@ def participant_headers(upload_id, participant_set_id=0):
     filepath = uploads.path(upload.upload_filename)
     try:
         with open(filepath) as source_file:
-            mapping_form_class = forms.make_import_mapping_form(source_file, participant_set)
+            mapping_form_class = forms.make_import_mapping_form(
+                source_file, participant_set)
     except Exception:
         # delete loaded file
         os.remove(filepath)
@@ -480,6 +481,10 @@ def participant_headers(upload_id, participant_set_id=0):
                     data[field.data].append(field.label.text)
                 else:
                     data[field.data] = field.label.text
+
+            for extra_field in participant_set.extra_fields:
+                value = data[str(extra_field.id)]
+                data[extra_field.name] = value
 
             # invoke task asynchronously
             kwargs = {
