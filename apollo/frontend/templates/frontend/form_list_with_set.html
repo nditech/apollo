@@ -2,7 +2,7 @@
 {% block toolbar %}
 <a class="btn btn-sm btn-warning pull-right" data-toggle="modal" data-target="#checklistModal" href="#"><span class="glyphicon glyphicon-list-alt"></span> {{ _('Create Checklists') }}</a>
 <a class="btn btn-sm btn-default pull-right" data-toggle="modal" data-target="#formImportModal" href="#" style="margin-right: 1em"><span class="glyphicon glyphicon-upload"></span> {{ _('Import') }}</a>
-<a class="btn btn-sm btn-default pull-right" href="{{ url_for('forms.new_form') }}" style="margin-right: 1em"><span class="glyphicon glyphicon-plus"></span> {{ _('Add Form') }}</a>
+<a class="btn btn-sm btn-default pull-right" href="{{ url_for('forms.new_form_with_set', form_set_id=form_set.id) }}" style="margin-right: 1em"><span class="glyphicon glyphicon-plus"></span> {{ _('Add Form') }}</a>
 {% endblock %}
 {% block subtitle %}{{ form_set.name }}{% endblock subtitle %}
 {% block content %}
@@ -57,9 +57,9 @@
             <li role="presentation" class="dropdown">
               <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">{{ _('Form Actions') }} <span class="caret"></span></a>
               <ul class="dropdown-menu" role="menu">
-                <li><a href="{{ url_for('forms.edit_form', form_id=form.id) }}">{{ _('Properties') }}</a></li>
-                <li><a href="{{ url_for('forms.form_builder', id=form.id) }}">{{ _('Builder') }}</a></li>
-                {% if form.form_type == 'CHECKLIST' %}<li><a href="{{ url_for('forms.quality_assurance', form_id=form.id) }}">{{ _('Quality Assurance') }}</a></li>{% endif %}
+                <li><a href="{{ url_for('forms.edit_form_with_set', form_set_id=form_set.id, form_id=form.id) }}">{{ _('Properties') }}</a></li>
+                <li><a href="{{ url_for('forms.form_builder_with_set', form_set_id=form_set.id, id=form.id) }}">{{ _('Builder') }}</a></li>
+                {% if form.form_type == 'CHECKLIST' %}<li><a href="{{ url_for('forms.quality_assurance_with_set', form_set_id=form_set.id, form_id=form.id) }}">{{ _('Quality Assurance') }}</a></li>{% endif %}
                 <li><a href="{{ url_for('forms.export_form', id=form.id) }}">{{ _('Export') }}</a></li>
               </ul>
             </li>
@@ -68,7 +68,7 @@
       {% endfor %}
       </tbody>
     </table>
-    <form class="form-horizontal" method="POST" action="{{ url_for('forms.checklist_init') }}" id="checklistInitForm">
+    <form class="form-horizontal" method="POST" action="{{ url_for('forms.checklist_init_with_set', form_set_id=form_set.id) }}" id="checklistInitForm">
       <div class="modal fade" id="checklistModal" tabindex="-1" role="dialog" aria-labelledby="checklistModalLabel">
         <div class="modal-dialog" role="document">
           <div class="modal-content">
@@ -104,7 +104,7 @@
             <h4 class="modal-title" id="formImportModalLabel">{{ _('Import form') }}</h4>
           </div>
           <div class="modal-body">
-            <form action="{{ url_for('forms.import_form_schema') }}" enctype="multipart/form-data" method="post">
+            <form action="{{ url_for('forms.import_form_schema_with_set', form_set_id=form_set.id) }}" enctype="multipart/form-data" method="post">
               {{ form_import_form.hidden_tag() }}
               <div class="form-group">
                 {{ form_import_form.import_file }}
