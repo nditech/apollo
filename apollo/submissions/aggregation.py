@@ -1,27 +1,8 @@
 # -*- coding: utf-8 -*-
-from itertools import groupby
-
-from flask_babelex import gettext as _
 import pandas as pd
-from sqlalchemy import func
 
-from apollo.submissions.models import QUALITY_STATUSES, Submission
+from apollo.submissions.qa.query_builder import get_logical_check_stats
 from apollo.submissions.utils import make_submission_dataframe
-
-# labels
-BUCKET_LABELS = {
-    'OK': _('OK'),
-    'FLAGGED_AND_VERIFIED': _('Verified'),
-    'FLAGGED_AND_UNVERIFIED': _('Flagged'),
-    'MISSING': _('Missing')
-}
-
-LABEL_MAP = {
-    None: _('Missing'),
-    QUALITY_STATUSES['OK']: _('OK'),
-    QUALITY_STATUSES['FLAGGED']: _('Flagged'),
-    QUALITY_STATUSES['VERIFIED']: _('Verified')
-}
 
 
 def aggregated_dataframe(queryset, form):
@@ -79,121 +60,6 @@ def aggregated_dataframe(queryset, form):
     return df_agg
 
 
-def _build_qa_pipeline(queryset, form):
-    v_stat = ['$verification_status', Submission.VERIFICATION_STATUSES[1][0]]
-    checks = []
-    for qc in form.quality_checks:
-        var = '$quality_checks.{}'.format(qc['name'])
-        flagged_eq_step = {'$eq': [var, QUALITY_STATUSES['FLAGGED']]}
-        checks.append({
-            'name': {'$literal': qc['name']},
-            'bucket': {
-                '$cond': {
-                    # if this check is OK,
-                    'if': {'$eq': [var, QUALITY_STATUSES['OK']]},
-                    # set bucket to 'OK'
-                    'then': BUCKET_LABELS['OK'],
-                    'else': {'$cond': {
-                        # elif this check is flagged and verified
-                        'if': {'$and': [
-                            flagged_eq_step,
-                            {'$eq': v_stat}
-                        ]},
-                        # set bucket to 'FLAGGED_AND_VERIFIED'
-                        'then': BUCKET_LABELS['FLAGGED_AND_VERIFIED'],
-                        'else': {'$cond': {
-                            # elif the check is flagged and not verified
-                            'if': {'$and': [
-                                flagged_eq_step,
-                                {'$ne': v_stat}
-                            ]},
-                            # set to 'FLAGGED_AND_UNVERIFIED'
-                            'then': BUCKET_LABELS['FLAGGED_AND_UNVERIFIED'],
-                            # otherwise set to 'MISSING'
-                            'else': BUCKET_LABELS['MISSING']
-                        }}
-                    }}
-                }
-            }
-        })
-    project_stage = {
-        '$project': {
-            '_id': 0,
-            'checks': checks
-        }
-    }
-
-    pipeline = [
-        {'$match': queryset._query},
-        project_stage,
-        {'$unwind': '$checks'},
-        {'$group': {
-            '_id': {'name': '$checks.name', 'bucket': '$checks.bucket'},
-            'count': {'$sum': 1}
-        }}
-    ]
-
-    return pipeline
-
-
-def __flag_sort_key(record):
-    return record.get('_id').get('name')
-
-
-def __bucket_sort_key(record):
-    return record.get('_id').get('bucket')
-
-
-def __total_counts(bucket_data):
-    return sum(i.get('count') for i in bucket_data)
-
-
-def _quality_check_aggregation(queryset, form):
-    pipeline = _build_qa_pipeline(queryset, form)
-
-    collection = queryset._collection
-    result = collection.aggregate(pipeline).get('result')
-
-    qc_meta = {
-        qc.get('name'): qc.get('description') for qc in form.quality_checks}
-    sorted_result = sorted(result, key=__flag_sort_key)
-
-    data = []
-
-    # use a two-level sort/group: first by flag name
-    for flag_name, flag_dataset in groupby(sorted_result, key=__flag_sort_key):
-        d = {
-            'name': flag_name,
-            'counts': [],
-            'description': qc_meta.get(flag_name)
-        }
-
-        # then by bucket name
-        sorted_flag_dataset = sorted(flag_dataset, key=__bucket_sort_key)
-
-        # i wish this dict creation was unnecessary, but we need to do
-        # something even when the bucket is missing from the set in
-        # BUCKET_LABELS
-        flag_data_dict = {
-            k: list(v)
-            for k, v in groupby(sorted_flag_dataset, key=__bucket_sort_key)
-        }
-        for bucket_name in list(BUCKET_LABELS.values()):
-            if bucket_name in flag_data_dict:
-                d['counts'].append({
-                    'count': __total_counts(flag_data_dict.get(bucket_name)),
-                    'label': bucket_name
-                })
-            else:
-                d['counts'].append({
-                    'count': 0,
-                    'label': bucket_name
-                })
-        data.append(d)
-
-    return data
-
-
 def _qa_counts(query, form):
     data = []
     if form.quality_checks:
@@ -203,25 +69,13 @@ def _qa_counts(query, form):
                 'description': check['description'],
                 'counts': []}
 
-            results = query.with_entities(
-                Submission.quality_assurance_status[check['name']],
-                func.count(Submission.id)
-            ).group_by(
-                Submission.quality_assurance_status[check['name']]
-            ).all()
+            results = get_logical_check_stats(query, form, check)
+            for label, count in results:
+                d['counts'].append({
+                    'count': count,
+                    'label': label
+                })
 
-            dict_results = {k: v for k, v in results}
-            for key in LABEL_MAP:
-                if key in dict_results:
-                    d['counts'].append({
-                        'count': dict_results[key],
-                        'label': LABEL_MAP[key]
-                    })
-                else:
-                    d['counts'].append({
-                        'count': 0,
-                        'label': LABEL_MAP[key]
-                    })
             data.append(d)
 
     return data
