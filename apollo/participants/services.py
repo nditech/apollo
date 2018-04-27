@@ -3,6 +3,7 @@ import csv
 from io import StringIO
 import re
 
+from apollo import constants
 from apollo.dal.service import Service
 from apollo.participants.models import (
     ParticipantSet,
@@ -29,6 +30,7 @@ class ParticipantService(Service):
         # TODO: location data missing
         # TODO: extra fields missing
         output_buffer = StringIO()
+        output_buffer.write(constants.BOM_UTF8_STR)
         writer = csv.writer(output_buffer)
 
         writer.writerow(headers)

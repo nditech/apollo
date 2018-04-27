@@ -2,6 +2,7 @@
 import csv
 from io import StringIO
 
+from apollo import constants
 from apollo.dal.service import Service
 from apollo.locations.models import LocationType, Sample
 from apollo.submissions.models import (
@@ -64,6 +65,7 @@ class SubmissionService(Service):
                 dataset_headers.extend(sample_headers)
 
             output = StringIO()
+            output.write(constants.BOM_UTF8_STR)
             writer = csv.writer(output)
             writer.writerow(dataset_headers)
             yield output.getvalue()

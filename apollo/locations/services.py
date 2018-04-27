@@ -2,6 +2,7 @@
 import csv
 from io import StringIO
 
+from apollo import constants
 from apollo.dal.service import Service
 from apollo.locations.models import Location, LocationSet, LocationType, Sample
 
@@ -28,6 +29,7 @@ class LocationService(Service):
                 headers.append('{}_RV'.format(location_name))
 
         output = StringIO()
+        output.write(constants.BOM_UTF8_STR)
         writer = csv.writer(output)
         writer.writerow(headers)
         yield output.getvalue()

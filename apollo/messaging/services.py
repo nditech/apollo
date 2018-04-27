@@ -3,6 +3,7 @@ import csv
 from datetime import datetime
 from io import StringIO
 
+from apollo import constants
 from apollo.dal.service import Service
 from apollo.messaging.models import Message
 
@@ -29,6 +30,7 @@ class MessageService(Service):
             'Mobile', 'Text', 'Direction', 'Created', 'Delivered'
         ]
         output = StringIO()
+        output.write(constants.BOM_UTF8_STR)
         writer = csv.writer(output)
         writer.writerow([str(i) for i in headers])
         yield output.getvalue()
