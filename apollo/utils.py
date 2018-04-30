@@ -57,3 +57,13 @@ def remove_bom_in_place(path):
                 chunk = fp.read(buffer_size)
             fp.seek(-bom_length, os.SEEK_CUR)
             fp.truncate()
+
+
+def strip_bom_header(fileobj):
+    chunk_size = 512
+    chunk = fileobj.read(chunk_size)
+
+    if chunk.startswith(codecs.BOM_UTF8):
+        fileobj.seek(len(codecs.BOM_UTF8))
+    else:
+        fileobj.seek(0)
