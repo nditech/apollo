@@ -13,7 +13,7 @@ from flask_restful import Api
 from flask_security import current_user, login_required
 from slugify import slugify_unicode
 
-from apollo import models, services
+from apollo import models, services, utils
 from apollo.core import uploads
 from apollo.frontend import helpers, permissions, route
 from apollo.frontend.forms import (
@@ -412,7 +412,8 @@ def participant_list_import(participant_set_id=0):
     else:
         # get the actual object from the proxy
         user = current_user._get_current_object()
-        filename = uploads.save(request.files['spreadsheet'])
+        upload_file = utils.strip_bom_header(request.files['spreadsheet'])
+        filename = uploads.save(upload_file)
         upload = services.user_uploads.create(
             deployment_id=g.deployment.id, upload_filename=filename,
             user_id=user.id)

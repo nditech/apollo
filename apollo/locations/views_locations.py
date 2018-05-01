@@ -13,7 +13,7 @@ from flask_security import current_user, login_required
 from slugify import slugify_unicode
 from sqlalchemy import not_, or_
 
-from apollo import models, services
+from apollo import models, services, utils
 from apollo.core import db, uploads
 from apollo.frontend import permissions, route
 from apollo.frontend.forms import (
@@ -137,7 +137,8 @@ def locations_import(location_set_id):
     else:
         # get the actual object from the proxy
         user = current_user._get_current_object()
-        filename = uploads.save(request.files['spreadsheet'])
+        upload_file = utils.strip_bom_header(request.files['spreadsheet'])
+        filename = uploads.save(upload_file)
         upload = models.UserUpload(
             deployment_id=g.deployment.id, upload_filename=filename,
             user_id=user.id)
@@ -185,7 +186,10 @@ def location_headers(location_set_id, upload_id):
             )
         else:
             # get header mappings
-            data = {field.data: field.label.text for field in form if field.data}
+            data = {
+                field.data: field.label.text
+                for field in form if field.data
+            }
 
             # invoke task asynchronously
             kwargs = {

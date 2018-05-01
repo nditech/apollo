@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import codecs
 import csv
 from datetime import datetime
 from functools import partial
@@ -31,7 +32,7 @@ from apollo.participants.utils import update_participant_completion_rating
 from apollo.submissions import filters, forms
 from apollo.submissions.incidents import incidents_csv
 from apollo.submissions.aggregation import (
-    aggregated_dataframe, _quality_check_aggregation, _qa_counts)
+    aggregated_dataframe, _qa_counts)
 from apollo.submissions.models import QUALITY_STATUSES, Submission
 from apollo.submissions.recordmanagers import AggFrameworkExporter
 from apollo.submissions.utils import make_submission_dataframe
@@ -649,7 +650,7 @@ def _incident_csv(form_id, location_type_id, location_id=None):
     for summary in incidents_csv(df, location_type.name, tags):
         ds.append([summary.get(heading) for heading in ds.headers])
 
-    return ds.csv
+    return codecs.BOM_UTF8.decode(encoding='utf-8') + ds.csv
 
 
 @route(bp, '/incidents/form/<form_id>/locationtype/<location_type_id>/incidents.csv')
