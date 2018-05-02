@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import codecs
 import importlib
 import magic
 import pandas as pd
@@ -42,6 +43,13 @@ def _make_choices(qs, placeholder=None):
 def stash_file(fileobj, user, event=None):
     from apollo.services import user_uploads
     upload = user_uploads.create(user=user, event=event)
+    chunk = fileobj.read(64)
+
+    if chunk.startswith(codecs.BOM_UTF8):
+        fileobj.seek(len(codecs.BOM_UTF8))
+    else:
+        fileobj.seek(0)
+
     upload.data.put(fileobj)
     upload.save()
     upload.reload()

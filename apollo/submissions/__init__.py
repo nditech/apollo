@@ -109,7 +109,7 @@ class SubmissionsService(Service):
                 ds_headers.extend(map(lambda f: '%s-CONFIDENCE' % f, fields))
 
             output = StringIO()
-            writer = unicodecsv.writer(output, encoding='utf-8')
+            writer = unicodecsv.writer(output, encoding='utf-8-sig')
             writer.writerow([unicode(i) for i in ds_headers])
             yield output.getvalue()
             output.close()

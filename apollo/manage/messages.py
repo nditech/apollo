@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import codecs
 import calendar
 from datetime import datetime
 from urlparse import urljoin
@@ -18,7 +19,7 @@ class MessagePlaybackCommand(Command):
         base_url = urljoin(hostname, url_for('messaging.kannel_view'))
 
         filename = prompt('Path to message log')
-        with open(filename) as f:
+        with codecs.open(filename, encoding='utf-8-sig') as f:
             reader = unicodecsv.DictReader(f)
             for row in reader:
                 # ignore outbound messages

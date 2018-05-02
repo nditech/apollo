@@ -72,10 +72,12 @@ def update_locations(df, mapping, event):
             location_code = df.ix[idx].get(mapping.get(map_attribute(lt, 'code'), u''), u'')
             location_code = int(location_code) if type(location_code) in [int, float] else location_code
             location_code = str(location_code).decode('utf-8')
-            location_name = str(df.ix[idx].get(
+            location_name = df.ix[idx].get(
                 mapping.get(map_attribute(lt, 'name'), u''),
-                u''
-            )).decode('utf-8')
+                u'')
+            if type(location_name) == str:
+                # convert to unicode
+                location_name = unicode(location_name.decode('utf-8'))
             location_pcode = df.ix[idx].get(
                 mapping.get(map_attribute(lt, 'pcode'), u''), u'') \
                 if lt.has_political_code else None
@@ -134,8 +136,12 @@ def update_locations(df, mapping, event):
             # update ancestors
             ancestors = []
             for sub_lt in lt.ancestors_ref:
-                sub_lt_name = str(df.ix[idx].get(
-                    mapping.get(map_attribute(sub_lt, 'name'), u''))).decode('utf-8')
+                sub_lt_name = df.ix[idx].get(
+                    mapping.get(map_attribute(sub_lt, 'name'), u''),
+                    u'')
+                if type(sub_lt_name) == str:
+                    # convert to unicode
+                    sub_lt_name = unicode(sub_lt_name.decode('utf-8'))
                 sub_lt_code = df.ix[idx].get(
                     mapping.get(map_attribute(sub_lt, 'code'), u''), u'')
                 sub_lt_code = int(sub_lt_code) if type(sub_lt_code) in [int, float] else sub_lt_code

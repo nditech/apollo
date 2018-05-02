@@ -51,7 +51,7 @@ class ParticipantsService(Service):
                 headers.append(extra_field.label)
 
         output = StringIO()
-        writer = unicodecsv.writer(output, encoding='utf-8')
+        writer = unicodecsv.writer(output, encoding='utf-8-sig')
         writer.writerow([unicode(i) for i in headers])
         yield output.getvalue()
         output.close()
@@ -96,7 +96,7 @@ class ParticipantsService(Service):
             'Messages Sent', 'Accuracy', 'Completion'
         ]
         output = StringIO()
-        writer = unicodecsv.writer(output, encoding='utf-8')
+        writer = unicodecsv.writer(output, encoding='utf-8-sig')
         writer.writerow(headers)
         yield output.getvalue()
         output.close()

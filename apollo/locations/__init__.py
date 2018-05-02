@@ -61,7 +61,7 @@ class LocationsService(Service):
                 ))
 
         output = StringIO()
-        writer = unicodecsv.writer(output, encoding='utf-8')
+        writer = unicodecsv.writer(output, encoding='utf-8-sig')
         writer.writerow([unicode(i) for i in headers])
         yield output.getvalue()
         output.close()
