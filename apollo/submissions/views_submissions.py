@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
+import codecs
 from datetime import datetime
 import json
 try:
@@ -126,7 +127,7 @@ def submission_list(form_id):
             records, headers = exporter.export_dataset()
 
             export_buffer = StringIO()
-            writer = unicodecsv.DictWriter(export_buffer, headers)
+            writer = unicodecsv.DictWriter(export_buffer, headers, encoding='utf-8-sig')
             writer.writeheader()
             for record in records:
                 writer.writerow(record)
@@ -547,7 +548,7 @@ def _incident_csv(form_pk, location_type_pk, location_pk=None):
     for summary in incidents_csv(df, location_type.name, tags):
         ds.append([summary.get(heading) for heading in ds.headers])
 
-    return ds.csv
+    return codecs.BOM_UTF8.decode('utf-8') + ds.csv
 
 
 @route(bp, '/incidents/form/<form_pk>/locationtype/<location_type_pk>/incidents.csv')
@@ -760,7 +761,7 @@ def submission_export(form_id):
     queryset = services.submissions.find(
         form=form, submission_type='M').order_by('location')
     dataset = aggregated_dataframe(queryset, form).to_csv(
-        encoding='utf-8', index=False, float_format='%d')
+        encoding='utf-8-sig', index=False, float_format='%d')
 
     # TODO: any other way to control/stream the output?
     # currently it just takes the name of the form ID
