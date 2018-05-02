@@ -21,7 +21,8 @@ Your location import task has been completed.
 
 
 class LocationCache():
-    cache = cachetools.LRUCache(maxsize=50)
+    def __init__(self):
+        self.cache = cachetools.LRUCache(maxsize=50)
 
     def _cache_key(self, location_code, location_type, location_name):
         # remove smart quotes
