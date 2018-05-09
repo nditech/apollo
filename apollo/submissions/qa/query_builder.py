@@ -58,11 +58,7 @@ FIELD_TYPE_CASTS = {
 }
 
 
-class QATreeVisitor(PTNodeVisitor):
-    def __init__(self, defaults=True, **kwargs):
-        self.form = kwargs.pop('form')
-        super().__init__(defaults, **kwargs)
-
+class BaseVisitor(PTNodeVisitor):
     def visit_number(self, node, children):
         return float(node.value)
 
@@ -71,25 +67,6 @@ class QATreeVisitor(PTNodeVisitor):
             return children[0]
         multiplier = -1 if children[0] == '-' else 1
         return multiplier * children[-1]
-
-    # def visit_attribute(self, node, children):
-    #     attribute_name = node.value[1:]
-    #     return getattr(Submission, attribute_name)
-
-    def visit_variable(self, node, children):
-        var_name = node.value
-        if var_name not in self.form.tags:
-            raise ValueError('Variable ({}) not in form'.format(var_name))
-
-        # casting is necessary because PostgreSQL will throw
-        # a fit if you attempt some operations that mix JSONB
-        # with other types
-        field = self.form.get_field_by_tag(var_name)
-        cast_type = FIELD_TYPE_CASTS.get(field['type'])
-
-        if cast_type is not None:
-            return Submission.data[var_name].astext.cast(cast_type)
-        return Submission.data[var_name]
 
     def visit_value(self, node, children):
         return children[-1]
@@ -139,6 +116,48 @@ class QATreeVisitor(PTNodeVisitor):
             expression = OPERATIONS[sign](expression, children[i])
 
         return expression
+
+
+class InlineQATreeVisitor(BaseVisitor):
+    def __init__(self, defaults=True, **kwargs):
+        self.form = kwargs.pop('form')
+        self.submission = kwargs.pop('submission')
+
+    def visit_variable(self, node, children):
+        var_name = node.value
+        if var_name not in self.form.tags:
+            raise ValueError('Variable ({}) not in form'.format(var_name))
+
+        # casting is necessary because PostgreSQL will throw
+        # a fit if you attempt some operations that mix JSONB
+        # with other types
+        field = self.form.get_field_by_tag(var_name)
+        return self.submission.data.get(field)
+
+
+class QATreeVisitor(BaseVisitor):
+    def __init__(self, defaults=True, **kwargs):
+        self.form = kwargs.pop('form')
+        super().__init__(defaults, **kwargs)
+
+    # def visit_attribute(self, node, children):
+    #     attribute_name = node.value[1:]
+    #     return getattr(Submission, attribute_name)
+
+    def visit_variable(self, node, children):
+        var_name = node.value
+        if var_name not in self.form.tags:
+            raise ValueError('Variable ({}) not in form'.format(var_name))
+
+        # casting is necessary because PostgreSQL will throw
+        # a fit if you attempt some operations that mix JSONB
+        # with other types
+        field = self.form.get_field_by_tag(var_name)
+        cast_type = FIELD_TYPE_CASTS.get(field['type'])
+
+        if cast_type is not None:
+            return Submission.data[var_name].astext.cast(cast_type)
+        return Submission.data[var_name]
 
 
 def generate_qa_query(expression, form):
