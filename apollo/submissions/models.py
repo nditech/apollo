@@ -68,6 +68,9 @@ class Submission(BaseModel):
         'REJECTED': '5'
     }
 
+    __table_args__ = (
+        db.Index('submission_data_idx', 'data', postgresql_using='gin'),
+    )
     __tablename__ = 'submission'
 
     id = db.Column(
