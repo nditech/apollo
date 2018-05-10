@@ -110,9 +110,8 @@ class DeploymentAdminView(BaseAdminView):
 
 class EventAdminView(BaseAdminView):
     column_filters = ('name', 'start', 'end')
-    column_list = ('name', 'start', 'end')
-    form_columns = ('name', 'start', 'end', 'form_set',
-                    'participant_set')
+    column_list = ('name', 'start', 'end', 'form_set', 'participant_set')
+    form_columns = ('name', 'start', 'end', 'form_set', 'participant_set')
     form_rules = [
         rules.FieldSet(
             ('name', 'start', 'end', 'form_set', 'participant_set'),
@@ -151,6 +150,11 @@ class EventAdminView(BaseAdminView):
         # deployment, since it won't appear in the form
         if is_created:
             model.deployment = current_user.deployment
+
+            # add role permissions for this event
+            roles = models.Role.query.filter_by(
+                deployment=model.deployment).all()
+            model.roles = roles
 
         if form.participant_set.data:
             model.location_set = form.participant_set.data.location_set

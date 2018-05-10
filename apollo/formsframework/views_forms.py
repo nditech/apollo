@@ -10,7 +10,7 @@ from flask_menu import register_menu
 from flask_security import login_required
 import json
 
-from apollo import services
+from apollo import models, services
 from apollo.formsframework.forms import FormForm, FormImportForm
 from apollo.formsframework.models import FormBuilderSerializer, import_form
 from apollo.submissions.tasks import init_submissions
@@ -122,6 +122,12 @@ def new_form(form_set_id=0):
         deployment_id=form_set.deployment_id,
         form_set_id=form_set.id)
     web_form.populate_obj(form)
+    form.save()
+
+    # add default role permissions for this form
+    roles = models.Role.query.filter_by(
+        deployment_id=form_set.deployment_id).all()
+    form.roles = roles
     form.save()
 
     if form_set_id:
@@ -297,6 +303,12 @@ def import_form_schema(form_set_id=0):
         form = import_form(request.files['import_file'])
         form.deployment_id = form_set.deployment_id
         form.form_set = form_set
+        form.save()
+
+        # add default role permissions for this form
+        roles = models.Role.query.filter_by(
+            deployment_id=form_set.deployment_id).all()
+        form.roles = roles
         form.save()
 
     if form_set_id:

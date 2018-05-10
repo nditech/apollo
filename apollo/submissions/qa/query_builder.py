@@ -13,8 +13,8 @@ from apollo.submissions.models import Submission
 #   - a Python syntax (the canonical)
 #   - two similar, but slightly EBNF-ish syntaxes
 # The EBNF/PEG syntaxes are converted to the canonical
-# syntax (serious dogfooding) internally, the others
-# are...less verbose.
+# syntax (serious dogfooding) internally, but they are less
+# verbose than it is.
 # If we need the performance gain, this should be changed
 # to the Python syntax. Other advantages of the Python
 # syntax include case-insensitivty for regex and string

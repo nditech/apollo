@@ -145,6 +145,11 @@ class CreateEventCommand(Command):
         event.start = start_utc
         event.end = end_utc
         event.save()
+
+        # add role permissions for this event
+        roles = models.Role.query.filter_by(deployment=deployment).all()
+        event.roles = roles
+        event.save()
         print('Event {} created.\n'.format(name))
 
 
