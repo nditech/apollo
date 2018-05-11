@@ -39,6 +39,7 @@ class CreateUserCommand(Command):
             (str(i), v) for i, v in enumerate(deployments, 1)])
         deployment = deployments[int(option) - 1]
         email = prompt('Email')
+        username = prompt('Username')
         password = prompt_pass('Password')
         password_confirm = prompt_pass('Confirm Password')
 
@@ -48,13 +49,13 @@ class CreateUserCommand(Command):
         if can_create:
             try:
                 user = register_user(deployment_id=deployment.id, email=email,
-                                     password=password)
+                                     password=password, username=username)
             except socket.error as e:
                 # if there's an error sending the notification email,
                 # recover
                 print('Error sending confirmation email: {}'.format(e))
             print('\nUser created successfully')
-            print('User(id=%s email=%s)' % (user.id, user.email))
+            print('User(id=%s, email=%s)' % (user.id, user.email))
             return
         print('\nError creating user:')
         for errors in list(form_errors.values()):
