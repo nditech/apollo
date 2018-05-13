@@ -85,7 +85,7 @@ def get_form_list_menu(**kwargs):
                          services.forms.find(
                              **kwargs, form_set_id=form_set_id
                          ).order_by('name')
-                         if Permission(ItemNeed('view_forms', f, 'object'),
+                         if Permission(ItemNeed('access_resource', f.resource_id, f.resource_type),
                                        RoleNeed('admin')).can()]]
 
 
@@ -105,7 +105,7 @@ def get_checklist_form_dashboard_menu(**kwargs):
                          services.forms.find(
                              **kwargs, form_set_id=form_set_id
                          ).order_by('name')
-                         if Permission(ItemNeed('view_forms', f, 'object'),
+                         if Permission(ItemNeed('access_resource', f.resource_id, f.resource_type),
                                        RoleNeed('admin')).can()]]
 
 
@@ -138,7 +138,7 @@ def get_quality_assurance_form_list_menu(**kwargs):
                          services.forms.find(
                              **kwargs, form_set_id=form_set_id
                          ).order_by('name')
-                         if Permission(ItemNeed('view_forms', f, 'object'),
+                         if Permission(ItemNeed('access_resource', f.resource_id, f.resource_type),
                                        RoleNeed('admin')).can()]]
 
 
@@ -158,7 +158,7 @@ def get_quality_assurance_form_dashboard_menu(**kwargs):
                          services.forms.find(
                              **kwargs,
                              form_set_id=form_set_id).order_by('name')
-                         if Permission(ItemNeed('view_forms', f, 'object'),
+                         if Permission(ItemNeed('access_resource', f.resource_id, f.resource_type),
                                        RoleNeed('admin')).can()]]
 
 
