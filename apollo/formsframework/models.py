@@ -191,7 +191,8 @@ class Form(Resource):
                     survey_sheet.write(current_survey_row, 0, 'end group')
                     current_survey_row += 1
                 survey_sheet.write(current_survey_row, 0, 'begin group')
-                survey_sheet.write(current_survey_row, 1, slugify_unicode(group['name']))
+                survey_sheet.write(
+                    current_survey_row, 1, slugify_unicode(group['name']))
                 survey_sheet.write(current_survey_row, 2, group['name'])
                 current_survey_row += 1
                 current_group = group
@@ -201,21 +202,31 @@ class Form(Resource):
                     for field in fields:
                         # output the type
                         if field['type'] == 'integer':
-                            survey_sheet.write(current_survey_row, 0, 'integer')
-                            survey_sheet.write(current_survey_row, 3, '. >= {} and . <= {}'.format(
-                                field.get('min', 0), field.get('max', 9999)))
+                            survey_sheet.write(
+                                current_survey_row, 0, 'integer')
+                            survey_sheet.write(
+                                current_survey_row, 3,
+                                '. >= {} and . <= {}'.format(
+                                    field.get('min', 0),
+                                    field.get('max', 9999)))
                         elif field['type'] == 'boolean':
-                            survey_sheet.write(current_survey_row, 0, 'select_one boolean')
+                            survey_sheet.write(
+                                current_survey_row, 0, 'select_one boolean')
 
-                            # write out boolean choices if they haven't been written before
+                            # write out boolean choices if they haven't been 
+                            # written before
                             if not boolean_written:
-                                choices_sheet.write(current_choices_row, 0, 'boolean')
+                                choices_sheet.write(
+                                    current_choices_row, 0, 'boolean')
                                 choices_sheet.write(current_choices_row, 1, 0)
-                                choices_sheet.write(current_choices_row, 2, 'False')
+                                choices_sheet.write(
+                                    current_choices_row, 2, 'False')
                                 current_choices_row += 1
-                                choices_sheet.write(current_choices_row, 0, 'boolean')
+                                choices_sheet.write(
+                                    current_choices_row, 0, 'boolean')
                                 choices_sheet.write(current_choices_row, 1, 1)
-                                choices_sheet.write(current_choices_row, 2, 'True')
+                                choices_sheet.write(
+                                    current_choices_row, 2, 'True')
                                 boolean_written = True
 
                         elif field['type'] in ('comment', 'string'):
@@ -223,27 +234,39 @@ class Form(Resource):
                         else:
                             # for questions with choices, write them to the
                             # choices sheet
-                            option_list_name = '{}_options'.format(field['tag'])
+                            option_list_name = '{}_options'.format(
+                                field['tag'])
                             options = field.get('options')
                             for description, value in options.items():
-                                choices_sheet.write(current_choices_row, 0, option_list_name)
-                                choices_sheet.write(current_choices_row, 1, value)
-                                choices_sheet.write(current_choices_row, 2, description)
+                                choices_sheet.write(
+                                    current_choices_row, 0, option_list_name)
+                                choices_sheet.write(
+                                    current_choices_row, 1, value)
+                                choices_sheet.write(
+                                    current_choices_row, 2, description)
                                 current_choices_row += 1
 
                             if field['type'] == 'select':
-                                survey_sheet.write(current_survey_row, 0, 'select_one {}'.format(option_list_name))
+                                survey_sheet.write(
+                                    current_survey_row, 0,
+                                    'select_one {}'.format(option_list_name))
                             else:
-                                survey_sheet.write(current_survey_row, 0, 'select_multiple {}'.format(option_list_name))
+                                survey_sheet.write(
+                                    current_survey_row, 0,
+                                    'select_multiple {}'.format(
+                                        option_list_name))
 
                         # output the name and description
                         survey_sheet.write(current_survey_row, 1, field['tag'])
-                        survey_sheet.write(current_survey_row, 2, field['description'])
+                        survey_sheet.write(
+                            current_survey_row, 2, field['description'])
                         current_survey_row += 1
 
                         # also output the analysis
-                        analysis_sheet.write(current_analysis_row, 0, field['tag'])
-                        analysis_sheet.write(current_analysis_row, 1, field['analysis_type'])
+                        analysis_sheet.write(
+                            current_analysis_row, 0, field['tag'])
+                        analysis_sheet.write(
+                            current_analysis_row, 1, field['analysis_type'])
                         current_analysis_row += 1
 
             if current_group:

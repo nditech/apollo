@@ -1,63 +1,69 @@
 # -*- coding: utf-8 -*-
 from flask_testing import TestCase
-# from werkzeug.datastructures import MultiDict
+from werkzeug.datastructures import MultiDict
 from apollo import create_app
-# from apollo.messaging.utils import parse_responses
-# from apollo.formsframework.forms import build_questionnaire
-# from apollo.formsframework.models import Form, FormField, FormGroup
+from apollo.messaging.utils import parse_responses
+from apollo.formsframework.forms import build_questionnaire
+from apollo.formsframework.models import Form
 from apollo.formsframework.parser import Comparator, grammar_factory
 
 
-# class QuestionnaireTest(TestCase):
-#     def create_app(self):
-#         return create_app()
+class AttributeDict(dict):
+    __getattr__ = dict.__getitem__
+    __setattr__ = dict.__setitem__
 
-#     def setUp(self):
-#         aa = FormField(name='AA', description='AA')
-#         ab = FormField(name='AB', description='AB',
-#                        allows_multiple_values=True,
-#                        options={'1': 'One', '2': 'Two'})
 
-#         grp1 = FormGroup(name='First', slug='First')
-#         grp1.fields.append(aa)
-#         grp1.fields.append(ab)
+class QuestionnaireTest(TestCase):
+    def create_app(self):
+        return create_app()
 
-#         self.checklist_form = Form(name='TCF', form_type='CHECKLIST')
-#         self.checklist_form.groups.append(grp1)
+    def setUp(self):
+        aa = AttributeDict(tag='AA', description='AA', type='integer')
+        ab = AttributeDict(tag='AB', description='AB', type='multiselect',
+                           options={'1': 'One', '2': 'Two'})
 
-#         a = FormField(name='A', description='A', represents_boolean=True)
-#         b = FormField(name='B', description='B', represents_boolean=True)
+        grp1 = AttributeDict(name='First')
+        grp1.fields = []
+        grp1.fields.append(aa)
+        grp1.fields.append(ab)
 
-#         grp2 = FormGroup(name='Other', slug='Other')
-#         grp2.fields.append(a)
-#         grp2.fields.append(b)
+        self.checklist_form = Form(name='TCF', form_type='CHECKLIST')
+        self.checklist_form.data = {'groups': [grp1]}
 
-#         self.incident_form = Form(name='TIF', form_type='INCIDENT')
-#         self.incident_form.groups.append(grp2)
+        a = AttributeDict(tag='A', description='A', type='boolean')
+        b = AttributeDict(tag='B', description='B', type='boolean')
 
-#     def test_checklist_parsing(self):
-#         sample_text = 'AA2AB12'
-#         q = build_questionnaire(
-#             self.checklist_form,
-#             MultiDict(parse_responses(sample_text, self.checklist_form)[0]))
-#         flag = q.validate()
-#         data = q.data
+        grp2 = AttributeDict(name='Other', slug='Other')
+        grp2.fields = []
+        grp2.fields.append(a)
+        grp2.fields.append(b)
 
-#         self.assertEqual(data['AA'], 2)
-#         self.assertEqual(data['AB'], [1, 2])
-#         # invalid due to missing data
-#         self.assertFalse(flag)
+        self.incident_form = Form(name='TIF', form_type='INCIDENT')
+        self.incident_form.data = {'groups': [grp2]}
 
-#     def test_incident_parsing(self):
-#         sample_text = 'AB'
-#         responses = parse_responses(sample_text, self.incident_form)[0]
-#         q = build_questionnaire(self.incident_form, MultiDict(responses))
+    def test_checklist_parsing(self):
+        sample_text = 'AA2AB12'
+        q = build_questionnaire(
+            self.checklist_form,
+            MultiDict(parse_responses(sample_text, self.checklist_form)[0]))
+        flag = q.validate()
+        data = q.data
 
-#         flag = q.validate()
-#         data = q.data
-#         self.assertEqual(data['A'], 1)
-#         self.assertEqual(data['B'], 1)
-#         self.assertFalse(flag)
+        self.assertEqual(data['AA'], 2)
+        self.assertEqual(data['AB'], [1, 2])
+        # invalid due to missing data
+        self.assertFalse(flag)
+
+    def test_incident_parsing(self):
+        sample_text = 'AB'
+        responses = parse_responses(sample_text, self.incident_form)[0]
+        q = build_questionnaire(self.incident_form, MultiDict(responses))
+
+        flag = q.validate()
+        data = q.data
+        self.assertEqual(data['A'], 1)
+        self.assertEqual(data['B'], 1)
+        self.assertFalse(flag)
 
 
 class ComparatorTest(TestCase):
@@ -93,10 +99,6 @@ class GrammarTest(TestCase):
         return create_app()
 
     def setUp(self):
-        class AttributeDict(dict):
-            __getattr__ = dict.__getitem__
-            __setattr__ = dict.__setitem__
-
         self.env = AttributeDict()
         self.env.data = AttributeDict()
 
