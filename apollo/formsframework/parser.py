@@ -9,8 +9,8 @@ def calculate(start, pairs):
     result = start
     operators = {
         '+': op.add, '-': op.sub, '*': op.mul, '/': op.truediv, '^': op.pow,
-        '>': op.gt, '>=': op.ge, '<': op.lt, '<=': op.le, '==': op.eq, '!=': op.ne,
-        '||': op.or_, '&&': op.and_}
+        '>': op.gt, '>=': op.ge, '<': op.lt, '<=': op.le, '==': op.eq,
+        '!=': op.ne, '||': op.or_, '&&': op.and_}
 
     for operator, value in pairs:
         if operator in operators:

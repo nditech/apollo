@@ -93,68 +93,69 @@ class GrammarTest(TestCase):
         return create_app()
 
     def setUp(self):
-        class AttributeHolder(object):
-            def set(self, attr, value):
-                setattr(self, attr, value)
+        class AttributeDict(dict):
+            __getattr__ = dict.__getitem__
+            __setattr__ = dict.__setitem__
 
-        self.env = AttributeHolder()
+        self.env = AttributeDict()
+        self.env.data = AttributeDict()
 
-    # def test_operands(self):
-    #     self.env.set('AA', 5)
-    #     self.env.set('AB', 3)
-    #     self.env.set('AC', 2)
+    def test_operands(self):
+        self.env.data.AA = 5
+        self.env.data.AB = 3
+        self.env.data.AC = 2
 
-    #     evaluator = grammar_factory(self.env)
+        evaluator = grammar_factory(self.env)
 
-    #     self.assertEqual(evaluator('AA').expr(), 5)
-    #     self.assertEqual(evaluator('AB').expr(), 3)
-    #     self.assertEqual(evaluator('15').expr(), 15)
+        self.assertEqual(evaluator('AA').expr(), 5)
+        self.assertEqual(evaluator('AB').expr(), 3)
+        self.assertEqual(evaluator('15').expr(), 15)
 
-    # def test_operations(self):
-    #     self.env.set('AA', 5)
-    #     self.env.set('AB', 3)
-    #     self.env.set('AC', 2)
+    def test_operations(self):
+        self.env.data.AA = 5
+        self.env.data.AB = 3
+        self.env.data.AC = 2
 
-    #     evaluator = grammar_factory(self.env)
+        evaluator = grammar_factory(self.env)
 
-    #     self.assertEqual(evaluator('AA + AB').expr(), 8)
-    #     self.assertEqual(evaluator('AA - AB').expr(), 2)
-    #     self.assertEqual(evaluator('AA * AB').expr(), 15)
-    #     self.assertEqual(evaluator('AB / AC').expr(), 1.5)
-    #     self.assertEqual(evaluator('AC ^ AB').expr(), 8)
-    #     self.assertEqual(evaluator('AA + 10').expr(), 15)
-    #     self.assertEqual(evaluator('AA + 5 ^ 3').expr(), 130)
-    #     self.assertEqual(evaluator('(AA + 5) ^ 3').expr(), 1000)
+        self.assertEqual(evaluator('AA + AB').expr(), 8)
+        self.assertEqual(evaluator('AA - AB').expr(), 2)
+        self.assertEqual(evaluator('AA * AB').expr(), 15)
+        self.assertEqual(evaluator('AB / AC').expr(), 1.5)
+        self.assertEqual(evaluator('AC ^ AB').expr(), 8)
+        self.assertEqual(evaluator('AA + 10').expr(), 15)
+        self.assertEqual(evaluator('AA + 5 ^ 3').expr(), 130)
+        self.assertEqual(evaluator('(AA + 5) ^ 3').expr(), 1000)
 
-    # def test_comparison_operators(self):
-    #     self.env.set('AA', 5)
-    #     self.env.set('AB', 3)
-    #     self.env.set('AC', 2)
-    #     self.env.set('AD', 2)
+    def test_comparison_operators(self):
+        self.env.data.AA = 5
+        self.env.data.AB = 3
+        self.env.data.AC = 2
+        self.env.data.AD = 2
 
-    #     evaluator = grammar_factory(self.env)
+        evaluator = grammar_factory(self.env)
 
-    #     self.assertTrue(evaluator('AA > AB').expr())
-    #     self.assertTrue(evaluator('AC < AB').expr())
-    #     self.assertFalse(evaluator('AC > AB').expr())
-    #     self.assertTrue(evaluator('AC <= AB').expr())
-    #     self.assertTrue(evaluator('AC <= AD').expr())
-    #     self.assertTrue(evaluator('AC >= AD').expr())
-    #     self.assertTrue(evaluator('(AC + AD) > AB').expr())
-    #     self.assertTrue(evaluator('AC + AD > AB').expr())
-    #     self.assertTrue(evaluator('(AB + AA) < 9').expr())
-    #     self.assertTrue(evaluator('AB + AA < 9').expr())
-    #     self.assertTrue(evaluator('AA + AB == 8').expr())
-    #     self.assertTrue(evaluator('(AA + AC) != ((AB + AD))').expr())
+        self.assertTrue(evaluator('AA > AB').expr())
+        self.assertTrue(evaluator('AC < AB').expr())
+        self.assertFalse(evaluator('AC > AB').expr())
+        self.assertTrue(evaluator('AC <= AB').expr())
+        self.assertTrue(evaluator('AC <= AD').expr())
+        self.assertTrue(evaluator('AC >= AD').expr())
+        self.assertTrue(evaluator('(AC + AD) > AB').expr())
+        self.assertTrue(evaluator('AC + AD > AB').expr())
+        self.assertTrue(evaluator('(AB + AA) < 9').expr())
+        self.assertTrue(evaluator('AB + AA < 9').expr())
+        self.assertTrue(evaluator('AA + AB == 8').expr())
+        self.assertTrue(evaluator('(AA + AC) != ((AB + AD))').expr())
 
-    # def test_logic_operators(self):
-    #     self.env.set('AA', 5)
-    #     self.env.set('AB', 3)
-    #     self.env.set('AC', 2)
-    #     self.env.set('AD', 2)
+    def test_logic_operators(self):
+        self.env.data.AA = 5
+        self.env.data.AB = 3
+        self.env.data.AC = 2
+        self.env.data.AD = 2
 
-    #     evaluator = grammar_factory(self.env)
+        evaluator = grammar_factory(self.env)
 
-    #     self.assertTrue(evaluator('AA > AB && AC >= AD').expr())
-    #     self.assertTrue(evaluator('AA < AB || (AC >= AD)').expr())
-    #     self.assertTrue(evaluator('AA < AB || AC >= AD && AA == 5').expr())
+        self.assertTrue(evaluator('AA > AB && AC >= AD').expr())
+        self.assertTrue(evaluator('AA < AB || (AC >= AD)').expr())
+        self.assertTrue(evaluator('AA < AB || AC >= AD && AA == 5').expr())
