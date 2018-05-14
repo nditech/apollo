@@ -166,3 +166,4 @@ MAX_CONTENT_LENGTH = config(
     'MAX_UPLOAD_SIZE_MB', cast=int, default=8) * 1024 * 1024
 default_upload_path = os.path.join(PROJECT_ROOT, 'uploads')
 UPLOADS_DEFAULT_DEST = config('UPLOADS_DIR', default=default_upload_path)
+PROMETHEUS_SECRET = config('PROMETHEUS_SECRET', default='')

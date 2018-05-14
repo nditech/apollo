@@ -9,6 +9,7 @@ from apollo import assets, models, services
 
 from apollo.frontend import permissions, template_filters
 from apollo.core import admin, db, menu, security, gravatar, csrf
+from apollo.prometheus.flask import monitor
 from .frontend.helpers import set_request_presets
 from .security_ext_forms import DeploymentLoginForm
 
@@ -55,6 +56,8 @@ def create_app(settings_override=None, register_security_blueprint=True):
     csrf.init_app(app)
     init_admin(admin, app)
 
+    monitor(app)
+
     # Register custom error handlers
     if not app.debug:
         for e in [500, 404, 403]:
@@ -97,7 +100,7 @@ def create_app(settings_override=None, register_security_blueprint=True):
         response.headers['Content-Security-Policy'] = "default-src 'self' " + \
             "*.googlecode.com *.google-analytics.com " + \
             "*.googletagmanager.com " + \
-            "*://cdn.heapanalytics.com *://heapanalytics.com " + \
+            "cdn.heapanalytics.com heapanalytics.com " + \
             "'unsafe-inline' 'unsafe-eval' data:; img-src * data:"
         return response
 
