@@ -6,6 +6,7 @@ from apollo.messaging.utils import parse_responses
 from apollo.formsframework.forms import build_questionnaire
 from apollo.formsframework.models import Form
 from apollo.formsframework.parser import Comparator, grammar_factory
+from apollo.wsgi import application
 
 
 class AttributeDict(dict):
@@ -14,8 +15,8 @@ class AttributeDict(dict):
 
 
 class QuestionnaireTest(TestCase):
-    def create_app(self):
-        return create_app()
+    def create_app(self):  # noqa
+        return application
 
     def setUp(self):
         aa = AttributeDict(tag='AA', description='AA', type='integer')
@@ -67,8 +68,8 @@ class QuestionnaireTest(TestCase):
 
 
 class ComparatorTest(TestCase):
-    def create_app(self):
-        return create_app()
+    def create_app(self):  # noqa
+        return application
 
     def test_numeric_comparisons(self):
         comparator = Comparator()
@@ -95,8 +96,8 @@ class ComparatorTest(TestCase):
 
 
 class GrammarTest(TestCase):
-    def create_app(self):
-        return create_app()
+    def create_app(self):  # noqa
+        return application
 
     def setUp(self):
         self.env = AttributeDict()

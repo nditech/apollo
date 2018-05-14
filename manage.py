@@ -7,7 +7,6 @@ from flask_security import SQLAlchemyUserDatastore
 
 from apollo.core import db
 from apollo import models, services
-from apollo import create_app
 from apollo.manage import \
     (CreateUserCommand, DeleteUserCommand, ListUsersCommand,
      AddUserRoleCommand, ListUserRolesCommand, RemoveUserRoleCommand,
@@ -17,18 +16,16 @@ from apollo.manage import \
      ListEventsCommand,
      InitializeSubmissionsCommand,
      SetupCommand, MessagePlaybackCommand, GunicornServer, CeleryWorker)
-
-
-app = create_app()
+from apollo.wsgi import application
 
 
 def _mk_ctx():
     return dict(
-        app=app, db=db, models=models, services=services,
+        app=application, db=db, models=models, services=services,
         userdatastore=SQLAlchemyUserDatastore(db, models.User, models.Role))
 
 
-manager = Manager(app)
+manager = Manager(application)
 
 
 manager.add_command('run', Server(host='::'))
