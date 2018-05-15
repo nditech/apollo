@@ -122,6 +122,7 @@ class InlineQATreeVisitor(BaseVisitor):
     def __init__(self, defaults=True, **kwargs):
         self.form = kwargs.pop('form')
         self.submission = kwargs.pop('submission')
+        super().__init__(defaults, **kwargs)
 
     def visit_variable(self, node, children):
         var_name = node.value
@@ -131,8 +132,7 @@ class InlineQATreeVisitor(BaseVisitor):
         # casting is necessary because PostgreSQL will throw
         # a fit if you attempt some operations that mix JSONB
         # with other types
-        field = self.form.get_field_by_tag(var_name)
-        return self.submission.data.get(field)
+        return self.submission.data.get(var_name)
 
 
 class QATreeVisitor(BaseVisitor):
@@ -169,6 +169,22 @@ def generate_qa_query(expression, form):
 
     try:
         visitor = QATreeVisitor(form=form)
+    except Exception:
+        raise
+
+    return visit_parse_tree(tree, visitor)
+
+
+def process_inline_qa(expression, submission):
+    parser = ParserPEG(GRAMMAR, 'qa')
+    try:
+        tree = parser.parse(expression)
+    except Exception:
+        raise
+
+    try:
+        visitor = InlineQATreeVisitor(
+            form=submission.form, submission=submission)
     except Exception:
         raise
 
