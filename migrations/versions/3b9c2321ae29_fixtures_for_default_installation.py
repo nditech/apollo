@@ -22,27 +22,51 @@ def upgrade():
         id, name, hostnames, allow_observer_submission_edit,
         include_rejected_in_votes, is_initialized, dashboard_full_locations) 
         VALUES (1, 'Default', '{\"localhost\"}', 't', 'f', 'f', 't')""")
+    op.execute("""
+    SELECT nextval(pg_get_serial_sequence('deployment', 'id'))
+    """)
     op.execute("""INSERT INTO resource (
         resource_id, resource_type, deployment_id)
         VALUES (1, 'event', 1)""")
+    op.execute("""
+    SELECT nextval(pg_get_serial_sequence('resource', 'resource_id'))
+    """)
     op.execute("""INSERT INTO event (
         id, name, start, \"end\", resource_id)
         VALUES (1, 'Default', '1970-01-01 00:00:00', '1970-01-01 00:00:00', 1)
         """)
+    op.execute("""
+    SELECT nextval(pg_get_serial_sequence('event', 'id'))
+    """)
     op.execute("""INSERT INTO role (
         id, deployment_id, name) VALUES (1, 1, 'admin')""")
+    op.execute("""
+    SELECT nextval(pg_get_serial_sequence('role', 'id'))
+    """)
     op.execute("""INSERT INTO role (
         id, deployment_id, name) VALUES (2, 1, 'analyst')""")
+    op.execute("""
+    SELECT nextval(pg_get_serial_sequence('role', 'id'))
+    """)
     op.execute("""INSERT INTO role (
         id, deployment_id, name) VALUES (3, 1, 'manager')""")
+    op.execute("""
+    SELECT nextval(pg_get_serial_sequence('role', 'id'))
+    """)
     op.execute("""INSERT INTO role (
         id, deployment_id, name) VALUES (4, 1, 'clerk')""")
+    op.execute("""
+    SELECT nextval(pg_get_serial_sequence('role', 'id'))
+    """)
     op.execute("""INSERT INTO \"user\" (
         id, deployment_id, email, username, password, active)
         VALUES (1, 1, 'root@localhost', 'admin',
         '$pbkdf2-sha256$29000$mPN.751zjhGCUKqVMmZMSQ$3/RCkmdZaTa6PTAtgimPMB4tIheE/Yz/1tAM/yVRgkQ',
         't')""")
     op.execute("INSERT INTO roles_users (user_id, role_id) VALUES (1, 1)")
+    op.execute("""
+    SELECT nextval(pg_get_serial_sequence('user', 'id'))
+    """)
 
     for name in dir(permissions):
         item = getattr(permissions, name, None)
