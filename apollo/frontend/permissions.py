@@ -59,3 +59,10 @@ def require_item_perm(action, item, http_exception=403):
     perm = Permission(ItemNeed(action, item, 'object'), RoleNeed('admin'))
     if not perm.can():
         abort(http_exception, perm)
+
+
+def can_access_resource(resource):
+    perm = Permission(ItemNeed('access_resource', resource.resource_id,
+                               resource.resource_type),
+                      RoleNeed('admin'))
+    return perm.can()

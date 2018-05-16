@@ -67,7 +67,9 @@
           <th>{{ _('Name') }}</th>
           <th class="shrink">{{ _('Type') }}</th>
           {% for field in extra_fields %}
+          {% if perms.can_access_resource(field) %}
           <th>{{ field.label }}</th>
+          {% endif %}
           {% endfor %}
         </tr>
       </thead>
@@ -78,11 +80,13 @@
           <td>{{ location.name }}</td>
           <td class="shrink">{{ location.location_type.name }}</td>
           {% for field in extra_fields %}
+          {% if perms.can_access_resource(field) %}
           {%- if location.extra_data -%}
           <td>{{ location.extra_data.get(field.name)|default('', true) }}</td>
           {%- else -%}
           <td></td>
           {%- endif -%}
+          {% endif %}
           {% endfor %}
         </tr>
         {% else %}

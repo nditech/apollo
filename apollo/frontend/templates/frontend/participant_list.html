@@ -83,7 +83,9 @@ a:hover.arrow-style{text-decoration:none; color:#333;}
                <th>{{ _('Phone') }}</th>
                <th>{{ _('Organization') }}</th>
                {% for field in extra_fields %}
+               {% if perms.can_access_resource(field) %}
                <th>{{ field.label }}</th>
+               {% endif %}
                {% endfor %}
              </tr>
            </thead>
@@ -105,11 +107,13 @@ a:hover.arrow-style{text-decoration:none; color:#333;}
                <td>{{ participant.primary_phone|default('', true) }}</td>
                <td>{{ participant.partner|default('', true) }}</td>
                {% for field in extra_fields %}
+               {% if perms.can_access_resource(field) %}
                {%- if participant.extra_data -%}
                <td>{{ participant.extra_data.get(field.name)|default('', true) }}</td>
                {%- else -%}
                <td></td>
                {%- endif -%}
+               {% endif %}
                {% endfor %}
              </tr>
              {% else %}
