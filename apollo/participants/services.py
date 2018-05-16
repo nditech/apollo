@@ -4,7 +4,9 @@ from io import StringIO
 import re
 
 from apollo import constants
+from apollo.core import db
 from apollo.dal.service import Service
+from apollo.locations.models import Location
 from apollo.participants.models import (
     ParticipantSet,
     Participant, ParticipantGroup, ParticipantGroupType, ParticipantPartner,
@@ -21,13 +23,24 @@ class ParticipantService(Service):
     __model__ = Participant
 
     def export_list(self, query):
-        headers = [
-            'ID', 'Name', 'Partner', 'Role', 'Location ID',
+        participant = query.first()
+        participant_set = participant.participant_set
+        location_set = participant_set.location_set
+
+        location_types = location_set.location_types
+
+        # build headers
+        headers = ['ID', 'Name', 'Partner', 'Role', 'Location ID']
+        headers.extend(lt.name for lt in location_types)
+
+        headers.extend([
             'Supervisor ID', 'Gender', 'Email', 'Password',
             'Phone #1', 'Phone #2', 'Phone #3'
-        ]
+        ])
 
-        # TODO: location data missing
+        samples = location_set.samples
+        headers.extend(s.name for s in samples)
+
         # TODO: extra fields missing
         output_buffer = StringIO()
         output_buffer.write(constants.BOM_UTF8_STR)
@@ -51,13 +64,25 @@ class ParticipantService(Service):
                 participant.partner.name if participant.partner else '',
                 participant.role.name if participant.role else '',
                 participant.location.code,
-                # TODO: insert location tree here
-                participant.gender,
-                participant.email,
-                participant.password
             ]
 
+            name_path = participant.location.make_path() if participant.location else {}
+            record.extend(name_path.get(lt.name, '') for lt in location_types)
+
+            record.extend([
+                participant.supervisor.participant_id if participant.supervisor else '',
+                participant.gender.value if participant.gender else '',
+                participant.email,
+                participant.password
+            ])
+
             record.extend(phone_numbers)
+
+            for sample in samples:
+                subquery = Location.query.filter(
+                    Location.id == participant.location_id,
+                    Location.samples.contains(sample))
+                record.append(int(db.session.query(subquery.exists()).scalar()))
 
             # TODO: process extra fields here
             output_buffer = StringIO()
