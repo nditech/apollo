@@ -7,7 +7,7 @@ from arpeggio import PTNodeVisitor, visit_parse_tree
 from arpeggio.cleanpeg import ParserPEG
 from sqlalchemy import Boolean, Integer, and_, case, func
 
-from apollo.submissions.models import Submission
+from apollo.models import Location, Participant, Submission
 
 # NOTE: Arpeggio has 3 ways to represent a grammar:
 #   - a Python syntax (the canonical)
@@ -22,9 +22,10 @@ from apollo.submissions.models import Submission
 GRAMMAR = '''
 number = r'\d+\.{0,1}\d*'
 variable = r'[A-Z]+'
-attribute = r'\$[a-zA-Z_][a-zA-Z0-9_]*'
+name = r'[a-zA-Z_][a-zA-Z0-9_]*'
+lookup = "$" ("location" / "participant") ("." / "@") name
 null = "NULL"
-factor = ("+" / "-")? (number / variable / attribute / "(" expression ")")
+factor = ("+" / "-")? (number / variable / lookup / "(" expression ")")
 value = null / factor
 exponent = value (("^") value)*
 product = exponent (("*" / "/") exponent)*
@@ -134,15 +135,35 @@ class InlineQATreeVisitor(BaseVisitor):
         # with other types
         return self.submission.data.get(var_name)
 
+    def visit_lookup(self, node, children):
+        top_level_attr, symbol, name = children
+
+        attribute = getattr(self.submission, top_level_attr)
+
+        if symbol == '.':
+            return getattr(attribute, name)
+        else:
+            return attribute.extra_data.get(name)
+
 
 class QATreeVisitor(BaseVisitor):
     def __init__(self, defaults=True, **kwargs):
         self.form = kwargs.pop('form')
         super().__init__(defaults, **kwargs)
 
-    # def visit_attribute(self, node, children):
-    #     attribute_name = node.value[1:]
-    #     return getattr(Submission, attribute_name)
+    def visit_lookup(self, node, children):
+        top_level_attr, symbol, name = children
+
+        if top_level_attr == 'location':
+            if symbol == '.':
+                return getattr(Location, name)
+            else:
+                return Location.extra_data[name]
+        else:
+            if symbol == '.':
+                return getattr(Participant, name)
+            else:
+                return Participant.extra_data[name]
 
     def visit_variable(self, node, children):
         var_name = node.value
