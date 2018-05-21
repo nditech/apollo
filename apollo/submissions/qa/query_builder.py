@@ -100,7 +100,7 @@ class BaseVisitor(PTNodeVisitor):
         return total
 
     def visit_comparison(self, node, children):
-        comparison = children[0]
+        comparison = children[0] if children[0] != 'NULL' else None
         for i in range(2, len(children), 2):
             sign = children[i - 1]
             item = None if children[i] == 'NULL' else children[i]
@@ -109,9 +109,7 @@ class BaseVisitor(PTNodeVisitor):
         return comparison
 
     def visit_expression(self, node, children):
-        if len(children) == 1 and children[0] == 'NULL':
-            return None
-        expression = children[0]
+        expression = children[0] if children[0] != 'NULL' else None
         for i in range(2, len(children), 2):
             sign = children[i - 1]
             expression = OPERATIONS[sign](expression, children[i])
@@ -130,10 +128,7 @@ class InlineQATreeVisitor(BaseVisitor):
         if var_name not in self.form.tags:
             raise ValueError('Variable ({}) not in form'.format(var_name))
 
-        # casting is necessary because PostgreSQL will throw
-        # a fit if you attempt some operations that mix JSONB
-        # with other types
-        return self.submission.data.get(var_name)
+        return self.submission.data.get(var_name, 'NULL')
 
     def visit_lookup(self, node, children):
         top_level_attr, symbol, name = children
@@ -213,8 +208,7 @@ def process_inline_qa(expression, submission):
 
 
 def get_logical_check_stats(query, form, check):
-    complete_expression = '{} {} {}'.format(
-        check['lvalue'], check['comparator'], check['rvalue'])
+    complete_expression = '{lvalue} {comparator} {rvalue}'.format(**check)
     qa_query = generate_qa_query(complete_expression, form)
 
     qa_case_query = case([
