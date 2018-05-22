@@ -10,6 +10,8 @@ import pandas as pd
 
 from apollo.process_analysis.common import (
     dataframe_analysis, multiselect_dataframe_analysis)
+from apollo.submissions.models import QUALITY_STATUSES
+from apollo.submissions.qa.query_builder import get_inline_qa_status
 
 
 def _clean(fieldname):
@@ -112,3 +114,13 @@ def number_format(number):
 
 def reverse_dict(d):
     return {v: k for k, v in list(d.items())}
+
+
+def qa_status(submission, check):
+    result = get_inline_qa_status(submission, check)
+    if result is True:
+        return QUALITY_STATUSES['OK']
+    elif result is False:
+        return QUALITY_STATUSES['FLAGGED']
+    else:
+        return None
