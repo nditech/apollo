@@ -158,7 +158,6 @@
         <strong>PS</strong>
         {%- endif -%}
         </td>
-        <td colspan="2" style="vertical-align: middle; padding-left: 1.5em"><abbr title="{{ _('Confidence Level') }}"><i class="glyphicon glyphicon-thumbs-up"></i></abbr></td>
       </tr>
       {% for group in form.data.groups %}
       <tr>
@@ -189,12 +188,6 @@
         {%- else -%}
         <td class="ps-on{%- if master_form[field.tag].errors %} danger{% elif field.tag in submission.master.overridden_fields %} warning{%- endif -%}"{% if field.tag in submission.master.overridden_fields %} title="{{ _('Overridden Field') }}"{%- endif -%}>{{ render_submission_field(master_form[field.tag], disabled=1) }}</td>
         {%- endif -%}
-        {% if submission.master %}{% set score = submission.master.confidence.get(field.tag, None) %}{% else %}{% set score = None %}{% endif -%}
-        {% if score == 0 %}{% set score_label = 'label-danger' -%}
-        {% elif score == 1 %}{% set score_label = 'label-success' -%}
-        {% elif not score %}{% set score_label = 'label-default' -%}
-        {% else %}{% set score_label = 'label-warning' %}{% endif -%}
-        <td style="padding-top:14px"><span class="label {{ score_label }}">{% if score == None %}-{% else %}{{ '%.3g' % score|percent_of(1, 0) }}%{% endif %}</span></td>
         <th style="padding-top:14px"><span>{{ field.tag }}</span></th>
       </tr>
       {% endfor %}
