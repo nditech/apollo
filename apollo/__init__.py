@@ -23,6 +23,7 @@ custom_filters = {
     'timestamp': template_filters.mkunixtimestamp,
     'mean_filter': template_filters.mean_filter,
     'reverse_dict': template_filters.reverse_dict,
+    'qa_status': template_filters.qa_status,
 }
 
 
