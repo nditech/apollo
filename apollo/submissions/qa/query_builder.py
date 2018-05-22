@@ -178,31 +178,9 @@ class QATreeVisitor(BaseVisitor):
 
 def generate_qa_query(expression, form):
     parser = ParserPEG(GRAMMAR, 'qa')
-    try:
-        tree = parser.parse(expression)
-    except Exception:
-        raise
+    tree = parser.parse(expression)
 
-    try:
-        visitor = QATreeVisitor(form=form)
-    except Exception:
-        raise
-
-    return visit_parse_tree(tree, visitor)
-
-
-def process_inline_qa(expression, submission):
-    parser = ParserPEG(GRAMMAR, 'qa')
-    try:
-        tree = parser.parse(expression)
-    except Exception:
-        raise
-
-    try:
-        visitor = InlineQATreeVisitor(
-            form=submission.form, submission=submission)
-    except Exception:
-        raise
+    visitor = QATreeVisitor(form=form)
 
     return visit_parse_tree(tree, visitor)
 
@@ -221,3 +199,21 @@ def get_logical_check_stats(query, form, check):
     return query.with_entities(
         qa_case_query.label('status'),
         func.count(qa_case_query)).group_by('status').all()
+
+
+def get_inline_qa_status(submission, check):
+    check_expression = '{lvalue} {comparator} {rvalue}'.format(**check)
+
+    parser = ParserPEG(GRAMMAR, 'qa')
+    tree = parser.parse(check_expression)
+
+    visitor = InlineQATreeVisitor(form=submission.form, submission=submission)
+
+    try:
+        result = visit_parse_tree(tree, visitor)
+    except TypeError:
+        # tried to perform a math operation combining None and a number,
+        # most likely
+        return None
+
+    return result
