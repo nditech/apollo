@@ -226,9 +226,6 @@ class BaseQuestionnaireForm(Form):
                             services.submissions.find(
                                 id=submission.id
                             ).update(update_params, synchronize_session=False)
-                            # update the master submission, since this
-                            # is a checklist being updated
-                            models.Submission.precomp_and_update_related(submission)
                         update_submission_version(submission)
 
                     # update completion rating for participant
@@ -272,6 +269,10 @@ def build_questionnaire(form, data=None):
                         validators=[validators.optional()],
                         widget=widgets.TextInput()
                     )
+            elif field_type == 'string':
+                fields[field['tag']] = StringField(
+                    field['tag'], description=field['description'],
+                    validators=[validators.optional()])
             elif field_type == 'comment':
                 continue
             elif field_type in ('boolean', 'integer'):
