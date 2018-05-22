@@ -97,8 +97,6 @@ class Submission(BaseModel):
         default=VERIFICATION_STATUSES[0][0])
     incident_description = db.Column(db.String)
     incident_status = db.Column(ChoiceType(INCIDENT_STATUSES))
-    confidence = db.Column(JSONB, default={})
-    quality_assurance_status = db.Column(JSONB, default={})
     overridden_fields = db.Column(ARRAY(db.String), default=[])
     deployment = db.relationship('Deployment', backref='submissions')
     event = db.relationship('Event', backref='submissions')
@@ -149,8 +147,7 @@ class Submission(BaseModel):
                 obs_submission = cls(
                     form_id=form.id, participant_id=participant.id,
                     location_id=location.id, deployment_id=deployment_id,
-                    event_id=event.id, submission_type='O', data={},
-                    quality_assurance_status={})
+                    event_id=event.id, submission_type='O', data={})
                 obs_submission.save()
 
             master_submission = cls.query.filter_by(
@@ -162,8 +159,7 @@ class Submission(BaseModel):
                 master_submission = cls(
                     form_id=form.id, participant_id=None,
                     location_id=location.id, deployment_id=deployment_id,
-                    event_id=event.id, submission_type='M', data={},
-                    confidence={}, quality_assurance_status={})
+                    event_id=event.id, submission_type='M', data={})
                 master_submission.save()
 
     def get_incident_status_display(self):
@@ -247,138 +243,6 @@ class Submission(BaseModel):
             ).first()
 
         return self._master
-
-
-    @classmethod
-    def _compute_quality_assurance(cls, submission):
-        form = submission.form
-        if not form.quality_checks_enabled or not form.quality_checks:
-            return {}
-
-        quality_checks_results = {}
-        evaluator = grammar_factory(submission)
-        comparator = Comparator()
-        for check in form.quality_checks:
-            if submission.quality_assurance_status.get(check['name']) == \
-                    QUALITY_STATUSES['VERIFIED']:
-                continue
-
-            try:
-                lhs = evaluator(check['lvalue']).expr()
-                rhs = evaluator(check['rvalue']).expr()
-            except (
-                    AttributeError, NameError, ParseError, ValueError,
-                    TypeError):
-                try:
-                    quality_checks_results.pop(check['name'])
-                except KeyError:
-                    continue
-
-            comparator.param = lhs
-            all_ok = comparator.eval('{} {}'.format(check['comparator'], rhs))
-
-            if all_ok:
-                quality_checks_results[check['name']] = QUALITY_STATUSES['OK']
-            else:
-                quality_checks_results[check['name']] = \
-                    QUALITY_STATUSES['FLAGGED']
-
-        return quality_checks_results
-
-    @classmethod
-    def precomp_and_update_related(cls, submission):
-        '''Does precomputation of conflict for related subs,
-        confidence for master, updates for master, and QA'''
-        form = submission.form
-        if form.form_type == 'INCIDENT':
-            return
-
-        master = submission.__master()
-        all_siblings_query = master.__siblings()
-        quarantined_status_flags = [
-            i[0] for i in
-            [s for s in cls.QUARANTINE_STATUSES if s[0]]
-        ]
-        nonquarantined_siblings = all_siblings_query.filter(
-            ~cls.quarantine_status.in_(quarantined_status_flags)
-        )
-
-        form_tags = form.tags
-        if master.overridden_fields:
-            non_overridden_tags = set(form_tags).difference(master.overridden_fields)
-        else:
-            non_overridden_tags = form_tags
-
-        confidence = {}
-        conflicts = {}
-        master_data = master.data.copy() if master.data else {}
-        changed = False
-
-        for tag in non_overridden_tags:
-            # TODO: replace this if quarantined submissions
-            # are also used
-            score = None
-            field_values = [s.data.get(tag) for s in nonquarantined_siblings]
-            unique_field_values = list({frozenset(v) if isinstance(v, list) else v for v in field_values})
-
-            if field_values and len(unique_field_values) == 1 and unique_field_values[0] is not None:
-                # all non-quarantined values agree
-                # update master data in this case - this field
-                # wasn't overridden and all values agree
-                score = 1
-                master_data[tag] = unique_field_values[0]
-                changed = True
-            elif field_values and len(unique_field_values) == 1 and not unique_field_values[0]:
-                # do nothing - score is already None
-                pass
-            else:
-                normal_field_values = [v for v in field_values if v is not None]
-                normal_unique_values = list(set(normal_field_values))
-                if len(normal_unique_values) == 0 or len(normal_unique_values) > 1:
-                    score = 0
-                    if len(normal_unique_values) > 1:
-                        # conflict
-                        conflicts[tag] = True
-                else:
-                    # no conflict - not all participants
-                    # have reported a value
-                    try:
-                        score = len(normal_field_values) / len(field_values)
-                    except ZeroDivisionError:
-                        # shouldn't happen, but hey
-                        score = 0
-
-            if score is not None:
-                confidence[tag] = score
-
-        master_update_params = {}
-        # update conflict status for all related submissions
-        if conflicts:
-            all_siblings_query.update(
-                {'conflicts': conflicts}, synchronize_session=False)
-            master_update_params['conflicts'] = conflicts
-
-        if confidence:
-            master_update_params['confidence'] = confidence
-
-        if changed:
-            master_update_params['data'] = master_data
-            # also update the data attribute directly,
-            # as we'll need it to compute QA
-            master.data = master_data
-
-        # compute and update QA
-        qa_status = cls._compute_quality_assurance(submission)
-        qa_status_master = cls._compute_quality_assurance(master)
-        master_update_params['quality_assurance_status'] = qa_status_master
-        cls.query.filter_by(id=master.id).update(
-            master_update_params, synchronize_session=False)
-        cls.query.filter_by(id=submission.id).update(
-            {'quality_assurance_status': qa_status},
-            synchronize_session=False)
-
-        # persist all changes
-        db.session.commit()
 
 
 class SubmissionComment(BaseModel):
