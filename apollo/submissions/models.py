@@ -1,12 +1,10 @@
 # -*- coding: utf-8 -*-
 from flask_babelex import lazy_gettext as _
-from parsley import ParseError
 from sqlalchemy.dialects.postgresql import ARRAY, JSONB
 from sqlalchemy_utils import ChoiceType
 
 from apollo.core import db
 from apollo.dal.models import BaseModel
-from apollo.formsframework.parser import Comparator, grammar_factory
 from apollo.utils import current_timestamp
 
 FLAG_STATUSES = {

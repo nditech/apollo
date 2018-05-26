@@ -1,17 +1,18 @@
 # -*- coding: utf-8 -*-
-from operator import itemgetter
-
-from apollo.core import CharFilter, ChoiceFilter, FilterSet
-from apollo.helpers import _make_choices
-from apollo.submissions.models import FLAG_CHOICES
-from apollo.wtforms_ext import ExtendedSelectField, ExtendedMultipleSelectField
-from apollo.frontend.helpers import get_event
 from collections import defaultdict, OrderedDict
+
 from dateutil.parser import parse
 from flask_babelex import lazy_gettext as _
 from sqlalchemy import or_
-from apollo import services, models
 from wtforms import widgets, fields, Form
+
+from apollo import services, models
+from apollo.core import CharFilter, ChoiceFilter, FilterSet
+from apollo.frontend.helpers import get_event
+from apollo.helpers import _make_choices
+from apollo.submissions.models import FLAG_CHOICES
+from apollo.submissions.qa.query_builder import generate_qa_query
+from apollo.wtforms_ext import ExtendedSelectField, ExtendedMultipleSelectField
 
 
 class EventFilter(CharFilter):
@@ -131,42 +132,52 @@ class DynamicFieldFilter(ChoiceFilter):
 class QualityAssuranceFilter(ChoiceFilter):
     field_class = fields.FormField
 
-    def __init__(self, form, *args, **kwargs):
+    def __init__(self, form, qa_form, *args, **kwargs):
         kwargs['form_class'] = form
+        self.qa_form = qa_form
         super(QualityAssuranceFilter, self).__init__(*args, **kwargs)
 
-    def filter(self, queryset, value):
+    def filter(self, query, value):
         if (
             'criterion' in value and 'condition' in value and
             value['criterion'] and value['condition']
         ):
-            if value['condition'] == '-1':
-                query_kwargs = {
-                    'quality_checks__{}__exists'.format(
-                        value['criterion']): False}
-            elif value['condition'] == '4':
-                query_kwargs = {
-                    'verification_status': '4'}
-            elif value['condition'] == '5':
-                query_kwargs = {
-                    'verification_status': '5'}
-            else:
-                query_kwargs = {'quality_checks__{}'.format(
-                    value['criterion']): value['condition'],
-                    'verification_status__nin': ['4', '5']}
-            return queryset(**query_kwargs)
-        return queryset
+            try:
+                index = int(value['criterion'])
+                check = self.qa_form.quality_checks[index]
+            except (IndexError, ValueError):
+                return query
+
+            qa_expr = '{lvalue} {comparator} {rvalue}'.format(**check)
+            qa_subquery = generate_qa_query(qa_expr, self.qa_form)
+
+            condition = value['condition']
+            if condition == '4':
+                # verified
+                return query.filter(models.Submission.verification_status == '4')
+            elif condition == '5':
+                # verified
+                return query.filter(models.Submission.verification_status == '5')
+            elif condition == '-1':
+                # missing
+                return query.filter(qa_subquery == None)
+            elif condition == '0':
+                # OK
+                return query.filter(qa_subquery == True)
+            elif condition == '2':
+                # flagged
+                return query.filter(qa_subquery == False)
+        return query
 
 
 class SubmissionQuarantineStatusFilter(ChoiceFilter):
     def filter(self, queryset, value):
         if value:
             if value == 'N':
-                query_kwargs = {
-                    'quarantine_status__nin': [i[0] for i in [s for s in models.Submission.QUARANTINE_STATUSES if s[0]]]}
+                allowed_statuses = [i[0] for i in [s for s in models.Submission.QUARANTINE_STATUSES if s[0]]]
+                return queryset.filter(~models.Submission.quarantine_status.in_(allowed_statuses))
             else:
-                query_kwargs = {'quarantine_status': value}
-            return queryset(**query_kwargs)
+                return queryset.filter(models.Submission.quarantine_status == value)
         return queryset
 
 
@@ -431,7 +442,10 @@ def generate_critical_incident_location_filter(tag):
 
 def generate_quality_assurance_filter(form):
     quality_check_criteria = [('', _('Quality Check Criterion'))] + \
-        [(qc['name'], qc['description']) for qc in form.quality_checks]
+        [
+            (str(idx), qc['description'])
+            for idx, qc in enumerate(form.quality_checks)
+        ]
     quality_check_conditions = [('', _('Quality Check Condition'))] + \
         list(FLAG_CHOICES)
 
@@ -442,7 +456,7 @@ def generate_quality_assurance_filter(form):
     attributes = {}
 
     attributes['quality_check'] = QualityAssuranceFilter(
-        QualityAssuranceConditionsForm)
+        QualityAssuranceConditionsForm, form)
 
     # quarantine status
     attributes['quarantine_status'] = SubmissionQuarantineStatusFilter(
