@@ -192,7 +192,7 @@ def get_logical_check_stats(query, form, check):
     # add joins as necessary
     if '$location' in complete_expression:
         query = query.join(Location, Location.id == Submission.location_id)
-    
+
     if '$participant' in complete_expression:
         query = query.join(Participant, Participant.id == Submission.participant_id)
 
