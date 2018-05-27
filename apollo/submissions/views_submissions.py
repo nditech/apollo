@@ -34,6 +34,7 @@ from apollo.submissions.incidents import incidents_csv
 from apollo.submissions.aggregation import (
     aggregated_dataframe, _qa_counts)
 from apollo.submissions.models import QUALITY_STATUSES, Submission
+from apollo.submissions.qa.query_builder import get_inline_qa_status
 from apollo.submissions.recordmanagers import AggFrameworkExporter
 from apollo.submissions.utils import make_submission_dataframe
 from slugify import slugify_unicode
@@ -309,11 +310,18 @@ def submission_edit(submission_id):
         initial_data = submission.data.copy() if submission.data else {}
         initial_data.update(location=submission.location_id)
         initial_data.update(participant=submission.participant_id)
+        failed_checks = []
 
         if questionnaire_form.form_type == 'INCIDENT':
             initial_data.update(description=submission.incident_description)
             if submission.incident_status:
                 initial_data.update(status=submission.incident_status.code)
+        else:
+            if questionnaire_form.quality_checks_enabled:
+                for check in questionnaire_form.quality_checks:
+                    result = get_inline_qa_status(submission, check)
+                    if result is False:
+                        failed_checks.append(check['description'])
 
         submission_form = edit_form_class(
             data=initial_data,
@@ -342,7 +350,8 @@ def submission_edit(submission_id):
             master_form=master_form,
             readonly=readonly,
             location_types=location_types,
-            comments=comments
+            comments=comments,
+            failed_checks=failed_checks
         )
     else:
         if questionnaire_form.form_type == 'INCIDENT':

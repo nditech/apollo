@@ -115,12 +115,12 @@
 </div>
 <div>
 
-{% if submission.flagged_criteria and submission.form.verifiable and perms.edit_submission_verification_status.can() %}
+{% if failed_checks and submission.form.quality_checks_enabled and perms.edit_submission_verification_status.can() %}
 <div class="alert alert-warning alert-dismissible" role="alert">
   <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
   <strong>{{ _('Validation Errors!') }}</strong> {{ _('The following conditions were flagged while validating this submission.') }}
   <ul class="list-group" style="margin-top:1em">
-    {% for criteria in submission.flagged_criteria %}
+    {% for criteria in failed_checks %}
     <li class="list-group-item text-warning">{{ criteria }}</li>
     {% endfor %}
   </ul>
@@ -158,6 +158,7 @@
         <strong>PS</strong>
         {%- endif -%}
         </td>
+        <td>&nbsp;</td>
       </tr>
       {% for group in form.data.groups %}
       <tr>
