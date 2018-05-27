@@ -189,6 +189,13 @@ def get_logical_check_stats(query, form, check):
     complete_expression = '{lvalue} {comparator} {rvalue}'.format(**check)
     qa_query = generate_qa_query(complete_expression, form)
 
+    # add joins as necessary
+    if '$location' in complete_expression:
+        query = query.join(Location, Location.id == Submission.location_id)
+    
+    if '$participant' in complete_expression:
+        query = query.join(Participant, Participant.id == Submission.participant_id)
+
     qa_case_query = case([
         (qa_query == True, 'OK'),
         (and_(qa_query == False, Submission.verification_status == Submission.VERIFICATION_STATUSES[1][0]), 'Verified'),    # noqa

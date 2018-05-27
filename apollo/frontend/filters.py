@@ -151,6 +151,16 @@ class QualityAssuranceFilter(ChoiceFilter):
             qa_expr = '{lvalue} {comparator} {rvalue}'.format(**check)
             qa_subquery = generate_qa_query(qa_expr, self.qa_form)
 
+            if '$location' in qa_expr:
+                query = query.join(
+                    models.Location,
+                    models.Submission.location_id == models.Location.id)
+
+            if '$participant' in qa_expr:
+                query = query.join(
+                    models.Participant,
+                    models.Submission.participant_id == models.Participant.id)
+
             condition = value['condition']
             if condition == '4':
                 # verified
