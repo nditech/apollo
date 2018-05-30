@@ -67,3 +67,5 @@ def strip_bom_header(fileobj):
         fileobj.seek(len(codecs.BOM_UTF8))
     else:
         fileobj.seek(0)
+
+    return fileobj
