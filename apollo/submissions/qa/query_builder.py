@@ -30,7 +30,7 @@ value = null / factor
 exponent = value (("^") value)*
 product = exponent (("*" / "/") exponent)*
 sum = product (("+" / "-") product)*
-comparison = sum ((">=" / ">" / "<=" / "<" / "==" / "!=") sum)*
+comparison = sum ((">=" / ">" / "<=" / "<" / "=" / "!=") sum)*
 expression = comparison (("&&" / "||") comparison)*
 qa = expression+ EOF
 '''
@@ -46,7 +46,7 @@ OPERATIONS = {
     '>': op.gt,
     '<=': op.le,
     '<': op.lt,
-    '==': op.eq,
+    '=': op.eq,
     '!=': op.ne,
     '&&': op.and_,
     '||': op.or_
