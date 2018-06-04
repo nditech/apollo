@@ -84,7 +84,7 @@ def submission_list(form_id):
     event = g.event
     form = services.forms.find(
         id=form_id, form_set_id=event.form_set_id).first_or_404()
-    permissions.require_item_perm('view_forms', form)
+    permissions.can_access_resource(form)
 
     filter_class = filters.make_submission_list_filter(event, form)
     page_title = form.name
