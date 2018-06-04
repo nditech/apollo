@@ -94,14 +94,21 @@ class Form(Resource):
         return str(_('Form - %(name)s', name=self.name))
 
     def _populate_field_cache(self):
-        self._field_cache = {
-            f['tag']: f for g in self.data['groups'] for f in g['fields']
-        }
+        if self.data:
+            self._field_cache = {
+                f['tag']: f for g in self.data.get('groups', [])
+                for f in g.get('fields', [])
+            }
+        else:
+            self._field_cache = {}
 
     def _populate_group_cache(self):
-        self._group_cache = {
-            g['name']: g for g in self.data['groups']
-        }
+        if self.data:
+            self._group_cache = {
+                g['name']: g for g in self.data.get('groups', [])
+            }
+        else:
+            self._group_cache = {}
 
     def get_form_type_display(self):
         d = dict(Form.FORM_TYPES)
