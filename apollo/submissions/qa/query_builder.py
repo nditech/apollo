@@ -153,12 +153,12 @@ class QATreeVisitor(BaseVisitor):
             if symbol == '.':
                 return getattr(Location, name)
             else:
-                return Location.extra_data[name]
+                return Location.extra_data[name].astext
         else:
             if symbol == '.':
                 return getattr(Participant, name)
             else:
-                return Participant.extra_data[name]
+                return Participant.extra_data[name].astext
 
     def visit_variable(self, node, children):
         var_name = node.value
