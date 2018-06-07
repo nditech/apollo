@@ -12,7 +12,7 @@
   </form>
 </div>
 <div class="btn-group pull-right">
-  <button style="margin-right:1em" type="button" class="btn btn-sm btn-default" id="addDivisionButton"><i class="glyphicon glyphicon-plus"></i> {{ _('Add Division') }}</button>
+  <button style="margin-right:1em" type="button" class="btn btn-sm btn-default" id="addDivisionButton"><i class="glyphicon glyphicon-plus"></i> {{ _('Add division') }}</button>
   <a href="{{ url_for('locations.export_divisions', location_set_id=location_set.id) }}" class="btn btn-sm btn-default"><i class="glyphicon glyphicon-download"></i> {{ _('Export') }}</a>
   {% if not has_admin_divisions %}
   <button class="btn btn-sm btn-default" data-toggle="modal" data-target="#importModal"><i class="glyphicon glyphicon-upload"></i> {{ _('Import') }}</button>
@@ -46,12 +46,12 @@
             <div class="col-sm-10 col-sm-offset-2">
               <div class="checkbox">
                 <label for="addDivisionAdministrative">
-                  <input type="checkbox" name="is_administrative" id="addDivisionAdministrative" value="true" /> {{ _('Administrative Division') }}
+                  <input type="checkbox" name="is_administrative" id="addDivisionAdministrative" value="true" /> {{ _('Administrative division') }}
                 </label>
               </div>
               <div class="checkbox">
                 <label for="addDivisionPolitical">
-                  <input type="checkbox" name="is_political" id="addDivisionPolitical" value="true" /> {{ _('Political Division') }}
+                  <input type="checkbox" name="is_political" id="addDivisionPolitical" value="true" /> {{ _('Political division') }}
                 </label>
               </div>
               <div class="panel-group" id="accordion-add" role="tablist" aria-multiselectable="true">
@@ -108,12 +108,12 @@
           <div class="col-sm-10 col-sm-offset-2">
             <div class="checkbox">
               <label for="updateDivisionAdministrative">
-                <input type="checkbox" name="is_administrative" id="updateDivisionAdministrative" value="true" /> {{ _('Administrative Division') }}
+                <input type="checkbox" name="is_administrative" id="updateDivisionAdministrative" value="true" /> {{ _('Administrative division') }}
               </label>
             </div>
             <div class="checkbox">
               <label for="updateDivisionPolitical">
-                <input type="checkbox" name="is_political" id="updateDivisionPolitical" value="true" /> {{ _('Political Division') }}
+                <input type="checkbox" name="is_political" id="updateDivisionPolitical" value="true" /> {{ _('Political division') }}
               </label>
             </div>
             <div class="panel-group" id="accordion-update" role="tablist" aria-multiselectable="true">
