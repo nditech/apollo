@@ -180,21 +180,25 @@ a:hover.arrow-style{text-decoration:none; color:#333;}
       <!-- Step 1 -->
       <div class="wizard-card" data-cardname="uploadFile">
         <h3>Upload File</h3>
-
         <div class="wizard-input-section">
         <form enctype="multipart/form-data" method="POST" id="upload-form" action="{{ url_for('participants.participant_list_import') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
           <div class="form-group">
             <div class="col-sm-9">
               <div class="row">
+                <div class="col-sm-12">
+                  <p class="help-block">Please select a CSV file, or an Excel spreadsheet</p>
+                </div>
+              </div>
+              <div class="row">
                 <div class="col-sm-4">
                   <div class="fileUpload btn btn-default btn-sm" style="margin-left:1px;">
-                      <span>Browse</span>
-                      <i class="glyphicon glyphicon-search"></i>
-                      <input id="uploadBtn" type="file" class="upload" name="spreadsheet" />
+                    <span>Browse</span>
+                    <i class="glyphicon glyphicon-search"></i>
+                    <input id="uploadBtn" type="file" class="upload" name="spreadsheet" />
                   </div>
                 </div>
                 <div class="col-sm-8" style="margin-left:-30px;">
-                    <input id="uploadFile" type="text" placeholder="Data File" class="form-control input-sm" readonly>
+                  <input id="uploadFile" type="text" placeholder="Data File" class="form-control input-sm" readonly>
                 </div>
               </div>
             </div>
