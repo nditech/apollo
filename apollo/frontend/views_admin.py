@@ -277,11 +277,10 @@ class FormSetAdminView(SetViewMixin, BaseAdminView):
 
 
 class LocationSetAdminView(SetViewMixin, BaseAdminView):
-    column_list = ('name', 'divisions', 'locations', 'samples')
+    column_list = ('name', 'divisions', 'locations')
     column_formatters = {
         'divisions': macro('locations_builder'),
         'locations': macro('locations_list'),
-        'samples': macro('samples_list')
     }
     form_columns = ('name',)
     inline_models = (ExtraDataInlineFormAdmin(models.LocationDataField),)
