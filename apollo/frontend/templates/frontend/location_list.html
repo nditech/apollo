@@ -116,8 +116,8 @@
         <div class="modal-footer">
           <form action="{{ url_for('locations.nuke_locations', location_set_id=location_set_id) }}" method="POST">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            <button class="btn btn-danger" disabled="true" id="confirm_nuke">Yes, I understand</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">{{ _('Close') }}</button>
+            <button class="btn btn-danger" disabled="true" id="confirm_nuke">{{ _('Yes, I understand') }}</button>
           </form>
         </div>
       </div>
@@ -134,11 +134,6 @@
           <div class="form-group">
             <div class="col-sm-9">
               <div class="row">
-                <div class="col-sm-12">
-                  <p class="help-block">Please select a CSV file, or an Excel spreadsheet</p>
-                </div>
-              </div>
-              <div class="row">
                 <div class="col-sm-4">
                   <div class="fileUpload btn btn-default btn-sm" style="margin-left:1px;">
                     <span>Browse</span>
@@ -148,6 +143,9 @@
                 </div>
                 <div class="col-sm-8" style="margin-left:-30px;">
                   <input id="uploadFile" type="text" placeholder="Data File" class="form-control input-sm" readonly>
+                  <p class="help-block">
+                    <small>{{ _('(only .csv, .xls and .xlsx files)') }}</small>
+                  </p>
                   <input type="hidden" name="event" value="{{ g.event.id }}">
                 </div>
               </div>
