@@ -263,7 +263,8 @@ def quality_assurance(form_id, form_set_id=0):
     context = {
         'page_title': page_title,
         'check_data': check_data,
-        'form_set': form_set
+        'form_set': form_set,
+        'form_set_id': form_set_id
     }
 
     return render_template(template_name, **context)

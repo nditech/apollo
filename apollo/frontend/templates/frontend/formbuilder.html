@@ -2,7 +2,10 @@
 {% block stylesheets %}
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/angular-form-builder.css') }}">
 {% endblock %}
-{% block subtitle %}{{ form.form_set.name }}{% endblock subtitle %}
+{% block subtitle %}{% if form_set_id %}
+<a href="{{ url_for('forms.list_forms_with_set', form_set_id=form_set_id) }}">{{ form.form_set.name }}</a>{% else %}
+<a href="{{ url_for('forms.list_forms') }}">{{ form.form_set.name }}</a>{% endif %}
+{% endblock subtitle %}
 {% block content %}
 <div ng-app="app">
   <div class="row" id="formbuilder" ng-controller="BuilderController" data-form='{{ form_data|tojson }}' data-csrf="{{ csrf_token() }}">

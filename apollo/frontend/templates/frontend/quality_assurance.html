@@ -1,4 +1,11 @@
 {% extends 'frontend/_layout.html' %}
+{% block subtitle %}
+{% if form_set_id %}
+<a href="{{ url_for('forms.list_forms_with_set', form_set_id=form_set_id) }}">{{ form_set.name }}</a>
+{% else %}
+<a href="{{ url_for('forms.list_forms') }}">{{ form_set.name }}</a>
+{% endif %}
+{% endblock subtitle %}
 {% block toolbar %}
 <a class="btn btn-sm btn-primary pull-right" href="javascript:save();"><span class="glyphicon glyphicon-floppy-save"></span> {{ _('Save') }}</a>
 {% endblock %}
