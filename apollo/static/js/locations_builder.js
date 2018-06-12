@@ -76,7 +76,9 @@
       joint.layout.DirectedGraph.layout(graph, {
         nodeSep: 50,
         edgeSep: 80,
-        rankDir: 'TB'
+        rankDir: 'TB',
+        marginX: 50,
+        marginY: 50,
       });
     };
 
@@ -94,7 +96,7 @@
         // width: options.width,
         // height: options.height,
         gridSize: 1
-      }).on({'cell:pointerdblclick': this.launchUpdateModal});
+      }).on({'cell:pointerclick': this.launchUpdateModal});
 
       // init graph cells
       if (data) {

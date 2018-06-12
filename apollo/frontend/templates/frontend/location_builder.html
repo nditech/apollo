@@ -194,8 +194,8 @@
 </div>
 {%- endif -%}
 <div class="row">
-  <div class="col-md-10 col-md-offset-1">
-    <div id="paper" style="margin-top: 5em; border: 1px solid #000;" data-graph='{{ location_set.make_admin_divisions_graph()|tojson }}'></div>
+  <div class="col-md-12">
+    <div id="paper" style="margin-top: 5em" data-graph='{{ location_set.make_admin_divisions_graph()|tojson }}'></div>
   </div>
 </div>
 {% endblock content %}
