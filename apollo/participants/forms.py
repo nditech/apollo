@@ -23,10 +23,6 @@ def _validate_required_fields(form):
         errors.append(_('Participant ID was not mapped'))
         rv = False
 
-    if 'location' not in mapped_form_values:
-        errors.append(_('Location code was not mapped'))
-        rv = False
-
     form.errors['__validate__'] = errors
 
     return rv
