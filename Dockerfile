@@ -10,6 +10,7 @@ RUN set -ex \
             libxslt-dev \
             python3-dev \
             postgresql-dev \
+            linux-headers \
         && apk add --no-cache --virtual .python-deps python3 libmagic \
         && python3 -m ensurepip \
         && rm -r /usr/lib/python*/ensurepip \
@@ -18,7 +19,7 @@ RUN set -ex \
         && if [[ ! -e /usr/bin/python ]]; then ln -sf /usr/bin/python3 /usr/bin/python; fi \
         && pip install pipenv \
         && cd /app/ \
-        && pipenv install \
+        && PIP_NO_BUILD_ISOLATION=false pipenv install \
         && find /usr -depth \
             \( -type f -a -name '*.pyc' -o -name '*.pyo' \) \
             -exec rm -rf '{}' + \
