@@ -10,6 +10,7 @@ from flask_wtf.file import FileField
 from wtforms import (
     Form, BooleanField, IntegerField, SelectField, StringField, validators,
     widgets)
+from wtforms_alchemy.utils import choice_type_coerce_factory
 
 from .. import models, services, utils
 from ..frontend.helpers import DictDiffer
@@ -300,15 +301,16 @@ def build_questionnaire(form, data=None):
 class FormForm(SecureForm):
     name = StringField(_('Name'), validators=[validators.InputRequired()])
     prefix = StringField(_('Prefix'), validators=[validators.InputRequired()])
-    form_type = SelectField(_('Form type'), choices=models.Form.FORM_TYPES,
+    form_type = SelectField(_('Form Type'), choices=models.Form.FORM_TYPES,
+                            coerce=choice_type_coerce_factory(models.Form.form_type.type),
                             validators=[validators.InputRequired()])
-    require_exclamation = BooleanField(_('Require exclamation'))
+    require_exclamation = BooleanField(_('Require Exclamation'))
     calculate_moe = BooleanField(_('Calculate MOE'))
-    quality_checks_enabled = BooleanField(_('QA enabled'))
-    accredited_voters_tag = StringField(_('Accredited voters tag'))
-    blank_votes_tag = StringField(_('Blank votes tag'))
-    invalid_votes_tag = StringField(_('Invalid votes tag'))
-    registered_votes_tag = StringField(_('Registered voters tag'))
+    quality_checks_enabled = BooleanField(_('QA Enabled'))
+    accredited_voters_tag = StringField(_('Accredited Voters Field'))
+    blank_votes_tag = StringField(_('Blank Votes Field'))
+    invalid_votes_tag = StringField(_('Invalid Votes Field'))
+    registered_votes_tag = StringField(_('Registered Voters Field'))
 
 
 class FormImportForm(SecureForm):

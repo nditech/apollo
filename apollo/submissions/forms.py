@@ -66,56 +66,57 @@ def make_submission_edit_form_class(event, form):
         widget=widgets.HiddenInput()
     )
 
-    for index, group in enumerate(form.data['groups']):
-        for field in group['fields']:
-            field_type = field.get('type')
-            if field_type == 'comment':
-                form_fields[field['tag']] = fields.StringField(
-                    field['tag'],
-                    description=field['description'],
-                    validators=[validators.Optional()],
-                    widget=widgets.TextArea()
-                )
-            elif field_type in ('select', 'multiselect'):
-                choices = [(v, k) for k, v in field['options'].items()]
-
-                if field_type == 'multiselect':
-                    form_fields[field['tag']] = fields.SelectMultipleField(
+    if form.data and 'groups' in form.data:
+        for index, group in enumerate(form.data['groups']):
+            for field in group['fields']:
+                field_type = field.get('type')
+                if field_type == 'comment':
+                    form_fields[field['tag']] = fields.StringField(
                         field['tag'],
-                        choices=choices,
-                        coerce=int,
                         description=field['description'],
-                        filters=[lambda data: data if data else None],
                         validators=[validators.Optional()],
-                        option_widget=widgets.CheckboxInput(),
-                        widget=widgets.ListWidget()
+                        widget=widgets.TextArea()
                     )
+                elif field_type in ('select', 'multiselect'):
+                    choices = [(v, k) for k, v in field['options'].items()]
+
+                    if field_type == 'multiselect':
+                        form_fields[field['tag']] = fields.SelectMultipleField(
+                            field['tag'],
+                            choices=choices,
+                            coerce=int,
+                            description=field['description'],
+                            filters=[lambda data: data if data else None],
+                            validators=[validators.Optional()],
+                            option_widget=widgets.CheckboxInput(),
+                            widget=widgets.ListWidget()
+                        )
+                    else:
+                        form_fields[field['tag']] = fields.IntegerField(
+                            field['tag'],
+                            description=field['description'],
+                            validators=[
+                                validators.Optional(),
+                                validators.AnyOf([v for v, k in choices])],
+                            widget=widgets.TextInput()
+                        )
                 else:
-                    form_fields[field['tag']] = fields.IntegerField(
-                        field['tag'],
-                        description=field['description'],
-                        validators=[
-                            validators.Optional(),
-                            validators.AnyOf([v for v, k in choices])],
-                        widget=widgets.TextInput()
-                    )
-            else:
-                if form.form_type == 'CHECKLIST' and field_type != 'boolean':
-                    form_fields[field['tag']] = fields.IntegerField(
-                        field['tag'], description=field['description'],
-                        validators=[
-                            validators.Optional(),
-                            validators.NumberRange(
-                                min=field.get('min', 0),
-                                max=field.get('max', 9999))]
-                    )
-                else:
-                    form_fields[field['tag']] = fields.BooleanField(
-                        field['tag'],
-                        description=field['description'],
-                        filters=[lambda data: 1 if data else None],
-                        validators=[validators.Optional()]
-                    )
+                    if form.form_type == 'CHECKLIST' or field_type != 'boolean':
+                        form_fields[field['tag']] = fields.IntegerField(
+                            field['tag'], description=field['description'],
+                            validators=[
+                                validators.Optional(),
+                                validators.NumberRange(
+                                    min=field.get('min', 0),
+                                    max=field.get('max', 9999))]
+                        )
+                    else:
+                        form_fields[field['tag']] = fields.BooleanField(
+                            field['tag'],
+                            description=field['description'],
+                            filters=[lambda data: 1 if data else None],
+                            validators=[validators.Optional()]
+                        )
 
     # TODO: verification status required
     # if form.form_type == 'CHECKLIST' and permissions.edit_submission_quarantine_status.can():

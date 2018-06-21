@@ -251,8 +251,6 @@ def make_submission_list_filter(event, form):
                 ), field['tag'])
                 attributes[field['tag']] = FieldOptionFilter(choices=choices)
 
-            attributes['status'] = IncidentStatusFilter()
-
         for group in form.data.get('groups'):
             field_name = '{}__{}'.format(form.id, group['slug'])
             choices = [
@@ -265,17 +263,20 @@ def make_submission_list_filter(event, form):
             attributes[field_name] = FormGroupFilter(
                 choices=choices, form=form, group=group)
 
-        attributes['quarantine_status'] = SubmissionQuarantineStatusFilter(
-            choices=(
-                ('', _('Quarantine Status')),
-                ('N', _('Quarantine None')),
-                ('A', _('Quarantine All')),
-                ('R', _('Quarantine Results'))
-            ))
+    if form.form_type == 'INCIDENT':
+        attributes['status'] = IncidentStatusFilter()
 
-        attributes['participant_id'] = ParticipantIDFilter()
-        attributes['location'] = make_submission_location_filter(
-            event.location_set_id)()
+    attributes['quarantine_status'] = SubmissionQuarantineStatusFilter(
+        choices=(
+            ('', _('Quarantine Status')),
+            ('N', _('Quarantine None')),
+            ('A', _('Quarantine All')),
+            ('R', _('Quarantine Results'))
+        ))
+
+    attributes['participant_id'] = ParticipantIDFilter()
+    attributes['location'] = make_submission_location_filter(
+        event.location_set_id)()
 
     return type(
         'SubmissionFilterSet',

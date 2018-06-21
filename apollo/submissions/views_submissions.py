@@ -174,8 +174,6 @@ def submission_list(form_id):
         models.Submission.participant_id == models.Participant.id
     ).order_by(models.Location.code, models.Participant.participant_id)
 
-    print(queryset.count())
-
     query_filterset = filter_class(queryset, request.args)
     filter_form = query_filterset.form
 
@@ -198,9 +196,12 @@ def submission_list(form_id):
     if form.form_type == 'CHECKLIST':
         form_fields = []
     else:
-        form_fields = [
-            field for group in form.data['groups']
-            for field in group['fields'] if not field.get('is_comment')]
+        if form.data and 'groups' in form.data:
+            form_fields = [
+                field for group in form.data['groups']
+                for field in group['fields'] if not field.get('is_comment')]
+        else:
+            form_fields = []
 
     return render_template(
         template_name,

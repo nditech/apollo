@@ -193,7 +193,7 @@ def list_forms(form_set_id=0):
 
     page_title = _('Forms')
 
-    forms = services.forms.find(form_set_id=form_set.id)
+    forms = services.forms.find(form_set_id=form_set.id).order_by('name')
     checklist_init_form = make_checklist_init_form(g.event)
     form_import_form = FormImportForm()
 
