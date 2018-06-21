@@ -10,16 +10,9 @@ from apollo.frontend.forms import _make_choices
 from apollo.helpers import load_source_file
 
 
-class SampleForm(FlaskForm):
-    '''Sample creation form'''
-    name = StringField(_('Name'), validators=[InputRequired()])
-    location_data = StringField(
-        _('Locations'), widget=HiddenInput())
-
-
 class AdminDivisionImportForm(FlaskForm):
     '''Form for processing admin division imports'''
-    import_file = FileField(_('Import file'), validators=[InputRequired()])
+    import_file = FileField(_('Import File'), validators=[InputRequired()])
 
 
 def _validate_mappings(form):
