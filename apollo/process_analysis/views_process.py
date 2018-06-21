@@ -186,24 +186,24 @@ def _process_analysis(event, form_id, location_id=None, tag=None):
     dynamic_list_constructor=partial(get_process_analysis_menu),
     visible_when=lambda: len(get_process_analysis_menu()) > 0
     and permissions.view_process_analysis.can())
-@permissions.view_process_analysis.require(403)
 @login_required
+@permissions.view_process_analysis.require(403)
 def process_analysis(form_id):
     event = g.event
     return _process_analysis(event, form_id)
 
 
 @route(bp, '/submissions/analysis/process/form/<int:form_id>/location/<int:location_id>')
-@permissions.view_process_analysis.require(403)
 @login_required
+@permissions.view_process_analysis.require(403)
 def process_analysis_with_location(form_id, location_id):
     event = g.event
     return _process_analysis(event, form_id, location_id)
 
 
 @route(bp, '/submissions/analysis/process/form/<int:form_id>/location/<int:location_id>/tag/<tag>')
-@permissions.view_process_analysis.require(403)
 @login_required
+@permissions.view_process_analysis.require(403)
 def process_analysis_with_location_and_tag(form_id, location_id, tag):
     event = g.event
     return _process_analysis(event, form_id, location_id, tag)

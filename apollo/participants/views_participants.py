@@ -58,8 +58,8 @@ def has_participant_set():
     visible_when=lambda: permissions.view_participants.can()
     and has_participant_set(),
     order=5)
-@permissions.view_participants.require(403)
 @login_required
+@permissions.view_participants.require(403)
 def participant_list(participant_set_id=0):
     if participant_set_id:
         participant_set = services.participant_sets.fget_or_404(
@@ -169,8 +169,8 @@ def participant_list(participant_set_id=0):
        endpoint="participant_performance_list_with_set", methods=['GET'])
 @route(bp, '/participants/performance',
        endpoint='participant_performance_list', methods=['GET'])
-@permissions.view_participants.require(403)
 @login_required
+@permissions.view_participants.require(403)
 def participant_performance_list(participant_set_id=0):
     if participant_set_id:
         participant_set = services.participant_sets.fget_or_404(
@@ -272,8 +272,8 @@ def participant_performance_list(participant_set_id=0):
 
 
 @route(bp, '/participant/performance/<pk>')
-@permissions.view_participants.require(403)
 @login_required
+@permissions.view_participants.require(403)
 def participant_performance_detail(pk):
     participant = services.participants.get_or_404(id=pk)
     page_title = _('Participant Performance')
@@ -293,8 +293,8 @@ def participant_performance_detail(pk):
 
 
 @route(bp, '/participant/phone/verify', methods=['POST'])
-@permissions.edit_participant.require(403)
 @login_required
+@permissions.edit_participant.require(403)
 def participant_phone_verify():
     if request.is_xhr:
         contributor = request.form.get('contributor')
@@ -318,8 +318,8 @@ def participant_phone_verify():
        endpoint="participant_edit_with_set", methods=['GET', 'POST'])
 @route(bp, '/participant/<int:id>',
        endpoint='participant_edit', methods=['GET', 'POST'])
-@permissions.edit_participant.require(403)
 @login_required
+@permissions.edit_participant.require(403)
 def participant_edit(id, participant_set_id=0):
     participant = services.participants.fget_or_404(id=id)
     page_title = _(
@@ -403,8 +403,8 @@ def participant_edit(id, participant_set_id=0):
        endpoint='participant_list_import_with_set', methods=['POST'])
 @route(bp, '/participants/import',
        endpoint='participant_list_import', methods=['POST'])
-@permissions.import_participants.require(403)
 @login_required
+@permissions.import_participants.require(403)
 def participant_list_import(participant_set_id=0):
     if participant_set_id:
         participant_set = services.participant_sets.fget_or_404(
@@ -443,8 +443,8 @@ def participant_list_import(participant_set_id=0):
        methods=['GET', 'POST'])
 @route(bp, '/participants/headers/<int:upload_id>',
        endpoint='participant_headers', methods=['GET', 'POST'])
-@permissions.import_participants.require(403)
 @login_required
+@permissions.import_participants.require(403)
 def participant_headers(upload_id, participant_set_id=0):
     if participant_set_id:
         participant_set = services.participant_sets.fget_or_404(
@@ -513,8 +513,8 @@ def participant_headers(upload_id, participant_set_id=0):
 
 
 @route(bp, '/participants/purge', methods=['POST'])
-@admin_required(403)
 @login_required
+@admin_required(403)
 def nuke_participants():
     event = g.event
 

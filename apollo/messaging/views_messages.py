@@ -7,6 +7,7 @@ from flask import (
     stream_with_context)
 from flask_babelex import lazy_gettext as _
 from flask_menu import register_menu
+from flask_security import login_required
 import pandas as pd
 from slugify import slugify_unicode
 
@@ -25,6 +26,7 @@ bp = Blueprint('messages', __name__)
     icon='<i class="glyphicon glyphicon-envelope"></i>',
     visible_when=lambda: permissions.view_messages.can(),
     order=6)
+@login_required
 @permissions.view_messages.require(403)
 def message_list():
     page_title = _('Messages')

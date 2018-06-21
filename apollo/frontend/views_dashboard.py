@@ -213,8 +213,8 @@ def concurrent_events(event_id):
 @register_menu(
     bp, 'user.events', _('Events'),
     visible_when=partial(lambda: permissions.view_events.can()))
-@permissions.view_events.require(403)
 @login_required
+@permissions.view_events.require(403)
 def event_selection():
     page_title = _('Choose Event')
     template_name = 'frontend/event_selection.html'

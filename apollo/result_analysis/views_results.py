@@ -453,15 +453,15 @@ def _voting_results(form_id, location_id=None):
     dynamic_list_constructor=partial(get_result_analysis_menu),
     visible_when=lambda: len(get_result_analysis_menu()) > 0
     and permissions.view_result_analysis.can())
-@permissions.view_result_analysis.require(403)
 @login_required
+@permissions.view_result_analysis.require(403)
 def results_analysis(form_id):
     return _voting_results(form_id)
 
 
 @route(bp, '/submissions/analysis/results/form/<form_id>/location/<location_id>')
-@permissions.view_result_analysis.require(403)
 @login_required
+@permissions.view_result_analysis.require(403)
 def results_analysis_with_location(form_id, location_id):
     return _voting_results(form_id, location_id)
 

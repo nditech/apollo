@@ -52,8 +52,8 @@ location_api.add_resource(
 
 
 @route(bp, '/locations/set/<int:location_set_id>', methods=['GET'])
-@permissions.edit_locations.require(403)
 @login_required
+@permissions.edit_locations.require(403)
 def location_list(location_set_id):
     template_name = 'frontend/location_list.html'
     page_title = _('Locations')
@@ -102,8 +102,8 @@ def location_list(location_set_id):
 
 
 @route(bp, '/location/<int:id>', methods=['GET', 'POST'])
-@permissions.edit_locations.require(403)
 @login_required
+@permissions.edit_locations.require(403)
 def location_edit(id):
     template_name = 'frontend/location_edit.html'
     location = models.Location.query.filter_by(id=id).first_or_404()
@@ -127,8 +127,8 @@ def location_edit(id):
 
 
 @route(bp, '/locations/set/<int:location_set_id>/import', methods=['POST'])
-@permissions.import_locations.require(403)
 @login_required
+@permissions.import_locations.require(403)
 def locations_import(location_set_id):
     form = file_upload_form(request.form)
 
@@ -152,8 +152,8 @@ def locations_import(location_set_id):
 @route(bp, '/locations/set/<int:location_set_id>'
            '/headers/upload/<int:upload_id>',
        methods=['GET', 'POST'])
-@permissions.import_locations.require(403)
 @login_required
+@permissions.import_locations.require(403)
 def location_headers(location_set_id, upload_id):
     user = current_user._get_current_object()
     location_set = services.location_sets.fget_or_404(id=location_set_id)
@@ -205,11 +205,8 @@ def location_headers(location_set_id, upload_id):
 
 @route(bp, '/locations/set/<int:location_set_id>/builder',
        methods=['GET', 'POST'])
-# @register_menu(
-#     bp, 'user.locations_builder', _('Administrative Divisions'),
-#     visible_when=lambda: permissions.edit_locations.can())
-@permissions.edit_locations.require(403)
 @login_required
+@permissions.edit_locations.require(403)
 def locations_builder(location_set_id):
     location_set = models.LocationSet.query.get_or_404(location_set_id)
 
@@ -262,8 +259,8 @@ def locations_builder(location_set_id):
 
 
 @route(bp, '/locations/set/<int:location_set_id>/purge', methods=['POST'])
-@admin_required(403)
 @login_required
+@admin_required(403)
 def nuke_locations(location_set_id):
     flash(
         str(_('Locations, Checklists, Critical Incidents and '
@@ -278,8 +275,8 @@ def nuke_locations(location_set_id):
 
 
 @route(bp, '/samples/<int:location_set_id>/new', methods=['GET', 'POST'])
-@permissions.edit_locations.require(403)
 @login_required
+@permissions.edit_locations.require(403)
 def sample_new(location_set_id):
     page_title = _('Create new sample')
     sample_form = forms.SampleForm(data={'location_data': json.dumps([])})
@@ -310,8 +307,8 @@ def sample_new(location_set_id):
 
 
 @route(bp, '/samples/set/<int:location_set_id>', methods=['GET'])
-@permissions.edit_locations.require(403)
 @login_required
+@permissions.edit_locations.require(403)
 def sample_list(location_set_id):
     page_title = _('Samples')
     samples = services.samples.find(location_set_id=location_set_id)
@@ -332,8 +329,8 @@ def sample_list(location_set_id):
 
 
 @route(bp, '/sample/<int:sample_id>', methods=['GET', 'POST'])
-@permissions.edit_locations.require(403)
 @login_required
+@permissions.edit_locations.require(403)
 def sample_edit(sample_id):
     sample = services.samples.fget_or_404(id=sample_id)
     page_title = _('Edit sample %(name)s', name=sample.name)
@@ -387,8 +384,8 @@ def sample_edit(sample_id):
 
 @route(bp, '/locations/set/<int:location_set_id>/export_divisions',
        methods=['GET'])
-@permissions.edit_locations.require(403)
 @login_required
+@permissions.edit_locations.require(403)
 def export_divisions(location_set_id):
     location_set = services.location_sets.fget_or_404(id=location_set_id)
     # TODO: when the representation of the graph is converted to POPOs,
@@ -406,8 +403,8 @@ def export_divisions(location_set_id):
 
 @route(bp, '/locations/set/<int:location_set_id>/import_divisions',
        methods=['POST'])
-@permissions.edit_locations.require(403)
 @login_required
+@permissions.edit_locations.require(403)
 def import_divisions(location_set_id):
     location_set = services.location_sets.fget_or_404(id=location_set_id)
     form = forms.AdminDivisionImportForm()

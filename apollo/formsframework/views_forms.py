@@ -24,8 +24,8 @@ bp = Blueprint('forms', __name__, template_folder='templates',
        endpoint='checklist_init_with_set', methods=['POST'])
 @route(bp, '/forms/init',
        endpoint='checklist_init', methods=['POST'])
-@permissions.edit_forms.require(403)
 @login_required
+@permissions.edit_forms.require(403)
 def checklist_init(form_set_id=0):
     if form_set_id:
         form_set = services.form_sets.fget_or_404(id=form_set_id)
@@ -64,8 +64,8 @@ def checklist_init(form_set_id=0):
        endpoint='form_builder_with_set', methods=['GET', 'POST'])
 @route(bp, '/formbuilder/<int:id>',
        endpoint='form_builder', methods=['GET', 'POST'])
-@permissions.edit_forms.require(403)
 @login_required
+@permissions.edit_forms.require(403)
 def form_builder(id, form_set_id=0):
     page_title = _('Form Builder')
     template_name = 'frontend/formbuilder.html'
@@ -93,8 +93,8 @@ def form_builder(id, form_set_id=0):
        endpoint='new_form_with_set', methods=['GET', 'POST'])
 @route(bp, '/forms/new',
        endpoint='new_form', methods=['GET', 'POST'])
-@permissions.edit_forms.require(403)
 @login_required
+@permissions.edit_forms.require(403)
 def new_form(form_set_id=0):
     if form_set_id:
         form_set = services.form_sets.fget_or_404(id=form_set_id)
@@ -141,8 +141,8 @@ def new_form(form_set_id=0):
        endpoint='edit_form_with_set', methods=['GET', 'POST'])
 @route(bp, '/forms/<int:form_id>',
        endpoint='edit_form', methods=['GET', 'POST'])
-@permissions.edit_forms.require(403)
 @login_required
+@permissions.edit_forms.require(403)
 def edit_form(form_id, form_set_id=0):
     if form_set_id:
         form_set = services.form_sets.fget_or_404(id=form_set_id)
@@ -181,8 +181,8 @@ def edit_form(form_id, form_set_id=0):
 @register_menu(
     bp, 'user.forms', _('Forms'),
     visible_when=lambda: permissions.edit_forms.can())
-@permissions.edit_forms.require(403)
 @login_required
+@permissions.edit_forms.require(403)
 def list_forms(form_set_id=0):
     if form_set_id:
         form_set = services.form_sets.fget_or_404(id=form_set_id)
@@ -212,8 +212,8 @@ def list_forms(form_set_id=0):
        endpoint='quality_assurance_with_set', methods=['GET', 'POST'])
 @route(bp, '/forms/<int:form_id>/qa',
        endpoint='quality_assurance', methods=['GET', 'POST'])
-@permissions.edit_forms.require(403)
 @login_required
+@permissions.edit_forms.require(403)
 def quality_assurance(form_id, form_set_id=0):
     if form_set_id:
         form_set = services.form_sets.fget_or_404(id=form_set_id)
@@ -271,8 +271,8 @@ def quality_assurance(form_id, form_set_id=0):
 
 
 @route(bp, '/forms/<int:id>/export', methods=['GET'])
-@permissions.edit_forms.require(403)
 @login_required
+@permissions.edit_forms.require(403)
 def export_form(id):
     form = services.forms.fget_or_404(id=id)
     memory_file = BytesIO()
@@ -290,8 +290,8 @@ def export_form(id):
        endpoint='import_form_schema_with_set', methods=['POST'])
 @route(bp, '/forms/import',
        endpoint='import_form_schema', methods=['POST'])
-@permissions.edit_forms.require(403)
 @login_required
+@permissions.edit_forms.require(403)
 def import_form_schema(form_set_id=0):
     if form_set_id:
         form_set = services.form_sets.fget_or_404(id=form_set_id)

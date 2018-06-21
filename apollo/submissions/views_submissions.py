@@ -218,8 +218,8 @@ def submission_list(form_id):
 
 
 @route(bp, '/submissions/<int:form_id>/new', methods=['GET', 'POST'])
-@permissions.add_submission.require(403)
 @login_required
+@permissions.add_submission.require(403)
 def submission_create(form_id):
     event = g.event
     questionnaire_form = services.forms.find(
@@ -287,8 +287,8 @@ def submission_create(form_id):
 
 
 @route(bp, '/submissions/<int:submission_id>', methods=['GET', 'POST'])
-@permissions.edit_submission.require(403)
 @login_required
+@permissions.edit_submission.require(403)
 def submission_edit(submission_id):
     event = g.event
     submission = services.submissions.find(
@@ -581,8 +581,8 @@ def submission_edit(submission_id):
 
 
 @route(bp, '/comments', methods=['POST'])
-@permissions.edit_submission.require(403)
 @login_required
+@permissions.edit_submission.require(403)
 def comment_create_view():
     submission = services.submissions.fget_or_404(
         id=request.form.get('submission'))
@@ -717,8 +717,8 @@ def submission_version(submission_id, version_id):
     dynamic_list_constructor=partial(
         get_quality_assurance_form_dashboard_menu,
         form_type='CHECKLIST', quality_checks_enabled=True))
-@permissions.view_quality_assurance.require(403)
 @login_required
+@permissions.view_quality_assurance.require(403)
 def quality_assurance_dashboard(form_id):
     form = services.forms.fget_or_404(id=form_id, form_type='CHECKLIST')
     page_title = _('Quality Assurance — %(name)s', name=form.name)
@@ -768,8 +768,8 @@ def quality_assurance_dashboard(form_id):
     dynamic_list_constructor=partial(
         get_quality_assurance_form_list_menu,
         form_type='CHECKLIST', quality_checks_enabled=True))
-@permissions.view_quality_assurance.require(403)
 @login_required
+@permissions.view_quality_assurance.require(403)
 def quality_assurance_list(form_id):
     form = services.forms.get_or_404(
         models.Form.id == form_id,
