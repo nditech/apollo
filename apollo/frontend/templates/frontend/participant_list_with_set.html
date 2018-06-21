@@ -91,7 +91,7 @@ a:hover.arrow-style{text-decoration:none; color:#333;}
              {% for participant in participants.items %}
              <tr>
                {%- if perms.edit_participant.can() -%}
-               <td class="text-right shrink"><a href="{{ url_for('participants.participant_edit', id=participant.id) }}" data-toggle="modal" data-target="#edit_modal">{{ participant.participant_id }}</a></td>
+               <td class="text-right shrink"><a href="{{ url_for('participants.participant_edit_with_set', id=participant.id, participant_set_id=participant_set_id) }}" data-toggle="modal" data-target="#edit_modal">{{ participant.participant_id }}</a></td>
                {%- else -%}
                <td class="text-right shrink">{{ participant.participant_id }}</td>
                {%- endif -%}

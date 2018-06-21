@@ -1,4 +1,9 @@
-<form class="form-horizontal" method="POST">
+<form class="form-horizontal" method="POST" action="
+{%- if participant_set_id -%}
+{{ url_for('participants.participant_edit_with_set', id=participant.id, participant_set_id=participant_set_id) }}
+{%- else -%}
+{{ url_for('participants.participant_edit', id=participant.id) }}
+{%- endif %}">
 <div class="modal-header">
   <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
   <h4 class="modal-title" id="myModalLabel">{{ _('Edit Participant') }}</h4>

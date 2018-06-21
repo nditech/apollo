@@ -314,10 +314,13 @@ def participant_phone_verify():
         abort(400)
 
 
-@route(bp, '/participant/<int:id>', methods=['GET', 'POST'])
+@route(bp, '/participant/set/<int:participant_set_id>/<int:id>',
+       endpoint="participant_edit_with_set", methods=['GET', 'POST'])
+@route(bp, '/participant/<int:id>',
+       endpoint='participant_edit', methods=['GET', 'POST'])
 @permissions.edit_participant.require(403)
 @login_required
-def participant_edit(id):
+def participant_edit(id, participant_set_id=0):
     participant = services.participants.fget_or_404(id=id)
     page_title = _(
         'Edit Participant · %(participant_id)s',
@@ -383,12 +386,16 @@ def participant_edit(id):
                     setattr(participant, extra_field.name, field_data)
             participant.save()
 
-            return redirect(url_for(
-                'participants.participant_list',
-                participant_set_id=participant_set.id))
+            if participant_set_id:
+                return redirect(url_for(
+                    'participants.participant_list_with_set',
+                    participant_set_id=participant_set.id))
+            else:
+                return redirect(url_for('participants.participant_list'))
 
     return render_template(
         template_name, form=form, page_title=page_title,
+        participant_set_id=participant_set_id,
         participant=participant)
 
 
