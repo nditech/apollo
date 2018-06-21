@@ -38,7 +38,9 @@ class LocationSet(BaseModel):
         ).with_entities(
             LocationType.id,
             LocationType.name,
-            LocationType.has_registered_voters
+            LocationType.has_registered_voters,
+            LocationType.is_administrative,
+            LocationType.is_political
         ).all()
 
         nx_graph = nx.DiGraph()
