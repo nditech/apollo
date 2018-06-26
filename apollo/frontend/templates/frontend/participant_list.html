@@ -208,13 +208,15 @@ a:hover.arrow-style{text-decoration:none; color:#333;}
         </div>
 
         <div class="wizard-error">
-          <div class="alert alert-error">
+          <div class="alert alert-danger">
             <strong>There was a problem</strong> with your submission. Please correct the errors and re-submit.
+            <ul id="error-list"></ul>
           </div>
+          <button class="btn btn-default" id="close-wizard">Close</button>
         </div>
 
         <div class="wizard-failure">
-          <div class="alert alert-error">
+          <div class="alert alert-danger">
             <strong>There was a problem</strong> submitting the form. Please try again in a minute.
           </div>
         </div>
@@ -280,12 +282,16 @@ $(function(){
     });
     {%- endif -%}
 
-    wizard = $('#import-wizard').wizard({
+    var wizard = $('#import-wizard').wizard({
         keyboard : true,
         contentHeight : 500,
         contentWidth : 700,
         showCancel: true,
         backdrop: 'static'
+    });
+
+    $('#close-wizard').on('click', function () {
+      wizard.close();
     });
 
     wizard.on('closed', function() {
@@ -323,11 +329,11 @@ $(function(){
             wizard._submitting = false;
             wizard.submitSuccess();
             wizard.updateProgressBar(0);
-        }).fail(function () {
-            wizard.trigger("failure");
-            wizard.hideButtons();
-            wizard._submitting = false;
-            wizard.updateProgressBar(0);
+        }).fail(function (data) {
+          wizard.submitError();
+          $.each(data.responseJSON.errors, function (index, msg) {
+            $('#error-list').append('<li>' + msg + '</li>');
+          });
         });
     });
 

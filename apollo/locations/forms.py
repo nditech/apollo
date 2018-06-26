@@ -29,8 +29,8 @@ def _validate_mappings(form):
         if lt_values:
             if '{}_code'.format(location_type.id) not in lt_values:
                 errors.append(
-                    _('Properties for %(loc_type_name)s were mapped, but no code was specified',
-                      loc_type_name=location_type.name))
+                    str(_('Properties for %(loc_type_name)s were mapped, but no code was specified',
+                        loc_type_name=location_type.name)))
                 rv = False
 
     form.errors['__validate__'] = errors

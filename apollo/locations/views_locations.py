@@ -6,7 +6,7 @@ import os
 
 from flask import (Blueprint, current_app, flash, g, redirect, render_template,
                    request, Response, url_for, abort, stream_with_context,
-                   send_file)
+                   send_file, jsonify)
 from flask_babelex import lazy_gettext as _
 from flask_restful import Api
 from flask_security import current_user, login_required
@@ -180,10 +180,11 @@ def location_headers(location_set_id, upload_id):
         form = mapping_form_class()
 
         if not form.validate():
-            return render_template(
-                template_name,
-                form=form
-            )
+            error_msgs = []
+            for key in form.errors:
+                for msg in form.errors[key]:
+                    error_msgs.append(msg)
+            return jsonify({'errors': error_msgs}), 400
         else:
             # get header mappings
             data = {

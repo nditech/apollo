@@ -20,7 +20,7 @@ def _validate_required_fields(form):
     errors = []
 
     if 'id' not in mapped_form_values:
-        errors.append(_('Participant ID was not mapped'))
+        errors.append(str(_('Participant ID was not mapped')))
         rv = False
 
     form.errors['__validate__'] = errors

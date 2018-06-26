@@ -6,7 +6,7 @@ import re
 
 from flask import (abort, Blueprint, current_app, flash, g, redirect,
                    render_template, request, Response, url_for,
-                   stream_with_context)
+                   stream_with_context, jsonify)
 from flask_babelex import lazy_gettext as _
 from flask_menu import register_menu
 from flask_restful import Api
@@ -474,10 +474,11 @@ def participant_headers(upload_id, participant_set_id=0):
         return render_template(template_name, form=form)
     else:
         if not form.validate():
-            return render_template(
-                template_name,
-                form=form
-            )
+            error_msgs = []
+            for key in form.errors:
+                for msg in form.errors[key]:
+                    error_msgs.append(msg)
+            return jsonify({'errors': error_msgs}), 400
         else:
             # get header mappings
             multi_column_fields = ('group', 'phone', 'sample')
