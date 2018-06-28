@@ -6,7 +6,7 @@ import os
 
 from flask import (Blueprint, current_app, flash, g, redirect, render_template,
                    request, Response, url_for, abort, stream_with_context,
-                   send_file, jsonify)
+                   send_file)
 from flask_babelex import lazy_gettext as _
 from flask_restful import Api
 from flask_security import current_user, login_required
@@ -126,14 +126,19 @@ def location_edit(id):
                            location_set=location.location_set)
 
 
-@route(bp, '/locations/set/<int:location_set_id>/import', methods=['POST'])
+@route(bp, '/locations/set/<int:location_set_id>/import', methods=['GET', 'POST'])
 @login_required
 @permissions.import_locations.require(403)
 def locations_import(location_set_id):
-    form = file_upload_form(request.form)
+    form = file_upload_form()
+    location_set = services.location_sets.fget_or_404(id=location_set_id)
+    page_title = _('Import Locations')
+    template_name = 'frontend/location_import.html'
 
-    if not form.validate():
-        return abort(400)
+    if not form.validate_on_submit():
+        return render_template(
+            template_name, form=form, location_set=location_set,
+            page_title=page_title)
     else:
         # get the actual object from the proxy
         user = current_user._get_current_object()
@@ -156,6 +161,7 @@ def locations_import(location_set_id):
 @permissions.import_locations.require(403)
 def location_headers(location_set_id, upload_id):
     user = current_user._get_current_object()
+    page_title = _('Map Columns')
     location_set = services.location_sets.fget_or_404(id=location_set_id)
 
     # disallow processing other users' files
@@ -173,35 +179,31 @@ def location_headers(location_set_id, upload_id):
 
     template_name = 'frontend/location_headers.html'
 
-    if request.method == 'GET':
-        form = mapping_form_class()
-        return render_template(template_name, form=form)
+    form = mapping_form_class()
+    if not form.validate_on_submit():
+        return render_template(
+            template_name, form=form, location_set=location_set,
+            page_title=page_title)
     else:
-        form = mapping_form_class()
+        # get header mappings
+        data = {
+            field.data: field.label.text
+            for field in form if field.data
+        }
 
-        if not form.validate():
-            error_msgs = []
-            for key in form.errors:
-                for msg in form.errors[key]:
-                    error_msgs.append(msg)
-            return jsonify({'errors': error_msgs}), 400
-        else:
-            # get header mappings
-            data = {
-                field.data: field.label.text
-                for field in form if field.data
-            }
+        # invoke task asynchronously
+        kwargs = {
+            'upload_id': upload.id,
+            'mappings': data,
+            'location_set_id': location_set_id
+        }
+        tasks.import_locations.apply_async(kwargs=kwargs)
 
-            # invoke task asynchronously
-            kwargs = {
-                'upload_id': upload.id,
-                'mappings': data,
-                'location_set_id': location_set_id
-            }
-            tasks.import_locations.apply_async(kwargs=kwargs)
+        message = str(_('The locations file is being processed'))
+        flash(message, category='locations')
 
-            return redirect(url_for('locations.location_list',
-                                    location_set_id=location_set_id))
+        return redirect(url_for('locations.location_list',
+                                location_set_id=location_set_id))
 
 
 @route(bp, '/locations/set/<int:location_set_id>/builder',

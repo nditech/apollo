@@ -32,7 +32,7 @@
   <a class="btn btn-sm btn-default pull-right" href="{{ url_for('locations.location_list', export='true', location_set_id=location_set_id, **request.args) }}"><i class="glyphicon glyphicon-export"></i> {{ _('Export') }}</a>
   {%- endif -%}
   {%- if perms.import_locations.can() -%}
-  <button id="open-wizard" class="btn btn-sm btn-primary pull-right" style="margin-right:1em;"><i class="glyphicon glyphicon-import glyphicon-white"></i> {{ _('Import Locations') }}</button>
+  <a class="btn btn-sm btn-primary pull-right" href="{{ url_for('locations.locations_import', location_set_id=location_set_id) }}" style="margin-right:1em;"><i class="glyphicon glyphicon-import glyphicon-white"></i> {{ _('Import Locations') }}</a>
   {%- endif -%}
   {%- if perms.role('admin').can() -%}
   <button class="btn btn-sm btn-danger pull-right" id="nuke_locations_modal_btn" style="margin-right: 1em;" data-toggle="modal" data-target="#nuke_modal"><i class="glyphicon glyphicon-trash"></i> {{ _('Purge Locations') }}</button>
