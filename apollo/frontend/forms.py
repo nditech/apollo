@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from flask_babelex import lazy_gettext as _
 from flask_wtf import FlaskForm as WTSecureForm
-from flask_wtf.file import FileField
+from flask_wtf.file import FileField, FileRequired
 from slugify import slugify
 from wtforms import (BooleanField, FloatField, IntegerField, SelectField,
                      SelectMultipleField, StringField, ValidationError,
@@ -364,7 +364,9 @@ def generate_submission_edit_form_class(form):
 def file_upload_form(*args, **kwargs):
     class FileUploadForm(WTSecureForm):
         spreadsheet = FileField(
-            _('Data File'),
+            _('Data File'), validators=[FileRequired(
+                _('Please upload a file')
+            )]
         )
 
     return FileUploadForm(*args, **kwargs)
