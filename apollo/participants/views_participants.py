@@ -400,9 +400,9 @@ def participant_edit(id, participant_set_id=0):
 
 
 @route(bp, '/participants/set/<int:participant_set_id>/import',
-       endpoint='participant_list_import_with_set', methods=['POST'])
+       endpoint='participant_list_import_with_set', methods=['GET', 'POST'])
 @route(bp, '/participants/import',
-       endpoint='participant_list_import', methods=['POST'])
+       endpoint='participant_list_import', methods=['GET', 'POST'])
 @login_required
 @permissions.import_participants.require(403)
 def participant_list_import(participant_set_id=0):
@@ -412,10 +412,13 @@ def participant_list_import(participant_set_id=0):
     else:
         participant_set = g.event.participant_set or abort(404)
 
-    form = forms.ParticipantFileUploadForm(request.form)
+    form = forms.ParticipantFileUploadForm()
+    page_title = _('Import Participants')
+    template_name = 'frontend/participant_import.html'
 
-    if not form.validate():
-        return abort(400)
+    if not form.validate_on_submit():
+        return render_template(template_name, form=form, page_title=page_title,
+            participant_set=participant_set)
     else:
         # get the actual object from the proxy
         user = current_user._get_current_object()
@@ -452,6 +455,7 @@ def participant_headers(upload_id, participant_set_id=0):
     else:
         participant_set = g.event.participant_set or abort(404)
 
+    page_title = _('Map Columns')
     user = current_user._get_current_object()
 
     # disallow processing other users' files
@@ -470,47 +474,45 @@ def participant_headers(upload_id, participant_set_id=0):
     form = mapping_form_class()
     template_name = 'frontend/participant_headers.html'
 
-    if request.method == 'GET':
-        return render_template(template_name, form=form)
+    if not form.validate_on_submit():
+        return render_template(
+            template_name, form=form, page_title=page_title,
+            participant_set=participant_set)
     else:
-        if not form.validate():
-            error_msgs = []
-            for key in form.errors:
-                for msg in form.errors[key]:
-                    error_msgs.append(msg)
-            return jsonify({'errors': error_msgs}), 400
-        else:
-            # get header mappings
-            multi_column_fields = ('group', 'phone', 'sample')
-            data = {fi: [] for fi in multi_column_fields}
-            for field in form:
-                if not field.data:
-                    continue
-                if field.data in multi_column_fields:
-                    data[field.data].append(field.label.text)
-                else:
-                    data[field.data] = field.label.text
-
-            for extra_field in participant_set.extra_fields:
-                value = data.get(str(extra_field.id))
-                if value is None:
-                    continue
-                data[extra_field.name] = value
-
-            # invoke task asynchronously
-            kwargs = {
-                'upload_id': upload.id,
-                'mappings': data,
-                'participant_set_id': participant_set.id
-            }
-            tasks.import_participants.apply_async(kwargs=kwargs)
-
-            if participant_set_id:
-                return redirect(url_for(
-                    'participants.participant_list_with_set',
-                    participant_set_id=participant_set_id))
+        # get header mappings
+        multi_column_fields = ('group', 'phone', 'sample')
+        data = {fi: [] for fi in multi_column_fields}
+        for field in form:
+            if not field.data:
+                continue
+            if field.data in multi_column_fields:
+                data[field.data].append(field.label.text)
             else:
-                return redirect(url_for('participants.participant_list'))
+                data[field.data] = field.label.text
+
+        for extra_field in participant_set.extra_fields:
+            value = data.get(str(extra_field.id))
+            if value is None:
+                continue
+            data[extra_field.name] = value
+
+        # invoke task asynchronously
+        kwargs = {
+            'upload_id': upload.id,
+            'mappings': data,
+            'participant_set_id': participant_set.id
+        }
+        tasks.import_participants.apply_async(kwargs=kwargs)
+
+        message = str(_('The participants file is being processed'))
+        flash(message, category='task_begun')
+
+        if participant_set_id:
+            return redirect(url_for(
+                'participants.participant_list_with_set',
+                participant_set_id=participant_set_id))
+        else:
+            return redirect(url_for('participants.participant_list'))
 
 
 @route(bp, '/participants/purge', methods=['POST'])

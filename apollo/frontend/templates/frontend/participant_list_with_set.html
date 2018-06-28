@@ -36,7 +36,7 @@ a:hover.arrow-style{text-decoration:none; color:#333;}
   {%- endif -%}
   <a class="btn btn-sm btn-default pull-right" href="{{ url_for('participants.participant_performance_list_with_set', participant_set_id=participant_set_id) }}" style="margin-right:1em;"><i class="glyphicon glyphicon-stats"></i> {{ _('Performance Evaluation') }}</a>
   {%- if perms.import_participants.can() -%}
-  <button id="open-wizard" class="btn btn-sm btn-primary pull-right" style="margin-right:1em;"><i class="glyphicon glyphicon-import glyphicon-white"></i> {{ _('Import Participants') }}</button>
+  <a class="btn btn-sm btn-primary pull-right" href="{{ url_for('participants.participant_list_import_with_set', participant_set_id=participant_set.id) }}" style="margin-right:1em;"><i class="glyphicon glyphicon-import glyphicon-white"></i> {{ _('Import Participants') }}</a>
   {%- endif -%}
   {%- if perms.send_messages.can() -%}
   <button class="btn btn-sm btn-success pull-right" id="send_message_modal_btn" style="margin-right:1em;"><i class="glyphicon glyphicon-envelope"></i> {{ _('Send Message') }}</button>

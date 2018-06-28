@@ -1,15 +1,18 @@
 # -*- coding: utf-8 -*-
 from flask_babelex import lazy_gettext as _
 from flask_wtf import FlaskForm
+from flask_wtf.file import FileField, FileRequired
 from slugify import slugify_unicode
-from wtforms import FileField, SelectField
+from wtforms import SelectField
 
 from apollo.frontend.forms import _make_choices
 from apollo.helpers import load_source_file
 
 
 class ParticipantFileUploadForm(FlaskForm):
-    spreadsheet = FileField(_('Data file'))
+    spreadsheet = FileField(
+        _('Data file'), validators=[FileRequired(_('Please upload a file'))]
+    )
 
 
 def _validate_required_fields(form):

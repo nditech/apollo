@@ -1,2 +1,38 @@
+{%- extends 'frontend/_layout.html' -%}
 {% from 'frontend/macros/participant_header_form.html' import render_mapping_form %}
-{{ render_mapping_form(form) }}
+{% block subtitle %}<a href="{{ url_for('participantset.index_view') }}">{{ participant_set.name }}</a>{% endblock subtitle %}
+{% block content %}
+<div class="row-fluid">
+  <div class="col-sm-8 col-sm-offset-2">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">{{ page_title }}</h3>
+      </div>
+      <div class="panel-body">
+        {% if form.errors %}
+        <div class="alert alert-danger">
+          <ul>
+            {% for key in form.errors %}
+            {% for msg in form.errors[key] %}
+            <li>{{ msg }}</li>
+            {% endfor %}
+            {% endfor %}
+          </ul>
+        </div>
+        {% endif %}
+        <form class="form-horizontal" enctype="multipart/form-data" method="POST">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+          {{ render_mapping_form(form) }}
+          <div class="form-group">
+            <div class="row">
+              <div class="col-sm-4 col-sm-offset-4">
+                <button class="btn btn-primary">{{ _('Save') }}</button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
