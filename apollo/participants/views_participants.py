@@ -478,32 +478,35 @@ def participant_headers(upload_id, participant_set_id=0):
             for key in form.errors:
                 for msg in form.errors[key]:
                     error_msgs.append(msg)
-            return jsonify({'errors': error_msgs}), 400
+            return render_template(
+                'frontend/participant_headers_errors.html',
+                error_msgs=error_msgs), 400
         else:
-            # get header mappings
-            multi_column_fields = ('group', 'phone', 'sample')
-            data = {fi: [] for fi in multi_column_fields}
-            for field in form:
-                if not field.data:
-                    continue
-                if field.data in multi_column_fields:
-                    data[field.data].append(field.label.text)
-                else:
-                    data[field.data] = field.label.text
+            if 'X-Validate' not in request.headers:
+                # get header mappings
+                multi_column_fields = ('group', 'phone', 'sample')
+                data = {fi: [] for fi in multi_column_fields}
+                for field in form:
+                    if not field.data:
+                        continue
+                    if field.data in multi_column_fields:
+                        data[field.data].append(field.label.text)
+                    else:
+                        data[field.data] = field.label.text
 
-            for extra_field in participant_set.extra_fields:
-                value = data.get(str(extra_field.id))
-                if value is None:
-                    continue
-                data[extra_field.name] = value
+                for extra_field in participant_set.extra_fields:
+                    value = data.get(str(extra_field.id))
+                    if value is None:
+                        continue
+                    data[extra_field.name] = value
 
-            # invoke task asynchronously
-            kwargs = {
-                'upload_id': upload.id,
-                'mappings': data,
-                'participant_set_id': participant_set.id
-            }
-            tasks.import_participants.apply_async(kwargs=kwargs)
+                # invoke task asynchronously
+                kwargs = {
+                    'upload_id': upload.id,
+                    'mappings': data,
+                    'participant_set_id': participant_set.id
+                }
+                tasks.import_participants.apply_async(kwargs=kwargs)
 
             if participant_set_id:
                 return redirect(url_for(

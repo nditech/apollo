@@ -1,0 +1,8 @@
+{% trans %}<strong>There was a problem</strong> with your submission. Please correct the errors and re-submit.{% endtrans %}
+{% if error_msgs -%}
+<ul id="error-list">
+{%- for error_msg in error_msgs %}
+    <li>{{ error_msg }}</li>
+{% endfor -%}
+</ul>
+{%- endif %}

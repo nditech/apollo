@@ -184,21 +184,24 @@ def location_headers(location_set_id, upload_id):
             for key in form.errors:
                 for msg in form.errors[key]:
                     error_msgs.append(msg)
-            return jsonify({'errors': error_msgs}), 400
+            return render_template(
+                'frontend/location_headers_errors.html',
+                error_msgs=error_msgs), 400
         else:
-            # get header mappings
-            data = {
-                field.data: field.label.text
-                for field in form if field.data
-            }
+            if 'X-Validate' not in request.headers:
+                # get header mappings
+                data = {
+                    field.data: field.label.text
+                    for field in form if field.data
+                }
 
-            # invoke task asynchronously
-            kwargs = {
-                'upload_id': upload.id,
-                'mappings': data,
-                'location_set_id': location_set_id
-            }
-            tasks.import_locations.apply_async(kwargs=kwargs)
+                # invoke task asynchronously
+                kwargs = {
+                    'upload_id': upload.id,
+                    'mappings': data,
+                    'location_set_id': location_set_id
+                }
+                tasks.import_locations.apply_async(kwargs=kwargs)
 
             return redirect(url_for('locations.location_list',
                                     location_set_id=location_set_id))

@@ -158,8 +158,8 @@ a:hover.arrow-style{text-decoration:none; color:#333;}
             <h4 class="modal-title" id="nukeModalLabel">{{ _('Purge Participants') }}</h4>
           </div>
           <div class="modal-body">
-            <div class="alert alert-danger"><strong>WARNING:</strong> This will delete all participants, as well as any data linked to them &ndash; checklists, critical incident reports and messages.</div>
-            <p>Please enter <code id="compare"></code> below to proceed:</p>
+            <div class="alert alert-danger">{% trans %}<strong>WARNING:</strong> This will delete all participants, as well as any data linked to them &ndash; checklists, critical incident reports and messages.{% endtrans %}</div>
+            <p>{% trans %}Please enter <code id="compare"></code> below to proceed:{% endtrans %}</p>
             <div class="form-group">
               <input class="form-control" id="prompt">
             </div>
@@ -176,7 +176,7 @@ a:hover.arrow-style{text-decoration:none; color:#333;}
     </div>
     {%- endif -%}
     <!-- IMPORT WIZARD -->
-    <div class="wizard" id="import-wizard" data-title="Import Participants">
+    <div class="wizard" id="import-wizard" data-title="{{ _('Import Participants') }}">
       <!-- Step 1 -->
       <div class="wizard-card" data-cardname="uploadFile">
         <h3>{{ _('Upload File') }}</h3>
@@ -187,7 +187,7 @@ a:hover.arrow-style{text-decoration:none; color:#333;}
               <div class="row">
                 <div class="col-sm-4">
                   <div class="fileUpload btn btn-default btn-sm" style="margin-left:1px;">
-                    <span>Browse</span>
+                    <span>{{ _('Browse') }}</span>
                     <i class="glyphicon glyphicon-search"></i>
                     <input id="uploadBtn" type="file" class="upload" name="spreadsheet" />
                   </div>
@@ -202,31 +202,24 @@ a:hover.arrow-style{text-decoration:none; color:#333;}
         </form>
         </div>
       </div>
-      <div class="wizard-card" data-cardname="mapFields">
-        <h3>Map Fields</h3>
-        <div class="wizard-input-section" style="">
-        </div>
 
-        <div class="wizard-error">
-          <div class="alert alert-danger">
-            <strong>There was a problem</strong> with your submission. Please correct the errors and re-submit.
-            <ul id="error-list"></ul>
+      <div class="wizard-card" data-cardname="mapFields">
+        <h3>{{ _('Map Fields') }}</h3>
+        <div class="wizard-input-section"></div>
+      </div>
+
+      <div class="wizard-card" data-cardname="finalize">
+        <h3>{{ _('Finalize') }}</h3>
+        <div class="wizard-input-section">
+          <div class="alert alert-info">
+            <span class="create-server-name">{% trans %}Click the <strong>Submit</strong> button to begin the import process.{% endtrans %}</span>
           </div>
-          <button class="btn btn-default" id="close-wizard">Close</button>
         </div>
 
         <div class="wizard-failure">
           <div class="alert alert-danger">
-            <strong>There was a problem</strong> submitting the form. Please try again in a minute.
+            {% trans %}There was a problem submitting the form. Please try again in a minute.{% endtrans %}
           </div>
-        </div>
-
-        <div class="wizard-success">
-          <div class="alert alert-success">
-            <span class="create-server-name">Your participants file is being <strong>imported.</strong> You'll receive an email when completed.</span>
-          </div>
-
-          <a class="btn btn-success im-done">Done</a>
         </div>
       </div>
     </div>
@@ -287,11 +280,12 @@ $(function(){
         contentHeight : 500,
         contentWidth : 700,
         showCancel: true,
-        backdrop: 'static'
-    });
-
-    $('#close-wizard').on('click', function () {
-      wizard.close();
+        backdrop: true,
+        buttons: {'cancelText': "{{ _('Cancel') }}",
+                  'nextText': "{{ _('Next') }}",
+                  'backText': "{{ _('Back') }}",
+                  'submitText': "{{ _('Submit') }}",
+                  'submittingText': "{{ _('Submitting...') }}"}
     });
 
     wizard.on('closed', function() {
@@ -307,7 +301,7 @@ $(function(){
             async: false,
             error: function (data) {
                 input = card.el.find("#uploadFile");
-                card.wizard.errorPopover(input, "{{ _('Invalid file.') }}");
+                card.wizard.errorPopover(input, "{{ _('Invalid File') }}");
                 cont = false;
             },
             success: function (data) {
@@ -316,6 +310,26 @@ $(function(){
             }
         });
         return cont;
+    });
+
+    wizard.cards['mapFields'].on('validate', function (card) {
+      var cont = false;
+
+      $.ajax({
+        type: 'POST',
+        url: $('#form-action').val(),
+        data: wizard.serialize(),
+        async: false,
+        beforeSend: function (xhr) { xhr.setRequestHeader('X-Validate', '1'); },
+      }).done(function (response) {
+        cont = true;
+      }).fail(function (data) {
+        $('#form-action-errors', wizard.cards['mapFields'].el).html(data.responseText);
+        $('#form-action-errors', wizard.cards['mapFields'].el).removeClass('hidden');
+        cont = false;
+      });
+
+      return cont;
     });
 
     wizard.on("submit", function(wizard) {
@@ -329,26 +343,19 @@ $(function(){
             wizard._submitting = false;
             wizard.submitSuccess();
             wizard.updateProgressBar(0);
-        }).fail(function (data) {
-          wizard.submitError();
-          $.each(data.responseJSON.errors, function (index, msg) {
-            $('#error-list').append('<li>' + msg + '</li>');
-          });
+            wizard.close();
+        }).fail(function () {
+          wizard.submitFailure();
+          wizard.showButtons();
         });
-    });
-
-    wizard.el.find(".wizard-success .im-done").click(function() {
-        wizard.hide();
-        setTimeout(function() {
-            wizard.reset();
-            $("#uploadFile").val("");
-            $("#uploadBtn").wrap('<form>').closest('form').get(0).reset();
-            $("#uploadBtn").unwrap();
-        }, 250);
     });
 
     $('#open-wizard').click(function(e) {
         e.preventDefault();
+        wizard.reset();
+        $("#uploadFile").val("");
+        $("#uploadBtn").wrap('<form>').closest('form').get(0).reset();
+        $("#uploadBtn").unwrap();
         wizard.show();
     });
 

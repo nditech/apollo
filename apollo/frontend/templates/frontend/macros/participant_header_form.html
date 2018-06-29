@@ -1,4 +1,5 @@
 {% macro render_mapping_form(form) %}
+<div class="col-sm-10 col-sm-offset-1 alert alert-danger hidden" id="form-action-errors"></div>
 <div class="col-sm-10">
 	{{ form.hidden_tag() }}
 	<input type="hidden" name="action" id="form-action" value="{{ request.full_path }}">
