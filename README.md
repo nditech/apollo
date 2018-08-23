@@ -55,6 +55,7 @@ Login with the username `admin` and password `admin`. Remember to immediately ch
 ##### Analytics Tracking #####
 For digital marketing or product improvement initiatives you may want to include JavaScript and or HTML snippet tags for tracking and analytics on Apollo. 
 
-Apollo leverages Google Tag Manager to achieve this. To enable Tag Manager, modify the `settings-docker.ini` file and add the configuration parameter `GOOGLE_TAG_MANAGER_KEY` and specify the **tag manager key** you get from Google and restart the container.
+Apollo leverages Google Tag Manager to achieve this. To enable Tag Manager, modify the `settings-docker.ini` file located in the project root directory. 
+Next, add the configuration parameter `GOOGLE_TAG_MANAGER_KEY` and specify the **tag manager key** you get from Google and restart the container.
 
 For more information on using Google Tag Manager [see the following resource](https://marketingplatform.google.com/about/tag-manager/).
