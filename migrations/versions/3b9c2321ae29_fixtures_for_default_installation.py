@@ -8,6 +8,7 @@ Create Date: 2018-04-17 12:54:58.330213
 from alembic import op
 from apollo.frontend import permissions
 from flask_principal import Permission
+from flask_security.utils import encrypt_password
 
 
 # revision identifiers, used by Alembic.
@@ -58,11 +59,11 @@ def upgrade():
     op.execute("""
     SELECT nextval(pg_get_serial_sequence('role', 'id'))
     """)
+    password = encrypt_password('admin')
     op.execute("""INSERT INTO \"user\" (
         id, deployment_id, email, username, password, active)
         VALUES (1, 1, 'root@localhost', 'admin',
-        '$pbkdf2-sha256$29000$mPN.751zjhGCUKqVMmZMSQ$3/RCkmdZaTa6PTAtgimPMB4tIheE/Yz/1tAM/yVRgkQ',
-        't')""")
+        '{}', 't')""".format(password))
     op.execute("INSERT INTO roles_users (user_id, role_id) VALUES (1, 1)")
     op.execute("""
     SELECT nextval(pg_get_serial_sequence('user', 'id'))
