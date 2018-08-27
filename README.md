@@ -51,3 +51,11 @@ docker run -d --name apollo_app --link postgres --link redis -p 5000:5000 -v upl
 Your application is now accessible on port *5000* on the host. You may want to setup a reverse proxy if you are hosting this on the Internet.
 
 Login with the username `admin` and password `admin`. Remember to immediately change the default password.
+
+##### Analytics Tracking #####
+For digital marketing or product improvement initiatives you may want to include JavaScript and or HTML snippet tags for tracking and analytics on Apollo. 
+
+Apollo leverages Google Tag Manager to achieve this. To enable Tag Manager, modify the `settings-docker.ini` file located in the project root directory. 
+Next, add the configuration parameter `GOOGLE_TAG_MANAGER_KEY` and specify the **tag manager key** you get from Google and restart the container.
+
+For more information on using Google Tag Manager [see the following resource](https://marketingplatform.google.com/about/tag-manager/).
