@@ -172,7 +172,7 @@ class UserAdminView(BaseAdminView):
     '''
     column_list = ('email', 'roles', 'active')
     column_searchable_list = ('email',)
-    form_columns = ('email', 'username', 'active', 'permissions')
+    form_columns = ('email', 'username', 'active', 'roles', 'permissions',)
     form_excluded_columns = ('password', 'confirmed_at', 'login_count',
                              'last_login_ip', 'last_login_at',
                              'current_login_at', 'deployment',
@@ -196,8 +196,12 @@ class UserAdminView(BaseAdminView):
         form = super().create_form(obj)
 
         deployment = current_user.deployment
-        form.roles.query = models.Role.query.filter_by(
-            deployment_id=deployment.id)
+
+        # local function helper
+        def _get_deployment_roles():
+            return models.Role.query.filter_by(deployment_id=deployment.id)
+
+        form.roles.query_factory = _get_deployment_roles
 
         return form
 
@@ -205,16 +209,18 @@ class UserAdminView(BaseAdminView):
         form = super().edit_form(obj)
 
         deployment = current_user.deployment
-        form.roles.query = models.Role.query.filter_by(
-            deployment_id=deployment.id)
-        form.roles.process(request.form, [role.id for role in obj.roles])
+
+        # local function helper
+        def _get_deployment_roles():
+            return models.Role.query.filter_by(deployment_id=deployment.id)
+
+        form.roles.query_factory = _get_deployment_roles
 
         return form
 
     def scaffold_form(self):
         form_class = super(UserAdminView, self).scaffold_form()
         form_class.password2 = PasswordField(_('New password'))
-        form_class.roles = QuerySelectMultipleField()
         return form_class
 
     @action('disable', _('Disable'),
