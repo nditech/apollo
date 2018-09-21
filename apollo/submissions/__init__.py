@@ -1,18 +1,21 @@
 # -*- coding: utf-8 -*-
-from apollo.core import Service
-from apollo.submissions.models import (
-    Submission, SubmissionComment, SubmissionVersion)
-from apollo.locations.models import LocationType, Sample
-from datetime import datetime
-from operator import attrgetter
-from flask import g
-from flask.ext.security import current_user
-import json
-import unicodecsv
+import codecs
 try:
     from cStringIO import StringIO
 except:
     from StringIO import StringIO
+from datetime import datetime
+import json
+from operator import attrgetter
+
+from flask import g
+from flask.ext.security import current_user
+import unicodecsv
+
+from apollo.core import Service
+from apollo.submissions.models import (
+    Submission, SubmissionComment, SubmissionVersion)
+from apollo.locations.models import LocationType, Sample
 
 
 def export_field(form, submission, field_name):
@@ -109,7 +112,8 @@ class SubmissionsService(Service):
                 ds_headers.extend(map(lambda f: '%s-CONFIDENCE' % f, fields))
 
             output = StringIO()
-            writer = unicodecsv.writer(output, encoding='utf-8-sig')
+            output.write(codecs.BOM_UTF8)
+            writer = unicodecsv.writer(output, encoding='utf-8')
             writer.writerow([unicode(i) for i in ds_headers])
             yield output.getvalue()
             output.close()
