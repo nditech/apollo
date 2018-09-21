@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-def setup_permission_defaults(deployment)
+def setup_permission_defaults(deployment):
     from apollo import services
     from apollo.frontend import permissions
 
@@ -15,7 +15,7 @@ def setup_permission_defaults(deployment)
                     action=need.value)
 
 
-def setup_permission_fixtures(deployment)
+def setup_permission_fixtures(deployment):
     from apollo import models, services
 
     perm_role_fixtures = {
