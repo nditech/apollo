@@ -7,7 +7,8 @@ from apollo.manage.deployments import (
     CreateDeploymentCommand, ListDeploymentsCommand,
     CreateEventCommand, ListEventsCommand, EventMigrationCommand)
 from apollo.manage.permissions import (
-    AddPermissionToRole, RemovePermissionFromRole, ListPermissionsOfRole)
+    AddPermissionToRole, RemovePermissionFromRole, ListPermissionsOfRole,
+    SetupDefaultPermissions)
 from apollo.manage.submissions import InitializeSubmissionsCommand
 from apollo.manage.setup import SetupCommand
 from apollo.manage.messages import MessagePlaybackCommand

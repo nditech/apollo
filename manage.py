@@ -2,8 +2,9 @@
 # -*- coding: utf-8 -*-
 import os
 import warnings
-from flask.ext.script import Manager, Server, Shell
+
 from flask.ext.security import MongoEngineUserDatastore
+from flask.ext.script import Manager, Server, Shell
 
 from apollo.core import db
 from apollo import models, services
@@ -16,9 +17,8 @@ from apollo.manage import \
      CreateDeploymentCommand, ListDeploymentsCommand, CreateEventCommand,
      ListEventsCommand,
      InitializeSubmissionsCommand,
-     SetupCommand, MessagePlaybackCommand, EventMigrationCommand)
-
-
+     SetupCommand, MessagePlaybackCommand, EventMigrationCommand,
+     SetupDefaultPermissions)
 
 
 app = create_app()
@@ -28,6 +28,7 @@ def _mk_ctx():
     return dict(
         app=app, db=db, models=models, services=services,
         userdatastore=MongoEngineUserDatastore(db, models.User, models.Role))
+
 
 manager = Manager(app)
 manager.add_command('run', Server(host='::'))
@@ -44,6 +45,7 @@ manager.add_command('add_role', AddRoleCommand())
 manager.add_command('add_rolepermission', AddPermissionToRole())
 manager.add_command('remove_rolepermission', RemovePermissionFromRole())
 manager.add_command('list_rolepermissions', ListPermissionsOfRole())
+manager.add_command('init_permissions', SetupDefaultPermissions())
 
 manager.add_command('create_deployment', CreateDeploymentCommand())
 manager.add_command('list_deployments', ListDeploymentsCommand())
