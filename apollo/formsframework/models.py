@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import hashlib
 import logging
 from operator import itemgetter
 import re
@@ -140,6 +141,16 @@ class Form(Resource):
                     tags.append(f.get('tag'))
 
         return tags
+
+    def odk_hash(self):
+        xform_data = etree.tostring(
+            self.to_xml(),
+            encoding='UTF-8',
+            xml_declaration=True
+        )
+        m = hashlib.md5()
+        m.update(xform_data)
+        return f"md5:{m.hexdigest()}"
 
     def to_excel(self):
         book = Workbook()

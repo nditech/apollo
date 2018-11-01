@@ -48,15 +48,28 @@ participant_auth = HTTPDigestAuth()
 
 @participant_auth.get_password
 def get_pw(participant_id):
-    participant = services.participants.get(participant_id=participant_id)
+    current_events_ids = [i[0] for i in services.events.overlapping_events(
+        g.event).with_entities(models.Event.id).all()]
+
+    participant = services.participants.query.join(
+        models.ParticipantSet, models.Participant.participant_set_id == models.ParticipantSet.id    # noqa
+    ).join(
+        models.Event, models.Event.participant_set_id == models.ParticipantSet.id   # noqa
+    ).filter(
+        models.Event.id.in_(current_events_ids),
+        models.Participant.participant_id == participant_id
+    ).one_or_none()
     return participant.password if participant else None
 
 
 @route(bp, '/xforms/formList')
 def get_form_download_list():
-    current_events = services.events.overlapping_events(g.event)
-    kwargs = {"events__in": current_events}
-    forms = services.forms.all().filter(**kwargs).order_by('form_type')
+    current_events_ids = [i[0] for i in services.events.overlapping_events(
+        g.event).with_entities(models.Event.id).all()]
+    forms = services.forms.query.join(
+        models.FormSet, models.Form.form_set_id == models.FormSet.id).join(
+            models.Event, models.Event.form_set_id == models.FormSet.id
+        ).filter(models.Event.id.in_(current_events_ids))
     template_name = 'frontend/xformslist.xml'
 
     response = make_response(render_template(template_name, forms=forms))
@@ -78,7 +91,7 @@ def get_form_manifest(form_pk):
 
 @route(bp, '/xforms/forms/<form_pk>/form.xml')
 def get_form(form_pk):
-    form = services.forms.get_or_404(id=form_pk)
+    form = services.forms.fget_or_404(id=form_pk)
     xform_data = etree.tostring(
         form.to_xml(),
         encoding='UTF-8',
@@ -108,12 +121,9 @@ def submission():
         document = etree.parse(source_file, parser)
 
         form_pk = document.xpath('//data/form_id')[0].text
-        form = services.forms.get(pk=form_pk)
+        form = services.forms.fget_or_404(pk=form_pk)
 
         participant = filter_participants(form, participant_auth.username())
-        if not form:
-            return open_rosa_default_response(
-                content=_('Invalid Form Specified'), status_code=404)
 
         if not participant:
             return open_rosa_default_response(
@@ -178,7 +188,6 @@ def submission():
     submission.data = data
     services.submissions.find(id=submission.id).update(
         {'data': data}, synchronize_session=False)
-    models.Submission.precomp_and_update_related(submission)
     update_submission_version(submission)
 
     if form_modified:
