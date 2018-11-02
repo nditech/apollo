@@ -32,13 +32,13 @@ def setup_permission_fixtures(deployment):
         'export_messages': [],
         'edit_submission_verification_status': ['analyst'],
         'view_messages': ['clerk', 'manager', 'analyst'],
-        'view_events': ['clerk', 'analyst', 'manager'],
-        'export_submissions': ['analyst', 'manager'],
+        'view_events': ['analyst', 'manager'],
+        'export_submissions': ['analyst'],
         'view_result_analysis': ['analyst'],
         'edit_submission': ['clerk', 'manager', 'analyst'],
         'view_process_analysis': ['analyst'],
         'export_locations': [],
-        'view_participants': ['manager', 'clerk', 'analyst'],
+        'view_participants': ['manager', 'analyst'],
         'edit_participant': ['analyst', 'manager']
     }
 
