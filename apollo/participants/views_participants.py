@@ -110,8 +110,8 @@ def participant_list(page=1):
         page_spec = args.pop(u'page', None) or [1]
         page = int(page_spec[0])
 
-        sort_by = sortable_columns.get(
-            args.pop('sort_by', ''), 'participant_id')
+        sort_spec = args.pop('sort_by', None) or ['participant_id']
+        sort_by = sortable_columns.get(sort_spec[0])
         subset = queryset_filter.qs.order_by(sort_by)
 
         # load form context

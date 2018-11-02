@@ -498,7 +498,8 @@ def comment_create_view():
         submission=submission,
         user=current_user._get_current_object(),
         comment=comment,
-        submit_date=datetime.utcnow()
+        submit_date=datetime.utcnow(),
+        deployment=submission.deployment
     )
 
     return jsonify(

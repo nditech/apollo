@@ -1,16 +1,19 @@
 # -*- coding: utf-8 -*-
-from apollo.core import Service
-from flask import g
-from apollo.participants.models import (
-    Participant, ParticipantRole, ParticipantPartner, ParticipantGroup,
-    ParticipantGroupType
-)
-from apollo.locations.models import LocationType
-import unicodecsv
+import codecs
 try:
     from cStringIO import StringIO
 except:
     from StringIO import StringIO
+
+from flask import g
+import unicodecsv
+
+from apollo.core import Service
+from apollo.locations.models import LocationType
+from apollo.participants.models import (
+    Participant, ParticipantRole, ParticipantPartner, ParticipantGroup,
+    ParticipantGroupType
+)
 
 
 class ParticipantsService(Service):
@@ -51,7 +54,8 @@ class ParticipantsService(Service):
                 headers.append(extra_field.label)
 
         output = StringIO()
-        writer = unicodecsv.writer(output, encoding='utf-8-sig')
+        output.write(codecs.BOM_UTF8)
+        writer = unicodecsv.writer(output, encoding='utf-8')
         writer.writerow([unicode(i) for i in headers])
         yield output.getvalue()
         output.close()

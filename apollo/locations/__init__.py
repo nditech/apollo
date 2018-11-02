@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
-from apollo.core import Service, cache
-from apollo.locations.models import Sample, LocationType, Location
-import unicodecsv
+import codecs
 try:
     from cStringIO import StringIO
 except:
     from StringIO import StringIO
+
+import unicodecsv
+
+from apollo.core import Service, cache
+from apollo.locations.models import Sample, LocationType, Location
 
 
 class SamplesService(Service):
@@ -61,7 +64,8 @@ class LocationsService(Service):
                 ))
 
         output = StringIO()
-        writer = unicodecsv.writer(output, encoding='utf-8-sig')
+        output.write(codecs.BOM_UTF8)
+        writer = unicodecsv.writer(output, encoding='utf-8')
         writer.writerow([unicode(i) for i in headers])
         yield output.getvalue()
         output.close()

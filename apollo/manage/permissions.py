@@ -2,8 +2,10 @@
 from flask import g
 from flask.ext.script import Command, prompt_choices
 from flask.ext.principal import Permission
-from apollo.frontend import permissions
+
 from apollo import models, services
+from apollo.frontend import permissions
+from apollo.users import utils
 
 
 class AddPermissionToRole(Command):
@@ -86,3 +88,17 @@ class RemovePermissionFromRole(Command):
         need = presentable_needs[int(option) - 1]
 
         services.perms.remove_action_need_from_entity(role, need)
+
+
+class SetupDefaultPermissions(Command):
+    '''Sets up default permissions for a deployment'''
+    def run(self):
+        deployments = models.Deployment.objects.all()
+        option = prompt_choices('Deployment', [
+            (str(i), v) for i, v in enumerate(deployments, 1)])
+        g.deployment = deployments[int(option) - 1]
+
+        utils.setup_permission_defaults(g.deployment)
+        utils.setup_permission_fixtures(g.deployment)
+
+        print 'Setup complete'
