@@ -12,6 +12,7 @@ from apollo import services, models, csrf
 from apollo.formsframework.forms import filter_participants
 from apollo.frontend import route
 from apollo.frontend.helpers import DictDiffer
+from apollo.odk import utils
 
 DEFAULT_CONTENT_LENGTH = 1000000
 DEFAULT_CONTENT_TYPE = 'text/xml; charset=utf-8'
@@ -48,28 +49,13 @@ participant_auth = HTTPDigestAuth()
 
 @participant_auth.get_password
 def get_pw(participant_id):
-    current_events_ids = [i[0] for i in services.events.overlapping_events(
-        g.event).with_entities(models.Event.id).all()]
-
-    participant = services.participants.query.join(
-        models.ParticipantSet, models.Participant.participant_set_id == models.ParticipantSet.id    # noqa
-    ).join(
-        models.Event, models.Event.participant_set_id == models.ParticipantSet.id   # noqa
-    ).filter(
-        models.Event.id.in_(current_events_ids),
-        models.Participant.participant_id == participant_id
-    ).one_or_none()
+    participant = utils.get_participant_during_event(g.event, participant_id)
     return participant.password if participant else None
 
 
 @route(bp, '/xforms/formList')
 def get_form_download_list():
-    current_events_ids = [i[0] for i in services.events.overlapping_events(
-        g.event).with_entities(models.Event.id).all()]
-    forms = services.forms.query.join(
-        models.FormSet, models.Form.form_set_id == models.FormSet.id).join(
-            models.Event, models.Event.form_set_id == models.FormSet.id
-        ).filter(models.Event.id.in_(current_events_ids))
+    forms = utils.get_forms_for_event(g.event)
     template_name = 'frontend/xformslist.xml'
 
     response = make_response(render_template(template_name, forms=forms))
