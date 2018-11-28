@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 from flask_security import RoleMixin, UserMixin
+from sqlalchemy_utils import ChoiceType
 
 from apollo.core import db
+from apollo.constants import LANGUAGE_CHOICES
 from apollo.dal.models import BaseModel
 from apollo.utils import current_timestamp
 
@@ -86,9 +88,11 @@ class User(BaseModel, UserMixin):
     current_login_ip = db.Column(db.String)
     last_login_ip = db.Column(db.String)
     login_count = db.Column(db.Integer)
+    locale = db.Column(ChoiceType(LANGUAGE_CHOICES))
     deployment = db.relationship(
         'Deployment',
-        backref=db.backref('users', cascade='all, delete', passive_deletes=True))
+        backref=db.backref('users', cascade='all, delete',
+                           passive_deletes=True))
     roles = db.relationship(
         'Role', backref='users', secondary=roles_users)
     permissions = db.relationship(

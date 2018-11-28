@@ -2,6 +2,7 @@
 from cachetools import cached
 from celery import Celery
 from flask import Flask, request
+from flask_security import current_user
 from flask_sslify import SSLify
 from flask_uploads import configure_uploads
 from raven.base import Client
@@ -52,8 +53,18 @@ def create_app(
     if babel.locale_selector_func is None:
         @babel.localeselector
         def get_locale():
+            # get a list of available language codes,
+            # starting from the current user's selected
+            # language
+            language_codes = set()
+            if not current_user.is_anonymous:
+                if current_user.locale:
+                    return current_user.locale
+
+            language_codes.update(app.config.get('LANGUAGES', {}).keys())
+
             return request.accept_languages \
-                .best_match(list(app.config.get('LANGUAGES', {}).keys()))
+                .best_match(language_codes)
 
     register_blueprints(app, package_name, package_path)
 

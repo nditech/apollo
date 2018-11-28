@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
-from flask import flash, g, request
+from flask import flash, g
 from flask_admin import form
 from flask_admin.actions import action
 from flask_admin.contrib.sqla import ModelView
-from flask_admin.contrib.sqla.fields import (
-    InlineModelFormList, QuerySelectMultipleField)
+from flask_admin.contrib.sqla.fields import InlineModelFormList
 from flask_admin.contrib.sqla.form import InlineModelConverter
 from flask_admin.form import rules
 from flask_admin.model.form import InlineFormAdmin
@@ -14,10 +13,10 @@ from flask_security import current_user
 from flask_security.utils import encrypt_password
 from jinja2 import contextfunction
 import pytz
-from wtforms import PasswordField
+from wtforms.fields import PasswordField, SelectField
 
 from apollo.core import admin, db
-from apollo import models, settings
+from apollo import constants, models, settings
 
 
 app_time_zone = pytz.timezone(settings.TIMEZONE)
@@ -174,14 +173,15 @@ class UserAdminView(BaseAdminView):
     '''
     column_list = ('email', 'roles', 'active')
     column_searchable_list = ('email',)
-    form_columns = ('email', 'username', 'active', 'roles', 'permissions',)
+    form_columns = ('email', 'username', 'active', 'roles', 'permissions',
+                    'locale',)
     form_excluded_columns = ('password', 'confirmed_at', 'login_count',
                              'last_login_ip', 'last_login_at',
                              'current_login_at', 'deployment',
                              'current_login_ip', 'submission_comments')
     form_rules = [
         rules.FieldSet(('email', 'username', 'password2', 'active', 'roles',
-                        'permissions'))
+                        'permissions', 'locale'))
     ]
 
     def get_query(self):
@@ -223,6 +223,8 @@ class UserAdminView(BaseAdminView):
     def scaffold_form(self):
         form_class = super(UserAdminView, self).scaffold_form()
         form_class.password2 = PasswordField(_('New password'))
+        form_class.locale = SelectField(_('Language'),
+                                        choices=constants.LANGUAGE_CHOICES)
         return form_class
 
     @action('disable', _('Disable'),

@@ -15,6 +15,7 @@ from sqlalchemy.dialects import postgresql
 from sqlalchemy.sql import text
 import sqlalchemy_utils
 
+from apollo.constants import LANGUAGE_CHOICES
 from apollo.frontend import permissions
 from apollo.models import (
     Form, Message, Participant, Submission, SubmissionVersion)
@@ -108,6 +109,7 @@ def upgrade():
     sa.Column('current_login_ip', sa.String(), nullable=True),
     sa.Column('last_login_ip', sa.String(), nullable=True),
     sa.Column('login_count', sa.Integer(), nullable=True),
+    sa.Column('locale', sqlalchemy_utils.ChoiceType(LANGUAGE_CHOICES), nullable=True)
     sa.ForeignKeyConstraint(['deployment_id'], ['deployment.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
