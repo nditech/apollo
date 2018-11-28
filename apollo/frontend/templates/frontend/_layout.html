@@ -57,20 +57,20 @@
             {% if not menu_item.has_visible_child() and menu_item.visible %}
             <li><a href="{{ menu_item.url }}">{{ menu_item.icon }} {{ _(menu_item.text) }}</a></li>
             {% elif menu_item.visible %}
-            <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ menu_item.icon }} {{ _(menu_item.text) }} <b class="caret"></b></a>
+            <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ menu_item.icon }} {{ menu_item.text }} <b class="caret"></b></a>
               <ul class="dropdown-menu">
                 {% if menu_item.children|count < 2 %}
                 {% for submenu_item in menu_item.children[0].dynamic_list %}
-                <li><a href="{{ submenu_item.url }}">{{ submenu_item.icon }} {{ _(submenu_item.text) }}</a></li>
+                <li><a href="{{ submenu_item.url }}">{{ submenu_item.icon }} {{ submenu_item.text }}</a></li>
                 {% endfor %}
                 {% else %}
                 {% for submenu_item in menu_item.children %}
                 {% if submenu_item.visible %}
                 <li class="dropdown-submenu">
-                  <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ submenu_item.icon }} {{ _(submenu_item.text) }}</a>
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ submenu_item.icon }} {{ submenu_item.text }}</a>
                   <ul class="dropdown-menu">
                     {% for subsubmenu_item in submenu_item.dynamic_list %}
-                    <li><a href="{{ subsubmenu_item.url }}">{{ subsubmenu_item.icon }} {{ _(subsubmenu_item.text) }}</a></li>
+                    <li><a href="{{ subsubmenu_item.url }}">{{ subsubmenu_item.icon }} {{ subsubmenu_item.text }}</a></li>
                     {% endfor %}
                   </ul>
                 </li>
