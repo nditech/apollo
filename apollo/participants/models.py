@@ -15,8 +15,7 @@ number_cleaner = re.compile(r'[^0-9]+', re.I)
 class ParticipantSet(BaseModel):
     __tablename__ = 'participant_set'
 
-    id = db.Column(
-        db.Integer, db.Sequence('participant_set_id_seq'), primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
     slug = db.Column(db.String)
     location_set_id = db.Column(
@@ -58,9 +57,7 @@ class ParticipantDataField(Resource):
     __mapper_args__ = {'polymorphic_identity': 'participant_data_field'}
     __tablename__ = 'participant_data_field'
 
-    id = db.Column(
-        db.Integer, db.Sequence('participant_data_field_id_seq'),
-        primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     participant_set_id = db.Column(
         db.Integer, db.ForeignKey('participant_set.id'), nullable=False)
     name = db.Column(db.String, nullable=False)
@@ -86,8 +83,7 @@ groups_participants = db.Table(
 class ParticipantRole(BaseModel):
     __tablename__ = 'participant_role'
 
-    id = db.Column(
-        db.Integer, db.Sequence('participant_role_id_seq'), primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
     participant_set_id = db.Column(
         db.Integer, db.ForeignKey('participant_set.id'), nullable=False)
@@ -102,9 +98,7 @@ class ParticipantRole(BaseModel):
 class ParticipantPartner(BaseModel):
     __tablename__ = 'participant_partner'
 
-    id = db.Column(
-        db.Integer, db.Sequence('participant_partner_id_seq'),
-        primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
     participant_set_id = db.Column(db.Integer, db.ForeignKey(
         'participant_set.id', ondelete='CASCADE'), nullable=False)
@@ -119,9 +113,7 @@ class ParticipantPartner(BaseModel):
 class ParticipantGroupType(BaseModel):
     __tablename__ = 'participant_group_type'
 
-    id = db.Column(
-        db.Integer, db.Sequence('participant_group_type_id_seq'),
-        primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
     participant_set_id = db.Column(db.Integer, db.ForeignKey(
         'participant_set.id', ondelete='CASCADE'), nullable=False)
@@ -136,9 +128,7 @@ class ParticipantGroupType(BaseModel):
 class ParticipantGroup(BaseModel):
     __tablename__ = 'participant_group'
 
-    id = db.Column(
-        db.Integer, db.Sequence('participant_group_id_seq'),
-        primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
     group_type_id = db.Column(db.Integer, db.ForeignKey(
         'participant_group_type.id', ondelete='CASCADE'), nullable=False)
@@ -160,7 +150,7 @@ class Phone(BaseModel):
         db.UniqueConstraint('number'),
     )
 
-    id = db.Column(db.Integer, db.Sequence('phone_id_seq'), primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     number = db.Column(db.String, nullable=False)
 
     def __init__(self, number):
@@ -175,8 +165,7 @@ class Participant(BaseModel):
     )
 
     __tablename__ = 'participant'
-    id = db.Column(
-        db.Integer, db.Sequence('participant_id_seq'), primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
     participant_id = db.Column(db.String)
     role_id = db.Column(db.Integer, db.ForeignKey(

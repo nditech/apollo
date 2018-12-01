@@ -20,8 +20,7 @@ def _default_event_end():
 class Deployment(BaseModel):
     __tablename__ = 'deployment'
 
-    id = db.Column(
-        db.Integer, db.Sequence('deployment_id_seq'), primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
     hostnames = db.Column(ARRAY(db.String), nullable=False)
     allow_observer_submission_edit = db.Column(db.Boolean, default=True)
@@ -45,8 +44,7 @@ class Event(Resource):
     __mapper_args__ = {'polymorphic_identity': 'event'}
     __tablename__ = 'event'
 
-    id = db.Column(
-        db.Integer, db.Sequence('event_id_seq'), primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
     start = db.Column(
         db.DateTime, default=_default_event_start, nullable=False)

@@ -16,7 +16,7 @@ class Message(BaseModel):
 
     __tablename__ = 'message'
 
-    id = db.Column(db.Integer, db.Sequence('message_id_seq'), primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     direction = db.Column(ChoiceType(DIRECTIONS), nullable=False)
     recipient = db.Column(db.String)
     sender = db.Column(db.String)

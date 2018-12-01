@@ -71,8 +71,7 @@ class Submission(BaseModel):
     )
     __tablename__ = 'submission'
 
-    id = db.Column(
-        db.Integer, db.Sequence('submission_id_seq'), primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     deployment_id = db.Column(db.Integer, db.ForeignKey(
         'deployment.id', ondelete='CASCADE'), nullable=False)
     event_id = db.Column(db.Integer, db.ForeignKey(
@@ -246,9 +245,7 @@ class Submission(BaseModel):
 class SubmissionComment(BaseModel):
     __tablename__ = 'submission_comment'
 
-    id = db.Column(
-        db.Integer, db.Sequence('submission_comment_id_seq'),
-        primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     submission_id = db.Column(db.Integer, db.ForeignKey(
         'submission.id', ondelete='CASCADE'), nullable=False)
     submission = db.relationship('Submission', backref='comments')
@@ -270,9 +267,7 @@ class SubmissionVersion(BaseModel):
         ('API', _('API')),
         ('ODK', _('ODK')),
     )
-    id = db.Column(
-        db.Integer, db.Sequence('submission_version_id_seq'),
-        primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     submission_id = db.Column(db.Integer, db.ForeignKey(
         'submission.id', ondelete='CASCADE'), nullable=False)
     data = db.Column(JSONB)
