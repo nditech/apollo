@@ -54,7 +54,8 @@ class Role(BaseModel, RoleMixin):
             'deployment.id', ondelete='CASCADE'), nullable=False)
     name = db.Column(db.String)
     description = db.Column(db.String)
-    deployment = db.relationship('Deployment', backref='roles')
+    deployment = db.relationship(
+        'Deployment', backref='roles', cascade='all, delete')
     permissions = db.relationship(
         'Permission', backref='roles', secondary=roles_permissions)
 

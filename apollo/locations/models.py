@@ -18,7 +18,8 @@ class LocationSet(BaseModel):
     deployment_id = db.Column(
         db.Integer, db.ForeignKey('deployment.id', ondelete='CASCADE'),
         nullable=False)
-    deployment = db.relationship('Deployment', backref='location_sets')
+    deployment = db.relationship(
+        'Deployment', backref='location_sets', cascade='all, delete')
 
     def __str__(self):
         return self.name or ''
@@ -121,7 +122,7 @@ class LocationType(BaseModel):
         nullable=False)
 
     location_set = db.relationship('LocationSet', backref=db.backref(
-        'location_types', lazy='dynamic'))
+        'location_types', lazy='dynamic'), cascade='all, delete')
     ancestor_paths = db.relationship(
         'LocationTypePath', order_by='desc(LocationTypePath.depth)',
         primaryjoin='LocationType.id == LocationTypePath.descendant_id',
@@ -203,7 +204,7 @@ class Location(BaseModel):
     extra_data = db.Column(JSONB)
 
     location_set = db.relationship('LocationSet', backref=db.backref(
-        'locations', lazy='dynamic'))
+        'locations', lazy='dynamic'), cascade='all, delete')
     location_type = db.relationship('LocationType', backref='locations')
     samples = db.relationship(
         'Sample', backref='locations', secondary=samples_locations)
@@ -288,12 +289,16 @@ class LocationDataField(Resource):
 
     id = db.Column(db.Integer, primary_key=True)
     location_set_id = db.Column(
-        db.Integer, db.ForeignKey('location_set.id'), nullable=False)
+        db.Integer, db.ForeignKey('location_set.id', ondelete='CASCADE'),
+        nullable=False)
     name = db.Column(db.String, nullable=False)
     label = db.Column(db.String, nullable=False)
     visible_in_lists = db.Column(db.Boolean, default=False)
-    resource_id = db.Column(db.Integer, db.ForeignKey('resource.resource_id'))
-    location_set = db.relationship('LocationSet', backref='extra_fields')
+    resource_id = db.Column(
+        db.Integer, db.ForeignKey('resource.resource_id', ondelete='CASCADE'),
+        nullable=False)
+    location_set = db.relationship(
+        'LocationSet', backref='extra_fields', cascade='all, delete')
 
     def __str__(self):
         return str(_('LocationDataField - %(name)s in %(location_set)s',
