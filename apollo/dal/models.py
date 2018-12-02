@@ -6,6 +6,9 @@ is liberally adapted (aka stolen) from the source of ziggurat_foundations
 (https://github.com/ergo/ziggurat-foundations)
 '''
 
+from uuid import uuid4
+
+from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.declarative import declared_attr
 
 from apollo.core import db
@@ -40,6 +43,7 @@ class CRUDMixin(object):
 class BaseModel(CRUDMixin, db.Model):
     '''Base model class'''
     __abstract__ = True
+    uuid = db.Column(UUID(as_uuid=True), default=uuid4, nullable=False)
 
 
 class Permission(BaseModel):
@@ -49,8 +53,10 @@ class Permission(BaseModel):
     name = db.Column(db.String, nullable=False)
     description = db.Column(db.String)
     deployment_id = db.Column(
-        db.Integer, db.ForeignKey('deployment.id'), nullable=False)
-    deployment = db.relationship('Deployment', backref='permissions')
+        db.Integer, db.ForeignKey('deployment.id', ondelete='CASCADE'),
+        nullable=False)
+    deployment = db.relationship(
+        'Deployment', backref='permissions', cascade='all, delete')
 
     def __str__(self):
         return self.description if self.description else self.name
@@ -80,11 +86,13 @@ class ResourceMixin(object):
     @declared_attr
     def deployment_id(self):
         return db.Column(
-            db.Integer, db.ForeignKey('deployment.id'), nullable=False)
+            db.Integer, db.ForeignKey('deployment.id', ondelete='CASCADE'),
+            nullable=False)
 
     @declared_attr
     def deployment(self):
-        return db.relationship('Deployment', backref='resources')
+        return db.relationship(
+            'Deployment', backref='resources', cascade='all, delete')
 
     @declared_attr
     def roles(self):

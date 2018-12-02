@@ -49,13 +49,15 @@ class Event(Resource):
     start = db.Column(
         db.DateTime, default=_default_event_start, nullable=False)
     end = db.Column(db.DateTime, default=_default_event_end, nullable=False)
-    form_set_id = db.Column(db.Integer, db.ForeignKey('form_set.id'))
+    form_set_id = db.Column(
+        db.Integer, db.ForeignKey('form_set.id'), nullable=True)
     resource_id = db.Column(
-        db.Integer, db.ForeignKey('resource.resource_id'))
+        db.Integer, db.ForeignKey('resource.resource_id', ondelete='CASCADE'),
+        nullable=False)
     location_set_id = db.Column(
-        db.Integer, db.ForeignKey('location_set.id'))
+        db.Integer, db.ForeignKey('location_set.id'), nullable=True)
     participant_set_id = db.Column(
-        db.Integer, db.ForeignKey('participant_set.id'))
+        db.Integer, db.ForeignKey('participant_set.id'), nullable=True)
     form_set = db.relationship('FormSet', backref='events')
     location_set = db.relationship('LocationSet', backref='events')
     participant_set = db.relationship('ParticipantSet', backref='events')

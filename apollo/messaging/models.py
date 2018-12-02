@@ -31,7 +31,9 @@ class Message(BaseModel):
     participant_id = db.Column(db.Integer, db.ForeignKey('participant.id'))
 
     # ----- RELATIONSHIP PROPERTIES ----
-    deployment = db.relationship('Deployment', backref='messages')
-    event = db.relationship('Event', backref='messages')
+    deployment = db.relationship(
+        'Deployment', backref='messages', cascade='all, delete')
+    event = db.relationship(
+        'Event', backref='messages', cascade='all, delete')
     submission = db.relationship('Submission', backref='messages')
     participant = db.relationship('Participant', backref='messages')

@@ -13,7 +13,7 @@ from apollo.participants.models import (  # noqa
     Participant, ParticipantGroup, ParticipantGroupType, ParticipantPartner,
     ParticipantRole, ParticipantPhone, Phone)
 from apollo.submissions.models import (  # noqa
-    Submission, SubmissionComment, SubmissionVersion)
+    Submission, SubmissionComment, SubmissionNote, SubmissionVersion)
 from apollo.users.models import (  # noqa
     Role, User, UserUpload, role_resource_permissions, roles_permissions,
     roles_users, user_resource_permissions, users_permissions)

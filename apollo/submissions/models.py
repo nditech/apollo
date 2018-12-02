@@ -248,14 +248,34 @@ class SubmissionComment(BaseModel):
     id = db.Column(db.Integer, primary_key=True)
     submission_id = db.Column(db.Integer, db.ForeignKey(
         'submission.id', ondelete='CASCADE'), nullable=False)
-    submission = db.relationship('Submission', backref='comments')
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    user = db.relationship('User', backref='submission_comments')
+    submission = db.relationship(
+        'Submission', backref='comments', cascade='all, delete')
     comment = db.Column(db.String)
     submit_date = db.Column(db.DateTime, default=current_timestamp)
     deployment_id = db.Column(db.Integer, db.ForeignKey(
         'deployment.id', ondelete='CASCADE'), nullable=False)
     deployment = db.relationship('Deployment', backref='submission_comments')
+
+
+class SubmissionNote(BaseModel):
+    __tablename__ = 'submission_note'
+
+    id = db.Column(db.Integer, primary_key=True)
+    submission_id = db.Column(db.Integer, db.ForeignKey(
+        'submission.id', ondelete='CASCADE'), nullable=False)
+    submission = db.relationship(
+        'Submission', backref='notes', cascade='all, delete')
+    user_id = db.Column(
+        db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'),
+        nullable=False)
+    user = db.relationship(
+        'User', backref='notes', cascade='all, delete')
+    comment = db.Column(db.String)
+    submit_date = db.Column(db.DateTime, default=current_timestamp)
+    deployment_id = db.Column(db.Integer, db.ForeignKey(
+        'deployment.id', ondelete='CASCADE'), nullable=False)
+    deployment = db.relationship(
+        'Deployment', backref='submission_notes')
 
 
 class SubmissionVersion(BaseModel):
@@ -271,10 +291,12 @@ class SubmissionVersion(BaseModel):
     submission_id = db.Column(db.Integer, db.ForeignKey(
         'submission.id', ondelete='CASCADE'), nullable=False)
     data = db.Column(JSONB)
-    submission = db.relationship('Submission', backref='versions')
+    submission = db.relationship(
+        'Submission', backref='versions', cascade='all, delete')
     timestamp = db.Column(db.DateTime, default=current_timestamp)
     channel = db.Column(ChoiceType(CHANNEL_CHOICES))
     deployment_id = db.Column(db.Integer, db.ForeignKey(
         'deployment.id', ondelete='CASCADE'), nullable=False)
-    deployment = db.relationship('Deployment', backref='submission_versions')
+    deployment = db.relationship(
+        'Deployment', backref='submission_versions', cascade='all, delete')
     identity = db.Column(db.String, default='unknown', nullable=False)
