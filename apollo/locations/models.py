@@ -178,12 +178,17 @@ class LocationTypePath(db.Model):
         db.Index('location_type_paths_descendant_idx', 'descendant_id'))
 
     location_set_id = db.Column(
-        db.Integer, db.ForeignKey('location_set.id'), nullable=False)
+        db.Integer, db.ForeignKey('location_set.id', ondelete='CASCADE'),
+        nullable=False)
     ancestor_id = db.Column(db.Integer, db.ForeignKey(
         'location_type.id', ondelete='CASCADE'), primary_key=True)
     descendant_id = db.Column(db.Integer, db.ForeignKey(
         'location_type.id', ondelete='CASCADE'), primary_key=True)
     depth = db.Column(db.Integer)
+
+    location_set = db.relationship(
+        'LocationSet', backref=db.backref('location_type_paths'),
+        cascade='all, delete')
 
 
 class Location(BaseModel):
@@ -281,6 +286,10 @@ class LocationPath(db.Model):
     descendant_id = db.Column(db.Integer, db.ForeignKey(
         'location.id', ondelete='CASCADE'), primary_key=True)
     depth = db.Column(db.Integer)
+
+    location_set = db.relationship(
+        'LocationSet', backref=db.backref('location_paths'),
+        cascade='all, delete')
 
 
 class LocationDataField(Resource):
