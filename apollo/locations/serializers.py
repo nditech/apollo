@@ -73,7 +73,7 @@ class LocationDataFieldSerializer(object):
         kwargs.pop('location_set')
         kwargs['location_set_id'] = location_set_id
 
-        return LocationDataField(**data)
+        return LocationDataField(**kwargs)
 
     def serialize_one(self, obj):
         if not isinstance(obj, self.__model__):
@@ -99,7 +99,7 @@ class LocationTypeSerializer(object):
         kwargs.pop('location_set')
         kwargs['location_set_id'] = location_set_id
 
-        return LocationType(**data)
+        return LocationType(**kwargs)
 
     def serialize_one(self, obj):
         if not isinstance(obj, self.__model__):
@@ -137,7 +137,7 @@ class LocationPathSerializer(object):
         kwargs['ancestor_id'] = ancestor_id
         kwargs['descendant_id'] = descendant_id
 
-        return LocationPath(**data)
+        return LocationPath(**kwargs)
 
     def serialize_one(self, obj):
         if not isinstance(obj, self.__model__):
@@ -172,7 +172,7 @@ class LocationTypePathSerializer(object):
         kwargs['ancestor_id'] = ancestor_id
         kwargs['descendant_id'] = descendant_id
 
-        return LocationTypePath(**data)
+        return LocationTypePath(**kwargs)
 
     def serialize_one(self, obj):
         if not isinstance(obj, self.__model__):
@@ -197,7 +197,7 @@ class SampleSerializer(object):
         kwargs.pop('location_set')
         kwargs['location_set_id'] = location_set_id
 
-        return Sample(**data)
+        return Sample(**kwargs)
 
     def serialize_one(self, obj):
         if not isinstance(obj, self.__model__):
