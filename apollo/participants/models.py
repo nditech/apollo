@@ -73,8 +73,9 @@ class ParticipantDataField(Resource):
         'ParticipantSet', backref='extra_fields', cascade='all, delete')
 
     def __str__(self):
-        return str(_('ParticipantDataField - %(name)s in %(participant_set)s',
-                     name=self.name, participant_set=self.participant_set.name))
+        return str(
+            _('ParticipantDataField - %(name)s in %(participant_set)s',
+              name=self.name, participant_set=self.participant_set.name))
 
 
 groups_participants = db.Table(
