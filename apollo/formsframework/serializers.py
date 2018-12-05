@@ -63,9 +63,12 @@ class FormSetArchiveSerializer(ArchiveSerializer):
     def deserialize(self, zip_file):
         return super().deserialize(zip_file)
 
-    def serialize(self, obj, zip_file):
-        self.serialize_form_set(obj, zip_file)
-        self.serialize_forms(obj.forms, zip_file)
+    def serialize(self, event, zip_file):
+        form_set = event.form_set
+
+        if form_set:
+            self.serialize_form_set(form_set, zip_file)
+            self.serialize_forms(form_set.forms, zip_file)
 
     def serialize_form_set(self, obj, zip_file):
         serializer = FormSetSerializer()

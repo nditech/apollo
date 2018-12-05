@@ -229,16 +229,21 @@ class ParticipantSetArchiveSerializer(ArchiveSerializer):
     def deserialize(self, zip_file):
         pass
 
-    def serialize(self, obj, zip_file):
-        self.serialize_participant_set(obj, zip_file)
-        self.serialize_extra_fields(obj.extra_fields, zip_file)
-        self.serialize_partners(obj.participant_partners, zip_file)
-        self.serialize_roles(obj.participant_roles, zip_file)
-        self.serialize_group_types(obj.participant_group_types, zip_file)
-        self.serialize_groups(obj.participant_groups, zip_file)
-        self.serialize_participants(obj.participants, zip_file)
-        self.serialize_participant_groups(obj, zip_file)
-        self.serialize_participant_phones(obj, zip_file)
+    def serialize(self, event, zip_file):
+        participant_set = event.participant_set
+
+        if participant_set:
+            self.serialize_participant_set(participant_set, zip_file)
+            self.serialize_extra_fields(participant_set.extra_fields, zip_file)
+            self.serialize_partners(participant_set.participant_partners,
+                                    zip_file)
+            self.serialize_roles(participant_set.participant_roles, zip_file)
+            self.serialize_group_types(participant_set.participant_group_types,
+                                       zip_file)
+            self.serialize_groups(participant_set.participant_groups, zip_file)
+            self.serialize_participants(participant_set.participants, zip_file)
+            self.serialize_participant_groups(participant_set, zip_file)
+            self.serialize_participant_phones(participant_set, zip_file)
 
     def serialize_participant_set(self, obj, zip_file):
         serializer = ParticipantSetSerializer()
