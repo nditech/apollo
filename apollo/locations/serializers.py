@@ -215,15 +215,21 @@ class LocationSetArchiveSerializer(ArchiveSerializer):
     def deserialize(self, zip_file):
         pass
 
-    def serialize(self, obj, zip_file):
-        self.serialize_location_set(obj, zip_file)
-        self.serialize_samples(obj.samples, zip_file)
-        self.serialize_location_types(obj.location_types, zip_file)
-        self.serialize_location_type_paths(obj.location_type_paths, zip_file)
-        self.serialize_locations(obj.locations, zip_file)
-        self.serialize_location_paths(obj.location_paths, zip_file)
-        self.serialize_extra_fields(obj.extra_fields, zip_file)
-        self.serialize_sample_nodes(obj, zip_file)
+    def serialize(self, event, zip_file):
+        location_set = event.location_set
+
+        if location_set:
+            self.serialize_location_set(location_set, zip_file)
+            self.serialize_samples(location_set.samples, zip_file)
+            self.serialize_location_types(
+                location_set.location_types, zip_file)
+            self.serialize_location_type_paths(
+                location_set.location_type_paths, zip_file)
+            self.serialize_locations(location_set.locations, zip_file)
+            self.serialize_location_paths(
+                location_set.location_paths, zip_file)
+            self.serialize_extra_fields(location_set.extra_fields, zip_file)
+            self.serialize_sample_nodes(location_set, zip_file)
 
     def serialize_location_set(self, obj, zip_file):
         serializer = LocationSetSerializer()
