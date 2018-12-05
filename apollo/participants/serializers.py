@@ -25,9 +25,13 @@ class ParticipantSerializer(object):
         role_id = ParticipantRole.query.filter_by(
             uuid=data['role']
         ).with_entities(ParticipantRole.id).scalar()
-        location_id = Location.query.filter_by(
-            uuid=data['location']
-        ).with_entities(Location.id).scalar()
+
+        if data['location']:
+            location_id = Location.query.filter_by(
+                uuid=data['location']
+            ).with_entities(Location.id).scalar()
+        else:
+            location_id = None
 
         kwargs = data.copy()
         kwargs.pop('participant_set')
@@ -53,7 +57,7 @@ class ParticipantSerializer(object):
             'role': obj.role.uuid.hex if obj.role else None,
             'location': obj.location.uuid.hex if obj.location else None,
             'partner': obj.partner.uuid.hex if obj.partner else None,
-            'gender': obj.gender.code if obj.gender else None,
+            'gender': obj.gender.code if obj.gender else '',
             'message_count': obj.message_count,
             'accurate_message_count': obj.accurate_message_count,
             'completion_rating': obj.completion_rating,
