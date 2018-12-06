@@ -12,10 +12,10 @@ from wtforms import (
     widgets)
 from wtforms_alchemy.utils import choice_type_coerce_factory
 
-from .. import models, services, utils
-from ..frontend.helpers import DictDiffer
-from ..participants.utils import update_participant_completion_rating
-from .custom_fields import IntegerSplitterField
+from apollo import models, services, utils
+from apollo.core import db
+from apollo.frontend.helpers import DictDiffer
+from apollo.formsframework.custom_fields import IntegerSplitterField
 
 ugly_phone = re.compile('[^\d]*')
 
@@ -223,10 +223,13 @@ class BaseQuestionnaireForm(Form):
                         else:
                             # for an existing submission, we need an update,
                             # otherwise the JSONB field won't get persisted
+                            db.session.begin(subtransactions=True)
                             update_params['data'] = data
                             services.submissions.find(
                                 id=submission.id
                             ).update(update_params, synchronize_session=False)
+                            db.session.commit()
+                        models.Submission.update_master(submission)
                         update_submission_version(submission)
 
                     # update completion rating for participant
