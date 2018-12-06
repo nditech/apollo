@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from flask_babelex import lazy_gettext as _
+import sqlalchemy as sa
 from sqlalchemy.dialects.postgresql import ARRAY, JSONB
 from sqlalchemy_utils import ChoiceType
 
@@ -101,6 +102,55 @@ class Submission(BaseModel):
     location = db.relationship('Location', backref='submissions')
     participant = db.relationship('Participant', backref='submissions')
     conflicts = db.Column(JSONB)
+
+    @classmethod
+    def update_master(cls, submission):
+        '''Update a master submission based on an observer submission's data'''
+        submission_form = submission.form
+
+        # not applicable to master submissions
+        if submission.submission_type.code == 'M':
+            return
+
+        # not applicable to incident form submissions
+        if submission_form.form_type == 'INCIDENT':
+            return
+
+        # get master and sibling submissions
+        related_submissions = cls.query.filter(
+            cls.deployment_id == submission.deployment_id,
+            cls.event_id == submission.event_id,
+            cls.form_id == submission.form_id,
+            cls.location_id == submission.location_id,
+            cls.id != submission.id)
+
+        master = related_submissions.filter_by(submission_type='M').one()
+        siblings = related_submissions.filter_by(submission_type='O')
+
+        available_tags = set(submission_form.tags).difference(
+            master.overridden_fields)
+
+        query_params = [
+            sa.func.bool_and(
+                cls.data[tag].astext == str(submission.data.get(tag)))
+            for tag in available_tags
+        ]
+        results = siblings.with_entities(*query_params).one()
+
+        master_data = {}
+        conflicts = []
+
+        for tag, result in zip(available_tags, results):
+            if result is True or result is None:
+                master_data[tag] = submission.data.get(tag)
+            else:
+                conflicts.append(tag)
+
+        db.session.begin(subtransactions=True)
+        cls.query.filter_by(id=master.id).update(
+            {'data': master_data, 'conflicts': conflicts},
+            synchronize_session=False)
+        db.session.commit()
 
     @classmethod
     def init_submissions(cls, event, form, role, location_type):
