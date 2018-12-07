@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from flask_babelex import lazy_gettext as _
+import sqlalchemy as sa
 from sqlalchemy.dialects.postgresql import ARRAY, JSONB
 from sqlalchemy_utils import ChoiceType
 
@@ -103,6 +104,55 @@ class Submission(BaseModel):
     conflicts = db.Column(JSONB)
 
     @classmethod
+    def update_master(cls, submission):
+        '''Update a master submission based on an observer submission's data'''
+        submission_form = submission.form
+
+        # not applicable to master submissions
+        if submission.submission_type.code == 'M':
+            return
+
+        # not applicable to incident form submissions
+        if submission_form.form_type == 'INCIDENT':
+            return
+
+        # get master and sibling submissions
+        related_submissions = cls.query.filter(
+            cls.deployment_id == submission.deployment_id,
+            cls.event_id == submission.event_id,
+            cls.form_id == submission.form_id,
+            cls.location_id == submission.location_id,
+            cls.id != submission.id)
+
+        master = related_submissions.filter_by(submission_type='M').one()
+        siblings = related_submissions.filter_by(submission_type='O')
+
+        available_tags = set(submission_form.tags).difference(
+            master.overridden_fields)
+
+        query_params = [
+            sa.func.bool_and(
+                cls.data.contains({tag: submission.data.get(tag)}))
+            for tag in available_tags
+        ]
+        results = siblings.with_entities(*query_params).one()
+
+        master_data = {}
+        conflicts = []
+
+        for tag, result in zip(available_tags, results):
+            if result is True or result is None:
+                master_data[tag] = submission.data.get(tag)
+            else:
+                conflicts.append(tag)
+
+        db.session.begin(subtransactions=True)
+        cls.query.filter_by(id=master.id).update(
+            {'data': master_data, 'conflicts': conflicts},
+            synchronize_session=False)
+        db.session.commit()
+
+    @classmethod
     def init_submissions(cls, event, form, role, location_type):
         from apollo.participants.models import Participant
 
@@ -164,35 +214,46 @@ class Submission(BaseModel):
         return d.get(self.incident_status, _('Unmarked'))
 
     def completion(self, group_name):
-        # TODO: fix conflict status
-        group_tags = self.form.get_group_tags(group_name)
-        siblings = self.siblings
-        if len(siblings) == 0:
-            subset = [
-                self.data.get(tag) not in (None, '', [])
-                for tag in group_tags] if self.data else []
-
-            if subset and all(subset):
+        def _completion(group_fill_status):
+            if all(group_fill_status):
                 return 'Complete'
-            elif any(subset):
+            elif any(group_fill_status):
                 return 'Partial'
-            else:
-                return 'Missing'
-        else:
-            if self.overridden_fields:
-                tags_to_check = set(group_tags) - set(self.overridden_fields)
-            else:
-                tags_to_check = group_tags
 
-            all_submissions = [self] + siblings
-            for tag in tags_to_check:
-                check_data = [sub.data.get(tag) for sub in all_submissions]
-                check = {
-                    frozenset(item)
-                    if isinstance(item, list) else item
-                    for item in check_data}
-                if len(check) > 1:
-                    return 'Conflict'
+            return 'Missing'
+
+        form = self.form
+        group_tags = form.get_group_tags(group_name)
+        if not group_tags:
+            return
+        empty_values = (None, '', [])
+        group_data_filled = [
+            self.data.get(tag) not in empty_values
+            for tag in group_tags
+        ] if self.data else []
+
+        if form.form_type == 'CHECKLIST':
+            siblings = self.__siblings()
+            if siblings.count() == 0:
+                return _completion(group_data_filled)
+            if self.overridden_fields:
+                tags = set(group_tags).difference(self.overridden_fields)
+            else:
+                tags = group_tags
+
+            query_params = [
+                sa.func.bool_and(Submission.data.contains({tag: self.data.get(tag)}))
+                for tag in tags
+            ]
+
+            result = siblings.with_entities(*query_params).one()
+            false_results = [r for r in result if r is False]
+            if len(false_results) > 0:
+                return 'Conflict'
+
+            return _completion(group_data_filled)
+        else:
+            return _completion(group_data_filled)
 
     def __siblings(self):
         '''Returns siblings as a SQLA query object'''
