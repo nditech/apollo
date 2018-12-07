@@ -132,7 +132,7 @@ class Submission(BaseModel):
 
         query_params = [
             sa.func.bool_and(
-                cls.data[tag].astext == str(submission.data.get(tag)))
+                cls.data.contains({tag: submission.data.get(tag)}))
             for tag in available_tags
         ]
         results = siblings.with_entities(*query_params).one()
@@ -214,35 +214,46 @@ class Submission(BaseModel):
         return d.get(self.incident_status, _('Unmarked'))
 
     def completion(self, group_name):
-        # TODO: fix conflict status
-        group_tags = self.form.get_group_tags(group_name)
-        siblings = self.siblings
-        if len(siblings) == 0:
-            subset = [
-                self.data.get(tag) not in (None, '', [])
-                for tag in group_tags] if self.data else []
-
-            if subset and all(subset):
+        def _completion(group_fill_status):
+            if all(group_fill_status):
                 return 'Complete'
-            elif any(subset):
+            elif any(group_fill_status):
                 return 'Partial'
-            else:
-                return 'Missing'
-        else:
-            if self.overridden_fields:
-                tags_to_check = set(group_tags) - set(self.overridden_fields)
-            else:
-                tags_to_check = group_tags
 
-            all_submissions = [self] + siblings
-            for tag in tags_to_check:
-                check_data = [sub.data.get(tag) for sub in all_submissions]
-                check = {
-                    frozenset(item)
-                    if isinstance(item, list) else item
-                    for item in check_data}
-                if len(check) > 1:
-                    return 'Conflict'
+            return 'Missing'
+
+        form = self.form
+        group_tags = form.get_group_tags(group_name)
+        if not group_tags:
+            return
+        empty_values = (None, '', [])
+        group_data_filled = [
+            self.data.get(tag) not in empty_values
+            for tag in group_tags
+        ] if self.data else []
+
+        if form.form_type == 'CHECKLIST':
+            siblings = self.__siblings()
+            if siblings.count() == 0:
+                return _completion(group_data_filled)
+            if self.overridden_fields:
+                tags = set(group_tags).difference(self.overridden_fields)
+            else:
+                tags = group_tags
+
+            query_params = [
+                sa.func.bool_and(Submission.data.contains({tag: self.data.get(tag)}))
+                for tag in tags
+            ]
+
+            result = siblings.with_entities(*query_params).one()
+            false_results = [r for r in result if r is False]
+            if len(false_results) > 0:
+                return 'Conflict'
+
+            return _completion(group_data_filled)
+        else:
+            return _completion(group_data_filled)
 
     def __siblings(self):
         '''Returns siblings as a SQLA query object'''
