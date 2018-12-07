@@ -413,8 +413,8 @@ def upgrade():
     sa.Column('participant_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['deployment_id'], ['deployment.id'], ondelete='CASCADE'),
     sa.ForeignKeyConstraint(['event_id'], ['event.id'], ondelete='CASCADE'),
-    sa.ForeignKeyConstraint(['participant_id'], ['participant.id'], ),
-    sa.ForeignKeyConstraint(['submission_id'], ['submission.id'], ),
+    sa.ForeignKeyConstraint(['participant_id'], ['participant.id'], ondelete='SET NULL'),
+    sa.ForeignKeyConstraint(['submission_id'], ['submission.id'], ondelete='SET NULL'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_message_received'), 'message', ['received'], unique=False)
