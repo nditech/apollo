@@ -224,7 +224,8 @@ class Submission(BaseModel):
                 master_submission = cls(
                     form_id=form.id, participant_id=None,
                     location_id=location.id, deployment_id=deployment_id,
-                    event_id=event.id, submission_type='M', data={})
+                    event_id=event.id, submission_type='M', data={},
+                    conflicts=[])
                 master_submission.save()
 
     def get_incident_status_display(self):
