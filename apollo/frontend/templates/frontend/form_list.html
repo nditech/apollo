@@ -1,6 +1,8 @@
 {% extends "frontend/_layout.html" %}
 {% block toolbar %}
+{% if g.event.form_set_id %}
 <a class="btn btn-sm btn-warning pull-right" data-toggle="modal" data-target="#checklistModal" href="#"><span class="glyphicon glyphicon-list-alt"></span> {{ _('Create Checklists') }}</a>
+{% endif %}
 <a class="btn btn-sm btn-default pull-right" data-toggle="modal" data-target="#formImportModal" href="#" style="margin-right: 1em"><span class="glyphicon glyphicon-upload"></span> {{ _('Import') }}</a>
 <a class="btn btn-sm btn-default pull-right" href="{{ url_for('forms.new_form') }}" style="margin-right: 1em"><span class="glyphicon glyphicon-plus"></span> {{ _('Add Form') }}</a>
 {% endblock %}
