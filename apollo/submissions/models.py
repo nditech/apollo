@@ -249,7 +249,7 @@ class Submission(BaseModel):
         group_data_filled = [
             self.data.get(tag) not in empty_values
             for tag in group_tags
-        ] if self.data else []
+        ] if self.data else [False] * len(group_tags)
 
         if form.form_type == 'CHECKLIST':
             siblings = self.__siblings()
