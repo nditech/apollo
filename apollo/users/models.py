@@ -55,7 +55,9 @@ class Role(BaseModel, RoleMixin):
     name = db.Column(db.String)
     description = db.Column(db.String)
     deployment = db.relationship(
-        'Deployment', backref='roles', cascade='all, delete')
+        'Deployment',
+        backref=db.backref('roles', cascade='all, delete',
+                           passive_deletes=True))
     permissions = db.relationship(
         'Permission', backref='roles', secondary=roles_permissions)
 
@@ -84,7 +86,9 @@ class User(BaseModel, UserMixin):
     current_login_ip = db.Column(db.String)
     last_login_ip = db.Column(db.String)
     login_count = db.Column(db.Integer)
-    deployment = db.relationship('Deployment', backref='users')
+    deployment = db.relationship(
+        'Deployment',
+        backref=db.backref('users', cascade='all, delete', passive_deletes=True))
     roles = db.relationship(
         'Role', backref='users', secondary=roles_users)
     permissions = db.relationship(
@@ -107,5 +111,11 @@ class UserUpload(BaseModel):
         'user.id', ondelete='CASCADE'), nullable=False)
     created = db.Column(db.DateTime, default=current_timestamp)
     upload_filename = db.Column(db.String)
-    deployment = db.relationship('Deployment', backref='user_uploads')
-    user = db.relationship('User', backref='uploads')
+    deployment = db.relationship(
+        'Deployment',
+        backref=db.backref('user_uploads', cascade='all, delete',
+                           passive_deletes=True))
+    user = db.relationship(
+        'User',
+        backref=db.backref('uploads', cascade='all, delete',
+                           passive_deletes=True))

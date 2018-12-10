@@ -51,7 +51,8 @@ class FormSet(BaseModel):
         db.Integer, db.ForeignKey('deployment.id', ondelete='CASCADE'),
         nullable=False)
     deployment = db.relationship(
-        'Deployment', backref='form_sets', cascade='all, delete')
+        'Deployment', backref=db.backref('form_sets', cascade='all, delete',
+                                         passive_deletes=True))
 
     def __str__(self):
         return self.name or ''

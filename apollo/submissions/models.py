@@ -96,11 +96,26 @@ class Submission(BaseModel):
     incident_description = db.Column(db.String)
     incident_status = db.Column(ChoiceType(INCIDENT_STATUSES))
     overridden_fields = db.Column(ARRAY(db.String), default=[])
-    deployment = db.relationship('Deployment', backref='submissions')
-    event = db.relationship('Event', backref='submissions')
-    form = db.relationship('Form', backref='submissions')
-    location = db.relationship('Location', backref='submissions')
-    participant = db.relationship('Participant', backref='submissions')
+    deployment = db.relationship(
+        'Deployment',
+        backref=db.backref('submissions', cascade='all, delete',
+                           passive_deletes=True))
+    event = db.relationship(
+        'Event',
+        backref=db.backref('submissions', cascade='all, delete',
+                           passive_deletes=True))
+    form = db.relationship(
+        'Form',
+        backref=db.backref('submissions', cascade='all, delete',
+                           passive_deletes=True))
+    location = db.relationship(
+        'Location',
+        backref=db.backref('submissions', cascade='all, delete',
+                           passive_deletes=True))
+    participant = db.relationship(
+        'Participant',
+        backref=db.backref('submissions', cascade='all, delete',
+                           passive_deletes=True))
     conflicts = db.Column(JSONB)
 
     @classmethod
@@ -135,7 +150,10 @@ class Submission(BaseModel):
                 cls.data.contains({tag: submission.data.get(tag)}))
             for tag in available_tags
         ]
-        results = siblings.with_entities(*query_params).one()
+        if query_params:
+            results = siblings.with_entities(*query_params).one()
+        else:
+            results = [True] * len(available_tags)
 
         master_data = {}
         conflicts = []
@@ -242,14 +260,16 @@ class Submission(BaseModel):
                 tags = group_tags
 
             query_params = [
-                sa.func.bool_and(Submission.data.contains({tag: self.data.get(tag)}))
-                for tag in tags
+                sa.func.bool_and(
+                    Submission.data.contains({tag: self.data.get(tag)}))
+                for tag in tags if self.data.get(tag) is not None
             ]
 
-            result = siblings.with_entities(*query_params).one()
-            false_results = [r for r in result if r is False]
-            if len(false_results) > 0:
-                return 'Conflict'
+            if query_params:
+                result = siblings.with_entities(*query_params).one()
+                false_results = [r for r in result if r is False]
+                if len(false_results) > 0:
+                    return 'Conflict'
 
             return _completion(group_data_filled)
         else:
@@ -310,12 +330,17 @@ class SubmissionComment(BaseModel):
     submission_id = db.Column(db.Integer, db.ForeignKey(
         'submission.id', ondelete='CASCADE'), nullable=False)
     submission = db.relationship(
-        'Submission', backref='comments', cascade='all, delete')
+        'Submission',
+        backref=db.backref('comments', cascade='all, delete',
+                           passive_deletes=True))
     comment = db.Column(db.String)
     submit_date = db.Column(db.DateTime, default=current_timestamp)
     deployment_id = db.Column(db.Integer, db.ForeignKey(
         'deployment.id', ondelete='CASCADE'), nullable=False)
-    deployment = db.relationship('Deployment', backref='submission_comments')
+    deployment = db.relationship(
+        'Deployment',
+        backref=db.backref('submission_comments', cascade='all, delete',
+                           passive_deletes=True))
 
 
 class SubmissionNote(BaseModel):
@@ -330,13 +355,17 @@ class SubmissionNote(BaseModel):
         db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'),
         nullable=False)
     user = db.relationship(
-        'User', backref='notes', cascade='all, delete')
+        'User',
+        backref=db.backref('notes', cascade='all, delete',
+                           passive_deletes=True))
     comment = db.Column(db.String)
     submit_date = db.Column(db.DateTime, default=current_timestamp)
     deployment_id = db.Column(db.Integer, db.ForeignKey(
         'deployment.id', ondelete='CASCADE'), nullable=False)
     deployment = db.relationship(
-        'Deployment', backref='submission_notes')
+        'Deployment',
+        backref=db.backref('submission_notes', cascade='all, delete',
+                           passive_deletes=True))
 
 
 class SubmissionVersion(BaseModel):
@@ -353,11 +382,15 @@ class SubmissionVersion(BaseModel):
         'submission.id', ondelete='CASCADE'), nullable=False)
     data = db.Column(JSONB)
     submission = db.relationship(
-        'Submission', backref='versions', cascade='all, delete')
+        'Submission',
+        backref=db.backref('versions', cascade='all, delete',
+                           passive_deletes=True))
     timestamp = db.Column(db.DateTime, default=current_timestamp)
     channel = db.Column(ChoiceType(CHANNEL_CHOICES))
     deployment_id = db.Column(db.Integer, db.ForeignKey(
         'deployment.id', ondelete='CASCADE'), nullable=False)
     deployment = db.relationship(
-        'Deployment', backref='submission_versions', cascade='all, delete')
+        'Deployment',
+        backref=db.backref('submission_versions', cascade='all, delete',
+                           passive_deletes=True))
     identity = db.Column(db.String, default='unknown', nullable=False)
