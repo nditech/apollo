@@ -109,7 +109,7 @@ def upgrade():
     sa.Column('current_login_ip', sa.String(), nullable=True),
     sa.Column('last_login_ip', sa.String(), nullable=True),
     sa.Column('login_count', sa.Integer(), nullable=True),
-    sa.Column('locale', sqlalchemy_utils.ChoiceType(LANGUAGE_CHOICES), nullable=True)
+    sa.Column('locale', sqlalchemy_utils.ChoiceType(LANGUAGE_CHOICES), nullable=True),
     sa.ForeignKeyConstraint(['deployment_id'], ['deployment.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
@@ -125,6 +125,7 @@ def upgrade():
     sa.Column('resource_id', sa.Integer(), nullable=False),
     sa.Column('quality_checks', postgresql.JSONB(astext_type=sa.Text()), nullable=True),
     sa.Column('party_mappings', postgresql.JSONB(astext_type=sa.Text()), nullable=True),
+    sa.Column('enable_conflict_tagging', sa.Boolean(), nullable=True),
     sa.Column('calculate_moe', sa.Boolean(), nullable=True),
     sa.Column('accredited_voters_tag', sa.String(), nullable=True),
     sa.Column('quality_checks_enabled', sa.Boolean(), nullable=True),

@@ -82,6 +82,7 @@ class Form(Resource):
         nullable=False)
     quality_checks = db.Column(JSONB)
     party_mappings = db.Column(JSONB)
+    enable_conflict_tagging = db.Column(db.Boolean, default=True)
     calculate_moe = db.Column(db.Boolean)
     accredited_voters_tag = db.Column(db.String)
     quality_checks_enabled = db.Column(db.Boolean, default=False)
