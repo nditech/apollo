@@ -18,7 +18,10 @@ class LocationSet(BaseModel):
     deployment_id = db.Column(
         db.Integer, db.ForeignKey('deployment.id', ondelete='CASCADE'),
         nullable=False)
-    deployment = db.relationship('Deployment', backref='location_sets')
+    deployment = db.relationship(
+        'Deployment',
+        backref=db.backref('location_sets', cascade='all, delete',
+                           passive_deletes=True))
 
     def __str__(self):
         return self.name or ''
@@ -104,7 +107,8 @@ class Sample(BaseModel):
         nullable=False)
 
     location_set = db.relationship('LocationSet', backref=db.backref(
-        'samples', lazy='dynamic'))
+        'samples', cascade='all, delete', lazy='dynamic',
+        passive_deletes=True))
 
 
 class LocationType(BaseModel):
@@ -121,7 +125,8 @@ class LocationType(BaseModel):
         nullable=False)
 
     location_set = db.relationship('LocationSet', backref=db.backref(
-        'location_types', lazy='dynamic'))
+        'location_types', cascade='all, delete', lazy='dynamic',
+        passive_deletes=True))
     ancestor_paths = db.relationship(
         'LocationTypePath', order_by='desc(LocationTypePath.depth)',
         primaryjoin='LocationType.id == LocationTypePath.descendant_id',
@@ -177,12 +182,18 @@ class LocationTypePath(db.Model):
         db.Index('location_type_paths_descendant_idx', 'descendant_id'))
 
     location_set_id = db.Column(
-        db.Integer, db.ForeignKey('location_set.id'), nullable=False)
+        db.Integer, db.ForeignKey('location_set.id', ondelete='CASCADE'),
+        nullable=False)
     ancestor_id = db.Column(db.Integer, db.ForeignKey(
         'location_type.id', ondelete='CASCADE'), primary_key=True)
     descendant_id = db.Column(db.Integer, db.ForeignKey(
         'location_type.id', ondelete='CASCADE'), primary_key=True)
     depth = db.Column(db.Integer)
+
+    location_set = db.relationship(
+        'LocationSet', backref=db.backref(
+            'location_type_paths', cascade='all, delete',
+            passive_deletes=True))
 
 
 class Location(BaseModel):
@@ -203,8 +214,11 @@ class Location(BaseModel):
     extra_data = db.Column(JSONB)
 
     location_set = db.relationship('LocationSet', backref=db.backref(
-        'locations', lazy='dynamic'))
-    location_type = db.relationship('LocationType', backref='locations')
+        'locations', cascade='all, delete', lazy='dynamic'))
+    location_type = db.relationship(
+        'LocationType',
+        backref=db.backref('locations', cascade='all, delete',
+                           passive_deletes=True))
     samples = db.relationship(
         'Sample', backref='locations', secondary=samples_locations)
 
@@ -281,6 +295,11 @@ class LocationPath(db.Model):
         'location.id', ondelete='CASCADE'), primary_key=True)
     depth = db.Column(db.Integer)
 
+    location_set = db.relationship(
+        'LocationSet',
+        backref=db.backref('location_paths', cascade='all, delete',
+                           passive_deletes=True))
+
 
 class LocationDataField(Resource):
     __mapper_args__ = {'polymorphic_identity': 'location_data_field'}
@@ -288,12 +307,18 @@ class LocationDataField(Resource):
 
     id = db.Column(db.Integer, primary_key=True)
     location_set_id = db.Column(
-        db.Integer, db.ForeignKey('location_set.id'), nullable=False)
+        db.Integer, db.ForeignKey('location_set.id', ondelete='CASCADE'),
+        nullable=False)
     name = db.Column(db.String, nullable=False)
     label = db.Column(db.String, nullable=False)
     visible_in_lists = db.Column(db.Boolean, default=False)
-    resource_id = db.Column(db.Integer, db.ForeignKey('resource.resource_id'))
-    location_set = db.relationship('LocationSet', backref='extra_fields')
+    resource_id = db.Column(
+        db.Integer, db.ForeignKey('resource.resource_id', ondelete='CASCADE'),
+        nullable=False)
+    location_set = db.relationship(
+        'LocationSet',
+        backref=db.backref('extra_fields', cascade='all, delete',
+                           passive_deletes=True))
 
     def __str__(self):
         return str(_('LocationDataField - %(name)s in %(location_set)s',

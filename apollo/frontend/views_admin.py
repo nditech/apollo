@@ -160,10 +160,12 @@ class EventAdminView(BaseAdminView):
             model.location_set = form.participant_set.data.location_set
 
         # also, convert the time zone to UTC
+        # then strip off the time zone information
+        # so what gets saved is the UTC timestamp
         model.start = app_time_zone.localize(model.start).astimezone(
-            utc_time_zone)
+            utc_time_zone).replace(tzinfo=None)
         model.end = app_time_zone.localize(model.end).astimezone(
-            utc_time_zone)
+            utc_time_zone).replace(tzinfo=None)
 
 
 class UserAdminView(BaseAdminView):
