@@ -55,7 +55,7 @@
             {% autoescape False %}
             {% for menu_item in current_menu.submenu('main').children %}
             {% if not menu_item.has_visible_child() and menu_item.visible %}
-            <li><a href="{{ menu_item.url }}">{{ menu_item.icon }} {{ _(menu_item.text) }}</a></li>
+            <li><a href="{{ menu_item.url }}">{{ menu_item.icon }} {{ menu_item.text }}</a></li>
             {% elif menu_item.visible %}
             <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ menu_item.icon }} {{ menu_item.text }} <b class="caret"></b></a>
               <ul class="dropdown-menu">
