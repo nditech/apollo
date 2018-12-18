@@ -49,7 +49,7 @@ class Role(BaseModel, RoleMixin):
         db.UniqueConstraint('deployment_id', 'name'),
     )
 
-    id = db.Column(db.Integer, db.Sequence('role_id_seq'), primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     deployment_id = db.Column(db.Integer, db.ForeignKey(
             'deployment.id', ondelete='CASCADE'), nullable=False)
     name = db.Column(db.String)
@@ -68,7 +68,7 @@ class Role(BaseModel, RoleMixin):
 class User(BaseModel, UserMixin):
     __tablename__ = 'user'
 
-    id = db.Column(db.Integer, db.Sequence('user_id_seq'), primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     deployment_id = db.Column(db.Integer, db.ForeignKey(
             'deployment.id', ondelete='CASCADE'), nullable=False)
     email = db.Column(db.String, nullable=False)
@@ -99,8 +99,7 @@ class User(BaseModel, UserMixin):
 class UserUpload(BaseModel):
     __tablename__ = 'user_upload'
 
-    id = db.Column(
-        db.Integer, db.Sequence('user_upload_id_seq'), primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     deployment_id = db.Column(db.Integer, db.ForeignKey(
         'deployment.id', ondelete='CASCADE'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey(

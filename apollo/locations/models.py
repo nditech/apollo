@@ -12,8 +12,7 @@ from apollo.dal.models import BaseModel, Resource
 class LocationSet(BaseModel):
     __tablename__ = 'location_set'
 
-    id = db.Column(
-        db.Integer, db.Sequence('location_set_id_seq'), primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
     slug = db.Column(db.String)
     deployment_id = db.Column(
@@ -98,8 +97,7 @@ samples_locations = db.Table(
 class Sample(BaseModel):
     __tablename__ = 'sample'
 
-    id = db.Column(
-        db.Integer, db.Sequence('sample_id_seq'), primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
     location_set_id = db.Column(
         db.Integer, db.ForeignKey('location_set.id', ondelete='CASCADE'),
@@ -112,8 +110,7 @@ class Sample(BaseModel):
 class LocationType(BaseModel):
     __tablename__ = 'location_type'
 
-    id = db.Column(
-        db.Integer, db.Sequence('location_type_id_seq'), primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
     is_administrative = db.Column(db.Boolean, default=False)
     is_political = db.Column(db.Boolean, default=False)
@@ -193,8 +190,7 @@ class Location(BaseModel):
     __table_args__ = (
         db.UniqueConstraint('location_set_id', 'code'),)
 
-    id = db.Column(
-        db.Integer, db.Sequence('location_id_seq'), primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
     code = db.Column(db.String, index=True, nullable=False)
     registered_voters = db.Column(db.Integer, default=0)
@@ -290,15 +286,15 @@ class LocationDataField(Resource):
     __mapper_args__ = {'polymorphic_identity': 'location_data_field'}
     __tablename__ = 'location_data_field'
 
-    id = db.Column(
-        db.Integer, db.Sequence('location_data_field_id_seq'),
-        primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     location_set_id = db.Column(
-        db.Integer, db.ForeignKey('location_set.id'), nullable=False)
+        db.Integer, db.ForeignKey('location_set.id', ondelete='CASCADE'),
+        nullable=False)
     name = db.Column(db.String, nullable=False)
     label = db.Column(db.String, nullable=False)
     visible_in_lists = db.Column(db.Boolean, default=False)
-    resource_id = db.Column(db.Integer, db.ForeignKey('resource.resource_id'))
+    resource_id = db.Column(
+        db.Integer, db.ForeignKey('resource.resource_id', ondelete='CASCADE'))
     location_set = db.relationship('LocationSet', backref='extra_fields')
 
     def __str__(self):
