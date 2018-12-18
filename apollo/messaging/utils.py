@@ -51,18 +51,23 @@ def parse_text(text):
     # remove unwanted punctuation characters and convert known characters
     # like i, l to 1 and o to 0. This will not be applied to the comment
     # section.
-    if config.get('TRANSLATE_CHARS'):
-        text = [s for s in text[:at_position] if s not in config.get('PUNCTUATIONS')] \
-            .translate(config.get('TRANS_TABLE')) + text[at_position:] \
-            if at_position != -1 \
-            else [s for s in text if s not in config.get('PUNCTUATIONS')] \
-            .translate(config.get('TRANS_TABLE'))
+    if at_position != -1:
+        data_section = text[:at_position]
+        comment_section = text[at_position:]
     else:
-        text = [s for s in text[:at_position] if s not in config.get('PUNCTUATIONS')] + [text[at_position:]] \
-            if at_position != -1 \
-            else [s for s in text if s not in config.get('PUNCTUATIONS')]
+        data_section = text
+        comment_section = ''
 
-    text = ''.join(text)
+    data_section_stripped = ''.join(
+        s for s in data_section if s not in config.get('PUNCTUATIONS'))
+
+    if config.get('TRANSLATE_CHARS'):
+        data_section_translated = data_section_stripped.translate(
+            config.get('TRANS_TABLE'))
+
+    # reconstruct message with translated characters
+    # and punctuation filtered out
+    text = data_section_translated + comment_section
 
     at_position = text.find("@")
     match = pattern.match(text[:at_position] if at_position != -1 else text)
