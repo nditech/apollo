@@ -6,6 +6,9 @@ is liberally adapted (aka stolen) from the source of ziggurat_foundations
 (https://github.com/ergo/ziggurat-foundations)
 '''
 
+from uuid import uuid4
+
+from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.declarative import declared_attr
 
 from apollo.core import db
@@ -18,6 +21,10 @@ class CRUDMixin(object):
     def create(cls, **kwargs):
         instance = cls(**kwargs)
         return instance.save()
+
+    @declared_attr
+    def uuid(self):
+        return db.Column(UUID(as_uuid=True), default=uuid4, nullable=False)
 
     def update(self, commit=True, **kwargs):
         for attr, value in kwargs.items():
