@@ -110,7 +110,7 @@ class Sample(BaseModel):
 class LocationType(BaseModel):
     __tablename__ = 'location_type'
 
-    id = db.Column(primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
     is_administrative = db.Column(db.Boolean, default=False)
     is_political = db.Column(db.Boolean, default=False)
