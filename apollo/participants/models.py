@@ -19,7 +19,8 @@ class ParticipantSet(BaseModel):
     name = db.Column(db.String, nullable=False)
     slug = db.Column(db.String)
     location_set_id = db.Column(
-        db.Integer, db.ForeignKey('location_set.id'), nullable=False)
+        db.Integer, db.ForeignKey('location_set.id', ondelete='CASCADE'),
+        nullable=False)
     deployment_id = db.Column(
         db.Integer, db.ForeignKey('deployment.id', ondelete='CASCADE'),
         nullable=False)
@@ -59,11 +60,13 @@ class ParticipantDataField(Resource):
 
     id = db.Column(db.Integer, primary_key=True)
     participant_set_id = db.Column(
-        db.Integer, db.ForeignKey('participant_set.id'), nullable=False)
+        db.Integer, db.ForeignKey('participant_set.id', ondelete='CASCADE'),
+        nullable=False)
     name = db.Column(db.String, nullable=False)
     label = db.Column(db.String, nullable=False)
     visible_in_lists = db.Column(db.Boolean, default=False)
-    resource_id = db.Column(db.Integer, db.ForeignKey('resource.resource_id'))
+    resource_id = db.Column(
+        db.Integer, db.ForeignKey('resource.resource_id', ondelete='CASCADE'))
     participant_set = db.relationship('ParticipantSet', backref='extra_fields')
 
     def __str__(self):
@@ -73,10 +76,12 @@ class ParticipantDataField(Resource):
 
 groups_participants = db.Table(
     'participant_groups_participants',
-    db.Column('group_id', db.Integer, db.ForeignKey('participant_group.id'),
+    db.Column('group_id', db.Integer,
+              db.ForeignKey('participant_group.id', ondelete='CASCADE'),
               nullable=False),
     db.Column('participant_id', db.Integer,
-              db.ForeignKey('participant.id'), nullable=False)
+              db.ForeignKey('participant.id', ondelete='CASCADE'),
+              nullable=False)
 )
 
 
@@ -86,7 +91,8 @@ class ParticipantRole(BaseModel):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
     participant_set_id = db.Column(
-        db.Integer, db.ForeignKey('participant_set.id'), nullable=False)
+        db.Integer, db.ForeignKey('participant_set.id', ondelete='CASCADE'),
+        nullable=False)
 
     participant_set = db.relationship(
         'ParticipantSet', backref='participant_roles')
@@ -133,7 +139,8 @@ class ParticipantGroup(BaseModel):
     group_type_id = db.Column(db.Integer, db.ForeignKey(
         'participant_group_type.id', ondelete='CASCADE'), nullable=False)
     participant_set_id = db.Column(
-        db.Integer, db.ForeignKey('participant_set.id'))
+        db.Integer, db.ForeignKey('participant_set.id', ondelete='CASCADE'),
+        nullable=False)
 
     group_type = db.relationship(
         'ParticipantGroupType', backref='participant_groups')
@@ -176,7 +183,8 @@ class Participant(BaseModel):
         'participant.id', ondelete='SET NULL'))
     gender = db.Column(ChoiceType(GENDER))
     email = db.Column(db.String)
-    location_id = db.Column(db.Integer, db.ForeignKey('location.id'))
+    location_id = db.Column(
+        db.Integer, db.ForeignKey('location.id', ondelete='CASCADE'))
     participant_set_id = db.Column(db.Integer, db.ForeignKey(
         'participant_set.id', ondelete='CASCADE'), nullable=False)
     message_count = db.Column(db.Integer, default=0)

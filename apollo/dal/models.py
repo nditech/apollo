@@ -49,7 +49,8 @@ class Permission(BaseModel):
     name = db.Column(db.String, nullable=False)
     description = db.Column(db.String)
     deployment_id = db.Column(
-        db.Integer, db.ForeignKey('deployment.id'), nullable=False)
+        db.Integer, db.ForeignKey('deployment.id', ondelete='CASCADE'),
+        nullable=False)
     deployment = db.relationship('Deployment', backref='permissions')
 
     def __str__(self):
@@ -80,7 +81,8 @@ class ResourceMixin(object):
     @declared_attr
     def deployment_id(self):
         return db.Column(
-            db.Integer, db.ForeignKey('deployment.id'), nullable=False)
+            db.Integer, db.ForeignKey('deployment.id', ondelete='CASCADE'),
+            nullable=False)
 
     @declared_attr
     def deployment(self):

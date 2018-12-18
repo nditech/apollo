@@ -27,8 +27,10 @@ class Message(BaseModel):
         'deployment.id', ondelete='CASCADE'), nullable=False)
     event_id = db.Column(db.Integer, db.ForeignKey(
         'event.id', ondelete='CASCADE'), nullable=False)
-    submission_id = db.Column(db.Integer, db.ForeignKey('submission.id'))
-    participant_id = db.Column(db.Integer, db.ForeignKey('participant.id'))
+    submission_id = db.Column(
+        db.Integer, db.ForeignKey('submission.id', ondelete='CASCADE'))
+    participant_id = db.Column(
+        db.Integer, db.ForeignKey('participant.id', ondelete='CASCADE'))
 
     # ----- RELATIONSHIP PROPERTIES ----
     deployment = db.relationship('Deployment', backref='messages')

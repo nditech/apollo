@@ -75,7 +75,7 @@ class Form(Resource):
     form_set_id = db.Column(
         db.Integer, db.ForeignKey('form_set.id'), nullable=False)
     resource_id = db.Column(
-        db.Integer, db.ForeignKey('resource.resource_id'))
+        db.Integer, db.ForeignKey('resource.resource_id', ondelete='CASCADE'))
     quality_checks = db.Column(JSONB)
     party_mappings = db.Column(JSONB)
     calculate_moe = db.Column(db.Boolean)

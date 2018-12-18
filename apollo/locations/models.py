@@ -288,11 +288,13 @@ class LocationDataField(Resource):
 
     id = db.Column(db.Integer, primary_key=True)
     location_set_id = db.Column(
-        db.Integer, db.ForeignKey('location_set.id'), nullable=False)
+        db.Integer, db.ForeignKey('location_set.id', ondelete='CASCADE'),
+        nullable=False)
     name = db.Column(db.String, nullable=False)
     label = db.Column(db.String, nullable=False)
     visible_in_lists = db.Column(db.Boolean, default=False)
-    resource_id = db.Column(db.Integer, db.ForeignKey('resource.resource_id'))
+    resource_id = db.Column(
+        db.Integer, db.ForeignKey('resource.resource_id', ondelete='CASCADE'))
     location_set = db.relationship('LocationSet', backref='extra_fields')
 
     def __str__(self):
