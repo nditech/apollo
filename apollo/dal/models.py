@@ -45,8 +45,7 @@ class BaseModel(CRUDMixin, db.Model):
 class Permission(BaseModel):
     __tablename__ = 'permission'
 
-    id = db.Column(
-        db.Integer, db.Sequence('permission_id_seq'), primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
     description = db.Column(db.String)
     deployment_id = db.Column(

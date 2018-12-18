@@ -44,8 +44,7 @@ lt_constraint_regex = re.compile('(?:.*\.\s*\<={0,1}\s*)(\d+)')
 class FormSet(BaseModel):
     __tablename__ = 'form_set'
 
-    id = db.Column(
-        db.Integer, db.Sequence('form_set_id_seq'), primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
     slug = db.Column(db.String)
     deployment_id = db.Column(
@@ -66,8 +65,7 @@ class Form(Resource):
     __mapper_args__ = {'polymorphic_identity': 'form'}
     __tablename__ = 'form'
 
-    id = db.Column(
-        db.Integer, db.Sequence('form_id_seq'), primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
     prefix = db.Column(db.String, nullable=False)
     form_type = db.Column(ChoiceType(FORM_TYPES), nullable=False)
