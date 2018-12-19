@@ -50,7 +50,9 @@ class FormSet(BaseModel):
     deployment_id = db.Column(
         db.Integer, db.ForeignKey('deployment.id', ondelete='CASCADE'),
         nullable=False)
-    deployment = db.relationship('Deployment', backref='form_sets')
+    deployment = db.relationship(
+        'Deployment', backref=db.backref('form_sets', cascade='all, delete',
+                                         passive_deletes=True))
 
     def __str__(self):
         return self.name or ''
@@ -85,8 +87,9 @@ class Form(Resource):
     registered_voters_tag = db.Column(db.String)
     blank_votes_tag = db.Column(db.String)
 
-    form_set = db.relationship('FormSet', backref=db.backref(
-        'forms', lazy='dynamic'))
+    form_set = db.relationship(
+        'FormSet', backref=db.backref('forms', lazy='dynamic'),
+        cascade='all, delete')
 
     def __str__(self):
         return str(_('Form - %(name)s', name=self.name))
@@ -218,7 +221,7 @@ class Form(Resource):
                             survey_sheet.write(
                                 current_survey_row, 0, 'select_one boolean')
 
-                            # write out boolean choices if they haven't been 
+                            # write out boolean choices if they haven't been
                             # written before
                             if not boolean_written:
                                 choices_sheet.write(
