@@ -24,8 +24,14 @@ class ParticipantSet(BaseModel):
     deployment_id = db.Column(
         db.Integer, db.ForeignKey('deployment.id', ondelete='CASCADE'),
         nullable=False)
-    deployment = db.relationship('Deployment', backref='participant_sets')
-    location_set = db.relationship('LocationSet', backref='participant_sets')
+    deployment = db.relationship(
+        'Deployment',
+        backref=db.backref(
+            'participant_sets', cascade='all, delete', passive_deletes=True))
+    location_set = db.relationship(
+        'LocationSet',
+        backref=db.backref(
+            'participant_sets', cascade='all, delete', passive_deletes=True))
 
     def __str__(self):
         return self.name or ''
@@ -67,11 +73,15 @@ class ParticipantDataField(Resource):
     visible_in_lists = db.Column(db.Boolean, default=False)
     resource_id = db.Column(
         db.Integer, db.ForeignKey('resource.resource_id', ondelete='CASCADE'))
-    participant_set = db.relationship('ParticipantSet', backref='extra_fields')
+    participant_set = db.relationship(
+        'ParticipantSet',
+        backref=db.backref(
+            'extra_fields', cascade='all, delete', passive_deletes=True))
 
     def __str__(self):
-        return str(_('ParticipantDataField - %(name)s in %(participant_set)s',
-                     name=self.name, participant_set=self.participant_set.name))
+        return str(
+            _('ParticipantDataField - %(name)s in %(participant_set)s',
+              name=self.name, participant_set=self.participant_set.name))
 
 
 groups_participants = db.Table(
@@ -95,7 +105,9 @@ class ParticipantRole(BaseModel):
         nullable=False)
 
     participant_set = db.relationship(
-        'ParticipantSet', backref='participant_roles')
+        'ParticipantSet',
+        backref=db.backref(
+            'participant_roles', cascade='all, delete', passive_deletes=True))
 
     def __str__(self):
         return self.name or ''
@@ -110,7 +122,9 @@ class ParticipantPartner(BaseModel):
         'participant_set.id', ondelete='CASCADE'), nullable=False)
 
     participant_set = db.relationship(
-        'ParticipantSet', backref='participant_partners')
+        'ParticipantSet',
+        backref=db.backref('participant_partners', cascade='all, delete',
+                           passive_deletes=True))
 
     def __str__(self):
         return self.name or ''
@@ -125,7 +139,8 @@ class ParticipantGroupType(BaseModel):
         'participant_set.id', ondelete='CASCADE'), nullable=False)
 
     participant_set = db.relationship(
-        'ParticipantSet', backref='participant_group_types')
+        'ParticipantSet', backref=db.backref(
+            'participant_group_types', cascade='all, delete'))
 
     def __str__(self):
         return self.name or ''
@@ -143,9 +158,11 @@ class ParticipantGroup(BaseModel):
         nullable=False)
 
     group_type = db.relationship(
-        'ParticipantGroupType', backref='participant_groups')
+        'ParticipantGroupType',
+        backref=db.backref('participant_groups', cascade='all, delete'))
     participant_set = db.relationship(
-        'ParticipantSet', backref='participant_groups')
+        'ParticipantSet',
+        backref=db.backref('participant_groups', cascade='all, delete'))
 
     def __str__(self):
         return self.name or ''
@@ -197,14 +214,16 @@ class Participant(BaseModel):
     location = db.relationship('Location', backref='participants')
     participant_set = db.relationship(
         'ParticipantSet', backref=db.backref(
-            'participants', lazy='dynamic'))
+            'participants', cascade='all, delete', lazy='dynamic',
+            passive_deletes=True))
     groups = db.relationship(
         'ParticipantGroup', secondary=groups_participants,
         backref='participants')
     role = db.relationship('ParticipantRole', backref='participants')
     partner = db.relationship('ParticipantPartner', backref='participants')
     participant_phones = db.relationship(
-        'ParticipantPhone', backref='participants')
+        'ParticipantPhone',
+        backref=db.backref('participants', cascade='all, delete'))
     supervisor = db.relationship('Participant', remote_side=id)
 
     def __str__(self):

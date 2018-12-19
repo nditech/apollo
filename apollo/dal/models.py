@@ -58,7 +58,8 @@ class Permission(BaseModel):
     deployment_id = db.Column(
         db.Integer, db.ForeignKey('deployment.id', ondelete='CASCADE'),
         nullable=False)
-    deployment = db.relationship('Deployment', backref='permissions')
+    deployment = db.relationship(
+        'Deployment', backref=db.backref('permissions', cascade='all, delete'))
 
     def __str__(self):
         return self.description if self.description else self.name
@@ -93,7 +94,10 @@ class ResourceMixin(object):
 
     @declared_attr
     def deployment(self):
-        return db.relationship('Deployment', backref='resources')
+        return db.relationship(
+            'Deployment',
+            backref=db.backref('resources', cascade='all, delete',
+                               passive_deletes=True))
 
     @declared_attr
     def roles(self):
