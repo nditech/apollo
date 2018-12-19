@@ -95,11 +95,26 @@ class Submission(BaseModel):
     incident_description = db.Column(db.String)
     incident_status = db.Column(ChoiceType(INCIDENT_STATUSES))
     overridden_fields = db.Column(ARRAY(db.String), default=[])
-    deployment = db.relationship('Deployment', backref='submissions')
-    event = db.relationship('Event', backref='submissions')
-    form = db.relationship('Form', backref='submissions')
-    location = db.relationship('Location', backref='submissions')
-    participant = db.relationship('Participant', backref='submissions')
+    deployment = db.relationship(
+        'Deployment',
+        backref=db.backref('submissions', cascade='all, delete',
+                           passive_deletes=True))
+    event = db.relationship(
+        'Event',
+        backref=db.backref('submissions', cascade='all, delete',
+                           passive_deletes=True))
+    form = db.relationship(
+        'Form',
+        backref=db.backref('submissions', cascade='all, delete',
+                           passive_deletes=True))
+    location = db.relationship(
+        'Location',
+        backref=db.backref('submissions', cascade='all, delete',
+                           passive_deletes=True))
+    participant = db.relationship(
+        'Participant',
+        backref=db.backref('submissions', cascade='all, delete',
+                           passive_deletes=True))
     conflicts = db.Column(JSONB)
 
     @classmethod
@@ -248,14 +263,20 @@ class SubmissionComment(BaseModel):
     id = db.Column(db.Integer, primary_key=True)
     submission_id = db.Column(db.Integer, db.ForeignKey(
         'submission.id', ondelete='CASCADE'), nullable=False)
-    submission = db.relationship('Submission', backref='comments')
+    submission = db.relationship(
+        'Submission',
+        backref=db.backref('comments', cascade='all, delete',
+                           passive_deletes=True))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     user = db.relationship('User', backref='submission_comments')
     comment = db.Column(db.String)
     submit_date = db.Column(db.DateTime, default=current_timestamp)
     deployment_id = db.Column(db.Integer, db.ForeignKey(
         'deployment.id', ondelete='CASCADE'), nullable=False)
-    deployment = db.relationship('Deployment', backref='submission_comments')
+    deployment = db.relationship(
+        'Deployment',
+        backref=db.backref('submission_comments', cascade='all, delete',
+                           passive_deletes=True))
 
 
 class SubmissionVersion(BaseModel):
@@ -271,10 +292,16 @@ class SubmissionVersion(BaseModel):
     submission_id = db.Column(db.Integer, db.ForeignKey(
         'submission.id', ondelete='CASCADE'), nullable=False)
     data = db.Column(JSONB)
-    submission = db.relationship('Submission', backref='versions')
+    submission = db.relationship(
+        'Submission',
+        backref=db.backref('versions', cascade='all, delete',
+                           passive_deletes=True))
     timestamp = db.Column(db.DateTime, default=current_timestamp)
     channel = db.Column(ChoiceType(CHANNEL_CHOICES))
     deployment_id = db.Column(db.Integer, db.ForeignKey(
         'deployment.id', ondelete='CASCADE'), nullable=False)
-    deployment = db.relationship('Deployment', backref='submission_versions')
+    deployment = db.relationship(
+        'Deployment',
+        backref=db.backref('submission_versions', cascade='all, delete',
+                           passive_deletes=True))
     identity = db.Column(db.String, default='unknown', nullable=False)
