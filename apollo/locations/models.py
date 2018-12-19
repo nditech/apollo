@@ -184,6 +184,11 @@ class LocationTypePath(db.Model):
         'location_type.id', ondelete='CASCADE'), primary_key=True)
     depth = db.Column(db.Integer)
 
+    location_set = db.relationship(
+        'LocationSet', backref=db.backref(
+            'location_type_paths', cascade='all, delete',
+            passive_deletes=True))
+
 
 class Location(BaseModel):
     __tablename__ = 'location'
@@ -280,6 +285,11 @@ class LocationPath(db.Model):
     descendant_id = db.Column(db.Integer, db.ForeignKey(
         'location.id', ondelete='CASCADE'), primary_key=True)
     depth = db.Column(db.Integer)
+
+    location_set = db.relationship(
+        'LocationSet',
+        backref=db.backref('location_paths', cascade='all, delete',
+                           passive_deletes=True))
 
 
 class LocationDataField(Resource):

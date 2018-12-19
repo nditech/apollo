@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
 import socket
+from zipfile import ZipFile, ZIP_DEFLATED
 
 from flask_principal import Permission
 from flask_script import Command, prompt, prompt_choices, prompt_pass
@@ -9,6 +10,7 @@ import pytz
 from sqlalchemy.dialects.postgresql import array
 
 from apollo import models, settings
+from apollo.deployments.serializers import EventArchiveSerializer
 from apollo.frontend import permissions
 
 
@@ -167,3 +169,31 @@ class ListEventsCommand(Command):
         events = models.Event.query.filter_by(deployment_id=deployment.id)
         for event in events:
             print(f'{event.name}\t+\t{event.start}\t+\t{event.end}')
+
+
+class ArchiveEventCommand(Command):
+    """Archives an event's artifacts"""
+    def run(self):
+        eas = EventArchiveSerializer()
+
+        # select a deployment
+        deployments = models.Deployment.query.all()
+        choices = [(str(i), d.name) for i, d in enumerate(deployments, 1)]
+        option = prompt_choices('Deployment', choices)
+        deployment_id = deployments[int(option) - 1].id
+
+        # select an event in the deployment
+        events = models.Event.query.filter_by(
+            deployment_id=deployment_id).all()
+        choices = [(str(i), ev.name) for i, ev in enumerate(events, 1)]
+        option = prompt_choices('Event', choices)
+        event = events[int(option) - 1]
+
+        # specify a path to the output archive file
+        path = prompt('Path to archive file:')
+
+        # begin
+        with ZipFile(path, 'w', ZIP_DEFLATED) as zf:
+            eas.serialize(event, zf)
+
+        print('Done')
