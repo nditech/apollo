@@ -1,0 +1,42 @@
+version: "3"
+
+services:
+  postgres:
+    image: postgres:10-alpine
+    environment:
+      POSTGRES_DB: ${DATABASE_NAME:-apollo}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:4-alpine
+
+  web:
+    build: .
+    links:
+      - postgres
+      - redis
+    environment:
+      DATABASE_NAME: ${DATABASE_NAME:-apollo}
+    volumes:
+      - upload_data:/app/uploads
+      - ./settings.ini:/app/settings.ini
+    ports:
+      - "5000:5000"
+    command: ['pipenv', 'run', './manage.py', 'gunicorn', '-c', 'gunicorn.conf']
+
+  worker:
+    build: .
+    links:
+      - postgres
+      - redis
+    environment:
+      DATABASE_NAME: ${DATABASE_NAME:-apollo}
+    volumes:
+      - upload_data:/app/uploads
+      - ./settings.ini:/app/settings.ini
+    command: ['pipenv', 'run', './manage.py', 'worker']
+
+volumes:
+  postgres_data:
+  upload_data:
