@@ -4,7 +4,7 @@ from apollo.manage.users import (  # noqa
     RemoveUserRoleCommand, ListUserRolesCommand, ListRolesCommand,
     AddRoleCommand)
 from apollo.manage.deployments import (  # noqa
-    CreateDeploymentCommand, ListDeploymentsCommand,
+    ArchiveEventCommand, CreateDeploymentCommand, ListDeploymentsCommand,
     CreateEventCommand, ListEventsCommand)
 from apollo.manage.permissions import (  # noqa
     AddPermissionToRole, RemovePermissionFromRole, ListPermissionsOfRole)
