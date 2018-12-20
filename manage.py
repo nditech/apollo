@@ -13,7 +13,7 @@ from apollo.manage import \
      ListRolesCommand, AddRoleCommand,
      AddPermissionToRole, RemovePermissionFromRole, ListPermissionsOfRole,
      CreateDeploymentCommand, ListDeploymentsCommand, CreateEventCommand,
-     ListEventsCommand,
+     ListEventsCommand, ArchiveEventCommand,
      InitializeSubmissionsCommand,
      SetupCommand, MessagePlaybackCommand, GunicornServer, CeleryWorker)
 from apollo.wsgi import application
@@ -61,6 +61,7 @@ manager.add_command('assets', ManageAssets)
 manager.add_command('db', MigrateCommand)
 manager.add_command('gunicorn', GunicornServer())
 manager.add_command('worker', CeleryWorker())
+manager.add_command('archive', ArchiveEventCommand())
 
 if __name__ == '__main__':
     manager.run()
