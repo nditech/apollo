@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
-from flask import flash, g, request
+from datetime import datetime
+from flask import abort, flash, g, request, send_file
 from flask_admin import form
+from flask_admin import expose
 from flask_admin.actions import action
 from flask_admin.contrib.sqla import ModelView
 from flask_admin.contrib.sqla.fields import (
@@ -12,12 +14,16 @@ from flask_admin.model.template import macro
 from flask_babelex import lazy_gettext as _
 from flask_security import current_user
 from flask_security.utils import encrypt_password
+from io import BytesIO
 from jinja2 import contextfunction
 import pytz
+from slugify import slugify_unicode
 from wtforms import PasswordField
+from zipfile import ZipFile, ZIP_DEFLATED
 
 from apollo.core import admin, db
-from apollo import models, settings
+from apollo import models, services, settings
+from apollo.deployments.serializers import EventArchiveSerializer
 
 
 app_time_zone = pytz.timezone(settings.TIMEZONE)
@@ -110,13 +116,35 @@ class DeploymentAdminView(BaseAdminView):
 
 class EventAdminView(BaseAdminView):
     column_filters = ('name', 'start', 'end')
-    column_list = ('name', 'start', 'end', 'form_set', 'participant_set')
+    column_list = ('name', 'start', 'end', 'form_set', 'participant_set',
+                   'archive')
     form_columns = ('name', 'start', 'end', 'form_set', 'participant_set')
     form_rules = [
         rules.FieldSet(
             ('name', 'start', 'end', 'form_set', 'participant_set'),
             _('Event'))
     ]
+    column_formatters = {
+        'archive': macro('event_archive'),
+    }
+
+    @expose('/download/<int:event_id>')
+    def download(self, event_id):
+        event = services.events.find(id=event_id).first_or_404()
+        eas = EventArchiveSerializer()
+
+        fp = BytesIO()
+        with ZipFile(fp, 'w', ZIP_DEFLATED) as zf:
+            eas.serialize(event, zf)
+
+        fp.seek(0)
+        fname = slugify_unicode(
+            f'event archive {event.name.lower()} {datetime.utcnow().strftime("%Y %m %d %H%M%S")}')  # noqa
+
+        return send_file(
+            fp,
+            attachment_filename=f'{fname}.zip',
+            as_attachment=True)
 
     def get_one(self, pk):
         event = super(EventAdminView, self).get_one(pk)
