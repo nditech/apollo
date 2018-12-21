@@ -320,6 +320,14 @@ class LocationSetAdminView(SetViewMixin, BaseAdminView):
     inline_models = (ExtraDataInlineFormAdmin(models.LocationDataField),)
     inline_model_form_converter = LocationExtraDataModelConverter
 
+    def on_model_delete(self, model):
+        # delete dependent objects first
+        models.LocationPath.query.filter_by(location_set=model).delete()
+        models.Location.query.filter_by(location_set=model).delete()
+        models.LocationTypePath.query.filter_by(location_set=model).delete()
+        models.LocationType.query.filter_by(location_set=model).delete()
+        return super().on_model_delete(model)
+
 
 class ParticipantSetAdminView(SetViewMixin, BaseAdminView):
     column_list = ('name', 'location_set', 'participants')

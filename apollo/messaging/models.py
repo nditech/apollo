@@ -32,8 +32,14 @@ class Message(BaseModel):
     participant_id = db.Column(
         db.Integer, db.ForeignKey('participant.id', ondelete='CASCADE'))
 
-    # ----- RELATIONSHIP PROPERTIES ----
-    deployment = db.relationship('Deployment', backref='messages')
-    event = db.relationship('Event', backref='messages')
-    submission = db.relationship('Submission', backref='messages')
-    participant = db.relationship('Participant', backref='messages')
+    deployment = db.relationship(
+        'Deployment',
+        backref=db.backref(
+            'messages', cascade='all, delete', passive_deletes=True))
+    event = db.relationship(
+        'Event', backref=db.backref(
+            'messages', cascade='all, delete', passive_deletes=True))
+    submission = db.relationship(
+        'Submission', backref=db.backref('messages', passive_deletes=True))
+    participant = db.relationship(
+        'Participant', backref=db.backref('messages', passive_deletes=True))
