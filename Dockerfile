@@ -1,6 +1,6 @@
 FROM alpine:3.7
 
-MAINTAINER Tim Akinbo <takinbo@timbaobjects.com>
+LABEL maintainer="Tim Akinbo <takinbo@timbaobjects.com>"
 
 ADD Pipfile* /app/
 RUN set -ex \
@@ -19,7 +19,7 @@ RUN set -ex \
         && if [[ ! -e /usr/bin/python ]]; then ln -sf /usr/bin/python3 /usr/bin/python; fi \
         && pip install pipenv \
         && cd /app/ \
-        && PIP_NO_BUILD_ISOLATION=false pipenv install \
+        && PIP_NO_BUILD_ISOLATION=false pipenv install --sequential \
         && find /usr -depth \
             \( -type f -a -name '*.pyc' -o -name '*.pyo' \) \
             -exec rm -rf '{}' + \

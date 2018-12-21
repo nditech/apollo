@@ -32,3 +32,9 @@
   <a href="{{ url_for('forms.list_forms_with_set', form_set_id=model.id) }}" class="btn btn-default">Manage</a>
 </div>
 {% endmacro %}
+
+{% macro event_archive(model, column) %}
+<div class="btn-group btn-group-sm" role="group" aria-label="...">
+  <a href="{{ url_for('event.download', event_id=model.id) }}" class="btn btn-default">Download Archive</a>
+</div>
+{% endmacro %}
