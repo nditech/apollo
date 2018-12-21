@@ -260,7 +260,7 @@ def upgrade():
     sa.Column('depth', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['ancestor_id'], ['location_type.id'], ondelete='CASCADE'),
     sa.ForeignKeyConstraint(['descendant_id'], ['location_type.id'], ondelete='CASCADE'),
-    sa.ForeignKeyConstraint(['location_set_id'], ['location_set.id'], ondelete='CASCADE'),
+    sa.ForeignKeyConstraint(['location_set_id'], ['location_set.id']),
     sa.PrimaryKeyConstraint('ancestor_id', 'descendant_id')
     )
     op.create_index('location_type_paths_ancestor_idx', 'location_type_path', ['ancestor_id'], unique=False)
