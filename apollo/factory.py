@@ -67,7 +67,7 @@ def create_app(
 
 @cached(cache={})
 def create_celery_app(app=None):
-    app = app or create_app('apollo', '', register_all_blueprints=False)
+    app = app or create_app('apollo', None, register_all_blueprints=False)
     celery = Celery(__name__, broker=app.config['CELERY_BROKER_URL'])
 
     # configure exception logging
