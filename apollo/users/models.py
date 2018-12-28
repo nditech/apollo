@@ -80,6 +80,7 @@ class User(BaseModel, UserMixin):
     last_name = db.Column(db.String)
     first_name = db.Column(db.String)
     active = db.Column(db.Boolean, default=True)
+    locale = db.Column(db.String)
     confirmed_at = db.Column(db.DateTime)
     current_login_at = db.Column(db.DateTime)
     last_login_at = db.Column(db.DateTime)
