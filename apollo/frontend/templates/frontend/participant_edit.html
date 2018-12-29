@@ -6,4 +6,32 @@
 {{ render_edit_form(form, participant) }}
 </div>
 </div>
+<div class="row">
+<div class="panel panel-default">
+<div class="panel-heading">
+<h4 class="panel-title"><a role="button" data-toggle="collapse" href="#allPhones" aria-expanded="true" aria-controls="allPhones">{{ _('All phones') }}</a></h4>
+</div>
+<div id="allPhones" class="panel-collapse collapse">
+<table class="table table-bordered table-hover table-striped" style="margin-bottom: 0px;">
+<thead>
+<tr>
+<th>{{ _('Number') }}</th>
+<th>{{ _('Last seen') }}</th>
+<th>{{ _('Verified') }}</th>
+</tr>
+</thead>
+<tbody>
+{% for p_phone in participant.participant_phones %}
+<tr>
+<td>{{ p_phone.phone.number }}</td>
+<td>{{ p_phone.last_seen }}</td>
+<td>{% if p_phone.verified %}<i class="glyphicon glyphicon-ok"></i>{% else %}<i class="glyphicon glyphicon-remove"></i>{% endif %}</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+</ul>
+</div>
+</div>
+</div>
 {% endblock %}
