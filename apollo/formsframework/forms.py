@@ -302,9 +302,11 @@ class FormForm(SecureForm):
     name = StringField(_('Name'), validators=[validators.InputRequired()])
     prefix = StringField(_('Prefix'), validators=[validators.InputRequired()])
     form_type = SelectField(_('Form Type'), choices=models.Form.FORM_TYPES,
-                            coerce=choice_type_coerce_factory(models.Form.form_type.type),
+                            coerce=choice_type_coerce_factory(
+                                models.Form.form_type.type),
                             validators=[validators.InputRequired()])
     require_exclamation = BooleanField(_('Require Exclamation'))
+    track_data_conflicts = BooleanField(_('Track data conflicts?'))
     calculate_moe = BooleanField(_('Calculate MOE'))
     quality_checks_enabled = BooleanField(_('QA Enabled'))
     accredited_voters_tag = StringField(_('Accredited Voters Field'))

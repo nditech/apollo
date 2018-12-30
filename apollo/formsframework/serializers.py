@@ -30,6 +30,7 @@ class FormSerializer(object):
             'require_exclamation': obj.require_exclamation,
             'data': obj.data,
             'version_identifier': obj.version_identifier,
+            'track_data_conflicts': obj.track_data_conflicts,
             'form_set': obj.form_set.uuid.hex,
             'quality_checks': obj.quality_checks,
             'party_mappings': obj.party_mappings,

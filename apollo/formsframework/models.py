@@ -73,6 +73,7 @@ class Form(Resource):
     form_type = db.Column(ChoiceType(FORM_TYPES), nullable=False)
     require_exclamation = db.Column(db.Boolean, default=True)
     data = db.Column(JSONB)
+    track_data_conflicts = db.Column(db.Boolean, default=True, nullable=False)
     version_identifier = db.Column(db.String)
     form_set_id = db.Column(
         db.Integer, db.ForeignKey('form_set.id'), nullable=False)
