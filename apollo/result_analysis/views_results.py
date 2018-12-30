@@ -448,7 +448,7 @@ def _voting_results(form_id, location_id=None):
 @route(bp, '/submissions/analysis/results/form/<form_id>')
 @register_menu(
     bp, 'main.analyses.results_analysis',
-    _('Results Analysis'),
+    _('Results data summary'),
     icon='<i class="glyphicon glyphicon-stats"></i>',
     dynamic_list_constructor=partial(get_result_analysis_menu),
     visible_when=lambda: len(get_result_analysis_menu()) > 0

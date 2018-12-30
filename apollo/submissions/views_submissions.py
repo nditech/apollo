@@ -318,7 +318,7 @@ def submission_edit(submission_id):
             if submission.incident_status:
                 initial_data.update(status=submission.incident_status.code)
         else:
-            if questionnaire_form.quality_checks_enabled:
+            if questionnaire_form.quality_checks_enabled and questionnaire_form.quality_checks:
                 for check in questionnaire_form.quality_checks:
                     result = get_inline_qa_status(submission, check)
                     if result is False:

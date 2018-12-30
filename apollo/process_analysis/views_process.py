@@ -73,7 +73,7 @@ def _process_analysis(event, form_id, location_id=None, tag=None):
 
     template_name = ''
     tags = []
-    page_title = _('%(form)s Analysis', form=form.name)
+    page_title = _('%(form)s data summary', form=form.name)
     grouped = False
     display_tag = None
     event = g.event
@@ -175,13 +175,13 @@ def _process_analysis(event, form_id, location_id=None, tag=None):
 @route(bp, '/submissions/analysis/process/form/<int:form_id>')
 @register_menu(
     bp, 'main.analyses',
-    _('Analyses'), order=4,
+    _('Data summary'), order=4,
     icon='<i class="glyphicon glyphicon-stats"></i>',
     visible_when=lambda: len(get_analysis_menu()) > 0
     and permissions.view_process_analysis.can())
 @register_menu(
     bp, 'main.analyses.process_analysis',
-    _('Process Analysis'),
+    _('Process data summary'),
     icon='<i class="glyphicon glyphicon-stats"></i>',
     dynamic_list_constructor=partial(get_process_analysis_menu),
     visible_when=lambda: len(get_process_analysis_menu()) > 0
