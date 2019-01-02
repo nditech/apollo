@@ -16,7 +16,7 @@ class UserDetailsForm(FlaskForm):
         validators=[validators.EqualTo('password_confirm')],
         widget=widgets.PasswordInput())
     password_confirm = fields.StringField(
-        _('Confirm password'),
+        _('Confirm Password'),
         widget=widgets.PasswordInput())
     locale = fields.SelectField(_('Language'),
                                 choices=constants.LANGUAGE_CHOICES)

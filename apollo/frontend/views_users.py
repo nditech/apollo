@@ -13,7 +13,7 @@ bp = Blueprint('users', __name__)
 @route(bp, '/users/profile', methods=['GET', 'POST'])
 @login_required
 def user_profile():
-    page_title = _('Edit profile')
+    page_title = _('Edit Profile')
     user = current_user._get_current_object()
     form = forms.UserDetailsForm(instance=user)
 
