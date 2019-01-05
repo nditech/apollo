@@ -2,7 +2,7 @@
 {% import 'admin/static.html' as admin_static with context %}
 {% from 'admin/macros.html' import locations_builder, locations_list, samples_list, participants_list, forms_list, event_archive %}
 <!DOCTYPE html>
-<html>
+<html {%- if g.locale.character_order == 'right-to-left' %} dir="rtl"{%- endif -%}>
   <head>
     <title>{% block title %}{% if admin_view.category %}{{ admin_view.category }} - {% endif %}{{ admin_view.name }} - {{ admin_view.admin.name }}{% endblock %}</title>
     {% block head_meta %}

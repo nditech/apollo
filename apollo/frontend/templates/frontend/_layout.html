@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" {%- if g.locale.character_order == 'right-to-left' %} dir="rtl"{%- endif -%}>
   <head>
     <meta charset="utf-8">
     <title>{{ page_title }}</title>
@@ -111,6 +111,8 @@
                 <li><a href="{{ current_menu.submenu('user.forms').url }}"><i class="glyphicon glyphicon-list-alt"></i> {{ current_menu.submenu('user.forms').text }}</a></li>
                 <li class="divider"></li>
               {%- endif %}
+                <li><a href="{{ url_for('users.user_profile') }}"><i class="glyphicon glyphicon-cog"></i> {{ _('Account Settings') }}</a></li>
+                <li class="divider"></li>
                 <li><a href="{{ url_for_security('logout') }}"><i class="glyphicon glyphicon-log-out"></i> {{ _('Logout') }}</a></li>
               </ul>
             </li>
