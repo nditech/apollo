@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 """Add checklist conflict tracking field
-=======
-"""empty message
->>>>>>> develop
 
 Revision ID: 98cab6d3d1d3
 Revises: e072b671cf70
