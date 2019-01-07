@@ -5,9 +5,11 @@ Revises:
 Create Date: 2018-12-18 13:20:00.714150
 
 """
+from datetime import datetime
 from uuid import uuid4
 
 from alembic import op
+from dateutil.tz import tzutc
 from flask_principal import Permission
 from flask_security.utils import encrypt_password
 import sqlalchemy as sa
@@ -462,10 +464,12 @@ def upgrade():
     op.execute("""
     SELECT nextval(pg_get_serial_sequence('resource', 'resource_id'))
     """)
-    op.execute("""INSERT INTO event (
+
+    timestamp = datetime(1970, 1, 1, tzinfo=tzutc())
+    conn.execute(text("""INSERT INTO event (
         id, name, start, \"end\", resource_id)
-        VALUES (1, 'Default', '1970-01-01 00:00:00', '1970-01-01 00:00:00', 1)
-        """)
+        VALUES (1, 'Default', :ts, :ts, 1)
+        """), ts=timestamp)
     op.execute("""
     SELECT nextval(pg_get_serial_sequence('event', 'id'))
     """)
