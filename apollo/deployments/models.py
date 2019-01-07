@@ -47,8 +47,11 @@ class Event(Resource):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
     start = db.Column(
-        db.DateTime, default=_default_event_start, nullable=False)
-    end = db.Column(db.DateTime, default=_default_event_end, nullable=False)
+        db.DateTime(timezone=True), default=_default_event_start,
+        nullable=False)
+    end = db.Column(
+        db.DateTime(timezone=True), default=_default_event_end,
+        nullable=False)
     form_set_id = db.Column(
         db.Integer, db.ForeignKey('form_set.id', ondelete='SET NULL'))
     resource_id = db.Column(

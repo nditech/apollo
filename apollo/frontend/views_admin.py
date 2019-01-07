@@ -150,21 +150,19 @@ class EventAdminView(BaseAdminView):
         event = super(EventAdminView, self).get_one(pk)
 
         # convert start and end dates to app time zone
-        event.start = utc_time_zone.localize(event.start).astimezone(
-            app_time_zone)
-        event.end = utc_time_zone.localize(event.end).astimezone(
-            app_time_zone)
+        event.start = event.start.astimezone(app_time_zone)
+        event.end = event.end.astimezone(app_time_zone)
         return event
 
     @contextfunction
     def get_list_value(self, context, model, name):
         if name in ['start', 'end']:
-            original = getattr(model, name, None)
-            if original:
-                return utc_time_zone.localize(original).astimezone(
+            attribute = getattr(model, name, None)
+            if attribute:
+                return attribute.astimezone(
                     app_time_zone).strftime(DATETIME_FORMAT_SPEC)
 
-            return original
+            return attribute
 
         return super(EventAdminView, self).get_list_value(context, model, name)
 
@@ -187,11 +185,9 @@ class EventAdminView(BaseAdminView):
         if form.participant_set.data:
             model.location_set = form.participant_set.data.location_set
 
-        # also, convert the time zone to UTC
-        model.start = app_time_zone.localize(model.start).astimezone(
-            utc_time_zone)
-        model.end = app_time_zone.localize(model.end).astimezone(
-            utc_time_zone)
+        # convert to the app time zone
+        model.start = model.start.astimezone(app_time_zone)
+        model.end = model.end.astimezone(app_time_zone)
 
 
 class UserAdminView(BaseAdminView):
