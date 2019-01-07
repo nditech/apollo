@@ -1,4 +1,4 @@
-"""empty message
+"""Change event start and end column types
 
 Revision ID: 2d9011b4a9f0
 Revises: e072b671cf70

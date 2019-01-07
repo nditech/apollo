@@ -1,4 +1,4 @@
-"""empty message
+"""Add user locale field
 
 Revision ID: e072b671cf70
 Revises: 30efc050b273
