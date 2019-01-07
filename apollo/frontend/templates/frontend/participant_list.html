@@ -78,9 +78,9 @@ a:hover.arrow-style{text-decoration:none; color:#333;}
                {%- endfor -%}
                <th>{{ _('Location') }}</th>
                <th><a href="{{ url_for('participants.participant_list', sort_by='name', **args) }}" class="arrow-style"><img src="{{ url_for('static', filename='img/double-arrow.gif') }}" class="img pull-left"></img>{{ _('Name') }}</a></th>
+               <th>{{ _('Phone') }}</th>
                <th><a href="{{ url_for('participants.participant_list', sort_by='gen', **args) }}" class="arrow-style"><img src="{{ url_for('static', filename='img/double-arrow.gif') }}" class="img pull-left"></img>{{ _('Gender') }}</a></th>
                <th>{{ _('Role') }}</th>
-               <th>{{ _('Phone') }}</th>
                <th>{{ _('Organization') }}</th>
                {% for field in extra_fields %}
                {% if perms.can_access_resource(field) %}
@@ -102,9 +102,9 @@ a:hover.arrow-style{text-decoration:none; color:#333;}
                {%- endfor -%}
                <td>{{ participant.location.name|default('N/A', true) }}</td>
                <td>{{ participant.name|default('', true) }}</td>
+               <td>{{ participant.primary_phone|default('', true) }}</td>
                <td>{{ participant.gender_display }}</td>
                <td>{{ participant.role.name|default('N/A', true) }}</td>
-               <td>{{ participant.primary_phone|default('', true) }}</td>
                <td>{{ participant.partner|default('', true) }}</td>
                {% for field in extra_fields %}
                {% if perms.can_access_resource(field) %}
