@@ -251,7 +251,7 @@ def build_questionnaire(form, data=None):
         for field in group['fields']:
             # if the field has options, create a list of choices
             field_type = field.get('type')
-            if field_type in ('select', 'multiselect'):
+            if field_type in ('select', 'multiselect', 'category'):
                 choices = [(v, k) for k, v in field.get('options').items()]
 
                 if field['type'] == 'multiselect':
@@ -270,12 +270,10 @@ def build_questionnaire(form, data=None):
                         validators=[validators.optional()],
                         widget=widgets.TextInput()
                     )
-            elif field_type == 'string':
+            elif field_type in ('comment', 'string'):
                 fields[field['tag']] = StringField(
                     field['tag'], description=field['description'],
                     validators=[validators.optional()])
-            elif field_type == 'comment':
-                continue
             elif field_type in ('boolean', 'integer'):
                 if field_type == 'boolean':
                     field_validators = [validators.optional()]
@@ -301,10 +299,13 @@ def build_questionnaire(form, data=None):
 class FormForm(SecureForm):
     name = StringField(_('Name'), validators=[validators.InputRequired()])
     prefix = StringField(_('Prefix'), validators=[validators.InputRequired()])
-    form_type = SelectField(_('Form Type'), choices=models.Form.FORM_TYPES,
-                            coerce=choice_type_coerce_factory(models.Form.form_type.type),
-                            validators=[validators.InputRequired()])
+    form_type = SelectField(
+        _('Form Type'), choices=models.Form.FORM_TYPES,
+        coerce=choice_type_coerce_factory(
+            models.Form.form_type.type),
+        validators=[validators.InputRequired()])
     require_exclamation = BooleanField(_('Require Exclamation'))
+    track_data_conflicts = BooleanField(_('Track Data Conflicts?'))
     calculate_moe = BooleanField(_('Calculate MOE'))
     quality_checks_enabled = BooleanField(_('QA Enabled'))
     accredited_voters_tag = StringField(_('Accredited Voters Field'))

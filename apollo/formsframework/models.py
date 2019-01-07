@@ -32,7 +32,7 @@ ROSA_E = ElementMaker(namespace=NSMAP['jr'], nsmap=NSMAP)
 
 FIELD_TYPES = (
     'boolean', 'comment', 'integer', 'select', 'multiselect',
-    # 'bucket', 'string'
+    'category', 'string'
 )
 
 logger = logging.getLogger(__name__)
@@ -72,6 +72,7 @@ class Form(Resource):
     prefix = db.Column(db.String, nullable=False)
     form_type = db.Column(ChoiceType(FORM_TYPES), nullable=False)
     require_exclamation = db.Column(db.Boolean, default=True)
+    track_data_conflicts = db.Column(db.Boolean, default=True, nullable=False)
     data = db.Column(JSONB)
     version_identifier = db.Column(db.String)
     form_set_id = db.Column(
