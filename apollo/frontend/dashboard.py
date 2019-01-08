@@ -60,36 +60,21 @@ def _get_group_coverage(query, form, group, location_type):
         # TODO: replace with the proper SQLA exception classes
         return coverage_list
 
-    # aliases for joins
-    other_submission = aliased(Submission)
-
     # get conflict submissions first
     conflict_query_params = [
-        and_(
-            Submission.data[tag] != None,   # noqa
-            other_submission.data[tag] != None,
-            Submission.data[tag] != other_submission.data[tag])
+        Submission.conflicts.has_key(tag)   # noqa
         for tag in group_tags
     ]
 
-    conflict_query = query.join(
-        other_submission,
-        other_submission.location_id == Submission.location_id
-    ).filter(or_(*conflict_query_params))
-
-    conflict_submission_ids = list(chain(
-        conflict_query.with_entities(Submission.id).all()))
+    conflict_query = query.filter(or_(*conflict_query_params))
 
     missing_query = query.filter(
-        ~Submission.id.in_(conflict_submission_ids),
         ~Submission.data.has_any(array(group_tags)))
 
     complete_query = query.filter(
-        ~Submission.id.in_(conflict_submission_ids),
         Submission.data.has_all(array(group_tags)))
 
     partial_query = query.filter(
-        ~Submission.id.in_(conflict_submission_ids),
         ~Submission.data.has_all(array(group_tags)),
         Submission.data.has_any(array(group_tags)))
 
