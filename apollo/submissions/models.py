@@ -159,7 +159,7 @@ class Submission(BaseModel):
                 obs_submission = cls(
                     form_id=form.id, participant_id=participant.id,
                     location_id=location.id, deployment_id=deployment_id,
-                    event_id=event.id, submission_type='O', data={})
+                    event_id=event.id, submission_type='O')
                 obs_submission.save()
 
             master_submission = cls.query.filter_by(
