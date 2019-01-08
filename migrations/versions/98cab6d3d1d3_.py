@@ -1,4 +1,4 @@
-"""empty message
+"""Add checklist conflict tracking field
 
 Revision ID: 98cab6d3d1d3
 Revises: e072b671cf70

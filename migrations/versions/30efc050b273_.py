@@ -1,4 +1,4 @@
-"""empty message
+"""Fix cascade on location type path
 
 Revision ID: 30efc050b273
 Revises: 872591ee58b4
