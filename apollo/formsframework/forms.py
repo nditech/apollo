@@ -121,7 +121,7 @@ class BaseQuestionnaireForm(Form):
         update_params = {}
 
         # also ignore fields that have errors so as not to save them
-        ignored_fields.extend(list(self.errors.keys()))
+        ignored_fields.extend(self.errors.keys())
         try:
             form = self.data.get('form')
             participant = self.data.get('participant')
@@ -162,25 +162,35 @@ class BaseQuestionnaireForm(Form):
 
             if submission:
                 data = submission.data.copy() if submission.data else {}
-                form_fields = [f for f in list(self.data.keys()) if f not in ignored_fields]
-                change_detected = False
+                form_fields = [
+                    f for f in self.data.keys() if f not in ignored_fields
+                ]
+
+                changed_fields = []
                 for form_field in form_fields:
                     field_data = self.data.get(form_field)
 
                     if isinstance(field_data, int):
-                        change_detected = True
                         if data.get(form_field) != field_data:
+                            changed_fields.append(form_field)
                             data[form_field] = field_data
+                            continue
 
                     if isinstance(field_data, list) and field_data:
-                        change_detected = True
                         original_value = data.get(form_field)
                         if isinstance(original_value, list):
                             original_value = sorted(original_value)
                         if (original_value != field_data):
+                            changed_fields.append(form_field)
+                            data[form_field] = field_data
+                        continue
+
+                    if isinstance(field_data, str) and field_data:
+                        if data.get(form_field) != field_data:
+                            changed_fields.append(form_field)
                             data[form_field] = field_data
 
-                if change_detected:
+                if changed_fields:
                     phone_num = ugly_phone.sub('', self.data.get('sender'))
                     g.phone = phone_num
 
@@ -227,6 +237,14 @@ class BaseQuestionnaireForm(Form):
                             services.submissions.find(
                                 id=submission.id
                             ).update(update_params, synchronize_session=False)
+
+                        # update conflict markers and master data
+                        changed_subset = {
+                            k: v for k, v in data.items()
+                            if k in changed_fields
+                        }
+                        if changed_subset:
+                            submission.update_related(changed_subset)
                         update_submission_version(submission)
 
                     # update completion rating for participant
