@@ -287,7 +287,7 @@ class ParticipantIDFilter(CharFilter):
                 # this will interfere with the default
                 # filtering of master submissions, so
                 # return nothing
-                return queryset.none()
+                return queryset.filter(False)
             return queryset(contributor=participant)
         return queryset
 
@@ -350,7 +350,7 @@ class DateFilter(CharFilter):
             try:
                 timestamp = parse(value, dayfirst=True)
             except Exception:
-                return queryset.none()
+                return queryset.filter(False)
 
             upper = timestamp.replace(hour=23, minute=59, second=59)
             lower = timestamp.replace(hour=0, minute=0, second=0)
