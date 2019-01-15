@@ -144,24 +144,11 @@ class FormGroupFilter(ChoiceFilter):
                 models.Submission.data.has_all(array(group_tags)))
         elif value == '4':
             # Conflict
-            # TODO: make this idiot-proof for array fields
-            # this subquery (thanks to RhodiumToad in #postgresql on Freenode)
-            # returns all location ids where the maximum for a tag is not
-            # equal to the minimum for the same tag and the tag is not
-            # overridden
-            # This implies that every checklist submission for the same
-            # event, form and location must have their `overridden_fields`
-            # set, not just the master, anymore.
-            query_params = and_(or_(*[and_(
-                func.max(models.Submission.data[tag].astext)
-                != func.min(models.Submission.data[tag].astext),
-                ~models.Submission.overridden_fields.contains(tag))
-                for tag in group_tags]), models.Submission.form == self.form,
-                    models.Submission.event == g.event)
-            loc_query = models.Submission.query.with_entities(
-                models.Submission.location_id
-            ).filter(query_params).group_by(models.Submission.location_id)
-            return query.filter(models.Submission.location_id.in_(loc_query))
+            query_params = [
+                models.Submission.conflicts.has_key(tag)    # noqa
+                for tag in group_tags
+            ]
+            return query.filter(or_(*query_params))
 
         return query
 

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from flask_babelex import lazy_gettext as _
+import sqlalchemy as sa
 from sqlalchemy.dialects.postgresql import ARRAY, JSONB
 from sqlalchemy_utils import ChoiceType
 
@@ -159,7 +160,7 @@ class Submission(BaseModel):
                 obs_submission = cls(
                     form_id=form.id, participant_id=participant.id,
                     location_id=location.id, deployment_id=deployment_id,
-                    event_id=event.id, submission_type='O', data={})
+                    event_id=event.id, submission_type='O')
                 obs_submission.save()
 
             master_submission = cls.query.filter_by(
@@ -174,40 +175,100 @@ class Submission(BaseModel):
                     event_id=event.id, submission_type='M', data={})
                 master_submission.save()
 
+    def update_related(self, data):
+        '''
+        Given a dict used to update the submission,
+        update the master with the data not in conflict,
+        and update all related submissions with the
+        conflict data
+        '''
+        if self.form.form_type == 'INCIDENT':
+            return
+
+        conflict_tags = self.compute_conflict_tags(data.keys())
+        subset = {k: v for k, v in data.items() if k not in conflict_tags}
+
+        # seems that trying to use .update() doesn't work
+        # no idea why
+        master = self.master
+        master_data = master.data.copy()
+        master_data.update(subset)
+        master.data = master_data
+
+        siblings = self.siblings
+        self.conflicts = trim_conflicts(self, conflict_tags, data.keys())
+        master.conflicts = trim_conflicts(master, conflict_tags, data.keys())
+        for sibling in siblings:
+            sibling.conflicts = trim_conflicts(
+                sibling, conflict_tags, data.keys())
+
+        db.session.add_all([self, master])
+        db.session.add_all(siblings)
+        db.session.commit()
+
+    def compute_conflict_tags(self, tags=None):
+        # don't compute if the 'track conflicts' flag is not set
+        # on the form
+        if not self.form.track_data_conflicts:
+            return []
+
+        # or if the form is an incident form
+        if self.form.form_type == 'INCIDENT':
+            return []
+
+        # check only a subset of the tags
+        tags_to_check = set(self.form.tags) - set(self.overridden_fields)
+        if tags:
+            tags_to_check = tags_to_check.intersection(set(tags))
+
+        # conflict query
+        params = [
+            sa.func.bool_or(
+                sa.and_(
+                    Submission.data.has_key(tag),   # noqa
+                    sa.not_(Submission.data.contains({tag: self.data[tag]}))
+                )
+            ).label(tag)
+            for tag in tags_to_check
+            if tag in self.data
+        ]
+
+        if not params:
+            return []
+        siblings = self.__siblings()
+        result = siblings.with_entities(*params).one()
+
+        return [k for k, v in result._asdict().items() if v]
+
     def get_incident_status_display(self):
         d = dict(self.INCIDENT_STATUSES)
         return d.get(self.incident_status, _('Unmarked'))
 
-    def completion(self, group_name):
-        # TODO: fix conflict status
-        group_tags = self.form.get_group_tags(group_name)
-        siblings = self.siblings
-        if len(siblings) == 0:
-            subset = [
-                self.data.get(tag) not in (None, '', [])
-                for tag in group_tags] if self.data else []
-
-            if subset and all(subset):
-                return 'Complete'
-            elif any(subset):
-                return 'Partial'
-            else:
-                return 'Missing'
+    def _compute_completion(self, group_tags):
+        are_empty_values = [
+            # TODO: check the empty values
+            self.data.get(tag) not in (None, '', [])
+            for tag in group_tags
+        ] if self.data else []
+        if are_empty_values and all(are_empty_values):
+            return 'Complete'
+        elif any(are_empty_values):
+            return 'Partial'
         else:
-            if self.overridden_fields:
-                tags_to_check = set(group_tags) - set(self.overridden_fields)
-            else:
-                tags_to_check = group_tags
+            return 'Missing'
 
-            all_submissions = [self] + siblings
-            for tag in tags_to_check:
-                check_data = [sub.data.get(tag) for sub in all_submissions]
-                check = {
-                    frozenset(item)
-                    if isinstance(item, list) else item
-                    for item in check_data}
-                if len(check) > 1:
-                    return 'Conflict'
+    def completion(self, group_name):
+        group_tags = self.form.get_group_tags(group_name)
+        if (
+            self.form.form_type == 'INCIDENT'
+                or not self.form.track_data_conflicts
+        ):
+            return self._compute_completion(group_tags)
+        else:
+            conflict_tags = set(group_tags).intersection(set(self.conflicts))
+            if conflict_tags:
+                return 'Conflict'
+            return self._compute_completion(group_tags)
 
     def __siblings(self):
         '''Returns siblings as a SQLA query object'''
@@ -305,3 +366,15 @@ class SubmissionVersion(BaseModel):
         backref=db.backref('submission_versions', cascade='all, delete',
                            passive_deletes=True))
     identity = db.Column(db.String, default='unknown', nullable=False)
+
+
+def trim_conflicts(submission, conflict_tags, data_keys):
+    '''remove keys that were updated and no longer in conflict
+    and add keys that are new conflicts'''
+    conflict_keys = set(conflict_tags)
+
+    # these were updated, they are not in conflict any longer
+    updated_unconflicted_keys = set(data_keys) - set(conflict_tags)
+    new_conflicts = set(submission.conflicts) - updated_unconflicted_keys
+
+    return sorted(new_conflicts.union(conflict_keys))
