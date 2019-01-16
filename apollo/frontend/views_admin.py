@@ -108,6 +108,12 @@ class DeploymentAdminView(BaseAdminView):
         )
     ]
 
+    form_args = {
+        'locales': {
+            'label': _('Languages')
+        }
+    }
+
     form_columns = ['name', 'hostnames', 'dashboard_full_locations',
                     'allow_observer_submission_edit', 'locales']
 
