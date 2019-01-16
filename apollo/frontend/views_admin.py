@@ -18,9 +18,10 @@ from io import BytesIO
 from jinja2 import contextfunction
 import pytz
 from slugify import slugify_unicode
-from wtforms import PasswordField
+from wtforms import PasswordField, SelectField, SelectMultipleField
 from zipfile import ZipFile, ZIP_DEFLATED
 
+from apollo.constants import LANGUAGE_CHOICES
 from apollo.core import admin, db
 from apollo import models, services, settings
 from apollo.deployments.serializers import EventArchiveSerializer
@@ -101,13 +102,20 @@ class DeploymentAdminView(BaseAdminView):
             (
                 'name', 'allow_observer_submission_edit',
                 'dashboard_full_locations', 'hostnames',
+                'locales',
             ),
             _('Deployment')
         )
     ]
 
+    form_args = {
+        'locales': {
+            'label': _('Languages')
+        }
+    }
+
     form_columns = ['name', 'hostnames', 'dashboard_full_locations',
-                    'allow_observer_submission_edit']
+                    'allow_observer_submission_edit', 'locales']
 
     def get_query(self):
         return models.Deployment.query.filter_by(
@@ -196,14 +204,15 @@ class UserAdminView(BaseAdminView):
     '''
     column_list = ('email', 'roles', 'active')
     column_searchable_list = ('email',)
-    form_columns = ('email', 'username', 'active', 'roles', 'permissions',)
+    form_columns = (
+        'email', 'username', 'active', 'roles', 'permissions', 'locale')
     form_excluded_columns = ('password', 'confirmed_at', 'login_count',
                              'last_login_ip', 'last_login_at',
                              'current_login_at', 'deployment',
                              'current_login_ip', 'submission_comments')
     form_rules = [
         rules.FieldSet(('email', 'username', 'password2', 'active', 'roles',
-                        'permissions'))
+                        'permissions', 'locale'))
     ]
 
     def get_query(self):
@@ -245,6 +254,8 @@ class UserAdminView(BaseAdminView):
     def scaffold_form(self):
         form_class = super(UserAdminView, self).scaffold_form()
         form_class.password2 = PasswordField(_('New password'))
+        form_class.locale = SelectField(
+            _('Language'), choices=LANGUAGE_CHOICES)
         return form_class
 
     @action('disable', _('Disable'),

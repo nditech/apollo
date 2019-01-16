@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from apollo.dal.models import Permission, Resource  # noqa
 from apollo.deployments.models import (  # noqa
-    Deployment, Event)
+    Deployment, Event, Locale, deployment_locales)
 from apollo.formsframework.models import Form, FormSet  # noqa
 from apollo.locations.models import (  # noqa
     LocationSet, LocationDataField,
