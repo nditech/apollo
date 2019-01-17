@@ -6,7 +6,7 @@ from sqlalchemy import or_
 
 from apollo import services
 from apollo.api.common import parser
-from apollo.locations.models import Location
+from apollo.locations.models import Location, LocationTranslation
 
 LOCATION_TYPE_FIELD_MAPPER = {
     'id': fields.String,
@@ -108,11 +108,13 @@ class LocationListResource(Resource):
         offset = args.get('offset') or 0
 
         lookup_args = args.get('q')
-        queryset = services.locations.find(location_set_id=location_set_id)
+        queryset = services.locations.find(
+            location_set_id=location_set_id
+        ).join(LocationTranslation)
         if lookup_args:
             queryset = queryset.filter(
                 or_(
-                    Location.name.ilike('%{}%'.format(lookup_args)),
+                    LocationTranslation.name.ilike('%{}%'.format(lookup_args)),
                     Location.code.ilike('{}%'.format(lookup_args))
                 )
             )
