@@ -29,12 +29,40 @@
       </div>
       <form role="form" class="form-horizontal">
       <div class="modal-body" style="padding-bottom:5px">
+        {% for code, label in locales %}
+        {% if loop.first %}
         <div class="form-group">
-          <label for="name" class="col-sm-2 control-label">{{ _('Name') }}</label>
-          <div class="col-sm-10">
-            <input type="text" class="form-control" id="addDivisionName">
+          <label for="name" class="col-sm-3 control-label">{{ _('Name (%(language)s)', language=label) }}</label>
+          <div class="col-sm-9">
+            <input type="text" class="form-control" id="addDivisionName_{{ code }}">
           </div>
         </div>
+        {% else %}
+        <div class="form-group">
+          <div class="row">
+            <div class="col-sm-8 col-sm-offset-2">
+              <div class="panel-group" id="add-name-accordion">
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+                    <h4 class="panel-title">
+                      <a role="button" data-toggle="collapse" data-parent="#add-name-accordion" href="#add-name-panel">{{ _('More languages' ) }}</a>
+                    </h4>
+                  </div>
+                  <div id="add-name-panel" class="panel-collapse collapse">
+                    <div class="panel-body">
+                      <div class="row">
+                        <label for="name" class="col-sm-3 control-label">{{ _('Name (%(language)s)', language=label) }}</label>
+                        <div class="col-sm-9"><input type="text" class="form-control" id="addDivisionName_{{ code }}"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endif %}
+        {% endfor %}
         <div class="form-group">
           <label for="parents" class="col-sm-2 control-label">{{ _('Parents') }}</label>
           <div class="col-sm-10">
@@ -96,12 +124,40 @@
       </div>
       <form role="form" class="form-horizontal">
       <div class="modal-body" style="padding-bottom:5px">
+        {% for code, label in locales %}
+        {% if loop.first %}
         <div class="form-group">
-          <label for="name" class="col-sm-2 control-label">{{ _('Name') }}</label>
-          <div class="col-sm-10">
-            <input type="text" class="form-control" id="updateDivisionName" name="name">
+          <label for="name" class="col-sm-3 control-label">{{ _('Name (%(language)s)', language=label) }}</label>
+          <div class="col-sm-9">
+            <input type="text" class="form-control" id="updateDivisionName_{{ code }}">
           </div>
         </div>
+        {% else %}
+        <div class="form-group">
+          <div class="row">
+            <div class="col-sm-8 col-sm-offset-2">
+              <div class="panel-group" id="update-name-accordion">
+                <div class="panel panel-default">
+                  <div class="panel-heading">
+                    <h4 class="panel-title">
+                      <a role="button" data-toggle="collapse" data-parent="#update-name-accordion" href="#update-name-panel">{{ _('More languages' ) }}</a>
+                    </h4>
+                  </div>
+                  <div id="update-name-panel" class="panel-collapse collapse">
+                    <div class="panel-body">
+                      <div class="row">
+                        <label for="name" class="col-sm-3 control-label">{{ _('Name (%(language)s)', language=label) }}</label>
+                        <div class="col-sm-9"><input type="text" class="form-control" id="updateDivisionName_{{ code }}"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endif %}
+        {% endfor %}
         <div class="form-group">
           <label for="parents" class="col-sm-2 control-label">{{ _('Parents') }}</label>
           <div class="col-sm-10">
@@ -206,4 +262,7 @@
 <script type="text/javascript" src="{{ url_for('static', filename='js/graphlib.core.min.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/joint.min.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/locations_builder.js') }}"></script>
+<script>
+var app = new App(JSON.parse('{{ locale_codes|tojson }}'));
+</script>
 {% endblock scripts %}
