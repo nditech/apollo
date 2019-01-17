@@ -3,7 +3,9 @@ from datetime import datetime
 
 from flask_babelex import lazy_gettext as _
 from sqlalchemy.dialects.postgresql import ARRAY
+from sqlalchemy_utils import ChoiceType
 
+from apollo.constants import LANGUAGE_CHOICES
 from apollo.core import db
 from apollo.dal.models import BaseModel, Resource
 from apollo.utils import current_timestamp
@@ -17,6 +19,30 @@ def _default_event_end():
     return datetime.combine(current_timestamp(), datetime.max.time())
 
 
+class Locale(db.Model):
+    __tablename__ = 'locale'
+
+    id = db.Column(db.Integer, nullable=False, primary_key=True)
+    code = db.Column(db.String, nullable=False)
+    name = db.Column(db.Unicode, nullable=False)
+
+    def __str__(self):
+        return self.name
+
+
+deployment_locales = db.Table(
+    'deployment_locales',
+    db.Column(
+        'deployment_id', db.Integer, db.ForeignKey(
+            'deployment.id', ondelete='CASCADE'),
+        nullable=False, primary_key=True),
+    db.Column(
+        'locale_id', db.Integer, db.ForeignKey(
+            'locale.id', ondelete='CASCADE'),
+        nullable=False, primary_key=True),
+)
+
+
 class Deployment(BaseModel):
     __tablename__ = 'deployment'
 
@@ -28,6 +54,7 @@ class Deployment(BaseModel):
     include_rejected_in_votes = db.Column(db.Boolean, default=False)
     is_initialized = db.Column(db.Boolean, default=False)
     dashboard_full_locations = db.Column(db.Boolean, default=True)
+    locales = db.relationship('Locale', secondary=deployment_locales)
 
     @classmethod
     def find_by_hostname(cls, hostname):
@@ -38,6 +65,10 @@ class Deployment(BaseModel):
 
     def __str__(self):
         return self.name or ''
+
+    @property
+    def locale_codes(self):
+        return [l.code for l in self.locales]
 
 
 class Event(Resource):
