@@ -6,7 +6,7 @@ import os
 
 from flask import (Blueprint, current_app, flash, g, redirect, render_template,
                    request, Response, url_for, abort, stream_with_context,
-                   send_file, jsonify)
+                   send_file)
 from flask_babelex import lazy_gettext as _
 from flask_restful import Api
 from flask_security import current_user, login_required
@@ -15,6 +15,7 @@ from sqlalchemy import not_, or_
 
 from apollo import models, services, utils
 from apollo.core import db, uploads
+from apollo.deployments.utils import get_deployment_locales
 from apollo.frontend import permissions, route
 from apollo.frontend.forms import (
     file_upload_form, generate_location_edit_form,
@@ -192,8 +193,11 @@ def location_headers(location_set_id, upload_id):
                 # get header mappings
                 data = {
                     field.data: field.label.text
-                    for field in form if field.data
+                    for field in form
+                    if field.data and field.name != 'locale'
                 }
+
+                data['locale'] = form.locale.data
 
                 # invoke task asynchronously
                 kwargs = {
@@ -216,6 +220,10 @@ def locations_builder(location_set_id):
 
     has_admin_divisions = db.session.query(services.location_types.find(
         location_set_id=location_set_id).exists()).scalar()
+
+    locales = get_deployment_locales(location_set.deployment_id)
+
+    locale_codes = [l[0] for l in locales]
 
     template_name = 'frontend/location_builder.html'
     page_title = _('Administrative Divisions')
@@ -259,7 +267,8 @@ def locations_builder(location_set_id):
 
     return render_template(template_name, page_title=page_title,
                            location_set=location_set, form=form,
-                           has_admin_divisions=has_admin_divisions)
+                           has_admin_divisions=has_admin_divisions,
+                           locales=locales, locale_codes=locale_codes)
 
 
 @route(bp, '/locations/set/<int:location_set_id>/purge', methods=['POST'])
