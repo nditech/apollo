@@ -41,9 +41,9 @@ class LocationCache():
         location_name = str(location_name).replace(
             "\u2018", "").replace(
             "\u2019", "").replace("\u201c", "").replace("\u201d", "")
-        return sha256(
-            '{}:{}:{}'.format(
-                location_code, location_type, location_name).encode('utf-8')).hexdigest()
+
+        plain_key = f'{location_code}:{location_type}:{location_name}'
+        return sha256(plain_key.encode('utf-8')).hexdigest()
 
     def get(self, location_code, location_type, location_name):
         cache_key = self._cache_key(
@@ -70,6 +70,7 @@ def map_attribute(location_type, attribute):
 
 def update_locations(data_frame, header_mapping, location_set):
     cache = LocationCache()
+    locale = header_mapping.get('locale')
 
     location_types = services.location_types.find(
         location_set=location_set
@@ -97,12 +98,16 @@ def update_locations(data_frame, header_mapping, location_set):
             name_column_key = '{}_name'.format(loc_type.id)
             code_column_key = '{}_code'.format(loc_type.id)
 
-            if header_mapping.get(name_column_key) is None or header_mapping.get(code_column_key) is None:
+            if (header_mapping.get(name_column_key) is None
+                    or header_mapping.get(code_column_key) is None):
                 continue
 
             lat_column_key = '{}_lat'.format(loc_type.id)
             lon_column_key = '{}_lon'.format(loc_type.id)
-            reg_voters_column_key = '{}_rv'.format(loc_type.id) if loc_type.has_registered_voters else None
+            if loc_type.has_registered_voters:
+                reg_voters_column_key = '{}_rv'.format(loc_type.id)
+            else:
+                reg_voters_column_key = None
 
             name_column = header_mapping.get(name_column_key)
             code_column = header_mapping.get(code_column_key)
@@ -149,12 +154,9 @@ def update_locations(data_frame, header_mapping, location_set):
                 'location_type_id': loc_type.id,
                 'location_set_id': location_set.id,
                 'lat': location_lat,
-                'lon': location_lon
+                'lon': location_lon,
+                'code': location_code
             }
-
-            kwargs.update({'code': location_code})
-
-            kwargs['name'] = location_name
 
             if location_rv:
                 kwargs.update({'registered_voters': location_rv})
@@ -166,7 +168,10 @@ def update_locations(data_frame, header_mapping, location_set):
 
             if not location:
                 # no, create it
-                location = services.locations.create(**kwargs)
+                location = services.locations.new(**kwargs)
+                location.locale = locale
+                location.name = location_name
+                location.save()
 
                 # also add the self-referencing path
                 self_ref_path = models.LocationPath(
@@ -177,7 +182,8 @@ def update_locations(data_frame, header_mapping, location_set):
                 db.session.commit()
             else:
                 # update the existing location instead
-                location.name = kwargs.get('name')
+                location.locale = locale
+                location.name = location_name
                 location.registered_voters = kwargs.get('registered_voters')
                 location.lat = kwargs.get('lat')
                 location.lon = kwargs.get('lon')
