@@ -48,6 +48,7 @@ class LocationSet(BaseModel):
 
         nodes = [{
             'id': lt.id,
+            'name': lt.name,
             'nameTranslations': {
                 locale: tr.name
                 for locale, tr in lt.translations.items()
