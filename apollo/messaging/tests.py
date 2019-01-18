@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from unittest import TestCase
 from apollo.formsframework.models import Form
-from .utils import parse_responses
+from .utils import get_unsent_codes, parse_responses
 
 
 class AttributeDict(dict):
@@ -65,3 +65,46 @@ class ResponseParserTest(TestCase):
             'ZX1CV2EA135DBAAA3 THIS IS A TEST ', self.test_form)
         self.assertEqual(extra, 'THIS IS A TEST')
 
+
+class MessagePartialTest(TestCase):
+    def setUp(self):
+        f1 = AttributeDict(tag='AA', type='integer')
+        f2 = AttributeDict(tag='BA', type='boolean')
+        f3 = AttributeDict(tag='D', type='boolean')
+        f4 = AttributeDict(tag='EA', type='multiselect')
+        f5 = AttributeDict(tag='Comment1', type='comment')
+        f6 = AttributeDict(tag='Comment2', type='comment')
+
+        g1 = AttributeDict(name='Group 1')
+        g1.fields = []
+        g1.fields.append(f1)
+        g1.fields.append(f2)
+        g1.fields.append(f5)
+
+        g2 = AttributeDict(name='Group 2')
+        g2.fields = []
+        g2.fields.append(f3)
+        g2.fields.append(f4)
+        g2.fields.append(f6)
+
+        form = Form()
+        form.data = {'groups': [g1, g2]}
+
+        self.test_form = form
+
+    def test_partial_response(self):
+        response_keys = ['AA', 'BA']
+        self.assertEqual(
+            get_unsent_codes(self.test_form, response_keys),
+            ['Comment1']
+        )
+
+        response_keys = ['D', 'Comment2']
+        self.assertEqual(
+            get_unsent_codes(self.test_form, response_keys),
+            ['EA']
+        )
+
+    def test_full_response(self):
+        response_keys = ['AA', 'BA', 'Comment1']
+        self.assertIsNone(get_unsent_codes(self.test_form, response_keys))

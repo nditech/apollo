@@ -323,6 +323,27 @@ class SubmissionStatus(ChoiceFilter):
         return queryset
 
 
+class MessageSubmissionType(ChoiceFilter):
+    field_class = fields.SelectField
+
+    def __init__(self, *args, **kwargs):
+        kwargs['choices'] = [
+            ('', _('Form Type')),
+            ('Invalid', _('Invalid')),
+        ]
+        kwargs['choices'].extend(models.Form.FORM_TYPES)
+
+        super(MessageSubmissionType, self).__init__(*args, **kwargs)
+
+    def filter(self, query, value):
+        if value == 'Invalid':
+            return query.filter_by(submission_id=None)
+        else:
+            return query.filter(models.Form.form_type == value)
+
+        return query
+
+
 class MobileFilter(CharFilter):
     def filter(self, queryset, value):
         if value:
@@ -382,6 +403,7 @@ def messages_filterset():
         mobile = MobileFilter()
         text = TextFilter()
         date = DateFilter()
+        form_type = MessageSubmissionType()
 
     return MessagesFilterSet
 

@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
-from flask import abort, flash, g, request, send_file
+from flask import flash, g, send_file
 from flask_admin import form
 from flask_admin import expose
 from flask_admin.actions import action
 from flask_admin.contrib.sqla import ModelView
-from flask_admin.contrib.sqla.fields import (
-    InlineModelFormList, QuerySelectMultipleField)
+from flask_admin.contrib.sqla.fields import InlineModelFormList
 from flask_admin.contrib.sqla.form import InlineModelConverter
 from flask_admin.form import rules
 from flask_admin.model.form import InlineFormAdmin
@@ -18,12 +17,12 @@ from io import BytesIO
 from jinja2 import contextfunction
 import pytz
 from slugify import slugify_unicode
-from wtforms import PasswordField, SelectField, SelectMultipleField
+from wtforms import PasswordField, SelectField
 from zipfile import ZipFile, ZIP_DEFLATED
 
-from apollo.constants import LANGUAGE_CHOICES
 from apollo.core import admin, db
 from apollo import models, services, settings
+from apollo.deployments import utils
 from apollo.deployments.serializers import EventArchiveSerializer
 
 
@@ -229,11 +228,14 @@ class UserAdminView(BaseAdminView):
         form = super().create_form(obj)
 
         deployment = current_user.deployment
+        locale_choices = [(None, _('None'))] + utils.get_deployment_locales(
+            deployment.id)
 
         # local function helper
         def _get_deployment_roles():
             return models.Role.query.filter_by(deployment_id=deployment.id)
 
+        form.locale.choices = locale_choices
         form.roles.query_factory = _get_deployment_roles
 
         return form
@@ -242,11 +244,14 @@ class UserAdminView(BaseAdminView):
         form = super().edit_form(obj)
 
         deployment = current_user.deployment
+        locale_choices = [(None, _('None'))] + utils.get_deployment_locales(
+            deployment.id)
 
         # local function helper
         def _get_deployment_roles():
             return models.Role.query.filter_by(deployment_id=deployment.id)
 
+        form.locale.choices = locale_choices
         form.roles.query_factory = _get_deployment_roles
 
         return form
@@ -254,8 +259,7 @@ class UserAdminView(BaseAdminView):
     def scaffold_form(self):
         form_class = super(UserAdminView, self).scaffold_form()
         form_class.password2 = PasswordField(_('New password'))
-        form_class.locale = SelectField(
-            _('Language'), choices=LANGUAGE_CHOICES)
+        form_class.locale = SelectField(_('Language'))
         return form_class
 
     @action('disable', _('Disable'),

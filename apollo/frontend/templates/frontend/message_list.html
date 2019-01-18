@@ -1,5 +1,8 @@
 {% extends "frontend/_layout.html" %}
 {%- from 'frontend/macros/pagination.html' import render_pager, render_pager_counter -%}
+{% block stylesheets %}
+<link rel="stylesheet" media="screen" href="https://fontlibrary.org/face/kawkab-mono" type="text/css"/>
+{% endblock %}
 {% block toolbar %}
 {% if perms.export_messages.can() %}
 <a class="btn btn-sm btn-default pull-right" href="{{ url_for('messages.message_list', export='true', **request.args) }}"><i class="glyphicon glyphicon-export"></i> {{ _('Export') }}</a>
@@ -20,6 +23,9 @@
         </div>
         <div class="form-group">
           {{ filter_form.text(class_="form-control span2 input-sm", placeholder=_("Text")) }}
+        </div>
+        <div class="form-group">
+          {{ filter_form.form_type(class_="form-control span2 input-sm", placeholder=_("Type")) }}
         </div>
         <div class=" form-group">
           <div class="input-group date span2 datesel" data-date="" data-date-format="dd-mm-yyyy">
@@ -46,27 +52,53 @@
 <div class="row">
   <div class="col-md-12">
     <table class="table table-striped table-bordered table-hover" style="table-layout:fixed">
-      <thead >
+      <thead>
         <tr>
-          <th width="7%">{{ _('Date') }}</th>
-          <th width="7%">{{ _('Time') }}</th>
-          <th width="10%">{{ _('Mobile') }}</th>
-          <th width="7%">{{ _('Direction') }}</th>
-          <th width="60%">{{ _('Text') }}</th>
+          <th>{{ _('Date') }}</th>
+          <th>{{ _('Time') }}</th>
+          <th>{{ _('Mobile') }}</th>
+          <th>{{ _('Direction') }}</th>
+          <th>{{ _('Text') }}</th>
+          <th>{{ _('Type') }}</th>
         </tr>
       </thead>
-      <tbody>
-        {% for message in pager.items %}
+      <tbody style="font-family: 'KawkabMonoRegular'; font-size: 0.75em;">
+        {% for left_message, right_message, submission_id, form_type in pager.items %}
+        {% if left_message.direction == 'IN' %}
         <tr>
-          <td class="timestamp-date" data-timestamp="{{ message.received|timestamp }}">{{ message.received.strftime('%b %d %Y') }}</td>
-          <td class="timestamp-time" data-timestamp="{{ message.received|timestamp }}">{{ message.received.strftime('%I:%M %p') }}</td>
-          <td>{% if message.direction == 'IN' %}{{ message.sender }}{% else %}{{ message.recipient }}{% endif %}</td>
-          <td>{% if message.direction == 'IN' %}{{ _('IN') }}{% else %}{{ _('OUT') }}{% endif %}</td>
-          <td style="word-wrap:break-word">{{ message.text }}</td>
+        {% if right_message == None %}
+          <td colspan="6"></td>
+        {% else %}
+          <td class="timestamp-date" data-timestamp="{{ right_message.received|timestamp }}">{{ right_message.received.strftime('%b %d %Y') }}</td>
+          <td class="timestamp-time" data-timestamp="{{ right_message.received|timestamp }}">{{ right_message.received.strftime('%I:%M %p') }}</td>
+          <td>{{ right_message.recipient }}</td>
+          <td>{{ right_message.direction.value }}</td>
+          <td style="word-wrap:break-word">{{ right_message.text }}</td>
+          <td>{% if form_type %}{{ form_type.value }}{% else %}{{ _('Invalid') }}{% endif %}</td>
+        {% endif %}
+        </tr>
+        <tr>
+          <td class="timestamp-date" data-timestamp="{{ left_message.received|timestamp }}">{{ left_message.received.strftime('%b %d %Y') }}</td>
+          <td class="timestamp-time" data-timestamp="{{ left_message.received|timestamp }}">{{ left_message.received.strftime('%I:%M %p') }}</td>
+          <td>{{ left_message.sender }}</td>
+          <td>{{ left_message.direction.value }}</td>
+          <td style="word-wrap:break-word">{{ left_message.text }}</td>
+          <td>{% if form_type %}{{ form_type.value }}{% else %}{{ _('Invalid') }}{% endif %}</td>
         </tr>
         {% else %}
+        <tr>
+          <td class="timestamp-date" data-timestamp="{{ left_message.received|timestamp }}">{{ left_message.received.strftime('%b %d %Y') }}</td>
+          <td class="timestamp-time" data-timestamp="{{ left_message.received|timestamp }}">{{ left_message.received.strftime('%I:%M %p') }}</td>
+          <td>{{ left_message.recipient }}</td>
+          <td>{{ left_message.direction.value }}</td>
+          <td style="word-wrap:break-word">{{ left_message.text }}</td>
+          <td>{% if form_type %}{{ form_type.value }}{% else %}{{ _('Invalid') }}{% endif %}</td>
+        </tr>
+        <tr><td colspan="6"></td></tr>
+        {% endif %}
+        {% else %}
         <tr class="warning">
-          <td style="text-align:center" colspan="5">{{ _('No Data Available') }}</td>
+          <td style="text-align:center" colspan="6">{{ _('No Data Available') }}</td>
         </tr>
         {% endfor %}
       </tbody>

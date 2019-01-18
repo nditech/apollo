@@ -30,9 +30,9 @@ class DeploymentLoginForm(LoginForm):
                 'deployment': g.deployment,
                 identity_attribute: self.email.data
             }
-            self._user = _datastore.find_user(**kwargs)
+            self.user = _datastore.find_user(**kwargs)
 
-            if self._user:
+            if self.user:
                 break
 
         if self.user is None:
