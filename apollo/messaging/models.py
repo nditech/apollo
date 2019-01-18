@@ -14,6 +14,12 @@ class Message(BaseModel):
         ('OUT', _('OUTGOING')),
     )
 
+    MESSAGE_TYPES = (
+        ('SMS', _('SMS')),
+        ('API', _('API')),
+        ('ODK', _('ODK')),
+    )
+
     __tablename__ = 'message'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -21,6 +27,8 @@ class Message(BaseModel):
     recipient = db.Column(db.String)
     sender = db.Column(db.String)
     text = db.Column(db.String)
+    message_type = db.Column(
+        ChoiceType(MESSAGE_TYPES), default=MESSAGE_TYPES[0][0])
     received = db.Column(db.DateTime, default=datetime.utcnow, index=True)
     delivered = db.Column(db.DateTime)
     deployment_id = db.Column(db.Integer, db.ForeignKey(
@@ -31,6 +39,9 @@ class Message(BaseModel):
         db.Integer, db.ForeignKey('submission.id', ondelete='CASCADE'))
     participant_id = db.Column(
         db.Integer, db.ForeignKey('participant.id', ondelete='CASCADE'))
+    # this is set only for reply SMS messages.
+    originating_message_id = db.Column(
+        db.Integer, db.ForeignKey('message.id', ondelete='SET NULL'))
 
     deployment = db.relationship(
         'Deployment',
@@ -43,3 +54,4 @@ class Message(BaseModel):
         'Submission', backref=db.backref('messages', passive_deletes=True))
     participant = db.relationship(
         'Participant', backref=db.backref('messages', passive_deletes=True))
+    originating_message = db.relationship('Message', uselist=False)

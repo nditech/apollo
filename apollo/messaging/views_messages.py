@@ -10,9 +10,11 @@ from flask_menu import register_menu
 from flask_security import login_required
 import pandas as pd
 from slugify import slugify_unicode
+import sqlalchemy as sa
+from sqlalchemy.orm import aliased
 
 from apollo.frontend import filters, route, permissions
-from apollo.models import Event, Message
+from apollo.models import Event, Form, Message, Submission
 from apollo.services import events, messages
 
 
@@ -38,7 +40,12 @@ def message_list():
     qs = Message.query.filter(
         Message.deployment == deployment,
         Message.event_id.in_(event_ids)).order_by(
-        Message.received.desc(), Message.direction.desc())
+        Message.received.desc(), Message.direction.desc()
+    ).join(
+        Submission
+    ).join(
+        Form
+    )
     queryset_filter = filters.messages_filterset()(qs, request.args)
 
     if request.args.get('export') and permissions.export_messages.can():
@@ -54,6 +61,23 @@ def message_list():
             mimetype="text/csv"
         )
     else:
+        Msg = aliased(Message)
+        all_messages = queryset_filter.qs.filter(
+            sa.or_(
+                Message.direction == 'IN',
+                sa.and_(
+                    Message.inbound_message_id == None, # noqa
+                    Message.direction == 'OUT'
+                )
+            )
+        ).join(
+            # TODO: add extra condition for 'OUT' message
+            # if necessary
+            Msg, Msg.inbound_message_id == Message.id
+        ).with_entities(
+            Message, Msg, Submission.id, Form.form_type
+        ).order_by(Message.received.desc())
+
         data = request.args.to_dict(flat=False)
         page_spec = data.pop('page', None) or [1]
         page = int(page_spec[0])
@@ -61,9 +85,9 @@ def message_list():
             'page_title': page_title,
             'filter_form': queryset_filter.form,
             'args': data,
-            'pager': queryset_filter.qs.paginate(
+            'pager': all_messages.paginate(
                 page=page, per_page=current_app.config.get('PAGE_SIZE')),
-            'chart_data': message_time_series(queryset_filter.qs)
+            'chart_data': message_time_series(all_messages)
         }
 
         return render_template(template_name, **context)

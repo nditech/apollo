@@ -136,3 +136,20 @@ def parse_responses(responses_text, form):
     substrate = default_pattern.sub('', substrate)
 
     return responses, substrate.strip()
+
+
+def get_unsent_codes(form, response_keys):
+    groups = [
+        g.get('name') for g in form.data.get('groups')
+        if 'groups' in form.data
+    ]
+
+    for group in groups:
+        group_tags = set(form.get_group_tags(group))
+        keys = set(response_keys)
+
+        is_partial = keys < group_tags
+        if is_partial:
+            return sorted(group_tags.difference(keys))
+
+    return None

@@ -6,7 +6,7 @@ from flask import Blueprint, make_response, request, g, current_app
 from unidecode import unidecode
 
 from apollo import models, services
-from apollo.core import csrf
+from apollo.core import db, csrf
 from apollo.frontend import route
 from apollo.messaging.forms import KannelForm, TelerivetForm
 from apollo.messaging.helpers import parse_message
@@ -45,6 +45,9 @@ def lookup_participant(msg, event=None):
 
 
 def update_datastore(inbound, outbound, submission, had_errors):
+    outbound.inbound_message_id = inbound.id
+    models_to_save = [outbound]
+
     if submission:
         participant = submission.participant
     else:
@@ -61,7 +64,11 @@ def update_datastore(inbound, outbound, submission, had_errors):
             participant.accurate_message_count += 1
 
         participant.message_count += 1
-        participant.save()
+        models_to_save.append(participant)
+        models_to_save.append(inbound)
+
+    db.session.add_all(models_to_save)
+    db.session.commit()
 
 
 @route(bp, '/messaging/kannel', methods=['GET'])
@@ -75,20 +82,23 @@ def kannel_view():
     form = KannelForm(request.args)
     if form.validate():
         msg = form.get_message()
-        incoming = services.messages.log_message(
-            event=g.event, sender=msg.get('sender'), text=msg.get('text'),
-            direction='IN', timestamp=msg.get('timestamp'))
-
         response, submission, had_errors = parse_message(form)
+        event = submission.event if submission else g.event
+
+        incoming = services.messages.log_message(
+            event=event, sender=msg.get('sender'), text=msg.get('text'),
+            direction='IN', timestamp=msg.get('timestamp'))
+        outgoing = services.messages.log_message(
+            # the str() call is necessary because the response
+            # is response is a translated string, which can't
+            # be saved to the database
+            event=event, recipient=msg.get('sender'), text=str(response),
+            direction='OUT')
+
+        update_datastore(incoming, outgoing, submission, had_errors)
 
         if current_app.config.get('TRANSLITERATE_OUTPUT'):
             response = unidecode(response)
-
-        outgoing = services.messages.log_message(
-            event=g.event, recipient=msg.get('sender'), text=response,
-            direction='OUT', timestamp=msg.get('timestamp'))
-
-        update_datastore(incoming, outgoing, submission, had_errors)
 
         return response
     return ""
@@ -109,9 +119,6 @@ def telerivet_view():
     form = TelerivetForm(request.form)
     if form.validate():
         msg = form.get_message()
-        incoming = services.messages.log_message(
-            event=g.event, sender=msg.get('sender'), text=msg.get('text'),
-            direction='IN', timestamp=msg.get('timestamp'))
 
         response_text, submission, had_errors = parse_message(form)
         if current_app.config.get('TRANSLITERATE_OUTPUT'):
@@ -120,8 +127,13 @@ def telerivet_view():
         http_response = make_response(json.dumps(response))
         http_response.headers['Content-Type'] = 'application/json'
 
+        event = submission.event if submission else g.event
+
+        incoming = services.messages.log_message(
+            event=event, sender=msg.get('sender'), text=msg.get('text'),
+            direction='IN', timestamp=msg.get('timestamp'))
         outgoing = services.messages.log_message(
-            event=g.event, recipient=msg.get('sender'), text=response_text,
+            event=event, recipient=msg.get('sender'), text=response_text,
             direction='OUT', timestamp=msg.get('timestamp'))
 
         update_datastore(incoming, outgoing, submission, had_errors)
