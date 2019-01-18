@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 from apollo.formsframework.forms import build_questionnaire
 from apollo.messaging.forms import retrieve_form
-from apollo.messaging.utils import parse_text, parse_responses
+from apollo.messaging.utils import (
+    get_unsent_codes, parse_text, parse_responses)
 from flask_babelex import lazy_gettext as _
 from werkzeug.datastructures import MultiDict
 
@@ -30,12 +31,27 @@ def parse_message(form):
 
                 # if submission returns empty, then the participant
                 # was not meant to send this text.
-                # TODO: add response for no recorded submission
+                if submission is None:
+                    reply = _(
+                        'Invalid message: %(text)s. Please check and resend!',
+                        text=message.get('text', ''))
+                    return reply, submission, True
 
                 # check if there were extra fields sent in
                 diff = set(response_dict.keys()).difference(
                     set(questionnaire.data.keys()))
                 if not diff and not extra:
+                    # check that the data sent was not partial
+                    unused_tags = get_unsent_codes(
+                        form_doc, response_dict.keys())
+                    if unused_tags:
+                        reply = _(
+                            'Thank you, but your message may be missing '
+                            '%(unused_codes)s. You sent: %(text)s',
+                            unused_codes=', '.join(unused_tags),
+                            text=message.get('text', ''))
+
+                        return reply, submission, had_errors
                     return (
                         _('Thank you! Your report was received!'
                           ' You sent: {text}')
@@ -44,6 +60,7 @@ def parse_message(form):
                         had_errors
                     )
                 elif diff:
+                    # TODO: replace .format() calls
                     had_errors = True
                     return (
                         _('Unknown question codes: "{questions}". '
