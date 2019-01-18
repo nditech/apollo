@@ -27,7 +27,7 @@ class MessageService(Service):
 
     def export_list(self, query):
         headers = [
-            'Mobile', 'Text', 'Direction', 'Created', 'Delivered'
+            'Mobile', 'Text', 'Direction', 'Created', 'Delivered', 'Type'
         ]
         output = StringIO()
         output.write(constants.BOM_UTF8_STR)
@@ -46,7 +46,8 @@ class MessageService(Service):
                 message.received.strftime('%Y-%m-%d %H:%M:%S')
                 if message.received else '',
                 message.delivered.strftime('%Y-%m-%d %H:%M:%S')
-                if message.delivered else ''
+                if message.delivered else '',
+                message.message_type.value
             ]
 
             output = StringIO()
