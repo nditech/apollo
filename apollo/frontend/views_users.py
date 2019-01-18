@@ -15,7 +15,8 @@ bp = Blueprint('users', __name__)
 def user_profile():
     page_title = _('Edit Profile')
     user = current_user._get_current_object()
-    form = forms.UserDetailsForm(instance=user)
+    form_class = forms.user_details_form_factory(user)
+    form = form_class()
 
     if form.validate_on_submit():
         data = form.data
