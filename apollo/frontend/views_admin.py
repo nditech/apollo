@@ -233,14 +233,11 @@ class UserAdminView(BaseAdminView):
         form = super().create_form(obj)
 
         deployment = current_user.deployment
-        locale_choices = [(None, _('None'))] + utils.get_deployment_locales(
-            deployment.id)
 
         # local function helper
         def _get_deployment_roles():
             return models.Role.query.filter_by(deployment_id=deployment.id)
 
-        form.locale.choices = locale_choices
         form.roles.query_factory = _get_deployment_roles
 
         return form
@@ -249,14 +246,11 @@ class UserAdminView(BaseAdminView):
         form = super().edit_form(obj)
 
         deployment = current_user.deployment
-        locale_choices = [(None, _('None'))] + utils.get_deployment_locales(
-            deployment.id)
 
         # local function helper
         def _get_deployment_roles():
             return models.Role.query.filter_by(deployment_id=deployment.id)
 
-        form.locale.choices = locale_choices
         form.roles.query_factory = _get_deployment_roles
 
         return form
