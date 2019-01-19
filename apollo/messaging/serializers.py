@@ -51,6 +51,9 @@ class MessageSerializer(object):
             if obj.submission else None,
             'participant': obj.participant.uuid.hex
             if obj.participant else None,
+            'message_type': obj.message_type.code,
+            'originating_message': obj.originating_message.uuid.hex
+            if obj.originating_message else None
         }
 
 
