@@ -1,12 +1,19 @@
 # -*- coding: utf-8 -*-
-from flask_babelex import lazy_gettext as _
+from flask_babelex import get_locale, lazy_gettext as _
 import networkx as nx
 from sqlalchemy import and_
 from sqlalchemy.dialects.postgresql import JSONB
-from sqlalchemy.orm import aliased
+from sqlalchemy.orm import aliased, joinedload
+from sqlalchemy_i18n import make_translatable, translation_base, Translatable
+import sqlalchemy_utils
 
 from apollo.core import db
 from apollo.dal.models import BaseModel, Resource
+from apollo.settings import LANGUAGES
+
+sqlalchemy_utils.i18n.get_locale = get_locale
+
+make_translatable(options={'locales': LANGUAGES.keys()})
 
 
 class LocationSet(BaseModel):
@@ -35,21 +42,27 @@ class LocationSet(BaseModel):
             LocationTypePath.descendant_id
         ).all()
 
-        nodes = LocationType.query.filter(
+        location_types = LocationType.query.filter(
             LocationType.location_set_id == self.id
-        ).with_entities(
-            LocationType.id,
-            LocationType.name,
-            LocationType.has_registered_voters,
-            LocationType.is_administrative,
-            LocationType.is_political
-        ).all()
+        ).options(joinedload(LocationType.translations))
+
+        nodes = [{
+            'id': lt.id,
+            'name': lt.name,
+            'nameTranslations': {
+                locale: tr.name
+                for locale, tr in lt.translations.items()
+            },
+            'has_registered_voters': lt.has_registered_voters,
+            'is_administrative': lt.is_administrative,
+            'is_political': lt.is_political,
+        } for lt in location_types]
 
         nx_graph = nx.DiGraph()
         nx_graph.add_edges_from(edges)
 
         graph = {
-            'nodes': [n._asdict() for n in nodes],
+            'nodes': nodes,
             'edges': list(nx.dfs_edges(nx_graph))
         }
 
@@ -111,11 +124,14 @@ class Sample(BaseModel):
         passive_deletes=True))
 
 
-class LocationType(BaseModel):
+class LocationType(Translatable, BaseModel):
     __tablename__ = 'location_type'
+    __translatable__ = {'locales': LANGUAGES.keys()}
+
+    # default locale
+    locale = 'en'
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String, nullable=False)
     is_administrative = db.Column(db.Boolean, default=False)
     is_political = db.Column(db.Boolean, default=False)
     has_registered_voters = db.Column(db.Boolean, default=False)
@@ -175,6 +191,12 @@ class LocationType(BaseModel):
             cls.id.in_(q), cls.location_set_id == location_set_id).first()
 
 
+class LocationTypeTranslation(translation_base(LocationType)):
+    __tablename__ = 'location_type_translation'
+
+    name = db.Column(db.Unicode(255))
+
+
 class LocationTypePath(db.Model):
     __tablename__ = 'location_type_path'
     __table_args__ = (
@@ -196,13 +218,16 @@ class LocationTypePath(db.Model):
             passive_deletes=True))
 
 
-class Location(BaseModel):
+class Location(Translatable, BaseModel):
     __tablename__ = 'location'
     __table_args__ = (
         db.UniqueConstraint('location_set_id', 'code'),)
+    __translatable__ = {'locales': LANGUAGES.keys()}
+
+    # default locale
+    locale = 'en'
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String, nullable=False)
     code = db.Column(db.String, index=True, nullable=False)
     registered_voters = db.Column(db.Integer, default=0)
     location_set_id = db.Column(db.Integer, db.ForeignKey(
@@ -279,6 +304,12 @@ class Location(BaseModel):
 
     def __repr__(self):
         return self.name
+
+
+class LocationTranslation(translation_base(Location)):
+    __tablename__ = 'location_translation'
+
+    name = db.Column(db.Unicode(255))
 
 
 class LocationPath(db.Model):
