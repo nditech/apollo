@@ -33,7 +33,10 @@ class LocationSerializer(object):
 
         return {
             'uuid': obj.uuid.hex,
-            'name': obj.name,
+            'name': {
+                locale: tr.name
+                for locale, tr in obj.translations.items()
+            },
             'code': obj.code,
             'registered_voters': obj.registered_voters,
             'lat': obj.lat,
@@ -107,7 +110,10 @@ class LocationTypeSerializer(object):
 
         return {
             'uuid': obj.uuid.hex,
-            'name': obj.name,
+            'name': {
+                locale: tr.name
+                for locale, tr in obj.translations.items()
+            },
             'is_administrative': obj.is_administrative,
             'is_political': obj.is_political,
             'has_registered_voters': obj.has_registered_voters,

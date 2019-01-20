@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "6bb843f1446a134d4e46a3cfa2359bc10aede87844cf2cb7b98e85257f7a73e4"
+            "sha256": "ad31d9e2dd45fe73fe65be955fa1c46bcbdf47abb955501968a04de0032aaa29"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -25,10 +25,11 @@
         },
         "amqp": {
             "hashes": [
-                "sha256:073dd02fdd73041bffc913b767866015147b61f2a9bc104daef172fc1a0066eb",
-                "sha256:eed41946890cd43e8dee44a316b85cf6fee5a1a34bb4a562b660a358eb529e1b"
+                "sha256:9f181e4aef6562e6f9f45660578fc1556150ca06e836ecb9e733e6ea10b48464",
+                "sha256:c3d7126bfbc640d076a01f1f4f6e609c0e4348508150c1f61336b0d83c738d2b"
             ],
-            "version": "==2.3.2"
+            "markers": "python_version >= '2.7' and python_version != '3.1.*' and python_version != '3.2.*' and python_version != '3.3.*' and python_version != '3.0.*'",
+            "version": "==2.4.0"
         },
         "aniso8601": {
             "hashes": [
@@ -762,10 +763,10 @@
         },
         "sqlalchemy-utils": {
             "hashes": [
-                "sha256:e198404f2794b6dfacc704fbee1d29721904d84eb6369e7f5ab512f8f76a011a"
+                "sha256:3f1cb542cf0549a0de508d4919f3ad693a36230bf4cd13fdd6253549fec71182"
             ],
             "index": "pypi",
-            "version": "==0.33.10"
+            "version": "==0.33.11"
         },
         "tablib": {
             "hashes": [
