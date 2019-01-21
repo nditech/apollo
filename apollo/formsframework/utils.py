@@ -116,6 +116,8 @@ def _process_survey_worksheet(sheet_data, form_data):
         elif record_type.startswith('select'):
             field['type'] = 'multiselect'
 
+        elif record_type == 'geopoint':
+            field['type'] = 'location'
         else:
             continue
 
