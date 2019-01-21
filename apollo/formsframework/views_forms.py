@@ -13,7 +13,7 @@ import json
 from apollo import models, services
 from apollo.formsframework.forms import FormForm, FormImportForm
 from apollo.formsframework.models import FormBuilderSerializer
-from apollo.formsframework.utils import import_form
+from apollo.formsframework import utils
 from apollo.submissions.tasks import init_submissions
 from apollo.frontend.forms import make_checklist_init_form
 
@@ -277,7 +277,7 @@ def quality_assurance(form_id, form_set_id=0):
 def export_form(id):
     form = services.forms.fget_or_404(id=id)
     memory_file = BytesIO()
-    workbook = form.to_excel()
+    workbook = utils.export_form(form)
     workbook.save(memory_file)
     memory_file.seek(0)
     filename = '{}.xls'.format(form.name)
@@ -302,7 +302,7 @@ def import_form_schema(form_set_id=0):
     web_form = FormImportForm()
 
     if web_form.validate_on_submit():
-        form = import_form(request.files['import_file'])
+        form = utils.import_form(request.files['import_file'])
         form.deployment_id = form_set.deployment_id
         form.form_set = form_set
         form.save()
