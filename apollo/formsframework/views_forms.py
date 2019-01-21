@@ -12,7 +12,8 @@ import json
 
 from apollo import models, services
 from apollo.formsframework.forms import FormForm, FormImportForm
-from apollo.formsframework.models import FormBuilderSerializer, import_form
+from apollo.formsframework.models import FormBuilderSerializer
+from apollo.formsframework.utils import import_form
 from apollo.submissions.tasks import init_submissions
 from apollo.frontend.forms import make_checklist_init_form
 
