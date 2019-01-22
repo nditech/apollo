@@ -45,7 +45,7 @@ def lookup_participant(msg, event=None):
 
 
 def update_datastore(inbound, outbound, submission, had_errors):
-    outbound.inbound_message_id = inbound.id
+    outbound.originating_message_id = inbound.id
     models_to_save = [outbound]
 
     if submission:
