@@ -93,7 +93,7 @@
                         <th class="numeric">&plusmn;{{ '%.1f' % data_analyses.overall.turnout_moe_95 }}%</th>
                         <th class="numeric">&plusmn;{{ '%.1f' % data_analyses.overall.turnout_moe_99 }}%</th>
                         {%- endif -%}
-						<th class="numeric">{{ '%.1f' % data_analyses.overall.all_valid_votes_pct|percent_of(1, 0) }}% ({{ data_analyses.overall.all_votes }})</th>
+						<th class="numeric">{{ data_analyses.overall.all_votes }}</th>
 						{%- if form.calculate_moe and config.ENABLE_MOE -%}
 						<th class="numeric">&plusmn;{{ '%.1f' % data_analyses.overall.all_valid_votes_moe_95 }}%</th>
 						<th class="numeric">&plusmn;{{ '%.1f' % data_analyses.overall.all_valid_votes_moe_99 }}%</th>
@@ -112,7 +112,7 @@
                         <th class="numeric">&plusmn;{{ '%.1f' % data_analyses.overall.total_blanks_moe_99 }}%</th>
                         {%- endif -%}
                         {%- endif %}
-                        <th class="numeric">{{ data_analyses.overall.all_valid_votes }}</th>
+                        <th class="numeric">{{ '%.1f' % data_analyses.overall.all_valid_votes_pct|percent_of(1, 0) }}%<br />({{ data_analyses.overall.all_valid_votes }})</th>
                         {%- for vote in result_labels -%}
                         {%- with vote_cnt = data_analyses['overall']['{}_cnt'.format(vote)] -%}
                         {%- with vote_pct = data_analyses['overall']['{}_pct'.format(vote)] -%}
