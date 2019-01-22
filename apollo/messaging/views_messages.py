@@ -66,14 +66,14 @@ def message_list():
             sa.or_(
                 Message.direction == 'IN',
                 sa.and_(
-                    Message.inbound_message_id == None, # noqa
+                    Message.originating_message_id == None, # noqa
                     Message.direction == 'OUT'
                 )
             )
         ).join(
             # TODO: add extra condition for 'OUT' message
             # if necessary
-            Msg, Msg.inbound_message_id == Message.id
+            Msg, Msg.originating_message_id == Message.id
         ).with_entities(
             Message, Msg, Submission.id, Form.form_type
         ).order_by(Message.received.desc())
