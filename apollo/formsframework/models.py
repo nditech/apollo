@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
+from datetime import datetime
+import hashlib
 import logging
 from operator import itemgetter
 import re
-from uuid import uuid4
 
 from flask_babelex import lazy_gettext as _
 from lxml import etree
@@ -41,7 +42,7 @@ lt_constraint_regex = re.compile('(?:.*\.\s*\<={0,1}\s*)(\d+)')
 
 
 def _make_version_identifer():
-    return uuid4().hex
+    return datetime.utcnow().strftime('%Y%m%d%H%M%S%f')
 
 
 class FormSet(BaseModel):
@@ -243,6 +244,13 @@ class Form(Resource):
         root.append(body)
 
         return root
+
+    def odk_hash(self):
+        xform_data = etree.tostring(
+            self.to_xml(), encoding='UTF-8', xml_declaration=True)
+        m = hashlib.md5()
+        m.update(xform_data)
+        return f'md5: {m.hexdigest()}'
 
 
 class FormBuilderSerializer(object):
