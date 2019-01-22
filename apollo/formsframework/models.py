@@ -79,7 +79,8 @@ class Form(Resource):
     data = db.Column(JSONB)
     version_identifier = db.Column(db.String, default=_make_version_identifer)
     form_set_id = db.Column(
-        db.Integer, db.ForeignKey('form_set.id'), nullable=False)
+        db.Integer, db.ForeignKey('form_set.id', ondelete='CASCADE'),
+        nullable=False)
     resource_id = db.Column(
         db.Integer, db.ForeignKey('resource.resource_id', ondelete='CASCADE'))
     quality_checks = db.Column(JSONB)
@@ -92,8 +93,10 @@ class Form(Resource):
     blank_votes_tag = db.Column(db.String)
 
     form_set = db.relationship(
-        'FormSet', backref=db.backref('forms', lazy='dynamic'),
-        cascade='all, delete')
+        'FormSet',
+        backref=db.backref('forms', cascade='all, delete', lazy='dynamic'),
+        passive_deletes=True
+    )
 
     def __str__(self):
         return str(_('Form - %(name)s', name=self.name))
