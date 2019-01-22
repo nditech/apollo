@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<h:html xmlns="http://www.w3.org/2002/xforms" 
+        xmlns:h="http://www.w3.org/1999/xhtml" 
+        xmlns:jr="http://openrosa.org/javarosa" 
+        xmlns:orx="http://openrosa.org/xforms" 
+        xmlns:odk="http://www.opendatakit.org/xforms"
+        xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <h:head>
+        <h:title>{{ form.name }}</h:title>
+        <model>
+            <instance>
+                <data id="{{ form_id }}" orx:version="{{ version_id }}">
+                    {% for tag in form.tags %}
+                    <{{ tag }}/>
+
+                    {% endfor %}
+                    <orx:meta>
+                        <orx:deviceID/>
+                        <orx:instanceID/>
+                    </orx:meta>
+                </data>
+            </instance>
+            {% for tag in form.tags %}
+            {% set current_field = form.get_field_by_tag(tag) %}
+            <bind nodeset="/data/{{ tag }}" type="{{ form.xform_type(tag) }}" {% if current_field.field_type == 'integer' %}constraint=". &gt;= {{ field.get('min', 0) }} and . &lt;= {{ field.get('max', 9999) }}"{% endif %} />
+            <bind nodeset="/data/orx:meta/orx:deviceID" jr:preload="property" jr:preloadParams="deviceid"/>
+            {% endfor %}
+        </model>
+    </h:head>
+    <h:body></h:body>
+</h:html>
