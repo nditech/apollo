@@ -79,7 +79,8 @@ class Form(Resource):
     data = db.Column(JSONB)
     version_identifier = db.Column(db.String, default=_make_version_identifer)
     form_set_id = db.Column(
-        db.Integer, db.ForeignKey('form_set.id'), nullable=False)
+        db.Integer, db.ForeignKey('form_set.id', ondelete='CASCADE'),
+        nullable=False)
     resource_id = db.Column(
         db.Integer, db.ForeignKey('resource.resource_id', ondelete='CASCADE'))
     quality_checks = db.Column(JSONB)
