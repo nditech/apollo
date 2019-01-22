@@ -13,7 +13,8 @@ def monitor(app):
         http_concurrent_request_count.inc()
 
     def after_request(response):
-        request_latency = time.time() - flask.g.start_time
+        end_time = time.time()
+        request_latency = end_time - getattr(flask.g, 'start_time', end_time)
         http_request_latency_ms.labels(request.method, request.path).observe(request_latency)
 
         http_concurrent_request_count.dec()
