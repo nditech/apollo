@@ -14,7 +14,6 @@ from wtforms_alchemy.utils import choice_type_coerce_factory
 
 from .. import models, services, utils
 from ..frontend.helpers import DictDiffer
-from ..participants.utils import update_participant_completion_rating
 from .custom_fields import IntegerSplitterField
 
 ugly_phone = re.compile('[^\d]*')
@@ -101,7 +100,10 @@ class BaseQuestionnaireForm(Form):
     def validate(self, *args, **kwargs):
         success = super(BaseQuestionnaireForm, self).validate(*args, **kwargs)
         if success and self._formdata:
-            unknown_fields = [f for f in list(self._formdata.keys()) if f not in list(self._fields.keys())]
+            unknown_fields = [
+                f for f in list(self._formdata.keys())
+                if f not in list(self._fields.keys())
+            ]
             if unknown_fields:
                 if type(self._errors) == dict:
                     self._errors.update({'__all__': unknown_fields})
