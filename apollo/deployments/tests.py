@@ -21,7 +21,6 @@ class EventServiceTest(TestCase):
         db.drop_all()
 
     def test_overlapping_events(self):
-        fixtures.load_sql_fixture('timestamp.sql')
         event1_start = datetime(2005, 12, 13, tzinfo=timezone.utc)
         event1_end = event1_start + timedelta(days=1, seconds=-1)
 
