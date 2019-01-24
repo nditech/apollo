@@ -174,4 +174,4 @@ WEBPACK_MANIFEST_PATH = Path(
         PROJECT_ROOT, 'apollo/static/dist/manifest.json')
 WEBPACK_ASSETS_URL = '/static/dist/'
 # Test settings
-TEST_DATABASE_URL = config('TEST_DATABASE_URL')
+TEST_DATABASE_URL = config('TEST_DATABASE_URL', default='')
