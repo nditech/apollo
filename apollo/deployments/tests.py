@@ -20,7 +20,7 @@ class EventServiceTest(TestCase):
         db.session.close()
         db.drop_all()
 
-    def test_active_form_selector(self):
+    def test_overlapping_events(self):
         event1_start = datetime(2005, 12, 13, tzinfo=timezone.utc)
         event1_end = event1_start + timedelta(days=1, seconds=-1)
 
