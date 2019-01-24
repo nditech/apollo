@@ -50,29 +50,23 @@ class EventService(Service):
         return None
 
     def overlapping_events(self, event):
-        now = current_timestamp().astimezone(app_time_zone)
+        # case 1: all events completely contained within the timespan
+        # of the passed-in event
+        expr1 = and_(Event.start >= event.start, Event.end <= event.end)
 
-        lower_bound = app_time_zone.localize(
-                datetime.combine(now, datetime.min.time())
-        ).astimezone(pytz.utc)
-        upper_bound = app_time_zone.localize(
-                datetime.combine(now, datetime.max.time())
-        ).astimezone(pytz.utc)
+        # case 2: all events that start before the passed-in event,
+        # and end before it ends
+        expr2 = and_(Event.start <= event.start, Event.end >= event.start)
 
-        # events starting after the specified event starts, and before it ends
-        expr1 = and_(Event.start >= event.start, Event.start <= event.end)
-
-        # events ending after the specified event starts, and ending before it
-        expr2 = and_(Event.end >= event.start, Event.end <= event.end)
-
-        # events starting before the event starts, and ending after it does
-        expr3 = and_(Event.end >= event.start, Event.end >= event.end)
+        # case 3: all events that start during the passed-in event,
+        # and end after it
+        expr3 = and_(Event.start <= event.end, Event.end >= event.end)
 
         overlapping = self.filter(
-            or_(expr1, expr2, expr3),
-            Event.start <= upper_bound, Event.end >= lower_bound)
+            Event.deployment_id == event.deployment_id,
+            or_(expr1, expr2, expr3))
 
-        if overlapping.count() > 0:
+        if overlapping.with_entities(Event.id).count() > 0:
             return overlapping
 
         return self.query.filter_by(id=event.id)
