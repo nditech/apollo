@@ -16,7 +16,9 @@ def load_sql_fixture(fixture):
     if source_file.exists() and source_file.is_file():
         query_text = text(source_file.read_text())
         try:
-            db.engine.execute(query_text)
+            # create connection and start transation
+            with db.engine.begin() as conn:
+                conn.execute(query_text)
         except Exception as ex:
             logger.exception('Error occurred executing fixture statement(s)')
     else:
