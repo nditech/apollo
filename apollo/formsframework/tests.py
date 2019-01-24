@@ -1,12 +1,17 @@
 # -*- coding: utf-8 -*-
+from datetime import datetime, timedelta, timezone
+from unittest import mock
+
 from flask_testing import TestCase
 from werkzeug.datastructures import MultiDict
-from apollo import create_app
+
+from apollo import services
+from apollo.core import db
 from apollo.messaging.utils import parse_responses
-from apollo.formsframework.forms import build_questionnaire
+from apollo.formsframework.forms import build_questionnaire, find_active_forms
 from apollo.formsframework.models import Form
 from apollo.formsframework.parser import Comparator, grammar_factory
-from apollo.wsgi import application
+from apollo.testutils import factory as test_factory, fixtures
 
 
 class AttributeDict(dict):
@@ -16,9 +21,11 @@ class AttributeDict(dict):
 
 class QuestionnaireTest(TestCase):
     def create_app(self):  # noqa
-        return application
+        return test_factory.create_test_app()
 
     def setUp(self):
+        db.create_all()
+
         aa = AttributeDict(tag='AA', description='AA', type='integer')
         ab = AttributeDict(tag='AB', description='AB', type='multiselect',
                            options={'1': 'One', '2': 'Two'})
@@ -42,7 +49,16 @@ class QuestionnaireTest(TestCase):
         self.incident_form = Form(name='TIF', form_type='INCIDENT')
         self.incident_form.data = {'groups': [grp2]}
 
-    def test_checklist_parsing(self):
+    def tearDown(self):
+        db.session.close_all()
+        db.drop_all()
+
+    @mock.patch('apollo.formsframework.forms.filter_form')
+    @mock.patch('apollo.formsframework.forms.filter_participants')
+    def test_checklist_parsing(self, filter_form, filter_participants):
+        filter_form.return_value = [self.checklist_form]
+        filter_participants.return_value = []
+
         sample_text = 'AA2AB12'
         q = build_questionnaire(
             self.checklist_form,
@@ -55,7 +71,12 @@ class QuestionnaireTest(TestCase):
         # invalid due to missing data
         self.assertFalse(flag)
 
-    def test_incident_parsing(self):
+    @mock.patch('apollo.formsframework.forms.filter_form')
+    @mock.patch('apollo.formsframework.forms.filter_participants')
+    def test_incident_parsing(self, filter_form, filter_participants):
+        filter_form.return_value = [self.checklist_form]
+        filter_participants.return_value = []
+
         sample_text = 'AB'
         responses = parse_responses(sample_text, self.incident_form)[0]
         q = build_questionnaire(self.incident_form, MultiDict(responses))
@@ -69,7 +90,14 @@ class QuestionnaireTest(TestCase):
 
 class ComparatorTest(TestCase):
     def create_app(self):  # noqa
-        return application
+        return test_factory.create_test_app()
+
+    def setUp(self):
+        db.create_all()
+
+    def tearDown(self):
+        db.session.close_all()
+        db.drop_all()
 
     def test_numeric_comparisons(self):
         comparator = Comparator()
@@ -97,7 +125,7 @@ class ComparatorTest(TestCase):
 
 class GrammarTest(TestCase):
     def create_app(self):  # noqa
-        return application
+        return test_factory.create_test_app()
 
     def setUp(self):
         self.env = AttributeDict()
@@ -162,3 +190,90 @@ class GrammarTest(TestCase):
         self.assertTrue(evaluator('AA > AB && AC >= AD').expr())
         self.assertTrue(evaluator('AA < AB || (AC >= AD)').expr())
         self.assertTrue(evaluator('AA < AB || AC >= AD && AA == 5').expr())
+
+
+class FormUtilsTest(TestCase):
+    def create_app(self):
+        return test_factory.create_test_app()
+
+    def setUp(self):
+        db.create_all()
+
+    def tearDown(self):
+        db.session.close_all()
+        db.drop_all()
+
+    def test_active_form_selector(self):
+        event1_start = datetime(2005, 12, 13, tzinfo=timezone.utc)
+        event1_end = event1_start + timedelta(days=1, seconds=-1)
+
+        event2_start = datetime(2005, 12, 14, tzinfo=timezone.utc)
+        event2_end = event2_start + timedelta(days=1, seconds=-1)
+
+        event3_start = datetime(2005, 12, 14, tzinfo=timezone.utc)
+        event3_end = event3_start + timedelta(days=2, seconds=-1)
+
+        deployment = fixtures.create_deployment('Demo')
+
+        event1 = fixtures.create_event(
+            deployment.id, 'Event 1', event1_start, event1_end)
+        event2 = fixtures.create_event(
+            deployment.id, 'Event 2', event2_start, event2_end)
+        event3 = fixtures.create_event(
+            deployment.id, 'Event 3', event3_start, event3_end)
+
+        form_set1 = fixtures.create_form_set(deployment.id, 'Form Set 1')
+        form_set2 = fixtures.create_form_set(deployment.id, 'Form Set 2')
+        form_set3 = fixtures.create_form_set(deployment.id, 'Form Set 3')
+
+        form1 = fixtures.create_checklist_form(
+            deployment.id, form_set1.id, 'CH-1-1', 'XA')
+        form2 = fixtures.create_incident_form(
+            deployment.id, form_set1.id, 'IN-1-1', 'XB')
+
+        form3 = fixtures.create_incident_form(
+            deployment.id, form_set2.id, 'IN-2-1', 'ZA')
+
+        form4 = fixtures.create_checklist_form(
+            deployment.id, form_set3.id, 'CH-3-1', 'WA')
+        form5 = fixtures.create_checklist_form(
+            deployment.id, form_set3.id, 'CH-3-2', 'WB')
+        form6 = fixtures.create_incident_form(
+            deployment.id, form_set3.id, 'IN-3-1', 'WC')
+
+        event1.form_set_id = form_set1.id
+        event2.form_set_id = form_set2.id
+        event3.form_set_id = form_set3.id
+
+        db.session.add_all([event1, event2, event3])
+        db.session.commit()
+
+        with mock.patch.object(
+                services.events, 'default', return_value=event1):
+            forms = find_active_forms().all()
+            self.assertIn(form1, forms)
+            self.assertIn(form2, forms)
+            self.assertNotIn(form3, forms)
+            self.assertNotIn(form4, forms)
+            self.assertNotIn(form5, forms)
+            self.assertNotIn(form6, forms)
+
+        with mock.patch.object(
+                services.events, 'default', return_value=event2):
+            forms = find_active_forms().all()
+            self.assertNotIn(form1, forms)
+            self.assertNotIn(form2, forms)
+            self.assertIn(form3, forms)
+            self.assertIn(form4, forms)
+            self.assertIn(form5, forms)
+            self.assertIn(form6, forms)
+
+        with mock.patch.object(
+                services.events, 'default', return_value=event3):
+            forms = find_active_forms().all()
+            self.assertNotIn(form1, forms)
+            self.assertNotIn(form2, forms)
+            self.assertIn(form3, forms)
+            self.assertIn(form4, forms)
+            self.assertIn(form5, forms)
+            self.assertIn(form6, forms)
