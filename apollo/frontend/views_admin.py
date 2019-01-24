@@ -114,7 +114,7 @@ class DeploymentAdminView(BaseAdminView):
     def get_query(self):
         return models.Deployment.query.filter_by(
             id=current_user.deployment.id)
-    
+
     def scaffold_form(self):
         form_class = super().scaffold_form()
         form_class.primary_locale = SelectField(
@@ -122,7 +122,7 @@ class DeploymentAdminView(BaseAdminView):
             validators=[validators.input_required()])
         form_class.other_locales = SelectMultipleField(
             _('Other Languages'), choices=LANGUAGE_CHOICES)
-        
+
         return form_class
 
 
@@ -258,7 +258,8 @@ class UserAdminView(BaseAdminView):
     def scaffold_form(self):
         form_class = super(UserAdminView, self).scaffold_form()
         form_class.password2 = PasswordField(_('New password'))
-        form_class.locale = SelectField(_('Language'), choices=LANGUAGE_CHOICES)
+        form_class.locale = SelectField(
+            _('Language'), choices=LANGUAGE_CHOICES)
         return form_class
 
     @action('disable', _('Disable'),
