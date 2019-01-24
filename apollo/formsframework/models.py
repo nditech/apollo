@@ -94,9 +94,8 @@ class Form(Resource):
 
     form_set = db.relationship(
         'FormSet',
-        backref=db.backref('forms', cascade='all, delete', lazy='dynamic'),
-        passive_deletes=True
-    )
+        backref=db.backref('forms', cascade='all, delete', lazy='dynamic',
+                           passive_deletes=True))
 
     def __str__(self):
         return str(_('Form - %(name)s', name=self.name))
