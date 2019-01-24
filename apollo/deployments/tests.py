@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from datetime import datetime, timedelta, timezone
+import pathlib
 from unittest import mock
 
 from flask_testing import TestCase
@@ -7,6 +7,8 @@ from flask_testing import TestCase
 from apollo import services
 from apollo.core import db
 from apollo.testutils import factory as test_factory, fixtures
+
+DEFAULT_FIXTURES_PATH = pathlib.Path(__file__).parent / 'fixtures'
 
 
 class EventServiceTest(TestCase):
@@ -21,23 +23,10 @@ class EventServiceTest(TestCase):
         db.drop_all()
 
     def test_overlapping_events(self):
-        event1_start = datetime(2005, 12, 13, tzinfo=timezone.utc)
-        event1_end = event1_start + timedelta(days=1, seconds=-1)
+        fixtures_path = DEFAULT_FIXTURES_PATH / '17720ddbe13.sql'
+        fixtures.load_sql_fixture(fixtures_path)
 
-        event2_start = datetime(2005, 12, 14, tzinfo=timezone.utc)
-        event2_end = event2_start + timedelta(days=1, seconds=-1)
-
-        event3_start = datetime(2005, 12, 14, tzinfo=timezone.utc)
-        event3_end = event3_start + timedelta(days=2, seconds=-1)
-
-        deployment = fixtures.create_deployment('Demo')
-
-        event1 = fixtures.create_event(
-            deployment.id, 'Event 1', event1_start, event1_end)
-        event2 = fixtures.create_event(
-            deployment.id, 'Event 2', event2_start, event2_end)
-        event3 = fixtures.create_event(
-            deployment.id, 'Event 3', event3_start, event3_end)
+        event1, event2, event3 = services.events.find().order_by('id').all()
 
         with mock.patch.object(
                 services.events, 'default', return_value=event1):
