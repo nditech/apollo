@@ -1,20 +1,16 @@
 # -*- coding: utf-8 -*-
 import re
 
-from flask_babelex import get_locale, lazy_gettext as _
+from flask_babelex import lazy_gettext as _
 from sqlalchemy.dialects.postgresql import JSONB
-from sqlalchemy_i18n import make_translatable, translation_base, Translatable
 import sqlalchemy_utils
 
 from apollo import utils
-from apollo.constants import LANGUAGES
 from apollo.core import db
-from apollo.dal.models import BaseModel, Resource
+from apollo.dal.models import BaseModel, Resource, translation_hybrid
 
-make_translatable(options={'locales': LANGUAGES.keys()})
 
 number_cleaner = re.compile(r'[^0-9]+', re.I)
-sqlalchemy_utils.i18n.get_locale = get_locale
 
 
 class ParticipantSet(BaseModel):
@@ -186,7 +182,7 @@ class Phone(BaseModel):
         self.number = number_cleaner.sub('', number)
 
 
-class Participant(Translatable, BaseModel):
+class Participant(BaseModel):
     GENDER = (
         ('', _('Unspecified')),
         ('F', _('Female')),
@@ -194,11 +190,9 @@ class Participant(Translatable, BaseModel):
     )
 
     __tablename__ = 'participant'
-    __translatable__ = {'locales': LANGUAGES.keys()}
-
-    locale = 'en'   # default locale
 
     id = db.Column(db.Integer, primary_key=True)
+    name_translations = db.Column(JSONB)
     participant_id = db.Column(db.String)
     role_id = db.Column(db.Integer, db.ForeignKey(
         'participant_role.id', ondelete='SET NULL'))
@@ -218,6 +212,8 @@ class Participant(Translatable, BaseModel):
     device_id = db.Column(db.String)
     password = db.Column(db.String)
     extra_data = db.Column(JSONB)
+
+    name = translation_hybrid(name_translations)
 
     location = db.relationship('Location', backref='participants')
     participant_set = db.relationship(
@@ -271,12 +267,6 @@ class Participant(Translatable, BaseModel):
 
         d = dict(Participant.GENDER)
         return d.get(self.gender, Participant.GENDER[0][1])
-
-
-class ParticipantTranslation(translation_base(Participant)):
-    __tablename__ = 'participant_translation'
-
-    name = db.Column(db.Unicode(255))
 
 
 class ParticipantPhone(BaseModel):

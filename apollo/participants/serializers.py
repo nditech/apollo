@@ -51,7 +51,10 @@ class ParticipantSerializer(object):
 
         return {
             'uuid': obj.uuid.hex,
-            'name': obj.name,
+            'name': {
+                locale: name
+                for locale, name in obj.name_translations.items()
+            },
             'participant_id': obj.participant_id,
             'email': obj.email,
             'role': obj.role.uuid.hex if obj.role else None,
