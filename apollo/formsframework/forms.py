@@ -85,6 +85,17 @@ def filter_form(form_id):
         return form
 
 
+def find_active_forms():
+    event = getattr(g, 'event', services.events.default())
+    current_events = services.events.overlapping_events(event)
+    query = current_events.join(
+        models.Form,
+        models.Event.form_set_id == models.Form.form_set_id
+    ).with_entities(models.Form)
+
+    return query
+
+
 class BaseQuestionnaireForm(Form):
     form = StringField(
         'Form', validators=[validators.required()],

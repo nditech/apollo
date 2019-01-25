@@ -8,6 +8,7 @@ import numpy
 from prettyconf import config
 
 postgres_password = Path('/run/secrets/postgres_password')
+test_postgres_password = Path('/run/secrets/postgres_password')
 
 PROJECT_ROOT = os.path.dirname(os.path.dirname(__file__))
 
@@ -173,3 +174,22 @@ PROMETHEUS_SECRET = config('PROMETHEUS_SECRET', default='')
 WEBPACK_MANIFEST_PATH = Path(
         PROJECT_ROOT, 'apollo/static/dist/manifest.json')
 WEBPACK_ASSETS_URL = '/static/dist/'
+
+# Test settings
+TEST_DATABASE_DRIVER = config('TEST_DATABASE_DRIVER', default='postgresql')
+TEST_DATABASE_HOSTNAME = config('TEST_DATABASE_HOSTNAME', default='postgres')
+TEST_DATABASE_USERNAME = config('TEST_DATABASE_USERNAME', default='postgres')
+if test_postgres_password.is_file():
+    TEST_DATABASE_PASSWORD = postgres_password.open().read()
+else:
+    TEST_DATABASE_PASSWORD = config('TEST_DATABASE_PASSWORD', default='')
+TEST_DATABASE_NAME = config('TEST_DATABASE_NAME', default='apollo')
+TEST_DATABASE_URL = config(
+    'TEST_DATABASE_URL',
+    default="{driver}://{username}:{password}@{hostname}/{database}".format(
+        driver=TEST_DATABASE_DRIVER,
+        username=TEST_DATABASE_USERNAME,
+        password=TEST_DATABASE_PASSWORD,
+        hostname=TEST_DATABASE_HOSTNAME,
+        database=TEST_DATABASE_NAME
+    ))
