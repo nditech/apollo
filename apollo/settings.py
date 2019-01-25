@@ -169,3 +169,7 @@ MAX_CONTENT_LENGTH = config(
 default_upload_path = os.path.join(PROJECT_ROOT, 'uploads')
 UPLOADS_DEFAULT_DEST = config('UPLOADS_DIR', default=default_upload_path)
 PROMETHEUS_SECRET = config('PROMETHEUS_SECRET', default='')
+
+WEBPACK_MANIFEST_PATH = Path(
+        PROJECT_ROOT, 'apollo/static/dist/manifest.json')
+WEBPACK_ASSETS_URL = '/static/dist/'
