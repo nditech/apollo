@@ -5,13 +5,34 @@ The concept of resources and the permissions implementation
 is liberally adapted (aka stolen) from the source of ziggurat_foundations
 (https://github.com/ergo/ziggurat-foundations)
 '''
-
+import warnings
 from uuid import uuid4
 
+from flask import g
+from flask_babelex import get_locale
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.declarative import declared_attr
+from sqlalchemy_utils import TranslationHybrid
 
 from apollo.core import db
+
+
+def get_default_locale():
+    try:
+        deployment = g.deployment
+
+        return deployment.primary_locale
+    except AttributeError:
+        warnings.warn('No deployment set')
+        return 'en'
+    except RuntimeError:
+        raise
+
+
+translation_hybrid = TranslationHybrid(
+    current_locale=get_locale,
+    default_locale=get_default_locale
+)
 
 
 class CRUDMixin(object):
