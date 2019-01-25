@@ -500,7 +500,7 @@ def upgrade():
     password = encrypt_password('admin')
     conn.execute(text("""INSERT INTO \"user\" (
         id, deployment_id, email, username, password, active, uuid)
-        VALUES (1, 1, 'root@localhost', 'admin',
+        VALUES (1, 1, 'admin@example.com', 'admin',
         :password, 't', :uuid)"""), password=password, uuid=uuid4().hex)
     op.execute("INSERT INTO roles_users (user_id, role_id) VALUES (1, 1)")
     op.execute("""
