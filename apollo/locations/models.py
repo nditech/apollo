@@ -1,19 +1,12 @@
 # -*- coding: utf-8 -*-
-from flask_babelex import get_locale, lazy_gettext as _
+from flask_babelex import lazy_gettext as _
 import networkx as nx
 from sqlalchemy import and_
 from sqlalchemy.dialects.postgresql import JSONB
-from sqlalchemy.orm import aliased, joinedload
-from sqlalchemy_i18n import make_translatable, translation_base, Translatable
-import sqlalchemy_utils
+from sqlalchemy.orm import aliased
 
 from apollo.core import db
-from apollo.dal.models import BaseModel, Resource
-from apollo.settings import LANGUAGES
-
-sqlalchemy_utils.i18n.get_locale = get_locale
-
-make_translatable(options={'locales': LANGUAGES.keys()})
+from apollo.dal.models import BaseModel, Resource, translation_hybrid
 
 
 class LocationSet(BaseModel):
@@ -43,15 +36,14 @@ class LocationSet(BaseModel):
         ).all()
 
         location_types = LocationType.query.filter(
-            LocationType.location_set_id == self.id
-        ).options(joinedload(LocationType.translations))
+            LocationType.location_set_id == self.id)
 
         nodes = [{
             'id': lt.id,
             'name': lt.name,
             'nameTranslations': {
-                locale: tr.name
-                for locale, tr in lt.translations.items()
+                locale: tr
+                for locale, tr in lt.name_translations.items()
             },
             'has_registered_voters': lt.has_registered_voters,
             'is_administrative': lt.is_administrative,
@@ -78,8 +70,12 @@ class LocationSet(BaseModel):
 
         for lt in location_types:
             lt_data = {}
-            lt_data['{}_name'.format(lt.id)] = _('%(location_type)s Name',
-                                                 location_type=lt.name)
+
+            for locale, language in self.deployment.languages.items():
+                lt_data[f'{lt.id}_name_{locale}'] = _(
+                    '%(location_type)s Name (%(language)s)',
+                    location_type=lt.name, language=language)
+
             lt_data['{}_code'.format(lt.id)] = _('%(location_type)s Code',
                                                  location_type=lt.name)
             lt_data['{}_lat'.format(lt.id)] = _('%(location_type)s Latitude',
@@ -124,14 +120,11 @@ class Sample(BaseModel):
         passive_deletes=True))
 
 
-class LocationType(Translatable, BaseModel):
+class LocationType(BaseModel):
     __tablename__ = 'location_type'
-    __translatable__ = {'locales': LANGUAGES.keys()}
-
-    # default locale
-    locale = 'en'
 
     id = db.Column(db.Integer, primary_key=True)
+    name_translations = db.Column(JSONB)
     is_administrative = db.Column(db.Boolean, default=False)
     is_political = db.Column(db.Boolean, default=False)
     has_registered_voters = db.Column(db.Boolean, default=False)
@@ -139,6 +132,8 @@ class LocationType(Translatable, BaseModel):
     location_set_id = db.Column(
         db.Integer, db.ForeignKey('location_set.id', ondelete='CASCADE'),
         nullable=False)
+
+    name = translation_hybrid(name_translations)
 
     location_set = db.relationship('LocationSet', backref=db.backref(
         'location_types', cascade='all, delete', lazy='dynamic',
@@ -191,12 +186,6 @@ class LocationType(Translatable, BaseModel):
             cls.id.in_(q), cls.location_set_id == location_set_id).first()
 
 
-class LocationTypeTranslation(translation_base(LocationType)):
-    __tablename__ = 'location_type_translation'
-
-    name = db.Column(db.Unicode(255))
-
-
 class LocationTypePath(db.Model):
     __tablename__ = 'location_type_path'
     __table_args__ = (
@@ -218,16 +207,13 @@ class LocationTypePath(db.Model):
             passive_deletes=True))
 
 
-class Location(Translatable, BaseModel):
+class Location(BaseModel):
     __tablename__ = 'location'
     __table_args__ = (
         db.UniqueConstraint('location_set_id', 'code'),)
-    __translatable__ = {'locales': LANGUAGES.keys()}
-
-    # default locale
-    locale = 'en'
 
     id = db.Column(db.Integer, primary_key=True)
+    name_translations = db.Column(JSONB)
     code = db.Column(db.String, index=True, nullable=False)
     registered_voters = db.Column(db.Integer, default=0)
     location_set_id = db.Column(db.Integer, db.ForeignKey(
@@ -237,6 +223,8 @@ class Location(Translatable, BaseModel):
     lat = db.Column(db.Float)
     lon = db.Column(db.Float)
     extra_data = db.Column(JSONB)
+
+    name = translation_hybrid(name_translations)
 
     location_set = db.relationship('LocationSet', backref=db.backref(
         'locations', cascade='all, delete', lazy='dynamic'))
@@ -304,12 +292,6 @@ class Location(Translatable, BaseModel):
 
     def __repr__(self):
         return self.name
-
-
-class LocationTranslation(translation_base(Location)):
-    __tablename__ = 'location_translation'
-
-    name = db.Column(db.Unicode(255))
 
 
 class LocationPath(db.Model):

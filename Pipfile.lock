@@ -767,13 +767,6 @@
             "index": "pypi",
             "version": "==1.2.6"
         },
-        "sqlalchemy-i18n": {
-            "hashes": [
-                "sha256:484d469c8f4bc0b6ac4a4de47f4592d4e97593eeb198f1239b49dc410c82aa97"
-            ],
-            "index": "pypi",
-            "version": "==1.0.3"
-        },
         "sqlalchemy-utils": {
             "hashes": [
                 "sha256:3f1cb542cf0549a0de508d4919f3ad693a36230bf4cd13fdd6253549fec71182"

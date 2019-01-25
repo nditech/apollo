@@ -74,7 +74,6 @@ prometheus-client = "*"
 netifaces = "*"
 psutil = "*"
 redis = "==2.10.6"
-"sqlalchemy-i18n" = "==1.0.3"
 flask-webpack = "*"
 
 [dev-packages]
