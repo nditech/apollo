@@ -44,7 +44,7 @@ class Deployment(BaseModel):
 
     @property
     def locale_codes(self):
-        locales = [self.primary_locale]
+        locales = [self.primary_locale] if self.primary_locale else ['en']
         if self.other_locales:
             locales.extend(self.other_locales)
 
