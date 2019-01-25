@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from datetime import datetime, timedelta, timezone
+import pathlib
 from unittest import mock
 
 from flask_testing import TestCase
@@ -12,6 +12,8 @@ from apollo.formsframework.forms import build_questionnaire, find_active_forms
 from apollo.formsframework.models import Form
 from apollo.formsframework.parser import Comparator, grammar_factory
 from apollo.testutils import factory as test_factory, fixtures
+
+DEFAULT_FIXTURE_PATH = pathlib.Path(__file__).parent / 'fixtures'
 
 
 class AttributeDict(dict):
@@ -204,49 +206,12 @@ class FormUtilsTest(TestCase):
         db.drop_all()
 
     def test_active_form_selector(self):
-        event1_start = datetime(2005, 12, 13, tzinfo=timezone.utc)
-        event1_end = event1_start + timedelta(days=1, seconds=-1)
+        fixture_path = DEFAULT_FIXTURE_PATH / '38fff911ea3.sql'
+        fixtures.load_sql_fixture(fixture_path)
 
-        event2_start = datetime(2005, 12, 14, tzinfo=timezone.utc)
-        event2_end = event2_start + timedelta(days=1, seconds=-1)
-
-        event3_start = datetime(2005, 12, 14, tzinfo=timezone.utc)
-        event3_end = event3_start + timedelta(days=2, seconds=-1)
-
-        deployment = fixtures.create_deployment('Demo')
-
-        event1 = fixtures.create_event(
-            deployment.id, 'Event 1', event1_start, event1_end)
-        event2 = fixtures.create_event(
-            deployment.id, 'Event 2', event2_start, event2_end)
-        event3 = fixtures.create_event(
-            deployment.id, 'Event 3', event3_start, event3_end)
-
-        form_set1 = fixtures.create_form_set(deployment.id, 'Form Set 1')
-        form_set2 = fixtures.create_form_set(deployment.id, 'Form Set 2')
-        form_set3 = fixtures.create_form_set(deployment.id, 'Form Set 3')
-
-        form1 = fixtures.create_checklist_form(
-            deployment.id, form_set1.id, 'CH-1-1', 'XA')
-        form2 = fixtures.create_incident_form(
-            deployment.id, form_set1.id, 'IN-1-1', 'XB')
-
-        form3 = fixtures.create_incident_form(
-            deployment.id, form_set2.id, 'IN-2-1', 'ZA')
-
-        form4 = fixtures.create_checklist_form(
-            deployment.id, form_set3.id, 'CH-3-1', 'WA')
-        form5 = fixtures.create_checklist_form(
-            deployment.id, form_set3.id, 'CH-3-2', 'WB')
-        form6 = fixtures.create_incident_form(
-            deployment.id, form_set3.id, 'IN-3-1', 'WC')
-
-        event1.form_set_id = form_set1.id
-        event2.form_set_id = form_set2.id
-        event3.form_set_id = form_set3.id
-
-        db.session.add_all([event1, event2, event3])
-        db.session.commit()
+        event1, event2, event3 = services.events.find().order_by('id').all()
+        form1, form2, form3, form4, form5, form6 = services.forms.find(
+            ).order_by('id').all()
 
         with mock.patch.object(
                 services.events, 'default', return_value=event1):
