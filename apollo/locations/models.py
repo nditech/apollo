@@ -74,7 +74,7 @@ class LocationSet(BaseModel):
             for locale, language in self.deployment.languages.items():
                 lt_data[f'{lt.id}_name_{locale}'] = _(
                     '%(location_type)s Name (%(language)s)',
-                    location_type=lt.name)
+                    location_type=lt.name, language=language)
 
             lt_data['{}_code'.format(lt.id)] = _('%(location_type)s Code',
                                                  location_type=lt.name)
