@@ -3,9 +3,8 @@ from datetime import datetime
 
 from flask_babelex import lazy_gettext as _
 from sqlalchemy.dialects.postgresql import ARRAY
-from sqlalchemy_utils import ChoiceType
 
-from apollo.constants import LANGUAGE_CHOICES
+from apollo.constants import LANGUAGES
 from apollo.core import db
 from apollo.dal.models import BaseModel, Resource
 from apollo.utils import current_timestamp
@@ -45,7 +44,19 @@ class Deployment(BaseModel):
 
     @property
     def locale_codes(self):
-        return [l.code for l in self.locales]
+        locales = [self.primary_locale]
+        if self.other_locales:
+            locales.extend(self.other_locales)
+
+        return locales
+
+    @property
+    def languages(self):
+        return {
+            locale: name
+            for locale, name in LANGUAGES.items()
+            if locale in self.locale_codes
+        }
 
 
 class Event(Resource):
