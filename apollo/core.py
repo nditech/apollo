@@ -16,6 +16,7 @@ from flask_security import Security
 from flask_sqlalchemy import SQLAlchemy
 from flask_uploads import DEFAULTS, UploadSet
 from flask_gravatar import Gravatar
+from flask_webpack import Webpack
 from flask_wtf.csrf import CSRFProtect
 from raven.contrib.flask import Sentry
 import six
@@ -45,6 +46,7 @@ sentry = Sentry(client_cls=ApolloRavenClient)
 csrf = CSRFProtect()
 debug_toolbar = DebugToolbarExtension() if fdt_available else None
 uploads = UploadSet('uploads', DEFAULTS)
+webpack = Webpack()
 
 
 class Filter(object):

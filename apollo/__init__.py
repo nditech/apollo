@@ -8,7 +8,7 @@ from whitenoise import WhiteNoise
 from apollo import assets, models, services
 
 from apollo.frontend import permissions, template_filters
-from apollo.core import admin, db, menu, security, gravatar, csrf
+from apollo.core import admin, db, menu, security, gravatar, csrf, webpack
 from apollo.prometheus.flask import monitor
 from .frontend.helpers import set_request_presets
 from .security_ext_forms import DeploymentLoginForm
@@ -44,6 +44,7 @@ def create_app(settings_override=None, register_security_blueprint=True):
 
     # Init assets
     assets.init_app(app)
+    webpack.init_app(app)
 
     menu.init_app(app)
     gravatar.init_app(app)

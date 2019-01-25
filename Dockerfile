@@ -1,4 +1,4 @@
-FROM alpine:3.7
+FROM python:3.6-alpine
 
 LABEL maintainer="Tim Akinbo <takinbo@timbaobjects.com>"
 
@@ -8,18 +8,12 @@ RUN set -ex \
             build-base \
             libxml2-dev \
             libxslt-dev \
-            python3-dev \
             postgresql-dev \
             linux-headers \
-        && apk add --no-cache --virtual .python-deps python3 libmagic \
-        && python3 -m ensurepip \
-        && rm -r /usr/lib/python*/ensurepip \
-        && pip3 install --upgrade pip setuptools \
-        && if [ ! -e /usr/bin/pip ]; then ln -s pip3 /usr/bin/pip ; fi \
-        && if [[ ! -e /usr/bin/python ]]; then ln -sf /usr/bin/python3 /usr/bin/python; fi \
+        && apk add --no-cache openblas-dev \
         && pip install pipenv \
         && cd /app/ \
-        && PIP_NO_BUILD_ISOLATION=false pipenv install --sequential \
+        && PIP_NO_BUILD_ISOLATION=false pipenv sync --sequential \
         && find /usr -depth \
             \( -type f -a -name '*.pyc' -o -name '*.pyo' \) \
             -exec rm -rf '{}' + \
