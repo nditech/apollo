@@ -24,3 +24,4 @@ messages.mo
 share/
 src/
 uploads/
+node_modules/
