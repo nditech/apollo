@@ -41,9 +41,9 @@ class LocationCache():
         location_name = str(location_name).replace(
             "\u2018", "").replace(
             "\u2019", "").replace("\u201c", "").replace("\u201d", "")
-        return sha256(
-            '{}:{}:{}'.format(
-                location_code, location_type, location_name).encode('utf-8')).hexdigest()
+
+        plain_key = f'{location_code}:{location_type}:{location_name}'
+        return sha256(plain_key.encode('utf-8')).hexdigest()
 
     def get(self, location_code, location_type, location_name):
         cache_key = self._cache_key(
@@ -70,6 +70,7 @@ def map_attribute(location_type, attribute):
 
 def update_locations(data_frame, header_mapping, location_set):
     cache = LocationCache()
+    locales = location_set.deployment.locale_codes
 
     location_types = services.location_types.find(
         location_set=location_set
@@ -94,29 +95,33 @@ def update_locations(data_frame, header_mapping, location_set):
         current_row = data_frame.ix[idx]
         row_ids = {}
         for loc_type in location_types:
-            name_column_key = '{}_name'.format(loc_type.id)
+            name_column_keys = [
+                f'{loc_type.id}_name_{locale}'
+                for locale in locales
+            ]
             code_column_key = '{}_code'.format(loc_type.id)
 
-            if header_mapping.get(name_column_key) is None or header_mapping.get(code_column_key) is None:
+            if header_mapping.get(name_column_keys[0]) is None or header_mapping.get(code_column_key) is None:
                 continue
 
             lat_column_key = '{}_lat'.format(loc_type.id)
             lon_column_key = '{}_lon'.format(loc_type.id)
             reg_voters_column_key = '{}_rv'.format(loc_type.id) if loc_type.has_registered_voters else None
 
-            name_column = header_mapping.get(name_column_key)
+            name_columns = [
+                header_mapping.get(col) for col in name_column_keys]
             code_column = header_mapping.get(code_column_key)
             lat_column = header_mapping.get(lat_column_key)
             lon_column = header_mapping.get(lon_column_key)
             reg_voters_column = header_mapping.get(reg_voters_column_key)
 
-            location_name = current_row.get(name_column)
+            location_names = [current_row.get(col) for col in name_columns]
             location_code = current_row.get(code_column)
             if isinstance(location_code, (int, float)):
                 location_code = str(int(location_code))
 
             # skip if we're missing a name or code
-            if not location_name or not location_code:
+            if not location_names[0] or not location_code:
                 continue
 
             location_lat = None
@@ -140,8 +145,8 @@ def update_locations(data_frame, header_mapping, location_set):
                 location_rv = None
 
             # if we have the location in the cache, then continue
-            if cache.has(location_code, loc_type, location_name):
-                loc = cache.get(location_code, loc_type, location_name)
+            if cache.has(location_code, loc_type, location_names[0]):
+                loc = cache.get(location_code, loc_type, location_names[0])
                 row_ids[loc_type.id] = loc.id
                 continue
 
@@ -149,12 +154,13 @@ def update_locations(data_frame, header_mapping, location_set):
                 'location_type_id': loc_type.id,
                 'location_set_id': location_set.id,
                 'lat': location_lat,
-                'lon': location_lon
+                'lon': location_lon,
+                'code': location_code,
+                'name_translations': {
+                    locale: name
+                    for locale, name in zip(locales, location_names)
+                }
             }
-
-            kwargs.update({'code': location_code})
-
-            kwargs['name'] = location_name
 
             if location_rv:
                 kwargs.update({'registered_voters': location_rv})
@@ -177,7 +183,7 @@ def update_locations(data_frame, header_mapping, location_set):
                 db.session.commit()
             else:
                 # update the existing location instead
-                location.name = kwargs.get('name')
+                location.name_translations = kwargs.get('name_translations')
                 location.registered_voters = kwargs.get('registered_voters')
                 location.lat = kwargs.get('lat')
                 location.lon = kwargs.get('lon')
