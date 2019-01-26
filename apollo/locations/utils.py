@@ -17,6 +17,7 @@ def import_graph(graph, location_set, fresh_import=False):
     edges = graph.get('edges')
 
     nx_graph = nx.DiGraph()
+    primary_locale = location_set.deployment.primary_locale or 'en'
 
     for i, node in enumerate(nodes):
         # old implementation had ids as strings, current implementation
@@ -28,17 +29,25 @@ def import_graph(graph, location_set, fresh_import=False):
                 id=node.get('id')).first()
 
             if location_type:
+                name_translations = {primary_locale: node.get('name')}
+                nt_temp = node.get('nameTranslations')
+                if nt_temp:
+                    name_translations.update(nt_temp)
                 location_type.is_administrative = node.get(
                     'is_administrative')
                 location_type.is_political = node.get('is_political')
                 location_type.has_registered_voters = node.get(
                     'has_registered_voters')
-                location_type.name_translations = node.get('nameTranslations')
+                location_type.name_translations = name_translations
                 location_type.save()
 
         else:
+            name_translations = {primary_locale: node.get('name')}
+            nt_temp = node.get('nameTranslations')
+            if nt_temp:
+                name_translations.update(nt_temp)
             location_type = services.location_types.create(
-                name_translations=node.get('nameTranslations'),
+                name_translations=name_translations,
                 is_administrative=node.get('is_administrative', False),
                 is_political=node.get('is_political', False),
                 has_registered_voters=node.get(
