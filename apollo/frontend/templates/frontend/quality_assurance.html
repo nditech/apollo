@@ -31,10 +31,8 @@
 		var check_data = JSON.parse(document.getElementById('check_builder').dataset.checks);
 		$('#check_builder').handsontable({
 			data: check_data,
-			colHeaders: ['Name', 'Description', 'LHS', 'Comparator', 'RHS'],
+			colHeaders: ['Description', 'LHS', 'Comparator', 'RHS'],
 			columns: [{
-				type: 'text'
-			}, {
 				type: 'text'
 			}, {
 				type: 'text'
@@ -55,12 +53,6 @@
 			$('#postdata').val(JSON.stringify(handsontable.getData()));
 			$('form').submit();
 		}
-
-		$('#save_button').click(function () {
-			handsontable = $('#check_builder').handsontable('getInstance');
-			$('#postdata').val(JSON.stringify(handsontable.getData()));
-			return true;
-		});
 	});
 </script>
 {% endblock %}
