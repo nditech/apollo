@@ -6,14 +6,15 @@ import os
 
 from flask import (Blueprint, current_app, flash, g, redirect, render_template,
                    request, Response, url_for, abort, stream_with_context,
-                   send_file, jsonify)
+                   send_file)
 from flask_babelex import lazy_gettext as _
 from flask_restful import Api
 from flask_security import current_user, login_required
 from slugify import slugify_unicode
 from sqlalchemy import not_, or_
+from sqlalchemy.orm.attributes import flag_modified
 
-from apollo import models, services, utils
+from apollo import services, utils
 from apollo.core import db, uploads
 from apollo.frontend import permissions, route
 from apollo.frontend.forms import (
@@ -22,6 +23,8 @@ from apollo.frontend.forms import (
 from apollo.locations import api, filters, forms, tasks
 from apollo.locations.utils import import_graph
 from .models import LocationSet, LocationType, Location, LocationTranslations
+from .models import LocationTypePath, LocationDataField
+from ..users.models import UserUpload
 
 
 bp = Blueprint('locations', __name__, template_folder='templates',
@@ -60,15 +63,16 @@ def location_list(location_set_id):
     page_title = _('Locations')
 
     location_set = LocationSet.query.filter(
-        LocationSet.id==location_set_id).first_or_404()
+        LocationSet.id == location_set_id).first_or_404()
     queryset = Location.query.select_from(
         Location, LocationTranslations).filter(
-            Location.location_set_id==location_set_id)
+            Location.location_set_id == location_set_id)
     queryset_filter = filters.location_filterset(
         location_set_id=location_set_id)(queryset, request.args)
     extra_fields = [
-        field for field in models.LocationDataField.query.filter_by(
-            location_set_id=location_set_id) if field.visible_in_lists]
+        field for field in LocationDataField.query.filter(
+            LocationDataField.location_set_id == location_set_id)
+        if field.visible_in_lists]
 
     args = request.args.to_dict(flat=False)
     args.update(location_set_id=location_set_id)
@@ -76,7 +80,7 @@ def location_list(location_set_id):
     page = int(page_spec[0])
 
     # NOTE: this was ordered by location type
-    subset = queryset_filter.qs.order_by(models.Location.code)
+    subset = queryset_filter.qs.order_by(Location.code).distinct(Location.code)
 
     if request.args.get('export') and permissions.export_locations.can():
         # Export requested
@@ -110,7 +114,7 @@ def location_list(location_set_id):
 @permissions.edit_locations.require(403)
 def location_edit(id):
     template_name = 'frontend/location_edit.html'
-    location = models.Location.query.filter_by(id=id).first_or_404()
+    location = Location.query.filter_by(id=id).first_or_404()
     page_title = _('Edit Location')
 
     if request.method == 'GET':
@@ -120,6 +124,13 @@ def location_edit(id):
 
         if form.validate():
             location.name = form.name.data
+            location.lat = form.lat.data
+            location.lon = form.lon.data
+
+            # note: if only .name is changed, SQLA does not register
+            # the object as being dirty or needing an update so we
+            # force it to recognize the object as needing an update.
+            flag_modified(location, 'name_translations')
             location.save()
 
             return redirect(url_for(
@@ -143,7 +154,7 @@ def locations_import(location_set_id):
         user = current_user._get_current_object()
         upload_file = utils.strip_bom_header(request.files['spreadsheet'])
         filename = uploads.save(upload_file)
-        upload = models.UserUpload(
+        upload = UserUpload(
             deployment_id=g.deployment.id, upload_filename=filename,
             user_id=user.id)
         upload.save()
@@ -160,10 +171,12 @@ def locations_import(location_set_id):
 @permissions.import_locations.require(403)
 def location_headers(location_set_id, upload_id):
     user = current_user._get_current_object()
-    location_set = services.location_sets.fget_or_404(id=location_set_id)
+    location_set = LocationSet.query.filter(
+        LocationSet.id == location_set_id).first_or_404()
 
     # disallow processing other users' files
-    upload = services.user_uploads.fget_or_404(id=upload_id, user=user)
+    upload = UserUpload.query.filter(
+        UserUpload.id == upload_id, UserUpload.user == user).first_or_404()
     filepath = uploads.path(upload.upload_filename)
     try:
         with open(filepath) as source_file:
@@ -216,10 +229,10 @@ def location_headers(location_set_id, upload_id):
 @login_required
 @permissions.edit_locations.require(403)
 def locations_builder(location_set_id):
-    location_set = models.LocationSet.query.get_or_404(location_set_id)
+    location_set = LocationSet.query.get_or_404(location_set_id)
 
-    has_admin_divisions = db.session.query(services.location_types.find(
-        location_set_id=location_set_id).exists()).scalar()
+    has_admin_divisions = db.session.query(LocationType.query.filter(
+        LocationType.location_set_id == location_set_id).exists()).scalar()
 
     template_name = 'frontend/location_builder.html'
     page_title = _('Administrative Divisions')
@@ -233,24 +246,24 @@ def locations_builder(location_set_id):
         # and delete them if there are no linked locations
         saved_node_ids = [node.get('id') for node in nodes
                           if str(node.get('id')).isdigit()]
-        unused_location_types = services.location_types.filter(
-            models.LocationType.location_set_id == location_set_id,
-            not_(models.LocationType.id.in_(saved_node_ids))
+        unused_location_types = LocationType.query.filter(
+            LocationType.location_set_id == location_set_id,
+            not_(LocationType.id.in_(saved_node_ids))
         ).all()
 
         for unused_lt in unused_location_types:
-            query = services.locations.find(location_type=unused_lt)
+            query = Location.query.filter(Location.location_type == unused_lt)
             if db.session.query(query.exists()).scalar():
-                flash(_('Admin level %(name)s has locations assigned '
-                        'and cannot be deleted', name=unused_lt.name),
+                flash(_('Administrative level %(name)s has locations assigned '
+                        'and cannot be deleted.', name=unused_lt.name),
                       category='locations_builder')
                 continue
 
             # explicitly doing this because we didn't add a cascade
             # to the backref
-            models.LocationTypePath.query.filter(or_(
-                models.LocationTypePath.ancestor_id == unused_lt.id,
-                models.LocationTypePath.descendant_id == unused_lt.id
+            LocationTypePath.query.filter(or_(
+                LocationTypePath.ancestor_id == unused_lt.id,
+                LocationTypePath.descendant_id == unused_lt.id
             )).delete()
             unused_lt.delete()
 
@@ -287,7 +300,8 @@ def nuke_locations(location_set_id):
 @login_required
 @permissions.edit_locations.require(403)
 def export_divisions(location_set_id):
-    location_set = services.location_sets.fget_or_404(id=location_set_id)
+    location_set = LocationSet.query.filter(
+        LocationSet.id == location_set_id).first_or_404()
     # TODO: when the representation of the graph is converted to POPOs,
     # make sure we convert to a string first
     graph = location_set.make_admin_divisions_graph()
@@ -306,12 +320,13 @@ def export_divisions(location_set_id):
 @login_required
 @permissions.edit_locations.require(403)
 def import_divisions(location_set_id):
-    location_set = services.location_sets.fget_or_404(id=location_set_id)
+    location_set = LocationSet.query.filter(
+        LocationSet.id == location_set_id).first_or_404()
     form = forms.AdminDivisionImportForm()
 
     if form.validate_on_submit():
-        query = services.location_types.find(
-            location_set_id=location_set_id).exists()
+        query = LocationType.query.filter(
+            LocationType.location_set_id == location_set_id).exists()
 
         if not db.session.query(query).scalar():
             graph = json.load(request.files['import_file'])
