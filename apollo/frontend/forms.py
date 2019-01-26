@@ -403,7 +403,7 @@ def make_checklist_init_form(event):
             choices=_make_choices(participant_role_choices, _('Select Role')),
             validators=[validators.input_required()])
         location_type = SelectField(
-            _('Location type'),
+            _('Location Type'),
             choices=_make_choices(location_type_choices,
                                   _('Select Location Type')),
             validators=[validators.input_required()])

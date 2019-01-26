@@ -23,7 +23,7 @@ def get_default_locale():
 
         return deployment.primary_locale
     except AttributeError:
-        warnings.warn('No deployment set')
+        warnings.warn('No Deployment Set')
         return 'en'
     except RuntimeError:
         raise
