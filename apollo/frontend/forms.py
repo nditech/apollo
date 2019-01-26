@@ -6,6 +6,7 @@ from slugify import slugify
 from wtforms import (BooleanField, FloatField, IntegerField, SelectField,
                      SelectMultipleField, StringField, ValidationError,
                      validators, widgets)
+from wtforms.validators import Optional
 
 from apollo.models import (
     Form, LocationType, Participant, ParticipantRole,
@@ -31,8 +32,8 @@ def generate_location_edit_form(location, data=None):
 
     class LocationEditForm(WTSecureForm):
         name = StringField(_('Name'), validators=[validators.input_required()])
-        lat = FloatField(_('Latitude'))
-        lon = FloatField(_('Longitude'))
+        lat = FloatField(_('Latitude'), [Optional()])
+        lon = FloatField(_('Longitude'), [Optional()])
 
     return LocationEditForm(formdata=data, **initial_data)
 
