@@ -22,14 +22,14 @@ class LocationTypeFilter(ChoiceFilter):
 
         kwargs['choices'] = _make_choices(
             [(i.id, i.name) for i in LocationType.query.filter(
-                LocationType.location_set_id==location_set_id)],
+                LocationType.location_set_id == location_set_id)],
             _('All Types')
         )
         super(LocationTypeFilter, self).__init__(*args, **kwargs)
 
     def filter(self, queryset, value):
         if value:
-            return queryset.filter(Location.location_type_id==value)
+            return queryset.filter(Location.location_type_id == value)
         return queryset
 
 
