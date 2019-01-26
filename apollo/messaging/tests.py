@@ -1,7 +1,11 @@
 # -*- coding: utf-8 -*-
-from unittest import TestCase
+from unittest import mock, TestCase
+
+from flask_testing import TestCase as FlaskTestCase
+
 from apollo.formsframework.models import Form
-from .utils import get_unsent_codes, parse_responses
+from apollo.messaging.utils import get_unsent_codes, parse_responses, parse_text
+from apollo.testutils.factory import create_test_app
 
 
 class AttributeDict(dict):
@@ -108,3 +112,30 @@ class MessagePartialTest(TestCase):
     def test_full_response(self):
         response_keys = ['AA', 'BA', 'Comment1']
         self.assertIsNone(get_unsent_codes(self.test_form, response_keys))
+
+
+class MessageParsingTest(FlaskTestCase):
+    def create_app(self):
+        return create_test_app()
+
+    def test_parse_invalid_message(self):
+        sample_text = '2014'
+        prefix, participant_id, exclamation, responses, comment = parse_text(
+            sample_text)
+
+        self.assertIsNone(prefix)
+        self.assertIsNone(participant_id, sample_text)
+        self.assertIsNone(exclamation)
+        self.assertIsNone(responses)
+        self.assertIsNone(comment)
+
+    def test_parse_comment_message(self):
+        sample_text = 'XA204112AA1AB2@hungry cat'
+        prefix, participant_id, exclamation, responses, comment = parse_text(
+            sample_text)
+
+        self.assertEqual(prefix, 'XA')
+        self.assertEqual(participant_id, '204112')
+        self.assertFalse(exclamation)
+        self.assertEqual(responses, 'AA1AB2')
+        self.assertEqual(comment, 'hungry cat')
