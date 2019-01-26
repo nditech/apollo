@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from flask_babelex import lazy_gettext as _
 import networkx as nx
-from sqlalchemy import and_
+from sqlalchemy import and_, func
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import aliased
 
@@ -44,7 +44,7 @@ class LocationSet(BaseModel):
             'nameTranslations': {
                 locale: tr
                 for locale, tr in lt.name_translations.items()
-            },
+            } if lt.name_translations else {},
             'has_registered_voters': lt.has_registered_voters,
             'is_administrative': lt.is_administrative,
             'is_political': lt.is_political,
@@ -335,3 +335,8 @@ class LocationDataField(Resource):
     def __str__(self):
         return str(_('LocationDataField - %(name)s in %(location_set)s',
                      name=self.name, location_set=self.location_set.name))
+
+LocationTranslations = func.jsonb_each_text(
+    Location.name_translations).alias('translations')
+LocationTypeTranslations = func.jsonb_each_text(
+    LocationType.name_translations).alias('translations')

@@ -21,6 +21,7 @@ from apollo.frontend.forms import (
     DummyForm)
 from apollo.locations import api, filters, forms, tasks
 from apollo.locations.utils import import_graph
+from .models import LocationSet, LocationType, Location, LocationTranslations
 
 
 bp = Blueprint('locations', __name__, template_folder='templates',
@@ -58,8 +59,11 @@ def location_list(location_set_id):
     template_name = 'frontend/location_list.html'
     page_title = _('Locations')
 
-    location_set = services.location_sets.fget_or_404(id=location_set_id)
-    queryset = services.locations.find(location_set_id=location_set_id)
+    location_set = LocationSet.query.filter(
+        LocationSet.id==location_set_id).first_or_404()
+    queryset = Location.query.select_from(
+        Location, LocationTranslations).filter(
+            Location.location_set_id==location_set_id)
     queryset_filter = filters.location_filterset(
         location_set_id=location_set_id)(queryset, request.args)
     extra_fields = [
