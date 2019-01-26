@@ -2,7 +2,7 @@
 import codecs
 from datetime import datetime
 import os
-from uuid import UUID
+from uuid import UUID, uuid4
 import warnings
 
 from pytz import utc
@@ -69,3 +69,8 @@ def strip_bom_header(fileobj):
         fileobj.seek(0)
 
     return fileobj
+
+
+def generate_identifier():
+    val = int(uuid4()) % 100000000000000
+    return hex(val)[2:-1]
