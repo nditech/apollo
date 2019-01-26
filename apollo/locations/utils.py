@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import networkx as nx
+from sqlalchemy.orm.attributes import flag_modified
 
 from apollo import services, utils
 from apollo.core import db
@@ -38,6 +39,11 @@ def import_graph(graph, location_set, fresh_import=False):
                         'nameTranslations')
                 else:
                     location_type.name = node.get('name')
+
+                # note: if only .name is changed, SQLA does not register
+                # the object as being dirty or needing an update so we
+                # force it to recognize the object as needing an update.
+                flag_modified(location_type, 'name_translations')
                 location_type.save()
 
         else:
