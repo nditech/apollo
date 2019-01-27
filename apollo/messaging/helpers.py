@@ -32,9 +32,9 @@ def parse_message(form):
                 # if submission returns empty, then the participant
                 # was not meant to send this text.
                 if submission is None:
-                    reply = _(
+                    reply = str(_(
                         'Invalid message: %(text)s. Please check and resend!',
-                        text=message.get('text', ''))
+                        text=message.get('text', '')))
                     return reply, submission, True
 
                 # check if there were extra fields sent in
@@ -45,11 +45,11 @@ def parse_message(form):
                     unused_tags = get_unsent_codes(
                         form_doc, response_dict.keys())
                     if unused_tags:
-                        reply = _(
+                        reply = str(_(
                             'Thank you, but your message may be missing '
                             '%(unused_codes)s. You sent: %(text)s',
                             unused_codes=', '.join(unused_tags),
-                            text=message.get('text', ''))
+                            text=message.get('text', '')))
 
                         return reply, submission, had_errors
                     return (
