@@ -1,7 +1,13 @@
 # -*- coding: utf-8 -*-
 from unittest import TestCase
+
+from flask_testing import TestCase as FlaskTestCase
+from mimesis import Generic, locales
+
 from apollo.formsframework.models import Form
-from .utils import get_unsent_codes, parse_responses
+from apollo.messaging.utils import (
+    get_unsent_codes, parse_responses, parse_text)
+from apollo.testutils.factory import create_test_app
 
 
 class AttributeDict(dict):
@@ -108,3 +114,45 @@ class MessagePartialTest(TestCase):
     def test_full_response(self):
         response_keys = ['AA', 'BA', 'Comment1']
         self.assertIsNone(get_unsent_codes(self.test_form, response_keys))
+
+
+class MessageParsingTest(FlaskTestCase):
+    def create_app(self):
+        return create_test_app()
+
+    def test_parse_invalid_message(self):
+        sample_text = '2014'
+        prefix, participant_id, exclamation, responses, comment = parse_text(
+            sample_text)
+
+        self.assertIsNone(prefix)
+        self.assertIsNone(participant_id, sample_text)
+        self.assertIsNone(exclamation)
+        self.assertIsNone(responses)
+        self.assertIsNone(comment)
+
+    def test_parse_comment_message(self):
+        faker = Generic()
+
+        # test with comments in the locales below
+        # we're using Farsi instead of Arabic
+        # as mimesis doesn't support Arabic yet ):
+        for locale in ['EN', 'ES', 'FA', 'FR', 'RU']:
+            current_locale = getattr(locales, locale)
+            test_participant_id = faker.person.identifier('######')
+
+            with self.subTest(current_locale=current_locale):
+                with faker.text.override_locale(current_locale):
+                    test_comment = faker.text.sentence()
+                    sample_text = 'XA{}AA1AB2@{}'.format(
+                        test_participant_id, test_comment)
+
+                    result = parse_text(sample_text)
+                    (prefix, participant_id, exclamation, responses,
+                        comment) = result
+
+                    self.assertEqual(prefix, 'XA')
+                    self.assertEqual(participant_id, test_participant_id)
+                    self.assertFalse(exclamation)
+                    self.assertEqual(responses, 'AA1AB2')
+                    self.assertEqual(comment, test_comment)
