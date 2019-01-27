@@ -232,8 +232,6 @@ def quality_assurance(form_id, form_set_id=0):
             form.quality_checks = []
             for item in postdata:
                 if isinstance(item, list):
-                    # fix for broken Handsontable
-                    # first row returns 5, not 4 items
                     desc = item[0]
                     lhs = item[1]
                     comp = item[2]
@@ -257,14 +255,13 @@ def quality_assurance(form_id, form_set_id=0):
                                         form_set_id=form_set.id))
             else:
                 return redirect(url_for('.list_forms'))
-        except ValueError as ex:
-            print(ex)
+        except ValueError:
             pass
 
     check_data = [
         (c['description'], c['lvalue'], c['comparator'], c['rvalue'])
         for c in form.quality_checks
-    ] if form.quality_checks else [[''] * 5]
+    ] if form.quality_checks else [[''] * 4]
 
     context = {
         'page_title': page_title,
