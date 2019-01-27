@@ -103,10 +103,14 @@ def update_participants(dataframe, header_map, participant_set):
     warnings = set()
 
     location_set = participant_set.location_set
+    locales = location_set.deployment.locale_codes
+    name_column_keys = [
+        f'name_{locale}'
+        for locale in locales
+    ]
 
     # set up mappings
     PARTICIPANT_ID_COL = header_map['id']
-    NAME_COL = header_map.get('name')
     ROLE_COL = header_map.get('role')
     PARTNER_COL = header_map.get('partner')
     LOCATION_ID_COL = header_map.get('location')
@@ -117,6 +121,8 @@ def update_participants(dataframe, header_map, participant_set):
     phone_columns = header_map.get('phone', [])
     group_columns = header_map.get('group', [])
     sample_columns = header_map.get('sample', [])
+    name_columns = [
+        header_map.get(col) for col in name_column_keys]
 
     extra_field_names = [f.name for f in participant_set.extra_fields] \
         if participant_set.extra_fields else []
@@ -137,9 +143,14 @@ def update_participants(dataframe, header_map, participant_set):
                 participant_set_id=participant_set.id
             )
 
-        if NAME_COL:
-            name = record[NAME_COL]
-            participant.name = name if _is_valid(name) else ''
+        participant_names = [record.get(col) for col in name_columns]
+
+        if participant_names:
+            participant.name_translations = {
+                locale: name
+                for locale, name in zip(locales, participant_names)
+                if _is_valid(name)
+            }
 
         role = None
         if ROLE_COL:

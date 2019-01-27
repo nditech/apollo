@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import re
 
+from sqlalchemy import func
 from flask_babelex import lazy_gettext as _
 from sqlalchemy.dialects.postgresql import JSONB
 import sqlalchemy_utils
@@ -42,7 +43,6 @@ class ParticipantSet(BaseModel):
             'role': _('Role'),
             'sample': _('Sample'),
             'id': _('Participant ID'),
-            'name': _('Name'),
             'supervisor': _('Supervisor'),
             'phone': _('Phone'),
             'partner': _('Partner'),
@@ -52,6 +52,9 @@ class ParticipantSet(BaseModel):
             'email': _('Email'),
             'password': _('Password')
         }
+        for locale, language in self.deployment.languages.items():
+            fields[f'name_{locale}'] = _(
+                'Name (%(language)s)', language=language)
 
         extra_fields = ParticipantDataField.query.filter_by(
             participant_set_id=self.id).all()
@@ -281,3 +284,7 @@ class ParticipantPhone(BaseModel):
     last_seen = db.Column(db.DateTime, default=utils.current_timestamp)
     verified = db.Column(db.Boolean, default=True)
     phone = db.relationship('Phone')
+
+
+ParticipantTranslations = func.jsonb_each_text(
+    Participant.name_translations).alias('translations')

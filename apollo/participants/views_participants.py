@@ -6,22 +6,29 @@ import re
 
 from flask import (abort, Blueprint, current_app, flash, g, redirect,
                    render_template, request, Response, url_for,
-                   stream_with_context, jsonify)
+                   stream_with_context)
 from flask_babelex import lazy_gettext as _
 from flask_menu import register_menu
 from flask_restful import Api
 from flask_security import current_user, login_required
 from slugify import slugify_unicode
 
-from apollo import models, services, utils
+from apollo import services, utils
 from apollo.core import uploads
 from apollo.frontend import helpers, permissions, route
 from apollo.frontend.forms import (
-    DummyForm, generate_participant_edit_form,
-    generate_participant_import_mapping_form)
-from apollo.helpers import load_source_file
+    DummyForm, generate_participant_edit_form)
 from apollo.messaging.tasks import send_messages
 from apollo.participants import api, filters, forms, tasks
+
+from .models import Participant, ParticipantSet, ParticipantRole
+from .models import ParticipantPartner, Phone, ParticipantPhone
+from .models import ParticipantTranslations
+from ..locations.models import Location
+from ..messaging.models import Message
+from ..submissions.models import Submission
+from ..users.models import UserUpload
+
 
 phone_number_cleaner = re.compile(r'[^0-9]')
 
@@ -62,8 +69,8 @@ def has_participant_set():
 @permissions.view_participants.require(403)
 def participant_list(participant_set_id=0):
     if participant_set_id:
-        participant_set = services.participant_sets.fget_or_404(
-            id=participant_set_id)
+        participant_set = ParticipantSet.query.filter(
+            ParticipantSet.id == participant_set_id).first_or_404()
         template_name = 'frontend/participant_list_with_set.html'
     else:
         participant_set = g.event.participant_set or abort(404)
@@ -82,15 +89,16 @@ def participant_list(participant_set_id=0):
         if participant_set.extra_fields else []
     location = None
     if request.args.get('location'):
-        location = services.locations.find(
-            id=request.args.get('location')).first()
+        location = Location.query.filter(
+            Location.id == request.args.get('location')).first()
 
     for field in extra_fields:
         sortable_columns.update({
-            field.name: models.Participant.extra_data[field.name]})
+            field.name: Participant.extra_data[field.name]})
 
-    queryset = services.participants.find(
-        participant_set_id=participant_set.id)
+    queryset = Participant.query.select_from(
+        Participant, ParticipantTranslations).filter(
+        Participant.participant_set_id == participant_set.id)
 
     # load the location set linked to the participant set
     location_set_id = participant_set.location_set_id
@@ -140,7 +148,7 @@ def participant_list(participant_set_id=0):
         else:
             sort_param = sort_by_arg
         sort_by = sortable_columns.get(sort_param, 'participant_id')
-        subset = queryset_filter.qs.order_by(sort_by)
+        subset = queryset_filter.qs.order_by(sort_by).distinct(sort_by)
 
         # load form context
         context = dict(
@@ -173,8 +181,8 @@ def participant_list(participant_set_id=0):
 @permissions.view_participants.require(403)
 def participant_performance_list(participant_set_id=0):
     if participant_set_id:
-        participant_set = services.participant_sets.fget_or_404(
-            id=participant_set_id)
+        participant_set = ParticipantSet.query.filter(
+            ParticipantSet.id == participant_set_id).first_or_404()
         template_name = 'frontend/participant_performance_list_with_set.html'
     else:
         participant_set = g.event.participant_set or abort(404)
@@ -192,13 +200,14 @@ def participant_performance_list(participant_set_id=0):
     extra_fields = []
     location = None
     if request.args.get('location'):
-        location = services.locations.find(
-            pk=request.args.get('location')).first()
+        location = Location.query.filter(
+            Location.id == request.args.get('location')).first()
 
     for field in extra_fields:
         sortable_columns.update({field.name: field.name})
 
-    queryset = services.participants.find()
+    queryset = Participant.query.select_from(
+        Participant, ParticipantTranslations).filter()
     sample_participant = queryset.first()
     if sample_participant:
         location_set_id = sample_participant.location.location_set_id
@@ -246,7 +255,7 @@ def participant_performance_list(participant_set_id=0):
 
         sort_by = sortable_columns.get(
             args.pop('sort_by', ''), 'participant_id')
-        subset = queryset_filter.qs.order_by(sort_by)
+        subset = queryset_filter.qs.order_by(sort_by).distinct(sort_by)
 
         # load form context
         context = dict(
@@ -275,12 +284,12 @@ def participant_performance_list(participant_set_id=0):
 @login_required
 @permissions.view_participants.require(403)
 def participant_performance_detail(pk):
-    participant = services.participants.get_or_404(id=pk)
+    participant = Participant.query.get_or_404(pk)
     page_title = _('Participant Performance')
     template_name = 'frontend/participant_performance_detail.html'
-    messages = services.messages.find(
-        participant=participant,
-        direction='IN'
+    messages = Message.query.filter(
+        Message.participant == participant,
+        Message.direction == 'IN'
     ).order_by('received')
 
     context = {
@@ -301,8 +310,8 @@ def participant_phone_verify():
         phone = request.form.get('phone')
         submission_id = request.form.get('submission')
 
-        submission = services.submissions.get_or_404(id=submission_id)
-        participant = services.participants.get_or_404(id=contributor)
+        submission = Submission.query.get_or_404(submission_id)
+        participant = Participant.query.get_or_404(contributor)
         phone_contact = next(filter(
             lambda p: phone == p.number, participant.phones), False)
         phone_contact.verified = True
@@ -321,7 +330,7 @@ def participant_phone_verify():
 @login_required
 @permissions.edit_participant.require(403)
 def participant_edit(id, participant_set_id=0):
-    participant = services.participants.fget_or_404(id=id)
+    participant = Participant.query.get_or_404(id)
     page_title = _(
         'Edit Participant · %(participant_id)s',
         participant_id=participant.participant_id
@@ -343,37 +352,40 @@ def participant_edit(id, participant_set_id=0):
             participant.name = form.name.data
             participant.gender = form.gender.data
             if form.role.data:
-                participant.role_id = services.participant_roles.fget_or_404(
-                    id=form.role.data).id
+                participant.role_id = ParticipantRole.query.get_or_404(
+                    form.role.data).id
             if form.supervisor.data:
-                participant.supervisor_id = services.participants.find(
-                    id=form.supervisor.data).first().id
+                participant.supervisor_id = Participant.query.filter(
+                    Participant.id == form.supervisor.data).first().id
             else:
                 participant.supervisor_id = None
             if form.location.data:
-                participant.location_id = services.locations.fget_or_404(
-                    id=form.location.data).id
+                participant.location_id = Location.query.get_or_404(
+                    form.location.data).id
             if form.partner.data:
-                participant.partner_id = \
-                    services.participant_partners.fget_or_404(
-                        id=form.partner.data).id
+                participant.partner_id = ParticipantPartner.query.get_or_404(
+                    form.partner.data).id
             else:
                 participant.partner = None
 
             phone_number = phone_number_cleaner.sub('', form.phone.data)
             phone = services.phones.find(number=phone_number).first()
             if not phone:
-                phone = services.phones.create(number=phone_number)
-                participant_phone = services.participant_phones.create(
+                phone = Phone.create(number=phone_number)
+                phone.save()
+                participant_phone = ParticipantPhone.create(
                     participant_id=participant.id, phone_id=phone.id,
                     verified=True)
+                participant_phone.save()
             else:
-                participant_phone = services.participant_phones.find(
-                    phone_id=phone.id, participant_id=participant.id).first()
+                participant_phone = ParticipantPhone.query.filter(
+                    ParticipantPhone.phone_id == phone.id,
+                    ParticipantPhone.participant_id == participant.id).first()
                 if not participant_phone:
-                    participant_phone = services.participant_phones.create(
+                    participant_phone = ParticipantPhone.create(
                         participant_id=participant.id, phone_id=phone.id,
                         verified=True)
+                    participant_phone.save()
                 else:
                     participant_phone.verified = True
                     participant_phone.save()
@@ -407,8 +419,7 @@ def participant_edit(id, participant_set_id=0):
 @permissions.import_participants.require(403)
 def participant_list_import(participant_set_id=0):
     if participant_set_id:
-        participant_set = services.participant_sets.fget_or_404(
-            id=participant_set_id)
+        participant_set = ParticipantSet.query.get_or_404(participant_set_id)
     else:
         participant_set = g.event.participant_set or abort(404)
 
@@ -447,15 +458,16 @@ def participant_list_import(participant_set_id=0):
 @permissions.import_participants.require(403)
 def participant_headers(upload_id, participant_set_id=0):
     if participant_set_id:
-        participant_set = services.participant_sets.fget_or_404(
-            id=participant_set_id)
+        participant_set = ParticipantSet.query.get_or_404(participant_set_id)
     else:
         participant_set = g.event.participant_set or abort(404)
 
     user = current_user._get_current_object()
 
     # disallow processing other users' files
-    upload = services.user_uploads.fget_or_404(id=upload_id, user=user)
+    upload = UserUpload.query.filter(
+        UserUpload.id == upload_id,
+        UserUpload.user == user).first_or_404()
     filepath = uploads.path(upload.upload_filename)
     try:
         with open(filepath) as source_file:

@@ -336,6 +336,7 @@ class LocationDataField(Resource):
         return str(_('LocationDataField - %(name)s in %(location_set)s',
                      name=self.name, location_set=self.location_set.name))
 
+
 LocationTranslations = func.jsonb_each_text(
     Location.name_translations).alias('translations')
 LocationTypeTranslations = func.jsonb_each_text(
