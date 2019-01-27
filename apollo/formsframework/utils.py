@@ -148,14 +148,16 @@ def _process_analysis_worksheet(analysis_data, form_schema):
 def _process_qa_worksheet(qa_data):
     quality_checks = []
     for qa_dict in qa_data:
-        qa_check = {
-            'name': generate_identifier(),
-            'description': qa_dict['description'],
-            'lvalue': qa_dict['left'],
-            'comparator': qa_dict['relation'],
-            'rvalue': qa_dict['right']
-        }
-        quality_checks.append(qa_check)
+        if (qa_dict['description'] and qa_dict['left'] and qa_dict['relation']
+                and qa_dict['right']):
+            qa_check = {
+                'name': generate_identifier(),
+                'description': qa_dict['description'],
+                'lvalue': qa_dict['left'],
+                'comparator': qa_dict['relation'],
+                'rvalue': qa_dict['right']
+            }
+            quality_checks.append(qa_check)
 
     return quality_checks
 
