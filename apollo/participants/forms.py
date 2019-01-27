@@ -9,7 +9,7 @@ from apollo.helpers import load_source_file
 
 
 class ParticipantFileUploadForm(FlaskForm):
-    spreadsheet = FileField(_('Data file'))
+    spreadsheet = FileField(_('Import File'))
 
 
 def _validate_required_fields(form):

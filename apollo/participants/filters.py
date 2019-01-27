@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from collections import OrderedDict
+from sqlalchemy import text
 
 from flask_babelex import lazy_gettext as _
 from wtforms.widgets import HiddenInput
@@ -9,15 +10,17 @@ from apollo.core import CharFilter, ChoiceFilter, FilterSet
 from apollo.helpers import _make_choices
 from apollo.locations.models import (
     Location, LocationPath, Sample, samples_locations)
-from apollo.participants import models
 from apollo.wtforms_ext import ExtendedMultipleSelectField
+
+from .models import Participant, ParticipantRole, ParticipantPartner
+from .models import ParticipantGroup, ParticipantGroupType, groups_participants
+from .models import Phone, ParticipantPhone
 
 
 class ParticipantIDFilter(CharFilter):
     def filter(self, query, value):
         if value:
-            return query.filter_by(participant_id=value)
-
+            return query.filter(Participant.participant_id == value)
         return query
 
 
@@ -25,8 +28,8 @@ class ParticipantNameFilter(CharFilter):
     def filter(self, query, value):
         if value:
             return query.filter(
-                models.Participant.name.ilike('%{}%'.format(value)))
-
+                text('translations.value ILIKE :name')).params(
+                    name=f'%{value}%')
         return query
 
 
@@ -36,7 +39,7 @@ def make_participant_role_filter(participant_set_id):
             choices = services.participant_roles.find(
                 participant_set_id=participant_set_id
             ).with_entities(
-                models.ParticipantRole.id, models.ParticipantRole.name).all()
+                ParticipantRole.id, ParticipantRole.name).all()
 
             kwargs['choices'] = _make_choices(choices, _('All roles'))
 
@@ -57,8 +60,8 @@ def make_participant_partner_filter(participant_set_id):
             choices = services.participant_partners.find(
                 participant_set_id=participant_set_id
             ).with_entities(
-                models.ParticipantPartner.id,
-                models.ParticipantPartner.name).all()
+                ParticipantPartner.id,
+                ParticipantPartner.name).all()
 
             kwargs['choices'] = _make_choices(choices, _('All partners'))
             super().__init__(*args, **kwargs)
@@ -80,10 +83,10 @@ def make_participant_group_filter(participant_set_id):
             for group_type in services.participant_group_types.find(
                     participant_set_id=participant_set_id
                 ).order_by(
-                    models.ParticipantGroupType.name):
+                    ParticipantGroupType.name):
                 for group in services.participant_groups.find(
                     group_type=group_type
-                ).order_by(models.ParticipantGroup.name):
+                ).order_by(ParticipantGroup.name):
                     choices.setdefault(group_type.name, []).append(
                         (group.id, group.name)
                     )
@@ -94,14 +97,14 @@ def make_participant_group_filter(participant_set_id):
 
         def filter(self, query, values):
             if values:
-                query2 = query.join(models.groups_participants).join(
-                    models.ParticipantGroup)
+                query2 = query.join(groups_participants).join(
+                    ParticipantGroup)
                 return query2.filter(
-                    models.Participant.id ==
+                    Participant.id ==
                         models.groups_participants.c.participant_id,    # noqa
-                    models.ParticipantGroup.id ==
-                        models.groups_participants.c.group_id,
-                    models.ParticipantGroup.id.in_(values)
+                    ParticipantGroup.id ==
+                        groups_participants.c.group_id,
+                    ParticipantGroup.id.in_(values)
                 )
 
             return query
@@ -113,15 +116,15 @@ class ParticipantPhoneFilter(CharFilter):
     def filter(self, query, value):
         if value:
             query2 = query.join(
-                models.ParticipantPhone,
-                models.Participant.id ==
-                    models.ParticipantPhone.participant_id  # noqa
+                ParticipantPhone,
+                Participant.id ==
+                    ParticipantPhone.participant_id  # noqa
             ).join(
-                models.Phone,
-                models.Phone.id == models.ParticipantPhone.phone_id
+                Phone,
+                Phone.id == ParticipantPhone.phone_id
             )
 
-            return query2.filter(models.Phone.number == value)
+            return query2.filter(Phone.number.ilike(f'%{value}%'))
 
         return query
 
@@ -141,7 +144,7 @@ def make_participant_sample_filter(location_set_id):
             if value:
                 query2 = query.join(
                     Location,
-                    models.Participant.location_id == Location.id
+                    Participant.location_id == Location.id
                 ).join(
                     samples_locations,
                     samples_locations.c.location_id == Location.id
@@ -172,7 +175,7 @@ def make_participant_location_filter(location_set_id):
                 ).filter(LocationPath.ancestor_id == value)
 
                 return query.filter(
-                    models.Participant.location_id.in_(location_query))
+                    Participant.location_id.in_(location_query))
 
             return query
 
