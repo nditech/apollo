@@ -1,15 +1,16 @@
 const path = require('path');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ManifestRevisionPlugin = require('manifest-revision-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
-module.exports = {
+var config = {
     entry: {
-        main: './src/main.js'
+        scripts: './src/scripts.js',
+        styles: './src/styles.js'
     },
     output: {
         path: path.resolve(__dirname, 'dist'),
-        publicPath: 'dist/',
         chunkFilename: '[name].[chunkhash].js',
         filename: '[name].[chunkhash].js'
     },
@@ -48,12 +49,6 @@ module.exports = {
         ]
     },
     plugins: [
-        new CleanWebpackPlugin(['dist']),
-        new ManifestRevisionPlugin(path.join('dist', 'manifest.json'),
-            {
-                rootAssetPath: './dist'
-            }
-        )
     ],
     resolve: {
         extensions: [ '.js' ],
@@ -82,3 +77,30 @@ module.exports = {
         ]
     }
 }
+
+module.exports = (env, argv) => {
+
+    if (argv.mode === 'development') {
+        console.log('development...');
+        config.devtool = 'inline-source-map';
+        config.devServer = { contentBase: './dist' };
+        config.plugins.push(
+            new HtmlWebpackPlugin({
+                template: 'src/index.html'
+            }));
+
+    } else if (argv.mode === 'production') {
+        console.log('production...');
+        config.plugins.push(
+            new CleanWebpackPlugin(['dist']));
+
+        config.plugins.push(
+            new ManifestRevisionPlugin(path.join('dist', 'manifest.json'),
+                {
+                    rootAssetPath: './dist'
+                }
+            ));
+    }
+
+    return config;
+};

@@ -1,71 +1,44 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-100">
   <head>
     <meta charset="utf-8">
-    <title>{{ _('User Login') }}</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <!-- Le styles -->
-    {% assets 'apollo_css' %}
-    <link rel="stylesheet" href="{{ ASSET_URL }}">
+    <title>{{ _('User Sign In') }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="icon" type="image/ico" href="{{ url_for('static', filename='ico/favicon.ico') }}">
-    {% endassets %}
-
     <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
+    <script type="text/javascript" src="{{ asset_url_for('styles.js') }}" charset="utf-8"></script>
   </head>
-
-  <body>
-    <div class="container-fluid">
-      <div class="row">
-        <div class="col-md-4 col-md-offset-4">
-          <div class="panel panel-default panel-login">
-            <div class="panel-heading panel-heading-login">{{ _('User Login') }}</div>
-            <div class="panel-body panel-login-body">
-              {% for msg in get_flashed_messages() %}
-              <div class="alert alert-info">{{ msg }}</div>
-              {% endfor %}
-              {% if login_user_form.errors %}
-              <div class="alert alert-danger">{{ _('Your username and password <strong>did not match</strong>. Please try again.') }}</div>
-              {% endif %}
-              <form name="login_user_form" class="form-vertical" action="{{ url_for_security('login') }}" method="POST" accept-charset="utf-8" autocomplete="off" autocorrect="off" autocapitalize="off">{{ login_user_form.hidden_tag() }}
-                <div class="form-group">
-                  <div class="input-group">
-                    <span class="input-group-addon input-sm">
-                      <i class="glyphicon glyphicon-user"></i>
-                    </span>
-                    <input type="text" name="{{ login_user_form.email.name }}" id="{{ login_user_form.email.id }}" class="form-control" placeholder="{{ _('Username/Email') }}">
+  <body class="h-100">
+    <form class="h-100" name="login_user_form" action="{{ url_for_security('login') }}" method="POST" accept-charset="utf-8" autocomplete="off" autocorrect="off" autocapitalize="off">
+      {{ login_user_form.hidden_tag() }}
+      <div class="container h-100">
+        <div class="row h-75 align-items-center">
+          <div class="col-md-6 col-lg-4 offset-md-3 offset-lg-4">
+            <div class="card">
+              <div class="card-body">{% if login_user_form.errors %}
+                <div class="alert alert-danger" role="alert">
+                  {{ _('The username and password you supplied <strong>do not match</strong> any of the credentials on this system. Please check both and try again.') }}
+                </div>{% endif %}
+                <section>
+                  <label class="sr-only" for="{{ login_user_form.email.id }}">{{ _('Username') }}</label>
+                  <input class="form-control mb-3 bg-light" id="{{ login_user_form.email.id }}" name="{{ login_user_form.email.name }}" type="text" placeholder="{{ _('Username') }}" autofocus>
+                  <label class="sr-only" for="{{ login_user_form.password.id }}">{{ _('Password') }}</label>
+                  <input class="form-control my-3 bg-light" id="{{ login_user_form.password.id }}" name="{{ login_user_form.password.name }}" type="password" placeholder="{{ _('Password') }}">
+                  <div class="row d-flex align-items-center px-3">
+                    <button type="submit" class="btn btn-primary btn-block col-5">{{ _('Sign In') }}</button>
+                    <div class="col-7 text-right"><a href="{{ url_for_security('forgot_password') }}" class="text-decoration-none">{{ _('Forgot Password?') }}</a></div>
                   </div>
-                </div>
-                <div class="form-group">
-                  <div class="input-group">
-                    <span class="input-group-addon input-sm">
-                      <i class="glyphicon glyphicon-lock"></i>
-                    </span>
-                    <input type="password" name="{{ login_user_form.password.name }}" id="{{ login_user_form.password.id }}" class="input-xlarge form-control" placeholder="{{ _('Password') }}" autocomplete="off">
-                  </div>
-                </div>
-                <input type="hidden" name="{{ login_user_form.next.name }}" id="{{ login_user_form.next.id }}" value="{{ login_user_form.next.value }}">
-                <button type="submit" class="btn btn-sm btn-default">{{ _('Sign In') }}</button>
-              </form>
+                </section>
+              </div>
+              <div class="card-footer text-muted text-right"><small>Apollo 3.0</small></div>
             </div>
-            <div class="panel-footer"><a href="{{ url_for_security('forgot_password') }}">{{ _('Forgot Password?') }}</a></div>
-          </div>
+          </div><input type="hidden" name="{{ login_user_form.next.name }}" id="{{ login_user_form.next.id }}" value="{{ login_user_form.next.value }}">
         </div>
       </div>
-    </div>
-    {% block scripts -%}
-    {%- assets 'apollo_js' %}
-    <script type="text/javascript" src="{{ ASSET_URL }}" charset="utf-8"></script>
-    <script type="text/javascript">
-      $(function () {
-        $('#email').focus();
-      });
-    </script>
-    {%- endassets %}
-    {%- endblock %}
+    </form>
+    <script type="text/javascript" src="{{ asset_url_for('scripts.js') }}" charset="utf-8"></script>
   </body>
 </html>
