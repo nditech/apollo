@@ -119,7 +119,7 @@ class Submission(BaseModel):
     conflicts = db.Column(JSONB)
 
     @classmethod
-    def init_submissions(cls, event, form, role, location_type):
+    def init_submissions(cls, event, form, role, location_type, task=None):
         from apollo.participants.models import Participant
 
         if form.form_type != 'CHECKLIST':
@@ -135,9 +135,14 @@ class Submission(BaseModel):
             return
 
         deployment_id = event.deployment_id
+        participants = Participant.query.filter_by(role_id=role.id)
+        num_records = participants.count()
+        processed_records = 0
+        error_records = 0
 
-        for participant in Participant.query.filter_by(role_id=role.id):
+        for participant in participants:
             if not participant.location_id:
+                error_records += 1
                 continue
 
             if location_type.id == participant.location.location_type.id:
@@ -174,6 +179,14 @@ class Submission(BaseModel):
                     location_id=location.id, deployment_id=deployment_id,
                     event_id=event.id, submission_type='M', data={})
                 master_submission.save()
+
+            processed_records += 1
+            if task:
+                task.update_progress(**{
+                    'num_records': num_records,
+                    'processed_records': processed_records,
+                    'error_records': error_records,
+                })
 
     def update_related(self, data):
         '''

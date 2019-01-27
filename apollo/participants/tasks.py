@@ -73,7 +73,7 @@ def generate_password(length):
         for _ in range(length))
 
 
-def update_participants(dataframe, header_map, participant_set):
+def update_participants(dataframe, header_map, participant_set, task):
     """
     Given a Pandas `class`DataFrame that has participant information loaded,
     create or update the participant database with the info contained therein.
@@ -101,6 +101,23 @@ def update_participants(dataframe, header_map, participant_set):
     unresolved_supervisors = set()
     errors = set()
     warnings = set()
+
+    num_records = dataframe.shape[0]
+    processed_records = 0
+    error_records = 0
+    warning_records = 0
+
+    subtask_1_progress = {
+        'num_records': num_records,
+        'processed_records': processed_records,
+        'error_records': error_records,
+        'warning_records': warning_records,
+    }
+    subtask_2_progress = {
+        'num_records': None,
+        'processed_records': 0,
+        'error_records': 0
+    }
 
     location_set = participant_set.location_set
     locales = location_set.deployment.locale_codes
@@ -187,6 +204,7 @@ def update_participants(dataframe, header_map, participant_set):
                     location_set=location_set
                 ).one()
         except MultipleResultsFound:
+            error_records += 1
             errors.add((
                 participant_id,
                 _('Invalid location id (%(loc_id)s)',
@@ -194,6 +212,7 @@ def update_participants(dataframe, header_map, participant_set):
             ))
             continue
         except NoResultFound:
+            warning_records += 1
             warnings.add((
                 participant_id,
                 _('Location with id %(loc_id)s not found',
@@ -352,7 +371,22 @@ def update_participants(dataframe, header_map, participant_set):
                 participant.groups = groups
             participant.save()
 
+        processed_records += 1
+        subtask_1_progress['processed_records'] = processed_records
+        subtask_1_progress['error_records'] = error_records
+        subtask_1_progress['warning_records'] = warning_records
+        task.update_progress(**{
+            'subtasks': [
+                subtask_1_progress,
+                subtask_2_progress
+            ],
+            'current_subtask': 1
+        })
+
     # second pass - resolve missing supervisor references
+    num_records = len(unresolved_supervisors)
+    processed_records = 0
+    error_records = 0
     for participant_id, supervisor_id in unresolved_supervisors:
         participant = services.participants.find(
             participant_id=participant_id,
@@ -365,12 +399,26 @@ def update_participants(dataframe, header_map, participant_set):
 
         if supervisor is None:
             participant.delete()
+            error_records += 1
             errors.add((
                 participant_id,
                 _('Supervisor with ID %(id)s not found', id=supervisor_id)))
         else:
+            processed_records += 1
             participant.supervisor_id = supervisor.id
             participant.save()
+
+        subtask_2_progress['num_records'] = num_records
+        subtask_2_progress['processed_records'] = processed_records
+        subtask_2_progress['error_records'] = error_records
+
+        task.update_progress(**{
+            'subtasks': [
+                subtask_1_progress,
+                subtask_2_progress,
+            ],
+            'current_subtask': 2
+        })
 
     return dataframe.shape[0], errors, warnings
 
@@ -391,8 +439,8 @@ def generate_response_email(count, errors, warnings):
     )
 
 
-@celery.task
-def import_participants(upload_id, mappings, participant_set_id):
+@celery.task(bind=True)
+def import_participants(self, upload_id, mappings, participant_set_id):
     upload = services.user_uploads.find(id=upload_id).first()
     if not upload:
         logger.error('Upload %s does not exist, aborting', upload_id)
@@ -419,7 +467,8 @@ def import_participants(upload_id, mappings, participant_set_id):
     count, errors, warnings = update_participants(
         dataframe,
         mappings,
-        participant_set
+        participant_set,
+        self
     )
 
     # delete uploaded file
@@ -429,6 +478,8 @@ def import_participants(upload_id, mappings, participant_set_id):
     msg_body = generate_response_email(count, errors, warnings)
 
     send_email(_('Import report'), msg_body, [upload.user.email])
+
+    return self.progress
 
 
 @celery.task

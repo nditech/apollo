@@ -72,9 +72,13 @@ def map_attribute(location_type, attribute):
     return '{}_{}'.format(slug, attribute.lower())
 
 
-def update_locations(data_frame, header_mapping, location_set):
+def update_locations(data_frame, header_mapping, location_set, task):
     cache = LocationCache()
     locales = location_set.deployment.locale_codes
+
+    num_records = data_frame.shape[0]
+    processed_records = 0
+    error_records = 0
 
     location_types = LocationType.query.filter(
         LocationType.location_set == location_set).join(
@@ -105,6 +109,7 @@ def update_locations(data_frame, header_mapping, location_set):
                 header_mapping.get(name_column_keys[0]) is None or
                 header_mapping.get(code_column_key) is None
             ):
+                error_records += 1
                 continue
 
             lat_column_key = '{}_lat'.format(loc_type.id)
@@ -126,6 +131,7 @@ def update_locations(data_frame, header_mapping, location_set):
 
             # skip if we're missing a name or code
             if not location_names[0] or not location_code:
+                error_records += 1
                 continue
 
             location_lat = None
@@ -243,9 +249,17 @@ def update_locations(data_frame, header_mapping, location_set):
 
             db.session.commit()
 
+        processed_records += 1
 
-@celery.task
-def import_locations(upload_id, mappings, location_set_id):
+        task.update_progress(**{
+            'num_records': num_records,
+            'processed_records': processed_records,
+            'error_records': error_records
+        })
+
+
+@celery.task(bind=True)
+def import_locations(self, upload_id, mappings, location_set_id):
     upload = UserUpload.query.filter(UserUpload.id == upload_id).first()
     if not upload:
         logger.error('Upload %s does not exist, aborting', upload_id)
@@ -267,7 +281,8 @@ def import_locations(upload_id, mappings, location_set_id):
     update_locations(
         dataframe,
         mappings,
-        location_set
+        location_set,
+        self
     )
 
     os.remove(filepath)
@@ -278,6 +293,8 @@ def import_locations(upload_id, mappings, location_set_id):
     )
 
     send_email(_('Locations Import Report'), msg_body, [upload.user.email])
+
+    return self.progress
 
 
 @celery.task
