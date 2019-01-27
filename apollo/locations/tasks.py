@@ -10,11 +10,15 @@ from pandas import isnull
 from slugify import slugify
 from sqlalchemy import func
 
-from apollo import helpers, models, services
+from apollo import helpers
 from apollo.core import db, uploads
 from apollo.factory import create_celery_app
 from apollo.locations import utils
 from apollo.messaging.tasks import send_email
+
+from .models import LocationSet
+from .models import Location, LocationPath, LocationType, LocationTypePath
+from ..users.models import UserUpload
 
 celery = create_celery_app()
 logger = logging.getLogger(__name__)
@@ -72,20 +76,16 @@ def update_locations(data_frame, header_mapping, location_set):
     cache = LocationCache()
     locales = location_set.deployment.locale_codes
 
-    location_types = services.location_types.find(
-        location_set=location_set
-    ).join(
-        models.LocationTypePath,
-        models.LocationType.id == models.LocationTypePath.ancestor_id
-    ).order_by(
-        func.count(models.LocationType.ancestor_paths)
-    ).group_by('id').all()
+    location_types = LocationType.query.filter(
+        LocationType.location_set == location_set).join(
+            LocationTypePath,
+            LocationType.id == LocationTypePath.ancestor_id).order_by(
+                func.count(LocationType.ancestor_paths)).group_by('id').all()
 
-    all_loc_type_paths = models.LocationTypePath.query.with_entities(
-        models.LocationTypePath.ancestor_id,
-        models.LocationTypePath.descendant_id,
-        models.LocationTypePath.depth,
-    ).all()
+    all_loc_type_paths = LocationTypePath.query.with_entities(
+        LocationTypePath.ancestor_id,
+        LocationTypePath.descendant_id,
+        LocationTypePath.depth).all()
 
     extra_field_cache = {
         fi.id: fi.name for fi in location_set.extra_fields
@@ -101,12 +101,16 @@ def update_locations(data_frame, header_mapping, location_set):
             ]
             code_column_key = '{}_code'.format(loc_type.id)
 
-            if header_mapping.get(name_column_keys[0]) is None or header_mapping.get(code_column_key) is None:
+            if (
+                header_mapping.get(name_column_keys[0]) is None or
+                header_mapping.get(code_column_key) is None
+            ):
                 continue
 
             lat_column_key = '{}_lat'.format(loc_type.id)
             lon_column_key = '{}_lon'.format(loc_type.id)
-            reg_voters_column_key = '{}_rv'.format(loc_type.id) if loc_type.has_registered_voters else None
+            reg_voters_column_key = '{}_rv'.format(loc_type.id) \
+                if loc_type.has_registered_voters else None
 
             name_columns = [
                 header_mapping.get(col) for col in name_column_keys]
@@ -158,7 +162,7 @@ def update_locations(data_frame, header_mapping, location_set):
                 'code': location_code,
                 'name_translations': {
                     locale: name
-                    for locale, name in zip(locales, location_names)
+                    for locale, name in zip(locales, location_names) if name
                 }
             }
 
@@ -166,16 +170,17 @@ def update_locations(data_frame, header_mapping, location_set):
                 kwargs.update({'registered_voters': location_rv})
 
             # is this location in the database?
-            location = services.locations.find(
-                location_set=location_set,
-                code=kwargs['code']).first()
+            location = Location.query.filter(
+                Location.location_set == location_set,
+                Location.code == kwargs['code']).first()
 
             if not location:
                 # no, create it
-                location = services.locations.create(**kwargs)
+                location = Location.create(**kwargs)
+                location.save()
 
                 # also add the self-referencing path
-                self_ref_path = models.LocationPath(
+                self_ref_path = LocationPath(
                     location_set_id=location_set.id, ancestor_id=location.id,
                     descendant_id=location.id, depth=0)
 
@@ -202,7 +207,7 @@ def update_locations(data_frame, header_mapping, location_set):
                     extra_data[extra_field_cache[field_id]] = value
 
             if extra_data:
-                services.locations.find(id=location.id).update(
+                Location.query.filter(Location.id == location.id).update(
                     {'extra_data': extra_data}, synchronize_session=False)
 
             row_ids[loc_type.id] = location.id
@@ -220,14 +225,14 @@ def update_locations(data_frame, header_mapping, location_set):
                 # never be tolerated
                 continue
 
-            path = models.LocationPath.query.filter_by(
+            path = LocationPath.query.filter_by(
                 ancestor_id=ancestor_loc_id,
                 descendant_id=descendant_loc_id,
                 depth=depth
             ).first()
 
             if not path:
-                path = models.LocationPath(
+                path = LocationPath(
                     ancestor_id=ancestor_loc_id,
                     descendant_id=descendant_loc_id,
                     location_set_id=location_set.id,
@@ -241,7 +246,7 @@ def update_locations(data_frame, header_mapping, location_set):
 
 @celery.task
 def import_locations(upload_id, mappings, location_set_id):
-    upload = services.user_uploads.find(id=upload_id).first()
+    upload = UserUpload.query.filter(UserUpload.id == upload_id).first()
     if not upload:
         logger.error('Upload %s does not exist, aborting', upload_id)
         return
@@ -256,8 +261,8 @@ def import_locations(upload_id, mappings, location_set_id):
     with open(filepath) as f:
         dataframe = helpers.load_source_file(f)
 
-    location_set = services.location_sets.find(
-        id=location_set_id).first()
+    location_set = LocationSet.query.filter(
+        LocationSet.id == location_set_id).first()
 
     update_locations(
         dataframe,

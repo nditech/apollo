@@ -2,11 +2,10 @@
 from flask import current_app, g, jsonify
 from flask_restful import Resource, fields, marshal, marshal_with
 from flask_security import login_required
-from sqlalchemy import or_
+from sqlalchemy import or_, text, bindparam
 
-from apollo import services
-from apollo.api.common import parser
-from apollo.locations.models import Location
+from ..api.common import parser
+from .models import Location, LocationType, LocationTranslations
 
 LOCATION_TYPE_FIELD_MAPPER = {
     'id': fields.String,
@@ -30,8 +29,10 @@ class LocationTypeItemResource(Resource):
         # into a Python dict
         location_set_id = getattr(g.event, 'location_id_set', None)
         data = marshal(
-            services.location_types.fget_or_404(
-                id=loc_type_id, location_set_id=location_set_id),
+            LocationType.query.filter(
+                LocationType.id == loc_type_id,
+                LocationType.location_set_id == location_set_id
+            ).first_or_404(),
             LOCATION_TYPE_FIELD_MAPPER)
 
         # for the Url field, the constructor argument must be a full
@@ -58,8 +59,8 @@ class LocationTypeListResource(Resource):
             args.get('limit') or current_app.config.get('PAGE_SIZE'),
             current_app.config.get('PAGE_SIZE'))
         offset = args.get('offset') or 0
-        queryset = services.location_types.find(
-            location_set_id=location_set_id)
+        queryset = LocationType.query.filter(
+            LocationType.location_set_id == location_set_id)
         count = queryset.count()
 
         queryset = queryset.offset(offset).limit(limit)
@@ -92,8 +93,9 @@ class LocationItemResource(Resource):
     @marshal_with(LOCATION_FIELD_MAPPER)
     def get(self, location_id):
         location_set_id = getattr(g.event, 'location_set_id', None)
-        return jsonify(services.locations.fget_or_404(
-            id=location_id, location_set_id=location_set_id))
+        return jsonify(Location.query.filter(
+            Location.id == location_id,
+            Location.location_set_id == location_set_id).first_or_404())
 
 
 class LocationListResource(Resource):
@@ -108,14 +110,16 @@ class LocationListResource(Resource):
         offset = args.get('offset') or 0
 
         lookup_args = args.get('q')
-        queryset = services.locations.find(location_set_id=location_set_id)
+        queryset = Location.query.select_from(
+            Location, LocationTranslations).filter(
+                Location.location_set_id == location_set_id)
         if lookup_args:
             queryset = queryset.filter(
                 or_(
-                    Location.name.ilike('%{}%'.format(lookup_args)),
-                    Location.code.ilike('{}%'.format(lookup_args))
+                    text('translations.value ILIKE :name'),
+                    Location.code.ilike(bindparam('code'))
                 )
-            )
+            ).params(name=f'%{lookup_args}%', code=f'{lookup_args}%')
         count = queryset.count()
 
         queryset = queryset.limit(limit).offset(offset)

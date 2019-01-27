@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import networkx as nx
+from sqlalchemy.orm.attributes import flag_modified
 
 from apollo import services, utils
 from apollo.core import db
@@ -33,18 +34,32 @@ def import_graph(graph, location_set, fresh_import=False):
                 location_type.is_political = node.get('is_political')
                 location_type.has_registered_voters = node.get(
                     'has_registered_voters')
-                location_type.name_translations = node.get('nameTranslations')
+                if node.get('nameTranslations'):
+                    location_type.name_translations = node.get(
+                        'nameTranslations')
+                else:
+                    location_type.name = node.get('name')
+
+                # note: if only .name is changed, SQLA does not register
+                # the object as being dirty or needing an update so we
+                # force it to recognize the object as needing an update.
+                flag_modified(location_type, 'name_translations')
                 location_type.save()
 
         else:
             location_type = services.location_types.create(
-                name_translations=node.get('nameTranslations'),
                 is_administrative=node.get('is_administrative', False),
                 is_political=node.get('is_political', False),
                 has_registered_voters=node.get(
                     'has_registered_voters', False),
                 location_set_id=location_set.id
             )
+            if node.get('nameTranslations'):
+                location_type.name_translations = node.get('nameTranslations')
+            else:
+                location_type.name = node.get('name')
+
+            location_type.save()
 
             # update the edges
             for edge in edges:

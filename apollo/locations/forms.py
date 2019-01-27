@@ -2,9 +2,8 @@
 from flask_babelex import lazy_gettext as _
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField
-from wtforms.fields import SelectField, StringField
+from wtforms.fields import SelectField
 from wtforms.validators import InputRequired
-from wtforms.widgets import HiddenInput
 
 from apollo.frontend.forms import _make_choices
 from apollo.helpers import load_source_file
@@ -29,7 +28,9 @@ def _validate_mappings(form):
         if lt_values:
             if '{}_code'.format(location_type.id) not in lt_values:
                 errors.append(
-                    str(_('Properties for %(loc_type_name)s were mapped, but no code was specified',
+                    str(_(
+                        'Properties for %(loc_type_name)s were mapped, '
+                        'but no code was specified',
                         loc_type_name=location_type.name)))
                 rv = False
 

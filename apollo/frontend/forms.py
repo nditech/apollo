@@ -6,6 +6,7 @@ from slugify import slugify
 from wtforms import (BooleanField, FloatField, IntegerField, SelectField,
                      SelectMultipleField, StringField, ValidationError,
                      validators, widgets)
+from wtforms.validators import Optional
 
 from apollo.models import (
     Form, LocationType, Participant, ParticipantRole,
@@ -31,8 +32,8 @@ def generate_location_edit_form(location, data=None):
 
     class LocationEditForm(WTSecureForm):
         name = StringField(_('Name'), validators=[validators.input_required()])
-        lat = FloatField(_('Latitude'))
-        lon = FloatField(_('Longitude'))
+        lat = FloatField(_('Latitude'), [Optional()])
+        lon = FloatField(_('Longitude'), [Optional()])
 
     return LocationEditForm(formdata=data, **initial_data)
 
@@ -103,7 +104,7 @@ def generate_participant_edit_form(participant, data=None):
 def generate_participant_import_mapping_form(
     headers, participant_set, *args, **kwargs
 ):
-    default_choices = [['', _('Select column')]] + [(v, v) for v in headers]
+    default_choices = [['', _('Select Column')]] + [(v, v) for v in headers]
 
     attributes = {
         '_headers': headers,
@@ -163,13 +164,13 @@ def generate_participant_import_mapping_form(
         if field.data:
             subset = [h for h in self._headers if h.startswith(field.data)]
             if not subset:
-                raise ValidationError(_('Invalid phone prefix'))
+                raise ValidationError(_('Invalid Phone Prefix'))
 
     def validate_group(self, field):
         if field.data:
             subset = {h for h in self._headers if h.startswith(field.data)}
             if not subset:
-                raise ValidationError(_('Invalid group prefix'))
+                raise ValidationError(_('Invalid Group Prefix'))
 
     attributes['validate_phone'] = validate_phone
     attributes['validate_group'] = validate_group
@@ -186,7 +187,7 @@ def generate_participant_import_mapping_form(
 def generate_location_update_mapping_form(
     headers, location_set, *args, **kwargs
 ):
-    default_choices = [['', _('Select column')]] + [(v, v) for v in headers]
+    default_choices = [['', _('Select Column')]] + [(v, v) for v in headers]
 
     attributes = {
         '_headers': headers,
@@ -241,7 +242,7 @@ def validate_location(form):
 
     if not form.participant.data and not form.location.data:
         form.location.errors.append(
-            _('Participant and location cannot both be empty'))
+            _('Participant and Location cannot both be empty'))
         return False
 
     return True
@@ -395,17 +396,17 @@ def make_checklist_init_form(event):
     class ChecklistInitForm(WTSecureForm):
         form = SelectField(
             _('Form'),
-            choices=_make_choices(form_choices, _('Select form')),
+            choices=_make_choices(form_choices, _('Select Form')),
             validators=[validators.input_required()])
 
         role = SelectField(
             _('Role'),
-            choices=_make_choices(participant_role_choices, _('Select role')),
+            choices=_make_choices(participant_role_choices, _('Select Role')),
             validators=[validators.input_required()])
         location_type = SelectField(
-            _('Location type'),
+            _('Location Type'),
             choices=_make_choices(location_type_choices,
-                                  _('Select location type')),
+                                  _('Select Location Type')),
             validators=[validators.input_required()])
 
     return ChecklistInitForm()
