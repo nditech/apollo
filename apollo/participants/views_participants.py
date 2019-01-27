@@ -349,7 +349,12 @@ def participant_edit(id, participant_set_id=0):
         if form.validate():
             # participant.participant_id = form.participant_id.data
             participant_set = participant.participant_set
-            participant.name = form.name.data
+            deployment = participant_set.deployment
+            name_translations = {}
+            for locale in deployment.locale_codes:
+                field_name = f'name_{locale}'
+                name_translations[locale] = getattr(form, field_name).data
+            participant.name_translations = name_translations
             participant.gender = form.gender.data
             if form.role.data:
                 participant.role_id = ParticipantRole.query.get_or_404(
