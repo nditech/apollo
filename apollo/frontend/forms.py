@@ -87,11 +87,12 @@ def generate_participant_edit_form(participant, data=None):
     kwargs.update({
         f'name_{locale}': participant.name_translations.get(locale)
         for locale in languages.keys()
+        if participant.name_translations.get(locale)
     })
-    if participant_set.extra_fields:
+    if participant_set.extra_fields and participant.extra_data:
         kwargs.update({
             f.name: participant.extra_data.get(f.name, '')
-            for f in participant.extra_data
+            for f in participant_set.extra_fields
         })
 
     return ParticipantEditForm(**kwargs)

@@ -397,10 +397,15 @@ def participant_edit(id, participant_set_id=0):
 
             participant.password = form.password.data
             if participant_set.extra_fields:
+                extra_data = {}
                 for extra_field in participant_set.extra_fields:
                     field_data = getattr(
                         getattr(form, extra_field.name, object()), 'data', '')
-                    setattr(participant, extra_field.name, field_data)
+                    if field_data != '':
+                        extra_data[extra_field.name] = field_data
+
+                participant.extra_data = extra_data
+
             participant.save()
 
             if participant_set_id:
