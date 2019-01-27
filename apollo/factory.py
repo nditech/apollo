@@ -91,6 +91,11 @@ def create_celery_app(app=None):
 
     class ContextTask(TaskBase):
         abstract = True
+        progress = {}
+
+        def update_progress(self, **kwargs):
+            self.progress.update(**kwargs)
+            self.update_state(state='RUNNING', meta=self.progress)
 
         def __call__(self, *args, **kwargs):
             with app.app_context():
