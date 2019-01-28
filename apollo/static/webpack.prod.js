@@ -5,6 +5,7 @@ const ManifestRevisionPlugin = require('manifest-revision-webpack-plugin');
 
 module.exports = merge.smart(common, {
     mode: 'production',
+    devtool: 'source-map',
     plugins: [
         new ManifestRevisionPlugin(path.join('dist', 'manifest.json'),
             {
