@@ -107,16 +107,11 @@ def update_participants(dataframe, header_map, participant_set, task):
     error_records = 0
     warning_records = 0
 
-    subtask_1_progress = {
+    progress = {
         'num_records': num_records,
         'processed_records': processed_records,
         'error_records': error_records,
-        'warning_records': warning_records,
-    }
-    subtask_2_progress = {
-        'num_records': None,
-        'processed_records': 0,
-        'error_records': 0
+        'warning_records': warning_records
     }
 
     location_set = participant_set.location_set
@@ -224,24 +219,42 @@ def update_participants(dataframe, header_map, participant_set, task):
 
         supervisor = None
         if SUPERVISOR_ID_COL:
-            if _is_valid(record[SUPERVISOR_ID_COL]):
-                if record[SUPERVISOR_ID_COL] != participant_id:
+            supervisor_id = record[SUPERVISOR_ID_COL]
+            if _is_valid(supervisor_id):
+                if supervisor_id != participant_id:
                     # ignore cases where participant is own supervisor
-                    supervisor_id = record[SUPERVISOR_ID_COL]
                     if type(supervisor_id) == float:
                         supervisor_id = int(supervisor_id)
+
                     supervisor = services.participants.find(
                         participant_id=str(supervisor_id),
                         participant_set=participant_set,
                     ).first()
                     if supervisor is None:
                         # perhaps supervisor exists further along.
-                        # cache the refs
+                        # cache the refs. if it's found in the second
+                        # pass, increment the number of processed
+                        # records then
                         unresolved_supervisors.add(
                             (participant_id, supervisor_id)
                         )
                     else:
                         participant.supervisor_id = supervisor.id
+                        # found the supervisor and assigned it, so
+                        # increment the number of processed records
+                        processed_records += 1
+                else:
+                    # participant is own supervisor (a mistake), so increment
+                    # the number of processed records
+                    processed_records += 1
+            else:
+                # invalid supervisor ID, so increment the number of
+                # processed records
+                processed_records += 1
+        else:
+            # no supervisor specified, so increment number of
+            # processed records
+            processed_records += 1
 
         if GENDER_COL:
             gender_spec = record[GENDER_COL]
@@ -371,22 +384,12 @@ def update_participants(dataframe, header_map, participant_set, task):
                 participant.groups = groups
             participant.save()
 
-        processed_records += 1
-        subtask_1_progress['processed_records'] = processed_records
-        subtask_1_progress['error_records'] = error_records
-        subtask_1_progress['warning_records'] = warning_records
-        task.update_progress(**{
-            'subtasks': [
-                subtask_1_progress,
-                subtask_2_progress
-            ],
-            'current_subtask': 1
-        })
+        progress['processed_records'] = processed_records
+        progress['error_records'] = error_records
+        progress['warning_records'] = warning_records
+        task.update_progress(**progress)
 
     # second pass - resolve missing supervisor references
-    num_records = len(unresolved_supervisors)
-    processed_records = 0
-    error_records = 0
     for participant_id, supervisor_id in unresolved_supervisors:
         participant = services.participants.find(
             participant_id=participant_id,
@@ -408,17 +411,10 @@ def update_participants(dataframe, header_map, participant_set, task):
             participant.supervisor_id = supervisor.id
             participant.save()
 
-        subtask_2_progress['num_records'] = num_records
-        subtask_2_progress['processed_records'] = processed_records
-        subtask_2_progress['error_records'] = error_records
+        progress['processed_records'] = processed_records
+        progress['error_records'] = error_records
 
-        task.update_progress(**{
-            'subtasks': [
-                subtask_1_progress,
-                subtask_2_progress,
-            ],
-            'current_subtask': 2
-        })
+        task.update_progress(**progress)
 
     return dataframe.shape[0], errors, warnings
 
