@@ -349,7 +349,12 @@ def participant_edit(id, participant_set_id=0):
         if form.validate():
             # participant.participant_id = form.participant_id.data
             participant_set = participant.participant_set
-            participant.name = form.name.data
+            deployment = participant_set.deployment
+            name_translations = {}
+            for locale in deployment.locale_codes:
+                field_name = f'name_{locale}'
+                name_translations[locale] = getattr(form, field_name).data
+            participant.name_translations = name_translations
             participant.gender = form.gender.data
             if form.role.data:
                 participant.role_id = ParticipantRole.query.get_or_404(
@@ -392,10 +397,15 @@ def participant_edit(id, participant_set_id=0):
 
             participant.password = form.password.data
             if participant_set.extra_fields:
+                extra_data = {}
                 for extra_field in participant_set.extra_fields:
                     field_data = getattr(
                         getattr(form, extra_field.name, object()), 'data', '')
-                    setattr(participant, extra_field.name, field_data)
+                    if field_data != '':
+                        extra_data[extra_field.name] = field_data
+
+                participant.extra_data = extra_data
+
             participant.save()
 
             if participant_set_id:

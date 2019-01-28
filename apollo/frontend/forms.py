@@ -2,10 +2,8 @@
 from flask_babelex import lazy_gettext as _
 from flask_wtf import FlaskForm as WTSecureForm
 from flask_wtf.file import FileField
-from slugify import slugify
 from wtforms import (BooleanField, FloatField, IntegerField, SelectField,
-                     SelectMultipleField, StringField, ValidationError,
-                     validators, widgets)
+                     SelectMultipleField, StringField, validators, widgets)
 from wtforms.validators import Optional
 
 from apollo.models import (
@@ -46,193 +44,58 @@ def generate_participant_edit_form(participant, data=None):
     partner_choices = participant_partners.find(
         participant_set_id=p_set_id).with_entities(
             ParticipantPartner.id, ParticipantPartner.name)
+    languages = participant.participant_set.deployment.languages
 
-    class ParticipantEditBaseForm(WTSecureForm):
-        # participant_id = StringField(
-        #     _('Participant ID'),
-        #     validators=[validators.input_required()]
-        # )
-        name = StringField(_('Name'))
-        gender = SelectField(_('Gender'), choices=Participant.GENDER)
-        role = SelectField(
-            _('Role'),
-            choices=_make_choices(role_choices),
-            validators=[validators.input_required()]
-        )
-        supervisor = StringField(
-            _('Supervisor')
-        )
-        location = StringField(
-            _('Location'),
-            validators=[validators.input_required()]
-        )
-        # partners are not required
-        partner = SelectField(
-            _('Partner'),
-            choices=_make_choices(partner_choices),
-        )
-        phone = StringField(_('Phone'))
-        password = StringField(_('Password'))
+    attributes = {
+        f'name_{locale}': StringField(_('Name (%(language)s)', language=lang))
+        for locale, lang in languages.items()
+    }
+    attributes['gender'] = SelectField(_('Gender'), choices=Participant.GENDER)
+    attributes['role'] = SelectField(
+        _('Role'), choices=_make_choices(role_choices),
+        validators=[validators.input_required()]
+    )
+    attributes['supervisor'] = StringField(_('Supervisor'))
+    attributes['location'] = StringField(
+        _('Location'), validators=[validators.input_required()])
+    attributes['partner'] = SelectField(
+        _('Partner'), choices=_make_choices(partner_choices))
+    attributes['phone'] = StringField(_('Phone'))
+    attributes['password'] = StringField(_('Password'))
 
     participant_set = participant.participant_set
 
-    attributes = {}
     if participant_set.extra_fields:
         attributes.update({
-            f.name: StringField(f.label) for f in participant_set.extra_fields})
+            f.name: StringField(f.label)
+            for f in participant_set.extra_fields
+        })
 
-    ParticipantEditForm = type('ParticipantEditForm', (ParticipantEditBaseForm,), attributes)
+    ParticipantEditForm = type(
+        'ParticipantEditForm', (WTSecureForm,), attributes)
 
-    kwargs = {field: getattr(participant, field, '') for field in attributes.keys()}
-
-    return ParticipantEditForm(
-        formdata=data,
-        # participant_id=participant.participant_id,
-        name=participant.name,
-        location=participant.location.id if participant.location else None,
-        gender=participant.gender.code if participant.gender else '',
-        role=participant.role.id if participant.role else None,
-        partner=participant.partner.id if participant.partner else None,
-        supervisor=participant.supervisor.id
-        if participant.supervisor else None,
-        phone=participant.primary_phone,
-        password=participant.password,
-        **kwargs
-    )
-
-
-def generate_participant_import_mapping_form(
-    headers, participant_set, *args, **kwargs
-):
-    default_choices = [['', _('Select Column')]] + [(v, v) for v in headers]
-
-    attributes = {
-        '_headers': headers,
-        'participant_id': SelectField(
-            _('Participant ID'),
-            choices=default_choices,
-            validators=[validators.input_required()]
-        ),
-        'name': SelectField(
-            _('Name'),
-            choices=default_choices
-        ),
-        'partner_org': SelectField(
-            _('Partner'),
-            choices=default_choices
-        ),
-        'role': SelectField(
-            _('Role'),
-            choices=default_choices,
-        ),
-        'location_id': SelectField(
-            _('Location ID'),
-            choices=default_choices,
-        ),
-        'supervisor_id': SelectField(
-            _('Supervisor'),
-            choices=default_choices,
-        ),
-        'gender': SelectField(
-            _('Gender'),
-            choices=default_choices
-        ),
-        'email': SelectField(
-            _('Email'),
-            choices=default_choices,
-        ),
-        'password': SelectField(
-            _('Password'),
-            choices=default_choices,
-        ),
-        'phone': StringField(
-            _('Phone prefix')
-        ),
-        'group': StringField(
-            _('Group prefix')
-        )
+    kwargs = {
+        'formdata': data,
+        'location': participant.location.id if participant.location else None,
+        'gender': participant.gender.code if participant.gender else '',
+        'role': participant.role.id if participant.role else None,
+        'partner': participant.partner.id if participant.partner else None,
+        'supervisor': participant.supervisor.id if participant.supervisor else None,
+        'phone': participant.primary_phone,
+        'password': participant.password,
     }
+    kwargs.update({
+        f'name_{locale}': participant.name_translations.get(locale)
+        for locale in languages.keys()
+        if participant.name_translations.get(locale)
+    })
+    if participant_set.extra_fields and participant.extra_data:
+        kwargs.update({
+            f.name: participant.extra_data.get(f.name, '')
+            for f in participant_set.extra_fields
+        })
 
-    if participant_set.extra_fields:
-        for field in participant_set.extra_fields:
-            attributes[field.name] = SelectField(
-                _('%(label)s', label=field.label),
-                choices=default_choices
-            )
-
-    def validate_phone(self, field):
-        if field.data:
-            subset = [h for h in self._headers if h.startswith(field.data)]
-            if not subset:
-                raise ValidationError(_('Invalid Phone Prefix'))
-
-    def validate_group(self, field):
-        if field.data:
-            subset = {h for h in self._headers if h.startswith(field.data)}
-            if not subset:
-                raise ValidationError(_('Invalid Group Prefix'))
-
-    attributes['validate_phone'] = validate_phone
-    attributes['validate_group'] = validate_group
-
-    ParticipantImportMappingForm = type(
-        'ParticipantImportMappingForm',
-        (WTSecureForm,),
-        attributes
-    )
-
-    return ParticipantImportMappingForm(*args, **kwargs)
-
-
-def generate_location_update_mapping_form(
-    headers, location_set, *args, **kwargs
-):
-    default_choices = [['', _('Select Column')]] + [(v, v) for v in headers]
-
-    attributes = {
-        '_headers': headers,
-    }
-
-    for location_type in location_types.find(location_set=location_set):
-        name = location_type.name
-        slug = slugify(name, separator='_').lower()
-        attributes['{}_name'.format(slug)] = SelectField(
-            _('%(label)s Name', label=name),
-            choices=default_choices
-        )
-        attributes['{}_code'.format(slug)] = SelectField(
-            _('%(label)s Code', label=name),
-            choices=default_choices
-        )
-        attributes['{}_lat'.format(slug)] = SelectField(
-            _('%(label)s Latitude', label=name),
-            choices=default_choices
-        )
-        attributes['{}_lon'.format(slug)] = SelectField(
-            _('%(label)s Longitude', label=name),
-            choices=default_choices
-        )
-        if location_type.has_registered_voters:
-            attributes['{}_rv'.format(slug)] = SelectField(
-                _('%(label)s Registered Voters', label=name),
-                choices=default_choices
-            )
-
-    # add in extra fields
-    if location_set.extra_fields:
-        for field in location_set.extra_fields:
-            attributes[field.name] = SelectField(
-                _('%(label)s', label=field.label),
-                choices=default_choices
-            )
-
-    LocationUpdateMappingForm = type(
-        'LocationUpdateMappingForm',
-        (WTSecureForm,),
-        attributes
-    )
-
-    return LocationUpdateMappingForm(*args, **kwargs)
+    return ParticipantEditForm(**kwargs)
 
 
 def validate_location(form):
