@@ -75,6 +75,7 @@ netifaces = "*"
 psutil = "*"
 redis = "==2.10.6"
 flask-webpack = "*"
+flask-sse = "==0.2.1"
 
 [dev-packages]
 "autopep8" = "*"
