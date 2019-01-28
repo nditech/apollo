@@ -545,6 +545,7 @@ def participant_headers(upload_id, participant_set_id=0):
 @login_required
 @admin_required(403)
 def nuke_participants(participant_set_id=0):
+    p_set_id = participant_set_id
     if participant_set_id == 0:
         if g.event.participant_set_id:
             participant_set_id = g.event.participant_set_id
@@ -558,7 +559,7 @@ def nuke_participants(participant_set_id=0):
     )
     tasks.nuke_participants.apply_async((participant_set_id,))
 
-    if participant_set_id:
+    if p_set_id:
         dest_url = url_for(
             'participants.participant_list_with_set',
             participant_set_id=participant_set_id)
