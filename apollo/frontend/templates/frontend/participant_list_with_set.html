@@ -161,7 +161,7 @@ a:hover.arrow-style{text-decoration:none; color:#333;}
             </div>
           </div>
           <div class="modal-footer">
-            <form action="{{ url_for('participants.nuke_participants') }}" method="POST">
+            <form action="{{ url_for('participants.nuke_set_participants', participant_set_id=participant_set_id) }}" method="POST">
               <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
               <button type="button" class="btn btn-default" data-dismiss="modal">{{ _('Close') }}</button>
               <button class="btn btn-danger" disabled="true" id="confirm_nuke">{{ _('Yes, I understand') }}</button>

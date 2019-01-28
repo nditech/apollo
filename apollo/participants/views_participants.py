@@ -538,22 +538,31 @@ def participant_headers(upload_id, participant_set_id=0):
                 return redirect(url_for('participants.participant_list'))
 
 
-@route(bp, '/participants/purge', methods=['POST'])
+@route(bp, '/participants/set/<int:participant_set_id>/purge',
+       endpoint='nuke_set_participants', methods=['POST'])
+@route(bp, '/participants/purge', endpoint='nuke_event_participants',
+       methods=['POST'])
 @login_required
 @admin_required(403)
-def nuke_participants():
-    event = g.event
+def nuke_participants(participant_set_id=0):
+    if participant_set_id == 0:
+        if g.event.participant_set_id:
+            participant_set_id = g.event.participant_set_id
+        else:
+            return redirect(url_for('dashboard.index'))
 
-    if event.participant_set_id:
-        flash(
-            str(_('Participants, Checklists, Critical Incidents and Messages'
-                ' linked to this participant set are being deleted.')),
-            category='task_begun'
-        )
-        tasks.nuke_participants.apply_async((event.participant_set_id,))
+    flash(
+        str(_('Participants, Checklists, Critical Incidents and Messages'
+            ' linked to this participant set are being deleted.')),
+        category='task_begun'
+    )
+    tasks.nuke_participants.apply_async((participant_set_id,))
 
-        return redirect(url_for(
-            'participants.participant_list',
-            participant_set_id=event.participant_set_id))
+    if participant_set_id:
+        dest_url = url_for(
+            'participants.participant_list_with_set',
+            participant_set_id=participant_set_id)
+    else:
+        dest_url = url_for('participants.participant_list')
 
-    return redirect(url_for('dashboard.index'))
+    return redirect(dest_url)

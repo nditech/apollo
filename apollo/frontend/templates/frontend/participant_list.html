@@ -41,7 +41,7 @@ a:hover.arrow-style{text-decoration:none; color:#333;}
   {%- if perms.send_messages.can() -%}
   <button class="btn btn-sm btn-success pull-right" id="send_message_modal_btn" style="margin-right:1em;"><i class="glyphicon glyphicon-envelope"></i> {{ _('Send Message') }}</button>
   {%- endif -%}
-  {%- if perms.role('admin').can() -%}
+  {%- if perms.role('admin').can() and g.event.participant_set_id -%}
   <button class="btn btn-sm btn-danger pull-right" id="nuke_participants_modal_btn" style="margin-right: 1em;" data-toggle="modal" data-target="#nuke_modal"><i class="glyphicon glyphicon-trash"></i> {{ _('Purge Participants') }}</button>
   {%- endif -%}
 {% endblock %}
@@ -165,7 +165,7 @@ a:hover.arrow-style{text-decoration:none; color:#333;}
             </div>
           </div>
           <div class="modal-footer">
-            <form action="{{ url_for('participants.nuke_participants') }}" method="POST">
+            <form action="{{ url_for('participants.nuke_event_participants') }}" method="POST">
               <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
               <button type="button" class="btn btn-default" data-dismiss="modal">{{ _('Close') }}</button>
               <button class="btn btn-danger" disabled="true" id="confirm_nuke">{{ _('Yes, I understand') }}</button>
