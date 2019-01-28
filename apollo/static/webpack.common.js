@@ -1,12 +1,10 @@
 const path = require('path');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const ManifestRevisionPlugin = require('manifest-revision-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
-var config = {
+module.exports = {
     entry: {
         scripts: './src/scripts.js',
         styles: './src/styles.js'
@@ -16,7 +14,6 @@ var config = {
         chunkFilename: '[id].[chunkhash].js',
         filename: '[name].[chunkhash].js'
     },
-    mode: 'production',
     module: {
         rules: [
             {
@@ -85,23 +82,3 @@ var config = {
         ]
     }
 }
-
-module.exports = (env, argv) => {
-    if (argv.mode === 'development') {
-        config.devtool = 'inline-source-map';
-        config.devServer = { contentBase: './dist' };
-        config.plugins.push(
-            new HtmlWebpackPlugin({
-                template: 'src/index.html'
-            }));
-    } else if (argv.mode === 'production') {
-        config.plugins.push(
-            new ManifestRevisionPlugin(path.join('dist', 'manifest.json'),
-                {
-                    rootAssetPath: './dist'
-                }
-            ));
-    }
-
-    return config;
-};
