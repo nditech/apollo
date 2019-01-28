@@ -2,6 +2,8 @@ const path = require('path');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ManifestRevisionPlugin = require('manifest-revision-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 var config = {
@@ -11,7 +13,7 @@ var config = {
     },
     output: {
         path: path.resolve(__dirname, 'dist'),
-        chunkFilename: '[name].[chunkhash].js',
+        chunkFilename: '[id].[chunkhash].js',
         filename: '[name].[chunkhash].js'
     },
     mode: 'production',
@@ -20,7 +22,7 @@ var config = {
             {
                 test: /\.(sc|sa|c)ss$/,
                 use: [
-                    'style-loader',
+                    MiniCssExtractPlugin.loader,
                     'css-loader',
                     {
                         loader: 'postcss-loader',
@@ -49,6 +51,11 @@ var config = {
         ]
     },
     plugins: [
+        new CleanWebpackPlugin(['dist']),
+        new MiniCssExtractPlugin({
+            filename: '[name].[chunkhash].css',
+            chunkFilename: '[id].[chunkhash].css'
+        })
     ],
     resolve: {
         extensions: [ '.js' ],
@@ -73,27 +80,21 @@ var config = {
                         comments: false
                     }
                 }
-            })
+            }),
+            new OptimizeCSSAssetsPlugin()
         ]
     }
 }
 
 module.exports = (env, argv) => {
-
     if (argv.mode === 'development') {
-        console.log('development...');
         config.devtool = 'inline-source-map';
         config.devServer = { contentBase: './dist' };
         config.plugins.push(
             new HtmlWebpackPlugin({
                 template: 'src/index.html'
             }));
-
     } else if (argv.mode === 'production') {
-        console.log('production...');
-        config.plugins.push(
-            new CleanWebpackPlugin(['dist']));
-
         config.plugins.push(
             new ManifestRevisionPlugin(path.join('dist', 'manifest.json'),
                 {
