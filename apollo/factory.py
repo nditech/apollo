@@ -3,6 +3,7 @@ from cachetools import cached
 from celery import Celery
 from flask import Flask, request
 from flask_security import current_user
+from flask_sse import sse
 from flask_sslify import SSLify
 from flask_uploads import configure_uploads
 from raven.base import Client
@@ -39,6 +40,8 @@ def create_app(
     db.init_app(app)
     migrate.init_app(app, db)
     mail.init_app(app)
+
+    app.register_blueprint(sse, url_prefix='/stream')
 
     configure_uploads(app, uploads)
 
@@ -96,6 +99,14 @@ def create_celery_app(app=None):
         def update_progress(self, **kwargs):
             self.progress.update(**kwargs)
             self.update_state(state='RUNNING', meta=self.progress)
+
+            task_meta = self.backend.get_task_meta(self.request.id)
+            sse_data = {
+                'id': self.request.id,
+                'status': task_meta.get('status'),
+                'progress': task_meta.get('result')
+            }
+            sse.publish(sse_data)
 
         def __call__(self, *args, **kwargs):
             with app.app_context():

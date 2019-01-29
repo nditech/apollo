@@ -195,3 +195,6 @@ TEST_DATABASE_URL = config(
         hostname=TEST_DATABASE_HOSTNAME,
         database=TEST_DATABASE_NAME
     ))
+
+# Server-sent events
+REDIS_URL = CELERY_BROKER_URL
