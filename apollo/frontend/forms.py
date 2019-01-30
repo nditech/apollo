@@ -6,12 +6,13 @@ from wtforms import (BooleanField, FloatField, IntegerField, SelectField,
                      SelectMultipleField, StringField, validators, widgets)
 from wtforms.validators import Optional
 
-from apollo.models import (
-    Form, LocationType, Participant, ParticipantRole,
-    ParticipantPartner, Submission)
-from apollo.services import (
-    forms, location_types, participant_partners, participant_roles)
 from apollo.frontend import permissions
+
+from ..formsframework.models import Form
+from ..locations.models import LocationType
+from ..participants.models import (
+    Participant, ParticipantRole, ParticipantPartner)
+from ..submissions.models import Submission
 
 
 def _make_choices(qs, placeholder=None):
@@ -38,11 +39,11 @@ def generate_location_edit_form(location, data=None):
 
 def generate_participant_edit_form(participant, data=None):
     p_set_id = participant.participant_set_id
-    role_choices = participant_roles.find(
-        participant_set_id=p_set_id).with_entities(
+    role_choices = ParticipantRole.query.filter(
+        ParticipantRole.participant_set_id == p_set_id).with_entities(
             ParticipantRole.id, ParticipantRole.name)
-    partner_choices = participant_partners.find(
-        participant_set_id=p_set_id).with_entities(
+    partner_choices = ParticipantPartner.query.filter(
+        ParticipantPartner.participant_set_id == p_set_id).with_entities(
             ParticipantPartner.id, ParticipantPartner.name)
     languages = participant.participant_set.deployment.languages
 
@@ -80,7 +81,7 @@ def generate_participant_edit_form(participant, data=None):
         'gender': participant.gender.code if participant.gender else '',
         'role': participant.role.id if participant.role else None,
         'partner': participant.partner.id if participant.partner else None,
-        'supervisor': participant.supervisor.id if participant.supervisor else None,
+        'supervisor': participant.supervisor.id if participant.supervisor else None,  # noqa
         'phone': participant.primary_phone,
         'password': participant.password,
     }
@@ -170,7 +171,7 @@ def generate_submission_edit_form_class(form):
                         widget=widgets.TextInput()
                     )
             else:
-                if form.form_type == 'CHECKLIST' or not field.represents_boolean:
+                if form.form_type == 'CHECKLIST' or not field.represents_boolean:  # noqa
                     form_fields[field.name] = IntegerField(
                         field.name,
                         description=field.description,
@@ -243,17 +244,16 @@ def make_checklist_init_form(event):
     location_set_id = getattr(event, 'location_set_id', None)
     participant_set_id = getattr(event, 'participant_set_id', None)
 
-    form_choices = forms.find(
-        form_set_id=form_set_id,
-        form_type='CHECKLIST'
+    form_choices = Form.query.filter(
+        Form.form_set_id == form_set_id,
+        Form.form_type == 'CHECKLIST'
     ).with_entities(Form.id, Form.name)
 
-    location_type_choices = location_types.find(
-        location_set_id=location_set_id
-    ).with_entities(LocationType.id, LocationType.name)
+    location_type_choices = [(i.id, i.name) for i in LocationType.query.filter(
+        LocationType.location_set_id == location_set_id)]
 
-    participant_role_choices = participant_roles.find(
-        participant_set_id=participant_set_id
+    participant_role_choices = ParticipantRole.query.filter(
+        ParticipantRole.participant_set_id == participant_set_id
     ).with_entities(ParticipantRole.id, ParticipantRole.name)
 
     class ChecklistInitForm(WTSecureForm):
