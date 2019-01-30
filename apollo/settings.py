@@ -7,6 +7,8 @@ import string
 import numpy
 from prettyconf import config
 
+VERSION = 'Apollo 3.2 (Koala)'
+
 postgres_password = Path('/run/secrets/postgres_password')
 test_postgres_password = Path('/run/secrets/postgres_password')
 
