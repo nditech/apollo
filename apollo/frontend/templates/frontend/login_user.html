@@ -18,8 +18,9 @@
         <div class="row h-75 align-items-center">
           <div class="col-md-6 col-lg-4 offset-md-3 offset-lg-4">
             <div class="card">
-              <div class="card-body">{% if login_user_form.errors %}
-                <div class="alert alert-danger" role="alert">
+              <div class="card-body">{% for msg in get_flashed_messages() %}
+                <div class="alert alert-info">{{ msg }}</div>{% endfor %}
+                {% if login_user_form.errors %}<div class="alert alert-danger" role="alert">
                   {{ _('The username and password you supplied <strong>do not match</strong> any of the credentials on this system. Please check both and try again.') }}
                 </div>{% endif %}
                 <section>

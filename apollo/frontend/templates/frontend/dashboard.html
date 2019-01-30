@@ -63,7 +63,7 @@
   {%- if group -%}
     <legend class="centered">{% if next_location %}<a href="{{ url_for('dashboard.checklists', form_id=form_id, group=group, locationtype=locationtype, location=row.get('id', ''), **args) }}">{% endif %}{{ row.name }}{% if next_location %}</a>{% endif %}</legend>
   {%- else -%}
-    <legend style="text-align:center">{% if not location %}<a href="{{ url_for('dashboard.checklists', form_id=form_id, group=row.name, locationtype=locationtype, **args) }}">{% endif %}{{ row.name }}{% if not location %}</a>{% endif %}</legend>
+    <legend style="text-align:center">{% if not location %}<a href="{{ url_for('dashboard.checklists', form_id=form_id, group=row.slug, locationtype=locationtype, **args) }}">{% endif %}{{ row.name }}{% if not location %}</a>{% endif %}</legend>
   {% endif %}
     <div class="piechart" data-chart='{{ row|tojson }}'>
     </div>
