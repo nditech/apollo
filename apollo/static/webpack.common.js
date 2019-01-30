@@ -1,25 +1,24 @@
 const path = require('path');
-const CleanWebpackPlugin = require('clean-webpack-plugin');
-const ManifestRevisionPlugin = require('manifest-revision-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 module.exports = {
     entry: {
-        main: './src/main.js'
+        scripts: './src/scripts.js',
+        styles: './src/styles.js'
     },
     output: {
         path: path.resolve(__dirname, 'dist'),
-        publicPath: 'dist/',
-        chunkFilename: '[name].[chunkhash].js',
+        chunkFilename: '[id].[chunkhash].js',
         filename: '[name].[chunkhash].js'
     },
-    mode: 'production',
     module: {
         rules: [
             {
                 test: /\.(sc|sa|c)ss$/,
                 use: [
-                    'style-loader',
+                    MiniCssExtractPlugin.loader,
                     'css-loader',
                     {
                         loader: 'postcss-loader',
@@ -48,12 +47,10 @@ module.exports = {
         ]
     },
     plugins: [
-        new CleanWebpackPlugin(['dist']),
-        new ManifestRevisionPlugin(path.join('dist', 'manifest.json'),
-            {
-                rootAssetPath: './dist'
-            }
-        )
+        new MiniCssExtractPlugin({
+            filename: '[name].[chunkhash].css',
+            chunkFilename: '[id].[chunkhash].css'
+        })
     ],
     resolve: {
         extensions: [ '.js' ],
@@ -78,7 +75,8 @@ module.exports = {
                         comments: false
                     }
                 }
-            })
+            }),
+            new OptimizeCSSAssetsPlugin()
         ]
     }
 }
