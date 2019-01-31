@@ -20,10 +20,10 @@
 <table class="table table-bordered">
 {%- if form.form_type == 'CHECKLIST' -%}
 <tr>
-  <th width="15%">&nbsp;</th>
-  <th>1</th>
+  <th width="15%">Observer</th>
+  <th>{{ _('Observer %(num)d', num=1) }}</th>
   {%- for sib in siblings -%}
-  <th>{{ loop.index + 1 }}</th>
+  <th>{{ _('Observer %(num)d', num=(loop.index + 1)) }}</th>
   {%- endfor -%}
 </tr>
 {%- endif -%}
@@ -65,7 +65,7 @@
   {%- endfor -%}
 </tr>
 <tr>
-  <td>&nbsp;</td>
+  <th>{{ _('Complete Location') }}</th>
   <td>
     {% for lt in location_types %}
     {% set node = submission.location.make_path()[lt.name] %}
@@ -137,25 +137,25 @@
         <td colspan="2">&nbsp;</td>
         <td style="text-align: center">
         {%- if perms.edit_both_submissions.can() -%}
-        <label for="{{ submission.id }}" style="margin-bottom: 0"><strong>OBS 1</strong><p style="margin-top: 0.25em"><input type="radio" id="{{ submission.id }}" class="obs1" name="submission_selection" value="obs"{% if not readonly %} checked{% endif %} /></p></label>
+        <label for="{{ submission.id }}" style="margin-bottom: 0"><strong>{{ _('Observer %(num)d', num=1) }}</strong><p style="margin-top: 0.25em"><input type="radio" id="{{ submission.id }}" class="obs1" name="submission_selection" value="obs"{% if not readonly %} checked{% endif %} /></p></label>
         {%- else -%}
-        <strong>OBS 1</strong>
+        <strong>{{ _('Observer %(num)d', num=1) }}</strong>
         {%- endif -%}
         </td>
         {%- for sibling in siblings -%}
         <td style="text-align: center">
         {%- if perms.edit_both_submissions.can() -%}
-        <label for="{{ sibling.id }}" style="margin-bottom: 0"><strong>OBS {{ loop.index + 1 }}</strong><p style="margin-top: 0.25em"><input type="radio" id="{{ sibling.id }}" name="submission_selection" value="" disabled></p></label>
+        <label for="{{ sibling.id }}" style="margin-bottom: 0"><strong>{{ _('Observer %(num)d', num=(loop.index + 1)) }}</strong><p style="margin-top: 0.25em"><input type="radio" id="{{ sibling.id }}" name="submission_selection" value="" disabled></p></label>
         {%- else -%}
-        <strong>OBS {{ loop.index + 1 }}</strong>
+        <strong>{{ _('Observer %(num)d', num=(loop.index + 1)) }}</strong>
         {%- endif -%}
         </td>
         {%- endfor -%}
         <td style="text-align: center">
         {%- if perms.edit_both_submissions.can() -%}
-        <label for="{{ submission.master.id }}" style="margin-bottom: 0"><strong>PS</strong><p style="margin-top: 0.25em"><input type="radio" id="{{ submission.master.id }}" class="ps" name="submission_selection" value="ps"{% if readonly %} checked{% endif %} /></p></label>
+        <label for="{{ submission.master.id }}" style="margin-bottom: 0"><strong>{{ _('LOCATION') }}</strong><p style="margin-top: 0.25em"><input type="radio" id="{{ submission.master.id }}" class="ps" name="submission_selection" value="ps"{% if readonly %} checked{% endif %} /></p></label>
         {%- else -%}
-        <strong>PS</strong>
+        <strong>{{ _('LOCATION') }}</strong>
         {%- endif -%}
         </td>
         <td>&nbsp;</td>
@@ -167,15 +167,7 @@
       {% for field in group.fields %}
       <tr{% if field.tag in submission.flagged_fields and submission.form.verifiable and perms.edit_submission_verification_status.can() %} class="warning"{% endif %}>
         <th>{{ field.tag }}</th>
-        <td>{{ field.description }}
-          {%- if field['type'] == 'select' %}
-          <span class="options">
-          {% for item in field.options|dictsort(false, 'value') %}
-          <span class="option"><strong>({{ item.1 }})</strong> {{ item.0 }}</span>
-          {% endfor %}
-          </span>
-          {%- endif %}
-        </td>
+        <td>{{ field.description }}</td>
         {%- if readonly -%}
         <td class="obs-on">{{ render_submission_field(submission_form[field.tag], disabled=1)}}</td>
         {%- else -%}
@@ -250,15 +242,7 @@
         <p style="margin-top:-0.5em; margin-bottom:0">{{ field.description }}</p>
       </td>
       {% else %}
-      <td>{{ field.description }}
-      {%- if field.options %}
-      <span class="options">
-      {% for description, value in field.options|dictsort(by='value') %}
-      <span class="option"><strong>({{ value }})</strong> {{ description }}</span>
-      {% endfor %}
-      </span>
-      {%- endif %}
-      </td>
+      <td>{{ field.description }}</td>
       <td style="min-width:6em" {%- if submission_form[field.tag].errors %} class="danger"{%- endif -%}>{{ render_submission_field(submission_form[field.tag]) }}</td>
       {% endif %}
     </tr>
