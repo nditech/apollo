@@ -265,7 +265,8 @@ class Submission(BaseModel):
         ):
             return self._compute_completion(group_tags)
         else:
-            conflict_tags = set(group_tags).intersection(set(self.conflicts))
+            conflict_tags = set(group_tags).intersection(
+                set(self.conflicts or []))
             if conflict_tags:
                 return 'Conflict'
             return self._compute_completion(group_tags)
