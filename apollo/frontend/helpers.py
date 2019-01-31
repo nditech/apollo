@@ -195,12 +195,31 @@ def analysis_navigation_data(form, location, tag=None,
                              analysis_type='process'):
     '''A helper function for generating data for navigation
     links for the analysis views.'''
-    loc_type_names = [
-        lt.name for lt in services.location_types.find(is_political=True)]
-    lower_locations = [
-        loc for loc in location.children()
-        if loc.location_type in loc_type_names]
-    lower_locations.sort(key=lambda loc: loc.name)
+    next_analyzable_level_id = models.LocationTypePath.query.join(
+        models.LocationType,
+        models.LocationType.id == models.LocationTypePath.descendant_id
+    ).filter(
+        models.LocationType.id != location.location_type_id,
+        models.LocationTypePath.depth > 0,
+        models.LocationType.is_political == True,   # noqa
+    ).order_by(
+        models.LocationTypePath.depth
+    ).with_entities(
+        models.LocationType.id
+    ).limit(1).scalar()
+
+    lower_locations = models.LocationPath.query.join(
+        models.Location,
+        models.LocationPath.descendant_id == models.Location.id
+    ).join(
+        models.LocationType
+    ).filter(
+        models.LocationType.id == next_analyzable_level_id,
+        models.LocationPath.ancestor_id == location.id,
+        models.LocationPath.depth > 0
+    ).with_entities(
+        models.Location
+    ).all()
 
     return {
         'form': form,
