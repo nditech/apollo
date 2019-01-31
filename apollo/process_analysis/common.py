@@ -453,7 +453,12 @@ def generate_incidents_data(form, queryset, location_root, grouped=True,
 
         # per-location level summaries
         for location_type in location_types:
-            data_group = data_frame.groupby(location_type)
+            try:
+                if location_type not in data_frame.columns:
+                    continue
+                data_group = data_frame.groupby(location_type)
+            except KeyError:
+                continue
             location_stats = {}
 
             for tag in tags:
@@ -558,7 +563,12 @@ def generate_process_data(form, queryset, location_root, grouped=True,
 
         # per-location level summaries
         for location_type in location_types:
-            data_group = data_frame.groupby(location_type)
+            try:
+                if location_type in data_frame.columns:
+                    continue
+                data_group = data_frame.groupby(location_type)
+            except KeyError:
+                continue
             location_type_summary = []
 
             for tag in tags:
