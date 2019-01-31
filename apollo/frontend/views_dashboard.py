@@ -76,7 +76,7 @@ def main_dashboard(form_id=None):
     # next_location_type = False
 
     if not group_slug:
-        data = get_coverage(query, form, g.locale.language)
+        data = get_coverage(query, form)
         # obs_data = get_coverage(obs_queryset)
     else:
         group = next(
@@ -118,7 +118,7 @@ def main_dashboard(form_id=None):
             group = None
 
         data = get_coverage(
-            query, form, g.locale.language, group, location_type)
+            query, form, group, location_type)
 
     #     # get the requisite location type - the way the aggregation
     #     # works, passing in a 'State' location type won't retrieve
