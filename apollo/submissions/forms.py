@@ -77,7 +77,7 @@ def make_submission_edit_form_class(event, form):
                         validators=[validators.Optional()],
                         widget=widgets.TextArea()
                     )
-                elif field_type in ('select', 'multiselect'):
+                elif field_type in ('select', 'multiselect', 'category'):
                     choices = [(v, k) for k, v in field['options'].items()]
 
                     if field_type == 'multiselect':
@@ -92,13 +92,16 @@ def make_submission_edit_form_class(event, form):
                             widget=widgets.ListWidget()
                         )
                     else:
-                        form_fields[field['tag']] = fields.IntegerField(
+                        form_fields[field['tag']] = fields.SelectField(
                             field['tag'],
+                            choices=choices,
+                            coerce=int,
                             description=field['description'],
                             validators=[
                                 validators.Optional(),
                                 validators.AnyOf([v for v, k in choices])],
-                            widget=widgets.TextInput()
+                            option_widget=widgets.RadioInput(),
+                            widget=widgets.ListWidget()
                         )
                 else:
                     if form.form_type == 'CHECKLIST' or field_type != 'boolean':
