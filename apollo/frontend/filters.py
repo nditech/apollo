@@ -474,10 +474,13 @@ def generate_critical_incident_location_filter(tag):
 
 def generate_quality_assurance_filter(form):
     quality_check_criteria = [('', _('Quality Check Criterion'))] + \
-        [
-            (str(idx), qc['description'])
-            for idx, qc in enumerate(form.quality_checks)
-        ]
+        (
+            [
+                (str(idx), qc['description'])
+                for idx, qc in enumerate(form.quality_checks)
+            ]
+            if form.quality_checks else []
+        )
     quality_check_conditions = [('', _('Quality Check Condition'))] + \
         list(FLAG_CHOICES)
 
