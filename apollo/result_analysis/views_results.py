@@ -65,12 +65,12 @@ def _voting_results(form_id, location_id=None):
     filter_class = filters.generate_submission_analysis_filter(form)
 
     loc_types = [lt for lt in location_types.root(
-                    event.location_set_id).children()
+                    event.location_set_id).descendants()
                  if lt.is_political is True]
     location_tree = {
         lt.name: locations.find(
             location_type=lt
-        ).order_by('name') for lt in loc_types
+        ) for lt in loc_types
     }
 
     # define the condition for which a submission should be included

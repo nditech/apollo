@@ -11,11 +11,10 @@ from sqlalchemy import func
 from apollo.deployments.forms import generate_event_selection_form
 from apollo.frontend import permissions, route
 from apollo.frontend.dashboard import get_coverage
-from apollo.frontend.filters import dashboard_filterset
 from apollo.frontend.helpers import (
     get_event, set_event, get_concurrent_events_list_menu,
     get_checklist_form_dashboard_menu)
-from apollo.models import Event, LocationType, LocationTypePath
+from apollo.models import Event, LocationType
 from apollo.services import (
     events, forms, submissions, locations, location_types)
 
@@ -81,7 +80,7 @@ def main_dashboard(form_id=None):
         # obs_data = get_coverage(obs_queryset)
     else:
         group = next(
-            (grp for grp in form.data['groups'] 
+            (grp for grp in form.data['groups']
              if grp['slug'] == group_slug), None)
         if group is None:
             abort(404)
