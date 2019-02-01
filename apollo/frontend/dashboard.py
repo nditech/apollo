@@ -4,7 +4,7 @@ from itertools import chain
 from logging import getLogger
 
 from sqlalchemy import and_, func, or_
-from sqlalchemy.orm import aliased
+from sqlalchemy.orm import aliased, Load
 from sqlalchemy.dialects.postgresql import array
 
 from apollo.core import db
@@ -25,7 +25,7 @@ def _get_coverage_results(query, depth):
     ancestor_location = aliased(Location)
     location_closure = aliased(LocationPath)
 
-    return query.join(
+    dataset = query.join(
         location_closure,
         location_closure.descendant_id == Submission.location_id
     ).join(
@@ -34,10 +34,13 @@ def _get_coverage_results(query, depth):
     ).filter(
         location_closure.depth == depth
     ).with_entities(
-        ancestor_location.id,
-        ancestor_location.name,
+        ancestor_location,
         func.count(Submission.id)
+    ).options(
+        Load(ancestor_location).load_only('id', 'name_translations')
     ).group_by(ancestor_location.id).all()
+
+    return [(item[0].id, item[0].name, item[1]) for item in dataset]
 
 
 def _get_group_coverage(query, form, group, location_type):
@@ -176,7 +179,8 @@ def _get_global_coverage(query, form):
             'Conflict': conflict_query.count(),
             'Missing': missing_query.count(),
             'Partial': partial_query.count(),
-            'name': group['name']
+            'name': group['name'],
+            'slug': group['slug']
         }
 
         coverage_list.append(data)
