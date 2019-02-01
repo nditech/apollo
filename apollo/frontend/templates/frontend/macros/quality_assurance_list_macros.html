@@ -6,9 +6,11 @@
     {% endfor %}
     <th>{{ _('Participant') }}</th>
     <th>{{ _('Phone') }}</th>
+    {% if form.quality_checks %}
     {% for qc in form.quality_checks %}
     <th class="text-center"><abbr title="{{ qc.description }}">{{ loop.index }}</abbr></th>
     {% endfor %}
+    {% endif %}
     <th class="text-center"><abbr title="{{ _('Phone Verification') }}"><i class="glyphicon glyphicon-phone"></i></abbr></th>
 </tr>
 {% endmacro %}
@@ -25,6 +27,7 @@
     {% endfor %}
     <td>{{ submission.participant.name|default('', true) }}</td>
     <td>{{ submission.participant.primary_phone|default('', true) }}</td>
+    {% if form.quality_checks %}
     {% for qc in form.quality_checks %}
     <td class="text-center">
         {%- if submission.verification_status == verification_statuses.VERIFIED %}<img src="{{ url_for('static', filename='img/blue_dot.png') }}" alt="{{ _('Verified') }}" title="{{ _('Verified') }}" height="11" width="11">
@@ -35,11 +38,16 @@
         {% endif %}
     </td>
     {% endfor %}
+    {% endif %}
     <td style="text-align: center"><img src="{% if submission.sender_verified %}{{ url_for('static', filename='img/tick.png') }}{% else %}{{ url_for('static', filename='img/caution.png') }}{% endif %}" title="{% if submission.sender_verified %}{{ _('Verified') }}{% else %}{{ _('Unverified') }}{% endif %}" height="11" width="11" /></td>
 </tr>
 {% else %}
 {% if perms.edit_submission.can() %}
+{% if form.quality_checks %}
 {%- set colspan = 5 + (location_types|length) + form.quality_checks|length -%}
+{% else %}
+{%- set colspan = 5 + (location_types|length) -%}
+{% endif %}
 <tr class="warning">
     <td class="text-center" colspan="{{ colspan }}">{{ _('No Data Available') }}</td>
 </tr>
