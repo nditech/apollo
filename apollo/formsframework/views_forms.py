@@ -14,8 +14,9 @@ from apollo import models, services
 from apollo.formsframework.forms import FormForm, FormImportForm
 from apollo.formsframework.models import FormBuilderSerializer
 from apollo.formsframework import utils
-from apollo.submissions.tasks import init_submissions
 from apollo.frontend.forms import make_checklist_init_form
+from apollo.submissions.tasks import init_submissions
+from apollo.utils import generate_identifier
 
 bp = Blueprint('forms', __name__, template_folder='templates',
                static_folder='static')
@@ -231,17 +232,19 @@ def quality_assurance(form_id, form_set_id=0):
             form.quality_checks = []
             for item in postdata:
                 if isinstance(item, list):
-                    (name, desc, lhs, comp, rhs) = item
+                    desc = item[0]
+                    lhs = item[1]
+                    comp = item[2]
+                    rhs = item[3]
                 elif isinstance(item, dict):
-                    name = item["0"]
-                    desc = item["1"]
-                    lhs = item["2"]
-                    comp = item["3"]
-                    rhs = item["4"]
+                    desc = item["0"]
+                    lhs = item["1"]
+                    comp = item["2"]
+                    rhs = item["3"]
 
-                if name and desc and lhs and comp and rhs:
+                if desc and lhs and comp and rhs:
                     form.quality_checks.append({
-                        'name': name, 'description': desc,
+                        'name': generate_identifier(), 'description': desc,
                         'lvalue': lhs, 'comparator': comp,
                         'rvalue': rhs
                     })
@@ -256,10 +259,9 @@ def quality_assurance(form_id, form_set_id=0):
             pass
 
     check_data = [
-        (c['name'],
-         c['description'], c['lvalue'], c['comparator'], c['rvalue'])
+        (c['description'], c['lvalue'], c['comparator'], c['rvalue'])
         for c in form.quality_checks
-    ] if form.quality_checks else [[''] * 5]
+    ] if form.quality_checks else [[''] * 4]
 
     context = {
         'page_title': page_title,

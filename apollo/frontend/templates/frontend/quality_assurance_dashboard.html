@@ -25,7 +25,7 @@
       <div class="panel-heading">
         <div class="panel-title"><h4><%= check.description %></h4></div>
       </div>
-      <div class="panel-body" :id="check.name"></div>
+      <div class="panel-body" :id="htmlID"></div>
     </div>
   </div>
 </template>
@@ -41,9 +41,14 @@ var check_data = JSON.parse(document.getElementById('check_breakdown').getAttrib
 Vue.component('check', {
   delimiters: [ '<%=', '%>' ],
   props: ['check'],
+  computed: {
+    htmlID: function () {
+      return 'qa_' + this.check.name;
+    }
+  },
   mounted: function() {
     this.$nextTick(function (){
-      var compSvg = dimple.newSvg('#' + this.check.name, '100%', '250px');
+      var compSvg = dimple.newSvg('#' + this.htmlID, '100%', '250px');
       var chart = new dimple.chart(compSvg, this.check.counts);
       var x_axis = chart.addMeasureAxis('x', 'count');
       x_axis.tickFormat = 'd';

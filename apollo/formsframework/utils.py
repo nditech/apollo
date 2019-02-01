@@ -9,6 +9,7 @@ from unidecode import unidecode
 from xlwt import Workbook
 
 from apollo.formsframework.models import Form
+from apollo.utils import generate_identifier
 
 gt_constraint_regex = re.compile('(?:.*\.\s*\>={0,1}\s*)(\d+)')
 lt_constraint_regex = re.compile('(?:.*\.\s*\<={0,1}\s*)(\d+)')
@@ -144,6 +145,23 @@ def _process_analysis_worksheet(analysis_data, form_schema):
         field['analysis_type'] = analysis_dict['analysis']
 
 
+def _process_qa_worksheet(qa_data):
+    quality_checks = []
+    for qa_dict in qa_data:
+        if (qa_dict['description'] and qa_dict['left'] and qa_dict['relation']
+                and qa_dict['right']):
+            qa_check = {
+                'name': generate_identifier(),
+                'description': qa_dict['description'],
+                'lvalue': qa_dict['left'],
+                'comparator': qa_dict['relation'],
+                'rvalue': qa_dict['right']
+            }
+            quality_checks.append(qa_check)
+
+    return quality_checks
+
+
 def import_form(sourcefile):
     try:
         file_data = xls2json.xls_to_dict(sourcefile)
@@ -154,6 +172,7 @@ def import_form(sourcefile):
     choices_data = file_data.get('choices')
     analysis_data = file_data.get('analysis')
     metadata = file_data.get('metadata')
+    qa_data = file_data.get('quality_checks')
 
     if not (survey_data and metadata):
         return
@@ -171,6 +190,10 @@ def import_form(sourcefile):
     # go over the analysis worksheet
     if analysis_data:
         _process_analysis_worksheet(analysis_data, form.data)
+
+    # go over the quality checks
+    if qa_data:
+        form.quality_checks = _process_qa_worksheet(qa_data)
 
     # remove the field cache
     form.data.pop('field_cache')

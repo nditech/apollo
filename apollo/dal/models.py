@@ -21,7 +21,7 @@ def get_default_locale():
     try:
         deployment = g.deployment
 
-        return deployment.primary_locale
+        return deployment.primary_locale or 'en'
     except AttributeError:
         warnings.warn('No Deployment Set')
         return 'en'
