@@ -15,6 +15,7 @@ from flask_menu import register_menu
 from flask_security import current_user, login_required
 from flask_security.utils import verify_and_update_password
 from sqlalchemy.dialects.postgresql import array
+from sqlalchemy.sql import false
 from tablib import Dataset
 from werkzeug.datastructures import MultiDict
 
@@ -791,10 +792,13 @@ def quality_assurance_list(form_id):
 
     if request.args.get('export') and permissions.export_submissions.can():
         mode = request.args.get('export')
-        queryset = services.submissions.find(
-            submission_type='O',
-            form=form
-        ).order_by('location', 'contributor')
+        if form.quality_checks:
+            queryset = services.submissions.find(
+                submission_type='O',
+                form=form
+            ).order_by('location', 'contributor')
+        else:
+            queryset = models.Submission.query.filter(false())
 
         query_filterset = filter_class(queryset, request.args)
         dataset = services.submissions.export_list(
@@ -811,7 +815,11 @@ def quality_assurance_list(form_id):
             mimetype="text/csv"
         )
 
-    submissions = services.submissions.find(form=form, submission_type='O')
+    if form.quality_checks:
+        submissions = models.Submission.query.filter_by(
+            form_id=form_id, submission_type='O')
+    else:
+        submissions = models.Submission.query.filter(false())
     query_filterset = filter_class(submissions, request.args)
     filter_form = query_filterset.form
     VERIFICATION_OPTIONS = services.submissions.__model__.VERIFICATION_OPTIONS
