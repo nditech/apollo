@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from functools import partial
 import math
+from operator import attrgetter
 
 from flask import (
     Blueprint, abort, current_app, g, render_template, request, url_for)
@@ -67,17 +68,21 @@ def _voting_results(form_id, location_id=None):
     loc_types = [lt for lt in location_types.root(
                     event.location_set_id).descendants()
                  if lt.is_political is True]
-    location_tree = {
-        lt.name: locations.find(
-            location_type=lt
-        ) for lt in loc_types
-    }
+
+    location_tree = {}
+    for lt in loc_types:
+        lt_locs = models.Location.query.filter_by(location_type_id=lt.id)
+        location_tree[lt.name] = sorted(lt_locs, key=attrgetter('name'))
 
     # define the condition for which a submission should be included
-    result_fields = [field for field in [field for group in form.data['groups']
-         for field in group['fields']] if field['analysis_type'] == 'RESULT']
+    result_fields = [
+        field for field in [
+            field for group in form.data['groups']
+            for field in group['fields']
+        ] if field['analysis_type'] == 'RESULT']
     result_field_labels = [field['tag'] for field in result_fields]
-    result_field_descriptions = [field['description'] for field in result_fields]
+    result_field_descriptions = [
+        field['description'] for field in result_fields]
 
     queryset = submissions.find(
         form=form,
@@ -109,7 +114,7 @@ def _voting_results(form_id, location_id=None):
     try:
         overall_summation = dataset.groupby(
             location.location_type.name).sum().ix[location.name]
-        reported_subset = dataset[dataset.reported==True]
+        reported_subset = dataset[dataset.reported == True]     # noqa
         valid_dataframe = reported_subset[reported_subset[location.location_type.name]==location.name]
         valid_summation = reported_subset.fillna(0).groupby(
             location.location_type.name).sum().ix[location.name]
