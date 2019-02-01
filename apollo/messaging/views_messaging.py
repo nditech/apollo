@@ -6,11 +6,12 @@ from flask import Blueprint, make_response, request, g, current_app
 from unidecode import unidecode
 
 from apollo import models, services
-from apollo.core import db, csrf
-from apollo.frontend import route
-from apollo.messaging.forms import KannelForm, TelerivetForm
-from apollo.messaging.helpers import parse_message
-from apollo.messaging.utils import parse_text
+from ..core import db, csrf
+from ..frontend import route
+from ..frontend.helpers import get_event
+from ..messaging.forms import KannelForm, TelerivetForm
+from ..messaging.helpers import parse_message
+from ..messaging.utils import parse_text
 
 
 bp = Blueprint('messaging', __name__)
@@ -82,17 +83,15 @@ def kannel_view():
     form = KannelForm(request.args)
     if form.validate():
         msg = form.get_message()
+
         response, submission, had_errors = parse_message(form)
-        event = submission.event if submission else g.event
+        event = submission.event if submission else get_event()
 
         incoming = services.messages.log_message(
             event=event, sender=msg.get('sender'), text=msg.get('text'),
             direction='IN', timestamp=msg.get('timestamp'))
         outgoing = services.messages.log_message(
-            # the str() call is necessary because the response
-            # is response is a translated string, which can't
-            # be saved to the database
-            event=event, recipient=msg.get('sender'), text=str(response),
+            event=event, recipient=msg.get('sender'), text=response,
             direction='OUT')
 
         update_datastore(incoming, outgoing, submission, had_errors)
@@ -113,7 +112,15 @@ def telerivet_view():
         return ''
 
     # if the sender is the same as the recipient, then don't respond
-    if re.sub(r'[^\d]', '', request.form.get('from_number')) == re.sub(r'[^\d]', '', request.form.get('to_number')):
+    if (
+        re.sub(
+            r'[^\d]', '',
+            request.form.get('from_number')
+        ) == re.sub(
+            r'[^\d]', '',
+            request.form.get('to_number')
+        )
+    ):
         return ''
 
     form = TelerivetForm(request.form)
@@ -121,13 +128,7 @@ def telerivet_view():
         msg = form.get_message()
 
         response_text, submission, had_errors = parse_message(form)
-        if current_app.config.get('TRANSLITERATE_OUTPUT'):
-            response_text = unidecode(response_text)
-        response = {'messages': [{'content': response_text}]}
-        http_response = make_response(json.dumps(response))
-        http_response.headers['Content-Type'] = 'application/json'
-
-        event = submission.event if submission else g.event
+        event = submission.event if submission else get_event()
 
         incoming = services.messages.log_message(
             event=event, sender=msg.get('sender'), text=msg.get('text'),
@@ -137,6 +138,12 @@ def telerivet_view():
             direction='OUT', timestamp=msg.get('timestamp'))
 
         update_datastore(incoming, outgoing, submission, had_errors)
+
+        if current_app.config.get('TRANSLITERATE_OUTPUT'):
+            response_text = unidecode(response_text)
+        response = {'messages': [{'content': response_text}]}
+        http_response = make_response(json.dumps(response))
+        http_response.headers['Content-Type'] = 'application/json'
 
         return http_response
     return ""

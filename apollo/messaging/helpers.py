@@ -73,17 +73,16 @@ def parse_message(form):
                 elif extra:
                     had_errors = True
                     return (_('Invalid text sent: "{extra}". '
-                        'You sent: {text}').format(
-                            extra=extra, text=message.get('text', '')),
-                        submission,
-                        had_errors)
+                              'You sent: {text}').format(
+                                  extra=extra, text=message.get('text', '')),
+                            submission, had_errors)
             else:
                 had_errors = True
                 if 'participant' in questionnaire.errors:
                     return (
                         _('Observer ID not found. Please resend with valid '
-                          'Observer ID. You sent: {text}')
-                        .format(text=message.get('text', '')),
+                          'Observer ID. You sent: {text}').format(
+                              text=message.get('text', '')),
                         submission,
                         had_errors
                     )
@@ -92,11 +91,10 @@ def parse_message(form):
                     submission = questionnaire.save()
                     return (
                         _('Invalid response(s) for question(s):'
-                          ' "{questions}". You sent: {text}')
-                        .format(
-                            questions=', '.join(sorted(
-                                questionnaire.errors.keys())),
-                            text=message.get('text', '')),
+                          ' "{questions}". You sent: {text}').format(
+                              questions=', '.join(sorted(
+                                  questionnaire.errors.keys())),
+                              text=message.get('text', '')),
                         submission,
                         had_errors
                     )
