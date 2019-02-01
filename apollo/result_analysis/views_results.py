@@ -247,14 +247,14 @@ def _voting_results(form_id, location_id=None):
             grouped_summation = dataset.groupby(
                 location_type).sum()
             grouped_valid_summation = dataset[
-                dataset.reported is True].groupby(location_type).sum()
+                dataset.reported==True].groupby(location_type).sum()
 
             for sublocation in location_tree[location_type]:
                 try:
                     _overall = grouped_summation.ix[sublocation.name]
                     _valid = grouped_valid_summation.fillna(
                         0).ix[sublocation.name]
-                    _reported_subset = dataset[dataset.reported is True]
+                    _reported_subset = dataset[dataset.reported==True]
                     _valid_dataframe = _reported_subset[
                         _reported_subset[location_type] == sublocation.name]
 
@@ -411,7 +411,7 @@ def _voting_results(form_id, location_id=None):
             pass
 
     if not dataset.empty:
-        convergence_dataset = dataset[dataset.reported is True].fillna(0)
+        convergence_dataset = dataset[dataset.reported==True].fillna(0)
     else:
         convergence_dataset = pd.DataFrame()
 
