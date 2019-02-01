@@ -5,8 +5,10 @@
     {{ render_analysis_breadcrumb(breadcrumb_data) }}
   </div>
   <div class="col-md-7">
-    <form class="form-horizontal pull-right" method="GET" accept-charset="utf-8">
-      {{ filter_form.status }} {{ filter_form.sample }}
+    <form class="form-inline pull-right" method="GET" accept-charset="utf-8">
+      <div class="form-group form-container">
+        {{ filter_form.status(class_='form-control span2 input-sm') }} {{ filter_form.sample(class_='form-control span2 input-sm') }}
+      </div>
       <button class="btn btn-warning" type="submit"><i class="icon-search icon-white"></i> {{ _('Filter') }}</button>
     </form>
   </div>
@@ -25,7 +27,7 @@
         <div class="tab-pane active" id="table">
           <table class="table table-bordered table-striped">
             <tr>
-              <td colspan="{{ 5 + location_types.count() }}"><strong>{{ form_field.name }}</strong> &middot; {{ form_field.description }}</td>
+              <td colspan="{{ 5 + location_types.count() }}"><strong>{{ form_field.tag }}</strong> &middot; {{ form_field.description }}</td>
             </tr>
             <tr>
               <th>{{ _('Observer ID') }}</th>
@@ -54,7 +56,7 @@
               <img src="{{ url_for('static', filename='img/caution.png') }}" title="{{ _('Unmarked') }}" alt="{{ _('Unmarked') }}" />
               {% endif %}
               </td>
-              <td>{{ incident.incident_description }}</td>
+              <td>{{ incident.incident_description|default('', true) }}</td>
             </tr>
             {% endfor %}
           </table>
