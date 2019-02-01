@@ -336,10 +336,12 @@ class MessageSubmissionType(ChoiceFilter):
         super(MessageSubmissionType, self).__init__(*args, **kwargs)
 
     def filter(self, query, value):
-        if value == 'Invalid':
-            return query.filter_by(submission_id=None)
-        else:
-            return query.filter(models.Form.form_type == value)
+        if value:
+            if value == 'Invalid':
+                return query.filter(
+                    models.Message.submission_id == None)   # noqa
+            else:
+                return query.filter(models.Form.form_type == value)
 
         return query
 
