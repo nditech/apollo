@@ -85,7 +85,7 @@ def gen_page_list(pager, window_size=10):
 
 
 def percent_of(a, b, default=None):
-    a_ = float(a if a else 0)
+    a_ = float(a if (a and not pd.np.isinf(a)) else 0)
     b_ = float(b if b else 0)
     try:
         return (a_ / b_) * 100

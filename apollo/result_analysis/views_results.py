@@ -103,19 +103,21 @@ def _voting_results(form_id, location_id=None):
     else:
         blank_votes_field = []
 
-    # compute and store reporting status
-    dataset['reported'] = dataset[
-        result_field_labels + [registered_voters_field]].count(1) == len(
-        result_field_labels) + 1
-    dataset['missing'] = dataset[
-        result_field_labels + [registered_voters_field]].count(1) != len(
-        result_field_labels) + 1
+    if not dataset.empty:
+        # compute and store reporting status
+        dataset['reported'] = dataset[
+            result_field_labels + [registered_voters_field]].count(1) == len(
+            result_field_labels) + 1
+        dataset['missing'] = dataset[
+            result_field_labels + [registered_voters_field]].count(1) != len(
+            result_field_labels) + 1
 
     try:
         overall_summation = dataset.groupby(
             location.location_type.name).sum().ix[location.name]
         reported_subset = dataset[dataset.reported == True]     # noqa
-        valid_dataframe = reported_subset[reported_subset[location.location_type.name]==location.name]
+        valid_dataframe = reported_subset[
+            reported_subset[location.location_type.name] == location.name]
         valid_summation = reported_subset.fillna(0).groupby(
             location.location_type.name).sum().ix[location.name]
         reporting = overall_summation[['missing', 'reported']]
@@ -244,16 +246,17 @@ def _voting_results(form_id, location_id=None):
         try:
             grouped_summation = dataset.groupby(
                 location_type).sum()
-            grouped_valid_summation = dataset[dataset.reported==True].groupby(
-                location_type).sum()
+            grouped_valid_summation = dataset[
+                dataset.reported==True].groupby(location_type).sum()  # noqa
 
             for sublocation in location_tree[location_type]:
                 try:
                     _overall = grouped_summation.ix[sublocation.name]
                     _valid = grouped_valid_summation.fillna(
                         0).ix[sublocation.name]
-                    _reported_subset = dataset[dataset.reported==True]
-                    _valid_dataframe = _reported_subset[_reported_subset[location_type]==sublocation.name]
+                    _reported_subset = dataset[dataset.reported==True]  # noqa
+                    _valid_dataframe = _reported_subset[
+                        _reported_subset[location_type] == sublocation.name]
 
                     _reporting = _overall[['missing', 'reported']]
                     _reporting['reported_pct'] = _reporting['reported'] / (
@@ -404,16 +407,19 @@ def _voting_results(form_id, location_id=None):
                             2.58) if data_available else 0
                 data_analyses['grouped'][location_type].append(
                     _sublocation_report)
-        except IndexError:
+        except (IndexError, KeyError):
             pass
 
-    convergence_dataset = dataset[dataset.reported==True].fillna(0)
+    if not dataset.empty:
+        convergence_dataset = dataset[dataset.reported==True].fillna(0)  # noqa
+    else:
+        convergence_dataset = pd.DataFrame()
 
     chart_data = {}
 
     # restrict the convergence dataframe to result fields and compute the
     # cummulative sum
-    if not convergence_dataset.empty:
+    if not (dataset.empty and convergence_dataset.empty):
         convergence_df = convergence_dataset.sort_values(
             by='updated')[['updated'] + result_field_labels]
         for field in result_field_labels:
@@ -422,10 +428,13 @@ def _voting_results(form_id, location_id=None):
         # compute vote proportions A / (A + B + C + ...)
         convergence_df[result_field_labels] = \
             convergence_df[result_field_labels].div(
-                convergence_df[result_field_labels].sum(axis=1), axis=0).fillna(0)
+                convergence_df[result_field_labels].sum(axis=1), axis=0
+            ).fillna(0)
 
         for component in result_field_labels:
-            chart_data[component] = [(int(ts_f[0].strftime('%s')) * 1000, ts_f[1] * 100) for ts_f in convergence_df.as_matrix(['updated', component])]
+            chart_data[component] = [
+                (int(ts_f[0].strftime('%s')) * 1000, ts_f[1] * 100)
+                for ts_f in convergence_df.as_matrix(['updated', component])]
 
     context = {
         'page_title': page_title,
@@ -464,7 +473,8 @@ def results_analysis(form_id):
     return _voting_results(form_id)
 
 
-@route(bp, '/submissions/analysis/results/form/<form_id>/location/<location_id>')
+@route(bp, '/submissions/analysis/results/form/<form_id>'
+           '/location/<location_id>')
 @login_required
 @permissions.view_result_analysis.require(403)
 def results_analysis_with_location(form_id, location_id):
