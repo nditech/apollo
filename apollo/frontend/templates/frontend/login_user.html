@@ -17,6 +17,15 @@
       <div class="container h-100">
         <div class="row h-75 align-items-center">
           <div class="col-md-6 col-lg-4 offset-md-3 offset-lg-4">
+            {%- with messages = get_flashed_messages(with_categories=true) -%}
+            {% if messages %}
+            {% for category, message in messages %}
+            <div class="alert alert-info">
+              {{ message }}
+            </div>
+            {% endfor %}
+            {% endif %}
+            {%- endwith %}
             <div class="card">
               <div class="card-body">{% if login_user_form.errors %}
                 <div class="alert alert-danger" role="alert">

@@ -46,7 +46,7 @@ MAIL_USE_TLS = config('MAIL_USE_TLS', cast=config.boolean, default=False)
 MAIL_USE_SSL = config('MAIL_USE_SSL', cast=config.boolean, default=False)
 MAIL_USERNAME = config('MAIL_USERNAME', default=None)
 MAIL_PASSWORD = config('MAIL_PASSWORD', default=None)
-DEFAULT_EMAIL_SENDER = config('DEFAULT_EMAIL_SENDER', default=None)
+DEFAULT_EMAIL_SENDER = config('DEFAULT_EMAIL_SENDER', default='root@localhost')
 
 SECURITY_PASSWORD_HASH = 'pbkdf2_sha256'
 SECURITY_PASSWORD_SALT = SECRET_KEY
