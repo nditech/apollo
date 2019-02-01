@@ -41,9 +41,9 @@ def message_list():
         Message.deployment == deployment,
         Message.event_id.in_(event_ids)).order_by(
         Message.received.desc(), Message.direction.desc()
-    ).join(
+    ).outerjoin(
         Submission
-    ).join(
+    ).outerjoin(
         Form
     )
     queryset_filter = filters.messages_filterset()(qs, request.args)
