@@ -466,6 +466,17 @@ def submission_edit(submission_id):
             # if the user is allowed to edit participant submissions,
             # everything has to be valid at one go. no partial update
             if master_form and selection == 'ps':
+                submission_form = edit_form_class(
+                    data=submission.data,
+                    prefix=str(submission.id)
+                )
+                sibling_forms = [
+                    edit_form_class(
+                        data=sibling.data,
+                        prefix=str(sibling.id)
+                    ) for sibling in sibling_submissions
+                ]
+
                 if master_form.validate():
                     form_fields = master_form.data.keys()
                     data_fields = set(form_fields).intersection(
@@ -544,6 +555,17 @@ def submission_edit(submission_id):
                     no_error = False
 
             if selection == 'obs':
+                master_form = edit_form_class(
+                    data=master_submission.data,
+                    prefix=str(master_submission.id)
+                )
+                sibling_forms = [
+                    edit_form_class(
+                        data=sibling.data,
+                        prefix=str(sibling.id)
+                    ) for sibling in sibling_submissions
+                ]
+
                 if submission_form.validate():
                     changed = False
                     data = submission.data.copy()
