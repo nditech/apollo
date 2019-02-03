@@ -376,6 +376,7 @@ def trim_conflicts(submission, conflict_tags, data_keys):
 
     # these were updated, they are not in conflict any longer
     updated_unconflicted_keys = set(data_keys) - set(conflict_tags)
-    new_conflicts = set(submission.conflicts) - updated_unconflicted_keys
+    new_conflicts = set(submission.conflicts) - updated_unconflicted_keys \
+        if submission.conflicts else set()
 
     return sorted(new_conflicts.union(conflict_keys))
