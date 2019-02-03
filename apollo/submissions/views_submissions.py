@@ -29,7 +29,6 @@ from apollo.frontend.helpers import (
     get_quality_assurance_form_dashboard_menu)
 from apollo.frontend.template_filters import mkunixtimestamp
 from apollo.messaging.tasks import send_messages
-from apollo.participants.utils import update_participant_completion_rating
 from apollo.submissions import filters, forms
 from apollo.submissions.incidents import incidents_csv
 from apollo.submissions.aggregation import (
@@ -181,11 +180,16 @@ def submission_list(form_id):
     # TODO: rewrite this. verify what select_related does
     if request.form.get('action') == 'send_message':
         message = request.form.get('message', '')
-        recipients = [x for x in [submission.participant.phone
-                if submission.participant and
-                submission.participant.phone else ''
+        recipients = [
+            x for x in [
+                submission.participant.phone
+                if (
+                    submission.participant and
+                    submission.participant.phone
+                ) else ''
                 for submission in query_filterset.qs.with_entities(
-                    models.Submission.participant).select_related(1)] if x is not '']
+                    models.Submission.participant).select_related(1)
+            ] if x != '']
         recipients.extend(current_app.config.get('MESSAGING_CC'))
 
         if message and recipients and permissions.send_messages.can():
@@ -386,9 +390,13 @@ def submission_edit(submission_id):
                 new_incident_description = submission_form.description.data
                 new_incident_status = submission_form.status.data
 
-                if new_incident_description != submission.incident_description:
+                if (
+                    new_incident_description !=
+                    submission.incident_description
+                ):
                     changed = True
-                    update_params['incident_description'] = new_incident_description
+                    update_params['incident_description'] = \
+                        new_incident_description
                 if new_incident_status != submission.incident_status:
                     changed = True
                     update_params['incident_status'] = new_incident_status
@@ -458,6 +466,17 @@ def submission_edit(submission_id):
             # if the user is allowed to edit participant submissions,
             # everything has to be valid at one go. no partial update
             if master_form and selection == 'ps':
+                submission_form = edit_form_class(
+                    data=submission.data,
+                    prefix=str(submission.id)
+                )
+                sibling_forms = [
+                    edit_form_class(
+                        data=sibling.data,
+                        prefix=str(sibling.id)
+                    ) for sibling in sibling_submissions
+                ]
+
                 if master_form.validate():
                     form_fields = master_form.data.keys()
                     data_fields = set(form_fields).intersection(
@@ -465,20 +484,37 @@ def submission_edit(submission_id):
                     changed = False
                     data = master_submission.data.copy()
                     update_params = {}
-                    overridden_fields = master_submission.overridden_fields[:] \
+                    overridden_fields = \
+                        master_submission.overridden_fields[:] \
                         if master_submission.overridden_fields else []
 
-                    new_verification_status = master_form.data.get('verification_status')
-                    new_quarantine_status = master_form.data.get('quarantine_status')
+                    new_verification_status = master_form.data.get(
+                        'verification_status')
+                    new_quarantine_status = master_form.data.get(
+                        'quarantine_status')
 
-                    if new_quarantine_status in get_valid_values(Submission.QUARANTINE_STATUSES):
-                        if master_submission.quarantine_status != new_quarantine_status:
+                    if (
+                        new_quarantine_status in get_valid_values(
+                            Submission.QUARANTINE_STATUSES)
+                    ):
+                        if (
+                            master_submission.quarantine_status !=
+                            new_quarantine_status
+                        ):
                             changed = True
-                        update_params['quarantine_status'] = new_quarantine_status
-                    if new_verification_status in get_valid_values(Submission.VERIFICATION_STATUSES):
-                        if master_submission.verification_status != new_verification_status:
+                        update_params['quarantine_status'] = \
+                            new_quarantine_status
+                    if (
+                        new_verification_status in get_valid_values(
+                            Submission.VERIFICATION_STATUSES)
+                    ):
+                        if (
+                            master_submission.verification_status !=
+                            new_verification_status
+                        ):
                             changed = True
-                        update_params['verification_status'] = new_verification_status
+                        update_params['verification_status'] = \
+                            new_verification_status
 
                     for form_field in data_fields:
 
@@ -491,8 +527,12 @@ def submission_edit(submission_id):
                             ):
                                 data.pop(form_field, None)
                             else:
-                                if master_form.data.get(form_field) is not None:
-                                    data[form_field] = master_form.data.get(form_field)
+                                if (
+                                    master_form.data.get(form_field)
+                                    is not None
+                                ):
+                                    data[form_field] = \
+                                        master_form.data.get(form_field)
 
                             if (
                                 form_field not in
@@ -515,24 +555,54 @@ def submission_edit(submission_id):
                     no_error = False
 
             if selection == 'obs':
+                master_form = edit_form_class(
+                    data=master_submission.data,
+                    prefix=str(master_submission.id)
+                )
+                sibling_forms = [
+                    edit_form_class(
+                        data=sibling.data,
+                        prefix=str(sibling.id)
+                    ) for sibling in sibling_submissions
+                ]
+
                 if submission_form.validate():
                     changed = False
                     data = submission.data.copy()
                     update_params = {}
-                    form_fields = set(submission_form.data.keys()).intersection(
-                        questionnaire_form.tags)
+                    form_fields = set(
+                        submission_form.data.keys()).intersection(
+                            questionnaire_form.tags)
 
-                    new_verification_status = submission_form.data.get('verification_status')
-                    new_quarantine_status = submission_form.data.get('quarantine_status')
+                    new_verification_status = submission_form.data.get(
+                        'verification_status')
+                    new_quarantine_status = submission_form.data.get(
+                        'quarantine_status')
 
-                    if new_quarantine_status in get_valid_values(Submission.QUARANTINE_STATUSES):
-                        if submission.quarantine_status != new_quarantine_status:
+                    if (
+                        new_quarantine_status in get_valid_values(
+                            Submission.QUARANTINE_STATUSES)
+                    ):
+                        if (
+                            submission.quarantine_status !=
+                            new_quarantine_status
+                        ):
                             changed = True
-                        update_params['quarantine_status'] = new_quarantine_status
-                    if new_verification_status in get_valid_values(Submission.VERIFICATION_STATUSES):
-                        if submission.verification_status != new_verification_status:
+                        update_params['quarantine_status'] = \
+                            new_quarantine_status
+                    if (
+                        new_verification_status in get_valid_values(
+                            Submission.VERIFICATION_STATUSES)
+                    ):
+                        if (
+                            submission.verification_status !=
+                            new_verification_status
+                        ):
                             changed = True
-                        update_params['verification_status'] = new_verification_status
+                        update_params['verification_status'] = \
+                            new_verification_status
+
+                    changed_fields = []
 
                     for form_field in form_fields:
                         if data.get(form_field) != \
@@ -545,13 +615,25 @@ def submission_edit(submission_id):
                             ):
                                 data.pop(form_field, None)
                             else:
-                                if submission_form.data.get(form_field) is not None:
-                                    data[form_field] = submission_form.data.get(form_field)
+                                if (
+                                    submission_form.data.get(form_field)
+                                    is not None
+                                ):
+                                    data[form_field] = \
+                                        submission_form.data.get(form_field)
+                                    changed_fields.append(form_field)
                             changed = True
                     if changed:
                         update_params['data'] = data
                         services.submissions.find(id=submission.id).update(
                             update_params)
+
+                        changed_subset = {
+                            k: v for k, v in data.items()
+                            if k in changed_fields
+                        }
+                        if changed_subset:
+                            submission.update_related(changed_subset)
 
                         db.session.commit()
                         update_submission_version(submission)
@@ -664,7 +746,8 @@ def _incident_csv(form_id, location_type_id, location_id=None):
     return codecs.BOM_UTF8.decode(encoding='utf-8') + ds.csv
 
 
-@route(bp, '/incidents/form/<form_id>/locationtype/<location_type_id>/incidents.csv')
+@route(bp, '/incidents/form/<form_id>/locationtype'
+           '/<location_type_id>/incidents.csv')
 @login_required
 def incidents_csv_dl(form_id, location_type_id):
     response = make_response(
@@ -674,7 +757,8 @@ def incidents_csv_dl(form_id, location_type_id):
     return response
 
 
-@route(bp, '/incidents/form/<form_id>/locationtype/<location_type_id>/location/<location_id>/incidents.csv')
+@route(bp, '/incidents/form/<form_id>/locationtype/<location_type_id>'
+           '/location/<location_id>/incidents.csv')
 @login_required
 def incidents_csv_with_location_dl(form_id, location_type_id, location_id):
     response = make_response(
@@ -716,7 +800,7 @@ def submission_version(submission_id, version_id):
     icon='<i class="glyphicon glyphicon-tasks"></i>', order=1,
     visible_when=lambda: len(
         get_quality_assurance_form_dashboard_menu(
-            form_type='CHECKLIST', quality_checks_enabled=True)) > 0 \
+            form_type='CHECKLIST', quality_checks_enabled=True)) > 0
         and permissions.view_quality_assurance.can(),
     dynamic_list_constructor=partial(
         get_quality_assurance_form_dashboard_menu,

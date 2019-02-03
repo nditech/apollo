@@ -16,7 +16,7 @@ from .. import models, services, utils
 from ..frontend.helpers import DictDiffer
 from .custom_fields import IntegerSplitterField
 
-ugly_phone = re.compile('[^\d]*')
+ugly_phone = re.compile('[^0-9]*')
 
 
 def update_submission_version(submission):
