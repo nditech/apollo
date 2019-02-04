@@ -8,16 +8,17 @@ from flask_menu import register_menu
 from flask_security import login_required
 from sqlalchemy import func
 
-from apollo.deployments.forms import generate_event_selection_form
-from apollo.frontend import permissions, route
-from apollo.frontend.dashboard import get_coverage
-from apollo.frontend.helpers import (
+from ..deployments.forms import generate_event_selection_form
+from ..frontend import permissions, route
+from ..frontend.dashboard import get_coverage
+from ..frontend.helpers import (
     get_event, set_event, get_concurrent_events_list_menu,
     get_checklist_form_dashboard_menu)
-from apollo.models import Event, LocationType
-from apollo.services import (
-    events, forms, submissions, locations, location_types)
-
+from ..locations.models import LocationType, Location
+from ..deployments.models import Event
+from ..submissions.models import Submission
+from ..formsframework.models import Form
+from apollo.services import events
 
 bp = Blueprint('dashboard', __name__, template_folder='templates',
                static_folder='static')
@@ -36,20 +37,25 @@ def main_dashboard(form_id=None):
 
     event = get_event()
     if not form_id:
-        form = forms.find(
-            form_set_id=event.form_set_id, form_type='CHECKLIST'
+        form = Form.query.filter(
+            Form.form_set_id == event.form_set_id,
+            Form.form_type == 'CHECKLIST'
         ).order_by('name').first()
     else:
-        form = forms.fget_or_404(
-            form_set_id=event.form_set_id, form_type='CHECKLIST', id=form_id)
+        form = Form.query.filter(
+            Form.form_set_id == event.form_set_id,
+            Form.form_type == 'CHECKLIST',
+            Form.id == form_id).first_or_404()
 
     if form is not None:
         page_title = _('Dashboard · %(name)s', name=form.name)
     else:
         page_title = _('Dashboard')
 
-    query = submissions.find(
-        event_id=event.id, form=form, submission_type='M')
+    query = Submission.query.filter(
+        Submission.event_id == event.id,
+        Submission.form == form,
+        Submission.submission_type == 'M')
     # dashboard_filter = dashboard_filterset()(query, data=args)
 
     # queryset = submissions.find(
@@ -66,8 +72,9 @@ def main_dashboard(form_id=None):
 
     location = None
     if args.get('location'):
-        location = locations.fget_or_404(
-            id=args.get('location'), location_set_id=event.location_set_id)
+        location = Location.query.filter(
+            Location.id == args.get('location'),
+            Location.location_set_id == event.location_set_id).first_or_404()
 
     # # activate sample filter
     # filter_form = filter_.form
@@ -88,8 +95,9 @@ def main_dashboard(form_id=None):
             'Dashboard · %(name)s  · %(group)s',
             name=form.name, group=group['name'])
 
-        admin_location_types = location_types.find(
-            is_administrative=True, location_set_id=event.location_set_id
+        admin_location_types = LocationType.query.filter(
+            LocationType.is_administrative == True,  # noqa
+            LocationType.location_set_id == event.location_set_id
         ).join(
             LocationType.ancestor_paths
         ).group_by(
@@ -98,9 +106,11 @@ def main_dashboard(form_id=None):
 
         location_type = None
         if location_type_id:
+            # pair[1].id needs to be cast to a str because location_type_id
+            # is a string
             index, location_type = next(
                 (pair for pair in enumerate(admin_location_types)
-                 if pair[1].id == location_type_id),
+                 if str(pair[1].id) == location_type_id),
                 (None, None))
 
         if location_type is None and len(admin_location_types) > 0:
@@ -155,7 +165,7 @@ def main_dashboard(form_id=None):
     context = {
         'args': {},
         'location_id': '',
-        'next_location': False,
+        'next_location': next_location_type,
         'data': data,
         'obs_data': [],
         'filter_form': None,
