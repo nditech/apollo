@@ -33,12 +33,17 @@ def get_event():
     the default event and persists it in the session
     """
     _id = session.get('event', None)
-    if not _id:
+    event = None
+
+    if _id:
+        event = services.events.query.filter_by(id=_id).first()
+
+    # ensure that even if the event is not found that we can
+    # retrieve the default
+    if not (event and _id):
         event = services.events.default()
         _id = event.id
         session['event'] = _id
-    else:
-        event = services.events.query.filter_by(id=_id).first()
 
     return event
 
