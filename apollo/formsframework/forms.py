@@ -135,136 +135,133 @@ class BaseQuestionnaireForm(Form):
 
         # also ignore fields that have errors so as not to save them
         ignored_fields.extend(self.errors.keys())
-        try:
-            form = self.data.get('form')
-            participant = self.data.get('participant')
+        form = self.data.get('form')
+        participant = self.data.get('participant')
 
-            if form.form_type == 'CHECKLIST':
-                # when searching for the submission, take into cognisance
-                # that the submission may be in one of several concurrent
-                # events
-                submission = models.Submission.query.filter(
-                    models.Submission.participant == participant,
-                    models.Submission.form == form,
-                    models.Submission.submission_type == 'O',
-                    models.Submission.event_id.in_(current_event_ids)
-                ).first()
+        if form.form_type == 'CHECKLIST':
+            # when searching for the submission, take into cognisance
+            # that the submission may be in one of several concurrent
+            # events
+            submission = models.Submission.query.filter(
+                models.Submission.participant == participant,
+                models.Submission.form == form,
+                models.Submission.submission_type == 'O',
+                models.Submission.event_id.in_(current_event_ids)
+            ).first()
 
-                if self.data.get('comment') and submission and commit:
-                    services.submission_comments.create_comment(
-                        submission, self.data.get('comment'))
-            else:
-                # the submission event is determined by taking the intersection
-                # of form events, participant events and concurrent events
-                # and taking the last event ordered by descending end date
-                event = current_events.filter_by(
-                    form_set_id=form.form_set_id,
-                    participant_set_id=participant.participant_set_id
-                ).order_by(models.Event.end.desc()).first()
+            if self.data.get('comment') and submission and commit:
+                services.submission_comments.create_comment(
+                    submission, self.data.get('comment'))
+        else:
+            # the submission event is determined by taking the intersection
+            # of form events, participant events and concurrent events
+            # and taking the last event ordered by descending end date
+            event = current_events.filter_by(
+                form_set_id=form.form_set_id,
+                participant_set_id=participant.participant_set_id
+            ).order_by(models.Event.end.desc()).first()
 
-                submission = models.Submission(
-                    submission_type='O',
-                    form=form,
-                    participant=participant,
-                    location=participant.location,
-                    created=utils.current_timestamp(),
-                    event=event,
-                    deployment_id=event.deployment_id)
-                if self.data.get('comment'):
-                    submission.incident_description = self.data.get('comment')
+            submission = models.Submission(
+                submission_type='O',
+                form=form,
+                participant=participant,
+                location=participant.location,
+                created=utils.current_timestamp(),
+                event=event,
+                deployment_id=event.deployment_id)
+            if self.data.get('comment'):
+                submission.incident_description = self.data.get('comment')
 
-            if submission:
-                data = submission.data.copy() if submission.data else {}
-                form_fields = [
-                    f for f in self.data.keys() if f not in ignored_fields
-                ]
+        if submission:
+            data = submission.data.copy() if submission.data else {}
+            form_fields = [
+                f for f in self.data.keys() if f not in ignored_fields
+            ]
 
-                changed_fields = []
-                for form_field in form_fields:
-                    field_data = self.data.get(form_field)
+            changed_fields = []
+            for form_field in form_fields:
+                field_data = self.data.get(form_field)
 
-                    if isinstance(field_data, int):
-                        if data.get(form_field) != field_data:
-                            changed_fields.append(form_field)
-                            data[form_field] = field_data
-                            continue
-
-                    if isinstance(field_data, list) and field_data:
-                        original_value = data.get(form_field)
-                        if isinstance(original_value, list):
-                            original_value = sorted(original_value)
-                        if (original_value != field_data):
-                            changed_fields.append(form_field)
-                            data[form_field] = field_data
+                if isinstance(field_data, int):
+                    if data.get(form_field) != field_data:
+                        changed_fields.append(form_field)
+                        data[form_field] = field_data
                         continue
 
-                    if isinstance(field_data, str) and field_data:
-                        if data.get(form_field) != field_data:
-                            changed_fields.append(form_field)
-                            data[form_field] = field_data
+                if isinstance(field_data, list) and field_data:
+                    original_value = data.get(form_field)
+                    if isinstance(original_value, list):
+                        original_value = sorted(original_value)
+                    if (original_value != field_data):
+                        changed_fields.append(form_field)
+                        data[form_field] = field_data
+                    continue
 
-                if changed_fields:
-                    phone_num = ugly_phone.sub('', self.data.get('sender'))
-                    g.phone = phone_num
+                if isinstance(field_data, str) and field_data:
+                    if data.get(form_field) != field_data:
+                        changed_fields.append(form_field)
+                        data[form_field] = field_data
 
-                    # confirm if phone number is known and verified
-                    participant = self.data.get('participant')
+            if changed_fields:
+                phone_num = ugly_phone.sub('', self.data.get('sender'))
+                g.phone = phone_num
 
-                    # retrieve the first phone contact that matches
-                    phone_contact = services.participant_phones.lookup(
-                        phone_num, participant)
+                # confirm if phone number is known and verified
+                participant = self.data.get('participant')
 
-                    if phone_contact:
-                        submission.sender_verified = phone_contact.verified
-                        phone_contact.last_seen = utils.current_timestamp()
+                # retrieve the first phone contact that matches
+                phone_contact = services.participant_phones.lookup(
+                    phone_num, participant)
 
-                        if commit:
-                            phone_contact.save()
-                    else:
-                        if submission.id is None:
-                            submission.sender_verified = False
-                        else:
-                            update_params['sender_verified'] = False
-
-                        phone = services.phones.get_by_number(phone_num)
-                        if not phone:
-                            phone = models.Phone(number=phone_num)
-
-                        phone_contact = models.ParticipantPhone(
-                            phone=phone, participant_id=participant.id,
-                            verified=False)
-
-                        if commit:
-                            phone.save()
-                            phone_contact.save()
+                if phone_contact:
+                    submission.sender_verified = phone_contact.verified
+                    phone_contact.last_seen = utils.current_timestamp()
 
                     if commit:
-                        submission.data = data
-                        if submission.id is None:
-                            # for a fresh submission, everything will get saved
-                            submission.save()
-                        else:
-                            # for an existing submission, we need an update,
-                            # otherwise the JSONB field won't get persisted
-                            update_params['data'] = data
-                            services.submissions.find(
-                                id=submission.id
-                            ).update(update_params, synchronize_session=False)
+                        phone_contact.save()
+                else:
+                    if submission.id is None:
+                        submission.sender_verified = False
+                    else:
+                        update_params['sender_verified'] = False
 
-                        # update conflict markers and master data
-                        changed_subset = {
-                            k: v for k, v in data.items()
-                            if k in changed_fields
-                        }
-                        if changed_subset:
-                            submission.update_related(changed_subset)
-                        update_submission_version(submission)
+                    phone = services.phones.get_by_number(phone_num)
+                    if not phone:
+                        phone = models.Phone(number=phone_num)
 
-                    # update completion rating for participant
-                    # if submission.form.form_type == 'CHECKLIST':
-                    #     update_participant_completion_rating(participant)
-        except Exception:
-            pass
+                    phone_contact = models.ParticipantPhone(
+                        phone=phone, participant_id=participant.id,
+                        verified=False)
+
+                    if commit:
+                        phone.save()
+                        phone_contact.save()
+
+                if commit:
+                    submission.data = data
+                    if submission.id is None:
+                        # for a fresh submission, everything will get saved
+                        submission.save()
+                    else:
+                        # for an existing submission, we need an update,
+                        # otherwise the JSONB field won't get persisted
+                        update_params['data'] = data
+                        services.submissions.find(
+                            id=submission.id
+                        ).update(update_params, synchronize_session=False)
+
+                    # update conflict markers and master data
+                    changed_subset = {
+                        k: v for k, v in data.items()
+                        if k in changed_fields
+                    }
+                    if changed_subset:
+                        submission.update_related(changed_subset)
+                    update_submission_version(submission)
+
+                # update completion rating for participant
+                # if submission.form.form_type == 'CHECKLIST':
+                #     update_participant_completion_rating(participant)
 
         return submission
 
