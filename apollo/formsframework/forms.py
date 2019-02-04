@@ -7,15 +7,17 @@ from flask import g
 from flask_babelex import lazy_gettext as _
 from flask_wtf import FlaskForm as SecureForm
 from flask_wtf.file import FileField
-from wtforms import (
-    Form, BooleanField, IntegerField, SelectField, StringField, validators,
-    widgets)
+import wtforms
 from wtforms_alchemy.utils import choice_type_coerce_factory
 
-from .. import models, services, utils
+from .. import services, utils
 from ..frontend.helpers import DictDiffer
 from .custom_fields import IntegerSplitterField
-from ..submissions.models import SubmissionComment
+from ..submissions.models import (
+    Submission, SubmissionComment, SubmissionVersion)
+from ..participants.models import Participant, ParticipantPhone, Phone
+from ..deployments.models import Event
+from ..formsframework.models import Form
 
 ugly_phone = re.compile('[^0-9]*')
 
@@ -32,9 +34,9 @@ def update_submission_version(submission):
         version_data['description'] = submission.incident_description
 
     # get previous version
-    previous = services.submission_versions.find(
-        submission=submission).order_by(
-            models.SubmissionVersion.timestamp.desc()).first()
+    previous = SubmissionVersion.query.filter(
+        SubmissionVersion.submission == submission).order_by(
+            SubmissionVersion.timestamp.desc()).first()
 
     if previous:
         diff = DictDiffer(version_data, previous.data)
@@ -61,11 +63,11 @@ def filter_participants(form, participant_id):
         return None
     event = getattr(g, 'event', services.events.default())
     current_events = services.events.overlapping_events(event)
-    form_events = models.Event.query.filter_by(form_set=form.form_set)
+    form_events = Event.query.filter_by(form_set=form.form_set)
     query = current_events.intersect(form_events).join(
-        models.Participant,
-        models.Participant.participant_set_id == models.Event.participant_set_id    # noqa
-    ).with_entities(models.Participant)
+        Participant,
+        Participant.participant_set_id == Event.participant_set_id    # noqa
+    ).with_entities(Participant)
 
     participant = query.filter_by(participant_id=participant_id).first()
 
@@ -76,9 +78,9 @@ def filter_form(form_id):
     event = getattr(g, 'event', services.events.default())
     current_events = services.events.overlapping_events(event)
     query = current_events.join(
-        models.Form,
-        models.Event.form_set_id == models.Form.form_set_id
-    ).with_entities(models.Form)
+        Form,
+        Event.form_set_id == Form.form_set_id
+    ).with_entities(Form)
 
     if form_id:
         form = query.filter_by(id=form_id).first()
@@ -90,19 +92,21 @@ def find_active_forms():
     event = getattr(g, 'event', services.events.default())
     current_events = services.events.overlapping_events(event)
     query = current_events.join(
-        models.Form,
-        models.Event.form_set_id == models.Form.form_set_id
-    ).with_entities(models.Form)
+        Form,
+        Event.form_set_id == Form.form_set_id
+    ).with_entities(Form)
 
     return query
 
 
-class BaseQuestionnaireForm(Form):
-    form = StringField(
-        'Form', validators=[validators.required()],
+class BaseQuestionnaireForm(wtforms.Form):
+    form = wtforms.StringField(
+        'Form', validators=[wtforms.validators.required()],
         filters=[lambda data: filter_form(data)])
-    sender = StringField('Sender', validators=[validators.required()])
-    comment = StringField('Comment', validators=[validators.optional()])
+    sender = wtforms.StringField('Sender',
+                                 validators=[wtforms.validators.required()])
+    comment = wtforms.StringField('Comment',
+                                  validators=[wtforms.validators.optional()])
 
     def process(self, formdata=None, obj=None, **kwargs):
         self._formdata = formdata
@@ -131,7 +135,7 @@ class BaseQuestionnaireForm(Form):
         submission = None
         current_events = services.events.overlapping_events(
             g.event)
-        current_event_ids = current_events.with_entities(models.Event.id)
+        current_event_ids = current_events.with_entities(Event.id)
         update_params = {}
 
         # also ignore fields that have errors so as not to save them
@@ -143,11 +147,11 @@ class BaseQuestionnaireForm(Form):
             # when searching for the submission, take into cognisance
             # that the submission may be in one of several concurrent
             # events
-            submission = models.Submission.query.filter(
-                models.Submission.participant == participant,
-                models.Submission.form == form,
-                models.Submission.submission_type == 'O',
-                models.Submission.event_id.in_(current_event_ids)
+            submission = Submission.query.filter(
+                Submission.participant == participant,
+                Submission.form == form,
+                Submission.submission_type == 'O',
+                Submission.event_id.in_(current_event_ids)
             ).first()
 
             if self.data.get('comment') and submission and commit:
@@ -162,9 +166,9 @@ class BaseQuestionnaireForm(Form):
             event = current_events.filter_by(
                 form_set_id=form.form_set_id,
                 participant_set_id=participant.participant_set_id
-            ).order_by(models.Event.end.desc()).first()
+            ).order_by(Event.end.desc()).first()
 
-            submission = models.Submission(
+            submission = Submission(
                 submission_type='O',
                 form=form,
                 participant=participant,
@@ -230,9 +234,9 @@ class BaseQuestionnaireForm(Form):
 
                     phone = services.phones.get_by_number(phone_num)
                     if not phone:
-                        phone = models.Phone(number=phone_num)
+                        phone = Phone(number=phone_num)
 
-                    phone_contact = models.ParticipantPhone(
+                    phone_contact = ParticipantPhone(
                         phone=phone, participant_id=participant.id,
                         verified=False)
 
@@ -271,10 +275,10 @@ class BaseQuestionnaireForm(Form):
 
 def build_questionnaire(form, data=None):
     fields = {'groups': []}
-    fields['participant'] = StringField(
+    fields['participant'] = wtforms.StringField(
         'Participant',
         filters=[partial(filter_participants, form)],
-        validators=[validators.required()])
+        validators=[wtforms.validators.required()])
 
     for group in form.data['groups']:
         groupspec = (group['name'], [])
@@ -290,32 +294,33 @@ def build_questionnaire(form, data=None):
                         field['tag'],
                         choices=choices,
                         description=field['description'],
-                        validators=[validators.optional()],
+                        validators=[wtforms.validators.optional()],
                     )
                 else:
-                    fields[field['tag']] = SelectField(
+                    fields[field['tag']] = wtforms.SelectField(
                         field['tag'],
                         choices=choices,
                         coerce=int,
                         description=field['description'],
-                        validators=[validators.optional()],
-                        widget=widgets.TextInput()
+                        validators=[wtforms.validators.optional()],
+                        widget=wtforms.widgets.TextInput()
                     )
             elif field_type in ('comment', 'string'):
-                fields[field['tag']] = StringField(
+                fields[field['tag']] = wtforms.StringField(
                     field['tag'], description=field['description'],
-                    validators=[validators.optional()])
+                    validators=[wtforms.validators.optional()])
             elif field_type in ('boolean', 'integer'):
                 if field_type == 'boolean':
-                    field_validators = [validators.optional()]
+                    field_validators = [wtforms.validators.optional()]
                 else:
                     field_validators = [
-                        validators.optional(),
-                        validators.NumberRange(min=field.get('min', 0),
-                                               max=field.get('max', 9999))
+                        wtforms.validators.optional(),
+                        wtforms.validators.NumberRange(
+                            min=field.get('min', 0),
+                            max=field.get('max', 9999))
                     ]
 
-                fields[field['tag']] = IntegerField(
+                fields[field['tag']] = wtforms.IntegerField(
                     field['tag'],
                     description=field['description'],
                     validators=field_validators)
@@ -328,21 +333,23 @@ def build_questionnaire(form, data=None):
 
 
 class FormForm(SecureForm):
-    name = StringField(_('Name'), validators=[validators.InputRequired()])
-    prefix = StringField(_('Prefix'), validators=[validators.InputRequired()])
-    form_type = SelectField(
-        _('Form Type'), choices=models.Form.FORM_TYPES,
+    name = wtforms.StringField(
+        _('Name'), validators=[wtforms.validators.InputRequired()])
+    prefix = wtforms.StringField(
+        _('Prefix'), validators=[wtforms.validators.InputRequired()])
+    form_type = wtforms.SelectField(
+        _('Form Type'), choices=Form.FORM_TYPES,
         coerce=choice_type_coerce_factory(
-            models.Form.form_type.type),
-        validators=[validators.InputRequired()])
-    require_exclamation = BooleanField(_('Require Exclamation'))
-    track_data_conflicts = BooleanField(_('Track Data Conflicts?'))
-    calculate_moe = BooleanField(_('Calculate MOE'))
-    quality_checks_enabled = BooleanField(_('QA Enabled'))
-    accredited_voters_tag = StringField(_('Accredited Voters Field'))
-    blank_votes_tag = StringField(_('Blank Votes Field'))
-    invalid_votes_tag = StringField(_('Invalid Votes Field'))
-    registered_votes_tag = StringField(_('Registered Voters Field'))
+            Form.form_type.type),
+        validators=[wtforms.validators.InputRequired()])
+    require_exclamation = wtforms.BooleanField(_('Require Exclamation'))
+    track_data_conflicts = wtforms.BooleanField(_('Track Data Conflicts?'))
+    calculate_moe = wtforms.BooleanField(_('Calculate MOE'))
+    quality_checks_enabled = wtforms.BooleanField(_('QA Enabled'))
+    accredited_voters_tag = wtforms.StringField(_('Accredited Voters Field'))
+    blank_votes_tag = wtforms.StringField(_('Blank Votes Field'))
+    invalid_votes_tag = wtforms.StringField(_('Invalid Votes Field'))
+    registered_votes_tag = wtforms.StringField(_('Registered Voters Field'))
 
 
 class FormImportForm(SecureForm):
