@@ -3,7 +3,7 @@ import calendar
 from datetime import datetime, timedelta
 
 from dateutil.parser import parse
-from dateutil.tz import gettz, UTC
+from dateutil.tz import gettz
 from flask import (
     Blueprint, Response, current_app, g, render_template, request,
     stream_with_context)
@@ -116,10 +116,10 @@ def message_list():
 
         if 'date' not in filter_errors and filter_data.get('date'):
             try:
-                dt = parse(filter_data.get('date'))
+                dt = parse(filter_data.get('date'), dayfirst=True)
 
                 dt = dt.replace(
-                    tzinfo=APP_TZ).astimezone(UTC).replace(tzinfo=None)
+                    tzinfo=APP_TZ)
 
                 date_end = dt.replace(hour=23, minute=59, second=59)
                 date_start = dt.replace(hour=0, minute=0, second=0)
@@ -136,7 +136,9 @@ def message_list():
                         ),
                     )
                 )
+
             except (OverflowError, ValueError):
+                print('Errored out!')
                 all_messages = all_messages.filter(False)
 
         if 'form_type' not in filter_errors and (
