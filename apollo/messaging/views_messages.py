@@ -138,7 +138,6 @@ def message_list():
                 )
 
             except (OverflowError, ValueError):
-                print('Errored out!')
                 all_messages = all_messages.filter(False)
 
         if 'form_type' not in filter_errors and (
