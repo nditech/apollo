@@ -2,6 +2,8 @@
 import calendar
 from datetime import datetime, timedelta
 
+from dateutil.parser import parse
+from dateutil.tz import gettz
 from flask import (
     Blueprint, Response, current_app, g, render_template, request,
     stream_with_context)
@@ -13,11 +15,14 @@ from slugify import slugify_unicode
 import sqlalchemy as sa
 from sqlalchemy.orm import aliased
 
-from apollo.frontend import filters, route, permissions
+from apollo.frontend import route, permissions
+from apollo.messaging.filters import MessageFilterForm, MessageFilterSet
 from apollo.models import Event, Form, Message, Submission
 from apollo.services import events, messages
+from apollo.settings import TIMEZONE
 
 
+APP_TZ = gettz(TIMEZONE)
 bp = Blueprint('messages', __name__)
 
 
@@ -41,15 +46,11 @@ def message_list():
         Message.deployment == deployment,
         Message.event_id.in_(event_ids)).order_by(
         Message.received.desc(), Message.direction.desc()
-    ).outerjoin(
-        Submission
-    ).outerjoin(
-        Form
     )
-    queryset_filter = filters.messages_filterset()(qs, request.args)
 
     if request.args.get('export') and permissions.export_messages.can():
         # Export requested
+        queryset_filter = MessageFilterSet(qs, request.args)
         dataset = messages.export_list(queryset_filter.qs)
         basename = slugify_unicode('%s messages %s' % (
             g.event.name.lower(),
@@ -61,8 +62,13 @@ def message_list():
             mimetype="text/csv"
         )
     else:
-        Msg = aliased(Message)
-        all_messages = queryset_filter.qs.filter(
+        filter_form = MessageFilterForm(request.args)
+        filter_form.validate()
+        filter_errors = filter_form.errors
+        filter_data = filter_form.data
+        OutboundMsg = aliased(Message, name='outbound')
+
+        split_messages = qs.filter(
             sa.or_(
                 Message.direction == 'IN',
                 sa.and_(
@@ -70,20 +76,87 @@ def message_list():
                     Message.direction == 'OUT'
                 )
             )
+        ).outerjoin(
+            Submission, Message.submission_id == Submission.id
+        ).outerjoin(
+            Form, Submission.form_id == Form.id
         ).join(
             # TODO: add extra condition for 'OUT' message
             # if necessary
-            Msg, Msg.originating_message_id == Message.id
-        ).with_entities(
-            Message, Msg, Submission.id, Form.form_type
+            OutboundMsg,
+            sa.and_(
+                OutboundMsg.originating_message_id == Message.id,
+                OutboundMsg.direction == 'OUT',
+            )
+        )
+
+        # filtering
+        all_messages = split_messages.with_entities(
+            Message, OutboundMsg, Submission.id, Form.form_type
         ).order_by(Message.received.desc())
+
+        if 'mobile' not in filter_errors and filter_data.get('mobile'):
+            val = f"%{filter_data.get('mobile')}%"
+            all_messages = all_messages.filter(
+                sa.or_(
+                    Message.recipient.ilike(val),
+                    Message.sender.ilike(val),
+                    OutboundMsg.recipient.ilike(val)
+                )
+            )
+
+        if 'text' not in filter_errors and filter_data.get('text'):
+            val = f"%{filter_data.get('text')}%"
+            all_messages = all_messages.filter(
+                sa.or_(
+                    Message.text.ilike(val),
+                    OutboundMsg.text.ilike(val),
+                )
+            )
+
+        if 'date' not in filter_errors and filter_data.get('date'):
+            try:
+                dt = parse(filter_data.get('date'), dayfirst=True)
+
+                dt = dt.replace(
+                    tzinfo=APP_TZ)
+
+                date_end = dt.replace(hour=23, minute=59, second=59)
+                date_start = dt.replace(hour=0, minute=0, second=0)
+
+                all_messages = all_messages.filter(
+                    sa.or_(
+                        sa.and_(
+                            Message.received >= date_start,
+                            Message.received <= date_end
+                        ),
+                        sa.and_(
+                            OutboundMsg.received >= date_start,
+                            OutboundMsg.received <= date_end
+                        ),
+                    )
+                )
+
+            except (OverflowError, ValueError):
+                all_messages = all_messages.filter(False)
+
+        if 'form_type' not in filter_errors and (
+                            filter_data.get('form_type') != ''):
+            if filter_data.get('form_type') == 'Invalid':
+                all_messages = all_messages.filter(
+                    Message.submission_id == None   # noqa
+                )
+            else:
+                all_messages = all_messages.filter(
+                    Form.form_type == filter_data.get('form_type')
+                )
 
         data = request.args.to_dict(flat=False)
         page_spec = data.pop('page', None) or [1]
         page = int(page_spec[0])
         context = {
             'page_title': page_title,
-            'filter_form': queryset_filter.form,
+            'filter_form': filter_form,
             'args': data,
             'pager': all_messages.paginate(
                 page=page, per_page=current_app.config.get('PAGE_SIZE')),
