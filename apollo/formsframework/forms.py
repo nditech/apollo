@@ -15,6 +15,7 @@ from wtforms_alchemy.utils import choice_type_coerce_factory
 from .. import models, services, utils
 from ..frontend.helpers import DictDiffer
 from .custom_fields import IntegerSplitterField
+from ..submissions.models import SubmissionComment
 
 ugly_phone = re.compile('[^0-9]*')
 
@@ -150,8 +151,10 @@ class BaseQuestionnaireForm(Form):
             ).first()
 
             if self.data.get('comment') and submission and commit:
-                services.submission_comments.create_comment(
-                    submission, self.data.get('comment'))
+                SubmissionComment.create(
+                    submission=submission,
+                    comment=self.data.get('comment'),
+                    deployment=submission.deployment)
         else:
             # the submission event is determined by taking the intersection
             # of form events, participant events and concurrent events
