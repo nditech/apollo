@@ -2,24 +2,18 @@
 from datetime import datetime
 from functools import partial
 from itertools import ifilter
-from mongoengine import signals
 from wtforms import (
-    Form,
-    IntegerField, SelectField, SelectMultipleField, StringField,
-    validators, widgets
-)
+    Form, IntegerField, SelectField, StringField, validators, widgets)
 from flask import g
 from flask.ext.mongoengine.wtf import model_form
 from flask.ext.wtf import Form as SecureForm
 from .. import services, models
 from ..frontend.helpers import DictDiffer
-from ..participants.utils import update_participant_completion_rating
 from .custom_fields import IntegerSplitterField
 import json
 import re
 
-
-ugly_phone = re.compile('[^\d]*')
+ugly_phone = re.compile(r'[^\d]*')
 
 
 def update_submission_version(sender, document, **kwargs):
@@ -193,15 +187,7 @@ class BaseQuestionnaireForm(Form):
                             verified=False, last_seen=datetime.utcnow())
                         participant.update(add_to_set__phones=phone_contact)
 
-                    with signals.post_save.connected_to(
-                        update_submission_version,
-                        sender=services.submissions.__model__
-                    ):
-                        submission.save()
-
-                    # update completion rating for participant
-                    if submission.form.form_type == 'CHECKLIST':
-                        update_participant_completion_rating(participant)
+                    submission.save(clean=False)
         except models.Submission.DoesNotExist:
             pass
 
@@ -261,8 +247,8 @@ def build_questionnaire(form, data=None):
 
     form_class = type('QuestionnaireForm', (BaseQuestionnaireForm,), fields)
 
-
     return form_class(data)
+
 
 FormForm = model_form(
     models.Form, SecureForm,
