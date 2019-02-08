@@ -42,7 +42,7 @@ def lookup_participant(msg, event=None):
 
 def update_datastore(inbound, outbound, submission, had_errors):
     if submission:
-        update_submission.apply_async((str(submission.pk,)))
+        update_submission.delay(str(submission.pk))
         participant = submission.contributor
     else:
         participant = lookup_participant(inbound)
