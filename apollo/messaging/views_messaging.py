@@ -5,6 +5,7 @@ from apollo.core import csrf
 from apollo.messaging.forms import KannelForm, TelerivetForm
 from apollo.messaging.helpers import parse_message
 from apollo.messaging.utils import parse_text
+from apollo.submissions.tasks import update_submission
 from flask import Blueprint, make_response, request, g, current_app
 import json
 import re
@@ -41,6 +42,7 @@ def lookup_participant(msg, event=None):
 
 def update_datastore(inbound, outbound, submission, had_errors):
     if submission:
+        update_submission.delay(str(submission.pk))
         participant = submission.contributor
     else:
         participant = lookup_participant(inbound)
