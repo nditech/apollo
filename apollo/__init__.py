@@ -103,6 +103,7 @@ def create_app(settings_override=None, register_security_blueprint=True):
             "*.googlecode.com *.google-analytics.com " + \
             "*.googletagmanager.com " + \
             "cdn.heapanalytics.com heapanalytics.com " + \
+            "fontlibrary.org " + \
             "'unsafe-inline' 'unsafe-eval' data:; img-src * data:"
         return response
 

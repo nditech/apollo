@@ -11,15 +11,13 @@ from apollo.submissions.models import (
 
 def export_field_value(form, submission, tag):
     field = form.get_field_by_tag(tag)
+    data = submission.data.get(tag) if submission.data else None
 
     if field['type'] == 'multiselect':
-        return submission.data.get(tag)
+        if data:
+            return ','.join(sorted(str(i) for i in data))
 
-    data = submission.data.get(tag)
-    if data and isinstance(data, list):
-        return ','.join(sorted(str(i) for i in data))
-
-    return None
+    return data
 
 
 class SubmissionService(Service):
@@ -32,6 +30,7 @@ class SubmissionService(Service):
             submission = query.first()
             event = submission.event
             form = submission.form
+            extra_fields = event.location_set.extra_fields
             location_types = LocationType.query.filter_by(
                 is_administrative=True,
                 location_set_id=event.location_set_id).all()
@@ -39,16 +38,17 @@ class SubmissionService(Service):
                 location_set_id=event.location_set_id).all()
             tags = form.tags
 
+            extra_field_headers = [fi.label for fi in extra_fields]
+
             sample_headers = [s.name for s in samples]
             if submission.submission_type == 'O':
                 dataset_headers = [
                     'Participant ID', 'Name', 'DB Phone', 'Recent Phone'] + \
                     [location_type.name for location_type in location_types]
                 if form.form_type == 'INCIDENT':
-                    dataset_headers += [
-                        'Location', 'Location Code', 'PS Code', 'RV'
-                    ] + tags + \
-                        ['Timestamp', 'Status', 'Description']
+                    dataset_headers.extend(
+                        ['Location', 'Location Code'] + extra_field_headers +
+                        ['RV'] + tags + ['Timestamp', 'Status', 'Description'])
                 else:
                     dataset_headers += [
                         'Location', 'Location Code', 'PS Code', 'RV'
@@ -59,9 +59,9 @@ class SubmissionService(Service):
                 dataset_headers = [
                     'Participant ID', 'Name', 'DB Phone', 'Recent Phone'] + \
                     [location_type.name for location_type in location_types]
-                dataset_headers += [
-                    'Location', 'Location Code', 'PS Code', 'RV'] + \
-                    tags + ['Timestamp']
+                dataset_headers.extend(
+                    ['Location', 'Location Code'] + extra_field_headers +
+                    ['RV'] + tags + ['Timestamp'])
                 dataset_headers.extend(sample_headers)
 
             output = StringIO()
@@ -73,6 +73,14 @@ class SubmissionService(Service):
 
             for submission in query:
                 if submission.submission_type == 'O':
+                    if submission.location.extra_data:
+                        extra_data_columns = [
+                            submission.location.extra_data.get(ef.name)
+                            for ef in extra_fields
+                        ]
+                    else:
+                        extra_data_columns = [''] * len(extra_fields)
+
                     record = [
                         submission.participant.participant_id
                         if submission.participant else '',
@@ -88,8 +96,8 @@ class SubmissionService(Service):
                         if loc.location_type in location_types
                     ] + [
                         submission.location.name,
-                        submission.location.code,
-                        submission.location.political_code,
+                        submission.location.code
+                    ] + extra_data_columns + [
                         submission.location.registered_voters
                     ] + [
                         export_field_value(form, submission, tag)
@@ -110,6 +118,13 @@ class SubmissionService(Service):
                         if submission.comments else ''])
                 else:
                     sib = submission.siblings[0]
+                    if sib.location.extra_data:
+                        extra_data_columns = [
+                            sib.location.extra_data.get(ef.name)
+                            for ef in extra_fields
+                        ]
+                    else:
+                        extra_data_columns = [''] * len(extra_fields)
                     record = [
                         sib.participant.participant_id
                         if sib.participant else '',
@@ -125,8 +140,8 @@ class SubmissionService(Service):
                         if loc.location_type in location_types
                     ] + [
                         sib.location.name,
-                        sib.location.code,
-                        sib.location.political_code,
+                        sib.location.code
+                    ] + extra_data_columns + [
                         sib.location.registered_voters
                     ] + [
                         export_field_value(form, sib, tag)
