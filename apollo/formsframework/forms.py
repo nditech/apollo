@@ -16,7 +16,7 @@ import re
 ugly_phone = re.compile(r'[^\d]*')
 
 
-def update_submission_version(sender, document, **kwargs):
+def update_submission_version(phone, sender, document, **kwargs):
     if sender != services.submissions.__model__:
         return
 
@@ -42,10 +42,11 @@ def update_submission_version(sender, document, **kwargs):
 
     services.submission_versions.create(
         submission=document,
+        deployment=document.deployment,
         data=json.dumps(version_data),
         timestamp=datetime.utcnow(),
         channel=channel,
-        identity=g.get('phone', '')
+        identity=phone
     )
 
 
