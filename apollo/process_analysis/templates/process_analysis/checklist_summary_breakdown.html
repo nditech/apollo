@@ -22,7 +22,7 @@
 				{% for tag, question, tag_stats in process_summary.top %}
 				<table id="mytable" class="table table-striped table-bordered">
 					<tr>
-						<td colspan="{%- if tag_stats.type == 'numeric' -%}4{% else %}{{ tag_stats.labels|count + 3 }}{%- endif -%}"><strong>{{ tag }}</strong> &middot; {{ question }}</td>
+						<td colspan="{%- if tag_stats.type == 'numeric' -%}4{% else %}{{ tag_stats.labels|count + 9 }}{%- endif -%}"><strong>{{ tag }}</strong> &middot; {{ question }}</td>
 					</tr>
 					<tr>
 						<th></th>
@@ -30,11 +30,11 @@
 						<th width="80">{{ _('Mean') }}</th>
 						{% else %}
 						{% for label in tag_stats.labels %}
-						<th>{{ _('%(label)s', label=label) }}</th>
+						<th colspan="2">{{ _('%(label)s', label=label) }}</th>
 						{% endfor %}
 						{% endif %}
-						<th width="80">{{ _('Reported') }}</th>
-						<th width="80">{{ _('Missing') }}</th>
+						<th colspan="2" width="80">{{ _('Reported') }}</th>
+						<th colspan="2" width="80">{{ _('Missing') }}</th>
 					</tr>
 					<tr>
 						<td><strong>{{ location }}</strong></td>
@@ -42,11 +42,14 @@
 						<td>{{ tag_stats.mean|mean_filter }}</td>
 						{% else %}
 						{% for value, percentage in tag_stats.histogram %}
-						<td>{{ percentage|round|int }}% ({{ value }})</td>
+						<td>{{ value }}</td>
+						<td>{{ percentage|round|int }}%</td>
 						{% endfor %}
 						{% endif %}
-						<td>{{ tag_stats.percent_reported|round|int }}% ({{ tag_stats.reported }})</td>
-						<td>{{ tag_stats.percent_missing|round|int }}% ({{ tag_stats.missing }})</td>
+						<td>{{ tag_stats.percent_reported|round|int }}%</td>
+						<td>{{ tag_stats.reported }}</td>
+						<td>{{ tag_stats.percent_missing|round|int }}%</td>
+						<td>{{ tag_stats.missing }}</td>
 					</tr>
 					{% for location_type, location_type_summary in process_summary.groups %}
 					{% for tag, question, tag_stats in location_type_summary %}
@@ -57,11 +60,13 @@
 						<td>{{ location_stats.mean|mean_filter }}</td>
 						{% else %}
 						{% for value, percentage in location_stats.histogram %}
-						<td>{{ percentage|round|int}}% ({{ value }})</td>
+						<td colspan="2">{{ percentage|round|int}}% ({{ value }})</td>
 						{% endfor %}
 						{% endif %}
-						<td>{{ location_stats.percent_reported|round|int }}% ({{ location_stats.reported }})</td>
-						<td>{{ location_stats.percent_missing|round|int }}% ({{ location_stats.missing }})</td>
+						<td>{{ location_stats.percent_reported|round|int }}%</td>
+						<td>{{ location_stats.reported }}</td>
+						<td>{{ location_stats.percent_missing|round|int }}%</td>
+						<td>{{ location_stats.missing }}</td>
 					</tr>
 					{% endfor %}
 					{% endfor %}

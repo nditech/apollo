@@ -34,11 +34,11 @@
 							<td bgcolor="#eee">{{ _('Mean') }}</td>
 							{% else %}
 							{% for label, unused in stats.options|dictsort(false, 'value') %}
-							<td>{{ _('%(label)s', label=label) }}</td>
+							<td colspan="2">{{ _('%(label)s', label=label) }}</td>
 							{% endfor %}
 							{% endif %}
-							<td width="100" bgcolor="#eee">{{ _('Reported') }}</td>
-							<td width="100" bgcolor="#eee">{{ _('Missing') }}</td>
+							<td colspan="2" width="100" bgcolor="#eee">{{ _('Reported') }}</td>
+							<td colspan="2" width="100" bgcolor="#eee">{{ _('Missing') }}</td>
 						</tr>
 						<tr>
 							<td class="text-centered"><strong>{{ _('All') }}</strong></td>
@@ -46,11 +46,14 @@
 							<td><strong>{{ stats.mean|mean_filter }}</strong></td>
 							{% else %}
 							{% for opt, option in stats.options|dictsort(false, 'value') %}
-							<td><strong>{{ stats.value_counts[option]|default(0)|percent_of(stats.value_counts_sum)|round|int }}% ({{ stats.value_counts[option]|default(0) }})</strong></td>
+							<td><strong>{{ stats.value_counts[option]|default(0)|percent_of(stats.value_counts_sum)|round|int }}%</strong></td>
+							<td><strong>{{ stats.value_counts[option]|default(0) }}</strong></td>
 							{% endfor %}
 							{% endif %}
-							<td><strong>{{ stats.count|percent_of(stats.size)|round|int }}% ({{ stats.count }}) </strong></td>
-							<td><strong>{{ stats.diff|percent_of(stats.size)|round|int }}% ({{ stats.diff }}) </strong></td>
+							<td><strong>{{ stats.count|percent_of(stats.size)|round|int }}%</strong></td>
+							<td><strong>{{ stats.count }}</strong></td>
+							<td><strong>{{ stats.diff|percent_of(stats.size)|round|int }}%</strong></td>
+							<td><strong>{{ stats.diff }}</strong></td>
 						</tr>
 						{% for group in stats.urban %}
 						<tr>
