@@ -369,9 +369,13 @@ class ParticipantSetAdminView(SetViewMixin, BaseAdminView):
 
 
 admin.add_view(DeploymentAdminView(models.Deployment, db.session))
-admin.add_view(EventAdminView(models.Event, db.session))
-admin.add_view(UserAdminView(models.User, db.session))
-admin.add_view(RoleAdminView(models.Role, db.session))
+admin.add_view(
+    EventAdminView(models.Event, db.session, _('Events')))
+admin.add_view(UserAdminView(models.User, db.session, _('Users')))
+admin.add_view(RoleAdminView(models.Role, db.session, _('Roles')))
 admin.add_view(FormSetAdminView(models.FormSet, db.session))
-admin.add_view(LocationSetAdminView(models.LocationSet, db.session))
-admin.add_view(ParticipantSetAdminView(models.ParticipantSet, db.session))
+admin.add_view(
+    LocationSetAdminView(models.LocationSet, db.session, _('Location Sets')))
+admin.add_view(
+    ParticipantSetAdminView(
+        models.ParticipantSet, db.session, _('Participant Sets')))
