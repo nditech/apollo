@@ -4,7 +4,6 @@
 <a class="btn btn-sm btn-default pull-right" data-toggle="modal" data-target="#formImportModal" href="#" style="margin-right: 1em"><span class="glyphicon glyphicon-upload"></span> {{ _('Import') }}</a>
 <a class="btn btn-sm btn-default pull-right" href="{{ url_for('forms.new_form') }}" style="margin-right: 1em"><span class="glyphicon glyphicon-plus"></span> {{ _('Add Form') }}</a>
 {% endblock %}
-{% block subtitle %}{{ form_set.name }}{% endblock subtitle %}
 {% block content %}
 {% with messages = get_flashed_messages(category_filter=['checklist_init_success']) %}
 {% if messages %}
