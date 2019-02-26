@@ -48,7 +48,6 @@ class EventArchiveSerializer(ArchiveSerializer):
             'name': obj.name,
             'start': calendar.timegm(obj.start.utctimetuple()),
             'end': calendar.timegm(obj.end.utctimetuple()),
-            'form_set': obj.form_set.uuid.hex if obj.form_set else None,
             'location_set': obj.location_set.uuid.hex
             if obj.location_set else None,
             'participant_set': obj.participant_set.uuid.hex
