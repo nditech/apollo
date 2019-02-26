@@ -128,12 +128,12 @@ class DeploymentAdminView(BaseAdminView):
 
 class EventAdminView(BaseAdminView):
     column_filters = ('name', 'start', 'end')
-    column_list = ('name', 'start', 'end', 'form_set', 'participant_set',
+    column_list = ('name', 'start', 'end', 'location_set', 'participant_set',
                    'archive')
-    form_columns = ('name', 'start', 'end', 'form_set', 'participant_set')
+    form_columns = ('name', 'start', 'end', 'forms', 'participant_set')
     form_rules = [
         rules.FieldSet(
-            ('name', 'start', 'end', 'form_set', 'participant_set'),
+            ('name', 'start', 'end', 'forms', 'participant_set'),
             _('Event'))
     ]
     column_formatters = {
