@@ -36,12 +36,23 @@ FIELD_TYPES = (
 
 logger = logging.getLogger(__name__)
 
-gt_constraint_regex = re.compile('(?:.*\.\s*\>={0,1}\s*)(\d+)')
-lt_constraint_regex = re.compile('(?:.*\.\s*\<={0,1}\s*)(\d+)')
+gt_constraint_regex = re.compile(r'(?:.*\.\s*\>={0,1}\s*)(\d+)')
+lt_constraint_regex = re.compile(r'(?:.*\.\s*\<={0,1}\s*)(\d+)')
 
 
 def _make_version_identifer():
     return uuid4().hex
+
+
+events_forms = db.Table(
+    'events_forms',
+    db.Column(
+        'event_id', db.Integer, db.ForeignKey('event.id', ondelete='CASCADE'),
+        primary_key=True),
+    db.Column(
+        'form_id', db.Integer, db.ForeignKey('form.id', ondelete='CASCADE'),
+        primary_key=True)
+)
 
 
 class FormSet(BaseModel):
@@ -91,6 +102,8 @@ class Form(Resource):
     invalid_votes_tag = db.Column(db.String)
     registered_voters_tag = db.Column(db.String)
     blank_votes_tag = db.Column(db.String)
+
+    events = db.relationship('Event', backref='forms', secondary=events_forms)
 
     form_set = db.relationship(
         'FormSet',
