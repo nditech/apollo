@@ -121,7 +121,7 @@ class DeploymentAdminView(BaseAdminView):
             _('Primary Language'), choices=LANGUAGE_CHOICES,
             validators=[validators.input_required()])
         form_class.other_locales = SelectMultipleField(
-            _('Other Languages'), choices=LANGUAGE_CHOICES)
+            _('Other Languages'), choices=LANGUAGE_CHOICES[1:])
 
         return form_class
 
