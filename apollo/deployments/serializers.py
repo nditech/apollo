@@ -4,7 +4,7 @@ import json
 
 from apollo.dal.serializers import ArchiveSerializer
 from apollo.deployments.models import Event
-from apollo.formsframework.serializers import FormSetArchiveSerializer
+from apollo.formsframework.serializers import FormSerializer
 from apollo.locations.serializers import LocationSetArchiveSerializer
 from apollo.messaging.serializers import MessageArchiveSerializer
 from apollo.participants.serializers import ParticipantSetArchiveSerializer
@@ -23,13 +23,18 @@ class EventArchiveSerializer(ArchiveSerializer):
             line = f'{json.dumps(data)}\n'
             f.write(line.encode('utf-8'))
 
-        form_set_serializer = FormSetArchiveSerializer()
+        form_serializer = FormSerializer()
         location_set_serializer = LocationSetArchiveSerializer()
         message_serializer = MessageArchiveSerializer()
         participant_set_serializer = ParticipantSetArchiveSerializer()
         submission_serializer = SubmissionArchiveSerializer()
 
-        form_set_serializer.serialize(event, zip_file)
+        with zip_file.open('forms.ndjson', 'w') as f:
+            for form in event.forms:
+                data = form_serializer.serialize_one(form)
+                line = f'{json.dumps(data)}\n'
+                f.write(line.encode('utf-8'))
+
         location_set_serializer.serialize(event, zip_file)
         message_serializer.serialize(event, zip_file)
         participant_set_serializer.serialize(event, zip_file)

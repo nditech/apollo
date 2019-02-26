@@ -1,7 +1,4 @@
 # -*- coding: utf-8 -*-
-import json
-
-from apollo.dal.serializers import ArchiveSerializer
 from apollo.formsframework.models import Form, FormSet
 
 
@@ -30,7 +27,6 @@ class FormSerializer(object):
             'require_exclamation': obj.require_exclamation,
             'data': obj.data,
             'version_identifier': obj.version_identifier,
-            'form_set': obj.form_set.uuid.hex,
             'quality_checks': obj.quality_checks,
             'party_mappings': obj.party_mappings,
             'calculate_moe': obj.calculate_moe,
@@ -57,32 +53,3 @@ class FormSetSerializer(object):
             'slug': obj.slug,
             'uuid': obj.uuid.hex,
         }
-
-
-class FormSetArchiveSerializer(ArchiveSerializer):
-    def deserialize(self, zip_file):
-        return super().deserialize(zip_file)
-
-    def serialize(self, event, zip_file):
-        form_set = event.form_set
-
-        if form_set:
-            self.serialize_form_set(form_set, zip_file)
-            self.serialize_forms(form_set.forms, zip_file)
-
-    def serialize_form_set(self, obj, zip_file):
-        serializer = FormSetSerializer()
-
-        with zip_file.open('form_set.ndjson', 'w') as f:
-            data = serializer.serialize_one(obj)
-            line = f'{json.dumps(data)}\n'
-            f.write(line.encode('utf-8'))
-
-    def serialize_forms(self, forms, zip_file):
-        serializer = FormSerializer()
-
-        with zip_file.open('forms.ndjson', 'w') as f:
-            for form in forms:
-                data = serializer.serialize_one(form)
-                line = f'{json.dumps(data)}\n'
-                f.write(line.encode('utf-8'))
