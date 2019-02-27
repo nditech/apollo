@@ -6,14 +6,7 @@ class FormSerializer(object):
     __model__ = Form
 
     def deserialize_one(self, data):
-        form_set_id = FormSet.query.filter_by(
-            uuid=data['form_set']).with_entities(FormSet.id).scalar()
-
-        kwargs = data.copy()
-        kwargs.pop('form_set')
-        kwargs['form_set_id'] = form_set_id
-
-        return self.__model__(**kwargs)
+        return self.__model__(**data)
 
     def serialize_one(self, obj):
         if not isinstance(obj, self.__model__):
