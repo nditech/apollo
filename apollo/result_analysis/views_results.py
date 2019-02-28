@@ -25,14 +25,13 @@ from apollo.submissions.utils import make_submission_dataframe
 
 def get_result_analysis_menu():
     event = g.event
-    form_set_id = event.form_set_id
     return [{
         'url': url_for(
             'result_analysis.results_analysis', form_id=form.id),
         'text': form.name,
         'icon': '<i class="glyphicon glyphicon-stats"></i>'
     } for form in forms.query.filter(
-        Form.form_set_id == form_set_id,
+        Form.events.contains(event),
         Form.form_type == 'CHECKLIST',
         Form.data.op('@>')(
             {'groups': [{'fields': [{'analysis_type': 'RESULT'}]}]})
@@ -50,7 +49,7 @@ def _voting_results(form_id, location_id=None):
             {'groups': [{'fields': [{'analysis_type': 'RESULT'}]}]}),
         Form.id == form_id,
         Form.form_type == 'CHECKLIST',
-        Form.form_set_id == event.form_set_id
+        Form.events.contains(event)
     ).first()
 
     if form is None:

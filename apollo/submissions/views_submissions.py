@@ -82,8 +82,11 @@ def verify_pw(username, password):
 @login_required
 def submission_list(form_id):
     event = g.event
-    form = services.forms.find(
-        id=form_id, form_set_id=event.form_set_id).first_or_404()
+    form = models.Form.query.filter_by(
+        id=form_id
+    ).join(
+        models.Form.events
+    ).filter(models.Form.events.contains(event)).first_or_404()
     permissions.can_access_resource(form)
 
     filter_class = filters.make_submission_list_filter(event, form)
@@ -227,9 +230,11 @@ def submission_list(form_id):
 @permissions.add_submission.require(403)
 def submission_create(form_id):
     event = g.event
-    questionnaire_form = services.forms.find(
-        id=form_id, form_type='INCIDENT', form_set_id=event.form_set_id
-    ).first_or_404()
+    questionnaire_form = form = models.Form.query.filter_by(
+        id=form_id, form_type='INCIDENT'
+    ).join(
+        models.Form.events
+    ).filter(models.Form.events.contains(event)).first_or_404()
     edit_form_class = forms.make_submission_edit_form_class(
         event, questionnaire_form)
     page_title = _('Add Submission')
