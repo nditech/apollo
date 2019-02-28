@@ -20,8 +20,12 @@ class InitializeSubmissionsCommand(Command):
         option = prompt_choices('Role', [
             (str(i), v) for i, v in enumerate(roles, 1)])
         role = roles[int(option) - 1]
-        forms = services.forms.find(
-            form_set_id=event.form_set_id, form_type='CHECKLIST')
+        forms = models.Form.query.join(
+            models.Form.events
+        ).filter(
+            models.Form.events.contains(event),
+            models.Form.form_type == 'CHECKLIST'
+        )
         option = prompt_choices('Form', [
             (str(i), v) for i, v in enumerate(forms, 1)])
         form = forms[int(option) - 1]
