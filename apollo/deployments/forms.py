@@ -7,7 +7,6 @@ from wtforms import SelectField, fields, validators
 
 from apollo import services
 from apollo.deployments.models import Event
-from apollo.formsframework.models import FormSet
 from apollo.locations.models import LocationSet
 from apollo.participants.models import ParticipantSet
 
