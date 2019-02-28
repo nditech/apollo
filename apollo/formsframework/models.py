@@ -55,23 +55,6 @@ events_forms = db.Table(
 )
 
 
-class FormSet(BaseModel):
-    __tablename__ = 'form_set'
-
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String, nullable=False)
-    slug = db.Column(db.String)
-    deployment_id = db.Column(
-        db.Integer, db.ForeignKey('deployment.id', ondelete='CASCADE'),
-        nullable=False)
-    deployment = db.relationship(
-        'Deployment', backref=db.backref('form_sets', cascade='all, delete',
-                                         passive_deletes=True))
-
-    def __str__(self):
-        return self.name or ''
-
-
 class Form(Resource):
     FORM_TYPES = (
         ('CHECKLIST', _('Checklist Form')),
@@ -89,9 +72,6 @@ class Form(Resource):
     track_data_conflicts = db.Column(db.Boolean, default=True, nullable=False)
     data = db.Column(JSONB)
     version_identifier = db.Column(db.String, default=_make_version_identifer)
-    form_set_id = db.Column(
-        db.Integer, db.ForeignKey('form_set.id', ondelete='CASCADE'),
-        nullable=False)
     resource_id = db.Column(
         db.Integer, db.ForeignKey('resource.resource_id', ondelete='CASCADE'))
     quality_checks = db.Column(JSONB)
@@ -104,11 +84,6 @@ class Form(Resource):
     blank_votes_tag = db.Column(db.String)
 
     events = db.relationship('Event', backref='forms', secondary=events_forms)
-
-    form_set = db.relationship(
-        'FormSet',
-        backref=db.backref('forms', cascade='all, delete', lazy='dynamic',
-                           passive_deletes=True))
 
     def __str__(self):
         return str(_('Form - %(name)s', name=self.name))

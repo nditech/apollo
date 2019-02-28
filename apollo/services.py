@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from apollo.deployments.services import EventService
-from apollo.formsframework.services import FormService, FormSetService
+from apollo.formsframework.services import FormService
 from apollo.locations.services import (
     LocationService, LocationSetService, LocationTypeService, SampleService)
 from apollo.messaging.services import MessageService
@@ -15,7 +15,6 @@ from apollo.users.services import UserService, UserUploadService
 
 events = EventService()
 forms = FormService()
-form_sets = FormSetService()
 locations = LocationService()
 location_sets = LocationSetService()
 location_types = LocationTypeService()
