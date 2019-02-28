@@ -3,14 +3,14 @@ from io import BytesIO
 
 from apollo.frontend import route, permissions
 from flask import (
-    abort, Blueprint, flash, g, redirect, render_template, request,
+    Blueprint, flash, g, redirect, render_template, request,
     send_file, url_for)
 from flask_babelex import lazy_gettext as _
 from flask_menu import register_menu
 from flask_security import login_required
 import json
 
-from apollo import models, services
+from apollo import models
 from apollo.formsframework.forms import FormForm, FormImportForm
 from apollo.formsframework.models import FormBuilderSerializer
 from apollo.formsframework import utils
@@ -22,18 +22,11 @@ bp = Blueprint('forms', __name__, template_folder='templates',
                static_folder='static')
 
 
-@route(bp, '/forms/set/<int:form_set_id>/init',
-       endpoint='checklist_init_with_set', methods=['POST'])
 @route(bp, '/forms/init',
        endpoint='checklist_init', methods=['POST'])
 @login_required
 @permissions.edit_forms.require(403)
-def checklist_init(form_set_id=0):
-    if form_set_id:
-        form_set = services.form_sets.fget_or_404(id=form_set_id)
-    else:
-        form_set = g.event.form_set or abort(400)
-
+def checklist_init():
     flash_message = ''
     flash_category = ''
     form = make_checklist_init_form(g.event)
@@ -54,24 +47,17 @@ def checklist_init(form_set_id=0):
         flash_message = _('Checklists were not created')
 
     flash(str(flash_message), flash_category)
-
-    if form_set_id:
-        return redirect(url_for('.list_forms_with_set',
-                                form_set_id=form_set.id))
-    else:
-        return redirect(url_for('.list_forms'))
+    return redirect(url_for('.list_forms'))
 
 
-@route(bp, '/formbuilder/set/<int:form_set_id>/form/<int:id>',
-       endpoint='form_builder_with_set', methods=['GET', 'POST'])
 @route(bp, '/formbuilder/<int:id>',
        endpoint='form_builder', methods=['GET', 'POST'])
 @login_required
 @permissions.edit_forms.require(403)
-def form_builder(id, form_set_id=0):
+def form_builder(id):
     page_title = _('Form Builder')
     template_name = 'frontend/formbuilder.html'
-    form = services.forms.fget_or_404(id=id)
+    form = models.Form.query.filter_by(id=id).first_or_404()
 
     ctx = dict(
         page_title=page_title,
@@ -79,7 +65,6 @@ def form_builder(id, form_set_id=0):
     )
 
     if request.method == 'GET':
-        ctx['form_set_id'] = form_set_id
         ctx['form_data'] = FormBuilderSerializer.serialize(form)
         return render_template(template_name, **ctx)
     else:
@@ -91,19 +76,12 @@ def form_builder(id, form_set_id=0):
         return ''
 
 
-@route(bp, '/forms/set/<int:form_set_id>/new',
-       endpoint='new_form_with_set', methods=['GET', 'POST'])
 @route(bp, '/forms/new',
        endpoint='new_form', methods=['GET', 'POST'])
 @login_required
 @permissions.edit_forms.require(403)
-def new_form(form_set_id=0):
-    if form_set_id:
-        form_set = services.form_sets.fget_or_404(id=form_set_id)
-        template_name = 'frontend/form_edit_with_set.html'
-    else:
-        form_set = g.event.form_set or abort(404)
-        template_name = 'frontend/form_edit.html'
+def new_form():
+    template_name = 'frontend/form_edit.html'
 
     page_title = _('Create Form')
 
@@ -112,48 +90,32 @@ def new_form(form_set_id=0):
     if not web_form.validate_on_submit():
         context = {
             'page_title': page_title,
-            'form': web_form,
-            'form_set_id': form_set_id,
-            'form_set': form_set
+            'form': web_form
         }
 
         return render_template(template_name, **context)
 
-    # hack because of nasty bug with forms service
-    form = services.forms.__model__(
-        deployment_id=form_set.deployment_id,
-        form_set_id=form_set.id)
+    form = models.Form(deployment_id=g.event.deployment_id)
     web_form.populate_obj(form)
     form.save()
 
     # add default role permissions for this form
     roles = models.Role.query.filter_by(
-        deployment_id=form_set.deployment_id).all()
+        deployment_id=g.event.deployment_id).all()
     form.roles = roles
     form.save()
 
-    if form_set_id:
-        return redirect(url_for('.list_forms_with_set',
-                        form_set_id=form_set.id))
-    else:
-        return redirect(url_for('.list_forms'))
+    return redirect(url_for('.list_forms'))
 
 
-@route(bp, '/forms/set/<int:form_set_id>/form/<int:form_id>',
-       endpoint='edit_form_with_set', methods=['GET', 'POST'])
 @route(bp, '/forms/<int:form_id>',
        endpoint='edit_form', methods=['GET', 'POST'])
 @login_required
 @permissions.edit_forms.require(403)
-def edit_form(form_id, form_set_id=0):
-    if form_set_id:
-        form_set = services.form_sets.fget_or_404(id=form_set_id)
-        template_name = 'frontend/form_edit_with_set.html'
-    else:
-        form_set = g.event.form_set or abort(404)
-        template_name = 'frontend/form_edit.html'
+def edit_form(form_id):
+    template_name = 'frontend/form_edit.html'
 
-    form = services.forms.fget_or_404(id=form_id, form_set_id=form_set.id)
+    form = models.Form.query.filter_by(id=form_id).first_or_404()
     page_title = _('Edit %(name)s', name=form.name)
     web_form = FormForm(obj=form)
 
@@ -161,8 +123,6 @@ def edit_form(form_id, form_set_id=0):
         context = {
             'page_title': page_title,
             'form': web_form,
-            'form_set_id': form_set_id,
-            'form_set': form_set
         }
 
         return render_template(template_name, **context)
@@ -170,32 +130,21 @@ def edit_form(form_id, form_set_id=0):
     web_form.populate_obj(form)
     form.save()
 
-    if form_set_id:
-        return redirect(url_for('.list_forms_with_set',
-                        form_set_id=form_set_id))
-    else:
-        return redirect(url_for('.list_forms'))
+    return redirect(url_for('.list_forms'))
 
 
 @route(bp, '/forms', endpoint="list_forms", methods=['GET'])
-@route(bp, '/forms/set/<int:form_set_id>',
-       endpoint="list_forms_with_set", methods=['GET'])
 @register_menu(
     bp, 'user.forms', _('Forms'),
     visible_when=lambda: permissions.edit_forms.can())
 @login_required
 @permissions.edit_forms.require(403)
-def list_forms(form_set_id=0):
-    if form_set_id:
-        form_set = services.form_sets.fget_or_404(id=form_set_id)
-        template_name = 'frontend/form_list_with_set.html'
-    else:
-        form_set = g.event.form_set or abort(404)
-        template_name = 'frontend/form_list.html'
+def list_forms():
+    template_name = 'frontend/form_list.html'
 
     page_title = _('Forms')
 
-    forms = services.forms.find(form_set_id=form_set.id).order_by('name')
+    forms = models.Form.query.order_by('name').all()
     checklist_init_form = make_checklist_init_form(g.event)
     form_import_form = FormImportForm()
 
@@ -204,26 +153,18 @@ def list_forms(form_set_id=0):
         'page_title': page_title,
         'init_form': checklist_init_form,
         'form_import_form': form_import_form,
-        'form_set': form_set
     }
 
     return render_template(template_name, **context)
 
 
-@route(bp, '/forms/set/<int:form_set_id>/form/<int:form_id>/qa',
-       endpoint='quality_assurance_with_set', methods=['GET', 'POST'])
 @route(bp, '/forms/<int:form_id>/qa',
        endpoint='quality_assurance', methods=['GET', 'POST'])
 @login_required
 @permissions.edit_forms.require(403)
-def quality_assurance(form_id, form_set_id=0):
-    if form_set_id:
-        form_set = services.form_sets.fget_or_404(id=form_set_id)
-    else:
-        form_set = g.event.form_set or abort(404)
-
+def quality_assurance(form_id):
     template_name = 'frontend/quality_assurance.html'
-    form = services.forms.fget_or_404(id=form_id, form_set_id=form_set.id)
+    form = models.Form.query.filter_by(id=form_id).first_or_404()
     page_title = _('Quality Assurance — %(name)s', name=form.name)
 
     if request.method == 'POST':
@@ -250,11 +191,7 @@ def quality_assurance(form_id, form_set_id=0):
                     })
             form.save()
 
-            if form_set_id:
-                return redirect(url_for('.list_forms_with_set',
-                                        form_set_id=form_set.id))
-            else:
-                return redirect(url_for('.list_forms'))
+            return redirect(url_for('.list_forms'))
         except ValueError:
             pass
 
@@ -265,9 +202,7 @@ def quality_assurance(form_id, form_set_id=0):
 
     context = {
         'page_title': page_title,
-        'check_data': check_data,
-        'form_set': form_set,
-        'form_set_id': form_set_id
+        'check_data': check_data
     }
 
     return render_template(template_name, **context)
@@ -277,7 +212,7 @@ def quality_assurance(form_id, form_set_id=0):
 @login_required
 @permissions.edit_forms.require(403)
 def export_form(id):
-    form = services.forms.fget_or_404(id=id)
+    form = models.Form.query.filter_by(id=id).first_or_404()
     memory_file = BytesIO()
     workbook = utils.export_form(form)
     workbook.save(memory_file)
@@ -289,34 +224,22 @@ def export_form(id):
         mimetype='application/vnd.ms-excel')
 
 
-@route(bp, '/forms/set/<int:form_set_id>/import',
-       endpoint='import_form_schema_with_set', methods=['POST'])
 @route(bp, '/forms/import',
        endpoint='import_form_schema', methods=['POST'])
 @login_required
 @permissions.edit_forms.require(403)
-def import_form_schema(form_set_id=0):
-    if form_set_id:
-        form_set = services.form_sets.fget_or_404(id=form_set_id)
-    else:
-        form_set = g.event.form_set or abort(404)
-
+def import_form_schema():
     web_form = FormImportForm()
 
     if web_form.validate_on_submit():
         form = utils.import_form(request.files['import_file'])
-        form.deployment_id = form_set.deployment_id
-        form.form_set = form_set
+        form.deployment_id = g.event.deployment_id
         form.save()
 
         # add default role permissions for this form
         roles = models.Role.query.filter_by(
-            deployment_id=form_set.deployment_id).all()
+            deployment_id=g.event.deployment_id).all()
         form.roles = roles
         form.save()
 
-    if form_set_id:
-        return redirect(url_for('.list_forms_with_set',
-                        form_set_id=form_set.id))
-    else:
-        return redirect(url_for('.list_forms'))
+    return redirect(url_for('.list_forms'))
