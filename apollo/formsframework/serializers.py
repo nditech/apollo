@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from apollo.formsframework.models import Form, FormSet
+from apollo.formsframework.models import Form
 
 
 class FormSerializer(object):
@@ -28,21 +28,4 @@ class FormSerializer(object):
             'invalid_votes_tag': obj.invalid_votes_tag,
             'registered_voters_tag': obj.registered_voters_tag,
             'blank_votes_tag': obj.blank_votes_tag,
-        }
-
-
-class FormSetSerializer(object):
-    __model__ = FormSet
-
-    def deserialize_one(self, data):
-        return self.__model__(**data)
-
-    def serialize_one(self, obj):
-        if not isinstance(obj, self.__model__):
-            raise TypeError('Object is not of type FormSet')
-
-        return {
-            'name': obj.name,
-            'slug': obj.slug,
-            'uuid': obj.uuid.hex,
         }
