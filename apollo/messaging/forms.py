@@ -86,7 +86,7 @@ def retrieve_form(prefix, exclamation=False):
     # find the first form that matches the prefix and optionally form type
     # for the current events
     query = models.Form.query.join(
-        models.Event, models.Form.form_set_id == models.Event.form_set_id
+        models.Form.events
     ).filter(
         models.Event.id.in_(current_events.with_entities(models.Event.id)),
         models.Form.prefix.ilike(prefix)
@@ -95,6 +95,6 @@ def retrieve_form(prefix, exclamation=False):
     if exclamation:
         query = query.filter(models.Form.form_type == 'INCIDENT')
 
-    form = query.first()
+    form = query.with_entities(models.Form).first()
 
     return form
