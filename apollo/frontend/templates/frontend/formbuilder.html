@@ -26,7 +26,7 @@
         <div class="panel-body">
           <div fb-components></div>
           <button class="btn btn-primary" ng-click="submit();"><span class="glyphicon glyphicon-save"></span> Save</button>
-          <a href="{% if form_set_id %}{{ url_for('forms.list_forms_with_set', form_set_id=form.form_set_id) }}{% else %}{{ url_for('forms.list_forms') }}{% endif %}" class="btn btn-default">Cancel</a>
+          <a href="{{ url_for('forms.list_forms') }}" class="btn btn-default">Cancel</a>
         </div>
       </div>
     </div>
@@ -72,7 +72,7 @@
             },
             type: 'POST',
           });
-          window.location.href = "{% if form_set_id %}{{ url_for('forms.list_forms_with_set', form_set_id=form.form_set_id) }}{% else %}{{ url_for('forms.list_forms') }}{% endif %}";
+          window.location.href = "{{ url_for('forms.list_forms') }}";
         }).error(function() {
           return console.log('error');
         });
