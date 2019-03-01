@@ -185,7 +185,9 @@ def generate_single_choice_field_stats(tag, dataset, options, labels=None):
     above statistics, as well as the labels for each of the options. Both the
     histogram and the labels are generated as lists, so they are ordered.'''
 
-    field_stats = {'type': 'single-choice', 'labels': labels}
+    field_stats = {
+        'type': 'single-choice', 'labels': labels,
+        'meta': list(zip(labels, options))}
 
     if hasattr(dataset, 'groups'):
         # the data is grouped, so per-group statistics will be generated
@@ -254,13 +256,14 @@ def generate_mutiple_choice_field_stats(tag, dataset, options, labels=None):
     Returns
     - a dictionary (nested in the case of dataset being a group series)
     of the relevant statistics.'''
-    field_stats = {'type': 'multiple-choice'}
+    field_stats = {
+        'type': 'multiple-choice', 'labels': labels, 
+        'meta': list(zip(labels, options))}
 
     if hasattr(dataset, 'groups'):
         group_names = list(dataset.groups.keys())
         group_names.sort()
 
-        field_stats['labels'] = labels
         location_stats = {}
 
         for group_name in group_names:
@@ -305,7 +308,7 @@ def generate_mutiple_choice_field_stats(tag, dataset, options, labels=None):
 
         stats = {'histogram': histogram2, 'reported': reported,
                  'missing': missing, 'percent_reported': percent_reported,
-                 'percent_missing': percent_missing, 'labels': labels}
+                 'percent_missing': percent_missing}
 
         field_stats.update(stats)
 

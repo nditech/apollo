@@ -29,8 +29,8 @@
 						{%- if tag_stats.type == 'numeric' %}
 						<th width="80">{{ _('Mean') }}</th>
 						{% else %}
-						{% for label in tag_stats.labels %}
-						<th>{{ _('%(label)s', label=label) }}</th>
+						{% for label, option in tag_stats.meta %}
+						<th>{{ _('%(label)s', label=label) }} ({{ option }})</th>
 						{% endfor %}
 						{% endif %}
 						<th width="80">{{ _('Reported') }}</th>

@@ -80,8 +80,8 @@
 									{% if stats.type == 'continuous' %}
 									<td bgcolor="#eee">{{ _('Mean') }}</td>
 									{% else %}
-									{% for label, unused in stats.options|dictsort(false, 'value') %}
-									<td>{{ _('%(label)s', label=label) }}</td>
+									{% for label, option in stats.options|dictsort(false, 'value') %}
+									<td>{{ _('%(label)s', label=label) }} ({{ option }})</td>
 									{% endfor %}
 									{% endif %}
 									<td width="100" bgcolor="#eee">{{ _('Reported') }}</td>
