@@ -314,6 +314,12 @@ def submission_edit(submission_id):
 
     if request.method == 'GET':
         initial_data = submission.data.copy() if submission.data else {}
+        sibling_data = [
+            s.data.copy()
+            for s in sibling_submissions
+        ]
+        if master_submission:
+            master_data = master_submission.data.copy()
         initial_data.update(location=submission.location_id)
         initial_data.update(participant=submission.participant_id)
         failed_checks = []
@@ -332,19 +338,32 @@ def submission_edit(submission_id):
                         if result is False:
                             failed_checks.append(check['description'])
 
+            if submission.quarantine_status:
+                initial_data.update(
+                    quarantine_status=submission.quarantine_status.code)
+            for i, s in enumerate(sibling_submissions):
+                if s.quarantine_status:
+                    sibling_data[i].update(
+                        quarantine_status=s.quarantine_status.code
+                    )
+            if master_submission.quarantine_status:
+                master_data.update(
+                    quarantine_status=master_submission.quarantine_status.code
+                )
+
         submission_form = edit_form_class(
             data=initial_data,
             prefix=str(submission.id)
         )
         sibling_forms = [
             edit_form_class(
-                data=sibling.data,
+                data=sibling_data[i],
                 prefix=str(sibling.id)
-            ) for sibling in sibling_submissions
+            ) for i, sibling in enumerate(sibling_submissions)
         ]
         if master_submission:
             master_form = edit_form_class(
-                data=master_submission.data,
+                data=master_data,
                 prefix=str(master_submission.id)
             )
         else:
