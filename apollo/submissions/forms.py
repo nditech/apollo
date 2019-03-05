@@ -70,7 +70,7 @@ def make_submission_edit_form_class(event, form):
         for index, group in enumerate(form.data['groups']):
             for field in group['fields']:
                 field_type = field.get('type')
-                if field_type == 'comment':
+                if field_type in ('comment', 'string'):
                     form_fields[field['tag']] = fields.StringField(
                         field['tag'],
                         description=field['description'],
@@ -91,17 +91,19 @@ def make_submission_edit_form_class(event, form):
                             option_widget=widgets.CheckboxInput(),
                             widget=widgets.ListWidget()
                         )
-                    else:
-                        form_fields[field['tag']] = fields.IntegerField(
+                    elif field_type == 'select':
+                        form_fields[field['tag']] = fields.SelectField(
                             field['tag'],
+                            choices=choices,
+                            coerce=int,
                             description=field['description'],
-                            validators=[
-                                validators.Optional(),
-                                validators.AnyOf([v for v, k in choices])],
-                            widget=widgets.TextInput()
+                            filters=[lambda data: data if data else None],
+                            validators=[validators.Optional()],
+                            option_widget=widgets.RadioInput(),
+                            widget=widgets.ListWidget()
                         )
                 else:
-                    if form.form_type == 'CHECKLIST' or field_type != 'boolean':
+                    if field_type in ('category', 'integer'):
                         form_fields[field['tag']] = fields.IntegerField(
                             field['tag'], description=field['description'],
                             validators=[
@@ -110,7 +112,7 @@ def make_submission_edit_form_class(event, form):
                                     min=field.get('min', 0),
                                     max=field.get('max', 9999))]
                         )
-                    else:
+                    elif field_type == 'boolean':
                         form_fields[field['tag']] = fields.BooleanField(
                             field['tag'],
                             description=field['description'],
