@@ -167,15 +167,7 @@
       {% for field in group.fields %}
       <tr{% if field.tag in submission.flagged_fields and submission.form.verifiable and perms.edit_submission_verification_status.can() %} class="warning"{% endif %}>
         <th>{{ field.tag }}</th>
-        <td>{{ field.description }}
-          {%- if field['type'] == 'select' %}
-          <span class="options">
-          {% for item in field.options|dictsort(false, 'value') %}
-          <span class="option"><strong>({{ item.1 }})</strong> {{ item.0 }}</span>
-          {% endfor %}
-          </span>
-          {%- endif %}
-        </td>
+        <td>{{ field.description }}</td>
         {%- if readonly -%}
         <td class="obs-on">{{ render_submission_field(submission_form[field.tag], disabled=1)}}</td>
         {%- else -%}
