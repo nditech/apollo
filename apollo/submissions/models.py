@@ -117,6 +117,7 @@ class Submission(BaseModel):
         backref=db.backref('submissions', cascade='all, delete',
                            passive_deletes=True))
     conflicts = db.Column(JSONB)
+    geopoint = db.Column(JSONB)
 
     @classmethod
     def init_submissions(cls, event, form, role, location_type):
@@ -151,6 +152,10 @@ class Submission(BaseModel):
                 except StopIteration:
                     return
 
+            geopoint = {
+                'lat': location.lat,
+                'lon': location.lon
+            }
             obs_submission = cls.query.filter_by(
                 form_id=form.id, participant_id=participant.id,
                 location_id=location.id, deployment_id=deployment_id,
@@ -160,7 +165,8 @@ class Submission(BaseModel):
                 obs_submission = cls(
                     form_id=form.id, participant_id=participant.id,
                     location_id=location.id, deployment_id=deployment_id,
-                    event_id=event.id, submission_type='O')
+                    event_id=event.id, submission_type='O',
+                    geopoint=geopoint, data={})
                 obs_submission.save()
 
             master_submission = cls.query.filter_by(
@@ -172,7 +178,8 @@ class Submission(BaseModel):
                 master_submission = cls(
                     form_id=form.id, participant_id=None,
                     location_id=location.id, deployment_id=deployment_id,
-                    event_id=event.id, submission_type='M', data={})
+                    event_id=event.id, submission_type='M', data={},
+                    geopoint=geopoint)
                 master_submission.save()
 
     def update_related(self, data):
@@ -183,6 +190,9 @@ class Submission(BaseModel):
         conflict data
         '''
         if self.form.form_type == 'INCIDENT':
+            return
+
+        if not self.form.track_data_conflicts:
             return
 
         conflict_tags = self.compute_conflict_tags(data.keys())

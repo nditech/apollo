@@ -157,6 +157,7 @@ def submission():
 
     tag_finder = etree.XPath('//data/*[local-name() = $tag]')
     data = {}
+    geopoint = {}
     for tag in form.tags:
         field = form.get_field_by_tag(tag)
         field_type = field.get('type')
@@ -165,20 +166,41 @@ def submission():
         except IndexError:
             # normally shouldn't happen, but the form might have been
             # modified
+            form_modified = True
             continue
 
         if element.text:
             if field_type in ('comment', 'string'):
                 data[tag] = element.text
             elif field_type == 'multiselect':
-                data[tag] = [int(i) for i in element.text.split()]
+                try:
+                    data[tag] = [int(i) for i in element.text.split()]
+                except ValueError:
+                    continue
+            # TODO: this may be a very bad idea
+            # what if there are multiple location fields
+            # in the form?
+            elif field_type == 'location':
+                geodata = element.text.split()
+                try:
+                    geopoint['lat'] = float(geodata[0])
+                    geopoint['lon'] = float(geodata[1])
+                    geopoint['acc'] = float(geodata[2])
+                    geopoint['elv'] = float(geodata[3])
+                except (IndexError, ValueError):
+                    continue
             else:
-                data[tag] = int(element.text)
+                try:
+                    data[tag] = int(element.text)
+                except ValueError:
+                    continue
 
-    submission.data = data
+    kwargs = {'data': data}
+    if geopoint and geopoint.get('lat') and geopoint.get('lon'):
+        kwargs.update(geopoint=geopoint)
     services.submissions.find(id=submission.id).update(
-        {'data': data}, synchronize_session=False)
-    models.Submission.precomp_and_update_related(submission)
+        kwargs, synchronize_session=False)
+    models.Submission.update_related(submission, data)
     update_submission_version(submission)
 
     if form_modified:

@@ -48,11 +48,13 @@ class SubmissionService(Service):
                 if form.form_type == 'INCIDENT':
                     dataset_headers.extend(
                         ['Location', 'Location Code'] + extra_field_headers +
-                        ['RV'] + tags + ['Timestamp', 'Status', 'Description'])
+                        ['RV'] + tags + [
+                            'Timestamp', 'Status', 'Description', 'Latitude'
+                            'Longitude'])
                 else:
                     dataset_headers += [
-                        'Location', 'Location Code', 'PS Code', 'RV'
-                    ] + tags + ['Timestamp']
+                        'Location', 'Location Code'] + extra_field_headers + \
+                        ['RV'] + tags + ['Timestamp', 'Latitude', 'Longitude']
                     dataset_headers.extend(sample_headers)
                     dataset_headers.append('Comment')
             else:
@@ -61,7 +63,7 @@ class SubmissionService(Service):
                     [location_type.name for location_type in location_types]
                 dataset_headers.extend(
                     ['Location', 'Location Code'] + extra_field_headers +
-                    ['RV'] + tags + ['Timestamp'])
+                    ['RV'] + tags + ['Timestamp', 'Latitude', 'Longitude'])
                 dataset_headers.extend(sample_headers)
 
             output = StringIO()
@@ -108,10 +110,14 @@ class SubmissionService(Service):
                         if submission.updated else '',
                         submission.incident_status.value
                         if submission.incident_status else '',
-                        submission.incident_description
+                        submission.incident_description,
+                        submission.geopoint.get('lat'),
+                        submission.geopoint.get('lon'),
                     ] if form.form_type == 'INCIDENT' else ([
                         submission.updated.strftime('%Y-%m-%d %H:%M:%S')
-                        if submission.updated else ''] + [
+                        if submission.updated else '',
+                        submission.geopoint.get('lat'),
+                        submission.geopoint.get('lon')] + [
                             1 if sample in submission.location.samples else 0
                             for sample in samples] + [
                             submission.comments[0].comment.replace('\n', '')
@@ -149,7 +155,9 @@ class SubmissionService(Service):
 
                     record += [
                         sib.updated.strftime('%Y-%m-%d %H:%M:%S')
-                        if sib.updated else ''] + [
+                        if sib.updated else '',
+                        sib.geopoint.get('lat'),
+                        sib.geopoint.get('lon')] + [
                             1 if sample in sib.location.samples else 0
                             for sample in samples]
 

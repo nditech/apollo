@@ -4,6 +4,7 @@
     {% for location_type in location_types %}
     <th>{{ location_type.name }}</th>
     {% endfor %}
+    <th>{{ _('Coordinates') }}</th>
     <th>{{ _('Participant') }}</th>
     <th>{{ _('Phone') }}</th>
     {% if form.form_type == 'CHECKLIST' %}
@@ -30,6 +31,11 @@
     {% for location_type in location_types %}
     <td>{{ submission.location.make_path()[location_type.name] }}</td>
     {% endfor %}
+    <td>
+    {% if submission.geopoint and submission.geopoint.lat and submission.geopoint.lon %}
+    ({{ submission.geopoint.lat|round(2) }}, {{ submission.geopoint.lon|round(2) }})
+    {% endif %}
+    </td>
     <td>{{ submission.participant.name|default('', true) }}</td>
     <td>{{ submission.participant.primary_phone|default('', true) }}</td>
     {%- if form.form_type == 'CHECKLIST' -%}
