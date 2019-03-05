@@ -221,6 +221,26 @@ def make_dashboard_filter(event):
         attributes)
 
 
+class QuarantineDataFilter(ChoiceFilter):
+    def __init__(self, *args, **kwargs):
+        kwargs['choices'] = (
+            ('', _('Not quarantined')),
+            ('1', _('Quarantined')),
+            ('2', _('All Records')),
+        )
+
+        super().__init__(*args, **kwargs)
+
+    def filter(self, query, value):
+        if value == '1':
+            return query.filter(
+                models.Submission.quarantine_status != '')
+        if value == '2':
+            return query
+
+        return query.filter(models.Submission.quarantine_status == '')
+
+
 def make_submission_list_filter(event, form):
     attributes = {}
     form._populate_field_cache()
@@ -264,6 +284,8 @@ def make_submission_list_filter(event, form):
     attributes['participant_id'] = ParticipantIDFilter()
     attributes['location'] = make_submission_location_filter(
         event.location_set_id)()
+    
+    attributes['quarantine'] = QuarantineDataFilter()
 
     return type(
         'SubmissionFilterSet',

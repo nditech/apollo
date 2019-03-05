@@ -23,6 +23,9 @@
 <div class="form-group">
 {{ filter_form['quarantine_status'](class_='form-control span2 input-sm') }}
 </div>
+<div class="form-group">
+{{ filter_form['quarantine'](class_='form-control span2 input-sm') }}
+</div>
 {%- else -%}
 {%- for group in form.data.groups -%}
 {%- for field in group.fields -%}
