@@ -224,9 +224,9 @@ def make_dashboard_filter(event):
 class QuarantineDataFilter(ChoiceFilter):
     def __init__(self, *args, **kwargs):
         kwargs['choices'] = (
-            ('', _('Not quarantined')),
-            ('1', _('Quarantined')),
-            ('2', _('All Records')),
+            ('2', _('ALL DATA')),
+            ('1', _('QUARANTINED DATA')),
+            ('', _('NOT QUARANTINED DATA')),
         )
 
         super().__init__(*args, **kwargs)
