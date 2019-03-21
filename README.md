@@ -96,7 +96,7 @@ TIMEZONE
 The timezone parameter configures the timezone that the application server uses by default. Usually this is set to the timezone of the country for which the application instance is deployed. For a full list of support timezone values, please visit this wikipedia article.
 
 
-GOOGLE_TAG_MANAGER
+#### GOOGLE_TAG_MANAGER (REQUIRED)####
 (e.g. GTM-1234567)
 
 If you need to manage tags that are inserted into the application, one way to do so it to use the Google Tag Manager. This parameter allows you to set the Google Tag Manager code that is linked to the Google account from where the tags will be managed.
@@ -210,7 +210,7 @@ Your application is now accessible on port *5000* on the host. You may want to s
 
 Login with the username `admin` and password `admin`. Remember to immediately change the default password.
 
-##### Analytics Tracking #####
+## Analytics Tracking ##
 For digital marketing or product improvement initiatives you may want to include JavaScript and or HTML snippet tags for tracking and analytics on Apollo. 
 
 Apollo leverages Google Tag Manager to achieve this. To enable Tag Manager, modify the `settings-docker.ini` file located in the project root directory. 
