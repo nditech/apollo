@@ -71,7 +71,7 @@ def _process_analysis(event, form_id, location_id=None, tag=None):
 
     template_name = ''
     tags = []
-    page_title = _('%(form)s Analysis', form=form.name)
+    page_title = _('%(form)s Summary', form=form.name)
     grouped = False
     display_tag = None
     event = g.event
@@ -112,7 +112,7 @@ def _process_analysis(event, form_id, location_id=None, tag=None):
             # a slightly different filter, one prefiltering
             # on the specified tag
             display_tag = tag
-            template_name = 'process_analysis/critical_incidents_locations.html'
+            template_name = 'process_analysis/critical_incidents_locations.html'  # noqa
             filter_class = \
                 filters.make_incident_location_filter(event, form, tag)
 
@@ -170,16 +170,16 @@ def _process_analysis(event, form_id, location_id=None, tag=None):
     return render_template(template_name, **context)
 
 
-@route(bp, '/submissions/analysis/process/form/<int:form_id>')
+@route(bp, '/process_summary/<int:form_id>')
 @register_menu(
     bp, 'main.analyses',
-    _('Analyses'), order=4,
+    _('Summaries'), order=4,
     icon='<i class="glyphicon glyphicon-stats"></i>',
     visible_when=lambda: len(get_analysis_menu()) > 0
     and permissions.view_process_analysis.can())
 @register_menu(
     bp, 'main.analyses.process_analysis',
-    _('Process Analysis'),
+    _('Process Summary'),
     icon='<i class="glyphicon glyphicon-stats"></i>',
     dynamic_list_constructor=partial(get_process_analysis_menu),
     visible_when=lambda: len(get_process_analysis_menu()) > 0
@@ -191,7 +191,7 @@ def process_analysis(form_id):
     return _process_analysis(event, form_id)
 
 
-@route(bp, '/submissions/analysis/process/form/<int:form_id>/location/<int:location_id>')
+@route(bp, '/process_summary/<int:form_id>/<int:location_id>')
 @login_required
 @permissions.view_process_analysis.require(403)
 def process_analysis_with_location(form_id, location_id):
@@ -199,7 +199,7 @@ def process_analysis_with_location(form_id, location_id):
     return _process_analysis(event, form_id, location_id)
 
 
-@route(bp, '/submissions/analysis/process/form/<int:form_id>/location/<int:location_id>/tag/<tag>')
+@route(bp, '/process_summary/<int:form_id>/<int:location_id>/<tag>')
 @login_required
 @permissions.view_process_analysis.require(403)
 def process_analysis_with_location_and_tag(form_id, location_id, tag):

@@ -63,7 +63,7 @@ def verify_pw(username, password):
     return verify_and_update_password(password, user)
 
 
-@route(bp, '/submissions/form/<int:form_id>', methods=['GET', 'POST'])
+@route(bp, '/submissions/<int:form_id>', methods=['GET', 'POST'])
 @register_menu(
     bp, 'main.checklists',
     _('Checklists'), order=1, icon='<i class="glyphicon glyphicon-check"></i>',
@@ -296,7 +296,7 @@ def submission_create(form_id):
             url_for('submissions.submission_list', form_id=form_id))
 
 
-@route(bp, '/submissions/<int:submission_id>', methods=['GET', 'POST'])
+@route(bp, '/submission/<int:submission_id>', methods=['GET', 'POST'])
 @login_required
 @permissions.edit_submission.require(403)
 def submission_edit(submission_id):
@@ -751,8 +751,7 @@ def _incident_csv(form_id, location_type_id, location_id=None):
     return codecs.BOM_UTF8.decode(encoding='utf-8') + ds.csv
 
 
-@route(bp, '/incidents/form/<form_id>/locationtype'
-           '/<location_type_id>/incidents.csv')
+@route(bp, '/incidents/<form_id>/<location_type_id>/incidents.csv')
 @login_required
 def incidents_csv_dl(form_id, location_type_id):
     response = make_response(
@@ -762,8 +761,8 @@ def incidents_csv_dl(form_id, location_type_id):
     return response
 
 
-@route(bp, '/incidents/form/<form_id>/locationtype/<location_type_id>'
-           '/location/<location_id>/incidents.csv')
+@route(bp, '/incidents/<form_id>/<location_type_id>'
+           '/<location_id>/incidents.csv')
 @login_required
 def incidents_csv_with_location_dl(form_id, location_type_id, location_id):
     response = make_response(
@@ -847,7 +846,7 @@ def quality_assurance_dashboard(form_id):
     return render_template(template_name, **context)
 
 
-@route(bp, '/submissions/qa/<form_id>/list')
+@route(bp, '/submissions/qa/<form_id>')
 @register_menu(
     bp, 'main.qa',
     _('Quality Assurance'),

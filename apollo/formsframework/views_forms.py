@@ -76,7 +76,7 @@ def form_builder(id):
         return ''
 
 
-@route(bp, '/forms/new',
+@route(bp, '/form/new',
        endpoint='new_form', methods=['GET', 'POST'])
 @login_required
 @permissions.edit_forms.require(403)
@@ -108,7 +108,7 @@ def new_form():
     return redirect(url_for('.list_forms'))
 
 
-@route(bp, '/forms/<int:form_id>',
+@route(bp, '/form/<int:form_id>',
        endpoint='edit_form', methods=['GET', 'POST'])
 @login_required
 @permissions.edit_forms.require(403)
@@ -158,7 +158,7 @@ def list_forms():
     return render_template(template_name, **context)
 
 
-@route(bp, '/forms/<int:form_id>/qa',
+@route(bp, '/form/<int:form_id>/qa',
        endpoint='quality_assurance', methods=['GET', 'POST'])
 @login_required
 @permissions.edit_forms.require(403)
@@ -208,7 +208,7 @@ def quality_assurance(form_id):
     return render_template(template_name, **context)
 
 
-@route(bp, '/forms/<int:id>/export', methods=['GET'])
+@route(bp, '/form/<int:id>/export', methods=['GET'])
 @login_required
 @permissions.edit_forms.require(403)
 def export_form(id):

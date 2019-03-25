@@ -458,10 +458,10 @@ def _voting_results(form_id, location_id=None):
     return render_template(template_name, **context)
 
 
-@route(bp, '/submissions/analysis/results/form/<form_id>')
+@route(bp, '/results_summary/<form_id>')
 @register_menu(
     bp, 'main.analyses.results_analysis',
-    _('Results Analysis'),
+    _('Results Summary'),
     icon='<i class="glyphicon glyphicon-stats"></i>',
     dynamic_list_constructor=partial(get_result_analysis_menu),
     visible_when=lambda: len(get_result_analysis_menu()) > 0
@@ -472,8 +472,7 @@ def results_analysis(form_id):
     return _voting_results(form_id)
 
 
-@route(bp, '/submissions/analysis/results/form/<form_id>'
-           '/location/<location_id>')
+@route(bp, '/results_summary/<form_id>/<location_id>')
 @login_required
 @permissions.view_result_analysis.require(403)
 def results_analysis_with_location(form_id, location_id):
