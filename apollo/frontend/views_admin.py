@@ -100,7 +100,8 @@ class DeploymentAdminView(BaseAdminView):
         rules.FieldSet(
             (
                 'name', 'allow_observer_submission_edit',
-                'dashboard_full_locations', 'hostnames',
+                'dashboard_full_locations',
+                'enable_partial_response_for_messages', 'hostnames',
                 'primary_locale', 'other_locales'
             ),
             _('Deployment')
@@ -108,6 +109,7 @@ class DeploymentAdminView(BaseAdminView):
     ]
 
     form_columns = ['name', 'hostnames', 'dashboard_full_locations',
+                    'enable_partial_response_for_messages',
                     'allow_observer_submission_edit', 'primary_locale',
                     'other_locales']
 

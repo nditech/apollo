@@ -3,6 +3,7 @@ from apollo.formsframework.forms import build_questionnaire
 from apollo.messaging.forms import retrieve_form
 from apollo.messaging.utils import (
     get_unsent_codes, parse_text, parse_responses)
+from flask import g
 from flask_babelex import gettext, lazy_gettext as _
 from werkzeug.datastructures import MultiDict
 
@@ -44,7 +45,12 @@ def parse_message(form):
                     # check that the data sent was not partial
                     unused_tags = get_unsent_codes(
                         form_doc, response_dict.keys())
-                    if unused_tags:
+                    if (
+                        unused_tags and
+                        getattr(g, 'deployment', False) and
+                        getattr(g.deployment,
+                                'enable_partial_response_for_messages', False)
+                    ):
                         reply = gettext(
                             'Thank you, but your message may be missing '
                             '%(unused_codes)s. You sent: %(text)s',

@@ -29,6 +29,7 @@ class Deployment(BaseModel):
     include_rejected_in_votes = db.Column(db.Boolean, default=False)
     is_initialized = db.Column(db.Boolean, default=False)
     dashboard_full_locations = db.Column(db.Boolean, default=True)
+    enable_partial_response_for_messages = db.Column(db.Boolean, default=True)
     primary_locale = db.Column(db.String)
     other_locales = db.Column(ARRAY(db.String))
 
