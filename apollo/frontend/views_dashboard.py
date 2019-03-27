@@ -223,7 +223,7 @@ def concurrent_events(event_id):
     return redirect(url_for('dashboard.index'))
 
 
-@route(bp, '/event', methods=['GET', 'POST'])
+@route(bp, '/events', methods=['GET', 'POST'])
 @register_menu(
     bp, 'user.events', _('Events'),
     visible_when=partial(lambda: permissions.view_events.can()))
