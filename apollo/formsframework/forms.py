@@ -30,8 +30,11 @@ def update_submission_version(submission):
         for k in data_fields if k in submission.data}
 
     if submission.form.form_type == 'INCIDENT':
-        version_data['status'] = submission.incident_status.code
-        version_data['description'] = submission.incident_description
+        if submission.incident_status:
+            version_data['status'] = submission.incident_status.code
+
+        if submission.incident_description:
+            version_data['description'] = submission.incident_description
 
     # get previous version
     previous = SubmissionVersion.query.filter(
