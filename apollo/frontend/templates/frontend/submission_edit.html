@@ -160,6 +160,25 @@
         </td>
         <td>&nbsp;</td>
       </tr>
+      {% if perms.edit_submission_quarantine_status.can() %}
+      <tr>
+        <td colspan="2" style="vertical-align: middle"><h4>{{ _('Quarantine Status') }}</h4></td>
+        {%- if readonly -%}
+        <td class="obs-on">{{ render_submission_field(submission_form['quarantine_status'], disabled=1)}}</td>
+        {%- else -%}
+        <td class="obs-on"{%- if submission_form['quarantine_status'].errors %} class="danger"{%- endif -%}>{{ render_submission_field(submission_form['quarantine_status']) }}</td>
+        {%- endif -%}
+        {%- for sibling_form in sibling_forms -%}
+        <td >{{ render_submission_field(sibling_form['quarantine_status'], disabled=1) }}</td>
+        {%- endfor -%}
+        {%- if readonly -%}
+        <td class="ps-on"{%- if master_form['quarantine_status'].errors %} class="danger"{%- endif -%}>{{ render_submission_field(master_form['quarantine_status']) }}</td>
+        {%- else -%}
+        <td class="ps-on"{%- if master_form['quarantine_status'].errors %} class="danger"{%- endif -%}>{{ render_submission_field(master_form['quarantine_status'], disabled=1) }}</td>
+        {%- endif -%}
+        <td colspan="2">&nbsp;</td>
+      </tr>
+      {% endif %}
       {% for group in form.data.groups %}
       <tr>
         <td colspan="{{ siblings|count + 6 }}"><h4>{{ group.name }}</h4></td>
@@ -193,25 +212,6 @@
       </tr>
       {% endfor %}
       {% endfor %}
-      {% if perms.edit_submission_quarantine_status.can() %}
-      <tr>
-        <td colspan="2" style="vertical-align: middle"><h4>{{ _('Quarantine Status') }}</h4></td>
-        {%- if readonly -%}
-        <td class="obs-on">{{ render_submission_field(submission_form['quarantine_status'], disabled=1)}}</td>
-        {%- else -%}
-        <td class="obs-on"{%- if submission_form['quarantine_status'].errors %} class="danger"{%- endif -%}>{{ render_submission_field(submission_form['quarantine_status']) }}</td>
-        {%- endif -%}
-        {%- for sibling_form in sibling_forms -%}
-        <td >{{ render_submission_field(sibling_form['quarantine_status'], disabled=1) }}</td>
-        {%- endfor -%}
-        {%- if readonly -%}
-        <td class="ps-on"{%- if master_form['quarantine_status'].errors %} class="danger"{%- endif -%}>{{ render_submission_field(master_form['quarantine_status']) }}</td>
-        {%- else -%}
-        <td class="ps-on"{%- if master_form['quarantine_status'].errors %} class="danger"{%- endif -%}>{{ render_submission_field(master_form['quarantine_status'], disabled=1) }}</td>
-        {%- endif -%}
-        <td colspan="2">&nbsp;</td>
-      </tr>
-      {% endif %}
       {% if perms.edit_submission_verification_status.can() and submission.form.verifiable %}
       <tr>
         <td colspan="2" style="vertical-align: middle"><h4>{{ _('Verification Status') }}</h4></td>
