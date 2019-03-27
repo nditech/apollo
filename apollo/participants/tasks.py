@@ -1,16 +1,19 @@
 # -*- coding: utf-8 -*-
 from collections import OrderedDict
+import random
+import string
+
 from flask import render_template_string
 from flask.ext.babel import lazy_gettext as _
 from mongoengine import MultipleObjectsReturned
+from mongoengine.connection import get_db
 import pandas as pd
+
 from apollo.messaging.tasks import send_email
 from apollo import services, helpers
 from apollo.factory import create_celery_app
 from apollo.participants import utils
 from apollo.participants.models import PhoneContact
-import random
-import string
 
 celery = create_celery_app()
 
@@ -287,6 +290,9 @@ def update_participants(dataframe, event, header_map):
 
         # finally done with first pass
         participant.save()
+
+    # force writes before running the second pass
+    get_db().connection.fsync()
 
     # second pass - resolve missing supervisor references
     for participant_id, supervisor_id in unresolved_supervisors:
