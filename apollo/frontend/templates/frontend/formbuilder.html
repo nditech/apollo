@@ -21,12 +21,21 @@
         <div fb-builder="default"></div>
       </div>
     </div>
-    <div class="col-md-6" style="position:fixed; margin-left:45%; width:45%;">
+    <div class="col-md-6" style="position: sticky; position: -webkit-sticky; top: 1em">
       <div class="panel panel-default" style="margin-bottom:2.5em;">
         <div class="panel-body">
           <div fb-components></div>
-          <button class="btn btn-primary" ng-click="submit();"><span class="glyphicon glyphicon-save"></span> Save</button>
-          <a href="{{ url_for('forms.list_forms') }}" class="btn btn-default">Cancel</a>
+          <div class="form-horizontal">
+            <div class="fb-component">
+              <div class="form-group">
+                <label class="col-sm-2 control-label">&nbsp;</label>
+                <div class="col-sm-10">
+                  <button class="btn btn-primary" ng-click="submit();"><span class="glyphicon glyphicon-save"></span> Save</button>
+                  <a href="{% if form_set_id %}{{ url_for('forms.list_forms_with_set', form_set_id=form.form_set_id) }}{% else %}{{ url_for('forms.list_forms') }}{% endif %}" class="btn btn-default">Cancel</a>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
