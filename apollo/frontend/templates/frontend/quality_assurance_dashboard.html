@@ -50,18 +50,22 @@ Vue.component('check', {
     this.$nextTick(function (){
       var compSvg = dimple.newSvg('#' + this.htmlID, '100%', '250px');
       var chart = new dimple.chart(compSvg, this.check.counts);
+
       var x_axis = chart.addMeasureAxis('x', 'count');
       x_axis.tickFormat = 'd';
+      x_axis.overrideMax = this.check.total;
+
       chart.setMargins(100, 50, 50, 50);
       chart.addCategoryAxis('y', 'label').addOrderRule([
         'OK', 'Verified', 'Flagged', 'Missing'
       ], true);
+
       chart.addSeries('label', dimple.plot.bar);
       chart.assignColor('OK', '#8ae234');
       chart.assignColor('Verified', '#fcaf3e');
       chart.assignColor('Flagged', '#ef2929');
       chart.assignColor('Missing', '#babdb6');
-      // chart.addLegend('5%', '5%', '80%', 20, "left");
+
       chart.draw();
     });
   },

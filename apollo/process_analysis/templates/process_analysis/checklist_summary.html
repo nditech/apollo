@@ -29,19 +29,17 @@
 						<tr>
 							<td width="30" rowspan="{% if stats.urban %}4{% else %}2{% endif %}"><strong>{{ field['tag'] }}</strong></td>
 							<td rowspan="{% if stats.urban %}4{% else %}2{% endif %}"><a href="{{ url_for('process_analysis.process_analysis_with_location_and_tag', form_id=form.id, location_id=location.id, tag=field['tag']) }}">{{ field.description }}</a></td>
-							<td>&nbsp;</td>
 							{% if stats.type == 'continuous' %}
 							<td bgcolor="#eee">{{ _('Mean') }}</td>
 							{% else %}
-							{% for label, unused in stats.options|dictsort(false, 'value') %}
-							<td>{{ _('%(label)s', label=label) }}</td>
+							{% for label, value in stats.options|dictsort(false, 'value') %}
+							<td>{{ _('%(label)s', label=label) }} ({{ value }})</td>
 							{% endfor %}
 							{% endif %}
 							<td width="100" bgcolor="#eee">{{ _('Reported') }}</td>
 							<td width="100" bgcolor="#eee">{{ _('Missing') }}</td>
 						</tr>
 						<tr>
-							<td class="text-centered"><strong>{{ _('All') }}</strong></td>
 							{% if stats.type == 'continuous' %}
 							<td><strong>{{ stats.mean|mean_filter }}</strong></td>
 							{% else %}
