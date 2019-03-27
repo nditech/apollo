@@ -7,7 +7,6 @@ from wtforms import SelectField, fields, validators
 
 from apollo import services
 from apollo.deployments.models import Event
-from apollo.formsframework.models import FormSet
 from apollo.locations.models import LocationSet
 from apollo.participants.models import ParticipantSet
 
@@ -58,8 +57,7 @@ class DeploymentForm(FlaskForm):
 
 
 def event_form_factory(*args, **kwargs):
-    form_set_choices = FormSet.query.with_entities(
-        FormSet.id, FormSet.name).all()
+    form_choices = Form.query.with_entities(Form.id, Form.name).all()
     location_set_choices = LocationSet.query.with_entities(
         LocationSet.id, LocationSet.name).all()
     participant_set_choices = ParticipantSet.query.with_entities(
@@ -70,7 +68,7 @@ def event_form_factory(*args, **kwargs):
             _('Start'), validators=[validators.DataRequired()])
         end = fields.DateTimeField(
             _('End'), validators=[validators.DataRequired()])
-        form_set = fields.SelectField(_('Form set'), choices=form_set_choices)
+        forms = fields.SelectMultipleField(_('Forms'), choices=form_choices)
         location_set = fields.SelectField(
             _('Location set'), choices=location_set_choices)
         participant_set = fields.SelectField(

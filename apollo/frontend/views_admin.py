@@ -128,12 +128,12 @@ class DeploymentAdminView(BaseAdminView):
 
 class EventAdminView(BaseAdminView):
     column_filters = ('name', 'start', 'end')
-    column_list = ('name', 'start', 'end', 'form_set', 'participant_set',
+    column_list = ('name', 'start', 'end', 'location_set', 'participant_set',
                    'archive')
-    form_columns = ('name', 'start', 'end', 'form_set', 'participant_set')
+    form_columns = ('name', 'start', 'end', 'forms', 'participant_set')
     form_rules = [
         rules.FieldSet(
-            ('name', 'start', 'end', 'form_set', 'participant_set'),
+            ('name', 'start', 'end', 'forms', 'participant_set'),
             _('Event'))
     ]
     column_formatters = {
@@ -313,14 +313,6 @@ class SetViewMixin(object):
         super().on_model_change(form, model, is_created)
 
 
-class FormSetAdminView(SetViewMixin, BaseAdminView):
-    column_list = ('name', 'forms')
-    form_columns = ('name',)
-    column_formatters = {
-        'forms': macro('forms_list')
-    }
-
-
 class LocationSetAdminView(SetViewMixin, BaseAdminView):
     column_list = ('name', 'divisions', 'locations')
     column_formatters = {
@@ -373,7 +365,6 @@ admin.add_view(
     EventAdminView(models.Event, db.session, _('Events')))
 admin.add_view(UserAdminView(models.User, db.session, _('Users')))
 admin.add_view(RoleAdminView(models.Role, db.session, _('Roles')))
-admin.add_view(FormSetAdminView(models.FormSet, db.session))
 admin.add_view(
     LocationSetAdminView(models.LocationSet, db.session, _('Location Sets')))
 admin.add_view(

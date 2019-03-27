@@ -37,13 +37,17 @@ def main_dashboard(form_id=None):
 
     event = get_event()
     if not form_id:
-        form = Form.query.filter(
-            Form.form_set_id == event.form_set_id,
+        form = Form.query.join(
+            Form.events
+        ).filter(
+            Form.events.contains(event),
             Form.form_type == 'CHECKLIST'
         ).order_by('name').first()
     else:
-        form = Form.query.filter(
-            Form.form_set_id == event.form_set_id,
+        form = Form.query.join(
+            Form.events
+        ).filter(
+            Form.events.contains(event),
             Form.form_type == 'CHECKLIST',
             Form.id == form_id).first_or_404()
 

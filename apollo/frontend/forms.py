@@ -8,7 +8,6 @@ from wtforms.validators import Optional
 
 from apollo.frontend import permissions
 
-from ..formsframework.models import Form
 from ..locations.models import LocationType
 from ..participants.models import (
     Participant, ParticipantRole, ParticipantPartner)
@@ -240,14 +239,14 @@ class DummyForm(WTSecureForm):
 
 
 def make_checklist_init_form(event):
-    form_set_id = getattr(event, 'form_set_id', None)
     location_set_id = getattr(event, 'location_set_id', None)
     participant_set_id = getattr(event, 'participant_set_id', None)
 
-    form_choices = Form.query.filter(
-        Form.form_set_id == form_set_id,
-        Form.form_type == 'CHECKLIST'
-    ).with_entities(Form.id, Form.name)
+    form_choices = [
+        (form.id, form.name)
+        for form in event.forms
+        if form.form_type == 'CHECKLIST'
+    ]
 
     location_type_choices = [(i.id, i.name) for i in LocationType.query.filter(
         LocationType.location_set_id == location_set_id)]

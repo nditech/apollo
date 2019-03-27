@@ -25,14 +25,13 @@ from apollo.submissions.utils import make_submission_dataframe
 
 def get_analysis_menu():
     event = g.event
-    form_set_id = event.form_set_id
     return [{
         'url': url_for('process_analysis.process_analysis',
                        form_id=form.id),
         'text': form.name,
         'icon': '<i class="glyphicon glyphicon-stats"></i>'
     } for form in forms.filter(
-        models.Form.form_set_id == form_set_id,
+        models.Form.events.contains(event),
         or_(
             models.Form.form_type == 'INCIDENT',
             and_(
@@ -45,14 +44,13 @@ def get_analysis_menu():
 
 def get_process_analysis_menu():
     event = g.event
-    form_set_id = event.form_set_id
     return [{
         'url': url_for('process_analysis.process_analysis',
                        form_id=form.id),
         'text': form.name,
         'icon': '<i class="glyphicon glyphicon-stats"></i>'
     } for form in forms.filter(
-        models.Form.form_set_id == form_set_id,
+        models.Form.events.contains(event),
         or_(
             models.Form.form_type == 'INCIDENT',
             and_(

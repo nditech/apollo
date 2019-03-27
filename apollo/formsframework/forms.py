@@ -66,7 +66,7 @@ def filter_participants(form, participant_id):
         return None
     event = getattr(g, 'event', services.events.default())
     current_events = services.events.overlapping_events(event)
-    form_events = Event.query.filter_by(form_set=form.form_set)
+    form_events = Event.query.filter(Event.forms.contains(form))
     query = current_events.intersect(form_events).join(
         Participant,
         Participant.participant_set_id == Event.participant_set_id    # noqa
@@ -80,10 +80,7 @@ def filter_participants(form, participant_id):
 def filter_form(form_id):
     event = getattr(g, 'event', services.events.default())
     current_events = services.events.overlapping_events(event)
-    query = current_events.join(
-        Form,
-        Event.form_set_id == Form.form_set_id
-    ).with_entities(Form)
+    query = current_events.join(Event.forms).with_entities(Form)
 
     if form_id:
         form = query.filter_by(id=form_id).first()
@@ -94,10 +91,7 @@ def filter_form(form_id):
 def find_active_forms():
     event = getattr(g, 'event', services.events.default())
     current_events = services.events.overlapping_events(event)
-    query = current_events.join(
-        Form,
-        Event.form_set_id == Form.form_set_id
-    ).with_entities(Form)
+    query = current_events.join(Event.forms).with_entities(Form)
 
     return query
 
@@ -166,9 +160,9 @@ class BaseQuestionnaireForm(wtforms.Form):
             # the submission event is determined by taking the intersection
             # of form events, participant events and concurrent events
             # and taking the last event ordered by descending end date
-            event = current_events.filter_by(
-                form_set_id=form.form_set_id,
-                participant_set_id=participant.participant_set_id
+            event = current_events.join(Event.forms).filter(
+                Event.forms.contains(form),
+                Event.participant_set_id == participant.participant_set_id
             ).order_by(Event.end.desc()).first()
 
             submission = Submission(
