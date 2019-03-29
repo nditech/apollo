@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
-from flask import flash, g, send_file
+from flask import flash, g, send_file, redirect, url_for
 from flask_admin import form
+from flask_admin import BaseView
 from flask_admin import expose
 from flask_admin.actions import action
 from flask_admin.contrib.sqla import ModelView
@@ -362,6 +363,12 @@ class ParticipantSetAdminView(SetViewMixin, BaseAdminView):
         return form
 
 
+class FormsView(BaseView):
+    @expose('/')
+    def index(self):
+        return redirect(url_for('forms.list_forms'))
+
+
 admin.add_view(DeploymentAdminView(models.Deployment, db.session))
 admin.add_view(
     EventAdminView(models.Event, db.session, _('Events')))
@@ -372,3 +379,4 @@ admin.add_view(
 admin.add_view(
     ParticipantSetAdminView(
         models.ParticipantSet, db.session, _('Participant Sets')))
+admin.add_view(FormsView(name="Forms", endpoint="forms_"))
