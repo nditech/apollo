@@ -376,8 +376,10 @@ def participant_edit(id, participant_set_id=0):
                 participant.partner = None
 
             phone_number = phone_number_cleaner.sub('', form.phone.data)
-            phone = services.phones.find(number=phone_number).first()
-            if not phone:
+            participant_phone = ParticipantPhone.query.filter_by(
+                participant_id=participant.id).order_by(
+                ParticipantPhone.last_seen.desc()).first()
+            if not participant_phone:
                 phone = Phone.create(number=phone_number)
                 phone.save()
                 participant_phone = ParticipantPhone.create(
@@ -385,17 +387,15 @@ def participant_edit(id, participant_set_id=0):
                     verified=True)
                 participant_phone.save()
             else:
-                participant_phone = ParticipantPhone.query.filter(
-                    ParticipantPhone.phone_id == phone.id,
-                    ParticipantPhone.participant_id == participant.id).first()
-                if not participant_phone:
-                    participant_phone = ParticipantPhone.create(
-                        participant_id=participant.id, phone_id=phone.id,
-                        verified=True)
-                    participant_phone.save()
+                if participant_phone.phone:
+                    participant_phone.phone.number = phone_number
+                    participant_phone.phone.save()
                 else:
-                    participant_phone.verified = True
-                    participant_phone.save()
+                    phone = Phone.create(number=phone_number)
+                    phone.save()
+                    participant_phone.phone = phone
+                participant_phone.verified = True
+                participant_phone.save()
 
             participant.password = form.password.data
             if participant_set.extra_fields:
