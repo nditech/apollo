@@ -242,10 +242,37 @@ class Participant(BaseModel):
             return None
 
         p_phone = ParticipantPhone.query.filter_by(
-            participant_id=self.id).order_by(
-                ParticipantPhone.phone_id).first()
+            participant_id=self.id, verified=True).order_by(
+                ParticipantPhone.last_seen.desc()).first()
 
         return p_phone.phone.number if p_phone else None
+
+    @property
+    def last_seen_phone(self):
+        if not self.id:
+            return None
+
+        p_phone = ParticipantPhone.query.filter_by(
+            participant_id=self.id).order_by(
+                ParticipantPhone.last_seen.desc()).first()
+
+        return p_phone.phone.number if p_phone else None
+
+    @property
+    def other_phones(self):
+        if not self.id:
+            return None
+
+        phone_primary = ParticipantPhone.query.filter_by(
+            participant_id=self.id, verified=True).order_by(
+                ParticipantPhone.last_seen.desc()).first()
+        other_phones = ParticipantPhone.query.filter(
+            ParticipantPhone.participant_id==self.id,  # noqa
+            ParticipantPhone.phone_id!=phone_primary.phone_id,  # noqa
+            ParticipantPhone.verified==True  # noqa
+        ).order_by(ParticipantPhone.last_seen.desc())
+
+        return [p.phone.number for p in other_phones]
 
     @property
     def phones(self):

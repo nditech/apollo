@@ -306,15 +306,17 @@ def participant_performance_detail(pk):
 @permissions.edit_participant.require(403)
 def participant_phone_verify():
     if request.is_xhr:
-        contributor = request.form.get('contributor')
+        contributor = request.form.get('participant')
         phone = request.form.get('phone')
         submission_id = request.form.get('submission')
 
         submission = Submission.query.get_or_404(submission_id)
         participant = Participant.query.get_or_404(contributor)
         phone_contact = next(filter(
-            lambda p: phone == p.number, participant.phones), False)
+            lambda p: phone == p.phone.number,
+            participant.participant_phones), False)
         phone_contact.verified = True
+        phone_contact.save()
         participant.save()
         submission.sender_verified = True
         submission.save()

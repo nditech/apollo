@@ -40,16 +40,27 @@
 </tr>
 <tr>
   <th>{{ _('Texted Phone') }}</th>
-  <td>{% if submission.participant and submission.participant.last_seen_phone %}<strong>{{ submission.participant.last_seen_phone|default('N/A', true) }}</strong> {% if submission.sender_verified %}<span id="phone_verification_status" class="label label-success">verified</span>{% else %}<span id="phone_verification_status" class="label label-warning">unverified</span> {% if perms.edit_participant.can() %}<button id="verify_button" data-participant="{{ submission.participant.id }}" data-phone="{{ submission.participant.last_seen_phone|default('', true) }}" data-submission="{{ submission.id }}" type="button" class="btn btn-default btn-xs" title="Verify Phone"><span class="glyphicon glyphicon-ok-sign"></span></button>{% endif %}{% endif %}{% else %}N/A{% endif %}</td>
+  <td>{% if submission.participant and submission.participant.last_seen_phone %}<strong>{{ submission.participant.last_seen_phone|default(_('N/A'), true) }}</strong> {% if submission.sender_verified %}<span id="phone_verification_status" class="label label-success">verified</span>{% else %}<span id="phone_verification_status" class="label label-warning">unverified</span> {% if perms.edit_participant.can() %}<button id="verify_button" data-participant="{{ submission.participant.id }}" data-phone="{{ submission.participant.last_seen_phone|default('', true) }}" data-submission="{{ submission.id }}" type="button" class="btn btn-default btn-xs" title="Verify Phone"><span class="glyphicon glyphicon-ok-sign"></span></button>{% endif %}{% endif %}{% else %}{{ _('N/A') }}{% endif %}</td>
   {%- if form.form_type == 'CHECKLIST' -%}
   {%- for sib in siblings -%}
-  <td>{% if sib.participant and sib.participant.last_seen_phone %}<strong>{{ sib.participant.last_seen_phone|default('N/A', true) }}</strong> {% if sib.sender_verified %}<span id="phone_verification_status" class="label label-success">verified</span>{% else %}<span id="phone_verification_status" class="label label-warning">unverified</span> {% if perms.edit_participant.can() %}<button id="verify_button" data-participant="{{ sib.participant.id }}" data-phone="{{ sib.participant.last_seen_phone|default('', true) }}" data-submission="{{ sib.id }}" type="button" class="btn btn-default btn-xs" title="Verify Phone"><span class="glyphicon glyphicon-ok-sign"></span></button>{% endif %}{% endif %}{% else %}N/A{% endif %}</td>
+  <td>{% if sib.participant and sib.participant.last_seen_phone %}<strong>{{ sib.participant.last_seen_phone|default(_('N/A'), true) }}</strong> {% if sib.sender_verified %}<span id="phone_verification_status" class="label label-success">verified</span>{% else %}<span id="phone_verification_status" class="label label-warning">unverified</span> {% if perms.edit_participant.can() %}<button id="verify_button" data-participant="{{ sib.participant.id }}" data-phone="{{ sib.participant.last_seen_phone|default('', true) }}" data-submission="{{ sib.id }}" type="button" class="btn btn-default btn-xs" title="Verify Phone"><span class="glyphicon glyphicon-ok-sign"></span></button>{% endif %}{% endif %}{% else %}{{ _('N/A') }}{% endif %}</td>
+  {%- endfor -%}
+  {%- endif -%}
+</tr>
+<tr>
+  <th>{{ _('Other Phones') }}</th>
+  <td>
+    {% if submission.participant and submission.participant.other_phones %}{{ submission.participant.other_phones|join(', ') }}{% else %}{{ _('N/A') }}{% endif %}
+  </td>
+  {%- if form.form_type == 'CHECKLIST' -%}
+  {%- for sib in siblings -%}
+  <td>{% if sib.participant and sib.participant.last_seen_phone %}{{ sib.participant.other_phones|join(', ') }}{% else %}{{ _('N/A') }}{% endif %}</td>
   {%- endfor -%}
   {%- endif -%}
 </tr>
 <tr>
   <th>{{ _('Role') }}</th>
-  <td>{{ submission.participant.role|default('N/A', true) }}</td>
+  <td>{{ submission.participant.role|default(_('N/A'), true) }}</td>
   {%- if form.form_type == 'CHECKLIST' -%}
   {%- for sib in siblings -%}
   <td>{{ sib.participant.role }}</td>
@@ -59,9 +70,9 @@
 {%- if form.form_type == 'CHECKLIST' -%}
 <tr>
   <th>{{ _('Location') }}</th>
-  <td><strong>{{ submission.location.name|default('N/A', true) }}</strong><input type="hidden" name="{{ submission_form['location'].name }}" value="{{ submission.location.id|default('__None', true) }}" /></td>
+  <td><strong>{{ submission.location.name|default(_('N/A'), true) }}</strong><input type="hidden" name="{{ submission_form['location'].name }}" value="{{ submission.location.id|default('__None', true) }}" /></td>
   {%- for sib in siblings -%}
-  <td><strong>{{ sib.location.name|default('N/A', true) }}</strong></td>
+  <td><strong>{{ sib.location.name|default(_('N/A'), true) }}</strong></td>
   {%- endfor -%}
 </tr>
 <tr>
@@ -87,9 +98,9 @@
 </tr>
 <tr>
   <th>{{ _('Supervisor') }}</th>
-  <td>{% if submission.participant and submission.participant.supervisor %}<strong>{{ submission.participant.supervisor.name|default('<em>N/A</em>', true) }}</strong>{%- if submission.participant.supervisor.phone %} ({{ submission.participant.supervisor.phone }}){%- endif -%}{% else %}N/A{% endif %}</td>
+  <td>{% if submission.participant and submission.participant.supervisor %}<strong>{{ submission.participant.supervisor.name|default('<em>{}</em>'.format(_('N/A')), true) }}</strong>{%- if submission.participant.supervisor.phone %} ({{ submission.participant.supervisor.phone }}){%- endif -%}{% else %}{{ _('N/A') }}{% endif %}</td>
   {%- for sib in siblings -%}
-  <td>{% if sib.participant and sib.participant.supervisor %}<strong>{{ sib.participant.supervisor.name|default('<em>N/A</em>', true) }}</strong>{%- if sib.participant.supervisor.phone %} ({{ sib.participant.supervisor.phone }}){%- endif -%}{% else %}N/A{% endif %}</td>
+  <td>{% if sib.participant and sib.participant.supervisor %}<strong>{{ sib.participant.supervisor.name|default('<em>{}</em>'.format(_('N/A')), true) }}</strong>{%- if sib.participant.supervisor.phone %} ({{ sib.participant.supervisor.phone }}){%- endif -%}{% else %}{{ _('N/A') }}{% endif %}</td>
   {%- endfor -%}
 </tr>
 {%- else -%}
