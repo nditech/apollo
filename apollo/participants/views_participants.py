@@ -306,15 +306,17 @@ def participant_performance_detail(pk):
 @permissions.edit_participant.require(403)
 def participant_phone_verify():
     if request.is_xhr:
-        contributor = request.form.get('contributor')
+        contributor = request.form.get('participant')
         phone = request.form.get('phone')
         submission_id = request.form.get('submission')
 
         submission = Submission.query.get_or_404(submission_id)
         participant = Participant.query.get_or_404(contributor)
         phone_contact = next(filter(
-            lambda p: phone == p.number, participant.phones), False)
+            lambda p: phone == p.phone.number,
+            participant.participant_phones), False)
         phone_contact.verified = True
+        phone_contact.save()
         participant.save()
         submission.sender_verified = True
         submission.save()
@@ -374,8 +376,10 @@ def participant_edit(id, participant_set_id=0):
                 participant.partner = None
 
             phone_number = phone_number_cleaner.sub('', form.phone.data)
-            phone = services.phones.find(number=phone_number).first()
-            if not phone:
+            participant_phone = ParticipantPhone.query.filter_by(
+                participant_id=participant.id).order_by(
+                ParticipantPhone.last_seen.desc()).first()
+            if not participant_phone:
                 phone = Phone.create(number=phone_number)
                 phone.save()
                 participant_phone = ParticipantPhone.create(
@@ -383,17 +387,15 @@ def participant_edit(id, participant_set_id=0):
                     verified=True)
                 participant_phone.save()
             else:
-                participant_phone = ParticipantPhone.query.filter(
-                    ParticipantPhone.phone_id == phone.id,
-                    ParticipantPhone.participant_id == participant.id).first()
-                if not participant_phone:
-                    participant_phone = ParticipantPhone.create(
-                        participant_id=participant.id, phone_id=phone.id,
-                        verified=True)
-                    participant_phone.save()
+                if participant_phone.phone:
+                    participant_phone.phone.number = phone_number
+                    participant_phone.phone.save()
                 else:
-                    participant_phone.verified = True
-                    participant_phone.save()
+                    phone = Phone.create(number=phone_number)
+                    phone.save()
+                    participant_phone.phone = phone
+                participant_phone.verified = True
+                participant_phone.save()
 
             participant.password = form.password.data
             if participant_set.extra_fields:
