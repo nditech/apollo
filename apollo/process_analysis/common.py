@@ -187,7 +187,7 @@ def generate_single_choice_field_stats(tag, dataset, options, labels=None):
 
     field_stats = {
         'type': 'single-choice', 'labels': labels,
-        'meta': list(zip(labels, options))}
+        'meta': list(zip(labels or [], options))}
 
     if hasattr(dataset, 'groups'):
         # the data is grouped, so per-group statistics will be generated
@@ -258,7 +258,7 @@ def generate_mutiple_choice_field_stats(tag, dataset, options, labels=None):
     of the relevant statistics.'''
     field_stats = {
         'type': 'multiple-choice', 'labels': labels, 
-        'meta': list(zip(labels, options))}
+        'meta': list(zip(labels or [], options))}
 
     if hasattr(dataset, 'groups'):
         group_names = list(dataset.groups.keys())

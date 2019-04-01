@@ -101,7 +101,7 @@ class ProcessAnalysisTest(TestCase):
     def test_generate_single_choice_field_stats(self):
         self.assertEqual(
             generate_single_choice_field_stats('AB', self.df, [2, 3, 4, 5, 6]),
-            {'type': 'single-choice', 'labels': None, 
+            {'type': 'single-choice', 'labels': None, 'meta': [],
              'histogram': [(1, 20.0), (1, 20.0), (1, 20.0), (1, 20.0),
                            (1, 20.0)],
              'reported': 5, 'missing': 0, 'percent_reported': 100.0,
@@ -109,7 +109,7 @@ class ProcessAnalysisTest(TestCase):
         self.assertEqual(
             generate_single_choice_field_stats(
                 'AB', self.df.groupby('location'), [2, 3, 4, 5, 6]),
-            {'type': 'single-choice', 'labels': None, 'locations':
+            {'type': 'single-choice', 'labels': None, 'meta': [], 'locations':
              {'A': {'missing': 0, 'reported': 1, 'total': 1, 
                     'percent_reported': 100.0, 'percent_missing': 0.0,
                     'histogram': [(1, 100.0), (0, 0.0), (0, 0.0),
@@ -135,12 +135,13 @@ class ProcessAnalysisTest(TestCase):
              'histogram': [(1, 20.0), (3, 60.0), (2, 40.0),
                            (1, 20.0), (1, 20.0), (1, 20.0)],
              'reported': 5, 'missing': 0, 'percent_reported': 100.0,
-             'percent_missing': 0.0, 'labels': None})
+             'percent_missing': 0.0, 'labels': None, 'meta': []})
         self.assertEqual(
             generate_mutiple_choice_field_stats(
                 'AC', self.df.groupby('location'),
                 opt),
-            {'type': 'multiple-choice', 'labels': None, 'locations':
+            {'type': 'multiple-choice', 'labels': None, 'meta': [],
+             'locations':
              {'A': {'missing': 0, 'reported': 1, 'percent_reported': 100.0,
                     'percent_missing': 0.0,
                     'histogram': [(1, 100.0), (1, 100.0), (0, 0.0),
