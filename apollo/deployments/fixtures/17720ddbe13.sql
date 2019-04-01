@@ -1,10 +1,10 @@
-INSERT INTO public.deployment VALUES (1, 'Demo', '{localhost}', true, NULL, false, false, true, NULL, NULL, 'd1c8beb2-92f3-4d90-a3f7-bcbc3aeeda00');
+INSERT INTO public.deployment VALUES (1, 'Demo', '{localhost}', true, NULL, false, false, true, true, NULL, NULL, 'd1c8beb2-92f3-4d90-a3f7-bcbc3aeeda00');
 INSERT INTO public.resource VALUES (1, 'event', 1, '93f73f01-515d-46fc-a1c9-ec7b8a7c5087');
 INSERT INTO public.resource VALUES (2, 'event', 1, 'f1e22698-98da-4016-a158-b136da4f5372');
 INSERT INTO public.resource VALUES (3, 'event', 1, 'a6701a89-9e07-49a9-a19a-055bcc5ca1f4');
-INSERT INTO public.event VALUES (1, 'Event 1', '2005-12-13 01:00:00+01', '2005-12-14 00:59:59+01', NULL, 1, NULL, NULL);
-INSERT INTO public.event VALUES (2, 'Event 2', '2005-12-14 01:00:00+01', '2005-12-15 00:59:59+01', NULL, 2, NULL, NULL);
-INSERT INTO public.event VALUES (3, 'Event 3', '2005-12-14 01:00:00+01', '2005-12-16 00:59:59+01', NULL, 3, NULL, NULL);
+INSERT INTO public.event VALUES (1, 'Event 1', '2005-12-13 01:00:00+01', '2005-12-14 00:59:59+01', 1, NULL, NULL);
+INSERT INTO public.event VALUES (2, 'Event 2', '2005-12-14 01:00:00+01', '2005-12-15 00:59:59+01', 2, NULL, NULL);
+INSERT INTO public.event VALUES (3, 'Event 3', '2005-12-14 01:00:00+01', '2005-12-16 00:59:59+01', 3, NULL, NULL);
 SELECT pg_catalog.setval('public.deployment_id_seq', 1, true);
 SELECT pg_catalog.setval('public.event_id_seq', 3, true);
 SELECT pg_catalog.setval('public.resource_resource_id_seq', 3, true);
