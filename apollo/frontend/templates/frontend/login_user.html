@@ -10,6 +10,7 @@
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
     <link rel="stylesheet" href="{{ asset_url_for('styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/fontawesome.min.css') }}">
   </head>
   <body class="h-100">
     <form class="h-100" name="login_user_form" action="{{ url_for_security('login') }}" method="POST" accept-charset="utf-8" autocomplete="off" autocorrect="off" autocapitalize="off">
@@ -40,6 +41,21 @@
                     <button type="submit" class="btn btn-primary btn-block col-5">{{ _('Sign In') }}</button>
                     <div class="col-7 text-right"><a href="{{ url_for_security('forgot_password') }}" class="text-decoration-none">{{ _('Forgot Password?') }}</a></div>
                   </div>
+                  {% if config['ENABLE_SOCIAL_LOGIN'] and config['GOOGLE_CLIENT_ID'] -%}
+                  <div class="row pt-3">
+                    <div class="col-12">
+                      <a href="{{ url_for('loginpass_google.login') }}" class="btn btn-outline-primary btn-block"><i class="fab fa-google"></i> Sign in with Google</a>
+                    </div>
+                  </div>
+                  {%- endif %}
+                  {% if config['ENABLE_SOCIAL_LOGIN'] and config['FACEBOOK_CLIENT_ID'] -%}
+                  <div class="row pt-3">
+                    <div class="col-12">
+                      <a href="{{ url_for('loginpass_facebook.login') }}" class="btn btn-outline-primary btn-block"><i
+                          class="fab fa-facebook"></i> Sign in with Facebook</a>
+                    </div>
+                  </div>
+                  {%- endif %}
                 </section>
               </div>
               <div class="card-footer text-muted text-right"><small>{{ config.VERSION }}</small></div>

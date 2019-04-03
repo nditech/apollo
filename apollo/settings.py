@@ -195,3 +195,12 @@ TEST_DATABASE_URL = config(
         hostname=TEST_DATABASE_HOSTNAME,
         database=TEST_DATABASE_NAME
     ))
+
+ENABLE_SOCIAL_LOGIN = config(
+    'ENABLE_SOCIAL_LOGIN', cast=config.boolean, default=False)
+
+GOOGLE_CLIENT_ID = config('GOOGLE_CLIENT_ID', default='')
+GOOGLE_CLIENT_SECRET = config('GOOGLE_CLIENT_SECRET', default='')
+
+FACEBOOK_CLIENT_ID = config('FACEBOOK_CLIENT_ID', default='')
+FACEBOOK_CLIENT_SECRET = config('FACEBOOK_CLIENT_SECRET', default='')

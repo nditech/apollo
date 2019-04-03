@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from authlib.flask.client import OAuth
 from collections import OrderedDict
 from flask import redirect, url_for
 from flask_admin import expose, Admin, AdminIndexView
@@ -40,6 +41,7 @@ db = SQLAlchemy(session_options={'expire_on_commit': False})
 mail = Mail()
 menu = Menu()
 migrate = Migrate()
+oauth = OAuth()
 security = Security()
 gravatar = Gravatar(size=25, default="identicon", use_ssl=True)
 sentry = Sentry(client_cls=ApolloRavenClient)
