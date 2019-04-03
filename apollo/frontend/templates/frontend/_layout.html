@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" {%- if g.locale.character_order == 'right-to-left' %} dir="rtl"{%- endif -%}>
+<html lang="en"{% if g.locale.text_direction == 'rtl' %} dir="rtl"{% endif %}>
   <head>
     <meta charset="utf-8">
     <title>{{ page_title }}</title>
