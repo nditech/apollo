@@ -44,7 +44,7 @@
                   {% if config['ENABLE_SOCIAL_LOGIN'] and config['GOOGLE_CLIENT_ID'] -%}
                   <div class="row pt-3">
                     <div class="col-12">
-                      <a href="{{ url_for('loginpass_google.login') }}" class="btn btn-outline-primary btn-block"><i class="fab fa-google"></i> Sign in with Google</a>
+                      <a href="{{ url_for('loginpass_google.login') }}" class="btn btn-outline-primary btn-block"><i class="fab fa-google"></i> {{ _('Sign in with Google') }}</a>
                     </div>
                   </div>
                   {%- endif %}
@@ -52,7 +52,7 @@
                   <div class="row pt-3">
                     <div class="col-12">
                       <a href="{{ url_for('loginpass_facebook.login') }}" class="btn btn-outline-primary btn-block"><i
-                          class="fab fa-facebook"></i> Sign in with Facebook</a>
+                          class="fab fa-facebook"></i> {{ _('Sign in with Facebook') }}</a>
                     </div>
                   </div>
                   {%- endif %}
