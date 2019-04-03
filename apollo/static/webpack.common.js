@@ -6,7 +6,9 @@ const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 module.exports = {
     entry: {
         scripts: './src/scripts.js',
-        styles: './src/styles.js'
+        styles: './src/styles.js',
+        'scripts-rtl': './src/scripts-rtl.js',
+        'styles-rtl': './src/styles-rtl.js'
     },
     output: {
         path: path.resolve(__dirname, 'dist'),

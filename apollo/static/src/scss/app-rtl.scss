@@ -1,0 +1,45 @@
+@import "custom";
+
+// Required
+@import "~bootstrap-v4-rtl/scss/functions";
+@import "~bootstrap-v4-rtl/scss/variables";
+@import "~bootstrap-v4-rtl/scss/mixins";
+
+// Optional
+@import "~bootstrap-v4-rtl/scss/root";
+@import "~bootstrap-v4-rtl/scss/reboot";
+@import "~bootstrap-v4-rtl/scss/type";
+@import "~bootstrap-v4-rtl/scss/images";
+@import "~bootstrap-v4-rtl/scss/code";
+@import "~bootstrap-v4-rtl/scss/grid";
+@import "~bootstrap-v4-rtl/scss/tables";
+@import "~bootstrap-v4-rtl/scss/forms";
+@import "~bootstrap-v4-rtl/scss/buttons";
+@import "~bootstrap-v4-rtl/scss/transitions";
+@import "~bootstrap-v4-rtl/scss/dropdown";
+@import "~bootstrap-v4-rtl/scss/button-group";
+@import "~bootstrap-v4-rtl/scss/input-group";
+@import "~bootstrap-v4-rtl/scss/custom-forms";
+@import "~bootstrap-v4-rtl/scss/nav";
+@import "~bootstrap-v4-rtl/scss/navbar";
+@import "~bootstrap-v4-rtl/scss/card";
+@import "~bootstrap-v4-rtl/scss/breadcrumb";
+@import "~bootstrap-v4-rtl/scss/pagination";
+@import "~bootstrap-v4-rtl/scss/badge";
+@import "~bootstrap-v4-rtl/scss/jumbotron";
+@import "~bootstrap-v4-rtl/scss/alert";
+@import "~bootstrap-v4-rtl/scss/progress";
+@import "~bootstrap-v4-rtl/scss/media";
+@import "~bootstrap-v4-rtl/scss/list-group";
+@import "~bootstrap-v4-rtl/scss/close";
+@import "~bootstrap-v4-rtl/scss/toasts";
+@import "~bootstrap-v4-rtl/scss/modal";
+@import "~bootstrap-v4-rtl/scss/tooltip";
+@import "~bootstrap-v4-rtl/scss/popover";
+@import "~bootstrap-v4-rtl/scss/carousel";
+@import "~bootstrap-v4-rtl/scss/spinners";
+@import "~bootstrap-v4-rtl/scss/utilities";
+@import "~bootstrap-v4-rtl/scss/print";
+
+// RTL
+@import "~bootstrap-v4-rtl/scss/rtl";
