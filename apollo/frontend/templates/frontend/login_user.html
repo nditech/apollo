@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="h-100">
+<html lang="en" class="h-100"{% if g.locale.text_direction == 'rtl' %} dir="rtl"{% endif %}>
   <head>
     <meta charset="utf-8">
     <title>{{ _('User Sign In') }}</title>
@@ -9,7 +9,11 @@
     <!--[if lt IE 9]>
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
+    {% if g.locale.text_direction == 'rtl' -%}
+    <link rel="stylesheet" href="{{ asset_url_for('styles-rtl.css') }}">
+    {%- else -%}
     <link rel="stylesheet" href="{{ asset_url_for('styles.css') }}">
+    {%- endif %}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/fontawesome.min.css') }}">
   </head>
   <body class="h-100">
@@ -64,6 +68,10 @@
         </div>
       </div>
     </form>
+    {% if g.locale.text_direction == 'rtl' -%}
+    <script type="text/javascript" src="{{ asset_url_for('scripts-rtl.js') }}" charset="utf-8"></script>
+    {%- else -%}
     <script type="text/javascript" src="{{ asset_url_for('scripts.js') }}" charset="utf-8"></script>
+    {%- endif %}
   </body>
 </html>
