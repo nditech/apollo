@@ -41,14 +41,14 @@
                     <button type="submit" class="btn btn-primary btn-block col-5">{{ _('Sign In') }}</button>
                     <div class="col-7 text-right"><a href="{{ url_for_security('forgot_password') }}" class="text-decoration-none">{{ _('Forgot Password?') }}</a></div>
                   </div>
-                  {% if config['GOOGLE_CLIENT_ID'] -%}
+                  {% if config['ENABLE_SOCIAL_LOGIN'] and config['GOOGLE_CLIENT_ID'] -%}
                   <div class="row pt-3">
                     <div class="col-12">
                       <a href="{{ url_for('loginpass_google.login') }}" class="btn btn-outline-primary btn-block"><i class="fab fa-google"></i> Sign in with Google</a>
                     </div>
                   </div>
                   {%- endif %}
-                  {% if config['FACEBOOK_CLIENT_ID'] -%}
+                  {% if config['ENABLE_SOCIAL_LOGIN'] and config['FACEBOOK_CLIENT_ID'] -%}
                   <div class="row pt-3">
                     <div class="col-12">
                       <a href="{{ url_for('loginpass_facebook.login') }}" class="btn btn-outline-primary btn-block"><i
