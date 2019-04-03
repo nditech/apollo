@@ -75,6 +75,8 @@ netifaces = "*"
 psutil = "*"
 redis = "==2.10.6"
 flask-webpack = "*"
+authlib = "*"
+loginpass = "*"
 
 [dev-packages]
 "autopep8" = "*"

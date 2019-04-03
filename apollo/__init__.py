@@ -1,14 +1,20 @@
 # -*- coding: utf-8 -*-
-from flask import g, render_template, session, request, redirect, url_for
+from flask import (
+    g, jsonify, redirect, render_template, request, session, url_for
+)
 from flask_admin import AdminIndexView
 from flask_login import user_logged_out
 from flask_principal import identity_loaded
 from flask_security import SQLAlchemyUserDatastore, current_user
+from flask_security.utils import login_user, url_for_security
+from loginpass import create_flask_blueprint, Facebook, Google
 from whitenoise import WhiteNoise
 from apollo import assets, models, services
 
 from apollo.frontend import permissions, template_filters
-from apollo.core import admin, db, menu, security, gravatar, csrf, webpack
+from apollo.core import (
+    admin, csrf, db, gravatar, menu, oauth, security, webpack
+)
 from apollo.prometheus.flask import monitor
 from .frontend.helpers import set_request_presets
 from .security_ext_forms import DeploymentLoginForm
@@ -46,6 +52,7 @@ def create_app(settings_override=None, register_security_blueprint=True):
     assets.init_app(app)
     webpack.init_app(app)
 
+    oauth.init_app(app)
     menu.init_app(app)
     gravatar.init_app(app)
 
@@ -106,6 +113,23 @@ def create_app(settings_override=None, register_security_blueprint=True):
             "fontlibrary.org " + \
             "'unsafe-inline' 'unsafe-eval' data:; img-src * data:"
         return response
+
+    def handle_authorize(remote, token, user_info):
+        if user_info and 'email' in user_info:
+            user = models.User.query.filter_by(
+                email=user_info['email']).first()
+            if user:
+                login_user(user)
+                userdatastore.commit()
+                return redirect(app.config.get('SECURITY_POST_LOGIN_VIEW'))
+
+        return redirect(url_for_security('login'))
+
+    facebook_bp = create_flask_blueprint(Facebook, oauth, handle_authorize)
+    google_bp = create_flask_blueprint(Google, oauth, handle_authorize)
+
+    app.register_blueprint(facebook_bp, url_prefix='/facebook')
+    app.register_blueprint(google_bp, url_prefix='/google')
 
     return app
 
