@@ -37,7 +37,7 @@ class UserDetailsForm(FlaskForm):
 
     def validate_username(self, field):
         deployment = self.instance.deployment if self.instance else None
-        args = [models.User.username != field.data]
+        args = [models.User.username == field.data]
         if deployment:
             args.append(models.User.deployment_id == deployment.id)
         if self.instance:
@@ -52,7 +52,7 @@ class UserDetailsForm(FlaskForm):
 
     def validate_email(self, field):
         deployment = self.instance.deployment if self.instance else None
-        args = [models.User.email != field.data]
+        args = [models.User.email == field.data]
         if deployment:
             args.append(models.User.deployment_id == deployment.id)
         if self.instance:
