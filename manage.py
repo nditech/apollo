@@ -1,5 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+try:
+    from gevent import monkey
+
+    monkey.patch_all()
+except ImportError:
+    pass
+
 from flask_assets import ManageAssets
 from flask_migrate import MigrateCommand
 from flask_script import Manager, Server, Shell
