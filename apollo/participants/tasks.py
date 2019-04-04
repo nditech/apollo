@@ -15,7 +15,7 @@ from apollo.factory import create_celery_app
 from apollo.locations.models import Sample
 from apollo.messaging.tasks import send_email
 from apollo.participants import utils
-from apollo.participants.models import Participant
+from apollo.participants.models import Participant, ParticipantPhone
 
 APPLICABLE_GENDERS = [s[0] for s in Participant.GENDER]
 celery = create_celery_app()
@@ -247,8 +247,15 @@ def update_participants(dataframe, header_map, participant_set):
             participant.save()
 
         if phone_columns:
+            # If this is an update for the participant, we should clear
+            # the current list of phone numbers and then recreate them
+            if participant.id:
+                ParticipantPhone.query.filter_by(
+                    participant_id=participant.id).delete()
+
             # check if the phone number is on record
-            for column in phone_columns:
+            # import phone numbers in reverse order so the first is the latest
+            for column in reversed(phone_columns):
                 if not _is_valid(record[column]):
                     continue
 
