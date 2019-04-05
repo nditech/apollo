@@ -229,8 +229,6 @@ def update_participants(dataframe, event, header_map):
         # for events and phone numbers
         if PHONE_PREFIX:
             phone_info = OrderedDict()
-            for phone in participant.phones:
-                phone_info[phone.number] = phone.verified
             for column in phone_columns:
                 if not _is_valid(record[column]):
                     continue
