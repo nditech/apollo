@@ -4,7 +4,6 @@
 .Python
 .vscode/
 .webassets-cache
-*.ini
 *.pyc
 *.sublime-project
 *.sublime-workspace
