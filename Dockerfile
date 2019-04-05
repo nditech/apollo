@@ -6,11 +6,12 @@ ADD Pipfile* /app/
 RUN set -ex \
         && apk add --no-cache --virtual .build-deps \
             build-base \
+        && apk add --no-cache openblas-dev \
+            libffi-dev \
             libxml2-dev \
             libxslt-dev \
             postgresql-dev \
-            linux-headers \
-        && apk add --no-cache openblas-dev \
+            libmagic \
         && pip install pipenv \
         && cd /app/ \
         && PIP_NO_BUILD_ISOLATION=false pipenv sync --sequential \
