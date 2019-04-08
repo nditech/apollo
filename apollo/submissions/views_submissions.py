@@ -548,8 +548,9 @@ def submission_edit(submission_id):
                             changed = True
                     if changed:
                         update_params['data'] = data
-                        update_params['overridden_fields'] = array(set(
-                            overridden_fields))     # remove duplicates
+                        if overridden_fields:
+                            update_params['overridden_fields'] = array(set(
+                                overridden_fields))     # remove duplicates
 
                         services.submissions.find(
                             id=master_submission.id).update(
