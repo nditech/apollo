@@ -18,14 +18,14 @@ from .models import Phone, ParticipantPhone
 
 
 class ParticipantIDFilter(CharFilter):
-    def filter(self, query, value):
+    def queryset_(self, query, value):
         if value:
             return query.filter(Participant.participant_id == value)
         return query
 
 
 class ParticipantNameFilter(CharFilter):
-    def filter(self, query, value):
+    def queryset_(self, query, value):
         if value:
             return query.filter(
                 text('translations.value ILIKE :name')).params(
@@ -45,7 +45,7 @@ def make_participant_role_filter(participant_set_id):
 
             super().__init__(*args, **kwargs)
 
-        def filter(self, query, value):
+        def queryset_(self, query, value):
             if value:
                 return query.filter_by(role_id=value)
 
@@ -66,7 +66,7 @@ def make_participant_partner_filter(participant_set_id):
             kwargs['choices'] = _make_choices(choices, _('All partners'))
             super().__init__(*args, **kwargs)
 
-        def filter(self, query, value):
+        def queryset_(self, query, value):
             if value:
                 return query.filter_by(partner_id=value)
             return query
@@ -95,7 +95,7 @@ def make_participant_group_filter(participant_set_id):
             kwargs['coerce'] = int
             super(ParticipantGroupFilter, self).__init__(*args, **kwargs)
 
-        def filter(self, query, values):
+        def queryset_(self, query, values):
             if values:
                 query2 = query.join(groups_participants).join(
                     ParticipantGroup)
@@ -113,7 +113,7 @@ def make_participant_group_filter(participant_set_id):
 
 
 class ParticipantPhoneFilter(CharFilter):
-    def filter(self, query, value):
+    def queryset_(self, query, value):
         if value:
             query2 = query.join(
                 ParticipantPhone,
@@ -140,7 +140,7 @@ def make_participant_sample_filter(location_set_id):
             kwargs['choices'] = _make_choices(choices, _('Sample'))
             super().__init__(*args, **kwargs)
 
-        def filter(self, query, value):
+        def queryset_(self, query, value):
             if value:
                 query2 = query.join(
                     Location,
@@ -167,7 +167,7 @@ def make_participant_location_filter(location_set_id):
 
             super().__init__(*args, **kwargs)
 
-        def filter(self, query, value):
+        def queryset_(self, query, value):
             if value:
                 location_query = Location.query.with_entities(
                     Location.id).join(

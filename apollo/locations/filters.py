@@ -8,7 +8,7 @@ from apollo.helpers import _make_choices
 
 
 class LocationNameFilter(CharFilter):
-    def filter(self, queryset, value):
+    def queryset_(self, queryset, value):
         if value:
             return queryset.filter(
                 text('translations.value ILIKE :name')).params(
@@ -27,7 +27,7 @@ class LocationTypeFilter(ChoiceFilter):
         )
         super(LocationTypeFilter, self).__init__(*args, **kwargs)
 
-    def filter(self, queryset, value):
+    def queryset_(self, queryset, value):
         if value:
             return queryset.filter(Location.location_type_id == value)
         return queryset
