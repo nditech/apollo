@@ -204,6 +204,22 @@ class SubmissionQuarantineStatusFilter(ChoiceFilter):
         return (None, None)
 
 
+class SubmissionSenderVerificationFilter(ChoiceFilter):
+    def filter(self, query, value, **kwargs):
+        if value and value == '1':
+            return (
+                models.Submission.sender_verified == True,
+                None
+            )
+        elif value:
+            return (
+                models.Submission.sender_verified == False,
+                None
+            )
+
+        return (None, None)
+
+
 def make_submission_location_filter(location_set_id):
     class AJAXLocationFilter(CharFilter):
         def __init__(self, *args, **kwargs):
@@ -277,6 +293,12 @@ def make_submission_list_filter(event, form):
             ('N', _('Quarantine None')),
             ('A', _('Quarantine All')),
             ('R', _('Quarantine Results'))
+        ))
+    attributes['sender_verification'] = SubmissionSenderVerificationFilter(
+        choices=(
+            ('', _('Sender Verification')),
+            ('1', _('Sender Verified')),
+            ('2', _('Sender Unverified'))
         ))
 
     attributes['participant_id'] = ParticipantIDFilter()
