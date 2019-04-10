@@ -2,11 +2,11 @@
 from flask import current_app, g, jsonify
 from flask_restful import Resource, fields, marshal, marshal_with
 from flask_security import login_required
-from sqlalchemy import or_
+from sqlalchemy import or_, text, bindparam
 
 from apollo import services
 from apollo.api.common import parser
-from apollo.participants.models import Participant
+from .models import Participant, ParticipantTranslations
 
 PARTICIPANT_FIELD_MAPPER = {
     'id': fields.String,
@@ -36,15 +36,19 @@ class ParticipantListResource(Resource):
         offset = args.get('offset') or 0
         participant_set_id = g.event.participant_set_id
 
-        queryset = services.participants.find(
-            participant_set_id=participant_set_id)
-
         lookup_item = args.get('q')
+
+        queryset = Participant.query.select_from(
+            Participant, ParticipantTranslations).filter(
+                Participant.participant_set_id == participant_set_id)
+
         if lookup_item:
-            queryset = queryset.filter(or_(
-                Participant.name.ilike('%{}%'.format(lookup_item)),
-                Participant.participant_id.ilike('{}%'.format(lookup_item))
-            ))
+            queryset = queryset.filter(
+                or_(
+                    text('translations.value ILIKE :name'),
+                    Participant.participant_id.ilike(bindparam('pid'))
+                )
+            ).params(name=f'%{lookup_item}%', pid=f'{lookup_item}%')
 
         count = queryset.count()
         queryset = queryset.limit(limit).offset(offset)
