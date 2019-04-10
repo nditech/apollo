@@ -321,6 +321,9 @@ def submission_edit(submission_id):
         initial_data = submission.data.copy() if submission.data else {}
         initial_data.update(location=submission.location_id)
         initial_data.update(participant=submission.participant_id)
+        if submission.quarantine_status:
+            initial_data.update(
+                quarantine_status=submission.quarantine_status.code)
         failed_checks = []
 
         if questionnaire_form.form_type == 'INCIDENT':
@@ -341,15 +344,27 @@ def submission_edit(submission_id):
             data=initial_data,
             prefix=str(submission.id)
         )
-        sibling_forms = [
-            edit_form_class(
-                data=sibling.data,
-                prefix=str(sibling.id)
-            ) for sibling in sibling_submissions
-        ]
+        sibling_forms = []
+        for sibling in sibling_submissions:
+            initial_data = sibling.data
+            if sibling.quarantine_status:
+                initial_data.update(
+                    quarantine_status=sibling.quarantine_status.code)
+
+            sibling_forms.append(
+                edit_form_class(
+                    data=initial_data,
+                    prefix=str(sibling.id)
+                ))
+
         if master_submission:
+            initial_data = master_submission.data
+            if master_submission.quarantine_status:
+                initial_data.update(
+                    quarantine_status=master_submission.quarantine_status.code)
+
             master_form = edit_form_class(
-                data=master_submission.data,
+                data=initial_data,
                 prefix=str(master_submission.id)
             )
         else:
@@ -548,8 +563,9 @@ def submission_edit(submission_id):
                             changed = True
                     if changed:
                         update_params['data'] = data
-                        update_params['overridden_fields'] = array(set(
-                            overridden_fields))     # remove duplicates
+                        if overridden_fields:
+                            update_params['overridden_fields'] = array(set(
+                                overridden_fields))     # remove duplicates
 
                         services.submissions.find(
                             id=master_submission.id).update(

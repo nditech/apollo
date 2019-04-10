@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 from operator import itemgetter
 
-from flask import g
 from flask_babelex import lazy_gettext as _
-from sqlalchemy import and_, func, or_
+from sqlalchemy import and_, or_
 from sqlalchemy.dialects.postgresql import array
 from wtforms import widgets
 
@@ -17,7 +16,7 @@ class TagLookupFilter(ChoiceFilter):
         self.contains = kwargs.pop('contains', None)
         super().__init__(*args, **kwargs)
 
-    def filter(self, query, value):
+    def filter(self, query, value, **kwargs):
         if value:
             if value == 'NULL':
                 condition = models.Submission.data[self.name] == None
@@ -26,12 +25,12 @@ class TagLookupFilter(ChoiceFilter):
             else:
                 condition = models.Submission.data[self.name] == value
 
-            return query.filter(condition)
+            return (condition, None)
         elif self.contains:
             condition = models.Submission.data[self.name] != None
-            return query.filter(condition)
+            return (condition, None)
 
-        return query
+        return (None, None)
 
 
 def make_submission_sample_filter(location_set_id):
@@ -44,7 +43,7 @@ def make_submission_sample_filter(location_set_id):
             kwargs['choices'] = _make_choices(sample_choices, _('Sample'))
             super().__init__(*args, **kwargs)
 
-        def filter(self, query, value):
+        def queryset_(self, query, value, **kwargs):
             if value:
                 query2 = query.join(
                     models.samples_locations,
@@ -78,16 +77,14 @@ class IncidentStatusFilter(ChoiceFilter):
         )
         super().__init__(*args, **kwargs)
 
-    def filter(self, query, value):
+    def filter(self, query, value, **kwargs):
         if value:
             if value == 'NULL':
-                return query.filter(
-                    models.Submission.incident_status == None)
+                return (models.Submission.incident_status == None, None)
 
-            return query.filter(
-                models.Submission.incident_status == value)
+            return (models.Submission.incident_status == value, None)
 
-        return query
+        return (None, None)
 
 
 def make_submission_analysis_filter(event, form):
@@ -122,44 +119,59 @@ def make_incident_location_filter(event, form, tag):
 
 class FormGroupFilter(ChoiceFilter):
     def __init__(self, *args, **kwargs):
-        self.form = kwargs.pop('form')
+        self.formobj = kwargs.pop('form')
         self.group = kwargs.pop('group')
         super().__init__(*args, **kwargs)
 
-    def filter(self, query, value):
-        group_tags = self.form.get_group_tags(self.group['name'])
+    def filter(self, query, value, **kwargs):
+        group_tags = self.formobj.get_group_tags(self.group['name'])
+
         if value == '1':
             # Partial
-            return query.filter(
-                ~models.Submission.data.has_all(array(group_tags)),
-                models.Submission.data.has_any(array(group_tags)))
+            constraint = and_(
+                    ~models.Submission.data.has_all(array(group_tags)),
+                    models.Submission.data.has_any(array(group_tags))
+                )
         elif value == '2':
             # Missing
-            return query.filter(or_(
-                ~models.Submission.data.has_any(array(group_tags)),
-                models.Submission.data == None))    # noqa
+            constraint = or_(
+                    ~models.Submission.data.has_any(array(group_tags)),
+                    models.Submission.data == None
+                )
         elif value == '3':
             # Complete
-            return query.filter(
-                models.Submission.data.has_all(array(group_tags)))
+            constraint = models.Submission.data.has_all(array(group_tags))
         elif value == '4':
             # Conflict
             query_params = [
                 models.Submission.conflicts.has_key(tag)    # noqa
                 for tag in group_tags
             ]
-            return query.filter(or_(*query_params))
+            constraint = or_(*query_params)
+        else:
+            constraint = None
 
-        return query
+        if constraint is None:
+            return (None, None)
+        else:
+            form_ = kwargs['form']
+            if form_.data and form_.data.get('conjunction') == 'OR':
+                # OR conjunction
+                return (None, constraint)
+            else:
+                # AND conjunction
+                return (constraint, None)
 
 
 class FieldOptionFilter(ChoiceFilter):
-    def filter(self, query, value):
+    def filter(self, query, value, **kwargs):
         if value:
-            return query.filter(
-                models.Submission.data[self.name] == int(value))
+            return (
+                models.Submission.data[self.name] == int(value),
+                None
+            )
 
-        return query
+        return (None, None)
 
 
 class FieldValueFilter(CharFilter):
@@ -167,23 +179,29 @@ class FieldValueFilter(CharFilter):
 
 
 class ParticipantIDFilter(CharFilter):
-    def filter(self, query, value):
+    def filter(self, query, value, **kwargs):
         if value:
-            return query.filter(models.Participant.participant_id == value)
+            return (
+                models.Participant.participant_id == value,
+                None
+            )
 
-        return query
+        return (None, None)
 
 
 class SubmissionQuarantineStatusFilter(ChoiceFilter):
-    def filter(self, query, value):
+    def filter(self, query, value, **kwargs):
         if value and value == 'N':
-            return query.filter(or_(
-                models.Submission.quarantine_status == None,
-                models.Submission.quarantine_status == ''))
+            return (
+                or_(
+                    models.Submission.quarantine_status == None,
+                    models.Submission.quarantine_status == ''),
+                None
+            )
         elif value:
-            return query.filter_by(quarantine_status=value)
+            return (models.Submission.quarantine_status == value, None)
 
-        return query
+        return (None, None)
 
 
 def make_submission_location_filter(location_set_id):
@@ -193,7 +211,7 @@ def make_submission_location_filter(location_set_id):
 
             super().__init__(*args, **kwargs)
 
-        def filter(self, query, value):
+        def queryset_(self, query, value, **kwargs):
             if value:
                 location_query = models.Location.query.with_entities(
                     models.Location.id
@@ -264,6 +282,11 @@ def make_submission_list_filter(event, form):
     attributes['participant_id'] = ParticipantIDFilter()
     attributes['location'] = make_submission_location_filter(
         event.location_set_id)()
+    attributes['conjunction'] = ChoiceFilter(
+        choices=(
+            ('AND', _('AND Conjunction')),
+            ('OR', _('OR Conjunction')),
+        ))
 
     return type(
         'SubmissionFilterSet',

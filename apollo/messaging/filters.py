@@ -28,7 +28,7 @@ def make_submission_type_field_choices():
 
 
 class MobileFilter(CharFilter):
-    def filter(self, query, value):
+    def queryset_(self, query, value):
         if value:
             query_val = f'%{value}%'
             return query.filter(
@@ -42,7 +42,7 @@ class MobileFilter(CharFilter):
 
 
 class TextFilter(CharFilter):
-    def filter(self, query, value):
+    def queryset_(self, query, value):
         if value:
             query_val = f'%{value}%'
             return query.filter(Message.text.ilike(query_val))
@@ -51,7 +51,7 @@ class TextFilter(CharFilter):
 
 
 class DateFilter(CharFilter):
-    def filter(self, query, value):
+    def queryset_(self, query, value):
         if value:
             try:
                 dt = parse(value, dayfirst=True)
@@ -79,7 +79,7 @@ class SubmissionFormTypeFilter(ChoiceFilter):
 
         super().__init__(*args, **kwargs)
 
-    def filter(self, query, value):
+    def queryset_(self, query, value):
         if value:
             if value == 'Invalid':
                 return query.filter(Message.submission_id == None)  # noqa

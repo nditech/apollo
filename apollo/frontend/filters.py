@@ -16,7 +16,7 @@ from apollo.wtforms_ext import ExtendedSelectField, ExtendedMultipleSelectField
 
 
 class EventFilter(CharFilter):
-    def filter(self, queryset, value):
+    def queryset_(self, queryset, value):
         if value:
             return queryset.filter_by(event_id=value)
         return queryset
@@ -30,7 +30,7 @@ class ChecklistFormFilter(ChoiceFilter):
             ).order_by('name').scalar('id', 'name'), _('Form'))
         super(ChecklistFormFilter, self).__init__(*args, **kwargs)
 
-    def filter(self, queryset, value):
+    def queryset_(self, queryset, value):
         if value:
             form = services.forms.get(pk=value)
             return queryset(form=form)
@@ -42,7 +42,7 @@ class AJAXLocationFilter(CharFilter):
         kwargs['widget'] = widgets.HiddenInput()
         return super(AJAXLocationFilter, self).__init__(*args, **kwargs)
 
-    def filter(self, queryset, value):
+    def queryset_(self, queryset, value):
         if value:
             location = services.locations.get(pk=value)
             return queryset.filter_in(location)
@@ -77,7 +77,7 @@ class LocationFilter(ChoiceFilter):
 
         super(LocationFilter, self).__init__(*args, **kwargs)
 
-    def filter(self, queryset, value):
+    def queryset_(self, queryset, value):
         if value:
             location = services.locations.get(pk=value)
             return queryset.filter_in(location)
@@ -93,7 +93,7 @@ class SampleFilter(ChoiceFilter):
         )
         super(SampleFilter, self).__init__(*args, **kwargs)
 
-    def filter(self, queryset, value):
+    def queryset_(self, queryset, value):
         if value:
             sample = services.samples.get(pk=value)
             return queryset(
@@ -109,7 +109,7 @@ class DynamicFieldFilter(ChoiceFilter):
         self.contains = kwargs.pop('contains', None)
         super(DynamicFieldFilter, self).__init__(*args, **kwargs)
 
-    def filter(self, queryset, value):
+    def queryset_(self, queryset, value):
         if value:
             if value == 'NULL':
                 # check that field does not exist
@@ -137,7 +137,7 @@ class QualityAssuranceFilter(ChoiceFilter):
         self.qa_form = qa_form
         super(QualityAssuranceFilter, self).__init__(*args, **kwargs)
 
-    def filter(self, query, value):
+    def queryset_(self, query, value):
         if (
             'criterion' in value and 'condition' in value and
             value['criterion'] and value['condition']
@@ -181,7 +181,7 @@ class QualityAssuranceFilter(ChoiceFilter):
 
 
 class SubmissionQuarantineStatusFilter(ChoiceFilter):
-    def filter(self, queryset, value):
+    def queryset_(self, queryset, value):
         if value:
             if value == 'N':
                 allowed_statuses = [i[0] for i in [s for s in models.Submission.QUARANTINE_STATUSES if s[0]]]
@@ -192,7 +192,7 @@ class SubmissionQuarantineStatusFilter(ChoiceFilter):
 
 
 class SubmissionVerificationFilter(ChoiceFilter):
-    def filter(self, queryset, value):
+    def queryset_(self, queryset, value):
         if value is not None or value != '':
             return queryset(verification=value)
         return queryset
@@ -208,7 +208,7 @@ class PartnerFilter(ChoiceFilter):
         )
         super(PartnerFilter, self).__init__(*args, **kwargs)
 
-    def filter(self, queryset, value):
+    def queryset_(self, queryset, value):
         if value:
             partner = services.participant_partners.find(id=value).first()
             return queryset.filter_by(partner=partner)
@@ -224,7 +224,7 @@ class RoleFilter(ChoiceFilter):
         )
         super(RoleFilter, self).__init__(*args, **kwargs)
 
-    def filter(self, queryset, value):
+    def queryset_(self, queryset, value):
         if value:
             role = services.participant_roles.find(id=value).first()
             return queryset.filter_by(role=role)
@@ -251,7 +251,7 @@ class ParticipantGroupFilter(ChoiceFilter):
         kwargs['choices'] = [(k, choices[k]) for k in choices]
         super(ParticipantGroupFilter, self).__init__(*args, **kwargs)
 
-    def filter(self, queryset, values):
+    def queryset_(self, queryset, values):
         if values:
             for value in values:
                 group = services.participant_groups.get(id=value)
@@ -263,7 +263,7 @@ class ParticipantGroupFilter(ChoiceFilter):
 class ParticipantFilter(CharFilter):
     """This is used for filtering a queryset of participants.
     """
-    def filter(self, queryset, value):
+    def queryset_(self, queryset, value):
         if value:
             return queryset(participant_id=value)
         return queryset
@@ -271,7 +271,8 @@ class ParticipantFilter(CharFilter):
 
 class ParticipantPhoneFilter(CharFilter):
     """Used for filtering a queryset of participants by phone number."""
-    def filter(self, queryset, value):
+
+    def queryset_(self, queryset, value):
         if value:
             return queryset(phones__number__startswith=value)
         return queryset
@@ -280,7 +281,8 @@ class ParticipantPhoneFilter(CharFilter):
 class ParticipantIDFilter(CharFilter):
     """This is used to filter on a queryset of submissions.
     """
-    def filter(self, queryset, value):
+
+    def queryset_(self, queryset, value):
         if value:
             participant = services.participants.get(participant_id=value)
             if participant is None:
@@ -293,14 +295,14 @@ class ParticipantIDFilter(CharFilter):
 
 
 class ParticipantNameFilter(CharFilter):
-    def filter(self, queryset, value):
+    def queryset_(self, queryset, value):
         if value:
             return queryset(name__icontains=value)
         return queryset
 
 
 class FieldOptionFilter(ChoiceFilter):
-    def filter(self, queryset, value):
+    def queryset_(self, queryset, value):
         if value:
             return queryset(**{self.name: int(value)})
         return queryset
@@ -316,7 +318,7 @@ class SubmissionStatus(ChoiceFilter):
             ('citizen', _('Citizen Report')))
         super(SubmissionStatus, self).__init__(*args, **kwargs)
 
-    def filter(self, queryset, values):
+    def queryset_(self, queryset, values):
         if values:
             values = [None if opt == 'None' else opt for opt in values]
             queryset = queryset(status__in=values)
@@ -335,7 +337,7 @@ class MessageSubmissionType(ChoiceFilter):
 
         super(MessageSubmissionType, self).__init__(*args, **kwargs)
 
-    def filter(self, query, value):
+    def queryset_(self, query, value):
         if value:
             if value == 'Invalid':
                 return query.filter(
@@ -347,7 +349,7 @@ class MessageSubmissionType(ChoiceFilter):
 
 
 class MobileFilter(CharFilter):
-    def filter(self, queryset, value):
+    def queryset_(self, queryset, value):
         if value:
             query_val = '%{}%'.format(value)
             return queryset.filter(
@@ -359,7 +361,7 @@ class MobileFilter(CharFilter):
 
 
 class TextFilter(CharFilter):
-    def filter(self, queryset, value):
+    def queryset_(self, queryset, value):
         if value:
             query_val = '%{}%'.format(value)
             return queryset.filter(models.Message.text.ilike(query_val))
@@ -368,7 +370,7 @@ class TextFilter(CharFilter):
 
 
 class DateFilter(CharFilter):
-    def filter(self, queryset, value):
+    def queryset_(self, queryset, value):
         if value:
             try:
                 timestamp = parse(value, dayfirst=True)

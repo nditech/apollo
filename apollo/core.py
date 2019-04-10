@@ -21,6 +21,7 @@ from flask_webpack import Webpack
 from flask_wtf.csrf import CSRFProtect
 from raven.contrib.flask import Sentry
 import six
+from sqlalchemy import and_, or_
 from wtforms import Form, fields
 
 from apollo.sentry_ext import ApolloRavenClient
@@ -74,8 +75,11 @@ class Filter(object):
         self.creation_counter = Filter.creation_counter
         Filter.creation_counter += 1
 
-    def filter(self, queryset, value):
-        raise NotImplementedError()
+    def filter(self, queryset, value, **kwargs):
+        return (None, None)
+
+    def queryset_(self, queryset, value, **kwargs):
+        return queryset
 
     @property
     def field(self):
@@ -168,6 +172,8 @@ class BaseFilterSet(object):
         """
         if not hasattr(self, '_qs'):
             qs = self.queryset
+            constraints_and = []
+            constraints_or = []
             # force form validation - otherwise, errors won't be picked up
             self.form.validate()
 
@@ -175,9 +181,19 @@ class BaseFilterSet(object):
                 field = self.form[name]
                 if field.errors:
                     continue
-                qs = filter_.filter(qs, field.data)
 
-            self._qs = qs
+                qs = filter_.queryset_(qs, field.data)
+
+                and_constraint, or_constraint = filter_.filter(
+                    qs, field.data, form=self.form)
+
+                if and_constraint is not None:
+                    constraints_and.append(and_constraint)
+                if or_constraint is not None:
+                    constraints_or.append(or_constraint)
+
+            self._qs = qs.filter(
+                and_(*constraints_and)).filter(or_(*constraints_or))
 
         return self._qs
 
