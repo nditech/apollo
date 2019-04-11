@@ -1,8 +1,14 @@
-## Apollo ##
+<h1 align="center">
+  <a href="https://www.ndi.org/"><img src="https://www.ndi.org/sites/all/themes/ndi/images/NDI_logo_svg.svg" alt="NDI Logo" width="200"></a>
+</h1>
+
+<h1 align="center">
+  Apollo
+</h1>
 
 [![CircleCI](https://circleci.com/gh/nditech/dev-elections/tree/master.svg?style=svg&circle-token=d73aae2670476f167920a4494b6087a6f8ef49e9)](https://circleci.com/gh/nditech/dev-elections/tree/master)
 
-## Apollo 3.x Deployment Guide ##
+## Apollo 3.x Deployment Guide
 
 Introduction
 
@@ -76,7 +82,7 @@ In both instances, the database (PostgreSQL) and task queue (Redis) containers a
 
 
 
-### Application Configuration Settings ###
+### Application Configuration Settings
 
 Each deployment installation can be further customized by modifying the contents of the settings.ini file. Here are a collection of settings parameters and sample values together with an explanation of what they do.
 
@@ -98,7 +104,7 @@ TIMEZONE
 The timezone parameter configures the timezone that the application server uses by default. Usually this is set to the timezone of the country for which the application instance is deployed. For a full list of support timezone values, please visit this wikipedia article.
 
 
-#### GOOGLE_TAG_MANAGER (REQUIRED)####
+#### GOOGLE_TAG_MANAGER (REQUIRED)
 (e.g. GTM-1234567)
 
 If you need to manage tags that are inserted into the application, one way to do so it to use the Google Tag Manager. This parameter allows you to set the Google Tag Manager code that is linked to the Google account from where the tags will be managed.
@@ -156,7 +162,7 @@ PROMETHEUS_SECRET
 Apollo 3 provides support for an external monitoring server (Prometheus) to be able to obtain application performance metrics. In order to randomize the URL from which the stats are retrieved from, the PROMETHEUS_SECRET is added as an additional URL fragment and must be correct for the metrics to be provided. The metrics url becomes https://apollo3servername/metrics/{PROMETHEUS_SECRET}.
 
 
-## Analytics Tracking ##
+## Analytics Tracking
 For digital marketing or product improvement initiatives you may want to include JavaScript and or HTML snippet tags for tracking and analytics on Apollo. 
 
 Apollo leverages Google Tag Manager to achieve this. To enable Tag Manager, modify the `settings-docker.ini` file located in the project root directory. 
