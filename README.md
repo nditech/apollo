@@ -10,17 +10,17 @@
 
 ## Apollo 3.x Deployment Guide
 
-Introduction
+###### Introduction
 
 This document details the steps required in deploying a fully functional installment of Apollo 3. As compared to its previous version, Apollo 3 has improved the steps required in getting an installation up.
 
-Dependencies
+###### Dependencies
 
 The only dependencies for building and deploying an Apollo 3 instance are git - for retrieving the source code from a source code versioning repository and docker for building and deploying the Apollo 3 instance.
 
 Documentation on how to install git may be found here while you could find out about docker here.
 
-Obtaining the Source
+###### Obtaining the Source
 
 After installing git, you would be able to clone the current version of Apollo from this repo, https://github.com/nditech/dev-elections. Due to the fact this repository is private, it would require that you upload a deployment SSH key to clone to a regular server or use an authenticated URL (if you have an account on GitHub that has access to the repository). You will find the section for adding deployment keys to the repository here: https://github.com/nditech/dev-elections/settings/keys.
 
@@ -32,7 +32,7 @@ SECRET_KEY=sD2av35FAg43rfsDa
 SSL_REQUIRED=False
 ```
 
-### Installation Method 1: Using Docker Compose ###
+### Installation: Using Docker Compose
 
 In order to simplify the deployment process, Apollo now includes a docker compose application configuration to allow admins skip the entire process of having to start each of the database, task queue, worker and main application containers individually.
 
@@ -47,40 +47,45 @@ docker-compose up -d
 The main application container and worker containers will be built and run together with the supporting database and task queue containers.
 
 
-### Installation Method 2: Without Docker-Compose ###
+### Nginx configuration
 
-Building the Docker Images 
+Apollo is designed to work with an Nginx webserver. After installing nginx on your server, go to `/etc/nginx/`. Remove all files from the directories `sites-available` and `sites-enabled`. Create a blank file called `apollo` in `sites-available`, and create a symbolic link to a file in `sites-enabled` by running the command below.
 
-Once the repository has been cloned, you build the application image by first changing the directory to the one containing the source code and running the command:
+`ln -s /etc/nginx/sites-available/apollo /etc/nginx/sites-enabled/apollo`
 
-docker build -t apollo .
+Then edit the apollo file in `sites-available` with Nginx configurations. A sample file is shown below, with **insert site url** indicating places in which the site url should be substituted in.
 
-This will start the build process where all application dependencies are downloaded and installed and an application image (from which the containers will be created) will be built.
-Running the Application Containers
+```
+server {
+    listen 80;
+    server_name **insert site url**;
+    location / {
+        rewrite ^ https://$server_name$request_uri? permanent;
+    }
+}
 
-There are two essential application containers that are required in every Apollo 3 deployment. The first one is the application container - this houses the main web application and serves the application contents to the web browsers and processes all user input.
+server {
+    listen 443;
+    server_name **insert site url**;
+    #limit_req zone=one burst=10 nodelay;
+    #limit_req_status 429;
+    ssl_trusted_certificate /etc/ssl/certs/demcloud_combined.crt;
 
-The second is the long-running task worker and is responsible for handling tasks that take a much longer time to run and that may otherwise block the main web application process and possibly timeout while waiting for the task to complete.
+    location / {
+        proxy_pass http://localhost:5000;
+        proxy_redirect http:// $scheme://;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-Server $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto https;
+        port_in_redirect off;
+        proxy_connect_timeout 300;
+        proxy_read_timeout 180;
+    }
+```
 
-Supporting containers include database container (PostgreSQL) and the task queue container (Redis).
-
-Start out by first running the database and task queue containers:
-
-docker run -d -e POSTGRES_DB=${DATABASE_NAME:-apollo} -v postgres_data:/var/lib/postgresql/data -n postgres postgres:10-alpine
-docker run -d -n redis redis:4-alpine 
-
-Then you run the worker container:
-
-docker run -d -n worker --link postgres --link redis -e DATABASE_NAME=${DATABASE_NAME:-apollo} -v upload_data:/app/uploads -v settings.ini:/app/settings.ini apollo:latest pipenv run ./manage.py worker
-
-Finally, you can then run the main application container:
-
-docker run -d -n web --link postgres --link redis -e DATABASE_NAME=${DATABASE_NAME:-apollo} -v upload_data:/app/uploads -v ./settings.ini:/app/settings.ini apollo:latest pipenv run ./manage.py gunicorn -c gunicorn.conf
-
-In both instances, the database (PostgreSQL) and task queue (Redis) containers are linked to the worker and main application containers.
-
-
-
+You should now be able to login to your site by navigating to port `:5000` on your localhost or server. The default login is username/password: `admin`/`admin`.
 
 ### Application Configuration Settings
 
@@ -169,3 +174,39 @@ Apollo leverages Google Tag Manager to achieve this. To enable Tag Manager, modi
 Next, add the configuration parameter `GOOGLE_TAG_MANAGER_KEY` and specify the **tag manager key** you get from Google and restart the container.
 
 For more information on using Google Tag Manager [see the following resource](https://marketingplatform.google.com/about/tag-manager/).
+
+
+
+### Alternative Installation Method: Without Docker-Compose ###
+
+An older installation method is documented below. In almost all cases, using docker compose is preferable. However if for some reason this is not possible, use the method below instead in place of the section above labeled *Installation: Using Docker Compose*.
+
+###### Building the Docker Images 
+
+Once the repository has been cloned, you build the application image by first changing the directory to the one containing the source code and running the command:
+
+docker build -t apollo .
+
+This will start the build process where all application dependencies are downloaded and installed and an application image (from which the containers will be created) will be built.
+Running the Application Containers
+
+There are two essential application containers that are required in every Apollo 3 deployment. The first one is the application container - this houses the main web application and serves the application contents to the web browsers and processes all user input.
+
+The second is the long-running task worker and is responsible for handling tasks that take a much longer time to run and that may otherwise block the main web application process and possibly timeout while waiting for the task to complete.
+
+Supporting containers include database container (PostgreSQL) and the task queue container (Redis).
+
+Start out by first running the database and task queue containers:
+
+docker run -d -e POSTGRES_DB=${DATABASE_NAME:-apollo} -v postgres_data:/var/lib/postgresql/data -n postgres postgres:10-alpine
+docker run -d -n redis redis:4-alpine 
+
+Then you run the worker container:
+
+docker run -d -n worker --link postgres --link redis -e DATABASE_NAME=${DATABASE_NAME:-apollo} -v upload_data:/app/uploads -v settings.ini:/app/settings.ini apollo:latest pipenv run ./manage.py worker
+
+Finally, you can then run the main application container:
+
+docker run -d -n web --link postgres --link redis -e DATABASE_NAME=${DATABASE_NAME:-apollo} -v upload_data:/app/uploads -v ./settings.ini:/app/settings.ini apollo:latest pipenv run ./manage.py gunicorn -c gunicorn.conf
+
+In both instances, the database (PostgreSQL) and task queue (Redis) containers are linked to the worker and main application containers.
