@@ -10,17 +10,17 @@
 
 ## Apollo 3.x Deployment Guide
 
-###### Introduction
+#### Introduction
 
 This document details the steps required in deploying a fully functional installment of Apollo 3. As compared to its previous version, Apollo 3 has improved the steps required in getting an installation up.
 
-###### Dependencies
+#### Dependencies
 
 The only dependencies for building and deploying an Apollo 3 instance are git - for retrieving the source code from a source code versioning repository and docker for building and deploying the Apollo 3 instance.
 
 Documentation on how to install git may be found here while you could find out about docker here.
 
-###### Obtaining the Source
+#### Obtaining the Source
 
 After installing git, you would be able to clone the current version of Apollo from this repo, https://github.com/nditech/dev-elections. Due to the fact this repository is private, it would require that you upload a deployment SSH key to clone to a regular server or use an authenticated URL (if you have an account on GitHub that has access to the repository). You will find the section for adding deployment keys to the repository here: https://github.com/nditech/dev-elections/settings/keys.
 
@@ -167,7 +167,7 @@ PROMETHEUS_SECRET
 Apollo 3 provides support for an external monitoring server (Prometheus) to be able to obtain application performance metrics. In order to randomize the URL from which the stats are retrieved from, the PROMETHEUS_SECRET is added as an additional URL fragment and must be correct for the metrics to be provided. The metrics url becomes https://apollo3servername/metrics/{PROMETHEUS_SECRET}.
 
 
-## Analytics Tracking
+### Analytics Tracking
 For digital marketing or product improvement initiatives you may want to include JavaScript and or HTML snippet tags for tracking and analytics on Apollo. 
 
 Apollo leverages Google Tag Manager to achieve this. To enable Tag Manager, modify the `settings-docker.ini` file located in the project root directory. 
@@ -181,7 +181,7 @@ For more information on using Google Tag Manager [see the following resource](ht
 
 An older installation method is documented below. In almost all cases, using docker compose is preferable. However if for some reason this is not possible, use the method below instead in place of the section above labeled *Installation: Using Docker Compose*.
 
-###### Building the Docker Images 
+#### Building the Docker Images 
 
 Once the repository has been cloned, you build the application image by first changing the directory to the one containing the source code and running the command:
 
