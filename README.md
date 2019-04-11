@@ -8,9 +8,17 @@
 
 [![CircleCI](https://circleci.com/gh/nditech/dev-elections/tree/master.svg?style=svg&circle-token=d73aae2670476f167920a4494b6087a6f8ef49e9)](https://circleci.com/gh/nditech/dev-elections/tree/master)
 
+  ### Table of Contents
+  1. [Introduction](#introduction)
+  1. [Installation](#installation-using-docker-compose)
+  1. [Web Server Configuration](#nginx-configuration)
+  1. [Application Configuration Settings](#application-configuration-settings)
+  1. [Legacy Installation Method](#alternative-installation-method-without-docker-compose)
+
+
 ## Apollo 3.x Deployment Guide
 
-#### Introduction
+### Introduction
 
 This document details the steps required in deploying a fully functional installment of Apollo 3. As compared to its previous version, Apollo 3 has improved the steps required in getting an installation up.
 
@@ -49,7 +57,7 @@ The main application container and worker containers will be built and run toget
 
 ### Nginx configuration
 
-Apollo is designed to work with an Nginx webserver. After installing nginx on your server, go to `/etc/nginx/`. Remove all files from the directories `sites-available` and `sites-enabled`. Create a blank file called `apollo` in `sites-available`, and create a symbolic link to a file in `sites-enabled` by running the command below.
+Apollo is designed to work with an Nginx webserver. After installing nginx on your server, become the root user and go to `/etc/nginx/`. Remove all files from the directories `sites-available` and `sites-enabled`. Create a blank file called `apollo` in `sites-available`, and create a symbolic link to a file in `sites-enabled` by running the command below.
 
 `ln -s /etc/nginx/sites-available/apollo /etc/nginx/sites-enabled/apollo`
 
@@ -85,11 +93,13 @@ server {
     }
 ```
 
+After changing the file, restart nginx using `service nginx restart`
+
 You should now be able to login to your site by navigating to port `:5000` on your localhost or server. The default login is username/password: `admin`/`admin`.
 
 ### Application Configuration Settings
 
-Each deployment installation can be further customized by modifying the contents of the settings.ini file. Here are a collection of settings parameters and sample values together with an explanation of what they do.
+Each deployment installation can be further customized by modifying the contents of the `settings.ini` file. Here are a collection of settings parameters and sample values together with an explanation of what they do.
 
 SECRET_KEY
 (e.g. LBZyd8EY80mALqb7bl8o3da8)
@@ -112,7 +122,12 @@ The timezone parameter configures the timezone that the application server uses 
 #### GOOGLE_TAG_MANAGER (REQUIRED)
 (e.g. GTM-1234567)
 
-If you need to manage tags that are inserted into the application, one way to do so it to use the Google Tag Manager. This parameter allows you to set the Google Tag Manager code that is linked to the Google account from where the tags will be managed.
+
+For digital marketing or product improvement initiatives you may want to include JavaScript and or HTML snippet tags for tracking and analytics on Apollo. 
+
+If you need to manage tags that are inserted into the application, one way to do so it to use the Google Tag Manager. This parameter allows you to set the Google Tag Manager code that is linked to the Google account from where the tags will be managed. To enable Tag Manager, modify the `settings-docker.ini` file. Add the configuration parameter `GOOGLE_TAG_MANAGER_KEY` and specify the **tag manager key** you get from Google and restart the container.
+
+For more information on using Google Tag Manager [see the following resource](https://marketingplatform.google.com/about/tag-manager/).
 
 
 REDIS_DATABASE
@@ -167,17 +182,7 @@ PROMETHEUS_SECRET
 Apollo 3 provides support for an external monitoring server (Prometheus) to be able to obtain application performance metrics. In order to randomize the URL from which the stats are retrieved from, the PROMETHEUS_SECRET is added as an additional URL fragment and must be correct for the metrics to be provided. The metrics url becomes https://apollo3servername/metrics/{PROMETHEUS_SECRET}.
 
 
-### Analytics Tracking
-For digital marketing or product improvement initiatives you may want to include JavaScript and or HTML snippet tags for tracking and analytics on Apollo. 
-
-Apollo leverages Google Tag Manager to achieve this. To enable Tag Manager, modify the `settings-docker.ini` file located in the project root directory. 
-Next, add the configuration parameter `GOOGLE_TAG_MANAGER_KEY` and specify the **tag manager key** you get from Google and restart the container.
-
-For more information on using Google Tag Manager [see the following resource](https://marketingplatform.google.com/about/tag-manager/).
-
-
-
-### Alternative Installation Method: Without Docker-Compose ###
+### Alternative Installation Method Without Docker Compose
 
 An older installation method is documented below. In almost all cases, using docker compose is preferable. However if for some reason this is not possible, use the method below instead in place of the section above labeled *Installation: Using Docker Compose*.
 
