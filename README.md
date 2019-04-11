@@ -16,9 +16,9 @@ Documentation on how to install git may be found here while you could find out a
 
 Obtaining the Source
 
-After installing git, you would be able to clone the current version of Apollo from the following source code versioning url: https://github.com/nditech/dev-elections. Due to the fact that the repository is private, it would require that you upload a deployment SSH key to clone to a regular server or use an authenticated URL (if you have an account on GitHub that has access to the repository). You will find the section for adding deployment keys to the repository here: https://github.com/nditech/dev-elections/settings/keys.
+After installing git, you would be able to clone the current version of Apollo from this repo, https://github.com/nditech/dev-elections. Due to the fact this repository is private, it would require that you upload a deployment SSH key to clone to a regular server or use an authenticated URL (if you have an account on GitHub that has access to the repository). You will find the section for adding deployment keys to the repository here: https://github.com/nditech/dev-elections/settings/keys.
 
-After downloading, create a settings file in the main folder called `settings.ini`. The install will not work if a settings file is not created with a Secret Key specified. The secret key can be any randomly generated string of characters. A basic sample settings file is shown below. For more information on additional setting configurations, read the section "Application Configuration Settings" below.
+After downloading, configure a settings file in the main folder called `settings.ini`. The install will not work if a settings file is not created with a Secret Key specified. The secret key can be any randomly generated string of characters. A basic sample settings file is shown below. For more information on additional setting configurations, read the section "Application Configuration Settings" below.
 
 ```
 [settings]
@@ -26,7 +26,22 @@ SECRET_KEY=sD2av35FAg43rfsDa
 SSL_REQUIRED=False
 ```
 
-### Installation Method 1: Without Docker-Compose ###
+### Installation Method 1: Using Docker Compose ###
+
+In order to simplify the deployment process, Apollo now includes a docker compose application configuration to allow admins skip the entire process of having to start each of the database, task queue, worker and main application containers individually.
+
+Docker compose is an optional dependency and you will find instructions on how to install it here.
+
+To start the application, simply run:
+
+docker-compose up -d
+
+(Alternatively, if after running docker-compose, changes are made and a clean install is needed that builds the containers from scratch without drawing upon the cached images, use `docker run build --no-cache`) 
+
+The main application container and worker containers will be built and run together with the supporting database and task queue containers.
+
+
+### Installation Method 2: Without Docker-Compose ###
 
 Building the Docker Images 
 
@@ -59,19 +74,6 @@ docker run -d -n web --link postgres --link redis -e DATABASE_NAME=${DATABASE_NA
 In both instances, the database (PostgreSQL) and task queue (Redis) containers are linked to the worker and main application containers.
 
 
-### Installation Method 2: Using Docker Compose ###
-
-In order to simplify the deployment process, Apollo now includes a docker compose application configuration to allow admins skip the entire process of having to start each of the database, task queue, worker and main application containers individually.
-
-Docker compose is an optional dependency and you will find instructions on how to install it here.
-
-To start the application, simply run:
-
-docker-compose up -d
-
-(Alternatively, if after running docker-compose, changes are made and a clean install is needed that builds the containers from scratch without drawing upon the cached images, use `docker run build --no-cache`) 
-
-The main application container and worker containers will be built and run together with the supporting database and task queue containers.
 
 
 ### Application Configuration Settings ###
@@ -153,62 +155,6 @@ PROMETHEUS_SECRET
 
 Apollo 3 provides support for an external monitoring server (Prometheus) to be able to obtain application performance metrics. In order to randomize the URL from which the stats are retrieved from, the PROMETHEUS_SECRET is added as an additional URL fragment and must be correct for the metrics to be provided. The metrics url becomes https://apollo3servername/metrics/{PROMETHEUS_SECRET}.
 
-
-
-
-
-
-## Apollo 2.x Installation Guide ##
-
-Apollo is an election monitoring platform that is designed to use the Parallel Voting Tabulation methodology of election monitoring to collect, store and analyse election data. This data is submitted by election observers using text messaging and provides tools to enable data managers and clerks manage the collected data. Apollo is capable of validating collected data and providing user-friendly error reports to enable election observers self-correct and resend their information.
-
-#### Installation ####
-
-##### Depedencies #####
-Apollo requires only **docker** and **git** to be installed on the host.
-
-##### Build Instructions #####
-```
-git clone git@github.com:nditech/dev-elections.git
-cd dev-elections
-docker build -t apollo:latest .
-```
-
-##### Deployment #####
-First create docker volumes for the database data and for storing uploaded files
-```
-docker volume create database_data
-docker volume create upload_data
-```
-
-Next choose a password for the PostgreSQL server and start containers for Redis and PostgreSQL (in this example, the chosen password is *iJqHvUqA923TPIkPHKURkXV4*)
-``` 
-docker run -d --name redis redis:4-alpine
-docker run -d --name postgres -e POSTGRES_DB=apollo -e POSTGRES_PASSWORD=iJqHvUqA923TPIkPHKURkXV4 -v database_data:/var/lib/postgresql/data postgres:10-alpine
-```
-
-Lastly create a `settings-docker.ini` file containing your application settings in the current directory. A sample of the contents of this file is shown below. Other parameters can be found in the `apollo/settings.py` file.
-```
-[settings]
-SECRET_KEY=GojAgMpHRir9aB6UcJeY3RZ4GJxph9wq
-DATABASE_NAME=apollo
-DATABASE_PASSWORD=iJqHvUqA923TPIkPHKURkXV4
-MAIL_SERVER=smtp.sendgrid.net
-MAIL_PORT=587
-MAIL_USE_TLS=True
-MAIL_USERNAME=sendgridusername
-MAIL_PASSWORD=sendgridpassword
-```
-
-and then start the `worker` and `application` containers.
-```
-docker run -d --name apollo_worker --link postgres --link redis -v upload_data:/app/uploads -v `pwd`/settings-docker.ini:/app/apollo.ini apollo:latest pipenv run ./manage.py worker
-docker run -d --name apollo_app --link postgres --link redis -p 5000:5000 -v upload_data:/app/uploads -v `pwd`/settings-docker.ini:/app/apollo.ini apollo:latest pipenv run ./manage.py gunicorn -c gunicorn.conf
-```
-
-Your application is now accessible on port *5000* on the host. You may want to setup a reverse proxy if you are hosting this on the Internet.
-
-Login with the username `admin` and password `admin`. Remember to immediately change the default password.
 
 ## Analytics Tracking ##
 For digital marketing or product improvement initiatives you may want to include JavaScript and or HTML snippet tags for tracking and analytics on Apollo. 
