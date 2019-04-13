@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from flask import (
-    g, jsonify, redirect, render_template, request, session, url_for
+    g, redirect, render_template, request, session, url_for
 )
 from flask_admin import AdminIndexView
 from flask_login import user_logged_out
@@ -8,6 +8,7 @@ from flask_principal import identity_loaded
 from flask_security import SQLAlchemyUserDatastore, current_user
 from flask_security.utils import login_user, url_for_security
 from loginpass import create_flask_blueprint, Facebook, Google
+from werkzeug.urls import url_encode
 from whitenoise import WhiteNoise
 from apollo import assets, models, services
 
@@ -124,6 +125,18 @@ def create_app(settings_override=None, register_security_blueprint=True):
                 return redirect(app.config.get('SECURITY_POST_LOGIN_VIEW'))
 
         return redirect(url_for_security('login'))
+
+    @app.template_global()
+    def modify_query(**values):
+        args = request.args.copy()
+
+        for k, v in values.items():
+            if not v:
+                _ = args.pop(k, None)
+            else:
+                args[k] = v
+
+        return '{}?{}'.format(request.path, url_encode(args))
 
     facebook_bp = create_flask_blueprint(Facebook, oauth, handle_authorize)
     google_bp = create_flask_blueprint(Google, oauth, handle_authorize)
