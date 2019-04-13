@@ -16,6 +16,7 @@ from flask_security import current_user, login_required
 from flask_security.utils import verify_and_update_password
 from sqlalchemy.dialects.postgresql import array
 from sqlalchemy.sql import false
+from sqlalchemy import desc, Integer, func, text
 from tablib import Dataset
 from werkzeug.datastructures import MultiDict
 
@@ -162,20 +163,131 @@ def submission_list(form_id):
             mimetype="text/csv"
         )
 
-    # first retrieve observer submissions for the form
-    # NOTE: this implicitly restricts selected submissions
-    # to the currently selected event.
-    queryset = services.submissions.find(
-        submission_type='O',
-        form=form,
-        event_id=event.id
-    ).join(
-        models.Location,
-        models.Submission.location_id == models.Location.id
-    ).join(
-        models.Participant,
-        models.Submission.participant_id == models.Participant.id
-    ).order_by(models.Location.code, models.Participant.participant_id)
+    # the following section defines the queryset for the submissions
+    # to be retrieved. due to the fact that we do specialized sorting
+    # the queryset will depend heavily on what is being sorted.
+    if (
+        request.args.get('sort_by') == 'location' and
+        request.args.get('sort_value')
+    ):
+        # when sorting based on location, we generally want to be able
+        # to sort submissions based on a specific administrative division.
+        # since we store the hierarchical structure in a separate table
+        # we not only have to retrieve the table for the location data but
+        # also join it based on results in the location hierarchy.
+
+        # start out by getting all the locations (as a subquery) in a
+        # particular division.
+        division = models.Location.query.with_entities(
+            models.Location.id).filter(
+                models.Location.location_type_id ==
+                request.args.get('sort_value')
+            ).subquery()
+        # next is we retrieve all the descendant locations for all the
+        # locations in that particular administrative division making sure
+        # to retrieve the name translations which would be used in sorting
+        # the submissions when the time comes.
+        descendants = models.LocationPath.query.join(
+            models.Location,
+            models.Location.id == models.LocationPath.ancestor_id
+            ).with_entities(
+                models.Location.name_translations,
+                models.LocationPath.descendant_id
+            ).filter(
+                models.LocationPath.ancestor_id.in_(division)
+            ).subquery()
+
+        # now we defined the actual queryset using the subqueries above
+        # taking note to group by the translation name which essentially
+        # is the division name.
+        queryset = models.Submission.query.select_from(
+            models.Submission, models.Location, models.Participant,
+            func.jsonb_each_text(
+                descendants.c.name_translations).alias('translation')
+        ).filter(
+            models.Submission.submission_type == 'O',
+            models.Submission.form == form,
+            models.Submission.event_id == event.id
+        ).join(
+            models.Location,
+            models.Submission.location_id == models.Location.id
+        ).join(
+            models.Participant,
+            models.Submission.participant_id == models.Participant.id
+        ).outerjoin(
+            descendants,
+            descendants.c.descendant_id == models.Submission.location_id
+        ).group_by(
+            text('translation.value'), models.Submission.id
+        )
+    elif request.args.get('sort_by') == 'phone':
+        participant_phones = models.ParticipantPhone.query.filter(
+            models.ParticipantPhone.verified == True).order_by(
+                desc(models.ParticipantPhone.last_seen)).subquery()
+        queryset = models.Submission.query.filter(
+            models.Submission.submission_type == 'O',
+            models.Submission.form == form,
+            models.Submission.event_id == event.id
+        ).join(
+            models.Location,
+            models.Submission.location_id == models.Location.id
+        ).join(
+            models.Participant,
+            models.Submission.participant_id == models.Participant.id
+        ).outerjoin(
+            participant_phones,
+            participant_phones.c.participant_id == models.Participant.id
+        ).join(
+            models.Phone,
+            participant_phones.c.phone_id == models.Phone.id
+        )
+    else:
+        queryset = models.Submission.query.select_from(
+            models.Submission, models.Location, models.Participant,
+            func.jsonb_each_text(models.Participant.name_translations).alias(
+                'participant_name')
+        ).filter(
+            models.Submission.submission_type == 'O',
+            models.Submission.form == form,
+            models.Submission.event_id == event.id
+        ).join(
+            models.Location,
+            models.Submission.location_id == models.Location.id
+        ).join(
+            models.Participant,
+            models.Submission.participant_id == models.Participant.id
+        )
+
+    if request.args.get('sort_by') == 'id':
+        if request.args.get('sort_direction') == 'desc':
+            queryset = queryset.order_by(
+                desc(models.Participant.participant_id.cast(Integer)))
+        else:
+            queryset = queryset.order_by(
+                models.Participant.participant_id.cast(Integer))
+    elif request.args.get('sort_by') == 'location':
+        if request.args.get('sort_direction') == 'desc':
+            queryset = queryset.order_by(
+                desc(text('translation.value')))
+        else:
+            queryset = queryset.order_by(text('translation.value'))
+    elif request.args.get('sort_by') == 'participant':
+        if request.args.get('sort_direction') == 'desc':
+            queryset = queryset.order_by(
+                desc(text('participant_name.value')))
+        else:
+            queryset = queryset.order_by(text('participant_name.value'))
+    elif request.args.get('sort_by') == 'phone':
+        if request.args.get('sort_direction') == 'desc':
+            queryset = queryset.order_by(
+                desc(models.Phone.number))
+        else:
+            queryset = queryset.order_by(
+                models.Phone.number)
+    else:
+        queryset = queryset.order_by(
+            models.Location.code.cast(Integer),
+            models.Participant.participant_id.cast(Integer))
 
     query_filterset = filter_class(queryset, request.args)
     filter_form = query_filterset.form
@@ -230,7 +342,7 @@ def submission_list(form_id):
 @permissions.add_submission.require(403)
 def submission_create(form_id):
     event = g.event
-    questionnaire_form = form = models.Form.query.filter_by(
+    questionnaire_form = models.Form.query.filter_by(
         id=form_id, form_type='INCIDENT'
     ).join(
         models.Form.events

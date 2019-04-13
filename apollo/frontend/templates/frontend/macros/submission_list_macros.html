@@ -1,11 +1,43 @@
 {% macro submission_header(form, form_fields, location_types, perms) %}
 <tr>
-    <th class="text-right shrink">{{ _('ID') }}</th>
+    {% if request.args.sort_by == 'id' %}
+    {% if request.args.sort_direction == 'desc' %}
+    <th class="text-right shrink"><a href="{{ modify_query(sort_by='id', sort_direction='asc', page='') }}">{{ _('ID') }} <i class="glyphicon glyphicon-chevron-down"></i></a></th>
+    {% else %}
+    <th class="text-right shrink"><a href="{{ modify_query(sort_by='id', sort_direction='desc', page='') }}">{{ _('ID') }} <i class="glyphicon glyphicon-chevron-up"></i></a></th>
+    {% endif %}
+    {% else %}
+    <th class="text-right shrink"><a href="{{ modify_query(sort_by='id', sort_value='', sort_direction='', page='') }}">{{ _('ID') }}</a></th>
+    {% endif %}
     {% for location_type in location_types %}
-    <th>{{ location_type.name }}</th>
+    {% if request.args.sort_by == 'location' and request.args.sort_value == location_type.id|string %}
+    {% if request.args.sort_direction == 'desc' %}
+    <th><a href="{{ modify_query(sort_by='location', sort_value=location_type.id, sort_direction='asc', page='') }}">{{ location_type.name }} <i class="glyphicon glyphicon-chevron-down"></i></a></th>
+    {% else %}
+    <th><a href="{{ modify_query(sort_by='location', sort_value=location_type.id, sort_direction='desc', page='') }}">{{ location_type.name }} <i class="glyphicon glyphicon-chevron-up"></i></a></th>
+    {% endif %}
+    {% else %}
+    <th><a href="{{ modify_query(sort_by='location', sort_value=location_type.id, sort_direction='', page='') }}">{{ location_type.name }}</a></th>
+    {% endif %}
     {% endfor %}
-    <th>{{ _('Participant') }}</th>
-    <th>{{ _('Phone') }}</th>
+    {% if request.args.sort_by == 'participant' %}
+    {% if request.args.sort_direction == 'desc' %}
+    <th><a href="{{ modify_query(sort_by='participant', sort_direction='asc', page='') }}">{{ _('Participant') }} <i class="glyphicon glyphicon-chevron-down"></i></a></th>
+    {% else %}
+    <th><a href="{{ modify_query(sort_by='participant', sort_direction='desc', page='') }}">{{ _('Participant') }} <i class="glyphicon glyphicon-chevron-up"></i></a></th>
+    {% endif %}
+    {% else %}
+    <th><a href="{{ modify_query(sort_by='participant', sort_value='', sort_direction='', page='') }}">{{ _('Participant') }}</a></th>
+    {% endif %}
+    {% if request.args.sort_by == 'phone' %}
+    {% if request.args.sort_direction == 'desc' %}
+    <th><a href="{{ modify_query(sort_by='phone', sort_direction='asc', page='') }}">{{ _('Phone') }} <i class="glyphicon glyphicon-chevron-down"></i></a></th>
+    {% else %}
+    <th><a href="{{ modify_query(sort_by='phone', sort_direction='desc', page='') }}">{{ _('Phone') }} <i class="glyphicon glyphicon-chevron-up"></i></a></th>
+    {% endif %}
+    {% else %}
+    <th><a href="{{ modify_query(sort_by='phone', sort_value='', sort_direction='', page='') }}">{{ _('Phone') }}</a></th>
+    {% endif %}
     {% if form.form_type == 'CHECKLIST' %}
     {% for group in form.data.groups %}
     <th class="text-center">{% if group.abbr %}<abbr title="{{ group.name }}">{{ group.abbr }}</abbr>{% else %}{{ group.name }}{% endif %}</th>
