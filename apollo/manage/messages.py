@@ -2,24 +2,32 @@
 import calendar
 import csv
 from datetime import datetime
+import io
+import sys
 from urllib.parse import urljoin
+
 from flask import current_app, url_for
-from flask_script import Command, prompt
+from flask_script import Command, Option
 import pytz
 import requests
 
 
 class MessagePlaybackCommand(Command):
-    def run(self):
+    option_list = (
+        Option(dest='url'),
+        Option(dest='msg_file'),
+    )
+
+    def run(self, url, msg_file):
         settings = current_app.config
 
-        # construct base url
-        hostname = prompt('URL of current instance')
-        base_url = urljoin(hostname, url_for('messaging.kannel_view'))
+        if msg_file == '-':
+            handle = io.TextIOWrapper(sys.stdin.buffer, 'utf-8-sig')
+        else:
+            handle = open(msg_file)
 
-        filename = prompt('Path to message log')
-        with open(filename) as f:
-            reader = csv.DictReader(f)
+        with handle:
+            reader = csv.DictReader(handle)
             for row in reader:
                 # ignore outbound messages
                 if row['Direction'] == 'OUT':
@@ -36,4 +44,4 @@ class MessagePlaybackCommand(Command):
                     'timestamp': calendar.timegm(msg_time.utctimetuple())
                 }
 
-                requests.get(base_url, params=data)
+                requests.get(url, params=data)
