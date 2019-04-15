@@ -2,25 +2,32 @@
 import codecs
 import calendar
 from datetime import datetime
+import sys
 from urlparse import urljoin
+
 from flask import current_app, url_for
-from flask.ext.script import Command, prompt
+from flask_script import Command, Option
 import pytz
 import requests
 import unicodecsv
 
 
 class MessagePlaybackCommand(Command):
-    def run(self):
+    option_list = (
+        Option(dest='url'),
+        Option(dest='msg_file'),
+    )
+
+    def run(self, url, msg_file):
         settings = current_app.config
 
-        # construct base url
-        hostname = prompt('URL of current instance')
-        base_url = urljoin(hostname, url_for('messaging.kannel_view'))
+        if msg_file == '-':
+            handle = codecs.getreader('utf-8-sig')(sys.stdin)
+        else:
+            handle = codecs.open(msg_file, encoding='utf-8-sig')
 
-        filename = prompt('Path to message log')
-        with codecs.open(filename, encoding='utf-8-sig') as f:
-            reader = unicodecsv.DictReader(f)
+        with handle:
+            reader = unicodecsv.DictReader(handle)
             for row in reader:
                 # ignore outbound messages
                 if row['Direction'] == 'OUT':
@@ -37,4 +44,4 @@ class MessagePlaybackCommand(Command):
                     'timestamp': calendar.timegm(msg_time.utctimetuple())
                 }
 
-                requests.get(base_url, params=data)
+                requests.get(url, params=data)
