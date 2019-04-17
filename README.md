@@ -10,10 +10,10 @@
 
   ### Table of Contents
   1. [Introduction](#introduction)
-  1. [Installation](#installation-using-docker-compose)
+  1. [Installation and Deployment](#installation-and-deployment)
   1. [Web Server Configuration](#nginx-configuration)
   1. [Application Configuration Settings](#application-configuration-settings)
-  1. [Legacy Installation Method](#alternative-installation-method-without-docker-compose)
+  1. [Legacy Installation Method](#legacy-installation-method)
 
 
 ## Apollo 3.x Deployment Guide
@@ -40,15 +40,15 @@ SECRET_KEY=sD2av35FAg43rfsDa
 SSL_REQUIRED=False
 ```
 
-### Installation: Using Docker Compose
+### Installation and Deployment
 
 In order to simplify the deployment process, Apollo now includes a docker compose application configuration to allow admins skip the entire process of having to start each of the database, task queue, worker and main application containers individually.
 
 Docker compose is an optional dependency and you will find instructions on how to install it here.
 
-To start the application, simply run:
+To install and start the application, simply run:
 
-docker-compose up -d
+`docker-compose up -d`
 
 (Alternatively, if after running docker-compose, changes are made and a clean install is needed that builds the containers from scratch without drawing upon the cached images, use `docker run build --no-cache`) 
 
@@ -61,7 +61,7 @@ Apollo is designed to work with an Nginx webserver. After installing nginx on yo
 
 `ln -s /etc/nginx/sites-available/apollo /etc/nginx/sites-enabled/apollo`
 
-Then edit the apollo file in `sites-available` with Nginx configurations. A sample file is shown below, with **insert site url** indicating places in which the site url should be substituted in.
+Then edit the apollo file in `sites-available` with Nginx configurations. A sample file is shown below, with *insert site url* indicating places in which the site url should be substituted in.
 
 ```
 server {
@@ -95,6 +95,8 @@ server {
 
 After changing the file, restart nginx using `service nginx restart`
 
+#### Logging in
+
 You should now be able to login to your site by navigating to port `:5000` on your localhost or server. The default login is username/password: `admin`/`admin`.
 
 ### Application Configuration Settings
@@ -119,7 +121,7 @@ TIMEZONE
 The timezone parameter configures the timezone that the application server uses by default. Usually this is set to the timezone of the country for which the application instance is deployed. For a full list of support timezone values, please visit this wikipedia article.
 
 
-#### GOOGLE_TAG_MANAGER (REQUIRED)
+#### GOOGLE_TAG_MANAGER
 (e.g. GTM-1234567)
 
 
@@ -182,15 +184,15 @@ PROMETHEUS_SECRET
 Apollo 3 provides support for an external monitoring server (Prometheus) to be able to obtain application performance metrics. In order to randomize the URL from which the stats are retrieved from, the PROMETHEUS_SECRET is added as an additional URL fragment and must be correct for the metrics to be provided. The metrics url becomes https://apollo3servername/metrics/{PROMETHEUS_SECRET}.
 
 
-### Alternative Installation Method Without Docker Compose
+### Legacy Installation Method
 
-An older installation method is documented below. In almost all cases, using docker compose is preferable. However if for some reason this is not possible, use the method below instead in place of the section above labeled *Installation: Using Docker Compose*.
+An older installation method is documented below. In almost all cases, using docker compose is preferable. However if for some reason this is not possible, use the method below instead in place of the section above labeled *Installation and Deployment*.
 
 #### Building the Docker Images 
 
 Once the repository has been cloned, you build the application image by first changing the directory to the one containing the source code and running the command:
 
-docker build -t apollo .
+`docker build -t apollo .`
 
 This will start the build process where all application dependencies are downloaded and installed and an application image (from which the containers will be created) will be built.
 Running the Application Containers
@@ -203,15 +205,15 @@ Supporting containers include database container (PostgreSQL) and the task queue
 
 Start out by first running the database and task queue containers:
 
-docker run -d -e POSTGRES_DB=${DATABASE_NAME:-apollo} -v postgres_data:/var/lib/postgresql/data -n postgres postgres:10-alpine
-docker run -d -n redis redis:4-alpine 
+`docker run -d -e POSTGRES_DB=${DATABASE_NAME:-apollo} -v postgres_data:/var/lib/postgresql/data -n postgres postgres:10-alpine`
+`docker run -d -n redis redis:4-alpine`
 
 Then you run the worker container:
 
-docker run -d -n worker --link postgres --link redis -e DATABASE_NAME=${DATABASE_NAME:-apollo} -v upload_data:/app/uploads -v settings.ini:/app/settings.ini apollo:latest pipenv run ./manage.py worker
+`docker run -d -n worker --link postgres --link redis -e DATABASE_NAME=${DATABASE_NAME:-apollo} -v upload_data:/app/uploads -v settings.ini:/app/settings.ini apollo:latest pipenv run ./manage.py worker`
 
 Finally, you can then run the main application container:
 
-docker run -d -n web --link postgres --link redis -e DATABASE_NAME=${DATABASE_NAME:-apollo} -v upload_data:/app/uploads -v ./settings.ini:/app/settings.ini apollo:latest pipenv run ./manage.py gunicorn -c gunicorn.conf
+`docker run -d -n web --link postgres --link redis -e DATABASE_NAME=${DATABASE_NAME:-apollo} -v upload_data:/app/uploads -v ./settings.ini:/app/settings.ini apollo:latest pipenv run ./manage.py gunicorn -c gunicorn.conf`
 
 In both instances, the database (PostgreSQL) and task queue (Redis) containers are linked to the worker and main application containers.
