@@ -24,9 +24,10 @@ This document details the steps required in deploying a fully functional install
 
 #### Dependencies
 
-The only dependencies for building and deploying an Apollo 3 instance are git - for retrieving the source code from a source code versioning repository and docker for building and deploying the Apollo 3 instance.
-
-Documentation on how to install git may be found here while you could find out about docker here.
+The only dependencies for building and deploying an Apollo 3 instance are:
+* [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) - for retrieving the source code from a source code versioning repository
+* [Docker](https://docs.docker.com/install/linux/docker-ce/ubuntu/) - for building and deploying the Apollo 3 instance.
+* [Docker-compose](https://docs.docker.com/compose/install/) - also for building and deploying Apollo 3. (If need be, it is possible to deploy Apollo without this dependency using the legacy instructions for deploying found here: [Legacy Installation Method](#legacy-installation-method))
 
 #### Obtaining the Source
 
@@ -43,8 +44,6 @@ SSL_REQUIRED=False
 ### Installation and Deployment
 
 In order to simplify the deployment process, Apollo now includes a docker compose application configuration to allow admins skip the entire process of having to start each of the database, task queue, worker and main application containers individually.
-
-Docker compose is an optional dependency and you will find instructions on how to install it here.
 
 To install and start the application, simply run:
 
@@ -97,7 +96,7 @@ After changing the file, restart nginx using `service nginx restart`
 
 #### Logging in
 
-You should now be able to login to your site by navigating to port `:5000` on your localhost or server. The default login is username/password: `admin`/`admin`.
+You should now be able to login to your site by navigating to port `:5000` on your localhost or server (http://localhost:5000 or http://*server-ip-address*:5000). The default login is username/password: `admin`/`admin`.
 
 ### Application Configuration Settings
 
@@ -121,7 +120,7 @@ TIMEZONE
 The timezone parameter configures the timezone that the application server uses by default. Usually this is set to the timezone of the country for which the application instance is deployed. For a full list of support timezone values, please visit this wikipedia article.
 
 
-#### GOOGLE_TAG_MANAGER
+GOOGLE_TAG_MANAGER
 (e.g. GTM-1234567)
 
 
