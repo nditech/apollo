@@ -21,9 +21,8 @@
 
 ### Introduction
 
-Apollo is a data management platform to support citizen election observation and other large-scale structured data collection efforts. Developed by Tim Akinbo's Nigeria-based TimbaObjects in conjunction with NDI’s Elections team, Apollo aids the management of observers, verification of collected information, and automated aggregation for analysis. Citizen watchdogs play a critical role in validating political processes, but to be convincing must back claims with data. Elections are one of the foundations of legitimate democracy when the official results truly represent the will of the voters. Systematic election observation requires large amounts of structured information from hundreds or thousands of observers and determining what it means – fast. Apollo aids the management of observers, verification of collected information, and automated aggregation for analysis.
+This document details the steps required in deploying a fully functional installment of Apollo 3. Apollo is a data management platform to support citizen election observation and other large-scale structured data collection efforts. Developed by Tim Akinbo and his team at TimbaObjects in conjunction with NDI’s Elections team, Apollo aids the management of observers, verification of collected information, and automated aggregation for analysis. Citizen watchdogs play a critical role in validating political processes, but to be convincing must back claims with data. Elections are one of the foundations of legitimate democracy when the official results truly represent the will of the voters. Systematic election observation requires large amounts of structured information from hundreds or thousands of observers and determining what it means – fast. Apollo aids the management of observers, verification of collected information, and automated aggregation for analysis.
 
-This document details the steps required in deploying a fully functional installment of Apollo 3. As compared to its previous version, Apollo 3 has improved the steps required in getting an installation up.
 
 ### Install
 
@@ -160,7 +159,6 @@ DATABASE_HOSTNAME
 As was the case in REDIS_HOSTNAME, there might be cases where an external PostgreSQL database is to be used, setting the DATABASE_HOSTNAME allows the application and worker applications to connect to this.
 
 
-
 DATABASE_NAME
 (e.g. apollo)
 
