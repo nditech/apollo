@@ -10,29 +10,41 @@
 
   ### Table of Contents
   1. [Introduction](#introduction)
-  1. [Installation](#installation-using-docker-compose)
+  1. [Install](#install)
+  1. [Builld and Deploy](#build-and-deploy)
   1. [Web Server Configuration](#nginx-configuration)
   1. [Application Configuration Settings](#application-configuration-settings)
-  1. [Legacy Installation Method](#alternative-installation-method-without-docker-compose)
+  1. [Legacy Installation Method](#legacy-installation-method)
 
 
 ## Apollo 3.x Deployment Guide
 
 ### Introduction
 
-This document details the steps required in deploying a fully functional installment of Apollo 3. As compared to its previous version, Apollo 3 has improved the steps required in getting an installation up.
+This document details the steps required in deploying a fully functional installment of Apollo 3. Apollo is a data management platform to support citizen election observation and other large-scale structured data collection efforts. Developed by Tim Akinbo and his team at TimbaObjects in conjunction with NDI’s Elections team, Apollo aids the management of observers, verification of collected information, and automated aggregation for analysis. Citizen watchdogs play a critical role in validating political processes, but to be convincing must back claims with data. Elections are one of the foundations of legitimate democracy when the official results truly represent the will of the voters. Systematic election observation requires large amounts of structured information from hundreds or thousands of observers and determining what it means – fast. Apollo aids the management of observers, verification of collected information, and automated aggregation for analysis.
+
+
+### Install
 
 #### Dependencies
 
-The only dependencies for building and deploying an Apollo 3 instance are git - for retrieving the source code from a source code versioning repository and docker for building and deploying the Apollo 3 instance.
-
-Documentation on how to install git may be found here while you could find out about docker here.
+The dependencies for building and deploying an Apollo 3 instance are:
+* [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) - for retrieving the source code from a source code versioning repository
+* [Docker](https://docs.docker.com/install/linux/docker-ce/ubuntu/) - for building and deploying the Apollo 3 instance.
+* [Docker-compose](https://docs.docker.com/compose/install/) - also for building and deploying Apollo 3. (If need be, it is possible to deploy Apollo without this dependency using the legacy instructions for deploying found here: [Legacy Installation Method](#legacy-installation-method))
+* [NGINX](https://www.nginx.com/resources/wiki/start/topics/tutorials/install/) - Apollo uses Nginx as a web-server for hosting the site.
 
 #### Obtaining the Source
 
-After installing git, you would be able to clone the current version of Apollo from this repo, https://github.com/nditech/dev-elections. Due to the fact this repository is private, it would require that you upload a deployment SSH key to clone to a regular server or use an authenticated URL (if you have an account on GitHub that has access to the repository). You will find the section for adding deployment keys to the repository here: https://github.com/nditech/dev-elections/settings/keys.
+After installing git, you will be able to clone the current version of Apollo from this repo, using:
 
-After downloading, configure a settings file in the main folder called `settings.ini`. The install will not work if a settings file is not created with a Secret Key specified. The secret key can be any randomly generated string of characters. A basic sample settings file is shown below. For more information on additional setting configurations, read the section "Application Configuration Settings" below.
+```
+git clone https://github.com/nditech/dev-elections.git
+```
+
+Due to the fact this repository is private, to clone this repository to a regular server you will need to upload a deployment SSH to this repository [here](https://github.com/nditech/dev-elections/settings/keys), or use an authenticated URL (if you have an account on GitHub that has access to the repository).
+
+After downloading, configure a settings file in the main folder called `settings.ini`. A basic sample settings file is shown below. The install will not work if a settings file is not created with a Secret Key specified. The secret key should be any randomly generated string of characters of similar length to the example provided. For more information on additional configuration settings, read the section "[Application Configuration Settings](#application-configuration-settings)" below.
 
 ```
 [settings]
@@ -40,33 +52,30 @@ SECRET_KEY=sD2av35FAg43rfsDa
 SSL_REQUIRED=False
 ```
 
-### Installation: Using Docker Compose
+### Build and Deploy
 
-In order to simplify the deployment process, Apollo now includes a docker compose application configuration to allow admins skip the entire process of having to start each of the database, task queue, worker and main application containers individually.
+In order to simplify the deployment process, Apollo now includes a docker compose application configuration to allow admins skip the entire process of having to start the database, task queue, worker and main application containers individually.
 
-Docker compose is an optional dependency and you will find instructions on how to install it here.
+To build and start the application, simply run:
 
-To start the application, simply run:
+`docker-compose up -d`
 
-docker-compose up -d
+The main application container and worker containers will be built and run together with the supporting database and task queue containers. After running the command initially, subsequent builds will use cached container images. To deploy the code from scratch without drawing upon the cached images (for example to incorporate subsequent any changes made to the Apollo code outside of the docker containers), run `docker run build --no-cache`.
 
-(Alternatively, if after running docker-compose, changes are made and a clean install is needed that builds the containers from scratch without drawing upon the cached images, use `docker run build --no-cache`) 
-
-The main application container and worker containers will be built and run together with the supporting database and task queue containers.
 
 
 ### Nginx configuration
 
-Apollo is designed to work with an Nginx webserver. After installing nginx on your server, become the root user and go to `/etc/nginx/`. Remove all files from the directories `sites-available` and `sites-enabled`. Create a blank file called `apollo` in `sites-available`, and create a symbolic link to a file in `sites-enabled` by running the command below.
+After deploying the containers, the Apollo application can be accessed by configuring Nginx. After installing nginx on your server, become the root user and go to `/etc/nginx/`. Remove all files from the directories `sites-available` and `sites-enabled`. Create a blank file called `apollo` in `sites-available`, and create a symbolic link to a file in `sites-enabled` by running the command below:
 
 `ln -s /etc/nginx/sites-available/apollo /etc/nginx/sites-enabled/apollo`
 
-Then edit the apollo file in `sites-available` with Nginx configurations. A sample file is shown below, with **insert site url** indicating places in which the site url should be substituted in.
+Then edit the apollo file in `sites-available` with Nginx configurations. A sample file is shown below, with INSERT_SITE_URL indicating places in which the site url should be substituted in.
 
 ```
 server {
     listen 80;
-    server_name **insert site url**;
+    server_name INSERT_SITE_URL;
     location / {
         rewrite ^ https://$server_name$request_uri? permanent;
     }
@@ -74,7 +83,7 @@ server {
 
 server {
     listen 443;
-    server_name **insert site url**;
+    server_name INSERT_SITE_URL;
     #limit_req zone=one burst=10 nodelay;
     #limit_req_status 429;
     ssl_trusted_certificate /etc/ssl/certs/demcloud_combined.crt;
@@ -93,9 +102,11 @@ server {
     }
 ```
 
-After changing the file, restart nginx using `service nginx restart`
+After changing the file, restart nginx using `service nginx restart` (or `service nginx start` if it has not yet been started).
 
-You should now be able to login to your site by navigating to port `:5000` on your localhost or server. The default login is username/password: `admin`/`admin`.
+#### Logging in
+
+You should now be able to login to your site by navigating to port `:5000` on your localhost or server (http://localhost:5000 or http://*server-ip-address*:5000). The default login is username: `admin` / password: `admin`. This can be changed upon logging in.
 
 ### Application Configuration Settings
 
@@ -119,7 +130,7 @@ TIMEZONE
 The timezone parameter configures the timezone that the application server uses by default. Usually this is set to the timezone of the country for which the application instance is deployed. For a full list of support timezone values, please visit this wikipedia article.
 
 
-#### GOOGLE_TAG_MANAGER (REQUIRED)
+GOOGLE_TAG_MANAGER
 (e.g. GTM-1234567)
 
 
@@ -127,7 +138,7 @@ For digital marketing or product improvement initiatives you may want to include
 
 If you need to manage tags that are inserted into the application, one way to do so it to use the Google Tag Manager. This parameter allows you to set the Google Tag Manager code that is linked to the Google account from where the tags will be managed. To enable Tag Manager, modify the `settings-docker.ini` file. Add the configuration parameter `GOOGLE_TAG_MANAGER_KEY` and specify the **tag manager key** you get from Google and restart the container.
 
-For more information on using Google Tag Manager [see the following resource](https://marketingplatform.google.com/about/tag-manager/).
+More information on using Google Tag Manager can be found [here](https://marketingplatform.google.com/about/tag-manager/), and [here](https://developers.google.com/tag-manager/).
 
 
 REDIS_DATABASE
@@ -148,7 +159,6 @@ DATABASE_HOSTNAME
 As was the case in REDIS_HOSTNAME, there might be cases where an external PostgreSQL database is to be used, setting the DATABASE_HOSTNAME allows the application and worker applications to connect to this.
 
 
-
 DATABASE_NAME
 (e.g. apollo)
 
@@ -182,15 +192,15 @@ PROMETHEUS_SECRET
 Apollo 3 provides support for an external monitoring server (Prometheus) to be able to obtain application performance metrics. In order to randomize the URL from which the stats are retrieved from, the PROMETHEUS_SECRET is added as an additional URL fragment and must be correct for the metrics to be provided. The metrics url becomes https://apollo3servername/metrics/{PROMETHEUS_SECRET}.
 
 
-### Alternative Installation Method Without Docker Compose
+### Legacy Installation Method
 
-An older installation method is documented below. In almost all cases, using docker compose is preferable. However if for some reason this is not possible, use the method below instead in place of the section above labeled *Installation: Using Docker Compose*.
+An older installation method is documented below. In almost all cases, using docker compose is preferable. However if for some reason this is not possible, use the method below instead in place of the section above labeled *Installation and Deployment*.
 
 #### Building the Docker Images 
 
 Once the repository has been cloned, you build the application image by first changing the directory to the one containing the source code and running the command:
 
-docker build -t apollo .
+`docker build -t apollo .`
 
 This will start the build process where all application dependencies are downloaded and installed and an application image (from which the containers will be created) will be built.
 Running the Application Containers
@@ -203,15 +213,15 @@ Supporting containers include database container (PostgreSQL) and the task queue
 
 Start out by first running the database and task queue containers:
 
-docker run -d -e POSTGRES_DB=${DATABASE_NAME:-apollo} -v postgres_data:/var/lib/postgresql/data -n postgres postgres:10-alpine
-docker run -d -n redis redis:4-alpine 
+`docker run -d -e POSTGRES_DB=${DATABASE_NAME:-apollo} -v postgres_data:/var/lib/postgresql/data -n postgres postgres:10-alpine`
+`docker run -d -n redis redis:4-alpine`
 
 Then you run the worker container:
 
-docker run -d -n worker --link postgres --link redis -e DATABASE_NAME=${DATABASE_NAME:-apollo} -v upload_data:/app/uploads -v settings.ini:/app/settings.ini apollo:latest pipenv run ./manage.py worker
+`docker run -d -n worker --link postgres --link redis -e DATABASE_NAME=${DATABASE_NAME:-apollo} -v upload_data:/app/uploads -v settings.ini:/app/settings.ini apollo:latest pipenv run ./manage.py worker`
 
 Finally, you can then run the main application container:
 
-docker run -d -n web --link postgres --link redis -e DATABASE_NAME=${DATABASE_NAME:-apollo} -v upload_data:/app/uploads -v ./settings.ini:/app/settings.ini apollo:latest pipenv run ./manage.py gunicorn -c gunicorn.conf
+`docker run -d -n web --link postgres --link redis -e DATABASE_NAME=${DATABASE_NAME:-apollo} -v upload_data:/app/uploads -v ./settings.ini:/app/settings.ini apollo:latest pipenv run ./manage.py gunicorn -c gunicorn.conf`
 
 In both instances, the database (PostgreSQL) and task queue (Redis) containers are linked to the worker and main application containers.
