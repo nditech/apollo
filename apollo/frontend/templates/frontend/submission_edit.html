@@ -76,7 +76,7 @@
   {%- endfor -%}
 </tr>
 <tr>
-  <td>&nbsp;</td>
+  <th>{{ _('Complete Location') }}</th>
   <td>
     {% for lt in location_types %}
     {% set node = submission.location.make_path()[lt.name] %}
@@ -148,25 +148,25 @@
         <td colspan="2">&nbsp;</td>
         <td style="text-align: center">
         {%- if perms.edit_both_submissions.can() -%}
-        <label for="{{ submission.id }}" style="margin-bottom: 0"><strong>OBS 1</strong><p style="margin-top: 0.25em"><input type="radio" id="{{ submission.id }}" class="obs1" name="submission_selection" value="obs"{% if not readonly %} checked{% endif %} /></p></label>
+        <label for="{{ submission.id }}" style="margin-bottom: 0"><strong>{{ _('Observer') }} 1</strong><p style="margin-top: 0.25em"><input type="radio" id="{{ submission.id }}" class="obs1" name="submission_selection" value="obs"{% if not readonly %} checked{% endif %} /></p></label>
         {%- else -%}
-        <strong>OBS 1</strong>
+        <strong>{{ _('Observer') }} 1</strong>
         {%- endif -%}
         </td>
         {%- for sibling in siblings -%}
         <td style="text-align: center">
         {%- if perms.edit_both_submissions.can() -%}
-        <label for="{{ sibling.id }}" style="margin-bottom: 0"><strong>OBS {{ loop.index + 1 }}</strong><p style="margin-top: 0.25em"><input type="radio" id="{{ sibling.id }}" name="submission_selection" value="" disabled></p></label>
+        <label for="{{ sibling.id }}" style="margin-bottom: 0"><strong>{{ _('Observer') }} {{ loop.index + 1 }}</strong><p style="margin-top: 0.25em"><input type="radio" id="{{ sibling.id }}" name="submission_selection" value="" disabled></p></label>
         {%- else -%}
-        <strong>OBS {{ loop.index + 1 }}</strong>
+        <strong>{{ _('Observer') }} {{ loop.index + 1 }}</strong>
         {%- endif -%}
         </td>
         {%- endfor -%}
         <td style="text-align: center">
         {%- if perms.edit_both_submissions.can() -%}
-        <label for="{{ submission.master.id }}" style="margin-bottom: 0"><strong>PS</strong><p style="margin-top: 0.25em"><input type="radio" id="{{ submission.master.id }}" class="ps" name="submission_selection" value="ps"{% if readonly %} checked{% endif %} /></p></label>
+        <label for="{{ submission.master.id }}" style="margin-bottom: 0"><strong>{{ _('Location') }}</strong><p style="margin-top: 0.25em"><input type="radio" id="{{ submission.master.id }}" class="ps" name="submission_selection" value="ps"{% if readonly %} checked{% endif %} /></p></label>
         {%- else -%}
-        <strong>PS</strong>
+        <strong>{{ _('Location') }}</strong>
         {%- endif -%}
         </td>
         <td>&nbsp;</td>
