@@ -1,12 +1,96 @@
-## Apollo ##
+<h1 align="center">
+  <a href="https://www.ndi.org/"><img src="https://www.ndi.org/sites/all/themes/ndi/images/NDI_logo_svg.svg" alt="NDI Logo" width="200"></a>
+</h1>
 
-Apollo is an election monitoring platform that is designed
-to use the Parallel Voting Tabulation methodology of election
-monitoring to collect, store and analyse election data. This
-data is submitted by election observers using text messaging
-and provides tools to enable data managers and clerks manage
-the collected data. Apollo is capable of validating collected
-data and providing user-friendly error reports to enable
-election observers self-correct and resend their information.
+<h1 align="center">
+  Apollo
+</h1>
 
 [![CircleCI](https://circleci.com/gh/nditech/dev-elections/tree/master.svg?style=svg&circle-token=d73aae2670476f167920a4494b6087a6f8ef49e9)](https://circleci.com/gh/nditech/dev-elections/tree/master)
+
+  ### Table of Contents
+  1. [Introduction](#introduction)
+  1. [Install](#install)
+  1. [Builld and Deploy](#build-and-deploy)
+  1. [Web Server Configuration](#nginx-configuration)
+  1. [Application Configuration Settings](#application-configuration-settings)
+  1. [Legacy Installation Method](#legacy-installation-method)
+
+
+## Apollo 3.x Deployment Guide
+
+### Introduction
+
+This document details the steps required in deploying a fully functional installment of Apollo 3. Apollo is a data management platform to support citizen election observation and other large-scale structured data collection efforts. Developed by Tim Akinbo and his team at TimbaObjects in conjunction with NDI’s Elections team, Apollo aids the management of observers, verification of collected information, and automated aggregation for analysis. Citizen watchdogs play a critical role in validating political processes, but to be convincing must back claims with data. Elections are one of the foundations of legitimate democracy when the official results truly represent the will of the voters. Systematic election observation requires large amounts of structured information from hundreds or thousands of observers and determining what it means – fast. Apollo aids the management of observers, verification of collected information, and automated aggregation for analysis.
+
+
+### Install
+
+#### Dependencies
+
+The dependencies for building and deploying an Apollo 3 instance are:
+* [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) - for retrieving the source code from a source code versioning repository
+* [Docker](https://docs.docker.com/install/linux/docker-ce/ubuntu/) - for building and deploying the Apollo 3 instance.
+* [NGINX](https://www.nginx.com/resources/wiki/start/topics/tutorials/install/) - Apollo uses Nginx as a web-server for hosting the site.
+
+
+#### Install and Build
+
+After installing git, you will be able to clone the current version of Apollo from this repo and enter the directory using:
+
+```
+git clone https://github.com/nditech/apollo.git
+cd apollo
+```
+
+Once the repository has been cloned, you build the application image by first changing the directory to the one containing the source code and running the command:
+
+`docker build -t apollo .`
+
+This will start the build process where all application dependencies are downloaded and installed and an application image (from which the containers will be created) will be built. In total Apollo uses 4 containers. The first one is the application container - this houses the main web application and serves the application contents to the web browsers and processes all user input. The second is the long-running task worker and is responsible for handling tasks that take a much longer time to run and that may otherwise block the main web application process and possibly timeout while waiting for the task to complete. In addition, supporting containers include database container (MongoDB) and the task queue container (Redis). 
+
+Next, run the database and task queue containters:
+
+```
+sudo docker run -d --name database mongo:3.2
+sudo docker run -d --name jobqueue redis:4.0
+```
+
+Next, we’ll want to create an environment configuration file for the Apollo instance. You can use the template at http://git.io/TAc4jg as a starting point and then edit as desired. To download the file, use:
+
+```
+wget -O ~/.env http://git.io/TAc4jg
+```
+
+Now, launch the Apollo instance by linking the mongodb and redis containers:
+
+```
+sudo docker run -d --hostname apollo --name apollo --link jobqueue:redis --link database:mongodb -p 8000:5000 --env-file=.env apollo honcho start
+```
+
+### Nginx configuration
+
+After deploying the containers, the Apollo application can be accessed by configuring Nginx. After installing Nginx on your server, become the root user. First, remove the default config files under `/etc/nginx/` using the following commands:
+
+```
+rm /etc/nginx/sites-enabled/default
+rm /etc/nginx/sites-available/default
+```
+
+Then, download a copy of a sample apollo config file:
+
+```
+wget -O /etc/nginx/sites-available/apollo http://git.io/VCsVtw 
+```
+
+Then, create a symbolic link between the apollo config file in `sites-available` and `sites-enabled`, so that changes to one file or automatically made in the other.
+
+```
+ln -s /etc/nginx/sites-available/apollo /etc/nginx/sites-enabled/apollo
+```
+
+Make any necessary changes to the config file `sites-available/apollo` and then restart nginx using `service nginx restart` (or `service nginx start` if it has not yet been started).
+
+#### Logging in
+
+You should now be able to get to your site by navigating to port `:5000` on your localhost or server (http://localhost:5000 or http://*server-ip-address*:5000). To log in, create a default user. To log in to the container, use `sudo docker exec –it apollo sh`, replacing apollo with the name of the main application docker container (to see the names of the running docker containers, use `sudo docker ps`. Once inside the container, run `./manage.py create_user`. You will be prompted to enter information for your account. Then, run `./manage.py add_userrole` and specify admin to give admin rights to your account.
