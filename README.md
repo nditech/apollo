@@ -7,7 +7,7 @@
 </h1>
 
   <p align="center">
-    <a href="https://github.com/nditech/demgames-debate/blob/master/LICENSE">
+    <a href="https://www.gnu.org/licenses/gpl-3.0.en.html">
       <img src="https://img.shields.io/badge/license-GPL-red.svg" alt="License"/>
     </a>
     <a href="https://www.python.org/">
@@ -108,4 +108,4 @@ Make any necessary changes to the config file `sites-available/apollo` and then 
 
 ### Logging in
 
-You should now be able to get to your site by navigating to port `:8000` on your localhost or server (http://localhost:8000 or http://*server-ip-address*:8000). To log in, create a default user. To log in to the container, use `sudo docker exec –it apollo sh`, replacing apollo with the name of the main application docker container (to see the names of the running docker containers, use `sudo docker ps`. Once inside the container, run `./manage.py create_user`. You will be prompted to enter information for your account. Then, run `./manage.py add_userrole` and specify admin to give admin rights to your account.
+You should now be able to get to your site by navigating to port `:8000` on your localhost or server (http://localhost:8000 or http://*server-ip-address*:8000). To log in, create a default user. To log in to the container, use `sudo docker exec –it apollo sh`, replacing apollo with the name of the main application docker container if it is named something else (to see the names of the running docker containers, use `sudo docker ps`). Once inside the container, run `./manage.py create_user`. You will be prompted to enter information for your account. Then, run `./manage.py add_userrole` and specify admin to give admin rights to your account.
