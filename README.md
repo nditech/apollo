@@ -6,18 +6,33 @@
   Apollo
 </h1>
 
+  <p align="center">
+    <a href="https://github.com/nditech/demgames-debate/blob/master/LICENSE">
+      <img src="https://img.shields.io/badge/license-GPL-red.svg" alt="License"/>
+    </a>
+    <a href="https://www.python.org/">
+      <img src="https://img.shields.io/badge/python-v2.7.15-blue.svg" alt="express"/>
+    </a>
+    <a href="https://docs.mongodb.com/">
+      <img src="https://img.shields.io/badge/mongodb-v3.2-blue.svg" alt="express"/>
+    </a>
+    <a href="https://redis.io/">
+      <img src="https://img.shields.io/badge/redis-v4.0-blue.svg" alt="express"/>
+    </a>
+
+   </p>
+  
+
 [![CircleCI](https://circleci.com/gh/nditech/dev-elections/tree/master.svg?style=svg&circle-token=d73aae2670476f167920a4494b6087a6f8ef49e9)](https://circleci.com/gh/nditech/dev-elections/tree/master)
 
   ### Table of Contents
   1. [Introduction](#introduction)
   1. [Install](#install)
-  1. [Builld and Deploy](#build-and-deploy)
   1. [Web Server Configuration](#nginx-configuration)
-  1. [Application Configuration Settings](#application-configuration-settings)
-  1. [Legacy Installation Method](#legacy-installation-method)
+  1. [Logging In](#logging-in)
 
 
-## Apollo 3.x Deployment Guide
+## Apollo 2.x Deployment Guide
 
 ### Introduction
 
@@ -45,9 +60,9 @@ cd apollo
 
 Once the repository has been cloned, you build the application image by first changing the directory to the one containing the source code and running the command:
 
-`docker build -t apollo .`
+`sudo docker build -t apollo .`
 
-This will start the build process where all application dependencies are downloaded and installed and an application image (from which the containers will be created) will be built. In total Apollo uses 4 containers. The first one is the application container - this houses the main web application and serves the application contents to the web browsers and processes all user input. The second is the long-running task worker and is responsible for handling tasks that take a much longer time to run and that may otherwise block the main web application process and possibly timeout while waiting for the task to complete. In addition, supporting containers include database container (MongoDB) and the task queue container (Redis). 
+This will start the build process where all application dependencies are downloaded and installed and an application image (from which the containers will be created) will be built. Apollo relies on an application container named 'apollo' by default - this houses the main web application and serves the application contents to the web browsers and processes all user input. In addition, supporting containers include database container (MongoDB) and the task queue container (Redis). 
 
 Next, run the database and task queue containters:
 
@@ -59,7 +74,7 @@ sudo docker run -d --name jobqueue redis:4.0
 Next, we’ll want to create an environment configuration file for the Apollo instance. You can use the template at http://git.io/TAc4jg as a starting point and then edit as desired. To download the file, use:
 
 ```
-wget -O ~/.env http://git.io/TAc4jg
+wget -O ./.env http://git.io/TAc4jg
 ```
 
 Now, launch the Apollo instance by linking the mongodb and redis containers:
@@ -91,6 +106,6 @@ ln -s /etc/nginx/sites-available/apollo /etc/nginx/sites-enabled/apollo
 
 Make any necessary changes to the config file `sites-available/apollo` and then restart nginx using `service nginx restart` (or `service nginx start` if it has not yet been started).
 
-#### Logging in
+### Logging in
 
-You should now be able to get to your site by navigating to port `:5000` on your localhost or server (http://localhost:5000 or http://*server-ip-address*:5000). To log in, create a default user. To log in to the container, use `sudo docker exec –it apollo sh`, replacing apollo with the name of the main application docker container (to see the names of the running docker containers, use `sudo docker ps`. Once inside the container, run `./manage.py create_user`. You will be prompted to enter information for your account. Then, run `./manage.py add_userrole` and specify admin to give admin rights to your account.
+You should now be able to get to your site by navigating to port `:8000` on your localhost or server (http://localhost:8000 or http://*server-ip-address*:8000). To log in, create a default user. To log in to the container, use `sudo docker exec –it apollo sh`, replacing apollo with the name of the main application docker container (to see the names of the running docker containers, use `sudo docker ps`. Once inside the container, run `./manage.py create_user`. You will be prompted to enter information for your account. Then, run `./manage.py add_userrole` and specify admin to give admin rights to your account.
