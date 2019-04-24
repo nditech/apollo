@@ -194,7 +194,8 @@ def get_logical_check_stats(query, form, check):
         query = query.join(Location, Location.id == Submission.location_id)
 
     if '$participant' in complete_expression:
-        query = query.join(Participant, Participant.id == Submission.participant_id)
+        query = query.join(
+            Participant, Participant.id == Submission.participant_id)
 
     qa_case_query = case([
         (qa_query == True, 'OK'),
@@ -235,6 +236,6 @@ def get_inline_qa_status(submission, check):
     except TypeError:
         # tried to perform a math operation combining None and a number,
         # most likely
-        return None
+        return None, set()
 
     return result, used_tags
