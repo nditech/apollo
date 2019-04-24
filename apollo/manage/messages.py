@@ -21,6 +21,9 @@ class MessagePlaybackCommand(Command):
     def run(self, url, msg_file):
         settings = current_app.config
 
+        view_path = url_for('messaging.kannel_view')
+        injection_url = urljoin(url, view_path)
+
         if msg_file == '-':
             handle = codecs.getreader('utf-8-sig')(sys.stdin)
         else:
@@ -44,4 +47,4 @@ class MessagePlaybackCommand(Command):
                     'timestamp': calendar.timegm(msg_time.utctimetuple())
                 }
 
-                requests.get(url, params=data)
+                requests.get(injection_url, params=data)
