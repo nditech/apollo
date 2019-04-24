@@ -437,6 +437,7 @@ def submission_edit(submission_id):
             initial_data.update(
                 quarantine_status=submission.quarantine_status.code)
         failed_checks = []
+        failed_check_tags = set()
 
         if questionnaire_form.form_type == 'INCIDENT':
             initial_data.update(description=submission.incident_description)
@@ -447,10 +448,11 @@ def submission_edit(submission_id):
                 questionnaire_form.quality_checks_enabled
                     and questionnaire_form.quality_checks
             ):
-                    for check in questionnaire_form.quality_checks:
-                        result = get_inline_qa_status(submission, check)
-                        if result is False:
-                            failed_checks.append(check['description'])
+                for check in questionnaire_form.quality_checks:
+                    result, used_tags = get_inline_qa_status(submission, check)
+                    if result is False:
+                        failed_checks.append(check['description'])
+                        failed_check_tags.update(used_tags)
 
         submission_form = edit_form_class(
             data=initial_data,
@@ -492,7 +494,8 @@ def submission_edit(submission_id):
             readonly=readonly,
             location_types=location_types,
             comments=comments,
-            failed_checks=failed_checks
+            failed_checks=failed_checks,
+            failed_check_tags=failed_check_tags
         )
     else:
         if questionnaire_form.form_type == 'INCIDENT':

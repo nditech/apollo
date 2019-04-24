@@ -117,7 +117,7 @@ def reverse_dict(d):
 
 
 def qa_status(submission, check):
-    result = get_inline_qa_status(submission, check)
+    result, _ = get_inline_qa_status(submission, check)
     if result is True:
         return QUALITY_STATUSES['OK']
     elif result is False:
