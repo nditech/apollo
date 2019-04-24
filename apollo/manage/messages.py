@@ -5,11 +5,11 @@ from datetime import datetime
 import sys
 from urlparse import urljoin
 
+from backports import csv
 from flask import current_app, url_for
 from flask_script import Command, Option
 import pytz
 import requests
-import unicodecsv
 
 
 class MessagePlaybackCommand(Command):
@@ -30,7 +30,7 @@ class MessagePlaybackCommand(Command):
             handle = codecs.open(msg_file, encoding='utf-8-sig')
 
         with handle:
-            reader = unicodecsv.DictReader(handle)
+            reader = csv.DictReader(handle)
             for row in reader:
                 # ignore outbound messages
                 if row['Direction'] == 'OUT':
