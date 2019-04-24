@@ -208,11 +208,25 @@ def get_logical_check_stats(query, form, check):
         func.count(qa_case_query)).group_by('status').all()
 
 
+class TagVisitor(PTNodeVisitor):
+    def __init__(self, *args, **kwargs):
+        self.variables = set()
+        super().__init__(*args, **kwargs)
+
+    def visit_variable(self, node, children):
+        self.variables.add(node.value)
+
+
 def get_inline_qa_status(submission, check):
     check_expression = '{lvalue} {comparator} {rvalue}'.format(**check)
 
     parser = ParserPEG(GRAMMAR, 'qa')
     tree = parser.parse(check_expression)
+
+    var_visitor = TagVisitor()
+    visit_parse_tree(tree, var_visitor)
+
+    used_tags = var_visitor.variables.intersection(submission.form.tags)
 
     visitor = InlineQATreeVisitor(form=submission.form, submission=submission)
 
@@ -223,4 +237,4 @@ def get_inline_qa_status(submission, check):
         # most likely
         return None
 
-    return result
+    return result, used_tags
