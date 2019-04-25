@@ -140,6 +140,16 @@ class InlineQATreeVisitor(BaseVisitor):
         else:
             return attribute.extra_data.get(name)
 
+    def visit_comparison(self, node, children):
+        if len(children) > 1:
+            # left and right are indices 0 and 2 respectively
+            left = children[0]
+            right = children[2]
+            if isinstance(left, str) and isinstance(right, str):
+                # both sides are NULL
+                return 'NULL'
+        return super().visit_comparison(node, children)
+
 
 class QATreeVisitor(BaseVisitor):
     def __init__(self, defaults=True, **kwargs):
