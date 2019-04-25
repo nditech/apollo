@@ -195,9 +195,13 @@
         <td colspan="{{ siblings|count + 6 }}"><h4>{{ group.name }}</h4></td>
       </tr>
       {% for field in group.fields %}
-      <tr{% if field.tag in submission.flagged_fields and submission.form.verifiable and perms.edit_submission_verification_status.can() %} class="warning"{% endif %}>
+      <tr{% if field.tag in failed_check_tags and submission.form.quality_checks_enabled and perms.edit_submission_verification_status.can() %} class="warning"{% endif %}>
         <th>{{ field.tag }}</th>
-        <td>{{ field.description }}
+        {% if g.locale.character_order != 'right-to-left' %}
+        <td>{% if field.tag in failed_check_tags and submission.form.quality_checks_enabled and perms.edit_submission_verification_status.can() %}<i class="glyphicon glyphicon-flag" style="color: #cc0000;"></i>{% endif %} {{ field.description }}
+        {% else %}
+        <td>{{ field.description }} {% if field.tag in failed_check_tags and submission.form.quality_checks_enabled and perms.edit_submission_verification_status.can() %}<i class="glyphicon glyphicon-flag" style="color: #cc0000;"></i>{% endif %}
+        {% endif %}
           {%- if field['type'] == 'select' %}
           <span class="options">
           {% for item in field.options|dictsort(false, 'value') %}
@@ -223,21 +227,6 @@
       </tr>
       {% endfor %}
       {% endfor %}
-      {% if perms.edit_submission_verification_status.can() and submission.form.verifiable %}
-      <tr>
-        <td colspan="2" style="vertical-align: middle"><h4>{{ _('Verification Status') }}</h4></td>
-        <td class="obs-on"><input type="hidden" name="{{ submission_form['verification_status'].name }}" value="{{ submission.verification_status|default('', true) }}" /></td>
-        {%- for sibling_form in sibling_forms -%}
-        <td>&nbsp;</td>
-        {%- endfor -%}
-        {%- if readonly -%}
-        <td class="ps-on"{%- if master_form['verification_status'].errors %} class="danger"{%- endif -%}>{{ render_submission_field(master_form['verification_status']) }}</td>
-        {%- else -%}
-        <td class="ps-on"{%- if master_form['verification_status'].errors %} class="danger"{%- endif -%}>{{ render_submission_field(master_form['verification_status'], disabled=1) }}</td>
-        {%- endif -%}
-        <td colspan="2">&nbsp;</td>
-      </tr>
-      {% endif %}
     </tbody>
   </table>
 </div>
