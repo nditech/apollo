@@ -24,7 +24,9 @@ class AdminHome(AdminIndexView):
         return redirect(url_for(u'dashboard.index'))
 
 
-admin = Admin(name='Apollo', index_view=AdminHome(name=u'Dashboard'))
+admin = Admin(
+    name='Apollo', index_view=AdminHome(name=u'Dashboard'),
+    template_mode='bootstrap3')
 babel = Babel()
 cache = Cache()
 db = MongoEngine()
