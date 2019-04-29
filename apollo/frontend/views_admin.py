@@ -11,7 +11,7 @@ from flask_admin.contrib.sqla.form import InlineModelConverter
 from flask_admin.form import rules
 from flask_admin.model.form import InlineFormAdmin
 from flask_admin.model.template import macro
-from flask_babelex import lazy_gettext as _
+from flask_babelex import gettext, lazy_gettext as _
 from flask_security import current_user
 from flask_security.utils import encrypt_password
 from io import BytesIO
@@ -103,7 +103,11 @@ class DeploymentAdminView(BaseAdminView):
                 'name', 'allow_observer_submission_edit',
                 'dashboard_full_locations',
                 'enable_partial_response_for_messages', 'hostnames',
-                'primary_locale', 'other_locales'
+                'primary_locale',
+                'other_locales',
+                rules.Header(
+                    gettext('Please use Ctrl (or Cmd on Mac) to select/deselect languages') # noqa
+                )
             ),
             _('Deployment')
         )
@@ -120,11 +124,19 @@ class DeploymentAdminView(BaseAdminView):
 
     def scaffold_form(self):
         form_class = super().scaffold_form()
+        # not stripping the first item for the primary locale
+        # because stripping it would mean the language is
+        # set to the next item if nothing is selected and
+        # the choice is saved. as at this moment, the next
+        # item is the choice for Arabic
         form_class.primary_locale = SelectField(
             _('Primary Language'), choices=LANGUAGE_CHOICES,
             validators=[validators.input_required()])
+        # stripping the first item for the other locales
+        # so that we avoid the "None is not a valid choice"
+        # error when it is selected by mistake
         form_class.other_locales = SelectMultipleField(
-            _('Other Languages'), choices=LANGUAGE_CHOICES)
+            _('Other Languages'), choices=LANGUAGE_CHOICES[1:])
 
         return form_class
 
