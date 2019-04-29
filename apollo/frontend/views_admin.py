@@ -11,7 +11,7 @@ from flask_admin.contrib.sqla.form import InlineModelConverter
 from flask_admin.form import rules
 from flask_admin.model.form import InlineFormAdmin
 from flask_admin.model.template import macro
-from flask_babelex import gettext, lazy_gettext as _
+from flask_babelex import lazy_gettext as _
 from flask_security import current_user
 from flask_security.utils import encrypt_password
 from io import BytesIO
@@ -103,11 +103,7 @@ class DeploymentAdminView(BaseAdminView):
                 'name', 'allow_observer_submission_edit',
                 'dashboard_full_locations',
                 'enable_partial_response_for_messages', 'hostnames',
-                'primary_locale',
-                'other_locales',
-                rules.Header(
-                    gettext('Please use Ctrl (or Cmd on Mac) to select/deselect languages') # noqa
-                )
+                'primary_locale', 'other_locales'
             ),
             _('Deployment')
         )
@@ -117,6 +113,12 @@ class DeploymentAdminView(BaseAdminView):
                     'enable_partial_response_for_messages',
                     'allow_observer_submission_edit', 'primary_locale',
                     'other_locales']
+
+    def _on_model_change(self, form, model, is_created):
+        # strip out the empty strings
+        if model.primary_locale == '':
+            model.primary_locale = None
+        model.other_locales = [loc for loc in model.other_locales if loc != '']
 
     def get_query(self):
         return models.Deployment.query.filter_by(
@@ -131,12 +133,14 @@ class DeploymentAdminView(BaseAdminView):
         # item is the choice for Arabic
         form_class.primary_locale = SelectField(
             _('Primary Language'), choices=LANGUAGE_CHOICES,
-            validators=[validators.input_required()])
+            validators=[validators.optional()])
         # stripping the first item for the other locales
         # so that we avoid the "None is not a valid choice"
         # error when it is selected by mistake
         form_class.other_locales = SelectMultipleField(
-            _('Other Languages'), choices=LANGUAGE_CHOICES[1:])
+            _('Other Languages'), choices=LANGUAGE_CHOICES,
+            description=_('Please select or deselect multiple languages with Ctrl (or Cmd on Mac)'),    # noqa
+            validators=[validators.optional()])
 
         return form_class
 
@@ -243,6 +247,8 @@ class UserAdminView(BaseAdminView):
             model.password = encrypt_password(form.password2.data)
         if is_created:
             model.deployment = current_user.deployment
+        if not form.locale.data:
+            model.locale = None
 
     def create_form(self, obj=None):
         form = super().create_form(obj)
