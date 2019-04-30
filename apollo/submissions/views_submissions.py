@@ -222,7 +222,7 @@ def submission_list(form_id):
         )
     elif request.args.get('sort_by') == 'phone':
         participant_phones = models.ParticipantPhone.query.filter(
-            models.ParticipantPhone.verified == True).order_by(
+            models.ParticipantPhone.verified == True).order_by(  # noqa
                 desc(models.ParticipantPhone.last_seen)).subquery()
         queryset = models.Submission.query.filter(
             models.Submission.submission_type == 'O',
@@ -433,6 +433,7 @@ def submission_edit(submission_id):
         initial_data = submission.data.copy() if submission.data else {}
         initial_data.update(location=submission.location_id)
         initial_data.update(participant=submission.participant_id)
+        initial_data.update(unreachable=submission.unreachable)
         if submission.quarantine_status:
             initial_data.update(
                 quarantine_status=submission.quarantine_status.code)
@@ -447,10 +448,10 @@ def submission_edit(submission_id):
                 questionnaire_form.quality_checks_enabled
                     and questionnaire_form.quality_checks
             ):
-                    for check in questionnaire_form.quality_checks:
-                        result = get_inline_qa_status(submission, check)
-                        if result is False:
-                            failed_checks.append(check['description'])
+                for check in questionnaire_form.quality_checks:
+                    result = get_inline_qa_status(submission, check)
+                    if result is False:
+                        failed_checks.append(check['description'])
 
         submission_form = edit_form_class(
             data=initial_data,
@@ -459,6 +460,7 @@ def submission_edit(submission_id):
         sibling_forms = []
         for sibling in sibling_submissions:
             initial_data = sibling.data
+            initial_data.update(unreachable=sibling.unreachable)
             if sibling.quarantine_status:
                 initial_data.update(
                     quarantine_status=sibling.quarantine_status.code)
@@ -711,6 +713,7 @@ def submission_edit(submission_id):
                         'verification_status')
                     new_quarantine_status = submission_form.data.get(
                         'quarantine_status')
+                    new_offline_status = submission_form.unreachable.data
 
                     if (
                         new_quarantine_status in get_valid_values(
@@ -734,6 +737,9 @@ def submission_edit(submission_id):
                             changed = True
                         update_params['verification_status'] = \
                             new_verification_status
+                    if new_offline_status != submission.unreachable:
+                        changed = True
+                        update_params['unreachable'] = new_offline_status
 
                     changed_fields = []
 
@@ -767,6 +773,8 @@ def submission_edit(submission_id):
                         }
                         if changed_subset:
                             submission.update_related(changed_subset)
+
+                        submission.update_master_offline_status()
 
                         db.session.commit()
                         update_submission_version(submission)

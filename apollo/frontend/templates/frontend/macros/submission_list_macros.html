@@ -50,6 +50,7 @@
     {% endif %}
     <th class="text-center"><abbr title="{{ _('Sender Verification') }}"><i class="glyphicon glyphicon-phone"></i></abbr></th>
     <th class="text-center"><abbr title="{{ _('Quarantine Status') }}"><i class="glyphicon glyphicon-exclamation-sign"></i></abbr></th>
+    <th class="text-center"><abbr title="{{ _('Online Status') }}"><i class="glyphicon glyphicon-signal"></i></abbr></th>
 </tr>
 {% endmacro %}
 {% macro submission_items(submissions, form, form_fields, location_types, perms) %}
@@ -120,9 +121,28 @@
         <i class="fa fa-exclamation-triangle warning" aria-hidden="true" title="{{ _('Quarantined') }}"></i>
         {% endif %}
     </td>
+    <td style="text-align: center">
+        {% if not submission.unreachable -%}
+        <i class="fa fa-toggle-on success" aria-hidden="true" title="{{ _('Online') }}"></i>
+        {%- else -%}
+        <i class="fa fa-toggle-off text-muted" aria-hidden="true" title="{{ _('Offline') }}"></i>
+        {% endif %}
+    </td>
 </tr>
 {% else %}
 {% if perms.edit_submission.can() %}
+{% if form.form_type == 'CHECKLIST' %}
+{%- set colspan = 6 + (location_types|length) + form.data.groups|length -%}
+<tr class="warning">
+    <td class="text-center" colspan="{{ colspan }}">{{ _('No Data Available') }}</td>
+</tr>
+{% else %}
+{%- set colspan = 7 + (location_types|length) + form_fields|length -%}
+<tr class="warning">
+    <td class="text-center" colspan="{{ colspan }}">{{ _('No Data Available') }}</td>
+</tr>
+{% endif %}
+{% else %}
 {% if form.form_type == 'CHECKLIST' %}
 {%- set colspan = 5 + (location_types|length) + form.data.groups|length -%}
 <tr class="warning">
@@ -130,18 +150,6 @@
 </tr>
 {% else %}
 {%- set colspan = 6 + (location_types|length) + form_fields|length -%}
-<tr class="warning">
-    <td class="text-center" colspan="{{ colspan }}">{{ _('No Data Available') }}</td>
-</tr>
-{% endif %}
-{% else %}
-{% if form.form_type == 'CHECKLIST' %}
-{%- set colspan = 4 + (location_types|length) + form.data.groups|length -%}
-<tr class="warning">
-    <td class="text-center" colspan="{{ colspan }}">{{ _('No Data Available') }}</td>
-</tr>
-{% else %}
-{%- set colspan = 5 + (location_types|length) + form_fields|length -%}
 <tr class="warning">
     <td class="text-center" colspan="{{ colspan }}">{{ _('No Data Available') }}</td>
 </tr>

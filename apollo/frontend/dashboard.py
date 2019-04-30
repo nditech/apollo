@@ -3,7 +3,7 @@ from collections import defaultdict
 from itertools import chain
 from logging import getLogger
 
-from sqlalchemy import and_, func, or_
+from sqlalchemy import and_, func, or_, not_
 from sqlalchemy.orm import aliased, Load
 from sqlalchemy.dialects.postgresql import array
 
@@ -69,17 +69,32 @@ def _get_group_coverage(query, form, group, location_type):
         for tag in group_tags
     ]
 
-    conflict_query = query.filter(or_(*conflict_query_params))
+    conflict_query = query.filter(
+        or_(*conflict_query_params),
+        Submission.unreachable != True)  # noqa
 
     missing_query = query.filter(
-        ~Submission.data.has_any(array(group_tags)))
+        ~Submission.data.has_any(array(group_tags)),
+        Submission.unreachable != True)  # noqa
 
     complete_query = query.filter(
         Submission.data.has_all(array(group_tags)))
 
     partial_query = query.filter(
         ~Submission.data.has_all(array(group_tags)),
-        Submission.data.has_any(array(group_tags)))
+        Submission.data.has_any(array(group_tags)),
+        Submission.unreachable != True)  # noqa
+
+    offline_query = query.filter(
+        and_(
+            Submission.unreachable == True,  # noqa
+            not_(
+                and_(
+                    Submission.data.has_all(array(group_tags)),
+                    Submission.unreachable == True
+                )
+            )
+        ))
 
     dataset = defaultdict(dict)
 
@@ -115,12 +130,21 @@ def _get_group_coverage(query, form, group, location_type):
             'name': loc_name
         })
 
+    for loc_id, loc_name, count in _get_coverage_results(
+            offline_query, depth_info.depth):
+        dataset[loc_name].update({
+            'Offline': count,
+            'id': loc_id,
+            'name': loc_name
+        })
+
     for name in sorted(dataset.keys()):
         loc_data = dataset.get(name)
         loc_data.setdefault('Complete', 0)
         loc_data.setdefault('Conflict', 0)
         loc_data.setdefault('Missing', 0)
         loc_data.setdefault('Partial', 0)
+        loc_data.setdefault('Offline', 0)
 
         coverage_list.append(loc_data)
 
@@ -156,14 +180,17 @@ def _get_global_coverage(query, form):
         conflict_query = query.join(
             other_submission,
             other_submission.location_id == Submission.location_id
-        ).filter(or_(*conflict_query_params))
+        ).filter(
+            or_(*conflict_query_params),
+            Submission.unreachable != True)  # noqa
 
         conflict_submission_ids = list(chain(
             conflict_query.with_entities(Submission.id).all()))
 
         missing_query = query.filter(
             ~Submission.id.in_(conflict_submission_ids),
-            ~Submission.data.has_any(array(group_tags)))
+            ~Submission.data.has_any(array(group_tags)),
+            Submission.unreachable != True)  # noqa
 
         complete_query = query.filter(
             ~Submission.id.in_(conflict_submission_ids),
@@ -172,13 +199,27 @@ def _get_global_coverage(query, form):
         partial_query = query.filter(
             ~Submission.id.in_(conflict_submission_ids),
             ~Submission.data.has_all(array(group_tags)),
-            Submission.data.has_any(array(group_tags)))
+            Submission.data.has_any(array(group_tags)),
+            Submission.unreachable != True)  # noqa
+
+        offline_query = query.filter(
+            and_(
+                Submission.unreachable == True,  # noqa
+                not_(
+                    and_(
+                        ~Submission.id.in_(conflict_submission_ids),
+                        Submission.data.has_all(array(group_tags)),
+                        Submission.unreachable == True
+                    )
+                )
+            ))
 
         data = {
             'Complete': complete_query.count(),
             'Conflict': conflict_query.count(),
             'Missing': missing_query.count(),
             'Partial': partial_query.count(),
+            'Offline': offline_query.count(),
             'name': group['name'],
             'slug': group['slug']
         }
