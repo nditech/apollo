@@ -139,7 +139,6 @@ class DeploymentAdminView(BaseAdminView):
         # error when it is selected by mistake
         form_class.other_locales = SelectMultipleField(
             _('Other Languages'), choices=LANGUAGE_CHOICES,
-            description=_('Please select or deselect multiple languages with Ctrl (or Cmd on Mac)'),    # noqa
             validators=[validators.optional()])
 
         return form_class
