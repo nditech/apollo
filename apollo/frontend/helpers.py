@@ -20,6 +20,9 @@ def get_deployment(hostname):
     deployment = models.Deployment.find_by_hostname(hostname)
     if not deployment:
         deployment = models.Deployment.find_by_hostname('localhost')
+    if not deployment:
+        deployment = models.Deployment.query.order_by(
+            models.Deployment.id).first()
 
     if not deployment:
         raise abort(404)
