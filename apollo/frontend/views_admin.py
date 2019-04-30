@@ -114,17 +114,32 @@ class DeploymentAdminView(BaseAdminView):
                     'allow_observer_submission_edit', 'primary_locale',
                     'other_locales']
 
+    def _on_model_change(self, form, model, is_created):
+        # strip out the empty strings
+        if model.primary_locale == '':
+            model.primary_locale = None
+        model.other_locales = [loc for loc in model.other_locales if loc != '']
+
     def get_query(self):
         return models.Deployment.query.filter_by(
             id=current_user.deployment.id)
 
     def scaffold_form(self):
         form_class = super().scaffold_form()
+        # not stripping the first item for the primary locale
+        # because stripping it would mean the language is
+        # set to the next item if nothing is selected and
+        # the choice is saved. as at this moment, the next
+        # item is the choice for Arabic
         form_class.primary_locale = SelectField(
             _('Primary Language'), choices=LANGUAGE_CHOICES,
-            validators=[validators.input_required()])
+            validators=[validators.optional()])
+        # stripping the first item for the other locales
+        # so that we avoid the "None is not a valid choice"
+        # error when it is selected by mistake
         form_class.other_locales = SelectMultipleField(
-            _('Other Languages'), choices=LANGUAGE_CHOICES)
+            _('Other Languages'), choices=LANGUAGE_CHOICES,
+            validators=[validators.optional()])
 
         return form_class
 
@@ -231,6 +246,8 @@ class UserAdminView(BaseAdminView):
             model.password = encrypt_password(form.password2.data)
         if is_created:
             model.deployment = current_user.deployment
+        if not form.locale.data:
+            model.locale = None
 
     def create_form(self, obj=None):
         form = super().create_form(obj)

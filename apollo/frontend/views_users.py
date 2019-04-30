@@ -24,7 +24,7 @@ def user_profile():
 
         user.username = data.get('username')
         user.email = data.get('email')
-        user.locale = data.get('locale')
+        user.locale = data.get('locale') or None
 
         user.save()
         return redirect(url_for('dashboard.index'))
