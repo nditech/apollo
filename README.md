@@ -23,7 +23,7 @@
    </p>
   
 
-[![CircleCI](https://circleci.com/gh/nditech/dev-elections/tree/master.svg?style=svg&circle-token=d73aae2670476f167920a4494b6087a6f8ef49e9)](https://circleci.com/gh/nditech/dev-elections/tree/master)
+[![CircleCI](https://circleci.com/gh/nditech/apollo/tree/master.svg?style=svg&circle-token=d73aae2670476f167920a4494b6087a6f8ef49e9)](https://circleci.com/gh/nditech/apollo/tree/master)
 
   ### Table of Contents
   1. [Introduction](#introduction)
@@ -36,7 +36,7 @@
 
 ### Introduction
 
-This document details the steps required in deploying a fully functional installment of Apollo 3. Apollo is a data management platform to support citizen election observation and other large-scale structured data collection efforts. Developed by Tim Akinbo and his team at TimbaObjects in conjunction with NDI’s Elections team, Apollo aids the management of observers, verification of collected information, and automated aggregation for analysis. Citizen watchdogs play a critical role in validating political processes, but to be convincing must back claims with data. Elections are one of the foundations of legitimate democracy when the official results truly represent the will of the voters. Systematic election observation requires large amounts of structured information from hundreds or thousands of observers and determining what it means – fast. Apollo aids the management of observers, verification of collected information, and automated aggregation for analysis.
+This document details the steps required in deploying a fully functional installment of Apollo 2. Apollo is a data management platform to support citizen election observation and other large-scale structured data collection efforts. Developed by Tim Akinbo and his team at TimbaObjects in conjunction with NDI’s Elections team, Apollo aids the management of observers, verification of collected information, and automated aggregation for analysis. Citizen watchdogs play a critical role in validating political processes, but to be convincing must back claims with data. Elections are one of the foundations of legitimate democracy when the official results truly represent the will of the voters. Systematic election observation requires large amounts of structured information from hundreds or thousands of observers and determining what it means – fast. Apollo aids the management of observers, verification of collected information, and automated aggregation for analysis.
 
 
 ### Install
@@ -51,10 +51,10 @@ The dependencies for building and deploying an Apollo 3 instance are:
 
 #### Install and Build
 
-After installing git, you will be able to clone the current version of Apollo from this repo and enter the directory using:
+After installing git, use the following commands to install the current version of Apollo from this repo and enter the directory. The current latest stable version of Apollo is v2.8.2 and is tagged accordingly. The command below will clone that version.
 
 ```
-git clone https://github.com/nditech/apollo.git
+git clone https://github.com/nditech/apollo.git -b "v2.8.2"
 cd apollo
 ```
 
