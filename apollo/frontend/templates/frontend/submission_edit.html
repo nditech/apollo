@@ -76,7 +76,7 @@
   {%- endfor -%}
 </tr>
 <tr>
-  <td>&nbsp;</td>
+  <th>{{ _('Complete Location') }}</th>
   <td>
     {% for lt in location_types %}
     {% set node = submission.location.make_path()[lt.name] %}
@@ -148,27 +148,43 @@
         <td colspan="2">&nbsp;</td>
         <td style="text-align: center">
         {%- if perms.edit_both_submissions.can() -%}
-        <label for="{{ submission.id }}" style="margin-bottom: 0"><strong>OBS 1</strong><p style="margin-top: 0.25em"><input type="radio" id="{{ submission.id }}" class="obs1" name="submission_selection" value="obs"{% if not readonly %} checked{% endif %} /></p></label>
+        <label for="{{ submission.id }}" style="margin-bottom: 0"><strong>{{ _('Observer') }} 1</strong><p style="margin-top: 0.25em"><input type="radio" id="{{ submission.id }}" class="obs1" name="submission_selection" value="obs"{% if not readonly %} checked{% endif %} /></p></label>
         {%- else -%}
-        <strong>OBS 1</strong>
+        <strong>{{ _('Observer') }} 1</strong>
         {%- endif -%}
         </td>
         {%- for sibling in siblings -%}
         <td style="text-align: center">
         {%- if perms.edit_both_submissions.can() -%}
-        <label for="{{ sibling.id }}" style="margin-bottom: 0"><strong>OBS {{ loop.index + 1 }}</strong><p style="margin-top: 0.25em"><input type="radio" id="{{ sibling.id }}" name="submission_selection" value="" disabled></p></label>
+        <label for="{{ sibling.id }}" style="margin-bottom: 0"><strong>{{ _('Observer') }} {{ loop.index + 1 }}</strong><p style="margin-top: 0.25em"><input type="radio" id="{{ sibling.id }}" name="submission_selection" value="" disabled></p></label>
         {%- else -%}
-        <strong>OBS {{ loop.index + 1 }}</strong>
+        <strong>{{ _('Observer') }} {{ loop.index + 1 }}</strong>
         {%- endif -%}
         </td>
         {%- endfor -%}
         <td style="text-align: center">
         {%- if perms.edit_both_submissions.can() -%}
-        <label for="{{ submission.master.id }}" style="margin-bottom: 0"><strong>PS</strong><p style="margin-top: 0.25em"><input type="radio" id="{{ submission.master.id }}" class="ps" name="submission_selection" value="ps"{% if readonly %} checked{% endif %} /></p></label>
+        <label for="{{ submission.master.id }}" style="margin-bottom: 0"><strong>{{ _('Location') }}</strong><p style="margin-top: 0.25em"><input type="radio" id="{{ submission.master.id }}" class="ps" name="submission_selection" value="ps"{% if readonly %} checked{% endif %} /></p></label>
         {%- else -%}
-        <strong>PS</strong>
+        <strong>{{ _('Location') }}</strong>
         {%- endif -%}
         </td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td colspan="2" style="vertical-align: middle">
+          <h4>{{ _('Offline?') }}</h4>
+        </td>
+        {%- if readonly -%}
+        <td class="obs-on">{{ render_submission_field(submission_form['unreachable'], disabled=1)}}</td>
+        {%- else -%}
+        <td class="obs-on" {%- if submission_form['unreachable'].errors %} class="danger" {%- endif -%}>
+          {{ render_submission_field(submission_form['unreachable']) }}</td>
+        {%- endif -%}
+        {%- for sibling_form in sibling_forms -%}
+        <td>{{ render_submission_field(sibling_form['unreachable'], disabled=1) }}</td>
+        {%- endfor -%}
+        <td>&nbsp;</td>
         <td>&nbsp;</td>
       </tr>
       {% if perms.edit_submission_quarantine_status.can() %}
@@ -187,7 +203,7 @@
         {%- else -%}
         <td class="ps-on"{%- if master_form['quarantine_status'].errors %} class="danger"{%- endif -%}>{{ render_submission_field(master_form['quarantine_status'], disabled=1) }}</td>
         {%- endif -%}
-        <td colspan="2">&nbsp;</td>
+        <td>&nbsp;</td>
       </tr>
       {% endif %}
       {% for group in form.data.groups %}
@@ -235,7 +251,7 @@
         {%- else -%}
         <td class="ps-on"{%- if master_form['verification_status'].errors %} class="danger"{%- endif -%}>{{ render_submission_field(master_form['verification_status'], disabled=1) }}</td>
         {%- endif -%}
-        <td colspan="2">&nbsp;</td>
+        <td>&nbsp;</td>
       </tr>
       {% endif %}
     </tbody>

@@ -101,7 +101,10 @@ def make_submission_edit_form_class(event, form):
                             widget=widgets.TextInput()
                         )
                 else:
-                    if form.form_type == 'CHECKLIST' or field_type != 'boolean':
+                    if (
+                        form.form_type == 'CHECKLIST' or
+                        field_type != 'boolean'
+                    ):
                         form_fields[field['tag']] = fields.IntegerField(
                             field['tag'], description=field['description'],
                             validators=[
@@ -118,12 +121,10 @@ def make_submission_edit_form_class(event, form):
                             validators=[validators.Optional()]
                         )
 
-    # TODO: verification status required
-    # if form.form_type == 'CHECKLIST' and permissions.edit_submission_quarantine_status.can():
-    #     form_fields['verification_status'] = fields.SelectField(
-    #         choices=models.Submission.VERI
-    #     )
-    if form.form_type == 'CHECKLIST' and permissions.edit_submission_quarantine_status.can():
+    if (
+        form.form_type == 'CHECKLIST' and
+        permissions.edit_submission_quarantine_status.can()
+    ):
         form_fields['quarantine_status'] = fields.SelectField(
             choices=models.Submission.QUARANTINE_STATUSES,
             filters=[lambda data: data if data else ''],
@@ -140,6 +141,8 @@ def make_submission_edit_form_class(event, form):
             widget=widgets.TextArea()
         )
         form_fields['validate'] = validate_location
+
+    form_fields['unreachable'] = fields.BooleanField()
 
     return type(
         'SubmissionEditForm',
