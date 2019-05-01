@@ -140,6 +140,16 @@ class InlineQATreeVisitor(BaseVisitor):
         else:
             return attribute.extra_data.get(name)
 
+    def visit_comparison(self, node, children):
+        if len(children) > 1:
+            # left and right are indices 0 and 2 respectively
+            left = children[0]
+            right = children[2]
+            if isinstance(left, str) and isinstance(right, str):
+                # both sides are NULL
+                return 'NULL'
+        return super().visit_comparison(node, children)
+
 
 class QATreeVisitor(BaseVisitor):
     def __init__(self, defaults=True, **kwargs):
@@ -194,7 +204,8 @@ def get_logical_check_stats(query, form, check):
         query = query.join(Location, Location.id == Submission.location_id)
 
     if '$participant' in complete_expression:
-        query = query.join(Participant, Participant.id == Submission.participant_id)
+        query = query.join(
+            Participant, Participant.id == Submission.participant_id)
 
     qa_case_query = case([
         (qa_query == True, 'OK'),
@@ -208,11 +219,25 @@ def get_logical_check_stats(query, form, check):
         func.count(qa_case_query)).group_by('status').all()
 
 
+class TagVisitor(PTNodeVisitor):
+    def __init__(self, *args, **kwargs):
+        self.variables = set()
+        super().__init__(*args, **kwargs)
+
+    def visit_variable(self, node, children):
+        self.variables.add(node.value)
+
+
 def get_inline_qa_status(submission, check):
     check_expression = '{lvalue} {comparator} {rvalue}'.format(**check)
 
     parser = ParserPEG(GRAMMAR, 'qa')
     tree = parser.parse(check_expression)
+
+    var_visitor = TagVisitor()
+    visit_parse_tree(tree, var_visitor)
+
+    used_tags = var_visitor.variables.intersection(submission.form.tags)
 
     visitor = InlineQATreeVisitor(form=submission.form, submission=submission)
 
@@ -221,6 +246,6 @@ def get_inline_qa_status(submission, check):
     except TypeError:
         # tried to perform a math operation combining None and a number,
         # most likely
-        return None
+        return None, set()
 
-    return result
+    return result, used_tags
