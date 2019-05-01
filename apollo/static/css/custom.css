@@ -22,6 +22,7 @@ body {
 }
 .select2-search-field {height: 25px;}
 td.shrink, th.shrink {
+  width: 0.1%;
   white-space: nowrap;
 }
 
