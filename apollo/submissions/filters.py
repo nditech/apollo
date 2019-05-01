@@ -220,6 +220,22 @@ class SubmissionSenderVerificationFilter(ChoiceFilter):
         return (None, None)
 
 
+class OnlineStatusFilter(ChoiceFilter):
+    def filter(self, query, value, **kwargs):
+        if value and value == '1':
+            return (
+                models.Submission.unreachable == True,
+                None
+            )
+        elif value:
+            return (
+                models.Submission.unreachable == False,
+                None
+            )
+
+        return (None, None)
+
+
 def make_submission_location_filter(location_set_id):
     class AJAXLocationFilter(CharFilter):
         def __init__(self, *args, **kwargs):
@@ -309,6 +325,13 @@ def make_submission_list_filter(event, form):
             ('AND', _('AND Conjunction')),
             ('OR', _('OR Conjunction')),
         ))
+    attributes['online_status'] = OnlineStatusFilter(
+        choices=(
+            ('', _('Online Status')),
+            ('0', _('Online')),
+            ('1', _('Offline'))
+        )
+    )
 
     return type(
         'SubmissionFilterSet',

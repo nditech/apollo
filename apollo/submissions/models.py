@@ -117,6 +117,7 @@ class Submission(BaseModel):
         backref=db.backref('submissions', cascade='all, delete',
                            passive_deletes=True))
     conflicts = db.Column(JSONB)
+    unreachable = db.Column(db.Boolean, default=False, nullable=False)
 
     @classmethod
     def init_submissions(cls, event, form, role, location_type):
@@ -205,6 +206,24 @@ class Submission(BaseModel):
         db.session.add_all([self, master])
         db.session.add_all(siblings)
         db.session.commit()
+
+    def update_master_offline_status(self):
+        siblings = self.siblings
+        master_offline_status = self.master.unreachable
+
+        if siblings:
+            if (
+                all([s.unreachable for s in self.siblings]) and
+                self.unreachable
+            ):
+                self.master.unreachable = True
+        else:
+            if self.unreachable:
+                self.master.unreachable = True
+
+        # if the offline status changed in any way
+        if master_offline_status != self.master.unreachable:
+            db.session.add(self.master)
 
     def compute_conflict_tags(self, tags=None):
         # don't compute if the 'track conflicts' flag is not set

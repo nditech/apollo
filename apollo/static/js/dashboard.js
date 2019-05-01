@@ -5,9 +5,9 @@
     var innerRadius = 0;
     
     var json = JSON.parse(el.dataset.chart);
-    var data = [json.Missing + (json.Conflict || 0), json.Partial, json.Complete];
-    var color = d3.scale.ordinal().range(["#FF5200", "#FFE22B", "#3BDF4A"]); // Conflict color #E83992
-    var labels = ['Missing', 'Partial', 'Complete']; // Conflict label
+    var data = [json.Missing + (json.Conflict || 0), json.Partial, json.Complete, json.Offline];
+    var color = d3.scale.ordinal().range(["#ca0020", "#f4a582", "#0571b0", "#f7f7f7"]); // Conflict color #E83992
+    var labels = ['Missing', 'Partial', 'Complete', 'Off-line']; // Conflict label
     var total = data.reduce(function (prev, curr, idx, arr) { return prev + curr; });
 
     function number_format(num) {
@@ -73,7 +73,7 @@
       .data(labels)
       .attr("x", w/4 - 16)
       .attr("y", h/2 + 24)
-      .attr("dy", ".35em")
+      .attr("dy", ".29em")
       .style('font-family', 'courier')
       .text(function(d) { return d})
       .style('font-size', '12.5px');
@@ -83,7 +83,7 @@
       .data(data)
       .attr("x", w /2 + 15)
       .attr("y", h/2 + 24)
-      .attr("dy", ".35em")
+      .attr("dy", ".29em")
       .style('font-family', 'courier')
       .text(function(d) { return '· ' +  d})
       .style('font-size', '12.5px');

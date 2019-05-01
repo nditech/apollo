@@ -60,6 +60,7 @@ def main_dashboard(form_id=None):
         Submission.event_id == event.id,
         Submission.form == form,
         Submission.submission_type == 'M')
+
     # dashboard_filter = dashboard_filterset()(query, data=args)
 
     # queryset = submissions.find(
