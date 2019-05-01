@@ -38,14 +38,15 @@
 
 This document details the steps required in deploying a fully functional installment of Apollo 2. Apollo is a data management platform to support citizen election observation and other large-scale structured data collection efforts. Developed by Tim Akinbo and his team at TimbaObjects in conjunction with NDI’s Elections team, Apollo aids the management of observers, verification of collected information, and automated aggregation for analysis. Citizen watchdogs play a critical role in validating political processes, but to be convincing must back claims with data. Elections are one of the foundations of legitimate democracy when the official results truly represent the will of the voters. Systematic election observation requires large amounts of structured information from hundreds or thousands of observers and determining what it means – fast. Apollo aids the management of observers, verification of collected information, and automated aggregation for analysis.
 
+**Note that Apollo 2 is no longer being actively maintained.** Bugs and issues can be reported under the issues section for this repository, however NDI does not make any guarantees about actively addressing these.
 
 ### Install
 
 #### Dependencies
 
-The dependencies for building and deploying an Apollo 3 instance are:
+The dependencies for building and deploying an Apollo 2 instance are:
 * [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) - for retrieving the source code from a source code versioning repository
-* [Docker](https://docs.docker.com/install/linux/docker-ce/ubuntu/) - for building and deploying the Apollo 3 instance.
+* [Docker](https://docs.docker.com/install/linux/docker-ce/ubuntu/) - for building and deploying the Apollo instance.
 * [NGINX](https://www.nginx.com/resources/wiki/start/topics/tutorials/install/) - Apollo uses Nginx as a web-server for hosting the site.
 
 
