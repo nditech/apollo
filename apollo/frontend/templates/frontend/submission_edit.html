@@ -21,9 +21,9 @@
 {%- if form.form_type == 'CHECKLIST' -%}
 <tr>
   <th width="15%">&nbsp;</th>
-  <th>1</th>
+  <th>{{ _('Observer %(index)s', index=1) }}</th>
   {%- for sib in siblings -%}
-  <th>{{ loop.index + 1 }}</th>
+  <th>{{ _('Observer %(index)s', index=loop.index + 1) }}</th>
   {%- endfor -%}
 </tr>
 {%- endif -%}
@@ -148,17 +148,17 @@
         <td colspan="2">&nbsp;</td>
         <td style="text-align: center">
         {%- if perms.edit_both_submissions.can() -%}
-        <label for="{{ submission.id }}" style="margin-bottom: 0"><strong>{{ _('Observer') }} 1</strong><p style="margin-top: 0.25em"><input type="radio" id="{{ submission.id }}" class="obs1" name="submission_selection" value="obs"{% if not readonly %} checked{% endif %} /></p></label>
+        <label for="{{ submission.id }}" style="margin-bottom: 0"><strong>{{ _('Observer %(index)s', index=1) }}</strong><p style="margin-top: 0.25em"><input type="radio" id="{{ submission.id }}" class="obs1" name="submission_selection" value="obs"{% if not readonly %} checked{% endif %} /></p></label>
         {%- else -%}
-        <strong>{{ _('Observer') }} 1</strong>
+        <strong>{{ _('Observer %(index)s', index='1') }}</strong>
         {%- endif -%}
         </td>
         {%- for sibling in siblings -%}
         <td style="text-align: center">
         {%- if perms.edit_both_submissions.can() -%}
-        <label for="{{ sibling.id }}" style="margin-bottom: 0"><strong>{{ _('Observer') }} {{ loop.index + 1 }}</strong><p style="margin-top: 0.25em"><input type="radio" id="{{ sibling.id }}" name="submission_selection" value="" disabled></p></label>
+        <label for="{{ sibling.id }}" style="margin-bottom: 0"><strong>{{ _('Observer %(index)s', index=loop.index + 1) }}</strong><p style="margin-top: 0.25em"><input type="radio" id="{{ sibling.id }}" name="submission_selection" value="" disabled></p></label>
         {%- else -%}
-        <strong>{{ _('Observer') }} {{ loop.index + 1 }}</strong>
+        <strong>{{ _('Observer %(index)s', index=loop.index + 1) }}</strong>
         {%- endif -%}
         </td>
         {%- endfor -%}
