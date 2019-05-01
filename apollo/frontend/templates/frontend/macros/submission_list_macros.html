@@ -57,7 +57,15 @@
 {% for submission in submissions %}
 <tr>
     {% if perms.edit_submission.can() %}
-    <td class="text-right shrink"><a href="{{ url_for('submissions.submission_edit', submission_id=submission.id) }}">{{ submission.participant.participant_id }}</a></td>
+    <td class="text-right shrink">
+        {% with comments_count = submission.comments|count -%}
+        {%- if comments_count == 1 %}
+        <i class="fa fa-comment-o" title="{{ ngettext('%(num)d comment', '%(num)d comments', comments_count) }}"></i>&nbsp;
+        {%- elif comments_count > 1 %}
+        <i class="fa fa-comments-o" title="{{ ngettext('%(num)d comment', '%(num)d comments', comments_count) }}"></i>&nbsp;
+        {%- endif %}{% endwith %}
+        <a href="{{ url_for('submissions.submission_edit', submission_id=submission.id) }}">{{ submission.participant.participant_id }}</a>
+    </td>
     {% else %}
     <td class="text-center">{{ submission.participant.participant_id }}</td>
     {% endif %}
