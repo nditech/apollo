@@ -343,7 +343,7 @@
         <button type="submit" class="btn btn-info btn-lg btn-block" style= "margin-left:1em;">Save</button>
       </div>
       <div class="col-md-2">
-        <a class="btn btn-default btn-lg btn-block" style= "margin-left:0;" href="{{ url_for('submissions.submission_list', form_id=form.id) }}">Cancel</a>
+        <a class="btn btn-default btn-lg btn-block" style= "margin-left:0;" href="{{ request.environ.get('HTTP_REFERER', url_for('submissions.submission_list', form_id=form.id)) }}">Cancel</a>
       </div>
     </div>
   </div>
