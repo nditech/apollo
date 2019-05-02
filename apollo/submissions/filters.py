@@ -309,7 +309,7 @@ def make_submission_list_filter(event, form):
             ('N', _('Quarantine None')),
             ('A', _('Quarantine All')),
             ('R', _('Quarantine Results'))
-        ))
+        ), default='N')
     attributes['sender_verification'] = SubmissionSenderVerificationFilter(
         choices=(
             ('', _('Sender Verification')),
