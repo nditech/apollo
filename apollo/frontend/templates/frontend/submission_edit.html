@@ -141,7 +141,7 @@
 {{ submission_form.csrf_token() }}
 {%- if form.form_type == 'CHECKLIST' %}
 {%- for f in sibling_forms -%}{{ f.csrf_token() }}{%- endfor -%}{{ master_form.csrf_token() }}
-<div class="table-responsive">
+<div class="table">
   <table class="table table-bordered table-striped table-hover">
     <tbody>
       <tr>
@@ -184,8 +184,7 @@
         {%- for sibling_form in sibling_forms -%}
         <td>{{ render_submission_field(sibling_form['unreachable'], disabled=1) }}</td>
         {%- endfor -%}
-        <td>&nbsp;</td>
-        <td>&nbsp;</td>
+        <td colspan="2">&nbsp;</td>
       </tr>
       {% if perms.edit_submission_quarantine_status.can() %}
       <tr>
@@ -213,11 +212,7 @@
       {% for field in group.fields %}
       <tr{% if field.tag in failed_check_tags and submission.form.quality_checks_enabled and perms.edit_submission_verification_status.can() %} class="warning"{% endif %}>
         <th>{{ field.tag }}</th>
-        {% if g.locale.character_order != 'right-to-left' %}
-        <td>{% if field.tag in failed_check_tags and submission.form.quality_checks_enabled and perms.edit_submission_verification_status.can() %}<i class="glyphicon glyphicon-flag" style="color: #cc0000;"></i>{% endif %} {{ field.description }}
-        {% else %}
-        <td>{{ field.description }} {% if field.tag in failed_check_tags and submission.form.quality_checks_enabled and perms.edit_submission_verification_status.can() %}<i class="glyphicon glyphicon-flag" style="color: #cc0000;"></i>{% endif %}
-        {% endif %}
+        <td>{{ field.description }}
           {%- if field['type'] == 'select' %}
           <span class="options">
           {% for item in field.options|dictsort(false, 'value') %}
@@ -239,7 +234,13 @@
         {%- else -%}
         <td class="ps-on{%- if master_form[field.tag].errors %} danger{% elif field.tag in submission.master.overridden_fields %} warning{%- endif -%}"{% if field.tag in submission.master.overridden_fields %} title="{{ _('Overridden Field') }}"{%- endif -%}>{{ render_submission_field(master_form[field.tag], disabled=1) }}</td>
         {%- endif -%}
-        <th style="padding-top:14px"><span>{{ field.tag }}</span></th>
+        <th style="padding-top:14px">
+          <span>{{ field.tag }}</span>
+          {% if field.tag in failed_check_tags and submission.form.quality_checks_enabled and perms.edit_submission_verification_status.can() -%}
+          <div style="position: relative; left: 3em; height: 0; top: -1em; overflow: visible;">
+            <i class="fa fa-exclamation-triangle" style="color:red"></i>
+          </div>{% endif %}
+        </th>
       </tr>
       {% endfor %}
       {% endfor %}
