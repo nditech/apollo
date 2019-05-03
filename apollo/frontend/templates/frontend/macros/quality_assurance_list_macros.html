@@ -1,6 +1,6 @@
 {% macro submission_header(form, form_fields, location_types, perms) %}
 <tr>
-    <th>{{ _('ID') }}</th>
+    <th class="shrink">{{ _('ID') }}</th>
     {% for location_type in location_types %}
     <th>{{ location_type.name }}</th>
     {% endfor %}

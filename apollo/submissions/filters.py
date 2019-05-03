@@ -305,7 +305,6 @@ def make_submission_list_filter(event, form):
 
     attributes['quarantine_status'] = SubmissionQuarantineStatusFilter(
         choices=(
-            ('', _('Quarantine Status')),
             ('N', _('Quarantine None')),
             ('A', _('Quarantine All')),
             ('R', _('Quarantine Results'))
