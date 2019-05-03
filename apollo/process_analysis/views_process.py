@@ -42,22 +42,27 @@ def get_analysis_menu():
     ).order_by(models.Form.form_type, models.Form.name)]
 
 
-def get_process_analysis_menu():
+def get_process_analysis_menu(form_type='CHECKLIST'):
     event = g.event
+    if form_type == 'CHECKLIST':
+        formlist = forms.filter(
+            models.Form.events.contains(event),
+            models.Form.form_type == 'CHECKLIST',
+            models.Form.data['groups'].op('@>')(
+                [{'fields': [{'analysis_type': 'PROCESS'}]}])
+        ).order_by(models.Form.form_type, models.Form.name)
+    else:
+        formlist = forms.filter(
+            models.Form.events.contains(event),
+            models.Form.form_type == 'INCIDENT',
+        ).order_by(models.Form.form_type, models.Form.name)
+
     return [{
         'url': url_for('process_analysis.process_analysis',
                        form_id=form.id),
         'text': form.name,
         'icon': '<i class="glyphicon glyphicon-stats"></i>'
-    } for form in forms.filter(
-        models.Form.events.contains(event),
-        or_(
-            models.Form.form_type == 'INCIDENT',
-            and_(
-                models.Form.form_type == 'CHECKLIST',
-                models.Form.data['groups'].op('@>')(
-                    [{'fields': [{'analysis_type': 'PROCESS'}]}])))
-    ).order_by(models.Form.form_type, models.Form.name)]
+    } for form in formlist]
 
 
 bp = Blueprint('process_analysis', __name__, template_folder='templates',
@@ -173,16 +178,23 @@ def _process_analysis(event, form_id, location_id=None, tag=None):
 @route(bp, '/process_summary/<int:form_id>')
 @register_menu(
     bp, 'main.analyses',
-    _('Summaries'), order=4,
+    _('Data Summary'), order=4,
     icon='<i class="glyphicon glyphicon-stats"></i>',
     visible_when=lambda: len(get_analysis_menu()) > 0
+    and permissions.view_process_analysis.can())
+@register_menu(
+    bp, 'main.analyses.incidents_analysis',
+    _('Incidents Summary'),
+    icon='<i class="glyphicon glyphicon-stats"></i>',
+    dynamic_list_constructor=partial(get_process_analysis_menu, 'INCIDENT'),
+    visible_when=lambda: len(get_process_analysis_menu('INCIDENT')) > 0
     and permissions.view_process_analysis.can())
 @register_menu(
     bp, 'main.analyses.process_analysis',
     _('Process Summary'),
     icon='<i class="glyphicon glyphicon-stats"></i>',
-    dynamic_list_constructor=partial(get_process_analysis_menu),
-    visible_when=lambda: len(get_process_analysis_menu()) > 0
+    dynamic_list_constructor=partial(get_process_analysis_menu, 'CHECKLIST'),
+    visible_when=lambda: len(get_process_analysis_menu('CHECKLIST')) > 0
     and permissions.view_process_analysis.can())
 @login_required
 @permissions.view_process_analysis.require(403)
