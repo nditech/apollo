@@ -1,4 +1,12 @@
 # -*- coding: utf-8 -*-
+import codecs
+import collections
+import csv
+from functools import partial
+from io import StringIO
+from itertools import chain
+
+import numpy as np
 import pandas as pd
 
 from apollo.submissions.qa.query_builder import get_logical_check_stats
@@ -6,11 +14,11 @@ from apollo.submissions.utils import make_submission_dataframe
 
 
 def aggregated_dataframe(queryset, form):
-    agg_locations = [anc.location_type for anc in
-                     queryset.first().location.ancestors]
+    agg_locations = [anc.location_type.name for anc in
+                     queryset.first().location.ancestors()]
     # change order of locations so the largest is first
     agg_locations.reverse()
-    df_submissions = make_submission_dataframe(queryset)
+    df_submissions = make_submission_dataframe(queryset, form)
     all_fields = []
 
     # iterate through fields
@@ -80,3 +88,103 @@ def _qa_counts(query, form):
             data.append(d)
 
     return data
+
+
+def _numeric_field_processor(column):
+    return int(np.sum(column))
+
+
+def _select_field_processor(options, column):
+    value_counts = column.value_counts()
+
+    return [
+        value_counts.get(opt, 0) for opt in sorted(options)
+    ]
+
+
+def _multiselect_field_processor(options, column):
+    value_counts = collections.Counter(
+        chain(*(i for i in column if i is not None)))
+
+    return [
+        value_counts.get(opt, 0) for opt in sorted(options)
+    ]
+
+
+def aggregate_dataset(query, form, stream=False):
+    data_frame = make_submission_dataframe(query, form)
+
+    location_type_names = [
+        a.location_type.name for a in query.first().location.ancestors()]
+
+    aggregate_field_types = ['integer', 'select', 'multiselect']
+    aggregate_fields = [
+        fi for grp in form.data.get('groups', [])
+        for fi in grp.get('fields', [])
+        if fi and fi.get('type') in aggregate_field_types
+    ]
+
+    headers = ['Level'] + location_type_names
+    for field in aggregate_fields:
+        if field['type'] == 'integer':
+            headers.append(field['tag'])
+        else:
+            headers.extend(
+                '{tag} | {option}'.format(tag=field['tag'], option=opt)
+                for opt in sorted(field['options'].values())
+            )
+
+    if stream:
+        output_stream = StringIO()
+        output_stream.write(codecs.BOM_UTF8.decode('utf-8'))
+        writer = csv.writer(output_stream)
+        writer.writerow(headers)
+
+        yield output_stream.getvalue()
+    else:
+        yield headers
+
+    for idx, level in enumerate(location_type_names):
+        group_subset = location_type_names[:idx + 1]
+
+        # the hard stuff comes here
+        grouped_dataframe = data_frame.groupby(group_subset)
+
+        # start with numeric fields. they're the easiest
+        for group_key, group in grouped_dataframe:
+            current_row = []
+
+            # add level info
+            current_row.append(level)
+
+            if idx == 0:
+                current_row.append(group_key)
+            else:
+                current_row.extend(group_key)
+
+            # add location info
+            padding_size = len(location_type_names) - len(group_subset)
+            current_row.extend([''] * padding_size)
+
+            for field in aggregate_fields:
+                if field['type'] == 'integer':
+                    processor = _numeric_field_processor
+                    current_row.append(processor(group[field['tag']]))
+                elif field['type'] == 'select':
+                    processor = partial(
+                        _select_field_processor, field['options'].values())
+                    current_row.extend(processor(group[field['tag']]))
+                else:
+                    processor = partial(
+                        _multiselect_field_processor,
+                        field['options'].values())
+                    current_row.extend(processor(group[field['tag']]))
+
+            if stream:
+                output_stream = StringIO()
+                writer = csv.writer(output_stream)
+                writer.writerow(current_row)
+
+                yield output_stream.getvalue()
+            else:
+                yield current_row

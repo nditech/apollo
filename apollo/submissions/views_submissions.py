@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 import codecs
-import csv
 from datetime import datetime
 from functools import partial
-from io import StringIO
 
 from flask import (
     Blueprint, Response, abort, current_app, g, jsonify, make_response,
@@ -14,6 +12,7 @@ from flask_httpauth import HTTPBasicAuth
 from flask_menu import register_menu
 from flask_security import current_user, login_required
 from flask_security.utils import verify_and_update_password
+from slugify import slugify_unicode
 from sqlalchemy.dialects.postgresql import array
 from sqlalchemy.sql import false
 from sqlalchemy import desc, Integer, func, text
@@ -33,12 +32,10 @@ from apollo.messaging.tasks import send_messages
 from apollo.submissions import filters, forms
 from apollo.submissions.incidents import incidents_csv
 from apollo.submissions.aggregation import (
-    aggregated_dataframe, _qa_counts)
+    aggregate_dataset, aggregated_dataframe, _qa_counts)
 from apollo.submissions.models import QUALITY_STATUSES, Submission
 from apollo.submissions.qa.query_builder import get_inline_qa_status
-from apollo.submissions.recordmanagers import AggFrameworkExporter
 from apollo.submissions.utils import make_submission_dataframe
-from slugify import slugify_unicode
 
 
 auth = HTTPBasicAuth()
@@ -141,17 +138,7 @@ def submission_list(form_id):
         if mode == 'aggregated':
             # TODO: you want to change the float format or even remove it
             # if you have columns that have float values
-            # exporter = AggFrameworkExporter(query_filterset.qs)
-            exporter = AggFrameworkExporter(queryset)
-            records, headers = exporter.export_dataset()
-
-            export_buffer = StringIO()
-            writer = csv.DictWriter(export_buffer, headers)
-            writer.writeheader()
-            for record in records:
-                writer.writerow(record)
-
-            dataset = export_buffer.getvalue()
+            dataset = aggregate_dataset(queryset.order_by(None), form, True)
         else:
             dataset = services.submissions.export_list(
                 # query_filterset.qs)
