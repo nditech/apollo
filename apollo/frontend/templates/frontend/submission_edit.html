@@ -6,7 +6,7 @@
   <button class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
   <ul class="dropdown-menu" role="menu">
     {% for version in submission.versions -%}
-    <li><a href="{{ url_for('submissions.submission_version', submission_id=submission.id, version_id=version.id) }}"><span class="tonow" data-timestamp="{{ version.timestamp|timestamp }}">{{ version.timestamp.strftime('%b %d %Y %I:%M %p') }}</span> &mdash; <em>{{ version.identity }}</em></a></li>
+    <li><a href="{{ url_for('submissions.submission_version', submission_id=submission.id, version_id=version.id) }}"><span>{{ version.timestamp|datetimeformat('medium') }}</span> &mdash; <em>{{ version.identity }}</em></a></li>
     {%- endfor %}
   </ul>
 </div>
@@ -124,8 +124,36 @@
 {%- endif -%}
 </table>
 </div>
+<div class="panel panel-default">
+  <div class="panel-heading" id="msgListHeading">
+    <h4 class="panel-title"><a role="button" data-toggle="collapse" href="#msgList" aria-expanded="false" aria-controls="msgList">{{ _('Messages') }}</a></h4>
+  </div>
+  <div id="msgList" class="panel-collapse collapse">
+    <table class="table table-bordered table-hover table-striped" style="margin-bottom: 0px;">
+      <thead>
+        <tr>
+          <th>{{ _('Timestamp') }}</th>
+          <th>{{ _('Number') }}</th>
+          <th>{{ _('Text') }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for msg in submission_messages %}
+        <tr>
+          <td>{{ msg.received|datetimeformat('medium') }}</td>
+          <td>{{ msg.sender }}</td>
+          <td>{{ msg.text }}</td>
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="3" class="warning" style="text-align: center;">{{ _('No messages') }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
 <div>
-
 {% if failed_checks and submission.form.quality_checks_enabled and perms.edit_submission_verification_status.can() %}
 <div class="alert alert-warning alert-dismissible" role="alert">
   <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -337,35 +365,6 @@
   </div>
 </div>
 {%- endif -%}
-<div class="panel panel-default">
-  <div class="panel-heading" id="msgListHeading">
-    <h4 class="panel-title"><a role="button" data-toggle="collapse" href="#msgList" aria-expanded="false" aria-controls="msgList">{{ _('Messages') }}</a></h4>
-  </div>
-  <div id="msgList" class="panel-collapse collapse">
-    <table class="table table-bordered table-hover table-striped" style="margin-bottom: 0px;">
-      <thead>
-        <tr>
-          <th>{{ _('Timestamp') }}</th>
-          <th>{{ _('Number') }}</th>
-          <th>{{ _('Text') }}</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for msg in submission_messages %}
-        <tr>
-          <td>{{ msg.received|datetimeformat('medium') }}</td>
-          <td>{{ msg.sender }}</td>
-          <td>{{ msg.text }}</td>
-        </tr>
-        {% else %}
-        <tr>
-          <td colspan="3" class="warning" style="text-align: center;">{{ _('No messages') }}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-</div>
 <div class="row navbar-fixed-bottom" style="bottom:0px; background:#fff; padding:1em 0 1em 2.6em;">
   <div class="container">
     <div class="col-md-offset-8 col-md-2">
@@ -380,8 +379,6 @@
 </form>
 {% endblock %}
 {% block scripts %}
-<script src="{{ url_for('static', filename='js/moment-with-langs.min.js') }}"></script>
-<script src="{{ url_for('static', filename='js/timestamps.js') }}"></script>
 <script type="text/javascript">
   var csrftoken = $('meta[name=csrf-token]').attr('content');
   
