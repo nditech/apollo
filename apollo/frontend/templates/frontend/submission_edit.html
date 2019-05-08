@@ -353,7 +353,7 @@
       <tbody>
         {% for msg in submission_messages %}
         <tr>
-          <td>{{ msg.received }}</td>
+          <td>{{ msg.received|datetimeformat('medium') }}</td>
           <td>{{ msg.sender }}</td>
           <td>{{ msg.text }}</td>
         </tr>
