@@ -415,8 +415,13 @@ def submission_edit(submission_id):
 
     sibling_submissions = submission.siblings
     master_submission = submission.master
+    submission_messages = None
 
     if request.method == 'GET':
+        submission_messages = models.Message.query.filter_by(
+            direction='IN',
+            submission_id=submission_id
+        ).order_by(models.Message.received.desc())
         initial_data = submission.data.copy() if submission.data else {}
         initial_data.update(location=submission.location_id)
         initial_data.update(participant=submission.participant_id)
@@ -484,7 +489,8 @@ def submission_edit(submission_id):
             location_types=location_types,
             comments=comments,
             failed_checks=failed_checks,
-            failed_check_tags=failed_check_tags
+            failed_check_tags=failed_check_tags,
+            submission_messages=submission_messages
         )
     else:
         if questionnaire_form.form_type == 'INCIDENT':
