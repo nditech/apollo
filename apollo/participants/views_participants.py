@@ -112,7 +112,7 @@ def participant_list(participant_set_id=0):
         message = request.form.get('message', '')
         recipients = [x for x in [participant.phone
                       if participant.phone else ''
-                      for participant in queryset_filter.qs] if x is not '']
+                      for participant in queryset_filter.qs] if x != '']
         recipients.extend(current_app.config.get('MESSAGING_CC'))
 
         if message and recipients and permissions.send_messages.can():
@@ -380,26 +380,31 @@ def participant_edit(id, participant_set_id=0):
                 participant.partner = None
 
             phone_number = phone_number_cleaner.sub('', form.phone.data)
+            # do we have a phone number like this in the database?
+            plain_phone = Phone.query.filter_by(number=phone_number).first()
+            if plain_phone is None:
+                plain_phone = Phone.create(number=phone_number)
+                plain_phone.save()
+
+            # do we have this number linked to the participant in question?
             participant_phone = ParticipantPhone.query.filter_by(
-                participant_id=participant.id).order_by(
-                ParticipantPhone.last_seen.desc()).first()
+                participant_id=participant.id, phone_id=plain_phone.id
+            ).first()
+
             if not participant_phone:
-                phone = Phone.create(number=phone_number)
-                phone.save()
+                # no, create a link
                 participant_phone = ParticipantPhone.create(
-                    participant_id=participant.id, phone_id=phone.id,
-                    verified=True)
-                participant_phone.save()
+                    participant_id=participant.id, phone_id=plain_phone.id,
+                    verified=True
+                )
             else:
-                if participant_phone.phone:
-                    participant_phone.phone.number = phone_number
-                    participant_phone.phone.save()
-                else:
-                    phone = Phone.create(number=phone_number)
-                    phone.save()
-                    participant_phone.phone = phone
+                # yes, so update the last_seen and verified attributes
+                # so this becomes the new primary number (primary is
+                # the first verified phone number when ordered by
+                # the last_seen attribute in descending order)
+                participant_phone.last_seen = utils.current_timestamp()
                 participant_phone.verified = True
-                participant_phone.save()
+            participant_phone.save()
 
             participant.password = form.password.data
             if participant_set.extra_fields:
