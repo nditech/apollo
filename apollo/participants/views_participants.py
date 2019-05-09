@@ -304,7 +304,11 @@ def participant_performance_detail(pk):
 @route(bp, '/participant/phone/verify', methods=['POST'])
 @login_required
 @permissions.edit_participant.require(403)
-def participant_phone_verify():
+def toggle_phone_verification():
+    """
+    Toggles phone verification status for a participant phone
+    and submission
+    """
     if request.is_xhr:
         contributor = request.form.get('participant')
         phone = request.form.get('phone')
@@ -315,10 +319,10 @@ def participant_phone_verify():
         phone_contact = next(filter(
             lambda p: phone == p.phone.number,
             participant.participant_phones), False)
-        phone_contact.verified = True
+        phone_contact.verified = not phone_contact.verified
         phone_contact.save()
         participant.save()
-        submission.sender_verified = True
+        submission.sender_verified = not submission.sender_verified
         submission.save()
         return 'OK'
     else:

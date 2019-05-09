@@ -393,7 +393,7 @@
 
     if (phone && participant) {
       $.ajax({
-        url: "{{ url_for('participants.participant_phone_verify') }}",
+        url: "{{ url_for('participants.toggle_phone_verification') }}",
         type: 'POST',
         data: {phone: phone, participant: participant, submission: submission},
         beforeSend: function (xhr, settings) {
