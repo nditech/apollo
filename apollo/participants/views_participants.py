@@ -310,12 +310,12 @@ def toggle_phone_verification():
     and submission
     """
     if request.is_xhr:
-        contributor = request.form.get('participant')
+        participant_id = request.form.get('participant')
         phone = request.form.get('phone')
         submission_id = request.form.get('submission')
 
         submission = Submission.query.get_or_404(submission_id)
-        participant = Participant.query.get_or_404(contributor)
+        participant = Participant.query.get_or_404(participant_id)
         phone_contact = next(filter(
             lambda p: phone == p.phone.number,
             participant.participant_phones), False)
