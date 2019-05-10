@@ -264,6 +264,8 @@ def make_dashboard_filter(event):
     attributes = {}
     attributes['location'] = make_submission_location_filter(
             event.location_set_id)()
+    attributes['sample'] = make_submission_sample_filter(
+        event.location_set_id)()
 
     return type(
         'SubmissionFilterSet',
