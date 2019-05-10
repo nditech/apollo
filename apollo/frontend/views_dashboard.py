@@ -61,7 +61,10 @@ def main_dashboard(form_id=None):
     query = Submission.query.filter(
         Submission.event_id == event.id,
         Submission.form == form,
-        Submission.submission_type == 'M')
+        Submission.submission_type == 'M').join(
+            Location,
+            Submission.location_id == Location.id
+        )
     query_filterset = filter_class(query, request.args)
 
     location = None
