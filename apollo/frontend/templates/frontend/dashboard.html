@@ -1,19 +1,14 @@
 {% extends 'frontend/_layout.html' %}
 {% block stylesheets %}
- <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-toggle.css') }}">
 <style type="text/css">
 .piechart svg{height:300px; margin-left: .8em; margin-top: .8em;}
-.toggle.btn{min-height: 30px;}
-.toggle-on.btn{padding-right: 30px;}
-.toggle-off.btn{padding-left: 32px;}
 </style>
 {% endblock %}
 {% from 'frontend/macros/dashboard_filter.html' import render_filter_form %}
 {% block scripts %}
- <script type="text/javascript" src="{{ url_for('static', filename='js/d3.v3.js') }}"></script>
- <script type="text/javascript" src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
- <script type="text/javascript" src="{{ url_for('static', filename='js/filters.js') }}"></script>
- <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap-toggle.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/d3.v3.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/filters.js') }}"></script>
 <script type="text/javascript">
   var time = new Date().getTime();
   
@@ -27,17 +22,6 @@
     else 
       setTimeout(refresh, 10000);
   }
-   $(function() {
-    $('#toggle-two').bootstrapToggle({
-      on: 'Observers',
-      off: 'Polling Unit'
-    });
-  })
-
-</script>
-<script type="text/javascript">  
-  //Create SVG element
-
 </script>
 {% endblock %}
 <div class="container">
