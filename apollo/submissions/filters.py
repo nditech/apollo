@@ -19,15 +19,15 @@ class TagLookupFilter(ChoiceFilter):
     def filter(self, query, value, **kwargs):
         if value:
             if value == 'NULL':
-                condition = models.Submission.data[self.name] == None
+                condition = (models.Submission.data[self.name] == None)   # noqa
             elif value == 'NOT_NULL':
-                condition = models.Submission.data[self.name] != None
+                condition = (models.Submission.data[self.name] != None)   # noqa
             else:
-                condition = models.Submission.data[self.name] == value
+                condition = (models.Submission.data[self.name] == value)
 
             return (condition, None)
         elif self.contains:
-            condition = models.Submission.data[self.name] != None
+            condition = (models.Submission.data[self.name] != None) # noqa
             return (condition, None)
 
         return (None, None)
@@ -47,7 +47,7 @@ def make_submission_sample_filter(location_set_id):
             if value:
                 query2 = query.join(
                     models.samples_locations,
-                    models.samples_locations.c.location_id == models.Location.id
+                    models.samples_locations.c.location_id == models.Location.id    # noqa
                 ).join(
                     models.Sample,
                     models.samples_locations.c.sample_id == models.Sample.id
@@ -80,7 +80,7 @@ class IncidentStatusFilter(ChoiceFilter):
     def filter(self, query, value, **kwargs):
         if value:
             if value == 'NULL':
-                return (models.Submission.incident_status == None, None)
+                return (models.Submission.incident_status == None, None)    # noqa
 
             return (models.Submission.incident_status == value, None)
 
@@ -136,7 +136,7 @@ class FormGroupFilter(ChoiceFilter):
             # Missing
             constraint = or_(
                     ~models.Submission.data.has_any(array(group_tags)),
-                    models.Submission.data == None
+                    models.Submission.data == None  # noqa
                 )
         elif value == '3':
             # Complete
@@ -194,7 +194,7 @@ class SubmissionQuarantineStatusFilter(ChoiceFilter):
         if value and value == 'N':
             return (
                 or_(
-                    models.Submission.quarantine_status == None,
+                    models.Submission.quarantine_status == None,    # noqa
                     models.Submission.quarantine_status == ''),
                 None
             )
@@ -208,12 +208,12 @@ class SubmissionSenderVerificationFilter(ChoiceFilter):
     def filter(self, query, value, **kwargs):
         if value and value == '1':
             return (
-                models.Submission.sender_verified == True,
+                models.Submission.sender_verified == True,  # noqa
                 None
             )
         elif value:
             return (
-                models.Submission.sender_verified == False,
+                models.Submission.sender_verified == False, # noqa
                 None
             )
 
@@ -224,12 +224,12 @@ class OnlineStatusFilter(ChoiceFilter):
     def filter(self, query, value, **kwargs):
         if value and value == '1':
             return (
-                models.Submission.unreachable == True,
+                models.Submission.unreachable == True,  # noqa
                 None
             )
         elif value:
             return (
-                models.Submission.unreachable == False,
+                models.Submission.unreachable == False, # noqa
                 None
             )
 
