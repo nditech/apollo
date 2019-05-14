@@ -40,3 +40,17 @@
 @import "~bootstrap/scss/spinners";
 @import "~bootstrap/scss/utilities";
 @import "~bootstrap/scss/print";
+
+@mixin make-td-col($size, $columns: $grid-columns) {
+    width: percentage($size / $columns);
+}
+
+@each $breakpoint in map-keys($grid-breakpoints) {
+    $infix: breakpoint-infix($breakpoint, $grid-breakpoints);
+
+    @for $i from 1 through $grid-columns {
+        td.col#{$infix}-#{$i}, th.col#{$infix}-#{$i} {
+            @include make-td-col($i, $grid-columns);
+        }
+    }
+}
