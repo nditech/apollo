@@ -17,7 +17,6 @@
     {%- else -%}
     <link rel="stylesheet" href="{{ asset_url_for('styles.css') }}">
     {%- endif %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/fontawesome.min.css') }}">
     {% block stylesheets %}{% endblock %}
     {% block head %}{% endblock %}
     {%- if not debug and gtm_key %}
@@ -105,7 +104,7 @@
         </div>
     </nav>
 
-    <div class="container mt-3">
+    <div class="container mt-2">
         <div class="d-flex justify-content-between align-items-center flex-column flex-md-row">
             <nav class="nav" aria-label="breadcrumb">
                 <ol class="breadcrumb mb-n1">
@@ -120,7 +119,7 @@
             </div>
         </div>
 
-        <div class="card mt-4 border-0">
+        <div class="card mt-3 border-0">
             {% block content %}{% endblock %}
         </div>
 
