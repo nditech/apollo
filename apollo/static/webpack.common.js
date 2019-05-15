@@ -72,7 +72,7 @@ module.exports = {
             'node_modules'
         ],
         alias: {
-            jquery: 'jquery/dist/jquery.slim.min.js'
+            jquery: 'jquery/dist/jquery.min.js'
         }
     },
     optimization: {
