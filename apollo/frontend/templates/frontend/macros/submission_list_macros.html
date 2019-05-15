@@ -1,5 +1,5 @@
 {% macro submission_header(form, form_fields, location_types, perms) %}
-<tr class="position-sticky">
+<tr>
     {% if request.args.sort_by == 'id' %}
     {% if request.args.sort_direction == 'desc' %}
     <th scope="col" class="text-right col-1"><a class="text-decoration-none" href="{{ modify_query(sort_by='id', sort_direction='asc', page='') }}">{{ _('ID') }} <i class="fa fa-chevron-down"></i></a></th>
