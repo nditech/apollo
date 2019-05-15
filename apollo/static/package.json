@@ -13,6 +13,7 @@
   "license": "ISC",
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.8.2",
+    "@ttskch/select2-bootstrap4-theme": "^1.2.2",
     "bootstrap": "^4.3.1",
     "bootstrap-v4-rtl": "^4.3.1-0",
     "jquery": "^3.4.1",
