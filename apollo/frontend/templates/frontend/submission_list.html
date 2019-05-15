@@ -21,35 +21,33 @@ $(function () {
 {% endblock %}
 
 {% block toolbar -%}
+<div class="btn-toolbar d-none d-md-flex" role="toolbar">
 {% if form.form_type == 'INCIDENT' %}
 {% if perms.add_submission.can() %}
-<div class="btn-group pull-right">
-  <a style="margin-left:1em" class="btn btn-sm btn-primary" href="{{ url_for('submissions.submission_create', form_id=form.id) }}"><i class="glyphicon glyphicon-plus glyphicon-white"></i> {{ _('Add Incident') }}</a>
-</div>
+<a style="margin-left:1em" class="btn btn-primary mr-2" href="{{ url_for('submissions.submission_create', form_id=form.id) }}">{{ _('Add Incident') }}</a>
 {% endif %}
 {% if perms.export_submissions.can() %}
-<div class="btn-group pull-right">
-  <a class="btn btn-sm btn-default" href="{{ url_for('submissions.submission_list', form_id=form.id, export='observer', **request.args) }}"><i class="glyphicon glyphicon-export"></i> {{ _('Export') }}</a>
-</div>
+<a class="btn btn-secondary mr-2" href="{{ url_for('submissions.submission_list', form_id=form.id, export='observer', **request.args) }}">{{ _('Export') }}</a>
 {% endif %}
 {% else %}
 {% if perms.export_submissions.can() %}
-<div class="btn-group pull-right">
-  <a class="btn btn-sm btn-default" href="{{ url_for('submissions.submission_list', form_id=form.id, export='master', **request.args) }}"><i class="glyphicon glyphicon-export"></i> {{ _('Export') }}</a>
-  <button class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
-  <ul class="dropdown-menu">
-    <li><a href="{{ url_for('submissions.submission_list', form_id=form.id, export='observer', **request.args) }}">{{ _('Observer') }}</a></li>
-    <li><a href="{{ url_for('submissions.submission_list', form_id=form.id, export='master', **request.args) }}">{{ _('Location') }}</a></li>
-    <li><a href="{{ url_for('submissions.submission_list', form_id=form.id, export='aggregated', **request.args) }}">{{ _('Aggregate') }}</a></li>
-  </ul>
+<div class="btn-group mr-2" role="group">
+  <a class="btn btn-secondary" href="{{ url_for('submissions.submission_list', form_id=form.id, export='master', **request.args) }}">{{ _('Export') }}</a>
+  <button class="btn btn-secondary dropdown-toggle dropdown-toggle-split" id="exportMenuReference" data-reference="parent" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <span class="sr-only">Toggle Dropdown</span>
+  </button>
+  <div class="dropdown-menu" aria-labelledby="exportMenuReference">
+    <a class="dropdown-item" href="{{ url_for('submissions.submission_list', form_id=form.id, export='observer', **request.args) }}">{{ _('Observer') }}</a></li>
+    <a class="dropdown-item" href="{{ url_for('submissions.submission_list', form_id=form.id, export='master', **request.args) }}">{{ _('Location') }}</a></li>
+    <a class="dropdown-item" href="{{ url_for('submissions.submission_list', form_id=form.id, export='aggregated', **request.args) }}">{{ _('Aggregate') }}</a></li>
+  </div>
 </div>
 {% endif %}
 {% endif %}
 {% if perms.send_messages.can() %}
-<div class="btn-group pull-right">
-  <button class="btn btn-sm btn-success" id="send_message_modal_btn" style="margin-right:1em;"><i class="glyphicon glyphicon-envelope glyphicon-white"></i> {{ _('Send Message') }}</button>
-</div>
+<button class="btn btn-success" id="send_message_modal_btn" style="margin-right:1em;">{{ _('Send Message') }}</button>
 {% endif %}
+</div>
 {% endblock %}
 
 {% block content -%}
