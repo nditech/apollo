@@ -1,4 +1,5 @@
 window.LocationOptions = {
+    width: 'null',
     theme: 'bootstrap4',
     minimumInputLength: 1,
     placeholder: {
