@@ -10,3 +10,5 @@ import 'bootstrap-v4-rtl/js/dist/scrollspy';
 import 'bootstrap-v4-rtl/js/dist/tab';
 import 'bootstrap-v4-rtl/js/dist/toast';
 import 'bootstrap-v4-rtl/js/dist/tooltip';
+
+import 'custom'

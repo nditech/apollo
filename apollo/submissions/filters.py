@@ -1,10 +1,14 @@
 # -*- coding: utf-8 -*-
 from operator import itemgetter
 
+from cgi import escape
 from flask_babelex import lazy_gettext as _
 from sqlalchemy import and_, or_
 from sqlalchemy.dialects.postgresql import array
 from wtforms import widgets
+from wtforms.compat import text_type
+from wtforms.widgets import html_params, HTMLString
+from wtforms_alchemy.fields import QuerySelectField
 
 from apollo import models, services
 from apollo.core import CharFilter, ChoiceFilter, FilterSet
@@ -236,10 +240,37 @@ class OnlineStatusFilter(ChoiceFilter):
         return (None, None)
 
 
+class LocationSelectWidget(widgets.Select):
+    @classmethod
+    def render_option(cls, value, label, selected, **kwargs):
+        print(type(label))
+        options = dict(kwargs, value=value)
+        if selected:
+            options['selected'] = True
+        return HTMLString('<option %s>%s · %s</option>' % (
+            html_params(**options),
+            escape(text_type(label.name)),
+            escape(text_type(label.location_type))))
+
+
+class LocationQuerySelectField(QuerySelectField):
+    widget = LocationSelectWidget()
+
+    def process_formdata(self, valuelist):
+        if valuelist:
+            self.query = models.Location.query.filter(
+                models.Location.id == valuelist[0])
+        return super(LocationQuerySelectField, self).process_formdata(
+            valuelist)
+
+
 def make_submission_location_filter(location_set_id):
-    class AJAXLocationFilter(CharFilter):
+    class AJAXLocationFilter(ChoiceFilter):
+        field_class = LocationQuerySelectField
+
         def __init__(self, *args, **kwargs):
-            kwargs['widget'] = widgets.HiddenInput()
+            kwargs['query_factory'] = lambda: []
+            kwargs['get_pk'] = lambda i: i.id
 
             super().__init__(*args, **kwargs)
 
@@ -250,7 +281,7 @@ def make_submission_location_filter(location_set_id):
                 ).join(
                     models.LocationPath,
                     models.Location.id == models.LocationPath.descendant_id
-                ).filter(models.LocationPath.ancestor_id == value)
+                ).filter(models.LocationPath.ancestor_id == value.id)
 
                 return query.filter(
                     models.Submission.location_id.in_(location_query))

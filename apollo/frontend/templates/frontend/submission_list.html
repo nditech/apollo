@@ -1,74 +1,78 @@
-{% extends "frontend/_layout.html" %}
+{% extends "frontend/layout.html" %}
 {%- from 'frontend/macros/submission_list_filter.html' import render_filter_form -%}
 {%- from 'frontend/macros/pagination.html' import render_pager, render_pager_counter -%}
 {%- from 'frontend/macros/submission_list_macros.html' import submission_header, submission_items -%}
 {%- from 'frontend/macros/send_message.html' import send_message_modal -%}
-{% block scripts %}
-<script type="text/javascript" src="{{ url_for('static', filename='js/filters.js') }}"></script>
+
+{% block scripts -%}
+<script type="text/javascript">
+$(function () {
+	$('#filter_reset').on('click', function() {
+		var $form = $(this).parents('form').first();
+		$form.find(':input').not('button').each(function() { $(this).val(''); })
+		$form.submit();
+	});
+	$('select.select2').select2(LocationOptions);
+});
+</script>
 {% if perms.send_messages.can() %}
 {{ send_message_modal(pager.total) }}
 {% endif %}
 {% endblock %}
-{% block toolbar %}
+
+{% block toolbar -%}
+<div class="btn-toolbar d-none d-md-flex" role="toolbar">
 {% if form.form_type == 'INCIDENT' %}
 {% if perms.add_submission.can() %}
-<div class="btn-group pull-right">
-  <a style="margin-left:1em" class="btn btn-sm btn-primary" href="{{ url_for('submissions.submission_create', form_id=form.id) }}"><i class="glyphicon glyphicon-plus glyphicon-white"></i> {{ _('Add Incident') }}</a>
-</div>
+<a style="margin-left:1em" class="btn btn-primary mr-2" href="{{ url_for('submissions.submission_create', form_id=form.id) }}">{{ _('Add Incident') }}</a>
 {% endif %}
 {% if perms.export_submissions.can() %}
-<div class="btn-group pull-right">
-  <a class="btn btn-sm btn-default" href="{{ url_for('submissions.submission_list', form_id=form.id, export='observer', **request.args) }}"><i class="glyphicon glyphicon-export"></i> {{ _('Export') }}</a>
-</div>
+<a class="btn btn-secondary mr-2" href="{{ url_for('submissions.submission_list', form_id=form.id, export='observer', **request.args) }}">{{ _('Export') }}</a>
 {% endif %}
 {% else %}
 {% if perms.export_submissions.can() %}
-<div class="btn-group pull-right">
-  <a class="btn btn-sm btn-default" href="{{ url_for('submissions.submission_list', form_id=form.id, export='master', **request.args) }}"><i class="glyphicon glyphicon-export"></i> {{ _('Export') }}</a>
-  <button class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
-  <ul class="dropdown-menu">
-    <li><a href="{{ url_for('submissions.submission_list', form_id=form.id, export='observer', **request.args) }}">{{ _('Observer') }}</a></li>
-    <li><a href="{{ url_for('submissions.submission_list', form_id=form.id, export='master', **request.args) }}">{{ _('Location') }}</a></li>
-    <li><a href="{{ url_for('submissions.submission_list', form_id=form.id, export='aggregated', **request.args) }}">{{ _('Aggregate') }}</a></li>
-  </ul>
+<div class="btn-group mr-2" role="group">
+  <a class="btn btn-secondary" href="{{ url_for('submissions.submission_list', form_id=form.id, export='master', **request.args) }}">{{ _('Export') }}</a>
+  <button class="btn btn-secondary dropdown-toggle dropdown-toggle-split" id="exportMenuReference" data-reference="parent" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <span class="sr-only">Toggle Dropdown</span>
+  </button>
+  <div class="dropdown-menu" aria-labelledby="exportMenuReference">
+    <a class="dropdown-item" href="{{ url_for('submissions.submission_list', form_id=form.id, export='observer', **request.args) }}">{{ _('Observer') }}</a></li>
+    <a class="dropdown-item" href="{{ url_for('submissions.submission_list', form_id=form.id, export='master', **request.args) }}">{{ _('Location') }}</a></li>
+    <a class="dropdown-item" href="{{ url_for('submissions.submission_list', form_id=form.id, export='aggregated', **request.args) }}">{{ _('Aggregate') }}</a></li>
+  </div>
 </div>
 {% endif %}
 {% endif %}
 {% if perms.send_messages.can() %}
-<div class="btn-group pull-right">
-  <button class="btn btn-sm btn-success" id="send_message_modal_btn" style="margin-right:1em;"><i class="glyphicon glyphicon-envelope glyphicon-white"></i> {{ _('Send Message') }}</button>
-</div>
+<button class="btn btn-success" id="send_message_modal_btn">{{ _('Send Message') }}</button>
 {% endif %}
+</div>
 {% endblock %}
-{% block content %}
+
+{% block content -%}
 <div class="row">
   <div class="col-md-12">
     {{ render_filter_form(form, filter_form, location) }}
   </div>
 </div>
-<div class="row">
-  <div class="col-md-12">
-     {{ render_pager_counter(pager, args) }}
-  </div>
-</div>
-<div class="row">
-  <div class="col-md-12">
-    <div class="table-responsive responsive">
-      <table class="table table-striped table-bordered table-hover">
-          <thead >
-            {{ submission_header(form, form_fields, location_types, perms) }}
-          </thead>
-          <tbody>
-            {{ submission_items(pager.items, form, form_fields, location_types, perms) }}
-          </tbody>
-        </table>
-      </div>
-  </div>
+
+<div class="card-header">
+  {{ render_pager(pager, 'submissions.submission_list', args) }}
 </div>
 
-<div class="row">
-  <div class="col-md-12">
+<div class="table-responsive-md mb-n3">
+  <table class="table table-sm table-hover">
+    <thead >
+      {{ submission_header(form, form_fields, location_types, perms) }}
+    </thead>
+    <tbody>
+      {{ submission_items(pager.items, form, form_fields, location_types, perms) }}
+    </tbody>
+  </table>
+</div>
+
+<div class="card-footer">
   {{ render_pager(pager, 'submissions.submission_list', args) }}
-  </div>
 </div>
 {% endblock %}

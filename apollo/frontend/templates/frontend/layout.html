@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en"{% if g.locale.text_direction == 'rtl' %} dir="rtl"{% endif %}>
+  <head>
+    <meta charset="utf-8">
+    <title>{{ page_title }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <link rel="icon" type="image/ico" href="{{ url_for('static', filename='ico/favicon.ico') }}">
+    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+        <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <!-- Le styles -->
+    {% if g.locale.text_direction == 'rtl' -%}
+    <link rel="stylesheet" href="{{ asset_url_for('styles-rtl.css') }}">
+    {%- else -%}
+    <link rel="stylesheet" href="{{ asset_url_for('styles.css') }}">
+    {%- endif %}
+    {% block stylesheets %}{% endblock %}
+    {% block head %}{% endblock %}
+    {%- if not debug and gtm_key %}
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','{{ gtm_key }}');</script>
+    <!-- End Google Tag Manager -->
+    {%- endif %}
+  </head>
+  <body>
+    {%- if not debug and gtm_key %}
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id={{ gtm_key }}" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+    {%- endif %}
+    <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('dashboard.index') }}" data-config-id="brand">
+                {% if g.deployment.logo %}
+                <img src="{{ g.deployment.logo }}" title="Apollo" class="navbrand-logo">
+                {% else %}Apollo{% endif %}
+            </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="{{ _('Toggle Navigation') }}"><span
+                    class="navbar-toggler-icon"></span></button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <div class="d-flex flex-column flex-lg-row align-items-start justify-content-between w-100">
+                    <ul class="navbar-nav order-2 order-lg-1">
+                        {% autoescape False %}
+                        {% for menu_item in current_menu.submenu('main').children %}
+                        {% if not menu_item.has_visible_child() and menu_item.visible %}
+                        <li class="nav-item">
+                            <a class="nav-link {%- if menu_item.active %} active{% endif %}" href="{{ menu_item.url }}">{{ menu_item.text }} {%- if menu_item.active %}<span class="sr-only">(current)</span>{% endif %}</a>
+                        </li>
+                        {% elif menu_item.visible %}
+                        <li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown">{{ menu_item.text }}</a>
+                            <div class="dropdown-menu">
+                                {% if menu_item.children|count < 2 %}
+                                {% for submenu_item in menu_item.children[0].dynamic_list %}
+                                <a class="dropdown-item" href="{{ submenu_item.url }}">{{ submenu_item.text }}</a>
+                                {% endfor %}
+                                {% else %}
+                                {% for submenu_item in menu_item.children %}
+                                {% if submenu_item.visible %}
+                                <div class="dropdown-header">{{ submenu_item.text }}</div>
+                                {% for subsubmenu_item in submenu_item.dynamic_list %}
+                                <a class="dropdown-item" href="{{ subsubmenu_item.url }}">{{ subsubmenu_item.text }}</a>
+                                {% endfor %}
+                                {% endif %}
+                                {% endfor %}
+                                {% endif %}
+                            </div>
+                        </li>
+                        {% endif %}
+                        {% endfor %}
+                        {% endautoescape %}
+                    </ul>
+                    <ul class="navbar-nav order-1 order-lg-2">
+                        <li class="nav-item"><a class="nav-link disabled" href="">{{ g.event.name }}</a></li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true"
+                                aria-expanded="false">Profile</a>
+                            <div class="dropdown-menu dropdown-menu-right">
+                                <a class="dropdown-item disabled" href="#">{{ current_user.email }}</a>
+                                <div class="dropdown-divider"></div>
+                                {%- if current_menu.submenu('user.events').visible %}
+                                <a class="dropdown-item" href="{{ current_menu.submenu('user.events').url }}">{{ current_menu.submenu('user.events').text }}</a>
+                                <div class="dropdown-divider"></div>
+                                {%- endif %}
+                                {%- if current_user.is_admin() %}
+                                <a class="dropdown-item" href="{{ url_for('deployment.index_view') }}">{{ _('Admin') }}</a>
+                                <div class="dropdown-divider"></div>
+                                {%- endif %}
+                                <a class="dropdown-item" href="{{ url_for('users.user_profile') }}">{{ _('Account Settings') }}</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="{{ url_for_security('logout') }}">{{ _('Logout') }}</a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-2">
+        <div class="d-flex justify-content-between align-items-md-center flex-column flex-md-row">
+            <nav class="nav" aria-label="breadcrumb">
+                <ol class="breadcrumb mb-n2">
+                    {% block title -%}
+                    <li class="breadcrumb-item">{{ page_title }}</li>
+                    <li class="breadcrumb-item active" aria-current="page">{{ page_subtitle }}</li>
+                    {%- endblock %}
+                </ol>
+            </nav>
+            <div class="d-flex justify-content-between align-items-start flex-column flex-md-row mt-2">
+                {% block toolbar %}{% endblock %}
+            </div>
+        </div>
+
+        <div class="card mt-3 border-0">
+            {% block content %}{% endblock %}
+        </div>
+
+        <footer class="py-3">
+            <div class="d-flex justify-content-start mt-0 pt-3">
+                <p class="small text-muted" data-config-id="copyright">Apollo v{{ config.VERSION }} &mdash; Built with <span class="text-danger">&hearts;</span> from Lagos</p>
+            </div>
+        </footer>
+    </div>
+
+    {% if g.locale.text_direction == 'rtl' -%}
+    <script type="text/javascript" src="{{ asset_url_for('scripts-rtl.js') }}" charset="utf-8"></script>
+    {%- else -%}
+    <script type="text/javascript" src="{{ asset_url_for('scripts.js') }}" charset="utf-8"></script>
+    {%- endif %}
+    {%- block scripts -%}{%- endblock -%}
+    {% if not debug and ga_key %}
+    <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', '{{ ga_key }}']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+    {% endif %}
+  </body>
+</html>

@@ -2,85 +2,95 @@
 <tr>
     {% if request.args.sort_by == 'id' %}
     {% if request.args.sort_direction == 'desc' %}
-    <th class="text-right shrink"><a href="{{ modify_query(sort_by='id', sort_direction='asc', page='') }}">{{ _('ID') }} <i class="glyphicon glyphicon-chevron-down"></i></a></th>
+    <th scope="col" class="text-right col-1"><a class="text-decoration-none" href="{{ modify_query(sort_by='id', sort_direction='asc', page='') }}">{{ _('ID') }} <i class="fa fa-chevron-down"></i></a></th>
     {% else %}
-    <th class="text-right shrink"><a href="{{ modify_query(sort_by='id', sort_direction='desc', page='') }}">{{ _('ID') }} <i class="glyphicon glyphicon-chevron-up"></i></a></th>
+    <th scope="col" class="text-right col-1"><a class="text-decoration-none" href="{{ modify_query(sort_by='id', sort_direction='desc', page='') }}">{{ _('ID') }} <i class="fa fa-chevron-up"></i></a></th>
     {% endif %}
     {% else %}
-    <th class="text-right shrink"><a href="{{ modify_query(sort_by='id', sort_value='', sort_direction='', page='') }}">{{ _('ID') }}</a></th>
+    <th scope="col" class="text-right col-1"><a class="text-decoration-none" href="{{ modify_query(sort_by='id', sort_value='', sort_direction='', page='') }}">{{ _('ID') }}</a></th>
     {% endif %}
     {% for location_type in location_types %}
     {% if request.args.sort_by == 'location' and request.args.sort_value == location_type.id|string %}
     {% if request.args.sort_direction == 'desc' %}
-    <th><a href="{{ modify_query(sort_by='location', sort_value=location_type.id, sort_direction='asc', page='') }}">{{ location_type.name }} <i class="glyphicon glyphicon-chevron-down"></i></a></th>
+    <th scope="col">
+        <a class="text-decoration-none" href="{{ modify_query(sort_by='location', sort_value=location_type.id, sort_direction='asc', page='') }}">{{ location_type.name }} <i class="fa fa-chevron-down"></i></a>
+    </th>
     {% else %}
-    <th><a href="{{ modify_query(sort_by='location', sort_value=location_type.id, sort_direction='desc', page='') }}">{{ location_type.name }} <i class="glyphicon glyphicon-chevron-up"></i></a></th>
+    <th scope="col">
+        <a class="text-decoration-none" href="{{ modify_query(sort_by='location', sort_value=location_type.id, sort_direction='desc', page='') }}">{{ location_type.name }} <i class="fa fa-chevron-up"></i></a>
+    </th>
     {% endif %}
     {% else %}
-    <th><a href="{{ modify_query(sort_by='location', sort_value=location_type.id, sort_direction='', page='') }}">{{ location_type.name }}</a></th>
+    <th scope="col"><a class="text-decoration-none" href="{{ modify_query(sort_by='location', sort_value=location_type.id, sort_direction='', page='') }}">{{ location_type.name }}</a></th>
     {% endif %}
     {% endfor %}
     {% if request.args.sort_by == 'participant' %}
     {% if request.args.sort_direction == 'desc' %}
-    <th><a href="{{ modify_query(sort_by='participant', sort_direction='asc', page='') }}">{{ _('Participant') }} <i class="glyphicon glyphicon-chevron-down"></i></a></th>
+    <th scope="col"><a class="text-decoration-none" href="{{ modify_query(sort_by='participant', sort_direction='asc', page='') }}">{{ _('Participant') }} <i class="fa fa-chevron-down"></i></a></th>
     {% else %}
-    <th><a href="{{ modify_query(sort_by='participant', sort_direction='desc', page='') }}">{{ _('Participant') }} <i class="glyphicon glyphicon-chevron-up"></i></a></th>
+    <th scope="col"><a class="text-decoration-none" href="{{ modify_query(sort_by='participant', sort_direction='desc', page='') }}">{{ _('Participant') }} <i class="fa fa-chevron-up"></i></a></th>
     {% endif %}
     {% else %}
-    <th><a href="{{ modify_query(sort_by='participant', sort_value='', sort_direction='', page='') }}">{{ _('Participant') }}</a></th>
+    <th scope="col"><a class="text-decoration-none" href="{{ modify_query(sort_by='participant', sort_value='', sort_direction='', page='') }}">{{ _('Participant') }}</a></th>
     {% endif %}
     {% if request.args.sort_by == 'phone' %}
     {% if request.args.sort_direction == 'desc' %}
-    <th><a href="{{ modify_query(sort_by='phone', sort_direction='asc', page='') }}">{{ _('Phone') }} <i class="glyphicon glyphicon-chevron-down"></i></a></th>
+    <th scope="col"><a class="text-decoration-none" href="{{ modify_query(sort_by='phone', sort_direction='asc', page='') }}">{{ _('Phone') }} <i class="fa fa-chevron-down"></i></a></th>
     {% else %}
-    <th><a href="{{ modify_query(sort_by='phone', sort_direction='desc', page='') }}">{{ _('Phone') }} <i class="glyphicon glyphicon-chevron-up"></i></a></th>
+    <th scope="col"><a class="text-decoration-none" href="{{ modify_query(sort_by='phone', sort_direction='desc', page='') }}">{{ _('Phone') }} <i class="fa fa-chevron-up"></i></a></th>
     {% endif %}
     {% else %}
-    <th><a href="{{ modify_query(sort_by='phone', sort_value='', sort_direction='', page='') }}">{{ _('Phone') }}</a></th>
+    <th scope="col"><a class="text-decoration-none" href="{{ modify_query(sort_by='phone', sort_value='', sort_direction='', page='') }}">{{ _('Phone') }}</a></th>
     {% endif %}
     {% if form.form_type == 'CHECKLIST' %}
     {% for group in form.data.groups %}
-    <th class="text-center">{% if group.name|count > 12 %}<abbr title="{{ group.name }}">{{ group.name|truncate(7, True) }}</abbr>{% else %}{{ group.name }}{% endif %}</th>
+    <th scope="col" class="text-center">{% if group.name|count > 12 %}<abbr title="{{ group.name }}">{{ group.name|truncate(7, True) }}</abbr>{% else %}{{ group.name }}{% endif %}</th>
     {% endfor %}
     {% else %}
     {% for field in form_fields %}
-    <th class="text-center"><abbr title="{{ field.description }}">{{ field.tag }}</abbr></th>
+    <th scope="col" class="text-center"><abbr title="{{ field.description }}">{{ field.tag }}</abbr></th>
     {% endfor %}
-    <th class="text-center"><abbr title="{{ _('Status') }}"><i class="glyphicon glyphicon-eye-open"></i></abbr></th>
+    <th scope="col" class="text-center"><abbr title="{{ _('Status') }}"><i class="fa fa-eye"></i></abbr></th>
     {% endif %}
-    <th class="text-center"><abbr title="{{ _('Sender Verification') }}"><i class="glyphicon glyphicon-phone"></i></abbr></th>
-    <th class="text-center"><abbr title="{{ _('Quarantine Status') }}"><i class="glyphicon glyphicon-exclamation-sign"></i></abbr></th>
-    <th class="text-center"><abbr title="{{ _('Online Status') }}"><i class="glyphicon glyphicon-signal"></i></abbr></th>
+    <th scope="col" class="text-center"><abbr title="{{ _('Sender Verification') }}"><i class="fa fa-mobile-alt"></i></abbr></th>
+    <th scope="col" class="text-center"><abbr title="{{ _('Quarantine Status') }}"><i class="fa fa-exclamation-triangle"></i></abbr></th>
+    <th scope="col" class="text-center"><abbr title="{{ _('Signal Status') }}"><i class="fa fa-phone"></i></abbr></th>
 </tr>
 {% endmacro %}
 {% macro submission_items(submissions, form, form_fields, location_types, perms) %}
 {% for submission in submissions %}
 <tr>
     {% if perms.edit_submission.can() %}
-    <td class="text-right shrink">
-        {% with comments_count = submission.comments|count -%}
-        {%- if comments_count == 1 %}
-        <i class="fa fa-comment-o" title="{{ ngettext('%(num)d comment', '%(num)d comments', comments_count) }}"></i>&nbsp;
-        {%- elif comments_count > 1 %}
-        <i class="fa fa-comments-o" title="{{ ngettext('%(num)d comment', '%(num)d comments', comments_count) }}"></i>&nbsp;
-        {%- endif %}{% endwith %}
-        <a href="{{ url_for('submissions.submission_edit', submission_id=submission.id) }}">{{ submission.participant.participant_id }}</a>
+    <td scope="row" class="text-monospace">
+        <div class="d-flex flex-row justify-content-between">
+            <div>
+                {% with comments_count = submission.comments|count -%}
+                {%- if comments_count == 1 -%}
+                <i class="fa fa-comment" title="{{ ngettext('%(num)d comment', '%(num)d comments', comments_count) }}"></i>&nbsp;
+                {%- elif comments_count > 1 -%}
+                <i class="fa fa-comments" title="{{ ngettext('%(num)d comment', '%(num)d comments', comments_count) }}"></i>&nbsp;
+                {%- endif -%}{%- endwith %}
+            </div>
+            <div class="text-right">
+                <a href="{{ url_for('submissions.submission_edit', submission_id=submission.id) }}">{{ submission.participant.participant_id }}</a>
+            </div>
+        </div>
     </td>
     {% else %}
-    <td class="text-center">{{ submission.participant.participant_id }}</td>
+    <td scope="row" class="text-center text-monospace">{{ submission.participant.participant_id }}</td>
     {% endif %}
     {% for location_type in location_types %}
-    <td>{{ submission.location.make_path()[location_type.name] }}</td>
+    <td class="text-monospace">{{ submission.location.make_path()[location_type.name] }}</td>
     {% endfor %}
-    <td>{{ submission.participant.name|default('', true) }}</td>
-    <td>{{ submission.participant.primary_phone|default('', true) }}</td>
+    <td class="text-monospace">{{ submission.participant.name|default('', true) }}</td>
+    <td class="text-monospace">{{ submission.participant.primary_phone|default('', true) }}</td>
     {%- if form.form_type == 'CHECKLIST' -%}
     {% for group in form.data.groups %}
     <td class="text-center">
-        {% if submission.completion(group.name) == 'Complete' %}<img src="{{ url_for('static', filename='img/tick.png') }}" alt="{{ _('complete') }}" title="{{ _('complete') }}" height="11" width="11">
-        {%- elif submission.completion(group.name) == 'Partial' %}<img src="{{ url_for('static', filename='img/caution.png') }}" alt="{{ _('partial') }}" title="{{ _('partial') }}" height="11" width="11">
-        {%- elif submission.completion(group.name) == 'Missing' %}<img src="{{ url_for('static', filename='img/red_dot.png') }}" alt="{{ _('missing') }}" title="{{ _('missing') }}" height="11" width="11">
-        {%- elif submission.completion(group.name) == 'Conflict' %}<img src="{{ url_for('static', filename='img/slash.png') }}" alt="{{ _('conflict') }}" title="{{ _('conflict') }}" height="11" width="11">
+        {% if submission.completion(group.name) == 'Complete' %}<i class="fa fa-check text-success" title="{{ _('Complete') }}"></i>
+        {%- elif submission.completion(group.name) == 'Partial' %}<i class="fa fa-exclamation-triangle text-warning" title="{{ _('Partial') }}"></i>
+        {%- elif submission.completion(group.name) == 'Missing' %}<i class="fa fa-times text-danger" title="{{ _('Missing') }}"></i>
+        {%- elif submission.completion(group.name) == 'Conflict' %}<i class="fa fa-exclamation-circle text-danger" title="{{ _('Conflict') }}"></i>
         {% endif %}
     </td>
     {% endfor %}
@@ -91,7 +101,7 @@
     {%- if (field['type'] == 'select') or not (field['type'] == 'integer') -%}
     {% if field['type'] == 'select' %}{%- set options = field.options|reverse_dict -%}<abbr title="{{ options[submission.data[field.tag]] }}">{{ submission.data[field.tag] }}</abbr>{% else %}{{ submission.data[field.tag] }}{% endif %}
     {%- else -%}
-    <i class="fa fa-check success" aria-hidden="true" title="{{ _('data present') }}"></i>
+    <i class="fa fa-check text-danger" aria-hidden="true" title="{{ _('Data Present') }}"></i>
     {% endif %}
     {% else %}
     &nbsp;
@@ -102,38 +112,38 @@
     {% if form.form_type == 'INCIDENT' %}
     {%- set status = submission.incident_status -%}
     {%- if status == 'confirmed' -%}
-    <i class="fa fa-check success" aria-hidden="true" title="{{ _('Confirmed') }}"></i>
+    <i class="fa fa-check text-success" aria-hidden="true" title="{{ _('Confirmed') }}"></i>
     {%- elif status == 'rejected' -%}
-    <i class="fa fa-circle error" aria-hidden="true" title="{{ _('Rejected') }}"></i>
+    <i class="fa fa-circle text-danger" aria-hidden="true" title="{{ _('Rejected') }}"></i>
     {%- elif status == 'citizen' -%}
-    <i class="fa fa-users neutral" aria-hidden="true" title="{{ _('Citizen Report') }}"></i>
+    <i class="fa fa-users text-warming" aria-hidden="true" title="{{ _('Citizen Report') }}"></i>
     {%- else -%}
-    <i class="fa fa-exclamation-triangle warning" aria-hidden="true" title="{{ _('Unmarked') }}"></i>
+    <i class="fa fa-exclamation-triangle text-warning" aria-hidden="true" title="{{ _('Unmarked') }}"></i>
     {%- endif -%}
     {%- else -%}
     &nbsp;
     {%- endif -%}
     </td>
     {% endif %}
-    <td style="text-align: center">
+    <td class="text-center">
       {% if submission.sender_verified -%}
-      <i class="fa fa-check success" aria-hidden="true" title="{{ _('Verified') }}"></i>
+      <i class="fa fa-check text-success" aria-hidden="true" title="{{ _('Verified') }}"></i>
       {%- else -%}
-      <i class="fa fa-exclamation-triangle warning" aria-hidden="true" title="{{ _('Unverified') }}"></i>
+      <i class="fa fa-exclamation-triangle text-warning" aria-hidden="true" title="{{ _('Unverified') }}"></i>
       {% endif %}
     </td>
-    <td style="text-align: center">
+    <td class="text-center">
         {% if not submission.quarantine_status -%}
-        <i class="fa fa-check success" aria-hidden="true" title="{{ _('OK') }}"></i>
+        <i class="fa fa-check text-success" aria-hidden="true" title="{{ _('OK') }}"></i>
         {%- else -%}
-        <i class="fa fa-exclamation-triangle warning" aria-hidden="true" title="{{ _('Quarantined') }}"></i>
+        <i class="fa fa-exclamation-triangle text-warning" aria-hidden="true" title="{{ _('Quarantined') }}"></i>
         {% endif %}
     </td>
-    <td style="text-align: center">
-        {% if not submission.unreachable -%}
-        <i class="fa fa-toggle-on success" aria-hidden="true" title="{{ _('Online') }}"></i>
+    <td class="text-center">
+        {% if submission.unreachable -%}
+        <i class="fa fa-phone-slash text-danger" aria-hidden="true" title="{{ _('No Signal') }}"></i>
         {%- else -%}
-        <i class="fa fa-toggle-off text-muted" aria-hidden="true" title="{{ _('Offline') }}"></i>
+        <i class="fa fa-phone text-success" aria-hidden="true" title="{{ _('Signal') }}"></i>
         {% endif %}
     </td>
 </tr>
@@ -141,25 +151,25 @@
 {% if perms.edit_submission.can() %}
 {% if form.form_type == 'CHECKLIST' %}
 {%- set colspan = 6 + (location_types|length) + form.data.groups|length -%}
-<tr class="warning">
-    <td class="text-center" colspan="{{ colspan }}">{{ _('No Data Available') }}</td>
+<tr class="table-warning">
+    <td class="text-center text-muted" colspan="{{ colspan }}">{{ _('No Data Available') }}</td>
 </tr>
 {% else %}
 {%- set colspan = 7 + (location_types|length) + form_fields|length -%}
-<tr class="warning">
-    <td class="text-center" colspan="{{ colspan }}">{{ _('No Data Available') }}</td>
+<tr class="table-warning">
+    <td class="text-center text-muted" colspan="{{ colspan }}">{{ _('No Data Available') }}</td>
 </tr>
 {% endif %}
 {% else %}
 {% if form.form_type == 'CHECKLIST' %}
 {%- set colspan = 5 + (location_types|length) + form.data.groups|length -%}
-<tr class="warning">
-    <td class="text-center" colspan="{{ colspan }}">{{ _('No Data Available') }}</td>
+<tr class="table-warning">
+    <td class="text-center text-muted" colspan="{{ colspan }}">{{ _('No Data Available') }}</td>
 </tr>
 {% else %}
 {%- set colspan = 6 + (location_types|length) + form_fields|length -%}
-<tr class="warning">
-    <td class="text-center" colspan="{{ colspan }}">{{ _('No Data Available') }}</td>
+<tr class="table-warning">
+    <td class="text-center text-muted" colspan="{{ colspan }}">{{ _('No Data Available') }}</td>
 </tr>
 {% endif %}
 {% endif %}

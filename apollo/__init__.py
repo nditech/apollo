@@ -108,7 +108,7 @@ def create_app(settings_override=None, register_security_blueprint=True):
     @app.after_request
     def content_security_policy(response):
         response.headers['Content-Security-Policy'] = "default-src 'self' " + \
-            "*.googlecode.com *.google-analytics.com " + \
+            "*.googlecode.com *.google-analytics.com fonts.gstatic.com " + \
             "*.googletagmanager.com " + \
             "cdn.heapanalytics.com heapanalytics.com " + \
             "fontlibrary.org " + \

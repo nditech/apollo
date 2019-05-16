@@ -18,6 +18,17 @@ module.exports = {
     module: {
         rules: [
             {
+                test: /\.(ttf|otf|eot|svg|woff(2)?)(\?[a-z0-9]+)?$/,
+                use: [
+                    {
+                        loader: 'file-loader',
+                        options: {
+                            outputPath: 'webfonts'
+                        },
+                    },
+                ]
+            },
+            {
                 test: /\.(sc|sa|c)ss$/,
                 use: [
                     MiniCssExtractPlugin.loader,
@@ -61,7 +72,7 @@ module.exports = {
             'node_modules'
         ],
         alias: {
-            jquery: 'jquery/dist/jquery.slim.min.js'
+            jquery: 'jquery/dist/jquery.min.js'
         }
     },
     optimization: {
