@@ -16,6 +16,7 @@ from ..frontend.helpers import (
     get_checklist_form_dashboard_menu)
 from ..locations.models import LocationType, Location
 from ..deployments.models import Event
+from ..submissions.filters import make_dashboard_filter
 from ..submissions.models import Submission
 from ..formsframework.models import Form
 from apollo.services import events
@@ -51,6 +52,7 @@ def main_dashboard(form_id=None):
             Form.form_type == 'CHECKLIST',
             Form.id == form_id).first_or_404()
 
+    filter_class = make_dashboard_filter(event)
     if form is not None:
         page_title = _('Dashboard · %(name)s', name=form.name)
     else:
@@ -59,21 +61,11 @@ def main_dashboard(form_id=None):
     query = Submission.query.filter(
         Submission.event_id == event.id,
         Submission.form == form,
-        Submission.submission_type == 'M')
-
-    # dashboard_filter = dashboard_filterset()(query, data=args)
-
-    # queryset = submissions.find(
-    #     form=form,
-    #     submission_type='M'
-    # )
-    # filter_ = dashboard_filterset()(queryset, data=args)
-
-    # obs_queryset = submissions.find(
-    #     form=form,
-    #     submission_type='O'
-    # )
-    # obs_filter_ = dashboard_filterset()(obs_queryset, data=args)
+        Submission.submission_type == 'M').join(
+            Location,
+            Submission.location_id == Location.id
+        )
+    query_filterset = filter_class(query, request.args)
 
     location = None
     if args.get('location'):
@@ -81,14 +73,8 @@ def main_dashboard(form_id=None):
             Location.id == args.get('location'),
             Location.location_set_id == event.location_set_id).first_or_404()
 
-    # # activate sample filter
-    # filter_form = filter_.form
-    # queryset = filter_.qs
-    # obs_queryset = obs_filter_.qs
-    # next_location_type = False
-
     if not group_slug:
-        data = get_coverage(query, form)
+        data = get_coverage(query_filterset.qs, form)
         # obs_data = get_coverage(obs_queryset)
     else:
         group = next(
@@ -152,28 +138,13 @@ def main_dashboard(form_id=None):
     #     data = get_coverage(queryset, group, location_type)
     #     obs_data = get_coverage(obs_queryset, group, location_type)
 
-    # # load the page context
-    # location_id = args.pop('location', '')
-    # context = {
-    #     'args': args,
-    #     'location_id': '',
-    #     'next_location': False,
-    #     'data': [],
-    #     'obs_data': [],
-    #     'filter_form': None,
-    #     'page_title': 'page_title',
-    #     'location': location,
-    #     'locationtype': getattr(next_location_type, 'id', ''),
-    #     'group': group or '',
-    #     'form_id': str(form.pk) if form else None
-    # }
     context = {
         'args': {},
         'location_id': '',
         'next_location': next_location_type,
         'data': data,
         'obs_data': [],
-        'filter_form': None,
+        'filter_form': query_filterset.form,
         'page_title': page_title,
         'location': location,
         'locationtype': getattr(next_location_type, 'id', ''),
