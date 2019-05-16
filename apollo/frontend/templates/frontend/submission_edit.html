@@ -20,7 +20,7 @@
 <table class="table table-bordered">
 {%- if form.form_type == 'CHECKLIST' -%}
 <tr>
-  <th width="15%">&nbsp;</th>
+  <th width="15%">{{ _('Observer') }}</th>
   <th>{{ _('Observer %(index)s', index=1) }}</th>
   {%- for sib in siblings -%}
   <th>{{ _('Observer %(index)s', index=loop.index + 1) }}</th>
