@@ -11,7 +11,7 @@ from wtforms.widgets import html_params, HTMLString
 from wtforms_alchemy.fields import QuerySelectField
 
 from apollo import models, services
-from apollo.core import CharFilter, ChoiceFilter, FilterSet
+from apollo.core import BooleanFilter, CharFilter, ChoiceFilter, FilterSet
 from apollo.helpers import _make_choices
 
 
@@ -159,7 +159,7 @@ class FormGroupFilter(ChoiceFilter):
             return (None, None)
         else:
             form_ = kwargs['form']
-            if form_.data and form_.data.get('conjunction') == 'OR':
+            if form_.data and form_.data.get('conjunction') is True:
                 # OR conjunction
                 return (None, constraint)
             else:
@@ -352,11 +352,9 @@ def make_submission_list_filter(event, form):
     attributes['participant_id'] = ParticipantIDFilter()
     attributes['location'] = make_submission_location_filter(
         event.location_set_id)()
-    attributes['conjunction'] = ChoiceFilter(
-        choices=(
-            ('AND', _('AND Conjunction')),
-            ('OR', _('OR Conjunction')),
-        ))
+    attributes['conjunction'] = BooleanFilter(
+        label=_('Optional Inclusion')
+    )
     attributes['online_status'] = OnlineStatusFilter(
         choices=(
             ('', _('Online Status')),

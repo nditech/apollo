@@ -98,6 +98,10 @@ class ChoiceFilter(Filter):
     field_class = fields.SelectField
 
 
+class BooleanFilter(Filter):
+    field_class = fields.BooleanField
+
+
 def get_declared_filters(bases, attrs, use_base_filters=True):
     """Creates an ordered dictionary of all `class`Filter instances
     declared in a `class`FilterSet, and optionally assigns a name to
