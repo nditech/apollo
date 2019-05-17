@@ -35,6 +35,7 @@ def main_dashboard(form_id=None):
     next_location_type = None
 
     template_name = 'frontend/dashboard.html'
+    breadcrumbs = [_('Dashboard')]
 
     event = get_event()
     if not form_id:
@@ -54,9 +55,7 @@ def main_dashboard(form_id=None):
 
     filter_class = make_dashboard_filter(event)
     if form is not None:
-        page_title = _('Dashboard · %(name)s', name=form.name)
-    else:
-        page_title = _('Dashboard')
+        breadcrumbs.append(form.name)
 
     query = Submission.query.filter(
         Submission.event_id == event.id,
@@ -82,9 +81,7 @@ def main_dashboard(form_id=None):
              if grp['slug'] == group_slug), None)
         if group is None:
             abort(404)
-        page_title = _(
-            'Dashboard · %(name)s  · %(group)s',
-            name=form.name, group=group['name'])
+        breadcrumbs.append(group['name'])
 
         admin_location_types = LocationType.query.filter(
             LocationType.is_administrative == True,  # noqa
@@ -145,7 +142,7 @@ def main_dashboard(form_id=None):
         'data': data,
         'obs_data': [],
         'filter_form': query_filterset.form,
-        'page_title': page_title,
+        'breadcrumbs': breadcrumbs,
         'location': location,
         'locationtype': getattr(next_location_type, 'id', ''),
         'group': group or '',
