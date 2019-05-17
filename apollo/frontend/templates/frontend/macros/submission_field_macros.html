@@ -14,6 +14,15 @@
     </div>
     {% endfor %}
 {%- endmacro %}
+{% macro render_select_field(field, disabled=0, as_list=0) -%}
+    {%- if as_list -%}
+    {% for value, label, selected in field.iter_choices() | sort %}
+    <div class="radio"><label><input name="{{ field.name }}" type="radio" {% if selected %}checked{% endif %}{% if disabled %}disabled{% endif %}> <strong>({{ value | int }})</strong> {{ label }} </label></div>
+    {% endfor %}
+    {%- else -%}
+    {{ field(class_='form-control') }}
+    {%- endif -%}
+{%- endmacro %}
 {% macro render_radio_field(field, disabled=0) -%}
     {% for subfield in field %}
         <div class="radio">
@@ -30,6 +39,12 @@
 {{ render_radio_field(field, disabled) }}
 {% elif field.type == 'SelectMultipleField' %}
 {{ render_select_multi_field(field, disabled) }}
+{% elif field.type == 'SelectField' %}
+{%- if field.widget.__class__.__name__ == 'ListWidget' -%}
+{{ render_select_field(field, disabled, 1) }}
+{%- else -%}
+{{ render_select_field(field, disabled) }}
+{%- endif -%}
 {% else %}
 {% if disabled %}
 {{ field(class_='form-control', disabled='disabled') }}
