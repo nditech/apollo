@@ -15,7 +15,7 @@ from sqlalchemy import not_, or_
 from sqlalchemy.orm.attributes import flag_modified
 
 from apollo import services, utils
-from apollo.core import db, uploads
+from apollo.core import db, sentry, uploads
 from apollo.frontend import permissions, route
 from apollo.frontend.forms import (
     file_upload_form, generate_location_edit_form,
@@ -179,10 +179,13 @@ def location_headers(location_set_id, upload_id):
         UserUpload.id == upload_id, UserUpload.user == user).first_or_404()
     filepath = uploads.path(upload.upload_filename)
     try:
-        with open(filepath) as source_file:
+        with open(filepath, 'rb') as source_file:
             mapping_form_class = forms.make_import_mapping_form(
                 source_file, location_set)
     except Exception:
+        # log exception (if Sentry is enabled)
+        sentry.captureException()
+
         # delete loaded file
         os.remove(filepath)
         upload.delete()
