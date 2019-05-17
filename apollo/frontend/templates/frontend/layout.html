@@ -2,7 +2,7 @@
 <html lang="en"{% if g.locale.text_direction == 'rtl' %} dir="rtl"{% endif %}>
   <head>
     <meta charset="utf-8">
-    <title>{{ page_title }}</title>
+    <title>{{ breadcrumbs|join(' · ') }}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -109,8 +109,9 @@
             <nav class="nav mb-2" aria-label="breadcrumb">
                 <ol class="breadcrumb mb-n2">
                     {% block title -%}
-                    <li class="breadcrumb-item">{{ page_title }}</li>
-                    <li class="breadcrumb-item active" aria-current="page">{{ page_subtitle }}</li>
+                    {% for breadcrumb in breadcrumbs %}
+                    <li class="breadcrumb-item {%- if loop.last %} active{% endif %}" {%- if loop.last %} aria-current="page"{% endif %}>{{ breadcrumb }}</li>
+                    {% endfor %}
                     {%- endblock %}
                 </ol>
             </nav>

@@ -88,7 +88,6 @@ def submission_list(form_id):
     permissions.can_access_resource(form)
 
     filter_class = filters.make_submission_list_filter(event, form)
-    page_subtitle = form.name
     template_name = 'frontend/submission_list.html'
 
     data = request.args.to_dict(flat=False)
@@ -302,7 +301,7 @@ def submission_list(form_id):
 
     if form.form_type == 'CHECKLIST':
         form_fields = []
-        page_title = _("Checklists")
+        breadcrumbs = [_("Checklists"), form.name]
     else:
         if form.data and 'groups' in form.data:
             form_fields = [
@@ -310,7 +309,7 @@ def submission_list(form_id):
                 for field in group['fields'] if not field.get('is_comment')]
         else:
             form_fields = []
-        page_title = _("Critical Incidents")
+        breadcrumbs = [_("Critical Incidents"), form.name]
 
     return render_template(
         template_name,
@@ -320,8 +319,7 @@ def submission_list(form_id):
         form_fields=form_fields,
         location_types=loc_types,
         location=location,
-        page_title=page_title,
-        page_subtitle=page_subtitle,
+        breadcrumbs=breadcrumbs,
         pager=query_filterset.qs.paginate(
             page=page, per_page=current_app.config.get('PAGE_SIZE'))
     )
