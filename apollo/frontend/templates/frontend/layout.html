@@ -29,7 +29,7 @@
     <!-- End Google Tag Manager -->
     {%- endif %}
   </head>
-  <body>
+  <body style="overflow-y: scroll">
     {%- if not debug and gtm_key %}
     <!-- Google Tag Manager (noscript) -->
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id={{ gtm_key }}" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
@@ -105,8 +105,8 @@
     </nav>
 
     <div class="container mt-2">
-        <div class="d-flex justify-content-between align-items-md-center flex-column flex-md-row">
-            <nav class="nav" aria-label="breadcrumb">
+        <div class="d-flex justify-content-between align-items-md-center flex-column flex-md-row mb-n2">
+            <nav class="nav mb-2" aria-label="breadcrumb">
                 <ol class="breadcrumb mb-n2">
                     {% block title -%}
                     <li class="breadcrumb-item">{{ page_title }}</li>
@@ -114,7 +114,7 @@
                     {%- endblock %}
                 </ol>
             </nav>
-            <div class="d-flex justify-content-between align-items-start flex-column flex-md-row mt-2">
+            <div class="d-flex justify-content-between align-items-start flex-column flex-md-row">
                 {% block toolbar %}{% endblock %}
             </div>
         </div>
