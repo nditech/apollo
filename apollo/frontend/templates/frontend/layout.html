@@ -2,7 +2,7 @@
 <html lang="en"{% if g.locale.text_direction == 'rtl' %} dir="rtl"{% endif %}>
   <head>
     <meta charset="utf-8">
-    <title>{{ page_title }}</title>
+    <title>{{ breadcrumbs|join(' · ') }}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -29,7 +29,7 @@
     <!-- End Google Tag Manager -->
     {%- endif %}
   </head>
-  <body>
+  <body style="overflow-y: scroll">
     {%- if not debug and gtm_key %}
     <!-- Google Tag Manager (noscript) -->
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id={{ gtm_key }}" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
@@ -105,16 +105,17 @@
     </nav>
 
     <div class="container mt-2">
-        <div class="d-flex justify-content-between align-items-md-center flex-column flex-md-row">
-            <nav class="nav" aria-label="breadcrumb">
+        <div class="d-flex justify-content-between align-items-md-center flex-column flex-md-row mb-n2">
+            <nav class="nav mb-2" aria-label="breadcrumb">
                 <ol class="breadcrumb mb-n2">
                     {% block title -%}
-                    <li class="breadcrumb-item">{{ page_title }}</li>
-                    <li class="breadcrumb-item active" aria-current="page">{{ page_subtitle }}</li>
+                    {% for breadcrumb in breadcrumbs %}
+                    <li class="breadcrumb-item {%- if loop.last %} active{% endif %}" {%- if loop.last %} aria-current="page"{% endif %}>{{ breadcrumb }}</li>
+                    {% endfor %}
                     {%- endblock %}
                 </ol>
             </nav>
-            <div class="d-flex justify-content-between align-items-start flex-column flex-md-row mt-2">
+            <div class="d-flex justify-content-between align-items-start flex-column flex-md-row">
                 {% block toolbar %}{% endblock %}
             </div>
         </div>

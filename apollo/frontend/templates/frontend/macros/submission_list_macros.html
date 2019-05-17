@@ -61,7 +61,7 @@
 {% for submission in submissions %}
 <tr>
     {% if perms.edit_submission.can() %}
-    <td scope="row" class="text-monospace">
+    <td class="text-monospace">
         <div class="d-flex flex-row justify-content-between">
             <div>
                 {% with comments_count = submission.comments|count -%}
@@ -77,7 +77,7 @@
         </div>
     </td>
     {% else %}
-    <td scope="row" class="text-center text-monospace">{{ submission.participant.participant_id }}</td>
+    <td class="text-center text-monospace">{{ submission.participant.participant_id }}</td>
     {% endif %}
     {% for location_type in location_types %}
     <td class="text-monospace">{{ submission.location.make_path()[location_type.name] }}</td>
