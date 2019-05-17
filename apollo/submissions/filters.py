@@ -243,7 +243,6 @@ class OnlineStatusFilter(ChoiceFilter):
 class LocationSelectWidget(widgets.Select):
     @classmethod
     def render_option(cls, value, label, selected, **kwargs):
-        print(type(label))
         options = dict(kwargs, value=value)
         if selected:
             options['selected'] = True
