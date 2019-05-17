@@ -327,6 +327,8 @@ class RoleAdminView(BaseAdminView):
 
 
 class SetViewMixin(object):
+    column_filters = ('name',)
+
     def on_model_change(self, form, model, is_created):
         if is_created:
             model.deployment_id = current_user.deployment.id
