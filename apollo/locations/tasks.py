@@ -258,7 +258,7 @@ def import_locations(upload_id, mappings, location_set_id):
         upload.delete()
         return
 
-    with open(filepath) as f:
+    with open(filepath, 'rb') as f:
         dataframe = helpers.load_source_file(f)
 
     location_set = LocationSet.query.filter(
