@@ -516,6 +516,140 @@ def upgrade():
                                  VALUES (:value, 1, :uuid)"""), uuid=uuid4().hex,
                                  value=need.value)
 
+    # clerk
+    conn.execute(text("""INSERT INTO roles_permissions (role_id, permission_id)
+                 VALUES ((SELECT id FROM role WHERE deployment_id=1 AND name=:role),
+                 (SELECT id FROM permission WHERE deployment_id=1 AND name=:permission))
+                 ON CONFLICT DO NOTHING"""), role='clerk', permission='add_submission')
+    conn.execute(text("""INSERT INTO roles_permissions (role_id, permission_id)
+                 VALUES ((SELECT id FROM role WHERE deployment_id=1 AND name=:role),
+                 (SELECT id FROM permission WHERE deployment_id=1 AND name=:permission))
+                 ON CONFLICT DO NOTHING"""), role='clerk', permission='edit_both_submissions')
+    conn.execute(text("""INSERT INTO roles_permissions (role_id, permission_id)
+                 VALUES ((SELECT id FROM role WHERE deployment_id=1 AND name=:role),
+                 (SELECT id FROM permission WHERE deployment_id=1 AND name=:permission))
+                 ON CONFLICT DO NOTHING"""), role='clerk', permission='edit_submission')
+    conn.execute(text("""INSERT INTO roles_permissions (role_id, permission_id)
+                 VALUES ((SELECT id FROM role WHERE deployment_id=1 AND name=:role),
+                 (SELECT id FROM permission WHERE deployment_id=1 AND name=:permission))
+                 ON CONFLICT DO NOTHING"""), role='clerk', permission='view_messages')
+    conn.execute(text("""INSERT INTO roles_permissions (role_id, permission_id)
+                 VALUES ((SELECT id FROM role WHERE deployment_id=1 AND name=:role),
+                 (SELECT id FROM permission WHERE deployment_id=1 AND name=:permission))
+                 ON CONFLICT DO NOTHING"""), role='clerk', permission='view_participants')
+    conn.execute(text("""INSERT INTO roles_permissions (role_id, permission_id)
+                 VALUES ((SELECT id FROM role WHERE deployment_id=1 AND name=:role),
+                 (SELECT id FROM permission WHERE deployment_id=1 AND name=:permission))
+                 ON CONFLICT DO NOTHING"""), role='clerk', permission='view_events')
+
+    # manager
+    conn.execute(text("""INSERT INTO roles_permissions (role_id, permission_id)
+                 VALUES ((SELECT id FROM role WHERE deployment_id=1 AND name=:role),
+                 (SELECT id FROM permission WHERE deployment_id=1 AND name=:permission))
+                 ON CONFLICT DO NOTHING"""), role='manager', permission='add_submission')
+    conn.execute(text("""INSERT INTO roles_permissions (role_id, permission_id)
+                 VALUES ((SELECT id FROM role WHERE deployment_id=1 AND name=:role),
+                 (SELECT id FROM permission WHERE deployment_id=1 AND name=:permission))
+                 ON CONFLICT DO NOTHING"""), role='manager', permission='edit_both_submissions')
+    conn.execute(text("""INSERT INTO roles_permissions (role_id, permission_id)
+                 VALUES ((SELECT id FROM role WHERE deployment_id=1 AND name=:role),
+                 (SELECT id FROM permission WHERE deployment_id=1 AND name=:permission))
+                 ON CONFLICT DO NOTHING"""), role='manager', permission='edit_submission')
+    conn.execute(text("""INSERT INTO roles_permissions (role_id, permission_id)
+                 VALUES ((SELECT id FROM role WHERE deployment_id=1 AND name=:role),
+                 (SELECT id FROM permission WHERE deployment_id=1 AND name=:permission))
+                 ON CONFLICT DO NOTHING"""), role='manager', permission='edit_submission_quarantine_status')
+    conn.execute(text("""INSERT INTO roles_permissions (role_id, permission_id)
+                 VALUES ((SELECT id FROM role WHERE deployment_id=1 AND name=:role),
+                 (SELECT id FROM permission WHERE deployment_id=1 AND name=:permission))
+                 ON CONFLICT DO NOTHING"""), role='manager', permission='edit_submission_verification_status')
+    conn.execute(text("""INSERT INTO roles_permissions (role_id, permission_id)
+                 VALUES ((SELECT id FROM role WHERE deployment_id=1 AND name=:role),
+                 (SELECT id FROM permission WHERE deployment_id=1 AND name=:permission))
+                 ON CONFLICT DO NOTHING"""), role='manager', permission='send_messages')
+    conn.execute(text("""INSERT INTO roles_permissions (role_id, permission_id)
+                 VALUES ((SELECT id FROM role WHERE deployment_id=1 AND name=:role),
+                 (SELECT id FROM permission WHERE deployment_id=1 AND name=:permission))
+                 ON CONFLICT DO NOTHING"""), role='manager', permission='view_events')
+    conn.execute(text("""INSERT INTO roles_permissions (role_id, permission_id)
+                 VALUES ((SELECT id FROM role WHERE deployment_id=1 AND name=:role),
+                 (SELECT id FROM permission WHERE deployment_id=1 AND name=:permission))
+                 ON CONFLICT DO NOTHING"""), role='manager', permission='view_messages')
+    conn.execute(text("""INSERT INTO roles_permissions (role_id, permission_id)
+                 VALUES ((SELECT id FROM role WHERE deployment_id=1 AND name=:role),
+                 (SELECT id FROM permission WHERE deployment_id=1 AND name=:permission))
+                 ON CONFLICT DO NOTHING"""), role='manager', permission='view_participants')
+    conn.execute(text("""INSERT INTO roles_permissions (role_id, permission_id)
+                 VALUES ((SELECT id FROM role WHERE deployment_id=1 AND name=:role),
+                 (SELECT id FROM permission WHERE deployment_id=1 AND name=:permission))
+                 ON CONFLICT DO NOTHING"""), role='manager', permission='view_quality_assurance')
+
+    # analyst
+    conn.execute(text("""INSERT INTO roles_permissions (role_id, permission_id)
+                 VALUES ((SELECT id FROM role WHERE deployment_id=1 AND name=:role),
+                 (SELECT id FROM permission WHERE deployment_id=1 AND name=:permission))
+                 ON CONFLICT DO NOTHING"""), role='analyst', permission='add_submission')
+    conn.execute(text("""INSERT INTO roles_permissions (role_id, permission_id)
+                 VALUES ((SELECT id FROM role WHERE deployment_id=1 AND name=:role),
+                 (SELECT id FROM permission WHERE deployment_id=1 AND name=:permission))
+                 ON CONFLICT DO NOTHING"""), role='analyst', permission='edit_both_submissions')
+    conn.execute(text("""INSERT INTO roles_permissions (role_id, permission_id)
+                 VALUES ((SELECT id FROM role WHERE deployment_id=1 AND name=:role),
+                 (SELECT id FROM permission WHERE deployment_id=1 AND name=:permission))
+                 ON CONFLICT DO NOTHING"""), role='analyst', permission='edit_participant')
+    conn.execute(text("""INSERT INTO roles_permissions (role_id, permission_id)
+                 VALUES ((SELECT id FROM role WHERE deployment_id=1 AND name=:role),
+                 (SELECT id FROM permission WHERE deployment_id=1 AND name=:permission))
+                 ON CONFLICT DO NOTHING"""), role='analyst', permission='edit_submission')
+    conn.execute(text("""INSERT INTO roles_permissions (role_id, permission_id)
+                 VALUES ((SELECT id FROM role WHERE deployment_id=1 AND name=:role),
+                 (SELECT id FROM permission WHERE deployment_id=1 AND name=:permission))
+                 ON CONFLICT DO NOTHING"""), role='analyst', permission='edit_submission_quarantine_status')
+    conn.execute(text("""INSERT INTO roles_permissions (role_id, permission_id)
+                 VALUES ((SELECT id FROM role WHERE deployment_id=1 AND name=:role),
+                 (SELECT id FROM permission WHERE deployment_id=1 AND name=:permission))
+                 ON CONFLICT DO NOTHING"""), role='analyst', permission='edit_submission_verification_status')
+    conn.execute(text("""INSERT INTO roles_permissions (role_id, permission_id)
+                 VALUES ((SELECT id FROM role WHERE deployment_id=1 AND name=:role),
+                 (SELECT id FROM permission WHERE deployment_id=1 AND name=:permission))
+                 ON CONFLICT DO NOTHING"""), role='analyst', permission='export_messages')
+    conn.execute(text("""INSERT INTO roles_permissions (role_id, permission_id)
+                 VALUES ((SELECT id FROM role WHERE deployment_id=1 AND name=:role),
+                 (SELECT id FROM permission WHERE deployment_id=1 AND name=:permission))
+                 ON CONFLICT DO NOTHING"""), role='analyst', permission='export_participants')
+    conn.execute(text("""INSERT INTO roles_permissions (role_id, permission_id)
+                 VALUES ((SELECT id FROM role WHERE deployment_id=1 AND name=:role),
+                 (SELECT id FROM permission WHERE deployment_id=1 AND name=:permission))
+                 ON CONFLICT DO NOTHING"""), role='analyst', permission='export_submissions')
+    conn.execute(text("""INSERT INTO roles_permissions (role_id, permission_id)
+                 VALUES ((SELECT id FROM role WHERE deployment_id=1 AND name=:role),
+                 (SELECT id FROM permission WHERE deployment_id=1 AND name=:permission))
+                 ON CONFLICT DO NOTHING"""), role='analyst', permission='send_messages')
+    conn.execute(text("""INSERT INTO roles_permissions (role_id, permission_id)
+                 VALUES ((SELECT id FROM role WHERE deployment_id=1 AND name=:role),
+                 (SELECT id FROM permission WHERE deployment_id=1 AND name=:permission))
+                 ON CONFLICT DO NOTHING"""), role='analyst', permission='view_events')
+    conn.execute(text("""INSERT INTO roles_permissions (role_id, permission_id)
+                 VALUES ((SELECT id FROM role WHERE deployment_id=1 AND name=:role),
+                 (SELECT id FROM permission WHERE deployment_id=1 AND name=:permission))
+                 ON CONFLICT DO NOTHING"""), role='analyst', permission='view_messages')
+    conn.execute(text("""INSERT INTO roles_permissions (role_id, permission_id)
+                 VALUES ((SELECT id FROM role WHERE deployment_id=1 AND name=:role),
+                 (SELECT id FROM permission WHERE deployment_id=1 AND name=:permission))
+                 ON CONFLICT DO NOTHING"""), role='analyst', permission='view_participants')
+    conn.execute(text("""INSERT INTO roles_permissions (role_id, permission_id)
+                 VALUES ((SELECT id FROM role WHERE deployment_id=1 AND name=:role),
+                 (SELECT id FROM permission WHERE deployment_id=1 AND name=:permission))
+                 ON CONFLICT DO NOTHING"""), role='analyst', permission='view_quality_assurance')
+    conn.execute(text("""INSERT INTO roles_permissions (role_id, permission_id)
+                 VALUES ((SELECT id FROM role WHERE deployment_id=1 AND name=:role),
+                 (SELECT id FROM permission WHERE deployment_id=1 AND name=:permission))
+                 ON CONFLICT DO NOTHING"""), role='analyst', permission='view_process_analysis')
+    conn.execute(text("""INSERT INTO roles_permissions (role_id, permission_id)
+                 VALUES ((SELECT id FROM role WHERE deployment_id=1 AND name=:role),
+                 (SELECT id FROM permission WHERE deployment_id=1 AND name=:permission))
+                 ON CONFLICT DO NOTHING"""), role='analyst', permission='view_result_analysis')
+
     # ### end Alembic commands ###
 
 
