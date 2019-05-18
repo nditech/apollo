@@ -57,6 +57,10 @@ class ExtraDataInlineFormAdmin(InlineFormAdmin):
             model.deployment = g.deployment
             model.resource_type = model.__mapper_args__['polymorphic_identity']
 
+    def on_model_delete(self, model):
+        # if this model has a resource attached to it, delete it as well
+        models.Resource.query.filter_by(uuid=model.uuid).delete()
+
 
 class ExtraDataInlineFormList(InlineModelFormList):
     def __init__(self, frm, session, model, prop, inline_view, **kwargs):
