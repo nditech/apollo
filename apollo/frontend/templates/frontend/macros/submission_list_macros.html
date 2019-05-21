@@ -77,13 +77,13 @@
         </div>
     </td>
     {% else %}
-    <td class="text-center text-monospace">{{ submission.participant.participant_id }}</td>
+    <td class="text-monospace">{{ submission.participant.participant_id }}</td>
     {% endif %}
     {% for location_type in location_types %}
-    <td class="text-monospace">{{ submission.location.make_path()[location_type.name] }}</td>
+    <td class="text-monospace {%- if g.locale.text_direction == 'rtl' %} rtl{% endif %}">{{ submission.location.make_path()[location_type.name] }}</td>
     {% endfor %}
-    <td class="text-monospace">{{ submission.participant.name|default('', true) }}</td>
-    <td class="text-monospace">{{ submission.participant.primary_phone|default('', true) }}</td>
+    <td class="text-monospace {%- if g.locale.text_direction == 'rtl' %} rtl{% endif %}">{{ submission.participant.name|default('', true) }}</td>
+    <td class="text-monospace {%- if g.locale.text_direction == 'rtl' %} rtl{% endif %}">{{ submission.participant.primary_phone|default('', true) }}</td>
     {%- if form.form_type == 'CHECKLIST' -%}
     {% for group in form.data.groups %}
     <td class="text-center">

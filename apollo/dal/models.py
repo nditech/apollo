@@ -17,16 +17,21 @@ from sqlalchemy_utils import TranslationHybrid
 from apollo.core import db
 
 
-def get_default_locale():
+def get_default_locale(obj, attr):
     try:
         deployment = g.deployment
 
-        return deployment.primary_locale or 'en'
+        locale = deployment.primary_locale or 'en'
     except AttributeError:
         warnings.warn('No Deployment Set')
-        return 'en'
+        locale = 'en'
     except RuntimeError:
         raise
+
+    if locale in getattr(obj, attr).keys():
+        return locale
+    else:
+        return sorted(getattr(obj, attr).keys())[0]
 
 
 translation_hybrid = TranslationHybrid(

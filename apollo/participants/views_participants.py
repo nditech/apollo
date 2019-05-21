@@ -162,7 +162,7 @@ def participant_list(participant_set_id=0):
             participant_set=participant_set,
             participant_set_id=participant_set.id,
             location_types=helpers.displayable_location_types(
-                is_administrative=True),
+                is_administrative=True, location_set_id=location_set_id),
             participants=subset.paginate(
                 page=page, per_page=current_app.config.get('PAGE_SIZE'))
         )
@@ -269,7 +269,7 @@ def participant_performance_list(participant_set_id=0):
             participant_set=participant_set,
             participant_set_id=participant_set.id,
             location_types=helpers.displayable_location_types(
-                is_administrative=True),
+                is_administrative=True, location_set_id=location_set_id),
             participants=subset.paginate(
                 page=page, per_page=current_app.config.get('PAGE_SIZE'))
         )

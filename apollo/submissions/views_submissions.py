@@ -646,9 +646,7 @@ def submission_edit(submission_id):
                         if data.get(form_field, None) != master_form.data.get(
                                 form_field):
                             if (
-                                not master_form.data.get(form_field) and
-                                isinstance(master_form.data.get(
-                                    form_field), list)
+                                not master_form.data.get(form_field)
                             ):
                                 data.pop(form_field, None)
                             else:
@@ -738,12 +736,10 @@ def submission_edit(submission_id):
                         if data.get(form_field) != \
                                 submission_form.data.get(form_field):
                             if (
-                                not submission_form.data.get(
-                                    form_field) and
-                                isinstance(submission_form.data.get(
-                                    form_field), list)
+                                not submission_form.data.get(form_field)
                             ):
                                 data.pop(form_field, None)
+                                changed_fields.append(form_field)
                             else:
                                 if (
                                     submission_form.data.get(form_field)
@@ -758,12 +754,7 @@ def submission_edit(submission_id):
                         services.submissions.find(id=submission.id).update(
                             update_params)
 
-                        changed_subset = {
-                            k: v for k, v in data.items()
-                            if k in changed_fields
-                        }
-                        if changed_subset:
-                            submission.update_related(changed_subset)
+                        submission.update_related(data)
 
                         submission.update_master_offline_status()
 
@@ -944,7 +935,8 @@ def quality_assurance_dashboard(form_id):
     filter_class = generate_quality_assurance_filter(form)
     data = request.args.to_dict()
     data['form_id'] = str(form.id)
-    loc_types = displayable_location_types(is_administrative=True)
+    loc_types = displayable_location_types(
+        is_administrative=True, location_set_id=g.event.location_set_id)
 
     location = None
     if request.args.get('location'):
@@ -998,7 +990,8 @@ def quality_assurance_list(form_id):
     data = request.args.to_dict()
     data['form_id'] = str(form.id)
     page = int(data.pop('page', 1))
-    loc_types = displayable_location_types(is_administrative=True)
+    loc_types = displayable_location_types(
+        is_administrative=True, location_set_id=g.event.location_set_id)
 
     location = None
     if request.args.get('location'):
@@ -1059,6 +1052,10 @@ def quality_assurance_list(form_id):
 
 
 def update_submission_version(submission):
+    # reload the submission to get rid of the loading problem
+    # with the incident_status attribute
+    submission = models.Submission.query.get(submission.id)
+
     # save actual version data
     data_fields = submission.form.tags
     version_data = {

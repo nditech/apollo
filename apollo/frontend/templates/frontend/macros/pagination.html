@@ -1,5 +1,5 @@
 {% macro render_pager(pager, endpoint, args) %}
-<div class="d-flex flex-row mt-n1 mb-n1 ml-n2 mr-n2">
+<div class="d-flex flex-row mt-n1 mb-n1 ml-n2 mr-n2 {%- if g.locale.text_direction == 'rtl' %} rtl{% endif %}">
     <div class="flex-fill align-self-center">
         {%- set start = (pager.page - 1) * pager.per_page + 1 -%}
         {%- if (pager.page * pager.per_page) > pager.total %}
@@ -24,7 +24,7 @@
 {% endmacro %}
 
 {% macro render_pager_counter(pager, args) %}
-<div class="d-flex flex-row ml-n2 mr-n2">
+<div class="d-flex flex-row ml-n2 mr-n2 {%- if g.locale.text_direction == 'rtl' %} rtl{% endif %}">
     <div class="flex-fill align-self-center">
         {%- set start = (pager.page - 1) * pager.per_page + 1 -%}
         {%- if (pager.page * pager.per_page) > pager.total %}

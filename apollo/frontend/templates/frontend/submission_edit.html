@@ -15,7 +15,7 @@
 {% block content %}{% set form, siblings, master = submission.form, submission.siblings, submission.master %}
 {%- from 'frontend/macros/submission_field_macros.html' import render_submission_field %}
 <form method="POST">
-<input type="hidden" name="next" value="{{ request.environ.get('HTTP_REFERER', url_for('submissions.submission_list', form_id=form.id)) }}" />
+<input type="hidden" name="next" value="{% if request.environ.get('HTTP_REFERER') == request.url %}{{ url_for('submissions.submission_list', form_id=form.id) }}{% else %}{{ request.environ.get('HTTP_REFERER', url_for('submissions.submission_list', form_id=form.id)) }}{% endif %}" />
 <div class="table-responsive">
 <table class="table table-bordered">
 {%- if form.form_type == 'CHECKLIST' -%}
@@ -344,7 +344,7 @@
         <button type="submit" class="btn btn-info btn-lg btn-block" style= "margin-left:1em;">Save</button>
       </div>
       <div class="col-md-2">
-        <a class="btn btn-default btn-lg btn-block" style= "margin-left:0;" href="{{ request.environ.get('HTTP_REFERER', url_for('submissions.submission_list', form_id=form.id)) }}">Cancel</a>
+        <a class="btn btn-default btn-lg btn-block" style= "margin-left:0;" href="{% if request.environ.get('HTTP_REFERER') == request.url %}{{ url_for('submissions.submission_list', form_id=form.id) }}{% else %}{{ request.environ.get('HTTP_REFERER', url_for('submissions.submission_list', form_id=form.id)) }}{% endif %}">Cancel</a>
       </div>
     </div>
   </div>

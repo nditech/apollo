@@ -5,7 +5,7 @@ import operator as op
 
 from arpeggio import PTNodeVisitor, visit_parse_tree
 from arpeggio.cleanpeg import ParserPEG
-from sqlalchemy import Boolean, Integer, and_, case, func
+from sqlalchemy import Boolean, Integer, String, and_, case, func, null
 
 from apollo.models import Location, Participant, Submission
 
@@ -54,8 +54,13 @@ OPERATIONS = {
 
 FIELD_TYPE_CASTS = {
     'boolean': Boolean,
+    'comment': String,
     'integer': Integer,
-    'select': Integer
+    'select': Integer,
+    'multiselect': String,
+    'category': Integer,
+    'string': String,
+    'location': String
 }
 
 
@@ -153,6 +158,8 @@ class InlineQATreeVisitor(BaseVisitor):
 
 class QATreeVisitor(BaseVisitor):
     def __init__(self, defaults=True, **kwargs):
+        self.prev_cast_type = None
+        self.lock_null = False
         self.form = kwargs.pop('form')
         super().__init__(defaults, **kwargs)
 
@@ -181,9 +188,26 @@ class QATreeVisitor(BaseVisitor):
         field = self.form.get_field_by_tag(var_name)
         cast_type = FIELD_TYPE_CASTS.get(field['type'])
 
-        if cast_type is not None:
-            return Submission.data[var_name].astext.cast(cast_type)
-        return Submission.data[var_name]
+        # there are side effects when attempting to make comparisons
+        # between attributes of different types. Naturally, you wouldn't
+        # be able to do that but we have no way of knowing if a user will
+        # make that attempt. This snippet helps to prevent that from
+        # occurring by tracking the types and whenever it notices there's
+        # a difference, it would start outputting nulls so the query
+        # returns no result.
+        if (
+            (
+                self.prev_cast_type is not None and
+                (self.prev_cast_type != cast_type)
+            ) or self.lock_null
+        ):
+            self.lock_null = True
+            return null()
+        else:
+            self.prev_cast_type = cast_type
+            if cast_type is not None:
+                return Submission.data[var_name].astext.cast(cast_type)
+            return Submission.data[var_name]
 
 
 def generate_qa_query(expression, form):
