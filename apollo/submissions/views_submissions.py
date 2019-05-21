@@ -935,7 +935,8 @@ def quality_assurance_dashboard(form_id):
     filter_class = generate_quality_assurance_filter(form)
     data = request.args.to_dict()
     data['form_id'] = str(form.id)
-    loc_types = displayable_location_types(is_administrative=True)
+    loc_types = displayable_location_types(
+        is_administrative=True, location_set_id=g.event.location_set_id)
 
     location = None
     if request.args.get('location'):
@@ -989,7 +990,8 @@ def quality_assurance_list(form_id):
     data = request.args.to_dict()
     data['form_id'] = str(form.id)
     page = int(data.pop('page', 1))
-    loc_types = displayable_location_types(is_administrative=True)
+    loc_types = displayable_location_types(
+        is_administrative=True, location_set_id=g.event.location_set_id)
 
     location = None
     if request.args.get('location'):
