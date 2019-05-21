@@ -504,8 +504,7 @@ def submission_edit(submission_id):
                 for form_field in data_fields:
                     field_value = submission_form.data.get(form_field)
                     if field_value is None:
-                        data.pop(form_field, None)
-                        changed = True
+                        continue
 
                     if submission.data.get(form_field) != field_value:
                         data[form_field] = field_value
@@ -1051,6 +1050,10 @@ def quality_assurance_list(form_id):
 
 
 def update_submission_version(submission):
+    # reload the submission to get rid of the loading problem
+    # with the incident_status attribute
+    submission = models.Submission.query.get(submission.id)
+
     # save actual version data
     data_fields = submission.form.tags
     version_data = {
