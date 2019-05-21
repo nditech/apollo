@@ -189,12 +189,8 @@ class Submission(BaseModel):
         conflict_tags = self.compute_conflict_tags(data.keys())
         subset = {k: v for k, v in data.items() if k not in conflict_tags}
 
-        # seems that trying to use .update() doesn't work
-        # no idea why
         master = self.master
-        master_data = master.data.copy()
-        master_data.update(subset)
-        master.data = master_data
+        master.data = subset
 
         siblings = self.siblings
         self.conflicts = trim_conflicts(self, conflict_tags, data.keys())

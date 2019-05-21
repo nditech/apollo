@@ -504,7 +504,8 @@ def submission_edit(submission_id):
                 for form_field in data_fields:
                     field_value = submission_form.data.get(form_field)
                     if field_value is None:
-                        continue
+                        data.pop(form_field, None)
+                        changed = True
 
                     if submission.data.get(form_field) != field_value:
                         data[form_field] = field_value
@@ -646,9 +647,7 @@ def submission_edit(submission_id):
                         if data.get(form_field, None) != master_form.data.get(
                                 form_field):
                             if (
-                                not master_form.data.get(form_field) and
-                                isinstance(master_form.data.get(
-                                    form_field), list)
+                                not master_form.data.get(form_field)
                             ):
                                 data.pop(form_field, None)
                             else:
@@ -738,12 +737,10 @@ def submission_edit(submission_id):
                         if data.get(form_field) != \
                                 submission_form.data.get(form_field):
                             if (
-                                not submission_form.data.get(
-                                    form_field) and
-                                isinstance(submission_form.data.get(
-                                    form_field), list)
+                                not submission_form.data.get(form_field)
                             ):
                                 data.pop(form_field, None)
+                                changed_fields.append(form_field)
                             else:
                                 if (
                                     submission_form.data.get(form_field)
@@ -758,12 +755,7 @@ def submission_edit(submission_id):
                         services.submissions.find(id=submission.id).update(
                             update_params)
 
-                        changed_subset = {
-                            k: v for k, v in data.items()
-                            if k in changed_fields
-                        }
-                        if changed_subset:
-                            submission.update_related(changed_subset)
+                        submission.update_related(data)
 
                         submission.update_master_offline_status()
 
