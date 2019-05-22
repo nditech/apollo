@@ -2,6 +2,7 @@
 import calendar
 from datetime import datetime, timedelta
 
+from arpeggio import visit_parse_tree
 from dateutil.parser import parse
 from dateutil.tz import gettz
 from flask import (
@@ -17,6 +18,7 @@ from sqlalchemy.orm import aliased
 
 from apollo.frontend import route, permissions
 from apollo.messaging.filters import MessageFilterForm, MessageFilterSet
+from apollo.messaging.parsers import NumberSearchVisitor, number_parser
 from apollo.models import Event, Form, Message, Submission
 from apollo.services import events, messages
 from apollo.settings import TIMEZONE
@@ -96,14 +98,15 @@ def message_list():
         ).order_by(Message.received.desc())
 
         if 'mobile' not in filter_errors and filter_data.get('mobile'):
-            val = f"%{filter_data.get('mobile')}%"
-            all_messages = all_messages.filter(
-                sa.or_(
-                    Message.recipient.ilike(val),
-                    Message.sender.ilike(val),
-                    OutboundMsg.recipient.ilike(val)
-                )
+            search_term = filter_data.get('mobile')
+            parse_tree = number_parser.parse(search_term)
+            number_visitor = NumberSearchVisitor(
+                inbound_message_class=Message,
+                outbound_message_class=OutboundMsg
             )
+
+            query_filter = visit_parse_tree(parse_tree, number_visitor)
+            all_messages = all_messages.filter(query_filter)
 
         if 'text' not in filter_errors and filter_data.get('text'):
             val = f"%{filter_data.get('text')}%"
