@@ -1,13 +1,11 @@
-{%- extends 'frontend/_layout.html' -%}
+{%- extends 'frontend/layout.html' -%}
 {%- from 'frontend/macros/participant_list_filter.html' import render_filter_form -%}
 {%- from 'frontend/macros/pagination.html' import render_pager, render_pager_counter -%}
 {%- from 'frontend/macros/send_message.html' import send_message_modal -%}
+
 {% block stylesheets %}
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap-wizard.css') }}">
 <style type="text/css">
-.arrow-style{text-decoration:none; color:#333;}
-a:hover.arrow-style{text-decoration:none; color:#333;}
-.img{margin: 4px 0 0 -6px;}
 .wizard-modal p {
   margin: 0 0 10px;
   padding: 0;
@@ -29,201 +27,192 @@ a:hover.arrow-style{text-decoration:none; color:#333;}
 }
 </style>
 {% endblock %}
-{% block subtitle %}{{ participant_set.name }}{% endblock subtitle %}
+
 {% block toolbar %}
+<div class="btn-toolbar d-none d-md-flex" role="toolbar">
   {%- if perms.export_participants.can() -%}
-  <a class="btn btn-sm btn-default pull-right" href="{{ url_for('participants.participant_list', export='true') }}"><i class="glyphicon glyphicon-export"></i> {{ _('Export') }}</a>
+  <a class="btn btn-secondary mr-2" href="{{ url_for('participants.participant_list', export='true') }}">{{ _('Export') }}</a>
   {%- endif -%}
-  <a class="btn btn-sm btn-default pull-right" href="{{ url_for('participants.participant_performance_list') }}" style="margin-right:1em;"><i class="glyphicon glyphicon-stats"></i> {{ _('Performance Evaluation') }}</a>
+  <a class="btn btn-secondary mr-2" href="{{ url_for('participants.participant_performance_list') }}">{{ _('Performance Evaluation') }}</a>
   {%- if perms.import_participants.can() -%}
-  <button id="open-wizard" class="btn btn-sm btn-primary pull-right" style="margin-right:1em;"><i class="glyphicon glyphicon-import glyphicon-white"></i> {{ _('Import Participants') }}</button>
+  <button id="open-wizard" class="btn btn-primary mr-2">{{ _('Import Participants') }}</button>
   {%- endif -%}
   {%- if perms.send_messages.can() -%}
-  <button class="btn btn-sm btn-success pull-right" id="send_message_modal_btn" style="margin-right:1em;"><i class="glyphicon glyphicon-envelope"></i> {{ _('Send Message') }}</button>
+  <button class="btn btn-success mr-2" id="send_message_modal_btn">{{ _('Send Message') }}</button>
   {%- endif -%}
   {%- if perms.role('admin').can() and g.event.participant_set_id -%}
-  <button class="btn btn-sm btn-danger pull-right" id="nuke_participants_modal_btn" style="margin-right: 1em;" data-toggle="modal" data-target="#nuke_modal"><i class="glyphicon glyphicon-trash"></i> {{ _('Purge Participants') }}</button>
+  <button class="btn btn-danger mr-2" id="nuke_participants_modal_btn" data-toggle="modal" data-target="#nuke_modal">{{ _('Purge Participants') }}</button>
   {%- endif -%}
+</div>
 {% endblock %}
+
 {% block content %}
 {%- set flash_msgs = get_flashed_messages(category_filter=['task_begun']) -%}
-    <div class="row-fluid">
-      <div class="well well-sm filter">
-        {{ render_filter_form(filter_form, location, location_set_id) }}
+<div class="row">
+  <div class="col-md-12">
+    {{ render_filter_form(filter_form, location, location_set_id) }}
+  </div>
+</div>
+
+<div class="card-header">
+  {{ render_pager(participants, 'participants.participant_list', args) }}
+</div>
+
+<div class="table-responsive-md mb-n3">
+  <table class="table table-sm table-hover">
+    <thead class="thead-light">
+      <tr>
+        <th scope="col" class="text-right col-1"><a class="text-decoration-none" href="{{ url_for('participants.participant_list', sort_by='id', **args) }}">{{ _('ID') }}</a></th>
+        {%- for location_type in location_types -%}
+        <th scope="col">{{ location_type.name }}</th>
+        {%- endfor -%}
+        <th scope="col">{{ _('Location') }}</th>
+        <th scope="col"><a href="{{ url_for('participants.participant_list', sort_by='name', **args) }}">{{ _('Name') }}</a></th>
+        <th scope="col">{{ _('Phone') }}</th>
+        <th scope="col"><a href="{{ url_for('participants.participant_list', sort_by='gen', **args) }}">{{ _('Gender') }}</a></th>
+        <th scope="col">{{ _('Role') }}</th>
+        <th scope="col">{{ _('Organization') }}</th>
+        {% for field in extra_fields %}
+        {% if perms.can_access_resource(field) %}
+        <th scope="col">{{ field.label }}</th>
+        {% endif %}
+        {% endfor %}
+      </tr>
+    </thead>
+    <tbody>
+      {% for participant in participants.items %}
+      <tr>
+        {%- if perms.edit_participant.can() -%}
+        <td class="text-right text-monospace"><a href="{{ url_for('participants.participant_edit', id=participant.id) }}" data-toggle="modal" data-target="#edit_modal">{{ participant.participant_id }}</a></td>
+        {%- else -%}
+        <td class="text-right text-monospace">{{ participant.participant_id }}</td>
+        {%- endif -%}
+        {%- for location_type in location_types -%}
+        <td class="text-monospace">{{ participant.location.make_path()[location_type.name] }}</td>
+        {%- endfor -%}
+        <td class="text-monospace">{{ participant.location.name|default('N/A', true) }}</td>
+        <td class="text-monospace">{{ participant.name|default('', true) }}</td>
+        <td class="text-monospace">{{ participant.primary_phone|default('', true) }}</td>
+        <td class="text-monospace">{{ participant.gender_display }}</td>
+        <td class="text-monospace">{{ participant.role.name|default('N/A', true) }}</td>
+        <td class="text-monospace">{{ participant.partner|default('', true) }}</td>
+        {% for field in extra_fields %}
+        {% if perms.can_access_resource(field) %}
+        {%- if participant.extra_data -%}
+        <td class="text-monospace">{{ participant.extra_data.get(field.name)|default('', true) }}</td>
+        {%- else -%}
+        <td></td>
+        {%- endif -%}
+        {% endif %}
+        {% endfor %}
+      </tr>
+      {% else %}
+      {%- set colspan = 7 + (location_types|length) + (extra_fields|length) -%}
+      <tr class="table-warning">
+        <td class="text-center text-muted" colspan="{{ colspan }}">{{ _('No Data Available') }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<div class="card-footer">
+  {{ render_pager(participants, 'participants.participant_list', args) }}
+</div>
+
+<div class="modal fade" id="edit_modal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+  <div class="modal-dialog" style="width:450px">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="editModalLabel">{{ _('Edit Participant') }}</h4>
+      </div>
+      <div class="modal-body" style="height:4.5em">
+        <div id="loader" class="ajax_loader" style="margin:auto">
+          <div class="ajax_loader_block block_1"></div>
+          <div class="ajax_loader_block block_2"></div>
+          <div class="ajax_loader_block block_3"></div>
+        </div>
       </div>
     </div>
-{%- if flash_msgs -%}
-    <div>
-    {%- for msg in flash_msgs -%}
-      <p class="alert alert-info">{{ msg }}</p>
-    {%- endfor -%}
-    </div>
-{%- endif -%}
-    <div class="row-fluid">
-      <div>
-        {{ render_pager_counter(participants, args) }}
-        <form class="form-inline" method="POST">
-          {{ form.csrf_token() }}{{ form.select_superset() }}
-          <!--<div class="checkbox" style="margin-left:10px;">
-            <label>
-              Select All
-            </label><a href="#" class="btn btn-xs"><i class="glyphicon glyphicon-trash"></i></a>
-          </div>-->
-          <table class="table table-bordered table-striped">
-           <thead>
-             <tr>
-               <th class="text-right shrink"><a href="{{ url_for('participants.participant_list', sort_by='id', **args) }}" class="arrow-style"><img src="{{ url_for('static', filename='img/double-arrow.gif') }}" class="img pull-left"></img>{{ _('ID') }}</a></th>
-               {%- for location_type in location_types -%}
-               <th>{{ location_type.name }}</th>
-               {%- endfor -%}
-               <th>{{ _('Location') }}</th>
-               <th><a href="{{ url_for('participants.participant_list', sort_by='name', **args) }}" class="arrow-style"><img src="{{ url_for('static', filename='img/double-arrow.gif') }}" class="img pull-left"></img>{{ _('Name') }}</a></th>
-               <th>{{ _('Phone') }}</th>
-               <th><a href="{{ url_for('participants.participant_list', sort_by='gen', **args) }}" class="arrow-style"><img src="{{ url_for('static', filename='img/double-arrow.gif') }}" class="img pull-left"></img>{{ _('Gender') }}</a></th>
-               <th>{{ _('Role') }}</th>
-               <th>{{ _('Organization') }}</th>
-               {% for field in extra_fields %}
-               {% if perms.can_access_resource(field) %}
-               <th>{{ field.label }}</th>
-               {% endif %}
-               {% endfor %}
-             </tr>
-           </thead>
-           <tbody>
-             {% for participant in participants.items %}
-             <tr>
-               {%- if perms.edit_participant.can() -%}
-               <td class="text-right shrink"><a href="{{ url_for('participants.participant_edit', id=participant.id) }}" data-toggle="modal" data-target="#edit_modal">{{ participant.participant_id }}</a></td>
-               {%- else -%}
-               <td class="text-right shrink">{{ participant.participant_id }}</td>
-               {%- endif -%}
-               {%- for location_type in location_types -%}
-               <td>{{ participant.location.make_path()[location_type.name] }}</td>
-               {%- endfor -%}
-               <td>{{ participant.location.name|default('N/A', true) }}</td>
-               <td>{{ participant.name|default('', true) }}</td>
-               <td>{{ participant.primary_phone|default('', true) }}</td>
-               <td>{{ participant.gender_display }}</td>
-               <td>{{ participant.role.name|default('N/A', true) }}</td>
-               <td>{{ participant.partner|default('', true) }}</td>
-               {% for field in extra_fields %}
-               {% if perms.can_access_resource(field) %}
-               {%- if participant.extra_data -%}
-               <td>{{ participant.extra_data.get(field.name)|default('', true) }}</td>
-               {%- else -%}
-               <td></td>
-               {%- endif -%}
-               {% endif %}
-               {% endfor %}
-             </tr>
-             {% else %}
-             {%- set colspan = 7 + (location_types|length) + (extra_fields|length) -%}
-             <tr class="warning">
-               <td class="text-center" colspan="{{ colspan }}">{{ _('No Data Available') }}</td>
-             </tr>
-             {% endfor %}
-           </tbody>
-          </table>
+  </div>
+</div>
+{%- if perms.role('admin').can() -%}
+<div class="modal fade" id="nuke_modal" tabindex="-2" role="dialog" aria-labelledby="nukeModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="nukeModalLabel">{{ _('Purge Participants') }}</h4>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-danger">{% trans %}<strong>WARNING:</strong> This will delete all participants, as well as any data linked to them &ndash; checklists, critical incident reports and messages.{% endtrans %}</div>
+        <p>{% trans %}Please enter <code id="compare"></code> below to proceed:{% endtrans %}</p>
+        <div class="form-group">
+          <input class="form-control" id="prompt">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <form action="{{ url_for('participants.nuke_event_participants') }}" method="POST">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+          <button type="button" class="btn btn-default" data-dismiss="modal">{{ _('Close') }}</button>
+          <button class="btn btn-danger" disabled="true" id="confirm_nuke">{{ _('Yes, I understand') }}</button>
         </form>
       </div>
     </div>
-    <div class="row">
-      <div class="col-md-12">
-      {{ render_pager(participants, 'participants.participant_list', args) }}
-      </div>
-    </div>
-    <div class="modal fade" id="edit_modal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
-      <div class="modal-dialog" style="width:450px">
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-            <h4 class="modal-title" id="editModalLabel">{{ _('Edit Participant') }}</h4>
-          </div>
-          <div class="modal-body" style="height:4.5em">
-            <div id="loader" class="ajax_loader" style="margin:auto">
-              <div class="ajax_loader_block block_1"></div>
-              <div class="ajax_loader_block block_2"></div>
-              <div class="ajax_loader_block block_3"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    {%- if perms.role('admin').can() -%}
-    <div class="modal fade" id="nuke_modal" tabindex="-2" role="dialog" aria-labelledby="nukeModalLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-            <h4 class="modal-title" id="nukeModalLabel">{{ _('Purge Participants') }}</h4>
-          </div>
-          <div class="modal-body">
-            <div class="alert alert-danger">{% trans %}<strong>WARNING:</strong> This will delete all participants, as well as any data linked to them &ndash; checklists, critical incident reports and messages.{% endtrans %}</div>
-            <p>{% trans %}Please enter <code id="compare"></code> below to proceed:{% endtrans %}</p>
-            <div class="form-group">
-              <input class="form-control" id="prompt">
-            </div>
-          </div>
-          <div class="modal-footer">
-            <form action="{{ url_for('participants.nuke_event_participants') }}" method="POST">
-              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-              <button type="button" class="btn btn-default" data-dismiss="modal">{{ _('Close') }}</button>
-              <button class="btn btn-danger" disabled="true" id="confirm_nuke">{{ _('Yes, I understand') }}</button>
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>
-    {%- endif -%}
-    <!-- IMPORT WIZARD -->
-    <div class="wizard" id="import-wizard" data-title="{{ _('Import Participants') }}">
-      <!-- Step 1 -->
-      <div class="wizard-card" data-cardname="uploadFile">
-        <h3>{{ _('Upload File') }}</h3>
-        <div class="wizard-input-section">
-        <form enctype="multipart/form-data" method="POST" id="upload-form" action="{{ url_for('participants.participant_list_import') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-          <div class="form-group">
-            <div class="col-sm-9">
-              <div class="row">
-                <div class="col-sm-4">
-                  <div class="fileUpload btn btn-default btn-sm" style="margin-left:1px;">
-                    <span>{{ _('Browse') }}</span>
-                    <i class="glyphicon glyphicon-search"></i>
-                    <input id="uploadBtn" type="file" class="upload" name="spreadsheet" />
-                  </div>
-                </div>
-                <div class="col-sm-8" style="margin-left:-30px;">
-                  <input id="uploadFile" type="text" placeholder="Data File" class="form-control input-sm" readonly>
-                  <p class="help-block"><small>{{ _('(only .csv, .xls and .xlsx files)') }}</small></p>
-                </div>
+  </div>
+</div>
+{%- endif -%}
+<!-- IMPORT WIZARD -->
+<div class="wizard" id="import-wizard" data-title="{{ _('Import Participants') }}">
+  <!-- Step 1 -->
+  <div class="wizard-card" data-cardname="uploadFile">
+    <h3>{{ _('Upload File') }}</h3>
+    <div class="wizard-input-section">
+    <form enctype="multipart/form-data" method="POST" id="upload-form" action="{{ url_for('participants.participant_list_import') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+      <div class="form-group">
+        <div class="col-sm-9">
+          <div class="row">
+            <div class="col-sm-4">
+              <div class="fileUpload btn btn-default btn-sm" style="margin-left:1px;">
+                <span>{{ _('Browse') }}</span>
+                <i class="glyphicon glyphicon-search"></i>
+                <input id="uploadBtn" type="file" class="upload" name="spreadsheet" />
               </div>
             </div>
+            <div class="col-sm-8" style="margin-left:-30px;">
+              <input id="uploadFile" type="text" placeholder="Data File" class="form-control input-sm" readonly>
+              <p class="help-block"><small>{{ _('(only .csv, .xls and .xlsx files)') }}</small></p>
+            </div>
           </div>
-        </form>
         </div>
       </div>
+    </form>
+    </div>
+  </div>
 
-      <div class="wizard-card" data-cardname="mapFields">
-        <h3>{{ _('Map Fields') }}</h3>
-        <div class="wizard-input-section"></div>
-      </div>
+  <div class="wizard-card" data-cardname="mapFields">
+    <h3>{{ _('Map Fields') }}</h3>
+    <div class="wizard-input-section"></div>
+  </div>
 
-      <div class="wizard-card" data-cardname="finalize">
-        <h3>{{ _('Finalize') }}</h3>
-        <div class="wizard-input-section">
-          <div class="alert alert-info">
-            <span class="create-server-name">{% trans %}Click the <strong>Submit</strong> button to begin the import process.{% endtrans %}</span>
-          </div>
-        </div>
-
-        <div class="wizard-failure">
-          <div class="alert alert-danger">
-            {% trans %}There was a problem submitting the form. Please try again in a minute.{% endtrans %}
-          </div>
-        </div>
+  <div class="wizard-card" data-cardname="finalize">
+    <h3>{{ _('Finalize') }}</h3>
+    <div class="wizard-input-section">
+      <div class="alert alert-info">
+        <span class="create-server-name">{% trans %}Click the <strong>Submit</strong> button to begin the import process.{% endtrans %}</span>
       </div>
     </div>
+
+    <div class="wizard-failure">
+      <div class="alert alert-danger">
+        {% trans %}There was a problem submitting the form. Please try again in a minute.{% endtrans %}
+      </div>
+    </div>
+  </div>
+</div>
 {%- endblock -%}
+
 {%- block scripts -%}
 <script src="{{ url_for('static', filename='js/filters.js') }}"></script>
 <script src="{{ url_for('static', filename='js/forms.js') }}"></script>
@@ -363,8 +352,17 @@ $(function(){
       $('#edit_modal input.select2-observers-clear').select2(observer_select2_clearable_options);
       $('#edit_modal input.select2-locations').select2(locations_select2_options);
     });
+
+    $('#filter_reset').on('click', function() {
+      var $form = $(this).parents('form').first();
+      $form.find(':input').not('button').each(function() { $(this).val(''); })
+      $form.submit();
+    });
+
+    $('select.select2-locations').select2(LocationOptions);
 });
 </script>
+
 {% if perms.send_messages.can() %}
 {{ send_message_modal(participants.total) }}
 {% endif %}

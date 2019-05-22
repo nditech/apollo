@@ -76,7 +76,7 @@ def participant_list(participant_set_id=0):
         participant_set = g.event.participant_set or abort(404)
         template_name = 'frontend/participant_list.html'
 
-    page_title = _('Participants')
+    breadcrumbs = [_('Participants'),]
 
     sortable_columns = {
         'id': 'participant_id',
@@ -158,7 +158,7 @@ def participant_list(participant_set_id=0):
             form=form,
             location=location,
             location_set_id=location_set_id,
-            page_title=page_title,
+            breadcrumbs=breadcrumbs,
             participant_set=participant_set,
             participant_set_id=participant_set.id,
             location_types=helpers.displayable_location_types(
