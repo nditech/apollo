@@ -2,6 +2,7 @@
 import cachetools
 from hashlib import sha256
 import logging
+import numbers
 import os
 
 from flask import render_template_string
@@ -121,7 +122,7 @@ def update_locations(data_frame, header_mapping, location_set):
 
             location_names = [current_row.get(col) for col in name_columns]
             location_code = current_row.get(code_column)
-            if isinstance(location_code, (int, float)):
+            if isinstance(location_code, numbers.Number):
                 location_code = str(int(location_code))
 
             # skip if we're missing a name or code
