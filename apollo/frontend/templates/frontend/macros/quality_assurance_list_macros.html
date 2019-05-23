@@ -1,11 +1,41 @@
 {% macro submission_header(form, form_fields, location_types, perms) %}
 <tr>
-    <th scope="col" class="text-right col-1">{{ _('ID') }}</th>
+    {% if request.args.sort_by == 'id' -%}
+    {% if request.args.sort_direction == 'desc' -%}
+    <th scope="col" class="text-right col-1"><a class="text-decoration-none" href="{{ modify_query(sort_by='id', sort_direction='asc', page='') }}">{{ _('ID') }} <i class="fa fa-chevron-down"></i></a></th>
+    {% else -%}
+    <th scope="col" class="text-right col-1"><a class="text-decoration-none" href="{{ modify_query(sort_by='id', sort_direction='desc', page='') }}">{{ _('ID') }} <i class="fa fa-chevron-up"></i></a></th>
+    {% endif %}{% else -%}
+    <th scope="col" class="text-right col-1"><a class="text-decoration-none" href="{{ modify_query(sort_by='id', sort_value='', sort_direction='', page='') }}">{{ _('ID') }}</a></th>
+    {% endif -%}
     {% for location_type in location_types %}
-    <th scope="col">{{ location_type.name }}</th>
+    <th scope="col">
+        {% if request.args.sort_by == 'location' and request.args.sort_value == location_type.id|string -%}
+        {% if request.args.sort_direction == 'desc' -%}
+        <a class="text-decoration-none" href="{{ modify_query(sort_by='location', sort_value=location_type.id, sort_direction='asc', page='') }}">{{ location_type.name }} <i class="fa fa-chevron-down"></i></a>
+        {% else -%}
+        <a class="text-decoration-none" href="{{ modify_query(sort_by='location', sort_value=location_type.id, sort_direction='desc', page='') }}">{{ location_type.name }} <i class="fa fa-chevron-up"></i></a>
+        {% endif %}{% else -%}
+        <a class="text-decoration-none" href="{{ modify_query(sort_by='location', sort_value=location_type.id, sort_direction='', page='') }}">{{ location_type.name }}</a>
+        {%- endif %}
+    </th>
     {% endfor %}
-    <th scope="col">{{ _('Participant') }}</th>
-    <th scope="col">{{ _('Phone') }}</th>
+    {% if request.args.sort_by == 'participant' %}
+    {% if request.args.sort_direction == 'desc' %}
+    <th scope="col"><a class="text-decoration-none" href="{{ modify_query(sort_by='participant', sort_direction='asc', page='') }}">{{ _('Participant') }} <i class="fa fa-chevron-down"></i></a></th>
+    {% else -%}
+    <th scope="col"><a class="text-decoration-none" href="{{ modify_query(sort_by='participant', sort_direction='desc', page='') }}">{{ _('Participant') }} <i class="fa fa-chevron-up"></i></a></th>
+    {% endif %}{% else -%}
+    <th scope="col"><a class="text-decoration-none" href="{{ modify_query(sort_by='participant', sort_value='', sort_direction='', page='') }}">{{ _('Participant') }}</a></th>
+    {% endif -%}
+    {% if request.args.sort_by == 'phone' %}
+    {% if request.args.sort_direction == 'desc' %}
+    <th scope="col"><a class="text-decoration-none" href="{{ modify_query(sort_by='phone', sort_direction='asc', page='') }}">{{ _('Phone') }} <i class="fa fa-chevron-down"></i></a></th>
+    {% else -%}
+    <th scope="col"><a class="text-decoration-none" href="{{ modify_query(sort_by='phone', sort_direction='desc', page='') }}">{{ _('Phone') }} <i class="fa fa-chevron-up"></i></a></th>
+    {% endif %}{% else -%}
+    <th scope="col"><a class="text-decoration-none" href="{{ modify_query(sort_by='phone', sort_value='', sort_direction='', page='') }}">{{ _('Phone') }}</a></th>
+    {% endif -%}
     {% if form.quality_checks %}
     {% for qc in form.quality_checks %}
     <th scope="col" class="text-center"><abbr title="{{ qc.description }}">{{ loop.index }}</abbr></th>
