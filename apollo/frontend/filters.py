@@ -1,10 +1,14 @@
 # -*- coding: utf-8 -*-
 from collections import defaultdict, OrderedDict
 
+from cgi import escape
 from dateutil.parser import parse
 from flask_babelex import lazy_gettext as _
 from sqlalchemy import or_
 from wtforms import widgets, fields, Form
+from wtforms.compat import text_type
+from wtforms.widgets import html_params, HTMLString
+from wtforms_alchemy.fields import QuerySelectField
 
 from apollo import services, models
 from apollo.core import CharFilter, ChoiceFilter, FilterSet
@@ -37,15 +41,50 @@ class ChecklistFormFilter(ChoiceFilter):
         return queryset
 
 
-class AJAXLocationFilter(CharFilter):
+class LocationSelectWidget(widgets.Select):
+    @classmethod
+    def render_option(cls, value, label, selected, **kwargs):
+        options = dict(kwargs, value=value)
+        if selected:
+            options['selected'] = True
+        return HTMLString('<option %s>%s · %s</option>' % (
+            html_params(**options),
+            escape(text_type(label.name)),
+            escape(text_type(label.location_type))))
+
+
+class LocationQuerySelectField(QuerySelectField):
+    widget = LocationSelectWidget()
+
+    def process_formdata(self, valuelist):
+        if valuelist and valuelist[0]:
+            self.query = models.Location.query.filter(
+                models.Location.id == valuelist[0])
+        return super(LocationQuerySelectField, self).process_formdata(
+            valuelist)
+
+
+class AJAXLocationFilter(ChoiceFilter):
+    field_class = LocationQuerySelectField
+
     def __init__(self, *args, **kwargs):
-        kwargs['widget'] = widgets.HiddenInput()
+        kwargs['query_factory'] = lambda: []
+        kwargs['get_pk'] = lambda i: i.id
+
         return super(AJAXLocationFilter, self).__init__(*args, **kwargs)
 
-    def queryset_(self, queryset, value):
+    def queryset_(self, queryset, value, **kwargs):
         if value:
-            location = services.locations.get(pk=value)
-            return queryset.filter_in(location)
+            location_query = models.Location.query.with_entities(
+                models.Location.id
+            ).join(
+                models.LocationPath,
+                models.Location.id == models.LocationPath.descendant_id
+            ).filter(models.LocationPath.ancestor_id == value.id)
+
+            return queryset.filter(
+                models.Submission.location_id.in_(location_query))
+
         return queryset
 
 
@@ -420,20 +459,6 @@ def dashboard_filterset():
         checklist_form = ChecklistFormFilter()
 
     return DashboardFilterSet
-
-
-def participant_filterset():
-    class ParticipantFilterSet(FilterSet):
-        participant_id = ParticipantFilter()
-        name = ParticipantNameFilter()
-        phone = ParticipantPhoneFilter()
-        location = AJAXLocationFilter()
-        sample = SampleFilter()
-        role = RoleFilter()
-        partner = PartnerFilter()
-        group = ParticipantGroupFilter()
-
-    return ParticipantFilterSet
 
 
 #########################
