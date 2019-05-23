@@ -1,45 +1,51 @@
 {% macro submission_header(form, form_fields, location_types, perms) %}
 <tr>
-    <th class="shrink">{{ _('ID') }}</th>
+    <th scope="col" class="text-right col-1">{{ _('ID') }}</th>
     {% for location_type in location_types %}
-    <th>{{ location_type.name }}</th>
+    <th scope="col">{{ location_type.name }}</th>
     {% endfor %}
-    <th>{{ _('Participant') }}</th>
-    <th>{{ _('Phone') }}</th>
+    <th scope="col">{{ _('Participant') }}</th>
+    <th scope="col">{{ _('Phone') }}</th>
     {% if form.quality_checks %}
     {% for qc in form.quality_checks %}
-    <th class="text-center"><abbr title="{{ qc.description }}">{{ loop.index }}</abbr></th>
+    <th scope="col" class="text-center"><abbr title="{{ qc.description }}">{{ loop.index }}</abbr></th>
     {% endfor %}
     {% endif %}
-    <th class="text-center"><abbr title="{{ _('Phone Verification') }}"><i class="glyphicon glyphicon-phone"></i></abbr></th>
+    <th scope="col" class="text-center"><abbr title="{{ _('Sender Verification') }}"><i class="fa fa-mobile-alt"></i></abbr></th>
 </tr>
 {% endmacro %}
+
 {% macro submission_items(submissions, form, form_fields, location_types, quality_statuses, verification_statuses, perms) %}
 {% for submission in submissions %}
 <tr>
     {% if perms.edit_submission.can() %}
-    <td class="text-center"><a href="{{ url_for('submissions.submission_edit', submission_id=submission.id) }}">{{ submission.participant.participant_id }}</a></td>
+    <td class="text-monospace text-right"><a href="{{ url_for('submissions.submission_edit', submission_id=submission.id) }}">{{ submission.participant.participant_id }}</a></td>
     {% else %}
-    <td>{{ submission.participant.participant_id }}</td>
+    <td class="text-monospace">{{ submission.participant.participant_id }}</td>
     {% endif %}
     {% for location_type in location_types %}
-    <td>{{ submission.location.make_path()[location_type.name] }}</td>
+    <td class="text-monospace {%- if g.locale.text_direction == 'rtl' %} rtl{% endif %}">{{ submission.location.make_path()[location_type.name] }}</td>
     {% endfor %}
-    <td>{{ submission.participant.name|default('', true) }}</td>
-    <td>{{ submission.participant.primary_phone|default('', true) }}</td>
+    <td class="text-monospace {%- if g.locale.text_direction == 'rtl' %} rtl{% endif %}">{{ submission.participant.name|default('', true) }}</td>
+    <td class="text-monospace {%- if g.locale.text_direction == 'rtl' %} rtl{% endif %}">{{ submission.participant.primary_phone|default('', true) }}</td>
     {% if form.quality_checks %}
     {% for qc in form.quality_checks %}
     <td class="text-center">
-        {%- if submission.verification_status == verification_statuses.VERIFIED %}<img src="{{ url_for('static', filename='img/blue_dot.png') }}" alt="{{ _('Verified') }}" title="{{ _('Verified') }}" height="11" width="11">
-        {%- elif submission.verification_status == verification_statuses.REJECTED %}<img src="{{ url_for('static', filename='img/slash.png') }}" alt="{{ _('Rejected') }}" title="{{ _('Rejected') }}" height="11" width="11">
-        {% elif submission|qa_status(qc) == quality_statuses.OK %}<img src="{{ url_for('static', filename='img/tick.png') }}" alt="{{ _('OK') }}" title="{{ _('OK') }}" height="11" width="11">
-        {%- elif submission|qa_status(qc) == quality_statuses.FLAGGED %}<img src="{{ url_for('static', filename='img/red_dot.png') }}" alt="{{ _('Flagged') }}" title="{{ _('Flagged') }}" height="11" width="11">
-        {%- else %}<img src="{{ url_for('static', filename='img/gray_dot.png') }}" alt="{{ _('Insufficient Data') }}" title="{{ _('Insufficient Data') }}" height="11" width="11">
-        {% endif %}
+    {% if submission.verification_status == verification_statuses.VERIFIED -%}
+        <i class="fa fa-check-double text-primary" title="{{ _('Verified') }}"></i>
+    {% elif submission.verification_status == verification_statuses.REJECTED -%}
+        <i class="fa fa-minus-circle text-danger" title="{{ _('Rejected') }}"></i>
+    {% elif submission|qa_status(qc) == quality_statuses.OK -%}
+        <i class="fa fa-check text-success" title="{{ _('OK') }}"></i>
+    {% elif submission|qa_status(qc) == quality_statuses.FLAGGED -%}
+        <i class="fa fa-circle text-danger" title="{{ _('Flagged') }}"></i>
+    {% else -%}
+        <i class="fa fa-circle text-black-50" title="{{ _('Insufficient Data') }}"></i>
+    {% endif %}
     </td>
     {% endfor %}
     {% endif %}
-    <td style="text-align: center"><img src="{% if submission.sender_verified %}{{ url_for('static', filename='img/tick.png') }}{% else %}{{ url_for('static', filename='img/caution.png') }}{% endif %}" title="{% if submission.sender_verified %}{{ _('Verified') }}{% else %}{{ _('Unverified') }}{% endif %}" height="11" width="11" /></td>
+    <td class="text-center">{% if submission.sender_verified %}<i class="fa fa-check text-success" title="{{ _('Verified') }}"></i>{% else %}<i class="fa fa-exclamation-triangle text-warning" title="{{ _('Unverified') }}"></i>{% endif %}</td>
 </tr>
 {% else %}
 {% if perms.edit_submission.can() %}
@@ -48,13 +54,13 @@
 {% else %}
 {%- set colspan = 5 + (location_types|length) -%}
 {% endif %}
-<tr class="warning">
-    <td class="text-center" colspan="{{ colspan }}">{{ _('No Data Available') }}</td>
+<tr class="table-warning">
+    <td class="text-center text-muted" colspan="{{ colspan }}">{{ _('No Data Available') }}</td>
 </tr>
 {% else %}
 {%- set colspan = 4 + (location_types|length) + form.quality_checks|length -%}
-<tr class="warning">
-    <td class="text-center" colspan="{{ colspan }}">{{ _('No Data Available') }}</td>
+<tr class="table-warning">
+    <td class="text-center text-muted" colspan="{{ colspan }}">{{ _('No Data Available') }}</td>
 </tr>
 {% endif %}
 {% endfor %}

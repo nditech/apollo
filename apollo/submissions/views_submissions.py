@@ -985,7 +985,7 @@ def quality_assurance_list(form_id):
     form = services.forms.get_or_404(
         models.Form.id == form_id,
         models.Form.form_type == 'CHECKLIST')
-    page_title = _('Quality Assurance — %(name)s', name=form.name)
+    breadcrumbs = [_("Quality Assurance"), form.name]
     filter_class = generate_quality_assurance_filter(form)
     data = request.args.to_dict()
     data['form_id'] = str(form.id)
@@ -1036,7 +1036,7 @@ def quality_assurance_list(form_id):
         'form': form,
         'args': data,
         'filter_form': filter_form,
-        'page_title': page_title,
+        'breadcrumbs': breadcrumbs,
         'location_types': loc_types,
         'location': location,
         'pager': query_filterset.qs.paginate(
