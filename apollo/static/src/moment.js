@@ -1,0 +1,5 @@
+"use strict";
+
+import moment from 'moment';
+
+window.moment = moment;
