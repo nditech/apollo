@@ -48,3 +48,15 @@ def update_submission(submission_pk, sender):
         participant = submission.contributor
         if participant:
             update_participant_completion_rating(participant)
+
+
+@celery.task
+def recompute_logical_checks(form_pk):
+    form = models.Form.objects.get(pk=form_pk)
+
+    # update most recently created first
+    related_submissions = models.Submission.objects.filter(
+        form=form).order_by('-created')
+    for submission in related_submissions:
+        submission._compute_data_quality()
+        submission.save(clean=False)

@@ -12,7 +12,7 @@ from apollo import services
 from apollo.formsframework.forms import FormForm
 from apollo.formsframework.models import FormBuilderSerializer
 from apollo.formsframework.tasks import update_submissions
-from apollo.submissions.tasks import init_submissions
+from apollo.submissions.tasks import init_submissions, recompute_logical_checks
 from apollo.frontend.forms import make_checklist_init_form
 
 bp = Blueprint('forms', __name__, template_folder='templates',
@@ -170,6 +170,7 @@ def quality_assurance(pk):
                         'rvalue': rhs
                     })
             form.save()
+            recompute_logical_checks.delay(pk)
             return redirect(url_for('.list_forms'))
         except ValueError:
             pass
