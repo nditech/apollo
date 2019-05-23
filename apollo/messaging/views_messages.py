@@ -36,7 +36,7 @@ bp = Blueprint('messages', __name__)
 @login_required
 @permissions.view_messages.require(403)
 def message_list():
-    page_title = _('Messages')
+    breadcrumbs = [_('Messages')]
     template_name = 'frontend/message_list.html'
 
     deployment = g.deployment
@@ -155,7 +155,7 @@ def message_list():
         page_spec = data.pop('page', None) or [1]
         page = int(page_spec[0])
         context = {
-            'page_title': page_title,
+            'breadcrumbs': breadcrumbs,
             'filter_form': filter_form,
             'args': data,
             'pager': all_messages.paginate(

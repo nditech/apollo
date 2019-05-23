@@ -1,121 +1,121 @@
-{% extends "frontend/_layout.html" %}
+{% extends "frontend/layout.html" %}
 {%- from 'frontend/macros/pagination.html' import render_pager, render_pager_counter -%}
-{% block stylesheets %}
-<link rel="stylesheet" media="screen" href="https://fontlibrary.org/face/kawkab-mono" type="text/css"/>
-{% endblock %}
+
 {% block toolbar %}
 {% if perms.export_messages.can() %}
-<a class="btn btn-sm btn-default pull-right" href="{{ url_for('messages.message_list', export='true', **request.args) }}"><i class="glyphicon glyphicon-export"></i> {{ _('Export') }}</a>
+<a class="btn btn-secondary mr-2" href="{{ url_for('messages.message_list', export='true', **request.args) }}">{{ _('Export') }}</a>
 {% endif %}
 {% endblock %}
+
 {% block content %}
+<div class="card border-light bg-light mb-3">
+  <div class="card-header">
+    <form class="mb-n2 ml-n2 mr-n2">
+      <div class="form-row">
+        <div class="col-md-2 mb-2">
+          {{ filter_form.mobile(class_="form-control", placeholder=_("Mobile")) }}
+        </div>
+        <div class="col-md-4 mb-2">
+          {{ filter_form.text(class_="form-control", placeholder=_("Text")) }}
+        </div>
+        <div class="col-md-2 mb-2">
+          {{ filter_form.form_type(class_="form-control custom-select", placeholder=_("Type")) }}
+        </div>
+        <div class="col-md-2 mb-2">
+          <div class="input-group date" id="datepicker" data-target-input="nearest">
+            {{ filter_form.date(class_="form-control datetimepicker-input", placeholder=_("Date"), **{'data-target': '#datepicker'}) }}
+            <div class="input-group-append" data-target="#datepicker" data-toggle="datetimepicker">
+              <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-2 mb-2">
+          <div class="d-flex flex-row">
+            <button class="btn btn-primary mr-2 flex-fill" type="submit">{{ _('Search') }}</button>
+            <a class="btn btn-secondary flex-fill" href="javascript:;" id="filter_reset">{{ _('Clear') }}</a>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
 <div class="row">
   <div class="col-md-12">
     <div id="container" style="height: 160px; min-width: 600px" data-chart='{{ chart_data|tojson }}'></div>
   </div>
 </div>
-<div class="row">
-  <div class="col-md-12">
-    <div class="well well-sm filter">
-      <form method="GET" id="filter" class="form-inline">
-        <div class="form-group">
-          {{ filter_form.mobile(class_="form-control span2 input-sm", placeholder=_("Mobile")) }}
-        </div>
-        <div class="form-group">
-          {{ filter_form.text(class_="form-control span2 input-sm", placeholder=_("Text")) }}
-        </div>
-        <div class="form-group">
-          {{ filter_form.form_type(class_="form-control span2 input-sm", placeholder=_("Type")) }}
-        </div>
-        <div class=" form-group">
-          <div class="input-group date span2 datesel" data-date="" data-date-format="dd-mm-yyyy">
-            {{ filter_form.date(class_="form-control span2 input-sm", placeholder=_("Date"), style="width:129px;", size="16", readonly="readonly") }}
-            <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
-          </div>
-        </div>
-        <div class="form-group">
-          <button type="submit" class="btn btn-warning btn-sm"><i class="glyphicon glyphicon-search"></i> {{ _('Search') }}</button>
-        </div>
-        <div class="form-group">
-          <a class="btn btn-default form-reset btn-sm">{{ _('Clear') }}</a>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
 
-<div class="row">
-  <div class="col-md-12">
-    {{ render_pager_counter(pager, args) }}
-  </div>
-</div>
-<div class="row">
-  <div class="col-md-12">
-    <table class="table table-striped table-bordered table-hover" style="table-layout:fixed">
-      <thead>
-        <tr>
-          <th>{{ _('Date') }}</th>
-          <th>{{ _('Time') }}</th>
-          <th>{{ _('Mobile') }}</th>
-          <th>{{ _('Direction') }}</th>
-          <th>{{ _('Text') }}</th>
-          <th>{{ _('Type') }}</th>
-        </tr>
-      </thead>
-      <tbody style="font-family: 'KawkabMonoRegular'; font-size: 0.75em;">
-        {% for left_message, right_message, submission_id, form_type in pager.items %}
-        {% if left_message.direction == 'IN' %}
-        <tr>
-        {% if right_message == None %}
-          <td colspan="6"></td>
-        {% else %}
-          <td class="timestamp-date" data-timestamp="{{ right_message.received|timestamp }}">{{ right_message.received.strftime('%b %d %Y') }}</td>
-          <td class="timestamp-time" data-timestamp="{{ right_message.received|timestamp }}">{{ right_message.received.strftime('%I:%M %p') }}</td>
-          <td>{{ right_message.recipient }}</td>
-          <td>{{ right_message.direction.value }}</td>
-          <td style="word-wrap:break-word">{{ right_message.text }}</td>
-          <td>{% if form_type %}{{ form_type.value }}{% else %}{{ _('Invalid') }}{% endif %}</td>
-        {% endif %}
-        </tr>
-        <tr>
-          <td class="timestamp-date" data-timestamp="{{ left_message.received|timestamp }}">{{ left_message.received.strftime('%b %d %Y') }}</td>
-          <td class="timestamp-time" data-timestamp="{{ left_message.received|timestamp }}">{{ left_message.received.strftime('%I:%M %p') }}</td>
-          <td>{{ left_message.sender }}</td>
-          <td>{{ left_message.direction.value }}</td>
-          <td style="word-wrap:break-word">{{ left_message.text }}</td>
-          <td>{% if form_type %}{{ form_type.value }}{% else %}{{ _('Invalid') }}{% endif %}</td>
-        </tr>
-        {% else %}
-        <tr>
-          <td class="timestamp-date" data-timestamp="{{ left_message.received|timestamp }}">{{ left_message.received.strftime('%b %d %Y') }}</td>
-          <td class="timestamp-time" data-timestamp="{{ left_message.received|timestamp }}">{{ left_message.received.strftime('%I:%M %p') }}</td>
-          <td>{{ left_message.recipient }}</td>
-          <td>{{ left_message.direction.value }}</td>
-          <td style="word-wrap:break-word">{{ left_message.text }}</td>
-          <td>{% if form_type %}{{ form_type.value }}{% else %}{{ _('Invalid') }}{% endif %}</td>
-        </tr>
-        <tr><td colspan="6"></td></tr>
-        {% endif %}
-        {% else %}
-        <tr class="warning">
-          <td style="text-align:center" colspan="6">{{ _('No Data Available') }}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-</div>
-
-<div class="row">
-  <div class="col-md-12">
+<div class="card-header">
   {{ render_pager(pager, 'messages.message_list', args) }}
-  </div>
+</div>
+
+<div class="table-responsive-md mb-n3">
+  <table class="table table-striped table-hover">
+    <thead class="thead-light">
+      <tr>
+        <th scope="col">{{ _('Date') }}</th>
+        <th scope="col">{{ _('Time') }}</th>
+        <th scope="col">{{ _('Mobile') }}</th>
+        <th scope="col">{{ _('Direction') }}</th>
+        <th scope="col">{{ _('Text') }}</th>
+        <th scope="col">{{ _('Type') }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for left_message, right_message, submission_id, form_type in pager.items %}
+      {% if left_message.direction == 'IN' %}
+      <tr>
+      {% if right_message == None %}
+        <td colspan="6" class="text-monospace"></td>
+      {% else %}
+        <td class="timestamp-date text-monospace" data-timestamp="{{ right_message.received|timestamp }}">{{ right_message.received.strftime('%b %d %Y') }}</td>
+        <td class="timestamp-time text-monospace" data-timestamp="{{ right_message.received|timestamp }}">{{ right_message.received.strftime('%I:%M %p') }}</td>
+        <td class="text-monospace">{{ right_message.recipient }}</td>
+        <td class="text-monospace">{{ _(right_message.direction.value) }}</td>
+        <td class="text-monospace" style="word-wrap:break-word">{{ right_message.text }}</td>
+        <td class="text-monospace">{% if form_type %}{{ form_type.value }}{% else %}{{ _('Invalid') }}{% endif %}</td>
+      {% endif %}
+      </tr>
+      <tr>
+        <td class="timestamp-date text-monospace" data-timestamp="{{ left_message.received|timestamp }}">{{ left_message.received.strftime('%b %d %Y') }}</td>
+        <td class="timestamp-time text-monospace" data-timestamp="{{ left_message.received|timestamp }}">{{ left_message.received.strftime('%I:%M %p') }}</td>
+        <td class="text-monospace">{{ left_message.sender }}</td>
+        <td class="text-monospace">{{ _(left_message.direction.value) }}</td>
+        <td class="text-monospace" style="word-wrap:break-word">{{ left_message.text }}</td>
+        <td class="text-monospace">{% if form_type %}{{ form_type.value }}{% else %}{{ _('Invalid') }}{% endif %}</td>
+      </tr>
+      {% else %}
+      <tr>
+        <td class="timestamp-date text-monospace" data-timestamp="{{ left_message.received|timestamp }}">{{ left_message.received.strftime('%b %d %Y') }}</td>
+        <td class="timestamp-time text-monospace" data-timestamp="{{ left_message.received|timestamp }}">{{ left_message.received.strftime('%I:%M %p') }}</td>
+        <td class="text-monospace">{{ left_message.recipient }}</td>
+        <td class="text-monospace">{{ _(left_message.direction.value) }}</td>
+        <td class="text-monospace" style="word-wrap:break-word">{{ left_message.text }}</td>
+        <td class="text-monospace">{% if form_type %}{{ form_type.value }}{% else %}{{ _('Invalid') }}{% endif %}</td>
+      </tr>
+      <tr><td colspan="6"></td></tr>
+      {% endif %}
+      {% else %}
+      <tr class="table-warning">
+        <td class="text-center text-muted" colspan="6">{{ _('No Data Available') }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<div class="card-footer">
+  {{ render_pager(pager, 'messages.message_list', args) }}
 </div>
 {% endblock %}
+
 {% block scripts %}
-<script src="{{ url_for('static', filename='js/moment-with-langs.min.js') }}"></script>
+<script type="text/javascript" src="{{ asset_url_for('moment.js') }}" charset="utf-8"></script>
+<script type="text/javascript" src="{{ asset_url_for('messagelog.js') }}" charset="utf-8"></script>
 <script type="text/javascript">
   moment.lang('{{ g.locale }}');
+
   $(function () {
     // load the data
     var data = $('#container').data('chart');
@@ -163,8 +163,17 @@
           min: 0
         }
     });
+
+    $('#datepicker').datetimepicker({
+      locale: '{{ g.locale }}',
+      format: 'DD-MM-YYYY',
+      allowInputToggle: true
+    });
   });
 </script>
-<script src="{{ url_for('static', filename='js/timestamps.js') }}"></script>
 <script src="{{ url_for('static', filename='js/highstock.js') }}"></script>
 {% endblock %}
+
+{% block stylesheets -%}
+<link rel="stylesheet" href="{{ asset_url_for('messagelog.css') }}">
+{%- endblock %}
