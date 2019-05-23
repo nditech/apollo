@@ -73,11 +73,10 @@ def participant_list(participant_set_id=0):
     if participant_set_id:
         participant_set = ParticipantSet.query.filter(
             ParticipantSet.id == participant_set_id).first_or_404()
-        template_name = 'frontend/participant_list_with_set.html'
     else:
         participant_set = g.event.participant_set or abort(404)
-        template_name = 'frontend/participant_list.html'
 
+    template_name = 'frontend/participant_list.html'
     breadcrumbs = [_('Participants')]
 
     extra_fields = [field for field in participant_set.extra_fields

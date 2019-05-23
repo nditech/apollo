@@ -31,7 +31,11 @@
 {% block toolbar %}
 <div class="btn-toolbar d-none d-md-flex" role="toolbar">
   {%- if perms.export_participants.can() -%}
+  {% if args.participant_set_id -%}
+  <a class="btn btn-secondary mr-2" href="{{ url_for('participants.participant_list_with_set', export='true', participant_set_id=participant_set_id) }}">{{ _('Export') }}</a>
+  {%- else -%}
   <a class="btn btn-secondary mr-2" href="{{ url_for('participants.participant_list', export='true') }}">{{ _('Export') }}</a>
+  {%- endif %}
   {%- endif -%}
   <a class="btn btn-secondary mr-2" href="{{ url_for('participants.participant_performance_list') }}">{{ _('Performance Evaluation') }}</a>
   {%- if perms.import_participants.can() -%}
@@ -55,7 +59,11 @@
 </div>
 
 <div class="card-header">
+  {% if args.participant_set_id -%}
+  {{ render_pager(participants, 'participants.participant_list_with_set', args) }}
+  {%- else -%}
   {{ render_pager(participants, 'participants.participant_list', args) }}
+  {%- endif %}
 </div>
 
 <div class="table-responsive-md mb-n3">
@@ -191,7 +199,11 @@
 </div>
 
 <div class="card-footer">
+  {% if args.participant_set_id -%}
+  {{ render_pager(participants, 'participants.participant_list_with_set', args) }}
+  {%- else -%}
   {{ render_pager(participants, 'participants.participant_list', args) }}
+  {%- endif %}
 </div>
 
 <div class="modal fade" id="edit_modal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
@@ -243,7 +255,7 @@
   <div class="wizard-card" data-cardname="uploadFile">
     <h3>{{ _('Upload File') }}</h3>
     <div class="wizard-input-section">
-    <form enctype="multipart/form-data" method="POST" id="upload-form" action="{{ url_for('participants.participant_list_import') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+    <form enctype="multipart/form-data" method="POST" id="upload-form" action="{% if args.participant_set_id %}{{ url_for('participants.participant_list_import_with_set', participant_set_id=participant_set_id) }}{% else %}{{ url_for('participants.participant_list_import') }}{% endif %}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
       <div class="form-group">
         <div class="col-sm-9">
           <div class="row">
