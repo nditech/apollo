@@ -12,6 +12,7 @@
                 <div class="col-md-6 mb-2">
                     {{ filter_form.location(class_='form-control select2 select2-locations') }}
                 </div>
+            {%- if form.form_type == 'CHECKLIST' -%}
                 <div class="col-md-2 mb-2 d-flex">
                     <div class="d-flex align-items-center">
                         <div class="custom-control custom-switch">
@@ -20,30 +21,29 @@
                         </div>
                     </div>
                 </div>
-                {%- if form.form_type == 'CHECKLIST' -%}
-                    {%- for group in form.data.groups -%}
-                    {% set field = form.id|string + '__' + group.slug %}
-                    <div class="col-md-2 mb-2">
-                        {{ filter_form[field](class_='form-control custom-select') }}
-                    </div>
-                    {%- endfor -%}
-                    <div class="col-md-2 mb-2">
-                        {{ filter_form['quarantine_status'](class_='form-control custom-select') }}
-                    </div>
-                {%- else -%}
-                    {%- for group in form.data.groups -%}
-                    {%- for field in group.fields -%}
-                    {%- if field['type'] == 'select' -%}
-                    <div class="col-md-2 mb-2">
-                        {{ filter_form[field.tag](class_='form-control custom-select') }}
-                    </div>
-                    {%- endif -%}
-                    {%- endfor -%}
-                    {%- endfor -%}
-                    <div class="col-md-2 mb-2">
-                        {{ filter_form.status(class_='form-control custom-select select2-container select2', placeholder=_('All Statuses')) }}
-                    </div>
-                {%- endif %}
+                {%- for group in form.data.groups -%}
+                {% set field = form.id|string + '__' + group.slug %}
+                <div class="col-md-2 mb-2">
+                    {{ filter_form[field](class_='form-control custom-select') }}
+                </div>
+                {%- endfor -%}
+                <div class="col-md-2 mb-2">
+                    {{ filter_form['quarantine_status'](class_='form-control custom-select') }}
+                </div>
+            {%- else -%}
+                {%- for group in form.data.groups -%}
+                {%- for field in group.fields -%}
+                {%- if field['type'] == 'select' -%}
+                <div class="col-md-2 mb-2">
+                    {{ filter_form[field.tag](class_='form-control custom-select') }}
+                </div>
+                {%- endif -%}
+                {%- endfor -%}
+                {%- endfor -%}
+                <div class="col-md-2 mb-2">
+                    {{ filter_form.status(class_='form-control custom-select select2-container select2', placeholder=_('All Statuses')) }}
+                </div>
+            {%- endif %}
                 <div class="col-md-2 mb-2">
                     {{ filter_form['sender_verification'](class_='form-control custom-select') }}
                 </div>
