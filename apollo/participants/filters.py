@@ -51,7 +51,8 @@ def make_participant_role_filter(participant_set_id):
 
         def queryset_(self, query, value):
             if value:
-                return query.filter_by(role_id=value)
+                return query.filter(
+                    models.Participant.role_id == value)
 
             return query
 
@@ -72,7 +73,8 @@ def make_participant_partner_filter(participant_set_id):
 
         def queryset_(self, query, value):
             if value:
-                return query.filter_by(partner_id=value)
+                return query.filter(
+                    models.Participant.partner_id == value)
             return query
 
     return ParticipantPartnerFilter

@@ -62,16 +62,90 @@
   <table class="table table-sm table-hover">
     <thead class="thead-light">
       <tr>
-        <th scope="col" class="text-right col-1"><a class="text-decoration-none" href="{{ url_for('participants.participant_list', sort_by='id', **args) }}">{{ _('ID') }}</a></th>
+        {% if request.args.sort_by == 'id' -%}
+        {% if request.args.sort_direction == 'desc' -%}
+        <th scope="col" class="text-right col-1"><a class="text-decoration-none" href="{{ modify_query(sort_by='id', sort_direction='asc', page='') }}">{{ _('ID') }} <i class="fa fa-chevron-down"></i></a></th>
+        {% else -%}
+        <th scope="col" class="text-right col-1"><a class="text-decoration-none" href="{{ modify_query(sort_by='id', sort_direction='desc', page='') }}">{{ _('ID') }} <i class="fa fa-chevron-up"></i></a></th>
+        {% endif %}{% else -%}
+        <th scope="col" class="text-right col-1"><a class="text-decoration-none" href="{{ modify_query(sort_by='id', sort_value='', sort_direction='', page='') }}">{{ _('ID') }}</a></th>
+        {% endif -%}
+
         {%- for location_type in location_types -%}
-        <th scope="col">{{ location_type.name }}</th>
+        {% if request.args.sort_by == 'location' and request.args.sort_value == location_type.id|string %}
+        {% if request.args.sort_direction == 'desc' %}
+        <th scope="col">
+          <a class="text-decoration-none" href="{{ modify_query(sort_by='location', sort_value=location_type.id, sort_direction='asc', page='') }}">{{ location_type.name }} <i class="fa fa-chevron-down"></i></a>
+        </th>
+        {% else -%}
+        <th scope="col">
+          <a class="text-decoration-none" href="{{ modify_query(sort_by='location', sort_value=location_type.id, sort_direction='desc', page='') }}">{{ location_type.name }} <i class="fa fa-chevron-up"></i></a>
+        </th>
+        {% endif -%}
+        {% else -%}
+        <th scope="col"><a class="text-decoration-none" href="{{ modify_query(sort_by='location', sort_value=location_type.id, sort_direction='', page='') }}">{{ location_type.name }}</a></th>
+        {% endif %}
         {%- endfor -%}
-        <th scope="col">{{ _('Location') }}</th>
-        <th scope="col"><a href="{{ url_for('participants.participant_list', sort_by='name', **args) }}">{{ _('Name') }}</a></th>
-        <th scope="col">{{ _('Phone') }}</th>
-        <th scope="col"><a href="{{ url_for('participants.participant_list', sort_by='gen', **args) }}">{{ _('Gender') }}</a></th>
-        <th scope="col">{{ _('Role') }}</th>
-        <th scope="col">{{ _('Organization') }}</th>
+
+        {% if request.args.sort_by == 'location_name' -%}
+        {% if request.args.sort_direction == 'desc' -%}
+        <th scope="col"><a class="text-decoration-none" href="{{ modify_query(sort_by='location_name', sort_direction='asc', page='') }}">{{ _('Location') }} <i class="fa fa-chevron-down"></i></a></th>
+        {% else -%}
+        <th scope="col"><a class="text-decoration-none" href="{{ modify_query(sort_by='location_name', sort_direction='desc', page='') }}">{{ _('Location') }} <i class="fa fa-chevron-up"></i></a></th>
+        {% endif -%}
+        {% else -%}
+        <th scope="col"><a class="text-decoration-none" href="{{ modify_query(sort_by='location_name', sort_value='', sort_direction='', page='') }}">{{ _('Location') }}</a></th>
+        {% endif -%}
+
+        {% if request.args.sort_by == 'name' -%}
+        {% if request.args.sort_direction == 'desc' -%}
+        <th scope="col"><a class="text-decoration-none" href="{{ modify_query(sort_by='name', sort_direction='asc', page='') }}">{{ _('Name') }} <i class="fa fa-chevron-down"></i></a></th>
+        {% else -%}
+        <th scope="col"><a class="text-decoration-none" href="{{ modify_query(sort_by='name', sort_direction='desc', page='') }}">{{ _('Name') }} <i class="fa fa-chevron-up"></i></a></th>
+        {% endif -%}
+        {% else -%}
+        <th scope="col"><a class="text-decoration-none" href="{{ modify_query(sort_by='name', sort_value='', sort_direction='', page='') }}">{{ _('Name') }}</a></th>
+        {% endif -%}
+        {% if request.args.sort_by == 'phone' -%}
+        {% if request.args.sort_direction == 'desc' -%}
+        <th scope="col"><a class="text-decoration-none" href="{{ modify_query(sort_by='phone', sort_direction='asc', page='') }}">{{ _('Phone') }} <i class="fa fa-chevron-down"></i></a></th>
+        {% else -%}
+        <th scope="col"><a class="text-decoration-none" href="{{ modify_query(sort_by='phone', sort_direction='desc', page='') }}">{{ _('Phone') }} <i class="fa fa-chevron-up"></i></a></th>
+        {% endif -%}
+        {% else -%}
+        <th scope="col"><a class="text-decoration-none" href="{{ modify_query(sort_by='phone', sort_value='', sort_direction='', page='') }}">{{ _('Phone') }}</a></th>
+        {% endif -%}
+
+        {% if request.args.sort_by == 'gen' -%}
+        {% if request.args.sort_direction == 'desc' -%}
+        <th scope="col"><a class="text-decoration-none" href="{{ modify_query(sort_by='gen', sort_direction='asc', page='') }}">{{ _('Gender') }} <i class="fa fa-chevron-down"></i></a></th>
+        {% else -%}
+        <th scope="col"><a class="text-decoration-none" href="{{ modify_query(sort_by='gen', sort_direction='desc', page='') }}">{{ _('Gender') }} <i class="fa fa-chevron-up"></i></a></th>
+        {% endif -%}
+        {% else -%}
+        <th scope="col"><a class="text-decoration-none" href="{{ modify_query(sort_by='gen', sort_value='', sort_direction='', page='') }}">{{ _('Gender') }}</a></th>
+        {% endif -%}
+
+        {% if request.args.sort_by == 'role' -%}
+        {% if request.args.sort_direction == 'desc' -%}
+        <th scope="col"><a class="text-decoration-none" href="{{ modify_query(sort_by='role', sort_direction='asc', page='') }}">{{ _('Role') }} <i class="fa fa-chevron-down"></i></a></th>
+        {% else -%}
+        <th scope="col"><a class="text-decoration-none" href="{{ modify_query(sort_by='role', sort_direction='desc', page='') }}">{{ _('Role') }} <i class="fa fa-chevron-up"></i></a></th>
+        {% endif -%}
+        {% else -%}
+        <th scope="col"><a class="text-decoration-none" href="{{ modify_query(sort_by='role', sort_value='', sort_direction='', page='') }}">{{ _('Role') }}</a></th>
+        {% endif -%}
+
+        {% if request.args.sort_by == 'org' -%}
+        {% if request.args.sort_direction == 'desc' -%}
+        <th scope="col"><a class="text-decoration-none" href="{{ modify_query(sort_by='org', sort_direction='asc', page='') }}">{{ _('Organization') }} <i class="fa fa-chevron-down"></i></a></th>
+        {% else -%}
+        <th scope="col"><a class="text-decoration-none" href="{{ modify_query(sort_by='org', sort_direction='desc', page='') }}">{{ _('Organization') }} <i class="fa fa-chevron-up"></i></a></th>
+        {% endif -%}
+        {% else -%}
+        <th scope="col"><a class="text-decoration-none" href="{{ modify_query(sort_by='org', sort_value='', sort_direction='', page='') }}">{{ _('Organization') }}</a></th>
+        {% endif -%}
+
         {% for field in extra_fields %}
         {% if perms.can_access_resource(field) %}
         <th scope="col">{{ field.label }}</th>

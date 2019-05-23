@@ -13,7 +13,7 @@ from flask_restful import Api
 from flask_security import current_user, login_required
 from slugify import slugify_unicode
 
-from apollo import services, utils
+from apollo import models, services, utils
 from apollo.core import uploads
 from apollo.frontend import helpers, permissions, route
 from apollo.frontend.forms import (
@@ -28,6 +28,8 @@ from ..locations.models import Location
 from ..messaging.models import Message
 from ..submissions.models import Submission
 from ..users.models import UserUpload
+
+from sqlalchemy import desc, Integer, func, text
 
 
 phone_number_cleaner = re.compile(r'[^0-9]')
@@ -76,25 +78,16 @@ def participant_list(participant_set_id=0):
         participant_set = g.event.participant_set or abort(404)
         template_name = 'frontend/participant_list.html'
 
-    breadcrumbs = [_('Participants'),]
-
-    sortable_columns = {
-        'id': 'participant_id',
-        'name': 'name',
-        'gen': 'gender'
-    }
+    breadcrumbs = [_('Participants')]
 
     extra_fields = [field for field in participant_set.extra_fields
                     if field.visible_in_lists] \
         if participant_set.extra_fields else []
+
     location = None
     if request.args.get('location'):
         location = Location.query.filter(
             Location.id == request.args.get('location')).first()
-
-    for field in extra_fields:
-        sortable_columns.update({
-            field.name: Participant.extra_data[field.name]})
 
     queryset = Participant.query.select_from(
         Participant, ParticipantTranslations).filter(
@@ -105,21 +98,6 @@ def participant_list(participant_set_id=0):
     filter_class = filters.participant_filterset(
         participant_set.id, location_set_id)
     queryset_filter = filter_class(queryset, request.args)
-
-    form = DummyForm(request.form)
-
-    if request.form.get('action') == 'send_message':
-        message = request.form.get('message', '')
-        recipients = [x for x in [participant.phone
-                      if participant.phone else ''
-                      for participant in queryset_filter.qs] if x != '']
-        recipients.extend(current_app.config.get('MESSAGING_CC'))
-
-        if message and recipients and permissions.send_messages.can():
-            send_messages.delay(g.event.id, message, recipients)
-            return 'OK'
-        else:
-            abort(400)
 
     if request.args.get('export') and permissions.export_participants.can():
         # Export requested
@@ -133,44 +111,195 @@ def participant_list(participant_set_id=0):
             headers={'Content-Disposition': content_disposition},
             mimetype="text/csv"
         )
+
+    # the following section defines the queryset for the participants
+    # to be retrieved. due to the fact that we do specialized sorting
+    # the queryset will depend heavily on what is being sorted.
+    if (
+        request.args.get('sort_by') == 'location' and
+        request.args.get('sort_value')
+    ):
+        # when sorting based on location, we generally want to be able
+        # to sort participants based on a specific administrative division.
+        # since we store the hierarchical structure in a separate table
+        # we not only have to retrieve the table for the location data but
+        # also join it based on results in the location hierarchy.
+
+        # start out by getting all the locations (as a subquery) in a
+        # particular division.
+
+        division = models.Location.query.with_entities(
+            models.Location.id).filter(
+                models.Location.location_type_id ==
+                request.args.get('sort_value')
+            ).subquery()
+        # next is we retrieve all the descendant locations for all the
+        # locations in that particular administrative division making sure
+        # to retrieve the name translations which would be used in sorting
+        # the participants when the time comes.
+        descendants = models.LocationPath.query.join(
+                models.Location,
+                models.Location.id == models.LocationPath.ancestor_id
+            ).with_entities(
+                models.Location.name_translations,
+                models.LocationPath.descendant_id
+            ).filter(
+                models.LocationPath.ancestor_id.in_(division)
+            ).subquery()
+
+        # now we defined the actual queryset using the subqueries above
+        # taking note to group by the translation name which essentially
+        # is the division name.
+        queryset = models.Participant.query.select_from(
+            models.Participant, models.Location,
+            func.jsonb_each_text(
+                descendants.c.name_translations).alias('translation')
+        ).filter(
+            models.Participant.participant_set_id == participant_set.id
+        ).join(
+            models.Location,
+            models.Participant.location_id == models.Location.id
+        ).outerjoin(
+            descendants,
+            descendants.c.descendant_id == models.Participant.location_id
+        ).group_by(
+            text('translation.value'), models.Participant.id
+        )
+    elif request.args.get('sort_by') == 'phone':
+        participant_phones = models.ParticipantPhone.query.filter(
+            models.ParticipantPhone.verified == True).order_by(  # noqa
+                desc(models.ParticipantPhone.last_seen)).subquery()
+        queryset = models.Participant.query.filter(
+            models.Participant.participant_set_id == participant_set.id
+        ).join(
+            models.Location,
+            models.Participant.location_id == models.Location.id
+        ).outerjoin(
+            participant_phones,
+            participant_phones.c.participant_id == models.Participant.id
+        ).join(
+            models.Phone,
+            participant_phones.c.phone_id == models.Phone.id
+        )
     else:
-        # request.args is immutable, so the .pop() call will fail on it.
-        # using .copy() returns a mutable version of it.
-        args = request.args.to_dict(flat=False)
-        page_spec = args.pop('page', None) or [1]
-        page = int(page_spec[0])
-        if participant_set_id:
-            args['participant_set_id'] = participant_set_id
+        queryset = models.Participant.query.select_from(
+            models.Participant, ParticipantTranslations,
+            models.Location,
+            func.jsonb_each_text(models.Location.name_translations).alias(
+                'translation'),
+            func.jsonb_each_text(models.Participant.name_translations).alias(
+                'participant_name'), models.ParticipantRole,
+            models.ParticipantPartner
+        ).filter(
+            models.Participant.participant_set_id == participant_set.id
+        ).join(
+            models.Location,
+            models.Participant.location_id == models.Location.id
+        ).outerjoin(
+            models.ParticipantRole,
+            models.Participant.role_id == models.ParticipantRole.id
+        ).outerjoin(
+            models.ParticipantPartner,
+            models.Participant.partner_id == models.ParticipantPartner.id
+        )
 
-        sort_by_arg = args.pop('sort_by', '')
-        if isinstance(sort_by_arg, list):
-            sort_param = sort_by_arg[0]
+    if request.args.get('sort_by') == 'id':
+        if request.args.get('sort_direction') == 'desc':
+            queryset = queryset.order_by(
+                desc(models.Participant.participant_id.cast(Integer)))
         else:
-            sort_param = sort_by_arg
-        sort_by = sortable_columns.get(sort_param, 'participant_id')
-        subset = queryset_filter.qs.order_by(sort_by).distinct(sort_by)
+            queryset = queryset.order_by(
+                models.Participant.participant_id.cast(Integer))
+    elif request.args.get('sort_by') in ('location_name', 'location',):
+        if request.args.get('sort_direction') == 'desc':
+            queryset = queryset.order_by(
+                desc(text('translation.value')))
+        else:
+            queryset = queryset.order_by(text('translation.value'))
+    elif request.args.get('sort_by') == 'name':
+        if request.args.get('sort_direction') == 'desc':
+            queryset = queryset.order_by(
+                desc(text('participant_name.value')))
+        else:
+            queryset = queryset.order_by(text('participant_name.value'))
+    elif request.args.get('sort_by') == 'phone':
+        if request.args.get('sort_direction') == 'desc':
+            queryset = queryset.order_by(
+                desc(models.Phone.number))
+        else:
+            queryset = queryset.order_by(
+                models.Phone.number)
+    elif request.args.get('sort_by') == 'gen':
+        if request.args.get('sort_direction') == 'desc':
+            queryset = queryset.order_by(
+                desc(models.Participant.gender))
+        else:
+            queryset = queryset.order_by(
+                models.Participant.gender)
+    elif request.args.get('sort_by') == 'role':
+        if request.args.get('sort_direction') == 'desc':
+            queryset = queryset.order_by(
+                desc(models.ParticipantRole.name))
+        else:
+            queryset = queryset.order_by(
+                models.ParticipantRole.name)
+    elif request.args.get('sort_by') == 'org':
+        if request.args.get('sort_direction') == 'desc':
+            queryset = queryset.order_by(
+                desc(models.ParticipantPartner.name))
+        else:
+            queryset = queryset.order_by(
+                models.ParticipantPartner.name)
+    else:
+        queryset = queryset.order_by(
+            models.Location.code.cast(Integer),
+            models.Participant.participant_id.cast(Integer))
 
-        # load form context
-        context = dict(
-            args=args,
-            extra_fields=extra_fields,
-            filter_form=queryset_filter.form,
-            form=form,
-            location=location,
-            location_set_id=location_set_id,
-            breadcrumbs=breadcrumbs,
-            participant_set=participant_set,
-            participant_set_id=participant_set.id,
-            location_types=helpers.displayable_location_types(
-                is_administrative=True, location_set_id=location_set_id),
-            participants=subset.paginate(
-                page=page, per_page=current_app.config.get('PAGE_SIZE'))
-        )
+    # request.args is immutable, so the .pop() call will fail on it.
+    # using .copy() returns a mutable version of it.
+    args = request.args.to_dict(flat=False)
+    page_spec = args.pop('page', None) or [1]
+    page = int(page_spec[0])
+    if participant_set_id:
+        args['participant_set_id'] = participant_set_id
 
-        return render_template(
-            template_name,
-            **context
-        )
+    queryset_filterset = filter_class(queryset, request.args)
+    filter_form = queryset_filterset.form
+
+    if request.form.get('action') == 'send_message':
+        message = request.form.get('message', '')
+        recipients = [x for x in [participant.phone
+                                  if participant.phone else ''
+                                  for participant in queryset_filterset.qs]
+                      if x != '']
+        recipients.extend(current_app.config.get('MESSAGING_CC'))
+
+        if message and recipients and permissions.send_messages.can():
+            send_messages.delay(g.event.id, message, recipients)
+            return 'OK'
+        else:
+            abort(400)
+
+    # load form context
+    context = dict(
+        args=args,
+        extra_fields=extra_fields,
+        filter_form=filter_form,
+        location=location,
+        location_set_id=location_set_id,
+        breadcrumbs=breadcrumbs,
+        participant_set=participant_set,
+        participant_set_id=participant_set.id,
+        location_types=helpers.displayable_location_types(
+            is_administrative=True, location_set_id=location_set_id),
+        participants=queryset_filterset.qs.paginate(
+            page=page, per_page=current_app.config.get('PAGE_SIZE'))
+    )
+
+    return render_template(
+        template_name,
+        **context
+    )
 
 
 @route(bp, '/participants/set/<int:participant_set_id>/performance',
