@@ -14,8 +14,8 @@ module.exports = {
     },
     output: {
         path: path.resolve(__dirname, 'dist'),
-        chunkFilename: '[id].[chunkhash].js',
-        filename: '[name].[chunkhash].js'
+        chunkFilename: '[id].[contenthash].js',
+        filename: '[name].[contenthash].js'
     },
     module: {
         rules: [
@@ -63,8 +63,8 @@ module.exports = {
     },
     plugins: [
         new MiniCssExtractPlugin({
-            filename: '[name].[chunkhash].css',
-            chunkFilename: '[id].[chunkhash].css'
+            filename: '[name].[contenthash].css',
+            chunkFilename: '[id].[contenthash].css'
         })
     ],
     resolve: {
