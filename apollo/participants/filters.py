@@ -2,10 +2,14 @@
 from collections import OrderedDict
 from sqlalchemy import text
 
+from cgi import escape
 from flask_babelex import lazy_gettext as _
-from wtforms.widgets import HiddenInput
+from wtforms import widgets
+from wtforms.compat import text_type
+from wtforms.widgets import html_params, HTMLString
+from wtforms_alchemy.fields import QuerySelectField
 
-from apollo import services
+from apollo import models, services
 from apollo.core import CharFilter, ChoiceFilter, FilterSet
 from apollo.helpers import _make_choices
 from apollo.locations.models import (
@@ -41,13 +45,14 @@ def make_participant_role_filter(participant_set_id):
             ).with_entities(
                 ParticipantRole.id, ParticipantRole.name).all()
 
-            kwargs['choices'] = _make_choices(choices, _('All roles'))
+            kwargs['choices'] = _make_choices(choices, _('All Roles'))
 
             super().__init__(*args, **kwargs)
 
         def queryset_(self, query, value):
             if value:
-                return query.filter_by(role_id=value)
+                return query.filter(
+                    models.Participant.role_id == value)
 
             return query
 
@@ -63,12 +68,13 @@ def make_participant_partner_filter(participant_set_id):
                 ParticipantPartner.id,
                 ParticipantPartner.name).all()
 
-            kwargs['choices'] = _make_choices(choices, _('All partners'))
+            kwargs['choices'] = _make_choices(choices, _('All Organizations'))
             super().__init__(*args, **kwargs)
 
         def queryset_(self, query, value):
             if value:
-                return query.filter_by(partner_id=value)
+                return query.filter(
+                    models.Participant.partner_id == value)
             return query
 
     return ParticipantPartnerFilter
@@ -160,10 +166,36 @@ def make_participant_sample_filter(location_set_id):
     return ParticipantSampleFilter
 
 
+class LocationSelectWidget(widgets.Select):
+    @classmethod
+    def render_option(cls, value, label, selected, **kwargs):
+        options = dict(kwargs, value=value)
+        if selected:
+            options['selected'] = True
+        return HTMLString('<option %s>%s · %s</option>' % (
+            html_params(**options),
+            escape(text_type(label.name)),
+            escape(text_type(label.location_type))))
+
+
+class LocationQuerySelectField(QuerySelectField):
+    widget = LocationSelectWidget()
+
+    def process_formdata(self, valuelist):
+        if valuelist and valuelist[0]:
+            self.query = models.Location.query.filter(
+                models.Location.id == valuelist[0])
+        return super(LocationQuerySelectField, self).process_formdata(
+            valuelist)
+
+
 def make_participant_location_filter(location_set_id):
     class AJAXLocationFilter(CharFilter):
+        field_class = LocationQuerySelectField
+
         def __init__(self, *args, **kwargs):
-            kwargs['widget'] = HiddenInput()
+            kwargs['query_factory'] = lambda: []
+            kwargs['get_pk'] = lambda i: i.id
 
             super().__init__(*args, **kwargs)
 
@@ -172,7 +204,7 @@ def make_participant_location_filter(location_set_id):
                 location_query = Location.query.with_entities(
                     Location.id).join(
                     LocationPath, Location.id == LocationPath.descendant_id
-                ).filter(LocationPath.ancestor_id == value)
+                ).filter(LocationPath.ancestor_id == value.id)
 
                 return query.filter(
                     Participant.location_id.in_(location_query))

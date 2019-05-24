@@ -1,36 +1,42 @@
 {% macro render_filter_form(form, location, location_set_id) %}
-<form class="form-inline">
-    <div class="form-group">
-    {{ form.participant_id(class_='form-control span2 input-sm', placeholder=_('Participant ID')) }}
+<div class="card border-light bg-light mb-3">
+    <div class="card-header">
+        <form class="mb-n2 ml-n2 mr-n2">
+            <div class="form-row">
+                <div class="col-6 col-md-2 mb-2">
+                    {{ form.participant_id(class_='form-control', placeholder=_('Participant ID')) }}
+                </div>
+                <div class="col-6 col-md-2 mb-2">
+                    {{ form.name(class_='form-control', placeholder=_('Name')) }}
+                </div>
+                {% if location_set_id -%}
+                <div class="col-md-6 mb-2">
+                    {{ form.location(class_='form-control select2 select2-locations') }}
+                </div>
+                <div class="col-6 col-md-2 mb-2">
+                    {{ form.sample(class_='form-control custom-select') }}
+                </div>
+                {%- endif %}
+                <div class="col-6 col-md-2 mb-2">
+                    {{ form.phone(class_='form-control', placeholder=_('Phone')) }}
+                </div>
+                <div class="col-md-2 mb-2">
+                    {{ form.role(class_='form-control custom-select') }}
+                </div>
+                <div class="col-md-2 mb-2">
+                    {{ form.partner(class_='form-control custom-select') }}
+                </div>
+                <div class="col-md-4 mb-2">
+                    {{ form.group(class_='form-control select2', size=1, placeholder=_('All Groups')) }}
+                </div>
+                <div class="col-md-2 mb-2">
+                    <div class="d-flex flex-row">
+                        <button class="btn btn-primary mr-2 flex-fill" type="submit">{{ _('Filter') }}</button>
+                        <a class="btn btn-secondary flex-fill" href="#" id="filter_reset">{{ _('Clear') }}</a>
+                    </div>
+                </div>
+            </div>
+        </form>
     </div>
-    <div class="form-group">
-    {{ form.name(class_='form-control span2 input-sm', placeholder=_('Name')) }}
-    </div>
-    {% if location_set_id %}
-    <div class="form-group">
-    {{ form.location(class_='select2-container span4 select2 select2-locations', **{'data-name': location.name, 'data-location_type': location.location_type}) }}
-    </div>
-    <div class="form-group">
-    {{ form.sample(class_='form-control span2 input-sm') }}
-    </div>
-    {% endif %}
-    <div class="form-group">
-    {{ form.phone(class_='form-control span2 input-sm', placeholder=_('Phone')) }}
-    </div>
-    <div class="form-group">
-    {{ form.role(class_='form-control span2 input-sm') }}
-    </div>
-    <div class="form-group">
-    {{ form.partner(class_='form-control span2 input-sm') }}
-    </div>
-    <div  class="form-group">
-    {{ form.group(class_='select2-container span2 select2', style='height:26px', placeholder=_('All Groups')) }}
-    </div>
-    <div class="form-group">
-    	<button class="btn btn-warning btn-sm" type="submit"><i class="glyphicon glyphicon-search"></i> {{ _('Filter') }}</button>
-    </div>
-    <div class="form-group">
-    	<a class="btn btn-default btn-sm" id="filter_reset">{{ _('Clear') }}</a>
-    </div>
-</form>
+</div>
 {% endmacro %}

@@ -92,9 +92,7 @@ def submission_list(form_id):
 
     data = request.args.to_dict(flat=False)
     data['form_id'] = str(form.id)
-    page_spec = data.pop('page', None) or [1]
-    page = int(page_spec[0])
-
+    page = int(data.pop('page', 1))
     loc_types = displayable_location_types(
         is_administrative=True, location_set_id=event.location_set_id)
 
@@ -982,11 +980,13 @@ def quality_assurance_dashboard(form_id):
 @login_required
 @permissions.view_quality_assurance.require(403)
 def quality_assurance_list(form_id):
+    event = g.event
     form = services.forms.get_or_404(
         models.Form.id == form_id,
         models.Form.form_type == 'CHECKLIST')
-    page_title = _('Quality Assurance — %(name)s', name=form.name)
+    breadcrumbs = [_("Quality Assurance"), form.name]
     filter_class = generate_quality_assurance_filter(form)
+
     data = request.args.to_dict()
     data['form_id'] = str(form.id)
     page = int(data.pop('page', 1))
@@ -1010,7 +1010,7 @@ def quality_assurance_list(form_id):
 
         query_filterset = filter_class(queryset, request.args)
         dataset = services.submissions.export_list(
-            query_filterset.qs, g.deployment)
+            query_filterset.qs)
         basename = slugify_unicode('%s %s %s %s' % (
             g.event.name.lower(),
             form.name.lower(),
@@ -1023,12 +1023,136 @@ def quality_assurance_list(form_id):
             mimetype="text/csv"
         )
 
-    if form.quality_checks:
-        submissions = models.Submission.query.filter_by(
-            form_id=form_id, submission_type='O')
+    # the following section defines the queryset for the submissions
+    # to be retrieved. due to the fact that we do specialized sorting
+    # the queryset will depend heavily on what is being sorted.
+    if (
+        request.args.get('sort_by') == 'location' and
+        request.args.get('sort_value')
+    ):
+        # when sorting based on location, we generally want to be able
+        # to sort submissions based on a specific administrative division.
+        # since we store the hierarchical structure in a separate table
+        # we not only have to retrieve the table for the location data but
+        # also join it based on results in the location hierarchy.
+
+        # start out by getting all the locations (as a subquery) in a
+        # particular division.
+        division = models.Location.query.with_entities(
+            models.Location.id).filter(
+                models.Location.location_type_id ==
+                request.args.get('sort_value')
+        ).subquery()
+        # next is we retrieve all the descendant locations for all the
+        # locations in that particular administrative division making sure
+        # to retrieve the name translations which would be used in sorting
+        # the submissions when the time comes.
+        descendants = models.LocationPath.query.join(
+            models.Location,
+            models.Location.id == models.LocationPath.ancestor_id
+        ).with_entities(
+            models.Location.name_translations,
+            models.LocationPath.descendant_id
+        ).filter(
+            models.LocationPath.ancestor_id.in_(division)
+        ).subquery()
+
+        # now we defined the actual queryset using the subqueries above
+        # taking note to group by the translation name which essentially
+        # is the division name.
+        queryset = models.Submission.query.select_from(
+            models.Submission, models.Location, models.Participant,
+            func.jsonb_each_text(
+                descendants.c.name_translations).alias('translation')
+        ).filter(
+            models.Submission.submission_type == 'O',
+            models.Submission.form == form,
+            models.Submission.event_id == event.id
+        ).join(
+            models.Location,
+            models.Submission.location_id == models.Location.id
+        ).join(
+            models.Participant,
+            models.Submission.participant_id == models.Participant.id
+        ).outerjoin(
+            descendants,
+            descendants.c.descendant_id == models.Submission.location_id
+        ).group_by(
+            text('translation.value'), models.Submission.id
+        )
+    elif request.args.get('sort_by') == 'phone':
+        participant_phones = models.ParticipantPhone.query.filter(
+            models.ParticipantPhone.verified == True).order_by(  # noqa
+                desc(models.ParticipantPhone.last_seen)).subquery()
+        queryset = models.Submission.query.filter(
+            models.Submission.submission_type == 'O',
+            models.Submission.form == form,
+            models.Submission.event_id == event.id
+        ).join(
+            models.Location,
+            models.Submission.location_id == models.Location.id
+        ).join(
+            models.Participant,
+            models.Submission.participant_id == models.Participant.id
+        ).outerjoin(
+            participant_phones,
+            participant_phones.c.participant_id == models.Participant.id
+        ).join(
+            models.Phone,
+            participant_phones.c.phone_id == models.Phone.id
+        )
     else:
-        submissions = models.Submission.query.filter(false())
-    query_filterset = filter_class(submissions, request.args)
+        queryset = models.Submission.query.select_from(
+            models.Submission, models.Location, models.Participant,
+            func.jsonb_each_text(models.Participant.name_translations).alias(
+                'participant_name')
+        ).filter(
+            models.Submission.submission_type == 'O',
+            models.Submission.form == form,
+            models.Submission.event_id == event.id
+        ).join(
+            models.Location,
+            models.Submission.location_id == models.Location.id
+        ).join(
+            models.Participant,
+            models.Submission.participant_id == models.Participant.id
+        )
+
+    if request.args.get('sort_by') == 'id':
+        if request.args.get('sort_direction') == 'desc':
+            queryset = queryset.order_by(
+                desc(models.Participant.participant_id.cast(Integer)))
+        else:
+            queryset = queryset.order_by(
+                models.Participant.participant_id.cast(Integer))
+    elif request.args.get('sort_by') == 'location':
+        if request.args.get('sort_direction') == 'desc':
+            queryset = queryset.order_by(
+                desc(text('translation.value')))
+        else:
+            queryset = queryset.order_by(text('translation.value'))
+    elif request.args.get('sort_by') == 'participant':
+        if request.args.get('sort_direction') == 'desc':
+            queryset = queryset.order_by(
+                desc(text('participant_name.value')))
+        else:
+            queryset = queryset.order_by(text('participant_name.value'))
+    elif request.args.get('sort_by') == 'phone':
+        if request.args.get('sort_direction') == 'desc':
+            queryset = queryset.order_by(
+                desc(models.Phone.number))
+        else:
+            queryset = queryset.order_by(
+                models.Phone.number)
+    else:
+        queryset = queryset.order_by(
+            models.Location.code.cast(Integer),
+            models.Participant.participant_id.cast(Integer))
+
+    if not form.quality_checks:
+        queryset = models.Submission.query.filter(false())
+
+    query_filterset = filter_class(queryset, request.args)
     filter_form = query_filterset.form
     VERIFICATION_OPTIONS = services.submissions.__model__.VERIFICATION_OPTIONS
 
@@ -1036,12 +1160,12 @@ def quality_assurance_list(form_id):
         'form': form,
         'args': data,
         'filter_form': filter_form,
-        'page_title': page_title,
+        'breadcrumbs': breadcrumbs,
         'location_types': loc_types,
         'location': location,
         'pager': query_filterset.qs.paginate(
             page=page, per_page=current_app.config.get('PAGE_SIZE')),
-        'submissions': submissions,
+        'submissions': queryset,
         'quality_statuses': QUALITY_STATUSES,
         'verification_statuses': VERIFICATION_OPTIONS
     }

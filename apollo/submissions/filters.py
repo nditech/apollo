@@ -256,7 +256,7 @@ class LocationQuerySelectField(QuerySelectField):
     widget = LocationSelectWidget()
 
     def process_formdata(self, valuelist):
-        if valuelist:
+        if valuelist and valuelist[0]:
             self.query = models.Location.query.filter(
                 models.Location.id == valuelist[0])
         return super(LocationQuerySelectField, self).process_formdata(

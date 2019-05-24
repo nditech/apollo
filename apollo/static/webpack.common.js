@@ -5,15 +5,18 @@ const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 module.exports = {
     entry: {
+        highcharts: './src/highcharts.js',
+        moment: './src/moment.js',
         scripts: './src/scripts.js',
         styles: './src/styles.js',
         'scripts-rtl': './src/scripts-rtl.js',
-        'styles-rtl': './src/styles-rtl.js'
+        'styles-rtl': './src/styles-rtl.js',
+        'messagelog': './src/messagelog.js'
     },
     output: {
         path: path.resolve(__dirname, 'dist'),
-        chunkFilename: '[id].[chunkhash].js',
-        filename: '[name].[chunkhash].js'
+        chunkFilename: '[id].[contenthash].js',
+        filename: '[name].[contenthash].js'
     },
     module: {
         rules: [
@@ -61,8 +64,8 @@ module.exports = {
     },
     plugins: [
         new MiniCssExtractPlugin({
-            filename: '[name].[chunkhash].css',
-            chunkFilename: '[id].[chunkhash].css'
+            filename: '[name].[contenthash].css',
+            chunkFilename: '[id].[contenthash].css'
         })
     ],
     resolve: {
@@ -72,7 +75,8 @@ module.exports = {
             'node_modules'
         ],
         alias: {
-            jquery: 'jquery/dist/jquery.min.js'
+            jquery: 'jquery/dist/jquery.min.js',
+            moment: 'moment/min/moment-with-locales.min.js'
         }
     },
     optimization: {

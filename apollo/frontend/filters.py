@@ -1,10 +1,14 @@
 # -*- coding: utf-8 -*-
-from collections import defaultdict, OrderedDict
+from collections import defaultdict
 
+from cgi import escape
 from dateutil.parser import parse
 from flask_babelex import lazy_gettext as _
 from sqlalchemy import or_
 from wtforms import widgets, fields, Form
+from wtforms.compat import text_type
+from wtforms.widgets import html_params, HTMLString
+from wtforms_alchemy.fields import QuerySelectField
 
 from apollo import services, models
 from apollo.core import CharFilter, ChoiceFilter, FilterSet
@@ -12,13 +16,14 @@ from apollo.frontend.helpers import get_event
 from apollo.helpers import _make_choices
 from apollo.submissions.models import FLAG_CHOICES
 from apollo.submissions.qa.query_builder import generate_qa_query
-from apollo.wtforms_ext import ExtendedSelectField, ExtendedMultipleSelectField
+from apollo.wtforms_ext import ExtendedSelectField
 
 
 class EventFilter(CharFilter):
     def queryset_(self, queryset, value):
         if value:
-            return queryset.filter_by(event_id=value)
+            return queryset.filter(
+                models.Submission.event_id == value)
         return queryset
 
 
@@ -37,15 +42,50 @@ class ChecklistFormFilter(ChoiceFilter):
         return queryset
 
 
-class AJAXLocationFilter(CharFilter):
+class LocationSelectWidget(widgets.Select):
+    @classmethod
+    def render_option(cls, value, label, selected, **kwargs):
+        options = dict(kwargs, value=value)
+        if selected:
+            options['selected'] = True
+        return HTMLString('<option %s>%s · %s</option>' % (
+            html_params(**options),
+            escape(text_type(label.name)),
+            escape(text_type(label.location_type))))
+
+
+class LocationQuerySelectField(QuerySelectField):
+    widget = LocationSelectWidget()
+
+    def process_formdata(self, valuelist):
+        if valuelist and valuelist[0]:
+            self.query = models.Location.query.filter(
+                models.Location.id == valuelist[0])
+        return super(LocationQuerySelectField, self).process_formdata(
+            valuelist)
+
+
+class AJAXLocationFilter(ChoiceFilter):
+    field_class = LocationQuerySelectField
+
     def __init__(self, *args, **kwargs):
-        kwargs['widget'] = widgets.HiddenInput()
+        kwargs['query_factory'] = lambda: []
+        kwargs['get_pk'] = lambda i: i.id
+
         return super(AJAXLocationFilter, self).__init__(*args, **kwargs)
 
-    def queryset_(self, queryset, value):
+    def queryset_(self, queryset, value, **kwargs):
         if value:
-            location = services.locations.get(pk=value)
-            return queryset.filter_in(location)
+            location_query = models.Location.query.with_entities(
+                models.Location.id
+            ).join(
+                models.LocationPath,
+                models.Location.id == models.LocationPath.descendant_id
+            ).filter(models.LocationPath.ancestor_id == value.id)
+
+            return queryset.filter(
+                models.Submission.location_id.in_(location_query))
+
         return queryset
 
 
@@ -164,19 +204,21 @@ class QualityAssuranceFilter(ChoiceFilter):
             condition = value['condition']
             if condition == '4':
                 # verified
-                return query.filter(models.Submission.verification_status == '4')
+                return query.filter(
+                    models.Submission.verification_status == '4')  # noqa
             elif condition == '5':
                 # verified
-                return query.filter(models.Submission.verification_status == '5')
+                return query.filter(
+                    models.Submission.verification_status == '5')  # noqa
             elif condition == '-1':
                 # missing
-                return query.filter(qa_subquery == None)
+                return query.filter(qa_subquery == None)  # noqa
             elif condition == '0':
                 # OK
-                return query.filter(qa_subquery == True)
+                return query.filter(qa_subquery == True)  # noqa
             elif condition == '2':
                 # flagged
-                return query.filter(qa_subquery == False)
+                return query.filter(qa_subquery == False)  # noqa
         return query
 
 
@@ -184,97 +226,16 @@ class SubmissionQuarantineStatusFilter(ChoiceFilter):
     def queryset_(self, queryset, value):
         if value:
             if value == 'N':
-                allowed_statuses = [i[0] for i in [s for s in models.Submission.QUARANTINE_STATUSES if s[0]]]
-                return queryset.filter(~models.Submission.quarantine_status.in_(allowed_statuses))
+                allowed_statuses = [
+                    i[0] for i in [
+                        s for s in models.Submission.QUARANTINE_STATUSES
+                        if s[0]
+                    ]]
+                return queryset.filter(
+                    ~models.Submission.quarantine_status.in_(allowed_statuses))
             else:
-                return queryset.filter(models.Submission.quarantine_status == value)
-        return queryset
-
-
-class SubmissionVerificationFilter(ChoiceFilter):
-    def queryset_(self, queryset, value):
-        if value is not None or value != '':
-            return queryset(verification=value)
-        return queryset
-
-
-class PartnerFilter(ChoiceFilter):
-    def __init__(self, *args, **kwargs):
-        kwargs['choices'] = _make_choices(
-            services.participant_partners.find().with_entities(
-                models.ParticipantPartner.id,
-                models.ParticipantPartner.name),
-            _('All Organizations')
-        )
-        super(PartnerFilter, self).__init__(*args, **kwargs)
-
-    def queryset_(self, queryset, value):
-        if value:
-            partner = services.participant_partners.find(id=value).first()
-            return queryset.filter_by(partner=partner)
-        return queryset
-
-
-class RoleFilter(ChoiceFilter):
-    def __init__(self, *args, **kwargs):
-        kwargs['choices'] = _make_choices(
-            services.participant_roles.find().with_entities(
-                models.ParticipantRole.id, models.ParticipantRole.name),
-            _('All Roles')
-        )
-        super(RoleFilter, self).__init__(*args, **kwargs)
-
-    def queryset_(self, queryset, value):
-        if value:
-            role = services.participant_roles.find(id=value).first()
-            return queryset.filter_by(role=role)
-        return queryset
-
-
-class ParticipantGroupFilter(ChoiceFilter):
-    field_class = ExtendedMultipleSelectField
-
-    def __init__(self, *args, **kwargs):
-        choices = OrderedDict()
-        # for group in services.participant_groups.find():
-        #     choices[group.name] = [
-        #         ('{}__{}'.format(group.name, tag), tag) for tag in group.tags
-        #     ]
-        for group_type in services.participant_group_types.find().order_by(
-                models.ParticipantGroupType.name):
-            for group in services.participant_groups.find(
-                group_type=group_type
-            ).order_by(models.ParticipantGroup.name):
-                choices.setdefault(group_type.name, []).append(
-                    (group.id, group.name)
-                )
-        kwargs['choices'] = [(k, choices[k]) for k in choices]
-        super(ParticipantGroupFilter, self).__init__(*args, **kwargs)
-
-    def queryset_(self, queryset, values):
-        if values:
-            for value in values:
-                group = services.participant_groups.get(id=value)
-
-                queryset = queryset.filter_by(participant_groups=group)
-        return queryset
-
-
-class ParticipantFilter(CharFilter):
-    """This is used for filtering a queryset of participants.
-    """
-    def queryset_(self, queryset, value):
-        if value:
-            return queryset(participant_id=value)
-        return queryset
-
-
-class ParticipantPhoneFilter(CharFilter):
-    """Used for filtering a queryset of participants by phone number."""
-
-    def queryset_(self, queryset, value):
-        if value:
-            return queryset(phones__number__startswith=value)
+                return queryset.filter(
+                    models.Submission.quarantine_status == value)
         return queryset
 
 
@@ -284,44 +245,15 @@ class ParticipantIDFilter(CharFilter):
 
     def queryset_(self, queryset, value):
         if value:
-            participant = services.participants.get(participant_id=value)
+            participant = models.Participant.query.filter(
+                models.Participant.participant_id == value).first()
             if participant is None:
                 # this will interfere with the default
                 # filtering of master submissions, so
                 # return nothing
                 return queryset.filter(False)
-            return queryset(contributor=participant)
-        return queryset
-
-
-class ParticipantNameFilter(CharFilter):
-    def queryset_(self, queryset, value):
-        if value:
-            return queryset(name__icontains=value)
-        return queryset
-
-
-class FieldOptionFilter(ChoiceFilter):
-    def queryset_(self, queryset, value):
-        if value:
-            return queryset(**{self.name: int(value)})
-        return queryset
-
-
-class SubmissionStatus(ChoiceFilter):
-    field_class = fields.SelectMultipleField
-
-    def __init__(self, *args, **kwargs):
-        kwargs['choices'] = (
-            ('None', _('Unmarked')),
-            ('confirmed', _('Confirmed')), ('rejected', _('Rejected')),
-            ('citizen', _('Citizen Report')))
-        super(SubmissionStatus, self).__init__(*args, **kwargs)
-
-    def queryset_(self, queryset, values):
-        if values:
-            values = [None if opt == 'None' else opt for opt in values]
-            queryset = queryset(status__in=values)
+            return queryset.filter(
+                models.Submission.participant_id == participant.id)
         return queryset
 
 
@@ -422,20 +354,6 @@ def dashboard_filterset():
     return DashboardFilterSet
 
 
-def participant_filterset():
-    class ParticipantFilterSet(FilterSet):
-        participant_id = ParticipantFilter()
-        name = ParticipantNameFilter()
-        phone = ParticipantPhoneFilter()
-        location = AJAXLocationFilter()
-        sample = SampleFilter()
-        role = RoleFilter()
-        partner = PartnerFilter()
-        group = ParticipantGroupFilter()
-
-    return ParticipantFilterSet
-
-
 #########################
 # factory functions
 #########################
@@ -452,28 +370,6 @@ def generate_submission_analysis_filter(form):
     return type(
         'SubmissionAnalysisFilterSet', (
             basesubmission_filterset(),), attributes)
-
-
-def generate_critical_incident_location_filter(tag):
-    attributes = {}
-    attributes[tag] = DynamicFieldFilter(
-        choices=(('NOT_NULL', ''),),
-        contains=True,
-        default='NOT_NULL',
-        widget=widgets.HiddenInput()
-    )
-    attributes['status'] = DynamicFieldFilter(
-        choices=(
-            ('', _('Status')), ('NULL', _('Unmarked')),
-            ('confirmed', _('Confirmed')), ('rejected', _('Rejected')),
-            ('citizen', _('Citizen Report')))
-    )
-
-    return type(
-        'CriticalIncidentsLocationFilterSet',
-        (basesubmission_filterset(),),
-        attributes
-    )
 
 
 def generate_quality_assurance_filter(form):
