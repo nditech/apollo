@@ -17,8 +17,8 @@
     {%- else -%}
     <link rel="stylesheet" href="{{ asset_url_for('styles.css') }}">
     {%- endif %}
-    {% block stylesheets %}{% endblock %}
-    {% block head %}{% endblock %}
+    {%- block stylesheets %}{%- endblock %}
+    {%- block head %}{% endblock %}
     {%- if not debug and gtm_key %}
     <!-- Google Tag Manager -->
     <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
@@ -48,34 +48,33 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <div class="d-flex flex-column flex-lg-row align-items-start justify-content-between w-100">
                     <ul class="navbar-nav order-2 order-lg-1">
-                        {% autoescape False %}
-                        {% for menu_item in current_menu.submenu('main').children %}
-                        {% if not menu_item.has_visible_child() and menu_item.visible %}
+                    {%- autoescape False -%}
+                    {%- for menu_item in current_menu.submenu('main').children %}
+                        {%- if not menu_item.has_visible_child() and menu_item.visible -%}
                         <li class="nav-item">
                             <a class="nav-link {%- if menu_item.active %} active{% endif %}" href="{{ menu_item.url }}">{{ menu_item.text }} {%- if menu_item.active %}<span class="sr-only">(current)</span>{% endif %}</a>
                         </li>
                         {% elif menu_item.visible %}
                         <li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown">{{ menu_item.text }}</a>
                             <div class="dropdown-menu">
-                                {% if menu_item.children|count < 2 %}
-                                {% for submenu_item in menu_item.children[0].dynamic_list %}
+                                {%- if menu_item.children|count < 2 %}
+                                {%- for submenu_item in menu_item.children[0].dynamic_list %}
                                 <a class="dropdown-item" href="{{ submenu_item.url }}">{{ submenu_item.text }}</a>
-                                {% endfor %}
-                                {% else %}
-                                {% for submenu_item in menu_item.children %}
-                                {% if submenu_item.visible %}
+                                {%- endfor %}
+                                {%- else -%}
+                                {%- for submenu_item in menu_item.children %}
+                                {%- if submenu_item.visible %}
                                 <div class="dropdown-header">{{ submenu_item.text }}</div>
-                                {% for subsubmenu_item in submenu_item.dynamic_list %}
+                                {%- for subsubmenu_item in submenu_item.dynamic_list %}
                                 <a class="dropdown-item" href="{{ subsubmenu_item.url }}">{{ subsubmenu_item.text }}</a>
-                                {% endfor %}
-                                {% endif %}
-                                {% endfor %}
-                                {% endif %}
+                                {%- endfor %}
+                                {%- endif %}
+                                {%- endfor %}
+                                {%- endif %}
                             </div>
                         </li>
-                        {% endif %}
-                        {% endfor %}
-                        {% endautoescape %}
+                        {%- endif %}
+                    {%- endfor -%}{% endautoescape %}
                     </ul>
                     <ul class="navbar-nav order-1 order-lg-2">
                         <li class="nav-item"><a class="nav-link disabled" href="">{{ g.event.name }}</a></li>
