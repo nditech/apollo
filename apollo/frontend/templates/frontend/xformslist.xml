@@ -6,10 +6,10 @@
 <name>{{ form.name }}</name>
 <majorMinorVersion/>
 <version/>
-<hash>{{ form.hash() }}</hash>
+<hash>{{ form.odk_hash() }}</hash>
 <descriptionText/>
-<downloadUrl>{{ url_for('xforms.get_form', form_pk=form.id, _external=True) }}</downloadUrl>
-<manifestUrl>{{ url_for('xforms.get_form_manifest', form_pk=form.id, _external=True) }}</manifestUrl>
+<downloadUrl>{{ url_for('xforms.get_form', form_id=form.id, _external=True) }}</downloadUrl>
+<manifestUrl>{{ url_for('xforms.get_form_manifest', form_id=form.id, _external=True) }}</manifestUrl>
 </xform>
 {% endfor %}
 </xforms>
