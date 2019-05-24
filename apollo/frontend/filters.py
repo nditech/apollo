@@ -320,6 +320,21 @@ class DateFilter(CharFilter):
         return queryset
 
 
+class OnlineStatusFilter(ChoiceFilter):
+    def filter(self, query, value, **kwargs):
+        if value and value == '1':
+            return (
+                models.Submission.unreachable == True,  # noqa
+                None
+            )
+        elif value:
+            return (
+                models.Submission.unreachable == False,  # noqa
+                None
+            )
+
+        return (None, None)
+
 def basesubmission_filterset():
     class BaseSubmissionFilterSet(FilterSet):
         event = EventFilter()
@@ -401,6 +416,14 @@ def generate_quality_assurance_filter(form):
             ('A', _('Quarantine All')),
             ('R', _('Quarantine Results'))
         ))
+
+    attributes['online_status'] = OnlineStatusFilter(
+        choices=(
+            ('', _('Signal Status')),
+            ('0', _('Signal')),
+            ('1', _('No Signal'))
+        )
+    )
 
     # participant id and location
     attributes['participant_id'] = ParticipantIDFilter()

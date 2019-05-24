@@ -42,6 +42,7 @@
     {% endfor %}
     {% endif %}
     <th scope="col" class="text-center"><abbr title="{{ _('Sender Verification') }}"><i class="fa fa-mobile-alt"></i></abbr></th>
+    <th scope="col" class="text-center"><abbr title="{{ _('Signal Status') }}"><i class="fa fa-phone"></i></abbr></th>
 </tr>
 {% endmacro %}
 
@@ -76,19 +77,26 @@
     {% endfor %}
     {% endif %}
     <td class="text-center">{% if submission.sender_verified %}<i class="fa fa-check text-success" title="{{ _('Verified') }}"></i>{% else %}<i class="fa fa-exclamation-triangle text-warning" title="{{ _('Unverified') }}"></i>{% endif %}</td>
+    <td class="text-center">
+        {% if submission.unreachable -%}
+        <i class="fa fa-phone-slash text-danger" aria-hidden="true" title="{{ _('No Signal') }}"></i>
+        {%- else -%}
+        <i class="fa fa-phone text-success" aria-hidden="true" title="{{ _('Signal') }}"></i>
+        {% endif %}
+    </td>
 </tr>
 {% else %}
 {% if perms.edit_submission.can() %}
 {% if form.quality_checks %}
-{%- set colspan = 5 + (location_types|length) + form.quality_checks|length -%}
+{%- set colspan = 6 + (location_types|length) + form.quality_checks|length -%}
 {% else %}
-{%- set colspan = 5 + (location_types|length) -%}
+{%- set colspan = 6 + (location_types|length) -%}
 {% endif %}
 <tr class="table-warning">
     <td class="text-center text-muted" colspan="{{ colspan }}">{{ _('No Data Available') }}</td>
 </tr>
 {% else %}
-{%- set colspan = 4 + (location_types|length) + form.quality_checks|length -%}
+{%- set colspan = 5 + (location_types|length) + form.quality_checks|length -%}
 <tr class="table-warning">
     <td class="text-center text-muted" colspan="{{ colspan }}">{{ _('No Data Available') }}</td>
 </tr>

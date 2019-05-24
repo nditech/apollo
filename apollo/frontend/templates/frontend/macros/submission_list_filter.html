@@ -16,8 +16,8 @@
                 <div class="col-md-2 mb-2 d-flex">
                     <div class="d-flex align-items-center">
                         <div class="custom-control custom-switch">
-                            {{ filter_form['conjunction'](class_='custom-control-input') }}
-                            {{ filter_form['conjunction'].label(class_='custom-control-label') }}
+                            {{ filter_form.conjunction(class_='custom-control-input') }}
+                            {{ filter_form.conjunction.label(class_='custom-control-label') }}
                         </div>
                     </div>
                 </div>
@@ -28,7 +28,7 @@
                 </div>
                 {%- endfor -%}
                 <div class="col-md-2 mb-2">
-                    {{ filter_form['quarantine_status'](class_='form-control custom-select') }}
+                    {{ filter_form.quarantine_status(class_='form-control custom-select') }}
                 </div>
             {%- else -%}
                 {%- for group in form.data.groups -%}
@@ -45,10 +45,10 @@
                 </div>
             {%- endif %}
                 <div class="col-md-2 mb-2">
-                    {{ filter_form['sender_verification'](class_='form-control custom-select') }}
+                    {{ filter_form.sender_verification(class_='form-control custom-select') }}
                 </div>
                 <div class="col-md-2 mb-2">
-                    {{ filter_form['online_status'](class_='form-control custom-select') }}
+                    {{ filter_form.online_status(class_='form-control custom-select') }}
                 </div>
                 <div class="col-md-2 mb-2">
                     <div class="d-flex flex-row">

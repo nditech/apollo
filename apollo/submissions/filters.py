@@ -356,9 +356,9 @@ def make_submission_list_filter(event, form):
     )
     attributes['online_status'] = OnlineStatusFilter(
         choices=(
-            ('', _('Online Status')),
-            ('0', _('Online')),
-            ('1', _('Offline'))
+            ('', _('Signal Status')),
+            ('0', _('Signal')),
+            ('1', _('No Signal'))
         )
     )
 
