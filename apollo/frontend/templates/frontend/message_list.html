@@ -112,6 +112,7 @@
 
 {% block scripts %}
 <script type="text/javascript" src="{{ asset_url_for('moment.js') }}" charset="utf-8"></script>
+<script type="text/javascript" src="{{ asset_url_for('highcharts.js') }}" charset="utf-8"></script>
 <script type="text/javascript" src="{{ asset_url_for('messagelog.js') }}" charset="utf-8"></script>
 <script type="text/javascript">
   moment.lang('{{ g.locale }}');
@@ -171,7 +172,6 @@
     });
   });
 </script>
-<script src="{{ url_for('static', filename='js/highstock.js') }}"></script>
 {% endblock %}
 
 {% block stylesheets -%}

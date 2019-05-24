@@ -5,6 +5,7 @@ const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 module.exports = {
     entry: {
+        highcharts: './src/highcharts.js',
         moment: './src/moment.js',
         scripts: './src/scripts.js',
         styles: './src/styles.js',
