@@ -162,42 +162,30 @@ def _get_global_coverage(query, form):
     if not groups:
         return coverage_list
 
-    # aliases for joins
-    other_submission = aliased(Submission)
-
     for group in groups:
         group_tags = form.get_group_tags(group['name'])
 
         # get conflict submissions first
         conflict_query_params = [
-            and_(
-                Submission.data[tag] != None,   # noqa
-                other_submission.data[tag] != None,
-                Submission.data[tag] != other_submission.data[tag])
+            Submission.conflicts.has_key(tag)   # noqa
             for tag in group_tags
         ]
 
-        conflict_query = query.join(
-            other_submission,
-            other_submission.location_id == Submission.location_id
-        ).filter(
+        conflict_query = query.filter(
             or_(*conflict_query_params),
             Submission.unreachable != True)  # noqa
 
-        conflict_submission_ids = list(chain(
-            conflict_query.with_entities(Submission.id).all()))
-
         missing_query = query.filter(
-            ~Submission.id.in_(conflict_submission_ids),
+            ~Submission.conflicts.has_any(array(group_tags)),
             ~Submission.data.has_any(array(group_tags)),
             Submission.unreachable != True)  # noqa
 
         complete_query = query.filter(
-            ~Submission.id.in_(conflict_submission_ids),
+            ~Submission.conflicts.has_any(array(group_tags)),
             Submission.data.has_all(array(group_tags)))
 
         partial_query = query.filter(
-            ~Submission.id.in_(conflict_submission_ids),
+            ~Submission.conflicts.has_any(array(group_tags)),
             ~Submission.data.has_all(array(group_tags)),
             Submission.data.has_any(array(group_tags)),
             Submission.unreachable != True)  # noqa
@@ -207,7 +195,7 @@ def _get_global_coverage(query, form):
                 Submission.unreachable == True,  # noqa
                 not_(
                     and_(
-                        ~Submission.id.in_(conflict_submission_ids),
+                        ~Submission.conflicts.has_any(array(group_tags)),
                         Submission.data.has_all(array(group_tags)),
                         Submission.unreachable == True
                     )
