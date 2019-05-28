@@ -64,23 +64,28 @@ def _get_group_coverage(query, form, group, location_type):
         return coverage_list
 
     # get conflict submissions first
-    conflict_query_params = [
-        Submission.conflicts.has_key(tag)   # noqa
-        for tag in group_tags
-    ]
-
     conflict_query = query.filter(
-        or_(*conflict_query_params),
+        Submission.conflicts != None,
+        Submission.conflicts.has_any(array(group_tags)),
         Submission.unreachable != True)  # noqa
 
     missing_query = query.filter(
         ~Submission.data.has_any(array(group_tags)),
+        or_(
+            Submission.conflicts == None,
+            ~Submission.conflicts.has_any(array(group_tags))),
         Submission.unreachable != True)  # noqa
 
     complete_query = query.filter(
+        or_(
+            Submission.conflicts == None,
+            ~Submission.conflicts.has_any(array(group_tags))),
         Submission.data.has_all(array(group_tags)))
 
     partial_query = query.filter(
+        or_(
+            Submission.conflicts == None,
+            ~Submission.conflicts.has_any(array(group_tags))),
         ~Submission.data.has_all(array(group_tags)),
         Submission.data.has_any(array(group_tags)),
         Submission.unreachable != True)  # noqa
@@ -162,42 +167,31 @@ def _get_global_coverage(query, form):
     if not groups:
         return coverage_list
 
-    # aliases for joins
-    other_submission = aliased(Submission)
-
     for group in groups:
         group_tags = form.get_group_tags(group['name'])
 
-        # get conflict submissions first
-        conflict_query_params = [
-            and_(
-                Submission.data[tag] != None,   # noqa
-                other_submission.data[tag] != None,
-                Submission.data[tag] != other_submission.data[tag])
-            for tag in group_tags
-        ]
-
-        conflict_query = query.join(
-            other_submission,
-            other_submission.location_id == Submission.location_id
-        ).filter(
-            or_(*conflict_query_params),
+        conflict_query = query.filter(
+            Submission.conflicts != None,
+            Submission.conflicts.has_any(array(group_tags)),
             Submission.unreachable != True)  # noqa
 
-        conflict_submission_ids = list(chain(
-            conflict_query.with_entities(Submission.id).all()))
-
         missing_query = query.filter(
-            ~Submission.id.in_(conflict_submission_ids),
+            or_(
+                ~Submission.conflicts.has_any(array(group_tags)),
+                Submission.conflicts == None),
             ~Submission.data.has_any(array(group_tags)),
             Submission.unreachable != True)  # noqa
 
         complete_query = query.filter(
-            ~Submission.id.in_(conflict_submission_ids),
+            or_(
+                Submission.conflicts == None,
+                ~Submission.conflicts.has_any(array(group_tags))),
             Submission.data.has_all(array(group_tags)))
 
         partial_query = query.filter(
-            ~Submission.id.in_(conflict_submission_ids),
+            or_(
+                Submission.conflicts == None,
+                ~Submission.conflicts.has_any(array(group_tags))),
             ~Submission.data.has_all(array(group_tags)),
             Submission.data.has_any(array(group_tags)),
             Submission.unreachable != True)  # noqa
@@ -207,7 +201,6 @@ def _get_global_coverage(query, form):
                 Submission.unreachable == True,  # noqa
                 not_(
                     and_(
-                        ~Submission.id.in_(conflict_submission_ids),
                         Submission.data.has_all(array(group_tags)),
                         Submission.unreachable == True
                     )
