@@ -380,8 +380,8 @@ class FormBuilderSerializer(object):
             if data['fields'][0]['component'] != 'group':
                 # no group was created, create a default
                 group = FormGroup(
-                    name=_('SMS 1'),
-                    slug=unidecode(slugify_unicode(str(_('SMS 1')))))
+                    name=_('Default Group'),
+                    slug=unidecode(slugify_unicode(str(_('Default Group')))))
                 groups.append(group)
 
         for f in data['fields']:
