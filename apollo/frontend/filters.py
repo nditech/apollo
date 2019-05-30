@@ -206,10 +206,6 @@ class QualityAssuranceFilter(ChoiceFilter):
                 # verified
                 return query.filter(
                     models.Submission.verification_status == '4')  # noqa
-            elif condition == '5':
-                # verified
-                return query.filter(
-                    models.Submission.verification_status == '5')  # noqa
             elif condition == '-1':
                 # missing
                 return query.filter(qa_subquery == None)  # noqa
@@ -334,6 +330,7 @@ class OnlineStatusFilter(ChoiceFilter):
             )
 
         return (None, None)
+
 
 def basesubmission_filterset():
     class BaseSubmissionFilterSet(FilterSet):
