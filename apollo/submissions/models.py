@@ -118,7 +118,6 @@ class Submission(BaseModel):
     conflicts = db.Column(JSONB)
     unreachable = db.Column(db.Boolean, default=False, nullable=False)
     geopoint = db.Column(JSONB)
-    verified_logical_checks = db.Column(JSONB)
 
     @classmethod
     def init_submissions(cls, event, form, role, location_type):
