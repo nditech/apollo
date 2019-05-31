@@ -72,7 +72,7 @@
         <td class="timestamp-date text-monospace" data-timestamp="{{ right_message.received|timestamp }}">{{ right_message.received.strftime('%b %d %Y') }}</td>
         <td class="timestamp-time text-monospace" data-timestamp="{{ right_message.received|timestamp }}">{{ right_message.received.strftime('%I:%M %p') }}</td>
         <td class="text-monospace">{{ right_message.recipient }}</td>
-        <td class="text-monospace">{{ _(right_message.direction.value) }}</td>
+        <td class="text-monospace">{{ right_message.direction.value }}</td>
         <td class="text-monospace" style="word-wrap:break-word">{{ right_message.text }}</td>
         <td class="text-monospace">{% if form_type %}{{ form_type.value }}{% else %}{{ _('Invalid') }}{% endif %}</td>
       {% endif %}
@@ -81,7 +81,7 @@
         <td class="timestamp-date text-monospace" data-timestamp="{{ left_message.received|timestamp }}">{{ left_message.received.strftime('%b %d %Y') }}</td>
         <td class="timestamp-time text-monospace" data-timestamp="{{ left_message.received|timestamp }}">{{ left_message.received.strftime('%I:%M %p') }}</td>
         <td class="text-monospace">{{ left_message.sender }}</td>
-        <td class="text-monospace">{{ _(left_message.direction.value) }}</td>
+        <td class="text-monospace">{{ left_message.direction.value }}</td>
         <td class="text-monospace" style="word-wrap:break-word">{{ left_message.text }}</td>
         <td class="text-monospace">{% if form_type %}{{ form_type.value }}{% else %}{{ _('Invalid') }}{% endif %}</td>
       </tr>
