@@ -26,7 +26,6 @@ FLAG_CHOICES = (
     ('-1', _('MISSING')),
     ('2', _('FLAGGED')),
     ('4', _('VERIFIED')),
-    ('5', _('REJECTED'))
 )
 
 STATUS_CHOICES = (
