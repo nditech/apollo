@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from datetime import datetime
+import hashlib
 import logging
 from operator import itemgetter
 import re
@@ -41,7 +43,7 @@ lt_constraint_regex = re.compile(r'(?:.*\.\s*\<={0,1}\s*)(\d+)')
 
 
 def _make_version_identifer():
-    return uuid4().hex
+    return datetime.utcnow().strftime('%Y%m%d%H%M%S%f')
 
 
 events_forms = db.Table(
@@ -71,7 +73,9 @@ class Form(Resource):
     require_exclamation = db.Column(db.Boolean, default=True)
     track_data_conflicts = db.Column(db.Boolean, default=True, nullable=False)
     data = db.Column(JSONB)
-    version_identifier = db.Column(db.String, default=_make_version_identifer)
+    version_identifier = db.Column(
+        db.String, default=_make_version_identifer,
+        onupdate=_make_version_identifer)
     resource_id = db.Column(
         db.Integer, db.ForeignKey('resource.resource_id', ondelete='CASCADE'))
     quality_checks = db.Column(JSONB)
@@ -233,6 +237,13 @@ class Form(Resource):
         root.append(body)
 
         return root
+
+    def odk_hash(self):
+        xform_data = etree.tostring(
+            self.to_xml(), encoding='UTF-8', xml_declaration=True)
+        hash_engine = hashlib.md5()
+        hash_engine.update(xform_data)
+        return f'md5: {hash_engine.hexdigest()}'
 
 
 class FormBuilderSerializer(object):

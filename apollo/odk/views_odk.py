@@ -9,7 +9,7 @@ import pytz
 from slugify import slugify
 
 from apollo import services, models, csrf
-from apollo.formsframework.forms import filter_participants
+from apollo.formsframework.forms import filter_participants, find_active_forms
 from apollo.frontend import route
 from apollo.frontend.helpers import DictDiffer
 
@@ -54,9 +54,7 @@ def get_pw(participant_id):
 
 @route(bp, '/xforms/formList')
 def get_form_download_list():
-    current_events = services.events.overlapping_events(g.event)
-    kwargs = {"events__in": current_events}
-    forms = services.forms.all().filter(**kwargs).order_by('form_type')
+    forms = find_active_forms().order_by('form_type')
     template_name = 'frontend/xformslist.xml'
 
     response = make_response(render_template(template_name, forms=forms))
@@ -65,8 +63,8 @@ def get_form_download_list():
     return response
 
 
-@route(bp, '/xforms/xformsManifest/<form_pk>')
-def get_form_manifest(form_pk):
+@route(bp, '/xforms/xformsManifest/<form_id>')
+def get_form_manifest(form_id):
     # not using the parameter since none of the forms uses
     # external files
     template_name = 'frontend/xformsManifest.xml'
@@ -76,9 +74,9 @@ def get_form_manifest(form_pk):
     return response
 
 
-@route(bp, '/xforms/forms/<form_pk>/form.xml')
-def get_form(form_pk):
-    form = services.forms.get_or_404(id=form_pk)
+@route(bp, '/xforms/forms/<form_id>/form.xml')
+def get_form(form_id):
+    form = services.forms.fget_or_404(id=form_id)
     xform_data = etree.tostring(
         form.to_xml(),
         encoding='UTF-8',
@@ -107,8 +105,8 @@ def submission():
         parser = etree.XMLParser(resolve_entities=False)
         document = etree.parse(source_file, parser)
 
-        form_pk = document.xpath('//data/form_id')[0].text
-        form = services.forms.get(pk=form_pk)
+        form_id = document.xpath('//data/form_id')[0].text
+        form = services.forms.fget(id=form_id)
 
         participant = filter_participants(form, participant_auth.username())
         if not form:
