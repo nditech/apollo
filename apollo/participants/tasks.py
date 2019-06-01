@@ -210,10 +210,10 @@ def update_participants(dataframe, header_map, participant_set):
                 if record[SUPERVISOR_ID_COL] != participant_id:
                     # ignore cases where participant is own supervisor
                     supervisor_id = record[SUPERVISOR_ID_COL]
-                    if type(supervisor_id) == float:
-                        supervisor_id = int(supervisor_id)
+                    if isinstance(supervisor_id, numbers.Number):
+                        supervisor_id = str(int(supervisor_id))
                     supervisor = services.participants.find(
-                        participant_id=str(supervisor_id),
+                        participant_id=supervisor_id,
                         participant_set=participant_set,
                     ).first()
                     if supervisor is None:
@@ -261,7 +261,7 @@ def update_participants(dataframe, header_map, participant_set):
                     continue
 
                 mobile = record[column]
-                if isinstance(mobile, float):
+                if isinstance(mobile, numbers.Number):
                     mobile = int(mobile)
                 mobile_num = str(mobile)
 
@@ -341,7 +341,7 @@ def update_participants(dataframe, header_map, participant_set):
             if column:
                 value = record[column]
                 if _is_valid(value):
-                    if isinstance(value, float):
+                    if isinstance(value, numbers.Number):
                         value = int(value)
                     extra_data[field_name] = value
 
