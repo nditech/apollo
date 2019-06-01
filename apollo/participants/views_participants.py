@@ -575,7 +575,6 @@ def participant_list_import(participant_set_id=0):
     form = forms.ParticipantFileUploadForm(request.form)
 
     if not form.validate():
-        print(form.errors)
         return abort(400)
     else:
         # get the actual object from the proxy
