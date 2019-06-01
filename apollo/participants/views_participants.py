@@ -14,7 +14,7 @@ from flask_security import current_user, login_required
 from slugify import slugify_unicode
 
 from apollo import models, services, utils
-from apollo.core import uploads
+from apollo.core import sentry, uploads
 from apollo.frontend import helpers, permissions, route
 from apollo.frontend.forms import (
     DummyForm, generate_participant_edit_form)
@@ -575,6 +575,7 @@ def participant_list_import(participant_set_id=0):
     form = forms.ParticipantFileUploadForm(request.form)
 
     if not form.validate():
+        print(form.errors)
         return abort(400)
     else:
         # get the actual object from the proxy
@@ -619,13 +620,14 @@ def participant_headers(upload_id, participant_set_id=0):
         UserUpload.user == user).first_or_404()
     filepath = uploads.path(upload.upload_filename)
     try:
-        with open(filepath) as source_file:
+        with open(filepath, 'rb') as source_file:
             mapping_form_class = forms.make_import_mapping_form(
                 source_file, participant_set)
     except Exception:
         # delete loaded file
         os.remove(filepath)
         upload.delete()
+        sentry.captureException()
         return abort(400)
 
     form = mapping_form_class()

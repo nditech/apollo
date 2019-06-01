@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import logging
+import numbers
 import os
 import random
 import string
@@ -130,16 +131,16 @@ def update_participants(dataframe, header_map, participant_set):
     for idx in index:
         record = dataframe.ix[idx]
         participant_id = record[PARTICIPANT_ID_COL]
-        if type(participant_id) == float:
-            participant_id = int(participant_id)
+        if isinstance(participant_id, numbers.Number):
+            participant_id = str(int(participant_id))
         participant = services.participants.find(
-            participant_id=str(participant_id),
+            participant_id=participant_id,
             participant_set=participant_set
         ).first()
 
         if participant is None:
             participant = services.participants.new(
-                participant_id=str(participant_id),
+                participant_id=participant_id,
                 participant_set_id=participant_set.id
             )
 
@@ -180,10 +181,10 @@ def update_participants(dataframe, header_map, participant_set):
         try:
             if LOCATION_ID_COL:
                 loc_code = record[LOCATION_ID_COL]
-                if isinstance(loc_code, float):
-                    loc_code = int(loc_code)
+                if isinstance(loc_code, numbers.Number):
+                    loc_code = str(int(loc_code))
                 location = services.locations.find(
-                    code=str(loc_code),
+                    code=loc_code,
                     location_set=location_set
                 ).one()
         except MultipleResultsFound:
@@ -411,7 +412,7 @@ def import_participants(upload_id, mappings, participant_set_id):
         upload.delete()
         return
 
-    with open(filepath) as f:
+    with open(filepath, 'rb') as f:
         dataframe = helpers.load_source_file(f)
 
     participant_set = services.participant_sets.find(
