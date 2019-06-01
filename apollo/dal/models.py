@@ -10,7 +10,6 @@ from uuid import uuid4
 
 from flask import g
 from flask_babelex import get_locale
-from sqlalchemy import Table
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy_utils import TranslationHybrid
@@ -29,12 +28,14 @@ def get_default_locale(obj, attr):
     except RuntimeError:
         raise
 
-    if isinstance(obj, (db.Model, Table)):
+    if isinstance(obj, db.Model):
+        # checking for the default locale for a model instance
         if locale in getattr(obj, attr).keys():
             return locale
         else:
             return sorted(getattr(obj, attr).keys())[0]
 
+    # return default deployment locale
     return locale
 
 
