@@ -28,10 +28,15 @@ def get_default_locale(obj, attr):
     except RuntimeError:
         raise
 
-    if locale in getattr(obj, attr).keys():
-        return locale
-    else:
-        return sorted(getattr(obj, attr).keys())[0]
+    if isinstance(obj, db.Model):
+        # checking for the default locale for a model instance
+        if locale in getattr(obj, attr).keys():
+            return locale
+        else:
+            return sorted(getattr(obj, attr).keys())[0]
+
+    # return default deployment locale
+    return locale
 
 
 translation_hybrid = TranslationHybrid(
