@@ -152,8 +152,7 @@ def message_list():
                 )
 
         data = request.args.to_dict(flat=False)
-        page_spec = data.pop('page', None) or [1]
-        page = int(page_spec[0])
+        page = int(data.pop('page', [1])[0])
         context = {
             'breadcrumbs': breadcrumbs,
             'filter_form': filter_form,
