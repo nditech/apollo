@@ -76,8 +76,7 @@ def location_list(location_set_id):
 
     args = request.args.to_dict(flat=False)
     args.update(location_set_id=location_set_id)
-    page_spec = args.pop('page', None) or [1]
-    page = int(page_spec[0])
+    page = int(args.pop('page', [1])[0])
 
     # NOTE: this was ordered by location type
     subset = queryset_filter.qs.order_by(Location.code).distinct(Location.code)

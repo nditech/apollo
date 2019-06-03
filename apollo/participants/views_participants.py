@@ -257,8 +257,7 @@ def participant_list(participant_set_id=0):
     # request.args is immutable, so the .pop() call will fail on it.
     # using .copy() returns a mutable version of it.
     args = request.args.to_dict(flat=False)
-    page_spec = args.pop('page', None) or [1]
-    page = int(page_spec[0])
+    page = int(args.pop('page', [1])[0])
     if participant_set_id:
         args['participant_set_id'] = participant_set_id
 
@@ -376,8 +375,7 @@ def participant_performance_list(participant_set_id=0):
         # request.args is immutable, so the .pop() call will fail on it.
         # using .copy() returns a mutable version of it.
         args = request.args.to_dict(flat=False)
-        page_spec = args.pop('page', None) or [1]
-        page = int(page_spec[0])
+        page = int(args.pop('page', [1])[0])
         if participant_set_id:
             args['participant_set_id'] = participant_set_id
 
