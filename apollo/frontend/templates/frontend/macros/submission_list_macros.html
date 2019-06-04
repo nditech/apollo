@@ -44,7 +44,7 @@
     {% endif %}
     {% if form.form_type == 'CHECKLIST' %}
     {% for group in form.data.groups %}
-    <th scope="col" class="text-center">{% if group.name|count > 12 %}<abbr title="{{ group.name }}">{{ group.name|truncate(7, True) }}</abbr>{% else %}{{ group.name }}{% endif %}</th>
+    <th scope="col" class="text-center">{% if group.name|count > 12 %}<abbr title="{{ group.name }}">{{ group.name|truncate(7, True, '') }}</abbr>{% else %}{{ group.name }}{% endif %}</th>
     {% endfor %}
     {% else %}
     {% for field in form_fields %}
