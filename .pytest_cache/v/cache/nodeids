@@ -1,0 +1,6 @@
+[
+  "apollo/submissions/tests.py::IncidentsTest::test_incidents_csv",
+  "apollo/submissions/tests.py::AggregationTest::test_multiselect_field_aggregation",
+  "apollo/submissions/tests.py::AggregationTest::test_numeric_field_aggregation",
+  "apollo/submissions/tests.py::AggregationTest::test_select_field_aggregation"
+]

@@ -205,9 +205,6 @@ def submission_list(form_id):
             text('translation.value'), models.Submission.id
         )
     elif request.args.get('sort_by') == 'phone':
-        participant_phones = models.ParticipantPhone.query.filter(
-            models.ParticipantPhone.verified == True).order_by(  # noqa
-                desc(models.ParticipantPhone.last_seen)).subquery()
         queryset = models.Submission.query.filter(
             models.Submission.submission_type == 'O',
             models.Submission.form == form,
@@ -218,12 +215,9 @@ def submission_list(form_id):
         ).join(
             models.Participant,
             models.Submission.participant_id == models.Participant.id
-        ).outerjoin(
-            participant_phones,
-            participant_phones.c.participant_id == models.Participant.id
         ).join(
-            models.Phone,
-            participant_phones.c.phone_id == models.Phone.id
+            models.PhoneContact,
+            models.PhoneContact.participant_id == models.Participant.id
         )
     else:
         queryset = models.Submission.query.select_from(
@@ -264,10 +258,10 @@ def submission_list(form_id):
     elif request.args.get('sort_by') == 'phone':
         if request.args.get('sort_direction') == 'desc':
             queryset = queryset.order_by(
-                desc(models.Phone.number))
+                desc(models.PhoneContact.number))
         else:
             queryset = queryset.order_by(
-                models.Phone.number)
+                models.PhoneContact.number)
     else:
         queryset = queryset.order_by(
             models.Location.code.cast(Integer),
@@ -1074,9 +1068,9 @@ def quality_assurance_list(form_id):
             text('translation.value'), models.Submission.id
         )
     elif request.args.get('sort_by') == 'phone':
-        participant_phones = models.ParticipantPhone.query.filter(
-            models.ParticipantPhone.verified == True).order_by(  # noqa
-                desc(models.ParticipantPhone.last_seen)).subquery()
+        participant_phones = models.PhoneContact.query.filter(
+            models.PhoneContact.verified == True).order_by(  # noqa
+                desc(models.PhoneContact.updated)).subquery()
         queryset = models.Submission.query.filter(
             models.Submission.submission_type == 'O',
             models.Submission.form == form,
@@ -1090,9 +1084,6 @@ def quality_assurance_list(form_id):
         ).outerjoin(
             participant_phones,
             participant_phones.c.participant_id == models.Participant.id
-        ).join(
-            models.Phone,
-            participant_phones.c.phone_id == models.Phone.id
         )
     else:
         queryset = models.Submission.query.select_from(
@@ -1133,10 +1124,10 @@ def quality_assurance_list(form_id):
     elif request.args.get('sort_by') == 'phone':
         if request.args.get('sort_direction') == 'desc':
             queryset = queryset.order_by(
-                desc(models.Phone.number))
+                desc(models.PhoneContact.number))
         else:
             queryset = queryset.order_by(
-                models.Phone.number)
+                models.PhoneContact.number)
     else:
         queryset = queryset.order_by(
             models.Location.code.cast(Integer),

@@ -32,14 +32,11 @@ def lookup_participant(msg, event=None):
     if not participant:
         clean_number = msg.sender.replace('+', '')
         participant = services.participants.query.join(
-            models.ParticipantPhone,
-            models.Participant.id == models.ParticipantPhone.participant_id
-        ).join(
-            models.Phone,
-            models.ParticipantPhone.phone_id == models.Phone.id
+            models.PhoneContact,
+            models.Participant.id == models.PhoneContact.participant_id
         ).filter(
             models.Participant.participant_set_id == evt.participant_set_id,
-            models.Phone.number == clean_number
+            models.PhoneContact.number == clean_number
         ).first()
 
     return participant

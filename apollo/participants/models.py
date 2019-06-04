@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from itertools import chain
 import re
 
 from sqlalchemy import func
@@ -172,19 +173,6 @@ class ParticipantGroup(BaseModel):
         return self.name or ''
 
 
-class Phone(BaseModel):
-    __tablename__ = 'phone'
-    __table_args__ = (
-        db.UniqueConstraint('number'),
-    )
-
-    id = db.Column(db.Integer, primary_key=True)
-    number = db.Column(db.String, nullable=False)
-
-    def __init__(self, number):
-        self.number = number_cleaner.sub('', number)
-
-
 class Participant(BaseModel):
     GENDER = (
         ('', _('Unspecified')),
@@ -228,8 +216,8 @@ class Participant(BaseModel):
         backref='participants')
     role = db.relationship('ParticipantRole', backref='participants')
     partner = db.relationship('ParticipantPartner', backref='participants')
-    participant_phones = db.relationship(
-        'ParticipantPhone',
+    phone_contacts = db.relationship(
+        'PhoneContact',
         backref=db.backref('participants', cascade='all, delete'))
     supervisor = db.relationship('Participant', remote_side=id)
 
@@ -241,38 +229,35 @@ class Participant(BaseModel):
         if not self.id:
             return None
 
-        p_phone = ParticipantPhone.query.filter_by(
+        p_phone = PhoneContact.query.filter_by(
             participant_id=self.id, verified=True).order_by(
-                ParticipantPhone.last_seen.desc()).first()
+                PhoneContact.updated.desc()).first()
 
-        return p_phone.phone.number if p_phone else None
-
-    @property
-    def last_seen_phone(self):
-        if not self.id:
-            return None
-
-        p_phone = ParticipantPhone.query.filter_by(
-            participant_id=self.id).order_by(
-                ParticipantPhone.last_seen.desc()).first()
-
-        return p_phone.phone.number if p_phone else None
+        return p_phone.number if p_phone else None
 
     @property
     def other_phones(self):
         if not self.id:
             return None
 
-        phone_primary = ParticipantPhone.query.filter_by(
+        phone_primary = PhoneContact.query.filter_by(
             participant_id=self.id, verified=True).order_by(
-                ParticipantPhone.last_seen.desc()).first()
-        other_phones = ParticipantPhone.query.filter(
-            ParticipantPhone.participant_id==self.id,  # noqa
-            ParticipantPhone.phone_id!=phone_primary.phone_id,  # noqa
-            ParticipantPhone.verified==True  # noqa
-        ).order_by(ParticipantPhone.last_seen.desc())
+                PhoneContact.updated.desc()).first()
 
-        return [p.phone.number for p in other_phones]
+        if phone_primary:
+            other_phones = PhoneContact.query.filter(
+                PhoneContact.participant_id==self.id,  # noqa
+                PhoneContact.id!=phone_primary.id,  # noqa
+                PhoneContact.verified==True  # noqa
+            ).order_by(
+                PhoneContact.updated.desc()
+            ).with_entities(
+                PhoneContact.number
+            ).all()
+
+            return list(chain(*other_phones))
+
+        return []
 
     @property
     def phones(self):
@@ -280,12 +265,9 @@ class Participant(BaseModel):
             return None
 
         if not hasattr(self, '_phones'):
-            phones = Phone.query.join(
-                ParticipantPhone,
-                Phone.id == ParticipantPhone.phone_id
-            ).filter(
-                ParticipantPhone.participant_id == self.id
-            ).order_by(ParticipantPhone.last_seen).all()
+            phones = PhoneContact.query.filter_by(
+                participant_id=self.id
+            ).order_by(PhoneContact.updated).all()
             self._phones = phones
 
         return self._phones
@@ -299,19 +281,24 @@ class Participant(BaseModel):
         return d.get(self.gender, Participant.GENDER[0][1])
 
 
-class ParticipantPhone(BaseModel):
-    __tablename__ = 'participant_phone'
-
-    participant_id = db.Column(
-        db.Integer, db.ForeignKey('participant.id', ondelete='CASCADE'),
-        primary_key=True)
-    phone_id = db.Column(
-        db.Integer, db.ForeignKey('phone.id', ondelete='CASCADE'),
-        primary_key=True)
-    last_seen = db.Column(db.DateTime, default=utils.current_timestamp)
-    verified = db.Column(db.Boolean, default=True)
-    phone = db.relationship('Phone')
-
-
 ParticipantTranslations = func.jsonb_each_text(
     Participant.name_translations).alias('translations')
+
+
+class PhoneContact(BaseModel):
+    __tablename__ = 'phone_contact'
+
+    id = db.Column(db.Integer, nullable=False, primary_key=True)
+    participant_id = db.Column(
+        db.Integer, db.ForeignKey('participant.id', ondelete='CASCADE'),
+        nullable=False)
+    number = db.Column(db.String, nullable=False)
+    created = db.Column(
+        db.DateTime, nullable=False, default=utils.current_timestamp,
+        onupdate=utils.current_timestamp)
+    updated = db.Column(
+        db.DateTime, nullable=False, default=utils.current_timestamp,
+        onupdate=utils.current_timestamp)
+    verified = db.Column(db.Boolean, default=False)
+
+    participant = db.relationship('Participant')

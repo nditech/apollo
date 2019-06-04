@@ -22,10 +22,10 @@
 </tr>
 </thead>
 <tbody>
-{% for p_phone in participant.participant_phones %}
+{% for p_phone in participant.phone_contacts %}
 <tr>
-<td>{{ p_phone.phone.number }}</td>
-<td>{{ p_phone.last_seen|datetimeformat }}</td>
+<td>{{ p_phone.number }}</td>
+<td>{{ p_phone.updated|datetimeformat }}</td>
 <td>{% if p_phone.verified %}<i class="glyphicon glyphicon-ok"></i>{% else %}<i class="glyphicon glyphicon-remove"></i>{% endif %}</td>
 </tr>
 {% endfor %}

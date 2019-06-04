@@ -95,6 +95,7 @@ class Submission(BaseModel):
     incident_description = db.Column(db.String)
     incident_status = db.Column(ChoiceType(INCIDENT_STATUSES))
     overridden_fields = db.Column(ARRAY(db.String), default=[])
+    last_phone_number = db.Column(db.String)
     deployment = db.relationship(
         'Deployment',
         backref=db.backref('submissions', cascade='all, delete',
@@ -198,6 +199,7 @@ class Submission(BaseModel):
             sibling.conflicts = trim_conflicts(
                 sibling, conflict_tags, data.keys())
 
+        db.session.begin(nested=True)
         db.session.add_all([self, master])
         db.session.add_all(siblings)
         db.session.commit()

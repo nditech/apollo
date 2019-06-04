@@ -22,7 +22,7 @@ from apollo.messaging.tasks import send_messages
 from apollo.participants import api, filters, forms, tasks
 
 from .models import Participant, ParticipantSet, ParticipantRole
-from .models import ParticipantPartner, Phone, ParticipantPhone
+from .models import ParticipantPartner, PhoneContact
 from .models import ParticipantTranslations
 from ..locations.models import Location
 from ..messaging.models import Message
@@ -165,20 +165,14 @@ def participant_list(participant_set_id=0):
             text('translation.value'), models.Participant.id
         )
     elif request.args.get('sort_by') == 'phone':
-        participant_phones = models.ParticipantPhone.query.filter(
-            models.ParticipantPhone.verified == True).order_by(  # noqa
-                desc(models.ParticipantPhone.last_seen)).subquery()
         queryset = models.Participant.query.filter(
             models.Participant.participant_set_id == participant_set.id
         ).join(
             models.Location,
             models.Participant.location_id == models.Location.id
-        ).outerjoin(
-            participant_phones,
-            participant_phones.c.participant_id == models.Participant.id
         ).join(
-            models.Phone,
-            participant_phones.c.phone_id == models.Phone.id
+            models.PhoneContact,
+            models.PhoneContact.participant_id == models.Participant.id
         )
     else:
         queryset = models.Participant.query.select_from(
@@ -224,10 +218,10 @@ def participant_list(participant_set_id=0):
     elif request.args.get('sort_by') == 'phone':
         if request.args.get('sort_direction') == 'desc':
             queryset = queryset.order_by(
-                desc(models.Phone.number))
+                desc(models.PhoneContact.number))
         else:
             queryset = queryset.order_by(
-                models.Phone.number)
+                models.PhoneContact.number)
     elif request.args.get('sort_by') == 'gen':
         if request.args.get('sort_direction') == 'desc':
             queryset = queryset.order_by(
@@ -266,8 +260,8 @@ def participant_list(participant_set_id=0):
 
     if request.form.get('action') == 'send_message':
         message = request.form.get('message', '')
-        recipients = [x for x in [participant.phone
-                                  if participant.phone else ''
+        recipients = [x for x in [participant.primary_phone
+                                  if participant.primary_phone else ''
                                   for participant in queryset_filterset.qs]
                       if x != '']
         recipients.extend(current_app.config.get('MESSAGING_CC'))
@@ -349,7 +343,8 @@ def participant_performance_list(participant_set_id=0):
 
     if request.form.get('action') == 'send_message':
         message = request.form.get('message', '')
-        recipients = [participant.phone if participant.phone else ''
+        recipients = [participant.primary_phone
+                      if participant.primary_phone else ''
                       for participant in queryset_filter.qs]
         recipients.extend(current_app.config.get('MESSAGING_CC'))
 
@@ -443,8 +438,8 @@ def toggle_phone_verification():
         submission = Submission.query.get_or_404(submission_id)
         participant = Participant.query.get_or_404(participant_id)
         phone_contact = next(filter(
-            lambda p: phone == p.phone.number,
-            participant.participant_phones), False)
+            lambda p: phone == p.number,
+            participant.phone_contacts), False)
         phone_contact.verified = not phone_contact.verified
         phone_contact.save()
         participant.save()
@@ -507,30 +502,29 @@ def participant_edit(id, participant_set_id=0):
 
             phone_number = phone_number_cleaner.sub('', form.phone.data)
             # do we have a phone number like this in the database?
-            plain_phone = Phone.query.filter_by(number=phone_number).first()
-            if plain_phone is None:
-                plain_phone = Phone.create(number=phone_number)
-                plain_phone.save()
+            phone = PhoneContact.query.filter_by(
+                number=phone_number, participant_id=id).first()
 
-            # do we have this number linked to the participant in question?
-            participant_phone = ParticipantPhone.query.filter_by(
-                participant_id=participant.id, phone_id=plain_phone.id
-            ).first()
-
-            if not participant_phone:
-                # no, create a link
-                participant_phone = ParticipantPhone.create(
-                    participant_id=participant.id, phone_id=plain_phone.id,
-                    verified=True
-                )
+            if phone is None:
+                # no, overwrite the primary phone,
+                # or create a new primary phone
+                primary_num = participant.primary_phone
+                phone = PhoneContact.query.filter_by(
+                    number=primary_num, participant_id=id, verified=True
+                ).first()
+                if phone:
+                    phone.number = phone_number
+                else:
+                    phone = PhoneContact(
+                        number=phone_number, participant_id=id, verified=True)
             else:
-                # yes, so update the last_seen and verified attributes
-                # so this becomes the new primary number (primary is
-                # the first verified phone number when ordered by
-                # the last_seen attribute in descending order)
-                participant_phone.last_seen = utils.current_timestamp()
-                participant_phone.verified = True
-            participant_phone.save()
+                # yes, so update the verified attribute, as the updated
+                # attribute is automatically updated.
+                # this will then  become the new primary number
+                # (primary is the most recently updated and
+                # verified phone number)
+                phone.verified = True
+            phone.save()
 
             participant.password = form.password.data
             if participant_set.extra_fields:

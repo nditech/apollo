@@ -1,0 +1,233 @@
+diff --git a/apollo/locations/__init__.py b/apollo/locations/__init__.py
+index 4fae4b4f..9101775a 100644
+--- a/apollo/locations/__init__.py
++++ b/apollo/locations/__init__.py
+@@ -1,11 +1,8 @@
+ # -*- coding: utf-8 -*-
+ import codecs
+-try:
+-    from cStringIO import StringIO
+-except:
+-    from StringIO import StringIO
++from io import StringIO
+ 
+-import unicodecsv
++from backports import csv
+ 
+ from apollo.core import Service, cache
+ from apollo.locations.models import Sample, LocationType, Location
+@@ -63,9 +60,9 @@ class LocationsService(Service):
+                     location_name, metafield.upper()
+                 ))
+ 
+-        output = StringIO()
++        output = StringIO(encoding='utf-8')
+         output.write(codecs.BOM_UTF8)
+-        writer = unicodecsv.writer(output, encoding='utf-8')
++        writer = csv.writer(output)
+         writer.writerow([unicode(i) for i in headers])
+         yield output.getvalue()
+         output.close()
+@@ -102,8 +99,8 @@ class LocationsService(Service):
+                         record.append(getattr(this_location, metafield, '')
+                                       if this_location else '')
+ 
+-                output = StringIO()
+-                writer = unicodecsv.writer(output, encoding='utf-8')
++                output = StringIO(encoding='utf-8')
++                writer = csv.writer(output)
+                 writer.writerow([unicode(i) for i in record])
+                 yield output.getvalue()
+                 output.close()
+diff --git a/apollo/messaging/__init__.py b/apollo/messaging/__init__.py
+index 63aa3843..5261e726 100644
+--- a/apollo/messaging/__init__.py
++++ b/apollo/messaging/__init__.py
+@@ -1,13 +1,10 @@
+ # -*- coding: utf-8 -*-
+ import codecs
+-try:
+-    from cStringIO import StringIO
+-except:
+-    from StringIO import StringIO
+ from datetime import datetime
++from io import StringIO
+ 
++from backports import csv
+ from flask import g
+-import unicodecsv
+ 
+ from apollo.core import Service
+ from apollo.messaging.models import Message
+@@ -41,9 +38,9 @@ class MessagesService(Service):
+         headers = [
+             'Mobile', 'Text', 'Direction', 'Created', 'Delivered'
+         ]
+-        output = StringIO()
++        output = StringIO(encoding='utf-8')
+         output.write(codecs.BOM_UTF8)
+-        writer = unicodecsv.writer(output, encoding='utf-8')
++        writer = csv.writer(output)
+         writer.writerow([unicode(i) for i in headers])
+         yield output.getvalue()
+         output.close()
+@@ -61,8 +58,8 @@ class MessagesService(Service):
+                 if message.delivered else ''
+             ]
+ 
+-            output = StringIO()
+-            writer = unicodecsv.writer(output, encoding='utf-8')
++            output = StringIO(encoding='utf-8')
++            writer = csv.writer(output)
+             writer.writerow([unicode(i) for i in record])
+             yield output.getvalue()
+             output.close()
+diff --git a/apollo/participants/__init__.py b/apollo/participants/__init__.py
+index cdda8984..10bae847 100644
+--- a/apollo/participants/__init__.py
++++ b/apollo/participants/__init__.py
+@@ -1,12 +1,9 @@
+ # -*- coding: utf-8 -*-
+ import codecs
+-try:
+-    from cStringIO import StringIO
+-except:
+-    from StringIO import StringIO
++from io import StringIO
+ 
++from backports import csv
+ from flask import g
+-import unicodecsv
+ 
+ from apollo.core import Service
+ from apollo.locations.models import LocationType
+@@ -53,9 +50,9 @@ class ParticipantsService(Service):
+             for extra_field in queryset.first().deployment.participant_extra_fields:
+                 headers.append(extra_field.label)
+ 
+-        output = StringIO()
++        output = StringIO(encoding='utf-8')
+         output.write(codecs.BOM_UTF8)
+-        writer = unicodecsv.writer(output, encoding='utf-8')
++        writer = csv.writer(output)
+         writer.writerow([unicode(i) for i in headers])
+         yield output.getvalue()
+         output.close()
+@@ -87,8 +84,9 @@ class ParticipantsService(Service):
+             for extra_field in participant.deployment.participant_extra_fields:
+                 record.append(getattr(participant, extra_field.name, ''))
+ 
+-            output = StringIO()
+-            writer = unicodecsv.writer(output, encoding='utf-8')
++            output = StringIO(encoding='utf-8')
++            output.write(codecs.BOM_UTF8)
++            writer = csv.writer(output)
+             writer.writerow([unicode(i) for i in record])
+             yield output.getvalue()
+             output.close()
+@@ -99,8 +97,8 @@ class ParticipantsService(Service):
+             'Phone Primary', 'Phone Secondary #1', 'Phone Secondary #2',
+             'Messages Sent', 'Accuracy', 'Completion'
+         ]
+-        output = StringIO()
+-        writer = unicodecsv.writer(output, encoding='utf-8-sig')
++        output = StringIO(encoding='utf-8')
++        writer = csv.writer(output)
+         writer.writerow(headers)
+         yield output.getvalue()
+         output.close()
+@@ -128,8 +126,8 @@ class ParticipantsService(Service):
+             record.append(accuracy)
+             record.append(participant.completion_rating)
+ 
+-            output = StringIO()
+-            writer = unicodecsv.writer(output, encoding='utf-8')
++            output = StringIO(encoding='utf-8')
++            writer = csv.writer(output)
+             writer.writerow([unicode(i) for i in record])
+             yield output.getvalue()
+             output.close()
+diff --git a/apollo/submissions/__init__.py b/apollo/submissions/__init__.py
+index 008906fe..43b19c12 100644
+--- a/apollo/submissions/__init__.py
++++ b/apollo/submissions/__init__.py
+@@ -1,16 +1,13 @@
+ # -*- coding: utf-8 -*-
+ import codecs
+-try:
+-    from cStringIO import StringIO
+-except:
+-    from StringIO import StringIO
+ from datetime import datetime
++from io import StringIO
+ import json
+ from operator import attrgetter
+ 
++from backports import csv
+ from flask import g
+ from flask.ext.security import current_user
+-import unicodecsv
+ 
+ from apollo.core import Service
+ from apollo.submissions.models import (
+@@ -111,9 +108,9 @@ class SubmissionsService(Service):
+                 ds_headers.extend(sample_headers)
+                 ds_headers.extend(map(lambda f: '%s-CONFIDENCE' % f, fields))
+ 
+-            output = StringIO()
++            output = StringIO(encoding='utf-8')
+             output.write(codecs.BOM_UTF8)
+-            writer = unicodecsv.writer(output, encoding='utf-8')
++            writer = csv.writer(output)
+             writer.writerow([unicode(i) for i in ds_headers])
+             yield output.getvalue()
+             output.close()
+@@ -187,8 +184,8 @@ class SubmissionsService(Service):
+                         [submission.confidence.get(field, '') or ''
+                          for field in fields]
+ 
+-                output = StringIO()
+-                writer = unicodecsv.writer(output, encoding='utf-8')
++                output = StringIO(encoding='utf-8')
++                writer = csv.writer(output)
+                 writer.writerow([unicode(i) for i in record])
+                 yield output.getvalue()
+                 output.close()
+diff --git a/apollo/submissions/views_submissions.py b/apollo/submissions/views_submissions.py
+index f308243f..f541972e 100644
+--- a/apollo/submissions/views_submissions.py
++++ b/apollo/submissions/views_submissions.py
+@@ -3,10 +3,9 @@ from __future__ import absolute_import
+ import codecs
+ from datetime import datetime
+ import json
+-try:
+-    from cStringIO import StringIO
+-except ImportError:
+-    from StringIO import StringIO
++from io import StringIO
++
++from backports import csv
+ from flask import (
+     Blueprint, jsonify, make_response, redirect, render_template, request,
+     url_for, current_app, abort, g, Response
+@@ -18,7 +17,6 @@ from flask.ext.menu import register_menu
+ from flask_httpauth import HTTPBasicAuth
+ from mongoengine import signals
+ from tablib import Dataset
+-import unicodecsv
+ from werkzeug.datastructures import MultiDict
+ from apollo import services
+ from apollo.submissions.incidents import incidents_csv
+@@ -126,8 +124,9 @@ def submission_list(form_id):
+             exporter = AggFrameworkExporter(query_filterset.qs)
+             records, headers = exporter.export_dataset()
+ 
+-            export_buffer = StringIO()
+-            writer = unicodecsv.DictWriter(export_buffer, headers, encoding='utf-8-sig')
++            export_buffer = StringIO(encoding='utf-8')
++            export_buffer.write(codecs.BOM_UTF8)
++            writer = csv.DictWriter(export_buffer, headers)
+             writer.writeheader()
+             for record in records:
+                 writer.writerow(record)
