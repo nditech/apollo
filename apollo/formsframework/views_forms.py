@@ -153,14 +153,18 @@ def forms_list(view):
 def quality_assurance(view, form_id):
     template_name = 'admin/quality_assurance.html'
     form = models.Form.query.filter_by(id=form_id).first_or_404()
+
     breadcrumbs = [
         {'text': _('Forms'), 'url': url_for('formsview.index')},
         _('Quality Assurance'), form.name]
+    failed_checks = []
 
     if request.method == 'POST':
+        from apollo.submissions.qa.query_builder import generate_qa_query
         try:
             postdata = json.loads(request.form.get('postdata'))
             form.quality_checks = []
+            posted_check_data = []
             for item in postdata:
                 if isinstance(item, list):
                     desc = item[0]
@@ -174,11 +178,31 @@ def quality_assurance(view, form_id):
                     rhs = item["3"]
 
                 if desc and lhs and comp and rhs:
-                    form.quality_checks.append({
-                        'name': generate_identifier(), 'description': desc,
-                        'lvalue': lhs, 'comparator': comp,
-                        'rvalue': rhs
-                    })
+                    posted_check_data.append([
+                        desc, lhs, comp, rhs
+                    ])
+                    expression = f'{lhs} {comp} {rhs}'
+                    try:
+                        # check that we have a valid expression,
+                        # and if so, add it to the form's QA
+                        generate_qa_query(expression, form)
+                        form.quality_checks.append({
+                            'name': generate_identifier(), 'description': desc,
+                            'lvalue': lhs, 'comparator': comp,
+                            'rvalue': rhs
+                        })
+                    except ValueError:
+                        failed_checks.append(desc)
+
+            # display the page again if there are any errors
+            if failed_checks:
+                context = {
+                    'page_title': page_title,
+                    'check_data': posted_check_data,
+                    'failed_checks': failed_checks
+                }
+                return render_template(template_name, **context)
+
             form.save()
 
             return redirect(url_for('formsview.index'))
@@ -192,7 +216,8 @@ def quality_assurance(view, form_id):
 
     context = {
         'breadcrumbs': breadcrumbs,
-        'check_data': check_data
+        'check_data': check_data,
+        'failed_checks': failed_checks
     }
 
     return view.render(template_name, **context)
