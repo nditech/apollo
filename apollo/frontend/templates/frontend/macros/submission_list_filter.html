@@ -14,12 +14,7 @@
                 </div>
             {%- if form.form_type == 'CHECKLIST' -%}
                 <div class="col-md-2 mb-2 d-flex">
-                    <div class="d-flex align-items-center">
-                        <div class="custom-control custom-switch">
-                            {{ filter_form.conjunction(class_='custom-control-input') }}
-                            {{ filter_form.conjunction.label(class_='custom-control-label') }}
-                        </div>
-                    </div>
+                    {{ filter_form.conjunction(class_='custom-control-input', **{'data-toggle': 'switchbutton', 'data-onlabel': _('OR'), 'data-offlabel': _('AND')}) }}
                 </div>
                 {%- for group in form.data.groups -%}
                 {% set field = form.id|string + '__' + group.slug %}
