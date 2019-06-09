@@ -126,15 +126,14 @@
         </div>
     </main>
 
-    {% block footer -%}
-    <footer class="footer mt-auto py-1 fixed-bottom bg-light">
+    <footer class="footer mt-auto py-1 fixed-bottom bg-white">
         <div class="container">
-            <div class="d-flex justify-content-start mt-0 pt-3">
+            <div class="d-flex align-items-center justify-content-between mt-0 pt-3">
                 <p class="small text-muted" data-config-id="copyright">Apollo v{{ config.VERSION }} &mdash; Built with <span class="text-danger">&hearts;</span> from Lagos</p>
+                {% block footer -%}{%- endblock %}
             </div>
         </div>
     </footer>
-    {%- endblock %}
 
     {% if g.locale.text_direction == 'rtl' -%}
     <script type="text/javascript" src="{{ asset_url_for('scripts-rtl.js') }}" charset="utf-8"></script>
