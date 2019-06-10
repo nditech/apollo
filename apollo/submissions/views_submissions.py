@@ -397,7 +397,7 @@ def submission_edit(submission_id):
     questionnaire_form = submission.form
     edit_form_class = forms.make_submission_edit_form_class(
         event, submission.form)
-    page_title = _('Edit Submission')
+    breadcrumbs = [_('Edit Submission')]
     readonly = not g.deployment.allow_observer_submission_edit
     location_types = services.location_types.find(
         location_set_id=event.location_set_id,
@@ -467,7 +467,7 @@ def submission_edit(submission_id):
 
         return render_template(
             template_name,
-            page_title=page_title,
+            breadcrumbs=breadcrumbs,
             submission=submission,
             submission_form=submission_form,
             sibling_forms=sibling_forms,
@@ -541,7 +541,7 @@ def submission_edit(submission_id):
             else:
                 return render_template(
                     template_name,
-                    page_title=page_title,
+                    breadcrumbs=breadcrumbs,
                     submission=submission,
                     submission_form=submission_form,
                     location_types=location_types
@@ -769,7 +769,7 @@ def submission_edit(submission_id):
             else:
                 return render_template(
                     template_name,
-                    page_title=page_title,
+                    breadcrumbs=breadcrumbs,
                     submission=submission,
                     submission_form=submission_form,
                     master_form=master_form,
@@ -1181,7 +1181,8 @@ def update_submission_version(submission):
         for k in data_fields if k in submission.data}
 
     if submission.form.form_type == 'INCIDENT':
-        version_data['status'] = submission.incident_status.code
+        if submission.incident_status:
+            version_data['status'] = submission.incident_status.code
         version_data['description'] = submission.incident_description
 
     # get previous version
