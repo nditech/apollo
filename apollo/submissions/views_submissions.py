@@ -1172,6 +1172,7 @@ def update_submission_version(submission):
     # reload the submission to get rid of the loading problem
     # with the incident_status attribute
     submission = models.Submission.query.get(submission.id)
+    db.session.refresh(submission)
 
     # save actual version data
     data_fields = submission.form.tags
