@@ -375,19 +375,12 @@ def submission_create(form_id):
             form_id=form_id,
             submission_type='O',
             created=utils.current_timestamp(),
-            data=data
+            data=data,
+            participant=submission_form.participant.data,
+            location=submission_form.location.data or submission_form.participant.data.location,  # noqa
+            incident_status=submission_form.status.data
         )
 
-        # properly populate all fields
-        # either the participant or the location may be blank, but not both
-        if submission_form.participant.data:
-            submission.participant = submission_form.participant.data
-            submission.location = submission.participant.location
-
-        if submission_form.location.data:
-            submission.location = submission_form.location.data
-
-        submission.incident_status = submission_form.status.data
         submission.save()
 
         return redirect(
