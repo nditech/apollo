@@ -191,7 +191,9 @@ def submission():
                     continue
 
     kwargs = {'data': data}
-    if geopoint and geopoint.get('lat') and geopoint.get('lon'):
+    geopoint_lat = geopoint.get('lat')
+    geopoint_lon = geopoint.get('lon')
+    if geopoint and (geopoint_lat is not None) and (geopoint_lon is not None):
         kwargs.update(geopoint=geopoint)
     models.Submission.query.filter_by(
         id=submission.id
