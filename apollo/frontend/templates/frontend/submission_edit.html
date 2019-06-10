@@ -1,316 +1,292 @@
-{%- extends 'frontend/_layout.html' -%}
-{% block toolbar %}
-{%- if submission.versions %}
-<div class="btn-group pull-right">
-  <a href class="btn btn-default">{{ _('History') }}</a>
-  <button class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
-  <ul class="dropdown-menu" role="menu">
-    {% for version in submission.versions -%}
-    <li><a href="{{ url_for('submissions.submission_version', submission_id=submission.id, version_id=version.id) }}"><span class="tonow" data-timestamp="{{ version.timestamp|timestamp }}">{{ version.timestamp.strftime('%b %d %Y %I:%M %p') }}</span> &mdash; <em>{{ version.identity }}</em></a></li>
-    {%- endfor %}
-  </ul>
-</div>
-{% endif %}
+{% extends 'frontend/layout.html' -%}
+{%- set form, siblings, master = submission.form, submission.siblings, submission.master %}
+
+
+{%- block stylesheets %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-switch-button.min.css') }}">
 {% endblock %}
-{% block content %}{% set form, siblings, master = submission.form, submission.siblings, submission.master %}
-{%- from 'frontend/macros/submission_field_macros.html' import render_submission_field %}
+
+
+
+{%- block content %}
 <form method="POST">
 <input type="hidden" name="next" value="{% if request.environ.get('HTTP_REFERER') == request.url %}{{ url_for('submissions.submission_list', form_id=form.id) }}{% else %}{{ request.environ.get('HTTP_REFERER', url_for('submissions.submission_list', form_id=form.id)) }}{% endif %}" />
-<div class="table-responsive">
-<table class="table table-bordered">
-{%- if form.form_type == 'CHECKLIST' -%}
-<tr>
-  <th width="15%">{{ _('Observer') }}</th>
-  <th>{{ _('Observer %(index)s', index=1) }}</th>
-  {%- for sib in siblings -%}
-  <th>{{ _('Observer %(index)s', index=loop.index + 1) }}</th>
-  {%- endfor -%}
-</tr>
-{%- endif -%}
-<tr>
-  <th>{{ _('Participant') }}</th>
-  <td>{% if submission.participant %}<strong>{{ submission.participant.participant_id }}</strong> &mdash; <strong>{{ submission.participant.name }}</strong>{%- if submission.participant.phone %} ({{ submission.participant.phone }}){%- endif %}
-  <input type="hidden" name="{{ submission_form['participant'].name }}" value="{{ submission_form['participant'].data.id|default('__None', true) }}" />
-  {%- else -%}{{ submission_form.participant(class_='select2-container span4 input-xlarge select2 select2-observers') }}{% endif %}</td>
-  {%- if form.form_type == 'CHECKLIST' -%}
-  {%- for sib in siblings -%}
-  <td>{% if sib.participant %}<strong>{{ sib.participant.name }}</strong>{% if sib.participant.phone %} ({{ sib.participant.phone }}){% endif %} &mdash; <strong>{{ sib.participant.participant_id }}</strong>{% endif %}</td>
-  {%- endfor -%}
-  {%- endif -%}
-</tr>
-<tr>
-  <th>{{ _('Texted Phone') }}</th>
-  <td>{% if submission.participant and submission.participant.last_seen_phone %}<strong>{{ submission.participant.last_seen_phone|default(_('N/A'), true) }}</strong> {% if submission.sender_verified %}<span id="phone_verification_status" class="label label-success">verified</span>{% else %}<span id="phone_verification_status" class="label label-warning">unverified</span> {% if perms.edit_participant.can() %}<button id="verify_button" data-participant="{{ submission.participant.id }}" data-phone="{{ submission.participant.last_seen_phone|default('', true) }}" data-submission="{{ submission.id }}" type="button" class="btn btn-default btn-xs" title="Verify Phone"><span class="glyphicon glyphicon-ok-sign"></span></button>{% endif %}{% endif %}{% else %}{{ _('N/A') }}{% endif %}</td>
-  {%- if form.form_type == 'CHECKLIST' -%}
-  {%- for sib in siblings -%}
-  <td>{% if sib.participant and sib.participant.last_seen_phone %}<strong>{{ sib.participant.last_seen_phone|default(_('N/A'), true) }}</strong> {% if sib.sender_verified %}<span id="phone_verification_status" class="label label-success">verified</span>{% else %}<span id="phone_verification_status" class="label label-warning">unverified</span> {% if perms.edit_participant.can() %}<button id="verify_button" data-participant="{{ sib.participant.id }}" data-phone="{{ sib.participant.last_seen_phone|default('', true) }}" data-submission="{{ sib.id }}" type="button" class="btn btn-default btn-xs" title="Verify Phone"><span class="glyphicon glyphicon-ok-sign"></span></button>{% endif %}{% endif %}{% else %}{{ _('N/A') }}{% endif %}</td>
-  {%- endfor -%}
-  {%- endif -%}
-</tr>
-<tr>
-  <th>{{ _('Other Phones') }}</th>
-  <td>
-    {% if submission.participant and submission.participant.other_phones %}{{ submission.participant.other_phones|join(', ') }}{% else %}{{ _('N/A') }}{% endif %}
-  </td>
-  {%- if form.form_type == 'CHECKLIST' -%}
-  {%- for sib in siblings -%}
-  <td>{% if sib.participant and sib.participant.last_seen_phone %}{{ sib.participant.other_phones|join(', ') }}{% else %}{{ _('N/A') }}{% endif %}</td>
-  {%- endfor -%}
-  {%- endif -%}
-</tr>
-<tr>
-  <th>{{ _('Role') }}</th>
-  <td>{{ submission.participant.role|default(_('N/A'), true) }}</td>
-  {%- if form.form_type == 'CHECKLIST' -%}
-  {%- for sib in siblings -%}
-  <td>{{ sib.participant.role }}</td>
-  {%- endfor -%}
-  {%- endif -%}
-</tr>
-{%- if form.form_type == 'CHECKLIST' -%}
-<tr>
-  <th>{{ _('Location') }}</th>
-  <td><strong>{{ submission.location.name|default(_('N/A'), true) }}</strong><input type="hidden" name="{{ submission_form['location'].name }}" value="{{ submission.location.id|default('__None', true) }}" /></td>
-  {%- for sib in siblings -%}
-  <td><strong>{{ sib.location.name|default(_('N/A'), true) }}</strong></td>
-  {%- endfor -%}
-</tr>
-<tr>
-  <th>{{ _('Complete Location') }}</th>
-  <td>
-    {% for lt in location_types %}
-    {% set node = submission.location.make_path()[lt.name] %}
-    {% if node %}
-    {{ submission.location.make_path()[lt.name] }} &middot; <em>{{ lt.name }}</em>{% if not loop.last %} / {% endif %}
-    {% endif %}
-    {% endfor %}
-  </td>
-  {% for sib in siblings %}
-  <td>
-    {% for lt in location_types %}
-    {% set node = sib.location.make_path()[lt.name] %}
-    {% if node %}
-    {{ submission.location.make_path()[lt.name] }} &middot; <em>{{ lt.name }}</em>{% if not loop.last %} / {% endif %}
-    {% endif %}
-    {% endfor %}
-  </td>
-  {% endfor %}
-</tr>
-<tr>
-  <th>{{ _('Supervisor') }}</th>
-  <td>{% if submission.participant and submission.participant.supervisor %}<strong>{{ submission.participant.supervisor.name|default('<em>{}</em>'.format(_('N/A')), true) }}</strong>{%- if submission.participant.supervisor.phone %} ({{ submission.participant.supervisor.phone }}){%- endif -%}{% else %}{{ _('N/A') }}{% endif %}</td>
-  {%- for sib in siblings -%}
-  <td>{% if sib.participant and sib.participant.supervisor %}<strong>{{ sib.participant.supervisor.name|default('<em>{}</em>'.format(_('N/A')), true) }}</strong>{%- if sib.participant.supervisor.phone %} ({{ sib.participant.supervisor.phone }}){%- endif -%}{% else %}{{ _('N/A') }}{% endif %}</td>
-  {%- endfor -%}
-</tr>
-{%- else -%}
-<tr>
-  <th>{{ _('Location') }}</th>
-  <td>{% if submission.location %}<strong>{{ submission.location.name }}</strong><input type="hidden" name="{{ submission_form['location'].name }}" value="{{ submission.location.id|default('__None', true) }}" />
-{% else -%}
-  {{ submission_form.location(class_='select2-container span4 input-xlarge select2 select2-locations') }}{% endif %}</td>
-</tr>
-<tr>
-  <td>&nbsp;</td>
-  <td>
-    {% for lt in location_types %}
-    {% set node = submission.location.make_path()[lt.name] %}
-    {% if node %}
-    {{ submission.location.make_path()[lt.name] }} &middot; <em>{{ lt.name }}</em>{% if not loop.last %} / {% endif %}
-    {% endif %}
-    {% endfor %}
-  </td>
-</tr>
-{%- endif -%}
-</table>
-</div>
-<div>
-
-{% if failed_checks and submission.form.quality_checks_enabled and perms.edit_submission_verification_status.can() %}
-<div class="alert alert-warning alert-dismissible" role="alert">
-  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-  <strong>{{ _('Validation Errors!') }}</strong> {{ _('The following conditions were flagged while validating this submission.') }}
-  <ul class="list-group" style="margin-top:1em">
-    {% for criteria in failed_checks %}
-    <li class="list-group-item text-warning">{{ criteria }}</li>
-    {% endfor %}
-  </ul>
-</div>
-{% endif %}
-
 {{ submission_form.csrf_token() }}
 {%- if form.form_type == 'CHECKLIST' %}
 {%- for f in sibling_forms -%}{{ f.csrf_token() }}{%- endfor -%}{{ master_form.csrf_token() }}
-<div class="table">
-  <table class="table table-bordered table-striped table-hover">
-    <tbody>
-      <tr>
-        <td colspan="2">&nbsp;</td>
-        <td style="text-align: center">
-        {%- if perms.edit_both_submissions.can() -%}
-        <label for="{{ submission.id }}" style="margin-bottom: 0"><strong>{{ _('Observer %(index)s', index=1) }}</strong><p style="margin-top: 0.25em"><input type="radio" id="{{ submission.id }}" class="obs1" name="submission_selection" value="obs"{% if not readonly %} checked{% endif %} /></p></label>
-        {%- else -%}
-        <strong>{{ _('Observer %(index)s', index='1') }}</strong>
-        {%- endif -%}
-        </td>
-        {%- for sibling in siblings -%}
-        <td style="text-align: center">
-        {%- if perms.edit_both_submissions.can() -%}
-        <label for="{{ sibling.id }}" style="margin-bottom: 0"><strong>{{ _('Observer %(index)s', index=loop.index + 1) }}</strong><p style="margin-top: 0.25em"><input type="radio" id="{{ sibling.id }}" name="submission_selection" value="" disabled></p></label>
-        {%- else -%}
-        <strong>{{ _('Observer %(index)s', index=loop.index + 1) }}</strong>
-        {%- endif -%}
-        </td>
-        {%- endfor -%}
-        <td style="text-align: center">
-        {%- if perms.edit_both_submissions.can() -%}
-        <label for="{{ submission.master.id }}" style="margin-bottom: 0"><strong>{{ _('Location') }}</strong><p style="margin-top: 0.25em"><input type="radio" id="{{ submission.master.id }}" class="ps" name="submission_selection" value="ps"{% if readonly %} checked{% endif %} /></p></label>
-        {%- else -%}
-        <strong>{{ _('Location') }}</strong>
-        {%- endif -%}
-        </td>
-        <td>&nbsp;</td>
-      </tr>
-      <tr>
-        <td colspan="2" style="vertical-align: middle">
-          <h4>{{ _('No Signal') }}</h4>
-        </td>
-        {%- if readonly -%}
-        <td class="obs-on">{{ render_submission_field(submission_form['unreachable'], disabled=1)}}</td>
-        {%- else -%}
-        <td class="obs-on" {%- if submission_form['unreachable'].errors %} class="danger" {%- endif -%}>
-          {{ render_submission_field(submission_form['unreachable']) }}</td>
-        {%- endif -%}
-        {%- for sibling_form in sibling_forms -%}
-        <td>{{ render_submission_field(sibling_form['unreachable'], disabled=1) }}</td>
-        {%- endfor -%}
-        <td colspan="2">&nbsp;</td>
-      </tr>
-      {% if perms.edit_submission_quarantine_status.can() %}
-      <tr>
-        <td colspan="2" style="vertical-align: middle"><h4>{{ _('Quarantine Status') }}</h4></td>
-        {%- if readonly -%}
-        <td class="obs-on">{{ render_submission_field(submission_form['quarantine_status'], disabled=1)}}</td>
-        {%- else -%}
-        <td class="obs-on"{%- if submission_form['quarantine_status'].errors %} class="danger"{%- endif -%}>{{ render_submission_field(submission_form['quarantine_status']) }}</td>
-        {%- endif -%}
-        {%- for sibling_form in sibling_forms -%}
-        <td >{{ render_submission_field(sibling_form['quarantine_status'], disabled=1) }}</td>
-        {%- endfor -%}
-        {%- if readonly -%}
-        <td class="ps-on"{%- if master_form['quarantine_status'].errors %} class="danger"{%- endif -%}>{{ render_submission_field(master_form['quarantine_status']) }}</td>
-        {%- else -%}
-        <td class="ps-on"{%- if master_form['quarantine_status'].errors %} class="danger"{%- endif -%}>{{ render_submission_field(master_form['quarantine_status'], disabled=1) }}</td>
-        {%- endif -%}
-        <td>&nbsp;</td>
-      </tr>
+{%- endif %}
+
+<div class="table-responsive">
+  <table class="table table-bordered">
+  <tr>
+    <th class="col-2">{{ _('Participant') }}</th>
+    <td>{% if submission.participant %}<strong>{{ submission.participant.name }}</strong> &mdash; <strong>{{ submission.participant.participant_id }}</strong>{%- if submission.participant.phone %} ({{ submission.participant.phone }}){%- endif %}
+    <input type="hidden" name="{{ submission_form['participant'].name }}" value="{{ submission_form['participant'].data.id|default('__None', true) }}" />
+    {%- else -%}{{ submission_form.participant(class_='select2-container span4 input-xlarge select2 select2-observers') }}{% endif %}</td>
+    {%- if form.form_type == 'CHECKLIST' -%}
+    {%- for sib in siblings -%}
+    <td>{% if sib.participant %}<strong>{{ sib.participant.name }}</strong>{% if sib.participant.phone %} ({{ sib.participant.phone }}){% endif %} &mdash; <strong>{{ sib.participant.participant_id }}</strong>{% endif %}</td>
+    {%- endfor -%}
+    {%- endif -%}
+  </tr>
+  <tr>
+    <th>{{ _('Texted Phone') }}</th>
+    <td>{% if submission.participant and submission.participant.last_seen_phone %}<strong>{{ submission.participant.last_seen_phone|default(_('N/A'), true) }}</strong> {% if submission.sender_verified %}<span id="phone_verification_status" class="badge badge-pill badge-success">{{ _('Verified') }}</span>{% else %}<span id="phone_verification_status" class="badge badge-pill badge-warning">{{ _('Unverified') }}</span> {% if perms.edit_participant.can() %}<button id="verify_button" data-participant="{{ submission.participant.id }}" data-phone="{{ submission.participant.last_seen_phone|default('', true) }}" data-submission="{{ submission.id }}" type="button" class="btn btn-default btn-xs" title="Verify Phone"><span class="glyphicon glyphicon-ok-sign"></span></button>{% endif %}{% endif %}{% else %}{{ _('N/A') }}{% endif %}</td>
+    {%- if form.form_type == 'CHECKLIST' -%}
+    {%- for sib in siblings -%}
+    <td>{% if sib.participant and sib.participant.last_seen_phone %}<strong>{{ sib.participant.last_seen_phone|default(_('N/A'), true) }}</strong> {% if sib.sender_verified %}<span id="phone_verification_status" class="badge badge-pill badge-success">{{ _('Verified') }}</span>{% else %}<span id="phone_verification_status" class="badge badge-pill badge-warning">{{ _('Unverified') }}</span> {% if perms.edit_participant.can() %}<button id="verify_button" data-participant="{{ sib.participant.id }}" data-phone="{{ sib.participant.last_seen_phone|default('', true) }}" data-submission="{{ sib.id }}" type="button" class="btn btn-default btn-xs" title="Verify Phone"><span class="glyphicon glyphicon-ok-sign"></span></button>{% endif %}{% endif %}{% else %}{{ _('N/A') }}{% endif %}</td>
+    {%- endfor -%}
+    {%- endif -%}
+  </tr>
+  <tr>
+    <th>{{ _('Other Phones') }}</th>
+    <td>
+      {% if submission.participant and submission.participant.other_phones %}{{ submission.participant.other_phones|join(', ') }}{% else %}{{ _('N/A') }}{% endif %}
+    </td>
+    {%- if form.form_type == 'CHECKLIST' -%}
+    {%- for sib in siblings -%}
+    <td>{% if sib.participant and sib.participant.other_phones %}{{ sib.participant.other_phones|join(', ') }}{% else %}{{ _('N/A') }}{% endif %}</td>
+    {%- endfor -%}
+    {%- endif -%}
+  </tr>
+  <tr>
+    <th>{{ _('Role') }}</th>
+    <td>{{ submission.participant.role|default(_('N/A'), true) }}</td>
+    {%- if form.form_type == 'CHECKLIST' -%}
+    {%- for sib in siblings -%}
+    <td>{{ sib.participant.role }}</td>
+    {%- endfor -%}
+    {%- endif -%}
+  </tr>
+  {%- if form.form_type == 'CHECKLIST' -%}
+  {#- checklist #}
+  <tr>
+    <th>{{ _('Location') }}</th>
+    <td>
+      {% for lt in location_types %}
+      {% set node = submission.location.make_path()[lt.name] %}
+      {% if node %}
+      {{ submission.location.make_path()[lt.name] }} &middot; <em>{{ lt.name }}</em>{% if not loop.last %} / {% endif %}
       {% endif %}
-      {% for group in form.data.groups %}
-      <tr>
-        <td colspan="{{ siblings|count + 6 }}"><h4>{{ group.name }}</h4></td>
-      </tr>
-      {% for field in group.fields %}
-      <tr{% if field.tag in failed_check_tags and submission.form.quality_checks_enabled and perms.edit_submission_verification_status.can() %} class="warning"{% endif %}>
-        <th>{{ field.tag }}</th>
-        <td>{{ field.description }}
-          {%- if field['type'] == 'select' %}
-          <span class="options">
-          {% for item in field.options|dictsort(false, 'value') %}
-          <span class="option"><strong>({{ item.1 }})</strong> {{ item.0 }}</span>
-          {% endfor %}
-          </span>
-          {%- endif %}
-        </td>
-        {%- if readonly -%}
-        <td class="obs-on">{{ render_submission_field(submission_form[field.tag], disabled=1)}}</td>
-        {%- else -%}
-        <td class="obs-on{%- if submission_form[field.tag].errors %} danger{%- endif -%}">{{ render_submission_field(submission_form[field.tag]) }}</td>
-        {%- endif -%}
-        {%- for sibling_form in sibling_forms -%}
-        <td >{{ render_submission_field(sibling_form[field.tag], disabled=1) }}</td>
-        {%- endfor -%}
-        {%- if readonly -%}
-        <td class="ps-on{%- if master_form[field.tag].errors %} danger{% elif field.tag in submission.master.overridden_fields %} warning{%- endif -%}"{% if field.tag in submission.master.overridden_fields %} title="{{ _('Overridden Field') }}"{%- endif -%}>{{ render_submission_field(master_form[field.tag]) }}</td>
-        {%- else -%}
-        <td class="ps-on{%- if master_form[field.tag].errors %} danger{% elif field.tag in submission.master.overridden_fields %} warning{%- endif -%}"{% if field.tag in submission.master.overridden_fields %} title="{{ _('Overridden Field') }}"{%- endif -%}>{{ render_submission_field(master_form[field.tag], disabled=1) }}</td>
-        {%- endif -%}
-        <th style="padding-top:14px">
-          <span>{{ field.tag }}</span>
-          {% if field.tag in failed_check_tags and submission.form.quality_checks_enabled and perms.edit_submission_verification_status.can() -%}
-          <div style="position: relative; left: 3em; height: 0; top: -1em; overflow: visible;">
-            <i class="fa fa-exclamation-triangle" style="color:red"></i>
-          </div>{% endif %}
-        </th>
-      </tr>
+      {% else %}
+      {{ _('N/A') }}
       {% endfor %}
-      {% endfor %}
-      {% if perms.edit_submission_verification_status.can() and submission.form.verifiable %}
-      <tr>
-        <td colspan="2" style="vertical-align: middle"><h4>{{ _('Verification Status') }}</h4></td>
-        <td class="obs-on"><input type="hidden" name="{{ submission_form['verification_status'].name }}" value="{{ submission.verification_status|default('', true) }}" /></td>
-        {%- for sibling_form in sibling_forms -%}
-        <td>&nbsp;</td>
-        {%- endfor -%}
-        {%- if readonly -%}
-        <td class="ps-on"{%- if master_form['verification_status'].errors %} class="danger"{%- endif -%}>{{ render_submission_field(master_form['verification_status']) }}</td>
-        {%- else -%}
-        <td class="ps-on"{%- if master_form['verification_status'].errors %} class="danger"{%- endif -%}>{{ render_submission_field(master_form['verification_status'], disabled=1) }}</td>
-        {%- endif -%}
-        <td>&nbsp;</td>
-      </tr>
+      <input type="hidden" name="{{ submission_form['location'].name }}" value="{{ submission.location.id|default('__None', true) }}" />
+    </td>
+    {% for sib in siblings %}
+    <td>
+      {% for lt in location_types %}
+      {% set node = sib.location.make_path()[lt.name] %}
+      {% if node %}
+      {{ submission.location.make_path()[lt.name] }} &middot; <em>{{ lt.name }}</em>{% if not loop.last %} / {% endif %}
       {% endif %}
-    </tbody>
+      {% else %}
+      {{ _('N/A') }}
+      {% endfor %}
+    </td>
+    {% endfor %}
+  </tr>
+  <tr>
+    <th>{{ _('Supervisor') }}</th>
+    <td>{% if submission.participant and submission.participant.supervisor %}<strong>{{ submission.participant.supervisor.name|default('<em>{}</em>'.format(_('N/A')), true) }}</strong>{%- if submission.participant.supervisor.phone %} ({{ submission.participant.supervisor.phone }}){%- endif -%}{% else %}{{ _('N/A') }}{% endif %}</td>
+    {%- for sib in siblings -%}
+    <td>{% if sib.participant and sib.participant.supervisor %}<strong>{{ sib.participant.supervisor.name|default('<em>{}</em>'.format(_('N/A')), true) }}</strong>{%- if sib.participant.supervisor.phone %} ({{ sib.participant.supervisor.phone }}){%- endif -%}{% else %}{{ _('N/A') }}{% endif %}</td>
+    {%- endfor -%}
+  </tr>
+  {%- else -%}
+  {#- critical incident #}
+  <tr>
+    <th>{{ _('Location') }}</th>
+    <td>
+      {% for lt in location_types %}
+      {% set node = submission.location.make_path()[lt.name] %}
+      {% if node %}
+      {{ submission.location.make_path()[lt.name] }} &middot; <em>{{ lt.name }}</em>{% if not loop.last %} / {% endif %}
+      {% endif %}
+      {% else %}
+      {{ _('N/A') }}
+      {% endfor %}
+      <input type="hidden" name="{{ submission_form['location'].name }}" value="{{ submission.location.id|default('__None', true) }}" />
+    </td>
+  </tr>
+  {%- endif -%}
   </table>
 </div>
-{% else %}
-<table class="table table-bordered table-striped table-hover">
-  <tbody>
-    <tr>
-      <td colspan="2">&nbsp;</td>
-      <td>&nbsp;</td>
-    </tr>
-    {%- for group in form.data.groups %}
-    <tr>
-      <td colspan="3"><h4>{{ group.name }}</h4></td>
-    </tr>
-    {%- for field in group.fields %}
-    <tr>
-      <th style="text-align: center">{{ field.tag }}</th>
-      {% if field.is_comment %}
-      <td colspan="2"{%- if submission_form[field.tag].errors %} class="danger"{%- endif -%}>
-        {{ render_submission_field(submission_form[field.tag]) }}<br />
-        <p style="margin-top:-0.5em; margin-bottom:0">{{ field.description }}</p>
-      </td>
-      {% else %}
-      <td>{{ field.description }}
-      {%- if field.options %}
-      <span class="options">
-      {% for description, value in field.options|dictsort(by='value') %}
-      <span class="option"><strong>({{ value }})</strong> {{ description }}</span>
-      {% endfor %}
-      </span>
-      {%- endif %}
-      </td>
-      <td style="min-width:6em" {%- if submission_form[field.tag].errors %} class="danger"{%- endif -%}>{{ render_submission_field(submission_form[field.tag]) }}</td>
-      {% endif %}
-    </tr>
-    {% endfor -%}
-    {% endfor -%}
-    <tr>
-      <td>{{ _('Description') }}</td>
-      <td colspan="2">{{ submission_form.description(cols=40, rows=5,class_='form-control span12') }}</td>
-    </tr>
-    <tr>
-      <td>{{ _('Status') }}</td>
-      <td colspan="2">{{ submission_form.status (class_='form-control span2 input-sm')}}</td>
-    </tr>
-  </tbody>
-</table>
-{% endif -%}
-{% if master_form %}<input type="hidden" name="{{ master_form['location'].name }}" value="{{ master_form['location'].data.id|default('__None', true) }}" />
-{% endif -%}
 
-{%- if form.form_type == 'CHECKLIST' -%}
+{%- if form.form_type == 'CHECKLIST' %}
+<ul class="nav nav-tabs justify-content-end mb-n1" id="tabbed" role="tablist">
+  <li class="nav-item">
+    <a class="nav-link active" id="checklist-tab" data-toggle="tab" role="tab" aria-controls="checklist-panel" aria-selected="true" href="#checklist-panel">{{ _('Checklist') }}</a>
+  </li>
+  <!--<li class="nav-item">
+    <a class="nav-link" id="critical-incidents-tab" data-toggle="tab" role="tab" aria-controls="critical-incidents-panel" aria-selected="false" href="#critical-incidents-panel">{{ _('Critical Incidents') }}</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" id="messages-tab" data-toggle="tab" role="tab" aria-controls="messages-panel" aria-selected="false" href="#messages-panel">{{ _('Messages') }}</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" id="history-tab" data-toggle="tab" role="tab" aria-controls="history-panel" aria-selected="false" href="#history-panel">{{ _('History') }}</a>
+  </li>-->
+</ul>
+
+  {%- if failed_checks and submission.form.quality_checks_enabled and perms.edit_submission_verification_status.can() %}
+<div class="alert alert-warning alert-dismissible fade show mt-4 mb-0 pb-0" role="alert">
+  <h5 class="alert-heading">{{ _('Quality Assurance Warnings') }}</h5>
+  <p>{{ _('The following quality assurance conditions were flagged while validating this submission. Please confirm with the participant that the submitted data is correct. If you find the data to be as reported by the participant, mark the data point as confirmed.') }}
+  </p>
+  <ul>
+    {% for criteria in failed_checks %}
+    <li>{{ criteria }}</li>
+    {% endfor %}
+  </ul>
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+  {%- endif %}
+{%- endif %}
+
+{%- if form.form_type == 'CHECKLIST' %}
+{%- if master_form.errors or submission_form.errors %}
+<div class="alert alert-danger alert-dismissible fade show mt-4 mb-0" role="alert">
+  <h5 class="alert-heading">{{ _('Data Validation Errors') }}</h5>
+  <p>{{ _('The data you entered are not valid. Please check the affected questions and correct them.') }}</p>
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+{%- endif %}
+
+<div class="card-body tab-content px-0" id="tabbed-content">
+  <div class="tab-pane fade show active" id="checklist-panel" role="tabpanel" aria-labelledby="checklist-tab">
+    <div class="card bg-light mb-3">
+      <div class="card-header py-0 px-0">
+        <table class="table table-borderless mb-0">
+          <tbody>
+            <tr>
+              <td class="align-middle">&nbsp;</td>
+              <td class="col-2 align-middle text-center">
+              {%- if perms.edit_both_submissions.can() %}
+                <div class="custom-control custom-radio">
+                  <input type="radio" id="{{ submission.id }}" name="submission_selection" class="custom-control-input obs1" value="obs"{% if not readonly %} checked="checked"{% endif %}>
+                  <label class="custom-control-label" for="{{ submission.id }}"><strong>{{ submission.participant.participant_id }}</strong></label>
+                </div>
+              {% else %}
+                <span><strong>{{ submission.participant.participant_id }}</strong></span>
+              {% endif %}
+              </td>
+              {% for sibling in siblings -%}
+              <td class="col-2 align-middle text-center">
+                <span><strong>{{ sibling.participant.participant_id }}</strong></span>
+              </td>
+              {%- endfor %}
+              <td class="col-2 align-middle text-center">
+              {%- if perms.edit_both_submissions.can() %}
+                <div class="custom-control custom-radio">
+                  <input type="radio" id="{{ master.id }}" name="submission_selection" class="custom-control-input ps" value="ps"{% if readonly %} checked="checked"{% endif %}>
+                  <label class="custom-control-label" for="{{ master.id }}"><strong>{{ _('Location') }}</strong></label>
+                </div>
+              {% else %}
+                <span><strong>{{ _('Location') }}</strong></span>
+              {% endif %}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div id="setup" class="card-body collapse show px-0 py-1">
+        <table class="table table-borderless mb-0">
+          <tbody>
+            <tr>
+              <td class="align-middle"><strong>{{ _('Signal') }}</strong></td>
+              <td class="col-2 align-middle obs-on text-center">
+                {{ submission_form.unreachable(**{'class_': 'tracked', 'data-toggle': 'switchbutton', 'data-width': '80', 'data-onlabel': _('No Signal'), 'data-onstyle': 'danger', 'data-offlabel': _('Signal'), 'data-offstyle': 'primary', 'data-size': 'sm'}) }}
+              </td>
+              {%- for sibling_form in sibling_forms %}
+              <td class="col-2 align-middle">
+                &nbsp;
+              </td>
+              {% endfor %}
+              <td class="col-2 align-middle">&nbsp;</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    {% for group in form.data.groups %}
+    {% set ns = namespace(has_form_error=false, has_qa_error=false) %}
+    <div class="card bg-light {%- if not loop.last %} mb-3{% endif %}">
+      <div class="card-header d-flex justify-content-between align-items-center" data-toggle="collapse" data-target="#{{ group.name }}">
+        <h5 class="mb-0">{{ group.name }}</h5>
+        {%- if master.completion(group.name) == 'Complete' %}
+        <h5 class="mb-0"><i class="fa fa-check-circle text-success"></i></h5>
+        {%- endif %}
+      </div>
+      {# check for data validation or quality assurance errors #}
+      {%- for field in group.fields %}
+      {%- if submission_form[field.tag].errors %}{% set ns.has_form_error = true %}{% endif %}
+      {%- if field.tag in failed_check_tags and submission.form.quality_checks_enabled and perms.edit_submission_verification_status.can() -%}{% set ns.has_qa_error = true %}{% endif %}
+      {%- endfor %}
+      <div id="{{ group.name }}" class="card-body {% if submission.completion(group.name) == 'Complete' and not ns.has_form_error and not ns.has_qa_error %} collapse{% else %} show{% endif %} py-0 px-0">
+        <table id="dataTable" class="table table-borderless mb-0 table-responsive">
+          <tbody>
+          {% for field in group.fields %}
+            <tr {%- if field.tag in failed_check_tags and submission.form.quality_checks_enabled and perms.edit_submission_verification_status.can() %} class="bg-warning"{% endif %}>
+              <td class="align-middle" style="width: 0.1%; white-space: nowrap;"><strong>{{ field.tag }}</strong></td>
+              <td class="align-middle">
+                {{ field.description }}
+                {%- if field['type'] == 'select' %}
+                <br>
+                <span class="options">
+                {% for item in field.options|dictsort(false, 'value') %}
+                <span class="option"><strong>({{ item.1 }})</strong> {{ item.0 }}</span>
+                {% endfor %}
+                </span>
+                {%- endif %}
+              </td>
+              {% if readonly -%}
+              <td class="col-2 align-middle obs-on">{{ submission_form[field.tag](class_='form-control tracked', disabled='disabled') }}</td>
+              {%- else -%}
+              {% if submission_form[field.tag].errors -%}
+              <td class="col-2 align-middle obs-on">{{ submission_form[field.tag](class_='form-control tracked is-invalid') }}</td>
+              {%- else -%}
+              <td class="col-2 align-middle obs-on">{{ submission_form[field.tag](class_='form-control tracked') }}</td>
+              {%- endif %}
+              {%- endif %}
+              {% for sibling_form in sibling_forms -%}
+              <td class="col-2 align-middle">{{ sibling_form[field.tag](class_='form-control tracked', disabled='disabled') }}</td>
+              {% endfor %}
+              {% if readonly -%}
+              {% if master_form[field.tag].errors -%}
+              <td class="col-2 align-middle ps-on">{{ master_form[field.tag](class_='form-control tracked is-invalid') }}</td>
+              {%- else -%}
+              <td class="col-2 align-middle ps-on">{{ master_form[field.tag](class_='form-control tracked') }}</td>
+              {%- endif %}
+              {%- else -%}
+              <td class="col-2 align-middle ps-on">{{ master_form[field.tag](class_='form-control tracked', disabled='disabled') }}</td>
+              {%- endif %}
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  <!--<div class="tab-pane fade" id="critical-incidents-panel" role="tabpanel" aria-labelledby="critical-incidents-tab">
+    {{ _('Critical Incidents Data') }}
+  </div>
+  <div class="tab-pane fade" id="messages-panel" role="tabpanel" aria-labelledby="messages-tab">
+    {{ _('Messages') }}
+  </div>
+  <div class="tab-pane fade" id="history-panel" role="tabpanel" aria-labelledby="history-tab">
+    {{ _('History') }}
+  </div>-->
+</div>
+<input type="hidden" name="{{ master_form['location'].name }}" value="{{ master_form['location'].data.id|default('__None', true) }}" />
+
+{# comments #}
 <div class="row">
   <div class="col-md-12">
     <table class="table table-bordered" id="comments">
@@ -323,114 +299,199 @@
       </tr>
     {% else %}
       <tr class="warning">
-        <td style="text-align:center">{{ _('No comment.') }}</td>
+        <td style="text-align:center">{{ _('No Comment') }}</td>
       </tr>
     {% endfor %}
       <tr id="save_comment">
         <td>
-          <textarea id="comment" class="form-control"></textarea>
+          <textarea id="comment" class="form-control tracked"></textarea>
           <input id="submission" name="submission" type="hidden" value="{{ submission.id|string }}">
-          <input id="postcomment" type="button" class="btn btn-primary pull-right" value="Add Comment" style="margin-top:.5em;">
+          <input id="postcomment" type="button" class="btn btn-primary pull-right" value="{{ _('Add Comment') }}" style="margin-top:.5em;">
         </td>
       </tr>
     </table>
   </div>
 </div>
-{%- endif -%}
+{%- else %}
+{#- Critical Incidents #}
+{%- if submission_form.errors %}
+<div class="alert alert-danger alert-dismissible fade show mt-2 mb-0" role="alert">
+  <h5 class="alert-heading">{{ _('Data Validation Errors') }}</h5>
+  <p>{{ _('The data you entered are not valid. Please check the affected questions and correct them.') }}</p>
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+{%- endif %}
 
- <div class="row navbar-fixed-bottom" style="bottom:0px; background:#fff; padding:1em 0 1em 2.6em;">
-    <div class="container">
-      <div class="col-md-offset-8 col-md-2">
-        <button type="submit" class="btn btn-info btn-lg btn-block" style= "margin-left:1em;">Save</button>
+<div class="card-body tab-content px-0">
+  <div>
+    {% for group in form.data.groups %}
+    <div class="card bg-light mb-3">
+      <div class="card-header">
+        <h5 class="mb-0">{{ group.name }}</h5>
       </div>
-      <div class="col-md-2">
-        <a class="btn btn-default btn-lg btn-block" style= "margin-left:0;" href="{% if request.environ.get('HTTP_REFERER') == request.url %}{{ url_for('submissions.submission_list', form_id=form.id) }}{% else %}{{ request.environ.get('HTTP_REFERER', url_for('submissions.submission_list', form_id=form.id)) }}{% endif %}">Cancel</a>
+      <div class="card-body py-0 px-0">
+        <table id="dataTable" class="table table-borderless mb-0 table-responsive">
+          <tbody>
+          {% for field in group.fields %}
+            <tr>
+              <td class="align-middle" style="width: 0.1%; white-space: nowrap;"><strong>{{ field.tag }}</strong></td>
+              <td class="align-middle">
+                {{ field.description }}
+                {%- if field['type'] == 'select' %}
+                <br>
+                <span class="options">
+                {% for item in field.options|dictsort(false, 'value') %}
+                <span class="option"><strong>({{ item.1 }})</strong> {{ item.0 }}</span>
+                {% endfor %}
+                </span>
+                {%- endif %}
+              </td>
+              {% if submission_form[field.tag].errors -%}
+              <td class="col-2 align-middle">{{ submission_form[field.tag](class_='form-control tracked is-invalid') }}</td>
+              {%- else -%}
+              <td class="col-2 align-middle">{{ submission_form[field.tag](class_='form-control tracked') }}</td>
+              {%- endif %}
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    {% endfor %}
+    <div class="card bg-light">
+      <div class="card-body py-0 px-0">
+        <table class="table table-borderless mb-0 table-responsive">
+          <tbody>
+            <tr>
+              <td style="width: 0.1%; white-space: nowrap;">&nbsp;&nbsp;</td>
+              <td class="text-right">
+                <strong>{{ _('Description')}}</strong>
+              </td>
+              <td class="col-4">{{ submission_form.description(class_='form-control tracked', rows=4) }}</td>
+            </tr>
+            <tr>
+              <td class="align-middle" style="width: 0.1%; white-space: nowrap;">&nbsp;&nbsp;</td>
+              <td class="align-middle text-right">
+                <strong>{{ _('Status')}}</strong>
+              </td>
+              <td class="col-4 align-middle">{{ submission_form.status(class_='form-control tracked') }}</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
   </div>
 </div>
+{%- endif %}
 </form>
 {% endblock %}
-{% block scripts %}
-<script src="{{ url_for('static', filename='js/moment-with-langs.min.js') }}"></script>
-<script src="{{ url_for('static', filename='js/timestamps.js') }}"></script>
+
+
+
+{%- block footer -%}
+  <div class="mt-n2 pb-2 w-25 d-flex justify-content-end">
+      <button type="button" id="saveBtn" class="btn btn-primary btn-lg mr-2">{{ _('Save') }}</button>
+      <a id="cancelBtn" class="btn btn-secondary btn-lg" href="javascript:;">{{ _('Cancel') }}</a>
+  </div>
+{%- endblock %}
+
+
+
+{%- block scripts %}
+<script type="text/javascript" src="{{ asset_url_for('moment.js') }}" charset="utf-8"></script>
+<script src="{{ url_for('static', filename='js/bootstrap-switch-button.min.js') }}"></script>
 <script type="text/javascript">
-  var csrftoken = $('meta[name=csrf-token]').attr('content');
-  
-  $('#postcomment').click(function() {
-    var comment = $('#comment').val(), submission = $('#submission').val();
+  $(function () {
+    $('.tonow').each(function (index) {
+      var timestamp = moment.unix(Number($(this).data('timestamp')));
+      this.innerText = timestamp.fromNow();
+    });
 
-    if (comment) {
-      $.ajax({
-        url: "{{ url_for('submissions.comment_create_view') }}",
-        type: 'POST',
-        data: {comment: comment, submission: submission},
-        beforeSend: function (xhr, settings) {
-          $('#comment').attr('disabled', 'disabled');
-          $('#save').attr('disabled', 'disabled');
-          $('#loader').attr('style', 'visibility:visible;');
-          if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
-            xhr.setRequestHeader("X-CSRFToken", csrftoken);
-          }
-        }
-      }).done(function(data) {
-        $('#comment').val("");  // clear the comment textbox
-        // if there's a table row displaying "No comment.", remove it
-        $('#comments tr.warning').remove();
-        $('#save_comment').before('<tr><td><p><strong>' + data.user + '</strong> · <em>' + moment.unix(data.date).fromNow() + '</em></p><p>' + data.comment + '</p></td></tr>');
-      }).always(function () {
-        // Re-enable
-        $('#comment').removeAttr('disabled');
-        $('#save').removeAttr('disabled');
-        $('#loader').attr('style', 'visibility:hidden;');
-      });
-    }
-  });
-  $('#verify_button').click(function() {
-    var phone = $(this).data('phone');
-    var participant = $(this).data('participant');
-    var submission = $(this).data('submission');
+    // provide warning before navigating away if form was modified
+    $(document).on('change', '.tracked', function(e){
+      window.onbeforeunload = function () { return true; };
+    });
 
-    if (phone && participant) {
-      $.ajax({
-        url: "{{ url_for('participants.toggle_phone_verification') }}",
-        type: 'POST',
-        data: {phone: phone, participant: participant, submission: submission},
-        beforeSend: function (xhr, settings) {
-          $('#verify_button').attr('disabled', 'disabled');
-          if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
-            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+    var csrftoken = $('meta[name=csrf-token]').attr('content');
+
+    $('#postcomment').click(function() {
+      var comment = $('#comment').val(), submission = $('#submission').val();
+      if (comment) {
+        $.ajax({
+          url: "{{ url_for('submissions.comment_create_view') }}",
+          type: 'POST',
+          data: {comment: comment, submission: submission},
+          beforeSend: function (xhr, settings) {
+            $('#comment').attr('disabled', 'disabled');
+            $('#save').attr('disabled', 'disabled');
+            $('#loader').attr('style', 'visibility:visible;');
+            if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+              xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
           }
-        }
-      }).done(function() {
-        $('#verify_button').remove();
-        $('#phone_verification_status').removeClass('label-warning');
-        $('#phone_verification_status').addClass('label-success');
-        $('#phone_verification_status').html('verified');
-      }).error(function () {
-        // Re-enable
-        $('#verify_button').removeAttr('disabled');
-      });
-    }
+        }).done(function(data) {
+          $('#comment').val("");  // clear the comment textbox
+          // if there's a table row displaying "No comment.", remove it
+          $('#comments tr.warning').remove();
+          $('#save_comment').before('<tr><td><p><strong>' + data.user + '</strong> · <em>' + moment.unix(data.date).fromNow() + '</em></p><p>' + data.comment + '</p></td></tr>');
+        }).always(function () {
+          // Re-enable
+          $('#comment').removeAttr('disabled');
+          $('#save').removeAttr('disabled');
+          $('#loader').attr('style', 'visibility:hidden;');
+        });
+      }
+    });
+
+    $('#verify_button').click(function() {
+      var phone = $(this).data('phone');
+      var participant = $(this).data('participant');
+      var submission = $(this).data('submission');
+
+      if (phone && participant) {
+        $.ajax({
+          url: "{{ url_for('participants.toggle_phone_verification') }}",
+          type: 'POST',
+          data: {phone: phone, participant: participant, submission: submission},
+          beforeSend: function (xhr, settings) {
+            $('#verify_button').attr('disabled', 'disabled');
+            if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+              xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+          }
+        }).done(function() {
+          $('#verify_button').remove();
+          $('#phone_verification_status').removeClass('label-warning');
+          $('#phone_verification_status').addClass('label-success');
+          $('#phone_verification_status').html('verified');
+        }).error(function () {
+          // Re-enable
+          $('#verify_button').removeAttr('disabled');
+        });
+      }
+    });
+
+    $('.obs1').click(function(){
+        $('table#dataTable tbody tr td.obs-on :input').prop('disabled', false);
+        $('table#dataTable tbody tr td.ps-on :input').prop('disabled', true);
+    });
+    $('.ps').click(function(){
+        $('table#dataTable tbody tr td.ps-on :input').prop('disabled', false);
+        $('table#dataTable tbody tr td.obs-on :input').prop('disabled', true);
+    });
+
+    $('#saveBtn').click(function(){
+      window.onbeforeunload = null;
+      $('form').submit();
+    });
+
+    $('#cancelBtn').click(function(){
+      var url = '{% if request.environ.get('HTTP_REFERER') == request.url %}{{ url_for('submissions.submission_list', form_id=form.id) }}{% else %}{{ request.environ.get('HTTP_REFERER', url_for('submissions.submission_list', form_id=form.id)) }}{% endif %}';
+      window.onbeforeunload = null;
+      window.location.href = url;
+    });
   });
-  
-  $('.obs1').click(function(){
-    var isDisabled = $('table tbody tr td.obs-on input').is(':disabled');
-    if (isDisabled) {
-        $('table tbody tr td.obs-on input').prop('disabled', false);
-        $('table tbody tr td.obs-on select').prop('disabled', false);
-        $('table tbody tr td.ps-on input').prop('disabled', true);
-        $('table tbody tr td.ps-on select').prop('disabled', true);
-    }
-  })
-  $('.ps').click(function(){
-    var isDisabled = $('table tbody tr td.ps-on input').is(':disabled');
-    if (isDisabled) {
-        $('table tbody tr td.ps-on input').prop('disabled', false);
-        $('table tbody tr td.ps-on select').prop('disabled', false);
-        $('table tbody tr td.obs-on input').prop('disabled', true);
-        $('table tbody tr td.obs-on select').prop('disabled', true);
-    }
-  })
 </script>
-{% endblock %}
+{%- endblock %}

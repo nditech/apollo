@@ -375,19 +375,12 @@ def submission_create(form_id):
             form_id=form_id,
             submission_type='O',
             created=utils.current_timestamp(),
-            data=data
+            data=data,
+            participant=submission_form.participant.data,
+            location=submission_form.location.data or submission_form.participant.data.location,  # noqa
+            incident_status=submission_form.status.data
         )
 
-        # properly populate all fields
-        # either the participant or the location may be blank, but not both
-        if submission_form.participant.data:
-            submission.participant = submission_form.participant.data
-            submission.location = submission.participant.location
-
-        if submission_form.location.data:
-            submission.location = submission_form.location.data
-
-        submission.incident_status = submission_form.status.data
         submission.save()
 
         return redirect(
@@ -404,7 +397,7 @@ def submission_edit(submission_id):
     questionnaire_form = submission.form
     edit_form_class = forms.make_submission_edit_form_class(
         event, submission.form)
-    page_title = _('Edit Submission')
+    breadcrumbs = [_('Edit Submission')]
     readonly = not g.deployment.allow_observer_submission_edit
     location_types = services.location_types.find(
         location_set_id=event.location_set_id,
@@ -474,7 +467,7 @@ def submission_edit(submission_id):
 
         return render_template(
             template_name,
-            page_title=page_title,
+            breadcrumbs=breadcrumbs,
             submission=submission,
             submission_form=submission_form,
             sibling_forms=sibling_forms,
@@ -548,7 +541,7 @@ def submission_edit(submission_id):
             else:
                 return render_template(
                     template_name,
-                    page_title=page_title,
+                    breadcrumbs=breadcrumbs,
                     submission=submission,
                     submission_form=submission_form,
                     location_types=location_types
@@ -776,7 +769,7 @@ def submission_edit(submission_id):
             else:
                 return render_template(
                     template_name,
-                    page_title=page_title,
+                    breadcrumbs=breadcrumbs,
                     submission=submission,
                     submission_form=submission_form,
                     master_form=master_form,
@@ -1179,6 +1172,7 @@ def update_submission_version(submission):
     # reload the submission to get rid of the loading problem
     # with the incident_status attribute
     submission = models.Submission.query.get(submission.id)
+    db.session.refresh(submission)
 
     # save actual version data
     data_fields = submission.form.tags
@@ -1187,7 +1181,8 @@ def update_submission_version(submission):
         for k in data_fields if k in submission.data}
 
     if submission.form.form_type == 'INCIDENT':
-        version_data['status'] = submission.incident_status.code
+        if submission.incident_status:
+            version_data['status'] = submission.incident_status.code
         version_data['description'] = submission.incident_description
 
     # get previous version
