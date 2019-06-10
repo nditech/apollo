@@ -46,6 +46,9 @@ def import_graph(graph, location_set, fresh_import=False):
                 flag_modified(location_type, 'name_translations')
                 location_type.save()
 
+            else:
+                return
+
         else:
             location_type = services.location_types.create(
                 is_administrative=node.get('is_administrative', False),
@@ -70,6 +73,10 @@ def import_graph(graph, location_set, fresh_import=False):
 
     # build graph for the closure table
     nx_graph.add_edges_from(edges)
+
+    # delete existing links
+    LocationTypePath.query.filter_by(location_set=location_set).delete()
+    db.session.commit()
 
     # build closure table
     path_lengths = dict(nx.all_pairs_shortest_path_length(nx_graph))

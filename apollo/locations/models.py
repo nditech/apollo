@@ -33,7 +33,9 @@ class LocationSet(BaseModel):
         ).with_entities(
             LocationTypePath.ancestor_id,
             LocationTypePath.descendant_id
-        ).all()
+        ).order_by(
+            LocationTypePath.ancestor_id, LocationTypePath.descendant_id,
+            LocationTypePath.depth).all()
 
         location_types = LocationType.query.filter(
             LocationType.location_set_id == self.id)
