@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from flask_babelex import lazy_gettext as _
 import networkx as nx
-from sqlalchemy import and_, func
+from sqlalchemy import and_, desc, func
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import aliased
 
@@ -33,9 +33,18 @@ class LocationSet(BaseModel):
         ).with_entities(
             LocationTypePath.ancestor_id,
             LocationTypePath.descendant_id
+        )
+
+        root_id = LocationTypePath.query.filter_by(
+            location_set_id=self.id
+        ).group_by(
+            LocationTypePath.ancestor_id
+        ).with_entities(
+            func.count(LocationTypePath.ancestor_id).label('ancestor_count'),
+            LocationTypePath.ancestor_id
         ).order_by(
-            LocationTypePath.ancestor_id, LocationTypePath.descendant_id,
-            LocationTypePath.depth).all()
+            desc('ancestor_count')
+        ).first()[1]
 
         location_types = LocationType.query.filter(
             LocationType.location_set_id == self.id)
@@ -57,7 +66,7 @@ class LocationSet(BaseModel):
 
         graph = {
             'nodes': nodes,
-            'edges': list(nx.dfs_edges(nx_graph))
+            'edges': list(nx.dfs_edges(nx_graph, root_id))
         }
 
         return graph
