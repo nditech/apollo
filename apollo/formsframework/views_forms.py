@@ -165,7 +165,7 @@ def quality_assurance(view, form_id):
             postdata = json.loads(request.form.get('postdata'))
             form.quality_checks = []
             posted_check_data = []
-            for item in postdata:
+            for index, item in enumerate(postdata):
                 if isinstance(item, list):
                     desc = item[0]
                     lhs = item[1]
@@ -192,7 +192,7 @@ def quality_assurance(view, form_id):
                             'rvalue': rhs
                         })
                     except ValueError:
-                        failed_checks.append(desc)
+                        failed_checks.append(index)
 
             # display the page again if there are any errors
             if failed_checks:
