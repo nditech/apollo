@@ -20,6 +20,13 @@ class HiddenQuerySelectField(QuerySelectField):
             return '__None'
 
 
+def single_choice_coerce(value):
+    if value == '':
+        return None
+
+    return int(value)
+
+
 def validate_location(form):
     '''Overrides the default validation for the form
     by running it first, then ensuring that the location
@@ -90,15 +97,14 @@ def make_submission_edit_form_class(event, form):
                             widget=widgets.ListWidget()
                         )
                     else:
+                        render_choices = [('', _('(Unspecified)'))] + choices
                         form_fields[field['tag']] = fields.SelectField(
                             field['tag'],
-                            choices=choices,
-                            coerce=int,
+                            choices=render_choices,
+                            coerce=single_choice_coerce,
                             description=field['description'],
                             filters=[lambda data: data if data else None],
-                            option_widget=widgets.RadioInput(),
-                            validators=[validators.Optional()],
-                            widget=widgets.ListWidget()
+                            validators=[validators.Optional()]
                         )
                 else:
                     if field_type in ('category', 'integer'):

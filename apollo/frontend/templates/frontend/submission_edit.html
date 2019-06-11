@@ -241,17 +241,7 @@
           {% for field in group.fields %}
             <tr {%- if field.tag in failed_check_tags and submission.form.quality_checks_enabled and perms.edit_submission_verification_status.can() %} class="bg-warning"{% endif %}>
               <td class="align-middle" style="width: 0.1%; white-space: nowrap;"><strong>{{ field.tag }}</strong></td>
-              <td class="align-middle">
-                {{ field.description }}
-                {%- if field['type'] == 'select' %}
-                <br>
-                <span class="options">
-                {% for item in field.options|dictsort(false, 'value') %}
-                <span class="option"><strong>({{ item.1 }})</strong> {{ item.0 }}</span>
-                {% endfor %}
-                </span>
-                {%- endif %}
-              </td>
+              <td class="align-middle">{{ field.description }}</td>
               {% if readonly -%}
               <td class="col-2 align-middle obs-on">{{ submission_form[field.tag](class_='form-control tracked text-monospace', disabled='disabled') }}</td>
               {%- else -%}
@@ -481,17 +471,7 @@
           {% for field in group.fields %}
             <tr>
               <td class="align-middle" style="width: 0.1%; white-space: nowrap;"><strong>{{ field.tag }}</strong></td>
-              <td class="align-middle">
-                {{ field.description }}
-                {%- if field['type'] == 'select' %}
-                <br>
-                <span class="options">
-                {% for item in field.options|dictsort(false, 'value') %}
-                <span class="option"><strong>({{ item.1 }})</strong> {{ item.0 }}</span>
-                {% endfor %}
-                </span>
-                {%- endif %}
-              </td>
+              <td class="align-middle">{{ field.description }}</td>
               {% if submission_form[field.tag].errors -%}
               <td class="col-2 align-middle">{{ submission_form[field.tag](class_='form-control tracked text-monospace is-invalid') }}</td>
               {%- else -%}
