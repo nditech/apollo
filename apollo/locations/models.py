@@ -35,16 +35,8 @@ class LocationSet(BaseModel):
             LocationTypePath.descendant_id
         )
 
-        root_id = LocationTypePath.query.filter_by(
-            location_set_id=self.id
-        ).group_by(
-            LocationTypePath.ancestor_id
-        ).with_entities(
-            func.count(LocationTypePath.ancestor_id).label('ancestor_count'),
-            LocationTypePath.ancestor_id
-        ).order_by(
-            desc('ancestor_count')
-        ).first()[1]
+        root = LocationType.root(self.id)
+        root_id = root.id if root else None
 
         location_types = LocationType.query.filter(
             LocationType.location_set_id == self.id)
