@@ -23,7 +23,7 @@ services:
       - ./settings.ini:/app/settings.ini
     ports:
       - "5000:5000"
-    command: ['pipenv', 'run', './manage.py', 'gunicorn', '-c', 'gunicorn.conf']
+    command: ['./manage.py', 'gunicorn', '-c', 'gunicorn.conf']
 
   worker:
     build: .
@@ -35,7 +35,7 @@ services:
     volumes:
       - upload_data:/app/uploads
       - ./settings.ini:/app/settings.ini
-    command: ['pipenv', 'run', './manage.py', 'worker']
+    command: ['./manage.py', 'worker']
 
 volumes:
   postgres_data:

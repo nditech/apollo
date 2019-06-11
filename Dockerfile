@@ -2,7 +2,7 @@ FROM python:3.6-alpine
 
 LABEL maintainer="Tim Akinbo <takinbo@timbaobjects.com>"
 
-ADD Pipfile* /app/
+ADD requirements/prod.txt /app/requirements.txt
 RUN set -ex \
         && apk add --no-cache --virtual .build-deps \
             build-base \
@@ -12,9 +12,8 @@ RUN set -ex \
             libxslt-dev \
             postgresql-dev \
             libmagic \
-        && pip install pipenv \
+        && pip install -r /app/requirements.txt \
         && cd /app/ \
-        && PIP_NO_BUILD_ISOLATION=false pipenv sync --sequential \
         && find /usr -depth \
             \( -type f -a -name '*.pyc' -o -name '*.pyo' \) \
             -exec rm -rf '{}' + \
@@ -28,7 +27,7 @@ RUN set -ex \
         && rm -rf /root/.cache
 ADD . /app/
 RUN cd /app/ \
-    && pipenv run pybabel compile -d /app/apollo/translations/
+    && pybabel compile -d /app/apollo/translations/
 WORKDIR /app/
-CMD ["pipenv","run","gunicorn","-c","gunicorn.conf","--bind=[::]:5000","apollo.wsgi:application"]
+CMD ["gunicorn","-c","gunicorn.conf","--bind=[::]:5000","apollo.wsgi:application"]
 EXPOSE 5000

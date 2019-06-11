@@ -21,6 +21,5 @@ jobs:
 
     steps:
       - checkout
-      - run: sudo pip install -U pipenv
-      - run: pipenv sync -d
-      - run: pipenv run nosetests apollo/
+      - run: sudo pip install -r requirements/dev.txt
+      - run: nosetests apollo/
