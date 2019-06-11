@@ -21,5 +21,5 @@ jobs:
 
     steps:
       - checkout
-      - run: pip install -r requirements/prod.txt
+      - run: sudo pip install -r requirements/dev.txt
       - run: nosetests apollo/
