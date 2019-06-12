@@ -8,7 +8,7 @@ from flask import g
 from apollo import models, services
 from apollo.core import db
 
-ugly_phone = re.compile('[^\d]*')
+ugly_phone = re.compile(r'[^\d]*')
 
 
 def update_participant_completion_rating(participant):
@@ -54,7 +54,8 @@ def lookup_participant(form, participant_id):
 
     # this assumes that nobody assigns the same participant ID in multiple
     # concurrent events
-    participant = models.Participant.objects.filter(event__in=available_events,
+    participant = models.Participant.objects.filter(
+        event__in=available_events,
         participant_id=participant_id).first()
 
     return participant
@@ -63,7 +64,7 @@ def lookup_participant(form, participant_id):
 def update_phone_contacts(participant, phone):
     phone_contact = next(filter(
         lambda contact: ugly_phone.sub('', phone) == contact.number,
-        participant.phones), False)
+        participant.phone_contacts), False)
     if phone_contact:
         phone_contact.last_seen = datetime.utcnow()
         participant.save()

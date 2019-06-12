@@ -81,9 +81,9 @@ class SubmissionService(Service):
                         if submission.participant else '',
                         submission.participant.primary_phone
                         if submission.participant else '',
-                        submission.participant.phones[0].number
+                        submission.participant.phone_contacts[0].number
                         if submission.participant and
-                        submission.participant.phones else '',
+                        submission.participant.phone_contacts else '',
                     ] + [
                         loc for loc in submission.location.ancestors()
                         if loc.location_type in location_types
@@ -127,8 +127,8 @@ class SubmissionService(Service):
                         if sib.participant else '',
                         sib.participant.primary_phone
                         if sib.participant else '',
-                        sib.participant.phones[0].number
-                        if sib.participant and sib.participant.phones
+                        sib.participant.phone_contacts[0].number
+                        if sib.participant and sib.participant.phone_contacts
                         else '',
                     ] + [
                         loc for loc in sib.location.ancestors()

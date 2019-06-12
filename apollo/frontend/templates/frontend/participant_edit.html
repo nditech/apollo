@@ -43,10 +43,10 @@
           </tr>
           </thead>
           <tbody>
-          {% for p_phone in participant.participant_phones %}
+          {% for p_phone in participant.phone_contacts %}
           <tr>
-          <td>{{ p_phone.phone.number }}</td>
-          <td>{{ p_phone.last_seen|datetimeformat }}</td>
+          <td>{{ p_phone.number }}</td>
+          <td>{{ p_phone.updated|datetimeformat }}</td>
           <td class="text-center">{% if p_phone.verified %}<i class="fa fa-check-circle text-success"></i>{% else %}<i class="fa fa-minus-circle text-danger"></i>{% endif %}</td>
           </tr>
           {% endfor %}

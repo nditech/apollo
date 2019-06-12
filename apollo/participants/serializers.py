@@ -8,8 +8,8 @@ from apollo.dal.serializers import ArchiveSerializer
 from apollo.locations.models import Location, LocationSet
 from apollo.participants.models import (
     Participant, ParticipantDataField, ParticipantGroup, ParticipantGroupType,
-    ParticipantPartner, ParticipantPhone, ParticipantRole, ParticipantSet,
-    Phone, groups_participants)
+    ParticipantPartner, ParticipantRole, ParticipantSet,
+    PhoneContact, groups_participants)
 
 
 class ParticipantSerializer(object):
@@ -322,8 +322,8 @@ class ParticipantSetArchiveSerializer(ArchiveSerializer):
 
     def serialize_participant_phones(self, participant_set, zip_file):
         query = participant_set.participants.join(
-            ParticipantPhone).join(Phone).with_entities(
-                cast(Participant.uuid, String), Phone.number)
+            PhoneContact).with_entities(
+                cast(Participant.uuid, String), PhoneContact.number)
 
         with zip_file.open('participant_phones.ndjson', 'w') as f:
             for pair in query:

@@ -21,7 +21,7 @@ from apollo.messaging.tasks import send_messages
 from apollo.participants import api, filters, forms, tasks
 
 from .models import Participant, ParticipantSet, ParticipantRole
-from .models import ParticipantPartner, Phone, ParticipantPhone
+from .models import ParticipantPartner, PhoneContact
 from .models import ParticipantTranslations
 from ..locations.models import Location
 from ..submissions.models import Submission
@@ -169,20 +169,14 @@ def participant_list(participant_set_id=0, view=None):
             text('translation.value'), models.Participant.id
         )
     elif request.args.get('sort_by') == 'phone':
-        participant_phones = models.ParticipantPhone.query.filter(
-            models.ParticipantPhone.verified == True).order_by(  # noqa
-                desc(models.ParticipantPhone.last_seen)).subquery()
         queryset = models.Participant.query.filter(
             models.Participant.participant_set_id == participant_set.id
         ).join(
             models.Location,
             models.Participant.location_id == models.Location.id
-        ).outerjoin(
-            participant_phones,
-            participant_phones.c.participant_id == models.Participant.id
         ).join(
-            models.Phone,
-            participant_phones.c.phone_id == models.Phone.id
+            models.PhoneContact,
+            models.PhoneContact.participant_id == models.Participant.id
         )
     else:
         queryset = models.Participant.query.select_from(
@@ -228,10 +222,10 @@ def participant_list(participant_set_id=0, view=None):
     elif request.args.get('sort_by') == 'phone':
         if request.args.get('sort_direction') == 'desc':
             queryset = queryset.order_by(
-                desc(models.Phone.number))
+                desc(models.PhoneContact.number))
         else:
             queryset = queryset.order_by(
-                models.Phone.number)
+                models.PhoneContact.number)
     elif request.args.get('sort_by') == 'gen':
         if request.args.get('sort_direction') == 'desc':
             queryset = queryset.order_by(
@@ -310,6 +304,134 @@ def participant_list(participant_set_id=0, view=None):
         )
 
 
+@route(bp, '/participants/set/<int:participant_set_id>/performance',
+       endpoint="participant_performance_list_with_set", methods=['GET'])
+@route(bp, '/participants/performance',
+       endpoint='participant_performance_list', methods=['GET'])
+@login_required
+@permissions.view_participants.require(403)
+def participant_performance_list(participant_set_id=0):
+    if participant_set_id:
+        participant_set = ParticipantSet.query.filter(
+            ParticipantSet.id == participant_set_id).first_or_404()
+        template_name = 'frontend/participant_performance_list_with_set.html'
+    else:
+        participant_set = g.event.participant_set or abort(404)
+        template_name = 'frontend/participant_performance_list.html'
+
+    page_title = _('Participants Performance')
+
+    sortable_columns = {
+        'id': 'participant_id',
+        'name': 'name',
+        'gen': 'gender'
+    }
+
+    # extra_fields = g.deployment.participant_extra_fields or []
+    extra_fields = []
+    location = None
+    if request.args.get('location'):
+        location = Location.query.filter(
+            Location.id == request.args.get('location')).first()
+
+    for field in extra_fields:
+        sortable_columns.update({field.name: field.name})
+
+    queryset = Participant.query.select_from(
+        Participant, ParticipantTranslations).filter()
+    sample_participant = queryset.first()
+    if sample_participant:
+        location_set_id = sample_participant.location.location_set_id
+    else:
+        location_set_id = None
+
+    filter_class = filters.participant_filterset(
+        participant_set.id, location_set_id)
+    queryset_filter = filter_class(queryset, request.args)
+
+    form = DummyForm(request.form)
+
+    if request.form.get('action') == 'send_message':
+        message = request.form.get('message', '')
+        recipients = [participant.primary_phone
+                      if participant.primary_phone else ''
+                      for participant in queryset_filter.qs]
+        recipients.extend(current_app.config.get('MESSAGING_CC'))
+
+        if message and recipients and permissions.send_messages.can():
+            send_messages.delay(str(g.event.pk), message, recipients)
+            return 'OK'
+        else:
+            abort(400)
+
+    if request.args.get('export') and permissions.export_participants.can():
+        # Export requested
+        dataset = services.participants.export_performance_list(
+            queryset_filter.qs)
+        basename = slugify_unicode('%s participants performance %s' % (
+            g.event.name.lower(),
+            datetime.utcnow().strftime('%Y %m %d %H%M%S')))
+        content_disposition = 'attachment; filename=%s.csv' % basename
+        return Response(
+            dataset, headers={'Content-Disposition': content_disposition},
+            mimetype="text/csv"
+        )
+    else:
+        # request.args is immutable, so the .pop() call will fail on it.
+        # using .copy() returns a mutable version of it.
+        args = request.args.to_dict(flat=False)
+        page = int(args.pop('page', [1])[0])
+        if participant_set_id:
+            args['participant_set_id'] = participant_set_id
+
+        sort_by = sortable_columns.get(
+            args.pop('sort_by', ''), 'participant_id')
+        subset = queryset_filter.qs.order_by(sort_by).distinct(sort_by)
+
+        # load form context
+        context = dict(
+            args=args,
+            extra_fields=extra_fields,
+            filter_form=queryset_filter.form,
+            form=form,
+            location=location,
+            location_set_id=location_set_id,
+            page_title=page_title,
+            participant_set=participant_set,
+            participant_set_id=participant_set.id,
+            location_types=helpers.displayable_location_types(
+                is_administrative=True, location_set_id=location_set_id),
+            participants=subset.paginate(
+                page=page, per_page=current_app.config.get('PAGE_SIZE'))
+        )
+
+        return render_template(
+            template_name,
+            **context
+        )
+
+
+@route(bp, '/participant/performance/<pk>')
+@login_required
+@permissions.view_participants.require(403)
+def participant_performance_detail(pk):
+    participant = Participant.query.get_or_404(pk)
+    page_title = _('Participant Performance')
+    template_name = 'frontend/participant_performance_detail.html'
+    messages = Message.query.filter(
+        Message.participant == participant,
+        Message.direction == 'IN'
+    ).order_by('received')
+
+    context = {
+        'participant': participant,
+        'messages': messages,
+        'page_title': page_title
+    }
+
+    return render_template(template_name, **context)
+
+
 @route(bp, '/participant/phone/verify', methods=['POST'])
 @login_required
 @permissions.edit_participant.require(403)
@@ -326,8 +448,8 @@ def toggle_phone_verification():
         submission = Submission.query.get_or_404(submission_id)
         participant = Participant.query.get_or_404(participant_id)
         phone_contact = next(filter(
-            lambda p: phone == p.phone.number,
-            participant.participant_phones), False)
+            lambda p: phone == p.number,
+            participant.phone_contacts), False)
         phone_contact.verified = not phone_contact.verified
         phone_contact.save()
         participant.save()
@@ -384,30 +506,29 @@ def participant_edit(id, participant_set_id=0, view=None):
 
             phone_number = phone_number_cleaner.sub('', form.phone.data)
             # do we have a phone number like this in the database?
-            plain_phone = Phone.query.filter_by(number=phone_number).first()
-            if plain_phone is None:
-                plain_phone = Phone.create(number=phone_number)
-                plain_phone.save()
+            phone = PhoneContact.query.filter_by(
+                number=phone_number, participant_id=id).first()
 
-            # do we have this number linked to the participant in question?
-            participant_phone = ParticipantPhone.query.filter_by(
-                participant_id=participant.id, phone_id=plain_phone.id
-            ).first()
-
-            if not participant_phone:
-                # no, create a link
-                participant_phone = ParticipantPhone.create(
-                    participant_id=participant.id, phone_id=plain_phone.id,
-                    verified=True
-                )
+            if phone is None:
+                # no, overwrite the primary phone,
+                # or create a new primary phone
+                primary_num = participant.primary_phone
+                phone = PhoneContact.query.filter_by(
+                    number=primary_num, participant_id=id, verified=True
+                ).first()
+                if phone:
+                    phone.number = phone_number
+                else:
+                    phone = PhoneContact(
+                        number=phone_number, participant_id=id, verified=True)
             else:
-                # yes, so update the last_seen and verified attributes
-                # so this becomes the new primary number (primary is
-                # the first verified phone number when ordered by
-                # the last_seen attribute in descending order)
-                participant_phone.last_seen = utils.current_timestamp()
-                participant_phone.verified = True
-            participant_phone.save()
+                # yes, so update the verified attribute, as the updated
+                # attribute is automatically updated.
+                # this will then  become the new primary number
+                # (primary is the most recently updated and
+                # verified phone number)
+                phone.verified = True
+            phone.save()
 
             participant.password = form.password.data
             if participant_set.extra_fields:
