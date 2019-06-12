@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from flask_babelex import lazy_gettext as _
-import networkx as nx
-from sqlalchemy import and_, desc, func
+from sqlalchemy import and_, func
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import aliased
 
@@ -29,14 +28,11 @@ class LocationSet(BaseModel):
     def make_admin_divisions_graph(self):
         edges = LocationTypePath.query.filter(
             LocationTypePath.location_set_id == self.id,
-            LocationTypePath.depth > 0
+            LocationTypePath.depth == 1
         ).with_entities(
             LocationTypePath.ancestor_id,
             LocationTypePath.descendant_id
-        )
-
-        root = LocationType.root(self.id)
-        root_id = root.id if root else None
+        ).all()
 
         location_types = LocationType.query.filter(
             LocationType.location_set_id == self.id)
@@ -53,12 +49,9 @@ class LocationSet(BaseModel):
             'is_political': lt.is_political,
         } for lt in location_types]
 
-        nx_graph = nx.DiGraph()
-        nx_graph.add_edges_from(edges)
-
         graph = {
             'nodes': nodes,
-            'edges': list(nx.dfs_edges(nx_graph, root_id))
+            'edges': edges
         }
 
         return graph
