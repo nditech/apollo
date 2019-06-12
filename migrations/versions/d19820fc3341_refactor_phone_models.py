@@ -32,7 +32,7 @@ def upgrade():
 
     # ----- data migration -----
     connection = op.get_bind()
-    migration_query = sa.sql.text('''
+    migration_query1 = sa.sql.text('''
         INSERT INTO phone_contact (
             participant_id, number, uuid, created, updated, verified)
         SELECT pp.participant_id, ph.number, ph.uuid,
@@ -40,12 +40,27 @@ def upgrade():
         FROM participant_phone AS pp JOIN phone AS ph
         ON pp.phone_id = ph.id;
     ''')
-    connection.execute(migration_query)
+    connection.execute(migration_query1)
     # ----- data migration -----
 
     op.drop_table('participant_phone')
     op.drop_table('phone')
-    op.add_column('submission', sa.Column('last_phone_number', sa.String(), nullable=True))
+    op.add_column(
+        'submission', sa.Column('last_phone_number', sa.String(),
+        nullable=True))
+
+    # ----- data migration -----
+    migration_query2 = sa.sql.text('''
+        WITH sel1 AS (
+            SELECT DISTINCT ON (submission_id) submission_id, sender
+            FROM message WHERE direction = 'IN' and submission_id IS NOT NULL
+            ORDER BY submission_id, received DESC
+        )
+        UPDATE submission SET last_phone_number = sel1.sender FROM sel1
+        WHERE submission.id = sel1.submission_id;
+    ''')
+    connection.execute(migration_query2)
+    # ----- data migration -----
     # ### end Alembic commands ###
 
 
