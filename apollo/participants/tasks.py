@@ -15,7 +15,6 @@ from apollo.core import db, uploads
 from apollo.factory import create_celery_app
 from apollo.locations.models import Sample
 from apollo.messaging.tasks import send_email
-from apollo.participants import utils
 from apollo.participants.models import Participant, ParticipantPhone
 
 APPLICABLE_GENDERS = [s[0] for s in Participant.GENDER]
@@ -437,14 +436,6 @@ def import_participants(upload_id, mappings, participant_set_id):
     msg_body = generate_response_email(count, errors, warnings)
 
     send_email(_('Import report'), msg_body, [upload.user.email])
-
-
-@celery.task
-def nuke_participants(participant_set_id):
-    participant_set = services.participant_sets.find(
-        id=participant_set_id).first()
-    if participant_set:
-        utils.nuke_participants(participant_set)
 
 
 def _cleanup_upload(filepath, upload):
