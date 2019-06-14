@@ -7,6 +7,7 @@ from flask_httpauth import HTTPDigestAuth
 from lxml import etree
 import pytz
 from slugify import slugify
+from sqlalchemy.orm.exc import NoResultFound
 
 from apollo import services, models, csrf
 from apollo.formsframework.forms import filter_participants, find_active_forms
@@ -48,6 +49,16 @@ def open_rosa_default_response(**kwargs):
 bp = Blueprint('xforms', __name__, template_folder='templates')
 
 participant_auth = HTTPDigestAuth()
+
+
+@participant_auth.verify_opaque
+def verify_opaque(opaque):
+    return True
+
+
+@participant_auth.verify_nonce
+def verify_nonce(nonce):
+    return True
 
 
 @participant_auth.get_password
@@ -132,7 +143,7 @@ def submission():
         if not participant:
             return open_rosa_default_response(
                 content=_('Invalid Participant ID'), status_code=404)
-    except (IndexError, etree.LxmlError):
+    except (IndexError, etree.LxmlError, NoResultFound):
         return open_rosa_default_response(status_code=400)
 
     submission = None
