@@ -1,7 +1,7 @@
 """refactor phone models
 
 Revision ID: d19820fc3341
-Revises: e0556a0d4ec8
+Revises: 9fe7f8aa7849
 Create Date: 2019-06-03 12:24:38.858805
 
 """
@@ -11,7 +11,7 @@ from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
 revision = 'd19820fc3341'
-down_revision = 'e0556a0d4ec8'
+down_revision = '9fe7f8aa7849'
 branch_labels = None
 depends_on = None
 
