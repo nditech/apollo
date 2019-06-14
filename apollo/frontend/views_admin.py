@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
-from flask import flash, g, send_file, redirect, url_for
+from flask import flash, g, send_file, redirect, url_for, request
 from flask_admin import form
 from flask_admin import BaseView
 from flask_admin import expose
@@ -13,7 +13,7 @@ from flask_admin.model.form import InlineFormAdmin
 from flask_admin.model.template import macro
 from flask_babelex import lazy_gettext as _
 from flask_security import current_user
-from flask_security.utils import encrypt_password
+from flask_security.utils import encrypt_password, url_for_security
 from io import BytesIO
 from jinja2 import contextfunction
 import pytz
@@ -47,6 +47,9 @@ class BaseAdminView(ModelView):
         role = models.Role.query.filter_by(
             deployment_id=deployment.id, name='admin').first()
         return current_user.has_role(role)
+
+    def inaccessible_callback(self, name, **kwargs):
+        return redirect(url_for_security('login', next=request.url))
 
 
 class ExtraDataInlineFormAdmin(InlineFormAdmin):
