@@ -1,0 +1,126 @@
+{% import 'admin/layout.html' as layout with context -%}
+{% import 'admin/static.html' as admin_static with context %}
+{% from 'admin/macros.html' import locations_builder, locations_list, samples_list, participants_list, forms_list, event_archive %}
+<!DOCTYPE html>
+<html lang="{{ g.locale.language }}" {%- if g.locale.text_direction == 'rtl' %} dir="rtl"{% endif %}>
+  <head>
+    <title>{% block title %}{% if admin_view.category %}{{ admin_view.category }} - {% endif %}{{ admin_view.name }} - {{ admin_view.admin.name }}{% endblock %}</title>
+    {% block head_meta %}
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="">
+        <meta name="author" content="">
+    {% endblock %}
+    {% block head_css %}
+      {% if g.locale.text_direction == 'rtl' -%}
+      <link rel="stylesheet" href="{{ asset_url_for('styles-rtl.css') }}">
+      {%- else -%}
+      <link rel="stylesheet" href="{{ asset_url_for('styles.css') }}">
+      {%- endif %}
+      {# <link href="{{ admin_static.url(filename='admin/css/bootstrap3/admin.css', v='1.1.1') }}" rel="stylesheet"> #}
+      {# <link href="{{ admin_static.url(filename='bootstrap/bootstrap3/swatch/{swatch}/bootstrap.min.css'.format(swatch=config.get('FLASK_ADMIN_SWATCH', 'default')), v='3.3.5') }}" rel="stylesheet">
+      {%if config.get('FLASK_ADMIN_SWATCH', 'default') == 'default' %}
+      <link href="{{ admin_static.url(filename='bootstrap/bootstrap3/css/bootstrap-theme.min.css', v='3.3.5') }}" rel="stylesheet">
+      {%endif%}
+      <link href="{{ admin_static.url(filename='admin/css/bootstrap3/admin.css', v='1.1.1') }}" rel="stylesheet"> #}
+      {# {% if admin_view.extra_css %}
+        {% for css_url in admin_view.extra_css %}
+          <link href="{{ css_url }}" rel="stylesheet">
+        {% endfor %}
+      {% endif %} #}
+      <style>
+      .shrink { width: 0.1%; white-space: nowrap; }
+      </style>
+    {% endblock %}
+    {% block head %}
+    {% endblock %}
+    {% block head_tail %}
+    {% endblock %}
+  </head>
+  <body class="pb-4 mb-5">
+    {% block page_body %}
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top" role="navigation">
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="container">
+          <a class="navbar-brand" href="{{ url_for('dashboard.index') }}" data-config-id="brand">
+              {{ admin_view.admin.name }}
+          </a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+              aria-controls="navbarNav" aria-expanded="false" aria-label="{{ _('Toggle Navigation') }}"><span
+                  class="navbar-toggler-icon"></span></button>
+          <div class="collapse navbar-collapse" id="navbarNav">
+              <div class="d-flex flex-column flex-lg-row align-items-start justify-content-between w-100">
+                  {% block main_menu %}
+                  <ul class="navbar-nav order-2 order-lg-1">
+                    {{ layout.menu() }}
+                  </ul>
+                  {% endblock %}
+                  {% block menu_links %}
+                  <ul class="navbar-nav order-1 order-lg-2">
+                    {{ layout.menu_links() }}
+                  </ul>
+                  {% endblock %}
+                  {% block access_control %}
+                  {% endblock %}
+              </div>
+          </div>
+      </div>
+    </nav>
+
+    <main role="main">
+      <div class="container mt-4">
+        {% block messages %}
+        {{ layout.messages() }}
+        {% endblock %}
+
+        {% set render_ctx = h.resolve_ctx() %}
+
+        {% block body %}{% endblock %}
+      </div>
+    </main>
+    {% endblock %}
+
+    <footer class="footer mt-auto py-1 fixed-bottom bg-white">
+        <div class="container">
+            <div class="d-flex align-items-center justify-content-between mt-0 pt-3">
+                <p class="small text-muted" data-config-id="copyright">Apollo v{{ config.VERSION }} &mdash; Built with <span class="text-danger">&hearts;</span> from Lagos</p>
+                {% block footer -%}{%- endblock %}
+            </div>
+        </div>
+    </footer>
+
+    {% block tail_js %}
+    {% if g.locale.text_direction == 'rtl' -%}
+    <script type="text/javascript" src="{{ asset_url_for('scripts-rtl.js') }}" charset="utf-8"></script>
+    {%- else -%}
+    <script type="text/javascript" src="{{ asset_url_for('scripts.js') }}" charset="utf-8"></script>
+    {%- endif %}
+    <script src="{{ admin_static.url(filename='vendor/moment.min.js') }}" type="text/javascript"></script>
+    {# {% if admin_view.extra_js %}
+      {% for js_url in admin_view.extra_js %}
+        <script src="{{ js_url }}" type="text/javascript"></script>
+      {% endfor %}
+    {% endif %} #}
+    <script type="text/javascript">
+      (function() {
+        window.faHelpers = {
+            // A simple confirm() wrapper
+            safeConfirm: function(msg) {
+                try {
+                    return confirm(msg) ? true : false;
+                } catch (e) {
+                    return false;
+                }
+            }
+        };
+
+        $('.select2').select2({
+          theme: 'bootstrap4'
+        });
+      })();
+    </script>
+    {% endblock %}
+
+    {% block tail %}
+    {% endblock %}
+  </body>
+</html>
