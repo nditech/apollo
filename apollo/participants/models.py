@@ -80,7 +80,7 @@ class ParticipantDataField(Resource):
     participant_set = db.relationship(
         'ParticipantSet',
         backref=db.backref(
-            'extra_fields', cascade='all, delete', passive_deletes=True))
+            'extra_fields', cascade='all, delete-orphan', passive_deletes=True))
 
     def __str__(self):
         return str(
