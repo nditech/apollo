@@ -41,28 +41,21 @@ class SubmissionService(Service):
             extra_field_headers = [fi.label for fi in extra_fields]
 
             sample_headers = [s.name for s in samples]
-            if submission.submission_type == 'O':
-                dataset_headers = [
-                    'Participant ID', 'Name', 'DB Phone', 'Recent Phone'] + \
-                    [location_type.name for location_type in location_types]
-                if form.form_type == 'INCIDENT':
-                    dataset_headers.extend(
-                        ['Location', 'Location Code'] + extra_field_headers +
-                        ['RV'] + tags + ['Timestamp', 'Status', 'Description'])
-                else:
-                    dataset_headers += [
-                        'Location', 'Location Code', 'PS Code', 'RV'
-                    ] + tags + ['Timestamp']
-                    dataset_headers.extend(sample_headers)
-                    dataset_headers.append('Comment')
+
+            dataset_headers = [
+                'Participant ID', 'Name', 'DB Phone', 'Recent Phone'
+            ] + [
+                loc_type.name for loc_type in location_types
+            ] + [
+                'Location', 'Location Code', 'Latitude', 'Longitude'
+            ] + extra_field_headers + ['RV'] + tags + ['Timestamp']
+
+            if form.form_type == 'INCIDENT':
+                dataset_headers.extend(['Status', 'Description'])
             else:
-                dataset_headers = [
-                    'Participant ID', 'Name', 'DB Phone', 'Recent Phone'] + \
-                    [location_type.name for location_type in location_types]
-                dataset_headers.extend(
-                    ['Location', 'Location Code'] + extra_field_headers +
-                    ['RV'] + tags + ['Timestamp'])
                 dataset_headers.extend(sample_headers)
+                if submission.submission_type == 'O':
+                    dataset_headers.append('Comment')
 
             output = StringIO()
             output.write(constants.BOM_UTF8_STR)
@@ -96,7 +89,9 @@ class SubmissionService(Service):
                         if loc.location_type in location_types
                     ] + [
                         submission.location.name,
-                        submission.location.code
+                        submission.location.code,
+                        submission.geopoint.get('lat') if submission.geopoint else '',  # noqa
+                        submission.geopoint.get('lon') if submission.geopoint else '',  # noqa
                     ] + extra_data_columns + [
                         submission.location.registered_voters
                     ] + [
@@ -140,11 +135,13 @@ class SubmissionService(Service):
                         if loc.location_type in location_types
                     ] + [
                         sib.location.name,
-                        sib.location.code
+                        sib.location.code,
+                        sib.geopoint.get('lat') if submission.geopoint else '', # noqa
+                        sib.geopoint.get('lon') if submission.geopoint else '', # noqa
                     ] + extra_data_columns + [
                         sib.location.registered_voters
                     ] + [
-                        export_field_value(form, sib, tag)
+                        export_field_value(form, submission, tag)
                         for tag in tags]
 
                     record += [

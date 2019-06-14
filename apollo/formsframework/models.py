@@ -4,7 +4,6 @@ import hashlib
 import logging
 from operator import itemgetter
 import re
-from uuid import uuid4
 
 from flask_babelex import lazy_gettext as _
 from lxml import etree
@@ -15,7 +14,7 @@ from slugify import slugify_unicode
 from unidecode import unidecode
 
 from apollo.core import db
-from apollo.dal.models import BaseModel, Resource
+from apollo.dal.models import Resource
 
 NSMAP = {
     None: 'http://www.w3.org/2002/xforms',
@@ -148,6 +147,12 @@ class Form(Resource):
 
         body = HTML_E.body()
 
+        model.append(E.bind(nodeset='/data/form_id', readonly='true()'))
+        model.append(E.bind(nodeset='/data/version_id', readonly='true()'))
+        form_id = etree.Element('form_id')
+        form_id.text = str(self.id)
+        data.append(form_id)
+
         data.append(E.device_id())
         data.append(E.subscriber_id())
         data.append(E.phone_number())
@@ -231,6 +236,19 @@ class Form(Resource):
 
                 grp_element.append(field_element)
             body.append(grp_element)
+
+        # hard coding a location question here until the form builder
+        # gets updated. please remove once the form builder supports
+        # locations
+        description = str(_('Location'))
+        path = '/data/location'
+        data.append(etree.Element('location'))
+        model.append(E.bind(nodeset=path, type='geopoint'))
+
+        grp_element = E.group(E.label(description))
+        field_element = E.input(E.label(description), ref='location')
+        grp_element.append(field_element)
+        body.append(grp_element)
 
         head.append(model)
         root.append(head)

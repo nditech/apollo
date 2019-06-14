@@ -19,6 +19,10 @@ HTTP_OPEN_ROSA_VERSION_HEADER = 'HTTP_X_OPENROSA_VERSION'
 OPEN_ROSA_VERSION = '1.0'
 OPEN_ROSA_VERSION_HEADER = 'X-OpenRosa-Version'
 
+NSMAP = {
+    'orx': 'http://openrosa.org/xforms',
+}
+
 
 def make_open_rosa_headers():
     return {
@@ -48,7 +52,16 @@ participant_auth = HTTPDigestAuth()
 
 @participant_auth.get_password
 def get_pw(participant_id):
-    participant = services.participants.get(participant_id=participant_id)
+    event = getattr(g, 'event', services.events.default())
+    current_events = services.events.overlapping_events(event)
+    participant = current_events.join(
+        models.Participant,
+        models.Participant.participant_set_id == models.Event.participant_set_id    # noqa
+    ).with_entities(
+        models.Participant
+    ).filter(
+        models.Participant.participant_id == participant_id
+    ).first()
     return participant.password if participant else None
 
 
@@ -99,6 +112,9 @@ def submission():
         response = open_rosa_default_response(status_code=204)
         return response
 
+    current_events = services.events.overlapping_events(
+        getattr(g, 'event', services.events.default()))
+
     # only for ODK Collect
     source_file = request.files.get('xml_submission_file')
     try:
@@ -106,7 +122,7 @@ def submission():
         document = etree.parse(source_file, parser)
 
         form_id = document.xpath('//data/form_id')[0].text
-        form = services.forms.fget(id=form_id)
+        form = models.Form.query.filter_by(id=form_id).one()
 
         participant = filter_participants(form, participant_auth.username())
         if not form:
@@ -128,14 +144,19 @@ def submission():
             # event__in=services.events.overlapping_events(g.event),
             deployment=form.deployment).first()
     else:
+        event = current_events.join(models.Event.forms).filter(
+            models.Event.forms.contains(form),
+            models.Event.participant_set_id == participant.participant_set_id
+        ).order_by(models.Event.end.desc()).first()
         submission = models.Submission(
             participant=participant,
-            deployment=participant.event.deployment,
-            event=participant.event,
+            deployment=participant.participant_set.deployment,
+            event=event,
             form=form,
             location=participant.location,
             submission_type='O',
         )
+        submission.save()
 
     if not submission:
         # no existing submission for that form and participant
@@ -146,7 +167,8 @@ def submission():
     submitted_version_id = None
 
     try:
-        submitted_version_id = document.xpath('//data/version_id')[0].text
+        submitted_version_id = document.xpath(
+            '//data/@orx:version', namespaces=NSMAP)[0]
     except (IndexError, etree.LxmlError):
         pass
 
@@ -155,6 +177,7 @@ def submission():
 
     tag_finder = etree.XPath('//data/*[local-name() = $tag]')
     data = {}
+    geopoint = {}
     for tag in form.tags:
         field = form.get_field_by_tag(tag)
         field_type = field.get('type')
@@ -163,20 +186,58 @@ def submission():
         except IndexError:
             # normally shouldn't happen, but the form might have been
             # modified
+            form_modified = True
             continue
 
         if element.text:
             if field_type in ('comment', 'string'):
                 data[tag] = element.text
             elif field_type == 'multiselect':
-                data[tag] = [int(i) for i in element.text.split()]
+                try:
+                    data[tag] = [int(i) for i in element.text.split()]
+                except ValueError:
+                    continue
+            elif field_type == 'location':
+                # TODO: what if there are multiple location
+                # fields in the form?
+                geodata = element.text.split() if element.text else []
+                try:
+                    geopoint['lat'] = float(geodata[0])
+                    geopoint['lon'] = float(geodata[1])
+                except (IndexError, ValueError):
+                    continue
             else:
-                data[tag] = int(element.text)
+                try:
+                    data[tag] = int(element.text)
+                except ValueError:
+                    continue
 
-    submission.data = data
-    services.submissions.find(id=submission.id).update(
-        {'data': data}, synchronize_session=False)
-    models.Submission.precomp_and_update_related(submission)
+    # hardcoding location lookup since the form builder
+    # doesn't support it yet. please remove when it does
+    try:
+        element = tag_finder(document, tag='location')[0]
+        geodata = element.text.split() if element.text else []
+
+        try:
+            geopoint['lat'] = float(geodata[0])
+            geopoint['lon'] = float(geodata[1])
+        except (IndexError, ValueError):
+            pass
+    except IndexError:
+        pass
+
+    kwargs = {'data': data}
+    geopoint_lat = geopoint.get('lat')
+    geopoint_lon = geopoint.get('lon')
+    if geopoint and (geopoint_lat is not None) and (geopoint_lon is not None):
+        kwargs.update(geopoint=geopoint)
+
+    models.Submission.query.filter_by(
+        id=submission.id
+    ).update(
+        kwargs, synchronize_session=False
+    )
+    models.Submission.update_related(submission, data)
     update_submission_version(submission)
 
     if form_modified:
@@ -196,7 +257,8 @@ def update_submission_version(submission):
         for k in data_fields if k in submission.data}
 
     if submission.form.form_type == 'INCIDENT':
-        version_data['status'] = submission.incident_status.code
+        if submission.incident_status:
+            version_data['status'] = submission.incident_status.code
         version_data['description'] = submission.incident_description
 
     # get previous version
@@ -220,5 +282,6 @@ def update_submission_version(submission):
         data=version_data,
         timestamp=datetime.utcnow(),
         channel=channel,
-        identity=identity
+        identity=identity,
+        deployment_id=submission.deployment_id
     )
