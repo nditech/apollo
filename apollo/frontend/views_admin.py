@@ -11,7 +11,7 @@ from flask_admin.contrib.sqla.form import InlineModelConverter
 from flask_admin.form import rules
 from flask_admin.model.form import InlineFormAdmin
 from flask_admin.model.template import macro
-from flask_babelex import lazy_gettext as _
+from flask_babelex import gettext as _
 from flask_security import current_user
 from flask_security.utils import encrypt_password, url_for_security
 from io import BytesIO
@@ -290,20 +290,20 @@ class UserAdminView(BaseAdminView):
         return form_class
 
     @action('disable', _('Disable'),
-            _('Are you sure you want to disable selected users?'))
+            _('Are you sure you want to disable the selected users?'))
     def action_disable(self, ids):
         for role in models.User.query.filter(models.User.id.in_(ids)):
             role.active = False
             role.save()
-        flash(_('User(s) successfully disabled.'))
+        flash(_('User(s) successfully disabled.'), 'success')
 
     @action('enable', _('Enable'),
-            _('Are you sure you want to enable selected users?'))
+            _('Are you sure you want to enable the selected users?'))
     def action_enable(self, ids):
         for role in models.User.query.filter(models.User.id.in_(ids)):
             role.active = True
             role.save()
-        flash(_('User(s) successfully enabled.'))
+        flash(_('User(s) successfully enabled.'), 'success')
 
 
 class RoleAdminView(BaseAdminView):
