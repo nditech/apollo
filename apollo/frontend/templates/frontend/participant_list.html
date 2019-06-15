@@ -227,30 +227,18 @@
     <h3>{{ _('Upload File') }}</h3>
     <div class="wizard-input-section">
     <form enctype="multipart/form-data" method="POST" id="upload-form" action="{% if args.participant_set_id %}{{ url_for('participants.participant_list_import_with_set', participant_set_id=participant_set_id) }}{% else %}{{ url_for('participants.participant_list_import') }}{% endif %}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-      <div class="form-group">
-        <div class="col-sm-9">
-          <div class="row">
-            <div class="col-sm-4">
-              <div class="fileUpload btn btn-default btn-sm" style="margin-left:1px;">
-                <span>{{ _('Browse') }}</span>
-                <i class="glyphicon glyphicon-search"></i>
-                <input id="uploadBtn" type="file" class="upload" name="spreadsheet" />
-              </div>
-            </div>
-            <div class="col-sm-8" style="margin-left:-30px;">
-              <input id="uploadFile" type="text" placeholder="Data File" class="form-control input-sm" readonly>
-              <p class="help-block"><small>{{ _('(only .csv, .xls and .xlsx files)') }}</small></p>
-            </div>
-          </div>
-        </div>
+      <div class="custom-file">
+        <input type="file" class="custom-file-input upload" id="uploadFile" name="spreadsheet">
+        <label for="uploadFile" class="custom-file-label" data-browse="{{ _('Browse') }}">{{ _('Choose file') }}</label>
+        <small class="form-text text-muted" id="uploadFileHelptext">{{ _('Only .csv, .xls and .xlsx files') }}</small>
       </div>
     </form>
     </div>
   </div>
 
-  <div class="wizard-card" data-cardname="mapFields">
+  <div class="wizard-card pr-0" data-cardname="mapFields">
     <h3>{{ _('Map Fields') }}</h3>
-    <div class="wizard-input-section"></div>
+    <div class="wizard-input-section overflow-auto"></div>
   </div>
 
   <div class="wizard-card" data-cardname="finalize">
@@ -281,10 +269,6 @@
 var wizard;
 
 $(function(){
-    $("#uploadBtn").change(function () {
-        $("#uploadFile").val(this.files[0].name);
-    });
-
     $('#delete').hide();
 
     $('input[type="checkbox"]').click(function() {
@@ -327,8 +311,6 @@ $(function(){
     wizard.on('closed', function() {
         wizard.reset();
         $("#uploadFile").val("");
-        $("#uploadBtn").wrap('<form>').closest('form').get(0).reset();
-        $("#uploadBtn").unwrap();
     });
 
     wizard.cards['uploadFile'].on('validate', function (card) {
@@ -337,11 +319,15 @@ $(function(){
             async: false,
             error: function (data) {
                 input = card.el.find("#uploadFile");
-                card.wizard.errorPopover(input, "{{ _('Invalid File') }}");
+                input_helptext = card.el.find('#uploadFileHelptext');
+                input.addClass('is-invalid');
+                input_helptext.removeClass('text-muted');
+                input_helptext.addClass('invalid-feedback');
                 cont = false;
             },
             success: function (data) {
                 $('.wizard-input-section', wizard.cards['mapFields'].el).html(data);
+                $('.wizard-input-section').height(wizard.dimensions.cardContainer - 85);
                 cont = true;
             }
         });
@@ -361,7 +347,7 @@ $(function(){
         cont = true;
       }).fail(function (data) {
         $('#form-action-errors', wizard.cards['mapFields'].el).html(data.responseText);
-        $('#form-action-errors', wizard.cards['mapFields'].el).removeClass('hidden');
+        $('#form-action-errors', wizard.cards['mapFields'].el).removeClass('d-none');
         cont = false;
       });
 
@@ -390,8 +376,6 @@ $(function(){
         e.preventDefault();
         wizard.reset();
         $("#uploadFile").val("");
-        $("#uploadBtn").wrap('<form>').closest('form').get(0).reset();
-        $("#uploadBtn").unwrap();
         wizard.show();
     });
 
