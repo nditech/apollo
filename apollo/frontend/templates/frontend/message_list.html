@@ -40,11 +40,13 @@
   </div>
 </div>
 
+{% if chart_data.incoming %}
 <div class="row">
   <div class="col-md-12">
     <div id="container" style="height: 160px; min-width: 600px" data-chart='{{ chart_data|tojson }}'></div>
   </div>
 </div>
+{% endif %}
 
 <div class="card-header">
   {{ render_pager(pager, 'messages.message_list', args) }}
