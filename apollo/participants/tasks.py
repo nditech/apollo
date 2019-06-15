@@ -15,7 +15,6 @@ from apollo.core import db, uploads
 from apollo.factory import create_celery_app
 from apollo.locations.models import Sample
 from apollo.messaging.tasks import send_email
-from apollo.participants import utils
 from apollo.participants.models import Participant, PhoneContact
 
 APPLICABLE_GENDERS = [s[0] for s in Participant.GENDER]
