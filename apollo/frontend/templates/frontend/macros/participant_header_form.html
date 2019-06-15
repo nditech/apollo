@@ -1,14 +1,14 @@
 {% macro render_mapping_form(form) %}
-<div class="col-sm-10 col-sm-offset-1 alert alert-danger hidden" id="form-action-errors"></div>
-<div class="col-sm-10">
+<div class="col-sm-11 d-none" id="form-action-errors"></div>
+<div class="col-sm-11">
 	{{ form.hidden_tag() }}
 	<input type="hidden" name="action" id="form-action" value="{{ request.full_path }}">
 	{%- for field in form -%}
 	{%- if field.type != 'CSRFTokenField' -%}
-	<div class="form-group {% if field.errors %}has-error{% endif %}">
-		{{ field.label(class_='col-sm-4 control-label') }}
+	<div class="form-group row {{- 'has_error' if field.errors }}">
+		{{ field.label(class_='col-sm-4 col-form-label text-right') }}
 		<div class="col-sm-8">
-			{{ field(class_='form-control input-sm') }}
+			{{ field(class_='form-control custom-select is-invalid' if field.errors else 'form-control custom-select') }}
 			{% if field.errors %}
 			{% for e in field.errors %}
 			<p class="help-block">{{ e }}</p>

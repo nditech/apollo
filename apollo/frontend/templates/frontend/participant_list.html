@@ -44,9 +44,6 @@
   {%- if perms.send_messages.can() -%}
   <button class="btn btn-success mr-2" id="send_message_modal_btn">{{ _('Send Message') }}</button>
   {%- endif -%}
-  {%- if perms.role('admin').can() and g.event.participant_set_id -%}
-  <button class="btn btn-danger mr-2" id="nuke_participants_modal_btn" data-toggle="modal" data-target="#nuke_modal">{{ _('Purge Participants') }}</button>
-  {%- endif -%}
 </div>
 {% endblock %}
 
@@ -223,32 +220,6 @@
     </div>
   </div>
 </div>
-{%- if perms.role('admin').can() -%}
-<div class="modal fade" id="nuke_modal" tabindex="-2" role="dialog" aria-labelledby="nukeModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h4 class="modal-title" id="nukeModalLabel">{{ _('Purge Participants') }}</h4>
-      </div>
-      <div class="modal-body">
-        <div class="alert alert-danger">{% trans %}<strong>WARNING:</strong> This will delete all participants, as well as any data linked to them &ndash; checklists, critical incident reports and messages.{% endtrans %}</div>
-        <p>{% trans %}Please enter <code id="compare"></code> below to proceed:{% endtrans %}</p>
-        <div class="form-group">
-          <input class="form-control" id="prompt">
-        </div>
-      </div>
-      <div class="modal-footer">
-        <form action="{{ url_for('participants.nuke_event_participants') }}" method="POST">
-          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-          <button type="button" class="btn btn-default" data-dismiss="modal">{{ _('Close') }}</button>
-          <button class="btn btn-danger" disabled="true" id="confirm_nuke">{{ _('Yes, I understand') }}</button>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
-{%- endif -%}
 <!-- IMPORT WIZARD -->
 <div class="wizard" id="import-wizard" data-title="{{ _('Import Participants') }}">
   <!-- Step 1 -->
@@ -256,30 +227,18 @@
     <h3>{{ _('Upload File') }}</h3>
     <div class="wizard-input-section">
     <form enctype="multipart/form-data" method="POST" id="upload-form" action="{% if args.participant_set_id %}{{ url_for('participants.participant_list_import_with_set', participant_set_id=participant_set_id) }}{% else %}{{ url_for('participants.participant_list_import') }}{% endif %}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-      <div class="form-group">
-        <div class="col-sm-9">
-          <div class="row">
-            <div class="col-sm-4">
-              <div class="fileUpload btn btn-default btn-sm" style="margin-left:1px;">
-                <span>{{ _('Browse') }}</span>
-                <i class="glyphicon glyphicon-search"></i>
-                <input id="uploadBtn" type="file" class="upload" name="spreadsheet" />
-              </div>
-            </div>
-            <div class="col-sm-8" style="margin-left:-30px;">
-              <input id="uploadFile" type="text" placeholder="Data File" class="form-control input-sm" readonly>
-              <p class="help-block"><small>{{ _('(only .csv, .xls and .xlsx files)') }}</small></p>
-            </div>
-          </div>
-        </div>
+      <div class="custom-file">
+        <input type="file" class="custom-file-input upload" id="uploadFile" name="spreadsheet">
+        <label for="uploadFile" class="custom-file-label" data-browse="{{ _('Browse') }}">{{ _('Choose file') }}</label>
+        <small class="form-text text-muted" id="uploadFileHelptext">{{ _('Only .csv, .xls and .xlsx files') }}</small>
       </div>
     </form>
     </div>
   </div>
 
-  <div class="wizard-card" data-cardname="mapFields">
+  <div class="wizard-card pr-0" data-cardname="mapFields">
     <h3>{{ _('Map Fields') }}</h3>
-    <div class="wizard-input-section"></div>
+    <div class="wizard-input-section overflow-auto"></div>
   </div>
 
   <div class="wizard-card" data-cardname="finalize">
@@ -310,10 +269,6 @@
 var wizard;
 
 $(function(){
-    $("#uploadBtn").change(function () {
-        $("#uploadFile").val(this.files[0].name);
-    });
-
     $('#delete').hide();
 
     $('input[type="checkbox"]').click(function() {
@@ -340,16 +295,6 @@ $(function(){
         $('#edit_modal').html(edit_modal_content);
     });
 
-    {%- if perms.role('admin').can() -%}
-    $('#nuke_modal').on('show.bs.modal', function (e) {
-        var compare = '{{ _("DELETE") }}';
-      $('#compare').html(compare);
-      $('#prompt').on('input', _.debounce(function () {
-        $('#confirm_nuke').prop('disabled', $('#prompt').val() != compare);
-      }, 500));
-    });
-    {%- endif -%}
-
     var wizard = $('#import-wizard').wizard({
         keyboard : true,
         contentHeight : 500,
@@ -366,8 +311,6 @@ $(function(){
     wizard.on('closed', function() {
         wizard.reset();
         $("#uploadFile").val("");
-        $("#uploadBtn").wrap('<form>').closest('form').get(0).reset();
-        $("#uploadBtn").unwrap();
     });
 
     wizard.cards['uploadFile'].on('validate', function (card) {
@@ -376,11 +319,15 @@ $(function(){
             async: false,
             error: function (data) {
                 input = card.el.find("#uploadFile");
-                card.wizard.errorPopover(input, "{{ _('Invalid File') }}");
+                input_helptext = card.el.find('#uploadFileHelptext');
+                input.addClass('is-invalid');
+                input_helptext.removeClass('text-muted');
+                input_helptext.addClass('invalid-feedback');
                 cont = false;
             },
             success: function (data) {
                 $('.wizard-input-section', wizard.cards['mapFields'].el).html(data);
+                $('.wizard-input-section').height(wizard.dimensions.cardContainer - 85);
                 cont = true;
             }
         });
@@ -400,7 +347,7 @@ $(function(){
         cont = true;
       }).fail(function (data) {
         $('#form-action-errors', wizard.cards['mapFields'].el).html(data.responseText);
-        $('#form-action-errors', wizard.cards['mapFields'].el).removeClass('hidden');
+        $('#form-action-errors', wizard.cards['mapFields'].el).removeClass('d-none');
         cont = false;
       });
 
@@ -429,8 +376,6 @@ $(function(){
         e.preventDefault();
         wizard.reset();
         $("#uploadFile").val("");
-        $("#uploadBtn").wrap('<form>').closest('form').get(0).reset();
-        $("#uploadBtn").unwrap();
         wizard.show();
     });
 

@@ -73,25 +73,3 @@ def update_phone_contacts(participant, phone):
         participant.update(add_to_set__phones=phone_contact)
 
     return phone_contact.verified
-
-
-def nuke_participants(participant_set):
-    participants = services.participants.find(
-        participant_set=participant_set)
-
-    participant_pks = participants.with_entities(
-        models.Participant.id).all()
-
-    submissions = services.submissions.filter(
-        models.Submission.participant_id.in_(participant_pks))
-
-    # nuke master submissions manually
-    for sub in submissions:
-        master_sub = sub.master
-        if master_sub is not None:
-            master_sub.delete()
-    db.session.commit()
-
-    # actually nuke the participants
-    participants.delete(synchronize_session='fetch')
-    db.session.commit()

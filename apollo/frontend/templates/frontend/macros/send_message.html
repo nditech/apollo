@@ -1,18 +1,27 @@
 {% macro send_message_modal(recipients) %}
 <div class="modal fade" id="send_message" style="display:none" tabindex="-1" role="dialog" aria-labelledby="send_message_label" aria-hidden="true">
-  <div class="modal-dialog">
+  <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h3 id="send_message_label">{{ _('Send Message') }}</h3>
+        <h5 id="send_message_label" class="modal-title">{{ _('Send Message') }}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
       </div>
       <div class="modal-body">
         <div class="alert" id="alert" style="display:none">
           <button type="button" class="close" data-dismiss="alert">×</button>
           <span id="alert_message"></span>
         </div>
-        <p><strong>{{ _('To') }}:</strong> {% trans counter=recipients %}{{ counter }} recipient{% pluralize %}{{ counter }} recipients{% endtrans %}.</p>
-        <p><textarea id="message" rows="5" cols="40" style="width:97.5%" class="form-control"></textarea><br /><span id="characters">0 {{ _('characters') }}</span> · <span id="parts">1 {{ _('message part') }}</span></p>
+        <div class="mb-3">
+          {{ _('Sending to') }} {% trans counter=recipients %}{{ counter }} recipient{% pluralize %}{{ counter }} recipients{% endtrans %}
+        </div>
+        <div class="mb-3">
+          <textarea id="message" rows="5" cols="40" style="width:97.5%" class="form-control"></textarea>
+        </div>
+        <div>
+          <span id="characters">0 {{ _('characters') }}</span> · <span id="parts">1 {{ _('message part') }}</span>
+        </div>
       </div>
       <div class="modal-footer">
         <div id="loader" class="ajax_loader" style="visibility: hidden">
@@ -20,7 +29,7 @@
           <div class="ajax_loader_block block_2"></div>
           <div class="ajax_loader_block block_3"></div>
         </div>
-        <button class="btn btn-default btn-modal" data-dismiss="modal" aria-hidden="true">{{ _('Cancel') }}</button>
+        <button class="btn btn-secondary btn-modal" data-dismiss="modal" aria-hidden="true">{{ _('Cancel') }}</button>
         <button class="btn btn-primary btn-modal" id="send" {% if not recipients %}disabled="disabled"{% endif %}>{{ _('Send') }}</button>
       </div>
     </div>

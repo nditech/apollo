@@ -1,8 +1,13 @@
-{% trans %}<strong>There was a problem</strong> with your submission. Please correct the errors and re-submit.{% endtrans %}
+<div class="alert alert-danger alert-dismissible fade show" role="alert">
+{% trans %}There were errors with your submission. Please correct the errors and re-submit.{% endtrans %}
 {% if error_msgs -%}
-<ul id="error-list">
+<ul id="error-list" class="mb-0 mt-1">
 {%- for error_msg in error_msgs %}
     <li>{{ error_msg }}</li>
 {% endfor -%}
 </ul>
+<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+</button>
 {%- endif %}
+</div>
