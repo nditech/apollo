@@ -37,7 +37,6 @@
   <a class="btn btn-secondary mr-2" href="{{ url_for('participants.participant_list', export='true') }}">{{ _('Export') }}</a>
   {%- endif %}
   {%- endif -%}
-  <a class="btn btn-secondary mr-2" href="{{ url_for('participants.participant_performance_list') }}">{{ _('Performance Evaluation') }}</a>
   {%- if perms.import_participants.can() -%}
   <button id="open-wizard" class="btn btn-primary mr-2">{{ _('Import Participants') }}</button>
   {%- endif -%}
