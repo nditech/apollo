@@ -375,7 +375,11 @@ $(function(){
     $('#open-wizard').click(function(e) {
         e.preventDefault();
         wizard.reset();
-        $("#uploadFile").val("");
+        var uploadFile = document.getElementById('uploadFile');
+        uploadFile.value = ''
+        uploadFile.dispatchEvent(new Event('change'));
+        $('#uploadFile').removeClass('is-invalid');
+        $('#uploadFileHelptext').removeClass('invalid-feedback');
         wizard.show();
     });
 
