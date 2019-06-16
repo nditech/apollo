@@ -341,10 +341,7 @@ def participant_edit(id, participant_set_id=0):
         participant_id=participant.participant_id
     )
 
-    if request.is_xhr:
-        template_name = 'frontend/participant_edit_modal.html'
-    else:
-        template_name = 'frontend/participant_edit.html'
+    template_name = 'frontend/participant_edit.html'
 
     if request.method == 'GET':
         form = generate_participant_edit_form(participant)
