@@ -4,7 +4,7 @@ import logging
 import os
 import re
 
-from flask import (abort, Blueprint, current_app, flash, g, redirect,
+from flask import (abort, Blueprint, current_app, g, redirect,
                    render_template, request, Response, url_for,
                    stream_with_context)
 from flask_babelex import lazy_gettext as _
@@ -16,8 +16,7 @@ from slugify import slugify_unicode
 from apollo import models, services, utils
 from apollo.core import sentry, uploads
 from apollo.frontend import helpers, permissions, route
-from apollo.frontend.forms import (
-    DummyForm, generate_participant_edit_form)
+from apollo.frontend.forms import generate_participant_edit_form
 from apollo.messaging.tasks import send_messages
 from apollo.participants import api, filters, forms, tasks
 
@@ -25,7 +24,6 @@ from .models import Participant, ParticipantSet, ParticipantRole
 from .models import ParticipantPartner, Phone, ParticipantPhone
 from .models import ParticipantTranslations
 from ..locations.models import Location
-from ..messaging.models import Message
 from ..submissions.models import Submission
 from ..users.models import UserUpload
 
@@ -336,10 +334,11 @@ def toggle_phone_verification():
 @permissions.edit_participant.require(403)
 def participant_edit(id, participant_set_id=0):
     participant = Participant.query.get_or_404(id)
-    page_title = _(
-        'Edit Participant · %(participant_id)s',
-        participant_id=participant.participant_id
-    )
+    breadcrumbs = [
+        _('Participants'),
+        _('Edit Participant'),
+        participant.participant_id
+    ]
 
     template_name = 'frontend/participant_edit.html'
 
@@ -362,13 +361,11 @@ def participant_edit(id, participant_set_id=0):
                 participant.role_id = ParticipantRole.query.get_or_404(
                     form.role.data).id
             if form.supervisor.data:
-                participant.supervisor_id = Participant.query.filter(
-                    Participant.id == form.supervisor.data).first().id
+                participant.supervisor = form.supervisor.data
             else:
-                participant.supervisor_id = None
+                participant.supervisor = None
             if form.location.data:
-                participant.location_id = Location.query.get_or_404(
-                    form.location.data).id
+                participant.location = form.location.data
             if form.partner.data:
                 participant.partner_id = ParticipantPartner.query.get_or_404(
                     form.partner.data).id
@@ -423,7 +420,7 @@ def participant_edit(id, participant_set_id=0):
                 return redirect(url_for('participants.participant_list'))
 
     return render_template(
-        template_name, form=form, page_title=page_title,
+        template_name, form=form, breadcrumbs=breadcrumbs,
         participant_set_id=participant_set_id,
         participant=participant)
 

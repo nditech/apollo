@@ -392,8 +392,10 @@
 
 {%- block footer -%}
   <div class="mt-n2 pb-2 w-25 d-flex justify-content-end">
-      <button type="button" id="saveBtn" class="btn btn-primary btn-lg mr-2">{{ _('Save') }}</button>
-      <a id="cancelBtn" class="btn btn-secondary btn-lg" href="javascript:;">{{ _('Cancel') }}</a>
+    <div>
+      <button id="cancelBtn" class="btn btn-secondary btn-lg">{{ _('Cancel') }}</button>
+      <button type="button" id="saveBtn" class="btn btn-primary btn-lg">{{ _('Save') }}</button>
+    </div>
   </div>
 {%- endblock %}
 

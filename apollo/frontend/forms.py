@@ -8,10 +8,11 @@ from wtforms.validators import Optional
 
 from apollo.frontend import permissions
 
-from ..locations.models import LocationType
+from ..locations.models import LocationType, Location
 from ..participants.models import (
     Participant, ParticipantRole, ParticipantPartner)
 from ..submissions.models import Submission
+from .filters import LocationQuerySelectField, SupervisorQuerySelectField
 
 
 def _make_choices(qs, placeholder=None):
@@ -55,9 +56,17 @@ def generate_participant_edit_form(participant, data=None):
         _('Role'), choices=_make_choices(role_choices),
         validators=[validators.input_required()]
     )
-    attributes['supervisor'] = StringField(_('Supervisor'))
-    attributes['location'] = StringField(
-        _('Location'), validators=[validators.input_required()])
+    attributes['supervisor'] = SupervisorQuerySelectField(
+        _('Supervisor'), validators=[validators.optional()], allow_blank=True,
+        blank_text=_('Participant'),
+        query_factory=lambda: Participant.query.filter(
+            Participant.id == participant.supervisor.id if participant.supervisor else None),  # noqa
+            get_pk=lambda i: i.id)
+    attributes['location'] = LocationQuerySelectField(
+        _('Location'), validators=[validators.input_required()],
+        query_factory=lambda: Location.query.filter(
+            Location.id == participant.location.id if participant.location else None),  # noqa
+            get_pk=lambda i: i.id)
     attributes['partner'] = SelectField(
         _('Partner'), choices=_make_choices(partner_choices))
     attributes['phone'] = StringField(_('Phone'))
@@ -76,11 +85,11 @@ def generate_participant_edit_form(participant, data=None):
 
     kwargs = {
         'formdata': data,
-        'location': participant.location.id if participant.location else None,
+        'location': participant.location,
         'gender': participant.gender.code if participant.gender else '',
         'role': participant.role.id if participant.role else None,
         'partner': participant.partner.id if participant.partner else None,
-        'supervisor': participant.supervisor.id if participant.supervisor else None,  # noqa
+        'supervisor': participant.supervisor,
         'phone': participant.primary_phone,
         'password': participant.password,
     }

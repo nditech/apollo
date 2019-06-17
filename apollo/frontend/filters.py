@@ -54,6 +54,23 @@ class LocationSelectWidget(widgets.Select):
             escape(text_type(label.location_type))))
 
 
+class SupervisorSelectWidget(widgets.Select):
+    @classmethod
+    def render_option(cls, value, label, selected, **kwargs):
+        options = dict(kwargs, value=value)
+        if selected:
+            options['selected'] = True
+        if hasattr(label, 'participant_id'):
+            return HTMLString('<option %s>%s · %s</option>' % (
+                html_params(**options),
+                escape(text_type(label.participant_id)),
+                escape(text_type(label.name))))
+        else:
+            return HTMLString('<option %s>%s</option>' % (
+                html_params(**options),
+                escape(text_type(label))))
+
+
 class LocationQuerySelectField(QuerySelectField):
     widget = LocationSelectWidget()
 
@@ -62,6 +79,17 @@ class LocationQuerySelectField(QuerySelectField):
             self.query = models.Location.query.filter(
                 models.Location.id == valuelist[0])
         return super(LocationQuerySelectField, self).process_formdata(
+            valuelist)
+
+
+class SupervisorQuerySelectField(QuerySelectField):
+    widget = SupervisorSelectWidget()
+
+    def process_formdata(self, valuelist):
+        if valuelist and valuelist[0]:
+            self.query = models.Participant.query.filter(
+                models.Participant.id == valuelist[0])
+        return super(SupervisorQuerySelectField, self).process_formdata(
             valuelist)
 
 
