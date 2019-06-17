@@ -200,7 +200,7 @@ class SubmissionCommentsService(Service):
     def create_comment(self, submission, comment, user=None):
         return self.create(
             submission=submission, user=user, comment=comment,
-            submit_date=datetime.utcnow())
+            submit_date=datetime.utcnow(), deployment=submission.deployment)
 
 
 class SubmissionVersionsService(Service):
