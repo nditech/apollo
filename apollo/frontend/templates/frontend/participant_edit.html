@@ -21,7 +21,7 @@
                 {% elif field.name in ['gender', 'role', 'partner'] %}
                 {{ field(class_='form-control custom-select tracked') }}
                 {% else %}
-                {{ field(class_='form-control tracked') }}
+                {{ field(class_='form-control tracked text-monospace') }}
                 {% endif %}
                 {% if field.errors %}
                 {% for e in field.errors %}
