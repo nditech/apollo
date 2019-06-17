@@ -37,7 +37,6 @@
   <a class="btn btn-secondary mr-2" href="{{ url_for('participants.participant_list', export='true') }}">{{ _('Export') }}</a>
   {%- endif %}
   {%- endif -%}
-  <a class="btn btn-secondary mr-2" href="{{ url_for('participants.participant_performance_list') }}">{{ _('Performance Evaluation') }}</a>
   {%- if perms.import_participants.can() -%}
   <button id="open-wizard" class="btn btn-primary mr-2">{{ _('Import Participants') }}</button>
   {%- endif -%}
@@ -162,7 +161,7 @@
       {% for participant in participants.items %}
       <tr>
         {%- if perms.edit_participant.can() -%}
-        <td class="text-right text-monospace"><a href="{{ url_for('participants.participant_edit', id=participant.id) }}" data-toggle="modal" data-target="#edit_modal">{{ participant.participant_id }}</a></td>
+        <td class="text-right text-monospace"><a href="{{ url_for('participants.participant_edit', id=participant.id) }}">{{ participant.participant_id }}</a></td>
         {%- else -%}
         <td class="text-right text-monospace">{{ participant.participant_id }}</td>
         {%- endif -%}
@@ -203,26 +202,7 @@
   {%- endif %}
 </div>
 
-<div class="modal fade" id="edit_modal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
-  <div class="modal-dialog" style="width:450px">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h4 class="modal-title" id="editModalLabel">{{ _('Edit Participant') }}</h4>
-      </div>
-      <div class="modal-body" style="height:4.5em">
-        <div id="loader" class="ajax_loader" style="margin:auto">
-          <div class="ajax_loader_block block_1"></div>
-          <div class="ajax_loader_block block_2"></div>
-          <div class="ajax_loader_block block_3"></div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-<!-- IMPORT WIZARD -->
 <div class="wizard" id="import-wizard" data-title="{{ _('Import Participants') }}">
-  <!-- Step 1 -->
   <div class="wizard-card" data-cardname="uploadFile">
     <h3>{{ _('Upload File') }}</h3>
     <div class="wizard-input-section">
@@ -269,32 +249,6 @@
 var wizard;
 
 $(function(){
-    $('#delete').hide();
-
-    $('input[type="checkbox"]').click(function() {
-        if (this.checked)
-        {
-            $('#delete').fadeIn('slow');
-        }
-        else
-        {
-            if ( !$('.checked:checked').length )
-            {
-                $('#delete').fadeOut('slow');
-            }
-        }
-    });
-
-    var edit_modal_content;
-
-    $('#edit_modal').on('show.bs.modal', function (e) {
-        edit_modal_content = $('#edit_modal').html();
-    });
-    $('#edit_modal').on('hidden.bs.modal', function(e) {
-        $('#edit_modal').removeData();
-        $('#edit_modal').html(edit_modal_content);
-    });
-
     var wizard = $('#import-wizard').wizard({
         keyboard : true,
         contentHeight : 500,
@@ -310,7 +264,11 @@ $(function(){
 
     wizard.on('closed', function() {
         wizard.reset();
-        $("#uploadFile").val("");
+        var uploadFile = document.getElementById('uploadFile');
+        uploadFile.value = ''
+        uploadFile.dispatchEvent(new Event('change'));
+        $('#uploadFile').removeClass('is-invalid');
+        $('#uploadFileHelptext').removeClass('invalid-feedback');
     });
 
     wizard.cards['uploadFile'].on('validate', function (card) {
@@ -375,19 +333,12 @@ $(function(){
     $('#open-wizard').click(function(e) {
         e.preventDefault();
         wizard.reset();
-        $("#uploadFile").val("");
+        var uploadFile = document.getElementById('uploadFile');
+        uploadFile.value = ''
+        uploadFile.dispatchEvent(new Event('change'));
+        $('#uploadFile').removeClass('is-invalid');
+        $('#uploadFileHelptext').removeClass('invalid-feedback');
         wizard.show();
-    });
-
-    $('#edit_modal').on('shown.bs.modal', function (e) {
-      $('#edit_modal input.select2-observers-clear').select2(observer_select2_clearable_options);
-      $('#edit_modal input.select2-locations').select2(locations_select2_options);
-    });
-
-    $('#filter_reset').on('click', function() {
-      var $form = $(this).parents('form').first();
-      $form.find(':input').not('button').each(function() { $(this).val(''); })
-      $form.submit();
     });
 
     $('select.select2-locations').select2(LocationOptions);

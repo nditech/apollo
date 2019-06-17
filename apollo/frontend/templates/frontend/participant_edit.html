@@ -1,39 +1,87 @@
-{% extends 'frontend/_layout.html' %}{% from 'frontend/macros/participant_edit_form.html' import render_edit_form %}
-{% block subtitle %}{{ participant.participant_set.name }}{% endblock subtitle %}
+{% extends 'frontend/layout.html' %}
 {% block content %}
+<form method="POST">
 <div class="row">
-<div class="col-md-8 col-md-offset-2">
-{{ render_edit_form(form, participant) }}
+  <div class="col-md-6 offset-md-3">
+    <div class="card border-light bg-light mt-4">
+      <h5 class="card-header">
+        {{ _('Edit Participant') }}
+      </h5>
+      <div class="card-body">
+        {{ form.hidden_tag() }}
+        {%- for field in form -%}
+        <div class="form-group row align-items-center">
+        {%- if field.type != 'CSRFTokenField' -%}
+            {{ field.label(class_='col-sm-4 control-label text-right mb-0') }}
+            <div class="col-sm-8">
+                {% if field.name == 'supervisor' %}
+                    {{ field(class_='form-control select2 select2-participants tracked') }}
+                {% elif field.name == 'location' %}
+                    {{ field(class_='form-control select2 select2-locations tracked') }}
+                {% elif field.name in ['gender', 'role', 'partner'] %}
+                {{ field(class_='form-control custom-select tracked') }}
+                {% else %}
+                {{ field(class_='form-control tracked text-monospace') }}
+                {% endif %}
+                {% if field.errors %}
+                {% for e in field.errors %}
+                <p class="help-block">{{ e }}</p>
+                {% endfor %}
+                {% endif %}
+            </div>
+        {%- endif -%}
+        </div>
+        {%- endfor -%}
+
+        <h6 class="mb-3">{{ _('All Phones') }}</h6>
+        <table class="table">
+          <thead>
+          <tr>
+          <th>{{ _('Number') }}</th>
+          <th>{{ _('Last Seen') }}</th>
+          <th class="text-center">{{ _('Verified') }}</th>
+          </tr>
+          </thead>
+          <tbody>
+          {% for p_phone in participant.participant_phones %}
+          <tr>
+          <td>{{ p_phone.phone.number }}</td>
+          <td>{{ p_phone.last_seen|datetimeformat }}</td>
+          <td class="text-center">{% if p_phone.verified %}<i class="fa fa-check-circle text-success"></i>{% else %}<i class="fa fa-minus-circle text-danger"></i>{% endif %}</td>
+          </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <div class="card-footer text-right">
+        <button type="button" id="cancelBtn" class="btn btn-secondary btn-lg">{{ _('Cancel') }}</button>
+        <button type="button" id="saveBtn" class="btn btn-primary btn-lg">{{ _('Save') }}</button>
+      </div>
+    </div>
+  </div>
 </div>
-</div>
-<div class="row">
-<div class="col-sm-8 col-sm-offset-2">
-<div class="panel panel-default">
-<div class="panel-heading">
-<h4 class="panel-title"><a role="button" data-toggle="collapse" href="#allPhones" aria-expanded="true" aria-controls="allPhones">{{ _('All Phones') }}</a></h4>
-</div>
-<div id="allPhones" class="panel-collapse collapse">
-<table class="table table-bordered table-hover table-striped" style="margin-bottom: 0px;">
-<thead>
-<tr>
-<th>{{ _('Number') }}</th>
-<th>{{ _('Last Seen') }}</th>
-<th>{{ _('Verified') }}</th>
-</tr>
-</thead>
-<tbody>
-{% for p_phone in participant.participant_phones %}
-<tr>
-<td>{{ p_phone.phone.number }}</td>
-<td>{{ p_phone.last_seen|datetimeformat }}</td>
-<td>{% if p_phone.verified %}<i class="glyphicon glyphicon-ok"></i>{% else %}<i class="glyphicon glyphicon-remove"></i>{% endif %}</td>
-</tr>
-{% endfor %}
-</tbody>
-</table>
-</ul>
-</div>
-</div>
-</div>
-</div>
+</form>
+{% endblock %}
+{% block scripts %}
+<script type="text/javascript" charset="utf-8">
+  $(function(){
+    $('.select2-locations').select2(LocationOptions);
+    $('.select2-participants').select2(ParticipantOptions);
+
+    $(document).on('change', '.tracked', function(e){
+      window.onbeforeunload = function () { return true; };
+    });
+
+    $('#cancelBtn').click(function(){
+      var url = '{% if request.environ.get('HTTP_REFERER') == request.url %}{{ url_for('participants.participant_list_with_set', participant_set_id=participant_set_id) if participant_set_id else url_for('participants.participant_list') }}{% else %}{{ request.environ.get('HTTP_REFERER', url_for('participants.participant_list_with_set', participant_set_id=participant_set_id) if participant_set_id else url_for('participants.participant_list')) }}{% endif %}';
+      window.onbeforeunload = null;
+      window.location.href = url;
+    });
+
+    $('#saveBtn').click(function(){
+      window.onbeforeunload = null;
+      $('form').submit();
+    });
+  });
+</script>
 {% endblock %}
