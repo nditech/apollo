@@ -335,7 +335,7 @@ def submission_create(form_id):
     ).filter(models.Form.events.contains(event)).first_or_404()
     edit_form_class = forms.make_submission_edit_form_class(
         event, questionnaire_form)
-    breadcrumbs = [_('Add Submission')]
+    breadcrumbs = [_('Add Incident')]
     template_name = 'frontend/incident_add.html'
 
     if request.method == 'GET':
@@ -398,7 +398,9 @@ def submission_edit(submission_id):
     questionnaire_form = submission.form
     edit_form_class = forms.make_submission_edit_form_class(
         event, submission.form)
-    breadcrumbs = [_('Edit Submission')]
+    breadcrumbs = [
+        _('Edit Incident') if questionnaire_form.form_type == 'INCIDENT' else
+        _('Edit Checklist')]
     readonly = not g.deployment.allow_observer_submission_edit
     location_types = models.LocationType.query.filter(
         models.LocationType.location_set_id==event.location_set_id,  # noqa
