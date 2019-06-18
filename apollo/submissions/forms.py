@@ -6,6 +6,8 @@ from wtforms_alchemy.fields import QuerySelectField
 
 from apollo import models, services
 from apollo.frontend import permissions
+from apollo.submissions.filters import (
+    ParticipantQuerySelectField, LocationQuerySelectField)
 
 
 class HiddenQuerySelectField(QuerySelectField):
@@ -47,23 +49,19 @@ def make_submission_edit_form_class(event, form):
         ('citizen', _('Citizen Report')),
     )
 
-    form_fields['participant'] = HiddenQuerySelectField(
+    form_fields['participant'] = ParticipantQuerySelectField(
         _('Participant'),
         allow_blank=True,
         blank_text=_('Participant'),
-        query_factory=lambda: services.participants.find(
-            participant_set_id=event.participant_set_id),
-        widget=widgets.HiddenInput(),
-        validators=[validators.Optional()]
+        query_factory=lambda: [], get_pk=lambda i: i.id
     )
 
-    form_fields['location'] = HiddenQuerySelectField(
+    form_fields['location'] = LocationQuerySelectField(
         _('Location'),
         allow_blank=True,
         blank_text=_('Location'),
-        query_factory=lambda: services.locations.find(
-            location_set_id=event.location_set_id),
-        widget=widgets.HiddenInput()
+        query_factory=lambda: [], get_pk=lambda i: i.id,
+        validators=[validators.Optional()]
     )
 
     if form.data and 'groups' in form.data:

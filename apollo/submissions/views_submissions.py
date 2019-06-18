@@ -335,14 +335,14 @@ def submission_create(form_id):
     ).filter(models.Form.events.contains(event)).first_or_404()
     edit_form_class = forms.make_submission_edit_form_class(
         event, questionnaire_form)
-    page_title = _('Add Submission')
+    breadcrumbs = [_('Add Incident')]
     template_name = 'frontend/incident_add.html'
 
     if request.method == 'GET':
         submission_form = edit_form_class()
         return render_template(
             template_name,
-            page_title=page_title,
+            breadcrumbs=breadcrumbs,
             form=questionnaire_form,
             submission_form=submission_form
         )
@@ -356,7 +356,7 @@ def submission_create(form_id):
             # really should redisplay the form again
             return render_template(
                 template_name,
-                page_title=page_title,
+                breadcrumbs=breadcrumbs,
                 form=questionnaire_form,
                 submission_form=submission_form
             )
@@ -378,6 +378,7 @@ def submission_create(form_id):
             data=data,
             participant=submission_form.participant.data,
             location=submission_form.location.data or submission_form.participant.data.location,  # noqa
+            incident_description=submission_form.description.data,
             incident_status=submission_form.status.data
         )
 
@@ -397,11 +398,13 @@ def submission_edit(submission_id):
     questionnaire_form = submission.form
     edit_form_class = forms.make_submission_edit_form_class(
         event, submission.form)
-    breadcrumbs = [_('Edit Submission')]
+    breadcrumbs = [
+        _('Edit Incident') if questionnaire_form.form_type == 'INCIDENT' else
+        _('Edit Checklist')]
     readonly = not g.deployment.allow_observer_submission_edit
-    location_types = services.location_types.find(
-        location_set_id=event.location_set_id,
-        is_administrative=True)
+    location_types = models.LocationType.query.filter(
+        models.LocationType.location_set_id==event.location_set_id,  # noqa
+        models.LocationType.is_administrative==True)  # noqa
     template_name = 'frontend/submission_edit.html'
     comments = services.submission_comments.find(submission=submission)
 
