@@ -13,7 +13,7 @@ bp = Blueprint('users', __name__)
 @route(bp, '/user/profile', methods=['GET', 'POST'])
 @login_required
 def user_profile():
-    page_title = _('Edit Profile')
+    breadcrumbs = [_('Edit Profile')]
     user = current_user._get_current_object()
     form = forms.UserDetailsForm(instance=user)
 
@@ -29,6 +29,6 @@ def user_profile():
         user.save()
         return redirect(url_for('dashboard.index'))
 
-    context = {'form': form, 'page_title': page_title}
+    context = {'form': form, 'breadcrumbs': breadcrumbs}
 
     return render_template('frontend/userprofile.html', **context)
