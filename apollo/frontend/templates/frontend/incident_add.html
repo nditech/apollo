@@ -1,73 +1,133 @@
-{%- extends 'frontend/_layout.html' -%}
+{%- extends 'frontend/layout.html' -%}
 {% block content %}
-{%- from 'frontend/macros/submission_field_macros.html' import render_submission_field %}
-<div>
 <form method="POST">
+<input type="hidden" name="next" value="{% if request.environ.get('HTTP_REFERER') == request.url %}{{ url_for('submissions.submission_list', form_id=form.id) }}{% else %}{{ request.environ.get('HTTP_REFERER', url_for('submissions.submission_list', form_id=form.id)) }}{% endif %}" />
 {{ submission_form.csrf_token() }}
-<table class="table table-bordered table-striped table-hover">
-  <tbody>
+<div class="table-responsive">
+  <table class="table table-bordered">
     <tr>
-      <td>{{ _('Participant') }}</td>
-      <td>{{ submission_form.participant(class_='select2-container span4 input-xlarge select2 select2-observers') }}</td>
+      <th class="col-2">{{ _('Participant') }}</th>
+      <td>{{ submission_form.participant(class_='select2 select2-participants is-invalid' if submission_form.participant.errors else 'select2 select2-participants') }}</td>
     </tr>
     <tr>
-      <td>{{ _('Location') }}</td>
-      <td>{{ submission_form.location(class_='select2-container span4 input-xlarge select2 select2-locations') }}</td>
+      <th>{{ _('Location') }}</th>
+      <td>{{ submission_form.location(class_='select2 select2-locations is-invalid' if submission_form.location.errors else 'select2 select2-locations') }}</td>
     </tr>
-  </tbody>
-</table>
-<table class="table table-bordered table-striped table-hover">
-  <tbody>
-    <tr>
-      <td colspan="2">&nbsp;</td>
-      <td>&nbsp;</td>
-    </tr>
-    {%- for group in form.data.groups %}
-    <tr>
-      <td colspan="3"><h4>{{ group.name }}</h4></td>
-    </tr>
-    {%- for field in group.fields %}
-    <tr>
-      <th style="text-align: center">{{ field.tag }}</th>
-      <td>{{ field.description }}
-      {%- if field.options %}
-      <span class="options">
-      {% for description, value in field.options|dictsort(false, 'value') %}
-      <span class="option"><strong>({{ value }})</strong> {{ description }}</span>
-      {% endfor %}
-      </span>
-      {%- endif %}
-      </td>
-      <td {%- if submission_form[field.tag].errors %} class="danger"{%- endif -%}>{{ render_submission_field(submission_form[field.tag]) }}</td>
-    </tr>
-    {% endfor -%}
-    {% endfor -%}
-    <tr>
-      <td>{{ _('Description') }}</td>
-      <td colspan="2">{{ submission_form.description(cols=40, rows=5,class_='form-control span4') }}</td>
-    </tr>
-    <tr>
-      <td>{{ _('Status') }}</td>
-      <td colspan="2">{{ submission_form.status (class_='form-control span2 input-sm')}}</td>
-    </tr>
-  </tbody>
-</table>
+  </table>
+</div>
 
+{%- if submission_form.errors %}
+<div class="alert alert-danger alert-dismissible fade show mt-2 mb-0" role="alert">
+  <h5 class="alert-heading">{{ _('Data Validation Errors') }}</h5>
+  <div>{{ _('The data you entered are not valid. Please check the affected questions and correct them.') }}</div>
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+{%- endif %}
 
- <div class="row navbar-fixed-bottom" style="bottom:0px; background:#fff; padding:1em 0 1em 2.6em;">
-      <div class="container">
-        <div class="col-md-offset-8 col-md-2">
-          <button type="submit" class="btn btn-info btn-lg btn-block" style= "margin-left:1em;">Save</button>
-        </div>
-        <div class="col-md-2">
-          <a class="btn btn-default btn-lg btn-block" style= "margin-left:;" href="{{ url_for('submissions.submission_list', form_id=form.id) }}">Cancel</a>
-        </div>
+<div class="card-body tab-content px-0">
+  <div>
+    {% for group in form.data.groups %}
+    <div class="card bg-light mb-3">
+      <div class="card-header">
+        <h5 class="mb-0">{{ group.name }}</h5>
+      </div>
+      <div class="card-body py-0 px-0">
+        <table id="dataTable" class="table table-borderless mb-0 table-responsive">
+          <tbody>
+          {% for field in group.fields %}
+            <tr>
+              <td class="align-middle" style="width: 0.1%; white-space: nowrap;"><strong>{{ field.tag }}</strong></td>
+              <td class="align-middle">
+                {{ field.description }}
+                {%- if field['type'] == 'select' %}
+                <br>
+                <span class="options">
+                {% for item in field.options|dictsort(false, 'value') %}
+                <span class="option"><strong>({{ item.1 }})</strong> {{ item.0 }}</span>
+                {% endfor %}
+                </span>
+                {%- endif %}
+              </td>
+              {% if submission_form[field.tag].errors -%}
+              <td class="col-2 align-middle">{{ submission_form[field.tag](class_='form-control tracked is-invalid') }}</td>
+              {%- else -%}
+              <td class="col-2 align-middle">{{ submission_form[field.tag](class_='form-control tracked') }}</td>
+              {%- endif %}
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
       </div>
     </div>
-</form>
+    {% endfor %}
+    <div class="card bg-light">
+      <div class="card-body py-0 px-0">
+        <table class="table table-borderless mb-0 table-responsive">
+          <tbody>
+            <tr>
+              <td style="width: 0.1%; white-space: nowrap;">&nbsp;&nbsp;</td>
+              <td class="text-right">
+                <strong>{{ _('Description')}}</strong>
+              </td>
+              <td class="col-4">{{ submission_form.description(class_='form-control tracked', rows=4) }}</td>
+            </tr>
+            <tr>
+              <td class="align-middle" style="width: 0.1%; white-space: nowrap;">&nbsp;&nbsp;</td>
+              <td class="align-middle text-right">
+                <strong>{{ _('Status')}}</strong>
+              </td>
+              <td class="col-4 align-middle">{{ submission_form.status(class_='form-control tracked') }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 </div>
 {% endblock %}
-{% block scripts %}
-<script src="{{ url_for('static', filename='js/moment-with-langs.min.js') }}"></script>
-<script src="{{ url_for('static', filename='js/timestamps.js') }}"></script>
+
+
+{%- block footer -%}
+  <div class="mt-n2 pb-2 w-25 d-flex justify-content-end">
+    <div>
+      <button type="button" id="cancelBtn" class="btn btn-secondary">{{ _('Cancel') }}</button>
+      <button type="button" id="saveBtn" class="btn btn-primary">{{ _('Save') }}</button>
+    </div>
+  </div>
+{%- endblock %}
+
+
+{%- block scripts %}
+<script type="text/javascript" charset="utf-8">
+  $(function(){
+    var addIncidentLocationOptions = LocationOptions;
+    var addIncidentParticipantOptions = ParticipantOptions;
+    delete addIncidentParticipantOptions.allowClear;
+    addIncidentLocationOptions.allowClear = true;
+    addIncidentLocationOptions.placeholder = {
+      id: "__None",
+      text: "{{ _('Location') }}"
+    };
+
+    $('.select2-locations').select2(addIncidentLocationOptions);
+    $('.select2-participants').select2(addIncidentParticipantOptions);
+
+    $(document).on('change', '.tracked', function(e){
+      window.onbeforeunload = function () { return true; };
+    });
+
+    $('#cancelBtn').click(function(){
+      var url = '{% if request.environ.get('HTTP_REFERER') == request.url %}{{ url_for('submissions.submission_list', form_id=form.id) }}{% else %}{{ request.environ.get('HTTP_REFERER', url_for('submissions.submission_list', form_id=form.id)) }}{% endif %}';
+      window.onbeforeunload = null;
+      window.location.href = url;
+    });
+
+    $('#saveBtn').click(function(){
+      window.onbeforeunload = null;
+      $('form').submit();
+    });
+  });
+</script>
 {% endblock %}

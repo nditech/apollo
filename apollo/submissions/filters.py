@@ -246,20 +246,53 @@ class LocationSelectWidget(widgets.Select):
         options = dict(kwargs, value=value)
         if selected:
             options['selected'] = True
-        return HTMLString('<option %s>%s · %s</option>' % (
-            html_params(**options),
-            escape(text_type(label.name)),
-            escape(text_type(label.location_type))))
+        if hasattr(label, 'location_type'):
+            return HTMLString('<option %s>%s · %s</option>' % (
+                html_params(**options),
+                escape(text_type(label.name)),
+                escape(text_type(label.location_type))))
+        else:
+            return HTMLString('<option %s>%s</option>' % (
+                html_params(**options),
+                escape(text_type(label))))
+
+
+class ParticipantSelectWidget(widgets.Select):
+    @classmethod
+    def render_option(cls, value, label, selected, **kwargs):
+        options = dict(kwargs, value=value)
+        if selected:
+            options['selected'] = True
+        if hasattr(label, 'participant_id'):
+            return HTMLString('<option %s>%s · %s</option>' % (
+                html_params(**options),
+                escape(text_type(label.participant_id)),
+                escape(text_type(label.name))))
+        else:
+            return HTMLString('<option %s>%s</option>' % (
+                html_params(**options),
+                escape(text_type(label))))
 
 
 class LocationQuerySelectField(QuerySelectField):
     widget = LocationSelectWidget()
 
     def process_formdata(self, valuelist):
-        if valuelist and valuelist[0]:
+        if valuelist and valuelist[0] and valuelist[0] != '__None':
             self.query = models.Location.query.filter(
                 models.Location.id == valuelist[0])
         return super(LocationQuerySelectField, self).process_formdata(
+            valuelist)
+
+
+class ParticipantQuerySelectField(QuerySelectField):
+    widget = ParticipantSelectWidget()
+
+    def process_formdata(self, valuelist):
+        if valuelist and valuelist[0] and valuelist[0] != '__None':
+            self.query = models.Participant.query.filter(
+                models.Participant.id == valuelist[0])
+        return super(ParticipantQuerySelectField, self).process_formdata(
             valuelist)
 
 
