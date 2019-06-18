@@ -1,14 +1,22 @@
-{%- extends 'frontend/_layout.html' -%}
+{%- extends 'frontend/layout.html' -%}
 {% block content %}
-<div class="row-fluid">
-	<div class="col-md-4 col-md-offset-4 text-center" style="margin-top:5em; text-align:center;">
-		<legend>{{ page_title }}</legend>
-		<form class="form-vertical" action="" method="POST" accept-charset="utf-8">{{ form.csrf_token }}
-			<div class="form-group">
-          {{ form.event(class_='form-control span3 center-block') }}
+<div class="row p-4 m-4">
+	<div class="col-md-4 offset-md-4 text-center">
+		<div class="card border-light bg-light">
+			<h5 class="card-header">{{ _('Choose Event') }}</h5>
+      <div class="card-body">
+        <legend>{{ page_title }}</legend>
+        <form class="form-vertical" action="" method="POST">{{ form.csrf_token }}
+          <div class="form-group">
+            {{ form.event(class_='form-control custom-select') }}
+          </div>
+              <button class="btn btn-primary col-3" type="submit">{{ _('Go') }}</button>
+        </form>
       </div>
-      <button class="btn btn-warning btn-md" type="submit">{{ _('Go') }}</button>
-		</form>
+		</div>
 	</div>
 </div>
+{% endblock %}
+
+{% block title %}
 {% endblock %}
