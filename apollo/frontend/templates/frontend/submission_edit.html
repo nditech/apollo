@@ -237,25 +237,25 @@
                 {%- endif %}
               </td>
               {% if readonly -%}
-              <td class="col-2 align-middle obs-on">{{ submission_form[field.tag](class_='form-control tracked', disabled='disabled') }}</td>
+              <td class="col-2 align-middle obs-on">{{ submission_form[field.tag](class_='form-control tracked text-monospace', disabled='disabled') }}</td>
               {%- else -%}
               {% if submission_form[field.tag].errors -%}
-              <td class="col-2 align-middle obs-on">{{ submission_form[field.tag](class_='form-control tracked is-invalid') }}</td>
+              <td class="col-2 align-middle obs-on">{{ submission_form[field.tag](class_='form-control tracked text-monospace is-invalid') }}</td>
               {%- else -%}
-              <td class="col-2 align-middle obs-on">{{ submission_form[field.tag](class_='form-control tracked') }}</td>
+              <td class="col-2 align-middle obs-on">{{ submission_form[field.tag](class_='form-control tracked text-monospace') }}</td>
               {%- endif %}
               {%- endif %}
               {% for sibling_form in sibling_forms -%}
-              <td class="col-2 align-middle">{{ sibling_form[field.tag](class_='form-control tracked', disabled='disabled') }}</td>
+              <td class="col-2 align-middle">{{ sibling_form[field.tag](class_='form-control tracked text-monospace', disabled='disabled') }}</td>
               {% endfor %}
               {% if readonly -%}
               {% if master_form[field.tag].errors -%}
-              <td class="col-2 align-middle ps-on">{{ master_form[field.tag](class_='form-control tracked is-invalid') }}</td>
+              <td class="col-2 align-middle ps-on">{{ master_form[field.tag](class_='form-control tracked text-monospace is-invalid') }}</td>
               {%- else -%}
-              <td class="col-2 align-middle ps-on">{{ master_form[field.tag](class_='form-control tracked') }}</td>
+              <td class="col-2 align-middle ps-on">{{ master_form[field.tag](class_='form-control tracked text-monospace') }}</td>
               {%- endif %}
               {%- else -%}
-              <td class="col-2 align-middle ps-on">{{ master_form[field.tag](class_='form-control tracked', disabled='disabled') }}</td>
+              <td class="col-2 align-middle ps-on">{{ master_form[field.tag](class_='form-control tracked text-monospace', disabled='disabled') }}</td>
               {%- endif %}
             </tr>
           {% endfor %}
@@ -340,9 +340,9 @@
                 {%- endif %}
               </td>
               {% if submission_form[field.tag].errors -%}
-              <td class="col-2 align-middle">{{ submission_form[field.tag](class_='form-control tracked is-invalid') }}</td>
+              <td class="col-2 align-middle">{{ submission_form[field.tag](class_='form-control tracked text-monospace is-invalid') }}</td>
               {%- else -%}
-              <td class="col-2 align-middle">{{ submission_form[field.tag](class_='form-control tracked') }}</td>
+              <td class="col-2 align-middle">{{ submission_form[field.tag](class_='form-control tracked text-monospace') }}</td>
               {%- endif %}
             </tr>
           {% endfor %}
