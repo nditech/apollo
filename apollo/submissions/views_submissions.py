@@ -378,6 +378,7 @@ def submission_create(form_id):
             data=data,
             participant=submission_form.participant.data,
             location=submission_form.location.data or submission_form.participant.data.location,  # noqa
+            incident_description=submission_form.description.data,
             incident_status=submission_form.status.data
         )
 
