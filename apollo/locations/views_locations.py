@@ -232,7 +232,7 @@ def locations_builder(view, location_set_id):
     has_admin_divisions = db.session.query(LocationType.query.filter(
         LocationType.location_set_id == location_set_id).exists()).scalar()
 
-    template_name = 'admin/location_builder.html'
+    template_name = 'admin/administrative_divisions.html'
     breadcrumbs = [
         {'text': _('Location Sets'), 'url': url_for('locationset.index_view')},
         _('Administrative Divisions')]
