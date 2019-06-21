@@ -77,8 +77,9 @@
         nodeSep: 50,
         edgeSep: 80,
         rankDir: 'TB',
-        marginX: 50,
-        marginY: 50,
+        rankSep: 30,
+        marginX: 5,
+        marginY: 5,
       });
     };
 
@@ -90,11 +91,8 @@
       this.paper = new joint.dia.Paper({
         el: paperElement,
         width: paperElement.width(),
-        height: 1000,
+        height: 600,
         model: new joint.dia.Graph,
-        // el: options.el,
-        // width: options.width,
-        // height: options.height,
         gridSize: 1
       }).on({'cell:pointerclick': this.launchUpdateModal});
 
@@ -118,7 +116,7 @@
       $('#addModalSaveButton').click(this.saveNewDivision);
       $('#updateModalDeleteButton').click(this.deleteDivision);
       $('#updateModalSaveButton').click(this.updateDivision);
-      $('#save').click(this.saveGraph);
+      $('#saveBtn').click(this.saveGraph);
 
       // set up new division modal
       $('#addDivision').on('shown.bs.modal', function () {
@@ -126,7 +124,9 @@
       });      
 
       // initialize select2
-      $('select').select2();
+      $('select').select2({
+        theme: 'bootstrap4'
+      });
     };
 
     this.saveGraph = function(ev) {
@@ -140,6 +140,8 @@
       });
 
       $('#divisions_graph').val(JSON.stringify(serializableGraph));
+
+      $('#save-form').submit();
     };
 
     this.launchUpdateModal = function(cellView) {

@@ -226,18 +226,16 @@ def location_headers(location_set_id, upload_id):
                                     location_set_id=location_set_id))
 
 
-@route(bp, '/locations/set/<int:location_set_id>/builder',
-       methods=['GET', 'POST'])
-@login_required
-@permissions.edit_locations.require(403)
-def locations_builder(location_set_id):
+def locations_builder(view, location_set_id):
     location_set = LocationSet.query.get_or_404(location_set_id)
 
     has_admin_divisions = db.session.query(LocationType.query.filter(
         LocationType.location_set_id == location_set_id).exists()).scalar()
 
-    template_name = 'frontend/location_builder.html'
-    page_title = _('Administrative Divisions')
+    template_name = 'admin/location_builder.html'
+    breadcrumbs = [
+        _('Location Sets'),
+        _('Administrative Divisions')]
     form = forms.AdminDivisionImportForm()
 
     if request.method == 'POST' and request.form.get('divisions_graph'):
@@ -258,7 +256,7 @@ def locations_builder(location_set_id):
             if db.session.query(query.exists()).scalar():
                 flash(_('Administrative level %(name)s has locations assigned '
                         'and cannot be deleted.', name=unused_lt.name),
-                      category='locations_builder')
+                      category='danger')
                 continue
 
             # explicitly doing this because we didn't add a cascade
@@ -273,12 +271,12 @@ def locations_builder(location_set_id):
 
         flash(
             _('Your changes have been saved.'),
-            category='locations_builder'
+            category='info'
         )
 
-    return render_template(template_name, page_title=page_title,
-                           location_set=location_set, form=form,
-                           has_admin_divisions=has_admin_divisions)
+    return view.render(
+        template_name, breadcrumbs=breadcrumbs, location_set=location_set,
+        form=form, has_admin_divisions=has_admin_divisions)
 
 
 @route(bp, '/locations/set/<int:location_set_id>/purge', methods=['POST'])
@@ -297,10 +295,6 @@ def nuke_locations(location_set_id):
                             location_set_id=location_set_id))
 
 
-@route(bp, '/locations/set/<int:location_set_id>/export_divisions',
-       methods=['GET'])
-@login_required
-@permissions.edit_locations.require(403)
 def export_divisions(location_set_id):
     location_set = LocationSet.query.filter(
         LocationSet.id == location_set_id).first_or_404()
@@ -317,10 +311,6 @@ def export_divisions(location_set_id):
                      as_attachment=True, attachment_filename=filename)
 
 
-@route(bp, '/locations/set/<int:location_set_id>/import_divisions',
-       methods=['POST'])
-@login_required
-@permissions.edit_locations.require(403)
 def import_divisions(location_set_id):
     location_set = LocationSet.query.filter(
         LocationSet.id == location_set_id).first_or_404()
@@ -334,8 +324,8 @@ def import_divisions(location_set_id):
             graph = json.load(request.files['import_file'])
             import_graph(graph, location_set, fresh_import=True)
 
-            return redirect(url_for('.locations_builder',
+            return redirect(url_for('locationset.builder',
                                     location_set_id=location_set_id))
 
-    return redirect(url_for('.locations_builder',
+    return redirect(url_for('locationset.builder',
                     location_set_id=location_set_id))
