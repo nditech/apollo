@@ -234,7 +234,7 @@ def locations_builder(view, location_set_id):
 
     template_name = 'admin/location_builder.html'
     breadcrumbs = [
-        _('Location Sets'),
+        {'text': _('Location Sets'), 'url': url_for('locationset.index_view')},
         _('Administrative Divisions')]
     form = forms.AdminDivisionImportForm()
 
