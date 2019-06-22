@@ -64,7 +64,7 @@
       <tbody>
         {% for location in locations.items %}
         <tr>
-          <td class="text-right text-monospace"><a href="{{ url_for('locations.location_edit', id=location.id) }}">{{ location.code }}</a></td>
+          <td class="text-right text-monospace"><a href="{{ url_for('locationset.location_edit', id=location.id) }}">{{ location.code }}</a></td>
           <td class="text-monospace">{{ location.name }}</td>
           <td class="text-monospace">{{ location.location_type.name }}</td>
           {% for field in extra_fields %}

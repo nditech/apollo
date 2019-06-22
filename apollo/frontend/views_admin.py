@@ -389,6 +389,13 @@ class LocationSetAdminView(SetViewMixin, BaseAdminView):
     def locations_headers(self, location_set_id, upload_id):
         return locations_headers(self, location_set_id, upload_id)
 
+    @expose(
+        '/location/<int:id>',
+        methods=['GET', 'POST']
+    )
+    def location_edit(self, id):
+        return location_edit(self, id)
+
 
 class ParticipantSetAdminView(SetViewMixin, BaseAdminView):
     column_list = ('name', 'location_set', 'participants')
