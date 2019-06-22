@@ -1,0 +1,351 @@
+{%- extends 'admin/base.html' -%}
+{%- from 'frontend/macros/participant_list_filter.html' import render_filter_form -%}
+{%- from 'frontend/macros/pagination.html' import render_pager -%}
+{%- from 'frontend/macros/send_message.html' import send_message_modal -%}
+
+{% block head_css %}
+{{ super() }}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap-wizard.css') }}">
+{% endblock %}
+
+{% block body %}
+<div class="d-flex justify-content-between align-items-md-center flex-column flex-md-row mb-n2">
+  <nav class="nav mb-4" aria-label="breadcrumb">
+    <ol class="breadcrumb mb-n2">
+        {% for breadcrumb in breadcrumbs %}
+        <li class="breadcrumb-item {%- if loop.last %} active{% endif %}" {%- if loop.last %} aria-current="page"{% endif %}>
+          {% if breadcrumb.url -%}
+          <a href="{{ breadcrumb.url }}" class="text-decoration-none">{{ breadcrumb.text or breadcrumb }}</a>
+          {%- else -%}
+          {{ breadcrumb.text or breadcrumb }}
+          {%- endif %}
+        </li>
+        {% endfor %}
+    </ol>
+  </nav>
+  <div class="d-flex justify-content-between align-items-start flex-column flex-md-row">
+    <div class="btn-toolbar d-none d-md-flex" role="toolbar">
+      {%- if perms.export_participants.can() -%}
+      {% if args.participant_set_id -%}
+      <a class="btn btn-secondary mr-2" href="{{ url_for('participantset.participants_list', export='true', participant_set_id=participant_set_id) }}">{{ _('Export') }}</a>
+      {%- else -%}
+      <a class="btn btn-secondary mr-2" href="{{ url_for('participants.participant_list', export='true') }}">{{ _('Export') }}</a>
+      {%- endif %}
+      {%- endif -%}
+      {%- if perms.import_participants.can() -%}
+      <button id="open-wizard" class="btn btn-primary mr-2">{{ _('Import Participants') }}</button>
+      {%- endif -%}
+      {%- if perms.send_messages.can() -%}
+      <button class="btn btn-success mr-2" id="send_message_modal_btn">{{ _('Send Message') }}</button>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+{%- set flash_msgs = get_flashed_messages(category_filter=['task_begun']) -%}
+<div class="row">
+  <div class="col-md-12">
+    {{ render_filter_form(filter_form, location, location_set_id) }}
+  </div>
+</div>
+
+<div class="card-header">
+  {% if args.participant_set_id -%}
+  {{ render_pager(participants, 'participantset.participants_list', args) }}
+  {%- else -%}
+  {{ render_pager(participants, 'participants.participant_list', args) }}
+  {%- endif %}
+</div>
+
+<div class="table-responsive-md mb-n3">
+  <table class="table table-sm table-hover">
+    <thead class="thead-light">
+      <tr>
+        {% if request.args.sort_by == 'id' -%}
+        {% if request.args.sort_direction == 'desc' -%}
+        <th scope="col" class="text-right col-1"><a class="text-decoration-none" href="{{ modify_query(sort_by='id', sort_direction='asc', page='') }}">{{ _('ID') }} <i class="fa fa-chevron-down"></i></a></th>
+        {% else -%}
+        <th scope="col" class="text-right col-1"><a class="text-decoration-none" href="{{ modify_query(sort_by='id', sort_direction='desc', page='') }}">{{ _('ID') }} <i class="fa fa-chevron-up"></i></a></th>
+        {% endif %}{% else -%}
+        <th scope="col" class="text-right col-1"><a class="text-decoration-none" href="{{ modify_query(sort_by='id', sort_value='', sort_direction='', page='') }}">{{ _('ID') }}</a></th>
+        {% endif -%}
+
+        {%- for location_type in location_types -%}
+        {% if request.args.sort_by == 'location' and request.args.sort_value == location_type.id|string %}
+        {% if request.args.sort_direction == 'desc' %}
+        <th scope="col">
+          <a class="text-decoration-none" href="{{ modify_query(sort_by='location', sort_value=location_type.id, sort_direction='asc', page='') }}">{{ location_type.name }} <i class="fa fa-chevron-down"></i></a>
+        </th>
+        {% else -%}
+        <th scope="col">
+          <a class="text-decoration-none" href="{{ modify_query(sort_by='location', sort_value=location_type.id, sort_direction='desc', page='') }}">{{ location_type.name }} <i class="fa fa-chevron-up"></i></a>
+        </th>
+        {% endif -%}
+        {% else -%}
+        <th scope="col"><a class="text-decoration-none" href="{{ modify_query(sort_by='location', sort_value=location_type.id, sort_direction='', page='') }}">{{ location_type.name }}</a></th>
+        {% endif %}
+        {%- endfor -%}
+
+        {% if request.args.sort_by == 'location_name' -%}
+        {% if request.args.sort_direction == 'desc' -%}
+        <th scope="col"><a class="text-decoration-none" href="{{ modify_query(sort_by='location_name', sort_direction='asc', page='') }}">{{ _('Location') }} <i class="fa fa-chevron-down"></i></a></th>
+        {% else -%}
+        <th scope="col"><a class="text-decoration-none" href="{{ modify_query(sort_by='location_name', sort_direction='desc', page='') }}">{{ _('Location') }} <i class="fa fa-chevron-up"></i></a></th>
+        {% endif -%}
+        {% else -%}
+        <th scope="col"><a class="text-decoration-none" href="{{ modify_query(sort_by='location_name', sort_value='', sort_direction='', page='') }}">{{ _('Location') }}</a></th>
+        {% endif -%}
+
+        {% if request.args.sort_by == 'name' -%}
+        {% if request.args.sort_direction == 'desc' -%}
+        <th scope="col"><a class="text-decoration-none" href="{{ modify_query(sort_by='name', sort_direction='asc', page='') }}">{{ _('Name') }} <i class="fa fa-chevron-down"></i></a></th>
+        {% else -%}
+        <th scope="col"><a class="text-decoration-none" href="{{ modify_query(sort_by='name', sort_direction='desc', page='') }}">{{ _('Name') }} <i class="fa fa-chevron-up"></i></a></th>
+        {% endif -%}
+        {% else -%}
+        <th scope="col"><a class="text-decoration-none" href="{{ modify_query(sort_by='name', sort_value='', sort_direction='', page='') }}">{{ _('Name') }}</a></th>
+        {% endif -%}
+        {% if request.args.sort_by == 'phone' -%}
+        {% if request.args.sort_direction == 'desc' -%}
+        <th scope="col"><a class="text-decoration-none" href="{{ modify_query(sort_by='phone', sort_direction='asc', page='') }}">{{ _('Phone') }} <i class="fa fa-chevron-down"></i></a></th>
+        {% else -%}
+        <th scope="col"><a class="text-decoration-none" href="{{ modify_query(sort_by='phone', sort_direction='desc', page='') }}">{{ _('Phone') }} <i class="fa fa-chevron-up"></i></a></th>
+        {% endif -%}
+        {% else -%}
+        <th scope="col"><a class="text-decoration-none" href="{{ modify_query(sort_by='phone', sort_value='', sort_direction='', page='') }}">{{ _('Phone') }}</a></th>
+        {% endif -%}
+
+        {% if request.args.sort_by == 'gen' -%}
+        {% if request.args.sort_direction == 'desc' -%}
+        <th scope="col"><a class="text-decoration-none" href="{{ modify_query(sort_by='gen', sort_direction='asc', page='') }}">{{ _('Gender') }} <i class="fa fa-chevron-down"></i></a></th>
+        {% else -%}
+        <th scope="col"><a class="text-decoration-none" href="{{ modify_query(sort_by='gen', sort_direction='desc', page='') }}">{{ _('Gender') }} <i class="fa fa-chevron-up"></i></a></th>
+        {% endif -%}
+        {% else -%}
+        <th scope="col"><a class="text-decoration-none" href="{{ modify_query(sort_by='gen', sort_value='', sort_direction='', page='') }}">{{ _('Gender') }}</a></th>
+        {% endif -%}
+
+        {% if request.args.sort_by == 'role' -%}
+        {% if request.args.sort_direction == 'desc' -%}
+        <th scope="col"><a class="text-decoration-none" href="{{ modify_query(sort_by='role', sort_direction='asc', page='') }}">{{ _('Role') }} <i class="fa fa-chevron-down"></i></a></th>
+        {% else -%}
+        <th scope="col"><a class="text-decoration-none" href="{{ modify_query(sort_by='role', sort_direction='desc', page='') }}">{{ _('Role') }} <i class="fa fa-chevron-up"></i></a></th>
+        {% endif -%}
+        {% else -%}
+        <th scope="col"><a class="text-decoration-none" href="{{ modify_query(sort_by='role', sort_value='', sort_direction='', page='') }}">{{ _('Role') }}</a></th>
+        {% endif -%}
+
+        {% if request.args.sort_by == 'org' -%}
+        {% if request.args.sort_direction == 'desc' -%}
+        <th scope="col"><a class="text-decoration-none" href="{{ modify_query(sort_by='org', sort_direction='asc', page='') }}">{{ _('Organization') }} <i class="fa fa-chevron-down"></i></a></th>
+        {% else -%}
+        <th scope="col"><a class="text-decoration-none" href="{{ modify_query(sort_by='org', sort_direction='desc', page='') }}">{{ _('Organization') }} <i class="fa fa-chevron-up"></i></a></th>
+        {% endif -%}
+        {% else -%}
+        <th scope="col"><a class="text-decoration-none" href="{{ modify_query(sort_by='org', sort_value='', sort_direction='', page='') }}">{{ _('Organization') }}</a></th>
+        {% endif -%}
+
+        {% for field in extra_fields %}
+        {% if perms.can_access_resource(field) %}
+        <th scope="col">{{ field.label }}</th>
+        {% endif %}
+        {% endfor %}
+      </tr>
+    </thead>
+    <tbody>
+      {% for participant in participants.items %}
+      <tr>
+        {%- if perms.edit_participant.can() -%}
+        <td class="text-right text-monospace"><a href="{{ url_for('participants.participant_edit', id=participant.id) }}">{{ participant.participant_id }}</a></td>
+        {%- else -%}
+        <td class="text-right text-monospace">{{ participant.participant_id }}</td>
+        {%- endif -%}
+        {%- for location_type in location_types -%}
+        <td class="text-monospace">{{ participant.location.make_path()[location_type.name] }}</td>
+        {%- endfor -%}
+        <td class="text-monospace">{{ participant.location.name|default('N/A', true) }}</td>
+        <td class="text-monospace">{{ participant.name|default('', true) }}</td>
+        <td class="text-monospace">{{ participant.primary_phone|default('', true) }}</td>
+        <td class="text-monospace">{{ participant.gender_display }}</td>
+        <td class="text-monospace">{{ participant.role.name|default('N/A', true) }}</td>
+        <td class="text-monospace">{{ participant.partner|default('', true) }}</td>
+        {% for field in extra_fields %}
+        {% if perms.can_access_resource(field) %}
+        {%- if participant.extra_data -%}
+        <td class="text-monospace">{{ participant.extra_data.get(field.name)|default('', true) }}</td>
+        {%- else -%}
+        <td></td>
+        {%- endif -%}
+        {% endif %}
+        {% endfor %}
+      </tr>
+      {% else %}
+      {%- set colspan = 7 + (location_types|length) + (extra_fields|length) -%}
+      <tr class="table-warning">
+        <td class="text-center text-muted" colspan="{{ colspan }}">{{ _('No Data Available') }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<div class="card-footer">
+  {% if args.participant_set_id -%}
+  {{ render_pager(participants, 'participantset.participants_list', args) }}
+  {%- else -%}
+  {{ render_pager(participants, 'participants.participant_list', args) }}
+  {%- endif %}
+</div>
+
+<div class="wizard" id="import-wizard" data-title="{{ _('Import Participants') }}">
+  <div class="wizard-card" data-cardname="uploadFile">
+    <h3>{{ _('Upload File') }}</h3>
+    <div class="wizard-input-section">
+    <form enctype="multipart/form-data" method="POST" id="upload-form" action="{{ url_for('participantset.participants_import', participant_set_id=participant_set_id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+      <div class="custom-file">
+        <input type="file" class="custom-file-input upload" id="uploadFile" name="spreadsheet">
+        <label for="uploadFile" class="custom-file-label" data-browse="{{ _('Browse') }}">{{ _('Choose file') }}</label>
+        <small class="form-text text-muted" id="uploadFileHelptext">{{ _('Only .csv, .xls and .xlsx files') }}</small>
+      </div>
+    </form>
+    </div>
+  </div>
+
+  <div class="wizard-card pr-0" data-cardname="mapFields">
+    <h3>{{ _('Map Fields') }}</h3>
+    <div class="wizard-input-section overflow-auto"></div>
+  </div>
+
+  <div class="wizard-card" data-cardname="finalize">
+    <h3>{{ _('Finalize') }}</h3>
+    <div class="wizard-input-section">
+      <div class="alert alert-info">
+        <span class="create-server-name">{% trans %}Click the <strong>Submit</strong> button to begin the import process.{% endtrans %}</span>
+      </div>
+    </div>
+
+    <div class="wizard-failure">
+      <div class="alert alert-danger">
+        {% trans %}There was a problem submitting the form. Please try again in a minute.{% endtrans %}
+      </div>
+    </div>
+  </div>
+</div>
+{%- endblock -%}
+
+{%- block tail_js -%}
+{{ super() }}
+<script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap-wizard.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/jquery.form.js') }}"></script>
+<script type="text/javascript">
+$(function(){
+    $('#filter_reset').on('click', function() {
+      var $form = $(this).parents('form').first();
+      $form.find(':input').not('button').each(function() { $(this).val(''); })
+      $form.submit();
+    });
+
+    var wizard = $('#import-wizard').wizard({
+        keyboard : true,
+        contentHeight : 500,
+        contentWidth : 700,
+        showCancel: true,
+        backdrop: true,
+        buttons: {'cancelText': "{{ _('Cancel') }}",
+                  'nextText': "{{ _('Next') }}",
+                  'backText': "{{ _('Back') }}",
+                  'submitText': "{{ _('Submit') }}",
+                  'submittingText': "{{ _('Submitting...') }}"}
+    });
+
+    wizard.on('closed', function() {
+        wizard.reset();
+        var uploadFile = document.getElementById('uploadFile');
+        uploadFile.value = ''
+        uploadFile.dispatchEvent(new Event('change'));
+        $('#uploadFile').removeClass('is-invalid');
+        $('#uploadFileHelptext').removeClass('invalid-feedback');
+    });
+
+    wizard.cards['uploadFile'].on('validate', function (card) {
+        var cont = true;
+        $('#upload-form').ajaxSubmit({
+            async: false,
+            error: function (data) {
+                input = card.el.find("#uploadFile");
+                input_helptext = card.el.find('#uploadFileHelptext');
+                input.addClass('is-invalid');
+                input_helptext.removeClass('text-muted');
+                input_helptext.addClass('invalid-feedback');
+                cont = false;
+            },
+            success: function (data) {
+                $('.wizard-input-section', wizard.cards['mapFields'].el).html(data);
+                $('.wizard-input-section').height(wizard.dimensions.cardContainer - 85);
+                cont = true;
+            }
+        });
+        return cont;
+    });
+
+    wizard.cards['mapFields'].on('validate', function (card) {
+      var cont = false;
+
+      $.ajax({
+        type: 'POST',
+        url: $('#form-action').val(),
+        data: wizard.serialize(),
+        async: false,
+        beforeSend: function (xhr) { xhr.setRequestHeader('X-Validate', '1'); },
+      }).done(function (response) {
+        cont = true;
+      }).fail(function (data) {
+        $('#form-action-errors', wizard.cards['mapFields'].el).html(data.responseText);
+        $('#form-action-errors', wizard.cards['mapFields'].el).removeClass('d-none');
+        cont = false;
+      });
+
+      return cont;
+    });
+
+    wizard.on("submit", function(wizard) {
+        $.ajax({
+            type: 'POST',
+            url: $('#form-action').val(),
+            data: wizard.serialize()
+        }).done(function (response) {
+            wizard.trigger("success");
+            wizard.hideButtons();
+            wizard._submitting = false;
+            wizard.submitSuccess();
+            wizard.updateProgressBar(0);
+            wizard.close();
+        }).fail(function () {
+          wizard.submitFailure();
+          wizard.showButtons();
+        });
+    });
+
+    $('#open-wizard').click(function(e) {
+        e.preventDefault();
+        wizard.reset();
+        var uploadFile = document.getElementById('uploadFile');
+        uploadFile.value = ''
+        uploadFile.dispatchEvent(new Event('change'));
+        $('#uploadFile').removeClass('is-invalid');
+        $('#uploadFileHelptext').removeClass('invalid-feedback');
+        wizard.show();
+    });
+
+    $('select.select2-locations').select2(LocationOptions);
+    $('#group.select2').select2({
+      theme: 'bootstrap4',
+      placeholder: "{{ _('All Groups') }}"
+    });
+});
+</script>
+
+{% if perms.send_messages.can() %}
+{{ send_message_modal(participants.total) }}
+{% endif %}
+{%- endblock -%}

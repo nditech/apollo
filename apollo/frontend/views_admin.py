@@ -27,6 +27,9 @@ from apollo.deployments.serializers import EventArchiveSerializer
 from apollo.locations.views_locations import (
     locations_builder, import_divisions, export_divisions,
     locations_list, location_edit, locations_import, locations_headers)
+from apollo.participants.views_participants import (
+    participant_list, participant_list_import, participant_headers,
+    participant_edit)
 
 
 app_time_zone = pytz.timezone(settings.TIMEZONE)
@@ -389,10 +392,7 @@ class LocationSetAdminView(SetViewMixin, BaseAdminView):
     def locations_headers(self, location_set_id, upload_id):
         return locations_headers(self, location_set_id, upload_id)
 
-    @expose(
-        '/location/<int:id>',
-        methods=['GET', 'POST']
-    )
+    @expose('/location/<int:id>', methods=['GET', 'POST'])
     def location_edit(self, id):
         return location_edit(self, id)
 
@@ -423,6 +423,25 @@ class ParticipantSetAdminView(SetViewMixin, BaseAdminView):
                 models.LocationSet.id, models.LocationSet.name).all()
 
         return form
+
+    @expose('/participants/<int:participant_set_id>', methods=['GET', 'POST'])
+    def participants_list(self, participant_set_id):
+        return participant_list(participant_set_id, self)
+
+    @expose('/participants/<int:participant_set_id>/import', methods=['POST'])
+    def participants_import(self, participant_set_id):
+        return participant_list_import(participant_set_id)
+
+    @expose(
+        '/participants/<int:participant_set_id>/headers/<int:upload_id>',
+        methods=['GET', 'POST']
+    )
+    def participants_headers(self, participant_set_id, upload_id):
+        return participant_headers(upload_id, participant_set_id, self)
+
+    @expose('/participant/<int:id>', methods=['GET', 'POST'])
+    def participant_edit(self, id):
+        return participant_edit(id, self)
 
 
 class FormsView(BaseView):
