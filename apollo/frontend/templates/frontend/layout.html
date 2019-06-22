@@ -110,7 +110,13 @@
                 {% block title -%}
                     <ol class="breadcrumb mb-n2">
                         {% for breadcrumb in breadcrumbs %}
-                        <li class="breadcrumb-item {%- if loop.last %} active{% endif %}" {%- if loop.last %} aria-current="page"{% endif %}>{{ breadcrumb }}</li>
+                        <li class="breadcrumb-item {%- if loop.last %} active{% endif %}" {%- if loop.last %} aria-current="page"{% endif %}>
+                            {% if breadcrumb.url -%}
+                            <a href="{{ breadcrumb.url }}" class="text-decoration-none">{{ breadcrumb.text or breadcrumb }}</a>
+                            {%- else -%}
+                            {{ breadcrumb.text or breadcrumb }}
+                            {%- endif %}
+                        </li>
                         {% endfor %}
                     </ol>
                 {%- endblock %}
