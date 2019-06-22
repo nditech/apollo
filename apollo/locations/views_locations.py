@@ -107,13 +107,12 @@ def locations_list(view, location_set_id):
         return view.render(template_name, **ctx)
 
 
-@route(bp, '/location/<int:id>', methods=['GET', 'POST'])
-@login_required
-@permissions.edit_locations.require(403)
-def location_edit(id):
-    template_name = 'frontend/location_edit.html'
+def location_edit(view, id):
+    template_name = 'admin/location_edit.html'
     location = Location.query.filter_by(id=id).first_or_404()
-    page_title = _('Edit Location')
+    breadcrumbs = [
+        {'text': _('Location Sets'), 'url': url_for('locationset.index_view')},
+        location.location_set.name, _('Edit Location')]
 
     if request.method == 'GET':
         form = generate_location_edit_form(location)
@@ -132,11 +131,12 @@ def location_edit(id):
             location.save()
 
             return redirect(url_for(
-                'locations.location_list',
+                'locationset.locations_list',
                 location_set_id=location.location_set_id))
 
-    return render_template(template_name, form=form, page_title=page_title,
-                           location_set=location.location_set)
+    return view.render(
+        template_name, form=form, breadcrumbs=breadcrumbs,
+        location_set=location.location_set)
 
 
 def locations_import(location_set_id):

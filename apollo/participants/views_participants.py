@@ -55,9 +55,9 @@ def has_participant_set():
     return g.event.participant_set is not None
 
 
-@route(bp, '/participants/set/<int:participant_set_id>',
-       endpoint="participant_list_with_set", methods=['GET'])
-@route(bp, '/participants', endpoint="participant_list", methods=['GET'])
+@route(
+    bp, '/participants', endpoint="participant_list",
+    methods=['GET', 'POST'])
 @register_menu(
     bp, 'main.participants',
     _('Participants'),
@@ -67,15 +67,21 @@ def has_participant_set():
     order=5)
 @login_required
 @permissions.view_participants.require(403)
-def participant_list(participant_set_id=0):
+def participant_list(participant_set_id=0, view=None):
     if participant_set_id:
         participant_set = ParticipantSet.query.filter(
             ParticipantSet.id == participant_set_id).first_or_404()
+        template_name = 'admin/participant_list.html'
+        breadcrumbs = [
+            {
+                'url': url_for('participantset.index_view'),
+                'text': _('Participant Sets')
+            },
+            participant_set.name, _('Participants')]
     else:
         participant_set = g.event.participant_set or abort(404)
-
-    template_name = 'frontend/participant_list.html'
-    breadcrumbs = [_('Participants')]
+        template_name = 'frontend/participant_list.html'
+        breadcrumbs = [_('Participants')]
 
     extra_fields = [field for field in participant_set.extra_fields
                     if field.visible_in_lists] \
@@ -264,8 +270,8 @@ def participant_list(participant_set_id=0):
 
     if request.form.get('action') == 'send_message':
         message = request.form.get('message', '')
-        recipients = [x for x in [participant.phone
-                                  if participant.phone else ''
+        recipients = [x for x in [participant.primary_phone
+                                  if participant.primary_phone else ''
                                   for participant in queryset_filterset.qs]
                       if x != '']
         recipients.extend(current_app.config.get('MESSAGING_CC'))
@@ -292,10 +298,16 @@ def participant_list(participant_set_id=0):
             page=page, per_page=current_app.config.get('PAGE_SIZE'))
     )
 
-    return render_template(
-        template_name,
-        **context
-    )
+    if view:
+        return view.render(
+            template_name,
+            **context
+        )
+    else:
+        return render_template(
+            template_name,
+            **context
+        )
 
 
 @route(bp, '/participant/phone/verify', methods=['POST'])
@@ -326,13 +338,11 @@ def toggle_phone_verification():
         abort(400)
 
 
-@route(bp, '/participant/set/<int:participant_set_id>/<int:id>',
-       endpoint="participant_edit_with_set", methods=['GET', 'POST'])
 @route(bp, '/participant/<int:id>',
        endpoint='participant_edit', methods=['GET', 'POST'])
 @login_required
 @permissions.edit_participant.require(403)
-def participant_edit(id, participant_set_id=0):
+def participant_edit(id, participant_set_id=0, view=None):
     participant = Participant.query.get_or_404(id)
     breadcrumbs = [
         _('Participants'),
@@ -419,14 +429,18 @@ def participant_edit(id, participant_set_id=0):
             else:
                 return redirect(url_for('participants.participant_list'))
 
-    return render_template(
-        template_name, form=form, breadcrumbs=breadcrumbs,
-        participant_set_id=participant_set_id,
-        participant=participant)
+    if view:
+        return view.render(
+            template_name, form=form, breadcrumbs=breadcrumbs,
+            participant_set_id=participant_set_id,
+            participant=participant)
+    else:
+        return render_template(
+            template_name, form=form, breadcrumbs=breadcrumbs,
+            participant_set_id=participant_set_id,
+            participant=participant)
 
 
-@route(bp, '/participants/set/<int:participant_set_id>/import',
-       endpoint='participant_list_import_with_set', methods=['POST'])
 @route(bp, '/participants/import',
        endpoint='participant_list_import', methods=['POST'])
 @login_required
@@ -452,7 +466,7 @@ def participant_list_import(participant_set_id=0):
 
     if participant_set_id:
         return redirect(url_for(
-            'participants.participant_headers_with_set',
+            'participantset.participants_headers',
             participant_set_id=participant_set.id,
             upload_id=upload.id)
         )
@@ -463,14 +477,11 @@ def participant_list_import(participant_set_id=0):
         )
 
 
-@route(bp, '/participants/set/<int:participant_set_id>/headers/'
-       '<int:upload_id>', endpoint='participant_headers_with_set',
-       methods=['GET', 'POST'])
 @route(bp, '/participants/headers/<int:upload_id>',
        endpoint='participant_headers', methods=['GET', 'POST'])
 @login_required
 @permissions.import_participants.require(403)
-def participant_headers(upload_id, participant_set_id=0):
+def participant_headers(upload_id, participant_set_id=0, view=None):
     if participant_set_id:
         participant_set = ParticipantSet.query.get_or_404(participant_set_id)
     else:
@@ -505,9 +516,14 @@ def participant_headers(upload_id, participant_set_id=0):
             for key in form.errors:
                 for msg in form.errors[key]:
                     error_msgs.append(msg)
-            return render_template(
-                'frontend/participant_headers_errors.html',
-                error_msgs=error_msgs), 400
+            if view:
+                return view.render(
+                    'frontend/participant_headers_errors.html',
+                    error_msgs=error_msgs), 400
+            else:
+                return render_template(
+                    'frontend/participant_headers_errors.html',
+                    error_msgs=error_msgs), 400
         else:
             if 'X-Validate' not in request.headers:
                 # get header mappings
@@ -537,7 +553,7 @@ def participant_headers(upload_id, participant_set_id=0):
 
             if participant_set_id:
                 return redirect(url_for(
-                    'participants.participant_list_with_set',
+                    'participantset.participants_list',
                     participant_set_id=participant_set_id))
             else:
                 return redirect(url_for('participants.participant_list'))

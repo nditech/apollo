@@ -1,52 +1,47 @@
-{%- extends 'frontend/layout.html' -%}
+{%- extends 'admin/base.html' -%}
 {%- from 'frontend/macros/participant_list_filter.html' import render_filter_form -%}
 {%- from 'frontend/macros/pagination.html' import render_pager -%}
 {%- from 'frontend/macros/send_message.html' import send_message_modal -%}
 
-{% block stylesheets %}
+{% block head_css %}
+{{ super() }}
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap-wizard.css') }}">
-<style type="text/css">
-.wizard-modal p {
-  margin: 0 0 10px;
-  padding: 0;
-}
-.fileUpload {
-  position: relative;
-  overflow: hidden;
-}
-.fileUpload input.upload {
-  position: absolute;
-  top: 0;
-  right: 0;
-  margin: 0;
-  padding: 0;
-  font-size: 20px;
-  cursor: pointer;
-  opacity: 0;
-  filter: alpha(opacity=0);
-}
-</style>
 {% endblock %}
 
-{% block toolbar %}
-<div class="btn-toolbar d-none d-md-flex" role="toolbar">
-  {%- if perms.export_participants.can() -%}
-  {% if args.participant_set_id -%}
-  <a class="btn btn-secondary mr-2" href="{{ url_for('participants.participant_list_with_set', export='true', participant_set_id=participant_set_id) }}">{{ _('Export') }}</a>
-  {%- else -%}
-  <a class="btn btn-secondary mr-2" href="{{ url_for('participants.participant_list', export='true') }}">{{ _('Export') }}</a>
-  {%- endif %}
-  {%- endif -%}
-  {%- if perms.import_participants.can() -%}
-  <button id="open-wizard" class="btn btn-primary mr-2">{{ _('Import Participants') }}</button>
-  {%- endif -%}
-  {%- if perms.send_messages.can() -%}
-  <button class="btn btn-success mr-2" id="send_message_modal_btn">{{ _('Send Message') }}</button>
-  {%- endif -%}
+{% block body %}
+<div class="d-flex justify-content-between align-items-md-center flex-column flex-md-row mb-n2">
+  <nav class="nav mb-4" aria-label="breadcrumb">
+    <ol class="breadcrumb mb-n2">
+        {% for breadcrumb in breadcrumbs %}
+        <li class="breadcrumb-item {%- if loop.last %} active{% endif %}" {%- if loop.last %} aria-current="page"{% endif %}>
+          {% if breadcrumb.url -%}
+          <a href="{{ breadcrumb.url }}" class="text-decoration-none">{{ breadcrumb.text or breadcrumb }}</a>
+          {%- else -%}
+          {{ breadcrumb.text or breadcrumb }}
+          {%- endif %}
+        </li>
+        {% endfor %}
+    </ol>
+  </nav>
+  <div class="d-flex justify-content-between align-items-start flex-column flex-md-row">
+    <div class="btn-toolbar d-none d-md-flex" role="toolbar">
+      {%- if perms.export_participants.can() -%}
+      {% if args.participant_set_id -%}
+      <a class="btn btn-secondary mr-2" href="{{ url_for('participantset.participants_list', export='true', participant_set_id=participant_set_id) }}">{{ _('Export') }}</a>
+      {%- else -%}
+      <a class="btn btn-secondary mr-2" href="{{ url_for('participants.participant_list', export='true') }}">{{ _('Export') }}</a>
+      {%- endif %}
+      {%- endif -%}
+      {%- if perms.import_participants.can() -%}
+      <button id="open-wizard" class="btn btn-primary mr-2">{{ _('Import Participants') }}</button>
+      {%- endif -%}
+      {%- if perms.send_messages.can() -%}
+      <button class="btn btn-success mr-2" id="send_message_modal_btn">{{ _('Send Message') }}</button>
+      {%- endif -%}
+    </div>
+  </div>
 </div>
-{% endblock %}
 
-{% block content %}
 {%- set flash_msgs = get_flashed_messages(category_filter=['task_begun']) -%}
 <div class="row">
   <div class="col-md-12">
@@ -56,7 +51,7 @@
 
 <div class="card-header">
   {% if args.participant_set_id -%}
-  {{ render_pager(participants, 'participants.participant_list_with_set', args) }}
+  {{ render_pager(participants, 'participantset.participants_list', args) }}
   {%- else -%}
   {{ render_pager(participants, 'participants.participant_list', args) }}
   {%- endif %}
@@ -196,7 +191,7 @@
 
 <div class="card-footer">
   {% if args.participant_set_id -%}
-  {{ render_pager(participants, 'participants.participant_list_with_set', args) }}
+  {{ render_pager(participants, 'participantset.participants_list', args) }}
   {%- else -%}
   {{ render_pager(participants, 'participants.participant_list', args) }}
   {%- endif %}
@@ -206,7 +201,7 @@
   <div class="wizard-card" data-cardname="uploadFile">
     <h3>{{ _('Upload File') }}</h3>
     <div class="wizard-input-section">
-    <form enctype="multipart/form-data" method="POST" id="upload-form" action="{% if args.participant_set_id %}{{ url_for('participants.participant_list_import_with_set', participant_set_id=participant_set_id) }}{% else %}{{ url_for('participants.participant_list_import') }}{% endif %}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+    <form enctype="multipart/form-data" method="POST" id="upload-form" action="{{ url_for('participantset.participants_import', participant_set_id=participant_set_id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
       <div class="custom-file">
         <input type="file" class="custom-file-input upload" id="uploadFile" name="spreadsheet">
         <label for="uploadFile" class="custom-file-label" data-browse="{{ _('Browse') }}">{{ _('Choose file') }}</label>
@@ -238,7 +233,8 @@
 </div>
 {%- endblock -%}
 
-{%- block scripts -%}
+{%- block tail_js -%}
+{{ super() }}
 <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap-wizard.min.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.form.js') }}"></script>
 <script type="text/javascript">
