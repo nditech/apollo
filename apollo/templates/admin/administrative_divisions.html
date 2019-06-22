@@ -178,6 +178,16 @@
         {% endfor %}
     </ol>
   </nav>
+  <div class="d-flex justify-content-between align-items-start flex-column flex-md-row">
+    <div class="btn-toolbar d-none d-md-flex" role="toolbar">
+      <button type="button" id="addDivisionButton" class="btn btn-secondary mr-2">{{ _('Add Division') }}</button>
+      <a href="{{ url_for('locationset.export_divisions', location_set_id=location_set.id) }}" class="btn btn-secondary mr-2">{{ _('Export') }}</a>
+      {% if not has_admin_divisions %}
+      <button type="button" id="exportBtn" class="btn btn-secondary mr-2" data-toggle="modal" data-target="#importModal">{{ _('Import') }}</button>
+      {% endif %}
+      <button type="button" id="saveBtn" class="btn btn-primary mr-2">{{ _('Save') }}</button>
+    </div>
+  </div>
 </div>
 
 <div class="card mt-3 border-0">
@@ -189,13 +199,7 @@
 {%- block footer -%}
   <div class="mt-n2 pb-2 d-flex justify-content-end">
     <div>
-      <a href="{{ url_for('locationset.index_view') }}" id="cancelBtn" class="btn btn-secondary">{{ _('Cancel') }}</a>
-      <button type="button" id="addDivisionButton" class="btn btn-secondary">{{ _('Add Division') }}</button>
-      <a href="{{ url_for('locationset.export_divisions', location_set_id=location_set.id) }}" class="btn btn-secondary">{{ _('Export') }}</a>
-      {% if not has_admin_divisions %}
-      <button type="button" id="exportBtn" class="btn btn-secondary" data-toggle="modal" data-target="#importModal">{{ _('Import') }}</button>
-      {% endif %}
-      <button type="button" id="saveBtn" class="btn btn-primary">{{ _('Save') }}</button>
+      
     </div>
   </div>
 {%- endblock %}
