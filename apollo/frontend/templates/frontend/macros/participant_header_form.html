@@ -5,8 +5,8 @@
 	<input type="hidden" name="action" id="form-action" value="{{ request.full_path }}">
 	{%- for field in form -%}
 	{%- if field.type != 'CSRFTokenField' -%}
-	<div class="form-group row {{- 'has_error' if field.errors }}">
-		{{ field.label(class_='col-sm-4 col-form-label text-right') }}
+	<div class="form-group row align-items-center {{- ' has_error' if field.errors }}">
+		{{ field.label(class_='col-sm-4 col-form-label text-right mb-0') }}
 		<div class="col-sm-8">
 			{{ field(class_='form-control custom-select is-invalid' if field.errors else 'form-control custom-select') }}
 			{% if field.errors %}

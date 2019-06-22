@@ -279,8 +279,3 @@ def import_locations(upload_id, mappings, location_set_id):
     )
 
     send_email(_('Locations Import Report'), msg_body, [upload.user.email])
-
-
-@celery.task
-def nuke_locations(location_set_id):
-    utils.nuke_locations(location_set_id)

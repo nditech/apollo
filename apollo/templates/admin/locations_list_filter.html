@@ -1,0 +1,22 @@
+{% macro render_filter_form(form) %}
+<div class="card border-light bg-light mb-3">
+  <div class="card-header">
+    <form class="mb-n2 ml-n2 mr-n2">
+      <div class="form-row">
+        <div class="col-6 col-md-4 mb-2">
+          {{ form.name(class_='form-control', placeholder='Name') }}
+        </div>
+        <div class="col-6 col-md-2 mb-2">
+          {{ form.location_type(class_='form-control custom-select') }}
+        </div>
+        <div class="col-md-2 mb-2">
+          <div class="d-flex flex-row">
+            <button class="btn btn-primary mr-2 flex-fill" type="submit">{{ _('Filter') }}</button>
+            <a class="btn btn-secondary flex-fill" href="#" id="filter_reset">{{ _('Clear') }}</a>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+{% endmacro %}

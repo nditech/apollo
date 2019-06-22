@@ -55,13 +55,7 @@ location_api.add_resource(
 )
 
 
-@route(bp, '/locations/set/<int:location_set_id>', methods=['GET'])
-@login_required
-@permissions.edit_locations.require(403)
-def location_list(location_set_id):
-    template_name = 'frontend/location_list.html'
-    page_title = _('Locations')
-
+def locations_list(view, location_set_id):
     location_set = LocationSet.query.filter(
         LocationSet.id == location_set_id).first_or_404()
     queryset = Location.query.select_from(
@@ -73,6 +67,11 @@ def location_list(location_set_id):
         field for field in LocationDataField.query.filter(
             LocationDataField.location_set_id == location_set_id)
         if field.visible_in_lists]
+
+    template_name = 'admin/locations_list.html'
+    breadcrumbs = [
+        {'text': _('Location Sets'), 'url': url_for('locationset.index_view')},
+        location_set.name, _('Locations')]
 
     args = request.args.to_dict(flat=False)
     args.update(location_set_id=location_set_id)
@@ -98,14 +97,14 @@ def location_list(location_set_id):
             args=args,
             extra_fields=extra_fields,
             filter_form=queryset_filter.form,
-            page_title=page_title,
+            breadcrumbs=breadcrumbs,
             form=DummyForm(),
             location_set=location_set,
             location_set_id=location_set_id,
             locations=subset.paginate(
                 page=page, per_page=current_app.config.get('PAGE_SIZE')))
 
-        return render_template(template_name, **ctx)
+        return view.render(template_name, **ctx)
 
 
 @route(bp, '/location/<int:id>', methods=['GET', 'POST'])
@@ -140,9 +139,6 @@ def location_edit(id):
                            location_set=location.location_set)
 
 
-@route(bp, '/locations/set/<int:location_set_id>/import', methods=['POST'])
-@login_required
-@permissions.import_locations.require(403)
 def locations_import(location_set_id):
     form = file_upload_form(request.form)
 
@@ -158,17 +154,12 @@ def locations_import(location_set_id):
             user_id=user.id)
         upload.save()
 
-        return redirect(url_for('locations.location_headers',
+        return redirect(url_for('locationset.locations_headers',
                                 location_set_id=location_set_id,
                                 upload_id=upload.id))
 
 
-@route(bp, '/locations/set/<int:location_set_id>'
-           '/headers/upload/<int:upload_id>',
-       methods=['GET', 'POST'])
-@login_required
-@permissions.import_locations.require(403)
-def location_headers(location_set_id, upload_id):
+def locations_headers(view, location_set_id, upload_id):
     user = current_user._get_current_object()
     location_set = LocationSet.query.filter(
         LocationSet.id == location_set_id).first_or_404()
@@ -190,11 +181,11 @@ def location_headers(location_set_id, upload_id):
         upload.delete()
         return abort(400)
 
-    template_name = 'frontend/location_headers.html'
+    template_name = 'admin/location_headers.html'
 
     if request.method == 'GET':
         form = mapping_form_class()
-        return render_template(template_name, form=form)
+        return view.render(template_name, form=form)
     else:
         form = mapping_form_class()
 
@@ -203,8 +194,8 @@ def location_headers(location_set_id, upload_id):
             for key in form.errors:
                 for msg in form.errors[key]:
                     error_msgs.append(msg)
-            return render_template(
-                'frontend/location_headers_errors.html',
+            return view.render(
+                'admin/location_headers_errors.html',
                 error_msgs=error_msgs), 400
         else:
             if 'X-Validate' not in request.headers:
@@ -222,22 +213,20 @@ def location_headers(location_set_id, upload_id):
                 }
                 tasks.import_locations.apply_async(kwargs=kwargs)
 
-            return redirect(url_for('locations.location_list',
+            return redirect(url_for('locationset.locations_list',
                                     location_set_id=location_set_id))
 
 
-@route(bp, '/locations/set/<int:location_set_id>/builder',
-       methods=['GET', 'POST'])
-@login_required
-@permissions.edit_locations.require(403)
-def locations_builder(location_set_id):
+def locations_builder(view, location_set_id):
     location_set = LocationSet.query.get_or_404(location_set_id)
 
     has_admin_divisions = db.session.query(LocationType.query.filter(
         LocationType.location_set_id == location_set_id).exists()).scalar()
 
-    template_name = 'frontend/location_builder.html'
-    page_title = _('Administrative Divisions')
+    template_name = 'admin/administrative_divisions.html'
+    breadcrumbs = [
+        {'text': _('Location Sets'), 'url': url_for('locationset.index_view')},
+        location_set.name, _('Administrative Divisions')]
     form = forms.AdminDivisionImportForm()
 
     if request.method == 'POST' and request.form.get('divisions_graph'):
@@ -258,7 +247,7 @@ def locations_builder(location_set_id):
             if db.session.query(query.exists()).scalar():
                 flash(_('Administrative level %(name)s has locations assigned '
                         'and cannot be deleted.', name=unused_lt.name),
-                      category='locations_builder')
+                      category='danger')
                 continue
 
             # explicitly doing this because we didn't add a cascade
@@ -273,34 +262,14 @@ def locations_builder(location_set_id):
 
         flash(
             _('Your changes have been saved.'),
-            category='locations_builder'
+            category='info'
         )
 
-    return render_template(template_name, page_title=page_title,
-                           location_set=location_set, form=form,
-                           has_admin_divisions=has_admin_divisions)
+    return view.render(
+        template_name, breadcrumbs=breadcrumbs, location_set=location_set,
+        form=form, has_admin_divisions=has_admin_divisions)
 
 
-@route(bp, '/locations/set/<int:location_set_id>/purge', methods=['POST'])
-@login_required
-@admin_required(403)
-def nuke_locations(location_set_id):
-    flash(
-        str(_('Locations, Checklists, Critical Incidents and '
-            'Participants are being deleted.')),
-        category='locations'
-    )
-
-    tasks.nuke_locations.apply_async(args=(location_set_id,))
-
-    return redirect(url_for('locations.location_list',
-                            location_set_id=location_set_id))
-
-
-@route(bp, '/locations/set/<int:location_set_id>/export_divisions',
-       methods=['GET'])
-@login_required
-@permissions.edit_locations.require(403)
 def export_divisions(location_set_id):
     location_set = LocationSet.query.filter(
         LocationSet.id == location_set_id).first_or_404()
@@ -317,10 +286,6 @@ def export_divisions(location_set_id):
                      as_attachment=True, attachment_filename=filename)
 
 
-@route(bp, '/locations/set/<int:location_set_id>/import_divisions',
-       methods=['POST'])
-@login_required
-@permissions.edit_locations.require(403)
 def import_divisions(location_set_id):
     location_set = LocationSet.query.filter(
         LocationSet.id == location_set_id).first_or_404()
@@ -334,8 +299,8 @@ def import_divisions(location_set_id):
             graph = json.load(request.files['import_file'])
             import_graph(graph, location_set, fresh_import=True)
 
-            return redirect(url_for('.locations_builder',
+            return redirect(url_for('locationset.builder',
                                     location_set_id=location_set_id))
 
-    return redirect(url_for('.locations_builder',
+    return redirect(url_for('locationset.builder',
                     location_set_id=location_set_id))

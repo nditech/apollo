@@ -199,7 +199,7 @@ def concurrent_events(event_id):
 @login_required
 @permissions.view_events.require(403)
 def event_selection():
-    page_title = _('Choose Event')
+    breadcrumbs = [_('Choose Event')]
     template_name = 'frontend/event_selection.html'
 
     if request.method == 'GET':
@@ -213,4 +213,4 @@ def event_selection():
             set_event(event)
             return redirect(url_for('dashboard.index'))
 
-    return render_template(template_name, form=form, page_title=page_title)
+    return render_template(template_name, form=form, breadcrumbs=breadcrumbs)

@@ -1,26 +1,58 @@
-{% extends 'frontend/_layout.html' %}
+{% extends 'frontend/layout.html' %}
 {% block content %}
-<form method="post" class="form-horizontal">
-{{ form.hidden_tag() }}
-{%- for field in form -%}
-{%- if field.type != 'CSRFTokenField' -%}
-<div class="form-group {% if field.errors %}has-error{% endif %}">
-{{ field.label(class_='col-sm-3 col-sm-offset-1 control-label') }}
-<div class="col-sm-6">
-{{ field(class_='form-control span3') }}
-{% if field.errors %}
-{% for e in field.errors %}
-<p class="help-block">{{ e }}</p>
-{% endfor %}
-{% endif %}
-</div>
-</div>
-{%- endif -%}
-{%- endfor -%}
-<div class="form-group">
-<div class="col-sm-offset-4 col-sm-4">
-<button class="btn btn-primary input-mini" type="submit">{{ _('Save') }}</button> <a class="btn btn-default input-mini" style="margin-left:0.5em" href="javascript:history.go(-1);">{{ _('Cancel') }}</a>
-</div>
+<form method="POST">
+<div class="row">
+  <div class="col-md-6 offset-md-3">
+    <div class="card border-light bg-light mt-4">
+      <h5 class="card-header">{{ _('Edit Profile') }}</h5>
+      <div class="card-body">
+        {{ form.hidden_tag() }}
+        {%- for field in form -%}
+        {%- if field.type != 'CSRFTokenField' -%}
+        <div class="form-group row align-items-center">
+          {{ field.label(class_='col-sm-4 control-label text-right mb-0') }}
+          <div class="col-sm-8">
+            {% if field.name == 'locale' %}
+            {{ field(class_='form-control custom-select tracked') }}
+            {% else %}
+            {{ field(class_='form-control text-monospace tracked') }}
+            {% endif %}
+            {% if field.errors %}
+            {% for e in field.errors %}
+            <p class="help-block">{{ e }}</p>
+            {% endfor %}
+            {% endif %}
+          </div>
+        </div>
+        {% endif %}
+        {%- endfor -%}
+      </div>
+      <div class="card-footer text-right">
+        <button type="button" id="cancelBtn" class="btn btn-secondary">{{ _('Cancel') }}</button>
+        <button type="button" id="saveBtn" class="btn btn-primary">{{ _('Save') }}</button>
+      </div>
+    </div>
+  </div>
 </div>
 </form>
 {% endblock content %}
+{% block scripts %}
+<script type="text/javascript" charset="utf-8">
+  $(function(){
+    $(document).on('change', '.tracked', function(e){
+      window.onbeforeunload = function () { return true; };
+    });
+
+    $('#cancelBtn').click(function(){
+      var url = '{% if request.environ.get('HTTP_REFERER') == request.url %}{{ url_for('dashboard.index') }}{% else %}{{ request.environ.get('HTTP_REFERER', url_for('dashboard.index')) }}{% endif %}';
+      window.onbeforeunload = null;
+      window.location.href = url;
+    });
+
+    $('#saveBtn').click(function(){
+      window.onbeforeunload = null;
+      $('form').submit();
+    });
+  });
+</script>
+{% endblock %}

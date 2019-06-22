@@ -7,12 +7,6 @@ from apollo.core import db
 from apollo.locations.models import LocationTypePath
 
 
-def nuke_locations(location_set_id):
-    # nuke locations
-    services.locations.find(location_set_id=location_set_id).delete()
-    db.session.commit()
-
-
 def import_graph(graph, location_set, fresh_import=False):
     nodes = graph.get('nodes')
     edges = graph.get('edges')

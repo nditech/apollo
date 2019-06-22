@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
 from flask import flash, g, send_file, redirect, url_for, request
-from flask_admin import form
-from flask_admin import BaseView
-from flask_admin import expose
+from flask_admin import (
+    form, BaseView, expose)
 from flask_admin.actions import action
 from flask_admin.contrib.sqla import ModelView
 from flask_admin.contrib.sqla.fields import InlineModelFormList
@@ -25,6 +24,9 @@ from apollo.core import admin, db
 from apollo import models, services, settings
 from apollo.constants import LANGUAGE_CHOICES
 from apollo.deployments.serializers import EventArchiveSerializer
+from apollo.locations.views_locations import (
+    locations_builder, import_divisions, export_divisions,
+    locations_list, location_edit, locations_import, locations_headers)
 
 
 app_time_zone = pytz.timezone(settings.TIMEZONE)
@@ -343,9 +345,9 @@ class SetViewMixin(object):
 
 
 class LocationSetAdminView(SetViewMixin, BaseAdminView):
-    column_list = ('name', 'divisions', 'locations')
+    column_list = ('name', 'administrative_divisions', 'locations')
     column_formatters = {
-        'divisions': macro('locations_builder'),
+        'administrative_divisions': macro('locations_builder'),
         'locations': macro('locations_list'),
     }
     form_columns = ('name',)
@@ -359,6 +361,33 @@ class LocationSetAdminView(SetViewMixin, BaseAdminView):
         models.LocationTypePath.query.filter_by(location_set=model).delete()
         models.LocationType.query.filter_by(location_set=model).delete()
         return super().on_model_delete(model)
+
+    @expose('/builder/<int:location_set_id>', methods=['GET', 'POST'])
+    def builder(self, location_set_id):
+        return locations_builder(self, location_set_id)
+
+    @expose('/builder/<int:location_set_id>/import', methods=['POST'])
+    def import_divisions(self, location_set_id):
+        return import_divisions(location_set_id)
+
+    @expose('/builder/<int:location_set_id>/export')
+    def export_divisions(self, location_set_id):
+        return export_divisions(location_set_id)
+
+    @expose('/locations/<int:location_set_id>')
+    def locations_list(self, location_set_id):
+        return locations_list(self, location_set_id)
+
+    @expose('/locations/<int:location_set_id>/import', methods=['POST'])
+    def locations_import(self, location_set_id):
+        return locations_import(location_set_id)
+
+    @expose(
+        '/locations/<int:location_set_id>/headers/<int:upload_id>',
+        methods=['GET', 'POST']
+    )
+    def locations_headers(self, location_set_id, upload_id):
+        return locations_headers(self, location_set_id, upload_id)
 
 
 class ParticipantSetAdminView(SetViewMixin, BaseAdminView):

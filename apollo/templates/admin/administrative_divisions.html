@@ -1,0 +1,226 @@
+{% extends 'admin/master.html' %}
+
+{% block head_css %}
+{{ super() }}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/joint.min.css') }}">
+{% endblock %}
+
+
+{% block subtitle %}<a href="{{ url_for('locationset.index_view') }}">{{ location_set.name }}</a>{% endblock subtitle %}
+
+
+{% block body %}
+<div class="modal fade" id="addDivision" role="dialog">
+<form role="form" class="form-horizontal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="importModalLabel">{{ _('Add Division') }}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group row">
+          <label for="name" class="col-sm-2 control-label text-right">{{ _('Name') }}</label>
+          <div class="col-sm-10">
+            <input type="text" class="form-control" id="addDivisionName">
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="parents" class="col-sm-2 control-label text-right">{{ _('Parents') }}</label>
+          <div class="col-sm-10">
+            <select multiple="multiple" class="form-control" name="parents" id="addDivisionParents"></select>
+          </div>
+        </div>
+        <div class="form-group row">
+          <div class="col-sm-10 offset-sm-2">
+            <div class="custom-control custom-checkbox">
+              <input type="checkbox" class="custom-control-input" id="addDivisionAdministrative" name="is_administrative" value="true">
+              <label class="custom-control-label" for="addDivisionAdministrative">{{ _('Display on dashboard and in tables') }}</label>
+            </div>
+          </div>
+        </div>
+        <div class="form-group row">
+          <div class="col-sm-10 offset-sm-2">
+            <div class="custom-control custom-checkbox">
+              <input type="checkbox" class="custom-control-input" id="addDivisionPolitical" name="is_political" value="true">
+              <label class="custom-control-label" for="addDivisionPolitical">{{ _('Use in data summary') }}</label>
+            </div>
+          </div>
+        </div>
+        <div class="form-group row">
+          <div class="col-sm-10 offset-sm-2">
+            <div class="custom-control custom-checkbox">
+              <input type="checkbox" class="custom-control-input" id="addDivisionRegisteredVoters" name="has_registered_voters" value="true">
+              <label class="custom-control-label" for="addDivisionRegisteredVoters">{{ _('Has Registered Voters') }}</label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ _('Close') }}</button>
+        <button type="button" class="btn btn-primary" id="addModalSaveButton">{{ _('Add') }}</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</form>
+</div><!-- /.modal -->
+
+<div class="modal fade" id="updateDivision" role="dialog">
+<form role="form" class="form-horizontal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="importModalLabel">{{ _('Update Division') }}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" style="padding-bottom:5px">
+        <div class="form-group row">
+          <label for="name" class="col-sm-2 control-label text-right">{{ _('Name') }}</label>
+          <div class="col-sm-10">
+            <input type="text" class="form-control" id="updateDivisionName" name="name">
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="parents" class="col-sm-2 control-label">{{ _('Parents') }}</label>
+          <div class="col-sm-10">
+            <select multiple="multiple" class="form-control" name="parents" id="updateDivisionParents"></select>
+            <input type="hidden" class="form-control" id="updateDivisionId" name="id">
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <div class="col-sm-10 offset-sm-2">
+            <div class="custom-control custom-checkbox">
+              <input type="checkbox" class="custom-control-input" id="updateDivisionAdministrative" name="is_administrative" value="true">
+              <label class="custom-control-label" for="updateDivisionAdministrative">{{ _('Display on dashboard and in tables') }}</label>
+            </div>
+          </div>
+        </div>
+        <div class="form-group row">
+          <div class="col-sm-10 offset-sm-2">
+            <div class="custom-control custom-checkbox">
+              <input type="checkbox" class="custom-control-input" id="updateDivisionPolitical" name="is_political" value="true">
+              <label class="custom-control-label" for="updateDivisionPolitical">{{ _('Use in data summary') }}</label>
+            </div>
+          </div>
+        </div>
+        <div class="form-group row">
+          <div class="col-sm-10 offset-sm-2">
+            <div class="custom-control custom-checkbox">
+              <input type="checkbox" class="custom-control-input" id="updateDivisionRegisteredVoters" name="has_registered_voters" value="true">
+              <label class="custom-control-label" for="updateDivisionRegisteredVoters">{{ _('Has Registered Voters') }}</label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ _('Close') }}</button>
+        <button type="button" class="btn btn-danger" id="updateModalDeleteButton">{{ _('Delete') }}</button>
+        <button type="button" class="btn btn-primary" id="updateModalSaveButton">{{ _('Update') }}</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</form>
+</div><!-- /.modal -->
+
+
+{% if not has_admin_divisions %}
+<form action="{{ url_for('locationset.import_divisions', location_set_id=location_set.id) }}" enctype="multipart/form-data" method="post">
+<div class="modal fade" id="importModal" role="dialog" aria-labelledby="importModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="importModalLabel">{{ _('Import Admin Divisions') }}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+          {{ form.hidden_tag() }}
+          <div class="custom-file">
+            {{ form.import_file(class_='custom-file-input') }}
+            <label for="import_file" class="custom-file-label" data-browse="{{ _('Browse') }}">{{ _('Choose file') }}</label>
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ _('Close') }}</button>
+        <button type="submit" class="btn btn-primary">{{ _('Import') }}</button>
+      </div>
+    </div>
+  </div>
+</div>
+</form>
+{% endif %}
+
+
+
+<form id="save-form" method="POST">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+  <input type="hidden" name="divisions_graph" id="divisions_graph" value="" />
+</form>
+
+
+<div class="d-flex justify-content-between align-items-md-center flex-column flex-md-row mb-n2">
+  <nav class="nav mb-4" aria-label="breadcrumb">
+    <ol class="breadcrumb mb-n2">
+        {% for breadcrumb in breadcrumbs %}
+        <li class="breadcrumb-item {%- if loop.last %} active{% endif %}" {%- if loop.last %} aria-current="page"{% endif %}>
+          {% if breadcrumb.url -%}
+          <a href="{{ breadcrumb.url }}" class="text-decoration-none">{{ breadcrumb.text or breadcrumb }}</a>
+          {%- else -%}
+          {{ breadcrumb.text or breadcrumb }}
+          {%- endif %}
+        </li>
+        {% endfor %}
+    </ol>
+  </nav>
+  <div class="d-flex justify-content-between align-items-start flex-column flex-md-row">
+    <div class="btn-toolbar d-none d-md-flex" role="toolbar">
+      <button type="button" id="addDivisionButton" class="btn btn-secondary mr-2">{{ _('Add Division') }}</button>
+      <a href="{{ url_for('locationset.export_divisions', location_set_id=location_set.id) }}" class="btn btn-secondary mr-2">{{ _('Export') }}</a>
+      {% if not has_admin_divisions %}
+      <button type="button" id="exportBtn" class="btn btn-secondary mr-2" data-toggle="modal" data-target="#importModal">{{ _('Import') }}</button>
+      {% endif %}
+      <button type="button" id="saveBtn" class="btn btn-primary mr-2">{{ _('Save') }}</button>
+    </div>
+  </div>
+</div>
+
+<div class="card mt-3 border-0">
+  <div id="paper" data-graph='{{ location_set.make_admin_divisions_graph()|tojson }}'></div>
+</div>
+{% endblock %}
+
+
+{%- block footer -%}
+  <div class="mt-n2 pb-2 d-flex justify-content-end">
+    <div>
+      
+    </div>
+  </div>
+{%- endblock %}
+
+
+{% block tail_js %}
+{{ super() }}
+<script type="text/javascript" src="{{ url_for('static', filename='js/lodash.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/backbone-min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/dagre.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/graphlib.core.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/joint.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/locations_builder.js') }}"></script>
+<script type="text/javascript">
+  (function() {
+    $('#importModal').on('show.bs.modal', function(){
+      var widget = document.getElementById('import_file');
+      widget.value = ''
+      widget.dispatchEvent(new Event('change'));
+    });
+    setTimeout(function(){ $('.alert').alert('close');}, 3000);
+  })();
+</script>
+{% endblock %}

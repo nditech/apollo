@@ -16,17 +16,6 @@
       {%- else -%}
       <link rel="stylesheet" href="{{ asset_url_for('styles.css') }}">
       {%- endif %}
-      {# <link href="{{ admin_static.url(filename='admin/css/bootstrap3/admin.css', v='1.1.1') }}" rel="stylesheet"> #}
-      {# <link href="{{ admin_static.url(filename='bootstrap/bootstrap3/swatch/{swatch}/bootstrap.min.css'.format(swatch=config.get('FLASK_ADMIN_SWATCH', 'default')), v='3.3.5') }}" rel="stylesheet">
-      {%if config.get('FLASK_ADMIN_SWATCH', 'default') == 'default' %}
-      <link href="{{ admin_static.url(filename='bootstrap/bootstrap3/css/bootstrap-theme.min.css', v='3.3.5') }}" rel="stylesheet">
-      {%endif%}
-      <link href="{{ admin_static.url(filename='admin/css/bootstrap3/admin.css', v='1.1.1') }}" rel="stylesheet"> #}
-      {# {% if admin_view.extra_css %}
-        {% for css_url in admin_view.extra_css %}
-          <link href="{{ css_url }}" rel="stylesheet">
-        {% endfor %}
-      {% endif %} #}
       <style>
       .shrink { width: 0.1%; white-space: nowrap; }
       </style>
@@ -95,11 +84,6 @@
     <script type="text/javascript" src="{{ asset_url_for('scripts.js') }}" charset="utf-8"></script>
     {%- endif %}
     <script src="{{ admin_static.url(filename='vendor/moment.min.js') }}" type="text/javascript"></script>
-    {# {% if admin_view.extra_js %}
-      {% for js_url in admin_view.extra_js %}
-        <script src="{{ js_url }}" type="text/javascript"></script>
-      {% endfor %}
-    {% endif %} #}
     <script type="text/javascript">
       (function() {
         window.faHelpers = {
