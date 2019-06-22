@@ -239,16 +239,16 @@
 {%- endblock -%}
 
 {%- block scripts -%}
-<script src="{{ url_for('static', filename='js/filters.js') }}"></script>
-<script src="{{ url_for('static', filename='js/forms.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap-wizard.min.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.form.js') }}"></script>
-<script type="text/javascript" src="{{ url_for('static', filename='js/underscore.js') }}"></script>
-<script type="text/javascript" src="{{ url_for('static', filename='js/URI.min.js') }}"></script>
 <script type="text/javascript">
-var wizard;
-
 $(function(){
+    $('#filter_reset').on('click', function() {
+      var $form = $(this).parents('form').first();
+      $form.find(':input').not('button').each(function() { $(this).val(''); })
+      $form.submit();
+    });
+
     var wizard = $('#import-wizard').wizard({
         keyboard : true,
         contentHeight : 500,
