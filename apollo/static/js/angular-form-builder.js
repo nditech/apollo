@@ -193,7 +193,10 @@
         scope: {
           fbBuilder: '='
         },
-        template: "<div class='form-horizontal'>\n    <div class='fb-form-object-editable' ng-repeat=\"object in formObjects\"\n        fb-form-object-editable=\"object\"></div>\n</div>",
+        template:
+        `<div class="form-horizontal">
+          <div class="fb-form-object-editable" ng-repeat="object in formObjects" fb-form-object-editable="object"></div>
+        </div>`,
         link: function(scope, element, attrs) {
           var beginMove, _base, _name;
           scope.formName = attrs.fbBuilder;
@@ -432,7 +435,15 @@
   ]).directive('fbComponents', function() {
     return {
       restrict: 'A',
-      template: "<ul ng-if=\"groups.length > 1\" class=\"nav nav-tabs nav-justified\">\n    <li ng-repeat=\"group in groups\" ng-class=\"{active:activeGroup==group}\">\n        <a href='#' ng-click=\"selectGroup($event, group)\">{{group}}</a>\n    </li>\n</ul>\n<div class='form-horizontal'>\n    <div class='fb-component' ng-repeat=\"component in components\"\n        fb-component=\"component\"></div>\n</div>",
+      template:
+      `<ul ng-if="groups.length > 1" class="nav nav-tabs nav-justified">
+        <li ng-repeat="group in groups" ng-class="{active:activeGroup==group}">
+          <a href='#' ng-click="selectGroup($event, group)">{{group}}</a>
+        </li>
+      </ul>
+      <div class='form-horizontal'>
+        <div class='fb-component' ng-repeat="component in components" fb-component="component"></div>
+      </div>`,
       controller: 'fbComponentsController'
     };
   }).directive('fbComponent', [
@@ -477,7 +488,8 @@
           input: '=ngModel',
           "default": '=fbDefault'
         },
-        template: "<div class='fb-form-object' ng-repeat=\"object in form\" fb-form-object=\"object\"></div>",
+        template:
+        `<div class="fb-form-object" ng-repeat="object in form" fb-form-object="object"></div>`,
         controller: 'fbFormController',
         link: function(scope, element, attrs) {
           var $builder, _base, _name;

@@ -1,0 +1,167 @@
+{% extends "admin/base.html" %}
+
+{%- block body %}
+<div class="d-flex justify-content-between align-items-md-center flex-column flex-md-row mb-3">
+  <nav class="nav mb-4" aria-label="breadcrumb">
+    <ol class="breadcrumb mb-n2">
+        {% for breadcrumb in breadcrumbs %}
+        <li class="breadcrumb-item {%- if loop.last %} active{% endif %}" {%- if loop.last %} aria-current="page"{% endif %}>
+          {% if breadcrumb.url -%}
+          <a href="{{ breadcrumb.url }}" class="text-decoration-none">{{ breadcrumb.text or breadcrumb }}</a>
+          {%- else -%}
+          {{ breadcrumb.text or breadcrumb }}
+          {%- endif %}
+        </li>
+        {% endfor %}
+    </ol>
+  </nav>
+  <div class="d-flex justify-content-between align-items-start flex-column flex-md-row">
+    <div class="btn-toolbar d-none d-md-flex" role="toolbar">
+      <a class="btn btn-secondary mr-2" href="{{ url_for('formsview.create_form') }}">{{ _('Create Form') }}</a>
+      <a class="btn btn-secondary mr-2" href="#" data-toggle="modal" data-target="#formImportModal">{{ _('Import Forms') }}</a>
+      <a class="btn btn-primary mr-2" href="#" data-toggle="modal" data-target="#checklistModal">{{ _('Create Checklists') }}</a>
+    </div>
+  </div>
+</div>
+
+{% with messages = get_flashed_messages(category_filter=['checklist_init_success']) %}
+{% if messages %}
+<div class="row">
+  <div class="col-md-12">
+    <div class="alert alert-success alert-dismissable">
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+      {% for message in messages %}
+      <p>{{ message }}</p>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endif %}
+{% endwith %}
+
+{% with messages = get_flashed_messages(category_filter=['checklist_init_failure']) %}
+{% if messages %}
+<div class="row">
+  <div class="col-md-12">
+    <div class="alert alert-danger alert-dismissable">
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+      {% for message in messages %}
+      <p>{{ message }}</p>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endif %}
+{% endwith %}
+
+<div class="table-responsive-md mb-n3">
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th scope="col">{{ _('Name') }}</th>
+        <th scope="col" class="col-2">{{ _('Type') }}</th>
+        <th scope="col" class="col-1">{{ _('Form Actions') }}</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for form in forms %}
+      <tr>
+        <td>{{ form.name }}</td>
+        <td class="align-middle"><span class="badge {% if form.form_type == 'CHECKLIST' %}badge-primary{% else %}badge-secondary{% endif %}">{{ form.get_form_type_display() }}</span></td>
+        <td class="align-middle">
+          <div class="dropdown">
+            <a class="btn btn-primary btn-sm dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              {{ _('Form Actions') }}
+            </a>
+
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+              <a class="dropdown-item" href="{{ url_for('formsview.edit_form', form_id=form.id) }}">{{ _('Properties') }}</a>
+              <a class="dropdown-item" href="{{ url_for('formsview.builder', form_id=form.id) }}">{{ _('Form Builder') }}</a>
+              {% if form.form_type == 'CHECKLIST' -%}
+                <a class="dropdown-item" href="{{ url_for('formsview.qa', form_id=form.id) }}">{{ _('Quality Assurance') }}</a>
+              {%- endif %}
+              <a class="dropdown-item" href="{{ url_for('formsview.form_export', form_id=form.id) }}">{{ _('Export') }}</a>
+            </div>
+          </div>
+        </td>
+      </tr>
+    {% else %}
+      <tr class="table-warning">
+        <td colspan="3" class="text-center text-muted">{{ _('No Forms Defined') }}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<form class="form-horizontal" method="POST" action="{{ url_for('formsview.init') }}" id="checklistInitForm">
+  <div class="modal fade" id="checklistModal" tabindex="-1" role="dialog" aria-labelledby="checklistModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 id="checklistModalLabel" class="modal-title">{{ _('Create Checklists') }}</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>          
+        </div>
+        <div class="modal-body">
+          {{ init_form.hidden_tag() }}
+          <div class="form-group row align-items-center">
+            {{ init_form.form.label(class_='col-sm-4 control-label text-right mb-0') }}
+            <div class="col-sm-8">
+              {{ init_form.form(class_="form-control custom-select")}}
+            </div>
+          </div>
+          <div class="form-group row align-items-center">
+            {{ init_form.role.label(class_='col-sm-4 control-label text-right mb-0') }}
+            <div class="col-sm-8">
+              {{ init_form.role(class_="form-control custom-select")}}
+            </div>
+          </div>
+          <div class="form-group row align-items-center">
+            {{ init_form.location_type.label(class_='col-sm-4 control-label text-right mb-0') }}
+            <div class="col-sm-8">
+              {{ init_form.location_type(class_="form-control custom-select")}}
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary btn-modal" data-dismiss="modal" aria-hidden="true">{{ _('Cancel') }}</button>
+          <button type="submit" id="send" class="btn btn-primary btn-modal">{{ _('Create Checklists') }}</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+
+<form action="{{ url_for('formsview.import_form') }}" enctype="multipart/form-data" method="post">
+  <div class="modal fade" id="formImportModal" role="dialog" aria-labelledby="formImportModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 id="formImportModalLabel" class="modal-title">{{ _('Import Form') }}</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          {{ form_import_form.hidden_tag() }}
+          <div class="custom-file">
+            <input type="file" class="custom-file-input upload" id="import_file" name="import_file">
+            <label for="import_file" class="custom-file-label" data-browse="{{ _('Browse') }}">{{ _('Choose file') }}</label>
+            <small class="form-text text-muted" id="import_file_help_text">{{ _('Only .xls and .xlsx files') }}</small>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary btn-modal" data-dismiss="modal" aria-hidden="true">{{ _('Cancel') }}</button>
+          <button class="btn btn-primary btn-modal">{{ _('Import') }}</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+{% endblock %}
