@@ -4,19 +4,19 @@ from io import BytesIO
 import json
 import os
 
-from flask import (Blueprint, current_app, flash, g, redirect, render_template,
+from flask import (Blueprint, current_app, flash, g, redirect,
                    request, Response, url_for, abort, stream_with_context,
                    send_file)
 from flask_babelex import lazy_gettext as _
 from flask_restful import Api
-from flask_security import current_user, login_required
+from flask_security import current_user
 from slugify import slugify_unicode
 from sqlalchemy import not_, or_
 from sqlalchemy.orm.attributes import flag_modified
 
 from apollo import services, utils
 from apollo.core import db, sentry, uploads
-from apollo.frontend import permissions, route
+from apollo.frontend import permissions
 from apollo.frontend.forms import (
     file_upload_form, generate_location_edit_form,
     DummyForm)

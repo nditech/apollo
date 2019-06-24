@@ -1,13 +1,10 @@
 # -*- coding: utf-8 -*-
 from io import BytesIO
 
-from apollo.frontend import route, permissions
 from flask import (
-    Blueprint, flash, g, redirect, render_template, request,
+    Blueprint, flash, g, redirect, request,
     send_file, url_for)
 from flask_babelex import lazy_gettext as _
-from flask_menu import register_menu
-from flask_security import login_required
 import json
 
 from apollo import models
@@ -22,17 +19,13 @@ bp = Blueprint('forms', __name__, template_folder='templates',
                static_folder='static')
 
 
-@route(bp, '/forms/init',
-       endpoint='checklist_init', methods=['POST'])
-@login_required
-@permissions.edit_forms.require(403)
 def checklist_init():
     flash_message = ''
     flash_category = ''
     form = make_checklist_init_form(g.event)
 
     if form.validate_on_submit():
-        flash_category = 'checklist_init_success'
+        flash_category = 'info'
         flash_message = _('Checklists are being created for the form, '
                           'role and location type you selected in the '
                           'current event')
@@ -43,30 +36,28 @@ def checklist_init():
             form.data['role'],
             form.data['location_type'])
     else:
-        flash_category = 'checklist_init_failure'
+        flash_category = 'danger'
         flash_message = _('Checklists were not created')
 
     flash(str(flash_message), flash_category)
-    return redirect(url_for('.list_forms'))
+    return redirect(url_for('formsview.index'))
 
 
-@route(bp, '/formbuilder/<int:id>',
-       endpoint='form_builder', methods=['GET', 'POST'])
-@login_required
-@permissions.edit_forms.require(403)
-def form_builder(id):
-    page_title = _('Form Builder')
-    template_name = 'frontend/formbuilder.html'
+def form_builder(view, id):
+    template_name = 'admin/formbuilder.html'
     form = models.Form.query.filter_by(id=id).first_or_404()
+    breadcrumbs = [
+        {'text': _('Forms'), 'url': url_for('formsview.index')},
+        _('Form Builder'), form.name]
 
     ctx = dict(
-        page_title=page_title,
+        breadcrumbs=breadcrumbs,
         form=form
     )
 
     if request.method == 'GET':
         ctx['form_data'] = FormBuilderSerializer.serialize(form)
-        return render_template(template_name, **ctx)
+        return view.render(template_name, **ctx)
     else:
         data = request.get_json()
 
@@ -76,24 +67,22 @@ def form_builder(id):
         return ''
 
 
-@route(bp, '/form/new',
-       endpoint='new_form', methods=['GET', 'POST'])
-@login_required
-@permissions.edit_forms.require(403)
-def new_form():
-    template_name = 'frontend/form_edit.html'
+def new_form(view):
+    template_name = 'admin/form_create.html'
 
-    page_title = _('Create Form')
+    breadcrumbs = [
+        {'text': _('Forms'), 'url': url_for('formsview.index')},
+        _('Create Form')]
 
     web_form = FormForm()
 
     if not web_form.validate_on_submit():
         context = {
-            'page_title': page_title,
+            'breadcrumbs': breadcrumbs,
             'form': web_form
         }
 
-        return render_template(template_name, **context)
+        return view.render(template_name, **context)
 
     form = models.Form(deployment_id=g.event.deployment_id)
     web_form.populate_obj(form)
@@ -105,44 +94,36 @@ def new_form():
     form.roles = roles
     form.save()
 
-    return redirect(url_for('.list_forms'))
+    return redirect(url_for('formsview.index'))
 
 
-@route(bp, '/form/<int:form_id>',
-       endpoint='edit_form', methods=['GET', 'POST'])
-@login_required
-@permissions.edit_forms.require(403)
-def edit_form(form_id):
-    template_name = 'frontend/form_edit.html'
+def edit_form(view, form_id):
+    template_name = 'admin/form_edit.html'
 
     form = models.Form.query.filter_by(id=form_id).first_or_404()
-    page_title = _('Edit %(name)s', name=form.name)
+    breadcrumbs = [
+        {'text': _('Forms'), 'url': url_for('formsview.index')},
+        _('Edit Form')]
     web_form = FormForm(obj=form)
 
     if not web_form.validate_on_submit():
         context = {
-            'page_title': page_title,
+            'breadcrumbs': breadcrumbs,
             'form': web_form,
         }
 
-        return render_template(template_name, **context)
+        return view.render(template_name, **context)
 
     web_form.populate_obj(form)
     form.save()
 
-    return redirect(url_for('.list_forms'))
+    return redirect(url_for('formsview.index'))
 
 
-@route(bp, '/forms', endpoint="list_forms", methods=['GET'])
-@register_menu(
-    bp, 'user.forms', _('Forms'),
-    visible_when=lambda: permissions.edit_forms.can())
-@login_required
-@permissions.edit_forms.require(403)
-def list_forms():
-    template_name = 'frontend/form_list.html'
+def forms_list(view):
+    template_name = 'admin/form_list.html'
 
-    page_title = _('Forms')
+    breadcrumbs = [_('Forms')]
 
     forms = models.Form.query.order_by('name').all()
     checklist_init_form = make_checklist_init_form(g.event)
@@ -150,22 +131,20 @@ def list_forms():
 
     context = {
         'forms': forms,
-        'page_title': page_title,
+        'breadcrumbs': breadcrumbs,
         'init_form': checklist_init_form,
         'form_import_form': form_import_form,
     }
 
-    return render_template(template_name, **context)
+    return view.render(template_name, **context)
 
 
-@route(bp, '/form/<int:form_id>/qa',
-       endpoint='quality_assurance', methods=['GET', 'POST'])
-@login_required
-@permissions.edit_forms.require(403)
-def quality_assurance(form_id):
-    template_name = 'frontend/quality_assurance.html'
+def quality_assurance(view, form_id):
+    template_name = 'admin/quality_assurance.html'
     form = models.Form.query.filter_by(id=form_id).first_or_404()
-    page_title = _('Quality Assurance — %(name)s', name=form.name)
+    breadcrumbs = [
+        {'text': _('Forms'), 'url': url_for('formsview.index')},
+        _('Quality Assurance'), form.name]
 
     if request.method == 'POST':
         try:
@@ -191,7 +170,7 @@ def quality_assurance(form_id):
                     })
             form.save()
 
-            return redirect(url_for('.list_forms'))
+            return redirect(url_for('formsview.index'))
         except ValueError:
             pass
 
@@ -201,16 +180,13 @@ def quality_assurance(form_id):
     ] if form.quality_checks else [[''] * 4]
 
     context = {
-        'page_title': page_title,
+        'breadcrumbs': breadcrumbs,
         'check_data': check_data
     }
 
-    return render_template(template_name, **context)
+    return view.render(template_name, **context)
 
 
-@route(bp, '/form/<int:id>/export', methods=['GET'])
-@login_required
-@permissions.edit_forms.require(403)
 def export_form(id):
     form = models.Form.query.filter_by(id=id).first_or_404()
     memory_file = BytesIO()
@@ -224,10 +200,6 @@ def export_form(id):
         mimetype='application/vnd.ms-excel')
 
 
-@route(bp, '/forms/import',
-       endpoint='import_form_schema', methods=['POST'])
-@login_required
-@permissions.edit_forms.require(403)
 def import_form_schema():
     web_form = FormImportForm()
 
@@ -242,4 +214,4 @@ def import_form_schema():
         form.roles = roles
         form.save()
 
-    return redirect(url_for('.list_forms'))
+    return redirect(url_for('formsview.index'))

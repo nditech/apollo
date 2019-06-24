@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
-from flask import flash, g, send_file, redirect, url_for, request
+from flask import flash, g, send_file, redirect, request
 from flask_admin import (
     form, BaseView, expose)
 from flask_admin.actions import action
@@ -30,6 +30,9 @@ from apollo.locations.views_locations import (
 from apollo.participants.views_participants import (
     participant_list, participant_list_import, participant_headers,
     participant_edit)
+from apollo.formsframework.views_forms import (
+    forms_list, export_form, checklist_init, form_builder, new_form, edit_form,
+    quality_assurance, import_form_schema)
 
 
 app_time_zone = pytz.timezone(settings.TIMEZONE)
@@ -445,9 +448,50 @@ class ParticipantSetAdminView(SetViewMixin, BaseAdminView):
 
 
 class FormsView(BaseView):
+    def is_accessible(self):
+        '''For checking if the admin view is accessible.'''
+        if current_user.is_anonymous:
+            return False
+
+        deployment = current_user.deployment
+        role = models.Role.query.filter_by(
+            deployment_id=deployment.id, name='admin').first()
+        return current_user.has_role(role)
+
+    def inaccessible_callback(self, name, **kwargs):
+        return redirect(url_for_security('login', next=request.url))
+
     @expose('/')
     def index(self):
-        return redirect(url_for('forms.list_forms'))
+        return forms_list(self)
+
+    @expose('/<int:form_id>/export')
+    def form_export(self, form_id):
+        return export_form(form_id)
+
+    @expose('/new', methods=['GET', 'POST'])
+    def create_form(self):
+        return new_form(self)
+
+    @expose('/<int:form_id>', methods=['GET', 'POST'])
+    def edit_form(self, form_id):
+        return edit_form(self, form_id)
+
+    @expose('/import', methods=['POST'])
+    def import_form(self):
+        return import_form_schema()
+
+    @expose('/builder/<int:form_id>', methods=['GET', 'POST'])
+    def builder(self, form_id):
+        return form_builder(self, form_id)
+
+    @expose('/init', methods=['POST'])
+    def init(self):
+        return checklist_init()
+
+    @expose('/qa/<int:form_id>', methods=['GET', 'POST'])
+    def qa(self, form_id):
+        return quality_assurance(self, form_id)
 
 
 admin.add_view(DeploymentAdminView(models.Deployment, db.session))
@@ -460,4 +504,4 @@ admin.add_view(
 admin.add_view(
     ParticipantSetAdminView(
         models.ParticipantSet, db.session, _('Participant Sets')))
-admin.add_view(FormsView(name="Forms", endpoint="forms_"))
+admin.add_view(FormsView(name="Forms"))
