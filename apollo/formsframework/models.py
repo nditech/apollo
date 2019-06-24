@@ -325,9 +325,17 @@ class FormBuilderSerializer(object):
         groups = []
         current_group = None
 
+        # verify that first field is always a group
         if len(data['fields']) > 0:
             if data['fields'][0]['component'] != 'group':
-                raise ValueError('Fields specified outside of group')
+                # no group was created, create a default
+                group = {
+                    'name': str(_('SMS 1')),
+                    'slug': unidecode(slugify_unicode(str(_('SMS 1')))),
+                    'fields': []
+                }
+                groups.append(group)
+                current_group = group
 
         for f in data['fields']:
             if f['component'] == 'group':
