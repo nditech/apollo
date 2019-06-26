@@ -325,7 +325,7 @@ class ParticipantSetArchiveSerializer(ArchiveSerializer):
             PhoneContact).with_entities(
                 cast(Participant.uuid, String), PhoneContact.number)
 
-        with zip_file.open('participant_phones.ndjson', 'w') as f:
+        with zip_file.open('phone-contacts.ndjson', 'w') as f:
             for pair in query:
                 line = f'{json.dumps(pair)}\n'
                 f.write(line.encode('utf-8'))
