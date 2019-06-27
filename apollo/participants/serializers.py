@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import json
 
-from sqlalchemy import String, cast
+from sqlalchemy import String, cast, func
 
 from apollo.core import db
 from apollo.dal.serializers import ArchiveSerializer
@@ -323,9 +323,12 @@ class ParticipantSetArchiveSerializer(ArchiveSerializer):
     def serialize_participant_phones(self, participant_set, zip_file):
         query = participant_set.participants.join(
             PhoneContact).with_entities(
-                cast(Participant.uuid, String), PhoneContact.number)
+                cast(Participant.uuid, String), PhoneContact.number,
+                func.extract('epoch', PhoneContact.created),
+                func.extract('epoch', PhoneContact.updated),
+                PhoneContact.verified)
 
         with zip_file.open('phone-contacts.ndjson', 'w') as f:
-            for pair in query:
-                line = f'{json.dumps(pair)}\n'
+            for record in query:
+                line = f'{json.dumps(record)}\n'
                 f.write(line.encode('utf-8'))
