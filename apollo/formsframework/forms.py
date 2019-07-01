@@ -11,11 +11,12 @@ import wtforms
 from wtforms_alchemy.utils import choice_type_coerce_factory
 
 from .. import services, utils
+from ..core import db
 from ..frontend.helpers import DictDiffer
 from .custom_fields import IntegerSplitterField
 from ..submissions.models import (
     Submission, SubmissionComment, SubmissionVersion)
-from ..participants.models import Participant, ParticipantPhone, Phone
+from ..participants.models import Participant, PhoneContact
 from ..deployments.models import Event
 from ..formsframework.models import Form
 
@@ -214,12 +215,11 @@ class BaseQuestionnaireForm(wtforms.Form):
                 participant = self.data.get('participant')
 
                 # retrieve the first phone contact that matches
-                phone_contact = services.participant_phones.lookup(
+                phone_contact = services.phone_contacts.lookup(
                     phone_num, participant)
 
                 if phone_contact:
                     submission.sender_verified = phone_contact.verified
-                    phone_contact.last_seen = utils.current_timestamp()
 
                     if commit:
                         phone_contact.save()
@@ -229,20 +229,18 @@ class BaseQuestionnaireForm(wtforms.Form):
                     else:
                         update_params['sender_verified'] = False
 
-                    phone = services.phones.get_by_number(phone_num)
+                    phone = services.phone_contacts.lookup(
+                        phone_num, participant)
                     if not phone:
-                        phone = Phone(number=phone_num)
-
-                    phone_contact = ParticipantPhone(
-                        phone=phone, participant_id=participant.id,
-                        verified=False)
+                        phone_contact = PhoneContact(
+                            number=phone_num, participant_id=participant.id)
 
                     if commit:
-                        phone.save()
                         phone_contact.save()
 
                 if commit:
                     submission.data = data
+                    submission.last_phone_number = phone_num
                     if submission.id is None:
                         # for a fresh submission, everything will get saved
                         submission.save()
@@ -250,18 +248,17 @@ class BaseQuestionnaireForm(wtforms.Form):
                         # for an existing submission, we need an update,
                         # otherwise the JSONB field won't get persisted
                         update_params['data'] = data
+                        update_params['last_phone_number'] = phone_num
                         services.submissions.find(
                             id=submission.id
                         ).update(update_params, synchronize_session=False)
+                        db.session.refresh(submission)
 
-                    # update conflict markers and master data
-                    changed_subset = {
-                        k: v for k, v in data.items()
-                        if k in changed_fields
-                    }
-                    if changed_subset:
-                        submission.update_related(changed_subset)
-                    update_submission_version(submission)
+                    # if data was changed, update conflict marker,
+                    # update location data and create a new version
+                    if changed_fields:
+                        submission.update_related(data)
+                        update_submission_version(submission)
 
                 # update completion rating for participant
                 # if submission.form.form_type == 'CHECKLIST':

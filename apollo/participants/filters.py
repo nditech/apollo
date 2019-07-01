@@ -18,7 +18,7 @@ from apollo.wtforms_ext import ExtendedMultipleSelectField
 
 from .models import Participant, ParticipantRole, ParticipantPartner
 from .models import ParticipantGroup, ParticipantGroupType, groups_participants
-from .models import Phone, ParticipantPhone
+from .models import PhoneContact
 
 
 class ParticipantIDFilter(CharFilter):
@@ -122,15 +122,9 @@ class ParticipantPhoneFilter(CharFilter):
     def queryset_(self, query, value):
         if value:
             query2 = query.join(
-                ParticipantPhone,
-                Participant.id ==
-                    ParticipantPhone.participant_id  # noqa
-            ).join(
-                Phone,
-                Phone.id == ParticipantPhone.phone_id
-            )
+                PhoneContact, Participant.id == PhoneContact.participant_id)
 
-            return query2.filter(Phone.number.ilike(f'%{value}%'))
+            return query2.filter(PhoneContact.number.ilike(f'%{value}%'))
 
         return query
 

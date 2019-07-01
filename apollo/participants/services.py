@@ -10,7 +10,7 @@ from apollo.locations.models import Location
 from apollo.participants.models import (
     ParticipantSet,
     Participant, ParticipantGroup, ParticipantGroupType, ParticipantPartner,
-    ParticipantPhone, ParticipantRole, Phone)
+    ParticipantRole, PhoneContact)
 
 number_regex = re.compile('[^0-9]')
 
@@ -51,7 +51,7 @@ class ParticipantService(Service):
         output_buffer.close()
 
         for participant in query:
-            phones = participant.phones
+            phones = participant.phone_contacts
             if phones:
                 phone_numbers = [p.number for p in phones[:3]]
                 phone_numbers += [''] * (3 - len(phone_numbers))
@@ -66,11 +66,13 @@ class ParticipantService(Service):
                 participant.location.code,
             ]
 
-            name_path = participant.location.make_path() if participant.location else {}
+            name_path = participant.location.make_path() \
+                if participant.location else {}
             record.extend(name_path.get(lt.name, '') for lt in location_types)
 
             record.extend([
-                participant.supervisor.participant_id if participant.supervisor else '',
+                participant.supervisor.participant_id
+                if participant.supervisor else '',
                 participant.gender.value if participant.gender else '',
                 participant.email,
                 participant.password
@@ -82,7 +84,8 @@ class ParticipantService(Service):
                 subquery = Location.query.filter(
                     Location.id == participant.location_id,
                     Location.samples.contains(sample))
-                record.append(int(db.session.query(subquery.exists()).scalar()))
+                record.append(
+                    int(db.session.query(subquery.exists()).scalar()))
 
             # TODO: process extra fields here
             output_buffer = StringIO()
@@ -108,21 +111,12 @@ class ParticipantRoleService(Service):
     __model__ = ParticipantRole
 
 
-class PhoneService(Service):
-    __model__ = Phone
-
-    def get_by_number(self, number):
-        num = number_regex.sub('', number)
-        return self.__model__.query.filter_by(number=num).first()
-
-
-class ParticipantPhoneService(Service):
-    __model__ = ParticipantPhone
+class PhoneContactService(Service):
+    __model__ = PhoneContact
 
     def lookup(self, number, participant):
         num = number_regex.sub('', number)
-        return self.__model__.query.join(
-            self.__model__.phone).filter(
-                self.__model__.participant_id == participant.id,
-                Phone.number == num
-            ).first()
+        return self.__model__.query.filter_by(
+            participant_id=participant.id,
+            number=num
+        ).first()

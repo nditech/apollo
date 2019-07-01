@@ -15,7 +15,7 @@ from apollo.core import db, uploads
 from apollo.factory import create_celery_app
 from apollo.locations.models import Sample
 from apollo.messaging.tasks import send_email
-from apollo.participants.models import Participant, ParticipantPhone
+from apollo.participants.models import Participant, PhoneContact
 
 APPLICABLE_GENDERS = [s[0] for s in Participant.GENDER]
 celery = create_celery_app()
@@ -250,8 +250,9 @@ def update_participants(dataframe, header_map, participant_set):
             # If this is an update for the participant, we should clear
             # the current list of phone numbers and then recreate them
             if participant.id:
-                ParticipantPhone.query.filter_by(
+                PhoneContact.query.filter_by(
                     participant_id=participant.id).delete()
+                db.session.commit()
 
             # check if the phone number is on record
             # import phone numbers in reverse order so the first is the latest
@@ -264,16 +265,11 @@ def update_participants(dataframe, header_map, participant_set):
                     mobile = int(mobile)
                 mobile_num = str(mobile)
 
-                phone = services.phones.get_by_number(mobile_num)
+                phone = services.phone_contacts.lookup(mobile_num, participant)
                 if not phone:
-                    phone = services.phones.create(number=mobile_num)
-
-                p_phone = services.participant_phones.find(
-                    participant_id=participant.id, phone_id=phone.id).first()
-                if not p_phone:
-                    services.participant_phones.create(
-                        participant_id=participant.id,
-                        phone_id=phone.id, verified=True)
+                    phone = services.phone_contacts.create(
+                        number=mobile_num, participant_id=participant.id,
+                        verified=True)
 
         groups = []
         # fix up groups
