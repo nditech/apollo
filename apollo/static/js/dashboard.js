@@ -6,7 +6,7 @@
 
     var json = JSON.parse(el.dataset.chart);
     var data = [json.Missing + (json.Conflict || 0), json.Partial, json.Complete, json.Offline];
-    var color = d3.scale.ordinal().range(["#ca0020", "#f4a582", "#0571b0", "#aaaaaa"]); // Conflict color #E83992
+    var color = d3.scale.ordinal().range(["#dc3545", "#ffc107", "#28a745", "#aaaaaa"]); // Conflict color #E83992
     var labels = ['Missing', 'Partial', 'Complete', 'No Signal']; // Conflict label
     var total = data.reduce(function (prev, curr, idx, arr) { return prev + curr; });
 
