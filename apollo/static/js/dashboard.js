@@ -6,7 +6,8 @@
 
     var json = JSON.parse(el.dataset.chart);
     var data = [json.Missing + (json.Conflict || 0), json.Partial, json.Complete, json.Offline];
-    var color = d3.scale.ordinal().range(["#ca0020", "#f4a582", "#0571b0", "#aaaaaa"]); // Conflict color #E83992
+    var color = d3.scale.ordinal().range(["#dc3545", "#ffc107", "#28a745", "#aaaaaa"]); // Conflict color #E83992
+    var labels_color = d3.scale.ordinal().range(["#ffffff", "#000000", "#ffffff", "#000000"]);
     var labels = ['Missing', 'Partial', 'Complete', 'No Signal']; // Conflict label
     var total = data.reduce(function (prev, curr, idx, arr) { return prev + curr; });
 
@@ -27,7 +28,7 @@
       .attr("fill", function(d, i) {
         return color(i);
       })
-      .attr("d", d3.svg.arc().innerRadius(innerRadius).outerRadius(outerRadius));
+      .attr("d", d3.svg.arc().innerRadius(innerRadius).outerRadius(outerRadius - 10));
 
     //Labels
     svg.selectAll("g.pieLabel")
@@ -39,11 +40,22 @@
 
       .append("text")
       .attr("transform", function(d) {
-        return "translate(" + d3.svg.arc().innerRadius(innerRadius).outerRadius(outerRadius).centroid(d) + ")";
+        if (d.value / total >= 0.1) {
+          return "translate(" + d3.svg.arc().innerRadius(innerRadius).outerRadius(outerRadius * 1.2).centroid(d) + ")";
+        } else {
+          return "translate(" + d3.svg.arc().innerRadius(innerRadius).outerRadius(outerRadius * 1.8).centroid(d) + ")";
+        }
       })
       .attr("text-anchor", "middle")
-      .text(function(d) {return d.value / total >= 0.05 ? (d.value/total * 100).toFixed(0) + '%' : '';})
-      .style('font-size', '10px');
+      .text(function(d) {return d.value / total >= 0.01 ? (d.value/total * 100).toFixed(0) + '%' : '';})
+      .attr('fill', function (d, i) {
+        var color = labels_color(i);
+        if (d.value / total < 0.1) {
+          color = '#000000';
+        }
+        return color;
+      })
+      .style('font-size', '9px');
 
     //Legend
     var legend = svg.append("g")

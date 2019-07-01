@@ -184,14 +184,14 @@ def _process_analysis(event, form_id, location_id=None, tag=None):
     and permissions.view_process_analysis.can())
 @register_menu(
     bp, 'main.analyses.incidents_analysis',
-    _('Incidents Summary'),
+    _('Incidents Data'),
     icon='<i class="glyphicon glyphicon-stats"></i>',
     dynamic_list_constructor=partial(get_process_analysis_menu, 'INCIDENT'),
     visible_when=lambda: len(get_process_analysis_menu('INCIDENT')) > 0
     and permissions.view_process_analysis.can())
 @register_menu(
     bp, 'main.analyses.process_analysis',
-    _('Process Summary'),
+    _('Process Data'),
     icon='<i class="glyphicon glyphicon-stats"></i>',
     dynamic_list_constructor=partial(get_process_analysis_menu, 'CHECKLIST'),
     visible_when=lambda: len(get_process_analysis_menu('CHECKLIST')) > 0

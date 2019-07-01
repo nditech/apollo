@@ -9,6 +9,7 @@
     {% else %}
     <th scope="col" class="text-right col-1"><a class="text-decoration-none" href="{{ modify_query(sort_by='id', sort_value='', sort_direction='', page='') }}">{{ _('ID') }}</a></th>
     {% endif %}
+    <th scope="col" class="text-center"><abbr title="{{ _('Signal Status') }}"><i class="fa fa-phone"></i></abbr></th>
     {% for location_type in location_types %}
     {% if request.args.sort_by == 'location' and request.args.sort_value == location_type.id|string %}
     {% if request.args.sort_direction == 'desc' %}
@@ -54,7 +55,6 @@
     {% endif %}
     <th scope="col" class="text-center"><abbr title="{{ _('Sender Verification') }}"><i class="fa fa-mobile-alt"></i></abbr></th>
     <th scope="col" class="text-center"><abbr title="{{ _('Quarantine Status') }}"><i class="fa fa-exclamation-triangle"></i></abbr></th>
-    <th scope="col" class="text-center"><abbr title="{{ _('Signal Status') }}"><i class="fa fa-phone"></i></abbr></th>
 </tr>
 {% endmacro %}
 {% macro submission_items(submissions, form, form_fields, location_types, perms) %}
@@ -79,6 +79,13 @@
     {% else %}
     <td class="text-monospace">{{ submission.participant.participant_id }}</td>
     {% endif %}
+    <td class="text-center">
+        {% if submission.unreachable -%}
+        <i class="fa fa-phone-slash text-danger" aria-hidden="true" title="{{ _('No Signal') }}"></i>
+        {%- else -%}
+        <i class="fa fa-phone text-success" aria-hidden="true" title="{{ _('Signal') }}"></i>
+        {% endif %}
+    </td>
     {% for location_type in location_types %}
     <td class="text-monospace {%- if g.locale.text_direction == 'rtl' %} rtl{% endif %}">{{ submission.location.make_path()[location_type.name] }}</td>
     {% endfor %}
@@ -137,13 +144,6 @@
         <i class="fa fa-check text-success" aria-hidden="true" title="{{ _('OK') }}"></i>
         {%- else -%}
         <i class="fa fa-exclamation-triangle text-warning" aria-hidden="true" title="{{ _('Quarantined') }}"></i>
-        {% endif %}
-    </td>
-    <td class="text-center">
-        {% if submission.unreachable -%}
-        <i class="fa fa-phone-slash text-danger" aria-hidden="true" title="{{ _('No Signal') }}"></i>
-        {%- else -%}
-        <i class="fa fa-phone text-success" aria-hidden="true" title="{{ _('Signal') }}"></i>
         {% endif %}
     </td>
 </tr>
