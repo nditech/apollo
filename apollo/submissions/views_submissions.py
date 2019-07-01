@@ -275,10 +275,10 @@ def submission_list(form_id):
         message = request.form.get('message', '')
         recipients = [
             x for x in [
-                submission.participant.phone
+                submission.participant.primary_phone
                 if (
                     submission.participant and
-                    submission.participant.phone
+                    submission.participant.primary_phone
                 ) else ''
                 for submission in query_filterset.qs.with_entities(
                     models.Submission.participant).select_related(1)
