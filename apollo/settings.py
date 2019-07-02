@@ -123,7 +123,9 @@ MESSAGING_SECRET = config('MESSAGING_SECRET', default=None)
 APPLICATIONS = config(
     'APPLICATIONS',
     cast=config.eval,
-    default='''("apollo.frontend",
+    default='''(
+        "apollo.deployments",
+        "apollo.frontend",
         "apollo.locations",
         "apollo.participants",
         "apollo.formsframework",
