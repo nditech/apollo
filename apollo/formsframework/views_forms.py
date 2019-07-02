@@ -11,12 +11,20 @@ from apollo import models
 from apollo.formsframework.forms import FormForm, FormImportForm
 from apollo.formsframework.models import FormBuilderSerializer
 from apollo.formsframework import utils
+from apollo.formsframework.api import views as api_views
 from apollo.frontend.forms import make_checklist_init_form
 from apollo.submissions.tasks import init_submissions
 from apollo.utils import generate_identifier
 
 bp = Blueprint('forms', __name__, template_folder='templates',
                static_folder='static')
+
+bp.add_url_rule(
+    '/api/forms',
+    view_func=api_views.FormListResource.as_view('api_form_list'))
+bp.add_url_rule(
+    '/api/forms/<int:form_id>',
+    view_func=api_views.FormItemResource.as_view('api_form_item'))
 
 
 def checklist_init():
