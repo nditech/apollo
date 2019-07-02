@@ -23,6 +23,7 @@ except KeyError:
 
 DEBUG = config('DEBUG', cast=config.boolean, default=False)
 PAGE_SIZE = config('PAGE_SIZE', cast=int, default=25)
+API_PAGE_SIZE = config('API_PAGE_SIZE', cast=int, default=100)
 
 # default to UTC for prior deployments
 TIMEZONE = config('TIMEZONE', default='UTC')
