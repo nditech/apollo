@@ -11,11 +11,9 @@ parser.add_argument('offset', type=int)
 
 
 class BaseListResource(MethodResource):
-    model = None
-
     @use_kwargs({'page': fields.Int(missing=1)})
     def get(self, **kwargs):
         page = kwargs.get('page')
 
         return self.get_items(**kwargs).paginate(
-            page, per_page=API_PAGE_SIZE)
+            page, per_page=API_PAGE_SIZE).items
