@@ -11,7 +11,7 @@ jobs:
           - SECRET_KEY: notasecret
           - REDIS_HOSTNAME: localhost
 
-      - image: circleci/postgres:10-alpine-ram
+      - image: circleci/postgres:10-alpine-postgis-ram
         environment:
           - POSTGRES_DB: apollo
           - POSTGRES_USER: postgres
