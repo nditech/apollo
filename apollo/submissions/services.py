@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import csv
+from geoalchemy2.shape import to_shape
 from io import StringIO
 
 from apollo import constants
@@ -85,18 +86,19 @@ class SubmissionService(Service):
                         if submission.participant and
                         submission.participant.phone_contacts else '',
                     ] + [
-                        loc for loc in submission.location.ancestors()
-                        if loc.location_type in location_types
+                        submission.location.make_path()[loc_type.name]
+                        for loc_type in location_types
                     ] + [
                         submission.location.name,
                         submission.location.code,
-                        submission.geopoint.get('lat') if submission.geopoint else '',  # noqa
-                        submission.geopoint.get('lon') if submission.geopoint else '',  # noqa
+                        to_shape(submission.geom).y if hasattr(submission.geom, 'desc') else '',  # noqa
+                        to_shape(submission.geom).x if hasattr(submission.geom, 'desc') else ''  # noqa
                     ] + extra_data_columns + [
                         submission.location.registered_voters
                     ] + [
                         export_field_value(form, submission, tag)
-                        for tag in tags]
+                        for tag in tags
+                    ]
 
                     record += [
                         submission.updated.strftime('%Y-%m-%d %H:%M:%S')
@@ -131,13 +133,13 @@ class SubmissionService(Service):
                         if sib.participant and sib.participant.phone_contacts
                         else '',
                     ] + [
-                        loc for loc in sib.location.ancestors()
-                        if loc.location_type in location_types
+                        sib.location.make_path()[loc_type.name]
+                        for loc_type in location_types
                     ] + [
                         sib.location.name,
                         sib.location.code,
-                        sib.geopoint.get('lat') if submission.geopoint else '', # noqa
-                        sib.geopoint.get('lon') if submission.geopoint else '', # noqa
+                        to_shape(sib.geom).y if hasattr(sib.geom, 'desc') else '', # noqa
+                        to_shape(sib.geom).x if hasattr(sib.geom, 'desc') else '', # noqa
                     ] + extra_data_columns + [
                         sib.location.registered_voters
                     ] + [

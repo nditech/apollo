@@ -2,6 +2,7 @@
 from flask_babelex import lazy_gettext as _
 from flask_wtf import FlaskForm as WTSecureForm
 from flask_wtf.file import FileField
+from geoalchemy2.shape import to_shape
 from wtforms import (BooleanField, FloatField, IntegerField, SelectField,
                      SelectMultipleField, StringField, validators, widgets)
 from wtforms.validators import Optional
@@ -25,8 +26,8 @@ def _make_choices(qs, placeholder=None):
 def generate_location_edit_form(location, data=None):
     initial_data = {
         'name': location.name,
-        'lat': location.lat,
-        'lon': location.lon
+        'lat': to_shape(location.geom).y,
+        'lon': to_shape(location.geom).x
     }
 
     class LocationEditForm(WTSecureForm):

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import json
 
+from geoalchemy2.shape import to_shape
 from apollo.dal.serializers import ArchiveSerializer
 from apollo.locations.models import (
     Location, LocationDataField, LocationPath, LocationSet, LocationType,
@@ -39,8 +40,8 @@ class LocationSerializer(object):
             },
             'code': obj.code,
             'registered_voters': obj.registered_voters,
-            'lat': obj.lat,
-            'lon': obj.lon,
+            'lat': to_shape(obj.geom).y,
+            'lon': to_shape(obj.geom).x,
             'extra_data': obj.extra_data,
             'location_set': obj.location_set.uuid.hex,
             'location_type': obj.location_type.uuid.hex,

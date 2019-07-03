@@ -158,8 +158,8 @@ def update_locations(data_frame, header_mapping, location_set):
             kwargs = {
                 'location_type_id': loc_type.id,
                 'location_set_id': location_set.id,
-                'lat': location_lat,
-                'lon': location_lon,
+                'geom': 'SRID=4326; POINT({longitude:f} {latitude:f})'.format(
+                    longitude=location_lon, latitude=location_lat),
                 'code': location_code,
                 'name_translations': {
                     locale: name
@@ -191,8 +191,7 @@ def update_locations(data_frame, header_mapping, location_set):
                 # update the existing location instead
                 location.name_translations = kwargs.get('name_translations')
                 location.registered_voters = kwargs.get('registered_voters')
-                location.lat = kwargs.get('lat')
-                location.lon = kwargs.get('lon')
+                location.geom = kwargs.get('geom')
 
                 location.save()
 

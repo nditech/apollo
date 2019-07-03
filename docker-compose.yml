@@ -2,7 +2,8 @@ version: "3"
 
 services:
   postgres:
-    image: postgres:10-alpine
+    build:
+      context: ./postgis
     environment:
       POSTGRES_DB: ${DATABASE_NAME:-apollo}
     volumes:

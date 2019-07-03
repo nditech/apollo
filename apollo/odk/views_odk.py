@@ -188,7 +188,6 @@ def submission():
 
     tag_finder = etree.XPath('//data/*[local-name() = $tag]')
     data = {}
-    geopoint = {}
     for tag in form.tags:
         field = form.get_field_by_tag(tag)
         field_type = field.get('type')
@@ -213,8 +212,8 @@ def submission():
                 # fields in the form?
                 geodata = element.text.split() if element.text else []
                 try:
-                    geopoint['lat'] = float(geodata[0])
-                    geopoint['lon'] = float(geodata[1])
+                    geopoint_lat = float(geodata[0])
+                    geopoint_lon = float(geodata[1])
                 except (IndexError, ValueError):
                     continue
             else:
@@ -230,18 +229,18 @@ def submission():
         geodata = element.text.split() if element.text else []
 
         try:
-            geopoint['lat'] = float(geodata[0])
-            geopoint['lon'] = float(geodata[1])
+            geopoint_lat = float(geodata[0])
+            geopoint_lon = float(geodata[1])
         except (IndexError, ValueError):
             pass
     except IndexError:
         pass
 
     kwargs = {'data': data}
-    geopoint_lat = geopoint.get('lat')
-    geopoint_lon = geopoint.get('lon')
-    if geopoint and (geopoint_lat is not None) and (geopoint_lon is not None):
-        kwargs.update(geopoint=geopoint)
+    if (geopoint_lat is not None) and (geopoint_lon is not None):
+        kwargs.update(
+            geom='SRID=4326; POINT({longitude:f} {latitude:f})'.format(
+                longitude=geopoint_lon, latitude=geopoint_lat))
 
     models.Submission.query.filter_by(
         id=submission.id
