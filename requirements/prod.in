@@ -59,6 +59,7 @@ raven==6.6.0
 redis==3.2.1
 regex==2018.2.3
 requests==2.21.0
+shapely
 six==1.11.0
 sqlalchemy-utils==0.33.11
 sqlalchemy~=1.2
