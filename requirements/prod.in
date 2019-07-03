@@ -28,6 +28,7 @@ flask-uploads==0.2.1
 flask-webpack
 flask-wtf==0.14.2
 flask==0.12.4
+geoalchemy2==0.6.3
 gevent==1.4.0
 gunicorn==19.7.1
 honcho==1.0.1
