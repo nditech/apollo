@@ -121,8 +121,8 @@ def location_edit(view, id):
 
         if form.validate():
             location.name = form.name.data
-            location.lat = form.lat.data
-            location.lon = form.lon.data
+            location.geom = 'SRID=4326; POINT({longitude:f} {latitude:f})'.format(  # noqa
+                longitude=form.lon.data, latitude=form.lat.data)
 
             # note: if only .name is changed, SQLA does not register
             # the object as being dirty or needing an update so we
