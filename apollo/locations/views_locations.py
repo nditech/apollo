@@ -20,7 +20,8 @@ from apollo.frontend import permissions
 from apollo.frontend.forms import (
     file_upload_form, generate_location_edit_form,
     DummyForm)
-from apollo.locations import api, filters, forms, tasks
+from apollo.locations import filters, forms, tasks
+import apollo.locations.api.views as api_views
 from apollo.locations.utils import import_graph
 from .models import LocationSet, LocationType, Location, LocationTranslations
 from .models import LocationTypePath, LocationDataField
@@ -34,22 +35,22 @@ location_api = Api(bp)
 admin_required = permissions.role('admin').require
 
 location_api.add_resource(
-    api.LocationTypeItemResource,
+    api_views.LocationTypeItemResource,
     '/api/locationtype/<int:loc_type_id>',
     endpoint='api.locationtype'
 )
 location_api.add_resource(
-    api.LocationTypeListResource,
+    api_views.LocationTypeListResource,
     '/api/locationtypes/',
     endpoint='api.locationtypes'
 )
 location_api.add_resource(
-    api.LocationItemResource,
+    api_views.LocationItemResource,
     '/api/location/<int:location_id>',
     endpoint='api.location'
 )
 location_api.add_resource(
-    api.LocationListResource,
+    api_views.LocationListResource,
     '/api/locations/',
     endpoint='api.locations'
 )

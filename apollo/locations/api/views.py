@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 from flask import current_app, g, jsonify
+from flask_apispec.views import MethodResourceMeta
 from flask_restful import Resource, fields, marshal, marshal_with
 from flask_security import login_required
 from sqlalchemy import or_, text, bindparam
 
-from ..api.common import parser
-from .models import Location, LocationType, LocationTranslations
+from apollo.api.common import parser
+from apollo.locations.models import (
+    Location, LocationType, LocationTranslations)
 
 LOCATION_TYPE_FIELD_MAPPER = {
     'id': fields.String,
@@ -22,7 +24,7 @@ LOCATION_FIELD_MAPPER = {
 }
 
 
-class LocationTypeItemResource(Resource):
+class LocationTypeItemResource(Resource, metaclass=MethodResourceMeta):
     @login_required
     def get(self, loc_type_id):
         # marshal() converts a custom object/dictionary/list using the mapper
@@ -47,7 +49,7 @@ class LocationTypeItemResource(Resource):
         return jsonify(data)
 
 
-class LocationTypeListResource(Resource):
+class LocationTypeListResource(Resource, metaclass=MethodResourceMeta):
     @login_required
     def get(self):
         # marshal() can also handle a list or tuple of objects, but it only
@@ -56,8 +58,8 @@ class LocationTypeListResource(Resource):
         args = parser.parse_args()
         location_set_id = getattr(g.event, 'location_set_id', None)
         limit = min(
-            args.get('limit') or current_app.config.get('PAGE_SIZE'),
-            current_app.config.get('PAGE_SIZE'))
+            args.get('limit') or current_app.config.get('API_PAGE_SIZE'),
+            current_app.config.get('API_PAGE_SIZE'))
         offset = args.get('offset') or 0
         queryset = LocationType.query.filter(
             LocationType.location_set_id == location_set_id)
@@ -88,7 +90,7 @@ class LocationTypeListResource(Resource):
         return jsonify(result)
 
 
-class LocationItemResource(Resource):
+class LocationItemResource(Resource, metaclass=MethodResourceMeta):
     @login_required
     @marshal_with(LOCATION_FIELD_MAPPER)
     def get(self, location_id):
@@ -98,15 +100,15 @@ class LocationItemResource(Resource):
             Location.location_set_id == location_set_id).first_or_404())
 
 
-class LocationListResource(Resource):
+class LocationListResource(Resource, metaclass=MethodResourceMeta):
     @login_required
     def get(self):
         parser.add_argument('q', type=str)
         args = parser.parse_args()
         location_set_id = getattr(g.event, 'location_set_id', None)
         limit = min(
-            args.get('limit') or current_app.config.get('PAGE_SIZE'),
-            current_app.config.get('PAGE_SIZE'))
+            args.get('limit') or current_app.config.get('API_PAGE_SIZE'),
+            current_app.config.get('API_PAGE_SIZE'))
         offset = args.get('offset') or 0
 
         lookup_args = args.get('q')
