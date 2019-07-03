@@ -154,7 +154,6 @@ class Submission(BaseModel):
                 except StopIteration:
                     return
 
-            geopoint = {'lat': location.lat, 'lon': location.lon}
             obs_submission = cls.query.filter_by(
                 form_id=form.id, participant_id=participant.id,
                 location_id=location.id, deployment_id=deployment_id,
@@ -165,7 +164,7 @@ class Submission(BaseModel):
                     form_id=form.id, participant_id=participant.id,
                     location_id=location.id, deployment_id=deployment_id,
                     event_id=event.id, submission_type='O',
-                    data={}, geopoint=geopoint)
+                    data={})
                 obs_submission.save()
 
             master_submission = cls.query.filter_by(
@@ -177,8 +176,7 @@ class Submission(BaseModel):
                 master_submission = cls(
                     form_id=form.id, participant_id=None,
                     location_id=location.id, deployment_id=deployment_id,
-                    event_id=event.id, submission_type='M', data={},
-                    geopoint=geopoint)
+                    event_id=event.id, submission_type='M', data={})
                 master_submission.save()
 
     def update_related(self, data):
