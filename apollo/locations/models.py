@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from flask_babelex import lazy_gettext as _
+from geoalchemy2 import Geometry
 from sqlalchemy import and_, func
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import aliased
@@ -216,8 +217,7 @@ class Location(BaseModel):
         'location_set.id', ondelete='CASCADE'), nullable=False)
     location_type_id = db.Column(db.Integer, db.ForeignKey(
         'location_type.id', ondelete='CASCADE'), nullable=False)
-    lat = db.Column(db.Float)
-    lon = db.Column(db.Float)
+    geom = db.Column(Geometry('POINT', srid=4326))
     extra_data = db.Column(JSONB)
 
     name = translation_hybrid(name_translations)

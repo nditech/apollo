@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from flask_babelex import lazy_gettext as _
+from geoalchemy2 import Geometry
 import sqlalchemy as sa
 from sqlalchemy.dialects.postgresql import ARRAY, JSONB
 from sqlalchemy_utils import ChoiceType
@@ -118,7 +119,7 @@ class Submission(BaseModel):
                            passive_deletes=True))
     conflicts = db.Column(JSONB)
     unreachable = db.Column(db.Boolean, default=False, nullable=False)
-    geopoint = db.Column(JSONB)
+    geom = db.Column(Geometry('POINT', srid=4326))
 
     @classmethod
     def init_submissions(cls, event, form, role, location_type):
