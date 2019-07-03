@@ -25,9 +25,9 @@ class EventItemResource(MethodResource):
         return Event.query.filter_by(id=event_id).one()
 
 
-@marshal_with(EventSchema(many=True))
 @use_kwargs(EVENT_LIST_QUERY_MAP)
 class EventListResource(BaseListResource):
+    schema = EventSchema()
 
     def get_items(self, **kwargs):
         params = []
