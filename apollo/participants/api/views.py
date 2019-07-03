@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 from flask import current_app, g, jsonify
+from flask_apispec.views import MethodResourceMeta
 from flask_restful import Resource, fields, marshal, marshal_with
 from flask_security import login_required
 from sqlalchemy import or_, text, bindparam
 
 from apollo import services
 from apollo.api.common import parser
-from .models import Participant, ParticipantTranslations
+from apollo.participants.models import Participant, ParticipantTranslations
 
 PARTICIPANT_FIELD_MAPPER = {
     'id': fields.String,
@@ -16,7 +17,7 @@ PARTICIPANT_FIELD_MAPPER = {
 }
 
 
-class ParticipantItemResource(Resource):
+class ParticipantItemResource(Resource, metaclass=MethodResourceMeta):
     @login_required
     @marshal_with(PARTICIPANT_FIELD_MAPPER)
     def get(self, participant_id):
@@ -25,7 +26,7 @@ class ParticipantItemResource(Resource):
             id=participant_id, participant_set_id=participant_set_id))
 
 
-class ParticipantListResource(Resource):
+class ParticipantListResource(Resource, metaclass=MethodResourceMeta):
     @login_required
     def get(self):
         parser.add_argument('q', type=str)

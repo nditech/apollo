@@ -18,7 +18,8 @@ from apollo.core import sentry, uploads
 from apollo.frontend import helpers, permissions, route
 from apollo.frontend.forms import generate_participant_edit_form
 from apollo.messaging.tasks import send_messages
-from apollo.participants import api, filters, forms, tasks
+from apollo.participants import filters, forms, tasks
+from apollo.participants.api import views as api_views
 
 from .models import Participant, ParticipantSet, ParticipantRole
 from .models import ParticipantPartner, PhoneContact
@@ -38,12 +39,12 @@ logger = logging.getLogger(__name__)
 participant_api = Api(bp)
 
 participant_api.add_resource(
-    api.ParticipantItemResource,
+    api_views.ParticipantItemResource,
     '/api/participant/<participant_id>',
     endpoint='api.participant'
 )
 participant_api.add_resource(
-    api.ParticipantListResource,
+    api_views.ParticipantListResource,
     '/api/participants/',
     endpoint='api.participants'
 )
