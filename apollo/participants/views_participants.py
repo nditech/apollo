@@ -14,7 +14,7 @@ from flask_security import current_user, login_required
 from slugify import slugify_unicode
 
 from apollo import models, services, utils
-from apollo.core import sentry, uploads
+from apollo.core import docs, sentry, uploads
 from apollo.frontend import helpers, permissions, route
 from apollo.frontend.forms import generate_participant_edit_form
 from apollo.messaging.tasks import send_messages
@@ -48,6 +48,11 @@ participant_api.add_resource(
     '/api/participants/',
     endpoint='api.participants'
 )
+
+docs.register(
+    api_views.ParticipantItemResource, 'participants.api.participant')
+docs.register(
+    api_views.ParticipantListResource, 'participants.api.participants')
 
 admin_required = permissions.role('admin').require
 

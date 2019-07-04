@@ -15,7 +15,7 @@ from sqlalchemy import not_, or_
 from sqlalchemy.orm.attributes import flag_modified
 
 from apollo import services, utils
-from apollo.core import db, sentry, uploads
+from apollo.core import db, docs, sentry, uploads
 from apollo.frontend import permissions
 from apollo.frontend.forms import (
     file_upload_form, generate_location_edit_form,
@@ -54,6 +54,12 @@ location_api.add_resource(
     '/api/locations/',
     endpoint='api.locations'
 )
+
+docs.register(api_views.LocationItemResource, 'locations.api.location')
+docs.register(api_views.LocationListResource, 'locations.api.locations')
+docs.register(api_views.LocationTypeItemResource, 'locations.api.locationtype')
+docs.register(
+    api_views.LocationTypeListResource, 'locations.api.locationtypes')
 
 
 def locations_list(view, location_set_id):

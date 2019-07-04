@@ -7,7 +7,7 @@ from flask import (
 from flask_babelex import lazy_gettext as _
 import json
 
-from apollo import models
+from apollo import core, models
 from apollo.formsframework.forms import FormForm, FormImportForm
 from apollo.formsframework.models import FormBuilderSerializer
 from apollo.formsframework import utils
@@ -25,6 +25,9 @@ bp.add_url_rule(
 bp.add_url_rule(
     '/api/forms/<int:form_id>',
     view_func=api_views.FormItemResource.as_view('api_form_item'))
+
+core.docs.register(api_views.FormItemResource, 'forms.api_form_item')
+core.docs.register(api_views.FormListResource, 'forms.api_form_list')
 
 
 def checklist_init():
