@@ -13,7 +13,7 @@ class FormSchema(BaseModelSchema):
         model = Form
         fields = (
             'id', 'name', 'prefix', 'form_type', 'track_data_conflicts',
-            'events')
+            'events', 'data')
 
     def get_event_ids(self, obj):
         return [ev.id for ev in obj.events]
