@@ -1,7 +1,4 @@
 # -*- coding: utf-8 -*-
-from datetime import datetime, timezone
-import sys
-
 from dateutil.parser import parse
 from flask_apispec import MethodResource, marshal_with, use_kwargs
 from sqlalchemy import false
@@ -13,9 +10,9 @@ from apollo.deployments.models import Event
 
 EVENT_LIST_QUERY_MAP = {
     # the timestamp to start filtering events from as an ISO 8601 format string
-    'from': fields.Str(),
+    'from': fields.DateTime(),
     # the timestamp to stop filtering events to as an ISO 8601 format string
-    'to': fields.Str(),
+    'to': fields.DateTime(),
 }
 
 
@@ -25,7 +22,7 @@ class EventItemResource(MethodResource):
         return Event.query.filter_by(id=event_id).one()
 
 
-@use_kwargs(EVENT_LIST_QUERY_MAP, location=['query'])
+@use_kwargs(EVENT_LIST_QUERY_MAP, locations=['query'])
 class EventListResource(BaseListResource):
     schema = EventSchema()
 
