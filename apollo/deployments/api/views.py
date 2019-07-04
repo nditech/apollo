@@ -25,7 +25,7 @@ class EventItemResource(MethodResource):
         return Event.query.filter_by(id=event_id).one()
 
 
-@use_kwargs(EVENT_LIST_QUERY_MAP)
+@use_kwargs(EVENT_LIST_QUERY_MAP, location=['query'])
 class EventListResource(BaseListResource):
     schema = EventSchema()
 

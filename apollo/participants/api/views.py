@@ -21,7 +21,7 @@ class ParticipantItemResource(MethodResource):
         return participant
 
 
-@use_kwargs({'q': fields.String()})
+@use_kwargs({'q': fields.String()}, locations=['query'])
 class ParticipantListResource(BaseListResource):
     schema = ParticipantSchema()
 

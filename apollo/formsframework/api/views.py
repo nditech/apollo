@@ -13,7 +13,7 @@ class FormItemResource(MethodResource):
         return Form.query.filter_by(id=form_id).one()
 
 
-@use_kwargs({'form_type': fields.String()})
+@use_kwargs({'form_type': fields.String()}, locations=['query'])
 class FormListResource(BaseListResource):
     schema = FormSchema()
 

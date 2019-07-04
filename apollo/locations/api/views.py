@@ -40,7 +40,7 @@ class LocationItemResource(MethodResource):
             location_set_id=location_set_id).one()
 
 
-@use_kwargs({'q': fields.String()})
+@use_kwargs({'q': fields.String()}, locations=['query'])
 class LocationListResource(BaseListResource):
     schema = LocationSchema()
 
