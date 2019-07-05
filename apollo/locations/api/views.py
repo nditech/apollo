@@ -5,20 +5,30 @@ from sqlalchemy import or_, text, bindparam
 from webargs import fields
 
 from apollo.api.common import BaseListResource
+from apollo.deployments.models import Event
 from apollo.locations.api.schema import LocationSchema, LocationTypeSchema
 from apollo.locations.models import (
     Location, LocationSet, LocationType, LocationTranslations)
 
 
 @marshal_with(LocationTypeSchema)
+@use_kwargs({'event_id': fields.Int()}, locations=['query'])
 class LocationTypeItemResource(MethodResource):
-    def get(self, loc_type_id):
+    def get(self, loc_type_id, **kwargs):
         deployment = getattr(g, 'deployment', None)
         if deployment:
             deployment_id = deployment.id
         else:
             deployment_id = None
-        location_set_id = getattr(g.event, 'location_id_set', None)
+
+        event_id = kwargs.get('event_id')
+        if event_id is None:
+            event = getattr(g, 'event', None)
+        else:
+            event = Event.query.filter_by(id=event_id).one()
+
+        if event and event.location_set_id:
+            location_set_id = event.location_set_id
 
         location_type = LocationType.query.join(
             LocationType.location_set
@@ -31,6 +41,7 @@ class LocationTypeItemResource(MethodResource):
         return location_type
 
 
+@use_kwargs({'event_id': fields.Int()}, locations=['query'])
 class LocationTypeListResource(BaseListResource):
     schema = LocationTypeSchema()
 
@@ -40,7 +51,15 @@ class LocationTypeListResource(BaseListResource):
             deployment_id = deployment.id
         else:
             deployment_id = None
-        location_set_id = getattr(g.event, 'location_set_id', None)
+
+        event_id = kwargs.get('event_id')
+        if event_id is None:
+            event = getattr(g, 'event', None)
+        else:
+            event = Event.query.filter_by(id=event_id).one()
+
+        if event and event.location_set_id:
+            location_set_id = event.location_set_id
 
         return LocationType.query.join(
             LocationType.location_set
@@ -51,20 +70,37 @@ class LocationTypeListResource(BaseListResource):
 
 
 @marshal_with(LocationSchema)
+@use_kwargs({'event_id': fields.Int()}, locations=['query'])
 class LocationItemResource(MethodResource):
-    def get(self, location_id):
-        location_set_id = getattr(g.event, 'location_set_id', None)
+    def get(self, location_id, **kwargs):
+        event_id = kwargs.get('event_id')
+        if event_id is None:
+            event = getattr(g, 'event', None)
+        else:
+            event = Event.query.filter_by(id=event_id).one()
+
+        if event and event.location_set_id:
+            location_set_id = event.location_set_id
+
         return Location.query.filter_by(
             id=location_id,
             location_set_id=location_set_id).one()
 
 
-@use_kwargs({'q': fields.String()}, locations=['query'])
+@use_kwargs(
+    {'event_id': fields.Int(), 'q': fields.String()}, locations=['query'])
 class LocationListResource(BaseListResource):
     schema = LocationSchema()
 
     def get_items(self, **kwargs):
-        location_set_id = getattr(g.event, 'location_set_id', None)
+        event_id = kwargs.get('event_id')
+        if event_id is None:
+            event = getattr(g, 'event', None)
+        else:
+            event = Event.query.filter_by(id=event_id).one()
+
+        if event and event.location_set_id:
+            location_set_id = event.location_set_id
 
         lookup_args = kwargs.get('q')
         queryset = Location.query.select_from(

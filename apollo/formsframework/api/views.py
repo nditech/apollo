@@ -5,7 +5,7 @@ from webargs import fields
 
 from apollo.api.common import BaseListResource
 from apollo.formsframework.api.schema import FormSchema
-from apollo.formsframework.models import Form
+from apollo.formsframework.models import Form, events_forms
 
 
 @marshal_with(FormSchema)
@@ -21,7 +21,9 @@ class FormItemResource(MethodResource):
             id=form_id, deployment_id=deployment_id).one()
 
 
-@use_kwargs({'form_type': fields.String()}, locations=['query'])
+@use_kwargs(
+    {'event_id': fields.Int(), 'form_type': fields.String()},
+    locations=['query'])
 class FormListResource(BaseListResource):
     schema = FormSchema()
 
@@ -32,9 +34,17 @@ class FormListResource(BaseListResource):
         else:
             deployment_id = None
 
+        query = Form.query.filter_by(deployment_id=deployment_id)
+
         form_type = kwargs.get('form_type')
         if form_type:
-            return Form.query.filter_by(
+            query = query.filter_by(
                 form_type=form_type, deployment_id=deployment_id)
 
-        return Form.query.filter_by(deployment_id=deployment_id)
+        event_id = kwargs.get('event_id')
+        if event_id:
+            query = query.join(events_forms).filter(
+                events_forms.c.event_id == event_id
+            )
+
+        return query

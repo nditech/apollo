@@ -5,6 +5,7 @@ from sqlalchemy import or_, text, bindparam
 from webargs import fields
 
 from apollo.api.common import BaseListResource
+from apollo.deployments.models import Event
 from apollo.participants.api.schema import ParticipantSchema
 from apollo.participants.models import (
     Participant, ParticipantSet, ParticipantTranslations)
@@ -38,13 +39,20 @@ class ParticipantItemResource(MethodResource):
         return participant
 
 
-@use_kwargs({'q': fields.String()}, locations=['query'])
+@use_kwargs(
+    {'event_id': fields.Int(), 'q': fields.String()}, locations=['query'])
 class ParticipantListResource(BaseListResource):
     schema = ParticipantSchema()
 
     def get_items(self, **kwargs):
+        event_id = kwargs.get('event_id')
+        lookup_item = kwargs.get('q')
+
         deployment = getattr(g, 'deployment', None)
-        event = getattr(g, 'event', None)
+        if event_id is None:
+            event = getattr(g, 'event', None)
+        else:
+            event = Event.query.filter_by(id=event_id).one()
 
         if deployment:
             deployment_id = deployment.id
@@ -56,7 +64,6 @@ class ParticipantListResource(BaseListResource):
         else:
             participant_set_id = None
 
-        lookup_item = kwargs.get('q')
 
         queryset = Participant.query.select_from(
             Participant, ParticipantTranslations).join(
@@ -73,5 +80,7 @@ class ParticipantListResource(BaseListResource):
                     Participant.participant_id.ilike(bindparam('pid'))
                 )
             ).params(name=f'%{lookup_item}%', pid=f'{lookup_item}%')
+
+
 
         return queryset
