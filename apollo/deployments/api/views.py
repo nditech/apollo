@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from dateutil.parser import parse
+from flask import g
 from flask_apispec import MethodResource, marshal_with, use_kwargs
 from sqlalchemy import false
 from webargs import fields
@@ -19,7 +20,14 @@ EVENT_LIST_QUERY_MAP = {
 class EventItemResource(MethodResource):
     @marshal_with(EventSchema)
     def get(self, event_id):
-        return Event.query.filter_by(id=event_id).one()
+        deployment = getattr(g, 'deployment', None)
+        if deployment:
+            deployment_id = deployment.id
+        else:
+            deployment_id = None
+
+        return Event.query.filter_by(
+            id=event_id, deployment_id=deployment_id).one()
 
 
 @use_kwargs(EVENT_LIST_QUERY_MAP, locations=['query'])
@@ -27,7 +35,13 @@ class EventListResource(BaseListResource):
     schema = EventSchema()
 
     def get_items(self, **kwargs):
-        params = []
+        deployment = getattr(g, 'deployment', None)
+        if deployment:
+            deployment_id = deployment.id
+        else:
+            deployment_id = None
+
+        params = [Event.deployment_id == deployment_id]
         lower_cutoff = kwargs.get('from')
         upper_cutoff = kwargs.get('to')
 
