@@ -12,6 +12,7 @@ RUN set -ex \
             libxslt-dev \
             postgresql-dev \
             libmagic \
+        && apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing/ geos-dev \
         && pip install -r /app/requirements.txt \
         && cd /app/ \
         && find /usr -depth \
