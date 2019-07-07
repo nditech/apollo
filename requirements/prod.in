@@ -49,7 +49,7 @@ passlib==1.7.1
 prettyconf==1.2.3
 prometheus-client
 psutil
-psycopg2==2.7.4
+psycopg2-binary
 python-dateutil==2.7.2
 python-editor==1.0.3
 python-magic==0.4.15
