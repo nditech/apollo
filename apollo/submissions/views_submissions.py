@@ -401,6 +401,9 @@ def submission_edit(submission_id):
         models.LocationType.is_administrative==True)  # noqa
     template_name = 'frontend/submission_edit.html'
     comments = services.submission_comments.find(submission=submission)
+    messages = models.Message.query.filter(
+        models.Message.submission==submission,
+        models.Message.direction=='IN').order_by(desc(models.Message.received))
 
     sibling_submissions = submission.siblings
     master_submission = submission.master
@@ -473,7 +476,8 @@ def submission_edit(submission_id):
             location_types=location_types,
             comments=comments,
             failed_checks=failed_checks,
-            failed_check_tags=failed_check_tags
+            failed_check_tags=failed_check_tags,
+            messages=messages
         )
     else:
         if questionnaire_form.form_type == 'INCIDENT':
@@ -773,7 +777,8 @@ def submission_edit(submission_id):
                     sibling_forms=sibling_forms,
                     readonly=readonly,
                     location_types=location_types,
-                    comments=comments
+                    comments=comments,
+                    messages=messages
                 )
 
 
