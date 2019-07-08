@@ -6,22 +6,73 @@
 
 {% block stylesheets %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-switch-button.min.css') }}">
+<link rel="stylesheet" href="{{ asset_url_for('leaflet.css') }}">
 {% endblock %}
 {% block scripts -%}
 <script src="{{ url_for('static', filename='js/bootstrap-switch-button.min.js') }}"></script>
+<script type="text/javascript" src="{{ asset_url_for('leaflet.js') }}" charset="utf-8"></script>
 <script type="text/javascript">
 $(function () {
-	$('#filter_reset').on('click', function() {
-		var $form = $(this).parents('form').first();
-		$form.find(':input').not('button').each(function() { $(this).val(''); })
-		$form.submit();
-	});
-	$('select.select2-locations').select2(LocationOptions);
+  var marker = undefined;
+  var map = undefined;
+
+  $('#filter_reset').on('click', function() {
+    var $form = $(this).parents('form').first();
+    $form.find(':input').not('button').each(function() { $(this).val(''); })
+    $form.submit();
+  });
+  $('select.select2-locations').select2(LocationOptions);
+  $('#geolocationModal').on('shown.bs.modal', function (ev) {
+    var target = $(ev.relatedTarget);
+    var longitude = target.data('longitude');
+    var latitude = target.data('latitude');
+
+    if (map === undefined) {
+      map = L.map('map').setView([latitude, longitude], 16);
+{%- if config.MAPBOX_TOKEN %}
+      L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+        maxZoom: 18,
+        id: 'mapbox.streets',
+        accessToken: '{{ config.MAPBOX_TOKEN }}'
+      }).addTo(map);
+{%- else %}
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
+        maxZoom: 18
+      }).addTo(map);
+{%- endif %}
+    }
+
+    if (marker !== undefined) {
+      marker.remove(map);
+    }
+
+    marker = L.marker([latitude, longitude]).addTo(map);
+    map.panTo([latitude, longitude]);
+  });
 });
 </script>
 {% if perms.send_messages.can() %}
 {{ send_message_modal(pager.total) }}
 {% endif %}
+<div class="modal" id="geolocationModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h6 class="modal-title">{{ _('Location') }}</h6>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body py-0" style="height: 300px !important" id="map">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ _('Close') }}</button>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}
 
 {% block toolbar -%}

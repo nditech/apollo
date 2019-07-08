@@ -149,9 +149,9 @@
     </td>
     <td class="text-center">
         {% if submission.geom.desc -%}
-        <i class="fa fa-map-marker-alt text-primary" aria-hidden="true" title="{{ _('GPS') }}"></i>
+        <a href="javascript:;" data-toggle="modal" data-target="#geolocationModal" data-longitude="{{ submission.geom|longitude }}" data-latitude="{{ submission.geom|latitude }}"><i class="fa fa-map-marker-alt text-primary" aria-hidden="true" title="{{ _('GPS') }}"></i></a>
         {%- else -%}
-        &nbsp;
+        <i class="fa fa-map-marker text-black-50" aria-hidden="true" title="{{ _('No GPS') }}"></i>
         {% endif %}
     </td>
 </tr>
