@@ -31,6 +31,8 @@ custom_filters = {
     'mean_filter': template_filters.mean_filter,
     'reverse_dict': template_filters.reverse_dict,
     'qa_status': template_filters.qa_status,
+    'longitude': template_filters.longitude,
+    'latitude': template_filters.latitude
 }
 
 
