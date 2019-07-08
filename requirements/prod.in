@@ -22,7 +22,7 @@ flask-principal==0.4.0
 flask-restful==0.3.6
 flask-script==2.0.6
 flask-security==3.0.0
-flask-sqlalchemy==2.3.2
+flask-sqlalchemy~=2.4.0
 flask-sslify==0.1.4
 flask-uploads==0.2.1
 flask-webpack
@@ -49,7 +49,7 @@ passlib==1.7.1
 prettyconf==1.2.3
 prometheus-client
 psutil
-psycopg2==2.7.4
+psycopg2-binary
 python-dateutil==2.7.2
 python-editor==1.0.3
 python-magic==0.4.15
@@ -61,7 +61,7 @@ regex==2018.2.3
 requests==2.21.0
 shapely
 six==1.11.0
-sqlalchemy-utils==0.33.11
+sqlalchemy-utils~=0.34
 sqlalchemy~=1.2
 tablib==0.13.0
 unidecode==0.4.21

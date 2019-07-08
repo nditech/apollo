@@ -77,7 +77,7 @@
                     {%- endfor -%}{% endautoescape %}
                     </ul>
                     <ul class="navbar-nav order-1 order-lg-2">
-                        <li class="nav-item"><a class="nav-link disabled" href="">{{ g.event.name }}</a></li>
+                        <li class="nav-item"><a class="nav-link text-primary {%- if not current_menu.submenu('user.events').visible %} disabled{% endif %}" href="{{ current_menu.submenu('user.events').url if current_menu.submenu('user.events').visible else '' }}"><strong>{{ g.event.name }}</strong></a></li>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true"
                                 aria-expanded="false">{{ _('Settings') }}</a>

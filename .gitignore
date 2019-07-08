@@ -2,6 +2,7 @@
 .DS_Store
 .env*
 .Python
+.python-version
 .vscode/
 .webassets-cache
 *.pyc

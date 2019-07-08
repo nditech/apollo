@@ -55,6 +55,7 @@
     {% endif %}
     <th scope="col" class="text-center"><abbr title="{{ _('Sender Verification') }}"><i class="fa fa-mobile-alt"></i></abbr></th>
     <th scope="col" class="text-center"><abbr title="{{ _('Quarantine Status') }}"><i class="fa fa-exclamation-triangle"></i></abbr></th>
+    <th scope="col" class="text-center"><abbr title="{{ _('Geolocation') }}"><i class="fa fa-globe"></i></abbr></th>
 </tr>
 {% endmacro %}
 {% macro submission_items(submissions, form, form_fields, location_types, perms) %}
@@ -146,9 +147,28 @@
         <i class="fa fa-exclamation-triangle text-warning" aria-hidden="true" title="{{ _('Quarantined') }}"></i>
         {% endif %}
     </td>
+    <td class="text-center">
+        {% if submission.geom.desc -%}
+        <a href="javascript:;" data-toggle="modal" data-target="#geolocationModal" data-longitude="{{ submission.geom|longitude }}" data-latitude="{{ submission.geom|latitude }}"><i class="fa fa-map-marker-alt text-primary" aria-hidden="true" title="{{ _('GPS') }}"></i></a>
+        {%- else -%}
+        <i class="fa fa-map-marker text-black-50" aria-hidden="true" title="{{ _('No GPS') }}"></i>
+        {% endif %}
+    </td>
 </tr>
 {% else %}
 {% if perms.edit_submission.can() %}
+{% if form.form_type == 'CHECKLIST' %}
+{%- set colspan = 7 + (location_types|length) + form.data.groups|length -%}
+<tr class="table-warning">
+    <td class="text-center text-muted" colspan="{{ colspan }}">{{ _('No Data Available') }}</td>
+</tr>
+{% else %}
+{%- set colspan = 8 + (location_types|length) + form_fields|length -%}
+<tr class="table-warning">
+    <td class="text-center text-muted" colspan="{{ colspan }}">{{ _('No Data Available') }}</td>
+</tr>
+{% endif %}
+{% else %}
 {% if form.form_type == 'CHECKLIST' %}
 {%- set colspan = 6 + (location_types|length) + form.data.groups|length -%}
 <tr class="table-warning">
@@ -156,18 +176,6 @@
 </tr>
 {% else %}
 {%- set colspan = 7 + (location_types|length) + form_fields|length -%}
-<tr class="table-warning">
-    <td class="text-center text-muted" colspan="{{ colspan }}">{{ _('No Data Available') }}</td>
-</tr>
-{% endif %}
-{% else %}
-{% if form.form_type == 'CHECKLIST' %}
-{%- set colspan = 5 + (location_types|length) + form.data.groups|length -%}
-<tr class="table-warning">
-    <td class="text-center text-muted" colspan="{{ colspan }}">{{ _('No Data Available') }}</td>
-</tr>
-{% else %}
-{%- set colspan = 6 + (location_types|length) + form_fields|length -%}
 <tr class="table-warning">
     <td class="text-center text-muted" colspan="{{ colspan }}">{{ _('No Data Available') }}</td>
 </tr>

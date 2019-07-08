@@ -5,7 +5,7 @@ LABEL maintainer="Tim Akinbo <takinbo@timbaobjects.com>"
 ADD . /app/
 RUN pip install --no-cache-dir -r /app/requirements/prod.txt
 RUN cd /app/ \
-    && pybabel compile -d /app/apollo/translations/
+    && make babel
 WORKDIR /app/
 CMD ["gunicorn","-c","gunicorn.conf","--bind=[::]:5000","apollo.wsgi:application"]
 EXPOSE 5000

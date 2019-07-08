@@ -6,6 +6,7 @@ import re
 from babel.numbers import format_number
 from flask import Markup
 from flask_babelex import get_locale, lazy_gettext as _
+from geoalchemy2.shape import to_shape
 import pandas as pd
 
 from apollo.process_analysis.common import (
@@ -124,3 +125,11 @@ def qa_status(submission, check):
         return QUALITY_STATUSES['FLAGGED']
     else:
         return None
+
+
+def longitude(geom):
+    return to_shape(geom).x
+
+
+def latitude(geom):
+    return to_shape(geom).y

@@ -6,6 +6,7 @@ const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 module.exports = {
     entry: {
         highcharts: './src/highcharts.js',
+        leaflet: './src/leaflet.js',
         moment: './src/moment.js',
         scripts: './src/scripts.js',
         styles: './src/styles.js',
@@ -20,6 +21,18 @@ module.exports = {
     },
     module: {
         rules: [
+            {
+                test: /\.(gif|jpg|jpeg|png)$/,
+                use: [
+                    {
+                        loader: 'file-loader',
+                        options: {
+                            outputPath: 'images',
+                            name: '[name].[ext]'
+                        },
+                    },
+                ]
+            },
             {
                 test: /\.(ttf|otf|eot|svg|woff(2)?)(\?[a-z0-9]+)?$/,
                 use: [
