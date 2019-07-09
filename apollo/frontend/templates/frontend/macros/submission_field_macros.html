@@ -3,7 +3,7 @@
 {% for value, label, selected in form_field.iter_choices() | sort %}
 <div class="form-check">
 <input type="checkbox" name="{{ form_field.name }}" id="{{ form_field.id }}_{{ loop.index }}" class="form-check-input" value="{{ value }}" {% if selected %}checked{% endif %}>
-<label for="{{ form_field.id }}_{{ loop.index }}" class="form-check-label">{{ label }}</label>
+<label for="{{ form_field.id }}_{{ loop.index }}" class="form-check-label">({{ value }}) {{ label }}</label>
 </div>
 {% endfor %}
 {% elif field_type == 'select' %}
