@@ -209,3 +209,5 @@ FACEBOOK_CLIENT_ID = config('FACEBOOK_CLIENT_ID', default='')
 FACEBOOK_CLIENT_SECRET = config('FACEBOOK_CLIENT_SECRET', default='')
 
 MAPBOX_TOKEN = config('MAPBOX_TOKEN', default='')
+
+API_KEY = config('API_KEY', default='')
