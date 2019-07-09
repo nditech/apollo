@@ -155,7 +155,7 @@ def update_locations(data_frame, header_mapping, location_set):
                 row_ids[loc_type.id] = loc.id
                 continue
 
-            if location_lat and location_lot:
+            if location_lat is not None and location_lon is not None:
                 geom_spec = 'SRID=4326; POINT({longitude:f} {latitude:f})'.format(
                     longitude=location_lon, latitude=location_lat)
             else:
