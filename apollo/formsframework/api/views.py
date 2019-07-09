@@ -4,12 +4,14 @@ from flask_apispec import MethodResource, marshal_with, use_kwargs
 from webargs import fields
 
 from apollo.api.common import BaseListResource
+from apollo.api.decorators import login_or_api_key_required
 from apollo.formsframework.api.schema import FormSchema
 from apollo.formsframework.models import Form, events_forms
 
 
 @marshal_with(FormSchema)
 class FormItemResource(MethodResource):
+    @login_or_api_key_required
     def get(self, form_id, **kwargs):
         deployment = getattr(g, 'deployment', None)
         if deployment:

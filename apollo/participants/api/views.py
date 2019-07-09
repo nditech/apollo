@@ -5,6 +5,7 @@ from sqlalchemy import or_, text, bindparam
 from webargs import fields
 
 from apollo.api.common import BaseListResource
+from apollo.api.decorators import login_or_api_key_required
 from apollo.deployments.models import Event
 from apollo.participants.api.schema import ParticipantSchema
 from apollo.participants.models import (
@@ -13,6 +14,7 @@ from apollo.participants.models import (
 
 @marshal_with(ParticipantSchema)
 class ParticipantItemResource(MethodResource):
+    @login_or_api_key_required
     def get(self, participant_id):
         deployment = getattr(g, 'deployment', None)
         event = getattr(g, 'event', None)
@@ -64,7 +66,6 @@ class ParticipantListResource(BaseListResource):
         else:
             participant_set_id = None
 
-
         queryset = Participant.query.select_from(
             Participant, ParticipantTranslations).join(
                 Participant.participant_set
@@ -80,7 +81,5 @@ class ParticipantListResource(BaseListResource):
                     Participant.participant_id.ilike(bindparam('pid'))
                 )
             ).params(name=f'%{lookup_item}%', pid=f'{lookup_item}%')
-
-
 
         return queryset
