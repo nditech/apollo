@@ -210,9 +210,6 @@
     <div class="card bg-light {%- if not loop.last %} mb-3{% endif %}">
       <div class="card-header d-flex justify-content-between align-items-center" data-toggle="collapse" data-target="#{{ group.name }}">
         <h5 class="mb-0">{{ group.name }}</h5>
-        {%- if master.completion(group.name) == 'Complete' %}
-        <h5 class="mb-0"><i class="fa fa-check-circle text-success"></i></h5>
-        {%- endif %}
       </div>
       {# check for data validation or quality assurance errors #}
       {%- for field in group.fields %}
