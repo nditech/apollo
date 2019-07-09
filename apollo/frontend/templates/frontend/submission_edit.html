@@ -106,6 +106,13 @@
 
 {%- if form.form_type == 'CHECKLIST' %}
 <ul class="nav nav-tabs justify-content-end mb-n1" id="tabbed" role="tablist">
+{%- with comments_count = submission.comments|count %}
+{%- if comments_count > 0 %}
+  <li class="flex-fill">
+    <span class="d-block py-2 px-3"><a href="#comments" class="text-decoration-none"><i class="fa {% if comments_count > 1 %}fa-comments{% else %}fa-comment{% endif %}"></i> {{ ngettext('%(num)d comment', '%(num)d comments', comments_count) }}</a></span>
+  </li>
+{%- endif %}
+{%- endwith %}
   <li class="nav-item">
     <a class="nav-link active" id="checklist-tab" data-toggle="tab" role="tab" aria-controls="checklist-panel" aria-selected="true" href="#checklist-panel">{{ _('Checklist') }}</a>
   </li>
@@ -304,6 +311,7 @@
 <input type="hidden" name="{{ master_form['location'].name }}" value="{{ master_form['location'].data.id|default('__None', true) }}" />
 
 {# comments #}
+<a name="comments"></a>
 <div class="row">
   <div class="col-md-12">
     <table class="table table-bordered" id="comments">
