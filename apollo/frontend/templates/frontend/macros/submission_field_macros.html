@@ -1,55 +1,14 @@
-{% macro render_checkbox_field(field, disabled=0) -%}
-<div class="checkbox">
-    <label>
-        <input name="{{ field.name }}" type="checkbox" value="1" {% if field.data %}checked{% endif %} {% if disabled %}disabled{% endif %}>
-    </label>
+{% macro render_field(form_field, field_type, klass_, disabled=false) %}
+{% if field_type == 'multiselect' %}
+{% for value, label, selected in form_field.iter_choices() | sort %}
+<div class="form-check">
+<input type="checkbox" name="{{ form_field.name }}" id="{{ form_field.id }}_{{ loop.index }}" class="form-check-input" value="{{ value }}" {% if selected %}checked{% endif %}>
+<label for="{{ form_field.id }}_{{ loop.index }}" class="form-check-label">{{ label }}</label>
 </div>
-{%- endmacro %}
-{% macro render_select_multi_field(field, disabled=0) -%}
-    {% for value, label, selected in field.iter_choices()|sort %}
-    <div class="checkbox">
-        <label>
-            <input name="{{ field.name }}" type="checkbox" value="{{ value }}" {% if selected %}checked{% endif %} {% if disabled %}disabled{% endif %}> <strong>({{ value|int }})</strong> {{ label }}
-        </label>
-    </div>
-    {% endfor %}
-{%- endmacro %}
-{% macro render_select_field(field, disabled=0, as_list=0) -%}
-    {%- if as_list -%}
-    {% for value, label, selected in field.iter_choices() | sort %}
-    <div class="radio"><label><input name="{{ field.name }}" type="radio" {% if selected %}checked{% endif %}{% if disabled %}disabled{% endif %}> <strong>({{ value | int }})</strong> {{ label }} </label></div>
-    {% endfor %}
-    {%- else -%}
-    {{ field(class_='form-control') }}
-    {%- endif -%}
-{%- endmacro %}
-{% macro render_radio_field(field, disabled=0) -%}
-    {% for subfield in field %}
-        <div class="radio">
-            <label>
-                {{ subfield(disabled=disabled) }} {{ subfield.label}}
-            </label>
-        </div>
-    {% endfor %}
-{%- endmacro %}
-{%- macro render_submission_field(field, disabled=0) -%}
-{% if field.type == 'BooleanField' %}
-{{ render_checkbox_field(field, disabled) }}
-{% elif field.type == 'RadioField' %}
-{{ render_radio_field(field, disabled) }}
-{% elif field.type == 'SelectMultipleField' %}
-{{ render_select_multi_field(field, disabled) }}
-{% elif field.type == 'SelectField' %}
-{%- if field.widget.__class__.__name__ == 'ListWidget' -%}
-{{ render_select_field(field, disabled, 1) }}
-{%- else -%}
-{{ render_select_field(field, disabled) }}
-{%- endif -%}
+{% endfor %}
+{% elif field_type == 'select' %}
+{{ form_field(class_="custom-select {{ klass_ }}", disabled=disabled) }}
 {% else %}
-{% if disabled %}
-{{ field(class_='form-control', disabled='disabled') }}
-{% else %}
-{{ field(class_='form-control') }}
+{{ form_field(class_=klass_, disabled=disabled) }}
 {% endif %}
-{% endif %}
-{%- endmacro -%}
+{% endmacro %}
