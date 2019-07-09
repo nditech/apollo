@@ -31,10 +31,10 @@
   </tr>
   <tr>
     <th>{{ _('Texted Phone') }}</th>
-    <td>{% if submission.participant and submission.participant.last_seen_phone %}<strong>{{ submission.participant.last_seen_phone|default(_('N/A'), true) }}</strong> {% if submission.sender_verified %}<span id="phone_verification_status" class="badge badge-pill badge-success">{{ _('Verified') }}</span>{% else %}<span id="phone_verification_status" class="badge badge-pill badge-warning">{{ _('Unverified') }}</span> {% if perms.edit_participant.can() %}<button id="verify_button" data-participant="{{ submission.participant.id }}" data-phone="{{ submission.participant.last_seen_phone|default('', true) }}" data-submission="{{ submission.id }}" type="button" class="btn btn-default btn-xs" title="Verify Phone"><span class="glyphicon glyphicon-ok-sign"></span></button>{% endif %}{% endif %}{% else %}{{ _('N/A') }}{% endif %}</td>
+    <td>{% if submission.last_phone_number %}<strong>{{ submission.last_phone_number }}</strong> <a href="javascript:;" {%- if not perms.edit_participant.can() %} style="pointer-events:none"{% endif %} id="toggle_verification" data-participant="{{ submission.participant.id }}" data-phone="{{ submission.last_phone_number }}" data-submission="{{ submission.id }}"><span id="toggle_verification_badge" class="badge badge-pill {% if submission.sender_verified %}badge-success{% else %}badge-warning{% endif %}">{% if submission.sender_verified %}{{ _('Verified') }}{% else %}{{ _('Unverified') }}{% endif %}</span></a> <div class="spinner-grow spinner-grow-sm inline-block invisible" id="toggle_verification_spinner" role="status"><span class="sr-only">Loading...</span></div>{% else %}{{ _('N/A') }}{% endif %}</td>
     {%- if form.form_type == 'CHECKLIST' -%}
     {%- for sib in siblings -%}
-    <td>{% if sib.participant and sib.participant.last_seen_phone %}<strong>{{ sib.participant.last_seen_phone|default(_('N/A'), true) }}</strong> {% if sib.sender_verified %}<span id="phone_verification_status" class="badge badge-pill badge-success">{{ _('Verified') }}</span>{% else %}<span id="phone_verification_status" class="badge badge-pill badge-warning">{{ _('Unverified') }}</span> {% if perms.edit_participant.can() %}<button id="verify_button" data-participant="{{ sib.participant.id }}" data-phone="{{ sib.participant.last_seen_phone|default('', true) }}" data-submission="{{ sib.id }}" type="button" class="btn btn-default btn-xs" title="Verify Phone"><span class="glyphicon glyphicon-ok-sign"></span></button>{% endif %}{% endif %}{% else %}{{ _('N/A') }}{% endif %}</td>
+    <td>{% if sib.last_phone_number %}<strong>{{ sib.last_phone_number }}</strong> {% if sib.sender_verified %}<span id="phone_verification_status" class="badge badge-pill badge-success">{{ _('Verified') }}</span>{% else %}<span id="phone_verification_status" class="badge badge-pill badge-warning">{{ _('Unverified') }}</span>{% endif %}{% else %}{{ _('N/A') }}{% endif %}</td>
     {%- endfor -%}
     {%- endif -%}
   </tr>
@@ -477,7 +477,7 @@
       }
     });
 
-    $('#verify_button').click(function() {
+    $('#toggle_verification').click(function() {
       var phone = $(this).data('phone');
       var participant = $(this).data('participant');
       var submission = $(this).data('submission');
@@ -488,19 +488,30 @@
           type: 'POST',
           data: {phone: phone, participant: participant, submission: submission},
           beforeSend: function (xhr, settings) {
-            $('#verify_button').attr('disabled', 'disabled');
+            $('#toggle_verification_spinner').removeClass('invisible');
+            $('#toggle_verification').css('pointer-events', 'none');
             if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
               xhr.setRequestHeader("X-CSRFToken", csrftoken);
             }
+          },
+          success: function(data) {
+            if (data == '1') {
+              $('#toggle_verification_badge').removeClass('badge-warning');
+              $('#toggle_verification_badge').addClass('badge-success');
+              $('#toggle_verification_badge').html('{{ _("Verified") }}');
+            } else {
+              $('#toggle_verification_badge').removeClass('badge-success');
+              $('#toggle_verification_badge').addClass('badge-warning');
+              $('#toggle_verification_badge').html('{{ _("Unverified") }}');
+            }
+            $('#toggle_verification_spinner').addClass('invisible');
+            $('#toggle_verification').css('pointer-events', 'auto');
+          },
+          error: function () {
+            // Re-enable
+            $('#toggle_verification_spinner').addClass('invisible');
+            $('#toggle_verification').css('pointer-events', 'auto');
           }
-        }).done(function() {
-          $('#verify_button').remove();
-          $('#phone_verification_status').removeClass('label-warning');
-          $('#phone_verification_status').addClass('label-success');
-          $('#phone_verification_status').html('verified');
-        }).error(function () {
-          // Re-enable
-          $('#verify_button').removeAttr('disabled');
         });
       }
     });

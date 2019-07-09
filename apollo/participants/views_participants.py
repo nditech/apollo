@@ -319,15 +319,14 @@ def toggle_phone_verification():
 
         submission = Submission.query.get_or_404(submission_id)
         participant = Participant.query.get_or_404(participant_id)
-        phone_contact = next(filter(
-            lambda p: phone == p.number,
-            participant.phone_contacts), False)
+        phone_contact = PhoneContact.query.filter(
+            PhoneContact.participant==participant,
+            PhoneContact.number==phone).first()
         phone_contact.verified = not phone_contact.verified
+        submission.sender_verified = phone_contact.verified
         phone_contact.save()
-        participant.save()
-        submission.sender_verified = not submission.sender_verified
         submission.save()
-        return 'OK'
+        return '1' if phone_contact.verified else '0'
     else:
         abort(400)
 
