@@ -117,11 +117,12 @@
     <a class="nav-link active" id="checklist-tab" data-toggle="tab" role="tab" aria-controls="checklist-panel" aria-selected="true" href="#checklist-panel">{{ _('Checklist') }}</a>
   </li>
   <li class="nav-item">
-    <a class="nav-link" id="messages-tab" data-toggle="tab" role="tab" aria-controls="messages-panel" aria-selected="false" href="#messages-panel">{{ _('Messages') }}</a>
-  </li>
-  <!--<li class="nav-item">
     <a class="nav-link" id="critical-incidents-tab" data-toggle="tab" role="tab" aria-controls="critical-incidents-panel" aria-selected="false" href="#critical-incidents-panel">{{ _('Critical Incidents') }}</a>
   </li>
+  <li class="nav-item">
+    <a class="nav-link" id="messages-tab" data-toggle="tab" role="tab" aria-controls="messages-panel" aria-selected="false" href="#messages-panel">{{ _('Messages') }}</a>
+  </li>
+  <!--
   <li class="nav-item">
     <a class="nav-link" id="history-tab" data-toggle="tab" role="tab" aria-controls="history-panel" aria-selected="false" href="#history-panel">{{ _('History') }}</a>
   </li>-->
@@ -301,10 +302,58 @@
       </table>
     </div>
   </div>
-  <!--<div class="tab-pane fade" id="critical-incidents-panel" role="tabpanel" aria-labelledby="critical-incidents-tab">
-    {{ _('Critical Incidents Data') }}
+  <div class="tab-pane fade" id="critical-incidents-panel" role="tabpanel" aria-labelledby="critical-incidents-tab">
+    <div class="table-responsive-md">
+      <table class="table table-hover">
+        <thead class="thead-light">
+          <tr>
+            <th scope="col" class="col-1">{{ _('ID') }}</th>
+            <th scope="col" class="col-2">{{ _('Type') }}</th>
+            <th scope="col" class="col-1 text-center">{{ _('Code') }}</th>
+            <th scope="col" class="col-1 text-center">{{ _('Status') }}</th>
+            <th scope="col">{{ _('Description') }}</th>
+            <th scope="col" class="col-2">{{ _('Date') }}</th>
+            <th scope="col" class="col-1">{{ _('Time') }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for incident in incidents %}
+          {% for group in incident.form.data.groups %}
+          {% for field in group.fields %}
+          {% if field.tag in incident.data %}
+          <tr>
+            <td class="text-monospace"><a href="{{ url_for('submissions.submission_edit', submission_id=incident.id) }}">{{ incident.participant.participant_id }}</a></td>
+            <td class="text-monospace">{{ incident.form.name }}</td>
+            <td class="text-monospace text-center"><abbr title="{{ field.description }}">{{ field.tag }}</abbr></td>
+            <td class="text-monospace text-center">
+              {%- set status = incident.incident_status -%}
+              {%- if status == 'confirmed' -%}
+              <i class="fa fa-check text-success" aria-hidden="true" title="{{ _('Confirmed') }}"></i>
+              {%- elif status == 'rejected' -%}
+              <i class="fa fa-circle text-danger" aria-hidden="true" title="{{ _('Rejected') }}"></i>
+              {%- elif status == 'citizen' -%}
+              <i class="fa fa-users text-primary" aria-hidden="true" title="{{ _('Citizen Report') }}"></i>
+              {%- else -%}
+              <i class="fa fa-exclamation-triangle text-warning" aria-hidden="true" title="{{ _('Unmarked') }}"></i>
+              {%- endif -%}
+            </td>
+            <td class="text-monospace">{{ incident.incident_description }}</td>
+            <td class="text-monospace timestamp-date" data-timestamp="{{ incident.created|timestamp }}">{{ incident.created.strftime('%b %d %Y') }}</td>
+            <td class="text-monospace timestamp-time" data-timestamp="{{ incident.created|timestamp }}">{{ incident.created.strftime('%I:%M %p') }}</td>
+          </tr>
+          {% endif %}
+          {% endfor %}
+          {% endfor %}
+          {% else %}
+          <tr class="table-warning">
+            <td class="text-center text-muted" colspan="7">{{ _('No Data Available') }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
   </div>
-  <div class="tab-pane fade" id="history-panel" role="tabpanel" aria-labelledby="history-tab">
+  <!--<div class="tab-pane fade" id="history-panel" role="tabpanel" aria-labelledby="history-tab">
     {{ _('History') }}
   </div>-->
 </div>

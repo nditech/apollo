@@ -401,9 +401,22 @@ def submission_edit(submission_id):
         models.LocationType.is_administrative==True)  # noqa
     template_name = 'frontend/submission_edit.html'
     comments = services.submission_comments.find(submission=submission)
-    messages = models.Message.query.filter(
-        models.Message.submission==submission,
-        models.Message.direction=='IN').order_by(desc(models.Message.received))
+    if questionnaire_form.form_type == 'CHECKLIST':
+        messages = models.Message.query.filter(
+            models.Message.submission==submission,  # noqa
+            models.Message.direction=='IN').order_by(desc(models.Message.received))  # noqa
+        incident_forms = models.Form.query.filter(
+            models.Form.events.contains(submission.event),
+            models.Form.form_type=='INCIDENT')  # noqa
+        incidents = models.Submission.query.filter(
+            models.Submission.event==submission.event,  # noqa
+            models.Submission.location==submission.location,  # noqa
+            models.Submission.participant==submission.participant,  # noqa
+            models.Submission.form_id.in_([f.id for f in incident_forms])
+        ).order_by(desc(models.Submission.created))
+    else:
+        messages = []
+        incidents = []
 
     sibling_submissions = submission.siblings
     master_submission = submission.master
@@ -477,7 +490,8 @@ def submission_edit(submission_id):
             comments=comments,
             failed_checks=failed_checks,
             failed_check_tags=failed_check_tags,
-            messages=messages
+            messages=messages,
+            incidents=incidents
         )
     else:
         if questionnaire_form.form_type == 'INCIDENT':
@@ -778,7 +792,8 @@ def submission_edit(submission_id):
                     readonly=readonly,
                     location_types=location_types,
                     comments=comments,
-                    messages=messages
+                    messages=messages,
+                    incidents=incidents
                 )
 
 
