@@ -3,7 +3,7 @@ from operator import itemgetter
 
 from cgi import escape
 from flask_babelex import lazy_gettext as _
-from sqlalchemy import and_, or_
+from sqlalchemy import Integer, and_, cast, or_
 from sqlalchemy.dialects.postgresql import array
 from wtforms import widgets
 from wtforms.compat import text_type
@@ -171,7 +171,8 @@ class FieldOptionFilter(ChoiceFilter):
     def filter(self, query, value, **kwargs):
         if value:
             return (
-                models.Submission.data[self.name] == int(value),
+                models.Submission.data[self.name].astext.cast(
+                    Integer) == int(value),
                 None
             )
 
