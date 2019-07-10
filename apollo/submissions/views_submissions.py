@@ -507,13 +507,15 @@ def submission_edit(submission_id):
                 data = submission.data.copy()
                 update_params = {}
                 changed = False
+
                 for form_field in data_fields:
                     field_value = submission_form.data.get(form_field)
-                    if field_value is None:
-                        continue
 
                     if submission.data.get(form_field) != field_value:
-                        data[form_field] = field_value
+                        if field_value is None:
+                            data.pop(form_field, None)
+                        else:
+                            data[form_field] = field_value
                         changed = True
 
                 new_participant = submission_form.participant.data
