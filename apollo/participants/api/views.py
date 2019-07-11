@@ -13,11 +13,16 @@ from apollo.participants.models import (
 
 
 @marshal_with(ParticipantSchema)
+@use_kwargs({'event_id': fields.Int()}, locations=['query'])
 class ParticipantItemResource(MethodResource):
     @login_or_api_key_required
-    def get(self, participant_id):
+    def get(self, participant_id, **kwargs):
         deployment = getattr(g, 'deployment', None)
         event = getattr(g, 'event', None)
+
+        event_id = kwargs.get('event_id')
+        if event_id:
+            event = Event.query.filter_by(id=event_id).first_or_404()
 
         if deployment:
             deployment_id = deployment.id
@@ -36,7 +41,7 @@ class ParticipantItemResource(MethodResource):
             ParticipantSet.deployment_id == deployment_id,
             Participant.id == participant_id,
             Participant.participant_set_id == ParticipantSet.id
-        ).one()
+        ).first_or_404()
 
         return participant
 

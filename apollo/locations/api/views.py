@@ -27,7 +27,7 @@ class LocationTypeItemResource(MethodResource):
         if event_id is None:
             event = getattr(g, 'event', None)
         else:
-            event = Event.query.filter_by(id=event_id).one()
+            event = Event.query.filter_by(id=event_id).first_or_404()
 
         if event and event.location_set_id:
             location_set_id = event.location_set_id
@@ -38,7 +38,7 @@ class LocationTypeItemResource(MethodResource):
             LocationType.id == loc_type_id,
             LocationType.location_set_id == location_set_id,
             LocationSet.deployment_id == deployment_id
-        ).one()
+        ).first_or_404()
 
         return location_type
 
@@ -58,7 +58,7 @@ class LocationTypeListResource(BaseListResource):
         if event_id is None:
             event = getattr(g, 'event', None)
         else:
-            event = Event.query.filter_by(id=event_id).one()
+            event = Event.query.filter_by(id=event_id).first_or_404()
 
         if event and event.location_set_id:
             location_set_id = event.location_set_id
@@ -80,14 +80,14 @@ class LocationItemResource(MethodResource):
         if event_id is None:
             event = getattr(g, 'event', None)
         else:
-            event = Event.query.filter_by(id=event_id).one()
+            event = Event.query.filter_by(id=event_id).first_or_404()
 
         if event and event.location_set_id:
             location_set_id = event.location_set_id
 
         return Location.query.filter_by(
             id=location_id,
-            location_set_id=location_set_id).one()
+            location_set_id=location_set_id).first_or_404()
 
 
 @use_kwargs(
@@ -100,7 +100,7 @@ class LocationListResource(BaseListResource):
         if event_id is None:
             event = getattr(g, 'event', None)
         else:
-            event = Event.query.filter_by(id=event_id).one()
+            event = Event.query.filter_by(id=event_id).first_or_404()
 
         if event and event.location_set_id:
             location_set_id = event.location_set_id
