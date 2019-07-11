@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from dateutil.parser import parse
 from flask import g
 from flask_apispec import MethodResource, marshal_with, use_kwargs
 from sqlalchemy import false
@@ -27,7 +26,7 @@ class EventItemResource(MethodResource):
             deployment_id = None
 
         return Event.query.filter_by(
-            id=event_id, deployment_id=deployment_id).one()
+            id=event_id, deployment_id=deployment_id).first_or_404()
 
 
 @use_kwargs(EVENT_LIST_QUERY_MAP, locations=['query'])
@@ -47,17 +46,13 @@ class EventListResource(BaseListResource):
 
         if lower_cutoff:
             try:
-                lower_timestamp = parse(lower_cutoff)
-
-                params.append(Event.end >= lower_timestamp)
+                params.append(Event.end >= lower_cutoff)
             except ValueError:
                 return Event.query.filter(false())
 
         if upper_cutoff:
             try:
-                upper_timestamp = parse(upper_cutoff)
-
-                params.append(Event.start <= upper_timestamp)
+                params.append(Event.start <= upper_cutoff)
             except ValueError:
                 return Event.query.filter(false())
 
