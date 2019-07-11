@@ -224,6 +224,8 @@ def submission():
 
     # hardcoding location lookup since the form builder
     # doesn't support it yet. please remove when it does
+    geopoint_lat = None
+    geopoint_lon = None
     try:
         element = tag_finder(document, tag='location')[0]
         geodata = element.text.split() if element.text else []
