@@ -20,7 +20,6 @@ flask-mail==0.9.1
 flask-menu
 flask-migrate==2.1.1
 flask-principal==0.4.0
-flask-restful==0.3.6
 flask-script==2.0.6
 flask-security==3.0.0
 flask-sqlalchemy~=2.4.0
