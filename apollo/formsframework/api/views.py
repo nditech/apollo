@@ -20,7 +20,7 @@ class FormItemResource(MethodResource):
             deployment_id = None
 
         return Form.query.filter_by(
-            id=form_id, deployment_id=deployment_id).one()
+            id=form_id, deployment_id=deployment_id).first_or_404()
 
 
 @use_kwargs(
