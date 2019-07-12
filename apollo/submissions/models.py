@@ -390,6 +390,34 @@ class SubmissionVersion(BaseModel):
                            passive_deletes=True))
     identity = db.Column(db.String, default='unknown', nullable=False)
 
+    def changes(self):
+        from apollo import models
+        added = []
+        changed = []
+        deleted = []
+
+        attr_current = set(self.data.keys())
+
+        prev_changeset = models.SubmissionVersion.query.filter(
+            models.SubmissionVersion.submission==self.submission,  # noqa
+            models.SubmissionVersion.timestamp<self.timestamp  # noqa
+        ).order_by(sa.desc(models.SubmissionVersion.timestamp)).first()
+
+        if prev_changeset:
+            attr_previous = set(prev_changeset.data.keys())
+
+            added = attr_current.difference(attr_previous)
+            deleted = attr_previous.difference(attr_current)
+            changed = {
+                attr
+                for attr in attr_current.intersection(attr_previous)
+                if self.data[attr] != prev_changeset.data[attr]
+            }
+        else:
+            added = set(self.data.keys())
+
+        return {'added': added, 'deleted': deleted, 'changed': changed}
+
 
 def trim_conflicts(submission, conflict_tags, data_keys):
     '''remove keys that were updated and no longer in conflict

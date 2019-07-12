@@ -122,6 +122,9 @@
   <li class="nav-item">
     <a class="nav-link" id="messages-tab" data-toggle="tab" role="tab" aria-controls="messages-panel" aria-selected="false" href="#messages-panel">{{ _('Messages') }}</a>
   </li>
+  <li class="nav-item">
+    <a class="nav-link" id="changelog-tab" data-toggle="tab" role="tab" aria-controls="changelog-panel" aria-selected="false" href="#changelog-panel">{{ _('Changelog') }}</a>
+  </li>
   <!--
   <li class="nav-item">
     <a class="nav-link" id="history-tab" data-toggle="tab" role="tab" aria-controls="history-panel" aria-selected="false" href="#history-panel">{{ _('History') }}</a>
@@ -353,6 +356,38 @@
       </table>
     </div>
   </div>
+  <div class="tab-pane fade" id="changelog-panel" role="tabpanel" aria-labelledby="changelog-tab">
+    <div class="table-responsive-md">
+      <table class="table table-hover">
+        <thead class="thead-light">
+          <tr>
+            <th scope="col" class="col-2">{{ _('User') }}</th>
+            <th scope="col" class="col-2">{{ _('Date') }}</th>
+            <th scope="col" class="col-1">{{ _('Time') }}</th>
+            <th scope="col">{{ _('Description') }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for changeset in changelog %}
+          <tr>
+            <td class="text-monospace">{{ changeset.identity }}</td>
+            <td class="text-monospace timestamp-date" data-timestamp="{{ changeset.timestamp|timestamp }}">{{ changeset.timestamp.strftime('%b %d %Y') }}</td>
+            <td class="text-monospace timestamp-time" data-timestamp="{{ changeset.timestamp|timestamp }}">{{ changeset.timestamp.strftime('%I:%M %p') }}</td>
+            <td class="text-monospace">
+              {%- for attr in changeset.changes()['added'] %}<span class="badge badge-pill badge-success" style="cursor: pointer" data-toggle="tooltip" title="{{ _('Added') }}">{{ attr }}: {{ changeset.data[attr] }}</span> {% endfor %}
+              {%- for attr in changeset.changes()['changed'] %}<span class="badge badge-pill badge-warning" style="cursor: pointer" data-toggle="tooltip" title="{{ _('Changed') }}">{{ attr }}: {{ changeset.data[attr] }}</span> {% endfor %}
+              {%- for attr in changeset.changes()['deleted'] %}<span class="badge badge-pill badge-danger" style="cursor: pointer" data-toggle="tooltip" title="{{ _('Deleted') }}">{{ attr }}</span> {% endfor -%}
+            </td>
+          </tr>
+          {% else %}
+          <tr class="table-warning">
+            <td class="text-center text-muted" colspan="4">{{ _('No Data Available') }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
   <!--<div class="tab-pane fade" id="history-panel" role="tabpanel" aria-labelledby="history-tab">
     {{ _('History') }}
   </div>-->
@@ -482,6 +517,8 @@
   moment.lang('{{ g.locale }}');
 
   $(function () {
+    $('[data-toggle="tooltip"]').tooltip();
+
     $('.tonow').each(function (index) {
       var timestamp = moment.unix(Number($(this).data('timestamp')));
       this.innerText = timestamp.fromNow();
