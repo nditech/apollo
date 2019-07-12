@@ -4,7 +4,7 @@ from flask_wtf import FlaskForm
 from wtforms import fields, validators, widgets
 from wtforms_alchemy.fields import QuerySelectField
 
-from apollo import models, services
+from apollo import models
 from apollo.frontend import permissions
 from apollo.submissions.filters import (
     ParticipantQuerySelectField, LocationQuerySelectField)
