@@ -413,9 +413,15 @@ def submission_edit(submission_id):
             models.Submission.participant==submission.participant,  # noqa
             models.Submission.form_id.in_([f.id for f in incident_forms])
         ).order_by(desc(models.Submission.created))
+        changelog = models.SubmissionVersion.query.filter(
+            models.SubmissionVersion.submission==submission,
+            models.SubmissionVersion.channel=='WEB').order_by(desc(
+                models.SubmissionVersion.timestamp
+            ))
     else:
         messages = []
         incidents = []
+        changelog = []
 
     sibling_submissions = submission.siblings
     master_submission = submission.master
@@ -490,7 +496,8 @@ def submission_edit(submission_id):
             failed_checks=failed_checks,
             failed_check_tags=failed_check_tags,
             messages=messages,
-            incidents=incidents
+            incidents=incidents,
+            changelog=changelog,
         )
     else:
         if questionnaire_form.form_type == 'INCIDENT':
@@ -794,7 +801,8 @@ def submission_edit(submission_id):
                     location_types=location_types,
                     comments=comments,
                     messages=messages,
-                    incidents=incidents
+                    incidents=incidents,
+                    changelog=changelog,
                 )
 
 
