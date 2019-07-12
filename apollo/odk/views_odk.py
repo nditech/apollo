@@ -10,6 +10,7 @@ from slugify import slugify
 from sqlalchemy.orm.exc import NoResultFound
 
 from apollo import services, models, csrf
+from apollo.core import db
 from apollo.formsframework.forms import filter_participants, find_active_forms
 from apollo.frontend import route
 from apollo.frontend.helpers import DictDiffer
@@ -238,17 +239,13 @@ def submission():
     except IndexError:
         pass
 
-    kwargs = {'data': data}
+    submission.data = data
     if (geopoint_lat is not None) and (geopoint_lon is not None):
-        kwargs.update(
-            geom='SRID=4326; POINT({longitude:f} {latitude:f})'.format(
-                longitude=geopoint_lon, latitude=geopoint_lat))
+        submission.geom = 'SRID=4326; POINT({longitude:f} {latitude:f})'.format(    # noqa
+            longitude=geopoint_lon, latitude=geopoint_lat)
 
-    models.Submission.query.filter_by(
-        id=submission.id
-    ).update(
-        kwargs, synchronize_session=False
-    )
+    db.session.add(submission)
+    db.session.commit()
     models.Submission.update_related(submission, data)
     update_submission_version(submission)
 
