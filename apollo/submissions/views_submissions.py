@@ -13,9 +13,9 @@ from flask_menu import register_menu
 from flask_security import current_user, login_required
 from flask_security.utils import verify_and_update_password
 from slugify import slugify_unicode
+from sqlalchemy import desc, Integer, func, text
 from sqlalchemy.dialects.postgresql import array
 from sqlalchemy.sql import false
-from sqlalchemy import desc, Integer, func, text
 from tablib import Dataset
 from werkzeug.datastructures import MultiDict
 
@@ -280,8 +280,7 @@ def submission_list(form_id):
                     submission.participant and
                     submission.participant.primary_phone
                 ) else ''
-                for submission in query_filterset.qs.with_entities(
-                    models.Submission.participant).select_related(1)
+                for submission in query_filterset.qs
             ] if x != '']
         recipients.extend(current_app.config.get('MESSAGING_CC'))
 

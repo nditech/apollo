@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from flask_mail import Message
-from apollo import services, settings
+from apollo import models, services, settings
 from apollo.core import mail, sentry
 from apollo.messaging.outgoing import gateway_factory
 from apollo.factory import create_celery_app
@@ -21,8 +21,8 @@ def send_message(event, message, recipient, sender=""):
     gateway = gateway_factory()
     if gateway:
         services.messages.log_message(
-            event=services.events.get(pk=event), recipient=recipient,
-            sender=sender, text=message, direction='OUT')
+            event=models.Event.query.filter_by(id=event).one(),
+            recipient=recipient, sender=sender, text=message, direction='OUT')
         return gateway.send(message, recipient, sender)
 
 
