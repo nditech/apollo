@@ -216,7 +216,7 @@
     {% for group in form.data.groups %}
     {% set ns = namespace(has_form_error=false, has_qa_error=false) %}
     <div class="card bg-light {%- if not loop.last %} mb-3{% endif %}">
-      <div class="card-header d-flex justify-content-between align-items-center" data-toggle="collapse" data-target="#{{ group.name }}">
+      <div class="card-header d-flex justify-content-between align-items-center" data-toggle="collapse" data-target="#{{ group.name }}" aria-expanded="{% if submission.completion(group.name) == 'Complete' and not ns.has_form_error and not ns.has_qa_error %}false{% else %}true{% endif %}" aria-controls="{{ group.name }}">
         <h5 class="mb-0">{{ group.name }}</h5>
       </div>
       {# check for data validation or quality assurance errors #}
