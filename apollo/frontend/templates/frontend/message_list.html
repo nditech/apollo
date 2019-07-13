@@ -70,7 +70,7 @@
       {% if left_message.direction == 'IN' %}
       <tr>
       {% if right_message == None %}
-        <td colspan="6" class="text-monospace"></td>
+        <td colspan="7" class="text-monospace text-center">{{ _('No response') }}</td>
       {% else %}
         <td class="timestamp-date text-monospace" data-timestamp="{{ right_message.received|timestamp }}">{{ right_message.received.strftime('%b %d %Y') }}</td>
         <td class="timestamp-time text-monospace" data-timestamp="{{ right_message.received|timestamp }}">{{ right_message.received.strftime('%I:%M %p') }}</td>
