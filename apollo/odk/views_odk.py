@@ -14,6 +14,8 @@ from apollo.core import db
 from apollo.formsframework.forms import filter_participants, find_active_forms
 from apollo.frontend import route
 from apollo.frontend.helpers import DictDiffer
+from apollo.odk.utils import make_message_text
+from apollo.services import messages
 
 DEFAULT_CONTENT_LENGTH = 1000000
 DEFAULT_CONTENT_TYPE = 'text/xml; charset=utf-8'
@@ -248,6 +250,12 @@ def submission():
     db.session.commit()
     models.Submission.update_related(submission, data)
     update_submission_version(submission)
+
+    message_text = make_message_text(form, participant, data)
+    sender = participant.primary_phone or participant.participant_id
+    messages.log_message(
+        event=submission.event, direction='IN', text=message_text,
+        sender=sender, message_type='ODK')
 
     if form_modified:
         return open_rosa_default_response(

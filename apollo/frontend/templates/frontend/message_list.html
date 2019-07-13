@@ -61,6 +61,7 @@
         <th scope="col">{{ _('Mobile') }}</th>
         <th scope="col">{{ _('Direction') }}</th>
         <th scope="col">{{ _('Text') }}</th>
+        <th scope="col" class="col-1">{{ _('Source') }}</th>
         <th scope="col" class="col-2">{{ _('Type') }}</th>
       </tr>
     </thead>
@@ -76,6 +77,7 @@
         <td class="text-monospace">{{ right_message.recipient }}</td>
         <td class="text-monospace">{{ right_message.direction.value }}</td>
         <td class="text-monospace" style="word-wrap:break-word">{{ right_message.text }}</td>
+        <td class="text-monospace">{{ right_message.message_type.value }}</td>
         <td class="text-monospace">{% if form_type %}{{ form_type.value }}{% else %}{{ _('Invalid') }}{% endif %}</td>
       {% endif %}
       </tr>
@@ -85,6 +87,7 @@
         <td class="text-monospace">{{ left_message.sender }}</td>
         <td class="text-monospace">{{ left_message.direction.value }}</td>
         <td class="text-monospace" style="word-wrap:break-word">{{ left_message.text }}</td>
+        <td class="text-monospace">{{ left_message.message_type.value }}</td>
         <td class="text-monospace">{% if form_type %}{{ form_type.value }}{% else %}{{ _('Invalid') }}{% endif %}</td>
       </tr>
       {% else %}
@@ -94,13 +97,14 @@
         <td class="text-monospace">{{ left_message.recipient }}</td>
         <td class="text-monospace">{{ _(left_message.direction.value) }}</td>
         <td class="text-monospace" style="word-wrap:break-word">{{ left_message.text }}</td>
+        <td class="text-monospace">{{ left_message.message_type.value }}</td>
         <td class="text-monospace">{% if form_type %}{{ form_type.value }}{% else %}{{ _('Invalid') }}{% endif %}</td>
       </tr>
       <tr><td colspan="6"></td></tr>
       {% endif %}
       {% else %}
       <tr class="table-warning">
-        <td class="text-center text-muted" colspan="6">{{ _('No Data Available') }}</td>
+        <td class="text-center text-muted" colspan="7">{{ _('No Data Available') }}</td>
       </tr>
       {% endfor %}
     </tbody>

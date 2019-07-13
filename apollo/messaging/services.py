@@ -12,7 +12,7 @@ class MessageService(Service):
     __model__ = Message
 
     def log_message(self, event, direction, text, recipient='', sender='',
-                    timestamp=None):
+                    message_type=Message.MESSAGE_TYPES[0][0], timestamp=None):
         if timestamp:
             try:
                 msg_time = datetime.utcfromtimestamp(timestamp)
