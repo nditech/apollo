@@ -253,9 +253,11 @@ def submission():
 
     message_text = make_message_text(form, participant, data)
     sender = participant.primary_phone or participant.participant_id
-    messages.log_message(
+    message = messages.log_message(
         event=submission.event, direction='IN', text=message_text,
         sender=sender, message_type='ODK')
+    message.submission_id = submission.id
+    message.save()
 
     if form_modified:
         return open_rosa_default_response(
