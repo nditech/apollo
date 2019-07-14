@@ -83,7 +83,8 @@ def make_submission_edit_form_class(event, form):
                         widget=widgets.TextArea()
                     )
                 elif field_type in ('select', 'multiselect'):
-                    choices = [(v, k) for k, v in field['options'].items()]
+                    choices = [(v, '{} — {}'.format(v, k)) for k, v in sorted(
+                        field['options'].items(), key=lambda x: x[1])]
 
                     if field_type == 'multiselect':
                         form_fields[field['tag']] = fields.SelectMultipleField(
@@ -97,7 +98,7 @@ def make_submission_edit_form_class(event, form):
                             widget=widgets.ListWidget()
                         )
                     else:
-                        render_choices = [('', _('(Unspecified)'))] + choices
+                        render_choices = [('', '')] + choices
                         form_fields[field['tag']] = fields.SelectField(
                             field['tag'],
                             choices=render_choices,
