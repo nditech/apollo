@@ -256,6 +256,7 @@ def submission():
     message = messages.log_message(
         event=submission.event, direction='IN', text=message_text,
         sender=sender, message_type='ODK')
+    message.participant = participant
     message.submission_id = submission.id
     message.save()
 
@@ -293,7 +294,7 @@ def update_submission_version(submission):
             return
 
     # use participant ID as identity
-    channel = 'WEB'
+    channel = 'ODK'
     identity = participant_auth.username()
 
     services.submission_versions.create(
