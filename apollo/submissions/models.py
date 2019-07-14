@@ -210,6 +210,12 @@ class Submission(BaseModel):
                 for k in sibling_data_keys.difference(subset_keys)
                 if k not in conflict_tags})
 
+        for key in master.overridden_fields:
+            if key in master.data:
+                subset[key] = master.data[key]
+            else:
+                del subset[key]
+
         master.data = subset
         db.session.begin(nested=True)
         db.session.add_all([self, master])
