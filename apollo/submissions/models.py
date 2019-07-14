@@ -194,9 +194,9 @@ class Submission(BaseModel):
 
         conflict_tags = self.compute_conflict_tags(data.keys())
         subset = {k: v for k, v in data.items() if k not in conflict_tags}
+        subset_keys = set(subset.keys())
 
         master = self.master
-        master.data = subset
 
         siblings = self.siblings
         self.conflicts = trim_conflicts(self, conflict_tags, data.keys())
@@ -204,7 +204,13 @@ class Submission(BaseModel):
         for sibling in siblings:
             sibling.conflicts = trim_conflicts(
                 sibling, conflict_tags, data.keys())
+            sibling_data_keys = set(sibling.data.keys())
+            subset.update(
+                {k: sibling.data[k]
+                for k in sibling_data_keys.difference(subset_keys)
+                if k not in conflict_tags})
 
+        master.data = subset
         db.session.begin(nested=True)
         db.session.add_all([self, master])
         db.session.add_all(siblings)
@@ -260,7 +266,7 @@ class Submission(BaseModel):
         siblings = self.__siblings()
         result = siblings.with_entities(*params).one()
 
-        return [k for k, v in result._asdict().items() if v]
+        return {k for k, v in result._asdict().items() if v}
 
     def get_incident_status_display(self):
         d = dict(self.INCIDENT_STATUSES)
