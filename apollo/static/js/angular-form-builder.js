@@ -411,7 +411,7 @@
               return scope.popover.shown();
             });
           });
-          return $(element).on('hide.bs.popover', function() {
+          return $(element).on('hidden.bs.popover', function() {
             var $popover;
             $popover = $("form." + popover.id).closest('.popover');
             if (!popover.isClickedSave) {
