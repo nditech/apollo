@@ -80,7 +80,7 @@ def message_list():
             Submission, Message.submission_id == Submission.id
         ).outerjoin(
             Form, Submission.form_id == Form.id
-        ).join(
+        ).outerjoin(
             # TODO: add extra condition for 'OUT' message
             # if necessary
             OutboundMsg,

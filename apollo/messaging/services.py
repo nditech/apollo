@@ -12,7 +12,7 @@ class MessageService(Service):
     __model__ = Message
 
     def log_message(self, event, direction, text, recipient='', sender='',
-                    timestamp=None):
+                    timestamp=None, message_type='SMS'):
         if timestamp:
             try:
                 msg_time = datetime.utcfromtimestamp(timestamp)
@@ -23,7 +23,8 @@ class MessageService(Service):
 
         return self.create(
             direction=direction, recipient=recipient, sender=sender, text=text,
-            deployment_id=event.deployment_id, event=event, received=msg_time)
+            deployment_id=event.deployment_id, event=event, received=msg_time,
+            message_type=message_type)
 
     def export_list(self, query):
         headers = [
