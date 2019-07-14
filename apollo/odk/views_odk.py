@@ -294,7 +294,7 @@ def update_submission_version(submission):
             return
 
     # use participant ID as identity
-    channel = 'WEB'
+    channel = 'ODK'
     identity = participant_auth.username()
 
     services.submission_versions.create(
