@@ -549,3 +549,24 @@ def participant_headers(upload_id, participant_set_id=0, view=None):
                     participant_set_id=participant_set_id))
             else:
                 return redirect(url_for('participants.participant_list'))
+
+
+@route(bp, '/participant/call', methods=['POST'])
+@login_required
+def log_call():
+    """
+    Adds a call log for the participant
+    """
+    if request.is_xhr:
+        participant_id = request.form.get('participant')
+        description = request.form.get('description')
+
+        participant = Participant.query.get_or_404(participant_id)
+        user = current_user._get_current_object()
+        contact = models.ContactHistory(
+            participant=participant,user=user, description=description)
+
+        contact.save()
+        return '1'
+    else:
+        abort(400)

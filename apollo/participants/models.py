@@ -280,6 +280,16 @@ class Participant(BaseModel):
         d = dict(Participant.GENDER)
         return d.get(self.gender, Participant.GENDER[0][1])
 
+    @property
+    def last_contacted(self):
+        contact = ContactHistory.query.filter(
+            ContactHistory.participant==self
+        ).order_by(ContactHistory.created.desc()).first()
+
+        if contact:
+            return contact.created
+        else:
+            return None
 
 ParticipantTranslations = func.jsonb_each_text(
     Participant.name_translations).alias('translations')
@@ -294,11 +304,32 @@ class PhoneContact(BaseModel):
         nullable=False)
     number = db.Column(db.String, nullable=False)
     created = db.Column(
-        db.DateTime, nullable=False, default=utils.current_timestamp,
-        onupdate=utils.current_timestamp)
+        db.DateTime, nullable=False, default=utils.current_timestamp)
     updated = db.Column(
         db.DateTime, nullable=False, default=utils.current_timestamp,
         onupdate=utils.current_timestamp)
     verified = db.Column(db.Boolean, default=False)
 
     participant = db.relationship('Participant')
+
+
+class ContactHistory(BaseModel):
+    id = db.Column(db.Integer, nullable=False, primary_key=True)
+    participant_id = db.Column(
+        db.Integer, db.ForeignKey('participant.id', ondelete='CASCADE'),
+        nullable=False)
+    user_id = db.Column(
+        db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'),
+        nullable=False)
+    description = db.Column(db.String)
+    created = db.Column(
+        db.DateTime, nullable=False, default=utils.current_timestamp)
+
+    participant = db.relationship(
+        'Participant',
+        backref=db.backref('contact_history', cascade='all, delete',
+                           passive_deletes=True))
+    user = db.relationship(
+        'User',
+        backref=db.backref('contact_history', cascade='all, delete',
+                           passive_deletes=True))
