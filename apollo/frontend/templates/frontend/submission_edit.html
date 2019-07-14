@@ -30,28 +30,37 @@
     {%- endif -%}
   </tr>
   <tr>
-    <th>{{ _('Texted Phone') }}</th>
-    <td>{% if submission.last_phone_number %}<strong>{{ submission.last_phone_number }}</strong> <a href="javascript:;" {%- if not perms.edit_participant.can() %} style="pointer-events:none"{% endif %} id="toggle_verification" data-participant="{{ submission.participant.id }}" data-phone="{{ submission.last_phone_number }}" data-submission="{{ submission.id }}"><span id="toggle_verification_badge" class="badge badge-pill {% if submission.sender_verified %}badge-success{% else %}badge-warning{% endif %}">{% if submission.sender_verified %}{{ _('Verified') }}{% else %}{{ _('Unverified') }}{% endif %}</span></a> <div class="spinner-grow spinner-grow-sm inline-block invisible" id="toggle_verification_spinner" role="status"><span class="sr-only">Loading...</span></div>{% else %}{{ _('N/A') }}{% endif %}</td>
+    <th>{{ _('Last Contacted') }}</th>
+    <td>{% if submission.participant.last_contacted %}<span class="tonow" data-timestamp="{{ submission.participant.last_contacted|timestamp }}">{{ submission.participant.last_contacted.strftime('%b %d, %Y %I:%M %p') }}</span>{% else %}{{ _('-') }}{% endif %}</td>
     {%- if form.form_type == 'CHECKLIST' -%}
     {%- for sib in siblings -%}
-    <td>{% if sib.last_phone_number %}<strong>{{ sib.last_phone_number }}</strong> {% if sib.sender_verified %}<span id="phone_verification_status" class="badge badge-pill badge-success">{{ _('Verified') }}</span>{% else %}<span id="phone_verification_status" class="badge badge-pill badge-warning">{{ _('Unverified') }}</span>{% endif %}{% else %}{{ _('N/A') }}{% endif %}</td>
+    <td>{% if sib.participant.last_contacted %}<span class="tonow" data-timestamp="{{ sib.participant.last_contacted|timestamp }}">{{ sib.participant.last_contacted.strftime('%b %d, %Y %I:%M %p') }}</span>{% else %}{{ _('-') }}{% endif %}</td>
+    {%- endfor -%}
+    {%- endif -%}
+  </tr>
+  <tr>
+    <th>{{ _('Texted Phone') }}</th>
+    <td>{% if submission.last_phone_number %}<strong>{{ submission.last_phone_number }}</strong> <a href="javascript:;" {%- if not perms.edit_participant.can() %} style="pointer-events:none"{% endif %} id="toggle_verification" data-participant="{{ submission.participant.id }}" data-phone="{{ submission.last_phone_number }}" data-submission="{{ submission.id }}"><span id="toggle_verification_badge" class="badge badge-pill {% if submission.sender_verified %}badge-success{% else %}badge-warning{% endif %}">{% if submission.sender_verified %}{{ _('Verified') }}{% else %}{{ _('Unverified') }}{% endif %}</span></a> <div class="spinner-grow spinner-grow-sm inline-block invisible" id="toggle_verification_spinner" role="status"><span class="sr-only">Loading...</span></div>{% else %}{{ _('-') }}{% endif %}</td>
+    {%- if form.form_type == 'CHECKLIST' -%}
+    {%- for sib in siblings -%}
+    <td>{% if sib.last_phone_number %}<strong>{{ sib.last_phone_number }}</strong> {% if sib.sender_verified %}<span id="phone_verification_status" class="badge badge-pill badge-success">{{ _('Verified') }}</span>{% else %}<span id="phone_verification_status" class="badge badge-pill badge-warning">{{ _('Unverified') }}</span>{% endif %}{% else %}{{ _('-') }}{% endif %}</td>
     {%- endfor -%}
     {%- endif -%}
   </tr>
   <tr>
     <th>{{ _('Other Phones') }}</th>
     <td>
-      {% if submission.participant and submission.participant.other_phones %}{{ submission.participant.other_phones|join(', ') }}{% else %}{{ _('N/A') }}{% endif %}
+      {% if submission.participant and submission.participant.other_phones %}{{ submission.participant.other_phones|join(', ') }}{% else %}{{ _('-') }}{% endif %}
     </td>
     {%- if form.form_type == 'CHECKLIST' -%}
     {%- for sib in siblings -%}
-    <td>{% if sib.participant and sib.participant.other_phones %}{{ sib.participant.other_phones|join(', ') }}{% else %}{{ _('N/A') }}{% endif %}</td>
+    <td>{% if sib.participant and sib.participant.other_phones %}{{ sib.participant.other_phones|join(', ') }}{% else %}{{ _('-') }}{% endif %}</td>
     {%- endfor -%}
     {%- endif -%}
   </tr>
   <tr>
     <th>{{ _('Role') }}</th>
-    <td>{{ submission.participant.role|default(_('N/A'), true) }}</td>
+    <td>{{ submission.participant.role|default(_('-'), true) }}</td>
     {%- if form.form_type == 'CHECKLIST' -%}
     {%- for sib in siblings -%}
     <td>{{ sib.participant.role }}</td>
@@ -125,10 +134,9 @@
   <li class="nav-item">
     <a class="nav-link" id="changelog-tab" data-toggle="tab" role="tab" aria-controls="changelog-panel" aria-selected="false" href="#changelog-panel">{{ _('Changelog') }}</a>
   </li>
-  <!--
   <li class="nav-item">
-    <a class="nav-link" id="history-tab" data-toggle="tab" role="tab" aria-controls="history-panel" aria-selected="false" href="#history-panel">{{ _('History') }}</a>
-  </li>-->
+    <a class="nav-link" id="calllog-tab" data-toggle="tab" role="tab" aria-controls="calllog-panel" aria-selected="false" href="#calllog-panel">{{ _('Call Log') }}</a>
+  </li>
 </ul>
 
   {%- if failed_checks and submission.form.quality_checks_enabled and perms.edit_submission_verification_status.can() %}
@@ -388,9 +396,36 @@
       </table>
     </div>
   </div>
-  <!--<div class="tab-pane fade" id="history-panel" role="tabpanel" aria-labelledby="history-tab">
-    {{ _('History') }}
-  </div>-->
+  <div class="tab-pane fade" id="calllog-panel" role="tabpanel" aria-labelledby="calllog-tab">
+    <div class="table-responsive-md">
+      <table class="table table-hover">
+        <thead class="thead-light">
+          <tr>
+            <th scope="col" class="col-2">{{ _('User') }}</th>
+            <th scope="col" class="col-2">{{ _('Date') }}</th>
+            <th scope="col" class="col-1">{{ _('Time') }}</th>
+            <th scope="col">{{ _('Note') }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for call in call_log %}
+          <tr>
+            <td class="text-monospace">{{ call.user.email }}</td>
+            <td class="text-monospace timestamp-date" data-timestamp="{{ call.created|timestamp }}">{{ call.created.strftime('%b %d %Y') }}</td>
+            <td class="text-monospace timestamp-time" data-timestamp="{{ call.created|timestamp }}">{{ call.created.strftime('%I:%M %p') }}</td>
+            <td class="text-monospace">
+              {% if call.description %}{{ call.description }}{% else %}<em class="text-muted">{{ _('-') }}</em>{% endif %}
+            </td>
+          </tr>
+          {% else %}
+          <tr class="table-warning">
+            <td class="text-center text-muted" colspan="4">{{ _('No Data Available') }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
 </div>
 <input type="hidden" name="{{ master_form['location'].name }}" value="{{ master_form['location'].data.id|default('__None', true) }}" />
 
@@ -495,6 +530,31 @@
 </div>
 {%- endif %}
 </form>
+
+<div class="modal fade" id="addCallLogModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">{{ _('Add Call Log') }}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mb-n2">
+        <div class="form-group">
+          <label for="calllog_description">{{ _('Note') }}</label>
+          <textarea id="calllog_description" class="form-control" rows="5" data-participant="{{ submission.participant.id }}"></textarea>
+          <small class="form-text text-muted">
+            {% trans %}You may (optionally) include details of your call or interaction with the participant here.{% endtrans %}
+          </small>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <div class="spinner-grow spinner-grow-sm inline-block invisible" id="calllog_loader" role="status"><span class="sr-only">Loading...</span></div> <button type="button" id="contactSaveBtn" class="btn btn-primary">{{ _('Save') }}</button>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}
 
 
@@ -502,6 +562,7 @@
 {%- block footer -%}
   <div class="mt-n2 pb-2 w-25 d-flex justify-content-end">
     <div>
+      <button type="button" id="addCallLogBtn" class="btn btn-success" data-toggle="modal" data-target="#addCallLogModal">{{ _('Add Call Log') }}</button>
       <button type="button" id="cancelBtn" class="btn btn-secondary">{{ _('Cancel') }}</button>
       <button type="button" id="saveBtn" class="btn btn-primary">{{ _('Save') }}</button>
     </div>
@@ -605,6 +666,32 @@
           }
         });
       }
+    });
+
+    $('#contactSaveBtn').click(function() {
+      var description = $('#calllog_description').val(), participant = $('#calllog_description').data('participant');
+
+      $.ajax({
+        url: "{{ url_for('participants.log_call') }}",
+        type: 'POST',
+        data: {description: description, participant: participant},
+        beforeSend: function (xhr, settings) {
+          $('#contactSaveBtn').attr('disabled', 'disabled');
+          $('#calllog_description').attr('disabled', 'disabled');
+          $('#calllog_loader').attr('style', 'visibility:visible;');
+          if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+          }
+        }
+      }).done(function(data) {
+        $('#calllog_description').val("");
+        $('#addCallLogModal').modal('hide');
+      }).always(function () {
+        // Re-enable
+        $('#calllog_description').removeAttr('disabled');
+        $('#contactSaveBtn').removeAttr('disabled');
+        $('#calllog_loader').attr('style', 'visibility:hidden;');
+      });
     });
 
     $('.obs1').click(function(){

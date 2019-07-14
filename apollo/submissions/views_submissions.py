@@ -418,10 +418,14 @@ def submission_edit(submission_id):
             models.SubmissionVersion.channel=='WEB').order_by(desc(
                 models.SubmissionVersion.timestamp
             ))
+        call_log = models.ContactHistory.query.filter(
+            models.ContactHistory.participant==submission.participant
+        ).order_by(models.ContactHistory.created.desc())
     else:
         messages = []
         incidents = []
         changelog = []
+        call_log = []
 
     sibling_submissions = submission.siblings
     master_submission = submission.master
@@ -498,6 +502,7 @@ def submission_edit(submission_id):
             messages=messages,
             incidents=incidents,
             changelog=changelog,
+            call_log=call_log,
         )
     else:
         if questionnaire_form.form_type == 'INCIDENT':
@@ -803,6 +808,7 @@ def submission_edit(submission_id):
                     messages=messages,
                     incidents=incidents,
                     changelog=changelog,
+                    call_log=call_log,
                 )
 
 
