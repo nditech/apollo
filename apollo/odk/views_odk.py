@@ -256,6 +256,7 @@ def submission():
     message = messages.log_message(
         event=submission.event, direction='IN', text=message_text,
         sender=sender, message_type='ODK')
+    message.participant = participant
     message.submission_id = submission.id
     message.save()
 
