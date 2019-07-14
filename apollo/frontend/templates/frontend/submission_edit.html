@@ -1,4 +1,5 @@
 {% extends 'frontend/layout.html' -%}
+{% from 'frontend/macros/submission_field_macros.html' import render_field %}
 {%- set form, siblings, master = submission.form, submission.siblings, submission.master %}
 
 
@@ -241,37 +242,27 @@
           {% for field in group.fields %}
             <tr {%- if field.tag in failed_check_tags and submission.form.quality_checks_enabled and perms.edit_submission_verification_status.can() %} class="bg-warning"{% endif %}>
               <td class="align-middle" style="width: 0.1%; white-space: nowrap;"><strong>{{ field.tag }}</strong></td>
-              <td class="align-middle">
-                {{ field.description }}
-                {%- if field['type'] == 'select' %}
-                <br>
-                <span class="options">
-                {% for item in field.options|dictsort(false, 'value') %}
-                <span class="option"><strong>({{ item.1 }})</strong> {{ item.0 }}</span>
-                {% endfor %}
-                </span>
-                {%- endif %}
-              </td>
+              <td class="align-middle">{{ field.description }}</td>
               {% if readonly -%}
-              <td class="col-2 align-middle obs-on">{{ submission_form[field.tag](class_='form-control tracked text-monospace', disabled='disabled') }}</td>
+              <td class="col-2 align-middle obs-on">{{ render_field(submission_form[field.tag], field.type, klass_='form-control tracked text-monospace', disabled='disabled') }}</td>
               {%- else -%}
               {% if submission_form[field.tag].errors -%}
-              <td class="col-2 align-middle obs-on">{{ submission_form[field.tag](class_='form-control tracked text-monospace is-invalid') }}</td>
+              <td class="col-2 align-middle obs-on">{{ render_field(submission_form[field.tag], field.type, klass_='form-control tracked text-monospace is-invalid') }}</td>
               {%- else -%}
-              <td class="col-2 align-middle obs-on">{{ submission_form[field.tag](class_='form-control tracked text-monospace') }}</td>
+              <td class="col-2 align-middle obs-on">{{ render_field(submission_form[field.tag], field.type, klass_='form-control tracked text-monospace') }}</td>
               {%- endif %}
               {%- endif %}
               {% for sibling_form in sibling_forms -%}
-              <td class="col-2 align-middle">{{ sibling_form[field.tag](class_='form-control tracked text-monospace', disabled='disabled') }}</td>
+              <td class="col-2 align-middle">{{ render_field(sibling_form[field.tag], field.type, klass_='form-control tracked text-monospace', disabled='disabled') }}</td>
               {% endfor %}
               {% if readonly -%}
               {% if master_form[field.tag].errors -%}
-              <td class="col-2 align-middle ps-on">{{ master_form[field.tag](class_='form-control tracked text-monospace is-invalid') }}</td>
+              <td class="col-2 align-middle ps-on">{{ render_field(master_form[field.tag], field.type, klass_='form-control tracked text-monospace is-invalid') }}</td>
               {%- else -%}
-              <td class="col-2 align-middle ps-on">{{ master_form[field.tag](class_='form-control tracked text-monospace') }}</td>
+              <td class="col-2 align-middle ps-on">{{ render_field(master_form[field.tag], field.type, klass_='form-control tracked text-monospace') }}</td>
               {%- endif %}
               {%- else -%}
-              <td class="col-2 align-middle ps-on">{{ master_form[field.tag](class_='form-control tracked text-monospace', disabled='disabled') }}</td>
+              <td class="col-2 align-middle ps-on">{{ render_field(master_form[field.tag], field.type, klass_='form-control tracked text-monospace', disabled='disabled') }}</td>
               {%- endif %}
             </tr>
           {% endfor %}
@@ -481,21 +472,11 @@
           {% for field in group.fields %}
             <tr>
               <td class="align-middle" style="width: 0.1%; white-space: nowrap;"><strong>{{ field.tag }}</strong></td>
-              <td class="align-middle">
-                {{ field.description }}
-                {%- if field['type'] == 'select' %}
-                <br>
-                <span class="options">
-                {% for item in field.options|dictsort(false, 'value') %}
-                <span class="option"><strong>({{ item.1 }})</strong> {{ item.0 }}</span>
-                {% endfor %}
-                </span>
-                {%- endif %}
-              </td>
+              <td class="align-middle">{{ field.description }}</td>
               {% if submission_form[field.tag].errors -%}
-              <td class="col-2 align-middle">{{ submission_form[field.tag](class_='form-control tracked text-monospace is-invalid') }}</td>
+              <td class="col-2 align-middle">{{ render_field(submission_form[field.tag], field.type, klass_='form-control tracked text-monospace is-invalid') }}</td>
               {%- else -%}
-              <td class="col-2 align-middle">{{ submission_form[field.tag](class_='form-control tracked text-monospace') }}</td>
+              <td class="col-2 align-middle">{{ render_field(submission_form[field.tag], field.type, klass_='form-control tracked text-monospace') }}</td>
               {%- endif %}
             </tr>
           {% endfor %}
