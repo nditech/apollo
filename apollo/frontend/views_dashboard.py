@@ -57,10 +57,16 @@ def main_dashboard(form_id=None):
     if form is not None:
         breadcrumbs.append(form.name)
 
-    query = Submission.query.filter(
+    query_args = [
         Submission.event_id == event.id,
-        Submission.form == form,
-        Submission.submission_type == 'M').join(
+        Submission.form_id == form.id
+    ]
+    if form.track_data_conflicts:
+        query_args.append(Submission.submission_type == 'M')
+    else:
+        query_args.append(Submission.submission_type == 'O')
+
+    query = Submission.query.filter(*query_args).join(
             Location,
             Submission.location_id == Location.id
         )

@@ -83,10 +83,13 @@ def _voting_results(form_id, location_id=None):
     result_field_descriptions = [
         field['description'] for field in result_fields]
 
-    queryset = submissions.find(
-        form=form,
-        submission_type='M'
-    ).filter(
+    query_kwargs = {'event': event, 'form': form}
+    if form.track_data_conflicts:
+        query_kwargs['submission_type'] = 'M'
+    else:
+        query_kwargs['submission_type'] = 'O'
+
+    queryset = submissions.find(**query_kwargs).filter(
         models.Submission.verification_status != FLAG_STATUSES['rejected'][0],
         not_(models.Submission.quarantine_status.in_(['A', 'R'])))
     filter_set = filter_class(queryset, request.args)
