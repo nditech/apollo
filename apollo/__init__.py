@@ -14,7 +14,7 @@ from apollo import assets, models, services
 
 from apollo.frontend import permissions, template_filters
 from apollo.core import (
-    admin, csrf, db, gravatar, menu, oauth, security, webpack
+    admin, csrf, db, docs, gravatar, menu, oauth, security, webpack
 )
 from apollo.prometheus.flask import monitor
 from .frontend.helpers import set_request_presets
@@ -64,6 +64,8 @@ def create_app(settings_override=None, register_security_blueprint=True):
     security.init_app(app, userdatastore,
                       login_form=DeploymentLoginForm,
                       register_blueprint=register_security_blueprint)
+
+    docs.init_app(app)
 
     csrf.init_app(app)
     init_admin(admin, app)

@@ -14,6 +14,10 @@ aniso8601==0.82 \
     --hash=sha256:e33ffc4ff6882e6a318c07844e346cd6160abe2f48cc2e797d2fe5f36364789e
 anyjson==0.3.3 \
     --hash=sha256:37812d863c9ad3e35c0734c42e0bf0320ce8c3bed82cd20ad54cb34d158157ba
+apispec==2.0.1 \
+    --hash=sha256:427293594699c77753b8fdc6d78d8dfe267c394df5186c236d57f6ef1af95027 \
+    --hash=sha256:edad7a67fae5576fd3e97888b05d228573bf75b2dc0d2714d7cea0480662ac19 \
+    # via flask-apispec
 argparse==1.4.0 \
     --hash=sha256:62b089a55be1d8949cd2bc7e0df0bddb9e028faefc8c32038cc84862aefdd6e4 \
     --hash=sha256:c31647edb69fd3d465a847ea3157d37bed1f95f19760b11a47aa91c04b666314 \
@@ -121,6 +125,9 @@ et-xmlfile==1.0.1 \
     # via openpyxl
 flask-admin==1.5.3 \
     --hash=sha256:ca0be6ec11a6913b73f656c65c444ae5be416c57c75638dd3199376ce6bc7422
+flask-apispec==0.8.1 \
+    --hash=sha256:8a39fc1b73bea8cfe0569d91494b23592e57ef1c68fd97ccec0a7bc22a0bdf31 \
+    --hash=sha256:fba842cdf3d3d8dfb56eb69a39da534cbb5879356f7186314c12b8b929caa5fe
 flask-assets==0.12 \
     --hash=sha256:6031527b89fb3509d1581d932affa5a79dd348cfffb58d0aef99a43461d47847
 flask-babelex==0.9.3 \
@@ -145,9 +152,6 @@ flask-migrate==2.1.1 \
     --hash=sha256:b709ca8642559c3c5a81a33ab10839fa052177accd5ba821047a99db635255ed
 flask-principal==0.4.0 \
     --hash=sha256:f5d6134b5caebfdbb86f32d56d18ee44b080876a27269560a96ea35f75c99453
-flask-restful==0.3.6 \
-    --hash=sha256:5795519501347e108c436b693ff9a4d7b373a3ac9069627d64e4001c05dd3407 \
-    --hash=sha256:e2f1b8063de3944b94c7f8be5cee4d2161db0267c54c5b757d875295061776fa
 flask-script==2.0.6 \
     --hash=sha256:6425963d91054cfcc185807141c7314a9c5ad46325911bd24dcb489bd0161c65
 flask-security==3.0.0 \
@@ -288,6 +292,13 @@ mako==1.0.7 \
     --hash=sha256:4e02fde57bd4abb5ec400181e4c314f56ac3e49ba4fb8b0d50bba18cb27d25ae
 markupsafe==1.0 \
     --hash=sha256:a6be69091dac236ea9c6bc7d012beab42010fa914c459791d627dad4910eb665
+marshmallow-sqlalchemy==0.17.0 \
+    --hash=sha256:d662fc8103a06b59aafbc33c8ab4f1318799d66aae4f660c1e7e278bc45ef69e \
+    --hash=sha256:f69e740ea8d3b678fd712263e5dd739c94482cd8840e2f6cf4314919e6547cee
+marshmallow==2.19.5 \
+    --hash=sha256:9cedfc5b6f568d57e8a2cf3d293fbd81b05e5ef557854008d03e25660a39ccfd \
+    --hash=sha256:a4d99922116a76e5abd8f997ec0519086e24814b7e1e1344bebe2a312ba50235 \
+    # via flask-apispec, marshmallow-sqlalchemy, webargs
 netifaces==0.10.9 \
     --hash=sha256:078986caf4d6a602a4257d3686afe4544ea74362b8928e9f4389b5cd262bc215 \
     --hash=sha256:0c4304c6d5b33fbd9b20fdc369f3a2fef1a8bbacfb6fd05b9708db01333e9e7b \
@@ -520,6 +531,11 @@ vine==1.3.0 \
     --hash=sha256:133ee6d7a9016f177ddeaf191c1f58421a1dcc6ee9a42c58b34bed40e1d2cd87 \
     --hash=sha256:ea4947cc56d1fd6f2095c8d543ee25dad966f78692528e68b4fada11ba3f98af \
     # via amqp
+webargs==5.3.2 \
+    --hash=sha256:6b81ce44572d4f345104aa41c734fdc01165f054a061a8ebb1b46e89851e1170 \
+    --hash=sha256:713bd63440ee078ce48ca953d254d51e5f1a6fa0c76fb521fc596306c78d95a5 \
+    --hash=sha256:e2394ea7e422c1e795681cee5e8b1c6083bab7db6d7a380841130cbbae173d29 \
+    # via flask-apispec
 webassets==0.12.1 \
     --hash=sha256:e7d9c8887343123fd5b32309b33167428cb1318cdda97ece12d0907fd69d38db
 werkzeug==0.14.1 \

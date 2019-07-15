@@ -8,19 +8,19 @@ from flask import (Blueprint, current_app, flash, g, redirect,
                    request, Response, url_for, abort, stream_with_context,
                    send_file)
 from flask_babelex import lazy_gettext as _
-from flask_restful import Api
 from flask_security import current_user
 from slugify import slugify_unicode
 from sqlalchemy import not_, or_
 from sqlalchemy.orm.attributes import flag_modified
 
 from apollo import services, utils
-from apollo.core import db, sentry, uploads
+from apollo.core import db, docs, sentry, uploads
 from apollo.frontend import permissions
 from apollo.frontend.forms import (
     file_upload_form, generate_location_edit_form,
     DummyForm)
-from apollo.locations import api, filters, forms, tasks
+from apollo.locations import filters, forms, tasks
+import apollo.locations.api.views as api_views
 from apollo.locations.utils import import_graph
 from .models import LocationSet, LocationType, Location, LocationTranslations
 from .models import LocationTypePath, LocationDataField
@@ -29,30 +29,31 @@ from ..users.models import UserUpload
 
 bp = Blueprint('locations', __name__, template_folder='templates',
                static_folder='static', static_url_path='/core/static')
-location_api = Api(bp)
 
 admin_required = permissions.role('admin').require
 
-location_api.add_resource(
-    api.LocationTypeItemResource,
-    '/api/locationtype/<int:loc_type_id>',
-    endpoint='api.locationtype'
-)
-location_api.add_resource(
-    api.LocationTypeListResource,
-    '/api/locationtypes/',
-    endpoint='api.locationtypes'
-)
-location_api.add_resource(
-    api.LocationItemResource,
-    '/api/location/<int:location_id>',
-    endpoint='api.location'
-)
-location_api.add_resource(
-    api.LocationListResource,
+bp.add_url_rule(
+    '/api/locations/<int:location_id>',
+    view_func=api_views.LocationItemResource.as_view('api_location_item'))
+bp.add_url_rule(
     '/api/locations/',
-    endpoint='api.locations'
-)
+    view_func=api_views.LocationListResource.as_view('api_location_list'))
+bp.add_url_rule(
+    '/api/locationtypes/<int:loc_type_id>',
+    view_func=api_views.LocationTypeItemResource.as_view(
+        'api_locationtype_item'))
+bp.add_url_rule(
+    '/api/locationtypes',
+    view_func=api_views.LocationTypeListResource.as_view(
+        'api_locationtype_list'))
+
+
+docs.register(api_views.LocationItemResource, 'locations.api_location_item')
+docs.register(api_views.LocationListResource, 'locations.api_location_list')
+docs.register(
+    api_views.LocationTypeItemResource, 'locations.api_locationtype_item')
+docs.register(
+    api_views.LocationTypeListResource, 'locations.api_locationtype_list')
 
 
 def locations_list(view, location_set_id):

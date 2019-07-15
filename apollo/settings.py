@@ -23,6 +23,7 @@ except KeyError:
 
 DEBUG = config('DEBUG', cast=config.boolean, default=False)
 PAGE_SIZE = config('PAGE_SIZE', cast=int, default=25)
+API_PAGE_SIZE = config('API_PAGE_SIZE', cast=int, default=100)
 
 # default to UTC for prior deployments
 TIMEZONE = config('TIMEZONE', default='UTC')
@@ -122,7 +123,9 @@ MESSAGING_SECRET = config('MESSAGING_SECRET', default=None)
 APPLICATIONS = config(
     'APPLICATIONS',
     cast=config.eval,
-    default='''("apollo.frontend",
+    default='''(
+        "apollo.deployments",
+        "apollo.frontend",
         "apollo.locations",
         "apollo.participants",
         "apollo.formsframework",
@@ -206,3 +209,5 @@ FACEBOOK_CLIENT_ID = config('FACEBOOK_CLIENT_ID', default='')
 FACEBOOK_CLIENT_SECRET = config('FACEBOOK_CLIENT_SECRET', default='')
 
 MAPBOX_TOKEN = config('MAPBOX_TOKEN', default='')
+
+API_KEY = config('API_KEY', default='')

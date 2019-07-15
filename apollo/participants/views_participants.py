@@ -9,16 +9,16 @@ from flask import (abort, Blueprint, current_app, g, redirect,
                    stream_with_context)
 from flask_babelex import lazy_gettext as _
 from flask_menu import register_menu
-from flask_restful import Api
 from flask_security import current_user, login_required
 from slugify import slugify_unicode
 
 from apollo import models, services, utils
-from apollo.core import sentry, uploads
+from apollo.core import docs, sentry, uploads
 from apollo.frontend import helpers, permissions, route
 from apollo.frontend.forms import generate_participant_edit_form
 from apollo.messaging.tasks import send_messages
-from apollo.participants import api, filters, forms, tasks
+from apollo.participants import filters, forms, tasks
+from apollo.participants.api import views as api_views
 
 from .models import Participant, ParticipantSet, ParticipantRole
 from .models import ParticipantPartner, PhoneContact
@@ -35,18 +35,20 @@ phone_number_cleaner = re.compile(r'[^0-9]')
 bp = Blueprint('participants', __name__, template_folder='templates',
                static_folder='static', static_url_path='/core/static')
 logger = logging.getLogger(__name__)
-participant_api = Api(bp)
 
-participant_api.add_resource(
-    api.ParticipantItemResource,
-    '/api/participant/<participant_id>',
-    endpoint='api.participant'
-)
-participant_api.add_resource(
-    api.ParticipantListResource,
+bp.add_url_rule(
+    '/api/participants/<int:participant_id>',
+    view_func=api_views.ParticipantItemResource.as_view(
+        'api_participant_item'))
+bp.add_url_rule(
     '/api/participants/',
-    endpoint='api.participants'
-)
+    view_func=api_views.ParticipantListResource.as_view(
+        'api_participant_list'))
+
+docs.register(
+    api_views.ParticipantItemResource, 'participants.api_participant_item')
+docs.register(
+    api_views.ParticipantListResource, 'participants.api_participant_list')
 
 admin_required = permissions.role('admin').require
 

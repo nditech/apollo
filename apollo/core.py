@@ -3,6 +3,7 @@ from authlib.flask.client import OAuth
 from collections import OrderedDict
 from flask import redirect, url_for
 from flask_admin import expose, Admin, AdminIndexView
+from flask_apispec import FlaskApiSpec
 from flask_babelex import Babel
 from flask_caching import Cache
 try:
@@ -49,6 +50,7 @@ csrf = CSRFProtect()
 debug_toolbar = DebugToolbarExtension() if fdt_available else None
 uploads = UploadSet('uploads', DEFAULTS)
 webpack = Webpack()
+docs = FlaskApiSpec()
 
 
 class Filter(object):

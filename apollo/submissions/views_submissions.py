@@ -20,7 +20,7 @@ from tablib import Dataset
 from werkzeug.datastructures import MultiDict
 
 from apollo import models, services, utils
-from apollo.core import db
+from apollo.core import db, docs
 from apollo.frontend import route, permissions
 from apollo.frontend.filters import generate_quality_assurance_filter
 from apollo.frontend.helpers import (
@@ -30,6 +30,7 @@ from apollo.frontend.helpers import (
 from apollo.frontend.template_filters import mkunixtimestamp
 from apollo.messaging.tasks import send_messages
 from apollo.submissions import filters, forms
+from apollo.submissions.api import views as api_views
 from apollo.submissions.incidents import incidents_csv
 from apollo.submissions.aggregation import (
     aggregate_dataset, aggregated_dataframe, _qa_counts)
@@ -42,6 +43,17 @@ auth = HTTPBasicAuth()
 bp = Blueprint('submissions', __name__, template_folder='templates',
                static_folder='static')
 
+bp.add_url_rule(
+    '/api/submissions',
+    view_func=api_views.SubmissionListResource.as_view('api_submission_list'))
+bp.add_url_rule(
+    '/api/submissions/<int:submission_id>',
+    view_func=api_views.SubmissionItemResource.as_view('api_submission_item'))
+
+docs.register(
+    api_views.SubmissionItemResource, 'submissions.api_submission_item')
+docs.register(
+    api_views.SubmissionListResource, 'submissions.api_submission_list')
 
 SUB_VERIFIED = '4'
 
