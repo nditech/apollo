@@ -6,6 +6,7 @@ import operator as op
 from arpeggio import PTNodeVisitor, visit_parse_tree
 from arpeggio.cleanpeg import ParserPEG
 from sqlalchemy import Boolean, Integer, String, and_, case, func, null
+from sqlalchemy.dialects.postgresql import array
 
 from apollo.models import Location, Participant, Submission
 
@@ -161,6 +162,7 @@ class QATreeVisitor(BaseVisitor):
         self.prev_cast_type = None
         self.lock_null = False
         self.form = kwargs.pop('form')
+        self.variables = set()
         super().__init__(defaults, **kwargs)
 
     def visit_lookup(self, node, children):
@@ -179,6 +181,7 @@ class QATreeVisitor(BaseVisitor):
 
     def visit_variable(self, node, children):
         var_name = node.value
+        self.variables.add(var_name)
         if var_name not in self.form.tags:
             raise ValueError('Variable ({}) not in form'.format(var_name))
 
@@ -216,7 +219,7 @@ def generate_qa_query(expression, form):
 
     visitor = QATreeVisitor(form=form)
 
-    return visit_parse_tree(tree, visitor)
+    return visit_parse_tree(tree, visitor), visitor.variables
 
 
 def get_logical_check_stats(query, form, condition):
@@ -242,8 +245,8 @@ def get_logical_check_stats(query, form, condition):
 
     qa_case_query = case([
         (qa_query == True, 'OK'),
-        (and_(qa_query == False, Submission.verification_status == Submission.VERIFICATION_STATUSES[1][0]), 'Verified'),    # noqa
-        (and_(qa_query == False, Submission.verification_status != Submission.VERIFICATION_STATUSES[1][0]), 'Flagged'),     # noqa
+        (and_(qa_query == False, Submission.verified_fields.has_all(array(question_codes))), 'Verified'),   # noqa
+        (and_(qa_query == False, ~Submission.verified_fields.has_all(array(question_codes))), 'Flagged'),   # noqa
         (qa_query == None, 'Missing')
     ])
 

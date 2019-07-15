@@ -62,7 +62,7 @@
     {% if form.quality_checks %}
     {% for qc in form.quality_checks %}
     <td class="text-center">
-    {% if submission.verification_status == verification_statuses.VERIFIED -%}
+    {% if submission|qa_status(qc) == quality_statuses.VERIFIED -%}
         <i class="fa fa-check-double text-primary" title="{{ _('Verified') }}"></i>
     {% elif submission.verification_status == verification_statuses.REJECTED -%}
         <i class="fa fa-minus-circle text-danger" title="{{ _('Rejected') }}"></i>

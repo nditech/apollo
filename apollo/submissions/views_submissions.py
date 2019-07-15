@@ -486,7 +486,8 @@ def submission_edit(submission_id):
             ):
                 for check in questionnaire_form.quality_checks:
                     result, used_tags = get_inline_qa_status(submission, check)
-                    if result is False:
+                    verified_fields = submission.verified_fields or set()
+                    if result is False and not used_tags.issubset(verified_fields):  # noqa
                         failed_checks.append(check['description'])
                         failed_check_tags.update(used_tags)
 
