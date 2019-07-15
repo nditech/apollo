@@ -102,9 +102,12 @@ def _process_analysis(event, form_id, location_id=None, tag=None):
             ])
             grouped = False
 
-        queryset = submissions.find(
-            event=event,
-            form=form, submission_type='M').filter(
+        query_kwargs = {'event': event, 'form': form}
+        if form.track_data_conflicts:
+            query_kwargs['submission_type'] = 'M'
+        else:
+            query_kwargs['submission_type'] = 'O'
+        queryset = submissions.find(**query_kwargs).filter(
                 models.Submission.location_id.in_(location_ids),
                 models.Submission.quarantine_status != 'A')
     else:
