@@ -31,7 +31,7 @@ class SubmissionItemResource(MethodResource):
         return submission
 
 
-@use_kwargs({'event_id': fields.Int(), 'form_id': fields.Int(),
+@use_kwargs({'event_id': fields.Int(), 'form_id': fields.Int(required=True),
             'submission_type': fields.Str()}, locations=['query'])
 class SubmissionListResource(BaseListResource):
     schema = SubmissionSchema()
