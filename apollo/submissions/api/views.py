@@ -10,18 +10,23 @@ from apollo.submissions.models import Submission
 
 
 @marshal_with(SubmissionSchema)
+@use_kwargs({'event_id': fields.Int()}, locations=['query'])
 class SubmissionItemResource(MethodResource):
     @login_or_api_key_required
-    def get(self, submission_id):
+    def get(self, submission_id, **kwargs):
         deployment = getattr(g, 'deployment', None)
-        event = getattr(g, 'event', None)
+
+        event_id = kwargs.get('event_id')
+        if event_id is None:
+            event = getattr(g, 'event', None)
+            event_id = event.id if event else None
+
         deployment_id = deployment.id if deployment else None
-        event_id = event.id if event else None
 
         submission = Submission.query.filter_by(
             deployment_id=deployment_id, event_id=event_id,
             id=submission_id
-        ).one()
+        ).first_or_404()
 
         return submission
 
