@@ -36,7 +36,8 @@ from apollo.submissions.incidents import incidents_csv
 from apollo.submissions.aggregation import (
     aggregate_dataset, aggregated_dataframe, _qa_counts)
 from apollo.submissions.models import QUALITY_STATUSES, Submission
-from apollo.submissions.qa.query_builder import get_inline_qa_status
+from apollo.submissions.qa.query_builder import (
+    generate_qa_queries, get_inline_qa_status)
 from apollo.submissions.utils import make_submission_dataframe
 
 
@@ -1064,7 +1065,14 @@ def quality_assurance_list(form_id):
             queryset = services.submissions.find(
                 submission_type='O',
                 form=form
-            ).order_by('location', 'contributor')
+            ).join(
+                models.Submission.location
+            ).join(
+                models.Submission.participant
+            ).order_by(
+                models.Submission.location_id,
+                models.Submission.participant_id
+            )
         else:
             queryset = models.Submission.query.filter(false())
 
@@ -1079,7 +1087,8 @@ def quality_assurance_list(form_id):
         content_disposition = 'attachment; filename=%s.csv' % basename
 
         return Response(
-            dataset, headers={'Content-Disposition': content_disposition},
+            stream_with_context(dataset),
+            headers={'Content-Disposition': content_disposition},
             mimetype="text/csv"
         )
 
@@ -1208,6 +1217,11 @@ def quality_assurance_list(form_id):
 
     if not form.quality_checks:
         queryset = models.Submission.query.filter(false())
+    else:
+        queryset = queryset.with_entities(
+            models.Submission,
+            *generate_qa_queries(queryset, form)
+        )
 
     query_filterset = filter_class(queryset, request.args)
     filter_form = query_filterset.form

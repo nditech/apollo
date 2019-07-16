@@ -46,9 +46,11 @@
 </tr>
 {% endmacro %}
 
-{% macro submission_items(submissions, form, form_fields, location_types, quality_statuses, verification_statuses, perms) %}
-{% for submission in submissions %}
+{% macro submission_items(results, form, form_fields, location_types, quality_statuses, verification_statuses, perms) %}
+{% for result in results %}
 <tr>
+    {% with record = result._asdict() %}
+    {% with submission = record['Submission'] %}
     {% if perms.edit_submission.can() %}
     <td class="text-monospace text-right"><a href="{{ url_for('submissions.submission_edit', submission_id=submission.id) }}">{{ submission.participant.participant_id }}</a></td>
     {% else %}
@@ -62,13 +64,13 @@
     {% if form.quality_checks %}
     {% for qc in form.quality_checks %}
     <td class="text-center">
-    {% if submission|qa_status(qc) == quality_statuses.VERIFIED -%}
+    {% if record[qc['name']] == 'Verified' -%}
         <i class="fa fa-check-double text-primary" title="{{ _('Verified') }}"></i>
     {% elif submission.verification_status == verification_statuses.REJECTED -%}
         <i class="fa fa-minus-circle text-danger" title="{{ _('Rejected') }}"></i>
-    {% elif submission|qa_status(qc) == quality_statuses.OK -%}
+    {% elif record[qc['name']] == 'OK' -%}
         <i class="fa fa-check text-success" title="{{ _('OK') }}"></i>
-    {% elif submission|qa_status(qc) == quality_statuses.FLAGGED -%}
+    {% elif record[qc['name']] == 'Flagged' -%}
         <i class="fa fa-circle text-danger" title="{{ _('Flagged') }}"></i>
     {% else -%}
         <i class="fa fa-circle text-black-50" title="{{ _('Insufficient Data') }}"></i>
@@ -84,6 +86,8 @@
         <i class="fa fa-phone text-success" aria-hidden="true" title="{{ _('Signal') }}"></i>
         {% endif %}
     </td>
+    {% endwith %}
+    {% endwith %}
 </tr>
 {% else %}
 {% if perms.edit_submission.can() %}

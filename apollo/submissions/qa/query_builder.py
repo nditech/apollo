@@ -222,6 +222,26 @@ def generate_qa_query(expression, form):
     return visit_parse_tree(tree, visitor), visitor.variables
 
 
+def generate_qa_queries(query, form):
+    subqueries = []
+    for check in form.quality_checks:
+        expression = '{lvalue} {comparator} {rvalue}'.format(**check)
+        subquery, used_tags = generate_qa_query(expression, form)
+
+        tags = array(used_tags)
+
+        case_query = case([
+            (subquery == True, 'OK'),
+            (and_(subquery == False, Submission.verified_fields.has_all(tags)), 'Verified'),
+            (and_(subquery == False, ~Submission.verified_fields.has_all(tags)), 'Flagged'),
+            (subquery == None, 'Missing')
+        ]).label(check['name'])
+
+        subqueries.append(case_query)
+
+    return subqueries
+
+
 def get_logical_check_stats(query, form, condition):
     if 'criteria' in condition:
         complete_expression = ''
