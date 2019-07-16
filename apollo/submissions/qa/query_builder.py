@@ -222,7 +222,7 @@ def generate_qa_query(expression, form):
     return visit_parse_tree(tree, visitor), visitor.variables
 
 
-def generate_qa_queries(query, form):
+def generate_qa_queries(form):
     subqueries = []
     for check in form.quality_checks:
         expression = '{lvalue} {comparator} {rvalue}'.format(**check)

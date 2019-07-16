@@ -487,8 +487,7 @@ def submission_edit(submission_id):
             ):
                 for check in questionnaire_form.quality_checks:
                     result, used_tags = get_inline_qa_status(submission, check)
-                    verified_fields = submission.verified_fields or set()
-                    if result is False and not used_tags.issubset(verified_fields):  # noqa
+                    if result is False:  # noqa
                         failed_checks.append(check['description'])
                         failed_check_tags.update(used_tags)
 
@@ -758,6 +757,11 @@ def submission_edit(submission_id):
                     new_quarantine_status = submission_form.data.get(
                         'quarantine_status')
                     new_offline_status = submission_form.unreachable.data
+
+                    new_verified_fields = submission_form.verified_fields.data
+                    if new_verified_fields != submission.verified_fields:
+                        changed = True
+                        update_params['verified_fields'] = new_verified_fields
 
                     if (
                         new_quarantine_status in get_valid_values(
@@ -1220,7 +1224,7 @@ def quality_assurance_list(form_id):
     else:
         queryset = queryset.with_entities(
             models.Submission,
-            *generate_qa_queries(queryset, form)
+            *generate_qa_queries(form)
         )
 
     query_filterset = filter_class(queryset, request.args)
