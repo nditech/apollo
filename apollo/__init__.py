@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from apispec import APISpec
+from apispec.ext.marshmallow import MarshmallowPlugin
 from flask import (
     g, redirect, render_template, request, session, url_for
 )
@@ -65,6 +67,16 @@ def create_app(settings_override=None, register_security_blueprint=True):
                       login_form=DeploymentLoginForm,
                       register_blueprint=register_security_blueprint)
 
+    # initialize the OpenAPI extension
+    spec = APISpec(
+        title='Apollo',
+        version='1.0.0',
+        openapi_version='3.0.2',
+        plugins=[MarshmallowPlugin()]
+    )
+    app.config.update({
+        'APISPEC_SPEC': spec
+    })
     docs.init_app(app)
 
     csrf.init_app(app)
