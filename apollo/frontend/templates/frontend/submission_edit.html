@@ -256,7 +256,7 @@
         <table id="dataTable" class="table table-borderless mb-0 table-responsive">
           <tbody>
           {% for field in group.fields %}
-            <tr {%- if field.tag in failed_check_tags and submission.form.quality_checks_enabled and perms.edit_submission_verification_status.can() %} class="bg-warning"{% endif %}>
+            <tr {%- if field.tag in failed_check_tags and submission.form.quality_checks_enabled and field.tag not in submission.verified_fields and perms.edit_submission_verification_status.can() %} class="bg-warning"{% endif %}>
               <td class="align-middle" style="width: 0.1%; white-space: nowrap;"><strong>{{ field.tag }}</strong></td>
               <td class="align-middle">{{ field.description }}</td>
               {% if readonly -%}
