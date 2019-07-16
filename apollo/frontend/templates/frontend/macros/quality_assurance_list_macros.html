@@ -66,8 +66,6 @@
     <td class="text-center">
     {% if record[qc['name']] == 'Verified' -%}
         <i class="fa fa-check-double text-primary" title="{{ _('Verified') }}"></i>
-    {% elif submission.verification_status == verification_statuses.REJECTED -%}
-        <i class="fa fa-minus-circle text-danger" title="{{ _('Rejected') }}"></i>
     {% elif record[qc['name']] == 'OK' -%}
         <i class="fa fa-check text-success" title="{{ _('OK') }}"></i>
     {% elif record[qc['name']] == 'Flagged' -%}
