@@ -225,16 +225,16 @@ def generate_qa_query(expression, form):
 def generate_qa_queries(form):
     subqueries = []
     for check in form.quality_checks:
-        expression = '{lvalue} {comparator} {rvalue}'.format(**check)
+        expression = build_expression(check)
         subquery, used_tags = generate_qa_query(expression, form)
 
         tags = array(used_tags)
 
         case_query = case([
-            (subquery == True, 'OK'),
-            (and_(subquery == False, Submission.verified_fields.has_all(tags)), 'Verified'),
-            (and_(subquery == False, ~Submission.verified_fields.has_all(tags)), 'Flagged'),
-            (subquery == None, 'Missing')
+            (subquery == True, 'OK'),   # noqa
+            (and_(subquery == False, Submission.verified_fields.has_all(tags)), 'Verified'),    # noqa
+            (and_(subquery == False, ~Submission.verified_fields.has_all(tags)), 'Flagged'),    # noqa
+            (subquery == None, 'Missing')   # noqa
         ]).label(check['name'])
 
         subqueries.append(case_query)
@@ -314,3 +314,32 @@ def get_inline_qa_status(submission, condition):
         return None, set()
 
     return result, used_tags
+
+
+def build_expression(logical_check):
+    boolean_op_map = {
+        'AND': '&&',
+        'OR': '||'
+    }
+
+    if isinstance(logical_check, dict):
+        return '{lvalue} {comparator} {rvalue}'.format(**logical_check)
+    elif isinstance(logical_check, list):
+        expression = ''
+        for index, sub_check in enumerate(logical_check):
+            if index == 0:
+                expression = build_expression(sub_check)
+            else:
+                boolean_op = boolean_op_map.get(
+                    sub_check['conjunction'].upper())
+                if boolean_op is None:
+                    raise ValueError('Invalid junction term in logical check')
+
+                expression = '{orig_expr} {boolean_op} {new_expr}'.format(
+                    orig_expr=expression, boolean_op=boolean_op,
+                    new_expr=build_expression(sub_check)
+                )
+
+        return expression
+    else:
+        raise ValueError('Invalid logical check')

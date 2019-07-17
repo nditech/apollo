@@ -9,6 +9,7 @@ from apollo.submissions.aggregation import (
     _select_field_processor,
 )
 from apollo.submissions.incidents import incidents_csv
+from apollo.submissions.qa.query_builder import build_expression
 
 
 class IncidentsTest(TestCase):
@@ -58,3 +59,56 @@ class AggregationTest(TestCase):
 
         result = _multiselect_field_processor(options, column)
         self.assertEqual(result, [4, 4, 5, 4, 4])
+
+
+class ExpressionBuilderTestCase(TestCase):
+    def test_single_check(self):
+        valid_check = {'lvalue': 'AA', 'comparator': '=', 'rvalue': '1'}
+        invalid_check = {'favourite_fruit': 'apples'}
+
+        expression = build_expression(valid_check)
+        self.assertEqual(expression, 'AA = 1')
+
+        with self.assertRaises(KeyError):
+            expression = build_expression(invalid_check)
+
+    def test_multiple_checks(self):
+        invalid_checks = [
+            {
+                'lvalue': 'AA', 'comparator': '=', 'rvalue': '1',
+                'conjunction': 'and'
+            },
+            {
+                'lvalue': 'BA', 'comparator': '=', 'rvalue': '1',
+                'conjunction': 'plus'
+            },
+            {
+                'lvalue': 'BH', 'comparator': '=', 'rvalue': 'EJ',
+                'conjunction': 'and'
+            }
+        ]
+        valid_checks = [
+            {
+                'lvalue': 'AA', 'comparator': '=', 'rvalue': '1',
+                'conjunction': 'and'
+            },
+            {
+                'lvalue': 'BA', 'comparator': '=', 'rvalue': '1',
+                'conjunction': 'and'
+            },
+            {
+                'lvalue': 'BH', 'comparator': '=', 'rvalue': 'EJ',
+                'conjunction': 'or'
+            }
+        ]
+
+        invalid_checks_2 = set()
+
+        with self.assertRaises(ValueError):
+            expression = build_expression(invalid_checks)
+
+        expression = build_expression(valid_checks)
+        self.assertEqual(expression, 'AA = 1 && BA = 1 || BH = EJ')
+
+        with self.assertRaises(ValueError):
+            expression = build_expression(invalid_checks_2)
