@@ -27,7 +27,7 @@ from ..locations.models import Location
 from ..submissions.models import Submission
 from ..users.models import UserUpload
 
-from sqlalchemy import desc, func, text
+from sqlalchemy import BigInteger, desc, func, text
 
 
 phone_number_cleaner = re.compile(r'[^0-9]')
@@ -205,10 +205,10 @@ def participant_list(participant_set_id=0, view=None):
     if request.args.get('sort_by') == 'id':
         if request.args.get('sort_direction') == 'desc':
             queryset = queryset.order_by(
-                desc(models.Participant.participant_id))
+                desc(models.Participant.participant_id.cast(BigInteger)))
         else:
             queryset = queryset.order_by(
-                models.Participant.participant_id)
+                models.Participant.participant_id.cast(BigInteger))
     elif request.args.get('sort_by') in ('location_name', 'location',):
         if request.args.get('sort_direction') == 'desc':
             queryset = queryset.order_by(
@@ -251,8 +251,8 @@ def participant_list(participant_set_id=0, view=None):
                 models.ParticipantPartner.name)
     else:
         queryset = queryset.order_by(
-            models.Location.code,
-            models.Participant.participant_id)
+            models.Location.code.cast(BigInteger),
+            models.Participant.participant_id.cast(BigInteger))
 
     # request.args is immutable, so the .pop() call will fail on it.
     # using .copy() returns a mutable version of it.

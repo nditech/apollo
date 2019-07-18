@@ -13,7 +13,7 @@ from flask_menu import register_menu
 from flask_security import current_user, login_required
 from flask_security.utils import verify_and_update_password
 from slugify import slugify_unicode
-from sqlalchemy import desc, func, text
+from sqlalchemy import BigInteger, desc, func, text
 from sqlalchemy.dialects.postgresql import array
 from sqlalchemy.sql import false
 from tablib import Dataset
@@ -251,10 +251,10 @@ def submission_list(form_id):
     if request.args.get('sort_by') == 'id':
         if request.args.get('sort_direction') == 'desc':
             queryset = queryset.order_by(
-                desc(models.Participant.participant_id))
+                desc(models.Participant.participant_id.cast(BigInteger)))
         else:
             queryset = queryset.order_by(
-                models.Participant.participant_id)
+                models.Participant.participant_id.cast(BigInteger))
     elif request.args.get('sort_by') == 'location':
         if request.args.get('sort_direction') == 'desc':
             queryset = queryset.order_by(
@@ -276,8 +276,8 @@ def submission_list(form_id):
                 models.PhoneContact.number)
     else:
         queryset = queryset.order_by(
-            models.Location.code,
-            models.Participant.participant_id)
+            models.Location.code.cast(BigInteger),
+            models.Participant.participant_id.cast(BigInteger))
 
     query_filterset = filter_class(queryset, request.args)
     filter_form = query_filterset.form
@@ -1155,10 +1155,10 @@ def quality_assurance_list(form_id):
     if request.args.get('sort_by') == 'id':
         if request.args.get('sort_direction') == 'desc':
             queryset = queryset.order_by(
-                desc(models.Participant.participant_id))
+                desc(models.Participant.participant_id.cast(BigInteger)))
         else:
             queryset = queryset.order_by(
-                models.Participant.participant_id)
+                models.Participant.participant_id.cast(BigInte))
     elif request.args.get('sort_by') == 'location':
         if request.args.get('sort_direction') == 'desc':
             queryset = queryset.order_by(
@@ -1180,8 +1180,8 @@ def quality_assurance_list(form_id):
                 models.PhoneContact.number)
     else:
         queryset = queryset.order_by(
-            models.Location.code,
-            models.Participant.participant_id)
+            models.Location.code.cast(BigInteger),
+            models.Participant.participant_id.cast(BigInteger))
 
     if not form.quality_checks:
         queryset = models.Submission.query.filter(false())
