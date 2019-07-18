@@ -1158,7 +1158,7 @@ def quality_assurance_list(form_id):
                 desc(models.Participant.participant_id.cast(BigInteger)))
         else:
             queryset = queryset.order_by(
-                models.Participant.participant_id.cast(BigInte))
+                models.Participant.participant_id.cast(BigInteger))
     elif request.args.get('sort_by') == 'location':
         if request.args.get('sort_direction') == 'desc':
             queryset = queryset.order_by(
