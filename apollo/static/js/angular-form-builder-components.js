@@ -8,7 +8,7 @@
         placeholder: "",
         required: false,
         template:
-        `<div class="card border-light bg-light mb-2">
+        `<div class="card border-light bg-light mb-1">
           <h6 class="card-header">{{label}}</h6>
         </div>`,
         popoverTemplate:
@@ -34,10 +34,10 @@
         max: 9999,
         template:
         `<div class="form-group row">
-          <label for="{{formName+index}}" class="col-sm-3 control-label text-right mt-2" ng-class="{'fb-required':required}">{{label}}</label>
+          <label for="{{formName+index}}" class="col-sm-3 control-label text-right mt-1" ng-class="{'fb-required':required}">{{label}}</label>
           <div class="col-sm-8">
             <input type="text" ng-model="inputText" validator-required="{{required}}" validator-group="{{formName}}" id="{{formName+index}}" class="form-control" placeholder="{{placeholder}}"/>
-            <p class="form-text">{{description}}</p>
+            <p class="form-text mb-1">{{description}}</p>
           </div>
         </div>`,
         popoverTemplate:
@@ -86,17 +86,64 @@
         options: ["Option 1", "Option 2"],
         template:
         `<div class="form-group row">
-          <label for="{{formName+index}}" class="col-sm-3 control-label text-right mt-2" ng-class="{'fb-required':required}">{{label}}</label>
+          <label for="{{formName+index}}" class="col-sm-3 control-label text-right mt-1" ng-class="{'fb-required':required}">{{label}}</label>
           <div class="col-sm-8">
             <div class="custom-control custom-radio" ng-repeat="item in options track by $index">
               <input id="{{formName+index}}" name="{{formName+index}}" class="custom-control-input" ng-model="$parent.inputText" validator-group="{{formName}}" value="{{item}}" type="radio"/>
               <label class="custom-control-label" for="{{formName+index}}">{{item}}</label>
             </div>
-            <p class="form-text">{{description}}</p>
+            <p class="form-text mb-1">{{description}}</p>
           </div>
         </div>`,
         popoverTemplate:
         `<form>
+          <div class="form-group mb-2">
+            <label class="control-label">Name</label>
+            <input type="text" ng-model="label" class="form-control"/>
+          </div>
+          <div class="form-group mb-2">
+            <label class="control-label">Description</label>
+            <input type="text" ng-model="description" class="form-control"/>
+          </div>
+          <div class="form-group mb-2">
+            <label class="control-label">Options</label>
+            <textarea class="form-control" rows="3" ng-model="optionsText"/>
+          </div>
+          <div class="form-group mb-2">
+            <label class="control-label">Analysis</label>
+            <select ng-model="analysis" ng-options="obj.value as obj.option for obj in analysisOptions" class="form-control custom-select"></select>
+          </div>
+          <div class="form-group mb-2" ng-if="validationOptions.length > 0">
+            <label class="control-label">Validation</label>
+            <select ng-model="$parent.validation" class="form-control custom-select" ng-options="option.rule as option.label for option in validationOptions"></select>
+          </div>
+          <div class="form-group mb-2 mt-4 text-right">
+            <input type="button" ng-click="popover.remove($event)" class="btn btn-danger mr-1" value="Delete"/>
+            <input type="button" ng-click="popover.cancel($event)" class="btn btn-secondary mr-1" value="Cancel"/>
+            <input type="submit" ng-click="popover.save($event)" class="btn btn-primary" value="Save"/>
+          </div>
+        </form>`
+      });
+      $builderProvider.registerComponent("yesno", {
+        group: "Default",
+        label: "AA",
+        description: "Yes/No Question",
+        placeholder: "",
+        required: false,
+        options: ["Yes", "No"],
+        template:
+          `<div class="form-group row">
+          <label for="{{formName+index}}" class="col-sm-3 control-label text-right mt-1" ng-class="{'fb-required':required}">{{label}}</label>
+          <div class="col-sm-8">
+            <div class="custom-control custom-radio" ng-repeat="item in options track by $index">
+              <input id="{{formName+index}}" name="{{formName+index}}" class="custom-control-input" ng-model="$parent.inputText" validator-group="{{formName}}" value="{{item}}" type="radio"/>
+              <label class="custom-control-label" for="{{formName+index}}">{{item}}</label>
+            </div>
+            <p class="form-text mb-1">{{description}}</p>
+          </div>
+        </div>`,
+        popoverTemplate:
+          `<form>
           <div class="form-group mb-2">
             <label class="control-label">Name</label>
             <input type="text" ng-model="label" class="form-control"/>
@@ -135,13 +182,13 @@
         arrayToText: true,
         template:
         `<div class="form-group row">
-          <label for="{{formName+index}}" class="col-sm-3 control-label text-right mt-2" ng-class="{'fb-required':required}">{{label}}</label>
+          <label for="{{formName+index}}" class="col-sm-3 control-label text-right mt-1" ng-class="{'fb-required':required}">{{label}}</label>
           <div class="col-sm-8">
             <div class="custom-control custom-checkbox" ng-repeat="item in options track by $index">
               <input id="{{formName+index}}" name="{{formName+index}}" class="custom-control-input" ng-model="$parent.inputText" validator-group="{{formName}}" value="{{item}}" type="checkbox"/>
               <label class="custom-control-label" for="{{formName+index}}">{{item}}</label>
             </div>
-            <p class="form-text">{{description}}</p>
+            <p class="form-text mb-1">{{description}}</p>
           </div>
         </div>`,
         popoverTemplate:
@@ -178,10 +225,10 @@
         required: false,
         template:
         `<div class="form-group row">
-          <label for="{{formName+index}}" class="col-sm-3 control-label text-right mt-2" ng-class="{'fb-required':required}">{{label}}</label>
+          <label for="{{formName+index}}" class="col-sm-3 control-label text-right mt-1" ng-class="{'fb-required':required}">{{label}}</label>
           <div class="col-sm-8">
             <textarea ng-model="inputText" rows="1" validator-required="{{required}}" validator-group="{{formName}}" id="{{formName+index}}" class="form-control" placeholder="{{placeholder}}"></textarea>
-            <p class="form-text">{{description}}</p>
+            <p class="form-text mb-1">{{description}}</p>
           </div>
         </div>`,
         popoverTemplate:
