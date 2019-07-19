@@ -192,8 +192,13 @@ class Submission(BaseModel):
         if not self.form.track_data_conflicts:
             return
 
-        conflict_tags = self.compute_conflict_tags(data.keys())
-        subset = {k: v for k, v in data.items() if k not in conflict_tags}
+        if self.quarantine_status == 'A':
+            conflict_tags = []
+            subset = {}
+        else:
+            conflict_tags = self.compute_conflict_tags(data.keys())
+            subset = {k: v for k, v in data.items() if k not in conflict_tags}
+
         subset_keys = set(subset.keys())
 
         master = self.master
@@ -202,13 +207,18 @@ class Submission(BaseModel):
         self.conflicts = trim_conflicts(self, conflict_tags, data.keys())
         master.conflicts = trim_conflicts(master, conflict_tags, data.keys())
         for sibling in siblings:
+            conflict_tags = sibling.compute_conflict_tags(data.keys())
             sibling.conflicts = trim_conflicts(
                 sibling, conflict_tags, data.keys())
             sibling_data_keys = set(sibling.data.keys())
-            subset.update(
-                {k: sibling.data[k]
-                for k in sibling_data_keys.difference(subset_keys)
-                if k not in conflict_tags})
+
+            if sibling.quarantine_status == 'A':
+                pass
+            else:
+                subset.update(
+                    {k: sibling.data[k]
+                    for k in sibling_data_keys.difference(subset_keys)
+                    if k not in conflict_tags})
 
         for key in master.overridden_fields:
             if key in master.data:
@@ -269,7 +279,7 @@ class Submission(BaseModel):
 
         if not params:
             return []
-        siblings = self.__siblings()
+        siblings = self.__siblings().filter(Submission.quarantine_status!='A')
         result = siblings.with_entities(*params).one()
 
         return {k for k, v in result._asdict().items() if v}
