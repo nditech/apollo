@@ -192,33 +192,63 @@ class Submission(BaseModel):
         if not self.form.track_data_conflicts:
             return
 
+        combined_data = self.data
+        combined_data.update(data)
+
         if self.quarantine_status == 'A':
             conflict_tags = []
             subset = {}
+        elif self.quarantine_status == 'R':
+            conflict_tags = self.compute_conflict_tags(
+                set(combined_data.keys()).difference(set(self.form.vote_tags)))
+            subset = {
+                k: v for k, v in combined_data.items()
+                if k not in conflict_tags and k not in self.form.vote_tags}
         else:
-            conflict_tags = self.compute_conflict_tags(data.keys())
-            subset = {k: v for k, v in data.items() if k not in conflict_tags}
+            conflict_tags = self.compute_conflict_tags(combined_data.keys())
+            subset = {
+                k: v for k, v in combined_data.items()
+                if k not in conflict_tags}
 
         subset_keys = set(subset.keys())
 
         master = self.master
 
         siblings = self.siblings
-        self.conflicts = trim_conflicts(self, conflict_tags, data.keys())
-        master.conflicts = trim_conflicts(master, conflict_tags, data.keys())
+        self.conflicts = trim_conflicts(
+            self, conflict_tags, combined_data.keys())
+        master.conflicts = trim_conflicts(
+            master, conflict_tags, combined_data.keys())
         for sibling in siblings:
-            conflict_tags = sibling.compute_conflict_tags(data.keys())
-            sibling.conflicts = trim_conflicts(
-                sibling, conflict_tags, data.keys())
             sibling_data_keys = set(sibling.data.keys())
 
             if sibling.quarantine_status == 'A':
-                pass
+                conflict_tags = []
+            elif sibling.quarantine_status == 'R':
+                conflict_tags = sibling.compute_conflict_tags(
+                    set(combined_data.keys()).difference(
+                        set(self.form.vote_tags)))
+                subset.update(
+                    {k: sibling.data[k]
+                    for k in sibling_data_keys.difference(subset_keys)
+                    if k not in conflict_tags
+                    and k not in self.form.vote_tags})
             else:
+                if self.quarantine_status == 'R':
+                    conflict_tags = sibling.compute_conflict_tags(
+                        set(combined_data.keys()).difference(
+                            set(self.form.vote_tags)))
+                else:
+                    conflict_tags = sibling.compute_conflict_tags(
+                        combined_data.keys())
+
                 subset.update(
                     {k: sibling.data[k]
                     for k in sibling_data_keys.difference(subset_keys)
                     if k not in conflict_tags})
+
+            sibling.conflicts = trim_conflicts(
+                sibling, conflict_tags, combined_data.keys())
 
         for key in master.overridden_fields:
             if key in master.data:
@@ -265,8 +295,11 @@ class Submission(BaseModel):
         if tags:
             tags_to_check = tags_to_check.intersection(set(tags))
 
+        tags_to_check_non_votes = tags_to_check.difference(
+            set(self.form.vote_tags))
+
         # conflict query
-        params = [
+        any_conflict_query = [
             sa.func.bool_or(
                 sa.and_(
                     Submission.data.has_key(tag),   # noqa
@@ -276,13 +309,43 @@ class Submission(BaseModel):
             for tag in tags_to_check
             if tag in self.data
         ]
+        non_vote_conflict_query = [
+            sa.func.bool_or(
+                sa.and_(
+                    Submission.data.has_key(tag),   # noqa
+                    sa.not_(Submission.data.contains({tag: self.data[tag]}))
+                )
+            ).label(tag)
+            for tag in tags_to_check_non_votes
+            if tag in self.data
+        ]
 
-        if not params:
+        if not any_conflict_query:
             return []
-        siblings = self.__siblings().filter(Submission.quarantine_status!='A')
-        result = siblings.with_entities(*params).one()
+        siblings_no_quarantine = self.__siblings().filter(
+            Submission.quarantine_status=='')
+        siblings_with_results_quarantine = self.__siblings().filter(
+            Submission.quarantine_status=='R')
 
-        return {k for k, v in result._asdict().items() if v}
+        results_conflict = siblings_no_quarantine.with_entities(
+            *any_conflict_query)
+        results_vote_conflict = siblings_with_results_quarantine.with_entities(
+            *non_vote_conflict_query)
+
+        any_conflict = {
+            k
+            for result in results_conflict
+            for k, v in result._asdict().items()
+            if v
+        }
+        vote_conflict = {
+            k
+            for result in results_vote_conflict
+            for k, v in result._asdict().items()
+            if v
+        }
+
+        return any_conflict.union(vote_conflict)
 
     def get_incident_status_display(self):
         d = dict(self.INCIDENT_STATUSES)
