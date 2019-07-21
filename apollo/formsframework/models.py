@@ -119,6 +119,15 @@ class Form(Resource):
 
         return sorted(self._field_cache.keys())
 
+    @property
+    def vote_tags(self):
+        if not hasattr(self, '_field_cache'):
+            self._populate_field_cache()
+
+        return sorted([
+            key for key in self._field_cache.keys()
+            if self._field_cache[key]['analysis_type'] == 'RESULT'])
+
     def get_field_by_tag(self, tag):
         if not hasattr(self, '_field_cache'):
             self._populate_field_cache()

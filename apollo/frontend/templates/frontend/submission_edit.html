@@ -224,11 +224,11 @@
             <tr>
               <td class="align-middle"><strong>{{ _('Quarantine Status') }}</strong></td>
               <td class="col-2 align-middle obs-on">
-                &nbsp;
+                {{ render_field(submission_form.quarantine_status, 'select', klass_='form-control tracked text-monospace') }}
               </td>
               {%- for sibling_form in sibling_forms %}
               <td class="col-2 align-middle">
-                &nbsp;
+                {{ render_field(sibling_form.quarantine_status, 'select', klass_='form-control tracked text-monospace', disabled='disabled') }}
               </td>
               {% endfor %}
               <td class="col-2 align-middle ps-on">
