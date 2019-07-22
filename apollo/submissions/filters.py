@@ -3,7 +3,7 @@ from operator import itemgetter
 
 from cgi import escape
 from flask_babelex import lazy_gettext as _
-from sqlalchemy import Integer, and_, cast, or_
+from sqlalchemy import Integer, and_, or_
 from sqlalchemy.dialects.postgresql import array
 from wtforms import widgets
 from wtforms.compat import text_type
@@ -204,8 +204,16 @@ class SubmissionQuarantineStatusFilter(ChoiceFilter):
                     models.Submission.quarantine_status == ''),
                 None
             )
-        elif value:
+        elif value in ('A', 'R'):
             return (models.Submission.quarantine_status == value, None)
+        elif value == 'Z':
+            return (
+                or_(
+                    models.Submission.quarantine_status == 'A',
+                    models.Submission.quarantine_status == 'R'
+                ),
+                None
+            )
 
         return (None, None)
 
@@ -369,13 +377,15 @@ def make_submission_list_filter(event, form):
 
     if form.form_type == 'INCIDENT':
         attributes['status'] = IncidentStatusFilter()
-
-    attributes['quarantine_status'] = SubmissionQuarantineStatusFilter(
-        choices=(
-            ('N', _('Quarantine None')),
-            ('A', _('Quarantine All')),
-            ('R', _('Quarantine Results'))
-        ), default='N')
+    elif form.form_type == 'CHECKLIST':
+        attributes['quarantine_status'] = SubmissionQuarantineStatusFilter(
+            choices=(
+                ('N', _('Not Quarantined')),
+                ('A', _('Quarantine All')),
+                ('R', _('Quarantine Results')),
+                ('Z', _('Quarantine All & Results')),
+                ('', _('All Checklists')),
+            ), default='N')
     attributes['sender_verification'] = SubmissionSenderVerificationFilter(
         choices=(
             ('', _('Sender Verification')),
