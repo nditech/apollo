@@ -254,7 +254,7 @@ class Submission(BaseModel):
             if key in master.data:
                 subset[key] = master.data[key]
             else:
-                del subset[key]
+                subset.pop(key, None)
 
         master.data = subset
         db.session.begin(nested=True)
